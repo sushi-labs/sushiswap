@@ -2063,6 +2063,7 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/router-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/jest': ^29.2.0
       '@types/react': 18.2.6
@@ -2086,6 +2087,7 @@ importers:
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/math': link:../math
       '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/router-config': link:../../config/router
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/jest': 29.5.1
       '@types/react': 18.2.6
@@ -3333,7 +3335,7 @@ packages:
     dependencies:
       '@fastify/deepmerge': 1.3.0
       ajv: 8.12.0
-      ajv-formats: 2.1.1
+      ajv-formats: 2.1.1_ajv@8.12.0
       fast-deep-equal: 3.1.3
       rfdc: 1.3.0
 
@@ -15524,6 +15526,17 @@ packages:
         optional: true
     dependencies:
       ajv: 8.12.0
+    dev: false
+
+  /ajv-formats/2.1.1_ajv@8.12.0:
+    resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
+    peerDependencies:
+      ajv: ^8.0.0
+    peerDependenciesMeta:
+      ajv:
+        optional: true
+    dependencies:
+      ajv: 8.12.0
 
   /ajv/6.12.3:
     resolution: {integrity: sha512-4K0cK3L1hsqk9xIb2z9vs/XU+PGJZ9PNpJRDS9YLzmNdX6jmVPfamLvTJr0aDAusnHyCHO6MjzlkAsgtqp9teA==}
@@ -16028,7 +16041,7 @@ packages:
   /axios/0.27.2:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       form-data: 4.0.0
     transitivePeerDependencies:
       - debug
@@ -21660,7 +21673,7 @@ packages:
       '@whatwg-node/fetch': 0.8.8
       '@whatwg-node/server': 0.7.7
       ajv: 8.12.0
-      ajv-formats: 2.1.1
+      ajv-formats: 2.1.1_ajv@8.12.0
       hotscript: 1.0.12
       json-schema-to-ts: 2.9.1
       openapi-types: 12.1.3
@@ -31118,7 +31131,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1

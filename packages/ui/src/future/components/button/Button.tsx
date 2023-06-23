@@ -6,7 +6,7 @@ import { BUTTON_CLASSES, BUTTON_SIZES, BUTTON_STYLES, BUTTON_STYLES_VARIANT } fr
 import { PolymorphicComponentPropsWithRef, PolymorphicRef } from '../../../types'
 
 export type ButtonColor = 'red' | 'blue' | 'default' | 'yellow' | 'green'
-export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'custom'
 export type ButtonVariant = 'outlined' | 'filled' | 'empty'
 
 interface Props {

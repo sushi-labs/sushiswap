@@ -13,7 +13,7 @@ interface TokenSelectorCurrencyListProps {
   chainId: ChainId
   onSelect(currency: Type): void
   pin?: {
-    pinnedSet: Set<string>
+    isPinned: (currencyId: string) => boolean
     onPin: (currencyId: string) => void
   }
   selected: Type | undefined
@@ -44,7 +44,7 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> = mem
       pin: pin
         ? {
             onPin: () => pin?.onPin(currency.wrapped.id),
-            pinned: pin.pinnedSet.has(currency.wrapped.id.toLowerCase()),
+            isPinned: pin.isPinned(currency.wrapped.id),
           }
         : undefined,
       selected: selected

@@ -66,4 +66,5 @@ export const BUTTON_SIZES: Record<ButtonSize, string> = {
   md: 'btn-md',
   lg: 'btn-lg',
   xl: 'btn-xl',
+  custom: '',
 }

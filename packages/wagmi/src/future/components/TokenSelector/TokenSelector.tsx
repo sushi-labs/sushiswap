@@ -7,7 +7,7 @@ import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { Search } from '@sushiswap/ui/future/components/input/Search'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 
 import { TokenSelectorCurrencyList } from './TokenSelectorCurrencyList'
 import { TokenSelectorImportRow } from './TokenSelectorImportRow'
@@ -21,6 +21,7 @@ import { useCustomTokens, usePinnedTokens } from '@sushiswap/hooks'
 import { useSortedTokenList } from './hooks/useSortedTokenList'
 import { useTokenWithCache } from '../../hooks'
 import { isAddress } from '@ethersproject/address'
+import { XMarkIcon } from '@heroicons/react/20/solid'
 
 interface TokenSelectorProps {
   id: string
@@ -56,12 +57,21 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
     query,
     customTokenMap: currencies ? {} : customTokenMap,
     tokenMap: currencies ? currencies : tokenMap,
-    pin: { isPinned: isTokenPinned, pinnedSet: pinnedTokenSet },
     pricesMap,
     balancesMap,
     chainId,
     includeNative: true,
   })
+
+  const pinnedTokens = useMemo(() => {
+    return Array.from(pinnedTokenSet)
+      .map((id) => {
+        const [cId, address] = id.split(':')
+        if (chainId !== Number(cId)) return null
+        return tokenMap?.[address] || customTokenMap?.[address]
+      })
+      .filter((token): token is Token => !!token)
+  }, [pinnedTokenSet, tokenMap])
 
   const _onSelect = useCallback(
     (currency: Type) => {
@@ -105,16 +115,29 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {COMMON_BASES[chainId].map((base) => (
-                <Button
-                  startIcon={<Currency.Icon currency={base} width={16} height={16} disableLink={true} />}
-                  color="default"
-                  variant="outlined"
-                  key={base.id}
-                  onClick={() => _onSelect(base)}
-                >
-                  {base.symbol}
-                </Button>
+              {pinnedTokens.map((token) => (
+                <div key={token.id} className="group">
+                  <div className="relative flex justify-end w-full">
+                    <Button
+                      color="default"
+                      variant="filled"
+                      className="absolute hidden group-hover:flex items-center justify-center w-[18px] h-[18px] -mt-1 -mr-1 border-gray-300 rounded-full border dark:border-gray-800 hover:border-gray-600 dark:hover:border-gray-600"
+                      size="custom"
+                      onClick={() => _onPin(token.id)}
+                    >
+                      <XMarkIcon className="w-3 h-3" />
+                    </Button>
+                  </div>
+                  <Button
+                    startIcon={<Currency.Icon currency={token} width={16} height={16} disableLink={true} />}
+                    color="default"
+                    variant="outlined"
+                    onClick={() => _onSelect(token)}
+                    className="border border-gray-300 dark:border-transparent hover:border-gray-600 dark:hover:border-gray-600"
+                  >
+                    {token.symbol}
+                  </Button>
+                </div>
               ))}
             </div>
 
@@ -152,7 +175,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
                     selected={selected}
                     onSelect={_onSelect}
                     id={id}
-                    pin={{ onPin: _onPin, pinnedSet: pinnedTokenSet }}
+                    pin={{ onPin: _onPin, isPinned: isTokenPinned }}
                     currencies={sortedTokenList}
                     chainId={chainId}
                   />
