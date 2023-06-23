@@ -103,7 +103,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
                     type="button"
                     icon={PlusIcon}
                     onClick={() => append({ ...CREATE_VEST_DEFAULT_VALUES, id: nanoid() })}
-                    testdata-id="create-multiple-vest-add-vest-button"
+                    testId="create-multiple-vest-add-vest"
                   >
                     Add Vesting
                   </Button>
@@ -112,7 +112,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
                     type="button"
                     onClick={() => setReview(true)}
                     disabled={!formState.isValid}
-                    testdata-id="create-multiple-vest-review-button"
+                    testId="create-multiple-vest-review"
                   >
                     Review
                   </Button>

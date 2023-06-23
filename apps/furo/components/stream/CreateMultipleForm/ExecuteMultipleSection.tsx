@@ -170,24 +170,29 @@ export const ExecuteMultipleSection: FC<{
       <Button type="button" variant="ghost" onClick={onBack}>
         Cancel
       </Button>
-      <Checker.Connect>
-        <Checker.Network chainId={chainId}>
+      <Checker.Connect size="default" fullWidth={false}>
+        <Checker.Network size="default" fullWidth={false} chainId={chainId}>
           <Checker.ApproveBentobox
+            size="default"
+            fullWidth={false}
             tag={APPROVE_TAG}
-            size="xl"
             id="create-multiple-stream-approve-bentobox"
             chainId={chainId}
             masterContract={getFuroStreamRouterContractConfig(chainId).address}
           >
-            <Checker.ApproveERC20Multiple id={'create-multiple-stream-approve-token'} amounts={approveAmounts}>
+            <Checker.ApproveERC20Multiple
+              size="default"
+              fullWidth={false}
+              id={'create-multiple-stream-approve-token'}
+              amounts={approveAmounts}
+            >
               <Checker.Success tag={APPROVE_TAG}>
                 <Button
-                  size="xl"
                   onClick={() => sendTransaction?.()}
                   type="submit"
                   loading={isWritePending}
                   disabled={!isValid || isValidating || !sendTransaction}
-                  testdata-id="create-multiple-streams-confirm-button"
+                  testId="create-multiple-streams-confirm"
                 >
                   {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Streams'}
                 </Button>

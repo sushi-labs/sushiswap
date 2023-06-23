@@ -75,7 +75,7 @@ export const CancelModal: FC<CancelModalProps> = ({
         },
       })
     },
-    [chainId, address]
+    [type, chainId, address]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({

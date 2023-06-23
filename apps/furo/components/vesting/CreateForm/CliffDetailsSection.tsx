@@ -30,7 +30,7 @@ export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
         render={({ field: { value, onChange } }) => (
           <FormItem>
             <FormControl>
-              <Switch checked={value} onCheckedChange={onChange} id={`cliff-toggle-switch${index}`} />
+              <Switch checked={value} onCheckedChange={onChange} testdata-id={`cliff-toggle-switch${index}`} />
             </FormControl>
             <FormMessage />
           </FormItem>

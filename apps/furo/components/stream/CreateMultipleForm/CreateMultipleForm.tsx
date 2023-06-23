@@ -89,7 +89,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ c
                     type="button"
                     icon={PlusIcon}
                     onClick={() => append({ ...CREATE_STREAM_DEFAULT_VALUES, id: nanoid() })}
-                    testdata-id="create-multiple-streams-add-item-button"
+                    testId="create-multiple-streams-add-item"
                   >
                     Add Stream
                   </Button>
@@ -97,7 +97,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ c
                     type="button"
                     onClick={() => setReview(true)}
                     disabled={!formState.isValid}
-                    testdata-id="create-multiple-streams-review-button"
+                    testId="create-multiple-streams-review"
                   >
                     Review
                   </Button>

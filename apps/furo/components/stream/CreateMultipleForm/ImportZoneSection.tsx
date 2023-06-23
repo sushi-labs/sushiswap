@@ -50,7 +50,7 @@ const Component: FC<ImportZoneSection> = ({ chainId }) => {
 
             const rows: CreateStreamFormSchemaType[] = []
             const tokens = await Promise.all(
-              arr.reduce<Promise<void | FetchTokenResult>[]>((acc, cur, index) => {
+              arr.reduce<Promise<void | FetchTokenResult>[]>((acc, cur) => {
                 if (cur !== '') {
                   const [tokenAddress] = cur.split(',') as [Address]
                   if (tokenAddress !== AddressZero) {

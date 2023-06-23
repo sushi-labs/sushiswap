@@ -18,7 +18,6 @@ import { Dialog } from '@sushiswap/ui/components/dialog/Dialog'
 import { List } from '@sushiswap/ui/components/list/List'
 import { Input } from '@sushiswap/ui/components/input'
 import { Switch } from '@sushiswap/ui/components/switch'
-import { Signature } from '@ethersproject/bytes'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { FuroStreamChainId } from '@sushiswap/furo'
 import { Dots } from '@sushiswap/ui/components/dots'
@@ -188,7 +187,7 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
               <div className="flex items-center justify-between gap-3 pb-2">
                 <List.Label className="text-gray-500 dark:text-slate-50">Top up amount</List.Label>
                 <Switch
-                  id="update-amount-switch"
+                  testdata-id="update-amount-switch"
                   checked={topUp}
                   onCheckedChange={() => setTopUp((prevState) => !prevState)}
                 />
@@ -207,7 +206,7 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
               <div className="flex items-center justify-between gap-3 py-2">
                 <List.Label className="text-gray-500 dark:text-slate-50">Change end date</List.Label>
                 <Switch
-                  id="update-end-date-switch"
+                  testdata-id="update-end-date-switch"
                   checked={changeEndDate}
                   onCheckedChange={() => setChangeEndDate((prevState) => !prevState)}
                 />

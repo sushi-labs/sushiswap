@@ -219,7 +219,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
   })
 
   const formValid = isValid && !isValidating && Object.keys(errors).length === 0
-  console.log({stepConfig})
+  console.log({ stepConfig })
   if (stepConfig) console.log(STEP_CONFIGURATIONS_MAP[stepConfig])
   return (
     <>
@@ -260,7 +260,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                           fullWidth
                           disabled={!formValid || !sendTransactionAsync}
                           onClick={open}
-                          testdata-id="review-single-vest-button"
+                          testId="review-single-vest"
                           className="col-span-3 md:col-span-2"
                         >
                           {isLoading ? <Dots>Confirm transaction</Dots> : 'Review Vesting'}
@@ -355,7 +355,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                   onClick={() => sendTransactionAsync?.().then(() => confirm())}
                   disabled={isError || !sendTransactionAsync}
                   color={isError ? 'red' : 'blue'}
-                  testdata-id="create-single-vest-confirmation-button"
+                  testId="create-single-vest-confirmation"
                 >
                   {isError ? 'Shoot! Something went wrong :(' : isLoading ? <Dots>Create</Dots> : 'Create'}
                 </Button>

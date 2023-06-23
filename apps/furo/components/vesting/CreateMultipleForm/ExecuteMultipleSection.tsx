@@ -211,23 +211,30 @@ export const ExecuteMultipleSection: FC<{
       <Button type="button" variant="ghost" onClick={onBack}>
         Cancel
       </Button>
-      <Checker.Connect>
-        <Checker.Network chainId={chainId}>
+      <Checker.Connect size="default" fullWidth={false}>
+        <Checker.Network size="default" fullWidth={false} chainId={chainId}>
           <Checker.ApproveBentobox
+            size="default"
+            fullWidth={false}
             tag={APPROVE_TAG}
             id="create-multiple-vest-approve-bentobox"
             chainId={chainId}
             masterContract={getFuroVestingRouterContractConfig(chainId).address}
           >
-            <Checker.ApproveERC20Multiple id={'create-multiple-vest-approve-token'} amounts={approveAmounts}>
+            <Checker.ApproveERC20Multiple
+              size="default"
+              fullWidth={false}
+              id={'create-multiple-vest-approve-token'}
+              amounts={approveAmounts}
+            >
               <Checker.Success tag={APPROVE_TAG}>
                 <Button
-                  size="xl"
+                  size="default"
                   onClick={() => sendTransaction?.()}
                   type="submit"
                   loading={isWritePending}
                   disabled={!isValid || isValidating || !sendTransaction}
-                  testdata-id="create-multiple-vest-confirm-button"
+                  testId="create-multiple-vest-confirm"
                 >
                   {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Vests'}
                 </Button>

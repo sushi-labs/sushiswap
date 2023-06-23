@@ -68,7 +68,7 @@ export const Component: FC<ApproveERC20Props> = ({
           </a>
         </div>
       </Explainer>
-      <div className="absolute right-1 top-1 bottom-1">
+      <div className={classNames(fullWidth ? 'absolute' : '', 'right-1 top-1 bottom-1')}>
         <Select value={`${max}`} onValueChange={(val) => setMax(val === 'true')}>
           <SelectPrimitive.Trigger>
             <IconButton size="lg" icon={ChevronDownIcon} name="Select" />
