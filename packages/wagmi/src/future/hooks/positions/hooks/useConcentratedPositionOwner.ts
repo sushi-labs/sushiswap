@@ -37,5 +37,5 @@ export const useConcentratedPositionOwner = ({
     functionName: 'ownerOf',
     args: [BigNumber.from(tokenId ? tokenId : 0)],
     enabled: Boolean(chainId) && Boolean(tokenId),
-  })
+  } as const)
 }

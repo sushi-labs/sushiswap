@@ -169,7 +169,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
             </div>
           </Transition>
           <Web3Input.Currency
-            id='add-liquidity-token0'
+            id="add-liquidity-token0"
             type="INPUT"
             className="p-3 bg-white dark:bg-slate-800 rounded-xl"
             chainId={chainId}
@@ -216,7 +216,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
             </div>
           </Transition>
           <Web3Input.Currency
-            id='add-liquidity-token1'
+            id="add-liquidity-token1"
             type="INPUT"
             className="p-3 bg-white dark:bg-slate-800 rounded-xl"
             chainId={chainId}
@@ -265,7 +265,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                     successLink={successLink}
                   >
                     {({ setOpen }) => (
-                      <Button fullWidth onClick={() => setOpen(true)} size="xl" testId='add-liquidity-preview'>
+                      <Button fullWidth onClick={() => setOpen(true)} size="xl" testId="add-liquidity-preview">
                         Preview
                       </Button>
                     )}

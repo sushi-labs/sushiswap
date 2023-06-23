@@ -27,7 +27,8 @@ const config = {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter Variable', ...defaultTheme.fontFamily.sans],
+        sans: ['var(--font-inter)'],
+        mono: ['var(--font-roboto-mono)'],
       },
       backgroundImage: () => ({
         'gradient-radial': 'radial-gradient(#13213E, #111829)',
@@ -68,8 +69,18 @@ const config = {
         wave: 'shimmer 1.25s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         dash: 'dash 1.5s 2s ease-out infinite',
         'dash-check': 'dash-check 1.5s 2s ease-out infinite',
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
       },
       keyframes: {
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
+        },
         shimmer: {
           '100%': { transform: 'translateX(100%)' },
         },

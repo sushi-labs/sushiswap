@@ -1,5 +1,32 @@
 # @sushiswap/amm
 
+## 0.1.12
+
+### Patch Changes
+
+- Updated dependencies [[`dc91c7513`](https://github.com/sushiswap/sushiswap/commit/dc91c7513bee9ca2c505ff4b804e337c98309bb3)]:
+  - @sushiswap/currency@0.1.1
+  - @sushiswap/tines@1.0.8
+  - @sushiswap/v2-sdk@0.0.8
+  - @sushiswap/trident-core@1.0.7
+
+## 0.1.11
+
+### Patch Changes
+
+- Updated dependencies [[`a726740ef`](https://github.com/sushiswap/sushiswap/commit/a726740ef94784753fcc431186bcefc2ecb5aec5)]:
+  - @sushiswap/v2-sdk@0.0.7
+
+## 0.1.10
+
+### Patch Changes
+
+- Updated dependencies [[`90784ce08`](https://github.com/sushiswap/sushiswap/commit/90784ce0876741b8f7f41552e181677d0746884b)]:
+  - @sushiswap/currency@0.1.0
+  - @sushiswap/tines@1.0.7
+  - @sushiswap/v2-sdk@0.0.6
+  - @sushiswap/trident-core@1.0.6
+
 ## 0.1.9
 
 ### Patch Changes

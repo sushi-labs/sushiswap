@@ -2,8 +2,8 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI, minimum, Percent } from '@sushiswap/math'
 
-import { type Vesting as VestingDTO, Rebase } from '../.graphclient'
-import { FuroStatus, VestingType } from './enums'
+import { Rebase, vestingQuery } from '../.graphclient'
+import { VestingType } from './enums'
 import { Furo } from './Furo'
 
 export class Vesting extends Furo {
@@ -17,7 +17,15 @@ export class Vesting extends Furo {
   public readonly stepDuration: number
   public readonly vestingType: VestingType
 
-  public constructor({ chainId, furo: vesting, rebase }: { chainId: ChainId; furo: VestingDTO; rebase: Rebase }) {
+  public constructor({
+    chainId,
+    furo: vesting,
+    rebase,
+  }: {
+    chainId: ChainId
+    furo: NonNullable<vestingQuery['vesting']>
+    rebase: Pick<Rebase, 'id' | 'base' | 'elastic'>
+  }) {
     super({ chainId, furo: vesting, rebase })
     this.steps = parseInt(vesting.steps)
     this.cliffShares = Amount.fromRawAmount(this.token, JSBI.BigInt(vesting.cliffShares))
@@ -63,49 +71,6 @@ export class Vesting extends Furo {
     )
   }
 
-  public get nextPaymentTimeRemaining(): { days: number; hours: number; minutes: number; seconds: number } | undefined {
-    if (this.status === FuroStatus.ACTIVE || this.status === FuroStatus.UPCOMING) {
-      const now = Date.now()
-      let interval: number
-      if (this.vestingType === VestingType.GRADED) {
-        if (this.status === FuroStatus.UPCOMING) {
-          interval = this.startTime.getTime() - now + this.stepDuration * 1000
-        } else {
-          const totalDuration = this.endTime.getTime() - now
-          interval = totalDuration % (this.stepDuration * 1000)
-        }
-      } else if (this.vestingType === VestingType.CLIFF) {
-        if (this.status === FuroStatus.UPCOMING) {
-          interval = now + this.cliffDuration * 1000
-        } else {
-          interval = this.startTime.getTime() + this.cliffDuration * 1000 - now
-        }
-      } else if (this.vestingType === VestingType.HYBRID) {
-        if (this.status === FuroStatus.UPCOMING) {
-          interval = this.startTime.getTime() - now + this.cliffDuration * 1000
-        } else {
-          const cliffTime = this.startTime.getTime() + this.cliffDuration * 1000
-          if (now <= cliffTime) {
-            interval = this.startTime.getTime() + this.cliffDuration * 1000 - now
-          } else {
-            const totalDuration = this.endTime.getTime() - this.cliffDuration * 1000 - now
-            interval = totalDuration % (this.stepDuration * 1000)
-          }
-        }
-      } else {
-        return { days: 0, hours: 0, minutes: 0, seconds: 0 }
-      }
-
-      const days = Math.floor(interval / (1000 * 60 * 60 * 24))
-      const hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-      const minutes = Math.floor((interval % (1000 * 60 * 60)) / (1000 * 60))
-      const seconds = Math.floor((interval % (1000 * 60)) / 1000)
-
-      return { days, hours, minutes, seconds }
-    }
-    return { days: 0, hours: 0, minutes: 0, seconds: 0 }
-  }
-
   public get streamedAmount(): Amount<Token> {
     if (!this.isStarted) return Amount.fromRawAmount(this.token, '0')
 
@@ -148,11 +113,6 @@ export class Vesting extends Furo {
     }
 
     return sum
-  }
-
-  public get withdrawnPercentage(): Percent {
-    if (this._withdrawnAmount.toExact() === '0') return new Percent(0, 100)
-    return new Percent(this._withdrawnAmount.quotient, this.totalAmount.quotient)
   }
 
   public get streamedPercentage(): Percent {

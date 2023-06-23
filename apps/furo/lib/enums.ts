@@ -1,8 +1,3 @@
-export enum FuroType {
-  STREAM = 'Stream',
-  VESTING = 'Vesting',
-}
-
 export enum FuroStatus {
   ACTIVE = 'ACTIVE',
   EXTENDED = 'EXTENDED',

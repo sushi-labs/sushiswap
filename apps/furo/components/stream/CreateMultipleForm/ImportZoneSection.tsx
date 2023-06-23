@@ -1,38 +1,31 @@
 import { getAddress, isAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { DownloadIcon } from '@heroicons/react/outline'
-import { nanoid } from '@reduxjs/toolkit'
+import { nanoid } from 'nanoid'
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
-import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { Button, Dropzone, NetworkIcon, Typography } from '@sushiswap/ui'
-import { Wallet } from '@sushiswap/wagmi'
+import { FundSource } from '@sushiswap/hooks'
+import { Dropzone, NetworkIcon } from '@sushiswap/ui'
+import { Address, fetchToken, FetchTokenResult } from '@sushiswap/wagmi'
 import { FC, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
-import { Address, useAccount } from '@sushiswap/wagmi'
-import { fetchToken, FetchTokenResult } from '@sushiswap/wagmi'
 
-import { useImportErrorContext } from '../../vesting/CreateMultipleForm/ImportErrorContext'
-import { CreateStreamFormSchemaType } from '../CreateForm'
-import { CreateMultipleStreamFormSchemaType } from './schema'
+import { Button } from '@sushiswap/ui/future/components/button'
+import dynamic from 'next/dynamic'
+import { CreateMultipleStreamFormSchemaType, CreateStreamFormSchemaType } from '../schema'
+import { FormSection } from '@sushiswap/ui/future/components/form'
 
 interface ImportZoneSection {
   chainId: ChainId
 }
 
-export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
-  const isMounted = useIsMounted()
-  const { address } = useAccount()
-  const { errors, setErrors } = useImportErrorContext<CreateMultipleStreamFormSchemaType>()
-  const { control, trigger, watch } = useFormContext<CreateMultipleStreamFormSchemaType>()
-  const { append } = useFieldArray({
+const Component: FC<ImportZoneSection> = ({ chainId }) => {
+  const { control, trigger } = useFormContext<CreateMultipleStreamFormSchemaType>()
+  const { replace } = useFieldArray({
     control,
     name: 'streams',
     shouldUnregister: true,
   })
-
-  const streams = watch('streams')
-  const nrOfStreams = streams?.length || 0
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -60,20 +53,7 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
                 if (cur !== '') {
                   const [tokenAddress] = cur.split(',') as [Address]
                   if (tokenAddress !== AddressZero) {
-                    acc.push(
-                      fetchToken({ address: tokenAddress, chainId }).catch(() => {
-                        if (!errors.streams?.[index]) {
-                          errors.streams = []
-                        }
-
-                        errors.streams[index + nrOfStreams] = {
-                          amount: {
-                            type: 'custom',
-                            message: `${tokenAddress} was not found`,
-                          },
-                        }
-                      })
-                    )
+                    acc.push(fetchToken({ address: tokenAddress, chainId }).catch())
                   }
                 }
 
@@ -94,62 +74,27 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
               return acc
             }, {})
 
-            arr?.forEach((cur, index) => {
+            arr?.forEach((cur) => {
               if (cur !== '') {
                 const [tokenAddress, fundSource, amount, recipient, startDate, endDate] = cur.split(',')
-
-                if (!errors.streams?.[index]) {
-                  errors.streams = []
-                }
-
                 let _startDate: Date | null = new Date(Number(startDate) * 1000)
                 let _endDate: Date | null = new Date(Number(endDate) * 1000)
                 let _recipient: string | undefined = recipient
-                let _currency: Type | undefined =
+                const _currency: Type | undefined =
                   tokenAddress.toLowerCase() === AddressZero.toLowerCase()
                     ? Native.onChain(chainId)
                     : tokenMap?.[tokenAddress.toLowerCase()]
 
-                if (errors.streams[index + nrOfStreams]?.amount) {
-                  _currency = undefined
-                }
-
                 if (!isAddress(recipient)) {
                   _recipient = undefined
-                  errors.streams[index + nrOfStreams] = {
-                    ...errors.streams[index + nrOfStreams],
-                    recipient: {
-                      type: 'custom',
-                      message: `${recipient} is not a valid address`,
-                    },
-                  }
                 }
 
                 if (isNaN(_startDate.getTime())) {
                   _startDate = null
-                  errors.streams[index + nrOfStreams] = {
-                    ...errors.streams[index + nrOfStreams],
-                    dates: {
-                      startDate: {
-                        type: 'custom',
-                        message: `${startDate} is not a valid unix timestamp`,
-                      },
-                    },
-                  }
                 }
 
                 if (isNaN(_endDate.getTime())) {
                   _endDate = null
-                  errors.streams[index + nrOfStreams] = {
-                    ...errors.streams[index + nrOfStreams],
-                    dates: {
-                      ...errors.streams[index + nrOfStreams]?.dates,
-                      endDate: {
-                        type: 'custom',
-                        message: `${endDate} is not a valid unix timestamp`,
-                      },
-                    },
-                  }
                 }
 
                 rows.push({
@@ -166,16 +111,15 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
               }
             }, [])
 
-            append(rows)
+            replace(rows)
             await trigger()
-            setErrors(errors)
           }
         }
 
         reader.readAsText(file)
       })
     },
-    [append, chainId, errors, nrOfStreams, setErrors, trigger]
+    [replace, chainId, trigger]
   )
 
   const downloadExample = useCallback(() => {
@@ -190,32 +134,28 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
   }, [])
 
   return (
-    <div className="flex flex-col md:grid md:grid-cols-[296px_auto] gap-y-10 lg:gap-20">
-      <div className="flex flex-col gap-3">
-        <Typography weight={500}>Quick Import</Typography>
-        <Typography variant="sm" weight={400} className="text-slate-400">
-          Autofill your list by uploading a .csv file to save time and effort! Please use the demo file to check if your
-          data is formatted correctly.
-        </Typography>
-        <div>
-          <Button
-            type="button"
-            onClick={downloadExample}
-            className="px-6 mt-4"
-            startIcon={<DownloadIcon width={20} height={20} />}
-          >
-            Example
-          </Button>
-        </div>
-      </div>
-      <div className="relative grid">
-        {isMounted && !address && (
-          <div className="absolute inset-0 z-10 backdrop-blur-[2px] flex justify-center items-center">
-            <Wallet.Button size="sm" className="shadow-md shadow-black/40">
-              Connect Wallet
-            </Wallet.Button>
+    <FormSection
+      title="Quick Import"
+      description={
+        <div className="flex flex-col gap-6">
+          <span>
+            Autofill your list by uploading a .csv file to save time and effort! Please use the demo file to check if
+            your data is formatted correctly.
+          </span>
+          <div>
+            <Button
+              size="lg"
+              type="button"
+              onClick={downloadExample}
+              startIcon={<DownloadIcon width={20} height={20} />}
+            >
+              Example
+            </Button>
           </div>
-        )}
+        </div>
+      }
+    >
+      <div className="relative grid">
         <div className="absolute -mt-2 -ml-2">
           <NetworkIcon chainId={chainId} className="w-6 h-6" />
         </div>
@@ -226,6 +166,8 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
           onDrop={onDrop}
         />
       </div>
-    </div>
+    </FormSection>
   )
 }
+
+export const ImportZoneSection = dynamic(() => Promise.resolve(Component), { ssr: false })

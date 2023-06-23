@@ -1,22 +1,22 @@
-import { DevTool } from '@hookform/devtools'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { nanoid } from '@reduxjs/toolkit'
+import { nanoid } from 'nanoid'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
-import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { Form } from '@sushiswap/ui'
+import { FundSource } from '@sushiswap/hooks'
+import { Form } from '@sushiswap/ui/future/components/form'
 import { FC, useEffect } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
-
+import { StreamForm } from './StreamForm'
 import { ExecuteSection } from './ExecuteSection'
-import { GeneralDetailsSection } from './GeneralDetailsSection'
-import { CreateStreamFormSchemaType, CreateStreamModelSchema } from './schema'
-import { StreamAmountDetails } from './StreamAmountDetails'
-
-export const FORM_ERROR = 'FORM_ERROR' as const
-export type FormErrors = { [FORM_ERROR]?: never }
+import { useForm } from 'react-hook-form'
+import {
+  CreateMultipleStreamBaseSchemaFormErrorsType,
+  CreateMultipleStreamFormSchemaType,
+  CreateMultipleStreamModelSchema,
+  CreateStreamFormSchemaType,
+} from '../schema'
 
 export const CREATE_STREAM_DEFAULT_VALUES: CreateStreamFormSchemaType = {
   id: nanoid(),
+  dates: undefined,
   currency: undefined,
   amount: '',
   recipient: '',
@@ -24,14 +24,15 @@ export const CREATE_STREAM_DEFAULT_VALUES: CreateStreamFormSchemaType = {
 }
 
 export const CreateForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
-  const isMounted = useIsMounted()
-  const methods = useForm<CreateStreamFormSchemaType>({
-    resolver: zodResolver(CreateStreamModelSchema),
-    mode: 'onBlur',
-    defaultValues: CREATE_STREAM_DEFAULT_VALUES,
+  const methods = useForm<CreateMultipleStreamFormSchemaType & CreateMultipleStreamBaseSchemaFormErrorsType>({
+    resolver: zodResolver(CreateMultipleStreamModelSchema),
+    mode: 'all',
+    defaultValues: {
+      streams: [{ ...CREATE_STREAM_DEFAULT_VALUES, id: nanoid() }],
+    },
   })
 
-  const { control, reset } = methods
+  const { reset } = methods
 
   useEffect(() => {
     reset()
@@ -39,14 +40,11 @@ export const CreateForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }
 
   return (
     <>
-      <FormProvider {...methods}>
-        <Form header="Create Stream">
-          <GeneralDetailsSection />
-          <StreamAmountDetails chainId={chainId} />
-          <ExecuteSection chainId={chainId} />
-        </Form>
-        {/* {process.env.NODE_ENV === 'development' && isMounted && <DevTool control={control} />} */}
-      </FormProvider>
+      <h3 className="text-3xl font-semibold text-gray-900 dark:text-slate-50 py-6">Create Stream</h3>
+      <Form {...methods}>
+        <StreamForm chainId={chainId} index={0} />
+        <ExecuteSection chainId={chainId} index={0} />
+      </Form>
     </>
   )
 }
