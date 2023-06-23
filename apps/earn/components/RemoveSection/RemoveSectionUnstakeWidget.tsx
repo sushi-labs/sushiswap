@@ -79,10 +79,10 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
           <Disclosure defaultOpen={balance?.greaterThan(ZERO)}>
             {({ open }) => (
               <>
-                <Disclosure.Button className="w-full" testdata-id="unstake-liquidity-header">
+                <Disclosure.Button className="w-full">
                   <div className="flex items-center justify-between">
                     <WidgetHeader title="Unstake Liquidity" />
-                    <IconButton size="sm" icon={ChevronDownIcon} name="Select">
+                    <IconButton size="sm" icon={ChevronDownIcon} name="Select" testId="unstake-liquidity-header">
                       <SelectIcon />
                     </IconButton>
                   </div>
@@ -98,10 +98,10 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                   leaveTo="transform max-h-0"
                 >
                   <Disclosure.Panel unmount={false}>
-                    <div className="text-sm px-3 pb-5 dark:text-slate-400 text-slate-600">
+                    <div className="text-sm text-gray-600 dark:text-slate-400 py-4">
                       Unstake your liquidity tokens first if you mean to remove your liquidity position
                     </div>
-                    <div className="flex flex-col gap-3 p-3">
+                    <div className="flex flex-col gap-3">
                       <div className="flex items-center gap-2">
                         <div className="flex items-center justify-between flex-grow">
                           <Input.Percent
@@ -122,7 +122,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                             size="xs"
                             variant={value === '50' ? 'default' : 'secondary'}
                             onClick={() => setValue(balance?.divide(4)?.toExact() || '')}
-                            testdata-id="unstake-25-button"
+                            testId="unstake-25"
                           >
                             25%
                           </Button>
@@ -130,7 +130,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                             size="xs"
                             variant={value === '50' ? 'default' : 'secondary'}
                             onClick={() => setValue(balance?.divide(2)?.toExact() || '')}
-                            testdata-id="unstake-50-button"
+                            testId="unstake-50"
                           >
                             50%
                           </Button>
@@ -138,7 +138,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                             size="xs"
                             variant={value === '75' ? 'default' : 'secondary'}
                             onClick={() => setValue(balance?.divide(4).multiply(3)?.toExact() || '')}
-                            testdata-id="unstake-50-button"
+                            testId="unstake-75"
                           >
                             75%
                           </Button>
@@ -146,7 +146,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                             size="xs"
                             variant={value === '100' ? 'default' : 'secondary'}
                             onClick={() => setValue(balance?.toExact() || '')}
-                            testdata-id="unstake-max-button"
+                            testId="unstake-max"
                           >
                             MAX
                           </Button>

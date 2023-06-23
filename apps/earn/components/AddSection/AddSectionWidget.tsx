@@ -112,7 +112,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                 leaveFrom="transform max-h-[380px]"
                 leaveTo="transform max-h-0"
               >
-                <Disclosure.Panel unmount={false}>
+                <Disclosure.Panel unmount={false} className="pt-4">
                   <Web3Input.Currency
                     type="INPUT"
                     className="bg-muted p-3 !rounded-xl"

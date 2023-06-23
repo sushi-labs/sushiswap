@@ -137,7 +137,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                   leaveTo="transform max-h-0"
                 >
                   <Disclosure.Panel unmount={false}>
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-3 pt-4">
                       <div className="flex items-center gap-4">
                         <div className="flex items-center justify-between flex-grow">
                           <Input.Percent
