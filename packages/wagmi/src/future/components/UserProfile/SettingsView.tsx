@@ -26,15 +26,10 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
   const [showTestnets, setShowTestnets] = useLocalStorage('showTestnets', false)
 
   return (
-    <div className="p-2">
+    <>
       <div className="grid grid-cols-3 mb-3">
         <div className="flex justify-start">
-          <IconButton
-              size="sm"
-            onClick={() => setView(ProfileView.Default)}
-            icon={ArrowLeftIcon}
-            name="Back"
-          />
+          <IconButton size="sm" onClick={() => setView(ProfileView.Default)} icon={ArrowLeftIcon} name="Back" />
         </div>
         <span className="font-medium text-center">Settings</span>
         <div />
@@ -69,6 +64,6 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
           </List.KeyValue>
         </List.Control>
       </List>
-    </div>
+    </>
   )
 }

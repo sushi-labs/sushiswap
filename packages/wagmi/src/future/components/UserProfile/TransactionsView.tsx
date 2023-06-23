@@ -18,14 +18,9 @@ export const TransactionsView: FC<TransactionsProps> = ({ setView, address }) =>
   const clearNotifications = useClearNotifications({ account: address })
 
   return (
-    <div className="p-2">
+    <>
       <div className="flex justify-between items-center mb-3">
-        <IconButton
-            size="sm"
-          onClick={() => setView(ProfileView.Default)}
-          icon={ArrowLeftIcon}
-          name="Back"
-        />
+        <IconButton size="sm" onClick={() => setView(ProfileView.Default)} icon={ArrowLeftIcon} name="Back" />
         <Button onClick={() => clearNotifications()} variant="ghost" size="sm" className="!px-2">
           Clear all
         </Button>
@@ -46,6 +41,6 @@ export const TransactionsView: FC<TransactionsProps> = ({ setView, address }) =>
           </div>
         </List.Control>
       </List>
-    </div>
+    </>
   )
 }
