@@ -27,7 +27,7 @@ interface WidgetContentProps {
 const WidgetContent = React.forwardRef<HTMLDivElement, WidgetContentProps>(({ asChild, children, ...props }, ref) => {
   const Comp = asChild ? Slot : 'div'
   return (
-    <Comp ref={ref} {...props} className="flex flex-col gap-4">
+    <Comp ref={ref} {...props}>
       {children}
     </Comp>
   )
