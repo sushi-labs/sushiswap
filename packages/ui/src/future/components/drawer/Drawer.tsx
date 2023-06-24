@@ -19,6 +19,7 @@ import ReactDOM from 'react-dom'
 
 import { ButtonComponent } from '../button'
 import { XMarkIcon } from '@heroicons/react/20/solid'
+import { IconButton } from '../IconButton'
 
 interface DrawerContext {
   open: boolean
@@ -95,23 +96,7 @@ export const Panel: FC<PanelProps> = ({ children, className }) => {
     <Transition.Root appear show={open} unmount={false} as={Fragment}>
       <div className={classNames(className, 'fixed right-0 top-0 bottom-0 w-full translate-x-[100%] z-[1080] ')}>
         <Transition.Child
-          as={Fragment}
-          enter="ease-in-out duration-500"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in-out duration-500"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-          unmount={false}
-        >
-          <div
-            aria-hidden="true"
-            onClick={() => setOpen(false)}
-            className="translate-x-[-100%] absolute inset-0 bg-black/40 transition-opacity"
-          />
-        </Transition.Child>
-        <Transition.Child
-          className="overflow-y-auto scroll w-full sm:w-[380px] bg-gray-100 dark:bg-slate-900 top-0 bottom-0 absolute p-3 shadow-xl shadow-black/30"
+          className="overflow-y-auto scroll w-full sm:w-[380px] bg-gray-100 dark:bg-slate-900 top-4 bottom-4 -left-4 rounded-2xl absolute p-4 shadow-xl shadow-black/30"
           enter="transform transition ease-in-out duration-300"
           enterFrom="translate-x-0"
           enterTo="translate-x-[-100%]"
@@ -121,9 +106,9 @@ export const Panel: FC<PanelProps> = ({ children, className }) => {
           unmount={false}
         >
           <div className="relative">
-            <button onClick={() => setOpen(false)} className="absolute right-0 top-0">
-              <XMarkIcon width={26} height={26} className="text-gray-400 dark:text-slate-400" />
-            </button>
+            <div className="absolute right-2 top-2">
+              <IconButton icon={XMarkIcon} iconProps={{ width: 26, height: 26 }} onClick={() => setOpen(false)} />
+            </div>
             {children}
           </div>
         </Transition.Child>

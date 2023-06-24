@@ -31,15 +31,7 @@ export const createScheduleRepresentation: CreateScheduleRepresentation = ({
   stepPayouts,
 }) => {
   let total = Amount.fromRawAmount(currency, '0')
-  const periods = [
-    {
-      id: 'start',
-      type: PeriodType.START,
-      date: startDate,
-      amount: Amount.fromRawAmount(currency, '0'),
-      total: Amount.fromRawAmount(currency, '0'),
-    },
-  ]
+  const periods = []
 
   if (cliffEndDate && cliffAmount) {
     total = cliffAmount
@@ -58,7 +50,7 @@ export const createScheduleRepresentation: CreateScheduleRepresentation = ({
       time += stepDuration
       total = total.add(stepAmount)
       periods.push({
-        id: `step:${i}`,
+        id: `Unlock ${i + 1}`,
         type: PeriodType.STEP,
         date: new Date(time),
         amount: stepAmount,

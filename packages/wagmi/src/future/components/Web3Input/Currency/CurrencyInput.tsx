@@ -3,7 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/future/components/currency'
-import { DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui/future/components/input'
+import { Input } from '@sushiswap/ui/future/components/input'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { FC, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useAccount } from 'wagmi'
@@ -102,12 +102,16 @@ export const Component: FC<CurrencyInputProps> = ({
           </div>
         ) : (
           <Input.Numeric
-            id={id}
+            label="input"
+            id={`${id}-input`}
+            testdata-id={`${id}-input`}
             ref={inputRef}
             variant="unstyled"
             disabled={disabled}
             onUserInput={onChange}
-            className={classNames(DEFAULT_INPUT_UNSTYLED, 'without-ring !text-3xl py-1')}
+            className={classNames(
+              'p-0 bg-transparent w-full truncate without-ring !text-3xl py-1 font-medium text-base'
+            )}
             value={value}
             readOnly={disabled}
             maxDecimals={currency?.decimals}

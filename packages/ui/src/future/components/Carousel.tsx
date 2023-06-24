@@ -1,16 +1,18 @@
 import { classNames } from '../../index'
-import React, { ReactNode, useCallback, useMemo, useRef, useState } from 'react'
+import React, { ReactNode, useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/20/solid'
 
 interface Carousel<T> {
+  defaultSlide?: number
   slideWidth?: number
   slides: T[]
-  render(slide: T): ReactNode
+  render(slide: T, i: number): ReactNode
   containerWidth?: number
   className?: string
 }
 
 export const Carousel = <T extends object>({
+  defaultSlide = 0,
   containerWidth = 1280,
   slideWidth = 400,
   slides,
@@ -57,6 +59,26 @@ export const Carousel = <T extends object>({
     }
   }, [slideWidth])
 
+  useLayoutEffect(() => {
+    if (defaultSlide > 0) {
+      requestAnimationFrame(() => {
+        if (ref.current) {
+          const scrollLeft = ref.current.scrollLeft
+          ref.current.scrollLeft = scrollLeft + slideWidth * (defaultSlide - 1)
+        }
+      })
+
+      if (ref.current && container.current) {
+        setButtons({
+          hasNext:
+            ref.current?.scrollWidth - ref.current?.scrollLeft - slideWidth * (defaultSlide - 1) >
+            container.current?.clientWidth,
+          hasPrev: true,
+        })
+      }
+    }
+  }, [])
+
   return (
     <div className="relative group">
       <div ref={container} className="overflow-hidden">
@@ -71,7 +93,7 @@ export const Carousel = <T extends object>({
                   className={classNames(i === 0 ? 'ml-0' : i === slides.length - 1 ? 'pr-4' : '', 'flex mr-5 h-full')}
                   style={{ transform: `translateX(calc(max(${containerWidth}px, 100vw)/2 - ${containerWidth / 2}px))` }}
                 >
-                  {render(el)}
+                  {render(el, i)}
                 </div>
               </div>
             ))}
