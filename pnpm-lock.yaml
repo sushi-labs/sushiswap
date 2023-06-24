@@ -638,6 +638,9 @@ importers:
       next-sitemap:
         specifier: 3.1.43
         version: 3.1.43(@next/env@13.4.4)(next@13.4.4)
+      next-themes:
+        specifier: ^0.2.1
+        version: 0.2.1(next@13.4.4)(react-dom@18.2.0)(react@18.2.0)
       octokit:
         specifier: 2.0.14
         version: 2.0.14

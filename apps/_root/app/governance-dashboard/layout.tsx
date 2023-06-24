@@ -1,6 +1,7 @@
 import React from 'react'
 
-import { Header, Container, Hero } from './components'
+import { Container, Header, Hero } from './components'
+import { Providers } from './providers'
 
 export default function GovernanceDashboardLayout({
   children, // will be a page or nested layout
@@ -8,7 +9,7 @@ export default function GovernanceDashboardLayout({
   children: React.ReactNode
 }) {
   return (
-    <>
+    <Providers>
       <Header />
       <main className="dark:text-gray-50 text-slate-900">
         <Hero />
@@ -16,6 +17,6 @@ export default function GovernanceDashboardLayout({
           {children}
         </Container>
       </main>
-    </>
+    </Providers>
   )
 }
