@@ -21,6 +21,7 @@ it.skip('LogFilter correctness test', async () => {
 
   let prevBlockNum = -1
   let prevLogIndex = -1
+  const allLogs: Log[] = []
 
   const filter = new LogFilter(
     client,
@@ -37,15 +38,17 @@ it.skip('LogFilter correctness test', async () => {
       )
       if (logs === undefined) filter.start()
       else {
-        for (let i = 0; i < logs.length; ) {
-          const l = logs[i]
+        const start = allLogs.length
+        allLogs.splice(start, 0, ...logs)
+        for (let i = start; i < allLogs.length; ) {
+          const l = allLogs[i]
           const bn = Number(l.blockNumber)
           const li = Number(l.logIndex)
           if (l.removed) {
-            const prev = logs[i - 1]
+            const prev = allLogs[i - 1]
             expect(prev.blockHash == l.blockHash, `Removed logs hash are equal ${prev.blockHash} == ${l.blockHash}`)
             expect(Number(prev.logIndex) == li, `Removed logIndexes are equal ${Number(prev.logIndex)} == ${li}`)
-            logs.splice(i - 1, 2)
+            allLogs.splice(i - 1, 2)
             prevBlockNum = bn
             prevLogIndex = -1
             --i
@@ -59,6 +62,7 @@ it.skip('LogFilter correctness test', async () => {
             ++i
           }
         }
+        if (allLogs.length > 10_000) allLogs.splice(0, 5_000)
       }
     }
   )
