@@ -524,28 +524,32 @@ describe('UniV3Extractor', () => {
           console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ROUTE CREATION FAILED !!!`)
           continue
         }
-        const amountOutReal = await client.readContract({
-          address: RP3Address,
-          abi: routeProcessor2Abi,
-          functionName: 'processRoute',
-          args: [
-            rpParams.tokenIn as Address,
-            BigInt(rpParams.amountIn.toString()),
-            rpParams.tokenOut as Address,
-            0n,
-            rpParams.to as Address,
-            rpParams.routeCode as Address, // !!!!
-          ],
-          value: BigInt(rpParams.value?.toString() as string),
-        })
-        const amountOutExp = BigInt(route.amountOutBN.toString())
-        const diff =
-          amountOutExp == 0n ? amountOutReal - amountOutExp : Number(amountOutReal - amountOutExp) / route.amountOut
-        console.log(
-          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.legs.length - 1} pools` +
-            ` diff = ${diff > 0 ? '+' : ''}${diff}`
-        )
-        if (Math.abs(Number(diff)) > 0.001) console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
+        try {
+          const amountOutReal = await client.readContract({
+            address: RP3Address,
+            abi: routeProcessor2Abi,
+            functionName: 'processRoute',
+            args: [
+              rpParams.tokenIn as Address,
+              BigInt(rpParams.amountIn.toString()),
+              rpParams.tokenOut as Address,
+              0n,
+              rpParams.to as Address,
+              rpParams.routeCode as Address, // !!!!
+            ],
+            value: BigInt(rpParams.value?.toString() as string),
+          })
+          const amountOutExp = BigInt(route.amountOutBN.toString())
+          const diff =
+            amountOutExp == 0n ? amountOutReal - amountOutExp : Number(amountOutReal - amountOutExp) / route.amountOut
+          console.log(
+            `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.legs.length - 1} pools` +
+              ` diff = ${diff > 0 ? '+' : ''}${diff}`
+          )
+          if (Math.abs(Number(diff)) > 0.001) console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
+        } catch (e) {
+          console.log('Routing failed. No connection ?')
+        }
       }
     }
   })

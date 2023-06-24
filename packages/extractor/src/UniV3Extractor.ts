@@ -3,11 +3,11 @@ import { PoolCode } from '@sushiswap/router'
 import { FeeAmount } from '@sushiswap/v3-sdk'
 import IUniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.json'
 import IUniswapV3Pool from '@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json'
-import { Abi, AbiEvent } from 'abitype'
+import { Abi } from 'abitype'
 import { Address, Log, PublicClient } from 'viem'
-import { Filter } from 'viem/dist/types/types/filter'
 
 import { Counter } from './Counter'
+import { LogFilter } from './LogFilter'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { PermanentCache } from './PermanentCache'
 import { TokenManager } from './TokenManager'
@@ -58,9 +58,8 @@ export class UniV3Extractor {
   poolMap: Map<Address, UniV3PoolWatcher> = new Map()
   poolPermanentCache: PermanentCache<PoolCacheRecord>
   otherFactoryPoolSet: Set<Address> = new Set()
-  eventFilters: Filter[] = []
+  logFilter: LogFilter
   logProcessGuard = false
-  lastProcessdBlock = -1n
   logProcessingStatus = LogsProcessing.NotStarted
   logging: boolean
   busyCounter: Counter
@@ -88,45 +87,35 @@ export class UniV3Extractor {
     this.busyCounter = new Counter((count) => {
       if (count == 0) this.consoleLog(`All pools were updated`)
     })
+
+    this.logFilter = new LogFilter(client, 50, UniV3EventsAbi, (logs?: Log[]) => {
+      if (logs) {
+        const blockNumber = logs.length > 0 ? Number(logs[logs.length - 1].blockNumber || 0) : '<undefined>'
+        if (!this.logProcessGuard) {
+          this.logProcessGuard = true
+          try {
+            const logNames = logs.map((l) => this.processLog(l))
+            this.consoleLog(`Block ${blockNumber} ${logNames.length} logs: [${logNames}]`)
+          } catch (e) {
+            warnLog(`Block ${blockNumber} log process error: ${e}`)
+          }
+
+          this.logProcessGuard = false
+        } else {
+          warnLog(`Extractor: Log Filtering was skipped for block ${blockNumber}`)
+        }
+      } else {
+        this.logFilter.start()
+        warnLog(`Log collecting failed. Pools refetching`)
+        Array.from(this.poolMap.values()).forEach((p) => p.updatePoolState())
+      }
+    })
   }
 
   // TODO: stop ?
   async start() {
     if (this.logProcessingStatus == LogsProcessing.NotStarted) {
-      this.logProcessingStatus = LogsProcessing.Starting
-      // Subscribe to each UniV3 event we are interested
-      for (let i = 0; i < UniV3EventsAbi.length; ++i) {
-        const filter = (await this.client.createEventFilter({ event: UniV3EventsAbi[i] as AbiEvent })) as Filter
-        this.eventFilters.push(filter)
-      }
-
-      // Start log watching
-      this.client.watchBlockNumber({
-        onBlockNumber: async (blockNumber) => {
-          if (!this.logProcessGuard) {
-            this.logProcessGuard = true
-            let logNames: string[] = []
-            try {
-              const promises = this.eventFilters.map((f) => this.client.getFilterChanges({ filter: f }))
-              const logss = await Promise.allSettled(promises)
-              logss.forEach((logs) => {
-                if (logs.status == 'fulfilled') {
-                  const ln = logs.value.map((l) => this.processLog(l))
-                  logNames = logNames.concat(ln)
-                }
-              })
-              this.lastProcessdBlock = blockNumber
-            } catch (e) {
-              warnLog(`Block ${blockNumber} log process error: ${e}`)
-            }
-
-            this.logProcessGuard = false
-            this.consoleLog(`Block ${blockNumber} ${logNames.length} logs: [${logNames}]`)
-          } else {
-            warnLog(`Extractor: Log Filtering was skipped for block ${blockNumber}`)
-          }
-        },
-      })
+      this.logFilter.start()
       this.logProcessingStatus = LogsProcessing.Started
 
       // Add cached pools to watching
