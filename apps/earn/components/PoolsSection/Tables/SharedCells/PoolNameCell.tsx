@@ -14,6 +14,8 @@ import { ChainId } from '@sushiswap/chain'
 export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
   const { token0, token1 } = useTokensFromPool(row)
 
+  const incetives = row.incentives.filter((i) => i.rewardPerDay > 0)
+
   return (
     <div className="flex items-center gap-5">
       <div className="flex min-w-[54px]">
@@ -55,10 +57,10 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
           <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
             {formatNumber(row.swapFee * 100)}%
           </div>
-          {row.incentives && row.incentives.length > 0 && (
+          {incetives && incetives.length > 0 && (
             <Tooltip description="Farm rewards available">
               <div className="bg-green/20 text-green text-[10px] px-2 rounded-full">
-                🧑‍🌾 {row.incentives.length > 1 ? `x ${row.incentives.length}` : ''}{' '}
+                🧑‍🌾 {incetives.length > 1 ? `x ${incetives.length}` : ''}{' '}
               </div>
             </Tooltip>
           )}
