@@ -48,11 +48,14 @@ export default function SwapPage() {
         .finally(() => {
           setLoadingPrice(false)
         })
+    } else {
+      setLoadingPrice(false)
+      setFilteredCoin({})
     }
     if (connected) {
       setBttonMessage('Enter Amount')
     }
-  }, [account, inverse])
+  }, [account, inverse, connected])
   return (
     <>
       <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
