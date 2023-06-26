@@ -99,9 +99,9 @@ export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, Governa
                 ))}
               </CardNavigation>
             ) : (
-              <i key={key} className="font-medium text-slate-300">
-                No posts found with the current filters
-              </i>
+              <p key={key} className="font-bold text-xl flex items-center justify-center">
+                No posts found
+              </p>
             ))
         )}
       </div>

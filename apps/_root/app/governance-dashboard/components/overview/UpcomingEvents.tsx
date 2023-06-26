@@ -14,11 +14,7 @@ export function UpcomingEvents({ events }: { events: SushiEvent[] }) {
   return (
     <section className="space-y-8">
       <h2 className="text-2xl font-bold dark:text-slate-200">Upcoming Events</h2>
-      <CardNavigation
-        slidesPerView={isMounted && isMd ? Math.min(events.length + 1, 3) : 1}
-        spaceBetween={24}
-        itemCount={events.length}
-      >
+      <CardNavigation slidesPerView={isMounted && isMd ? 3 : 1} spaceBetween={24} itemCount={events.length}>
         {events.map((event, index) => (
           <SwiperSlide key={index}>
             <EventItemCard {...event} />

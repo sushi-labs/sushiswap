@@ -21,7 +21,7 @@ function SlideButtons({ show }: { show: { left: boolean; right: boolean } }) {
 
   const BASE =
     'rounded-full h-10 w-10 flex items-center justify-center border border-blue/40 dark:border-slate-600 transition-colors ease-in'
-  const ACTIVE = 'bg-blue-100 dark:bg-gray-50 text-blue dark:text-slate-800 hover:bg-blue-300 dark:hover:bg-slate-200'
+  const ACTIVE = 'bg-blue-100 dark:bg-slate-400 text-blue dark:text-slate-50 hover:bg-blue-300 dark:hover:bg-slate-200'
   const STALE =
     'bg-blue/80 dark:bg-slate-700 text-gray-50 dark:text-slate-400 hover:bg-blue-300 dark:hover:bg-slate-800'
 
@@ -73,7 +73,7 @@ export function CardNavigation({
   const [buttonState, setButtonState] = useReducer(reducer, INITIAL_BUTTON_STATE)
 
   return (
-    <div className={classNames('relative flex overflow-hidden', containerStyle)}>
+    <div className={classNames('relative h-fit flex overflow-hidden', containerStyle)}>
       <Swiper
         slidesPerView={slidesPerView}
         spaceBetween={spaceBetween}
@@ -84,6 +84,9 @@ export function CardNavigation({
       >
         {itemCount - slidesPerView >= 0 && <SlideButtons show={buttonState} />}
         {children}
+        {itemCount + 1 < slidesPerView
+          ? Array.from({ length: slidesPerView - itemCount - 1 }).map((_, index) => <SwiperSlide key={index} />)
+          : null}
         {/** empty slot */}
         <div className="hidden md:block">
           <SwiperSlide />
