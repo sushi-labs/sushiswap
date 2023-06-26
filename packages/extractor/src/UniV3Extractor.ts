@@ -10,6 +10,7 @@ import { Counter } from './Counter'
 import { LogFilter } from './LogFilter'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { PermanentCache } from './PermanentCache'
+import { QualityChecker } from './QualityChecker'
 import { TokenManager } from './TokenManager'
 import { UniV3EventsAbi, UniV3PoolWatcher } from './UniV3PoolWatcher'
 import { warnLog } from './WarnLog'
@@ -63,6 +64,7 @@ export class UniV3Extractor {
   logProcessingStatus = LogsProcessing.NotStarted
   logging: boolean
   busyCounter: Counter
+  qualityChecker: QualityChecker
 
   /// @param client
   /// @param tickHelperContract address of helper contract for pool's ticks download
@@ -84,8 +86,16 @@ export class UniV3Extractor {
     factories.forEach((f) => this.factoryMap.set(f.address.toLowerCase(), f))
     this.poolPermanentCache = new PermanentCache(cacheDir, `uniV3Pools-${this.client.chain?.id}`)
     this.logging = logging
-    this.busyCounter = new Counter((count) => {
-      if (count == 0) this.consoleLog(`All pools were updated`)
+    this.busyCounter = new Counter(() => {
+      //if (count == 0) this.consoleLog(`All pools were updated`)
+    })
+    this.qualityChecker = new QualityChecker(200, ([newPool, status]) => {
+      if (newPool instanceof UniV3PoolWatcher) this.poolMap.set(newPool.address.toLowerCase() as Address, newPool)
+      this.consoleLog(
+        `Pool ${newPool instanceof UniV3PoolWatcher ? newPool.address : newPool} quality check: ${status} ` +
+          `${newPool instanceof UniV3PoolWatcher ? 'pool was updated ' : ''}` +
+          `(${this.qualityChecker.totalMatchCounter}/${this.qualityChecker.totalCheckCounter})`
+      )
     })
 
     this.logFilter = new LogFilter(client, 50, UniV3EventsAbi, (logs?: Log[]) => {
@@ -95,7 +105,9 @@ export class UniV3Extractor {
           this.logProcessGuard = true
           try {
             const logNames = logs.map((l) => this.processLog(l))
-            this.consoleLog(`Block ${blockNumber} ${logNames.length} logs: [${logNames}]`)
+            this.consoleLog(
+              `Block ${blockNumber} ${logNames.length} logs: [${logNames}] jobs: ${this.busyCounter.counter}`
+            )
           } catch (e) {
             warnLog(`Block ${blockNumber} log process error: ${e}`)
           }
@@ -115,6 +127,7 @@ export class UniV3Extractor {
   // TODO: stop ?
   async start() {
     if (this.logProcessingStatus == LogsProcessing.NotStarted) {
+      warnLog('Extractor was started')
       this.logFilter.start()
       this.logProcessingStatus = LogsProcessing.Started
 
@@ -151,8 +164,10 @@ export class UniV3Extractor {
   processLog(l: Log): string {
     try {
       const pool = this.poolMap.get(l.address.toLowerCase() as Address)
-      if (pool) return pool.processLog(l)
-      else this.addPoolByAddress(l.address)
+      if (pool) {
+        this.qualityChecker.processLog(l, pool)
+        return pool.processLog(l)
+      } else this.addPoolByAddress(l.address)
       return 'UnknPool'
     } catch (e) {
       warnLog(`Log processing for pool ${l.address} throwed an exception ${e}`)

@@ -1,7 +1,7 @@
 import { erc20Abi } from '@sushiswap/abi'
 import { Token } from '@sushiswap/currency'
 import { LiquidityProviders, PoolCode, UniV3PoolCode } from '@sushiswap/router'
-import { RToken, UniV3Pool } from '@sushiswap/tines'
+import { CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
 import { FeeAmount, TICK_SPACINGS } from '@sushiswap/v3-sdk'
 import { Abi, Address, parseAbiItem } from 'abitype'
 import { BigNumber } from 'ethers'
@@ -10,8 +10,6 @@ import { decodeEventLog, Log } from 'viem'
 import { Counter } from './Counter'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { WordLoadManager } from './WordLoadManager'
-
-const RESERVES_UPDATE_INTERVAL = 1000
 
 interface UniV3PoolSelfState {
   blockNumber: number
@@ -81,7 +79,7 @@ export class UniV3PoolWatcher {
   fee: FeeAmount
   spacing: number
   latestEventBlockNumber = 0
-  eventsAfterLastReservesUpdate = 0
+  //eventsAfterLastReservesUpdate = 0
 
   providerName: string
   client: MultiCallAggregator
@@ -130,7 +128,7 @@ export class UniV3PoolWatcher {
           ])
           if (blockNumber < this.latestEventBlockNumber) continue // later events already have came
 
-          this.eventsAfterLastReservesUpdate = 0
+          //this.eventsAfterLastReservesUpdate = 0
 
           const [sqrtPriceX96, tick] = slot0 as [bigint, number]
           this.state = {
@@ -241,28 +239,28 @@ export class UniV3PoolWatcher {
     // Reserves for uniV3 pools don't participate in swap calculation, so it is not critical
     // But they participate in pricing calculation
     // Reserves need to be updated from time to time
-    if (this.eventsAfterLastReservesUpdate++ >= RESERVES_UPDATE_INTERVAL) this.updateReserves()
+    //if (this.eventsAfterLastReservesUpdate++ >= RESERVES_UPDATE_INTERVAL) this.updateReserves()
 
     return data.eventName
   }
 
-  async updateReserves() {
-    if (this.busyCounter) this.busyCounter.inc()
-    try {
-      this.eventsAfterLastReservesUpdate = 0
-      const [reserve0, reserve1] = await Promise.all([
-        this.client.callValue(this.token0.address as Address, erc20Abi as Abi, 'balanceOf', [this.address]),
-        this.client.callValue(this.token1.address as Address, erc20Abi as Abi, 'balanceOf', [this.address]),
-      ])
-      if (this.state) {
-        this.state.reserve0 = reserve0 as bigint
-        this.state.reserve1 = reserve1 as bigint
-      }
-    } catch (e) {
-      // do nothing
-    }
-    if (this.busyCounter) this.busyCounter.dec()
-  }
+  // async updateReserves() {
+  //   if (this.busyCounter) this.busyCounter.inc()
+  //   try {
+  //     this.eventsAfterLastReservesUpdate = 0
+  //     const [reserve0, reserve1] = await Promise.all([
+  //       this.client.callValue(this.token0.address as Address, erc20Abi as Abi, 'balanceOf', [this.address]),
+  //       this.client.callValue(this.token1.address as Address, erc20Abi as Abi, 'balanceOf', [this.address]),
+  //     ])
+  //     if (this.state) {
+  //       this.state.reserve0 = reserve0 as bigint
+  //       this.state.reserve1 = reserve1 as bigint
+  //     }
+  //   } catch (e) {
+  //     // do nothing
+  //   }
+  //   if (this.busyCounter) this.busyCounter.dec()
+  // }
 
   getPoolCode(): PoolCode | undefined {
     if (this.state === undefined) return
@@ -285,7 +283,12 @@ export class UniV3PoolWatcher {
     return pc
   }
 
+  getTicks(): CLTick[] {
+    if (this.state === undefined) return []
+    return this.wordLoadManager.getMaxTickDiapason(this.state.tick)
+  }
+
   isStable(): boolean {
-    return !this.wordLoadManager.downloadCycleIsStared
+    return this.state !== undefined && !this.wordLoadManager.downloadCycleIsStared
   }
 }

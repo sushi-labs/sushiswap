@@ -17,7 +17,7 @@ export enum PoolSyncState {
   CheckFailed = 'check failed',
 }
 
-export type QualityCheckerCallBack = (arg: [UniV3PoolWatcher | undefined, PoolSyncState]) => void
+export type QualityCheckerCallBack = (arg: [UniV3PoolWatcher | string, PoolSyncState]) => void
 
 export class QualityChecker {
   readonly checkAfterLogsNumber: number
@@ -32,13 +32,10 @@ export class QualityChecker {
     this.callBack = callBack
   }
 
-  async check(
-    pool: UniV3PoolWatcher,
-    newPool: UniV3PoolWatcher
-  ): Promise<[UniV3PoolWatcher | undefined, PoolSyncState]> {
+  async check(pool: UniV3PoolWatcher, newPool: UniV3PoolWatcher): Promise<[UniV3PoolWatcher | string, PoolSyncState]> {
     try {
       await newPool.updatePoolState()
-      for (;;) {
+      for (let i = 0; i < 3600; ++i) {
         await delay(1000)
         if (newPool.isStable() && pool.isStable() && pool.state && newPool.state) {
           this.totalCheckCounter++
@@ -46,24 +43,31 @@ export class QualityChecker {
           if (pool.state.sqrtPriceX96 !== newPool.state.sqrtPriceX96) return [newPool, PoolSyncState.PriceMismatch]
           if (pool.state.tick !== newPool.state.tick) return [newPool, PoolSyncState.CurrentTickMicmatch]
           const ticks0 = pool.getTicks()
+          ticks0.shift()
+          ticks0.pop()
           const ticks1 = newPool.getTicks()
-          const start = ticks0.findIndex((t) => t.index == ticks1[0].index)
-          if (start == -1) return [newPool, PoolSyncState.TicksStartMismatch]
-          if (ticks0.length < start + ticks1.length) [newPool, PoolSyncState.TicksFinishMismatch]
-          for (let i = 0; i < ticks1.length; ++i) {
-            if (ticks0[i + start].index !== ticks1[i].index || !ticks0[i + start].DLiquidity.eq(ticks1[i].DLiquidity))
-              return [newPool, PoolSyncState.TicksMismatch]
+          ticks1.shift()
+          ticks1.pop()
+          if (ticks1.length > 0) {
+            const start = ticks0.findIndex((t) => t.index == ticks1[0].index)
+            if (start == -1) return [newPool, PoolSyncState.TicksStartMismatch]
+            if (ticks0.length < start + ticks1.length) [newPool, PoolSyncState.TicksFinishMismatch]
+            for (let i = 0; i < ticks1.length; ++i) {
+              if (ticks0[i + start].index !== ticks1[i].index || !ticks0[i + start].DLiquidity.eq(ticks1[i].DLiquidity))
+                return [newPool, PoolSyncState.TicksMismatch]
+            }
           }
           this.totalMatchCounter++
           if (pool.state.reserve0 !== newPool.state.reserve0 || pool.state.reserve1 !== newPool.state.reserve1)
             return [newPool, PoolSyncState.ReservesMismatch]
-          return [undefined, PoolSyncState.Match]
+          return [pool.address, PoolSyncState.Match]
         }
       }
+      warnLog('Quality check timeout error')
     } catch (e) {
       warnLog('Quality check error: ' + e)
-      return [undefined, PoolSyncState.CheckFailed]
     }
+    return [pool.address, PoolSyncState.CheckFailed]
   }
 
   processLog(l: Log, pool: UniV3PoolWatcher) {
@@ -84,11 +88,11 @@ export class QualityChecker {
           pool.client,
           pool.busyCounter
         )
-        this.checkingPools.set(pool.address.toLowerCase(), newPool)
+        this.checkingPools.set(addr, newPool)
         this.check(pool, newPool).then((res) => {
           this.callBack(res)
           this.poolsLogCounter.set(addr, 0)
-          this.checkingPools.delete(pool.address.toLowerCase())
+          this.checkingPools.delete(addr)
         })
       }
     }
