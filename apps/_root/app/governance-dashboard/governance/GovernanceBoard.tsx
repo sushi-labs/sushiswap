@@ -27,11 +27,17 @@ export function GovernanceBoard({
               <h3 className="font-medium">{isValidGovernanceType(key) ? GOV_STATUS[key].title : ''}</h3>
             </div>
 
-            <div className="grid gap-2">
-              {items.map((item, index) => (
-                <GovernanceItemCard key={index} {...item} />
-              ))}
-            </div>
+            {items.length ? (
+              <div className="grid gap-2">
+                {items.map((item, index) => (
+                  <GovernanceItemCard key={index} {...item} />
+                ))}
+              </div>
+            ) : (
+              <p key={key} className="font-medium pl-2.5 italic">
+                No results
+              </p>
+            )}
           </div>
         ))}
       </div>

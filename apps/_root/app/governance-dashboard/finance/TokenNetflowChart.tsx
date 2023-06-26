@@ -36,13 +36,21 @@ export function TokenNetflowChart(props: { tokenNetflowData: SushiTokenNetflow[]
           content={({ active, payload, label }) =>
             active && payload?.length ? (
               <ChartTooltip>
-                <dl className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded-sm bg-blue" />
-                  <dd className="text-base font-semibold">${formatNumber(Math.abs(payload[0].payload.outflow), 0)}</dd>
-                </dl>
-                <dl className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded-sm bg-[#BF60EE]" />
-                  <dd className="text-base font-semibold">${formatNumber(payload[0].payload.inflow, 0)}</dd>
+                <dl className="text-base font-semibold">
+                  <div className="flex items-center gap-8 justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="h-3 w-3 rounded-sm bg-blue" />
+                      <dt>Inflow</dt>
+                    </div>
+                    <dd>${formatNumber(Math.abs(payload[0].payload.inflow), 0)}</dd>
+                  </div>
+                  <div className="flex items-center gap-8 justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="h-3 w-3 rounded-sm bg-[#BF60EE]" />
+                      <dt>Outflow</dt>
+                    </div>
+                    <dd>${formatNumber(Math.abs(payload[0].payload.outflow), 0)}</dd>
+                  </div>
                 </dl>
                 <p className="mt-1">{label}</p>
               </ChartTooltip>
