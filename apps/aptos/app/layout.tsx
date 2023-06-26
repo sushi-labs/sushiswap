@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 import '@sushiswap/ui/index.css'
+import './../app/swap/css/swap.css'
 
 import React from 'react'
 import { Providers } from './providers'

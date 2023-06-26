@@ -11,13 +11,12 @@
   "keywords": ["pancake", "default", "aptos"],
   "schema": "aptos",
   "tokens": [
-
     {
       "name": "APTOS",
       "symbol": "APT",
-      "chainId": 34,
+      "chainId": 2,
       "decimals": 8,
-      "address": "0xb06483aa110a1d7cfdc0f5ba48545ee967564819014326b2767de4705048aab9::btc_coin::Bitcoin",
+      "address": "0x1::aptos_coin::AptosCoin",
       "logoURI": "https://aptosfoundation.org/brandbook/logomark/PNG/Aptos_mark_BLK.png"
     },
     {

@@ -1,0 +1,15 @@
+.wallet-button {
+    color: #fff;
+}
+.wallet-connect-button-text {
+    color: #000;
+}
+.wallet-menu-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.wallet-name-wrapper {
+    display: flex;
+    align-items: center;
+}
