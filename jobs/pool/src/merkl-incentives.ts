@@ -86,12 +86,9 @@ export async function execute() {
       )
     ).reduce((acc, prices) => ({ ...acc, ...prices }), {})
 
-
     // TRANSFORM
     const { incentivesToCreate, incentivesToUpdate, tokens } = await transform(merkls, prices)
-        for (const ins of incentivesToUpdate) {
-          console.log(ins.poolId, ins.rewardPerDay)
-        }
+
     // LOAD
     await createTokens(tokens)
     await mergeIncentives(incentivesToCreate, incentivesToUpdate)
