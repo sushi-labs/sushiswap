@@ -15,6 +15,7 @@
     "@headlessui/react": "1.7.7",
     "@sushiswap/nextjs-config": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
+    "@sushiswap/wagmi": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@vercel/analytics": "0.1.5",
     "next": "13.4.4",

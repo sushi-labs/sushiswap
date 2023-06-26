@@ -188,37 +188,41 @@ export default [
     ]
   },
   {
-    "name": "Kovan",
-    "title": "Ethereum Testnet Kovan",
-    "chain": "ETH",
+    "name": "LUKSO Mainnet",
+    "chain": "LUKSO",
+    "icon": "lukso",
     "rpc": [
-      "https://kovan.poa.network",
-      "http://kovan.poa.network:8545",
-      "https://kovan.infura.io/v3/${INFURA_API_KEY}",
-      "wss://kovan.infura.io/ws/v3/${INFURA_API_KEY}",
-      "ws://kovan.poa.network:8546"
+      "https://rpc.mainnet.lukso.network",
+      "wss://ws-rpc.mainnet.lukso.network"
     ],
-    "faucets": [
-      "http://fauceth.komputing.org?chain=42&address=${ADDRESS}",
-      "https://faucet.kovan.network",
-      "https://gitter.im/kovan-testnet/faucet"
-    ],
+    "faucets": [],
     "nativeCurrency": {
-      "name": "Kovan Ether",
-      "symbol": "ETH",
+      "name": "LUKSO",
+      "symbol": "LYX",
       "decimals": 18
     },
     "explorers": [
       {
-        "name": "etherscan",
-        "url": "https://kovan.etherscan.io",
+        "name": "Blockscout",
+        "url": "https://explorer.execution.mainnet.lukso.network",
         "standard": "EIP3091"
       }
     ],
-    "infoURL": "https://kovan-testnet.github.io/website",
-    "shortName": "kov",
+    "infoURL": "https://lukso.network",
+    "shortName": "lukso",
     "chainId": 42,
-    "networkId": 42
+    "networkId": 42,
+    "features": [
+      {
+        "name": "EIP155"
+      },
+      {
+        "name": "EIP1559"
+      }
+    ],
+    "redFlags": [
+      "reusedChainId"
+    ]
   },
   {
     "name": "Binance Smart Chain Mainnet",
@@ -351,20 +355,23 @@ export default [
     "icon": "gnosis",
     "rpc": [
       "https://rpc.gnosischain.com",
+      "https://rpc.gnosis.gateway.fm",
       "https://rpc.ankr.com/gnosis",
       "https://gnosischain-rpc.gateway.pokt.network",
       "https://gnosis-mainnet.public.blastapi.io",
+      "https://gnosis.api.onfinality.io/public",
+      "https://gnosis.blockpi.network/v1/rpc/public",
+      "https://web3endpoints.com/gnosischain-mainnet",
       "wss://rpc.gnosischain.com/wss"
     ],
     "faucets": [
       "https://gnosisfaucet.com",
-      "https://faucet.gimlu.com/gnosis",
       "https://stakely.io/faucet/gnosis-chain-xdai",
       "https://faucet.prussia.dev/xdai"
     ],
     "nativeCurrency": {
       "name": "xDAI",
-      "symbol": "xDAI",
+      "symbol": "XDAI",
       "decimals": 18
     },
     "infoURL": "https://docs.gnosischain.com",
