@@ -44,6 +44,10 @@ import { ChainId } from '@sushiswap/chain'
 import { Explainer } from '@sushiswap/ui/future/components/Explainer'
 
 const PositionPage = () => {
+  const { query } = useRouter()
+
+  if (!queryParamsSchema.safeParse(query).success) return <></>
+
   return (
     <SplashController>
       <ConcentratedLiquidityProvider>
