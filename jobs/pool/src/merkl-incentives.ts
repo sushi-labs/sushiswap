@@ -22,6 +22,7 @@ const isTokenErrorResponse = (token: TokenSuccess | TokenError): token is TokenE
 type MerklResponse = {
   pools: {
     [poolId: string]: {
+      chainId: number
       aprs: {
         [incentiveName: string]: number
       }[]
@@ -35,7 +36,9 @@ type MerklDistribution = {
   amount: number
   start: number
   end: number
-  token: string
+  token: string,
+  isMock: boolean,
+  isLive: boolean,
 }
 
 type PriceResponse = {
@@ -73,14 +76,18 @@ export async function execute() {
     const startTime = performance.now()
 
     // EXTRACT
-    const merklByChain = new Map<ChainId, MerklResponse>()
-    for (const chainId of MERKL_SUPPORTED_NETWORKS) {
-      merklByChain.set(chainId, await extract(chainId))
-    }
+    const merkls = await extract()
     console.log('EXTRACT - Extracted merkl incentives.')
+    const prices = (
+      await Promise.all(
+        MERKL_SUPPORTED_NETWORKS.map((chainId) =>
+          fetch(`https://token-price.sushi.com/v1/${chainId}`).then((data) => data.json() as Promise<PriceResponse>)
+        )
+      )
+    ).reduce((acc, prices) => ({ ...acc, ...prices }), {})
 
     // TRANSFORM
-    const { incentivesToCreate, incentivesToUpdate, tokens } = await transform(merklByChain)
+    const { incentivesToCreate, incentivesToUpdate, tokens } = await transform(merkls, prices)
 
     // LOAD
     await createTokens(tokens)
@@ -97,13 +104,14 @@ export async function execute() {
   }
 }
 
-async function extract(chainId: ChainId) {
-  return await fetch(`https://api.angle.money/v1/merkl?chainId=${chainId}`).then(
-    (data) => data.json() as Promise<MerklResponse>
-  )
+async function extract() {
+  return await fetch('https://api.angle.money/v1/merkl').then((data) => data.json() as Promise<MerklResponse>)
 }
 
-async function transform(merklByChain: Map<ChainId, MerklResponse>): Promise<{
+async function transform(
+  merkl: MerklResponse,
+  prices: PriceResponse
+): Promise<{
   incentivesToCreate: Prisma.IncentiveCreateManyInput[]
   incentivesToUpdate: Prisma.IncentiveCreateManyInput[]
   tokens: Prisma.TokenCreateManyInput[]
@@ -111,59 +119,50 @@ async function transform(merklByChain: Map<ChainId, MerklResponse>): Promise<{
   let incentives: Prisma.IncentiveCreateManyInput[] = []
   const tokensToCreate: Prisma.TokenCreateManyInput[] = []
   const rewardTokens: Map<string, { chainId: ChainId; address: string }> = new Map()
-  // Could be optimised to run in parallell..
-  for (const [chainId, data] of merklByChain) {
-    if (data === undefined || data.pools === undefined) {
-      continue
-    }
+  if (merkl === undefined || merkl.pools === undefined) {
+    return
+  }
 
-    const prices = await fetch(`https://token-price.sushi.com/v1/${chainId}`).then(
-      (data) => data.json() as Promise<PriceResponse>
-    )
+  for (const [poolAddress, pool] of Object.entries(merkl.pools)) {
+    if (pool.distributionData.length > 0) {
+      const rewardsByToken: Map<string, MerklDistribution[]> = new Map()
+      // Group rewards by token
+      for (const distributionData of pool.distributionData) {
+        if (!rewardsByToken.has(distributionData.token)) {
+          rewardsByToken.set(distributionData.token, [])
+        }
+        rewardsByToken.get(distributionData.token).push(distributionData)
+      }
 
-    for (const [poolAddress, pool] of Object.entries(data.pools)) {
-      if (pool.distributionData.length > 0) {
-        const rewardsByToken: Map<string, MerklDistribution[]> = new Map()
-        // Group rewards by token
-        for (const { amount, start, end, token } of pool.distributionData) {
-          if (!rewardsByToken.has(token)) {
-            rewardsByToken.set(token, [])
+      for (const [token, rewards] of rewardsByToken) {
+        const rewardPerDay = rewards.reduce((acc, distData) => {
+          if (!distData.isLive || distData.isMock || !(MERKL_SUPPORTED_NETWORKS as number[]).includes(pool.chainId)) {
+            return acc
           }
-          rewardsByToken.get(token).push({ amount, start, end, token })
-        }
+          const duration = distData.end - distData.start
+          const durationInDays = duration / 86400
+          const amountPerDay = distData.amount / durationInDays
+          return acc + amountPerDay
+        }, 0)
 
-        const now = Date.now() / 1000
-        // Calculate APR for each token
-        for (const [token, rewards] of rewardsByToken) {
-          const rewardPerDay = rewards.reduce((acc, { amount, start, end }) => {
-            if (now >= end || now < start) {
-              return acc // Not started or has ended
-            }
-            const duration = end - start
-            const durationInDays = duration / 86400
-            const amountPerDay = amount / durationInDays
-            return acc + amountPerDay
-          }, 0)
+        const price = prices[token.toLowerCase()] ?? 0
+        const rewardPerYearUSD = 365 * rewardPerDay * price
+        const apr = pool.tvl ? rewardPerYearUSD / pool.tvl : 0
 
-          const price = prices[token.toLowerCase()] ?? 0
-          const rewardPerYearUSD = 365 * rewardPerDay * price
-          const apr = pool.tvl ? rewardPerYearUSD / pool.tvl : 0
-
-          const incentive = Prisma.validator<Prisma.IncentiveCreateManyInput>()({
-            id: poolAddress.toLowerCase().concat(':').concat(token.toLowerCase()).concat(':').concat('merkl'),
-            chainId: chainId,
-            chefType: ChefType.Merkl,
-            apr: isNaN(apr) || apr === Infinity ? 0 : apr,
-            rewardTokenId: chainId.toString().concat(':').concat(token.toLowerCase()),
-            rewardPerDay: rewardPerDay,
-            poolId: chainId.toString().concat(':').concat(poolAddress.toLowerCase()),
-            pid: 0, // Does not exist for merkl
-            rewarderAddress: '0x0000000000000000000000000000000000000000',
-            rewarderType: RewarderType.Primary,
-          })
-          incentives.push(incentive)
-          rewardTokens.set(`${chainId}:${token.toLowerCase()}`, { chainId, address: token.toLowerCase() })
-        }
+        const incentive = Prisma.validator<Prisma.IncentiveCreateManyInput>()({
+          id: poolAddress.toLowerCase().concat(':').concat(token.toLowerCase()).concat(':').concat('merkl'),
+          chainId: pool.chainId,
+          chefType: ChefType.Merkl,
+          apr: isNaN(apr) || apr === Infinity ? 0 : apr,
+          rewardTokenId: pool.chainId.toString().concat(':').concat(token.toLowerCase()),
+          rewardPerDay: rewardPerDay,
+          poolId: pool.chainId.toString().concat(':').concat(poolAddress.toLowerCase()),
+          pid: 0, // Does not exist for merkl
+          rewarderAddress: '0x0000000000000000000000000000000000000000',
+          rewarderType: RewarderType.Primary,
+        })
+        incentives.push(incentive)
+        rewardTokens.set(`${pool.chainId}:${token.toLowerCase()}`, { chainId: pool.chainId as ChainId, address: token.toLowerCase() })
       }
     }
   }
