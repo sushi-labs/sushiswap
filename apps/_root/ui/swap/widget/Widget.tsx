@@ -15,6 +15,7 @@ import { CrossChainBanner } from './CrossChainBanner'
 import { SwapButtonCrossChain } from './SwapButtonCrossChain'
 import { AppType } from '@sushiswap/ui'
 import { useSwapState } from '../trade/TradeProvider'
+import { Banner } from '@sushiswap/ui/future/components/banner/Banner'
 
 export const Widget: FC = () => {
   const { appType } = useSwapState()
@@ -38,6 +39,7 @@ export const Widget: FC = () => {
         <SwapCurrencyOutput />
         {/* <SwapButton /> */}
         {appType === AppType.Swap ? <SwapButton /> : <SwapButtonCrossChain />}
+        <Banner />
       </UIWidget.Content>
     </div>
   )
