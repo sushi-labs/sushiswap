@@ -1,6 +1,5 @@
 'use client'
 
-import { WalletSelector } from '@aptos-labs/wallet-adapter-ant-design'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Dialog, Transition } from '@headlessui/react'
 import { Drawer } from '@sushiswap/ui'
@@ -14,6 +13,7 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { SwitchAppType } from 'widget/SwitchAppType'
 import { ThunderCoreBanner } from 'widget/ThunderCoreBanner'
 import { WidgetTitleV2 } from 'widget/WidgetTitleV2'
+import { WalletSelector } from '@aptos-labs/wallet-adapter-ant-design'
 
 export default function SwapPage() {
   // const token0 = 'APTOS'
@@ -58,7 +58,7 @@ export default function SwapPage() {
   }, [account, inverse, connected])
   return (
     <>
-      <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
+      <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4 swap-container">
         <Drawer.Root>
           <WidgetTitleV2 />
           <SwitchAppType />
@@ -89,15 +89,13 @@ export default function SwapPage() {
               </>
             )}
             <div className="pt-4">
-              <button
-                onClick={() => {
-                  !connected && connect(wallets[0].name)
-                }}
-                className="btn w-full font-medium flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold"
-                disabled={isLoading}
-              >
-                {isLoading ? <>Loading...</> : buttonMessage}
-              </button>
+              {connected ? (
+                <button className="btn w-full flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold">
+                  Enter Amount
+                </button>
+              ) : (
+                <WalletSelector />
+              )}
             </div>
             {/* <ThunderCoreBanner /> */}
           </div>
