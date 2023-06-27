@@ -8,7 +8,14 @@ interface PropType {
   isLoadingPrice?: boolean
 }
 export default function TradeInput({ setOpen, tokenName, imgURL, coinData, isLoadingPrice }: PropType) {
-  console.log(coinData, tokenName)
+  const [error, setError] = useState('')
+  const checkBalance = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (coinData === undefined) {
+      coinData = 0
+    }
+    const priceEst = coinData / 10 ** 8 < parseFloat(e.target.value)
+    priceEst ? setError('Exceed Balance') : setError('')
+  }
   const [big, portion] = (coinData ? `${(coinData / 10 ** 8).toFixed(2)}` : '0.00').split('.')
   return (
     <div className="space-y-2 overflow-hidden pb-2 p-3 bg-white dark:bg-slate-800 rounded-xl">
@@ -24,6 +31,7 @@ export default function TradeInput({ setOpen, tokenName, imgURL, coinData, isLoa
           pattern="^[0-9]*[.,]?[0-9]*$"
           placeholder="0"
           min={0}
+          onChange={checkBalance}
           minLength={1}
           maxLength={79}
           className="text-gray-900 dark:text-slate-50 text-left text-base font-medium border-none focus:outline-none focus:ring-0 p-0 bg-transparent w-full truncate font-medium without-ring !text-3xl py-1"
@@ -82,9 +90,14 @@ export default function TradeInput({ setOpen, tokenName, imgURL, coinData, isLoa
         />
       </div>
       <div className="flex flex-row items-center justify-between h-[36px]">
-        <p className="font-medium text-lg flex items-baseline select-none text-gray-500 dark:text-slate-400">
-          $ 0.<span className="text-sm font-semibold">00</span>
-        </p>
+        {error ? (
+          error
+        ) : (
+          <p className="font-medium text-lg flex items-baseline select-none text-gray-500 dark:text-slate-400">
+            $ 0.<span className="text-sm font-semibold">00</span>
+          </p>
+        )}
+
         <button
           id="swap-from-balance-button"
           testdata-id="swap-from-balance-button"
