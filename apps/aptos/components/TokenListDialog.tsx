@@ -1,11 +1,12 @@
 import { Dialog, Transition } from '@headlessui/react'
 import React, { Fragment } from 'react'
 import TokenListItem from './TokenListItem'
+import { Token } from 'utils/tokenType'
 type PropType = {
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
   tokens: object
-  handleChangeToken: (token: object) => void
+  handleChangeToken: (token: Token) => void
 }
 export default function TokenListDialog({ open, setOpen, tokens, handleChangeToken }: PropType) {
   return (

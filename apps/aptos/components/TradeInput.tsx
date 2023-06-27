@@ -24,7 +24,6 @@ export default function TradeInput({
 }: PropType) {
   const [error, setError] = useState('')
   const { connected } = useWallet()
-  // const [tradeVal, setTradeVal] = useState<number>()
   const tradeVal = useRef<HTMLInputElement>(null)
   let [big, portion] = (coinData ? `${coinData / 10 ** decimals}` : '0.00').split('.')
   portion = portion ? portion.substring(0, 2) : '00'

@@ -14,19 +14,10 @@ import { WidgetTitleV2 } from 'widget/WidgetTitleV2'
 import { WalletSelector } from '@aptos-labs/wallet-adapter-ant-design'
 import { getYTokenPrice } from 'utils/utilFunctions'
 
-type Token = {
-  address: string
-  chainId: number
-  decimals: number
-  logoURI: string
-  name: string
-  symbol: string
-}
 import { Network, Provider } from 'aptos'
+import { Token } from 'utils/tokenType'
 
 export default function SwapPage() {
-  // const token0 = 'APTOS'
-  // const token1 = 'SUSHI'
   const { wallet, account, connected, isLoading, connect, wallets, signAndSubmitTransaction } = useWallet()
   const [token0, setToken0] = useState<Token>(DEFAULT_TOKEN_LIST.tokens[0])
   const [token1, setToken1] = useState<Token>(DEFAULT_TOKEN_LIST.tokens[1])
@@ -38,7 +29,6 @@ export default function SwapPage() {
   const [filteredCoin1, setFilteredCoin1] = useState<object | undefined>({})
   const [isLoadingPrice, setLoadingPrice] = useState<boolean>(true)
   const [tokenSelectedNumber, setTokenSelectedNumber] = useState<string>('')
-  // return <WidgetTitleV2 />
   const handleChangeToken = (token: Token) => {
     console.log(token)
     setOpen(false)
@@ -65,8 +55,6 @@ export default function SwapPage() {
           const coinData1 = data.filter((coin: object) => {
             return coin.type.includes(token1.address)
           })
-          // console.log(coinData0[0])
-          // console.log(coinData1[0])
           setFilteredCoin0(coinData0[0])
           setFilteredCoin1(coinData1[0])
           setLoadingPrice(false)
@@ -187,7 +175,7 @@ export default function SwapPage() {
         open={open}
         setOpen={setOpen}
         tokens={DEFAULT_TOKEN_LIST}
-        handleChangeToken={() => handleChangeToken}
+        handleChangeToken={handleChangeToken}
       />
     </>
   )
