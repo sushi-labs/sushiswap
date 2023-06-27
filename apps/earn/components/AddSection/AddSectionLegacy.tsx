@@ -90,7 +90,12 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
             }
           >
             <Checker.Network fullWidth size="xl" chainId={_pool.chainId}>
-              <Checker.Amounts fullWidth size="xl" chainId={_pool.chainId} amounts={[parsedInput0, parsedInput1]}>
+              <Checker.Amounts
+                fullWidth
+                size="xl"
+                chainId={_pool.chainId as ChainId}
+                amounts={useMemo(() => [parsedInput0, parsedInput1], [parsedInput0, parsedInput1])}
+              >
                 <Checker.ApproveERC20
                   id="approve-token-0"
                   size="xl"

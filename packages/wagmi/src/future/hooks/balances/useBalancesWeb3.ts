@@ -7,14 +7,14 @@ import { isAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 
 interface UseBalanceParams {
-  chainId: ChainId
+  chainId: ChainId | undefined
   currencies: (Type | undefined)[]
   account: Address | undefined
   enabled?: boolean
 }
 
 export const queryFnUseBalances = async ({ chainId, currencies, account }: Omit<UseBalanceParams, 'enabled'>) => {
-  if (!account) return null
+  if (!account || !chainId) return null
   const native = await fetchBalance({ address: account, chainId, formatUnits: 'wei' })
   const [validatedTokens, validatedTokenAddresses] = currencies.reduce<[Token[], Address[]]>(
     (acc, currencies) => {
