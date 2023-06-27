@@ -106,7 +106,7 @@ export default function SwapPage() {
     <>
       <div className="flex flex-col gap-4 swap-container">
         <Drawer.Root>
-        <button
+          <button
             onClick={() => {
               swapToken()
             }}
@@ -187,7 +187,7 @@ export default function SwapPage() {
         open={open}
         setOpen={setOpen}
         tokens={DEFAULT_TOKEN_LIST}
-        handleChangeToken={handleChangeToken}
+        handleChangeToken={() => handleChangeToken}
       />
     </>
   )
