@@ -24,8 +24,7 @@ export const SwapCurrencyOutput: FC = () => {
       onSelect={setToken1}
       value={trade?.amountOut?.toSignificant() ?? ''}
       currency={token1}
-      usdPctChange={undefined}
-      // usdPctChange={trade?.route?.status === 'NoWay' ? undefined : usdPctChange}
+      usdPctChange={trade?.route?.status === 'NoWay' ? undefined : usdPctChange}
       loading={Boolean(isLoading && +value > 0) || isFetching || tokensLoading}
       disableMaxButton
       currencyLoading={tokensLoading}
