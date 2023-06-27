@@ -1,22 +1,55 @@
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useEffect, useRef, useState } from 'react'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import { helloCLG } from 'utils/utilFunctions'
 interface PropType {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
   tokenName: string
   imgURL: string
+  decimals: number
   coinData?: number
   isLoadingPrice?: boolean
+  setTokenSelectedNumber: React.Dispatch<React.SetStateAction<string>>
+  tokenNumber: string
 }
-export default function TradeInput({ setOpen, tokenName, imgURL, coinData, isLoadingPrice }: PropType) {
+export default function TradeInput({
+  setOpen,
+  decimals,
+  tokenName,
+  imgURL,
+  coinData,
+  isLoadingPrice,
+  setTokenSelectedNumber,
+  tokenNumber,
+}: PropType) {
   const [error, setError] = useState('')
-  const checkBalance = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { connected } = useWallet()
+  // const [tradeVal, setTradeVal] = useState<number>()
+  const tradeVal = useRef<HTMLInputElement>(null)
+  let [big, portion] = (coinData ? `${coinData / 10 ** decimals}` : '0.00').split('.')
+  portion = portion ? portion.substring(0, 2) : '00'
+  useEffect(() => {
+    checkBalance()
+  }, [coinData])
+
+  const checkBalance = () => {
     if (coinData === undefined) {
       coinData = 0
     }
-    const priceEst = coinData / 10 ** 8 < parseFloat(e.target.value)
-    priceEst ? setError('Exceed Balance') : setError('')
+    if (tradeVal?.current?.value && connected) {
+      const priceEst = coinData / 10 ** 8 < parseFloat(tradeVal?.current?.value)
+      console.log()
+      priceEst ? setError('Exceed Balance') : setError('')
+    } else {
+      setError('')
+    }
   }
-  const [big, portion] = (coinData ? `${(coinData / 10 ** 8).toFixed(2)}` : '0.00').split('.')
+
+  const changeToken = () => {
+    setOpen(true)
+    setTokenSelectedNumber(tokenNumber)
+  }
+
   return (
     <div className="space-y-2 overflow-hidden pb-2 p-3 bg-white dark:bg-slate-800 rounded-xl">
       <div className="relative flex items-center gap-4">
@@ -31,14 +64,18 @@ export default function TradeInput({ setOpen, tokenName, imgURL, coinData, isLoa
           pattern="^[0-9]*[.,]?[0-9]*$"
           placeholder="0"
           min={0}
-          onChange={checkBalance}
+          ref={tradeVal}
+          onChange={() => {
+            checkBalance()
+            helloCLG('yash')
+          }}
           minLength={1}
           maxLength={79}
           className="text-gray-900 dark:text-slate-50 text-left text-base font-medium border-none focus:outline-none focus:ring-0 p-0 bg-transparent w-full truncate font-medium without-ring !text-3xl py-1"
           type="text"
         />
         <button
-          onClick={() => setOpen(true)}
+          onClick={changeToken}
           id="swap-from-button"
           type="button"
           testdata-id="swap-from-button"

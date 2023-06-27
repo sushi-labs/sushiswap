@@ -5,8 +5,9 @@ type PropType = {
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
   tokens: object
+  handleChangeToken: (token: object) => void
 }
-export default function TokenListDialog({ open, setOpen, tokens }: PropType) {
+export default function TokenListDialog({ open, setOpen, tokens, handleChangeToken }: PropType) {
   return (
     <Transition appear show={open} as={Fragment}>
       <Dialog as="div" className="relative z-[1080]" onClose={() => setOpen(false)}>
@@ -37,8 +38,8 @@ export default function TokenListDialog({ open, setOpen, tokens }: PropType) {
                 <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-white">
                   Tokens
                 </Dialog.Title>
-                {tokens.tokens.map((token, key) => {
-                  return <TokenListItem token={token} key={key} />
+                {tokens.tokens.map((token: object, key: number) => {
+                  return <TokenListItem token={token} key={key} handleChangeToken={handleChangeToken} />
                 })}
               </Dialog.Panel>
             </Transition.Child>

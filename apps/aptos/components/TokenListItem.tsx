@@ -1,11 +1,15 @@
 import React from 'react'
 type PropType = {
   token: object
+  handleChangeToken: (token: object) => void
 }
-export default function TokenListItem({ token }: PropType) {
+export default function TokenListItem({ token, handleChangeToken }: PropType) {
   return (
     <div className="py-0.5 h-[64px]">
-      <div className="flex items-center w-full h-full rounded-lg px-3">
+      <div
+        className="flex items-center w-full h-full rounded-lg px-3 cursor-pointer hover:bg-white/[0.04]"
+        onClick={() => handleChangeToken(token)}
+      >
         <div className="flex items-center justify-between flex-grow gap-2 rounded">
           <div className="flex flex-row items-center flex-grow gap-4">
             <img src={token.logoURI} alt="" height={40} width={40} />
