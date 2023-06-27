@@ -2,6 +2,8 @@ import { Abi, Narrow } from 'abitype'
 import { Address, PublicClient } from 'viem'
 import { Contract, MulticallContracts } from 'viem/dist/types/types/multicall'
 
+import { warnLog } from './WarnLog'
+
 const getBlockNumberAbi: Abi = [
   {
     inputs: [],
@@ -102,15 +104,24 @@ export class MultiCallAggregator {
           abi: getBlockNumberAbi,
           functionName: 'getBlockNumber',
         })
-        const res = await this.client.multicall({
-          allowFailure: true,
-          contracts: pendingCalls.map((c) => ({
-            address: c.address,
-            abi: c.abi,
-            functionName: c.functionName,
-            args: c.args as Narrow<readonly unknown[] | undefined>,
-          })),
-        })
+        let res
+        for (;;) {
+          try {
+            res = await this.client.multicall({
+              allowFailure: true,
+              contracts: pendingCalls.map((c) => ({
+                address: c.address,
+                abi: c.abi,
+                functionName: c.functionName,
+                args: c.args as Narrow<readonly unknown[] | undefined>,
+              })),
+            })
+          } catch (e) {
+            warnLog('Multicall error: ' + e)
+            continue
+          }
+          break
+        }
         if (res[0].status !== 'success') {
           // getBlockNumber Failed
           for (let i = 1; i < res.length; ++i) pendingRejects[i](res[0].error)
