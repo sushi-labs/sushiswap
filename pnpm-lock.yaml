@@ -714,6 +714,7 @@ importers:
       '@types/react': 18.2.6
       '@types/react-dom': 18.2.4
       '@vercel/analytics': 0.1.5
+      aptos: ^1.11.0
       autoprefixer: 10.4.14
       eslint: 8.41.0
       fewcha-plugin-wallet-adapter: ^0.1.2
@@ -728,7 +729,7 @@ importers:
     dependencies:
       '@aptos-labs/wallet-adapter-ant-design': 1.0.0
       '@aptos-labs/wallet-adapter-react': 1.0.2
-      '@aptstats/safepal-wallet-extension': 0.0.3_rkbze2kr3f2yskkhdqcuwxwzlq
+      '@aptstats/safepal-wallet-extension': 0.0.3_po67ks375xcooxovpoudcazg7a
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 2.0.18_react@18.2.0
       '@martianwallet/aptos-wallet-adapter': 0.0.4
@@ -739,6 +740,7 @@ importers:
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@vercel/analytics': 0.1.5_react@18.2.0
+      aptos: 1.11.0
       fewcha-plugin-wallet-adapter: 0.1.2
       next: 13.4.4_biqbaboplfbrettd7655fr4n2y
       next-axiom: 0.17.0_next@13.4.4
@@ -3559,9 +3561,10 @@ packages:
       - debug
     dev: false
 
-  /@aptstats/aptos-wallet-framework/0.0.2_rkbze2kr3f2yskkhdqcuwxwzlq:
+  /@aptstats/aptos-wallet-framework/0.0.2_po67ks375xcooxovpoudcazg7a:
     resolution: {integrity: sha512-HcagZHjKPGopDcs51XSfj2AX8yVaUONixjbGOOX+ydeBkMPFOoiDFeGXCVa3MklNncap1VGE+F/izND5gUDs3A==}
     peerDependencies:
+      aptos: ^1.3.16
       react: ^18.X.X || 17.X.X
       react-dom: ^18.X.X || 17.X.X
     dependencies:
@@ -3607,10 +3610,12 @@ packages:
       - webpack-plugin-serve
     dev: false
 
-  /@aptstats/safepal-wallet-extension/0.0.3_rkbze2kr3f2yskkhdqcuwxwzlq:
+  /@aptstats/safepal-wallet-extension/0.0.3_po67ks375xcooxovpoudcazg7a:
     resolution: {integrity: sha512-th27vQG9EqmO6yopGIdbEBSAdTAXMmitPA8Ria0Oq21LX4m6gb2Wl/XYXLLJ/ULW+WSolpkVwPu+Zldo9yU4xw==}
+    peerDependencies:
+      aptos: ^1.3.16
     dependencies:
-      '@aptstats/aptos-wallet-framework': 0.0.2_rkbze2kr3f2yskkhdqcuwxwzlq
+      '@aptstats/aptos-wallet-framework': 0.0.2_po67ks375xcooxovpoudcazg7a
       aptos: 1.11.0
       eventemitter3: 4.0.7
     transitivePeerDependencies:

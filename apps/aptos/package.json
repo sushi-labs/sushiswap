@@ -25,6 +25,7 @@
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
     "@vercel/analytics": "0.1.5",
+    "aptos": "^1.11.0",
     "fewcha-plugin-wallet-adapter": "^0.1.2",
     "next": "13.4.4",
     "next-axiom": "0.17.0",
