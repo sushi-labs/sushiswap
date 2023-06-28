@@ -12,8 +12,14 @@ import { APPROVE_XSWAP_TAG } from '../../ui/swap/widget/SwapButtonCrossChain'
 
 type ObjectType<T> = T extends true ? ReturnType<typeof useCrossChainTrade> : ReturnType<typeof _useTrade>
 
-export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): ObjectType<T> {
-  const { token0, token1, network0, network1, amount, recipient, tradeId, isFallback } = useSwapState()
+export function useTrade<T extends boolean>({
+  crossChain,
+  enabled = true,
+}: {
+  crossChain: T
+  enabled?: boolean
+}): ObjectType<T> {
+  const { value, token0, token1, network0, network1, amount, recipient, tradeId, isFallback } = useSwapState()
   const { setFallback } = useSwapActions()
   const [slippageTolerance] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
@@ -28,7 +34,7 @@ export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): 
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
     gasPrice: feeData?.gasPrice?.toNumber(),
     recipient,
-    enabled: !crossChain && network0 === network1 && !isFallback,
+    enabled: Boolean(enabled && !crossChain && network0 === network1 && !isFallback && value),
     carbonOffset,
     onError: () => setFallback(true),
   })
@@ -41,7 +47,7 @@ export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): 
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
     gasPrice: feeData?.gasPrice?.toNumber(),
     recipient,
-    enabled: !crossChain && network0 === network1 && isFallback,
+    enabled: Boolean(enabled && !crossChain && network0 === network1 && isFallback && value),
     carbonOffset,
   })
 
@@ -54,7 +60,14 @@ export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): 
     amount: amount,
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
     recipient,
-    enabled: crossChain && network0 !== network1 && isSushiXSwapChainId(network0) && isSushiXSwapChainId(network1),
+    enabled: Boolean(
+      enabled &&
+        crossChain &&
+        network0 !== network1 &&
+        isSushiXSwapChainId(network0) &&
+        isSushiXSwapChainId(network1) &&
+        value
+    ),
     bentoboxSignature: signature,
   })
 

@@ -30,7 +30,7 @@ export const TradeReviewDialogSameChain: FC = () => {
   const { appType, review, token0, token1, recipient, network0, amount, value } = useSwapState()
   const { setReview } = useSwapActions()
   const [slippageTolerance] = useSlippageTolerance()
-  const { data: trade, isFetching } = useTrade({ crossChain: false })
+  const { data: trade, isFetching } = useTrade({ crossChain: false, enabled: review })
 
   const onClose = useCallback(() => setReview(false), [setReview])
   const isWrap =
@@ -38,8 +38,6 @@ export const TradeReviewDialogSameChain: FC = () => {
   const isUnwrap =
     appType === AppType.Swap && token1?.isNative && token0?.wrapped.address === Native.onChain(network0).wrapped.address
   const isSwap = !isWrap && !isUnwrap
-
-  console.log('TradeReviewDialogSameChain')
 
   // Don't unmount this dialog since that will slow down the opening callback
   return (
