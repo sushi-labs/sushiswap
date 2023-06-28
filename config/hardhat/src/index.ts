@@ -169,6 +169,14 @@ export const defaultConfig: HardhatUserConfig = {
           browserURL: 'https://andromeda-explorer.metis.io',
         },
       },
+      {
+        network: 'bttc',
+        chainId: 199,
+        urls: {
+          apiURL: 'https://api.bttcscan.com/api',
+          browserURL: 'https://bttcscan.com',
+        },
+      },
     ],
     apiKey: {
       mainnet: process.env.ETHERSCAN_API_KEY || '',

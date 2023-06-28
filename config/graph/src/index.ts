@@ -323,6 +323,7 @@ export const FURO_ENABLED_NETWORKS = [
   ChainId.MOONRIVER,
   ChainId.OPTIMISM,
   ChainId.POLYGON,
+  ChainId.BTTC
 ] as const
 
 // TODO: Make typesafe
@@ -339,6 +340,7 @@ export const FURO_SUBGRAPH_NAME: Record<string, string> = {
   [ChainId.MOONRIVER]: 'sushi-subgraphs/furo-moonriver',
   [ChainId.OPTIMISM]: 'sushi-subgraphs/furo-optimism',
   [ChainId.POLYGON]: 'sushi-subgraphs/furo-polygon',
+  [ChainId.BTTC]: 'sushi-subgraphs/furo-bttc'
 } as const
 
 export const KASHI_SUBGRAPH_NAME: Record<number, string> = {
