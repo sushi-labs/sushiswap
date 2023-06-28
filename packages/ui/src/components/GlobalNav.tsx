@@ -113,7 +113,7 @@ export const GlobalNav: FC<HeaderProps> = ({
                 </div>
               </Transition>
             </Menu>
-            <div className="hidden lg:flex justify-center gap-2 relative h-[38px]">{children}</div>
+            <div className="hidden lg:flex justify-center gap-2 relative">{children}</div>
           </div>
           <div className="flex items-center justify-end gap-2">{rightElement}</div>
         </div>
