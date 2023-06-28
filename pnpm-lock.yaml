@@ -1883,6 +1883,7 @@ importers:
     specifiers:
       '@ethersproject/address': 5.7.0
       '@ethersproject/providers': 5.7.2
+      '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -1907,6 +1908,7 @@ importers:
       copy-to-clipboard: 3.3.3
       react-responsive: 9.0.0-beta.10_react@18.2.0
     devDependencies:
+      '@sushiswap/chain': link:../chain
       '@sushiswap/currency': link:../currency
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
