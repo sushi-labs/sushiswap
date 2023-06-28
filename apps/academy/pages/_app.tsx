@@ -7,12 +7,12 @@ import { App, ThemeProvider } from '@sushiswap/ui'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
 import { useRouter } from 'next/router'
-import Script from 'next/script'
 import { useEffect } from 'react'
 
 import { DefaultSeo, Header } from '../common/components'
 import { getGlobalSEO } from '../lib/api'
 import { Global } from '.mesh'
+import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
 
 export const cld = new Cloudinary({
   cloud: {
@@ -42,21 +42,6 @@ const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
 
   return (
     <>
-      <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
-      <Script
-        id="gtag-init"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-JW8KWJ48EF', {
-              page_path: window.location.pathname,
-            });
-          `,
-        }}
-      />
       <ThemeProvider>
         <App.Shell>
           <DefaultSeo seo={seo} />
@@ -67,6 +52,8 @@ const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
           </div>
         </App.Shell>
       </ThemeProvider>
+      <GoogleAnalytics />
+      <HotJar />
     </>
   )
 }

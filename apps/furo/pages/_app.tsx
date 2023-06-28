@@ -6,7 +6,6 @@ import { Analytics } from '@vercel/analytics/react'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
 import { FC, useEffect } from 'react'
 
@@ -15,6 +14,7 @@ import SEO from '../next-seo.config.mjs'
 import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
 import { queryClient } from '@sushiswap/react-query'
 import { QueryClientProvider } from '@tanstack/react-query'
+import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
 
 declare global {
   interface Window {
@@ -50,21 +50,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="mask-icon" href="/furo/safari-pinned-tab.svg?v=1" color="#fa52a0" />
         <link rel="shortcut icon" href="/furo/favicon.ico?v=1" />
       </Head>
-      <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
-      <Script
-        id="gtag-init"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-JW8KWJ48EF', {
-              page_path: window.location.pathname,
-            });
-          `,
-        }}
-      />
       <WagmiConfig client={client}>
         <QueryClientProvider client={queryClient}>
           <ThemeProvider>
@@ -77,6 +62,8 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
           </ThemeProvider>
         </QueryClientProvider>
       </WagmiConfig>
+      <GoogleAnalytics />
+      <HotJar />
       <Analytics />
     </>
   )

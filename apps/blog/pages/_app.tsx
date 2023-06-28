@@ -9,12 +9,12 @@ import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
 import { useEffect } from 'react'
 
 import { Header } from '../components'
 import SEO from '../next-seo.config'
+import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
 
 export const cld = new Cloudinary({
   cloud: {
@@ -54,21 +54,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
         <link rel="shortcut icon" href="/favicon.ico?v=1" />
       </Head>
-      <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
-      <Script
-        id="gtag-init"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-JW8KWJ48EF', {
-              page_path: window.location.pathname,
-            });
-          `,
-        }}
-      />
       <ThemeProvider>
         <App.Shell>
           <DefaultSeo {...SEO} />
@@ -77,6 +62,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           <App.Footer />
         </App.Shell>
       </ThemeProvider>
+      <GoogleAnalytics />
+      <HotJar />
       <Analytics />
     </>
   )
