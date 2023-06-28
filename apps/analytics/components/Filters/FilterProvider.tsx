@@ -1,13 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import {
-  createContext,
-  FC,
-  ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { Protocol } from '@sushiswap/client'
@@ -41,10 +33,7 @@ const defaultFilters: FiltersT = {
   [Filters.isWhitelisted]: true,
 }
 
-export const FilterProvider: FC<FiltersProvider> = ({
-  children,
-  passedFilters,
-}) => {
+export const FilterProvider: FC<FiltersProvider> = ({ children, passedFilters }) => {
   const [filters, _setFilters] = useState({
     ...defaultFilters,
     ...passedFilters,
@@ -57,10 +46,7 @@ export const FilterProvider: FC<FiltersProvider> = ({
     }))
   }, [])
 
-  useEffect(
-    () => setFilters({ ...defaultFilters, ...passedFilters }),
-    [passedFilters, setFilters],
-  )
+  useEffect(() => setFilters({ ...defaultFilters, ...passedFilters }), [passedFilters, setFilters])
 
   return (
     <FilterContext.Provider

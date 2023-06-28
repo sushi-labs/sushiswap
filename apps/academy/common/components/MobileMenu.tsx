@@ -1,7 +1,7 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { Bars3Icon } from '@heroicons/react/24/solid'
-import { classNames, Link, SushiIcon, Typography } from '@sushiswap/ui'
-import { SushiTransparentIcon, TriangleIcon } from 'common/icons'
+import { classNames, Link } from '@sushiswap/ui'
+import { SushiIcon, SushiTransparentIcon, TriangleIcon } from 'common/icons'
 import { FC, useCallback, useState } from 'react'
 
 import { Drawer } from './Drawer'
@@ -43,15 +43,15 @@ export const MobileMenu: FC<MobileMenu> = ({ navData }) => {
             if (href && !links) {
               return isExternal ? (
                 <Link.External href={href} key={title}>
-                  <Typography variant="h3" weight={700} className="text-slate-50" onClick={onClose}>
+                  <p className="text-2xl font-semibold text-slate-50" onClick={onClose}>
                     {title}
-                  </Typography>
+                  </p>
                 </Link.External>
               ) : (
                 <Link.Internal href={href} key={title}>
-                  <Typography variant="h3" weight={700} className="text-slate-50" onClick={onClose}>
+                  <p className="text-2xl font-semibold text-slate-50" onClick={onClose}>
                     {title}
-                  </Typography>
+                  </p>
                 </Link.Internal>
               )
             }
@@ -61,9 +61,7 @@ export const MobileMenu: FC<MobileMenu> = ({ navData }) => {
                   <>
                     <Disclosure.Button className="flex items-center gap-6">
                       <TriangleIcon className={classNames('transition', open && 'rotate-90')} />
-                      <Typography variant="h3" weight={700} className="text-slate-50">
-                        {title}
-                      </Typography>
+                      <p className="text-2xl font-semibold text-slate-50">{title}</p>
                     </Disclosure.Button>
                     <Transition
                       enter="transition duration-100 ease-out"
@@ -77,15 +75,15 @@ export const MobileMenu: FC<MobileMenu> = ({ navData }) => {
                         {links?.map(({ name, href, isExternal }) =>
                           isExternal ? (
                             <Link.External key={href} href={href}>
-                              <Typography weight={500} className="text-slate-400" onClick={onClose}>
+                              <p className="font-medium text-slate-400" onClick={onClose}>
                                 {name}
-                              </Typography>
+                              </p>
                             </Link.External>
                           ) : (
                             <Link.Internal key={href} href={href}>
-                              <Typography weight={500} className="text-slate-400" onClick={onClose}>
+                              <p className="font-medium text-slate-400" onClick={onClose}>
                                 {name}
-                              </Typography>
+                              </p>
                             </Link.Internal>
                           )
                         )}

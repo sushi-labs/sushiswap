@@ -1,9 +1,8 @@
 import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Amount, Type } from '@sushiswap/currency'
-import { calculateGasMargin } from '@sushiswap/gas'
 import { Percent } from '@sushiswap/math'
-import { Dots } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui/components/dots'
 import {
   _useSendTransaction as useSendTransaction,
   Address,
@@ -21,8 +20,8 @@ import { useTransactionDeadline } from '../../lib/hooks'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { createToast } from '@sushiswap/ui/future/components/toast'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { createToast } from '@sushiswap/ui/components/toast'
+import { Button } from '@sushiswap/ui/components/button'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_ADD_LEGACY } from '../../lib/constants'

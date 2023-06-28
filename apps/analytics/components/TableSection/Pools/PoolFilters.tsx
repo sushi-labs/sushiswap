@@ -1,8 +1,8 @@
 import { Protocol } from '@sushiswap/client'
-import { Button } from '@sushiswap/ui/future/components/button'
 import { ChainFilter, SearchFilter, useFilters } from 'components/Filters'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import React, { FC, useCallback } from 'react'
+import { Toggle } from '@sushiswap/ui/components/toggle'
 
 export const PoolFilters: FC = () => {
   const { poolProtocols: protocols, isWhitelisted, setFilters } = useFilters()
@@ -17,7 +17,7 @@ export const PoolFilters: FC = () => {
         poolProtocols: newProtocols.length === 0 ? undefined : newProtocols,
       })
     },
-    [protocols, setFilters],
+    [protocols, setFilters]
   )
 
   const whitelistedHandler = useCallback(() => {
@@ -27,78 +27,54 @@ export const PoolFilters: FC = () => {
   }, [isWhitelisted, setFilters])
 
   return (
-    <div className='flex flex-col gap-4 mb-4'>
-      <div className='flex gap-4'>
+    <div className="flex flex-col gap-4 mb-4">
+      <div className="flex gap-4">
         <SearchFilter />
         <ChainFilter availableChainIds={SUPPORTED_CHAIN_IDS} />
       </div>
-      <div className='flex flex-wrap items-center gap-3'>
-        <div className='flex flex-wrap items-center gap-3'>
-          <Button
-            className='items-center gap-2.5'
-            onClick={() => protocolHandler(Protocol.SUSHISWAP_V3)}
-            size='sm'
-            variant='outlined'
-            color={
-              protocols?.includes(Protocol.SUSHISWAP_V3) ? 'blue' : 'default'
-            }
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <Toggle
+            onPressedChange={() => protocolHandler(Protocol.SUSHISWAP_V3)}
+            size="sm"
+            pressed={Boolean(protocols?.includes(Protocol.SUSHISWAP_V3))}
           >
             <span>🍣</span>{' '}
             <span>
               SushiSwap <sup>v3</sup>
             </span>
-          </Button>
-          <Button
-            className='gap-2.5'
-            onClick={() => protocolHandler(Protocol.SUSHISWAP_V2)}
-            size='sm'
-            variant='outlined'
-            color={
-              protocols?.includes(Protocol.SUSHISWAP_V2) ? 'blue' : 'default'
-            }
+          </Toggle>
+          <Toggle
+            onPressedChange={() => protocolHandler(Protocol.SUSHISWAP_V2)}
+            size="sm"
+            pressed={Boolean(protocols?.includes(Protocol.SUSHISWAP_V2))}
           >
             <span>🍣</span>{' '}
             <span>
               SushiSwap <sup>v2</sup>
             </span>
-          </Button>
+          </Toggle>
 
-          <Button
-            className='flex items-center gap-2.5'
-            onClick={() => protocolHandler(Protocol.BENTOBOX_STABLE)}
-            size='sm'
-            variant='outlined'
-            color={
-              protocols?.includes(Protocol.BENTOBOX_STABLE) ? 'blue' : 'default'
-            }
+          <Toggle
+            onPressedChange={() => protocolHandler(Protocol.BENTOBOX_STABLE)}
+            size="sm"
+            pressed={Boolean(protocols?.includes(Protocol.BENTOBOX_STABLE))}
           >
-            <span className='mt-1'>🍱</span>
+            <span className="mt-1">🍱</span>
             <span>Trident Stable</span>
-          </Button>
-          <Button
-            className='flex items-center gap-2.5'
-            onClick={() => protocolHandler(Protocol.BENTOBOX_CLASSIC)}
-            size='sm'
-            variant='outlined'
-            color={
-              protocols?.includes(Protocol.BENTOBOX_CLASSIC)
-                ? 'blue'
-                : 'default'
-            }
+          </Toggle>
+          <Toggle
+            onPressedChange={() => protocolHandler(Protocol.BENTOBOX_CLASSIC)}
+            size="sm"
+            pressed={Boolean(protocols?.includes(Protocol.BENTOBOX_CLASSIC))}
           >
-            <span className='mt-1'>🍱</span>
+            <span className="mt-1">🍱</span>
             <span>Trident Classic</span>
-          </Button>
+          </Toggle>
           {process.env.NODE_ENV !== 'production' && (
-            <Button
-              onClick={() => whitelistedHandler()}
-              size='sm'
-              variant='outlined'
-              color={isWhitelisted ? 'blue' : 'default'}
-              className='flex gap-2.5'
-            >
-              <span>Whitelisted</span>
-            </Button>
+            <Toggle onPressedChange={() => whitelistedHandler()} size="sm" pressed={isWhitelisted}>
+              Whitelisted
+            </Toggle>
           )}
         </div>
       </div>

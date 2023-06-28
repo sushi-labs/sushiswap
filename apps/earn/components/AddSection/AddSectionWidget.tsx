@@ -4,11 +4,12 @@ import { PlusIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
-import { classNames, Widget } from '@sushiswap/ui'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
-import React, { FC, ReactNode } from 'react'
-import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
-import { Button } from '@sushiswap/ui/future/components/button'
+import React, { FC, Fragment, ReactNode } from 'react'
+import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/components/settings'
+import { Widget, WidgetContent, WidgetHeader } from '@sushiswap/ui/components/widget'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
+import { SelectIcon } from '@sushiswap/ui/components/select'
 
 interface AddSectionWidgetProps {
   isFarm: boolean
@@ -40,13 +41,13 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
   const isMounted = useIsMounted()
 
   return (
-    <Widget id="addLiquidity" maxWidth={400}>
-      <Widget.Content>
+    <Widget id="addLiquidity" maxWidth="sm">
+      <WidgetContent>
         <Disclosure defaultOpen={true}>
           {({ open }) => (
             <>
               {isFarm && isMounted ? (
-                <Widget.Header title="1. Add Liquidity" className="!pb-3 ">
+                <WidgetHeader title="1. Add Liquidity">
                   <div className="flex gap-3">
                     <SettingsOverlay
                       options={{
@@ -59,31 +60,24 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                       modules={[SettingsModule.CustomTokens, SettingsModule.SlippageTolerance]}
                     >
                       {({ setOpen }) => (
-                        <Button variant="outlined" color="default" onClick={() => setOpen(true)}>
-                          <CogIcon width={24} height={24} />
-                        </Button>
+                        <IconButton
+                          size="sm"
+                          name="Settings"
+                          icon={CogIcon}
+                          variant="secondary"
+                          onClick={() => setOpen(true)}
+                        />
                       )}
                     </SettingsOverlay>
-                    <Disclosure.Button className="w-full pr-0.5">
-                      <div className="flex items-center justify-between">
-                        <div
-                          className={classNames(
-                            open ? 'rotate-180' : 'rotate-0',
-                            'transition-all w-5 h-5 -mr-1.5 flex items-center delay-300'
-                          )}
-                        >
-                          <ChevronDownIcon
-                            width={24}
-                            height={24}
-                            className="text-gray-700 hover:text-gray-800 dark:group-hover:text-slate-200 dark:text-slate-300"
-                          />
-                        </div>
-                      </div>
+                    <Disclosure.Button as={Fragment}>
+                      <IconButton size="sm" icon={ChevronDownIcon} name="Select">
+                        <SelectIcon />
+                      </IconButton>
                     </Disclosure.Button>
                   </div>
-                </Widget.Header>
+                </WidgetHeader>
               ) : (
-                <Widget.Header title="Add Liquidity" className="!pb-3">
+                <WidgetHeader title="Add Liquidity">
                   <div className="flex gap-3">
                     <SettingsOverlay
                       options={{
@@ -96,13 +90,17 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                       modules={[SettingsModule.CustomTokens, SettingsModule.SlippageTolerance]}
                     >
                       {({ setOpen }) => (
-                        <Button variant="outlined" color="default" onClick={() => setOpen(true)}>
-                          <CogIcon width={24} height={24} />
-                        </Button>
+                        <IconButton
+                          size="sm"
+                          name="Settings"
+                          icon={CogIcon}
+                          variant="secondary"
+                          onClick={() => setOpen(true)}
+                        />
                       )}
                     </SettingsOverlay>
                   </div>
-                </Widget.Header>
+                </WidgetHeader>
               )}
               <Transition
                 unmount={false}
@@ -114,10 +112,10 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                 leaveFrom="transform max-h-[380px]"
                 leaveTo="transform max-h-0"
               >
-                <Disclosure.Panel unmount={false}>
+                <Disclosure.Panel unmount={false} className="pt-4">
                   <Web3Input.Currency
                     type="INPUT"
-                    className="p-3"
+                    className="bg-muted p-3 !rounded-xl"
                     loading={false}
                     value={input0}
                     onChange={onInput0}
@@ -125,29 +123,27 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                     currency={token0}
                     chainId={chainId}
                   />
-                  <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
-                    <div className="group dark:bg-slate-700 p-0.5 dark:border-2 dark:border-slate-800 transition-all rounded-full">
+                  <div className="flex items-center justify-center -mt-[8px] -mb-[8px] z-10">
+                    <div className="group p-0.5 bg-accent rounded-full">
                       <PlusIcon width={16} height={16} />
                     </div>
                   </div>
-                  <div className="dark:bg-slate-800 bg-white">
-                    <Web3Input.Currency
-                      type="INPUT"
-                      className="p-3 !pb-1"
-                      value={input1}
-                      onChange={onInput1}
-                      currency={token1}
-                      onSelect={onSelectToken1}
-                      chainId={chainId}
-                    />
-                    <div className="p-3">{children}</div>
-                  </div>
+                  <Web3Input.Currency
+                    type="INPUT"
+                    className="bg-muted p-3 !rounded-xl"
+                    value={input1}
+                    onChange={onInput1}
+                    currency={token1}
+                    onSelect={onSelectToken1}
+                    chainId={chainId}
+                  />
+                  <div className="pt-4">{children}</div>
                 </Disclosure.Panel>
               </Transition>
             </>
           )}
         </Disclosure>
-      </Widget.Content>
+      </WidgetContent>
     </Widget>
   )
 }

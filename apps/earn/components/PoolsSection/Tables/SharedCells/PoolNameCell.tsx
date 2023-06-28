@@ -1,20 +1,21 @@
 import { formatNumber } from '@sushiswap/format'
 import { Pool, Protocol } from '@sushiswap/client'
-import { classNames, NetworkIcon } from '@sushiswap/ui'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { classNames } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui/components/currency'
 import { FC } from 'react'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 
 import { useTokensFromPool } from '../../../../lib/hooks'
 import { ICON_SIZE } from '../constants'
 import { Row } from './types'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
+import { Badge } from '@sushiswap/ui/components/Badge'
 import { ChainId } from '@sushiswap/chain'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
 
 export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
   const { token0, token1 } = useTokensFromPool(row)
 
-  const incetives = row.incentives.filter((i) => i.rewardPerDay > 0)
+  const incentives = row.incentives.filter((i) => i.rewardPerDay > 0)
 
   return (
     <div className="flex items-center gap-5">
@@ -57,12 +58,19 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
           <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
             {formatNumber(row.swapFee * 100)}%
           </div>
-          {incetives && incetives.length > 0 && (
-            <Tooltip description="Farm rewards available">
-              <div className="bg-green/20 text-green text-[10px] px-2 rounded-full">
-                🧑‍🌾 {incetives.length > 1 ? `x ${incetives.length}` : ''}{' '}
-              </div>
-            </Tooltip>
+          {incentives && incentives.length > 0 && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="bg-green/20 text-green text-[10px] px-2 rounded-full">
+                    🧑‍🌾 {incentives.length > 1 ? `x ${incentives.length}` : ''}{' '}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Farm rewards available</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
         </div>
       </div>

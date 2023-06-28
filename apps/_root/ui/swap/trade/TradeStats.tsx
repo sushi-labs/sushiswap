@@ -5,7 +5,8 @@ import React, { FC, useState } from 'react'
 
 import { useSwapState } from './TradeProvider'
 import { useTrade } from '../../../lib/swap/useTrade'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonBox, SkeletonText } from '@sushiswap/ui/components/skeleton'
+
 import { AppType, classNames } from '@sushiswap/ui'
 import { warningSeverity, warningSeverityClassName } from '../../../lib/swap/warningSeverity'
 import { TradeRoute } from './TradeRoute'
@@ -15,7 +16,7 @@ import { UseTradeReturn } from '@sushiswap/react-query'
 import { shortenAddress } from '@sushiswap/format'
 import { isAddress } from 'ethers/lib/utils'
 import { useAccount } from '@sushiswap/wagmi'
-import { Explainer } from '@sushiswap/ui/future/components/Explainer'
+import { Explainer } from '@sushiswap/ui/components/explainer'
 import { AddressToEnsResolver } from '@sushiswap/wagmi/future/components/Account/AddressToEnsResolver'
 
 export const TradeStats: FC = () => {
@@ -45,7 +46,7 @@ export const TradeStats: FC = () => {
             )}
           >
             {loading || !trade?.priceImpact ? (
-              <Skeleton.Box className="h-4 py-0.5 w-[120px] rounded-md" />
+              <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : trade?.priceImpact ? (
               `${trade?.priceImpact?.lessThan(ZERO) ? '+' : trade?.priceImpact?.greaterThan(ZERO) ? '-' : ''}${Math.abs(
                 Number(trade?.priceImpact?.toFixed(2))
@@ -58,7 +59,7 @@ export const TradeStats: FC = () => {
           <span className="text-sm text-gray-700 dark:text-slate-400">Est. received</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
             {loading || !trade?.amountOut ? (
-              <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
+              <SkeletonText fontSize="sm" className="w-[120px]" />
             ) : (
               `${trade?.amountOut?.toSignificant(6) ?? '0.00'} ${trade?.amountOut?.currency?.symbol ?? ''}`
             )}
@@ -69,7 +70,7 @@ export const TradeStats: FC = () => {
           <span className="text-sm text-gray-700 dark:text-slate-400">Min. received</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
             {loading || !trade?.minAmountOut ? (
-              <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
+              <SkeletonText fontSize="sm" className="w-[120px]" />
             ) : (
               `${trade?.minAmountOut?.toSignificant(6) ?? '0.00'} ${trade?.amountOut?.currency?.symbol ?? ''}`
             )}
@@ -82,7 +83,7 @@ export const TradeStats: FC = () => {
             <span className="text-sm text-gray-700 dark:text-slate-400">Network fee</span>
             <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
               {loading || !trade?.gasSpent || trade.gasSpent === '0' ? (
-                <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
+                <SkeletonText fontSize="sm" className="w-[120px]" />
               ) : trade?.gasSpent && trade.gasSpent !== '0' ? (
                 `~$${trade?.gasSpent}`
               ) : null}
@@ -94,7 +95,7 @@ export const TradeStats: FC = () => {
             <span className="text-sm text-gray-700 dark:text-slate-400">Route</span>
             <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
               {loading ? (
-                <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
+                <SkeletonText fontSize="sm" className="w-[120px]" />
               ) : (
                 <button onClick={() => setOpen(true)} className="text-sm text-blue font-semibold">
                   View
@@ -123,11 +124,8 @@ export const TradeStats: FC = () => {
                   }}
                 </AddressToEnsResolver>
                 {address !== recipient && (
-                  <Explainer iconSize={18} placement="bottom" className="!text-yellow">
-                    <span className="text-gray-500 dark:text-slate-400 font-medium">
-                      Recipient is different from the connected wallet address. If this is expected, ignore this
-                      warning.
-                    </span>
+                  <Explainer>
+                    Recipient is different from the connected wallet address. If this is expected, ignore this warning.
                   </Explainer>
                 )}
               </a>

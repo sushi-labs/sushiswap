@@ -1,6 +1,6 @@
-import { Button } from '@sushiswap/ui'
 import { Dispatch, FC, SetStateAction, useCallback } from 'react'
 import { Category } from 'types'
+import { Toggle } from '@sushiswap/ui/components/toggle'
 
 interface Categories {
   selected: string[]
@@ -25,16 +25,13 @@ export const Categories: FC<Categories> = ({ categories, selected, onSelect }) =
         if (!category?.id) return <></>
 
         return (
-          <Button
-            size="sm"
-            color={selected.includes(category.id) ? 'blue' : 'gray'}
-            onClick={() => handleSelect(category.id as string)}
-            variant="outlined"
+          <Toggle
+            pressed={Boolean(selected.includes(category.id))}
+            onPressedChange={() => handleSelect(category.id as string)}
             key={category.id}
-            className="!text-xs capitalize"
           >
             {category?.attributes?.name}
-          </Button>
+          </Toggle>
         )
       })}
     </>

@@ -2,13 +2,15 @@
 
 import { yupResolver } from '@hookform/resolvers/yup'
 import { ChainId } from '@sushiswap/chain'
-import { Button, classNames, Loader, Typography } from '@sushiswap/ui'
 import { BackgroundImageMakerField, Form, ImageCanvas, NetworkModal, SizeSlider, UploadImageField } from './components'
 import stringify from 'fast-json-stable-stringify'
 import { addressValidator, useTokenData } from './lib'
 import React, { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
+import { Loader } from '@sushiswap/ui/components/loader'
+import { classNames } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/components/button'
 
 enum SubmitState {
   Nothing = 'nothing',
@@ -106,9 +108,7 @@ export default function Partner() {
         <Form.Card className={submitState?.error ? '!border-red/40' : ''}>
           <Form.Section columns={6} header={<Form.Section.Header header="Submit your request" />}>
             <div className="col-span-6">
-              <Typography weight={600} className="mb-2">
-                Network
-              </Typography>
+              <span className="font-medium mb-2">Network</span>
               <NetworkModal chainId={chainId} setChainId={setChainId} />
             </div>
             <div className="col-span-6">
@@ -134,7 +134,7 @@ export default function Partner() {
               />
             </div>
             <div className="col-span-6">
-              <Typography weight={600}>Logo</Typography>
+              <span className="font-medium">Logo</span>
               <div className="flex gap-6 mt-2">
                 <div className="flex flex-grow">
                   <UploadImageField />
@@ -147,7 +147,7 @@ export default function Partner() {
               </div>
             )}
             <div className="col-span-3 space-y-3">
-              <Typography weight={600}>Background color</Typography>
+              <span className="font-medium">Background color</span>
               <BackgroundImageMakerField />
             </div>
             <div
@@ -156,7 +156,7 @@ export default function Partner() {
                 !logoFile ? 'hidden' : 'block'
               )}
             >
-              <Typography weight={600}>Preview</Typography>
+              <span className="font-medium">Preview</span>
               <ImageCanvas size={128} canvasRef={canvasRef} className="rounded-full" />
             </div>
             {/* <div className="flex col-span-6">
@@ -181,8 +181,7 @@ export default function Partner() {
               <Button
                 disabled={(tokenAddress && !tokenData?.symbol) || !logoUri || !background}
                 loading={submitState.state === SubmitState.Loading}
-                variant="filled"
-                color="gray"
+                variant="secondary"
                 onClick={onSubmit}
                 type="button"
                 fullWidth
@@ -191,31 +190,27 @@ export default function Partner() {
               </Button>
             </div>
             {submitState?.error && (
-              <Typography weight={600} variant="sm" className="col-span-6 text-center text-red">
-                {submitState?.error}
-              </Typography>
+              <span className="text-sm font-medium col-span-6 text-center text-red">{submitState?.error}</span>
             )}
             {submitState?.data && (
               <div className="flex flex-col col-span-6 gap-5 p-4 border rounded-xl border-slate-700">
                 <div className="flex flex-col gap-1">
-                  <Typography variant="sm" weight={600}>
-                    List pull request
-                  </Typography>
-                  <Typography variant="sm" className="text-blue-400 cursor-pointer hover:text-blue-600">
+                  <span className="text-sm font-medium">List pull request</span>
+                  <span className="text-sm text-blue-400 cursor-pointer hover:text-blue-600">
                     <a target="_blank" rel="noreferrer" href={submitState.data?.listPr}>
                       {submitState.data?.listPr}
                     </a>
-                  </Typography>
+                  </span>
                 </div>
               </div>
             )}
           </Form.Section>
         </Form.Card>
       </Form>
-      <Typography variant="xs" weight={300} className="flex justify-center text-center">
+      <span className="text-xs flex justify-center text-center">
         I understand that filing an issue or adding liquidity does not guarantee addition to the Sushi default token
         list. I will not ping the Discord about this listing request.
-      </Typography>
+      </span>
     </div>
   )
 }

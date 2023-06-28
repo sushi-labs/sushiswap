@@ -1,6 +1,6 @@
 import { ErrorCode } from '@ethersproject/logger'
 import { TransactionRequest } from '@ethersproject/providers'
-import { createErrorToast } from '@sushiswap/ui/future/components/toast'
+import { createErrorToast } from '@sushiswap/ui/components/toast'
 import { BigNumber } from 'ethers'
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react'
 import { ProviderRpcError, usePrepareSendTransaction, useSendTransaction as useSendTransaction_ } from 'wagmi'

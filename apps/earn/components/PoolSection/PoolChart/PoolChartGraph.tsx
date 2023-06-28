@@ -1,5 +1,5 @@
 import { formatPercent, formatUSD } from '@sushiswap/format'
-import { AppearOnMount, Typography, classNames } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo } from 'react'
@@ -11,8 +11,10 @@ import { useTheme } from 'next-themes'
 import { PoolChartPeriod, PoolChartType } from './types'
 import { chartPeriods } from './constants'
 import { ChainId } from '@sushiswap/chain'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
+
 import resolveConfig from 'tailwindcss/resolveConfig'
+import { AppearOnMount } from '@sushiswap/ui/components/animation'
 
 interface PoolChartProps {
   chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL | PoolChartType.APR
@@ -182,7 +184,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
   return (
     <>
       <div className="flex flex-col">
-        <Typography variant="xl" weight={500} className="text-gray-900 dark:text-slate-50">
+        <p className="text-xl font-medium text-gray-900 dark:text-slate-50">
           <span className="hoveredItemValue">
             {chart === PoolChartType.APR ? formatPercent(yData[yData.length - 1]) : formatUSD(yData[yData.length - 1])}
           </span>{' '}
@@ -193,15 +195,15 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
               earned
             </span>
           )}
-        </Typography>
+        </p>
         {xData.length && (
-          <Typography variant="sm" className="text-gray-500 dark:text-slate-500 hoveredItemName">
+          <p className="text-sm text-gray-500 dark:text-slate-500 hoveredItemName">
             <AppearOnMount>{format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}</AppearOnMount>
-          </Typography>
+          </p>
         )}
       </div>
       {isLoading ? (
-        <Skeleton.Box className={classNames('h-[400px] w-full dark:via-slate-800 dark:to-slate-900')} />
+        <SkeletonBox className={classNames('h-[400px] w-full dark:via-slate-800 dark:to-slate-900')} />
       ) : (
         <ReactECharts option={DEFAULT_OPTION} style={{ height: 400 }} />
       )}

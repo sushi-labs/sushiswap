@@ -2,11 +2,11 @@ import { TrashIcon } from '@heroicons/react/24/outline'
 import chains from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { useCustomTokens, useIsMounted } from '@sushiswap/hooks'
-import { SlideIn } from '@sushiswap/ui/future/components/animation'
-import { List } from '@sushiswap/ui/future/components/list/List'
-import { Overlay } from '@sushiswap/ui/future/components/overlay'
+import { SlideIn } from '@sushiswap/ui/components/animation'
+import { List } from '@sushiswap/ui/components/list/List'
+import { Overlay } from '@sushiswap/ui/components/overlay'
 import React, { FC, useMemo, useState } from 'react'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 
 export const TokenSelectorCustomTokensOverlay: FC = () => {
   const isMounted = useIsMounted()
@@ -31,7 +31,7 @@ export const TokenSelectorCustomTokensOverlay: FC = () => {
 
   return (
     <>
-      <Button className="rounded-full" color="blue" size="xs" onClick={() => setOpen(true)}>
+      <Button className="rounded-full"  size="sm" onClick={() => setOpen(true)}>
         Manage
       </Button>
       <SlideIn.FromRight show={open} onClose={() => setOpen(false)} className="!mt-0">

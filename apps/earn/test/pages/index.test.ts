@@ -1,8 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
-import { Page, test, expect } from '@playwright/test'
-import { USDC_ADDRESS, Native, Token, Type } from '@sushiswap/currency'
-
-
+import { expect, Page, test } from '@playwright/test'
+import { Native, Token, Type, USDC_ADDRESS } from '@sushiswap/currency'
 
 export async function approve(page: Page, locator: string) {
   await timeout(500) // give the approve button time to load contracts, unrealistically fast when running test
@@ -210,7 +208,7 @@ async function createOrAddLiquidityV3(page: Page, args: V3PoolArgs) {
   await page.locator(`[testdata-id=add-liquidity-token${tokenOrderNumber}-input]`).fill(args.amount)
 
   // if ((args.amountBelongsToToken0 && !args.token0.isNative) || (!args.amountBelongsToToken0 && !args.token1.isNative)) {
-  await approve(page, `approve-erc20-${tokenOrderNumber}`)
+  await approve(page, `approve-erc20-${tokenOrderNumber}-button`)
   // }
   const previewLocator = page.locator('[testdata-id=add-liquidity-preview-button]')
   await expect(previewLocator).toBeVisible({ timeout: 10_000 })
@@ -243,12 +241,12 @@ async function createOrAddTridentPool(page: Page, args: TridentPoolArgs) {
   await page.locator('[testdata-id=add-liquidity-token1-input]').fill(args.amount1)
 
   const approveBentoId =
-    args.type === 'CREATE' ? 'create-trident-approve-bentobox' : 'add-liquidity-trident-approve-bentobox'
+    args.type === 'CREATE' ? 'create-trident-approve-bentobox-button' : 'add-liquidity-trident-approve-bentobox-button'
   await approve(page, approveBentoId)
   const approveTokenId =
     args.type === 'CREATE'
-      ? `create-trident-approve-token${args.token0.isNative ? 1 : 0}`
-      : `add-liquidity-trident-approve-token${args.token0.isNative ? 1 : 0}`
+      ? `create-trident-approve-token${args.token0.isNative ? 1 : 0}-button`
+      : `add-liquidity-trident-approve-token${args.token0.isNative ? 1 : 0}-button`
   await approve(page, approveTokenId)
 
   const reviewSelector =
@@ -283,7 +281,7 @@ async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
       .fill(args.token0.isNative ? args.amount1 : args.amount0)
   }
 
-  await approve(page, `approve-token-${args.token0.isNative ? 1 : 0}`)
+  await approve(page, `approve-token-${args.token0.isNative ? 1 : 0}-button`)
 
   const reviewSelector =
     args.type === 'CREATE' ? '[testdata-id=create-pool-button]' : '[testdata-id=add-liquidity-button]'
@@ -303,8 +301,7 @@ async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
 }
 
 async function removeLiquidityV3(page: Page) {
-  const url = process.env.PLAYWRIGHT_URL as string
-  await page.goto(url)
+  await page.goto(BASE_URL)
   await page.locator('[testdata-id=my-positions-button]').click()
 
   const concentratedPositionTableSelector = page.locator('[testdata-id=concentrated-positions-loading-0]')
@@ -338,13 +335,13 @@ async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
   const maxButtonSelector = page.locator(`[testdata-id=${type.toLowerCase()}-max-button]`)
   if (!(await maxButtonSelector.isVisible())) {
     await expect(maxButtonSelector).toBeEnabled()
-    await page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-header]`).click()
+    await page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-header-button]`).click()
   }
   await expect(maxButtonSelector).toBeVisible()
   await expect(maxButtonSelector).toBeEnabled()
   await maxButtonSelector.click()
-  if(type === 'STAKE') { 
-    await approve(page, `${type.toLowerCase()}-approve-slp`)
+  if (type === 'STAKE') {
+    await approve(page, `${type.toLowerCase()}-approve-slp-button`)
   }
 
   const actionSelector = page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-button]`)
@@ -359,7 +356,7 @@ async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
 async function removeLiquidityV2(page: Page) {
   await switchNetwork(page, CHAIN_ID)
   await page.locator('[testdata-id=remove-liquidity-max-button]').click()
-  await approve(page, 'approve-remove-liquidity-slp')
+  await approve(page, 'approve-remove-liquidity-slp-button')
 
   const removeLiquidityLocator = page.locator('[testdata-id=remove-liquidity-button]')
 
@@ -381,7 +378,7 @@ async function handleToken(page: Page, currency: Type, order: 'FIRST' | 'SECOND'
   await page.fill(`[testdata-id=${selectorInfix}-token-selector-address-input]`, currency.symbol as string)
   const rowSelector = page.locator(
     `[testdata-id=${selectorInfix}-token-selector-row-${
-      currency.isNative ? AddressZero : currency.address.toLowerCase()
+      currency.isNative ? AddressZero : currency.wrapped.address.toLowerCase()
     }]`
   )
   await expect(rowSelector).toBeVisible()

@@ -1,5 +1,5 @@
-import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
-import { Button, Container, Typography } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/components/button'
+import { Container } from '@sushiswap/ui/components/container'
 import { FC } from 'react'
 
 import { MoveImage } from './MoveImage'
@@ -11,22 +11,17 @@ export const Move: FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-[380px_auto] justify-center gap-x-[100px] gap-y-[20px]">
           <div className="order-2 lg:order-1 flex flex-col justify-center gap-3">
             <div className="flex flex-col items-center lg:items-start">
-              <Typography variant="h1" weight={600} className="text-center lg:text-left">
+              <span className="text-4xl font-semibold text-center lg:text-left">
                 Move assets across networks in seconds.
-              </Typography>
-              <Typography variant="lg" weight={400} className="text-center lg:text-left mt-2">
+              </span>
+              <span className="text-lg text-center lg:text-left mt-2">
                 We will always find you the best rate, no matter what network you’re on, with no extra fees.
-              </Typography>
-              <div className="flex gap-6">
-                <Button
-                  as="a"
-                  target="_blank"
-                  href="https://www.sushi.com/xswap"
-                  className="!p-0 mt-3"
-                  variant="empty"
-                  endIcon={<ExternalLinkIcon width={16} height={16} />}
-                >
-                  Visit xSwap
+              </span>
+              <div className="flex gap-6 mt-3">
+                <Button asChild variant="secondary">
+                  <a target="_blank" href="https://www.sushi.com/xswap" rel="noreferrer">
+                    Visit xSwap
+                  </a>
                 </Button>
               </div>
             </div>

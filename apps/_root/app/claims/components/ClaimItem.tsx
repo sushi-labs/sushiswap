@@ -1,6 +1,6 @@
 'use client'
 
-import { classNames, Currency, NetworkIcon } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import React, { FC, useMemo } from 'react'
 import { RP2MerkleTreeClaimSchema } from '@sushiswap/wagmi/future/hooks/exploits/constants'
 import { z } from 'zod'
@@ -11,17 +11,20 @@ import {
   useTokenRevokeApproval,
   useTokenWithCache,
 } from '@sushiswap/wagmi/future/hooks'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
+
 import { Amount } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { RP2ClaimChainId } from '@sushiswap/wagmi/future/hooks/exploits/types'
 import { CheckIcon } from '@heroicons/react-v1/solid'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { Address } from 'wagmi'
 import { routeProcessor2Address } from '@sushiswap/route-processor/exports/exports'
 import { ZERO } from '@sushiswap/math'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
+import { Badge } from '@sushiswap/ui/components/Badge'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 
 interface ClaimItem {
   account: Address
@@ -59,8 +62,8 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
         <span className="text-sm font-medium text-gray-600 dark:text-white">
           {isLoading ? (
             <div className="flex gap-3 items-center">
-              <Skeleton.Circle radius={24} />
-              <Skeleton.Text fontSize="text-sm" className="max-w-[100px]" />
+              <SkeletonCircle radius={24} />
+              <SkeletonText fontSize="sm" className="max-w-[100px]" />
             </div>
           ) : token ? (
             <div className="flex gap-3 items-center">
@@ -80,7 +83,7 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
       <div className="flex justify-end">
         <span className="w-full text-right flex justify-end text-sm font-semibold text-gray-900 dark:text-white">
           {isLoading ? (
-            <Skeleton.Text className="max-w-[75px]" align="right" />
+            <SkeletonText className="max-w-[75px]" align="right" />
           ) : token ? (
             <>
               {amount?.toSignificant(6)} {token.symbol}
@@ -91,42 +94,26 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
         </span>
       </div>
       {!allowance || isLoading ? (
-        <Skeleton.Text className="max-w-[100px]" align="right" />
+        <SkeletonText className="max-w-[100px]" align="right" />
       ) : (
         <div className="flex justify-end">
           {!isClaimed ? (
-            <Checker.Connect size="xs">
-              <Checker.Network size="xs" chainId={chainId}>
+            <Checker.Connect size="sm">
+              <Checker.Network size="sm" chainId={chainId}>
                 {allowance.greaterThan(ZERO) ? (
-                  <Button
-                    size="xs"
-                    color="blue"
-                    loading={isRevokePending}
-                    disabled={isRevokePending}
-                    onClick={() => revoke?.()}
-                  >
+                  <Button size="sm" loading={isRevokePending} disabled={isRevokePending} onClick={() => revoke?.()}>
                     Revoke Approval
                   </Button>
                 ) : (
-                  <Button
-                    onClick={() => write?.()}
-                    size="xs"
-                    disabled={isClaimPending}
-                    loading={isClaimPending}
-                    variant="filled"
-                    color="blue"
-                  >
+                  <Button onClick={() => write?.()} size="sm" disabled={isClaimPending} loading={isClaimPending}>
                     <div className="flex gap-1 items-center">Claim</div>
                   </Button>
                 )}
               </Checker.Network>
             </Checker.Connect>
           ) : (
-            <Button size="xs" variant="outlined" color="green" className="pointer-events-none">
-              <div className="flex gap-1 items-center">
-                <CheckIcon strokeWidth={2} width={16} height={16} className="text-green" />
-                Claimed
-              </div>
+            <Button icon={CheckIcon} size="sm" variant="secondary" className="pointer-events-none">
+              Claimed
             </Button>
           )}
         </div>

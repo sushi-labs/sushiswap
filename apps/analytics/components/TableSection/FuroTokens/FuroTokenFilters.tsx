@@ -1,4 +1,4 @@
-import { ChainFilter, SearchFilter, SettingFilter } from 'components/Filters'
+import { ChainFilter, SearchFilter } from 'components/Filters'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import React, { FC } from 'react'
 

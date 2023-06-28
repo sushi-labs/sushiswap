@@ -1,5 +1,5 @@
 import { Transition } from '@headlessui/react'
-import { classNames, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { FC, forwardRef, Key } from 'react'
 import ReactSlider, { ReactSliderProps } from 'react-slider'
 
@@ -52,9 +52,9 @@ export const Slider: FC<Slider> = forwardRef<ReactSlider, Slider>(({ markFormatt
         renderTrack={Track}
         renderMark={({ key, style }) => {
           return (
-            <Typography style={style} variant="xxs" key={key} className="mt-4 text-secondary" as="span">
+            <span style={style} key={key} className="text-[10px] mt-4 text-secondary">
               {markFormatter(key)}
-            </Typography>
+            </span>
           )
         }}
       />

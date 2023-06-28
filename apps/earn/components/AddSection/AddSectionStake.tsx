@@ -3,10 +3,9 @@ import { tryParseAmount } from '@sushiswap/currency'
 import { ChefType, Pool, usePool } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
-import { Dots, Typography } from '@sushiswap/ui'
-import { getMasterChefContractConfig, useMasterChefDeposit } from '@sushiswap/wagmi'
+import { getMasterChefContractConfig, useAccount, useMasterChefDeposit } from '@sushiswap/wagmi'
 import { FC, Fragment, useMemo, useState } from 'react'
-import { useAccount } from '@sushiswap/wagmi'
+import { Dots } from '@sushiswap/ui/components/dots'
 
 import { useGraphPool } from '../../lib/hooks'
 import { usePoolPosition } from '../PoolPositionProvider'
@@ -14,7 +13,7 @@ import { AddSectionStakeWidget } from './AddSectionStakeWidget'
 import { useSWRConfig } from 'swr'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import Button from '@sushiswap/ui/future/components/button/Button'
+import { Button } from '@sushiswap/ui/components/button'
 import { APPROVE_TAG_STAKE } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
 
@@ -64,12 +63,12 @@ const _AddSectionStake: FC<AddSectionStakeProps> = withCheckerRoot(({ pool, chef
   } = useGraphPool(pool)
   const { balance } = usePoolPosition()
 
-  const amount = useMemo(() => {
-    return tryParseAmount(value, liquidityToken)
+  const amounts = useMemo(() => {
+    return [tryParseAmount(value, liquidityToken)]
   }, [liquidityToken, value])
 
   const { sendTransaction, isLoading: isWritePending } = useMasterChefDeposit({
-    amount,
+    amount: amounts[0],
     chainId: liquidityToken.chainId,
     chef: chefType,
     pid: farmId,
@@ -89,9 +88,9 @@ const _AddSectionStake: FC<AddSectionStakeProps> = withCheckerRoot(({ pool, chef
         leaveTo="transform opacity-0"
       >
         <div className="border dark:border-slate-200/5 border-gray-900/5 flex justify-center items-center z-[100] absolute inset-0 backdrop-blur bg-black bg-opacity-[0.24] rounded-2xl">
-          <Typography variant="xs" weight={600} className="bg-white bg-opacity-[0.12] rounded-full p-2 px-3">
+          <p className="text-xs font-semibold  bg-white bg-opacity-[0.12] rounded-full p-2 px-3">
             No liquidity tokens found, did you add liquidity first?
-          </Typography>
+          </p>
         </div>
       </Transition>
       <div className={balance?.[FundSource.WALLET]?.greaterThan(ZERO) ? '' : 'opacity-40 pointer-events-none'}>
@@ -104,28 +103,21 @@ const _AddSectionStake: FC<AddSectionStakeProps> = withCheckerRoot(({ pool, chef
           reserve1={reserve1}
           liquidityToken={liquidityToken}
         >
-          <Checker.Connect size="xl" fullWidth>
-            <Checker.Network size="xl" fullWidth chainId={pool.chainId}>
-              <Checker.Amounts
-                size="xl"
-                fullWidth
-                chainId={pool.chainId as ChainId}
-                amounts={useMemo(() => [amount], [amount])}
-              >
+          <Checker.Connect fullWidth>
+            <Checker.Network fullWidth chainId={pool.chainId}>
+              <Checker.Amounts fullWidth chainId={pool.chainId as ChainId} amounts={amounts}>
                 <Checker.ApproveERC20
-                  size="xl"
                   fullWidth
                   id="stake-approve-slp"
-                  amount={amount}
+                  amount={amounts[0]}
                   contract={getMasterChefContractConfig(pool.chainId, chefType)?.address}
                   enabled={Boolean(getMasterChefContractConfig(pool.chainId, chefType)?.address)}
                 >
                   <Checker.Success tag={APPROVE_TAG_STAKE}>
                     <Button
+                      size="xl"
                       onClick={() => sendTransaction?.()}
                       fullWidth
-                      size="xl"
-                      variant="filled"
                       disabled={!approved || isWritePending}
                       testId="stake-liquidity"
                     >

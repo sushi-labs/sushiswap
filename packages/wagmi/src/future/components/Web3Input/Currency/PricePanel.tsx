@@ -1,6 +1,7 @@
 import { Price, Type, tryParseAmount } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui/components/skeleton'
+
 import { FC, useMemo } from 'react'
 import { CurrencyInputProps } from './CurrencyInput'
 import { ZERO } from '@sushiswap/math'
@@ -20,7 +21,7 @@ export const PricePanel: FC<PricePanel> = ({ loading, price, currency, value, us
   if (loading)
     return (
       <div className="w-1/5 flex items-center">
-        <Skeleton.Text fontSize="text-lg" className="w-full" />
+        <SkeletonText fontSize="lg" className="w-full" />
       </div>
     )
 

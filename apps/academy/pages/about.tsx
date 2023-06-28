@@ -1,5 +1,5 @@
 import { Disclosure, Transition } from '@headlessui/react'
-import { classNames, Container, Link } from '@sushiswap/ui'
+import { classNames, Link } from '@sushiswap/ui'
 import sushiPulse from 'common/assets/sushi-pulse.png'
 import sushidilly from 'common/assets/sushidilly.png'
 import { DEFAULT_SIDE_PADDING } from 'common/helpers'
@@ -8,6 +8,7 @@ import { roadmapSections } from 'common/roadmap'
 import { format } from 'date-fns'
 import { NextPage } from 'next'
 import Image from 'next/image'
+import { Container } from '@sushiswap/ui/components/container'
 
 const About: NextPage = () => {
   return (

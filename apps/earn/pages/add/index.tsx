@@ -1,6 +1,6 @@
 import { ArrowLeftIcon, SwitchHorizontalIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
-import { NetworkIcon } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { Layout, SelectNetworkWidget, SelectPricesWidget, SelectTokensWidget } from '../../components'
 import React, { FC, useMemo, useState } from 'react'
 import { SWRConfig } from 'swr'
@@ -15,16 +15,17 @@ import { SelectFeeConcentratedWidget } from '../../components/NewPositionSection
 import { ConcentratedLiquidityWidget } from '../../components/ConcentratedLiquidityWidget'
 import { useAccount } from '@sushiswap/wagmi'
 import { useConcentratedLiquidityPool, useConcentratedPositionInfo } from '@sushiswap/wagmi/future/hooks'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { Currency } from '@sushiswap/ui/future/components/currency'
-import { List } from '@sushiswap/ui/future/components/list/List'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { Badge } from '@sushiswap/ui/components/Badge'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { List } from '@sushiswap/ui/components/list/List'
+import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { tryParseAmount } from '@sushiswap/currency'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { computePoolAddress } from '@sushiswap/v3-sdk'
 import { getV3FactoryContractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3FactoryContract'
-import { SplashController } from '@sushiswap/ui/future/components/SplashController'
+import { SplashController } from '@sushiswap/ui/components/SplashController'
+import { Button } from '@sushiswap/ui/components/button'
 import { useRouter } from 'next/router'
 
 export function AddPage() {
@@ -37,14 +38,7 @@ export function AddPage() {
             <Layout>
               <div className="flex flex-col gap-2">
                 <Link className="group flex gap-4 items-center mb-2" href="/" shallow={true}>
-                  <IconButton
-                    icon={ArrowLeftIcon}
-                    iconProps={{
-                      width: 24,
-                      height: 24,
-                      transparent: true,
-                    }}
-                  />
+                  <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
                   <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
                     Go back to pools list
                   </span>
@@ -155,8 +149,8 @@ const _Add: FC = () => {
                 </>
               ) : tokensLoading ? (
                 <>
-                  <Skeleton.Text fontSize="text-xl" className="w-full" />
-                  <Skeleton.Text fontSize="text-base" className="w-full" />
+                  <SkeletonText fontSize="xl" className="w-full" />
+                  <SkeletonText className="w-full" />
                 </>
               ) : (
                 <></>
@@ -182,24 +176,19 @@ const _Add: FC = () => {
             {!isInitialLoading && !pool ? (
               <span className="">N/A</span>
             ) : isInitialLoading ? (
-              <Skeleton.Text className="w-[120px]" />
+              <SkeletonText className="w-[120px]" />
             ) : token0 && token1 && pool ? (
-              <div
-                onClick={() => setInvert((prev) => !prev)}
-                role="button"
-                className="flex items-center font-semibold gap-1.5 rounded-xl text-blue hover:text-blue-600"
-              >
-                <SwitchHorizontalIcon width={16} height={16} />
-                <div className="flex items-baseline gap-1.5">
-                  {invert ? token1.symbol : token0.symbol} ={' '}
-                  {pool.priceOf(invert ? token1.wrapped : token0.wrapped)?.toSignificant(4)}{' '}
-                  {invert ? token0.symbol : token1.symbol}
-                  <span className="text-sm font-normal">${fiatAmountsAsNumber[invert ? 1 : 0].toFixed(2)}</span>
-                </div>
+              <div>
+                <Button icon={SwitchHorizontalIcon} variant="link" onClick={() => setInvert((prev) => !prev)}>
+                  <div className="flex items-baseline gap-1.5">
+                    {invert ? token1.symbol : token0.symbol} ={' '}
+                    {pool.priceOf(invert ? token1.wrapped : token0.wrapped)?.toSignificant(4)}{' '}
+                    {invert ? token0.symbol : token1.symbol}
+                    <span className="text-sm font-normal">${fiatAmountsAsNumber[invert ? 1 : 0].toFixed(2)}</span>
+                  </div>
+                </Button>
               </div>
-            ) : (
-              <></>
-            )}
+            ) : null}
           </div>
         </div>
       </div>

@@ -1,14 +1,19 @@
-import { List } from '@sushiswap/ui/future/components/list/List'
 import { Fraction, JSBI, Percent, ZERO } from '@sushiswap/math'
 import { RadioGroup } from '@headlessui/react'
-import { classNames, Dots } from '@sushiswap/ui'
+import { classNames, Dots, List, Currency } from '@sushiswap/ui'
 import { formatUSD } from '@sushiswap/format'
-import { Currency } from '@sushiswap/ui/future/components/currency'
 import { unwrapToken } from '../../lib/functions'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { getMasterChefContractConfig, useMasterChefWithdraw, usePair, useTotalSupply } from '@sushiswap/wagmi'
+import {
+  Address,
+  getMasterChefContractConfig,
+  useAccount,
+  useMasterChefWithdraw,
+  usePair,
+  useTotalSupply,
+} from '@sushiswap/wagmi'
 import { APPROVE_TAG_MIGRATE, APPROVE_TAG_UNSTAKE, Bound, Field } from '../../lib/constants'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { SelectFeeConcentratedWidget } from '../NewPositionSection/SelectFeeConcentratedWidget'
 import { SelectPricesWidget } from '../NewPositionSection'
 import {
@@ -16,8 +21,8 @@ import {
   Pool as V3Pool,
   Position,
   priceToClosestTick,
-  TickMath,
   SushiSwapV3ChainId,
+  TickMath,
 } from '@sushiswap/v3-sdk'
 import React, { FC, useMemo, useState } from 'react'
 import { useGraphPool, useTokenAmountDollarValues } from '../../lib/hooks'
@@ -27,13 +32,12 @@ import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { usePoolPositionRewards } from '../PoolPositionRewardsProvider'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { useV3Migrate, V3MigrateContractConfig } from '@sushiswap/wagmi/future/hooks/migrate/hooks/useV3Migrate'
-import { Address, useAccount } from '@sushiswap/wagmi'
 import { Amount, Price, tryParseAmount } from '@sushiswap/currency'
 import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
 import { ArrowDownIcon, ArrowLeftIcon, SwitchHorizontalIcon } from '@heroicons/react/solid'
 import { FundSource } from '@sushiswap/hooks'
-import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
+import { Modal } from '@sushiswap/ui/components/modal/Modal'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
@@ -464,10 +468,9 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
             <div className="p-6 font-medium bg-blue/10 text-blue rounded-xl">
               You have staked liquidity balance. Please unstake and claim your rewards before migrating.
             </div>
-            <Checker.Connect size="xl" fullWidth>
-              <Checker.Network size="xl" fullWidth chainId={pool.chainId}>
+            <Checker.Connect fullWidth>
+              <Checker.Network fullWidth chainId={pool.chainId}>
                 <Checker.ApproveERC20
-                  size="xl"
                   fullWidth
                   id="approve-token0"
                   amount={stakedBalance}
@@ -476,10 +479,9 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                 >
                   <Checker.Success tag={APPROVE_TAG_UNSTAKE}>
                     <Button
+                      size="xl"
                       onClick={() => sendTransaction?.()}
                       fullWidth
-                      size="xl"
-                      variant="filled"
                       disabled={!approved || isWritePending}
                       testId="unstake-liquidity"
                     >
@@ -605,28 +607,19 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
               </div>
             )}
           </SelectPricesWidget>
-          <Checker.Connect size="xl" fullWidth>
-            <Checker.Network size="xl" fullWidth chainId={pool.chainId}>
+          <Checker.Connect fullWidth>
+            <Checker.Network fullWidth chainId={pool.chainId}>
               <Checker.Custom
-                showGuardIfTrue={!balance?.[FundSource.WALLET].greaterThan(ZERO)}
-                guard={
-                  <Button size="xl" fullWidth>
-                    Not enough balance
-                  </Button>
-                }
+                guardWhen={!balance?.[FundSource.WALLET].greaterThan(ZERO)}
+                guardText="Not enough balance"
               >
                 <Checker.Custom
-                  showGuardIfTrue={Boolean(
-                    !position || positionAmount0?.equalTo(ZERO) || positionAmount1?.equalTo(ZERO)
+                  guardWhen={Boolean(
+                      !position || positionAmount0?.equalTo(ZERO) || positionAmount1?.equalTo(ZERO)
                   )}
-                  guard={
-                    <Button size="xl" fullWidth>
-                      Enter valid range
-                    </Button>
-                  }
+                  guardText="Enter valid range"
                 >
                   <Checker.ApproveERC20
-                    size="xl"
                     fullWidth
                     id="approve-token0"
                     amount={balance?.[FundSource.WALLET] ?? undefined}
@@ -636,7 +629,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                     <Checker.Success tag={APPROVE_TAG_MIGRATE}>
                       <Modal.Trigger tag={MODAL_MIGRATE_ID}>
                         {({ open }) => (
-                          <Button onClick={open} fullWidth size="xl" variant="filled" testId="unstake-liquidity">
+                          <Button size="xl" onClick={open} fullWidth testId="unstake-liquidity">
                             Migrate
                           </Button>
                         )}

@@ -1,5 +1,5 @@
+import {SwapChainId} from '../../types'
 import { z } from 'zod'
-import { SwapChainId } from '../../types'
 
 export const queryParamsSchema = z.object({
   fromChainId: z.coerce
