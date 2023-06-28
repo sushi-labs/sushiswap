@@ -101,6 +101,7 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   )
 
   const close = useCallback(() => setOpen(false), [])
+  const amounts = useMemo(() => [parsedInput0, parsedInput1], [parsedInput0, parsedInput1])
 
   return (
     <Checker.Root>
@@ -129,7 +130,7 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
             guardText="Pool not found"
           >
             <Checker.Network fullWidth chainId={_pool.chainId}>
-              <Checker.Amounts fullWidth chainId={_pool.chainId} amounts={[parsedInput0, parsedInput1]}>
+              <Checker.Amounts fullWidth chainId={_pool.chainId as ChainId} amounts={amounts}>
                 <Checker.ApproveBentobox
                   tag={APPROVE_TAG_ADD_TRIDENT}
                   chainId={chainId}

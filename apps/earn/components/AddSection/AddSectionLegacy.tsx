@@ -67,6 +67,7 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   )
 
   const close = useCallback(() => setOpen(false), [])
+  const amounts = useMemo(() => [parsedInput0, parsedInput1], [parsedInput1, parsedInput0])
 
   return (
     <Checker.Root>
@@ -86,7 +87,7 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
             guardText="Pool not found"
           >
             <Checker.Network fullWidth chainId={_pool.chainId}>
-              <Checker.Amounts fullWidth chainId={_pool.chainId} amounts={[parsedInput0, parsedInput1]}>
+              <Checker.Amounts fullWidth chainId={_pool.chainId as ChainId} amounts={amounts}>
                 <Checker.ApproveERC20
                   id="approve-token-0"
                   className="whitespace-nowrap"

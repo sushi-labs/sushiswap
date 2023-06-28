@@ -15,6 +15,7 @@ import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { Button } from '@sushiswap/ui/components/button'
 import { APPROVE_TAG_STAKE } from '../../lib/constants'
+import { ChainId } from '@sushiswap/chain'
 
 interface AddSectionStakeProps {
   pool: Pool
@@ -62,12 +63,12 @@ const _AddSectionStake: FC<AddSectionStakeProps> = withCheckerRoot(({ pool, chef
   } = useGraphPool(pool)
   const { balance } = usePoolPosition()
 
-  const amount = useMemo(() => {
-    return tryParseAmount(value, liquidityToken)
+  const amounts = useMemo(() => {
+    return [tryParseAmount(value, liquidityToken)]
   }, [liquidityToken, value])
 
   const { sendTransaction, isLoading: isWritePending } = useMasterChefDeposit({
-    amount,
+    amount: amounts[0],
     chainId: liquidityToken.chainId,
     chef: chefType,
     pid: farmId,
@@ -104,11 +105,11 @@ const _AddSectionStake: FC<AddSectionStakeProps> = withCheckerRoot(({ pool, chef
         >
           <Checker.Connect fullWidth>
             <Checker.Network fullWidth chainId={pool.chainId}>
-              <Checker.Amounts fullWidth chainId={pool.chainId} amounts={[amount]}>
+              <Checker.Amounts fullWidth chainId={pool.chainId} amounts={amounts}>
                 <Checker.ApproveERC20
                   fullWidth
                   id="stake-approve-slp"
-                  amount={amount}
+                  amount={amounts[0]}
                   contract={getMasterChefContractConfig(pool.chainId, chefType)?.address}
                   enabled={Boolean(getMasterChefContractConfig(pool.chainId, chefType)?.address)}
                 >

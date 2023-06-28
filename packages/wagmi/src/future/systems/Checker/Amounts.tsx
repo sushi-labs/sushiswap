@@ -1,17 +1,17 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Amount, Type } from '@sushiswap/currency'
-import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button } from '@sushiswap/ui/components/button'
 import React, { FC, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
-import { useBalances } from '../../../hooks'
+import { useBalancesWeb3 } from '../../hooks'
 import dynamic from 'next/dynamic'
 import {ButtonProps} from "@sushiswap/ui/components/button";
+import { ChainId } from '@sushiswap/chain'
 
 export interface AmountsProps extends ButtonProps {
-  chainId: number | undefined
+  chainId: ChainId | undefined
   amounts: (Amount<Type> | undefined)[]
 }
 
@@ -27,7 +27,7 @@ export const Component: FC<AmountsProps> = ({
   const amountsAreDefined = useMemo(() => amounts.every((el) => el?.greaterThan(ZERO)), [amounts])
   const currencies = useMemo(() => amounts.map((amount) => amount?.currency), [amounts])
 
-  const { data: balances } = useBalances({
+  const { data: balances } = useBalancesWeb3({
     currencies,
     chainId,
     account: address,
@@ -37,9 +37,7 @@ export const Component: FC<AmountsProps> = ({
   const sufficientBalance = useMemo(() => {
     return amounts?.every((amount) => {
       if (!amount) return true
-      return !balances?.[amount.currency.isNative ? AddressZero : amount.currency.wrapped.address]?.[
-        FundSource.WALLET
-      ]?.lessThan(amount)
+      return !balances?.[amount.currency.isNative ? AddressZero : amount.currency.wrapped.address]?.lessThan(amount)
     })
   }, [amounts, balances])
 

@@ -81,6 +81,7 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
+    "@sushiswap/react-query": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/token-lists": "workspace:*",
     "@tailwindcss/aspect-ratio": "0.4.2",

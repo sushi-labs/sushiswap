@@ -44,6 +44,10 @@ import { Explainer } from '@sushiswap/ui/components/explainer'
 import { Toggle } from '@sushiswap/ui/components/toggle'
 
 const PositionPage = () => {
+  const { query } = useRouter()
+
+  if (!queryParamsSchema.safeParse(query).success) return <></>
+
   return (
     <SplashController>
       <ConcentratedLiquidityProvider>
