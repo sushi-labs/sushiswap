@@ -5,7 +5,7 @@ import { getAllPoolsCodeMap } from '../actions/getAllPoolsCodeMap'
 export const usePoolsCodeMap = ({ enabled = true, ...variables }: UsePoolsParams) => {
   const { chainId, currencyA, currencyB } = variables
   return useQuery({
-    queryKey: ['usePoolsCodeMap', { chainId, currencyA, currencyB }],
+    queryKey: ['usePools', { chainId, currencyA, currencyB }],
     queryFn: async () => await getAllPoolsCodeMap(variables),
     refetchInterval: 10000,
     enabled,
