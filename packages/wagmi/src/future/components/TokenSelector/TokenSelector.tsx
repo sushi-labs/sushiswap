@@ -4,7 +4,6 @@ import { useBalances, usePrices, useTokens } from '@sushiswap/react-query'
 import { SlideIn } from '@sushiswap/ui/future/components/animation'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
-import { Input } from '@sushiswap/ui/future/components/input'
 import { Search } from '@sushiswap/ui/future/components/input/Search'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
@@ -15,7 +14,6 @@ import { useAccount } from 'wagmi'
 import { TokenSelectorCustomTokensOverlay } from './TokenSelectorCustomTokensOverlay'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Currency } from '@sushiswap/ui/future/components/currency'
-import { COMMON_BASES } from '@sushiswap/router-config'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { useCustomTokens, usePinnedTokens } from '@sushiswap/hooks'
 import { useSortedTokenList } from './hooks/useSortedTokenList'
@@ -40,7 +38,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
   const handleClose = useCallback(() => setOpen(false), [])
 
   const { data: customTokenMap, mutate: customTokenMutate } = useCustomTokens()
-  const { data: pinnedTokenSet, mutate: pinnedTokenMutate, hasToken: isTokenPinned } = usePinnedTokens()
+  const { data: pinnedTokenMap, mutate: pinnedTokenMutate, hasToken: isTokenPinned } = usePinnedTokens()
   const { data: tokenMap } = useTokens({ chainId })
   const { data: pricesMap } = usePrices({ chainId })
   const { data: balancesMap } = useBalances({ chainId, account: address })
@@ -64,14 +62,12 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
   })
 
   const pinnedTokens = useMemo(() => {
-    return Array.from(pinnedTokenSet)
-      .map((id) => {
-        const [cId, address] = id.split(':')
-        if (chainId !== Number(cId)) return null
+    return pinnedTokenMap[chainId]
+      .map((address) => {
         return tokenMap?.[address] || customTokenMap?.[address]
       })
       .filter((token): token is Token => !!token)
-  }, [pinnedTokenSet, tokenMap])
+  }, [pinnedTokenMap, tokenMap])
 
   const _onSelect = useCallback(
     (currency: Type) => {

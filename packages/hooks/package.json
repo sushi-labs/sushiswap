@@ -33,6 +33,7 @@
   "devDependencies": {
     "@sushiswap/math": "workspace:*",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/chain": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",

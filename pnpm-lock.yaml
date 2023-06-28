@@ -1806,7 +1806,7 @@ importers:
       '@sushiswap/chain': link:../chain
       '@sushiswap/database': link:../database
       '@whatwg-node/fetch': 0.8.4
-      tslib: 2.5.3
+      tslib: 2.6.0
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -2058,6 +2058,7 @@ importers:
     specifiers:
       '@ethersproject/address': 5.7.0
       '@ethersproject/providers': 5.7.2
+      '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -2082,6 +2083,7 @@ importers:
       copy-to-clipboard: 3.3.3
       react-responsive: 9.0.0-beta.10_react@18.2.0
     devDependencies:
+      '@sushiswap/chain': link:../chain
       '@sushiswap/currency': link:../currency
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -15895,14 +15897,14 @@ packages:
     resolution: {integrity: sha512-x1FCFnFifvYDDzTaLII71vG5uvDwgtmDTEVWAxrgeiR8VjMONcCXJx7E+USjDtHlwFmt9MysbqgF9b9Vjr6w+w==}
     engines: {node: '>=4'}
     dependencies:
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: true
 
   /ast-types/0.15.2:
     resolution: {integrity: sha512-c27loCv9QkZinsa5ProX751khO9DJl/AcB5c2KNtA6NRvHKS0PgLfcftz72KVq504vB0Gku5s2kUZzDBvQWvHg==}
     engines: {node: '>=4'}
     dependencies:
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: true
 
   /astral-regex/1.0.0:
@@ -30019,7 +30021,7 @@ packages:
       ast-types: 0.15.2
       esprima: 4.0.1
       source-map: 0.6.1
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: true
 
   /rechoir/0.6.2:
@@ -30574,7 +30576,7 @@ packages:
   /rxjs/7.8.1:
     resolution: {integrity: sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==}
     dependencies:
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: true
 
   /sade/1.8.1:
@@ -32740,6 +32742,9 @@ packages:
 
   /tslib/2.5.3:
     resolution: {integrity: sha512-mSxlJJwl3BMEQCUNnxXBU9jP4JBktcEGhURcPR6VQVlnP0FdDEsIaz0C35dXNGLyRfrATNofF0F5p2KPxQgB+w==}
+
+  /tslib/2.6.0:
+    resolution: {integrity: sha512-7At1WUettjcSRHXCyYtTselblcHl9PJFFVKiCAy/bY97+BPZXSQ2wbq0P9s8tK2G7dFQfNnlJnPAiArVBVBsfA==}
 
   /tslog/4.8.2:
     resolution: {integrity: sha512-eAKIRjxfSKYLs06r1wT7oou6Uv9VN6NW9g0JPidBlqQwPBBl5+84dm7r8zSOPVq1kyfEw1P6B3/FLSpZCorAgA==}
