@@ -10,7 +10,7 @@ import { Counter } from './Counter'
 import { LogFilter } from './LogFilter'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { PermanentCache } from './PermanentCache'
-import { QualityChecker } from './QualityChecker'
+import { QualityChecker, QualityCheckerCallBackArg } from './QualityChecker'
 import { TokenManager } from './TokenManager'
 import { UniV3EventsAbi, UniV3PoolWatcher } from './UniV3PoolWatcher'
 import { warnLog } from './WarnLog'
@@ -89,13 +89,16 @@ export class UniV3Extractor {
     this.busyCounter = new Counter(() => {
       //if (count == 0) this.consoleLog(`All pools were updated`)
     })
-    this.qualityChecker = new QualityChecker(200, ([newPool, status]) => {
-      if (newPool instanceof UniV3PoolWatcher) this.poolMap.set(newPool.address.toLowerCase() as Address, newPool)
+    this.qualityChecker = new QualityChecker(200, (arg: QualityCheckerCallBackArg) => {
+      const addr = arg.ethalonPool.address.toLowerCase() as Address
+      if (arg.ethalonPool != this.poolMap.get(addr)) return false // checked pool was replaced during checking
+      if (arg.correctPool) this.poolMap.set(addr, arg.correctPool)
       this.consoleLog(
-        `Pool ${newPool instanceof UniV3PoolWatcher ? newPool.address : newPool} quality check: ${status} ` +
-          `${newPool instanceof UniV3PoolWatcher ? 'pool was updated ' : ''}` +
+        `Pool ${arg.ethalonPool.address} quality check: ${arg.status} ` +
+          `${arg.correctPool ? 'pool was updated ' : ''}` +
           `(${this.qualityChecker.totalMatchCounter}/${this.qualityChecker.totalCheckCounter})`
       )
+      return true
     })
 
     this.logFilter = new LogFilter(client, 50, UniV3EventsAbi, (logs?: Log[]) => {

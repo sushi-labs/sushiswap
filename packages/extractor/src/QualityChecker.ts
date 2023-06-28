@@ -17,7 +17,13 @@ export enum PoolSyncState {
   CheckFailed = 'check failed',
 }
 
-export type QualityCheckerCallBack = (arg: [UniV3PoolWatcher | string, PoolSyncState]) => void
+export type QualityCheckerCallBackArg = {
+  ethalonPool: UniV3PoolWatcher
+  correctPool?: UniV3PoolWatcher
+  status: PoolSyncState
+}
+
+export type QualityCheckerCallBack = (arg: QualityCheckerCallBackArg) => boolean
 
 export class QualityChecker {
   readonly checkAfterLogsNumber: number
@@ -32,16 +38,26 @@ export class QualityChecker {
     this.callBack = callBack
   }
 
-  async check(pool: UniV3PoolWatcher, newPool: UniV3PoolWatcher): Promise<[UniV3PoolWatcher | string, PoolSyncState]> {
+  async check(
+    pool: UniV3PoolWatcher,
+    newPool: UniV3PoolWatcher
+  ): Promise<[UniV3PoolWatcher | undefined, PoolSyncState, number, number]> {
     try {
       await newPool.updatePoolState()
       for (let i = 0; i < 3600; ++i) {
-        await delay(1000)
-        if (newPool.isStable() && pool.isStable() && pool.state && newPool.state) {
-          this.totalCheckCounter++
-          if (pool.state.liquidity !== newPool.state.liquidity) return [newPool, PoolSyncState.LiquidityMismatch]
-          if (pool.state.sqrtPriceX96 !== newPool.state.sqrtPriceX96) return [newPool, PoolSyncState.PriceMismatch]
-          if (pool.state.tick !== newPool.state.tick) return [newPool, PoolSyncState.CurrentTickMicmatch]
+        await delay(20000)
+        if (
+          newPool.isStable() &&
+          pool.isStable() &&
+          pool.state &&
+          newPool.state &&
+          pool.latestEventBlockNumber == newPool.latestEventBlockNumber
+        ) {
+          //this.totalCheckCounter++
+          if (pool.state.liquidity !== newPool.state.liquidity) return [newPool, PoolSyncState.LiquidityMismatch, 1, 0]
+          if (pool.state.sqrtPriceX96 !== newPool.state.sqrtPriceX96)
+            return [newPool, PoolSyncState.PriceMismatch, 1, 0]
+          if (pool.state.tick !== newPool.state.tick) return [newPool, PoolSyncState.CurrentTickMicmatch, 1, 0]
           const ticks0 = pool.getTicks()
           ticks0.shift()
           ticks0.pop()
@@ -50,24 +66,24 @@ export class QualityChecker {
           ticks1.pop()
           if (ticks1.length > 0) {
             const start = ticks0.findIndex((t) => t.index == ticks1[0].index)
-            if (start == -1) return [newPool, PoolSyncState.TicksStartMismatch]
+            if (start == -1) return [newPool, PoolSyncState.TicksStartMismatch, 1, 0]
             if (ticks0.length < start + ticks1.length) [newPool, PoolSyncState.TicksFinishMismatch]
             for (let i = 0; i < ticks1.length; ++i) {
               if (ticks0[i + start].index !== ticks1[i].index || !ticks0[i + start].DLiquidity.eq(ticks1[i].DLiquidity))
-                return [newPool, PoolSyncState.TicksMismatch]
+                return [newPool, PoolSyncState.TicksMismatch, 1, 0]
             }
           }
-          this.totalMatchCounter++
+          //this.totalMatchCounter++
           if (pool.state.reserve0 !== newPool.state.reserve0 || pool.state.reserve1 !== newPool.state.reserve1)
-            return [newPool, PoolSyncState.ReservesMismatch]
-          return [pool.address, PoolSyncState.Match]
+            return [newPool, PoolSyncState.ReservesMismatch, 1, 1]
+          return [undefined, PoolSyncState.Match, 1, 1]
         }
       }
       warnLog('Quality check timeout error')
     } catch (e) {
       warnLog('Quality check error: ' + e)
     }
-    return [pool.address, PoolSyncState.CheckFailed]
+    return [undefined, PoolSyncState.CheckFailed, 0, 0]
   }
 
   processLog(l: Log, pool: UniV3PoolWatcher) {
@@ -90,7 +106,13 @@ export class QualityChecker {
         )
         this.checkingPools.set(addr, newPool)
         this.check(pool, newPool).then((res) => {
-          this.callBack(res)
+          this.totalCheckCounter += res[2]
+          this.totalMatchCounter += res[3]
+          if (!this.callBack({ ethalonPool: pool, correctPool: res[0], status: res[1] })) {
+            // return counters back
+            this.totalCheckCounter -= res[2]
+            this.totalMatchCounter -= res[3]
+          }
           this.poolsLogCounter.set(addr, 0)
           this.checkingPools.delete(addr)
         })
