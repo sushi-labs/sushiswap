@@ -14,7 +14,7 @@ import {
 import { FeeAmount, Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { Type } from '@sushiswap/currency'
 import { useConcentratedPositionOwner } from '@sushiswap/wagmi/future/hooks/positions/hooks/useConcentratedPositionOwner'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
 
 interface ConcentratedLiquidityWidget {
@@ -229,11 +229,10 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
           />
         </div>
 
-        <Checker.Connect fullWidth size="xl">
-          <Checker.Network fullWidth size="xl" chainId={chainId}>
-            <Checker.Amounts fullWidth size="xl" chainId={chainId} amounts={amounts}>
+        <Checker.Connect fullWidth>
+          <Checker.Network fullWidth chainId={chainId}>
+            <Checker.Amounts fullWidth chainId={chainId} amounts={amounts}>
               <Checker.ApproveERC20
-                size="xl"
                 fullWidth
                 id="approve-erc20-0"
                 amount={parsedAmounts[Field.CURRENCY_A]}
@@ -241,7 +240,6 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                 enabled={!depositADisabled}
               >
                 <Checker.ApproveERC20
-                  size="xl"
                   fullWidth
                   id="approve-erc20-1"
                   amount={parsedAmounts[Field.CURRENCY_B]}

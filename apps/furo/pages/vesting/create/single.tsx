@@ -6,7 +6,7 @@ import { useNetwork } from '@sushiswap/wagmi'
 import { Layout } from '../../../components'
 import { CreateForm } from '../../../components/vesting'
 import Link from 'next/link'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { ArrowLeftIcon } from '@heroicons/react/solid'
 import React from 'react'
 
@@ -25,14 +25,7 @@ const SingleVesting = () => {
           }}
           shallow={true}
         >
-          <IconButton
-            icon={ArrowLeftIcon}
-            iconProps={{
-              width: 24,
-              height: 24,
-              transparent: true,
-            }}
-          />
+          <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
           <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">Go back</span>
         </Link>
         <CreateForm chainId={chainId} />

@@ -2,7 +2,8 @@ import { ColumnDef } from '@tanstack/react-table'
 import { Transaction, TransactionType, useTransactionsV3 } from './useTransactionsV3'
 import { formatUSD } from '@sushiswap/format'
 import formatDistance from 'date-fns/formatDistance/index.js'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui/components/skeleton'
+
 import React from 'react'
 
 export const TYPE_COLUMN: ColumnDef<Transaction, unknown> = {
@@ -14,7 +15,7 @@ export const TYPE_COLUMN: ColumnDef<Transaction, unknown> = {
     </span>
   ),
   meta: {
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -28,7 +29,7 @@ export const SENDER_COLUMN: ColumnDef<Transaction, unknown> = {
     )}..${props.row.original.origin.slice(-4)}`}</span>
   ),
   meta: {
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -63,7 +64,7 @@ export const AMOUNT_IN_COLUMN = (
     }
   },
   meta: {
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 })
 
@@ -98,7 +99,7 @@ export const AMOUNT_OUT_COLUMN = (
     }
   },
   meta: {
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 })
 
@@ -112,7 +113,7 @@ export const AMOUNT_USD_COLUMN: ColumnDef<Transaction, unknown> = {
   ),
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -126,6 +127,6 @@ export const TIME_COLUMN: ColumnDef<Transaction, unknown> = {
   ),
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }

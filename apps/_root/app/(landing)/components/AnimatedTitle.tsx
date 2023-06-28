@@ -1,4 +1,4 @@
-import { classNames, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { useInView } from 'framer-motion'
 import { FC, ReactNode, useRef } from 'react'
 
@@ -7,10 +7,8 @@ export const AnimatedTitle: FC<{ children: ReactNode; className?: string }> = ({
   const isInView = useInView(ref, { once: true })
 
   return (
-    <Typography
-      variant="hero"
-      weight={600}
-      className={classNames(className, 'max-w-[740px]')}
+    <p
+      className={classNames(className, 'text-5xl font-semibold max-w-[740px]')}
       ref={ref}
       style={{
         transform: isInView ? 'none' : 'translateX(-100px)',
@@ -19,6 +17,6 @@ export const AnimatedTitle: FC<{ children: ReactNode; className?: string }> = ({
       }}
     >
       {children}
-    </Typography>
+    </p>
   )
 }

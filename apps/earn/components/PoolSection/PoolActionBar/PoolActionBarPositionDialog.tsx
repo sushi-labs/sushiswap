@@ -1,13 +1,14 @@
 import { formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
 import { FundSource } from '@sushiswap/hooks'
-import { Currency, Dialog, Typography } from '@sushiswap/ui'
 import { FC, useCallback } from 'react'
 
 import { useTokensFromPool } from '../../../lib/hooks'
 import { usePoolPosition } from '../../PoolPositionProvider'
 import { usePoolPositionStaked } from '../../PoolPositionStakedProvider'
 import { PoolButtons } from '../PoolButtons'
+import { Dialog } from '@sushiswap/ui/components/dialog'
+import { Currency } from '@sushiswap/ui/components/currency'
 
 interface PoolActionBarPositionDialogProps {
   pool: Pool
@@ -54,36 +55,28 @@ export const PoolActionBarPositionDialog: FC<PoolActionBarPositionDialogProps> =
         ) : (
           <>
             <div className="flex items-center justify-between p-2 pt-4">
-              <Typography variant="sm" weight={600} className="text-slate-100">
-                My Position
-              </Typography>
+              <p className="text-sm font-semibold  text-slate-100">My Position</p>
               <div className="flex flex-col">
-                <Typography variant="xs" weight={500} className="text-right text-slate-100">
-                  {formatUSD(value0 + value1)}
-                </Typography>
+                <p className="text-xs font-medium text-right text-slate-100">{formatUSD(value0 + value1)}</p>
               </div>
             </div>
             <div className="flex justify-between px-2 py-1">
               <div className="flex items-center gap-2">
                 <Currency.Icon currency={token0} width={20} height={20} />
-                <Typography variant="sm" weight={500} className="text-slate-300">
+                <p className="text-sm font-medium text-slate-300">
                   {underlying0?.toSignificant(6)} {token0.symbol}
-                </Typography>
+                </p>
               </div>
-              <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600">
-                {formatUSD(value0)}
-              </Typography>
+              <p className="text-xs font-medium dark:text-slate-400 text-slate-600">{formatUSD(value0)}</p>
             </div>
             <div className="flex justify-between px-2 py-1">
               <div className="flex items-center gap-2">
                 <Currency.Icon currency={token1} width={20} height={20} />
-                <Typography variant="sm" weight={500} className="text-slate-300">
+                <p className="text-sm font-medium text-slate-300">
                   {underlying1?.toSignificant(6)} {token1.symbol}
-                </Typography>
+                </p>
               </div>
-              <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600">
-                {formatUSD(value1)}
-              </Typography>
+              <p className="text-xs font-medium dark:text-slate-400 text-slate-600">{formatUSD(value1)}</p>
             </div>
           </>
         )}
@@ -106,34 +99,26 @@ export const PoolActionBarPositionDialog: FC<PoolActionBarPositionDialogProps> =
         ) : (
           <div className="flex flex-col gap-2 px-2 py-4 mt-2">
             <div className="flex items-center justify-between mb-1">
-              <Typography variant="sm" weight={600} className="text-slate-100">
-                Staked Position
-              </Typography>
-              <Typography variant="xs" weight={500} className="text-slate-100">
-                {formatUSD(stakedValue0 + stakedValue1)}
-              </Typography>
+              <p className="text-sm font-semibold  text-slate-100">Staked Position</p>
+              <p className="text-xs font-medium text-slate-100">{formatUSD(stakedValue0 + stakedValue1)}</p>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Currency.Icon currency={token0} width={20} height={20} />
-                <Typography variant="sm" weight={500} className="text-slate-300">
+                <p className="text-sm font-medium text-slate-300">
                   {stakedUnderlying0?.toSignificant(6)} {token0.symbol}
-                </Typography>
+                </p>
               </div>
-              <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600">
-                {formatUSD(stakedValue0)}
-              </Typography>
+              <p className="text-xs font-medium dark:text-slate-400 text-slate-600">{formatUSD(stakedValue0)}</p>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Currency.Icon currency={token1} width={20} height={20} />
-                <Typography variant="sm" weight={500} className="text-slate-300">
+                <p className="text-sm font-medium text-slate-300">
                   {stakedUnderlying1?.toSignificant(6)} {token1.symbol}
-                </Typography>
+                </p>
               </div>
-              <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600">
-                {formatUSD(stakedValue1)}
-              </Typography>
+              <p className="text-xs font-medium dark:text-slate-400 text-slate-600">{formatUSD(stakedValue1)}</p>
             </div>
           </div>
         )}

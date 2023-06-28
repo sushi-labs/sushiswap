@@ -1,11 +1,13 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
-import { Network } from '@sushiswap/ui/network'
-import { Typography } from '@sushiswap/ui/typography'
-import { useEffect, useMemo, useState } from 'react'
-import useSWR from 'swr'
+import { Chain, ChainId } from '@sushiswap/chain'
+import React, { useMemo, useState } from 'react'
 import { getStrategies } from './lib'
+import { ChevronDownIcon } from '@heroicons/react/24/outline'
+import useSWR from 'swr'
+import { NetworkSelector } from '@sushiswap/ui/components/networkselector'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { Button } from '@sushiswap/ui/components/button'
 
 export default function BentoBoxStrategiesPage() {
   const { data } = useSWR('bentobox-strategies', () => getStrategies())
@@ -18,33 +20,29 @@ export default function BentoBoxStrategiesPage() {
     [data]
   )
 
-  const [selectedChainIds, setChainIds] = useState<ChainId[]>([])
-
-  useEffect(() => {
-    if (strategyChainIds) {
-      setChainIds(strategyChainIds)
-    }
-  }, [strategyChainIds])
-
+  const [selectedChainId, setSelectedChainId] = useState<ChainId>(ChainId.ETHEREUM)
   const filteredStrategies = useMemo(
-    () => data?.filter((el) => selectedChainIds.includes(el.chainId)),
-    [data, selectedChainIds]
+    () => data?.filter((el) => el.chainId === selectedChainId),
+    [data, selectedChainId]
   )
 
   return (
     <div className="max-w-full px-4 py-12 mx-auto space-y-4 sm:px-6 lg:px-8">
-      <Typography variant="hero" weight={600} className="text-slate-50">
-        BentoBox Strategies
-      </Typography>
-      <>
-        {strategyChainIds && (
-          <Network.Selector
-            networks={strategyChainIds}
-            selectedNetworks={selectedChainIds}
-            onChange={(selectedChainIds) => setChainIds(selectedChainIds)}
-          />
-        )}
-      </>
+      <p className="text-5xl font-semibold  text-slate-50">BentoBox Strategies</p>
+      {strategyChainIds && (
+        <NetworkSelector
+          networks={strategyChainIds}
+          selected={selectedChainId}
+          onSelect={setSelectedChainId}
+          variant="menu"
+        >
+          <Button variant="secondary" className="!font-medium">
+            <NetworkIcon chainId={selectedChainId} width={20} height={20} />
+            <div>{Chain.from(selectedChainId).name}</div>
+            <ChevronDownIcon width={24} height={24} />
+          </Button>
+        </NetworkSelector>
+      )}
       <div className="grid grid-cols-1 gap-5">
         {filteredStrategies?.map((strategy) => (
           <pre key={`${strategy.chainId}:${strategy.id}`} className="p-4 bg-slate-700 rounded-3xl">

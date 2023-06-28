@@ -1,7 +1,5 @@
-import { SearchIcon } from '@heroicons/react/outline'
-import { ChevronLeftIcon } from '@heroicons/react/outline'
+import { ChevronLeftIcon, SearchIcon } from '@heroicons/react/outline'
 import { useDebounce } from '@sushiswap/hooks'
-import { Container, Typography } from '@sushiswap/ui'
 import { InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { FC, useState } from 'react'
@@ -10,6 +8,7 @@ import { Article, Category, Collection } from 'types'
 
 import { ArticleList, ArticleListItem, Categories, Pagination } from '../components'
 import { getArticles, getCategories } from '../lib/api'
+import { Container } from '@sushiswap/ui/components/container'
 
 export async function getStaticProps() {
   const articles = await getArticles()
@@ -83,9 +82,7 @@ const _Archive: FC = () => {
         <Link href="/" passHref={true} legacyBehavior>
           <a className="flex items-center gap-3 group">
             <ChevronLeftIcon width={18} className="text-slate-400 group-hover:text-slate-50" />
-            <Typography variant="lg" weight={500} className="text-lg group-hover:text-slate-50 text-slate-200">
-              Archive
-            </Typography>
+            <p className="text-lg font-medium text-lg group-hover:text-slate-50 text-slate-200">Archive</p>
           </a>
         </Link>
       </Container>

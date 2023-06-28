@@ -1,5 +1,5 @@
 import { useBreakpoint } from '@sushiswap/hooks'
-import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
+import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { FC, ReactNode, useEffect, useMemo, useState } from 'react'
 import { FuroStatus, Stream, Vesting } from '../../../lib'

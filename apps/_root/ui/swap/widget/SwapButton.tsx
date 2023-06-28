@@ -1,4 +1,4 @@
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import React, { FC, useEffect, useState } from 'react'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { Checker } from '@sushiswap/wagmi/future/systems'
@@ -15,8 +15,6 @@ import {
 import { ZERO } from '@sushiswap/math'
 
 export const SwapButton: FC = () => {
-  console.log('Swap button')
-
   const { appType, amount, network0, network1, value, token0, token1 } = useSwapState()
   const { isFetching, isLoading, data: trade } = useTrade({ crossChain: network0 !== network1 })
   const { setReview } = useSwapActions()
@@ -37,13 +35,11 @@ export const SwapButton: FC = () => {
   return (
     <>
       <div className="pt-4">
-        <Checker.Connect fullWidth size="xl" color="blue" variant="filled">
-          <Checker.Network fullWidth size="xl" chainId={network0}>
-            <Checker.Amounts fullWidth size="xl" chainId={network0} amounts={[amount]}>
+        <Checker.Connect>
+          <Checker.Network chainId={network0}>
+            <Checker.Amounts chainId={network0} amounts={[amount]}>
               <Checker.ApproveERC20
                 id="approve-erc20"
-                fullWidth
-                size="xl"
                 amount={amount}
                 contract={
                   isRouteProcessor3ChainId(network0)
@@ -55,6 +51,7 @@ export const SwapButton: FC = () => {
               >
                 <Checker.Success tag="swap">
                   <Button
+                    size="xl"
                     disabled={
                       !trade?.amountOut?.greaterThan(ZERO) ||
                       trade?.route?.status === 'NoWay' ||
@@ -64,7 +61,6 @@ export const SwapButton: FC = () => {
                     }
                     color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
                     fullWidth
-                    size="xl"
                     onClick={() => setReview(true)}
                     testId="swap"
                   >

@@ -1,6 +1,6 @@
 import { formatUSD } from '@sushiswap/format'
-import { Currency, Typography } from '@sushiswap/ui'
 import React, { FC } from 'react'
+import { Currency } from '@sushiswap/ui/components/currency'
 
 import { usePoolPositionStaked } from '../../PoolPositionStakedProvider'
 
@@ -11,9 +11,7 @@ export const AddSectionMyPositionStaked: FC = () => {
     return (
       <div className="flex flex-col gap-2">
         <div className="flex gap-1 justify-between items-center">
-          <Typography variant="sm" weight={600} className="dark:text-slate-50 text-gray-900">
-            My Staked Position
-          </Typography>
+          <p className="text-sm font-semibold  dark:text-slate-50 text-gray-900">My Staked Position</p>
           <div className="h-[16px] w-[40px] animate-pulse bg-slate-600 rounded-full" />
         </div>
         <div className="flex flex-col gap-1.5">
@@ -33,29 +31,25 @@ export const AddSectionMyPositionStaked: FC = () => {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex gap-1 justify-between items-center">
-        <Typography variant="sm" weight={600} className="dark:text-slate-50 text-gray-900">
-          My Staked Position
-        </Typography>
-        <Typography variant="xs" weight={500} className="dark:text-slate-400 text-gray-600">
-          {formatUSD(value0 + value1)}
-        </Typography>
+        <p className="text-sm font-semibold  dark:text-slate-50 text-gray-900">My Staked Position</p>
+        <p className="text-xs font-medium dark:text-slate-400 text-gray-600">{formatUSD(value0 + value1)}</p>
       </div>
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-4">
             {underlying0 && <Currency.Icon currency={underlying0.currency} width={16} height={16} />}
           </div>
-          <Typography variant="xs" weight={500} className="flex items-center gap-1 dark:text-slate-400 text-gray-600">
+          <p className="text-xs font-medium flex items-center gap-1 dark:text-slate-400 text-gray-600">
             {underlying0 && underlying0?.toSignificant(3)} {underlying0?.currency.symbol}
-          </Typography>
+          </p>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-4">
             {underlying1 && <Currency.Icon currency={underlying1.currency} width={16} height={16} />}
           </div>
-          <Typography variant="xs" weight={500} className="flex items-center gap-1 dark:text-slate-400 text-gray-600">
+          <p className="text-xs font-medium flex items-center gap-1 dark:text-slate-400 text-gray-600">
             {underlying1 && underlying1?.toSignificant(3)} {underlying1?.currency.symbol}
-          </Typography>
+          </p>
         </div>
       </div>
     </div>

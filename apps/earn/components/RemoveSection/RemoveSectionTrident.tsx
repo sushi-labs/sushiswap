@@ -4,20 +4,21 @@ import { Amount, Native } from '@sushiswap/currency'
 import { Pool, Protocol } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
-import { Dots } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui/components/dots'
 import {
+  _useSendTransaction as useSendTransaction,
   ConstantProductPoolState,
   getTridentRouterContractConfig,
   StablePoolState,
+  useAccount,
   useBentoBoxTotals,
   useConstantProductPool,
-  _useSendTransaction as useSendTransaction,
+  useNetwork,
   useStablePool,
   useTotalSupply,
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount, useNetwork } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Checker } from '@sushiswap/wagmi/future/systems'
@@ -32,10 +33,10 @@ import {
 import { useTokensFromPool, useUnderlyingTokenBalanceFromPool } from '../../lib/hooks'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
-import { createToast } from '@sushiswap/ui/future/components/toast'
+import { createToast } from '@sushiswap/ui/components/toast'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
-import Button from '@sushiswap/ui/future/components/button/Button'
-import { useApproved, useSignature, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { Button } from '@sushiswap/ui/components/button'
+import { useApproved, withCheckerRoot, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_REMOVE_TRIDENT } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
 
@@ -286,9 +287,10 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
         token1Minimum={minAmount1}
         setPercentage={setPercentage}
       >
-        <Checker.Connect fullWidth size="xl">
+        <Checker.Connect fullWidth>
           <Checker.Custom
-            showGuardIfTrue={
+            guardText="Pool not found"
+            guardWhen={
               isMounted &&
               !!poolState &&
               [
@@ -298,42 +300,27 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
                 StablePoolState.INVALID,
               ].includes(poolState)
             }
-            guard={
-              <Button size="xl" fullWidth disabled={true}>
-                Pool Not Found
-              </Button>
-            }
           >
-            <Checker.Network fullWidth size="xl" chainId={_pool.chainId}>
-              <Checker.Custom
-                showGuardIfTrue={+percentage <= 0}
-                guard={
-                  <Button size="xl" fullWidth disabled={true}>
-                    Enter Amount
-                  </Button>
-                }
-              >
+            <Checker.Network fullWidth chainId={_pool.chainId}>
+              <Checker.Custom guardWhen={+percentage <= 0} guardText="Enter amount">
                 <Checker.ApproveBentobox
                   tag={APPROVE_TAG_REMOVE_TRIDENT}
                   fullWidth
-                  size="xl"
                   chainId={chainId}
                   id="remove-liquidity-trident-approve-bentobox"
                   masterContract={getTridentRouterContractConfig(_pool.chainId).address}
                 >
                   <Checker.ApproveERC20
                     fullWidth
-                    size="xl"
                     id="approve-remove-liquidity-slp"
                     amount={slpAmountToRemove}
                     contract={getTridentRouterContractConfig(_pool.chainId).address}
                   >
                     <Checker.Success tag={APPROVE_TAG_REMOVE_TRIDENT}>
                       <Button
+                        size="xl"
                         onClick={() => sendTransaction?.()}
                         fullWidth
-                        size="xl"
-                        variant="filled"
                         disabled={!approved || isWritePending}
                         testId="remove-liquidity"
                       >

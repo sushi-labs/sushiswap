@@ -1,23 +1,27 @@
 'use client'
 
 import { SearchIcon } from '@heroicons/react-v1/solid'
-import { ChainId } from '@sushiswap/chain'
+import { Chain, ChainId } from '@sushiswap/chain'
 import { useDebounce } from '@sushiswap/hooks'
-import { classNames, DEFAULT_INPUT_UNSTYLED, Network } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { TokenTable } from './components/TokenTable'
 import { TOKENS_SUPPORTED_CHAIN_IDS } from './config'
 import stringify from 'fast-json-stable-stringify'
 import { getTokens, Token } from './lib'
-import { FC, useState } from 'react'
+import React, { FC, useState } from 'react'
 import useSWR from 'swr'
+import { NetworkSelector } from '@sushiswap/ui/components/networkselector'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { Button } from '@sushiswap/ui/components/button'
+import { ChevronDownIcon } from '@heroicons/react/24/outline'
 
 const TokensPage: FC = () => {
   const [filter, setFilter] = useState<string>('')
-  const [chainIds, setChainIds] = useState<ChainId[]>([ChainId.ETHEREUM])
+  const [chainId, setChainId] = useState<ChainId>(ChainId.ETHEREUM)
   const debouncedFilter = useDebounce(filter, 400)
 
-  const { data: tokens } = useSWR<Token[]>(stringify(['tokens', debouncedFilter, chainIds]), () =>
-    getTokens({ chainIds, filter: debouncedFilter })
+  const { data: tokens } = useSWR<Token[]>(stringify(['tokens', debouncedFilter, chainId]), () =>
+    getTokens({ chainIds: [chainId], filter: debouncedFilter })
   )
 
   // console.log(tokens)
@@ -41,17 +45,22 @@ const TokensPage: FC = () => {
               </div>
               <input
                 placeholder="Search a token"
-                className={classNames(DEFAULT_INPUT_UNSTYLED, 'flex flex-grow !text-base placeholder:text-sm')}
+                className={classNames(
+                  'p-0 bg-transparent border-none focus:outline-none focus:ring-0 w-full truncate font-medium text-left text-base md:text-sm placeholder:font-normal font-medium',
+                  'flex flex-grow !text-base placeholder:text-sm'
+                )}
                 onChange={(e) => setFilter(e.target.value)}
               />
             </div>
           </div>
         </div>
-        <Network.Selector
-          networks={TOKENS_SUPPORTED_CHAIN_IDS}
-          selectedNetworks={chainIds}
-          onChange={(selectedNetworks) => setChainIds(selectedNetworks)}
-        />
+        <NetworkSelector networks={TOKENS_SUPPORTED_CHAIN_IDS} selected={chainId} onSelect={setChainId} variant="menu">
+          <Button variant="secondary" className="!font-medium">
+            <NetworkIcon chainId={chainId} width={20} height={20} />
+            <div>{Chain.from(chainId).name}</div>
+            <ChevronDownIcon width={24} height={24} />
+          </Button>
+        </NetworkSelector>
 
         <TokenTable tokens={tokens || []} />
       </section>

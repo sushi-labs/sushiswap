@@ -2,12 +2,14 @@ import { ChevronDownIcon, SearchIcon, StarIcon } from '@heroicons/react-v1/solid
 import chains, { ChainId, chainShortName } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { useDebounce, useOnClickOutside } from '@sushiswap/hooks'
-import { classNames, Currency, DEFAULT_INPUT_UNSTYLED, NetworkIcon, Skeleton, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import type { TokenList } from '@uniswap/token-lists'
 import { isAddress } from 'ethers/lib/utils'
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery, useToken } from '@sushiswap/wagmi'
-
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { SUPPORTED_CHAIN_IDS } from '../../../config'
 
 const EXAMPLE_CURRENCIES = [
@@ -79,11 +81,11 @@ export const Search: FC = () => {
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700">
           <div className="w-[36px] h-[36px]">
-            <Skeleton.Circle radius={36} className="bg-neutral-600" />
+            <SkeletonCircle radius={36} />
           </div>
-          <div className="flex flex-col space-y-1">
-            <Skeleton.Box className="h-4 w-[120px] my-0.5 bg-neutral-600" />
-            <Skeleton.Box className="h-4 w-[60px] my-0.5 bg-neutral-700" />
+          <div className="flex flex-col gap-1 w-full">
+            <SkeletonText fontSize="sm" className="w-[120px]" />
+            <SkeletonText fontSize="xs" className="w-[60px]" />
           </div>
         </div>
       </div>
@@ -115,20 +117,21 @@ export const Search: FC = () => {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search by token or address"
-                className={classNames('!text-lg w-full placeholder:text-neutral-500', DEFAULT_INPUT_UNSTYLED)}
+                className={classNames(
+                  '!text-lg w-full placeholder:text-neutral-500',
+                  'p-0 bg-transparent border-none focus:outline-none focus:ring-0 w-full truncate font-medium text-left text-base md:text-sm placeholder:font-normal font-medium'
+                )}
                 autoComplete="new-password"
                 autoCorrect="off"
               />
             </div>
-            <Typography
+            <p
               onClick={() => setSelectNetwork((prev) => !prev)}
-              as="button"
-              weight={600}
-              variant="sm"
-              className="flex items-center gap-1 py-2 pl-3 pr-2 rounded-lg cursor-pointer bg-neutral-700 hover:bg-neutral-600 text-neutral-300 hover:text-neutral-200"
+              role="button"
+              className="font-semibold text-sm flex items-center gap-1 py-2 pl-3 pr-2 rounded-lg cursor-pointer bg-neutral-700 hover:bg-neutral-600 text-neutral-300 hover:text-neutral-200"
             >
               {chainShortName[chainId].toUpperCase()} <ChevronDownIcon width={16} height={16} />
-            </Typography>
+            </p>
           </div>
           <div
             className={classNames(
@@ -138,9 +141,7 @@ export const Search: FC = () => {
           >
             {selectNetwork ? (
               <>
-                <Typography variant="sm" weight={600} className="px-4 text-neutral-400">
-                  Networks
-                </Typography>
+                <p className="text-sm font-semibold  px-4 text-neutral-400">Networks</p>
                 {SUPPORTED_CHAIN_IDS.map((el) => (
                   <Row
                     key={el}
@@ -155,9 +156,7 @@ export const Search: FC = () => {
               </>
             ) : query.length > 2 ? (
               <>
-                <Typography variant="sm" weight={600} className="px-4 text-neutral-400">
-                  Tokens
-                </Typography>
+                <p className="text-sm font-semibold  px-4 text-neutral-400">Tokens</p>
                 {isAddress(query) && web3Loading ? (
                   skeleton
                 ) : web3Token ? (
@@ -197,9 +196,9 @@ export const Search: FC = () => {
               </>
             ) : (
               <>
-                <Typography variant="sm" weight={600} className="flex items-center gap-2 px-4 text-neutral-400">
+                <p className="text-sm font-semibold  flex items-center gap-2 px-4 text-neutral-400">
                   <StarIcon width={16} height={16} /> Popular Tokens
-                </Typography>
+                </p>
                 <div className="flex flex-col gap-2">
                   {EXAMPLE_CURRENCIES.map((el) => (
                     <Row currency={el} key={`example-${el.address}`} />
@@ -232,10 +231,8 @@ const Row: FC<{ currency: Type; onClick?(): void; isNetwork?: boolean }> = ({
         )}
       </div>
       <div className="flex flex-col">
-        <Typography weight={600}>{isNetwork ? chains[currency.chainId].name : currency.name}</Typography>
-        <Typography variant="sm" weight={600} className="text-left text-neutral-400">
-          {currency.symbol}
-        </Typography>
+        <p className="font-semibold">{isNetwork ? chains[currency.chainId].name : currency.name}</p>
+        <p className="text-sm font-semibold  text-left text-neutral-400">{currency.symbol}</p>
       </div>
     </div>
   )

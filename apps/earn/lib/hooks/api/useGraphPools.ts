@@ -1,8 +1,7 @@
-import { parseArgs, Pool, Pools, usePools } from '@sushiswap/client'
+import { parseArgs, Pool, Pools, Protocol, usePools } from '@sushiswap/client'
 import { useMemo } from 'react'
 import useSWR from 'swr'
 import { getGraphPools } from '../../api'
-import { Protocol } from '@sushiswap/client'
 
 function transformGraphPool(graphPool: Awaited<ReturnType<typeof getGraphPools>>[0]): Pool {
   let protocol: Protocol = Protocol.SUSHISWAP_V2

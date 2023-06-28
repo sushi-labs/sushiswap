@@ -1,4 +1,4 @@
-import { JSBI, Percent } from '@sushiswap/math'
+import {JSBI, Percent} from '@sushiswap/math'
 
 // one basis JSBI.BigInt
 const BIPS_BASE = JSBI.BigInt(10000)

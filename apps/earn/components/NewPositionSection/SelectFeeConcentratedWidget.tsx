@@ -1,13 +1,12 @@
 import { RadioGroup } from '@headlessui/react'
-import { classNames, Skeleton } from '@sushiswap/ui'
-import React, { Dispatch, FC, memo, SetStateAction, useMemo } from 'react'
+import { classNames } from '@sushiswap/ui'
+import React, { FC, memo, useMemo } from 'react'
 
 import { ContentBlock } from '../AddPage/ContentBlock'
 import { FeeAmount } from '@sushiswap/v3-sdk'
-import { useConcentratedLiquidityURLState } from '../ConcentratedLiquidityURLStateProvider'
 import { Type } from '@sushiswap/currency'
 import { usePoolsByTokenPair } from 'lib/hooks/usePoolsByTokenPair'
-import { formatPercent } from '@sushiswap/format'
+import { Dots } from '@sushiswap/ui/components/dots'
 
 export const FEE_OPTIONS = [
   {
@@ -91,19 +90,13 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> = memo
             <div className="flex flex-col space-y-1">
               <span className="flex items-center space-x-2">
                 <div className="font-medium text-gray-900 dark:text-slate-50">{option.value / 10000}% Fees </div>{' '}
-                {!isLoading ? (
-                  <>
-                    {tvlDistribution.get(option.value) && (
-                      <div className="px-2 py-1 text-xs text-gray-700 bg-gray-200 dark:bg-gray-700 dark:text-gray-200 rounded-[20px]">
-                        {(tvlDistribution.get(option.value)! * 100)?.toFixed(0)}% Selected
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <Skeleton.Box className="w-[90px] h-[24px] rounded-[20px]" />
+                {tvlDistribution.get(option.value) && (
+                  <div className="px-2 py-1 text-xs text-gray-700 bg-gray-200 dark:bg-gray-700 dark:text-gray-200 rounded-[20px]">
+                    {isLoading ? <Dots /> : `${(tvlDistribution.get(option.value)! * 100)?.toFixed(0)}% Selected`}
+                  </div>
                 )}
               </span>
-              <span className="text-sm text-gray-500 dark:text-slate-400 text-slate-600">{option.subtitle}</span>
+              <span className="text-sm text-gray-500 dark:text-slate-400">{option.subtitle}</span>
             </div>
           </RadioGroup.Option>
         ))}

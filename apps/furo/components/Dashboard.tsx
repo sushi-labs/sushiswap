@@ -1,11 +1,12 @@
 import { Tab } from '@headlessui/react'
 import React, { FC, Fragment, useState } from 'react'
 import { useUserStreams, useUserVestings } from '../lib'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { SushiIcon } from '@sushiswap/ui/future/components/icons'
-import Container from '@sushiswap/ui/future/components/Container'
-import { useAccount, Address } from '@sushiswap/wagmi'
+import { Button } from '@sushiswap/ui/components/button'
+import { SushiIcon } from '@sushiswap/ui/components/icons'
+import { Container } from '@sushiswap/ui/components/container'
+import { Address, useAccount } from '@sushiswap/wagmi'
 import { FuroTableType, StreamTable } from './Table'
+import { Toggle } from '@sushiswap/ui/components/toggle'
 
 export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress }) => {
   const { address: account } = useAccount()
@@ -34,20 +35,14 @@ export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress 
                 </span>
                 <div className="relative z-10 mt-2 group">
                   <div className="flex items-center w-full">
-                    <Button
-                      as="a"
-                      href="/furo/create"
-                      variant="filled"
-                      className="text-blue font-medium !rounded-full"
-                      size="lg"
-                    >
-                      Pay Someone
+                    <Button asChild size="xl">
+                      <a href="/furo/create">Pay Someone</a>
                     </Button>
                   </div>
                 </div>
               </div>
               <div className="flex justify-center">
-                <div className="shadow-lg relative w-[460px] h-[290px] bg-gradient-to-tr from-blue to-pink flex flex-col bg-slate-800 p-4 rounded-2xl">
+                <div className="shadow-lg relative w-full lg:w-[460px] h-fit aspect-[460/290] bg-gradient-to-tr from-blue to-pink flex flex-col bg-slate-800 p-4 rounded-2xl">
                   <span className="flex items-center justify-start gap-2">
                     <div className="flex flex-col">
                       <span className="font-medium text-white">SUSHI</span>
@@ -77,26 +72,25 @@ export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress 
           <div className="flex items-center gap-2 mb-4">
             <Tab as={Fragment}>
               {({ selected }) => (
-                <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
+                <Toggle size="sm" pressed={selected}>
                   Incoming
-                </Button>
+                </Toggle>
               )}
             </Tab>
             <Tab as={Fragment}>
               {({ selected }) => (
-                <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
+                <Toggle size="sm" pressed={selected}>
                   Outgoing
-                </Button>
+                </Toggle>
               )}
             </Tab>
-            <Button
-              variant={showActiveIncoming ? 'outlined' : 'empty'}
-              color={showActiveIncoming ? 'blue' : 'default'}
-              onClick={() => setShowActiveIncoming((prevState) => !prevState)}
+            <Toggle
+              pressed={showActiveIncoming}
+              onPressedChange={() => setShowActiveIncoming((prevState) => !prevState)}
               size="sm"
             >
               Active
-            </Button>
+            </Toggle>
           </div>
           <Tab.Panels>
             <Tab.Panel>

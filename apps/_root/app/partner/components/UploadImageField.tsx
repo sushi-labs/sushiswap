@@ -1,5 +1,5 @@
 import { DocumentAddIcon, DocumentDownloadIcon, ExclamationIcon } from '@heroicons/react-v1/outline'
-import { classNames, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { FormType } from '../page'
 import React, { FC, useCallback } from 'react'
 import { DropzoneOptions, useDropzone } from 'react-dropzone'
@@ -40,12 +40,10 @@ export const UploadImageField: FC = () => {
           <DocumentAddIcon width={48} />
         )}
         <div className="flex text-sm text-slate-600">
-          <Typography
-            as="label"
-            variant="sm"
+          <label
             className={classNames(
               isDragActive ? '' : 'text-purple',
-              'outline-none relative cursor-pointer rounded-md font-medium hover:purple focus-within:outline-none'
+              'text-sm outline-none relative cursor-pointer rounded-md font-medium hover:purple focus-within:outline-none'
             )}
           >
             <label htmlFor="file-upload" className="outline-none">
@@ -58,7 +56,7 @@ export const UploadImageField: FC = () => {
               className="outline-none sr-only"
               {...getInputProps()}
             />
-          </Typography>
+          </label>
           {!isDragActive && <p className="pl-1">or drag and drop</p>}
         </div>
       </div>

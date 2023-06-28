@@ -4,24 +4,24 @@ import { useRouter } from 'next/router'
 import { usePool } from '@sushiswap/client'
 import { useSWRConfig } from 'swr'
 import { useAccount } from '@sushiswap/wagmi'
-import { SplashController } from '@sushiswap/ui/future/components/SplashController'
+import { SplashController } from '@sushiswap/ui/components/SplashController'
 import React, { useMemo } from 'react'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { NetworkIcon } from '@sushiswap/ui'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Badge } from '@sushiswap/ui/components/Badge'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { Currency } from '@sushiswap/ui/components/currency'
 import { formatPercent } from '@sushiswap/format'
 import { Layout, PoolPositionProvider, PoolPositionRewardsProvider, PoolPositionStakedProvider } from '../../components'
 import Link from 'next/link'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { ArrowLeftIcon } from '@heroicons/react/solid'
 import { unwrapToken } from '../../lib/functions'
 import { ChainId } from '@sushiswap/chain'
 import { MigrateTab } from '../../components/PoolPage/MigrateTab'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonBox, SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { ConcentratedLiquidityProvider } from '../../components/ConcentratedLiquidityProvider'
 import { Token } from '@sushiswap/currency'
-import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/components/settings'
+import { Button } from '@sushiswap/ui/components/button'
 import { CogIcon } from '@heroicons/react/outline'
 
 const queryParamsSchema = z.object({
@@ -88,14 +88,7 @@ export const Migrate = () => {
     <Layout>
       <div className="flex flex-col gap-2">
         <Link className="flex items-center gap-4 mb-2 group" href={'/'} shallow={true}>
-          <IconButton
-            icon={ArrowLeftIcon}
-            iconProps={{
-              width: 24,
-              height: 24,
-              transparent: true,
-            }}
-          />
+          <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
           <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
             Go back to pool list
           </span>
@@ -104,12 +97,12 @@ export const Migrate = () => {
         {isLoading ? (
           <div className="flex gap-6 h-[52px]">
             <div className="inline-flex">
-              <Skeleton.Circle radius={48} />
-              <Skeleton.Circle radius={48} style={{ marginLeft: -48 / 3 }} />
+              <SkeletonCircle radius={48} />
+              <SkeletonCircle radius={48} style={{ marginLeft: -48 / 3 }} />
             </div>
             <div className="flex flex-col flex-grow">
-              <Skeleton.Text fontSize="text-xl" className="w-[120px]" />
-              <Skeleton.Text fontSize="text-base" className="w-[240px]" />
+              <SkeletonText fontSize="xl" className="w-[120px]" />
+              <SkeletonText className="w-[240px]" />
             </div>
           </div>
         ) : pool && token0 && token1 ? (
@@ -151,7 +144,7 @@ export const Migrate = () => {
             modules={[SettingsModule.CustomTokens, SettingsModule.SlippageTolerance]}
           >
             {({ setOpen }) => (
-              <Button variant="outlined" color="default" onClick={() => setOpen(true)}>
+              <Button variant="secondary" onClick={() => setOpen(true)}>
                 <CogIcon width={24} height={24} />
               </Button>
             )}
@@ -163,22 +156,22 @@ export const Migrate = () => {
         {isLoading ? (
           <>
             <div>
-              <Skeleton.Box className="h-[164px]" />
+              <SkeletonBox className="h-[164px]" />
             </div>
             <div className="flex flex-col gap-[64px]">
               <div className="flex flex-col gap-6">
-                <Skeleton.Text fontSize="text-xl" className="w-[240px]" />
+                <SkeletonText fontSize="xl" className="w-[240px]" />
                 <div className="grid grid-cols-2 gap-4">
-                  <Skeleton.Box className="h-[76px]" />
-                  <Skeleton.Box className="h-[76px]" />
-                  <Skeleton.Box className="h-[76px]" />
-                  <Skeleton.Box className="h-[76px]" />
+                  <SkeletonBox className="h-[76px]" />
+                  <SkeletonBox className="h-[76px]" />
+                  <SkeletonBox className="h-[76px]" />
+                  <SkeletonBox className="h-[76px]" />
                 </div>
               </div>
               <div className="flex flex-col gap-6">
-                <Skeleton.Text fontSize="text-xl" className="w-[240px]" />
-                <Skeleton.Box className="h-[266px]" />
-                <Skeleton.Box className="h-[52px]" />
+                <SkeletonText fontSize="xl" className="w-[240px]" />
+                <SkeletonBox className="h-[266px]" />
+                <SkeletonBox className="h-[52px]" />
               </div>
             </div>
           </>

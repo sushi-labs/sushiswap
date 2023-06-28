@@ -1,18 +1,13 @@
 'use client'
 
-import { Typography } from '@sushiswap/ui'
-import React, { FC } from 'react'
+import React from 'react'
 
 export default async function TermsOfUsePage() {
   return (
     <>
       <div className="flex flex-col justify-center gap-5 py-10">
-        <Typography variant="hero" weight={700} className="text-center">
-          Sushi Website Terms Of Use
-        </Typography>
-        <Typography variant="xl" className="text-center text-neutral-400">
-          Legal Information & Notices
-        </Typography>
+        <p className="text-5xl font-semibold text-center">Sushi Website Terms Of Use</p>
+        <p className="text-xl text-center text-neutral-400">Legal Information & Notices</p>
       </div>
       <div className="w-full h-px mx-auto my-3 prose bg-neutral-800" />
       <div className="mx-auto prose prose-dark">

@@ -6,7 +6,7 @@ import { useSwapActions, useSwapState } from './trade/TradeProvider'
 import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from '@sushiswap/wagmi'
 import { useTrade } from '../../lib/swap/useTrade'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
 import { log } from 'next-axiom'
@@ -14,7 +14,7 @@ import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import {
   ConfirmationDialog as UIConfirmationDialog,
   ConfirmationDialogState,
-} from '@sushiswap/ui/dialog/ConfirmationDialog'
+} from '@sushiswap/ui/components/dialog/ConfirmationDialog'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import {
   isRouteProcessor3ChainId,

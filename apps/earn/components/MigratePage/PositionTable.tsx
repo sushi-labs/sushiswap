@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 import { PositionWithPool } from '../../types'
 import { useBreakpoint } from '@sushiswap/hooks'
-import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
+import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
 import { APR_COLUMN, NAME_COLUMN, VALUE_COLUMN } from '../PoolsSection/Tables/PositionsTable/Cells/columns'
 import { Protocol } from '@sushiswap/client'
 

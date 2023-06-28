@@ -5,21 +5,22 @@ import { PencilIcon } from '@heroicons/react/outline'
 import { Amount, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { JSBI, ZERO } from '@sushiswap/math'
-import { classNames, Dots } from '@sushiswap/ui'
-import { _useSendTransaction as useSendTransaction, useAccount, useContract, Address } from '@sushiswap/wagmi'
+import { classNames } from '@sushiswap/ui'
+import { _useSendTransaction as useSendTransaction, Address, useAccount, useContract } from '@sushiswap/wagmi'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { Button } from '@sushiswap/ui/future/components/button/Button'
-import { Stream, approveBentoBoxAction, batchAction } from '../../lib'
-import { createToast } from '@sushiswap/ui/future/components/toast'
+import { Button } from '@sushiswap/ui/components/button'
+import { approveBentoBoxAction, batchAction, Stream } from '../../lib'
+import { createToast } from '@sushiswap/ui/components/toast'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
-import { Dialog } from '@sushiswap/ui/future/components/dialog/Dialog'
-import { List } from '@sushiswap/ui/future/components/list/List'
-import { Input } from '@sushiswap/ui/future/components/input'
-import { Switch } from '@sushiswap/ui/future/components/Switch'
-import { withCheckerRoot, useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { Dialog } from '@sushiswap/ui/components/dialog/Dialog'
+import { List } from '@sushiswap/ui/components/list/List'
+import { Input } from '@sushiswap/ui/components/input'
+import { Switch } from '@sushiswap/ui/components/switch'
+import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { FuroStreamChainId } from '@sushiswap/furo'
+import { Dots } from '@sushiswap/ui/components/dots'
 import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 
 const APPROVE_TAG = 'updateStreamSingle'
@@ -164,12 +165,7 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
         {typeof children === 'function' ? (
           children({ setOpen })
         ) : (
-          <Button
-            fullWidth
-            startIcon={<PencilIcon width={18} height={18} />}
-            onClick={() => setOpen(true)}
-            disabled={!stream?.canUpdate(address)}
-          >
+          <Button fullWidth icon={PencilIcon} onClick={() => setOpen(true)} disabled={!stream?.canUpdate(address)}>
             Update
           </Button>
         )}
@@ -191,10 +187,9 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
               <div className="flex items-center justify-between gap-3 pb-2">
                 <List.Label className="text-gray-500 dark:text-slate-50">Top up amount</List.Label>
                 <Switch
-                  id="update-amount-switch"
+                  testdata-id="update-amount-switch"
                   checked={topUp}
-                  onChange={() => setTopUp((prevState) => !prevState)}
-                  size="sm"
+                  onCheckedChange={() => setTopUp((prevState) => !prevState)}
                 />
               </div>
               <div className={classNames(topUp ? '' : 'opacity-40 pointer-events-none', 'flex flex-col gap-2')}>
@@ -211,10 +206,9 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
               <div className="flex items-center justify-between gap-3 py-2">
                 <List.Label className="text-gray-500 dark:text-slate-50">Change end date</List.Label>
                 <Switch
-                  id="update-end-date-switch"
+                  testdata-id="update-end-date-switch"
                   checked={changeEndDate}
-                  onChange={() => setChangeEndDate((prevState) => !prevState)}
-                  size="sm"
+                  onCheckedChange={() => setChangeEndDate((prevState) => !prevState)}
                 />
               </div>
               <div className={classNames(changeEndDate ? '' : 'opacity-40 pointer-events-none', 'flex flex-col gap-2')}>
@@ -236,30 +230,14 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
               </div>
             </div>
             <div>
-              <Checker.Connect type="button" size="xl" fullWidth>
-                <Checker.Network type="button" size="xl" fullWidth chainId={chainId}>
-                  <Checker.Custom
-                    showGuardIfTrue={topUp && !amountAsEntity?.greaterThan(ZERO)}
-                    guard={
-                      <Button type="button" size="xl" fullWidth>
-                        Enter amount
-                      </Button>
-                    }
-                  >
-                    <Checker.Custom
-                      showGuardIfTrue={changeEndDate && !endDate}
-                      guard={
-                        <Button type="button" size="xl" fullWidth>
-                          Enter date
-                        </Button>
-                      }
-                    >
+              <Checker.Connect type="button">
+                <Checker.Network type="button" chainId={chainId}>
+                  <Checker.Custom guardWhen={topUp && !amountAsEntity?.greaterThan(ZERO)} guardText="Enter amount">
+                    <Checker.Custom guardWhen={changeEndDate && !endDate} guardText="Enter date">
                       <Checker.ApproveBentobox
                         tag={APPROVE_TAG}
                         type="button"
-                        fullWidth
                         id="furo-update-stream-approve-bentobox"
-                        size="xl"
                         chainId={chainId satisfies BentoBoxV1ChainId}
                         masterContract={contractAddress as Address}
                         className="col-span-3 md:col-span-2"
@@ -267,8 +245,6 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                         <Checker.ApproveERC20
                           id="approve-erc20-update-stream"
                           type="button"
-                          size="xl"
-                          fullWidth
                           amount={amountAsEntity}
                           contract={bentoBoxV1Address[chainId] as Address}
                           enabled={topUp}
@@ -276,8 +252,8 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                           <Checker.Success tag={APPROVE_TAG}>
                             <Button
                               type="button"
-                              size="xl"
                               fullWidth
+                              size="xl"
                               disabled={isWritePending || (!topUp && !changeEndDate) || !sendTransaction}
                               onClick={() => sendTransaction?.()}
                               testId="stream-update-confirmation"

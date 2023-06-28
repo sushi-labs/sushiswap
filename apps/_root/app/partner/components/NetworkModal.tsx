@@ -1,8 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
-import { Button, Dialog, NetworkIcon, Typography } from '@sushiswap/ui'
-import { SUPPORTED_CHAINS } from './../config'
+import { SUPPORTED_CHAINS } from '../config'
 import React, { FC, useState } from 'react'
+import { Button } from '@sushiswap/ui/components/button'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { Dialog } from '@sushiswap/ui/components/dialog'
 
 interface NetworkModal {
   chainId: ChainId
@@ -14,9 +16,9 @@ export const NetworkModal: FC<NetworkModal> = ({ chainId, setChainId }) => {
 
   return (
     <>
-      <Button key={chainId} color="gray" onClick={() => setOpen(true)} className="flex !justify-start">
+      <Button key={chainId} variant="secondary" onClick={() => setOpen(true)} className="flex !justify-start">
         <NetworkIcon type="circle" chainId={chainId} width={28} height={28} />
-        <Typography>{CHAIN_NAME[chainId]}</Typography>
+        <span>{CHAIN_NAME[chainId]}</span>
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-3 !pb-4">
@@ -25,7 +27,7 @@ export const NetworkModal: FC<NetworkModal> = ({ chainId, setChainId }) => {
             {SUPPORTED_CHAINS.map((key) => (
               <Button
                 key={key}
-                color="gray"
+                variant="secondary"
                 onClick={() => {
                   setChainId(key)
                   setOpen(false)
@@ -33,7 +35,7 @@ export const NetworkModal: FC<NetworkModal> = ({ chainId, setChainId }) => {
                 className="flex !justify-start"
               >
                 <NetworkIcon type="circle" chainId={key} width={28} height={28} />
-                <Typography>{CHAIN_NAME[key]}</Typography>
+                <span>{CHAIN_NAME[key]}</span>
               </Button>
             ))}
           </div>

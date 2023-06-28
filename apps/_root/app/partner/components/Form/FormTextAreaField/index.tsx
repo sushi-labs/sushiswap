@@ -1,4 +1,4 @@
-import { classNames, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { FormType } from '../../../page'
 import React, { FC, ReactElement, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -23,13 +23,14 @@ const FormTextAreaField: FC<FormTextAreaFieldProps> = ({ name, label, children, 
   // Unregister on unmount
   useEffect(() => {
     return () => {
+      // @ts-ignore
       unregister(name)
     }
   }, [name, unregister])
 
   return (
     <>
-      <Typography weight={600}>{label}</Typography>
+      <p className="font-semibold">{label}</p>
       <div className="flex mt-2 rounded-lg shadow-lg">
         <textarea
           {...register(name)}

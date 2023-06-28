@@ -2,20 +2,20 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { Percent } from '@sushiswap/math'
 import {
   _useSendTransaction as useSendTransaction,
-  useNetwork,
   useAccount,
+  useNetwork,
   UserRejectedRequestError,
 } from '@sushiswap/wagmi'
 import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { createToast } from '@sushiswap/ui/future/components/toast'
 import { isSushiSwapV3ChainId, NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
+import { createToast } from '@sushiswap/ui/components/toast'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
 import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import {
   ConfirmationDialog as UIConfirmationDialog,
   ConfirmationDialogState,
-} from '@sushiswap/ui/dialog/ConfirmationDialog'
+} from '@sushiswap/ui/components/dialog/ConfirmationDialog'
 import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'

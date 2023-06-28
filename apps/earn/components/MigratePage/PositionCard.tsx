@@ -1,12 +1,12 @@
 import { Chain } from '@sushiswap/chain'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Currency } from '@sushiswap/ui/components/currency'
 import React, { FC } from 'react'
 import { PositionWithPool } from '../../types'
 import { useTokensFromPool } from '../../lib/hooks'
 import { formatNumber, formatUSD } from '@sushiswap/format'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { Button } from '@sushiswap/ui/components/button'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
 
 interface PositionCard {
   position: PositionWithPool
@@ -15,18 +15,18 @@ interface PositionCard {
 export const PositionCardSkeleton = () => {
   return (
     <div className="relative bg-white dark:bg-slate-800 hover:shadow-md transition-all rounded-2xl p-7 overflow-hidden w-[320px]">
-      <Skeleton.Text fontSize="text-xs" className="w-[40px]" />
-      <Skeleton.Text fontSize="text-2xl" className="w-[160px]" />
+      <SkeletonText fontSize="xs" className="w-[40px]" />
+      <SkeletonText fontSize="2xl" className="w-[160px]" />
       <div className="flex flex-col gap-2 items-center py-7">
         <div className="inline-flex">
-          <Skeleton.Circle radius={56} />
-          <Skeleton.Circle radius={56} style={{ marginLeft: -48 / 3 }} />
+          <SkeletonCircle radius={56} />
+          <SkeletonCircle radius={56} style={{ marginLeft: -48 / 3 }} />
         </div>
       </div>
-      <Skeleton.Text fontSize="text-sm" className="w-[100px]" />
-      <Skeleton.Text fontSize="text-sm" className="w-[40px]" />
+      <SkeletonText fontSize="sm" className="w-[100px]" />
+      <SkeletonText fontSize="sm" className="w-[40px]" />
       <div className="absolute bottom-7 right-7">
-        <Skeleton.Text fontSize="text-2xl" className="w-[80px] !h-[32px] !rounded-full" />
+        <SkeletonText fontSize="2xl" className="w-[80px] !h-[32px] !rounded-full" />
       </div>
     </div>
   )
@@ -58,16 +58,23 @@ export const PositionCard: FC<PositionCard> = ({ position }) => {
       </span>
       <div className="flex gap-1 absolute top-7 right-7">
         {position.pool.incentives && position.pool.incentives.length > 0 && (
-          <Tooltip description="Farm rewards available">
-            <div className="py-1 bg-green/20 text-green text-xs px-2 rounded-full">
-              🧑‍🌾 {position.pool.incentives.length > 1 ? `x ${position.pool.incentives.length}` : ''}{' '}
-            </div>
-          </Tooltip>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="py-1 bg-green/20 text-green text-xs px-2 rounded-full">
+                  🧑‍🌾 {position.pool.incentives.length > 1 ? `x ${position.pool.incentives.length}` : ''}{' '}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Farm rewards available</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         )}
       </div>
       <div className="absolute bottom-7 right-7">
-        <Button size="sm" as="a" href={`/pools/${position.pool.id}/migrate`} className="!rounded-full">
-          Migrate
+        <Button size="sm" asChild>
+          <a href={`/pools/${position.pool.id}/migrate`}>Migrate</a>
         </Button>
       </div>
     </div>

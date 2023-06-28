@@ -2,7 +2,6 @@ import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import { Chain, configureChains, createClient, CreateClientConfig, mainnet } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
-import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { LedgerConnector } from 'wagmi/connectors/ledger'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
@@ -49,26 +48,19 @@ export const _createClient = (config?: CreateClientConfig) => {
               enableDebugLogs: process.env.NODE_ENV !== 'production',
             },
           }),
-          // TODO: Migrate to the WalletConnect v2 Connector before June 28
-          // and flesh out wallet connect options.
-          new WalletConnectLegacyConnector({
+          new WalletConnectConnector({
             chains,
             options: {
-              qrcode: true,
+              showQrModal: true,
+              projectId: '187b0394dbf3b20ce7762592560eafd2',
+              metadata: {
+                name: 'Sushi',
+                description: 'Community home of DeFi',
+                url: 'https://www.sushi.com',
+                icons: ['https://www.sushi.com/icon.png'],
+              },
             },
           }),
-          // new WalletConnectConnector({
-          //   chains,
-          //   options: {
-          //     projectId: '187b0394dbf3b20ce7762592560eafd2',
-          //     metadata: {
-          //       name: 'Sushi',
-          //       description: 'Community home of DeFi',
-          //       url: 'https://www.sushi.com',
-          //       icons: ['https://www.sushi.com/icon.png'],
-          //     },
-          //   },
-          // }),
           new CoinbaseWalletConnector({
             // TODO: Flesh out coinbase wallet connect options?
             chains,

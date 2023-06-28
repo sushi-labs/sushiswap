@@ -4,10 +4,11 @@ import { RefreshIcon } from '@heroicons/react-v1/solid'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { formatNumber, formatPercent } from '@sushiswap/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
-import { CheckIcon, NetworkIcon, Tooltip } from '@sushiswap/ui'
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import { GenericTable } from '@sushiswap/ui/table'
 import { Subgraph } from '../lib'
+import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
+import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
 
 interface SubgraphTable {
   subgraphs: Subgraph[]
@@ -40,9 +41,27 @@ const columns = [
     cell: (info) => (
       <div className="flex justify-center">
         {info.getValue() === 'Current' ? (
-          <Tooltip panel={<>Synced</>} button={<CheckIcon width={24} height={24} />} />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <CheckIcon width={24} height={24} />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Synced</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         ) : (
-          <Tooltip panel={<>Syncing</>} button={<RefreshIcon width={24} height={24} />} />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <RefreshIcon width={24} height={24} />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Syncing</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         )}
       </div>
     ),
@@ -94,7 +113,7 @@ const columns = [
             <div className="text-yellow">
               {status} ({formatNumber(unsyncedBlockCount).replace(/\.(00|0)/, '')})
             </div>
-          );
+          )
         case 'Failed':
           return <div className="text-red">{status}</div>
       }

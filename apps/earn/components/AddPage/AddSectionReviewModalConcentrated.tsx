@@ -1,10 +1,9 @@
 import { Amount, tryParseAmount, Type } from '@sushiswap/currency'
-import { Collapsible, Dots } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { Dialog } from '@sushiswap/ui/future/components/dialog'
-import { Currency } from '@sushiswap/ui/future/components/currency'
-import { List } from '@sushiswap/ui/future/components/list/List'
+import { Dialog } from '@sushiswap/ui/components/dialog'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { List } from '@sushiswap/ui/components/list/List'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { AddSectionConfirmModalConcentrated } from './AddSectionConfirmModalConcentrated'
 import { ArrowLeftIcon } from '@heroicons/react/solid'
@@ -12,6 +11,8 @@ import { Bound } from '../../lib/constants'
 import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
 import { FeeAmount, Position } from '@sushiswap/v3-sdk'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
+import { Dots } from '@sushiswap/ui/components/dots'
+import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
 
 interface AddSectionReviewModalConcentratedProps
   extends Pick<
@@ -203,12 +204,11 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
               {({ onClick, isWritePending, isLoading, isError, error, isConfirming }) => (
                 <div className="space-y-4">
                   <Button
-                    fullWidth
                     size="xl"
+                    fullWidth
                     loading={isLoading && !isError}
                     onClick={onClick}
                     disabled={isWritePending || Boolean(isLoading) || isError}
-                    color={isError ? 'red' : 'blue'}
                     testId="confirm-add-liquidity"
                     type="button"
                   >

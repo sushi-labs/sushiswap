@@ -1,13 +1,13 @@
 import React, { FC, useMemo } from 'react'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { NetworkIcon } from '@sushiswap/ui'
-import { Currency } from '@sushiswap/ui/future/components/currency'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { Badge } from '@sushiswap/ui/components/Badge'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/v3-sdk'
 import { unwrapToken } from '../../lib/functions'
-import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
 import { formatPercent } from '@sushiswap/format'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
 
 type PoolHeader = {
   title?: string
@@ -31,12 +31,12 @@ export const PoolHeader: FC<PoolHeader> = ({ title, isLoading, pool, chainId, ap
     return (
       <div className="flex gap-6 h-[52px]">
         <div className="inline-flex">
-          <Skeleton.Circle radius={48} />
-          <Skeleton.Circle radius={48} style={{ marginLeft: -48 / 3 }} />
+          <SkeletonCircle radius={48} />
+          <SkeletonCircle radius={48} style={{ marginLeft: -48 / 3 }} />
         </div>
         <div className="flex flex-col flex-grow">
-          <Skeleton.Text fontSize="text-xl" className="w-[120px]" />
-          <Skeleton.Text fontSize="text-base" className="w-[240px]" />
+          <SkeletonText fontSize="xl" className="w-[120px]" />
+          <SkeletonText className="w-[240px]" />
         </div>
       </div>
     )
@@ -65,12 +65,14 @@ export const PoolHeader: FC<PoolHeader> = ({ title, isLoading, pool, chainId, ap
           <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-400">
             {apy ? (
               <>
-                <Tooltip description={`${formatPercent(apy.fees)} fee APR + ${formatPercent(apy.rewards)} reward APR`}>
-                  <span className="font-semibold text-gray-900 dark:text-slate-50 underline underline-offset-[6px] decoration-dotted decoration-slate-500">
-                    {formatPercent((apy.fees || 0) + (apy.rewards || 0))} APR
-                  </span>{' '}
-                </Tooltip>
-
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>{formatPercent((apy.fees || 0) + (apy.rewards || 0))} APR</TooltipTrigger>
+                    <TooltipContent>
+                      <p>{`${formatPercent(apy.fees)} fee APR + ${formatPercent(apy.rewards)} reward APR`}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 <span className="text-[10px]">•</span>
               </>
             ) : (

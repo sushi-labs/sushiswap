@@ -3,11 +3,11 @@ import React, { FC, useMemo, useState } from 'react'
 import { Transaction, TransactionType, useTransactionsV3 } from './useTransactionsV3'
 import { getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 import { AMOUNT_IN_COLUMN, AMOUNT_OUT_COLUMN, AMOUNT_USD_COLUMN, SENDER_COLUMN, TIME_COLUMN } from './columns'
-import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
+import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
 import { Chain } from '@sushiswap/chain'
-import { Paginator } from '@sushiswap/ui/table/Paginator'
 import { RadioGroup } from '@headlessui/react'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Paginator } from '@sushiswap/ui/components/table/Paginator'
+import { Toggle } from '@sushiswap/ui/components/toggle'
 
 interface PoolTransactionsV3Props {
   pool: Pool | undefined | null
@@ -58,38 +58,23 @@ export const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }
       <RadioGroup value={type} onChange={setType} className="flex gap-1 mb-6 justify-end px-2">
         <RadioGroup.Option value={TransactionType.Swap}>
           {({ checked }) => (
-            <Button
-              size="xs"
-              variant={checked ? 'outlined' : 'empty'}
-              color={checked ? 'blue' : 'default'}
-              className="!h-[24px] font-bold"
-            >
+            <Toggle size="sm" pressed={checked}>
               Swaps
-            </Button>
+            </Toggle>
           )}
         </RadioGroup.Option>
         <RadioGroup.Option value={TransactionType.Mint}>
           {({ checked }) => (
-            <Button
-              size="xs"
-              variant={checked ? 'outlined' : 'empty'}
-              color={checked ? 'blue' : 'default'}
-              className="!h-[24px] font-bold"
-            >
+            <Toggle size="sm" pressed={checked}>
               Add liquidity
-            </Button>
+            </Toggle>
           )}
         </RadioGroup.Option>
         <RadioGroup.Option value={TransactionType.Burn}>
           {({ checked }) => (
-            <Button
-              size="xs"
-              variant={checked ? 'outlined' : 'empty'}
-              color={checked ? 'blue' : 'default'}
-              className="!h-[24px] font-bold"
-            >
+            <Toggle size="sm" pressed={checked}>
               Remove liquidity
-            </Button>
+            </Toggle>
           )}
         </RadioGroup.Option>
       </RadioGroup>

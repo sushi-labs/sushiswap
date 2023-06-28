@@ -1,8 +1,8 @@
 import { ForwardedRef, forwardRef, useEffect, useState } from 'react'
-import { Input } from '@sushiswap/ui/future/components/input'
+import { Input } from '@sushiswap/ui/components/input'
 import { useEnsResolver } from 'wagmi'
 import { ChainId } from '@sushiswap/chain'
-import { TextInput } from '@sushiswap/ui/future/components/input/Text'
+import { TextInput } from '@sushiswap/ui/components/input/Text'
 
 export type EnsInputProps = TextInput
 

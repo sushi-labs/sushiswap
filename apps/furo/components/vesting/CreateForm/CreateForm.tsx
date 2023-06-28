@@ -11,7 +11,7 @@ import {
   CreateMultipleVestingModelSchema,
   CreateVestingFormSchemaType,
 } from '../schema'
-import { Form } from '@sushiswap/ui/future/components/form'
+import { Form } from '@sushiswap/ui/components/form'
 
 export const CREATE_VEST_DEFAULT_VALUES: CreateVestingFormSchemaType = {
   id: nanoid(),

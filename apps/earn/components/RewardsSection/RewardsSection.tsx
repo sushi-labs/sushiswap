@@ -1,13 +1,13 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { AngleRewardsPool, useAngleRewardsMultipleChains } from '@sushiswap/react-query'
-import { Carousel } from '@sushiswap/ui/future/components/Carousel'
+import { Carousel } from '@sushiswap/ui/components/Carousel'
 import { RewardSlide } from './RewardSlide'
 import { useAccount } from '@sushiswap/wagmi'
-import Container from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/components/container'
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
 import { useBreakpoint } from '@sushiswap/hooks'
-import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
+import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
 import {
   REWARDS_V3_APR_COLUMN,
   REWARDS_V3_CLAIMABLE_COLUMN,
@@ -15,7 +15,7 @@ import {
   REWARDS_V3_POSITION_SIZE_COLUMN,
 } from './Tables/RewardsTableV3'
 import { ANGLE_ENABLED_NETWORKS } from '../../config'
-import { Dialog } from '@sushiswap/ui/future/components/dialog'
+import { Dialog } from '@sushiswap/ui/components/dialog'
 import { RewardsTableV3RowPopover } from './Tables/RewardsTableV3/RewardsTableV3RowPopover'
 
 const COLUMNS = [
