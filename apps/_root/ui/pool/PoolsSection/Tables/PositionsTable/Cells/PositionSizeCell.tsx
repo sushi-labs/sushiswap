@@ -1,7 +1,7 @@
 import { formatUSD } from '@sushiswap/format'
+import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future/hooks'
 import { FC } from 'react'
 
-import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future/hooks'
 import { Row } from '../../SharedCells/types'
 
 export const PositionSizeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> = ({ row }) => {

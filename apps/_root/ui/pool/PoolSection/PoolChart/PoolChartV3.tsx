@@ -1,10 +1,11 @@
-import React, { FC, useMemo, useState } from 'react'
-import { PoolChartPeriod, PoolChartType } from './types'
-import { PoolChartTypes } from './PoolChartTypes'
-import { PoolChartPeriods } from './PoolChartPeriods'
-import { PoolChartGraph } from './PoolChartGraph'
-import { PoolDepthWidget } from '../V3/PoolDepthWidget'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import React, { FC, useMemo, useState } from 'react'
+
+import { PoolDepthWidget } from '../V3/PoolDepthWidget'
+import { PoolChartGraph } from './PoolChartGraph'
+import { PoolChartPeriods } from './PoolChartPeriods'
+import { PoolChartTypes } from './PoolChartTypes'
+import { PoolChartPeriod, PoolChartType } from './types'
 
 const charts = [PoolChartType.Volume, PoolChartType.TVL, PoolChartType.Fees, PoolChartType.Depth]
 const periods = [

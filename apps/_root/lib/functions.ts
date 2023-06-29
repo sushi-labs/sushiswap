@@ -1,7 +1,8 @@
 import { ConstantProductPool, Pair, StablePool } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
-import { DAI, Native, Price, Token, Type, USDC, USDT, WBTC } from '@sushiswap/currency'
 import { Pool, Protocol } from '@sushiswap/client'
+import { DAI, Native, Price, Token, Type, USDC, USDT, WBTC } from '@sushiswap/currency'
+import { JSBI } from '@sushiswap/math'
 import {
   encodeSqrtRatioX96,
   FeeAmount,
@@ -12,10 +13,10 @@ import {
   TickMath,
   tickToPrice,
 } from '@sushiswap/v3-sdk'
-import { JSBI } from '@sushiswap/math'
-import { TickProcessed } from './hooks/useConcentratedActiveLiquidity'
-import { useTicks } from './hooks'
+
 import { Bound } from './constants'
+import { useTicks } from './hooks'
+import { TickProcessed } from './hooks/useConcentratedActiveLiquidity'
 
 export const isConstantProductPool = (
   pool: Pair | ConstantProductPool | StablePool | null

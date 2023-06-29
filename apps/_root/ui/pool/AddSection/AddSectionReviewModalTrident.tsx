@@ -5,7 +5,9 @@ import { calculateSlippageAmount, ConstantProductPool, StablePool } from '@sushi
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
+import { createToast } from '@sushiswap/ui/components/toast'
 import {
   _useSendTransaction as useSendTransaction,
   ConstantProductPoolState,
@@ -16,17 +18,14 @@ import {
   useTotalSupply,
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { approveMasterContractAction, batchAction, getAsEncodedAction, LiquidityInput } from 'lib/actions'
+import { APPROVE_TAG_ADD_TRIDENT } from 'lib/constants'
+import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-
-import { approveMasterContractAction, batchAction, getAsEncodedAction, LiquidityInput } from 'lib/actions'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
-import { createToast } from '@sushiswap/ui/components/toast'
-import { Button } from '@sushiswap/ui/components/button'
-import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
-import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { APPROVE_TAG_ADD_TRIDENT } from 'lib/constants'
 
 interface AddSectionReviewModalTridentProps {
   poolAddress: string

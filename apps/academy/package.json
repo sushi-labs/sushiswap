@@ -8,7 +8,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .mesh",
     "dev": "next dev --port 3009",
     "generate": "graphql-mesh build",
-    "lint": "TIMING=1 next lint",
+    "lint": "TIMING=1 next lint --fix",
     "sitemap": "next-sitemap --config next-sitemap.config.mjs",
     "start": "next start"
   },

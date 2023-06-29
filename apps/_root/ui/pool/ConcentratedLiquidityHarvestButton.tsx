@@ -1,9 +1,9 @@
-import { FC, ReactElement, useMemo } from 'react'
+import { BigNumber } from '@ethersproject/bignumber'
 import { ChainId } from '@sushiswap/chain'
-import { useHarvestAngleRewards } from '@sushiswap/wagmi/future/hooks'
 import { useAngleRewards } from '@sushiswap/react-query'
 import { Address } from '@sushiswap/wagmi'
-import { BigNumber } from '@ethersproject/bignumber'
+import { useHarvestAngleRewards } from '@sushiswap/wagmi/future/hooks'
+import { FC, ReactElement, useMemo } from 'react'
 
 interface ConcentratedLiquidityHarvestButton {
   account: Address | undefined

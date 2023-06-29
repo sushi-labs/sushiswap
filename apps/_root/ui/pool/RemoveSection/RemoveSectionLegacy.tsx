@@ -1,13 +1,16 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
+import { ChainId } from '@sushiswap/chain'
+import { Pool } from '@sushiswap/client'
 import { Amount, Native } from '@sushiswap/currency'
 import { calculateGasMargin } from '@sushiswap/gas'
-import { Pool } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
-import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { Dots } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/components/button'
+import { createToast } from '@sushiswap/ui/components/toast'
+import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   _useSendTransaction as useSendTransaction,
   Address,
@@ -19,18 +22,16 @@ import {
   useSushiSwapRouterContract,
   useTotalSupply,
 } from '@sushiswap/wagmi'
-import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { useTokensFromPool, useTransactionDeadline, useUnderlyingTokenBalanceFromPool } from 'lib/hooks'
-import { usePoolPosition } from '../PoolPositionProvider'
-import { RemoveSectionWidget } from './RemoveSectionWidget'
-import { createToast } from '@sushiswap/ui/components/toast'
-import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
-import { Button } from '@sushiswap/ui/components/button'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_REMOVE_LEGACY } from 'lib/constants'
-import { ChainId } from '@sushiswap/chain'
+import { useTokensFromPool, useTransactionDeadline, useUnderlyingTokenBalanceFromPool } from 'lib/hooks'
+import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
+import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
+
+import { usePoolPosition } from '../PoolPositionProvider'
+import { RemoveSectionWidget } from './RemoveSectionWidget'
 
 interface RemoveSectionLegacyProps {
   pool: Pool

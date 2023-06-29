@@ -1,9 +1,9 @@
-import { FC, useMemo } from 'react'
+import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
+import { shortenAddress } from '@sushiswap/format'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
-import { ChainId } from '@sushiswap/chain'
-import { shortenAddress } from '@sushiswap/format'
+import { FC, useMemo } from 'react'
 
 interface UnknownTokenAlert {
   pool: Pool

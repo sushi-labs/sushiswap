@@ -1,9 +1,9 @@
-import { formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
-import { FC } from 'react'
+import { formatUSD } from '@sushiswap/format'
 import { Currency } from '@sushiswap/ui/components/currency'
-
 import { useTokensFromPool } from 'lib/hooks'
+import { FC } from 'react'
+
 import { usePoolPosition } from '../../PoolPositionProvider'
 
 interface PoolPositionProps {

@@ -1,17 +1,18 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
+import { FuroVestingChainId } from '@sushiswap/furo'
+import { ZERO } from '@sushiswap/math'
+import { Button } from '@sushiswap/ui/components/button'
+import { Dialog } from '@sushiswap/ui/components/dialog'
 import { Dots } from '@sushiswap/ui/components/dots'
+import { createToast } from '@sushiswap/ui/components/toast'
 import { useAccount, useFuroVestingContract } from '@sushiswap/wagmi'
-import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems'
+import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
+
 import { useVestingBalance, Vesting } from '../../lib'
-import { createToast } from '@sushiswap/ui/components/toast'
-import { FuroVestingChainId } from '@sushiswap/furo'
-import { Button } from '@sushiswap/ui/components/button'
-import { ZERO } from '@sushiswap/math'
-import { Dialog } from '@sushiswap/ui/components/dialog'
 
 interface WithdrawModalProps {
   vesting?: Vesting

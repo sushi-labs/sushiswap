@@ -1,21 +1,21 @@
 import { Transition } from '@headlessui/react'
-import { tryParseAmount } from '@sushiswap/currency'
+import { ChainId } from '@sushiswap/chain'
 import { ChefType, Pool, usePool } from '@sushiswap/client'
+import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
-import { getMasterChefContractConfig, useAccount, useMasterChefDeposit } from '@sushiswap/wagmi'
-import { FC, Fragment, useMemo, useState } from 'react'
+import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
-
-import { useGraphPool } from 'lib/hooks'
-import { usePoolPosition } from '../PoolPositionProvider'
-import { AddSectionStakeWidget } from './AddSectionStakeWidget'
-import { useSWRConfig } from 'swr'
+import { getMasterChefContractConfig, useAccount, useMasterChefDeposit } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { Button } from '@sushiswap/ui/components/button'
 import { APPROVE_TAG_STAKE } from 'lib/constants'
-import { ChainId } from '@sushiswap/chain'
+import { useGraphPool } from 'lib/hooks'
+import { FC, Fragment, useMemo, useState } from 'react'
+import { useSWRConfig } from 'swr'
+
+import { usePoolPosition } from '../PoolPositionProvider'
+import { AddSectionStakeWidget } from './AddSectionStakeWidget'
 
 interface AddSectionStakeProps {
   pool: Pool

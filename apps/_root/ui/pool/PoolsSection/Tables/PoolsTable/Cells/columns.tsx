@@ -1,17 +1,16 @@
+import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
+import { Explainer } from '@sushiswap/ui/components/explainer'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
-import { PoolFees1dCell } from './PoolFees1dCell'
 import { PoolAPRCell, PoolChainCell, PoolNameCell, PoolVolume1dCell } from '../../SharedCells'
-import { PoolTVLCell } from './PoolTVLCell'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
-
-import { Explainer } from '@sushiswap/ui/components/explainer'
-import { ChainId } from '@sushiswap/chain'
 import { PoolVolume1hCell } from '../../SharedCells/PoolVolume1hCell'
-import { PoolVolume1wCell } from '../../SharedCells/PoolVolume1wCell'
 import { PoolVolume1mCell } from '../../SharedCells/PoolVolume1mCell'
+import { PoolVolume1wCell } from '../../SharedCells/PoolVolume1wCell'
+import { PoolFees1dCell } from './PoolFees1dCell'
+import { PoolTVLCell } from './PoolTVLCell'
 
 export const ICON_SIZE = 26
 export const PAGE_SIZE = 20

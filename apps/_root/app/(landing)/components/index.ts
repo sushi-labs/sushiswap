@@ -1,4 +1,3 @@
-export { Story } from './Story/Story'
 export { AnimatedTitle } from './AnimatedTitle'
 export { BuildFuture } from './BuildFuture'
 export { BuildWealth } from './BuildWealth'
@@ -9,6 +8,7 @@ export { NeedHelp } from './NeedHelp'
 export { Partners } from './Partners'
 export { Search } from './Search'
 export { Stats } from './Stats'
+export { Story } from './Story/Story'
 
 // svgs
 // export { ArbitrumSVG } from './svgs/ArbitrumSVG'

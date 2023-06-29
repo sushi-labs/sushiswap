@@ -1,13 +1,14 @@
-import React, { FC, useMemo, useState } from 'react'
-import { Transaction, TransactionType, useTransactionsV2 } from './useTransactionsV2'
-import { getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
-import { AMOUNT_IN_COLUMN, AMOUNT_OUT_COLUMN, AMOUNT_USD_COLUMN, SENDER_COLUMN, TIME_COLUMN } from './columns'
-import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
-import { Chain } from '@sushiswap/chain'
 import { RadioGroup } from '@headlessui/react'
+import { Chain } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
+import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
 import { Paginator } from '@sushiswap/ui/components/table/Paginator'
 import { Toggle } from '@sushiswap/ui/components/toggle'
+import { getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
+import React, { FC, useMemo, useState } from 'react'
+
+import { AMOUNT_IN_COLUMN, AMOUNT_OUT_COLUMN, AMOUNT_USD_COLUMN, SENDER_COLUMN, TIME_COLUMN } from './columns'
+import { Transaction, TransactionType, useTransactionsV2 } from './useTransactionsV2'
 
 interface PoolTransactionsV2Props {
   pool: Pool | undefined | null

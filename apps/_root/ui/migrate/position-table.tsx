@@ -1,13 +1,14 @@
-import { useAccount } from '@sushiswap/wagmi'
-import { useUserPositions } from '../../lib/hooks'
-import { SUPPORTED_CHAIN_IDS } from '../../config'
-import React, { useEffect, useMemo, useState } from 'react'
-import { getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
-import { PositionWithPool } from '../../types'
+import { Protocol } from '@sushiswap/client'
 import { useBreakpoint } from '@sushiswap/hooks'
 import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
+import { useAccount } from '@sushiswap/wagmi'
+import { getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
+import React, { useEffect, useMemo, useState } from 'react'
+
+import { SUPPORTED_CHAIN_IDS } from '../../config'
+import { useUserPositions } from '../../lib/hooks'
+import { PositionWithPool } from '../../types'
 import { APR_COLUMN, NAME_COLUMN, VALUE_COLUMN } from '../pool/PoolsSection/Tables/PositionsTable/Cells/columns'
-import { Protocol } from '@sushiswap/client'
 
 const COLUMNS = [NAME_COLUMN, VALUE_COLUMN, APR_COLUMN] as any
 

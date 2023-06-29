@@ -1,8 +1,9 @@
 import { Type } from '@sushiswap/currency'
-import { FeeAmount, TICK_SPACINGS, tickToPrice, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { useMemo } from 'react'
-import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { JSBI } from '@sushiswap/math'
+import { FeeAmount, SushiSwapV3ChainId,TICK_SPACINGS, tickToPrice } from '@sushiswap/v3-sdk'
+import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
+import { useMemo } from 'react'
+
 import computeSurroundingTicks from '../functions'
 import { useTicks } from './useTicks'
 

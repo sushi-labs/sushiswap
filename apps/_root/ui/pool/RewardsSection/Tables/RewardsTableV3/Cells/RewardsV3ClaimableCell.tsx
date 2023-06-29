@@ -1,8 +1,8 @@
+import { formatNumber } from '@sushiswap/format'
+import { useTokenAmountDollarValues } from 'lib/hooks'
 import React, { FC, useMemo } from 'react'
 
 import { RewardTableV3CellProps } from './types'
-import { useTokenAmountDollarValues } from 'lib/hooks'
-import { formatNumber } from '@sushiswap/format'
 
 export const RewardsV3ClaimableCell: FC<RewardTableV3CellProps> = ({ row }) => {
   const unclaimed = useMemo(() => Object.values(row.rewardsPerToken).map((el) => el.unclaimed), [row])

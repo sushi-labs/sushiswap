@@ -1,6 +1,5 @@
-import { createContext, FC, ReactNode, useContext, useEffect, useRef } from 'react'
-
 import { useRouter } from 'next/router'
+import { createContext, FC, ReactNode, useContext, useEffect, useRef } from 'react'
 
 interface HistoryProviderContext {
   path: string | null

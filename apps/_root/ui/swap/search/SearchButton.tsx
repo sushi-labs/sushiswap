@@ -1,8 +1,8 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import React, { FC, useCallback } from 'react'
 
 import { useSearchContext } from './SearchProvider'
-import { IconButton } from '@sushiswap/ui/components/iconbutton'
 
 export const SearchButton: FC = () => {
   const { setOpen } = useSearchContext()

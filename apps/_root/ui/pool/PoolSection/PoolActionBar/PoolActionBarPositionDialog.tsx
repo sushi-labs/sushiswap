@@ -1,14 +1,14 @@
-import { formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
+import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { Dialog } from '@sushiswap/ui/components/dialog'
+import { useTokensFromPool } from 'lib/hooks'
 import { FC, useCallback } from 'react'
 
-import { useTokensFromPool } from 'lib/hooks'
 import { usePoolPosition } from '../../PoolPositionProvider'
 import { usePoolPositionStaked } from '../../PoolPositionStakedProvider'
 import { PoolButtons } from '../PoolButtons'
-import { Dialog } from '@sushiswap/ui/components/dialog'
-import { Currency } from '@sushiswap/ui/components/currency'
 
 interface PoolActionBarPositionDialogProps {
   pool: Pool

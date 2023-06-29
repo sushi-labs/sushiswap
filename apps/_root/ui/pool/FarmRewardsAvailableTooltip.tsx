@@ -1,5 +1,5 @@
-import { FC } from 'react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
+import { FC } from 'react'
 
 export const FarmRewardsAvailableTooltip: FC = () => {
   return (

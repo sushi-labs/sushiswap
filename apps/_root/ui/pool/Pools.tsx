@@ -1,21 +1,12 @@
 'use client'
 
 import { ChevronRightIcon } from '@heroicons/react-v1/solid'
-import { Button } from '@sushiswap/ui/components/button'
-import React, { FC } from 'react'
-import { useAccount, useNetwork } from '@sushiswap/wagmi'
-import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { PoolFilters, PoolsFiltersProvider, PoolsSection } from '.'
 import { ChainId } from '@sushiswap/chain'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
-import { PositionCardList } from './MigratePage/PositionCardList'
-import { Container } from '@sushiswap/ui/components/container'
-import { PositionCard, PositionCardSkeleton } from './MigratePage/PositionCard'
+import { Button } from '@sushiswap/ui/components/button'
 import { Carousel } from '@sushiswap/ui/components/Carousel'
-import { DiscordIcon } from '@sushiswap/ui/components/icons'
-import { TRIDENT_ENABLED_NETWORKS } from 'config'
-import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-
+import { Chip } from '@sushiswap/ui/components/chip'
+import { Container } from '@sushiswap/ui/components/container'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,8 +14,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@sushiswap/ui/components/dropdown-menu'
-import { Chip } from '@sushiswap/ui/components/chip'
+import { DiscordIcon } from '@sushiswap/ui/components/icons'
 import { SelectIcon } from '@sushiswap/ui/components/select'
+import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
+import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { useAccount, useNetwork } from '@sushiswap/wagmi'
+import { TRIDENT_ENABLED_NETWORKS } from 'config'
+import React, { FC } from 'react'
+
+import { PoolFilters, PoolsFiltersProvider, PoolsSection } from '.'
+import { PositionCard, PositionCardSkeleton } from './MigratePage/PositionCard'
+import { PositionCardList } from './MigratePage/PositionCardList'
 
 export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
   const { address } = useAccount()

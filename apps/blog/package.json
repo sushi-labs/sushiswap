@@ -9,7 +9,7 @@
     "dev": "next dev --port 3002",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "generate": "graphql-mesh build",
-    "lint": "TIMING=1 next lint",
+    "lint": "TIMING=1 next lint --fix",
     "sitemap": "next build && next-sitemap --config next-sitemap.config.mjs",
     "start": "next start"
   },
@@ -53,10 +53,5 @@
     "sharp": "0.31.3",
     "tailwindcss": "3.3.2",
     "typescript": "5.1.6"
-  },
-  "nextBundleAnalysis": {
-    "budget": 460800,
-    "budgetPercentIncreaseRed": 20,
-    "showDetails": true
   }
 }

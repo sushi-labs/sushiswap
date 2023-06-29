@@ -1,7 +1,10 @@
 import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { tryParseAmount } from '@sushiswap/currency'
+import { ChainId } from '@sushiswap/chain'
 import { Pool, Protocol } from '@sushiswap/client'
+import { tryParseAmount } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
+import { ZERO } from '@sushiswap/math'
+import { Button } from '@sushiswap/ui/components/button'
 import {
   ConstantProductPoolState,
   getTridentRouterContractConfig,
@@ -9,16 +12,13 @@ import {
   useConstantProductPool,
   useStablePool,
 } from '@sushiswap/wagmi'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import { APPROVE_TAG_ADD_TRIDENT } from 'lib/constants'
+import { useTokensFromPool } from 'lib/hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
 
-import { useTokensFromPool } from 'lib/hooks'
 import { AddSectionReviewModalTrident } from './AddSectionReviewModalTrident'
 import { AddSectionWidget } from './AddSectionWidget'
-import { ZERO } from '@sushiswap/math'
-import { Checker } from '@sushiswap/wagmi/future/systems'
-import { Button } from '@sushiswap/ui/components/button'
-import { APPROVE_TAG_ADD_TRIDENT } from 'lib/constants'
-import { ChainId } from '@sushiswap/chain'
 
 export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const [open, setOpen] = useState(false)

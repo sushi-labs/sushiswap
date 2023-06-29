@@ -1,18 +1,17 @@
+import { ChainId } from '@sushiswap/chain'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future/hooks'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 import { PositionWithPool } from 'types'
 
-import { PoolAPRCell, PoolChainCell, PoolNameCell, PoolVolume1dCell } from '../../SharedCells'
-import { PairValueCell } from './PoolValueCell'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
-
 import { ICON_SIZE } from '../../PoolsTable/Cells/columns'
+import { PoolAPRCell, PoolChainCell, PoolNameCell, PoolVolume1dCell } from '../../SharedCells'
 import { PoolNameCellV3 } from '../../SharedCells/PoolNameCellV3'
-import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future/hooks'
-import { PriceRangeCell } from './PriceRangeCell'
+import { PairValueCell } from './PoolValueCell'
 import { PositionSizeCell } from './PositionSizeCell'
+import { PriceRangeCell } from './PriceRangeCell'
 import { UnclaimedCell } from './UnclaimedCell'
-import { ChainId } from '@sushiswap/chain'
 
 type TData = PositionWithPool
 

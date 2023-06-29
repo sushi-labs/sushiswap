@@ -1,7 +1,7 @@
+import { Progress } from '@sushiswap/ui/components/progress'
 import React, { FC } from 'react'
 
 import { CellProps } from './types'
-import { Progress } from '@sushiswap/ui/components/progress'
 
 export const StreamedCell: FC<CellProps> = ({ row }) => {
   if (row.streamedPercentage?.toFixed() === '100.00') {

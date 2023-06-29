@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { SUBGRAPH_HOST, SUSHISWAP_V3_SUBGRAPH_NAME } from '@sushiswap/graph-config'
-import { Pool, SushiSwapV3ChainId, isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { isSushiSwapV3ChainId,Pool, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useQuery } from '@tanstack/react-query'
 
 export enum TransactionType {

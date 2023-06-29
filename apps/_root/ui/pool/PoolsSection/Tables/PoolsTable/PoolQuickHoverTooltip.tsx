@@ -1,13 +1,12 @@
-import { formatNumber, formatPercent } from '@sushiswap/format'
-import { Pool, Protocol } from '@sushiswap/client'
-import React, { FC } from 'react'
-import { Currency } from '@sushiswap/ui/components/currency'
-
-import { incentiveRewardToToken } from 'lib/functions'
-import { List } from '@sushiswap/ui/components/list/List'
-import { Button } from '@sushiswap/ui/components/button'
 import { PlusIcon, UserCircleIcon } from '@heroicons/react-v1/solid'
 import { ChainId } from '@sushiswap/chain'
+import { Pool, Protocol } from '@sushiswap/client'
+import { formatNumber, formatPercent } from '@sushiswap/format'
+import { Button } from '@sushiswap/ui/components/button'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { List } from '@sushiswap/ui/components/list/List'
+import { incentiveRewardToToken } from 'lib/functions'
+import React, { FC } from 'react'
 
 interface PoolQuickHoverTooltipProps {
   row: Pool

@@ -1,12 +1,12 @@
 import { PlusIcon } from '@heroicons/react-v1/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Type } from '@sushiswap/currency'
-import { FC, ReactNode, useMemo } from 'react'
 import { Currency } from '@sushiswap/ui/components/currency'
-
-import { useTokenAmountDollarValues } from 'lib/hooks'
-import { Rate } from '../Rate'
 import { Dialog } from '@sushiswap/ui/components/dialog'
+import { useTokenAmountDollarValues } from 'lib/hooks'
+import { FC, ReactNode, useMemo } from 'react'
+
+import { Rate } from '../Rate'
 
 interface AddSectionReviewModal {
   chainId: ChainId

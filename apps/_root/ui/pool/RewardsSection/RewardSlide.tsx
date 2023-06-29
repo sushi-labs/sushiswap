@@ -1,16 +1,17 @@
-import React, { FC, ReactNode, useMemo } from 'react'
-import { useAngleRewardsMultipleChains } from '@sushiswap/react-query'
 import { Chain } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
-import { useTokenAmountDollarValues } from 'lib/hooks'
-import { Currency } from '@sushiswap/ui/components/currency'
 import { formatNumber } from '@sushiswap/format'
-import { List } from '@sushiswap/ui/components/list/List'
-import { Explainer } from '@sushiswap/ui/components/explainer'
-import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
+import { useAngleRewardsMultipleChains } from '@sushiswap/react-query'
 import { Button } from '@sushiswap/ui/components/button'
-import { ConcentratedLiquidityHarvestButton } from '../ConcentratedLiquidityHarvestButton'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { Explainer } from '@sushiswap/ui/components/explainer'
+import { List } from '@sushiswap/ui/components/list/List'
 import { Address } from '@sushiswap/wagmi'
+import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
+import { useTokenAmountDollarValues } from 'lib/hooks'
+import React, { FC, ReactNode, useMemo } from 'react'
+
+import { ConcentratedLiquidityHarvestButton } from '../ConcentratedLiquidityHarvestButton'
 
 export const RewardSlide: FC<{
   address: Address | undefined

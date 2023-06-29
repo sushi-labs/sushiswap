@@ -1,6 +1,5 @@
-import { createContext, FC, ReactNode, useCallback, useContext, useMemo, useReducer } from 'react'
-import { Bound, Field } from 'lib/constants'
-
+import { Amount, Currency, Price, Token, tryParseAmount, Type } from '@sushiswap/currency'
+import { JSBI, Rounding } from '@sushiswap/math'
 import {
   encodeSqrtRatioX96,
   FeeAmount,
@@ -8,16 +7,15 @@ import {
   Pool,
   Position,
   priceToClosestTick,
+  SushiSwapV3ChainId,
   TICK_SPACINGS,
   TickMath,
   tickToPrice,
-  SushiSwapV3ChainId,
 } from '@sushiswap/v3-sdk'
-
-import { JSBI, Rounding } from '@sushiswap/math'
-import { Amount, Currency, Price, Token, tryParseAmount, Type } from '@sushiswap/currency'
-import { getTickToPrice, tryParseTick } from 'lib/functions'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
+import { Bound, Field } from 'lib/constants'
+import { getTickToPrice, tryParseTick } from 'lib/functions'
+import { createContext, FC, ReactNode, useCallback, useContext, useMemo, useReducer } from 'react'
 
 type FullRange = true
 

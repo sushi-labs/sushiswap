@@ -1,12 +1,13 @@
-import React, { FC, useCallback } from 'react'
-import { Switch } from '@sushiswap/ui/components/switch'
-import { useSwapActions, useSwapState } from '../trade/TradeProvider'
-import { AppType } from '@sushiswap/ui/types'
-import { classNames } from '@sushiswap/ui'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
-import { ChainSelectors } from './ChainSelectors'
-import { Explainer } from '@sushiswap/ui/components/explainer'
 import { STARGATE_SUPPORTED_CHAIN_IDS, StargateChainId } from '@sushiswap/stargate'
+import { classNames } from '@sushiswap/ui'
+import { Explainer } from '@sushiswap/ui/components/explainer'
+import { Switch } from '@sushiswap/ui/components/switch'
+import { AppType } from '@sushiswap/ui/types'
+import React, { FC, useCallback } from 'react'
+
+import { useSwapActions, useSwapState } from '../trade/TradeProvider'
+import { ChainSelectors } from './ChainSelectors'
 
 export const CrossChainBanner: FC = () => {
   const { appType, network0 } = useSwapState()

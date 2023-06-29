@@ -1,5 +1,5 @@
-import { formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
+import { formatUSD } from '@sushiswap/format'
 import { useBreakpoint } from '@sushiswap/hooks'
 import { FC } from 'react'
 

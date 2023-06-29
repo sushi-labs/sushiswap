@@ -1,16 +1,16 @@
+import { ChainId } from '@sushiswap/chain'
+import { Type } from '@sushiswap/currency'
 import { formatNumber } from '@sushiswap/format'
 import { classNames } from '@sushiswap/ui'
+import { Badge } from '@sushiswap/ui/components/Badge'
 import { Currency } from '@sushiswap/ui/components/currency'
-import { FC, useMemo } from 'react'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future/hooks'
+import { unwrapToken } from 'lib/functions'
+import { FC, useMemo } from 'react'
 
 import { ICON_SIZE } from '../constants'
 import { Row } from './types'
-import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future/hooks'
-import { Badge } from '@sushiswap/ui/components/Badge'
-import { unwrapToken } from 'lib/functions'
-import { ChainId } from '@sushiswap/chain'
-import { Type } from '@sushiswap/currency'
 
 export const PoolNameCellV3: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> = ({ row }) => {
   const [_token0, _token1]: Type[] = useMemo(() => [unwrapToken(row.pool.token0), unwrapToken(row.pool.token1)], [row])

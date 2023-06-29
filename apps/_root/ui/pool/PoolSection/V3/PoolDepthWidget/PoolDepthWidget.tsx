@@ -1,16 +1,15 @@
+import { useIsMounted } from '@sushiswap/hooks'
+import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
+import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
+import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import React, { FC } from 'react'
+import AutoSizer from 'react-virtualized-auto-sizer'
 import colors from 'tailwindcss/colors'
 
 import { useConcentratedDerivedMintInfo } from '../../../ConcentratedLiquidityProvider'
-import { useIsMounted } from '@sushiswap/hooks'
-import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { Chart } from '../../../LiquidityChartRangeInput/Chart'
 import { useDensityChartData } from '../../../LiquidityChartRangeInput/hooks'
 import { ZoomLevels } from '../../../LiquidityChartRangeInput/types'
-import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
-
-import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
-import AutoSizer from 'react-virtualized-auto-sizer'
 
 interface PoolDepthWidget {
   id?: string

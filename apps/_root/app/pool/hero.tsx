@@ -1,6 +1,10 @@
 'use client'
 
-import { FC } from 'react'
+import { ChevronRightIcon } from '@heroicons/react-v1/solid'
+import { ChainId } from '@sushiswap/chain'
+import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
+import { Button } from '@sushiswap/ui/components/button'
+import { Chip } from '@sushiswap/ui/components/chip'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,17 +12,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@sushiswap/ui/components/dropdown-menu'
-import { SelectIcon } from '@sushiswap/ui/components/select'
-import { TRIDENT_ENABLED_NETWORKS } from 'config'
 import { DiscordIcon } from '@sushiswap/ui/components/icons'
-import { ChevronRightIcon } from '@heroicons/react-v1/solid'
-import { Button } from '@sushiswap/ui/components/button'
-import { Chip } from '@sushiswap/ui/components/chip'
+import { SelectIcon } from '@sushiswap/ui/components/select'
 import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
 import { useNetwork } from '@sushiswap/wagmi'
-import { ChainId } from '@sushiswap/chain'
+import { TRIDENT_ENABLED_NETWORKS } from 'config'
 import Link from 'next/link'
+import { FC } from 'react'
 
 export const Hero: FC = () => {
   const { chain } = useNetwork()

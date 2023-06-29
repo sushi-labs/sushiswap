@@ -1,15 +1,15 @@
 import { useBreakpoint } from '@sushiswap/hooks'
 import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
-import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
+import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
+import { SUPPORTED_CHAIN_IDS } from 'config'
 import { useUserPositions } from 'lib/hooks'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { PositionWithPool } from 'types'
 
+import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { APR_COLUMN, NAME_COLUMN, VALUE_COLUMN } from './Cells/columns'
 import { PositionQuickHoverTooltip } from './PositionQuickHoverTooltip'
-import { SUPPORTED_CHAIN_IDS } from 'config'
-import { usePoolFilters } from '../../../PoolsFiltersProvider'
 
 const COLUMNS = [NAME_COLUMN, VALUE_COLUMN, APR_COLUMN] as any
 

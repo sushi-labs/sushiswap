@@ -1,18 +1,19 @@
-import { Button } from '@sushiswap/ui/components/button'
-import React, { FC, useEffect, useState } from 'react'
-import { useSwapActions, useSwapState } from '../trade/TradeProvider'
-import { Checker } from '@sushiswap/wagmi/future/systems'
-import { useTrade } from '../../../lib/swap/useTrade'
 import { Native } from '@sushiswap/currency'
-import { AppType } from '@sushiswap/ui/types'
-import { warningSeverity } from '../../../lib/swap/warningSeverity'
+import { ZERO } from '@sushiswap/math'
 import {
   isRouteProcessor3ChainId,
   isRouteProcessorChainId,
   routeProcessor3Address,
   routeProcessorAddress,
 } from '@sushiswap/route-processor'
-import { ZERO } from '@sushiswap/math'
+import { Button } from '@sushiswap/ui/components/button'
+import { AppType } from '@sushiswap/ui/types'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import React, { FC, useEffect, useState } from 'react'
+
+import { useTrade } from '../../../lib/swap/useTrade'
+import { warningSeverity } from '../../../lib/swap/warningSeverity'
+import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 
 export const SwapButton: FC = () => {
   const { appType, amount, network0, network1, value, token0, token1 } = useSwapState()

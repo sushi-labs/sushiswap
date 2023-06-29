@@ -1,15 +1,16 @@
 import { TradeType } from '@sushiswap/amm'
-import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, StargateChainId } from '@sushiswap/stargate'
-import { Fraction, JSBI, ONE, Percent, ZERO } from '@sushiswap/math'
-import { useFeeData, useSushiXSwapContract } from '@sushiswap/wagmi'
 import { Amount, Native, Price, Token, tryParseAmount, Type, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { useQuery } from '@tanstack/react-query'
-import { getBridgeFees } from './getBridgeFees'
-import { Action, SushiXSwap } from '../SushiXSwap'
-import { useCallback } from 'react'
-import { UseCrossChainSelect, UseCrossChainTradeParams, UseCrossChainTradeQuerySelect } from './types'
+import { Fraction, JSBI, ONE, Percent, ZERO } from '@sushiswap/math'
 import { usePrice } from '@sushiswap/react-query'
+import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, StargateChainId } from '@sushiswap/stargate'
+import { useFeeData, useSushiXSwapContract } from '@sushiswap/wagmi'
 import { getClientTrade, useBentoboxTotals, usePools } from '@sushiswap/wagmi/future/hooks'
+import { useQuery } from '@tanstack/react-query'
+import { useCallback } from 'react'
+
+import { Action, SushiXSwap } from '../SushiXSwap'
+import { getBridgeFees } from './getBridgeFees'
+import { UseCrossChainSelect, UseCrossChainTradeParams, UseCrossChainTradeQuerySelect } from './types'
 
 const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // 0.50%
 

@@ -1,17 +1,17 @@
-import { tryParseAmount } from '@sushiswap/currency'
+import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
+import { tryParseAmount } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
+import { Button } from '@sushiswap/ui/components/button'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { Address, getSushiSwapRouterContractConfig, PairState, usePair } from '@sushiswap/wagmi'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
+import { useTokensFromPool } from 'lib/hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
 
-import { useTokensFromPool } from 'lib/hooks'
 import { AddSectionReviewModalLegacy } from './AddSectionReviewModalLegacy'
 import { AddSectionWidget } from './AddSectionWidget'
-import { Checker } from '@sushiswap/wagmi/future/systems'
-import { Button } from '@sushiswap/ui/components/button'
-import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
-import { ChainId } from '@sushiswap/chain'
 
 export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const chainId = _pool.chainId as SushiSwapV2ChainId

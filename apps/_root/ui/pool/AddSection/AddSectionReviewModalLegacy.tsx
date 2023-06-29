@@ -1,8 +1,12 @@
 import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Type } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
+import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
+import { createToast } from '@sushiswap/ui/components/toast'
+import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   _useSendTransaction as useSendTransaction,
   Address,
@@ -11,21 +15,15 @@ import {
   useNetwork,
   useSushiSwapRouterContract,
 } from '@sushiswap/wagmi'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { BigNumber } from 'ethers'
+import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
+import { useTransactionDeadline } from 'lib/hooks'
+import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-
-import { useTransactionDeadline } from 'lib/hooks'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
-
-import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { createToast } from '@sushiswap/ui/components/toast'
-import { Button } from '@sushiswap/ui/components/button'
-import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
-import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 interface AddSectionReviewModalLegacyProps {
   poolState: PairState

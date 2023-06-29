@@ -1,10 +1,10 @@
+import { Protocol } from '@sushiswap/client'
+import { Toggle } from '@sushiswap/ui/components/toggle'
 import React, { FC, useCallback } from 'react'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
-import { TableFiltersSearchToken } from './TableFiltersSearchToken'
 import { TableFiltersNetwork } from './TableFiltersNetwork'
-import { Protocol } from '@sushiswap/client'
-import { Toggle } from '@sushiswap/ui/components/toggle'
+import { TableFiltersSearchToken } from './TableFiltersSearchToken'
 
 export const TableFilters: FC<{ showCategories?: boolean }> = ({ showCategories = true }) => {
   const { protocols, farmsOnly, setFilters } = usePoolFilters()

@@ -1,9 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
+import { Pool } from '@sushiswap/client'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { SUBGRAPH_HOST, SUSHISWAP_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { useQuery } from '@tanstack/react-query'
-import { Pool } from '@sushiswap/client'
-
 import { AMM_ENABLED_NETWORKS } from 'config'
 
 export enum TransactionType {

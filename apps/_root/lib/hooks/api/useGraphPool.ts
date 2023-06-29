@@ -1,8 +1,9 @@
+import { Pool } from '@sushiswap/client'
 import { Amount } from '@sushiswap/currency'
 import { Pair } from '@sushiswap/graph-client'
-import { Pool } from '@sushiswap/client'
 import { useMemo } from 'react'
 import useSWR from 'swr'
+
 import { useTokensFromPool } from '../useTokensFromPool'
 
 export function getGraphPoolUrl(poolId: string) {

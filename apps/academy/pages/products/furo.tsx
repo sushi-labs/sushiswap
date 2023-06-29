@@ -1,5 +1,6 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
 import { classNames } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
 import furoImg from 'common/assets/furo-img.png'
 import {
   ProductArticles,
@@ -17,7 +18,6 @@ import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import Image from 'next/image'
 import { FC } from 'react'
 import useSWR from 'swr'
-import { Container } from '@sushiswap/ui/components/container'
 
 import { ProductSeo } from '../../common/components/Seo/ProductSeo'
 

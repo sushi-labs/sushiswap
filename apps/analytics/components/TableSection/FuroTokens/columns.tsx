@@ -1,13 +1,12 @@
+import { formatNumber, formatUSD } from '@sushiswap/format'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
 import { ChainCell, StringCell } from '../Common'
 import { TokenNameCell } from './Cells'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
-
-import { FuroToken } from './useFuroTokens'
-import { formatNumber, formatUSD } from '@sushiswap/format'
 import { ICON_SIZE } from './constants'
+import { FuroToken } from './useFuroTokens'
 
 export const NETWORK_COLUMN: ColumnDef<FuroToken, unknown> = {
   id: 'network',

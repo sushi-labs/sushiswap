@@ -1,15 +1,15 @@
 import { ChartBarIcon, InboxIcon, StopIcon } from '@heroicons/react-v1/solid'
 import { Price, Token, Type } from '@sushiswap/currency'
+import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
+import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { format } from 'd3'
+import { Bound } from 'lib/constants'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import colors from 'tailwindcss/colors'
 
-import { Bound } from 'lib/constants'
 import { Chart } from './Chart'
 import { useDensityChartData } from './hooks'
 import { ZoomLevels } from './types'
-import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 
 const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {
   [FeeAmount.LOWEST]: {

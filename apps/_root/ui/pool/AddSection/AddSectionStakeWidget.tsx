@@ -4,17 +4,17 @@ import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/components/button'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
+import { Input } from '@sushiswap/ui/components/input'
+import { SelectIcon } from '@sushiswap/ui/components/select'
 import { Widget, WidgetContent, WidgetHeader } from '@sushiswap/ui/components/widget'
 import { useTotalSupply } from '@sushiswap/wagmi'
-import { FC, ReactNode, useMemo } from 'react'
-import { Currency } from '@sushiswap/ui/components/currency'
-import { Input } from '@sushiswap/ui/components/input'
-
 import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPool } from 'lib/hooks'
+import { FC, ReactNode, useMemo } from 'react'
+
 import { usePoolPosition } from '../PoolPositionProvider'
-import { Button } from '@sushiswap/ui/components/button'
-import { IconButton } from '@sushiswap/ui/components/iconbutton'
-import { SelectIcon } from '@sushiswap/ui/components/select'
 
 interface AddSectionStakeWidgetProps {
   title?: string

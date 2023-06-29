@@ -1,12 +1,13 @@
-import React, { FC } from 'react'
-import { RewardTableV3CellProps } from './Cells'
 import { Badge } from '@sushiswap/ui/components/Badge'
-import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { Currency } from '@sushiswap/ui/components/currency'
-import { unwrapToken } from 'lib/functions'
+import { Explainer } from '@sushiswap/ui/components/explainer'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { List } from '@sushiswap/ui/components/list/List'
 import { format } from 'date-fns'
-import { Explainer } from '@sushiswap/ui/components/explainer'
+import { unwrapToken } from 'lib/functions'
+import React, { FC } from 'react'
+
+import { RewardTableV3CellProps } from './Cells'
 import { rewardPerDay } from './utils'
 
 export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) => {

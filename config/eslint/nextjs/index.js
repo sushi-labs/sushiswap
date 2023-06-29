@@ -1,10 +1,10 @@
 // @ts-check
 /** @type {import('eslint').ESLint.ConfigData} */
 const eslintConfig = {
-  extends: ['@sushiswap/eslint-config', 'next'],
+  extends: ['@sushiswap/eslint-config', 'next/core-web-vitals'],
   settings: {
     next: {
-      rootDir: ['apps/*/', 'packages/*/'],
+      rootDir: ['apps/*/', 'examples/*/', 'packages/*/'],
     },
   },
   rules: {

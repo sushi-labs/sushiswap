@@ -7,7 +7,7 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc",
     "dev": "next dev --port 3001",
-    "lint": "TIMING=1 next lint",
+    "lint": "TIMING=1 next lint --fix",
     "sitemap": "next-sitemap --config next-sitemap.config.mjs",
     "start": "next start"
   },

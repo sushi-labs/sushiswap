@@ -1,15 +1,15 @@
-import { classNames } from '@sushiswap/ui'
-import { FC, useMemo, useState } from 'react'
-
-import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future/hooks'
-import { Row } from '../../SharedCells/types'
 import { ArrowSmLeftIcon, ArrowSmRightIcon } from '@heroicons/react-v1/solid'
-import { Position } from '@sushiswap/v3-sdk'
 import { JSBI } from '@sushiswap/math'
-import { formatTickPrice, getPriceOrderingFromPositionForUI } from 'lib/functions'
+import { classNames } from '@sushiswap/ui'
+import { Position } from '@sushiswap/v3-sdk'
+import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future/hooks'
 import { Bound } from 'lib/constants'
+import { formatTickPrice, getPriceOrderingFromPositionForUI } from 'lib/functions'
 import { usePriceInverter } from 'lib/hooks'
 import useIsTickAtLimit from 'lib/hooks/useIsTickAtLimit'
+import { FC, useMemo, useState } from 'react'
+
+import { Row } from '../../SharedCells/types'
 
 export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> = ({ row }) => {
   const [manuallyInverted, setManuallyInverted] = useState(false)

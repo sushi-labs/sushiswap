@@ -10,7 +10,9 @@ import {
 } from '@sushiswap/amm'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Type } from '@sushiswap/currency'
+import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
+import { createToast } from '@sushiswap/ui/components/toast'
 import {
   _useSendTransaction as useSendTransaction,
   PoolFinderType,
@@ -21,9 +23,8 @@ import {
   useStablePoolFactoryContract,
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
-import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-
+import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import {
   approveMasterContractAction,
   batchAction,
@@ -31,11 +32,10 @@ import {
   getAsEncodedAction,
   LiquidityInput,
 } from 'lib/actions'
-import { AddSectionReviewModal } from '../AddSection'
-import { createToast } from '@sushiswap/ui/components/toast'
-import { Button } from '@sushiswap/ui/components/button'
-import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_CREATE_TRIDENT } from 'lib/constants'
+import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
+
+import { AddSectionReviewModal } from '../AddSection'
 
 interface CreateSectionReviewModalTridentProps {
   chainId: BentoBoxV1ChainId

@@ -1,5 +1,5 @@
-import React from 'react'
 import { Toggle } from '@sushiswap/ui/components/toggle'
+import React from 'react'
 
 interface PoolChartTypesProps<C> {
   charts: Readonly<C[]>

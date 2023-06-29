@@ -3,13 +3,14 @@ import chains, { ChainId, chainShortName } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { useDebounce, useOnClickOutside } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { useQuery, useToken } from '@sushiswap/wagmi'
 import type { TokenList } from '@uniswap/token-lists'
 import { isAddress } from 'ethers/lib/utils'
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
-import { useQuery, useToken } from '@sushiswap/wagmi'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { Currency } from '@sushiswap/ui/components/currency'
-import { NetworkIcon } from '@sushiswap/ui/components/icons'
+
 import { SUPPORTED_CHAIN_IDS } from '../../../config'
 
 const EXAMPLE_CURRENCIES = [

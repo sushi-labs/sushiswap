@@ -1,20 +1,8 @@
 'use client'
 
-import { FC, ReactNode, useCallback, useState } from 'react'
-
-import { useSwapActions, useSwapState } from './trade/TradeProvider'
-import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from '@sushiswap/wagmi'
-import { useTrade } from '../../lib/swap/useTrade'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import { AppType } from '@sushiswap/ui/types'
+import { routeProcessor2Abi } from '@sushiswap/abi'
+import { Chain } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
-import { log } from 'next-axiom'
-import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import {
-  ConfirmationDialog as UIConfirmationDialog,
-  ConfirmationDialogState,
-} from '@sushiswap/ui/components/dialog/ConfirmationDialog'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import {
   isRouteProcessor3ChainId,
@@ -22,11 +10,23 @@ import {
   routeProcessor3Address,
   routeProcessorAddress,
 } from '@sushiswap/route-processor'
-import { routeProcessor2Abi } from '@sushiswap/abi'
-import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
 import { Bridge, LiquidityProviders } from '@sushiswap/router'
-import { Chain } from '@sushiswap/chain'
+import {
+  ConfirmationDialog as UIConfirmationDialog,
+  ConfirmationDialogState,
+} from '@sushiswap/ui/components/dialog/ConfirmationDialog'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
+import { AppType } from '@sushiswap/ui/types'
+import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from '@sushiswap/wagmi'
 import { useNetwork } from '@sushiswap/wagmi'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
+import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { log } from 'next-axiom'
+import { FC, ReactNode, useCallback, useState } from 'react'
+
+import { useTrade } from '../../lib/swap/useTrade'
+import { useSwapActions, useSwapState } from './trade/TradeProvider'
 
 interface ConfirmationDialogProps {
   children({

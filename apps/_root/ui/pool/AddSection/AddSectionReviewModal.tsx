@@ -1,12 +1,12 @@
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import { Amount, Price, Type } from '@sushiswap/currency'
-import { Dialog } from '@sushiswap/ui/components/dialog'
-import { FC, ReactNode, useMemo } from 'react'
-import { Currency } from '@sushiswap/ui/components/currency'
-
-import { useTokenAmountDollarValues } from 'lib/hooks'
-import { Rate } from '../Rate'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { Amount, Price, Type } from '@sushiswap/currency'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { Dialog } from '@sushiswap/ui/components/dialog'
+import { useTokenAmountDollarValues } from 'lib/hooks'
+import { FC, ReactNode, useMemo } from 'react'
+
+import { Rate } from '../Rate'
 
 interface AddSectionReviewModal {
   chainId: BentoBoxV1ChainId

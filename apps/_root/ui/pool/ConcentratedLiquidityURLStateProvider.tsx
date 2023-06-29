@@ -2,13 +2,13 @@
 
 import { ChainId } from '@sushiswap/chain'
 import { currencyFromShortCurrencyName, isShortCurrencyName, Native, Token, Type } from '@sushiswap/currency'
-import React, { createContext, FC, ReactNode, useContext, useMemo, useState } from 'react'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { isAddress } from 'ethers/lib/utils'
-import { z } from 'zod'
 import { FeeAmount, isSushiSwapV3ChainId, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import { useNetwork } from '@sushiswap/wagmi'
+import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
+import { isAddress } from 'ethers/lib/utils'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import React, { createContext, FC, ReactNode, useContext, useMemo, useState } from 'react'
+import { z } from 'zod'
 
 export const queryParamsSchema = z.object({
   chainId: z.coerce

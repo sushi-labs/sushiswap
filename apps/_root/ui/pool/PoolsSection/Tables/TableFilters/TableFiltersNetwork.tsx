@@ -1,13 +1,13 @@
-import React, { FC, useCallback, useMemo, useState } from 'react'
-
-import { SUPPORTED_CHAIN_IDS } from 'config'
-import { usePoolFilters } from '../../../PoolsFiltersProvider'
-import { Button } from '@sushiswap/ui/components/button'
-import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
 import { Chain, ChainId } from '@sushiswap/chain'
+import { Button } from '@sushiswap/ui/components/button'
+import { Command, CommandEmpty, CommandGroup, CommandItem } from '@sushiswap/ui/components/command'
+import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
 import { PopoverContent, PopoverNew, PopoverTrigger } from '@sushiswap/ui/components/popovernew'
 import { SelectIcon } from '@sushiswap/ui/components/select'
-import { Command, CommandEmpty, CommandGroup, CommandItem } from '@sushiswap/ui/components/command'
+import { SUPPORTED_CHAIN_IDS } from 'config'
+import React, { FC, useCallback, useMemo, useState } from 'react'
+
+import { usePoolFilters } from '../../../PoolsFiltersProvider'
 
 export const TableFiltersNetwork: FC = () => {
   const [open, setOpen] = useState(false)

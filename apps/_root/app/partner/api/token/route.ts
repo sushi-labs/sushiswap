@@ -1,9 +1,8 @@
 import { isAddress } from '@ethersproject/address'
 import { ChainId } from '@sushiswap/chain'
-import { NextResponse } from 'next/server'
-import { Contract } from 'ethers'
-import { Address, createPublicClient, getContract } from 'viem'
 import { config } from '@sushiswap/viem-config'
+import { NextResponse } from 'next/server'
+import { Address, createPublicClient, getContract } from 'viem'
 export interface Token {
   symbol: string
   name: string

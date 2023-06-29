@@ -1,11 +1,10 @@
-import { formatNumber, formatPercent } from '@sushiswap/format'
-import { Pool } from '@sushiswap/client'
-import { Currency } from '@sushiswap/ui/components/currency'
-import React, { FC } from 'react'
-
-import { incentiveRewardToToken } from 'lib/functions'
 import { ChainId } from '@sushiswap/chain'
+import { Pool } from '@sushiswap/client'
+import { formatNumber, formatPercent } from '@sushiswap/format'
+import { Currency } from '@sushiswap/ui/components/currency'
 import { List } from '@sushiswap/ui/components/list/List'
+import { incentiveRewardToToken } from 'lib/functions'
+import React, { FC } from 'react'
 
 export const PoolRewards: FC<{ pool: Pool }> = ({ pool }) => {
   if (!pool?.incentives?.length) return <></>

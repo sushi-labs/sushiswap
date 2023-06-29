@@ -1,9 +1,10 @@
-import React, { FC, useState } from 'react'
-import { PoolChartPeriod, PoolChartType } from './types'
-import { PoolChartTypes } from './PoolChartTypes'
-import { PoolChartPeriods } from './PoolChartPeriods'
-import { PoolChartGraph } from './PoolChartGraph'
 import { ChainId } from '@sushiswap/chain'
+import React, { FC, useState } from 'react'
+
+import { PoolChartGraph } from './PoolChartGraph'
+import { PoolChartPeriods } from './PoolChartPeriods'
+import { PoolChartTypes } from './PoolChartTypes'
+import { PoolChartPeriod, PoolChartType } from './types'
 
 const charts = [PoolChartType.Volume, PoolChartType.TVL, PoolChartType.Fees, PoolChartType.APR] as const
 const periods = [

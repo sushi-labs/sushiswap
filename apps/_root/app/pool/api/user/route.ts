@@ -1,7 +1,7 @@
-import { z } from 'zod'
 import { ChainId } from '@sushiswap/chain'
-import { NextResponse } from 'next/server'
 import { getUser } from 'lib/api'
+import { NextResponse } from 'next/server'
+import { z } from 'zod'
 
 const schema = z.object({
   id: z.string(),

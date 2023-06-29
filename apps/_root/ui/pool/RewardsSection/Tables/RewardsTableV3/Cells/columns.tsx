@@ -1,13 +1,12 @@
-import { ColumnDef } from '@tanstack/react-table'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
-
-import React from 'react'
-import { RewardsV3NameCell } from './RewardsV3NameCell'
-import { AngleRewardsPool } from '@sushiswap/react-query'
-import { Pool } from '@sushiswap/client'
 import { formatNumber } from '@sushiswap/format'
+import { AngleRewardsPool } from '@sushiswap/react-query'
 import { Explainer } from '@sushiswap/ui/components/explainer'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { ColumnDef } from '@tanstack/react-table'
+import React from 'react'
+
 import { RewardsV3ClaimableCell } from './RewardsV3ClaimableCell'
+import { RewardsV3NameCell } from './RewardsV3NameCell'
 
 export const REWARDS_V3_NAME_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
   id: 'poolName',

@@ -1,17 +1,18 @@
 import { TransactionRequest } from '@ethersproject/providers'
 import { TrashIcon } from '@heroicons/react/outline'
 import { Chain, ChainId } from '@sushiswap/chain'
-import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
+import { shortenAddress } from '@sushiswap/format'
+import { Button } from '@sushiswap/ui/components/button'
+import { Dialog } from '@sushiswap/ui/components/dialog/Dialog'
+import { Dots } from '@sushiswap/ui/components/dots'
+import { createToast } from '@sushiswap/ui/components/toast'
 import { useAccount, useContract } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { Button } from '@sushiswap/ui/components/button'
-import { Stream, Vesting } from '../lib'
-import { createToast } from '@sushiswap/ui/components/toast'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
-import { Dialog } from '@sushiswap/ui/components/dialog/Dialog'
-import { shortenAddress } from '@sushiswap/format'
-import { Dots } from '@sushiswap/ui/components/dots'
+import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
+
+import { Stream, Vesting } from '../lib'
 
 interface CancelModalProps {
   title: string

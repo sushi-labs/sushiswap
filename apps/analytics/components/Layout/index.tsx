@@ -1,6 +1,6 @@
 import { classNames, ExtractProps } from '@sushiswap/ui'
-import React from 'react'
 import { Container, ContainerProps } from '@sushiswap/ui/components/container'
+import React from 'react'
 
 interface Props extends Pick<ExtractProps<ContainerProps>, 'maxWidth'> {
   children?: React.ReactNode

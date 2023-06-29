@@ -1,7 +1,7 @@
 import { formatUSD } from '@sushiswap/format'
-import { FC, useMemo } from 'react'
-
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future/hooks'
+import { FC } from 'react'
+
 import { Row } from '../../SharedCells/types'
 
 export const UnclaimedCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> = ({ row }) => {

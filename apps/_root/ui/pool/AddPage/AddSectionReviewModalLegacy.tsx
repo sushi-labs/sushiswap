@@ -3,6 +3,10 @@ import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Amount, Type } from '@sushiswap/currency'
 import { calculateGasMargin } from '@sushiswap/gas'
 import { Percent } from '@sushiswap/math'
+import { Button } from '@sushiswap/ui/components/button'
+import { Dots } from '@sushiswap/ui/components/dots'
+import { createToast } from '@sushiswap/ui/components/toast'
+import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   _useSendTransaction as useSendTransaction,
   Address,
@@ -11,18 +15,13 @@ import {
   useNetwork,
   useSushiSwapRouterContract,
 } from '@sushiswap/wagmi'
-import { BigNumber } from 'ethers'
-import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { Dots } from '@sushiswap/ui/components/dots'
-
+import { BigNumber } from 'ethers'
 import { useTransactionDeadline } from 'lib/hooks'
-import { AddSectionReviewModal } from './AddSectionReviewModal'
-
-import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { Button } from '@sushiswap/ui/components/button'
-import { createToast } from '@sushiswap/ui/components/toast'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
+import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
+
+import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface AddSectionReviewModalLegacyProps {
   poolState: PairState

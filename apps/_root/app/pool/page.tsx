@@ -1,15 +1,16 @@
 'use client'
 
-import React from 'react'
-import { useAccount } from '@sushiswap/wagmi'
 import { ChainId } from '@sushiswap/chain'
+import { Carousel } from '@sushiswap/ui/components/Carousel'
 import { Container } from '@sushiswap/ui/components/container'
 import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { PositionCardList } from 'ui/migrate/position-card-list'
+import { useAccount } from '@sushiswap/wagmi'
+import React from 'react'
 import { PositionCard, PositionCardSkeleton } from 'ui/migrate/position-card'
-import { Carousel } from '@sushiswap/ui/components/Carousel'
-import { Hero } from './hero'
+import { PositionCardList } from 'ui/migrate/position-card-list'
+
 import { PoolsFiltersProvider, PoolsSection } from '../../ui/pool'
+import { Hero } from './hero'
 
 const Pool = async () => {
   const { address } = useAccount()

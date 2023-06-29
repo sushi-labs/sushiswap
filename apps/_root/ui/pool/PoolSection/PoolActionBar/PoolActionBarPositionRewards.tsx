@@ -1,12 +1,12 @@
-import { formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
+import { formatUSD } from '@sushiswap/format'
+import { Button } from '@sushiswap/ui/components/button'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { Dialog } from '@sushiswap/ui/components/dialog'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { FC, useCallback } from 'react'
 
 import { usePoolPositionRewards } from '../../PoolPositionRewardsProvider'
-import { Button } from '@sushiswap/ui/components/button'
-import { Dialog } from '@sushiswap/ui/components/dialog'
-import { Currency } from '@sushiswap/ui/components/currency'
 
 interface PoolActionBarPositionRewardsProps {
   pool: Pool

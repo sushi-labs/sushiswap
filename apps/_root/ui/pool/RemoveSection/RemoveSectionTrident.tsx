@@ -1,10 +1,14 @@
 import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
-import { Amount, Native } from '@sushiswap/currency'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { ChainId } from '@sushiswap/chain'
 import { Pool, Protocol } from '@sushiswap/client'
+import { Amount, Native } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
+import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
+import { createToast } from '@sushiswap/ui/components/toast'
 import {
   _useSendTransaction as useSendTransaction,
   ConstantProductPoolState,
@@ -18,10 +22,9 @@ import {
   useTotalSupply,
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
-import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Checker } from '@sushiswap/wagmi/future/systems'
+import { useApproved, useSignature,withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import {
   approveMasterContractAction,
   batchAction,
@@ -30,15 +33,13 @@ import {
   sweep,
   unwrapWETHAction,
 } from 'lib/actions'
+import { APPROVE_TAG_REMOVE_TRIDENT } from 'lib/constants'
 import { useTokensFromPool, useUnderlyingTokenBalanceFromPool } from 'lib/hooks'
+import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
+import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
+
 import { usePoolPosition } from '../PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
-import { createToast } from '@sushiswap/ui/components/toast'
-import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
-import { Button } from '@sushiswap/ui/components/button'
-import { useApproved, withCheckerRoot, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { APPROVE_TAG_REMOVE_TRIDENT } from 'lib/constants'
-import { ChainId } from '@sushiswap/chain'
 
 interface RemoveSectionTridentProps {
   pool: Pool

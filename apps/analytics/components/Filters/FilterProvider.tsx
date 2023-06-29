@@ -1,8 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
+import { Protocol } from '@sushiswap/client'
 import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../../config'
-import { Protocol } from '@sushiswap/client'
 
 enum Filters {
   search = 'search',

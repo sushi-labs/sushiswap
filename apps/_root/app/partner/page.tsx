@@ -2,15 +2,16 @@
 
 import { yupResolver } from '@hookform/resolvers/yup'
 import { ChainId } from '@sushiswap/chain'
-import { BackgroundImageMakerField, Form, ImageCanvas, NetworkModal, SizeSlider, UploadImageField } from './components'
+import { classNames } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/components/button'
+import { Loader } from '@sushiswap/ui/components/loader'
 import stringify from 'fast-json-stable-stringify'
-import { addressValidator, useTokenData } from './lib'
 import React, { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
-import { Loader } from '@sushiswap/ui/components/loader'
-import { classNames } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
+
+import { BackgroundImageMakerField, Form, ImageCanvas, NetworkModal, SizeSlider, UploadImageField } from './components'
+import { addressValidator, useTokenData } from './lib'
 
 enum SubmitState {
   Nothing = 'nothing',

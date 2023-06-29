@@ -1,10 +1,10 @@
 import { ChainId, ChainKey } from '@sushiswap/chain'
 import { formatUSD } from '@sushiswap/format'
-import { CHAIN_NAME, SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
+import { CHAIN_NAME } from '@sushiswap/graph-config'
+import { getOctokit, Token } from 'app/partner/lib'
 import Cors from 'cors'
 import { ethers } from 'ethers'
 import stringify from 'fast-json-stable-stringify'
-import { getOctokit, Token } from 'app/partner/lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 interface Body {

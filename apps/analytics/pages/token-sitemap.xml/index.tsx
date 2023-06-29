@@ -1,7 +1,7 @@
+import stringify from 'fast-json-stable-stringify'
 import { getTokens, GetTokensQuery } from 'lib/api'
 import { GetServerSideProps } from 'next'
 import { getServerSideSitemap, ISitemapField } from 'next-sitemap'
-import stringify from 'fast-json-stable-stringify'
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const tokens = await getTokens({

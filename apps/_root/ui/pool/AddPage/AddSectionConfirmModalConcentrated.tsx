@@ -1,25 +1,26 @@
 import { TransactionRequest } from '@ethersproject/providers'
+import { ChainId } from '@sushiswap/chain'
+import { Type } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
+import {
+  ConfirmationDialog as UIConfirmationDialog,
+  ConfirmationDialogState,
+} from '@sushiswap/ui/components/dialog/ConfirmationDialog'
+import { createToast } from '@sushiswap/ui/components/toast'
+import { isSushiSwapV3ChainId, NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
 import {
   _useSendTransaction as useSendTransaction,
   useAccount,
   useNetwork,
   UserRejectedRequestError,
 } from '@sushiswap/wagmi'
-import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { isSushiSwapV3ChainId, NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
-import { createToast } from '@sushiswap/ui/components/toast'
-import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
-import {
-  ConfirmationDialog as UIConfirmationDialog,
-  ConfirmationDialogState,
-} from '@sushiswap/ui/components/dialog/ConfirmationDialog'
-import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
-import { ChainId } from '@sushiswap/chain'
-import { Type } from '@sushiswap/currency'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
+import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
+import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
+
+import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
 
 interface AddSectionConfirmModalConcentratedProps
   extends Pick<ReturnType<typeof useConcentratedDerivedMintInfo>, 'noLiquidity' | 'position'> {

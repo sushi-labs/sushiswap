@@ -1,19 +1,19 @@
-import { tryParseAmount } from '@sushiswap/currency'
+import { ChainId } from '@sushiswap/chain'
 import { ChefType, Pool, usePool } from '@sushiswap/client'
+import { tryParseAmount } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import { AppearOnMount } from '@sushiswap/ui/components/animation'
-import { useMasterChefWithdraw } from '@sushiswap/wagmi'
-import { FC, useMemo, useState } from 'react'
+import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
-
+import { useMasterChefWithdraw } from '@sushiswap/wagmi'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import { withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { useGraphPool } from 'lib/hooks'
+import { FC, useMemo, useState } from 'react'
+import { useSWRConfig } from 'swr'
+
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { RemoveSectionUnstakeWidget } from './RemoveSectionUnstakeWidget'
-import { useSWRConfig } from 'swr'
-import { Checker } from '@sushiswap/wagmi/future/systems'
-import { Button } from '@sushiswap/ui/components/button'
-import { withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { ChainId } from '@sushiswap/chain'
 
 interface AddSectionStakeProps {
   pool: Pool

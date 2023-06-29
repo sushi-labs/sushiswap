@@ -1,18 +1,17 @@
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
-
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
 import { Stream, Vesting } from '../../lib'
 import { AmountCell } from './AmountCell'
+import { EndDateCell } from './EndDateCell'
 import { FromCell } from './FromCell'
+import { NetworkCell } from './NetworkCell'
 import { StartDateCell } from './StartDateCell'
 import { StatusCell } from './StatusCell'
 import { StreamedCell } from './StreamedCell'
 import { FuroTableType } from './StreamTable'
 import { TypeCell } from './TypeCell'
-import { NetworkCell } from './NetworkCell'
-import { EndDateCell } from './EndDateCell'
 
 export const NETWORK_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   id: 'network',

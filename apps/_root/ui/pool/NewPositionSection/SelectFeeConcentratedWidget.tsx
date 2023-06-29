@@ -1,12 +1,12 @@
 import { RadioGroup } from '@headlessui/react'
+import { Type } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui/components/dots'
+import { FeeAmount } from '@sushiswap/v3-sdk'
+import { usePoolsByTokenPair } from 'lib/hooks/usePoolsByTokenPair'
 import React, { FC, memo, useMemo } from 'react'
 
 import { ContentBlock } from '../AddPage/ContentBlock'
-import { FeeAmount } from '@sushiswap/v3-sdk'
-import { Type } from '@sushiswap/currency'
-import { usePoolsByTokenPair } from 'lib/hooks/usePoolsByTokenPair'
-import { Dots } from '@sushiswap/ui/components/dots'
 
 export const FEE_OPTIONS = [
   {

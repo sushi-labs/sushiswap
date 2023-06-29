@@ -1,6 +1,11 @@
+import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/client'
 import { useBreakpoint } from '@sushiswap/hooks'
+import { Loader } from '@sushiswap/ui/components/loader'
+import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import React, { FC, useCallback, useMemo, useState } from 'react'
+import InfiniteScroll from 'react-infinite-scroll-component'
+import { useSWRConfig } from 'swr'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { PAGE_SIZE } from '../constants'
@@ -14,11 +19,6 @@ import {
   VOLUME_7D_COLUMN,
 } from './Cells/columns'
 import { PoolQuickHoverTooltip } from './PoolQuickHoverTooltip'
-import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/client'
-import { useSWRConfig } from 'swr'
-import InfiniteScroll from 'react-infinite-scroll-component'
-import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
-import { Loader } from '@sushiswap/ui/components/loader'
 
 const COLUMNS = [
   NAME_COLUMN,

@@ -1,5 +1,5 @@
-import { useMemo } from 'react'
 import { Price, Token } from '@sushiswap/currency'
+import { useMemo } from 'react'
 
 export const usePriceInverter = ({
   priceLower,

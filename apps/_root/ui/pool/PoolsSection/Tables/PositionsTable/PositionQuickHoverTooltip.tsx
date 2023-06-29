@@ -1,15 +1,16 @@
+import { ArrowDownIcon, MinusIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { formatPercent, formatUSD } from '@sushiswap/format'
+import { ZERO } from '@sushiswap/math'
+import { Button } from '@sushiswap/ui/components/button'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { List } from '@sushiswap/ui/components/list/List'
+import { useNetwork, useSwitchNetwork } from '@sushiswap/wagmi'
 import React, { FC, useCallback } from 'react'
 import { PositionWithPool } from 'types'
+
 import { PoolPositionProvider, usePoolPosition } from '../../../PoolPositionProvider'
 import { PoolPositionRewardsProvider, usePoolPositionRewards } from '../../../PoolPositionRewardsProvider'
 import { PoolPositionStakedProvider, usePoolPositionStaked } from '../../../PoolPositionStakedProvider'
-import { List } from '@sushiswap/ui/components/list/List'
-import { Button } from '@sushiswap/ui/components/button'
-import { ArrowDownIcon, MinusIcon, PlusIcon } from '@heroicons/react-v1/solid'
-import { useNetwork, useSwitchNetwork } from '@sushiswap/wagmi'
-import { ZERO } from '@sushiswap/math'
-import { Currency } from '@sushiswap/ui/components/currency'
 
 interface PositionQuickHoverTooltipProps {
   row: PositionWithPool

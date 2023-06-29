@@ -1,14 +1,14 @@
 import { useBreakpoint } from '@sushiswap/hooks'
 import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
-import { SortingState, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { useAccount } from '@sushiswap/wagmi'
-
-import { NAME_COLUMN_V3, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL, PRICE_RANGE_COLUMN } from './Cells/columns'
-import { ConcentratedLiquidityPosition, useConcentratedLiquidityPositions } from '@sushiswap/wagmi/future/hooks'
 import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
+import { useAccount } from '@sushiswap/wagmi'
+import { ConcentratedLiquidityPosition, useConcentratedLiquidityPositions } from '@sushiswap/wagmi/future/hooks'
+import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Writeable } from 'zod'
+
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
+import { NAME_COLUMN_V3, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL, PRICE_RANGE_COLUMN } from './Cells/columns'
 
 // rome-ignore lint: reasons
 const COLUMNS = [NAME_COLUMN_V3, PRICE_RANGE_COLUMN, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL] as any

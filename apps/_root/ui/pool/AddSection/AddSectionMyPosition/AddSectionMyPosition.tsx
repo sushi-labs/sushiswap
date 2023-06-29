@@ -1,13 +1,13 @@
-import { formatPercent } from '@sushiswap/format'
+import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
+import { formatPercent } from '@sushiswap/format'
 import { classNames } from '@sushiswap/ui'
-import React, { FC } from 'react'
 import { Currency as UICurrency } from '@sushiswap/ui/components/currency'
-
 import { incentiveRewardToToken } from 'lib/functions'
+import React, { FC } from 'react'
+
 import { AddSectionMyPositionStaked } from './AddSectionMyPositionStaked'
 import { AddSectionMyPositionUnstaked } from './AddSectionMyPositionUnstaked'
-import { ChainId } from '@sushiswap/chain'
 
 export const AddSectionMyPosition: FC<{ pool: Pool }> = ({ pool }) => {
   return (

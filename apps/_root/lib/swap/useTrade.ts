@@ -1,14 +1,15 @@
+import { useSlippageTolerance } from '@sushiswap/hooks'
 import { useTrade as _useTrade } from '@sushiswap/react-query'
+import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap'
 import { useFeeData } from '@sushiswap/wagmi'
+import { useClientTrade } from '@sushiswap/wagmi/future/hooks'
+import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { useMemo } from 'react'
+
 import { useSwapActions, useSwapState } from '../../ui/swap/trade/TradeProvider'
+import { APPROVE_XSWAP_TAG } from '../../ui/swap/widget/SwapButtonCrossChain'
 import { useCarbonOffset } from './useCarbonOffset'
 import { useCrossChainTrade } from './useCrossChainTrade/useCrossChainTrade'
-import { useMemo } from 'react'
-import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap'
-import { useClientTrade } from '@sushiswap/wagmi/future/hooks'
-import { useSlippageTolerance } from '@sushiswap/hooks'
-import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { APPROVE_XSWAP_TAG } from '../../ui/swap/widget/SwapButtonCrossChain'
 
 type ObjectType<T> = T extends true ? ReturnType<typeof useCrossChainTrade> : ReturnType<typeof _useTrade>
 

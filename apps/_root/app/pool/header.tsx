@@ -1,15 +1,14 @@
 'use client'
 
+import { AppearOnMount } from '@sushiswap/ui/components/animation'
+import { Button } from '@sushiswap/ui/components/button'
 import { GlobalNav, NavLink } from '@sushiswap/ui/components/GlobalNav'
+import { useConnect } from '@sushiswap/wagmi'
+import { Onramper } from '@sushiswap/wagmi/future/components'
 import { HeaderNetworkSelector } from '@sushiswap/wagmi/future/components/HeaderNetworkSelector'
 import { UserProfile } from '@sushiswap/wagmi/future/components/UserProfile'
-import React, { FC } from 'react'
-
-import { AppearOnMount } from '@sushiswap/ui/components/animation'
-import { Onramper } from '@sushiswap/wagmi/future/components'
-import { Button } from '@sushiswap/ui/components/button'
-import { useConnect } from '@sushiswap/wagmi'
 import { SUPPORTED_CHAIN_IDS } from 'config'
+import React, { FC } from 'react'
 
 export const Header: FC = () => {
   const { isLoading } = useConnect()

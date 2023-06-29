@@ -1,10 +1,10 @@
+import { Badge } from '@sushiswap/ui/components/Badge'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { unwrapToken } from 'lib/functions'
 import React, { FC } from 'react'
 
 import { RewardTableV3CellProps } from './types'
-import { Badge } from '@sushiswap/ui/components/Badge'
-import { NetworkIcon } from '@sushiswap/ui/components/icons'
-import { Currency } from '@sushiswap/ui/components/currency'
-import { unwrapToken } from 'lib/functions'
 
 export const RewardsV3NameCell: FC<RewardTableV3CellProps> = ({ row }) => {
   const ongoingFarms = row.distributionData.filter((el) => el.end * 1000 >= Date.now())

@@ -1,11 +1,10 @@
-import { Amount, Type } from '@sushiswap/currency'
+import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
+import { Amount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { _useBalance as useBalance, useAccount } from '@sushiswap/wagmi'
-import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
-
 import { useGraphPool, useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPool } from 'lib/hooks'
-import { ChainId } from '@sushiswap/chain'
+import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
 interface PoolPositionContext {
   balance: Record<FundSource, Amount<Type>> | undefined

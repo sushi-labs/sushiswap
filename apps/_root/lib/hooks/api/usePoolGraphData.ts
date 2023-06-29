@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/react-query'
 import { ChainId, chainShortName } from '@sushiswap/chain'
-import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { Amount, Token } from '@sushiswap/currency'
+import { getBuiltGraphSDK } from '@sushiswap/graph-client'
+import { useQuery } from '@tanstack/react-query'
 
 interface UsePoolGraphDataParams {
   poolAddress: string

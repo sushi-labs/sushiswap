@@ -1,8 +1,8 @@
 import { classNames } from '@sushiswap/ui'
-import { FormType } from '../../../page'
 import React, { FC, ReactElement, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 
+import { FormType } from '../../../page'
 import { DEFAULT_FORM_FIELD_CLASSNAMES } from '..'
 import FormFieldHelperText from '../FormFieldHelperText'
 

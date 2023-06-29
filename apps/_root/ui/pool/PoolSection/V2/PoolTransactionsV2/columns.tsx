@@ -1,9 +1,10 @@
-import { ColumnDef } from '@tanstack/react-table'
-import { Transaction, TransactionType, useTransactionsV2 } from './useTransactionsV2'
 import { formatUSD } from '@sushiswap/format'
-import formatDistance from 'date-fns/formatDistance/index.js'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { ColumnDef } from '@tanstack/react-table'
+import formatDistance from 'date-fns/formatDistance/index.js'
 import React from 'react'
+
+import { Transaction, TransactionType, useTransactionsV2 } from './useTransactionsV2'
 
 export const TYPE_COLUMN: ColumnDef<Transaction, unknown> = {
   id: 'type',

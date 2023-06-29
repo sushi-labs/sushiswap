@@ -1,20 +1,19 @@
+import { ChainId } from '@sushiswap/chain'
 import { formatPercent, formatUSD } from '@sushiswap/format'
 import { classNames } from '@sushiswap/ui'
+import { AppearOnMount } from '@sushiswap/ui/components/animation'
+import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 import { format } from 'date-fns'
-import { EChartsOption } from 'echarts-for-react/lib/types'
-import { FC, useCallback, useMemo } from 'react'
 import ReactECharts from 'echarts-for-react'
-
-import tailwindConfig from 'tailwind.config.js'
+import { EChartsOption } from 'echarts-for-react/lib/types'
 import { usePoolGraphData } from 'lib/hooks'
 import { useTheme } from 'next-themes'
-import { PoolChartPeriod, PoolChartType } from './types'
-import { chartPeriods } from './constants'
-import { ChainId } from '@sushiswap/chain'
-import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
-
+import { FC, useCallback, useMemo } from 'react'
+import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
-import { AppearOnMount } from '@sushiswap/ui/components/animation'
+
+import { chartPeriods } from './constants'
+import { PoolChartPeriod, PoolChartType } from './types'
 
 interface PoolChartProps {
   chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL | PoolChartType.APR

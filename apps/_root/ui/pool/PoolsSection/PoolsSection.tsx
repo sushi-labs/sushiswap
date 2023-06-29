@@ -1,14 +1,14 @@
 import { Tab } from '@headlessui/react'
-import React, { FC, Fragment, useState } from 'react'
-import { useAccount } from '@sushiswap/wagmi'
-
-import { PoolsTable } from './Tables'
-import { TableFilters } from './Tables/TableFilters'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Container } from '@sushiswap/ui/components/container'
+import { Toggle } from '@sushiswap/ui/components/toggle'
+import { useAccount } from '@sushiswap/wagmi'
+import React, { FC, Fragment, useState } from 'react'
+
 import { PositionsTab } from './PositionsTab'
 import { RewardsTab } from './RewardsTab'
-import { Toggle } from '@sushiswap/ui/components/toggle'
+import { PoolsTable } from './Tables'
+import { TableFilters } from './Tables/TableFilters'
 
 export const PoolsSection: FC = () => {
   const { address } = useAccount()

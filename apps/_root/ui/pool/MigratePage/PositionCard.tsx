@@ -1,12 +1,12 @@
 import { Chain } from '@sushiswap/chain'
-import { Currency } from '@sushiswap/ui/components/currency'
-import React, { FC } from 'react'
-import { PositionWithPool } from 'types'
-import { useTokensFromPool } from 'lib/hooks'
 import { formatNumber, formatUSD } from '@sushiswap/format'
 import { Button } from '@sushiswap/ui/components/button'
+import { Currency } from '@sushiswap/ui/components/currency'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
+import { useTokensFromPool } from 'lib/hooks'
+import React, { FC } from 'react'
+import { PositionWithPool } from 'types'
 
 interface PositionCard {
   position: PositionWithPool

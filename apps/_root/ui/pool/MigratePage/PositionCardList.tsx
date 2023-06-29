@@ -1,9 +1,9 @@
-import React, { FC, ReactNode } from 'react'
-import { useUserPositions } from 'lib/hooks'
-import { SUPPORTED_CHAIN_IDS } from 'config'
-import { useAccount } from '@sushiswap/wagmi'
-import { PositionWithPool } from 'types'
 import { Protocol } from '@sushiswap/client'
+import { useAccount } from '@sushiswap/wagmi'
+import { SUPPORTED_CHAIN_IDS } from 'config'
+import { useUserPositions } from 'lib/hooks'
+import React, { FC, ReactNode } from 'react'
+import { PositionWithPool } from 'types'
 
 interface PositionCardList {
   children({ positions, isLoading }: { positions: PositionWithPool[]; isLoading: boolean }): ReactNode

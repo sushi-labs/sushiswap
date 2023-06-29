@@ -1,10 +1,9 @@
-import { createContext, FC, ReactNode, useCallback, useContext, useMemo } from 'react'
-
-import { SUPPORTED_CHAIN_IDS } from 'config'
-import { z } from 'zod'
 import { parseArgs, Protocol } from '@sushiswap/client'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { SUPPORTED_CHAIN_IDS } from 'config'
 import stringify from 'fast-json-stable-stringify'
+import { useRouter,useSearchParams } from 'next/navigation'
+import { createContext, FC, ReactNode, useCallback, useContext, useMemo } from 'react'
+import { z } from 'zod'
 
 interface FilterContext extends z.TypeOf<typeof poolFiltersSchema> {
   setFilters(filters: Partial<Omit<FilterContext, 'setFilters'>>): void

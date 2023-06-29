@@ -1,21 +1,15 @@
-import { Fraction, JSBI, Percent, ZERO } from '@sushiswap/math'
 import { RadioGroup } from '@headlessui/react'
-import { classNames, Dots, List, Currency } from '@sushiswap/ui'
+import { ArrowDownIcon, ArrowLeftIcon, SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
+import { Chain, ChainId } from '@sushiswap/chain'
+import { Pool } from '@sushiswap/client'
+import { Amount, Price, tryParseAmount } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
-import { unwrapToken } from 'lib/functions'
-import { Checker } from '@sushiswap/wagmi/future/systems'
-import {
-  Address,
-  getMasterChefContractConfig,
-  useAccount,
-  useMasterChefWithdraw,
-  usePair,
-  useTotalSupply,
-} from '@sushiswap/wagmi'
-import { APPROVE_TAG_MIGRATE, APPROVE_TAG_UNSTAKE, Bound, Field } from 'lib/constants'
+import { FundSource } from '@sushiswap/hooks'
+import { Fraction, JSBI, Percent, ZERO } from '@sushiswap/math'
+import { classNames, Currency,Dots, List } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { SelectFeeConcentratedWidget } from '../NewPositionSection/SelectFeeConcentratedWidget'
-import { SelectPricesWidget } from '../NewPositionSection'
+import { Modal } from '@sushiswap/ui/components/modal/Modal'
+import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   FeeAmount,
   Pool as V3Pool,
@@ -24,25 +18,32 @@ import {
   SushiSwapV3ChainId,
   TickMath,
 } from '@sushiswap/v3-sdk'
-import React, { FC, useMemo, useState } from 'react'
-import { useGraphPool, useTokenAmountDollarValues } from 'lib/hooks'
-import { Pool } from '@sushiswap/client'
-import { usePoolPosition } from '../PoolPositionProvider'
-import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
-import { usePoolPositionRewards } from '../PoolPositionRewardsProvider'
-import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { useV3Migrate, V3MigrateContractConfig } from '@sushiswap/wagmi/future/hooks/migrate/hooks/useV3Migrate'
-import { Amount, Price, tryParseAmount } from '@sushiswap/currency'
-import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
-import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
-import { ArrowDownIcon, ArrowLeftIcon, SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
-import { FundSource } from '@sushiswap/hooks'
-import { Modal } from '@sushiswap/ui/components/modal/Modal'
-import { Chain, ChainId } from '@sushiswap/chain'
-import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
+import {
+  Address,
+  getMasterChefContractConfig,
+  useAccount,
+  useMasterChefWithdraw,
+  usePair,
+  useTotalSupply,
+} from '@sushiswap/wagmi'
 import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
-import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
+import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
+import { useV3Migrate, V3MigrateContractConfig } from '@sushiswap/wagmi/future/hooks/migrate/hooks/useV3Migrate'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { APPROVE_TAG_MIGRATE, APPROVE_TAG_UNSTAKE, Bound, Field } from 'lib/constants'
+import { unwrapToken } from 'lib/functions'
+import { useGraphPool, useTokenAmountDollarValues } from 'lib/hooks'
+import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import { useRouter } from 'next/navigation'
+import React, { FC, useMemo, useState } from 'react'
+
+import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
+import { SelectPricesWidget } from '../NewPositionSection'
+import { SelectFeeConcentratedWidget } from '../NewPositionSection/SelectFeeConcentratedWidget'
+import { usePoolPosition } from '../PoolPositionProvider'
+import { usePoolPositionRewards } from '../PoolPositionRewardsProvider'
+import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 
 export const MODAL_MIGRATE_ID = 'migrate-modal'
 

@@ -1,11 +1,11 @@
 import { Type } from '@sushiswap/currency'
-import { FeeAmount, TICK_SPACINGS, computePoolAddress, nearestUsableTick, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
-import { useMemo } from 'react'
+import { computePoolAddress, FeeAmount, nearestUsableTick, SushiSwapV3ChainId,TICK_SPACINGS } from '@sushiswap/v3-sdk'
 import { Address, useContractReads } from '@sushiswap/wagmi'
-import { Writeable } from 'zod'
+import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { getV3FactoryContractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3FactoryContract'
 import { getV3TickLensContractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3TickLens'
+import { useMemo } from 'react'
+import { Writeable } from 'zod'
 
 interface useTicks {
   token0: Type | undefined

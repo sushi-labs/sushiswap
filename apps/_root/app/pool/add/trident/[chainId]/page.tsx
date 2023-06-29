@@ -1,9 +1,14 @@
 'use client'
 
+import { Signature } from '@ethersproject/bytes'
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { ConstantProductPool, Fee, StablePool } from '@sushiswap/amm'
+import { bentoBoxV1Address, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId } from '@sushiswap/chain'
 import { defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
+import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
+import { Button } from '@sushiswap/ui/components/button'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { Loader } from '@sushiswap/ui/components/loader'
 import {
   ConstantProductPoolState,
@@ -13,6 +18,15 @@ import {
   PoolFinderType,
   StablePoolState,
 } from '@sushiswap/wagmi'
+import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import { TRIDENT_ENABLED_NETWORKS, TridentEnabledChainId } from 'config'
+import { APPROVE_TAG_ADD_TRIDENT, APPROVE_TAG_CREATE_TRIDENT } from 'lib/constants'
+import { isConstantProductPool, isStablePool } from 'lib/functions'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
+import { SWRConfig } from 'swr'
 import {
   AddSectionReviewModalTrident,
   Layout,
@@ -21,22 +35,8 @@ import {
   SelectPoolTypeWidget,
   SelectTokensWidget,
 } from 'ui/pool'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
-import { SWRConfig } from 'swr'
-import { CreateSectionReviewModalTrident } from 'ui/pool/CreateSection'
-import { TRIDENT_ENABLED_NETWORKS, TridentEnabledChainId } from 'config'
-import { isConstantProductPool, isStablePool } from 'lib/functions'
-import { bentoBoxV1Address, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { useRouter } from 'next/navigation'
-import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
 import { ContentBlock } from 'ui/pool/AddPage/ContentBlock'
-import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
-import Link from 'next/link'
-import { IconButton } from '@sushiswap/ui/components/iconbutton'
-import { Checker } from '@sushiswap/wagmi/future/systems'
-import { Button } from '@sushiswap/ui/components/button'
-import { Signature } from '@ethersproject/bytes'
-import { APPROVE_TAG_ADD_TRIDENT, APPROVE_TAG_CREATE_TRIDENT } from 'lib/constants'
+import { CreateSectionReviewModalTrident } from 'ui/pool/CreateSection'
 
 // // This function gets called at build time on server-side.
 // // It may be called again, on a serverless function, if

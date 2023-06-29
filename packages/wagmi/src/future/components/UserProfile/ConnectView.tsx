@@ -11,6 +11,7 @@ import {
 } from '@sushiswap/ui/components/icons'
 import { List } from '@sushiswap/ui/components/list/List'
 import React, { FC, ReactNode, SVGProps, useCallback, useMemo } from 'react'
+
 import { useConnect } from '../../../hooks'
 
 const Icons: Record<string, (props: SVGProps<SVGSVGElement>) => ReactNode | null> = {

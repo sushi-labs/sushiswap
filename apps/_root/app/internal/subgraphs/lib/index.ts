@@ -1,4 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
+import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import {
   BENTOBOX_SUBGRAPH_NAME,
   BLOCKS_SUBGRAPH_NAME,
@@ -10,8 +11,6 @@ import {
   SUBGRAPH_HOST,
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
-
-import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 
 export type Subgraph = Awaited<ReturnType<typeof getSubgraphs>>[0]
 

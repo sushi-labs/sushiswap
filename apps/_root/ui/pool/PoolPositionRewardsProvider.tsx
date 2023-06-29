@@ -1,12 +1,11 @@
-import { Amount, Token } from '@sushiswap/currency'
+import { ChainId } from '@sushiswap/chain'
 import { ChefType, Pool } from '@sushiswap/client'
+import { Amount, Token } from '@sushiswap/currency'
 import { RewarderType, useAccount, useMasterChef } from '@sushiswap/wagmi'
 import { useRewarder } from '@sushiswap/wagmi/hooks/useRewarder'
-import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
-
 import { incentiveRewardToToken } from 'lib/functions'
 import { useTokenAmountDollarValues, useTokensFromPool } from 'lib/hooks'
-import { ChainId } from '@sushiswap/chain'
+import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
 interface PoolPositionRewardsContext {
   pendingRewards: (Amount<Token> | undefined)[]

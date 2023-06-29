@@ -1,11 +1,12 @@
 import { ChainId, chainName } from '@sushiswap/chain'
-import { NetworkIcon } from '@sushiswap/ui/components/icons'
-import React, { FC, memo } from 'react'
-import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
-import { NetworkSelector } from '@sushiswap/ui/components/networkselector'
 import { Button } from '@sushiswap/ui/components/button'
-import { ContentBlock } from '../AddPage/ContentBlock'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { NetworkSelector } from '@sushiswap/ui/components/networkselector'
 import { SelectIcon } from '@sushiswap/ui/components/select'
+import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
+import React, { FC, memo } from 'react'
+
+import { ContentBlock } from '../AddPage/ContentBlock'
 
 interface SelectNetworkWidgetProps {
   networks?: ChainId[]

@@ -1,10 +1,10 @@
-import { formatNumber, formatPercent, formatUSD } from '@sushiswap/format'
-import { Pool } from '@sushiswap/client'
-import { FC } from 'react'
-import { usePoolGraphData } from 'lib/hooks'
 import { ChainId } from '@sushiswap/chain'
-import { SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { Pool } from '@sushiswap/client'
+import { formatNumber, formatPercent, formatUSD } from '@sushiswap/format'
 import { classNames } from '@sushiswap/ui'
+import { SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { usePoolGraphData } from 'lib/hooks'
+import { FC } from 'react'
 
 interface PoolStats {
   pool: Pool

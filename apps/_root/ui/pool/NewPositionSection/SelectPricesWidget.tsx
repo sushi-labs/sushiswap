@@ -1,28 +1,27 @@
 import { MinusIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { tryParseAmount, Type } from '@sushiswap/currency'
+import { useIsMounted } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
+import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
+import { Button } from '@sushiswap/ui/components/button'
+import { Input } from '@sushiswap/ui/components/input'
+import { SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { Toggle } from '@sushiswap/ui/components/toggle'
+import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { useAccount } from '@sushiswap/wagmi'
+import { useConcentratedLiquidityPositionsFromTokenId } from '@sushiswap/wagmi/future/hooks'
+import { Bound } from 'lib/constants'
+import { useTokenAmountDollarValues } from 'lib/hooks'
 import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 
-import { Bound } from 'lib/constants'
 import { ContentBlock } from '../AddPage/ContentBlock'
-import LiquidityChartRangeInput from '../LiquidityChartRangeInput'
 import {
   useConcentratedDerivedMintInfo,
   useConcentratedMintActionHandlers,
   useConcentratedMintState,
   useRangeHopCallbacks,
 } from '../ConcentratedLiquidityProvider'
-import { Input } from '@sushiswap/ui/components/input'
-import { useAccount } from '@sushiswap/wagmi'
-import { useTokenAmountDollarValues } from 'lib/hooks'
-import { Button } from '@sushiswap/ui/components/button'
-import { useIsMounted } from '@sushiswap/hooks'
-import { SkeletonText } from '@sushiswap/ui/components/skeleton'
-
-import { useConcentratedLiquidityPositionsFromTokenId } from '@sushiswap/wagmi/future/hooks'
-import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
-import { Toggle } from '@sushiswap/ui/components/toggle'
+import LiquidityChartRangeInput from '../LiquidityChartRangeInput'
 
 interface SelectPricesWidget {
   chainId: SushiSwapV3ChainId

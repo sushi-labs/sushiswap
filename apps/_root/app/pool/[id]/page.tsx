@@ -1,12 +1,11 @@
 'use client'
 
+import { ChainId } from '@sushiswap/chain'
+import { Protocol, usePool } from '@sushiswap/client'
 import { formatPercent } from '@sushiswap/format'
-import { SUPPORTED_CHAIN_IDS } from 'config'
-import { getPool, getPools, getPoolUrl, Protocol, usePool } from '@sushiswap/client'
-import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
-import { FC } from 'react'
-import { SWRConfig, useSWRConfig } from 'swr'
-
+import { AppearOnMount } from '@sushiswap/ui/components/animation'
+import { NextSeo } from 'next-seo'
+import { useSWRConfig } from 'swr'
 import {
   Layout,
   PoolActionBar,
@@ -24,10 +23,7 @@ import {
   PoolTransactionsV2,
   UnknownTokenAlert,
 } from 'ui/pool'
-import { ChainId } from '@sushiswap/chain'
-import { NextSeo } from 'next-seo'
 import { PoolPageV3 } from 'ui/pool/PoolPageV3'
-import { AppearOnMount } from '@sushiswap/ui/components/animation'
 
 export default function Page({ params }: { params: { id: string } }) {
   const [chainId, address] = params.id.split('%3A') as [ChainId, string]

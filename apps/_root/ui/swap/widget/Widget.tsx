@@ -1,16 +1,17 @@
+import { AppType } from '@sushiswap/ui'
+import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/components/settings'
 import { WidgetContent } from '@sushiswap/ui/components/widget'
 import React, { FC } from 'react'
-import { SwitchAppType } from './SwitchAppType'
-import { SwitchTokensButton } from './SwitchTokensButton'
+
+import { useSwapState } from '../trade/TradeProvider'
+import { CrossChainBanner } from './CrossChainBanner'
+import { SwapButton } from './SwapButton'
+import { SwapButtonCrossChain } from './SwapButtonCrossChain'
 import { SwapCurrencyInput } from './SwapCurrencyInput'
 import { SwapCurrencyOutput } from './SwapCurrencyOutput'
+import { SwitchAppType } from './SwitchAppType'
+import { SwitchTokensButton } from './SwitchTokensButton'
 import { WidgetTitleV2 } from './WidgetTitleV2'
-import { SwapButton } from './SwapButton'
-import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/components/settings'
-import { CrossChainBanner } from './CrossChainBanner'
-import { SwapButtonCrossChain } from './SwapButtonCrossChain'
-import { AppType } from '@sushiswap/ui'
-import { useSwapState } from '../trade/TradeProvider'
 
 export const Widget: FC = () => {
   const { appType } = useSwapState()

@@ -1,9 +1,9 @@
 import { Amount, Token } from '@sushiswap/currency'
-import { Address, getBentoBoxContractConfig, getFuroStreamContractConfig, readContracts } from '@sushiswap/wagmi'
+import { FuroStreamChainId } from '@sushiswap/furo/exports/exports'
 import { JSBI } from '@sushiswap/math'
+import { Address, getBentoBoxContractConfig, getFuroStreamContractConfig, readContracts } from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
 import { BigNumber } from 'ethers'
-import { FuroStreamChainId } from '@sushiswap/furo/exports/exports'
 
 interface UseStreamBalances {
   streams: { chainId: FuroStreamChainId; streamId: string; token: Token }[]

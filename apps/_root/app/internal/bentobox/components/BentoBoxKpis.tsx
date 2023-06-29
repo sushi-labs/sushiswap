@@ -2,6 +2,7 @@
 
 import {formatNumber} from '@sushiswap/format'
 import useSWR from 'swr'
+
 import {getBentoBoxKpis} from '../lib'
 
 // const stats = [
