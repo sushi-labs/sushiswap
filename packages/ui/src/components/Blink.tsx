@@ -10,7 +10,7 @@ interface Props {
 }
 
 export type BlinkProps<C extends ElementType> = PolymorphicComponentPropsWithRef<C, Props>
-export type BlinkComponent = <C extends ElementType = 'div'>(props: BlinkProps<C>) => ReactElement | null
+export type BlinkComponent = <C extends ElementType = 'div'>(props: BlinkProps<C>) => ReactNode | null
 
 export const Blink: BlinkComponent = forwardRef(function Blink<Tag extends ElementType = 'div'>(
   { as, dep, children, timeout = 300, className = '', ...rest }: BlinkProps<Tag>,
