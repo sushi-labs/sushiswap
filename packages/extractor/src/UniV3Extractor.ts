@@ -60,7 +60,6 @@ export class UniV3Extractor {
   poolPermanentCache: PermanentCache<PoolCacheRecord>
   otherFactoryPoolSet: Set<Address> = new Set()
   logFilter: LogFilter
-  logProcessGuard = false
   logProcessingStatus = LogsProcessing.NotStarted
   logging: boolean
   busyCounter: Counter
@@ -104,20 +103,13 @@ export class UniV3Extractor {
     this.logFilter = new LogFilter(client, 50, UniV3EventsAbi, (logs?: Log[]) => {
       if (logs) {
         const blockNumber = logs.length > 0 ? Number(logs[logs.length - 1].blockNumber || 0) : '<undefined>'
-        if (!this.logProcessGuard) {
-          this.logProcessGuard = true
-          try {
-            const logNames = logs.map((l) => this.processLog(l))
-            this.consoleLog(
-              `Block ${blockNumber} ${logNames.length} logs: [${logNames}] jobs: ${this.busyCounter.counter}`
-            )
-          } catch (e) {
-            warnLog(`Block ${blockNumber} log process error: ${e}`)
-          }
-
-          this.logProcessGuard = false
-        } else {
-          warnLog(`Extractor: Log Filtering was skipped for block ${blockNumber}`)
+        try {
+          const logNames = logs.map((l) => this.processLog(l))
+          this.consoleLog(
+            `Block ${blockNumber} ${logNames.length} logs: [${logNames}] jobs: ${this.busyCounter.counter}`
+          )
+        } catch (e) {
+          warnLog(`Block ${blockNumber} log process error: ${e}`)
         }
       } else {
         this.logFilter.start()
