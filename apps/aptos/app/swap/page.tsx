@@ -113,13 +113,6 @@ export default function SwapPage() {
     <>
       <div className="flex flex-col gap-4 swap-container">
         <Drawer.Root>
-          <button
-            onClick={() => {
-              swapToken()
-            }}
-          >
-            Test swap
-          </button>
           <WidgetTitleV2 />
           <SwitchAppType />
           <div>
