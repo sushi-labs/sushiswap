@@ -1,14 +1,15 @@
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
-import { Chain, configureChains, createClient as _createClient, CreateClientConfig, mainnet } from 'wagmi'
+import { configureChains, createClient as _createClient, CreateClientConfig } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { LedgerConnector } from 'wagmi/connectors/ledger'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { SafeConnector } from 'wagmi/connectors/safe'
-import { _createTestClient, getSigners } from '../test/setup'
-import { MockConnector } from './connectors/mock'
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
+
+import { getSigners } from '../test/setup'
+import { MockConnector } from './connectors/mock'
 
 const isTest =
   process.env['APP_ENV'] === 'test' || process.env['TEST'] === 'true' || process.env['NEXT_PUBLIC_TEST'] === 'true'

@@ -1,5 +1,6 @@
 {
   "eslint.enable": true,
+  "eslint.packageManager": "pnpm",
   "eslint.validate": [
     "json",
     "javascript",
