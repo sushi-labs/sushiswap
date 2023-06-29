@@ -54,6 +54,11 @@ const defaultNextConfig = {
       }
     }
 
+    config.module = {
+      ...config.module,
+      exprContextCritical: false,
+    }
+
     return config
   },
 }
