@@ -3,6 +3,7 @@ import { Chain, ChainId } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/currency'
 import Image, { ImageProps } from 'next/image'
 import { FC, useEffect, useMemo, useState } from 'react'
+
 import { cloudinaryImageLoader } from '../../cloudinary'
 import { classNames } from '../../index'
 

@@ -1,8 +1,9 @@
+import * as PopperJS from '@popperjs/core'
 import { FC, ReactNode } from 'react'
+
+import { PopoverButton, PopoverButtonInterface } from './PopoverButton'
 import { PopoverPanel, PopoverPanelInterface } from './PopoverPanel'
 import { PopoverProvider } from './PopoverProvider'
-import { PopoverButton, PopoverButtonInterface } from './PopoverButton'
-import * as PopperJS from '@popperjs/core'
 
 type Popover<T> = FC<T> & {
   Panel: FC<PopoverPanelInterface>

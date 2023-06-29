@@ -5,11 +5,11 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "lint": "TIMING=1 next lint --fix",
+    "lint": "TIMING=1 next lint",
     "start": "next start"
   },
   "dependencies": {
-    "@next/font": "13.1.1",
+    "@next/font": "13.4.7",
     "next": "13.4.7",
     "react": "18.2.0",
     "react-dom": "18.2.0"
@@ -22,9 +22,9 @@
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "18",
-    "@types/react": "18.2.6",
-    "@types/react-dom": "18.2.4",
-    "eslint": "8.30.0",
+    "@types/react": "18.2.14",
+    "@types/react-dom": "18.2.6",
+    "eslint": "8.43.0",
     "typescript": "5.1.6"
   }
 }

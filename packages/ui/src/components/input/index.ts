@@ -1,10 +1,11 @@
+import { ComponentProps, FC } from 'react'
+
+import { DatePicker } from './DatePicker'
 import { DatePickerCustomInput } from './DatePickerCustomInput'
 import { Numeric } from './Numeric'
-import { Text } from './Text'
-import { DatePicker } from './DatePicker'
-import { Select } from './Select'
-import { ComponentProps, FC } from 'react'
 import { Percent } from './Percent'
+import { Select } from './Select'
+import { Text } from './Text'
 
 export const Input: {
   DatePicker: typeof DatePicker
