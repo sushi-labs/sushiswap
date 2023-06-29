@@ -16,13 +16,13 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
+    "build": "graphclient build --fileType js && rm -f .graphclient/package.json",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "lint": "TIMING=1 eslint src --fix",
-    "build": "graphclient build --fileType js && rm -f .graphclient/package.json",
-    "start": "ts-node src/server.ts",
     "server": "ts-node src/server.ts",
     "setup": "ts-node src/setup-schedulers.ts",
+    "start": "ts-node src/server.ts",
     "test": "jest --passWithNoTests",
     "validate": "graphclient validate"
   },
