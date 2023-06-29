@@ -4,7 +4,7 @@ import defaultNextConfig from '@sushiswap/nextjs-config'
 const nextConfig = {
   ...defaultNextConfig,
   basePath: '/analytics',
-  transpilePackages: ['@sushiswap/redux-localstorage', '@sushiswap/wagmi', '@sushiswap/ui'],
+  transpilePackages: ['@sushiswap/wagmi', '@sushiswap/ui'],
   async redirects() {
     return [
       {

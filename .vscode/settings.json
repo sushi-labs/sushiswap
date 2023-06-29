@@ -1,7 +1,5 @@
 {
   "eslint.enable": true,
-<<<<<<< HEAD
-  "eslint.packageManager": "pnpm",
   "eslint.validate": [
     "json",
     "javascript",
@@ -9,9 +7,6 @@
     "typescript",
     "typescriptreact"
   ],
-=======
-  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
->>>>>>> parent of f389ad654... chore: sort, format & lint
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnPaste": false,
   "editor.formatOnSave": false,
@@ -23,17 +18,15 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
   },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
   "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
   },
   "[solidity]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-<<<<<<< HEAD
   }
 }
-=======
-  },
-  "eslint.packageManager": "pnpm"
-}
->>>>>>> parent of f389ad654... chore: sort, format & lint

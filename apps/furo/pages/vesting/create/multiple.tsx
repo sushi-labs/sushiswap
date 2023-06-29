@@ -1,14 +1,14 @@
+import { ArrowLeftIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
-import { NextSeo } from 'next-seo'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { useNetwork } from '@sushiswap/wagmi'
+import Link from 'next/link'
+import { NextSeo } from 'next-seo'
+import React from 'react'
 
 import { Layout } from '../../../components'
 import { CreateMultipleForm } from '../../../components/vesting/CreateMultipleForm'
-import Link from 'next/link'
-import { IconButton } from '@sushiswap/ui/components/iconbutton'
-import { ArrowLeftIcon } from '@heroicons/react/solid'
-import React from 'react'
 
 const MultipleStream = () => {
   const { chain } = useNetwork()

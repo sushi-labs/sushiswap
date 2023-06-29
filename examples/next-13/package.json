@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "lint": "next lint",
+    "lint": "TIMING=1 next lint --fix",
     "start": "next start"
   },
   "dependencies": {
@@ -21,7 +21,7 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@types/node": "18.11.18",
+    "@types/node": "18",
     "@types/react": "18.2.6",
     "@types/react-dom": "18.2.4",
     "eslint": "8.30.0",

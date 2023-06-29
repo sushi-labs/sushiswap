@@ -1,15 +1,10 @@
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
-<<<<<<< HEAD
 import { configureChains, createClient as _createClient, CreateClientConfig } from 'wagmi'
-=======
-import { Chain, configureChains, createClient, CreateClientConfig, mainnet } from 'wagmi'
->>>>>>> parent of f389ad654... chore: sort, format & lint
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { LedgerConnector } from 'wagmi/connectors/ledger'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { SafeConnector } from 'wagmi/connectors/safe'
-<<<<<<< HEAD
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
@@ -18,22 +13,51 @@ import { MockConnector } from './connectors/mock'
 
 const isTest =
   process.env['APP_ENV'] === 'test' || process.env['TEST'] === 'true' || process.env['NEXT_PUBLIC_TEST'] === 'true'
-=======
-import { _createTestClient } from '../test/setup'
 
-const isTest = process.env['NODE_ENV'] === 'test' || process.env['NEXT_PUBLIC_TEST'] === 'true'
->>>>>>> parent of f389ad654... chore: sort, format & lint
+export const createWagmiClient = (config?: CreateClientConfig) => {
+  const anvilRpcUrl =
+    process.env['ANVIL_RPC_URL'] || process.env['NEXT_PUBLIC_ANVIL_RPC_URL'] || 'http://127.0.0.1:8545'
 
-const { chains, provider }: CreateClientConfig & { chains: Chain[] } = configureChains(allChains, allProviders, {
-  pollingInterval: 8_000,
-})
+  const testWalletIndex =
+    Number(process.env['TEST_WALLET_INDEX']) || Number(process.env['NEXT_PUBLIC_TEST_WALLET_INDEX']) || 0
 
-// console.log({ isTest, NODE_ENV: process.env.NODE_ENV })
+  console.log({
+    isTest,
+    testWalletIndex,
+    anvilRpcUrl,
+    env: {
+      TEST_WALLET_INDEX: process.env['TEST_WALLET_INDEX'],
+      NEXT_PUBLIC_TEST_WALLET_INDEX: process.env['NEXT_PUBLIC_TEST_WALLET_INDEX'],
+      ANVIL_RPC_URL: process.env['ANVIL_RPC_URL'],
+      NEXT_PUBLIC_ANVIL_RPC_URL: process.env['NEXT_PUBLIC_ANVIL_RPC_URL'],
+    },
+  })
 
-export const _createClient = (config?: CreateClientConfig) => {
+  const { chains, provider } = isTest
+    ? configureChains(
+        allChains,
+        [
+          jsonRpcProvider({
+            rpc: () => ({
+              http: anvilRpcUrl,
+            }),
+          }),
+        ],
+        {
+          pollingInterval: 1_000,
+        }
+      )
+    : configureChains(allChains, allProviders, {
+        pollingInterval: 8_000,
+      })
+
   return isTest
-    ? _createTestClient()
-    : createClient({
+    ? _createClient({
+        provider,
+        autoConnect: true,
+        connectors: [new MockConnector({ options: { signer: getSigners()[testWalletIndex] } })],
+      })
+    : _createClient({
         provider,
         // logger: {
         //   warn: process.env.NODE_ENV !== 'production' ? console.warn : null,
@@ -103,4 +127,4 @@ export const _createClient = (config?: CreateClientConfig) => {
       })
 }
 
-export const client: ReturnType<typeof _createClient> = _createClient()
+export const client = createWagmiClient()
