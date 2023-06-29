@@ -1,7 +1,7 @@
 import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 
-import { SUPPORTED_CHAINS, SupportedChainId } from '../config'
 import { getBuiltGraphSDK } from '../.graphclient'
+import { SUPPORTED_CHAINS, SupportedChainId } from '../config'
 
 const GRAPH_HOST = 'api.thegraph.com'
 

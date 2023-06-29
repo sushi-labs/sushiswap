@@ -4,13 +4,14 @@ import { Native, Token } from '@sushiswap/currency'
 import { formatPercent, formatUSD } from '@sushiswap/format'
 import { Token as GraphToken } from '@sushiswap/graph-client'
 import { Link } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { Popover } from '@sushiswap/ui/components/Popover'
+import { Table } from '@sushiswap/ui/components/table'
 import React, { FC } from 'react'
 import { useSWRConfig } from 'swr'
-import { Table } from '@sushiswap/ui/components/table'
+
 import { FarmRewardsAvailableTooltip } from '../FarmRewardsAvailableTooltip'
 import { PoolQuickHoverTooltip } from '../PoolQuickHoverTooltip'
-import { Popover } from '@sushiswap/ui/components/Popover'
-import { Currency } from '@sushiswap/ui/components/currency'
 
 interface TokenPairs {
   token: GraphToken

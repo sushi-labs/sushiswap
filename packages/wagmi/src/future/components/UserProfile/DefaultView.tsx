@@ -51,7 +51,7 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
         <div className="flex flex-col gap-2">
           <div className="flex gap-2">
             <IconButton
-                size="sm"
+              size="sm"
               icon={Cog6ToothIcon}
               onClick={() => setView(ProfileView.Settings)}
               description="Settings"
@@ -60,7 +60,7 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
             <ClipboardController hideTooltip>
               {({ setCopied, isCopied }) => (
                 <IconButton
-                    size="sm"
+                  size="sm"
                   icon={DocumentDuplicateIcon}
                   onClick={() => setCopied(address)}
                   description={isCopied ? 'Copied!' : 'Copy Address'}
@@ -69,16 +69,11 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
               )}
             </ClipboardController>
             <a target="_blank" href={chains[chainId].getAccountUrl(address)}>
-              <IconButton
-                  size="sm"
-                  icon={LinkIcon}
-                  description="View on Explorer"
-                  name="View on Explorer"
-              />
+              <IconButton size="sm" icon={LinkIcon} description="View on Explorer" name="View on Explorer" />
             </a>
 
             <IconButton
-                size="sm"
+              size="sm"
               icon={ArrowLeftOnRectangleIcon}
               onClick={() => disconnect()}
               description="Disconnect"

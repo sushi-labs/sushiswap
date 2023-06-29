@@ -1,4 +1,4 @@
-import {Token} from "@sushiswap/currency";
+import { Token } from '@sushiswap/currency'
 import z from 'zod'
 
 import { tokenListValidator } from './validator'

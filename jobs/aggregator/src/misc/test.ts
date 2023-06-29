@@ -3,8 +3,6 @@
 // import { performance } from 'perf_hooks'
 // import { ProtocolName } from '../config.js'
 
-
-
 // export async function test() {
 //   const client = await createClient()
 //   try {

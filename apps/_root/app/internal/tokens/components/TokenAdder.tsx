@@ -1,13 +1,14 @@
+import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Token as TokenEntity } from '@sushiswap/currency'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { Loader } from '@sushiswap/ui/components/loader'
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@sushiswap/ui/components/select'
 import stringify from 'fast-json-stable-stringify'
-import { getTokenLogos, Token, TokenLogo } from '../lib'
 import Image from 'next/legacy/image'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
-import { Select, SelectContent, SelectItem, SelectTrigger } from '@sushiswap/ui/components/select'
-import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { Loader } from '@sushiswap/ui/components/loader'
-import { Currency } from '@sushiswap/ui/components/currency'
+
+import { getTokenLogos, Token, TokenLogo } from '../lib'
 
 interface TokenAdder {
   token: Token

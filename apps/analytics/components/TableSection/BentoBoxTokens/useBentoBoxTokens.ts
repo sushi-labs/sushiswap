@@ -1,10 +1,10 @@
 import { GetApiInputFromOutput, parseArgs } from '@sushiswap/client'
 import { Amount, Token } from '@sushiswap/currency'
 import { Rebase } from '@sushiswap/graph-client'
+import { useAllPrices } from '@sushiswap/react-query'
 import { bentoBoxTokensSchema } from 'pages/api/bentobox'
 import { useMemo } from 'react'
 import useSWR from 'swr'
-import { useAllPrices } from '@sushiswap/react-query'
 
 export type GetBentoBoxTokenArgs = GetApiInputFromOutput<
   (typeof bentoBoxTokensSchema)['_input'],

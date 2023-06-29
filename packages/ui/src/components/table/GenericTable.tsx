@@ -1,12 +1,13 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid'
-import { flexRender, RowData, Table as ReactTableType } from '@tanstack/react-table'
-import React, { ReactNode, useCallback, useState } from 'react'
-import { Table } from '.'
-import { Link } from '../link'
-import classNames from 'classnames'
-import { Popover } from '../Popover'
 import { useIsMounted } from '@sushiswap/hooks'
+import { flexRender, RowData, Table as ReactTableType } from '@tanstack/react-table'
+import classNames from 'classnames'
+import React, { ReactNode, useCallback, useState } from 'react'
+
+import { Link } from '../link'
 import { LoadingOverlay } from '../loader'
+import { Popover } from '../Popover'
+import { Table } from '.'
 
 interface GenericTableProps<C> {
   table: ReactTableType<C>

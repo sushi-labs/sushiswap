@@ -2,18 +2,17 @@ import { UsePoolsParams } from '../types'
 import { DataFetcher, LiquidityProviders, PoolCode } from '@sushiswap/router'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
 
-const isTest = process.env.NEXT_PUBLIC_TEST === 'true' || process.env.TEST === 'true'
+const isTest =
+  process.env['APP_ENV'] === 'test' || process.env['TEST'] === 'true' || process.env['NEXT_PUBLIC_TEST'] === 'true'
 
 export const getAllPoolsCodeMap = async ({ currencyA, currencyB, chainId }: Omit<UsePoolsParams, 'enabled'>) => {
   if (!currencyA || !currencyB || !chainId) {
     return new Map<string, PoolCode>()
   }
-
   const sushiLiquidityProviders = [LiquidityProviders.SushiSwapV2, LiquidityProviders.Trident]
   if (isRouteProcessor3ChainId(chainId)) {
     sushiLiquidityProviders.push(LiquidityProviders.SushiSwapV3)
   }
-
   const liquidityProviders = [
     ...sushiLiquidityProviders,
     LiquidityProviders.UniswapV2,
@@ -33,11 +32,8 @@ export const getAllPoolsCodeMap = async ({ currencyA, currencyB, chainId }: Omit
     LiquidityProviders.DovishV3, // polygon zkevm
     LiquidityProviders.LaserSwap, // thundercore
   ]
-
   const testLiquidityProviders = [...sushiLiquidityProviders]
-
   const dataFetcher = DataFetcher.onChain(chainId)
-  console.log('IS TEST', isTest)
   dataFetcher.startDataFetching(isTest ? testLiquidityProviders : liquidityProviders)
   await dataFetcher.fetchPoolsForToken(currencyA, currencyB)
   dataFetcher.stopDataFetching()

@@ -160,7 +160,9 @@ async function transform(chainId: ChainId, pools: Pool[]) {
   console.log(`ChainId ${chainId} got block number: ${blockNumber}. `)
   const rebases = isBentoBoxV1ChainId(chainId) ? await fetchRebases(stablePools, chainId, blockNumber) : undefined
 
-  const constantProductPoolIds = pools.filter((p) => p.protocol === Protocol.BENTOBOX_CLASSIC || p.protocol === Protocol.SUSHISWAP_V2).map((p) => p.id)
+  const constantProductPoolIds = pools
+    .filter((p) => p.protocol === Protocol.BENTOBOX_CLASSIC || p.protocol === Protocol.SUSHISWAP_V2)
+    .map((p) => p.id)
   const stablePoolIds = stablePools.map((p) => p.id)
   const concentratedLiquidityPools = pools.filter((p) => p.protocol === Protocol.SUSHISWAP_V3)
 

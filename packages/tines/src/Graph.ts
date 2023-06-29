@@ -427,7 +427,7 @@ export class Graph {
       processedVert.add(v)
     }
 
-    if (logging) console.log(`Pricing: Initial token ${from.token.symbol} price=${price}` )
+    if (logging) console.log(`Pricing: Initial token ${from.token.symbol} price=${price}`)
     addVertice(from, price)
     while (nextEdges.length > 0) {
       const bestEdge = nextEdges.pop() as Edge
@@ -436,10 +436,11 @@ export class Graph {
         : [bestEdge.vert0, bestEdge.vert1]
       if (processedVert.has(vTo)) continue
       const p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1)
-      if (logging) 
+      if (logging)
         console.log(
-          `Pricing: + Token ${vTo.token.symbol} price=${vFrom.price * p}`
-          + ` from ${vFrom.token.symbol} pool=${bestEdge.pool.address} liquidity=${edgeValues.get(bestEdge)}` )
+          `Pricing: + Token ${vTo.token.symbol} price=${vFrom.price * p}` +
+            ` from ${vFrom.token.symbol} pool=${bestEdge.pool.address} liquidity=${edgeValues.get(bestEdge)}`
+        )
       addVertice(vTo, vFrom.price * p)
     }
 

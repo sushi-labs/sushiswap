@@ -5,7 +5,13 @@ import { Address } from 'wagmi'
 import { fetchBalance } from '../../../..'
 import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
 
-export const getConcentratedLiquidityPoolReserves = async ({ pool, chainId }: { pool: Pool; chainId: SushiSwapV3ChainId }) => {
+export const getConcentratedLiquidityPoolReserves = async ({
+  pool,
+  chainId,
+}: {
+  pool: Pool
+  chainId: SushiSwapV3ChainId
+}) => {
   const address = computePoolAddress({
     factoryAddress: getV3FactoryContractConfig(chainId).address,
     tokenA: pool.token0,

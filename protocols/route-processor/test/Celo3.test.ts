@@ -104,4 +104,3 @@ describe('Celo RP3', async () => {
     await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, getBigNumber(800000))
   })
 })
-

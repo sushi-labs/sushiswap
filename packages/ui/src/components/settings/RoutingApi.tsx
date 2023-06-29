@@ -1,7 +1,8 @@
 'use client'
 
-import React, { FC } from 'react'
 import { useLocalStorage } from '@sushiswap/hooks'
+import React, { FC } from 'react'
+
 import { Switch } from '../switch'
 
 export const RoutingApi: FC = () => {

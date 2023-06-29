@@ -1,22 +1,23 @@
+import { DuplicateIcon, PlusIcon, TrashIcon } from '@heroicons/react/solid'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { FuroVestingRouterChainId } from '@sushiswap/furo/exports/exports'
+import { Button } from '@sushiswap/ui/components/button'
+import { Form } from '@sushiswap/ui/components/form'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
+import { nanoid } from 'nanoid'
 import { FC, useCallback, useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
+
 import { CREATE_VEST_DEFAULT_VALUES } from '../CreateForm'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { nanoid } from 'nanoid'
-import { ImportZoneSection } from './ImportZoneSection'
-import { IconButton } from '@sushiswap/ui/components/iconbutton'
-import { DuplicateIcon, PlusIcon, TrashIcon } from '@heroicons/react/solid'
 import { VestingForm } from '../CreateForm/VestingForm'
-import { Button } from '@sushiswap/ui/components/button'
-import { ReviewSection } from './ReviewSection'
-import { ExecuteMultipleSection } from './ExecuteMultipleSection'
 import {
   CreateMultipleVestingBaseSchemaFormErrorsType,
   CreateMultipleVestingFormSchemaType,
   CreateMultipleVestingModelSchema,
 } from '../schema'
-import { Form } from '@sushiswap/ui/components/form'
+import { ExecuteMultipleSection } from './ExecuteMultipleSection'
+import { ImportZoneSection } from './ImportZoneSection'
+import { ReviewSection } from './ReviewSection'
 
 export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ chainId }) => {
   const [review, setReview] = useState(false)

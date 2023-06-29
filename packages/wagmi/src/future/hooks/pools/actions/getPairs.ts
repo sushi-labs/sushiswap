@@ -1,6 +1,6 @@
 import { Amount, Token, Type, Type as Currency } from '@sushiswap/currency'
 import { Address, readContracts } from 'wagmi'
-import { computePairAddress, Pair }from "@sushiswap/amm"
+import { computePairAddress, Pair } from '@sushiswap/amm'
 import { SushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS, isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { uniswapV2PairAbi } from '@sushiswap/abi'
 

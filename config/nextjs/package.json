@@ -19,6 +19,9 @@
   "files": [
     "index.js"
   ],
+  "scripts": {
+    "lint": "TIMING=1 eslint index.js --fix"
+  },
   "devDependencies": {
     "next": "13.4.7"
   },

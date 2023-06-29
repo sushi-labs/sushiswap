@@ -1,12 +1,12 @@
-import React, { FC, Fragment, useMemo } from 'react'
-
 import { Listbox, Transition } from '@headlessui/react'
 import { CogIcon } from '@heroicons/react/outline'
-import { classNames } from '@sushiswap/ui'
 import { CheckIcon } from '@heroicons/react/solid'
+import { classNames } from '@sushiswap/ui'
+import React, { FC, Fragment, useMemo } from 'react'
+
 import { useFilters } from './FilterProvider'
 
-export const SettingFilter: FC = ({}) => {
+export const SettingFilter: FC = () => {
   const { setFilters, isWhitelisted } = useFilters()
 
   // TODO: Make modular?

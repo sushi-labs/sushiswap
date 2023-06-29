@@ -15,28 +15,32 @@ export async function getConstantProductPoolReserves(poolIds: string[], blockNum
   const startTime = performance.now()
   const updatedPools: Map<string, PoolWithReserves> = new Map()
 
-  
-  const contracts = poolIds.map((id) => ({
-    allowFailure: true,
-    address: id.split(':')[1] as Address,
-    chainId: Number(id.split(':')[0]),
-    abi: getReservesAbi,
-    functionName: 'getReserves',
-    blockNumber
-  } as const))
+  const contracts = poolIds.map(
+    (id) =>
+      ({
+        allowFailure: true,
+        address: id.split(':')[1] as Address,
+        chainId: Number(id.split(':')[0]),
+        abi: getReservesAbi,
+        functionName: 'getReserves',
+        blockNumber,
+      } as const)
+  )
 
   let failures = 0
 
   const batchSize = contracts.length > 250 ? 250 : contracts.length
-  const batches: Promise<(readonly [BigNumber, BigNumber, number] & {
-    _reserve0: BigNumber;
-    _reserve1: BigNumber;
-    _blockTimestampLast: number;
-})[]>[] = []
+  const batches: Promise<
+    (readonly [BigNumber, BigNumber, number] & {
+      _reserve0: BigNumber
+      _reserve1: BigNumber
+      _blockTimestampLast: number
+    })[]
+  >[] = []
 
   for (let i = 0; i < contracts.length; i += batchSize) {
     const contractBatch = readContracts({
-      contracts: contracts.slice(i, i+batchSize),
+      contracts: contracts.slice(i, i + batchSize),
     })
     batches.push(contractBatch)
   }
@@ -75,7 +79,7 @@ export async function getStablePoolReserves(poolIds: string[], blockNumber: numb
       chainId: Number(id.split(':')[0]),
       abi: getStableReservesAbi,
       functionName: 'getReserves',
-      blockNumber
+      blockNumber,
     })),
   })
   let failures = 0
@@ -109,7 +113,7 @@ export async function getConcentratedLiquidityPoolReserves(
     chainId: number
     token0: Token
     token1: Token
-  }[], 
+  }[],
   blockNumber: number
 ) {
   const startTime = performance.now()
@@ -123,7 +127,7 @@ export async function getConcentratedLiquidityPoolReserves(
         chainId: p.chainId,
         abi: balanceOfAbi,
         functionName: 'balanceOf',
-        blockNumber
+        blockNumber,
       } as const,
       {
         args: [p.address as Address],
@@ -131,7 +135,7 @@ export async function getConcentratedLiquidityPoolReserves(
         chainId: p.chainId,
         abi: balanceOfAbi,
         functionName: 'balanceOf',
-        blockNumber
+        blockNumber,
       } as const,
     ].flat()
   )
@@ -160,9 +164,7 @@ export async function getConcentratedLiquidityPoolReserves(
 
   const success = pools.length - failures
   const endTime = performance.now()
-  console.log(
-    `Fetched ${success}/${pools.length} cl balances (${((endTime - startTime) / 1000).toFixed(1)}s). `
-  )
+  console.log(`Fetched ${success}/${pools.length} cl balances (${((endTime - startTime) / 1000).toFixed(1)}s). `)
 
   return updatedPools
 }

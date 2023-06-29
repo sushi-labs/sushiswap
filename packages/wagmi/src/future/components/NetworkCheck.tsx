@@ -36,14 +36,7 @@ export const NetworkCheck: FC<{ chainId: ChainId }> = ({ chainId }) => {
         {chain?.id ? chainName[chain.id] : ''}).
       </p>
       <div className="block flex justify-end px-3 w-full sm:w-[unset]">
-        <Button
-          fullWidth
-          onClick={() => switchNetwork?.(chainId)}
-          
-          
-          size="sm"
-          className="whitespace-nowrap"
-        >
+        <Button fullWidth onClick={() => switchNetwork?.(chainId)} size="sm" className="whitespace-nowrap">
           Switch to {Chain.fromChainId(chainId).name}
         </Button>
       </div>

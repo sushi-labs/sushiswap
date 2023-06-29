@@ -2,8 +2,8 @@ import { Amount, Token } from '@sushiswap/currency'
 import { FuroStreamChainId } from '@sushiswap/furo'
 import { JSBI } from '@sushiswap/math'
 import { Address, getBentoBoxContractConfig, getFuroStreamContractConfig, readContract } from '@sushiswap/wagmi'
-import { BigNumber } from 'ethers'
 import { useQuery } from '@tanstack/react-query'
+import { BigNumber } from 'ethers'
 
 interface UseStreamBalance {
   chainId: FuroStreamChainId
@@ -32,7 +32,13 @@ export function useStreamBalance({ chainId, streamId, token, enabled = true }: U
           args: [token.address as Address],
         }),
       ])
-      console.log('hook', balance.senderBalance.toString(), balance.recipientBalance.toString(), rebase[0].toString(), rebase[1].toString())
+      console.log(
+        'hook',
+        balance.senderBalance.toString(),
+        balance.recipientBalance.toString(),
+        rebase[0].toString(),
+        rebase[1].toString()
+      )
 
       return Amount.fromShare(token, JSBI.BigInt(balance[1]), {
         elastic: JSBI.BigInt(rebase[0]),

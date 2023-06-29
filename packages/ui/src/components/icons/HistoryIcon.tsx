@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { IconComponent } from '../../types'
 
 export const HistoryIcon: IconComponent = (props) => {

@@ -13,13 +13,13 @@ FIRST_TIME_SEED=true pnpm ts-node --esm --swc ./src/pools.ts
 ### Incentives
 
 ```bash
-pnpm ts-node --esm --swc ./src/incentives.ts 
+pnpm ts-node --esm --swc ./src/incentives.ts
 ```
 
 ### Volume
 
 ```bash
-pnpm ts-node --esm --swc ./src/volume.ts 
+pnpm ts-node --esm --swc ./src/volume.ts
 ```
 
 ```

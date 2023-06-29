@@ -1,5 +1,5 @@
-import type {PlaywrightTestConfig} from '@playwright/test'
-import {devices} from '@playwright/test'
+import type { PlaywrightTestConfig } from '@playwright/test'
+import { devices } from '@playwright/test'
 import path from 'path'
 
 // Use process.env.PORT by default and fallback to port 3000

@@ -1,7 +1,8 @@
-import { FormType } from '../../page'
 import { FC, useEffect } from 'react'
 import { HexColorPicker } from 'react-colorful'
 import { useFormContext } from 'react-hook-form'
+
+import { FormType } from '../../page'
 
 export const BackgroundMaker: FC = () => {
   const { setValue, watch } = useFormContext<FormType>()

@@ -1,7 +1,7 @@
+import { Button } from '@sushiswap/ui/components/button'
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
 import { nanoid } from 'nanoid'
 import React, { FC, ReactNode, useCallback, useState } from 'react'
-import { Button } from '@sushiswap/ui/components/button'
 
 interface ExpandableCardRenderProps {
   open: boolean

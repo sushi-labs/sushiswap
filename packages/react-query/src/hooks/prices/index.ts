@@ -1,3 +1,3 @@
+export * from './useAllPrices'
 export * from './usePrice'
 export * from './usePrices'
-export * from './useAllPrices'

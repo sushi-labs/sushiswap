@@ -1,19 +1,20 @@
+import { DuplicateIcon, PlusIcon, TrashIcon } from '@heroicons/react/solid'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { FuroStreamRouterChainId } from '@sushiswap/furo'
+import { Button } from '@sushiswap/ui/components/button'
+import { Form } from '@sushiswap/ui/components/form'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
+import { nanoid } from 'nanoid'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
-import { ExecuteMultipleSection, ImportZoneSection, ReviewSection } from '.'
-import { FuroStreamRouterChainId } from '@sushiswap/furo'
+
 import { CREATE_STREAM_DEFAULT_VALUES, StreamForm } from '../CreateForm'
-import { Button } from '@sushiswap/ui/components/button'
-import { DuplicateIcon, PlusIcon, TrashIcon } from '@heroicons/react/solid'
-import { nanoid } from 'nanoid'
-import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import {
   CreateMultipleStreamBaseSchemaFormErrorsType,
   CreateMultipleStreamFormSchemaType,
   CreateMultipleStreamModelSchema,
 } from '../schema'
-import { Form } from '@sushiswap/ui/components/form'
+import { ExecuteMultipleSection, ImportZoneSection, ReviewSection } from '.'
 
 export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
   const [review, setReview] = useState(false)

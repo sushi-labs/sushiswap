@@ -1,6 +1,7 @@
-import { ExtractProps } from '../../types'
 import { Dialog as HeadlessDialog } from '@headlessui/react/dist/components/dialog/dialog'
 import React, { FC } from 'react'
+
+import { ExtractProps } from '../../types'
 import { ModalPanel } from './ModalPanel'
 import { ModalType } from './ModalProvider'
 

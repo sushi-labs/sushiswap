@@ -3,12 +3,12 @@ import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { Token as GraphToken } from '@sushiswap/graph-client'
 import { Link } from '@sushiswap/ui'
-import { FC } from 'react'
-import { Table } from '@sushiswap/ui/components/table'
+import { ClipboardController } from '@sushiswap/ui/components/ClipboardController'
 import { Currency } from '@sushiswap/ui/components/currency'
+import { Table } from '@sushiswap/ui/components/table'
+import { FC } from 'react'
 
 import { useTokenFromToken } from '../../lib/hooks'
-import { ClipboardController } from '@sushiswap/ui/components/ClipboardController'
 
 interface TokenInformation {
   token: GraphToken

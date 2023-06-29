@@ -15,7 +15,7 @@ export async function pager(host: string, name: string) {
 
     tokenPrices.push(...newTokenPrices)
 
-    if(!newTokenPrices) throw new Error(`Fetch on ${host}/${name} failed.`)
+    if (!newTokenPrices) throw new Error(`Fetch on ${host}/${name} failed.`)
 
     if (newTokenPrices.length < 1000) {
       rest = newRest

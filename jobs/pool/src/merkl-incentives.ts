@@ -36,9 +36,9 @@ type MerklDistribution = {
   amount: number
   start: number
   end: number
-  token: string,
-  isMock: boolean,
-  isLive: boolean,
+  token: string
+  isMock: boolean
+  isLive: boolean
 }
 
 type PriceResponse = {
@@ -162,7 +162,10 @@ async function transform(
           rewarderType: RewarderType.Primary,
         })
         incentives.push(incentive)
-        rewardTokens.set(`${pool.chainId}:${token.toLowerCase()}`, { chainId: pool.chainId as ChainId, address: token.toLowerCase() })
+        rewardTokens.set(`${pool.chainId}:${token.toLowerCase()}`, {
+          chainId: pool.chainId as ChainId,
+          address: token.toLowerCase(),
+        })
       }
     }
   }

@@ -1,10 +1,9 @@
+import { FURO_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 import stringify from 'fast-json-stable-stringify'
 import type { NextApiRequest, NextApiResponse } from 'next'
-
 import { z } from 'zod'
 
 import { getFuroTokens } from '../../../lib/api'
-import { FURO_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 
 export const FuroTokensSchema = z.object({
   // first: z.coerce.number().default(20),

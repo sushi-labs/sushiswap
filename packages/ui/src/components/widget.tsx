@@ -1,7 +1,8 @@
+import { Slot } from '@radix-ui/react-slot'
 import classNames from 'classnames'
 import React, { ReactNode } from 'react'
+
 import { Container, ContainerProps } from './container'
-import { Slot } from '@radix-ui/react-slot'
 
 const Widget = React.forwardRef<HTMLDivElement, ContainerProps>(({ id, className, ...props }, ref) => {
   return (

@@ -42,7 +42,6 @@ Example: `https://localhost:8080/protocol?name=SushiSwap`
 - `http://localhost:8080/protocol?name=UbeSwap&version=V2`
 - `http://localhost:8080/protocol?name=Uniswap&version=V2`
 
-
 - `http://localhost:8080/whitelist-pools`
 - `http://localhost:8080/price`
 - `http://localhost:8080/reserves`

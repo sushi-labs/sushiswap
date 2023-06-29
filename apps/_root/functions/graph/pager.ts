@@ -1,4 +1,4 @@
-import {request, Variables} from 'graphql-request'
+import { request, Variables } from 'graphql-request'
 
 // @ts-ignore TYPE NEEDS FIXING
 export async function pager(endpoint: string, query, variables: Variables = {}) {

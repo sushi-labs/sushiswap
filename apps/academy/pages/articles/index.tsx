@@ -1,5 +1,8 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { useDebounce } from '@sushiswap/hooks'
+import { classNames } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@sushiswap/ui/components/select'
 import { DEFAULT_SIDE_PADDING, SORTING_OPTIONS } from 'common/helpers'
 import { InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
@@ -16,9 +19,6 @@ import {
 } from '../../.mesh'
 import { ArticleList, ArticlesPageHeader, Card, Pagination, SearchInput } from '../../common/components'
 import { getArticles, getDifficulties, getProducts, getTopics } from '../../lib/api'
-import { Container } from '@sushiswap/ui/components/container'
-import { classNames } from '@sushiswap/ui'
-import { Select, SelectContent, SelectItem, SelectTrigger } from '@sushiswap/ui/components/select'
 
 export async function getStaticProps() {
   const [difficulties, topics, products] = await Promise.all([getDifficulties(), getTopics(), getProducts()])

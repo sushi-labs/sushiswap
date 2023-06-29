@@ -31,7 +31,7 @@ export const TokenSelectorCustomTokensOverlay: FC = () => {
 
   return (
     <>
-      <Button className="rounded-full"  size="sm" onClick={() => setOpen(true)}>
+      <Button className="rounded-full" size="sm" onClick={() => setOpen(true)}>
         Manage
       </Button>
       <SlideIn.FromRight show={open} onClose={() => setOpen(false)} className="!mt-0">

@@ -7,7 +7,7 @@ import {
   TradeType,
   Version as TradeVersion,
 } from '@sushiswap/amm'
-import {   SUSHISWAP_V2_FACTORY_ADDRESS} from '@sushiswap/v2-sdk'
+import { SUSHISWAP_V2_FACTORY_ADDRESS } from '@sushiswap/v2-sdk'
 import { BigNumber } from 'ethers'
 import { RouteStatus } from '@sushiswap/tines'
 import { FetchFeeDataResult } from 'wagmi/actions'

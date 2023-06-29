@@ -1,12 +1,13 @@
-import { useQuery } from '@tanstack/react-query'
-import { getBuiltGraphSDK, Rebase, streamQuery, userStreamsQuery } from '../../.graphclient'
-import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
-import { SUPPORTED_CHAINS } from '../../config'
-import { FuroStreamChainId } from '@sushiswap/furo/exports/exports'
-import { toToken } from '../mapper'
 import { Token } from '@sushiswap/currency'
-import { queryRebasesDTO } from './useRebasesDTO'
+import { FuroStreamChainId } from '@sushiswap/furo/exports/exports'
+import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import { useQuery } from '@tanstack/react-query'
+
+import { getBuiltGraphSDK, Rebase, streamQuery, userStreamsQuery } from '../../.graphclient'
+import { SUPPORTED_CHAINS } from '../../config'
+import { toToken } from '../mapper'
 import { Stream } from '../Stream'
+import { queryRebasesDTO } from './useRebasesDTO'
 
 const GRAPH_HOST = 'api.thegraph.com'
 

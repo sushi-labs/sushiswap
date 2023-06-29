@@ -16,7 +16,7 @@ export enum BridgeBentoState {
 export const getBridgeBentoPools = async (
   chainId: BentoBoxV1ChainId,
   currencies: Token[],
-  totals: Map<string,{ base: BigNumber; elastic: BigNumber }>
+  totals: Map<string, { base: BigNumber; elastic: BigNumber }>
 ) => {
   const balances = await readContracts({
     contracts: currencies.map(

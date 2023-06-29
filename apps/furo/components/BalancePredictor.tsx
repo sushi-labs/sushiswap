@@ -1,6 +1,6 @@
 import { Amount, Token } from '@sushiswap/currency'
-import { FC, ReactNode, useEffect, useMemo, useState } from 'react'
 import { useInterval } from '@sushiswap/hooks'
+import { FC, ReactNode, useEffect, useMemo, useState } from 'react'
 
 interface BalancePredictor {
   balance: Amount<Token> | null | undefined

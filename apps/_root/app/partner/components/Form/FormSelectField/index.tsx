@@ -1,10 +1,10 @@
 import { classNames } from '@sushiswap/ui'
-import { FormType } from '../../../page'
 import React, { FC, ReactElement, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import FormFieldHelperText from '../FormFieldHelperText'
+import { FormType } from '../../../page'
 import { DEFAULT_FORM_FIELD_CLASSNAMES } from '..'
+import FormFieldHelperText from '../FormFieldHelperText'
 
 export interface FormSelectFieldProps extends React.HTMLProps<HTMLSelectElement> {
   name: keyof FormType
