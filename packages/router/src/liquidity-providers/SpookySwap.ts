@@ -6,6 +6,7 @@ import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 
 export class SpookySwapProvider extends UniswapV2BaseProvider {
+
   constructor(chainId: ChainId, web3Client: PublicClient, databaseClient?: PrismaClient) {
     const factory = {
       [ChainId.FANTOM]: '0x152eE697f2E276fA89E96742e9bB9aB1F2E61bE3',

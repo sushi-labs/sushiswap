@@ -72,9 +72,7 @@ export const Notification: FC<{
           )}
         </Disclosure.Button>
       )}
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
+      <a target="_blank" rel="noopener noreferrer"
         href={
           notification.href
             ? notification.href

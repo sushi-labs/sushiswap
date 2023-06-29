@@ -1,9 +1,9 @@
 'use client'
 
-import { Slot } from '@radix-ui/react-slot'
 import { useInterval } from '@sushiswap/hooks'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import React, { useState } from 'react'
+import { Slot } from '@radix-ui/react-slot'
 
 export interface TimeAgoProps extends Omit<React.ButtonHTMLAttributes<HTMLSpanElement>, 'value'> {
   asChild?: boolean

@@ -1,10 +1,9 @@
 import { DocumentAddIcon, DocumentDownloadIcon, ExclamationIcon } from '@heroicons/react-v1/outline'
 import { classNames } from '@sushiswap/ui'
+import { FormType } from '../page'
 import React, { FC, useCallback } from 'react'
 import { DropzoneOptions, useDropzone } from 'react-dropzone'
 import { useFormContext } from 'react-hook-form'
-
-import { FormType } from '../page'
 
 export const UploadImageField: FC = () => {
   const { register, setValue } = useFormContext<FormType>()

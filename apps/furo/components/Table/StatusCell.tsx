@@ -1,8 +1,8 @@
-import { Chip } from '@sushiswap/ui/components/chip'
 import React, { FC } from 'react'
 
 import { FuroStatus } from '../../lib'
 import { CellProps } from './types'
+import { Chip } from '@sushiswap/ui/components/chip'
 
 export const StatusCell: FC<CellProps> = ({ row }) => {
   return (

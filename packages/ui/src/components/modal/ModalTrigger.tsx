@@ -1,5 +1,4 @@
 import { FC, ReactNode } from 'react'
-
 import { useModal } from './ModalProvider'
 
 export interface ModalTriggerProps {

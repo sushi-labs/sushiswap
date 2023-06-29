@@ -1,12 +1,13 @@
-import { formatNumber, formatUSD } from '@sushiswap/format'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
 import { ChainCell, StringCell } from '../Common'
 import { TokenNameCell } from './Cells'
-import { ICON_SIZE } from './constants'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
+
 import { BentoBoxToken } from './useBentoBoxTokens'
+import { formatNumber, formatUSD } from '@sushiswap/format'
+import { ICON_SIZE } from './constants'
 
 export const NETWORK_COLUMN: ColumnDef<BentoBoxToken, unknown> = {
   id: 'network',

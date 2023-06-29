@@ -1,10 +1,10 @@
 import { Chain } from '@sushiswap/chain'
 import React, { useState } from 'react'
 
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../command'
 import { NetworkIcon } from '../icons'
-import { PopoverContent, PopoverNew, PopoverPrimitive } from '../popovernew'
 import { NetworkSelectorProps } from './index'
+import { PopoverContent, PopoverNew, PopoverPrimitive } from '../popovernew'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../command'
 
 export const NetworkSelectorMenu = <T extends number>({
   onSelect,

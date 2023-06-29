@@ -1,8 +1,8 @@
-import { Container } from '@sushiswap/ui/components/container'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { Article, MediaBlock as MediaBlockType, RichTextBlock as RichTextBlockType } from 'types'
+import { Container } from '@sushiswap/ui/components/container'
 
 import {
   ArticleAuthors,

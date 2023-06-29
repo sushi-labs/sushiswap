@@ -24,7 +24,7 @@ async function getSushiSwapResults() {
   )
 
   return results
-    .filter((result): result is NonNullable<(typeof results)[0]> => result !== undefined)
+    .filter((result): result is NonNullable<typeof results[0]> => result !== undefined)
     .map((result, i) => {
       const nativePrice = Number(result.bundle?.nativePrice)
       const updatedAtBlock = Number(result._meta?.block.number)
@@ -52,7 +52,7 @@ async function getTridentResults() {
   )
 
   return results
-    .filter((result): result is NonNullable<(typeof results)[0]> => result !== undefined)
+    .filter((result): result is NonNullable<typeof results[0]> => result !== undefined)
     .map((result, i) => {
       const nativePrice = Number(result.bundle?.nativePrice)
       const updatedAtBlock = Number(result._meta?.block.number)
@@ -129,7 +129,7 @@ export async function execute() {
   })
 
   if (process.env['DRY_RUN']) return
-  const { redis } = await import('./redis.js')
+  const { redis } = await import('./redis.js');
   await redis.hset(
     'prices',
     Object.fromEntries(

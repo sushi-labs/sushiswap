@@ -1,16 +1,16 @@
 import { ChainId } from '@sushiswap/chain'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { FormControl, FormField, FormItem, FormMessage, FormSection } from '@sushiswap/ui/components/form'
-import { Input } from '@sushiswap/ui/components/input'
 import { _useBalance as useBalance, useAccount } from '@sushiswap/wagmi'
-import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
 import React, { FC, useCallback, useEffect } from 'react'
 import { ControllerRenderProps, useFormContext } from 'react-hook-form'
 
 import { useFundSourceFromZFundSource, useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
-import { CreateMultipleStreamBaseSchemaFormErrorsType, CreateMultipleStreamFormSchemaType } from '../schema'
 import { FundSourceOption } from './FundSourceOption'
+import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
+import { Input } from '@sushiswap/ui/components/input'
+import { CreateMultipleStreamBaseSchemaFormErrorsType, CreateMultipleStreamFormSchemaType } from '../schema'
+import { FormControl, FormField, FormItem, FormMessage, FormSection } from '@sushiswap/ui/components/form'
 
 export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ chainId, index }) => {
   const { address } = useAccount()

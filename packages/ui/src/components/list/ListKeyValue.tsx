@@ -1,7 +1,6 @@
-import classNames from 'classnames'
 import React, { FC, ReactNode } from 'react'
-
 import { SkeletonText } from '../skeleton'
+import classNames from 'classnames'
 
 export type ListKeyValueProps =
   | {

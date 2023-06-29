@@ -31,8 +31,7 @@ import { UniswapV3Provider } from './liquidity-providers/UniswapV3'
 import type { PoolCode } from './pools/PoolCode'
 
 // import { create } from 'viem'
-const isTest =
-  process.env['APP_ENV'] === 'test' || process.env['TEST'] === 'true' || process.env['NEXT_PUBLIC_TEST'] === 'true'
+const isTest = process.env['NODE_ENV'] === 'test' || process.env['NEXT_PUBLIC_TEST'] === 'true'
 
 // Gathers pools info, creates routing in 'incremental' mode
 // This means that new routing recalculates each time new pool fetching data comes
@@ -71,9 +70,7 @@ export class DataFetcher {
     } else {
       this.web3Client = createPublicClient({
         ...config[chainId],
-        transport: isTest
-          ? http(process.env['ANVIL_RPC_URL'] || process.env['NEXT_PUBLIC_ANVIL_RPC_URL'] || 'http://127.0.0.1:8545')
-          : config[chainId].transport,
+        transport: isTest ? http('http://127.0.0.1:8545') : config[chainId].transport,
         pollingInterval: 8_000,
         batch: {
           multicall: {

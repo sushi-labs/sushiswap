@@ -1,5 +1,3 @@
-import { Pool } from '@sushiswap/client'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
@@ -15,6 +13,9 @@ import {
   PoolVolume1mCell,
   PoolVolume1wCell,
 } from './Cells'
+import { Pool } from '@sushiswap/client'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
+
 import { ICON_SIZE } from './constants'
 
 export const NETWORK_COLUMN: ColumnDef<Pool, unknown> = {

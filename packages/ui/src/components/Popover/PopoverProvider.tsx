@@ -1,6 +1,5 @@
 'use client'
 
-import * as PopperJS from '@popperjs/core'
 import React, {
   createContext,
   CSSProperties,
@@ -13,6 +12,7 @@ import React, {
   useState,
 } from 'react'
 import { usePopper } from 'react-popper'
+import * as PopperJS from '@popperjs/core'
 
 interface PopoverContext {
   open: boolean

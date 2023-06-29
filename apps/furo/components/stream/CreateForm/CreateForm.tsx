@@ -1,19 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { nanoid } from 'nanoid'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
 import { FundSource } from '@sushiswap/hooks'
 import { Form } from '@sushiswap/ui/components/form'
-import { nanoid } from 'nanoid'
 import { FC, useEffect } from 'react'
+import { StreamForm } from './StreamForm'
+import { ExecuteSection } from './ExecuteSection'
 import { useForm } from 'react-hook-form'
-
 import {
   CreateMultipleStreamBaseSchemaFormErrorsType,
   CreateMultipleStreamFormSchemaType,
   CreateMultipleStreamModelSchema,
   CreateStreamFormSchemaType,
 } from '../schema'
-import { ExecuteSection } from './ExecuteSection'
-import { StreamForm } from './StreamForm'
 
 export const CREATE_STREAM_DEFAULT_VALUES: CreateStreamFormSchemaType = {
   id: nanoid(),

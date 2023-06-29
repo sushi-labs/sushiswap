@@ -2,13 +2,13 @@ import { Dialog as HeadlessDialog, Transition } from '@headlessui/react'
 import { useBreakpoint } from '@sushiswap/hooks'
 import React, { FC, Fragment, FunctionComponent, useEffect } from 'react'
 
-import { syncScrollLockSafeArea } from '../../lib'
-import { ExtractProps } from '../../types'
-import { ContainerProps, containerVariants } from '../container'
 import DialogActions, { DialogActionProps } from './DialogActions'
 import DialogContent, { DialogContentProps } from './DialogContent'
 import DialogDescription, { DialogDescriptionProps } from './DialogDescription'
 import DialogHeader, { DialogHeaderProps } from './DialogHeader'
+import { syncScrollLockSafeArea } from '../../lib'
+import { ExtractProps } from '../../types'
+import { ContainerProps, containerVariants } from '../container'
 
 export type DialogRootProps = Pick<ExtractProps<ContainerProps>, 'maxWidth'> &
   ExtractProps<typeof HeadlessDialog> & {

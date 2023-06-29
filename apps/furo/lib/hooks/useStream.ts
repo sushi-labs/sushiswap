@@ -1,11 +1,10 @@
-import { ChainId } from '@sushiswap/chain'
-import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { useQuery } from '@tanstack/react-query'
-
-import { getBuiltGraphSDK } from '../../.graphclient'
 import { isSupportedChainId } from '../../config'
-import { Stream } from '../Stream'
+import { getBuiltGraphSDK } from '../../.graphclient'
+import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import { ChainId } from '@sushiswap/chain'
 import { queryRebaseDTO } from './useRebaseDTO'
+import { Stream } from '../Stream'
 
 const GRAPH_HOST = 'api.thegraph.com'
 

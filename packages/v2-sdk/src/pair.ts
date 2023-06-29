@@ -3,7 +3,7 @@ import { _997, _1000, BigintIsh, FIVE, JSBI, ONE, sqrt, ZERO } from '@sushiswap/
 import invariant from 'tiny-invariant'
 
 import { computePairAddress } from './computePairAddress'
-import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS } from './constants'
+import { isSushiSwapV2ChainId,SUSHISWAP_V2_FACTORY_ADDRESS } from './constants'
 import { InsufficientInputAmountError, InsufficientReservesError } from './errors'
 import { pairSchema, SerializedPair } from './zod'
 

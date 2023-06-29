@@ -1,11 +1,11 @@
 'use client'
 
-import dynamic from 'next/dynamic'
 import { ReactNode, useCallback } from 'react'
 
-import { ExtractProps } from '../types'
-import { Container, ContainerProps } from './container'
+import dynamic from 'next/dynamic'
 import { DiscordIcon, GithubIcon, InstagramIcon, SushiWithTextIcon, TwitterIcon } from './icons'
+import { Container, ContainerProps } from './container'
+import { ExtractProps } from '../types'
 
 export interface FooterProps extends React.HTMLProps<HTMLDivElement>, Pick<ExtractProps<ContainerProps>, 'maxWidth'> {
   children?: ReactNode

@@ -1,9 +1,9 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
 import { Bundle, getBuiltGraphSDK, Pagination, QuerytokensByChainIdsArgs } from '@sushiswap/graph-client'
-import { bentoBoxTokensSchema } from 'pages/api/bentobox'
-import { FuroTokensSchema } from 'pages/api/furoTokens'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
+import { FuroTokensSchema } from 'pages/api/furoTokens'
+import { bentoBoxTokensSchema } from 'pages/api/bentobox'
 
 const sdk = getBuiltGraphSDK()
 

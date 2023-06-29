@@ -1,10 +1,10 @@
 'use client'
 
-import { CheckIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
-import * as SelectPrimitive from '@radix-ui/react-select'
-import classNames from 'classnames'
 import * as React from 'react'
 import { FC } from 'react'
+import * as SelectPrimitive from '@radix-ui/react-select'
+import { CheckIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
+import classNames from 'classnames'
 
 export * as SelectPrimitive from '@radix-ui/react-select'
 
@@ -32,7 +32,6 @@ const SelectIcon = React.forwardRef<
     <ChevronDownIcon strokeWidth={2} width={16} height={16} className={classNames(className, 'w-4 h-4')} />
   </SelectPrimitive.Icon>
 ))
-SelectIcon.displayName = SelectPrimitive.Icon.displayName
 
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
@@ -145,13 +144,13 @@ const SelectCaption: FC<{ caption?: string; isError?: boolean }> = ({ caption, i
 
 export {
   Select,
-  SelectCaption,
-  SelectContent,
   SelectGroup,
-  SelectIcon,
-  SelectItem,
-  SelectLabel,
-  SelectSeparator,
-  SelectTrigger,
   SelectValue,
+  SelectTrigger,
+  SelectContent,
+  SelectLabel,
+  SelectItem,
+  SelectSeparator,
+  SelectCaption,
+  SelectIcon,
 }

@@ -1,15 +1,14 @@
 'use client'
 
 import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
-import { ChainId } from '@sushiswap/chain'
-import { usePool } from '@sushiswap/client'
 import { formatPercent } from '@sushiswap/format'
 import { Link } from '@sushiswap/ui'
-import { AppearOnMount } from '@sushiswap/ui/components/animation'
+import { SUPPORTED_CHAIN_IDS } from 'config'
+import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
+import { FC } from 'react'
+import { SWRConfig, useSWRConfig } from 'swr'
 import { Container } from '@sushiswap/ui/components/container'
-import { isTridentPoolProtocol } from 'lib/functions'
-import { NextSeo } from 'next-seo'
-import { useSWRConfig } from 'swr'
+
 import {
   AddSectionLegacy,
   AddSectionMyPosition,
@@ -19,6 +18,11 @@ import {
   PoolPositionProvider,
   PoolPositionStakedProvider,
 } from 'ui/pool'
+import { getPool, getPools, getPoolUrl, usePool } from '@sushiswap/client'
+import { ChainId } from '@sushiswap/chain'
+import { NextSeo } from 'next-seo'
+import { isTridentPoolProtocol } from 'lib/functions'
+import { AppearOnMount } from '@sushiswap/ui/components/animation'
 
 export default function Page({ params }: { params: { id: string } }) {
   const [chainId, address] = params.id.split('%3A') as [ChainId, string]

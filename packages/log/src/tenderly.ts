@@ -2,7 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import fetch from 'isomorphic-unfetch'
 
 type LogTenderlyParams = {
-  chainId?: (typeof ChainId)[keyof typeof ChainId]
+  chainId?: typeof ChainId[keyof typeof ChainId]
   from?: string
   to?: string
   data?: string

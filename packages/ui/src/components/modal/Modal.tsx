@@ -1,10 +1,9 @@
-import { FC } from 'react'
-
-import { ModalConfirm, ModalConfirmProps } from './ModalConfirm'
 import { ModalPanel, ModalPanelProps } from './ModalPanel'
 import { ModalProvider, ModalProviderProps } from './ModalProvider'
-import { ModalReview, ModalReviewProps } from './ModalReview'
 import { ModalTrigger, ModalTriggerProps } from './ModalTrigger'
+import { FC } from 'react'
+import { ModalReview, ModalReviewProps } from './ModalReview'
+import { ModalConfirm, ModalConfirmProps } from './ModalConfirm'
 
 type Modal = {
   Panel: FC<ModalPanelProps>

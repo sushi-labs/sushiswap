@@ -1,12 +1,8 @@
 import '@sushiswap/ui/index.css'
 import '../variables.css'
 
-import { queryClient } from '@sushiswap/react-query'
 import { ThemeProvider } from '@sushiswap/ui'
-import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
-import { GlobalNav } from '@sushiswap/ui/components/GlobalNav'
 import { client, WagmiConfig } from '@sushiswap/wagmi'
-import { QueryClientProvider as _QueryClientProvider } from '@tanstack/react-query'
 import { Analytics } from '@vercel/analytics/react'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import type { AppProps } from 'next/app'
@@ -19,6 +15,10 @@ import { Provider } from 'react-redux'
 import { store } from 'store'
 
 import SEO from '../next-seo.config.mjs'
+import { GlobalNav } from '@sushiswap/ui/components/GlobalNav'
+import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
+import { queryClient } from '@sushiswap/react-query'
+import { QueryClientProvider as _QueryClientProvider } from '@tanstack/react-query'
 
 declare global {
   interface Window {

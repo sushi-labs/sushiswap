@@ -1,8 +1,8 @@
+import { Form } from '../Form'
+import { FormType } from '../../page'
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { FormType } from '../../page'
-import { Form } from '../Form'
 import { Slider } from './Slider'
 
 export const SizeSlider: FC = () => {

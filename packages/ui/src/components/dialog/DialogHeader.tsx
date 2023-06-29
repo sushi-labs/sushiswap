@@ -1,8 +1,7 @@
-import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 import { XMarkIcon } from '@heroicons/react/24/solid'
+import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 import classNames from 'classnames'
 import React, { FC, ReactNode } from 'react'
-
 import { IconButton } from '../iconbutton'
 
 export interface DialogHeaderProps {

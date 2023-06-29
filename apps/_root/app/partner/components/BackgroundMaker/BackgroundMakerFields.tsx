@@ -1,10 +1,10 @@
 import { classNames } from '@sushiswap/ui'
+import { DEFAULT_FORM_FIELD_CLASSNAMES } from '../Form'
+import FormFieldHelperText from '../Form/FormFieldHelperText'
+import { FormType } from '../../page'
 import React, { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { FormType } from '../../page'
-import { DEFAULT_FORM_FIELD_CLASSNAMES } from '../Form'
-import FormFieldHelperText from '../Form/FormFieldHelperText'
 import { BackgroundMaker } from './BackgroundMaker'
 
 export const BackgroundImageMakerField: FC = () => {

@@ -6,6 +6,7 @@ import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 
 export class DfynProvider extends UniswapV2BaseProvider {
+
   constructor(chainId: ChainId, web3Client: PublicClient, databaseClient?: PrismaClient) {
     const factory = {
       [ChainId.POLYGON]: '0xE7Fb3e833eFE5F9c441105EB65Ef8b261266423B',

@@ -15,12 +15,12 @@ import { TokenSelectorCustomTokensOverlay } from './TokenSelectorCustomTokensOve
 import { Button } from '@sushiswap/ui/components/button'
 import { COMMON_BASES } from '@sushiswap/router-config'
 import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/components/skeleton'
-import { Currency } from '@sushiswap/ui/components/currency'
+import { Currency } from "@sushiswap/ui/components/currency";
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useSortedTokenList } from './hooks/useSortedTokenList'
 import { useTokenWithCache } from '../../hooks'
 import { isAddress } from '@ethersproject/address'
-import { buttonIconVariants } from '@sushiswap/ui/components/button'
+import {buttonIconVariants} from "@sushiswap/ui/components/button";
 
 interface TokenSelectorProps {
   id: string
@@ -96,14 +96,12 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
 
             <div className="flex flex-wrap gap-2">
               {COMMON_BASES[chainId].map((base) => (
-                <Button variant="secondary" key={base.id} onClick={() => _onSelect(base)}>
-                  <Currency.Icon
-                    width={20}
-                    height={20}
-                    className={buttonIconVariants({ size: 'default' })}
-                    currency={base}
-                    disableLink
-                  />
+                <Button
+                  variant="secondary"
+                  key={base.id}
+                  onClick={() => _onSelect(base)}
+                >
+                  <Currency.Icon width={20} height={20} className={buttonIconVariants({ size: 'default'})} currency={base} disableLink/>
                   {base.symbol}
                 </Button>
               ))}
@@ -117,13 +115,13 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
                       <div className="flex flex-row items-center flex-grow gap-4">
                         <SkeletonCircle radius={40} />
                         <div className="flex flex-col items-start">
-                          <SkeletonText className="w-full bg-gray-300 w-[100px]" />
+                          <SkeletonText  className="w-full bg-gray-300 w-[100px]" />
                           <SkeletonText fontSize="sm" className="w-full bg-gray-100 w-[60px]" />
                         </div>
                       </div>
 
                       <div className="flex flex-col">
-                        <SkeletonText className="bg-gray-300 w-[80px]" />
+                        <SkeletonText  className="bg-gray-300 w-[80px]" />
                         <SkeletonText fontSize="sm" align="right" className="bg-gray-200 w-[40px]" />
                       </div>
                     </div>

@@ -1,7 +1,6 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
-import classNames from 'classnames'
 import { FC } from 'react'
-
+import classNames from 'classnames'
 import { IconButton } from '../iconbutton'
 
 export interface PaginatorProps {

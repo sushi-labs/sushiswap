@@ -1,9 +1,9 @@
-import { Chip } from '@sushiswap/ui/components/chip'
 import { format } from 'date-fns'
 import { FC } from 'react'
 import { Article } from 'types'
 
 import { Image } from './Image'
+import { Chip } from '@sushiswap/ui/components/chip'
 
 interface ArticleListItem {
   article: Article

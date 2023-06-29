@@ -1,7 +1,6 @@
-import type { PlaywrightTestConfig } from '@playwright/test'
-import { devices } from '@playwright/test'
+import type {PlaywrightTestConfig} from '@playwright/test'
+import {devices} from '@playwright/test'
 import path from 'path'
-// import 'dotenv/config'
 
 // Use process.env.PORT by default and fallback to port 3000
 const PORT = process.env.PORT || 3000
@@ -37,7 +36,7 @@ const config: PlaywrightTestConfig = {
   // Retry on CI only.
   // retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
-  // workers: 1,
+  workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI ? 'dot' : 'list',
   // reporter: process.env.CI ? 'github' : 'html',
@@ -64,15 +63,10 @@ const config: PlaywrightTestConfig = {
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'setup',
-      testMatch: /setup\.ts/,
-    },
-    {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
       },
-      dependencies: ['setup'],
     },
 
     // {
@@ -101,76 +95,27 @@ const config: PlaywrightTestConfig = {
   // Run your local dev server before starting the tests:
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
   webServer: [
-    // Anvil node 1 (pool)
     {
       command: [
-        `DEBUG=${process.env.DEBUG}`,
         'anvil',
         `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
         `--fork-url=${process.env.ANVIL_FORK_URL}`,
-        `--port=8545`,
       ].join(' '),
-      port: 8545,
-      timeout: 10 * 1000,
-      reuseExistingServer: !process.env.CI,
       env: {
         ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
         ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
-        CI: String(process.env.CI),
-        DEBUG: 'pw:webserver',
       },
+      port: 8545,
     },
-    // Webserver 1 (pool)
     {
-      command: [
-        `DEBUG=pw:webserver`,
-        `NEXT_PUBLIC_APP_ENV=test`,
-        'NEXT_PUBLIC_ANVIL_RPC_URL=http://127.0.0.1:8545',
-        'NEXT_PUBLIC_TEST_WALLET_INDEX=0',
-        'pnpm start',
-      ].join(' '),
+      command: 'npm run start',
       port: 3000,
-      timeout: 10 * 1000,
+      timeout: 120 * 1000,
       reuseExistingServer: !process.env.CI,
       env: {
-        CI: String(process.env.CI),
-        DEBUG: 'pw:webserver',
+        NEXT_PUBLIC_TEST: 'true',
       },
     },
-    // // Anvil node 2 (swap)
-    // {
-    //   command: [
-    //     `DEBUG=${process.env.DEBUG}`,
-    //     'anvil',
-    //     `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
-    //     `--fork-url=${process.env.ANVIL_FORK_URL}`,
-    //     `--port=8546`,
-    //   ].join(' '),
-    //   port: 8546,
-    //   env: {
-    //     ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
-    //     ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
-    //     DEBUG: 'pw:*',
-    //   },
-    // },
-    // // Webserver 2 (swap)
-    // {
-    //   command: [
-    //     `DEBUG=${process.env.DEBUG}`,
-    //     `NEXT_PUBLIC_APP_ENV=test`,
-    //     'NEXT_PUBLIC_ANVIL_RPC_URL=http://127.0.0.1:8545',
-    //     'NEXT_PUBLIC_TEST_WALLET_INDEX=1',
-    //     'pnpm start',
-    //     '--',
-    //     '--port 3001',
-    //   ].join(' '),
-    //   port: 3001,
-    //   timeout: 120 * 1000,
-    //   reuseExistingServer: !process.env.CI,
-    //   env: {
-    //     DEBUG: 'pw:*',
-    //   },
-    // },
   ],
 }
 

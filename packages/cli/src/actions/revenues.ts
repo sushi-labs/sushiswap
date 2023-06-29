@@ -168,12 +168,7 @@ async function getAllPairsWithFarms(chainIds: number[], blockNumber: number) {
   })
 }
 
-async function processRevenues(
-  lastBlocks: Array<Pick<Block, 'id' | 'chainId' | 'number' | 'timestamp'>>,
-  pastBlocks: Array<Pick<Block, 'id' | 'chainId' | 'number' | 'timestamp'>>,
-  sushiPriceUSD: number,
-  days: number
-) {
+async function processRevenues(lastBlocks: Array<Pick<Block, 'id' | 'chainId' | 'number' | 'timestamp'>>, pastBlocks: Array<Pick<Block, 'id' | 'chainId' | 'number' | 'timestamp'>>, sushiPriceUSD: number, days: number) {
   const revenues: {
     [chainName: string]: {
       volume: number

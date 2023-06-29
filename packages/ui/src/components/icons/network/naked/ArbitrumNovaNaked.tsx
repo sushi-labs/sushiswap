@@ -1,5 +1,4 @@
 import * as React from 'react'
-
 import { IconComponent } from '../../../../types'
 
 export const ArbitrumNovaNaked: IconComponent = (props) => (

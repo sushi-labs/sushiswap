@@ -1,6 +1,7 @@
 'use client'
 
 import { ChainId } from '@sushiswap/chain'
+import { SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
 import { erc20ABI, getProvider } from '@sushiswap/wagmi'
 import { Contract } from 'ethers'
 

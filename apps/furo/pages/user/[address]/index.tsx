@@ -1,10 +1,9 @@
-import { SplashController } from '@sushiswap/ui/components/SplashController'
-import { Address } from '@sushiswap/wagmi'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import { NextSeo } from 'next-seo'
-
 import { Layout } from '../../../components'
+import { NextSeo } from 'next-seo'
+import { SplashController } from '@sushiswap/ui/components/SplashController'
+import { Address } from '@sushiswap/wagmi'
 
 const Dashboard = dynamic(() => import('../../../components/Dashboard').then((mod) => mod.Dashboard), { ssr: false })
 

@@ -1,6 +1,5 @@
-import classNames from 'classnames'
 import React, { FC } from 'react'
-
+import classNames from 'classnames'
 import { WithTestDataId } from './types'
 
 export interface HeadCellProps

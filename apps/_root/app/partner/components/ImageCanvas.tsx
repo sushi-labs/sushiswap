@@ -1,8 +1,7 @@
+import { FormType } from '../page'
 import { FC, HTMLAttributes, RefObject, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import Resizer from 'react-image-file-resizer'
-
-import { FormType } from '../page'
 
 function adjust(color: string, amount: number) {
   return (

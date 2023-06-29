@@ -1,8 +1,8 @@
 'use client'
 
-import { Button } from '@sushiswap/ui/components/button'
-import { GlobalNav, NavLink, SubNav, SubNavLink } from '@sushiswap/ui/components/GlobalNav'
 import React, { FC } from 'react'
+import { GlobalNav, NavLink, SubNav, SubNavLink } from '@sushiswap/ui/components/GlobalNav'
+import { Button } from '@sushiswap/ui/components/button'
 
 export const Header: FC = () => {
   return (

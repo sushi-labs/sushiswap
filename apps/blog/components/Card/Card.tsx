@@ -1,12 +1,12 @@
 import { ChevronRightIcon } from '@heroicons/react/solid'
 import { classNames } from '@sushiswap/ui'
-import { Chip } from '@sushiswap/ui/components/chip'
 import { format } from 'date-fns'
 import { FC } from 'react'
 import { Article } from 'types'
 
 import { isMediaVideo } from '../../lib/media'
 import { Image } from '../Image'
+import { Chip } from '@sushiswap/ui/components/chip'
 
 interface Card {
   article: Article

@@ -1,12 +1,11 @@
 import { RadioGroup } from '@headlessui/react'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
-import { useSlippageTolerance } from '@sushiswap/hooks'
-import classNames from 'classnames'
 import React, { FC, Fragment, useCallback, useEffect, useState } from 'react'
-
-import { Collapsible } from '../animation/Collapsible'
 import { Explainer } from '../explainer'
+import classNames from 'classnames'
+import { Collapsible } from '../animation/Collapsible'
 import { Input } from '../input'
+import { useSlippageTolerance } from '@sushiswap/hooks'
 import { Switch } from '../switch'
 
 const TABS = ['0.1', '0.5', '1.0']

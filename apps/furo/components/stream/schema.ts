@@ -1,7 +1,6 @@
 import { z } from 'zod'
-import { RefinementCtx } from 'zod/lib/types'
-
 import { ZAddress, ZToken } from '../../lib/zod'
+import { RefinementCtx } from 'zod/lib/types'
 
 const dateRangeValidator = (val: { startDate?: Date; endDate?: Date }, ctx: RefinementCtx) => {
   console.log('dateRangeValidator', val)

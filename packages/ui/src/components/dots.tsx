@@ -1,6 +1,6 @@
-import { Slot } from '@radix-ui/react-slot'
 import classNames from 'classnames'
 import * as React from 'react'
+import { Slot } from '@radix-ui/react-slot'
 
 export interface DotsProps extends React.ButtonHTMLAttributes<HTMLSpanElement> {
   asChild?: boolean

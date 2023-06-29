@@ -1,11 +1,11 @@
 import { Tab } from '@headlessui/react'
-import { Container } from '@sushiswap/ui/components/container'
-import { Toggle } from '@sushiswap/ui/components/toggle'
 import React, { FC, Fragment } from 'react'
 
-import { BentoBoxTokenTable } from './BentoBoxTokens'
-import { FuroTokenTable } from './FuroTokens'
 import { Pools } from './Pools'
+import { Container } from '@sushiswap/ui/components/container'
+import { FuroTokenTable } from './FuroTokens'
+import { BentoBoxTokenTable } from './BentoBoxTokens'
+import { Toggle } from '@sushiswap/ui/components/toggle'
 
 export const TableSection: FC = () => {
   return (

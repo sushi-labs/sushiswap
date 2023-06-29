@@ -1,8 +1,7 @@
 import { formatUSD } from '@sushiswap/format'
-import { Token } from '@sushiswap/graph-client'
-import { FC } from 'react'
-
 import { Row } from '../../Common'
+import { FC } from 'react'
+import { Token } from '@sushiswap/graph-client'
 
 export const TokenLiquidityCell: FC<Row<Token>> = ({ row }) => {
   const tvl = formatUSD(row.liquidityUSD)

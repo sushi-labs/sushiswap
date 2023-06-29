@@ -2,10 +2,10 @@ import { Tab as HeadlessTab } from '@headlessui/react'
 import classNames from 'classnames'
 import React, { FC, forwardRef, Fragment, FunctionComponent, ReactNode } from 'react'
 
-import { ExtractProps } from '../../types'
-import { Button } from '../button'
 import { TabGroup, TabGroupProps } from './TabGroup'
 import { TabList, TabListProps } from './TabList'
+import { ExtractProps } from '../../types'
+import { Button } from '../button'
 
 export type TabButton = Omit<ExtractProps<typeof HeadlessTab>, 'children'> & { children: ReactNode }
 

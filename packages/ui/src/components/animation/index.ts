@@ -1,2 +1,2 @@
-export * from './AppearOnMount'
 export * from './SlideIn'
+export * from './AppearOnMount'

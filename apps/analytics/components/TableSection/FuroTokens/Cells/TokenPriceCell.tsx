@@ -1,5 +1,5 @@
-import { Token } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
+import { Token } from '@sushiswap/currency'
 import { FC } from 'react'
 
 export const TokenPriceCell: FC<{ token: Token }> = ({ token }) => {

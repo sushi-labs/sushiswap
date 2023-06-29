@@ -1,11 +1,7 @@
+
 import { Amount, Token, Type as Currency, Type } from '@sushiswap/currency'
-import {
-  SUSHISWAP_V2_FACTORY_ADDRESS,
-  isSushiSwapV2ChainId,
-  SushiSwapV2ChainId,
-  computePairAddress,
-} from '@sushiswap/v2-sdk'
-import { Pair } from '@sushiswap/amm'
+import { SUSHISWAP_V2_FACTORY_ADDRESS, isSushiSwapV2ChainId, SushiSwapV2ChainId, computePairAddress } from '@sushiswap/v2-sdk'
+import { Pair } from "@sushiswap/amm"
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
 

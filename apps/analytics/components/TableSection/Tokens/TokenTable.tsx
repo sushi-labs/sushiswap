@@ -4,14 +4,14 @@ import { useBreakpoint } from '@sushiswap/hooks'
 import { Table } from '@sushiswap/ui/components/table'
 import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
-import { useFilters } from 'components/Filters'
 import stringify from 'fast-json-stable-stringify'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { LIQUIDITY_COLUMN, NAME_COLUMN, NETWORK_COLUMN, PRICE_COLUMN, VOLUME_COLUMN } from './columns'
-import { PAGE_SIZE } from './constants'
 import { TokenFilters } from './TokenFilters'
+import { PAGE_SIZE } from './constants'
+import { useFilters } from 'components/Filters'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, PRICE_COLUMN, LIQUIDITY_COLUMN, VOLUME_COLUMN] as any

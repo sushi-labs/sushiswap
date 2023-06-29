@@ -35,8 +35,8 @@ export const PoolCountApiSchema = z.object({
     .transform((tokenSymbols) => tokenSymbols?.split(','))
     .refine((tokenSymbols) => tokenSymbols.length <= 3, { message: 'Can only use up to 3 tokenSymbols.' })
     .optional(),
-  protocols: z
-    .string()
-    .optional()
-    .transform((protocols) => protocols?.split(',') as Protocol[]),
+    protocols: z
+      .string()
+      .optional()
+      .transform((protocols) => protocols?.split(',') as Protocol[]),
 })

@@ -1,6 +1,5 @@
 import { Container } from '@sushiswap/ui/components/container'
 import React from 'react'
-
 import { PoolFilters } from './PoolFilters'
 import { PoolTable } from './PoolTable'
 

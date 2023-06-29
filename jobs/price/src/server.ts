@@ -4,7 +4,7 @@ import { execute } from './index.js'
 
 const app = express()
 
-app.get('/', async (_, res) => {
+app.get('/', async (_,res) => {
   try {
     await execute()
     res.sendStatus(200)

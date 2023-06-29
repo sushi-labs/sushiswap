@@ -1,10 +1,10 @@
-import { Token } from '@sushiswap/graph-client'
-import { Currency } from '@sushiswap/ui/components/currency'
-import { Row } from 'components/TableSection/Common'
-import { useTokenFromToken } from 'lib/hooks'
 import { FC } from 'react'
 
 import { ICON_SIZE } from '../constants'
+import { Token } from '@sushiswap/graph-client'
+import { Row } from 'components/TableSection/Common'
+import { useTokenFromToken } from 'lib/hooks'
+import { Currency } from '@sushiswap/ui/components/currency'
 
 export const TokenNameCell: FC<Row<Token>> = ({ row }) => {
   const token = useTokenFromToken(row)

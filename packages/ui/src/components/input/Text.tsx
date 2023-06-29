@@ -1,6 +1,6 @@
 import XMarkIcon from '@heroicons/react/20/solid/XMarkIcon'
-import classNames from 'classnames'
 import React, { ForwardedRef, forwardRef, HTMLProps, ReactNode, useCallback } from 'react'
+import classNames from 'classnames'
 
 export interface TextInput extends Omit<HTMLProps<HTMLInputElement>, 'label' | 'onChange' | 'id' | 'testdata-id'> {
   label: ReactNode

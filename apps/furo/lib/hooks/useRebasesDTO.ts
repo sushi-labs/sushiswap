@@ -1,10 +1,9 @@
-import { Token } from '@sushiswap/currency'
-import { FuroStreamChainId } from '@sushiswap/furo/exports/exports'
-import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { useQuery } from '@tanstack/react-query'
-
+import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import { Token } from '@sushiswap/currency'
 import { bentoBoxRebaseQuery, getBuiltGraphSDK } from '../../.graphclient'
 import { SUPPORTED_CHAINS } from '../../config'
+import { FuroStreamChainId } from '@sushiswap/furo/exports/exports'
 
 const GRAPH_HOST = 'api.thegraph.com'
 

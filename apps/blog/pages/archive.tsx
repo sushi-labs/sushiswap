@@ -1,6 +1,5 @@
 import { ChevronLeftIcon, SearchIcon } from '@heroicons/react/outline'
 import { useDebounce } from '@sushiswap/hooks'
-import { Container } from '@sushiswap/ui/components/container'
 import { InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { FC, useState } from 'react'
@@ -9,6 +8,7 @@ import { Article, Category, Collection } from 'types'
 
 import { ArticleList, ArticleListItem, Categories, Pagination } from '../components'
 import { getArticles, getCategories } from '../lib/api'
+import { Container } from '@sushiswap/ui/components/container'
 
 export async function getStaticProps() {
   const articles = await getArticles()

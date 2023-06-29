@@ -5,7 +5,12 @@ import type { Address } from '@wagmi/core'
 import { daysInYear, secondsInDay } from 'date-fns'
 
 import { MASTERCHEF_V2_ADDRESS } from '../../../config.js'
-import { divBigNumberToNumber, getPairs, getTokenBalancesOf, getTokens } from '../../common/index.js'
+import {
+  divBigNumberToNumber,
+  getPairs,
+  getTokenBalancesOf,
+  getTokens,
+} from '../../common/index.js'
 import type { ChefReturn, Farm } from '../../types.js'
 import {
   getLpTokens,

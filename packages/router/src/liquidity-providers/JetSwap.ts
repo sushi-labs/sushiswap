@@ -6,6 +6,7 @@ import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 
 export class JetSwapProvider extends UniswapV2BaseProvider {
+
   constructor(chainId: ChainId, web3Client: PublicClient, databaseClient?: PrismaClient) {
     const factory = {
       [ChainId.POLYGON]: '0x668ad0ed2622C62E24f0d5ab6B6Ac1b9D2cD4AC7',

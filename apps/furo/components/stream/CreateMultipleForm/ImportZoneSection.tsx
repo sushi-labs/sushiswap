@@ -1,20 +1,20 @@
 import { getAddress, isAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { DownloadIcon } from '@heroicons/react/outline'
+import { nanoid } from 'nanoid'
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { Button } from '@sushiswap/ui/components/button'
-import { Dropzone } from '@sushiswap/ui/components/dropzone'
-import { FormSection } from '@sushiswap/ui/components/form'
-import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { Address, fetchToken, FetchTokenResult } from '@sushiswap/wagmi'
-import { nanoid } from 'nanoid'
-import dynamic from 'next/dynamic'
 import { FC, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 
+import { Button } from '@sushiswap/ui/components/button'
+import dynamic from 'next/dynamic'
 import { CreateMultipleStreamFormSchemaType, CreateStreamFormSchemaType } from '../schema'
+import { FormSection } from '@sushiswap/ui/components/form'
+import { Dropzone } from '@sushiswap/ui/components/dropzone'
 
 interface ImportZoneSection {
   chainId: ChainId

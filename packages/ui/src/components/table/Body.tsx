@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-
 import { WithTestDataId } from './types'
 
 const Body: FC<

@@ -2,10 +2,8 @@
   "$schema": "https://turbo.build/schema.json",
   "globalEnv": [
     "CI",
-    "APP_ENV",
     "NODE_ENV",
-    "GITHUB_TOKEN",
-    "DEBUG"
+    "GITHUB_TOKEN"
   ],
   "globalDependencies": [
     ".eslintignore",
@@ -21,8 +19,7 @@
       "cache": false,
       "env": [
         "ANVIL_BLOCK_NUMBER", 
-        "ANVIL_FORK_URL",
-        "ANVIL_PORT"
+        "ANVIL_FORK_URL"
       ],
       "persistent": true
     },
@@ -86,7 +83,6 @@
         "export"
       ],
       "env": [
-        "APP_ENV",
         "TEST",
         "ALCHEMY_ID",
         "DATABASE_URL",

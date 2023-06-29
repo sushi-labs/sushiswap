@@ -1,16 +1,9 @@
 'use client'
 
-import { CheckIcon } from '@heroicons/react-v1/solid'
-import { Amount } from '@sushiswap/currency'
-import { ZERO } from '@sushiswap/math'
-import { routeProcessor2Address } from '@sushiswap/route-processor/exports/exports'
 import { classNames } from '@sushiswap/ui'
-import { Badge } from '@sushiswap/ui/components/Badge'
-import { Button } from '@sushiswap/ui/components/button'
-import { Currency } from '@sushiswap/ui/components/currency'
-import { NetworkIcon } from '@sushiswap/ui/components/icons'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { Address } from '@sushiswap/wagmi'
+import React, { FC, useMemo } from 'react'
+import { RP2MerkleTreeClaimSchema } from '@sushiswap/wagmi/future/hooks/exploits/constants'
+import { z } from 'zod'
 import {
   useRP2ExploitClaim,
   useRP2ExploitIsClaimed,
@@ -18,12 +11,20 @@ import {
   useTokenRevokeApproval,
   useTokenWithCache,
 } from '@sushiswap/wagmi/future/hooks'
-import { RP2MerkleTreeClaimSchema } from '@sushiswap/wagmi/future/hooks/exploits/constants'
-import { RP2ClaimChainId } from '@sushiswap/wagmi/future/hooks/exploits/types'
-import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
+
+import { Amount } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
-import React, { FC, useMemo } from 'react'
-import { z } from 'zod'
+import { Button } from '@sushiswap/ui/components/button'
+import { RP2ClaimChainId } from '@sushiswap/wagmi/future/hooks/exploits/types'
+import { CheckIcon } from '@heroicons/react-v1/solid'
+import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
+import { Address } from '@sushiswap/wagmi'
+import { routeProcessor2Address } from '@sushiswap/route-processor/exports/exports'
+import { ZERO } from '@sushiswap/math'
+import { Badge } from '@sushiswap/ui/components/Badge'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 
 interface ClaimItem {
   account: Address

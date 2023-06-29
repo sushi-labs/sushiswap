@@ -1,4 +1,3 @@
-import { createNotification, PromiseNotification, ResolvedNotification } from '@sushiswap/dexie'
 import { nanoid } from 'nanoid'
 import React from 'react'
 import { toast, ToastOptions } from 'react-toastify'
@@ -9,6 +8,7 @@ import { ToastContent } from './ToastContent'
 import { ToastFailed } from './ToastFailed'
 import { ToastInfo } from './ToastInfo'
 import { ToastPending } from './ToastPending'
+import { createNotification, PromiseNotification, ResolvedNotification } from '@sushiswap/dexie'
 
 export const TOAST_OPTIONS: ToastOptions = {
   position: 'top-right',

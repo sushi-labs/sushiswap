@@ -1,8 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
 import { expect, Page, test } from '@playwright/test'
 import { Native, Token, Type, USDC_ADDRESS } from '@sushiswap/currency'
-import { createTestClient, http } from 'viem'
-import { foundry } from 'viem/chains'
 
 export async function approve(page: Page, locator: string) {
   await timeout(500) // give the approve button time to load contracts, unrealistically fast when running test
@@ -60,29 +58,11 @@ const USDC = new Token({
   name: 'USDC Stablecoin',
 })
 
-const BASE_URL = process.env.PLAYWRIGHT_URL || 'http://127.0.0.1:3000/pool'
+const BASE_URL = process.env.PLAYWRIGHT_URL || 'http://localhost:3000/pool'
 
-test.beforeAll(async () => {
-  // We cam reset the fork easily
-  const client = createTestClient({ mode: 'anvil', chain: foundry, transport: http() })
-  await client.reset({ blockNumber: 42259027n })
-})
+// test.beforeAll(async ({ page }) => {})
 
-const errorHandler = (error: Error) => {
-  console.error(error)
-}
-
-test.beforeEach(async ({ page }) => {
-  page.on('pageerror', errorHandler)
-  const url = BASE_URL.concat('/add').concat(`?chainId=${CHAIN_ID}`)
-  await page.goto(url)
-  await switchNetwork(page, CHAIN_ID)
-})
-test.afterEach(async ({ page }) => {
-  page.off('pageerror', errorHandler)
-})
-
-// Tests will only work for polygon atm
+// // Tests will only work for polygon atm
 test.describe('V3', () => {
   test.beforeEach(async ({ page }) => {
     const url = BASE_URL.concat('/add').concat(`?chainId=${CHAIN_ID}`)

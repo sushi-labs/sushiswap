@@ -161,12 +161,7 @@ export function findSingleRouteExactOut(
   return out
 }
 
-export function calcTokenPrices(
-  pools: RPool[],
-  baseToken: RToken,
-  minPriceLiquidity = 0,
-  priceLogging = false
-): Map<RToken, number> {
+export function calcTokenPrices(pools: RPool[], baseToken: RToken, minPriceLiquidity = 0, priceLogging = false): Map<RToken, number> {
   setTokenId(baseToken)
   const g = new Graph(pools, baseToken, baseToken, 0, minPriceLiquidity, priceLogging)
   const res = new Map<RToken, number>()

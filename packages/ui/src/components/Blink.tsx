@@ -1,5 +1,4 @@
 import React, { ElementType, forwardRef, ReactElement, ReactNode, useEffect, useState } from 'react'
-
 import { PolymorphicComponentPropsWithRef, PolymorphicRef } from '../types'
 
 interface Props {
@@ -12,24 +11,26 @@ interface Props {
 export type BlinkProps<C extends ElementType> = PolymorphicComponentPropsWithRef<C, Props>
 export type BlinkComponent = <C extends ElementType = 'div'>(props: BlinkProps<C>) => ReactElement | null
 
-export const Blink: BlinkComponent = forwardRef(function Blink<Tag extends ElementType = 'div'>(
-  { as, dep, children, timeout = 300, className = '', ...rest }: BlinkProps<Tag>,
-  ref?: PolymorphicRef<Tag>
-) {
-  const Component = as || 'button'
-  const [blinking, setBlinking] = useState(false)
+export const Blink: BlinkComponent = forwardRef(
+  <Tag extends ElementType = 'div'>(
+    { as, dep, children, timeout = 300, className = '', ...rest }: BlinkProps<Tag>,
+    ref?: PolymorphicRef<Tag>
+  ) => {
+    const Component = as || 'button'
+    const [blinking, setBlinking] = useState(false)
 
-  useEffect(() => {
-    setBlinking(true)
+    useEffect(() => {
+      setBlinking(true)
 
-    setTimeout(() => {
-      setBlinking(false)
-    }, timeout)
-  }, [dep, timeout])
+      setTimeout(() => {
+        setBlinking(false)
+      }, timeout)
+    }, [dep, timeout])
 
-  return (
-    <Component {...rest} ref={ref} className={className}>
-      {typeof children === 'function' ? children(blinking) : children}
-    </Component>
-  )
-})
+    return (
+      <Component {...rest} ref={ref} className={className}>
+        {typeof children === 'function' ? children(blinking) : children}
+      </Component>
+    )
+  }
+)

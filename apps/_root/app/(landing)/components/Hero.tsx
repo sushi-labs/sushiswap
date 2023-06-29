@@ -1,14 +1,13 @@
-import { ArrowDownIcon } from '@heroicons/react/24/outline'
 import { ChainId } from '@sushiswap/chain'
 import { Native, SUSHI } from '@sushiswap/currency'
 import { useInterval } from '@sushiswap/hooks'
-import { Button } from '@sushiswap/ui/components/button'
-import { Container } from '@sushiswap/ui/components/container'
-import { CurrencyInput } from '@sushiswap/wagmi/future/components/Web3Input/Currency'
 import { motion } from 'framer-motion'
 import React, { FC, useEffect, useState } from 'react'
-
+import { Button } from '@sushiswap/ui/components/button'
 import { Search } from './Search'
+import { CurrencyInput } from '@sushiswap/wagmi/future/components/Web3Input/Currency'
+import { ArrowDownIcon } from '@heroicons/react/24/outline'
+import { Container } from '@sushiswap/ui/components/container'
 
 const TITLES = ['Whenever', 'Wherever', 'Whoever']
 const VALUES = [

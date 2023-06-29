@@ -1,11 +1,11 @@
 'use client'
 
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
-import { default as cn } from 'classnames'
 import * as React from 'react'
 import { DayPicker } from 'react-day-picker'
 
+import { default as cn } from 'classnames'
 import { buttonVariants } from './button'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>
 

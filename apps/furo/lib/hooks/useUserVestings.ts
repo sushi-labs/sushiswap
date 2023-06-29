@@ -1,13 +1,12 @@
-import { Token } from '@sushiswap/currency'
-import { FuroVestingChainId } from '@sushiswap/furo/exports/exports'
-import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { useQuery } from '@tanstack/react-query'
-
-import { getBuiltGraphSDK, Rebase, userVestingsQuery, vestingQuery } from '../../.graphclient'
 import { SUPPORTED_CHAINS } from '../../config'
+import { getBuiltGraphSDK, Rebase, userVestingsQuery, vestingQuery } from '../../.graphclient'
+import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import { FuroVestingChainId } from '@sushiswap/furo/exports/exports'
+import { Token } from '@sushiswap/currency'
 import { toToken } from '../mapper'
-import { Vesting } from '../Vesting'
 import { queryRebasesDTO } from './useRebasesDTO'
+import { Vesting } from '../Vesting'
 
 const GRAPH_HOST = 'api.thegraph.com'
 

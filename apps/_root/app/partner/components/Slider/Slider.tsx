@@ -42,7 +42,7 @@ interface Slider extends ReactSliderProps {
   markFormatter(x?: Key | null): string
 }
 
-export const Slider: FC<Slider> = forwardRef<ReactSlider, Slider>(function Slider({ markFormatter, ...props }, ref) {
+export const Slider: FC<Slider> = forwardRef<ReactSlider, Slider>(({ markFormatter, ...props }, ref) => {
   return (
     <div className="relative w-full h-5">
       <ReactSlider

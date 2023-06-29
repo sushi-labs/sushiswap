@@ -1,6 +1,5 @@
 import { formatUSD } from '@sushiswap/format'
 import { FC } from 'react'
-
 import { Row } from '../../Common/types'
 
 export const PoolFees1mCell: FC<Row<{ fees1m: string | number }>> = ({ row }) => {

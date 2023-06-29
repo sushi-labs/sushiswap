@@ -1,11 +1,12 @@
+import type { Metadata } from 'next'
+
 import '@sushiswap/ui/index.css'
 
-import { SanctionedAddressDialog } from '@sushiswap/wagmi/future/components/SanctionedAddressDialog'
-import type { Metadata } from 'next'
-import { Inter, Roboto_Mono } from 'next/font/google'
 import React from 'react'
-
 import { Providers } from './providers'
+import { SanctionedAddressDialog } from '@sushiswap/wagmi/future/components/SanctionedAddressDialog'
+
+import { Inter, Roboto_Mono } from 'next/font/google'
 
 const inter = Inter({
   subsets: ['latin'],

@@ -1,9 +1,8 @@
+import * as React from 'react'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { Loader2 } from 'lucide-react'
-import * as React from 'react'
-
 import { classNames } from '../index'
+import { Loader2 } from 'lucide-react'
 import { IconComponent } from '../types'
 
 const buttonVariants = cva(
@@ -123,10 +122,7 @@ interface ButtonContentProps extends React.HTMLAttributes<HTMLDivElement> {
   asChild?: boolean
 }
 
-const ButtonContent = React.forwardRef<HTMLDivElement, ButtonContentProps>(function Button(
-  { asChild, children, ...props },
-  ref
-) {
+const ButtonContent = React.forwardRef<HTMLDivElement, ButtonContentProps>(({ asChild, children, ...props }, ref) => {
   if (asChild) {
     return (
       <div className="inline-flex gap-1" ref={ref} {...props}>
@@ -138,4 +134,4 @@ const ButtonContent = React.forwardRef<HTMLDivElement, ButtonContentProps>(funct
   return <>{children}</>
 })
 
-export { Button, buttonIconVariants, buttonLoaderVariants, buttonVariants }
+export { Button, buttonVariants, buttonLoaderVariants, buttonIconVariants }

@@ -4,7 +4,6 @@ import '../variables.css'
 
 import { Cloudinary } from '@cloudinary/url-gen'
 import { ThemeProvider } from '@sushiswap/ui'
-import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
 import { useRouter } from 'next/router'
@@ -14,6 +13,7 @@ import { useEffect } from 'react'
 import { DefaultSeo, Header } from '../common/components'
 import { getGlobalSEO } from '../lib/api'
 import { Global } from '.mesh'
+import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
 
 export const cld = new Cloudinary({
   cloud: {

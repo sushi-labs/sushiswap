@@ -1,13 +1,4 @@
-import {
-  addSeconds,
-  getUnixTime,
-  startOfHour,
-  startOfMinute,
-  startOfSecond,
-  subDays,
-  subHours,
-  subMonths,
-} from 'date-fns'
+import { addSeconds, getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays, subHours, subMonths } from 'date-fns'
 
 import type { Block, Resolvers, ResolverTypeWrapper } from '../../.graphclient/index.js'
 import { _blocksByChainIds, blocksByChainIds } from './blocksByChainIds.js'

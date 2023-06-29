@@ -2,7 +2,6 @@ import React, { FC } from 'react'
 
 import { default as tbody } from './Body'
 import { default as td } from './Cell'
-import container, { TableContainerProps } from './Container'
 import { default as thead } from './Head'
 import { default as th, HeadCellProps } from './HeadCell'
 import { default as thr, HeadRowProps } from './HeadRow'
@@ -10,6 +9,7 @@ import { Paginator, PaginatorProps } from './Paginator'
 import { default as table } from './Root'
 import { default as tr } from './Row'
 import { WithTestDataId } from './types'
+import container, { TableContainerProps } from './Container'
 
 export type TableProps = {
   container: FC<WithTestDataId<TableContainerProps>>

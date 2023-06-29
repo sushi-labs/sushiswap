@@ -1,14 +1,14 @@
 import { Menu, Transition } from '@headlessui/react'
-import { ArrowSmallRightIcon } from '@heroicons/react/20/solid'
 import useScrollPosition from '@react-hook/window-scroll'
 import classNames from 'classnames'
 import React, { FC, Fragment, ReactElement, ReactNode, useState } from 'react'
 
 import { APP_TYPE_LINKS, HEADER_HEIGHT } from '../constants'
-import { AppType, ExtractProps } from '../types'
 import { Button } from './button'
-import { Container, ContainerProps } from './container'
 import { SushiIcon } from './icons'
+import { ArrowSmallRightIcon } from '@heroicons/react/20/solid'
+import { Container, ContainerProps } from './container'
+import { AppType, ExtractProps } from '../types'
 
 const ITEMS = [
   {

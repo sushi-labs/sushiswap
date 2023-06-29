@@ -1,11 +1,10 @@
 import { isAddress } from '@ethersproject/address'
 import { Native, Token } from '@sushiswap/currency'
-import { FuroStreamChainId } from '@sushiswap/furo/exports/exports'
 import { FundSource } from '@sushiswap/hooks'
 import { useMemo } from 'react'
 import { z } from 'zod'
-
 import { isSupportedChainId } from '../config'
+import { FuroStreamChainId } from '@sushiswap/furo/exports/exports'
 
 export const ZToken = z.object({
   chainId: z.number(),

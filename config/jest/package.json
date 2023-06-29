@@ -20,6 +20,6 @@
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
-    "@types/node": "18"
+    "@types/node": "18.11.18"
   }
 }

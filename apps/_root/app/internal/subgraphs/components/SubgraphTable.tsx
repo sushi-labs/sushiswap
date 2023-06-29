@@ -4,12 +4,11 @@ import { RefreshIcon } from '@heroicons/react-v1/solid'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { formatNumber, formatPercent } from '@sushiswap/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
-import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
+import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { Subgraph } from '../lib'
 import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
-import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-
-import { Subgraph } from '../lib'
+import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
 
 interface SubgraphTable {
   subgraphs: Subgraph[]

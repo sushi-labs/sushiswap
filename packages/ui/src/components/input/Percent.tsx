@@ -1,7 +1,6 @@
 import React, { forwardRef } from 'react'
-
-import { Text, TextInput } from './Text'
 import { escapeRegExp, inputRegex } from './utils'
+import { Text, TextInput } from './Text'
 
 interface PercentInput extends Omit<TextInput, 'onChange'> {
   variant?: 'default' | 'unstyled'

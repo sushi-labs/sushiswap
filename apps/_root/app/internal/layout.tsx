@@ -1,7 +1,7 @@
 'use client'
 
-import { GlobalNav, NavLink, SubNav, SubNavLink } from '@sushiswap/ui/components/GlobalNav'
 import { DefaultSeo, DefaultSeoProps } from 'next-seo'
+import { GlobalNav, NavLink, SubNav, SubNavLink } from '@sushiswap/ui/components/GlobalNav'
 
 const SEO: DefaultSeoProps = {
   titleTemplate: '%s | Internal',

@@ -1,11 +1,10 @@
-import { AddressZero } from '@ethersproject/constants'
-import { ChainId } from '@sushiswap/chain'
-import { Native } from '@sushiswap/currency'
-import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { useQuery } from '@tanstack/react-query'
-
-import { getBuiltGraphSDK } from '../../.graphclient'
 import { isSupportedChainId } from '../../config'
+import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import { AddressZero } from '@ethersproject/constants'
+import { Native } from '@sushiswap/currency'
+import { ChainId } from '@sushiswap/chain'
+import { getBuiltGraphSDK } from '../../.graphclient'
 
 const GRAPH_HOST = 'api.thegraph.com'
 

@@ -55,7 +55,7 @@
     "dev2": "tsup --watch",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "lint": "TIMING=1 eslint src --fix",
+    "lint": "TIMING=1 eslint \"./**/*.ts*\"",
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
@@ -121,7 +121,7 @@
     "@types/react-virtualized-auto-sizer": "1.0.1",
     "@types/react-window": "1.8.5",
     "autoprefixer": "10.4.14",
-    "eslint": "8.43.0",
+    "eslint": "8.41.0",
     "next": "13.4.7",
     "postcss": "8.4.23",
     "react": "18.2.0",

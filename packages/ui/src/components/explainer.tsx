@@ -1,9 +1,8 @@
-import { InformationCircleIcon } from '@heroicons/react/20/solid'
 import React, { FC, ReactNode } from 'react'
-
-import { classNames } from '../index'
-import { IconComponent, IconProps } from '../types'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip'
+import { IconComponent, IconProps } from '../types'
+import { InformationCircleIcon } from '@heroicons/react/20/solid'
+import { classNames } from '../index'
 
 export const Explainer: FC<{
   children: ReactNode

@@ -1,5 +1,4 @@
 import React from 'react'
-
 import { IconComponent } from '../../types'
 
 export const ClassicPoolIcon: IconComponent = (props) => {

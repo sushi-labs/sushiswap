@@ -1,9 +1,8 @@
 import { Transition } from '@headlessui/react'
-import { ArrowSmallRightIcon } from '@heroicons/react/20/solid'
 import classNames from 'classnames'
 import React, { Fragment, ReactNode, SVGProps, useState } from 'react'
-
 import { ExtractProps, PolymorphicComponentProps } from '../../types'
+import { ArrowSmallRightIcon } from '@heroicons/react/20/solid'
 
 interface Props {
   disabled?: boolean

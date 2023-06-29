@@ -1,10 +1,11 @@
 import { GetApiInputFromOutput, parseArgs } from '@sushiswap/client'
 import { Amount, Token } from '@sushiswap/currency'
 import { Furo_token } from '@sushiswap/graph-client'
-import { useAllPrices } from '@sushiswap/react-query'
 import { FuroTokensSchema } from 'pages/api/furoTokens'
 import { useMemo } from 'react'
 import useSWR from 'swr'
+
+import { useAllPrices } from '@sushiswap/react-query'
 
 export type GetFuroTokenArgs = GetApiInputFromOutput<
   (typeof FuroTokensSchema)['_input'],

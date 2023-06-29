@@ -1,9 +1,10 @@
-import { BENTOBOX_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 import stringify from 'fast-json-stable-stringify'
 import type { NextApiRequest, NextApiResponse } from 'next'
+
 import { z } from 'zod'
 
 import { getBentoBoxTokens } from '../../../lib/api'
+import { BENTOBOX_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 
 export const bentoBoxTokensSchema = z.object({
   tokenSymbols: z

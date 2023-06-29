@@ -1,10 +1,9 @@
-import { FormControl, FormField, FormItem, FormMessage, FormSection } from '@sushiswap/ui/components/form'
-import { Input } from '@sushiswap/ui/components/input'
-import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
-
+import { Input } from '@sushiswap/ui/components/input'
+import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import { CreateMultipleStreamFormSchemaType } from '../schema'
+import { FormControl, FormField, FormItem, FormMessage, FormSection } from '@sushiswap/ui/components/form'
 
 interface GeneralDetailsSection {
   index: number

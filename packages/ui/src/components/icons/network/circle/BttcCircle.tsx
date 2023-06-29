@@ -1,7 +1,6 @@
 import * as React from 'react'
-
-import { classNames } from '../../../../index'
 import { IconComponent } from '../../../../types'
+import { classNames } from '../../../../index'
 
 export const BttcCircle: IconComponent = (props) => (
   <svg

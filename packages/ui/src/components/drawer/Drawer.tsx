@@ -1,5 +1,4 @@
 import { Transition } from '@headlessui/react'
-import { XMarkIcon } from '@heroicons/react/20/solid'
 import { useIsMounted } from '@sushiswap/hooks'
 import classNames from 'classnames'
 import React, {
@@ -18,8 +17,9 @@ import React, {
 } from 'react'
 import ReactDOM from 'react-dom'
 
-import { Button, ButtonProps } from '../button'
+import { XMarkIcon } from '@heroicons/react/20/solid'
 import { IconButton } from '../iconbutton'
+import { Button, ButtonProps } from '../button'
 
 interface DrawerContext {
   open: boolean

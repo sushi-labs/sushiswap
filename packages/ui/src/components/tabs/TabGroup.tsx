@@ -1,6 +1,5 @@
 import { Tab as HeadlessTab } from '@headlessui/react'
 import { FC } from 'react'
-
 import { ExtractProps } from '../../types'
 
 export type TabGroupProps = ExtractProps<typeof HeadlessTab.Group>

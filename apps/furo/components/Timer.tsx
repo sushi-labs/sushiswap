@@ -1,5 +1,5 @@
-import { useInterval } from '@sushiswap/hooks'
 import { FC, ReactNode, useState } from 'react'
+import { useInterval } from '@sushiswap/hooks'
 
 interface State {
   days: string

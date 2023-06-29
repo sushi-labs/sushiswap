@@ -1,3 +1,1 @@
-// import '@testing-library/jest-dom'
-
-console.log('TEST SETUP!!!')
+import '@testing-library/jest-dom'

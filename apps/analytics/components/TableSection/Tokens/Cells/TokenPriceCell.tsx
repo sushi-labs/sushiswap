@@ -1,9 +1,8 @@
 import { formatUSD } from '@sushiswap/format'
 import { Bundle, Token } from '@sushiswap/graph-client'
+import { Row } from '../../Common'
 import { FC } from 'react'
 import useSWR from 'swr'
-
-import { Row } from '../../Common'
 
 export const TokenPriceCell: FC<Row<Token>> = ({ row }) => {
   const { data: bundles } = useSWR<Bundle[]>('/analytics/api/bundles', (url) =>

@@ -19,7 +19,9 @@ export async function pancakeSwapV2() {
   // try {
   //   const startTime = performance.now()
   //   console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}`)
+
   //   await start(client)
+
   //   const endTime = performance.now()
   //   console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
   // } catch (e) {

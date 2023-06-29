@@ -1,4 +1,3 @@
-import { Container } from '@sushiswap/ui/components/container'
 import { Table } from '@sushiswap/ui/components/table'
 import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
 import {
@@ -9,13 +8,14 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
-import { useFilters } from 'components/Filters'
 import React, { FC, useMemo, useState } from 'react'
 
-import { LIQUIDITY_COLUMN, LIQUIDITY_USD_COLUMN, NAME_COLUMN, NETWORK_COLUMN } from './columns'
 import { PAGE_SIZE } from './constants'
+import { useFilters } from 'components/Filters'
+import { LIQUIDITY_COLUMN, LIQUIDITY_USD_COLUMN, NAME_COLUMN, NETWORK_COLUMN } from './columns'
 import { FuroTokenFilters } from './FuroTokenFilters'
 import { FuroToken, GetFuroTokenArgs, useFuroTokens } from './useFuroTokens'
+import { Container } from '@sushiswap/ui/components/container'
 
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, LIQUIDITY_USD_COLUMN, LIQUIDITY_COLUMN] as any
 

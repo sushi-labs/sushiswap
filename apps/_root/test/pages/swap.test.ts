@@ -2,20 +2,16 @@ import { AddressZero } from '@ethersproject/constants'
 import { expect, Page, test } from '@playwright/test'
 import { DAI, Native, SUSHI, Type, USDC, USDT, WBTC } from '@sushiswap/currency'
 import { SupportedChainId } from '../../config'
-import { createTestClient, http } from 'viem'
-import { foundry } from 'viem/chains'
 
 type InputType = 'INPUT' | 'OUTPUT'
 
 // eslint-disable-next-line turbo/no-undeclared-env-vars
-if (!process.env.CHAIN_ID) {
-  throw new Error('CHAIN_ID env var not set')
-}
+if (!process.env.CHAIN_ID) throw new Error('CHAIN_ID env var not set')
 
 // eslint-disable-next-line turbo/no-undeclared-env-vars
 const chainId = Number(process.env.CHAIN_ID) as SupportedChainId
 
-const url = 'http://127.0.0.1:3000/swap'
+const url = 'http://localhost:3000/swap'
 
 const native = Native.onChain(chainId)
 const wnative = native.wrapped
@@ -26,16 +22,15 @@ const dai = DAI[chainId]
 const sushi = SUSHI[chainId]
 const wbtc = WBTC[chainId]
 
-test.beforeAll(async () => {
-  // We cam reset the fork easily
-  const client = createTestClient({ mode: 'anvil', chain: foundry, transport: http() })
-  await client.reset({ blockNumber: 42259027n })
-})
+// test.beforeAll(async () => {})
 
 test.beforeEach(async ({ page }) => {
   page.on('pageerror', (error) => {
     console.error(error)
   })
+  // We cam reset the fork easily
+  // const client = createTestClient({ mode: 'anvil', chain: foundry, transport: http() })
+  // await client.reset({ blockNumber: 42259027n })
   await page.goto(url)
   await switchNetwork(page, chainId)
 })

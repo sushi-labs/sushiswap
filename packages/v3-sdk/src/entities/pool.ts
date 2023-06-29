@@ -3,7 +3,7 @@ import { JSBI } from '@sushiswap/math'
 import { BigintIsh } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
-import { FeeAmount, SushiSwapV3ChainId, TICK_SPACINGS, V3_FACTORY_ADDRESS } from '../constants'
+import { FeeAmount, SushiSwapV3ChainId,TICK_SPACINGS, V3_FACTORY_ADDRESS } from '../constants'
 import { NEGATIVE_ONE, ONE, Q192, ZERO } from '../internalConstants'
 import { computePoolAddress } from '../utils/computePoolAddress'
 import { LiquidityMath } from '../utils/liquidityMath'

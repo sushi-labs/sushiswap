@@ -1,13 +1,11 @@
 import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/client'
 import { useBreakpoint } from '@sushiswap/hooks'
 import { Loader } from '@sushiswap/ui/components/loader'
-import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
-import { useFilters } from 'components/Filters'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useSWRConfig } from 'swr'
-
+import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
 import {
   APR_COLUMN,
   FEES_1D_COLUMN,
@@ -20,6 +18,7 @@ import {
   VOLUME_7D_COLUMN,
 } from './columns'
 import { PAGE_SIZE } from './constants'
+import { useFilters } from 'components/Filters'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore

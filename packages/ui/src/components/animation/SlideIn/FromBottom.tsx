@@ -4,9 +4,9 @@ import classNames from 'classnames'
 import React, { FC, Fragment, ReactElement } from 'react'
 import ReactDOM from 'react-dom'
 
-import { Dialog } from '../../dialog'
 import { useSlideInContext } from './SlideIn'
 import { useEscapeClose } from './useEscapeClose'
+import { Dialog } from '../../dialog'
 
 export type FromBottom = {
   show: boolean

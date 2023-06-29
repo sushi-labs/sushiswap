@@ -1,6 +1,5 @@
 import classNames from 'classnames'
 import React from 'react'
-
 import { IconComponent } from '../../types'
 
 export const WaterIcon: IconComponent = (props) => {

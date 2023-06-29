@@ -2,9 +2,9 @@
  * @param value the value to be memoized (usually a dependency list)
  * @returns a memoized version of the value as long as it remains deeply equal
  */
-import { deepEqual } from '@sushiswap/wagmi'
 import cloneDeep from 'lodash.clonedeep'
 import React from 'react'
+import { deepEqual } from '@sushiswap/wagmi'
 
 export function useDeepCompareMemoize<T>(value: T) {
   const ref = React.useRef<T>(value)
