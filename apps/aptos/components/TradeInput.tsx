@@ -14,7 +14,7 @@ interface PropType {
   disabledInput?: boolean
   setToken1Value?: React.Dispatch<React.SetStateAction<number>>
   getSwapPrice?: (tradeVal: number) => Promise<any>
-  outpuSwapTokenAmount?: number
+  outpuSwapTokenAmount?: any
 }
 export default function TradeInput({
   setOpen,
@@ -36,7 +36,7 @@ export default function TradeInput({
   const tradeVal = useRef<HTMLInputElement>(null)
   let [big, portion] = (coinData ? `${coinData / 10 ** decimals}` : '0.00').split('.')
   portion = portion ? portion.substring(0, 2) : '00'
-  if (outpuSwapTokenAmount) {
+  if (outpuSwapTokenAmount && typeof outpuSwapTokenAmount == 'number') {
     outpuSwapTokenAmount = outpuSwapTokenAmount / 10 ** 8
     if (String(outpuSwapTokenAmount).split('.')[1].length > 8) {
       outpuSwapTokenAmount = parseFloat(outpuSwapTokenAmount.toFixed(9))
@@ -44,6 +44,8 @@ export default function TradeInput({
     if (parseFloat(String(outpuSwapTokenAmount).split('.')[0]) > 0) {
       outpuSwapTokenAmount = parseFloat(outpuSwapTokenAmount.toFixed(2))
     }
+  } else {
+    outpuSwapTokenAmount = ''
   }
   useEffect(() => {
     checkBalance()
@@ -61,9 +63,6 @@ export default function TradeInput({
     }
 
     if (setButtonError) setButtonError('')
-    // if (setToken1Value) {
-    //   setToken1Value(0)
-    // }
     if (connected) {
       const priceEst = coinData / 10 ** 8 < parseFloat(tradeVal?.current?.value as string)
       if (priceEst && !disabledInput) {
@@ -100,8 +99,6 @@ export default function TradeInput({
           ref={tradeVal}
           onChange={() => {
             checkBalance()
-            if (!disabledInput) {
-            }
           }}
           minLength={1}
           maxLength={79}

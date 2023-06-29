@@ -32,8 +32,9 @@ export default function SwapPage() {
   const [isLoadingPrice, setLoadingPrice] = useState<boolean>(true)
   const [tokenSelectedNumber, setTokenSelectedNumber] = useState<string>('')
   const [token1Value, setToken1Value] = useState<number>(0)
-  const [swapPerTokenPrice, setSwapPerTokenPrice] = useState<number>()
+  const [swapPerTokenPrice, setSwapPerTokenPrice] = useState<any>()
   const [isTransactionPending, setisTransactionPending] = useState(false)
+  const [noRouteFound, setNoRouteFound] = useState<string>('')
 
   const handleChangeToken = (token: Token) => {
     setOpen(false)
@@ -44,14 +45,16 @@ export default function SwapPage() {
     }
   }
   const getSwapPrice = async (tradeVal: number): Promise<any> => {
-    console.log('token0', token0.address)
-    console.log('token1', token1.address)
     setSwapPerTokenPrice(0)
-    const output = !inverse
+    const output: any = !inverse
       ? await getYTokenPrice(tradeVal * 10 ** 8, token0?.address, token1?.address)
       : await getYTokenPrice(tradeVal * 10 ** 8, token1?.address, token0?.address)
-    console.log('output', output)
     setSwapPerTokenPrice(output)
+    if (output?.message?.includes('Unexpected') || output?.message?.includes('Cannot read properties')) {
+      setNoRouteFound('No Route Found')
+    } else {
+      setNoRouteFound('')
+    }
   }
 
   const provider = new Provider(Network.TESTNET)
@@ -175,14 +178,22 @@ export default function SwapPage() {
               {connected ? (
                 <button
                   className={`btn w-full flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold ${
-                    buttonError ? 'pointer-events-none relative opacity-[0.4] overflow-hidden' : ''
+                    buttonError || noRouteFound ? 'pointer-events-none relative opacity-[0.4] overflow-hidden' : ''
                   }`}
-                  disabled={buttonError ? true : false}
+                  disabled={buttonError || noRouteFound ? true : false}
                   onClick={() => {
                     token1Value ? swapToken() : {}
                   }}
                 >
-                  {buttonError ? buttonError : token1Value ? <>Swap</> : <>Enter Amount</>}
+                  {noRouteFound ? (
+                    noRouteFound
+                  ) : buttonError ? (
+                    buttonError
+                  ) : token1Value ? (
+                    <>Swap</>
+                  ) : (
+                    <>Enter Amount</>
+                  )}
                 </button>
               ) : (
                 <WalletSelector />

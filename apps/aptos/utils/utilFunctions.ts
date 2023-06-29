@@ -1,5 +1,4 @@
 export async function getYTokenPrice(amount_in: number, coinX: string, coinY: string) {
-  console.log('input,', amount_in)
   let outputData
   await fetch(
     `https://fullnode.testnet.aptoslabs.com/v1/accounts/e8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resource/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::TokenPairReserve<${coinX},${coinY}>`
@@ -12,13 +11,11 @@ export async function getYTokenPrice(amount_in: number, coinX: string, coinY: st
         )
           .then((res) => res.json())
           .then((data) => {
-            console.log(data)
             if (amount_in > 0) {
               if (data.data.reserve_x > 0 && data.data.reserve_x > 0) {
                 let amount_in_with_fee = amount_in * 9975
                 let numerator = amount_in_with_fee * data.data.reserve_x
                 let denominator = data.data.reserve_y * 10000 + amount_in_with_fee
-                console.log(numerator / denominator)
                 outputData = numerator / denominator
               } else {
                 console.log('ERROR_INSUFFICIENT_LIQUIDITY')
@@ -29,16 +26,15 @@ export async function getYTokenPrice(amount_in: number, coinX: string, coinY: st
             }
           })
           .catch((err) => {
+            outputData = err
             console.log(err)
           })
       } else {
-        console.log(data)
         if (amount_in > 0) {
           if (data.data.reserve_x > 0 && data.data.reserve_x > 0) {
             let amount_in_with_fee = amount_in * 9975
             let numerator = amount_in_with_fee * data.data.reserve_y
             let denominator = data.data.reserve_x * 10000 + amount_in_with_fee
-            console.log(numerator / denominator)
             outputData = numerator / denominator
           } else {
             console.log('ERROR_INSUFFICIENT_LIQUIDITY')
@@ -49,6 +45,7 @@ export async function getYTokenPrice(amount_in: number, coinX: string, coinY: st
       }
     })
     .catch((err) => {
+      outputData = err
       console.log(err)
     })
   return outputData
