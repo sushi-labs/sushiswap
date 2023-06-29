@@ -25,7 +25,9 @@
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-simple-import-sort": "10.0.0",
     "eslint-plugin-testing-library": "5.11.0",
-    "eslint-plugin-unused-imports": "2.0.0"
+    "eslint-plugin-unused-imports": "2.0.0",
+    "@next/eslint-plugin-next": "^13.4.7",
+    "eslint-plugin-react-hooks": "4.6.0"
   },
   "devDependencies": {
     "@types/eslint": "8.40.2",

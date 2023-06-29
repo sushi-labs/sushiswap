@@ -30,6 +30,7 @@ importers:
       eslint-plugin-prettier: 4.2.1
       eslint-plugin-simple-import-sort: 10.0.0
       eslint-plugin-testing-library: 5.11.0
+      eslint-plugin-turbo: ^1.10.6
       eslint-plugin-unused-imports: 2.0.0
       husky: 8.0.3
       is-ci: 3.0.1
@@ -62,6 +63,7 @@ importers:
       eslint-plugin-prettier: 4.2.1_rq4fpy2d6n64xyb3nxqqtsfbhq
       eslint-plugin-simple-import-sort: 10.0.0_eslint@8.43.0
       eslint-plugin-testing-library: 5.11.0_eslint@8.43.0
+      eslint-plugin-turbo: 1.10.6_eslint@8.43.0
       eslint-plugin-unused-imports: 2.0.0_fjwzzqvwxnfpyzumzp7fgjdlke
       husky: 8.0.3
       is-ci: 3.0.1
@@ -928,22 +930,28 @@ importers:
 
   config/eslint:
     specifiers:
+      '@next/eslint-plugin-next': ^13.4.7
       '@types/eslint': 8.40.2
       '@types/node': '18'
       eslint-config-next: 13.4.7
       eslint-config-prettier: 8.8.0
       eslint-config-turbo: 1.10.6
       eslint-plugin-prettier: 4.2.1
+      eslint-plugin-react-hooks: 4.6.0
       eslint-plugin-simple-import-sort: 10.0.0
       eslint-plugin-testing-library: 5.11.0
+      eslint-plugin-turbo: ^1.10.6
       eslint-plugin-unused-imports: 2.0.0
     dependencies:
+      '@next/eslint-plugin-next': 13.4.7
       eslint-config-next: 13.4.7
       eslint-config-prettier: 8.8.0
       eslint-config-turbo: 1.10.6
       eslint-plugin-prettier: 4.2.1_oaez6fkrrb5zzrowm57o6j34fq
+      eslint-plugin-react-hooks: 4.6.0
       eslint-plugin-simple-import-sort: 10.0.0
       eslint-plugin-testing-library: 5.11.0
+      eslint-plugin-turbo: 1.10.6
       eslint-plugin-unused-imports: 2.0.0
     devDependencies:
       '@types/eslint': 8.40.2
@@ -25102,7 +25110,7 @@ packages:
       pretty-format: 29.5.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1_vgecuulidpx36ppb4uqgt55o24
+      ts-node: 10.9.1_@types+node@18.11.18
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -25181,7 +25189,7 @@ packages:
       pretty-format: 29.5.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1_j2tenfqo3ojkwe6mxlyxo4e3lm
+      ts-node: 10.9.1_@types+node@18.11.18
     transitivePeerDependencies:
       - supports-color
     dev: true

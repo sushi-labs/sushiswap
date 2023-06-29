@@ -66,6 +66,7 @@
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-simple-import-sort": "10.0.0",
     "eslint-plugin-testing-library": "5.11.0",
+    "eslint-plugin-turbo": "^1.10.6",
     "eslint-plugin-unused-imports": "2.0.0",
     "husky": "8.0.3",
     "is-ci": "3.0.1",
