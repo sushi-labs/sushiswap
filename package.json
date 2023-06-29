@@ -39,7 +39,7 @@
     "test-config": "dotenv -- turbo run test --filter={./config/*}[HEAD^1]...",
     "test-packages": "dotenv -- turbo run test --filter={./packages/*}[HEAD^1]...",
     "test-protocols": "dotenv -- turbo run test --filter={./protocols/*}[HEAD^1]...",
-    "test-evm-app": "dotenv -- turbo run test --filter=evm",
+    "test-evm-app": "dotenv -- turbo run test --filter=root",
     "test-swap-app": "dotenv -- turbo run test --filter=swap",
     "test-earn-app": "dotenv -- turbo run test --filter=earn",
     "test-furo-app": "dotenv -- turbo run test --filter=furo",
