@@ -52,14 +52,14 @@
   "devDependencies": {
     "@graphprotocol/client-add-source-name": "2.0.0",
     "@graphprotocol/client-auto-pagination": "2.0.0",
-    "@graphprotocol/client-auto-type-merging": "1.0.23",
+    "@graphprotocol/client-auto-type-merging": "2.0.0",
     "@graphprotocol/client-cli": "3.0.0",
-    "@graphql-mesh/transform-filter-schema": "0.15.24",
-    "@graphql-mesh/transform-prefix": "0.12.22",
-    "@graphql-mesh/transform-prune": "0.1.20",
-    "@graphql-mesh/transform-rename": "0.14.22",
-    "@graphql-mesh/transform-type-merging": "0.5.20",
-    "@graphql-tools/merge": "8.4.0",
+    "@graphql-mesh/transform-filter-schema": "0.94.1",
+    "@graphql-mesh/transform-prefix": "0.94.2",
+    "@graphql-mesh/transform-prune": "0.94.1",
+    "@graphql-mesh/transform-rename": "0.94.2",
+    "@graphql-mesh/transform-type-merging": "0.94.1",
+    "@graphql-tools/merge": "9.0.0",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
@@ -73,6 +73,6 @@
     "jest": "29.3.1",
     "prettier": "2.8.1",
     "ts-node": "10.9.1",
-    "typescript": "5.0.4"
+    "typescript": "5.1.6"
   }
 }

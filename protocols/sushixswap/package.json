@@ -64,7 +64,7 @@
     "hardhat-deploy": "0.11.22",
     "seedrandom": "^3.0.5",
     "ts-node": "10.9.1",
-    "typescript": "5.0.4"
+    "typescript": "5.1.6"
   },
   "peerDependencies": {
     "@ethersproject/abi": "5.7.0",

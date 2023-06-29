@@ -6,17 +6,14 @@ const defaultNextConfig = {
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
   modularizeImports: {
-    '@heroicons/react/solid': {
-      transform: '@heroicons/react/solid/{{member}}',
-    },
     '@heroicons-v1/react/solid': {
       transform: '@heroicons-v1/react/solid/{{member}}',
     },
-    '@heroicons/react/outline': {
-      transform: '@heroicons/react/outline/{{member}}',
-    },
     '@heroicons-v1/react/outline': {
       transform: '@heroicons-v1/react/outline/{{member}}',
+    },
+    '@heroicons/react': {
+      transform: '@heroicons/react/{{member}}',
     },
     lodash: {
       transform: 'lodash/{{member}}',

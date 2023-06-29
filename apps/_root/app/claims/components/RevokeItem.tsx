@@ -9,7 +9,7 @@ import { Button } from '@sushiswap/ui/components/button'
 import { ZERO } from '@sushiswap/math'
 import { routeProcessor2Address, RouteProcessor2ChainId } from '@sushiswap/route-processor/exports/exports'
 import { CheckIcon } from '@heroicons/react-v1/solid'
-import { Address } from 'wagmi'
+import { Address } from '@sushiswap/wagmi'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 
 export const RevokeItem: FC<{ token: Token; account: Address }> = ({ account, token }) => {

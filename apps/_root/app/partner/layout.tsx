@@ -2,7 +2,7 @@ import { Header } from './header'
 import { Providers } from './providers'
 
 export const metadata = {
-  title: 'Partner',
+  title: 'SushiPartner',
 }
 
 export default function PartnerLayout({

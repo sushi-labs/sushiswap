@@ -177,7 +177,7 @@ const factoryABI = parseAbi([
   'function pool_list(uint256) pure returns (address)',
   'function find_pool_for_coins(address, address, uint256) view returns (address)',
   //'function get_n_coins(address) pure returns (uint256)',
-])
+] as const)
 
 export async function getAllSupportedCurvePools(publicClient: PublicClient): Promise<Map<string, CurvePoolType>> {
   const result: Map<string, CurvePoolType> = new Map()
@@ -212,28 +212,28 @@ const curvePoolABI = {
     'function fee() pure returns (uint256)',
     'function coins(uint256) pure returns (address)',
     'function balances(uint256) pure returns (uint256)',
-  ]),
+  ] as const),
   [CurvePoolType.Legacy]: parseAbi([
     'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns (uint256)',
     'function A() pure returns (uint256)',
     'function fee() pure returns (uint256)',
     'function coins(uint256) pure returns (address)',
     'function balances(uint256) pure returns (uint256)',
-  ]),
+  ] as const),
   [CurvePoolType.LegacyV2]: parseAbi([
     'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns ()',
     'function A() pure returns (uint256)',
     'function fee() pure returns (uint256)',
     'function coins(int128) pure returns (address)',
     'function balances(int128) pure returns (uint256)',
-  ]),
+  ] as const),
   [CurvePoolType.LegacyV3]: parseAbi([
     'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns ()',
     'function A() pure returns (uint256)',
     'function fee() pure returns (uint256)',
     'function coins(uint256) pure returns (address)',
     'function balances(uint256) pure returns (uint256)',
-  ]),
+  ] as const),
 }
 /*
 async function getCurvePoolCode(publicClient: PublicClient, poolAddress: string, poolType: CurvePoolType, token0: Type, token1: Type): Promise<PoolCode> {
@@ -345,25 +345,25 @@ export class CurveProvider extends LiquidityProvider {
           {
             address: '0xE95A203B1a91a908F9B9CE46459d101078c2c3cb', // ankr
             //chainId: this.chainId,
-            abi: parseAbi(['function ratio() pure returns (uint256)']),
+            abi: parseAbi(['function ratio() pure returns (uint256)'] as const),
             functionName: 'ratio',
           },
           {
             address: '0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593', // rETH
             //chainId: this.chainId,
-            abi: parseAbi(['function getExchangeRate() pure returns (uint256)']),
+            abi: parseAbi(['function getExchangeRate() pure returns (uint256)'] as const),
             functionName: 'getExchangeRate',
           },
           {
             address: '0x39aa39c021dfbae8fac545936693ac917d5e7563', // cUSDC
             //chainId: this.chainId,
-            abi: parseAbi(['function exchangeRateCurrent() pure returns (uint256)']),
+            abi: parseAbi(['function exchangeRateCurrent() pure returns (uint256)'] as const),
             functionName: 'exchangeRateCurrent',
           },
           {
             address: '0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643', // cDAI
             //chainId: this.chainId,
-            abi: parseAbi(['function exchangeRateCurrent() pure returns (uint256)']),
+            abi: parseAbi(['function exchangeRateCurrent() pure returns (uint256)'] as const),
             functionName: 'exchangeRateCurrent',
           },
         ],

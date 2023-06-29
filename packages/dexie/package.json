@@ -60,11 +60,11 @@
     "eslint": "8.41.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "tsup": "6.5.0",
-    "typescript": "5.0.4"
+    "tsup": "7.1.0",
+    "typescript": "5.1.6"
   },
   "peerDependencies": {
-    "next": "13.4.4",
+    "next": "13.4.7",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   }

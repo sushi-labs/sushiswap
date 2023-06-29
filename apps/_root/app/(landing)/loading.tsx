@@ -10,7 +10,6 @@ export default function Loading() {
       <Transition
         appear
         show={true}
-        unmount={false}
         static
         enter="ease-in-out duration-1000"
         enterFrom="scale-1 saturate-0"

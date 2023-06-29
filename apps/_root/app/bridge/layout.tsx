@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'SushiBridge 📦 | Sushi',
+  title: 'SushiBridge 📦',
 }
 
 export default function BridgeLayout({ children }: { children: React.ReactNode }) {

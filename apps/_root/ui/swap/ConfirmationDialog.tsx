@@ -26,7 +26,7 @@ import { routeProcessor2Abi } from '@sushiswap/abi'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
 import { Bridge, LiquidityProviders } from '@sushiswap/router'
 import { Chain } from '@sushiswap/chain'
-import { useNetwork } from 'wagmi'
+import { useNetwork } from '@sushiswap/wagmi'
 
 interface ConfirmationDialogProps {
   children({

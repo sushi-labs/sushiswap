@@ -102,12 +102,12 @@
     "@wagmi/core": "0.10.13",
     "eslint": "8.41.0",
     "ethers": "5.7.2",
-    "next": "13.4.4",
+    "next": "13.4.7",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "tsup": "6.5.0",
+    "tsup": "7.1.0",
     "typechain": "^8.0.0",
-    "typescript": "5.0.4",
+    "typescript": "5.1.6",
     "vitest": "0.30.1",
     "wagmi": "0.12.15"
   },
@@ -136,6 +136,6 @@
     }
   },
   "optionalDependencies": {
-    "next": "13.4.4"
+    "next": "13.4.7"
   }
 }

@@ -41,8 +41,8 @@
     "@types/seedrandom": "^3.0.1",
     "eslint": "8.41.0",
     "seedrandom": "^3.0.5",
-    "tsup": "6.5.0",
-    "typescript": "5.0.4"
+    "tsup": "7.1.0",
+    "typescript": "5.1.6"
   },
   "publishConfig": {
     "access": "public"

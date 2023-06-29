@@ -1,3 +1,5 @@
+'use client'
+
 export { useBreakpoint } from './useBreakpoint'
 export { useCopyClipboard } from './useCopyClipboard'
 export * from './useCustomTokens'

@@ -21,10 +21,10 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts",
+    "build": "tsup src/index.ts",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsup src/index.ts --format esm --watch --dts",
+    "dev": "tsup src/index.ts --watch",
     "prepublishOnly": "pnpm build",
     "lint": "TIMING=1 eslint . --fix"
   },
@@ -46,8 +46,8 @@
     "@types/node": "18.11.18",
     "eslint": "8.41.0",
     "swr": "2.1.5",
-    "tsup": "6.5.0",
-    "typescript": "5.0.4"
+    "tsup": "7.1.0",
+    "typescript": "5.1.6"
   },
   "peerDependencies": {
     "swr": "2.1.5",

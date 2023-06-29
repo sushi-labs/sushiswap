@@ -1,4 +1,4 @@
-import { FormType } from './../../page'
+import { FormType } from '../../page'
 import { FC, useEffect } from 'react'
 import { HexColorPicker } from 'react-colorful'
 import { useFormContext } from 'react-hook-form'
