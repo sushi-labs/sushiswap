@@ -4,9 +4,9 @@
   "private": true,
   "description": "Router",
   "license": "UNLICENSED",
+  "author": "Ilya Lyalin",
   "main": "exports/exports.js",
   "types": "exports/exports.d.ts",
-  "author": "Ilya Lyalin",
   "files": [
     "artifacts",
     "contracts",

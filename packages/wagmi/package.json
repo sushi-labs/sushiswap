@@ -26,9 +26,6 @@
       "./src/future/*/index.tsx"
     ]
   },
-  "files": [
-    "src"
-  ],
   "typesVersions": {
     "*": {
       "*": [
@@ -39,6 +36,9 @@
       ]
     }
   },
+  "files": [
+    "src"
+  ],
   "scripts": {
     "build": "true",
     "check": "tsc --pretty --noEmit",
@@ -72,12 +72,12 @@
     "@sushiswap/route-processor": "workspace:*",
     "@sushiswap/router": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
-    "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/sushixswap": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/trident-core": "workspace:*",
     "@sushiswap/types": "workspace:*",
     "@sushiswap/ui": "workspace:*",
+    "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",
     "@sushiswap/validate": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",

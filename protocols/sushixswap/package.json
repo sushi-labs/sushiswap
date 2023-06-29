@@ -16,9 +16,9 @@
     "directory": "protocols/sushixswap"
   },
   "license": "MIT",
+  "author": "Sarang",
   "main": "exports/exports.js",
   "types": "exports/exports.d.ts",
-  "author": "Sarang",
   "files": [
     "artifacts",
     "contracts",

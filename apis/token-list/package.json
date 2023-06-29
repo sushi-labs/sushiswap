@@ -16,8 +16,8 @@
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
-    "@tsconfig/strictest": "2.0.1",
     "@tsconfig/node18": "2.0.0",
+    "@tsconfig/strictest": "2.0.1",
     "eslint": "8.43.0",
     "typescript": "5.1.6",
     "vercel": "29.4.0"

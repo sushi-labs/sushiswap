@@ -37,10 +37,10 @@
   "dependencies": {
     "@openzeppelin/contracts": "4.7.3",
     "@rari-capital/solmate": "6.2.0",
-    "@sushiswap/currency": "workspace:*",
     "@sushiswap/bentobox": "workspace:*",
-    "@sushiswap/types": "workspace:*",
-    "@sushiswap/hardhat-config": "workspace:*"
+    "@sushiswap/currency": "workspace:*",
+    "@sushiswap/hardhat-config": "workspace:*",
+    "@sushiswap/types": "workspace:*"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",

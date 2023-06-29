@@ -15,24 +15,8 @@
   },
   "license": "MIT",
   "author": "LufyCZ <me@lufy.cz>",
-  "files": [
-    "dist"
-  ],
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "source": "src/index.ts",
-  "types": "dist/index.d.ts",
   "sideEffects": false,
   "type": "module",
-  "scripts": {
-    "build": "tsc",
-    "check": "tsc --pretty --noEmit",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsc -w",
-    "lint": "TIMING=1 eslint src --fix",
-    "prepublishOnly": "pnpm build",
-    "test": "jest --passWithNoTests"
-  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -47,6 +31,22 @@
       "default": "./dist/providers.js"
     },
     "./package.json": "./package.json"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "source": "src/index.ts",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --pretty --noEmit",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "tsc -w",
+    "lint": "TIMING=1 eslint src --fix",
+    "prepublishOnly": "pnpm build",
+    "test": "jest --passWithNoTests"
   },
   "jest": {
     "preset": "@sushiswap/jest-config/node"

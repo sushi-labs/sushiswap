@@ -16,9 +16,9 @@
     "directory": "protocols/furo"
   },
   "license": "MIT",
+  "author": "Sarang",
   "main": "exports/exports.js",
   "types": "exports/exports.d.ts",
-  "author": "Sarang",
   "files": [
     "artifacts",
     "contracts",
@@ -41,8 +41,8 @@
     "@sushiswap/core": "^1.4.2",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/stargate": "workspace:*",
-    "@sushiswap/v2-sdk": "workspace:*",
-    "@sushiswap/types": "workspace:*"
+    "@sushiswap/types": "workspace:*",
+    "@sushiswap/v2-sdk": "workspace:*"
   },
   "devDependencies": {
     "@ethersproject/abi": "5.7.0",

@@ -35,10 +35,6 @@
       "./src/future/*/index.tsx"
     ]
   },
-  "files": [
-    "src",
-    "tailwind.js"
-  ],
   "typesVersions": {
     "*": {
       "*": [
@@ -49,12 +45,16 @@
       ]
     }
   },
+  "files": [
+    "src",
+    "tailwind.js"
+  ],
   "scripts": {
     "build": "true",
     "build2": "tsup",
-    "dev2": "tsup --watch",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev2": "tsup --watch",
     "lint": "TIMING=1 eslint src --fix",
     "test": "jest --passWithNoTests"
   },

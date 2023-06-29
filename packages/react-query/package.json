@@ -25,9 +25,6 @@
       "./src/*/index.ts"
     ]
   },
-  "files": [
-    "src"
-  ],
   "typesVersions": {
     "*": {
       "*": [
@@ -36,6 +33,9 @@
       ]
     }
   },
+  "files": [
+    "src"
+  ],
   "scripts": {
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",

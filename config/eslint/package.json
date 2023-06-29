@@ -9,8 +9,8 @@
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "main": "index.js",
   "sideEffects": false,
+  "main": "index.js",
   "files": [
     "index.js",
     "base/index.js",

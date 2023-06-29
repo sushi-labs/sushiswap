@@ -31,10 +31,10 @@
     "react-responsive": "9.0.0-beta.10"
   },
   "devDependencies": {
-    "@sushiswap/math": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/math": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "^29.2.0",
@@ -48,13 +48,19 @@
     "typescript": "5.1.6"
   },
   "peerDependencies": {
+    "@sushiswap/currency": "*",
+    "@sushiswap/math": "*",
     "react": "*",
     "react-dom": "*",
-    "tailwindcss": "*",
-    "@sushiswap/math": "*",
-    "@sushiswap/currency": "*"
+    "tailwindcss": "*"
   },
   "peerDependenciesMeta": {
+    "@sushiswap/currency": {
+      "optional": true
+    },
+    "@sushiswap/math": {
+      "optional": true
+    },
     "react": {
       "optional": false
     },
@@ -62,12 +68,6 @@
       "optional": false
     },
     "tailwindcss": {
-      "optional": true
-    },
-    "@sushiswap/math": {
-      "optional": true
-    },
-    "@sushiswap/currency": {
       "optional": true
     }
   }

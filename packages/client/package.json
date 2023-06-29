@@ -25,24 +25,24 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsup src/index.ts --watch",
-    "prepublishOnly": "pnpm build",
-    "lint": "TIMING=1 eslint src --fix"
+    "lint": "TIMING=1 eslint src --fix",
+    "prepublishOnly": "pnpm build"
   },
   "jest": {
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@sushiswap/database": "workspace:*",
     "@sushiswap/chain": "workspace:*",
+    "@sushiswap/database": "workspace:*",
     "@whatwg-node/fetch": "0.8.4",
     "tslib": "latest"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/pools-api": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@sushiswap/pools-api": "workspace:*",
     "@types/node": "18",
     "eslint": "8.43.0",
     "swr": "2.1.5",
@@ -50,14 +50,14 @@
     "typescript": "5.1.6"
   },
   "peerDependencies": {
-    "swr": "2.1.5",
-    "react": "18.2.0"
+    "react": "18.2.0",
+    "swr": "2.1.5"
   },
   "peerDependenciesMeta": {
-    "swr": {
+    "react": {
       "optional": true
     },
-    "react": {
+    "swr": {
       "optional": true
     }
   }

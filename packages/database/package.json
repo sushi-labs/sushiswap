@@ -13,25 +13,25 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "files": [
-    "dist"
-  ],
+  "sideEffects": false,
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
-  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo node_modules dist",
-    "generate": "prisma generate --data-proxy",
-    "pull": "prisma db pull",
-    "push": "prisma db push --skip-generate",
     "dev": "tsc -w",
+    "generate": "prisma generate --data-proxy",
     "lint": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build",
+    "pull": "prisma db pull",
+    "push": "prisma db push --skip-generate",
     "studio": "prisma studio",
     "test": "jest --passWithNoTests"
   },

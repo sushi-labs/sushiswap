@@ -8,10 +8,10 @@
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "sideEffects": false,
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "sideEffects": false,
   "bin": {
     "scli": "./dist/index.js"
   },
@@ -32,10 +32,10 @@
   },
   "dependencies": {
     "@sushiswap/chain": "workspace:*",
+    "@sushiswap/client": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/format": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",
-    "@sushiswap/client": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/log": "workspace:*",
     "@sushiswap/validate": "workspace:*",
@@ -43,8 +43,8 @@
     "cli-table3": "0.6.3",
     "commander": "9.4.1",
     "date-fns": "2.29.3",
-    "node-fetch": "3.3.0",
     "listr": "0.14.3",
+    "node-fetch": "3.3.0",
     "numeral": "2.0.6",
     "ora": "5.4.1"
   },

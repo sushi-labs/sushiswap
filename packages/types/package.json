@@ -46,10 +46,10 @@
   "peerDependencies": {
     "@wagmi/core": "0.10.13"
   },
-  "typescript": {
-    "definition": "./index.d.ts"
-  },
   "publishConfig": {
     "access": "public"
+  },
+  "typescript": {
+    "definition": "./index.d.ts"
   }
 }
