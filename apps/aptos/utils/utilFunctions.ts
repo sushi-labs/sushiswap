@@ -1,8 +1,5 @@
-export function helloCLG(name: string) {
-  console.log(`hello ${name}`)
-}
 export async function getYTokenPrice(amount_in: number, coinX: string, coinY: string) {
-  console.log(coinX, coinY)
+  let outputData
   await fetch(
     `https://fullnode.testnet.aptoslabs.com/v1/accounts/e8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resource/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::TokenPairReserve<${coinX},${coinY}>`
   )
@@ -21,12 +18,17 @@ export async function getYTokenPrice(amount_in: number, coinX: string, coinY: st
                 let numerator = amount_in_with_fee * data.data.reserve_x
                 let denominator = data.data.reserve_y * 10000 + amount_in_with_fee
                 console.log(numerator / denominator)
+                outputData = numerator / denominator
               } else {
                 console.log('ERROR_INSUFFICIENT_LIQUIDITY')
+                return data.error_code
               }
             } else {
               console.log('ERROR_INSUFFICIENT_INPUT_AMOUNT')
             }
+          })
+          .catch((err) => {
+            console.log(err)
           })
       } else {
         console.log(data)
@@ -36,6 +38,7 @@ export async function getYTokenPrice(amount_in: number, coinX: string, coinY: st
             let numerator = amount_in_with_fee * data.data.reserve_y
             let denominator = data.data.reserve_x * 10000 + amount_in_with_fee
             console.log(numerator / denominator)
+            outputData = numerator / denominator
           } else {
             console.log('ERROR_INSUFFICIENT_LIQUIDITY')
           }
@@ -44,4 +47,8 @@ export async function getYTokenPrice(amount_in: number, coinX: string, coinY: st
         }
       }
     })
+    .catch((err) => {
+      console.log(err)
+    })
+  return outputData
 }

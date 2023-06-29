@@ -1,7 +1,6 @@
 import React, { ReactElement, useEffect, useRef, useState } from 'react'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { helloCLG } from 'utils/utilFunctions'
 interface PropType {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
   tokenName: string
@@ -11,6 +10,11 @@ interface PropType {
   isLoadingPrice?: boolean
   setTokenSelectedNumber: React.Dispatch<React.SetStateAction<string>>
   tokenNumber: string
+  setButtonError?: React.Dispatch<React.SetStateAction<string>>
+  disabledInput?: boolean
+  setToken1Value?: React.Dispatch<React.SetStateAction<number>>
+  getSwapPrice?: (tradeVal: number) => number | undefined
+  outpuSwapTokenAmount?: number
 }
 export default function TradeInput({
   setOpen,
@@ -21,12 +25,28 @@ export default function TradeInput({
   isLoadingPrice,
   setTokenSelectedNumber,
   tokenNumber,
+  setButtonError,
+  getSwapPrice,
+  disabledInput,
+  setToken1Value,
+  outpuSwapTokenAmount,
 }: PropType) {
   const [error, setError] = useState('')
   const { connected } = useWallet()
   const tradeVal = useRef<HTMLInputElement>(null)
   let [big, portion] = (coinData ? `${coinData / 10 ** decimals}` : '0.00').split('.')
   portion = portion ? portion.substring(0, 2) : '00'
+  if (outpuSwapTokenAmount) {
+    outpuSwapTokenAmount = outpuSwapTokenAmount / 10 ** 8
+    console.log(String(outpuSwapTokenAmount).split('.')[1].length)
+    if (String(outpuSwapTokenAmount).split('.')[1].length > 7) {
+      console.log(String(outpuSwapTokenAmount).split('.')[1])
+      outpuSwapTokenAmount = parseFloat(outpuSwapTokenAmount.toFixed(8))
+    }
+    if (parseFloat(String(outpuSwapTokenAmount).split('.')[0]) > 0) {
+      outpuSwapTokenAmount = parseFloat(outpuSwapTokenAmount.toFixed(2))
+    }
+  }
   useEffect(() => {
     checkBalance()
   }, [coinData])
@@ -35,10 +55,23 @@ export default function TradeInput({
     if (coinData === undefined) {
       coinData = 0
     }
-    if (tradeVal?.current?.value && connected) {
+    getSwapPrice ? getSwapPrice(parseFloat(tradeVal?.current?.value)) : {}
+    if (setButtonError) setButtonError('')
+    if (setToken1Value) {
+      setToken1Value(0)
+    }
+    if (connected) {
+      if (setToken1Value) {
+        setToken1Value(parseFloat(tradeVal?.current?.value))
+      }
       const priceEst = coinData / 10 ** 8 < parseFloat(tradeVal?.current?.value)
-      console.log()
-      priceEst ? setError('Exceed Balance') : setError('')
+      if (priceEst) {
+        setError('Exceed Balance')
+        if (setButtonError) setButtonError('Insufficient Balance')
+      } else {
+        setError('')
+        if (setButtonError) setButtonError('')
+      }
     } else {
       setError('')
     }
@@ -61,17 +94,19 @@ export default function TradeInput({
           spellCheck="false"
           autoComplete="new-password"
           pattern="^[0-9]*[.,]?[0-9]*$"
-          placeholder="0"
+          placeholder="0.0"
           min={0}
           ref={tradeVal}
           onChange={() => {
             checkBalance()
-            helloCLG('yash')
           }}
           minLength={1}
           maxLength={79}
-          className="text-gray-900 dark:text-slate-50 text-left text-base font-medium border-none focus:outline-none focus:ring-0 p-0 bg-transparent w-full truncate font-medium without-ring !text-3xl py-1"
+          className="text-gray-900 dark:text-slate-50 text-left border-none focus:outline-none focus:ring-0 p-0 bg-transparent w-full truncate font-medium without-ring !text-3xl py-1"
           type="text"
+          // disabled={disabledInput}
+          readOnly={disabledInput}
+          value={disabledInput ? (outpuSwapTokenAmount ? outpuSwapTokenAmount : '') : tradeVal?.current?.value}
         />
         <button
           onClick={changeToken}
