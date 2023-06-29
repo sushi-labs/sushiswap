@@ -13,7 +13,7 @@ interface PropType {
   setButtonError?: React.Dispatch<React.SetStateAction<string>>
   disabledInput?: boolean
   setToken1Value?: React.Dispatch<React.SetStateAction<number>>
-  getSwapPrice?: (tradeVal: number) => number | undefined
+  getSwapPrice?: (tradeVal: number) => Promise<any>
   outpuSwapTokenAmount?: number
 }
 export default function TradeInput({
@@ -38,10 +38,8 @@ export default function TradeInput({
   portion = portion ? portion.substring(0, 2) : '00'
   if (outpuSwapTokenAmount) {
     outpuSwapTokenAmount = outpuSwapTokenAmount / 10 ** 8
-    console.log(String(outpuSwapTokenAmount).split('.')[1].length)
-    if (String(outpuSwapTokenAmount).split('.')[1].length > 7) {
-      console.log(String(outpuSwapTokenAmount).split('.')[1])
-      outpuSwapTokenAmount = parseFloat(outpuSwapTokenAmount.toFixed(8))
+    if (String(outpuSwapTokenAmount).split('.')[1].length > 8) {
+      outpuSwapTokenAmount = parseFloat(outpuSwapTokenAmount.toFixed(9))
     }
     if (parseFloat(String(outpuSwapTokenAmount).split('.')[0]) > 0) {
       outpuSwapTokenAmount = parseFloat(outpuSwapTokenAmount.toFixed(2))
@@ -52,20 +50,23 @@ export default function TradeInput({
   }, [coinData])
 
   const checkBalance = () => {
+    console.log('checkbalac=nce', tradeVal?.current?.value)
     if (coinData === undefined) {
       coinData = 0
     }
-    getSwapPrice ? getSwapPrice(parseFloat(tradeVal?.current?.value)) : {}
-    if (setButtonError) setButtonError('')
     if (setToken1Value) {
-      setToken1Value(0)
+      setToken1Value(parseFloat(tradeVal?.current?.value as string))
+      console.log(tradeVal?.current?.value)
+      getSwapPrice ? getSwapPrice(parseFloat(tradeVal?.current?.value as string)) : {}
     }
+
+    if (setButtonError) setButtonError('')
+    // if (setToken1Value) {
+    //   setToken1Value(0)
+    // }
     if (connected) {
-      if (setToken1Value) {
-        setToken1Value(parseFloat(tradeVal?.current?.value))
-      }
-      const priceEst = coinData / 10 ** 8 < parseFloat(tradeVal?.current?.value)
-      if (priceEst) {
+      const priceEst = coinData / 10 ** 8 < parseFloat(tradeVal?.current?.value as string)
+      if (priceEst && !disabledInput) {
         setError('Exceed Balance')
         if (setButtonError) setButtonError('Insufficient Balance')
       } else {
@@ -99,6 +100,8 @@ export default function TradeInput({
           ref={tradeVal}
           onChange={() => {
             checkBalance()
+            if (!disabledInput) {
+            }
           }}
           minLength={1}
           maxLength={79}
@@ -106,7 +109,7 @@ export default function TradeInput({
           type="text"
           // disabled={disabledInput}
           readOnly={disabledInput}
-          value={disabledInput ? (outpuSwapTokenAmount ? outpuSwapTokenAmount : '') : tradeVal?.current?.value}
+          value={disabledInput ? (outpuSwapTokenAmount ? outpuSwapTokenAmount : '') : tradeVal?.current?.value || ''}
         />
         <button
           onClick={changeToken}

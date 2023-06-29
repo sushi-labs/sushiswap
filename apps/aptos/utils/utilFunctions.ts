@@ -1,4 +1,5 @@
 export async function getYTokenPrice(amount_in: number, coinX: string, coinY: string) {
+  console.log('input,', amount_in)
   let outputData
   await fetch(
     `https://fullnode.testnet.aptoslabs.com/v1/accounts/e8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resource/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::TokenPairReserve<${coinX},${coinY}>`
