@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@sushiswap/abi": "workspace:*",
+    "@sushiswap/amm": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/router": "workspace:*",

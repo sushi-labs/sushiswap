@@ -1,5 +1,8 @@
 import { getReservesAbi } from '@sushiswap/abi'
-import { ConstantProductPoolCode } from '@sushiswap/router'
+import { computePairAddress } from '@sushiswap/amm'
+import { Token } from '@sushiswap/currency'
+import { ConstantProductPoolCode, LiquidityProviders, PoolCode } from '@sushiswap/router'
+import { ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 import { Address, decodeEventLog, Log, parseAbiItem, PublicClient } from 'viem'
 
@@ -10,8 +13,9 @@ import { warnLog } from './WarnLog'
 
 export interface Factory {
   address: Address
-  providerName: string
+  provider: LiquidityProviders
   fee: number
+  initCodeHash: string
 }
 
 interface PoolState {
@@ -93,6 +97,52 @@ export class UniV2Extractor {
     const [reserve0, reserve1] = reserves as [bigint, bigint]
     pool.updateReserves(BigNumber.from(reserve0), BigNumber.from(reserve1))
     poolState.isUpdated = true
+  }
+
+  async addPoolsForTokens(tokens: Token[]) {
+    const promises: Promise<ConstantProductPoolCode>[] = []
+    for (let i = 0, promiseIndex = 0; i < tokens.length; ++i) {
+      for (let j = i + 1; j < tokens.length; ++j) {
+        this.factories.forEach((factory) => {
+          const [t0, t1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i], tokens[j]] : [tokens[j], tokens[i]]
+          const addr = computePairAddress({
+            factoryAddress: factory.address,
+            tokenA: t0,
+            tokenB: t1,
+            initCodeHashManualOverride: factory.initCodeHash,
+          }) as Address
+          const poolState = this.poolMap.get(addr.toLowerCase() as Address)
+          if (!poolState) {
+            promises[promiseIndex++] = this.multiCallAggregator
+              .callValue(addr, getReservesAbi, 'getReserves')
+              .then((reserves) => {
+                // TODO: keep a set of unexisted pools
+                const [reserve0, reserve1] = reserves as [bigint, bigint]
+                const pool = new ConstantProductRPool(
+                  addr,
+                  t0 as RToken,
+                  t1 as RToken,
+                  factory.fee,
+                  BigNumber.from(reserve0),
+                  BigNumber.from(reserve1)
+                )
+                const poolState: PoolState = {
+                  poolCode: new ConstantProductPoolCode(pool, factory.provider, factory.provider),
+                  isUpdated: true,
+                }
+                this.poolMap.set(addr.toLowerCase() as Address, poolState)
+                return poolState.poolCode
+              })
+          } else {
+            promises[promiseIndex++] = Promise.resolve(poolState.poolCode)
+          }
+        })
+      }
+    }
+
+    const result = await Promise.allSettled(promises)
+
+    return result.map((r) => (r.status == 'fulfilled' ? r.value : undefined)).filter((r) => r !== undefined)
   }
 
   consoleLog(log: string) {

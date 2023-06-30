@@ -150,14 +150,6 @@ export class UniV3Extractor {
     }
   }
 
-  async startForever(tokens: Token[]) {
-    await this.start()
-    await this.addPoolsForTokens(tokens)
-    await new Promise(() => {
-      // waits forever
-    })
-  }
-
   processLog(l: Log): string {
     try {
       const pool = this.poolMap.get(l.address.toLowerCase() as Address)
