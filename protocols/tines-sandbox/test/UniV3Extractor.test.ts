@@ -33,9 +33,11 @@ const NonfungiblePositionManagerAddress: Address = '0xC36442b4a4522E871399CD717a
 const SwapRouterAddress: Address = '0xE592427A0AEce92De3Edee1F18E0157C05861564'
 const RP3Address: Address = '0x827179dD56d07A7eeA32e3873493835da2866976'
 
-const uniswapFactory: FactoryInfo = {
-  address: UniswapV3FactoryAddress[ChainId.ETHEREUM] as Address,
-  providerName: 'UniswapV3',
+function uniswapFactory(chain: ChainId): FactoryInfo {
+  return {
+    address: UniswapV3FactoryAddress[chain] as Address,
+    providerName: 'UniswapV3',
+  }
 }
 
 export const pancakeswapFactory: FactoryInfo = {
@@ -54,21 +56,21 @@ const pools: PoolInfo[] = [
     token0: DAI[ChainId.ETHEREUM],
     token1: USDC[ChainId.ETHEREUM],
     fee: 100,
-    factory: uniswapFactory,
+    factory: uniswapFactory(ChainId.ETHEREUM),
   },
   {
     address: '0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640',
     token0: USDC[ChainId.ETHEREUM],
     token1: WNATIVE[ChainId.ETHEREUM],
     fee: 500,
-    factory: uniswapFactory,
+    factory: uniswapFactory(ChainId.ETHEREUM),
   },
   {
     address: '0xCBCdF9626bC03E24f779434178A73a0B4bad62eD',
     token0: WBTC[ChainId.ETHEREUM],
     token1: WNATIVE[ChainId.ETHEREUM],
     fee: 3000,
-    factory: uniswapFactory,
+    factory: uniswapFactory(ChainId.ETHEREUM),
   },
 ]
 
@@ -286,7 +288,7 @@ async function makeTest(
   const extractor = new UniV3Extractor(
     client,
     '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
-    [uniswapFactory],
+    [uniswapFactory(ChainId.ETHEREUM)],
     '',
     false
   )
@@ -353,7 +355,7 @@ async function checkHistoricalLogs(env: TestEnvironment, pool: PoolInfo, fromBlo
   const extractor = new UniV3Extractor(
     clientPrimary,
     '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
-    [uniswapFactory],
+    [uniswapFactory(ChainId.ETHEREUM)],
     '',
     false
   )
@@ -479,78 +481,91 @@ describe('UniV3Extractor', () => {
   it('pool #3 historical logs (1953)', async () => {
     await checkHistoricalLogs(env, pools[2], 17390000n, 17450000n)
   })
+})
 
-  it.skip('infinit work test', async () => {
-    const transport = http(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`)
-    const client = createPublicClient({
-      chain: env.chain,
-      transport: transport,
-    })
+async function startInfinitTest(args: {
+  providerURL: string
+  chain: Chain
+  factories: FactoryInfo[]
+  tickLensContract: Address
+  RP3Address: Address
+}) {
+  const transport = http(args.providerURL)
+  const client = createPublicClient({
+    chain: args.chain,
+    transport: transport,
+  })
+  const chainId = client.chain?.id as ChainId
 
-    const extractor = new UniV3Extractor(
-      client,
-      '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
-      [uniswapFactory, kyberswapFactory],
-      './cache'
-    )
-    await extractor.start()
-    extractor.addPoolsForTokens(BASES_TO_CHECK_TRADES_AGAINST[ChainId.ETHEREUM])
+  const extractor = new UniV3Extractor(client, args.tickLensContract, args.factories, './cache')
+  await extractor.start()
+  extractor.addPoolsForTokens(BASES_TO_CHECK_TRADES_AGAINST[chainId])
 
-    const nativeProvider = new NativeWrapProvider(env.client.chain?.id as ChainId, client)
-    const tokens = BASES_TO_CHECK_TRADES_AGAINST[ChainId.ETHEREUM]
-    for (;;) {
-      for (let i = 1; i < tokens.length; ++i) {
-        await delay(1000)
-        const pools = extractor.getPoolCodes()
-        const poolMap = new Map<string, PoolCode>()
-        pools.forEach((p) => poolMap.set(p.pool.address, p))
-        nativeProvider.getCurrentPoolList().forEach((p) => poolMap.set(p.pool.address, p))
-        const fromToken = Native.onChain(ChainId.ETHEREUM),
-          toToken = tokens[i]
-        const route = Router.findBestRoute(
-          poolMap,
-          env.client.chain?.id as ChainId,
-          fromToken,
-          getBigNumber(1e18),
-          toToken,
-          30e9
+  const nativeProvider = new NativeWrapProvider(chainId, client)
+  const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId]
+  for (;;) {
+    for (let i = 1; i < tokens.length; ++i) {
+      await delay(1000)
+      const pools = extractor.getPoolCodes()
+      const poolMap = new Map<string, PoolCode>()
+      pools.forEach((p) => poolMap.set(p.pool.address, p))
+      nativeProvider.getCurrentPoolList().forEach((p) => poolMap.set(p.pool.address, p))
+      const fromToken = Native.onChain(chainId),
+        toToken = tokens[i]
+      const route = Router.findBestRoute(poolMap, chainId, fromToken, getBigNumber(1e18), toToken, 30e9)
+      if (route.status == RouteStatus.NoWay) {
+        console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status}`)
+        continue
+      }
+      const rpParams = Router.routeProcessor2Params(
+        poolMap,
+        route,
+        fromToken,
+        toToken,
+        args.RP3Address,
+        args.RP3Address
+      )
+      if (rpParams === undefined) {
+        console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ROUTE CREATION FAILED !!!`)
+        continue
+      }
+      try {
+        const amountOutReal = await client.readContract({
+          address: RP3Address,
+          abi: routeProcessor2Abi,
+          functionName: 'processRoute',
+          args: [
+            rpParams.tokenIn as Address,
+            BigInt(rpParams.amountIn.toString()),
+            rpParams.tokenOut as Address,
+            0n,
+            rpParams.to as Address,
+            rpParams.routeCode as Address, // !!!!
+          ],
+          value: BigInt(rpParams.value?.toString() as string),
+        })
+        const amountOutExp = BigInt(route.amountOutBN.toString())
+        const diff =
+          amountOutExp == 0n ? amountOutReal - amountOutExp : Number(amountOutReal - amountOutExp) / route.amountOut
+        console.log(
+          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.legs.length - 1} pools` +
+            ` diff = ${diff > 0 ? '+' : ''}${diff}`
         )
-        if (route.status == RouteStatus.NoWay) {
-          console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status}`)
-          continue
-        }
-        const rpParams = Router.routeProcessor2Params(poolMap, route, fromToken, toToken, env.user, RP3Address)
-        if (rpParams === undefined) {
-          console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ROUTE CREATION FAILED !!!`)
-          continue
-        }
-        try {
-          const amountOutReal = await client.readContract({
-            address: RP3Address,
-            abi: routeProcessor2Abi,
-            functionName: 'processRoute',
-            args: [
-              rpParams.tokenIn as Address,
-              BigInt(rpParams.amountIn.toString()),
-              rpParams.tokenOut as Address,
-              0n,
-              rpParams.to as Address,
-              rpParams.routeCode as Address, // !!!!
-            ],
-            value: BigInt(rpParams.value?.toString() as string),
-          })
-          const amountOutExp = BigInt(route.amountOutBN.toString())
-          const diff =
-            amountOutExp == 0n ? amountOutReal - amountOutExp : Number(amountOutReal - amountOutExp) / route.amountOut
-          console.log(
-            `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.legs.length - 1} pools` +
-              ` diff = ${diff > 0 ? '+' : ''}${diff}`
-          )
-          if (Math.abs(Number(diff)) > 0.001) console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
-        } catch (e) {
-          console.log('Routing failed. No connection ?')
-        }
+        if (Math.abs(Number(diff)) > 0.001) console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
+      } catch (e) {
+        console.log('Routing failed. No connection ?')
       }
     }
+  }
+}
+
+it.skip('UniV3 Extractor Ethereum infinit work test', async () => {
+  await startInfinitTest({
+    providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
+    // `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`
+    chain: mainnet,
+    factories: [uniswapFactory(ChainId.ETHEREUM), kyberswapFactory],
+    tickLensContract: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
+    RP3Address,
   })
 })
