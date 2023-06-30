@@ -15,6 +15,7 @@ import { getYTokenPrice } from 'utils/utilFunctions'
 
 import { Network, Provider } from 'aptos'
 import { Token } from 'utils/tokenType'
+import Container from '@sushiswap/ui/future/components/Container'
 
 export default function SwapPage() {
   const { wallet, account, connected, isLoading, connect, wallets, signAndSubmitTransaction } = useWallet()
@@ -111,93 +112,95 @@ export default function SwapPage() {
 
   return (
     <>
-      <div className="flex flex-col gap-4 swap-container">
-        <Drawer.Root>
-          <WidgetTitleV2 />
-          <SwitchAppType />
-          <div>
-            {inverse == false ? (
-              <>
-                <TradeInput
-                  setOpen={setOpen}
-                  tokenName={token0.name}
-                  decimals={token0.decimals}
-                  imgURL={token0.logoURI}
-                  coinData={filteredCoin0?.data?.coin?.value}
-                  isLoadingPrice={isLoadingPrice}
-                  setTokenSelectedNumber={setTokenSelectedNumber}
-                  tokenNumber="0"
-                  setButtonError={setButtonError}
-                  getSwapPrice={getSwapPrice}
-                  setToken1Value={setToken1Value}
-                />
-                <SwapTrade inverse={inverse} setInverse={setInverse} />
-                <TradeInput
-                  setOpen={setOpen}
-                  tokenName={token1.name}
-                  decimals={token1.decimals}
-                  coinData={filteredCoin1?.data?.coin?.value}
-                  imgURL={token1.logoURI}
-                  isLoadingPrice={isLoadingPrice}
-                  setTokenSelectedNumber={setTokenSelectedNumber}
-                  tokenNumber="1"
-                  disabledInput={true}
-                  outpuSwapTokenAmount={swapPerTokenPrice}
-                />
-              </>
-            ) : (
-              <>
-                <TradeInput
-                  setOpen={setOpen}
-                  tokenName={token1.name}
-                  decimals={token1.decimals}
-                  imgURL={token1.logoURI}
-                  coinData={filteredCoin1?.data?.coin?.value}
-                  isLoadingPrice={isLoadingPrice}
-                  setTokenSelectedNumber={setTokenSelectedNumber}
-                  tokenNumber="1"
-                  getSwapPrice={getSwapPrice}
-                  setButtonError={setButtonError}
-                  setToken1Value={setToken1Value}
-                />
-                <SwapTrade inverse={inverse} setInverse={setInverse} />
-                <TradeInput
-                  setOpen={setOpen}
-                  tokenName={token0.name}
-                  decimals={token0.decimals}
-                  coinData={filteredCoin0?.data?.coin?.value}
-                  imgURL={token0.logoURI}
-                  isLoadingPrice={isLoadingPrice}
-                  setTokenSelectedNumber={setTokenSelectedNumber}
-                  tokenNumber="0"
-                  disabledInput={true}
-                  outpuSwapTokenAmount={swapPerTokenPrice}
-                />
-              </>
-            )}
-            <div className="pt-4">
-              {connected ? (
-                <button
-                  className={`btn w-full flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold ${
-                    buttonError ? 'pointer-events-none relative opacity-[0.4] overflow-hidden' : ''
-                  }`}
-                  disabled={buttonError ? true : false}
-                  onClick={() => {
-                    token1Value ? swapToken() : {}
-                  }}
-                >
-                  {buttonError ? buttonError : token1Value ? <>Swap</> : <>Enter Amount</>}
-                </button>
+      <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
+        <div className="flex flex-col gap-4 swap-container">
+          <Drawer.Root>
+            <WidgetTitleV2 />
+            <SwitchAppType />
+            <div>
+              {inverse == false ? (
+                <>
+                  <TradeInput
+                    setOpen={setOpen}
+                    tokenName={token0.name}
+                    decimals={token0.decimals}
+                    imgURL={token0.logoURI}
+                    coinData={filteredCoin0?.data?.coin?.value}
+                    isLoadingPrice={isLoadingPrice}
+                    setTokenSelectedNumber={setTokenSelectedNumber}
+                    tokenNumber="0"
+                    setButtonError={setButtonError}
+                    getSwapPrice={getSwapPrice}
+                    setToken1Value={setToken1Value}
+                  />
+                  <SwapTrade inverse={inverse} setInverse={setInverse} />
+                  <TradeInput
+                    setOpen={setOpen}
+                    tokenName={token1.name}
+                    decimals={token1.decimals}
+                    coinData={filteredCoin1?.data?.coin?.value}
+                    imgURL={token1.logoURI}
+                    isLoadingPrice={isLoadingPrice}
+                    setTokenSelectedNumber={setTokenSelectedNumber}
+                    tokenNumber="1"
+                    disabledInput={true}
+                    outpuSwapTokenAmount={swapPerTokenPrice}
+                  />
+                </>
               ) : (
-                <WalletSelector />
+                <>
+                  <TradeInput
+                    setOpen={setOpen}
+                    tokenName={token1.name}
+                    decimals={token1.decimals}
+                    imgURL={token1.logoURI}
+                    coinData={filteredCoin1?.data?.coin?.value}
+                    isLoadingPrice={isLoadingPrice}
+                    setTokenSelectedNumber={setTokenSelectedNumber}
+                    tokenNumber="1"
+                    getSwapPrice={getSwapPrice}
+                    setButtonError={setButtonError}
+                    setToken1Value={setToken1Value}
+                  />
+                  <SwapTrade inverse={inverse} setInverse={setInverse} />
+                  <TradeInput
+                    setOpen={setOpen}
+                    tokenName={token0.name}
+                    decimals={token0.decimals}
+                    coinData={filteredCoin0?.data?.coin?.value}
+                    imgURL={token0.logoURI}
+                    isLoadingPrice={isLoadingPrice}
+                    setTokenSelectedNumber={setTokenSelectedNumber}
+                    tokenNumber="0"
+                    disabledInput={true}
+                    outpuSwapTokenAmount={swapPerTokenPrice}
+                  />
+                </>
               )}
+              <div className="pt-4">
+                {connected ? (
+                  <button
+                    className={`btn w-full flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold ${
+                      buttonError ? 'pointer-events-none relative opacity-[0.4] overflow-hidden' : ''
+                    }`}
+                    disabled={buttonError ? true : false}
+                    onClick={() => {
+                      token1Value ? swapToken() : {}
+                    }}
+                  >
+                    {buttonError ? buttonError : token1Value ? <>Swap</> : <>Enter Amount</>}
+                  </button>
+                ) : (
+                  <WalletSelector />
+                )}
+              </div>
+              {/* <ThunderCoreBanner /> */}
             </div>
-            {/* <ThunderCoreBanner /> */}
-          </div>
-        </Drawer.Root>
-        {/*spacer for fixed positioned swap button */}
-      </div>
-      <div className="h-[68px] w-full" />
+          </Drawer.Root>
+          {/*spacer for fixed positioned swap button */}
+        </div>
+        <div className="h-[68px] w-full" />
+      </Container>
       <TokenListDialog
         open={open}
         setOpen={setOpen}

@@ -29,9 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="h-screen">
         <Providers>
           <Header />
-          <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
-            {children}
-          </Container>
+          {children}
         </Providers>
       </body>
     </html>
