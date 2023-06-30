@@ -3,7 +3,7 @@ import '../index.css'
 import '../variables.css'
 
 import { Cloudinary } from '@cloudinary/url-gen'
-import { App, ThemeProvider } from '@sushiswap/ui'
+import { ThemeProvider } from '@sushiswap/ui/ThemeProvider'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
 import { useRouter } from 'next/router'
@@ -13,6 +13,7 @@ import { DefaultSeo, Header } from '../common/components'
 import { getGlobalSEO } from '../lib/api'
 import { Global } from '.mesh'
 import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
+import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
 
 export const cld = new Cloudinary({
   cloud: {
@@ -43,14 +44,12 @@ const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
   return (
     <>
       <ThemeProvider>
-        <App.Shell>
-          <DefaultSeo seo={seo} />
-          <div className="dark">
-            <Header />
-            <Component {...pageProps} seo={seo} />
-            <App.Footer />
-          </div>
-        </App.Shell>
+        <DefaultSeo seo={seo} />
+        <div className="dark">
+          <Header />
+          <Component {...pageProps} seo={seo} />
+          <GlobalFooter />
+        </div>
       </ThemeProvider>
       <GoogleAnalytics />
       <HotJar />

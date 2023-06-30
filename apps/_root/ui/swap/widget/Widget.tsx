@@ -1,21 +1,16 @@
-import { Widget as UIWidget } from '@sushiswap/ui/future/components/widget'
+import { WidgetContent } from '@sushiswap/ui/components/widget'
 import React, { FC } from 'react'
 import { SwitchAppType } from './SwitchAppType'
 import { SwitchTokensButton } from './SwitchTokensButton'
 import { SwapCurrencyInput } from './SwapCurrencyInput'
 import { SwapCurrencyOutput } from './SwapCurrencyOutput'
 import { WidgetTitleV2 } from './WidgetTitleV2'
-// import { CrossChainBanner } from './CrossChainBanner'
 import { SwapButton } from './SwapButton'
-// import { useSwapState } from '../trade/TradeProvider'
-// import { AppType } from '@sushiswap/ui'
-// import { SwapButtonCrossChain } from './SwapButtonCrossChain'
-import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
+import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/components/settings'
 import { CrossChainBanner } from './CrossChainBanner'
 import { SwapButtonCrossChain } from './SwapButtonCrossChain'
 import { AppType } from '@sushiswap/ui'
 import { useSwapState } from '../trade/TradeProvider'
-import { Banner } from '@sushiswap/ui/future/components/banner/Banner'
 
 export const Widget: FC = () => {
   const { appType } = useSwapState()
@@ -24,23 +19,15 @@ export const Widget: FC = () => {
       <WidgetTitleV2 />
       <div className="flex items-center justify-between">
         <SwitchAppType />
-        <SettingsOverlay
-          modules={[
-            SettingsModule.SlippageTolerance,
-            SettingsModule.CarbonOffset,
-            // SettingsModule.RoutingApi
-          ]}
-        />
+        <SettingsOverlay modules={[SettingsModule.SlippageTolerance, SettingsModule.CarbonOffset]} />
       </div>
-      <UIWidget.Content>
+      <WidgetContent>
         <CrossChainBanner />
         <SwapCurrencyInput />
         <SwitchTokensButton />
         <SwapCurrencyOutput />
-        {/* <SwapButton /> */}
         {appType === AppType.Swap ? <SwapButton /> : <SwapButtonCrossChain />}
-        <Banner />
-      </UIWidget.Content>
+      </WidgetContent>
     </div>
   )
 }

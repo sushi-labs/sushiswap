@@ -3,7 +3,7 @@ import '../index.css'
 import '../variables.css'
 
 import { Cloudinary } from '@cloudinary/url-gen'
-import { App, ThemeProvider } from '@sushiswap/ui'
+import { ThemeProvider } from '@sushiswap/ui'
 import { Analytics } from '@vercel/analytics/react'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
@@ -11,6 +11,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { DefaultSeo } from 'next-seo'
 import { useEffect } from 'react'
+import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
 
 import { Header } from '../components'
 import SEO from '../next-seo.config'
@@ -55,12 +56,10 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         <link rel="shortcut icon" href="/favicon.ico?v=1" />
       </Head>
       <ThemeProvider>
-        <App.Shell>
-          <DefaultSeo {...SEO} />
-          <Header />
-          <Component {...pageProps} />
-          <App.Footer />
-        </App.Shell>
+        <DefaultSeo {...SEO} />
+        <Header />
+        <Component {...pageProps} />
+        <GlobalFooter />
       </ThemeProvider>
       <GoogleAnalytics />
       <HotJar />

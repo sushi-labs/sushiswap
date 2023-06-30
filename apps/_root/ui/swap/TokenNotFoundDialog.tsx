@@ -1,17 +1,17 @@
 import React, { useCallback, useMemo } from 'react'
-import { Dialog } from '@sushiswap/ui/future/components/dialog'
+import { Dialog } from '@sushiswap/ui/components/dialog'
 import { useSwapActions, useSwapState } from './trade/TradeProvider'
 import { useSearchParams } from 'next/navigation'
 import { defaultQuoteCurrency, Native, Token } from '@sushiswap/currency'
-import { List } from '@sushiswap/ui/future/components/list/List'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { List } from '@sushiswap/ui/components/list/List'
+import { Button } from '@sushiswap/ui/components/button'
 import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { queryParamsSchema } from '../../lib/swap/queryParamsSchema'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import { useTokenSecurity } from '@sushiswap/react-query'
-import { DangerousIcon, GoPlusLabsIcon } from '@sushiswap/ui/icons'
+import { DangerousIcon, GoPlusLabsIcon } from '@sushiswap/ui/components/icons'
 import { Link } from '@sushiswap/ui'
 
 export const TokenNotFoundDialog = () => {
@@ -164,7 +164,7 @@ export const TokenNotFoundDialog = () => {
                 </List.Control>
               </List>
             )}
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-3 mt-4">
               {tokenSecurity?.isSupported && (
                 <div className="flex items-center gap-0.5 justify-center">
                   <span className="text-xs text-gray-700 dark:text-slate-400">
@@ -178,7 +178,7 @@ export const TokenNotFoundDialog = () => {
                   I understand
                 </Button>
               ) : (
-                <Button size="xl" variant="outlined" onClick={reset}>
+                <Button size="xl" onClick={reset}>
                   Close
                 </Button>
               )}
@@ -252,7 +252,7 @@ export const TokenNotFoundDialog = () => {
                 </List.Control>
               </List>
             )}
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-3 mt-4">
               {tokenSecurity.isSupported && (
                 <div className="flex items-center gap-0.5 justify-center">
                   <span className="text-xs text-gray-700 dark:text-slate-400">

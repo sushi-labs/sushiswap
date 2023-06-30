@@ -1,33 +1,32 @@
-import { classNames, NetworkIcon, ProgressColor } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { FC, useMemo } from 'react'
 import { CancelModal, FuroTimer, Layout, TransferModal } from '../../components'
 import { createScheduleRepresentation, NextPaymentTimer, WithdrawModal } from '../../components/vesting'
-import { SplashController } from '@sushiswap/ui/future/components/SplashController'
+import { SplashController } from '@sushiswap/ui/components/SplashController'
 import Link from 'next/link'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon, CheckCircleIcon } from '@heroicons/react/solid'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
-import { List } from '@sushiswap/ui/future/components/list/List'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { SkeletonBox, SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { NetworkIcon, SushiIcon } from '@sushiswap/ui/components/icons'
+
+import { List } from '@sushiswap/ui/components/list/List'
+import { Badge } from '@sushiswap/ui/components/Badge'
+import { Currency } from '@sushiswap/ui/components/currency'
 import { formatNumber, shortenAddress } from '@sushiswap/format'
-import { SushiIcon } from '@sushiswap/ui/future/components/icons'
-import { Blink } from '@sushiswap/ui/future/components/Blink'
+import { Blink } from '@sushiswap/ui/components/Blink'
 import { format } from 'date-fns'
-import { useEnsName } from '@sushiswap/wagmi'
-import { Address } from '@sushiswap/wagmi'
+import { Address, getFuroVestingContractConfig, useEnsName } from '@sushiswap/wagmi'
 import { ChainId } from '@sushiswap/chain'
-import { getFuroVestingContractConfig } from '@sushiswap/wagmi'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { DownloadIcon, XIcon } from '@heroicons/react/outline'
+import { Button } from '@sushiswap/ui/components/button'
+import { DownloadIcon, TrashIcon } from '@heroicons/react/outline'
 import { FuroStatus, useVesting, useVestingBalance, useVestingTransactions } from '../../lib'
 import { queryParamsSchema } from '../../lib/zod'
-import { Carousel } from '@sushiswap/ui/future/components/Carousel'
-import ProgressBar from '@sushiswap/ui/progressbar/ProgressBar'
+import { Carousel } from '@sushiswap/ui/components/Carousel'
 import { Timer } from '../../components/Timer'
-import Container from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/components/container'
+import { Progress } from '@sushiswap/ui/components/progress'
 
 const VestingPage = () => {
   const { isReady } = useRouter()
@@ -104,38 +103,31 @@ const _VestingPage: FC = () => {
               }}
               shallow={true}
             >
-              <IconButton
-                icon={ArrowLeftIcon}
-                iconProps={{
-                  width: 24,
-                  height: 24,
-                  transparent: true,
-                }}
-              />
+              <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
               <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
                 Go back to dashboard
               </span>
             </Link>
             <div className="flex gap-6 h-[52px]">
               <div className="inline-flex">
-                <Skeleton.Circle radius={48} />
+                <SkeletonCircle radius={48} />
               </div>
               <div className="flex flex-col flex-grow">
-                <Skeleton.Text fontSize="text-xl" className="w-[120px]" />
-                <Skeleton.Text fontSize="text-base" className="w-[240px]" />
+                <SkeletonText fontSize="xl" className="w-[120px]" />
+                <SkeletonText className="w-[240px]" />
               </div>
             </div>
             <div>
               <div className="flex gap-2 mt-3">
-                <Skeleton.Box className="w-[132px] h-[38px]" />
-                <Skeleton.Box className="w-[122px] h-[38px]" />
+                <SkeletonBox className="w-[132px] h-[38px]" />
+                <SkeletonBox className="w-[122px] h-[38px]" />
               </div>
             </div>
           </div>
           <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
           <div className="flex flex-col md:grid md:grid-cols-[460px_372px] justify-center gap-8 md:gap-y-6">
             <div className="flex justify-center">
-              <Skeleton.Box className="w-[460px] h-[290px]" />
+              <SkeletonBox className="w-full lg:w-[460px] h-fit aspect-[460/290]" />
             </div>
             <div className="min-w-fit">
               <div className="flex flex-col justify-center flex-grow gap-5">
@@ -183,14 +175,7 @@ const _VestingPage: FC = () => {
               }}
               shallow={true}
             >
-              <IconButton
-                icon={ArrowLeftIcon}
-                iconProps={{
-                  width: 24,
-                  height: 24,
-                  transparent: true,
-                }}
-              />
+              <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
               <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
                 Go back to dashboard
               </span>
@@ -220,9 +205,9 @@ const _VestingPage: FC = () => {
                   <Button
                     disabled={disabled}
                     onClick={() => setOpen(true)}
-                    startIcon={<DownloadIcon width={18} height={18} />}
+                    icon={DownloadIcon}
                     testId="vest-withdraw"
-                    variant="outlined"
+                    variant="secondary"
                   >
                     Withdraw
                   </Button>
@@ -237,8 +222,8 @@ const _VestingPage: FC = () => {
                 {({ setOpen }) => (
                   <Button
                     onClick={() => setOpen(true)}
-                    startIcon={<ArrowRightIcon width={18} height={18} />}
-                    variant="outlined"
+                    icon={ArrowRightIcon}
+                    variant="secondary"
                     testId="vest-transfer"
                   >
                     Transfer
@@ -254,13 +239,7 @@ const _VestingPage: FC = () => {
                 chainId={chainId}
               >
                 {({ setOpen }) => (
-                  <Button
-                    color="red"
-                    onClick={() => setOpen(true)}
-                    startIcon={<XIcon width={18} height={18} />}
-                    variant="outlined"
-                    testId="vest-cancel"
-                  >
+                  <Button variant="destructive" onClick={() => setOpen(true)} icon={TrashIcon} testId="vest-cancel">
                     Cancel
                   </Button>
                 )}
@@ -332,11 +311,7 @@ const _VestingPage: FC = () => {
                         <CheckCircleIcon className="text-green" width={24} height={24} />
                       </div>
                     )}
-                    <ProgressBar
-                      className="h-6"
-                      progress={progress}
-                      color={progress === 1 ? ProgressColor.GREEN : ProgressColor.BLUE}
-                    />
+                    <Progress value={progress * 100} />
                   </div>
                 </div>
               )
@@ -347,7 +322,7 @@ const _VestingPage: FC = () => {
         <Container maxWidth="4xl" className="h-full px-4 pb-4 mb-4 lg:mt-4 lg:mx-auto lg:mb-40">
           <div className="flex flex-col lg:grid lg:grid-cols-[460px_372px] justify-center gap-8 lg:gap-y-6">
             <div className="flex justify-center">
-              <div className="shadow-lg relative w-[460px] h-[290px] bg-gradient-to-tr from-green to-blue flex flex-col bg-slate-800 p-4 rounded-2xl">
+              <div className="shadow-lg relative w-full lg:w-[460px] h-fit aspect-[460/290] bg-gradient-to-tr from-green to-blue flex flex-col bg-slate-800 p-4 rounded-2xl">
                 <span className="flex items-center justify-start gap-2">
                   <div className="flex flex-col">
                     <span className="font-medium text-white">{vesting?.totalAmount.currency.symbol}</span>

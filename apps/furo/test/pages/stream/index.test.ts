@@ -1,4 +1,4 @@
-import { Page, expect, test } from '@playwright/test'
+import { expect, Page, test } from '@playwright/test'
 import { Token, USDC_ADDRESS } from '@sushiswap/currency'
 import { addWeeks, getUnixTime, subWeeks } from 'date-fns'
 import {
@@ -61,12 +61,12 @@ async function updateStream(page: Page, streamId: string) {
 
   await page.locator('[testdata-id=furo-stream-top-up]').fill('0.0001')
 
-  const approveBentoboxLocator = page.locator('[testdata-id=furo-update-stream-approve-bentobox]')
+  const approveBentoboxLocator = page.locator('[testdata-id=furo-update-stream-approve-bentobox-button]')
   await expect(approveBentoboxLocator).toBeVisible()
   await expect(approveBentoboxLocator).toBeEnabled()
   await approveBentoboxLocator.click()
 
-  const approveLocator = page.locator('[testdata-id=approve-erc20-update-stream]')
+  const approveLocator = page.locator('[testdata-id=approve-erc20-update-stream-button]')
   await expect(approveLocator).toBeVisible()
   await expect(amountSwitchLocator).toBeEnabled()
   await approveLocator.click()

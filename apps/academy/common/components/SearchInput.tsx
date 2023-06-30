@@ -1,11 +1,12 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { useBreakpoint } from '@sushiswap/hooks'
-import { classNames, IconButton } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { getTrendingSearch } from 'lib/api'
 import { ChangeEvent, FC, FormEvent, RefObject, useLayoutEffect, useState } from 'react'
 import useSWR from 'swr'
 
 import { APP_HEADER_HEIGHT } from '../helpers'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 
 interface SearchInput {
   handleSearch: (value: string) => void
@@ -72,7 +73,7 @@ export const SearchInput: FC<SearchInput> = ({ ref, handleSearch, isTopOfPage, s
         <form
           onSubmit={onSubmit}
           className={classNames(
-            'flex max-w-[870px] w-full mx-auto h-full rounded-full pr-1.5 py-1.5 items-center transition ease-in-out duration-300',
+            'flex max-w-[870px] w-full mx-auto h-full rounded-full pr-3.5 py-1.5 items-center transition ease-in-out duration-300',
             isMobileAndSticky ? 'bg-slate-900' : 'bg-slate-800 pl-6'
           )}
         >
@@ -91,13 +92,14 @@ export const SearchInput: FC<SearchInput> = ({ ref, handleSearch, isTopOfPage, s
             type="submit"
             className={classNames(
               'sm:bg-[#3B7EF6] rounded-full',
-              isMobileAndSticky ? 'sm:order-2 order-1' : 'order-2 ml-2 p-2.5 sm:p-[14px]'
+              isMobileAndSticky ? 'sm:order-2 order-1' : 'order-2 ml-2 p-2.5'
             )}
-          >
-            <MagnifyingGlassIcon
-              className={isMobileAndSticky ? 'w-5 h-5 fill-slate-500' : 'w-6 h-6 fill-[#3B7EF6] sm:fill-white'}
-            />
-          </IconButton>
+            icon={MagnifyingGlassIcon}
+            iconProps={{
+              className: isMobileAndSticky ? 'fill-slate-500' : 'fill-[#3B7EF6] sm:fill-white',
+            }}
+            name="Search"
+          />
         </form>
       </div>
       {showTopics && (

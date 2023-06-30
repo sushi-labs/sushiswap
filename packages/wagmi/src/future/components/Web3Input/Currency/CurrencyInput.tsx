@@ -2,16 +2,18 @@ import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { ChainId } from '@sushiswap/chain'
 import { Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui'
-import { Currency } from '@sushiswap/ui/future/components/currency'
-import { Input } from '@sushiswap/ui/future/components/input'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { Input } from '@sushiswap/ui/components/input'
+import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
+
 import { FC, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useAccount } from 'wagmi'
 
 import { TokenSelector } from '../../TokenSelector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
-import { useBalanceWeb3, useUSDCPrice } from '../../../hooks'
+import { usePrice } from '@sushiswap/react-query'
+import { useBalanceWeb3 } from '../../../hooks'
 import dynamic from 'next/dynamic'
 
 export interface CurrencyInputProps {
@@ -62,9 +64,9 @@ export const Component: FC<CurrencyInputProps> = ({
     currency,
   })
 
-  const { data: price, isInitialLoading: isPriceLoading } = useUSDCPrice({
+  const { data: price, isInitialLoading: isPriceLoading } = usePrice({
     chainId: currency?.chainId,
-    currency
+    address: currency?.wrapped?.address,
   })
 
   const _value = useMemo(() => tryParseAmount(value, currency), [value, currency])
@@ -97,7 +99,7 @@ export const Component: FC<CurrencyInputProps> = ({
       <div className="relative flex items-center gap-4">
         {isLoading ? (
           <div className="flex gap-1 items-center justify-between flex-grow h-[44px]">
-            <Skeleton.Box className="w-1/2 h-[32px] rounded-lg" />
+            <SkeletonBox className="w-1/2 h-[32px] rounded-lg" />
           </div>
         ) : (
           <Input.Numeric
@@ -134,7 +136,7 @@ export const Component: FC<CurrencyInputProps> = ({
                   e.stopPropagation()
                 }}
                 className={classNames(
-                  'flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12] whitespace-nowrap'
+                  'flex items-center gap-1.5 text-xl py-1.5 pl-[6px] pr-3 rounded-full font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12] whitespace-nowrap'
                 )}
               >
                 {currency ? (
@@ -143,7 +145,7 @@ export const Component: FC<CurrencyInputProps> = ({
                       <Currency.Icon disableLink currency={currency} width={28} height={28} />
                     </div>
                     {currency.symbol}
-                    <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />
+                    <ChevronDownIcon className="ml-0.5" strokeWidth={3} width={16} height={16} />
                   </>
                 ) : (
                   'Select'

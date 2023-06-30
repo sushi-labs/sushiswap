@@ -5,15 +5,16 @@ import { nanoid } from 'nanoid'
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { Dropzone, NetworkIcon } from '@sushiswap/ui'
 import { Address, fetchToken, FetchTokenResult } from '@sushiswap/wagmi'
 import { FC, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import dynamic from 'next/dynamic'
 import { CreateMultipleStreamFormSchemaType, CreateStreamFormSchemaType } from '../schema'
-import { FormSection } from '@sushiswap/ui/future/components/form'
+import { FormSection } from '@sushiswap/ui/components/form'
+import { Dropzone } from '@sushiswap/ui/components/dropzone'
 
 interface ImportZoneSection {
   chainId: ChainId
@@ -49,7 +50,7 @@ const Component: FC<ImportZoneSection> = ({ chainId }) => {
 
             const rows: CreateStreamFormSchemaType[] = []
             const tokens = await Promise.all(
-              arr.reduce<Promise<void | FetchTokenResult>[]>((acc, cur, index) => {
+              arr.reduce<Promise<void | FetchTokenResult>[]>((acc, cur) => {
                 if (cur !== '') {
                   const [tokenAddress] = cur.split(',') as [Address]
                   if (tokenAddress !== AddressZero) {
@@ -143,12 +144,7 @@ const Component: FC<ImportZoneSection> = ({ chainId }) => {
             your data is formatted correctly.
           </span>
           <div>
-            <Button
-              size="lg"
-              type="button"
-              onClick={downloadExample}
-              startIcon={<DownloadIcon width={20} height={20} />}
-            >
+            <Button size="lg" type="button" onClick={downloadExample} icon={DownloadIcon}>
               Example
             </Button>
           </div>

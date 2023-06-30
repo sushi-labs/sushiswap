@@ -1,21 +1,21 @@
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, Fragment, useMemo, useState } from 'react'
 import { Layout } from '../../../components'
 import Link from 'next/link'
 import { ArrowLeftIcon, MinusIcon, PlusIcon } from '@heroicons/react/solid'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
-import { SplashController } from '@sushiswap/ui/future/components/SplashController'
+import { SplashController } from '@sushiswap/ui/components/SplashController'
 import {
   useConcentratedLiquidityPositionsFromTokenId,
   useConcentratedPositionInfo,
   useConcentratedPositionOwner,
   useTokenWithCache,
 } from '@sushiswap/wagmi/future/hooks'
-import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
-import { Currency } from '@sushiswap/ui/future/components/currency'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { useAngleRewards, useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { classNames } from '@sushiswap/ui'
-import { List } from '@sushiswap/ui/future/components/list/List'
+import { List } from '@sushiswap/ui/components/list/List'
 import { Amount } from '@sushiswap/currency'
 import { usePriceInverter } from '../../../lib/hooks'
 import { formatTickPrice, getPriceOrderingFromPositionForUI, unwrapToken } from '../../../lib/functions'
@@ -25,23 +25,23 @@ import {
   ConcentratedLiquidityProvider,
   useConcentratedDerivedMintInfo,
 } from '../../../components/ConcentratedLiquidityProvider'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { RadioGroup } from '@headlessui/react'
 import { ConcentratedLiquidityRemoveWidget } from '../../../components/ConcentratedLiquidityRemoveWidget'
 import { JSBI } from '@sushiswap/math'
 import { ConcentratedLiquidityCollectButton } from '../../../components/ConcentratedLiquidityCollectButton'
 import { Bound } from '../../../lib/constants'
-import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
+import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/components/settings'
 import { CogIcon } from '@heroicons/react/outline'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { PoolHeader } from '../../../components/future/PoolHeader'
 import { isSushiSwapV3ChainId, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import useIsTickAtLimit from '../../../lib/hooks/useIsTickAtLimit'
-import { useAngleRewards } from '@sushiswap/react-query'
 import { ConcentratedLiquidityHarvestButton } from '../../../components/ConcentratedLiquidityHarvestButton'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { ChainId } from '@sushiswap/chain'
-import { Explainer } from '@sushiswap/ui/future/components/Explainer'
+import { Explainer } from '@sushiswap/ui/components/explainer'
+import { Toggle } from '@sushiswap/ui/components/toggle'
 
 const PositionPage = () => {
   const { query } = useRouter()
@@ -167,14 +167,7 @@ const Position: FC = () => {
           href={`/${chainId}:${positionDetails?.address}`}
           shallow={true}
         >
-          <IconButton
-            icon={ArrowLeftIcon}
-            iconProps={{
-              width: 24,
-              height: 24,
-              transparent: true,
-            }}
-          />
+          <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
           <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">Go back to pool</span>
         </Link>
         <PoolHeader
@@ -197,19 +190,20 @@ const Position: FC = () => {
           <RadioGroup.Option
             value={SelectedTab.IncreaseLiq}
             as={Button}
-            startIcon={<PlusIcon width={18} height={18} />}
-            variant="outlined"
+            icon={PlusIcon}
+            variant="secondary"
             color={tab === SelectedTab.IncreaseLiq ? 'blue' : 'default'}
+            testId="increase-liquidity"
           >
             Increase Liquidity
           </RadioGroup.Option>{' '}
           <RadioGroup.Option
             value={SelectedTab.DecreaseLiq}
             as={Button}
-            startIcon={<MinusIcon width={18} height={18} />}
-            variant="outlined"
+            icon={MinusIcon}
+            variant="secondary"
             color={tab === SelectedTab.DecreaseLiq ? 'blue' : 'default'}
-            testdata-id="decrease-liquidity-button"
+            testId="decrease-liquidity"
           >
             Decrease Liquidity
           </RadioGroup.Option>
@@ -225,7 +219,7 @@ const Position: FC = () => {
               modules={[SettingsModule.SlippageTolerance]}
             >
               {({ setOpen }) => (
-                <Button variant="outlined" color="default" onClick={() => setOpen(true)}>
+                <Button variant="secondary" onClick={() => setOpen(true)}>
                   <CogIcon width={24} height={24} />
                 </Button>
               )}
@@ -271,7 +265,7 @@ const Position: FC = () => {
                 <div className="flex flex-col">
                   <List.Label className="flex gap-1">
                     Unclaimed rewards{' '}
-                    <Explainer hover iconSize={16} placement="bottom" width={320}>
+                    <Explainer>
                       <List className="!pt-0 ">
                         <List.Label>Accumulated rewards since inception</List.Label>
                         <List.Control>
@@ -309,15 +303,9 @@ const Position: FC = () => {
                 </div>
                 <ConcentratedLiquidityHarvestButton account={address} chainId={chainId}>
                   {({ write, isLoading }) => (
-                    <Checker.Connect size="xs" variant="empty" className="!h-[24px] font-bold">
-                      <Checker.Network size="xs" variant="empty" className="!h-[24px] font-bold" chainId={chainId}>
-                        <Button
-                          disabled={isLoading}
-                          onClick={() => write?.()}
-                          size="xs"
-                          variant="empty"
-                          className="!h-[24px] font-bold"
-                        >
+                    <Checker.Connect size="xs" variant="link">
+                      <Checker.Network size="xs" variant="link" chainId={chainId}>
+                        <Button disabled={isLoading} onClick={() => write?.()} size="xs" variant="link">
                           Harvest
                         </Button>
                       </Checker.Network>
@@ -369,15 +357,9 @@ const Position: FC = () => {
                 chainId={chainId}
               >
                 {({ sendTransaction, isLoading }) => (
-                  <Checker.Connect size="xs" variant="empty" className="!h-[24px] font-bold">
-                    <Checker.Network size="xs" variant="empty" className="!h-[24px] font-bold" chainId={chainId}>
-                      <Button
-                        disabled={isLoading}
-                        onClick={() => sendTransaction?.()}
-                        size="xs"
-                        variant="empty"
-                        className="!h-[24px] font-bold"
-                      >
+                  <Checker.Connect fullWidth={false} size="xs" variant="link">
+                    <Checker.Network fullWidth={false} size="xs" variant="link" chainId={chainId}>
+                      <Button disabled={isLoading} onClick={() => sendTransaction?.()} size="xs" variant="link">
                         Collect
                       </Button>
                     </Checker.Network>
@@ -416,26 +398,20 @@ const Position: FC = () => {
             <div className="flex items-center justify-between">
               <List.Label>Price Range</List.Label>
               {_token0 && _token1 && (
-                <RadioGroup value={invert} onChange={setInvert} className="flex">
-                  <RadioGroup.Option
-                    value={false}
-                    as={Button}
-                    size="xs"
-                    color={invert ? 'default' : 'blue'}
-                    variant="empty"
-                    className="!h-[24px] font-bold"
-                  >
-                    {_token0.symbol}
+                <RadioGroup value={invert} onChange={setInvert} className="flex gap-1">
+                  <RadioGroup.Option as={Fragment} value={true}>
+                    {({ checked }) => (
+                      <Toggle size="xs" pressed={checked}>
+                        {_token0.symbol}
+                      </Toggle>
+                    )}
                   </RadioGroup.Option>
-                  <RadioGroup.Option
-                    value={true}
-                    as={Button}
-                    color={invert ? 'blue' : 'default'}
-                    size="xs"
-                    variant="empty"
-                    className="!h-[24px] font-bold"
-                  >
-                    {_token1.symbol}
+                  <RadioGroup.Option as={Fragment} value={false}>
+                    {({ checked }) => (
+                      <Toggle size="xs" pressed={checked}>
+                        {_token1.symbol}
+                      </Toggle>
+                    )}
                   </RadioGroup.Option>
                 </RadioGroup>
               )}
@@ -467,7 +443,7 @@ const Position: FC = () => {
                     </b>
                   </span>
                 ) : (
-                  <Skeleton.Text fontSize="text-sm" />
+                  <SkeletonText fontSize="sm" />
                 )}
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -486,7 +462,7 @@ const Position: FC = () => {
                         {unwrapToken(currencyQuote)?.symbol}
                       </span>
                     ) : (
-                      <Skeleton.Text />
+                      <SkeletonText />
                     )}
                   </div>
                   {currencyBase && (
@@ -510,7 +486,7 @@ const Position: FC = () => {
                         {unwrapToken(currencyQuote).symbol}
                       </span>
                     ) : (
-                      <Skeleton.Text />
+                      <SkeletonText />
                     )}
                   </div>
                   {currencyQuote && (

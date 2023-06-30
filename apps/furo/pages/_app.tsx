@@ -1,6 +1,6 @@
 import '@sushiswap/ui/index.css'
 
-import { App, ThemeProvider } from '@sushiswap/ui'
+import { ThemeProvider } from '@sushiswap/ui'
 import { client, WagmiConfig } from '@sushiswap/wagmi'
 import { Analytics } from '@vercel/analytics/react'
 import type { AppProps } from 'next/app'
@@ -15,6 +15,7 @@ import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
 import { queryClient } from '@sushiswap/react-query'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
+import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
 
 declare global {
   interface Window {
@@ -57,7 +58,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
               <DefaultSeo {...SEO} />
               <Header />
               <Component {...pageProps} />
-              <App.Footer />
+              <GlobalFooter />
             </Onramper.Provider>
           </ThemeProvider>
         </QueryClientProvider>

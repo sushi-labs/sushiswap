@@ -9,7 +9,7 @@ import { Chart } from './Chart'
 import { useDensityChartData } from './hooks'
 import { ZoomLevels } from './types'
 import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 
 const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {
   [FeeAmount.LOWEST]: {
@@ -153,7 +153,7 @@ export default function LiquidityChartRangeInput({
           icon={<InboxIcon width={16} stroke="currentColor" className="text-slate-200" />}
         />
       ) : isLoading ? (
-        <InfoBox icon={<Skeleton.Box className="w-full h-full" />} />
+        <InfoBox icon={<SkeletonBox className="w-full h-full" />} />
       ) : error ? (
         <InfoBox
           message="Liquidity data not available."

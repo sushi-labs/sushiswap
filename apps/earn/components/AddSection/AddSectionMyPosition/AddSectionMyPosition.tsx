@@ -1,7 +1,8 @@
 import { formatPercent } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
-import { classNames, Currency as UICurrency, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import React, { FC } from 'react'
+import { Currency as UICurrency } from '@sushiswap/ui/components/currency'
 
 import { incentiveRewardToToken } from '../../../lib/functions'
 import { AddSectionMyPositionStaked } from './AddSectionMyPositionStaked'
@@ -13,30 +14,22 @@ export const AddSectionMyPosition: FC<{ pool: Pool }> = ({ pool }) => {
     <div className="flex flex-col bg-white dark:bg-opacity-[0.04] rounded-2xl">
       <div className="flex flex-col gap-4 p-5">
         <div className="grid items-center grid-cols-2 gap-2">
-          <Typography variant="xs" weight={500} className="text-gray-700 dark:text-slate-300">
-            Total APR:
-          </Typography>
-          <Typography variant="xs" weight={500} className="text-right text-gray-700 dark:text-slate-300">
+          <p className="text-xs font-medium text-gray-700 dark:text-slate-300">Total APR:</p>
+          <p className="text-xs font-medium text-right text-gray-700 dark:text-slate-300">
             {formatPercent(pool.feeApr1d + pool.incentiveApr)}
-          </Typography>
+          </p>
           {pool.incentives && (
             <>
-              <Typography variant="xs" weight={500} className="text-gray-700 dark:text-slate-300">
-                Fee APR:
-              </Typography>
-              <Typography variant="xs" weight={500} className="text-right text-gray-700 dark:text-slate-300">
+              <p className="text-xs font-medium text-gray-700 dark:text-slate-300">Fee APR:</p>
+              <p className="text-xs font-medium text-right text-gray-700 dark:text-slate-300">
                 {formatPercent(pool.feeApr1d)}
-              </Typography>
-              <Typography variant="xs" weight={500} className="text-gray-700 dark:text-slate-300">
-                Reward APR:
-              </Typography>
-              <Typography variant="xs" weight={500} className="text-right text-gray-700 dark:text-slate-300">
+              </p>
+              <p className="text-xs font-medium text-gray-700 dark:text-slate-300">Reward APR:</p>
+              <p className="text-xs font-medium text-right text-gray-700 dark:text-slate-300">
                 {/* Reward APR */}
                 {formatPercent(pool.incentiveApr)}
-              </Typography>
-              <Typography variant="xs" weight={500} className="text-gray-700 dark:text-slate-300">
-                Farming Rewards:
-              </Typography>
+              </p>
+              <p className="text-xs font-medium text-gray-700 dark:text-slate-300">Farming Rewards:</p>
               <div className={classNames(pool.incentives?.length === 2 ? '-mr-2' : '', 'flex justify-end ')}>
                 <UICurrency.IconList iconWidth={16} iconHeight={16}>
                   {pool.incentives?.map((incentive) => (

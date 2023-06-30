@@ -7,7 +7,7 @@ import { SendTransactionResult } from 'wagmi/actions'
 
 import { useMasterChefContract } from '../useMasterChefContract'
 import { useSendTransaction } from '../useSendTransaction'
-import { createToast } from '@sushiswap/ui/future/components/toast'
+import { createToast } from '@sushiswap/ui/components/toast'
 
 interface UseMasterChefDepositParams {
   chainId: number

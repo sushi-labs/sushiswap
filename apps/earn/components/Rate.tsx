@@ -1,5 +1,5 @@
 import { Price, Type } from '@sushiswap/currency'
-import { classNames, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/react-query'
 import { FC, ReactElement, ReactNode, useCallback, useState } from 'react'
 
@@ -53,10 +53,8 @@ export const Rate: FC<Rate> = ({ children, price }) => {
         'text-slate-300 hover:text-slate-200 flex justify-between border-t border-opacity-40 border-slate-700'
       )}
     >
-      <Typography variant="xs" className={classNames('cursor-pointer h-[36px] flex items-center gap-1')}>
-        Rate
-      </Typography>
-      <Typography variant="xs" className={classNames('cursor-pointer h-[36px] flex items-center ')}>
+      <p className={classNames('text-xs cursor-pointer h-[36px] flex items-center gap-1')}>Rate</p>
+      <p className={classNames('text-xs cursor-pointer h-[36px] flex items-center ')}>
         {price ? (
           <div className="flex items-center h-full gap-1 font-medium" onClick={toggleInvert}>
             {content} <span className="text-slate-500">(${usdPrice})</span>
@@ -64,7 +62,7 @@ export const Rate: FC<Rate> = ({ children, price }) => {
         ) : (
           'Enter an amount'
         )}
-      </Typography>
+      </p>
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { AppType } from '@sushiswap/ui/types'
 import {
+  getSushiXSwapContractConfig,
   useAccount,
   useContractWrite,
   useNetwork,
@@ -8,11 +9,10 @@ import {
   UserRejectedRequestError,
   useTransaction,
 } from '@sushiswap/wagmi'
-import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { createErrorToast, createInfoToast, createToast } from '@sushiswap/ui/future/components/toast'
-import { Dialog } from '@sushiswap/ui/future/components/dialog'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { createErrorToast, createInfoToast, createToast } from '@sushiswap/ui/components/toast'
+import { Dialog } from '@sushiswap/ui/components/dialog'
+import { Button } from '@sushiswap/ui/components/button'
 import { Divider, failedState, finishedState, GetStateComponent, pendingState, StepState } from './StepStates'
 import { ConfirmationDialogContent } from './ConfirmationDialogContent'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
@@ -322,7 +322,7 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
                 dstTxHash={lzData?.dstTxHash}
               />
             </div>
-            <Button fullWidth color="blue" variant="outlined" size="xl" onClick={() => setOpen(false)}>
+            <Button size="xl" fullWidth onClick={() => setOpen(false)}>
               {failedState(stepStates) ? 'Try again' : finishedState(stepStates) ? 'Make another swap' : 'Close'}
             </Button>
           </div>

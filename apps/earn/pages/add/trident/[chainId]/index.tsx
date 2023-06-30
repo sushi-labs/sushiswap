@@ -2,7 +2,7 @@ import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/solid'
 import { ConstantProductPool, Fee, StablePool } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
-import { Loader } from '@sushiswap/ui'
+import { Loader } from '@sushiswap/ui/components/loader'
 import {
   ConstantProductPoolState,
   getTridentRouterContractConfig,
@@ -31,9 +31,9 @@ import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from 
 import { ContentBlock } from '../../../../components/AddPage/ContentBlock'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import Link from 'next/link'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { Signature } from '@ethersproject/bytes'
 import { APPROVE_TAG_ADD_TRIDENT, APPROVE_TAG_CREATE_TRIDENT } from '../../../../lib/constants'
 
@@ -87,14 +87,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
       <Layout>
         <div className="flex flex-col gap-2">
           <Link className="flex items-center gap-4 mb-2 group" href="/" shallow={true}>
-            <IconButton
-              icon={ArrowLeftIcon}
-              iconProps={{
-                width: 24,
-                height: 24,
-                transparent: true,
-              }}
-            />
+            <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
             <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
               Go back to pools list
             </span>
@@ -319,16 +312,15 @@ const _Add: FC<AddProps> = ({
             loading={poolState === ConstantProductPoolState.LOADING || poolState === StablePoolState.LOADING}
           />
           <Checker.Root>
-            <Checker.Connect fullWidth size="xl">
-              <Checker.Network fullWidth size="xl" chainId={chainId}>
-                <Checker.Amounts fullWidth size="xl" chainId={chainId} amounts={[parsedInput0, parsedInput1]}>
+            <Checker.Connect fullWidth>
+              <Checker.Network fullWidth chainId={chainId}>
+                <Checker.Amounts fullWidth chainId={chainId} amounts={[parsedInput0, parsedInput1]}>
                   {pool && (isConstantProductPool(pool) || isStablePool(pool)) && isBentoBoxV1ChainId(chainId) && (
                     <>
                       <Checker.ApproveBentobox
                         tag={APPROVE_TAG_ADD_TRIDENT}
                         chainId={chainId}
                         id="add-liquidity-trident-approve-bentobox"
-                        size="xl"
                         className="whitespace-nowrap"
                         fullWidth
                         masterContract={getTridentRouterContractConfig(chainId).address}
@@ -336,7 +328,6 @@ const _Add: FC<AddProps> = ({
                       >
                         <Checker.ApproveERC20
                           id="add-liquidity-trident-approve-token0"
-                          size="xl"
                           className="whitespace-nowrap"
                           fullWidth
                           amount={parsedInput0}
@@ -345,7 +336,6 @@ const _Add: FC<AddProps> = ({
                         >
                           <Checker.ApproveERC20
                             id="add-liquidity-trident-approve-token1"
-                            size="xl"
                             className="whitespace-nowrap"
                             fullWidth
                             amount={parsedInput1}
@@ -353,7 +343,7 @@ const _Add: FC<AddProps> = ({
                             enabled={isBentoBoxV1ChainId(chainId)}
                           >
                             <Checker.Success tag={APPROVE_TAG_ADD_TRIDENT}>
-                              <Button id="add-liquidity" fullWidth onClick={() => setOpen(true)} size="xl">
+                              <Button size="xl" id="add-liquidity" fullWidth onClick={() => setOpen(true)}>
                                 {title}
                               </Button>
                             </Checker.Success>
@@ -381,7 +371,6 @@ const _Add: FC<AddProps> = ({
                         tag={APPROVE_TAG_CREATE_TRIDENT}
                         chainId={chainId}
                         id="create-trident-approve-bentobox"
-                        size="xl"
                         className="whitespace-nowrap"
                         fullWidth
                         masterContract={getTridentRouterContractConfig(chainId).address}
@@ -389,7 +378,6 @@ const _Add: FC<AddProps> = ({
                       >
                         <Checker.ApproveERC20
                           id="create-trident-approve-token0"
-                          size="xl"
                           className="whitespace-nowrap"
                           fullWidth
                           amount={parsedInput0}
@@ -398,7 +386,6 @@ const _Add: FC<AddProps> = ({
                         >
                           <Checker.ApproveERC20
                             id="create-trident-approve-token1"
-                            size="xl"
                             className="whitespace-nowrap"
                             fullWidth
                             amount={parsedInput1}
@@ -406,7 +393,7 @@ const _Add: FC<AddProps> = ({
                             enabled={isBentoBoxV1ChainId(chainId)}
                           >
                             <Checker.Success tag={APPROVE_TAG_CREATE_TRIDENT}>
-                              <Button id="create-pool" size="xl" fullWidth onClick={() => setOpen(true)}>
+                              <Button id="create-pool" fullWidth onClick={() => setOpen(true)}>
                                 {title}
                               </Button>
                             </Checker.Success>

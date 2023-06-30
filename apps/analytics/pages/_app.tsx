@@ -1,8 +1,8 @@
 import '@sushiswap/ui/index.css'
 import '../variables.css'
 
-import { App, ThemeProvider } from '@sushiswap/ui'
-import { client } from '@sushiswap/wagmi'
+import { ThemeProvider } from '@sushiswap/ui/ThemeProvider'
+import { client, WagmiConfig } from '@sushiswap/wagmi'
 import { Analytics } from '@vercel/analytics/react'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import type { AppProps } from 'next/app'
@@ -12,10 +12,13 @@ import { DefaultSeo } from 'next-seo'
 import { FC, ReactNode, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { store } from 'store'
-import { WagmiConfig } from '@sushiswap/wagmi'
 
 import SEO from '../next-seo.config.mjs'
-import { GlobalNav } from '@sushiswap/ui/future/components/GlobalNav'
+import { GlobalNav } from '@sushiswap/ui/components/GlobalNav'
+import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
+import { queryClient } from '@sushiswap/react-query'
+import { QueryClientProvider as _QueryClientProvider } from '@tanstack/react-query'
+import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
 
 declare global {
   interface Window {
@@ -23,9 +26,6 @@ declare global {
   }
 }
 
-import { queryClient } from '@sushiswap/react-query'
-import { QueryClientProvider as _QueryClientProvider } from '@tanstack/react-query'
-import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
 
 export const QueryClientProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return <_QueryClientProvider client={queryClient}>{children}</_QueryClientProvider>
@@ -61,12 +61,10 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <Provider store={store}>
           <ThemeProvider forcedTheme="dark">
             <QueryClientProvider>
-              <App.Shell>
-                <DefaultSeo {...SEO} />
-                <GlobalNav />
-                <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
-                <App.Footer />
-              </App.Shell>
+              <DefaultSeo {...SEO} />
+              <GlobalNav />
+              <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
+              <GlobalFooter />
             </QueryClientProvider>
           </ThemeProvider>
         </Provider>

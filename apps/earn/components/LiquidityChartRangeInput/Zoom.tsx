@@ -1,5 +1,5 @@
 import { ZoomInIcon, ZoomOutIcon } from '@heroicons/react/solid'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { ScaleLinear, select, zoom, ZoomBehavior, zoomIdentity, ZoomTransform } from 'd3'
 import React, { FC, useEffect, useMemo, useRef } from 'react'
 
@@ -82,8 +82,8 @@ export const Zoom: FC<ZoomProps> = ({
     <div className="flex justify-between gap-2">
       {showResetButton ? (
         <Button
-          size="xs"
-          variant="empty"
+          size="sm"
+          variant="link"
           disabled={!showResetButton}
           onClick={() => {
             resetBrush()
@@ -96,10 +96,10 @@ export const Zoom: FC<ZoomProps> = ({
         <div />
       )}
       <div className="flex gap-2">
-        <Button size="xs" variant="outlined" onClick={zoomIn} disabled={false}>
+        <Button size="sm" variant="secondary" onClick={zoomIn} disabled={false}>
           <ZoomInIcon width={20} height={20} />
         </Button>
-        <Button size="xs" variant="outlined" onClick={zoomOut} disabled={false}>
+        <Button size="sm" variant="secondary" onClick={zoomOut} disabled={false}>
           <ZoomOutIcon width={20} height={20} />
         </Button>
       </div>

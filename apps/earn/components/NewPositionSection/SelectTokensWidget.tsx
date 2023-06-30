@@ -1,11 +1,11 @@
-import { ChevronDownIcon } from '@heroicons/react/solid'
-import { classNames, Currency } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { ContentBlock } from '../AddPage/ContentBlock'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { SelectIcon } from '@sushiswap/ui/components/select'
 
 interface SelectTokensWidget {
   chainId: ChainId
@@ -26,38 +26,29 @@ export const SelectTokensWidget: FC<SelectTokensWidget> = ({ chainId, token0, to
     >
       <div className="flex gap-3">
         <TokenSelector id={'token0-token-selector'} selected={token0} chainId={chainId} onSelect={setToken0}>
-          {({ open, setOpen }) => (
+          {({ setOpen }) => (
             <Button
-              size="xl"
-              variant="outlined"
-              color={!token0 ? 'blue' : 'default'}
+              variant="secondary"
               id={'token0-select-button'}
               testId={'token0-select'}
               onClick={() => setOpen(true)}
             >
               {token0 ? (
                 <>
-                  <div className="w-[28px] h-[28px] mr-0.5">
-                    <Currency.Icon disableLink currency={token0} width={28} height={28} />
-                  </div>
+                  <Currency.Icon disableLink currency={token0} width={16} height={16} />
                   {token0.symbol}
                 </>
               ) : (
                 'Select Token'
               )}
-              <ChevronDownIcon
-                width={24}
-                height={24}
-                className={classNames('transition-all', open ? 'rotate-180' : 'rotate-0', 'hidden sm:block')}
-              />
+              <SelectIcon />
             </Button>
           )}
         </TokenSelector>
         <TokenSelector id={'token1-token-selector'} selected={token1} chainId={chainId} onSelect={setToken1}>
-          {({ open, setOpen }) => (
+          {({ setOpen }) => (
             <Button
-              size="xl"
-              variant="outlined"
+              variant="secondary"
               color={!token1 ? 'blue' : 'default'}
               id={'token1-select-button'}
               testId={'token1-select'}
@@ -65,19 +56,13 @@ export const SelectTokensWidget: FC<SelectTokensWidget> = ({ chainId, token0, to
             >
               {token1 ? (
                 <>
-                  <div className="w-[28px] h-[28px] mr-0.5">
-                    <Currency.Icon disableLink currency={token1} width={28} height={28} />
-                  </div>
+                  <Currency.Icon disableLink currency={token1} width={16} height={16} />
                   {token1.symbol}
                 </>
               ) : (
                 'Select Token'
               )}
-              <ChevronDownIcon
-                width={24}
-                height={24}
-                className={classNames('transition-all', open ? 'rotate-180' : 'rotate-0', 'hidden sm:block')}
-              />
+              <SelectIcon />
             </Button>
           )}
         </TokenSelector>

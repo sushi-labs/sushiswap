@@ -1,18 +1,18 @@
 import { tryParseAmount } from '@sushiswap/currency'
 import { ChefType, Pool, usePool } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
-import { AppearOnMount, Dots } from '@sushiswap/ui'
+import { AppearOnMount } from '@sushiswap/ui/components/animation'
 import { useMasterChefWithdraw } from '@sushiswap/wagmi'
 import { FC, useMemo, useState } from 'react'
+import { Dots } from '@sushiswap/ui/components/dots'
 
 import { useGraphPool } from '../../lib/hooks'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { RemoveSectionUnstakeWidget } from './RemoveSectionUnstakeWidget'
 import { useSWRConfig } from 'swr'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import Button from '@sushiswap/ui/future/components/button/Button'
-import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { APPROVE_TAG_UNSTAKE } from '../../lib/constants'
+import { Button } from '@sushiswap/ui/components/button'
+import { withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { ChainId } from '@sushiswap/chain'
 
 interface AddSectionStakeProps {
@@ -66,21 +66,16 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot((
       reserve1={reserve1}
       liquidityToken={liquidityToken}
     >
-      <Checker.Connect size="xl" fullWidth>
-        <Checker.Network size="xl" fullWidth chainId={pool.chainId}>
+      <Checker.Connect fullWidth>
+        <Checker.Network fullWidth chainId={pool.chainId}>
           <Checker.Custom
-            showGuardIfTrue={Boolean(amount && balance && amount.greaterThan(balance))}
-            guard={
-              <Button size="xl" fullWidth>
-                Insufficient Balance
-              </Button>
-            }
+            guardWhen={Boolean(amount && balance && amount.greaterThan(balance))}
+            guardText="Insufficient balance"
           >
             <Button
               onClick={() => sendTransaction?.()}
               fullWidth
               size="xl"
-              variant="filled"
               disabled={isWritePending}
               testId="unstake-liquidity"
             >

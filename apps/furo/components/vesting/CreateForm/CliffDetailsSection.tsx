@@ -1,17 +1,17 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { Switch } from '@sushiswap/ui/future/components/Switch'
-import { Input } from '@sushiswap/ui/future/components/input'
+import { Switch } from '@sushiswap/ui/components/switch'
+import { Input } from '@sushiswap/ui/components/input'
 import { CreateMultipleVestingFormSchemaType } from '../schema'
 import { classNames } from '@sushiswap/ui'
 import {
-  FormSection,
+  FormControl,
+  FormDescription,
   FormField,
   FormItem,
-  FormControl,
   FormMessage,
-  FormDescription,
-} from '@sushiswap/ui/future/components/form'
+  FormSection,
+} from '@sushiswap/ui/components/form'
 
 export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
   const { control, watch } = useFormContext<CreateMultipleVestingFormSchemaType>()
@@ -30,7 +30,7 @@ export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
         render={({ field: { value, onChange } }) => (
           <FormItem>
             <FormControl>
-              <Switch checked={value} onChange={onChange} size="sm" id={`cliff-toggle-switch${index}`} />
+              <Switch checked={value} onCheckedChange={onChange} testdata-id={`cliff-toggle-switch${index}`} />
             </FormControl>
             <FormMessage />
           </FormItem>

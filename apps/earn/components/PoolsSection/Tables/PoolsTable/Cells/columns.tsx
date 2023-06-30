@@ -3,14 +3,16 @@ import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
 import { PoolFees1dCell } from './PoolFees1dCell'
-import { PoolNameCell, PoolChainCell, PoolAPRCell, PoolVolume1dCell } from '../../SharedCells'
+import { PoolAPRCell, PoolChainCell, PoolNameCell, PoolVolume1dCell } from '../../SharedCells'
 import { PoolTVLCell } from './PoolTVLCell'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
-import { Explainer } from '@sushiswap/ui/future/components/Explainer'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
+
+import { Explainer } from '@sushiswap/ui/components/explainer'
 import { ChainId } from '@sushiswap/chain'
 import { PoolVolume1hCell } from '../../SharedCells/PoolVolume1hCell'
 import { PoolVolume1wCell } from '../../SharedCells/PoolVolume1wCell'
 import { PoolVolume1mCell } from '../../SharedCells/PoolVolume1mCell'
+
 export const ICON_SIZE = 26
 export const PAGE_SIZE = 20
 
@@ -20,7 +22,7 @@ export const NETWORK_COLUMN: ColumnDef<Pool, unknown> = {
   cell: (props) => <PoolChainCell row={props.row.original as typeof props.row.original & { chainId: ChainId }} />,
   size: 50,
   meta: {
-    skeleton: <Skeleton.Circle radius={ICON_SIZE} />,
+    skeleton: <SkeletonCircle radius={ICON_SIZE} />,
   },
 }
 
@@ -33,11 +35,11 @@ export const NAME_COLUMN: ColumnDef<Pool, unknown> = {
     skeleton: (
       <div className="flex items-center w-full gap-2">
         <div className="flex items-center">
-          <Skeleton.Circle radius={ICON_SIZE} />
-          <Skeleton.Circle radius={ICON_SIZE} className="-ml-[12px]" />
+          <SkeletonCircle radius={ICON_SIZE} />
+          <SkeletonCircle radius={ICON_SIZE} className="-ml-[12px]" />
         </div>
         <div className="flex flex-col w-full">
-          <Skeleton.Text fontSize="text-lg" />
+          <SkeletonText fontSize="lg" />
         </div>
       </div>
     ),
@@ -52,7 +54,7 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
   size: 100,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -61,9 +63,7 @@ export const APR_COLUMN: ColumnDef<Pool, unknown> = {
   header: () => (
     <div className="flex items-center gap-1">
       APR
-      <Explainer hover iconSize={16} placement="bottom">
-        The APRs displayed for the liquidity pools are algorithmic and subject to change.
-      </Explainer>
+      <Explainer>The APRs displayed for the liquidity pools are algorithmic and subject to change.</Explainer>
     </div>
   ),
   accessorFn: (row) => row.totalApr1d,
@@ -71,7 +71,7 @@ export const APR_COLUMN: ColumnDef<Pool, unknown> = {
   size: 100,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -83,7 +83,7 @@ export const VOLUME_1H_COLUMN: ColumnDef<Pool, unknown> = {
   size: 100,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -95,7 +95,7 @@ export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
   size: 100,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -107,7 +107,7 @@ export const VOLUME_7D_COLUMN: ColumnDef<Pool, unknown> = {
   size: 100,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -119,7 +119,7 @@ export const VOLUME_1M_COLUMN: ColumnDef<Pool, unknown> = {
   size: 100,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -131,6 +131,6 @@ export const FEES_COLUMN: ColumnDef<Pool, unknown> = {
   size: 100,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }

@@ -10,15 +10,15 @@ import {
   NAME_COLUMN,
   TVL_COLUMN,
   VOLUME_1D_COLUMN,
-  VOLUME_7D_COLUMN,
   VOLUME_1M_COLUMN,
+  VOLUME_7D_COLUMN,
 } from './Cells/columns'
 import { PoolQuickHoverTooltip } from './PoolQuickHoverTooltip'
 import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/client'
 import { useSWRConfig } from 'swr'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
-import { Loader } from '@sushiswap/ui/future/components/Loader'
+import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
+import { Loader } from '@sushiswap/ui/components/loader'
 
 const COLUMNS = [
   NAME_COLUMN,

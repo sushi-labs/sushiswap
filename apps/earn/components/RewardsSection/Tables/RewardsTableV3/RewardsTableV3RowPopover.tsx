@@ -1,12 +1,12 @@
 import React, { FC } from 'react'
 import { RewardTableV3CellProps } from './Cells'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { NetworkIcon } from '@sushiswap/ui'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Badge } from '@sushiswap/ui/components/Badge'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { Currency } from '@sushiswap/ui/components/currency'
 import { unwrapToken } from '../../../../lib/functions'
-import { List } from '@sushiswap/ui/future/components/list/List'
+import { List } from '@sushiswap/ui/components/list/List'
 import { format } from 'date-fns'
-import { Explainer } from '@sushiswap/ui/future/components/Explainer'
+import { Explainer } from '@sushiswap/ui/components/explainer'
 import { rewardPerDay } from './utils'
 
 export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) => {
@@ -50,7 +50,7 @@ export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) =>
                 title={
                   <div className="flex gap-1 items-center">
                     Reward
-                    <Explainer hover iconSize={16} placement="bottom">
+                    <Explainer>
                       Your share calculated as your LP divided by the total LP in the pool multiplied by the rewards set
                       per day.
                     </Explainer>
@@ -85,7 +85,7 @@ export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) =>
                 title={
                   <div className="flex gap-1 items-center">
                     Details
-                    <Explainer hover iconSize={16} placement="bottom">
+                    <Explainer>
                       Weight that fees earned by positions represent in their rewards score. A higher % means that more
                       rewards will be attributed to positions that earn more fees during the distribution.
                     </Explainer>

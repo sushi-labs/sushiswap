@@ -1,9 +1,10 @@
 import { EnvelopeIcon, LinkIcon } from '@heroicons/react/24/outline'
-import { Tooltip, TwitterIcon } from '@sushiswap/ui'
 import { getShareText } from 'common/helpers'
-import { FC, useState } from 'react'
+import { FC } from 'react'
 
 import { ArticleEntity } from '../../../.mesh'
+import { ClipboardController } from '@sushiswap/ui/components/ClipboardController'
+import { TwitterIcon } from '@sushiswap/ui/components/icons'
 
 interface ArticleLinks {
   article?: ArticleEntity
@@ -12,14 +13,6 @@ interface ArticleLinks {
 export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
   const shareText = getShareText(article?.attributes?.title)
   const url = `https://www.sushi.com/academy/articles/${article?.attributes?.slug}`
-
-  const [showTooltip, setShowTooltip] = useState(false)
-  const handleTooltipTimer = () => {
-    setShowTooltip(true)
-    setTimeout(() => {
-      setShowTooltip(false)
-    }, 1000)
-  }
 
   return (
     <section>
@@ -38,22 +31,16 @@ export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
         >
           <EnvelopeIcon width={20} height={20} className="cursor-pointer text-blue hover:text-blue-400" />
         </a>
-        <Tooltip
-          button={
+        <ClipboardController>
+          {({ setCopied }) => (
             <LinkIcon
               width={20}
               height={20}
               className="cursor-pointer text-blue hover:text-blue-400"
-              onClick={() => {
-                navigator.clipboard.writeText(url)
-                handleTooltipTimer()
-              }}
+              onClick={() => setCopied(url)}
             />
-          }
-          panel={<>Copied to clipboard</>}
-          placement="bottom"
-          visible={showTooltip}
-        />
+          )}
+        </ClipboardController>
       </div>
     </section>
   )

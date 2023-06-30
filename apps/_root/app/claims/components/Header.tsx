@@ -1,13 +1,13 @@
 'use client'
 
-import { GlobalNav, NavLink } from '@sushiswap/ui/future/components/GlobalNav'
+import { GlobalNav, NavLink } from '@sushiswap/ui/components/GlobalNav'
 import { HeaderNetworkSelector } from '@sushiswap/wagmi/future/components/HeaderNetworkSelector'
 import { UserProfile } from '@sushiswap/wagmi/future/components/UserProfile'
 import React, { FC } from 'react'
 
-import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
+import { AppearOnMount } from '@sushiswap/ui/components/animation'
 import { Onramper } from '@sushiswap/wagmi/future/components'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { useConnect } from '@sushiswap/wagmi'
 import { SUPPORTED_CHAIN_IDS } from '../../../config'
 
@@ -31,7 +31,7 @@ export const Header: FC = () => {
       <NavLink title="Pools" href="https://www.sushi.com/pools" />
       <NavLink title="Pay" href="https://www.sushi.com/furo" />
       <Onramper.Button>
-        <Button as="span" color="default" variant="empty" size="md" className="whitespace-nowrap">
+        <Button variant="ghost" className="whitespace-nowrap">
           Buy Crypto
         </Button>
       </Onramper.Button>

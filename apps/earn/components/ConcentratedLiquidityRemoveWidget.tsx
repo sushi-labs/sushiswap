@@ -1,20 +1,19 @@
 import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { ConcentratedLiquidityPosition, useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { List } from '@sushiswap/ui/future/components/list/List'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Button } from '@sushiswap/ui/components/button'
+import { List } from '@sushiswap/ui/components/list/List'
+import { Currency } from '@sushiswap/ui/components/currency'
 import { isSushiSwapV3ChainId, NonfungiblePositionManager, Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { createToast } from '@sushiswap/ui/future/components/toast'
+import { createToast } from '@sushiswap/ui/components/toast'
 import { TransactionRequest } from '@ethersproject/providers'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { useSlippageTolerance } from '../lib/hooks/useSlippageTolerance'
 import { Amount, Type } from '@sushiswap/currency'
-import { _useSendTransaction as useSendTransaction } from '@sushiswap/wagmi'
+import { _useSendTransaction as useSendTransaction, useNetwork } from '@sushiswap/wagmi'
 import { unwrapToken } from '../lib/functions'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
-import { useNetwork } from '@sushiswap/wagmi'
 
 interface ConcentratedLiquidityRemoveWidget {
   token0: Type | undefined
@@ -178,16 +177,36 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
               <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">{value}%</h1>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outlined" color="blue" size="sm" onClick={() => _onChange('25')} testId="liquidity-25">
+              <Button
+                variant={value === '25' ? 'default' : 'secondary'}
+                size="sm"
+                onClick={() => _onChange('25')}
+                testId="liquidity-25"
+              >
                 25%
               </Button>
-              <Button variant="outlined" size="sm" onClick={() => _onChange('50')} testId="liquidity-50">
+              <Button
+                variant={value === '50' ? 'default' : 'secondary'}
+                size="sm"
+                onClick={() => _onChange('50')}
+                testId="liquidity-50"
+              >
                 50%
               </Button>
-              <Button variant="outlined" size="sm" onClick={() => _onChange('75')} testId="liquidity-75">
+              <Button
+                variant={value === '75' ? 'default' : 'secondary'}
+                size="sm"
+                onClick={() => _onChange('75')}
+                testId="liquidity-75"
+              >
                 75%
               </Button>
-              <Button variant="outlined" size="sm" onClick={() => _onChange('100')} testId="liquidity-max">
+              <Button
+                variant={value === '100' ? 'default' : 'secondary'}
+                size="sm"
+                onClick={() => _onChange('100')}
+                testId="liquidity-max"
+              >
                 Max
               </Button>
             </div>
@@ -266,14 +285,14 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
         </List>
       )}
 
-      <Checker.Connect fullWidth size="xl">
-        <Checker.Network fullWidth size="xl" chainId={chainId}>
+      <Checker.Connect fullWidth>
+        <Checker.Network fullWidth chainId={chainId}>
           <Button
+            size="xl"
             loading={isWritePending}
             disabled={+value === 0}
             fullWidth
             onClick={() => sendTransaction?.()}
-            size="xl"
             testId="remove-or-add-liquidity"
           >
             {+value === 0 ? 'Enter Amount' : 'Remove'}

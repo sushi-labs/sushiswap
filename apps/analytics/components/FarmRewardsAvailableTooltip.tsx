@@ -1,12 +1,15 @@
-import { Tooltip } from '@sushiswap/ui'
 import { FC } from 'react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
 
 export const FarmRewardsAvailableTooltip: FC = () => {
   return (
-    <Tooltip
-      placement="bottom"
-      button={<span>✨</span>}
-      panel={<div className="text-xs rounded-2xl text-slate-300">Farm rewards available</div>}
-    />
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>✨</TooltipTrigger>
+        <TooltipContent>
+          <p>Farm rewards available</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   )
 }

@@ -1,7 +1,8 @@
 import { ArrowRightIcon } from '@heroicons/react/24/solid'
-import { Button, classNames, Link, Typography } from '@sushiswap/ui'
+import { classNames, Link } from '@sushiswap/ui'
 import { DocsIcon } from 'common/icons'
 import { FC } from 'react'
+import { Button } from '@sushiswap/ui/components/button'
 
 interface ProductTechnicalDoc {
   color: string
@@ -11,7 +12,7 @@ interface ProductTechnicalDoc {
 
 const DocsButton: FC<{ className: string; url: string }> = ({ className, url }) => (
   <Link.External href={url}>
-    <Button className={classNames('w-12 h-12 ml-6', className)} variant="outlined">
+    <Button className={classNames(className)} variant="secondary">
       <ArrowRightIcon width={20} height={20} />
     </Button>
   </Link.External>
@@ -26,14 +27,14 @@ export const ProductTechnicalDoc: FC<ProductTechnicalDoc> = ({ color, secondaryC
         </div>
         <div className="sm:ml-8">
           <div className="flex items-center justify-between">
-            <Typography variant="lg">Technical Documentation</Typography>
+            <span className="text-lg">Technical Documentation</span>
             <DocsButton className="sm:hidden" url={url} />
           </div>
-          <Typography variant="sm" className="mt-3 text-slate-400">
+          <span className="text-sm mt-3 text-slate-400">
             {
               "Learn about the architecture of Sushi's smart contracts and how to build on top of the protocol, you can find implementations and explanations for each of our core smart contracts, broken out by product."
             }
-          </Typography>
+          </span>
         </div>
         <DocsButton className="hidden sm:block" url={url} />
       </div>

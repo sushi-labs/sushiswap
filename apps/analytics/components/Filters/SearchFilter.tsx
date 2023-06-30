@@ -1,7 +1,7 @@
 import { useDebounce } from '@sushiswap/hooks'
 import React, { FC, useEffect, useState } from 'react'
 
-import { Search } from '@sushiswap/ui/future/components/input/Search'
+import { Search } from '@sushiswap/ui/components/input/Search'
 import { useFilters } from './FilterProvider'
 
 export const SearchFilter: FC = () => {
@@ -30,5 +30,5 @@ export const SearchFilter: FC = () => {
     }
   }, [extra, setFilters])
 
-  return <Search id="search" value={_query} loading={false} onChange={setQuery} className="max-w-full" />
+  return <Search id="search" value={_query} loading={false} onValueChange={setQuery} className="max-w-full" />
 }

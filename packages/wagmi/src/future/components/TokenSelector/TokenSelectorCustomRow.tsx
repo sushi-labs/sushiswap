@@ -1,9 +1,9 @@
 import { LinkIcon, XCircleIcon } from '@heroicons/react/24/outline'
 import chain from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
-import { Icon } from '@sushiswap/ui/future/components/currency/Icon'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
+import { Icon } from '@sushiswap/ui/components/currency/Icon'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import React, { CSSProperties, FC } from 'react'
 
 export const TokenSelectorCustomTokenRow: FC<{
@@ -29,21 +29,16 @@ export const TokenSelectorCustomTokenRow: FC<{
         <div className="flex items-center gap-3">
           <IconButton
             icon={XCircleIcon}
-            iconProps={{
-              width: 20,
-              height: 20,
-              className: 'text-gray-500 dark:text-slate-500',
-            }}
             onClick={onRemove}
+            name="Remove"
           />
-          <IconButton
-            icon={LinkIcon}
-            iconProps={{ width: 20, height: 20, className: 'text-blue' }}
-            as="a"
-            rel="noopener noreffer"
-            target="_blank"
-            href={chain[currency.chainId].getTokenUrl(currency.wrapped.address)}
-          />
+          <a rel="noopener noreffer" href={chain[currency.chainId].getTokenUrl(currency.wrapped.address)} target="_blank">
+            <IconButton
+                icon={LinkIcon}
+                iconProps={{  className: 'text-blue' }}
+                name="View on explorer"
+            />
+          </a>
         </div>
       </div>
     </div>

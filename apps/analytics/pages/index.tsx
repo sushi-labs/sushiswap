@@ -3,14 +3,14 @@ import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 import { unstable_serialize as unstable_serialize_infinite } from 'swr/infinite'
-import { getPools, getPoolCount, getPoolCountUrl, getPoolsUrl } from '@sushiswap/client'
+import { getPoolCount, getPoolCountUrl, getPools, getPoolsUrl } from '@sushiswap/client'
 
 import { ChartSection, Layout, TableSection } from '../components'
-import { getBundles, getCharts, getFuroTokens, getTokenCount, getTokens } from '../lib/api'
+import { getBundles, getCharts, getFuroTokens } from '../lib/api'
 import { defaultPoolsArgs } from 'lib/constants'
 import { FilterProvider } from 'components/Filters'
 import { getFuroTokensUrl } from 'components/TableSection/FuroTokens/useFuroTokens'
-import Container from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/components/container'
 
 export const getStaticProps: GetStaticProps = async () => {
   const [pools, charts, poolCount, bundles, furoTokens /*tokens, tokenCount*/] = await Promise.all([

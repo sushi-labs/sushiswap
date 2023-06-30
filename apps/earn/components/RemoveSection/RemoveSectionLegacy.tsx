@@ -9,23 +9,25 @@ import { Percent } from '@sushiswap/math'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { Dots } from '@sushiswap/ui'
 import {
+  _useSendTransaction as useSendTransaction,
+  Address,
   getSushiSwapRouterContractConfig,
   PairState,
+  useAccount,
+  useNetwork,
   usePair,
-  _useSendTransaction as useSendTransaction,
   useSushiSwapRouterContract,
   useTotalSupply,
 } from '@sushiswap/wagmi'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { Address, useAccount, useNetwork } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { useTokensFromPool, useTransactionDeadline, useUnderlyingTokenBalanceFromPool } from '../../lib/hooks'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
-import { createToast } from '@sushiswap/ui/future/components/toast'
+import { createToast } from '@sushiswap/ui/components/toast'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_REMOVE_LEGACY } from '../../lib/constants'
@@ -250,37 +252,24 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
         token1Minimum={minAmount1}
         setPercentage={setPercentage}
       >
-        <Checker.Connect fullWidth size="xl">
+        <Checker.Connect fullWidth>
           <Checker.Custom
-            showGuardIfTrue={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
-            guard={
-              <Button size="xl" fullWidth disabled={true}>
-                Pool Not Found
-              </Button>
-            }
+            guardWhen={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
+            guardText="Pool not found"
           >
-            <Checker.Network fullWidth size="xl" chainId={_pool.chainId}>
-              <Checker.Custom
-                showGuardIfTrue={+percentage <= 0}
-                guard={
-                  <Button size="xl" fullWidth disabled={true}>
-                    Enter Amount
-                  </Button>
-                }
-              >
+            <Checker.Network fullWidth chainId={_pool.chainId}>
+              <Checker.Custom guardWhen={+percentage <= 0} guardText="Enter amount">
                 <Checker.ApproveERC20
                   fullWidth
-                  size="xl"
                   id="approve-remove-liquidity-slp"
                   amount={amountToRemove}
                   contract={getSushiSwapRouterContractConfig(_pool.chainId as SushiSwapV2ChainId).address as Address}
                 >
                   <Checker.Success tag={APPROVE_TAG_REMOVE_LEGACY}>
                     <Button
+                      size="xl"
                       onClick={() => sendTransaction?.()}
                       fullWidth
-                      size="xl"
-                      variant="filled"
                       disabled={!approved || isWritePending}
                       testId="remove-liquidity"
                     >
