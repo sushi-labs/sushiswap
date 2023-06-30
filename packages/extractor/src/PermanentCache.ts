@@ -46,9 +46,15 @@ export class PermanentCache<CacheRecord> {
 
     let records: CacheRecord[] = []
     await this.lock.takeTurn()
+    // read from the beginning
+    let file
     try {
-      // read from the beginning
-      const file = await open(this.filePath)
+      file = await open(this.filePath)
+    } catch (e) {
+      this.lock.returnTurn()
+      return []
+    }
+    try {
       const data = await file.readFile('utf8')
       records = data
         .split('\n')

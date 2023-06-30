@@ -22,16 +22,22 @@ import {
   WalletClient,
 } from 'viem'
 import { Account, privateKeyToAccount } from 'viem/accounts'
-import { Chain, hardhat, mainnet } from 'viem/chains'
+import { Chain, hardhat, mainnet, polygon } from 'viem/chains'
 
 import { setTokenBalance, UniswapV3FactoryAddress } from '../src'
 import { comparePoolCodes, isSubpool } from '../src/ComparePoolCodes'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
-const NonfungiblePositionManagerAddress: Address = '0xC36442b4a4522E871399CD717aBDD847Ab11FE88'
+const PositionManagerAddress: Record<number, Address> = {
+  [ChainId.ETHEREUM]: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
+  [ChainId.POLYGON]: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
+}
 const SwapRouterAddress: Address = '0xE592427A0AEce92De3Edee1F18E0157C05861564'
-const RP3Address: Address = '0x827179dD56d07A7eeA32e3873493835da2866976'
+const RP3Address = {
+  [ChainId.ETHEREUM]: '0x827179dD56d07A7eeA32e3873493835da2866976' as Address,
+  [ChainId.POLYGON]: '0x0a6e511Fe663827b9cA7e2D2542b20B37fC217A6' as Address,
+}
 
 function uniswapFactory(chain: ChainId): FactoryInfo {
   return {
@@ -115,7 +121,7 @@ async function prepareEnvironment(): Promise<TestEnvironment> {
         address: addr as Address,
         abi: erc20Abi,
         functionName: 'approve',
-        args: [NonfungiblePositionManagerAddress, amount],
+        args: [PositionManagerAddress[ChainId.ETHEREUM], amount],
       })
       await client.writeContract({
         address: addr as Address,
@@ -158,7 +164,7 @@ async function Mint(
   const hash = await env.client.writeContract({
     account: env.user,
     chain: env.chain,
-    address: NonfungiblePositionManagerAddress,
+    address: PositionManagerAddress[ChainId.ETHEREUM],
     abi: INonfungiblePositionManager.abi,
     functionName: 'mint',
     args: [MintParams],
@@ -193,7 +199,7 @@ async function MintAndBurn(
   const hashMint = await env.client.writeContract({
     account: env.user,
     chain: env.chain,
-    address: NonfungiblePositionManagerAddress,
+    address: PositionManagerAddress[ChainId.ETHEREUM],
     abi: INonfungiblePositionManager.abi,
     functionName: 'mint',
     args: [MintParams],
@@ -218,7 +224,7 @@ async function MintAndBurn(
   await env.client.writeContract({
     account: env.user,
     chain: env.chain,
-    address: NonfungiblePositionManagerAddress,
+    address: PositionManagerAddress[ChainId.ETHEREUM],
     abi: INonfungiblePositionManager.abi,
     functionName: 'decreaseLiquidity',
     args: [DecreaseParams],
@@ -233,7 +239,7 @@ async function MintAndBurn(
   await env.client.writeContract({
     account: env.user,
     chain: env.chain,
-    address: NonfungiblePositionManagerAddress,
+    address: PositionManagerAddress[ChainId.ETHEREUM],
     abi: INonfungiblePositionManager.abi,
     functionName: 'collect',
     args: [CollectParams],
@@ -242,7 +248,7 @@ async function MintAndBurn(
   const hashBurn = await env.client.writeContract({
     account: env.user,
     chain: env.chain,
-    address: NonfungiblePositionManagerAddress,
+    address: PositionManagerAddress[ChainId.ETHEREUM],
     abi: INonfungiblePositionManager.abi,
     functionName: 'burn',
     args: [tokenId],
@@ -531,7 +537,7 @@ async function startInfinitTest(args: {
       }
       try {
         const amountOutReal = await client.readContract({
-          address: RP3Address,
+          address: args.RP3Address,
           abi: routeProcessor2Abi,
           functionName: 'processRoute',
           args: [
@@ -562,10 +568,19 @@ async function startInfinitTest(args: {
 it.skip('UniV3 Extractor Ethereum infinit work test', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
-    // `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`
     chain: mainnet,
     factories: [uniswapFactory(ChainId.ETHEREUM), kyberswapFactory],
     tickLensContract: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
-    RP3Address,
+    RP3Address: RP3Address[ChainId.ETHEREUM],
+  })
+})
+
+it.skip('UniV3 Extractor Polygon infinit work test', async () => {
+  await startInfinitTest({
+    providerURL: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
+    chain: polygon,
+    factories: [uniswapFactory(ChainId.POLYGON)],
+    tickLensContract: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
+    RP3Address: RP3Address[ChainId.POLYGON],
   })
 })

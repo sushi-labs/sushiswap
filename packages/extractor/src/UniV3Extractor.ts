@@ -64,6 +64,7 @@ export class UniV3Extractor {
   logging: boolean
   busyCounter: Counter
   qualityChecker: QualityChecker
+  lastProcessdBlock = -1
 
   /// @param client
   /// @param tickHelperContract address of helper contract for pool's ticks download
@@ -108,6 +109,7 @@ export class UniV3Extractor {
           this.consoleLog(
             `Block ${blockNumber} ${logNames.length} logs: [${logNames}] jobs: ${this.busyCounter.counter}`
           )
+          if (logs.length > 0) this.lastProcessdBlock = Number(logs[logs.length - 1].blockNumber || 0)
         } catch (e) {
           warnLog(`Block ${blockNumber} log process error: ${e}`)
         }
