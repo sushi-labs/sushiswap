@@ -112,7 +112,7 @@ export default function SwapPage() {
         <Drawer.Root>
           <WidgetTitleV2 />
           <SwitchAppType />
-          <div>
+          <div className="relative">
             {inverse == false ? (
               <>
                 <TradeInput

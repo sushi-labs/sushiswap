@@ -52,13 +52,11 @@ export default function TradeInput({
   }, [coinData])
 
   const checkBalance = () => {
-    console.log('checkbalac=nce', tradeVal?.current?.value)
     if (coinData === undefined) {
       coinData = 0
     }
     if (setToken1Value) {
       setToken1Value(parseFloat(tradeVal?.current?.value as string))
-      console.log(tradeVal?.current?.value)
       getSwapPrice ? getSwapPrice(parseFloat(tradeVal?.current?.value as string)) : {}
     }
 
