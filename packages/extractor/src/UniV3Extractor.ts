@@ -1,5 +1,5 @@
 import { Token } from '@sushiswap/currency'
-import { PoolCode } from '@sushiswap/router'
+import { LiquidityProviders, PoolCode } from '@sushiswap/router'
 import { FeeAmount } from '@sushiswap/v3-sdk'
 import IUniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.json'
 import IUniswapV3Pool from '@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json'
@@ -17,7 +17,7 @@ import { warnLog } from './WarnLog'
 
 export interface FactoryInfo {
   address: Address
-  providerName: string
+  provider: LiquidityProviders
 }
 
 export interface PoolInfo {
@@ -217,7 +217,7 @@ export class UniV3Extractor {
     }
     if (!this.poolMap.has(p.address.toLowerCase() as Address)) {
       const watcher = new UniV3PoolWatcher(
-        p.factory.providerName,
+        p.factory.provider,
         p.address,
         this.tickHelperContract,
         p.token0,

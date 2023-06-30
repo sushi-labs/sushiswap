@@ -81,7 +81,7 @@ export class UniV3PoolWatcher {
   latestEventBlockNumber = 0
   //eventsAfterLastReservesUpdate = 0
 
-  providerName: string
+  provider: LiquidityProviders
   client: MultiCallAggregator
   wordLoadManager: WordLoadManager
   state?: UniV3PoolSelfState
@@ -89,7 +89,7 @@ export class UniV3PoolWatcher {
   busyCounter?: Counter
 
   constructor(
-    providerName: string,
+    provider: LiquidityProviders,
     address: Address,
     tickHelperContract: Address,
     token0: Token,
@@ -98,7 +98,7 @@ export class UniV3PoolWatcher {
     client: MultiCallAggregator,
     busyCounter?: Counter
   ) {
-    this.providerName = providerName
+    this.provider = provider
     this.address = address
     this.tickHelperContract = tickHelperContract
     this.token0 = token0
@@ -279,7 +279,7 @@ export class UniV3PoolWatcher {
       BigNumber.from(this.state.sqrtPriceX96),
       ticks
     )
-    const pc = new UniV3PoolCode(v3Pool, LiquidityProviders.UniswapV3, this.providerName)
+    const pc = new UniV3PoolCode(v3Pool, this.provider, this.provider)
     return pc
   }
 

@@ -95,7 +95,7 @@ export class QualityChecker {
       if (counter < this.checkAfterLogsNumber) this.poolsLogCounter.set(addr, counter + 1)
       else {
         const newPool = new UniV3PoolWatcher(
-          pool.providerName,
+          pool.provider,
           pool.address,
           pool.tickHelperContract,
           pool.token0,
