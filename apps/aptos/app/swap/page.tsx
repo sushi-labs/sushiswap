@@ -15,6 +15,10 @@ import { getYTokenPrice } from 'utils/utilFunctions'
 
 import { Network, Provider } from 'aptos'
 import { Token } from 'utils/tokenType'
+interface coinType {
+  type: string
+  data: any
+}
 import Container from '@sushiswap/ui/future/components/Container'
 
 export default function SwapPage() {
@@ -24,21 +28,16 @@ export default function SwapPage() {
   const [buttonError, setButtonError] = useState<string>('')
   const [open, setOpen] = useState<boolean>(false)
   const [inverse, setInverse] = useState<boolean>(false)
-  const [balance, setBalance] = useState<number>(0)
-  const [buttonMessage, setBttonMessage] = useState<string>('Connect Wallet')
-  const [filteredCoin0, setFilteredCoin0] = useState<object | undefined>({})
-  const [filteredCoin1, setFilteredCoin1] = useState<object | undefined>({})
+  const [filteredCoin0, setFilteredCoin0] = useState<coinType | undefined>(undefined)
+  const [filteredCoin1, setFilteredCoin1] = useState<coinType | undefined>(undefined)
   const [isLoadingPrice, setLoadingPrice] = useState<boolean>(true)
   const [tokenSelectedNumber, setTokenSelectedNumber] = useState<string>('')
   const [token1Value, setToken1Value] = useState<number>(0)
-  const [swapPerTokenPrice, setSwapPerTokenPrice] = useState<number>()
+  const [swapPerTokenPrice, setSwapPerTokenPrice] = useState<any>()
   const [isTransactionPending, setisTransactionPending] = useState(false)
-  // const swapPerTokenPrice: number = !inverse
-  //   ? getYTokenPrice(100000000, token0?.address, token1?.address)
-  //   : getYTokenPrice(100000000, token1?.address, token0?.address)
+  const [noRouteFound, setNoRouteFound] = useState<string>('')
 
   const handleChangeToken = (token: Token) => {
-    console.log(token)
     setOpen(false)
     if (tokenSelectedNumber == '0') {
       setToken0(token)
@@ -46,35 +45,33 @@ export default function SwapPage() {
       setToken1(token)
     }
   }
-
-  // function getSwapPrice(): void {
-  //   console.log('first')
-  // }
   const getSwapPrice = async (tradeVal: number): Promise<any> => {
-    // console.log(tradeVal)
     setSwapPerTokenPrice(0)
-    const output = !inverse
+    const output: any = !inverse
       ? await getYTokenPrice(tradeVal * 10 ** 8, token0?.address, token1?.address)
       : await getYTokenPrice(tradeVal * 10 ** 8, token1?.address, token0?.address)
-    console.log('output', output)
     setSwapPerTokenPrice(output)
+    if (output?.message?.includes('Unexpected') || output?.message?.includes('Cannot read properties')) {
+      setNoRouteFound('No Route Found')
+    } else {
+      setNoRouteFound('')
+    }
   }
 
   const provider = new Provider(Network.TESTNET)
 
   useEffect(() => {
-    // console.log('swapPerTokenPrice', swapPerTokenPrice)
+    getSwapPrice(token1Value)
     setLoadingPrice(true)
     if (connected) {
-      setBttonMessage('Enter Amount')
       fetch(`https://fullnode.testnet.aptoslabs.com/v1/accounts/${account?.address}/resources`)
         .then((res) => res.json())
         .then((data) => {
-          const coinData0 = data.filter((coin: object) => {
-            return coin.type.includes(token0.address)
+          const coinData0 = data.filter((coin: coinType) => {
+            return coin?.type.includes(token0.address)
           })
-          const coinData1 = data.filter((coin: object) => {
-            return coin.type.includes(token1.address)
+          const coinData1 = data.filter((coin: coinType) => {
+            return coin?.type.includes(token1.address)
           })
           setFilteredCoin0(coinData0[0])
           setFilteredCoin1(coinData1[0])
@@ -85,8 +82,8 @@ export default function SwapPage() {
         })
     } else {
       setLoadingPrice(false)
-      setFilteredCoin0({})
-      setFilteredCoin1({})
+      setFilteredCoin0(undefined)
+      setFilteredCoin1(undefined)
     }
   }, [account, inverse, connected, token0, token1, isTransactionPending])
 
@@ -117,7 +114,7 @@ export default function SwapPage() {
           <Drawer.Root>
             <WidgetTitleV2 />
             <SwitchAppType />
-            <div>
+            <div className="relative">
               {inverse == false ? (
                 <>
                   <TradeInput
@@ -143,6 +140,7 @@ export default function SwapPage() {
                     isLoadingPrice={isLoadingPrice}
                     setTokenSelectedNumber={setTokenSelectedNumber}
                     tokenNumber="1"
+                    getSwapPrice={getSwapPrice}
                     disabledInput={true}
                     outpuSwapTokenAmount={swapPerTokenPrice}
                   />
@@ -172,6 +170,7 @@ export default function SwapPage() {
                     isLoadingPrice={isLoadingPrice}
                     setTokenSelectedNumber={setTokenSelectedNumber}
                     tokenNumber="0"
+                    getSwapPrice={getSwapPrice}
                     disabledInput={true}
                     outpuSwapTokenAmount={swapPerTokenPrice}
                   />
@@ -181,14 +180,22 @@ export default function SwapPage() {
                 {connected ? (
                   <button
                     className={`btn w-full flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold ${
-                      buttonError ? 'pointer-events-none relative opacity-[0.4] overflow-hidden' : ''
+                      buttonError || noRouteFound ? 'pointer-events-none relative opacity-[0.4] overflow-hidden' : ''
                     }`}
-                    disabled={buttonError ? true : false}
+                    disabled={buttonError || noRouteFound ? true : false}
                     onClick={() => {
                       token1Value ? swapToken() : {}
                     }}
                   >
-                    {buttonError ? buttonError : token1Value ? <>Swap</> : <>Enter Amount</>}
+                    {noRouteFound ? (
+                      noRouteFound
+                    ) : buttonError ? (
+                      buttonError
+                    ) : token1Value ? (
+                      <>Swap</>
+                    ) : (
+                      <>Enter Amount</>
+                    )}
                   </button>
                 ) : (
                   <WalletSelector />

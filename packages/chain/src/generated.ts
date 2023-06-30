@@ -140,7 +140,7 @@ export default [
     ]
   },
   {
-    "name": "Optimism",
+    "name": "OP Mainnet",
     "chain": "ETH",
     "rpc": [
       "https://mainnet.optimism.io/"

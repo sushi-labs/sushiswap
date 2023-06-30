@@ -4,7 +4,7 @@ import { GlobalNav } from '@sushiswap/ui/future/components/GlobalNav'
 import { Button } from '@sushiswap/ui/future/components/button'
 import React, { FC } from 'react'
 import Link from 'next/link'
-import { WalletSelector } from '@aptos-labs/wallet-adapter-ant-design'
+import WalletSelector from 'components/WalletSelector'
 
 export const Header: FC = () => {
   return (
