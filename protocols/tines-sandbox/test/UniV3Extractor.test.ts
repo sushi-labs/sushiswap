@@ -3,7 +3,7 @@ import { erc20Abi, routeProcessor2Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { DAI, Native, USDC, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
 import { FactoryInfo, PoolInfo, UniV3Extractor } from '@sushiswap/extractor'
-import { NativeWrapProvider, PoolCode, Router, UniswapV3Provider } from '@sushiswap/router'
+import { LiquidityProviders, NativeWrapProvider, PoolCode, Router, UniswapV3Provider } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { getBigNumber, RouteStatus, UniV3Pool } from '@sushiswap/tines'
 import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
@@ -42,18 +42,18 @@ const RP3Address = {
 function uniswapFactory(chain: ChainId): FactoryInfo {
   return {
     address: UniswapV3FactoryAddress[chain] as Address,
-    providerName: 'UniswapV3',
+    provider: LiquidityProviders.UniswapV3,
   }
 }
 
 export const pancakeswapFactory: FactoryInfo = {
   address: '0x6e229c972d9f69c15bdc7b07f385d2025225e72b' as Address,
-  providerName: 'PancakeswapV3',
+  provider: LiquidityProviders.UniswapV3,
 }
 
 const kyberswapFactory: FactoryInfo = {
   address: '0xC7a590291e07B9fe9E64b86c58fD8fC764308C4A' as Address,
-  providerName: 'KyberSwapV3',
+  provider: LiquidityProviders.UniswapV3,
 }
 
 const pools: PoolInfo[] = [
