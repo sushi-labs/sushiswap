@@ -940,7 +940,6 @@ importers:
       eslint-plugin-react-hooks: 4.6.0
       eslint-plugin-simple-import-sort: 10.0.0
       eslint-plugin-testing-library: 5.11.0
-      eslint-plugin-turbo: ^1.10.6
       eslint-plugin-unused-imports: 2.0.0
     dependencies:
       '@next/eslint-plugin-next': 13.4.7
@@ -951,7 +950,6 @@ importers:
       eslint-plugin-react-hooks: 4.6.0
       eslint-plugin-simple-import-sort: 10.0.0
       eslint-plugin-testing-library: 5.11.0
-      eslint-plugin-turbo: 1.10.6
       eslint-plugin-unused-imports: 2.0.0
     devDependencies:
       '@types/eslint': 8.40.2
@@ -3127,7 +3125,7 @@ packages:
     dependencies:
       '@fastify/deepmerge': 1.3.0
       ajv: 8.12.0
-      ajv-formats: 2.1.1_ajv@8.12.0
+      ajv-formats: 2.1.1
       fast-deep-equal: 3.1.3
       rfdc: 1.3.0
 
@@ -16203,17 +16201,6 @@ packages:
         optional: true
     dependencies:
       ajv: 8.12.0
-    dev: false
-
-  /ajv-formats/2.1.1_ajv@8.12.0:
-    resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
-    peerDependencies:
-      ajv: ^8.0.0
-    peerDependenciesMeta:
-      ajv:
-        optional: true
-    dependencies:
-      ajv: 8.12.0
 
   /ajv/6.12.6:
     resolution: {integrity: sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==}
@@ -22054,7 +22041,7 @@ packages:
       '@whatwg-node/fetch': 0.8.8
       '@whatwg-node/server': 0.7.7
       ajv: 8.12.0
-      ajv-formats: 2.1.1_ajv@8.12.0
+      ajv-formats: 2.1.1
       hotscript: 1.0.12
       json-schema-to-ts: 2.9.1
       openapi-types: 12.1.3
@@ -25110,7 +25097,7 @@ packages:
       pretty-format: 29.5.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1_@types+node@18.11.18
+      ts-node: 10.9.1_vgecuulidpx36ppb4uqgt55o24
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -25189,7 +25176,7 @@ packages:
       pretty-format: 29.5.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1_@types+node@18.11.18
+      ts-node: 10.9.1_j2tenfqo3ojkwe6mxlyxo4e3lm
     transitivePeerDependencies:
       - supports-color
     dev: true
