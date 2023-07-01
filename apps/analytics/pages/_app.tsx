@@ -1,14 +1,13 @@
 import '@sushiswap/ui/index.css'
 import '../variables.css'
 
-import { ThemeProvider } from '@sushiswap/ui'
+import { ThemeProvider } from '@sushiswap/ui/ThemeProvider'
 import { client, WagmiConfig } from '@sushiswap/wagmi'
 import { Analytics } from '@vercel/analytics/react'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
 import { FC, ReactNode, useEffect } from 'react'
 import { Provider } from 'react-redux'
@@ -19,12 +18,14 @@ import { GlobalNav } from '@sushiswap/ui/components/GlobalNav'
 import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
 import { queryClient } from '@sushiswap/react-query'
 import { QueryClientProvider as _QueryClientProvider } from '@tanstack/react-query'
+import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
 
 declare global {
   interface Window {
     dataLayer: Record<string, any>[]
   }
 }
+
 
 export const QueryClientProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return <_QueryClientProvider client={queryClient}>{children}</_QueryClientProvider>
@@ -56,22 +57,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="mask-icon" href="/analytics/safari-pinned-tab.svg?v=1" color="#fa52a0" />
         <link rel="shortcut icon" href="/analytics/favicon.ico?v=1" />
       </Head>
-      <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
-      <Script
-        id="gtag-init"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-JW8KWJ48EF', {
-              page_path: window.location.pathname,
-            });
-          `,
-        }}
-      />
-
       <WagmiConfig client={client}>
         <Provider store={store}>
           <ThemeProvider forcedTheme="dark">
@@ -84,6 +69,8 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
           </ThemeProvider>
         </Provider>
       </WagmiConfig>
+      <GoogleAnalytics />
+      <HotJar />
       <Analytics />
     </>
   )

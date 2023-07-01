@@ -27,16 +27,15 @@ export const TableFiltersNetwork: FC = () => {
   )
 
   return (
-    <PopoverNew open={open} onOpenChange={setOpen}>
+    <PopoverNew modal={true} open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="secondary" role="combobox" aria-expanded={open}>
           <span>Networks</span>
           <SelectIcon />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="!p-0">
+      <PopoverContent className="!p-0 !overflow-x-hidden !overflow-y-scroll scroll">
         <Command className="flex items-center gap-1">
-          <CommandEmpty>No framework found.</CommandEmpty>
           <CommandGroup>
             {SUPPORTED_CHAIN_IDS.map((chainId) => (
               <CommandItem

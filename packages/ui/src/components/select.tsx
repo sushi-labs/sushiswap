@@ -63,13 +63,14 @@ const SelectContent = React.forwardRef<
       collisionPadding={collisionPadding}
       sideOffset={sideOffset}
       className={classNames(
-        'p-0.5 relative z-[1081] min-w-[8rem] rounded-xl overflow-hidden bg-white/50 paper dark:bg-slate-800/50 shadow-md animate-in fade-in-80',
-        position === 'popper' && 'translate-y-1',
+        'max-h-[--radix-select-content-available-height] p-0.5 relative z-[1081] min-w-[8rem] rounded-xl overflow-hidden bg-white/50 paper dark:bg-slate-800/50 shadow-md animate-in fade-in-80',
+        position === 'popper' && 'translate-y-1 ',
         className
       )}
       position={position}
       {...props}
     >
+      <SelectPrimitive.ScrollUpButton>Test</SelectPrimitive.ScrollUpButton>
       <SelectPrimitive.Viewport
         className={classNames(
           'p-1',
@@ -78,6 +79,7 @@ const SelectContent = React.forwardRef<
       >
         {children}
       </SelectPrimitive.Viewport>
+      <SelectPrimitive.ScrollDownButton>Test</SelectPrimitive.ScrollDownButton>
     </SelectPrimitive.Content>
   </SelectPrimitive.Portal>
 ))
