@@ -1,3 +1,4 @@
+import { ChainId } from '@sushiswap/chain'
 import { Abi, Narrow } from 'abitype'
 import { Address, PublicClient } from 'viem'
 import { Contract, MulticallContracts } from 'viem/dist/types/types/multicall'
@@ -100,7 +101,7 @@ export class MultiCallAggregator {
         this.pendingResolves = []
         this.pendingRejects = []
         pendingCalls.unshift({
-          address: this.client.chain?.contracts?.multicall3?.address as Address,
+          address: this.getBlockNumberContractAddress(),
           abi: getBlockNumberAbi,
           functionName: 'getBlockNumber',
         })
@@ -124,7 +125,7 @@ export class MultiCallAggregator {
         }
         if (res[0].status !== 'success') {
           // getBlockNumber Failed
-          for (let i = 1; i < res.length; ++i) pendingRejects[i](res[0].error)
+          for (let i = 1; i < res.length; ++i) pendingRejects[i - 1](res[0].error)
         } else {
           const blockNumber = res[0].result as number
           for (let i = 1; i < res.length; ++i) {
@@ -134,5 +135,14 @@ export class MultiCallAggregator {
         }
       }, 0)
     }
+  }
+
+  getBlockNumberContractAddress(): Address {
+    if (this.client.chain?.id == ChainId.ARBITRUM) {
+      // multicall3.getBlockNumber returns address for L1 Ethereum, not local L2
+      // this is Arbitrum-adapted multicall2 contract
+      return '0x842eC2c7D803033Edf55E478F461FC547Bc54EB2'
+    }
+    return this.client.chain?.contracts?.multicall3?.address as Address
   }
 }
