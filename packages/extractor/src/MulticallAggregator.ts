@@ -117,7 +117,7 @@ export class MultiCallAggregator {
               })),
             })
           } catch (e) {
-            warnLog('Multicall error: ' + e)
+            warnLog('Multicall error')
             continue
           }
           break

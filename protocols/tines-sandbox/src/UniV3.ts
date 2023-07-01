@@ -17,7 +17,10 @@ const ZERO = getBigNumber(0)
 
 export const UniswapV3FactoryAddress: Record<number, string> = {
   [ChainId.ETHEREUM]: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
-  [ChainId.POLYGON]: '0x1f98431c8ad98523631ae4a59f267346ea31f984',
+  [ChainId.POLYGON]: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
+  [ChainId.ARBITRUM]: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
+  [ChainId.OPTIMISM]: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
+  [ChainId.BSC]: '0xdB1d10011AD0Ff90774D0C6Bb92e5C5c8b4461F7',
 }
 
 const PositionManagerAddress: Record<number, string> = {

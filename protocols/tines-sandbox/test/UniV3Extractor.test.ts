@@ -22,7 +22,7 @@ import {
   WalletClient,
 } from 'viem'
 import { Account, privateKeyToAccount } from 'viem/accounts'
-import { Chain, hardhat, mainnet, polygon } from 'viem/chains'
+import { arbitrum, Chain, hardhat, mainnet, polygon } from 'viem/chains'
 
 import { setTokenBalance, UniswapV3FactoryAddress } from '../src'
 import { comparePoolCodes, isSubpool } from '../src/ComparePoolCodes'
@@ -37,6 +37,7 @@ const SwapRouterAddress: Address = '0xE592427A0AEce92De3Edee1F18E0157C05861564'
 const RP3Address = {
   [ChainId.ETHEREUM]: '0x827179dD56d07A7eeA32e3873493835da2866976' as Address,
   [ChainId.POLYGON]: '0x0a6e511Fe663827b9cA7e2D2542b20B37fC217A6' as Address,
+  [ChainId.ARBITRUM]: '0xfc506AaA1340b4dedFfd88bE278bEe058952D674' as Address,
 }
 
 function uniswapFactory(chain: ChainId): FactoryInfo {
@@ -582,5 +583,15 @@ it.skip('UniV3 Extractor Polygon infinit work test', async () => {
     factories: [uniswapFactory(ChainId.POLYGON)],
     tickLensContract: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
     RP3Address: RP3Address[ChainId.POLYGON],
+  })
+})
+
+it.only('UniV3 Extractor Arbitrum infinit work test', async () => {
+  await startInfinitTest({
+    providerURL: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
+    chain: arbitrum,
+    factories: [uniswapFactory(ChainId.ARBITRUM)],
+    tickLensContract: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
+    RP3Address: RP3Address[ChainId.ARBITRUM],
   })
 })
