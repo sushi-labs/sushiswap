@@ -76,6 +76,7 @@ export class UniV3Extractor {
     tickHelperContract: Address,
     factories: FactoryInfo[],
     cacheDir: string,
+    logDepth: number,
     logging = true
   ) {
     this.client = client
@@ -101,7 +102,7 @@ export class UniV3Extractor {
       return true
     })
 
-    this.logFilter = new LogFilter(client, 50, UniV3EventsAbi, (logs?: Log[]) => {
+    this.logFilter = new LogFilter(client, logDepth, UniV3EventsAbi, (logs?: Log[]) => {
       if (logs) {
         const blockNumber = logs.length > 0 ? Number(logs[logs.length - 1].blockNumber || 0) : '<undefined>'
         try {

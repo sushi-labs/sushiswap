@@ -34,7 +34,7 @@ const PositionManagerAddress: Record<number, Address> = {
   [ChainId.POLYGON]: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
 }
 const SwapRouterAddress: Address = '0xE592427A0AEce92De3Edee1F18E0157C05861564'
-const RP3Address = {
+export const RP3Address = {
   [ChainId.ETHEREUM]: '0x827179dD56d07A7eeA32e3873493835da2866976' as Address,
   [ChainId.POLYGON]: '0x0a6e511Fe663827b9cA7e2D2542b20B37fC217A6' as Address,
   [ChainId.ARBITRUM]: '0xfc506AaA1340b4dedFfd88bE278bEe058952D674' as Address,
@@ -297,6 +297,7 @@ async function makeTest(
     '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
     [uniswapFactory(ChainId.ETHEREUM)],
     '',
+    50,
     false
   )
   await extractor.start()
@@ -364,6 +365,7 @@ async function checkHistoricalLogs(env: TestEnvironment, pool: PoolInfo, fromBlo
     '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
     [uniswapFactory(ChainId.ETHEREUM)],
     '',
+    50,
     false
   )
   await extractor.start()
@@ -496,6 +498,7 @@ async function startInfinitTest(args: {
   factories: FactoryInfo[]
   tickLensContract: Address
   RP3Address: Address
+  logDepth: number
 }) {
   const transport = http(args.providerURL)
   const client = createPublicClient({
@@ -504,7 +507,7 @@ async function startInfinitTest(args: {
   })
   const chainId = client.chain?.id as ChainId
 
-  const extractor = new UniV3Extractor(client, args.tickLensContract, args.factories, './cache')
+  const extractor = new UniV3Extractor(client, args.tickLensContract, args.factories, './cache', args.logDepth)
   await extractor.start()
   extractor.addPoolsForTokens(BASES_TO_CHECK_TRADES_AGAINST[chainId])
 
@@ -573,6 +576,7 @@ it.skip('UniV3 Extractor Ethereum infinit work test', async () => {
     factories: [uniswapFactory(ChainId.ETHEREUM), kyberswapFactory],
     tickLensContract: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
     RP3Address: RP3Address[ChainId.ETHEREUM],
+    logDepth: 50,
   })
 })
 
@@ -583,6 +587,7 @@ it.skip('UniV3 Extractor Polygon infinit work test', async () => {
     factories: [uniswapFactory(ChainId.POLYGON)],
     tickLensContract: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
     RP3Address: RP3Address[ChainId.POLYGON],
+    logDepth: 50,
   })
 })
 
@@ -593,5 +598,6 @@ it.only('UniV3 Extractor Arbitrum infinit work test', async () => {
     factories: [uniswapFactory(ChainId.ARBITRUM)],
     tickLensContract: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
     RP3Address: RP3Address[ChainId.ARBITRUM],
+    logDepth: 300,
   })
 })
