@@ -33,7 +33,7 @@ export const useConcentratedPositionOwner = ({
         stateMutability: 'view',
         type: 'function',
       },
-    ],
+    ] as const,
     functionName: 'ownerOf',
     args: [BigNumber.from(tokenId ? tokenId : 0)],
     enabled: Boolean(chainId) && Boolean(tokenId),

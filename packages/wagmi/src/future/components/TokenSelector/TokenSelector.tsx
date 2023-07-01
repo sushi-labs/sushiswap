@@ -1,24 +1,26 @@
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
 import { useBalances, usePrices, useTokens } from '@sushiswap/react-query'
-import { SlideIn } from '@sushiswap/ui/future/components/animation'
-import { Dialog } from '@sushiswap/ui/future/components/dialog'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
-import { Search } from '@sushiswap/ui/future/components/input/Search'
-import { List } from '@sushiswap/ui/future/components/list/List'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
+import { SlideIn } from '@sushiswap/ui/components/animation'
+import { Dialog } from '@sushiswap/ui/components/dialog'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { Search } from '@sushiswap/ui/components/input/Search'
+import { List } from '@sushiswap/ui/components/list/List'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
 
 import { TokenSelectorCurrencyList } from './TokenSelectorCurrencyList'
 import { TokenSelectorImportRow } from './TokenSelectorImportRow'
 import { useAccount } from 'wagmi'
 import { TokenSelectorCustomTokensOverlay } from './TokenSelectorCustomTokensOverlay'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { Currency } from '@sushiswap/ui/future/components/currency'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { Button } from '@sushiswap/ui/components/button'
+import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/components/skeleton'
+import { Currency } from '@sushiswap/ui/components/currency'
 import { useCustomTokens, usePinnedTokens } from '@sushiswap/hooks'
 import { useSortedTokenList } from './hooks/useSortedTokenList'
 import { useTokenWithCache } from '../../hooks'
 import { isAddress } from '@ethersproject/address'
+import { buttonIconVariants } from '@sushiswap/ui/components/button'
+import { useMemo } from 'react'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 
 interface TokenSelectorProps {
@@ -107,7 +109,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
               <TokenSelectorCustomTokensOverlay />
             </div>
             <div className="flex gap-2">
-              <Search id={id} value={query} loading={isQueryTokenLoading} onChange={setQuery} />
+              <Search id={id} value={query} loading={isQueryTokenLoading} onValueChange={setQuery} />
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -116,24 +118,26 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
                   <div className="relative flex justify-end w-full">
                     <Button
                       color="default"
-                      variant="filled"
+                      variant="default"
                       className="absolute hidden group-hover:flex items-center justify-center w-[18px] h-[18px] -mt-1 -mr-1 border-gray-300 rounded-full border dark:border-gray-800 hover:border-gray-600 dark:hover:border-gray-600"
-                      size="custom"
+                      size={null}
                       onClick={() => _onPin(token.id)}
                     >
                       <XMarkIcon className="w-3 h-3" />
                     </Button>
                   </div>
-                  <Button
-                    startIcon={<Currency.Icon currency={token} width={16} height={16} disableLink={true} />}
-                    color="default"
-                    variant="outlined"
-                    onClick={() => _onSelect(token)}
-                    className="border border-gray-300 dark:border-transparent hover:border-gray-600 dark:hover:border-gray-600"
-                  >
+                  <Button variant="secondary" key={token.id} onClick={() => _onSelect(token)}>
+                    <Currency.Icon
+                      width={20}
+                      height={20}
+                      className={buttonIconVariants({ size: 'default' })}
+                      currency={token}
+                      disableLink
+                    />
                     {token.symbol}
                   </Button>
                 </div>
+                // className="border border-gray-300 dark:border-transparent hover:border-gray-600 dark:hover:border-gray-600"
               ))}
             </div>
 
@@ -143,16 +147,16 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
                   <div className="flex items-center w-full h-full px-3 rounded-lg">
                     <div className="flex items-center justify-between flex-grow gap-2 rounded">
                       <div className="flex flex-row items-center flex-grow gap-4">
-                        <Skeleton.Circle radius={40} />
+                        <SkeletonCircle radius={40} />
                         <div className="flex flex-col items-start">
-                          <Skeleton.Text fontSize="text-base" className="w-full bg-gray-300 w-[100px]" />
-                          <Skeleton.Text fontSize="text-sm" className="w-full bg-gray-100 w-[60px]" />
+                          <SkeletonText className="w-full bg-gray-300 w-[100px]" />
+                          <SkeletonText fontSize="sm" className="w-full bg-gray-100 w-[60px]" />
                         </div>
                       </div>
 
                       <div className="flex flex-col">
-                        <Skeleton.Text fontSize="text-base" className="bg-gray-300 w-[80px]" />
-                        <Skeleton.Text fontSize="text-sm" align="right" className="bg-gray-200 w-[40px]" />
+                        <SkeletonText className="bg-gray-300 w-[80px]" />
+                        <SkeletonText fontSize="sm" align="right" className="bg-gray-200 w-[40px]" />
                       </div>
                     </div>
                   </div>

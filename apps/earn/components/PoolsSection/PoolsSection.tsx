@@ -4,11 +4,11 @@ import { useAccount } from '@sushiswap/wagmi'
 
 import { PoolsTable } from './Tables'
 import { TableFilters } from './Tables/TableFilters'
-import { Button } from '@sushiswap/ui/future/components/button'
 import { useIsMounted } from '@sushiswap/hooks'
-import Container from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/components/container'
 import { PositionsTab } from './PositionsTab'
 import { RewardsTab } from './RewardsTab'
+import { Toggle } from '@sushiswap/ui/components/toggle'
 
 export const PoolsSection: FC = () => {
   const { address } = useAccount()
@@ -22,42 +22,25 @@ export const PoolsSection: FC = () => {
           <div className="flex items-center gap-2 mb-4">
             <Tab as={Fragment}>
               {({ selected }) => (
-                <Button
-                  size="sm"
-                  variant={selected ? 'outlined' : 'empty'}
-                  color="default"
-                  className="!rounded-full !h-[36px]"
-                >
+                <Toggle size="sm" pressed={selected}>
                   All
-                </Button>
+                </Toggle>
               )}
             </Tab>
             {address && isMounted && (
               <>
                 <Tab as={Fragment}>
                   {({ selected }) => (
-                    <Button
-                      size="sm"
-                      variant={selected ? 'outlined' : 'empty'}
-                      color="default"
-                      testId="my-positions"
-                      className="!rounded-full !h-[36px]"
-                    >
+                    <Toggle size="sm" pressed={selected} testId="my-positions">
                       My Positions
-                    </Button>
+                    </Toggle>
                   )}
                 </Tab>
                 <Tab as={Fragment}>
                   {({ selected }) => (
-                    <Button
-                      size="sm"
-                      variant={selected ? 'outlined' : 'empty'}
-                      color="default"
-                      className="!rounded-full !h-[36px]"
-                      testId="my-rewards"
-                    >
+                    <Toggle size="sm" pressed={selected} testId="my-rewards">
                       My Rewards
-                    </Button>
+                    </Toggle>
                   )}
                 </Tab>
               </>

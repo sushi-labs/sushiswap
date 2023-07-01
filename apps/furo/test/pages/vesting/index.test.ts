@@ -1,15 +1,15 @@
-import { Page, expect, test } from '@playwright/test'
+import { expect, Page, test } from '@playwright/test'
 import { Token, USDC_ADDRESS } from '@sushiswap/currency'
 import { addWeeks, getUnixTime, subWeeks } from 'date-fns'
 import {
-  GradedVestingFrequency,
-  VestingArgs,
   createSingleVest,
   createSnapshot,
   getStartOfMonthUnix,
+  GradedVestingFrequency,
   increaseEvmTime,
   loadSnapshot,
   switchNetwork,
+  VestingArgs,
 } from '../../utils'
 
 if (!process.env.CHAIN_ID) {

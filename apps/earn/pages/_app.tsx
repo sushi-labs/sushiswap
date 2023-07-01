@@ -1,6 +1,6 @@
 import '@sushiswap/ui/index.css'
 
-import { App, ThemeProvider } from '@sushiswap/ui'
+import { ThemeProvider } from '@sushiswap/ui'
 import { Analytics } from '@vercel/analytics/react'
 import { Header } from '../components'
 import { SUPPORTED_CHAIN_IDS } from '../config'
@@ -10,7 +10,8 @@ import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
 import { FC, useEffect } from 'react'
-import { WagmiConfig, client } from '@sushiswap/wagmi'
+import { client, WagmiConfig } from '@sushiswap/wagmi'
+import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
 
 import SEO from '../next-seo.config.mjs'
 import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
@@ -56,14 +57,12 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
           <ThemeProvider>
             <Onramper.Provider>
               <HistoryProvider>
-                <App.Shell>
-                  <DefaultSeo {...SEO} />
-                  <Header />
-                  <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
-                  <App.Footer maxWidth="7xl">
-                    <Disclaimer />
-                  </App.Footer>
-                </App.Shell>
+                <DefaultSeo {...SEO} />
+                <Header />
+                <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
+                <GlobalFooter maxWidth="7xl">
+                  <Disclaimer />
+                </GlobalFooter>
               </HistoryProvider>
             </Onramper.Provider>
           </ThemeProvider>

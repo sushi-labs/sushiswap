@@ -1,4 +1,4 @@
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import React, { FC, useEffect, useState } from 'react'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { Checker } from '@sushiswap/wagmi/future/systems'
@@ -26,13 +26,12 @@ export const SwapButtonCrossChain: FC = () => {
   return (
     <>
       <div className="pt-4">
-        <Checker.Connect fullWidth size="xl" color="blue" variant="filled">
-          <Checker.Network fullWidth size="xl" chainId={network0}>
-            <Checker.Amounts fullWidth size="xl" chainId={network0} amounts={[amount]}>
+        <Checker.Connect fullWidth>
+          <Checker.Network fullWidth chainId={network0}>
+            <Checker.Amounts fullWidth chainId={network0} amounts={[amount]}>
               <Checker.ApproveBentobox
                 tag={APPROVE_XSWAP_TAG}
                 fullWidth
-                size="xl"
                 chainId={network0 as BentoBoxV1ChainId}
                 id="approve-bentobox"
                 masterContract={sushiXSwapAddress[network0 as SushiXSwapChainId]}
@@ -40,7 +39,6 @@ export const SwapButtonCrossChain: FC = () => {
                 <Checker.ApproveERC20
                   id="approve-erc20"
                   fullWidth
-                  size="xl"
                   amount={amount}
                   contract={bentoBoxV1Address[network0 as BentoBoxV1ChainId]}
                 >
@@ -55,8 +53,8 @@ export const SwapButtonCrossChain: FC = () => {
                       }
                       color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
                       fullWidth
-                      size="xl"
                       onClick={() => setReview(true)}
+                      size="xl"
                     >
                       {!checked && warningSeverity(trade?.priceImpact) >= 3
                         ? 'Price impact too high'

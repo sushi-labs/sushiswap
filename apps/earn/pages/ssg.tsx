@@ -6,7 +6,7 @@ import { Pools as _Pools } from '../components'
 import { getPoolCount, getPoolCountUrl, getPools, getPoolsUrl } from '@sushiswap/client'
 import { defaultPoolsArgs } from '../lib/constants'
 import { unstable_serialize } from 'swr/infinite'
-import { SplashController } from '@sushiswap/ui/future/components/SplashController'
+import { SplashController } from '@sushiswap/ui/components/SplashController'
 import { useIsMounted } from '@sushiswap/hooks'
 import { useRouter } from 'next/router'
 

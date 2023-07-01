@@ -2,10 +2,13 @@ import { ExternalLinkIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { Token as GraphToken } from '@sushiswap/graph-client'
-import { CopyHelper, Currency, Link, Table, Typography } from '@sushiswap/ui'
+import { Link } from '@sushiswap/ui'
 import { FC } from 'react'
+import { Table } from '@sushiswap/ui/components/table'
+import { Currency } from '@sushiswap/ui/components/currency'
 
 import { useTokenFromToken } from '../../lib/hooks'
+import { ClipboardController } from '@sushiswap/ui/components/ClipboardController'
 
 interface TokenInformation {
   token: GraphToken
@@ -17,9 +20,7 @@ export const TokenInformation: FC<TokenInformation> = ({ token }) => {
 
   return (
     <div className="flex flex-col w-full gap-4">
-      <Typography weight={600} className="text-slate-50">
-        Token Information
-      </Typography>
+      <p className="font-semibold  text-slate-50">Token Information</p>
       <Table.container className="w-full">
         <Table.table>
           <Table.thead>
@@ -41,33 +42,29 @@ export const TokenInformation: FC<TokenInformation> = ({ token }) => {
           <Table.tbody>
             <Table.tr>
               <Table.td>
-                <Typography weight={600} variant="sm" className="text-slate-100">
-                  {_token.symbol}
-                </Typography>
+                <p className="font-semibold text-sm text-slate-100">{_token.symbol}</p>
               </Table.td>
               <Table.td>
                 <div className="flex items-center gap-2">
                   <Currency.Icon currency={_token} width={24} height={24} />
-                  <Typography weight={500} variant="sm" className="text-slate-100">
-                    {_token.name}
-                  </Typography>
+                  <p className="font-medium text-sm text-slate-100">{_token.name}</p>
                 </div>
               </Table.td>
               <Table.td>
-                <CopyHelper toCopy={shortenAddress(_token.wrapped.address)}>
-                  <Typography weight={500} variant="sm" className="text-slate-100">
-                    {shortenAddress(_token.wrapped.address)}
-                  </Typography>
-                </CopyHelper>
+                <ClipboardController>
+                  {({ setCopied }) => (
+                    <span onClick={() => setCopied(_token.wrapped.address)} className="text-sm font-medium">
+                      {shortenAddress(_token.wrapped.address)}
+                    </span>
+                  )}
+                </ClipboardController>
               </Table.td>
               <Table.td>
                 <Link.External
                   href={chain.getTokenUrl(_token.wrapped.address)}
                   className="flex items-center gap-1 !no-underline"
                 >
-                  <Typography weight={500} variant="sm" className="text-slate-100">
-                    View
-                  </Typography>
+                  <p className="font-medium text-sm text-slate-100">View</p>
                   <ExternalLinkIcon width={18} height={18} />
                 </Link.External>
               </Table.td>

@@ -1,17 +1,17 @@
 import { TransactionRequest } from '@ethersproject/providers'
 import { TrashIcon } from '@heroicons/react/outline'
 import { Chain, ChainId } from '@sushiswap/chain'
-import { Dots, Typography } from '@sushiswap/ui'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
 import { useAccount, useContract } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { Button } from '@sushiswap/ui/future/components/button/Button'
+import { Button } from '@sushiswap/ui/components/button'
 import { Stream, Vesting } from '../lib'
-import { createToast } from '@sushiswap/ui/future/components/toast'
+import { createToast } from '@sushiswap/ui/components/toast'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
-import { Dialog } from '@sushiswap/ui/future/components/dialog/Dialog'
+import { Dialog } from '@sushiswap/ui/components/dialog/Dialog'
 import { shortenAddress } from '@sushiswap/format'
+import { Dots } from '@sushiswap/ui/components/dots'
 
 interface CancelModalProps {
   title: string
@@ -75,7 +75,7 @@ export const CancelModal: FC<CancelModalProps> = ({
         },
       })
     },
-    [chainId, address]
+    [type, chainId, address]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
@@ -95,18 +95,14 @@ export const CancelModal: FC<CancelModalProps> = ({
       {typeof children === 'function' ? (
         children({ setOpen })
       ) : (
-        <Button
-          fullWidth
-          startIcon={<TrashIcon className="text-red-400" width={18} height={18} />}
-          onClick={() => setOpen(true)}
-        >
+        <Button fullWidth variant="destructive" icon={TrashIcon} onClick={() => setOpen(true)}>
           Cancel
         </Button>
       )}
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-4 !pb-3 !bg-white dark:!bg-slate-800">
           <Dialog.Header title={title} onClose={() => setOpen(false)} />
-          <Typography variant="sm" weight={400} className="text-gray-700 dark:text-slate-400">
+          <p className="text-sm text-gray-700 dark:text-slate-400">
             This will send the remaining amount of{' '}
             <span className="font-medium text-gray-900 dark:text-slate-200">
               {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount?.currency.symbol}
@@ -121,9 +117,9 @@ export const CancelModal: FC<CancelModalProps> = ({
               {shortenAddress(stream?.createdBy.id)}
             </a>
             .
-          </Typography>
-          <Checker.Connect size="xl" fullWidth>
-            <Checker.Network size="xl" fullWidth chainId={chainId}>
+          </p>
+          <Checker.Connect fullWidth>
+            <Checker.Network fullWidth chainId={chainId}>
               <Button
                 size="xl"
                 fullWidth

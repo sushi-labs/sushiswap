@@ -1,13 +1,11 @@
-import { Popover } from '@headlessui/react'
 import { ChainId, chainName } from '@sushiswap/chain'
-import { classNames, NetworkIcon } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import React, { FC, memo } from 'react'
-
 import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
-import { NetworkSelector } from '@sushiswap/ui/future/components/networkselector'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { ChevronDownIcon } from '@heroicons/react/solid'
+import { NetworkSelector } from '@sushiswap/ui/components/networkselector'
+import { Button } from '@sushiswap/ui/components/button'
 import { ContentBlock } from '../AddPage/ContentBlock'
+import { SelectIcon } from '@sushiswap/ui/components/select'
 
 interface SelectNetworkWidgetProps {
   networks?: ChainId[]
@@ -34,19 +32,12 @@ export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(function S
           selected={selectedNetwork}
           onSelect={onSelect}
           variant="menu"
-          align="left"
         >
-          {({ open }) => (
-            <Popover.Button as={Button} variant="outlined" color="default" size="xl" className="!font-medium">
-              <NetworkIcon chainId={selectedNetwork} width={20} height={20} />
-              <div>{chainName?.[selectedNetwork]}</div>
-              <ChevronDownIcon
-                width={24}
-                height={24}
-                className={classNames('transition-all', open ? 'rotate-180' : 'rotate-0', 'hidden sm:block')}
-              />
-            </Popover.Button>
-          )}
+          <Button variant="secondary" className="!font-medium">
+            <NetworkIcon chainId={selectedNetwork} width={16} height={16} />
+            {chainName?.[selectedNetwork]}
+            <SelectIcon />
+          </Button>
         </NetworkSelector>
       </div>
     </ContentBlock>

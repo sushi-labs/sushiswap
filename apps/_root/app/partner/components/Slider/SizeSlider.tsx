@@ -1,4 +1,3 @@
-import { Typography } from '@sushiswap/ui'
 import { Form } from '../../components/Form'
 import { FormType } from '../../page'
 import React, { FC } from 'react'
@@ -12,7 +11,7 @@ export const SizeSlider: FC = () => {
 
   return (
     <div className="flex flex-col">
-      <Typography weight={600}>Logo size</Typography>
+      <p className="font-semibold">Logo size</p>
       <div className="flex gap-4">
         <div className="flex flex-col flex-grow mt-3">
           <Slider

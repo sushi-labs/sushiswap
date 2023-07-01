@@ -1,13 +1,12 @@
-import { ChevronRightIcon } from '@heroicons/react-v1/solid'
-import { Button, Container, Typography } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
 import React, { FC } from 'react'
 
 import { ExpandableCard } from './ExpandableCard'
 import { AnimatedTitle } from './AnimatedTitle'
 
-import { BentoBoxSVG } from './svgs/BentoBoxSVG'
-import { SwitchSVG } from './svgs/SwitchSVG'
+import { BentoBoxSVG, SwitchSVG } from './svgs'
+import { Button } from '@sushiswap/ui/components/button'
+import { Container } from '@sushiswap/ui/components/container'
 
 const DATA = [
   {
@@ -67,7 +66,7 @@ export const BuildFuture: FC = () => {
     <section className="px-4 py-20 sm:py-40">
       <Container maxWidth="5xl" className="mx-auto">
         <div className="flex flex-col gap-20">
-          <AnimatedTitle className="text-center md:text-left !max-w-full">
+          <AnimatedTitle className="text-center md:text-left !max-w-full tracking-tight">
             Help build <span className="text-pink">the future</span> with Sushi.{' '}
             <span className="text-neutral-400">{`We invite all developers to explore Sushi's frameworks.`}</span>
           </AnimatedTitle>
@@ -98,27 +97,13 @@ export const BuildFuture: FC = () => {
                         >
                           <div className="flex items-center gap-3">
                             <Icon width={40} height={40} className="text-neutral-50 opacity-1" />
-                            <Typography weight={500} className="text-neutral-400">
-                              {category}
-                            </Typography>
+                            <span className="font-medium text-neutral-400">{category}</span>
                           </div>
-                          <Typography
-                            as={motion.h1}
-                            layoutId={titleId}
-                            weight={600}
-                            variant="h3"
-                            className="text-left text-neutral-50"
-                          >
+                          <motion.h1 layoutId={titleId} className="text-4xl font-semibold text-left text-neutral-50">
                             {title}
-                          </Typography>
+                          </motion.h1>
                           <div>
-                            <Button
-                              className="!p-0"
-                              variant="empty"
-                              endIcon={<ChevronRightIcon width={16} height={16} />}
-                            >
-                              View More
-                            </Button>
+                            <Button variant="ghost">View More</Button>
                           </div>
                         </motion.div>
                       </motion.div>

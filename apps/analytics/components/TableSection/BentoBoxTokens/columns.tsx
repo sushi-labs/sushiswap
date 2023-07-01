@@ -1,9 +1,10 @@
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
-import { ChainCell, StringCell } from '../Common/Cells'
+import { ChainCell, StringCell } from '../Common'
 import { TokenNameCell } from './Cells'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
+
 import { BentoBoxToken } from './useBentoBoxTokens'
 import { formatNumber, formatUSD } from '@sushiswap/format'
 import { ICON_SIZE } from './constants'
@@ -14,7 +15,7 @@ export const NETWORK_COLUMN: ColumnDef<BentoBoxToken, unknown> = {
   cell: (props) => <ChainCell row={props.row.original.token} ICON_SIZE={ICON_SIZE} />,
   size: 30,
   meta: {
-    skeleton: <Skeleton.Circle radius={26} />,
+    skeleton: <SkeletonCircle radius={26} />,
   },
 }
 
@@ -24,7 +25,7 @@ export const NAME_COLUMN: ColumnDef<BentoBoxToken, unknown> = {
   cell: (props) => <TokenNameCell token={props.row.original.token} />,
   size: 160,
   meta: {
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -38,7 +39,7 @@ export const LIQUIDITY_COLUMN: ColumnDef<BentoBoxToken, unknown> = {
   size: 160,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -53,6 +54,6 @@ export const LIQUIDITY_USD_COLUMN: ColumnDef<BentoBoxToken, unknown> = {
   size: 160,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }

@@ -1,12 +1,14 @@
 import { getAddress } from '@ethersproject/address'
 import { formatUSD } from '@sushiswap/format'
 import { Bundle, Token as GraphToken } from '@sushiswap/graph-client'
-import { Button, Chip, Currency, Typography } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui/components/currency'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import useSWR from 'swr'
 
 import { useTokenFromToken } from '../../lib/hooks'
+import { Button } from '@sushiswap/ui/components/button'
+import { Chip } from '@sushiswap/ui/components/chip'
 
 interface TokenHeader {
   token: GraphToken
@@ -27,14 +29,10 @@ export const TokenHeader: FC<TokenHeader> = ({ token }) => {
           <div>
             <Currency.Icon currency={_token} width={24} height={24} />
           </div>
-          <Typography variant="lg" className="text-slate-200" weight={500}>
-            {_token.name}
-          </Typography>
-          <Chip label={_token.symbol} />
+          <span className="text-lg font-medium text-slate-200">{_token.name}</span>
+          <Chip variant="ghost">{_token.symbol}</Chip>
         </div>
-        <Typography variant="h3" className="text-slate-200" weight={600}>
-          {price.includes('NaN') ? '$0.00' : price}
-        </Typography>
+        <span className="text-2xl font-semibold text-slate-200">{price.includes('NaN') ? '$0.00' : price}</span>
       </div>
       <Button
         onClick={() =>
@@ -42,7 +40,6 @@ export const TokenHeader: FC<TokenHeader> = ({ token }) => {
             `https://www.sushi.com/swap?chainId=${token.chainId}&token0=${getAddress(token.id.split(':')[1])}`
           )
         }
-        size="md"
         fullWidth
       >
         Trade

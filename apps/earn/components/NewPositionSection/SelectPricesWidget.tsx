@@ -1,6 +1,6 @@
 import { MinusIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/react/solid'
 import { tryParseAmount, Type } from '@sushiswap/currency'
-import { classNames, Collapsible } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { Bound } from '../../lib/constants'
@@ -12,14 +12,17 @@ import {
   useConcentratedMintState,
   useRangeHopCallbacks,
 } from '../ConcentratedLiquidityProvider'
-import { Input } from '@sushiswap/ui/future/components/input'
+import { Input } from '@sushiswap/ui/components/input'
 import { useAccount } from '@sushiswap/wagmi'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { useIsMounted } from '@sushiswap/hooks'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui/components/skeleton'
+
 import { useConcentratedLiquidityPositionsFromTokenId } from '@sushiswap/wagmi/future/hooks'
 import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
+import { Toggle } from '@sushiswap/ui/components/toggle'
 
 interface SelectPricesWidget {
   chainId: SushiSwapV3ChainId
@@ -146,7 +149,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
           <div className="flex items-center justify-between gap-2">
             <div className="flex justify-end lg:hidden">
               {isLoading || !pool || !token0 || !token1 ? (
-                <Skeleton.Text fontSize="text-xs" />
+                <SkeletonText fontSize="xs" />
               ) : (
                 <div
                   onClick={() => setInvert((prev) => !prev)}
@@ -165,28 +168,18 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
             </div>
             {switchTokens ? (
               <div className="flex gap-2 rounded-xl bg-gray-100 dark:bg-white/[0.02] p-1">
-                <Button
-                  onClick={switchTokens}
-                  variant={isSorted ? 'outlined' : 'empty'}
-                  color={isSorted ? 'blue' : 'default'}
-                  size="xs"
-                >
+                <Toggle onPressedChange={switchTokens} pressed={isSorted} size="xs">
                   {isSorted ? token0?.symbol : token1?.symbol}
-                </Button>
-                <Button
-                  onClick={switchTokens}
-                  variant={isSorted ? 'empty' : 'outlined'}
-                  color={isSorted ? 'default' : 'blue'}
-                  size="xs"
-                >
+                </Toggle>
+                <Toggle onPressedChange={switchTokens} pressed={!isSorted} size="xs">
                   {isSorted ? token1?.symbol : token0?.symbol}
-                </Button>
+                </Toggle>
               </div>
             ) : (
               <div />
             )}
             {!noLiquidity && (
-              <Button size="xs" variant="empty" color="blue" onClick={getSetFullRange}>
+              <Button size="sm" variant="ghost" onClick={getSetFullRange}>
                 Full Range
               </Button>
             )}

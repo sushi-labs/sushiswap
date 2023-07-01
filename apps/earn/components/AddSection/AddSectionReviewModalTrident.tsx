@@ -5,7 +5,7 @@ import { calculateSlippageAmount, ConstantProductPool, StablePool } from '@sushi
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
-import { Dots } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui/components/dots'
 import {
   _useSendTransaction as useSendTransaction,
   ConstantProductPoolState,
@@ -22,8 +22,8 @@ import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { approveMasterContractAction, batchAction, getAsEncodedAction, LiquidityInput } from '../../lib/actions'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
-import { createToast } from '@sushiswap/ui/future/components/toast'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { createToast } from '@sushiswap/ui/components/toast'
+import { Button } from '@sushiswap/ui/components/button'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
 import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_ADD_TRIDENT } from '../../lib/constants'
@@ -255,8 +255,8 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   return (
     <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} close={close}>
       <Button
-        id="confirm-add-liquidity"
         size="xl"
+        id="confirm-add-liquidity"
         disabled={isWritePending}
         fullWidth
         onClick={() => sendTransaction?.()}

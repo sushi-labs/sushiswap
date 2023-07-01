@@ -1,5 +1,5 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
-import { classNames, Container } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import furoImg from 'common/assets/furo-img.png'
 import {
   ProductArticles,
@@ -17,6 +17,7 @@ import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import Image from 'next/image'
 import { FC } from 'react'
 import useSWR from 'swr'
+import { Container } from '@sushiswap/ui/components/container'
 
 import { ProductSeo } from '../../common/components/Seo/ProductSeo'
 
@@ -56,7 +57,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (product
           productDescription={description}
           productUrl={url}
           buttonText={buttonText}
-          buttonIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
+          buttonIcon={LinkIcon}
           image={<Image src={furoImg} unoptimized alt="furo-img" />}
           productStats={productStats}
         />

@@ -5,7 +5,7 @@ import React from 'react'
 
 import { useIsSmScreen } from '@sushiswap/hooks'
 
-import { BuildFuture, BuildWealth, Ecosystem, Hero, NeedHelp, Story, Partners, Stats } from './components'
+import { BuildFuture, BuildWealth, Ecosystem, Hero, NeedHelp, Partners, Stats, Story } from './components'
 
 export default async function LandingPage() {
   const isSmallScreen = useIsSmScreen()

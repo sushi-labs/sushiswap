@@ -20,8 +20,15 @@ const bitmapIndex = (tick: number, tickSpacing: number) => {
   return Math.floor(tick / tickSpacing / 256)
 }
 
-export function useTicks({ token0, token1, chainId, feeAmount, numSurroundingTicks, enabled }: useTicks) {
-  numSurroundingTicks = numSurroundingTicks ?? 1250
+export function useTicks({
+  token0,
+  token1,
+  chainId,
+  feeAmount,
+  numSurroundingTicks: _numSurroundingTicks,
+  enabled,
+}: useTicks) {
+  const numSurroundingTicks = _numSurroundingTicks ?? 1250
 
   const { data: pool } = useConcentratedLiquidityPool({ token0, token1, chainId, feeAmount, enabled })
 
@@ -42,14 +49,14 @@ export function useTicks({ token0, token1, chainId, feeAmount, numSurroundingTic
 
   const minIndex = useMemo(
     () =>
-      tickSpacing && activeTick && numSurroundingTicks
+      tickSpacing !== undefined && activeTick !== undefined
         ? bitmapIndex(activeTick - (numSurroundingTicks as number) * tickSpacing, tickSpacing)
         : undefined,
     [tickSpacing, activeTick, numSurroundingTicks]
   )
   const maxIndex = useMemo(
     () =>
-      tickSpacing && activeTick && numSurroundingTicks
+      tickSpacing !== undefined && activeTick !== undefined
         ? bitmapIndex(activeTick + numSurroundingTicks * tickSpacing, tickSpacing)
         : undefined,
     [tickSpacing, activeTick, numSurroundingTicks]

@@ -1,6 +1,6 @@
 import { test } from '@playwright/test'
 import { Native, Token, USDC_ADDRESS } from '@sushiswap/currency'
-import { GradedVestingFrequency, createMultipleVests, createSnapshot, loadSnapshot } from '../../../utils'
+import { createMultipleVests, createSnapshot, GradedVestingFrequency, loadSnapshot } from '../../../utils'
 
 let SNAPSHOT_ID = '0x0'
 const CHAIN_ID = parseInt(process.env.CHAIN_ID as string)

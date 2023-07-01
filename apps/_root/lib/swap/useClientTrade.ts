@@ -11,24 +11,23 @@ import {
 import { Amount, Type as Currency, WNATIVE } from '@sushiswap/currency'
 import { RouteStatus } from '@sushiswap/tines'
 import {
+  ConstantProductPoolState,
+  PairState,
+  StablePoolState,
   useBentoBoxTotal,
   useCurrencyCombinations,
+  useFeeData,
   useGetConstantProductPools,
   useGetStablePools,
-  StablePoolState,
-  ConstantProductPoolState,
   usePairs,
-  PairState,
 } from '@sushiswap/wagmi'
 import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from '../../config'
 import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
-import { useFeeData } from '@sushiswap/wagmi'
 import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { StablePoolFactoryChainId } from '@sushiswap/trident-core'
+import { ConstantProductPoolFactoryChainId, StablePoolFactoryChainId } from '@sushiswap/trident-core'
 import { RouteProcessor3ChainId } from '@sushiswap/route-processor'
-import { ConstantProductPoolFactoryChainId } from '@sushiswap/trident-core'
 
 export type UseTradeOutput =
   | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>

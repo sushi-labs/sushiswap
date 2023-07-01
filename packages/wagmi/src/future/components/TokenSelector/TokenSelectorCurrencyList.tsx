@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Native, Type } from '@sushiswap/currency'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Currency } from '@sushiswap/ui/components/currency'
 import React, { FC, memo, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 

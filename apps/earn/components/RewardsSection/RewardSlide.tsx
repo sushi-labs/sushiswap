@@ -3,12 +3,12 @@ import { useAngleRewardsMultipleChains } from '@sushiswap/react-query'
 import { Chain } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Currency } from '@sushiswap/ui/components/currency'
 import { formatNumber } from '@sushiswap/format'
-import { List } from '@sushiswap/ui/future/components/list/List'
-import { Explainer } from '@sushiswap/ui/future/components/Explainer'
+import { List } from '@sushiswap/ui/components/list/List'
+import { Explainer } from '@sushiswap/ui/components/explainer'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
-import Button from '@sushiswap/ui/future/components/button/Button'
+import { Button } from '@sushiswap/ui/components/button'
 import { ConcentratedLiquidityHarvestButton } from '../ConcentratedLiquidityHarvestButton'
 import { Address } from 'wagmi'
 
@@ -48,7 +48,7 @@ export const RewardSlide: FC<{
         <span className="font-medium flex items-center gap-1 text-sm text-gray-500 dark:text-slate-400">
           Claimable{' '}
           {unclaimed.length > 0 && (
-            <Explainer hover iconSize={16} placement="bottom" width={320}>
+            <Explainer>
               <List className="!pt-0 ">
                 <List.Label>Claimable on {Chain.from(data.chainId).name}</List.Label>
                 <List.Control>
@@ -95,9 +95,15 @@ export const RewardSlide: FC<{
         <div className="mt-4">
           <ConcentratedLiquidityHarvestButton account={address} chainId={data.chainId}>
             {({ write, isLoading }) => (
-              <Checker.Connect fullWidth variant="outlined">
-                <Checker.Network fullWidth variant="outlined" chainId={data.chainId}>
-                  <Button fullWidth disabled={isLoading} onClick={() => write?.()} variant="outlined">
+              <Checker.Connect fullWidth={false} size="sm" variant="secondary">
+                <Checker.Network fullWidth={false} size="sm" variant="secondary" chainId={data.chainId}>
+                  <Button
+                    fullWidth={false}
+                    size="sm"
+                    disabled={isLoading}
+                    onClick={() => write?.()}
+                    variant="secondary"
+                  >
                     Claim
                   </Button>
                 </Checker.Network>

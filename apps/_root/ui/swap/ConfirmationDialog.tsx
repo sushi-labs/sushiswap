@@ -6,7 +6,7 @@ import { useSwapActions, useSwapState } from './trade/TradeProvider'
 import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from '@sushiswap/wagmi'
 import { useTrade } from '../../lib/swap/useTrade'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
 import { log } from 'next-axiom'
@@ -14,7 +14,7 @@ import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import {
   ConfirmationDialog as UIConfirmationDialog,
   ConfirmationDialogState,
-} from '@sushiswap/ui/dialog/ConfirmationDialog'
+} from '@sushiswap/ui/components/dialog/ConfirmationDialog'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import {
   isRouteProcessor3ChainId,
@@ -48,7 +48,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   const { setReview } = useSwapActions()
   const { appType, network0, token0, token1, review } = useSwapState()
   const { approved } = useApproved('swap')
-  const { data: trade } = useTrade({ crossChain: false })
+  const { data: trade } = useTrade({ crossChain: false, enabled: review })
 
   if (trade?.route && trade?.route?.status !== 'NoWay') {
     if (
@@ -137,12 +137,14 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     abi: routeProcessor2Abi,
     functionName: trade?.functionName,
     args: trade?.writeArgs,
-    enabled:
-      Boolean(trade?.writeArgs &&
-      appType === AppType.Swap &&
-      (isRouteProcessorChainId(network0) || isRouteProcessor3ChainId(network0)) &&
-      approved &&
-      trade?.route?.status !== 'NoWay' && chain?.id === network0),
+    enabled: Boolean(
+      trade?.writeArgs &&
+        appType === AppType.Swap &&
+        (isRouteProcessorChainId(network0) || isRouteProcessor3ChainId(network0)) &&
+        approved &&
+        trade?.route?.status !== 'NoWay' &&
+        chain?.id === network0
+    ),
     overrides: trade?.overrides,
     onError: (error) => {
       const message = error.message.toLowerCase()

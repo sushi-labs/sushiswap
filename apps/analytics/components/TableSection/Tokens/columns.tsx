@@ -2,9 +2,10 @@ import { Token } from '@sushiswap/graph-client'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
-import { ChainCell } from '../Common/Cells'
+import { ChainCell } from '../Common'
 import { TokenLiquidityCell, TokenNameCell, TokenPriceCell, TokenVolumeCell } from './Cells'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
+
 import { ICON_SIZE } from './constants'
 
 export const NETWORK_COLUMN: ColumnDef<Token, unknown> = {
@@ -13,7 +14,7 @@ export const NETWORK_COLUMN: ColumnDef<Token, unknown> = {
   cell: (props) => <ChainCell row={props.row.original} ICON_SIZE={ICON_SIZE} />,
   size: 30,
   meta: {
-    skeleton: <Skeleton.Circle radius={26} />,
+    skeleton: <SkeletonCircle radius={26} />,
   },
 }
 
@@ -23,7 +24,7 @@ export const NAME_COLUMN: ColumnDef<Token, unknown> = {
   cell: (props) => <TokenNameCell row={props.row.original} />,
   size: 160,
   meta: {
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -34,7 +35,7 @@ export const LIQUIDITY_COLUMN: ColumnDef<Token, unknown> = {
   size: 160,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -45,7 +46,7 @@ export const PRICE_COLUMN: ColumnDef<Token, unknown> = {
   size: 160,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -56,6 +57,6 @@ export const VOLUME_COLUMN: ColumnDef<Token, unknown> = {
   size: 160,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }

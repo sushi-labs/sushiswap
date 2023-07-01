@@ -1,6 +1,7 @@
 'use client'
 
 import React, { FC, ReactNode, useCallback } from 'react'
+import { Slot } from '@radix-ui/react-slot'
 
 import { useOnramperContext } from './OnramperProvider'
 
@@ -12,8 +13,8 @@ export const OnramperButton: FC<{ children: ReactNode; className?: string }> = (
   }, [setOpen])
 
   return (
-    <button onClick={onClick} className={className}>
+    <Slot onClick={onClick} className={className}>
       {children}
-    </button>
+    </Slot>
   )
 }

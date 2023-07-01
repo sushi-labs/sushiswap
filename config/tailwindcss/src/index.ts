@@ -20,7 +20,7 @@ const config = {
   //   // include packages if not transpiling
   //   '../../packages/**/*.{js,ts,jsx,tsx}',
   // ],
-  plugins: [forms, aspectRatio, typography],
+  plugins: [forms, aspectRatio, typography, require('tailwindcss-animate')],
   theme: {
     screens: {
       ...defaultTheme.screens,
@@ -60,6 +60,11 @@ const config = {
         yellow: {
           DEFAULT: '#eab308',
         },
+        secondary: 'var(--secondary)',
+        muted: 'var(--muted)',
+        'muted-foreground': 'var(--muted-foreground)',
+        accent: 'var(--accent)',
+        'accent-foreground': 'var(--accent-foreground)',
       },
       animation: {
         ellipsis: 'ellipsis 1.25s infinite',

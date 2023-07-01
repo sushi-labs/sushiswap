@@ -1,5 +1,5 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
-import { classNames, Container } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import sushixswapImg from 'common/assets/sushixswap-img.png'
 import {
   ProductArticles,
@@ -17,6 +17,7 @@ import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import Image from 'next/image'
 import { FC } from 'react'
 import useSWR from 'swr'
+import { Container } from '@sushiswap/ui/components/container'
 
 import { ArticleEntity } from '.mesh'
 
@@ -67,7 +68,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         }
         productDescription={description}
         productUrl={url}
-        buttonIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
+        buttonIcon={LinkIcon}
         image={<Image src={sushixswapImg} unoptimized alt="sushixswap-img" />}
       />
       <ProductCards

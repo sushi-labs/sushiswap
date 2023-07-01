@@ -8,8 +8,8 @@ import {
   RabbyIcon,
   TrustWalletIcon,
   WalletConnectIcon,
-} from '@sushiswap/ui/future/components/icons'
-import { List } from '@sushiswap/ui/future/components/list/List'
+} from '@sushiswap/ui/components/icons'
+import { List } from '@sushiswap/ui/components/list/List'
 import React, { FC, SVGProps, useCallback, useMemo } from 'react'
 import { useConnect } from '../../../hooks'
 

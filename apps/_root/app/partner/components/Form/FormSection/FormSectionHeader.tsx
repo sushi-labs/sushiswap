@@ -1,4 +1,3 @@
-import { Typography } from '@sushiswap/ui'
 import React, { FC } from 'react'
 
 export interface FormSectionHeaderProps {
@@ -10,14 +9,8 @@ const FormSectionHeader: FC<FormSectionHeaderProps> = ({ header, subheader }) =>
   return (
     <div>
       <div className="flex flex-col gap-1">
-        <Typography variant="lg" className="text-high-emphesis" weight={700}>
-          {header}
-        </Typography>
-        {subheader && (
-          <Typography variant="sm" weight={400}>
-            {subheader}
-          </Typography>
-        )}
+        <p className="font-semibold text-lg text-high-emphesis">{header}</p>
+        {subheader && <p className="text-sm">{subheader}</p>}
       </div>
     </div>
   )

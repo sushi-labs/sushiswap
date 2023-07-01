@@ -1,13 +1,13 @@
 import { ChainId } from '@sushiswap/chain'
 import { Native, SUSHI } from '@sushiswap/currency'
 import { useInterval } from '@sushiswap/hooks'
-import { classNames, Container, Typography } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
 import React, { FC, useEffect, useState } from 'react'
-import { Button } from '@sushiswap/ui/future/components/button/Button'
+import { Button } from '@sushiswap/ui/components/button'
 import { Search } from './Search'
 import { CurrencyInput } from '@sushiswap/wagmi/future/components/Web3Input/Currency'
 import { ArrowDownIcon } from '@heroicons/react/24/outline'
+import { Container } from '@sushiswap/ui/components/container'
 
 const TITLES = ['Whenever', 'Wherever', 'Whoever']
 const VALUES = [
@@ -40,12 +40,12 @@ export const Hero: FC = () => {
       <Container maxWidth="5xl" className="px-4 mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[auto_400px] flex justify-between gap-[100px]">
           <div className="flex flex-col">
-            <Typography variant="hero" weight={800} className="text-neutral-50 leading-[3.5rem]">
-              Buy and Sell Instantly on Sushi. <br /> <span className="text-blue"> {TITLES[index]}.</span>
-            </Typography>
-            <Typography variant="lg" className="mt-3 text-neutral-400">
+            <p className="text-5xl font-semibold text-neutral-50 leading-[3.5rem] tracking-tight">
+              Buy and Sell Instantly on Sushi. <span className="text-blue"> {TITLES[index]}.</span>
+            </p>
+            <p className="text-lg mt-3 text-neutral-400">
               No registration needed. Over 400 tokens to trade at your fingertips.
-            </Typography>
+            </p>
             <div className="mt-10">
               <Search />
             </div>
@@ -68,10 +68,10 @@ export const Hero: FC = () => {
                 }}
               >
                 <div className="flex gap-2 mb-4">
-                  <Button size="sm" variant="outlined" color="default">
+                  <Button size="sm" variant="secondary">
                     Swap
                   </Button>
-                  <Button className="pointer-events-none opacity-40" size="sm" variant="empty" color="default">
+                  <Button className="pointer-events-none opacity-40" size="sm" variant="secondary">
                     Limit
                   </Button>
                 </div>
@@ -115,8 +115,8 @@ export const Hero: FC = () => {
                 }}
                 className="mt-4"
               >
-                <Button as="a" href="https://www.sushi.com/swap" size="xl" fullWidth>
-                  Trade Now
+                <Button size="xl" asChild fullWidth>
+                  <a href="https://www.sushi.com/swap">Trade Now</a>
                 </Button>
               </motion.div>
             </motion.div>

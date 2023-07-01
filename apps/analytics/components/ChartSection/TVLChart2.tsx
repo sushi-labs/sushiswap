@@ -1,5 +1,5 @@
 import { formatUSD } from '@sushiswap/format'
-import { classNames, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
@@ -189,14 +189,14 @@ export const TVLChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
       </div>
       <div className="flex flex-col h-[48px]">
         {yData && yData.length && (
-          <Typography variant="xl" weight={500} className="text-slate-50">
+          <p className="text-xl font-medium text-slate-50">
             <span className="hoveredItemValueTVL">{formatUSD(yData[yData.length - 1])}</span>{' '}
-          </Typography>
+          </p>
         )}
         {xData && xData.length && (
-          <Typography variant="sm" className="text-slate-500 hoveredItemNameTVL">
+          <p className="text-sm text-slate-500 hoveredItemNameTVL">
             {format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}
-          </Typography>
+          </p>
         )}
       </div>
       <ReactECharts option={DEFAULT_OPTION} style={{ height: 320 }} />

@@ -6,7 +6,6 @@ import { useMemo } from 'react'
 import useSWR from 'swr'
 
 import { useAllPrices } from '@sushiswap/react-query'
-import { Fraction } from '@sushiswap/math'
 
 export type GetFuroTokenArgs = GetApiInputFromOutput<
   (typeof FuroTokensSchema)['_input'],
