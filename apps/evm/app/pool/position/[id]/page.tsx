@@ -302,7 +302,13 @@ const Position: FC<{ params: { id: string } }> = ({ params }) => {
                   {({ write, isLoading }) => (
                     <Checker.Connect size="xs" variant="link">
                       <Checker.Network size="xs" variant="link" chainId={chainId}>
-                        <Button disabled={isLoading} onClick={() => write?.()} size="xs" variant="link">
+                        <Button
+                          disabled={isLoading}
+                          onClick={() => write?.()}
+                          size="xs"
+                          variant="link"
+                          className="!justify-end"
+                        >
                           Harvest
                         </Button>
                       </Checker.Network>
