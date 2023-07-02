@@ -1,3 +1,5 @@
+'use client'
+
 import { Dialog as HeadlessDialog, Transition } from '@headlessui/react'
 import { useBreakpoint } from '@sushiswap/hooks'
 import React, { FC, Fragment, useEffect } from 'react'

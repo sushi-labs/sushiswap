@@ -1,3 +1,5 @@
+'use client'
+
 import { Transition } from '@headlessui/react'
 import { ArrowSmallRightIcon } from '@heroicons/react/20/solid'
 import classNames from 'classnames'

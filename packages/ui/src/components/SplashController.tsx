@@ -1,3 +1,5 @@
+'use client'
+
 import { Transition } from '@headlessui/react'
 import dynamic from 'next/dynamic'
 import React, { FC, ReactNode } from 'react'

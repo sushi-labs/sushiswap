@@ -1,3 +1,5 @@
+'use client'
+
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useState } from 'react'
 
