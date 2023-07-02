@@ -2,9 +2,8 @@ import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { SUBGRAPH_HOST, SUSHISWAP_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import { isSushiSwapV2ChainId, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { useQuery } from '@tanstack/react-query'
-import { AMM_ENABLED_NETWORKS } from 'config'
-
 export enum TransactionType {
   Mint = 'Mint',
   Burn = 'Burn',
@@ -18,12 +17,7 @@ interface UseTransactionsV2Opts {
   skip?: number
 }
 
-type V2ChainId = (typeof AMM_ENABLED_NETWORKS)[number]
-
-export const isV2ChainId = (chainId: ChainId): chainId is V2ChainId =>
-  AMM_ENABLED_NETWORKS.includes(chainId as V2ChainId)
-
-const fetchAll = async (poolId: string, chainId: V2ChainId, opts: UseTransactionsV2Opts) => {
+const fetchAll = async (poolId: string, chainId: SushiSwapV2ChainId, opts: UseTransactionsV2Opts) => {
   const sdk = getBuiltGraphSDK({
     subgraphHost: SUBGRAPH_HOST[chainId],
     subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
@@ -59,7 +53,7 @@ const fetchAll = async (poolId: string, chainId: V2ChainId, opts: UseTransaction
   return transactions
 }
 
-const fetchMints = async (poolId: string, chainId: V2ChainId, opts: UseTransactionsV2Opts) => {
+const fetchMints = async (poolId: string, chainId: SushiSwapV2ChainId, opts: UseTransactionsV2Opts) => {
   const sdk = getBuiltGraphSDK({
     subgraphHost: SUBGRAPH_HOST[chainId],
     subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
@@ -79,7 +73,7 @@ const fetchMints = async (poolId: string, chainId: V2ChainId, opts: UseTransacti
   }))
 }
 
-const fetchBurns = async (poolId: string, chainId: V2ChainId, opts: UseTransactionsV2Opts) => {
+const fetchBurns = async (poolId: string, chainId: SushiSwapV2ChainId, opts: UseTransactionsV2Opts) => {
   const sdk = getBuiltGraphSDK({
     subgraphHost: SUBGRAPH_HOST[chainId],
     subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
@@ -104,7 +98,7 @@ const fetchBurns = async (poolId: string, chainId: V2ChainId, opts: UseTransacti
   }))
 }
 
-const fetchSwaps = async (poolId: string, chainId: V2ChainId, opts: UseTransactionsV2Opts) => {
+const fetchSwaps = async (poolId: string, chainId: SushiSwapV2ChainId, opts: UseTransactionsV2Opts) => {
   const sdk = getBuiltGraphSDK({
     subgraphHost: SUBGRAPH_HOST[chainId],
     subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
@@ -132,7 +126,7 @@ function useTransactionsV2(pool: Pool | undefined | null, poolId: string, opts: 
     queryFn: async () => {
       const chainId = pool?.chainId as ChainId
 
-      if (!pool || !isV2ChainId(chainId)) return []
+      if (!pool || !isSushiSwapV2ChainId(chainId)) return []
 
       let transactions: Awaited<ReturnType<typeof fetchAll>> = []
 
@@ -194,7 +188,7 @@ function useTransactionsV2(pool: Pool | undefined | null, poolId: string, opts: 
           .sort((a, b) => b.logIndex - a.logIndex)
       })
     },
-    enabled: !!pool && isV2ChainId(pool?.chainId as ChainId),
+    enabled: !!pool && isSushiSwapV2ChainId(pool?.chainId as ChainId),
     refetchInterval: opts?.refetchInterval,
   })
 }

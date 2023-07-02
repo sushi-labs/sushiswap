@@ -1,7 +1,7 @@
 import { parseArgs, Protocol } from '@sushiswap/client'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import stringify from 'fast-json-stable-stringify'
-import { useRouter,useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createContext, FC, ReactNode, useCallback, useContext, useMemo } from 'react'
 import { z } from 'zod'
 

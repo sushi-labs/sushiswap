@@ -3,6 +3,7 @@
 import { ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { ChainId } from '@sushiswap/chain'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
+import { isTridentChainId } from '@sushiswap/trident-sdk'
 import { Button } from '@sushiswap/ui/components/button'
 import { Carousel } from '@sushiswap/ui/components/Carousel'
 import { Chip } from '@sushiswap/ui/components/chip'
@@ -19,7 +20,6 @@ import { SelectIcon } from '@sushiswap/ui/components/select'
 import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useAccount, useNetwork } from '@sushiswap/wagmi'
-import { TRIDENT_ENABLED_NETWORKS } from 'config'
 import React, { FC } from 'react'
 
 import { PoolFilters, PoolsFiltersProvider, PoolsSection } from '.'
@@ -93,7 +93,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                           </a>
                         </DropdownMenuItem>
                       ) : null}
-                      {TRIDENT_ENABLED_NETWORKS.includes(chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]) ? (
+                      {isTridentChainId(chainId as ChainId) ? (
                         <DropdownMenuItem asChild>
                           <a
                             href={`/pools/add/trident/${chainId}`}
