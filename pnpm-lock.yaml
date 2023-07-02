@@ -321,221 +321,6 @@ importers:
       typescript: 5.1.6
       vercel: 29.4.0_@types+node@18.11.18
 
-  apps/_root:
-    specifiers:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/constants': 5.7.0
-      '@ethersproject/contracts': 5.7.0
-      '@ethersproject/providers': 5.7.2
-      '@headlessui/react': 1.7.7
-      '@heroicons/react': 2.0.13
-      '@heroicons/react-v1': npm:@heroicons/react@v1
-      '@hookform/resolvers': 2.9.10
-      '@layerzerolabs/scan-client': 0.0.0-beta.6
-      '@octokit/auth-app': 4.0.7
-      '@playwright/test': 1.32.1
-      '@sushiswap/abi': workspace:*
-      '@sushiswap/amm': workspace:*
-      '@sushiswap/bentobox': workspace:*
-      '@sushiswap/chain': workspace:*
-      '@sushiswap/client': workspace:*
-      '@sushiswap/currency': workspace:*
-      '@sushiswap/database': workspace:*
-      '@sushiswap/dexie': workspace:*
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/format': workspace:*
-      '@sushiswap/gas': workspace:*
-      '@sushiswap/graph-client': workspace:*
-      '@sushiswap/graph-config': workspace:*
-      '@sushiswap/hooks': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/math': workspace:*
-      '@sushiswap/nextjs-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/react-query': workspace:*
-      '@sushiswap/route-processor': workspace:*
-      '@sushiswap/router': workspace:*
-      '@sushiswap/router-config': workspace:*
-      '@sushiswap/stargate': workspace:*
-      '@sushiswap/sushixswap': workspace:*
-      '@sushiswap/tailwindcss-config': workspace:*
-      '@sushiswap/tines': workspace:*
-      '@sushiswap/token-lists': workspace:*
-      '@sushiswap/trident-core': workspace:*
-      '@sushiswap/types': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@sushiswap/ui': workspace:*
-      '@sushiswap/v2-sdk': workspace:*
-      '@sushiswap/v3-sdk': workspace:*
-      '@sushiswap/validate': workspace:*
-      '@sushiswap/viem-config': workspace:*
-      '@sushiswap/wagmi': workspace:*
-      '@sushiswap/wagmi-config': workspace:*
-      '@tanstack/query-sync-storage-persister': 4.27.1
-      '@tanstack/react-query': 4.28.0
-      '@tanstack/react-query-devtools': 4.28.0
-      '@tanstack/react-query-persist-client': 4.29.7
-      '@tanstack/react-table': 8.9.1
-      '@tsconfig/next': 1.0.5
-      '@types/cors': 2.8.13
-      '@types/d3': 7.4.0
-      '@types/node': '18'
-      '@types/numeral': 2.0.2
-      '@types/react': 18.2.14
-      '@types/react-dom': 18.2.6
-      '@types/react-slider': 1.3.1
-      '@types/react-virtualized-auto-sizer': 1.0.1
-      '@uniswap/token-lists': 1.0.0-beta.30
-      '@vercel/analytics': 1.0.1
-      '@wagmi/core': 0.10.13
-      autoprefixer: 10.4.14
-      cors: 2.8.5
-      d3: 7.8.4
-      date-fns: 2.29.3
-      echarts: 5.4.2
-      echarts-for-react: 3.0.2
-      eslint: 8.43.0
-      ethers: 5.7.2
-      fast-json-stable-stringify: 2.1.0
-      framer-motion: 7.10.3
-      graphql-request: 5.1.0
-      nanoid: 4.0.0
-      next: 13.4.7
-      next-axiom: 0.18.0
-      next-seo: 5.15.0
-      next-sitemap: 3.1.43
-      next-themes: 0.2.1
-      octokit: 2.0.14
-      postcss: 8.4.23
-      react: 18.2.0
-      react-colorful: 5.6.1
-      react-dom: 18.2.0
-      react-dropzone: 14.2.3
-      react-hook-form: 7.41.2
-      react-image-file-resizer: 0.4.8
-      react-infinite-scroll-component: 6.1.0
-      react-redux: 8.0.7
-      react-slider: 2.0.4
-      react-virtualized-auto-sizer: 1.0.7
-      swr: 2.1.5
-      tailwindcss: 3.3.2
-      typescript: 5.1.6
-      unimported: 1.28.0
-      viem: 1.0.2
-      wagmi: 0.12.15
-      yup: ^0.32.11
-      zod: 3.21.4
-    dependencies:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/constants': 5.7.0
-      '@ethersproject/contracts': 5.7.0
-      '@ethersproject/providers': 5.7.2
-      '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
-      '@heroicons/react': 2.0.13_react@18.2.0
-      '@heroicons/react-v1': /@heroicons/react/1.0.6_react@18.2.0
-      '@hookform/resolvers': 2.9.10_react-hook-form@7.41.2
-      '@layerzerolabs/scan-client': 0.0.0-beta.6
-      '@octokit/auth-app': 4.0.7
-      '@sushiswap/abi': link:../../packages/abi
-      '@sushiswap/amm': link:../../packages/amm
-      '@sushiswap/bentobox': link:../../protocols/bentobox
-      '@sushiswap/chain': link:../../packages/chain
-      '@sushiswap/client': link:../../packages/client
-      '@sushiswap/currency': link:../../packages/currency
-      '@sushiswap/database': link:../../packages/database
-      '@sushiswap/dexie': link:../../packages/dexie
-      '@sushiswap/format': link:../../packages/format
-      '@sushiswap/gas': link:../../packages/gas
-      '@sushiswap/graph-client': link:../../packages/graph-client
-      '@sushiswap/graph-config': link:../../config/graph
-      '@sushiswap/hooks': link:../../packages/hooks
-      '@sushiswap/math': link:../../packages/math
-      '@sushiswap/nextjs-config': link:../../config/nextjs
-      '@sushiswap/react-query': link:../../packages/react-query
-      '@sushiswap/route-processor': link:../../protocols/route-processor
-      '@sushiswap/router': link:../../packages/router
-      '@sushiswap/router-config': link:../../config/router
-      '@sushiswap/stargate': link:../../packages/stargate
-      '@sushiswap/sushixswap': link:../../protocols/sushixswap
-      '@sushiswap/tailwindcss-config': link:../../config/tailwindcss
-      '@sushiswap/tines': link:../../packages/tines
-      '@sushiswap/token-lists': link:../../packages/token-lists
-      '@sushiswap/trident-core': link:../../protocols/trident
-      '@sushiswap/types': link:../../packages/types
-      '@sushiswap/ui': link:../../packages/ui
-      '@sushiswap/v2-sdk': link:../../packages/v2-sdk
-      '@sushiswap/v3-sdk': link:../../packages/v3-sdk
-      '@sushiswap/validate': link:../../packages/validate
-      '@sushiswap/viem-config': link:../../config/viem
-      '@sushiswap/wagmi': link:../../packages/wagmi
-      '@sushiswap/wagmi-config': link:../../config/wagmi
-      '@tanstack/query-sync-storage-persister': 4.27.1
-      '@tanstack/react-query': 4.28.0_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 4.28.0_q4teel2yjbizrm4naiaqcdpjum
-      '@tanstack/react-query-persist-client': 4.29.7_qfusmmwykmcbgdy37sd3cqxiry
-      '@tanstack/react-table': 8.9.1_biqbaboplfbrettd7655fr4n2y
-      '@uniswap/token-lists': 1.0.0-beta.30
-      '@vercel/analytics': 1.0.1
-      '@wagmi/core': 0.10.13_divl2mlbgykdorgvstykaxfz5q
-      cors: 2.8.5
-      d3: 7.8.4
-      date-fns: 2.29.3
-      echarts: 5.4.2
-      echarts-for-react: 3.0.2_echarts@5.4.2+react@18.2.0
-      ethers: 5.7.2
-      fast-json-stable-stringify: 2.1.0
-      framer-motion: 7.10.3_biqbaboplfbrettd7655fr4n2y
-      graphql-request: 5.1.0
-      nanoid: 4.0.0
-      next: 13.4.7_biqbaboplfbrettd7655fr4n2y
-      next-axiom: 0.18.0_next@13.4.7
-      next-seo: 5.15.0_5v7kwk6wz2hvmegftnptprfjvm
-      next-sitemap: 3.1.43_next@13.4.7
-      next-themes: 0.2.1_5v7kwk6wz2hvmegftnptprfjvm
-      octokit: 2.0.14
-      react: 18.2.0
-      react-colorful: 5.6.1_biqbaboplfbrettd7655fr4n2y
-      react-dom: 18.2.0_react@18.2.0
-      react-dropzone: 14.2.3_react@18.2.0
-      react-hook-form: 7.41.2_react@18.2.0
-      react-image-file-resizer: 0.4.8
-      react-infinite-scroll-component: 6.1.0_react@18.2.0
-      react-redux: 8.0.7_hrrtw4it2dqo6rzcqzvl36ff7i
-      react-slider: 2.0.4_react@18.2.0
-      react-virtualized-auto-sizer: 1.0.7_biqbaboplfbrettd7655fr4n2y
-      swr: 2.1.5_react@18.2.0
-      viem: 1.0.2_zno6rcmvi3mruj4xg7lanqhjom
-      wagmi: 0.12.15_thipbjmm77fmzin7qvxmor4o7e
-      yup: 0.32.11
-      zod: 3.21.4
-    devDependencies:
-      '@playwright/test': 1.32.1
-      '@sushiswap/eslint-config': link:../../config/eslint
-      '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/typescript-config': link:../../config/typescript
-      '@tsconfig/next': 1.0.5
-      '@types/cors': 2.8.13
-      '@types/d3': 7.4.0
-      '@types/node': 18.11.18
-      '@types/numeral': 2.0.2
-      '@types/react': 18.2.14
-      '@types/react-dom': 18.2.6
-      '@types/react-slider': 1.3.1
-      '@types/react-virtualized-auto-sizer': 1.0.1
-      autoprefixer: 10.4.14_postcss@8.4.23
-      eslint: 8.43.0
-      postcss: 8.4.23
-      tailwindcss: 3.3.2
-      typescript: 5.1.6
-      unimported: 1.28.0_eslint@8.43.0
-
   apps/academy:
     specifiers:
       '@cloudinary/url-gen': ^1.8.0
@@ -794,6 +579,221 @@ importers:
       sharp: 0.31.3
       tailwindcss: 3.3.2
       typescript: 5.1.6
+
+  apps/evm:
+    specifiers:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/constants': 5.7.0
+      '@ethersproject/contracts': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      '@headlessui/react': 1.7.7
+      '@heroicons/react': 2.0.13
+      '@heroicons/react-v1': npm:@heroicons/react@v1
+      '@hookform/resolvers': 2.9.10
+      '@layerzerolabs/scan-client': 0.0.0-beta.6
+      '@octokit/auth-app': 4.0.7
+      '@playwright/test': 1.32.1
+      '@sushiswap/abi': workspace:*
+      '@sushiswap/amm': workspace:*
+      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/client': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/database': workspace:*
+      '@sushiswap/dexie': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/format': workspace:*
+      '@sushiswap/gas': workspace:*
+      '@sushiswap/graph-client': workspace:*
+      '@sushiswap/graph-config': workspace:*
+      '@sushiswap/hooks': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/nextjs-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/react-query': workspace:*
+      '@sushiswap/route-processor': workspace:*
+      '@sushiswap/router': workspace:*
+      '@sushiswap/router-config': workspace:*
+      '@sushiswap/stargate': workspace:*
+      '@sushiswap/sushixswap': workspace:*
+      '@sushiswap/tailwindcss-config': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/token-lists': workspace:*
+      '@sushiswap/trident-core': workspace:*
+      '@sushiswap/types': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/ui': workspace:*
+      '@sushiswap/v2-sdk': workspace:*
+      '@sushiswap/v3-sdk': workspace:*
+      '@sushiswap/validate': workspace:*
+      '@sushiswap/viem-config': workspace:*
+      '@sushiswap/wagmi': workspace:*
+      '@sushiswap/wagmi-config': workspace:*
+      '@tanstack/query-sync-storage-persister': 4.27.1
+      '@tanstack/react-query': 4.28.0
+      '@tanstack/react-query-devtools': 4.28.0
+      '@tanstack/react-query-persist-client': 4.29.7
+      '@tanstack/react-table': 8.9.1
+      '@tsconfig/next': 1.0.5
+      '@types/cors': 2.8.13
+      '@types/d3': 7.4.0
+      '@types/node': '18'
+      '@types/numeral': 2.0.2
+      '@types/react': 18.2.14
+      '@types/react-dom': 18.2.6
+      '@types/react-slider': 1.3.1
+      '@types/react-virtualized-auto-sizer': 1.0.1
+      '@uniswap/token-lists': 1.0.0-beta.30
+      '@vercel/analytics': 1.0.1
+      '@wagmi/core': 0.10.13
+      autoprefixer: 10.4.14
+      cors: 2.8.5
+      d3: 7.8.4
+      date-fns: 2.29.3
+      echarts: 5.4.2
+      echarts-for-react: 3.0.2
+      eslint: 8.43.0
+      ethers: 5.7.2
+      fast-json-stable-stringify: 2.1.0
+      framer-motion: 7.10.3
+      graphql-request: 5.1.0
+      nanoid: 4.0.0
+      next: 13.4.7
+      next-axiom: 0.18.0
+      next-seo: 5.15.0
+      next-sitemap: 3.1.43
+      next-themes: 0.2.1
+      octokit: 2.0.14
+      postcss: 8.4.23
+      react: 18.2.0
+      react-colorful: 5.6.1
+      react-dom: 18.2.0
+      react-dropzone: 14.2.3
+      react-hook-form: 7.41.2
+      react-image-file-resizer: 0.4.8
+      react-infinite-scroll-component: 6.1.0
+      react-redux: 8.0.7
+      react-slider: 2.0.4
+      react-virtualized-auto-sizer: 1.0.7
+      swr: 2.1.5
+      tailwindcss: 3.3.2
+      typescript: 5.1.6
+      unimported: 1.28.0
+      viem: 1.0.2
+      wagmi: 0.12.15
+      yup: ^0.32.11
+      zod: 3.21.4
+    dependencies:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/constants': 5.7.0
+      '@ethersproject/contracts': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
+      '@heroicons/react': 2.0.13_react@18.2.0
+      '@heroicons/react-v1': /@heroicons/react/1.0.6_react@18.2.0
+      '@hookform/resolvers': 2.9.10_react-hook-form@7.41.2
+      '@layerzerolabs/scan-client': 0.0.0-beta.6
+      '@octokit/auth-app': 4.0.7
+      '@sushiswap/abi': link:../../packages/abi
+      '@sushiswap/amm': link:../../packages/amm
+      '@sushiswap/bentobox': link:../../protocols/bentobox
+      '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/client': link:../../packages/client
+      '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/database': link:../../packages/database
+      '@sushiswap/dexie': link:../../packages/dexie
+      '@sushiswap/format': link:../../packages/format
+      '@sushiswap/gas': link:../../packages/gas
+      '@sushiswap/graph-client': link:../../packages/graph-client
+      '@sushiswap/graph-config': link:../../config/graph
+      '@sushiswap/hooks': link:../../packages/hooks
+      '@sushiswap/math': link:../../packages/math
+      '@sushiswap/nextjs-config': link:../../config/nextjs
+      '@sushiswap/react-query': link:../../packages/react-query
+      '@sushiswap/route-processor': link:../../protocols/route-processor
+      '@sushiswap/router': link:../../packages/router
+      '@sushiswap/router-config': link:../../config/router
+      '@sushiswap/stargate': link:../../packages/stargate
+      '@sushiswap/sushixswap': link:../../protocols/sushixswap
+      '@sushiswap/tailwindcss-config': link:../../config/tailwindcss
+      '@sushiswap/tines': link:../../packages/tines
+      '@sushiswap/token-lists': link:../../packages/token-lists
+      '@sushiswap/trident-core': link:../../protocols/trident
+      '@sushiswap/types': link:../../packages/types
+      '@sushiswap/ui': link:../../packages/ui
+      '@sushiswap/v2-sdk': link:../../packages/v2-sdk
+      '@sushiswap/v3-sdk': link:../../packages/v3-sdk
+      '@sushiswap/validate': link:../../packages/validate
+      '@sushiswap/viem-config': link:../../config/viem
+      '@sushiswap/wagmi': link:../../packages/wagmi
+      '@sushiswap/wagmi-config': link:../../config/wagmi
+      '@tanstack/query-sync-storage-persister': 4.27.1
+      '@tanstack/react-query': 4.28.0_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.28.0_q4teel2yjbizrm4naiaqcdpjum
+      '@tanstack/react-query-persist-client': 4.29.7_qfusmmwykmcbgdy37sd3cqxiry
+      '@tanstack/react-table': 8.9.1_biqbaboplfbrettd7655fr4n2y
+      '@uniswap/token-lists': 1.0.0-beta.30
+      '@vercel/analytics': 1.0.1
+      '@wagmi/core': 0.10.13_divl2mlbgykdorgvstykaxfz5q
+      cors: 2.8.5
+      d3: 7.8.4
+      date-fns: 2.29.3
+      echarts: 5.4.2
+      echarts-for-react: 3.0.2_echarts@5.4.2+react@18.2.0
+      ethers: 5.7.2
+      fast-json-stable-stringify: 2.1.0
+      framer-motion: 7.10.3_biqbaboplfbrettd7655fr4n2y
+      graphql-request: 5.1.0
+      nanoid: 4.0.0
+      next: 13.4.7_biqbaboplfbrettd7655fr4n2y
+      next-axiom: 0.18.0_next@13.4.7
+      next-seo: 5.15.0_5v7kwk6wz2hvmegftnptprfjvm
+      next-sitemap: 3.1.43_next@13.4.7
+      next-themes: 0.2.1_5v7kwk6wz2hvmegftnptprfjvm
+      octokit: 2.0.14
+      react: 18.2.0
+      react-colorful: 5.6.1_biqbaboplfbrettd7655fr4n2y
+      react-dom: 18.2.0_react@18.2.0
+      react-dropzone: 14.2.3_react@18.2.0
+      react-hook-form: 7.41.2_react@18.2.0
+      react-image-file-resizer: 0.4.8
+      react-infinite-scroll-component: 6.1.0_react@18.2.0
+      react-redux: 8.0.7_hrrtw4it2dqo6rzcqzvl36ff7i
+      react-slider: 2.0.4_react@18.2.0
+      react-virtualized-auto-sizer: 1.0.7_biqbaboplfbrettd7655fr4n2y
+      swr: 2.1.5_react@18.2.0
+      viem: 1.0.2_zno6rcmvi3mruj4xg7lanqhjom
+      wagmi: 0.12.15_thipbjmm77fmzin7qvxmor4o7e
+      yup: 0.32.11
+      zod: 3.21.4
+    devDependencies:
+      '@playwright/test': 1.32.1
+      '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/typescript-config': link:../../config/typescript
+      '@tsconfig/next': 1.0.5
+      '@types/cors': 2.8.13
+      '@types/d3': 7.4.0
+      '@types/node': 18.11.18
+      '@types/numeral': 2.0.2
+      '@types/react': 18.2.14
+      '@types/react-dom': 18.2.6
+      '@types/react-slider': 1.3.1
+      '@types/react-virtualized-auto-sizer': 1.0.1
+      autoprefixer: 10.4.14_postcss@8.4.23
+      eslint: 8.43.0
+      postcss: 8.4.23
+      tailwindcss: 3.3.2
+      typescript: 5.1.6
+      unimported: 1.28.0_eslint@8.43.0
 
   apps/furo:
     specifiers:
@@ -3125,7 +3125,7 @@ packages:
     dependencies:
       '@fastify/deepmerge': 1.3.0
       ajv: 8.12.0
-      ajv-formats: 2.1.1
+      ajv-formats: 2.1.1_ajv@8.12.0
       fast-deep-equal: 3.1.3
       rfdc: 1.3.0
 
@@ -16201,6 +16201,17 @@ packages:
         optional: true
     dependencies:
       ajv: 8.12.0
+    dev: false
+
+  /ajv-formats/2.1.1_ajv@8.12.0:
+    resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
+    peerDependencies:
+      ajv: ^8.0.0
+    peerDependenciesMeta:
+      ajv:
+        optional: true
+    dependencies:
+      ajv: 8.12.0
 
   /ajv/6.12.6:
     resolution: {integrity: sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==}
@@ -22041,7 +22052,7 @@ packages:
       '@whatwg-node/fetch': 0.8.8
       '@whatwg-node/server': 0.7.7
       ajv: 8.12.0
-      ajv-formats: 2.1.1
+      ajv-formats: 2.1.1_ajv@8.12.0
       hotscript: 1.0.12
       json-schema-to-ts: 2.9.1
       openapi-types: 12.1.3
