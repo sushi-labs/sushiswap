@@ -22,7 +22,7 @@ import {
   WalletClient,
 } from 'viem'
 import { Account, privateKeyToAccount } from 'viem/accounts'
-import { arbitrum, Chain, hardhat, mainnet, polygon } from 'viem/chains'
+import { arbitrum, Chain, hardhat, mainnet, optimism, polygon } from 'viem/chains'
 
 import { setTokenBalance, UniswapV3FactoryAddress } from '../src'
 import { comparePoolCodes, isSubpool } from '../src/ComparePoolCodes'
@@ -38,6 +38,7 @@ export const RP3Address = {
   [ChainId.ETHEREUM]: '0x827179dD56d07A7eeA32e3873493835da2866976' as Address,
   [ChainId.POLYGON]: '0x0a6e511Fe663827b9cA7e2D2542b20B37fC217A6' as Address,
   [ChainId.ARBITRUM]: '0xfc506AaA1340b4dedFfd88bE278bEe058952D674' as Address,
+  [ChainId.OPTIMISM]: '0x4C5D5234f232BD2D76B96aA33F5AE4FCF0E4BFAb' as Address,
 }
 
 function uniswapFactory(chain: ChainId): FactoryInfo {
@@ -499,6 +500,7 @@ async function startInfinitTest(args: {
   tickLensContract: Address
   RP3Address: Address
   logDepth: number
+  account?: Address
 }) {
   const transport = http(args.providerURL)
   const client = createPublicClient({
@@ -553,6 +555,7 @@ async function startInfinitTest(args: {
             rpParams.routeCode as Address, // !!!!
           ],
           value: BigInt(rpParams.value?.toString() as string),
+          account: args.account,
         })
         const amountOutExp = BigInt(route.amountOutBN.toString())
         const diff =
@@ -587,11 +590,11 @@ it.skip('UniV3 Extractor Polygon infinit work test', async () => {
     factories: [uniswapFactory(ChainId.POLYGON)],
     tickLensContract: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
     RP3Address: RP3Address[ChainId.POLYGON],
-    logDepth: 50,
+    logDepth: 100,
   })
 })
 
-it.only('UniV3 Extractor Arbitrum infinit work test', async () => {
+it.skip('UniV3 Extractor Arbitrum infinit work test', async () => {
   await startInfinitTest({
     providerURL: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: arbitrum,
@@ -599,5 +602,17 @@ it.only('UniV3 Extractor Arbitrum infinit work test', async () => {
     tickLensContract: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
     RP3Address: RP3Address[ChainId.ARBITRUM],
     logDepth: 300,
+  })
+})
+
+it.skip('UniV3 Extractor Optimism infinit work test', async () => {
+  await startInfinitTest({
+    providerURL: `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
+    chain: optimism,
+    factories: [uniswapFactory(ChainId.OPTIMISM)],
+    tickLensContract: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
+    RP3Address: RP3Address[ChainId.OPTIMISM],
+    logDepth: 50,
+    account: '0x4200000000000000000000000000000000000006', // just a whale because optimism eth_call needs gas (
   })
 })
