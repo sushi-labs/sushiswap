@@ -86,22 +86,22 @@ const nextConfig = {
       //   source: '/xswap/:path*',
       //   destination: '/swap/:path*',
       // },
-      // {
-      //   source: '/earn',
-      //   destination: `${EARN_URL}/pools`,
-      // },
-      // {
-      //   source: '/earn/:path*',
-      //   destination: `${EARN_URL}/pools/:path*`,
-      // },
-      // {
-      //   source: '/pools',
-      //   destination: `${EARN_URL}/pools`,
-      // },
-      // {
-      //   source: '/pools/:path*',
-      //   destination: `${EARN_URL}/pools/:path*`,
-      // },
+      {
+        source: '/earn',
+        destination: `/pool`,
+      },
+      {
+        source: '/earn/:path*',
+        destination: `/pool/:path*`,
+      },
+      {
+        source: '/pools',
+        destination: `/pool`,
+      },
+      {
+        source: '/pools/:path*',
+        destination: `/pool/:path*`,
+      },
     ]
   },
 }
