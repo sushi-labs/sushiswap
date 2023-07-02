@@ -27,11 +27,11 @@ import { z } from 'zod'
 const queryParamsSchema = z.object({
   id: z
     .string()
-    .refine((val) => val.includes(':'), {
+    .refine((val) => val.includes('%3A'), {
       message: 'PoolId not in the right format',
     })
     .transform((val) => {
-      const [chainId, poolId] = val.split(':')
+      const [chainId, poolId] = val.split('%3A')
       return [+chainId, poolId] as [SushiSwapV2ChainId, string]
     })
     .refine(([chainId]) => isSushiSwapV2ChainId(chainId), {

@@ -51,7 +51,7 @@ const PoolPageV3 = () => {
 const queryParamsSchema = z.object({
   id: z
     .string()
-    .refine((val) => val.includes(':'), {
+    .refine((val) => val.includes('%3A'), {
       message: 'TokenId not in the right format',
     })
     .transform((val) => {
