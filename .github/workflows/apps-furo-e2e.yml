@@ -1,4 +1,4 @@
-name: Sushi - apps / furo / e2e
+name: Sushi - apps / furo
 
 on:
   pull_request:

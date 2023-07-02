@@ -1,4 +1,7 @@
 name: Sushi - verify
+# on:
+#   workflow_call:
+#   workflow_dispatch:
 on:
   pull_request:
     types: [opened, synchronize]
@@ -9,7 +12,7 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    # timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
         with:
@@ -36,7 +39,7 @@ jobs:
     name: Types
     needs: lint
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    # timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
         with:

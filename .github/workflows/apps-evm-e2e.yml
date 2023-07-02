@@ -1,4 +1,4 @@
-name: Sushi - apps / evm / e2e
+name: Sushi - apps / evm
 
 on:
   pull_request:
