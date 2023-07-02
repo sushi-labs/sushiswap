@@ -3,8 +3,8 @@ import { Amount, Currency, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { STARGATE_CHAIN_ID, STARGATE_POOL_ADDRESS, STARGATE_POOL_ID, StargateChainId } from '@sushiswap/stargate'
 import { Address, getSushiXSwapContractConfig, readContracts } from '@sushiswap/wagmi'
-import { BigNumber } from 'ethers'
 import { getContract, readContract } from '@sushiswap/wagmi/actions'
+import { BigNumber } from 'ethers'
 
 export const getBridgeFees = async ({
   amount,

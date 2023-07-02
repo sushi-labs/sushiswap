@@ -1,12 +1,10 @@
-import { NextResponse } from 'next/server'
-
-import { formatNumber, formatUSD } from '@sushiswap/format'
-import { SUSHI_ADDRESS } from '@sushiswap/currency'
 import { ChainId } from '@sushiswap/chain'
-
+import { SUSHI_ADDRESS } from '@sushiswap/currency'
+import { formatNumber, formatUSD } from '@sushiswap/format'
 import getBentoTVL from 'functions/graph/fetchers/bentobox'
 import { getLegacyExchangeData } from 'functions/graph/fetchers/exchange'
 import { getTridentExchangeData } from 'functions/graph/queries/trident'
+import { NextResponse } from 'next/server'
 
 const getSushiPriceUSD = async () => {
   {

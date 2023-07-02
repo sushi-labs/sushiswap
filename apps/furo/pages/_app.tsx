@@ -1,7 +1,12 @@
 import '@sushiswap/ui/index.css'
 
+import { queryClient } from '@sushiswap/react-query'
 import { ThemeProvider } from '@sushiswap/ui'
+import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
+import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
 import { client, WagmiConfig } from '@sushiswap/wagmi'
+import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { Analytics } from '@vercel/analytics/react'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
@@ -11,11 +16,6 @@ import { FC, useEffect } from 'react'
 
 import { Header } from '../components'
 import SEO from '../next-seo.config.mjs'
-import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
-import { queryClient } from '@sushiswap/react-query'
-import { QueryClientProvider } from '@tanstack/react-query'
-import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
-import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
 
 declare global {
   interface Window {

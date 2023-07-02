@@ -1,5 +1,6 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
 import { classNames } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
 import sushixswapImg from 'common/assets/sushixswap-img.png'
 import {
   ProductArticles,
@@ -17,7 +18,6 @@ import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import Image from 'next/image'
 import { FC } from 'react'
 import useSWR from 'swr'
-import { Container } from '@sushiswap/ui/components/container'
 
 import { ArticleEntity } from '.mesh'
 

@@ -9,16 +9,17 @@ import {
   Token,
   Type,
 } from '@sushiswap/currency'
-import React, { createContext, FC, ReactNode, useContext, useMemo, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
-import { isAddress } from 'ethers/lib/utils'
-import { queryParamsSchema } from '../../../lib/swap/queryParamsSchema'
-import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
-import { useNetwork } from '@sushiswap/wagmi'
-import { SwapChainId } from '../../../types'
-import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
+import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { useNetwork } from '@sushiswap/wagmi'
+import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
+import { isAddress } from 'ethers/lib/utils'
+import { useSearchParams } from 'next/navigation'
+import React, { createContext, FC, ReactNode, useContext, useMemo, useState } from 'react'
+
+import { queryParamsSchema } from '../../../lib/swap/queryParamsSchema'
+import { SwapChainId } from '../../../types'
 
 type State = {
   token0: Type | undefined

@@ -1,9 +1,10 @@
+import { BigNumber } from '@ethersproject/bignumber'
+import { Signature } from '@ethersproject/bytes'
 import { Amount, Price, Type } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
-import { BigNumber } from '@ethersproject/bignumber'
-import { Action } from '../SushiXSwap'
-import { Signature } from '@ethersproject/bytes'
 import { SushiXSwapChainId } from '@sushiswap/sushixswap'
+
+import { Action } from '../SushiXSwap'
 
 export interface UseCrossChainTradeParams {
   tradeId: string

@@ -1,5 +1,4 @@
 import { createClient, Prisma } from '@sushiswap/database'
-import { string } from 'zod'
 
 export async function createTokens(tokens: Prisma.TokenCreateManyInput[]) {
   if (tokens.length === 0) {

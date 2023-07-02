@@ -34,6 +34,7 @@ export const Standard = {
   Eip3091: 'EIP3091',
   None: 'none',
 } as const
+
 export type Standard = (typeof Standard)[keyof typeof Standard]
 
 export interface NativeCurrency {

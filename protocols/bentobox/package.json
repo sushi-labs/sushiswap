@@ -46,14 +46,14 @@
     "@sushiswap/hardhat-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
-    "@sushiswap/typescript-config": "workspace:*",
     "@sushiswap/types": "workspace:*",
-    "@types/node": "18.11.18",
-    "eslint": "8.41.0",
+    "@sushiswap/typescript-config": "workspace:*",
+    "@types/node": "18",
+    "eslint": "8.43.0",
     "ethers": "5.7.2",
     "hardhat": "2.12.4",
     "hardhat-deploy": "0.11.22",
     "ts-node": "10.9.1",
-    "typescript": "5.0.4"
+    "typescript": "5.1.6"
   }
 }

@@ -1,5 +1,5 @@
-import { classNames } from '@sushiswap/ui'
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { classNames } from '@sushiswap/ui'
 import { Loader } from '@sushiswap/ui/components/loader'
 import { FC, ReactNode } from 'react'
 

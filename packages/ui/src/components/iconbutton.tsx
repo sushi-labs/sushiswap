@@ -1,8 +1,9 @@
-import * as React from 'react'
 import { type VariantProps } from 'class-variance-authority'
+import * as React from 'react'
+
+import { IconComponent } from '../types'
 import { Button, buttonVariants } from './button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip'
-import { IconComponent } from '../types'
 
 export interface IconButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,

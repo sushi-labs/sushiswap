@@ -1,6 +1,7 @@
 import { Dialog as HeadlessDialog } from '@headlessui/react'
 import classNames from 'classnames'
 import React, { FC } from 'react'
+
 import { ExtractProps } from '../../types'
 
 export type DialogDescriptionProps = ExtractProps<typeof HeadlessDialog.Description>

@@ -1,9 +1,9 @@
-import classNames from 'classnames'
-import React, { forwardRef, KeyboardEvent, useCallback, useEffect, useState } from 'react'
-import { cva, type VariantProps } from 'class-variance-authority'
-import { Loader2, Search as SearchIcon } from 'lucide-react'
-
 import { XMarkIcon } from '@heroicons/react/24/outline'
+import { cva, type VariantProps } from 'class-variance-authority'
+import classNames from 'classnames'
+import { Loader2, Search as SearchIcon } from 'lucide-react'
+import React, { forwardRef, KeyboardEvent, useCallback, useEffect, useState } from 'react'
+
 import { Chip } from '../chip'
 
 const containerVariants = cva('font-medium relative w-full flex items-center gap-1.5 rounded-xl bg-secondary', {

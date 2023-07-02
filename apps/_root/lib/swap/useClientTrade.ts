@@ -8,8 +8,12 @@ import {
   TradeType,
   Version as TradeVersion,
 } from '@sushiswap/amm'
+import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Type as Currency, WNATIVE } from '@sushiswap/currency'
+import { RouteProcessor3ChainId } from '@sushiswap/route-processor'
 import { RouteStatus } from '@sushiswap/tines'
+import { ConstantProductPoolFactoryChainId, StablePoolFactoryChainId } from '@sushiswap/trident-core'
+import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   ConstantProductPoolState,
   PairState,
@@ -21,13 +25,10 @@ import {
   useGetStablePools,
   usePairs,
 } from '@sushiswap/wagmi'
-import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from '../../config'
-import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
-import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { ConstantProductPoolFactoryChainId, StablePoolFactoryChainId } from '@sushiswap/trident-core'
-import { RouteProcessor3ChainId } from '@sushiswap/route-processor'
+
+import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from '../../config'
 
 export type UseTradeOutput =
   | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>

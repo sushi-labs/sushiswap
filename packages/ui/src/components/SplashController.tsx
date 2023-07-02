@@ -1,6 +1,7 @@
-import React, { FC, ReactNode } from 'react'
 import { Transition } from '@headlessui/react'
 import dynamic from 'next/dynamic'
+import React, { FC, ReactNode } from 'react'
+
 import { SushiIcon } from './icons'
 
 const Component: FC<{ children: ReactNode; show?: boolean }> = ({ children, show = false }) => {
@@ -11,7 +12,6 @@ const Component: FC<{ children: ReactNode; show?: boolean }> = ({ children, show
           <Transition
             appear
             show={true}
-            unmount={false}
             static
             enter="ease-in-out duration-1000"
             enterFrom="scale-1 saturate-0"

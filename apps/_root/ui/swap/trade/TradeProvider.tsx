@@ -3,12 +3,12 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui/types'
-import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Signature } from '@ethersproject/bytes'
 import { nanoid } from 'nanoid'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
 import { SwapChainId } from 'types'
+
 import { queryParamsSchema } from '../../../lib/swap/queryParamsSchema'
 import { useTokenState } from '../token/TokenProvider'
 

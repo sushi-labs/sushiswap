@@ -16,9 +16,9 @@
     "directory": "protocols/sushixswap"
   },
   "license": "MIT",
+  "author": "Sarang",
   "main": "exports/exports.js",
   "types": "exports/exports.d.ts",
-  "author": "Sarang",
   "files": [
     "artifacts",
     "contracts",
@@ -55,16 +55,16 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@tenderly/hardhat-tenderly": "^1.0.13",
     "@types/chai": "^4.3.3",
-    "@types/node": "18.11.18",
+    "@types/node": "18",
     "@types/seedrandom": "^3.0.1",
     "chai": "^4.3.6",
-    "eslint": "8.41.0",
+    "eslint": "8.43.0",
     "ethers": "5.7.2",
     "hardhat": "2.12.4",
     "hardhat-deploy": "0.11.22",
     "seedrandom": "^3.0.5",
     "ts-node": "10.9.1",
-    "typescript": "5.0.4"
+    "typescript": "5.1.6"
   },
   "peerDependencies": {
     "@ethersproject/abi": "5.7.0",

@@ -1,11 +1,11 @@
 import { ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
-import React, { useMemo, useState } from 'react'
-import { useSwapState } from '../trade/TradeProvider'
-import { usePrice } from '@sushiswap/react-query'
 import { Amount, Price, Token, tryParseAmount } from '@sushiswap/currency'
-import { SkeletonText } from '@sushiswap/ui/components/skeleton'
-
 import { ZERO } from '@sushiswap/math'
+import { usePrice } from '@sushiswap/react-query'
+import { SkeletonText } from '@sushiswap/ui/components/skeleton'
+import React, { useMemo, useState } from 'react'
+
+import { useSwapState } from '../trade/TradeProvider'
 
 export const WidgetTitleV2 = () => {
   const [invert, setInvert] = useState(false)

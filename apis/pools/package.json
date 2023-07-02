@@ -25,9 +25,9 @@
   "dependencies": {
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/database": "workspace:*",
+    "@sushiswap/types": "workspace:*",
     "@sushiswap/validate": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
-    "@sushiswap/types": "workspace:*",
     "@vercel/node": "2.14.3",
     "@wagmi/core": "0.10.13",
     "deepmerge-ts": "^4.3.0",
@@ -37,13 +37,13 @@
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
-    "@tsconfig/strictest": "2.0.1",
-    "@tsconfig/node18": "2.0.0",
     "@tsconfig/esm": "1.0.3",
-    "@types/node": "18.11.18",
+    "@tsconfig/node18": "2.0.0",
+    "@tsconfig/strictest": "2.0.1",
+    "@types/node": "18",
     "dotenv": "16.0.3",
-    "eslint": "8.41.0",
-    "typescript": "5.0.4",
+    "eslint": "8.43.0",
+    "typescript": "5.1.6",
     "vercel": "29.4.0"
   }
 }

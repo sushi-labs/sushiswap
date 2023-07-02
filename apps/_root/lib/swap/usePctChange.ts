@@ -1,7 +1,8 @@
-import { useMemo } from 'react'
 import { ZERO } from '@sushiswap/math'
-import { useSwapState } from '../../ui/swap/trade/TradeProvider'
 import { usePrice } from '@sushiswap/react-query'
+import { useMemo } from 'react'
+
+import { useSwapState } from '../../ui/swap/trade/TradeProvider'
 import { useTrade } from './useTrade'
 
 export const usePctChange = () => {

@@ -1,13 +1,14 @@
-import React, { FC, useCallback } from 'react'
-import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui/components/networkselector'
-import { Chain } from '@sushiswap/chain'
-import { NetworkIcon } from '@sushiswap/ui/components/icons'
-import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
+import { Chain } from '@sushiswap/chain'
 import { STARGATE_SUPPORTED_CHAIN_IDS, StargateChainId } from '@sushiswap/stargate'
 import { classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui/components/networkselector'
 import { SelectIcon } from '@sushiswap/ui/components/select'
+import React, { FC, useCallback } from 'react'
+
+import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 
 export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
   const { network0, network1 } = useSwapState()

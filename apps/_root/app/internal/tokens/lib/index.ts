@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
-import { SUSHI_DEFAULT_TOKEN_LIST } from '@sushiswap/redux-token-lists'
+import { SUSHI_DEFAULT_TOKEN_LIST } from '@sushiswap/token-lists'
 
 export type Token = Awaited<ReturnType<typeof getTokens>>[0]
 

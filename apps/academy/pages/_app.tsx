@@ -3,6 +3,8 @@ import '../index.css'
 import '../variables.css'
 
 import { Cloudinary } from '@cloudinary/url-gen'
+import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
+import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
 import { ThemeProvider } from '@sushiswap/ui/ThemeProvider'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
@@ -12,8 +14,6 @@ import { useEffect } from 'react'
 import { DefaultSeo, Header } from '../common/components'
 import { getGlobalSEO } from '../lib/api'
 import { Global } from '.mesh'
-import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
-import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
 
 export const cld = new Cloudinary({
   cloud: {

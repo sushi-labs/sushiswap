@@ -16,10 +16,10 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "sideEffects": false,
   "main": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
-  "sideEffects": false,
   "files": [
     "dist"
   ],
@@ -38,9 +38,9 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@tsconfig/node18": "2.0.0",
-    "@types/node": "18.11.18",
-    "eslint": "8.41.0",
-    "typescript": "5.0.4"
+    "@types/node": "18",
+    "eslint": "8.43.0",
+    "typescript": "5.1.6"
   },
   "engines": {
     "node": ">=18.x"

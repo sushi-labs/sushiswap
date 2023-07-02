@@ -1,9 +1,10 @@
 'use client'
 
-import React, { FC } from 'react'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
-import { useSwapActions, useSwapState } from '../trade/TradeProvider'
+import React, { FC } from 'react'
+
 import { useTokenState } from '../token/TokenProvider'
+import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 
 export const SwapCurrencyInput: FC = () => {
   const { tokensLoading } = useTokenState()

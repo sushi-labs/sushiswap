@@ -24,22 +24,22 @@
   },
   "dependencies": {
     "@sushiswap/database": "workspace:*",
+    "@sushiswap/default-token-list": "41.4.0",
     "@sushiswap/wagmi-config": "workspace:*",
     "@vercel/node": "2.14.3",
-    "zod": "3.21.4",
     "@wagmi/core": "0.10.13",
-    "@sushiswap/default-token-list": "41.4.0"
+    "zod": "3.21.4"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
-    "@sushiswap/wagmi-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
-    "@tsconfig/strictest": "2.0.1",
+    "@sushiswap/wagmi-config": "workspace:*",
     "@tsconfig/esm": "1.0.3",
-    "@types/node": "18.11.18",
-    "eslint": "8.41.0",
-    "typescript": "5.0.4",
+    "@tsconfig/strictest": "2.0.1",
+    "@types/node": "18",
+    "eslint": "8.43.0",
+    "typescript": "5.1.6",
     "vercel": "29.4.0"
   }
 }

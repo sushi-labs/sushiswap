@@ -1,8 +1,8 @@
 import { Native, Token, Type } from '@sushiswap/currency'
-import React, { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
 import { TradeLegType, UseTradeReturn } from '@sushiswap/react-query'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Dialog } from '@sushiswap/ui/components/dialog'
+import React, { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
 
 const tokenFromRToken = (token: TradeLegType['tokenFrom']) => {
   if (token.address === '' || !token.address) return Native.onChain(Number(token.chainId))

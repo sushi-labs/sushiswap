@@ -1,4 +1,9 @@
-import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+import { Chain } from '@sushiswap/chain'
+import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
+import { SushiXSwapChainId } from '@sushiswap/sushixswap'
+import { Button } from '@sushiswap/ui/components/button'
+import { Dialog } from '@sushiswap/ui/components/dialog'
+import { createErrorToast, createInfoToast, createToast } from '@sushiswap/ui/components/toast'
 import { AppType } from '@sushiswap/ui/types'
 import {
   getSushiXSwapContractConfig,
@@ -10,22 +15,18 @@ import {
   useTransaction,
 } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { createErrorToast, createInfoToast, createToast } from '@sushiswap/ui/components/toast'
-import { Dialog } from '@sushiswap/ui/components/dialog'
-import { Button } from '@sushiswap/ui/components/button'
-import { Divider, failedState, finishedState, GetStateComponent, pendingState, StepState } from './StepStates'
-import { ConfirmationDialogContent } from './ConfirmationDialogContent'
-import { useSwapActions, useSwapState } from '../trade/TradeProvider'
-import { useTrade } from '../../../lib/swap/useTrade'
-import { nanoid } from 'nanoid'
-import { useLayerZeroScanLink } from '../../../lib/swap/useLayerZeroScanLink'
-import { SushiXSwapChainId } from '@sushiswap/sushixswap'
-import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { Chain } from '@sushiswap/chain'
-import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
-import { log } from 'next-axiom'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
+import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { nanoid } from 'nanoid'
+import { log } from 'next-axiom'
+import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+
+import { useLayerZeroScanLink } from '../../../lib/swap/useLayerZeroScanLink'
+import { useTrade } from '../../../lib/swap/useTrade'
+import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { APPROVE_XSWAP_TAG } from '../widget/SwapButtonCrossChain'
+import { ConfirmationDialogContent } from './ConfirmationDialogContent'
+import { Divider, failedState, finishedState, GetStateComponent, pendingState, StepState } from './StepStates'
 
 interface ConfirmationDialogCrossChainProps {
   children({

@@ -21,43 +21,43 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts",
+    "build": "tsup src/index.ts",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsup src/index.ts --format esm --watch --dts",
-    "prepublishOnly": "pnpm build",
-    "lint": "TIMING=1 eslint . --fix"
+    "dev": "tsup src/index.ts --watch",
+    "lint": "TIMING=1 eslint src --fix",
+    "prepublishOnly": "pnpm build"
   },
   "jest": {
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@sushiswap/database": "workspace:*",
     "@sushiswap/chain": "workspace:*",
+    "@sushiswap/database": "workspace:*",
     "@whatwg-node/fetch": "0.8.4",
     "tslib": "latest"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/pools-api": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@sushiswap/pools-api": "workspace:*",
-    "@types/node": "18.11.18",
-    "eslint": "8.41.0",
+    "@types/node": "18",
+    "eslint": "8.43.0",
     "swr": "2.1.5",
-    "tsup": "6.5.0",
-    "typescript": "5.0.4"
+    "tsup": "7.1.0",
+    "typescript": "5.1.6"
   },
   "peerDependencies": {
-    "swr": "2.1.5",
-    "react": "18.2.0"
+    "react": "18.2.0",
+    "swr": "2.1.5"
   },
   "peerDependenciesMeta": {
-    "swr": {
+    "react": {
       "optional": true
     },
-    "react": {
+    "swr": {
       "optional": true
     }
   }

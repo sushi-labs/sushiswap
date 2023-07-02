@@ -35,10 +35,6 @@
       "./src/future/*/index.tsx"
     ]
   },
-  "files": [
-    "src",
-    "tailwind.js"
-  ],
   "typesVersions": {
     "*": {
       "*": [
@@ -49,13 +45,17 @@
       ]
     }
   },
+  "files": [
+    "src",
+    "tailwind.js"
+  ],
   "scripts": {
     "build": "true",
     "build2": "tsup",
-    "dev2": "tsup --watch",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "lint": "TIMING=1 eslint \"./**/*.ts*\"",
+    "dev2": "tsup --watch",
+    "lint": "TIMING=1 eslint src --fix",
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
@@ -115,24 +115,24 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@types/react": "18.2.6",
+    "@types/react": "18.2.14",
     "@types/react-datepicker": "4.8.0",
-    "@types/react-dom": "18.2.4",
+    "@types/react-dom": "18.2.6",
     "@types/react-virtualized-auto-sizer": "1.0.1",
     "@types/react-window": "1.8.5",
     "autoprefixer": "10.4.14",
-    "eslint": "8.41.0",
-    "next": "13.4.4",
+    "eslint": "8.43.0",
+    "next": "13.4.7",
     "postcss": "8.4.23",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwindcss": "3.3.2",
-    "tsup": "6.5.0",
-    "typescript": "5.0.4",
+    "tsup": "7.1.0",
+    "typescript": "5.1.6",
     "wagmi": "0.12.15"
   },
   "peerDependencies": {
-    "next": "13.4.4",
+    "next": "13.4.7",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwindcss": "3.3.2",

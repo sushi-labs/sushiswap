@@ -1,13 +1,14 @@
 'use client'
 
 import { Container } from '@sushiswap/ui/components/container'
-import React from 'react'
-import { Checker } from '@sushiswap/wagmi/future/systems'
-import { TradeStats } from '../../ui/swap/trade/TradeStats'
-import { Widget } from '../../ui/swap/widget/Widget'
 import { Drawer } from '@sushiswap/ui/components/drawer'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import React from 'react'
+
 import { TokenNotFoundDialog } from '../../ui/swap/TokenNotFoundDialog'
 import { TradeReviewDialog } from '../../ui/swap/trade/TradeReviewDialog'
+import { TradeStats } from '../../ui/swap/trade/TradeStats'
+import { Widget } from '../../ui/swap/widget/Widget'
 
 // export const dynamic = 'force-dynamic'
 

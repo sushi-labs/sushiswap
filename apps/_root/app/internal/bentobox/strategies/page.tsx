@@ -1,13 +1,14 @@
 'use client'
 
-import { Chain, ChainId } from '@sushiswap/chain'
-import React, { useMemo, useState } from 'react'
-import { getStrategies } from './lib'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
-import useSWR from 'swr'
-import { NetworkSelector } from '@sushiswap/ui/components/networkselector'
-import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { Chain, ChainId } from '@sushiswap/chain'
 import { Button } from '@sushiswap/ui/components/button'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { NetworkSelector } from '@sushiswap/ui/components/networkselector'
+import React, { useMemo, useState } from 'react'
+import useSWR from 'swr'
+
+import { getStrategies } from './lib'
 
 export default function BentoBoxStrategiesPage() {
   const { data } = useSWR('bentobox-strategies', () => getStrategies())

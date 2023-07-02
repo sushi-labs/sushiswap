@@ -1,7 +1,13 @@
 import { ChainId } from '@sushiswap/chain'
 import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 
+export const ANGLE_ENABLED_NETWORKS = [ChainId.ETHEREUM, ChainId.POLYGON, ChainId.ARBITRUM, ChainId.OPTIMISM]
+
+export type AngleEnabledChainId = (typeof ANGLE_ENABLED_NETWORKS)[number]
+
 export const SWAP_API_ENABLED_NETWORKS = []
+
+export type SwapApiEnabledChainId = (typeof SWAP_API_ENABLED_NETWORKS)[number]
 
 export const STABLE_POOL_FACTORY_ADDRESS = {
   [ChainId.METIS]: '0x2f686751b19a9d91cc3d57d90150Bc767f050066',
@@ -34,7 +40,12 @@ export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
   ChainId.BSC,
-] as const
+  // ChainId.ETHEREUM,
+  // ChainId.FANTOM,
+  // ChainId.GNOSIS,
+]
+
+export type TridentEnabledChainId = (typeof TRIDENT_ENABLED_NETWORKS)[number]
 
 export const AMM_ENABLED_NETWORKS = [
   ChainId.ETHEREUM,
@@ -56,7 +67,7 @@ export const AMM_ENABLED_NETWORKS = [
   ChainId.BOBA_AVAX,
   ChainId.BOBA_BNB,
   ChainId.HARMONY,
-] as const
+]
 
 export const SUPPORTED_CHAIN_IDS = Array.from(
   new Set([...AMM_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS, ...SUSHISWAP_V3_SUPPORTED_CHAIN_IDS])

@@ -1,5 +1,5 @@
 import defaultNextConfig from '@sushiswap/nextjs-config'
-import {withAxiom} from 'next-axiom'
+import { withAxiom } from 'next-axiom'
 
 const { ANALYTICS_URL, BLOG_URL, EARN_URL, FURO_URL, SWAP_URL, ACADEMY_URL } = process.env
 
@@ -88,19 +88,19 @@ const nextConfig = {
       // },
       {
         source: '/earn',
-        destination: `${EARN_URL}/pools`,
+        destination: `/pool`,
       },
       {
         source: '/earn/:path*',
-        destination: `${EARN_URL}/pools/:path*`,
+        destination: `/pool/:path*`,
       },
       {
         source: '/pools',
-        destination: `${EARN_URL}/pools`,
+        destination: `/pool`,
       },
       {
         source: '/pools/:path*',
-        destination: `${EARN_URL}/pools/:path*`,
+        destination: `/pool/:path*`,
       },
     ]
   },

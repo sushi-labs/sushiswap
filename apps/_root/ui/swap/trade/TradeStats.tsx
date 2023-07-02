@@ -1,23 +1,22 @@
 'use client'
 
 import { Transition } from '@headlessui/react'
+import { Chain } from '@sushiswap/chain'
+import { shortenAddress } from '@sushiswap/format'
+import { ZERO } from '@sushiswap/math'
+import { UseTradeReturn } from '@sushiswap/react-query'
+import { AppType, classNames } from '@sushiswap/ui'
+import { Explainer } from '@sushiswap/ui/components/explainer'
+import { SkeletonBox, SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { useAccount } from '@sushiswap/wagmi'
+import { AddressToEnsResolver } from '@sushiswap/wagmi/future/components/Account/AddressToEnsResolver'
+import { isAddress } from 'ethers/lib/utils'
 import React, { FC, useState } from 'react'
 
-import { useSwapState } from './TradeProvider'
 import { useTrade } from '../../../lib/swap/useTrade'
-import { SkeletonBox, SkeletonText } from '@sushiswap/ui/components/skeleton'
-
-import { AppType, classNames } from '@sushiswap/ui'
 import { warningSeverity, warningSeverityClassName } from '../../../lib/swap/warningSeverity'
+import { useSwapState } from './TradeProvider'
 import { TradeRoute } from './TradeRoute'
-import { ZERO } from '@sushiswap/math'
-import { Chain } from '@sushiswap/chain'
-import { UseTradeReturn } from '@sushiswap/react-query'
-import { shortenAddress } from '@sushiswap/format'
-import { isAddress } from 'ethers/lib/utils'
-import { useAccount } from '@sushiswap/wagmi'
-import { Explainer } from '@sushiswap/ui/components/explainer'
-import { AddressToEnsResolver } from '@sushiswap/wagmi/future/components/Account/AddressToEnsResolver'
 
 export const TradeStats: FC = () => {
   const { address } = useAccount()

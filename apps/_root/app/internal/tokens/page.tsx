@@ -1,19 +1,20 @@
 'use client'
 
+import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { SearchIcon } from '@heroicons/react-v1/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { useDebounce } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
-import { TokenTable } from './components/TokenTable'
-import { TOKENS_SUPPORTED_CHAIN_IDS } from './config'
+import { Button } from '@sushiswap/ui/components/button'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { NetworkSelector } from '@sushiswap/ui/components/networkselector'
 import stringify from 'fast-json-stable-stringify'
-import { getTokens, Token } from './lib'
 import React, { FC, useState } from 'react'
 import useSWR from 'swr'
-import { NetworkSelector } from '@sushiswap/ui/components/networkselector'
-import { NetworkIcon } from '@sushiswap/ui/components/icons'
-import { Button } from '@sushiswap/ui/components/button'
-import { ChevronDownIcon } from '@heroicons/react/24/outline'
+
+import { TokenTable } from './components/TokenTable'
+import { TOKENS_SUPPORTED_CHAIN_IDS } from './config'
+import { getTokens, Token } from './lib'
 
 const TokensPage: FC = () => {
   const [filter, setFilter] = useState<string>('')

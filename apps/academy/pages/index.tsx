@@ -1,5 +1,6 @@
 import { useDebounce } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
 import { AcademySeo } from 'common/components/Seo/AcademySeo'
 import { DEFAULT_SIDE_PADDING } from 'common/helpers'
 import { InferGetServerSidePropsType } from 'next'
@@ -32,7 +33,6 @@ import {
   ViewAllButton,
 } from '../common/components'
 import { getArticles, getDifficulties, getProducts, getTopics } from '../lib/api'
-import { Container } from '@sushiswap/ui/components/container'
 
 export async function getStaticProps() {
   const [articles, difficulties, topics, products] = await Promise.all([

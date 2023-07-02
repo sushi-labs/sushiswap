@@ -1,3 +1,5 @@
+'use client'
+
 // Export pre-configured client
 export * from './client'
 

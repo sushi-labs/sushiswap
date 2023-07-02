@@ -1,9 +1,8 @@
 'use client'
 
+import { useIsSmScreen } from '@sushiswap/hooks'
 import { MotionConfig } from 'framer-motion'
 import React from 'react'
-
-import { useIsSmScreen } from '@sushiswap/hooks'
 
 import { BuildFuture, BuildWealth, Ecosystem, Hero, NeedHelp, Partners, Stats, Story } from './components'
 

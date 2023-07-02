@@ -1,5 +1,6 @@
-import React, { FC } from 'react'
 import classNames from 'classnames'
+import React, { FC } from 'react'
+
 import { WithTestDataId } from './types'
 
 const Root: FC<

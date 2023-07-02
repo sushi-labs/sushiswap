@@ -1,8 +1,8 @@
 'use client'
 
-import React from 'react'
 import { Transition } from '@headlessui/react'
 import { SushiIcon } from '@sushiswap/ui/components/icons'
+import React from 'react'
 
 export default function Loading() {
   return (
@@ -10,7 +10,6 @@ export default function Loading() {
       <Transition
         appear
         show={true}
-        unmount={false}
         static
         enter="ease-in-out duration-1000"
         enterFrom="scale-1 saturate-0"

@@ -1,12 +1,13 @@
+import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { ZERO } from '@sushiswap/math'
+import { sushiXSwapAddress, SushiXSwapChainId } from '@sushiswap/sushixswap'
 import { Button } from '@sushiswap/ui/components/button'
-import React, { FC, useEffect, useState } from 'react'
-import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { Checker } from '@sushiswap/wagmi/future/systems'
+import React, { FC, useEffect, useState } from 'react'
+
 import { useTrade } from '../../../lib/swap/useTrade'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { sushiXSwapAddress, SushiXSwapChainId } from '@sushiswap/sushixswap'
-import { ZERO } from '@sushiswap/math'
+import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 
 export const APPROVE_XSWAP_TAG = 'APPROVE_XSWAP_TAG'
 

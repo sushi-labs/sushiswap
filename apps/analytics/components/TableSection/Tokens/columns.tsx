@@ -1,11 +1,10 @@
 import { Token } from '@sushiswap/graph-client'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
 import { ChainCell } from '../Common'
 import { TokenLiquidityCell, TokenNameCell, TokenPriceCell, TokenVolumeCell } from './Cells'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
-
 import { ICON_SIZE } from './constants'
 
 export const NETWORK_COLUMN: ColumnDef<Token, unknown> = {

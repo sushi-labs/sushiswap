@@ -1,6 +1,7 @@
 import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon, XMarkIcon } from '@heroicons/react/24/solid'
 import classNames from 'classnames'
 import React, { FC } from 'react'
+
 import { IconButton } from '../iconbutton'
 
 export interface Header {

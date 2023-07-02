@@ -132,12 +132,11 @@ async function cancelVest(page: Page) {
 async function mockSubgraph(page: Page) {
   await page.route('https://api.thegraph.com/subgraphs/name/sushi-subgraphs/furo-polygon', async (route, request) => {
     if (request.method() === 'POST') {
-      const response = await route.fetch()
       const postData = JSON.parse(request.postData() as string)
-      if (postData.query.includes('_0_vesting: vesting')) {
+      if (postData.query.includes('query vesting')) {
         const resultData = {
           data: {
-            _0_vesting: {
+            vesting: {
               id: '100',
               __typename: 'Vesting',
               status: 'ACTIVE',
@@ -167,11 +166,10 @@ async function mockSubgraph(page: Page) {
           },
         }
         return await route.fulfill({
-          response,
           contentType: 'application/json',
           body: JSON.stringify(resultData),
         })
-      } else if (postData.query.includes('Transaction_orderBy')) {
+      } else if (postData.query.includes('query vestingTransactions')) {
         const resultData = [
           {
             id: '1082:tx:0',
@@ -191,14 +189,13 @@ async function mockSubgraph(page: Page) {
           },
         ]
         return await route.fulfill({
-          response,
           contentType: 'application/json',
           body: JSON.stringify(resultData),
         })
-      } else if (postData.query.includes('_0_rebase: rebase')) {
+      } else if (postData.query.includes('query bentoBoxRebase')) {
         const resultData = {
           data: {
-            _0_rebase: {
+            rebase: {
               id: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
               base: '300',
               elastic: '300',
@@ -207,7 +204,6 @@ async function mockSubgraph(page: Page) {
         }
 
         return await route.fulfill({
-          response,
           contentType: 'application/json',
           body: JSON.stringify(resultData),
         })
