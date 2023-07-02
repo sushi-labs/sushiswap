@@ -7,14 +7,12 @@ const schema = z.object({
 })
 
 // uses thegraph, not the pools api
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const id = searchParams.get('id')
-  const result = schema.safeParse({ id })
+export async function GET(request: Request, { params }: { params: { id: string } }) {
+  const result = schema.safeParse(params)
   if (!result.success) {
     return new Response(result.error.message, { status: 400 })
   }
 
   const pool = await getGraphPool(result.data.id)
-  NextResponse.json(pool)
+  return NextResponse.json(pool)
 }

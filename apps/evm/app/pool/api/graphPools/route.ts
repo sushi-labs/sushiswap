@@ -14,5 +14,5 @@ export async function GET(request: Request) {
     return new Response(result.error.message, { status: 400 })
   }
   const pool = await getGraphPools(result.data.ids)
-  NextResponse.json(pool)
+  return NextResponse.json(pool)
 }
