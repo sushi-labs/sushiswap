@@ -26,7 +26,7 @@ query CrossChainChefUser(
   $block: Block_height
   $orderBy: User_orderBy
   $orderDirection: OrderDirection
-  $chainIds: [Int!]!
+  $chainIds: [BigInt!]!
 ) {
   crossChainChefUser(
     skip: $skip
