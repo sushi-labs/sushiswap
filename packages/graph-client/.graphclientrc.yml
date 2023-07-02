@@ -302,6 +302,9 @@ additionalTypeDefs: |
   extend type Factory {
     chainId: Int!
   }
+  extend type SUSHISWAP_V3_Factory {
+    chainId: Int!
+  }
   extend type Rebase {
     chainId: Int!
   }
@@ -409,8 +412,11 @@ additionalTypeDefs: |
       chainIds: [Int!]!
     ): [Block!]!
     factoriesByChainIds(
-      chainIds: [Int!]!
+      chainIds: [BigInt!]!
     ): [Factory!]!
+    v3factoriesByChainIds(
+      chainIds: [BigInt!]!
+    ): [SUSHISWAP_V3_Factory!]!
     liquidityPositionsByChainIds(
       skip: Int = 0
       first: Int = 100
@@ -554,7 +560,7 @@ additionalTypeDefs: |
       orderBy: Pair_orderBy
       orderDirection: OrderDirection
       block: Block_height
-      chainIds: [Int!]!
+      chainIds: [BigInt!]!
       now: Int!
     ): [Pair!]!
     oneDayBlocks(

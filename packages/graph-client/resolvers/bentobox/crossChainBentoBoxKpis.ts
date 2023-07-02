@@ -1,6 +1,7 @@
 import { BENTOBOX_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 
 import { BentoBoxKpi, Resolvers } from '../../.graphclient/index.js'
+import { ChainId } from '@sushiswap/chain'
 
 export const crossChainBentoBoxKpis: Resolvers['Query']['crossChainBentoBoxKpis'] = async (
   root,
@@ -8,10 +9,13 @@ export const crossChainBentoBoxKpis: Resolvers['Query']['crossChainBentoBoxKpis'
   context,
   info
 ) => {
-  const supportedChainIds = args.chainIds.filter(
-    (chainId): chainId is keyof typeof BENTOBOX_SUBGRAPH_NAME & keyof typeof SUBGRAPH_HOST =>
-      chainId in BENTOBOX_SUBGRAPH_NAME
-  )
+  const supportedChainIds = args.chainIds
+    .filter(
+      (chainId): chainId is keyof typeof BENTOBOX_SUBGRAPH_NAME & keyof typeof SUBGRAPH_HOST =>
+        chainId in BENTOBOX_SUBGRAPH_NAME
+    )
+    // Kava subgraph doesn't have the bentoBoxKpis query
+    .filter((chainId) => chainId !== ChainId.KAVA)
 
   const kpis = await Promise.all(
     supportedChainIds.map((chainId) =>
@@ -25,13 +29,15 @@ export const crossChainBentoBoxKpis: Resolvers['Query']['crossChainBentoBoxKpis'
           subgraphHost: SUBGRAPH_HOST[chainId],
         },
         info,
-      }).then((kpis: BentoBoxKpi[]) =>
+      }).then((kpis: BentoBoxKpi[]) => {
         // We send chainId here so we can take it in the resolver above
-        kpis.map((kpi) => ({
+        console.log(kpis, chainId)
+
+        return kpis.map((kpi) => ({
           ...kpi,
           chainId,
         }))
-      )
+      })
     )
   )
 

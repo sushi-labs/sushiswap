@@ -178,7 +178,7 @@ query CrossChainStats(
   $orderBy: Pair_orderBy
   $orderDirection: OrderDirection
   $block: Block_height
-  $chainIds: [Int!]!
+  $chainIds: [BigInt!]!
   $now: Int!
 ) {
   crossChainStats(
