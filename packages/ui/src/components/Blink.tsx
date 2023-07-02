@@ -1,3 +1,5 @@
+'use client'
+
 import React, { ElementType, forwardRef, ReactNode, useEffect, useState } from 'react'
 
 import { PolymorphicComponentPropsWithRef, PolymorphicRef } from '../types'

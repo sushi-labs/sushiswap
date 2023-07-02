@@ -1,3 +1,5 @@
+'use client'
+
 import { Chain } from '@sushiswap/chain'
 import React, { useState } from 'react'
 

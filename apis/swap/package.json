@@ -27,7 +27,8 @@
     "build": "true",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "lint": "TIMING=1 eslint src --fix",
+    "lint": "TIMING=1 eslint src",
+    "lint:fix": "TIMING=1 eslint src --fix",
     "server": "ts-node --swc src/index.ts",
     "start": "ts-node --swc src/index.ts",
     "test": "jest --passWithNoTests"

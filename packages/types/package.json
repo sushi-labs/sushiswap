@@ -28,7 +28,8 @@
   },
   "typings": "./index.d.ts",
   "scripts": {
-    "lint": "TIMING=1 eslint . --fix",
+    "lint": "TIMING=1 eslint .",
+    "lint:fix": "TIMING=1 eslint . --fix",
     "test": "jest --passWithNoTests"
   },
   "devDependencies": {

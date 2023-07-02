@@ -1,3 +1,5 @@
+'use client'
+
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/currency'

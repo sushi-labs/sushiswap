@@ -21,17 +21,17 @@ export const createWagmiClient = (config?: CreateClientConfig) => {
   const testWalletIndex =
     Number(process.env['TEST_WALLET_INDEX']) || Number(process.env['NEXT_PUBLIC_TEST_WALLET_INDEX']) || 0
 
-  console.log({
-    isTest,
-    testWalletIndex,
-    anvilRpcUrl,
-    env: {
-      TEST_WALLET_INDEX: process.env['TEST_WALLET_INDEX'],
-      NEXT_PUBLIC_TEST_WALLET_INDEX: process.env['NEXT_PUBLIC_TEST_WALLET_INDEX'],
-      ANVIL_RPC_URL: process.env['ANVIL_RPC_URL'],
-      NEXT_PUBLIC_ANVIL_RPC_URL: process.env['NEXT_PUBLIC_ANVIL_RPC_URL'],
-    },
-  })
+  // console.log({
+  //   isTest,
+  //   testWalletIndex,
+  //   anvilRpcUrl,
+  //   env: {
+  //     TEST_WALLET_INDEX: process.env['TEST_WALLET_INDEX'],
+  //     NEXT_PUBLIC_TEST_WALLET_INDEX: process.env['NEXT_PUBLIC_TEST_WALLET_INDEX'],
+  //     ANVIL_RPC_URL: process.env['ANVIL_RPC_URL'],
+  //     NEXT_PUBLIC_ANVIL_RPC_URL: process.env['NEXT_PUBLIC_ANVIL_RPC_URL'],
+  //   },
+  // })
 
   const { chains, provider } = isTest
     ? configureChains(

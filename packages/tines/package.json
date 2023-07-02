@@ -20,7 +20,8 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
-    "lint": "TIMING=1 eslint src --fix",
+    "lint": "TIMING=1 eslint src",
+    "lint:fix": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build",
     "test": "jest --passWithNoTests",
     "test_debug": "node --inspect-brk ../../node_modules/jest/bin/jest.js --runInBand"

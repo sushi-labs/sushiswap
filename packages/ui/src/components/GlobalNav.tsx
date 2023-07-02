@@ -1,3 +1,5 @@
+'use client'
+
 import { Menu, Transition } from '@headlessui/react'
 import { ArrowSmallRightIcon } from '@heroicons/react/20/solid'
 import useScrollPosition from '@react-hook/window-scroll'

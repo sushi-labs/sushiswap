@@ -125,7 +125,7 @@ query deprecated_TokensAndBundle(
 #   }
 # }
 
-query CrossChainToken($id: ID!, $now: Int!, $chainId: Int!) {
+query CrossChainToken($id: ID!, $now: Int!, $chainId: BigInt!) {
   crossChainToken(id: $id, now: $now, chainId: $chainId) {
     id
     chainId
