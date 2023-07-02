@@ -28,7 +28,7 @@ export const useTokensFromPool = (pool: Pool) => {
         ? Native.onChain(_token1.chainId)
         : _token1,
       new Token({
-        address: pool.id.includes(':') ? pool.id.split(':')[1] : pool.id,
+        address: pool.id.includes('%3A') ? pool.id.split('%3A')[1] : pool.id,
         name: 'SLP Token',
         decimals: 18,
         symbol: 'SLP',
