@@ -76,7 +76,7 @@ export default function Page({ params }: { params: { id: string } }) {
   return (
     <Layout>
       <div className="flex flex-col gap-2">
-        <Link className="flex items-center gap-4 mb-2 group" href={'/'} shallow={true}>
+        <Link className="flex items-center gap-4 mb-2 group" href={'/pool'} shallow={true}>
           <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
           <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
             Go back to pool list

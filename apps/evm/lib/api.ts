@@ -163,7 +163,7 @@ export async function getUser(args: { id?: string; chainIds?: ChainId[] }) {
 }
 
 export const getGraphPool = async (id: string) => {
-  if (!id.includes('%3A')) throw Error('Invalid pair id')
+  if (!id.includes(':')) throw Error('Invalid pair id')
   // Migrating to new format, graph-client uses the deprecated one
   const split = id.split(':')
   const sdk = (await import('@sushiswap/graph-client').then((m) => m.getBuiltGraphSDK))()
@@ -174,7 +174,7 @@ export const getGraphPool = async (id: string) => {
 }
 
 export const getGraphPools = async (ids: string[]) => {
-  if (!ids.every((id) => id.includes('%3A'))) throw Error('Invalid pair ids')
+  if (!ids.every((id) => id.includes(':'))) throw Error('Invalid pair ids')
 
   // Migrating to new format, graph-client uses the deprecated one
   const addresses = ids.map((id) => id.split(':')[1])

@@ -14,6 +14,8 @@ export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ 
   const { token0, token1 } = useTokensFromPool(pool)
   const { value1, value0, underlying1, underlying0, isLoading, isError } = usePoolPositionStaked()
 
+  console.log({ underlying0, underlying1 })
+
   if (!pool.incentives) return <></>
 
   if (isLoading && !isError) {

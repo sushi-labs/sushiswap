@@ -7,7 +7,7 @@ import { defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/c
 import { Button } from '@sushiswap/ui/components/button'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { Loader } from '@sushiswap/ui/components/loader'
-import { isSushiSwapV2ChainId,SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
+import { isSushiSwapV2ChainId, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { Address, getSushiSwapRouterContractConfig, PairState, PoolFinder } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import { Checker } from '@sushiswap/wagmi/future/systems'
@@ -67,7 +67,7 @@ export default function Page({ params }: { params: { chainId: string } }) {
     <SWRConfig>
       <Layout className="flex justify-center">
         <div className="flex flex-col gap-2">
-          <Link className="flex items-center gap-4 mb-2 group" href="/" shallow={true}>
+          <Link className="flex items-center gap-4 mb-2 group" href={'/pool'} shallow={true}>
             <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
             <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
               Go back to pools list

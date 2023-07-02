@@ -121,11 +121,7 @@ const Pool: FC<{ id: string }> = ({ id }) => {
       <div className="flex flex-col gap-2">
         <Link
           className="flex items-center gap-4 mb-2 group"
-          href={`/pools/${chainId}:${poolAddress}`}
-          // href={{
-          //   pathname: '/',
-          //   ...(basePath === '/pools' && path?.includes('categories') && { query: path.replace('/?&', '') }),
-          // }}
+          href={'/pool'}
           shallow={true}
         >
           <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
