@@ -17,5 +17,5 @@ type Story = StoryObj<typeof Button>
  * to learn how to use render functions.
  */
 export const Primary: Story = {
-  render: () => <Button />,
+  render: () => <Button>Optimus Prime</Button>,
 }
