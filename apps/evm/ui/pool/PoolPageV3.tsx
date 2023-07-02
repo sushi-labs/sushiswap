@@ -38,11 +38,11 @@ enum Granularity {
   Week,
 }
 
-const PoolPageV3 = () => {
+const PoolPageV3: FC<{ id: string }> = ({ id }) => {
   return (
     <SplashController>
       <ConcentratedLiquidityProvider>
-        <Pool />
+        <Pool id={id} />
       </ConcentratedLiquidityProvider>
     </SplashController>
   )
@@ -55,7 +55,7 @@ const queryParamsSchema = z.object({
       message: 'TokenId not in the right format',
     })
     .transform((val) => {
-      const [chainId, poolId] = val.split(':')
+      const [chainId, poolId] = val.split('%3A')
       return [+chainId, poolId] as [SushiSwapV3ChainId, string]
     })
     .refine(([chainId]) => isSushiSwapV3ChainId(chainId), {
@@ -73,17 +73,15 @@ enum SelectedTab {
   ManagePosition,
 }
 
-const Pool: FC = () => {
+const Pool: FC<{ id: string }> = ({ id }) => {
   const { address } = useAccount()
-
-  // const { path, basePath } = usePreviousRoute()
 
   const searchParams = useSearchParams()!
 
   const {
     id: [chainId, poolAddress],
     activeTab,
-  } = queryParamsSchema.parse({ id: searchParams.get('id'), activeTab: searchParams.get('activeTab') })
+  } = queryParamsSchema.parse({ id, activeTab: searchParams.get('activeTab') })
 
   const [invertTokens, setInvertTokens] = useState(false)
   const [tab, setTab] = useState<SelectedTab>(

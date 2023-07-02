@@ -37,7 +37,7 @@ export default function Page({ params }: { params: { id: string } }) {
   if (!pool) return <></>
 
   if (pool.protocol === Protocol.SUSHISWAP_V3) {
-    return <PoolPageV3 />
+    return <PoolPageV3 id={params.id} />
   }
 
   return (
