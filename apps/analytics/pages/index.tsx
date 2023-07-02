@@ -83,7 +83,6 @@ const _Index: FC = () => {
             </div>
           </section>
         </Container>
-
         <FilterProvider>
           <ChartSection />
           <TableSection />
