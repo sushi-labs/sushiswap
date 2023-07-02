@@ -1,6 +1,6 @@
 'use client'
 
-import { yupResolver } from '@hookform/resolvers/yup'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { ChainId } from '@sushiswap/chain'
 import { classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
@@ -8,10 +8,10 @@ import { Loader } from '@sushiswap/ui/components/loader'
 import stringify from 'fast-json-stable-stringify'
 import React, { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import * as yup from 'yup'
 
 import { BackgroundImageMakerField, Form, ImageCanvas, NetworkModal, SizeSlider, UploadImageField } from './components'
-import { addressValidator, useTokenData } from './lib'
+import { ListType, SubmiTokenSchema } from './config'
+import { useTokenData } from './lib'
 
 enum SubmitState {
   Nothing = 'nothing',
@@ -20,35 +20,25 @@ enum SubmitState {
   Success = 'success',
 }
 
-const schema = yup.object().shape({
-  tokenAddress: addressValidator.required('Please enter a valid ERC20-address'),
-  background: yup.string(),
-  logoSize: yup.number(),
-  logoFile: yup.string(),
-  listType: yup.string(),
-})
-
 export interface FormType {
   tokenAddress: string
   background: string
   logoUri: string
   logoFile: Blob
   logoSize: number
-  listType: 'default-token-list' | 'community-token-list'
+  listType: string
 }
 
 export default function Partner() {
-  const methods = useForm<FormType>({
-    resolver: yupResolver(schema),
+  const form = useForm<FormType>({
+    resolver: zodResolver(SubmiTokenSchema),
     defaultValues: {
       logoSize: 128,
-      listType: 'default-token-list',
+      listType: ListType.DEFAULT,
     },
   })
-  const { watch } = methods
   const [chainId, setChainId] = useState<ChainId>(ChainId.ETHEREUM)
-  // @ts-ignore
-  const [tokenAddress, logoUri, logoFile, background, listType] = watch([
+  const [tokenAddress, logoUri, logoFile, background, listType] = form.watch([
     'tokenAddress',
     'logoUri',
     'logoFile',
@@ -68,19 +58,21 @@ export default function Partner() {
   const onSubmit = async () => {
     setSubmitState({ state: SubmitState.Loading })
 
-    const result = await fetch('/api/partner/submitToken', {
+    const result = await fetch('/partner/api/submitToken', {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       method: 'POST',
       body: stringify({
-        tokenAddress,
-        tokenData,
+        token: {
+          address: tokenAddress,
+          ...tokenData,
+        },
         tokenIcon: canvasRef.current?.toDataURL(),
         chainId,
         listType,
-      }),
+      } as (typeof SubmiTokenSchema)['_output']),
     })
 
     const data = await result.json()
@@ -88,6 +80,12 @@ export default function Partner() {
     switch (result.status) {
       case 200:
         setSubmitState({ state: SubmitState.Success, data })
+        break
+      case 400:
+        setSubmitState({
+          state: SubmitState.Error,
+          error: JSON.stringify(data?.error) ?? 'Unknown error.',
+        })
         break
       case 500:
         setSubmitState({
@@ -105,11 +103,11 @@ export default function Partner() {
 
   return (
     <div className="flex flex-col max-w-lg space-y-2">
-      <Form {...(methods as any)} onSubmit={() => {}}>
+      <Form {...form} onSubmit={() => undefined}>
         <Form.Card className={submitState?.error ? '!border-red/40' : ''}>
           <Form.Section columns={6} header={<Form.Section.Header header="Submit your request" />}>
-            <div className="col-span-6">
-              <span className="font-medium mb-2">Network</span>
+            <div className="flex items-center col-span-6 space-x-4">
+              <span className="font-medium">Network</span>
               <NetworkModal chainId={chainId} setChainId={setChainId} />
             </div>
             <div className="col-span-6">
@@ -191,7 +189,7 @@ export default function Partner() {
               </Button>
             </div>
             {submitState?.error && (
-              <span className="text-sm font-medium col-span-6 text-center text-red">{submitState?.error}</span>
+              <span className="col-span-6 text-sm font-medium text-center text-red">{submitState?.error}</span>
             )}
             {submitState?.data && (
               <div className="flex flex-col col-span-6 gap-5 p-4 border rounded-xl border-slate-700">
@@ -208,7 +206,7 @@ export default function Partner() {
           </Form.Section>
         </Form.Card>
       </Form>
-      <span className="text-xs flex justify-center text-center">
+      <span className="flex justify-center text-xs text-center">
         I understand that filing an issue or adding liquidity does not guarantee addition to the Sushi default token
         list. I will not ping the Discord about this listing request.
       </span>

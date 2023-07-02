@@ -9,22 +9,13 @@ import FormFieldHelperText from '../FormFieldHelperText'
 export interface FormTextFieldProps extends React.HTMLProps<HTMLInputElement> {
   name: keyof FormType
   error?: string
-  helperText?: any
+  helperText?: ReactNode
   icon?: ReactNode
   endIcon?: ReactNode
   children?: ReactElement<HTMLInputElement>
 }
 
-const FormTextField: FC<FormTextFieldProps> = ({
-  name,
-  label,
-  children,
-  helperText,
-  icon,
-  endIcon,
-  error,
-  ...rest
-}) => {
+const FormTextField: FC<FormTextFieldProps> = ({ name, label, helperText, icon, endIcon, error, ...rest }) => {
   const {
     register,
     unregister,
@@ -34,7 +25,6 @@ const FormTextField: FC<FormTextFieldProps> = ({
   // Unregister on unmount
   useEffect(() => {
     return () => {
-      // @ts-ignore
       unregister(name)
     }
   }, [name, unregister])
@@ -77,7 +67,7 @@ const FormTextField: FC<FormTextFieldProps> = ({
         )}
       </div>
       {errors[name] ? (
-        <FormFieldHelperText className="!text-red">{errors[name]?.message as unknown as string}</FormFieldHelperText>
+        <FormFieldHelperText className="!text-red">{errors[name]?.message}</FormFieldHelperText>
       ) : error ? (
         <FormFieldHelperText className="!text-red">{error}</FormFieldHelperText>
       ) : typeof helperText === 'string' ? (

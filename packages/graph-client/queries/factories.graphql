@@ -2,6 +2,8 @@ query Factories($chainIds: [BigInt!]!) {
   factories: factoriesByChainIds(chainIds: $chainIds) {
     id
     chainId
+    liquidityUSD
+    volumeUSD
     pairCount
     tokenCount
   }

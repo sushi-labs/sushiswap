@@ -7,9 +7,9 @@ export interface FormFieldHelperTextProps extends React.HTMLProps<HTMLDivElement
 
 const FormFieldHelperText: FC<FormFieldHelperTextProps> = ({ children, className = '', ...props }) => {
   return (
-    <p className={classNames('text-sm text-gray-600 mt-2', className)}>
+    <div className={classNames('text-sm text-gray-600 mt-2', className)}>
       <div {...props}>{children}</div>
-    </p>
+    </div>
   )
 }
 
