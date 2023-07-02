@@ -60,7 +60,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   const { approved } = useApproved(APPROVE_TAG_ADD_TRIDENT)
   const liquidityToken = useMemo(() => {
     return new Token({
-      address: poolAddress.includes('%3A') ? poolAddress.split('%3A')[1] : poolAddress,
+      address: poolAddress.includes(':') ? poolAddress.split(':')[1] : poolAddress,
       name: 'SLP Token',
       decimals: 18,
       symbol: 'SLP',
