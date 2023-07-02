@@ -161,7 +161,7 @@ const Position: FC<{ params: { id: string } }> = ({ params }) => {
       <div className="flex flex-col gap-2">
         <Link
           className="flex items-center gap-4 mb-2 group"
-          href={`/${chainId}:${positionDetails?.address}`}
+          href={`/pool/${chainId}:${positionDetails?.address}`}
           shallow={true}
         >
           <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />

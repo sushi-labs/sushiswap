@@ -37,7 +37,7 @@ export default function Page() {
           <SWRConfig>
             <Layout>
               <div className="flex flex-col gap-2">
-                <Link className="group flex gap-4 items-center mb-2" href="/" shallow={true}>
+                <Link className="group flex gap-4 items-center mb-2" href={'/pool'} shallow={true}>
                   <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
                   <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
                     Go back to pools list
