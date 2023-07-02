@@ -9,6 +9,8 @@ import { mergeConfig } from 'vite'
 const config: StorybookConfig = {
   stories: ['../stories/**/*.stories.mdx', '../stories/**/*.stories.tsx', '../stories/**/*.stories.ts'],
   addons: [
+    '@storybook/addon-mdx-gfm',
+    '@storybook/addon-a11y',
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     {
@@ -19,14 +21,7 @@ const config: StorybookConfig = {
         postCss: true,
       },
     },
-    '@storybook/addon-mdx-gfm',
   ],
-  core: {
-    builder: '@storybook/builder-vite',
-  },
-  typescript: {
-    reactDocgen: 'react-docgen', // 👈 react-docgen configured here.
-  },
   framework: {
     name: '@storybook/react-vite',
     options: {},

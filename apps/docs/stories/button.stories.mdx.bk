@@ -1,4 +1,4 @@
-import { Button } from "@sushiswap/ui/src";
+import { Button } from "@sushiswap/ui";
 import { Meta, Story, Canvas, ArgsTable } from "@storybook/addon-docs";
 
 <Meta title="Components/Button" component={Button} />
