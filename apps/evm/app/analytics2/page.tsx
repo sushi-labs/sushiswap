@@ -3,5 +3,5 @@ export const metadata = {
 }
 
 export default function AnalyticsPage() {
-  return <h1>SushiVault 🏦</h1>
+  return <h1>SushiAnalytics 📈</h1>
 }
