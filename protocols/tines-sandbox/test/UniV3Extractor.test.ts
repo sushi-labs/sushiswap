@@ -1,11 +1,13 @@
 import { reset } from '@nomicfoundation/hardhat-network-helpers'
 import { erc20Abi, routeProcessor2Abi } from '@sushiswap/abi'
+import { INIT_CODE_HASH } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { DAI, Native, USDC, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
-import { FactoryInfo, PoolInfo, UniV3Extractor } from '@sushiswap/extractor'
+import { FactoryV3, PoolInfo, UniV3Extractor } from '@sushiswap/extractor'
 import { LiquidityProviders, NativeWrapProvider, PoolCode, Router, UniswapV3Provider } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { getBigNumber, RouteStatus, UniV3Pool } from '@sushiswap/tines'
+import { POOL_INIT_CODE_HASH } from '@sushiswap/v3-sdk'
 import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import ISwapRouter from '@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
 import { expect } from 'chai'
@@ -41,21 +43,24 @@ export const RP3Address = {
   [ChainId.OPTIMISM]: '0x4C5D5234f232BD2D76B96aA33F5AE4FCF0E4BFAb' as Address,
 }
 
-function uniswapFactory(chain: ChainId): FactoryInfo {
+function uniswapFactory(chain: ChainId): FactoryV3 {
   return {
     address: UniswapV3FactoryAddress[chain] as Address,
     provider: LiquidityProviders.UniswapV3,
+    initCodeHash: POOL_INIT_CODE_HASH,
   }
 }
 
-export const pancakeswapFactory: FactoryInfo = {
+export const pancakeswapFactory: FactoryV3 = {
   address: '0x6e229c972d9f69c15bdc7b07f385d2025225e72b' as Address,
   provider: LiquidityProviders.UniswapV3,
+  initCodeHash: POOL_INIT_CODE_HASH,
 }
 
-const kyberswapFactory: FactoryInfo = {
+const kyberswapFactory: FactoryV3 = {
   address: '0xC7a590291e07B9fe9E64b86c58fD8fC764308C4A' as Address,
   provider: LiquidityProviders.UniswapV3,
+  initCodeHash: POOL_INIT_CODE_HASH,
 }
 
 const pools: PoolInfo[] = [
@@ -496,7 +501,7 @@ describe('UniV3Extractor', () => {
 async function startInfinitTest(args: {
   providerURL: string
   chain: Chain
-  factories: FactoryInfo[]
+  factories: FactoryV3[]
   tickLensContract: Address
   RP3Address: Address
   logDepth: number

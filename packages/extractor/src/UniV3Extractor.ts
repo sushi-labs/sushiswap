@@ -15,9 +15,10 @@ import { TokenManager } from './TokenManager'
 import { UniV3EventsAbi, UniV3PoolWatcher } from './UniV3PoolWatcher'
 import { warnLog } from './WarnLog'
 
-export interface FactoryInfo {
+export interface FactoryV3 {
   address: Address
   provider: LiquidityProviders
+  initCodeHash: string
 }
 
 export interface PoolInfo {
@@ -25,7 +26,7 @@ export interface PoolInfo {
   token0: Token
   token1: Token
   fee: FeeAmount
-  factory: FactoryInfo
+  factory: FactoryV3
 }
 
 enum LogsProcessing {
@@ -50,8 +51,8 @@ interface PoolCacheRecord {
 //   - direct logs (std output) to console
 //   - direct warnings (std error) to a file
 export class UniV3Extractor {
-  factories: FactoryInfo[]
-  factoryMap: Map<string, FactoryInfo> = new Map()
+  factories: FactoryV3[]
+  factoryMap: Map<string, FactoryV3> = new Map()
   tickHelperContract: Address
   client: PublicClient
   multiCallAggregator: MultiCallAggregator
@@ -74,7 +75,7 @@ export class UniV3Extractor {
   constructor(
     client: PublicClient,
     tickHelperContract: Address,
-    factories: FactoryInfo[],
+    factories: FactoryV3[],
     cacheDir: string,
     logDepth: number,
     logging = true
@@ -223,7 +224,7 @@ export class UniV3Extractor {
         tokenA: p.token0,
         tokenB: p.token1,
         fee: p.fee,
-        initCodeHashManualOverride: '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+        initCodeHashManualOverride: p.factory.initCodeHash,
       })
       if (addrL !== expectedPoolAddress.toLowerCase()) {
         this.consoleLog(`FakePool: ${p.address}`)

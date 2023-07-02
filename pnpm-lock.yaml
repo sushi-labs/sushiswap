@@ -3282,6 +3282,7 @@ importers:
       '@nomiclabs/hardhat-solhint': 2.0.1
       '@openzeppelin/contracts': 4.8.0
       '@sushiswap/abi': workspace:*
+      '@sushiswap/amm': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
@@ -3294,6 +3295,7 @@ importers:
       '@sushiswap/tines': workspace:*
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/v3-sdk': workspace:*
       '@typechain/ethers-v5': ^10.0.0
       '@typechain/hardhat': ^6.1.0
       '@types/chai': ^4.3.0
@@ -3338,6 +3340,7 @@ importers:
       '@nomiclabs/hardhat-solhint': 2.0.1_hardhat@2.12.7
       '@openzeppelin/contracts': 4.8.0
       '@sushiswap/abi': link:../../packages/abi
+      '@sushiswap/amm': link:../../packages/amm
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/eslint-config': link:../../config/eslint
@@ -3350,6 +3353,7 @@ importers:
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/typescript-config': link:../../config/typescript
+      '@sushiswap/v3-sdk': link:../../packages/v3-sdk
       '@typechain/ethers-v5': 10.2.1_zeqmkmpmjj3uhi3azc7qy7ccom
       '@typechain/hardhat': 6.1.6_edthanczpszvjtfvupxofozoka
       '@types/chai': 4.3.5
