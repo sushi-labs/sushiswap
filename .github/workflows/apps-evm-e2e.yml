@@ -18,7 +18,7 @@ on:
 defaults:
   run:
     # change this if your nextjs app does not live at the root of the repo
-    working-directory: ./apps/_root
+    working-directory: ./apps/evm
 
 # https://playwright.dev/docs/ci#sharding
 env:
