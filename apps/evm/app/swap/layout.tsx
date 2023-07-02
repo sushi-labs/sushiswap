@@ -1,6 +1,7 @@
+import { HotJar } from '@sushiswap/ui/components/scripts'
+
 import { Header } from './header'
 import { Providers } from './providers'
-import { HotJar } from '@sushiswap/ui/components/scripts'
 
 export const metadata = {
   title: 'SushiSwap',
