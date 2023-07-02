@@ -1,5 +1,5 @@
-import {ChevronDoubleDownIcon} from '@heroicons/react/24/outline'
-import {Button, ButtonProps} from '@sushiswap/ui/components/button'
+import { ChevronDoubleDownIcon } from '@heroicons/react/24/outline'
+import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import {
   CoinbaseWalletIcon,
   FrameIcon,
@@ -8,17 +8,18 @@ import {
   MetamaskIcon,
   RabbyIcon,
   TrustWalletIcon,
-  WalletConnectIcon
+  WalletConnectIcon,
+  XDEFIWalletIcon,
 } from '@sushiswap/ui/components/icons'
-import React, {FC, useCallback, useMemo} from 'react'
-import {useConnect} from '../../hooks'
+import React, { FC, useCallback, useMemo } from 'react'
+import { useConnect } from '../../hooks'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuTrigger
-} from "@sushiswap/ui/components/dropdown-menu";
+  DropdownMenuTrigger,
+} from '@sushiswap/ui/components/dropdown-menu'
 
 const Icons: Record<string, React.ElementType> = {
   Injected: ChevronDoubleDownIcon,
@@ -31,6 +32,7 @@ const Icons: Record<string, React.ElementType> = {
   Rabby: RabbyIcon,
   Frame: FrameIcon,
   Ledger: LedgerIcon,
+  'XDEFI Wallet': XDEFIWalletIcon,
 }
 
 export const ConnectButton: FC<ButtonProps> = ({ children, ...props }) => {
@@ -67,32 +69,27 @@ export const ConnectButton: FC<ButtonProps> = ({ children, ...props }) => {
   }
 
   return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button {...props}>
-            Connect Wallet
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56">
-          <DropdownMenuGroup>
-            {_connectors.map((connector) => {
-              const Icon = Icons[connector.name]
-              return (
-                  <DropdownMenuItem
-                      onClick={() => onSelect(connector.id)}
-                      key={connector.id}
-                  >
-                    <Icon className="mr-2 h-4 w-4" />
-                    {                        connector.name == 'Safe'
-                        ? 'Gnosis Safe'
-                        : connector.name == 'WalletConnectLegacy'
-                            ? 'WalletConnect'
-                            : connector.name}
-                  </DropdownMenuItem>
-              )
-            })}
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button {...props}>Connect Wallet</Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuGroup>
+          {_connectors.map((connector) => {
+            const Icon = connector.name in Icons ? Icons[connector.name] : Icons.Injected
+            return (
+              <DropdownMenuItem onClick={() => onSelect(connector.id)} key={connector.id}>
+                <Icon className="mr-2 h-4 w-4" />
+                {connector.name == 'Safe'
+                  ? 'Gnosis Safe'
+                  : connector.name == 'WalletConnectLegacy'
+                  ? 'WalletConnect'
+                  : connector.name}
+              </DropdownMenuItem>
+            )
+          })}
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }

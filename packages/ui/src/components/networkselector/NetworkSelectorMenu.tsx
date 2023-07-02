@@ -14,9 +14,9 @@ export const NetworkSelectorMenu = <T extends number>({
   const [open, setOpen] = useState(false)
 
   return (
-    <PopoverNew open={open} onOpenChange={setOpen}>
+    <PopoverNew modal={true} open={open} onOpenChange={setOpen}>
       <PopoverPrimitive.Trigger asChild>{children}</PopoverPrimitive.Trigger>
-      <PopoverContent className="w-60 !p-0">
+      <PopoverContent className="!w-60 !p-0 !overflow-x-hidden !overflow-y-scroll scroll">
         <Command>
           <CommandInput placeholder="Search network..." />
           <CommandEmpty>No network found.</CommandEmpty>

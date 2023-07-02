@@ -2,9 +2,10 @@ import '@sushiswap/ui/index.css'
 import '../variables.css'
 
 import { queryClient } from '@sushiswap/react-query'
-import { ThemeProvider } from '@sushiswap/ui'
 import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
 import { GlobalNav } from '@sushiswap/ui/components/GlobalNav'
+import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
+import { ThemeProvider } from '@sushiswap/ui/ThemeProvider'
 import { client, WagmiConfig } from '@sushiswap/wagmi'
 import { QueryClientProvider as _QueryClientProvider } from '@tanstack/react-query'
 import { Analytics } from '@vercel/analytics/react'
@@ -12,7 +13,6 @@ import { SUPPORTED_CHAIN_IDS } from 'config'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
 import { FC, ReactNode, useEffect } from 'react'
 
@@ -54,22 +54,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="mask-icon" href="/analytics/safari-pinned-tab.svg?v=1" color="#fa52a0" />
         <link rel="shortcut icon" href="/analytics/favicon.ico?v=1" />
       </Head>
-      <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
-      <Script
-        id="gtag-init"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-JW8KWJ48EF', {
-              page_path: window.location.pathname,
-            });
-          `,
-        }}
-      />
-
       <WagmiConfig client={client}>
         <ThemeProvider forcedTheme="dark">
           <QueryClientProvider>
@@ -80,6 +64,8 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
           </QueryClientProvider>
         </ThemeProvider>
       </WagmiConfig>
+      <GoogleAnalytics />
+      <HotJar />
       <Analytics />
     </>
   )
