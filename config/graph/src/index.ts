@@ -104,7 +104,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.POLYGON_ZKEVM]: 'Polygon zkEVM',
 } as const
 
-export const SUBGRAPH_HOST = {
+export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.ARBITRUM]: GRAPH_HOST,
   [ChainId.ARBITRUM_NOVA]: 'subgraphs.sushi.com/subgraphs/name',
   [ChainId.AVALANCHE]: GRAPH_HOST,
@@ -230,7 +230,7 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.BOBA_BNB]: 'sushi-0m/sushiswap-boba-bnb',
 } as const
 
-export const SUSHISWAP_SUBGRAPH_NAME = {
+export const SUSHISWAP_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.ETHEREUM]: 'sushi-v2/sushiswap-ethereum',
   [ChainId.AVALANCHE]: 'sushi-v2/sushiswap-avalanche',
   [ChainId.ARBITRUM]: 'sushi-v2/sushiswap-arbitrum',
@@ -249,7 +249,7 @@ export const SUSHISWAP_SUBGRAPH_NAME = {
   [ChainId.BOBA_BNB]: 'sushi-0m/sushiswap-boba-bnb',
 } as const
 
-export const SUSHISWAP_V3_SUBGRAPH_NAME = {
+export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.ARBITRUM_NOVA]: 'sushi-v3/v3-arbitrum-nova',
   [ChainId.ARBITRUM]: 'sushi-v3/v3-arbitrum',
   [ChainId.AVALANCHE]: 'sushi-v3/v3-avalanche',
@@ -266,7 +266,7 @@ export const SUSHISWAP_V3_SUBGRAPH_NAME = {
   [ChainId.THUNDERCORE]: 'sushi-v3/v3-thundercore',
 }
 
-export const TRIDENT_SUBGRAPH_NAME = {
+export const TRIDENT_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.POLYGON]: 'sushi-v2/trident-polygon',
   [ChainId.OPTIMISM]: 'sushi-v2/trident-optimism',
   [ChainId.KAVA]: 'sushi-qa/trident-kava',

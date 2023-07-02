@@ -5,7 +5,7 @@ import { useMemo } from 'react'
 import { useSwapState } from '../../ui/swap/trade/TradeProvider'
 import { useTrade } from './useTrade'
 
-export const usePctChange = () => {
+export const usePercentChange = () => {
   const { token1, token0, network0, network1, amount } = useSwapState()
   const { data: price0 } = usePrice({ chainId: network0, address: token0?.wrapped?.address })
   const { data: price1 } = usePrice({ chainId: network1, address: token1?.wrapped?.address })

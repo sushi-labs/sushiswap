@@ -3,6 +3,7 @@
 import { ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { ChainId } from '@sushiswap/chain'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
+import { isTridentChainId } from '@sushiswap/trident-sdk'
 import { Button } from '@sushiswap/ui/components/button'
 import { Chip } from '@sushiswap/ui/components/chip'
 import {
@@ -16,7 +17,6 @@ import { DiscordIcon } from '@sushiswap/ui/components/icons'
 import { SelectIcon } from '@sushiswap/ui/components/select'
 import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { useNetwork } from '@sushiswap/wagmi'
-import { TRIDENT_ENABLED_NETWORKS } from 'config'
 import Link from 'next/link'
 import { FC } from 'react'
 
@@ -61,22 +61,21 @@ export const Hero: FC = () => {
                         <Chip variant="secondary">{isRouteProcessor3ChainId(chainId) ? 'New 🔥' : 'Unavailable'}</Chip>
                       </div>
                       <p className="text-sm leading-snug text-muted-foreground">
-                        Provide highly-efficient concentrated liquidity.
+                        Provide liquidity to a V3 liquidity pool.
                       </p>
                     </Link>
                   </DropdownMenuItem>
-
                   {isSushiSwapV2ChainId(chainId as ChainId) ? (
                     <DropdownMenuItem asChild>
                       <a href={`/pools/add/v2/${chainId}`} className="flex flex-col !items-start gap-1 cursor-pointer">
                         <div className="flex items-center gap-1 font-medium leading-none">V2 Position</div>
                         <p className="text-sm leading-snug text-muted-foreground">
-                          Create a legacy V2 liquidity position.
+                          Provide liquidity to a V2 liquidity pool.
                         </p>
                       </a>
                     </DropdownMenuItem>
                   ) : null}
-                  {TRIDENT_ENABLED_NETWORKS.includes(chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]) ? (
+                  {isTridentChainId(chainId as ChainId) ? (
                     <DropdownMenuItem asChild>
                       <Link
                         href={`/pool/add/trident/${chainId}`}
@@ -86,7 +85,7 @@ export const Hero: FC = () => {
                           Trident Position <Chip variant="secondary">Deprecated 💀</Chip>
                         </div>
                         <p className="text-sm leading-snug text-muted-foreground">
-                          If you prefer creating a trident liquidity position.
+                          Provide liquidity to a Trident liquidity pool.
                         </p>
                       </Link>
                     </DropdownMenuItem>

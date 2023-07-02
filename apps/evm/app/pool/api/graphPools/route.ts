@@ -6,6 +6,8 @@ const schema = z.object({
   ids: z.string().transform((ids) => ids.split(',')),
 })
 
+// export const revalidate = 60 // revalidate every minute
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const ids = searchParams.get('ids')
