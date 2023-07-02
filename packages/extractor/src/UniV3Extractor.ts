@@ -1,6 +1,6 @@
 import { Token } from '@sushiswap/currency'
 import { LiquidityProviders, PoolCode } from '@sushiswap/router'
-import { FeeAmount } from '@sushiswap/v3-sdk'
+import { computePoolAddress, FeeAmount } from '@sushiswap/v3-sdk'
 import IUniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.json'
 import IUniswapV3Pool from '@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json'
 import { Abi } from 'abitype'
@@ -216,7 +216,20 @@ export class UniV3Extractor {
     if (this.logProcessingStatus !== LogsProcessing.Started) {
       throw new Error('Pools can be added after Log processing have been started')
     }
-    if (!this.poolMap.has(p.address.toLowerCase() as Address)) {
+    const addrL = p.address.toLowerCase() as Address
+    if (!this.poolMap.has(addrL) && !this.otherFactoryPoolSet.has(addrL)) {
+      const expectedPoolAddress = computePoolAddress({
+        factoryAddress: p.factory.address,
+        tokenA: p.token0,
+        tokenB: p.token1,
+        fee: p.fee,
+        initCodeHashManualOverride: '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      })
+      if (addrL !== expectedPoolAddress.toLowerCase()) {
+        this.consoleLog(`FakePool: ${p.address}`)
+        this.otherFactoryPoolSet.add(addrL)
+        return
+      }
       const watcher = new UniV3PoolWatcher(
         p.factory.provider,
         p.address,
@@ -242,7 +255,7 @@ export class UniV3Extractor {
   }
 
   async addPoolByAddress(address: Address) {
-    if (this.otherFactoryPoolSet.has(address)) return
+    if (this.otherFactoryPoolSet.has(address.toLowerCase() as Address)) return
     if (this.client.chain?.id === undefined) return
 
     const factoryAddress = await this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'factory')
@@ -262,7 +275,7 @@ export class UniV3Extractor {
         return
       }
     }
-    this.otherFactoryPoolSet.add(address)
+    this.otherFactoryPoolSet.add(address.toLowerCase() as Address)
     this.consoleLog(`other factory pool ${address}, such pools known: ${this.otherFactoryPoolSet.size}`)
   }
 
