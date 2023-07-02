@@ -1,4 +1,3 @@
-import { getAddress } from '@ethersproject/address'
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI_ADDRESS } from '@sushiswap/currency'
 import { formatNumber, formatUSD } from '@sushiswap/format'
@@ -7,6 +6,7 @@ import { BENTOBOX_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 import { SUSHISWAP_V2_SUPPORTED_CHAIN_IDS } from '@sushiswap/v2-sdk'
 import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { NextResponse } from 'next/server'
+import { getAddress } from 'viem'
 
 const getSushiPriceUSD = async () => {
   const prices = await fetch('https://token-price.sushi.com/v1/1').then((data) => data.json())
