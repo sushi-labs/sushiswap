@@ -2,9 +2,7 @@
 
 import { ChainId } from '@sushiswap/chain'
 import { Protocol, usePool } from '@sushiswap/client'
-import { formatPercent } from '@sushiswap/format'
 import { AppearOnMount } from '@sushiswap/ui/components/animation'
-import { NextSeo } from 'next-seo'
 import { useSWRConfig } from 'swr'
 import {
   Layout,
@@ -26,6 +24,10 @@ import {
 import { PoolPageV3 } from 'ui/pool/PoolPageV3'
 
 export default function Page({ params }: { params: { id: string } }) {
+
+  // 1. figure out the pool type from the id
+  // 2. use the pool type to determine which pool page to render
+
   const [chainId, address] = params.id.split('%3A') as [ChainId, string]
 
   const { data: pool } = usePool({
@@ -42,7 +44,6 @@ export default function Page({ params }: { params: { id: string } }) {
 
   return (
     <>
-      <NextSeo title={`${pool.name} - ${formatPercent(pool.swapFee)}`} />
       <PoolPositionProvider pool={pool}>
         <PoolPositionStakedProvider pool={pool}>
           <PoolPositionRewardsProvider pool={pool}>

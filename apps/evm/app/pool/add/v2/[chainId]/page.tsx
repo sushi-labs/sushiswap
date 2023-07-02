@@ -11,7 +11,7 @@ import { isSushiSwapV2ChainId, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { Address, getSushiSwapRouterContractConfig, PairState, PoolFinder } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { AMM_ENABLED_NETWORKS } from 'config'
+import { SushiSwapV2ChainIds } from '@sushiswap/v2-sdk'
 import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
 import { isLegacyPool } from 'lib/functions'
 import Link from 'next/link'
@@ -202,7 +202,7 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
 
   return (
     <div className="flex flex-col order-3 gap-[64px] pb-40 sm:order-2">
-      <SelectNetworkWidget networks={AMM_ENABLED_NETWORKS} selectedNetwork={chainId} onSelect={setChainId} />
+      <SelectNetworkWidget networks={SushiSwapV2ChainIds} selectedNetwork={chainId} onSelect={setChainId} />
       <SelectTokensWidget
         chainId={chainId}
         token0={token0}

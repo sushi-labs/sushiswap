@@ -1,32 +1,6 @@
 'use client'
 
 import { GlobalNav, NavLink, SubNav, SubNavLink } from '@sushiswap/ui/components/GlobalNav'
-import { DefaultSeo, DefaultSeoProps } from 'next-seo'
-
-const SEO: DefaultSeoProps = {
-  titleTemplate: '%s | Internal',
-  defaultTitle: 'Internal',
-  //   canonical: 'https://www.sushi.com/analytics',
-  //   mobileAlternate: {
-  //     media: '',
-  //     href: '',
-  //   },
-  //   languageAlternates: [{ hrefLang: "en", href: "https://www.sushi.com/analytics" }],
-  twitter: {
-    handle: '@sushiswap',
-    site: '@sushiswap',
-    cardType: 'summary_large_image',
-  },
-  openGraph: {
-    // url: 'https://www.sushi.com/analytics',
-    type: 'website',
-    title: 'Internal',
-    // images: [],
-    // videos: [],
-    // locale: 'en_IE',
-    site_name: 'Sushi',
-  },
-}
 
 export default function InternalLayout({
   children, // will be a page or nested layout
@@ -35,7 +9,6 @@ export default function InternalLayout({
 }) {
   return (
     <>
-      <DefaultSeo {...SEO} />
       <GlobalNav>
         <NavLink title="Dashboard" href="/internal" />
         <SubNav title="Bentobox">

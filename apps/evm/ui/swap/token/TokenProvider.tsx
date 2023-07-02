@@ -9,7 +9,7 @@ import {
   Token,
   Type,
 } from '@sushiswap/currency'
-import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
+import { isTridentChainId } from '@sushiswap/trident-sdk'
 import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useNetwork } from '@sushiswap/wagmi'
@@ -57,20 +57,14 @@ const getTokenFromUrl = (
 const getChainIdFromUrl = (urlChainId: ChainId | undefined, connectedChainId: ChainId | undefined): SwapChainId => {
   let chainId: SwapChainId = ChainId.ETHEREUM
   if (urlChainId) {
-    if (
-      isSushiSwapV3ChainId(urlChainId) ||
-      isSushiSwapV2ChainId(urlChainId) ||
-      isConstantProductPoolFactoryChainId(urlChainId) ||
-      isStablePoolFactoryChainId(urlChainId)
-    ) {
+    if (isSushiSwapV3ChainId(urlChainId) || isSushiSwapV2ChainId(urlChainId) || isTridentChainId(urlChainId)) {
       chainId = urlChainId
     }
   } else if (connectedChainId) {
     if (
       isSushiSwapV3ChainId(connectedChainId) ||
       isSushiSwapV2ChainId(connectedChainId) ||
-      isConstantProductPoolFactoryChainId(connectedChainId) ||
-      isStablePoolFactoryChainId(connectedChainId)
+      isTridentChainId(connectedChainId)
     ) {
       chainId = connectedChainId
     }

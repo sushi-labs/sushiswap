@@ -12,7 +12,11 @@ import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Type as Currency, WNATIVE } from '@sushiswap/currency'
 import { RouteProcessor3ChainId } from '@sushiswap/route-processor'
 import { RouteStatus } from '@sushiswap/tines'
-import { ConstantProductPoolFactoryChainId, StablePoolFactoryChainId } from '@sushiswap/trident-core'
+import {
+  CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS,
+  STABLE_POOL_FACTORY_ADDRESS,
+  TridentChainId,
+} from '@sushiswap/trident-sdk'
 import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   ConstantProductPoolState,
@@ -28,8 +32,6 @@ import {
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 
-import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from '../../config'
-
 export type UseTradeOutput =
   | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>
   | undefined
@@ -43,11 +45,7 @@ export type UseTradeOutput =
  * @param otherCurrency the desired output/payment currency
  */
 export function useTrade(
-  chainId:
-    | SushiSwapV2ChainId
-    | StablePoolFactoryChainId
-    | ConstantProductPoolFactoryChainId
-    | RouteProcessor3ChainId,
+  chainId: SushiSwapV2ChainId | TridentChainId | RouteProcessor3ChainId,
   tradeType: TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT,
   amountSpecified?: Amount<Currency>,
   mainCurrency?: Currency,

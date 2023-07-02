@@ -3,7 +3,7 @@
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import React, { FC } from 'react'
 
-import { usePctChange } from '../../../lib/swap/usePctChange'
+import { usePercentChange } from '../../../lib/swap/usePercentChange'
 import { useTrade } from '../../../lib/swap/useTrade'
 import { useTokenState } from '../token/TokenProvider'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
@@ -12,7 +12,7 @@ export const SwapCurrencyOutput: FC = () => {
   const { tokensLoading } = useTokenState()
   const { value, network0, token1, network1 } = useSwapState()
   const { setToken1 } = useSwapActions()
-  const usdPctChange = usePctChange()
+  const percentChange = usePercentChange()
   const { isLoading, isFetching, data: trade } = useTrade({ crossChain: network0 !== network1 })
 
   return (

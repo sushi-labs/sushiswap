@@ -6,7 +6,7 @@ import { ConstantProductPool, Fee, StablePool } from '@sushiswap/amm'
 import { bentoBoxV1Address, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId } from '@sushiswap/chain'
 import { defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
-import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
+import { isTridentChainId, TridentChainId, TridentChainIds } from '@sushiswap/trident-sdk'
 import { Button } from '@sushiswap/ui/components/button'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { Loader } from '@sushiswap/ui/components/loader'
@@ -20,7 +20,6 @@ import {
 } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { TRIDENT_ENABLED_NETWORKS, TridentEnabledChainId } from 'config'
 import { APPROVE_TAG_ADD_TRIDENT, APPROVE_TAG_CREATE_TRIDENT } from 'lib/constants'
 import { isConstantProductPool, isStablePool } from 'lib/functions'
 import Link from 'next/link'
@@ -69,7 +68,7 @@ import { CreateSectionReviewModalTrident } from 'ui/pool/CreateSection'
 
 export default function Page({ params }: { params: { chainId: string } }) {
   const router = useRouter()
-  const [chainId, setChainId] = useState(+params.chainId as TridentEnabledChainId)
+  const [chainId, setChainId] = useState(+params.chainId as TridentChainId)
   const [fee, setFee] = useState(Fee.DEFAULT)
   const [poolType, setPoolType] = useState(PoolFinderType.Classic)
 
@@ -107,11 +106,7 @@ export default function Page({ params }: { params: { chainId: string } }) {
                   chainId={chainId}
                   token0={token0}
                   token1={token1}
-                  enabled={
-                    isConstantProductPoolFactoryChainId(chainId) &&
-                    poolType === PoolFinderType.Classic &&
-                    TRIDENT_ENABLED_NETWORKS.includes(chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number])
-                  }
+                  enabled={isTridentChainId(chainId) && poolType === PoolFinderType.Classic}
                   fee={fee}
                   twap={false}
                 />
@@ -119,11 +114,7 @@ export default function Page({ params }: { params: { chainId: string } }) {
                   chainId={chainId}
                   token0={token0}
                   token1={token1}
-                  enabled={
-                    isStablePoolFactoryChainId(chainId) &&
-                    poolType === PoolFinderType.Stable &&
-                    TRIDENT_ENABLED_NETWORKS.includes(chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number])
-                  }
+                  enabled={isTridentChainId(chainId) && poolType === PoolFinderType.Stable}
                   fee={fee}
                   twap={false}
                 />
@@ -151,7 +142,7 @@ export default function Page({ params }: { params: { chainId: string } }) {
                   chainId={chainId}
                   setChainId={(chainId) => {
                     router.push(`/pool/add/trident/${chainId}`)
-                    setChainId(chainId as TridentEnabledChainId)
+                    setChainId(chainId as TridentChainId)
                   }}
                   fee={fee}
                   setFee={setFee}
@@ -264,7 +255,7 @@ const _Add: FC<AddProps> = ({
 
   return (
     <div className="flex flex-col order-3 gap-[64px] pb-40 sm:order-2">
-      <SelectNetworkWidget networks={TRIDENT_ENABLED_NETWORKS} selectedNetwork={chainId} onSelect={setChainId} />
+      <SelectNetworkWidget networks={TridentChainIds} selectedNetwork={chainId} onSelect={setChainId} />
       <SelectTokensWidget
         chainId={chainId}
         token0={token0}
