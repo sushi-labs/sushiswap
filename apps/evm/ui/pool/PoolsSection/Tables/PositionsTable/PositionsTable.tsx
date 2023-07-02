@@ -72,7 +72,7 @@ export const PositionsTable: FC<PositionsTableProps> = ({ protocol }) => {
   }, [isMd, isSm])
 
   const rowLink = useCallback((row: PositionWithPool) => {
-    return `/${row.pool.id}`
+    return `/pool/${row.pool.id}`
   }, [])
 
   return (
