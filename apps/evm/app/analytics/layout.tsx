@@ -9,14 +9,14 @@ export const metadata = {
 
 export default function AnalyticsLayout({ children }: { children: React.ReactNode }) {
   return (
-    <Container maxWidth="full" className="lg:mx-auto h-full">
-      <div className="pb-4 mt-10 mb-4 lg:mb-40 xl:mt-20">
-        <Providers>
-          <Header />
-          {children}
-        </Providers>
-        <HotJar />
-      </div>
-    </Container>
+    <>
+      <Providers>
+        <Header />
+        <Container maxWidth="full" className="lg:mx-auto h-full">
+          <div className="pb-4 mt-10 mb-4 lg:mb-40 xl:mt-20">{children}</div>
+        </Container>
+      </Providers>
+      <HotJar />
+    </>
   )
 }

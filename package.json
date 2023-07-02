@@ -18,6 +18,7 @@
     "check": "turbo run check --no-cache",
     "clean": "turbo run clean && rm -rf node_modules",
     "dev": "dotenv -- turbo run dev --no-cache --parallel --continue",
+    "dev:evm": "dotenv -- turbo run dev --filter evm",
     "disable-remote-caching": "turbo unlink && rm -rf ./node_modules/.cache/turbo",
     "enable-remote-caching": "turbo link",
     "format": "prettier --write \"**/*.{ts,cts,mts,tsx,md,js,cjs,mjs}\"",
