@@ -1,4 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
+import { getAddress } from 'viem'
+import { z } from 'zod'
 
 export const SUPPORTED_CHAINS = [
   ChainId.ETHEREUM,
@@ -31,3 +33,20 @@ export const SUPPORTED_CHAINS = [
 
 export type SupportedChainIds = typeof SUPPORTED_CHAINS
 export type SupportedChainId = SupportedChainIds[number]
+
+export enum ListType {
+  DEFAULT = 'default-token-list',
+  COMMUNITY = 'community-token-list',
+}
+
+export const SubmiTokenSchema = z.object({
+  token: z.object({
+    address: z.string().transform((tokenAddress) => getAddress(tokenAddress)),
+    name: z.string(),
+    symbol: z.string(),
+    decimals: z.coerce.number(),
+  }),
+  tokenIcon: z.string(),
+  chainId: z.coerce.number().transform((chainId) => chainId as ChainId),
+  listType: z.enum([ListType.DEFAULT, ListType.COMMUNITY]),
+})

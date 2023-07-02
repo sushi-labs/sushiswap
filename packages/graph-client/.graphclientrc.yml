@@ -302,6 +302,9 @@ additionalTypeDefs: |
   extend type Factory {
     chainId: BigInt!
   }
+  extend type SUSHISWAP_V3_Factory {
+    chainId: Int!
+  }
   extend type Rebase {
     chainId: BigInt!
   }
@@ -411,6 +414,9 @@ additionalTypeDefs: |
     factoriesByChainIds(
       chainIds: [BigInt!]!
     ): [Factory!]!
+    v3factoriesByChainIds(
+      chainIds: [BigInt!]!
+    ): [SUSHISWAP_V3_Factory!]!
     liquidityPositionsByChainIds(
       skip: Int = 0
       first: Int = 100
