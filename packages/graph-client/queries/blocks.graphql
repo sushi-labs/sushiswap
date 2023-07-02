@@ -34,7 +34,7 @@ query BlocksByChainIds(
   $where: Block_filter
   $orderBy: Block_orderBy = timestamp
   $orderDirection: OrderDirection = desc
-  $chainIds: [Int!]!
+  $chainIds: [BigInt!]!
 ) {
   blocks: blocksByChainIds(
     first: $first
@@ -51,7 +51,7 @@ query BlocksByChainIds(
   }
 }
 
-query OneDayBlocks($chainIds: [Int!]!) {
+query OneDayBlocks($chainIds: [BigInt!]!) {
   oneDayBlocks(chainIds: $chainIds) {
     id
     chainId
@@ -60,7 +60,7 @@ query OneDayBlocks($chainIds: [Int!]!) {
   }
 }
 
-query TwoDayBlocks($chainIds: [Int!]!) {
+query TwoDayBlocks($chainIds: [BigInt!]!) {
   twoDayBlocks(chainIds: $chainIds) {
     id
     chainId
@@ -69,7 +69,7 @@ query TwoDayBlocks($chainIds: [Int!]!) {
   }
 }
 
-query OneWeekBlocks($chainIds: [Int!]!) {
+query OneWeekBlocks($chainIds: [BigInt!]!) {
   oneWeekBlocks(chainIds: $chainIds) {
     id
     chainId
@@ -78,7 +78,7 @@ query OneWeekBlocks($chainIds: [Int!]!) {
   }
 }
 
-query CustomBlocks($timestamp: Int!, $chainIds: [Int!]!) {
+query CustomBlocks($timestamp: Int!, $chainIds: [BigInt!]!) {
   customBlocks(timestamp: $timestamp, chainIds: $chainIds) {
     id
     chainId

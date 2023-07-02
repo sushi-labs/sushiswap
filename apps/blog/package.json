@@ -9,7 +9,8 @@
     "dev": "next dev --port 3002",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "generate": "graphql-mesh build",
-    "lint": "TIMING=1 next lint --fix",
+    "lint": "TIMING=1 next lint",
+    "lint:fix": "TIMING=1 next lint --fix",
     "sitemap": "next build && next-sitemap --config next-sitemap.config.mjs",
     "start": "next start"
   },

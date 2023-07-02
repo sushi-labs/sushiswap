@@ -1,4 +1,4 @@
-query Factories($chainIds: [Int!]!) {
+query Factories($chainIds: [BigInt!]!) {
   factories: factoriesByChainIds(chainIds: $chainIds) {
     id
     chainId
@@ -14,7 +14,7 @@ query FactoryDaySnapshots(
   $orderBy: FactoryDaySnapshot_orderBy = date
   $orderDirection: OrderDirection = desc
   $block: Block_height
-  $chainIds: [Int!]!
+  $chainIds: [BigInt!]!
 ) {
   factoryDaySnapshots: factoryDaySnapshotsByChainIds(
     first: $first

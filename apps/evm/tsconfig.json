@@ -5,7 +5,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "app/analytics/api/bentobox", "app/analytics/api/stats/route.ts.bk"  ],
   "exclude": [
     "node_modules",
     "test"

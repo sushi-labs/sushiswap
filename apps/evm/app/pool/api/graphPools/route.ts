@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   const ids = searchParams.get('ids')
   const result = schema.safeParse({ ids })
   if (!result.success) {
-    return new Response(result.error.message, { status: 400 })
+    return new Response(result.error.message, { status: 422 })
   }
   const pool = await getGraphPools(result.data.ids)
   return NextResponse.json(pool)

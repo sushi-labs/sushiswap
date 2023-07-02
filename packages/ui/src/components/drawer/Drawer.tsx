@@ -1,3 +1,5 @@
+'use client'
+
 import { Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import { useIsMounted } from '@sushiswap/hooks'

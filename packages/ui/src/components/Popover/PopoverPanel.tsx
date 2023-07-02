@@ -1,3 +1,5 @@
+'use client'
+
 import { Transition } from '@headlessui/react'
 import { useIsMounted } from '@sushiswap/hooks'
 import React, { FC, ReactNode, useCallback, useRef } from 'react'

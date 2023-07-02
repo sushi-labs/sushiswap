@@ -1,0 +1,50 @@
+name: Sushi - verify
+# on:
+#   workflow_call:
+#   workflow_dispatch:
+on:
+  pull_request:
+    types: [opened, synchronize]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    # timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Install dependencies
+        uses: ./.github/actions/install
+      - name: Lint
+        run: pnpm lint
+
+  # build:
+  #   name: Build
+  #   needs: lint
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 5
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         submodules: true
+  #     - name: Install dependencies
+  #       uses: ./.github/actions/install
+  #     - name: Build
+  #       run: pnpm build
+  types:
+    name: Types
+    needs: lint
+    runs-on: ubuntu-latest
+    # timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Install dependencies
+        uses: ./.github/actions/install
+      - name: Check types
+        run: pnpm check

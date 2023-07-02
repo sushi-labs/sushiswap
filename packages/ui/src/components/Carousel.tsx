@@ -1,3 +1,5 @@
+'use client'
+
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 import React, { ReactNode, useCallback, useLayoutEffect, useRef, useState } from 'react'
 

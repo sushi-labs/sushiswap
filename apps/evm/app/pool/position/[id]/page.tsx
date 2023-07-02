@@ -43,8 +43,8 @@ import { z } from 'zod'
 import { ConcentratedLiquidityHarvestButton } from '../../../../ui/pool/ConcentratedLiquidityHarvestButton'
 
 export default function Page({ params }: { params: { id: string } }) {
-  console.log({ params })
-  if (!queryParamsSchema.safeParse(params).success) return <></>
+  const result = queryParamsSchema.safeParse(params)
+  if (!result.success) return <></>
   return (
     <SplashController>
       <ConcentratedLiquidityProvider>

@@ -11,28 +11,6 @@ export const SWAP_API_ENABLED_NETWORKS = []
 
 export type SwapApiEnabledChainId = (typeof SWAP_API_ENABLED_NETWORKS)[number]
 
-export const AMM_ENABLED_NETWORKS = [
-  ChainId.ETHEREUM,
-  ChainId.ARBITRUM,
-  ChainId.AVALANCHE,
-  ChainId.POLYGON,
-  ChainId.FANTOM,
-  ChainId.BSC,
-  ChainId.GNOSIS,
-  ChainId.MOONRIVER,
-  ChainId.ARBITRUM_NOVA,
-  ChainId.FUSE,
-  ChainId.CELO,
-  ChainId.MOONBEAM,
-  // ChainId.HECO,
-  // ChainId.PALM,
-  // ChainId.OKEX,
-  ChainId.BOBA,
-  ChainId.BOBA_AVAX,
-  ChainId.BOBA_BNB,
-  ChainId.HARMONY,
-]
-
 export const SUPPORTED_CHAIN_IDS = Array.from(
   new Set([...TridentChainIds, ...SushiSwapV2ChainIds, ...SushiSwapV3ChainIds])
 ).sort((a: number, b: number) => {
