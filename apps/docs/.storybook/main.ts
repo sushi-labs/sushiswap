@@ -20,14 +20,6 @@ const config: StorybookConfig = {
       },
     },
     '@storybook/addon-mdx-gfm',
-    {
-      name: '@storybook/addon-styling',
-      options: {},
-    },
-    {
-      name: '@storybook/addon-styling',
-      options: {},
-    },
   ],
   core: {
     builder: '@storybook/builder-vite',
