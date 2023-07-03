@@ -160,7 +160,7 @@ export class UniV2Extractor {
   }
 
   computeV2Address(factory: FactoryV2, tokenA: Token, tokenB: Token): Address {
-    const key = `${factory.address}_${tokenA.address}_${tokenB.address}`
+    const key = `${tokenA.address}${tokenB.address}${factory.address}`
     const cached = this.addressCache.get(key)
     if (cached) return cached
     const addr = computePairAddress({
