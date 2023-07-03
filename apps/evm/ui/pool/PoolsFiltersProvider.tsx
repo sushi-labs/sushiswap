@@ -51,22 +51,11 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => 
 
   const setFilters = useCallback(
     (filters: PoolFilters) => {
-      console.log('setFilters...', filters)
       const newFilters = { ...parsed, ...filters }
       void push(parseArgs(newFilters))
     },
     [parsed, push]
   )
-
-  // const _searchParams = new URLSearchParams(searchParams)
-  // Object.entries(newFilters).forEach(([key, value]) => {
-  //   if (value) {
-  //     _searchParams.set(key, value.toString())
-  //   } else {
-  //     _searchParams.delete(key)
-  //   }
-  // })
-  // void push(`${pathname}?${_searchParams.toString()}`)
 
   return (
     <FilterContext.Provider
