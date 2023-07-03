@@ -71,11 +71,11 @@ export const ViewGroup = ({
   children: ReactNode
   direction?: 'column' | 'row'
 }) => {
-  const viewClasses = cva(['flex', 'justify-start'], {
+  const viewClasses = cva(['flex', 'flex-wrap', 'justify-start'], {
     variants: {
       direction: {
-        row: ['flex-row', 'space-x-3', 'items-center'],
-        column: ['flex-col', 'space-y-3'],
+        row: ['flex-row', 'gap-3', 'items-center'],
+        column: ['flex-col', 'gap-3'],
       },
     },
   })

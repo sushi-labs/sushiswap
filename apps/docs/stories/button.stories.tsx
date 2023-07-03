@@ -65,7 +65,7 @@ export const Sizes = (args) => {
   const items = sizes.map((size) => (
     <React.Fragment key={size}>
       <Button {...args} key={size} size={size}>
-        {size}
+        Size {size}
       </Button>
     </React.Fragment>
   ))
@@ -89,7 +89,7 @@ export const WithIcon = (args) => {
   const items = sizes.map((size) => (
     <React.Fragment key={size}>
       <Button icon={DiscordIcon} {...args} key={size} size={size}>
-        {size}
+        Size {size}
       </Button>
     </React.Fragment>
   ))
@@ -103,7 +103,7 @@ export const WithIcon = (args) => {
         key={size}
         size={size}
       >
-        {size}
+        Size {size}
       </Button>
     </React.Fragment>
   ))

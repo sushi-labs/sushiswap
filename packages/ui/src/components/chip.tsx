@@ -22,12 +22,12 @@ const chipVariants = cva(
   }
 )
 
-export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof chipVariants> {
+export interface ChipProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof chipVariants> {
   icon?: IconComponent
   iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
 }
 
-function Chip({ className, variant, icon: Icon, iconProps, children, ...props }: BadgeProps) {
+function Chip({ className, variant, icon: Icon, iconProps, children, ...props }: ChipProps) {
   return (
     <div
       className={classNames(chipVariants({ variant, className: classNames(className, 'flex items-center gap-1') }))}
