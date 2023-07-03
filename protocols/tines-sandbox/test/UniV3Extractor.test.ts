@@ -24,7 +24,7 @@ import {
   WalletClient,
 } from 'viem'
 import { Account, privateKeyToAccount } from 'viem/accounts'
-import { arbitrum, Chain, hardhat, mainnet, optimism, polygon } from 'viem/chains'
+import { arbitrum, celo, Chain, hardhat, mainnet, optimism, polygon } from 'viem/chains'
 
 import { setTokenBalance, UniswapV3FactoryAddress } from '../src'
 import { comparePoolCodes, isSubpool } from '../src/ComparePoolCodes'
@@ -41,6 +41,7 @@ export const RP3Address = {
   [ChainId.POLYGON]: '0x0a6e511Fe663827b9cA7e2D2542b20B37fC217A6' as Address,
   [ChainId.ARBITRUM]: '0xfc506AaA1340b4dedFfd88bE278bEe058952D674' as Address,
   [ChainId.OPTIMISM]: '0x4C5D5234f232BD2D76B96aA33F5AE4FCF0E4BFAb' as Address,
+  [ChainId.CELO]: '0x2f686751b19a9d91cc3d57d90150Bc767f050066' as Address,
 }
 
 function uniswapFactory(chain: ChainId): FactoryV3 {
@@ -619,5 +620,16 @@ it.skip('UniV3 Extractor Optimism infinit work test', async () => {
     RP3Address: RP3Address[ChainId.OPTIMISM],
     logDepth: 50,
     account: '0x4200000000000000000000000000000000000006', // just a whale because optimism eth_call needs gas (
+  })
+})
+
+it.skip('UniV3 Extractor Celo infinit work test', async () => {
+  await startInfinitTest({
+    providerURL: `https://forno.celo.org`,
+    chain: celo,
+    factories: [uniswapFactory(ChainId.CELO)],
+    tickLensContract: '0x5f115D9113F88e0a0Db1b5033D90D4a9690AcD3D',
+    RP3Address: RP3Address[ChainId.CELO],
+    logDepth: 50,
   })
 })

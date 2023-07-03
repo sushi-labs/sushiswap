@@ -21,6 +21,7 @@ export const UniswapV3FactoryAddress: Record<number, string> = {
   [ChainId.ARBITRUM]: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
   [ChainId.OPTIMISM]: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
   [ChainId.BSC]: '0xdB1d10011AD0Ff90774D0C6Bb92e5C5c8b4461F7',
+  [ChainId.CELO]: '0xAfE208a311B21f13EF87E33A90049fC17A7acDEc',
 }
 
 const PositionManagerAddress: Record<number, string> = {
