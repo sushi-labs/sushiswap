@@ -14,7 +14,6 @@ const config: StorybookConfig = {
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@storybook/addon-docs',
-    'storybook-addon-react-docgen',
     {
       name: '@storybook/addon-styling',
       options: {

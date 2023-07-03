@@ -498,12 +498,14 @@ importers:
       '@sushiswap/ui': workspace:*
       '@vitejs/plugin-react': 4.0.1
       autoprefixer: 10.4.14
+      chromatic: ^6.19.9
       class-variance-authority: ^0.6.0
       postcss: 8.4.23
       react: 18.2.0
       react-dom: 18.2.0
       serve: 14.2.0
       storybook: 7.1.0-alpha.42
+      storybook-addon-related-links: ^0.0.4
       tailwindcss: 3.3.2
       typescript: 5.1.6
       vite: 4.3.9
@@ -514,6 +516,7 @@ importers:
       class-variance-authority: 0.6.0_typescript@5.1.6
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+      storybook-addon-related-links: 0.0.4_biqbaboplfbrettd7655fr4n2y
     devDependencies:
       '@storybook/addon-a11y': 7.0.24_biqbaboplfbrettd7655fr4n2y
       '@storybook/addon-actions': 7.0.24_biqbaboplfbrettd7655fr4n2y
@@ -529,6 +532,7 @@ importers:
       '@sushiswap/typescript-config': link:../../config/typescript
       '@vitejs/plugin-react': 4.0.1_vite@4.3.9
       autoprefixer: 10.4.14_postcss@8.4.23
+      chromatic: 6.19.9
       postcss: 8.4.23
       serve: 14.2.0
       storybook: 7.1.0-alpha.42
@@ -21519,6 +21523,11 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
+  /chromatic/6.19.9:
+    resolution: {integrity: sha512-UHrPbPoLnJwd063cRSO0U865VhcATykpMiHsAnNFz5EFRsBvM9wefqyS2Z6W8Ti9J7Fjrf4MV4PA+Q5k2lhFfQ==}
+    hasBin: true
+    dev: true
+
   /ci-info/2.0.0:
     resolution: {integrity: sha512-5tK7EtrZ0N+OLFMthtqOj4fI2Jeb88C4CAZPu25LDVUgXJ0A3Js4PMGqrn0JU1W0Mh1/Z8wZzYPxqUrXeBboCQ==}
 
@@ -35915,6 +35924,26 @@ packages:
   /store2/2.14.2:
     resolution: {integrity: sha512-siT1RiqlfQnGqgT/YzXVUNsom9S0H1OX+dpdGN1xkyYATo4I6sep5NmsRD/40s3IIOvlCq6akxkqG82urIZW1w==}
     dev: true
+
+  /storybook-addon-related-links/0.0.4_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-hV/0/JYxgePts6I5+dY8nYvDlNghRBj0FhmxU89YKZwgfaIcl7L2lW9UkJkuXBvBZvNlO8ad1ksKVthmR++Kiw==}
+    peerDependencies:
+      '@storybook/addons': ^6.5.8
+      '@storybook/api': ^6.5.8
+      '@storybook/components': ^6.5.8
+      '@storybook/core-events': ^6.5.8
+      '@storybook/theming': ^6.5.8
+      react: ^16.8.0 || ^17.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-dom:
+        optional: true
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    dev: false
 
   /storybook/7.1.0-alpha.42:
     resolution: {integrity: sha512-Ri5QN8HupAYQzYw4nEwe2OiYl3KLXGT+ARezYNZ8YhDjWLqO0H1Jz6h4jt8MhfOe7VVrvAqd4JiLRYTS0MyRoA==}
