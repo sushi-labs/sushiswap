@@ -22,9 +22,11 @@ export class MultiCallAggregator {
   pendingResolves: ((arg: any) => void)[] = []
   pendingRejects: ((arg: unknown) => void)[] = []
   timer?: NodeJS.Timeout
+  maxCallsInOneBatch: number
 
-  constructor(client: PublicClient) {
+  constructor(client: PublicClient, maxCallsInOneBatch = 0) {
     this.client = client
+    this.maxCallsInOneBatch = maxCallsInOneBatch
   }
 
   // aggregate several calls in one multicall
@@ -32,7 +34,8 @@ export class MultiCallAggregator {
     address: Address,
     abi: Abi,
     functionName: string,
-    args?: unknown[]
+    args?: unknown[],
+    makeMulticallIfExceeds = true
   ): Promise<{ blockNumber: number; returnValue: FunctionRetType }> {
     this.sheduleMulticall()
     this.pendingCalls.push({
@@ -41,10 +44,12 @@ export class MultiCallAggregator {
       functionName,
       args,
     })
-    return new Promise<{ blockNumber: number; returnValue: FunctionRetType }>((resolve, reject) => {
+    const promise = new Promise<{ blockNumber: number; returnValue: FunctionRetType }>((resolve, reject) => {
       this.pendingResolves.push(resolve)
       this.pendingRejects.push(reject)
     })
+    if (makeMulticallIfExceeds) this.makeMulticallIfMaxBatchSizeExceeds()
+    return promise
   }
 
   // aggregate several calls in one multicall
@@ -61,10 +66,12 @@ export class MultiCallAggregator {
       functionName,
       args,
     })
-    const res = await new Promise<{ blockNumber: number; returnValue: FunctionRetType }>((resolve, reject) => {
+    const promise = new Promise<{ blockNumber: number; returnValue: FunctionRetType }>((resolve, reject) => {
       this.pendingResolves.push(resolve)
       this.pendingRejects.push(reject)
     })
+    this.makeMulticallIfMaxBatchSizeExceeds()
+    const res = await promise
     return res.returnValue
   }
 
@@ -75,7 +82,9 @@ export class MultiCallAggregator {
   ): Promise<{ blockNumber: number; returnValues: unknown[] }> {
     if (functions.length == 0) return { blockNumber: -1, returnValues: [] }
     this.sheduleMulticall()
-    const res = await Promise.all(functions.map(([name, args]) => this.call(address, abi, name, args)))
+    const promise = Promise.all(functions.map(([name, args]) => this.call(address, abi, name, args, false)))
+    this.makeMulticallIfMaxBatchSizeExceeds()
+    const res = await promise
     return { blockNumber: res[0].blockNumber, returnValues: res.map(({ returnValue }) => returnValue) }
   }
 
@@ -84,9 +93,13 @@ export class MultiCallAggregator {
   ): Promise<{ blockNumber: number; returnValues: unknown[] }> {
     if (calls.length == 0) return { blockNumber: -1, returnValues: [] }
     this.sheduleMulticall()
-    const res = await Promise.all(
-      calls.map(({ address, abi, functionName, args }) => this.call(address, abi, functionName, args as unknown[]))
+    const promise = Promise.all(
+      calls.map(({ address, abi, functionName, args }) =>
+        this.call(address, abi, functionName, args as unknown[], false)
+      )
     )
+    this.makeMulticallIfMaxBatchSizeExceeds()
+    const res = await promise
     return { blockNumber: res[0].blockNumber, returnValues: res.map(({ returnValue }) => returnValue) }
   }
 
@@ -94,46 +107,56 @@ export class MultiCallAggregator {
     if (this.timer === undefined) {
       this.timer = setTimeout(async () => {
         this.timer = undefined
-        const pendingCalls = this.pendingCalls
-        const pendingResolves = this.pendingResolves
-        const pendingRejects = this.pendingRejects
-        this.pendingCalls = []
-        this.pendingResolves = []
-        this.pendingRejects = []
-        pendingCalls.unshift({
-          address: this.getBlockNumberContractAddress(),
-          abi: getBlockNumberAbi,
-          functionName: 'getBlockNumber',
-        })
-        let res
-        for (;;) {
-          try {
-            res = await this.client.multicall({
-              allowFailure: true,
-              contracts: pendingCalls.map((c) => ({
-                address: c.address,
-                abi: c.abi,
-                functionName: c.functionName,
-                args: c.args as Narrow<readonly unknown[] | undefined>,
-              })),
-            })
-          } catch (e) {
-            warnLog('Multicall error')
-            continue
-          }
-          break
-        }
-        if (res[0].status !== 'success') {
-          // getBlockNumber Failed
-          for (let i = 1; i < res.length; ++i) pendingRejects[i - 1](res[0].error)
-        } else {
-          const blockNumber = res[0].result as number
-          for (let i = 1; i < res.length; ++i) {
-            if (res[i].status == 'success') pendingResolves[i - 1]({ blockNumber, returnValue: res[i].result })
-            else pendingRejects[i - 1](res[i].error)
-          }
-        }
+        await this.makeMulticallNow()
       }, 0)
+    }
+  }
+
+  async makeMulticallIfMaxBatchSizeExceeds(): Promise<void> {
+    if (this.maxCallsInOneBatch == 0 || this.pendingCalls.length < this.maxCallsInOneBatch) return
+    await this.makeMulticallNow()
+  }
+
+  async makeMulticallNow(): Promise<void> {
+    const pendingCalls = this.pendingCalls
+    const pendingResolves = this.pendingResolves
+    const pendingRejects = this.pendingRejects
+    this.pendingCalls = []
+    this.pendingResolves = []
+    this.pendingRejects = []
+    if (pendingCalls.length == 0) return
+    pendingCalls.unshift({
+      address: this.getBlockNumberContractAddress(),
+      abi: getBlockNumberAbi,
+      functionName: 'getBlockNumber',
+    })
+    let res
+    for (;;) {
+      try {
+        res = await this.client.multicall({
+          allowFailure: true,
+          contracts: pendingCalls.map((c) => ({
+            address: c.address,
+            abi: c.abi,
+            functionName: c.functionName,
+            args: c.args as Narrow<readonly unknown[] | undefined>,
+          })),
+        })
+      } catch (e) {
+        warnLog('Multicall error')
+        continue
+      }
+      break
+    }
+    if (res[0].status !== 'success') {
+      // getBlockNumber Failed
+      for (let i = 1; i < res.length; ++i) pendingRejects[i - 1](res[0].error)
+    } else {
+      const blockNumber = res[0].result as number
+      for (let i = 1; i < res.length; ++i) {
+        if (res[i].status == 'success') pendingResolves[i - 1]({ blockNumber, returnValue: res[i].result })
+        else pendingRejects[i - 1](res[i].error)
+      }
     }
   }
 
