@@ -1,8 +1,7 @@
 import { parseArgs, Protocol } from '@sushiswap/client'
 import { SUPPORTED_CHAIN_IDS } from 'config'
-import stringify from 'fast-json-stable-stringify'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { createContext, FC, ReactNode, useCallback, useContext, useMemo } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { createContext, FC, ReactNode, useCallback, useContext } from 'react'
 import { z } from 'zod'
 
 interface FilterContext extends z.TypeOf<typeof poolFiltersSchema> {
@@ -20,20 +19,24 @@ interface PoolsFiltersProvider {
 
 export const poolFiltersSchema = z.object({
   tokenSymbols: z.nullable(z.string()).transform((tokenSymbols) => {
-    return tokenSymbols ? tokenSymbols.split(',') : []
+    console.log({ tokenSymbols })
+    return tokenSymbols && tokenSymbols !== ',' ? tokenSymbols.split(',') : []
   }),
   chainIds: z
     .nullable(z.string())
-    .transform((chainIds) => (chainIds ? chainIds.split(',').map((chainId) => Number(chainId)) : SUPPORTED_CHAIN_IDS)),
+    .transform((chainIds) =>
+      chainIds && chainIds !== ',' ? chainIds.split(',').map((chainId) => Number(chainId)) : SUPPORTED_CHAIN_IDS
+    ),
   protocols: z
     .nullable(z.string())
-    .transform((protocols) => (protocols ? (protocols.split(',') as Protocol[]) : undefined)),
-  farmsOnly: z.nullable(z.string()).transform((bool) => (bool ? bool === 'true' : false)),
+    .transform((protocols) => (protocols && protocols !== ',' ? (protocols.split(',') as Protocol[]) : [])),
+  farmsOnly: z.nullable(z.string()).transform((bool) => (bool ? bool === 'true' : undefined)),
 })
 
 export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => {
   const { push } = useRouter()
 
+  const pathname = usePathname()
   const searchParams = useSearchParams()
 
   const tokenSymbols = searchParams?.get('tokenSymbols')
@@ -41,22 +44,29 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => 
   const protocols = searchParams?.get('protocols')
   const farmsOnly = searchParams?.get('farmsOnly')
 
-  const parsed = useMemo(() => {
-    const parsed = poolFiltersSchema.parse({ tokenSymbols, chainIds, protocols, farmsOnly })
-    return {
-      ...parsed,
-      protocols: parsed?.protocols?.filter((el) => (el as string) !== ''),
-    }
-  }, [tokenSymbols, chainIds, protocols, farmsOnly])
+  const parsed = poolFiltersSchema.parse({ tokenSymbols, chainIds, protocols, farmsOnly })
+
+  // const parsed = useMemo(() => {
+  //   return poolFiltersSchema.parse({ tokenSymbols, chainIds, protocols, farmsOnly })
+  // }, [tokenSymbols, chainIds, protocols, farmsOnly])
 
   const setFilters = useCallback(
     (filters: PoolFilters) => {
       const newFilters = { ...parsed, ...filters }
       void push(parseArgs(newFilters))
     },
-    // eslint-disable-next-line
-    [stringify(parsed)]
+    [parsed, push]
   )
+
+  // const _searchParams = new URLSearchParams(searchParams)
+  // Object.entries(newFilters).forEach(([key, value]) => {
+  //   if (value) {
+  //     _searchParams.set(key, value.toString())
+  //   } else {
+  //     _searchParams.delete(key)
+  //   }
+  // })
+  // void push(`${pathname}?${_searchParams.toString()}`)
 
   return (
     <FilterContext.Provider

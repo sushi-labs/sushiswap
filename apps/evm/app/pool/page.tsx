@@ -12,7 +12,7 @@ import { PositionCardList } from 'ui/migrate/position-card-list'
 import { PoolsFiltersProvider, PoolsSection } from '../../ui/pool'
 import { Hero } from './hero'
 
-const Pool = async () => {
+export default async function PoolPage() {
   const { address } = useAccount()
   return (
     <>
@@ -49,5 +49,3 @@ const Pool = async () => {
     </>
   )
 }
-
-export default Pool
