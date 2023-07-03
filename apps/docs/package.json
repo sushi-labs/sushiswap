@@ -10,16 +10,19 @@
   },
   "dependencies": {
     "@sushiswap/ui": "workspace:*",
+    "@sushiswap/currency": "workspace:*",
+    "@sushiswap/chain": "workspace:*",
+    "class-variance-authority": "^0.6.0",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
   "devDependencies": {
+    "@storybook/addon-a11y": "7.0.24",
     "@storybook/addon-actions": "7.0.24",
     "@storybook/addon-docs": "7.0.24",
     "@storybook/addon-essentials": "7.0.24",
     "@storybook/addon-links": "7.0.24",
     "@storybook/addon-mdx-gfm": "7.0.24",
-    "@storybook/addon-a11y": "7.0.24",
     "@storybook/addon-styling": "1.3.2",
     "@storybook/cli": "7.0.24",
     "@storybook/react": "7.0.24",
@@ -27,10 +30,10 @@
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@vitejs/plugin-react": "4.0.1",
+    "autoprefixer": "10.4.14",
+    "postcss": "8.4.23",
     "serve": "14.2.0",
     "storybook": "7.1.0-alpha.42",
-    "postcss": "8.4.23",
-    "autoprefixer": "10.4.14",
     "tailwindcss": "3.3.2",
     "typescript": "5.1.6",
     "vite": "4.3.9"

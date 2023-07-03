@@ -13,6 +13,8 @@ const config: StorybookConfig = {
     '@storybook/addon-a11y',
     '@storybook/addon-links',
     '@storybook/addon-essentials',
+    '@storybook/addon-docs',
+    'storybook-addon-react-docgen',
     {
       name: '@storybook/addon-styling',
       options: {
@@ -25,6 +27,10 @@ const config: StorybookConfig = {
   framework: {
     name: '@storybook/react-vite',
     options: {},
+  },
+  docs: {
+    autodocs: true,
+    defaultName: 'Documentation',
   },
   async viteFinal(config, { configType }) {
     // customize the Vite config here
