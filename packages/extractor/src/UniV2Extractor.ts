@@ -31,6 +31,7 @@ export class UniV2Extractor {
   multiCallAggregator: MultiCallAggregator
   poolMap: Map<Address, PoolState> = new Map()
   unexistedPools: Set<Address> = new Set()
+  addressCache: Map<string, Address> = new Map()
   logFilter: LogFilter
   logging: boolean
   busyCounter: Counter
@@ -112,14 +113,10 @@ export class UniV2Extractor {
     const waitPools: Promise<ConstantProductPoolCode | undefined>[] = []
     for (let i = 0; i < tokens.length; ++i) {
       for (let j = i + 1; j < tokens.length; ++j) {
+        if (tokens[i].address == tokens[j].address) continue
         const [t0, t1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i], tokens[j]] : [tokens[j], tokens[i]]
         this.factories.forEach((factory) => {
-          const addr = computePairAddress({
-            factoryAddress: factory.address,
-            tokenA: t0,
-            tokenB: t1,
-            initCodeHashManualOverride: factory.initCodeHash,
-          }) as Address
+          const addr = this.computeV2Address(factory, t0, t1)
           const addrL = addr.toLowerCase() as Address
           const poolState = this.poolMap.get(addrL)
           if (poolState) {
@@ -160,6 +157,20 @@ export class UniV2Extractor {
         (pools) => pools.filter((p) => p !== undefined) as ConstantProductPoolCode[]
       ),
     }
+  }
+
+  computeV2Address(factory: FactoryV2, tokenA: Token, tokenB: Token): Address {
+    const key = `${factory.address}_${tokenA.address}_${tokenB.address}`
+    const cached = this.addressCache.get(key)
+    if (cached) return cached
+    const addr = computePairAddress({
+      factoryAddress: factory.address,
+      tokenA,
+      tokenB,
+      initCodeHashManualOverride: factory.initCodeHash,
+    }) as Address
+    this.addressCache.set(key, addr)
+    return addr
   }
 
   consoleLog(log: string) {

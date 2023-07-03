@@ -1,8 +1,8 @@
 import { routeProcessor2Abi } from '@sushiswap/abi'
-import { INIT_CODE_HASH } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { FactoryV2, UniV2Extractor } from '@sushiswap/extractor'
+import { TokenManager } from '@sushiswap/extractor/dist/TokenManager'
 import { LiquidityProviders, NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { getBigNumber, RouteStatus } from '@sushiswap/tines'
@@ -28,16 +28,17 @@ async function startInfinitTest(args: {
 
   const extractor = new UniV2Extractor(client, args.factories)
   await extractor.start()
-  extractor.getPoolsForTokens(BASES_TO_CHECK_TRADES_AGAINST[chainId])
 
   const nativeProvider = new NativeWrapProvider(chainId, client)
-  const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId]
+  const tokenManager = new TokenManager(extractor.multiCallAggregator, './cache')
+  await tokenManager.addCachedTokens()
+  const tokens = Array.from(tokenManager.tokens.values())
   for (;;) {
     for (let i = 1; i < tokens.length; ++i) {
       await delay(1000)
       const time0 = performance.now()
       const { prefetchedPools: pools0, fetchingPools: poolsPromise } = extractor.getPoolsForTokens(
-        BASES_TO_CHECK_TRADES_AGAINST[chainId]
+        BASES_TO_CHECK_TRADES_AGAINST[chainId].concat([tokens[i]])
       )
       const time1 = performance.now()
       const pools1 = await poolsPromise
