@@ -101,6 +101,19 @@ async function startInfinitTest(args: {
   }
 }
 
+async function allPoolsPrefetchingTest(args: { providerURL: string; chain: Chain; factories: FactoryV2[] }) {
+  const transport = http(args.providerURL)
+  const client = createPublicClient({
+    chain: args.chain,
+    transport: transport,
+  })
+  const extractor = new UniV2Extractor(client, args.factories)
+  await extractor.start()
+  const start = performance.now()
+  const pools = await extractor.addAllPoolsFromFactories()
+  console.log(`allPoolsPrefetchingTest: ${pools.length} pools - ${Math.round(performance.now() - start)}ms`)
+}
+
 it.skip('UniV2 Extractor Ethereum infinit work test', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
@@ -114,5 +127,20 @@ it.skip('UniV2 Extractor Ethereum infinit work test', async () => {
       },
     ],
     RP3Address: RP3Address[ChainId.ETHEREUM],
+  })
+})
+
+it.skip('UniV2 Extractor Ethereum allPoolsPrefetching test', async () => {
+  await allPoolsPrefetchingTest({
+    providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
+    chain: mainnet,
+    factories: [
+      {
+        address: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
+        provider: LiquidityProviders.UniswapV2,
+        fee: 0.003,
+        initCodeHash: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
+      },
+    ],
   })
 })
