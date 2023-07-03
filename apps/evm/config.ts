@@ -14,7 +14,7 @@ export type SwapApiEnabledChainId = (typeof SWAP_API_ENABLED_NETWORKS)[number]
 export const SUPPORTED_CHAIN_IDS = Array.from(
   new Set([...TridentChainIds, ...SushiSwapV2ChainIds, ...SushiSwapV3ChainIds])
 )
-  .filter((c) => !TESTNET_CHAIN_IDS.includes(c))
+  .filter((c) => !TESTNET_CHAIN_IDS.includes(c as (typeof TESTNET_CHAIN_IDS)[number]))
   .sort((a: number, b: number) => {
     // Sort Thundercore
     if (
