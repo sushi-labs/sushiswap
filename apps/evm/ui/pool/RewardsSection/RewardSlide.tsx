@@ -1,5 +1,4 @@
 import { Chain } from '@sushiswap/chain'
-import { Amount, Token } from '@sushiswap/currency'
 import { formatNumber } from '@sushiswap/format'
 import { useAngleRewardsMultipleChains } from '@sushiswap/react-query'
 import { Button } from '@sushiswap/ui/components/button'
@@ -8,8 +7,7 @@ import { Explainer } from '@sushiswap/ui/components/explainer'
 import { List } from '@sushiswap/ui/components/list/List'
 import { Address } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
-import { useTokenAmountDollarValues } from 'lib/hooks'
-import React, { FC, ReactNode, useMemo } from 'react'
+import React, { FC, ReactNode } from 'react'
 
 import { ConcentratedLiquidityHarvestButton } from '../ConcentratedLiquidityHarvestButton'
 
@@ -17,48 +15,28 @@ export const RewardSlide: FC<{
   address: Address | undefined
   data: NonNullable<ReturnType<typeof useAngleRewardsMultipleChains>['data']>[0]
 }> = ({ address, data }) => {
-  const unclaimed = useMemo(
-    () =>
-      Object.values(
-        Object.values(data.pools ?? []).reduce<Record<string, Amount<Token>>>((acc, cur) => {
-          Object.values(cur.rewardsPerToken).forEach((val) => {
-            if (!acc[val.unclaimed.currency.address]) {
-              acc[val.unclaimed.currency.address] = val.unclaimed
-            } else {
-              acc[val.unclaimed.currency.address] = acc[val.unclaimed.currency.address].add(val.unclaimed)
-            }
-          })
-
-          return acc
-        }, {})
-      ),
-    []
-  )
-
-  const dollarValues = useTokenAmountDollarValues({ chainId: data.chainId, amounts: unclaimed })
-
   return (
     <div className="flex flex-col relative bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-all rounded-2xl p-7 overflow-hidden w-[320px]">
-      <span className="uppercase text-xs font-semibold dark:text-slate-400 text-gray-600">
+      <span className="text-xs font-semibold text-gray-600 uppercase dark:text-slate-400">
         {Chain.from(data.chainId).name}
       </span>
-      <h1 className="text-2xl font-semibold dark:text-white text-gray-900">
-        ${dollarValues.reduce((acc, cur) => acc + +formatNumber(cur), 0)}
+      <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+        ${data.unclaimed.reduce((acc, cur) => acc + +formatNumber(cur.amountUSD), 0)}
       </h1>
-      <div className="flex flex-col gap-1 mt-4 flex-grow">
-        <span className="font-medium flex items-center gap-1 text-sm text-gray-500 dark:text-slate-400">
+      <div className="flex flex-col flex-grow gap-1 mt-4">
+        <span className="flex items-center gap-1 text-sm font-medium text-gray-500 dark:text-slate-400">
           Claimable{' '}
-          {unclaimed.length > 0 && (
+          {data.unclaimed.length > 0 && (
             <Explainer>
               <List className="!pt-0 ">
                 <List.Label>Claimable on {Chain.from(data.chainId).name}</List.Label>
                 <List.Control>
-                  {unclaimed.map((el, i) => (
-                    <List.KeyValue key={i} flex title={`${el.currency.symbol}`}>
+                  {data.unclaimed.map((el) => (
+                    <List.KeyValue key={el.amount.currency.id} flex title={`${el.amount.currency.symbol}`}>
                       <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-2">
-                          <Currency.Icon currency={el.currency} width={18} height={18} />
-                          {el.toSignificant(4)} {el.currency.symbol}
+                          <Currency.Icon currency={el.amount.currency} width={18} height={18} />
+                          {el.amount.toSignificant(4)} {el.amount.currency.symbol}
                         </div>
                       </div>
                     </List.KeyValue>
@@ -72,17 +50,17 @@ export const RewardSlide: FC<{
           )}
         </span>
         <div className="flex gap-1.5 truncate flex-grow h-full">
-          {unclaimed.length === 0 ? (
+          {data.unclaimed.length === 0 ? (
             <span className="text-sm font-light text-gray-500 dark:text-slate-500">No rewards found</span>
           ) : (
             React.Children.toArray(
-              unclaimed.map((el, i) => {
+              data.unclaimed.map((el) => {
                 return (
-                  <div key={i} className="flex items-center gap-1">
+                  <div key={el.amount.currency.id} className="flex items-center gap-1">
                     <div className="w-4 h-4">
-                      <Currency.Icon currency={el.currency} width={18} height={18} />
+                      <Currency.Icon currency={el.amount.currency} width={18} height={18} />
                     </div>
-                    <span className="text-sm ">{el.toSignificant(4)}</span>
+                    <span className="text-sm ">{el.amount.toSignificant(4)}</span>
                   </div>
                 )
               })
