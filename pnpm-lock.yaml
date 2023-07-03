@@ -570,7 +570,7 @@ importers:
       react-colorful: 5.6.1
       react-dom: 18.2.0
       react-dropzone: 14.2.3
-      react-hook-form: 7.45.1
+      react-hook-form: 7.41.2
       react-image-file-resizer: 0.4.8
       react-infinite-scroll-component: 6.1.0
       react-redux: 8.0.7
@@ -594,7 +594,7 @@ importers:
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 2.0.13_react@18.2.0
       '@heroicons/react-v1': /@heroicons/react/1.0.6_react@18.2.0
-      '@hookform/resolvers': 2.9.10_react-hook-form@7.45.1
+      '@hookform/resolvers': 2.9.10_react-hook-form@7.41.2
       '@layerzerolabs/scan-client': 0.0.0-beta.6
       '@octokit/auth-app': 4.0.7
       '@sushiswap/abi': link:../../packages/abi
@@ -656,7 +656,7 @@ importers:
       react-colorful: 5.6.1_biqbaboplfbrettd7655fr4n2y
       react-dom: 18.2.0_react@18.2.0
       react-dropzone: 14.2.3_react@18.2.0
-      react-hook-form: 7.45.1_react@18.2.0
+      react-hook-form: 7.41.2_react@18.2.0
       react-image-file-resizer: 0.4.8
       react-infinite-scroll-component: 6.1.0_react@18.2.0
       react-redux: 8.0.7_hrrtw4it2dqo6rzcqzvl36ff7i
@@ -9151,14 +9151,6 @@ packages:
       react-hook-form: ^7.0.0
     dependencies:
       react-hook-form: 7.41.2_react@18.2.0
-    dev: false
-
-  /@hookform/resolvers/2.9.10_react-hook-form@7.45.1:
-    resolution: {integrity: sha512-JIL1DgJIlH9yuxcNGtyhsWX/PgNltz+5Gr6+8SX9fhXc/hPbEIk6wPI82nhgvp3uUb6ZfAM5mqg/x7KR7NAb+A==}
-    peerDependencies:
-      react-hook-form: ^7.0.0
-    dependencies:
-      react-hook-form: 7.45.1_react@18.2.0
     dev: false
 
   /@humanwhocodes/config-array/0.11.10:
@@ -29578,15 +29570,6 @@ packages:
 
   /react-hook-form/7.41.2_react@18.2.0:
     resolution: {integrity: sha512-Uz5kNlfkEZve0sr5y2LsxPDGN3eNDjjKb1XJgand1E5Ay0S3zWo8YcJQNGu88/Zs6JaFnrJqTXbSr6B2q7wllA==}
-    engines: {node: '>=12.22.0'}
-    peerDependencies:
-      react: ^16.8.0 || ^17 || ^18
-    dependencies:
-      react: 18.2.0
-    dev: false
-
-  /react-hook-form/7.45.1_react@18.2.0:
-    resolution: {integrity: sha512-6dWoFJwycbuFfw/iKMcl+RdAOAOHDiF11KWYhNDRN/OkUt+Di5qsZHwA0OwsVnu9y135gkHpTw9DJA+WzCeR9w==}
     engines: {node: '>=12.22.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18

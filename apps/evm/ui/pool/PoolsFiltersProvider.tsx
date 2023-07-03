@@ -1,6 +1,5 @@
 import { parseArgs, Protocol } from '@sushiswap/client'
 import { SUPPORTED_CHAIN_IDS } from 'config'
-import stringify from 'fast-json-stable-stringify'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createContext, FC, ReactNode, useCallback, useContext, useMemo } from 'react'
 import { z } from 'zod'
@@ -20,15 +19,20 @@ interface PoolsFiltersProvider {
 
 export const poolFiltersSchema = z.object({
   tokenSymbols: z.nullable(z.string()).transform((tokenSymbols) => {
-    return tokenSymbols ? tokenSymbols.split(',') : []
+    console.log('tokenSymbols', tokenSymbols)
+    return tokenSymbols !== null && tokenSymbols !== ',' ? tokenSymbols.split(',') : undefined
   }),
   chainIds: z
     .nullable(z.string())
-    .transform((chainIds) => (chainIds ? chainIds.split(',').map((chainId) => Number(chainId)) : SUPPORTED_CHAIN_IDS)),
+    .transform((chainIds) =>
+      chainIds !== null && chainIds !== ','
+        ? chainIds.split(',').map((chainId) => Number(chainId))
+        : SUPPORTED_CHAIN_IDS
+    ),
   protocols: z
     .nullable(z.string())
-    .transform((protocols) => (protocols ? (protocols.split(',') as Protocol[]) : undefined)),
-  farmsOnly: z.nullable(z.string()).transform((bool) => (bool ? bool === 'true' : false)),
+    .transform((protocols) => (protocols !== null && protocols !== ',' ? (protocols.split(',') as Protocol[]) : [])),
+  farmsOnly: z.nullable(z.string()).transform((bool) => (bool ? bool === 'true' : undefined)),
 })
 
 export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => {
@@ -42,11 +46,7 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => 
   const farmsOnly = searchParams?.get('farmsOnly')
 
   const parsed = useMemo(() => {
-    const parsed = poolFiltersSchema.parse({ tokenSymbols, chainIds, protocols, farmsOnly })
-    return {
-      ...parsed,
-      protocols: parsed?.protocols?.filter((el) => (el as string) !== ''),
-    }
+    return poolFiltersSchema.parse({ tokenSymbols, chainIds, protocols, farmsOnly })
   }, [tokenSymbols, chainIds, protocols, farmsOnly])
 
   const setFilters = useCallback(
@@ -54,8 +54,7 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => 
       const newFilters = { ...parsed, ...filters }
       void push(parseArgs(newFilters))
     },
-    // eslint-disable-next-line
-    [stringify(parsed)]
+    [parsed, push]
   )
 
   return (

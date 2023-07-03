@@ -32,14 +32,14 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  if (pathname.startsWith('/earn') || pathname.startsWith('/pools') || pathname.startsWith('/pool')) {
-    if ((pathname === '/earn/add' || pathname === '/pools/add' || pathname === '/pool/add') && search === '') {
+  if (pathname.startsWith('/pool')) {
+    if (pathname === '/pool/add' && search === '') {
       const url = req.nextUrl.clone()
       url.search = '?fromCurrency=NATIVE'
       return NextResponse.redirect(url)
     }
 
-    if ((pathname === '/earn/add/v2' || pathname === '/pools/add/v2' || pathname === '/pool/add/v2') && search === '') {
+    if (pathname === '/pool/add/v2' && search === '') {
       const url = req.nextUrl.clone()
       url.pathname = '/add/v2/1'
       return NextResponse.redirect(url)

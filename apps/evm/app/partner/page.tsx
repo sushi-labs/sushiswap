@@ -38,6 +38,8 @@ export default function Partner() {
     },
   })
   const [chainId, setChainId] = useState<ChainId>(ChainId.ETHEREUM)
+
+  // @ts-ignore
   const [tokenAddress, logoUri, logoFile, background, listType] = form.watch([
     'tokenAddress',
     'logoUri',
