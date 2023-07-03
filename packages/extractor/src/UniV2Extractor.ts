@@ -24,6 +24,10 @@ interface PoolState {
 }
 
 const UniV2EventsAbi = [parseAbiItem('event Sync(uint112 reserve0, uint112 reserve1)')]
+const UniV2FactoryAbi = [
+  parseAbiItem('function allPairsLength() external view returns (uint)'),
+  parseAbiItem('function allPairs(uint256) external view returns (address)'),
+]
 
 export class UniV2Extractor {
   factories: FactoryV2[]
@@ -157,6 +161,27 @@ export class UniV2Extractor {
         (pools) => pools.filter((p) => p !== undefined) as ConstantProductPoolCode[]
       ),
     }
+  }
+
+  async addAllPoolsFromFactories(): Promise<Address[]> {
+    const poolListPromises = this.factories.map(async (factory) => {
+      const poolsNumber = Number(
+        (await this.multiCallAggregator.callValue(factory.address, UniV2FactoryAbi, 'allPairsLength')) as bigint
+      )
+      const poolsPromise = new Array(poolsNumber)
+      for (let i = 0; i < poolsNumber; ++i) {
+        poolsPromise[i] = this.multiCallAggregator.callValue(factory.address, UniV2FactoryAbi, 'allPairs', [i])
+      }
+      const pools = (await Promise.allSettled(poolsPromise))
+        .map((r) =>
+          r.status == 'fulfilled' && r.value !== '0x0000000000000000000000000000000000000000' ? r.value : undefined
+        )
+        .filter((r) => r !== undefined) as Address[]
+      return pools
+    })
+    const poolLists = await Promise.all(poolListPromises)
+    const pools = poolLists.reduce((a, b) => a.concat(b), [])
+    return pools
   }
 
   computeV2Address(factory: FactoryV2, tokenA: Token, tokenB: Token): Address {
