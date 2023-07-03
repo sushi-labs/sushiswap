@@ -87,16 +87,8 @@ const nextConfig = {
       //   destination: '/swap/:path*',
       // },
       {
-        source: '/earn',
-        destination: `/pool`,
-      },
-      {
         source: '/earn/:path*',
         destination: `/pool/:path*`,
-      },
-      {
-        source: '/pools',
-        destination: `/pool`,
       },
       {
         source: '/pools/:path*',

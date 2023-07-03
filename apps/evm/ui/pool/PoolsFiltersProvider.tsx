@@ -19,7 +19,6 @@ interface PoolsFiltersProvider {
 
 export const poolFiltersSchema = z.object({
   tokenSymbols: z.nullable(z.string()).transform((tokenSymbols) => {
-    console.log({ tokenSymbols, bool: tokenSymbols !== null && tokenSymbols !== ',' })
     return tokenSymbols !== null && tokenSymbols !== ',' ? tokenSymbols.split(',') : undefined
   }),
   chainIds: z
