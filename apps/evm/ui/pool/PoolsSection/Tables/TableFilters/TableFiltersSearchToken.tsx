@@ -10,8 +10,8 @@ export const TableFiltersSearchToken: FC = () => {
   const debouncedQuery = useDebounce(_query, 400)
 
   useEffect(() => {
-    if (tokenSymbols && tokenSymbols.join(' ') !== debouncedQuery) {
-      setFilters({ tokenSymbols: debouncedQuery.split(' ') })
+    if (tokenSymbols?.join(' ') !== debouncedQuery) {
+      setFilters({ tokenSymbols: debouncedQuery.split(' ').filter((f) => f !== '') })
     }
   }, [_query, debouncedQuery, setFilters, tokenSymbols])
 
