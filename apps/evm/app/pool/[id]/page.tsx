@@ -23,8 +23,13 @@ import {
 } from 'ui/pool'
 import { PoolPageV3 } from 'ui/pool/PoolPageV3'
 
-export default function Page({ params }: { params: { id: string } }) {
+// export async function generateMetadata({ params }: { params: { id: string } }) {
+//   return {
+//     title: `Pool ${params.id}`,
+//   }
+// }
 
+export default function Page({ params }: { params: { id: string } }) {
   // 1. figure out the pool type from the id
   // 2. use the pool type to determine which pool page to render
 

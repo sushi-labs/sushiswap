@@ -24,7 +24,7 @@ import {
 } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { useApproved, useSignature,withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { useApproved, useSignature, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import {
   approveMasterContractAction,
   batchAction,
@@ -46,6 +46,8 @@ interface RemoveSectionTridentProps {
 }
 
 export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRoot(({ pool: _pool }) => {
+  console.log('faa')
+
   const chainId = _pool.chainId as BentoBoxV1ChainId
   const { address } = useAccount()
   const { chain } = useNetwork()
@@ -104,17 +106,25 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
 
   const [underlying0, underlying1] = underlying
 
-  const currencyAToRemove = token0
-    ? percentToRemove?.greaterThan('0') && underlying0
-      ? Amount.fromRawAmount(token0, percentToRemove.multiply(underlying0.quotient).quotient || '0')
-      : Amount.fromRawAmount(token0, '0')
-    : undefined
+  const currencyAToRemove = useMemo(
+    () =>
+      token0
+        ? percentToRemove?.greaterThan('0') && underlying0
+          ? Amount.fromRawAmount(token0, percentToRemove.multiply(underlying0.quotient).quotient || '0')
+          : Amount.fromRawAmount(token0, '0')
+        : undefined,
+    [token0, percentToRemove, underlying0]
+  )
 
-  const currencyBToRemove = token1
-    ? percentToRemove?.greaterThan('0') && underlying1
-      ? Amount.fromRawAmount(token1, percentToRemove.multiply(underlying1.quotient).quotient || '0')
-      : Amount.fromRawAmount(token1, '0')
-    : undefined
+  const currencyBToRemove = useMemo(
+    () =>
+      token1
+        ? percentToRemove?.greaterThan('0') && underlying1
+          ? Amount.fromRawAmount(token1, percentToRemove.multiply(underlying1.quotient).quotient || '0')
+          : Amount.fromRawAmount(token1, '0')
+        : undefined,
+    [token1, percentToRemove, underlying0]
+  )
 
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
@@ -322,7 +332,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
                         size="xl"
                         onClick={() => sendTransaction?.()}
                         fullWidth
-                        disabled={!approved || isWritePending}
+                        disabled={!approved || isWritePending || !sendTransaction}
                         testId="remove-liquidity"
                       >
                         {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}

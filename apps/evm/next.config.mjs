@@ -34,6 +34,16 @@ const nextConfig = {
         permanent: true,
         destination: 'https://medium.com/sushiswap-org',
       },
+      {
+        source: '/earn/:path*',
+        permanent: true,
+        destination: '/pool/:path*',
+      },
+      {
+        source: '/pools/:path*',
+        permanent: true,
+        destination: '/pool/:path*',
+      },
     ]
   },
   async rewrites() {
@@ -69,38 +79,6 @@ const nextConfig = {
       {
         source: '/furo/:path*',
         destination: `${FURO_URL}/furo/:path*`,
-      },
-      // {
-      //   source: '/swap',
-      //   destination: `${SWAP_URL}/swap`,
-      // },
-      // {
-      //   source: '/swap/:path*',
-      //   destination: `${SWAP_URL}/swap/:path*`,
-      // },
-      // {
-      //   source: '/xswap',
-      //   destination: '/swap',
-      // },
-      // {
-      //   source: '/xswap/:path*',
-      //   destination: '/swap/:path*',
-      // },
-      {
-        source: '/earn',
-        destination: `/pool`,
-      },
-      {
-        source: '/earn/:path*',
-        destination: `/pool/:path*`,
-      },
-      {
-        source: '/pools',
-        destination: `/pool`,
-      },
-      {
-        source: '/pools/:path*',
-        destination: `/pool/:path*`,
       },
     ]
   },

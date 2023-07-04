@@ -4,7 +4,7 @@ import { Header } from './header'
 import { Providers } from './providers'
 
 export const metadata = {
-  title: 'SushiPool',
+  title: 'Pool 💦',
 }
 
 export default function PoolLayout({ children }: { children: React.ReactNode }) {

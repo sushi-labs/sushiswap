@@ -1,70 +1,31 @@
 import { ChainId, ChainKey } from '@sushiswap/chain'
 import { formatUSD } from '@sushiswap/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
-import { getOctokit, Token } from 'app/partner/lib'
-import Cors from 'cors'
-import { ethers } from 'ethers'
+import { SubmiTokenSchema } from 'app/partner/config'
+import { getOctokit } from 'app/partner/lib'
 import stringify from 'fast-json-stable-stringify'
-import type { NextApiRequest, NextApiResponse } from 'next'
-
-interface Body {
-  tokenAddress: string
-  tokenData: Token
-  tokenIcon: string
-  chainId: ChainId
-  listType: 'default-token-list' | 'community-token-list'
-}
+import { NextResponse } from 'next/server'
 
 const owner = 'sushiswap'
 
-const cors = Cors({
-  methods: ['POST', 'GET', 'HEAD'],
-})
-
-function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: any) {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result: any) => {
-      if (result instanceof Error) {
-        return reject(result)
-      }
-
-      return resolve(result)
-    })
-  })
+interface ListEntry {
+  address: string
+  chainId: number
+  decimals: number
+  logoURI: string
+  name: string
+  symbol: string
 }
 
-// TODO: Zod validation
-// import { z } from "zod";
-// const schema = z.object({
-//     tokenAddress: ,
-//     tokenData: ,
-//     tokenIcon: ,
-//     chainId: ,
-//     listType: ,
-// })
-
-// TODO: Clean up by extracting octokit calls
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  await runMiddleware(req, res, cors)
-
+export async function POST(request: Request) {
   if (!process.env.TOKEN_LIST_PR_WEBHOOK_URL) throw new Error('TOKEN_LIST_PR_WEBHOOK_URL undefined')
   if (!process.env.OCTOKIT_KEY) throw new Error('OCTOKIT_KEY undefined')
 
-  const { tokenAddress, tokenData, tokenIcon, chainId, listType } = req.body as Body
-
-  if (
-    tokenData?.decimals === undefined ||
-    !tokenData.name ||
-    !tokenData.symbol ||
-    !tokenIcon ||
-    !listType ||
-    !chainId
-  ) {
-    res.status(500).json({ error: 'Invalid data submitted.' })
-    return
+  const parsed = SubmiTokenSchema.safeParse(await request.json())
+  if (parsed.success === false) {
+    return NextResponse.json({ error: parsed.error }, { status: 400 })
   }
-
-  const checksummedAddress = ethers.utils.getAddress(tokenAddress)
+  const { token, tokenIcon, chainId, listType } = parsed.data
 
   const octokit = getOctokit(process.env.OCTOKIT_KEY)
 
@@ -80,14 +41,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   })
 
   // Filter out characters that github / ... might not like
-  const displayName = tokenData.symbol.toLowerCase().replace(/( )|(\.)/g, '_')
+  const displayName = token.symbol.toLowerCase().replace(/( )|(\.)/g, '_')
 
   // Find unused branch name
   const branch = await (async function () {
     const branches: string[] = []
 
     for (let i = 1; ; i++) {
-      // @ts-ignore
       const { data }: { data: { name: string }[] } = await octokit.request('GET /repos/{owner}/{repo}/branches', {
         owner,
         repo: 'list',
@@ -119,22 +79,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     sha: latestIconsSha,
   })
 
-  const imagePath = `logos/token-logos/network/${ChainKey[chainId].toLowerCase()}/${checksummedAddress}.jpg`
+  const imagePath = `logos/token-logos/network/${ChainKey[chainId].toLowerCase()}/${token.address}.jpg`
 
   try {
     // Figure out if image already exists, overwrite if it does
     let previousImageFileSha: string | undefined
 
     try {
-      ;({
-        data: { sha: previousImageFileSha },
-        // @ts-ignore
-      } = (await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
+      const res = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
         owner,
         repo: 'list',
         branch: 'master',
         path: imagePath,
-      })) as any)
+      })
+
+      if (!Array.isArray(res.data)) {
+        previousImageFileSha = res.data.sha
+      }
     } catch {
       //
     }
@@ -150,44 +111,46 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       sha: previousImageFileSha,
     })
   } catch (e) {
-    res.status(500).json({ error: 'Failed to add token image' })
-    return
+    return NextResponse.json({ error: 'Failed to add token image' }, { status: 500 })
   }
 
   const listPath = `lists/token-lists/${listType}/tokens/${ChainKey[chainId].toLowerCase()}.json`
 
   // Get current token list to append to
-  let currentListData: { sha: string; content: any } | undefined
+  let currentListData
 
   try {
-    // @ts-ignore
-    ;({ data: currentListData } = (await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
+    const res = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
       owner,
       repo: 'list',
       branch: 'master',
       path: listPath,
-    })) as any)
+    })
+
+    if (!Array.isArray(res.data) && res.data.type === 'file') {
+      currentListData = { sha: res.data.sha, content: res.data.content }
+    }
   } catch {
     //
   }
 
-  let currentList: any[] = currentListData
+  let currentList: ListEntry[] = currentListData
     ? JSON.parse(Buffer.from(currentListData?.content, 'base64').toString('ascii'))
     : []
 
   // Remove from current list if exists to overwrite later
-  currentList = currentList.filter((entry) => entry.address !== checksummedAddress)
+  currentList = currentList.filter((entry) => entry.address !== token.address)
 
   // Append to current list
   const newList = [
     ...currentList,
     {
-      address: checksummedAddress,
+      address: token.address,
       chainId: chainId,
-      decimals: Number(tokenData.decimals),
+      decimals: Number(token.decimals),
       logoURI: `https://raw.githubusercontent.com/${owner}/list/master/${imagePath}`,
-      name: tokenData.name,
-      symbol: tokenData.symbol,
+      name: token.name,
+      symbol: token.symbol,
     },
   ].sort((a, b) => a.symbol.localeCompare(b.symbol))
 
@@ -202,10 +165,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     sha: currentListData?.sha,
   })
 
-  // const exchangeData = await getTokenKPI(tokenAddress, chainId as Extract<ChainId, SushiSwapChainId & TridentChainId>)
-  // Volume: ${formatUSD(exchangeData?.volumeUSD ?? 0)}
-  // Liquidity: ${formatUSD(exchangeData?.liquidityUSD ?? 0)}
-
   // Open List PR
   const {
     data: { html_url: listPr },
@@ -216,13 +175,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     head: branch,
     base: 'master',
     body: `Chain: ${CHAIN_NAME[chainId] ?? chainId}
-      Name: ${tokenData.name}
-      Symbol: ${tokenData.symbol}
-      Decimals: ${tokenData.decimals}
+      Name: ${token.name}
+      Symbol: ${token.symbol}
+      Decimals: ${token.decimals}
       List: ${listType}
       Volume: ${formatUSD(0)}
       Liquidity: ${formatUSD(0)}
-      CoinGecko: ${await getCoinGecko(chainId, checksummedAddress)}
+      CoinGecko: ${await getCoinGecko(chainId, token.address)}
       Image: https://github.com/${owner}/list/tree/${branch}/${imagePath}
       ![${displayName}](https://raw.githubusercontent.com/${owner}/list/${branch}/${imagePath})
     `,
@@ -238,7 +197,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           description: 'New pull request',
           color: 5814783,
           author: {
-            name: `${tokenData.name} - ${CHAIN_NAME[chainId]}`,
+            name: `${token.name} - ${CHAIN_NAME[chainId]}`,
             url: listPr,
             icon_url: `https://raw.githubusercontent.com/${owner}/list/${branch}/${imagePath}`,
           },
@@ -251,10 +210,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     headers: { 'Content-Type': 'application/json' },
   })
 
-  res.status(200).json({ listPr })
+  return NextResponse.json(
+    { listPr },
+    {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+    }
+  )
 }
-
-export default handler
 
 async function getCoinGecko(chainId: ChainId, address: string) {
   return await fetch(`https://api.coingecko.com/api/v3/coins/${CHAIN_NAME[chainId].toLowerCase()}/contract/${address}`)

@@ -36,7 +36,7 @@ export const Header: FC = () => {
           Pools
         </Button>
       </Link>
-      <Link href="/pay">
+      <Link href="/furo">
         <Button color="default" variant="ghost" size="default">
           Pay
         </Button>
