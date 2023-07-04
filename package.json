@@ -17,6 +17,7 @@
     "changeset:release": "changeset publish",
     "changeset:version": "changeset version && pnpm install --lockfile-only",
     "check": "turbo run check --no-cache",
+    "chromatic": "dotenv -- turbo run chromatic --filter=docs",
     "clean": "turbo run clean && rm -rf node_modules",
     "dev": "dotenv -- turbo run dev --no-cache --parallel --continue",
     "dev:evm": "dotenv -- turbo run dev --filter evm",
