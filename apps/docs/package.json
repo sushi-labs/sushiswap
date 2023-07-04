@@ -4,8 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "storybook dev -p 6007",
-    "build": "storybook build --docs",
+    "build": "build-storybook",
     "start": "serve storybook-static",
+    "build-storybook": "storybook build --docs",
+    "chromatic": "chromatic --exit-zero-on-changes",
     "clean": "rm -rf .turbo && rm -rf node_modules"
   },
   "dependencies": {
