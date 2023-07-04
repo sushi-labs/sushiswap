@@ -1,12 +1,11 @@
 // Skeleton.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import * as React from 'react'
 import { SkeletonText, SkeletonTextProps } from '@sushiswap/ui'
 
 const fontSizes: SkeletonTextProps['fontSize'][] = ['xs', 'sm', 'default', 'lg', 'xl', '2xl', '3xl']
 const meta = {
-  title: 'Components/Skeleton/Text',
+  title: 'Primitives/Skeleton/Text',
   component: SkeletonText,
   argTypes: {
     fontSize: {

@@ -1,11 +1,10 @@
 // Progress.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import * as React from 'react'
 import { Progress } from '@sushiswap/ui'
 
 const meta = {
-  title: 'Components/Progress',
+  title: 'Primitives/Progress',
   component: Progress,
   argTypes: {
     value: {

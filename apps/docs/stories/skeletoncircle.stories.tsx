@@ -1,11 +1,11 @@
 // Skeleton.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import * as React from 'react'
 import { SkeletonCircle } from '@sushiswap/ui'
+import * as React from 'react'
 
 const meta = {
-  title: 'Components/Skeleton/Circle',
+  title: 'Primitives/Skeleton/Circle',
   component: SkeletonCircle,
   argTypes: {
     radius: {

@@ -1,15 +1,16 @@
 // IconButton.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
+import { DiscordIcon, IconButton, IconButtonProps } from '@sushiswap/ui'
 import * as React from 'react'
-import { IconButton, IconButtonProps, DiscordIcon } from '@sushiswap/ui'
+
 import { ViewGroup } from '../components/View'
 
 const variants: IconButtonProps['variant'][] = ['default', 'secondary', 'destructive', 'ghost', 'outline', 'link']
 const sizes: IconButtonProps['size'][] = ['xs', 'sm', 'default', 'lg', 'xl']
 
 const meta = {
-  title: 'Components/IconButton',
+  title: 'Primitives/IconButton',
   component: IconButton,
   argTypes: {
     variant: {

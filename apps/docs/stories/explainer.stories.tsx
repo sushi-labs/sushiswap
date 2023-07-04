@@ -1,11 +1,11 @@
 // Explainer.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import * as React from 'react'
 import { Explainer } from '@sushiswap/ui'
+import * as React from 'react'
 
 const meta = {
-  title: 'Components/Explainer',
+  title: 'Primitives/Explainer',
   component: Explainer,
   argTypes: {},
   parameters: {

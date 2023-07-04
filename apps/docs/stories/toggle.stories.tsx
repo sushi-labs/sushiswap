@@ -1,14 +1,15 @@
 // Toggle.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import * as React from 'react'
 import { Toggle, ToggleProps } from '@sushiswap/ui'
+import * as React from 'react'
+
 import { ViewGroup } from '../components/View'
 
 const sizes: ToggleProps['size'][] = ['xs', 'sm', 'default', 'lg']
 
 const meta = {
-  title: 'Components/Toggle',
+  title: 'Primitives/Toggle',
   component: Toggle,
   argTypes: {
     size: {

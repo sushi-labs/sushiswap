@@ -1,14 +1,15 @@
 // Chip.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import * as React from 'react'
 import { Chip, ChipProps, DiscordIcon } from '@sushiswap/ui'
+import * as React from 'react'
+
 import { ViewGroup } from '../components/View'
 
 const variants: ChipProps['variant'][] = ['default', 'secondary', 'destructive', 'ghost', 'outline']
 
 const meta = {
-  title: 'Components/Chip',
+  title: 'Primitives/Chip',
   component: Chip,
   argTypes: {
     variant: {

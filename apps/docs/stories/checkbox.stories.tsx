@@ -1,11 +1,11 @@
 // Checkbox.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import * as React from 'react'
 import { Checkbox } from '@sushiswap/ui'
+import * as React from 'react'
 
 const meta = {
-  title: 'Components/Checkbox',
+  title: 'Primitives/Checkbox',
   component: Checkbox,
   argTypes: {
     checked: {
