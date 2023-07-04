@@ -3,7 +3,7 @@ import { Container } from '@sushiswap/ui'
 import { Header } from './header'
 
 export const metadata = {
-  title: 'SushiHome 🍣',
+  title: 'Home 🏠',
 }
 
 export default function HomeLayout({ children }: { children: React.ReactNode }) {

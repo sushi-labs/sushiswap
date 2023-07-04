@@ -1,5 +1,5 @@
 import { Type } from '@sushiswap/currency'
-import { computePoolAddress, FeeAmount, nearestUsableTick, SushiSwapV3ChainId,TICK_SPACINGS } from '@sushiswap/v3-sdk'
+import { computePoolAddress, FeeAmount, nearestUsableTick, SushiSwapV3ChainId, TICK_SPACINGS } from '@sushiswap/v3-sdk'
 import { Address, useContractReads } from '@sushiswap/wagmi'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { getV3FactoryContractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3FactoryContract'
@@ -7,7 +7,7 @@ import { getV3TickLensContractConfig } from '@sushiswap/wagmi/future/hooks/contr
 import { useMemo } from 'react'
 import { Writeable } from 'zod'
 
-interface useTicks {
+interface useTicksProps {
   token0: Type | undefined
   token1: Type | undefined
   chainId: SushiSwapV3ChainId
@@ -27,13 +27,14 @@ export function useTicks({
   feeAmount,
   numSurroundingTicks: _numSurroundingTicks,
   enabled,
-}: useTicks) {
+}: useTicksProps) {
   const numSurroundingTicks = _numSurroundingTicks ?? 1250
 
   const { data: pool } = useConcentratedLiquidityPool({ token0, token1, chainId, feeAmount, enabled })
 
   const tickSpacing = feeAmount && TICK_SPACINGS[feeAmount]
-  const activeTick = pool?.tickCurrent && tickSpacing ? nearestUsableTick(pool?.tickCurrent, tickSpacing) : undefined
+  const activeTick =
+    typeof pool?.tickCurrent === 'number' && tickSpacing ? nearestUsableTick(pool?.tickCurrent, tickSpacing) : undefined
   const poolAddress = useMemo(
     () =>
       token0 && token1 && feeAmount && chainId
@@ -50,7 +51,7 @@ export function useTicks({
   const minIndex = useMemo(
     () =>
       tickSpacing !== undefined && activeTick !== undefined
-        ? bitmapIndex(activeTick - (numSurroundingTicks as number) * tickSpacing, tickSpacing)
+        ? bitmapIndex(activeTick - numSurroundingTicks * tickSpacing, tickSpacing)
         : undefined,
     [tickSpacing, activeTick, numSurroundingTicks]
   )

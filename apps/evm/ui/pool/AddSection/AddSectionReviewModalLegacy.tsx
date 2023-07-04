@@ -171,7 +171,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
     >
       <Button
         size="xl"
-        disabled={isWritePending}
+        disabled={isWritePending || !approved || !sendTransaction}
         loading={Boolean(!sendTransaction)}
         fullWidth
         onClick={() => sendTransaction?.()}
