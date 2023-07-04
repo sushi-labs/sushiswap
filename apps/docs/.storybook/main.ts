@@ -18,10 +18,14 @@ const config: StorybookConfig = {
     defaultName: 'Documentation',
   },
   async viteFinal(config, { configType }) {
+    if (configType === 'DEVELOPMENT') {
+      // Your development configuration goes here
+    }
+    if (configType === 'PRODUCTION') {
+      // Your production configuration goes here.
+    }
+
     return mergeConfig(config, {
-      optimizeDeps: {
-        include: ['@sushiswap/chain', '@sushiswap/currency'],
-      },
       define: {
         'process.env': {},
       },
@@ -30,14 +34,6 @@ const config: StorybookConfig = {
           {
             find: '@sushiswap/ui',
             replacement: path.resolve(__dirname, '../../../packages/ui/'),
-          },
-          {
-            find: '@sushiswap/chain',
-            replacement: path.resolve(__dirname, '../../../packages/chain/'),
-          },
-          {
-            find: '@sushiswap/currency',
-            replacement: path.resolve(__dirname, '../../../packages/currency/'),
           },
         ],
       },
