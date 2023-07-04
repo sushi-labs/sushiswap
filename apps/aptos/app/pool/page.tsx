@@ -5,13 +5,14 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { DiscordIcon } from '@sushiswap/ui/future/components/icons'
 import Link from 'next/link'
 import PoolsSection from '../../components/PoolsSection'
-import { Search } from 'components/Search'
+import { PoolFilters } from 'components/PoolFilters'
+import { Footer } from '@sushiswap/ui/app/Footer'
 
 export default function Pool() {
   return (
     <>
       <Container maxWidth="7xl" className="mx-auto px-4 pt-[80px] lg:pb-[54px]">
-        <section className="flex flex-col justify-between gap-12 lg:flex-row lg:items-center">
+        <div className="flex flex-col justify-between gap-12 lg:flex-row lg:items-center">
           <div className="flex flex-col items-center flex-grow gap-6 lg:items-start">
             <div className="flex flex-col gap-2">
               <span className="text-center lg:text-left font-semibold text-5xl text-gray-800 dark:text-slate-200 leading-[1.2]">
@@ -55,10 +56,11 @@ export default function Pool() {
               </div>
             </div>
           </div>
-        </section>
+        </div>
       </Container>
       <PoolsSection />
-      <Search />
+      <PoolFilters />
+      <Footer />
     </>
   )
 }
