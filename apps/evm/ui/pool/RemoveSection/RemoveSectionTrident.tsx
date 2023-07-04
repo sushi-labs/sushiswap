@@ -332,7 +332,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
                         size="xl"
                         onClick={() => sendTransaction?.()}
                         fullWidth
-                        disabled={!approved || isWritePending}
+                        disabled={!approved || isWritePending || !sendTransaction}
                         testId="remove-liquidity"
                       >
                         {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}

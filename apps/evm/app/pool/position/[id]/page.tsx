@@ -42,6 +42,12 @@ import { z } from 'zod'
 
 import { ConcentratedLiquidityHarvestButton } from '../../../../ui/pool/ConcentratedLiquidityHarvestButton'
 
+// export async function generateMetadata({ params }: { params: { id: string } }) {
+//   return {
+//     title: `Position ${params.id}`,
+//   }
+// }
+
 export default function Page({ params }: { params: { id: string } }) {
   const result = queryParamsSchema.safeParse(params)
   if (!result.success) return <></>

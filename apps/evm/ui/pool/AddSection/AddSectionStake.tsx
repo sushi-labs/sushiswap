@@ -118,7 +118,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = withCheckerRoot(({ pool, chef
                       size="xl"
                       onClick={() => sendTransaction?.()}
                       fullWidth
-                      disabled={!approved || isWritePending}
+                      disabled={isWritePending || !approved || !sendTransaction}
                       testId="stake-liquidity"
                     >
                       {isWritePending ? <Dots>Confirm transaction</Dots> : 'Stake Liquidity'}
