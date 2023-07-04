@@ -1,5 +1,6 @@
-import React, { forwardRef } from 'react'
 import classNames from 'classnames'
+import React, { forwardRef } from 'react'
+
 import { WithTestDataId } from './types'
 
 export interface RowProps

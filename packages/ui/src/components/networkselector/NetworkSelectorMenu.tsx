@@ -1,10 +1,12 @@
+'use client'
+
 import { Chain } from '@sushiswap/chain'
 import React, { useState } from 'react'
 
-import { NetworkIcon } from '../icons'
-import { NetworkSelectorProps } from './index'
-import { PopoverContent, PopoverNew, PopoverPrimitive } from '../popovernew'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../command'
+import { NetworkIcon } from '../icons'
+import { PopoverContent, PopoverNew, PopoverPrimitive } from '../popovernew'
+import { NetworkSelectorProps } from './index'
 
 export const NetworkSelectorMenu = <T extends number>({
   onSelect,
@@ -14,9 +16,9 @@ export const NetworkSelectorMenu = <T extends number>({
   const [open, setOpen] = useState(false)
 
   return (
-    <PopoverNew open={open} onOpenChange={setOpen}>
+    <PopoverNew modal={true} open={open} onOpenChange={setOpen}>
       <PopoverPrimitive.Trigger asChild>{children}</PopoverPrimitive.Trigger>
-      <PopoverContent className="w-60 !p-0">
+      <PopoverContent className="!w-60 !p-0 !overflow-x-hidden !overflow-y-scroll scroll">
         <Command>
           <CommandInput placeholder="Search network..." />
           <CommandEmpty>No network found.</CommandEmpty>

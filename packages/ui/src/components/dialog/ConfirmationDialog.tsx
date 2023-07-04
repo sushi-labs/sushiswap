@@ -1,15 +1,16 @@
 'use client'
 
 import { Chain, ChainId } from '@sushiswap/chain'
-import { FC, ReactNode } from 'react'
-import { Dialog } from './Dialog'
-import { BarLoader } from '../BarLoader'
+import { FC } from 'react'
 import * as React from 'react'
-import { Loader } from '../loader'
-import { Dots } from '../dots'
+
+import { BarLoader } from '../BarLoader'
 import { Button } from '../button'
+import { Dots } from '../dots'
 import { CheckMarkIcon } from '../icons/CheckmarkIcon'
 import { FailedMarkIcon } from '../icons/FailedMarkIcon'
+import { Loader } from '../loader'
+import { Dialog } from './Dialog'
 
 export enum ConfirmationDialogState {
   Undefined,

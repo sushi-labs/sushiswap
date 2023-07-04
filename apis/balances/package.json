@@ -20,29 +20,30 @@
   "scripts": {
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .vercel",
-    "lint": "TIMING=1 eslint --fix ."
+    "lint": "TIMING=1 eslint .",
+    "lint:fix": "TIMING=1 eslint --fix ."
   },
   "dependencies": {
     "@sushiswap/chain": "workspace:*",
     "@vercel/node": "2.14.3",
-    "@wagmi/core": "0.10.13",
-    "lodash.zip": "4.2.0",
+    "@wagmi/core": "0.10.16",
     "@whatwg-node/fetch": "0.8.4",
+    "lodash.zip": "4.2.0",
     "zod": "3.21.4"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/wagmi-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
-    "@tsconfig/strictest": "2.0.1",
-    "@tsconfig/node18": "2.0.0",
+    "@sushiswap/wagmi-config": "workspace:*",
     "@tsconfig/esm": "1.0.3",
+    "@tsconfig/node18": "2.0.0",
+    "@tsconfig/strictest": "2.0.1",
     "@types/lodash.zip": "4.2.7",
-    "@types/node": "18.11.18",
+    "@types/node": "18",
     "@types/node-fetch": "2.6.2",
-    "eslint": "8.41.0",
-    "typescript": "5.0.4",
+    "eslint": "8.43.0",
+    "typescript": "5.1.6",
     "vercel": "29.4.0"
   }
 }

@@ -1,6 +1,7 @@
-import { classNames } from '../index'
 import { cva, type VariantProps } from 'class-variance-authority'
 import * as React from 'react'
+
+import { classNames } from '../index'
 
 function SkeletonBox(props: React.HTMLAttributes<HTMLDivElement>) {
   return (

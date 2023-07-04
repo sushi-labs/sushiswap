@@ -26,9 +26,6 @@
       "./src/future/*/index.tsx"
     ]
   },
-  "files": [
-    "src"
-  ],
   "typesVersions": {
     "*": {
       "*": [
@@ -39,6 +36,9 @@
       ]
     }
   },
+  "files": [
+    "src"
+  ],
   "scripts": {
     "build": "true",
     "check": "tsc --pretty --noEmit",
@@ -72,12 +72,12 @@
     "@sushiswap/route-processor": "workspace:*",
     "@sushiswap/router": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
-    "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/sushixswap": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/trident-core": "workspace:*",
     "@sushiswap/types": "workspace:*",
     "@sushiswap/ui": "workspace:*",
+    "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",
     "@sushiswap/validate": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",
@@ -97,26 +97,26 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "^29.5.1",
-    "@types/react": "18.2.6",
-    "@types/react-dom": "18.2.4",
-    "@wagmi/core": "0.10.13",
-    "eslint": "8.41.0",
+    "@types/react": "18.2.14",
+    "@types/react-dom": "18.2.6",
+    "@wagmi/core": "0.10.16",
+    "eslint": "8.43.0",
     "ethers": "5.7.2",
-    "next": "13.4.4",
+    "next": "13.4.8",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "tsup": "6.5.0",
+    "tsup": "7.1.0",
     "typechain": "^8.0.0",
-    "typescript": "5.0.4",
+    "typescript": "5.1.6",
     "vitest": "0.30.1",
-    "wagmi": "0.12.15"
+    "wagmi": "0.12.18"
   },
   "peerDependencies": {
-    "@wagmi/core": "0.10.13",
+    "@wagmi/core": "0.10.16",
     "ethers": "5.7.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "wagmi": "0.12.15"
+    "wagmi": "0.12.18"
   },
   "peerDependenciesMeta": {
     "@wagmi/core": {
@@ -136,6 +136,6 @@
     }
   },
   "optionalDependencies": {
-    "next": "13.4.4"
+    "next": "13.4.8"
   }
 }

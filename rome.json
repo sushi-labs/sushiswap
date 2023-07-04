@@ -13,6 +13,12 @@
       "recommended": true,
       "performance": {
         "noDelete": "off"
+      },
+      "style": {
+        "noParameterAssign": "off"
+      },
+      "complexity": {
+        "noExtraSemicolon": "off"
       }
     }
   },

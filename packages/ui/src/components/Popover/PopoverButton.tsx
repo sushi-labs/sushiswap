@@ -1,4 +1,7 @@
+'use client'
+
 import React, { FC, ReactElement, useCallback, useRef } from 'react'
+
 import { usePopoverContext } from './PopoverProvider'
 
 export interface PopoverButtonInterface {

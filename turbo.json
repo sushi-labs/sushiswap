@@ -1,7 +1,9 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalEnv": [
+    "APP_ENV",
     "CI",
+    "DEBUG",
     "NODE_ENV",
     "GITHUB_TOKEN"
   ],
@@ -19,7 +21,8 @@
       "cache": false,
       "env": [
         "ANVIL_BLOCK_NUMBER", 
-        "ANVIL_FORK_URL"
+        "ANVIL_FORK_URL",
+        "ANVIL_PORT"
       ],
       "persistent": true
     },
@@ -76,6 +79,10 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
+    "lint:fix": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
     "start": {
       "dependsOn": [        
         "^build", 
@@ -83,13 +90,14 @@
         "export"
       ],
       "env": [
-        "TEST",
         "ALCHEMY_ID",
+        "APP_ENV",
         "DATABASE_URL",
-        "REDIS_URL",
         "POOLS_API_V0_BASE_URL",
-        "TOKENS_API_V0_BASE_URL",
+        "REDIS_URL",
         "SWAP_API_V0_BASE_URL",
+        "TEST",
+        "TOKENS_API_V0_BASE_URL",
         "NEXT_PUBLIC_STRAPI_API_URL"
       ],
       "cache": false,

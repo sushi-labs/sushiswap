@@ -1,6 +1,6 @@
-import { FC } from 'react'
 import { Button } from '@sushiswap/ui/components/button'
 import { Container } from '@sushiswap/ui/components/container'
+import { FC } from 'react'
 
 interface PreviewBanner {
   show: boolean

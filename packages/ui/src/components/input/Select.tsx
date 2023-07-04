@@ -1,7 +1,8 @@
-import React, { ForwardedRef, forwardRef } from 'react'
-import { Text, TextInput } from './Text'
 import { ChevronUpDownIcon } from '@heroicons/react/24/outline'
 import classNames from 'classnames'
+import React, { ForwardedRef, forwardRef } from 'react'
+
+import { Text, TextInput } from './Text'
 
 interface SelectProps extends Omit<TextInput, 'onChange'> {
   onClick?(): void

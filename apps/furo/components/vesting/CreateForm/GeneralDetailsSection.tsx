@@ -1,16 +1,16 @@
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
+import { FormControl, FormField, FormItem, FormMessage, FormSection } from '@sushiswap/ui/components/form'
+import { Input } from '@sushiswap/ui/components/input'
+import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
+import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import React, { FC, useCallback } from 'react'
 import { ControllerRenderProps, useFormContext } from 'react-hook-form'
 
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { FundSourceOption } from '../../stream/CreateForm/FundSourceOption'
-import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
-import { Input } from '@sushiswap/ui/components/input'
-import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import { CreateMultipleVestingFormSchemaType } from '../schema'
-import { FormControl, FormField, FormItem, FormMessage, FormSection } from '@sushiswap/ui/components/form'
 
 export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({ chainId, index }) => {
   const { control, watch, setValue } = useFormContext<CreateMultipleVestingFormSchemaType>()

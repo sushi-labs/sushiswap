@@ -1,6 +1,7 @@
 import { Tab as HeadlessTab } from '@headlessui/react'
 import classNames from 'classnames'
 import React, { FC } from 'react'
+
 import { ExtractProps } from '../../types'
 
 export type TabListProps = ExtractProps<typeof HeadlessTab.List>

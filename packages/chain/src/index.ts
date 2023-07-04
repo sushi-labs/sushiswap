@@ -34,6 +34,7 @@ export const Standard = {
   Eip3091: 'EIP3091',
   None: 'none',
 } as const
+
 export type Standard = (typeof Standard)[keyof typeof Standard]
 
 export interface NativeCurrency {
@@ -111,6 +112,21 @@ export const ChainId = {
   // FILECOIN: 314,
 } as const
 export type ChainId = (typeof ChainId)[keyof typeof ChainId]
+
+export const TESTNET_CHAIN_IDS = [
+  ChainId.ARBITRUM_TESTNET,
+  ChainId.AVALANCHE_TESTNET,
+  ChainId.BSC_TESTNET,
+  ChainId.FANTOM_TESTNET,
+  ChainId.HECO_TESTNET,
+  ChainId.HARMONY_TESTNET,
+  ChainId.OKEX_TESTNET,
+  ChainId.POLYGON_TESTNET,
+  ChainId.ROPSTEN,
+  ChainId.RINKEBY,
+  ChainId.GÖRLI,
+  ChainId.KOVAN,
+] as const
 
 // export const isChainId = (chainId: number): chainId is ChainId => Object.values(ChainId).includes(chainId as ChainId)
 

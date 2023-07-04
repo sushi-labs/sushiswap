@@ -35,10 +35,12 @@ export const SUSHISWAP_V2_SUPPORTED_CHAIN_IDS = [
   ChainId.KOVAN,
 ]
 
-export type SushiSwapV2ChainId = typeof SUSHISWAP_V2_SUPPORTED_CHAIN_IDS[number]
+export const SushiSwapV2ChainIds = SUSHISWAP_V2_SUPPORTED_CHAIN_IDS
+
+export type SushiSwapV2ChainId = (typeof SUSHISWAP_V2_SUPPORTED_CHAIN_IDS)[number]
 
 export const isSushiSwapV2ChainId = (chainId: ChainId): chainId is SushiSwapV2ChainId =>
-SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.includes(chainId as SushiSwapV2ChainId)
+  SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.includes(chainId as SushiSwapV2ChainId)
 
 export const SUSHISWAP_V2_INIT_CODE_HASH: Record<SushiSwapV2ChainId, `0x${string}`> = {
   [ChainId.ARBITRUM]: '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303',

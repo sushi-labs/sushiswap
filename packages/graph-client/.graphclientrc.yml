@@ -216,13 +216,13 @@ transforms:
 additionalTypeDefs: |
   # Deprecated 
   extend type deprecated_Token {
-    chainId: Int!
+    chainId: BigInt!
   }
   extend type deprecated_Pair {
-    chainId: Int!
+    chainId: BigInt!
   }
   extend type deprecated_LiquidityPosition {
-    chainId: Int!
+    chainId: BigInt!
   }
 
   # Custom types
@@ -240,7 +240,7 @@ additionalTypeDefs: |
   type UserPosition {
     id: ID!
     pool: String!
-    chainId: Int!
+    chainId: BigInt!
     balance: BigInt!
     unstakedBalance: BigInt!
     stakedBalance: BigInt!
@@ -260,7 +260,7 @@ additionalTypeDefs: |
   }
   type ChefUser {
     id: ID!
-    chainId: Int!
+    chainId: BigInt!
     address: String!
     amount: BigInt!
     pool: ChefUserPool
@@ -271,7 +271,7 @@ additionalTypeDefs: |
     decimals: Int!
   }
   type Incentive {
-    chainId: Int!
+    chainId: BigInt!
     poolId: String!
     pid: Int!
     type: String!
@@ -294,26 +294,29 @@ additionalTypeDefs: |
   }
   # Type Extensions
   extend type Block {
-    chainId: Int!
+    chainId: BigInt!
   }
   extend type Bundle {
-    chainId: Int!
+    chainId: BigInt!
   }
   extend type Factory {
+    chainId: BigInt!
+  }
+  extend type SUSHISWAP_V3_Factory {
     chainId: Int!
   }
   extend type Rebase {
-    chainId: Int!
+    chainId: BigInt!
   }
   extend type Token {
-    chainId: Int!
+    chainId: BigInt!
     source: String!
   }
   extend type FactoryDaySnapshot {
-    chainId: Int!
+    chainId: BigInt!
   }
   extend type Pair {
-    chainId: Int!
+    chainId: BigInt!
     address: String!
     liquidity1dChange: BigDecimal
     liquidity1wChange: BigDecimal
@@ -332,7 +335,7 @@ additionalTypeDefs: |
     feeApr: BigDecimal
   }
   extend type LiquidityPosition {
-    chainId: Int!
+    chainId: BigInt!
   }
 
   extend type BentoBoxKpi {
@@ -385,20 +388,20 @@ additionalTypeDefs: |
       orderBy: StrategyKpi_orderBy
       orderDirection: OrderDirection
       block: Block_height
-      chainIds: [Int!]!
+      chainIds: [BigInt!]!
     ): [StrategyKpi!]!
 
     # / Internal app
     furoTokensByChainIds(
       skip: Int = 0
-      chainIds: [Int!]!
+      chainIds: [BigInt!]!
       orderBy: Token_orderBy
       orderDirection: OrderDirection
       first: Int = 100
       where: Token_filter
     ): [Furo_token!]!
     bundlesByChainIds(
-      chainIds: [Int!]!
+      chainIds: [BigInt!]!
     ): [Bundle!]!
     blocksByChainIds(
       skip: Int = 0
@@ -406,11 +409,14 @@ additionalTypeDefs: |
       where: Block_filter
       orderBy: Block_orderBy
       orderDirection: OrderDirection
-      chainIds: [Int!]!
+      chainIds: [BigInt!]!
     ): [Block!]!
     factoriesByChainIds(
-      chainIds: [Int!]!
+      chainIds: [BigInt!]!
     ): [Factory!]!
+    v3factoriesByChainIds(
+      chainIds: [BigInt!]!
+    ): [SUSHISWAP_V3_Factory!]!
     liquidityPositionsByChainIds(
       skip: Int = 0
       first: Int = 100
@@ -418,7 +424,7 @@ additionalTypeDefs: |
       orderBy: LiquidityPosition_orderBy
       orderDirection: OrderDirection
       block: Block_height
-      chainIds: [Int!]!
+      chainIds: [BigInt!]!
     ): [LiquidityPosition!]!
     # pairsByIds(
     #   skip: Int = 0
@@ -436,7 +442,7 @@ additionalTypeDefs: |
       orderBy: Pair_orderBy
       orderDirection: OrderDirection
       block: Block_height
-      chainIds: [Int!]!
+      chainIds: [BigInt!]!
       farmsOnly: Boolean
       pagination: Pagination
     ): [Pair!]!
@@ -447,7 +453,7 @@ additionalTypeDefs: |
       orderBy: Pair_orderBy
       orderDirection: OrderDirection
       block: Block_height
-      chainId: Int!
+      chainId: BigInt!
     ): [Pair!]!
     pairsByChainIds(
       skip: Int = 0
@@ -456,7 +462,7 @@ additionalTypeDefs: |
       orderBy: Pair_orderBy
       orderDirection: OrderDirection
       block: Block_height
-      chainIds: [Int!]!
+      chainIds: [BigInt!]!
       blocks: [Block_height!]
     ): [Pair!]!
     pairById(
@@ -477,13 +483,13 @@ additionalTypeDefs: |
     #   where: Pair_filter
     #   orderBy: Pair_orderBy
     #   orderDirection: OrderDirection
-    #   chainIds: [Int!]!
+    #   chainIds: [BigInt!]!
     # ): [PairWithIncentives!]!
     rebasesByChainIds(
       skip: Int = 0
       first: Int = 100
       where: Rebase_filter
-      chainIds: [Int!]!
+      chainIds: [BigInt!]!
     ): [Rebase!]!
     tokensByChainIds(
       skip: Int = 0
@@ -493,7 +499,7 @@ additionalTypeDefs: |
       orderDirection: OrderDirection
       block: Block_height
       pagination: Pagination
-      chainIds: [Int!]! 
+      chainIds: [BigInt!]! 
     ): [Token!]!
     tokensByChainId(
       skip: Int = 0
@@ -502,7 +508,7 @@ additionalTypeDefs: |
       orderBy: Token_orderBy
       orderDirection: OrderDirection
       block: Block_height
-      chainId: Int!
+      chainId: BigInt!
     ): [Token!]!
     tokenById(
       id: ID!
@@ -531,11 +537,11 @@ additionalTypeDefs: |
       orderBy: User_orderBy
       orderDirection: OrderDirection
       block: Block_height
-      chainIds: [Int!]!
+      chainIds: [BigInt!]!
     ): [ChefUser!]!
     crossChainUserPositions(
       id: ID!
-      chainIds: [Int!]!
+      chainIds: [BigInt!]!
     ): [UserPosition!]!
     factoryDaySnapshotsByChainIds(
       first: Int
@@ -544,9 +550,9 @@ additionalTypeDefs: |
       orderBy: FactoryDaySnapshot_orderBy
       orderDirection: OrderDirection
       block: Block_height
-      chainIds: [Int!]!
+      chainIds: [BigInt!]!
     ): [FactoryDaySnapshot!]!
-    crossChainToken(id: ID! now: Int! chainId: Int!): Token!
+    crossChainToken(id: ID! now: Int! chainId: BigInt!): Token!
     crossChainStats(
       first: Int
       skip: Int
@@ -554,29 +560,29 @@ additionalTypeDefs: |
       orderBy: Pair_orderBy
       orderDirection: OrderDirection
       block: Block_height
-      chainIds: [Int!]!
+      chainIds: [BigInt!]!
       now: Int!
     ): [Pair!]!
     oneDayBlocks(
       skip: Int = 0
       first: Int = 100
-      chainIds: [Int!]!
+      chainIds: [BigInt!]!
     ): [Block!]!
     twoDayBlocks(
       skip: Int = 0
       first: Int = 100
-      chainIds: [Int!]!
+      chainIds: [BigInt!]!
     ): [Block!]!
     oneWeekBlocks(
       skip: Int = 0
       first: Int = 100
-      chainIds: [Int!]!
+      chainIds: [BigInt!]!
     ): [Block!]!
     customBlocks(
       skip: Int = 0
       first: Int = 100
       timestamp: Int!
-      chainIds: [Int!]!
+      chainIds: [BigInt!]!
     ): [Block!]!
   }
 

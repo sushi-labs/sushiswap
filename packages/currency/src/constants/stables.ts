@@ -1,4 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
+
 import { DAI, LUSD, USDC, USDT } from './tokens'
 
 export const STABLES = {

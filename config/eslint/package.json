@@ -9,6 +9,7 @@
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "sideEffects": false,
   "main": "index.js",
   "files": [
     "index.js",
@@ -18,20 +19,22 @@
     "react/index.js"
   ],
   "dependencies": {
-    "eslint-config-next": "13.4.4",
+    "eslint-config-next": "13.4.7",
     "eslint-config-prettier": "8.8.0",
-    "eslint-config-turbo": "1.10.3",
+    "eslint-config-turbo": "1.10.6",
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-simple-import-sort": "10.0.0",
     "eslint-plugin-testing-library": "5.11.0",
-    "eslint-plugin-unused-imports": "2.0.0"
+    "eslint-plugin-unused-imports": "2.0.0",
+    "@next/eslint-plugin-next": "^13.4.7",
+    "eslint-plugin-react-hooks": "4.6.0"
   },
   "devDependencies": {
-    "@types/eslint": "8.40.0",
-    "@types/node": "18.11.18"
+    "@types/eslint": "8.40.2",
+    "@types/node": "18"
   },
   "peerDependencies": {
-    "eslint": "8.41.0"
+    "eslint": "8.43.0"
   },
   "peerDependenciesMeta": {
     "eslint": {

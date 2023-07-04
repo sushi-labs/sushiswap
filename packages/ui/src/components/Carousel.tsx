@@ -1,5 +1,8 @@
-import React, { ReactNode, useCallback, useLayoutEffect, useRef, useState } from 'react'
+'use client'
+
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
+import React, { ReactNode, useCallback, useLayoutEffect, useRef, useState } from 'react'
+
 import { classNames } from '../index'
 
 interface Carousel<T> {

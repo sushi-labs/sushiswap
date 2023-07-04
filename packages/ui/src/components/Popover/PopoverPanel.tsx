@@ -1,8 +1,11 @@
+'use client'
+
 import { Transition } from '@headlessui/react'
-import React, { FC, ReactNode, useCallback, useRef } from 'react'
-import { usePopoverContext } from './PopoverProvider'
-import ReactDOM from 'react-dom'
 import { useIsMounted } from '@sushiswap/hooks'
+import React, { FC, ReactNode, useCallback, useRef } from 'react'
+import ReactDOM from 'react-dom'
+
+import { usePopoverContext } from './PopoverProvider'
 
 export interface PopoverPanelInterface {
   children: ReactNode

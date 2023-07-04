@@ -1,7 +1,7 @@
+import { Button } from '@sushiswap/ui/components/button'
+import { Container } from '@sushiswap/ui/components/container'
 import { FC } from 'react'
 import { Article } from 'types'
-import { Container } from '@sushiswap/ui/components/container'
-import { Button } from '@sushiswap/ui/components/button'
 
 import { ArticleAuthors, ArticleHeader } from './article'
 

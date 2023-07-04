@@ -1,14 +1,17 @@
+'use client'
+
 import { Menu, Transition } from '@headlessui/react'
+import { ArrowSmallRightIcon } from '@heroicons/react/20/solid'
 import useScrollPosition from '@react-hook/window-scroll'
 import classNames from 'classnames'
+import Link from 'next/link'
 import React, { FC, Fragment, ReactElement, ReactNode, useState } from 'react'
 
 import { APP_TYPE_LINKS, HEADER_HEIGHT } from '../constants'
-import { Button } from './button'
-import { SushiIcon } from './icons'
-import { ArrowSmallRightIcon } from '@heroicons/react/20/solid'
-import { Container, ContainerProps } from './container'
 import { AppType, ExtractProps } from '../types'
+import { Button } from './button'
+import { Container, ContainerProps } from './container'
+import { SushiIcon } from './icons'
 
 const ITEMS = [
   {
@@ -71,11 +74,11 @@ export const GlobalNav: FC<HeaderProps> = ({
       <Container maxWidth={maxWidth} style={{ height: HEADER_HEIGHT }} className="mx-auto flex items-center">
         <div className="grid grid-cols-2 items-center w-full mx-auto z-[101] px-4">
           <div className="flex items-center sm:gap-2">
-            <a className="flex flex-row items-center sm:pl-2 sm:pr-6" href="/">
+            <Link className="flex flex-row items-center sm:pl-2 sm:pr-6" href="/">
               <div className="w-7 h-7 sm:w-8 sm:h-8">
                 <SushiIcon width="100%" height="100%" className="sm:mr-2" />
               </div>
-            </a>
+            </Link>
             <Menu as="div" className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
               <Menu.Button as={Button} variant="ghost">
                 Explore

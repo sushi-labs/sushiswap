@@ -1,13 +1,15 @@
+'use client'
+
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useState } from 'react'
 
+import { Dialog } from '../dialog'
+import { IconButton } from '../iconbutton'
+import { List } from '../list/List'
 import { CarbonOffset } from './CarbonOffset'
 import { ExpertMode } from './ExpertMode'
-import { SlippageTolerance } from './SlippageTolerance'
 import { RoutingApi } from './RoutingApi'
-import { Dialog } from '../dialog'
-import { List } from '../list/List'
-import { IconButton } from '../iconbutton'
+import { SlippageTolerance } from './SlippageTolerance'
 
 export enum SettingsModule {
   CarbonOffset = 'CarbonOffset',

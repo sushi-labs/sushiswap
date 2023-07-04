@@ -1,11 +1,12 @@
-import { _useBalance as useBalance, useAccount } from '@sushiswap/wagmi'
-import React, { FC, useEffect, useMemo } from 'react'
-import { useFormContext } from 'react-hook-form'
-
-import { useDeepCompareMemoize } from '../../../lib'
-import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
-import { calculateTotalAmount } from '../utils'
 import { ChainId } from '@sushiswap/chain'
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormMessage,
+  FormSection,
+} from '@sushiswap/ui/components/form'
 import { Input } from '@sushiswap/ui/components/input'
 import {
   Select,
@@ -16,19 +17,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@sushiswap/ui/components/select'
+import { _useBalance as useBalance, useAccount } from '@sushiswap/wagmi'
+import React, { FC, useEffect, useMemo } from 'react'
+import { useFormContext } from 'react-hook-form'
+
+import { useDeepCompareMemoize } from '../../../lib'
+import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import {
   CreateMultipleVestingBaseSchemaFormErrorsType,
   CreateMultipleVestingFormSchemaType,
   STEP_CONFIGURATIONS_SECONDS,
 } from '../schema'
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormMessage,
-  FormSection,
-} from '@sushiswap/ui/components/form'
+import { calculateTotalAmount } from '../utils'
 
 export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) => {
   const { address } = useAccount()

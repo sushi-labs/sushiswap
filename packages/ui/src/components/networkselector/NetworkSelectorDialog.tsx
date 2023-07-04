@@ -1,12 +1,14 @@
+'use client'
+
 import { Popover } from '@headlessui/react'
 import chains from '@sushiswap/chain'
 import classNames from 'classnames'
 import React, { useState } from 'react'
 
+import { Dialog } from '../dialog'
 import { NetworkIcon } from '../icons'
 import { Search } from '../input/Search'
 import { NetworkSelectorProps } from './index'
-import { Dialog } from '../dialog'
 
 export const NetworkSelectorDialog = <T extends number>({
   networks,
