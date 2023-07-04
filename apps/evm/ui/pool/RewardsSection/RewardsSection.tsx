@@ -84,7 +84,7 @@ export const RewardsSection: FC = () => {
   }, [isMd, isSm])
 
   const rowLink = useCallback((row: AngleRewardsPool) => {
-    return `/${row.id}`
+    return `/pool/${row.id}`
   }, [])
 
   return (
