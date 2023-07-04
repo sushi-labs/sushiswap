@@ -82,7 +82,7 @@ export class UniV3Extractor {
   ) {
     this.client = client
     this.multiCallAggregator = new MultiCallAggregator(client)
-    this.tokenManager = new TokenManager(this.multiCallAggregator, cacheDir)
+    this.tokenManager = new TokenManager(this.multiCallAggregator, cacheDir, `uniV3Tokens-${this.client.chain?.id}`)
     this.tickHelperContract = tickHelperContract
     this.factories = factories
     factories.forEach((f) => this.factoryMap.set(f.address.toLowerCase(), f))

@@ -18,9 +18,9 @@ export class TokenManager {
   tokens: Map<Address, Token> = new Map()
   tokenPermanentCache: PermanentCache<TokenCacheRecord>
 
-  constructor(client: MultiCallAggregator, cacheDir: string) {
+  constructor(client: MultiCallAggregator, ...paths: string[]) {
     this.client = client
-    this.tokenPermanentCache = new PermanentCache(cacheDir, `uniV3Tokens-${this.client.client.chain?.id}`)
+    this.tokenPermanentCache = new PermanentCache(...paths)
   }
 
   async addCachedTokens() {
