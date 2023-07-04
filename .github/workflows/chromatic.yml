@@ -13,6 +13,16 @@ jobs:
     runs-on: ubuntu-latest
     # Job steps
     steps:
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7.9.5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'pnpm'
+
       - uses: actions/checkout@v1
       - name: Install dependencies
         # 👇 Install dependencies with the same package manager used in the project (replace it as needed), e.g. yarn, npm, pnpm
