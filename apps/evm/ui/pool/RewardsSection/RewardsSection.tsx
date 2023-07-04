@@ -10,7 +10,7 @@ import { ANGLE_ENABLED_NETWORKS } from 'config'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { usePoolFilters } from '../PoolsFiltersProvider'
-import { RewardSlide } from './RewardSlide'
+import { RewardSlide, RewardSlideSkeleton } from './RewardSlide'
 import {
   REWARDS_V3_APR_COLUMN,
   REWARDS_V3_CLAIMABLE_COLUMN,
@@ -41,7 +41,7 @@ export const RewardsSection: FC = () => {
   const [columnVisibility, setColumnVisibility] = useState({})
 
   const chainsSorted = useMemo(() => {
-    if (!data) return []
+    if (!data) return undefined
     return data.sort((a, b) => {
       const aAmount = a.unclaimed.reduce((acc, cur) => acc + cur.amountUSD, 0)
       const bAmount = b.unclaimed.reduce((acc, cur) => acc + cur.amountUSD, 0)
@@ -103,10 +103,12 @@ export const RewardsSection: FC = () => {
             Claim your rewards per network.
           </h1>
         </Container>
-        <Carousel
+        <Carousel<NonNullable<typeof chainsSorted>[0] | number>
           containerWidth={1280}
-          slides={chainsSorted}
-          render={(row) => <RewardSlide data={row} address={address} />}
+          slides={chainsSorted || ANGLE_ENABLED_NETWORKS}
+          render={(row) =>
+            typeof row === 'number' ? <RewardSlideSkeleton /> : <RewardSlide data={row} address={address} />
+          }
           className="!pt-0"
         />
       </div>

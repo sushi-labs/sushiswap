@@ -117,7 +117,7 @@ export const angleRewardsSelect = ({ chainId, data, prices }: AngleRewardsSelect
   const unclaimed = unclaimedAmounts.map((amount) => {
     let amountUSD = 0
 
-    if (amount?.greaterThan(ZERO) && !prices?.[amount.currency.wrapped.address]) {
+    if (amount?.greaterThan(ZERO) && prices?.[amount.currency.wrapped.address]) {
       amountUSD = Number(Number(amount.toExact()) * Number(prices[amount.currency.wrapped.address].toFixed(10)))
     }
     if (isNaN(amountUSD) || amountUSD < 0.000001) {

@@ -1,6 +1,7 @@
 import { Chain } from '@sushiswap/chain'
 import { formatNumber } from '@sushiswap/format'
 import { useAngleRewardsMultipleChains } from '@sushiswap/react-query'
+import { SkeletonBox, SkeletonText } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Explainer } from '@sushiswap/ui/components/explainer'
@@ -11,10 +12,12 @@ import React, { FC, ReactNode } from 'react'
 
 import { ConcentratedLiquidityHarvestButton } from '../ConcentratedLiquidityHarvestButton'
 
-export const RewardSlide: FC<{
+interface RewardSlide {
   address: Address | undefined
   data: NonNullable<ReturnType<typeof useAngleRewardsMultipleChains>['data']>[0]
-}> = ({ address, data }) => {
+}
+
+export const RewardSlide: FC<RewardSlide> = ({ address, data }) => {
   return (
     <div className="flex flex-col relative bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-all rounded-2xl p-7 overflow-hidden w-[320px]">
       <span className="text-xs font-semibold text-gray-600 uppercase dark:text-slate-400">
@@ -90,6 +93,22 @@ export const RewardSlide: FC<{
             )}
           </ConcentratedLiquidityHarvestButton>
         </div>
+      </div>
+    </div>
+  )
+}
+
+export const RewardSlideSkeleton: FC = () => {
+  return (
+    <div className="flex flex-col relative bg-white dark:bg-slate-800 shadow-md hover:shadow-lg rounded-2xl p-7 overflow-hidden w-[320px] h-[220px]">
+      <SkeletonText fontSize="xs" className="w-[50px]" />
+      <SkeletonText fontSize="2xl" className="w-[90px]" />
+      <div className="flex flex-col flex-grow gap-1 mt-4">
+        <SkeletonText fontSize="sm" className="w-[50px]" />
+        <SkeletonText fontSize="sm" className="w-[90px]" />
+      </div>
+      <div className="mt-4">
+        <SkeletonBox className="w-[140px] h-[36px]" />
       </div>
     </div>
   )
