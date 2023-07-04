@@ -12,6 +12,7 @@
     "build-protocols": "dotenv -- turbo run build --filter={./protocols/*}...",
     "build-protocols-head": "dotenv -- turbo run build --filter={./protocols/*}[HEAD^1]...",
     "build-scripts": "dotenv -- turbo run build --filter={./scripts/*}[HEAD^1]...",
+    "build-storybook": "dotenv -- turbo run build --filter=docs...[HEAD^1]",
     "changeset": "changeset",
     "changeset:release": "changeset publish",
     "changeset:version": "changeset version && pnpm install --lockfile-only",
