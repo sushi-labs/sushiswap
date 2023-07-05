@@ -1,7 +1,7 @@
 'use client'
 
+import { Button } from '@sushiswap/ui/components/button'
 import React, { useEffect } from 'react'
-import { Button } from '@sushiswap/ui/future/components/button/Button'
 
 export default function Error({ error, reset }: { error: Error; reset: () => void }) {
   useEffect(() => {

@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import React from 'react'
 
 export function KpiReportButton() {

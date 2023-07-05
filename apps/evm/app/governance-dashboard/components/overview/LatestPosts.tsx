@@ -1,7 +1,8 @@
 'use client'
 
+import { useIsMounted } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
-import { useBreakpoint } from '@sushiswap/ui/future/lib'
+import { useBreakpoint } from '@sushiswap/ui/lib'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { useState } from 'react'
 import { SwiperSlide } from 'swiper/react'
@@ -12,7 +13,6 @@ import { FilterButton } from '../FilterButton'
 import { GovernanceDateFilters } from '../GovernanceDateFilters'
 import { GovernanceItemCard } from '../GovernanceItemCard'
 import { GovernanceTypeFilter } from '../GovernanceTypeFilter'
-import { useIsMounted } from '@sushiswap/hooks'
 
 export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, GovernanceItem[]> }) {
   const [selectedGovType, setSelectedGovType] = useState<GovernanceStatus>('IMPLEMENTATION')

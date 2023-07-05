@@ -2,9 +2,8 @@
 
 import { ArrowTopRightOnSquareIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { shortenAddress } from '@sushiswap/format'
-import { ExternalLink } from '@sushiswap/ui/future/components/ExternalLink'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
-import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
+import { SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -86,25 +85,22 @@ export function TokenHoldersTable({ users, userCount }: { users: TokenHolder[]; 
       cell: (info) => <span className="text-slate-600 dark:text-slate-300">{info.getValue()}</span>,
       size: 40,
       enableSorting: false,
-      meta: { skeleton: <Skeleton.Text /> },
+      meta: { skeleton: <SkeletonText /> },
     }),
     columnHelper.accessor('address', {
       header: 'Name',
       cell: (info) => {
         const address = info.getValue()
         return (
-          <ExternalLink
-            href={`https://etherscan.io/address/${address}`}
-            endIcon={<ArrowTopRightOnSquareIcon className="mb-0.5 h-4 w-4" strokeWidth={2.5} />}
-            className="gap-2 font-bold"
-          >
+          <a href={`https://etherscan.io/address/${address}`} className="gap-2 font-bold flex items-center">
             {isCustomName(address) ? tokenHolderNames[address] : shortenAddress(address)}
-          </ExternalLink>
+            <ArrowTopRightOnSquareIcon className="mb-0.5 h-4 w-4" strokeWidth={2.5} />
+          </a>
         )
       },
       minSize: 240,
       enableSorting: false,
-      meta: { skeleton: <Skeleton.Text /> },
+      meta: { skeleton: <SkeletonText /> },
     }),
     columnHelper.accessor('quantity', {
       header: (h) => <div onClick={() => sortColumn(h.column.getIsSorted())}>Quantity</div>,
@@ -115,7 +111,7 @@ export function TokenHoldersTable({ users, userCount }: { users: TokenHolder[]; 
           })}
         </span>
       ),
-      meta: { skeleton: <Skeleton.Text /> },
+      meta: { skeleton: <SkeletonText /> },
       size: 100,
     }),
     columnHelper.accessor('ownership', {
@@ -128,7 +124,7 @@ export function TokenHoldersTable({ users, userCount }: { users: TokenHolder[]; 
           })}
         </span>
       ),
-      meta: { skeleton: <Skeleton.Text /> },
+      meta: { skeleton: <SkeletonText /> },
       size: 60,
     }),
     columnHelper.accessor('value', {
@@ -139,7 +135,7 @@ export function TokenHoldersTable({ users, userCount }: { users: TokenHolder[]; 
           style: 'currency',
           currency: 'USD',
         }),
-      meta: { skeleton: <Skeleton.Text /> },
+      meta: { skeleton: <SkeletonText /> },
       size: 110,
     }),
     columnHelper.accessor('change30d', {
@@ -156,7 +152,7 @@ export function TokenHoldersTable({ users, userCount }: { users: TokenHolder[]; 
           </span>
         )
       },
-      meta: { skeleton: <Skeleton.Text /> },
+      meta: { skeleton: <SkeletonText /> },
       enableSorting: false,
       size: 60,
     }),
