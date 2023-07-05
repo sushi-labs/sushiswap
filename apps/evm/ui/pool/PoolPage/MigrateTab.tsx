@@ -213,17 +213,17 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
     [feeAmount, invalidRange, sqrtPrice, tick, tickLower, tickUpper, token0, token0Value, token1, token1Value, v3Pool]
   )
 
-  const { amount0, amount1 } = useMemo(
+  const { amount0: v3Amount0Min, amount1: v3Amount1Min } = useMemo(
     () => (position ? position.mintAmountsWithSlippage(slippagePercent) : { amount0: undefined, amount1: undefined }),
     [position, slippagePercent]
   )
 
-  const [positionAmount0, positionAmount1, v3Amount0Min, v3Amount1Min] = useMemo(
+  const [positionAmount0, positionAmount1] = useMemo(
     () =>
       invertTokens
-        ? [position?.amount1, position?.amount0, amount1, amount0]
-        : [position?.amount0, position?.amount1, amount0, amount1],
-    [invertTokens, position?.amount0, position?.amount1, amount0, amount1]
+        ? [position?.amount1, position?.amount0]
+        : [position?.amount0, position?.amount1],
+    [invertTokens, position?.amount0, position?.amount1]
   )
 
   const refund0 = useMemo(
@@ -284,8 +284,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
       pair: pool.address as Address,
       liquidityToMigrate: balance?.[FundSource.WALLET],
       percentageToMigrate: 100,
-      token0: token0?.wrapped,
-      token1: token1?.wrapped,
+      token0: _token0?.wrapped,
+      token1: _token1?.wrapped,
       fee: feeAmount,
       tickLower: tickLower,
       tickUpper: tickUpper,
