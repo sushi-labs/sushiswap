@@ -24,21 +24,23 @@ type Story = StoryObj<typeof Navigation>
 
 export const Default = {
   args: {},
-  render: () => {
+  render: (args) => {
     return (
       <OnramperProvider>
-        <Navigation />
+        <Navigation {...args} />
       </OnramperProvider>
     )
   },
 } satisfies Story
 
 export const Transparent = {
-  args: {},
-  render: () => {
+  args: {
+    variant: 'transparent',
+  },
+  render: (args) => {
     return (
       <OnramperProvider>
-        <Navigation variant="transparent" />
+        <Navigation {...args} />
       </OnramperProvider>
     )
   },
