@@ -10,7 +10,6 @@
   "ignore": [
     "evm",
     "academy",
-    "analytics",
     "blog",
     "furo",
     "next-13-example",

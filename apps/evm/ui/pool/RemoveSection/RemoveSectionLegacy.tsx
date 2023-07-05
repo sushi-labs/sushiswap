@@ -270,7 +270,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
                       size="xl"
                       onClick={() => sendTransaction?.()}
                       fullWidth
-                      disabled={!approved || isWritePending}
+                      disabled={!approved || isWritePending || !sendTransaction}
                       testId="remove-liquidity"
                     >
                       {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}

@@ -1,30 +1,110 @@
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI_ADDRESS } from '@sushiswap/currency'
 import { formatNumber, formatUSD } from '@sushiswap/format'
-import getBentoTVL from 'functions/graph/fetchers/bentobox'
-import { getLegacyExchangeData } from 'functions/graph/fetchers/exchange'
-import { getTridentExchangeData } from 'functions/graph/queries/trident'
+import { getBuiltGraphSDK } from '@sushiswap/graph-client'
+import { BENTOBOX_ENABLED_NETWORKS } from '@sushiswap/graph-config'
+import { SUSHISWAP_V2_SUPPORTED_CHAIN_IDS } from '@sushiswap/v2-sdk'
+import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { NextResponse } from 'next/server'
+import { getAddress } from 'viem'
 
 const getSushiPriceUSD = async () => {
-  {
-    const prices = await fetch('https://token-price.sushi.com/v1/1').then((data) => data.json())
-    return prices[SUSHI_ADDRESS[ChainId.ETHEREUM].toLowerCase()]
+  const prices = await fetch('https://token-price.sushi.com/v1/1').then((data) => data.json())
+  return prices[SUSHI_ADDRESS[ChainId.ETHEREUM].toLowerCase()]
+}
+
+interface ExchangeData {
+  tvlUSD: number
+  volumeUSD: number
+  pairCount: number
+}
+
+const getV2Data = async () => {
+  const sdk = getBuiltGraphSDK()
+  const { factories } = await sdk.Factories({ chainIds: SUSHISWAP_V2_SUPPORTED_CHAIN_IDS })
+
+  return {
+    v2: factories
+      .filter(({ id }) => id !== 'ALL')
+      .reduce<ExchangeData>(
+        (acc, cur) => {
+          return {
+            tvlUSD: acc.tvlUSD + Number(cur.liquidityUSD),
+            volumeUSD: acc.volumeUSD + Number(cur.volumeUSD),
+            pairCount: acc.pairCount + Number(cur.pairCount),
+          }
+        },
+        {
+          tvlUSD: 0,
+          volumeUSD: 0,
+          pairCount: 0,
+        }
+      ),
+    trident: factories
+      .filter(({ id }) => id === 'ALL')
+      .reduce<ExchangeData>(
+        (acc, cur) => {
+          return {
+            tvlUSD: acc.tvlUSD + Number(cur.liquidityUSD),
+            volumeUSD: acc.volumeUSD + Number(cur.volumeUSD),
+            pairCount: acc.pairCount + Number(cur.pairCount),
+          }
+        },
+        {
+          tvlUSD: 0,
+          volumeUSD: 0,
+          pairCount: 0,
+        }
+      ),
   }
+}
+
+const getBentoTvl = async () => {
+  const sdk = getBuiltGraphSDK()
+  const { rebases } = await sdk.RebasesByChainIds({ first: 1000, chainIds: BENTOBOX_ENABLED_NETWORKS })
+
+  const prices = await fetch('https://token-price.sushi.com/v1').then((data) => data.json())
+
+  return rebases.reduce((acc, cur) => {
+    const price = prices[cur.chainId][cur.id] || prices[cur.chainId][getAddress(cur.id)]
+    if (!price) return acc
+
+    return acc + (Number(cur.elastic) / 10 ** Number(cur.token.decimals)) * Number(price)
+  }, 0)
+}
+
+const getV3Data = async () => {
+  const sdk = getBuiltGraphSDK()
+  const { factories } = await sdk.V3Factories({ chainIds: SUSHISWAP_V3_SUPPORTED_CHAIN_IDS })
+
+  return factories.reduce<ExchangeData>(
+    (acc, cur) => {
+      return {
+        tvlUSD: acc.tvlUSD + Number(cur.totalValueLockedUSD),
+        volumeUSD: acc.volumeUSD + Number(cur.totalVolumeUSD),
+        pairCount: acc.pairCount + Number(cur.poolCount),
+      }
+    },
+    {
+      tvlUSD: 0,
+      volumeUSD: 0,
+      pairCount: 0,
+    }
+  )
 }
 
 export const fetchCache = 'auto'
 
 export async function GET() {
-  const [sushiPrice, bentoTVL, legacyExchangeData, tridentExchangeData] = await Promise.all([
+  const [sushiPrice, bentoTVL, v2Data, v3Data] = await Promise.all([
     getSushiPriceUSD(),
-    getBentoTVL(),
-    getLegacyExchangeData(),
-    getTridentExchangeData(),
+    getBentoTvl(),
+    getV2Data(),
+    getV3Data(),
   ])
-  const totalTVL = bentoTVL + legacyExchangeData.tvlUSD
-  const totalVolume = legacyExchangeData.volumeUSD + tridentExchangeData.volumeUSD
-  const totalPoolCount = legacyExchangeData.pairCount + tridentExchangeData.poolCount
+  const totalTVL = bentoTVL + v2Data.v2.tvlUSD + v3Data.tvlUSD
+  const totalVolume = v2Data.v2.volumeUSD + v2Data.trident.volumeUSD + v3Data.volumeUSD
+  const totalPoolCount = v2Data.v2.pairCount + v2Data.trident.pairCount + v3Data.pairCount
 
   return NextResponse.json({
     stats: {

@@ -3,6 +3,7 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { Container } from '@sushiswap/ui/components/container'
 import { Toggle } from '@sushiswap/ui/components/toggle'
 import { useAccount } from '@sushiswap/wagmi'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { FC, Fragment, useState } from 'react'
 
 import { PositionsTab } from './PositionsTab'
@@ -14,6 +15,9 @@ export const PoolsSection: FC = () => {
   const { address } = useAccount()
   const [tab, setTab] = useState<number>(0)
   const isMounted = useIsMounted()
+  const { push } = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
   return (
     <section className="flex flex-col">
@@ -31,14 +35,32 @@ export const PoolsSection: FC = () => {
               <>
                 <Tab as={Fragment}>
                   {({ selected }) => (
-                    <Toggle size="sm" pressed={selected} testId="my-positions">
+                    <Toggle
+                      size="sm"
+                      pressed={selected}
+                      testId="my-positions"
+                      // onClick={() => {
+                      //   const _searchParams = new URLSearchParams(searchParams)
+                      //   _searchParams.set('tab', 'my-positions')
+                      //   void push(`${pathname}?${_searchParams.toString()}`)
+                      // }}
+                    >
                       My Positions
                     </Toggle>
                   )}
                 </Tab>
                 <Tab as={Fragment}>
                   {({ selected }) => (
-                    <Toggle size="sm" pressed={selected} testId="my-rewards">
+                    <Toggle
+                      size="sm"
+                      pressed={selected}
+                      testId="my-rewards"
+                      // onClick={() => {
+                      //   const _searchParams = new URLSearchParams(searchParams)
+                      //   _searchParams.set('tab', 'my-rewards')
+                      //   void push(`${pathname}?${_searchParams.toString()}`)
+                      // }}
+                    >
                       My Rewards
                     </Toggle>
                   )}

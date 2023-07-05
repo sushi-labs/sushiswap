@@ -11,7 +11,7 @@ export const TableFiltersSearchToken: FC = () => {
 
   useEffect(() => {
     if (tokenSymbols?.join(' ') !== debouncedQuery) {
-      setFilters({ tokenSymbols: debouncedQuery.split(' ') })
+      setFilters({ tokenSymbols: debouncedQuery.split(' ').filter((f) => f !== '') })
     }
   }, [_query, debouncedQuery, setFilters, tokenSymbols])
 

@@ -1,6 +1,6 @@
 import { Type } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
-import { FeeAmount, SushiSwapV3ChainId,TICK_SPACINGS, tickToPrice } from '@sushiswap/v3-sdk'
+import { FeeAmount, SushiSwapV3ChainId, TICK_SPACINGS, tickToPrice } from '@sushiswap/v3-sdk'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { useMemo } from 'react'
 
@@ -17,7 +17,9 @@ export interface TickProcessed {
 }
 
 const getActiveTick = (tickCurrent: number | undefined, feeAmount: FeeAmount | undefined) =>
-  tickCurrent && feeAmount ? Math.floor(tickCurrent / TICK_SPACINGS[feeAmount]) * TICK_SPACINGS[feeAmount] : undefined
+  tickCurrent !== undefined && feeAmount
+    ? Math.floor(tickCurrent / TICK_SPACINGS[feeAmount]) * TICK_SPACINGS[feeAmount]
+    : undefined
 
 const useAllV3Ticks = ({
   token0,

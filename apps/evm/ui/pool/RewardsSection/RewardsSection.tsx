@@ -10,7 +10,7 @@ import { ANGLE_ENABLED_NETWORKS } from 'config'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { usePoolFilters } from '../PoolsFiltersProvider'
-import { RewardSlide } from './RewardSlide'
+import { RewardSlide, RewardSlideSkeleton } from './RewardSlide'
 import {
   REWARDS_V3_APR_COLUMN,
   REWARDS_V3_CLAIMABLE_COLUMN,
@@ -40,11 +40,20 @@ export const RewardsSection: FC = () => {
   const [sorting, setSorting] = useState<SortingState>([{ id: 'positionSize', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
 
+  const chainsSorted = useMemo(() => {
+    if (!data) return undefined
+    return data.sort((a, b) => {
+      const aAmount = a.unclaimed.reduce((acc, cur) => acc + cur.amountUSD, 0)
+      const bAmount = b.unclaimed.reduce((acc, cur) => acc + cur.amountUSD, 0)
+
+      return bAmount - aAmount
+    })
+  }, [data])
   const positions = useMemo(() => {
     const _tokenSymbols = tokenSymbols?.filter((el) => el !== '') || []
     return (data ?? [])
       .filter((el) => chainIds.includes(el.chainId))
-      .map((el) => {
+      .flatMap((el) => {
         return Object.values(el.pools ?? {})
           .filter((el) => el.userTotalBalance0 + el.userTotalBalance1 > 0 || Object.keys(el.rewardsPerToken).length > 0)
           .filter((el) =>
@@ -55,7 +64,6 @@ export const RewardsSection: FC = () => {
               : true
           )
       })
-      .flat()
   }, [chainIds, tokenSymbols, data])
 
   const table = useReactTable<AngleRewardsPool>({
@@ -84,21 +92,23 @@ export const RewardsSection: FC = () => {
   }, [isMd, isSm])
 
   const rowLink = useCallback((row: AngleRewardsPool) => {
-    return `/${row.id}`
+    return `/pool/${row.id}`
   }, [])
 
   return (
     <>
       <div className="pl-4 xl:pl-2">
         <Container maxWidth="7xl" className="px-4 mx-auto !py-4">
-          <h1 className="font-medium text-sm my-2 text-gray-700 dark:text-slate-200">
+          <h1 className="my-2 text-sm font-medium text-gray-700 dark:text-slate-200">
             Claim your rewards per network.
           </h1>
         </Container>
-        <Carousel
+        <Carousel<NonNullable<typeof chainsSorted>[0] | number>
           containerWidth={1280}
-          slides={data ?? []}
-          render={(row) => <RewardSlide data={row} address={address} />}
+          slides={chainsSorted || ANGLE_ENABLED_NETWORKS}
+          render={(row) =>
+            typeof row === 'number' ? <RewardSlideSkeleton /> : <RewardSlide data={row} address={address} />
+          }
           className="!pt-0"
         />
       </div>
