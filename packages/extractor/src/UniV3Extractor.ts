@@ -51,7 +51,7 @@ interface PoolCacheRecord {
 //   - direct logs (std output) to console
 //   - direct warnings (std error) to a file
 // TODO: watcher getCode caching
-// TODO: empty address cache
+// TODO: infinit watcher
 export class UniV3Extractor {
   factories: FactoryV3[]
   factoryMap: Map<string, FactoryV3> = new Map()
@@ -60,6 +60,7 @@ export class UniV3Extractor {
   multiCallAggregator: MultiCallAggregator
   tokenManager: TokenManager
   poolMap: Map<Address, UniV3PoolWatcher> = new Map()
+  emptyAddressSet: Set<Address> = new Set()
   poolPermanentCache: PermanentCache<PoolCacheRecord>
   otherFactoryPoolSet: Set<Address> = new Set()
   logFilter: LogFilter
@@ -272,11 +273,15 @@ export class UniV3Extractor {
               prefetchedPools.push(pool)
               return
             }
+            if (this.emptyAddressSet.has(addr)) return
             const promise = this.multiCallAggregator
               .callValue(factory.address, IUniswapV3Factory.abi as Abi, 'getPool', [t0.address, t1.address, fee])
               .then(
                 (checkedAddress) => {
-                  if (checkedAddress == '0x0000000000000000000000000000000000000000') return
+                  if (checkedAddress == '0x0000000000000000000000000000000000000000') {
+                    this.emptyAddressSet.add(addr)
+                    return
+                  }
                   const watcher = this.addPoolWatching({ address: addr, token0: t0, token1: t1, fee, factory })
                   return watcher
                 },
@@ -296,6 +301,7 @@ export class UniV3Extractor {
   async addPoolByAddress(address: Address) {
     if (this.otherFactoryPoolSet.has(address.toLowerCase() as Address)) return
     if (this.client.chain?.id === undefined) return
+    this.emptyAddressSet.delete(address)
 
     const factoryAddress = await this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'factory')
     const factory = this.factoryMap.get((factoryAddress as Address).toLowerCase())
