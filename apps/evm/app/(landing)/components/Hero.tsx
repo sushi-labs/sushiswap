@@ -12,11 +12,11 @@ import { Search } from './Search'
 
 const TITLES = ['Whenever', 'Wherever', 'Whoever']
 const VALUES = [
-  { value0: '1', value1: '867.5' },
-  { value0: '1.', value1: '867.5' },
-  { value0: '1.4', value1: '1214.448' },
-  { value0: '1.43', value1: '1240.464' },
-  { value0: '1.435', value1: '1244.80654' },
+  { value0: '1', value1: '2812.18' },
+  { value0: '1.', value1: '2812.18' },
+  { value0: '1.4', value1: '3936.03' },
+  { value0: '1.43', value1: '4020.3' },
+  { value0: '1.435', value1: '4034.34' },
 ]
 
 export const Hero: FC = () => {
@@ -27,7 +27,7 @@ export const Hero: FC = () => {
 
   useEffect(() => {
     const setIndex = (i: number) => {
-      if (i < 5) {
+      if (i < VALUES.length) {
         setValueIndex(i)
         setTimeout(() => setIndex(i + 1), 100)
       }
