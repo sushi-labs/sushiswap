@@ -1,7 +1,8 @@
+import { InformationCircleIcon } from '@heroicons/react/24/outline'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
 import React from 'react'
 
-import { formatNumber, getForumStats, getPercentageDiff, getHolderSnapshot } from '../lib'
-import { InfoIconTooltip } from './InfoIconTooltip'
+import { formatNumber, getForumStats, getHolderSnapshot, getPercentageDiff } from '../lib'
 import { KpiCard } from './KpiCard'
 
 export async function HolderSnapshot() {
@@ -34,7 +35,14 @@ export async function HolderSnapshot() {
       title: (
         <div className="flex items-center gap-1">
           <span>Token Concentration</span>
-          <InfoIconTooltip description="Percentage of $SUSHI held by top 10 addresses" />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <InformationCircleIcon className="h-4 w-4" strokeWidth={2} />
+              </TooltipTrigger>
+              <TooltipContent>Percentage of $SUSHI held by top 10 addresses</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       ),
       value: holderSnapshot.tokenConcentration.toLocaleString('EN', { style: 'percent', maximumFractionDigits: 2 }),
