@@ -10,17 +10,20 @@ export function useDensityChartData({
   token0,
   token1,
   feeAmount,
+  enabled,
 }: {
   chainId: SushiSwapV3ChainId
   token0: Type | undefined
   token1: Type | undefined
   feeAmount: FeeAmount | undefined
+  enabled?: boolean
 }) {
   const { isLoading, error, data } = useConcentratedActiveLiquidity({
     chainId,
     token0,
     token1,
     feeAmount,
+    enabled,
   })
 
   const formatData = useCallback(() => {
