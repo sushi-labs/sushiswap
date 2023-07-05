@@ -34,6 +34,7 @@ const ITEMS = [
   {
     label: 'Links',
     items: [
+      { type: AppType.Governance_dashboard, subtitle: 'Managing DAO with transparency' },
       { type: AppType.Blog, subtitle: 'Stay up to date with Sushi' },
       { type: AppType.Academy, subtitle: 'Demystifying DeFi' },
       { type: AppType.Legacy, subtitle: 'Prefer the old app?' },
