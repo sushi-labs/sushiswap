@@ -3,9 +3,9 @@ import '@sushiswap/ui/index.css'
 import { queryClient } from '@sushiswap/react-query'
 import { ThemeProvider } from '@sushiswap/ui'
 import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
+import { OnramperProvider } from '@sushiswap/ui/components/onramper'
 import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
 import { client, WagmiConfig } from '@sushiswap/wagmi'
-import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Analytics } from '@vercel/analytics/react'
 import type { AppProps } from 'next/app'
@@ -54,12 +54,12 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       <WagmiConfig client={client}>
         <QueryClientProvider client={queryClient}>
           <ThemeProvider>
-            <Onramper.Provider>
+            <OnramperProvider>
               <DefaultSeo {...SEO} />
               <Header />
               <Component {...pageProps} />
               <GlobalFooter />
-            </Onramper.Provider>
+            </OnramperProvider>
           </ThemeProvider>
         </QueryClientProvider>
       </WagmiConfig>

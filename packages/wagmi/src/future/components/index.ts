@@ -1,5 +1,5 @@
 export * from './ConnectButton'
-export * from './UserProfile'
-export * from './Onramper'
 export * from './NetworkCheck'
 export * from './SanctionedAddressDialog'
+export * from './UserProfile'
+export * from './WagmiHeaderComponents'
