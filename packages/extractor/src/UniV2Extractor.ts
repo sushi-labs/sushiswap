@@ -56,6 +56,7 @@ const UniV2FactoryAbi = [
 // TODO: Add pools from factory list - ?
 // TODO: add pools known/ignored/ ... counter - with special functions to change pool status
 // TODO: make buisyCounter correct
+// TODO: uniformization with ExtractorV3 ?
 export class UniV2Extractor {
   readonly client: PublicClient
   readonly multiCallAggregator: MultiCallAggregator

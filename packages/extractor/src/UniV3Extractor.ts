@@ -50,6 +50,8 @@ interface PoolCacheRecord {
 //   - don't call getPoolCodes() too often. It consumes much. Good practice is no do it once per second or so
 //   - direct logs (std output) to console
 //   - direct warnings (std error) to a file
+// TODO: watcher getCode caching
+// TODO: empty address cache
 export class UniV3Extractor {
   factories: FactoryV3[]
   factoryMap: Map<string, FactoryV3> = new Map()
@@ -166,52 +168,52 @@ export class UniV3Extractor {
     }
   }
 
-  async addPoolsForTokens(tokens: Token[]) {
-    this.tokenManager.addTokens(tokens)
-    const fees = Object.values(FeeAmount).filter((fee) => typeof fee == 'number')
-    const promises: Promise<Address>[] = []
-    for (let i = 0, promiseIndex = 0; i < tokens.length; ++i) {
-      for (let j = i + 1; j < tokens.length; ++j) {
-        const [a0, a1] = tokens[i].sortsBefore(tokens[j])
-          ? [tokens[i].address, tokens[j].address]
-          : [tokens[j].address, tokens[i].address]
-        fees.forEach((fee) => {
-          this.factories.forEach((factory) => {
-            promises[promiseIndex++] = this.multiCallAggregator.callValue(
-              factory.address,
-              IUniswapV3Factory.abi as Abi,
-              'getPool',
-              [a0, a1, fee]
-            )
-          })
-        })
-      }
-    }
+  // async addPoolsForTokens(tokens: Token[]) {
+  //   this.tokenManager.addTokens(tokens)
+  //   const fees = Object.values(FeeAmount).filter((fee) => typeof fee == 'number')
+  //   const promises: Promise<Address>[] = []
+  //   for (let i = 0, promiseIndex = 0; i < tokens.length; ++i) {
+  //     for (let j = i + 1; j < tokens.length; ++j) {
+  //       const [a0, a1] = tokens[i].sortsBefore(tokens[j])
+  //         ? [tokens[i].address, tokens[j].address]
+  //         : [tokens[j].address, tokens[i].address]
+  //       fees.forEach((fee) => {
+  //         this.factories.forEach((factory) => {
+  //           promises[promiseIndex++] = this.multiCallAggregator.callValue(
+  //             factory.address,
+  //             IUniswapV3Factory.abi as Abi,
+  //             'getPool',
+  //             [a0, a1, fee]
+  //           )
+  //         })
+  //       })
+  //     }
+  //   }
 
-    const result = await Promise.all(promises)
+  //   const result = await Promise.all(promises)
 
-    const pools: PoolInfo[] = []
-    for (let i = 0, promiseIndex = 0; i < tokens.length; ++i) {
-      for (let j = i + 1; j < tokens.length; ++j) {
-        const [token0, token1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i], tokens[j]] : [tokens[j], tokens[i]]
-        fees.forEach((fee) => {
-          this.factories.forEach((factory) => {
-            const address = result[promiseIndex++]
-            if (address !== '0x0000000000000000000000000000000000000000')
-              pools.push({
-                address,
-                token0,
-                token1,
-                fee: fee as FeeAmount,
-                factory,
-              })
-          })
-        })
-      }
-    }
+  //   const pools: PoolInfo[] = []
+  //   for (let i = 0, promiseIndex = 0; i < tokens.length; ++i) {
+  //     for (let j = i + 1; j < tokens.length; ++j) {
+  //       const [token0, token1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i], tokens[j]] : [tokens[j], tokens[i]]
+  //       fees.forEach((fee) => {
+  //         this.factories.forEach((factory) => {
+  //           const address = result[promiseIndex++]
+  //           if (address !== '0x0000000000000000000000000000000000000000')
+  //             pools.push({
+  //               address,
+  //               token0,
+  //               token1,
+  //               fee: fee as FeeAmount,
+  //               factory,
+  //             })
+  //         })
+  //       })
+  //     }
+  //   }
 
-    pools.forEach((p) => this.addPoolWatching(p))
-  }
+  //   pools.forEach((p) => this.addPoolWatching(p))
+  // }
 
   addPoolWatching(p: PoolInfo, addToCache = true) {
     if (this.logProcessingStatus !== LogsProcessing.Started) {
@@ -250,7 +252,7 @@ export class UniV3Extractor {
     }
   }
 
-  getPoolsForTokens(tokens: Token[]): {
+  getWatchersForTokens(tokens: Token[]): {
     prefetchedPools: UniV3PoolWatcher[]
     fetchingPools: Promise<UniV3PoolWatcher[]>
   } {

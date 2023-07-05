@@ -517,14 +517,14 @@ async function startInfinitTest(args: {
 
   const extractor = new UniV3Extractor(client, args.tickLensContract, args.factories, './cache', args.logDepth)
   await extractor.start()
-  extractor.addPoolsForTokens(BASES_TO_CHECK_TRADES_AGAINST[chainId])
+  extractor.getWatchersForTokens(BASES_TO_CHECK_TRADES_AGAINST[chainId])
 
   const nativeProvider = new NativeWrapProvider(chainId, client)
   const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId]
   for (;;) {
     for (let i = 1; i < tokens.length; ++i) {
       await delay(1000)
-      const { prefetchedPools: watchers } = extractor.getPoolsForTokens(tokens)
+      const { prefetchedPools: watchers } = extractor.getWatchersForTokens(tokens)
       const pools = watchers.map((w) => w.getPoolCode()).filter((pc) => pc !== undefined) as PoolCode[]
       const poolMap = new Map<string, PoolCode>()
       pools.forEach((p) => poolMap.set(p.pool.address, p))
