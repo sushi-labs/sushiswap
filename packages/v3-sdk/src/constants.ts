@@ -108,6 +108,8 @@ export const SUSHISWAP_V3_SUPPORTED_CHAIN_IDS = [
   ChainId.THUNDERCORE,
 ] as const
 
+export const SushiSwapV3ChainIds = SUSHISWAP_V3_SUPPORTED_CHAIN_IDS
+
 export type SushiSwapV3ChainId = (typeof SUSHISWAP_V3_SUPPORTED_CHAIN_IDS)[number]
 
 export const isSushiSwapV3ChainId = (chainId: ChainId): chainId is SushiSwapV3ChainId =>

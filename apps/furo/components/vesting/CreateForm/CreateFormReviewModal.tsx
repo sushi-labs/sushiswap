@@ -1,38 +1,37 @@
 import { isAddress } from '@ethersproject/address'
-import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
+import { ArrowLeftIcon } from '@heroicons/react/solid'
+import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { Chain } from '@sushiswap/chain'
+import { tryParseAmount } from '@sushiswap/currency'
+import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { FundSource } from '@sushiswap/hooks'
-import { Dots } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/components/button'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { Dots } from '@sushiswap/ui/components/dots'
+import { List } from '@sushiswap/ui/components/list/List'
+import { Modal } from '@sushiswap/ui/components/modal/Modal'
+import { createToast } from '@sushiswap/ui/components/toast'
 import {
   getFuroVestingRouterContractConfig,
   useAccount,
   useBentoBoxTotal,
   useFuroVestingRouterContract,
 } from '@sushiswap/wagmi'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import { format } from 'date-fns'
 import React, { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
-import { createToast } from '@sushiswap/ui/future/components/toast'
-import { FuroVestingRouterChainId } from '@sushiswap/furo'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { Checker } from '@sushiswap/wagmi/future/systems'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
-import { ArrowLeftIcon } from '@heroicons/react/solid'
-import { Currency } from '@sushiswap/ui/future/components/currency'
-import { List } from '@sushiswap/ui/future/components/list/List'
-import { Chain } from '@sushiswap/chain'
-import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
-import { format } from 'date-fns'
-import { tryParseAmount } from '@sushiswap/currency'
 import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreationAction } from '../../../lib'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
+import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS_LABEL,STEP_CONFIGURATIONS_MAP } from '../schema'
 import { calculateCliffDuration, calculateEndDate, calculateStepPercentage, calculateTotalAmount } from '../utils'
-import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS_SECONDS, STEP_CONFIGURATIONS_MAP, STEP_CONFIGURATIONS_LABEL } from '../schema'
-import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 
 const MODAL_ID = 'createVestingSingle'
 const APPROVE_TAG = 'createVestingSingle'
@@ -220,18 +219,17 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
   })
 
   const formValid = isValid && !isValidating && Object.keys(errors).length === 0
-  console.log({stepConfig})
+  console.log({ stepConfig })
   if (stepConfig) console.log(STEP_CONFIGURATIONS_MAP[stepConfig])
   return (
     <>
       <div className="grid grid-cols-3 gap-x-10">
         <div />
-        <Checker.Connect fullWidth type="button" size="xl" className="col-span-3 md:col-span-2">
-          <Checker.Network fullWidth type="button" size="xl" chainId={chainId} className="col-span-3 md:col-span-2">
+        <Checker.Connect fullWidth type="button" className="col-span-3 md:col-span-2">
+          <Checker.Network fullWidth type="button" chainId={chainId} className="col-span-3 md:col-span-2">
             <Checker.Amounts
               fullWidth
               type="button"
-              size="xl"
               chainId={chainId}
               amounts={[_totalAmount]}
               className="col-span-3 md:col-span-2"
@@ -241,7 +239,6 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                 type="button"
                 fullWidth
                 id="create-single-vest-approve-bentobox"
-                size="xl"
                 chainId={chainId as BentoBoxV1ChainId}
                 masterContract={getFuroVestingRouterContractConfig(chainId).address}
                 className="col-span-3 md:col-span-2"
@@ -251,7 +248,6 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                   fullWidth
                   contract={bentoBoxV1Address[chainId]}
                   id="create-single-vest-approve-token"
-                  size="xl"
                   amount={_totalAmount}
                   className="col-span-3 md:col-span-2"
                 >
@@ -259,12 +255,12 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                     <Modal.Trigger tag={MODAL_ID}>
                       {({ open }) => (
                         <Button
+                          size="xl"
                           type="button"
                           fullWidth
                           disabled={!formValid || !sendTransactionAsync}
-                          size="xl"
                           onClick={open}
-                          testdata-id="review-single-vest-button"
+                          testId="review-single-vest"
                           className="col-span-3 md:col-span-2"
                         >
                           {isLoading ? <Dots>Confirm transaction</Dots> : 'Review Vesting'}
@@ -359,7 +355,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                   onClick={() => sendTransactionAsync?.().then(() => confirm())}
                   disabled={isError || !sendTransactionAsync}
                   color={isError ? 'red' : 'blue'}
-                  testdata-id="create-single-vest-confirmation-button"
+                  testId="create-single-vest-confirmation"
                 >
                   {isError ? 'Shoot! Something went wrong :(' : isLoading ? <Dots>Create</Dots> : 'Create'}
                 </Button>

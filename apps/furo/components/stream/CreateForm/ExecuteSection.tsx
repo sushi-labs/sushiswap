@@ -1,35 +1,35 @@
 import { isAddress } from '@ethersproject/address'
 import { TransactionRequest } from '@ethersproject/providers'
+import { ArrowLeftIcon } from '@heroicons/react/solid'
+import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
+import { shortenAddress } from '@sushiswap/format'
+import { FuroStreamRouterChainId } from '@sushiswap/furo'
 import { FundSource } from '@sushiswap/hooks'
-import { Dots } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/components/button'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { Dots } from '@sushiswap/ui/components/dots'
+import { List } from '@sushiswap/ui/components/list/List'
+import { Modal } from '@sushiswap/ui/components/modal/Modal'
+import { createToast } from '@sushiswap/ui/components/toast'
 import {
   getFuroStreamRouterContractConfig,
   useAccount,
   useBentoBoxTotal,
   useFuroStreamRouterContract,
 } from '@sushiswap/wagmi'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
+import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
+import { useApproved, useSignature, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import { format } from 'date-fns'
 import React, { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { FuroStreamRouterChainId } from '@sushiswap/furo'
 
 import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../../lib'
 import { ZFundSourceToFundSource, ZTokenToToken } from '../../../lib/zod'
-import { createToast } from '@sushiswap/ui/future/components/toast'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { useApproved, useSignature, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
-import { ArrowLeftIcon } from '@heroicons/react/solid'
-import { Currency } from '@sushiswap/ui/future/components/currency'
-import { List } from '@sushiswap/ui/future/components/list/List'
-import { Chain } from '@sushiswap/chain'
-import { format } from 'date-fns'
-import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
-import { shortenAddress } from '@sushiswap/format'
 import { CreateMultipleStreamFormSchemaType } from '../schema'
 
 const APPROVE_TAG = 'createStreamSingle'
@@ -157,12 +157,11 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
       <>
         <div className="grid grid-cols-3 gap-x-10">
           <div />
-          <Checker.Connect fullWidth type="button" size="xl" className="col-span-3 md:col-span-2">
-            <Checker.Network fullWidth type="button" size="xl" chainId={chainId} className="col-span-3 md:col-span-2">
+          <Checker.Connect fullWidth type="button" className="col-span-3 md:col-span-2">
+            <Checker.Network fullWidth type="button" chainId={chainId} className="col-span-3 md:col-span-2">
               <Checker.Amounts
                 fullWidth
                 type="button"
-                size="xl"
                 chainId={chainId}
                 amounts={[_amount]}
                 className="col-span-3 md:col-span-2"
@@ -172,7 +171,6 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
                   type="button"
                   fullWidth
                   id="furo-create-single-stream-approve-bentobox"
-                  size="xl"
                   chainId={chainId as BentoBoxV1ChainId}
                   masterContract={getFuroStreamRouterContractConfig(chainId).address}
                   className="col-span-3 md:col-span-2"
@@ -182,7 +180,6 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
                     type="button"
                     contract={bentoBoxV1Address[chainId]}
                     id="furo-create-single-stream-approve-token"
-                    size="xl"
                     amount={_amount}
                     className="col-span-3 md:col-span-2"
                   >
@@ -190,10 +187,10 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
                       <Modal.Trigger tag={MODAL_ID}>
                         {({ open }) => (
                           <Button
+                            size="xl"
                             type="button"
                             fullWidth
                             disabled={!formValid}
-                            size="xl"
                             onClick={open}
                             testId="review-single-stream"
                             className="col-span-3 md:col-span-2"

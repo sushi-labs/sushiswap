@@ -1,7 +1,7 @@
 import { Address, useContractWrite, useNetwork, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
 import { useCallback } from 'react'
 import { SendTransactionResult } from 'wagmi/actions'
-import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { ChainId } from '@sushiswap/chain'
 import { ERC1967Proxy } from '../abis'
 import { BigNumber } from 'ethers'

@@ -8,12 +8,13 @@ import {
   RabbyIcon,
   TrustWalletIcon,
   WalletConnectIcon,
-} from '@sushiswap/ui/future/components/icons'
-import { List } from '@sushiswap/ui/future/components/list/List'
-import React, { FC, SVGProps, useCallback, useMemo } from 'react'
+} from '@sushiswap/ui/components/icons'
+import { List } from '@sushiswap/ui/components/list/List'
+import React, { FC, ReactNode, SVGProps, useCallback, useMemo } from 'react'
+
 import { useConnect } from '../../../hooks'
 
-const Icons: Record<string, (props: SVGProps<SVGSVGElement>) => JSX.Element | null> = {
+const Icons: Record<string, (props: SVGProps<SVGSVGElement>) => ReactNode | null> = {
   Injected: ChevronDoubleDownIcon,
   MetaMask: MetamaskIcon,
   'Trust Wallet': TrustWalletIcon,

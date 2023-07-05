@@ -1,15 +1,15 @@
 import { ArrowTopRightOnSquareIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { Chain } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { SlideIn } from '@sushiswap/ui/future/components/animation'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { Icon } from '@sushiswap/ui/future/components/currency/Icon'
-import { List } from '@sushiswap/ui/future/components/list/List'
-import { Overlay } from '@sushiswap/ui/future/components/overlay'
+import { SlideIn } from '@sushiswap/ui/components/animation'
+import { Button } from '@sushiswap/ui/components/button'
+import { Icon } from '@sushiswap/ui/components/currency/Icon'
+import { List } from '@sushiswap/ui/components/list/List'
+import { Overlay } from '@sushiswap/ui/components/overlay'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { shortenAddress } from '@sushiswap/format'
 import { useTokenSecurity } from '@sushiswap/react-query'
-import { DangerousIcon, GoPlusLabsIcon } from '@sushiswap/ui/icons'
+import { DangerousIcon, GoPlusLabsIcon } from '@sushiswap/ui/components/icons'
 import { Link } from '@sushiswap/ui'
 
 interface TokenSelectorImportRow {
@@ -87,14 +87,14 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
               }, [])}
             </List.Control>
           </List>
-          <div className="absolute bottom-3 left-3 right-3 flex flex-col gap-1">
+          <div className="absolute bottom-3 left-3 right-3 flex flex-col gap-3">
             {tokenSecurity?.isSupported && (
               <div className="flex items-center gap-0.5 justify-center">
                 <span className="text-xs text-gray-700 dark:text-slate-400">Honeypot detection powered by GoPlus</span>
                 <GoPlusLabsIcon width={22} height={20} />
               </div>
             )}
-            <Button fullWidth size="xl" variant="outlined" color="blue" onClick={onClick}>
+            <Button fullWidth size="xl" onClick={onClick}>
               Import
             </Button>
           </div>
@@ -168,7 +168,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
                 <GoPlusLabsIcon width={22} height={20} />
               </div>
             )}
-            <Button fullWidth size="xl" variant="outlined" color="blue" disabled>
+            <Button fullWidth disabled>
               Honeypot Token Not Supported
             </Button>
           </div>
@@ -197,7 +197,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
                 </div>
 
                 <div className="flex flex-col">
-                  <Button className="rounded-full" color="blue" size="xs" onClick={() => setOpen(true)}>
+                  <Button size="sm" onClick={() => setOpen(true)}>
                     Import
                   </Button>
                 </div>

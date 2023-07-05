@@ -1,7 +1,7 @@
 'use client'
 
 import { FC, useCallback } from 'react'
-import { Dialog } from '@sushiswap/ui/future/components/dialog'
+import { Dialog } from '@sushiswap/ui/components/dialog'
 import { useAccount } from 'wagmi'
 import { useOnramperContext } from './OnramperProvider'
 

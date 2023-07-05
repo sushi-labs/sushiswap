@@ -12,7 +12,7 @@ import { BigNumber } from 'ethers'
 import { useTokenAllowance } from './useTokenAllowance'
 import { useCallback, useMemo, useState } from 'react'
 import { SendTransactionResult } from 'wagmi/actions'
-import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 
 export enum ApprovalState {
   LOADING = 'LOADING',

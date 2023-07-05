@@ -1,17 +1,18 @@
-import { NextSeo } from 'next-seo'
-import { Layout } from '../components'
 import { RadioGroup, Transition } from '@headlessui/react'
-import React, { useState } from 'react'
-import { classNames } from '@sushiswap/ui'
-import { shortenAddress } from '@sushiswap/format'
-import { SushiIcon } from '@sushiswap/ui/future/components/icons'
-import { ChainId } from '@sushiswap/chain'
-import { useAccount, useEnsName } from '@sushiswap/wagmi'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { SplashController } from '@sushiswap/ui/future/components/SplashController'
-import Link from 'next/link'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { ArrowLeftIcon } from '@heroicons/react/solid'
+import { ChainId } from '@sushiswap/chain'
+import { shortenAddress } from '@sushiswap/format'
+import { classNames } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/components/button'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
+import { SushiIcon } from '@sushiswap/ui/components/icons'
+import { SplashController } from '@sushiswap/ui/components/SplashController'
+import { useAccount, useEnsName } from '@sushiswap/wagmi'
+import Link from 'next/link'
+import { NextSeo } from 'next-seo'
+import React, { useState } from 'react'
+
+import { Layout } from '../components'
 
 enum Type {
   stream,
@@ -38,14 +39,7 @@ export default function CreatePage() {
           }}
           shallow={true}
         >
-          <IconButton
-            icon={ArrowLeftIcon}
-            iconProps={{
-              width: 24,
-              height: 24,
-              transparent: true,
-            }}
-          />
+          <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
           <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">Go back</span>
         </Link>
         <h1 className="text-3xl lg:text-5xl font-semibold max-w-[600px] mt-6">
@@ -62,7 +56,7 @@ export default function CreatePage() {
                 <div
                   className={classNames(
                     checked ? 'z-10 lg:scale-110 shadow-2xl' : 'lg:scale-100 shadow-md',
-                    'relative transform-all duration-200 w-full lg:w-[460px] h-fit lg:h-[290px] bg-gradient-to-tr from-blue to-pink flex flex-col bg-slate-800 p-4 rounded-2xl'
+                    'relative transform-all duration-200 w-full lg:w-[460px] h-fit aspect-[460/290] bg-gradient-to-tr from-blue to-pink flex flex-col bg-slate-800 p-4 rounded-2xl'
                   )}
                 >
                   <div className="relative lg:absolute lg:top-4 lg:left-5 flex flex-col justify-center">
@@ -96,11 +90,11 @@ export default function CreatePage() {
                       leaveTo="transform translate-y-[32px] opacity-0"
                     >
                       <div className="flex justify-center gap-2">
-                        <Button as="a" href="/furo/stream/create/single" size="lg" className="!rounded-full">
-                          Single stream
+                        <Button asChild size="lg">
+                          <a href="/furo/stream/create/single">Single stream</a>
                         </Button>
-                        <Button as="a" href="/furo/stream/create/multiple" size="lg" className="!rounded-full">
-                          Multiple streams
+                        <Button asChild size="lg">
+                          <a href="/furo/stream/create/multiple">Multiple streams</a>
                         </Button>
                       </div>
                     </Transition>
@@ -115,7 +109,7 @@ export default function CreatePage() {
                 <div
                   className={classNames(
                     checked ? 'z-10 lg:scale-110 shadow-2xl' : 'lg:scale-100 shadow-md lg:mt-0 mt-20',
-                    'relative transform-all duration-200 w-full lg:w-[460px] h-fit lg:h-[290px] bg-gradient-to-tr from-green to-blue flex flex-col bg-slate-800 p-4 rounded-2xl'
+                    'relative transform-all duration-200 w-full lg:w-[460px] h-fit aspect-[460/290] bg-gradient-to-tr from-green to-blue flex flex-col bg-slate-800 p-4 rounded-2xl'
                   )}
                 >
                   <div className="relative lg:absolute lg:top-4 lg:left-5 flex flex-col justify-center">
@@ -151,11 +145,11 @@ export default function CreatePage() {
                       leaveTo="transform translate-y-[32px] opacity-0"
                     >
                       <div className="flex justify-center gap-2">
-                        <Button as="a" href="/furo/vesting/create/single" size="lg" className="!rounded-full">
-                          Single vest
+                        <Button asChild size="lg">
+                          <a href="/furo/vesting/create/single">Single vest</a>
                         </Button>
-                        <Button as="a" href="/furo/vesting/create/multiple" size="lg" className="!rounded-full">
-                          Multiple vests
+                        <Button asChild size="lg">
+                          <a href="/furo/vesting/create/multiple">Multiple vests</a>
                         </Button>
                       </div>
                     </Transition>

@@ -18,7 +18,8 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
-    "lint": "TIMING=1 eslint src --fix",
+    "lint": "TIMING=1 eslint src",
+    "lint:fix": "TIMING=1 eslint src --fix",
     "test": "jest --passWithNoTests"
   },
   "jest": {
@@ -31,30 +32,36 @@
     "react-responsive": "9.0.0-beta.10"
   },
   "devDependencies": {
-    "@sushiswap/math": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/math": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "^29.2.0",
-    "@types/react": "18.2.6",
-    "@types/react-dom": "18.2.4",
-    "eslint": "8.41.0",
+    "@types/react": "18.2.14",
+    "@types/react-dom": "18.2.6",
+    "eslint": "8.43.0",
     "jest": "29.3.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwindcss": "3.3.2",
-    "typescript": "5.0.4"
+    "typescript": "5.1.6"
   },
   "peerDependencies": {
+    "@sushiswap/currency": "*",
+    "@sushiswap/math": "*",
     "react": "*",
     "react-dom": "*",
-    "tailwindcss": "*",
-    "@sushiswap/math": "*",
-    "@sushiswap/currency": "*"
+    "tailwindcss": "*"
   },
   "peerDependenciesMeta": {
+    "@sushiswap/currency": {
+      "optional": true
+    },
+    "@sushiswap/math": {
+      "optional": true
+    },
     "react": {
       "optional": false
     },
@@ -62,12 +69,6 @@
       "optional": false
     },
     "tailwindcss": {
-      "optional": true
-    },
-    "@sushiswap/math": {
-      "optional": true
-    },
-    "@sushiswap/currency": {
       "optional": true
     }
   }

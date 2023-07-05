@@ -1,4 +1,4 @@
-import { Page, expect, test } from '@playwright/test'
+import { expect, Page, test } from '@playwright/test'
 import { Token, USDC_ADDRESS } from '@sushiswap/currency'
 import { addWeeks, getUnixTime, subWeeks } from 'date-fns'
 import {
@@ -61,12 +61,12 @@ async function updateStream(page: Page, streamId: string) {
 
   await page.locator('[testdata-id=furo-stream-top-up]').fill('0.0001')
 
-  const approveBentoboxLocator = page.locator('[testdata-id=furo-update-stream-approve-bentobox]')
+  const approveBentoboxLocator = page.locator('[testdata-id=furo-update-stream-approve-bentobox-button]')
   await expect(approveBentoboxLocator).toBeVisible()
   await expect(approveBentoboxLocator).toBeEnabled()
   await approveBentoboxLocator.click()
 
-  const approveLocator = page.locator('[testdata-id=approve-erc20-update-stream]')
+  const approveLocator = page.locator('[testdata-id=approve-erc20-update-stream-button]')
   await expect(approveLocator).toBeVisible()
   await expect(amountSwitchLocator).toBeEnabled()
   await approveLocator.click()
@@ -155,12 +155,11 @@ async function cancelStream(page: Page, streamId: string) {
 async function mockSubgraph(page: Page) {
   await page.route('https://api.thegraph.com/subgraphs/name/sushi-subgraphs/furo-polygon', async (route, request) => {
     if (request.method() === 'POST') {
-      const response = await route.fetch()
       const postData = JSON.parse(request.postData() as string)
-      if (postData.query.includes('_0_stream: stream')) {
+      if (postData.query.includes('query stream')) {
         const resultData = {
           data: {
-            _0_stream: {
+            stream: {
               id: '1082',
               __typename: 'Stream',
               status: 'ACTIVE',
@@ -189,11 +188,10 @@ async function mockSubgraph(page: Page) {
           },
         }
         return await route.fulfill({
-          response,
           contentType: 'application/json',
           body: JSON.stringify(resultData),
         })
-      } else if (postData.query.includes('Transaction_orderBy')) {
+      } else if (postData.query.includes('query streamTransactions')) {
         const resultData = [
           {
             id: '1082:tx:0',
@@ -215,23 +213,20 @@ async function mockSubgraph(page: Page) {
           },
         ]
         return await route.fulfill({
-          response,
           contentType: 'application/json',
           body: JSON.stringify(resultData),
         })
-      } else if (postData.query.includes('_0_rebase: rebase')) {
+      } else if (postData.query.includes('query bentoBoxRebase')) {
         const resultData = {
           data: {
-            _0_rebase: {
+            rebase: {
               id: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
               base: '100',
               elastic: '100',
             },
           },
         }
-
         return await route.fulfill({
-          response,
           contentType: 'application/json',
           body: JSON.stringify(resultData),
         })

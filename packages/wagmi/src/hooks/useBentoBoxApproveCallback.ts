@@ -16,7 +16,7 @@ import {
 import { ApprovalState } from './useERC20ApproveCallback'
 import { isAddress } from '@ethersproject/address'
 import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { createToast } from '@sushiswap/ui/future/components/toast'
+import { createToast } from '@sushiswap/ui/components/toast'
 
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useBentoBoxApproveCallback({

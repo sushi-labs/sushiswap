@@ -3,16 +3,17 @@ import { ExternalLinkIcon } from '@heroicons/react/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
-import { Currency, Table } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/react-query'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { List } from '@sushiswap/ui/components/list/List'
+import { Table } from '@sushiswap/ui/components/table'
 import { format } from 'date-fns'
 import React, { FC, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { useDeepCompareMemoize } from '../../../lib'
-import { calculateEndDate, calculateTotalAmount } from '../utils'
-import { List } from '@sushiswap/ui/future/components/list/List'
 import { CreateMultipleVestingFormSchemaType, CreateVestingFormSchemaType } from '../schema'
+import { calculateEndDate, calculateTotalAmount } from '../utils'
 
 interface ReviewSection {
   chainId: ChainId

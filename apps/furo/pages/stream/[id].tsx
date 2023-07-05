@@ -1,29 +1,28 @@
-import { getFuroStreamContractConfig } from '@sushiswap/wagmi'
+import { DownloadIcon, XIcon } from '@heroicons/react/outline'
+import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon, RefreshIcon } from '@heroicons/react/solid'
+import { ChainId } from '@sushiswap/chain'
+import { formatNumber, shortenAddress } from '@sushiswap/format'
+import { Percent } from '@sushiswap/math'
+import { classNames } from '@sushiswap/ui'
+import { Badge } from '@sushiswap/ui/components/Badge'
+import { Blink } from '@sushiswap/ui/components/Blink'
+import { Button } from '@sushiswap/ui/components/button'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
+import { NetworkIcon, SushiIcon } from '@sushiswap/ui/components/icons'
+import { List } from '@sushiswap/ui/components/list/List'
+import { SkeletonBox, SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { SplashController } from '@sushiswap/ui/components/SplashController'
+import { Address, getFuroStreamContractConfig, useEnsName } from '@sushiswap/wagmi'
+import { format } from 'date-fns'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { FC, useMemo } from 'react'
+
 import { BalancePredictor, CancelModal, FuroTimer, Layout, TransferModal, UpdateModal } from '../../components'
 import { WithdrawModal } from '../../components/stream'
 import { useStream, useStreamBalance, useStreamTransactions } from '../../lib'
-import { SushiIcon } from '@sushiswap/ui/future/components/icons'
-import { formatNumber, shortenAddress } from '@sushiswap/format'
-import { useEnsName } from '@sushiswap/wagmi'
-import { ChainId } from '@sushiswap/chain'
-import { List } from '@sushiswap/ui/future/components/list/List'
-import { format } from 'date-fns'
-import { Button } from '@sushiswap/ui/future/components/button'
-import Link from 'next/link'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
-import { ArrowLeftIcon, ArrowRightIcon, ArrowDownIcon, ArrowUpIcon, RefreshIcon } from '@heroicons/react/solid'
-import { DownloadIcon, XIcon } from '@heroicons/react/outline'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { classNames, NetworkIcon } from '@sushiswap/ui'
-import { Currency } from '@sushiswap/ui/future/components/currency'
-import { Address } from '@sushiswap/wagmi'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
-import { SplashController } from '@sushiswap/ui/future/components/SplashController'
-import { Blink } from '@sushiswap/ui/future/components/Blink'
-import { Percent } from '@sushiswap/math'
 import { queryParamsSchema } from '../../lib/zod'
 
 const Streams = () => {
@@ -88,38 +87,31 @@ const _Streams: FC = () => {
               }}
               shallow={true}
             >
-              <IconButton
-                icon={ArrowLeftIcon}
-                iconProps={{
-                  width: 24,
-                  height: 24,
-                  transparent: true,
-                }}
-              />
+              <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
               <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
                 Go back to dashboard
               </span>
             </Link>
             <div className="flex gap-6 h-[52px]">
               <div className="inline-flex">
-                <Skeleton.Circle radius={48} />
+                <SkeletonCircle radius={48} />
               </div>
               <div className="flex flex-col flex-grow">
-                <Skeleton.Text fontSize="text-xl" className="w-[120px]" />
-                <Skeleton.Text fontSize="text-base" className="w-[240px]" />
+                <SkeletonText fontSize="xl" className="w-[120px]" />
+                <SkeletonText className="w-[240px]" />
               </div>
             </div>
             <div>
               <div className="flex gap-2 mt-3">
-                <Skeleton.Box className="w-[132px] h-[38px]" />
-                <Skeleton.Box className="w-[122px] h-[38px]" />
+                <SkeletonBox className="w-[132px] h-[38px]" />
+                <SkeletonBox className="w-[122px] h-[38px]" />
               </div>
             </div>
           </div>
           <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
           <div className="flex flex-col md:grid md:grid-cols-[460px_372px] justify-center gap-8 md:gap-y-6">
             <div className="flex justify-center">
-              <Skeleton.Box className="w-[460px] h-[290px]" />
+              <SkeletonBox className="w-full lg:w-[460px] h-fit aspect-[460/290]" />
             </div>
             <div className="min-w-fit">
               <div className="flex flex-col justify-center flex-grow gap-5">
@@ -167,14 +159,7 @@ const _Streams: FC = () => {
               }}
               shallow={true}
             >
-              <IconButton
-                icon={ArrowLeftIcon}
-                iconProps={{
-                  width: 24,
-                  height: 24,
-                  transparent: true,
-                }}
-              />
+              <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
               <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
                 Go back to dashboard
               </span>
@@ -204,9 +189,9 @@ const _Streams: FC = () => {
                   <Button
                     disabled={disabled}
                     onClick={() => setOpen(true)}
-                    startIcon={<DownloadIcon width={18} height={18} />}
+                    icon={DownloadIcon}
                     testId="stream-withdraw"
-                    variant="outlined"
+                    variant="secondary"
                   >
                     Withdraw
                   </Button>
@@ -221,9 +206,9 @@ const _Streams: FC = () => {
                 {({ setOpen }) => (
                   <Button
                     onClick={() => setOpen(true)}
-                    startIcon={<ArrowRightIcon width={18} height={18} />}
+                    icon={ArrowRightIcon}
                     testId="stream-transfer"
-                    variant="outlined"
+                    variant="secondary"
                   >
                     Transfer
                   </Button>
@@ -236,12 +221,7 @@ const _Streams: FC = () => {
                 chainId={chainId}
               >
                 {({ setOpen }) => (
-                  <Button
-                    onClick={() => setOpen(true)}
-                    startIcon={<RefreshIcon width={18} height={18} />}
-                    testId="stream-update"
-                    variant="outlined"
-                  >
+                  <Button onClick={() => setOpen(true)} icon={RefreshIcon} testId="stream-update" variant="secondary">
                     Update
                   </Button>
                 )}
@@ -258,9 +238,9 @@ const _Streams: FC = () => {
                   <Button
                     color="red"
                     onClick={() => setOpen(true)}
-                    startIcon={<XIcon width={18} height={18} />}
+                    icon={XIcon}
                     testId="stream-cancel"
-                    variant="outlined"
+                    variant="secondary"
                   >
                     Cancel
                   </Button>
@@ -271,7 +251,7 @@ const _Streams: FC = () => {
           <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
           <div className="flex flex-col lg:grid lg:grid-cols-[460px_372px] justify-center gap-8 lg:gap-y-6">
             <div className="flex justify-center">
-              <div className="shadow-lg relative w-[460px] h-[290px] bg-gradient-to-tr from-blue to-pink flex flex-col bg-slate-800 p-4 rounded-2xl">
+              <div className="shadow-lg relative w-full lg:w-[460px] h-fit aspect-[460/290] bg-gradient-to-tr from-blue to-pink flex flex-col bg-slate-800 p-4 rounded-2xl">
                 <span className="flex items-center justify-start gap-2">
                   <span className="flex items-center gap-2 text-lg font-semibold text-white">
                     <div className="rounded-full shadow-md shadow-black/30 -mt-0.5">

@@ -15,13 +15,10 @@ import {
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { Currency as UICurrency } from '@sushiswap/ui/future/components/currency'
-import { ExternalLink } from '@sushiswap/ui/future/components/ExternalLink'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
-import { Loader } from '@sushiswap/ui/future/components/Loader'
-import { TimeAgo } from '@sushiswap/ui/future/components/TimeAgo'
+import { Currency as UICurrency } from '@sushiswap/ui/components/currency'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { Loader } from '@sushiswap/ui/components/loader'
+import { TimeAgo } from '@sushiswap/ui/components/time-ago'
 import React, { FC } from 'react'
 import { useWaitForTransaction } from 'wagmi'
 import { ResolvedNotification } from '@sushiswap/dexie'
@@ -75,7 +72,7 @@ export const Notification: FC<{
           )}
         </Disclosure.Button>
       )}
-      <ExternalLink
+      <a target="_blank" rel="noopener noreferrer"
         href={
           notification.href
             ? notification.href
@@ -83,7 +80,6 @@ export const Notification: FC<{
             ? Chain.from(notification.chainId).getTxUrl(notification.txHash)
             : ''
         }
-        className="!no-underline"
       >
         <div
           className={classNames(
@@ -144,11 +140,11 @@ export const Notification: FC<{
             </div>
             <span className="flex gap-1 items-center text-xs text-gray-600 dark:text-slate-500">
               <NetworkIcon type="naked" chainId={notification.chainId} width={14} height={14} />•{' '}
-              <TimeAgo date={new Date(notification.timestamp)} />
+              <TimeAgo value={new Date(notification.timestamp)} />
             </span>
           </div>
         </div>
-      </ExternalLink>
+      </a>
     </div>
   )
 }

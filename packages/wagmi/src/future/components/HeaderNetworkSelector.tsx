@@ -1,14 +1,11 @@
-import { Popover } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/20/solid'
-import { ChainId, chainName } from '@sushiswap/chain'
-import { classNames } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
-import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui/future/components/networkselector'
-import { createErrorToast } from '@sushiswap/ui/future/components/toast'
-import { useBreakpoint } from '@sushiswap/ui/future/lib/useBreakpoint'
+import { Chain, ChainId } from '@sushiswap/chain'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui/components/networkselector'
+import { createErrorToast } from '@sushiswap/ui/components/toast'
+import { useBreakpoint } from '@sushiswap/ui/lib/useBreakpoint'
 import React, { FC, useCallback } from 'react'
 import { ProviderRpcError, useNetwork, UserRejectedRequestError, useSwitchNetwork } from 'wagmi'
+import { Button } from '@sushiswap/ui/components/button'
 
 export const HeaderNetworkSelector: FC<{
   networks: ChainId[]
@@ -51,17 +48,10 @@ export const HeaderNetworkSelector: FC<{
       onSelect={onSwitchNetwork}
       networks={networks}
     >
-      {({ open }) => (
-        <Popover.Button as={Button} variant="outlined" color="default" size="md" className="!font-medium" testdata-id="network-selector-button">
-          <NetworkIcon chainId={selected} width={20} height={20} />
-          <div className="hidden xl:block">{chainName[selected]}</div>
-          <ChevronDownIcon
-            width={24}
-            height={24}
-            className={classNames('transition-all', open ? 'rotate-180' : 'rotate-0', 'hidden sm:block')}
-          />
-        </Popover.Button>
-      )}
+      <Button variant="secondary" testId="network-selector">
+        <NetworkIcon chainId={selected} width={20} height={20} />
+        <div className="hidden xl:block">{Chain.from(selected)?.name}</div>
+      </Button>
     </NetworkSelector>
   )
 }

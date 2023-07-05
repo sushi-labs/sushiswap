@@ -1,5 +1,6 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
-import { classNames, Container } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
 import kashiImg from 'common/assets/kashi-img.png'
 import {
   ProductArticles,
@@ -57,7 +58,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         productName={longName}
         productDescription={description}
         productUrl={url}
-        buttonIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
+        buttonIcon={LinkIcon}
         image={<Image src={kashiImg} unoptimized alt="kashi-img" />}
       />
       <ProductCards

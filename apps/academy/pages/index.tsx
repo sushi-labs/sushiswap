@@ -1,13 +1,12 @@
-import { Disclosure, Listbox, Transition } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { useDebounce } from '@sushiswap/hooks'
-import { classNames, Container, Select, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
 import { AcademySeo } from 'common/components/Seo/AcademySeo'
 import { DEFAULT_SIDE_PADDING } from 'common/helpers'
 import { InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FC, Fragment, useMemo, useRef, useState } from 'react'
+import { FC, useMemo, useRef, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
 import {
@@ -28,11 +27,9 @@ import {
   Difficulties,
   DifficultyCard,
   FilterButton,
-  GradientWrapper,
   Hero,
   HomeBackground,
   SearchInput,
-  SelectOption,
   ViewAllButton,
 } from '../common/components'
 import { getArticles, getDifficulties, getProducts, getTopics } from '../lib/api'
@@ -161,95 +158,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
         </div>
 
         <div className={classNames('z-[1] flex flex-col mt-16 sm:mt-[124px]', DEFAULT_SIDE_PADDING)}>
-          <Disclosure>
-            <div className="flex justify-between">
-              <span className="text-xl font-bold sm:text-2xl">Choose Topic</span>
-
-              <Disclosure.Button as={Fragment}>
-                <ViewAllButton isSmall />
-              </Disclosure.Button>
-            </div>
-
-            <Transition
-              enter="transition duration-100 ease-out"
-              enterFrom="transform scale-95 opacity-0"
-              enterTo="transform scale-100 opacity-100"
-              leave="transition duration-75 ease-out"
-              leaveFrom="transform scale-100 opacity-100"
-              leaveTo="transform scale-95 opacity-0"
-            >
-              <Disclosure.Panel className="grid grid-cols-2 gap-3 mt-9 sm:hidden">
-                <Select
-                  onChange={([value, isProduct]: [TopicEntity, false] | [ProductEntity, true]) =>
-                    isProduct ? handleSelectProduct(value) : handleSelectTopic(value)
-                  }
-                  button={
-                    <Listbox.Button
-                      type="button"
-                      className="flex items-center justify-between w-full px-4 border rounded-lg bg-slate-800 text-slate-50 h-9 border-slate-700"
-                    >
-                      <Typography variant="xs" weight={500}>
-                        {selectedTopic?.attributes?.name ?? selectedProduct?.attributes?.name ?? 'All Topics'}
-                      </Typography>
-                      <ChevronDownIcon className="w-3 h-3" aria-hidden="true" />
-                    </Listbox.Button>
-                  }
-                >
-                  <Select.Options className="!bg-slate-700 p-2 !max-h-[unset] space-y-1">
-                    {products.map((product) => (
-                      <SelectOption
-                        className="text-xs"
-                        key={`product_${product.id}`}
-                        value={[product, true]}
-                        title={product.attributes?.name}
-                        isSelected={selectedProduct?.id === product.id}
-                      />
-                    ))}
-                    {topics.map((topic) => (
-                      <SelectOption
-                        className="text-xs"
-                        key={`topic_${topic.id}`}
-                        value={[topic, false]}
-                        title={topic.attributes?.name}
-                        isSelected={selectedTopic?.id === topic.id}
-                      />
-                    ))}
-                  </Select.Options>
-                </Select>
-                <Select
-                  value={selectedDifficulty}
-                  onChange={handleSelectDifficulty}
-                  button={
-                    <GradientWrapper className="w-full rounded-lg h-9">
-                      <Listbox.Button
-                        type="button"
-                        className="flex items-center justify-between w-full h-full px-4 rounded-lg bg-slate-800 text-slate-50"
-                      >
-                        <Typography variant="xs" weight={500}>
-                          {selectedDifficulty?.attributes?.name ?? 'Select Difficulty'}
-                        </Typography>
-                        <ChevronDownIcon width={12} height={12} aria-hidden="true" />
-                      </Listbox.Button>
-                    </GradientWrapper>
-                  }
-                >
-                  <Select.Options className="!bg-slate-700 p-2 !max-h-[unset] space-y-1">
-                    {difficulties.map((difficulty) => (
-                      <SelectOption
-                        className="text-xs"
-                        key={`difficulty_${difficulty.id}`}
-                        value={difficulty}
-                        title={difficulty.attributes?.name}
-                        isSelected={selectedDifficulty?.id === difficulty.id}
-                      />
-                    ))}
-                  </Select.Options>
-                </Select>
-              </Disclosure.Panel>
-            </Transition>
-          </Disclosure>
-
-          <div className="flex-wrap hidden gap-3 sm:flex sm:gap-4 mt-9 sm:mt-8">
+          <div className="flex-wrap gap-3 flex sm:gap-4 mt-9 sm:mt-8">
             {products.map(
               (product) =>
                 product && (
@@ -274,10 +183,8 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
             )}
           </div>
 
-          <div className="items-center hidden gap-8 mt-10 sm:flex">
-            <Typography variant="xl" weight={700}>
-              Difficulty:
-            </Typography>
+          <div className="items-center gap-8 mt-10 flex flex-wrap">
+            <span className="text-xl font-semibold">Difficulty:</span>
             <div className="flex flex-wrap gap-6">
               <Difficulties
                 selected={selectedDifficulty as DifficultyEntity}

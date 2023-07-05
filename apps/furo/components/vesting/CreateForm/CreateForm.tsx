@@ -1,17 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { nanoid } from 'nanoid'
 import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { FundSource } from '@sushiswap/hooks'
+import { Form } from '@sushiswap/ui/components/form'
+import { nanoid } from 'nanoid'
 import { FC, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { CreateFormReviewModal } from './CreateFormReviewModal'
-import { VestingForm } from './VestingForm'
+
 import {
   CreateMultipleVestingFormSchemaType,
   CreateMultipleVestingModelSchema,
   CreateVestingFormSchemaType,
 } from '../schema'
-import { Form } from '@sushiswap/ui/future/components/form'
+import { CreateFormReviewModal } from './CreateFormReviewModal'
+import { VestingForm } from './VestingForm'
 
 export const CREATE_VEST_DEFAULT_VALUES: CreateVestingFormSchemaType = {
   id: nanoid(),

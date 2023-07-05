@@ -1,5 +1,6 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
-import { classNames, Container } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
 import {
   ProductArticles,
   ProductBackground,
@@ -62,7 +63,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         }
         productDescription={description}
         productUrl={url}
-        buttonIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
+        buttonIcon={LinkIcon}
         productStats={productStats}
       />
       <ProductCards

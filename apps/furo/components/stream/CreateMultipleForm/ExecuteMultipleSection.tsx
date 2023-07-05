@@ -1,30 +1,30 @@
 import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
+import { bentoBoxV1Address } from '@sushiswap/bentobox'
 import { Amount, Native, tryParseAmount, Type } from '@sushiswap/currency'
+import { FuroStreamRouterChainId } from '@sushiswap/furo'
 import { FundSource } from '@sushiswap/hooks'
-import { Dots } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/components/button'
+import { Dots } from '@sushiswap/ui/components/dots'
+import { createToast } from '@sushiswap/ui/components/toast'
 import {
+  Address,
   getFuroStreamRouterContractConfig,
   useAccount,
   useBentoBoxTotals,
   useFuroStreamRouterContract,
 } from '@sushiswap/wagmi'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { Address } from '@sushiswap/wagmi'
 import React, { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { approveBentoBoxAction, batchAction, streamCreationAction, useDeepCompareMemoize } from '../../../lib'
 import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
-import { createToast } from '@sushiswap/ui/future/components/toast'
-import { FuroStreamRouterChainId } from '@sushiswap/furo'
-import { bentoBoxV1Address } from '@sushiswap/bentobox'
-import { Checker } from '@sushiswap/wagmi/future/systems'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { CreateMultipleStreamFormSchemaType } from '../schema'
-import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 
 const APPROVE_TAG = 'approve-multiple-streams'
 
@@ -167,31 +167,32 @@ export const ExecuteMultipleSection: FC<{
 
   return (
     <div className="flex justify-end gap-4">
-      <Button size="xl" type="button" variant="empty" onClick={onBack}>
+      <Button type="button" variant="ghost" onClick={onBack}>
         Cancel
       </Button>
-      <Checker.Connect size="xl">
-        <Checker.Network chainId={chainId} size="xl">
+      <Checker.Connect size="default" fullWidth={false}>
+        <Checker.Network size="default" fullWidth={false} chainId={chainId}>
           <Checker.ApproveBentobox
+            size="default"
+            fullWidth={false}
             tag={APPROVE_TAG}
-            size="xl"
             id="create-multiple-stream-approve-bentobox"
             chainId={chainId}
             masterContract={getFuroStreamRouterContractConfig(chainId).address}
           >
             <Checker.ApproveERC20Multiple
-              size="xl"
+              size="default"
+              fullWidth={false}
               id={'create-multiple-stream-approve-token'}
               amounts={approveAmounts}
             >
               <Checker.Success tag={APPROVE_TAG}>
                 <Button
-                  size="xl"
                   onClick={() => sendTransaction?.()}
                   type="submit"
                   loading={isWritePending}
                   disabled={!isValid || isValidating || !sendTransaction}
-                  testdata-id="create-multiple-streams-confirm-button"
+                  testId="create-multiple-streams-confirm"
                 >
                   {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Streams'}
                 </Button>

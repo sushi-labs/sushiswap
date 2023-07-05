@@ -1,6 +1,7 @@
 import { z } from 'zod'
-import { ZAddress, ZFundSource, ZToken } from '../../lib/zod'
 import { RefinementCtx } from 'zod/lib/types'
+
+import { ZAddress, ZFundSource, ZToken } from '../../lib/zod'
 
 export const STEP_CONFIGURATIONS_SECONDS: Record<string, number> = {
   Weekly: 604800,

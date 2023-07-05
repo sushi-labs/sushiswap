@@ -1,6 +1,6 @@
 import { test } from '@playwright/test'
 import { Native, Token, USDC_ADDRESS } from '@sushiswap/currency'
-import { GradedVestingFrequency, VestingArgs, createSingleVest, createSnapshot, loadSnapshot } from '../../../utils'
+import { createSingleVest, createSnapshot, GradedVestingFrequency, loadSnapshot, VestingArgs } from '../../../utils'
 
 if (!process.env.CHAIN_ID) {
   throw new Error('CHAIN_ID env var not set')

@@ -1,31 +1,31 @@
 import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
+import { bentoBoxV1Address } from '@sushiswap/bentobox'
 import { Amount, Native, Type } from '@sushiswap/currency'
+import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { FundSource } from '@sushiswap/hooks'
-import { Dots } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/components/button'
+import { Dots } from '@sushiswap/ui/components/dots'
+import { createToast } from '@sushiswap/ui/components/toast'
 import {
+  Address,
   getFuroVestingRouterContractConfig,
   useAccount,
   useBentoBoxTotals,
   useFuroVestingRouterContract,
 } from '@sushiswap/wagmi'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { Address } from '@sushiswap/wagmi'
 import React, { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreationAction } from '../../../lib'
 import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
-import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount } from '../utils'
-import { createToast } from '@sushiswap/ui/future/components/toast'
-import { FuroVestingRouterChainId } from '@sushiswap/furo'
-import { bentoBoxV1Address } from '@sushiswap/bentobox'
 import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS_MAP } from '../schema'
-import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { Checker } from '@sushiswap/wagmi/future/systems'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount } from '../utils'
 
 const APPROVE_TAG = 'approve-multiple-vestings'
 
@@ -208,27 +208,33 @@ export const ExecuteMultipleSection: FC<{
 
   return (
     <div className="flex justify-end gap-4">
-      <Button size="xl" type="button" variant="empty" onClick={onBack}>
+      <Button type="button" variant="ghost" onClick={onBack}>
         Cancel
       </Button>
-      <Checker.Connect size="xl">
-        <Checker.Network chainId={chainId} size="xl">
+      <Checker.Connect size="default" fullWidth={false}>
+        <Checker.Network size="default" fullWidth={false} chainId={chainId}>
           <Checker.ApproveBentobox
+            size="default"
+            fullWidth={false}
             tag={APPROVE_TAG}
-            size="xl"
             id="create-multiple-vest-approve-bentobox"
             chainId={chainId}
             masterContract={getFuroVestingRouterContractConfig(chainId).address}
           >
-            <Checker.ApproveERC20Multiple size="xl" id={'create-multiple-vest-approve-token'} amounts={approveAmounts}>
+            <Checker.ApproveERC20Multiple
+              size="default"
+              fullWidth={false}
+              id={'create-multiple-vest-approve-token'}
+              amounts={approveAmounts}
+            >
               <Checker.Success tag={APPROVE_TAG}>
                 <Button
-                  size="xl"
+                  size="default"
                   onClick={() => sendTransaction?.()}
                   type="submit"
                   loading={isWritePending}
                   disabled={!isValid || isValidating || !sendTransaction}
-                  testdata-id="create-multiple-vest-confirm-button"
+                  testId="create-multiple-vest-confirm"
                 >
                   {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Vests'}
                 </Button>

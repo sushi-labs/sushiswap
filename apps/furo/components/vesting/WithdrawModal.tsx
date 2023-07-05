@@ -1,17 +1,18 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
-import { Dots } from '@sushiswap/ui'
+import { FuroVestingChainId } from '@sushiswap/furo'
+import { ZERO } from '@sushiswap/math'
+import { Button } from '@sushiswap/ui/components/button'
+import { Dialog } from '@sushiswap/ui/components/dialog'
+import { Dots } from '@sushiswap/ui/components/dots'
+import { createToast } from '@sushiswap/ui/components/toast'
 import { useAccount, useFuroVestingContract } from '@sushiswap/wagmi'
-import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems'
+import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
+
 import { useVestingBalance, Vesting } from '../../lib'
-import { createToast } from '@sushiswap/ui/future/components/toast'
-import { FuroVestingChainId } from '@sushiswap/furo'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { ZERO } from '@sushiswap/math'
-import { Dialog } from '@sushiswap/ui/future/components/dialog'
 
 interface WithdrawModalProps {
   vesting?: Vesting
@@ -69,9 +70,8 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, childr
       setOpen(false)
     },
     enabled: Boolean(vesting && balance && contract),
-    gasMargin: true
+    gasMargin: true,
   })
-
 
   return (
     <>
@@ -80,8 +80,6 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, childr
       ) : (
         <Button
           fullWidth
-          size="xl"
-          variant="filled"
           disabled={!address || !vesting?.canWithdraw(address) || !balance || !balance?.greaterThan(0)}
           onClick={() => {
             setOpen(true)
@@ -100,31 +98,17 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, childr
             </span>{' '}
             unlocked tokens available for withdrawal.
           </div>
-          <Checker.Connect size="xl" fullWidth>
-            <Checker.Network size="xl" fullWidth chainId={chainId}>
-              <Checker.Custom
-                showGuardIfTrue={Boolean(!balance?.greaterThan(ZERO))}
-                guard={
-                  <Button size="xl" fullWidth>
-                    Not enough available
-                  </Button>
-                }
-              >
+          <Checker.Connect fullWidth>
+            <Checker.Network fullWidth chainId={chainId}>
+              <Checker.Custom guardWhen={Boolean(!balance?.greaterThan(ZERO))} guardText="Not enough available">
                 <Button
                   size="xl"
-                  variant="filled"
                   fullWidth
                   disabled={isWritePending || !sendTransaction}
                   onClick={() => sendTransaction?.()}
-                  testId='withdraw-modal-confirmation'
+                  testId="withdraw-modal-confirmation"
                 >
-                  {!vesting?.token ? (
-                    'Invalid vest token'
-                  ) : isWritePending ? (
-                    <Dots>Confirm Withdraw</Dots>
-                  ) : (
-                    'Withdraw'
-                  )}
+                  {!vesting?.token ? 'Invalid vest token' : isWritePending ? <Dots>Confirm Withdraw</Dots> : 'Withdraw'}
                 </Button>
               </Checker.Custom>
             </Checker.Network>

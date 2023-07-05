@@ -1,19 +1,20 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
-import { tryParseAmount } from '@sushiswap/currency'
-import { Dots } from '@sushiswap/ui'
-import { _useSendTransaction as useSendTransaction, useAccount, useFuroStreamContract } from '@sushiswap/wagmi'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { Stream, useStreamBalance } from '../../lib'
-import { createToast } from '@sushiswap/ui/future/components/toast'
-import { FuroStreamChainId } from '@sushiswap/furo'
-import { Button } from '@sushiswap/ui/future/components/button/Button'
-import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
-import { Dialog } from '@sushiswap/ui/future/components/dialog/Dialog'
-import { Text } from '@sushiswap/ui/future/components/input/Text'
-import { shortenAddress } from '@sushiswap/format'
 import { Chain } from '@sushiswap/chain'
+import { tryParseAmount } from '@sushiswap/currency'
+import { shortenAddress } from '@sushiswap/format'
+import { FuroStreamChainId } from '@sushiswap/furo'
+import { Button } from '@sushiswap/ui/components/button'
+import { Dialog } from '@sushiswap/ui/components/dialog/Dialog'
+import { Dots } from '@sushiswap/ui/components/dots'
+import { Text } from '@sushiswap/ui/components/input/Text'
+import { createToast } from '@sushiswap/ui/components/toast'
+import { _useSendTransaction as useSendTransaction, useAccount, useFuroStreamContract } from '@sushiswap/wagmi'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
+
+import { Stream, useStreamBalance } from '../../lib'
 
 interface WithdrawModalProps {
   stream: Stream
@@ -95,8 +96,6 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, childre
       ) : (
         <Button
           fullWidth
-          size="md"
-          variant="filled"
           disabled={!stream.canWithdraw(address)}
           onClick={() => {
             setOpen(true)
@@ -124,32 +123,27 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, childre
               {shortenAddress(stream.recipient.id)}
             </a>
           </div>
-          <Text label="Amount" value={input} onChange={(val) => setInput(`${val}`)} id="withdraw-modal-input" testdata-id="withdraw-modal-input" />
+          <Text
+            label="Amount"
+            value={input}
+            onChange={(val) => setInput(`${val}`)}
+            id="withdraw-modal-input"
+            testdata-id="withdraw-modal-input"
+          />
           <div className="col-span-2 pt-2">
-            <Checker.Connect size="xl" fullWidth>
-              <Checker.Network size="xl" fullWidth chainId={chainId}>
-                <Checker.Custom
-                  showGuardIfTrue={!amount?.greaterThan(0)}
-                  guard={
-                    <Button size="xl" fullWidth>
-                      Enter amount
-                    </Button>
-                  }
-                >
+            <Checker.Connect fullWidth>
+              <Checker.Network fullWidth chainId={chainId}>
+                <Checker.Custom guardWhen={!amount?.greaterThan(0)} guardText="Enter amount">
                   <Checker.Custom
-                    showGuardIfTrue={Boolean(stream.balance && amount?.greaterThan(stream.balance))}
-                    guard={
-                      <Button size="xl" fullWidth>
-                        Not enough available
-                      </Button>
-                    }
+                    guardWhen={Boolean(stream.balance && amount?.greaterThan(stream.balance))}
+                    guardText="Not enough available"
                   >
                     <Button
                       size="xl"
                       fullWidth
                       disabled={isWritePending || !stream.balance}
                       onClick={() => sendTransaction?.()}
-                      testId='withdraw-modal-confirmation'
+                      testId="withdraw-modal-confirmation"
                     >
                       {!stream.token ? (
                         'Invalid stream token'

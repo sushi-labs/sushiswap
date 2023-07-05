@@ -43,8 +43,9 @@
     "@tailwindcss/forms": "0.5.3",
     "@tailwindcss/typography": "0.5.9",
     "tailwindcss": "3.3.2",
-    "tsup": "6.5.0",
-    "typescript": "5.0.4"
+    "tailwindcss-animate": "^1.0.5",
+    "tsup": "7.1.0",
+    "typescript": "5.1.6"
   },
   "peerDependencies": {
     "tailwindcss": "3.3.2"

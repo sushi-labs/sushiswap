@@ -1,22 +1,23 @@
+import { DuplicateIcon, PlusIcon, TrashIcon } from '@heroicons/react/solid'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { FuroVestingRouterChainId } from '@sushiswap/furo/exports/exports'
+import { Button } from '@sushiswap/ui/components/button'
+import { Form } from '@sushiswap/ui/components/form'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
+import { nanoid } from 'nanoid'
 import { FC, useCallback, useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
+
 import { CREATE_VEST_DEFAULT_VALUES } from '../CreateForm'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { nanoid } from 'nanoid'
-import { ImportZoneSection } from './ImportZoneSection'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
-import { DuplicateIcon, PlusIcon, TrashIcon } from '@heroicons/react/solid'
 import { VestingForm } from '../CreateForm/VestingForm'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { ReviewSection } from './ReviewSection'
-import { ExecuteMultipleSection } from './ExecuteMultipleSection'
 import {
   CreateMultipleVestingBaseSchemaFormErrorsType,
   CreateMultipleVestingFormSchemaType,
   CreateMultipleVestingModelSchema,
 } from '../schema'
-import { Form } from '@sushiswap/ui/future/components/form'
+import { ExecuteMultipleSection } from './ExecuteMultipleSection'
+import { ImportZoneSection } from './ImportZoneSection'
+import { ReviewSection } from './ReviewSection'
 
 export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ chainId }) => {
   const [review, setReview] = useState(false)
@@ -80,18 +81,15 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
                       <h1 className="text-xs font-semibold uppercase">Vesting {i + 1}</h1>
                       <div className="flex items-center gap-5 pr-2">
                         <div className="flex items-center">
-                          <IconButton
-                            icon={DuplicateIcon}
-                            iconProps={{ width: 16, height: 16 }}
-                            onClick={() => append(el)}
-                          />
+                          <IconButton icon={DuplicateIcon} onClick={() => append(el)} name="Duplicate" />
                         </div>
                         {(i > 0 || (formData.vestings || []).length > 1) && (
                           <div className="flex items-center">
                             <IconButton
                               icon={TrashIcon}
-                              iconProps={{ width: 16, height: 16, className: 'text-red' }}
+                              iconProps={{ className: 'text-red' }}
                               onClick={() => remove(i)}
+                              name="Remove"
                             />
                           </div>
                         )}
@@ -102,22 +100,20 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
                 ))}
                 <div className="flex justify-end gap-4">
                   <Button
-                    size="xl"
-                    variant="outlined"
+                    variant="secondary"
                     type="button"
-                    startIcon={<PlusIcon width={16} height={16} />}
+                    icon={PlusIcon}
                     onClick={() => append({ ...CREATE_VEST_DEFAULT_VALUES, id: nanoid() })}
-                    testdata-id="create-multiple-vest-add-vest-button"
+                    testId="create-multiple-vest-add-vest"
                   >
                     Add Vesting
                   </Button>
                   <Button
-                    size="xl"
-                    variant="outlined"
+                    variant="secondary"
                     type="button"
                     onClick={() => setReview(true)}
                     disabled={!formState.isValid}
-                    testdata-id="create-multiple-vest-review-button"
+                    testId="create-multiple-vest-review"
                   >
                     Review
                   </Button>

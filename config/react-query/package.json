@@ -26,7 +26,8 @@
     "build": "tsup src/index.ts --format esm,cjs --dts",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "lint": "TIMING=1 eslint ./**/*.ts* --fix",
+    "lint": "TIMING=1 eslint src",
+    "lint:fix": "TIMING=1 eslint src --fix",
     "test": "jest --passWithNoTests"
   },
   "jest": {
@@ -42,8 +43,8 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@tanstack/react-query": "4.28.0",
     "@tanstack/react-query-devtools": "4.28.0",
-    "tsup": "6.5.0",
-    "typescript": "5.0.4"
+    "tsup": "7.1.0",
+    "typescript": "5.1.6"
   },
   "peerDependencies": {
     "@tanstack/react-query": "4.28.0",

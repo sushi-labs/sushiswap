@@ -1,5 +1,5 @@
 import { LinkIcon, MailIcon } from '@heroicons/react/outline'
-import { TwitterIcon } from '@sushiswap/ui'
+import { TwitterIcon } from '@sushiswap/ui/components/icons'
 import { FC } from 'react'
 import { Article } from 'types'
 

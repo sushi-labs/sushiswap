@@ -1,4 +1,4 @@
-import { Chip, Typography } from '@sushiswap/ui'
+import { Chip } from '@sushiswap/ui/components/chip'
 import { format } from 'date-fns'
 import { FC } from 'react'
 import { Article } from 'types'
@@ -28,16 +28,18 @@ export const ArticleListItem: FC<ArticleListItem> = ({ article }) => {
         {(article?.attributes?.categories?.data || []).length > 0 && (
           <div className="flex gap-1 md:pt-3">
             {article?.attributes?.categories?.data.map((category) => (
-              <Chip key={category.id} label={category?.attributes?.name} className="capitalize" />
+              <Chip variant="ghost" key={category.id}>
+                {category?.attributes?.name}
+              </Chip>
             ))}
           </div>
         )}
         <div className="flex flex-col gap-2 lg:gap-3">
           <div className="text-base font-medium md:text-2xl text-slate-200">{article?.attributes?.title}</div>
-          {/*<Typography className="text-slate-400 line-clamp-2">{article?.attributes.description}</Typography>*/}
-          <Typography variant="sm" weight={500} className="text-slate-400">
+          {/*<p className="text-slate-400 line-clamp-2">{article?.attributes.description}</p>*/}
+          <p className="text-sm font-medium text-slate-400">
             {article?.attributes?.publishedAt && format(new Date(article?.attributes.publishedAt), 'dd MMM, yyyy')}
-          </Typography>
+          </p>
         </div>
       </div>
     </a>

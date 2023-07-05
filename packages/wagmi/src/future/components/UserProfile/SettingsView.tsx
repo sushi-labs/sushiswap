@@ -1,14 +1,14 @@
 import { ArrowLeftIcon } from '@heroicons/react/20/solid'
-import { List } from '@sushiswap/ui/future/components/list/List'
+import { List } from '@sushiswap/ui/components/list/List'
 import React, { Dispatch, FC, Fragment, SetStateAction } from 'react'
 
 import { ProfileView } from './index'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { RadioGroup } from '@headlessui/react'
 import { classNames } from '@sushiswap/ui'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
 import { useLocalStorage } from '@sushiswap/hooks'
-import Switch from '@sushiswap/ui/future/components/Switch'
+import { Switch } from '@sushiswap/ui/components/switch'
 import { useTheme } from 'next-themes'
 
 interface SettingsViewProps {
@@ -26,19 +26,10 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
   const [showTestnets, setShowTestnets] = useLocalStorage('showTestnets', false)
 
   return (
-    <div className="p-2">
+    <>
       <div className="grid grid-cols-3 mb-3">
         <div className="flex justify-start">
-          <IconButton
-            onClick={() => setView(ProfileView.Default)}
-            icon={ArrowLeftIcon}
-            iconProps={{
-              strokeWidth: 4,
-              width: 20,
-              height: 20,
-              transparent: true,
-            }}
-          />
+          <IconButton size="sm" onClick={() => setView(ProfileView.Default)} icon={ArrowLeftIcon} name="Back" />
         </div>
         <span className="font-medium text-center">Settings</span>
         <div />
@@ -69,10 +60,10 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
             </RadioGroup>
           </List.KeyValue>
           <List.KeyValue flex title="Show testnets">
-            <Switch checked={showTestnets} onChange={setShowTestnets} />
+            <Switch checked={showTestnets} onCheckedChange={setShowTestnets} />
           </List.KeyValue>
         </List.Control>
       </List>
-    </div>
+    </>
   )
 }

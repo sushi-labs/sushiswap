@@ -3,16 +3,17 @@ import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
-import { Dots } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/components/button'
+import { Dialog } from '@sushiswap/ui/components/dialog/Dialog'
+import { Dots } from '@sushiswap/ui/components/dots'
+import { Text } from '@sushiswap/ui/components/input/Text'
+import { createToast } from '@sushiswap/ui/components/toast'
 import { _useSendTransaction as useSendTransaction, useAccount, useContract, useEnsAddress } from '@sushiswap/wagmi'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { Button } from '@sushiswap/ui/future/components/button/Button'
-import { Stream, Vesting } from '../lib'
-import { createToast } from '@sushiswap/ui/future/components/toast'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
-import { Dialog } from '@sushiswap/ui/future/components/dialog/Dialog'
-import { Text } from '@sushiswap/ui/future/components/input/Text'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
+
+import { Stream, Vesting } from '../lib'
 
 interface TransferModalProps {
   stream?: Stream | Vesting
@@ -36,7 +37,7 @@ export const TransferModal: FC<TransferModalProps> = ({
   const [recipient, setRecipient] = useState<string>('')
 
   const type = stream instanceof Vesting ? 'Vest' : 'Stream'
-  
+
   const contract = useContract({
     address: contractAddress,
     abi: abi,
@@ -102,7 +103,8 @@ export const TransferModal: FC<TransferModalProps> = ({
       ) : (
         <Button
           fullWidth
-          startIcon={<PaperAirplaneIcon width={18} height={18} className="transform rotate-45 mt-[-4px] ml-0.5" />}
+          icon={PaperAirplaneIcon}
+          iconProps={{ className: 'transform rotate-45 mt-[-4px] ml-0.5' }}
           onClick={() => setOpen(true)}
         >
           Transfer
@@ -118,23 +120,30 @@ export const TransferModal: FC<TransferModalProps> = ({
             </span>{' '}
             to the entered recipient.
             <p className="mt-2">
-              Please note that this will transfer ownership of the entire {type.toLowerCase()} to the recipient. You will not be able
-              to withdraw from this {type.toLowerCase()} after transferring
+              Please note that this will transfer ownership of the entire {type.toLowerCase()} to the recipient. You
+              will not be able to withdraw from this {type.toLowerCase()} after transferring
             </p>
           </div>
-          <Text label="Address" value={recipient} onChange={(val) => setRecipient(`${val}`)} id="ens-input" testdata-id="transfer-recipient-input"/>
-          <Checker.Connect size="xl" fullWidth>
-            <Checker.Network size="xl" fullWidth chainId={chainId}>
+          <Text
+            label="Address"
+            value={recipient}
+            onChange={(val) => setRecipient(`${val}`)}
+            id="ens-input"
+            testdata-id="transfer-recipient-input"
+          />
+          <Checker.Connect fullWidth>
+            <Checker.Network fullWidth chainId={chainId}>
               <Button
                 size="xl"
                 fullWidth
                 disabled={
                   isWritePending ||
                   !resolvedAddress ||
-                  resolvedAddress.toLowerCase() === stream?.recipient.id.toLowerCase() || !sendTransaction
+                  resolvedAddress.toLowerCase() === stream?.recipient.id.toLowerCase() ||
+                  !sendTransaction
                 }
                 onClick={() => sendTransaction?.()}
-                testId='transfer-confirmation'
+                testId="transfer-confirmation"
               >
                 {isWritePending ? (
                   <Dots>Confirm Transfer</Dots>

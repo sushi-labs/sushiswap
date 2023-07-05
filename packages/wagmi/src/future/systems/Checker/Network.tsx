@@ -1,16 +1,21 @@
 import { chainName } from '@sushiswap/chain'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
+import { ButtonProps } from '@sushiswap/ui/components/button'
+import dynamic from 'next/dynamic'
 import React, { FC, ReactElement } from 'react'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 
-import { CheckerButton } from './types'
-import dynamic from 'next/dynamic'
-
-export interface NetworkProps extends CheckerButton {
+export interface NetworkProps extends ButtonProps {
   chainId: number | undefined
 }
 
-export const Component: FC<NetworkProps> = ({ chainId, children, ...rest }): ReactElement<any, any> | null => {
+export const Component: FC<NetworkProps> = ({
+  chainId,
+  fullWidth = true,
+  size = 'xl',
+  children,
+  ...rest
+}): ReactElement<any, any> | null => {
   const { chain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
 
@@ -18,7 +23,7 @@ export const Component: FC<NetworkProps> = ({ chainId, children, ...rest }): Rea
 
   if (chain?.id !== chainId)
     return (
-      <Button onClick={() => switchNetwork && switchNetwork(chainId)} {...rest}>
+      <Button fullWidth={fullWidth} size={size} onClick={() => switchNetwork?.(chainId)} {...rest}>
         Switch to {chainName[chainId]}
       </Button>
     )
