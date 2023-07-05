@@ -524,7 +524,8 @@ async function startInfinitTest(args: {
   for (;;) {
     for (let i = 1; i < tokens.length; ++i) {
       await delay(1000)
-      const pools = extractor.getPoolCodes()
+      const { prefetchedPools: watchers } = extractor.getPoolsForTokens(tokens)
+      const pools = watchers.map((w) => w.getPoolCode()).filter((pc) => pc !== undefined) as PoolCode[]
       const poolMap = new Map<string, PoolCode>()
       pools.forEach((p) => poolMap.set(p.pool.address, p))
       nativeProvider.getCurrentPoolList().forEach((p) => poolMap.set(p.pool.address, p))

@@ -171,7 +171,7 @@ export class UniV2Extractor {
         this.factories.forEach((factory) => {
           const addr = this.computeV2Address(factory, t0, t1)
           const addrL = addr.toLowerCase()
-          const poolState = this.poolMap.get(addr.toLowerCase())
+          const poolState = this.poolMap.get(addrL)
           if (poolState) {
             if (poolState.status == PoolStatus.ValidPool || poolState.status == PoolStatus.UpdatingPool)
               prefetchedPools.push(poolState.poolCode)
