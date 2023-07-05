@@ -15,6 +15,7 @@ interface PropType {
   setToken1Value?: React.Dispatch<React.SetStateAction<number>>
   getSwapPrice?: (tradeVal: number) => Promise<any>
   outpuSwapTokenAmount?: any
+  isLoadingPriceLower?: boolean
 }
 export default function TradeInput({
   setOpen,
@@ -30,6 +31,7 @@ export default function TradeInput({
   disabledInput,
   setToken1Value,
   outpuSwapTokenAmount,
+  isLoadingPriceLower,
 }: PropType) {
   const [error, setError] = useState('')
   const { connected } = useWallet()
@@ -64,7 +66,7 @@ export default function TradeInput({
     if (connected) {
       const priceEst = coinData / 10 ** 8 < parseFloat(tradeVal?.current?.value as string)
       if (priceEst && !disabledInput) {
-        setError('Exceed Balance')
+        setError('Exceeds Balance')
         if (setButtonError) setButtonError('Insufficient Balance')
       } else {
         setError('')
@@ -81,31 +83,43 @@ export default function TradeInput({
   }
 
   return (
-    <div className="space-y-2 overflow-hidden pb-2 p-3 bg-white dark:bg-slate-800 rounded-xl">
+    <div
+      className={`${
+        error && '!bg-red-500/20 !dark:bg-red-900/30'
+      } space-y-2 overflow-hidden pb-2 p-3 bg-white dark:bg-slate-800 rounded-xl`}
+    >
       <div className="relative flex items-center gap-4">
-        <input
-          testdata-id="swap-from-input"
-          inputMode="decimal"
-          title="Token Amount"
-          autoCorrect="off"
-          autoCapitalize="off"
-          spellCheck="false"
-          autoComplete="new-password"
-          pattern="^[0-9]*[.,]?[0-9]*$"
-          placeholder="0.0"
-          min={0}
-          ref={tradeVal}
-          onChange={() => {
-            checkBalance()
-          }}
-          minLength={1}
-          maxLength={79}
-          className="text-gray-900 dark:text-slate-50 text-left border-none focus:outline-none focus:ring-0 p-0 bg-transparent w-full truncate font-medium without-ring !text-3xl py-1"
-          type="text"
-          // disabled={disabledInput}
-          readOnly={disabledInput}
-          value={disabledInput ? (outpuSwapTokenAmount ? outpuSwapTokenAmount : '') : tradeVal?.current?.value || ''}
-        />
+        {isLoadingPriceLower ? (
+          <div className="w-full flex items-center">
+            <div className="w-[170px]">
+              <Skeleton.Text fontSize="text-2xl" className="w-full" />
+            </div>
+          </div>
+        ) : (
+          <input
+            testdata-id="swap-from-input"
+            inputMode="decimal"
+            title="Token Amount"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck="false"
+            autoComplete="new-password"
+            pattern="^[0-9]*[.,]?[0-9]*$"
+            placeholder="0"
+            min={0}
+            ref={tradeVal}
+            onChange={() => {
+              checkBalance()
+            }}
+            minLength={1}
+            maxLength={79}
+            className="text-gray-900 dark:text-slate-50 text-left border-none focus:outline-none focus:ring-0 p-0 bg-transparent w-full truncate font-medium without-ring !text-3xl py-1"
+            type="text"
+            // disabled={disabledInput}
+            readOnly={disabledInput}
+            value={disabledInput ? (outpuSwapTokenAmount ? outpuSwapTokenAmount : '') : tradeVal?.current?.value || ''}
+          />
+        )}
         <button
           onClick={changeToken}
           id="swap-from-button"
@@ -159,11 +173,23 @@ export default function TradeInput({
         />
       </div>
       <div className="flex flex-row items-center justify-between h-[36px]">
-        {error ? (
-          error
+        {isLoadingPrice ? (
+          <div className="w-[90px] flex items-center">
+            <Skeleton.Text fontSize="text-lg" className="w-full" />
+          </div>
         ) : (
-          <p className="font-medium text-lg flex items-baseline select-none text-gray-500 dark:text-slate-400">
-            $ 0.<span className="text-sm font-semibold">00</span>
+          <p
+            className={`font-medium text-lg flex items-baseline select-none ${
+              error ? 'text-red' : 'text-gray-500 dark:text-slate-400'
+            }`}
+          >
+            {error ? (
+              error
+            ) : (
+              <>
+                $ 0.<span className="text-sm font-semibold">00</span>
+              </>
+            )}
           </p>
         )}
 
@@ -179,7 +205,7 @@ export default function TradeInput({
               d="M15.6 4.6H1.85v-.55l12.1-.968v.968h1.65V2.4c0-1.21-.98-2.059-2.177-1.888L2.378 2.089C1.18 2.26.2 3.39.2 4.6v11a2.2 2.2 0 002.2 2.2h13.2a2.2 2.2 0 002.2-2.2V6.8a2.2 2.2 0 00-2.2-2.2zm-1.65 7.707a1.65 1.65 0 01-.63-3.176 1.65 1.65 0 11.63 3.176z"
             />
           </svg>
-          {isLoadingPrice ? (
+          {isLoadingPrice || isLoadingPriceLower ? (
             <div className="w-[60px] flex items-center">
               <Skeleton.Text fontSize="text-lg" className="w-full" />
             </div>

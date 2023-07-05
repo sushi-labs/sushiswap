@@ -1,7 +1,7 @@
 import { Transition } from '@headlessui/react'
-import { ChevronRightIcon } from '@heroicons/react/20/solid'
+import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import React, { Fragment, SVGProps, useState } from 'react'
-
+import { Wallet } from '@aptos-labs/wallet-adapter-core'
 interface Props {
   Icons: Record<string, (props: SVGProps<SVGSVGElement>) => JSX.Element | null>
   wallet: Wallet
@@ -24,7 +24,7 @@ export const NotFoundWalletList = ({ Icons, wallet }: Props) => {
           className: 'text-blue-500',
         })}
       </span>
-      <div className="text-sm font-medium text-gray-900 dark:text-slate-200">{wallet.name}</div>
+      <span className="text-sm font-medium text-gray-900 dark:text-slate-200">{wallet.name}</span>
 
       <Transition
         as={Fragment}
@@ -37,9 +37,9 @@ export const NotFoundWalletList = ({ Icons, wallet }: Props) => {
         leaveTo="translate-x-[10px] opacity-0"
         unmount={false}
       >
-        <div className="absolute right-0 top-0 bottom-0 flex justify-center items-center">
+        <span className="absolute right-0 top-0 bottom-0 flex justify-center items-center">
           <ChevronRightIcon width={20} height={20} />
-        </div>
+        </span>
       </Transition>
     </a>
   )

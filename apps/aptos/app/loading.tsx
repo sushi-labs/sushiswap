@@ -9,7 +9,7 @@ export default function Loading() {
     <div className="fixed inset-0 bg-gray-100 dark:bg-slate-900 z-[1080] flex items-center justify-center">
       <Transition
         appear
-        show={false}
+        show={true}
         unmount={false}
         static
         enter="ease-in-out duration-[1000ms]"

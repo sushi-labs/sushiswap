@@ -8,7 +8,7 @@ import WalletSelector from 'components/WalletSelector'
 
 export const Header: FC = () => {
   return (
-    <GlobalNav rightElement={<WalletSelector />}>
+    <GlobalNav rightElement={<WalletSelector varient="outlined" color="default" size="md" />}>
       <Link href="/swap">
         <Button color="default" variant="empty" size="md">
           Swap

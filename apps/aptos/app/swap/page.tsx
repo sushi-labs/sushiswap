@@ -10,7 +10,7 @@ import TradeInput from 'components/TradeInput'
 import React, { useEffect, useState } from 'react'
 import { SwitchAppType } from 'widget/SwitchAppType'
 import { WidgetTitleV2 } from 'widget/WidgetTitleV2'
-import { WalletSelector } from '@aptos-labs/wallet-adapter-ant-design'
+import WalletSelector from './../../components/WalletSelector'
 import { getYTokenPrice } from 'utils/utilFunctions'
 
 import { Network, Provider } from 'aptos'
@@ -20,9 +20,11 @@ interface coinType {
   data: any
 }
 import Container from '@sushiswap/ui/future/components/Container'
+import Loading from 'app/loading'
 
 export default function SwapPage() {
-  const { wallet, account, connected, isLoading, connect, wallets, signAndSubmitTransaction } = useWallet()
+  const { account, connected, disconnect, network, signAndSubmitTransaction } = useWallet()
+  const [isLoading, setLoading] = useState<boolean>(true)
   const [token0, setToken0] = useState<Token>(DEFAULT_TOKEN_LIST.tokens[0])
   const [token1, setToken1] = useState<Token>(DEFAULT_TOKEN_LIST.tokens[1])
   const [buttonError, setButtonError] = useState<string>('')
@@ -31,11 +33,17 @@ export default function SwapPage() {
   const [filteredCoin0, setFilteredCoin0] = useState<coinType | undefined>(undefined)
   const [filteredCoin1, setFilteredCoin1] = useState<coinType | undefined>(undefined)
   const [isLoadingPrice, setLoadingPrice] = useState<boolean>(true)
+  const [isLoadingPriceLower, setLoadingPriceLower] = useState<boolean>(true)
   const [tokenSelectedNumber, setTokenSelectedNumber] = useState<string>('')
   const [token1Value, setToken1Value] = useState<number>(0)
   const [swapPerTokenPrice, setSwapPerTokenPrice] = useState<any>()
   const [isTransactionPending, setisTransactionPending] = useState(false)
   const [noRouteFound, setNoRouteFound] = useState<string>('')
+  useEffect(() => {
+    if (network?.name === undefined) {
+      disconnect()
+    }
+  }, [network])
 
   const handleChangeToken = (token: Token) => {
     setOpen(false)
@@ -46,7 +54,9 @@ export default function SwapPage() {
     }
   }
   const getSwapPrice = async (tradeVal: number): Promise<any> => {
+    setLoadingPriceLower(true)
     setSwapPerTokenPrice(0)
+    tradeVal = tradeVal || 0
     const output: any = !inverse
       ? await getYTokenPrice(tradeVal * 10 ** 8, token0?.address, token1?.address)
       : await getYTokenPrice(tradeVal * 10 ** 8, token1?.address, token0?.address)
@@ -56,6 +66,7 @@ export default function SwapPage() {
     } else {
       setNoRouteFound('')
     }
+    setLoadingPriceLower(false)
   }
 
   const provider = new Provider(Network.TESTNET)
@@ -67,10 +78,10 @@ export default function SwapPage() {
       fetch(`https://fullnode.testnet.aptoslabs.com/v1/accounts/${account?.address}/resources`)
         .then((res) => res.json())
         .then((data) => {
-          const coinData0 = data.filter((coin: coinType) => {
+          const coinData0 = data?.filter((coin: coinType) => {
             return coin?.type.includes(token0.address)
           })
-          const coinData1 = data.filter((coin: coinType) => {
+          const coinData1 = data?.filter((coin: coinType) => {
             return coin?.type.includes(token1.address)
           })
           setFilteredCoin0(coinData0[0])
@@ -106,9 +117,22 @@ export default function SwapPage() {
     } finally {
     }
   }
+  useEffect(() => {
+    if (connected) {
+      setLoading(false)
+    } else {
+      const loadingInterval = setTimeout(() => {
+        setLoading(false)
+      }, 1750)
+      return () => {
+        clearInterval(loadingInterval)
+      }
+    }
+  }, [connected])
 
   return (
     <>
+      {isLoading && <Loading />}
       <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
         <div className="flex flex-col gap-4 swap-container">
           <Drawer.Root>
@@ -143,6 +167,7 @@ export default function SwapPage() {
                     getSwapPrice={getSwapPrice}
                     disabledInput={true}
                     outpuSwapTokenAmount={swapPerTokenPrice}
+                    isLoadingPriceLower={isLoadingPriceLower}
                   />
                 </>
               ) : (
@@ -173,6 +198,7 @@ export default function SwapPage() {
                     getSwapPrice={getSwapPrice}
                     disabledInput={true}
                     outpuSwapTokenAmount={swapPerTokenPrice}
+                    isLoadingPriceLower={isLoadingPriceLower}
                   />
                 </>
               )}
@@ -180,9 +206,9 @@ export default function SwapPage() {
                 {connected ? (
                   <button
                     className={`btn w-full flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold ${
-                      buttonError || noRouteFound ? 'pointer-events-none relative opacity-[0.4] overflow-hidden' : ''
+                      noRouteFound || buttonError ? 'pointer-events-none relative opacity-[0.4] overflow-hidden' : ''
                     }`}
-                    disabled={buttonError || noRouteFound ? true : false}
+                    disabled={noRouteFound || buttonError ? true : false}
                     onClick={() => {
                       token1Value ? swapToken() : {}
                     }}
@@ -198,7 +224,9 @@ export default function SwapPage() {
                     )}
                   </button>
                 ) : (
-                  <WalletSelector />
+                  // <button className="btn w-full flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold ">
+                  <WalletSelector hideChevron color="blue" size="xl" fullWidth={true} />
+                  // </button>
                 )}
               </div>
               {/* <ThunderCoreBanner /> */}
@@ -207,13 +235,14 @@ export default function SwapPage() {
           {/*spacer for fixed positioned swap button */}
         </div>
         <div className="h-[68px] w-full" />
+        <TokenListDialog
+          open={open}
+          selected={[token0, token1]}
+          setOpen={setOpen}
+          tokens={DEFAULT_TOKEN_LIST}
+          handleChangeToken={handleChangeToken}
+        />
       </Container>
-      <TokenListDialog
-        open={open}
-        setOpen={setOpen}
-        tokens={DEFAULT_TOKEN_LIST}
-        handleChangeToken={handleChangeToken}
-      />
     </>
   )
 }
