@@ -5,7 +5,7 @@ import NonSSRWrapper from 'NonSSRWrapper'
 
 export const SwitchAppType: FC = () => {
   return (
-    <div className="flex gap-2">
+    <div className="flex">
       <Button size="sm" variant="outlined" color="default">
         Swap
       </Button>
@@ -16,6 +16,9 @@ export const SwitchAppType: FC = () => {
           </Button>
         </Tooltip>
       </NonSSRWrapper>
+      <Button size="sm" variant="empty" color="default">
+        Liquidity
+      </Button>
     </div>
   )
 }

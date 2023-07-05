@@ -11,6 +11,7 @@ import React, { useEffect, useState } from 'react'
 import { SwitchAppType } from 'widget/SwitchAppType'
 import { WidgetTitleV2 } from 'widget/WidgetTitleV2'
 import WalletSelector from './../../components/WalletSelector'
+import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
 import { getYTokenPrice } from 'utils/utilFunctions'
 
 import { Network, Provider } from 'aptos'
@@ -137,7 +138,16 @@ export default function SwapPage() {
         <div className="flex flex-col gap-4 swap-container">
           <Drawer.Root>
             <WidgetTitleV2 />
-            <SwitchAppType />
+            <div className="flex items-center justify-between">
+              <SwitchAppType />
+              <SettingsOverlay
+                modules={[
+                  SettingsModule.SlippageTolerance,
+                  SettingsModule.CarbonOffset,
+                  // SettingsModule.RoutingApi
+                ]}
+              />
+            </div>
             <div className="relative">
               {inverse == false ? (
                 <>

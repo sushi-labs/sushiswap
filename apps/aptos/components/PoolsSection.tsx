@@ -1,15 +1,15 @@
 import { Tab } from '@headlessui/react'
 import Container from '@sushiswap/ui/future/components/Container'
 import { Button } from '@sushiswap/ui/future/components/button'
-import React, { FC } from 'react'
+import React, { FC, Fragment } from 'react'
 
 export default function PoolsSection() {
   return (
-    <section className="flex flex-col">
+    <div className="flex flex-col">
       <Tab.Group>
         <Container maxWidth="7xl" className="px-4 mx-auto">
           <div className="flex items-center gap-2 mb-4">
-            <Tab>
+            <Tab as={Fragment}>
               {({ selected }) => (
                 <Button
                   size="sm"
@@ -21,7 +21,7 @@ export default function PoolsSection() {
                 </Button>
               )}
             </Tab>
-            <Tab>
+            <Tab as={Fragment}>
               {({ selected }) => (
                 <Button
                   size="sm"
@@ -34,7 +34,7 @@ export default function PoolsSection() {
                 </Button>
               )}
             </Tab>
-            <Tab>
+            <Tab as={Fragment}>
               {({ selected }) => (
                 <Button
                   size="sm"
@@ -49,8 +49,7 @@ export default function PoolsSection() {
             </Tab>
           </div>
         </Container>
-        <Tab.Panels className="bg-gray-50 dark:bg-white/[0.02] pt-4"></Tab.Panels>
       </Tab.Group>
-    </section>
+    </div>
   )
 }
