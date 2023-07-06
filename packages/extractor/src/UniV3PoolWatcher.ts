@@ -86,6 +86,7 @@ export class UniV3PoolWatcher {
   state?: UniV3PoolSelfState
   updatePoolStateGuard = false
   busyCounter?: Counter
+  private lastPoolCode?: PoolCode
 
   constructor(
     provider: LiquidityProviders,
@@ -106,7 +107,9 @@ export class UniV3PoolWatcher {
     this.spacing = TICK_SPACINGS[fee]
 
     this.client = client
-    this.wordLoadManager = new WordLoadManager(address, this.spacing, tickHelperContract, client, busyCounter)
+    this.wordLoadManager = new WordLoadManager(address, this.spacing, tickHelperContract, client, busyCounter, () => {
+      this.lastPoolCode = undefined
+    })
     this.busyCounter = busyCounter
   }
 
@@ -136,6 +139,7 @@ export class UniV3PoolWatcher {
             liquidity: liquidity as bigint,
             sqrtPriceX96: sqrtPriceX96 as bigint,
           }
+          this.lastPoolCode = undefined
 
           this.wordLoadManager.onPoolTickChange(this.state.tick, true)
           break
@@ -175,6 +179,7 @@ export class UniV3PoolWatcher {
           this.wordLoadManager.addTick(l.blockNumber, tickLower, amount)
           this.wordLoadManager.addTick(l.blockNumber, tickUpper, -amount)
         }
+        this.lastPoolCode = undefined
         break
       }
       case 'Burn': {
@@ -190,6 +195,7 @@ export class UniV3PoolWatcher {
           this.wordLoadManager.addTick(l.blockNumber, tickLower, -amount)
           this.wordLoadManager.addTick(l.blockNumber, tickUpper, amount)
         }
+        this.lastPoolCode = undefined
         break
       }
       case 'Collect':
@@ -201,6 +207,7 @@ export class UniV3PoolWatcher {
             this.state.reserve1 -= amount1
           }
         }
+        this.lastPoolCode = undefined
         break
       }
       case 'Flash': {
@@ -211,6 +218,7 @@ export class UniV3PoolWatcher {
             this.state.reserve1 += paid1
           }
         }
+        this.lastPoolCode = undefined
         break
       }
       case 'Swap': {
@@ -227,6 +235,7 @@ export class UniV3PoolWatcher {
             this.wordLoadManager.onPoolTickChange(this.state.tick, false)
           }
         }
+        this.lastPoolCode = undefined
         break
       }
       default:
@@ -236,6 +245,7 @@ export class UniV3PoolWatcher {
   }
 
   getPoolCode(): PoolCode | undefined {
+    if (this.lastPoolCode) return this.lastPoolCode
     if (this.state === undefined) return
     const ticks = this.wordLoadManager.getMaxTickDiapason(this.state.tick)
     if (ticks.length == 0) return
@@ -253,6 +263,7 @@ export class UniV3PoolWatcher {
       ticks
     )
     const pc = new UniV3PoolCode(v3Pool, this.provider, this.provider)
+    this.lastPoolCode = pc
     return pc
   }
 

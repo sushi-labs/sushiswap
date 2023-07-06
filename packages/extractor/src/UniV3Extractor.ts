@@ -50,8 +50,8 @@ interface PoolCacheRecord {
 //   - don't call getPoolCodes() too often. It consumes much. Good practice is no do it once per second or so
 //   - direct logs (std output) to console
 //   - direct warnings (std error) to a file
-// TODO: watcher getCode caching
 // TODO: infinit watcher
+// TODO: write example of 'best practice'
 export class UniV3Extractor {
   factories: FactoryV3[]
   factoryMap: Map<string, FactoryV3> = new Map()

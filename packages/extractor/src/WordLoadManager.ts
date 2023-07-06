@@ -32,19 +32,22 @@ export class WordLoadManager {
   downloadQueue: number[] = []
   downloadCycleIsStared = false
   latestEventBlockNumber = 0
+  onTicksChanged?: () => void
 
   constructor(
     poolAddress: Address,
     poolSpacing: number,
     tickHelperContract: Address,
     client: MultiCallAggregator,
-    counter?: Counter
+    counter?: Counter,
+    onTicksChanged?: () => void
   ) {
     this.poolAddress = poolAddress
     this.poolSpacing = poolSpacing
     this.tickHelperContract = tickHelperContract
     this.client = client
     this.busyCounter = counter
+    this.onTicksChanged = onTicksChanged
   }
 
   wordIndex(tick: number) {
@@ -77,6 +80,7 @@ export class WordLoadManager {
                 }))
                 .sort((a: CLTick, b: CLTick) => a.index - b.index),
             })
+            if (this.onTicksChanged) this.onTicksChanged()
             if (blockNumber >= this.latestEventBlockNumber) this.downloadQueue.pop()
           }
         }
