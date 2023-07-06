@@ -157,7 +157,7 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant }) => {
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
-      {rightElement}
+      <div className="space-x-2">{rightElement}</div>
     </NavigationContainer>
   )
 }
