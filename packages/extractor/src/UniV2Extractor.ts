@@ -57,6 +57,8 @@ const UniV2FactoryAbi = [
 // TODO: add pools known/ignored/ ... counter - with special functions to change pool status
 // TODO: make buisyCounter correct
 // TODO: uniformization with ExtractorV3 ?
+// TODO: one token cache for all extractors ?
+// TODO: external token manager?
 export class UniV2Extractor {
   readonly client: PublicClient
   readonly multiCallAggregator: MultiCallAggregator
@@ -282,7 +284,7 @@ export class UniV2Extractor {
       return
     }
 
-    const [t0, t1] = token0.sortsBefore(token0) ? [token0, token1] : [token1, token0]
+    const [t0, t1] = token0.sortsBefore(token1) ? [token0, token1] : [token1, token0]
     const pool = new ConstantProductRPool(
       addr,
       t0 as RToken,

@@ -26,11 +26,11 @@ async function startInfinitTest(args: {
   })
   const chainId = client.chain?.id as ChainId
 
-  const extractor = new UniV2Extractor(client, args.factories)
+  const extractor = new UniV2Extractor(client, args.factories, './cache')
   await extractor.start()
 
   const nativeProvider = new NativeWrapProvider(chainId, client)
-  const tokenManager = new TokenManager(extractor.multiCallAggregator, './cache')
+  const tokenManager = new TokenManager(extractor.multiCallAggregator, `./cache/uniV3Tokens-${client.chain?.id}`)
   await tokenManager.addCachedTokens()
   const tokens = Array.from(tokenManager.tokens.values())
   for (;;) {
@@ -107,7 +107,7 @@ async function allPoolsPrefetchingTest(args: { providerURL: string; chain: Chain
     chain: args.chain,
     transport: transport,
   })
-  const extractor = new UniV2Extractor(client, args.factories)
+  const extractor = new UniV2Extractor(client, args.factories, './cache')
   await extractor.start()
   const start = performance.now()
   const pools = await extractor.addAllPoolsFromFactories()
