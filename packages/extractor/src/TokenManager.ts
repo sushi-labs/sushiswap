@@ -5,12 +5,18 @@ import { Address } from 'viem'
 
 import { MultiCallAggregator } from './MulticallAggregator'
 import { PermanentCache } from './PermanentCache'
+import { warnLog } from './WarnLog'
 
 interface TokenCacheRecord {
   address: Address
   name: string
   symbol: string
   decimals: number
+}
+
+// For some tokens that are not 100% ERC-20:
+const SpecialTokens: Record<string, Omit<TokenCacheRecord, 'address'>> = {
+  '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2': { name: 'Maker Token', symbol: 'MKR', decimals: 18 },
 }
 
 export class TokenManager {
@@ -59,9 +65,21 @@ export class TokenManager {
     const addr = address.toLowerCase() as Address
     const cached = this.tokens.get(addr)
     if (cached !== undefined) return cached
+    const special = SpecialTokens[addr]
+    if (special) {
+      const newToken = new Token({
+        chainId: this.client.client.chain?.id as ChainId,
+        address: address,
+        decimals: special.decimals,
+        symbol: special.symbol,
+        name: special.name,
+      })
+      this.addToken(newToken)
+      return newToken
+    }
 
     try {
-      const [decimals, symbol, name] = await Promise.all([
+      const [decimals, symbol, name] = await Promise.allSettled([
         this.client.callValue(address, erc20Abi, 'decimals'),
         this.client.callValue(address, erc20Abi, 'symbol'),
         this.client.callValue(address, erc20Abi, 'name'),
@@ -70,13 +88,14 @@ export class TokenManager {
       const newToken = new Token({
         chainId: this.client.client.chain?.id as ChainId,
         address: address,
-        decimals: Number(decimals as bigint),
-        symbol: symbol as string,
-        name: name as string,
+        decimals: decimals.status == 'fulfilled' ? Number(decimals.value as bigint) : 18,
+        symbol: symbol.status == 'fulfilled' ? (symbol.value as string) : `Unknown_${address.substring(2, 10)}`,
+        name: name.status == 'fulfilled' ? (name.value as string) : `Unknown_${address.substring(2, 10)}`,
       })
       this.addToken(newToken)
       return newToken
     } catch (e) {
+      warnLog(`Token downloading error ${address}`)
       return undefined
     }
   }
