@@ -11,7 +11,6 @@ interface Props {
 
 export const SwapButton = ({ noRouteFound, buttonError, token1Value, swapToken }: Props) => {
   const { connected } = useWallet()
-  console.log(noRouteFound, buttonError)
   return (
     <div className="pt-4">
       {connected ? (

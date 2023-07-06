@@ -29,7 +29,8 @@ export default function TradeOutput({
   outpuSwapTokenAmount,
   isLoadingPriceLower,
 }: PropType) {
-  outpuSwapTokenAmount = outpuSwapTokenAmount ? formatNumber(outpuSwapTokenAmount, decimals) : ''
+  outpuSwapTokenAmount = outpuSwapTokenAmount?.amountOut ? formatNumber(outpuSwapTokenAmount.amountOut, decimals) : ''
+  console.log(outpuSwapTokenAmount)
   useEffect(() => {
     checkBalance()
   }, [coinData])
@@ -110,6 +111,8 @@ export default function TradeOutput({
           isLoading={isLoadingPrice}
           isLoadingLower={isLoadingPriceLower}
           decimals={decimals}
+          disabled={true}
+          className="text-gray-500 dark:text-slate-500"
         />
       </div>
     </div>

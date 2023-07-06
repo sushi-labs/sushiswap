@@ -1,24 +1,43 @@
-function useAllCommonPairs(coinA, coinB) {
-  const basePairs = [
+import { Token } from './tokenType'
+
+export async function useAllCommonPairs(
+  amount_in: number = 0,
+  coinA: Token,
+  coinB: Token,
+  controller: AbortController
+) {
+  const basePairs: string[] = [
     '0x1::aptos_coin::AptosCoin',
-    '0x8c805723ebc0a7fc5b7d3e7b75d567918e806b3461cb9fa21941a9edc0220bf::devnet_coins::DevnetBNB',
-    '0x8c805723ebc0a7fc5b7d3e7b75d567918e806b3461cb9fa21941a9edc0220bf::devnet_coins::DevnetETH',
-    coinA.Address,
-    coinB.Address,
+    '0xb06483aa110a1d7cfdc0f5ba48545ee967564819014326b2767de4705048aab9::btc_coin::Bitcoin',
+    '0xd2f34ece0b838b770eac6d23a1e139d28008c806af944f779728629867d17538::ether_coin::Ether',
+    coinA.address,
+    coinB.address,
   ]
+  let returnRoutes
+  // var allPairs: string[][] = [].concat(
+  //   ...basePairs.map((pair: string, index: number) =>
+  //     basePairs.slice(index + 1).map((innerPair) => [pair, innerPair])
+  //   )
+  // )
+  var allPairs: string[][] = []
 
-  var allPairs = [].concat(...basePairs.map((v, i) => basePairs.slice(i + 1).map((w) => [v, w])))
+  for (let i = 0; i < basePairs.length; i++) {
+    for (let j = i + 1; j < basePairs.length; j++) {
+      allPairs.push([basePairs[i], basePairs[j]])
+    }
+  }
 
-  fetch(
-    'https://fullnode.testnet.aptoslabs.com/v1/accounts/0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa/resources'
+  await fetch(
+    'https://fullnode.testnet.aptoslabs.com/v1/accounts/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resources',
+    { signal: controller.signal }
   )
     .then((res) => res.json())
     .then((data) => {
-      let t = {}
-      let reserve_tokens = {}
-      let reserve_token_info = {}
+      let t: any = {}
+      let reserve_tokens: any = {}
+      let reserve_token_info: any = {}
 
-      let reserves = data.filter((d) => {
+      let reserves = data.filter((d: any) => {
         if (d.type.includes('swap::TokenPairReserve')) {
           reserve_tokens[d.type] = d
 
@@ -27,30 +46,28 @@ function useAllCommonPairs(coinA, coinB) {
 
         if (
           d.type.includes(
-            '0x1::coin::CoinInfo<0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa::swap::LPToken<'
+            '0x1::coin::CoinInfo<0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::LPToken<'
           )
         ) {
           reserve_token_info[d.type] = d
         }
       })
 
-      console.log(reserve_tokens)
-
       allPairs.map((token) => {
         if (
           reserve_tokens[
-            `0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa::swap::TokenPairReserve<${token[0]}, ${token[1]}>`
+            `0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::TokenPairReserve<${token[0]}, ${token[1]}>`
           ]
         ) {
           let info = {
             lpTokenInfo:
               reserve_token_info[
-                `0x1::coin::CoinInfo<0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa::swap::LPToken<${token[0]}, ${token[1]}>>`
+                `0x1::coin::CoinInfo<0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::LPToken<${token[0]}, ${token[1]}>>`
               ],
           }
           let data =
             reserve_tokens[
-              `0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa::swap::TokenPairReserve<${token[0]}, ${token[1]}>`
+              `0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::TokenPairReserve<${token[0]}, ${token[1]}>`
             ]
 
           t[`${token[0]}|||${token[1]}`] = {
@@ -64,18 +81,18 @@ function useAllCommonPairs(coinA, coinB) {
 
         if (
           reserve_tokens[
-            `0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa::swap::TokenPairReserve<${token[1]}, ${token[0]}>`
+            `0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::TokenPairReserve<${token[1]}, ${token[0]}>`
           ]
         ) {
           let info = {
             lpTokenInfo:
               reserve_token_info[
-                `0x1::coin::CoinInfo<0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa::swap::LPToken<${token[1]}, ${token[0]}>>`
+                `0x1::coin::CoinInfo<0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::LPToken<${token[1]}, ${token[0]}>>`
               ],
           }
           let data =
             reserve_tokens[
-              `0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa::swap::TokenPairReserve<${token[1]}, ${token[0]}>`
+              `0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::TokenPairReserve<${token[1]}, ${token[0]}>`
             ]
 
           t[`${token[1]}|||${token[0]}`] = {
@@ -88,9 +105,7 @@ function useAllCommonPairs(coinA, coinB) {
         }
       })
 
-      console.log(t)
-
-      let graph = Object.values(t).reduce((data, coin) => {
+      let graph = Object.values(t).reduce((data: any, coin: any) => {
         const coins_data = coin.pairs.split('|||')
 
         if (data[coins_data[0]]) {
@@ -108,17 +123,18 @@ function useAllCommonPairs(coinA, coinB) {
         return data
       }, {})
 
-      RouteDemo(t, graph, coinA, coinB)
+      returnRoutes = RouteDemo(amount_in, t, graph, coinA, coinB)
     })
+  return returnRoutes
 }
 
-const exactOutput = (amt_in, res_x, res_y) => {
-  let amt_with_fee = amt_in * 10 ** 8 * 9975
+const exactOutput = (amt_in: number, res_x: number, res_y: number) => {
+  let amt_with_fee = amt_in * 9975
   let amt_out = (amt_with_fee * res_y) / (res_x * 10000 + amt_with_fee)
-  return amt_out.toFixed(0) / 10 ** 8
+  return amt_out
 }
 
-function findPossibleRoutes(tokenA, tokenB, graph, visited, currentRoute, routes) {
+function findPossibleRoutes(tokenA: string, tokenB: string, graph: any, visited: any, currentRoute: any, routes: any) {
   // Mark the current token as visited
   visited[tokenA] = true
 
@@ -143,14 +159,14 @@ function findPossibleRoutes(tokenA, tokenB, graph, visited, currentRoute, routes
   visited[tokenA] = false
 }
 
-function RouteDemo(ARR, tokenGraph, coinA, coinB) {
+function RouteDemo(firstInput: any, ARR: any, tokenGraph: any, coinA: any, coinB: any) {
   const visitedTokens = {}
-  const currentTokenRoute = []
-  const allRoutes = []
+  const currentTokenRoute: any[] = []
+  const allRoutes: any[] = []
 
-  findPossibleRoutes(coinA.Address, coinB.Address, tokenGraph, visitedTokens, currentTokenRoute, allRoutes)
+  findPossibleRoutes(coinA.address, coinB.address, tokenGraph, visitedTokens, currentTokenRoute, allRoutes)
 
-  let firstInput = 100000000
+  // let firstInput = 100000000
   let lastOutput
   const bestFinder = []
 
@@ -167,13 +183,11 @@ function RouteDemo(ARR, tokenGraph, coinA, coinB) {
           lastOutput = exactOutput(lastOutput, res_x, res_y)
 
           if (ARR[route[2] + '|||' + route[3]] || ARR[route[3] + '|||' + route[2]]) {
-            // console.log(ARR[route[2] + "-" + route[3]]?.res_x || ARR[route[3] + "-" + route[2]]?.res_x)
             let res_x = ARR[route[2] + '|||' + route[3]]?.res_x || ARR[route[3] + '|||' + route[2]]?.res_y
             let res_y = ARR[route[2] + '|||' + route[3]]?.res_y || ARR[route[3] + '|||' + route[2]]?.res_x
             lastOutput = exactOutput(lastOutput, res_x, res_y)
 
             if (ARR[route[3] + '|||' + route[4]] || ARR[route[4] + '|||' + route[3]]) {
-              // console.log(ARR[route[3] + "-" + route[4]]?.res_x || ARR[route[4] + "-" + route[3]]?.res_x)
               let res_x = ARR[route[3] + '|||' + route[4]]?.res_x || ARR[route[4] + '|||' + route[3]]?.res_y
               let res_y = ARR[route[3] + '|||' + route[4]]?.res_y || ARR[route[4] + '|||' + route[3]]?.res_x
               lastOutput = exactOutput(lastOutput, res_x, res_y)
@@ -185,8 +199,9 @@ function RouteDemo(ARR, tokenGraph, coinA, coinB) {
     }
   }
 
-  const bestRoutePrice = bestFinder.reduce((r, b) => (r.amountOut > b.amountOut ? r : b))
-  console.log(bestRoutePrice)
+  const bestRoutePrice = bestFinder.reduce((r: any, b: any) => (r.amountOut > b.amountOut ? r : b))
+  console.log(bestFinder)
+  return bestRoutePrice
 }
 
 export async function getYTokenPrice(amount_in: number = 0, coinX: string, coinY: string, controller: AbortController) {

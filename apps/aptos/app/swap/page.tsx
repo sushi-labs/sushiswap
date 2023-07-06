@@ -13,13 +13,14 @@ import { SwitchAppType } from 'widget/SwitchAppType'
 import { WidgetTitleV2 } from 'widget/WidgetTitleV2'
 import WalletSelector from './../../components/WalletSelector'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
-import { getYTokenPrice } from 'utils/utilFunctions'
+import { getYTokenPrice, useAllCommonPairs } from 'utils/utilFunctions'
 import { Network, Provider } from 'aptos'
 import { Token } from 'utils/tokenType'
 import Container from '@sushiswap/ui/future/components/Container'
 import Loading from 'app/loading'
 import TradeOutput from 'components/TradeOutput'
 import { useSlippageTolerance } from '@sushiswap/hooks'
+import { payloadArgs } from 'utils/payloadUtil'
 
 interface coinType {
   type: string
@@ -69,19 +70,23 @@ export default function SwapPage() {
     setController(newController)
     setLoadingPriceLower(true)
     setSwapPerTokenPrice('')
-    const output: any = !inverse
-      ? await getYTokenPrice(
-          parseInt((tradeVal * 10 ** token0?.decimals) as unknown as string),
-          token0?.address,
-          token1?.address,
-          newController
-        )
-      : await getYTokenPrice(
-          parseInt((tradeVal * 10 ** token1?.decimals) as unknown as string),
-          token1?.address,
-          token0?.address,
-          newController
-        )
+    console.log('tradeVal', tradeVal)
+    const output = inverse
+      ? await useAllCommonPairs(tradeVal * 10 ** 8, token1, token0, newController)
+      : await useAllCommonPairs(tradeVal * 10 ** 8, token0, token1, newController)
+    // const output: any = !inverse
+    //   ? await getYTokenPrice(
+    //       parseInt((tradeVal * 10 ** token0?.decimals) as unknown as string),
+    //       token0?.address,
+    //       token1?.address,
+    //       newController
+    //     )
+    //   : await getYTokenPrice(
+    //       parseInt((tradeVal * 10 ** token1?.decimals) as unknown as string),
+    //       token1?.address,
+    //       token0?.address,
+    //       newController
+    //     )
     setSwapPerTokenPrice(output)
     if (output?.message?.includes('Unexpected') || output?.message?.includes('Cannot read properties')) {
       setNoRouteFound('No Route Found')
@@ -129,20 +134,21 @@ export default function SwapPage() {
   }, [account, inverse, connected, token0, token1, isTransactionPending])
 
   const swapToken = async () => {
+    console.log(swapPerTokenPrice)
+    const payload: any = payloadArgs(
+      parseInt((token1Value * 10 ** token0.decimals) as unknown as string),
+      swapPerTokenPrice
+    )
     setisTransactionPending(true)
     if (!account) return []
-    const payload = {
-      function: `${process.env.NEXT_PUBLIC_CONTRACT_ADDRESS}::router::swap_exact_input`,
-      type_arguments: !inverse ? [token0?.address, token1?.address] : [token1?.address, token0?.address],
-      arguments: [parseInt((token1Value * 10 ** token0.decimals) as unknown as string), '0'],
-      type: 'entry_function_payload',
-    }
     try {
       // sign and submit transaction to chain
-      const response = await signAndSubmitTransaction(payload)
-      // wait for transaction
-      await provider.waitForTransaction(response.hash)
-      setisTransactionPending(false)
+      if (payload) {
+        const response = await signAndSubmitTransaction(payload)
+        // wait for transaction
+        await provider.waitForTransaction(response.hash)
+        setisTransactionPending(false)
+      }
     } catch (error: any) {
     } finally {
     }

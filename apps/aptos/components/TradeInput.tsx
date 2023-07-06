@@ -43,6 +43,7 @@ export default function TradeInput({
   useEffect(() => {
     checkBalance()
   }, [coinData])
+  console.log(coinData)
 
   const checkBalance = () => {
     const regexPattern = /^[0-9]*(\.[0-9]*)?$/
@@ -136,7 +137,21 @@ export default function TradeInput({
       </div>
       <div className="flex flex-row items-center justify-between h-[36px]">
         <PricePanel isLoading={isLoadingPrice} error={error} />
-        <BalancePanel coinData={coinData} isLoading={isLoadingPrice} decimals={decimals} />
+        <BalancePanel
+          coinData={coinData}
+          isLoading={isLoadingPrice}
+          decimals={decimals}
+          onClick={() => {
+            setInputValue((coinData / 10 ** 8) as unknown as string)
+            const timeOut = setTimeout(() => {
+              checkBalance()
+            }, 100)
+            return () => {
+              clearTimeout(timeOut)
+            }
+          }}
+          className="text-blue hover:text-blue-600 active:text-blue-700 hover:dark:text-slate-300"
+        />
       </div>
     </div>
   )
