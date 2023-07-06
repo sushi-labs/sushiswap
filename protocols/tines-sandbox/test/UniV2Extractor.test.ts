@@ -110,8 +110,8 @@ async function allPoolsPrefetchingTest(args: { providerURL: string; chain: Chain
   const extractor = new UniV2Extractor(client, args.factories, './cache')
   await extractor.start()
   const start = performance.now()
-  const pools = await extractor.addAllPoolsFromFactories()
-  console.log(`allPoolsPrefetchingTest: ${pools.length} pools - ${Math.round(performance.now() - start)}ms`)
+  await extractor.addPoolsFromFactory(args.factories[0].address)
+  console.log(`addPoolsFromFactory test: ${Math.round(performance.now() - start)}ms`)
 }
 
 it.skip('UniV2 Extractor Ethereum infinit work test', async () => {
