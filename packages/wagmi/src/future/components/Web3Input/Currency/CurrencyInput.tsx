@@ -1,20 +1,19 @@
-import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { ChainId } from '@sushiswap/chain'
 import { Token, tryParseAmount, Type } from '@sushiswap/currency'
+import { usePrice } from '@sushiswap/react-query'
 import { classNames } from '@sushiswap/ui'
+import { Button, SelectIcon } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Input } from '@sushiswap/ui/components/input'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
-
+import dynamic from 'next/dynamic'
 import { FC, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useAccount } from 'wagmi'
 
+import { useBalanceWeb3 } from '../../../hooks'
 import { TokenSelector } from '../../TokenSelector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
-import { usePrice } from '@sushiswap/react-query'
-import { useBalanceWeb3 } from '../../../hooks'
-import dynamic from 'next/dynamic'
 
 export interface CurrencyInputProps {
   id?: string
@@ -32,6 +31,8 @@ export interface CurrencyInputProps {
   fetching?: boolean
   currencyLoading?: boolean
   currencies?: Record<string, Token>
+  allowNative?: boolean
+  error?: string
 }
 
 export const Component: FC<CurrencyInputProps> = ({
@@ -50,6 +51,8 @@ export const Component: FC<CurrencyInputProps> = ({
   fetching,
   currencyLoading,
   currencies,
+  allowNative = true,
+  error,
 }) => {
   const { address } = useAccount()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -85,12 +88,13 @@ export const Component: FC<CurrencyInputProps> = ({
   }, [currency])
 
   const isLoading = loading || currencyLoading || isBalanceLoading
+  const _error = error ? error : insufficientBalance ? 'Exceeds Balance' : undefined
 
   return (
     <div
       className={classNames(
         fetching && type === 'OUTPUT' ? 'shimmer-fast' : '',
-        insufficientBalance ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
+        _error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
         'space-y-2 overflow-hidden pb-2',
         className
       )}
@@ -125,9 +129,12 @@ export const Component: FC<CurrencyInputProps> = ({
             selected={currency}
             chainId={chainId}
             onSelect={onSelect}
+            includeNative={allowNative}
           >
             {({ setOpen }) => (
-              <button
+              <Button
+                size="lg"
+                variant={currency ? 'secondary' : 'default'}
                 id={`${id}-button`}
                 type="button"
                 testdata-id={`${id}-button`}
@@ -135,9 +142,7 @@ export const Component: FC<CurrencyInputProps> = ({
                   setOpen(true)
                   e.stopPropagation()
                 }}
-                className={classNames(
-                  'flex items-center gap-1.5 text-xl py-1.5 pl-[6px] pr-3 rounded-full font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12] whitespace-nowrap'
-                )}
+                className={classNames(currency ? 'pl-2 pr-3 text-xl' : '', '!rounded-full')}
               >
                 {currency ? (
                   <>
@@ -145,12 +150,12 @@ export const Component: FC<CurrencyInputProps> = ({
                       <Currency.Icon disableLink currency={currency} width={28} height={28} />
                     </div>
                     {currency.symbol}
-                    <ChevronDownIcon className="ml-0.5" strokeWidth={3} width={16} height={16} />
+                    <SelectIcon />
                   </>
                 ) : (
-                  'Select'
+                  'Select token'
                 )}
-              </button>
+              </Button>
             )}
           </TokenSelector>
         )}
@@ -179,7 +184,7 @@ export const Component: FC<CurrencyInputProps> = ({
           value={value}
           currency={currency}
           usdPctChange={usdPctChange}
-          error={insufficientBalance ? 'Exceeds Balance' : undefined}
+          error={_error}
           loading={isLoading || isPriceLoading}
           price={price}
         />

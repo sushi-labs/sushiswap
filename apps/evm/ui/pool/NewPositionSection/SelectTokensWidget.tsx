@@ -14,15 +14,25 @@ interface SelectTokensWidget {
   token1: Type | undefined
   setToken0(token: Type): void
   setToken1(token: Type): void
+  title?: string
 }
 
-export const SelectTokensWidget: FC<SelectTokensWidget> = ({ chainId, token0, token1, setToken0, setToken1 }) => {
+export const SelectTokensWidget: FC<SelectTokensWidget> = ({
+  title,
+  chainId,
+  token0,
+  token1,
+  setToken0,
+  setToken1,
+}) => {
   return (
     <ContentBlock
       title={
-        <>
-          Which <span className="text-gray-900 dark:text-white">token pair</span> would you like to add liquidity to?
-        </>
+        title ?? (
+          <>
+            Which <span className="text-gray-900 dark:text-white">token pair</span> would you like to add liquidity to?
+          </>
+        )
       }
     >
       <div className="flex gap-3">

@@ -233,8 +233,8 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
             <div>
               <Checker.Connect type="button">
                 <Checker.Network type="button" chainId={chainId}>
-                  <Checker.Custom guardWhen={topUp && !amountAsEntity?.greaterThan(ZERO)} guardText="Enter amount">
-                    <Checker.Custom guardWhen={changeEndDate && !endDate} guardText="Enter date">
+                  <Checker.Guard guardWhen={topUp && !amountAsEntity?.greaterThan(ZERO)} guardText="Enter amount">
+                    <Checker.Guard guardWhen={changeEndDate && !endDate} guardText="Enter date">
                       <Checker.ApproveBentobox
                         tag={APPROVE_TAG}
                         type="button"
@@ -264,8 +264,8 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                           </Checker.Success>
                         </Checker.ApproveERC20>
                       </Checker.ApproveBentobox>
-                    </Checker.Custom>
-                  </Checker.Custom>
+                    </Checker.Guard>
+                  </Checker.Guard>
                 </Checker.Network>
               </Checker.Connect>
             </div>

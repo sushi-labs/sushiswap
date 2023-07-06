@@ -1,9 +1,10 @@
-import { useDebounce } from '@sushiswap/hooks'
+import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
-import { filterTokens, getSortedTokensByQuery, tokenComparator } from '../../../../hooks/useSortedTokensByQuery'
+import { useDebounce } from '@sushiswap/hooks'
 import { Fraction } from '@sushiswap/math'
 import { useQuery } from '@tanstack/react-query'
-import { ChainId } from '@sushiswap/chain'
+
+import { filterTokens, getSortedTokensByQuery, tokenComparator } from '../../../../hooks/useSortedTokensByQuery'
 
 interface Params {
   query: string
@@ -37,7 +38,7 @@ export const useSortedTokenList = ({
   const debouncedQuery = useDebounce(query, 250)
 
   return useQuery({
-    queryKey: ['sortedTokenList', { debouncedQuery, tokenMap, customTokenMap, balancesMap, pricesMap }],
+    queryKey: ['sortedTokenList', { debouncedQuery, tokenMap, customTokenMap, balancesMap, pricesMap, includeNative }],
     queryFn: async () => {
       const tokenMapValues = tokenMap ? Object.values(tokenMap) : []
       const tokenMapIds: string[] = tokenMapValues ? tokenMapValues.map((el) => el.address) : []

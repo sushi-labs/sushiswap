@@ -82,7 +82,7 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
         onInput1={onChangeToken1TypedAmount}
       >
         <Checker.Connect fullWidth>
-          <Checker.Custom
+          <Checker.Guard
             guardWhen={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
             guardText="Pool not found"
           >
@@ -111,7 +111,7 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                 </Checker.ApproveERC20>
               </Checker.Amounts>
             </Checker.Network>
-          </Checker.Custom>
+          </Checker.Guard>
         </Checker.Connect>
       </AddSectionWidget>
       <AddSectionReviewModalLegacy

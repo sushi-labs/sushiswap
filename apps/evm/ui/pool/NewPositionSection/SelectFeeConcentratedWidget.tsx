@@ -32,6 +32,8 @@ interface SelectFeeConcentratedWidget {
   setFeeAmount: (fee: FeeAmount) => void
   token0: Type | undefined
   token1: Type | undefined
+  title?: string
+  disableIfNotExists?: boolean
 }
 
 export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> = memo(function SelectFeeWidget({
@@ -39,6 +41,8 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> = memo
   setFeeAmount,
   token0,
   token1,
+  title,
+  disableIfNotExists = false,
 }) {
   const { data: pools, isLoading } = usePoolsByTokenPair(token0?.wrapped.id, token1?.wrapped.id)
 
@@ -64,9 +68,11 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> = memo
     <ContentBlock
       disabled={!token0 || !token1}
       title={
-        <>
-          What percentage for <span className="text-gray-900 dark:text-white">fees</span> do you prefer?
-        </>
+        title ?? (
+          <>
+            What percentage for <span className="text-gray-900 dark:text-white">fees</span> do you prefer?
+          </>
+        )
       }
     >
       <RadioGroup
@@ -80,8 +86,10 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> = memo
             testdata-id={`fee-option-${option.value}`}
             key={option.value}
             value={option.value}
-            className={({ checked }) =>
+            disabled={disableIfNotExists && !tvlDistribution.get(option.value)}
+            className={({ checked, disabled }) =>
               classNames(
+                disabled ? 'opacity-40 pointer-events-none' : '',
                 checked ? 'ring ring-blue' : '',
                 'px-5 py-4 flex items-center rounded-xl bg-white dark:bg-slate-800/40 cursor-pointer'
               )

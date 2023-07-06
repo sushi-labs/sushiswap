@@ -299,7 +299,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
         setPercentage={setPercentage}
       >
         <Checker.Connect fullWidth>
-          <Checker.Custom
+          <Checker.Guard
             guardText="Pool not found"
             guardWhen={
               isMounted &&
@@ -313,7 +313,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
             }
           >
             <Checker.Network fullWidth chainId={_pool.chainId}>
-              <Checker.Custom guardWhen={+percentage <= 0} guardText="Enter amount">
+              <Checker.Guard guardWhen={+percentage <= 0} guardText="Enter amount">
                 <Checker.ApproveBentobox
                   tag={APPROVE_TAG_REMOVE_TRIDENT}
                   fullWidth
@@ -340,9 +340,9 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
                     </Checker.Success>
                   </Checker.ApproveERC20>
                 </Checker.ApproveBentobox>
-              </Checker.Custom>
+              </Checker.Guard>
             </Checker.Network>
-          </Checker.Custom>
+          </Checker.Guard>
         </Checker.Connect>
       </RemoveSectionWidget>
     </div>

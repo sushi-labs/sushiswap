@@ -100,7 +100,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, childr
           </div>
           <Checker.Connect fullWidth>
             <Checker.Network fullWidth chainId={chainId}>
-              <Checker.Custom guardWhen={Boolean(!balance?.greaterThan(ZERO))} guardText="Not enough available">
+              <Checker.Guard guardWhen={Boolean(!balance?.greaterThan(ZERO))} guardText="Not enough available">
                 <Button
                   size="xl"
                   fullWidth
@@ -110,7 +110,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, childr
                 >
                   {!vesting?.token ? 'Invalid vest token' : isWritePending ? <Dots>Confirm Withdraw</Dots> : 'Withdraw'}
                 </Button>
-              </Checker.Custom>
+              </Checker.Guard>
             </Checker.Network>
           </Checker.Connect>
         </Dialog.Content>

@@ -133,8 +133,8 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, childre
           <div className="col-span-2 pt-2">
             <Checker.Connect fullWidth>
               <Checker.Network fullWidth chainId={chainId}>
-                <Checker.Custom guardWhen={!amount?.greaterThan(0)} guardText="Enter amount">
-                  <Checker.Custom
+                <Checker.Guard guardWhen={!amount?.greaterThan(0)} guardText="Enter amount">
+                  <Checker.Guard
                     guardWhen={Boolean(stream.balance && amount?.greaterThan(stream.balance))}
                     guardText="Not enough available"
                   >
@@ -153,8 +153,8 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, childre
                         'Withdraw'
                       )}
                     </Button>
-                  </Checker.Custom>
-                </Checker.Custom>
+                  </Checker.Guard>
+                </Checker.Guard>
               </Checker.Network>
             </Checker.Connect>
           </div>

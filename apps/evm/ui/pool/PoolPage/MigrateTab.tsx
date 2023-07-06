@@ -6,7 +6,7 @@ import { Amount, Price, tryParseAmount } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { Fraction, JSBI, Percent, ZERO } from '@sushiswap/math'
-import { classNames, Currency,Dots, List } from '@sushiswap/ui'
+import { classNames, Currency, Dots, List } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Modal } from '@sushiswap/ui/components/modal/Modal'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
@@ -219,10 +219,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   )
 
   const [positionAmount0, positionAmount1] = useMemo(
-    () =>
-      invertTokens
-        ? [position?.amount1, position?.amount0]
-        : [position?.amount0, position?.amount1],
+    () => (invertTokens ? [position?.amount1, position?.amount0] : [position?.amount0, position?.amount1]),
     [invertTokens, position?.amount0, position?.amount1]
   )
 
@@ -610,11 +607,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
           </SelectPricesWidget>
           <Checker.Connect fullWidth>
             <Checker.Network fullWidth chainId={pool.chainId}>
-              <Checker.Custom
-                guardWhen={!balance?.[FundSource.WALLET].greaterThan(ZERO)}
-                guardText="Not enough balance"
-              >
-                <Checker.Custom
+              <Checker.Guard guardWhen={!balance?.[FundSource.WALLET].greaterThan(ZERO)} guardText="Not enough balance">
+                <Checker.Guard
                   guardWhen={Boolean(!position || positionAmount0?.equalTo(ZERO) || positionAmount1?.equalTo(ZERO))}
                   guardText="Enter valid range"
                 >
@@ -635,8 +629,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                       </Modal.Trigger>
                     </Checker.Success>
                   </Checker.ApproveERC20>
-                </Checker.Custom>
-              </Checker.Custom>
+                </Checker.Guard>
+              </Checker.Guard>
             </Checker.Network>
           </Checker.Connect>
         </div>
