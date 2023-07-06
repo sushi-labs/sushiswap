@@ -59,6 +59,7 @@ const UniV2FactoryAbi = [
 // TODO: uniformization with ExtractorV3 ?
 // TODO: one token cache for all extractors ?
 // TODO: external token manager?
+// TODO: extractor start log
 export class UniV2Extractor {
   readonly client: PublicClient
   readonly multiCallAggregator: MultiCallAggregator
@@ -222,28 +223,47 @@ export class UniV2Extractor {
     }
   }
 
-  async addAllPoolsFromFactories(): Promise<Address[]> {
-    const poolListPromises = this.factories.map(async (factory) => {
-      const poolsNumber = Number(
+  async addPoolsFromFactory(factoryAddr: Address, step = 1000, from = 0, quantity = -1) {
+    const factory = this.factoryMap.get(factoryAddr.toLowerCase() as Address)
+    if (!factory) return
+    let to
+    if (quantity < 0) {
+      to = Number(
         (await this.multiCallAggregator.callValue(factory.address, UniV2FactoryAbi, 'allPairsLength')) as bigint
       )
-      const poolsPromise = new Array(poolsNumber)
-      for (let i = 0; i < poolsNumber; ++i) {
-        poolsPromise[i] = this.multiCallAggregator.callValue(factory.address, UniV2FactoryAbi, 'allPairs', [i])
-      }
-      const pools = (await Promise.allSettled(poolsPromise))
-        .map((r) =>
-          r.status == 'fulfilled' && r.value !== '0x0000000000000000000000000000000000000000' ? r.value : undefined
-        )
-        .filter((r) => r !== undefined) as Address[]
-      return pools
-    })
-    const poolLists = await Promise.all(poolListPromises)
-    const pools = poolLists.reduce((a, b) => a.concat(b), [])
-    return pools
+    } else to = from + quantity
+    for (let i = from; i < to; ) {
+      const poolNum = Math.min(step, to - i)
+      const promises = new Array<Promise<ConstantProductPoolCode | undefined>>(poolNum)
+      for (let j = 0; j < poolNum; ++j)
+        promises[j] = (async () => {
+          try {
+            const addr = await this.multiCallAggregator.callValue(factory.address, UniV2FactoryAbi, 'allPairs', [i++])
+            const poolState = this.poolMap.get((addr as Address).toLowerCase())
+            if (poolState)
+              if (poolState.status != PoolStatus.NoPool && poolState.status == PoolStatus.IgnorePool) return
+            const reserves = await this.multiCallAggregator.callValue(
+              addr as Address,
+              constantProductPoolAbi,
+              'getReserves'
+            )
+            const [res0, res1] = reserves as [bigint, bigint]
+            return await this.addPoolByLog(addr as Address, res0, res1, factory)
+          } catch (e) {
+            return
+          }
+        })()
+      await Promise.all(promises)
+      this.consoleLog(`Factory ${factoryAddr} pools ${i - poolNum}-${i} were downloaded`)
+    }
   }
 
-  async addPoolByLog(addr: Address, reserve0: bigint, reserve1: bigint): Promise<ConstantProductPoolCode | undefined> {
+  async addPoolByLog(
+    addr: Address,
+    reserve0: bigint,
+    reserve1: bigint,
+    trustedFactory?: FactoryV2
+  ): Promise<ConstantProductPoolCode | undefined> {
     const addrL = addr.toLowerCase()
     const poolState = this.poolMap.get(addrL)
     if (poolState) {
@@ -254,12 +274,16 @@ export class UniV2Extractor {
       return
     }
     this.poolMap.set(addr.toLowerCase(), { status: PoolStatus.AddingPool, reserve0, reserve1 })
-    const factoryAddr = await this.multiCallAggregator.callValue(addr, constantProductPoolAbi, 'factory')
-    const factory = this.factoryMap.get((factoryAddr as string).toLowerCase() as Address)
-    if (!factory) {
-      this.poolMap.set(addrL, { status: PoolStatus.IgnorePool })
-      this.consoleLog(`other factory pool ${addr}`)
-      return
+    let factory
+    if (trustedFactory) factory = trustedFactory
+    else {
+      const factoryAddr = await this.multiCallAggregator.callValue(addr, constantProductPoolAbi, 'factory')
+      factory = this.factoryMap.get((factoryAddr as string).toLowerCase() as Address)
+      if (!factory) {
+        this.poolMap.set(addrL, { status: PoolStatus.IgnorePool })
+        this.consoleLog(`other factory pool ${addr}`)
+        return
+      }
     }
     const [token0Addr, token1Addr] = await Promise.all([
       this.multiCallAggregator.callValue(addr, constantProductPoolAbi, 'token0'),
@@ -277,11 +301,13 @@ export class UniV2Extractor {
       this.consoleLog(`ignore pool ${addr} (adding error)`)
       return
     }
-    const expectedPoolAddress = this.computeV2Address(factory, token0, token1)
-    if (expectedPoolAddress.toLowerCase() !== addrL) {
-      this.poolMap.set(addrL, { status: PoolStatus.IgnorePool })
-      this.consoleLog(`fake pool ${addr}`)
-      return
+    if (!trustedFactory) {
+      const expectedPoolAddress = this.computeV2Address(factory as FactoryV2, token0, token1)
+      if (expectedPoolAddress.toLowerCase() !== addrL) {
+        this.poolMap.set(addrL, { status: PoolStatus.IgnorePool })
+        this.consoleLog(`fake pool ${addr}`)
+        return
+      }
     }
 
     const [t0, t1] = token0.sortsBefore(token1) ? [token0, token1] : [token1, token0]
