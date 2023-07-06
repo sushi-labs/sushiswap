@@ -142,7 +142,11 @@ export default function TradeInput({
           isLoading={isLoadingPrice}
           decimals={decimals}
           onClick={() => {
-            setInputValue((coinData / 10 ** 8) as unknown as string)
+            if (tokenName == 'APTOS') {
+              setInputValue(((coinData - 2000000) / 10 ** 8) as unknown as string)
+            } else {
+              setInputValue((coinData / 10 ** 8) as unknown as string)
+            }
             const timeOut = setTimeout(() => {
               checkBalance()
             }, 100)
