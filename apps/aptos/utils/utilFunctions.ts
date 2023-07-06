@@ -1,14 +1,207 @@
-export async function getYTokenPrice(amount_in: number = 0, coinX: string, coinY: string) {
-  console.log(amount_in, coinX, coinY)
+function useAllCommonPairs(coinA, coinB) {
+  const basePairs = [
+    '0x1::aptos_coin::AptosCoin',
+    '0x8c805723ebc0a7fc5b7d3e7b75d567918e806b3461cb9fa21941a9edc0220bf::devnet_coins::DevnetBNB',
+    '0x8c805723ebc0a7fc5b7d3e7b75d567918e806b3461cb9fa21941a9edc0220bf::devnet_coins::DevnetETH',
+    coinA.Address,
+    coinB.Address,
+  ]
+
+  var allPairs = [].concat(...basePairs.map((v, i) => basePairs.slice(i + 1).map((w) => [v, w])))
+
+  fetch(
+    'https://fullnode.testnet.aptoslabs.com/v1/accounts/0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa/resources'
+  )
+    .then((res) => res.json())
+    .then((data) => {
+      let t = {}
+      let reserve_tokens = {}
+      let reserve_token_info = {}
+
+      let reserves = data.filter((d) => {
+        if (d.type.includes('swap::TokenPairReserve')) {
+          reserve_tokens[d.type] = d
+
+          return true
+        }
+
+        if (
+          d.type.includes(
+            '0x1::coin::CoinInfo<0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa::swap::LPToken<'
+          )
+        ) {
+          reserve_token_info[d.type] = d
+        }
+      })
+
+      console.log(reserve_tokens)
+
+      allPairs.map((token) => {
+        if (
+          reserve_tokens[
+            `0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa::swap::TokenPairReserve<${token[0]}, ${token[1]}>`
+          ]
+        ) {
+          let info = {
+            lpTokenInfo:
+              reserve_token_info[
+                `0x1::coin::CoinInfo<0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa::swap::LPToken<${token[0]}, ${token[1]}>>`
+              ],
+          }
+          let data =
+            reserve_tokens[
+              `0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa::swap::TokenPairReserve<${token[0]}, ${token[1]}>`
+            ]
+
+          t[`${token[0]}|||${token[1]}`] = {
+            pairs: `${token[0]}|||${token[1]}`,
+            res_x: data.data.reserve_x,
+            res_y: data.data.reserve_y,
+            ...info,
+            ...data,
+          }
+        }
+
+        if (
+          reserve_tokens[
+            `0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa::swap::TokenPairReserve<${token[1]}, ${token[0]}>`
+          ]
+        ) {
+          let info = {
+            lpTokenInfo:
+              reserve_token_info[
+                `0x1::coin::CoinInfo<0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa::swap::LPToken<${token[1]}, ${token[0]}>>`
+              ],
+          }
+          let data =
+            reserve_tokens[
+              `0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa::swap::TokenPairReserve<${token[1]}, ${token[0]}>`
+            ]
+
+          t[`${token[1]}|||${token[0]}`] = {
+            pairs: `${token[0]}|||${token[1]}`,
+            res_x: data.data.reserve_x,
+            res_y: data.data.reserve_y,
+            ...info,
+            ...data,
+          }
+        }
+      })
+
+      console.log(t)
+
+      let graph = Object.values(t).reduce((data, coin) => {
+        const coins_data = coin.pairs.split('|||')
+
+        if (data[coins_data[0]]) {
+          data[coins_data[0]].push(coins_data[1])
+        } else {
+          data[coins_data[0]] = [coins_data[1]]
+        }
+
+        if (data[coins_data[1]]) {
+          data[coins_data[1]].push(coins_data[0])
+        } else {
+          data[coins_data[1]] = [coins_data[0]]
+        }
+
+        return data
+      }, {})
+
+      RouteDemo(t, graph, coinA, coinB)
+    })
+}
+
+const exactOutput = (amt_in, res_x, res_y) => {
+  let amt_with_fee = amt_in * 10 ** 8 * 9975
+  let amt_out = (amt_with_fee * res_y) / (res_x * 10000 + amt_with_fee)
+  return amt_out.toFixed(0) / 10 ** 8
+}
+
+function findPossibleRoutes(tokenA, tokenB, graph, visited, currentRoute, routes) {
+  // Mark the current token as visited
+  visited[tokenA] = true
+
+  // Add the current token to the current route
+  currentRoute.push(tokenA)
+
+  // If the current token is the desired tokenB, add the current route to the routes array
+  if (tokenA === tokenB) {
+    routes.push([...currentRoute])
+  } else {
+    // Iterate through the adjacent tokens of the current token
+    for (let adjacentToken of graph[tokenA]) {
+      // If the adjacent token is not visited, recursively find possible routes
+      if (!visited[adjacentToken]) {
+        findPossibleRoutes(adjacentToken, tokenB, graph, visited, currentRoute, routes)
+      }
+    }
+  }
+
+  // Remove the current token from the current route and mark it as unvisited
+  currentRoute.pop()
+  visited[tokenA] = false
+}
+
+function RouteDemo(ARR, tokenGraph, coinA, coinB) {
+  const visitedTokens = {}
+  const currentTokenRoute = []
+  const allRoutes = []
+
+  findPossibleRoutes(coinA.Address, coinB.Address, tokenGraph, visitedTokens, currentTokenRoute, allRoutes)
+
+  let firstInput = 100000000
+  let lastOutput
+  const bestFinder = []
+
+  for (let route of allRoutes) {
+    if (route.length < 6) {
+      if (ARR[route[0] + '|||' + route[1]] || ARR[route[1] + '|||' + route[0]]) {
+        let res_x = ARR[route[0] + '|||' + route[1]]?.res_x || ARR[route[1] + '|||' + route[0]]?.res_y
+        let res_y = ARR[route[0] + '|||' + route[1]]?.res_y || ARR[route[1] + '|||' + route[0]]?.res_x
+        lastOutput = exactOutput(firstInput, res_x, res_y)
+
+        if (ARR[route[1] + '|||' + route[2]] || ARR[route[2] + '|||' + route[1]]) {
+          let res_x = ARR[route[1] + '|||' + route[2]]?.res_x || ARR[route[2] + '|||' + route[1]]?.res_y
+          let res_y = ARR[route[1] + '|||' + route[2]]?.res_y || ARR[route[2] + '|||' + route[1]]?.res_x
+          lastOutput = exactOutput(lastOutput, res_x, res_y)
+
+          if (ARR[route[2] + '|||' + route[3]] || ARR[route[3] + '|||' + route[2]]) {
+            // console.log(ARR[route[2] + "-" + route[3]]?.res_x || ARR[route[3] + "-" + route[2]]?.res_x)
+            let res_x = ARR[route[2] + '|||' + route[3]]?.res_x || ARR[route[3] + '|||' + route[2]]?.res_y
+            let res_y = ARR[route[2] + '|||' + route[3]]?.res_y || ARR[route[3] + '|||' + route[2]]?.res_x
+            lastOutput = exactOutput(lastOutput, res_x, res_y)
+
+            if (ARR[route[3] + '|||' + route[4]] || ARR[route[4] + '|||' + route[3]]) {
+              // console.log(ARR[route[3] + "-" + route[4]]?.res_x || ARR[route[4] + "-" + route[3]]?.res_x)
+              let res_x = ARR[route[3] + '|||' + route[4]]?.res_x || ARR[route[4] + '|||' + route[3]]?.res_y
+              let res_y = ARR[route[3] + '|||' + route[4]]?.res_y || ARR[route[4] + '|||' + route[3]]?.res_x
+              lastOutput = exactOutput(lastOutput, res_x, res_y)
+            }
+          }
+        }
+      }
+      bestFinder.push({ route: route, amountOut: lastOutput })
+    }
+  }
+
+  const bestRoutePrice = bestFinder.reduce((r, b) => (r.amountOut > b.amountOut ? r : b))
+  console.log(bestRoutePrice)
+}
+
+export async function getYTokenPrice(amount_in: number = 0, coinX: string, coinY: string, controller: AbortController) {
+  // console.log(amount_in, coinX, coinY)
   let outputData
   await fetch(
-    `https://fullnode.testnet.aptoslabs.com/v1/accounts/e8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resource/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::TokenPairReserve<${coinX},${coinY}>`
+    `https://fullnode.testnet.aptoslabs.com/v1/accounts/e8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resource/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::TokenPairReserve<${coinX},${coinY}>`,
+    { signal: controller.signal }
   )
     .then((res) => res.json())
     .then(async (data) => {
       if (data.error_code == 'resource_not_found') {
         await fetch(
-          `https://fullnode.testnet.aptoslabs.com/v1/accounts/e8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resource/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::TokenPairReserve<${coinY},${coinX}>`
+          `https://fullnode.testnet.aptoslabs.com/v1/accounts/e8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resource/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::TokenPairReserve<${coinY},${coinX}>`,
+          { signal: controller.signal }
         )
           .then((res) => res.json())
           .then((data) => {
@@ -23,10 +216,6 @@ export async function getYTokenPrice(amount_in: number = 0, coinX: string, coinY
               console.log('ERROR_INSUFFICIENT_LIQUIDITY')
               // return data.error_code
             }
-            // } else {
-            //   outputData = 'ERROR_INSUFFICIENT_INPUT_AMOUNT'
-            //   console.log('ERROR_INSUFFICIENT_INPUT_AMOUNT')
-            // }
           })
           .catch((err) => {
             outputData = err
@@ -44,10 +233,6 @@ export async function getYTokenPrice(amount_in: number = 0, coinX: string, coinY
           console.log('ERROR_INSUFFICIENT_LIQUIDITY')
           // return data.error_code
         }
-        // } else {
-        //   outputData = 'ERROR_INSUFFICIENT_INPUT_AMOUNT'
-        //   console.log('ERROR_INSUFFICIENT_INPUT_AMOUNT')
-        // }
       }
     })
     .catch((err) => {
@@ -55,4 +240,19 @@ export async function getYTokenPrice(amount_in: number = 0, coinX: string, coinY
       console.log(err)
     })
   return outputData
+}
+
+export const formatNumber = (number: number, decimals: number) => {
+  if (number) {
+    number = number / 10 ** decimals
+    if (String(number).includes('.') && String(number).split('.')[1].length > 8) {
+      number = parseFloat(number.toFixed(9))
+    }
+    if (String(number).includes('.') && parseFloat(String(number).split('.')[0]) > 0) {
+      number = parseFloat(number.toFixed(2))
+    }
+  } else {
+    number = 0
+  }
+  return number
 }

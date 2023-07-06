@@ -42,11 +42,9 @@ export default function WalletSelector({ hideChevron, varient, color, fullWidth,
     fetch(`https://fullnode.testnet.aptoslabs.com/v1/accounts/${account?.address}/resources`)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data)
         const balance = data?.filter((coin: coinType) => {
           return coin?.type.includes('0x1::aptos_coin::AptosCoin')
         })
-        console.log(balance[0]?.data?.coin?.value / 10 ** 8)
         setBalance(balance[0]?.data?.coin?.value / 10 ** 8)
       })
   }, [account])
