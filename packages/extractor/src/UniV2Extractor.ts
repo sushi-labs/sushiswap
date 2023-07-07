@@ -61,7 +61,6 @@ const UniV2FactoryAbi = [
 // TODO: external token manager?
 // TODO: extractor start log
 export class UniV2Extractor {
-  readonly client: PublicClient
   readonly multiCallAggregator: MultiCallAggregator
   readonly tokenManager: TokenManager
 
@@ -77,18 +76,27 @@ export class UniV2Extractor {
   /// @param client
   /// @param factories list of supported factories
   /// @param logging to write logs in console or not
-  constructor(client: PublicClient, factories: FactoryV2[], cacheDir: string, logging = true) {
-    this.client = client
-    this.multiCallAggregator = new MultiCallAggregator(client)
+  constructor(
+    client: PublicClient,
+    factories: FactoryV2[],
+    cacheDir: string,
+    logDepth: number,
+    logging = true,
+    multiCallAggregator?: MultiCallAggregator,
+    tokenManager?: TokenManager
+  ) {
+    this.multiCallAggregator = multiCallAggregator || new MultiCallAggregator(client)
     this.factories = factories
     factories.forEach((f) => this.factoryMap.set(f.address.toLowerCase(), f))
-    this.tokenManager = new TokenManager(this.multiCallAggregator, cacheDir, `uniV2Tokens-${this.client.chain?.id}`)
+    this.tokenManager =
+      tokenManager ||
+      new TokenManager(this.multiCallAggregator, cacheDir, `uniV2Tokens-${this.multiCallAggregator.chainId}`)
     this.logging = logging
     this.busyCounter = new Counter(() => {
       // do nothing
     })
 
-    this.logFilter = new LogFilter(client, 200, UniV2EventsListenAbi, (logs?: Log[]) => {
+    this.logFilter = new LogFilter(client, logDepth, UniV2EventsListenAbi, (logs?: Log[]) => {
       if (logs) {
         let eventKnown = 0
         let eventUnknown = 0
@@ -145,6 +153,7 @@ export class UniV2Extractor {
 
   async start() {
     await this.tokenManager.addCachedTokens()
+    await this.logFilter.start()
   }
 
   async updatePoolState(poolState: PoolState) {
@@ -164,7 +173,7 @@ export class UniV2Extractor {
 
   getPoolsForTokens(tokens: Token[]): {
     prefetchedPools: ConstantProductPoolCode[]
-    fetchingPools: Promise<ConstantProductPoolCode[]>
+    fetchingPools: Promise<ConstantProductPoolCode[]> | undefined
   } {
     const prefetchedPools: ConstantProductPoolCode[] = []
     const waitPools: Promise<ConstantProductPoolCode | undefined>[] = []
@@ -217,9 +226,10 @@ export class UniV2Extractor {
     }
     return {
       prefetchedPools,
-      fetchingPools: Promise.all(waitPools).then(
-        (pools) => pools.filter((p) => p !== undefined) as ConstantProductPoolCode[]
-      ),
+      fetchingPools:
+        waitPools.length != 0
+          ? Promise.all(waitPools).then((pools) => pools.filter((p) => p !== undefined) as ConstantProductPoolCode[])
+          : undefined,
     }
   }
 

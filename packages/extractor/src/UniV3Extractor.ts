@@ -56,7 +56,7 @@ export class UniV3Extractor {
   factories: FactoryV3[]
   factoryMap: Map<string, FactoryV3> = new Map()
   tickHelperContract: Address
-  client: PublicClient
+  // client: PublicClient
   multiCallAggregator: MultiCallAggregator
   tokenManager: TokenManager
   poolMap: Map<Address, UniV3PoolWatcher> = new Map()
@@ -81,15 +81,18 @@ export class UniV3Extractor {
     factories: FactoryV3[],
     cacheDir: string,
     logDepth: number,
-    logging = true
+    logging = true,
+    multiCallAggregator?: MultiCallAggregator,
+    tokenManager?: TokenManager
   ) {
-    this.client = client
-    this.multiCallAggregator = new MultiCallAggregator(client)
-    this.tokenManager = new TokenManager(this.multiCallAggregator, cacheDir, `uniV3Tokens-${this.client.chain?.id}`)
+    this.multiCallAggregator = multiCallAggregator || new MultiCallAggregator(client)
+    this.tokenManager =
+      tokenManager ||
+      new TokenManager(this.multiCallAggregator, cacheDir, `uniV3Tokens-${this.multiCallAggregator.chainId}`)
     this.tickHelperContract = tickHelperContract
     this.factories = factories
     factories.forEach((f) => this.factoryMap.set(f.address.toLowerCase(), f))
-    this.poolPermanentCache = new PermanentCache(cacheDir, `uniV3Pools-${this.client.chain?.id}`)
+    this.poolPermanentCache = new PermanentCache(cacheDir, `uniV3Pools-${this.multiCallAggregator.chainId}`)
     this.logging = logging
     this.busyCounter = new Counter(() => {
       //if (count == 0) this.consoleLog(`All pools were updated`)
@@ -255,7 +258,7 @@ export class UniV3Extractor {
 
   getWatchersForTokens(tokens: Token[]): {
     prefetchedPools: UniV3PoolWatcher[]
-    fetchingPools: Promise<UniV3PoolWatcher[]>
+    fetchingPools: Promise<UniV3PoolWatcher[]> | undefined
   } {
     const prefetchedPools: UniV3PoolWatcher[] = []
     const waitPools: Promise<UniV3PoolWatcher | undefined>[] = []
@@ -294,13 +297,16 @@ export class UniV3Extractor {
     }
     return {
       prefetchedPools,
-      fetchingPools: Promise.all(waitPools).then((pools) => pools.filter((p) => p !== undefined) as UniV3PoolWatcher[]),
+      fetchingPools:
+        waitPools.length > 0
+          ? Promise.all(waitPools).then((pools) => pools.filter((p) => p !== undefined) as UniV3PoolWatcher[])
+          : undefined,
     }
   }
 
   async addPoolByAddress(address: Address) {
     if (this.otherFactoryPoolSet.has(address.toLowerCase() as Address)) return
-    if (this.client.chain?.id === undefined) return
+    if (this.multiCallAggregator.chainId === undefined) return
     this.emptyAddressSet.delete(address)
 
     const factoryAddress = await this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'factory')

@@ -23,10 +23,12 @@ export class MultiCallAggregator {
   pendingRejects: ((arg: unknown) => void)[] = []
   timer?: NodeJS.Timeout
   maxCallsInOneBatch: number
+  chainId: ChainId
 
   constructor(client: PublicClient, maxCallsInOneBatch = 0) {
     this.client = client
     this.maxCallsInOneBatch = maxCallsInOneBatch
+    this.chainId = client.chain?.id as ChainId
   }
 
   // aggregate several calls in one multicall

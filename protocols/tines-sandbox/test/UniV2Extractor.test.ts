@@ -26,7 +26,7 @@ async function startInfinitTest(args: {
   })
   const chainId = client.chain?.id as ChainId
 
-  const extractor = new UniV2Extractor(client, args.factories, './cache')
+  const extractor = new UniV2Extractor(client, args.factories, './cache', 200)
   await extractor.start()
 
   const nativeProvider = new NativeWrapProvider(chainId, client)
@@ -41,7 +41,7 @@ async function startInfinitTest(args: {
         BASES_TO_CHECK_TRADES_AGAINST[chainId].concat([tokens[i]])
       )
       const time1 = performance.now()
-      const pools1 = await poolsPromise
+      const pools1 = poolsPromise === undefined ? [] : await poolsPromise
       const time2 = performance.now()
       console.log(
         `Timing: ${pools0.length} pools ${Math.round(time1 - time0)}ms, ${pools1.length} pools ${Math.round(
@@ -107,7 +107,7 @@ async function allPoolsPrefetchingTest(args: { providerURL: string; chain: Chain
     chain: args.chain,
     transport: transport,
   })
-  const extractor = new UniV2Extractor(client, args.factories, './cache')
+  const extractor = new UniV2Extractor(client, args.factories, './cache', 200)
   await extractor.start()
   const start = performance.now()
   await extractor.addPoolsFromFactory(args.factories[0].address)
