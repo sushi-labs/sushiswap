@@ -8,10 +8,9 @@ import DEFAULT_TOKEN_LIST from './../../config/tokenList.json'
 import TokenListDialog from 'components/TokenListDialog'
 import TradeInput from 'components/TradeInput'
 import { SwapButton } from 'components/SwapButton'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { SwitchAppType } from 'widget/SwitchAppType'
 import { WidgetTitleV2 } from 'widget/WidgetTitleV2'
-import WalletSelector from './../../components/WalletSelector'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
 import { getYTokenPrice, useAllCommonPairs } from 'utils/utilFunctions'
 import { Network, Provider } from 'aptos'
@@ -21,6 +20,13 @@ import Loading from 'app/loading'
 import TradeOutput from 'components/TradeOutput'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { payloadArgs } from 'utils/payloadUtil'
+import { Theme, toast } from 'react-toastify'
+import { ToastContent } from '@sushiswap/ui/future/components/toast/ToastContent'
+import { useTheme } from 'next-themes'
+import { ToastButtons } from '@sushiswap/ui/future/components/toast/ToastButtons'
+import { TOAST_OPTIONS } from '@sushiswap/ui/future/components/toast'
+import { TradeReviewDialog } from 'components/TradeReviewDialog'
+import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 
 interface coinType {
   type: string
@@ -45,6 +51,10 @@ export default function SwapPage() {
   const [noRouteFound, setNoRouteFound] = useState<string>('')
   const [controller, setController] = useState<AbortController | null>(null)
   const [slippageTolerance] = useSlippageTolerance('swapSlippage')
+  const tradeVal = useRef<HTMLInputElement>(null)
+  const { theme } = useTheme()
+  const slippageAmount =
+    swapPerTokenPrice?.amountOut - (swapPerTokenPrice?.amountOut * parseFloat(slippageTolerance)) / 100
 
   useEffect(() => {
     if (network?.name === undefined) {
@@ -70,23 +80,9 @@ export default function SwapPage() {
     setController(newController)
     setLoadingPriceLower(true)
     setSwapPerTokenPrice('')
-    console.log('tradeVal', tradeVal)
     const output = inverse
       ? await useAllCommonPairs(tradeVal * 10 ** 8, token1, token0, newController)
       : await useAllCommonPairs(tradeVal * 10 ** 8, token0, token1, newController)
-    // const output: any = !inverse
-    //   ? await getYTokenPrice(
-    //       parseInt((tradeVal * 10 ** token0?.decimals) as unknown as string),
-    //       token0?.address,
-    //       token1?.address,
-    //       newController
-    //     )
-    //   : await getYTokenPrice(
-    //       parseInt((tradeVal * 10 ** token1?.decimals) as unknown as string),
-    //       token1?.address,
-    //       token0?.address,
-    //       newController
-    //     )
     setSwapPerTokenPrice(output)
     if (output?.message?.includes('Unexpected') || output?.message?.includes('Cannot read properties')) {
       setNoRouteFound('No Route Found')
@@ -133,24 +129,63 @@ export default function SwapPage() {
     }
   }, [account, inverse, connected, token0, token1, isTransactionPending])
 
-  const swapToken = async () => {
+  const swapToken = async (close: () => void) => {
     console.log(swapPerTokenPrice)
     const payload: any = payloadArgs(
       parseInt((token1Value * 10 ** token0.decimals) as unknown as string),
-      swapPerTokenPrice
+      swapPerTokenPrice,
+      parseInt(String(slippageAmount))
     )
     setisTransactionPending(true)
     if (!account) return []
     try {
       // sign and submit transaction to chain
-      if (payload) {
-        const response = await signAndSubmitTransaction(payload)
-        // wait for transaction
-        await provider.waitForTransaction(response.hash)
-        setisTransactionPending(false)
-      }
-    } catch (error: any) {
+      const response: Promise<any> = await signAndSubmitTransaction(payload)
+      // wait for transaction
+      console.log(response)
+      await provider.waitForTransaction(response?.hash)
+
+      //return from here if response is failed
+      if (!response?.success) return
+      const toastId = `completed:${response?.hash}`
+      toast(
+        <>
+          <ToastContent
+            summary={`Swap ${token1Value} ${token0.symbol} for ${parseFloat(
+              (swapPerTokenPrice?.amountOut / 10 ** token1?.decimals).toFixed(9)
+            )} ${token1.symbol}`}
+            href={`https://explorer.aptoslabs.com/txn/${response?.version}?network=${network?.name?.toLowerCase()}`}
+          />
+          <ToastButtons onDismiss={() => toast.dismiss(toastId)} />
+        </>,
+        {
+          ...TOAST_OPTIONS,
+          toastId,
+          theme: theme as Theme,
+        }
+      )
+      setisTransactionPending(false)
+      close()
+    } catch (error) {
+      console.error(error)
+      const toastId = `failed:${Math.random()}`
+      toast(
+        <>
+          <ToastContent summary={`User rejected request`} />
+          <ToastButtons onDismiss={() => toast.dismiss(toastId)} />
+        </>,
+        {
+          ...TOAST_OPTIONS,
+          toastId,
+          theme: theme as Theme,
+        }
+      )
     } finally {
+      setisTransactionPending(false)
+      if (tradeVal.current) {
+        tradeVal.current.value = ''
+      }
+      console.log(tradeVal?.current?.value)
     }
   }
   useEffect(() => {
@@ -180,7 +215,7 @@ export default function SwapPage() {
             <UIWidget.Content>
               <TradeInput
                 setOpen={setOpen}
-                tokenName={!inverse ? token0.name : token1.name}
+                tokenName={!inverse ? token0.symbol : token1.symbol}
                 decimals={!inverse ? token0.decimals : token1.decimals}
                 imgURL={!inverse ? token0.logoURI : token1.logoURI}
                 coinData={!inverse ? filteredCoin0?.data?.coin?.value : filteredCoin1?.data?.coin?.value}
@@ -191,11 +226,12 @@ export default function SwapPage() {
                 setSwapPerTokenPrice={setSwapPerTokenPrice}
                 getSwapPrice={getSwapPrice}
                 setToken1Value={setToken1Value}
+                tradeVal={tradeVal}
               />
               <SwapTrade inverse={inverse} setInverse={setInverse} />
               <TradeOutput
                 setOpen={setOpen}
-                tokenName={!inverse ? token1.name : token0.name}
+                tokenName={!inverse ? token1.symbol : token0.symbol}
                 decimals={!inverse ? token1.decimals : token0.decimals}
                 imgURL={!inverse ? token1.logoURI : token0.logoURI}
                 coinData={!inverse ? filteredCoin1?.data?.coin?.value : filteredCoin0?.data?.coin?.value}
@@ -206,12 +242,16 @@ export default function SwapPage() {
                 isLoadingPriceLower={isLoadingPriceLower}
               />
 
-              <SwapButton
-                noRouteFound={noRouteFound}
-                buttonError={buttonError}
-                token1Value={token1Value}
-                swapToken={swapToken}
-              />
+              <Modal.Trigger tag="review-modal">
+                {({ open, isOpen, close }) => (
+                  <SwapButton
+                    noRouteFound={noRouteFound}
+                    buttonError={buttonError}
+                    token1Value={token1Value}
+                    onClick={open}
+                  />
+                )}
+              </Modal.Trigger>
             </UIWidget.Content>
           </Drawer.Root>
           {/*spacer for fixed positioned swap button */}
@@ -223,6 +263,16 @@ export default function SwapPage() {
           setOpen={setOpen}
           tokens={DEFAULT_TOKEN_LIST}
           handleChangeToken={handleChangeToken}
+        />
+
+        <TradeReviewDialog
+          swapToken={swapToken}
+          value1={token1Value}
+          value2={swapPerTokenPrice?.amountOut}
+          token0={!inverse ? token0 : token1}
+          token1={!inverse ? token1 : token0}
+          isTransactionPending={isTransactionPending}
+          slippageAmount={slippageAmount}
         />
       </Container>
     </>

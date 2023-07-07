@@ -18,6 +18,7 @@ interface PropType {
   setButtonError: React.Dispatch<React.SetStateAction<string>>
   setToken1Value: React.Dispatch<React.SetStateAction<number>>
   getSwapPrice: (tradeVal: number) => Promise<any>
+  tradeVal: React.RefObject<HTMLInputElement>
 }
 export default function TradeInput({
   setOpen,
@@ -28,29 +29,27 @@ export default function TradeInput({
   isLoadingPrice,
   setTokenSelectedNumber,
   tokenNumber,
-  setSwapPerTokenPrice,
   setButtonError,
   getSwapPrice,
   setToken1Value,
+  tradeVal,
 }: PropType) {
   const [error, setError] = useState('')
   const { connected } = useWallet()
   const [inputValue, setInputValue] = useState<string>('')
-  const tradeVal = useRef<HTMLInputElement>(null)
   const focusInput = useCallback(() => {
     tradeVal.current?.focus()
   }, [])
   useEffect(() => {
-    checkBalance()
+    checkBalance(tradeVal?.current?.value as string)
   }, [coinData])
-  console.log(coinData)
 
-  const checkBalance = () => {
+  const checkBalance = (tradeVal: string) => {
     const regexPattern = /^[0-9]*(\.[0-9]*)?$/
-    if (regexPattern.test(tradeVal?.current?.value as string)) {
-      setInputValue(tradeVal?.current?.value as string)
-      setToken1Value(parseFloat(tradeVal?.current?.value as string))
-      getSwapPrice(parseFloat(tradeVal?.current?.value as string))
+    if (regexPattern.test(tradeVal)) {
+      setInputValue(tradeVal)
+      setToken1Value(parseFloat(tradeVal))
+      getSwapPrice(parseFloat(tradeVal))
     }
     if (coinData === undefined) {
       coinData = 0
@@ -58,7 +57,7 @@ export default function TradeInput({
 
     if (setButtonError) setButtonError('')
     if (connected) {
-      const priceEst = coinData / 10 ** decimals < parseFloat(tradeVal?.current?.value as string)
+      const priceEst = coinData / 10 ** decimals < parseFloat(tradeVal)
       if (priceEst) {
         setError('Exceeds Balance')
         if (setButtonError) setButtonError('Insufficient Balance')
@@ -89,7 +88,9 @@ export default function TradeInput({
           variant="unstyled"
           value={inputValue}
           ref={tradeVal}
-          onUserInput={checkBalance}
+          onUserInput={(e) => {
+            checkBalance(e)
+          }}
           className="text-gray-900 dark:text-slate-50 text-left border-none focus:outline-none focus:ring-0 p-0 bg-transparent w-full truncate font-medium without-ring !text-3xl py-1"
         />
         <button
@@ -148,7 +149,7 @@ export default function TradeInput({
               setInputValue((coinData / 10 ** 8) as unknown as string)
             }
             const timeOut = setTimeout(() => {
-              checkBalance()
+              checkBalance(tradeVal?.current?.value as string)
             }, 100)
             return () => {
               clearTimeout(timeOut)

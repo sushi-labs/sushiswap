@@ -6,10 +6,10 @@ interface Props {
   noRouteFound: string
   buttonError: string
   token1Value: number
-  swapToken: () => void
+  onClick: () => void
 }
 
-export const SwapButton = ({ noRouteFound, buttonError, token1Value, swapToken }: Props) => {
+export const SwapButton = ({ noRouteFound, buttonError, token1Value, onClick }: Props) => {
   const { connected } = useWallet()
   return (
     <div className="pt-4">
@@ -20,7 +20,7 @@ export const SwapButton = ({ noRouteFound, buttonError, token1Value, swapToken }
           }`}
           disabled={noRouteFound || buttonError ? true : false}
           onClick={() => {
-            token1Value ? swapToken() : {}
+            token1Value ? onClick() : {}
           }}
         >
           {noRouteFound ? noRouteFound : buttonError ? buttonError : token1Value ? <>Swap</> : <>Enter Amount</>}
