@@ -153,45 +153,40 @@ export const PoolPageV3 = () => {
     }
   }, [connected])
   return (
-    <ContentBlock
-      title={
-        <>
-          How much <span className="text-gray-900 dark:text-white">liquidity</span> do you want to provide?
-        </>
-      }
-    >
-      <TradeInput
-        setOpen={setOpen}
-        tokenName={!inverse ? token0.name : token1.name}
-        decimals={!inverse ? token0.decimals : token1.decimals}
-        imgURL={!inverse ? token0.logoURI : token1.logoURI}
-        coinData={!inverse ? filteredCoin0?.data?.coin?.value : filteredCoin1?.data?.coin?.value}
-        isLoadingPrice={isLoadingPrice}
-        setTokenSelectedNumber={setTokenSelectedNumber}
-        tokenNumber={!inverse ? '0' : '1'}
-        setButtonError={setButtonError}
-        setSwapPerTokenPrice={setSwapPerTokenPrice}
-        getSwapPrice={getSwapPrice}
-        setToken1Value={setToken1Value}
-      />
-      {/* <SwapTrade inverse={inverse} setInverse={setInverse} /> */}
-      <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
-        <button type="button" className="z-10 p-2 bg-gray-100 rounded-full dark:bg-slate-900">
-          <PlusIcon strokeWidth={3} className="w-4 h-4 dark:text-slate-400 text-slate-600" />
-        </button>
+    <ContentBlock title={<span className="text-gray-900 dark:text-white">Deposit.</span>}>
+      <div className="flex flex-col gap-4">
+        <TradeInput
+          setOpen={setOpen}
+          tokenName={!inverse ? token0.name : token1.name}
+          decimals={!inverse ? token0.decimals : token1.decimals}
+          imgURL={!inverse ? token0.logoURI : token1.logoURI}
+          coinData={!inverse ? filteredCoin0?.data?.coin?.value : filteredCoin1?.data?.coin?.value}
+          isLoadingPrice={isLoadingPrice}
+          setTokenSelectedNumber={setTokenSelectedNumber}
+          tokenNumber={!inverse ? '0' : '1'}
+          setButtonError={setButtonError}
+          setSwapPerTokenPrice={setSwapPerTokenPrice}
+          getSwapPrice={getSwapPrice}
+          setToken1Value={setToken1Value}
+        />
+        <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
+          <button type="button" className="z-10 p-2 bg-gray-100 rounded-full dark:bg-slate-900">
+            <PlusIcon strokeWidth={3} className="w-4 h-4 dark:text-slate-400 text-slate-600" />
+          </button>
+        </div>
+        <TradeOutput
+          setOpen={setOpen}
+          tokenName={!inverse ? token1.name : token0.name}
+          decimals={!inverse ? token1.decimals : token0.decimals}
+          imgURL={!inverse ? token1.logoURI : token0.logoURI}
+          coinData={!inverse ? filteredCoin1?.data?.coin?.value : filteredCoin0?.data?.coin?.value}
+          isLoadingPrice={isLoadingPrice}
+          setTokenSelectedNumber={setTokenSelectedNumber}
+          tokenNumber={!inverse ? '1' : '0'}
+          outpuSwapTokenAmount={swapPerTokenPrice}
+          isLoadingPriceLower={isLoadingPriceLower}
+        />
       </div>
-      <TradeOutput
-        setOpen={setOpen}
-        tokenName={!inverse ? token1.name : token0.name}
-        decimals={!inverse ? token1.decimals : token0.decimals}
-        imgURL={!inverse ? token1.logoURI : token0.logoURI}
-        coinData={!inverse ? filteredCoin1?.data?.coin?.value : filteredCoin0?.data?.coin?.value}
-        isLoadingPrice={isLoadingPrice}
-        setTokenSelectedNumber={setTokenSelectedNumber}
-        tokenNumber={!inverse ? '1' : '0'}
-        outpuSwapTokenAmount={swapPerTokenPrice}
-        isLoadingPriceLower={isLoadingPriceLower}
-      />
       <SwapButton
         noRouteFound={noRouteFound}
         buttonError={buttonError}

@@ -9,6 +9,7 @@ import { PoolPageV3 } from 'components/PoolPageV3'
 import { SelectFeeConcentratedWidget } from 'components/SelectFeeConcentratedWidget'
 import { SelectNetworkWidget } from 'components/SelectNetworkWidget'
 import { SelectPricesWidget } from 'components/SelectPricesWidget'
+import { SelectTokensWidget } from 'components/SelectTokensWidget'
 import Link from 'next/link'
 import React, { FC } from 'react'
 
@@ -78,7 +79,7 @@ export function AddPage() {
     //   </div>
     // </>
     <>
-      <Container maxWidth={'5xl'} className="lg:mx-auto px-4 h-full">
+      <Container maxWidth={'5xl'} className="flex justify-center lg:mx-auto px-4 h-full">
         <div className="pb-4 mt-10 mb-4 lg:mb-40 xl:mt-20">
           <div className="flex flex-col gap-2">
             <Link className="group flex gap-4 items-center mb-2" href="/" shallow={true}>
@@ -99,11 +100,9 @@ export function AddPage() {
               Create a new pool or create a liquidity position on an existing pool.
             </h1>
           </div>
-          <div className="h-0.5 w-full bg-gray-900/5 dark:bg-slate-200/5 my-10" />
-          <div className="flex justify-center">
-            <div className="flex lg:grid lg:grid-cols-[404px_auto] gap-20">
-              <_Add />
-            </div>
+          <div className="grid grid-cols-1 sm:w-[340px] md:w-[572px] gap-10">
+            <div className="hidden md:block"></div>
+            <_Add />
           </div>
         </div>
       </Container>
@@ -114,15 +113,15 @@ export function AddPage() {
 const _Add: FC = () => {
   return (
     <>
-      <div className="hidden lg:block">
-        <div className="lg:grid grid-cols-2 items-center gap-6 sticky top-[96px]">
-          <div className="col-span-2 flex gap-7">
+      {/* <div className="hidden lg:block"> */}
+      {/* <div className="lg:grid grid-cols-2 items-center gap-6 sticky top-[96px]"> */}
+      {/* <div className="col-span-2 flex gap-7">
             <div className="flex min-w-[44px] mb-4"></div>
-          </div>
-          <div className="col-span-2 flex flex-col gap-2">
+          </div> */}
+      {/* <div className="col-span-2 flex flex-col gap-2">
             <List.Label className="!px-0">Network</List.Label>
             <div className="flex font-medium items-center gap-2 rounded-xl">
-              {/* <NetworkIcon width={24} height={24}/> */}
+              
             </div>
           </div>
           <div className="col-span-2 flex flex-col gap-2">
@@ -135,13 +134,14 @@ const _Add: FC = () => {
           </div>
           <div className="col-span-2 flex flex-col gap-2">
             <List.Label className="!px-0">Current Price</List.Label>
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-col order-3 gap-[64px]  pb-40 sm:order-2">
+          </div> */}
+      {/* </div> */}
+      {/* </div> */}
+      <div className="flex flex-col order-3 gap-[64px] pb-40 sm:order-2">
         <SelectNetworkWidget />
         <SelectFeeConcentratedWidget />
         <SelectPricesWidget />
+        <SelectTokensWidget />
         <PoolPageV3 />
       </div>
     </>
