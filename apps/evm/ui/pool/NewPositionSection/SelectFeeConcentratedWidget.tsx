@@ -90,8 +90,8 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> = memo
             className={({ checked, disabled }) =>
               classNames(
                 disabled ? 'opacity-40 pointer-events-none' : '',
-                checked ? 'ring ring-blue' : '',
-                'px-5 py-4 flex items-center rounded-xl bg-white dark:bg-slate-800/40 cursor-pointer'
+                checked ? 'ring-blue ring' : '',
+                'hover:ring ring-primary px-5 py-4 flex items-center rounded-xl bg-white dark:bg-slate-800/40 cursor-pointer'
               )
             }
           >

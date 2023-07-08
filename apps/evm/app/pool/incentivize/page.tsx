@@ -7,6 +7,7 @@ import { useAngleRewards } from '@sushiswap/react-query'
 import {
   Badge,
   Button,
+  ChipInput,
   Currency,
   Dots,
   IconButton,
@@ -377,28 +378,18 @@ const Incentivize = withCheckerRoot(() => {
                 value={[distribution.thumb0, distribution.thumb1]}
                 onValueChange={onChangeSlider}
                 max={100}
-                step={1}
+                step={5}
+                minStepsBetweenThumbs={1}
                 className="w-full"
               />
-              <div className="grid grid-cols-3 gap-2">
-                {token0 ? (
-                  <div className="text-sm font-medium p-2 flex items-center gap-2 bg-white rounded-xl dark:bg-slate-800">
-                    <Currency.Icon currency={token0} width={24} height={24} />
-                    {distribution.thumb0}% of rewards
-                  </div>
-                ) : null}
-                {token1 ? (
-                  <div className="text-sm font-medium p-2 flex items-center gap-2 bg-white rounded-xl dark:bg-slate-800">
-                    <Currency.Icon currency={token1} width={24} height={24} />
-                    {distribution.thumb1 - distribution.thumb0}% of rewards
-                  </div>
-                ) : null}
-                {token1 ? (
-                  <div className="text-sm font-medium p-2 flex items-center gap-2 bg-white rounded-xl dark:bg-slate-800">
-                    Fees {100 - distribution.thumb1}% of rewards
-                  </div>
-                ) : null}
-              </div>
+              <List>
+                <List.Label>Distribution</List.Label>
+                <List.Control>
+                  <List.KeyValue title={`${token0.symbol}`}>{distribution.thumb0}%</List.KeyValue>
+                  <List.KeyValue title={`${token1.symbol}`}>{distribution.thumb1 - distribution.thumb0}%</List.KeyValue>
+                  <List.KeyValue title="Fees">{100 - distribution.thumb1}%</List.KeyValue>
+                </List.Control>
+              </List>
             </div>
           </div>
         </div>
@@ -412,14 +403,15 @@ const Incentivize = withCheckerRoot(() => {
             />
           </div>
           <div className={classNames(includeBlacklist ? 'flex flex-col gap-2' : 'hidden')}>
-            <Input.Text
-              label="Blacklist"
-              id="blacklist"
-              value={blacklist.join(', ')}
-              onChange={(val) => setBlacklist(val ? val.toString().replace(' ', '').split(',') : [])}
+            <ChipInput
+              delimiters={[',', ' ', ';', ':']}
+              variant="secondary"
+              values={blacklist}
+              onValueChange={setBlacklist}
+              placeholder="Address"
             />
-            <p className={typographyVariants({ variant: 'muted', className: 'text-sm px-4' })}>
-              The addresses to blacklist, use a comma to separate addresses
+            <p className={typographyVariants({ variant: 'muted', className: 'text-sm px-3' })}>
+              The addresses to blacklist, use commas to separate addresses
             </p>
           </div>
         </div>
