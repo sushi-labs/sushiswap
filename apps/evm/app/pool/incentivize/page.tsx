@@ -379,7 +379,6 @@ const Incentivize = withCheckerRoot(() => {
                 onValueChange={onChangeSlider}
                 max={100}
                 step={5}
-                minStepsBetweenThumbs={1}
                 className="w-full"
               />
               <List>
