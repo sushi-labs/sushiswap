@@ -50,6 +50,7 @@
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/v2-core": "workspace:*",
     "@sushiswap/trident-core": "workspace:*",
+    "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",
     "ethers": "5.7.2",
