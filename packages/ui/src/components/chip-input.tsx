@@ -1,3 +1,5 @@
+'use client'
+
 import { VariantProps } from 'class-variance-authority'
 import classNames from 'classnames'
 import * as React from 'react'
@@ -62,7 +64,6 @@ const ChipInput = React.forwardRef<HTMLInputElement, ChipInputProps>(
           </TooltipProvider>
         ))}
         <input
-          type={type}
           value={state}
           onChange={onChange}
           onKeyDown={onKeyDown}

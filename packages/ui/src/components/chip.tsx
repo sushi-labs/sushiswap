@@ -27,7 +27,7 @@ export interface ChipProps extends React.HTMLAttributes<HTMLDivElement>, Variant
   iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
 }
 
-const Chip = React.forwardRef<HTMLButtonElement, ChipProps>(
+const Chip = React.forwardRef<HTMLDivElement, ChipProps>(
   ({ className, variant, icon: Icon, iconProps, children, ...props }, ref) => {
     return (
       <div
