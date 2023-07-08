@@ -22,7 +22,7 @@ interface ChipInputProps extends React.HTMLAttributes<HTMLInputElement>, Variant
 }
 
 const ChipInput = React.forwardRef<HTMLInputElement, ChipInputProps>(
-  ({ className, type, values, variant, onValueChange, delimiters = [',', ';', ':'], mutateValue, ...props }, ref) => {
+  ({ className, values, variant, onValueChange, delimiters = [',', ';', ':'], mutateValue, ...props }, ref) => {
     const [state, setState] = useState<string>('')
     const onKeyDown = useCallback(
       (e: React.KeyboardEvent) => {
