@@ -384,13 +384,31 @@ const Incentivize = withCheckerRoot(() => {
               <List>
                 <List.Label>Distribution</List.Label>
                 <List.Control>
-                  {token0 ? <List.KeyValue title={`${token0.symbol}`}>{distribution.thumb0}%</List.KeyValue> : null}
+                  {token0 ? (
+                    <List.KeyValue
+                      flex
+                      title={`${token0.symbol}`}
+                      subtitle={`Percentage of rewards that get distributed to ${token0.symbol} liquidity`}
+                    >
+                      {distribution.thumb0}%
+                    </List.KeyValue>
+                  ) : null}
                   {token1 ? (
-                    <List.KeyValue title={`${token1.symbol}`}>
+                    <List.KeyValue
+                      flex
+                      title={`${token1.symbol}`}
+                      subtitle={`Percentage of rewards that get distributed to ${token1.symbol} liquidity`}
+                    >
                       {distribution.thumb1 - distribution.thumb0}%
                     </List.KeyValue>
                   ) : null}
-                  <List.KeyValue title="Fees">{100 - distribution.thumb1}%</List.KeyValue>
+                  <List.KeyValue
+                    flex
+                    title="Fees"
+                    subtitle={`Percentage of rewards that get distributed to fee generation`}
+                  >
+                    {100 - distribution.thumb1}%
+                  </List.KeyValue>
                 </List.Control>
               </List>
             </div>
