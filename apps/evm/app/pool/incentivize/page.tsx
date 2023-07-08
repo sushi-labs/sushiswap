@@ -143,7 +143,7 @@ const Incentivize = withCheckerRoot(() => {
               uniV3Pool: v3Address as Address,
               rewardToken: rewardToken.wrapped.address as Address,
               amount: BigNumber.from(amount[0].quotient.toString()),
-              positionWrappers: blacklist.length > 0 ? blacklist : [],
+              positionWrappers: blacklist.length > 0 ? (blacklist as Address[]) : [],
               wrapperTypes: blacklist.length > 0 ? [3] : [],
               propToken0: customize ? distribution.thumb0 * 100 : 2000,
               propToken1: customize ? (distribution.thumb1 - distribution.thumb0) * 100 : 2000,
