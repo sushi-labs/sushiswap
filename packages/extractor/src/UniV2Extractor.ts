@@ -154,6 +154,7 @@ export class UniV2Extractor {
   async start() {
     await this.tokenManager.addCachedTokens()
     await this.logFilter.start()
+    warnLog('ExtractorV3 was started')
   }
 
   async updatePoolState(poolState: PoolState) {
@@ -354,6 +355,6 @@ export class UniV2Extractor {
   }
 
   consoleLog(log: string) {
-    if (this.logging) console.log('ExtrV2: ' + log)
+    if (this.logging) console.log('V2: ' + log)
   }
 }

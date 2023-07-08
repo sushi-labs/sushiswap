@@ -31,6 +31,9 @@
     "prepublishOnly": "pnpm build",
     "test": "jest --passWithNoTests"
   },
+  "jest": {
+    "preset": "@sushiswap/jest-config/node"
+  },
   "dependencies": {
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/amm": "workspace:*",
@@ -42,12 +45,13 @@
     "@uniswap/v3-core": "1.0.1",
     "abitype": "0.8.2",
     "ethers": "5.7.2",
-    "viem": "0.3.29"
+    "viem": "1.0.2"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",    
+    "@sushiswap/prettier-config": "workspace:*",        
+    "@sushiswap/router-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",    
     "@types/jest": "29.2.5",
     "@types/node": "18.11.18",

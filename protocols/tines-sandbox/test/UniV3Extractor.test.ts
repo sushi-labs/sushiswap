@@ -1,6 +1,5 @@
 import { reset } from '@nomicfoundation/hardhat-network-helpers'
 import { erc20Abi, routeProcessor2Abi } from '@sushiswap/abi'
-import { INIT_CODE_HASH } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { DAI, Native, USDC, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
 import { FactoryV3, PoolInfo, UniV3Extractor } from '@sushiswap/extractor'

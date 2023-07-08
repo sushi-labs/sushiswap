@@ -1992,6 +1992,7 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/router': workspace:*
+      '@sushiswap/router-config': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/v3-sdk': workspace:*
@@ -2001,7 +2002,7 @@ importers:
       abitype: 0.8.2
       ethers: 5.7.2
       typescript: 5.0.4
-      viem: 0.3.29
+      viem: 1.0.2
     dependencies:
       '@sushiswap/abi': link:../abi
       '@sushiswap/amm': link:../amm
@@ -2013,11 +2014,12 @@ importers:
       '@uniswap/v3-core': 1.0.1
       abitype: 0.8.2_typescript@5.0.4
       ethers: 5.7.2
-      viem: 0.3.29_typescript@5.0.4
+      viem: 1.0.2_typescript@5.0.4
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/router-config': link:../../config/router
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/jest': 29.2.5
       '@types/node': 18.11.18
@@ -3328,7 +3330,7 @@ importers:
       tsup: 6.5.0
       typechain: 8.1.1
       typescript: 5.0.4
-      viem: 0.3.29
+      viem: 1.0.2
     devDependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/bytes': 5.7.0
@@ -3386,7 +3388,7 @@ importers:
       tsup: 6.5.0_pyqfhkbboucpxgvrs7ocxwodkm
       typechain: 8.1.1_typescript@5.0.4
       typescript: 5.0.4
-      viem: 0.3.29_typescript@5.0.4
+      viem: 1.0.2_typescript@5.0.4
 
   protocols/trident:
     specifiers:
@@ -12269,7 +12271,7 @@ packages:
   /@types/keyv/3.1.4:
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
     dependencies:
-      '@types/node': 18.11.18
+      '@types/node': 20.2.3
 
   /@types/linkify-it/3.0.2:
     resolution: {integrity: sha512-HZQYqbiFVWufzCwexrvh694SOim8z2d+xJl5UNamcvQFejLY/2YUtzXHYi3cHdI7PMlS8ejH2slRAOJQ32aNbA==}
@@ -13701,16 +13703,6 @@ packages:
       typescript: 5.0.4
     dev: true
 
-  /@wagmi/chains/0.2.16_typescript@5.0.4:
-    resolution: {integrity: sha512-rkWaI2PxCnbD8G07ZZff5QXftnSkYL0h5f4DkHCG3fGYYr/ZDvmCL4bMae7j7A9sAif1csPPBmbCzHp3R5ogCQ==}
-    peerDependencies:
-      typescript: '>=4.9.4'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-    dependencies:
-      typescript: 5.0.4
-
   /@wagmi/chains/0.2.22_typescript@5.0.4:
     resolution: {integrity: sha512-TdiOzJT6TO1JrztRNjTA5Quz+UmQlbvWFG8N41u9tta0boHA1JCAzGGvU6KuIcOmJfRJkKOUIt67wlbopCpVHg==}
     peerDependencies:
@@ -14841,6 +14833,7 @@ packages:
         optional: true
     dependencies:
       typescript: 5.0.4
+    dev: false
 
   /abitype/0.8.7_typescript@5.0.4:
     resolution: {integrity: sha512-wQ7hV8Yg/yKmGyFpqrNZufCxbszDe5es4AZGYPBitocfSqXtjrTG9JMWFcc4N30ukl2ve48aBTwt7NJxVQdU3w==}
@@ -14852,7 +14845,6 @@ packages:
         optional: true
     dependencies:
       typescript: 5.0.4
-    dev: true
 
   /abitype/0.8.7_z34kx2cq3kivpffalfeqk2ugre:
     resolution: {integrity: sha512-wQ7hV8Yg/yKmGyFpqrNZufCxbszDe5es4AZGYPBitocfSqXtjrTG9JMWFcc4N30ukl2ve48aBTwt7NJxVQdU3w==}
@@ -33168,24 +33160,6 @@ packages:
       unist-util-stringify-position: 3.0.3
       vfile-message: 3.1.4
 
-  /viem/0.3.29_typescript@5.0.4:
-    resolution: {integrity: sha512-uFoEnUn4bEKneG2R2Ot2Jgk5LkMScPCanSZp0z5elqK5jFfgBKl7V5bJNL+EaPYKyxSa2A14rSE1IBVQHPYxlw==}
-    dependencies:
-      '@adraffy/ens-normalize': 1.9.0
-      '@noble/curves': 1.0.0
-      '@noble/hashes': 1.3.0
-      '@scure/bip32': 1.3.0
-      '@scure/bip39': 1.2.0
-      '@wagmi/chains': 0.2.16_typescript@5.0.4
-      abitype: 0.8.2_typescript@5.0.4
-      isomorphic-ws: 5.0.0_ws@8.12.0
-      ws: 8.12.0
-    transitivePeerDependencies:
-      - bufferutil
-      - typescript
-      - utf-8-validate
-      - zod
-
   /viem/1.0.2_typescript@5.0.4:
     resolution: {integrity: sha512-3Bn+CuInU8zsdKqqzFDWL018x4B9HDjPIISztReGcBjikY+04tP7CrQQCf1lbinK3wWrEoFU9VDiptCciNjUQA==}
     dependencies:
@@ -33203,7 +33177,6 @@ packages:
       - typescript
       - utf-8-validate
       - zod
-    dev: true
 
   /viem/1.0.2_z34kx2cq3kivpffalfeqk2ugre:
     resolution: {integrity: sha512-3Bn+CuInU8zsdKqqzFDWL018x4B9HDjPIISztReGcBjikY+04tP7CrQQCf1lbinK3wWrEoFU9VDiptCciNjUQA==}
