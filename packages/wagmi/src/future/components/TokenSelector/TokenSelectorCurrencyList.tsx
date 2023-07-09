@@ -1,11 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
 import { Native, Type } from '@sushiswap/currency'
+import { NativeAddress, useBalances, usePrices } from '@sushiswap/react-query'
 import { Currency } from '@sushiswap/ui/components/currency'
 import React, { FC, memo, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
 import { TokenSelectorRow } from './TokenSelectorRow'
-import { NativeAddress, useBalances, usePrices } from '@sushiswap/react-query'
 
 interface TokenSelectorCurrencyListProps {
   id: string
@@ -43,8 +43,8 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> = mem
       onSelect: () => onSelect(currency),
       pin: pin
         ? {
-            onPin: () => pin?.onPin(currency.wrapped.id),
-            isPinned: pin.isPinned(currency.wrapped.id),
+            onPin: () => pin?.onPin(currency.id),
+            isPinned: pin.isPinned(currency.id),
           }
         : undefined,
       selected: selected

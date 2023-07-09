@@ -1,7 +1,7 @@
 import { isAddress } from '@ethersproject/address'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import { ChainId, chainName } from '@sushiswap/chain'
-import { Token, Type } from '@sushiswap/currency'
+import { Native, Token, Type } from '@sushiswap/currency'
 import { useCustomTokens, usePinnedTokens } from '@sushiswap/hooks'
 import { useBalances, usePrices, useTokens } from '@sushiswap/react-query'
 import { IconButton } from '@sushiswap/ui'
@@ -66,7 +66,9 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
 
   const pinnedTokens = useMemo(() => {
     return pinnedTokenMap[chainId]
-      .map((address) => {
+      .map((id) => {
+        const [, address] = id.split(':')
+        if (address === 'NATIVE') return Native.onChain(chainId)
         return tokenMap?.[address] || customTokenMap?.[address]
       })
       .filter((token): token is Token => !!token)
@@ -84,6 +86,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
   )
 
   const _onPin = useCallback((currencyId: string) => {
+    console.log('onPin', currencyId, isTokenPinned(currencyId))
     if (isTokenPinned(currencyId)) {
       pinnedTokenMutate('remove', currencyId)
     } else {
