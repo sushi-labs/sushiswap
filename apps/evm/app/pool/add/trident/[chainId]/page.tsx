@@ -344,14 +344,21 @@ const _Add: FC<AddProps> = ({
                       </Checker.ApproveBentobox>
                       <AddSectionReviewModalTrident
                         poolAddress={pool.liquidityToken.address}
-                        // TODO: Shouldnt need to cast if this is done right
-                        poolState={poolState as ConstantProductPoolState | StablePoolState}
+                        poolState={poolState}
                         pool={pool as ConstantProductPool | StablePool}
                         chainId={chainId}
                         token0={token0}
                         token1={token1}
                         input0={parsedInput0}
                         input1={parsedInput1}
+                        onSuccess={() => {
+                          // Clear inputs
+                          setTypedAmounts({
+                            input0: '',
+                            input1: '',
+                          })
+                          close()
+                        }}
                         open={open}
                         close={close}
                       />

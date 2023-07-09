@@ -45,7 +45,7 @@ interface ConfirmationDialogProps {
 export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
-  const { setReview } = useSwapActions()
+  const { setReview, setValue } = useSwapActions()
   const { appType, network0, token0, token1, review } = useSwapState()
   const { approved } = useApproved('swap')
   const { data: trade } = useTrade({ crossChain: false, enabled: review })
@@ -207,6 +207,9 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     ...(config.request && { request: { ...config.request, gasLimit: config.request.gasLimit.mul(120).div(100) } }),
     onSuccess: async (data) => {
       setReview(false)
+
+      // Clear input fields
+      setValue('')
 
       data
         .wait()

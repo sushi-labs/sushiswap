@@ -8,10 +8,10 @@ import { Button } from '@sushiswap/ui/components/button'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { Loader } from '@sushiswap/ui/components/loader'
 import { isSushiSwapV2ChainId, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
+import { SushiSwapV2ChainIds } from '@sushiswap/v2-sdk'
 import { Address, getSushiSwapRouterContractConfig, PairState, PoolFinder } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { SushiSwapV2ChainIds } from '@sushiswap/v2-sdk'
 import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
 import { isLegacyPool } from 'lib/functions'
 import Link from 'next/link'
@@ -274,6 +274,11 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
                         token1={token1}
                         input0={parsedInput0}
                         input1={parsedInput1}
+                        onSuccess={() => {
+                          // Clear inputs
+                          setTypedAmounts({ input0: '', input1: '' })
+                          close()
+                        }}
                         open={open}
                         close={close}
                       />
