@@ -1,6 +1,6 @@
-import { getAddress, isAddress } from '@ethersproject/address'
-import { Type } from '@sushiswap/currency'
+import { getAddress as _getAddress, isAddress } from '@ethersproject/address'
 import { ChainId } from '@sushiswap/chain'
+import { Type } from '@sushiswap/currency'
 import { COMMON_BASES } from '@sushiswap/router-config'
 import { useCallback, useEffect, useMemo } from 'react'
 
@@ -8,9 +8,14 @@ import { useLocalStorage } from './useLocalStorage'
 
 const COMMON_BASES_IDS = Object.entries(COMMON_BASES).reduce<Record<string, string[]>>((acc, [chain, tokens]) => {
   const chainId = chain
-  acc[chainId] = Array.from(new Set(tokens.map((token) => token.wrapped.address)))
+  acc[chainId] = Array.from(new Set(tokens.map((token) => token.id)))
   return acc
 }, {} as Record<ChainId, string[]>)
+
+function getAddress(address: string) {
+  if (address === 'NATIVE') return 'NATIVE'
+  return _getAddress(address)
+}
 
 export const usePinnedTokens = () => {
   const [value, setValue] = useLocalStorage('sushi.pinnedTokens', COMMON_BASES_IDS)
@@ -27,7 +32,7 @@ export const usePinnedTokens = () => {
   const addPinnedToken = useCallback(
     (currencyId: string) => {
       const [chainId, address] = currencyId.split(':')
-      value[chainId] = Array.from(new Set([...value[chainId], getAddress(address)]))
+      value[chainId] = Array.from(new Set([...value[chainId], `${chainId}:${getAddress(address)}`]))
       setValue(value)
     },
     [setValue]
@@ -36,7 +41,9 @@ export const usePinnedTokens = () => {
   const removePinnedToken = useCallback(
     (currencyId: string) => {
       const [chainId, address] = currencyId.split(':')
-      value[chainId] = Array.from(new Set(value[chainId].filter((token) => token !== getAddress(address))))
+      value[chainId] = Array.from(
+        new Set(value[chainId].filter((token) => token !== `${chainId}:${getAddress(address)}`))
+      )
       setValue(value)
     },
     [setValue]
@@ -50,13 +57,14 @@ export const usePinnedTokens = () => {
         }
 
         const [chainId, address] = currency.split(':')
-        if (!isAddress(address)) {
+        if (address !== 'NATIVE' && !isAddress(address)) {
           throw new Error('Address provided not a valid ERC20 address')
         }
 
-        return value[chainId].includes(getAddress(address))
+        return value[chainId].includes(`${chainId}:${getAddress(address)}`)
       }
-      return !!value[currency.chainId].includes(currency.wrapped.id)
+
+      return !!value[currency.chainId].includes(currency.id)
     },
     [value]
   )
