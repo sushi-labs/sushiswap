@@ -10,6 +10,7 @@ import { useConnect } from '@sushiswap/wagmi'
 import { ConnectView } from './ConnectView'
 import { DefaultView } from './DefaultView'
 import { SettingsView } from './SettingsView'
+import { useBreakpoint } from '@sushiswap/ui/future/lib'
 
 type fullWidth = {
   fullWidth: boolean
@@ -36,6 +37,8 @@ export enum ProfileView {
 export default function WalletSelector({ hideChevron, varient, color, fullWidth, size }: Props) {
   const { account, connected } = useWallet()
   const [view, setView] = useState<ProfileView>(ProfileView.Default)
+  const { isSm } = useBreakpoint('sm')
+  console.log(isSm)
 
   const [balance, setBalance] = useState<number>(0)
   useEffect(() => {

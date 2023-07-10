@@ -9,6 +9,7 @@ import { Token } from 'utils/tokenType'
 interface PropType {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
   currency: Token
+  setToken: React.Dispatch<React.SetStateAction<Token>>
   coinData: number
   isLoadingPrice: boolean
   setTokenSelectedNumber: React.Dispatch<React.SetStateAction<string>>
