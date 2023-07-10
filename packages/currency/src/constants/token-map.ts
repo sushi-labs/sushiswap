@@ -150,7 +150,6 @@ export const TOKEN_MAP = AddressMapper.generate([
   TUSD_ADDRESS,
   UNI_ADDRESS,
   WBTC_ADDRESS,
-  WNATIVE_ADDRESS,
   XSUSHI_ADDRESS,
   YFI_ADDRESS,
 ])
