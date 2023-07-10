@@ -1,13 +1,12 @@
 import { AddressZero } from '@ethersproject/constants'
+import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import { Amount, Type } from '@sushiswap/currency'
 import { Fraction, ZERO } from '@sushiswap/math'
+import { classNames, PalmNaked } from '@sushiswap/ui'
+import { IconButton } from '@sushiswap/ui'
+import { Badge } from '@sushiswap/ui/components/Badge'
 import { Icon } from '@sushiswap/ui/components/currency/Icon'
 import React, { CSSProperties, FC, memo, useCallback } from 'react'
-import { Badge } from '@sushiswap/ui/components/Badge'
-import { CheckCircleIcon } from '@heroicons/react/20/solid'
-import { classNames } from '@sushiswap/ui'
-import { StarIcon as StarIconOutline } from '@heroicons/react/24/outline'
-import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid'
 
 export interface TokenSelectorRow {
   id: string
@@ -46,10 +45,11 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
   }, [])
 
   return (
-    <div className="py-0.5 h-[64px]" style={style}>
+    <div className="relative py-0.5 h-[64px]" style={style}>
       <div
         testdata-id={`${id}-row-${currency.isNative ? AddressZero : currency.wrapped.address.toLowerCase()}`}
         onClick={onClick}
+        onKeyUp={onClick}
         className={classNames(
           className,
           selected ? 'bg-black/[0.06] dark:bg-white/[0.06]' : '',
@@ -102,11 +102,15 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
                 </span>
               </div>
             )}
-
             {pin && (
-              <div onClick={onPin} onKeyDown={onPin} className="flex items-center justify-center w-8 h-8">
-                <div className="w-5 h-5">{pin.isPinned ? <StarIconSolid /> : <StarIconOutline />}</div>
-              </div>
+              <IconButton
+                size="xs"
+                icon={PalmNaked}
+                variant="ghost"
+                name="pin"
+                onClick={onPin}
+                className={classNames(pin.isPinned ? '' : 'grayscale opacity-50', 'z-[1080]')}
+              />
             )}
           </div>
         </div>
