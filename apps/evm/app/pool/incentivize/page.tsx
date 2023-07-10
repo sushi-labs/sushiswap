@@ -475,8 +475,8 @@ const Incentivize = withCheckerRoot(() => {
                         <DialogReview>
                           {({ confirm }) => (
                             <>
-                              <DialogTrigger>
-                                <Button size="xl" testId="swap">
+                              <DialogTrigger asChild>
+                                <Button fullWidth size="xl" testId="swap">
                                   Incentivize pool
                                 </Button>
                               </DialogTrigger>

@@ -4,9 +4,21 @@ import { XMarkIcon } from '@heroicons/react/24/solid'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { Chain, ChainId } from '@sushiswap/chain'
 import * as React from 'react'
-import { createContext, FC, ReactNode, useCallback, useContext, useMemo, useState } from 'react'
+import {
+  createContext,
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react'
 
-import { Button, classNames, Dots, IconButton } from '../index'
+import { Button, classNames, Dots, IconButton, Loader } from '../index'
+import { CheckMarkIcon } from './icons/CheckmarkIcon'
+import { FailedMarkIcon } from './icons/FailedMarkIcon'
 
 const DialogNew = DialogPrimitive.Root
 const DialogTrigger = DialogPrimitive.Trigger
@@ -96,9 +108,9 @@ interface DialogReviewProps
 }
 
 const DialogReview: FC<DialogReviewProps> = ({ children, ...props }) => {
-  const { confirm, open } = useDialog(DialogType.Review)
+  const { confirm, open, setOpen } = useDialog(DialogType.Review)
   return (
-    <DialogNew {...props} open={open}>
+    <DialogNew {...props} open={open} onOpenChange={setOpen}>
       {children({ confirm })}
     </DialogNew>
   )
@@ -126,10 +138,10 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
   txHash,
   ...props
 }) => {
-  const { open } = useDialog(DialogType.Confirm)
+  const { open, setOpen } = useDialog(DialogType.Confirm)
 
   return (
-    <DialogNew {...props} open={open}>
+    <DialogNew {...props} open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
@@ -169,6 +181,15 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
               </a>
             )}
           </DialogDescription>
+          <div className="py-5">
+            {status === 'loading' ? (
+              <Loader size={100} strokeWidth={1} className="!text-blue" />
+            ) : status === 'success' ? (
+              <CheckMarkIcon width={100} height={100} />
+            ) : (
+              <FailedMarkIcon width={100} height={100} />
+            )}
+          </div>
           <DialogFooter>
             <Button testId={testId} asChild={!!buttonLink} fullWidth size="xl">
               {buttonLink ? <a href={buttonLink}>{buttonText}</a> : <>{buttonText}</>}
@@ -189,6 +210,7 @@ export enum DialogType {
 interface DialogContext {
   state: Record<DialogType, boolean>
   confirm(): void
+  setState: Dispatch<SetStateAction<Record<DialogType, boolean>>>
 }
 
 const DialogContext = createContext<DialogContext | undefined>(undefined)
@@ -210,16 +232,18 @@ const DialogProvider: FC<DialogProviderProps> = ({ children }) => {
     })
   }, [])
 
-  return <DialogContext.Provider value={{ state, confirm }}>{children}</DialogContext.Provider>
+  return <DialogContext.Provider value={{ state, confirm, setState }}>{children}</DialogContext.Provider>
 }
 
 type UseDialog<T> = T extends DialogType.Review
   ? {
       open: boolean
+      setOpen(): void
       confirm(): void
     }
   : {
       open: boolean
+      setOpen(): void
     }
 
 const useDialog = <T extends DialogType>(type: T): UseDialog<T> => {
@@ -232,11 +256,13 @@ const useDialog = <T extends DialogType>(type: T): UseDialog<T> => {
     if (type === DialogType.Review) {
       return {
         open: Boolean(context.state[type]),
+        setOpen: () => context.setState({ [DialogType.Confirm]: false, [DialogType.Review]: true }),
         confirm: context.confirm,
       } as UseDialog<T>
     } else {
       return {
         open: Boolean(context.state[type]),
+        setOpen: () => context.setState({ [DialogType.Confirm]: true, [DialogType.Review]: false }),
       } as UseDialog<T>
     }
   }, [context, type])
