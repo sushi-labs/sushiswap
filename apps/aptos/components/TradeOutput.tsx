@@ -5,11 +5,10 @@ import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { PricePanel } from './PricePanel'
 import { BalancePanel } from './BalancePanel'
 import { formatNumber } from 'utils/utilFunctions'
+import { Token } from 'utils/tokenType'
 interface PropType {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
-  tokenName: string
-  imgURL: string
-  decimals: number
+  currency: Token
   coinData: number
   isLoadingPrice: boolean
   setTokenSelectedNumber: React.Dispatch<React.SetStateAction<string>>
@@ -19,9 +18,7 @@ interface PropType {
 }
 export default function TradeOutput({
   setOpen,
-  decimals,
-  tokenName,
-  imgURL,
+  currency,
   coinData,
   isLoadingPrice,
   setTokenSelectedNumber,
@@ -29,7 +26,9 @@ export default function TradeOutput({
   outpuSwapTokenAmount,
   isLoadingPriceLower,
 }: PropType) {
-  outpuSwapTokenAmount = outpuSwapTokenAmount?.amountOut ? formatNumber(outpuSwapTokenAmount.amountOut, decimals) : ''
+  outpuSwapTokenAmount = outpuSwapTokenAmount?.amountOut
+    ? formatNumber(outpuSwapTokenAmount.amountOut, currency.decimals)
+    : ''
   useEffect(() => {
     checkBalance()
   }, [coinData])
@@ -63,6 +62,7 @@ export default function TradeOutput({
             className="text-gray-900 dark:text-slate-50 text-left border-none focus:outline-none focus:ring-0 p-0 bg-transparent w-full truncate font-medium without-ring !text-3xl py-1"
           />
         )}
+
         <button
           onClick={changeToken}
           id="swap-from-button"
@@ -79,11 +79,11 @@ export default function TradeOutput({
               decoding="async"
               data-nimg={1}
               className="rounded-full"
-              src={imgURL}
+              src={currency.logoURI}
               style={{ color: 'transparent' }}
             />
           </div>
-          {tokenName}
+          {currency.name}
           <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />
         </button>
         <div
@@ -109,7 +109,7 @@ export default function TradeOutput({
           coinData={coinData}
           isLoading={isLoadingPrice}
           isLoadingLower={isLoadingPriceLower}
-          decimals={decimals}
+          decimals={currency.decimals}
           disabled={true}
           className="text-gray-500 dark:text-slate-500"
         />

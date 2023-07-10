@@ -7,11 +7,10 @@ import { List } from '@sushiswap/ui/future/components/list/List'
 type PropType = {
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
-  tokens: object
+  tokens: Token[]
   handleChangeToken: (token: Token) => void
-  selected: Token[]
 }
-export default function TokenListDialog({ open, setOpen, tokens, handleChangeToken, selected }: PropType) {
+export default function TokenListDialog({ open, setOpen, tokens, handleChangeToken }: PropType) {
   return (
     <Transition appear show={open} as={Fragment}>
       <Dialog as="div" className="relative z-[1080]" onClose={() => setOpen(false)}>
@@ -28,7 +27,7 @@ export default function TokenListDialog({ open, setOpen, tokens, handleChangeTok
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center">
+          <div className="flex items-end justify-center min-h-full text-center sm:items-center">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -44,15 +43,8 @@ export default function TokenListDialog({ open, setOpen, tokens, handleChangeTok
                     <span className="text-lg font-semibold text-gray-900 dark:text-slate-50">Tokens</span>
                   </div>
                   <List.Control className="relative flex flex-col flex-grow gap-3 p-1">
-                    {tokens?.tokens.map((token: Token, key: number) => {
-                      return (
-                        <TokenListItem
-                          selected={selected}
-                          token={token}
-                          key={key}
-                          handleChangeToken={handleChangeToken}
-                        />
-                      )
+                    {tokens?.map((token: Token, key: number) => {
+                      return <TokenListItem token={token} key={key} handleChangeToken={handleChangeToken} />
                     })}
                   </List.Control>
                 </SlideIn>

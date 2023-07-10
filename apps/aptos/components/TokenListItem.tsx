@@ -3,9 +3,8 @@ import { Token } from 'utils/tokenType'
 type PropType = {
   token: Token
   handleChangeToken: (token: Token) => void
-  selected: Token[]
 }
-export default function TokenListItem({ token, handleChangeToken, selected }: PropType) {
+export default function TokenListItem({ token, handleChangeToken }: PropType) {
   return (
     <div className="py-0.5 h-[64px]">
       <div
@@ -14,7 +13,7 @@ export default function TokenListItem({ token, handleChangeToken, selected }: Pr
       >
         <div className="flex items-center justify-between flex-grow gap-2 rounded">
           <div className="flex flex-row items-center flex-grow gap-4">
-            <img src={token?.logoURI} alt="" height={40} width={40} />
+            <img src={token?.logoURI} alt="" className="rounded-full" height={40} width={40} />
             <div className="flex flex-col items-start">
               <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 group-hover:dark:text-white">
                 {token?.symbol}

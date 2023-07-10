@@ -1,6 +1,7 @@
 import { ArrowLeftIcon } from '@heroicons/react/20/solid'
 import { PlusIcon } from '@heroicons/react/24/outline'
 import { useSlippageTolerance } from '@sushiswap/hooks'
+import { cloudinaryFetchLoader } from '@sushiswap/ui/cloudinary'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { Dots } from '@sushiswap/ui/future/components/Dots'
 import { Button } from '@sushiswap/ui/future/components/button'

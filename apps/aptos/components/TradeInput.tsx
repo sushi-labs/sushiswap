@@ -5,11 +5,10 @@ import { ChevronDownIcon } from '@heroicons/react/24/outline'
 // import { WalletIcon } from '@sushiswap/ui/future/components/icons'
 import { PricePanel } from './PricePanel'
 import { BalancePanel } from './BalancePanel'
+import { Token } from 'utils/tokenType'
 interface PropType {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
-  tokenName: string
-  imgURL: string
-  decimals: number
+  currency: Token
   coinData: number
   isLoadingPrice: boolean
   setTokenSelectedNumber: React.Dispatch<React.SetStateAction<string>>
@@ -22,9 +21,7 @@ interface PropType {
 }
 export default function TradeInput({
   setOpen,
-  decimals,
-  tokenName,
-  imgURL,
+  currency,
   coinData,
   isLoadingPrice,
   setTokenSelectedNumber,
@@ -57,7 +54,7 @@ export default function TradeInput({
 
     if (setButtonError) setButtonError('')
     if (connected) {
-      const priceEst = coinData / 10 ** decimals < parseFloat(tradeVal)
+      const priceEst = coinData / 10 ** currency.decimals < parseFloat(tradeVal)
       if (priceEst) {
         setError('Exceeds Balance')
         if (setButtonError) setButtonError('Insufficient Balance')
@@ -73,6 +70,20 @@ export default function TradeInput({
   const changeToken = () => {
     setOpen(true)
     setTokenSelectedNumber(tokenNumber)
+  }
+
+  const balanceClick = () => {
+    if (currency.name == 'APT') {
+      setInputValue(((coinData - 2000000) / 10 ** 8) as unknown as string)
+    } else {
+      setInputValue((coinData / 10 ** 8) as unknown as string)
+    }
+    const timeOut = setTimeout(() => {
+      checkBalance(tradeVal?.current?.value as string)
+    }, 100)
+    return () => {
+      clearTimeout(timeOut)
+    }
   }
 
   return (
@@ -105,8 +116,8 @@ export default function TradeInput({
         >
           <div className="w-[28px] h-[28px] mr-0.5">
             <img
-              src={imgURL}
-              alt={tokenName}
+              src={currency.logoURI}
+              alt={currency.name}
               height={28}
               width={28}
               decoding="async"
@@ -116,7 +127,7 @@ export default function TradeInput({
               style={{ color: 'transparent' }}
             />
           </div>
-          {tokenName}
+          {currency.name}
           <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />
         </button>
         <div
@@ -141,20 +152,8 @@ export default function TradeInput({
         <BalancePanel
           coinData={coinData}
           isLoading={isLoadingPrice}
-          decimals={decimals}
-          onClick={() => {
-            if (tokenName == 'APTOS') {
-              setInputValue(((coinData - 2000000) / 10 ** 8) as unknown as string)
-            } else {
-              setInputValue((coinData / 10 ** 8) as unknown as string)
-            }
-            const timeOut = setTimeout(() => {
-              checkBalance(tradeVal?.current?.value as string)
-            }, 100)
-            return () => {
-              clearTimeout(timeOut)
-            }
-          }}
+          decimals={currency.decimals}
+          onClick={balanceClick}
           className="text-blue hover:text-blue-600 active:text-blue-700 hover:dark:text-slate-300"
         />
       </div>
