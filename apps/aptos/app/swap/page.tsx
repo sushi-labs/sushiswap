@@ -218,6 +218,7 @@ export default function SwapPage() {
               <TradeInput
                 setOpen={setOpen}
                 currency={token0}
+                setToken={setToken0}
                 coinData={filteredCoin0?.data?.coin?.value}
                 isLoadingPrice={isLoadingPrice}
                 setTokenSelectedNumber={setTokenSelectedNumber}
@@ -232,6 +233,7 @@ export default function SwapPage() {
               <TradeOutput
                 setOpen={setOpen}
                 currency={token1}
+                setToken={setToken1}
                 coinData={filteredCoin1?.data?.coin?.value}
                 isLoadingPrice={isLoadingPrice}
                 setTokenSelectedNumber={setTokenSelectedNumber}
@@ -248,7 +250,6 @@ export default function SwapPage() {
         <div className="h-[68px] w-full" />
         <TokenListDialog
           open={open}
-          selected={[token0, token1]}
           setOpen={setOpen}
           tokens={DEFAULT_TOKEN_LIST.tokens}
           handleChangeToken={handleChangeToken}
