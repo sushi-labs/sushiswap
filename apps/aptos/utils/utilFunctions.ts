@@ -26,7 +26,7 @@ export async function useAllCommonPairs(
       allPairs.push([basePairs[i], basePairs[j]])
     }
   }
-
+  let reserves
   await fetch(
     'https://fullnode.testnet.aptoslabs.com/v1/accounts/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resources',
     { signal: controller.signal }
@@ -37,7 +37,7 @@ export async function useAllCommonPairs(
       let reserve_tokens: any = {}
       let reserve_token_info: any = {}
 
-      let reserves = data.filter((d: any) => {
+      reserves = data.filter((d: any) => {
         if (d.type.includes('swap::TokenPairReserve')) {
           reserve_tokens[d.type] = d
 
@@ -126,6 +126,23 @@ export async function useAllCommonPairs(
       returnRoutes = RouteDemo(amount_in, t, graph, coinA, coinB)
     })
   return returnRoutes
+}
+
+export async function getPoolPairs(controller: AbortController) {
+  let reserves
+  await fetch(
+    'https://fullnode.testnet.aptoslabs.com/v1/accounts/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resources',
+    { signal: controller.signal }
+  )
+    .then((res) => res.json())
+    .then((data) => {
+      reserves = data.filter((d: any) => {
+        if (d.type.includes('swap::TokenPairReserve')) {
+          return true
+        }
+      })
+    })
+  return reserves
 }
 
 const exactOutput = (amt_in: number, res_x: number, res_y: number) => {

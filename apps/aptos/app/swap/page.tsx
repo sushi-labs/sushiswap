@@ -12,7 +12,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { SwitchAppType } from 'widget/SwitchAppType'
 import { WidgetTitleV2 } from 'widget/WidgetTitleV2'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
-import { getYTokenPrice, useAllCommonPairs } from 'utils/utilFunctions'
+import { getPoolPairs, getYTokenPrice, useAllCommonPairs } from 'utils/utilFunctions'
 import { Network, Provider } from 'aptos'
 import { Token } from 'utils/tokenType'
 import Container from '@sushiswap/ui/future/components/Container'
@@ -79,14 +79,17 @@ export default function SwapPage() {
     setController(newController)
     setLoadingPriceLower(true)
     setSwapPerTokenPrice('')
-    const output = await useAllCommonPairs(tradeVal * 10 ** 8, token0, token1, newController)
-    setSwapPerTokenPrice(output)
-    if (output?.message?.includes('Unexpected') || output?.message?.includes('Cannot read properties')) {
+    const returnRoutes = await useAllCommonPairs(tradeVal * 10 ** 8, token0, token1, newController)
+    setSwapPerTokenPrice(returnRoutes)
+    if (returnRoutes?.message?.includes('Unexpected') || returnRoutes?.message?.includes('Cannot read properties')) {
       setNoRouteFound('No Route Found')
     } else {
       setNoRouteFound('')
     }
     setLoadingPriceLower(false)
+
+    const reserves = await getPoolPairs(newController)
+    console.log('reserves', reserves)
   }
 
   const provider = new Provider(Network.TESTNET)
