@@ -1,19 +1,28 @@
 'use client'
 
 import { ArrowLeftIcon, SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
-import { Chain, ChainId } from '@sushiswap/chain'
+import { Chain } from '@sushiswap/chain'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { useAngleRewards } from '@sushiswap/react-query'
 import {
   Badge,
   Button,
   ChipInput,
+  classNames,
   Currency,
+  DialogConfirm,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogProvider,
+  DialogReview,
+  DialogTitle,
+  DialogTrigger,
   Dots,
   IconButton,
   Input,
   List,
-  Modal,
   NetworkIcon,
   Separator,
   SkeletonText,
@@ -22,10 +31,8 @@ import {
   Switch,
   typographyVariants,
 } from '@sushiswap/ui'
-import { classNames } from '@sushiswap/ui'
 import { ADDRESS_ZERO, Pool as V3Pool, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { Address, readContract, useAccount, useSignMessage } from '@sushiswap/wagmi'
-import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { DistributionCreator } from '@sushiswap/wagmi/future/hooks/rewards/abis/DistributionCreator'
@@ -38,6 +45,7 @@ import { BigNumber } from 'ethers'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
+import { useWaitForTransaction } from 'wagmi'
 
 import { useTokenAmountDollarValues } from '../../../lib/hooks'
 import { Layout, SelectNetworkWidget, SelectTokensWidget } from '../../../ui/pool'
@@ -49,7 +57,6 @@ import {
 } from '../../../ui/pool/ConcentratedLiquidityURLStateProvider'
 import { SelectFeeConcentratedWidget } from '../../../ui/pool/NewPositionSection/SelectFeeConcentratedWidget'
 
-const MODAL_INCENTIVIZE_ID = 'incentivize-modal'
 const APPROVE_TAG = 'approve-incentivize'
 
 export default async function Page() {
@@ -177,8 +184,10 @@ const Incentivize = withCheckerRoot(() => {
     setDistribution({ thumb0: val[0], thumb1: Math.max(val[0], val[1]) })
   }, [])
 
+  const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
+
   return (
-    <>
+    <DialogProvider>
       <div className="hidden lg:block">
         <div className="lg:grid grid-cols-2 items-center gap-6 sticky top-[96px]">
           <div className="col-span-2 flex gap-7">
@@ -270,7 +279,7 @@ const Incentivize = withCheckerRoot(() => {
           onSelect={setNetwork}
         />
         <SelectTokensWidget
-          title="Which token pair would you like to incentivize"
+          title="Which token pair would you like to incentivize?"
           chainId={chainId}
           token0={token0}
           token1={token1}
@@ -463,13 +472,109 @@ const Incentivize = withCheckerRoot(() => {
                       buttonText="Sign the terms & conditions"
                     >
                       <Checker.Success tag={APPROVE_TAG}>
-                        <Modal.Trigger tag={MODAL_INCENTIVIZE_ID}>
-                          {({ open }) => (
-                            <Button size="xl" testId="swap" onClick={open}>
-                              Incentivize pool
-                            </Button>
+                        <DialogReview>
+                          {({ confirm }) => (
+                            <>
+                              <DialogTrigger>
+                                <Button size="xl" testId="swap">
+                                  Incentivize pool
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Incentivize Pool</DialogTitle>
+                                  <DialogDescription>
+                                    {token0?.symbol}/{token1?.symbol} • SushiSwap V3 • {feeAmount / 10000}%
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="flex flex-col gap-4">
+                                  <List className="!pt-0">
+                                    <List.Control>
+                                      {pool ? (
+                                        <List.KeyValue flex title="Network">
+                                          {Chain.from(pool.chainId).name}
+                                        </List.KeyValue>
+                                      ) : null}
+                                      {feeAmount && (
+                                        <List.KeyValue title="Fee Tier">{`${+feeAmount / 10000}%`}</List.KeyValue>
+                                      )}
+                                    </List.Control>
+                                  </List>
+                                  <List className="!pt-0">
+                                    <List.Control>
+                                      {startDate ? (
+                                        <List.KeyValue flex title="Start date">
+                                          {format(startDate, 'dd MMM yyyy hh:mmaaa')}
+                                        </List.KeyValue>
+                                      ) : null}
+                                      {endDate ? (
+                                        <List.KeyValue flex title="End date">
+                                          {format(endDate, 'dd MMM yyyy hh:mmaaa')}
+                                        </List.KeyValue>
+                                      ) : null}
+                                      {amount[0] ? (
+                                        <List.KeyValue title={`Total distributed`}>
+                                          <div className="flex items-center gap-2">
+                                            <Currency.Icon currency={amount[0].currency} width={18} height={18} />
+                                            <span>
+                                              {amount[0].toSignificant(6)} {amount[0].currency.symbol}
+                                            </span>
+                                          </div>
+                                        </List.KeyValue>
+                                      ) : null}
+                                      <List.KeyValue
+                                        flex
+                                        title="Out of range incentivization"
+                                        subtitle="Distribute rewards to out of range positions"
+                                      >
+                                        {customizeOOR ? 'Yes' : 'No'}
+                                      </List.KeyValue>
+                                      <List.KeyValue
+                                        flex
+                                        title="Exclude addresses"
+                                        subtitle="Exluded addresses from receiving rewards"
+                                      >
+                                        {blacklist ? `${blacklist.length} Addresses` : 'No'}
+                                      </List.KeyValue>
+                                      {token0 && token1 ? (
+                                        <List.KeyValue
+                                          flex
+                                          title="Customized distribution formula"
+                                          subtitle={`${token0.symbol} / ${token1.symbol} / Fees`}
+                                        >
+                                          {customize
+                                            ? `${distribution.thumb0}% / ${
+                                                distribution.thumb1 - distribution.thumb0
+                                              }% / ${100 - distribution.thumb1}%`
+                                            : 'No'}
+                                        </List.KeyValue>
+                                      ) : null}
+                                    </List.Control>
+                                  </List>
+                                </div>
+                                <DialogFooter>
+                                  <Button
+                                    fullWidth
+                                    size="xl"
+                                    variant={isError ? 'destructive' : 'default'}
+                                    loading={isIncentivizeLoading && !isError}
+                                    onClick={() => writeAsync?.().then(() => confirm())}
+                                    disabled={isIncentivizeLoading || isError}
+                                    testId="confirm-swap"
+                                  >
+                                    {isError ? (
+                                      'Shoot! Something went wrong :('
+                                    ) : isIncentivizeLoading ? (
+                                      <Dots>Incentivize Pool</Dots>
+                                    ) : (
+                                      `Incentivize Pool`
+                                    )}
+                                  </Button>
+                                </DialogFooter>
+                              </DialogContent>
+                            </>
                           )}
-                        </Modal.Trigger>
+                        </DialogReview>
                       </Checker.Success>
                     </Checker.Custom>
                   </Checker.ApproveERC20>
@@ -480,130 +585,16 @@ const Incentivize = withCheckerRoot(() => {
         </Checker.Connect>
       </div>
       {pool && token0 && token1 ? (
-        <>
-          <Modal.Review tag={MODAL_INCENTIVIZE_ID} variant="opaque">
-            {({ close, confirm }) => (
-              <div className="max-w-[504px] mx-auto">
-                <button onClick={close} className="p-3 pl-0">
-                  <ArrowLeftIcon strokeWidth={3} width={24} height={24} />
-                </button>
-                <div className="flex items-start justify-between gap-4 py-2">
-                  <div className="flex flex-col flex-grow gap-1">
-                    <h1 className="text-3xl font-semibold text-gray-900 dark:text-slate-50">Migrate Liquidity</h1>
-                    <h1 className="text-lg font-medium text-gray-600 dark:text-slate-300">
-                      {token0?.symbol}/{token1?.symbol} • SushiSwap V3 • {feeAmount / 10000}%
-                    </h1>
-                  </div>
-                  <div>
-                    {token0 && token1 && (
-                      <Currency.IconList iconWidth={56} iconHeight={56}>
-                        <Currency.Icon currency={token0} width={56} height={56} />
-                        <Currency.Icon currency={token1} width={56} height={56} />
-                      </Currency.IconList>
-                    )}
-                  </div>
-                </div>
-                <div className="flex flex-col gap-3">
-                  <List>
-                    <List.Control>
-                      <List.KeyValue flex title="Network">
-                        {Chain.from(pool.chainId).name}
-                      </List.KeyValue>
-                      {feeAmount && <List.KeyValue title="Fee Tier">{`${+feeAmount / 10000}%`}</List.KeyValue>}
-                    </List.Control>
-                  </List>
-                  <List>
-                    <List.Control>
-                      {startDate ? (
-                        <List.KeyValue flex title="Start date">
-                          {format(startDate, 'dd MMM yyyy hh:mmaaa')}
-                        </List.KeyValue>
-                      ) : null}
-                      {endDate ? (
-                        <List.KeyValue flex title="End date">
-                          {format(endDate, 'dd MMM yyyy hh:mmaaa')}
-                        </List.KeyValue>
-                      ) : null}
-                      {amount[0] ? (
-                        <List.KeyValue title={`Total distributed`}>
-                          <div className="flex items-center gap-2">
-                            <Currency.Icon currency={amount[0].currency} width={18} height={18} />
-                            <span>
-                              {amount[0].toSignificant(6)} {amount[0].currency.symbol}
-                            </span>
-                          </div>
-                        </List.KeyValue>
-                      ) : null}
-                      <List.KeyValue
-                        flex
-                        title="Out of range incentivization"
-                        subtitle="Distribute rewards to out of range positions"
-                      >
-                        {customizeOOR ? 'Yes' : 'No'}
-                      </List.KeyValue>
-                      <List.KeyValue flex title="Exclude addresses" subtitle="Exluded addresses from receiving rewards">
-                        {blacklist ? `${blacklist.length} Addresses` : 'No'}
-                      </List.KeyValue>
-                      <List.KeyValue
-                        flex
-                        title="Customized distribution formula"
-                        subtitle={`${token0.symbol} / ${token1.symbol} / Fees`}
-                      >
-                        {customize
-                          ? `${distribution.thumb0}% / ${distribution.thumb1 - distribution.thumb0}% / ${
-                              100 - distribution.thumb1
-                            }%`
-                          : 'No'}
-                      </List.KeyValue>
-                    </List.Control>
-                  </List>
-                  <List>
-                    <List.Control>
-                      <span />
-                    </List.Control>
-                  </List>
-                </div>
-                <div className="pt-4">
-                  <div className="space-y-4">
-                    <Button
-                      fullWidth
-                      size="xl"
-                      variant={isError ? 'destructive' : 'default'}
-                      loading={isIncentivizeLoading && !isError}
-                      onClick={() => writeAsync?.().then(() => confirm())}
-                      disabled={isIncentivizeLoading || isError}
-                      testId="confirm-swap"
-                    >
-                      {isError ? (
-                        'Shoot! Something went wrong :('
-                      ) : isIncentivizeLoading ? (
-                        <Dots>Incentivize Pool</Dots>
-                      ) : (
-                        `Incentivize Pool`
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </Modal.Review>
-          <Modal.Confirm tag={MODAL_INCENTIVIZE_ID} variant="transparent">
-            {({ close }) => (
-              <TxStatusModalContent
-                onComplete={() => push(`/pools/${pool.chainId}:${v3Address}?activeTab=myPositions`)}
-                testId="migrate-confirmation-modal"
-                tag={MODAL_INCENTIVIZE_ID}
-                chainId={pool.chainId as ChainId}
-                hash={data?.hash}
-                successMessage={`Successfully migrated your ${token0.symbol}/${token1.symbol} position`}
-                onClose={close}
-                buttonSuccessText="Go to pool"
-                buttonSuccessLink={`/pools/${pool.chainId}:${v3Address}?activeTab=myPositions`}
-              />
-            )}
-          </Modal.Confirm>
-        </>
+        <DialogConfirm
+          chainId={chainId}
+          status={status}
+          testId="migrate-confirmation-modal"
+          successMessage={`Successfully migrated your ${token0.symbol}/${token1.symbol} position`}
+          buttonText="Go to pool"
+          buttonLink={`/pools/${pool.chainId}:${v3Address}?activeTab=myPositions`}
+          txHash={data?.hash}
+        />
       ) : null}
-    </>
+    </DialogProvider>
   )
 })

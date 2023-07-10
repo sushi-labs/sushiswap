@@ -1,13 +1,14 @@
 'use client'
 
+import { XMarkIcon } from '@heroicons/react/24/solid'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
-import { X } from 'lucide-react'
+import { Chain, ChainId } from '@sushiswap/chain'
 import * as React from 'react'
+import { createContext, FC, ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 
-import { classNames } from '../index'
+import { Button, classNames, Dots, IconButton } from '../index'
 
 const DialogNew = DialogPrimitive.Root
-
 const DialogTrigger = DialogPrimitive.Trigger
 
 const DialogPortal = ({ className, children, ...props }: DialogPrimitive.DialogPortalProps) => (
@@ -24,7 +25,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={classNames(
-      'fixed inset-0 z-50 bg-background/80 backdrop-blur-sm transition-all duration-100 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=open]:fade-in',
+      'fixed inset-0 z-50 bg-black/10 backdrop-blur-sm transition-all duration-100 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=open]:fade-in',
       className
     )}
     {...props}
@@ -41,15 +42,14 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={classNames(
-        'fixed z-50 grid w-full gap-4 rounded-b-lg border bg-background p-6 shadow-lg animate-in data-[state=open]:fade-in-90 data-[state=open]:slide-in-from-bottom-10 sm:max-w-lg sm:rounded-lg sm:zoom-in-90 data-[state=open]:sm:slide-in-from-bottom-0',
+        'fixed z-50 grid w-full gap-4 rounded-2xl paper dark:bg-slate-800/50 bg-white/50 p-6 shadow-lg animate-in data-[state=open]:fade-in-90 data-[state=open]:slide-in-from-bottom-10 sm:max-w-lg sm:rounded-2xl sm:zoom-in-90 data-[state=open]:sm:slide-in-from-bottom-0',
         className
       )}
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-        <X className="h-4 w-4" />
-        <span className="sr-only">Close</span>
+      <DialogPrimitive.Close asChild className="absolute right-6 top-6">
+        <IconButton icon={XMarkIcon} name="Close" />
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
   </DialogPortal>
@@ -90,4 +90,168 @@ const DialogDescription = React.forwardRef<
 ))
 DialogDescription.displayName = DialogPrimitive.Description.displayName
 
-export { DialogContent, DialogDescription,DialogFooter, DialogHeader, DialogNew, DialogTitle, DialogTrigger }
+interface DialogReviewProps
+  extends Omit<React.ComponentPropsWithoutRef<typeof DialogPrimitive.Root>, 'children' | 'open'> {
+  children: ({ confirm }: { confirm(): void }) => ReactNode
+}
+
+const DialogReview: FC<DialogReviewProps> = ({ children, ...props }) => {
+  const { confirm, open } = useDialog(DialogType.Review)
+  return (
+    <DialogNew {...props} open={open}>
+      {children({ confirm })}
+    </DialogNew>
+  )
+}
+DialogReview.displayName = 'DialogReview'
+
+interface DialogConfirmProps
+  extends Omit<React.ComponentPropsWithoutRef<typeof DialogPrimitive.Root>, 'children' | 'open'> {
+  chainId: ChainId
+  testId: string
+  successMessage: string
+  buttonLink?: string
+  buttonText?: string
+  txHash: string | undefined
+  status: 'idle' | 'loading' | 'success' | 'error'
+}
+
+const DialogConfirm: FC<DialogConfirmProps> = ({
+  chainId,
+  testId,
+  successMessage,
+  buttonText,
+  buttonLink,
+  status,
+  txHash,
+  ...props
+}) => {
+  const { open } = useDialog(DialogType.Confirm)
+
+  return (
+    <DialogNew {...props} open={open}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            {status === 'loading' ? <Dots>Confirming</Dots> : status === 'success' ? 'Success!' : 'Oops!'}
+          </DialogTitle>
+          <DialogDescription>
+            {status === 'loading' ? (
+              <>
+                Waiting for your{' '}
+                <a
+                  target="_blank"
+                  href={txHash ? Chain.from(chainId).getTxUrl(txHash) : ''}
+                  className="cursor-pointer text-blue hover:underline"
+                  rel="noreferrer"
+                >
+                  transaction
+                </a>{' '}
+                to be confirmed on the blockchain.
+              </>
+            ) : status === 'success' ? (
+              <a
+                target="_blank"
+                href={txHash ? Chain.from(chainId).getTxUrl(txHash) : ''}
+                className="cursor-pointer text-blue hover:underline"
+                rel="noreferrer"
+              >
+                {successMessage}
+              </a>
+            ) : (
+              <a
+                target="_blank"
+                href={txHash ? Chain.from(chainId).getTxUrl(txHash) : ''}
+                className="cursor-pointer text-blue hover:underline"
+                rel="noreferrer"
+              >
+                Something went wrong...
+              </a>
+            )}
+          </DialogDescription>
+          <DialogFooter>
+            <Button testId={testId} asChild={!!buttonLink} fullWidth size="xl">
+              {buttonLink ? <a href={buttonLink}>{buttonText}</a> : <>{buttonText}</>}
+            </Button>
+          </DialogFooter>
+        </DialogHeader>
+      </DialogContent>
+    </DialogNew>
+  )
+}
+DialogConfirm.displayName = 'DialogConfirm'
+
+export enum DialogType {
+  Review,
+  Confirm,
+}
+
+interface DialogContext {
+  state: Record<DialogType, boolean>
+  confirm(): void
+}
+
+const DialogContext = createContext<DialogContext | undefined>(undefined)
+
+interface DialogProviderProps {
+  children: ReactNode
+}
+
+const DialogProvider: FC<DialogProviderProps> = ({ children }) => {
+  const [state, setState] = useState<Record<DialogType, boolean>>({
+    [DialogType.Review]: false,
+    [DialogType.Confirm]: false,
+  })
+
+  const confirm = useCallback(() => {
+    setState({
+      [DialogType.Review]: false,
+      [DialogType.Confirm]: true,
+    })
+  }, [])
+
+  return <DialogContext.Provider value={{ state, confirm }}>{children}</DialogContext.Provider>
+}
+
+type UseDialog<T> = T extends DialogType.Review
+  ? {
+      open: boolean
+      confirm(): void
+    }
+  : {
+      open: boolean
+    }
+
+const useDialog = <T extends DialogType>(type: T): UseDialog<T> => {
+  const context = useContext(DialogContext)
+  if (!context) {
+    throw new Error('Hook can only be used inside Modal Context')
+  }
+
+  return useMemo(() => {
+    if (type === DialogType.Review) {
+      return {
+        open: Boolean(context.state[type]),
+        confirm: context.confirm,
+      } as UseDialog<T>
+    } else {
+      return {
+        open: Boolean(context.state[type]),
+      } as UseDialog<T>
+    }
+  }, [context, type])
+}
+
+export {
+  DialogConfirm,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogNew,
+  DialogProvider,
+  DialogReview,
+  DialogTitle,
+  DialogTrigger,
+  useDialog,
+}
