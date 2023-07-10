@@ -116,6 +116,7 @@ const config: PlaywrightTestConfig = {
       reuseExistingServer: !process.env.CI,
       env: {
         NEXT_PUBLIC_TEST: 'true',
+        ANVIL_PORT: String(process.env.ANVIL_PORT),
         NEXT_PUBLIC_ANVIL_PORT: String(process.env.ANVIL_PORT),
       },
     },

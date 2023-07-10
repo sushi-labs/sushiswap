@@ -378,17 +378,17 @@ async function reviewAndConfirmSingleVest(page: Page, args: VestingArgs) {
 }
 
 export async function increaseEvmTime(unix: number, chainId: number) {
-  const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545', chainId)
+  const provider = new ethers.providers.JsonRpcProvider(`http://127.0.0.1:${process.env.ANVIL_PORT}`, chainId)
   await provider.send('evm_mine', [unix])
 }
 
 export async function createSnapshot(chainId: number): Promise<string> {
-  const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545', chainId)
+  const provider = new ethers.providers.JsonRpcProvider(`http://127.0.0.1:${process.env.ANVIL_PORT}`, chainId)
   return await provider.send('evm_snapshot', [])
 }
 
 export async function loadSnapshot(chainId: number, snapshot: string) {
-  const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545', chainId)
+  const provider = new ethers.providers.JsonRpcProvider(`http://127.0.0.1:${process.env.ANVIL_PORT}`, chainId)
   await provider.send('evm_revert', [snapshot])
 }
 
