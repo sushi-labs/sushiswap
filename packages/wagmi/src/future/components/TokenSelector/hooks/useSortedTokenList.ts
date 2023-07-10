@@ -4,16 +4,11 @@ import { filterTokens, getSortedTokensByQuery, tokenComparator } from '../../../
 import { Fraction } from '@sushiswap/math'
 import { useQuery } from '@tanstack/react-query'
 import { ChainId } from '@sushiswap/chain'
-import { useEffect, useState } from 'react'
 
 interface Params {
   query: string
   chainId?: ChainId
   tokenMap: Record<string, Token> | undefined
-  pin?: {
-    pinnedSet: Set<string>
-    isPinned: (currency: string | Type) => boolean | undefined
-  }
   customTokenMap: Record<string, Token> | undefined
   pricesMap?: Record<string, Fraction>
   balancesMap?: Record<string, Amount<Type>>
@@ -34,7 +29,6 @@ export const useSortedTokenList = ({
   query,
   chainId,
   tokenMap,
-  pin,
   customTokenMap,
   balancesMap,
   pricesMap,
@@ -43,10 +37,7 @@ export const useSortedTokenList = ({
   const debouncedQuery = useDebounce(query, 250)
 
   return useQuery({
-    queryKey: [
-      'sortedTokenList',
-      { debouncedQuery, tokenMap, customTokenMap, balancesMap, pricesMap, pinnedSet: Array.from(pin?.pinnedSet || []) },
-    ],
+    queryKey: ['sortedTokenList', { debouncedQuery, tokenMap, customTokenMap, balancesMap, pricesMap }],
     queryFn: async () => {
       const tokenMapValues = tokenMap ? Object.values(tokenMap) : []
       const tokenMapIds: string[] = tokenMapValues ? tokenMapValues.map((el) => el.address) : []
@@ -61,18 +52,11 @@ export const useSortedTokenList = ({
 
       const filteredTokens: Token[] = filterTokens(tokenMapValues, debouncedQuery)
       const filteredCustomTokens: Token[] = filterTokens(customTokenMapValues, debouncedQuery)
-      const sortedTokensWithValue: Token[] = [...filteredTokens, ...filteredCustomTokens].sort(
+      const sortedTokens: Token[] = [...filteredTokens, ...filteredCustomTokens].sort(
         tokenComparator(balancesMap, pricesMap)
       )
-      const sortedTokesWithPin = pin?.isPinned
-        ? sortedTokensWithValue.sort((a, b) => {
-            if (pin.isPinned(a) && !pin.isPinned(b)) return -1
-            if (!pin.isPinned(a) && pin.isPinned(b)) return 1
-            return 0
-          })
-        : sortedTokensWithValue
 
-      const filteredSortedTokens = getSortedTokensByQuery(sortedTokesWithPin, debouncedQuery)
+      const filteredSortedTokens = getSortedTokensByQuery(sortedTokens, debouncedQuery)
       if (_includeNative) return [Native.onChain(chainId), ...customTokenMapValues, ...filteredSortedTokens]
       return filteredSortedTokens
     },

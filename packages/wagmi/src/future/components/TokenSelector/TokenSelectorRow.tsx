@@ -19,7 +19,7 @@ export interface TokenSelectorRow {
   balance?: Amount<Type> | undefined
   price?: Fraction
   pin?: {
-    pinned: boolean
+    isPinned: boolean
     onPin(): void
   }
   selected: boolean
@@ -105,7 +105,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
 
             {pin && (
               <div onClick={onPin} onKeyDown={onPin} className="flex items-center justify-center w-8 h-8">
-                <div className="w-5 h-5">{pin.pinned ? <StarIconSolid /> : <StarIconOutline />}</div>
+                <div className="w-5 h-5">{pin.isPinned ? <StarIconSolid /> : <StarIconOutline />}</div>
               </div>
             )}
           </div>

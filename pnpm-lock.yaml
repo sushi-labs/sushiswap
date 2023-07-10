@@ -1888,6 +1888,7 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/router-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/jest': ^29.2.0
       '@types/react': 18.2.14
@@ -1911,6 +1912,7 @@ importers:
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/math': link:../math
       '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/router-config': link:../../config/router
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/jest': 29.5.1
       '@types/react': 18.2.14
@@ -18895,7 +18897,7 @@ packages:
   /axios/0.27.2:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       form-data: 4.0.0
     transitivePeerDependencies:
       - debug
@@ -24810,6 +24812,15 @@ packages:
     resolution: {integrity: sha512-Y6hyofImk9JdzU8k5INtTXX1cu8LDlePWDFU5sftm9H+zKCr5SGrVjdhkvsim646cw5zD0nADj8oHyXMZmCZ9w==}
     dependencies:
       imul: 1.0.1
+
+  /follow-redirects/1.15.2:
+    resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
 
   /follow-redirects/1.15.2_debug@4.3.4:
     resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
@@ -34486,7 +34497,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1

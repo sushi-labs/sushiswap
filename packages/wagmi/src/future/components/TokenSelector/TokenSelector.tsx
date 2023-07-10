@@ -1,19 +1,17 @@
 import { isAddress } from '@ethersproject/address'
+import { XMarkIcon } from '@heroicons/react/20/solid'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
 import { useCustomTokens, usePinnedTokens } from '@sushiswap/hooks'
 import { useBalances, usePrices, useTokens } from '@sushiswap/react-query'
-import { COMMON_BASES } from '@sushiswap/router-config'
 import { SlideIn } from '@sushiswap/ui/components/animation'
 import { Button } from '@sushiswap/ui/components/button'
-import { buttonIconVariants } from '@sushiswap/ui/components/button'
-import { Currency } from '@sushiswap/ui/components/currency'
 import { Dialog } from '@sushiswap/ui/components/dialog'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { Search } from '@sushiswap/ui/components/input/Search'
 import { List } from '@sushiswap/ui/components/list/List'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useTokenWithCache } from '../../hooks'
@@ -56,12 +54,21 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
     query,
     customTokenMap: currencies ? {} : customTokenMap,
     tokenMap: currencies ? currencies : tokenMap,
-    pin: { isPinned: isTokenPinned, pinnedSet: pinnedTokenSet },
     pricesMap,
     balancesMap,
     chainId,
     includeNative: true,
   })
+
+  const pinnedTokens = useMemo(() => {
+    return Array.from(pinnedTokenSet)
+      .map((id) => {
+        const [cId, address] = id.split(':')
+        if (chainId !== Number(cId)) return null
+        return tokenMap?.[address] || customTokenMap?.[address]
+      })
+      .filter((token): token is Token => !!token)
+  }, [pinnedTokenSet, tokenMap])
 
   const _onSelect = useCallback(
     (currency: Type) => {
@@ -105,17 +112,25 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {COMMON_BASES[chainId].map((base) => (
-                <Button variant="secondary" key={base.id} onClick={() => _onSelect(base)}>
-                  <Currency.Icon
-                    width={20}
-                    height={20}
-                    className={buttonIconVariants({ size: 'default' })}
-                    currency={base}
-                    disableLink
-                  />
-                  {base.symbol}
-                </Button>
+              {pinnedTokens.map((token) => (
+                <div key={token.id} className="group">
+                  <div className="relative flex justify-end w-full">
+                    <Button
+                      color="default"
+                      className="absolute hidden group-hover:flex items-center justify-center w-[18px] h-[18px] -mt-1 -mr-1 border-gray-300 rounded-full border dark:border-gray-800 hover:border-gray-600 dark:hover:border-gray-600"
+                      onClick={() => _onPin(token.id)}
+                    >
+                      <XMarkIcon className="w-3 h-3" />
+                    </Button>
+                  </div>
+                  <Button
+                    color="default"
+                    onClick={() => _onSelect(token)}
+                    className="border border-gray-300 dark:border-transparent hover:border-gray-600 dark:hover:border-gray-600"
+                  >
+                    {token.symbol}
+                  </Button>
+                </div>
               ))}
             </div>
 
@@ -153,7 +168,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
                     selected={selected}
                     onSelect={_onSelect}
                     id={id}
-                    pin={{ onPin: _onPin, pinnedSet: pinnedTokenSet }}
+                    pin={{ onPin: _onPin, isPinned: isTokenPinned }}
                     currencies={sortedTokenList}
                     chainId={chainId}
                   />
