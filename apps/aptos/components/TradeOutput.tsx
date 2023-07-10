@@ -6,24 +6,20 @@ import { PricePanel } from './PricePanel'
 import { BalancePanel } from './BalancePanel'
 import { formatNumber } from 'utils/utilFunctions'
 import { Token } from 'utils/tokenType'
+import TokenListDialog from './TokenListDialog'
 interface PropType {
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
   currency: Token
   setToken: React.Dispatch<React.SetStateAction<Token>>
   coinData: number
   isLoadingPrice: boolean
-  setTokenSelectedNumber: React.Dispatch<React.SetStateAction<string>>
-  tokenNumber: string
   outpuSwapTokenAmount: any
   isLoadingPriceLower: boolean
 }
 export default function TradeOutput({
-  setOpen,
   currency,
+  setToken,
   coinData,
   isLoadingPrice,
-  setTokenSelectedNumber,
-  tokenNumber,
   outpuSwapTokenAmount,
   isLoadingPriceLower,
 }: PropType) {
@@ -38,11 +34,6 @@ export default function TradeOutput({
     if (coinData === undefined) {
       coinData = 0
     }
-  }
-
-  const changeToken = () => {
-    setOpen(true)
-    setTokenSelectedNumber(tokenNumber)
   }
 
   return (
@@ -63,30 +54,36 @@ export default function TradeOutput({
             className="text-gray-900 dark:text-slate-50 text-left border-none focus:outline-none focus:ring-0 p-0 bg-transparent w-full truncate font-medium without-ring !text-3xl py-1"
           />
         )}
-
-        <button
-          onClick={changeToken}
-          id="swap-from-button"
-          type="button"
-          testdata-id="swap-from-button"
-          className="flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12] whitespace-nowrap"
-        >
-          <div className="w-[28px] h-[28px] mr-0.5">
-            <img
-              alt="Ether"
-              loading="lazy"
-              width={28}
-              height={28}
-              decoding="async"
-              data-nimg={1}
-              className="rounded-full"
-              src={currency.logoURI}
-              style={{ color: 'transparent' }}
-            />
-          </div>
-          {currency.name}
-          <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />
-        </button>
+        <TokenListDialog selected={currency} handleChangeToken={setToken}>
+          {({ setOpen }) => (
+            <button
+              onClick={(e) => {
+                setOpen(true)
+                e.stopPropagation()
+              }}
+              id="swap-from-button"
+              type="button"
+              testdata-id="swap-from-button"
+              className="flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12] whitespace-nowrap"
+            >
+              <div className="w-[28px] h-[28px] mr-0.5">
+                <img
+                  alt="Ether"
+                  loading="lazy"
+                  width={28}
+                  height={28}
+                  decoding="async"
+                  data-nimg={1}
+                  className="rounded-full"
+                  src={currency.logoURI}
+                  style={{ color: 'transparent' }}
+                />
+              </div>
+              {currency.name}
+              <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />
+            </button>
+          )}
+        </TokenListDialog>
         <div
           style={{
             position: 'fixed',

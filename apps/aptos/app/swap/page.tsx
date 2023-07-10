@@ -5,14 +5,13 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Drawer } from '@sushiswap/ui'
 import SwapTrade from 'components/SwapTrade'
 import DEFAULT_TOKEN_LIST from './../../config/tokenList.json'
-import TokenListDialog from 'components/TokenListDialog'
 import TradeInput from 'components/TradeInput'
 import { SwapButton } from 'components/SwapButton'
 import React, { useEffect, useRef, useState } from 'react'
 import { SwitchAppType } from 'widget/SwitchAppType'
 import { WidgetTitleV2 } from 'widget/WidgetTitleV2'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
-import { getPoolPairs, getYTokenPrice, useAllCommonPairs } from 'utils/utilFunctions'
+import { getPoolPairs, useAllCommonPairs } from 'utils/utilFunctions'
 import { Network, Provider } from 'aptos'
 import { Token } from 'utils/tokenType'
 import Container from '@sushiswap/ui/future/components/Container'
@@ -37,12 +36,10 @@ export default function SwapPage() {
   const [token0, setToken0] = useState<Token>(DEFAULT_TOKEN_LIST.tokens[0])
   const [token1, setToken1] = useState<Token>(DEFAULT_TOKEN_LIST.tokens[1])
   const [buttonError, setButtonError] = useState<string>('')
-  const [open, setOpen] = useState<boolean>(false)
   const [filteredCoin0, setFilteredCoin0] = useState<coinType | undefined>(undefined)
   const [filteredCoin1, setFilteredCoin1] = useState<coinType | undefined>(undefined)
   const [isLoadingPrice, setLoadingPrice] = useState<boolean>(true)
   const [isLoadingPriceLower, setLoadingPriceLower] = useState<boolean>(true)
-  const [tokenSelectedNumber, setTokenSelectedNumber] = useState<string>('')
   const [token1Value, setToken1Value] = useState<number>(0)
   const [swapPerTokenPrice, setSwapPerTokenPrice] = useState<any>()
   const [isTransactionPending, setisTransactionPending] = useState(false)
@@ -61,14 +58,6 @@ export default function SwapPage() {
     }
   }, [network])
 
-  const handleChangeToken = (token: Token) => {
-    setOpen(false)
-    if (tokenSelectedNumber == '0') {
-      setToken0(token)
-    } else {
-      setToken1(token)
-    }
-  }
   const getSwapPrice = async (tradeVal: number): Promise<any> => {
     if (controller) {
       controller.abort()
@@ -87,9 +76,6 @@ export default function SwapPage() {
       setNoRouteFound('')
     }
     setLoadingPriceLower(false)
-
-    const reserves = await getPoolPairs(newController)
-    console.log('reserves', reserves)
   }
 
   const provider = new Provider(Network.TESTNET)
@@ -130,7 +116,6 @@ export default function SwapPage() {
   }, [account, connected, token0, token1, isTransactionPending])
 
   const swapToken = async (close: () => void) => {
-    console.log(swapPerTokenPrice)
     const payload: any = payloadArgs(
       parseInt((token1Value * 10 ** token0.decimals) as unknown as string),
       swapPerTokenPrice,
@@ -142,7 +127,6 @@ export default function SwapPage() {
       // sign and submit transaction to chain
       const response: Promise<any> = await signAndSubmitTransaction(payload)
       // wait for transaction
-      console.log(response)
       await provider.waitForTransaction(response?.hash)
 
       //return from here if response is failed
@@ -167,7 +151,6 @@ export default function SwapPage() {
       setisTransactionPending(false)
       close()
     } catch (error) {
-      console.error(error)
       const toastId = `failed:${Math.random()}`
       toast(
         <>
@@ -185,7 +168,6 @@ export default function SwapPage() {
       if (tradeVal.current) {
         tradeVal.current.value = ''
       }
-      console.log(tradeVal?.current?.value)
     }
   }
   useEffect(() => {
@@ -219,28 +201,21 @@ export default function SwapPage() {
             </div>
             <UIWidget.Content>
               <TradeInput
-                setOpen={setOpen}
                 currency={token0}
                 setToken={setToken0}
                 coinData={filteredCoin0?.data?.coin?.value}
                 isLoadingPrice={isLoadingPrice}
-                setTokenSelectedNumber={setTokenSelectedNumber}
-                tokenNumber={'0'}
                 setButtonError={setButtonError}
-                setSwapPerTokenPrice={setSwapPerTokenPrice}
                 getSwapPrice={getSwapPrice}
                 setToken1Value={setToken1Value}
                 tradeVal={tradeVal}
               />
               <SwapTrade setInverse={swapInput} />
               <TradeOutput
-                setOpen={setOpen}
                 currency={token1}
                 setToken={setToken1}
                 coinData={filteredCoin1?.data?.coin?.value}
                 isLoadingPrice={isLoadingPrice}
-                setTokenSelectedNumber={setTokenSelectedNumber}
-                tokenNumber={'1'}
                 outpuSwapTokenAmount={swapPerTokenPrice}
                 isLoadingPriceLower={isLoadingPriceLower}
               />
@@ -251,12 +226,6 @@ export default function SwapPage() {
           {/*spacer for fixed positioned swap button */}
         </div>
         <div className="h-[68px] w-full" />
-        <TokenListDialog
-          open={open}
-          setOpen={setOpen}
-          tokens={DEFAULT_TOKEN_LIST.tokens}
-          handleChangeToken={handleChangeToken}
-        />
 
         <TradeReviewDialog
           swapToken={swapToken}

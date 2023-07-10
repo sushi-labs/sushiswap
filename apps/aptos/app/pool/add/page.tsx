@@ -5,7 +5,7 @@ import { Badge } from '@sushiswap/ui/future/components/Badge'
 import Container from '@sushiswap/ui/future/components/Container'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import { PoolPageV3 } from 'components/PoolPageV2'
+import { PoolPageV2 } from 'components/PoolPageV2'
 import { SelectFeeConcentratedWidget } from 'components/SelectFeeConcentratedWidget'
 import { SelectNetworkWidget } from 'components/SelectNetworkWidget'
 import { SelectPricesWidget } from 'components/SelectPricesWidget'
@@ -142,7 +142,7 @@ const _Add: FC = () => {
         <SelectFeeConcentratedWidget />
         <SelectPricesWidget />
         <SelectTokensWidget />
-        <PoolPageV3 />
+        <PoolPageV2 />
       </div>
     </>
   )

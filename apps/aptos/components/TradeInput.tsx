@@ -6,28 +6,22 @@ import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { PricePanel } from './PricePanel'
 import { BalancePanel } from './BalancePanel'
 import { Token } from 'utils/tokenType'
+import TokenListDialog from './TokenListDialog'
 interface PropType {
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
   currency: Token
   setToken: React.Dispatch<React.SetStateAction<Token>>
   coinData: number
   isLoadingPrice: boolean
-  setTokenSelectedNumber: React.Dispatch<React.SetStateAction<string>>
-  setSwapPerTokenPrice: React.Dispatch<React.SetStateAction<any>>
-  tokenNumber: string
   setButtonError: React.Dispatch<React.SetStateAction<string>>
   setToken1Value: React.Dispatch<React.SetStateAction<number>>
   getSwapPrice: (tradeVal: number) => Promise<any>
   tradeVal: React.RefObject<HTMLInputElement>
 }
 export default function TradeInput({
-  setOpen,
   currency,
   setToken,
   coinData,
   isLoadingPrice,
-  setTokenSelectedNumber,
-  tokenNumber,
   setButtonError,
   getSwapPrice,
   setToken1Value,
@@ -69,11 +63,6 @@ export default function TradeInput({
     }
   }
 
-  const changeToken = () => {
-    setOpen(true)
-    setTokenSelectedNumber(tokenNumber)
-  }
-
   const balanceClick = () => {
     if (currency.name == 'APT') {
       setInputValue(((coinData - 2000000) / 10 ** 8) as unknown as string)
@@ -106,32 +95,36 @@ export default function TradeInput({
           }}
           className="text-gray-900 dark:text-slate-50 text-left border-none focus:outline-none focus:ring-0 p-0 bg-transparent w-full truncate font-medium without-ring !text-3xl py-1"
         />
-        <button
-          onClick={(e) => {
-            changeToken()
-            e.stopPropagation()
-          }}
-          id="swap-from-button"
-          type="button"
-          testdata-id="swap-from-button"
-          className="flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12] whitespace-nowrap"
-        >
-          <div className="w-[28px] h-[28px] mr-0.5">
-            <img
-              src={currency.logoURI}
-              alt={currency.name}
-              height={28}
-              width={28}
-              decoding="async"
-              loading="lazy"
-              data-nimg={1}
-              className="rounded-full"
-              style={{ color: 'transparent' }}
-            />
-          </div>
-          {currency.name}
-          <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />
-        </button>
+        <TokenListDialog selected={currency} handleChangeToken={setToken}>
+          {({ setOpen }) => (
+            <button
+              onClick={(e) => {
+                setOpen(true)
+                e.stopPropagation()
+              }}
+              id="swap-from-button"
+              type="button"
+              testdata-id="swap-from-button"
+              className="flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12] whitespace-nowrap"
+            >
+              <div className="w-[28px] h-[28px] mr-0.5">
+                <img
+                  src={currency.logoURI}
+                  alt={currency.name}
+                  height={28}
+                  width={28}
+                  decoding="async"
+                  loading="lazy"
+                  data-nimg={1}
+                  className="rounded-full"
+                  style={{ color: 'transparent' }}
+                />
+              </div>
+              {currency.name}
+              <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />
+            </button>
+          )}
+        </TokenListDialog>
         <div
           style={{
             position: 'fixed',

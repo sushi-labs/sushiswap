@@ -32,7 +32,6 @@ export const TradeReviewDialog: FC<Props> = ({
   isTransactionPending,
 }) => {
   const [slippageTolerance] = useSlippageTolerance('swapSlippage')
-  console.log(value2)
   return (
     // <>Hello</>
     <Modal.Review modalType={ModalType.Regular} variant="opaque" tag="review-modal">
