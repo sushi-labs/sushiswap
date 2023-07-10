@@ -9,11 +9,11 @@ const chipVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-blue hover:bg-blue-600 focus:bg-blue-700 border-transparent text-primary-foreground',
-        secondary: 'bg-secondary hover:bg-muted focus:bg-accent border-transparent text-secondary-foreground',
-        destructive: 'bg-red hover:bg-red-600 focus:bg-red-700 border-transparent text-destructive-foreground',
+        default: 'bg-blue hover:bg-blue-600 focus:bg-blue-700 border-transparent text-white',
+        destructive: 'bg-red hover:bg-red-600 focus:bg-red-700 border-transparent text-white',
+        secondary: 'bg-secondary hover:bg-muted focus:bg-accent border-transparent',
         ghost: 'hover:bg-muted focus:bg-accent',
-        outline: 'text-foreground',
+        outline: '',
       },
     },
     defaultVariants: {
@@ -22,12 +22,12 @@ const chipVariants = cva(
   }
 )
 
-export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof chipVariants> {
+export interface ChipProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof chipVariants> {
   icon?: IconComponent
   iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
 }
 
-function Chip({ className, variant, icon: Icon, iconProps, children, ...props }: BadgeProps) {
+function Chip({ className, variant, icon: Icon, iconProps, children, ...props }: ChipProps) {
   return (
     <div
       className={classNames(chipVariants({ variant, className: classNames(className, 'flex items-center gap-1') }))}
