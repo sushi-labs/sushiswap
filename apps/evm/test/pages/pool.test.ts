@@ -337,7 +337,7 @@ async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
   const maxButtonSelector = page.locator(`[testdata-id=${type.toLowerCase()}-max-button]`)
   if (!(await maxButtonSelector.isVisible())) {
     await expect(maxButtonSelector).toBeEnabled()
-    await page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-header-button]`).click()
+    await page.locator(`[testId=${type.toLowerCase()}-liquidity-header-button]`).click()
   }
   await expect(maxButtonSelector).toBeVisible()
   await expect(maxButtonSelector).toBeEnabled()
