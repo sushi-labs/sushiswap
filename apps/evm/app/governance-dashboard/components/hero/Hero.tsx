@@ -28,7 +28,6 @@ export function Hero() {
               <TabList />
             </div>
           </div>
-          {/* @ts-expect-error Async Server Component */}
           <Stats />
         </Container>
       </div>

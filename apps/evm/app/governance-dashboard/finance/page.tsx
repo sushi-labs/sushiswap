@@ -18,13 +18,11 @@ export default async function Finance() {
           <h2 className="ml-1 text-2xl font-bold text-slate-900 dark:text-slate-200">Treasury Overview</h2>
           <div className="grid gap-4 md:grid-cols-[3fr,7fr]">
             <TreasuryKpis treasurySnapshot={treasurySnapshot} budgetData={budgetData} />
-            {/* @ts-expect-error Async Server Component */}
             <HistoricalTreasury treasuryLiquidBalance={treasurySnapshot.balancesValueUsd} />
           </div>
         </div>
         <div className="grid gap-4 md:grid-cols-2">
           <QuarterlyExpenses budgetData={budgetData} />
-          {/* @ts-expect-error Async Server Component */}
           <TokenNetflow />
         </div>
         <TreasuryBalancesTable balances={treasurySnapshot.balances} />

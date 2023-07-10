@@ -9,7 +9,6 @@ export default async function Overview({ searchParams }: { searchParams: Governa
   return (
     <div className="space-y-12 md:space-y-20">
       <LatestPosts posts={latestPosts} />
-      {/* @ts-expect-error Async Server Component */}
       <HolderSnapshot />
       <UpcomingEvents events={events} />
     </div>

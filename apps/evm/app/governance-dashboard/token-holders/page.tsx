@@ -21,7 +21,6 @@ export default async function TokenHolders({ searchParams }: { searchParams: Tok
 
   return (
     <section className="space-y-14">
-      {/* @ts-expect-error Async Server Component */}
       <HolderSnapshot />
       <TokenHoldersTable users={users} userCount={tokenHolders.userCount} />
     </section>
