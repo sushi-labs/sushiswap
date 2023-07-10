@@ -52,7 +52,7 @@ export const DefaultView = ({ balance, setView }: Props) => {
             iconProps={{ width: 18, height: 18 }}
             as="a"
             target="_blank"
-            href={`https://explorer.aptoslabs.com/account/0x54f45f219d8ac489307ec0604c710227ae67835a0253fb17b9a5aa0c421b2e39?network=${network?.name?.toLowerCase()}`}
+            href={`https://explorer.aptoslabs.com/account/${account?.address}?network=${network?.name?.toLowerCase()}`}
             description="View on Explorer"
           />
           <IconButton
