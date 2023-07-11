@@ -25,12 +25,12 @@ export const PoolFilters: FC = () => {
               </div>
               <div className="flex flex-wrap items-center gap-3">
                 <div className="flex gap-3 flex-wrap items-center">
-                  <Button className="items-center gap-2.5" size="sm" variant="outlined" color="default">
+                  {/* <Button className="items-center gap-2.5" size="sm" variant="outlined" color="default">
                     <span>🍣</span>{' '}
                     <span>
                       SushiSwap <sup>v3</sup>
                     </span>
-                  </Button>
+                  </Button> */}
                   <Button className="gap-2.5" size="sm" variant="outlined" color="default">
                     <span>🍣</span>{' '}
                     <span>

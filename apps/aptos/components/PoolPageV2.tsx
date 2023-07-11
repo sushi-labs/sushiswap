@@ -143,14 +143,11 @@ export const PoolPageV2 = () => {
     <ContentBlock title={<span className="text-gray-900 dark:text-white">Deposit.</span>}>
       <div className="flex flex-col gap-4">
         <TradeInput
-          setOpen={setOpen}
           currency={token0}
+          setToken={setToken0}
           coinData={filteredCoin0?.data?.coin?.value}
           isLoadingPrice={isLoadingPrice}
-          setTokenSelectedNumber={setTokenSelectedNumber}
-          tokenNumber={'0'}
           setButtonError={setButtonError}
-          setSwapPerTokenPrice={setSwapPerTokenPrice}
           getSwapPrice={getPools}
           setToken1Value={setToken1Value}
           tradeVal={tradeValInput}
@@ -173,26 +170,16 @@ export const PoolPageV2 = () => {
           isLoadingPriceLower={isLoadingPriceLower}
         /> */}
         <TradeInput
-          setOpen={setOpen}
+          setToken={setToken1}
           currency={token1}
           coinData={filteredCoin1?.data?.coin?.value}
           isLoadingPrice={isLoadingPrice}
-          setTokenSelectedNumber={setTokenSelectedNumber}
-          tokenNumber={'1'}
           setButtonError={setButtonError}
-          setSwapPerTokenPrice={setSwapPerTokenPrice}
           getSwapPrice={getPools}
           setToken1Value={setToken1Value}
           tradeVal={tradeValOutput}
         />
-      </div>
-      <div className='h-[68px] w-full"'>
-        <TokenListDialog
-          open={open}
-          setOpen={setOpen}
-          tokens={DEFAULT_TOKEN_LIST.tokens}
-          handleChangeToken={handleChangeToken}
-        />
+        <SwapButton noRouteFound={noRouteFound} buttonError={buttonError} token1Value={token1Value} />
       </div>
     </ContentBlock>
   )
