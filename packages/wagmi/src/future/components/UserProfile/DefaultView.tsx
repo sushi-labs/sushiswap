@@ -1,21 +1,22 @@
 import {
   ArrowLeftOnRectangleIcon,
+  Cog6ToothIcon,
   CreditCardIcon,
   DocumentDuplicateIcon,
   InboxArrowDownIcon,
   LinkIcon,
-  Cog6ToothIcon,
 } from '@heroicons/react/24/outline'
 import chains, { ChainId } from '@sushiswap/chain'
 import { Amount, Native } from '@sushiswap/currency'
+import { usePrice } from '@sushiswap/react-query'
+import { OnramperButton } from '@sushiswap/ui'
 import { ClipboardController } from '@sushiswap/ui/components/ClipboardController'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { List } from '@sushiswap/ui/components/list/List'
 import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
-import { useBalance, useDisconnect, useEnsAvatar } from 'wagmi'
+import { useBalance, useDisconnect } from 'wagmi'
+
 import { ProfileView } from './index'
-import { usePrice } from '@sushiswap/react-query'
-import { Onramper } from '../Onramper'
 
 interface DefaultProps {
   chainId: ChainId
@@ -26,10 +27,6 @@ interface DefaultProps {
 export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => {
   const { disconnect } = useDisconnect()
   const { data: price } = usePrice({ chainId, address: Native.onChain(chainId).wrapped.address })
-  const { data: avatar } = useEnsAvatar({
-    chainId: ChainId.ETHEREUM,
-    address,
-  })
 
   const { data: _balance } = useBalance({
     address: address,
@@ -51,7 +48,7 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
         <div className="flex flex-col gap-2">
           <div className="flex gap-2">
             <IconButton
-                size="sm"
+              size="sm"
               icon={Cog6ToothIcon}
               onClick={() => setView(ProfileView.Settings)}
               description="Settings"
@@ -60,7 +57,7 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
             <ClipboardController hideTooltip>
               {({ setCopied, isCopied }) => (
                 <IconButton
-                    size="sm"
+                  size="sm"
                   icon={DocumentDuplicateIcon}
                   onClick={() => setCopied(address)}
                   description={isCopied ? 'Copied!' : 'Copy Address'}
@@ -69,16 +66,11 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
               )}
             </ClipboardController>
             <a target="_blank" href={chains[chainId].getAccountUrl(address)}>
-              <IconButton
-                  size="sm"
-                  icon={LinkIcon}
-                  description="View on Explorer"
-                  name="View on Explorer"
-              />
+              <IconButton size="sm" icon={LinkIcon} description="View on Explorer" name="View on Explorer" />
             </a>
 
             <IconButton
-                size="sm"
+              size="sm"
               icon={ArrowLeftOnRectangleIcon}
               onClick={() => disconnect()}
               description="Disconnect"
@@ -101,9 +93,9 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
             onClick={() => setView(ProfileView.Transactions)}
             hoverIconProps={{ width: 20, height: 20 }}
           />
-          <Onramper.Button className="w-full">
+          <OnramperButton className="w-full">
             <List.MenuItem icon={CreditCardIcon} title="Buy Crypto" hoverIconProps={{ width: 20, height: 20 }} />
-          </Onramper.Button>
+          </OnramperButton>
         </List.Control>
       </List>
     </>

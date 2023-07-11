@@ -3,15 +3,15 @@
 import { Transition } from '@headlessui/react'
 import { ArrowSmallRightIcon } from '@heroicons/react/20/solid'
 import classNames from 'classnames'
-import React, { Fragment, ReactNode, SVGProps, useState } from 'react'
+import React, { Fragment, ReactNode, useState } from 'react'
 
-import { ExtractProps, PolymorphicComponentProps } from '../../types'
+import { ExtractProps, IconComponent, PolymorphicComponentProps } from '../../types'
 
 interface Props {
   disabled?: boolean
   title: ReactNode
   subtitle?: ReactNode
-  hoverIcon?: (props: SVGProps<SVGSVGElement>) => JSX.Element | null
+  hoverIcon?: IconComponent
   hoverIconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'> & {
     width: number
     height: number
