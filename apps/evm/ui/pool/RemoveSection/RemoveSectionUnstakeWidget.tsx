@@ -82,7 +82,12 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                 <Disclosure.Button className="w-full">
                   <div className="flex items-center justify-between">
                     <WidgetHeader title="Unstake Liquidity" />
-                    <IconButton size="sm" icon={ChevronDownIcon} name="Select" testId="unstake-liquidity-header">
+                    <IconButton
+                      size="sm"
+                      icon={ChevronDownIcon}
+                      name="Select"
+                      testdata-id="unstake-liquidity-header-button"
+                    >
                       <SelectIcon />
                     </IconButton>
                   </div>
@@ -98,7 +103,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                   leaveTo="transform max-h-0"
                 >
                   <Disclosure.Panel unmount={false}>
-                    <div className="text-sm text-gray-600 dark:text-slate-400 py-4">
+                    <div className="py-4 text-sm text-gray-600 dark:text-slate-400">
                       Unstake your liquidity tokens first if you mean to remove your liquidity position
                     </div>
                     <div className="flex flex-col gap-3">

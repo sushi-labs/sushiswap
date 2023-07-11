@@ -6,12 +6,12 @@ export async function approve(page: Page, locator: string) {
   await timeout(500) // give the approve button time to load contracts, unrealistically fast when running test
   const pageLocator = page.locator(`[testdata-id=${locator}]`)
   await expect(pageLocator)
-    .toBeEnabled({ timeout: 1500 })
+    .toBeEnabled({ timeout: 1000 })
     .then(async () => {
-      await pageLocator.click({ timeout: 2500 })
+      await pageLocator.click({ timeout: 2000 })
       const expectedText = '(Successfully approved .*)'
       const regex = new RegExp(expectedText)
-      await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+      await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex, { timeout: 1_000 })
     })
     .catch(() => console.log('already approved or not needed'))
 }
@@ -335,9 +335,8 @@ async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
   // check if the max button is visible, otherwise expand the section. For some reason the default state seem to be inconsistent, closed/open.
   // TODO: fix this in the UI, the default state should be consistent
   const maxButtonSelector = page.locator(`[testdata-id=${type.toLowerCase()}-max-button]`)
-  if (!(await maxButtonSelector.isVisible())) {
-    await expect(maxButtonSelector).toBeEnabled()
-    await page.locator(`[testId=${type.toLowerCase()}-liquidity-header-button]`).click()
+  while (!(await maxButtonSelector.isVisible())) {
+    await page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-header-button]`).click()
   }
   await expect(maxButtonSelector).toBeVisible()
   await expect(maxButtonSelector).toBeEnabled()
