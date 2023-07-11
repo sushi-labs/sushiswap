@@ -32,11 +32,7 @@ const columns = [
     header: 'Portfolio Share',
     minSize: 150,
     cell: (info) => (
-      <Progress
-        value={info.getValue()}
-        // color={ProgressColor.BLUE} // TODO:
-        className="w-20 md:w-[100px] bg-slate-900/20 dark:bg-slate-50/20"
-      />
+      <Progress value={info.getValue() * 100} className="w-20 md:w-[100px] bg-slate-900/20 dark:bg-slate-50/20" />
     ),
   }),
   columnHelper.accessor('balanceUSD', {
@@ -83,15 +79,6 @@ export function TreasuryBalancesTable({ balances }: { balances: TreasuryBalance[
     <div className="rounded-lg bg-white dark:bg-[#1A2031]">
       <div className="h-full w-full border-b border-slate-200 dark:border-slate-800 px-5 pb-7 pt-5">
         <h3 className="mt-3 text-xl font-semibold">Treasury Snapshot</h3>
-        {/* <ExternalLink
-          href={`https://etherscan.io/address/${TREASURY_ADDRESS}`}
-          className="group inline-flex text-sm text-slate-400"
-          endIcon={
-            <ArrowTopRightOnSquareIcon className="h-4 w-4 text-slate-400 group-hover:text-white group-focus:text-white group-active:text-white" />
-          }
-        >
-          <span>Wallet Address: {shortenAddress(TREASURY_ADDRESS)}</span>
-        </ExternalLink> */}
       </div>
       <GenericTable<TreasuryBalance>
         loading={false}
