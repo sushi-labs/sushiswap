@@ -37,21 +37,31 @@ SelectIcon.displayName = SelectPrimitive.Icon.displayName
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
-  <>
-    <SelectPrimitive.Trigger
-      ref={ref}
-      className={classNames(
-        'h-[54px] data-[state=open]:bg-accent group relative rounded-xl flex items-center justify-between gap-1 w-full text-gray-900 dark:text-slate-50 bg-secondary px-4',
-        className
-      )}
-      {...props}
-    >
+>(({ className, children, ...props }, ref) => {
+  const content = props.asChild ? (
+    children
+  ) : (
+    <>
       {children}
       <SelectIcon />
-    </SelectPrimitive.Trigger>
-  </>
-))
+    </>
+  )
+
+  return (
+    <>
+      <SelectPrimitive.Trigger
+        ref={ref}
+        className={classNames(
+          'h-[54px] data-[state=open]:bg-accent group relative rounded-xl flex items-center justify-between gap-1 w-full text-gray-900 dark:text-slate-50 bg-secondary px-4',
+          className
+        )}
+        {...props}
+      >
+        {content}
+      </SelectPrimitive.Trigger>
+    </>
+  )
+})
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName
 
 const SelectContent = React.forwardRef<

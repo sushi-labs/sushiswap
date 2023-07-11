@@ -61,11 +61,11 @@ const skeletonTextVariants = cva('flex w-full', {
   },
 })
 
-export interface TextProps
+export interface SkeletonTextProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'size'>,
     VariantProps<typeof skeletonTextVariants> {}
 
-function SkeletonText({ className, align, fontSize, ...props }: TextProps) {
+function SkeletonText({ className, align, fontSize, ...props }: SkeletonTextProps) {
   return (
     <div {...props} className={classNames(skeletonTextVariants({ align, fontSize }))}>
       <div
