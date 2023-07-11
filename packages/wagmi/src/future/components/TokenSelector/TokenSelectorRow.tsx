@@ -2,7 +2,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import { Amount, Type } from '@sushiswap/currency'
 import { Fraction, ZERO } from '@sushiswap/math'
-import { classNames, PalmNaked } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { IconButton } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Icon } from '@sushiswap/ui/components/currency/Icon'
@@ -49,7 +49,6 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
       <div
         testdata-id={`${id}-row-${currency.isNative ? AddressZero : currency.wrapped.address.toLowerCase()}`}
         onClick={onClick}
-        onKeyUp={onClick}
         className={classNames(
           className,
           selected ? 'bg-black/[0.06] dark:bg-white/[0.06]' : '',
@@ -105,7 +104,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
             {pin && (
               <IconButton
                 size="xs"
-                icon={PalmNaked}
+                icon="⭐"
                 variant="ghost"
                 name="pin"
                 onClick={onPin}
