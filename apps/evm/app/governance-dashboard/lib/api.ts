@@ -1,12 +1,12 @@
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI_ADDRESS } from '@sushiswap/currency'
 import { gql, request } from 'graphql-request'
+import type { Address } from 'wagmi'
 import { z } from 'zod'
 
 import { DATE_FILTERS, GOV_STATUS } from './constants'
 import { endOfPreviousQuarter, getPercentageDiff } from './helpers'
 
-import type { Address } from 'wagmi'
 async function fetchUrl<T>(urlPath: string, options?: RequestInit) {
   const url = new URL(urlPath)
 

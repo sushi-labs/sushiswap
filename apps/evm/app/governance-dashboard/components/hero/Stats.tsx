@@ -1,15 +1,29 @@
 import React from 'react'
 
-import { formatNumber, getForumStats, getNotionEvents, getSushiUserCount, getTreasurySnapshot } from '../../lib'
+import {
+  formatNumber,
+  getForumStats,
+  getNotionBudget,
+  getNotionEvents,
+  getSushiUserCount,
+  getTreasurySnapshot,
+} from '../../lib'
 import { StatsBackground } from './StatsBackground'
 
 export async function Stats() {
-  const [userCount, forumStats, treasurySnapshot, events] = await Promise.all([
+  const [userCount, forumStats, treasurySnapshot, events, budgetData] = await Promise.all([
     getSushiUserCount(),
     getForumStats(),
     getTreasurySnapshot(),
     getNotionEvents(),
+    getNotionBudget(),
   ])
+  const currentQuarter = budgetData[budgetData.length - 1]
+  const runwayQuarters = treasurySnapshot.balancesValueUsd / currentQuarter.expenses
+  const runwayYears = Math.floor(runwayQuarters / 4)
+  const runwayMonths = Math.floor(runwayQuarters * 3)
+
+  const runway = runwayYears > 0 ? `${runwayYears} years` : `${runwayMonths} months`
 
   return (
     <div className="hidden h-fit w-[350px] rounded-lg bg-gradient-to-b from-white/[4%] to-transparent p-px md:block">
@@ -46,8 +60,8 @@ export async function Stats() {
             </div>
             <div className="flex justify-between">
               <div className="flex flex-col gap-1">
-                <label className="text-sm text-slate-400">Lifetime Participation</label>
-                <span className="text-gray-50 text-2xl font-bold">{formatNumber(forumStats?.user_count)}</span>
+                <label className="text-sm text-slate-400">Runway</label>
+                <span className="text-gray-50 text-2xl font-bold">{runway}</span>
               </div>
               <div className="flex flex-col gap-1 text-right">
                 <label className="text-sm text-slate-400">Events</label>

@@ -30,12 +30,12 @@ export function TreasuryKpis({
             Positive
           </div>
         ) : runwayMonths > 5 ? (
-          <div className="flex items-center gap-1 text-sm text-green-400">
+          <div className="flex items-center gap-1 text-sm text-yellow-400">
             <CircleIcon width={8} className="fill-yellow-400 text-yellow-400" />
             Moderate
           </div>
         ) : (
-          <div className="flex items-center gap-1 text-sm text-green-400">
+          <div className="flex items-center gap-1 text-sm text-red-400">
             <CircleIcon width={8} className="fill-red-400 text-red-400" />
             Negative
           </div>
