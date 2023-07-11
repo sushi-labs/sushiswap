@@ -1905,7 +1905,6 @@ importers:
     dependencies:
       '@ethersproject/address': 5.7.0
       '@ethersproject/providers': 5.7.2
-      '@sushiswap/router-config': link:../../config/router
       copy-to-clipboard: 3.3.3
       react-responsive: 9.0.0-beta.10_react@18.2.0
     devDependencies:
@@ -1915,6 +1914,7 @@ importers:
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/math': link:../math
       '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/router-config': link:../../config/router
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/jest': 29.5.1
       '@types/react': 18.2.14
