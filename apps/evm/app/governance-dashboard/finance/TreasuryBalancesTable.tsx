@@ -1,8 +1,7 @@
 'use client'
 
 import { Native, Token } from '@sushiswap/currency'
-import { Currency } from '@sushiswap/ui/components/currency'
-import { Progress } from '@sushiswap/ui/components/Progress'
+import { Currency, Progress } from '@sushiswap/ui'
 import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
 import { createColumnHelper, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 import React from 'react'

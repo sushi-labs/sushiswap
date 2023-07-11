@@ -1,5 +1,4 @@
 export { ChartTooltip } from './ChartTooltip'
-export { Container } from './Container'
 export { GovernanceDateFilters } from './GovernanceDateFilters'
 export { GovernanceItemCard } from './GovernanceItemCard'
 export { GovernanceSorting } from './GovernanceSorting'
