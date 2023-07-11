@@ -134,7 +134,7 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant }) => {
             </Link>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
-            <Link href="/pay" legacyBehavior passHref>
+            <Link href="/furo" legacyBehavior passHref>
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pay</NavigationMenuLink>
             </Link>
           </NavigationMenuItem>
@@ -157,7 +157,7 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant }) => {
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
-      <div className="space-x-2">{rightElement}</div>
+      <div className="flex gap-2 items-center">{rightElement}</div>
     </NavigationContainer>
   )
 }
