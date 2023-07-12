@@ -110,6 +110,8 @@ export const ChainId = {
   POLYGON_ZKEVM: 1101,
   THUNDERCORE: 108,
   // FILECOIN: 314,
+  HAQQ: 11235,
+  CORE: 1116,
 } as const
 export type ChainId = (typeof ChainId)[keyof typeof ChainId]
 
@@ -174,6 +176,8 @@ export const ChainKey = {
   // [ChainId.BASE_TESTNET]:'base-testnet',
   [ChainId.POLYGON_ZKEVM]: 'polygon-zkevm',
   [ChainId.THUNDERCORE]: 'thundercore',
+  [ChainId.HAQQ]: 'haqq',
+  [ChainId.CORE]: 'core',
   // [ChainId.FILECOIN]: 'filecoin',
   // [ChainId.SEPOLIA]: 'sepolia',
 } as const

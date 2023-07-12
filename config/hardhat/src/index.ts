@@ -580,6 +580,34 @@ export const defaultConfig: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
     },
+    filecoin: {
+      url: 'https://filecoin-mainnet.chainstacklabs.com/rpc/v1',
+      accounts,
+      chainId: 314,
+      live: true,
+      saveDeployments: true,
+    },
+    // linea: {
+    //   url: '',
+    //   accounts,
+    //   chainId: ,
+    //   live: true,
+    //   saveDeployments: true,
+    // },
+    haqq: {
+      url: 'https://rpc.eth.haqq.network',
+      accounts,
+      chainId: 11235,
+      live: true,
+      saveDeployments: true,
+    },
+    core: {
+      url: 'https://rpc.coredao.org',
+      accounts,
+      chainId: 1116,
+      live: true,
+      saveDeployments: true,
+    },
   },
   namedAccounts: {
     // e.g. ledger://0x18dd4e0Eb8699eA4fee238dE41ecF115e32272F8

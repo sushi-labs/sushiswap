@@ -43,5 +43,7 @@ export const nativeCurrencyIds = {
   // [ChainId.SCROLL_ALPHA_TESTNET]: 'ETH',
   // [ChainId.BASE_TESTNET]: 'ETH',
   [ChainId.POLYGON_ZKEVM]: 'ETH',
+  [ChainId.CORE]: 'CORE',
+  [ChainId.HAQQ]: 'ISLM',
   // [ChainId.SEPOLIA]: 'ETH',
 } as const

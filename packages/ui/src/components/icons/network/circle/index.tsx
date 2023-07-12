@@ -27,6 +27,8 @@ import { PolygonCircle } from './PolygonCircle'
 import { PolygonZKCircle } from './PolygonZKCircle'
 import { TelosCircle } from './TelosCircle'
 import { ThunderCoreCircle } from './ThunderCoreCircle'
+import { CoreCircle } from './CoreCircle'
+import { HaqqCircle } from './HaqqCircle'
 
 export * from './ArbitrumCircle'
 export * from './ArbitrumNovaCircle'
@@ -54,6 +56,8 @@ export * from './PolygonCircle'
 export * from './PolygonZKCircle'
 export * from './TelosCircle'
 export * from './ThunderCoreCircle'
+export * from './CoreCircle'
+export * from './HaqqCircle'
 
 export const NETWORK_CIRCLE_ICON: Record<number, IconComponent> = {
   [ChainId.ETHEREUM]: EthereumCircle,
@@ -82,4 +86,6 @@ export const NETWORK_CIRCLE_ICON: Record<number, IconComponent> = {
   [ChainId.BTTC]: BttcCircle,
   [ChainId.POLYGON_ZKEVM]: PolygonZKCircle,
   [ChainId.THUNDERCORE]: ThunderCoreCircle,
+  [ChainId.HAQQ]: HaqqCircle,
+  [ChainId.CORE]: CoreCircle,
 }

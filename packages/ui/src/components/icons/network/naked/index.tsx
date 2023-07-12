@@ -27,6 +27,8 @@ import { PolygonNaked } from './PolygonNaked'
 import { PolygonZKNaked } from './PolygonZKNaked'
 import { TelosNaked } from './TelosNaked'
 import { ThunderCoreNaked } from './ThunderCoreNaked'
+import { CoreNaked } from './CoreNaked'
+import { HaqqNakked } from './HaqqNaked'
 
 export * from './ArbitrumNaked'
 export * from './ArbitrumNovaNaked'
@@ -53,6 +55,8 @@ export * from './PalmNaked'
 export * from './PolygonNaked'
 export * from './PolygonZKNaked'
 export * from './TelosNaked'
+export * from './CoreNaked'
+export * from './HaqqNaked'
 
 export const NETWORK_NAKED_ICON: Record<number, IconComponent> = {
   [ChainId.ETHEREUM]: EthereumNaked,
@@ -81,4 +85,6 @@ export const NETWORK_NAKED_ICON: Record<number, IconComponent> = {
   [ChainId.BTTC]: BttcNaked,
   [ChainId.POLYGON_ZKEVM]: PolygonZKNaked,
   [ChainId.THUNDERCORE]: ThunderCoreNaked,
+  [ChainId.HAQQ]: HaqqNakked,
+  [ChainId.CORE]: CoreNaked,
 }

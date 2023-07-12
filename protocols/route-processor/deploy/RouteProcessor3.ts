@@ -13,13 +13,13 @@ const func: DeployFunction = async function ({
 
   const chainId = await getChainId()
 
-  if (!isBentoBoxV1ChainId(chainId)) {
-    throw Error(`No BENTOBOX_ADDRESS for chain #${chainId}!`)
-  }
+  // if (!isBentoBoxV1ChainId(chainId)) {
+  //   throw Error(`No BENTOBOX_ADDRESS for chain #${chainId}!`)
+  // }
 
-  const args = [bentoBoxV1Address[chainId], []]
+  // const args = [bentoBoxV1Address[chainId], []]
 
-  // const args = ['0x0000000000000000000000000000000000000000', []]
+  const args = ['0x0000000000000000000000000000000000000000', []]
 
   const { address } = await deploy('RouteProcessor3', {
     from: deployer,
