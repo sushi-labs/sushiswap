@@ -1,26 +1,28 @@
+import { isAddress } from '@ethersproject/address'
+import { XMarkIcon } from '@heroicons/react/20/solid'
 import { ChainId, chainName } from '@sushiswap/chain'
-import { Token, Type } from '@sushiswap/currency'
+import { Native, Token, Type } from '@sushiswap/currency'
+import { useCustomTokens, usePinnedTokens } from '@sushiswap/hooks'
 import { useBalances, usePrices, useTokens } from '@sushiswap/react-query'
+import { IconButton } from '@sushiswap/ui'
 import { SlideIn } from '@sushiswap/ui/components/animation'
+import { Button } from '@sushiswap/ui/components/button'
+import { buttonIconVariants } from '@sushiswap/ui/components/button'
+import { Currency } from '@sushiswap/ui/components/currency'
 import { Dialog } from '@sushiswap/ui/components/dialog'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { Search } from '@sushiswap/ui/components/input/Search'
 import { List } from '@sushiswap/ui/components/list/List'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
-
-import { TokenSelectorCurrencyList } from './TokenSelectorCurrencyList'
-import { TokenSelectorImportRow } from './TokenSelectorImportRow'
+import { useMemo } from 'react'
 import { useAccount } from 'wagmi'
-import { TokenSelectorCustomTokensOverlay } from './TokenSelectorCustomTokensOverlay'
-import { Button } from '@sushiswap/ui/components/button'
-import { COMMON_BASES } from '@sushiswap/router-config'
-import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/components/skeleton'
-import { Currency } from "@sushiswap/ui/components/currency";
-import { useCustomTokens } from '@sushiswap/hooks'
-import { useSortedTokenList } from './hooks/useSortedTokenList'
+
 import { useTokenWithCache } from '../../hooks'
-import { isAddress } from '@ethersproject/address'
-import {buttonIconVariants} from "@sushiswap/ui/components/button";
+import { useSortedTokenList } from './hooks/useSortedTokenList'
+import { TokenSelectorCurrencyList } from './TokenSelectorCurrencyList'
+import { TokenSelectorCustomTokensOverlay } from './TokenSelectorCustomTokensOverlay'
+import { TokenSelectorImportRow } from './TokenSelectorImportRow'
 
 interface TokenSelectorProps {
   id: string
@@ -39,6 +41,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
   const handleClose = useCallback(() => setOpen(false), [])
 
   const { data: customTokenMap, mutate: customTokenMutate } = useCustomTokens()
+  const { data: pinnedTokenMap, mutate: pinnedTokenMutate, hasToken: isTokenPinned } = usePinnedTokens()
   const { data: tokenMap } = useTokens({ chainId })
   const { data: pricesMap } = usePrices({ chainId })
   const { data: balancesMap } = useBalances({ chainId, account: address })
@@ -61,6 +64,16 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
     includeNative: true,
   })
 
+  const pinnedTokens = useMemo(() => {
+    return pinnedTokenMap[chainId]
+      .map((id) => {
+        const [, address] = id.split(':')
+        if (address === 'NATIVE') return Native.onChain(chainId)
+        return tokenMap?.[address] || customTokenMap?.[address]
+      })
+      .filter((token): token is Token => !!token)
+  }, [pinnedTokenMap, tokenMap])
+
   const _onSelect = useCallback(
     (currency: Type) => {
       if (onSelect) {
@@ -71,6 +84,15 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
     },
     [onSelect]
   )
+
+  const _onPin = useCallback((currencyId: string) => {
+    console.log('onPin', currencyId, isTokenPinned(currencyId))
+    if (isTokenPinned(currencyId)) {
+      pinnedTokenMutate('remove', currencyId)
+    } else {
+      pinnedTokenMutate('add', currencyId)
+    }
+  }, [])
 
   const handleImport = useCallback(
     (currency: Token) => {
@@ -95,15 +117,35 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {COMMON_BASES[chainId].map((base) => (
-                <Button
-                  variant="secondary"
-                  key={base.id}
-                  onClick={() => _onSelect(base)}
-                >
-                  <Currency.Icon width={20} height={20} className={buttonIconVariants({ size: 'default'})} currency={base} disableLink/>
-                  {base.symbol}
-                </Button>
+              {pinnedTokens.map((token) => (
+                <div key={token.id} className="group">
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="group"
+                    key={token.id}
+                    onClick={() => _onSelect(token)}
+                  >
+                    <Currency.Icon
+                      width={20}
+                      height={20}
+                      className={buttonIconVariants({ size: 'default' })}
+                      currency={token}
+                      disableLink
+                    />
+                    {token.symbol}
+                    <IconButton
+                      size="xs"
+                      name="remove"
+                      icon={XMarkIcon}
+                      variant="ghost"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        _onPin(token.id)
+                      }}
+                    />
+                  </Button>
+                </div>
               ))}
             </div>
 
@@ -115,13 +157,13 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
                       <div className="flex flex-row items-center flex-grow gap-4">
                         <SkeletonCircle radius={40} />
                         <div className="flex flex-col items-start">
-                          <SkeletonText  className="w-full bg-gray-300 w-[100px]" />
+                          <SkeletonText className="w-full bg-gray-300 w-[100px]" />
                           <SkeletonText fontSize="sm" className="w-full bg-gray-100 w-[60px]" />
                         </div>
                       </div>
 
                       <div className="flex flex-col">
-                        <SkeletonText  className="bg-gray-300 w-[80px]" />
+                        <SkeletonText className="bg-gray-300 w-[80px]" />
                         <SkeletonText fontSize="sm" align="right" className="bg-gray-200 w-[40px]" />
                       </div>
                     </div>
@@ -141,6 +183,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
                     selected={selected}
                     onSelect={_onSelect}
                     id={id}
+                    pin={{ onPin: _onPin, isPinned: isTokenPinned }}
                     currencies={sortedTokenList}
                     chainId={chainId}
                   />

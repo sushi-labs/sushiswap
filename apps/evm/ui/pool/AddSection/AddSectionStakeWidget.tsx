@@ -66,7 +66,12 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                 <Disclosure.Button className="w-full">
                   <div className="flex items-center justify-between">
                     <WidgetHeader title={title || '2. Stake Liquidity'} />
-                    <IconButton size="sm" icon={ChevronDownIcon} name="Select" testId="stake-liquidity-header">
+                    <IconButton
+                      size="sm"
+                      icon={ChevronDownIcon}
+                      name="Select"
+                      testdata-id="stake-liquidity-header-button"
+                    >
                       <SelectIcon />
                     </IconButton>
                   </div>
@@ -82,12 +87,12 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                   leaveTo="transform max-h-0"
                 >
                   <Disclosure.Panel unmount={false}>
-                    <div className="text-sm text-gray-600 dark:text-slate-400 py-4">
+                    <div className="py-4 text-sm text-gray-600 dark:text-slate-400">
                       Stake your liquidity tokens to receive incentive rewards on top of your pool fee rewards
                     </div>
                     <div className="flex flex-col gap-3">
-                      <div className="flex items-center gap-2 justify-between flex-grow">
-                        <div className="flex items-center justify-between flex-grow flex-1">
+                      <div className="flex items-center justify-between flex-grow gap-2">
+                        <div className="flex items-center justify-between flex-1 flex-grow">
                           <Input.Numeric
                             id="stake-input"
                             label="Amount"
