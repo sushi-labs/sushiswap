@@ -51,7 +51,7 @@ export const Header: FC = () => {
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem className="hidden md:block">
-              <Link href="/pay" legacyBehavior passHref>
+              <Link href="/furo" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pay</NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
