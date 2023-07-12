@@ -1,8 +1,11 @@
-import { Chain, CreateClientConfig, configureChains, createClient } from 'wagmi'
-import { foundry, polygon } from '../src/chains'
-import { Wallet, providers } from 'ethers'
-import { MockConnector } from '../src/connectors/mock'
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
+import { providers, Wallet } from 'ethers'
+import { Chain, configureChains, createClient, CreateClientConfig } from 'wagmi'
+
+import { foundry, polygon } from '../src/chains'
+import { MockConnector } from '../src/connectors/mock'
+
+const foundryPort = String(process.env['ANVIL_PORT'] || process.env['NEXT_PUBLIC_ANVIL_PORT'] || 8545)
 
 const foundryPolygon: Chain = {
   ...polygon,
@@ -16,12 +19,12 @@ const { provider }: CreateClientConfig & { chains: Chain[] } = configureChains(
   [
     jsonRpcProvider({
       rpc: (chain_) => ({
-        http: chain_.rpcUrls.default.http[0],
+        http: chain_.rpcUrls.default.http[0].replace('8545', foundryPort),
       }),
     }),
   ],
   {
-    pollingInterval: 8_000,
+    pollingInterval: 1_000,
   }
 )
 
@@ -137,7 +140,7 @@ export function getSigners() {
 
 export function getProvider({ chains = testChains, chainId }: { chains?: Chain[]; chainId?: number } = {}) {
   const chain = testChains.find((x) => x.id === chainId) ?? foundryPolygon
-  const url = foundryPolygon.rpcUrls.default.http[0]
+  const url = foundryPolygon.rpcUrls.default.http[0].replace('8545', foundryPort)
   const provider = new EthersProviderWrapper(url, getNetwork(chain))
   provider.pollingInterval = 1_000
   return Object.assign(provider, { chains })
