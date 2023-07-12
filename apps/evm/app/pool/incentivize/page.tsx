@@ -3,7 +3,7 @@
 import { ArrowLeftIcon, SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount, Type } from '@sushiswap/currency'
-import { useAngleRewards } from '@sushiswap/react-query'
+import { useAngleRewards, useAngleRewardTokens } from '@sushiswap/react-query'
 import {
   Badge,
   Button,
@@ -43,7 +43,6 @@ import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { format } from 'date-fns'
 import { BigNumber } from 'ethers'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 import { useWaitForTransaction } from 'wagmi'
 
@@ -94,7 +93,6 @@ export default async function Page() {
 
 const Incentivize = withCheckerRoot(() => {
   const { address } = useAccount()
-  const { push } = useRouter()
   const { chainId, token0, token1, setToken1, setToken0, setNetwork, feeAmount, setFeeAmount, tokensLoading } =
     useConcentratedLiquidityURLState()
 
@@ -129,11 +127,12 @@ const Incentivize = withCheckerRoot(() => {
   const { data: signature, signMessage } = useSignMessage()
 
   const { data: angleRewards } = useAngleRewards({ chainId, account: address })
+  const { data: angleRewardTokens } = useAngleRewardTokens({ chainId })
 
   const minAmount = useMemo(() => {
     if (!angleRewards) return undefined
-    const token = angleRewards.validRewardTokens.find((el) => el.token === rewardToken?.wrapped.address)
-    if (token && epochs) return tryParseAmount(token.minimumAmountPerEpoch.toString(), rewardToken)?.multiply(epochs)
+    const token = angleRewards.validRewardTokens.find((el) => el.token.wrapped.address === rewardToken?.wrapped.address)
+    if (token && epochs) return token.minimumAmountPerEpoch?.multiply(epochs)
   }, [angleRewards, epochs, rewardToken])
 
   const {
@@ -359,6 +358,7 @@ const Incentivize = withCheckerRoot(() => {
             value={value}
             onChange={setValue}
             currency={rewardToken}
+            currencies={angleRewardTokens}
             loading={tokensLoading}
             currencyLoading={tokensLoading}
             allowNative={false}

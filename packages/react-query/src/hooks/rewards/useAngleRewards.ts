@@ -1,6 +1,6 @@
 import { parseUnits } from '@ethersproject/units'
 import { ChainId } from '@sushiswap/chain'
-import { Amount, Token } from '@sushiswap/currency'
+import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
 import { ZERO } from '@sushiswap/math'
 import { useQuery } from '@tanstack/react-query'
 import z from 'zod'
@@ -130,16 +130,24 @@ export const angleRewardsSelect = ({ chainId, data, prices }: AngleRewardsSelect
     }
   })
 
+  const validRewardTokens = data.validRewardTokens.map((el) => {
+    const token = new Token({ chainId, address: el.token, symbol: '', decimals: 18 })
+    return {
+      minimumAmountPerEpoch: tryParseAmount(el.minimumAmountPerEpoch.toString(), token),
+      token,
+    }
+  })
+
   return {
     ...data,
     unclaimed,
     pools,
+    validRewardTokens,
   }
 }
 
 export const useAngleRewards = ({ chainId, account }: UseAngleRewardsParams) => {
   const { data: prices } = usePrices({ chainId })
-
   return useQuery({
     queryKey: ['getAngleRewards', { chainId, account, prices }],
     queryFn: async () => await angleRewardsQueryFn({ chainId, account }),
