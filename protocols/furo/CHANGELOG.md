@@ -1,5 +1,15 @@
 # @sushiswap/furo
 
+## 1.0.11
+
+### Patch Changes
+
+- Updated dependencies [[`bc01f18ef`](https://github.com/sushiswap/sushiswap/commit/bc01f18ef532abc44b4b8cfa706f6a1b890ce71d)]:
+  - @sushiswap/currency@0.1.2
+  - @sushiswap/stargate@1.0.0
+  - @sushiswap/v2-sdk@0.0.9
+  - @sushiswap/bentobox@1.0.1
+
 ## 1.0.10
 
 ### Patch Changes

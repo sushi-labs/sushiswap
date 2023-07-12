@@ -588,8 +588,8 @@ const Incentivize = withCheckerRoot(() => {
         <DialogConfirm
           chainId={chainId}
           status={status}
-          testId="migrate-confirmation-modal"
-          successMessage={`Successfully migrated your ${token0.symbol}/${token1.symbol} position`}
+          testId="incentivize-confirmation-modal"
+          successMessage={`Successfully incentivized the ${token0.symbol}/${token1.symbol} V3 pool`}
           buttonText="Go to pool"
           buttonLink={`/pools/${pool.chainId}:${v3Address}?activeTab=myPositions`}
           txHash={data?.hash}

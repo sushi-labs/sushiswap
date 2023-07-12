@@ -1,3 +1,5 @@
+'use client'
+
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { Chain } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
