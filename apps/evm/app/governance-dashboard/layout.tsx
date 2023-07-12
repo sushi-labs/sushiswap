@@ -1,7 +1,8 @@
 import { Container } from '@sushiswap/ui/components/Container'
 import React from 'react'
 
-import { Header, Hero } from './components'
+import { Header } from './components'
+import { Hero } from './components/hero'
 import { Providers } from './providers'
 
 export default function GovernanceDashboardLayout({
