@@ -77,7 +77,7 @@ export const SearchPanel: FC = () => {
             Cancel
           </Button>
         </div>
-        <div className="scroll relative">
+        <div className="relative scroll">
           {query && query.length > 2 && (
             <List className="pt-6">
               <List.Label className="text-sm">{Chain.from(network1).name}</List.Label>
@@ -148,7 +148,7 @@ const Row: FC<{ currency: Token; supported?: boolean }> = ({ currency, supported
   return (
     <button
       onClick={handleClick}
-      className="w-full cursor-pointer flex justify-between px-3 py-2 rounded-lg hover:bg-blue/10 dark:hover:bg-slate-700"
+      className="flex justify-between w-full px-3 py-2 rounded-lg cursor-pointer hover:bg-blue/10 dark:hover:bg-slate-700"
     >
       <div className="flex items-center gap-5">
         <div className="w-9 h-9">
@@ -160,7 +160,7 @@ const Row: FC<{ currency: Token; supported?: boolean }> = ({ currency, supported
           </Badge>
         </div>
         <div className="flex flex-col">
-          <div className="flex gap-1 items-center">
+          <div className="flex items-center gap-1">
             <span className="font-medium text-gray-900 dark:text-slate-100">{currency.name}</span>
 
             {!supported && (
@@ -176,14 +176,14 @@ const Row: FC<{ currency: Token; supported?: boolean }> = ({ currency, supported
               </TooltipProvider>
             )}
           </div>
-          <div className="flex gap-1 items-center">
-            <span className="font-medium text-sm text-gray-500 dark:text-slate-400">{currency.symbol}</span>
+          <div className="flex items-center gap-1">
+            <span className="text-sm font-medium text-gray-500 dark:text-slate-400">{currency.symbol}</span>
           </div>
         </div>
       </div>
       {price && (
         <div className="flex flex-col">
-          <span className="font-medium text-gray-900 dark:text-slate-100 text-right">${price?.toSignificant(2)}</span>
+          <span className="font-medium text-right text-gray-900 dark:text-slate-100">${price?.toSignificant(2)}</span>
           <span
             className={classNames(
               // change > 0 ? 'text-green' : 'text-red',
@@ -201,7 +201,7 @@ const Row: FC<{ currency: Token; supported?: boolean }> = ({ currency, supported
 const RowSkeleton = () => {
   return (
     <div className="flex justify-between px-3 py-2 rounded-lg">
-      <div className="flex w-2/4 items-center gap-5">
+      <div className="flex items-center w-2/4 gap-5">
         <div className="w-9 h-9">
           <Badge position="bottom-right" badgeContent={<SkeletonCircle radius={20} />}>
             <SkeletonCircle radius={36} />
@@ -212,7 +212,7 @@ const RowSkeleton = () => {
           <SkeletonText fontSize="sm" className="w-1/2" />
         </div>
       </div>
-      <div className="flex flex-col w-1/4 items-center">
+      <div className="flex flex-col items-center w-1/4">
         <SkeletonText className="w-1/2" align="right" />
         <SkeletonText fontSize="sm" className="w-1/3" align="right" />
       </div>

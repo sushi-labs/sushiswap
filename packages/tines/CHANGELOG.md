@@ -1,5 +1,12 @@
 # @sushiswap/tines
 
+## 1.0.9
+
+### Patch Changes
+
+- Updated dependencies [[`bc01f18ef`](https://github.com/sushiswap/sushiswap/commit/bc01f18ef532abc44b4b8cfa706f6a1b890ce71d)]:
+  - @sushiswap/currency@0.1.2
+
 ## 1.0.8
 
 ### Patch Changes

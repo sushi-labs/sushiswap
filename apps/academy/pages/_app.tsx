@@ -43,7 +43,7 @@ const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
 
   return (
     <>
-      <ThemeProvider>
+      <ThemeProvider forcedTheme="dark">
         <DefaultSeo seo={seo} />
         <div className="dark">
           <Header />
