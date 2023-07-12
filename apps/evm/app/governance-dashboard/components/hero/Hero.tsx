@@ -1,4 +1,4 @@
-import { Container } from '@sushiswap/ui/components/Container'
+import { Container } from '@sushiswap/ui'
 import React from 'react'
 
 import { KpiReportButton } from './KpiReportButton'
