@@ -254,7 +254,18 @@ export const COMMON_BASES = {
     USDT[ChainId.THUNDERCORE],
     WBTC[ChainId.THUNDERCORE],
   ],
-  [ChainId.HAQQ]: [Native.onChain(ChainId.HAQQ), WNATIVE[ChainId.HAQQ]],
-  [ChainId.CORE]: [Native.onChain(ChainId.CORE), WNATIVE[ChainId.CORE]],
+  [ChainId.HAQQ]: [
+    Native.onChain(ChainId.HAQQ),
+    WNATIVE[ChainId.HAQQ],
+    // USDC[ChainId.HAQQ],
+    // USDT[ChainId.HAQQ]
+  ],
+  [ChainId.CORE]: [
+    Native.onChain(ChainId.CORE),
+    WNATIVE[ChainId.CORE],
+    WETH9[ChainId.CORE],
+    USDC[ChainId.CORE],
+    USDT[ChainId.CORE],
+  ],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const
