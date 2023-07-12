@@ -22,6 +22,7 @@ import { FailedMarkIcon } from './icons/FailedMarkIcon'
 
 const DialogNew = DialogPrimitive.Root
 const DialogTrigger = DialogPrimitive.Trigger
+const DialogClose = DialogPrimitive.Close
 
 const DialogPortal = ({ className, children, ...props }: DialogPrimitive.DialogPortalProps) => (
   <DialogPrimitive.Portal className={classNames(className)} {...props}>
@@ -132,7 +133,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
   chainId,
   testId,
   successMessage,
-  buttonText,
+  buttonText = 'Close',
   buttonLink,
   status,
   txHash,
@@ -141,7 +142,14 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
   const { open, setOpen } = useDialog(DialogType.Confirm)
 
   return (
-    <DialogNew {...props} open={open} onOpenChange={setOpen}>
+    <DialogNew
+      {...props}
+      open={open}
+      onOpenChange={(val) => {
+        console.log(val)
+        setOpen(val)
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
@@ -181,19 +189,21 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
               </a>
             )}
           </DialogDescription>
-          <div className="py-5">
+          <div className="py-6 flex justify-center">
             {status === 'loading' ? (
-              <Loader size={100} strokeWidth={1} className="!text-blue" />
+              <Loader size={132} strokeWidth={2} className="!text-blue" />
             ) : status === 'success' ? (
-              <CheckMarkIcon width={100} height={100} />
+              <CheckMarkIcon width={132} height={132} />
             ) : (
-              <FailedMarkIcon width={100} height={100} />
+              <FailedMarkIcon width={132} height={132} />
             )}
           </div>
           <DialogFooter>
-            <Button testId={testId} asChild={!!buttonLink} fullWidth size="xl">
-              {buttonLink ? <a href={buttonLink}>{buttonText}</a> : <>{buttonText}</>}
-            </Button>
+            <DialogClose asChild>
+              <Button testId={testId} asChild={!!buttonLink} fullWidth size="xl">
+                {buttonLink ? <a href={buttonLink}>{buttonText}</a> : <>{buttonText}</>}
+              </Button>
+            </DialogClose>
           </DialogFooter>
         </DialogHeader>
       </DialogContent>
@@ -238,12 +248,12 @@ const DialogProvider: FC<DialogProviderProps> = ({ children }) => {
 type UseDialog<T> = T extends DialogType.Review
   ? {
       open: boolean
-      setOpen(): void
+      setOpen(open: boolean): void
       confirm(): void
     }
   : {
       open: boolean
-      setOpen(): void
+      setOpen(open: boolean): void
     }
 
 const useDialog = <T extends DialogType>(type: T): UseDialog<T> => {
@@ -256,19 +266,20 @@ const useDialog = <T extends DialogType>(type: T): UseDialog<T> => {
     if (type === DialogType.Review) {
       return {
         open: Boolean(context.state[type]),
-        setOpen: () => context.setState({ [DialogType.Confirm]: false, [DialogType.Review]: true }),
+        setOpen: (val) => context.setState((prev) => ({ ...prev, [DialogType.Review]: val })),
         confirm: context.confirm,
       } as UseDialog<T>
     } else {
       return {
         open: Boolean(context.state[type]),
-        setOpen: () => context.setState({ [DialogType.Confirm]: true, [DialogType.Review]: false }),
+        setOpen: (val) => context.setState((prev) => ({ ...prev, [DialogType.Confirm]: val })),
       } as UseDialog<T>
     }
   }, [context, type])
 }
 
 export {
+  DialogClose,
   DialogConfirm,
   DialogContent,
   DialogDescription,

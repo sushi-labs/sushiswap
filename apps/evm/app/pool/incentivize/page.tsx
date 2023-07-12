@@ -302,6 +302,7 @@ const Incentivize = withCheckerRoot(() => {
               onChange={setStartDate}
               customInput={
                 <Input.DatePickerCustomInput
+                  testdata-id="start-date"
                   id="start-date"
                   label={
                     <>
@@ -326,6 +327,7 @@ const Incentivize = withCheckerRoot(() => {
               onChange={setEndDate}
               customInput={
                 <Input.DatePickerCustomInput
+                  testdata-id="end-date"
                   id="end-date"
                   label={
                     <>
@@ -476,7 +478,7 @@ const Incentivize = withCheckerRoot(() => {
                           {({ confirm }) => (
                             <>
                               <DialogTrigger asChild>
-                                <Button fullWidth size="xl" testId="swap">
+                                <Button fullWidth size="xl" testId="incentivize-pool-review">
                                   Incentivize pool
                                 </Button>
                               </DialogTrigger>
@@ -560,7 +562,7 @@ const Incentivize = withCheckerRoot(() => {
                                     loading={isIncentivizeLoading && !isError}
                                     onClick={() => writeAsync?.().then(() => confirm())}
                                     disabled={isIncentivizeLoading || isError}
-                                    testId="confirm-swap"
+                                    testId="incentivize-pool-confirm"
                                   >
                                     {isError ? (
                                       'Shoot! Something went wrong :('

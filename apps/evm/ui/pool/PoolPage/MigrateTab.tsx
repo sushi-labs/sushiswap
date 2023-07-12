@@ -35,6 +35,7 @@ import {
   usePair,
   useTotalSupply,
 } from '@sushiswap/wagmi'
+import { useWaitForTransaction } from '@sushiswap/wagmi'
 import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import { useV3Migrate, V3MigrateContractConfig } from '@sushiswap/wagmi/future/hooks/migrate/hooks/useV3Migrate'
 import { Checker } from '@sushiswap/wagmi/future/systems'
@@ -43,9 +44,7 @@ import { APPROVE_TAG_MIGRATE, APPROVE_TAG_UNSTAKE, Bound, Field } from 'lib/cons
 import { unwrapToken } from 'lib/functions'
 import { useGraphPool, useTokenAmountDollarValues } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
-import { useRouter } from 'next/navigation'
 import React, { FC, useMemo, useState } from 'react'
-import { useWaitForTransaction } from 'wagmi'
 
 import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
 import { SelectPricesWidget } from '../NewPositionSection'
@@ -62,7 +61,6 @@ enum PositionView {
 }
 
 export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
-  const { push } = useRouter()
   const { address } = useAccount()
   const [positionView, setPositionView] = useState(PositionView.staked)
   const [feeAmount, setFeeAmount] = useState<FeeAmount>(FeeAmount.LOWEST)
