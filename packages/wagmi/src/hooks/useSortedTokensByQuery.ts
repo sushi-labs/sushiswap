@@ -43,9 +43,9 @@ export const balanceComparator = (balanceA?: Amount<Type>, balanceB?: Amount<Typ
   if (balanceA && balanceB) {
     if (balanceA.asFraction.equalTo(balanceB.asFraction)) return 0
     return balanceA.asFraction.greaterThan(balanceB.asFraction) ? -1 : 1
-  } else if (balanceA && balanceA.greaterThan('0')) {
+  } else if (balanceA?.greaterThan('0')) {
     return -1
-  } else if (balanceB && balanceB.greaterThan('0')) {
+  } else if (balanceB?.greaterThan('0')) {
     return 1
   }
   return 0
