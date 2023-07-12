@@ -649,6 +649,46 @@ export const otherChains: Chain[] = [
       },
     },
   },
+  {
+    id: ChainId.HAQQ,
+    name: 'Haqq',
+    network: 'haqq',
+    nativeCurrency: { name: 'Islam', symbol: 'ISLM', decimals: 18 },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.eth.haqq.network'],
+      },
+      public: {
+        http: ['https://rpc.eth.haqq.network'],
+      },
+    },
+    contracts: {
+      multicall3: {
+        address: '0xfe2D04A5018AC1B366F599A13BF4e0C760b2aE6b',
+        blockCreated: 6589598,
+      },
+    },
+  },
+  {
+    id: ChainId.CORE,
+    name: 'Core',
+    network: 'core',
+    nativeCurrency: { name: 'Core', symbol: 'CORE', decimals: 18 },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.coredao.org', 'https://rpc-core.icecreamswap.com'],
+      },
+      public: {
+        http: ['https://rpc.coredao.org', 'https://rpc-core.icecreamswap.com'],
+      },
+    },
+    contracts: {
+      multicall3: {
+        address: '0xC4b2e1718E850535A0f3e79F7fC522d966821688',
+        blockCreated: 5087121,
+      },
+    },
+  },
 ]
 
 export const allChains = [...defaultChains, ...otherChains]

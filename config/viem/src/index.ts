@@ -549,6 +549,48 @@ const thundercore = {
   },
 } as const
 
+const haqq = {
+  id: ChainId.HAQQ,
+  name: 'Haqq',
+  network: 'haqq',
+  nativeCurrency: { name: 'Islam', symbol: 'ISLM', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.eth.haqq.network'],
+    },
+    public: {
+      http: ['https://rpc.eth.haqq.network'],
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xfe2D04A5018AC1B366F599A13BF4e0C760b2aE6b',
+      blockCreated: 6589598,
+    },
+  },
+} as const
+
+const core = {
+  id: ChainId.CORE,
+  name: 'Core',
+  network: 'core',
+  nativeCurrency: { name: 'Core', symbol: 'CORE', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.coredao.org', 'https://rpc-core.icecreamswap.com'],
+    },
+    public: {
+      http: ['https://rpc.coredao.org', 'https://rpc-core.icecreamswap.com'],
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xC4b2e1718E850535A0f3e79F7fC522d966821688',
+      blockCreated: 5087121,
+    },
+  },
+} as const
+
 const alchemyId = process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
 
 export const config: Record<number, PublicClientConfig> = {
@@ -714,6 +756,24 @@ export const config: Record<number, PublicClientConfig> = {
     chain: thundercore,
     transport: fallback(
       thundercore.rpcUrls.default.http.map((url) => http(url)),
+      {
+        rank: true,
+      }
+    ),
+  },
+  [ChainId.HAQQ]: {
+    chain: haqq,
+    transport: fallback(
+      haqq.rpcUrls.default.http.map((url) => http(url)),
+      {
+        rank: true,
+      }
+    ),
+  },
+  [ChainId.CORE]: {
+    chain: core,
+    transport: fallback(
+      core.rpcUrls.default.http.map((url) => http(url)),
       {
         rank: true,
       }
