@@ -51,10 +51,9 @@ export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) =>
                   className="!items-start"
                   title={
                     <div className="flex items-center gap-1">
-                      My Reward
+                      Reward
                       <Explainer>
-                        Your share calculated as your LP divided by the total LP in the pool multiplied by the rewards
-                        set per day.
+                        Total reward that gets distributed per day over all liquidity providers in this pool.
                       </Explainer>
                     </div>
                   }
@@ -67,7 +66,6 @@ export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) =>
                       end,
                       amount,
                       tvl: row.tvl ?? 0,
-                      userTVL: row.userTVL ?? 0,
                       token,
                     })?.toSignificant(6)}{' '}
                     {unwrapToken(token).symbol}

@@ -5,6 +5,7 @@ import '../variables.css'
 import { Cloudinary } from '@cloudinary/url-gen'
 import { ThemeProvider } from '@sushiswap/ui'
 import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
+import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
 import { Analytics } from '@vercel/analytics/react'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
@@ -15,7 +16,6 @@ import { useEffect } from 'react'
 
 import { Header } from '../components'
 import SEO from '../next-seo.config'
-import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
 
 export const cld = new Cloudinary({
   cloud: {
@@ -55,7 +55,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
         <link rel="shortcut icon" href="/favicon.ico?v=1" />
       </Head>
-      <ThemeProvider>
+      <ThemeProvider forcedTheme="dark">
         <DefaultSeo {...SEO} />
         <Header />
         <Component {...pageProps} />

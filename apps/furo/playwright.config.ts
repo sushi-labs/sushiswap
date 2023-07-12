@@ -1,5 +1,5 @@
-import type {PlaywrightTestConfig} from '@playwright/test'
-import {devices} from '@playwright/test'
+import type { PlaywrightTestConfig } from '@playwright/test'
+import { devices } from '@playwright/test'
 import path from 'path'
 
 // Use process.env.PORT by default and fallback to port 3000
@@ -101,12 +101,14 @@ const config: PlaywrightTestConfig = {
         'anvil',
         `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
         `--fork-url=${process.env.ANVIL_FORK_URL}`,
+        `--port=${process.env.ANVIL_PORT}`,
       ].join(' '),
       env: {
         ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
         ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
+        ANVIL_PORT: String(process.env.ANVIL_PORT),
       },
-      port: 8545,
+      port: Number(process.env.ANVIL_PORT),
     },
     {
       command: 'npm run start',
@@ -115,6 +117,7 @@ const config: PlaywrightTestConfig = {
       reuseExistingServer: !process.env.CI,
       env: {
         NEXT_PUBLIC_TEST: 'true',
+        NEXT_PUBLIC_ANVIL_PORT: String(process.env.ANVIL_PORT),
       },
     },
   ],

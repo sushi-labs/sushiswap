@@ -28,6 +28,7 @@
     },
     "build": {
       "outputs": [
+        "storybook-static/**",
         ".next/**/*",
         "!.next/cache/**",
         ".vercel/**/*",

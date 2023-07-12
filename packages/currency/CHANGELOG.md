@@ -1,5 +1,11 @@
 # @sushiswap/currency
 
+## 0.1.2
+
+### Patch Changes
+
+- [#1001](https://github.com/sushiswap/sushiswap/pull/1001) [`bc01f18ef`](https://github.com/sushiswap/sushiswap/commit/bc01f18ef532abc44b4b8cfa706f6a1b890ce71d) Thanks [@OlaStenberg](https://github.com/OlaStenberg)! - refactor AddressMapper return format, remove wnative mappings from TOKEN_MAP constant
+
 ## 0.1.1
 
 ### Patch Changes

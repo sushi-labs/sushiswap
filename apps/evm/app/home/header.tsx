@@ -1,26 +1,18 @@
 'use client'
 
-import { AppearOnMount } from '@sushiswap/ui/components/animation'
-import { GlobalNav } from '@sushiswap/ui/components/GlobalNav'
-import { useConnect } from '@sushiswap/wagmi'
-import { HeaderNetworkSelector } from '@sushiswap/wagmi/future/components/HeaderNetworkSelector'
-import { UserProfile } from '@sushiswap/wagmi/future/components/UserProfile'
-import { SUPPORTED_CHAIN_IDS } from 'config'
+import { Navigation } from '@sushiswap/ui'
+import { WagmiHeaderComponents } from '@sushiswap/wagmi/future/components/WagmiHeaderComponents'
 import React, { FC } from 'react'
 
+import { SUPPORTED_CHAIN_IDS } from '../../config'
+
 export const Header: FC = () => {
-  const { isLoading } = useConnect()
   return (
-    <GlobalNav
+    <Navigation
       rightElement={
-        isLoading ? (
-          <></>
-        ) : (
-          <AppearOnMount className="flex gap-2">
-            <HeaderNetworkSelector networks={SUPPORTED_CHAIN_IDS} />
-            <UserProfile networks={SUPPORTED_CHAIN_IDS} />
-          </AppearOnMount>
-        )
+        <div className="flex gap-2">
+          <WagmiHeaderComponents chainIds={SUPPORTED_CHAIN_IDS} />
+        </div>
       }
     />
   )
