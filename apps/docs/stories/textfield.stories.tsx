@@ -1,5 +1,6 @@
 // Input.stories.ts|tsx
 
+import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import type { Meta, StoryObj } from '@storybook/react'
 import { TextField } from '@sushiswap/ui'
 
@@ -19,7 +20,6 @@ type Story = StoryObj<typeof TextField>
 
 export const Default = {
   args: {
-    label: 'Label',
     id: 'input',
     placeholder: 'Example',
   },
@@ -27,7 +27,6 @@ export const Default = {
 
 export const Numeric = {
   args: {
-    label: 'Label',
     id: 'input',
     type: 'number',
     maxDecimals: 2,
@@ -36,9 +35,16 @@ export const Numeric = {
 
 export const Percent = {
   args: {
-    label: 'Label',
     id: 'input',
     type: 'percent',
     maxDecimals: 2,
+  },
+} satisfies Story
+
+export const Icon = {
+  args: {
+    id: 'input',
+    icon: MagnifyingGlassIcon,
+    placeholder: 'Search',
   },
 } satisfies Story

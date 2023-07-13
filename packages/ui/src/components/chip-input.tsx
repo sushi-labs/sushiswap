@@ -5,6 +5,8 @@ import classNames from 'classnames'
 import * as React from 'react'
 import { useCallback, useState } from 'react'
 
+import { IconComponent } from '../types'
+import { buttonIconVariants } from './button'
 import { Chip, chipVariants } from './chip'
 import { textFieldVariants } from './text-field'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip'
@@ -17,6 +19,8 @@ const ChipInputRoot = React.forwardRef<HTMLDivElement, ChipInputRootProps>(({ ..
 ChipInputRoot.displayName = 'ChipInputRoot'
 
 interface ChipInputProps extends React.HTMLAttributes<HTMLInputElement>, VariantProps<typeof chipVariants> {
+  icon?: IconComponent
+  iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
   onValueChange(values: string[]): void
   values: string[]
   mutateValue?(string: string): string
@@ -24,7 +28,20 @@ interface ChipInputProps extends React.HTMLAttributes<HTMLInputElement>, Variant
 }
 
 const ChipInput = React.forwardRef<HTMLInputElement, ChipInputProps>(
-  ({ className, values, variant, onValueChange, delimiters = [',', ';', ':'], mutateValue, ...props }, ref) => {
+  (
+    {
+      className,
+      icon: Icon,
+      iconProps,
+      values,
+      variant,
+      onValueChange,
+      delimiters = [',', ';', ':'],
+      mutateValue,
+      ...props
+    },
+    ref
+  ) => {
     const [state, setState] = useState<string>('')
     const onKeyDown = useCallback(
       (e: React.KeyboardEvent) => {
@@ -49,6 +66,7 @@ const ChipInput = React.forwardRef<HTMLInputElement, ChipInputProps>(
 
     return (
       <ChipInputRoot className={textFieldVariants({ className: 'gap-2 flex-wrap !h-[unset]' })}>
+        {Icon ? <Icon {...iconProps} className={buttonIconVariants()} /> : null}
         {values.map((value, i) => (
           <TooltipProvider key={i}>
             <Tooltip>

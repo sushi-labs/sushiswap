@@ -1,6 +1,10 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import * as React from 'react'
 
+import { classNames } from '../index'
+import { IconComponent } from '../types'
+import { buttonIconVariants } from './button'
+
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
 const escapeRegExp = (string: string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
 
@@ -37,12 +41,14 @@ interface TextFieldBaseProps
   extends React.InputHTMLAttributes<HTMLInputElement>,
     VariantProps<typeof textFieldVariants> {
   id?: string
+  icon?: IconComponent
+  iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
 }
 
 interface TextFieldDynamicProps<T extends InputType> {
   type: T
   maxDecimals?: T extends 'number' ? number : never
-  onValueChange: <T>(val: T extends 'date' ? Date | null : string) => void
+  onValueChange: (val: string) => void
 }
 
 type TextFieldProps<T extends InputType> = TextFieldBaseProps & TextFieldDynamicProps<T>
@@ -52,7 +58,7 @@ const isTypeNumber = (type: InputType): type is 'number' => type === 'number'
 const isTypePercent = (type: InputType): type is 'percent' => type === 'percent'
 
 const Component = <T extends InputType>(
-  { variant, className, type, onChange, onValueChange, ...props }: TextFieldProps<T>,
+  { icon: Icon, iconProps, variant, className, type, onChange, onValueChange, ...props }: TextFieldProps<T>,
   ref: React.ForwardedRef<HTMLInputElement>
 ) => {
   const _onChange: React.InputHTMLAttributes<HTMLInputElement>['onChange'] = (e) => {
@@ -87,6 +93,27 @@ const Component = <T extends InputType>(
     if (onChange) {
       onChange(e)
     }
+  }
+
+  if (Icon) {
+    return (
+      <div className="relative flex items-center w-full">
+        <Icon {...iconProps} className={buttonIconVariants({ className: 'text-muted-foreground absolute left-3' })} />
+        <input
+          onChange={_onChange}
+          type={type}
+          className={textFieldVariants({ variant, className: classNames(className, 'pl-[40px]') })}
+          ref={ref}
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck="false"
+          autoComplete="off"
+          {...(isTypeNumber(type) && numericInputProps)}
+          {...(isTypePercent(type) && percentInputProps)}
+          {...props}
+        />
+      </div>
+    )
   }
 
   return (

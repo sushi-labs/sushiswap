@@ -1,13 +1,14 @@
 'use client'
 
 import { Popover } from '@headlessui/react'
+import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import chains from '@sushiswap/chain'
 import classNames from 'classnames'
 import React, { useState } from 'react'
 
 import { Dialog } from '../dialog'
 import { NetworkIcon } from '../icons'
-import { Search } from '../input/Search'
+import { TextField } from '../text-field'
 import { NetworkSelectorProps } from './index'
 
 export const NetworkSelectorDialog = <T extends number>({
@@ -26,7 +27,14 @@ export const NetworkSelectorDialog = <T extends number>({
           <Dialog open={open} onClose={() => close()}>
             <Dialog.Content className="flex flex-col gap-2 scroll sm:overflow-hidden !pb-0 !h-[75vh] sm:!h-[640px]">
               <Popover.Panel className="overflow-hidden">
-                <Search id="network-selector" value={query} loading={false} onValueChange={setQuery} />
+                <TextField
+                  placeholder="Search by token or address"
+                  icon={MagnifyingGlassIcon}
+                  type="text"
+                  id="network-selector"
+                  value={query}
+                  onValueChange={setQuery}
+                />
                 <div className="h-[calc(100%-44px)] scroll overflow-auto py-3">
                   {networks
                     .filter((el) => (query ? chains[el].name.toLowerCase().includes(query.toLowerCase()) : Boolean))

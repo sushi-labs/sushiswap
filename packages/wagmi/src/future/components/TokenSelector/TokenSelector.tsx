@@ -1,16 +1,17 @@
 import { isAddress } from '@ethersproject/address'
 import { XMarkIcon } from '@heroicons/react/20/solid'
+import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { useCustomTokens, usePinnedTokens } from '@sushiswap/hooks'
 import { useBalances, usePrices, useTokens } from '@sushiswap/react-query'
 import { IconButton } from '@sushiswap/ui'
+import { TextField } from '@sushiswap/ui'
 import { SlideIn } from '@sushiswap/ui/components/animation'
 import { Button, buttonIconVariants } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Dialog } from '@sushiswap/ui/components/dialog'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
-import { Search } from '@sushiswap/ui/components/input/Search'
 import { List } from '@sushiswap/ui/components/list/List'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
@@ -120,41 +121,50 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
               <TokenSelectorCustomTokensOverlay />
             </div>
             <div className="flex gap-2">
-              <Search id={id} value={query} loading={isQueryTokenLoading} onValueChange={setQuery} />
+              <TextField
+                placeholder="Search by token or address"
+                icon={MagnifyingGlassIcon}
+                type="text"
+                id="network-selector"
+                value={query}
+                onValueChange={setQuery}
+              />
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              {pinnedTokens.map((token) => (
-                <div key={token.id} className="group">
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    className="group"
-                    key={token.id}
-                    onClick={() => _onSelect(token)}
-                  >
-                    <Currency.Icon
-                      width={20}
-                      height={20}
-                      className={buttonIconVariants({ size: 'default' })}
-                      currency={token}
-                      disableLink
-                    />
-                    {token.symbol}
-                    <IconButton
-                      size="xs"
-                      name="remove"
-                      icon={XMarkIcon}
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        _onPin(token.id)
-                      }}
-                    />
-                  </Button>
-                </div>
-              ))}
-            </div>
+            {pinnedTokens.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {pinnedTokens.map((token) => (
+                  <div key={token.id} className="group">
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      className="group"
+                      key={token.id}
+                      onClick={() => _onSelect(token)}
+                    >
+                      <Currency.Icon
+                        width={20}
+                        height={20}
+                        className={buttonIconVariants({ size: 'default' })}
+                        currency={token}
+                        disableLink
+                      />
+                      {token.symbol}
+                      <IconButton
+                        size="xs"
+                        name="remove"
+                        icon={XMarkIcon}
+                        variant="ghost"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          _onPin(token.id)
+                        }}
+                      />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ) : null}
 
             <List.Control className="relative flex flex-col flex-grow gap-3 p-1">
               {isQueryTokenLoading ? (

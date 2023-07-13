@@ -13,6 +13,7 @@
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/ui": "workspace:*",
+    "@heroicons/react": "2.0.13",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "class-variance-authority": "^0.6.0",
     "react": "18.2.0",
