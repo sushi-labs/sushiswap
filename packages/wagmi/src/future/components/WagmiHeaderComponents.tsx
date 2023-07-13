@@ -18,7 +18,7 @@ export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
   onChange,
 }) => {
   return (
-    <AppearOnMount>
+    <AppearOnMount className="flex items-center gap-2">
       <HeaderNetworkSelector networks={chainIds} selectedNetwork={selectedNetwork} onChange={onChange} />
       <UserProfile networks={chainIds} />
     </AppearOnMount>
