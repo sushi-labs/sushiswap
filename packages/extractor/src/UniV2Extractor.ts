@@ -53,6 +53,7 @@ const UniV2FactoryAbi = [
 
 // TODO: UniV3Ext price max-min change (+-10%)
 // TODO: UniV3Ext watcher-something-all - ???
+// TODO: UniV3Ext - to add "(337ms after demand)"
 // TODO: pools cache - ?
 export class UniV2Extractor {
   readonly multiCallAggregator: MultiCallAggregator
