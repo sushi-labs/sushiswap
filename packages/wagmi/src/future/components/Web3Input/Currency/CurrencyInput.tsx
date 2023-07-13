@@ -19,7 +19,7 @@ export interface CurrencyInputProps {
   id?: string
   disabled?: boolean
   value: string
-  onChange(value: string): void
+  onChange?(value: string): void
   currency: Type | undefined
   onSelect?(currency: Type): void
   chainId: ChainId
