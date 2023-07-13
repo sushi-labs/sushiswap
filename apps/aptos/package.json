@@ -23,6 +23,7 @@
     "@martianwallet/aptos-wallet-adapter": "^0.0.4",
     "@pontem/wallet-adapter-plugin": "^0.2.0",
     "@rise-wallet/wallet-adapter": "^0.1.2",
+    "@sushiswap/amm": "workspace:*",
     "@sushiswap/format": "workspace:0.1.0",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",

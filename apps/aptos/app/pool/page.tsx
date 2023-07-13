@@ -5,7 +5,7 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { DiscordIcon } from '@sushiswap/ui/future/components/icons'
 import Link from 'next/link'
 import PoolsSection from '../../components/PoolsSection'
-import { PoolFilters } from 'components/PoolFilters'
+import { PoolFilters } from 'app/pool/PoolsSection/Tables/TableFilters/PoolFilters'
 import { Footer } from '@sushiswap/ui/app/Footer'
 
 export default function Pool() {

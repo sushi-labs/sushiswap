@@ -5,13 +5,14 @@ import { Badge } from '@sushiswap/ui/future/components/Badge'
 import Container from '@sushiswap/ui/future/components/Container'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import { PoolPageV2 } from 'components/PoolPageV2'
-import { SelectFeeConcentratedWidget } from 'components/SelectFeeConcentratedWidget'
-import { SelectNetworkWidget } from 'components/SelectNetworkWidget'
-import { SelectPricesWidget } from 'components/SelectPricesWidget'
-import { SelectTokensWidget } from 'components/SelectTokensWidget'
+import { PoolPageV2 } from 'app/pool/add/v2/[chainId]/PoolPageV2'
+import { SelectFeeConcentratedWidget } from 'components/NewPositionSection/SelectFeeConcentratedWidget'
 import Link from 'next/link'
 import React, { FC } from 'react'
+import { SelectNetworkWidget } from 'components/NewPositionSection/SelectNetworkWidget'
+import { SelectPricesWidget } from 'components/NewPositionSection/SelectPricesWidget'
+import { SelectTokensWidget } from 'components/NewPositionSection/SelectTokensWidget'
+import { Add } from './v2/[chainId]'
 
 export function AddPage() {
   return (
@@ -83,22 +84,22 @@ export function AddPage() {
         <div className="pb-4 mt-10 mb-4 lg:mb-40 xl:mt-20">
           <div className="flex flex-col gap-2">
             <Link className="group flex gap-4 items-center mb-2" href="/" shallow={true}>
-              <IconButton
+              {/* <IconButton
                 icon={ArrowLeftIcon}
                 iconProps={{
                   width: 24,
                   height: 24,
                   transparent: true,
                 }}
-              />
-              <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
+              /> */}
+              {/* <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
                 Go back to pools list
-              </span>
+              </span> */}
             </Link>
-            <h1 className="text-3xl font-medium mt-2">Add Liquidity</h1>
-            <h1 className="text-lg text-gray-600 dark:dark:text-slate-400 text-slate-600">
+            {/* <h1 className="text-3xl font-medium mt-2">Add Liquidity</h1> */}
+            {/* <h1 className="text-lg text-gray-600 dark:dark:text-slate-400 text-slate-600">
               Create a new pool or create a liquidity position on an existing pool.
-            </h1>
+            </h1> */}
           </div>
           <div className="grid grid-cols-1 sm:w-[340px] md:w-[572px] gap-10">
             <div className="hidden md:block"></div>
@@ -138,11 +139,12 @@ const _Add: FC = () => {
       {/* </div> */}
       {/* </div> */}
       <div className="flex flex-col order-3 gap-[64px] pb-40 sm:order-2">
-        <SelectNetworkWidget />
-        <SelectFeeConcentratedWidget />
-        <SelectPricesWidget />
-        <SelectTokensWidget />
-        <PoolPageV2 />
+        {/* <SelectNetworkWidget /> */}
+        {/* <SelectFeeConcentratedWidget /> */}
+        {/* <SelectPricesWidget /> */}
+        {/* <SelectTokensWidget /> */}
+        {/* <PoolPageV2 /> */}
+        <Add />
       </div>
     </>
   )
