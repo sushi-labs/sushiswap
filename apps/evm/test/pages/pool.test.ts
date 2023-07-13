@@ -65,7 +65,9 @@ const USDC = new Token({
 
 const BASE_URL = process.env.PLAYWRIGHT_URL || 'http://localhost:3000/pool'
 
-// Tests will only work for polygon atm
+// test.beforeAll(async ({ page }) => {})
+
+// // Tests will only work for polygon atm
 test.describe('V3', () => {
   test.beforeEach(async ({ page }) => {
     const url = BASE_URL.concat('/add').concat(`?chainId=${CHAIN_ID}`)
