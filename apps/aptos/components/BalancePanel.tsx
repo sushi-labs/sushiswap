@@ -1,3 +1,4 @@
+import { classNames } from '@sushiswap/ui'
 import { WalletIcon } from '@sushiswap/ui/future/components/icons'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import React from 'react'
@@ -5,22 +6,13 @@ import React from 'react'
 interface Props {
   coinData: number
   isLoading: boolean
-  isLoadingLower?: boolean
   decimals: number
-  className?: string
-  disabled?: boolean
   onClick?: () => void
+  type: 'INPUT' | 'OUTPUT'
 }
 
-export const BalancePanel = ({
-  coinData,
-  isLoading,
-  isLoadingLower,
-  decimals,
-  className = '',
-  disabled,
-  onClick,
-}: Props) => {
+export const BalancePanel = ({ coinData, isLoading, decimals, onClick, type }: Props) => {
+  console.log('type', type)
   let [big, portion] = (coinData ? `${coinData / 10 ** decimals}` : '0.00').split('.')
   portion = portion ? portion.substring(0, 2) : '00'
   return (
@@ -28,12 +20,17 @@ export const BalancePanel = ({
       id="swap-from-balance-button"
       testdata-id="swap-from-balance-button"
       type="button"
-      disabled={disabled}
+      // disabled={disabled}
       onClick={onClick}
-      className={`${className} font-medium flex gap-1.5 items-center py-1 dark:text-slate-400 px-2 rounded-md`}
+      className={classNames(
+        type === 'INPUT'
+          ? 'text-blue hover:text-blue-600 active:text-blue-700 hover:dark:text-slate-300'
+          : 'text-gray-500 dark:text-slate-500',
+        `font-medium flex gap-1.5 items-center py-1 dark:text-slate-400 px-2 rounded-md`
+      )}
     >
       <WalletIcon width={18} height={18} />
-      {isLoading || isLoadingLower ? (
+      {isLoading ? (
         <div className="w-[60px] flex items-center">
           <Skeleton.Text fontSize="text-lg" className="w-full" />
         </div>

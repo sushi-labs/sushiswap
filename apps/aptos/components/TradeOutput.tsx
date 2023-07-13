@@ -7,39 +7,30 @@ import { BalancePanel } from './BalancePanel'
 import { formatNumber } from 'utils/utilFunctions'
 import { Token } from 'utils/tokenType'
 import TokenListDialog from './TokenListDialog'
+import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
 interface PropType {
-  currency: Token
-  setToken: React.Dispatch<React.SetStateAction<Token>>
-  coinData: number
+  balance: number
   isLoadingPrice: boolean
-  outpuSwapTokenAmount: any
-  isLoadingPriceLower: boolean
+  isPriceFetching: boolean
 }
-export default function TradeOutput({
-  currency,
-  setToken,
-  coinData,
-  isLoadingPrice,
-  outpuSwapTokenAmount,
-  isLoadingPriceLower,
-}: PropType) {
-  outpuSwapTokenAmount = outpuSwapTokenAmount?.amountOut
-    ? formatNumber(outpuSwapTokenAmount.amountOut, currency.decimals)
-    : ''
+export default function TradeOutput({ balance, isLoadingPrice, isPriceFetching }: PropType) {
+  const { token1, outputAmount } = useSwapState()
+  const { setToken1 } = useSwapActions()
+  const outpuSwapTokenAmount = outputAmount ? formatNumber(parseFloat(outputAmount), token1.decimals) : ''
   useEffect(() => {
     checkBalance()
-  }, [coinData])
+  }, [balance])
 
   const checkBalance = () => {
-    if (coinData === undefined) {
-      coinData = 0
+    if (balance === undefined) {
+      balance = 0
     }
   }
 
   return (
     <div className={`space-y-2 overflow-hidden pb-2 p-3 bg-white dark:bg-slate-800 rounded-xl`}>
       <div className="relative flex items-center gap-4">
-        {isLoadingPriceLower ? (
+        {isPriceFetching ? (
           <div className="w-full flex items-center">
             <div className="w-[170px]">
               <Skeleton.Text fontSize="text-2xl" className="w-full" />
@@ -50,11 +41,11 @@ export default function TradeOutput({
             id="swap-to"
             variant="unstyled"
             disabled={true}
-            value={outpuSwapTokenAmount ? outpuSwapTokenAmount : ''}
+            value={outpuSwapTokenAmount ? String(outpuSwapTokenAmount) : ''}
             className="text-gray-900 dark:text-slate-50 text-left border-none focus:outline-none focus:ring-0 p-0 bg-transparent w-full truncate font-medium without-ring !text-3xl py-1"
           />
         )}
-        <TokenListDialog selected={currency} handleChangeToken={setToken}>
+        <TokenListDialog selected={token1} handleChangeToken={setToken1}>
           {({ setOpen }) => (
             <button
               onClick={(e) => {
@@ -75,11 +66,11 @@ export default function TradeOutput({
                   decoding="async"
                   data-nimg={1}
                   className="rounded-full"
-                  src={currency.logoURI}
+                  src={token1.logoURI}
                   style={{ color: 'transparent' }}
                 />
               </div>
-              {currency.name}
+              {token1.symbol}
               <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />
             </button>
           )}
@@ -104,10 +95,9 @@ export default function TradeOutput({
       <div className="flex flex-row items-center justify-between h-[36px]">
         <PricePanel isLoading={isLoadingPrice} />
         <BalancePanel
-          coinData={coinData}
-          isLoading={isLoadingPrice}
-          isLoadingLower={isLoadingPriceLower}
-          decimals={currency.decimals}
+          coinData={balance}
+          isLoading={isLoadingPrice || isPriceFetching}
+          decimals={token1.decimals}
           disabled={true}
           className="text-gray-500 dark:text-slate-500"
         />

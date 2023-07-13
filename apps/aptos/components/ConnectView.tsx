@@ -31,19 +31,17 @@ export const ConnectView: FC<{ close(): void }> = ({ close }) => {
         {wallets.map((wallet, key) => {
           if (wallet.readyState == 'Installed') {
             return (
-              <>
-                <List.MenuItem
-                  className="p-0"
-                  onClick={() => onSelect(wallet.name as WalletName)}
-                  title={wallet.name}
-                  icon={Icons[wallet.name]}
-                  key={wallet.name}
-                  hoverIcon={ChevronRightIcon}
-                ></List.MenuItem>
-              </>
+              <List.MenuItem
+                className="p-0"
+                onClick={() => onSelect(wallet.name as WalletName)}
+                title={wallet.name}
+                icon={Icons[wallet.name]}
+                key={wallet.name}
+                hoverIcon={ChevronRightIcon}
+              ></List.MenuItem>
             )
           } else {
-            return <NotFoundWalletList Icons={Icons} wallet={wallet} />
+            return <NotFoundWalletList key={wallet.name} Icons={Icons} wallet={wallet} />
           }
         })}
       </List.Control>

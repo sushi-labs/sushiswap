@@ -4,8 +4,8 @@ export const RiseIcon = (props: React.ComponentProps<'svg'>) => {
   return (
     <svg fill="none" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
       <radialGradient id="0" gradientTransform="translate(-0.2 -0.8) scale(2, 2)">
-        <stop offset="40%" stop-color="#22e4e5" />
-        <stop offset="100%" stop-color="#071ee6" />
+        <stop offset="40%" stopColor="#22e4e5" />
+        <stop offset="100%" stopColor="#071ee6" />
       </radialGradient>
       <clipPath id="a">
         <path d="m0 0h90.9091v30h-90.9091z"></path>

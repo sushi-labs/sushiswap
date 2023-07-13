@@ -2,78 +2,51 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
-// import { WalletIcon } from '@sushiswap/ui/future/components/icons'
 import { PricePanel } from './PricePanel'
 import { BalancePanel } from './BalancePanel'
-import { Token } from 'utils/tokenType'
 import TokenListDialog from './TokenListDialog'
+import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
+import { Token } from 'utils/tokenType'
+import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 interface PropType {
-  currency: Token
-  setToken: React.Dispatch<React.SetStateAction<Token>>
-  coinData: number
+  type: 'INPUT' | 'OUTPUT'
+  token: Token
+  value: string
+  setAmount?: (value: string) => void
+  disabled?: boolean
+  setToken: (token: Token) => void
+  balance: number
+  error?: string
   isLoadingPrice: boolean
-  setButtonError: React.Dispatch<React.SetStateAction<string>>
-  setToken1Value: React.Dispatch<React.SetStateAction<number>>
-  getSwapPrice: (tradeVal: number) => Promise<any>
-  tradeVal: React.RefObject<HTMLInputElement>
+  tradeVal?: React.RefObject<HTMLInputElement>
+  onUserInput?: (value: string) => void
 }
 export default function TradeInput({
-  currency,
+  type,
+  token,
+  value,
+  setAmount,
+  disabled,
   setToken,
-  coinData,
+  balance,
+  error,
   isLoadingPrice,
-  setButtonError,
-  getSwapPrice,
-  setToken1Value,
   tradeVal,
+  onUserInput,
 }: PropType) {
-  const [error, setError] = useState('')
-  const { connected } = useWallet()
-  const [inputValue, setInputValue] = useState<string>('')
   const focusInput = useCallback(() => {
-    tradeVal.current?.focus()
+    if (tradeVal) {
+      tradeVal.current?.focus()
+    }
   }, [])
-  useEffect(() => {
-    checkBalance(tradeVal?.current?.value as string)
-  }, [coinData])
-
-  const checkBalance = (tradeVal: string) => {
-    const regexPattern = /^[0-9]*(\.[0-9]*)?$/
-    if (regexPattern.test(tradeVal)) {
-      setInputValue(tradeVal)
-      setToken1Value(parseFloat(tradeVal))
-      getSwapPrice(parseFloat(tradeVal))
-    }
-    if (coinData === undefined) {
-      coinData = 0
-    }
-
-    if (setButtonError) setButtonError('')
-    if (connected) {
-      const priceEst = coinData / 10 ** currency.decimals < parseFloat(tradeVal)
-      if (priceEst) {
-        setError('Exceeds Balance')
-        if (setButtonError) setButtonError('Insufficient Balance')
-      } else {
-        setError('')
-        if (setButtonError) setButtonError('')
-      }
-    } else {
-      setError('')
-    }
-  }
 
   const balanceClick = () => {
-    if (currency.name == 'APT') {
-      setInputValue(((coinData - 2000000) / 10 ** 8) as unknown as string)
-    } else {
-      setInputValue((coinData / 10 ** 8) as unknown as string)
-    }
-    const timeOut = setTimeout(() => {
-      checkBalance(tradeVal?.current?.value as string)
-    }, 100)
-    return () => {
-      clearTimeout(timeOut)
+    if (setAmount) {
+      if (token.symbol == 'APT') {
+        setAmount(((balance - 2000000) / 10 ** 8) as unknown as string)
+      } else {
+        setAmount((balance / 10 ** 8) as unknown as string)
+      }
     }
   }
 
@@ -85,17 +58,28 @@ export default function TradeInput({
       onClick={focusInput}
     >
       <div className="relative flex items-center gap-4">
-        <Input.Numeric
-          id="swap-from"
-          variant="unstyled"
-          value={inputValue}
-          ref={tradeVal}
-          onUserInput={(e) => {
-            checkBalance(e)
-          }}
-          className="text-gray-900 dark:text-slate-50 text-left border-none focus:outline-none focus:ring-0 p-0 bg-transparent w-full truncate font-medium without-ring !text-3xl py-1"
-        />
-        <TokenListDialog selected={currency} handleChangeToken={setToken}>
+        {isLoadingPrice ? (
+          <div className="w-full flex items-center">
+            <div className="w-[170px]">
+              <Skeleton.Text fontSize="text-2xl" className="w-full" />
+            </div>
+          </div>
+        ) : (
+          <Input.Numeric
+            id="swap-from"
+            variant="unstyled"
+            value={value}
+            ref={tradeVal}
+            onUserInput={(value) => {
+              if (onUserInput) {
+                onUserInput(value)
+              }
+            }}
+            disabled={disabled}
+            className="text-gray-900 dark:text-slate-50 text-left border-none focus:outline-none focus:ring-0 p-0 bg-transparent w-full truncate font-medium without-ring !text-3xl py-1"
+          />
+        )}
+        <TokenListDialog selected={token} handleChangeToken={setToken}>
           {({ setOpen }) => (
             <button
               onClick={(e) => {
@@ -109,8 +93,8 @@ export default function TradeInput({
             >
               <div className="w-[28px] h-[28px] mr-0.5">
                 <img
-                  src={currency.logoURI}
-                  alt={currency.name}
+                  src={token.logoURI}
+                  alt={token.name}
                   height={28}
                   width={28}
                   decoding="async"
@@ -120,7 +104,7 @@ export default function TradeInput({
                   style={{ color: 'transparent' }}
                 />
               </div>
-              {currency.name}
+              {token.symbol}
               <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />
             </button>
           )}
@@ -145,11 +129,11 @@ export default function TradeInput({
       <div className="flex flex-row items-center justify-between h-[36px]">
         <PricePanel isLoading={isLoadingPrice} error={error} />
         <BalancePanel
-          coinData={coinData}
+          coinData={balance}
           isLoading={isLoadingPrice}
-          decimals={currency.decimals}
+          decimals={token.decimals}
           onClick={balanceClick}
-          className="text-blue hover:text-blue-600 active:text-blue-700 hover:dark:text-slate-300"
+          type={type}
         />
       </div>
     </div>

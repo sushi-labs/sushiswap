@@ -1,5 +1,6 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Popover, Transition } from '@headlessui/react'
+import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { JazzIcon, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/future/components/button'
 import React, { useEffect, useState } from 'react'
@@ -8,6 +9,8 @@ import { ConnectView } from './ConnectView'
 import { DefaultView } from './DefaultView'
 import { SettingsView } from './SettingsView'
 import { useBreakpoint } from '@sushiswap/ui/future/lib'
+import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
+import { ModalType } from '@sushiswap/ui/future/components/modal/ModalProvider'
 
 type fullWidth = {
   fullWidth: boolean
@@ -32,22 +35,27 @@ export enum ProfileView {
 }
 
 export default function WalletSelector({ hideChevron, varient, color, fullWidth, size }: Props) {
-  const { account, connected } = useWallet()
+  const { account, connected, network } = useWallet()
   const [view, setView] = useState<ProfileView>(ProfileView.Default)
-  const { isSm } = useBreakpoint('sm')
-  console.log(isSm)
-
   const [balance, setBalance] = useState<number>(0)
   useEffect(() => {
-    fetch(`https://fullnode.testnet.aptoslabs.com/v1/accounts/${account?.address}/resources`)
-      .then((res) => res.json())
-      .then((data) => {
-        const balance = data?.filter((coin: coinType) => {
-          return coin?.type.includes('0x1::aptos_coin::AptosCoin')
+    if (account?.address && network?.name) {
+      fetch(`https://fullnode.${network?.name?.toLowerCase()}.aptoslabs.com/v1/accounts/${account?.address}/resources`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.error_code) {
+            const balance = data?.filter((coin: coinType) => {
+              return coin?.type.includes('0x1::aptos_coin::AptosCoin')
+            })
+            setBalance(balance[0]?.data?.coin?.value / 10 ** 8)
+          } else {
+            setBalance(0)
+          }
         })
-        setBalance(balance[0]?.data?.coin?.value / 10 ** 8)
-      })
-  }, [account])
+    } else {
+      setBalance(0)
+    }
+  }, [account, network, connected])
   return (
     <Popover className={fullWidth ? 'relative w-full' : ''}>
       {({ open, close }) => (
