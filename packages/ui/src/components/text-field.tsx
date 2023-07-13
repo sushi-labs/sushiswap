@@ -1,7 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import * as React from 'react'
 
-import { classNames } from '../index'
 import { IconComponent } from '../types'
 import { buttonIconVariants } from './button'
 
@@ -25,12 +24,22 @@ const textFieldVariants = cva(
     variants: {
       variant: {
         default:
-          'flex items-center min-h-[40px] h-[40px] py-2 px-3 rounded-lg font-medium block bg-secondary hover:bg-muted focus:bg-accent',
+          'flex items-center min-h-[40px] h-[40px] py-2 px-3 rounded-lg font-medium block bg-secondary group-hover:bg-muted group-focus:bg-accent',
         naked: 'bg-transparent',
+      },
+      hasIcon: {
+        yes: 'pl-[40px]',
+        no: '',
+      },
+      hasUnit: {
+        yes: 'rounded-r-none',
+        no: '',
       },
     },
     defaultVariants: {
       variant: 'default',
+      hasIcon: 'no',
+      hasUnit: 'no',
     },
   }
 )
@@ -43,12 +52,13 @@ interface TextFieldBaseProps
   id?: string
   icon?: IconComponent
   iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
+  unit?: string
 }
 
 interface TextFieldDynamicProps<T extends InputType> {
   type: T
   maxDecimals?: T extends 'number' ? number : never
-  onValueChange: (val: string) => void
+  onValueChange?(val: string): void
 }
 
 type TextFieldProps<T extends InputType> = TextFieldBaseProps & TextFieldDynamicProps<T>
@@ -58,7 +68,7 @@ const isTypeNumber = (type: InputType): type is 'number' => type === 'number'
 const isTypePercent = (type: InputType): type is 'percent' => type === 'percent'
 
 const Component = <T extends InputType>(
-  { icon: Icon, iconProps, variant, className, type, onChange, onValueChange, ...props }: TextFieldProps<T>,
+  { icon: Icon, iconProps, unit, variant, className, type, onChange, onValueChange, ...props }: TextFieldProps<T>,
   ref: React.ForwardedRef<HTMLInputElement>
 ) => {
   const _onChange: React.InputHTMLAttributes<HTMLInputElement>['onChange'] = (e) => {
@@ -68,25 +78,26 @@ const Component = <T extends InputType>(
     }
 
     if (isTypeNumber(type)) {
+      console.log(nextUserInput)
       const val = `${nextUserInput}`.replace(/,/g, '.')
-      if (val === '') onValueChange('')
+      if (onValueChange && val === '') onValueChange('')
 
       if (inputRegex.test(escapeRegExp(val))) {
         if (props.maxDecimals && val?.includes('.')) {
           const [, decimals] = val.split('.')
-          if (decimals.length <= props.maxDecimals) {
+          if (onValueChange && decimals.length <= props.maxDecimals) {
             onValueChange(val)
           }
         } else {
-          onValueChange(val)
+          if (onValueChange) onValueChange(val)
         }
       }
-    } else if (isTypeText(type)) {
+    } else if (isTypeText(type) && onValueChange) {
       onValueChange(nextUserInput)
     } else if (isTypePercent(type)) {
       const _nextUserInput = nextUserInput.replace(/,/g, '.').replace(/%/g, '')
       if (_nextUserInput === '' || inputRegex.test(escapeRegExp(_nextUserInput))) {
-        onValueChange(_nextUserInput)
+        if (onValueChange) onValueChange(_nextUserInput)
       }
     }
 
@@ -95,41 +106,34 @@ const Component = <T extends InputType>(
     }
   }
 
-  if (Icon) {
-    return (
-      <div className="relative flex items-center w-full">
-        <Icon {...iconProps} className={buttonIconVariants({ className: 'text-muted-foreground absolute left-3' })} />
-        <input
-          onChange={_onChange}
-          type={type}
-          className={textFieldVariants({ variant, className: classNames(className, 'pl-[40px]') })}
-          ref={ref}
-          autoCorrect="off"
-          autoCapitalize="off"
-          spellCheck="false"
-          autoComplete="off"
-          {...(isTypeNumber(type) && numericInputProps)}
-          {...(isTypePercent(type) && percentInputProps)}
-          {...props}
-        />
-      </div>
-    )
-  }
-
   return (
-    <input
-      onChange={_onChange}
-      type={type}
-      className={textFieldVariants({ variant, className })}
-      ref={ref}
-      autoCorrect="off"
-      autoCapitalize="off"
-      spellCheck="false"
-      autoComplete="off"
-      {...(isTypeNumber(type) && numericInputProps)}
-      {...(isTypePercent(type) && percentInputProps)}
-      {...props}
-    />
+    <div className="group relative flex items-center justify-between w-full">
+      {Icon ? (
+        <Icon {...iconProps} className={buttonIconVariants({ className: 'text-muted-foreground absolute left-3' })} />
+      ) : null}
+      <input
+        onChange={_onChange}
+        className={textFieldVariants({
+          variant,
+          hasIcon: Icon ? 'yes' : 'no',
+          hasUnit: unit ? 'yes' : 'no',
+          className: 'flex-grow flex-1',
+        })}
+        ref={ref}
+        autoCorrect="off"
+        autoCapitalize="off"
+        spellCheck="false"
+        autoComplete="off"
+        {...(isTypeNumber(type) && numericInputProps)}
+        {...(isTypePercent(type) && percentInputProps)}
+        {...props}
+      />
+      {unit ? (
+        <div className={textFieldVariants({ className: 'text-muted-foreground rounded-l-none !w-[unset]' })}>
+          {unit}
+        </div>
+      ) : null}
+    </div>
   )
 }
 

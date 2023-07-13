@@ -1,5 +1,6 @@
 // Input.stories.ts|tsx
 
+import { CreditCardIcon } from '@heroicons/react/24/outline'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import type { Meta, StoryObj } from '@storybook/react'
 import { TextField } from '@sushiswap/ui'
@@ -46,5 +47,22 @@ export const Icon = {
     id: 'input',
     icon: MagnifyingGlassIcon,
     placeholder: 'Search',
+  },
+} satisfies Story
+
+export const Unit = {
+  args: {
+    id: 'input',
+    placeholder: 'Input with unit',
+    unit: 'ETH',
+  },
+} satisfies Story
+
+export const Adornments = {
+  args: {
+    id: 'input',
+    unit: 'CVV',
+    icon: CreditCardIcon,
+    placeholder: '',
   },
 } satisfies Story

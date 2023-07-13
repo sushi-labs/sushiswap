@@ -1,4 +1,4 @@
-import { DownloadIcon, XIcon } from '@heroicons/react/outline'
+import { XIcon } from '@heroicons/react/outline'
 import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon, RefreshIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { formatNumber, shortenAddress } from '@sushiswap/format'
@@ -184,19 +184,7 @@ const _Streams: FC = () => {
               </div>
             </div>{' '}
             <div className="flex flex-wrap gap-2 mt-3">
-              <WithdrawModal stream={stream} chainId={chainId}>
-                {({ setOpen, disabled }) => (
-                  <Button
-                    disabled={disabled}
-                    onClick={() => setOpen(true)}
-                    icon={DownloadIcon}
-                    testId="stream-withdraw"
-                    variant="secondary"
-                  >
-                    Withdraw
-                  </Button>
-                )}
-              </WithdrawModal>
+              <WithdrawModal stream={stream} chainId={chainId} />
               <TransferModal
                 stream={stream}
                 abi={getFuroStreamContractConfig(chainId)?.abi}

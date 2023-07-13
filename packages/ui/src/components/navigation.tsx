@@ -123,19 +123,19 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant }) => {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
-            <a href="/swap">
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>Swap</NavigationMenuLink>
-            </a>
+            <NavigationMenuLink href="/swap" className={navigationMenuTriggerStyle()}>
+              Swap
+            </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
-            <a href="/pools">
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pools</NavigationMenuLink>
-            </a>
+            <NavigationMenuLink href="/pools" className={navigationMenuTriggerStyle()}>
+              Pools
+            </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
-            <a href="/furo">
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pay</NavigationMenuLink>
-            </a>
+            <NavigationMenuLink href="/furo" className={navigationMenuTriggerStyle()}>
+              Pay
+            </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
             <NavigationMenuTrigger>Tools</NavigationMenuTrigger>

@@ -3,8 +3,8 @@ import { Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { usePrice } from '@sushiswap/react-query'
 import { classNames } from '@sushiswap/ui'
 import { Button, SelectIcon } from '@sushiswap/ui'
+import { TextField } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
-import { Input } from '@sushiswap/ui/components/input'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 import dynamic from 'next/dynamic'
 import { FC, useCallback, useEffect, useMemo, useRef } from 'react'
@@ -19,7 +19,7 @@ export interface CurrencyInputProps {
   id?: string
   disabled?: boolean
   value: string
-  onChange?(value: string): void
+  onChange(value: string): void
   currency: Type | undefined
   onSelect?(currency: Type): void
   chainId: ChainId
@@ -106,20 +106,17 @@ export const Component: FC<CurrencyInputProps> = ({
             <SkeletonBox className="w-1/2 h-[32px] rounded-lg" />
           </div>
         ) : (
-          <Input.Numeric
-            label="input"
-            id={`${id}-input`}
+          <TextField
             testdata-id={`${id}-input`}
+            type="number"
             ref={inputRef}
-            variant="unstyled"
+            variant="naked"
             disabled={disabled}
-            onUserInput={onChange}
-            className={classNames(
-              'p-0 bg-transparent w-full truncate without-ring !text-3xl py-1 font-medium text-base'
-            )}
+            onValueChange={onChange}
             value={value}
             readOnly={disabled}
             maxDecimals={currency?.decimals}
+            className="p-0 py-1 !text-3xl font-medium"
           />
         )}
         {onSelect && (

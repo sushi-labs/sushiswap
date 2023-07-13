@@ -50,82 +50,66 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   const { approved } = useApproved('swap')
   const { data: trade } = useTrade({ crossChain: false, enabled: review })
 
-  if (trade?.route && trade?.route?.status !== 'NoWay') {
-    if (
-      trade?.route?.legs?.every(
-        (leg) =>
-          leg.poolName.startsWith('Wrap') ||
-          leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-          leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
-          leg.poolName.startsWith(LiquidityProviders.Trident) ||
-          leg.poolName.startsWith(Bridge.BentoBox)
-      )
-    ) {
-      console.log('Swap success (internal)', {
-        route: trade?.route,
-      })
-    } else if (
-      trade?.route?.legs?.some(
-        (leg) =>
-          !leg.poolName.startsWith('Wrap') &&
-          (leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-            leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
-            leg.poolName.startsWith(LiquidityProviders.Trident) ||
-            leg.poolName.startsWith(Bridge.BentoBox))
-      ) &&
-      trade?.route?.legs?.some(
-        (leg) =>
-          !leg.poolName.startsWith('Wrap') &&
-          (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-            !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
-            !leg.poolName.startsWith(LiquidityProviders.Trident) ||
-            !leg.poolName.startsWith(Bridge.BentoBox))
-      )
-    ) {
-      console.log('Swap success (mix)', {
-        route: trade?.route,
-      })
-    } else if (
-      trade?.route?.legs?.every(
-        (leg) =>
-          leg.poolName.startsWith('Wrap') ||
-          (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
-            !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) &&
-            !leg.poolName.startsWith(LiquidityProviders.Trident) &&
-            !leg.poolName.startsWith(Bridge.BentoBox))
-      )
-    ) {
-      console.log('Swap success (external)', {
-        route: trade?.route,
-      })
-    } else {
-      console.log('Swap success (unknown)', {
-        route: trade?.route,
-      })
-    }
-  }
+  // if (trade?.route && trade?.route?.status !== 'NoWay') {
+  //   if (
+  //     trade?.route?.legs?.every(
+  //       (leg) =>
+  //         leg.poolName.startsWith('Wrap') ||
+  //         leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+  //         leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+  //         leg.poolName.startsWith(LiquidityProviders.Trident) ||
+  //         leg.poolName.startsWith(Bridge.BentoBox)
+  //     )
+  //   ) {
+  //     console.log('Swap success (internal)', {
+  //       route: trade?.route,
+  //     })
+  //   } else if (
+  //     trade?.route?.legs?.some(
+  //       (leg) =>
+  //         !leg.poolName.startsWith('Wrap') &&
+  //         (leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+  //           leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+  //           leg.poolName.startsWith(LiquidityProviders.Trident) ||
+  //           leg.poolName.startsWith(Bridge.BentoBox))
+  //     ) &&
+  //     trade?.route?.legs?.some(
+  //       (leg) =>
+  //         !leg.poolName.startsWith('Wrap') &&
+  //         (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+  //           !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+  //           !leg.poolName.startsWith(LiquidityProviders.Trident) ||
+  //           !leg.poolName.startsWith(Bridge.BentoBox))
+  //     )
+  //   ) {
+  //     console.log('Swap success (mix)', {
+  //       route: trade?.route,
+  //     })
+  //   } else if (
+  //     trade?.route?.legs?.every(
+  //       (leg) =>
+  //         leg.poolName.startsWith('Wrap') ||
+  //         (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
+  //           !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) &&
+  //           !leg.poolName.startsWith(LiquidityProviders.Trident) &&
+  //           !leg.poolName.startsWith(Bridge.BentoBox))
+  //     )
+  //   ) {
+  //     console.log('Swap success (external)', {
+  //       route: trade?.route,
+  //     })
+  //   } else {
+  //     console.log('Swap success (unknown)', {
+  //       route: trade?.route,
+  //     })
+  //   }
+  // }
 
   const [slippageTolerance] = useSlippageTolerance()
   const refetchBalances = useBalanceWeb3Refetch()
 
   const [open, setOpen] = useState(false)
   const [dialogState, setDialogState] = useState<ConfirmationDialogState>(ConfirmationDialogState.Undefined)
-
-  console.log(
-    Boolean(trade?.writeArgs) &&
-      appType === AppType.Swap &&
-      (isRouteProcessorChainId(network0) || isRouteProcessor3ChainId(network0)) &&
-      approved &&
-      trade?.route?.status !== 'NoWay',
-    [
-      trade,
-      Boolean(trade?.writeArgs),
-      appType === AppType.Swap,
-      isRouteProcessorChainId(network0) || isRouteProcessor3ChainId(network0),
-      approved,
-      trade?.route?.status !== 'NoWay',
-    ]
-  )
 
   const { config, isError, error } = usePrepareContractWrite({
     chainId: network0,
