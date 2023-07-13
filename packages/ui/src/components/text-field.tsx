@@ -37,7 +37,6 @@ interface TextFieldBaseProps
   extends React.InputHTMLAttributes<HTMLInputElement>,
     VariantProps<typeof textFieldVariants> {
   id?: string
-  label?: string
 }
 
 interface TextFieldDynamicProps<T extends InputType> {

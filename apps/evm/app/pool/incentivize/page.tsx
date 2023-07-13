@@ -10,6 +10,7 @@ import {
   ChipInput,
   classNames,
   Currency,
+  DateField,
   DialogConfirm,
   DialogContent,
   DialogDescription,
@@ -21,7 +22,6 @@ import {
   DialogTrigger,
   Dots,
   IconButton,
-  Input,
   List,
   NetworkIcon,
   Separator,
@@ -296,20 +296,9 @@ const Incentivize = withCheckerRoot(() => {
         <Separator />
         <ContentBlock title="What is the duration for distributing rewards?">
           <div className="grid grid-cols-2 gap-3">
-            <Input.DatePicker
+            <DateField
               selected={startDate}
               onChange={setStartDate}
-              customInput={
-                <Input.DatePickerCustomInput
-                  testdata-id="start-date"
-                  id="start-date"
-                  label={
-                    <>
-                      Start date<sup>*</sup>
-                    </>
-                  }
-                />
-              }
               portalId="root-portal"
               showTimeSelect
               timeFormat="HH:mm"
@@ -318,23 +307,12 @@ const Incentivize = withCheckerRoot(() => {
               startDate={new Date(Date.now() + 5 * 60 * 1000)}
               minDate={new Date(Date.now() + 5 * 60 * 1000)}
               dateFormat="MMM d, yyyy HH:mm"
-              placeholderText="Select date"
+              placeholderText="Start date"
               autoComplete="off"
             />
-            <Input.DatePicker
+            <DateField
               selected={endDate}
               onChange={setEndDate}
-              customInput={
-                <Input.DatePickerCustomInput
-                  testdata-id="end-date"
-                  id="end-date"
-                  label={
-                    <>
-                      End date<sup>*</sup>
-                    </>
-                  }
-                />
-              }
               portalId="root-portal"
               showTimeSelect
               timeFormat="HH:mm"
@@ -343,7 +321,7 @@ const Incentivize = withCheckerRoot(() => {
               startDate={startDate ? startDate : new Date(Date.now() + 5 * 60 * 1000)}
               minDate={startDate ? startDate : new Date(Date.now() + 5 * 60 * 1000)}
               dateFormat="MMM d, yyyy HH:mm"
-              placeholderText="Select date"
+              placeholderText="End date"
               autoComplete="off"
             />
           </div>
