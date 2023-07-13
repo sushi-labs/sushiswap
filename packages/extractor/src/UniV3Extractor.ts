@@ -66,7 +66,7 @@ export class UniV3Extractor {
   logFilter: LogFilter
   logProcessingStatus = LogsProcessing.NotStarted
   logging: boolean
-  busyCounter: Counter
+  taskCounter: Counter
   qualityChecker: QualityChecker
   lastProcessdBlock = -1
 
@@ -94,7 +94,7 @@ export class UniV3Extractor {
     factories.forEach((f) => this.factoryMap.set(f.address.toLowerCase(), f))
     this.poolPermanentCache = new PermanentCache(cacheDir, `uniV3Pools-${this.multiCallAggregator.chainId}`)
     this.logging = logging
-    this.busyCounter = new Counter(() => {
+    this.taskCounter = new Counter(() => {
       //if (count == 0) this.consoleLog(`All pools were updated`)
     })
     this.qualityChecker = new QualityChecker(200, (arg: QualityCheckerCallBackArg) => {
@@ -115,7 +115,7 @@ export class UniV3Extractor {
         try {
           const logNames = logs.map((l) => this.processLog(l))
           this.consoleLog(
-            `Block ${blockNumber} ${logNames.length} logs: [${logNames}] jobs: ${this.busyCounter.counter}`
+            `Block ${blockNumber} ${logNames.length} logs: [${logNames}] jobs: ${this.taskCounter.counter}`
           )
           if (logs.length > 0) this.lastProcessdBlock = Number(logs[logs.length - 1].blockNumber || 0)
         } catch (e) {
@@ -239,7 +239,7 @@ export class UniV3Extractor {
         p.token1,
         p.fee,
         this.multiCallAggregator,
-        this.busyCounter
+        this.taskCounter
       )
       watcher.updatePoolState()
       this.poolMap.set(p.address.toLowerCase() as Address, watcher) // lowercase because incoming events have lowcase addresses ((

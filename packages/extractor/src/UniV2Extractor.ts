@@ -71,7 +71,7 @@ export class UniV2Extractor {
 
   readonly logFilter: LogFilter
   readonly logging: boolean
-  readonly busyCounter: Counter
+  readonly taskCounter: Counter
 
   /// @param client
   /// @param factories list of supported factories
@@ -92,7 +92,7 @@ export class UniV2Extractor {
       tokenManager ||
       new TokenManager(this.multiCallAggregator, cacheDir, `uniV2Tokens-${this.multiCallAggregator.chainId}`)
     this.logging = logging
-    this.busyCounter = new Counter(() => {
+    this.taskCounter = new Counter(() => {
       // do nothing
     })
 
@@ -142,7 +142,7 @@ export class UniV2Extractor {
           .filter((e) => e !== '')
           .join(', ')
 
-        this.consoleLog(`Block ${blockNumber} ${logs.length} logs (${eventInfo}) jobs ${this.busyCounter.counter}`)
+        this.consoleLog(`Block ${blockNumber} ${logs.length} logs (${eventInfo}) jobs ${this.taskCounter.counter}`)
       } else {
         this.logFilter.start()
         warnLog(`Log collecting failed. Pools refetching`)
@@ -154,22 +154,32 @@ export class UniV2Extractor {
   async start() {
     await this.tokenManager.addCachedTokens()
     await this.logFilter.start()
-    warnLog('ExtractorV3 was started')
+    warnLog('ExtractorV2 was started')
   }
 
   async updatePoolState(poolState: PoolState) {
     if (poolState.status !== PoolStatus.ValidPool) return
-    poolState.status = PoolStatus.UpdatingPool
-    const pool = poolState.poolCode.pool
-    const reserves = await this.multiCallAggregator.callValue(
-      pool.address as Address,
-      constantProductPoolAbi,
-      'getReserves'
-    )
-    if (poolState.status !== PoolStatus.UpdatingPool) return // during await pool state was updated - don't touch it
-    const [reserve0, reserve1] = reserves as [bigint, bigint]
-    pool.updateReserves(BigNumber.from(reserve0), BigNumber.from(reserve1))
-    poolState.status = PoolStatus.ValidPool
+    this.taskCounter.inc()
+    try {
+      poolState.status = PoolStatus.UpdatingPool
+      const pool = poolState.poolCode.pool
+      const reserves = await this.multiCallAggregator.callValue(
+        pool.address as Address,
+        constantProductPoolAbi,
+        'getReserves'
+      )
+      if (poolState.status !== PoolStatus.UpdatingPool) {
+        // during await pool state was updated - don't touch it
+        this.taskCounter.dec()
+        return
+      }
+      const [reserve0, reserve1] = reserves as [bigint, bigint]
+      pool.updateReserves(BigNumber.from(reserve0), BigNumber.from(reserve1))
+      poolState.status = PoolStatus.ValidPool
+    } catch (e) {
+      warnLog(`Ext2 pool ${poolState.poolCode.pool.address} update fail`)
+    }
+    this.taskCounter.dec()
   }
 
   getPoolsForTokens(tokens: Token[]): {
@@ -285,25 +295,36 @@ export class UniV2Extractor {
       return
     }
     this.poolMap.set(addr.toLowerCase(), { status: PoolStatus.AddingPool, reserve0, reserve1 })
-    let factory
-    if (trustedFactory) factory = trustedFactory
-    else {
-      const factoryAddr = await this.multiCallAggregator.callValue(addr, constantProductPoolAbi, 'factory')
-      factory = this.factoryMap.get((factoryAddr as string).toLowerCase() as Address)
-      if (!factory) {
-        this.poolMap.set(addrL, { status: PoolStatus.IgnorePool })
-        this.consoleLog(`other factory pool ${addr}`)
-        return
+    let factory, token0, token1
+    this.taskCounter.inc()
+    try {
+      if (trustedFactory) factory = trustedFactory
+      else {
+        const factoryAddr = await this.multiCallAggregator.callValue(addr, constantProductPoolAbi, 'factory')
+        factory = this.factoryMap.get((factoryAddr as string).toLowerCase() as Address)
+        if (!factory) {
+          this.poolMap.set(addrL, { status: PoolStatus.IgnorePool })
+          this.consoleLog(`other factory pool ${addr}`)
+          this.taskCounter.dec()
+          return
+        }
       }
+      const [token0Addr, token1Addr] = await Promise.all([
+        this.multiCallAggregator.callValue(addr, constantProductPoolAbi, 'token0'),
+        this.multiCallAggregator.callValue(addr, constantProductPoolAbi, 'token1'),
+      ])
+      const tokens = await Promise.all([
+        this.tokenManager.findToken(token0Addr as Address),
+        this.tokenManager.findToken(token1Addr as Address),
+      ])
+      token0 = tokens[0]
+      token1 = tokens[1]
+    } catch (e) {
+      this.taskCounter.dec()
+      warnLog(`Ext2 add pool ${addr} by log failed`)
+      return
     }
-    const [token0Addr, token1Addr] = await Promise.all([
-      this.multiCallAggregator.callValue(addr, constantProductPoolAbi, 'token0'),
-      this.multiCallAggregator.callValue(addr, constantProductPoolAbi, 'token1'),
-    ])
-    const [token0, token1] = await Promise.all([
-      this.tokenManager.findToken(token0Addr as Address),
-      this.tokenManager.findToken(token1Addr as Address),
-    ])
+    this.taskCounter.dec()
     const poolState2 = this.poolMap.get(addrL)
     if (!poolState2 || poolState2.status !== PoolStatus.AddingPool) return // pool status changed
 
