@@ -29,6 +29,7 @@ export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
               <FormItem>
                 <FormControl>
                   <Input.DatePicker
+                    wrapperClassName="w-full"
                     name={name}
                     onBlur={onBlur}
                     customInput={
@@ -55,6 +56,23 @@ export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
                     placeholderText="Select date"
                     autoComplete="off"
                   />
+                  {/*<DateField*/}
+                  {/*  testId={`stream-start-date${index}`}*/}
+                  {/*  name={name}*/}
+                  {/*  onBlur={onBlur}*/}
+                  {/*  onChange={onChange}*/}
+                  {/*  selected={value}*/}
+                  {/*  portalId="root-portal"*/}
+                  {/*  showTimeSelect*/}
+                  {/*  timeFormat="HH:mm"*/}
+                  {/*  timeIntervals={15}*/}
+                  {/*  timeCaption="time"*/}
+                  {/*  startDate={new Date(Date.now() + 5 * 60 * 1000)}*/}
+                  {/*  minDate={new Date(Date.now() + 5 * 60 * 1000)}*/}
+                  {/*  dateFormat="MMM d, yyyy HH:mm"*/}
+                  {/*  placeholderText="Start date"*/}
+                  {/*  autoComplete="off"*/}
+                  {/*/>*/}
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -74,6 +92,7 @@ export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
               <FormItem>
                 <FormControl>
                   <Input.DatePicker
+                    wrapperClassName="w-full"
                     name={name}
                     onBlur={onBlur}
                     customInput={

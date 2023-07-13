@@ -1,5 +1,6 @@
 import { Tab } from '@headlessui/react'
-import { Button } from '@sushiswap/ui/components/button'
+import { typographyVariants } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui'
 import { Container } from '@sushiswap/ui/components/container'
 import { SushiIcon } from '@sushiswap/ui/components/icons'
 import { Toggle } from '@sushiswap/ui/components/toggle'
@@ -26,22 +27,23 @@ export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress 
         <section className="flex flex-col justify-between gap-12">
           <div className="flex flex-col items-center flex-grow gap-6 lg:items-start">
             <div className="flex flex-col gap-12 lg:flex-row">
-              <div className="flex flex-col gap-5">
-                <h1 className="mt-2 text-5xl font-semibold">
-                  Want to stream
-                  <br /> to someone?
-                </h1>
-                <span className="text-2xl font-medium text-gray-600 dark:text-slate-400 leading-[1.5]">
-                  Sushi Pay allows you to stream any ERC20 to any wallet.
-                </span>
-                <div className="relative z-10 mt-2 group">
-                  <div className="flex items-center w-full">
-                    <Button asChild size="xl">
-                      <a href="/furo/create">Pay Someone</a>
-                    </Button>
-                  </div>
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col">
+                  <h1 className={typographyVariants({ variant: 'h1' })}>
+                    Want to stream <br /> to someone?
+                  </h1>
+                  <p className={typographyVariants({ variant: 'lead', className: 'max-w-[500px]' })}>
+                    Sushi Pay allows you to stream any ERC20 to any wallet. Create a simple stream to automate salaries
+                    or create a vest for vesting schedules.
+                  </p>
+                </div>
+                <div>
+                  <Button asChild size="lg">
+                    <a href="/furo/create">Pay Someone</a>
+                  </Button>
                 </div>
               </div>
+
               <div className="flex justify-center">
                 <div className="shadow-lg relative w-full lg:w-[460px] h-fit aspect-[460/290] bg-gradient-to-tr from-blue to-pink flex flex-col bg-slate-800 p-4 rounded-2xl">
                   <span className="flex items-center justify-start gap-2">

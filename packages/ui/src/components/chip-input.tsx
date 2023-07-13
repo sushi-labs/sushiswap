@@ -6,7 +6,7 @@ import * as React from 'react'
 import { useCallback, useState } from 'react'
 
 import { Chip, chipVariants } from './chip'
-import { inputVariants } from './inputnew'
+import { textFieldVariants } from './text-field'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip'
 
 export type ChipInputRootProps = React.InputHTMLAttributes<HTMLDivElement>
@@ -48,7 +48,7 @@ const ChipInput = React.forwardRef<HTMLInputElement, ChipInputProps>(
     )
 
     return (
-      <ChipInputRoot className={inputVariants({ size: 'default', className: 'gap-2 flex-wrap !h-[unset]' })}>
+      <ChipInputRoot className={textFieldVariants({ className: 'gap-2 flex-wrap !h-[unset]' })}>
         {values.map((value, i) => (
           <TooltipProvider key={i}>
             <Tooltip>

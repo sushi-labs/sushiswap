@@ -3,6 +3,7 @@ import { ArrowLeftIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { classNames } from '@sushiswap/ui'
+import { typographyVariants } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { SushiIcon } from '@sushiswap/ui/components/icons'
@@ -42,8 +43,8 @@ export default function CreatePage() {
           <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
           <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">Go back</span>
         </Link>
-        <h1 className="text-3xl lg:text-5xl font-semibold max-w-[600px] mt-6">
-          Would you like to create a stream or a vest?
+        <h1 className={typographyVariants({ variant: 'h1', className: 'text-center' })}>
+          Would you like to create <br /> a stream or a vest?
         </h1>
         <RadioGroup
           value={type}
