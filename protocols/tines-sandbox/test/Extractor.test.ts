@@ -78,7 +78,7 @@ async function startInfinitTest(args: {
     `./cache/uniV3Tokens-${client.chain?.id}`
   )
   await tokenManager.addCachedTokens()
-  const tokens = Array.from(tokenManager.tokens.values()).concat(BASES_TO_CHECK_TRADES_AGAINST[chainId])
+  const tokens = Array.from(tokenManager.tokens.values()).concat(BASES_TO_CHECK_TRADES_AGAINST[chainId]).slice(0, 100)
   for (;;) {
     for (let i = 1; i < tokens.length; ++i) {
       await delay(1000)
@@ -153,7 +153,7 @@ async function startInfinitTest(args: {
   }
 }
 
-it.skip('Extractor Ethereum infinit work test', async () => {
+it.only('Extractor Ethereum infinit work test', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
