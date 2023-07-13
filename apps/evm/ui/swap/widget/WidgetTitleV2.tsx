@@ -2,6 +2,7 @@ import { ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
 import { Amount, Price, Token, tryParseAmount } from '@sushiswap/currency'
 import { ZERO } from '@sushiswap/math'
 import { usePrice } from '@sushiswap/react-query'
+import { typographyVariants } from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import React, { useMemo, useState } from 'react'
 
@@ -46,9 +47,7 @@ export const WidgetTitleV2 = () => {
 
   return (
     <div className="flex flex-col gap-2 mb-4 sm:mt-10 mt-2">
-      <h1 className="flex items-center gap-2 text-4xl font-medium text-gray-900 dark:text-slate-50 max-h-[36px] sm:max-h-[44px]">
-        Trade
-      </h1>
+      <h1 className={typographyVariants({ variant: 'h1' })}>Trade</h1>
       {tokensLoading || isPrice0Loading || isPrice1Loading || !token0 || !token1 ? (
         <SkeletonText fontSize="sm" className="w-2/4" />
       ) : (

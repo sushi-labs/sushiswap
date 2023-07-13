@@ -96,13 +96,13 @@ const Component = <T extends InputType>(
       type={type}
       className={textFieldVariants({ variant, className })}
       ref={ref}
-      {...(isTypeNumber(type) && numericInputProps)}
-      {...(isTypePercent(type) && percentInputProps)}
-      {...props}
       autoCorrect="off"
       autoCapitalize="off"
       spellCheck="false"
       autoComplete="off"
+      {...(isTypeNumber(type) && numericInputProps)}
+      {...(isTypePercent(type) && percentInputProps)}
+      {...props}
     />
   )
 }
