@@ -201,6 +201,7 @@ export class UniV2Extractor {
               prefetchedPools.push(poolState.poolCode)
             return
           }
+          const start = performance.now()
           const promise = this.multiCallAggregator.callValue(addr, getReservesAbi, 'getReserves').then(
             (reserves) => {
               const poolState2 = this.poolMap.get(addrL)
@@ -223,7 +224,7 @@ export class UniV2Extractor {
                 poolCode: new ConstantProductPoolCode(pool, factory.provider, factory.provider),
               }
               this.poolMap.set(addrL, poolState)
-              this.consoleLog(`pool was added ${addr}`)
+              this.consoleLog(`add pool ${addr} (${Math.round(performance.now() - start)}ms after demand)`)
               return poolState.poolCode
             },
             () => {

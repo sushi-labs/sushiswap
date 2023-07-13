@@ -2,7 +2,7 @@ import { routeProcessor2Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { Extractor, FactoryV2, FactoryV3, MultiCallAggregator, TokenManager } from '@sushiswap/extractor'
-import { LiquidityProviders, NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
+import { ConstantProductPoolCode, LiquidityProviders, NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { getBigNumber, RouteStatus } from '@sushiswap/tines'
 import { POOL_INIT_CODE_HASH } from '@sushiswap/v3-sdk'
@@ -69,7 +69,6 @@ async function startInfinitTest(args: {
   })
   const chainId = client.chain?.id as ChainId
 
-  debugger
   const extractor = new Extractor({ ...args, client })
   await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId])
 
@@ -79,7 +78,7 @@ async function startInfinitTest(args: {
     `./cache/uniV3Tokens-${client.chain?.id}`
   )
   await tokenManager.addCachedTokens()
-  const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId] //.concat(Array.from(tokenManager.tokens.values()))
+  const tokens = Array.from(tokenManager.tokens.values()).concat(BASES_TO_CHECK_TRADES_AGAINST[chainId])
   for (;;) {
     for (let i = 1; i < tokens.length; ++i) {
       await delay(1000)
@@ -91,11 +90,13 @@ async function startInfinitTest(args: {
         2000
       )
       const time2 = performance.now()
-      console.log(
-        `Timing: ${pools0.length} pools ${Math.round(time1 - time0)}ms, ${pools1.length} pools ${Math.round(
-          time2 - time1
-        )}ms`
-      )
+      const pools0_2 = pools0.filter((p) => p instanceof ConstantProductPoolCode).length
+      const pools0_3 = pools0.length - pools0_2
+      const pools1_2 = pools1.filter((p) => p instanceof ConstantProductPoolCode).length
+      const pools1_3 = pools1.length - pools1_2
+      const timingLine =
+        `sync: (${pools0_2}, ${pools0_3}) pools ${Math.round(time1 - time0)}ms` +
+        `, async: (${pools1_2}, ${pools1_3}) pools ${Math.round(time2 - time1)}ms`
 
       const pools = pools0.concat(pools1)
       const poolMap = new Map<string, PoolCode>()
@@ -105,7 +106,7 @@ async function startInfinitTest(args: {
         toToken = tokens[i]
       const route = Router.findBestRoute(poolMap, chainId, fromToken, getBigNumber(1e18), toToken, 30e9)
       if (route.status == RouteStatus.NoWay) {
-        console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status}`)
+        console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ` + timingLine)
         continue
       }
       const rpParams = Router.routeProcessor2Params(
@@ -140,8 +141,9 @@ async function startInfinitTest(args: {
         const diff =
           amountOutExp == 0n ? amountOutReal - amountOutExp : Number(amountOutReal - amountOutExp) / route.amountOut
         console.log(
-          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.legs.length - 1} pools` +
-            ` diff = ${diff > 0 ? '+' : ''}${diff}`
+          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.legs.length - 1} pools ` +
+            timingLine +
+            ` diff = ${diff > 0 ? '+' : ''}${diff} `
         )
         if (Math.abs(Number(diff)) > 0.001) console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
       } catch (e) {
@@ -151,7 +153,7 @@ async function startInfinitTest(args: {
   }
 }
 
-it.only('Extractor Ethereum infinit work test', async () => {
+it.skip('Extractor Ethereum infinit work test', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
