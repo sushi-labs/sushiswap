@@ -8,7 +8,7 @@ export const angleRewardsPoolsValidator = z.object({
     z.object({
       amm: z.number(),
       amount: z.number(),
-      breakdown: z.record(z.string(), z.number()),
+      breakdown: z.record(z.string(), z.number()).optional(),
       end: z.number(),
       isOutOfRangeIncentivized: z.boolean(),
       isLive: z.boolean(),
@@ -18,7 +18,7 @@ export const angleRewardsPoolsValidator = z.object({
       start: z.number(),
       token: z.string(),
       tokenSymbol: z.string(),
-      unclaimed: z.number(),
+      unclaimed: z.number().optional(),
       wrappers: z.array(z.unknown()),
     })
   ),
@@ -44,17 +44,17 @@ export const angleRewardsPoolsValidator = z.object({
   tokenSymbol0: z.string(),
   tokenSymbol1: z.string(),
   tvl: z.number().nullable(),
-  userBalances: z.array(
+  almDetails: z.array(
     z.object({
-      balance0: z.number(),
-      balance1: z.number(),
+      balance0: z.number().optional().nullable(),
+      balance1: z.number().optional().nullable(),
       origin: z.number(),
-      tvl: z.number().nullable(),
+      tvl: z.number().optional().nullable(),
     })
   ),
   userTVL: z.number().nullable(),
-  userTotalBalance0: z.number(),
-  userTotalBalance1: z.number(),
+  userTotalBalance0: z.number().nullable(),
+  userTotalBalance1: z.number().nullable(),
 })
 
 export const angleRewardsBaseValidator = z.object({
@@ -75,18 +75,3 @@ export const angleRewardsBaseValidator = z.object({
 })
 
 export const angleRewardsMultipleValidator = z.array(angleRewardsBaseValidator)
-
-export const angleRewardTokensValidator = z.array(
-  z.record(
-    z.string(),
-    z.record(
-      z.string(),
-      z.object({
-        address: z.string(),
-        name: z.string(),
-        decimals: z.number(),
-        symbol: z.string(),
-      })
-    )
-  )
-)

@@ -137,7 +137,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       }
 
       log.error('Swap prepare error', {
-        trade,
+        route: trade?.route,
         slippageTolerance,
         error,
       })
@@ -195,9 +195,9 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       data
         .wait()
         .then((receipt) => {
-          log.info('swap receipt', {
-            receipt,
-          })
+          // log.info('swap receipt', {
+          //   receipt,
+          // })
           if (receipt.status === 1) {
             if (
               trade?.route?.legs?.every(
@@ -213,7 +213,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 chainId: network0,
                 txHash: data.hash,
                 exporerLink: Chain.txUrl(network0, data.hash),
-                trade,
+                route: trade?.route,
               })
             } else if (
               trade?.route?.legs?.some(
@@ -237,7 +237,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 chainId: network0,
                 txHash: data.hash,
                 exporerLink: Chain.txUrl(network0, data.hash),
-                trade,
+                route: trade?.route,
               })
             } else if (
               trade?.route?.legs?.every(
@@ -253,14 +253,15 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 chainId: network0,
                 txHash: data.hash,
                 exporerLink: Chain.txUrl(network0, data.hash),
-                trade,
+                route: trade?.route,
               })
             } else {
-              log.info('Swap success (unknown)', {
+              log.info('unknown', {
                 chainId: network0,
                 txHash: data.hash,
                 exporerLink: Chain.txUrl(network0, data.hash),
-                trade,
+                route: trade?.route,
+                args: trade?.writeArgs,
               })
             }
             setDialogState(ConfirmationDialogState.Success)
@@ -278,10 +279,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               log.error('internal route', {
                 chainId: network0,
                 txHash: data.hash,
-                // exporerLink: Chain.txUrl(network0, data.hash),
                 route: trade?.route,
-                // data,
-                // receipt,
               })
             } else if (
               trade?.route?.legs?.some(
@@ -304,10 +302,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               log.error('mix route', {
                 chainId: network0,
                 txHash: data.hash,
-                // exporerLink: Chain.txUrl(network0, data.hash),
                 route: trade?.route,
-                // data,
-                // receipt,
               })
             } else if (
               trade?.route?.legs?.every(
@@ -322,19 +317,14 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               log.error('external route', {
                 chainId: network0,
                 txHash: data.hash,
-                // exporerLink: Chain.txUrl(network0, data.hash),
                 route: trade?.route,
-                // data,
-                // receipt,
               })
             } else {
-              log.error('Swap failed (unknown)', {
+              log.error('unknown', {
                 chainId: network0,
                 txHash: data.hash,
-                // exporerLink: Chain.txUrl(network0, data.hash),
                 route: trade?.route,
-                // data,
-                // receipt,
+                args: trade?.writeArgs,
               })
             }
             setDialogState(ConfirmationDialogState.Failed)
@@ -348,7 +338,8 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     onError: (error) => {
       if (error.message.startsWith('user rejected transaction')) return
       log.error('Swap error', {
-        trade,
+        route: trade?.route,
+        args: trade?.writeArgs,
         error,
       })
       createErrorToast(error.message, false)
