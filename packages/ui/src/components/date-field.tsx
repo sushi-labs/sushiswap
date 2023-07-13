@@ -9,7 +9,7 @@ interface DateFieldProps extends ReactDatePickerProps, VariantProps<typeof textF
   testId?: string
 }
 
-export const DateField: FC<DateFieldProps> = ({ testId, className, variant, ...props }) => {
+const DateField: FC<DateFieldProps> = ({ testId, className, variant, ...props }) => {
   return (
     <div className="relative w-full">
       <ReactDatePicker
@@ -25,3 +25,5 @@ export const DateField: FC<DateFieldProps> = ({ testId, className, variant, ...p
     </div>
   )
 }
+
+export { DateField }
