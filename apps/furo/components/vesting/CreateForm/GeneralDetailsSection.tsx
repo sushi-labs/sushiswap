@@ -1,8 +1,12 @@
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
+import { SelectIcon } from '@sushiswap/ui'
+import { textFieldVariants } from '@sushiswap/ui'
+import { Label } from '@sushiswap/ui'
+import { TextField } from '@sushiswap/ui'
+import { DateField } from '@sushiswap/ui'
 import { FormControl, FormField, FormItem, FormMessage, FormSection } from '@sushiswap/ui/components/form'
-import { Input } from '@sushiswap/ui/components/input'
 import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import React, { FC, useCallback } from 'react'
@@ -53,8 +57,11 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
       <FormField
         control={control}
         name={`vestings.${index}.currency`}
-        render={({ field: { onChange, onBlur, value } }) => (
+        render={({ field: { onChange, name, onBlur, value } }) => (
           <FormItem>
+            <Label>
+              Token<sup>*</sup>
+            </Label>
             <FormControl>
               <TokenSelector
                 id={`create-single-vest${index}`}
@@ -64,18 +71,23 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
                 selected={_currency}
               >
                 {({ setOpen }) => (
-                  <Input.Select
-                    id={`create-single-vest-select${index}`}
-                    testdata-id={`create-single-vest-select${index}`}
+                  <button
                     onBlur={onBlur}
-                    label={
-                      <>
-                        Token<sup>*</sup>
-                      </>
-                    }
-                    value={value?.isNative ? value?.symbol : value?.address}
                     onClick={() => setOpen(true)}
-                  />
+                    className={textFieldVariants({ className: 'flex flex-1 justify-between' })}
+                  >
+                    <TextField
+                      name={name}
+                      readOnly
+                      value={value?.isNative ? value?.symbol : value?.address}
+                      placeholder="Select a token"
+                      testdata-id={`create-single-vest-select${index}`}
+                      variant="naked"
+                      type="text"
+                      className="cursor-pointer"
+                    />
+                    <SelectIcon />
+                  </button>
                 )}
               </TokenSelector>
             </FormControl>
@@ -90,21 +102,14 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
         render={({ field: { name, onChange, value, onBlur } }) => {
           return (
             <FormItem>
+              <Label>
+                Start date<sup>*</sup>
+              </Label>
               <FormControl>
-                <Input.DatePicker
+                <DateField
+                  testId={`create-single-vest-start-date${index}`}
                   name={name}
                   onBlur={onBlur}
-                  customInput={
-                    <Input.DatePickerCustomInput
-                      testdata-id={`create-single-vest-start-date${index}`}
-                      id={`create-single-vest-start-date${index}`}
-                      label={
-                        <>
-                          Start date<sup>*</sup>
-                        </>
-                      }
-                    />
-                  }
                   onChange={onChange}
                   selected={value}
                   portalId="root-portal"
@@ -117,7 +122,6 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
                   dateFormat="MMM d, yyyy HH:mm"
                   placeholderText="Select date"
                   autoComplete="off"
-                  testdata-id={'TEST'}
                 />
               </FormControl>
               <FormMessage />
@@ -131,19 +135,17 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
         render={({ field: { onChange, value, onBlur, name } }) => {
           return (
             <FormItem>
+              <Label>
+                Recipient<sup>*</sup>
+              </Label>
               <FormControl>
                 <Web3Input.Ens
-                  label={
-                    <>
-                      Address or ENS<sup>*</sup>
-                    </>
-                  }
+                  placeholder="Enter wallet address or ENS"
                   name={name}
                   onBlur={onBlur}
-                  id={`create-single-vest-recipient-input${index}`}
                   testdata-id={`create-single-vest-recipient-input${index}`}
                   value={value}
-                  onChange={onChange}
+                  onValueChange={onChange}
                 />
               </FormControl>
               <FormMessage />
@@ -158,6 +160,9 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
           const _value = ZFundSourceToFundSource.parse(value)
           return (
             <FormItem>
+              <Label>
+                Source<sup>*</sup>
+              </Label>
               <FormControl>
                 <div className="flex flex-col">
                   <div className="flex items-center gap-3">

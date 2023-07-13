@@ -62,7 +62,7 @@ interface TextFieldDynamicProps<T extends InputType> {
   onValueChange?(val: string): void
 }
 
-type TextFieldProps<T extends InputType> = TextFieldBaseProps & TextFieldDynamicProps<T>
+export type TextFieldProps<T extends InputType> = TextFieldBaseProps & TextFieldDynamicProps<T>
 
 const isTypeText = (type: InputType): type is 'text' => type === 'text'
 const isTypeNumber = (type: InputType): type is 'number' => type === 'number'
