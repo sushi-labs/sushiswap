@@ -1,7 +1,6 @@
 'use client'
 
 import { ChainId } from '@sushiswap/chain'
-import dynamic from 'next/dynamic'
 
 import { HeaderNetworkSelector } from './HeaderNetworkSelector'
 import { UserProfile } from './UserProfile'
@@ -12,7 +11,11 @@ interface WagmiHeaderComponentsProps {
   onChange?(chainId: ChainId): void
 }
 
-const Component: React.FC<WagmiHeaderComponentsProps> = ({ chainIds, selectedNetwork, onChange }) => {
+export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
+  chainIds,
+  selectedNetwork,
+  onChange,
+}) => {
   return (
     <>
       <HeaderNetworkSelector networks={chainIds} selectedNetwork={selectedNetwork} onChange={onChange} />
@@ -20,5 +23,3 @@ const Component: React.FC<WagmiHeaderComponentsProps> = ({ chainIds, selectedNet
     </>
   )
 }
-
-export const WagmiHeaderComponents = dynamic(() => Promise.resolve(Component), { ssr: false })
