@@ -4,10 +4,10 @@ export const FewchaIcon = (props: React.ComponentProps<'svg'>) => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 26" fill="none">
       <linearGradient xmlns="http://www.w3.org/2000/svg" id="0" x1="0.5" y1="0" x2="0.5" y2="1">
-        <stop offset="0%" stop-color="#47a2f7" />
-        <stop offset="25%" stop-color="#2a90f5" />
-        <stop offset="50%" stop-color="#1e7cf0" />
-        <stop offset="100%" stop-color="#0148fe" />
+        <stop offset="0%" stopColor="#47a2f7" />
+        <stop offset="25%" stopColor="#2a90f5" />
+        <stop offset="50%" stopColor="#1e7cf0" />
+        <stop offset="100%" stopColor="#0148fe" />
       </linearGradient>
       <g fill="url(#0)">
         <path d="M18.3001 12.9945H6.10352C6.10352 9.64399 8.84582 6.89062 12.2074 6.89062C15.5689 6.89062 18.3112 9.63293 18.3112 12.9945H18.3001Z" />

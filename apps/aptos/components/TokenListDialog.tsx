@@ -8,7 +8,7 @@ import Tokens from './../config/tokenList.json'
 type PropType = {
   children({ open, setOpen }: { open: boolean; setOpen: React.Dispatch<React.SetStateAction<boolean>> }): ReactNode
   selected: Token
-  handleChangeToken: React.Dispatch<React.SetStateAction<Token>>
+  handleChangeToken: (token: Token) => void
 }
 export default function TokenListDialog({ children, selected, handleChangeToken }: PropType) {
   const [open, setOpen] = useState<boolean>(false)

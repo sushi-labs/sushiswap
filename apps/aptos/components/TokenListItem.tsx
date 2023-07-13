@@ -5,7 +5,7 @@ import { Token } from 'utils/tokenType'
 type PropType = {
   token: Token
   selected: Token
-  handleChangeToken: React.Dispatch<React.SetStateAction<Token>>
+  handleChangeToken: (token: Token) => void
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 export default function TokenListItem({ token, selected, handleChangeToken, setOpen }: PropType) {
