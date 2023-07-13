@@ -73,7 +73,7 @@ export class Extractor {
       pools = prefetchedPools
       if (fetchingPools)
         promise2 = fetchingPools.then(
-          (pools) => (pools = pools.concat(pools)),
+          (pools2) => (pools = pools.concat(pools2)),
           () => undefined
         )
     }
@@ -98,7 +98,7 @@ export class Extractor {
     }
 
     if (promise2 != undefined || promise3 != undefined) {
-      const totalPromise = await Promise.all([promise2, promise3].filter((p) => p != undefined))
+      const totalPromise = Promise.all([promise2, promise3].filter((p) => p != undefined))
       await Promise.any([totalPromise, delay(timeout)])
     }
     return pools
