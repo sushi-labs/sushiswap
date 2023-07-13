@@ -125,7 +125,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
                 placeholder="Search by token or address"
                 icon={MagnifyingGlassIcon}
                 type="text"
-                id="network-selector"
+                testdata-id={`${id}-address-input`}
                 value={query}
                 onValueChange={setQuery}
               />

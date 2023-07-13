@@ -105,7 +105,13 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
           <>
             <div>
               <DialogTrigger asChild>
-                <Button icon={DownloadIcon} variant="secondary" fullWidth disabled={!stream.canWithdraw(address)}>
+                <Button
+                  id="stream-withdraw"
+                  icon={DownloadIcon}
+                  variant="secondary"
+                  fullWidth
+                  disabled={!stream.canWithdraw(address)}
+                >
                   Withdraw
                 </Button>
               </DialogTrigger>

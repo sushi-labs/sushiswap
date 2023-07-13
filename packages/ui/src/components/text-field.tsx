@@ -1,6 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import * as React from 'react'
 
+import { classNames } from '../index'
 import { IconComponent } from '../types'
 import { buttonIconVariants } from './button'
 
@@ -117,7 +118,7 @@ const Component = <T extends InputType>(
           variant,
           hasIcon: Icon ? 'yes' : 'no',
           hasUnit: unit ? 'yes' : 'no',
-          className: 'flex-grow flex-1',
+          className: classNames(className, 'flex-grow flex-1'),
         })}
         ref={ref}
         autoCorrect="off"
