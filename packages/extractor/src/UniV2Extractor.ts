@@ -51,15 +51,9 @@ const UniV2FactoryAbi = [
   parseAbiItem('function allPairs(uint256) external view returns (address)'),
 ]
 
-// TODO: correct cache files names
+// TODO: UniV3Ext price max-min change (+-10%)
+// TODO: UniV3Ext watcher-something-all - ???
 // TODO: pools cache - ?
-// TODO: Add pools from factory list - ?
-// TODO: add pools known/ignored/ ... counter - with special functions to change pool status
-// TODO: make buisyCounter correct
-// TODO: uniformization with ExtractorV3 ?
-// TODO: one token cache for all extractors ?
-// TODO: external token manager?
-// TODO: extractor start log
 export class UniV2Extractor {
   readonly multiCallAggregator: MultiCallAggregator
   readonly tokenManager: TokenManager
@@ -72,6 +66,7 @@ export class UniV2Extractor {
   readonly logFilter: LogFilter
   readonly logging: boolean
   readonly taskCounter: Counter
+  watchedPools = 0
 
   /// @param client
   /// @param factories list of supported factories
@@ -142,7 +137,7 @@ export class UniV2Extractor {
           .filter((e) => e !== '')
           .join(', ')
 
-        this.consoleLog(`Block ${blockNumber} ${logs.length} logs (${eventInfo}) jobs ${this.taskCounter.counter}`)
+        this.consoleLog(`Block ${blockNumber} ${logs.length} logs (${eventInfo}), jobs: ${this.taskCounter.counter}`)
       } else {
         this.logFilter.start()
         warnLog(`Log collecting failed. Pools refetching`)
@@ -224,7 +219,12 @@ export class UniV2Extractor {
                 poolCode: new ConstantProductPoolCode(pool, factory.provider, factory.provider),
               }
               this.poolMap.set(addrL, poolState)
-              this.consoleLog(`add pool ${addr} (${Math.round(performance.now() - start)}ms after demand)`)
+              ++this.watchedPools
+              this.consoleLog(
+                `add pool ${addr} (${Math.round(performance.now() - start)}ms after demand), watched pools total: ${
+                  this.watchedPools
+                }`
+              )
               return poolState.poolCode
             },
             () => {
@@ -357,7 +357,8 @@ export class UniV2Extractor {
       poolCode: new ConstantProductPoolCode(pool, factory.provider, factory.provider),
     }
     this.poolMap.set(addrL, poolState3)
-    this.consoleLog(`pool was added ${addr}`)
+    ++this.watchedPools
+    this.consoleLog(`add pool ${addr}, watched pools total: ${this.watchedPools}`)
     return poolState3.poolCode
   }
 
