@@ -149,7 +149,7 @@ async function cancelStream(page: Page, streamId: string) {
   await expect(confirmTransferLocator).toBeEnabled()
   await confirmTransferLocator.click()
 
-  const expectedText = '(Successfully cancelled Stream)'
+  const expectedText = '(Successfully cancelled stream)'
   const regex = new RegExp(expectedText)
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }

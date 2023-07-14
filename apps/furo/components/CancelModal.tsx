@@ -70,9 +70,9 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
         groupTimestamp: ts,
         promise: data.wait(),
         summary: {
-          pending: `Cancelling ${type}`,
-          completed: `Successfully cancelled ${type}`,
-          failed: `Something went wrong cancelling the ${type}`,
+          pending: `Cancelling ${type.toLowerCase()}`,
+          completed: `Successfully cancelled ${type.toLowerCase()}`,
+          failed: `Something went wrong cancelling the ${type.toLowerCase()}`,
         },
       })
     },
