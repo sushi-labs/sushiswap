@@ -15,11 +15,16 @@ import { SwapButton } from 'components/SwapButton'
 import { getPoolPairs } from 'utils/utilFunctions'
 import { useRouter } from 'next/router'
 import { SelectNetworkWidget, SelectTokensWidget } from 'components/NewPositionSection'
-import { usePoolActions, usePoolState } from 'app/pool/Pool/PoolProvider'
-import { connected, title } from 'process'
+import { PoolProvider, usePoolActions, usePoolState } from 'app/pool/Pool/PoolProvider'
+import { title } from 'process'
 import { Network, Provider } from 'aptos'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Input } from '@sushiswap/ui/future/components/input'
+import { AddLiquidityButton } from 'app/pool/Pool/AddLiquidityButton'
+import { AddSectionReviewModal } from 'app/pool/Pool/AddSectionReviewModel'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { createToast } from 'components/toast'
+import { payloadArgs } from 'utils/payloadUtil'
 
 interface coinType {
   type: string
@@ -30,7 +35,8 @@ export function Add() {
   // const router = useRouter()
 
   const { token0, token1 } = usePoolState()
-  const { setToken0, setToken1 } = usePoolActions()
+
+  const { connected } = useWallet()
 
   return (
     <Layout className="flex justify-center">
@@ -58,7 +64,7 @@ export function Add() {
           <PoolFinder
             components={
               <PoolFinder.Components>
-                <PoolFinder.LegacyPool token0={token0} token1={token1} enabled={''} />
+                {/* <PoolFinder.LegacyPool token0={token0} token1={token1} enabled={''} /> */}
               </PoolFinder.Components>
             }
           >
@@ -106,10 +112,39 @@ const _Add: FC<AddProps> = ({ title }) => {
   const [isLoadingPriceLower, setLoadingPriceLower] = useState<boolean>(true)
   const [reserves, setReserves] = useState<any>()
   const [noRouteFound, setNoRouteFound] = useState<string>('')
-  const { network, disconnect, account } = useWallet()
+  const { network, disconnect, account, signAndSubmitTransaction } = useWallet()
   const [isLoading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState('')
-  const [inputValue, setInputValue] = useState<string>('')
+  const { setisTransactionPending } = usePoolActions()
+
+  const addLiquidity = async (close: () => void) => {
+    const provider = new Provider(Network.TESTNET)
+    const payload: any = payloadArgs()
+    setisTransactionPending(true)
+    if (!account) return []
+    try {
+      const responce: Promise<any> = await signAndSubmitTransaction(payload)
+      console.log(responce)
+      await provider.waitForTransaction(responce?.hash)
+      if (!responce?.success) return
+      const toastId = `completed:${response?.hash}`
+      // const summery = noLiquidity
+      // ? `Created the ${token0.symbol}/${token1.symbol} liquidity pool`
+      // : `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`;
+      const summery = `Created`
+      createToast({
+        summery: summery,
+        toastId: toastId,
+      })
+      setisTransactionPending(false)
+      close()
+    } catch (error) {
+      const toastId = `failed:${Math.random()}`
+      createToast({ summery: `User rejected request`, toastId: toastId })
+    } finally {
+      setisTransactionPending(false)
+    }
+  }
   const focusInput = useCallback(() => {
     // tradeVal.current?.focus()
   }, [])
@@ -119,53 +154,60 @@ const _Add: FC<AddProps> = ({ title }) => {
     input1: string
   }>({ input0: '', input1: '' })
 
-  const [parsedInput0, parsedInput1] = useMemo(() => {
-    return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
-  }, [input0, input1, token0, token1])
+  const { connected } = useWallet()
 
-  const onChangeToken0TypedAmount = useCallback(
-    (value: string) => {
-      if (poolState === PairState.NOT_EXISTS) {
-        setTypedAmounts((prev) => ({
-          ...prev,
-          input0: value,
-        }))
-      } else if (token0 && pool) {
-        const parsedAmount = tryParseAmount(value, token0)
-        setTypedAmounts({
-          input0: value,
-          input1: parsedAmount ? pool.priceOf(token0.wrapped).quote(parsedAmount.wrapped).toExact() : '',
-        })
-      }
-    },
-    [pool, poolState, token0]
-  )
+  const { setBalance1, setBalance0, setToken0, setToken1, setAmount0, setAmount1 } = usePoolActions()
+  const { token0, token1, balance0, balance1, isTransactionPending, amount0, amount1, isPriceFetching } = usePoolState()
+  const tradeVal = useRef<HTMLInputElement>(null)
+  const tradeVal1 = useRef<HTMLInputElement>(null)
 
-  const onChangeToken1TypedAmount = useCallback(
-    (value: string) => {
-      if (poolState === PairState.NOT_EXISTS) {
-        setTypedAmounts((prev) => ({
-          ...prev,
-          input1: value,
-        }))
-      } else if (token1 && pool) {
-        const parsedAmount = tryParseAmount(value, token1)
-        setTypedAmounts({
-          input0: parsedAmount ? pool.priceOf(token1.wrapped).quote(parsedAmount.wrapped).toExact() : '',
-          input1: value,
-        })
-      }
-    },
-    [pool, poolState, token1]
-  )
+  // const [parsedInput0, parsedInput1] = useMemo(() => {
+  //   return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
+  // }, [input0, input1, token0, token1])
 
-  useEffect(() => {
-    if (pool) {
-      onChangeToken0TypedAmount(input0)
-    }
-  }, [onChangeToken0TypedAmount])
+  // const onChangeToken0TypedAmount = useCallback(
+  //   (value: string) => {
+  //     if (poolState === PairState.NOT_EXISTS) {
+  //       setTypedAmounts((prev) => ({
+  //         ...prev,
+  //         input0: value,
+  //       }))
+  //     } else if (token0 && pool) {
+  //       const parsedAmount = tryParseAmount(value, token0)
+  //       setTypedAmounts({
+  //         input0: value,
+  //         input1: parsedAmount ? pool.priceOf(token0.wrapped).quote(parsedAmount.wrapped).toExact() : '',
+  //       })
+  //     }
+  //   },
+  //   [pool, poolState, token0]
+  // )
 
-  console.log(pool)
+  // const onChangeToken1TypedAmount = useCallback(
+  //   (value: string) => {
+  //     if (poolState === PairState.NOT_EXISTS) {
+  //       setTypedAmounts((prev) => ({
+  //         ...prev,
+  //         input1: value,
+  //       }))
+  //     } else if (token1 && pool) {
+  //       const parsedAmount = tryParseAmount(value, token1)
+  //       setTypedAmounts({
+  //         input0: parsedAmount ? pool.priceOf(token1.wrapped).quote(parsedAmount.wrapped).toExact() : '',
+  //         input1: value,
+  //       })
+  //     }
+  //   },
+  //   [pool, poolState, token1]
+  // )
+
+  // useEffect(() => {
+  //   if (pool) {
+  //     onChangeToken0TypedAmount(input0)
+  //   }
+  // }, [onChangeToken0TypedAmount])
+
+  // console.log(pool)
 
   useEffect(() => {
     if (network?.name === undefined) {
@@ -190,13 +232,15 @@ const _Add: FC<AddProps> = ({ title }) => {
   const provider = new Provider(Network.TESTNET)
 
   useEffect(() => {
-    checkBalance('')
+    PoolInputBalance0('')
+    PoolInputBalance1('')
   }, [])
 
-  const checkBalance = (tradeVal: string) => {
+  const PoolInputBalance0 = (tradeVal: string) => {
+    console.log('1', tradeVal)
     const regexPattern = /^[0-9]*(\.[0-9]*)?$/
     if (regexPattern.test(tradeVal)) {
-      setInputValue(tradeVal)
+      setAmount0(tradeVal)
     }
     if (setButtonError) setButtonError('')
     if (connected) {
@@ -213,14 +257,36 @@ const _Add: FC<AddProps> = ({ title }) => {
     }
   }
 
-  const balanceClick = () => {
-    const timeOut = setTimeout(() => {
-      checkBalance('')
-    }, 100)
-    return () => {
-      clearTimeout(timeOut)
+  const PoolInputBalance1 = (tradeVal1: string) => {
+    console.log(tradeVal1)
+    const regexPattern = /^[0-9]*(\.[0-9]*)?$/
+    if (regexPattern.test(tradeVal1)) {
+      setAmount1(tradeVal1)
+    }
+    if (setButtonError) setButtonError('')
+    if (connected) {
+      const priceEst = ''
+      if (priceEst) {
+        setError('Exceeds Balance')
+        if (setButtonError) setButtonError('Insufficient Balance')
+      } else {
+        setError('')
+        if (setButtonError) setButtonError('')
+      }
+    } else {
+      setError('')
     }
   }
+
+  // const balanceClick = () => {
+  //   const timeOut = setTimeout(() => {
+  //     PoolInputBalance0('')
+  //     PoolInputBalance1('')
+  //   }, 100)
+  //   return () => {
+  //     clearTimeout(timeOut)
+  //   }
+  // }
 
   useEffect(() => {
     getPools(token1Value)
@@ -228,12 +294,25 @@ const _Add: FC<AddProps> = ({ title }) => {
     if (connected) {
       fetch(`https://fullnode.testnet.aptoslabs.com/v1/accounts/${account?.address}/resources`)
         .then((res) => res.json())
-        .then((data) => {})
+        .then((data) => {
+          if (!data.error_code) {
+            const coinData0 = data?.filter((coin: coinType) => {
+              return coin?.type.includes(token0.address)
+            })
+            const coinData1 = data?.filter((coin: coinType) => {
+              return coin?.type.includes(token1.address)
+            })
+            console.log(coinData0[0]?.data?.coin?.value)
+            setBalance0(coinData0[0]?.data?.coin?.value)
+            setBalance1(coinData1[0]?.data?.coin?.value)
+            setLoadingPrice(false)
+          }
+        })
       setLoadingPrice(false)
     } else {
       setLoadingPrice(false)
     }
-  }, [account, connected])
+  }, [account, connected, network, token0, token1, isTransactionPending])
 
   useEffect(() => {
     if (connected) {
@@ -255,28 +334,60 @@ const _Add: FC<AddProps> = ({ title }) => {
         <SelectTokensWidget />
         <ContentBlock title={<span className="text-gray-900 dark:text-white">Deposit.</span>}>
           <div className="flex flex-col gap-4">
-            {/* <TradeInput
-            coinData={filteredCoin0?.data?.coin?.value}
-            isLoadingPrice={isLoadingPrice}
-            setButtonError={setButtonError}
-            getSwapPrice={getPools}
-            tradeVal={tradeValInput}
-          /> */}
+            <TradeInput
+              // coinData={filteredCoin0?.data?.coin?.value}
+              // isLoadingPrice={isLoadingPrice}
+              // setButtonError={setButtonError}
+              // getSwapPrice={getPools}
+              // tradeVal={tradeValInput}
+              token={token0}
+              value={String(amount0)}
+              setToken={setToken0}
+              balance={balance0}
+              error={error}
+              isLoadingPrice={isLoadingPrice || isPriceFetching}
+              onUserInput={PoolInputBalance0}
+              tradeVal={tradeVal}
+              setAmount={setAmount0}
+              type="INPUT"
+            />
             <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
               <button type="button" className="z-10 p-2 bg-gray-100 rounded-full dark:bg-slate-900">
                 <PlusIcon strokeWidth={3} className="w-4 h-4 dark:text-slate-400 text-slate-600" />
               </button>
             </div>
-            {/* <TradeInput
-            coinData={filteredCoin1?.data?.coin?.value}
-            isLoadingPrice={isLoadingPrice}
-            setButtonError={setButtonError}
-            getSwapPrice={getPools}
-            tradeVal={tradeValOutput}
-          /> */}
-            <SwapButton noRouteFound={noRouteFound} buttonError={buttonError} token1Value={token1Value} />
+            <TradeInput
+              // coinData={filteredCoin1?.data?.coin?.value}
+              // isLoadingPrice={isLoadingPrice}
+              // setButtonError={setButtonError}
+              // getSwapPrice={getPools}
+              // tradeVal={tradeValOutput}
+              token={token1}
+              value={String(amount1)}
+              setToken={setToken1}
+              balance={balance1}
+              error={error}
+              isLoadingPrice={isLoadingPrice || isPriceFetching}
+              onUserInput={PoolInputBalance1}
+              tradeVal={tradeVal1}
+              setAmount={setAmount1}
+              type="INPUT"
+            />
+            <AddLiquidityButton buttonError="" token1Value={String(amount0)} />
+            {/* <SwapButton buttonError={buttonError} token1Value={amount0} /> */}
           </div>
         </ContentBlock>
+        <AddSectionReviewModal>
+          <Button
+            size="xl"
+            fullWidth
+            onClick={() => {
+              addLiquidity(close)
+            }}
+          >
+            Add
+          </Button>
+        </AddSectionReviewModal>
       </div>
     </div>
   )

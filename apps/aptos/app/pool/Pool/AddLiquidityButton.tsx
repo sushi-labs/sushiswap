@@ -1,17 +1,17 @@
-import { useWallet } from '@aptstats/aptos-wallet-framework'
 import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 import WalletSelector from '../../../components/WalletSelector'
+import { useWallet } from '@aptos-labs/wallet-adapter-react'
 
 interface Props {
   buttonError: string
-  token1Value: Number
+  token1Value: string
 }
 
 export const AddLiquidityButton = ({ buttonError, token1Value }: Props) => {
   const { connected } = useWallet()
   return (
-    <Modal.Trigger tag="review-modal">
-      {({ open, isOpen, close }) => (
+    <Modal.Trigger tag="add-liquidity">
+      {({ open }) => (
         <div className="pt-4">
           {connected ? (
             <button

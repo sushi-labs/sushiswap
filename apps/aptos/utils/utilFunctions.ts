@@ -128,11 +128,10 @@ export async function useAllCommonPairs(
   return returnRoutes
 }
 
-export async function getPoolPairs(controller: AbortController) {
+export async function getPoolPairs() {
   let reserves
   await fetch(
-    'https://fullnode.testnet.aptoslabs.com/v1/accounts/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resources',
-    { signal: controller.signal }
+    'https://fullnode.testnet.aptoslabs.com/v1/accounts/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resources'
   )
     .then((res) => res.json())
     .then((data) => {
