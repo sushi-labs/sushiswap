@@ -114,11 +114,7 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
                   title="Price Impect"
                   subtitle="The impact your trade has on the market price of this pool."
                 >
-                  <span
-                    className={'text-gray-700 text-right dark:text-slate-400 text-yellow text-yellow-700 text-green'}
-                  >
-                    +0.13% (static right now)
-                  </span>
+                  <span className={'text-gray-700 text-right dark:text-slate-400'}>+0.13% (static right now)</span>
                 </List.KeyValue>
                 <List.KeyValue
                   title={`Min. received after slippage (${slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance}%)`}

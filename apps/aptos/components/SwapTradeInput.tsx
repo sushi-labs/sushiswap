@@ -48,23 +48,22 @@ export const SwapTradeInput = () => {
   }
 
   useEffect(() => {
-    getSwapPrice(parseFloat(String(amount)))
-  }, [account, connected, network, token0, token1, isTransactionPending, slippageTolerance])
+    checkBalance(String(amount))
+  }, [account, connected, network, token0, token1, isTransactionPending, slippageTolerance, balance0])
 
   const checkBalance = (value: string) => {
     // let coinData = filteredCoin0?.data?.coin?.value
-    let coinData = balance0
     const regexPattern = /^[0-9]*(\.[0-9]*)?$/
     if (regexPattern.test(value)) {
       setAmount(value)
       getSwapPrice(parseFloat(value))
     }
-    if (coinData === undefined) {
-      coinData = 0
-    }
+    // if (balance0 === undefined) {
+    //   balance0 = 0
+    // }
 
     if (connected) {
-      const priceEst = coinData / 10 ** token0.decimals < parseFloat(value)
+      const priceEst = balance0 / 10 ** token0.decimals < parseFloat(value)
       if (priceEst) {
         setError('Exceeds Balance')
       } else {

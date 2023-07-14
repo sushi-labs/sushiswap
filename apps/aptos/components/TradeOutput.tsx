@@ -98,7 +98,6 @@ export default function TradeOutput({ balance, isLoadingPrice, isPriceFetching }
           coinData={balance}
           isLoading={isLoadingPrice || isPriceFetching}
           decimals={token1.decimals}
-          disabled={true}
           className="text-gray-500 dark:text-slate-500"
         />
       </div>

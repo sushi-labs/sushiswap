@@ -12,7 +12,6 @@ interface Props {
 }
 
 export const BalancePanel = ({ coinData, isLoading, decimals, onClick, type }: Props) => {
-  console.log('type', type)
   let [big, portion] = (coinData ? `${coinData / 10 ** decimals}` : '0.00').split('.')
   portion = portion ? portion.substring(0, 2) : '00'
   return (

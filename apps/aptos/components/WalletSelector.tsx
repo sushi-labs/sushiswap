@@ -52,6 +52,7 @@ export default function WalletSelector({ hideChevron, varient, color, fullWidth,
             setBalance(0)
           }
         })
+        .catch((err) => {})
     } else {
       setBalance(0)
     }
