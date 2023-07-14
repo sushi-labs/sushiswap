@@ -1,5 +1,5 @@
-import { DownloadIcon, TrashIcon } from '@heroicons/react/outline'
-import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon, CheckCircleIcon } from '@heroicons/react/solid'
+import { DownloadIcon } from '@heroicons/react/outline'
+import { ArrowDownIcon, ArrowLeftIcon, ArrowUpIcon, CheckCircleIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { formatNumber, shortenAddress } from '@sushiswap/format'
 import { classNames } from '@sushiswap/ui'
@@ -218,18 +218,7 @@ const _VestingPage: FC = () => {
                 abi={getFuroVestingContractConfig(chainId)?.abi}
                 address={getFuroVestingContractConfig(chainId)?.address}
                 chainId={chainId}
-              >
-                {({ setOpen }) => (
-                  <Button
-                    onClick={() => setOpen(true)}
-                    icon={ArrowRightIcon}
-                    variant="secondary"
-                    testId="vest-transfer"
-                  >
-                    Transfer
-                  </Button>
-                )}
-              </TransferModal>
+              />
               <CancelModal
                 title="Cancel Vesting"
                 stream={vesting}
@@ -237,13 +226,7 @@ const _VestingPage: FC = () => {
                 address={getFuroVestingContractConfig(chainId)?.address}
                 fn="stopVesting"
                 chainId={chainId}
-              >
-                {({ setOpen }) => (
-                  <Button variant="destructive" onClick={() => setOpen(true)} icon={TrashIcon} testId="vest-cancel">
-                    Cancel
-                  </Button>
-                )}
-              </CancelModal>
+              />
             </div>
           </div>
           <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />

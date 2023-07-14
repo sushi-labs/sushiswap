@@ -1,12 +1,10 @@
-import { XIcon } from '@heroicons/react/outline'
-import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon } from '@heroicons/react/solid'
+import { ArrowDownIcon, ArrowLeftIcon, ArrowUpIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { formatNumber, shortenAddress } from '@sushiswap/format'
 import { Percent } from '@sushiswap/math'
 import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Blink } from '@sushiswap/ui/components/Blink'
-import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { NetworkIcon, SushiIcon } from '@sushiswap/ui/components/icons'
@@ -185,24 +183,13 @@ const _Streams: FC = () => {
             </div>{' '}
             <div className="flex flex-wrap gap-2 mt-3">
               <WithdrawModal stream={stream} chainId={chainId} />
-              <TransferModal
+              <UpdateModal
                 stream={stream}
                 abi={getFuroStreamContractConfig(chainId)?.abi}
                 address={getFuroStreamContractConfig(chainId)?.address}
                 chainId={chainId}
-              >
-                {({ setOpen }) => (
-                  <Button
-                    onClick={() => setOpen(true)}
-                    icon={ArrowRightIcon}
-                    testId="stream-transfer"
-                    variant="secondary"
-                  >
-                    Transfer
-                  </Button>
-                )}
-              </TransferModal>
-              <UpdateModal
+              />
+              <TransferModal
                 stream={stream}
                 abi={getFuroStreamContractConfig(chainId)?.abi}
                 address={getFuroStreamContractConfig(chainId)?.address}
@@ -215,19 +202,7 @@ const _Streams: FC = () => {
                 address={getFuroStreamContractConfig(chainId)?.address}
                 fn="cancelStream"
                 chainId={chainId}
-              >
-                {({ setOpen }) => (
-                  <Button
-                    color="red"
-                    onClick={() => setOpen(true)}
-                    icon={XIcon}
-                    testId="stream-cancel"
-                    variant="secondary"
-                  >
-                    Cancel
-                  </Button>
-                )}
-              </CancelModal>
+              />
             </div>
           </div>
           <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />

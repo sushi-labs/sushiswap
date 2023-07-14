@@ -85,7 +85,7 @@ const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={classNames('text-lg font-semibold leading-none tracking-tight', className)}
+    className={classNames('text-lg font-semibold leading-none tracking-tight mr-[64px]', className)}
     {...props}
   />
 ))
@@ -97,7 +97,7 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={classNames('text-sm text-muted-foreground', className)}
+    className={classNames('text-sm text-muted-foreground mr-[64px]', className)}
     {...props}
   />
 ))
@@ -191,7 +191,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
           </DialogDescription>
           <div className="py-6 flex justify-center">
             {status === 'loading' ? (
-              <Loader size={132} strokeWidth={2} className="!text-blue" />
+              <Loader size={132} strokeWidth={1} className="!text-blue" />
             ) : status === 'success' ? (
               <CheckMarkIcon width={132} height={132} />
             ) : (

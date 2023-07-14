@@ -286,8 +286,8 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
         <DialogConfirm
           chainId={chainId}
           status={status}
-          testId="withdraw-stream-confirmation-modal"
-          successMessage={`Successfully withdrawn from stream`}
+          testId="update-stream-confirmation-modal"
+          successMessage={`Successfully updated stream`}
           txHash={data?.hash}
         />
       </DialogProvider>
