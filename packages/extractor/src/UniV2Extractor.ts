@@ -55,6 +55,7 @@ const UniV2FactoryAbi = [
 // TODO: UniV3Ext watcher-something-all - ???
 // TODO: UniV3Ext - to add "(337ms after demand)"
 // TODO: pools cache - ?
+// TODO: Back to LogFilter ?
 export class UniV2Extractor {
   readonly multiCallAggregator: MultiCallAggregator
   readonly tokenManager: TokenManager
@@ -220,11 +221,9 @@ export class UniV2Extractor {
                 poolCode: new ConstantProductPoolCode(pool, factory.provider, factory.provider),
               }
               this.poolMap.set(addrL, poolState)
-              ++this.watchedPools
               this.consoleLog(
-                `add pool ${addr} (${Math.round(performance.now() - start)}ms after demand), watched pools total: ${
-                  this.watchedPools
-                }`
+                `add pool ${addr} (${Math.round(performance.now() - start)}ms, request), watched pools total: ${++this
+                  .watchedPools}`
               )
               return poolState.poolCode
             },
@@ -299,6 +298,7 @@ export class UniV2Extractor {
     this.poolMap.set(addr.toLowerCase(), { status: PoolStatus.AddingPool, reserve0, reserve1 })
     let factory, token0, token1
     this.taskCounter.inc()
+    const startTime = performance.now()
     try {
       if (trustedFactory) factory = trustedFactory
       else {
@@ -358,8 +358,8 @@ export class UniV2Extractor {
       poolCode: new ConstantProductPoolCode(pool, factory.provider, factory.provider),
     }
     this.poolMap.set(addrL, poolState3)
-    ++this.watchedPools
-    this.consoleLog(`add pool ${addr}, watched pools total: ${this.watchedPools}`)
+    const delay = Math.round(performance.now() - startTime)
+    this.consoleLog(`add pool ${addr} (${delay}ms, logs), watched pools total: ${++this.watchedPools}`)
     return poolState3.poolCode
   }
 

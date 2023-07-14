@@ -69,6 +69,7 @@ export class UniV3Extractor {
   taskCounter: Counter
   qualityChecker: QualityChecker
   lastProcessdBlock = -1
+  watchedPools = 0
 
   /// @param client
   /// @param tickHelperContract address of helper contract for pool's ticks download
@@ -152,7 +153,7 @@ export class UniV3Extractor {
             factory,
           })
       })
-      cachedPools.forEach((p) => this.addPoolWatching(p, false))
+      cachedPools.forEach((p) => this.addPoolWatching(p, 'cache', false))
       this.consoleLog(`${cachedPools.size} pools were taken from cache`)
       warnLog('ExtractorV3 was started')
     }
@@ -172,12 +173,13 @@ export class UniV3Extractor {
     }
   }
 
-  addPoolWatching(p: PoolInfo, addToCache = true) {
+  addPoolWatching(p: PoolInfo, source: string, addToCache = true, startTime = 0) {
     if (this.logProcessingStatus !== LogsProcessing.Started) {
       throw new Error('Pools can be added only after Log processing have been started')
     }
     const addrL = p.address.toLowerCase() as Address
     if (!this.poolMap.has(addrL) && !this.otherFactoryPoolSet.has(addrL)) {
+      startTime = startTime || performance.now()
       const expectedPoolAddress = this.computeV3Address(p.factory, p.token0, p.token1, p.fee)
       if (addrL !== expectedPoolAddress.toLowerCase()) {
         this.consoleLog(`FakePool: ${p.address}`)
@@ -204,7 +206,10 @@ export class UniV3Extractor {
           fee: p.fee,
           factory: p.factory.address,
         })
-      this.consoleLog(`add pool ${p.address}, watched pools total: ${this.poolMap.size}`)
+      watcher.once('isUpdated', () => {
+        const delay = Math.round(performance.now() - startTime)
+        this.consoleLog(`add pool ${p.address} (${delay}ms, ${source}), watched pools total: ${++this.watchedPools}`)
+      })
       return watcher
     }
   }
@@ -216,6 +221,7 @@ export class UniV3Extractor {
     const prefetchedPools: UniV3PoolWatcher[] = []
     const waitPools: Promise<UniV3PoolWatcher | undefined>[] = []
     const fees = Object.values(FeeAmount).filter((fee) => typeof fee == 'number') as FeeAmount[]
+    const startTime = performance.now()
     for (let i = 0; i < tokens.length; ++i) {
       for (let j = i + 1; j < tokens.length; ++j) {
         if (tokens[i].address == tokens[j].address) continue
@@ -238,7 +244,12 @@ export class UniV3Extractor {
                     this.emptyAddressSet.add(addr)
                     return
                   }
-                  const watcher = this.addPoolWatching({ address: addr, token0: t0, token1: t1, fee, factory })
+                  const watcher = this.addPoolWatching(
+                    { address: addr, token0: t0, token1: t1, fee, factory },
+                    'request',
+                    true,
+                    startTime
+                  )
                   return watcher
                 },
                 () => undefined
@@ -261,7 +272,7 @@ export class UniV3Extractor {
     if (this.otherFactoryPoolSet.has(address.toLowerCase() as Address)) return
     if (this.multiCallAggregator.chainId === undefined) return
     this.emptyAddressSet.delete(address)
-
+    const startTime = performance.now()
     const factoryAddress = await this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'factory')
     const factory = this.factoryMap.get((factoryAddress as Address).toLowerCase())
     if (factory !== undefined) {
@@ -275,7 +286,7 @@ export class UniV3Extractor {
         this.tokenManager.findToken(token1Address as Address),
       ])
       if (token0 && token1) {
-        this.addPoolWatching({ address, token0, token1, fee: fee as FeeAmount, factory })
+        this.addPoolWatching({ address, token0, token1, fee: fee as FeeAmount, factory }, 'logs', true, startTime)
         return
       }
     }

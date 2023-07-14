@@ -1,3 +1,5 @@
+import { EventEmitter } from 'node:events'
+
 import { erc20Abi } from '@sushiswap/abi'
 import { Token } from '@sushiswap/currency'
 import { LiquidityProviders, PoolCode, UniV3PoolCode } from '@sushiswap/router'
@@ -71,7 +73,7 @@ export const UniV3EventsAbi = [
 
 // TODO: more ticks and priority depending on resources
 // TODO: gather statistics how often (blockNumber < this.latestEventBlockNumber)
-export class UniV3PoolWatcher {
+export class UniV3PoolWatcher extends EventEmitter {
   address: Address
   tickHelperContract: Address
   token0: Token
@@ -98,6 +100,7 @@ export class UniV3PoolWatcher {
     client: MultiCallAggregator,
     busyCounter?: Counter
   ) {
+    super()
     this.provider = provider
     this.address = address
     this.tickHelperContract = tickHelperContract
@@ -107,9 +110,8 @@ export class UniV3PoolWatcher {
     this.spacing = TICK_SPACINGS[fee]
 
     this.client = client
-    this.wordLoadManager = new WordLoadManager(address, this.spacing, tickHelperContract, client, busyCounter, () => {
-      this.lastPoolCode = undefined
-    })
+    this.wordLoadManager = new WordLoadManager(address, this.spacing, tickHelperContract, client, busyCounter)
+    this.wordLoadManager.on('ticksChanged', () => (this.lastPoolCode = undefined))
     this.busyCounter = busyCounter
   }
 
@@ -142,6 +144,7 @@ export class UniV3PoolWatcher {
           this.lastPoolCode = undefined
 
           this.wordLoadManager.onPoolTickChange(this.state.tick, true)
+          this.wordLoadManager.once('isUpdated', () => this.emit('isUpdated'))
           break
         }
       } catch (e) {

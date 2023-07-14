@@ -1,3 +1,5 @@
+import { EventEmitter } from 'node:events'
+
 import { tickLensAbi } from '@sushiswap/abi'
 import { NUMBER_OF_SURROUNDING_TICKS } from '@sushiswap/router'
 import { CLTick } from '@sushiswap/tines'
@@ -21,7 +23,7 @@ function getJump(index: number, positiveFirst: boolean): number {
   return positiveFirst ? res : -res
 }
 
-export class WordLoadManager {
+export class WordLoadManager extends EventEmitter {
   poolAddress: Address
   poolSpacing: number
   tickHelperContract: Address
@@ -32,22 +34,20 @@ export class WordLoadManager {
   downloadQueue: number[] = []
   downloadCycleIsStared = false
   latestEventBlockNumber = 0
-  onTicksChanged?: () => void
 
   constructor(
     poolAddress: Address,
     poolSpacing: number,
     tickHelperContract: Address,
     client: MultiCallAggregator,
-    counter?: Counter,
-    onTicksChanged?: () => void
+    counter?: Counter
   ) {
+    super()
     this.poolAddress = poolAddress
     this.poolSpacing = poolSpacing
     this.tickHelperContract = tickHelperContract
     this.client = client
     this.busyCounter = counter
-    this.onTicksChanged = onTicksChanged
   }
 
   wordIndex(tick: number) {
@@ -80,7 +80,7 @@ export class WordLoadManager {
                 }))
                 .sort((a: CLTick, b: CLTick) => a.index - b.index),
             })
-            if (this.onTicksChanged) this.onTicksChanged()
+            this.emit('ticksChanged')
             if (blockNumber >= this.latestEventBlockNumber) this.downloadQueue.pop()
           }
         }
@@ -88,6 +88,7 @@ export class WordLoadManager {
         // do nothing
       }
       if (initialQueueLength > 0 && this.busyCounter) this.busyCounter.dec()
+      this.emit('isUpdated')
       this.downloadCycleIsStared = false
     }
   }
