@@ -153,7 +153,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
                     <Checker.Guard guardWhen={!amount?.greaterThan(0)} guardText="Enter amount">
                       <Checker.Guard
                         guardWhen={Boolean(stream.balance && amount?.greaterThan(stream.balance))}
-                        guardText="Not enough available"
+                        guardText="No available tokens for withdrawal"
                       >
                         <Button
                           size="xl"

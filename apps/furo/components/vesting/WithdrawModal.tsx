@@ -115,7 +115,10 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
               <DialogFooter>
                 <Checker.Connect fullWidth>
                   <Checker.Network fullWidth chainId={chainId}>
-                    <Checker.Guard guardWhen={Boolean(!balance?.greaterThan(ZERO))} guardText="Not enough available">
+                    <Checker.Guard
+                      guardWhen={Boolean(!balance?.greaterThan(ZERO))}
+                      guardText="No unlocked tokens for withdrawal"
+                    >
                       <Button
                         size="xl"
                         fullWidth
