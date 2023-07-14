@@ -1,14 +1,22 @@
 'use client'
 
-import { Chain } from '@sushiswap/chain'
-import React, { useState } from 'react'
+import { Chain, ChainId } from '@sushiswap/chain'
+import React, { ReactNode, useState } from 'react'
 
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../command'
-import { NetworkIcon } from '../icons'
-import { PopoverContent, PopoverNew, PopoverPrimitive } from '../popovernew'
-import { NetworkSelectorProps } from './index'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from './command'
+import { NetworkIcon } from './icons'
+import { PopoverContent, PopoverNew, PopoverPrimitive } from './popovernew'
 
-export const NetworkSelectorMenu = <T extends number>({
+export type NetworkSelectorOnSelectCallback<T extends number = ChainId> = (chainId: T, close: () => void) => void
+
+export interface NetworkSelectorProps<T extends number = ChainId> {
+  networks: readonly T[]
+  selected: T
+  onSelect: NetworkSelectorOnSelectCallback<T>
+  children: ReactNode
+}
+
+const NetworkSelector = <T extends number>({
   onSelect,
   networks = [],
   children,
@@ -42,3 +50,5 @@ export const NetworkSelectorMenu = <T extends number>({
     </PopoverNew>
   )
 }
+
+export { NetworkSelector }
