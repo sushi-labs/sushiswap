@@ -1,3 +1,5 @@
+'use client'
+
 import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId } from '@sushiswap/chain'
 import { Pool, Protocol } from '@sushiswap/client'

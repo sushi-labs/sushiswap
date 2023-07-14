@@ -69,7 +69,18 @@ const isTypeNumber = (type: InputType): type is 'number' => type === 'number'
 const isTypePercent = (type: InputType): type is 'percent' => type === 'percent'
 
 const Component = <T extends InputType>(
-  { icon: Icon, iconProps, unit, variant, className, type, onChange, onValueChange, ...props }: TextFieldProps<T>,
+  {
+    icon: Icon,
+    iconProps,
+    unit,
+    variant,
+    className,
+    type,
+    onChange,
+    maxDecimals,
+    onValueChange,
+    ...props
+  }: TextFieldProps<T>,
   ref: React.ForwardedRef<HTMLInputElement>
 ) => {
   const _onChange: React.InputHTMLAttributes<HTMLInputElement>['onChange'] = (e) => {
@@ -79,14 +90,13 @@ const Component = <T extends InputType>(
     }
 
     if (isTypeNumber(type)) {
-      console.log(nextUserInput)
       const val = `${nextUserInput}`.replace(/,/g, '.')
       if (onValueChange && val === '') onValueChange('')
 
       if (inputRegex.test(escapeRegExp(val))) {
-        if (props.maxDecimals && val?.includes('.')) {
+        if (maxDecimals && val?.includes('.')) {
           const [, decimals] = val.split('.')
-          if (onValueChange && decimals.length <= props.maxDecimals) {
+          if (onValueChange && decimals.length <= maxDecimals) {
             onValueChange(val)
           }
         } else {

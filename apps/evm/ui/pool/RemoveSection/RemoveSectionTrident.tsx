@@ -46,8 +46,6 @@ interface RemoveSectionTridentProps {
 }
 
 export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRoot(({ pool: _pool }) => {
-  console.log('faa')
-
   const chainId = _pool.chainId as BentoBoxV1ChainId
   const { address } = useAccount()
   const { chain } = useNetwork()

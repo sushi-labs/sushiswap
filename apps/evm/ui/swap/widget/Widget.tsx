@@ -21,11 +21,13 @@ export const Widget: FC = () => {
         <SwitchAppType />
         <SettingsOverlay modules={[SettingsModule.SlippageTolerance, SettingsModule.CarbonOffset]} />
       </div>
-      <CrossChainBanner />
-      <SwapCurrencyInput />
-      <SwitchTokensButton />
-      <SwapCurrencyOutput />
-      {appType === AppType.Swap ? <SwapButton /> : <SwapButtonCrossChain />}
+      <div>
+        <CrossChainBanner />
+        <SwapCurrencyInput />
+        <SwitchTokensButton />
+        <SwapCurrencyOutput />
+        {appType === AppType.Swap ? <SwapButton /> : <SwapButtonCrossChain />}
+      </div>
     </div>
   )
 }

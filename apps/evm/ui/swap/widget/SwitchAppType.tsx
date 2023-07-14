@@ -1,3 +1,4 @@
+import { buttonVariants } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
 import React, { FC } from 'react'
@@ -11,9 +12,12 @@ export const SwitchAppType: FC = () => {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger className="cursor-default">
-            <Button className="pointer-events-none opacity-40" size="sm" variant="ghost">
+            <div
+              role="button"
+              className={buttonVariants({ variant: 'ghost', size: 'sm', className: 'pointer-events-none opacity-40' })}
+            >
               Limit
-            </Button>
+            </div>
           </TooltipTrigger>
           <TooltipContent>
             <p>Coming soon!</p>
