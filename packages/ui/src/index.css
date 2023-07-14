@@ -98,6 +98,10 @@ html[class='dark'] *.scroll::-webkit-scrollbar-thumb {
   filter: invert(1);
 }
 
+#root-portal {
+  pointer-events: all;
+}
+
 
 @layer utilities {
   input[type='number']::-webkit-inner-spin-button,

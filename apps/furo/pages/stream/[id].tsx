@@ -1,5 +1,5 @@
 import { XIcon } from '@heroicons/react/outline'
-import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon, RefreshIcon } from '@heroicons/react/solid'
+import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { formatNumber, shortenAddress } from '@sushiswap/format'
 import { Percent } from '@sushiswap/math'
@@ -207,13 +207,7 @@ const _Streams: FC = () => {
                 abi={getFuroStreamContractConfig(chainId)?.abi}
                 address={getFuroStreamContractConfig(chainId)?.address}
                 chainId={chainId}
-              >
-                {({ setOpen }) => (
-                  <Button onClick={() => setOpen(true)} icon={RefreshIcon} testId="stream-update" variant="secondary">
-                    Update
-                  </Button>
-                )}
-              </UpdateModal>
+              />
               <CancelModal
                 title="Cancel Stream"
                 stream={stream}
