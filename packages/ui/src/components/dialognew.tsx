@@ -55,7 +55,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={classNames(
-        'fixed z-50 grid w-full gap-4 rounded-2xl dark:bg-slate-800 bg-white p-6 shadow-lg animate-in data-[state=open]:fade-in-90 data-[state=open]:slide-in-from-bottom-10 sm:max-w-lg sm:rounded-2xl sm:zoom-in-90 data-[state=open]:sm:slide-in-from-bottom-0',
+        'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-gray-100 dark:bg-slate-800 p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-2xl md:w-full',
         className
       )}
       {...props}
@@ -142,14 +142,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
   const { open, setOpen } = useDialog(DialogType.Confirm)
 
   return (
-    <DialogNew
-      {...props}
-      open={open}
-      onOpenChange={(val) => {
-        console.log(val)
-        setOpen(val)
-      }}
-    >
+    <DialogNew {...props} open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>

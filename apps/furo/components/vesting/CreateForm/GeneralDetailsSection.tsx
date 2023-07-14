@@ -70,25 +70,19 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
                 onSelect={(currency) => onSelect(onChange, currency)}
                 selected={_currency}
               >
-                {({ setOpen }) => (
-                  <button
-                    onBlur={onBlur}
-                    onClick={() => setOpen(true)}
-                    className={textFieldVariants({ className: 'flex flex-1 justify-between' })}
-                  >
-                    <TextField
-                      name={name}
-                      readOnly
-                      value={value?.isNative ? value?.symbol : value?.address}
-                      placeholder="Select a token"
-                      testdata-id={`create-single-vest-select${index}`}
-                      variant="naked"
-                      type="text"
-                      className="cursor-pointer"
-                    />
-                    <SelectIcon />
-                  </button>
-                )}
+                <button onBlur={onBlur} className={textFieldVariants({ className: 'flex flex-1 justify-between' })}>
+                  <TextField
+                    name={name}
+                    readOnly
+                    value={value?.isNative ? value?.symbol : value?.address}
+                    placeholder="Select a token"
+                    testdata-id={`create-single-vest-select${index}`}
+                    variant="naked"
+                    type="text"
+                    className="cursor-pointer"
+                  />
+                  <SelectIcon />
+                </button>
               </TokenSelector>
             </FormControl>
             <FormMessage />

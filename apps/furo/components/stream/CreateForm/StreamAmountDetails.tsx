@@ -93,25 +93,19 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
                 onSelect={(currency) => onSelect(onChange, currency)}
                 selected={_currency}
               >
-                {({ setOpen }) => (
-                  <button
-                    onBlur={onBlur}
-                    onClick={() => setOpen(true)}
-                    className={textFieldVariants({ className: 'flex flex-1 justify-between' })}
-                  >
-                    <TextField
-                      name={name}
-                      readOnly
-                      value={value?.isNative ? value?.symbol : value?.address}
-                      placeholder="Select a token"
-                      testdata-id={`create-single-stream-token-select${index}`}
-                      variant="naked"
-                      type="text"
-                      className="cursor-pointer"
-                    />
-                    <SelectIcon />
-                  </button>
-                )}
+                <button onBlur={onBlur} className={textFieldVariants({ className: 'flex flex-1 justify-between' })}>
+                  <TextField
+                    name={name}
+                    readOnly
+                    value={value?.isNative ? value?.symbol : value?.address}
+                    placeholder="Select a token"
+                    testdata-id={`create-single-stream-token-select${index}`}
+                    variant="naked"
+                    type="text"
+                    className="cursor-pointer"
+                  />
+                  <SelectIcon />
+                </button>
               </TokenSelector>
             </FormControl>
             <FormMessage />

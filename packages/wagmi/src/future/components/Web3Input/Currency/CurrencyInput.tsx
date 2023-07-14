@@ -128,31 +128,25 @@ export const Component: FC<CurrencyInputProps> = ({
             onSelect={onSelect}
             includeNative={allowNative}
           >
-            {({ setOpen }) => (
-              <Button
-                size="lg"
-                variant={currency ? 'secondary' : 'default'}
-                id={id}
-                type="button"
-                onClick={(e) => {
-                  setOpen(true)
-                  e.stopPropagation()
-                }}
-                className={classNames(currency ? 'pl-2 pr-3 text-xl' : '', '!rounded-full')}
-              >
-                {currency ? (
-                  <>
-                    <div className="w-[28px] h-[28px] mr-0.5">
-                      <Currency.Icon disableLink currency={currency} width={28} height={28} />
-                    </div>
-                    {currency.symbol}
-                    <SelectIcon />
-                  </>
-                ) : (
-                  'Select token'
-                )}
-              </Button>
-            )}
+            <Button
+              size="lg"
+              variant={currency ? 'secondary' : 'default'}
+              id={id}
+              type="button"
+              className={classNames(currency ? 'pl-2 pr-3 text-xl' : '', '!rounded-full')}
+            >
+              {currency ? (
+                <>
+                  <div className="w-[28px] h-[28px] mr-0.5">
+                    <Currency.Icon disableLink currency={currency} width={28} height={28} />
+                  </div>
+                  {currency.symbol}
+                  <SelectIcon />
+                </>
+              ) : (
+                'Select token'
+              )}
+            </Button>
           </TokenSelector>
         )}
         {!onSelect && (
