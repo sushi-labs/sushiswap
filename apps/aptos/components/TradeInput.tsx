@@ -1,11 +1,9 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import React, { useCallback } from 'react'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { PricePanel } from './PricePanel'
 import { BalancePanel } from './BalancePanel'
 import TokenListDialog from './TokenListDialog'
-import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
 import { Token } from 'utils/tokenType'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 interface PropType {

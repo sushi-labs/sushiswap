@@ -16,6 +16,7 @@ import { useSwapActions, useSwapState } from './trade/TradeProvider'
 import { SwapTradeInput } from 'components/SwapTradeInput'
 import { coinType } from 'utils/tokenData'
 import { SwapTradeOutput } from 'components/SwapTradeOutput'
+import { getPoolPairs } from 'utils/utilFunctions'
 
 export default function SwapPage() {
   const { account, connected, disconnect, network } = useWallet()
@@ -23,6 +24,17 @@ export default function SwapPage() {
   const [slippageTolerance] = useSlippageTolerance('swapSlippage')
   const { setBalance0, setBalance1, setLoadingPrice } = useSwapActions()
   const { token0, token1, isTransactionPending } = useSwapState()
+  const [routeFound, setRouteFound] = useState<boolean>(false)
+  getPoolPairs(token0, token1).then((pairs: any) => {
+    console.log('pairsss', pairs)
+    if (pairs && pairs.length > 0) {
+      setRouteFound(true)
+    } else {
+      setRouteFound(false)
+    }
+  })
+
+  // console.log(allPairs)
   useEffect(() => {
     if (network?.name === undefined) {
       disconnect()
@@ -45,7 +57,13 @@ export default function SwapPage() {
             setBalance0(coinData0[0]?.data?.coin?.value)
             setBalance1(coinData1[0]?.data?.coin?.value)
             setLoadingPrice(false)
+          } else {
+            setBalance0(0)
+            setBalance1(0)
           }
+        })
+        .catch((err) => {
+          console.log(err)
         })
         .finally(() => {
           setLoadingPrice(false)
@@ -72,6 +90,7 @@ export default function SwapPage() {
 
   return (
     <>
+      {routeFound ? <>RouteFound'</> : <>'no route found'</>}
       {isLoading && <Loading />}
       <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
         <div className="flex flex-col gap-4">

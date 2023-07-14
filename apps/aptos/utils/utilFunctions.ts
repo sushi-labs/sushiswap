@@ -1,5 +1,6 @@
+import { useMemo } from 'react'
 import { Token } from './tokenType'
-
+console.log(process.env.CONTRACT_ADDRESS)
 export async function useAllCommonPairs(
   amount_in: number = 0,
   coinA: Token,
@@ -14,11 +15,7 @@ export async function useAllCommonPairs(
     coinB.address,
   ]
   let returnRoutes
-  // var allPairs: string[][] = [].concat(
-  //   ...basePairs.map((pair: string, index: number) =>
-  //     basePairs.slice(index + 1).map((innerPair) => [pair, innerPair])
-  //   )
-  // )
+
   var allPairs: string[][] = []
 
   for (let i = 0; i < basePairs.length; i++) {
@@ -28,8 +25,10 @@ export async function useAllCommonPairs(
   }
   let reserves
   await fetch(
-    'https://fullnode.testnet.aptoslabs.com/v1/accounts/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resources',
-    { signal: controller.signal }
+    `https://fullnode.testnet.aptoslabs.com/v1/accounts/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resources`,
+    {
+      signal: controller.signal,
+    }
   )
     .then((res) => res.json())
     .then((data) => {
@@ -46,7 +45,7 @@ export async function useAllCommonPairs(
 
         if (
           d.type.includes(
-            '0x1::coin::CoinInfo<0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::LPToken<'
+            `0x1::coin::CoinInfo<0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::LPToken<`
           )
         ) {
           reserve_token_info[d.type] = d
@@ -128,21 +127,26 @@ export async function useAllCommonPairs(
   return returnRoutes
 }
 
-export async function getPoolPairs(controller: AbortController) {
-  let reserves
-  await fetch(
-    'https://fullnode.testnet.aptoslabs.com/v1/accounts/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resources',
-    { signal: controller.signal }
-  )
-    .then((res) => res.json())
-    .then((data) => {
-      reserves = data.filter((d: any) => {
-        if (d.type.includes('swap::TokenPairReserve')) {
-          return true
-        }
+export async function getPoolPairs(token0: Token, token1: Token) {
+  return useMemo(async () => {
+    let reserves: any
+    await fetch(
+      `https://fullnode.testnet.aptoslabs.com/v1/accounts/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resources`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        reserves = data.filter((d: any) => {
+          if (
+            d.type.includes('swap::TokenPairReserve') &&
+            d.type.includes(token0.address) &&
+            d.type.includes(token1.address)
+          ) {
+            return true
+          }
+        })
       })
-    })
-  return reserves
+    return reserves
+  }, [token0, token1])
 }
 
 const exactOutput = (amt_in: number, res_x: number, res_y: number) => {
