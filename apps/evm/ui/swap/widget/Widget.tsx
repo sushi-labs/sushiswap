@@ -1,3 +1,5 @@
+'use client'
+
 import { AppType } from '@sushiswap/ui'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/components/settings'
 import React, { FC } from 'react'

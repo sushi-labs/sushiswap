@@ -15,6 +15,7 @@ import {
   useStablePool,
 } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/future/systems'
+import { CheckerProvider } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_ADD_TRIDENT } from 'lib/constants'
 import { useTokensFromPool } from 'lib/hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
@@ -106,7 +107,7 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const amounts = useMemo(() => [parsedInput0, parsedInput1], [parsedInput0, parsedInput1])
 
   return (
-    <Checker.Root>
+    <CheckerProvider>
       <AddSectionWidget
         isFarm={!!_pool.incentives && _pool.incentives.length > 0}
         chainId={_pool.chainId as ChainId}
@@ -183,6 +184,6 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
         open={open}
         close={close}
       />
-    </Checker.Root>
+    </CheckerProvider>
   )
 }

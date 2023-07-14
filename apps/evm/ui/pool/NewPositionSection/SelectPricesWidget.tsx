@@ -1,9 +1,7 @@
 import { MinusIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
-import { classNames } from '@sushiswap/ui'
-import { TextField } from '@sushiswap/ui'
-import { Label } from '@sushiswap/ui'
+import { classNames, Label, TextField, TextFieldDescription } from '@sushiswap/ui'
 import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
 import { Button } from '@sushiswap/ui/components/button'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
@@ -99,29 +97,22 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
         </div>
       </Collapsible>
       {children && children}
-      <div className="bg-white dark:bg-white/[0.02] rounded-xl flex flex-col gap-4 p-4">
+      <div className="bg-white dark:bg-secondary rounded-xl flex flex-col gap-4 p-4">
         {isMounted && showStartPrice && (
           <div className="flex flex-col gap-3">
             {noLiquidity && (
-              <div className="relative flex items-center w-full gap-3 pb-2">
-                <div className="flex flex-col gap-2">
-                  <Label>Start price</Label>
-                  <TextField
-                    value={startPriceTypedValue}
-                    onValueChange={onStartPriceInput}
-                    testdata-id="start-price-input"
-                    type="number"
-                  />
-                  <span className="mt-1.5 inline-block px-4 text-xs text-gray-500 dark:text-slate-400">
-                    Your pool needs a starting price somewhere between the min. and max. price
-                  </span>
-                </div>
-
-                <div className="absolute top-0 flex items-center right-4 bottom-7">
-                  <div className="text-xs font-medium text-gray-500 whitespace-nowrap dark:text-slate-400">
-                    {token1?.symbol} per {token0?.symbol}
-                  </div>
-                </div>
+              <div className="flex flex-col gap-2">
+                <Label>Start price</Label>
+                <TextField
+                  value={startPriceTypedValue}
+                  onValueChange={onStartPriceInput}
+                  testdata-id="start-price-input"
+                  type="number"
+                  unit={`${token1?.symbol} per ${token0?.symbol}`}
+                />
+                <TextFieldDescription>
+                  Your pool needs a starting price somewhere between the min. and max. price
+                </TextFieldDescription>
               </div>
             )}
             {!noLiquidity && (

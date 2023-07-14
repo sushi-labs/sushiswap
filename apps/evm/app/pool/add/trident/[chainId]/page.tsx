@@ -20,6 +20,7 @@ import {
 } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import { Checker } from '@sushiswap/wagmi/future/systems'
+import { CheckerProvider } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_ADD_TRIDENT, APPROVE_TAG_CREATE_TRIDENT } from 'lib/constants'
 import { isConstantProductPool, isStablePool } from 'lib/functions'
 import Link from 'next/link'
@@ -303,7 +304,7 @@ const _Add: FC<AddProps> = ({
             disabled={!token1}
             loading={poolState === ConstantProductPoolState.LOADING || poolState === StablePoolState.LOADING}
           />
-          <Checker.Root>
+          <CheckerProvider>
             <Checker.Connect fullWidth>
               <Checker.Network fullWidth chainId={chainId}>
                 <Checker.Amounts fullWidth chainId={chainId} amounts={[parsedInput0, parsedInput1]}>
@@ -408,7 +409,7 @@ const _Add: FC<AddProps> = ({
                 </Checker.Amounts>
               </Checker.Network>
             </Checker.Connect>
-          </Checker.Root>
+          </CheckerProvider>
         </div>
       </ContentBlock>
     </div>

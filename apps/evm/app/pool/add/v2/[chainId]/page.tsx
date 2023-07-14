@@ -8,10 +8,11 @@ import { Button } from '@sushiswap/ui/components/button'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { Loader } from '@sushiswap/ui/components/loader'
 import { isSushiSwapV2ChainId, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
+import { SushiSwapV2ChainIds } from '@sushiswap/v2-sdk'
 import { Address, getSushiSwapRouterContractConfig, PairState, PoolFinder } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { SushiSwapV2ChainIds } from '@sushiswap/v2-sdk'
+import { CheckerProvider } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
 import { isLegacyPool } from 'lib/functions'
 import Link from 'next/link'
@@ -240,7 +241,7 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
             disabled={!token1}
             loading={poolState === PairState.LOADING}
           />
-          <Checker.Root>
+          <CheckerProvider>
             <Checker.Connect fullWidth>
               <Checker.Network fullWidth chainId={chainId}>
                 <Checker.Amounts fullWidth chainId={chainId} amounts={[parsedInput0, parsedInput1]}>
@@ -282,7 +283,7 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
                 </Checker.Amounts>
               </Checker.Network>
             </Checker.Connect>
-          </Checker.Root>
+          </CheckerProvider>
         </div>
       </ContentBlock>
     </div>

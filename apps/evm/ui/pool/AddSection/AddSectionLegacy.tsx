@@ -6,6 +6,7 @@ import { Button } from '@sushiswap/ui/components/button'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { Address, getSushiSwapRouterContractConfig, PairState, usePair } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/future/systems'
+import { CheckerProvider } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
 import { useTokensFromPool } from 'lib/hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
@@ -70,7 +71,7 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const amounts = useMemo(() => [parsedInput0, parsedInput1], [parsedInput1, parsedInput0])
 
   return (
-    <Checker.Root>
+    <CheckerProvider>
       <AddSectionWidget
         isFarm={!!_pool.incentives && _pool.incentives.length > 0}
         chainId={_pool.chainId as ChainId}
@@ -124,6 +125,6 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
         open={open}
         close={close}
       />
-    </Checker.Root>
+    </CheckerProvider>
   )
 }

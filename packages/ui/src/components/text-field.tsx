@@ -151,4 +151,11 @@ const Component = <T extends InputType>(
 const TextField = React.forwardRef(Component)
 TextField.displayName = 'TextField'
 
-export { TextField, textFieldVariants }
+const TextFieldDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
+  ({ className, ...props }, ref) => {
+    return <p ref={ref} className={classNames('text-sm text-muted-foreground', className)} {...props} />
+  }
+)
+TextFieldDescription.displayName = 'TextFieldDescription'
+
+export { TextField, TextFieldDescription, textFieldVariants }
