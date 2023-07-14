@@ -1,11 +1,9 @@
-import { DownloadIcon } from '@heroicons/react/outline'
 import { ArrowDownIcon, ArrowLeftIcon, ArrowUpIcon, CheckCircleIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { formatNumber, shortenAddress } from '@sushiswap/format'
 import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Blink } from '@sushiswap/ui/components/Blink'
-import { Button } from '@sushiswap/ui/components/button'
 import { Carousel } from '@sushiswap/ui/components/Carousel'
 import { Container } from '@sushiswap/ui/components/container'
 import { Currency } from '@sushiswap/ui/components/currency'
@@ -200,19 +198,7 @@ const _VestingPage: FC = () => {
               </div>
             </div>{' '}
             <div className="flex flex-wrap gap-2 mt-3">
-              <WithdrawModal vesting={vesting} chainId={chainId}>
-                {({ setOpen, disabled }) => (
-                  <Button
-                    disabled={disabled}
-                    onClick={() => setOpen(true)}
-                    icon={DownloadIcon}
-                    testId="vest-withdraw"
-                    variant="secondary"
-                  >
-                    Withdraw
-                  </Button>
-                )}
-              </WithdrawModal>
+              <WithdrawModal vesting={vesting} chainId={chainId} />
               <TransferModal
                 stream={vesting}
                 abi={getFuroVestingContractConfig(chainId)?.abi}
