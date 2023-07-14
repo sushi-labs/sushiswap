@@ -289,10 +289,44 @@ query CustomBlocks($timestamp: Int!, $chainIds: [Int!]!) {
   }
 }
 
-query CurrentBlock($first: Int = 1000 $skip: Int = 0) {
+query CurrentBlock($first: Int = 1000, $skip: Int = 0) {
   _meta {
     block {
       number
     }
+  }
+}
+
+query SteerVaults($first: Int = 1000, $skip: Int = 0) {
+  vaults(first: $first, skip: $skip) {
+    id
+    feeTier
+    reserve0: totalAmount0
+    reserve1: totalAmount1
+    pool
+    state
+    payloadIpfs
+    strategyToken {
+      id
+      executionBundle
+      name # "Elastic Expansion Strategy"
+    #   # creator: {
+    #   #     id
+    #   # }
+    }
+    positions(first: 1000) {
+      lowerTick
+      upperTick
+    }
+    createdAt
+    annualPercentageYield
+    annualPercentageDailyYield
+    annualPercentageMonthlyYield
+    annualPercentageYearlyYield
+    annualFeeARR
+    token0
+    token1
+    fees0
+    fees1
   }
 }
