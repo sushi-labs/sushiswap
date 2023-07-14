@@ -6,6 +6,7 @@ import {
   routeProcessor3Address,
   routeProcessorAddress,
 } from '@sushiswap/route-processor'
+import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { AppType } from '@sushiswap/ui/types'
 import { Checker } from '@sushiswap/wagmi/future/systems'
@@ -35,53 +36,55 @@ export const SwapButton: FC = () => {
 
   return (
     <>
-      <div className="pt-4">
-        <Checker.Connect>
-          <Checker.Network chainId={network0}>
-            <Checker.Amounts chainId={network0} amounts={[amount]}>
-              <Checker.ApproveERC20
-                id="approve-erc20"
-                amount={amount}
-                contract={
-                  isRouteProcessor3ChainId(network0)
-                    ? routeProcessor3Address[network0]
-                    : isRouteProcessorChainId(network0)
-                    ? routeProcessorAddress[network0]
-                    : undefined
-                }
-              >
-                <Checker.Success tag="swap">
-                  <TradeReviewDialogSameChain>
-                    <Button
-                      size="xl"
-                      disabled={
-                        !trade?.amountOut?.greaterThan(ZERO) ||
-                        trade?.route?.status === 'NoWay' ||
-                        Boolean(isLoading && +value > 0) ||
-                        isFetching ||
-                        (!checked && warningSeverity(trade?.priceImpact) > 3)
-                      }
-                      color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
-                      fullWidth
-                      testId="swap"
-                    >
-                      {!checked && warningSeverity(trade?.priceImpact) >= 3
-                        ? 'Price impact too high'
-                        : trade?.route?.status === 'NoWay'
-                        ? 'No trade found'
-                        : isWrap
-                        ? 'Wrap'
-                        : isUnwrap
-                        ? 'Unwrap'
-                        : 'Swap'}
-                    </Button>
-                  </TradeReviewDialogSameChain>
-                </Checker.Success>
-              </Checker.ApproveERC20>
-            </Checker.Amounts>
-          </Checker.Network>
-        </Checker.Connect>
-      </div>
+      <TradeReviewDialogSameChain>
+        <div className="pt-4">
+          <Checker.Connect>
+            <Checker.Network chainId={network0}>
+              <Checker.Amounts chainId={network0} amounts={[amount]}>
+                <Checker.ApproveERC20
+                  id="approve-erc20"
+                  amount={amount}
+                  contract={
+                    isRouteProcessor3ChainId(network0)
+                      ? routeProcessor3Address[network0]
+                      : isRouteProcessorChainId(network0)
+                      ? routeProcessorAddress[network0]
+                      : undefined
+                  }
+                >
+                  <Checker.Success tag="swap">
+                    <DialogTrigger asChild>
+                      <Button
+                        size="xl"
+                        disabled={
+                          !trade?.amountOut?.greaterThan(ZERO) ||
+                          trade?.route?.status === 'NoWay' ||
+                          Boolean(isLoading && +value > 0) ||
+                          isFetching ||
+                          (!checked && warningSeverity(trade?.priceImpact) > 3)
+                        }
+                        color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
+                        fullWidth
+                        testId="swap"
+                      >
+                        {!checked && warningSeverity(trade?.priceImpact) >= 3
+                          ? 'Price impact too high'
+                          : trade?.route?.status === 'NoWay'
+                          ? 'No trade found'
+                          : isWrap
+                          ? 'Wrap'
+                          : isUnwrap
+                          ? 'Unwrap'
+                          : 'Swap'}
+                      </Button>
+                    </DialogTrigger>
+                  </Checker.Success>
+                </Checker.ApproveERC20>
+              </Checker.Amounts>
+            </Checker.Network>
+          </Checker.Connect>
+        </div>
+      </TradeReviewDialogSameChain>
       {warningSeverity(trade?.priceImpact) > 3 && (
         <div className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20">
           <input

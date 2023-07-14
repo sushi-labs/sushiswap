@@ -148,7 +148,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
           <DialogTitle>
             {status === 'loading' ? <Dots>Confirming</Dots> : status === 'success' ? 'Success!' : 'Oops!'}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="font-medium">
             {status === 'loading' ? (
               <>
                 Waiting for your{' '}

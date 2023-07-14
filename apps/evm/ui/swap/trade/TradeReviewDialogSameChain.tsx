@@ -24,7 +24,6 @@ import {
   DialogReview,
   DialogTitle,
 } from '@sushiswap/ui'
-import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { List } from '@sushiswap/ui/components/list/List'
 import { SkeletonBox, SkeletonText } from '@sushiswap/ui/components/skeleton'
@@ -50,7 +49,7 @@ import { TradeRoute } from './TradeRoute'
 
 export const TradeReviewDialogSameChain: FC<{ children: ReactNode }> = ({ children }) => {
   const { appType, review, token0, token1, recipient, network0, amount, value } = useSwapState()
-  const { setReview } = useSwapActions()
+  const { setReview, setValue } = useSwapActions()
   const { approved } = useApproved('swap')
   const [slippageTolerance] = useSlippageTolerance()
   const { data: trade, isFetching } = useTrade({ crossChain: false, enabled: review })
@@ -138,6 +137,8 @@ export const TradeReviewDialogSameChain: FC<{ children: ReactNode }> = ({ childr
     ...config,
     ...(config.request && { request: { ...config.request, gasLimit: config.request.gasLimit.mul(120).div(100) } }),
     onSuccess: async (data) => {
+      setValue('')
+
       data
         .wait()
         .then((receipt) => {
@@ -297,7 +298,7 @@ export const TradeReviewDialogSameChain: FC<{ children: ReactNode }> = ({ childr
       <DialogReview onOpenChange={setReview}>
         {({ confirm }) => (
           <>
-            <DialogTrigger asChild>{children}</DialogTrigger>
+            {children}
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>
@@ -432,18 +433,11 @@ export const TradeReviewDialogSameChain: FC<{ children: ReactNode }> = ({ childr
         testId="make-another-swap"
         buttonText="Make another swap"
         txHash={data?.hash}
-        successMessage={
-          <>
-            You {isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'}
-            <span className="text-red px-0.5">
-              {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
-            </span>{' '}
-            {isWrap ? 'to' : isUnwrap ? 'to' : 'for'}{' '}
-            <span className="text-blue px-0.5">
-              {trade?.amountOut?.toSignificant(6)} {token1?.symbol}.
-            </span>
-          </>
-        }
+        successMessage={`You ${isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'} ${trade?.amountIn?.toSignificant(
+          6
+        )} ${token0?.symbol} ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'} ${trade?.amountOut?.toSignificant(6)} ${
+          token1?.symbol
+        }`}
       />
     </DialogProvider>
   )
