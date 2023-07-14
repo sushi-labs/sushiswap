@@ -136,9 +136,10 @@ export class UniV3Extractor {
       this.logFilter.start()
       this.logProcessingStatus = LogsProcessing.Started
 
+      if (this.tokenManager.tokens.size == 0) await this.tokenManager.addCachedTokens()
+
       // Add cached pools to watching
       const cachedPools: Map<string, PoolInfo> = new Map() // map instead of array to avoid duplicates
-      await this.tokenManager.addCachedTokens()
       const cachedRecords = await this.poolPermanentCache.getAllRecords()
       cachedRecords.forEach((r) => {
         const token0 = this.tokenManager.getKnownToken(r.token0)
