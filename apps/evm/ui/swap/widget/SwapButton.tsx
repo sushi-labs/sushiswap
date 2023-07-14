@@ -13,12 +13,12 @@ import React, { FC, useEffect, useState } from 'react'
 
 import { useTrade } from '../../../lib/swap/useTrade'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
-import { useSwapActions, useSwapState } from '../trade/TradeProvider'
+import { useSwapState } from '../trade/TradeProvider'
+import { TradeReviewDialogSameChain } from '../trade/TradeReviewDialogSameChain'
 
 export const SwapButton: FC = () => {
   const { appType, amount, network0, network1, value, token0, token1 } = useSwapState()
   const { isFetching, isLoading, data: trade } = useTrade({ crossChain: network0 !== network1 })
-  const { setReview } = useSwapActions()
   const [checked, setChecked] = useState(false)
 
   const isWrap =
@@ -51,30 +51,31 @@ export const SwapButton: FC = () => {
                 }
               >
                 <Checker.Success tag="swap">
-                  <Button
-                    size="xl"
-                    disabled={
-                      !trade?.amountOut?.greaterThan(ZERO) ||
-                      trade?.route?.status === 'NoWay' ||
-                      Boolean(isLoading && +value > 0) ||
-                      isFetching ||
-                      (!checked && warningSeverity(trade?.priceImpact) > 3)
-                    }
-                    color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
-                    fullWidth
-                    onClick={() => setReview(true)}
-                    testId="swap"
-                  >
-                    {!checked && warningSeverity(trade?.priceImpact) >= 3
-                      ? 'Price impact too high'
-                      : trade?.route?.status === 'NoWay'
-                      ? 'No trade found'
-                      : isWrap
-                      ? 'Wrap'
-                      : isUnwrap
-                      ? 'Unwrap'
-                      : 'Swap'}
-                  </Button>
+                  <TradeReviewDialogSameChain>
+                    <Button
+                      size="xl"
+                      disabled={
+                        !trade?.amountOut?.greaterThan(ZERO) ||
+                        trade?.route?.status === 'NoWay' ||
+                        Boolean(isLoading && +value > 0) ||
+                        isFetching ||
+                        (!checked && warningSeverity(trade?.priceImpact) > 3)
+                      }
+                      color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
+                      fullWidth
+                      testId="swap"
+                    >
+                      {!checked && warningSeverity(trade?.priceImpact) >= 3
+                        ? 'Price impact too high'
+                        : trade?.route?.status === 'NoWay'
+                        ? 'No trade found'
+                        : isWrap
+                        ? 'Wrap'
+                        : isUnwrap
+                        ? 'Unwrap'
+                        : 'Swap'}
+                    </Button>
+                  </TradeReviewDialogSameChain>
                 </Checker.Success>
               </Checker.ApproveERC20>
             </Checker.Amounts>

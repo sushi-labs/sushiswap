@@ -1,204 +1,450 @@
 'use client'
 
-import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/24/outline'
+import { routeProcessor2Abi } from '@sushiswap/abi'
 import { Chain } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
-import { classNames } from '@sushiswap/ui'
-import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
-import { Badge } from '@sushiswap/ui/components/Badge'
+import {
+  isRouteProcessor3ChainId,
+  isRouteProcessorChainId,
+  routeProcessor3Address,
+  routeProcessorAddress,
+} from '@sushiswap/route-processor'
+import { Bridge, LiquidityProviders } from '@sushiswap/router'
+import {
+  classNames,
+  DialogConfirm,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogProvider,
+  DialogReview,
+  DialogTitle,
+} from '@sushiswap/ui'
+import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { Currency } from '@sushiswap/ui/components/currency'
-import { Dialog } from '@sushiswap/ui/components/dialog'
-import { Dots } from '@sushiswap/ui/components/dots'
 import { List } from '@sushiswap/ui/components/list/List'
-import { SkeletonBox, SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { SkeletonBox, SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { AppType } from '@sushiswap/ui/types'
-import React, { FC, useCallback, useState } from 'react'
+import {
+  useAccount,
+  useContractWrite,
+  useNetwork,
+  usePrepareContractWrite,
+  useWaitForTransaction,
+} from '@sushiswap/wagmi'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
+import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { log } from 'next-axiom'
+import React, { FC, ReactNode, useCallback } from 'react'
 
 import { useTrade } from '../../../lib/swap/useTrade'
 import { warningSeverity, warningSeverityClassName } from '../../../lib/swap/warningSeverity'
-import { ConfirmationDialog } from '../ConfirmationDialog'
 import { useSwapActions, useSwapState } from './TradeProvider'
 import { TradeRoute } from './TradeRoute'
 
-export const TradeReviewDialogSameChain: FC = () => {
-  const [open, setOpen] = useState(false)
+export const TradeReviewDialogSameChain: FC<{ children: ReactNode }> = ({ children }) => {
   const { appType, review, token0, token1, recipient, network0, amount, value } = useSwapState()
   const { setReview } = useSwapActions()
+  const { approved } = useApproved('swap')
   const [slippageTolerance] = useSlippageTolerance()
   const { data: trade, isFetching } = useTrade({ crossChain: false, enabled: review })
+  const { address } = useAccount()
+  const { chain } = useNetwork()
+  const refetchBalances = useBalanceWeb3Refetch()
 
-  const onClose = useCallback(() => setReview(false), [setReview])
   const isWrap =
     appType === AppType.Swap && token0?.isNative && token1?.wrapped.address === Native.onChain(network0).wrapped.address
   const isUnwrap =
     appType === AppType.Swap && token1?.isNative && token0?.wrapped.address === Native.onChain(network0).wrapped.address
   const isSwap = !isWrap && !isUnwrap
 
-  // Don't unmount this dialog since that will slow down the opening callback
+  const { config, isError, error } = usePrepareContractWrite({
+    chainId: network0,
+    address: isRouteProcessor3ChainId(network0)
+      ? routeProcessor3Address[network0]
+      : isRouteProcessorChainId(network0)
+      ? routeProcessorAddress[network0]
+      : undefined,
+    abi: routeProcessor2Abi,
+    functionName: trade?.functionName,
+    args: trade?.writeArgs,
+    enabled: Boolean(
+      trade?.writeArgs &&
+        appType === AppType.Swap &&
+        (isRouteProcessorChainId(network0) || isRouteProcessor3ChainId(network0)) &&
+        approved &&
+        trade?.route?.status !== 'NoWay' &&
+        chain?.id === network0
+    ),
+    overrides: trade?.overrides,
+    onError: (error) => {
+      const message = error.message.toLowerCase()
+      if (message.includes('user rejected') || message.includes('user cancelled')) {
+        return
+      }
+
+      log.error('Swap prepare error', {
+        route: trade?.route,
+        slippageTolerance,
+        error,
+      })
+    },
+  })
+
+  const onSettled = useCallback(
+    (data: SendTransactionResult | undefined) => {
+      if (!trade || !network0 || !data) return
+
+      const ts = new Date().getTime()
+      void createToast({
+        account: address,
+        type: 'swap',
+        chainId: network0,
+        txHash: data.hash,
+        promise: data.wait(),
+        summary: {
+          pending: `${isWrap ? 'Wrapping' : isUnwrap ? 'Unwrapping' : 'Swapping'} ${trade.amountIn?.toSignificant(6)} ${
+            trade.amountIn?.currency.symbol
+          } ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'} ${trade.amountOut?.toSignificant(6)} ${
+            trade.amountOut?.currency.symbol
+          }`,
+          completed: `${isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'} ${trade.amountIn?.toSignificant(6)} ${
+            trade.amountIn?.currency.symbol
+          } ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'} ${trade.amountOut?.toSignificant(6)} ${
+            trade.amountOut?.currency.symbol
+          }`,
+          failed: `Something went wrong when trying to ${isWrap ? 'wrap' : isUnwrap ? 'unwrap' : 'swap'} ${
+            trade.amountIn?.currency.symbol
+          } ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'} ${trade.amountOut?.currency.symbol}`,
+        },
+        timestamp: ts,
+        groupTimestamp: ts,
+      })
+    },
+    [trade, network0, address, isWrap, isUnwrap]
+  )
+
+  const {
+    writeAsync,
+    isLoading: isWritePending,
+    data,
+  } = useContractWrite({
+    ...config,
+    ...(config.request && { request: { ...config.request, gasLimit: config.request.gasLimit.mul(120).div(100) } }),
+    onSuccess: async (data) => {
+      data
+        .wait()
+        .then((receipt) => {
+          // log.info('swap receipt', {
+          //   receipt,
+          // })
+          if (receipt.status === 1) {
+            if (
+              trade?.route?.legs?.every(
+                (leg) =>
+                  leg.poolName.startsWith('Wrap') ||
+                  leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+                  leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+                  leg.poolName.startsWith(LiquidityProviders.Trident) ||
+                  leg.poolName.startsWith(Bridge.BentoBox)
+              )
+            ) {
+              log.info('internal route', {
+                chainId: network0,
+                txHash: data.hash,
+                exporerLink: Chain.txUrl(network0, data.hash),
+                route: trade?.route,
+              })
+            } else if (
+              trade?.route?.legs?.some(
+                (leg) =>
+                  !leg.poolName.startsWith('Wrap') &&
+                  (leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+                    leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+                    leg.poolName.startsWith(LiquidityProviders.Trident) ||
+                    leg.poolName.startsWith(Bridge.BentoBox))
+              ) &&
+              trade?.route?.legs?.some(
+                (leg) =>
+                  !leg.poolName.startsWith('Wrap') &&
+                  (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+                    !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+                    !leg.poolName.startsWith(LiquidityProviders.Trident) ||
+                    !leg.poolName.startsWith(Bridge.BentoBox))
+              )
+            ) {
+              log.info('mix route', {
+                chainId: network0,
+                txHash: data.hash,
+                exporerLink: Chain.txUrl(network0, data.hash),
+                route: trade?.route,
+              })
+            } else if (
+              trade?.route?.legs?.every(
+                (leg) =>
+                  leg.poolName.startsWith('Wrap') ||
+                  (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
+                    !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) &&
+                    !leg.poolName.startsWith(LiquidityProviders.Trident) &&
+                    !leg.poolName.startsWith(Bridge.BentoBox))
+              )
+            ) {
+              log.info('external route', {
+                chainId: network0,
+                txHash: data.hash,
+                exporerLink: Chain.txUrl(network0, data.hash),
+                route: trade?.route,
+              })
+            } else {
+              log.info('unknown', {
+                chainId: network0,
+                txHash: data.hash,
+                exporerLink: Chain.txUrl(network0, data.hash),
+                route: trade?.route,
+                args: trade?.writeArgs,
+              })
+            }
+          } else {
+            if (
+              trade?.route?.legs?.every(
+                (leg) =>
+                  leg.poolName.startsWith('Wrap') ||
+                  leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+                  leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+                  leg.poolName.startsWith(LiquidityProviders.Trident) ||
+                  leg.poolName.startsWith(Bridge.BentoBox)
+              )
+            ) {
+              log.error('internal route', {
+                chainId: network0,
+                txHash: data.hash,
+                route: trade?.route,
+              })
+            } else if (
+              trade?.route?.legs?.some(
+                (leg) =>
+                  !leg.poolName.startsWith('Wrap') &&
+                  (leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+                    leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+                    leg.poolName.startsWith(LiquidityProviders.Trident) ||
+                    leg.poolName.startsWith(Bridge.BentoBox))
+              ) &&
+              trade?.route?.legs?.some(
+                (leg) =>
+                  !leg.poolName.startsWith('Wrap') &&
+                  (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+                    !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+                    !leg.poolName.startsWith(LiquidityProviders.Trident) ||
+                    !leg.poolName.startsWith(Bridge.BentoBox))
+              )
+            ) {
+              log.error('mix route', {
+                chainId: network0,
+                txHash: data.hash,
+                route: trade?.route,
+              })
+            } else if (
+              trade?.route?.legs?.every(
+                (leg) =>
+                  leg.poolName.startsWith('Wrap') ||
+                  (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
+                    !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) &&
+                    !leg.poolName.startsWith(LiquidityProviders.Trident) &&
+                    !leg.poolName.startsWith(Bridge.BentoBox))
+              )
+            ) {
+              log.error('external route', {
+                chainId: network0,
+                txHash: data.hash,
+                route: trade?.route,
+              })
+            } else {
+              log.error('unknown', {
+                chainId: network0,
+                txHash: data.hash,
+                route: trade?.route,
+                args: trade?.writeArgs,
+              })
+            }
+          }
+        })
+        .finally(async () => {
+          await refetchBalances()
+        })
+    },
+    onSettled,
+    onError: (error) => {
+      if (error.message.startsWith('user rejected transaction')) return
+      log.error('Swap error', {
+        route: trade?.route,
+        args: trade?.writeArgs,
+        error,
+      })
+      createErrorToast(error.message, false)
+    },
+  })
+
+  const { status } = useWaitForTransaction({ chainId: network0, hash: data?.hash })
+
   return (
-    <Dialog open={review} unmount={false} onClose={onClose} variant="opaque">
-      <div className="max-w-[504px] mx-auto">
-        <button type="button" onClick={onClose} className="p-3 pl-0">
-          <ArrowLeftIcon strokeWidth={3} width={24} height={24} />
-        </button>
-        <div className="flex items-start justify-between gap-4 py-2">
-          <div className="flex flex-col flex-grow gap-1">
-            {isFetching ? (
-              <SkeletonText fontSize="3xl" className="w-2/3" />
-            ) : (
-              <h1 className="text-3xl font-semibold dark:text-slate-50">
-                Buy {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
-              </h1>
-            )}
-            <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">
-              {isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Sell'} {amount?.toSignificant(6)} {token0?.symbol}
-            </h1>
-          </div>
-          <div className="min-w-[56px] min-h-[56px]">
-            <div className="pr-1">
-              <Badge
-                position="bottom-right"
-                badgeContent={
-                  <div className="bg-gray-100 border-2 border-gray-100 rounded-full">
-                    <PlusIcon
-                      strokeWidth={2}
-                      width={24}
-                      height={24}
-                      className="bg-blue text-white rounded-full p-0.5"
-                    />
+    <DialogProvider>
+      <DialogReview onOpenChange={setReview}>
+        {({ confirm }) => (
+          <>
+            <DialogTrigger asChild>{children}</DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>
+                  Buy {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
+                </DialogTitle>
+                <DialogDescription>
+                  {isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Sell'} {amount?.toSignificant(6)} {token0?.symbol}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex flex-col gap-4">
+                {warningSeverity(trade?.priceImpact) >= 3 && (
+                  <div className="px-4 py-3 mt-4 rounded-xl bg-red/20">
+                    <span className="text-sm font-medium text-red-600">
+                      High price impact. You will lose a significant portion of your funds in this trade due to price
+                      impact.
+                    </span>
                   </div>
-                }
-              >
-                {token1 ? (
-                  <Currency.Icon currency={token1} width={56} height={56} />
-                ) : (
-                  <SkeletonCircle radius={56} className="bg-gray-100 dark:bg-slate-800" />
                 )}
-              </Badge>
-            </div>
-          </div>
-        </div>
-        {warningSeverity(trade?.priceImpact) >= 3 && (
-          <div className="px-4 py-3 mt-4 rounded-xl bg-red/20">
-            <span className="text-sm font-medium text-red-600">
-              High price impact. You will lose a significant portion of your funds in this trade due to price impact.
-            </span>
-          </div>
-        )}
-        <div className="flex flex-col gap-3">
-          <List>
-            <List.Control>
-              <List.KeyValue title="Network">{Chain.from(network0).name}</List.KeyValue>
-              {isSwap && (
-                <List.KeyValue
-                  title="Price impact"
-                  subtitle="The impact your trade has on the market price of this pool."
-                >
-                  <span
-                    className={classNames(
-                      warningSeverityClassName(warningSeverity(trade?.priceImpact)),
-                      'text-gray-700 text-right dark:text-slate-400 text-yellow text-yellow-700 text-green'
+                <List className="!pt-0">
+                  <List.Control>
+                    <List.KeyValue title="Network">{Chain.from(network0).name}</List.KeyValue>
+                    {isSwap && (
+                      <List.KeyValue
+                        title="Price impact"
+                        subtitle="The impact your trade has on the market price of this pool."
+                      >
+                        <span
+                          className={classNames(
+                            warningSeverityClassName(warningSeverity(trade?.priceImpact)),
+                            'text-right'
+                          )}
+                        >
+                          {isFetching ? (
+                            <SkeletonBox className="h-4 py-0.5 w-[60px] rounded-md" />
+                          ) : (
+                            `${
+                              trade?.priceImpact?.lessThan(ZERO)
+                                ? '+'
+                                : trade?.priceImpact?.greaterThan(ZERO)
+                                ? '-'
+                                : ''
+                            }${Math.abs(Number(trade?.priceImpact?.toFixed(2)))}%` ?? '-'
+                          )}
+                        </span>
+                      </List.KeyValue>
                     )}
-                  >
-                    {isFetching ? (
-                      <SkeletonBox className="h-4 py-0.5 w-[60px] rounded-md" />
-                    ) : (
-                      `${
-                        trade?.priceImpact?.lessThan(ZERO) ? '+' : trade?.priceImpact?.greaterThan(ZERO) ? '-' : ''
-                      }${Math.abs(Number(trade?.priceImpact?.toFixed(2)))}%` ?? '-'
+                    {isSwap && (
+                      <List.KeyValue
+                        title={`Min. received after slippage (${
+                          slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance
+                        }%)`}
+                        subtitle="The minimum amount you are guaranteed to receive."
+                      >
+                        {isFetching ? (
+                          <SkeletonText align="right" fontSize="sm" className="w-1/2" />
+                        ) : (
+                          `${trade?.minAmountOut?.toSignificant(6)} ${token1?.symbol}`
+                        )}
+                      </List.KeyValue>
                     )}
-                  </span>
-                </List.KeyValue>
-              )}
-              {isSwap && (
-                <List.KeyValue
-                  title={`Min. received after slippage (${slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance}%)`}
-                  subtitle="The minimum amount you are guaranteed to receive."
-                >
-                  {isFetching ? (
-                    <SkeletonText align="right" fontSize="sm" className="w-1/2" />
-                  ) : (
-                    `${trade?.minAmountOut?.toSignificant(6)} ${token1?.symbol}`
-                  )}
-                </List.KeyValue>
-              )}
-              <List.KeyValue title="Network fee">
-                {isFetching ? (
-                  <SkeletonText align="right" fontSize="sm" className="w-1/3" />
-                ) : (
-                  `~$${trade?.gasSpent ?? '0.00'}`
+                    <List.KeyValue title="Network fee">
+                      {isFetching ? (
+                        <SkeletonText align="right" fontSize="sm" className="w-1/3" />
+                      ) : (
+                        `~$${trade?.gasSpent ?? '0.00'}`
+                      )}
+                    </List.KeyValue>
+                    {isSwap && (
+                      <List.KeyValue title="Route">
+                        {isFetching ? (
+                          <SkeletonText align="right" fontSize="sm" className="w-1/3" />
+                        ) : (
+                          <TradeRoute trade={trade}>
+                            <Button size="sm" variant="link">
+                              Show route
+                            </Button>
+                          </TradeRoute>
+                        )}
+                      </List.KeyValue>
+                    )}
+                  </List.Control>
+                </List>
+                {recipient && (
+                  <List className="!pt-0">
+                    <List.Control>
+                      <List.KeyValue title="Recipient">
+                        <Button variant="link" size="sm" asChild>
+                          <a
+                            target="_blank"
+                            href={Chain.fromChainId(network0)?.getAccountUrl(recipient) ?? '#'}
+                            rel="noreferrer"
+                          >
+                            {shortenAddress(recipient)}
+                          </a>
+                        </Button>
+                      </List.KeyValue>
+                    </List.Control>
+                  </List>
                 )}
-              </List.KeyValue>
-              {isSwap && (
-                <List.KeyValue title="Route">
-                  {isFetching ? (
-                    <SkeletonText align="right" fontSize="sm" className="w-1/3" />
-                  ) : (
-                    <button type="button" onClick={() => setOpen(true)} className="text-sm font-semibold text-blue">
-                      View
-                    </button>
-                  )}
-                  <TradeRoute trade={trade} open={open} setOpen={setOpen} />
-                </List.KeyValue>
-              )}
-            </List.Control>
-          </List>
-          {recipient && (
-            <List className="!pt-2">
-              <List.Control>
-                <List.KeyValue title="Recipient">
-                  <a
-                    target="_blank"
-                    href={Chain.fromChainId(network0)?.getAccountUrl(recipient) ?? '#'}
-                    className="flex items-center gap-2 cursor-pointer text-blue"
-                    rel="noreferrer"
-                  >
-                    {shortenAddress(recipient)}
-                  </a>
-                </List.KeyValue>
-              </List.Control>
-            </List>
-          )}
-        </div>
-        <div className="pt-4">
-          <ConfirmationDialog>
-            {({ onClick, isWritePending, isLoading, isError, error, isConfirming }) => (
-              <div className="space-y-4">
-                <Button
-                  fullWidth
-                  size="xl"
-                  loading={isLoading && !isError}
-                  onClick={onClick}
-                  disabled={isWritePending || Boolean(isLoading && +value > 0) || isError}
-                  color={isError ? 'red' : warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
-                  testId="confirm-swap"
-                >
-                  {isError ? (
-                    'Shoot! Something went wrong :('
-                  ) : isConfirming ? (
-                    <Dots>Confirming transaction</Dots>
-                  ) : isWritePending ? (
-                    <Dots>Confirm Swap</Dots>
-                  ) : isWrap ? (
-                    'Wrap'
-                  ) : isUnwrap ? (
-                    'Unwrap'
-                  ) : (
-                    `Swap ${token0?.symbol} for ${token1?.symbol}`
-                  )}
-                </Button>
-                <Collapsible open={Boolean(error)}>
-                  <div className="scroll bg-red/10 text-red-700 p-2 px-3 rounded-lg break-all">{error?.message}</div>
-                </Collapsible>
               </div>
-            )}
-          </ConfirmationDialog>
-        </div>
-      </div>
-    </Dialog>
+              <DialogFooter>
+                <div className="flex flex-col gap-4 w-full">
+                  <Button
+                    fullWidth
+                    size="xl"
+                    loading={!writeAsync && !isError}
+                    onClick={() => writeAsync?.().then(() => confirm())}
+                    disabled={isWritePending || Boolean(!writeAsync && +value > 0) || isError}
+                    color={isError ? 'red' : warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
+                    testId="confirm-swap"
+                  >
+                    {isError
+                      ? 'Shoot! Something went wrong :('
+                      : isWrap
+                      ? 'Wrap'
+                      : isUnwrap
+                      ? 'Unwrap'
+                      : `Swap ${token0?.symbol} for ${token1?.symbol}`}
+                  </Button>
+                  {error ? (
+                    <div className="scroll bg-red/10 text-red-700 p-2 px-3 rounded-lg break-all">{error?.message}</div>
+                  ) : null}
+                </div>
+              </DialogFooter>
+            </DialogContent>
+          </>
+        )}
+      </DialogReview>
+      <DialogConfirm
+        chainId={network0}
+        status={status}
+        testId="make-another-swap"
+        buttonText="Make another swap"
+        txHash={data?.hash}
+        successMessage={
+          <>
+            You {isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'}
+            <span className="text-red px-0.5">
+              {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
+            </span>{' '}
+            {isWrap ? 'to' : isUnwrap ? 'to' : 'for'}{' '}
+            <span className="text-blue px-0.5">
+              {trade?.amountOut?.toSignificant(6)} {token1?.symbol}.
+            </span>
+          </>
+        }
+      />
+    </DialogProvider>
   )
 }

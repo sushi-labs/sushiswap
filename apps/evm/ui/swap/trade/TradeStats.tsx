@@ -6,12 +6,13 @@ import { shortenAddress } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
 import { UseTradeReturn } from '@sushiswap/react-query'
 import { AppType, classNames } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui'
 import { Explainer } from '@sushiswap/ui/components/explainer'
 import { SkeletonBox, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { useAccount } from '@sushiswap/wagmi'
 import { AddressToEnsResolver } from '@sushiswap/wagmi/future/components/Account/AddressToEnsResolver'
 import { isAddress } from 'ethers/lib/utils'
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 
 import { useTrade } from '../../../lib/swap/useTrade'
 import { warningSeverity, warningSeverityClassName } from '../../../lib/swap/warningSeverity'
@@ -20,7 +21,6 @@ import { TradeRoute } from './TradeRoute'
 
 export const TradeStats: FC = () => {
   const { address } = useAccount()
-  const [open, setOpen] = useState(false)
   const { value, network0, network1, appType, recipient } = useSwapState()
   const { isLoading, isFetching, data: trade } = useTrade({ crossChain: network0 !== network1 })
   const loading = Boolean(isLoading && +value > 0) || isFetching
@@ -96,11 +96,12 @@ export const TradeStats: FC = () => {
               {loading ? (
                 <SkeletonText fontSize="sm" className="w-[120px]" />
               ) : (
-                <button onClick={() => setOpen(true)} className="text-sm text-blue font-semibold">
-                  View
-                </button>
+                <TradeRoute trade={trade as UseTradeReturn | undefined}>
+                  <Button size="sm" variant="link">
+                    Show route
+                  </Button>
+                </TradeRoute>
               )}
-              <TradeRoute trade={trade as UseTradeReturn | undefined} open={open} setOpen={setOpen} />
             </span>
           </div>
         )}

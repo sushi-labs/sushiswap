@@ -6,7 +6,6 @@ import { Checker } from '@sushiswap/wagmi/future/systems'
 import React from 'react'
 
 import { TokenNotFoundDialog } from '../../ui/swap/TokenNotFoundDialog'
-import { TradeReviewDialog } from '../../ui/swap/trade/TradeReviewDialog'
 import { TradeStats } from '../../ui/swap/trade/TradeStats'
 import { Widget } from '../../ui/swap/widget/Widget'
 
@@ -22,7 +21,6 @@ export default async function SwapPage() {
         <Checker.Root>
           <Widget />
           <TradeStats />
-          <TradeReviewDialog />
           <TokenNotFoundDialog />
         </Checker.Root>
       </Drawer.Root>
