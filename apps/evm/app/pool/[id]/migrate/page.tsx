@@ -132,11 +132,9 @@ export default function Page({ params }: { params: { id: string } }) {
             }}
             modules={[SettingsModule.CustomTokens, SettingsModule.SlippageTolerance]}
           >
-            {({ setOpen }) => (
-              <Button variant="secondary" onClick={() => setOpen(true)}>
-                <CogIcon width={24} height={24} />
-              </Button>
-            )}
+            <Button variant="secondary">
+              <CogIcon width={24} height={24} />
+            </Button>
           </SettingsOverlay>
         </div>
       </div>

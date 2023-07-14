@@ -119,11 +119,7 @@ const Pool: FC<{ id: string }> = ({ id }) => {
   return (
     <Layout>
       <div className="flex flex-col gap-2">
-        <Link
-          className="flex items-center gap-4 mb-2 group"
-          href={'/pool'}
-          shallow={true}
-        >
+        <Link className="flex items-center gap-4 mb-2 group" href={'/pool'} shallow={true}>
           <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
           <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
             Go back to pools list
@@ -175,11 +171,9 @@ const Pool: FC<{ id: string }> = ({ id }) => {
               }}
               modules={[SettingsModule.SlippageTolerance]}
             >
-              {({ setOpen }) => (
-                <Button variant="secondary" onClick={() => setOpen(true)}>
-                  <CogIcon width={24} height={24} />
-                </Button>
-              )}
+              <Button variant="secondary">
+                <CogIcon width={24} height={24} />
+              </Button>
             </SettingsOverlay>
           </div>
         </RadioGroup>

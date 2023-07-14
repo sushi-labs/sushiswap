@@ -221,11 +221,9 @@ const Position: FC<{ params: { id: string } }> = ({ params }) => {
               }}
               modules={[SettingsModule.SlippageTolerance]}
             >
-              {({ setOpen }) => (
-                <Button variant="secondary" onClick={() => setOpen(true)}>
-                  <CogIcon width={24} height={24} />
-                </Button>
-              )}
+              <Button variant="secondary">
+                <CogIcon width={24} height={24} />
+              </Button>
             </SettingsOverlay>
           </div>
         </RadioGroup>

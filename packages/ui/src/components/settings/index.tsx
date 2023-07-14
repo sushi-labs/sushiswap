@@ -1,11 +1,11 @@
 'use client'
 
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useState } from 'react'
+import React, { FC, ReactNode } from 'react'
 
-import { Dialog } from '../dialog'
+import { DialogContent, DialogDescription, DialogHeader, DialogNew, DialogTitle, DialogTrigger } from '../dialognew'
 import { IconButton } from '../iconbutton'
-import { List } from '../list/List'
+import { List } from '../list'
 import { CarbonOffset } from './CarbonOffset'
 import { ExpertMode } from './ExpertMode'
 import { RoutingApi } from './RoutingApi'
@@ -20,7 +20,7 @@ export enum SettingsModule {
 }
 
 interface SettingsOverlayProps {
-  children?({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }): ReactNode
+  children?: ReactNode
   modules: SettingsModule[]
   options?: {
     slippageTolerance?: {
@@ -32,18 +32,17 @@ interface SettingsOverlayProps {
 }
 
 export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules, children, options }) => {
-  const [open, setOpen] = useState(false)
-
   return (
-    <>
-      {children ? (
-        children({ setOpen })
-      ) : (
-        <IconButton size="sm" name="Settings" icon={Cog6ToothIcon} onClick={() => setOpen(true)} />
-      )}
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="flex flex-col gap-3">
-          <Dialog.Header title="Settings" onClose={() => setOpen(false)} />
+    <DialogNew>
+      <DialogTrigger asChild>
+        {children ? children : <IconButton size="sm" name="Settings" icon={Cog6ToothIcon} />}
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Settings</DialogTitle>
+          <DialogDescription>Adjust to your personal preferences.</DialogDescription>
+        </DialogHeader>
+        <div className="flex flex-col gap-4">
           {modules.includes(SettingsModule.SlippageTolerance) && (
             <List className="!pt-0">
               <List.Control>
@@ -66,8 +65,8 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules, children, o
               </List.Control>
             </List>
           )}
-        </Dialog.Content>
-      </Dialog>
-    </>
+        </div>
+      </DialogContent>
+    </DialogNew>
   )
 }

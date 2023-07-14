@@ -2,9 +2,10 @@ import { MinusIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/react-v1/s
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
+import { TextField } from '@sushiswap/ui'
+import { Label } from '@sushiswap/ui'
 import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
 import { Button } from '@sushiswap/ui/components/button'
-import { Input } from '@sushiswap/ui/components/input'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { Toggle } from '@sushiswap/ui/components/toggle'
 import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
@@ -103,15 +104,13 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
           <div className="flex flex-col gap-3">
             {noLiquidity && (
               <div className="relative flex items-center w-full gap-3 pb-2">
-                <div className="flex flex-col">
-                  <Input.Text
-                    hideCloseButton={true}
-                    className="!bg-gray-100 dark:!bg-slate-800 !w-full pr-[120px]"
-                    label="Start price"
+                <div className="flex flex-col gap-2">
+                  <Label>Start price</Label>
+                  <TextField
                     value={startPriceTypedValue}
-                    onChange={onStartPriceInput}
-                    id="start-price-input"
+                    onValueChange={onStartPriceInput}
                     testdata-id="start-price-input"
+                    type="number"
                   />
                   <span className="mt-1.5 inline-block px-4 text-xs text-gray-500 dark:text-slate-400">
                     Your pool needs a starting price somewhere between the min. and max. price
@@ -292,18 +291,15 @@ export const PriceBlock: FC<PriceBlockProps> = ({
       <p className="text-sm font-medium text-gray-600 dark:text-slate-400">{label}</p>
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <Input.Numeric
-            id={`${id}-input`}
-            label="price"
-            variant="unstyled"
+          <TextField
+            variant="naked"
             testdata-id={`${id}-input`}
+            type="number"
             value={localValue}
-            onUserInput={setLocalValue}
+            onValueChange={setLocalValue}
             disabled={locked}
-            className={classNames(
-              'font-medium text-base without-ring !text-3xl !px-0 !pt-1 !pb-2 shadow-none bg-transparent w-full'
-            )}
             tabIndex={0}
+            className="text-3xl font-medium pt-1 pb-2"
           />
           {isMounted && (
             <p className="text-sm font-medium text-gray-500 dark:text-slate-500">

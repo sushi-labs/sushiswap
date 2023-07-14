@@ -1,6 +1,5 @@
 import { AppType } from '@sushiswap/ui'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/components/settings'
-import { WidgetContent } from '@sushiswap/ui/components/widget'
 import React, { FC } from 'react'
 
 import { useSwapState } from '../trade/TradeProvider'
@@ -22,13 +21,11 @@ export const Widget: FC = () => {
         <SwitchAppType />
         <SettingsOverlay modules={[SettingsModule.SlippageTolerance, SettingsModule.CarbonOffset]} />
       </div>
-      <WidgetContent>
-        <CrossChainBanner />
-        <SwapCurrencyInput />
-        <SwitchTokensButton />
-        <SwapCurrencyOutput />
-        {appType === AppType.Swap ? <SwapButton /> : <SwapButtonCrossChain />}
-      </WidgetContent>
+      <CrossChainBanner />
+      <SwapCurrencyInput />
+      <SwitchTokensButton />
+      <SwapCurrencyOutput />
+      {appType === AppType.Swap ? <SwapButton /> : <SwapButtonCrossChain />}
     </div>
   )
 }

@@ -130,7 +130,7 @@ const Component = <T extends InputType>(
         {...props}
       />
       {unit ? (
-        <div className={textFieldVariants({ className: 'text-muted-foreground rounded-l-none !w-[unset]' })}>
+        <div className={textFieldVariants({ variant, className: 'text-muted-foreground rounded-l-none !w-[unset]' })}>
           {unit}
         </div>
       ) : null}

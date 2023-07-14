@@ -337,12 +337,8 @@ async function removeLiquidityV3(page: Page) {
 
 async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
   await switchNetwork(page, CHAIN_ID)
-  // check if the max button is visible, otherwise expand the section. For some reason the default state seem to be inconsistent, closed/open.
-  // TODO: fix this in the UI, the default state should be consistent
   const maxButtonSelector = page.locator(`[testdata-id=${type.toLowerCase()}-max-button]`)
-  while (!(await maxButtonSelector.isVisible())) {
-    await page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-header-button]`).click()
-  }
+
   await expect(maxButtonSelector).toBeVisible()
   await expect(maxButtonSelector).toBeEnabled()
   await maxButtonSelector.click()
