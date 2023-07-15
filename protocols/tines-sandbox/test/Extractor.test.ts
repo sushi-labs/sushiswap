@@ -75,7 +75,8 @@ async function startInfinitTest(args: {
   const nativeProvider = new NativeWrapProvider(chainId, client)
   const tokenManager = new TokenManager(
     extractor.extractorV2?.multiCallAggregator as MultiCallAggregator,
-    `./cache/uniV3Tokens-${client.chain?.id}`
+    __dirname,
+    `tokens-${client.chain?.id}`
   )
   await tokenManager.addCachedTokens()
   const tokens = Array.from(tokenManager.tokens.values()).concat(BASES_TO_CHECK_TRADES_AGAINST[chainId]).slice(0, 100)
@@ -85,7 +86,7 @@ async function startInfinitTest(args: {
       const time0 = performance.now()
       const pools0 = extractor.getPoolCodesForTokens(BASES_TO_CHECK_TRADES_AGAINST[chainId].concat([tokens[i]]))
       const time1 = performance.now()
-      const pools1 = await extractor.getPoolCodesForTokensAsync(
+      const pools1 = await extractor.getPoolCodesForTokensAsync2(
         BASES_TO_CHECK_TRADES_AGAINST[chainId].concat([tokens[i]]),
         2000
       )
@@ -98,7 +99,7 @@ async function startInfinitTest(args: {
         `sync: (${pools0_2}, ${pools0_3}) pools ${Math.round(time1 - time0)}ms` +
         `, async: (${pools1_2}, ${pools1_3}) pools ${Math.round(time2 - time1)}ms`
 
-      const pools = pools0.concat(pools1)
+      const pools = pools1
       const poolMap = new Map<string, PoolCode>()
       pools.forEach((p) => poolMap.set(p.pool.address, p))
       nativeProvider.getCurrentPoolList().forEach((p) => poolMap.set(p.pool.address, p))
