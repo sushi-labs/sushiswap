@@ -280,6 +280,7 @@ export class UniV3Extractor {
     const fees = Object.values(FeeAmount).filter((fee) => typeof fee == 'number') as FeeAmount[]
     const startTime = performance.now()
     for (let i = 0; i < tokens.length; ++i) {
+      this.tokenManager.findToken(tokens[i].address as Address) // to let save it in the cache
       for (let j = i + 1; j < tokens.length; ++j) {
         if (tokens[i].address == tokens[j].address) continue
         const [t0, t1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i], tokens[j]] : [tokens[j], tokens[i]]

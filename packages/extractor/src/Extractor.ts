@@ -55,11 +55,11 @@ export class Extractor {
   }
 
   getPoolCodesForTokens(tokens: Token[]): PoolCode[] {
-    const pools2 = this.extractorV2 ? this.extractorV2.getPoolsForTokens(tokens).prefetchedPools : []
+    const pools2 = this.extractorV2 ? this.extractorV2.getPoolsForTokens2(tokens).prefetched : []
     const pools3 = this.extractorV3
       ? (this.extractorV3
-          .getWatchersForTokens(tokens)
-          .prefetchedPools.map((w) => w.getPoolCode())
+          .getWatchersForTokens2(tokens)
+          .prefetched.map((w) => w.getPoolCode())
           .filter((pc) => pc !== undefined) as PoolCode[])
       : []
     return pools2.concat(pools3)
