@@ -71,6 +71,12 @@ export const UniV3EventsAbi = [
   ),
 ]
 
+export enum UniV3PoolWatcherStatus {
+  Nothing,
+  Something,
+  All,
+}
+
 // TODO: more ticks and priority depending on resources
 // TODO: gather statistics how often (blockNumber < this.latestEventBlockNumber)
 export class UniV3PoolWatcher extends EventEmitter {
@@ -277,5 +283,23 @@ export class UniV3PoolWatcher extends EventEmitter {
 
   isStable(): boolean {
     return this.state !== undefined && !this.wordLoadManager.downloadCycleIsStared
+  }
+
+  getStatus(): UniV3PoolWatcherStatus {
+    if (this.state === undefined) return UniV3PoolWatcherStatus.Nothing
+    if (!this.wordLoadManager.downloadCycleIsStared) return UniV3PoolWatcherStatus.All
+    if (this.wordLoadManager.hasSomeTicksAround(this.state.tick)) return UniV3PoolWatcherStatus.Something
+    return UniV3PoolWatcherStatus.Nothing
+  }
+
+  statusPromise?: Promise<void>
+  async statusAll(): Promise<void> {
+    if (this.state !== undefined && !this.wordLoadManager.downloadCycleIsStared) return Promise.resolve()
+    if (this.statusPromise !== undefined) return this.statusPromise
+    this.statusPromise = new Promise((resolve) => {
+      this.wordLoadManager.once('isUpdated', () => resolve())
+    })
+    await this.statusPromise
+    this.statusPromise = undefined
   }
 }

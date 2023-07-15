@@ -179,40 +179,42 @@ export class UniV3Extractor {
       throw new Error('Pools can be added only after Log processing have been started')
     }
     const addrL = p.address.toLowerCase() as Address
-    if (!this.poolMap.has(addrL) && !this.otherFactoryPoolSet.has(addrL)) {
-      startTime = startTime || performance.now()
-      const expectedPoolAddress = this.computeV3Address(p.factory, p.token0, p.token1, p.fee)
-      if (addrL !== expectedPoolAddress.toLowerCase()) {
-        this.consoleLog(`FakePool: ${p.address}`)
-        this.otherFactoryPoolSet.add(addrL)
-        return
-      }
-      const watcher = new UniV3PoolWatcher(
-        p.factory.provider,
-        p.address,
-        this.tickHelperContract,
-        p.token0,
-        p.token1,
-        p.fee,
-        this.multiCallAggregator,
-        this.taskCounter
-      )
-      watcher.updatePoolState()
-      this.poolMap.set(p.address.toLowerCase() as Address, watcher) // lowercase because incoming events have lowcase addresses ((
-      if (addToCache)
-        this.poolPermanentCache.add({
-          address: p.address,
-          token0: p.token0.address as Address,
-          token1: p.token1.address as Address,
-          fee: p.fee,
-          factory: p.factory.address,
-        })
-      watcher.once('isUpdated', () => {
-        const delay = Math.round(performance.now() - startTime)
-        this.consoleLog(`add pool ${p.address} (${delay}ms, ${source}), watched pools total: ${++this.watchedPools}`)
-      })
-      return watcher
+    const watcherExisted = this.poolMap.get(addrL)
+    if (watcherExisted) return watcherExisted
+    if (this.otherFactoryPoolSet.has(addrL)) return
+
+    startTime = startTime || performance.now()
+    const expectedPoolAddress = this.computeV3Address(p.factory, p.token0, p.token1, p.fee)
+    if (addrL !== expectedPoolAddress.toLowerCase()) {
+      this.consoleLog(`FakePool: ${p.address}`)
+      this.otherFactoryPoolSet.add(addrL)
+      return
     }
+    const watcher = new UniV3PoolWatcher(
+      p.factory.provider,
+      p.address,
+      this.tickHelperContract,
+      p.token0,
+      p.token1,
+      p.fee,
+      this.multiCallAggregator,
+      this.taskCounter
+    )
+    watcher.updatePoolState()
+    this.poolMap.set(p.address.toLowerCase() as Address, watcher) // lowercase because incoming events have lowcase addresses ((
+    if (addToCache)
+      this.poolPermanentCache.add({
+        address: p.address,
+        token0: p.token0.address as Address,
+        token1: p.token1.address as Address,
+        fee: p.fee,
+        factory: p.factory.address,
+      })
+    watcher.once('isUpdated', () => {
+      const delay = Math.round(performance.now() - startTime)
+      this.consoleLog(`add pool ${p.address} (${delay}ms, ${source}), watched pools total: ${++this.watchedPools}`)
+    })
+    return watcher
   }
 
   getWatchersForTokens(tokens: Token[]): {
@@ -266,6 +268,57 @@ export class UniV3Extractor {
         waitPools.length > 0
           ? Promise.all(waitPools).then((pools) => pools.filter((p) => p !== undefined) as UniV3PoolWatcher[])
           : undefined,
+    }
+  }
+
+  getWatchersForTokens2(tokens: Token[]): {
+    prefetched: UniV3PoolWatcher[]
+    fetching: Promise<UniV3PoolWatcher | undefined>[]
+  } {
+    const prefetched: UniV3PoolWatcher[] = []
+    const fetching: Promise<UniV3PoolWatcher | undefined>[] = []
+    const fees = Object.values(FeeAmount).filter((fee) => typeof fee == 'number') as FeeAmount[]
+    const startTime = performance.now()
+    for (let i = 0; i < tokens.length; ++i) {
+      for (let j = i + 1; j < tokens.length; ++j) {
+        if (tokens[i].address == tokens[j].address) continue
+        const [t0, t1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i], tokens[j]] : [tokens[j], tokens[i]]
+        this.factories.forEach((factory) => {
+          fees.forEach((fee) => {
+            const addr = this.computeV3Address(factory, t0, t1, fee)
+            const addrL = addr.toLowerCase() as Address
+            const pool = this.poolMap.get(addrL)
+            if (pool) {
+              prefetched.push(pool)
+              return
+            }
+            if (this.emptyAddressSet.has(addr)) return
+            const promise = this.multiCallAggregator
+              .callValue(factory.address, IUniswapV3Factory.abi as Abi, 'getPool', [t0.address, t1.address, fee])
+              .then(
+                (checkedAddress) => {
+                  if (checkedAddress == '0x0000000000000000000000000000000000000000') {
+                    this.emptyAddressSet.add(addr)
+                    return
+                  }
+                  const watcher = this.addPoolWatching(
+                    { address: addr, token0: t0, token1: t1, fee, factory },
+                    'request',
+                    true,
+                    startTime
+                  )
+                  return watcher
+                },
+                () => undefined
+              )
+            fetching.push(promise)
+          })
+        })
+      }
+    }
+    return {
+      prefetched,
+      fetching,
     }
   }
 

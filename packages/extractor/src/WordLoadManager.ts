@@ -148,6 +148,10 @@ export class WordLoadManager extends EventEmitter {
     return ticks
   }
 
+  hasSomeTicksAround(tick: number): boolean {
+    return this.words.has(this.wordIndex(tick))
+  }
+
   addTick(eventBlockNumber: bigint, tick: number, amount: bigint) {
     this.latestEventBlockNumber = Math.max(this.latestEventBlockNumber, Number(eventBlockNumber))
 

@@ -60,8 +60,16 @@ const UniV2FactoryAbi = [
 ]
 
 // TODO: UniV3Ext price max-min change (+-10%)
-// TODO: UniV3Ext watcher-something-all - ???
+// TODO: switch to getForTokens2 (check it is better!)
+// TODO: add instructions to extructor (from ext3)
+// TODO: Ext: GetAllPools
+// TODO: Ext: fullness test
+// TODO: Ext: correctness test
+// TODO: Ext: stress test
+// TODO: Ext: All blockchain test
+// TODO: Avoid tokens duplicating
 // TODO: Back to LogFilter ?
+// TODO: The list of the best tokens
 export class UniV2Extractor {
   readonly multiCallAggregator: MultiCallAggregator
   readonly tokenManager: TokenManager
@@ -283,6 +291,62 @@ export class UniV2Extractor {
     }
   }
 
+  getPoolsForTokens2(tokens: Token[]): {
+    prefetched: ConstantProductPoolCode[]
+    fetching: Promise<ConstantProductPoolCode | undefined>[]
+  } {
+    const prefetched: ConstantProductPoolCode[] = []
+    const fetching: Promise<ConstantProductPoolCode | undefined>[] = []
+    for (let i = 0; i < tokens.length; ++i) {
+      for (let j = i + 1; j < tokens.length; ++j) {
+        if (tokens[i].address == tokens[j].address) continue
+        const [t0, t1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i], tokens[j]] : [tokens[j], tokens[i]]
+        this.factories.forEach((factory) => {
+          const addr = this.computeV2Address(factory, t0, t1)
+          const addrL = addr.toLowerCase()
+          const poolState = this.poolMap.get(addrL)
+          if (poolState) {
+            if (poolState.status == PoolStatus.ValidPool || poolState.status == PoolStatus.UpdatingPool)
+              prefetched.push(poolState.poolCode)
+            return
+          }
+          const startTime = performance.now()
+          const promise = this.multiCallAggregator.callValue(addr, getReservesAbi, 'getReserves').then(
+            (reserves) => {
+              const poolState2 = this.poolMap.get(addrL)
+              if (poolState2) {
+                // pool was created
+                if (poolState2.status == PoolStatus.ValidPool || poolState2.status == PoolStatus.UpdatingPool)
+                  return poolState2.poolCode
+              }
+              const [reserve0, reserve1] = reserves as [bigint, bigint]
+              return this.addPoolWatching({
+                address: addr,
+                token0: t0,
+                token1: t1,
+                reserve0,
+                reserve1,
+                factory,
+                source: 'request',
+                addToCache: true,
+                startTime,
+              })
+            },
+            () => {
+              this.poolMap.set(addrL, { status: PoolStatus.NoPool })
+              return undefined
+            }
+          )
+          fetching.push(promise)
+        })
+      }
+    }
+    return {
+      prefetched,
+      fetching,
+    }
+  }
+
   async addPoolsFromFactory(factoryAddr: Address, step = 1000, from = 0, quantity = -1) {
     const factory = this.factoryMap.get(factoryAddr.toLowerCase() as Address)
     if (!factory) return
@@ -428,7 +492,9 @@ export class UniV2Extractor {
         factory: args.factory.address,
       })
     const delay = Math.round(performance.now() - startTime)
-    this.consoleLog(`add pool ${args.address} (${delay}ms, logs), watched pools total: ${++this.watchedPools}`)
+    this.consoleLog(
+      `add pool ${args.address} (${delay}ms, ${args.source}), watched pools total: ${++this.watchedPools}`
+    )
     return poolState.poolCode
   }
 
