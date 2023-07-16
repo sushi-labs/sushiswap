@@ -6,7 +6,6 @@ import { getBuiltGraphSDK } from '../.graphclient/index.js'
 import { upsertVaults } from './etl/steer/load.js'
 
 export async function steer() {
-  // const client = new PrismaClient()
   try {
     const startTime = performance.now()
     const chainsWithVaults = await extract()
@@ -19,9 +18,6 @@ export async function steer() {
     console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
   } catch (e) {
     console.error(e)
-    // await client.$disconnect()
-  } finally {
-    // await client.$disconnect()
   }
 }
 
@@ -95,8 +91,8 @@ function transform(chainsWithVaults: Awaited<ReturnType<typeof extract>>): Prism
       if (!strategyType) return []
 
       return {
-        id: `${chainId}:${vault.id}`,
-        poolId: `${chainId}:${vault.pool}`,
+        id: `${chainId}:${vault.id}`.toLowerCase(),
+        poolId: `${chainId}:${vault.pool}`.toLowerCase(),
         feeTier: Number(vault.feeTier) / 1000000,
 
         apr: Number(vault.annualFeeARR),
@@ -104,11 +100,11 @@ function transform(chainsWithVaults: Awaited<ReturnType<typeof extract>>): Prism
         apr1m: Number(vault.annualPercentageMonthlyYield),
         apr1y: Number(vault.annualPercentageYearlyYield),
 
-        token0Id: vault.token0,
+        token0Id: `${chainId}:${vault.token0}`.toLowerCase(),
         reserve0: vault.reserve0 as string,
         fees0: vault.fees0 as string,
 
-        token1Id: vault.token1,
+        token1Id: `${chainId}:${vault.token1}`.toLowerCase(),
         reserve1: vault.reserve1 as string,
         fees1: vault.fees1 as string,
 
