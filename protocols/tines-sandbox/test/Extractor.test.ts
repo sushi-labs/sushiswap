@@ -86,7 +86,7 @@ async function startInfinitTest(args: {
       const time0 = performance.now()
       const pools0 = extractor.getPoolCodesForTokens(BASES_TO_CHECK_TRADES_AGAINST[chainId].concat([tokens[i]]))
       const time1 = performance.now()
-      const pools1 = await extractor.getPoolCodesForTokensAsync2(
+      const pools1 = await extractor.getPoolCodesForTokensAsync(
         BASES_TO_CHECK_TRADES_AGAINST[chainId].concat([tokens[i]]),
         2000
       )

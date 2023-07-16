@@ -218,60 +218,6 @@ export class UniV3Extractor {
   }
 
   getWatchersForTokens(tokens: Token[]): {
-    prefetchedPools: UniV3PoolWatcher[]
-    fetchingPools: Promise<UniV3PoolWatcher[]> | undefined
-  } {
-    const prefetchedPools: UniV3PoolWatcher[] = []
-    const waitPools: Promise<UniV3PoolWatcher | undefined>[] = []
-    const fees = Object.values(FeeAmount).filter((fee) => typeof fee == 'number') as FeeAmount[]
-    const startTime = performance.now()
-    for (let i = 0; i < tokens.length; ++i) {
-      for (let j = i + 1; j < tokens.length; ++j) {
-        if (tokens[i].address == tokens[j].address) continue
-        const [t0, t1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i], tokens[j]] : [tokens[j], tokens[i]]
-        this.factories.forEach((factory) => {
-          fees.forEach((fee) => {
-            const addr = this.computeV3Address(factory, t0, t1, fee)
-            const addrL = addr.toLowerCase() as Address
-            const pool = this.poolMap.get(addrL)
-            if (pool) {
-              prefetchedPools.push(pool)
-              return
-            }
-            if (this.emptyAddressSet.has(addr)) return
-            const promise = this.multiCallAggregator
-              .callValue(factory.address, IUniswapV3Factory.abi as Abi, 'getPool', [t0.address, t1.address, fee])
-              .then(
-                (checkedAddress) => {
-                  if (checkedAddress == '0x0000000000000000000000000000000000000000') {
-                    this.emptyAddressSet.add(addr)
-                    return
-                  }
-                  const watcher = this.addPoolWatching(
-                    { address: addr, token0: t0, token1: t1, fee, factory },
-                    'request',
-                    true,
-                    startTime
-                  )
-                  return watcher
-                },
-                () => undefined
-              )
-            waitPools.push(promise)
-          })
-        })
-      }
-    }
-    return {
-      prefetchedPools,
-      fetchingPools:
-        waitPools.length > 0
-          ? Promise.all(waitPools).then((pools) => pools.filter((p) => p !== undefined) as UniV3PoolWatcher[])
-          : undefined,
-    }
-  }
-
-  getWatchersForTokens2(tokens: Token[]): {
     prefetched: UniV3PoolWatcher[]
     fetching: Promise<UniV3PoolWatcher | undefined>[]
   } {

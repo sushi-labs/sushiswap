@@ -53,14 +53,11 @@
 {"address":"0x2dE9F12A2a01d5C55d4B2Be8111F9F51143d980A","name":"Christopher Poole","symbol":"MOOT","decimals":9}
 {"address":"0xEF4928e4a36628408419F0eFD99228907b19aCe5","name":"DogeKing2.0","symbol":"DogeKing2.0","decimals":9}
 {"address":"0x8f8221aFbB33998d8584A2B05749bA73c37a938a","name":"Request Token","symbol":"REQ","decimals":18}
-{"address":"0x610C584F1275f0f7c982Af0aC7883Ff4Dba661Bd","name":"FX1 Sports","symbol":"FX1","decimals":18}
-{"address":"0x5395df198fCbC9C13bEC506004C9A8B6460A7712","name":"BUBU","symbol":"BUBU","decimals":18}
 {"address":"0xae78736Cd615f374D3085123A210448E74Fc6393","name":"Rocket Pool ETH","symbol":"rETH","decimals":18}
 {"address":"0x36880f14AF2e85Cae8E467827FA077D6BF12ea56","name":"Jared From Subway","symbol":"JARED","decimals":18}
 {"address":"0xb8C4a91675d4D33db64899082041cE525E5aAd2C","name":"ZUSKVSMUSK2.0","symbol":"ZUSKVSMUSK2.0","decimals":18}
 {"address":"0x69af81e73A73B40adF4f3d4223Cd9b1ECE623074","name":"Mask Network","symbol":"MASK","decimals":18}
 {"address":"0x0fE96499998418c76eB6CFcb70Af24b9Ea0016d6","name":"🐸🟪","symbol":"🐸🟪","decimals":18}
-{"address":"0x6aD9a31f02F1E790fF85584EA3c3D0001E45cd64","name":"Ethane","symbol":"C2H6","decimals":9}
 {"address":"0xf4d2888d29D722226FafA5d9B24F9164c092421E","name":"LooksRare Token","symbol":"LOOKS","decimals":18}
 {"address":"0xab78f098b3Ca1A0fBC5fC611B22d739f5ADD13Dd","name":"Lit","symbol":"Lit","decimals":18}
 {"address":"0x3797FfaAe8c5b76E784c65594E01c2D256E2217b","name":"X","symbol":"X","decimals":18}
@@ -68,7 +65,6 @@
 {"address":"0xAf5191B0De278C7286d6C7CC6ab6BB8A73bA2Cd6","name":"StargateToken","symbol":"STG","decimals":18}
 {"address":"0xb23d80f5FefcDDaa212212F028021B41DEd428CF","name":"Prime","symbol":"PRIME","decimals":18}
 {"address":"0x0A13A5929e5F0ff0EABA4Bd9e9512C91fCE40280","name":"XAI Corp","symbol":"XAI","decimals":9}
-{"address":"0x11BEBcd969EdC7d756fbFc807eF0191bc19bca2E","name":"TWO","symbol":"TWO","decimals":8}
 {"address":"0x88417754Ff7062c10F4E3A4AB7E9F9D9cbDa6023","name":"Peepa","symbol":"PEEPA","decimals":18}
 {"address":"0x703293d32aEa894CCA91d6C282db9eFFfE47C308","name":"AERIE","symbol":"AER","decimals":18}
 {"address":"0x32f044dA25218598D4238A4fc6826Ac4ebb97e9E","name":"REBATE","symbol":"RBE","decimals":18}
@@ -81,10 +77,7 @@
 {"address":"0x1b40183EFB4Dd766f11bDa7A7c3AD8982e998421","name":"VesperToken","symbol":"VSP","decimals":18}
 {"address":"0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE","name":"SHIBA INU","symbol":"SHIB","decimals":18}
 {"address":"0x2aD9adDD0d97EC3cDBA27F92bF6077893b76Ab0b","name":"PLANET","symbol":"PLANET","decimals":18}
-{"address":"0x609b36C9f4811B8CFEa8988ddFF338f89CdEF5d9","name":"Wall Street Pepe","symbol":"WSP","decimals":18}
-{"address":"0x298d492e8c1d909D3F63Bc4A36C66c64ACB3d695","name":"PolkaBridge","symbol":"PBR","decimals":18}
 {"address":"0x519C1001D550C0a1DaE7d1fC220f7d14c2A521BB","name":"Polkaswap","symbol":"PSWAP","decimals":18}
-{"address":"0x9FC8e960098d26B8075aD1Cc7333996552BB075b","name":"MAD","symbol":"MAD","decimals":18}
 {"address":"0x4d224452801ACEd8B2F0aebE155379bb5D594381","name":"ApeCoin","symbol":"APE","decimals":18}
 {"address":"0xC7555f6410E983C867748879B2F6d2b0b0e100fd","name":"SilverDAX","symbol":"SDAX","decimals":5}
 {"address":"0x0607A9844472e8Ef1058Dc33096ACe550Cb65909","name":"Mongoose 2.0","symbol":"MONG2.0","decimals":18}
@@ -94,18 +87,12 @@
 {"address":"0x97D87327D8F168b0Ba317fd8B210d2B087f4b851","name":"Autonomous Secure Dollar","symbol":"USSD","decimals":6}
 {"address":"0x2bA64EFB7A4Ec8983E22A49c81fa216AC33f383A","name":"Wrapped BGL","symbol":"WBGL","decimals":18}
 {"address":"0xa21Af1050F7B26e0cfF45ee51548254C41ED6b5c","name":"Osaka Protocol","symbol":"OSAK","decimals":18}
-{"address":"0x9F5f463A7666e04CDABD22BD83569A5c72Cb4f4D","name":"Smol Su","symbol":"SU","decimals":9}
 {"address":"0xCf586d9f47E35fE6B37e53263a286C0a1DF0AA38","name":"Autism Pepe","symbol":"AUTISM","decimals":9}
 {"address":"0x0c885E4eC05EF5160c48d63e3E00864f9400Efe7","name":"PEPELISA","symbol":"PESA","decimals":9}
-{"address":"0x2479F03e2beA89e636f1961272C6Ed6B8Cc20b29","name":"Baby Doge 2.0","symbol":"BABYDOGE2.0","decimals":18}
 {"address":"0x59f6B0ea66cD0E78FaDB450940448BcF62eA04Ba","name":"Dr Manhattan","symbol":"DRMAN","decimals":18}
 {"address":"0x111111111117dC0aa78b770fA6A738034120C302","name":"1INCH Token","symbol":"1INCH","decimals":18}
-{"address":"0xB475332D25d34b59176F5c1D94cb9Bc9B5E3954A","name":"Hobbes","symbol":"HOBBES","decimals":9}
 {"address":"0xa72daEf35f3875355112b7A39b867866A88723DA","name":"MEGAMOON","symbol":"MEGAM","decimals":18}
-{"address":"0x1A8042Afa49bff816e446Accd8F76DE27541C3B7","name":"Gangster Pepe","symbol":"$GPEPE","decimals":9}
 {"address":"0x9E32b13ce7f2E80A01932B42553652E053D6ed8e","name":"Metis Token","symbol":"Metis","decimals":18}
-{"address":"0x232Cbcd8341Fad851f491e3Eac3F5FDb46E7A7E1","name":"Fronki","symbol":"FRONKI","decimals":9}
-{"address":"0x7C1AAA201b5bCc010a92f377ac132A6810310A10","name":"Dogelon 2.0","symbol":"DOGELON2.0","decimals":18}
 {"address":"0x24dA31e7BB182cb2cABfEF1d88db19C2AE1f5572","name":"SHIKOKU INU","symbol":"SHIK","decimals":18}
 {"address":"0xf3dcbc6D72a4E1892f7917b7C43b74131Df8480e","name":"BDPToken","symbol":"BDP","decimals":18}
 {"address":"0xBe9895146f7AF43049ca1c1AE358B0541Ea49704","name":"Coinbase Wrapped Staked ETH","symbol":"cbETH","decimals":18}
