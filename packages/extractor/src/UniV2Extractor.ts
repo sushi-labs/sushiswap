@@ -59,19 +59,6 @@ const UniV2FactoryAbi = [
   parseAbiItem('function allPairs(uint256) external view returns (address)'),
 ]
 
-// TODO: UniV3Ext price max-min change (+-10%)
-// TODO: add instructions to extractor (from ext3)
-// TODO: Ext: fullness test
-// TODO: Ext: correctness test
-// TODO: Ext: stress test
-// TODO: Ext: All blockchain test
-// TODO: Avoid tokens duplicating
-// TODO: Back to LogFilter ?
-// TODO: The list of the best tokens
-// TODO: wait at start for all pool cache reading
-// TODO: cache for not-existed pools?
-// TODO: to fill address cache from pool cache
-// TODO: check wrong tokens (big difference)
 export class UniV2Extractor {
   readonly multiCallAggregator: MultiCallAggregator
   readonly tokenManager: TokenManager

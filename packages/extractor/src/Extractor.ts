@@ -10,11 +10,39 @@ import { UniV3PoolWatcher, UniV3PoolWatcherStatus } from './UniV3PoolWatcher'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
+// TODO: UniV3 price diapason +-10% test
+// TODO: fullness test
+// TODO: correctness test
+// TODO: stress test
+// TODO: All blockchain test
+// TODO: Avoid tokens duplicating
+// TODO: Back to LogFilter ?
+// TODO: The list of the best tokens
+// TODO: wait at start for all pool cache reading
+// TODO: cache for not-existed pools?
+// TODO: to fill address cache from pool cache
+// TODO: check wrong tokens (big difference)
+
+// Usage recomendation:
+//  - getPoolCodesForTokens/getPoolCodesForTokensAsync consumes much processor resources for new token sets -
+//    about 50ms. Some quantity of routing requests can be processed on the same process as Extractor
+//    But for significant loading it is better to deploy Extractor on a separate server
+//    and have several servers for routing. Extractor server can provide all pools by getCurrentPoolCodes()
+//  - direct logs (std output) to console
+//  - direct warnings (std error) to a file
 export class Extractor {
   extractorV2?: UniV2Extractor
   extractorV3?: UniV3Extractor
 
-  // IMPORTANT: Use different cacheDir for Extractor with the same chainId
+  /// @param client
+  /// @param factoriesV2 list of supported V2 factories
+  /// @param factoriesV3 list of supported V3 factories
+  /// @param tickHelperContract address of helper contract for pool's ticks download
+  /// @param cacheDir directory for cache
+  //                  Extremely recomended
+  //                  IMPORTANT: Use different cacheDir for Extractors with the same chainId
+  /// @param logDepth the depth of logs to keep in memory for reorgs
+  /// @param logging to write logs in console or not
   constructor(args: {
     client: PublicClient
     factoriesV2: FactoryV2[]
@@ -49,6 +77,7 @@ export class Extractor {
       )
   }
 
+  /// @param tokensPrefetch Prefetch all pools between these tokens
   async start(tokensPrefetch: Token[] = []) {
     await Promise.all([this.extractorV2?.start(), this.extractorV3?.start()].filter((e) => e !== undefined))
     this.getPoolCodesForTokens(tokensPrefetch)
