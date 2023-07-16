@@ -99,4 +99,10 @@ export class Extractor {
     const poolsV3 = watchersV3.map((w) => w.getPoolCode()).filter((pc) => pc !== undefined) as PoolCode[]
     return poolsV3.concat(poolsV2)
   }
+
+  getCurrentPoolCodes() {
+    const pools2 = this.extractorV2 ? this.extractorV2.getCurrentPoolCodes() : []
+    const pools3 = this.extractorV3 ? this.extractorV3.getCurrentPoolCodes() : []
+    return pools2.concat(pools3)
+  }
 }

@@ -295,7 +295,7 @@ export class UniV3Extractor {
     this.consoleLog(`other factory pool ${address}, such pools known: ${this.otherFactoryPoolSet.size}`)
   }
 
-  getPoolCodes(): PoolCode[] {
+  getCurrentPoolCodes(): PoolCode[] {
     return Array.from(this.poolMap.values())
       .map((p) => p.getPoolCode())
       .filter((pc) => pc !== undefined) as PoolCode[]

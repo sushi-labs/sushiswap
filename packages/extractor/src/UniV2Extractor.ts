@@ -443,6 +443,13 @@ export class UniV2Extractor {
     return poolState.poolCode
   }
 
+  getCurrentPoolCodes(): ConstantProductPoolCode[] {
+    const pools = Array.from(this.poolMap.values()).filter(
+      (p) => p.status == PoolStatus.ValidPool || p.status == PoolStatus.UpdatingPool
+    ) as PoolStateValidPool[]
+    return pools.map((p) => p.poolCode)
+  }
+
   readonly addressCache: Map<string, Address> = new Map()
   computeV2Address(factory: FactoryV2, tokenA: Token, tokenB: Token): Address {
     const key = `${tokenA.address}${tokenB.address}${factory.address}`
