@@ -79,7 +79,7 @@ async function startInfinitTest(args: {
     `tokens-${client.chain?.id}`
   )
   await tokenManager.addCachedTokens()
-  const tokens = Array.from(tokenManager.tokens.values()).slice(0, 100).concat(BASES_TO_CHECK_TRADES_AGAINST[chainId])
+  const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values()).slice(0, 100))
   for (;;) {
     for (let i = 1; i < tokens.length; ++i) {
       await delay(1000)
