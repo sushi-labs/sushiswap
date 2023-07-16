@@ -61,7 +61,6 @@ const UniV2FactoryAbi = [
 
 // TODO: UniV3Ext price max-min change (+-10%)
 // TODO: add instructions to extractor (from ext3)
-// TODO: Ext: GetAllPools
 // TODO: Ext: fullness test
 // TODO: Ext: correctness test
 // TODO: Ext: stress test
