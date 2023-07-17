@@ -6,7 +6,10 @@ import { BalancePanel } from './BalancePanel'
 import TokenListDialog from './TokenListDialog'
 import { Token } from 'utils/tokenType'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
+import { Icon } from './Icon'
 interface PropType {
+  id: string
   type: 'INPUT' | 'OUTPUT'
   token: Token
   value: string
@@ -20,6 +23,7 @@ interface PropType {
   onUserInput?: (value: string) => void
 }
 export default function TradeInput({
+  id,
   type,
   token,
   value,
@@ -37,7 +41,6 @@ export default function TradeInput({
       tradeVal.current?.focus()
     }
   }, [])
-
   const balanceClick = () => {
     if (setAmount) {
       if (token.symbol == 'APT') {
@@ -64,7 +67,7 @@ export default function TradeInput({
           </div>
         ) : (
           <Input.Numeric
-            id="swap-from"
+            id={id}
             variant="unstyled"
             value={value}
             ref={tradeVal}
@@ -77,35 +80,43 @@ export default function TradeInput({
             className="text-gray-900 dark:text-slate-50 text-left border-none focus:outline-none focus:ring-0 p-0 bg-transparent w-full truncate font-medium without-ring !text-3xl py-1"
           />
         )}
-        <TokenListDialog selected={token} handleChangeToken={setToken}>
-          {({ setOpen }) => (
-            <button
-              onClick={(e) => {
-                setOpen(true)
-                e.stopPropagation()
-              }}
-              id="swap-from-button"
-              type="button"
-              testdata-id="swap-from-button"
-              className="flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12] whitespace-nowrap"
-            >
-              <div className="w-[28px] h-[28px] mr-0.5">
-                <img
-                  src={token.logoURI}
-                  alt={token.name}
-                  height={28}
-                  width={28}
-                  decoding="async"
-                  loading="lazy"
-                  data-nimg={1}
-                  className="rounded-full"
-                  style={{ color: 'transparent' }}
-                />
-              </div>
-              {token.symbol}
-              <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />
-            </button>
-          )}
+        <TokenListDialog id={id} selected={token} handleChangeToken={setToken}>
+          <Modal.Trigger tag={`${id}-token-selector-modal`}>
+            {({ open }) => (
+              <>
+                <button
+                  onClick={open}
+                  id={`${id}-token-selector`}
+                  type="button"
+                  testdata-id="swap-from-button"
+                  className="flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12] whitespace-nowrap"
+                >
+                  {token ? (
+                    <>
+                      <div className="w-[28px] h-[28px] mr-0.5">
+                        <Icon currency={token} height={28} width={28} />
+                        {/* <img
+                          src={token.logoURI}
+                          alt={token.name}
+                          height={28}
+                          width={28}
+                          decoding="async"
+                          loading="lazy"
+                          data-nimg={1}
+                          className="rounded-full"
+                          style={{ color: 'transparent' }}
+                        /> */}
+                      </div>
+                      {token.symbol}
+                      <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />
+                    </>
+                  ) : (
+                    'Select'
+                  )}
+                </button>
+              </>
+            )}
+          </Modal.Trigger>
         </TokenListDialog>
         <div
           style={{
@@ -129,7 +140,7 @@ export default function TradeInput({
         <BalancePanel
           coinData={balance}
           isLoading={isLoadingPrice}
-          decimals={token.decimals}
+          decimals={token?.decimals}
           onClick={balanceClick}
           type={type}
         />

@@ -14,16 +14,24 @@ export const SwapButton = () => {
           {connected ? (
             <button
               className={`btn w-full flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold ${
-                noRouteFound || error || isPriceFetching
+                noRouteFound || error || isPriceFetching || Number(amount) <= 0
                   ? 'pointer-events-none relative opacity-[0.4] overflow-hidden'
                   : ''
               }`}
-              disabled={noRouteFound || error ? true : false}
+              disabled={noRouteFound || error || Number(amount) <= 0 ? true : false}
               onClick={() => {
                 amount ? open() : {}
               }}
             >
-              {noRouteFound ? noRouteFound : error ? 'Insufficient Balance' : amount ? <>Swap</> : <>Enter Amount</>}
+              {noRouteFound ? (
+                noRouteFound
+              ) : error ? (
+                'Insufficient Balance'
+              ) : Number(amount) > 0 ? (
+                <>Swap</>
+              ) : (
+                <>Enter Amount</>
+              )}
             </button>
           ) : (
             // <button className="btn w-full flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold ">

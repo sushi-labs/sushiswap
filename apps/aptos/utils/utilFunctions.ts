@@ -1,11 +1,12 @@
 import { useMemo } from 'react'
 import { Token } from './tokenType'
 import { usePoolActions, usePoolState } from 'app/pool/Pool/PoolProvider'
-console.log(process.env.CONTRACT_ADDRESS)
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 export async function useAllCommonPairs(
   amount_in: number = 0,
   coinA: Token,
   coinB: Token,
+  network: string = 'mainnet',
   controller: AbortController
 ) {
   const basePairs: string[] = [
@@ -25,12 +26,9 @@ export async function useAllCommonPairs(
     }
   }
   let reserves
-  await fetch(
-    `https://fullnode.testnet.aptoslabs.com/v1/accounts/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resources`,
-    {
-      signal: controller.signal,
-    }
-  )
+  await fetch(`https://fullnode.${network}.aptoslabs.com/v1/accounts/${CONTRACT_ADDRESS}/resources`, {
+    signal: controller.signal,
+  })
     .then((res) => res.json())
     .then((data) => {
       let t: any = {}
@@ -44,31 +42,18 @@ export async function useAllCommonPairs(
           return true
         }
 
-        if (
-          d.type.includes(
-            `0x1::coin::CoinInfo<0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::LPToken<`
-          )
-        ) {
+        if (d.type.includes(`0x1::coin::CoinInfo<${CONTRACT_ADDRESS}::swap::LPToken<`)) {
           reserve_token_info[d.type] = d
         }
       })
 
       allPairs.map((token) => {
-        if (
-          reserve_tokens[
-            `0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::TokenPairReserve<${token[0]}, ${token[1]}>`
-          ]
-        ) {
+        if (reserve_tokens[`${CONTRACT_ADDRESS}::swap::TokenPairReserve<${token[0]}, ${token[1]}>`]) {
           let info = {
             lpTokenInfo:
-              reserve_token_info[
-                `0x1::coin::CoinInfo<0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::LPToken<${token[0]}, ${token[1]}>>`
-              ],
+              reserve_token_info[`0x1::coin::CoinInfo<${CONTRACT_ADDRESS}::swap::LPToken<${token[0]}, ${token[1]}>>`],
           }
-          let data =
-            reserve_tokens[
-              `0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::TokenPairReserve<${token[0]}, ${token[1]}>`
-            ]
+          let data = reserve_tokens[`${CONTRACT_ADDRESS}::swap::TokenPairReserve<${token[0]}, ${token[1]}>`]
 
           t[`${token[0]}|||${token[1]}`] = {
             pairs: `${token[0]}|||${token[1]}`,
@@ -79,21 +64,12 @@ export async function useAllCommonPairs(
           }
         }
 
-        if (
-          reserve_tokens[
-            `0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::TokenPairReserve<${token[1]}, ${token[0]}>`
-          ]
-        ) {
+        if (reserve_tokens[`${CONTRACT_ADDRESS}::swap::TokenPairReserve<${token[1]}, ${token[0]}>`]) {
           let info = {
             lpTokenInfo:
-              reserve_token_info[
-                `0x1::coin::CoinInfo<0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::LPToken<${token[1]}, ${token[0]}>>`
-              ],
+              reserve_token_info[`0x1::coin::CoinInfo<${CONTRACT_ADDRESS}::swap::LPToken<${token[1]}, ${token[0]}>>`],
           }
-          let data =
-            reserve_tokens[
-              `0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::TokenPairReserve<${token[1]}, ${token[0]}>`
-            ]
+          let data = reserve_tokens[`${CONTRACT_ADDRESS}::swap::TokenPairReserve<${token[1]}, ${token[0]}>`]
 
           t[`${token[1]}|||${token[0]}`] = {
             pairs: `${token[0]}|||${token[1]}`,
@@ -125,6 +101,9 @@ export async function useAllCommonPairs(
 
       returnRoutes = RouteDemo(amount_in, t, graph, coinA, coinB)
     })
+  // .catch((err) => {
+  //   // console.log(err)
+  // })
   return returnRoutes
 }
 export async function getPoolPairs() {
@@ -135,9 +114,7 @@ export async function getPoolPairs() {
     let reserves: any
     try {
       setLoadingPrice(true)
-      await fetch(
-        `https://fullnode.testnet.aptoslabs.com/v1/accounts/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resources`
-      )
+      await fetch(`https://fullnode.testnet.aptoslabs.com/v1/accounts/${CONTRACT_ADDRESS}/resources`)
         .then((res) => res.json())
         .then((data) => {
           reserves = data.filter((d: any) => {
@@ -248,14 +225,14 @@ export async function getYTokenPrice(amount_in: number = 0, coinX: string, coinY
   // console.log(amount_in, coinX, coinY)
   let outputData
   await fetch(
-    `https://fullnode.testnet.aptoslabs.com/v1/accounts/e8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resource/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::TokenPairReserve<${coinX},${coinY}>`,
+    `https://fullnode.testnet.aptoslabs.com/v1/accounts/e8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resource/${CONTRACT_ADDRESS}::swap::TokenPairReserve<${coinX},${coinY}>`,
     { signal: controller.signal }
   )
     .then((res) => res.json())
     .then(async (data) => {
       if (data.error_code == 'resource_not_found') {
         await fetch(
-          `https://fullnode.testnet.aptoslabs.com/v1/accounts/e8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resource/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2::swap::TokenPairReserve<${coinY},${coinX}>`,
+          `https://fullnode.testnet.aptoslabs.com/v1/accounts/e8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resource/${CONTRACT_ADDRESS}::swap::TokenPairReserve<${coinY},${coinX}>`,
           { signal: controller.signal }
         )
           .then((res) => res.json())

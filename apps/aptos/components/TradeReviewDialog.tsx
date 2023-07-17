@@ -22,7 +22,7 @@ interface Props {
 export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
   const { bestRoutes, token0, token1, slippageAmount, amount, outputAmount, isPriceFetching } = useSwapState()
   const { account, signAndSubmitTransaction } = useWallet()
-  const { setisTransactionPending } = useSwapActions()
+  const { setisTransactionPending, setAmount, setOutputAmount } = useSwapActions()
 
   const swapToken = async (close: () => void) => {
     const provider = new Provider(Network.TESTNET)
@@ -51,6 +51,8 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
       })
       setisTransactionPending(false)
       close()
+      setAmount('')
+      setAmount(' ')
     } catch (error) {
       const toastId = `failed:${Math.random()}`
       createToast({ summery: `User rejected request`, toastId: toastId })

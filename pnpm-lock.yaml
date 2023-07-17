@@ -712,13 +712,17 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/react-query': workspace:*
       '@sushiswap/tailwindcss-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi': workspace:*
+      '@tanstack/react-query': 4.28.0
       '@types/node': 18.11.18
       '@types/react': 18.2.6
       '@types/react-dom': 18.2.4
+      '@types/react-virtualized-auto-sizer': 1.0.1
+      '@types/react-window': 1.8.5
       '@vercel/analytics': 0.1.5
       aptos: ^1.11.0
       autoprefixer: 10.4.14
@@ -732,6 +736,8 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0
       react-toastify: 9.1.3
+      react-virtualized-auto-sizer: 1.0.7
+      react-window: 1.8.7
       tailwindcss: 3.3.2
       typescript: 5.0.4
     dependencies:
@@ -750,9 +756,11 @@ importers:
       '@sushiswap/format': link:../../packages/format
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/nextjs-config': link:../../config/nextjs
+      '@sushiswap/react-query': link:../../packages/react-query
       '@sushiswap/tailwindcss-config': link:../../config/tailwindcss
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
+      '@tanstack/react-query': 4.28.0_biqbaboplfbrettd7655fr4n2y
       '@vercel/analytics': 0.1.5_react@18.2.0
       aptos: 1.11.0
       fewcha-plugin-wallet-adapter: 0.1.2
@@ -763,6 +771,8 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-toastify: 9.1.3_biqbaboplfbrettd7655fr4n2y
+      react-virtualized-auto-sizer: 1.0.7_biqbaboplfbrettd7655fr4n2y
+      react-window: 1.8.7_biqbaboplfbrettd7655fr4n2y
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -771,6 +781,8 @@ importers:
       '@types/node': 18.11.18
       '@types/react': 18.2.6
       '@types/react-dom': 18.2.4
+      '@types/react-virtualized-auto-sizer': 1.0.1
+      '@types/react-window': 1.8.5
       autoprefixer: 10.4.14_postcss@8.4.23
       eslint: 8.41.0
       postcss: 8.4.23
@@ -3744,7 +3756,7 @@ packages:
     dependencies:
       '@fastify/deepmerge': 1.3.0
       ajv: 8.12.0
-      ajv-formats: 2.1.1
+      ajv-formats: 2.1.1_ajv@8.12.0
       fast-deep-equal: 3.1.3
       rfdc: 1.3.0
 
@@ -16624,6 +16636,17 @@ packages:
         optional: true
     dependencies:
       ajv: 8.12.0
+    dev: false
+
+  /ajv-formats/2.1.1_ajv@8.12.0:
+    resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
+    peerDependencies:
+      ajv: ^8.0.0
+    peerDependenciesMeta:
+      ajv:
+        optional: true
+    dependencies:
+      ajv: 8.12.0
 
   /ajv-keywords/3.5.2_ajv@6.12.6:
     resolution: {integrity: sha512-5p6WTN0DdTGVQk6VjcEju19IgaHudalcfabD7yhDGeA6bcQnmL+CpveLJq/3hvfwd1aof6L386Ougkx6RfyMIQ==}
@@ -23756,7 +23779,7 @@ packages:
       '@whatwg-node/fetch': 0.8.4
       '@whatwg-node/server': 0.7.7
       ajv: 8.12.0
-      ajv-formats: 2.1.1
+      ajv-formats: 2.1.1_ajv@8.12.0
       hotscript: 1.0.12
       json-schema-to-ts: 2.9.1
       openapi-types: 12.1.3
@@ -35212,7 +35235,7 @@ packages:
     dependencies:
       '@types/json-schema': 7.0.12
       ajv: 8.12.0
-      ajv-formats: 2.1.1
+      ajv-formats: 2.1.1_ajv@8.12.0
       ajv-keywords: 5.1.0_ajv@8.12.0
     dev: false
 
