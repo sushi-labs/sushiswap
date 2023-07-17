@@ -13,11 +13,9 @@ const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 // TODO: UniV3 price diapason +-10% test
 // TODO: fullness test
 // TODO: correctness test
-// TODO: stress test
 // TODO: All blockchains test
 // TODO: Back to LogFilter ? Faster events applying
 // TODO: The list of the best tokens
-// TODO: wait at start for all pool cache reading
 // TODO: cache for not-existed pools?
 // TODO: to fill address cache from pool cache
 // TODO: check wrong tokens (big difference)

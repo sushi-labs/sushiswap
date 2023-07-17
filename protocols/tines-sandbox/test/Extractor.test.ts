@@ -7,7 +7,7 @@ import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { getBigNumber, RouteStatus } from '@sushiswap/tines'
 import { POOL_INIT_CODE_HASH } from '@sushiswap/v3-sdk'
 import { Address, createPublicClient, http } from 'viem'
-import { Chain, mainnet } from 'viem/chains'
+import { Chain, mainnet, polygon } from 'viem/chains'
 
 export const RP3Address = {
   [ChainId.ETHEREUM]: '0x827179dD56d07A7eeA32e3873493835da2866976' as Address,
@@ -19,6 +19,7 @@ export const RP3Address = {
 
 export const TickLensContract = {
   [ChainId.ETHEREUM]: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573' as Address,
+  [ChainId.POLYGON]: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573' as Address,
 }
 
 export const UniswapV2FactoryAddress: Record<number, string> = {
@@ -74,7 +75,7 @@ async function startInfinitTest(args: {
 
   const nativeProvider = new NativeWrapProvider(chainId, client)
   const tokenManager = new TokenManager(
-    extractor.extractorV2?.multiCallAggregator as MultiCallAggregator,
+    extractor.extractorV2?.multiCallAggregator || (extractor.extractorV3?.multiCallAggregator as MultiCallAggregator),
     __dirname,
     `tokens-${client.chain?.id}`
   )
@@ -165,5 +166,19 @@ it.skip('Extractor Ethereum infinit work test', async () => {
     logDepth: 50,
     logging: true,
     RP3Address: RP3Address[ChainId.ETHEREUM],
+  })
+})
+
+it.skip('Extractor Polygon infinit work test', async () => {
+  await startInfinitTest({
+    providerURL: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
+    chain: polygon,
+    factoriesV2: [],
+    factoriesV3: [uniswapV3Factory(ChainId.POLYGON)],
+    tickHelperContract: TickLensContract[ChainId.POLYGON],
+    cacheDir: './cache',
+    logDepth: 100,
+    logging: true,
+    RP3Address: RP3Address[ChainId.POLYGON],
   })
 })
