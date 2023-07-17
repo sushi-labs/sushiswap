@@ -124,7 +124,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
         <DialogHeader>
           <DialogTitle>Select a token</DialogTitle>
           <DialogDescription>
-            Select a token from our list or add a custom token if your token is not on our list.
+            Select a token from our default list or search for a token by symbol or address.
           </DialogDescription>
         </DialogHeader>
         <div className="flex gap-2">
