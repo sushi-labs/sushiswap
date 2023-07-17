@@ -92,7 +92,7 @@ interface NavContainerProps extends VariantProps<typeof navigationContainerVaria
 const NavigationContainer: React.FC<NavContainerProps> = ({ children, variant }) => {
   return (
     <div className={navigationContainerVariants({ variant })}>
-      <SushiIcon width={24} height={24} />
+      <SushiIcon width={24} height={24} className="hidden sm:block" />
       <div className="flex justify-between gap-4 items-center flex-grow">{children}</div>
     </div>
   )

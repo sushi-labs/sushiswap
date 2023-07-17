@@ -1,11 +1,13 @@
 'use client'
 
-import { Analytics } from '@vercel/analytics/react'
+import { GoogleAnalytics } from '@sushiswap/ui/components/scripts'
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react'
 
 export function Trackers() {
   return (
     <>
-      <Analytics />
+      <VercelAnalytics />
+      <GoogleAnalytics />
     </>
   )
 }
