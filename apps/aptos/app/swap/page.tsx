@@ -16,35 +16,44 @@ import { useSwapActions, useSwapState } from './trade/TradeProvider'
 import { SwapTradeInput } from 'components/SwapTradeInput'
 import { coinType } from 'utils/tokenData'
 import { SwapTradeOutput } from 'components/SwapTradeOutput'
-import { getPoolPairs } from 'utils/utilFunctions'
+import { useTokens } from 'utils/useTokens'
 
+type Data = {
+  chainId: number
+  id: string
+  address: string
+  decimals: number
+  name: string | undefined
+  symbol: string | undefined
+}
 export default function SwapPage() {
   const { account, connected, disconnect, network } = useWallet()
   const [isLoading, setLoading] = useState<boolean>(true)
   const [slippageTolerance] = useSlippageTolerance('swapSlippage')
-  const { setBalance0, setBalance1, setLoadingPrice } = useSwapActions()
+  const { setBalance0, setBalance1, setLoadingPrice, setToken0, setToken1 } = useSwapActions()
   const { token0, token1, isTransactionPending } = useSwapState()
-  const [routeFound, setRouteFound] = useState<boolean>(false)
-  getPoolPairs(token0, token1).then((pairs: any) => {
-    console.log('pairsss', pairs)
-    if (pairs && pairs.length > 0) {
-      setRouteFound(true)
-    } else {
-      setRouteFound(false)
-    }
-  })
-
-  // console.log(allPairs)
+  const [controller, setController] = useState<AbortController | null>(null)
+  const { tokens } = useTokens()
   useEffect(() => {
     if (network?.name === undefined) {
       disconnect()
     }
+    setToken0(tokens[0])
+    setToken1(tokens[1])
   }, [network])
-
   useEffect(() => {
+    // setValue({})
+    if (controller) {
+      controller.abort()
+    }
+    const newController = new AbortController()
+    setController(newController)
     setLoadingPrice(true)
-    if (account?.address && network?.name) {
-      fetch(`https://fullnode.${network?.name?.toLowerCase()}.aptoslabs.com/v1/accounts/${account?.address}/resources`)
+    if (account?.address && network?.name && token0 && token1) {
+      fetch(
+        `https://fullnode.${network?.name?.toLowerCase()}.aptoslabs.com/v1/accounts/${account?.address}/resources`,
+        { signal: newController.signal }
+      )
         .then((res) => res.json())
         .then((data) => {
           if (!data.error_code) {
@@ -87,10 +96,8 @@ export default function SwapPage() {
       }
     }
   }, [connected])
-
   return (
     <>
-      {routeFound ? <>RouteFound'</> : <>'no route found'</>}
       {isLoading && <Loading />}
       <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
         <div className="flex flex-col gap-4">

@@ -5,10 +5,13 @@ import { formatNumber } from 'utils/utilFunctions'
 
 export const SwapTradeOutput = () => {
   const { token1, balance1, isLoadingPrice, outputAmount, isPriceFetching } = useSwapState()
-  const outputSwapTokenAmount = outputAmount ? String(formatNumber(parseFloat(outputAmount), token1.decimals)) : ''
+  const outputSwapTokenAmount = outputAmount
+    ? String(formatNumber(parseFloat(outputAmount), token1 ? token1.decimals : 8))
+    : ''
   const { setToken1 } = useSwapActions()
   return (
     <TradeInput
+      id="swap-to"
       balance={balance1}
       setToken={setToken1}
       isLoadingPrice={isLoadingPrice || isPriceFetching}

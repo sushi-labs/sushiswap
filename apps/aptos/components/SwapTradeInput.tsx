@@ -22,34 +22,45 @@ export const SwapTradeInput = () => {
     setBestRoutes,
     setNoRouteFound,
   } = useSwapActions()
+  useEffect(() => {}, [controller])
+  console.log(token0, token1)
   const getSwapPrice = async (tradeVal: number = 0): Promise<any> => {
+    console.log('controller', controller)
     if (controller) {
       controller.abort()
-      setOutputAmount('')
     }
+    console.log(controller)
     const newController = new AbortController()
     setController(newController)
     setPriceFetching(true)
     setOutputAmount('')
-    const routes: any = await useAllCommonPairs(tradeVal * 10 ** 8, token0, token1, newController)
-    if (routes?.amountOut) {
-      setOutputAmount(routes.amountOut)
-      setSlippageAmount(routes?.amountOut)
-    }
-    if (routes?.route) {
-      setBestRoutes(routes?.route)
-    }
-    if (routes?.message?.includes('Unexpected') || routes?.message?.includes('Cannot read properties')) {
-      setNoRouteFound('No Route Found')
-    } else {
-      setNoRouteFound('')
+    if (tradeVal > 0) {
+      const routes: any = await useAllCommonPairs(
+        tradeVal * 10 ** 8,
+        token0,
+        token1,
+        network?.name?.toLowerCase(),
+        newController
+      )
+      if (routes?.amountOut) {
+        setOutputAmount(routes.amountOut)
+        setSlippageAmount(routes?.amountOut)
+      }
+      if (routes?.route) {
+        setBestRoutes(routes?.route)
+      }
+      if (routes?.message?.includes('Unexpected') || routes?.message?.includes('Cannot read properties')) {
+        setNoRouteFound('No Route Found')
+      } else {
+        setNoRouteFound('')
+      }
     }
     setPriceFetching(false)
   }
 
   useEffect(() => {
     checkBalance(String(amount))
-  }, [account, connected, network, token0, token1, isTransactionPending, slippageTolerance, balance0])
+  }, [account, connected, network, token0, token1, isTransactionPending, slippageTolerance, amount, balance0])
 
   const checkBalance = (value: string) => {
     // let coinData = filteredCoin0?.data?.coin?.value
@@ -63,7 +74,7 @@ export const SwapTradeInput = () => {
     // }
 
     if (connected) {
-      const priceEst = balance0 / 10 ** token0.decimals < parseFloat(value)
+      const priceEst = balance0 / 10 ** token0?.decimals < parseFloat(value)
       if (priceEst) {
         setError('Exceeds Balance')
       } else {
@@ -75,6 +86,7 @@ export const SwapTradeInput = () => {
   }
   return (
     <TradeInput
+      id="swap-from"
       type="INPUT"
       setToken={setToken0}
       token={token0}
