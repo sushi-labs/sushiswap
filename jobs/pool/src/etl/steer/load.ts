@@ -16,8 +16,23 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
       },
     })
   ).map((token) => token.id)
+
+  const vaultPools = vaults.map((vault) => vault.poolId)
+  const dbPools = (
+    await client.sushiPool.findMany({
+      select: {
+        id: true,
+      },
+      where: {
+        id: {
+          in: vaultPools,
+        },
+      },
+    })
+  ).map((pool) => pool.id)
+
   const vaultsToUpdate = vaults.filter(
-    (vault) => dbTokens.includes(vault.token0Id) && dbTokens.includes(vault.token1Id)
+    (vault) => dbTokens.includes(vault.token0Id) && dbTokens.includes(vault.token1Id) && dbPools.includes(vault.poolId)
   )
 
   if (vaultsToUpdate.length === 0) return
