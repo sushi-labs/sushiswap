@@ -1,6 +1,5 @@
 'use client'
 
-import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/currency'
 import { ImageProps } from 'next/image'
@@ -92,9 +91,8 @@ export interface IconProps extends Omit<ImageProps, 'src' | 'alt'> {
   disableLink?: boolean
 }
 
-export const Icon: FC<IconProps> = ({ currency, disableLink, className, ...rest }) => {
+export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
   const src = useMemo(() => {
-    if (!currency) return null
     if (currency.isNative)
       return cloudinaryImageLoader({
         width: Number(rest.width) ?? 20,
@@ -105,16 +103,6 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, className, ...rest 
       src: `tokens/${currency.chainId}/${currency.wrapped.address}.jpg`,
     })
   }, [currency, rest.width])
-
-  if (!src) {
-    return (
-      <QuestionMarkCircleIcon
-        width={rest.width}
-        height={rest.height}
-        className="rounded-full bg-white bg-opacity-[0.12]"
-      />
-    )
-  }
 
   if (disableLink) {
     return (
