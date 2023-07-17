@@ -1,7 +1,7 @@
 import { isAddress } from '@ethersproject/address'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
-import { ChainId, chainName } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { useCustomTokens, usePinnedTokens } from '@sushiswap/hooks'
 import { useBalances, useOtherTokenListsQuery, usePrices, useTokens } from '@sushiswap/react-query'
@@ -13,7 +13,6 @@ import { DialogDescription } from '@sushiswap/ui'
 import { DialogTrigger } from '@sushiswap/ui'
 import { Button, buttonIconVariants } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
-import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { List } from '@sushiswap/ui/components/list/List'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
@@ -207,17 +206,9 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
                 chainId={chainId}
               />
               {sortedTokenList?.length === 0 && !queryToken && chainId && (
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="flex flex-col items-center justify-center gap-1">
-                    <span className="flex items-center text-xs text-gray-500 dark:text-slate-500">
-                      No tokens found on <NetworkIcon type="naked" width={20} height={20} chainId={chainId} />{' '}
-                      <span className="font-medium">{chainName[chainId]}</span>.
-                    </span>
-                    <span className="text-xs text-gray-500 dark:text-slate-500">
-                      Did you try searching with the token address?
-                    </span>
-                  </div>
-                </div>
+                <span className="h-10 flex items-center justify-center text-center text-sm text-gray-500 dark:text-slate-500">
+                  No results found.
+                </span>
               )}
             </>
           )}
