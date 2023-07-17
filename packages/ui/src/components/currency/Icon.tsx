@@ -91,7 +91,7 @@ export interface IconProps extends Omit<ImageProps, 'src' | 'alt'> {
   disableLink?: boolean
 }
 
-export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
+export const Icon: FC<IconProps> = ({ currency, disableLink = true, ...rest }) => {
   const src = useMemo(() => {
     if (currency.isNative)
       return cloudinaryImageLoader({
