@@ -3,11 +3,11 @@
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/currency'
-import Image, { ImageProps } from 'next/image'
-import { FC, useEffect, useMemo, useState } from 'react'
+import { ImageProps } from 'next/image'
+import { FC, useMemo } from 'react'
 
 import { cloudinaryImageLoader } from '../../cloudinary'
-import { classNames } from '../../index'
+import { Avatar, AvatarFallback, AvatarImage } from '../avatar'
 
 const AvaxLogo = 'avax.svg'
 const BnbLogo = 'bnb.svg'
@@ -93,49 +93,18 @@ export interface IconProps extends Omit<ImageProps, 'src' | 'alt'> {
 }
 
 export const Icon: FC<IconProps> = ({ currency, disableLink, className, ...rest }) => {
-  const [error, setError] = useState(false)
-
   const src = useMemo(() => {
     if (!currency) return null
-    if (currency.isNative) return `native-currency/${LOGO[currency.chainId]}`
-    return `tokens/${currency.chainId}/${currency.wrapped.address}.jpg`
-  }, [currency])
-
-  useEffect(() => {
-    setError(false)
-  }, [src])
-
-  if (error) {
-    if (disableLink) {
-      return (
-        <div
-          className="text-xs text-white font-bold rounded-full flex items-center justify-center bg-gradient-to-b from-gray-300 to-gray-200 dark:from-blue-700 dark:to-blue-900"
-          style={{
-            width: rest.width,
-            height: rest.height,
-            background: hashStringToColor(`${currency.symbol} ${currency.name}` ?? '??'),
-          }}
-        >
-          {+(rest.width || 0) < 20 ? currency.symbol?.substring(0, 1) : currency.symbol?.substring(0, 2) ?? '??'}
-        </div>
-      )
-    }
-
-    return (
-      <a target="_blank" rel="noopener noreferrer" href={Chain.tokenUrl(currency.chainId, currency.wrapped.address)}>
-        <div
-          className="text-xs text-white font-bold rounded-full flex items-center justify-center bg-gradient-to-b from-gray-300 to-gray-200 dark:from-blue-700 dark:to-blue-900"
-          style={{
-            width: rest.width,
-            height: rest.height,
-            background: hashStringToColor(`${currency.symbol} ${currency.name}` ?? '??'),
-          }}
-        >
-          {currency.symbol?.substring(0, 2) ?? '??'}
-        </div>
-      </a>
-    )
-  }
+    if (currency.isNative)
+      return cloudinaryImageLoader({
+        width: Number(rest.width) ?? 20,
+        src: `native-currency/${LOGO[currency.chainId]}`,
+      })
+    return cloudinaryImageLoader({
+      width: Number(rest.width) ?? 20,
+      src: `tokens/${currency.chainId}/${currency.wrapped.address}.jpg`,
+    })
+  }, [currency, rest.width])
 
   if (!src) {
     return (
@@ -149,33 +118,29 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, className, ...rest 
 
   if (disableLink) {
     return (
-      <Image
-        key={src}
-        onError={() => setError(true)}
-        src={src}
-        alt={currency.name || currency.symbol || currency.wrapped.address}
-        className={classNames(className, 'rounded-full overflow-hidden')}
-        width={rest.width}
-        height={rest.height}
-        loader={cloudinaryImageLoader}
-        {...rest}
-      />
+      <Avatar style={{ width: rest.width, height: rest.height }}>
+        <AvatarImage src={src} />
+        <AvatarFallback
+          style={{ background: hashStringToColor(`${currency.symbol} ${currency.name}` ?? '??') }}
+          className="text-white"
+        >
+          {currency.symbol?.substring(0, 2)}
+        </AvatarFallback>
+      </Avatar>
     )
   }
 
   return (
     <a target="_blank" rel="noopener noreferrer" href={Chain.tokenUrl(currency.chainId, currency.wrapped.address)}>
-      <Image
-        key={src}
-        onError={() => setError(true)}
-        src={src}
-        className={classNames(className, 'rounded-full overflow-hidden')}
-        alt={currency.name || currency.symbol || currency.wrapped.address}
-        width={rest.width}
-        height={rest.height}
-        loader={cloudinaryImageLoader}
-        {...rest}
-      />
+      <Avatar style={{ width: rest.width, height: rest.height }}>
+        <AvatarImage src={src} />
+        <AvatarFallback
+          style={{ background: hashStringToColor(`${currency.symbol} ${currency.name}` ?? '??') }}
+          className="text-white"
+        >
+          {currency.symbol?.substring(0, 2)}
+        </AvatarFallback>
+      </Avatar>
     </a>
   )
 }
