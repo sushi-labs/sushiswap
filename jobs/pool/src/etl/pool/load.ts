@@ -41,7 +41,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
     }
     poolsToCreate.push(pool)
   }
-  
+
   const feeApr1h = poolsToUpdate
     .filter((p) => p.feeApr1h)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.feeApr1h}`)
@@ -295,7 +295,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
       END,`
     : Prisma.empty
 
-    const query = Prisma.sql`
+  const query = Prisma.sql`
     UPDATE SushiPool
     SET 
       reserve0 = CASE 
@@ -400,9 +400,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
     WHERE id IN (${Prisma.join(poolsToUpdate.map((update) => update.id))});
 `
   const [updated, created] = await Promise.all([
-    poolsToUpdate.length
-      ? client.$executeRaw`${query}`
-      : Promise.resolve(0),
+    poolsToUpdate.length ? client.$executeRaw`${query}` : Promise.resolve(0),
     client.sushiPool.createMany({
       data: poolsToCreate,
       skipDuplicates: true,
