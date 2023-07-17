@@ -335,6 +335,7 @@ const _Add: FC = () => {
       <ContentBlock title={<span className="text-gray-900 dark:text-white">Deposit.</span>}>
         <div className="flex flex-col gap-4">
           <TradeInput
+            id={`liquidity-from`}
             token={token0}
             value={String(amount0)}
             setToken={setToken0}
@@ -352,6 +353,7 @@ const _Add: FC = () => {
             </button>
           </div>
           <TradeInput
+            id={`liquidity-to`}
             token={token1}
             value={String(amount1)}
             setToken={setToken1}

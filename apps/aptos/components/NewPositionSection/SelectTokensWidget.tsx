@@ -4,10 +4,12 @@ import TokenListDialog from '../TokenListDialog'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { Token } from 'utils/tokenType'
 import { usePoolActions, usePoolState } from 'app/pool/Pool/PoolProvider'
+import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 
 export const SelectTokensWidget: FC = ({}) => {
   const { token0, token1 } = usePoolState()
   const { setToken0, setToken1 } = usePoolActions()
+  console.log(token0, token1)
   return (
     <ContentBlock
       title={
@@ -17,67 +19,69 @@ export const SelectTokensWidget: FC = ({}) => {
       }
     >
       <div className="flex gap-3">
-        <TokenListDialog selected={token0} handleChangeToken={setToken0}>
-          {({ setOpen }) => (
-            <button
-              onClick={(e) => {
-                setOpen(true)
-                e.stopPropagation()
-              }}
-              id="swap-from-button"
-              type="button"
-              testdata-id="swap-from-button"
-              className="flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12] whitespace-nowrap"
-            >
-              <div className="w-[28px] h-[28px] mr-0.5">
-                <img
-                  src={token0.logoURI}
-                  alt={''}
-                  height={28}
-                  width={28}
-                  decoding="async"
-                  loading="lazy"
-                  data-nimg={1}
-                  className="rounded-full"
-                  style={{ color: 'transparent' }}
-                />
-              </div>
-              {/* {currency.name} */}
-              {token0.symbol}
-              <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />
-            </button>
-          )}
+        <TokenListDialog id={`liquidity-from`} selected={token0} handleChangeToken={setToken0}>
+          <Modal.Trigger tag={`liquidity-from-token-selector-modal`}>
+            {({ open }) => (
+              <>
+                <button
+                  onClick={open}
+                  id="swap-from-button"
+                  type="button"
+                  testdata-id="swap-from-button"
+                  className="flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12] whitespace-nowrap"
+                >
+                  <div className="w-[28px] h-[28px] mr-0.5">
+                    <img
+                      src={token0.logoURI}
+                      alt={''}
+                      height={28}
+                      width={28}
+                      decoding="async"
+                      loading="lazy"
+                      data-nimg={1}
+                      className="rounded-full"
+                      style={{ color: 'transparent' }}
+                    />
+                  </div>
+                  {/* {currency.name} */}
+                  {token0.symbol}
+                  <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />
+                </button>
+              </>
+            )}
+          </Modal.Trigger>
         </TokenListDialog>
-        <TokenListDialog selected={token1} handleChangeToken={setToken1}>
-          {({ setOpen }) => (
-            <button
-              onClick={(e) => {
-                setOpen(true)
-                e.stopPropagation()
-              }}
-              id="swap-from-button"
-              type="button"
-              testdata-id="swap-from-button"
-              className="flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12] whitespace-nowrap"
-            >
-              <div className="w-[28px] h-[28px] mr-0.5">
-                <img
-                  src={token1.logoURI}
-                  alt={''}
-                  height={28}
-                  width={28}
-                  decoding="async"
-                  loading="lazy"
-                  data-nimg={1}
-                  className="rounded-full"
-                  style={{ color: 'transparent' }}
-                />
-              </div>
-              {token1.name}
+        <TokenListDialog id={`liquidity-to`} selected={token1} handleChangeToken={setToken1}>
+          <Modal.Trigger tag={`liquidity-to-token-selector-modal`}>
+            {({ open }) => (
+              <>
+                <button
+                  onClick={open}
+                  id="swap-from-button"
+                  type="button"
+                  testdata-id="swap-from-button"
+                  className="flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12] whitespace-nowrap"
+                >
+                  <div className="w-[28px] h-[28px] mr-0.5">
+                    <img
+                      src={token1.logoURI}
+                      alt={''}
+                      height={28}
+                      width={28}
+                      decoding="async"
+                      loading="lazy"
+                      data-nimg={1}
+                      className="rounded-full"
+                      style={{ color: 'transparent' }}
+                    />
+                  </div>
+                  {token1.symbol}
 
-              <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />
-            </button>
-          )}
+                  <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />
+                </button>
+              </>
+            )}
+          </Modal.Trigger>
         </TokenListDialog>
         <div
           style={{
