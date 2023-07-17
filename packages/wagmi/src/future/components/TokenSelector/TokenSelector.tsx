@@ -4,7 +4,7 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { useCustomTokens, usePinnedTokens } from '@sushiswap/hooks'
-import { useBalances, usePrices, useTokens } from '@sushiswap/react-query'
+import { useBalances, useOtherTokenListsQuery, usePrices, useTokens } from '@sushiswap/react-query'
 import { IconButton } from '@sushiswap/ui'
 import { TextField } from '@sushiswap/ui'
 import { DialogContent, DialogNew } from '@sushiswap/ui'
@@ -50,9 +50,17 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
 
   const { data: customTokenMap, mutate: customTokenMutate } = useCustomTokens()
   const { data: pinnedTokenMap, mutate: pinnedTokenMutate, hasToken: isTokenPinned } = usePinnedTokens()
-  const { data: tokenMap } = useTokens({ chainId })
+  const { data: defaultTokenMap } = useTokens({ chainId })
+  const { data: otherTokenMap } = useOtherTokenListsQuery({ chainId, query })
   const { data: pricesMap } = usePrices({ chainId })
   const { data: balancesMap } = useBalances({ chainId, account: address })
+
+  const tokenMap = useMemo(() => {
+    return {
+      ...defaultTokenMap,
+      ...otherTokenMap,
+    }
+  }, [defaultTokenMap, otherTokenMap])
 
   const { data: queryToken, isInitialLoading: isQueryTokenLoading } = useTokenWithCache({
     chainId,
