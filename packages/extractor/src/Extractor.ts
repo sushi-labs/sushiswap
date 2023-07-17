@@ -12,13 +12,15 @@ const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
 // TODO: UniV3 price diapason +-10% test
 // TODO: fullness test
-// TODO: correctness test
 // TODO: All blockchains test
+// TODO: correctness terst - now ofter fails? (needs good token list)
+
 // TODO: Back to LogFilter ? Faster events applying
+
 // TODO: The list of the best tokens
+
 // TODO: cache for not-existed pools?
 // TODO: to fill address cache from pool cache
-// TODO: check wrong tokens (big difference)
 
 // Usage recomendation:
 //  - getPoolCodesForTokens/getPoolCodesForTokensAsync consumes much processor resources for new token sets -
