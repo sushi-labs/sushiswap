@@ -118,8 +118,9 @@ export class UniV3Extractor {
   // TODO: stop ?
   async start() {
     if (this.logProcessingStatus == LogsProcessing.NotStarted) {
-      this.logFilter.start()
       this.logProcessingStatus = LogsProcessing.Started
+      const startTime = performance.now()
+      this.logFilter.start()
 
       if (this.tokenManager.tokens.size == 0) await this.tokenManager.addCachedTokens()
 
@@ -141,7 +142,7 @@ export class UniV3Extractor {
       })
       cachedPools.forEach((p) => this.addPoolWatching(p, 'cache', false))
       this.consoleLog(`${cachedPools.size} pools were taken from cache`)
-      warnLog('ExtractorV3 was started')
+      warnLog(`ExtractorV3 was started (${Math.round(performance.now() - startTime)}ms)`)
     }
   }
 

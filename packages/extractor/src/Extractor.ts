@@ -14,9 +14,8 @@ const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 // TODO: fullness test
 // TODO: correctness test
 // TODO: stress test
-// TODO: All blockchain test
-// TODO: Avoid tokens duplicating
-// TODO: Back to LogFilter ?
+// TODO: All blockchains test
+// TODO: Back to LogFilter ? Faster events applying
 // TODO: The list of the best tokens
 // TODO: wait at start for all pool cache reading
 // TODO: cache for not-existed pools?

@@ -154,13 +154,14 @@ export class UniV2Extractor {
   }
 
   async start() {
-    await this.logFilter.start()
+    const startTime = performance.now()
+    this.logFilter.start()
     if (this.tokenManager.tokens.size == 0) await this.tokenManager.addCachedTokens()
 
     // Add cached pools to watching
     const cachedPools: Set<string> = new Set()
     const cachedRecords = await this.poolPermanentCache.getAllRecords()
-    cachedRecords.forEach(async (r) => {
+    const promises = cachedRecords.map(async (r) => {
       const token0 = this.tokenManager.getKnownToken(r.token0)
       const token1 = this.tokenManager.getKnownToken(r.token1)
       const factory = this.factoryMap.get(r.factory.toLowerCase())
@@ -192,8 +193,9 @@ export class UniV2Extractor {
       }
     })
     this.consoleLog(`${cachedPools.size} pools were taken from cache`)
+    await Promise.allSettled(promises)
 
-    warnLog('ExtractorV2 was started')
+    warnLog(`ExtractorV2 was started (${Math.round(performance.now() - startTime)}ms)`)
   }
 
   async updatePoolState(poolState: PoolState) {
