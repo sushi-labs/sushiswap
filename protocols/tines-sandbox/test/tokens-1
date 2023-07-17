@@ -5,18 +5,14 @@
 {"address":"0xD7e228e0152a2Eac8a900576830c764e9dDD6A74","name":"Homer","symbol":"Simpson 3.0","decimals":9}
 {"address":"0x267955c2501d089a48B8be0FC4ed53c53A95c68c","name":"Homer","symbol":"Simpson 4.0","decimals":9}
 {"address":"0xF4cbC55c37139031B735368D416F693AA85C875C","name":"PEPE 2","symbol":"PEPE2","decimals":18}
-{"address":"0x4145dDf6E855D70424e196A512826Be0a6fc1418","name":"Evermars","symbol":"EVERMARS","decimals":18}
 {"address":"0x0D505C03d30e65f6e9b4Ef88855a47a89e4b7676","name":"ZOOMER","symbol":"ZOOMER","decimals":18}
 {"address":"0xBE77212A6c7f55567470c2C95AFf7B0B0E0C3Ef5","name":"Shiba 2.0","symbol":"Shiba 2.0","decimals":9}
 {"address":"0x3a6E64c8a985F0897D888D7F25e7B2814b98cA6e","name":"SHIB 2","symbol":"SHIB2","decimals":18}
-{"address":"0xa818758BA5E18BFc64404AE9e5219353e36daB6b","name":"XSHIB","symbol":"XSHIB","decimals":9}
-{"address":"0x9235652dF1D8c3b36917Ed80f791148d0f1c87A2","name":"Pepe Crazy","symbol":"PECRAZY","decimals":9}
 {"address":"0x2e85ae1C47602f7927bCabc2Ff99C40aA222aE15","name":"Katana Inu","symbol":"KATA","decimals":18}
 {"address":"0xB0B195aEFA3650A6908f15CdaC7D92F8a5791B0B","name":"BOB","symbol":"BOB","decimals":18}
 {"address":"0x046EeE2cc3188071C02BfC1745A6b17c656e3f3d","name":"Rollbit Coin","symbol":"RLB","decimals":18}
 {"address":"0x6982508145454Ce325dDbE47a25d4ec3d2311933","name":"Pepe","symbol":"PEPE","decimals":18}
 {"address":"0x7eaF9C89037e4814DC0d9952Ac7F888C784548DB","name":"Royale","symbol":"ROYA","decimals":18}
-{"address":"0x3bd8268791DE798d4ED5d424d49412cF42B8eC3a","name":"Opera Protocol","symbol":"OPERA","decimals":9}
 {"address":"0xa71d0588EAf47f12B13cF8eC750430d21DF04974","name":"Shiba Predator","symbol":"QOM","decimals":18}
 {"address":"0x5f5166C4fdb9055efB24A7E75Cc1A21Ca8ca61a3","name":"AI-X","symbol":"X","decimals":9}
 {"address":"0x499cC872dAeCa4c62CBfe45f72b49473D5Ccb6Af","name":"PEPEMINER","symbol":"PEPEM","decimals":18}
@@ -36,7 +32,6 @@
 {"address":"0x84cA8bc7997272c7CfB4D0Cd3D55cd942B3c9419","name":"DIAToken","symbol":"DIA","decimals":18}
 {"address":"0x7a2Bc711E19ba6aff6cE8246C546E8c4B4944DFD","name":"WAX Economic Token","symbol":"WAXE","decimals":8}
 {"address":"0xFE3E6a25e6b192A42a44ecDDCd13796471735ACf","name":"Reef.finance","symbol":"REEF","decimals":18}
-{"address":"0x5fe9401F4C81454fd2DfDbC3E988C88143459248","name":"GREEN","symbol":"GREEN","decimals":9}
 {"address":"0x38e4adB44ef08F22F5B5b76A8f0c2d0dCbE7DcA1","name":"Concentrated Voting Power","symbol":"CVP","decimals":18}
 {"address":"0x12970E6868f88f6557B76120662c1B3E50A646bf","name":"Milady","symbol":"LADYS","decimals":18}
 {"address":"0x1BBf25e71EC48B84d773809B4bA55B6F4bE946Fb","name":"Vow","symbol":"VOW","decimals":18}
@@ -49,8 +44,6 @@
 {"address":"0x39207D2E2fEEF178FBdA8083914554C59D9f8c00","name":"MultiPlanetary Inus","symbol":"INUS","decimals":18}
 {"address":"0x464FdB8AFFC9bac185A7393fd4298137866DCFB8","name":"REALM","symbol":"REALM","decimals":18}
 {"address":"0x0FAFc0c448c7074107e353aE728640C7a2BCbc77","name":"Amazing Spider Man","symbol":"SPIDER","decimals":18}
-{"address":"0x0Eef64c9c064F97A1FEEe3d0C529C517Fe1B029B","name":"Pauly0x","symbol":"PAULY","decimals":18}
-{"address":"0x2dE9F12A2a01d5C55d4B2Be8111F9F51143d980A","name":"Christopher Poole","symbol":"MOOT","decimals":9}
 {"address":"0xEF4928e4a36628408419F0eFD99228907b19aCe5","name":"DogeKing2.0","symbol":"DogeKing2.0","decimals":9}
 {"address":"0x8f8221aFbB33998d8584A2B05749bA73c37a938a","name":"Request Token","symbol":"REQ","decimals":18}
 {"address":"0xae78736Cd615f374D3085123A210448E74Fc6393","name":"Rocket Pool ETH","symbol":"rETH","decimals":18}
@@ -66,12 +59,10 @@
 {"address":"0xb23d80f5FefcDDaa212212F028021B41DEd428CF","name":"Prime","symbol":"PRIME","decimals":18}
 {"address":"0x0A13A5929e5F0ff0EABA4Bd9e9512C91fCE40280","name":"XAI Corp","symbol":"XAI","decimals":9}
 {"address":"0x88417754Ff7062c10F4E3A4AB7E9F9D9cbDa6023","name":"Peepa","symbol":"PEEPA","decimals":18}
-{"address":"0x703293d32aEa894CCA91d6C282db9eFFfE47C308","name":"AERIE","symbol":"AER","decimals":18}
 {"address":"0x32f044dA25218598D4238A4fc6826Ac4ebb97e9E","name":"REBATE","symbol":"RBE","decimals":18}
 {"address":"0x9813037ee2218799597d83D4a5B6F3b6778218d9","name":"BONE SHIBASWAP","symbol":"BONE","decimals":18}
 {"address":"0xF1182229B71E79E504b1d2bF076C15a277311e05","name":"LBR","symbol":"LBR","decimals":18}
 {"address":"0x4730fB1463A6F1F44AEB45F6c5c422427f37F4D0","name":"The 4th Pillar Token","symbol":"FOUR","decimals":18}
-{"address":"0xF76018c130663F907f4Bfaa04999888f25b57099","name":"Floki 2.0","symbol":"FLOKI2.0","decimals":18}
 {"address":"0x1614F18Fc94f47967A3Fbe5FfcD46d4e7Da3D787","name":"PAID Network","symbol":"PAID","decimals":18}
 {"address":"0x2F573070E6090b3264Fe707e2C9F201716F123c7","name":"Mumu","symbol":"MUMU","decimals":18}
 {"address":"0x1b40183EFB4Dd766f11bDa7A7c3AD8982e998421","name":"VesperToken","symbol":"VSP","decimals":18}
@@ -80,7 +71,6 @@
 {"address":"0x519C1001D550C0a1DaE7d1fC220f7d14c2A521BB","name":"Polkaswap","symbol":"PSWAP","decimals":18}
 {"address":"0x4d224452801ACEd8B2F0aebE155379bb5D594381","name":"ApeCoin","symbol":"APE","decimals":18}
 {"address":"0xC7555f6410E983C867748879B2F6d2b0b0e100fd","name":"SilverDAX","symbol":"SDAX","decimals":5}
-{"address":"0x0607A9844472e8Ef1058Dc33096ACe550Cb65909","name":"Mongoose 2.0","symbol":"MONG2.0","decimals":18}
 {"address":"0x95e05e2Abbd26943874ac000D87C3D9e115B543c","name":"Raptor","symbol":"BIBLE","decimals":18}
 {"address":"0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39","name":"HEX","symbol":"HEX","decimals":8}
 {"address":"0x6B175474E89094C44Da98b954EedeAC495271d0F","name":"Dai Stablecoin","symbol":"DAI","decimals":18}
@@ -89,9 +79,7 @@
 {"address":"0xa21Af1050F7B26e0cfF45ee51548254C41ED6b5c","name":"Osaka Protocol","symbol":"OSAK","decimals":18}
 {"address":"0xCf586d9f47E35fE6B37e53263a286C0a1DF0AA38","name":"Autism Pepe","symbol":"AUTISM","decimals":9}
 {"address":"0x0c885E4eC05EF5160c48d63e3E00864f9400Efe7","name":"PEPELISA","symbol":"PESA","decimals":9}
-{"address":"0x59f6B0ea66cD0E78FaDB450940448BcF62eA04Ba","name":"Dr Manhattan","symbol":"DRMAN","decimals":18}
 {"address":"0x111111111117dC0aa78b770fA6A738034120C302","name":"1INCH Token","symbol":"1INCH","decimals":18}
-{"address":"0xa72daEf35f3875355112b7A39b867866A88723DA","name":"MEGAMOON","symbol":"MEGAM","decimals":18}
 {"address":"0x9E32b13ce7f2E80A01932B42553652E053D6ed8e","name":"Metis Token","symbol":"Metis","decimals":18}
 {"address":"0x24dA31e7BB182cb2cABfEF1d88db19C2AE1f5572","name":"SHIKOKU INU","symbol":"SHIK","decimals":18}
 {"address":"0xf3dcbc6D72a4E1892f7917b7C43b74131Df8480e","name":"BDPToken","symbol":"BDP","decimals":18}
@@ -103,21 +91,11 @@
 {"address":"0x57B946008913B82E4dF85f501cbAeD910e58D26C","name":"Marlin POND","symbol":"POND","decimals":18}
 {"address":"0x2C98DD11019803075A0f79104872eCf1c5c94Da3","name":"XPEPE","symbol":"XPEPE","decimals":2}
 {"address":"0x72e4f9F808C49A2a61dE9C5896298920Dc4EEEa9","name":"HarryPotterObamaSonic10Inu","symbol":"BITCOIN","decimals":8}
-{"address":"0x7D3E240BA20D700be5a90e80FA9Fd57C57472F18","name":"Squid3.0","symbol":"Squid3.0","decimals":18}
 {"address":"0x335F4e66B9B61CEE5CeaDE4e727FCEC20156B2F0","name":"Elmo","symbol":"ELMO","decimals":18}
-{"address":"0xc37126b2399b078e73cbCf7D7ed2df139114b2Ae","name":"2.0 Pepe","symbol":"2.0PEPE","decimals":18}
 {"address":"0x1a7e4e63778B4f12a199C062f3eFdD288afCBce8","name":"agEUR","symbol":"agEUR","decimals":18}
 {"address":"0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c","name":"Euro Coin","symbol":"EUROC","decimals":6}
 {"address":"0x967da4048cD07aB37855c090aAF366e4ce1b9F48","name":"Ocean Token","symbol":"OCEAN","decimals":18}
-{"address":"0x948C93E1417D354b991CF1098DD94210F9DBA506","name":"Pepe Inu","symbol":"PEPINU","decimals":18}
-{"address":"0xE9feA4479fc04f797190350687775573496D27A7","name":"Crocodile","symbol":"CROC","decimals":9}
-{"address":"0x5532628753bBB19D42851D95eD8Be6Ff70fCF2fB","name":"Daumenfrosch","symbol":"PUPU","decimals":9}
-{"address":"0x949BB77e38059914895dEbf4B2384a7A09c6b32E","name":"BeeBee","symbol":"BeeBee","decimals":9}
 {"address":"0xd2877702675e6cEb975b4A1dFf9fb7BAF4C91ea9","name":"Wrapped LUNA Token","symbol":"LUNA","decimals":18}
-{"address":"0xe48F40c570A0c56D83D56467E6B0c840b0644bA2","name":"Peppa2.0","symbol":"Peppa2.0","decimals":18}
-{"address":"0x59631cE4fEfD82229E62246dD41Ef9bF12211800","name":"🐸🟪","symbol":"🐸🟪","decimals":9}
-{"address":"0x0981d9774a59a703dB85f5EaA23672283EA31106","name":"Pepe Inu","symbol":"PEPINU","decimals":18}
-{"address":"0x0Af882690ac8c159aD7cC471018fB3f53817bAFb","name":"HeartBurn","symbol":"HPT.5","decimals":18}
 {"address":"0xa3d070051E8eF3d52a0711d91F8886011DEE2908","name":"Heart Protocol","symbol":"HPT","decimals":9}
 {"address":"0x41B6F91DAa1509bFbe06340D756560C4a1d146Fd","name":"Babydoge 2.0","symbol":"Babydoge2.0","decimals":9}
 {"address":"0xdb7fb3f5BDD86CC59D189150C9A3306332861459","name":"PEPEINU","symbol":"PEPEINU","decimals":9}
