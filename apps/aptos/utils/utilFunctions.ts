@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { Token } from './tokenType'
+import { usePoolActions, usePoolState } from 'app/pool/Pool/PoolProvider'
 console.log(process.env.CONTRACT_ADDRESS)
 export async function useAllCommonPairs(
   amount_in: number = 0,
@@ -126,25 +127,43 @@ export async function useAllCommonPairs(
     })
   return returnRoutes
 }
-
-export async function getPoolPairs(token0: Token, token1: Token) {
+export async function getPoolPairs() {
+  const { token0, token1 } = usePoolState()
+  const { setPairFound, setPairs, setLoadingPrice, setPoolPairRatio } = usePoolActions()
+  console.log('token', token0)
   return useMemo(async () => {
     let reserves: any
-    await fetch(
-      `https://fullnode.testnet.aptoslabs.com/v1/accounts/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resources`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        reserves = data.filter((d: any) => {
-          if (
-            d.type.includes('swap::TokenPairReserve') &&
-            d.type.includes(token0.address) &&
-            d.type.includes(token1.address)
-          ) {
-            return true
-          }
+    try {
+      setLoadingPrice(true)
+      await fetch(
+        `https://fullnode.testnet.aptoslabs.com/v1/accounts/0xe8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resources`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          reserves = data.filter((d: any) => {
+            if (
+              d.type.includes('swap::TokenPairReserve') &&
+              d.type.includes(token0.address) &&
+              d.type.includes(token1.address)
+            ) {
+              return true
+            }
+          })
         })
-      })
+      setLoadingPrice(false)
+    } catch (err) {
+      console.log(err)
+    } finally {
+      setLoadingPrice(false)
+    }
+    console.log(reserves)
+    if (reserves && reserves.length) {
+      setPairs(reserves[0])
+      setPoolPairRatio(reserves[0]?.data?.reserve_y / reserves[0]?.data?.reserve_x)
+    } else {
+      setPairs({})
+      setPoolPairRatio(0)
+    }
     return reserves
   }, [token0, token1])
 }

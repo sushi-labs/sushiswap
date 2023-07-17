@@ -16,9 +16,6 @@ export const SwitchAppType: FC = () => {
           </Button>
         </Tooltip>
       </NonSSRWrapper>
-      <Button size="sm" variant="empty" color="default">
-        Liquidity
-      </Button>
     </div>
   )
 }

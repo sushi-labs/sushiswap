@@ -20,11 +20,12 @@ export const Rate: FC<Rate> = ({ children }) => {
   // const usdPrice = price
   //   ? prices?.[invert ? price.quoteCurrency.wrapped.address : price.baseCurrency.wrapped.address]?.toFixed(2)
   //   : undefined
+
   const content = (
     <>
       {invert ? (
         <>
-          1 {token1?.symbol} = {amount0} {token0?.symbol}
+          1 {token1?.symbol} = {amount1} {token0?.symbol}
         </>
       ) : (
         <>

@@ -1,56 +1,33 @@
-import { PlusIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Typography } from '@sushiswap/ui'
 import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 import { ModalType } from '@sushiswap/ui/future/components/modal/ModalProvider'
-import { FC, ReactNode } from 'react'
+import { FC, ReactNode, useState } from 'react'
 import { Rate } from './Rate'
 import { usePoolActions, usePoolState } from './PoolProvider'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { Network, Provider } from 'aptos'
-import { payloadArgs } from 'utils/payloadUtil'
-import { createToast } from 'components/toast'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 interface Props {
-  children: ReactNode
+  children({ close }: { close: () => void }): ReactNode
 }
 
 export const AddSectionReviewModal: FC<Props> = ({ children }) => {
   const { token0, token1, amount0, amount1, isPriceFetching } = usePoolState()
   const { account, signAndSubmitTransaction } = useWallet()
   const { setisTransactionPending } = usePoolActions()
-  // const addLiquidity = async (close: () => void) => {
-  //   const provider = new Provider(Network.TESTNET)
-  //   const payload: any = payloadArgs()
-  //   setisTransactionPending(true)
-  //   if (!account) return []
-  //   try {
-  //     const responce: Promise<any> = await signAndSubmitTransaction(payload)
-  //     console.log(responce)
-  //     await provider.waitForTransaction(responce?.hash)
-  //     if (!responce?.success) return
-  //     const toastId = `completed:${response?.hash}`
-  //     // const summery = noLiquidity
-  //     // ? `Created the ${token0.symbol}/${token1.symbol} liquidity pool`
-  //     // : `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`;
-  //     const summery = `Created`
-  //     createToast({
-  //       summery: summery,
-  //       toastId: toastId,
-  //     })
-  //     setisTransactionPending(false)
-  //     close()
-  //   } catch (error) {
-  //     const toastId = `failed:${Math.random()}`
-  //     createToast({ summery: `User rejected request`, toastId: toastId })
-  //   } finally {
-  //     setisTransactionPending(false)
-  //   }
-  // }
+  const [open, setOpen] = useState(false)
   return (
     <Modal.Review modalType={ModalType.Regular} variant="transparent" tag="add-liquidity">
       {({ close }) => (
         <>
-          <h1 className="text-2xl font dark:text-slate-50">Add Liquidity</h1>
+          <div className="flex justify-between items-center pb-4">
+            <h3 className="flex justify-center text-lg font-medium leading-6 text-slate-100">Add Liquidity</h3>
+            <Button variant="outlined" color="default" className="!p-2 !rounded-full" onClick={close}>
+              <XMarkIcon height={24} width={24} className="hover:text-slate-50 text-slate-100" />
+            </Button>
+          </div>
+          {/* <Dialog.Header border={false} title="Add Liquidity" onClose={close} /> */}
           <div className="!my-0 grid grid-cols-12 items-center">
             <div className="relative flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
               <div className="flex items-center gap-2">
@@ -111,7 +88,7 @@ export const AddSectionReviewModal: FC<Props> = ({ children }) => {
               )}
             </Rate>
           </div>
-          {children}
+          {children({ close })}
         </>
       )}
     </Modal.Review>

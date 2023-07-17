@@ -61,7 +61,7 @@ export const PoolPageV2 = () => {
     setController(newController)
     setLoadingPriceLower(true)
     setSwapPerTokenPrice('')
-    const reserves = await getPoolPairs(newController)
+    // const reserves = await getPoolPairs(newController)
     setReserves(reserves)
     setLoadingPriceLower(false)
   }
