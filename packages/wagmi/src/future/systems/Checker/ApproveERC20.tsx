@@ -1,15 +1,16 @@
-import { Button, ButtonProps } from '@sushiswap/ui/components/button'
-import { Amount, Type } from '@sushiswap/currency'
-import { ChevronRightIcon } from '@heroicons/react/24/solid'
-import { ApprovalState, useTokenApproval } from '../../hooks'
-import { Address } from 'wagmi'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { ChevronRightIcon } from '@heroicons/react/24/solid'
+import { Amount, Type } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui'
-import dynamic from 'next/dynamic'
+import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import { Explainer } from '@sushiswap/ui/components/explainer'
-import { Select, SelectContent, SelectItem, SelectPrimitive } from '@sushiswap/ui/components/select'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
+import { Select, SelectContent, SelectItem, SelectPrimitive } from '@sushiswap/ui/components/select'
+import dynamic from 'next/dynamic'
 import React, { FC, useState } from 'react'
+import { Address } from 'wagmi'
+
+import { ApprovalState, useTokenApproval } from '../../hooks'
 
 export interface ApproveERC20Props extends ButtonProps {
   id: string

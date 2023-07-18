@@ -49,14 +49,14 @@ import { V3MigrateChainId } from '@sushiswap/wagmi/future/hooks/migrate/types'
 export const MODAL_MIGRATE_ID = 'migrate-modal'
 
 enum PositionView {
-  staked,
-  unstaked,
+  Staked = 'Staked',
+  Unstaked = 'Unstaked',
 }
 
 export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   const { push } = useRouter()
   const { address } = useAccount()
-  const [positionView, setPositionView] = useState(PositionView.staked)
+  const [positionView, setPositionView] = useState(PositionView.Staked)
   const [feeAmount, setFeeAmount] = useState<FeeAmount>(FeeAmount.LOWEST)
   const { approved } = useApproved(APPROVE_TAG_UNSTAKE)
   const [invertPrice, setInvertPrice] = useState(false)
@@ -301,9 +301,9 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
 
   return (
     <>
-      <div className="flex gap-6 col-span-2">
+      <div className="flex col-span-2 gap-6">
         {v2SpotPrice && (
-          <div className="col-span-2 flex flex-col gap-2">
+          <div className="flex flex-col col-span-2 gap-2">
             <List.Label className="!px-0">V2 Price</List.Label>
             {token0 && token1 && pool ? (
               <div
@@ -325,7 +325,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
           </div>
         )}
         {v3SpotPrice && (
-          <div className="col-span-2 flex flex-col gap-2">
+          <div className="flex flex-col col-span-2 gap-2">
             <List.Label className="!px-0">V3 Price</List.Label>
             {token0 && token1 && pool ? (
               <div
@@ -353,16 +353,16 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
             {stakedBalance?.greaterThan(ZERO) && (
               <List.Label>
                 <RadioGroup value={positionView} onChange={setPositionView} className="flex gap-3">
-                  <RadioGroup.Option value={PositionView.staked}>
+                  <RadioGroup.Option value={PositionView.Staked}>
                     {({ checked }) => (
-                      <button className={classNames(checked ? 'text-blue' : '', 'font-semibold text-xs')}>
+                      <button type="button" className={classNames(checked ? 'text-blue' : '', 'font-semibold text-xs')}>
                         Staked
                       </button>
                     )}
                   </RadioGroup.Option>
-                  <RadioGroup.Option value={PositionView.unstaked}>
+                  <RadioGroup.Option value={PositionView.Unstaked}>
                     {({ checked }) => (
-                      <button className={classNames(checked ? 'text-blue' : '', 'font-semibold text-xs')}>
+                      <button type="button" className={classNames(checked ? 'text-blue' : '', 'font-semibold text-xs')}>
                         Unstaked
                       </button>
                     )}
@@ -372,10 +372,10 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
             )}
           </div>
           <List.Control>
-            <List.KeyValue flex title={<span className="font-semibold text-base">Position Value</span>}>
-              <span className="font-semibold text-base">
+            <List.KeyValue flex title={<span className="text-base font-semibold">Position Value</span>}>
+              <span className="text-base font-semibold">
                 {formatUSD(
-                  positionView === PositionView.staked && stakedBalance?.greaterThan(ZERO)
+                  positionView === PositionView.Staked && stakedBalance?.greaterThan(ZERO)
                     ? stakedValue0 + stakedValue1
                     : value0 + value1
                 )}
@@ -389,15 +389,15 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                   <div className="flex flex-col gap-0.5">
                     <div className="flex items-center gap-2">
                       <Currency.Icon currency={unwrapToken(token0)} width={18} height={18} />
-                      {(positionView === PositionView.staked && stakedBalance?.greaterThan(ZERO)
+                      {(positionView === PositionView.Staked && stakedBalance?.greaterThan(ZERO)
                         ? stakedUnderlying0
                         : underlying0
                       )?.toSignificant(6)}{' '}
                       {unwrapToken(token0).symbol}
                     </div>
-                    <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                    <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
                       {formatUSD(
-                        positionView === PositionView.staked && stakedBalance?.greaterThan(ZERO) ? stakedValue0 : value0
+                        positionView === PositionView.Staked && stakedBalance?.greaterThan(ZERO) ? stakedValue0 : value0
                       )}
                     </span>
                   </div>
@@ -413,15 +413,15 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                 <div className="flex flex-col gap-0.5">
                   <div className="flex items-center gap-2">
                     <Currency.Icon currency={unwrapToken(token1)} width={18} height={18} />
-                    {(positionView === PositionView.staked && stakedBalance?.greaterThan(ZERO)
+                    {(positionView === PositionView.Staked && stakedBalance?.greaterThan(ZERO)
                       ? stakedUnderlying1
                       : underlying1
                     )?.toSignificant(6)}{' '}
                     {unwrapToken(token1).symbol}
                   </div>
-                  <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                  <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
                     {formatUSD(
-                      positionView === PositionView.staked && stakedBalance?.greaterThan(ZERO) ? stakedValue1 : value1
+                      positionView === PositionView.Staked && stakedBalance?.greaterThan(ZERO) ? stakedValue1 : value1
                     )}
                   </span>
                 </div>
@@ -447,7 +447,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                 ) : (
                   pendingRewards?.map((reward, i) => (
                     <List.KeyValue
-                      key={i}
+                      key={reward?.currency.id}
                       flex
                       title={`${unwrapToken(rewardTokens[i]).symbol}`}
                       className="!items-start"
@@ -480,7 +480,6 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                     <Button
                       size="xl"
                       onClick={() => sendTransaction?.()}
-                      fullWidth
                       disabled={!approved || isWritePending}
                       testId="unstake-liquidity"
                     >
@@ -495,13 +494,13 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
 
         {(token0Value?.greaterThan(ZERO) || token1Value?.greaterThan(ZERO)) && position && (
           <div className="flex flex-col gap-2">
-            <div className="w-full flex justify-center">
+            <div className="flex justify-center w-full">
               <ArrowDownIcon width={20} height={20} />
             </div>
             <List>
               <List.Control>
-                <List.KeyValue flex title={<span className="font-semibold text-base">Migration</span>}>
-                  <span className="font-semibold text-base">{formatUSD(v3FiatValue0 + v3FiatValue1)}</span>
+                <List.KeyValue flex title={<span className="text-base font-semibold">Migration</span>}>
+                  <span className="text-base font-semibold">{formatUSD(v3FiatValue0 + v3FiatValue1)}</span>
                 </List.KeyValue>
                 {positionAmount0 && (
                   <List.KeyValue flex title={`${positionAmount0.currency.symbol}`} className="!items-start">
@@ -510,7 +509,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                         <Currency.Icon currency={unwrapToken(positionAmount0.currency)} width={18} height={18} />
                         {positionAmount0.toSignificant(6)} {unwrapToken(positionAmount0.currency).symbol}
                       </div>
-                      <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                      <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
                         {formatUSD(v3FiatValue0)}
                       </span>
                     </div>
@@ -523,7 +522,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                         <Currency.Icon currency={unwrapToken(positionAmount1.currency)} width={18} height={18} />
                         {positionAmount1.toSignificant(6)} {unwrapToken(positionAmount1.currency).symbol}
                       </div>
-                      <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                      <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
                         {formatUSD(v3FiatValue1)}
                       </span>
                     </div>
@@ -532,8 +531,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                 <div className="p-4">
                   <div className="h-0.5 w-full bg-gray-100 dark:bg-slate-200/5" />
                 </div>
-                <List.KeyValue flex title={<span className="font-semibold text-base">Refund</span>}>
-                  <span className="font-semibold text-base">{formatUSD(refund0FiatValue + refund1FiatValue)}</span>
+                <List.KeyValue flex title={<span className="text-base font-semibold">Refund</span>}>
+                  <span className="text-base font-semibold">{formatUSD(refund0FiatValue + refund1FiatValue)}</span>
                 </List.KeyValue>
                 {token0Value && (
                   <List.KeyValue flex title={`${token0Value.currency.symbol}`} className="!items-start">
@@ -542,7 +541,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                         <Currency.Icon currency={unwrapToken(token0Value.currency)} width={18} height={18} />
                         {refund0?.toSignificant(6) ?? '0.00'} {unwrapToken(token0Value.currency).symbol}
                       </div>
-                      <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                      <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
                         {formatUSD(refund0FiatValue)}
                       </span>
                     </div>
@@ -555,7 +554,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                         <Currency.Icon currency={unwrapToken(token1Value.currency)} width={18} height={18} />
                         {refund1?.toSignificant(6) ?? '0.00'} {unwrapToken(token1Value.currency).symbol}
                       </div>
-                      <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                      <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
                         {formatUSD(refund1FiatValue)}
                       </span>
                     </div>
@@ -642,7 +641,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
       <Modal.Review tag={MODAL_MIGRATE_ID} variant="opaque">
         {({ close, confirm }) => (
           <div className="max-w-[504px] mx-auto">
-            <button onClick={close} className="p-3 pl-0">
+            <button type="button" onClick={close} className="p-3 pl-0">
               <ArrowLeftIcon strokeWidth={3} width={24} height={24} />
             </button>
             <div className="flex items-start justify-between gap-4 py-2">
@@ -713,7 +712,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                   {positionAmount0 && (
                     <List.KeyValue
                       flex
-                      title={`Migration`}
+                      title={'Migration'}
                       subtitle="The value of your position after migration"
                       className="!items-start"
                     >
@@ -722,20 +721,20 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                           <Currency.Icon currency={unwrapToken(positionAmount0.currency)} width={18} height={18} />
                           {positionAmount0.toSignificant(6)} {unwrapToken(positionAmount0.currency).symbol}
                         </div>
-                        <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                        <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
                           {formatUSD(v3FiatValue0)}
                         </span>
                       </div>
                     </List.KeyValue>
                   )}
                   {positionAmount1 && (
-                    <List.KeyValue flex title={``} className="!items-start">
+                    <List.KeyValue flex title={''} className="!items-start">
                       <div className="flex flex-col gap-0.5">
                         <div className="flex items-center gap-2">
                           <Currency.Icon currency={unwrapToken(positionAmount1.currency)} width={18} height={18} />
                           {positionAmount1.toSignificant(6)} {unwrapToken(positionAmount1.currency).symbol}
                         </div>
-                        <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                        <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
                           {formatUSD(v3FiatValue1)}
                         </span>
                       </div>
@@ -747,7 +746,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                   {token0Value && (
                     <List.KeyValue
                       flex
-                      title={`Refund`}
+                      title={'Refund'}
                       subtitle="The refund you receive after migration"
                       className="!items-start"
                     >
@@ -756,20 +755,20 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                           <Currency.Icon currency={unwrapToken(token0Value.currency)} width={18} height={18} />
                           {refund0?.toSignificant(6) ?? '0.00'} {unwrapToken(token0Value.currency).symbol}
                         </div>
-                        <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                        <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
                           {formatUSD(refund0FiatValue)}
                         </span>
                       </div>
                     </List.KeyValue>
                   )}
                   {token1Value && (
-                    <List.KeyValue flex title={``} className="!items-start">
+                    <List.KeyValue flex title={''} className="!items-start">
                       <div className="flex flex-col gap-0.5">
                         <div className="flex items-center gap-2">
                           <Currency.Icon currency={unwrapToken(token1Value.currency)} width={18} height={18} />
                           {refund1?.toSignificant(6) ?? '0.00'} {unwrapToken(token1Value.currency).symbol}
                         </div>
-                        <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                        <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
                           {formatUSD(refund1FiatValue)}
                         </span>
                       </div>
@@ -794,7 +793,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                   ) : isMigrateLoading ? (
                     <Dots>Confirm Migrate</Dots>
                   ) : (
-                    `Confirm Migrate`
+                    'Confirm Migrate'
                   )}
                 </Button>
               </div>

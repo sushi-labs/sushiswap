@@ -241,7 +241,7 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
                       </List.KeyValue>
                     )}
                     {dates?.startDate && (
-                      <List.KeyValue flex title="End date">
+                      <List.KeyValue flex title="Start date">
                         {format(dates.startDate, 'dd MMM yyyy hh:mm')}
                       </List.KeyValue>
                     )}

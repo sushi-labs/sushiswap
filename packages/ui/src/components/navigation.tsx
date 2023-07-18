@@ -1,5 +1,4 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import Link from 'next/link'
 import * as React from 'react'
 
 import { classNames, navigationMenuTriggerStyle, SushiIcon } from '../index'
@@ -93,7 +92,7 @@ interface NavContainerProps extends VariantProps<typeof navigationContainerVaria
 const NavigationContainer: React.FC<NavContainerProps> = ({ children, variant }) => {
   return (
     <div className={navigationContainerVariants({ variant })}>
-      <SushiIcon width={24} height={24} />
+      <SushiIcon width={24} height={24} className="hidden sm:block" />
       <div className="flex justify-between gap-4 items-center flex-grow">{children}</div>
     </div>
   )
@@ -124,19 +123,19 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant }) => {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
-            <Link href="/swap" legacyBehavior passHref>
+            <a href="/swap">
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>Swap</NavigationMenuLink>
-            </Link>
+            </a>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
-            <Link href="/pools" legacyBehavior passHref>
+            <a href="/pools">
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pools</NavigationMenuLink>
-            </Link>
+            </a>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
-            <Link href="/pay" legacyBehavior passHref>
+            <a href="/furo">
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pay</NavigationMenuLink>
-            </Link>
+            </a>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
             <NavigationMenuTrigger>Tools</NavigationMenuTrigger>
@@ -157,7 +156,7 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant }) => {
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
-      <div className="space-x-2">{rightElement}</div>
+      <div className="flex gap-2 items-center">{rightElement}</div>
     </NavigationContainer>
   )
 }
