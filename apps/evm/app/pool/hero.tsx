@@ -25,7 +25,7 @@ export const Hero: FC = () => {
   const { chain } = useNetwork()
   const chainId = chain?.id || ChainId.ETHEREUM
   return (
-    <section className="flex flex-col justify-between gap-12 lg:flex-row lg:items-start">
+    <section className="flex flex-col justify-between gap-12 lg:flex-row lg:items-start mb-12">
       <div className="flex flex-col items-center flex-grow gap-6 lg:items-start">
         <div className="flex flex-col">
           <h1 className={typographyVariants({ variant: 'h1' })}>
@@ -36,9 +36,9 @@ export const Hero: FC = () => {
             extra rewards if the pool is incentivized.
           </p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row w-full sm:w-[unset] gap-4">
           <div className="flex items-center w-full">
-            <Button asChild size="lg" className="rounded-r-none">
+            <Button asChild size="lg" className="flex-1 w-full sm:flex-0 sm:w-[unset] rounded-r-none">
               <Link
                 href={isRouteProcessor3ChainId(chainId) ? `/pool/add?chainId=${chainId}` : `/pool/add/v2/${chainId}`}
               >
@@ -96,7 +96,7 @@ export const Hero: FC = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <Button asChild icon={GiftIcon} variant="secondary" size="lg">
+          <Button fullWidth asChild icon={GiftIcon} variant="secondary" size="lg">
             <Link href="/pools/incentivize">I want to incentivize a pool</Link>
           </Button>
         </div>
@@ -104,7 +104,13 @@ export const Hero: FC = () => {
       <div className="flex flex-col items-center gap-4 lg:items-end">
         <div className="flex flex-col items-center gap-1 lg:items-end">
           <span className="font-semibold lg:text-sm">Looking for a partnership with Sushi?</span>
-          <Button icon={ChevronRightIcon} variant="link" size="sm" asChild>
+          <Button
+            className="flex-1 w-full sm:flex-0 sm:w-[unset]"
+            icon={ChevronRightIcon}
+            variant="link"
+            size="sm"
+            asChild
+          >
             <a href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe" rel="noreferrer noopener" target="_blank">
               Join Onsen
             </a>

@@ -1,6 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
-import { Explainer } from '@sushiswap/ui/components/explainer'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
@@ -59,12 +58,7 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
 
 export const APR_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'totalApr1d',
-  header: () => (
-    <div className="flex items-center gap-1">
-      APR
-      <Explainer>The APRs displayed for the liquidity pools are algorithmic and subject to change.</Explainer>
-    </div>
-  ),
+  header: 'APR',
   accessorFn: (row) => row.totalApr1d,
   cell: (props) => <PoolAPRCell row={props.row.original} />,
   size: 100,

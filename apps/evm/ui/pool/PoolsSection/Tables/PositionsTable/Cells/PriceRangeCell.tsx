@@ -66,7 +66,7 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> = 
             'w-2 h-2 rounded-full'
           )}
         />
-        <span className="text-sm flex items-center gap-1 text-gray-900 dark:text-slate-50">
+        <span className="whitespace-nowrap text-sm flex items-center gap-1 text-gray-900 dark:text-slate-50">
           {fullRange ? '0' : formatTickPrice({ price: priceLower, atLimit: tickAtLimit, direction: Bound.UPPER })}{' '}
           {currencyQuote?.symbol}
           <div className="flex items-center">

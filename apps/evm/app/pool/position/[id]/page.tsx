@@ -31,6 +31,7 @@ import { formatTickPrice, getPriceOrderingFromPositionForUI, unwrapToken } from 
 import { usePriceInverter } from 'lib/hooks'
 import useIsTickAtLimit from 'lib/hooks/useIsTickAtLimit'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import React, { FC, Fragment, useMemo, useState } from 'react'
 import { Layout } from 'ui/pool'
 import { ConcentratedLiquidityCollectButton } from 'ui/pool/ConcentratedLiquidityCollectButton'
@@ -49,12 +50,10 @@ import { ConcentratedLiquidityHarvestButton } from '../../../../ui/pool/Concentr
 // }
 
 export default function Page({ params }: { params: { id: string } }) {
-  const result = queryParamsSchema.safeParse(params)
-  if (!result.success) return <></>
   return (
     <SplashController>
       <ConcentratedLiquidityProvider>
-        <Position params={params} />
+        <Position id={params.id} />
       </ConcentratedLiquidityProvider>
     </SplashController>
   )
@@ -73,6 +72,7 @@ const queryParamsSchema = z.object({
     .refine(([chainId]) => isSushiSwapV3ChainId(chainId), {
       message: 'ChainId not supported.',
     }),
+  activeTab: z.nullable(z.string()),
 })
 
 enum SelectedTab {
@@ -81,15 +81,23 @@ enum SelectedTab {
   IncreaseLiq,
 }
 
-const Position: FC<{ params: { id: string } }> = ({ params }) => {
+const Position: FC<{ id: string }> = ({ id }) => {
   const { address } = useAccount()
-
-  const [invert, setInvert] = useState(false)
-  const [tab, setTab] = useState<SelectedTab>(SelectedTab.IncreaseLiq)
+  const searchParams = useSearchParams()!
 
   const {
     id: [chainId, tokenId],
-  } = queryParamsSchema.parse(params)
+    activeTab,
+  } = queryParamsSchema.parse({ id, activeTab: searchParams.get('activeTab') })
+
+  const [invert, setInvert] = useState(false)
+  const [tab, setTab] = useState<SelectedTab>(
+    activeTab === 'analytics'
+      ? SelectedTab.Analytics
+      : activeTab === 'withdraw'
+      ? SelectedTab.DecreaseLiq
+      : SelectedTab.IncreaseLiq
+  )
 
   const { data: positionDetails } = useConcentratedLiquidityPositionsFromTokenId({
     chainId,

@@ -1,9 +1,10 @@
+import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Popover, PopoverContent, PopoverTrigger } from '@sushiswap/ui'
+import { Chip, Separator } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Command, CommandGroup, CommandItem } from '@sushiswap/ui/components/command'
 import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
-import { SelectIcon } from '@sushiswap/ui/components/select'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 
@@ -24,12 +25,31 @@ export const TableFiltersNetwork: FC = () => {
     },
     [values, setFilters]
   )
+
   return (
     <Popover modal={true} open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="secondary" role="combobox" aria-expanded={open}>
+        <Button icon={PlusCircleIcon} variant="secondary" role="combobox" size="sm" aria-expanded={open}>
           <span>Networks</span>
-          <SelectIcon />
+          {values?.length > 0 && (
+            <>
+              <Separator orientation="vertical" className="m-1 !h-4" />
+              <Chip variant="secondary" className="lg:hidden">
+                {values.length}
+              </Chip>
+              <div className="hidden lg:flex gap-1">
+                {values.length > 2 ? (
+                  <Chip variant="secondary">{values.length} selected</Chip>
+                ) : (
+                  SUPPORTED_CHAIN_IDS.filter((option) => values.includes(option)).map((option) => (
+                    <Chip variant="secondary" key={option}>
+                      {Chain.from(option).name}
+                    </Chip>
+                  ))
+                )}
+              </div>
+            </>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="!p-0 !overflow-x-hidden !overflow-y-scroll scroll">

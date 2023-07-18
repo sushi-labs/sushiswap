@@ -4,6 +4,7 @@ import { SanctionedAddressDialog } from '@sushiswap/wagmi/future/components/Sanc
 import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
 import React from 'react'
+
 import { Providers } from './providers'
 import { Trackers } from './trackers'
 
@@ -39,11 +40,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
       <link rel="shortcut icon" href="/favicon.ico?v=1" />
       <body className="h-screen">
-        <Providers>
-          <SanctionedAddressDialog />
-          {children}
-        </Providers>
-        <Trackers />
+        <div className="flex flex-col h-full">
+          <Providers>
+            <SanctionedAddressDialog />
+            {children}
+          </Providers>
+          <Trackers />
+        </div>
       </body>
     </html>
   )

@@ -1,13 +1,25 @@
-import { useBreakpoint } from '@sushiswap/hooks'
+import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid'
+import { ChartBarIcon, DownloadIcon, PlusIcon, UserCircleIcon } from '@heroicons/react-v1/solid'
 import { AngleRewardsPool, useAngleRewardsMultipleChains } from '@sushiswap/react-query'
+import {
+  Button,
+  Container,
+  DataTable,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from '@sushiswap/ui'
 import { Carousel } from '@sushiswap/ui/components/Carousel'
-import { Container } from '@sushiswap/ui/components/container'
-import { Dialog } from '@sushiswap/ui/components/dialog'
-import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
 import { useAccount } from '@sushiswap/wagmi'
-import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
+import { ColumnDef } from '@tanstack/react-table'
 import { ANGLE_ENABLED_NETWORKS } from 'config'
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { FC, useCallback, useMemo } from 'react'
 
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import { RewardSlide, RewardSlideSkeleton } from './RewardSlide'
@@ -17,28 +29,66 @@ import {
   REWARDS_V3_NAME_COLUMN,
   REWARDS_V3_POSITION_SIZE_COLUMN,
 } from './Tables/RewardsTableV3'
-import { RewardsTableV3RowPopover } from './Tables/RewardsTableV3/RewardsTableV3RowPopover'
 
 const COLUMNS = [
   REWARDS_V3_NAME_COLUMN,
   REWARDS_V3_POSITION_SIZE_COLUMN,
   REWARDS_V3_APR_COLUMN,
   REWARDS_V3_CLAIMABLE_COLUMN,
-] as any
+  {
+    id: 'actions',
+    cell: ({ row }) => (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button icon={EllipsisHorizontalIcon} variant="ghost" size="sm">
+            <span className="sr-only">Open menu</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-[240px]">
+          <DropdownMenuItem asChild>
+            <a href={`/pool/${row.original.id}`}>
+              <ChartBarIcon width={16} height={16} className="mr-2" /> Statistics
+            </a>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <a className="flex items-center" href={`/pool/${row.original.id}?activeTab=new`}>
+              <DownloadIcon width={16} height={16} className="mr-2" />
+              Deposit
+            </a>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Position</DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem asChild>
+                  <a href={`/pool/${row.original.id}?activeTab=new`}>
+                    <PlusIcon width={16} height={16} className="mr-2" />
+                    Create new position
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a href={`/pool/${row.original.id}?activeTab=myPositions`}>
+                    <UserCircleIcon width={16} height={16} className="mr-2" /> My positions
+                  </a>
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    ),
+  },
+] satisfies ColumnDef<AngleRewardsPool, unknown>[]
 
 export const RewardsSection: FC = () => {
-  const [clickedRow, setClickedRow] = useState<AngleRewardsPool>()
   const { address } = useAccount()
-  const { isSm } = useBreakpoint('sm')
-  const { isMd } = useBreakpoint('md')
   const { chainIds, tokenSymbols } = usePoolFilters()
   const { data, isInitialLoading } = useAngleRewardsMultipleChains({
     chainIds: ANGLE_ENABLED_NETWORKS,
     account: address,
   })
-
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'positionSize', desc: true }])
-  const [columnVisibility, setColumnVisibility] = useState({})
 
   const chainsSorted = useMemo(() => {
     if (!data) return undefined
@@ -49,6 +99,7 @@ export const RewardsSection: FC = () => {
       return bAmount - aAmount
     })
   }, [data])
+
   const positions = useMemo(() => {
     const _tokenSymbols = tokenSymbols?.filter((el) => el !== '') || []
     return (data ?? [])
@@ -70,69 +121,22 @@ export const RewardsSection: FC = () => {
       })
   }, [chainIds, tokenSymbols, data])
 
-  const table = useReactTable<AngleRewardsPool>({
-    data: positions,
-    state: {
-      sorting,
-      columnVisibility,
-    },
-    columns: COLUMNS,
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-  })
-
-  useEffect(() => {
-    if (isSm && !isMd) {
-      setColumnVisibility({ claimable: false })
-    } else if (isSm) {
-      setColumnVisibility({})
-    } else {
-      setColumnVisibility({
-        claimable: false,
-        apr: false,
-      })
-    }
-  }, [isMd, isSm])
-
   const rowLink = useCallback((row: AngleRewardsPool) => {
     return `/pool/${row.id}`
   }, [])
 
   return (
     <>
-      <div className="pl-4 xl:pl-2">
-        <Container maxWidth="7xl" className="px-4 mx-auto !py-4">
-          <h1 className="my-2 text-sm font-medium text-gray-700 dark:text-slate-200">
-            Claim your rewards per network.
-          </h1>
-        </Container>
-        <Carousel<NonNullable<typeof chainsSorted>[0] | number>
-          containerWidth={1280}
-          slides={chainsSorted || ANGLE_ENABLED_NETWORKS}
-          render={(row) =>
-            typeof row === 'number' ? <RewardSlideSkeleton /> : <RewardSlide data={row} address={address} />
-          }
-          className="!pt-0"
-        />
-      </div>
-      <Container maxWidth="7xl" className="px-4 mx-auto mb-[120px]">
-        <GenericTable<AngleRewardsPool>
-          table={table}
-          loading={isInitialLoading}
-          placeholder="No positions found"
-          pageSize={positions?.length ? positions.length : 1}
-          HoverElement={isMd ? RewardsTableV3RowPopover : undefined}
-          onClick={!isMd ? setClickedRow : undefined}
-          linkFormatter={rowLink}
-        />
-        {clickedRow && !isMd && (
-          <Dialog appear open={true} onClose={() => setClickedRow(undefined)}>
-            <Dialog.Content>
-              <RewardsTableV3RowPopover row={clickedRow} />
-            </Dialog.Content>
-          </Dialog>
-        )}
+      <Carousel<NonNullable<typeof chainsSorted>[0] | number>
+        containerWidth={1280}
+        slides={chainsSorted || ANGLE_ENABLED_NETWORKS}
+        render={(row) =>
+          typeof row === 'number' ? <RewardSlideSkeleton /> : <RewardSlide data={row} address={address} />
+        }
+        className="!pt-0 px-2"
+      />
+      <Container maxWidth="7xl" className="px-4 mx-auto">
+        <DataTable linkFormatter={rowLink} loading={isInitialLoading} columns={COLUMNS} data={positions} />
       </Container>
     </>
   )

@@ -1,6 +1,6 @@
 import { formatNumber } from '@sushiswap/format'
 import { AngleRewardsPool } from '@sushiswap/react-query'
-import { Explainer } from '@sushiswap/ui/components/explainer'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
@@ -45,17 +45,19 @@ export const REWARDS_V3_POSITION_SIZE_COLUMN: ColumnDef<AngleRewardsPool, unknow
 
 export const REWARDS_V3_APR_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
   id: 'apr',
-  header: () => (
-    <div className="flex items-center gap-1">
-      APR
-      <Explainer>The APRs displayed for the liquidity pools are algorithmic and subject to change.</Explainer>
-    </div>
-  ),
+  header: 'APR',
   accessorFn: (row) => row.meanAPR ?? 0,
   cell: (props) => (
-    <span className="text-sm text-right text-gray-900 dark:text-slate-50">
-      {formatNumber(props.row.original.meanAPR)}%
-    </span>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="underline decoration-dotted flex items-center justify-end gap-1 text-sm text-gray-900 dark:text-slate-50">
+            {formatNumber(props.row.original.meanAPR)}%
+          </span>
+        </TooltipTrigger>
+        <TooltipContent>The APR displayed is algorithmic and subject to change.</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   ),
   size: 100,
   meta: {

@@ -68,6 +68,7 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> {
   icon?: IconComponent
   iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
+  iconPosition?: 'start' | 'end'
   asChild?: boolean
   loading?: boolean
   fullWidth?: boolean
@@ -80,6 +81,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       fullWidth,
       icon: Icon,
       iconProps,
+      iconPosition = 'start',
       disabled = false,
       className,
       variant,
@@ -107,10 +109,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         <ButtonContent asChild={asChild}>
           {loading ? (
             <Loader2 className={buttonLoaderVariants({ size })} />
-          ) : Icon ? (
+          ) : Icon && iconPosition === 'start' ? (
             <Icon {...iconProps} className={buttonIconVariants({ size, className: iconProps?.className })} />
           ) : null}
           {children}
+          {Icon && iconPosition === 'end' ? (
+            <Icon {...iconProps} className={buttonIconVariants({ size, className: iconProps?.className })} />
+          ) : null}
         </ButtonContent>
       </Comp>
     )

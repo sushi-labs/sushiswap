@@ -1,35 +1,95 @@
-import { useBreakpoint } from '@sushiswap/hooks'
-import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
+import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid'
+import { ChartBarIcon, DownloadIcon, PlusIcon, UploadIcon } from '@heroicons/react-v1/solid'
+import {
+  Button,
+  DataTable,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from '@sushiswap/ui'
 import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
+import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future'
 import { ConcentratedLiquidityPosition, useConcentratedLiquidityPositions } from '@sushiswap/wagmi/future/hooks'
-import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { ColumnDef } from '@tanstack/react-table'
+import React, { FC, useCallback, useMemo } from 'react'
 import { Writeable } from 'zod'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { NAME_COLUMN_V3, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL, PRICE_RANGE_COLUMN } from './Cells/columns'
 
-// rome-ignore lint: reasons
-const COLUMNS = [NAME_COLUMN_V3, PRICE_RANGE_COLUMN, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL] as any
+const COLUMNS = [
+  NAME_COLUMN_V3,
+  PRICE_RANGE_COLUMN,
+  POSITION_SIZE_CELL,
+  POSITION_UNCLAIMED_CELL,
+  {
+    id: 'actions',
+    cell: ({ row }) => (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button icon={EllipsisHorizontalIcon} variant="ghost" size="sm">
+            <span className="sr-only">Open menu</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-[160px]">
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Position</DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem asChild>
+                  <a href={`/pool/position/${row.original.chainId}:${row.original.id}?activeTab=deposit`}>
+                    <ChartBarIcon width={16} height={16} className="mr-2" /> Details
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a href={`/pool/position/${row.original.chainId}:${row.original.id}?activeTab=deposit`}>
+                    <DownloadIcon width={16} height={16} className="mr-2" />
+                    Deposit
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a href={`/pool/position/${row.original.chainId}:${row.original.id}?activeTab=withdraw`}>
+                    <UploadIcon width={16} height={16} className="mr-2" />
+                    Withdraw
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <a href={`/pool/${row.original.id}?activeTab=new`}>
+                    <PlusIcon width={16} height={16} className="mr-2" />
+                    Create
+                  </a>
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <a href={`/pool/${row.original.chainId}:${row.original.address}`}>View Pool</a>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    ),
+  },
+] satisfies ColumnDef<ConcentratedLiquidityPositionWithV3Pool, unknown>[]
+
+const tableState = { sorting: [{ id: 'positionSize', desc: true }] }
 
 export const ConcentratedPositionsTable: FC<{
-  variant?: 'default' | 'minimal'
   poolId?: string
   hideClosed?: boolean
-}> = ({ variant = 'default', poolId, hideClosed }) => {
+}> = ({ poolId, hideClosed }) => {
   const { address } = useAccount()
-  const { isSm } = useBreakpoint('sm')
-  const { isMd } = useBreakpoint('md')
   const { chainIds, tokenSymbols } = usePoolFilters()
-  const [columnVisibility, setColumnVisibility] = useState({})
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'positionSize', desc: true }])
 
-  const {
-    data: positions,
-    isLoading,
-    isInitialLoading,
-  } = useConcentratedLiquidityPositions({
+  const { data: positions, isInitialLoading } = useConcentratedLiquidityPositions({
     account: address,
     chainIds: SUSHISWAP_V3_SUPPORTED_CHAIN_IDS as Writeable<typeof SUSHISWAP_V3_SUPPORTED_CHAIN_IDS>,
   })
@@ -53,59 +113,17 @@ export const ConcentratedPositionsTable: FC<{
       })
   }, [hideClosed, poolId, positions, chainIds, tokenSymbols])
 
-  const table = useReactTable<ConcentratedLiquidityPosition>({
-    data: _positions,
-    state: {
-      sorting,
-      columnVisibility,
-    },
-    columns: COLUMNS,
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-  })
-
-  useEffect(() => {
-    if (isSm && !isMd) {
-      setColumnVisibility({})
-    } else if (isSm) {
-      setColumnVisibility({})
-    } else {
-      setColumnVisibility({
-        positionSize: false,
-        unclaimed: false,
-      })
-    }
-  }, [isMd, isSm])
-
   const rowLink = useCallback((row: ConcentratedLiquidityPosition) => {
     return `/pool/position/${row.chainId}:${row.tokenId}`
   }, [])
 
-  if (variant === 'minimal') {
-    return (
-      <GenericTable<ConcentratedLiquidityPosition>
-        table={table}
-        loading={isInitialLoading}
-        placeholder="No positions found"
-        pageSize={!_positions ? 5 : _positions?.length}
-        linkFormatter={rowLink}
-        loadingOverlay={false}
-      />
-    )
-  }
-
   return (
-    <div className="mb-[120px]">
-      <GenericTable<ConcentratedLiquidityPosition>
-        table={table}
-        loading={Boolean(isLoading && address)}
-        placeholder="No positions found"
-        pageSize={_positions?.length ? _positions.length : 1}
-        linkFormatter={rowLink}
-        loadingOverlay={false}
-        testId={'concentrated-positions'}
-      />
-    </div>
+    <DataTable
+      state={tableState}
+      loading={isInitialLoading}
+      linkFormatter={rowLink}
+      columns={COLUMNS}
+      data={_positions}
+    />
   )
 }

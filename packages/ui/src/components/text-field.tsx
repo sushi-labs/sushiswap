@@ -23,9 +23,13 @@ const textFieldVariants = cva(
   'truncate border-0 appearance-none dark:text-slate-50 focus:outline-none focus:ring-0 text-gray-900 w-full',
   {
     variants: {
+      size: {
+        sm: 'min-h-[36px] h-[36px] py-1',
+        default: 'min-h-[40px] h-[40px] py-2',
+      },
       variant: {
         default:
-          'flex items-center min-h-[40px] h-[40px] py-2 px-3 rounded-lg font-medium block bg-secondary group-hover:bg-muted group-focus:bg-accent',
+          'flex items-center px-3 rounded-lg font-medium block bg-secondary group-hover:bg-muted group-focus:bg-accent',
         naked: 'bg-transparent',
       },
       hasIcon: {
@@ -41,6 +45,7 @@ const textFieldVariants = cva(
       variant: 'default',
       hasIcon: 'no',
       hasUnit: 'no',
+      size: 'default',
     },
   }
 )
@@ -48,7 +53,7 @@ const textFieldVariants = cva(
 type InputType = 'text' | 'number' | 'percent'
 
 interface TextFieldBaseProps
-  extends React.InputHTMLAttributes<HTMLInputElement>,
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
     VariantProps<typeof textFieldVariants> {
   id?: string
   icon?: IconComponent
@@ -78,6 +83,7 @@ const Component = <T extends InputType>(
     type,
     onChange,
     maxDecimals,
+    size,
     onValueChange,
     ...props
   }: TextFieldProps<T>,
@@ -140,7 +146,9 @@ const Component = <T extends InputType>(
         {...props}
       />
       {unit ? (
-        <div className={textFieldVariants({ variant, className: 'text-muted-foreground rounded-l-none !w-[unset]' })}>
+        <div
+          className={textFieldVariants({ variant, size, className: 'text-muted-foreground rounded-l-none !w-[unset]' })}
+        >
           {unit}
         </div>
       ) : null}

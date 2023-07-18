@@ -18,7 +18,10 @@ const ChipInputRoot = React.forwardRef<HTMLDivElement, ChipInputRootProps>(({ ..
 })
 ChipInputRoot.displayName = 'ChipInputRoot'
 
-interface ChipInputProps extends React.HTMLAttributes<HTMLInputElement>, VariantProps<typeof chipVariants> {
+interface ChipInputProps
+  extends Omit<React.HTMLAttributes<HTMLInputElement>, 'size'>,
+    VariantProps<typeof chipVariants>,
+    Omit<VariantProps<typeof textFieldVariants>, 'variant'> {
   icon?: IconComponent
   iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
   onValueChange(values: string[]): void
@@ -33,6 +36,7 @@ const ChipInput = React.forwardRef<HTMLInputElement, ChipInputProps>(
       className,
       icon: Icon,
       iconProps,
+      size,
       values,
       variant,
       onValueChange,
@@ -65,7 +69,7 @@ const ChipInput = React.forwardRef<HTMLInputElement, ChipInputProps>(
     )
 
     return (
-      <ChipInputRoot className={textFieldVariants({ className: 'gap-2 flex-wrap !h-[unset]' })}>
+      <ChipInputRoot className={textFieldVariants({ size, className: 'gap-2 flex-wrap' })}>
         {Icon ? <Icon {...iconProps} className={buttonIconVariants()} /> : null}
         {values.map((value, i) => (
           <TooltipProvider key={i}>

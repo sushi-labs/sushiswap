@@ -14,7 +14,7 @@ interface PositionCard {
 
 export const PositionCardSkeleton = () => {
   return (
-    <div className="relative bg-white dark:bg-slate-800 hover:shadow-md transition-all rounded-2xl p-7 overflow-hidden w-[320px]">
+    <div className="shadow-md relative bg-white dark:bg-slate-800 hover:shadow-md transition-all rounded-2xl p-7 overflow-hidden w-[320px]">
       <SkeletonText fontSize="xs" className="w-[40px]" />
       <SkeletonText fontSize="2xl" className="w-[160px]" />
       <div className="flex flex-col gap-2 items-center py-7">

@@ -17,13 +17,16 @@ export const TableFiltersSearchToken: FC = () => {
   }, [_query, debouncedQuery, setFilters, tokenSymbols])
 
   return (
-    <ChipInput
-      icon={MagnifyingGlassIcon}
-      delimiters={[',', ' ', ';', ':']}
-      variant="secondary"
-      values={tokenSymbols ?? []}
-      onValueChange={(values: string[]) => setQuery(values.join(' '))}
-      placeholder="Search"
-    />
+    <div>
+      <ChipInput
+        size="sm"
+        icon={MagnifyingGlassIcon}
+        delimiters={[',', ' ', ';', ':']}
+        variant="secondary"
+        values={tokenSymbols ?? []}
+        onValueChange={(values: string[]) => setQuery(values.join(' '))}
+        placeholder="Search"
+      />
+    </div>
   )
 }

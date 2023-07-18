@@ -386,7 +386,7 @@ const Pool: FC<{ id: string }> = ({ id }) => {
       </div>
       <div className={classNames('', tab === SelectedTab.ManagePosition ? 'block' : 'hidden')}>
         <PoolsFiltersProvider>
-          <ConcentratedPositionsTable variant="minimal" poolId={poolAddress} />
+          <ConcentratedPositionsTable poolId={poolAddress} />
         </PoolsFiltersProvider>
       </div>
     </Layout>
