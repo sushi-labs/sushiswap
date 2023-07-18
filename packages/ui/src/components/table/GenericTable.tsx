@@ -156,7 +156,7 @@ export const GenericTable = <T extends { id: string }>({
                             })}
                           </Table.tr>
                         </TooltipTrigger>
-                        <TooltipContent className="w-fit w-[min(90vw,_420px)]">
+                        <TooltipContent className="w-fit min-w-[min(90vw,_420px)]">
                           <HoverElement row={row.original} />
                         </TooltipContent>
                       </Tooltip>
