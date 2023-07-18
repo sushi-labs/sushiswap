@@ -483,6 +483,7 @@ importers:
     specifiers:
       '@storybook/addon-a11y': 7.0.25
       '@storybook/addon-actions': 7.0.25
+      '@storybook/addon-designs': ^7.0.0
       '@storybook/addon-docs': 7.0.25
       '@storybook/addon-essentials': 7.0.25
       '@storybook/addon-links': 7.0.25
@@ -520,6 +521,7 @@ importers:
     devDependencies:
       '@storybook/addon-a11y': 7.0.25_biqbaboplfbrettd7655fr4n2y
       '@storybook/addon-actions': 7.0.25_biqbaboplfbrettd7655fr4n2y
+      '@storybook/addon-designs': 7.0.0_j4j6vst7iuhmrydej34gcf7nuy
       '@storybook/addon-docs': 7.0.25_biqbaboplfbrettd7655fr4n2y
       '@storybook/addon-essentials': 7.0.25_biqbaboplfbrettd7655fr4n2y
       '@storybook/addon-links': 7.0.25_biqbaboplfbrettd7655fr4n2y
@@ -7207,6 +7209,22 @@ packages:
       tiny-lru: 10.4.1
     dev: false
 
+  /@figspec/components/1.0.1:
+    resolution: {integrity: sha512-UvnEamPEAMh9HExViqpobWmX25g1+soA9kcJu+It3VerMa7CeVyaIbQydNf1Gys5v/rxJVdTDRgQ7OXW2zAAig==}
+    dependencies:
+      lit: 2.7.5
+    dev: true
+
+  /@figspec/react/1.0.3_react@18.2.0:
+    resolution: {integrity: sha512-r683qOko+5CbT48Ox280fMx2MNAtaFPgCNJvldOqN3YtmAzlcTT+YSxd3OahA+kjXGGrnzDbUgeTOX1cPLII+g==}
+    peerDependencies:
+      react: ^16.14.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@figspec/components': 1.0.1
+      '@lit-labs/react': 1.2.1
+      react: 18.2.0
+    dev: true
+
   /@floating-ui/core/1.2.6:
     resolution: {integrity: sha512-EvYTiXet5XqweYGClEmpu3BoxmsQ4hkj3QaYA6qEnigCWffTP3vNRwBReTdrwDwo7OoJ3wM8Uoe9Uk4n+d4hfg==}
     dev: false
@@ -10846,6 +10864,10 @@ packages:
   /@ledgerhq/connect-kit-loader/1.0.2:
     resolution: {integrity: sha512-TQ21IjcZOw/scqypaVFY3jHVqI7X7Hta3qN/us6FvTol3AY06UmrhhXGww0E9xHmAbdX241ddwXEiMBSQZFr9g==}
 
+  /@lit-labs/react/1.2.1:
+    resolution: {integrity: sha512-DiZdJYFU0tBbdQkfwwRSwYyI/mcWkg3sWesKRsHUd4G+NekTmmeq9fzsurvcKTNVa0comNljwtg4Hvi1ds3V+A==}
+    dev: true
+
   /@lit-labs/ssr-dom-shim/1.1.1:
     resolution: {integrity: sha512-kXOeFbfCm4fFf2A3WwVEeQj55tMZa8c8/f9AKHMobQMkzNUfUj+antR3fRPaZJawsa1aZiP/Da3ndpZrwEe4rQ==}
 
@@ -13713,6 +13735,29 @@ packages:
     transitivePeerDependencies:
       - encoding
       - supports-color
+    dev: true
+
+  /@storybook/addon-designs/7.0.0_j4j6vst7iuhmrydej34gcf7nuy:
+    resolution: {integrity: sha512-XSkW9Ylz62bpRSOpvN/C2W5gtb3I6wY77hyH3i0iOhYUsLo+Lv734aY4a31dIZbxzIs6OWN+C/htsL4Kc2hZsA==}
+    peerDependencies:
+      '@storybook/addon-docs': ^7.0.0
+      '@storybook/addons': ^7.0.0
+      '@storybook/components': ^7.0.0
+      '@storybook/manager-api': ^7.0.0
+      '@storybook/preview-api': ^7.0.0
+      '@storybook/theming': ^7.0.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-dom:
+        optional: true
+    dependencies:
+      '@figspec/react': 1.0.3_react@18.2.0
+      '@storybook/addon-docs': 7.0.25_biqbaboplfbrettd7655fr4n2y
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: true
 
   /@storybook/addon-docs/7.0.25_biqbaboplfbrettd7655fr4n2y:
