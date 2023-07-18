@@ -1,6 +1,17 @@
 'use client'
 
-import { GlobalNav, NavLink, SubNav, SubNavLink } from '@sushiswap/ui/components/GlobalNav'
+import {
+  NavigationContainer,
+  NavigationListItem,
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from '@sushiswap/ui'
+import Link from 'next/link'
 
 export default function InternalLayout({
   children, // will be a page or nested layout
@@ -9,16 +20,41 @@ export default function InternalLayout({
 }) {
   return (
     <>
-      <GlobalNav>
-        <NavLink title="Dashboard" href="/internal" />
-        <SubNav title="Bentobox">
-          <SubNavLink title="Overview" href="/internal/bentobox" />
-          <SubNavLink title="Strategies" href="/internal/bentobox/strategies" />
-        </SubNav>
-        <NavLink title="Tokens" href="/internal/tokens" />
-        <NavLink title="Subgraphs" href="/internal/subgraphs" />
-      </GlobalNav>
-      <div className="flex items-center justify-center w-full my-10">{children}</div>
+      <NavigationContainer>
+        <NavigationMenu>
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <Link href="/internal" legacyBehavior passHref>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Dashboard</NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>Bentobox</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="w-[400px] gap-3 p-4">
+                  <NavigationListItem title="Overview" href="/internal/bentobox">
+                    Overview
+                  </NavigationListItem>
+                  <NavigationListItem title="Strategies" href="internal/strategies">
+                    Strategies
+                  </NavigationListItem>
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link href="/internal/tokens" legacyBehavior passHref>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Tokens</NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link href="/internal/subgraphs" legacyBehavior passHref>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Subgraphs</NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </NavigationContainer>
+      {children}
     </>
   )
 }

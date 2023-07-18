@@ -5,9 +5,9 @@ import { SearchIcon } from '@heroicons/react-v1/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { useDebounce } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
+import { NetworkSelector } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
-import { NetworkSelector } from '@sushiswap/ui/components/networkselector'
 import stringify from 'fast-json-stable-stringify'
 import React, { FC, useState } from 'react'
 import useSWR from 'swr'
@@ -55,7 +55,7 @@ const TokensPage: FC = () => {
             </div>
           </div>
         </div>
-        <NetworkSelector networks={TOKENS_SUPPORTED_CHAIN_IDS} selected={chainId} onSelect={setChainId} variant="menu">
+        <NetworkSelector networks={TOKENS_SUPPORTED_CHAIN_IDS} selected={chainId} onSelect={setChainId}>
           <Button variant="secondary" className="!font-medium">
             <NetworkIcon chainId={chainId} width={20} height={20} />
             <div>{Chain.from(chainId).name}</div>

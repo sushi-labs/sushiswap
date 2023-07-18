@@ -3,9 +3,9 @@ import '../index.css'
 import '../variables.css'
 
 import { Cloudinary } from '@cloudinary/url-gen'
-import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
+import { ThemeProvider } from '@sushiswap/ui'
+import { GlobalFooter } from '@sushiswap/ui'
 import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
-import { ThemeProvider } from '@sushiswap/ui/ThemeProvider'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
 import { useRouter } from 'next/router'
@@ -43,7 +43,7 @@ const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
 
   return (
     <>
-      <ThemeProvider>
+      <ThemeProvider forcedTheme="dark">
         <DefaultSeo seo={seo} />
         <div className="dark">
           <Header />

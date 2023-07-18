@@ -1,6 +1,7 @@
 import { Container } from '@sushiswap/ui'
 
 import { Header } from './header'
+import { Providers } from './providers'
 
 export const metadata = {
   title: 'Home 🏠',
@@ -8,7 +9,7 @@ export const metadata = {
 
 export default function HomeLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <Providers>
       <Header />
       <Container maxWidth="7xl" className="mx-auto px-4 pt-[80px]">
         <h1 className="text-4xl text-center font-semibold">
@@ -23,6 +24,6 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
       <Container maxWidth="6xl" className="mx-auto px-4 text-center">
         Smart Pools Table
       </Container>
-    </>
+    </Providers>
   )
 }
