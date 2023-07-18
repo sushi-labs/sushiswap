@@ -12,6 +12,7 @@ import { rewardPerDay } from './utils'
 
 export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) => {
   const ongoingFarms = row.distributionData.filter((el) => el.isLive)
+  console.log(ongoingFarms)
   return (
     <div className="p-2">
       <div className="flex items-center gap-4">
@@ -65,7 +66,6 @@ export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) =>
                       start,
                       end,
                       amount,
-                      tvl: row.tvl ?? 0,
                       token,
                     })?.toSignificant(6)}{' '}
                     {unwrapToken(token).symbol}
