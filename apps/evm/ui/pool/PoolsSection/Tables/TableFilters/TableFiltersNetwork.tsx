@@ -1,8 +1,8 @@
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Button } from '@sushiswap/ui/components/button'
-import { Command, CommandEmpty, CommandGroup, CommandItem } from '@sushiswap/ui/components/command'
+import { Command, CommandGroup, CommandItem } from '@sushiswap/ui/components/command'
 import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
-import { PopoverContent, PopoverNew, PopoverTrigger } from '@sushiswap/ui/components/popovernew'
+import { Popover, PopoverContent, PopoverTrigger } from '@sushiswap/ui/components/Popover'
 import { SelectIcon } from '@sushiswap/ui/components/select'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import React, { FC, useCallback, useMemo, useState } from 'react'
@@ -25,7 +25,7 @@ export const TableFiltersNetwork: FC = () => {
     [values, setFilters]
   )
   return (
-    <PopoverNew modal={true} open={open} onOpenChange={setOpen}>
+    <Popover modal={true} open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="secondary" role="combobox" aria-expanded={open}>
           <span>Networks</span>
@@ -54,6 +54,6 @@ export const TableFiltersNetwork: FC = () => {
           </CommandGroup>
         </Command>
       </PopoverContent>
-    </PopoverNew>
+    </Popover>
   )
 }

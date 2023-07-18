@@ -5,7 +5,7 @@ import React, { ReactNode, useState } from 'react'
 
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from './command'
 import { NetworkIcon } from './icons'
-import { PopoverContent, PopoverNew, PopoverPrimitive } from './popovernew'
+import { Popover, PopoverContent, PopoverPrimitive } from './popover'
 
 export type NetworkSelectorOnSelectCallback<T extends number = ChainId> = (chainId: T, close: () => void) => void
 
@@ -24,7 +24,7 @@ const NetworkSelector = <T extends number>({
   const [open, setOpen] = useState(false)
 
   return (
-    <PopoverNew modal={true} open={open} onOpenChange={setOpen}>
+    <Popover modal={true} open={open} onOpenChange={setOpen}>
       <PopoverPrimitive.Trigger asChild>{children}</PopoverPrimitive.Trigger>
       <PopoverContent className="!w-60 !p-0 !overflow-x-hidden !overflow-y-scroll scroll">
         <Command>
@@ -47,7 +47,7 @@ const NetworkSelector = <T extends number>({
           </CommandGroup>
         </Command>
       </PopoverContent>
-    </PopoverNew>
+    </Popover>
   )
 }
 

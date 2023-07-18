@@ -5,7 +5,7 @@ import * as React from 'react'
 
 import { classNames } from '../index'
 
-const PopoverNew = PopoverPrimitive.Root
+const Popover = PopoverPrimitive.Root
 
 const PopoverTrigger = PopoverPrimitive.Trigger
 
@@ -31,4 +31,4 @@ const PopoverContent = React.forwardRef<
 ))
 PopoverContent.displayName = PopoverPrimitive.Content.displayName
 
-export { PopoverContent, PopoverNew, PopoverPrimitive, PopoverTrigger }
+export { Popover, PopoverContent, PopoverPrimitive, PopoverTrigger }

@@ -2,7 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { Button } from '@sushiswap/ui/components/button'
 import { JazzIcon } from '@sushiswap/ui/components/icons/JazzIcon'
-import { PopoverContent, PopoverNew, PopoverTrigger } from '@sushiswap/ui/components/popovernew'
+import { Popover, PopoverContent, PopoverTrigger } from '@sushiswap/ui/components/Popover'
 import { useBreakpoint } from '@sushiswap/ui/lib/useBreakpoint'
 import React, { FC, useState } from 'react'
 import { useAccount, useEnsAvatar, useNetwork } from 'wagmi'
@@ -39,7 +39,7 @@ export const UserProfile: FC<ProfileProps> = () => {
   if (!address) return <ConnectButton variant="secondary" />
 
   return (
-    <PopoverNew>
+    <Popover>
       <PopoverTrigger asChild>
         <Button variant="secondary">
           {avatar ? (
@@ -58,6 +58,6 @@ export const UserProfile: FC<ProfileProps> = () => {
         {view === ProfileView.Settings && <SettingsView setView={setView} />}
         {view === ProfileView.Transactions && address && <TransactionsView setView={setView} address={address} />}
       </PopoverContent>
-    </PopoverNew>
+    </Popover>
   )
 }
