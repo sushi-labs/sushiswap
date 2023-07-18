@@ -7,7 +7,7 @@ import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { getBigNumber, RouteStatus } from '@sushiswap/tines'
 import { POOL_INIT_CODE_HASH } from '@sushiswap/v3-sdk'
 import { Address, createPublicClient, http } from 'viem'
-import { arbitrum, Chain, mainnet, optimism, polygon } from 'viem/chains'
+import { arbitrum, celo, Chain, mainnet, optimism, polygon } from 'viem/chains'
 
 export const RP3Address = {
   [ChainId.ETHEREUM]: '0x827179dD56d07A7eeA32e3873493835da2866976' as Address,
@@ -22,6 +22,7 @@ export const TickLensContract = {
   [ChainId.POLYGON]: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573' as Address,
   [ChainId.ARBITRUM]: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573' as Address,
   [ChainId.OPTIMISM]: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573' as Address,
+  [ChainId.CELO]: '0x5f115D9113F88e0a0Db1b5033D90D4a9690AcD3D' as Address,
 }
 
 export const UniswapV2FactoryAddress: Record<number, string> = {
@@ -213,5 +214,19 @@ it.skip('Extractor Optimism infinit work test', async () => {
     logging: true,
     RP3Address: RP3Address[ChainId.OPTIMISM],
     account: '0x4200000000000000000000000000000000000006', // just a whale because optimism eth_call needs gas (
+  })
+})
+
+it.skip('Extractor Celo infinit work test', async () => {
+  await startInfinitTest({
+    providerURL: `https://forno.celo.org`,
+    chain: celo,
+    factoriesV2: [],
+    factoriesV3: [uniswapV3Factory(ChainId.CELO)],
+    tickHelperContract: TickLensContract[ChainId.CELO],
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+    RP3Address: RP3Address[ChainId.CELO],
   })
 })
