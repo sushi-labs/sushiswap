@@ -146,6 +146,7 @@ export async function getUnindexedPool(poolId: string): Promise<Awaited<ReturnTy
       name: token1.name,
       decimals: token1.decimals,
     },
+    steerVaults: [],
     liquidityUSD: '0',
     volumeUSD: '0',
     feesUSD: '0',
