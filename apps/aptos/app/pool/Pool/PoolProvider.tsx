@@ -1,6 +1,7 @@
 import { FC, ReactNode, createContext, useContext, useMemo, useReducer } from 'react'
 import { Token } from 'utils/tokenType'
 import TOKENS from './../../../config/tokenList.json'
+import { useTokens } from 'utils/useTokens'
 
 interface PoolProviderProps {
   children: ReactNode
@@ -97,9 +98,11 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
         return { ...state, notPairFound: action.value }
     }
   }
+
+  const { tokens } = useTokens()
   const [internalState, dispatch] = useReducer(reducer, {
-    token0: TOKENS.tokens[0],
-    token1: TOKENS.tokens[1],
+    token0: tokens[0],
+    token1: tokens[1],
     amount0: '',
     amount1: '',
     isLoadingPrice: false,
@@ -116,7 +119,7 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
   })
   const state = useMemo(() => {
     return { ...internalState }
-  }, [internalState])
+  }, [internalState, tokens])
   const api = useMemo(() => {
     const setToken0 = (value: Token) => dispatch({ type: 'setToken0', value })
     const setToken1 = (value: Token) => dispatch({ type: 'setToken1', value })
@@ -151,10 +154,12 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
       setPoolPairRatio,
       setNotPairFound,
     }
-  }, [internalState])
+  }, [internalState, tokens])
   return (
     <PoolActionsContext.Provider value={api}>
-      <PoolStateContext.Provider value={useMemo(() => ({ ...state }), [state])}>{children}</PoolStateContext.Provider>
+      <PoolStateContext.Provider value={useMemo(() => ({ ...state }), [state, tokens])}>
+        {children}
+      </PoolStateContext.Provider>
     </PoolActionsContext.Provider>
   )
 }
