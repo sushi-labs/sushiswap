@@ -73,6 +73,7 @@ export const PENDING_METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/id'
 
 export const POLYGON_ZKEVM_HOST = 'api.studio.thegraph.com/query/32073'
 export const THUNDERCORE_HOST = 'graph-node.thundercore.com/subgraphs/name'
+export const CORE_HOST = 'thegraph.coredao.org/subgraphs/name'
 
 export const SUSHI_HOST = 'subgraphs.sushi.com/subgraphs/name'
 
@@ -104,6 +105,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.BTTC]: 'BitTorrent',
   [ChainId.THUNDERCORE]: 'ThunderCore',
   [ChainId.POLYGON_ZKEVM]: 'Polygon zkEVM',
+  [ChainId.CORE]: 'Core',
 } as const
 
 export const SUBGRAPH_HOST: Record<number, string> = {
@@ -133,6 +135,7 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.HECO]: '',
   [ChainId.KOVAN]: '',
   [ChainId.THUNDERCORE]: THUNDERCORE_HOST,
+  [ChainId.CORE]: CORE_HOST,
 } as const
 
 export const BENTOBOX_SUBGRAPH_NAME = {
@@ -182,6 +185,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.BOBA_BNB]: 'sushiswap/blocks-boba-bnb',
   [ChainId.BTTC]: 'sushiswap/blocks-bttc',
   [ChainId.THUNDERCORE]: 'sushiswap/blocks-thundercore',
+  [ChainId.CORE]: 'sushiswap/blocks-core',
 } as const
 
 export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
@@ -266,6 +270,7 @@ export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.POLYGON]: 'sushi-v3/v3-polygon',
   [ChainId.POLYGON_ZKEVM]: 'v3-polygon-zkevm/v0.0.2',
   [ChainId.THUNDERCORE]: 'sushi-v3/v3-thundercore',
+  [ChainId.CORE]: 'sushi-v3/v3-core',
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number, string> = {
