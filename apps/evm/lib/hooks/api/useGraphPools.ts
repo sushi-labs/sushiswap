@@ -70,6 +70,7 @@ function transformGraphPool(graphPool: Awaited<ReturnType<typeof getGraphPools>>
       decimals: graphPool.token1.decimals,
     },
     incentives: [],
+    steerVaults: [],
   } satisfies Pool
 }
 
