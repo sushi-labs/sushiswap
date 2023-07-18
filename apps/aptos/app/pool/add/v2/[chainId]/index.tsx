@@ -243,7 +243,11 @@ const _Add: FC = () => {
 
   useEffect(() => {
     onChangeToken0TypedAmount(String(amount0))
-  }, [account, connected, network, token0, token1, isTransactionPending, balance0, poolPairRatio])
+  }, [account, connected, network, token0, isTransactionPending, balance0, poolPairRatio])
+
+  useEffect(() => {
+    onChangeToken1TypedAmount(String(amount1))
+  }, [account, connected, network, token1, isTransactionPending, balance1, poolPairRatio])
 
   // useEffect(() => {
   //   onChangeToken1TypedAmount(String(amount1))
@@ -271,6 +275,7 @@ const _Add: FC = () => {
   }
 
   const PoolInputBalance1 = (tradeVal1: string) => {
+    console.log(tradeVal1)
     const regexPattern = /^[0-9]*(\.[0-9]*)?$/
     if (regexPattern.test(tradeVal1)) {
       setAmount1(tradeVal1)
@@ -365,7 +370,7 @@ const _Add: FC = () => {
             setAmount={setAmount1}
             type="INPUT"
           />
-          <AddLiquidityButton buttonError="" token1Value={String(amount0)} />
+          <AddLiquidityButton buttonError={error0 || error1 || buttonError} token1Value={String(amount0)} />
         </div>
       </ContentBlock>
       <AddSectionReviewModal>

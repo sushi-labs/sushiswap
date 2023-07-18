@@ -23,7 +23,6 @@ export function useTokens() {
   Object.entries(value).forEach(([, value]) => {
     tokens.push(value)
   })
-  console.log(tokens)
   tokens = useMemo(() => {
     return tokens
       .map((token) => token)

@@ -34,7 +34,6 @@ export default function TokenListDialog<TData>({ id, children, selected, handleC
   const { network } = useWallet()
   // const { allTokenList } = useSwapState()
   const { tokens } = useTokens()
-  console.log(tokens)
   const [value, setValue] = useLocalStorage<Record<string, Data>>('sushi.customTokens.aptos', {})
   // const [allTokenList, setAllTokenList] = useState<Token[]>(TokenList.tokens)
   const {

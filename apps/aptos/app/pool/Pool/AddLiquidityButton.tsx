@@ -18,7 +18,7 @@ export const AddLiquidityButton = ({ buttonError, token1Value }: Props) => {
           {connected ? (
             <button
               className={`btn w-full flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold ${
-                notPairFound || error || isPriceFetching
+                notPairFound || isPriceFetching || buttonError
                   ? 'pointer-events-none relative opacity-[0.4] overflow-hidden'
                   : ''
               }`}
@@ -29,7 +29,7 @@ export const AddLiquidityButton = ({ buttonError, token1Value }: Props) => {
             >
               {notPairFound ? (
                 notPairFound
-              ) : error ? (
+              ) : buttonError ? (
                 'Insufficient Balance'
               ) : token1Value ? (
                 <>Add Liquidity</>
