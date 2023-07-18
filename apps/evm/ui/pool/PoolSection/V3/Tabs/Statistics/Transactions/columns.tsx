@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import formatDistance from 'date-fns/formatDistance/index.js'
 import React from 'react'
 
-import { Transaction, TransactionType, useTransactionsV3 } from './useTransactionsV3'
+import { Transaction, TransactionType, useTransactionsV3 } from './useTransactions'
 
 export const TYPE_COLUMN: ColumnDef<Transaction, unknown> = {
   id: 'type',

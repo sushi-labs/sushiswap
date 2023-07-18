@@ -74,7 +74,6 @@ export const BentoBoxTokenTable: FC = () => {
           onPrev={table.previousPage}
           onNext={table.nextPage}
           page={pagination.pageIndex}
-          onPage={table.setPageIndex}
           pages={table.getPageCount()}
           pageSize={PAGE_SIZE}
         />
