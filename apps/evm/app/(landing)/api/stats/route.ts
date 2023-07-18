@@ -102,9 +102,13 @@ export async function GET() {
     getV2Data(),
     getV3Data(),
   ])
-  const totalTVL = bentoTVL + v2Data.v2.tvlUSD + v3Data.tvlUSD
-  const totalVolume = v2Data.v2.volumeUSD + v2Data.trident.volumeUSD + v3Data.volumeUSD
-  const totalPoolCount = v2Data.v2.pairCount + v2Data.trident.pairCount + v3Data.pairCount
+
+  let totalTVL = Number(bentoTVL) + Number(v2Data.v2.tvlUSD) + Number(v3Data.tvlUSD)
+  let totalVolume = Number(v2Data.v2.volumeUSD) + Number(v2Data.trident.volumeUSD) + Number(v3Data.volumeUSD)
+  const totalPoolCount = Number(v2Data.v2.pairCount) + Number(v2Data.trident.pairCount) + Number(v3Data.pairCount)
+
+  totalTVL = totalTVL > 10_000_000_000 ? 0 : totalTVL
+  totalVolume = totalVolume > 5_000_000_000_000 ? 0 : totalVolume
 
   return NextResponse.json({
     stats: {
