@@ -28,7 +28,7 @@ export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) =>
           </Badge>
         </div>
         <div className="flex flex-col items-baseline gap-[1px]">
-          <span className="text-sm font-medium flex items-baseline gap-1 text-gray-900 dark:text-slate-50">
+          <span className="flex items-baseline gap-1 text-sm font-medium text-gray-900 dark:text-slate-50">
             {unwrapToken(row.token0).symbol} <span className="font-normal text-gray-900 dark:text-slate-500">/</span>{' '}
             {unwrapToken(row.token1).symbol}
             <span className="text-xs text-gray-500 dark:text-slate-500">{row.poolFee}%</span>
@@ -40,7 +40,7 @@ export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) =>
       </div>
       <List className="mt-4">
         <List.Control className="!bg-secondary">
-          {ongoingFarms.map(({ start, end, amount, token, propFees, propToken0, propToken1 }, i) => (
+          {ongoingFarms.map(({ start, end, amount, token, propFees, propToken0, propToken1, isOutOfRangeIncentivized }, i) => (
             <>
               <List.Label className="!text-[10px] !px-4 pt-4 uppercase font-semibold !text-gray-400 !dark:text-slate-500">
                 Farm {i + 1}
@@ -64,7 +64,6 @@ export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) =>
                     start,
                     end,
                     amount,
-                    tvl: row.tvl ?? 0,
                     token,
                   })?.toSignificant(6)}{' '}
                   {unwrapToken(token).symbol}
@@ -99,6 +98,22 @@ export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) =>
                   <span className="flex gap-1 items-center text-xs text-gray-500 dark:text-slate-500">
                     Fees / {row.token0.symbol} / {row.token1.symbol}
                   </span>
+                </div>
+              </List.KeyValue>
+              <List.KeyValue
+                  flex
+                  className="!items-start"
+                  title={
+                    <div className="flex items-center gap-1">
+                      Out of range Liquidity
+                      <Explainer>This farm does not incentivize out of range liquidity.</Explainer>
+                    </div>
+                  }
+              >
+                <div className="flex flex-col">
+                    <span className="font-medium">
+                      {isOutOfRangeIncentivized ? 'Incentivized' : 'Not Incentivized'}
+                    </span>
                 </div>
               </List.KeyValue>
             </>

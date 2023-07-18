@@ -58,6 +58,11 @@ sources:
       graphql:
         endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:blocklytics/ethereum-blocks}
         retry: 3
+  - name: Steer
+    handler:
+      graphql:
+        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:steerprotocol/steer-protocol-polygon}
+        retry: 3
 
 additionalTypeDefs: |
   # Type Extensions

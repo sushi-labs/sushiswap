@@ -1,4 +1,4 @@
-import { Button } from '@sushiswap/ui/components/button'
+import { Button } from '@sushiswap/ui'
 import { Container } from '@sushiswap/ui/components/container'
 import { motion } from 'framer-motion'
 import React, { FC } from 'react'
@@ -81,7 +81,7 @@ export const BuildFuture: FC = () => {
               >
                 {({ setOpen, containerId, titleId }) => (
                   <div
-                    className="relative h-[240px] flex flex-grow"
+                    className="relative h-[285px] flex flex-grow"
                     onClick={() => setOpen(true)}
                     onKeyDown={() => setOpen(true)}
                   >
