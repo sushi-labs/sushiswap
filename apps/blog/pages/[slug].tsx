@@ -1,4 +1,4 @@
-import { Container } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import { FC } from 'react'

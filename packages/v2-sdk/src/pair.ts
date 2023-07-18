@@ -3,7 +3,7 @@ import { _997, _1000, BigintIsh, FIVE, JSBI, ONE, sqrt, ZERO } from '@sushiswap/
 import invariant from 'tiny-invariant'
 
 import { computePairAddress } from './computePairAddress'
-import { FACTORY_ADDRESS } from './constants'
+import { isSushiSwapV2ChainId,SUSHISWAP_V2_FACTORY_ADDRESS } from './constants'
 import { InsufficientInputAmountError, InsufficientReservesError } from './errors'
 import { pairSchema, SerializedPair } from './zod'
 
@@ -14,8 +14,10 @@ export class Pair {
   private readonly tokenAmounts: [Amount<Token>, Amount<Token>]
 
   public static getAddress(tokenA: Token, tokenB: Token): string {
+    invariant(isSushiSwapV2ChainId(tokenA.chainId), 'CHAIN_ID')
+    invariant(isSushiSwapV2ChainId(tokenB.chainId), 'CHAIN_ID')
     return computePairAddress({
-      factoryAddress: FACTORY_ADDRESS[tokenA.chainId],
+      factoryAddress: SUSHISWAP_V2_FACTORY_ADDRESS[tokenA.chainId],
       tokenA,
       tokenB,
     })

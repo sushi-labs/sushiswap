@@ -1,5 +1,6 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
-import { classNames, Container } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
 import furoImg from 'common/assets/furo-img.png'
 import {
   ProductArticles,
@@ -26,7 +27,7 @@ const { color, cards, buttonText, productStats, faq } = PRODUCTS_DATA[PRODUCT_SL
 export const getStaticProps: GetStaticProps = async () => {
   const data = await getProducts({ filters: { slug: { eq: PRODUCT_SLUG } } })
   const product = data?.products?.data?.[0].attributes
-  if (!product) throw new Error(`Product not found`)
+  if (!product) throw new Error('Product not found')
   return { props: product, revalidate: 60 }
 }
 
@@ -34,7 +35,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (product
   const { name, longName, url, description, slug, relevantArticleIds } = product
 
   const { data, isValidating } = useSWR(
-    [`/furo-articles`],
+    ['/furo-articles'],
     async () => await getLatestAndRelevantArticles(slug, relevantArticleIds),
     {
       revalidateOnFocus: false,
@@ -56,7 +57,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (product
           productDescription={description}
           productUrl={url}
           buttonText={buttonText}
-          buttonIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
+          buttonIcon={LinkIcon}
           image={<Image src={furoImg} unoptimized alt="furo-img" />}
           productStats={productStats}
         />

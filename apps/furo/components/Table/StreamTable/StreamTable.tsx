@@ -1,19 +1,15 @@
-// @ts-nocheck
-
-import { AddressZero } from '@ethersproject/constants'
-import { Amount, Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { useBreakpoint } from '@sushiswap/hooks'
-import { GenericTable } from '@sushiswap/ui'
+import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
+import { useAccount } from '@sushiswap/wagmi'
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import { Dispatch, FC, ReactNode, SetStateAction, useEffect, useMemo, useState } from 'react'
+import { FC, ReactNode, useEffect, useMemo, useState } from 'react'
 
-import { type Stream as StreamDTO, type Vesting as VestingDTO, Rebase as RebaseDTO } from '../../../.graphclient'
 import { FuroStatus, Stream, Vesting } from '../../../lib'
 import {
   AMOUNT_COLUMN,
-  FROM_COLUMN,
+  END_DATE_COLUMN,
+  NETWORK_COLUMN,
   START_DATE_COLUMN,
-  STATUS_COLUMN,
   STREAMED_COLUMN,
   TYPE_COLUMN,
 } from '../constants'
@@ -24,79 +20,55 @@ export enum FuroTableType {
 }
 
 interface FuroTableProps {
-  chainId: number | undefined
-  balances: Record<string, Amount<Token>> | undefined
-  globalFilter: boolean
-  setGlobalFilter: Dispatch<SetStateAction<boolean>>
-  streams: StreamDTO[]
-  vestings: VestingDTO[]
-  rebases: RebaseDTO[] | undefined
+  activeOnly: boolean
+  streams: (Stream | undefined)[] | null | undefined
+  vestings: (Vesting | undefined)[] | null | undefined
   type: FuroTableType
   placeholder: ReactNode
   loading: boolean
 }
 
-export const StreamTable: FC<FuroTableProps> = ({
-  chainId,
-  streams,
-  vestings,
-  rebases,
-  placeholder,
-  globalFilter,
-  loading,
-  type,
-}) => {
+export const StreamTable: FC<FuroTableProps> = ({ streams, vestings, placeholder, activeOnly, loading, type }) => {
+  const { address } = useAccount()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
-
-  const [columns] = useState([
-    STREAMED_COLUMN,
-    STATUS_COLUMN,
-    TYPE_COLUMN,
-    AMOUNT_COLUMN,
-    FROM_COLUMN(type),
-    START_DATE_COLUMN,
-  ])
-
   const [columnVisibility, setColumnVisibility] = useState({})
 
-  const data: Array<Stream | Vesting> = useMemo(() => {
-    if (!chainId || !streams || !vestings || !rebases) return []
+  const COLUMNS = useMemo(
+    () => [NETWORK_COLUMN, AMOUNT_COLUMN, STREAMED_COLUMN, TYPE_COLUMN, START_DATE_COLUMN, END_DATE_COLUMN],
+    []
+  )
+
+  const data = useMemo(() => {
     return [
-      ...streams
-        .map(
-          (stream) =>
-            new Stream({
-              chainId,
-              furo: stream,
-              rebase: rebases.find((rebase) =>
-                stream.token.id === AddressZero
-                  ? WNATIVE_ADDRESS[Number(chainId) as keyof typeof WNATIVE_ADDRESS].toLowerCase() === rebase.id
-                  : rebase.id === stream.token.id
-              ) as RebaseDTO,
-            })
-        )
-        .filter((el) => (globalFilter ? el.status === FuroStatus.ACTIVE : true)),
-      ...vestings
-        .map(
-          (vesting) =>
-            new Vesting({
-              chainId,
-              furo: vesting,
-              rebase: rebases.find((rebase) =>
-                vesting.token.id === AddressZero
-                  ? WNATIVE_ADDRESS[Number(chainId) as keyof typeof WNATIVE_ADDRESS].toLowerCase() === rebase.id
-                  : rebase.id === vesting.token.id
-              ) as RebaseDTO,
-            })
-        )
-        .filter((el) => (globalFilter ? el.status === FuroStatus.ACTIVE : true)),
+      ...(streams
+        ? streams
+            .filter((el): el is Stream => !!el)
+            .filter((el) => (activeOnly ? el.status === FuroStatus.ACTIVE : true))
+            .filter((el) =>
+              type === FuroTableType.INCOMING && address ? el.recipient.id === address.toLowerCase() : true
+            )
+            .filter((el) =>
+              type === FuroTableType.OUTGOING && address ? el.createdBy.id === address.toLowerCase() : true
+            )
+        : []),
+      ...(vestings
+        ? vestings
+            .filter((el): el is Vesting => !!el)
+            .filter((el) => (activeOnly ? el.status === FuroStatus.ACTIVE : true))
+            .filter((el) =>
+              type === FuroTableType.INCOMING && address ? el.recipient.id === address.toLowerCase() : true
+            )
+            .filter((el) =>
+              type === FuroTableType.OUTGOING && address ? el.createdBy.id === address.toLowerCase() : true
+            )
+        : []),
     ]
-  }, [chainId, streams, vestings, rebases, globalFilter])
+  }, [activeOnly, address, streams, type, vestings])
 
   const table = useReactTable<Stream | Vesting>({
     data: data,
-    columns,
+    columns: COLUMNS,
     state: {
       columnVisibility,
     },
@@ -117,19 +89,18 @@ export const StreamTable: FC<FuroTableProps> = ({
         from: false,
         type: false,
         startDate: false,
+        endDate: false,
       })
     }
   }, [isMd, isSm])
 
   return (
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     <GenericTable<Stream | Vesting>
       loading={loading}
       table={table}
       placeholder={placeholder}
-      pageSize={Math.max(data.length, 5)}
-      linkFormatter={(row) => `/${row instanceof Stream ? 'stream' : 'vesting'}/${row.id}?chainId=${row.chainId}`}
+      pageSize={Math.max(data.length, 1)}
+      linkFormatter={(row) => `/${row instanceof Stream ? 'stream' : 'vesting'}/${row.chainId}:${row.id}`}
     />
   )
 }

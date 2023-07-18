@@ -1,12 +1,12 @@
 import { FC } from 'react'
 import { Address, useWaitForTransaction } from 'wagmi'
 import { Chain, ChainId } from '@sushiswap/chain'
-import { BarLoader } from '@sushiswap/ui/future/components/BarLoader'
-import { Loader } from '@sushiswap/ui/future/components/Loader'
-import { CheckMarkIcon } from '@sushiswap/ui/future/components/icons/CheckmarkIcon'
-import { FailedMarkIcon } from '@sushiswap/ui/future/components/icons/FailedMarkIcon'
-import { Dots } from '@sushiswap/ui/future/components/Dots'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { BarLoader } from '@sushiswap/ui/components/BarLoader'
+import { Loader } from '@sushiswap/ui/components/loader'
+import { CheckMarkIcon } from '@sushiswap/ui/components/icons/CheckmarkIcon'
+import { FailedMarkIcon } from '@sushiswap/ui/components/icons/FailedMarkIcon'
+import { Dots } from '@sushiswap/ui/components/dots'
+import { Button } from '@sushiswap/ui/components/button'
 
 interface TxStatusModalContentProps {
   testId: string
@@ -63,7 +63,7 @@ export const TxStatusModalContent: FC<TxStatusModalContentProps> = ({
             to be confirmed on the blockchain.
           </h1>
         ) : status === 'success' ? (
-          <h1 className="flex flex-wrap items-center justify-center text-center gap-1 text-lg font-semibold">
+          <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-semibold text-center">
             {successMessage}
           </h1>
         ) : (
@@ -76,8 +76,8 @@ export const TxStatusModalContent: FC<TxStatusModalContentProps> = ({
       <Button
         {...(buttonSuccessLink ? { as: 'a', href: buttonSuccessLink } : { onClick: onClose })}
         fullWidth
-        color="blue"
-        variant="outlined"
+        
+        variant="secondary"
         size="xl"
         testId={testId}
       >

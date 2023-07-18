@@ -1,225 +1,122 @@
 import { Tab } from '@headlessui/react'
-import { CheckIcon, PaperAirplaneIcon, XIcon } from '@heroicons/react/outline'
-import { Token } from '@sushiswap/currency'
-import { FuroStreamChainId } from '@sushiswap/furo'
-import { useIsMounted } from '@sushiswap/hooks'
-import { Chip, classNames, Menu, Switch, Typography } from '@sushiswap/ui'
-import stringify from 'fast-json-stable-stringify'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { FC, useEffect, useMemo, useState } from 'react'
-import useSWR from 'swr'
-import { useAccount } from '@sushiswap/wagmi'
+import { Button } from '@sushiswap/ui/components/button'
+import { Container } from '@sushiswap/ui/components/container'
+import { SushiIcon } from '@sushiswap/ui/components/icons'
+import { Toggle } from '@sushiswap/ui/components/toggle'
+import { Address, useAccount } from '@sushiswap/wagmi'
+import React, { FC, Fragment, useState } from 'react'
 
-import { Rebase } from '../.graphclient'
-import { toToken, useStreamBalances } from '../lib'
-import { Streams, Vestings } from '../types'
+import { useUserStreams, useUserVestings } from '../lib'
 import { FuroTableType, StreamTable } from './Table'
 
-const fetcher = (url: string) =>
-  fetch(url)
-    .then((res) => res.json())
-    .catch((e) => console.log(stringify(e)))
-
-export const Dashboard: FC<{
-  chainId: FuroStreamChainId
-  address: string
-  showOutgoing: boolean
-}> = ({ chainId, address, showOutgoing }) => {
-  const isMounted = useIsMounted()
-  const router = useRouter()
-  const { address: account, isConnected } = useAccount()
+export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress }) => {
+  const { address: account } = useAccount()
+  const address = providedAddress ? providedAddress : account
 
   const [showActiveIncoming, setShowActiveIncoming] = useState(false)
 
-  const { data: streams, isValidating: isValidatingStreams } = useSWR<Streams>(
-    `/furo/api/user/${chainId}/${address}/streams`,
-    fetcher
-  )
-  const { data: vestings, isValidating: isValidatingVestings } = useSWR<Vestings>(
-    `/furo/api/user/${chainId}/${address}/vestings`,
-    fetcher
-  )
-  const [ids, tokens] = useMemo(() => {
-    const ids: [string][] = []
-    const tokens: Token[] = []
+  const { data: streams, isLoading: isStreamsLoading } = useUserStreams({ account: address })
+  const { data: vestings, isLoading: isVestingsLoading } = useUserVestings({ account: address })
 
-    streams?.incomingStreams?.forEach((stream) => {
-      ids.push([stream.id])
-      tokens.push(toToken(stream.token, chainId))
-    })
-
-    streams?.outgoingStreams?.forEach((stream) => {
-      ids.push([stream.id])
-      tokens.push(toToken(stream.token, chainId))
-    })
-
-    vestings?.incomingVestings?.forEach((vesting) => {
-      tokens.push(toToken(vesting.token, chainId))
-    })
-
-    vestings?.outgoingVestings?.forEach((vesting) => {
-      tokens.push(toToken(vesting.token, chainId))
-    })
-
-    return [ids, tokens]
-  }, [
-    chainId,
-    streams?.incomingStreams,
-    streams?.outgoingStreams,
-    vestings?.incomingVestings,
-    vestings?.outgoingVestings,
-  ])
-
-  const { data: rebases, isValidating: isValidatingRebases } = useSWR<Rebase[]>(
-    () =>
-      streams
-        ? [
-            `/furo/api/rebases/${chainId}/${tokens.map((token) => token.address).join('/')}`,
-            tokens.map((token) => token.address),
-          ]
-        : null,
-    fetcher
-  )
-
-  const { isLoading: balancesLoading, data: balancesData } = useStreamBalances(chainId, ids, tokens, {
-    blocksPerFetch: 3,
-  })
-
-  // Prefetch stream/vesting pages
-  useEffect(() => {
-    void router.prefetch('/stream/[id]')
-    void router.prefetch('/vesting/[id]')
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const isLoading = isStreamsLoading || isVestingsLoading
 
   return (
-    <div className="flex flex-col h-full gap-[80px] pt-20">
-      <div className="flex justify-between">
-        <div className="flex flex-col gap-3">
-          <Typography variant="h2" weight={500} className="text-slate-200">
-            <span className="text-blue">Furo</span> Streaming
-          </Typography>
-          <Typography className="text-slate-400">
-            Earn, stream and automate your DAO salaries <br /> and token vesting with Furo.
-          </Typography>
-          <div className="flex mt-4 h-9">
-            {account && isMounted && isConnected && (
-              <Menu
-                button={
-                  <Menu.Button
-                    color="blue"
-                    fullWidth
-                    startIcon={<PaperAirplaneIcon width={18} className="transform rotate-45 -mt-0.5" />}
-                    className="px-6"
-                    as="div"
-                  >
-                    Pay Someone
-                  </Menu.Button>
-                }
-              >
-                <Menu.Items unmount={false} className="!min-w-0">
-                  <Link passHref={true} href="/stream/create" legacyBehavior>
-                    <Menu.Item as="a">Stream</Menu.Item>
-                  </Link>
-                  <Link passHref={true} href="/vesting/create" legacyBehavior>
-                    <Menu.Item as="a">Vesting</Menu.Item>
-                  </Link>
-                </Menu.Items>
-              </Menu>
-            )}
+    <div className="flex flex-col gap-10">
+      <Container maxWidth="6xl" className="mx-auto px-4 pt-[80px] lg:pb-[54px]">
+        <section className="flex flex-col justify-between gap-12">
+          <div className="flex flex-col items-center flex-grow gap-6 lg:items-start">
+            <div className="flex flex-col gap-12 lg:flex-row">
+              <div className="flex flex-col gap-5">
+                <h1 className="mt-2 text-5xl font-semibold">
+                  Want to stream
+                  <br /> to someone?
+                </h1>
+                <span className="text-2xl font-medium text-gray-600 dark:text-slate-400 leading-[1.5]">
+                  Sushi Pay allows you to stream any ERC20 to any wallet.
+                </span>
+                <div className="relative z-10 mt-2 group">
+                  <div className="flex items-center w-full">
+                    <Button asChild size="xl">
+                      <a href="/furo/create">Pay Someone</a>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-center">
+                <div className="shadow-lg relative w-full lg:w-[460px] h-fit aspect-[460/290] bg-gradient-to-tr from-blue to-pink flex flex-col bg-slate-800 p-4 rounded-2xl">
+                  <span className="flex items-center justify-start gap-2">
+                    <div className="flex flex-col">
+                      <span className="font-medium text-white">SUSHI</span>
+                      <span className="text-2xl font-medium text-white">5000</span>
+                    </div>
+                  </span>
+                  <div className="absolute flex items-center justify-center gap-3 bottom-4 right-4">
+                    <div className="p-2 rounded-full shadow-md bg-white/10">
+                      <SushiIcon width={22} height={22} />
+                    </div>
+                    <span className="text-2xl font-medium tracking-[-0.025em] text-white">
+                      Sushi <span className="font-bold">Pay</span>
+                    </span>
+                  </div>
+                  <div className="absolute flex flex-col text-lg font-semibold tracking-wide text-white left-5 bottom-4 text-sh mono">
+                    <span className="text-sm font-medium">Recipient</span>
+                    you.eth
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <Tab.Group as="div" className="space-y-6" defaultIndex={showOutgoing ? 1 : 0}>
-        <div className="flex flex-wrap justify-between px-2 gap-y-4">
-          <Tab.List className="flex gap-10">
-            <Tab
-              as={Typography}
-              weight={500}
-              className={({ selected }) =>
-                classNames(
-                  selected ? 'text-slate-200 ' : 'text-slate-500',
-                  'outline-none ring-0 flex items-center gap-3'
-                )
-              }
-            >
-              Incoming{' '}
-              <Chip
-                color="blue"
-                label={((streams?.incomingStreams?.length || 0) + (vestings?.incomingVestings?.length || 0)).toString()}
-              />
+        </section>
+      </Container>
+      <Container maxWidth="6xl" className="mx-auto px-4 mb-[120px]">
+        <Tab.Group>
+          <div className="flex items-center gap-2 mb-4">
+            <Tab as={Fragment}>
+              {({ selected }) => (
+                <Toggle size="sm" pressed={selected}>
+                  Incoming
+                </Toggle>
+              )}
             </Tab>
-            <Tab
-              as={Typography}
-              weight={500}
-              className={({ selected }) =>
-                classNames(
-                  selected ? 'text-slate-200 ' : 'text-slate-500',
-                  'outline-none ring-0 flex items-center gap-3'
-                )
-              }
-            >
-              Outgoing{' '}
-              <Chip
-                color="pink"
-                label={((streams?.outgoingStreams?.length || 0) + (vestings?.outgoingVestings?.length || 0)).toString()}
-              />
+            <Tab as={Fragment}>
+              {({ selected }) => (
+                <Toggle size="sm" pressed={selected}>
+                  Outgoing
+                </Toggle>
+              )}
             </Tab>
-          </Tab.List>
-          <div className="flex items-center gap-3">
-            <Typography variant="sm" className="text-slate-400">
-              Active Streams Only
-            </Typography>
-            <Switch
-              checked={showActiveIncoming}
-              onChange={() => setShowActiveIncoming((prevState) => !prevState)}
+            <Toggle
+              pressed={showActiveIncoming}
+              onPressedChange={() => setShowActiveIncoming((prevState) => !prevState)}
               size="sm"
-              uncheckedIcon={<XIcon />}
-              checkedIcon={<CheckIcon />}
-            />
+            >
+              Active
+            </Toggle>
           </div>
-        </div>
-        <Tab.Panels>
-          <Tab.Panel>
-            <StreamTable
-              chainId={chainId}
-              balances={balancesData}
-              globalFilter={showActiveIncoming}
-              setGlobalFilter={setShowActiveIncoming}
-              loading={isValidatingVestings || isValidatingStreams || isValidatingRebases || balancesLoading}
-              streams={streams?.incomingStreams ?? []}
-              vestings={vestings?.incomingVestings ?? []}
-              rebases={rebases}
-              type={FuroTableType.INCOMING}
-              placeholder={
-                <>
-                  No <b>incoming</b> streams found
-                </>
-              }
-            />
-          </Tab.Panel>
-          <Tab.Panel>
-            <StreamTable
-              chainId={chainId}
-              balances={balancesData}
-              globalFilter={showActiveIncoming}
-              setGlobalFilter={setShowActiveIncoming}
-              loading={isValidatingVestings || isValidatingStreams || isValidatingRebases || balancesLoading}
-              streams={streams?.outgoingStreams ?? []}
-              vestings={vestings?.outgoingVestings ?? []}
-              rebases={rebases}
-              type={FuroTableType.OUTGOING}
-              placeholder={
-                <>
-                  No <b>outgoing</b> streams found
-                </>
-              }
-            />
-          </Tab.Panel>
-        </Tab.Panels>
-      </Tab.Group>
+          <Tab.Panels>
+            <Tab.Panel>
+              <StreamTable
+                activeOnly={showActiveIncoming}
+                loading={isLoading}
+                streams={streams}
+                vestings={vestings}
+                type={FuroTableType.INCOMING}
+                placeholder="No incoming streams found"
+              />
+            </Tab.Panel>
+            <Tab.Panel>
+              <StreamTable
+                activeOnly={showActiveIncoming}
+                loading={isLoading}
+                streams={streams}
+                vestings={vestings}
+                type={FuroTableType.OUTGOING}
+                placeholder="No incoming streams found"
+              />
+            </Tab.Panel>
+          </Tab.Panels>
+        </Tab.Group>
+      </Container>
     </div>
   )
 }

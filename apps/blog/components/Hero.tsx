@@ -1,4 +1,5 @@
-import { Button, Container } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/components/button'
+import { Container } from '@sushiswap/ui/components/container'
 import { FC } from 'react'
 import { Article } from 'types'
 
@@ -15,14 +16,11 @@ export const Hero: FC<Hero> = ({ article }) => {
         <div className="relative pt-10">
           <ArticleHeader article={article} />
           <ArticleAuthors article={article} />
-          <Button
-            as="a"
-            href={`/blog/${article?.attributes?.slug}`}
-            color="blue"
-            className="mt-8 inline-flex transition-all hover:ring-4 focus:ring-4 text-sm text-slate-50 px-6 h-[40px] sm:!h-[40px]"
-          >
-            Read Article
-          </Button>
+          <div className="mt-8">
+            <Button asChild>
+              <a href={`/blog/${article?.attributes?.slug}`}>Read Article</a>
+            </Button>
+          </div>
         </div>
       </Container>
     </section>

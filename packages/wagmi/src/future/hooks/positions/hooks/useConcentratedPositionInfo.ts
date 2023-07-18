@@ -1,14 +1,14 @@
 import { getConcentratedLiquidityPool } from '../../pools'
 import { useQuery } from '@tanstack/react-query'
 import { Type } from '@sushiswap/currency'
-import { Position, V3ChainId } from '@sushiswap/v3-sdk'
+import { Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useConcentratedLiquidityPositionsFromTokenId } from './useConcentratedPositionsFromTokenId'
 
 interface UseConcentratedLiquidityPositionsFromTokenIdParams {
   token0: Type | undefined
   token1: Type | undefined
   tokenId: number | string | undefined
-  chainId: V3ChainId
+  chainId: SushiSwapV3ChainId
   enabled?: boolean
 }
 

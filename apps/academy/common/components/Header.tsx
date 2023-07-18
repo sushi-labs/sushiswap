@@ -1,10 +1,24 @@
-import { GlobalNav, NavLink, SubNav, SubNavLink } from '@sushiswap/ui/future/components/GlobalNav'
+'use client'
+
+import {
+  Container,
+  EXPLORE_NAVIGATION_LINKS,
+  NavigationContainer,
+  NavigationListItem,
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+  OnramperButton,
+} from '@sushiswap/ui'
 import { DOCS_URL } from 'common/helpers'
 import { getDifficulties, getProducts } from 'lib/api'
+import Link from 'next/link'
 import React, { FC, useMemo } from 'react'
 import useSWR from 'swr'
-
-import { MobileMenu } from './'
 
 interface HeaderLink {
   name: string
@@ -20,7 +34,6 @@ export interface HeaderSection {
 }
 
 const PRODUCTS_ORDER = ['trident', 'furo', 'sushixswap', 'onsen', 'kashi', 'miso', 'bentobox']
-const BASE_URL = '/academy'
 
 export const Header: FC = () => {
   const { data: productsData } = useSWR('/products', async () => (await getProducts())?.products)
@@ -37,12 +50,12 @@ export const Header: FC = () => {
 
   const navData: HeaderSection[] = useMemo(
     () => [
-      { title: 'Academy', href: BASE_URL },
+      { title: 'Academy', href: '/' },
       {
         title: 'Products',
         links: sortedProducts.map(({ attributes }) => ({
           name: attributes?.longName as string,
-          href: `${BASE_URL}/products/${attributes?.slug}`,
+          href: `/products/${attributes?.slug}`,
         })),
       },
       {
@@ -51,36 +64,66 @@ export const Header: FC = () => {
           const isTechnical = attributes?.slug === 'technical'
           return {
             name: attributes?.shortDescription as string,
-            href: isTechnical ? DOCS_URL : `${BASE_URL}/articles?difficulty=${attributes?.slug}`,
+            href: isTechnical ? DOCS_URL : `/articles?difficulty=${attributes?.slug}`,
             isExternal: isTechnical,
           }
         }),
       },
       { title: 'Blog', href: 'https://www.sushi.com/blog', isExternal: true },
-      { title: 'About', href: `${BASE_URL}/about` },
+      { title: 'About', href: `/about` },
     ],
     [difficulties, sortedProducts]
   )
 
   return (
-    <GlobalNav maxWidth="6xl">
-      <>
-        {navData.map(({ title, href, links, isExternal }, i, a) => {
-          if (href && !links) {
-            return <NavLink title={title} href={href} key={i} />
-          }
+    <Container maxWidth="6xl" className="mx-auto">
+      <NavigationContainer variant="transparent">
+        <NavigationMenu>
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>Explore</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="w-[400px] gap-3 p-4">
+                  {EXPLORE_NAVIGATION_LINKS.map((component) => (
+                    <NavigationListItem key={component.title} title={component.title} href={component.href}>
+                      {component.description}
+                    </NavigationListItem>
+                  ))}
+                  <OnramperButton>
+                    <NavigationListItem title="Buy Crypto">Need to buy some more crypto?</NavigationListItem>
+                  </OnramperButton>
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            {navData.map(({ title, href, links, isExternal }) => {
+              if (href && !links) {
+                return (
+                  <NavigationMenuItem key={href}>
+                    <Link href={href} legacyBehavior passHref>
+                      <NavigationMenuLink className={navigationMenuTriggerStyle()}>{title}</NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
+                )
+              }
 
-          return (
-            <SubNav title={title} key={i}>
-              {links?.map(({ name, href }, j) => (
-                <SubNavLink href={href} title={name} key={`${i}-${j}`} />
-              ))}
-            </SubNav>
-          )
-        })}
-      </>
-
-      <MobileMenu navData={navData} />
-    </GlobalNav>
+              return (
+                <NavigationMenuItem key={title}>
+                  <NavigationMenuTrigger>{title}</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="w-[400px] gap-3 p-4">
+                      {links?.map(({ name, href }) => (
+                        <NavigationListItem key={`${title}-${name}`} title={name.split('-')?.[0]} href={href}>
+                          {name.split('-')?.[1]}
+                        </NavigationListItem>
+                      ))}
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              )
+            })}
+          </NavigationMenuList>
+        </NavigationMenu>
+      </NavigationContainer>
+    </Container>
   )
 }

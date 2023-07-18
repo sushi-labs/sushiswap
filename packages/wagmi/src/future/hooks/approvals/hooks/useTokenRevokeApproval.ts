@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { Token } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
-import { createToast } from '@sushiswap/ui/future/components/toast'
+import { createToast } from '@sushiswap/ui/components/toast'
 import { Address, erc20ABI, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import { SendTransactionResult } from '@wagmi/core'
 

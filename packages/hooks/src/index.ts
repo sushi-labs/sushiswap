@@ -1,3 +1,5 @@
+'use client'
+
 export { useBreakpoint } from './useBreakpoint'
 export { useCopyClipboard } from './useCopyClipboard'
 export * from './useCustomTokens'
@@ -12,6 +14,7 @@ export { useIsWindowVisible } from './useIsWindowVisible'
 export { useLocalStorage } from './useLocalStorage'
 export * from './useMediaQuery'
 export { useOnClickOutside } from './useOnClickOutside'
+export * from './usePinnedTokens'
 export { usePrevious } from './usePrevious'
 export * from './useSlippageTolerance'
 export * from './useSortedTokensByQuery'

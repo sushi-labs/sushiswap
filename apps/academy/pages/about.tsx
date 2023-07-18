@@ -1,5 +1,6 @@
 import { Disclosure, Transition } from '@headlessui/react'
-import { classNames, Container, Link } from '@sushiswap/ui'
+import { classNames, Link } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
 import sushiPulse from 'common/assets/sushi-pulse.png'
 import sushidilly from 'common/assets/sushidilly.png'
 import { DEFAULT_SIDE_PADDING } from 'common/helpers'

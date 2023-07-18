@@ -1,5 +1,6 @@
 import { ArrowRightCircleIcon } from '@heroicons/react/24/solid'
-import { classNames, Container, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
 import onsenImg from 'common/assets/onsen-img.png'
 import {
   ProductArticles,
@@ -26,7 +27,7 @@ const { color, productStats, buttonText, cards, faq } = PRODUCTS_DATA[PRODUCT_SL
 export const getStaticProps: GetStaticProps = async () => {
   const data = await getProducts({ filters: { slug: { eq: PRODUCT_SLUG } } })
   const product = data?.products?.data?.[0].attributes
-  if (!product) throw new Error(`Product not found`)
+  if (!product) throw new Error('Product not found')
   return { props: product, revalidate: 60 }
 }
 
@@ -39,7 +40,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   relevantArticleIds,
 }) => {
   const { data, isValidating } = useSWR(
-    [`/bentobox-articles`],
+    ['/bentobox-articles'],
     async () => await getLatestAndRelevantArticles(slug, relevantArticleIds),
     {
       revalidateOnFocus: false,
@@ -61,7 +62,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         productDescription={description}
         productUrl={url}
         buttonText={buttonText}
-        buttonIcon={<ArrowRightCircleIcon width={20} height={20} />}
+        buttonIcon={ArrowRightCircleIcon}
         image={<Image src={onsenImg} unoptimized alt="onsen-img" />}
         productStats={productStats}
       />
@@ -82,7 +83,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
           <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-x-6 gap-y-4 sm:gap-y-8">
             {traderCards.map((card, i) => (
               <div
-                key={i}
+                key={card.title}
                 className="p-px sm:h-[420px] rounded-3xl"
                 style={{
                   background: !i ? `linear-gradient(218.8deg, ${color} 2.35%, rgba(0, 0, 0, 0) 97.65%)` : 'unset',
@@ -107,18 +108,14 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
             <span className="text-lg font-bold sm:text-2xl">For Projects</span>
           </div>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-x-6 gap-y-8">
-            {projectCards.map((card, i) => (
-              <div key={i} className="p-12 h-full bg-[#212939] rounded-3xl">
+            {projectCards.map((card) => (
+              <div key={card.title} className="p-12 h-full bg-[#212939] rounded-3xl">
                 <card.Icon />
                 <div className="mt-11">
-                  <Typography weight={700} variant="h3">
-                    {card.title}
-                  </Typography>
+                  <p className="text-2xl font-semibold">{card.title}</p>
                 </div>
                 <div className="mt-5">
-                  <Typography variant="sm" className="text-slate-400">
-                    {card.subtitle}
-                  </Typography>
+                  <p className="text-sm text-slate-400">{card.subtitle}</p>
                 </div>
               </div>
             ))}

@@ -1,5 +1,6 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
-import { classNames, Container } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
 import {
   ProductArticles,
   ProductBackground,
@@ -24,7 +25,7 @@ const { color, productStats, cards, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
 export const getStaticProps: GetStaticProps = async () => {
   const data = await getProducts({ filters: { slug: { eq: PRODUCT_SLUG } } })
   const product = data?.products?.data?.[0]?.attributes
-  if (!product) throw new Error(`Product not found`)
+  if (!product) throw new Error('Product not found')
   return { props: product, revalidate: 60 }
 }
 
@@ -36,7 +37,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   relevantArticleIds,
 }) => {
   const { data, isValidating } = useSWR(
-    [`/trident-articles`],
+    ['/trident-articles'],
     async () => await getLatestAndRelevantArticles(slug, relevantArticleIds),
     {
       revalidateOnFocus: false,
@@ -62,7 +63,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         }
         productDescription={description}
         productUrl={url}
-        buttonIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
+        buttonIcon={LinkIcon}
         productStats={productStats}
       />
       <ProductCards

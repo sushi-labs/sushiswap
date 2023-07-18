@@ -3,11 +3,12 @@ import '../index.css'
 import '../variables.css'
 
 import { Cloudinary } from '@cloudinary/url-gen'
-import { App, ThemeProvider } from '@sushiswap/ui'
+import { ThemeProvider } from '@sushiswap/ui'
+import { GlobalFooter } from '@sushiswap/ui'
+import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
 import { useRouter } from 'next/router'
-import Script from 'next/script'
 import { useEffect } from 'react'
 
 import { DefaultSeo, Header } from '../common/components'
@@ -42,31 +43,16 @@ const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
 
   return (
     <>
-      <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
-      <Script
-        id="gtag-init"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-JW8KWJ48EF', {
-              page_path: window.location.pathname,
-            });
-          `,
-        }}
-      />
-      <ThemeProvider>
-        <App.Shell>
-          <DefaultSeo seo={seo} />
-          <div className="dark">
-            <Header />
-            <Component {...pageProps} seo={seo} />
-            <App.Footer />
-          </div>
-        </App.Shell>
+      <ThemeProvider forcedTheme="dark">
+        <DefaultSeo seo={seo} />
+        <div className="dark">
+          <Header />
+          <Component {...pageProps} seo={seo} />
+          <GlobalFooter />
+        </div>
       </ThemeProvider>
+      <GoogleAnalytics />
+      <HotJar />
     </>
   )
 }

@@ -1,5 +1,7 @@
 import { useBreakpoint } from '@sushiswap/hooks'
-import { classNames, Container, LoadingOverlay } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
+import { LoadingOverlay } from '@sushiswap/ui/components/loader'
 import { APP_HEADER_HEIGHT, DEFAULT_SIDE_PADDING } from 'common/helpers'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
@@ -19,11 +21,11 @@ import {
   ArticleLinks,
   ArticleSeo,
   Breadcrumb,
+  Image,
   MediaBlock,
   PreviewBanner,
   RichTextBlock,
 } from '../../common/components'
-import { Image } from '../../common/components'
 import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../../lib/api'
 
 export async function getStaticPaths() {

@@ -10,7 +10,7 @@ import { useCustomTokens } from '@sushiswap/hooks'
 
 interface UseTokenParams<T extends boolean> {
   chainId: ChainId | undefined
-  address: string | undefined
+  address: string | undefined | null
   withStatus?: T
   enabled?: boolean
   keepPreviousData?: boolean
@@ -57,7 +57,7 @@ export const getTokenWithQueryCacheHydrate = <T extends boolean>(
 
 interface GetTokenWithQueryCacheFn {
   chainId: ChainId | undefined
-  address: string | undefined
+  address: string | undefined | null
   customTokens: Record<string, Token>
   hasToken: (cur: string | Token) => boolean
 }

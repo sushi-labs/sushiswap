@@ -1,58 +1,47 @@
-import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form } from '@sushiswap/ui'
-import { DatePicker } from '@sushiswap/ui/input/DatePicker'
-import { Web3Input } from '@sushiswap/wagmi'
-import React, { useEffect } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { FormControl, FormField, FormItem, FormMessage, FormSection } from '@sushiswap/ui/components/form'
+import { Input } from '@sushiswap/ui/components/input'
+import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
+import React, { FC } from 'react'
+import { useFormContext } from 'react-hook-form'
 
-import { CreateStreamFormSchemaType } from './schema'
+import { CreateMultipleStreamFormSchemaType } from '../schema'
 
-export const GeneralDetailsSection = () => {
-  const { control, watch, setError, clearErrors } = useFormContext<CreateStreamFormSchemaType>()
-  const [startDate, endDate] = watch(['dates.startDate', 'dates.endDate'])
+interface GeneralDetailsSection {
+  index: number
+}
 
-  useEffect(() => {
-    if (startDate && startDate.getTime() <= new Date(Date.now() + 5 * 60 * 1000).getTime()) {
-      setError(`dates.startDate`, {
-        type: 'custom',
-        message: 'Must be at least 5 minutes from now',
-      })
-    } else {
-      clearErrors(`dates.startDate`)
-    }
-  }, [clearErrors, setError, startDate])
-
-  useEffect(() => {
-    if (startDate && endDate && endDate < startDate) {
-      setError(`dates.endDate`, {
-        type: 'custom',
-        message: 'Must be later than start date',
-      })
-    } else {
-      clearErrors(`dates.endDate`)
-    }
-  }, [clearErrors, endDate, setError, startDate])
+export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
+  const { control, watch } = useFormContext<CreateMultipleStreamFormSchemaType>()
+  const [startDate] = watch([`streams.${index}.dates.startDate`])
 
   return (
-    <Form.Section
+    <FormSection
       title="General Details"
       description="Furo allows you to create a vested or non vested stream using your wallet or BentoBox balance."
     >
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <Form.Control label="Start date*">
-          <Controller
-            control={control}
-            name="dates.startDate"
-            render={({ field: { name, onChange, value, onBlur }, fieldState: { error } }) => {
-              return (
-                <>
-                  <DatePicker
+        <FormField
+          control={control}
+          rules={{ deps: [`streams.${index}.dates.endDate`] }}
+          name={`streams.${index}.dates.startDate`}
+          render={({ field: { name, onChange, value, onBlur } }) => {
+            return (
+              <FormItem>
+                <FormControl>
+                  <Input.DatePicker
                     name={name}
                     onBlur={onBlur}
-                    className={classNames(
-                      DEFAULT_INPUT_CLASSNAME,
-                      error ? ERROR_INPUT_CLASSNAME : '',
-                      '!ring-offset-slate-900'
-                    )}
+                    customInput={
+                      <Input.DatePickerCustomInput
+                        testdata-id={`stream-start-date${index}`}
+                        id={`stream-start-date${index}`}
+                        label={
+                          <>
+                            Start date<sup>*</sup>
+                          </>
+                        }
+                      />
+                    }
                     onChange={onChange}
                     selected={value}
                     portalId="root-portal"
@@ -60,32 +49,44 @@ export const GeneralDetailsSection = () => {
                     timeFormat="HH:mm"
                     timeIntervals={15}
                     timeCaption="time"
+                    startDate={new Date(Date.now() + 5 * 60 * 1000)}
                     minDate={new Date(Date.now() + 5 * 60 * 1000)}
                     dateFormat="MMM d, yyyy HH:mm"
                     placeholderText="Select date"
                     autoComplete="off"
                   />
-                  <Form.Error message={error?.message} />
-                </>
-              )
-            }}
-          />
-        </Form.Control>
-        <Form.Control label="End date*">
-          <Controller
-            control={control}
-            name="dates.endDate"
-            render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
-              return (
-                <>
-                  <DatePicker
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )
+          }}
+        />
+        <FormField
+          control={control}
+          rules={{ deps: [`streams.${index}.dates.endDate`] }}
+          name={`streams.${index}.dates.endDate`}
+          render={({ field: { onChange, value, onBlur, name } }) => {
+            const minDate = startDate
+              ? new Date(startDate.getTime() + 5 * 60 * 1000)
+              : new Date(Date.now() + 10 * 60 * 1000)
+
+            return (
+              <FormItem>
+                <FormControl>
+                  <Input.DatePicker
                     name={name}
                     onBlur={onBlur}
-                    className={classNames(
-                      DEFAULT_INPUT_CLASSNAME,
-                      error ? ERROR_INPUT_CLASSNAME : '',
-                      '!ring-offset-slate-900'
-                    )}
+                    customInput={
+                      <Input.DatePickerCustomInput
+                        testdata-id={`stream-end-date${index}`}
+                        id={`stream-end-date${index}`}
+                        label={
+                          <>
+                            End date<sup>*</sup>
+                          </>
+                        }
+                      />
+                    }
                     onChange={onChange}
                     selected={value}
                     portalId="root-portal"
@@ -93,47 +94,45 @@ export const GeneralDetailsSection = () => {
                     timeFormat="HH:mm"
                     timeIntervals={15}
                     timeCaption="time"
-                    minDate={
-                      startDate ? new Date(startDate.getTime() + 5 * 60 * 1000) : new Date(Date.now() + 10 * 60 * 1000)
-                    }
+                    startDate={new Date(Date.now()) > minDate ? new Date(Date.now() + 10 * 60 * 1000) : minDate}
+                    minDate={new Date(Date.now()) > minDate ? new Date(Date.now() + 10 * 60 * 1000) : minDate}
                     dateFormat="MMM d, yyyy HH:mm"
                     placeholderText="Select date"
                     autoComplete="off"
                   />
-                  <Form.Error message={error?.message} />
-                </>
-              )
-            }}
-          />
-        </Form.Control>
-      </div>
-      <Form.Control label="Recipient*">
-        <Controller
-          control={control}
-          name="recipient"
-          render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
-            return (
-              <>
-                <Web3Input.Ens
-                  name={name}
-                  onBlur={onBlur}
-                  id="recipient"
-                  value={value}
-                  onChange={onChange}
-                  error={!!error?.message}
-                  placeholder="Address or ENS Name"
-                  className={classNames(
-                    DEFAULT_INPUT_CLASSNAME,
-                    error ? ERROR_INPUT_CLASSNAME : '',
-                    'ring-offset-slate-900'
-                  )}
-                />
-                <Form.Error message={error?.message} />
-              </>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )
           }}
         />
-      </Form.Control>
-    </Form.Section>
+      </div>
+      <FormField
+        control={control}
+        name={`streams.${index}.recipient`}
+        render={({ field: { onChange, value, onBlur, name } }) => {
+          return (
+            <FormItem>
+              <FormControl>
+                <Web3Input.Ens
+                  label={
+                    <>
+                      Address or ENS<sup>*</sup>
+                    </>
+                  }
+                  name={name}
+                  onBlur={onBlur}
+                  id={`create-stream-recipient-input${index}`}
+                  testdata-id={`create-stream-recipient-input${index}`}
+                  value={value}
+                  onChange={onChange}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )
+        }}
+      />
+    </FormSection>
   )
 }

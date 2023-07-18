@@ -1,38 +1,51 @@
-import { Form, Input, Select, Typography } from '@sushiswap/ui'
-import { _useBalance as useBalance } from '@sushiswap/wagmi'
-import { format } from 'date-fns'
-import { useEffect, useMemo } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
-import { useAccount } from '@sushiswap/wagmi'
+import { ChainId } from '@sushiswap/chain'
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormMessage,
+  FormSection,
+} from '@sushiswap/ui/components/form'
+import { Input } from '@sushiswap/ui/components/input'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@sushiswap/ui/components/select'
+import { _useBalance as useBalance, useAccount } from '@sushiswap/wagmi'
+import React, { FC, useEffect, useMemo } from 'react'
+import { useFormContext } from 'react-hook-form'
 
 import { useDeepCompareMemoize } from '../../../lib'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
-import { CurrencyInputBase, HelperTextPanel } from '../../CurrencyInput'
-import { CreateVestingFormSchemaType, FormErrors, StepConfig, stepConfigurations } from '../../vesting'
-import { calculateEndDate, calculateTotalAmount } from '../utils'
-import { Chain, ChainId } from '@sushiswap/chain'
+import {
+  CreateMultipleVestingBaseSchemaFormErrorsType,
+  CreateMultipleVestingFormSchemaType,
+  STEP_CONFIGURATIONS_SECONDS,
+} from '../schema'
+import { calculateTotalAmount } from '../utils'
 
-export const GradedVestingDetailsSection = () => {
+export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) => {
   const { address } = useAccount()
-  const {
-    control,
-    watch,
-    setError,
-    clearErrors,
-    formState: { errors },
-  } = useFormContext<CreateVestingFormSchemaType & FormErrors>()
-  const formData = watch()
+  const { control, watch, setError, clearErrors } = useFormContext<
+    CreateMultipleVestingFormSchemaType & CreateMultipleVestingBaseSchemaFormErrorsType
+  >()
+
+  const formData = watch(`vestings.${index}`)
   const _formData = useDeepCompareMemoize(formData)
-
-  const { currency, stepConfig, fundSource, cliff, stepAmount, stepPayouts } = _formData
-
+  const { currency, fundSource, cliffEnabled, cliffAmount, stepAmount, stepPayouts } = _formData
   const _fundSource = ZFundSourceToFundSource.parse(fundSource)
   const _currency = useTokenFromZToken(currency)
-  const endDate = calculateEndDate(formData)
   const totalAmount = useMemo(
-    () => calculateTotalAmount({ currency, cliff, stepAmount, stepPayouts }),
-    [cliff, currency, stepAmount, stepPayouts]
+    () => calculateTotalAmount({ currency, cliffEnabled, cliffAmount, stepAmount, stepPayouts }),
+    [cliffAmount, cliffEnabled, currency, stepAmount, stepPayouts]
   )
+
   const { data: balance } = useBalance({
     account: address,
     chainId: currency?.chainId as ChainId | undefined,
@@ -43,136 +56,109 @@ export const GradedVestingDetailsSection = () => {
   useEffect(() => {
     if (!_fundSource || !totalAmount || !balance || !balance[_fundSource]) return
     if (totalAmount.greaterThan(balance[_fundSource])) {
-      setError('FORM_ERROR', {
+      setError(`FORM_ERRORS.${index}.stepAmount`, {
         type: 'custom',
         message: 'Insufficient Balance',
       })
     } else {
-      clearErrors('FORM_ERROR')
+      clearErrors(`FORM_ERRORS.${index}.stepAmount`)
     }
-  }, [balance, clearErrors, _fundSource, setError, totalAmount])
+  }, [balance, clearErrors, _fundSource, setError, totalAmount, index])
 
   return (
-    <Form.Section title="Graded Vesting Details" description="Optionally provide graded vesting details">
-      <Form.Control label="Payout per Period*">
-        <Controller
-          control={control}
-          name="stepAmount"
-          render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
-            <CurrencyInputBase
-              className="ring-offset-slate-900"
-              onChange={onChange}
-              value={value || ''}
-              currency={_currency}
-              error={!!error?.message}
-              name={name}
-              onBlur={onBlur}
-              helperTextPanel={
-                <HelperTextPanel
-                  text={
-                    error?.message ? (
-                      error.message
-                    ) : (
-                      <>
-                        The amount the recipient receives after every period. For a value of {value} and a{' '}
-                        {stepConfig?.label.toLowerCase()} period length, the user will receive {value}{' '}
-                        {currency?.symbol} {stepConfig?.label.toLowerCase()}.
-                      </>
-                    )
-                  }
-                  isError={!!error?.message}
-                />
-              }
-            />
-          )}
-        />
-      </Form.Control>
-      <div className="flex flex-col gap-6 md:flex-row">
-        <Form.Control label="Amount of Periods*">
-          <Controller
-            control={control}
-            name="stepPayouts"
-            render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => {
-              return (
-                <>
-                  <Input.Counter
-                    name={name}
-                    onBlur={onBlur}
-                    step={1}
-                    min={0}
-                    max={100}
-                    onChange={(val) => onChange(Number(val) > 0 ? Number(val) : 1)}
-                    value={value}
-                    error={!!error?.message}
-                    className="ring-offset-slate-900"
-                  />
-                  <Form.Error message={error?.message} />
-                </>
-              )
-            }}
-          />
-        </Form.Control>
-        <Form.Control label="Period Length*">
-          <Controller
-            control={control}
-            name="stepConfig"
-            render={({ field: { onChange, value, onBlur }, fieldState: { error } }) => (
-              <>
-                <Select
-                  button={
-                    <Select.Button error={!!error?.message} className="ring-offset-slate-900">
-                      {value.label}
-                    </Select.Button>
-                  }
+    <FormSection title="Graded Vesting Details" description="Optionally provide graded vesting details">
+      <FormField
+        control={control}
+        name={`vestings.${index}.stepAmount`}
+        render={({ field: { onChange, value, onBlur, name } }) => {
+          return (
+            <FormItem>
+              <FormControl>
+                <Input.Numeric
+                  onUserInput={onChange}
+                  onBlur={onBlur}
+                  name={name}
                   value={value}
-                  onChange={(val: StepConfig) => {
-                    onChange(val)
-                    onBlur()
-                  }}
-                >
-                  <Select.Options>
-                    {Object.values(stepConfigurations).map((stepConfig) => (
-                      <Select.Option key={stepConfig.label} value={stepConfig}>
-                        {stepConfig.label}
-                      </Select.Option>
-                    ))}
-                  </Select.Options>
-                </Select>
-                <Form.Error message={error?.message} />
-              </>
-            )}
-          />
-        </Form.Control>
-      </div>
-      <div className="flex gap-6">
-        <Form.Control label="Total Amount">
-          <Typography
-            variant="sm"
-            className={
-              _fundSource && balance?.[_fundSource] && totalAmount?.greaterThan(balance[_fundSource])
-                ? 'text-red'
-                : totalAmount
-                ? 'text-slate-50'
-                : 'text-slate-500'
-            }
-            weight={600}
-          >
-            {totalAmount ? totalAmount?.toSignificant(6) : '0.000000'} {totalAmount?.currency.symbol}
-          </Typography>
-          <Form.Error message={errors['FORM_ERROR']?.message} />
-        </Form.Control>
-        <Form.Control label="End Date">
-          {endDate ? (
-            <Typography variant="sm" className="text-slate-50" weight={600}>
-              {format(endDate, 'dd MMM yyyy hh:mmaaa')}
-            </Typography>
-          ) : (
-            <Typography variant="sm" className="italic text-slate-500">
-              Not available
-            </Typography>
-          )}
-        </Form.Control>
-      </div>
-    </Form.Section>
+                  id={`create-single-vest-graded-amount-input${index}`}
+                  testdata-id={`create-single-vest-graded-amount-input${index}`}
+                  label={
+                    <>
+                      Payout per unlock{currency ? ` (${currency.symbol})` : ''}
+                      <sup>*</sup>
+                    </>
+                  }
+                />
+              </FormControl>
+              <FormDescription>The amount the recipient receives for every unlock.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )
+        }}
+      />
+      <FormField
+        control={control}
+        name={`vestings.${index}.stepPayouts`}
+        render={({ field: { onChange, value, onBlur, name } }) => {
+          return (
+            <FormItem>
+              <FormControl>
+                <Input.Numeric
+                  onUserInput={(val) => onChange(+val)}
+                  onBlur={onBlur}
+                  name={name}
+                  value={value}
+                  id={`create-single-vest-steps-input${index}`}
+                  testdata-id={`create-single-vest-steps-input${index}`}
+                  label={
+                    <>
+                      Number of unlocks<sup>*</sup>
+                    </>
+                  }
+                />
+              </FormControl>
+              <FormDescription>
+                Defines the number of unlocks, a value of 10 would mean there will be a total of 10 unlocks during the
+                duration of this vest.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )
+        }}
+      />
+      <FormField
+        control={control}
+        name={`vestings.${index}.stepConfig`}
+        render={({ field: { onChange, value } }) => (
+          <FormItem>
+            <Select value={value} onValueChange={onChange} defaultValue={value}>
+              <FormControl>
+                <SelectGroup>
+                  <SelectTrigger testdata-id={`create-single-vest-graded-frequency-selection-button${index}`}>
+                    <SelectLabel aria-label={value}>
+                      Unlock frequency<sup>*</sup>
+                    </SelectLabel>
+                    <SelectValue />
+                  </SelectTrigger>
+                </SelectGroup>
+              </FormControl>
+
+              <SelectContent>
+                {Object.keys(STEP_CONFIGURATIONS_SECONDS).map((stepConfig, i) => (
+                  <SelectItem
+                    key={stepConfig}
+                    value={`${i}`}
+                    testdata-id={`create-single-vest-graded-type-${stepConfig.toLowerCase()}${index}`}
+                  >
+                    {stepConfig}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormDescription>The period of time between each unlock.</FormDescription>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </FormSection>
   )
 }

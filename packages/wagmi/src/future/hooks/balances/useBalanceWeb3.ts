@@ -6,7 +6,7 @@ import { queryFnUseBalances } from './useBalancesWeb3'
 import { AddressZero } from '@ethersproject/constants'
 
 interface UseBalanceParams {
-  chainId: ChainId
+  chainId: ChainId | undefined
   currency: Type | undefined
   account: Address | undefined
   enabled?: boolean

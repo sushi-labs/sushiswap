@@ -1,22 +1,14 @@
+import { ArrowLeftIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { FuroVestingRouterChainId } from '@sushiswap/furo'
-import { Breadcrumb, BreadcrumbLink } from '@sushiswap/ui'
-import { NextSeo } from 'next-seo'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { useNetwork } from '@sushiswap/wagmi'
+import Link from 'next/link'
+import { NextSeo } from 'next-seo'
+import React from 'react'
 
 import { Layout } from '../../../components'
 import { CreateForm } from '../../../components/vesting'
-
-const LINKS: BreadcrumbLink[] = [
-  {
-    href: '/vesting/create',
-    label: 'Create Vesting',
-  },
-  {
-    href: '/vesting/create/single',
-    label: 'Single',
-  },
-]
 
 const SingleVesting = () => {
   const { chain } = useNetwork()
@@ -26,10 +18,17 @@ const SingleVesting = () => {
     <>
       <NextSeo title="New Vesting" />
       <Layout>
-        <Breadcrumb home="/dashboard" links={LINKS} />
-        <div className="mt-6">
-          <CreateForm chainId={chainId} />
-        </div>
+        <Link
+          className="group flex gap-4 items-center mb-2"
+          href={{
+            pathname: '/create',
+          }}
+          shallow={true}
+        >
+          <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
+          <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">Go back</span>
+        </Link>
+        <CreateForm chainId={chainId} />
       </Layout>
     </>
   )

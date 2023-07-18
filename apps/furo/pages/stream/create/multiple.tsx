@@ -1,22 +1,14 @@
+import { ArrowLeftIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
-import { Breadcrumb, BreadcrumbLink } from '@sushiswap/ui'
-import { NextSeo } from 'next-seo'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { useNetwork } from '@sushiswap/wagmi'
+import Link from 'next/link'
+import { NextSeo } from 'next-seo'
+import React from 'react'
 
 import { Layout } from '../../../components'
 import { CreateMultipleForm } from '../../../components/stream/CreateMultipleForm'
-
-const LINKS: BreadcrumbLink[] = [
-  {
-    href: '/stream/create',
-    label: 'Create Stream',
-  },
-  {
-    href: '/stream/create/multiple',
-    label: 'Multiple',
-  },
-]
 
 const MultipleStream = () => {
   const { chain } = useNetwork()
@@ -25,11 +17,18 @@ const MultipleStream = () => {
   return (
     <>
       <NextSeo title="New Streams" />
-      <Layout>
-        <Breadcrumb home="/dashboard" links={LINKS} />
-        <div className="mt-6">
-          <CreateMultipleForm chainId={chainId} />
-        </div>
+      <Layout maxWidth="7xl">
+        <Link
+          className="group flex gap-4 items-center mb-2"
+          href={{
+            pathname: '/create',
+          }}
+          shallow={true}
+        >
+          <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
+          <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">Go back</span>
+        </Link>
+        <CreateMultipleForm chainId={chainId} />
       </Layout>
     </>
   )

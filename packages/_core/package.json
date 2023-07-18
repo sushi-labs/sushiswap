@@ -15,19 +15,20 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "files": [
-    "dist"
-  ],
+  "sideEffects": false,
   "main": "dist/index.js",
   "source": "src/index.ts",
   "types": "dist/index.d.ts",
-  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
-    "lint": "TIMING=1 eslint src --fix",
+    "lint": "TIMING=1 eslint src",
+    "lint:fix": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build"
   },
   "dependencies": {
@@ -37,9 +38,9 @@
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "eslint": "8.41.0",
+    "eslint": "8.43.0",
     "ethers": "5.7.2",
-    "typescript": "5.0.4"
+    "typescript": "5.1.6"
   },
   "peerDependencies": {
     "ethers": "*"

@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/furo",
-  "version": "1.0.6",
+  "version": "1.0.11",
   "description": "SushiXSwap",
   "keywords": [
     "sushixswap",
@@ -16,9 +16,9 @@
     "directory": "protocols/furo"
   },
   "license": "MIT",
+  "author": "Sarang",
   "main": "exports/exports.js",
   "types": "exports/exports.d.ts",
-  "author": "Sarang",
   "files": [
     "artifacts",
     "contracts",
@@ -36,12 +36,13 @@
   "dependencies": {
     "@openzeppelin/contracts": "^4.6.0",
     "@rari-capital/solmate": "6.2.0",
-    "@sushiswap/bentobox": "1.0.1",
+    "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/core": "^1.4.2",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/stargate": "workspace:*",
-    "@sushiswap/v2-core": "workspace:*"
+    "@sushiswap/types": "workspace:*",
+    "@sushiswap/v2-sdk": "workspace:*"
   },
   "devDependencies": {
     "@ethersproject/abi": "5.7.0",
@@ -53,14 +54,13 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@sushiswap/types": "workspace:*",
-    "@types/node": "18.11.18",
-    "eslint": "8.41.0",
+    "@types/node": "18",
+    "eslint": "8.43.0",
     "ethers": "5.7.2",
     "hardhat": "2.12.4",
     "hardhat-deploy": "0.11.22",
     "ts-node": "10.9.1",
-    "typescript": "5.0.4"
+    "typescript": "5.1.6"
   },
   "peerDependencies": {
     "@ethersproject/abi": "5.7.0",

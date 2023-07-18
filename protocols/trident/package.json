@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/trident-core",
-  "version": "1.0.4",
+  "version": "1.0.8",
   "description": "Trident is a experimental framework for building AMM's.",
   "keywords": [
     "trident",
@@ -37,10 +37,10 @@
   "dependencies": {
     "@openzeppelin/contracts": "4.7.3",
     "@rari-capital/solmate": "6.2.0",
-    "@sushiswap/currency": "0.0.5",
-    "@sushiswap/bentobox": "1.0.1",
-    "@sushiswap/types": "0.0.2",
-    "@sushiswap/hardhat-config": "0.1.2"
+    "@sushiswap/bentobox": "workspace:*",
+    "@sushiswap/currency": "workspace:*",
+    "@sushiswap/hardhat-config": "workspace:*",
+    "@sushiswap/types": "workspace:*"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
@@ -49,12 +49,12 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@tenderly/hardhat-tenderly": "^1.0.13",
-    "@types/node": "18.11.18",
-    "eslint": "8.41.0",
+    "@types/node": "18",
+    "eslint": "8.43.0",
     "ethers": "5.7.2",
     "hardhat": "2.12.4",
     "hardhat-deploy": "0.11.22",
     "ts-node": "10.9.1",
-    "typescript": "5.0.4"
+    "typescript": "5.1.6"
   }
 }

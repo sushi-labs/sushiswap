@@ -1,7 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
 
-// export const FACTORY_ADDRESS = '0x1af415a1EbA07a4986a52B6f2e7dE7003D82231e'
-
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
 
 export const POOL_INIT_CODE_HASH = '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54'
@@ -93,7 +91,7 @@ export const V3_TICK_LENS = {
   [ChainId.THUNDERCORE]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904',
 } as const
 
-export const V3_SUPPORTED_CHAIN_IDS = [
+export const SUSHISWAP_V3_SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM_NOVA,
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
@@ -110,7 +108,9 @@ export const V3_SUPPORTED_CHAIN_IDS = [
   ChainId.THUNDERCORE,
 ] as const
 
-export type V3ChainId = (typeof V3_SUPPORTED_CHAIN_IDS)[number]
+export const SushiSwapV3ChainIds = SUSHISWAP_V3_SUPPORTED_CHAIN_IDS
 
-export const isV3ChainId = (chainId: ChainId): chainId is V3ChainId =>
-  V3_SUPPORTED_CHAIN_IDS.includes(chainId as V3ChainId)
+export type SushiSwapV3ChainId = (typeof SUSHISWAP_V3_SUPPORTED_CHAIN_IDS)[number]
+
+export const isSushiSwapV3ChainId = (chainId: ChainId): chainId is SushiSwapV3ChainId =>
+  SUSHISWAP_V3_SUPPORTED_CHAIN_IDS.includes(chainId as SushiSwapV3ChainId)

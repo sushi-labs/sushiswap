@@ -1,7 +1,6 @@
-import { SearchIcon } from '@heroicons/react/outline'
-import { ChevronLeftIcon } from '@heroicons/react/outline'
+import { ChevronLeftIcon, SearchIcon } from '@heroicons/react/outline'
 import { useDebounce } from '@sushiswap/hooks'
-import { Container, Typography } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
 import { InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { FC, useState } from 'react'
@@ -43,8 +42,8 @@ const _Archive: FC = () => {
   const { data: articlesData } = useSWR<Collection<Article>>('/articles')
   const { data: categoriesData } = useSWR<Collection<Category>>('/categories')
   const { data: filterData, isValidating } = useSWR(
-    [`/articles`, selected, debouncedQuery, page],
-    async (url, selected, debouncedQuery, page) => {
+    ['/articles', selected, debouncedQuery, page],
+    async ([_url, selected, debouncedQuery, page]) => {
       return (
         await getArticles({
           filters: {
@@ -83,9 +82,7 @@ const _Archive: FC = () => {
         <Link href="/" passHref={true} legacyBehavior>
           <a className="flex items-center gap-3 group">
             <ChevronLeftIcon width={18} className="text-slate-400 group-hover:text-slate-50" />
-            <Typography variant="lg" weight={500} className="text-lg group-hover:text-slate-50 text-slate-200">
-              Archive
-            </Typography>
+            <p className="text-lg font-medium text-lg group-hover:text-slate-50 text-slate-200">Archive</p>
           </a>
         </Link>
       </Container>

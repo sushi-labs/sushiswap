@@ -1,26 +1,21 @@
 import '@sushiswap/ui/index.css'
-import '../variables.css'
 
-import { App, ThemeProvider } from '@sushiswap/ui'
-import { client } from '@sushiswap/wagmi'
+import { queryClient } from '@sushiswap/react-query'
+import { ThemeProvider } from '@sushiswap/ui'
+import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
+import { OnramperProvider } from '@sushiswap/ui/components/onramper'
+import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
+import { client, WagmiConfig } from '@sushiswap/wagmi'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { Analytics } from '@vercel/analytics/react'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
 import { FC, useEffect } from 'react'
-import { Provider as ReduxProvider } from 'react-redux'
-import { WagmiConfig } from '@sushiswap/wagmi'
 
 import { Header } from '../components'
-import { SUPPORTED_CHAINS } from '../config'
-import { Updaters as MulticallUpdaters } from '../lib/state/MulticallUpdaters'
-import { Updaters as TokenListUpdaters } from '../lib/state/TokenListsUpdaters'
 import SEO from '../next-seo.config.mjs'
-import store from '../store'
-import { PersistQueryClientProvider } from '../components/PersistQueryClientProvider'
-import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
 
 declare global {
   interface Window {
@@ -30,6 +25,7 @@ declare global {
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
+
   useEffect(() => {
     const handler = (page: any) => {
       window.dataLayer.push({
@@ -44,6 +40,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       router.events.off('hashChangeComplete', handler)
     }
   }, [router.events])
+
   return (
     <>
       <Head>
@@ -54,39 +51,20 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="mask-icon" href="/furo/safari-pinned-tab.svg?v=1" color="#fa52a0" />
         <link rel="shortcut icon" href="/furo/favicon.ico?v=1" />
       </Head>
-      <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
-      <Script
-        id="gtag-init"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-JW8KWJ48EF', {
-              page_path: window.location.pathname,
-            });
-          `,
-        }}
-      />
       <WagmiConfig client={client}>
-        <PersistQueryClientProvider>
-          <ReduxProvider store={store}>
-            <ThemeProvider forcedTheme="dark">
-              <Onramper.Provider>
-                <App.Shell>
-                  <DefaultSeo {...SEO} />
-                  <Header />
-                  <MulticallUpdaters chainIds={SUPPORTED_CHAINS} />
-                  <TokenListUpdaters chainIds={SUPPORTED_CHAINS} />
-                  <Component {...pageProps} />
-                  <App.Footer />
-                </App.Shell>
-              </Onramper.Provider>
-            </ThemeProvider>
-          </ReduxProvider>
-        </PersistQueryClientProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
+            <OnramperProvider>
+              <DefaultSeo {...SEO} />
+              <Header />
+              <Component {...pageProps} />
+              <GlobalFooter />
+            </OnramperProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
       </WagmiConfig>
+      <GoogleAnalytics />
+      <HotJar />
       <Analytics />
     </>
   )

@@ -1,49 +1,44 @@
 import { Amount, Token } from '@sushiswap/currency'
-import { FuroVestingChainId } from '@sushiswap/furo'
+import { FuroStreamChainId } from '@sushiswap/furo'
 import { JSBI } from '@sushiswap/math'
-import { getFuroVestingContractConfig, getBentoBoxContractConfig } from '@sushiswap/wagmi'
+import { Address, getBentoBoxContractConfig, getFuroVestingContractConfig, readContract } from '@sushiswap/wagmi'
+import { useQuery } from '@tanstack/react-query'
 import { BigNumber } from 'ethers'
-import { useMemo } from 'react'
-import { Address, useContractRead } from '@sushiswap/wagmi'
 
-export function useVestingBalance(
-  chainId?: FuroVestingChainId,
-  vestingId?: string,
-  token?: Token
-): Amount<Token> | undefined {
-  const {
-    data: balance,
-    error: balanceError,
-    isLoading: balanceLoading,
-  } = useContractRead({
-    ...(chainId ? getFuroVestingContractConfig(chainId) : {}),
-    functionName: 'vestBalance',
-    chainId,
-    enabled: !!chainId && !!vestingId,
-    args: vestingId ? [BigNumber.from(vestingId)] : undefined,
-    watch: true,
+interface UseVestingBalance {
+  chainId: FuroStreamChainId
+  vestingId: string | undefined
+  token: Token | undefined
+  enabled?: boolean
+}
+
+export function useVestingBalance({ chainId, vestingId, token, enabled = true }: UseVestingBalance) {
+  return useQuery({
+    queryKey: ['useVestingBalance', { chainId, vestingId }],
+    queryFn: async () => {
+      if (!vestingId || !token) return null
+
+      const [balance, rebase] = await Promise.all([
+        readContract({
+          ...getFuroVestingContractConfig(chainId),
+          functionName: 'vestBalance',
+          chainId,
+          args: [BigNumber.from(vestingId)],
+        }),
+        readContract({
+          ...getBentoBoxContractConfig(chainId),
+          functionName: 'totals',
+          chainId,
+          args: [token.address as Address],
+        }),
+      ])
+
+      return Amount.fromShare(token, JSBI.BigInt(balance), {
+        elastic: JSBI.BigInt(rebase[0]),
+        base: JSBI.BigInt(rebase[1]),
+      })
+    },
+    refetchInterval: 2000,
+    enabled: Boolean(enabled && vestingId && token),
   })
-
-  const {
-    data: rebase,
-    error: rebaseError,
-    isLoading: rebaseLoading,
-  } = useContractRead({
-    ...(chainId ? getBentoBoxContractConfig(chainId) : {}),
-    functionName: 'totals',
-    chainId,
-    enabled: !!chainId && !!token,
-    args: token ? [token.address as Address] : undefined,
-    watch: true,
-  })
-
-  return useMemo(() => {
-    if (balanceError || rebaseError || balanceLoading || rebaseLoading || !balance || !rebase || !vestingId || !token)
-      return undefined
-
-    return Amount.fromShare(token, JSBI.BigInt(balance), {
-      base: JSBI.BigInt(rebase[1]),
-      elastic: JSBI.BigInt(rebase[0]),
-    })
-  }, [balanceError, rebaseError, balanceLoading, rebaseLoading, balance, vestingId, token, rebase])
 }

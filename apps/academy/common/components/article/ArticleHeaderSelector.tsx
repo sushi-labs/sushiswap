@@ -1,6 +1,6 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
-import { classNames, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { ComponentSharedTableOfContentsEntry, Maybe } from '.mesh'
@@ -22,9 +22,7 @@ export const ArticleHeaderSelector: FC<ArticleHeaderSelector> = ({
       {({ open, close }) => (
         <>
           <Disclosure.Button className="flex items-center justify-between w-full h-12 gap-1 text-slate-40 outline-0">
-            <Typography variant="sm" weight={500}>
-              {selectedHeader || 'Table of Contents'}
-            </Typography>
+            <p className="text-sm font-medium">{selectedHeader || 'Table of Contents'}</p>
             <ChevronDownIcon width={12} height={12} className={classNames('transition', open && 'rotate-180')} />
           </Disclosure.Button>
           <Transition
@@ -50,9 +48,7 @@ export const ArticleHeaderSelector: FC<ArticleHeaderSelector> = ({
                       setSelectedHeader(el?.text)
                     }}
                   >
-                    <Typography variant="sm" weight={500} as="span">
-                      {el?.text}
-                    </Typography>
+                    <span className="text-sm font-medium">{el?.text}</span>
                   </li>
                 ))}
               </ol>

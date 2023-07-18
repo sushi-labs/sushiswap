@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/token-lists",
-  "version": "0.0.2",
+  "version": "0.0.6",
   "private": true,
   "description": "Sushi Token Lists",
   "keywords": [
@@ -9,19 +9,20 @@
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "files": [
-    "dist/**"
-  ],
+  "sideEffects": false,
   "main": "dist/index.js",
   "source": "src/index.ts",
   "types": "dist/index.d.ts",
-  "sideEffects": false,
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
-    "lint": "TIMING=1 eslint src --fix",
+    "lint": "TIMING=1 eslint src",
+    "lint:fix": "TIMING=1 eslint src --fix",
     "test": "jest --passWithNoTests"
   },
   "jest": {
@@ -41,12 +42,12 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "^29.2.0",
-    "@types/node": "18.11.18",
-    "@types/react": "18.2.6",
-    "eslint": "8.41.0",
+    "@types/node": "18",
+    "@types/react": "18.2.14",
+    "eslint": "8.43.0",
     "jest": "29.3.1",
     "react": "18.2.0",
-    "typescript": "5.0.4"
+    "typescript": "5.1.6"
   },
   "peerDependencies": {
     "react": "18.2.0"

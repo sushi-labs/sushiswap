@@ -1,11 +1,12 @@
 import { AddressZero } from '@ethersproject/constants'
+import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import { Amount, Type } from '@sushiswap/currency'
 import { Fraction, ZERO } from '@sushiswap/math'
-import { Icon } from '@sushiswap/ui/future/components/currency/Icon'
-import React, { CSSProperties, FC, memo, useCallback } from 'react'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import { classNames } from '@sushiswap/ui'
+import { IconButton } from '@sushiswap/ui'
+import { Badge } from '@sushiswap/ui/components/Badge'
+import { Icon } from '@sushiswap/ui/components/currency/Icon'
+import React, { CSSProperties, FC, memo, useCallback } from 'react'
 
 export interface TokenSelectorRow {
   id: string
@@ -16,6 +17,10 @@ export interface TokenSelectorRow {
   onSelect(currency: Type): void
   balance?: Amount<Type> | undefined
   price?: Fraction
+  pin?: {
+    isPinned: boolean
+    onPin(): void
+  }
   selected: boolean
 }
 
@@ -27,14 +32,20 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
   style,
   className,
   onSelect,
+  pin,
   selected,
 }) {
   const onClick = useCallback(() => {
     onSelect(currency)
   }, [currency, onSelect])
 
+  const onPin = useCallback((e: React.MouseEvent | React.KeyboardEvent) => {
+    e.stopPropagation()
+    pin?.onPin()
+  }, [])
+
   return (
-    <div className="py-0.5 h-[64px]" style={style}>
+    <div className="relative py-0.5 h-[64px]" style={style}>
       <div
         testdata-id={`${id}-row-${currency.isNative ? AddressZero : currency.wrapped.address.toLowerCase()}`}
         onClick={onClick}
@@ -50,8 +61,8 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
               <Badge
                 position="bottom-right"
                 badgeContent={
-                  <div className="bg-white dark:bg-slate-800 rounded-full">
-                    <CheckCircleIcon width={20} height={20} className="text-blue rounded-full" />
+                  <div className="bg-white rounded-full dark:bg-slate-800">
+                    <CheckCircleIcon width={20} height={20} className="rounded-full text-blue" />
                   </div>
                 }
               >
@@ -74,21 +85,33 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
             </div>
           </div>
 
-          {balance?.greaterThan(ZERO) && (
-            <div className="flex flex-col">
-              <span
-                className={classNames(
-                  selected ? 'font-semibold' : 'font-medium',
-                  'text-right text-gray-900 dark:text-slate-50'
-                )}
-              >
-                {balance?.toSignificant(6)}
-              </span>
-              <span className="text-sm font-medium text-right text-gray-500 dark:text-slate-400">
-                {price ? `$${balance?.multiply(price).toFixed(2)}` : '-'}
-              </span>
-            </div>
-          )}
+          <div className="flex items-center gap-4">
+            {balance?.greaterThan(ZERO) && (
+              <div className="flex flex-col">
+                <span
+                  className={classNames(
+                    selected ? 'font-semibold' : 'font-medium',
+                    'text-right text-gray-900 dark:text-slate-50'
+                  )}
+                >
+                  {balance?.toSignificant(6)}
+                </span>
+                <span className="text-sm font-medium text-right text-gray-500 dark:text-slate-400">
+                  {price ? `$${balance?.multiply(price).toFixed(2)}` : '-'}
+                </span>
+              </div>
+            )}
+            {pin && (
+              <IconButton
+                size="xs"
+                icon="⭐"
+                variant="ghost"
+                name="pin"
+                onClick={onPin}
+                className={classNames(pin.isPinned ? '' : 'grayscale opacity-50', 'z-[1080]')}
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>

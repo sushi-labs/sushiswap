@@ -1,7 +1,7 @@
 import { Amount, Token, Type, Type as Currency } from '@sushiswap/currency'
 import { Address, readContracts } from 'wagmi'
-import { computePairAddress, FACTORY_ADDRESS, Pair } from '@sushiswap/amm'
-import { uniswapV2FactoryAddress, UniswapV2FactoryChainId, UniswapV2Router02ChainId } from '@sushiswap/v2-core'
+import { computePairAddress, Pair }from "@sushiswap/amm"
+import { SushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS, isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { uniswapV2PairAbi } from '@sushiswap/abi'
 
 export enum PairState {
@@ -12,7 +12,7 @@ export enum PairState {
 }
 
 export const getPairs = async (
-  chainId: UniswapV2Router02ChainId | undefined,
+  chainId: SushiSwapV2ChainId | undefined,
   currencies: [Currency | undefined, Currency | undefined][]
 ): Promise<[PairState, Pair | null][]> => {
   const filtered = currencies.filter((currencies): currencies is [Type, Type] => {
@@ -22,7 +22,7 @@ export const getPairs = async (
         currencyB &&
         currencyA.chainId === currencyB.chainId &&
         !currencyA.wrapped.equals(currencyB.wrapped) &&
-        FACTORY_ADDRESS[currencyA.chainId]
+        isSushiSwapV2ChainId(currencyA.chainId)
     )
   })
 
@@ -39,7 +39,7 @@ export const getPairs = async (
   const contracts = filtered.map(([currencyA, currencyB]) => ({
     chainId,
     address: computePairAddress({
-      factoryAddress: uniswapV2FactoryAddress[currencyA.chainId as UniswapV2FactoryChainId],
+      factoryAddress: SUSHISWAP_V2_FACTORY_ADDRESS[currencyA.chainId as SushiSwapV2ChainId],
       tokenA: currencyA.wrapped,
       tokenB: currencyB.wrapped,
     }) as Address,

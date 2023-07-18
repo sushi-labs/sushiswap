@@ -1,9 +1,10 @@
 import { Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useIsMounted } from '@sushiswap/hooks'
-import { classNames, IconButton } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import React, { FC, Fragment, ReactNode } from 'react'
 import ReactDOM from 'react-dom'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 
 interface Drawer {
   isOpen: boolean
@@ -49,9 +50,7 @@ export const Drawer: FC<Drawer> = ({ children, isOpen, onClose, className, heade
           <div className={classNames('relative overflow-y-auto', className)}>
             <div className="z-[1] py-[34px] sticky top-0 bg-slate-900">{header}</div>
             <div className="z-[1] fixed right-6 top-[38px]" onClick={onClose}>
-              <IconButton className="w-6 h-6 text-slate-50/50" onClick={onClose}>
-                <XMarkIcon />
-              </IconButton>
+              <IconButton icon={XMarkIcon} onClick={onClose} name="Close" />
             </div>
             <div className="px-[30px]">{children}</div>
           </div>

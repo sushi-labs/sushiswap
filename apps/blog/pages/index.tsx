@@ -1,6 +1,7 @@
 import { SearchIcon } from '@heroicons/react/outline'
 import { useDebounce } from '@sushiswap/hooks'
-import { Button, Container } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/components/button'
+import { Container } from '@sushiswap/ui/components/container'
 import BlogSeo from 'components/Seo/BlogSeo'
 import { InferGetServerSidePropsType } from 'next'
 import { FC, useState } from 'react'
@@ -40,8 +41,8 @@ const _Home: FC = () => {
   const { data: categoriesData } = useSWR<Collection<Category>>('/categories')
 
   const { data: filterData, isValidating } = useSWR(
-    [`/articles`, selected, debouncedQuery],
-    async (url, selected, debouncedQuery) => {
+    ['/articles', selected, debouncedQuery],
+    async ([_url, selected, debouncedQuery]) => {
       return (
         await getArticles({
           filters: {
@@ -103,8 +104,8 @@ const _Home: FC = () => {
               </div>
             )}
             <div className="flex justify-center">
-              <Button as="a" href="/blog/archive" color="gray" variant="outlined" className="px-6">
-                View Archive
+              <Button asChild variant="secondary">
+                <a href="/blog/archive">View Archive</a>
               </Button>
             </div>
           </Container>
