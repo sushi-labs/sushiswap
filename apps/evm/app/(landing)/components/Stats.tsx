@@ -9,7 +9,7 @@ export const Stats: FC = () => {
   const { data } = useQuery(['api/stats'], () => fetch('api/stats').then((response) => response.json()))
   return (
     <section className="overflow-x-hidden">
-      <Container maxWidth="5xl" className="mx-auto px-4 pt-10">
+      <Container maxWidth="5xl" className="px-4 pt-10 mx-auto">
         <div className="grid grid-cols-2 md:flex md:justify-between my-[120px] gap-10">
           <div className="flex items-center gap-3 px-6 lg:px-0">
             <div className="flex flex-col justify-center gap-1">
