@@ -44,7 +44,7 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
               <List.Label>Reward Emission</List.Label>
               <List.Label>per day</List.Label>
             </div>
-            <List.Control className="bg-gray-100 dark:bg-slate-700">
+            <List.Control className="!bg-secondary">
               {row.incentives.map((incentive) => (
                 <List.Item
                   key={incentive.id}

@@ -74,121 +74,119 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
         </Button>
       </div>
 
-      <div className="max-h-[240px] scroll border-t border-gray-200 dark:border-slate-200/5 mt-2">
-        {row.pool.incentives && pendingRewards.length > 0 && (
-          <>
-            <List className="!pt-5">
-              <List.Label>Pending rewards</List.Label>
-              <List.Control className="bg-gray-100 dark:bg-slate-700">
-                {pendingRewards.map((reward, index) =>
-                  reward?.currency ? (
-                    <List.Item
-                      key={index}
-                      icon={Currency.Icon}
-                      iconProps={{
-                        currency: reward.currency,
-                      }}
-                      title={
-                        <div className="flex items-baseline gap-2">
-                          {reward?.toSignificant(6) || '0.00'} {rewardTokens[index]?.symbol}
-                          <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
-                            {' '}
-                            {formatUSD(values[index])}
-                          </span>
-                        </div>
-                      }
-                    />
-                  ) : (
-                    <></>
-                  )
-                )}
-              </List.Control>
-            </List>
-          </>
-        )}
-
-        <List className="!pt-5">
-          <div className="flex justify-between">
-            <List.Label>Position</List.Label>
-            <List.Label>{formatUSD(value0 + value1)}</List.Label>
-          </div>
-          <List.Control className="bg-gray-100 dark:bg-slate-700">
-            {underlying0 && (
-              <List.Item
-                loading={!underlying0}
-                icon={Currency.Icon}
-                iconProps={{
-                  currency: underlying0?.currency,
-                }}
-                title={
-                  <div className="flex items-baseline gap-2">
-                    {underlying0?.toSignificant(6)} {underlying0?.currency.symbol}
-                    <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
-                      {formatUSD(value0)}
-                    </span>
-                  </div>
-                }
-              />
-            )}
-            {underlying1 && (
-              <List.Item
-                loading={!underlying1}
-                icon={Currency.Icon}
-                iconProps={{
-                  currency: underlying1?.currency,
-                }}
-                title={
-                  <div className="flex items-baseline gap-2">
-                    {underlying1?.toSignificant(6)} {underlying1?.currency.symbol}
-                    <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
-                      {formatUSD(value1)}
-                    </span>
-                  </div>
-                }
-              />
-            )}
-          </List.Control>
-        </List>
-
-        {row.pool.incentives && stakedUnderlying0?.greaterThan(ZERO) && stakedUnderlying1?.greaterThan(ZERO) && (
+      {row.pool.incentives && pendingRewards.length > 0 && (
+        <>
           <List className="!pt-5">
-            <div className="flex justify-between">
-              <List.Label>Staked Position</List.Label>
-              <List.Label>{formatUSD(stakedValue0 + stakedValue1)}</List.Label>
-            </div>
-            <List.Control className="bg-gray-100 dark:bg-slate-700">
-              <List.Item
-                icon={Currency.Icon}
-                iconProps={{
-                  currency: stakedUnderlying0?.currency,
-                }}
-                title={
-                  <div className="flex items-baseline gap-2">
-                    {stakedUnderlying0?.toSignificant(6)} {stakedUnderlying0?.currency.symbol}
-                    <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
-                      {formatUSD(stakedValue1)}
-                    </span>
-                  </div>
-                }
-              />
-              <List.Item
-                icon={Currency.Icon}
-                iconProps={{
-                  currency: stakedUnderlying1?.currency,
-                }}
-                title={
-                  <div className="flex items-baseline gap-2">
-                    {stakedUnderlying1?.toSignificant(6) || '0.00'} {stakedUnderlying1?.currency.symbol}
-                    <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
-                      {formatUSD(stakedValue1)}
-                    </span>
-                  </div>
-                }
-              />
+            <List.Label>Pending rewards</List.Label>
+            <List.Control className="!bg-secondary">
+              {pendingRewards.map((reward, index) =>
+                reward?.currency ? (
+                  <List.Item
+                    key={index}
+                    icon={Currency.Icon}
+                    iconProps={{
+                      currency: reward.currency,
+                    }}
+                    title={
+                      <div className="flex items-baseline gap-2">
+                        {reward?.toSignificant(6) || '0.00'} {rewardTokens[index]?.symbol}
+                        <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
+                          {' '}
+                          {formatUSD(values[index])}
+                        </span>
+                      </div>
+                    }
+                  />
+                ) : (
+                  <></>
+                )
+              )}
             </List.Control>
           </List>
-        )}
-      </div>
+        </>
+      )}
+
+      <List className="!pt-5">
+        <div className="flex justify-between">
+          <List.Label>Position</List.Label>
+          <List.Label>{formatUSD(value0 + value1)}</List.Label>
+        </div>
+        <List.Control className="!bg-secondary">
+          {underlying0 && (
+            <List.Item
+              loading={!underlying0}
+              icon={Currency.Icon}
+              iconProps={{
+                currency: underlying0?.currency,
+              }}
+              title={
+                <div className="flex items-baseline gap-2">
+                  {underlying0?.toSignificant(6)} {underlying0?.currency.symbol}
+                  <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
+                    {formatUSD(value0)}
+                  </span>
+                </div>
+              }
+            />
+          )}
+          {underlying1 && (
+            <List.Item
+              loading={!underlying1}
+              icon={Currency.Icon}
+              iconProps={{
+                currency: underlying1?.currency,
+              }}
+              title={
+                <div className="flex items-baseline gap-2">
+                  {underlying1?.toSignificant(6)} {underlying1?.currency.symbol}
+                  <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
+                    {formatUSD(value1)}
+                  </span>
+                </div>
+              }
+            />
+          )}
+        </List.Control>
+      </List>
+
+      {row.pool.incentives && stakedUnderlying0?.greaterThan(ZERO) && stakedUnderlying1?.greaterThan(ZERO) && (
+        <List className="!pt-5">
+          <div className="flex justify-between">
+            <List.Label>Staked Position</List.Label>
+            <List.Label>{formatUSD(stakedValue0 + stakedValue1)}</List.Label>
+          </div>
+          <List.Control className="!bg-secondary">
+            <List.Item
+              icon={Currency.Icon}
+              iconProps={{
+                currency: stakedUnderlying0?.currency,
+              }}
+              title={
+                <div className="flex items-baseline gap-2">
+                  {stakedUnderlying0?.toSignificant(6)} {stakedUnderlying0?.currency.symbol}
+                  <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
+                    {formatUSD(stakedValue1)}
+                  </span>
+                </div>
+              }
+            />
+            <List.Item
+              icon={Currency.Icon}
+              iconProps={{
+                currency: stakedUnderlying1?.currency,
+              }}
+              title={
+                <div className="flex items-baseline gap-2">
+                  {stakedUnderlying1?.toSignificant(6) || '0.00'} {stakedUnderlying1?.currency.symbol}
+                  <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
+                    {formatUSD(stakedValue1)}
+                  </span>
+                </div>
+              }
+            />
+          </List.Control>
+        </List>
+      )}
     </div>
   )
 }

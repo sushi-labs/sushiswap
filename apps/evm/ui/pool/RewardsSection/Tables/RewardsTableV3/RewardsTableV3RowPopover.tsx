@@ -39,7 +39,7 @@ export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) =>
         </div>
       </div>
       <List className="mt-4">
-        <List.Control className="max-h-[300px] overflow-y-scroll scroll">
+        <List.Control className="!bg-secondary">
           {ongoingFarms.map(({ start, end, amount, token, propFees, propToken0, propToken1 }, i) => (
             <>
               <List.Label className="!text-[10px] !px-4 pt-4 uppercase font-semibold !text-gray-400 !dark:text-slate-500">
