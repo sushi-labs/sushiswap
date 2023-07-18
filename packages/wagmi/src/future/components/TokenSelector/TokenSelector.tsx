@@ -90,6 +90,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
               <span className="text-lg font-semibold text-gray-900 dark:text-slate-50">Tokens</span>
               <TokenSelectorCustomTokensOverlay />
             </div>
+            
             <div className="flex gap-2">
               <Search id={id} input={Input.Address} value={query} loading={isQueryTokenLoading} onChange={setQuery} />
             </div>

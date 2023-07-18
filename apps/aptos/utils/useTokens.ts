@@ -13,7 +13,7 @@ export type Data = {
 
 export function useTokens() {
   const { network } = useWallet()
-  const [value, setValue] = useLocalStorage<Token[]>('sushi.customTokens.aptos', {})
+  const [value, setValue] = useLocalStorage<Token[]>('sushi.customTokens.aptos', [])
   let tokens: Token[] = [] as Token[]
   const BASE_TOKENS = TOKENS.tokens
 

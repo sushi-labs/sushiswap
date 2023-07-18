@@ -103,12 +103,12 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         return { ...state, noRouteFound: action.value }
     }
   }
-  const allTokenList = useTokens()
-  console.log(allTokenList)
+  const { tokens } = useTokens()
+  console.log(tokens)
   // const filteredTokenList = getFilterTokenList(Number(network?.chainId))
   const [internalState, dispatch] = useReducer(reducer, {
-    token0: allTokenList[0],
-    token1: allTokenList[1],
+    token0: tokens[0],
+    token1: tokens[1],
     balance0: 0,
     balance1: 0,
     amount: '',
@@ -123,7 +123,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   })
   const state = useMemo(() => {
     return { ...internalState }
-  }, [internalState, network, account, allTokenList])
+  }, [internalState, network, account, tokens])
   const api = useMemo(() => {
     const setToken0 = (value: Token) => dispatch({ type: 'setToken0', value })
     const setToken1 = (value: Token) => dispatch({ type: 'setToken1', value })
@@ -156,11 +156,11 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setBestRoutes,
       setNoRouteFound,
     }
-  }, [internalState, allTokenList])
+  }, [internalState, tokens])
 
   return (
     <SwapActionsContext.Provider value={api}>
-      <SwapStateContext.Provider value={useMemo(() => ({ ...state }), [state, allTokenList])}>
+      <SwapStateContext.Provider value={useMemo(() => ({ ...state }), [state, tokens])}>
         {children}
       </SwapStateContext.Provider>
     </SwapActionsContext.Provider>

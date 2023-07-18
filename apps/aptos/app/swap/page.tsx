@@ -18,14 +18,6 @@ import { coinType } from 'utils/tokenData'
 import { SwapTradeOutput } from 'components/SwapTradeOutput'
 import { useTokens } from 'utils/useTokens'
 
-type Data = {
-  chainId: number
-  id: string
-  address: string
-  decimals: number
-  name: string | undefined
-  symbol: string | undefined
-}
 export default function SwapPage() {
   const { account, connected, disconnect, network } = useWallet()
   const [isLoading, setLoading] = useState<boolean>(true)
