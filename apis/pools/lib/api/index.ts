@@ -120,6 +120,7 @@ export async function getEarnPool(args: typeof PoolApiSchema._output) {
   })
 
   if (!pool) {
+    // rome-ignore lint/suspicious/noExplicitAny: recursive
     pool = (await getUnindexedPool(id)) as any
   }
 
@@ -228,6 +229,30 @@ export async function getEarnPools(args: typeof PoolsApiSchema._output) {
               decimals: true,
             },
           },
+        },
+      },
+      steerVaults: {
+        select: {
+          id: true,
+          adjustmentFrequency: true,
+          apr: true,
+          apr1d: true,
+          apr1m: true,
+          apr1y: true,
+          description: true,
+          fees0: true,
+          fees1: true,
+          feeTier: true,
+          lastAdjustmentTimestamp: true,
+          generatedAt: true,
+          lowerTick: true,
+          upperTick: true,
+          performanceFee: true,
+          reserve0: true,
+          reserve1: true,
+          state: true,
+          strategy: true,
+          updatedAt: true,
         },
       },
     },

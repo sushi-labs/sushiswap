@@ -2,7 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { formatPercent } from '@sushiswap/format'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Currency } from '@sushiswap/ui/components/currency'
-import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { NetworkIcon, SteerIcon } from '@sushiswap/ui/components/icons'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
 import { Pool } from '@sushiswap/v3-sdk'
@@ -19,9 +19,18 @@ type PoolHeader = {
     rewards: number | undefined
   }
   priceRange?: string
+  hasEnabledStrategies?: boolean
 }
 
-export const PoolHeader: FC<PoolHeader> = ({ title, isLoading, pool, chainId, apy, priceRange }) => {
+export const PoolHeader: FC<PoolHeader> = ({
+  title,
+  isLoading,
+  pool,
+  chainId,
+  apy,
+  priceRange,
+  hasEnabledStrategies,
+}) => {
   const unwrappedTokens = useMemo(() => {
     if (!pool) return [undefined, undefined]
     return [unwrapToken(pool.token0), unwrapToken(pool.token1)]
@@ -87,12 +96,18 @@ export const PoolHeader: FC<PoolHeader> = ({ title, isLoading, pool, chainId, ap
               <></>
             )}
             {pool.fee / 10000}% Fee{' '}
-            {apy && apy.rewards ? (
+            {apy?.rewards ? (
               <>
                 <span className="text-[10px]">•</span> Farm rewards available ✨
               </>
             ) : (
               <></>
+            )}
+            {hasEnabledStrategies && (
+              <>
+                <span className="text-[10px]">•</span> Steer strategy available
+                <SteerIcon className="w-[10px] h-[14px] text-purple-500" />
+              </>
             )}
           </div>
         </div>

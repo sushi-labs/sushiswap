@@ -34,8 +34,8 @@ import { PoolsFiltersProvider } from './PoolsFiltersProvider'
 import { ConcentratedPositionsTable } from './PoolsSection/Tables/PositionsTable/ConcentratedPositionsTable'
 
 enum Granularity {
-  Day,
-  Week,
+  Day = 'Day',
+  Week = 'Week',
 }
 
 const PoolPageV3: FC<{ id: string }> = ({ id }) => {
@@ -68,15 +68,15 @@ const queryParamsSchema = z.object({
 })
 
 enum SelectedTab {
-  Analytics,
-  NewPosition,
-  ManagePosition,
+  Analytics = 'Analytics',
+  NewPosition = 'New Position',
+  ManagePosition = 'Manage Position',
 }
 
 const Pool: FC<{ id: string }> = ({ id }) => {
   const { address } = useAccount()
 
-  const searchParams = useSearchParams()!
+  const searchParams = useSearchParams()
 
   const {
     id: [chainId, poolAddress],
@@ -119,11 +119,7 @@ const Pool: FC<{ id: string }> = ({ id }) => {
   return (
     <Layout>
       <div className="flex flex-col gap-2">
-        <Link
-          className="flex items-center gap-4 mb-2 group"
-          href={'/pool'}
-          shallow={true}
-        >
+        <Link className="flex items-center gap-4 mb-2 group" href={'/pool'} shallow={true}>
           <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
           <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
             Go back to pools list
@@ -135,6 +131,7 @@ const Pool: FC<{ id: string }> = ({ id }) => {
           chainId={chainId}
           pool={pool}
           apy={{ rewards: poolStats?.incentiveApr, fees: poolStats?.feeApr1d }}
+          hasEnabledStrategies={!!poolStats && poolStats?.steerVaults.length > 0}
         />
         <RadioGroup value={tab} onChange={setTab} className="flex flex-wrap gap-2 mt-3">
           <RadioGroup.Option
