@@ -23,17 +23,15 @@ export const SwapTradeInput = () => {
     setNoRouteFound,
   } = useSwapActions()
   useEffect(() => {}, [controller])
-  console.log(token0, token1)
   const getSwapPrice = async (tradeVal: number = 0): Promise<any> => {
-    console.log('controller', controller)
     if (controller) {
       controller.abort()
     }
-    console.log(controller)
     const newController = new AbortController()
     setController(newController)
     setPriceFetching(true)
     setOutputAmount('')
+    setNoRouteFound('')
     if (tradeVal > 0) {
       const routes: any = await useAllCommonPairs(
         tradeVal * 10 ** 8,
@@ -48,11 +46,10 @@ export const SwapTradeInput = () => {
       }
       if (routes?.route) {
         setBestRoutes(routes?.route)
-      }
-      if (routes?.message?.includes('Unexpected') || routes?.message?.includes('Cannot read properties')) {
-        setNoRouteFound('No Route Found')
-      } else {
         setNoRouteFound('')
+      } else {
+        setBestRoutes([])
+        setNoRouteFound('Price Impact High')
       }
     }
     setPriceFetching(false)
@@ -86,6 +83,7 @@ export const SwapTradeInput = () => {
       type="INPUT"
       setToken={setToken0}
       token={token0}
+      alteredSelected={token1}
       value={String(amount)}
       balance={balance0}
       error={error}

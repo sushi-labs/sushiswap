@@ -16,7 +16,8 @@ import { useSwapActions, useSwapState } from './trade/TradeProvider'
 import { SwapTradeInput } from 'components/SwapTradeInput'
 import { coinType } from 'utils/tokenData'
 import { SwapTradeOutput } from 'components/SwapTradeOutput'
-import { useTokens } from 'utils/useTokens'
+import { getTokensWithoutKey, useTokens } from 'utils/useTokens'
+import { TradeStats } from 'components/TradeStats'
 
 export default function SwapPage() {
   const { account, connected, disconnect, network } = useWallet()
@@ -25,13 +26,13 @@ export default function SwapPage() {
   const { setBalance0, setBalance1, setLoadingPrice, setToken0, setToken1 } = useSwapActions()
   const { token0, token1, isTransactionPending } = useSwapState()
   const [controller, setController] = useState<AbortController | null>(null)
-  const { tokens } = useTokens()
+  const tokensWithoutKey = getTokensWithoutKey(Number(network?.chainId) || 1)
   useEffect(() => {
     if (network?.name === undefined) {
       disconnect()
     }
-    setToken0(tokens[0])
-    setToken1(tokens[1])
+    setToken0(tokensWithoutKey[0])
+    setToken1(tokensWithoutKey[1])
   }, [network])
   useEffect(() => {
     // setValue({})
@@ -50,10 +51,10 @@ export default function SwapPage() {
         .then((data) => {
           if (!data.error_code) {
             const coinData0 = data?.filter((coin: coinType) => {
-              return coin?.type.includes(token0.address)
+              return coin?.type.replaceAll(' ', '').includes(token0.address)
             })
             const coinData1 = data?.filter((coin: coinType) => {
-              return coin?.type.includes(token1.address)
+              return coin?.type.replaceAll(' ', '').includes(token1.address)
             })
             setBalance0(coinData0[0]?.data?.coin?.value)
             setBalance1(coinData1[0]?.data?.coin?.value)
@@ -108,9 +109,9 @@ export default function SwapPage() {
           </Drawer.Root>
           {/*spacer for fixed positioned swap button */}
         </div>
-        <div className="h-[68px] w-full" />
-
+        <TradeStats />
         <TradeReviewDialog isTransactionPending={isTransactionPending} />
+        <div className="h-[68px] w-full" />
         {/* <button onClick={() => testData()}>click</button> */}
       </Container>
     </>

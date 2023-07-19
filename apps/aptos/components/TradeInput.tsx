@@ -12,6 +12,7 @@ interface PropType {
   id: string
   type: 'INPUT' | 'OUTPUT'
   token: Token
+  alteredSelected: Token
   value: string
   setAmount?: (value: string) => void
   disabled?: boolean
@@ -26,6 +27,7 @@ export default function TradeInput({
   id,
   type,
   token,
+  alteredSelected,
   value,
   setAmount,
   disabled,
@@ -42,15 +44,17 @@ export default function TradeInput({
     }
   }, [])
   const balanceClick = () => {
-    if (setAmount) {
+    if (setAmount && balance) {
       if (token.symbol == 'APT') {
         setAmount(((balance - 2000000) / 10 ** 8) as unknown as string)
       } else {
         setAmount((balance / 10 ** 8) as unknown as string)
       }
     }
+    if (!balance && setAmount) {
+      setAmount('0')
+    }
   }
-
   return (
     <div
       className={`${
@@ -80,7 +84,7 @@ export default function TradeInput({
             className="text-gray-900 dark:text-slate-50 text-left border-none focus:outline-none focus:ring-0 p-0 bg-transparent w-full truncate font-medium without-ring !text-3xl py-1"
           />
         )}
-        <TokenListDialog id={id} selected={token} handleChangeToken={setToken}>
+        <TokenListDialog id={id} selected={token} alteredSelected={alteredSelected} handleChangeToken={setToken}>
           <Modal.Trigger tag={`${id}-token-selector-modal`}>
             {({ open }) => (
               <>

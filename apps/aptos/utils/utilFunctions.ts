@@ -1,7 +1,9 @@
 import { useMemo } from 'react'
 import { Token } from './tokenType'
 import { usePoolActions, usePoolState } from 'app/pool/Pool/PoolProvider'
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
+const MAINNET_CONTRACT = process.env.NEXT_PUBLIC_MAINNET_CONTRACT
+const TESTNET_CONTRACT = process.env.NEXT_PUBLIC_TESTNET_CONTRACT
+
 export async function useAllCommonPairs(
   amount_in: number = 0,
   coinA: Token,
@@ -9,6 +11,8 @@ export async function useAllCommonPairs(
   network: string = 'mainnet',
   controller: AbortController
 ) {
+  const CONTRACT_ADDRESS = network == 'mainnet' ? MAINNET_CONTRACT : TESTNET_CONTRACT
+  console.log(TESTNET_CONTRACT)
   const basePairs: string[] = [
     '0x1::aptos_coin::AptosCoin',
     '0xb06483aa110a1d7cfdc0f5ba48545ee967564819014326b2767de4705048aab9::btc_coin::Bitcoin',
@@ -34,7 +38,7 @@ export async function useAllCommonPairs(
       let t: any = {}
       let reserve_tokens: any = {}
       let reserve_token_info: any = {}
-
+      if (data?.error_code) return
       reserves = data.filter((d: any) => {
         if (d.type.includes('swap::TokenPairReserve')) {
           reserve_tokens[d.type] = d
@@ -103,10 +107,10 @@ export async function useAllCommonPairs(
     })
   return returnRoutes
 }
-export async function getPoolPairs() {
+export async function getPoolPairs(network: string = 'mainnet') {
+  const CONTRACT_ADDRESS = network == 'mainnet' ? MAINNET_CONTRACT : TESTNET_CONTRACT
   const { token0, token1 } = usePoolState()
-  const { setPairFound, setPairs, setLoadingPrice, setPoolPairRatio } = usePoolActions()
-  console.log('token', token0)
+  const { setPairs, setLoadingPrice, setPoolPairRatio } = usePoolActions()
   return useMemo(async () => {
     let reserves: any
     try {
@@ -130,7 +134,6 @@ export async function getPoolPairs() {
     } finally {
       setLoadingPrice(false)
     }
-    console.log(reserves)
     if (reserves && reserves.length) {
       setPairs(reserves[0])
       setPoolPairRatio(reserves[0]?.data?.reserve_y / reserves[0]?.data?.reserve_x)
@@ -160,10 +163,12 @@ function findPossibleRoutes(tokenA: string, tokenB: string, graph: any, visited:
     routes.push([...currentRoute])
   } else {
     // Iterate through the adjacent tokens of the current token
-    for (let adjacentToken of graph[tokenA]) {
-      // If the adjacent token is not visited, recursively find possible routes
-      if (!visited[adjacentToken]) {
-        findPossibleRoutes(adjacentToken, tokenB, graph, visited, currentRoute, routes)
+    if (graph[tokenA]) {
+      for (let adjacentToken of graph[tokenA]) {
+        // If the adjacent token is not visited, recursively find possible routes
+        if (!visited[adjacentToken]) {
+          findPossibleRoutes(adjacentToken, tokenB, graph, visited, currentRoute, routes)
+        }
       }
     }
   }
@@ -212,59 +217,64 @@ function RouteDemo(firstInput: any, ARR: any, tokenGraph: any, coinA: any, coinB
       bestFinder.push({ route: route, amountOut: lastOutput })
     }
   }
-
-  const bestRoutePrice = bestFinder.reduce((r: any, b: any) => (r.amountOut > b.amountOut ? r : b))
-  console.log(bestFinder)
+  const bestRoutePrice = bestFinder.length
+    ? bestFinder.reduce((r: any, b: any) => (r.amountOut > b.amountOut ? r : b))
+    : {}
+  console.log(bestRoutePrice)
   return bestRoutePrice
 }
 
-export async function getYTokenPrice(amount_in: number = 0, coinX: string, coinY: string, controller: AbortController) {
-  let outputData
-  await fetch(
-    `https://fullnode.testnet.aptoslabs.com/v1/accounts/e8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resource/${CONTRACT_ADDRESS}::swap::TokenPairReserve<${coinX},${coinY}>`,
-    { signal: controller.signal }
-  )
-    .then((res) => res.json())
-    .then(async (data) => {
-      if (data.error_code == 'resource_not_found') {
-        await fetch(
-          `https://fullnode.testnet.aptoslabs.com/v1/accounts/e8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resource/${CONTRACT_ADDRESS}::swap::TokenPairReserve<${coinY},${coinX}>`,
-          { signal: controller.signal }
-        )
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.data.reserve_x > 0 && data.data.reserve_x > 0) {
-              let amount_in_with_fee = amount_in * 9975
-              let numerator = amount_in_with_fee * data.data.reserve_x
-              let denominator = data.data.reserve_y * 10000 + amount_in_with_fee
-              outputData = numerator / denominator
-            } else {
-              outputData = 'ERROR_INSUFFICIENT_LIQUIDITY'
-              console.log('ERROR_INSUFFICIENT_LIQUIDITY')
-            }
-          })
-          .catch((err) => {
-            outputData = err
-            console.log(err)
-          })
-      } else {
-        if (data.data.reserve_x > 0 && data.data.reserve_x > 0) {
-          let amount_in_with_fee = amount_in * 9975
-          let numerator = amount_in_with_fee * data.data.reserve_y
-          let denominator = data.data.reserve_x * 10000 + amount_in_with_fee
-          outputData = numerator / denominator
-        } else {
-          outputData = 'ERROR_INSUFFICIENT_LIQUIDITY'
-          console.log('ERROR_INSUFFICIENT_LIQUIDITY')
-        }
-      }
-    })
-    .catch((err) => {
-      outputData = err
-      console.log(err)
-    })
-  return outputData
-}
+// export async function getYTokenPrice(amount_in: number = 0, coinX: string, coinY: string, controller: AbortController) {
+//   let outputData
+//   await fetch(
+//     `https://fullnode.testnet.aptoslabs.com/v1/accounts/e8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resource/${CONTRACT_ADDRESS}::swap::TokenPairReserve<${coinX},${coinY}>`,
+//     { signal: controller.signal }
+//   )
+//     .then((res) => res.json())
+//     .then(async (data) => {
+//       if (data.error_code == 'resource_not_found') {
+//         await fetch(
+//           `https://fullnode.testnet.aptoslabs.com/v1/accounts/e8c9cd6be3b05d3d7d5e09d7f4f0328fe7639b0e41d06e85e3655024ad1a79c2/resource/${CONTRACT_ADDRESS}::swap::TokenPairReserve<${coinY},${coinX}>`,
+//           { signal: controller.signal }
+//         )
+//           .then((res) => res.json())
+//           .then((data) => {
+//             // if (amount_in > 0) {
+//             if (data.data.reserve_x > 0 && data.data.reserve_x > 0) {
+//               let amount_in_with_fee = amount_in * 9975
+//               let numerator = amount_in_with_fee * data.data.reserve_x
+//               let denominator = data.data.reserve_y * 10000 + amount_in_with_fee
+//               outputData = numerator / denominator
+//             } else {
+//               outputData = 'ERROR_INSUFFICIENT_LIQUIDITY'
+//               console.log('ERROR_INSUFFICIENT_LIQUIDITY')
+//               // return data.error_code
+//             }
+//           })
+//           .catch((err) => {
+//             outputData = err
+//             console.log(err)
+//           })
+//       } else {
+//         // if (amount_in > 0) {
+//         if (data.data.reserve_x > 0 && data.data.reserve_x > 0) {
+//           let amount_in_with_fee = amount_in * 9975
+//           let numerator = amount_in_with_fee * data.data.reserve_y
+//           let denominator = data.data.reserve_x * 10000 + amount_in_with_fee
+//           outputData = numerator / denominator
+//         } else {
+//           outputData = 'ERROR_INSUFFICIENT_LIQUIDITY'
+//           console.log('ERROR_INSUFFICIENT_LIQUIDITY')
+//           // return data.error_code
+//         }
+//       }
+//     })
+//     .catch((err) => {
+//       outputData = err
+//       console.log(err)
+//     })
+//   return outputData
+// }
 
 export const formatNumber = (number: number, decimals: number) => {
   if (number) {

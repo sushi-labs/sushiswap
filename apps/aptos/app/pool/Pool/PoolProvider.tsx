@@ -1,6 +1,7 @@
 import { FC, ReactNode, createContext, useContext, useMemo, useReducer } from 'react'
 import { Token } from 'utils/tokenType'
 import { useTokens } from 'utils/useTokens'
+import { useWallet } from '@aptos-labs/wallet-adapter-react'
 
 interface PoolProviderProps {
   children: ReactNode
@@ -63,6 +64,7 @@ type Actions =
   | { type: 'setNotPairFound'; value: boolean }
 
 export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
+  const { network } = useWallet()
   const reducer = (state: State, action: Actions) => {
     switch (action.type) {
       case 'setToken0':
@@ -98,7 +100,7 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
     }
   }
 
-  const { tokens } = useTokens()
+  const { tokens } = useTokens(Number(network?.chainId) || 1)
   const [internalState, dispatch] = useReducer(reducer, {
     token0: tokens[0],
     token1: tokens[1],

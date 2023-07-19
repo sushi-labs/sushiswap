@@ -28,9 +28,9 @@ export function Add() {
   const { token0, token1, pairs, pairFound, poolPairRatio } = usePoolState()
   const { setPairs, setPairFound } = usePoolActions()
 
-  const { connected } = useWallet()
+  const { connected, network } = useWallet()
 
-  getPoolPairs()
+  getPoolPairs(network?.chainId)
   console.log(pairs)
   console.log(poolPairRatio)
 

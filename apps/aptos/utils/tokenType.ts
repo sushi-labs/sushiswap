@@ -2,7 +2,7 @@ export type Token = {
   address: string
   chainId: number
   decimals: number
-  logoURI: string
+  logoURI?: string
   name: string
   symbol: string
 }
