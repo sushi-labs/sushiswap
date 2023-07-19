@@ -7,6 +7,7 @@ import { Overlay } from '@sushiswap/ui/future/components/overlay'
 import React, { ReactNode, useCallback, useState } from 'react'
 import { Token } from 'utils/tokenType'
 import { Icon } from './Icon'
+import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 interface Props {
   token: Token[]
   onImport(): void
@@ -29,7 +30,6 @@ export const TokenSelectorImportRow = ({ token, onImport }: Props) => {
         <div className="flex items-center w-full h-full rounded-lg px-3">
           <div className="flex items-center justify-between flex-grow gap-2 rounded">
             <div className="flex flex-row items-center flex-grow gap-4">
-              {/* <Icon currency={currencies[0]} width={40} height={40} /> */}
               <Icon currency={token[0]} height={40} width={40} />
               <div className="flex flex-col items-start">
                 <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 group-hover:dark:text-white">
@@ -113,7 +113,16 @@ export const TokenSelectorImportRow = ({ token, onImport }: Props) => {
               </List.Control>
             </List>
             <div className="absolute bottom-3 left-3 right-3 flex flex-col gap-1">
-              <Button fullWidth size="xl" variant="filled" color="blue" onClick={onClick}>
+              <Button
+                fullWidth
+                size="xl"
+                variant="filled"
+                color="blue"
+                onClick={() => {
+                  onClick()
+                  close()
+                }}
+              >
                 Import
               </Button>
             </div>

@@ -14,6 +14,7 @@ import React, { FC } from 'react'
 import { payloadArgs } from 'utils/payloadUtil'
 import { createToast } from './toast'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import { formatNumber } from 'utils/utilFunctions'
 
 interface Props {
   isTransactionPending: boolean
@@ -23,7 +24,7 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
   const { bestRoutes, token0, token1, slippageAmount, amount, outputAmount, isPriceFetching } = useSwapState()
   const { account, signAndSubmitTransaction } = useWallet()
   const { setisTransactionPending, setAmount, setOutputAmount } = useSwapActions()
-
+  const minOutput = slippageAmount ? formatNumber(slippageAmount, token1 ? token1.decimals : 8) : 0
   const swapToken = async (close: () => void) => {
     const provider = new Provider(Network.TESTNET)
     const payload: any = payloadArgs(
@@ -35,7 +36,7 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
     if (!account) return []
     try {
       // sign and submit transaction to chain
-      const response: Promise<any> = await signAndSubmitTransaction(payload)
+      const response: any = await signAndSubmitTransaction(payload)
       console.log(response)
       // wait for transaction
       await provider.waitForTransaction(response?.hash)
@@ -126,7 +127,7 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
                     <Skeleton.Text align="right" fontSize="text-sm" className="w-1/2" />
                   ) : (
                     <>
-                      {parseFloat(String((slippageAmount / 10 ** token1.decimals).toFixed(8)))} {token1?.symbol}
+                      {minOutput} {token1?.symbol}
                     </>
                   )}
                 </List.KeyValue>

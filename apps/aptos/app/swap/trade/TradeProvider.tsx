@@ -1,9 +1,8 @@
-import { FC, ReactNode, createContext, useCallback, useContext, useMemo, useReducer } from 'react'
+import { FC, ReactNode, createContext, useContext, useMemo, useReducer } from 'react'
 import { Token } from 'utils/tokenType'
-import TOKENS from './../../../config/tokenList.json'
-import { filterTokens, useSlippageTolerance } from '@sushiswap/hooks'
+import { useSlippageTolerance } from '@sushiswap/hooks'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { useTokens } from 'utils/useTokens'
+import { getTokensWithoutKey } from 'utils/useTokens'
 interface SwapProviderProps {
   children: ReactNode
 }
@@ -19,7 +18,7 @@ type State = {
   isLoadingPrice: boolean
   isTransactionPending: boolean
   isPriceFetching: boolean
-  bestRoutes: string[] | ''
+  bestRoutes: string[]
   noRouteFound: string
 }
 type SwapApi = {
@@ -61,12 +60,7 @@ type Actions =
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const [slippageTolerance] = useSlippageTolerance()
   const { account, network } = useWallet()
-  // return useMemo(() => {
-  // return TOKENS.tokens
-  //   .map((token) => token)
-  //   .filter((token) => {
-  //     return token.chainId == Number(network?.chainId)
-  // }, [network])
+  const baseTokens = getTokensWithoutKey(Number(network?.chainId) || 1)
   const reducer = (state: State, action: Actions) => {
     switch (action.type) {
       case 'setToken0':
@@ -103,12 +97,10 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         return { ...state, noRouteFound: action.value }
     }
   }
-  const { tokens } = useTokens()
-  console.log(tokens)
   // const filteredTokenList = getFilterTokenList(Number(network?.chainId))
   const [internalState, dispatch] = useReducer(reducer, {
-    token0: tokens[0],
-    token1: tokens[1],
+    token0: baseTokens[0],
+    token1: baseTokens[1],
     balance0: 0,
     balance1: 0,
     amount: '',
@@ -118,12 +110,12 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     isLoadingPrice: false,
     isTransactionPending: false,
     isPriceFetching: false,
-    bestRoutes: '',
+    bestRoutes: [],
     noRouteFound: '',
   })
   const state = useMemo(() => {
     return { ...internalState }
-  }, [internalState, network, account, tokens])
+  }, [internalState, network, account, baseTokens])
   const api = useMemo(() => {
     const setToken0 = (value: Token) => dispatch({ type: 'setToken0', value })
     const setToken1 = (value: Token) => dispatch({ type: 'setToken1', value })
@@ -156,11 +148,11 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setBestRoutes,
       setNoRouteFound,
     }
-  }, [internalState, tokens])
+  }, [internalState, baseTokens])
 
   return (
     <SwapActionsContext.Provider value={api}>
-      <SwapStateContext.Provider value={useMemo(() => ({ ...state }), [state, tokens])}>
+      <SwapStateContext.Provider value={useMemo(() => ({ ...state }), [state, baseTokens])}>
         {children}
       </SwapStateContext.Provider>
     </SwapActionsContext.Provider>

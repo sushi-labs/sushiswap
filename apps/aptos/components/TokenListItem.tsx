@@ -4,28 +4,41 @@ import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 import React, { CSSProperties } from 'react'
 import { Token } from 'utils/tokenType'
 import { Icon } from './Icon'
+import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
+import { classNames } from '@sushiswap/ui'
 type PropType = {
   id: string
   style: CSSProperties
   token: Token
-  selected: Token
+  selected: boolean
+  alteredSelected: Token
   handleChangeToken: (token: Token) => void
 }
-export default function TokenListItem({ id, style, token, selected, handleChangeToken }: PropType) {
+export default function TokenListItem({ id, style, token, alteredSelected, selected, handleChangeToken }: PropType) {
+  const { token0, token1 } = useSwapState()
+  const { setToken0, setToken1 } = useSwapActions()
   return (
     <div className="py-0.5 h-[64px]" style={style}>
       <Modal.Trigger tag={`${id}-token-selector-modal`}>
         {({ close }) => (
           <div
-            className={`group flex items-center w-full active:bg-black/[0.06] dark:active:bg-white/[0.06] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] h-full rounded-lg px-3 token-$TRDL cursor-pointer`}
+            className={classNames(
+              selected ? 'bg-black/[0.06] dark:bg-white/[0.06]' : '',
+              `group flex items-center w-full active:bg-black/[0.06] dark:active:bg-white/[0.06] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] h-full rounded-lg px-3 token-$TRDL cursor-pointer`
+            )}
             onClick={() => {
-              handleChangeToken(token)
+              if (token.address == alteredSelected.address) {
+                setToken0(token1)
+                setToken1(token0)
+              } else {
+                handleChangeToken(token)
+              }
               close()
             }}
           >
             <div className="flex items-center justify-between flex-grow gap-2 rounded">
               <div className="flex flex-row items-center flex-grow gap-4">
-                {selected == token ? (
+                {selected ? (
                   <Badge
                     position="bottom-right"
                     badgeContent={

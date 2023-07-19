@@ -23,17 +23,15 @@ export const SwapTradeInput = () => {
     setNoRouteFound,
   } = useSwapActions()
   useEffect(() => {}, [controller])
-  console.log(token0, token1)
   const getSwapPrice = async (tradeVal: number = 0): Promise<any> => {
-    console.log('controller', controller)
     if (controller) {
       controller.abort()
     }
-    console.log(controller)
     const newController = new AbortController()
     setController(newController)
     setPriceFetching(true)
     setOutputAmount('')
+    setNoRouteFound('')
     if (tradeVal > 0) {
       const routes: any = await useAllCommonPairs(
         tradeVal * 10 ** 8,
@@ -48,11 +46,10 @@ export const SwapTradeInput = () => {
       }
       if (routes?.route) {
         setBestRoutes(routes?.route)
-      }
-      if (routes?.message?.includes('Unexpected') || routes?.message?.includes('Cannot read properties')) {
-        setNoRouteFound('No Route Found')
-      } else {
         setNoRouteFound('')
+      } else {
+        setBestRoutes([])
+        setNoRouteFound('Price Impact High')
       }
     }
     setPriceFetching(false)
@@ -63,15 +60,11 @@ export const SwapTradeInput = () => {
   }, [account, connected, network, token0, token1, isTransactionPending, slippageTolerance, amount, balance0])
 
   const checkBalance = (value: string) => {
-    // let coinData = filteredCoin0?.data?.coin?.value
     const regexPattern = /^[0-9]*(\.[0-9]*)?$/
     if (regexPattern.test(value)) {
       setAmount(value)
       getSwapPrice(parseFloat(value))
     }
-    // if (balance0 === undefined) {
-    //   balance0 = 0
-    // }
 
     if (connected) {
       const priceEst = balance0 / 10 ** token0?.decimals < parseFloat(value)
@@ -90,6 +83,7 @@ export const SwapTradeInput = () => {
       type="INPUT"
       setToken={setToken0}
       token={token0}
+      alteredSelected={token1}
       value={String(amount)}
       balance={balance0}
       error={error}

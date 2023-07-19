@@ -142,7 +142,7 @@ export const useTokenWithCache = <T extends boolean = false>({
     (data: Data) => getTokenWithQueryCacheHydrate<T>(chainId, data, withStatus),
     [chainId, withStatus]
   )
-
+    
   return useQuery({
     queryKey: ['token', { chainId, address }],
     queryFn: async () => getTokenWithCacheQueryFn({ chainId, address, customTokens, hasToken }),

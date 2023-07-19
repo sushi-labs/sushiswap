@@ -1,27 +1,60 @@
 import { useQuery } from '@tanstack/react-query'
 import { Token } from './tokenType'
+import { useCustomTokens } from './useCustomTokens'
+interface GetTokenWithQueryCacheFn {
+  chainId: number | undefined
+  address: string | undefined
+  hasToken: (currency: string | Token) => boolean
+  customTokens: Record<string, Token>
+}
 
-export const getTokenDetails = async (chainId: number, address: string) => {
-  const tokenAddress = address.split(':')
-  console.log(tokenAddress[0], address)
-  const response = await fetch(
-    `https://fullnode.testnet.aptoslabs.com/v1/accounts/${tokenAddress[0]}/resource/0x1::coin::CoinInfo<${address}>`
-  )
-  console.log(response)
-  if (response.status == 200) {
-    const data = await response.json()
-    console.log(data)
-    return { address, chainId, decimals: data.data.decimals, name: data.data.name, symbol: data.data.symbol } as Token
+export const getTokenDetails = async ({ chainId, address, hasToken, customTokens }: GetTokenWithQueryCacheFn) => {
+  if (chainId && hasToken(`${chainId}:${address}`)) {
+    const { address: tokenAddress, name, symbol, decimals } = customTokens[`${chainId}:${address}`]
+    return {
+      address: tokenAddress,
+      chainId,
+      name,
+      symbol,
+      decimals,
+    } as Token
+  }
+  if (address) {
+    const tokenAddress = address.split(':')
+    const response = await fetch(
+      `https://fullnode.testnet.aptoslabs.com/v1/accounts/${tokenAddress[0]}/resource/0x1::coin::CoinInfo<${address}>`
+    )
+    if (response.status == 200) {
+      const data = await response.json()
+      return { address, chainId, decimals: data.data.decimals, name: data.data.name, symbol: data.data.symbol } as Token
+    } else {
+      return null
+    }
   } else {
     return null
   }
 }
 
-export default function useCustomToken(chainId: number = 1, address: string) {
+interface UseTokenParams {
+  chainId: number
+  address: string
+  enabled?: boolean
+  keepPreviousData?: boolean
+}
+
+export default function useTokenWithCache({
+  chainId = 1,
+  address,
+  enabled = true,
+  keepPreviousData = true,
+}: UseTokenParams) {
+  const { data: customTokens, hasToken } = useCustomTokens()
   return useQuery({
     queryKey: ['token', { chainId, address }],
-    queryFn: async () => address && getTokenDetails(chainId, address),
+    queryFn: async () => address && getTokenDetails({ chainId, address, hasToken, customTokens }),
+    enabled: Boolean(enabled && chainId && address),
     refetchOnWindowFocus: false,
+    keepPreviousData,
     retry: false,
     staleTime: 900000, // 15 mins
     cacheTime: 86400000, // 24hs

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Token } from 'utils/tokenType'
 interface Props {
-  currency: Token
+  currency: Token | undefined
   height?: number
   width?: number
 }
@@ -30,10 +30,10 @@ export const Icon = ({ currency, height = 40, width = 40 }: Props) => {
           style={{
             width: `${width}px`,
             height: `${height}px`,
-            background: hashStringToColor(`${currency.symbol} ${currency.name}` ?? '??'),
+            background: hashStringToColor(`${currency?.symbol} ${currency?.name}` ?? '??'),
           }}
         >
-          {currency.symbol?.substring(0, 2) ?? '??'}
+          {currency?.symbol?.substring(0, 2) ?? '??'}
         </div>
       )}
     </>
