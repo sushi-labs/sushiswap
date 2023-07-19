@@ -1,15 +1,13 @@
-import React, { Dispatch, FC, SetStateAction } from 'react'
+import React, { FC } from 'react'
 import { ContentBlock } from '../ContentBlock'
 import TokenListDialog from '../TokenListDialog'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
-import { Token } from 'utils/tokenType'
 import { usePoolActions, usePoolState } from 'app/pool/Pool/PoolProvider'
 import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 
 export const SelectTokensWidget: FC = ({}) => {
   const { token0, token1 } = usePoolState()
   const { setToken0, setToken1 } = usePoolActions()
-  console.log(token0, token1)
   return (
     <ContentBlock
       title={
@@ -43,7 +41,6 @@ export const SelectTokensWidget: FC = ({}) => {
                       style={{ color: 'transparent' }}
                     />
                   </div>
-                  {/* {currency.name} */}
                   {token0.symbol}
                   <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />
                 </button>

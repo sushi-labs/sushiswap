@@ -49,6 +49,7 @@ export default function PoolsSection() {
             </Tab>
           </div>
         </Container>
+        <Tab.Panels className="bg-gray-50 dark:bg-white/[0.02] pt-4"></Tab.Panels>
       </Tab.Group>
     </div>
   )

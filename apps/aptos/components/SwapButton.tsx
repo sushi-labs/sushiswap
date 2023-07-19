@@ -34,9 +34,7 @@ export const SwapButton = () => {
               )}
             </button>
           ) : (
-            // <button className="btn w-full flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold ">
             <WalletSelector hideChevron color="blue" size="xl" fullWidth={true} />
-            // </button>
           )}
         </div>
       )}

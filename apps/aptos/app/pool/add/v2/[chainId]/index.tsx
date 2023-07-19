@@ -247,18 +247,25 @@ const _Add: FC = () => {
 
   useEffect(() => {
     onChangeToken0TypedAmount(String(amount0))
-  }, [account, connected, network, token0, isTransactionPending, balance0, poolPairRatio])
+    // PoolInputBalance1(String(amount1))
+  }, [account, connected, network, token0, token1, poolPairRatio])
+
+  // useEffect(() => {
+  //   PoolInputBalance1(String(amount1))
+  //   // PoolInputBalance0(String(amount0))
+  //   // PoolInputBalance1(String(amount1))
+  // }, [account, connected, network, token1, poolPairRatio])
 
   // useEffect(() => {
   //   onChangeToken1TypedAmount(String(amount1))
   // }, [account, connected, network, token1, isTransactionPending, balance1, poolPairRatio])
 
-  useEffect(() => {
-    PoolInputBalance0(String(amount0))
-  }, [account, connected, network, token0, balance0, poolPairRatio, amount0])
-  useEffect(() => {
-    PoolInputBalance1(String(amount1))
-  }, [account, connected, network, token1, balance1, poolPairRatio, amount1])
+  // useEffect(() => {
+  //   PoolInputBalance0(String(amount0))
+  // }, [account, connected, network, token0, balance0, poolPairRatio, amount0])
+  // useEffect(() => {
+  //   PoolInputBalance1(String(amount1))
+  // }, [account, connected, network, token1, balance1, poolPairRatio, amount1])
 
   const PoolInputBalance0 = (tradeVal: string) => {
     console.log('-==================', tradeVal)
@@ -322,7 +329,7 @@ const _Add: FC = () => {
             setLoadingPrice(false)
           }
         })
-      setLoadingPrice(false)
+      // setLoadingPrice(false)
     } else {
       setLoadingPrice(false)
     }

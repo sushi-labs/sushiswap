@@ -27,7 +27,6 @@ export const AddSectionReviewModal: FC<Props> = ({ children }) => {
               <XMarkIcon height={24} width={24} className="hover:text-slate-50 text-slate-100" />
             </Button>
           </div>
-          {/* <Dialog.Header border={false} title="Add Liquidity" onClose={close} /> */}
           <div className="!my-0 grid grid-cols-12 items-center">
             <div className="relative flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
               <div className="flex items-center gap-2">
@@ -37,7 +36,6 @@ export const AddSectionReviewModal: FC<Props> = ({ children }) => {
                   </Typography>
                   <div className="flex items-center justify-end gap-2 text-right">
                     <img src={token0.logoURI} className="rounded-full" width={26} height={56} />
-                    {/* {token0 && <div className="w-5 h-5">{token0.logoURI} </div>} */}
                     <Typography variant="h3" weight={500} className="text-right text-slate-50">
                       {token0?.symbol}
                     </Typography>
@@ -61,7 +59,6 @@ export const AddSectionReviewModal: FC<Props> = ({ children }) => {
                   </Typography>
                   <div className="flex items-center justify-end gap-2 text-right">
                     <img src={token1.logoURI} className="rounded-full" width={26} height={56} />
-                    {/* {token1 && <div className="w-5 h-5">{token1.name}</div>} */}
                     <Typography variant="h3" weight={500} className="text-right text-slate-50">
                       {token1?.symbol}
                     </Typography>
@@ -75,7 +72,7 @@ export const AddSectionReviewModal: FC<Props> = ({ children }) => {
           </div>
           <div className="flex justify-center p-4">
             <Rate>
-              {({ toggleInvert, content, usdPrice }) => (
+              {({ toggleInvert, content }) => (
                 <Typography
                   as="button"
                   onClick={() => toggleInvert()}
@@ -83,7 +80,7 @@ export const AddSectionReviewModal: FC<Props> = ({ children }) => {
                   weight={600}
                   className="flex items-center gap-1 text-slate-100"
                 >
-                  {content} {usdPrice && <span className="font-normal text-slate-300">(${usdPrice})</span>}
+                  {content} {<span className="font-normal text-slate-300">(${})</span>}
                 </Typography>
               )}
             </Rate>

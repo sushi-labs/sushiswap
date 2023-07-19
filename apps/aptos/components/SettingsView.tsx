@@ -6,8 +6,6 @@ import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { RadioGroup } from '@headlessui/react'
 import { classNames } from '@sushiswap/ui'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
-import { useLocalStorage } from '@sushiswap/hooks'
-// import Switch from '@sushiswap/ui/future/components/Switch'
 import { useTheme } from 'next-themes'
 import { ProfileView } from './WalletSelector'
 
@@ -23,8 +21,6 @@ const map = {
 
 export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
   const { theme, setTheme } = useTheme()
-  //   const [showTestnets, setShowTestnets] = useLocalStorage('showTestnets', false)
-
   return (
     <div className="p-2">
       <div className="grid grid-cols-3 mb-3">

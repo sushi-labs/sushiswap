@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import TradeInput from './TradeInput'
 import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
@@ -63,15 +63,11 @@ export const SwapTradeInput = () => {
   }, [account, connected, network, token0, token1, isTransactionPending, slippageTolerance, amount, balance0])
 
   const checkBalance = (value: string) => {
-    // let coinData = filteredCoin0?.data?.coin?.value
     const regexPattern = /^[0-9]*(\.[0-9]*)?$/
     if (regexPattern.test(value)) {
       setAmount(value)
       getSwapPrice(parseFloat(value))
     }
-    // if (balance0 === undefined) {
-    //   balance0 = 0
-    // }
 
     if (connected) {
       const priceEst = balance0 / 10 ** token0?.decimals < parseFloat(value)

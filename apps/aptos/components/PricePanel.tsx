@@ -1,5 +1,5 @@
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
-import React, { FC } from 'react'
+import React from 'react'
 interface Props {
   isLoading: boolean
   error?: string

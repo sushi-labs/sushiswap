@@ -7,21 +7,9 @@ import { classNames } from '@sushiswap/ui'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { Token } from 'utils/tokenType'
 
-interface SelectNetworkWidgetProps {
-  // networks?: ChainId[]
-  // selectedNetwork: ChainId
-  // onSelect(chainId: ChainId): void
-  // token0: Token
-}
+interface SelectNetworkWidgetProps {}
 
-export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(function SelectNetworkWidget(
-  {
-    // selectedNetwork,
-    // onSelect,
-    // networks,
-    // token0,
-  }
-) {
+export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(function SelectNetworkWidget({}) {
   return (
     <ContentBlock
       title={
@@ -31,16 +19,9 @@ export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(function S
       }
     >
       <div className="flex relative z-[100]">
-        <NetworkSelector
-        // networks={networks ?? SUSHISWAP_V3_SUPPORTED_CHAIN_IDS}
-        // selected={selectedNetwork}
-        // onSelect={onSelect}
-        // variant="menu"
-        // align="left"
-        >
+        {/* <NetworkSelector>
           {({ open }) => (
             <Popover.Button as={Button} variant="outlined" color="default" size="xl" className="!font-medium">
-              {/* <NetworkIcon width={20} height={20}></NetworkIcon> */}
               <img
                 src="https://cryptototem.com/wp-content/uploads/2022/08/aptos-logo.jpg"
                 className="rounded-full"
@@ -56,6 +37,19 @@ export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(function S
               />
             </Popover.Button>
           )}
+        </NetworkSelector> */}
+
+        <NetworkSelector>
+          <Popover as={Button} color="default" size="xl" className="!font-medium">
+            <img
+              src="https://cryptototem.com/wp-content/uploads/2022/08/aptos-logo.jpg"
+              alt=""
+              className="rounded-full"
+              height={20}
+              width={20}
+            />
+            APTOS
+          </Popover>
         </NetworkSelector>
       </div>
     </ContentBlock>

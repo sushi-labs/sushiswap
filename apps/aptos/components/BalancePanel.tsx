@@ -19,7 +19,6 @@ export const BalancePanel = ({ coinData, isLoading, decimals, onClick, type }: P
       id="swap-from-balance-button"
       testdata-id="swap-from-balance-button"
       type="button"
-      // disabled={disabled}
       onClick={onClick}
       className={classNames(
         type === 'INPUT'

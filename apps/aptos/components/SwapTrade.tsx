@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react'
+import React from 'react'
 import { ArrowDownIcon } from '@heroicons/react/24/outline'
 import { useSwapActions } from 'app/swap/trade/TradeProvider'
 

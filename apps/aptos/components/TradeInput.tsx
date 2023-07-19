@@ -95,17 +95,6 @@ export default function TradeInput({
                     <>
                       <div className="w-[28px] h-[28px] mr-0.5">
                         <Icon currency={token} height={28} width={28} />
-                        {/* <img
-                          src={token.logoURI}
-                          alt={token.name}
-                          height={28}
-                          width={28}
-                          decoding="async"
-                          loading="lazy"
-                          data-nimg={1}
-                          className="rounded-full"
-                          style={{ color: 'transparent' }}
-                        /> */}
                       </div>
                       {token.symbol}
                       <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />

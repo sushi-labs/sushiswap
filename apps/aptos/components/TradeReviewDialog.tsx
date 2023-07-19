@@ -36,7 +36,6 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
     try {
       // sign and submit transaction to chain
       const response: Promise<any> = await signAndSubmitTransaction(payload)
-      console.log(response)
       // wait for transaction
       await provider.waitForTransaction(response?.hash)
 
@@ -62,7 +61,6 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
   }
   const [slippageTolerance] = useSlippageTolerance('swapSlippage')
   return (
-    // <>Hello</>
     <Modal.Review modalType={ModalType.Regular} variant="opaque" tag="review-modal">
       {({ close }) => (
         <div className="max-w-[504px] mx-auto">
@@ -79,7 +77,6 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
                 </h1>
               )}
               <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">
-                {/* {isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Sell'} {amount?.toSignificant(6)} {token0?.symbol} */}
                 Sell {amount} {token0?.symbol}
               </h1>
             </div>
@@ -101,7 +98,6 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
                   {token1 ? (
                     <img src={token1.logoURI} className="rounded-full" width={56} height={56} />
                   ) : (
-                    // <Currency.Icon currency={token1} width={56} height={56} />
                     <Skeleton.Circle radius={56} className="bg-gray-100 dark:bg-slate-800" />
                   )}
                 </Badge>

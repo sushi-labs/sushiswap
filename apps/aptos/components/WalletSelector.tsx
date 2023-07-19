@@ -1,6 +1,5 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Popover, Transition } from '@headlessui/react'
-import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { JazzIcon, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/future/components/button'
 import React, { useEffect, useState } from 'react'
@@ -8,9 +7,6 @@ import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { ConnectView } from './ConnectView'
 import { DefaultView } from './DefaultView'
 import { SettingsView } from './SettingsView'
-import { useBreakpoint } from '@sushiswap/ui/future/lib'
-import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
-import { ModalType } from '@sushiswap/ui/future/components/modal/ModalProvider'
 
 type fullWidth = {
   fullWidth: boolean

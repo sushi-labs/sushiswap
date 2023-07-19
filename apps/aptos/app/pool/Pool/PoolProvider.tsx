@@ -1,6 +1,5 @@
 import { FC, ReactNode, createContext, useContext, useMemo, useReducer } from 'react'
 import { Token } from 'utils/tokenType'
-import TOKENS from './../../../config/tokenList.json'
 import { useTokens } from 'utils/useTokens'
 
 interface PoolProviderProps {

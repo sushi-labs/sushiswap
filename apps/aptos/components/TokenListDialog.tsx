@@ -1,4 +1,4 @@
-import React, { CSSProperties, FC, ReactElement, ReactNode, useCallback, useEffect, useState } from 'react'
+import React, { CSSProperties, ReactElement, ReactNode, useCallback, useState } from 'react'
 import TokenListItem from './TokenListItem'
 import { Token } from 'utils/tokenType'
 import { SlideIn } from '@sushiswap/ui/future/components/animation'
@@ -32,10 +32,8 @@ export default function TokenListDialog<TData>({ id, children, selected, handleC
   const [query, setQuery] = useState('')
   const debouncedQuery = useDebounce(query, 250)
   const { network } = useWallet()
-  // const { allTokenList } = useSwapState()
   const { tokens } = useTokens()
   const [value, setValue] = useLocalStorage<Record<string, Data>>('sushi.customTokens.aptos', {})
-  // const [allTokenList, setAllTokenList] = useState<Token[]>(TokenList.tokens)
   const {
     data: queryToken,
     isInitialLoading: isQueryTokenLoading,
@@ -46,14 +44,12 @@ export default function TokenListDialog<TData>({ id, children, selected, handleC
       const data: Data[] = [
         {
           chainId: Number(network?.chainId),
-          // id: 'currency.id',
           address: currency.address,
           name: currency.name,
           symbol: currency.symbol,
           decimals: currency.decimals,
         },
       ]
-      // customTokenMutate('add', [currency])
       setValue((prev) => {
         return data.reduce(
           (acc, cur) => {
@@ -68,23 +64,6 @@ export default function TokenListDialog<TData>({ id, children, selected, handleC
     },
     [handleChangeToken]
   )
-  // const newToken = useCustomToken(Number(network?.chainId), debouncedQuery)
-  // console.log(newToken)
-  // useEffect(() => {
-  //   if (queryToken && isSuccess) {
-  //     setFetchedToken([
-  //       {
-  //         address: query,
-  //         chainId: Number(network?.chainId),
-  //         decimals: queryToken?.data?.decimals,
-  //         name: queryToken?.data?.name,
-  //         symbol: queryToken?.data?.symbol,
-  //       },
-  //     ])
-  //   } else {
-  //     setFetchedToken([])
-  //   }
-  // }, [queryToken])
   const Row = useCallback<RowCallback<TData>>(
     ({ index, style }) => {
       return (
@@ -135,13 +114,6 @@ export default function TokenListDialog<TData>({ id, children, selected, handleC
                     onImport={() => queryToken && handleImport(queryToken)}
                   ></TokenSelectorImportRow>
                 ) : (
-                  // <TokenListItem
-                  //   id={id}
-                  //   selected={selected}
-                  //   style={{}}
-                  //   token={fetchedToken as Token[]}
-                  //   handleChangeToken={handleChangeToken}
-                  // />
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <div className="flex flex-col items-center justify-center gap-1">
                       <span className="flex items-center text-xs text-gray-500 dark:text-slate-500">

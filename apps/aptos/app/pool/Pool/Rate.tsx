@@ -6,7 +6,6 @@ interface RenderPayload {
   invert: boolean
   toggleInvert(): void
   content: ReactElement
-  usdPrice?: string
 }
 
 interface Rate {
@@ -14,22 +13,18 @@ interface Rate {
 }
 
 export const Rate: FC<Rate> = ({ children }) => {
-  const { token0, token1, amount0, amount1, isPriceFetching } = usePoolState()
+  const { token0, token1, poolPairRatio } = usePoolState()
   const [invert, setInvert] = useState(false)
-  // const { data: prices } = usePrices({})
-  // const usdPrice = price
-  //   ? prices?.[invert ? price.quoteCurrency.wrapped.address : price.baseCurrency.wrapped.address]?.toFixed(2)
-  //   : undefined
 
   const content = (
     <>
       {invert ? (
         <>
-          1 {token1?.symbol} = {amount1} {token0?.symbol}
+          1 {token1?.symbol} = {1 / poolPairRatio} {token0?.symbol}
         </>
       ) : (
         <>
-          1 {token0?.symbol} = {amount1} {token1?.symbol}
+          1 {token0?.symbol} = {poolPairRatio} {token1?.symbol}
         </>
       )}
     </>
@@ -49,18 +44,14 @@ export const Rate: FC<Rate> = ({ children }) => {
         'text-slate-300 hover:text-slate-200 flex justify-between border-t border-opacity-40 border-slate-700'
       )}
     >
-      <Typography variant="xs" className={classNames('cursor-pointer h-[36px] flex items-center gap-1')}>
+      {/* <Typography variant="xs" className={classNames('cursor-pointer h-[36px] flex items-center gap-1')}>
         Rate
-      </Typography>
-      {/* <Typography variant="xs" className={classNames('cursor-pointer h-[36px] flex items-center ')}>
-        {price ? (
-          <div className="flex items-center h-full gap-1 font-medium" onClick={toggleInvert}>
-            {content} <span className="text-slate-500">(${usdPrice})</span>
-          </div>
-        ) : (
-          'Enter an amount'
-        )}
       </Typography> */}
+      <Typography variant="xs" className={classNames('cursor-pointer h-[36px] flex items-center ')}>
+        <div className="flex items-center h-full gap-1 font-medium" onClick={toggleInvert}>
+          {content} <span className="text-slate-500">(${})</span>
+        </div>
+      </Typography>
     </div>
   )
 }

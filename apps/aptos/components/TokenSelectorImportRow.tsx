@@ -29,7 +29,6 @@ export const TokenSelectorImportRow = ({ token, onImport }: Props) => {
         <div className="flex items-center w-full h-full rounded-lg px-3">
           <div className="flex items-center justify-between flex-grow gap-2 rounded">
             <div className="flex flex-row items-center flex-grow gap-4">
-              {/* <Icon currency={currencies[0]} width={40} height={40} /> */}
               <Icon currency={token[0]} height={40} width={40} />
               <div className="flex flex-col items-start">
                 <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 group-hover:dark:text-white">
@@ -72,8 +71,6 @@ export const TokenSelectorImportRow = ({ token, onImport }: Props) => {
                         <div className="flex items-center w-full h-full rounded-lg px-3">
                           <div className="flex items-center justify-between flex-grow gap-2 rounded">
                             <div className="flex flex-row items-center flex-grow gap-4">
-                              {/* <Icon currency={cur} width={40} height={40} /> */}
-
                               <Icon currency={cur} height={40} width={40} />
                               <div className="flex flex-col items-start">
                                 <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 group-hover:dark:text-white">
@@ -87,10 +84,7 @@ export const TokenSelectorImportRow = ({ token, onImport }: Props) => {
 
                             <div className="flex flex-col">
                               <span className="text-right font-medium text-sm text-gray-900 group-hover:text-gray-900 dark:text-slate-50 group-hover:dark:text-white">
-                                {/* {shortenAddress(cur.address)} */}
-                                {/* {cur.address} */}
                                 {cur.address.substring(0, 6)} ... {cur.address.split('::')[0].substring(66 - 4)}
-                                {/* parsed.substring(0, characters + 2), "...").concat(parsed.substring(42 - characters) */}
                               </span>
                               <a
                                 target="_blank"
