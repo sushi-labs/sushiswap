@@ -576,29 +576,42 @@ export const config: Record<number, PublicClientConfig> = {
   },
   [ChainId.AVALANCHE]: {
     chain: avalanche,
-    transport: fallback([http(avalanche.rpcUrls.default.http[0]), http('https://rpc.ankr.com/avalanche')]),
+    transport: fallback([http(avalanche.rpcUrls.default.http[0]), http('https://rpc.ankr.com/avalanche')], {
+      rank: true,
+    }),
   },
   [ChainId.BOBA]: {
     chain: boba,
-    transport: fallback([http(boba.rpcUrls.default.http[0]), http('https://lightning-replica.boba.network')]),
+    transport: fallback([http(boba.rpcUrls.default.http[0]), http('https://lightning-replica.boba.network')], {
+      rank: true,
+    }),
   },
   [ChainId.BOBA_AVAX]: {
     chain: bobaAvax,
-    transport: fallback([http(bobaAvax.rpcUrls.default.http[0]), http('https://replica.avax.boba.network')]),
+    transport: fallback([http(bobaAvax.rpcUrls.default.http[0]), http('https://replica.avax.boba.network')], {
+      rank: true,
+    }),
   },
   [ChainId.BOBA_BNB]: {
     chain: bobaBnb,
-    transport: fallback([http(bobaBnb.rpcUrls.default.http[0]), http('https://replica.bnb.boba.network')]),
+    transport: fallback([http(bobaBnb.rpcUrls.default.http[0]), http('https://replica.bnb.boba.network')], {
+      rank: true,
+    }),
   },
   [ChainId.BSC]: {
     chain: bsc,
-    transport: fallback([
-      http(bsc.rpcUrls.default.http[0]),
-      // http('https://lb.drpc.org/ogrpc?network=bsc&dkey=Ak765fp4zUm6uVwKu4annC8M80dnCZkR7pAEsm6XXi_w'),
-      http('https://bsc-dataseed.binance.org'),
-      http('https://bsc-dataseed1.binance.org'),
-      http('https://bsc-dataseed2.binance.org'),
-    ]),
+    transport: fallback(
+      [
+        http(bsc.rpcUrls.default.http[0]),
+        // http('https://lb.drpc.org/ogrpc?network=bsc&dkey=Ak765fp4zUm6uVwKu4annC8M80dnCZkR7pAEsm6XXi_w'),
+        http('https://bsc-dataseed.binance.org'),
+        http('https://bsc-dataseed1.binance.org'),
+        http('https://bsc-dataseed2.binance.org'),
+      ],
+      {
+        rank: true,
+      }
+    ),
   },
   [ChainId.BTTC]: {
     chain: bttc,
@@ -628,11 +641,12 @@ export const config: Record<number, PublicClientConfig> = {
   },
   [ChainId.FANTOM]: {
     chain: fantom,
-    transport: fallback([
-      http(fantom.rpcUrls.default.http[0]),
-      http('https://rpc.fantom.network'),
-      http('https://rpc2.fantom.network'),
-    ]),
+    transport: fallback(
+      [http(fantom.rpcUrls.default.http[0]), http('https://rpc.fantom.network'), http('https://rpc2.fantom.network')],
+      {
+        rank: true,
+      }
+    ),
   },
   [ChainId.FUSE]: {
     chain: fuse,
@@ -640,15 +654,24 @@ export const config: Record<number, PublicClientConfig> = {
   },
   [ChainId.GNOSIS]: {
     chain: gnosis,
-    transport: fallback([http(gnosis.rpcUrls.default.http[0]), http('https://rpc.ankr.com/gnosis')]),
+    transport: fallback([http(gnosis.rpcUrls.default.http[0]), http('https://rpc.ankr.com/gnosis')], {
+      rank: true,
+    }),
   },
   [ChainId.HARMONY]: {
     chain: harmony,
-    transport: fallback([http(harmony.rpcUrls.default.http[0]), http('https://rpc.ankr.com/harmony')]),
+    transport: fallback([http(harmony.rpcUrls.default.http[0]), http('https://rpc.ankr.com/harmony')], {
+      rank: true,
+    }),
   },
   [ChainId.KAVA]: {
     chain: kava,
-    transport: fallback([http(kava.rpcUrls.default.http[0]), http(kava.rpcUrls.default.http[1])]),
+    transport: fallback(
+      kava.rpcUrls.default.http.map((url) => http(url)),
+      {
+        rank: true,
+      }
+    ),
   },
   [ChainId.METIS]: {
     chain: metis,
@@ -656,7 +679,9 @@ export const config: Record<number, PublicClientConfig> = {
   },
   [ChainId.MOONBEAM]: {
     chain: moonbeam,
-    transport: fallback([http(moonbeam.rpcUrls.default.http[0]), http('https://rpc.ankr.com/moonbeam')]),
+    transport: fallback([http(moonbeam.rpcUrls.default.http[0]), http('https://rpc.ankr.com/moonbeam')], {
+      rank: true,
+    }),
   },
   [ChainId.MOONRIVER]: {
     chain: moonriver,
@@ -722,7 +747,14 @@ export const config: Record<number, PublicClientConfig> = {
   },
   [ChainId.TELOS]: {
     chain: telos,
-    transport: http(telos.rpcUrls.default.http[0]),
+    transport: fallback(
+      [
+        http(telos.rpcUrls.default.http[0]),
+        http('https://rpc1.eu.telos.net/evm'),
+        http('https://rpc1.us.telos.net/evm'),
+      ],
+      { rank: true }
+    ),
   },
   [ChainId.PALM]: {
     chain: palm,
