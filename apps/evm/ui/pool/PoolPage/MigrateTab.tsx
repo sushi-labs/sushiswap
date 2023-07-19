@@ -300,7 +300,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
 
   return (
     <>
-      <div className="flex col-span-2 gap-6">
+      <div className="flex col-span-1 gap-6 sm:col-span-2">
         {v2SpotPrice && (
           <div className="flex flex-col col-span-2 gap-2">
             <List.Label className="!px-0">V2 Price</List.Label>
