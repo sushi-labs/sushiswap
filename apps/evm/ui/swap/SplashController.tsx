@@ -1,4 +1,4 @@
-import { SplashController as UISplashController } from '@sushiswap/ui/components/SplashController'
+import { SplashController as UISplashController } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
 
 import { useTokenState } from './token/TokenProvider'
