@@ -1,9 +1,7 @@
-import { ArrowDownIcon, ArrowLeftIcon, ArrowUpIcon, CheckCircleIcon } from '@heroicons/react/solid'
+import { ArrowLeftIcon, CheckCircleIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { formatNumber, shortenAddress } from '@sushiswap/format'
-import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
-import { Blink } from '@sushiswap/ui/components/Blink'
 import { Carousel } from '@sushiswap/ui/components/Carousel'
 import { Container } from '@sushiswap/ui/components/container'
 import { Currency } from '@sushiswap/ui/components/currency'
@@ -348,31 +346,13 @@ const _VestingPage: FC = () => {
                     </List.KeyValue>
                     <List.KeyValue title="Unlocked" subtitle="available for withdrawal">
                       <div className="flex flex-col items-end">
-                        <Blink dep={balance?.toSignificant()} as="span" timeout={1500}>
-                          {(isBlinking) => (
-                            <span className={classNames(isBlinking ? 'text-green' : '', 'flex items-center gap-1')}>
-                              {balance?.toSignificant(6)}{' '}
-                              {isBlinking && (
-                                <ArrowUpIcon className="rotate-45" strokeWidth={3} width={14} height={14} />
-                              )}
-                            </span>
-                          )}
-                        </Blink>
+                        <span>{balance?.toSignificant(6)} </span>
                         <span className="text-[10px] font-medium text-slate-500">{balance?.currency.symbol}</span>
                       </div>
                     </List.KeyValue>
                     <List.KeyValue title="Locked" subtitle="funds in vest">
                       <div className="flex flex-col items-end">
-                        <Blink dep={remainingAmount?.toSignificant()} as="span" timeout={1500}>
-                          {(isBlinking) => (
-                            <span className={classNames(isBlinking ? 'text-red' : '', 'flex items-center gap-1')}>
-                              {remainingAmount?.toSignificant(6)}{' '}
-                              {isBlinking && (
-                                <ArrowDownIcon className="rotate-45" strokeWidth={3} width={14} height={14} />
-                              )}
-                            </span>
-                          )}
-                        </Blink>
+                        <span>{remainingAmount?.toSignificant(6)} </span>
                         <span className="text-[10px] font-medium text-slate-500">{balance?.currency.symbol}</span>
                       </div>
                     </List.KeyValue>

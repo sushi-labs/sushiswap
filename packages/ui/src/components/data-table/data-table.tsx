@@ -12,6 +12,7 @@ import {
   getSortedRowModel,
   OnChangeFn,
   PaginationState,
+  RowData,
   SortingState,
   type Table as TableType,
   TableState,
@@ -23,6 +24,13 @@ import { default as React } from 'react'
 import { Table, TableBody, TableCell, TableCellAsLink, TableHead, TableHeader, TableRow } from '../tablenew'
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTablePagination } from './data-table-pagination'
+
+declare module '@tanstack/react-table' {
+  interface ColumnMeta<TData extends RowData, TValue> {
+    className?: string
+    skeleton?: React.ReactNode
+  }
+}
 
 interface DataTableProps<TData, TValue> {
   testId?: string
