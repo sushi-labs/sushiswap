@@ -136,8 +136,9 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
       </Container>
       {address && (
         <PositionCardList>
-          {({ positions, isLoading }) =>
-            !isLoading && positions?.[0] ? (
+          {({ positions, isLoading }) => {
+            const slides = positions?.filter((position) => isSushiSwapV3ChainId(position?.chainId as ChainId))
+            return !isLoading && slides.length > 0 ? (
               <section className="flex flex-col gap-3 py-10 lg:py-[54px]">
                 <Container maxWidth="7xl" className="px-4 mx-auto">
                   <h1 className="text-3xl font-semibold text-center text-gray-800 dark:text-slate-200 lg:text-start">
@@ -147,7 +148,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                 <div className="pl-4 xl:pl-2">
                   <Carousel
                     slideWidth={320}
-                    slides={positions.filter((position) => isSushiSwapV3ChainId(position.chainId as ChainId))}
+                    slides={slides}
                     render={(position) => (isLoading ? <PositionCardSkeleton /> : <PositionCard position={position} />)}
                   />
                 </div>
@@ -155,7 +156,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
             ) : (
               <></>
             )
-          }
+          }}
         </PositionCardList>
       )}
       <PoolsFiltersProvider passedFilters={filters}>
