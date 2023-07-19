@@ -129,7 +129,7 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> = memo
                     <p className={typographyVariants({ variant: 'lead', className: '!text-sm !mt-0' })}>
                       A pool for this fee tier {`doesn't`} exist yet. <br /> Anyone can create a pool. Want to
                       <br />
-                      create a pool first?
+                      create this pool first?
                     </p>
                     <div className="mt-2">
                       {token0 && token1 ? (
