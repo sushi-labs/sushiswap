@@ -1,6 +1,6 @@
 'use client'
 
-import { Drawer, ThemeProvider } from '@sushiswap/ui'
+import { ThemeProvider } from '@sushiswap/ui'
 import { SplashController } from '@sushiswap/ui/components/SplashController'
 import { CheckerProvider } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { TokenProvider } from 'ui/swap/token/TokenProvider'
@@ -12,9 +12,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <TokenProvider>
         <SplashController>
           <SwapProvider>
-            <Drawer.Root>
-              <CheckerProvider>{children}</CheckerProvider>
-            </Drawer.Root>
+            <CheckerProvider>{children}</CheckerProvider>
           </SwapProvider>
         </SplashController>
       </TokenProvider>
