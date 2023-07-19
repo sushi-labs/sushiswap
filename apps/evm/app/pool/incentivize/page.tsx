@@ -31,6 +31,7 @@ import {
   Switch,
   typographyVariants,
 } from '@sushiswap/ui'
+import { TextField } from '@sushiswap/ui'
 import { ADDRESS_ZERO, Pool as V3Pool, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { Address, readContract, useAccount, useSignMessage } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
@@ -110,6 +111,11 @@ const Incentivize = withCheckerRoot(() => {
     thumb0: 20,
     thumb1: 60,
   })
+
+  const [distro1, setDistro1] = useState<number[]>([20])
+  const [distro2, setDistro2] = useState<number[]>([40])
+  const [distro3, setDistro3] = useState<number[]>([40])
+  const totalDistro = distro1[0] + distro2[0] + distro3[0]
 
   const amount = useMemo(() => [tryParseAmount(value, rewardToken)], [value, rewardToken])
   const { data: pool, isInitialLoading } = useConcentratedLiquidityPool({ chainId, token0, token1, feeAmount })
@@ -260,7 +266,7 @@ const Incentivize = withCheckerRoot(() => {
               <div>
                 <Button icon={SwitchHorizontalIcon} variant="link" onClick={() => setInvert((prev) => !prev)}>
                   <div className="flex items-baseline gap-1.5">
-                    {invert ? token1.symbol : token0.symbol} ={' '}
+                    1 {invert ? token1.symbol : token0.symbol} ={' '}
                     {pool.priceOf(invert ? token1.wrapped : token0.wrapped)?.toSignificant(4)}{' '}
                     {invert ? token0.symbol : token1.symbol}
                     <span className="text-sm font-normal">${fiatAmountsAsNumber[invert ? 1 : 0].toFixed(2)}</span>
@@ -361,46 +367,76 @@ const Incentivize = withCheckerRoot(() => {
               onCheckedChange={() => setCustomize((prevState) => !prevState)}
             />
           </div>
-          <div className={classNames('flex flex-col gap-3', customize ? '' : 'hidden')}>
-            <div className="flex flex-col gap-6">
-              <Slider
-                value={[distribution.thumb0, distribution.thumb1]}
-                onValueChange={onChangeSlider}
-                max={100}
-                step={5}
-                className="w-full"
-              />
-              <List>
-                <List.Label>Distribution</List.Label>
-                <List.Control>
-                  {token0 ? (
-                    <List.KeyValue
-                      flex
-                      title={`${token0.symbol}`}
-                      subtitle={`Percentage of rewards that get distributed to ${token0.symbol} liquidity`}
-                    >
-                      {distribution.thumb0}%
-                    </List.KeyValue>
-                  ) : null}
-                  {token1 ? (
-                    <List.KeyValue
-                      flex
-                      title={`${token1.symbol}`}
-                      subtitle={`Percentage of rewards that get distributed to ${token1.symbol} liquidity`}
-                    >
-                      {distribution.thumb1 - distribution.thumb0}%
-                    </List.KeyValue>
-                  ) : null}
-                  <List.KeyValue
-                    flex
-                    title="Fees"
-                    subtitle={`Percentage of rewards that get distributed to fee generation`}
-                  >
-                    {100 - distribution.thumb1}%
-                  </List.KeyValue>
-                </List.Control>
-              </List>
+          <div className={classNames('flex flex-col gap-3', customize ? 'mt-4' : 'hidden')}>
+            <div className="flex flex-col gap-10">
+              <div className="flex flex-col">
+                {token0 ? (
+                  <span className="flex items-center gap-2">
+                    <Currency.Icon currency={token0} width={20} height={20} />
+                    {token0?.symbol}
+                  </span>
+                ) : null}
+                <div className="grid grid-cols-12 items-center gap-x-4">
+                  <Slider value={distro1} onValueChange={setDistro1} max={100} step={5} className="col-span-9 w-full" />
+                  <div className="col-span-3">
+                    <TextField
+                      isError={totalDistro !== 100}
+                      unit="%"
+                      type="number"
+                      value={distro1[0]}
+                      onValueChange={(val) => setDistro1([+val])}
+                    />
+                  </div>
+                  <span className="col-span-9 text-sm text-muted-foreground">
+                    Percentage of rewards that get distributed to {token0?.symbol} liquidity
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-col">
+                {token1 ? (
+                  <span className="flex items-center gap-2">
+                    <Currency.Icon currency={token1} width={20} height={20} />
+                    {token1?.symbol}
+                  </span>
+                ) : null}
+                <div className="grid grid-cols-12 items-center gap-x-4">
+                  <Slider value={distro2} onValueChange={setDistro2} max={100} step={5} className="col-span-9 w-full" />
+                  <div className="col-span-3">
+                    <TextField
+                      isError={totalDistro !== 100}
+                      unit="%"
+                      type="number"
+                      value={distro2[0]}
+                      onValueChange={(val) => setDistro2([+val])}
+                    />
+                  </div>
+                  <span className="col-span-9 text-sm text-muted-foreground">
+                    Percentage of rewards that get distributed to {token1?.symbol} liquidity
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <span className="flex items-center gap-2">Fees</span>
+                <div className="grid grid-cols-12 items-center gap-x-4">
+                  <Slider value={distro3} onValueChange={setDistro3} max={100} step={5} className="col-span-9 w-full" />
+                  <div className="col-span-3">
+                    <TextField
+                      isError={totalDistro !== 100}
+                      unit="%"
+                      type="number"
+                      value={distro3[0]}
+                      onValueChange={(val) => setDistro3([+val])}
+                    />
+                  </div>
+                  <span className="col-span-9 text-sm text-muted-foreground">
+                    Percentage of rewards that get distributed to fee generation
+                  </span>
+                </div>
+              </div>
             </div>
+            <h1 className={classNames(totalDistro !== 100 ? 'text-red' : 'text-muted-foreground', 'text-sm pt-4')}>
+              You have assigned <b>{totalDistro}%</b> of the available <b>100%</b>.
+            </h1>
           </div>
         </div>
         <div className="flex flex-col gap-4">
@@ -421,7 +457,9 @@ const Incentivize = withCheckerRoot(() => {
               placeholder="Address"
             />
             <p className={typographyVariants({ variant: 'muted', className: 'text-sm px-3' })}>
-              The addresses to blacklist, use commas to separate addresses
+              {blacklist.length > 0
+                ? `${blacklist.length} address${blacklist.length > 1 ? 'es' : ''} blacklisted.`
+                : 'The addresses to blacklist, use commas to separate addresses.'}
             </p>
           </div>
         </div>
@@ -441,123 +479,125 @@ const Incentivize = withCheckerRoot(() => {
             <Checker.Guard guardWhen={!pool} guardText="Pool not found">
               <Checker.Amounts chainId={chainId} amounts={amount}>
                 <Checker.Guard guardWhen={!startDate || !endDate} guardText="Enter duration">
-                  <Checker.ApproveERC20
-                    id="approve-erc20"
-                    amount={amount[0]}
-                    contract="0x8BB4C975Ff3c250e0ceEA271728547f3802B36Fd"
-                  >
-                    <Checker.Custom
-                      showChildren={Boolean(signature)}
-                      onClick={sign}
-                      buttonText="Sign the terms & conditions"
+                  <Checker.Guard guardWhen={totalDistro !== 100} guardText="Invalid distribution">
+                    <Checker.ApproveERC20
+                      id="approve-erc20"
+                      amount={amount[0]}
+                      contract="0x8BB4C975Ff3c250e0ceEA271728547f3802B36Fd"
                     >
-                      <Checker.Success tag={APPROVE_TAG}>
-                        <DialogReview>
-                          {({ confirm }) => (
-                            <>
-                              <DialogTrigger asChild>
-                                <Button fullWidth size="xl" testId="incentivize-pool-review">
-                                  Incentivize pool
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent>
-                                <DialogHeader>
-                                  <DialogTitle>Incentivize Pool</DialogTitle>
-                                  <DialogDescription>
-                                    {token0?.symbol}/{token1?.symbol} • SushiSwap V3 • {feeAmount / 10000}%
-                                  </DialogDescription>
-                                </DialogHeader>
-                                <div className="flex flex-col gap-4">
-                                  <List className="!pt-0">
-                                    <List.Control>
-                                      {pool ? (
-                                        <List.KeyValue flex title="Network">
-                                          {Chain.from(pool.chainId).name}
-                                        </List.KeyValue>
-                                      ) : null}
-                                      {feeAmount && (
-                                        <List.KeyValue title="Fee Tier">{`${+feeAmount / 10000}%`}</List.KeyValue>
-                                      )}
-                                    </List.Control>
-                                  </List>
-                                  <List className="!pt-0">
-                                    <List.Control>
-                                      {startDate ? (
-                                        <List.KeyValue flex title="Start date">
-                                          {format(startDate, 'dd MMM yyyy hh:mmaaa')}
-                                        </List.KeyValue>
-                                      ) : null}
-                                      {endDate ? (
-                                        <List.KeyValue flex title="End date">
-                                          {format(endDate, 'dd MMM yyyy hh:mmaaa')}
-                                        </List.KeyValue>
-                                      ) : null}
-                                      {amount[0] ? (
-                                        <List.KeyValue title={`Total distributed`}>
-                                          <div className="flex items-center gap-2">
-                                            <Currency.Icon currency={amount[0].currency} width={18} height={18} />
-                                            <span>
-                                              {amount[0].toSignificant(6)} {amount[0].currency.symbol}
-                                            </span>
-                                          </div>
-                                        </List.KeyValue>
-                                      ) : null}
-                                      <List.KeyValue
-                                        flex
-                                        title="Out of range incentivization"
-                                        subtitle="Distribute rewards to out of range positions"
-                                      >
-                                        {customizeOOR ? 'Yes' : 'No'}
-                                      </List.KeyValue>
-                                      <List.KeyValue
-                                        flex
-                                        title="Exclude addresses"
-                                        subtitle="Exluded addresses from receiving rewards"
-                                      >
-                                        {blacklist ? `${blacklist.length} Addresses` : 'No'}
-                                      </List.KeyValue>
-                                      {token0 && token1 ? (
+                      <Checker.Custom
+                        showChildren={Boolean(signature)}
+                        onClick={sign}
+                        buttonText="Sign the terms & conditions"
+                      >
+                        <Checker.Success tag={APPROVE_TAG}>
+                          <DialogReview>
+                            {({ confirm }) => (
+                              <>
+                                <DialogTrigger asChild>
+                                  <Button fullWidth size="xl" testId="incentivize-pool-review">
+                                    Incentivize pool
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                  <DialogHeader>
+                                    <DialogTitle>Incentivize Pool</DialogTitle>
+                                    <DialogDescription>
+                                      {token0?.symbol}/{token1?.symbol} • SushiSwap V3 • {feeAmount / 10000}%
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  <div className="flex flex-col gap-4">
+                                    <List className="!pt-0">
+                                      <List.Control>
+                                        {pool ? (
+                                          <List.KeyValue flex title="Network">
+                                            {Chain.from(pool.chainId).name}
+                                          </List.KeyValue>
+                                        ) : null}
+                                        {feeAmount && (
+                                          <List.KeyValue title="Fee Tier">{`${+feeAmount / 10000}%`}</List.KeyValue>
+                                        )}
+                                      </List.Control>
+                                    </List>
+                                    <List className="!pt-0">
+                                      <List.Control>
+                                        {startDate ? (
+                                          <List.KeyValue flex title="Start date">
+                                            {format(startDate, 'dd MMM yyyy hh:mmaaa')}
+                                          </List.KeyValue>
+                                        ) : null}
+                                        {endDate ? (
+                                          <List.KeyValue flex title="End date">
+                                            {format(endDate, 'dd MMM yyyy hh:mmaaa')}
+                                          </List.KeyValue>
+                                        ) : null}
+                                        {amount[0] ? (
+                                          <List.KeyValue title={`Total distributed`}>
+                                            <div className="flex items-center gap-2">
+                                              <Currency.Icon currency={amount[0].currency} width={18} height={18} />
+                                              <span>
+                                                {amount[0].toSignificant(6)} {amount[0].currency.symbol}
+                                              </span>
+                                            </div>
+                                          </List.KeyValue>
+                                        ) : null}
                                         <List.KeyValue
                                           flex
-                                          title="Customized distribution formula"
-                                          subtitle={`${token0.symbol} / ${token1.symbol} / Fees`}
+                                          title="Out of range incentivization"
+                                          subtitle="Distribute rewards to out of range positions"
                                         >
-                                          {customize
-                                            ? `${distribution.thumb0}% / ${
-                                                distribution.thumb1 - distribution.thumb0
-                                              }% / ${100 - distribution.thumb1}%`
-                                            : 'No'}
+                                          {customizeOOR ? 'Yes' : 'No'}
                                         </List.KeyValue>
-                                      ) : null}
-                                    </List.Control>
-                                  </List>
-                                </div>
-                                <DialogFooter>
-                                  <Button
-                                    fullWidth
-                                    size="xl"
-                                    variant={isError ? 'destructive' : 'default'}
-                                    loading={isIncentivizeLoading && !isError}
-                                    onClick={() => writeAsync?.().then(() => confirm())}
-                                    disabled={isIncentivizeLoading || isError}
-                                    testId="incentivize-pool-confirm"
-                                  >
-                                    {isError ? (
-                                      'Shoot! Something went wrong :('
-                                    ) : isIncentivizeLoading ? (
-                                      <Dots>Incentivize Pool</Dots>
-                                    ) : (
-                                      `Incentivize Pool`
-                                    )}
-                                  </Button>
-                                </DialogFooter>
-                              </DialogContent>
-                            </>
-                          )}
-                        </DialogReview>
-                      </Checker.Success>
-                    </Checker.Custom>
-                  </Checker.ApproveERC20>
+                                        <List.KeyValue
+                                          flex
+                                          title="Exclude addresses"
+                                          subtitle="Exluded addresses from receiving rewards"
+                                        >
+                                          {blacklist ? `${blacklist.length} Addresses` : 'No'}
+                                        </List.KeyValue>
+                                        {token0 && token1 ? (
+                                          <List.KeyValue
+                                            flex
+                                            title="Customized distribution formula"
+                                            subtitle={`${token0.symbol} / ${token1.symbol} / Fees`}
+                                          >
+                                            {customize
+                                              ? `${distribution.thumb0}% / ${
+                                                  distribution.thumb1 - distribution.thumb0
+                                                }% / ${100 - distribution.thumb1}%`
+                                              : 'No'}
+                                          </List.KeyValue>
+                                        ) : null}
+                                      </List.Control>
+                                    </List>
+                                  </div>
+                                  <DialogFooter>
+                                    <Button
+                                      fullWidth
+                                      size="xl"
+                                      variant={isError ? 'destructive' : 'default'}
+                                      loading={isIncentivizeLoading && !isError}
+                                      onClick={() => writeAsync?.().then(() => confirm())}
+                                      disabled={isIncentivizeLoading || isError}
+                                      testId="incentivize-pool-confirm"
+                                    >
+                                      {isError ? (
+                                        'Shoot! Something went wrong :('
+                                      ) : isIncentivizeLoading ? (
+                                        <Dots>Incentivize Pool</Dots>
+                                      ) : (
+                                        `Incentivize Pool`
+                                      )}
+                                    </Button>
+                                  </DialogFooter>
+                                </DialogContent>
+                              </>
+                            )}
+                          </DialogReview>
+                        </Checker.Success>
+                      </Checker.Custom>
+                    </Checker.ApproveERC20>
+                  </Checker.Guard>
                 </Checker.Guard>
               </Checker.Amounts>
             </Checker.Guard>

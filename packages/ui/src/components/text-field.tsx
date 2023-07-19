@@ -28,6 +28,10 @@ const textFieldVariants = cva(
           'flex items-center min-h-[40px] h-[40px] py-2 px-3 rounded-lg font-medium block bg-secondary group-hover:bg-muted group-focus:bg-accent',
         naked: 'bg-transparent',
       },
+      isError: {
+        yes: 'bg-red/10 text-red',
+        no: '',
+      },
       hasIcon: {
         yes: 'pl-[40px]',
         no: '',
@@ -41,6 +45,7 @@ const textFieldVariants = cva(
       variant: 'default',
       hasIcon: 'no',
       hasUnit: 'no',
+      isError: 'no',
     },
   }
 )
@@ -49,7 +54,8 @@ type InputType = 'text' | 'number' | 'percent'
 
 interface TextFieldBaseProps
   extends React.InputHTMLAttributes<HTMLInputElement>,
-    VariantProps<typeof textFieldVariants> {
+    Omit<VariantProps<typeof textFieldVariants>, 'isError'> {
+  isError?: boolean
   id?: string
   icon?: IconComponent
   iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
@@ -69,7 +75,18 @@ const isTypeNumber = (type: InputType): type is 'number' => type === 'number'
 const isTypePercent = (type: InputType): type is 'percent' => type === 'percent'
 
 const Component = <T extends InputType>(
-  { icon: Icon, iconProps, unit, variant, className, type, onChange, onValueChange, ...props }: TextFieldProps<T>,
+  {
+    icon: Icon,
+    iconProps,
+    unit,
+    variant,
+    isError = false,
+    className,
+    type,
+    onChange,
+    onValueChange,
+    ...props
+  }: TextFieldProps<T>,
   ref: React.ForwardedRef<HTMLInputElement>
 ) => {
   const _onChange: React.InputHTMLAttributes<HTMLInputElement>['onChange'] = (e) => {
@@ -115,6 +132,7 @@ const Component = <T extends InputType>(
       <input
         onChange={_onChange}
         className={textFieldVariants({
+          isError: isError ? 'yes' : 'no',
           variant,
           hasIcon: Icon ? 'yes' : 'no',
           hasUnit: unit ? 'yes' : 'no',
@@ -130,7 +148,12 @@ const Component = <T extends InputType>(
         {...props}
       />
       {unit ? (
-        <div className={textFieldVariants({ className: 'text-muted-foreground rounded-l-none !w-[unset]' })}>
+        <div
+          className={textFieldVariants({
+            isError: isError ? 'yes' : 'no',
+            className: 'text-muted-foreground rounded-l-none !w-[unset]',
+          })}
+        >
           {unit}
         </div>
       ) : null}

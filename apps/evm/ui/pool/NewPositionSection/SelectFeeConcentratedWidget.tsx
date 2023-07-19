@@ -1,6 +1,7 @@
 import { RadioGroup } from '@headlessui/react'
 import { Type } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { FeeAmount } from '@sushiswap/v3-sdk'
 import { usePoolsByTokenPair } from 'lib/hooks/usePoolsByTokenPair'
@@ -81,33 +82,74 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> = memo
         className="grid grid-cols-2 gap-4"
         disabled={!token0 || !token1}
       >
-        {FEE_OPTIONS.map((option) => (
-          <RadioGroup.Option
-            testdata-id={`fee-option-${option.value}`}
-            key={option.value}
-            value={option.value}
-            disabled={disableIfNotExists && !tvlDistribution.get(option.value)}
-            className={({ checked, disabled }) =>
-              classNames(
-                disabled ? 'opacity-40 pointer-events-none' : '',
-                checked ? 'ring-blue ring' : '',
-                'hover:ring ring-primary px-5 py-4 flex items-center rounded-xl bg-white dark:bg-slate-800/40 cursor-pointer'
-              )
-            }
-          >
-            <div className="flex flex-col space-y-1">
-              <span className="flex items-center space-x-2">
-                <div className="font-medium text-gray-900 dark:text-slate-50">{option.value / 10000}% Fees </div>{' '}
-                {tvlDistribution.get(option.value) && (
-                  <div className="px-2 py-1 text-xs text-gray-700 bg-gray-200 dark:bg-gray-700 dark:text-gray-200 rounded-[20px]">
-                    {isLoading ? <Dots /> : `${(tvlDistribution.get(option.value)! * 100)?.toFixed(0)}% Selected`}
-                  </div>
-                )}
-              </span>
-              <span className="text-sm text-gray-500 dark:text-slate-400">{option.subtitle}</span>
-            </div>
-          </RadioGroup.Option>
-        ))}
+        {FEE_OPTIONS.map((option, i) =>
+          disableIfNotExists && !tvlDistribution.get(option.value) ? (
+            <TooltipProvider key={i}>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger className="cursor-default">
+                  <RadioGroup.Option
+                    testdata-id={`fee-option-${option.value}`}
+                    key={option.value}
+                    value={option.value}
+                    disabled={true}
+                    className={({ checked, disabled }) =>
+                      classNames(
+                        disabled ? 'opacity-40 pointer-events-none' : '',
+                        checked ? 'ring-blue ring' : '',
+                        'hover:ring ring-primary px-5 py-4 flex items-center rounded-xl bg-white dark:bg-slate-800/40 cursor-pointer'
+                      )
+                    }
+                  >
+                    <div className="flex flex-col space-y-1">
+                      <span className="flex items-center space-x-2">
+                        <div className="font-medium text-gray-900 dark:text-slate-50">
+                          {option.value / 10000}% Fees{' '}
+                        </div>{' '}
+                        {tvlDistribution.get(option.value) && (
+                          <div className="px-2 py-1 text-xs text-gray-700 bg-gray-200 dark:bg-gray-700 dark:text-gray-200 rounded-[20px]">
+                            {isLoading ? (
+                              <Dots />
+                            ) : (
+                              `${(tvlDistribution.get(option.value)! * 100)?.toFixed(0)}% Selected`
+                            )}
+                          </div>
+                        )}
+                      </span>
+                      <span className="text-sm text-gray-500 dark:text-slate-400">{option.subtitle}</span>
+                    </div>
+                  </RadioGroup.Option>
+                </TooltipTrigger>
+                <TooltipContent>Pool does not exist for this fee tier</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <RadioGroup.Option
+              testdata-id={`fee-option-${option.value}`}
+              key={option.value}
+              value={option.value}
+              disabled={disableIfNotExists && !tvlDistribution.get(option.value)}
+              className={({ checked, disabled }) =>
+                classNames(
+                  disabled ? 'opacity-40 pointer-events-none' : '',
+                  checked ? 'ring-blue ring' : '',
+                  'hover:ring ring-primary px-5 py-4 flex items-center rounded-xl bg-white dark:bg-slate-800/40 cursor-pointer'
+                )
+              }
+            >
+              <div className="flex flex-col space-y-1">
+                <span className="flex items-center space-x-2">
+                  <div className="font-medium text-gray-900 dark:text-slate-50">{option.value / 10000}% Fees </div>{' '}
+                  {tvlDistribution.get(option.value) && (
+                    <div className="px-2 py-1 text-xs text-gray-700 bg-gray-200 dark:bg-gray-700 dark:text-gray-200 rounded-[20px]">
+                      {isLoading ? <Dots /> : `${(tvlDistribution.get(option.value)! * 100)?.toFixed(0)}% Selected`}
+                    </div>
+                  )}
+                </span>
+                <span className="text-sm text-gray-500 dark:text-slate-400">{option.subtitle}</span>
+              </div>
+            </RadioGroup.Option>
+          )
+        )}
       </RadioGroup>
     </ContentBlock>
   )
