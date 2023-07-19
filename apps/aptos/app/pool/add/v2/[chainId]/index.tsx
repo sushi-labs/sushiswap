@@ -15,6 +15,7 @@ import { AddSectionReviewModal } from 'app/pool/Pool/AddSectionReviewModel'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { createToast } from 'components/toast'
 import { liquidityArgs } from 'utils/liquidityPayload'
+import { useTokens } from 'utils/useTokens'
 
 interface coinType {
   type: string
@@ -136,6 +137,7 @@ const _Add: FC = () => {
   }>({ input0: '', input1: '' })
 
   const { connected } = useWallet()
+  const { tokens } = useTokens()
 
   const {
     setBalance1,
@@ -208,6 +210,8 @@ const _Add: FC = () => {
     if (network?.name === undefined) {
       disconnect()
     }
+    setToken0(tokens[0])
+    setToken1(tokens[1])
   }, [network])
 
   // const getPools = async (tradeVal: number): Promise<any> => {
@@ -245,15 +249,19 @@ const _Add: FC = () => {
     onChangeToken0TypedAmount(String(amount0))
   }, [account, connected, network, token0, isTransactionPending, balance0, poolPairRatio])
 
-  useEffect(() => {
-    onChangeToken1TypedAmount(String(amount1))
-  }, [account, connected, network, token1, isTransactionPending, balance1, poolPairRatio])
-
   // useEffect(() => {
   //   onChangeToken1TypedAmount(String(amount1))
-  // }, [account, connected, network, token0, token1, isTransactionPending, balance1, poolPairRatio])
+  // }, [account, connected, network, token1, isTransactionPending, balance1, poolPairRatio])
+
+  useEffect(() => {
+    PoolInputBalance0(String(amount0))
+  }, [account, connected, network, token0, balance0, poolPairRatio, amount0])
+  useEffect(() => {
+    PoolInputBalance1(String(amount1))
+  }, [account, connected, network, token1, balance1, poolPairRatio, amount1])
 
   const PoolInputBalance0 = (tradeVal: string) => {
+    console.log('-==================', tradeVal)
     const regexPattern = /^[0-9]*(\.[0-9]*)?$/
     if (regexPattern.test(tradeVal)) {
       setAmount0(tradeVal)

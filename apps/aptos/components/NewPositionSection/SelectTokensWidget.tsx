@@ -19,8 +19,8 @@ export const SelectTokensWidget: FC = ({}) => {
       }
     >
       <div className="flex gap-3">
-        <TokenListDialog id={`liquidity-from`} selected={token0} handleChangeToken={setToken0}>
-          <Modal.Trigger tag={`liquidity-from-token-selector-modal`}>
+        <TokenListDialog id={`liquidity-from-0`} selected={token0} handleChangeToken={setToken0}>
+          <Modal.Trigger tag={`liquidity-from-0-token-selector-modal`}>
             {({ open }) => (
               <>
                 <button
@@ -51,8 +51,8 @@ export const SelectTokensWidget: FC = ({}) => {
             )}
           </Modal.Trigger>
         </TokenListDialog>
-        <TokenListDialog id={`liquidity-to`} selected={token1} handleChangeToken={setToken1}>
-          <Modal.Trigger tag={`liquidity-to-token-selector-modal`}>
+        <TokenListDialog id={`liquidity-to-1`} selected={token1} handleChangeToken={setToken1}>
+          <Modal.Trigger tag={`liquidity-to-1-token-selector-modal`}>
             {({ open }) => (
               <>
                 <button
