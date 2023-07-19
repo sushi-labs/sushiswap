@@ -113,25 +113,25 @@ export async function GET() {
   return NextResponse.json({
     stats: {
       price: {
-        formatted: formatUSD(sushiPrice),
+        formatted: !sushiPrice ? '-' : formatUSD(sushiPrice),
         number: Number(sushiPrice),
         title: '$SUSHI Price',
         decimalPlaces: 2,
       },
       liquidity: {
-        formatted: formatUSD(totalTVL),
+        formatted: !totalTVL ? '-' : formatUSD(totalTVL),
         number: totalTVL,
         title: 'Total Liquidity',
         decimalPlaces: 0,
       },
       volume: {
-        formatted: formatUSD(totalVolume),
+        formatted: !totalVolume ? '-' : formatUSD(totalVolume),
         number: totalVolume,
         title: 'Total Volume',
         decimalPlaces: 0,
       },
       pairs: {
-        formatted: formatNumber(totalPoolCount),
+        formatted: !totalPoolCount ? '-' : formatNumber(totalPoolCount),
         number: totalPoolCount,
         title: 'Total Pairs',
         decimalPlaces: 0,
