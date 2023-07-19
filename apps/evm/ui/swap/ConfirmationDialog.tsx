@@ -125,7 +125,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       approved,
       trade?.route?.status !== 'NoWay',
     ]
-  )
+  ) 
 
   const { config, isError, error } = usePrepareContractWrite({
     chainId: network0,

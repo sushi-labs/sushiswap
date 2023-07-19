@@ -40,6 +40,7 @@ import {
   // sepolia,
   //  taraxa,
   // taraxaTestnet,
+  telos,
   //  zkSync,
   // zkSyncTestnet,
 } from 'viem/chains'
@@ -663,38 +664,11 @@ export const config: Record<number, PublicClientConfig> = {
   },
   [ChainId.OPTIMISM]: {
     chain: optimism,
-    transport: fallback(
-      [
-        http(`${optimism.rpcUrls.alchemy.http}/${alchemyId}`),
-        http('https://lb.drpc.org/ogrpc?network=optimism&dkey=Ak765fp4zUm6uVwKu4annC8M80dnCZkR7pAEsm6XXi_w'),
-        http('https://rpc.ankr.com/optimism'),
-        http('https://optimism-mainnet.public.blastapi.io'),
-        http('https://1rpc.io/op'),
-        http('https://optimism.blockpi.network/v1/rpc/public'),
-        http('https://mainnet.optimism.io'),
-      ],
-      { rank: true }
-    ),
+    transport: fallback([http(`${optimism.rpcUrls.alchemy.http}/${alchemyId}`)], { rank: true }),
   },
   [ChainId.POLYGON]: {
     chain: polygon,
-    transport: fallback(
-      [
-        http(`${polygon.rpcUrls.alchemy.http}/${alchemyId}`),
-        http('https://polygon.llamarpc.com'),
-        // http('https://polygon.rpc.blxrbdn.com'),
-        http('https://polygon-mainnet.public.blastapi.io'),
-        http('https://polygon.blockpi.network/v1/rpc/public'),
-        http('https://polygon-rpc.com'),
-        http('https://rpc.ankr.com/polygon'),
-        http('https://matic-mainnet.chainstacklabs.com'),
-        http('https://polygon-bor.publicnode.com'),
-        http('https://rpc-mainnet.matic.quiknode.pro'),
-        http('https://rpc-mainnet.maticvigil.com'),
-        // ...polygon.rpcUrls.default.http.map((url) => http(url)),
-      ],
-      { rank: true }
-    ),
+    transport: fallback([http(`${polygon.rpcUrls.alchemy.http}/${alchemyId}`)], { rank: true }),
     // transport: fallback([http(`${polygon.rpcUrls.alchemy.http}/${alchemyId}`), http('https://polygon.llamarpc.com')]),
   },
   [ChainId.POLYGON_ZKEVM]: {
@@ -718,5 +692,9 @@ export const config: Record<number, PublicClientConfig> = {
         rank: true,
       }
     ),
+  },
+  [ChainId.TELOS]: {
+    chain: telos,
+    transport: http(telos.rpcUrls.default.http[0]),
   },
 } as const
