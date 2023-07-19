@@ -1,7 +1,11 @@
 import { RadioGroup } from '@headlessui/react'
+import { ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { Type } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui'
+import { typographyVariants } from '@sushiswap/ui'
+import { Label } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { FeeAmount } from '@sushiswap/v3-sdk'
 import { usePoolsByTokenPair } from 'lib/hooks/usePoolsByTokenPair'
@@ -119,7 +123,30 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> = memo
                     </div>
                   </RadioGroup.Option>
                 </TooltipTrigger>
-                <TooltipContent>Pool does not exist for this fee tier</TooltipContent>
+                <TooltipContent asChild>
+                  <div className="flex flex-col gap-2 !p-6 dark:!bg-secondary">
+                    <Label>Pool doesnt exist yet.</Label>
+                    <p className={typographyVariants({ variant: 'lead', className: '!text-sm !mt-0' })}>
+                      A pool for this fee tier {`doesn't`} exist yet. <br /> Anyone can create a pool. Want to
+                      <br />
+                      create a pool first?
+                    </p>
+                    <div className="mt-2">
+                      {token0 && token1 ? (
+                        <Button asChild icon={ChevronRightIcon} size="sm" variant="secondary">
+                          <a
+                            target="_blank"
+                            href={`/pool/add?chainId=${token0.chainId}&feeAmount=${option.value}&fromCurrency=${
+                              token0.isNative ? 'NATIVE' : token0.wrapped.address
+                            }&toCurrency=${token1.isNative ? 'NATIVE' : token1.wrapped.address}`}
+                          >
+                            Create Pool
+                          </a>
+                        </Button>
+                      ) : null}
+                    </div>
+                  </div>
+                </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           ) : (
