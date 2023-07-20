@@ -192,6 +192,19 @@ export class Router {
     }
   }
 
+  static routeProcessor3Params(
+    poolCodesMap: Map<string, PoolCode>,
+    route: MultiRoute,
+    fromToken: Type,
+    toToken: Type,
+    to: string,
+    RPAddr: string,
+    permits: PermitData[] = [],
+    maxPriceImpact = 0.005
+  ): RPParams {
+    return Router.routeProcessor2Params(poolCodesMap, route, fromToken, toToken, to, RPAddr, permits, maxPriceImpact)
+  }
+
   static routeProcessor4Params(
     poolCodesMap: Map<string, PoolCode>,
     route: MultiRoute,

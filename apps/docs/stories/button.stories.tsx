@@ -48,6 +48,12 @@ export const Default = {
   args: {
     children: 'Button',
   },
+  parameters: {
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/file/wz1kpOOhMVEjqthxup2RDZ/Untitled?type=design&node-id=1-1267&mode=design&t=IL44c76uveATLFR8-4',
+    },
+  },
 } satisfies Story
 
 export const Variants = (args) => {

@@ -41,6 +41,7 @@ interface AddSectionConfirmModalConcentratedProps
   chainId: ChainId
   tokenId: number | string | undefined
   existingPosition: Position | undefined
+  onSuccess(): void
   successLink?: string
 }
 
@@ -54,6 +55,7 @@ export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcen
   position,
   closeReview,
   existingPosition,
+  onSuccess,
   successLink,
 }) => {
   const { chain } = useNetwork()
@@ -151,6 +153,8 @@ export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcen
     onSuccess: (data) => {
       closeReview()
 
+      onSuccess()
+
       data.wait().then((receipt) => {
         if (receipt.status === 1) {
           setDialogState(ConfirmationDialogState.Success)
@@ -202,7 +206,7 @@ export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcen
         isWritePending={isWritePending}
         onComplete={onComplete}
         successMessage={
-          <h1 className="flex flex-wrap items-center justify-center text-center gap-1 text-lg font-semibold">
+          <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-semibold text-center">
             You successfully added liquidity to the {token0?.symbol}/{token1?.symbol} pair
           </h1>
         }
