@@ -31,6 +31,7 @@ interface TokenSelectorProps {
   children({ open, setOpen }: { open: boolean; setOpen: Dispatch<SetStateAction<boolean>> }): ReactNode
   currencies?: Record<string, Token>
   includeNative?: boolean
+  hidePinnedTokens?: boolean
 }
 
 export const TokenSelector: FC<TokenSelectorProps> = ({
@@ -41,6 +42,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   chainId,
   children,
   currencies,
+  hidePinnedTokens,
 }) => {
   const { address } = useAccount()
 
@@ -131,7 +133,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
               />
             </div>
 
-            {pinnedTokens.length > 0 ? (
+            {pinnedTokens.length > 0 && !hidePinnedTokens ? (
               <div className="flex flex-wrap gap-2">
                 {pinnedTokens.map((token) => (
                   <div key={token.id} className="group">
