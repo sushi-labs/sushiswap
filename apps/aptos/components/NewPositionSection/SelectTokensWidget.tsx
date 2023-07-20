@@ -4,8 +4,10 @@ import TokenListDialog from '../TokenListDialog'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { usePoolActions, usePoolState } from 'app/pool/Pool/PoolProvider'
 import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
-
-export const SelectTokensWidget: FC = ({}) => {
+interface Props {
+  handleSwap: () => void
+}
+export const SelectTokensWidget: FC<Props> = ({ handleSwap }) => {
   const { token0, token1 } = usePoolState()
   const { setToken0, setToken1 } = usePoolActions()
   return (
@@ -17,7 +19,13 @@ export const SelectTokensWidget: FC = ({}) => {
       }
     >
       <div className="flex gap-3">
-        <TokenListDialog id={`liquidity-from-0`} selected={token0} handleChangeToken={setToken0}>
+        <TokenListDialog
+          alteredSelected={token1}
+          id={`liquidity-from-0`}
+          selected={token0}
+          handleSwap={handleSwap}
+          handleChangeToken={setToken0}
+        >
           <Modal.Trigger tag={`liquidity-from-0-token-selector-modal`}>
             {({ open }) => (
               <>
@@ -48,7 +56,7 @@ export const SelectTokensWidget: FC = ({}) => {
             )}
           </Modal.Trigger>
         </TokenListDialog>
-        <TokenListDialog id={`liquidity-to-1`} selected={token1} handleChangeToken={setToken1}>
+        <TokenListDialog id={`liquidity-to-1`} selected={token1} alteredSelected={token0} handleChangeToken={setToken1}>
           <Modal.Trigger tag={`liquidity-to-1-token-selector-modal`}>
             {({ open }) => (
               <>

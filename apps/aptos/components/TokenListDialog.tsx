@@ -25,6 +25,7 @@ interface PropType {
   selected: Token
   alteredSelected: Token
   handleChangeToken: (token: Token) => void
+  handleSwap: () => void
 }
 interface RowType {
   index: number
@@ -36,6 +37,7 @@ export default function TokenListDialog<TData>({
   children,
   selected,
   alteredSelected,
+  handleSwap,
   handleChangeToken,
 }: PropType) {
   const [query, setQuery] = useState('')
@@ -74,6 +76,7 @@ export default function TokenListDialog<TData>({
             alteredSelected={alteredSelected}
             handleChangeToken={handleChangeToken}
             id={id}
+            handleSwap={handleSwap}
           />
         </>
       )

@@ -22,6 +22,7 @@ interface PropType {
   isLoadingPrice: boolean
   tradeVal?: React.RefObject<HTMLInputElement>
   onUserInput?: (value: string) => void
+  handleSwap: () => void
 }
 export default function TradeInput({
   id,
@@ -37,6 +38,7 @@ export default function TradeInput({
   isLoadingPrice,
   tradeVal,
   onUserInput,
+  handleSwap,
 }: PropType) {
   const focusInput = useCallback(() => {
     if (tradeVal) {
@@ -84,7 +86,13 @@ export default function TradeInput({
             className="text-gray-900 dark:text-slate-50 text-left border-none focus:outline-none focus:ring-0 p-0 bg-transparent w-full truncate font-medium without-ring !text-3xl py-1"
           />
         )}
-        <TokenListDialog id={id} selected={token} alteredSelected={alteredSelected} handleChangeToken={setToken}>
+        <TokenListDialog
+          id={id}
+          selected={token}
+          alteredSelected={alteredSelected}
+          handleChangeToken={setToken}
+          handleSwap={handleSwap}
+        >
           <Modal.Trigger tag={`${id}-token-selector-modal`}>
             {({ open }) => (
               <>

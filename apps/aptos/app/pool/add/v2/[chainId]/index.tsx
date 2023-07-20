@@ -15,7 +15,7 @@ import { AddSectionReviewModal } from 'app/pool/Pool/AddSectionReviewModel'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { createToast } from 'components/toast'
 import { liquidityArgs } from 'utils/liquidityPayload'
-import { useTokens } from 'utils/useTokens'
+import { getTokensWithoutKey } from 'utils/useTokens'
 
 interface coinType {
   type: string
@@ -30,7 +30,7 @@ export function Add() {
 
   const { connected, network } = useWallet()
 
-  getPoolPairs(network?.chainId)
+  getPoolPairs(network?.name)
   console.log(pairs)
   console.log(poolPairRatio)
 
@@ -85,22 +85,24 @@ const _Add: FC = () => {
   type payloadType = {
     type: string
     type_arguments: string[]
-    arguments: string[]
+    arguments: number[]
     function: string
   }
 
   const addLiquidity = async (close: () => void) => {
-    const provider = new Provider(Network.TESTNET)
+    const networkType = network?.name?.toLocaleLowerCase() == 'testnet' ? Network.TESTNET : Network.MAINNET
+    const provider = new Provider(networkType)
     const payload: payloadType = liquidityArgs(
       token0.address,
       token1.address,
-      String(parseInt(String(Number(amount0) * 10 ** token0.decimals))),
-      String(parseInt(String(Number(amount1) * 10 ** token1.decimals)))
+      parseInt(String(Number(amount0) * 10 ** token0.decimals)),
+      parseInt(String(Number(amount1) * 10 ** token1.decimals)),
+      networkType
     )
     setisTransactionPending(true)
     if (!account) return []
     try {
-      const response: Promise<any> = await signAndSubmitTransaction(payload)
+      const response: any = await signAndSubmitTransaction(payload)
       console.log(response)
       await provider.waitForTransaction(response?.hash)
       if (!response?.success) return
@@ -137,7 +139,6 @@ const _Add: FC = () => {
   }>({ input0: '', input1: '' })
 
   const { connected } = useWallet()
-  const { tokens } = useTokens()
 
   const {
     setBalance1,
@@ -205,13 +206,13 @@ const _Add: FC = () => {
       }
     }
   }
-
+  const tokensWithoutKey = getTokensWithoutKey(Number(network?.chainId) || 1)
   useEffect(() => {
     if (network?.name === undefined) {
       disconnect()
     }
-    setToken0(tokens[0])
-    setToken1(tokens[1])
+    setToken0(tokensWithoutKey[0])
+    setToken1(tokensWithoutKey[1])
   }, [network])
 
   // const getPools = async (tradeVal: number): Promise<any> => {
@@ -348,15 +349,21 @@ const _Add: FC = () => {
     }
   }, [connected])
 
+  const swapTokenIfAlreadySelected = () => {
+    setToken0(token1)
+    setToken1(token0)
+  }
+
   return (
     <div className="flex flex-col order-3 gap-[64px] pb-40 sm:order-2">
       <SelectNetworkWidget />
-      <SelectTokensWidget />
+      <SelectTokensWidget handleSwap={swapTokenIfAlreadySelected} />
       <ContentBlock title={<span className="text-gray-900 dark:text-white">Deposit.</span>}>
         <div className="flex flex-col gap-4">
           <TradeInput
             id={`liquidity-from`}
             token={token0}
+            alteredSelected={token1}
             value={String(amount0)}
             setToken={setToken0}
             balance={balance0}
@@ -366,6 +373,7 @@ const _Add: FC = () => {
             tradeVal={tradeVal}
             setAmount={setAmount0}
             type="INPUT"
+            handleSwap={swapTokenIfAlreadySelected}
           />
           <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
             <button type="button" className="z-10 p-2 bg-gray-100 rounded-full dark:bg-slate-900">
@@ -373,6 +381,7 @@ const _Add: FC = () => {
             </button>
           </div>
           <TradeInput
+            alteredSelected={token0}
             id={`liquidity-to`}
             token={token1}
             value={String(amount1)}
@@ -384,6 +393,7 @@ const _Add: FC = () => {
             tradeVal={tradeVal1}
             setAmount={setAmount1}
             type="INPUT"
+            handleSwap={swapTokenIfAlreadySelected}
           />
           <AddLiquidityButton buttonError={error0 || error1 || buttonError} token1Value={String(amount0)} />
         </div>

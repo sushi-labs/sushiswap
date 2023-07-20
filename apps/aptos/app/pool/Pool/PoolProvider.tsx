@@ -1,6 +1,6 @@
 import { FC, ReactNode, createContext, useContext, useMemo, useReducer } from 'react'
 import { Token } from 'utils/tokenType'
-import { useTokens } from 'utils/useTokens'
+import { getTokensWithoutKey } from 'utils/useTokens'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 
 interface PoolProviderProps {
@@ -65,6 +65,7 @@ type Actions =
 
 export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
   const { network } = useWallet()
+  const baseTokens = getTokensWithoutKey(Number(network?.chainId) || 1)
   const reducer = (state: State, action: Actions) => {
     switch (action.type) {
       case 'setToken0':
@@ -100,10 +101,10 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
     }
   }
 
-  const { tokens } = useTokens(Number(network?.chainId) || 1)
+  // const { tokens } = useTokens(Number(network?.chainId) || 1)
   const [internalState, dispatch] = useReducer(reducer, {
-    token0: tokens[0],
-    token1: tokens[1],
+    token0: baseTokens[0],
+    token1: baseTokens[1],
     amount0: '',
     amount1: '',
     isLoadingPrice: false,
@@ -120,7 +121,7 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
   })
   const state = useMemo(() => {
     return { ...internalState }
-  }, [internalState, tokens])
+  }, [internalState, baseTokens])
   const api = useMemo(() => {
     const setToken0 = (value: Token) => dispatch({ type: 'setToken0', value })
     const setToken1 = (value: Token) => dispatch({ type: 'setToken1', value })
@@ -155,10 +156,10 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
       setPoolPairRatio,
       setNotPairFound,
     }
-  }, [internalState, tokens])
+  }, [internalState, baseTokens])
   return (
     <PoolActionsContext.Provider value={api}>
-      <PoolStateContext.Provider value={useMemo(() => ({ ...state }), [state, tokens])}>
+      <PoolStateContext.Provider value={useMemo(() => ({ ...state }), [state, baseTokens])}>
         {children}
       </PoolStateContext.Provider>
     </PoolActionsContext.Provider>
