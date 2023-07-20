@@ -27,6 +27,7 @@ export default function SwapPage() {
   const { token0, token1, isTransactionPending } = useSwapState()
   const [controller, setController] = useState<AbortController | null>(null)
   const tokensWithoutKey = getTokensWithoutKey(Number(network?.chainId) || 1)
+
   console.log(network)
   useEffect(() => {
     if (network?.name === undefined) {
@@ -94,6 +95,11 @@ export default function SwapPage() {
       }
     }
   }, [connected])
+
+  const swapTokenIfAlreadySelected = () => {
+    setToken0(token1)
+    setToken1(token0)
+  }
   return (
     <>
       {isLoading && <Loading />}
@@ -106,9 +112,9 @@ export default function SwapPage() {
               <SettingsOverlay modules={[SettingsModule.SlippageTolerance, SettingsModule.CarbonOffset]} />
             </div>
             <UIWidget.Content>
-              <SwapTradeInput />
+              <SwapTradeInput handleSwap={swapTokenIfAlreadySelected} />
               <SwapTrade />
-              <SwapTradeOutput />
+              <SwapTradeOutput handleSwap={swapTokenIfAlreadySelected} />
               <SwapButton />
             </UIWidget.Content>
           </Drawer.Root>

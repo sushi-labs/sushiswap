@@ -42,9 +42,7 @@ export default function TokenListDialog<TData>({
 }: PropType) {
   const [query, setQuery] = useState('')
   const { network } = useWallet()
-  // const { allTokenList } = useSwapState()
   const { data: tokens } = useTokens(Number(network?.chainId) || 1)
-  // const [allTokenList, setAllTokenList] = useState<Token[]>(TokenList.tokens)
   const { data: customTokens, mutate: customTokenMutate } = useCustomTokens()
   const { data: queryToken, isInitialLoading: isQueryTokenLoading } = useTokenWithCache({
     chainId: Number(network?.chainId || 1),

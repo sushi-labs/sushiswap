@@ -79,7 +79,10 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         return {
           ...state,
           slippageAmount:
-            action.value - (action.value * parseFloat(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance)) / 100,
+            action.value -
+            (action.value *
+              parseFloat(slippageTolerance ? (slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) : '0.5')) /
+              100,
         }
       case 'setOutputAmount':
         return { ...state, outputAmount: action.value }

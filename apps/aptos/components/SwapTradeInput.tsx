@@ -5,7 +5,11 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { useAllCommonPairs } from 'utils/utilFunctions'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 
-export const SwapTradeInput = () => {
+interface Props {
+  handleSwap: () => void
+}
+
+export const SwapTradeInput = ({ handleSwap }: Props) => {
   const { connected, account, network } = useWallet()
   const tradeVal = useRef<HTMLInputElement>(null)
 
@@ -91,6 +95,7 @@ export const SwapTradeInput = () => {
       onUserInput={checkBalance}
       tradeVal={tradeVal}
       setAmount={setAmount}
+      handleSwap={handleSwap}
     />
   )
 }

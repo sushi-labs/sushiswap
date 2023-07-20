@@ -1,11 +1,15 @@
-export function payloadArgs(amount_in: number, routes: any, minimumOut: number) {
+import { Network } from 'aptos'
+
+export function payloadArgs(amount_in: number, routes: any, minimumOut: number, networkType: Network) {
+  const contractAddress =
+    networkType == Network.TESTNET ? process.env.NEXT_PUBLIC_TESTNET_CONTRACT : process.env.NEXT_PUBLIC_MAINNET_CONTRACT
   switch (routes.length) {
     case 2:
       return {
         type: 'entry_function_payload',
         type_arguments: [routes[0], routes[1]],
         arguments: [amount_in, minimumOut],
-        function: `${process.env.NEXT_PUBLIC_CONTRACT_ADDRESS}::router::swap_exact_input`,
+        function: `${contractAddress}::router::swap_exact_input`,
       }
       break
     case 3:
@@ -13,7 +17,7 @@ export function payloadArgs(amount_in: number, routes: any, minimumOut: number) 
         type: 'entry_function_payload',
         type_arguments: [routes[0], routes[1], routes[2]],
         arguments: [amount_in, minimumOut],
-        function: `${process.env.NEXT_PUBLIC_CONTRACT_ADDRESS}::router::swap_exact_input_doublehop`,
+        function: `${contractAddress}::router::swap_exact_input_doublehop`,
       }
       break
     case 4:
@@ -21,7 +25,7 @@ export function payloadArgs(amount_in: number, routes: any, minimumOut: number) 
         type: 'entry_function_payload',
         type_arguments: [routes[0], routes[1], routes[2], routes[3]],
         arguments: [amount_in, minimumOut],
-        function: `${process.env.NEXT_PUBLIC_CONTRACT_ADDRESS}::router::swap_exact_input_triplehop`,
+        function: `${contractAddress}::router::swap_exact_input_triplehop`,
       }
       break
     case 5:
@@ -29,7 +33,7 @@ export function payloadArgs(amount_in: number, routes: any, minimumOut: number) 
         type: 'entry_function_payload',
         type_arguments: [routes[0], routes[1], routes[2], routes[3], routes[4]],
         arguments: [amount_in, minimumOut],
-        function: `${process.env.NEXT_PUBLIC_CONTRACT_ADDRESS}::router::swap_exact_input_quadruplehop`,
+        function: `${contractAddress}::router::swap_exact_input_quadruplehop`,
       }
       break
     default:

@@ -3,7 +3,11 @@ import TradeInput from './TradeInput'
 import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
 import { formatNumber } from 'utils/utilFunctions'
 
-export const SwapTradeOutput = () => {
+interface Props {
+  handleSwap: () => void
+}
+
+export const SwapTradeOutput = ({ handleSwap }: Props) => {
   const { token0, token1, balance1, isLoadingPrice, outputAmount, isPriceFetching } = useSwapState()
   const outputSwapTokenAmount = outputAmount
     ? String(formatNumber(parseFloat(outputAmount), token1 ? token1.decimals : 8))
@@ -11,6 +15,7 @@ export const SwapTradeOutput = () => {
   const { setToken1 } = useSwapActions()
   return (
     <TradeInput
+      handleSwap={handleSwap}
       id="swap-to"
       balance={balance1}
       setToken={setToken1}

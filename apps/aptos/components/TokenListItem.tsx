@@ -4,7 +4,6 @@ import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 import React, { CSSProperties } from 'react'
 import { Token } from 'utils/tokenType'
 import { Icon } from './Icon'
-import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
 import { classNames } from '@sushiswap/ui'
 type PropType = {
   id: string

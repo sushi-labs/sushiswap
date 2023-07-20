@@ -7,7 +7,6 @@ import { Overlay } from '@sushiswap/ui/future/components/overlay'
 import React, { ReactNode, useCallback, useState } from 'react'
 import { Token } from 'utils/tokenType'
 import { Icon } from './Icon'
-import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 interface Props {
   token: Token[]
   onImport(): void
@@ -16,7 +15,6 @@ interface Props {
 export const TokenSelectorImportRow = ({ token, onImport }: Props) => {
   const [open, setOpen] = useState<boolean>(false)
   const { network } = useWallet()
-  console.log(token)
   const onClick = useCallback(() => {
     onImport()
 
