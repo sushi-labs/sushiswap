@@ -2,8 +2,8 @@
 
 import { ArrowLeftIcon, SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { Chain } from '@sushiswap/chain'
-import { tryParseAmount, Type } from '@sushiswap/currency'
-import { useAngleRewards, useAngleRewardTokens } from '@sushiswap/react-query'
+import { Token, tryParseAmount, Type } from '@sushiswap/currency'
+import { useAngleRewards } from '@sushiswap/react-query'
 import {
   Badge,
   Button,
@@ -107,11 +107,6 @@ const Incentivize = withCheckerRoot(() => {
   const [endDate, setEndDate] = useState<Date | null>()
   const [rewardToken, setRewardToken] = useState<Type>()
   const [blacklist, setBlacklist] = useState<string[]>([])
-  const [distribution, setDistribution] = useState({
-    thumb0: 20,
-    thumb1: 60,
-  })
-
   const [distro1, setDistro1] = useState<number[]>([20])
   const [distro2, setDistro2] = useState<number[]>([40])
   const [distro3, setDistro3] = useState<number[]>([40])
@@ -133,7 +128,6 @@ const Incentivize = withCheckerRoot(() => {
   const { data: signature, signMessage } = useSignMessage()
 
   const { data: angleRewards } = useAngleRewards({ chainId, account: address })
-  const { data: angleRewardTokens } = useAngleRewardTokens({ chainId })
 
   const minAmount = useMemo(() => {
     if (!angleRewards) return undefined
@@ -157,9 +151,9 @@ const Incentivize = withCheckerRoot(() => {
               amount: BigNumber.from(amount[0].quotient.toString()),
               positionWrappers: blacklist.length > 0 ? (blacklist as Address[]) : [],
               wrapperTypes: blacklist.length > 0 ? [3] : [],
-              propToken0: customize ? distribution.thumb0 * 100 : 2000,
-              propToken1: customize ? (distribution.thumb1 - distribution.thumb0) * 100 : 2000,
-              propFees: customize ? (100 - distribution.thumb1) * 100 : 6000,
+              propToken0: customize ? distro1[0] * 100 : 2000,
+              propToken1: customize ? distro2[0] * 100 : 2000,
+              propFees: customize ? distro3[0] * 100 : 6000,
               epochStart: Math.floor(startDate.getTime() / 1000) || 0,
               numEpoch: epochs,
               isOutOfRangeIncentivized: customizeOOR ? 1 : 0,
@@ -185,11 +179,18 @@ const Incentivize = withCheckerRoot(() => {
     signMessage({ message })
   }, [signMessage])
 
-  const onChangeSlider = useCallback((val: number[]) => {
-    setDistribution({ thumb0: val[0], thumb1: Math.max(val[0], val[1]) })
-  }, [])
-
   const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
+
+  const rewardTokens = useMemo(
+    () =>
+      angleRewards
+        ? angleRewards.validRewardTokens.reduce<Record<string, Token>>((acc, cur) => {
+            acc[cur.token.wrapped.address] = cur.token
+            return acc
+          }, {})
+        : {},
+    [angleRewards]
+  )
 
   return (
     <DialogProvider>
@@ -342,7 +343,7 @@ const Incentivize = withCheckerRoot(() => {
             value={value}
             onChange={setValue}
             currency={rewardToken}
-            currencies={angleRewardTokens}
+            currencies={rewardTokens}
             loading={tokensLoading}
             currencyLoading={tokensLoading}
             allowNative={false}
@@ -562,11 +563,7 @@ const Incentivize = withCheckerRoot(() => {
                                             title="Customized distribution formula"
                                             subtitle={`${token0.symbol} / ${token1.symbol} / Fees`}
                                           >
-                                            {customize
-                                              ? `${distribution.thumb0}% / ${
-                                                  distribution.thumb1 - distribution.thumb0
-                                                }% / ${100 - distribution.thumb1}%`
-                                              : 'No'}
+                                            {customize ? `${distro1[0]}% / ${distro2[0]}% / ${distro3[0]}%` : 'No'}
                                           </List.KeyValue>
                                         ) : null}
                                       </List.Control>

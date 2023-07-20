@@ -131,7 +131,7 @@ export const angleRewardsSelect = ({ chainId, data, prices }: AngleRewardsSelect
   })
 
   const validRewardTokens = data.validRewardTokens.map((el) => {
-    const token = new Token({ chainId, address: el.token, symbol: '', decimals: 18 })
+    const token = new Token({ chainId, address: el.token, symbol: el.symbol, decimals: el.decimals })
     return {
       minimumAmountPerEpoch: tryParseAmount(el.minimumAmountPerEpoch.toString(), token),
       token,
