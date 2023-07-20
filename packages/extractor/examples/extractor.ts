@@ -7,7 +7,6 @@ import { getBigNumber, RouteStatus } from '@sushiswap/tines'
 import { POOL_INIT_CODE_HASH } from '@sushiswap/v3-sdk'
 import { Address, createPublicClient, http } from 'viem'
 import { Chain, mainnet } from 'viem/chains'
-import { it } from 'vitest'
 
 import { Extractor, FactoryV2, FactoryV3, MultiCallAggregator, TokenManager } from '../src'
 
@@ -151,7 +150,7 @@ async function startInfinitTest(args: {
   }
 }
 
-it.only('Extractor Ethereum infinit work test', async () => {
+;(async function () {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
@@ -162,4 +161,4 @@ it.only('Extractor Ethereum infinit work test', async () => {
     logDepth: 50,
     RP3Address: RP3Address[ChainId.ETHEREUM],
   })
-})
+})()
