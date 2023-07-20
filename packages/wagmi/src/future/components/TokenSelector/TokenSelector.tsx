@@ -110,8 +110,6 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
     [_onSelect, customTokenMutate]
   )
 
-  console.log(balancesMap)
-
   return (
     <>
       {children({ open, setOpen })}

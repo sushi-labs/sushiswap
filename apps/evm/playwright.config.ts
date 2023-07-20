@@ -100,14 +100,14 @@ const config: PlaywrightTestConfig = {
         'anvil',
         `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
         `--fork-url=${process.env.ANVIL_FORK_URL}`,
-        `--port=${process.env.ANVIL_PORT}`,
+        `--port=${process.env.ANVIL_PORT || 8545}`,
       ].join(' '),
       env: {
         ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
         ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
-        ANVIL_PORT: String(process.env.ANVIL_PORT),
+        ANVIL_PORT: String(process.env.ANVIL_PORT || 8545),
       },
-      port: Number(process.env.ANVIL_PORT) || 8545,
+      port: Number(process.env.ANVIL_PORT || 8545),
     },
     {
       command: 'npm run start',
@@ -116,7 +116,7 @@ const config: PlaywrightTestConfig = {
       reuseExistingServer: !process.env.CI,
       env: {
         NEXT_PUBLIC_TEST: 'true',
-        NEXT_PUBLIC_ANVIL_PORT: String(process.env.ANVIL_PORT),
+        NEXT_PUBLIC_ANVIL_PORT: String(process.env.ANVIL_PORT || 8545),
       },
     },
   ],
