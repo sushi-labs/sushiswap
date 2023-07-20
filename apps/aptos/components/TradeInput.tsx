@@ -78,7 +78,7 @@ export default function TradeInput({
             value={value}
             ref={tradeVal}
             onUserInput={(value) => {
-              if (onUserInput) {
+              if (onUserInput && token !== alteredSelected) {
                 onUserInput(value)
               }
             }}
