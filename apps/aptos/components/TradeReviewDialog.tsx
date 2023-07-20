@@ -22,15 +22,17 @@ interface Props {
 
 export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
   const { bestRoutes, token0, token1, slippageAmount, amount, outputAmount, isPriceFetching } = useSwapState()
-  const { account, signAndSubmitTransaction } = useWallet()
-  const { setisTransactionPending, setAmount, setOutputAmount } = useSwapActions()
+  const { account, signAndSubmitTransaction, network } = useWallet()
+  const networkType = network?.name?.toLowerCase() == 'testnet' ? Network.TESTNET : Network.MAINNET
+  const { setisTransactionPending, setAmount } = useSwapActions()
   const minOutput = slippageAmount ? formatNumber(slippageAmount, token1 ? token1.decimals : 8) : 0
   const swapToken = async (close: () => void) => {
-    const provider = new Provider(Network.TESTNET)
+    const provider = new Provider(networkType)
     const payload: any = payloadArgs(
       parseInt((parseFloat(String(amount)) * 10 ** token0.decimals) as unknown as string),
       bestRoutes,
-      parseInt(String(slippageAmount))
+      parseInt(String(slippageAmount)),
+      networkType
     )
     setisTransactionPending(true)
     if (!account) return []

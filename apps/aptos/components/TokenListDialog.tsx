@@ -47,10 +47,10 @@ export default function TokenListDialog<TData>({
   const { data: queryToken, isInitialLoading: isQueryTokenLoading } = useTokenWithCache({
     chainId: Number(network?.chainId || 1),
     address: query,
-    enabled: true,
+    enabled: (query.startsWith('0x') && query.length > 65) || query == '0x1::aptos_coin::AptosCoin',
     keepPreviousData: false,
   })
-  const { data: sortedTokenList, status } = useSortedTokenList({
+  const { data: sortedTokenList } = useSortedTokenList({
     query,
     tokenMap: tokens,
     customTokenMap: customTokens,

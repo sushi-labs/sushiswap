@@ -27,9 +27,14 @@ export default function SwapPage() {
   const { token0, token1, isTransactionPending } = useSwapState()
   const [controller, setController] = useState<AbortController | null>(null)
   const tokensWithoutKey = getTokensWithoutKey(Number(network?.chainId) || 1)
+  console.log(network)
   useEffect(() => {
     if (network?.name === undefined) {
       disconnect()
+    }
+    if (network?.name?.toLowerCase() === 'devnet') {
+      disconnect()
+      alert('Devnet chain is not supported, please select to mainnet or testnet')
     }
     setToken0(tokensWithoutKey[0])
     setToken1(tokensWithoutKey[1])

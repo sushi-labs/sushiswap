@@ -6,7 +6,7 @@ export function createTokenFilterFunction<T extends Token>(search: string): (tok
 
   // if (isValidAddress) {
   // }
-  if (search.startsWith('0x') && search.length > 65) {
+  if ((search.startsWith('0x') && search.length > 65) || search == '0x1::aptos_coin::AptosCoin') {
     return (t: T) => search.toLowerCase() === t.address.toLowerCase()
   }
 
