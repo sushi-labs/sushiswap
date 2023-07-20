@@ -115,7 +115,7 @@ export async function getPoolPairs(network: string = 'mainnet') {
     let reserves: any
     try {
       setLoadingPrice(true)
-      await fetch(`https://fullnode.testnet.aptoslabs.com/v1/accounts/${CONTRACT_ADDRESS}/resources`)
+      await fetch(`https://fullnode.${network}.aptoslabs.com/v1/accounts/${CONTRACT_ADDRESS}/resources`)
         .then((res) => res.json())
         .then((data) => {
           reserves = data.filter((d: any) => {

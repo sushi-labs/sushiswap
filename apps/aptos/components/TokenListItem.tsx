@@ -13,10 +13,17 @@ type PropType = {
   selected: boolean
   alteredSelected: Token
   handleChangeToken: (token: Token) => void
+  handleSwap: () => void
 }
-export default function TokenListItem({ id, style, token, alteredSelected, selected, handleChangeToken }: PropType) {
-  const { token0, token1 } = useSwapState()
-  const { setToken0, setToken1 } = useSwapActions()
+export default function TokenListItem({
+  id,
+  style,
+  token,
+  alteredSelected,
+  selected,
+  handleChangeToken,
+  handleSwap,
+}: PropType) {
   return (
     <div className="py-0.5 h-[64px]" style={style}>
       <Modal.Trigger tag={`${id}-token-selector-modal`}>
@@ -28,8 +35,7 @@ export default function TokenListItem({ id, style, token, alteredSelected, selec
             )}
             onClick={() => {
               if (token.address == alteredSelected.address) {
-                setToken0(token1)
-                setToken1(token0)
+                handleSwap()
               } else {
                 handleChangeToken(token)
               }
