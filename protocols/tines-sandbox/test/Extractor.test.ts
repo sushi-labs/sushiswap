@@ -1,4 +1,5 @@
 import { routeProcessor2Abi } from '@sushiswap/abi'
+import { FACTORY_ADDRESS, INIT_CODE_HASH } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { Extractor, FactoryV2, FactoryV3, MultiCallAggregator, TokenManager } from '@sushiswap/extractor'
@@ -34,6 +35,15 @@ function uniswapV2Factory(chain: ChainId): FactoryV2 {
     provider: LiquidityProviders.UniswapV2,
     fee: 0.003,
     initCodeHash: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
+  }
+}
+
+function sushiswapV2Factory(chain: ChainId): FactoryV2 {
+  return {
+    address: FACTORY_ADDRESS[chain] as Address,
+    provider: LiquidityProviders.SushiSwapV2,
+    fee: 0.003,
+    initCodeHash: INIT_CODE_HASH[chain],
   }
 }
 
@@ -164,7 +174,7 @@ it.skip('Extractor Ethereum infinit work test', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
-    factoriesV2: [uniswapV2Factory(ChainId.ETHEREUM)],
+    factoriesV2: [uniswapV2Factory(ChainId.ETHEREUM), sushiswapV2Factory(ChainId.ETHEREUM)],
     factoriesV3: [uniswapV3Factory(ChainId.ETHEREUM)],
     tickHelperContract: TickLensContract[ChainId.ETHEREUM],
     cacheDir: './cache',
@@ -178,7 +188,15 @@ it.skip('Extractor Polygon infinit work test', async () => {
   await startInfinitTest({
     providerURL: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: polygon,
-    factoriesV2: [],
+    factoriesV2: [
+      sushiswapV2Factory(ChainId.POLYGON),
+      {
+        address: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32',
+        provider: LiquidityProviders.QuickSwap,
+        fee: 0.003,
+        initCodeHash: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
+      },
+    ],
     factoriesV3: [uniswapV3Factory(ChainId.POLYGON)],
     tickHelperContract: TickLensContract[ChainId.POLYGON],
     cacheDir: './cache',
