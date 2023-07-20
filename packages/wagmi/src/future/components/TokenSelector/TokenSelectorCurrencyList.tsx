@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
-import { Native, Type } from '@sushiswap/currency'
-import { NativeAddress, useBalances, usePrices } from '@sushiswap/react-query'
+import { Amount, Native, Type } from '@sushiswap/currency'
+import { Fraction } from '@sushiswap/math'
 import { Currency } from '@sushiswap/ui/components/currency'
 import React, { FC, memo, useMemo } from 'react'
 import { useAccount } from 'wagmi'
@@ -17,20 +17,20 @@ interface TokenSelectorCurrencyListProps {
     onPin: (currencyId: string) => void
   }
   selected: Type | undefined
+  balancesMap: Record<string, Amount<Type>> | undefined
+  pricesMap: Record<string, Fraction> | undefined
 }
 
 export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> = memo(function TokenSelectorCurrencyList({
   id,
   onSelect,
   currencies,
-  chainId,
   selected,
   pin,
+  pricesMap,
+  balancesMap,
 }) {
   const { address } = useAccount()
-  const { data: pricesMap } = usePrices({ chainId })
-  const { data: balancesMap } = useBalances({ chainId, account: address })
-
   const rowData = useMemo<TokenSelectorRow[]>(() => {
     if (!currencies) return []
 
@@ -38,7 +38,7 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> = mem
       id: id,
       account: address,
       currency,
-      balance: balancesMap?.[currency.isNative ? NativeAddress : currency.address],
+      balance: balancesMap?.[currency.isNative ? '0x0000000000000000000000000000000000000000' : currency.address],
       price: pricesMap?.[currency.isNative ? Native.onChain(currency.chainId).wrapped.address : currency.address],
       onSelect: () => onSelect(currency),
       pin: pin

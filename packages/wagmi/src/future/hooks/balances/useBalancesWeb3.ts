@@ -1,10 +1,11 @@
-import { Amount, Native, Token, Type } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
-import { useQuery } from '@tanstack/react-query'
-import { ChainId } from '@sushiswap/chain'
-import { fetchBalance, Address, erc20ABI, readContracts } from '../../..'
 import { isAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
+import { ChainId } from '@sushiswap/chain'
+import { Amount, Native, Token, Type } from '@sushiswap/currency'
+import { ZERO } from '@sushiswap/math'
+import { useQuery } from '@tanstack/react-query'
+
+import { Address, erc20ABI, fetchBalance, readContracts } from '../../..'
 
 interface UseBalanceParams {
   chainId: ChainId | undefined
@@ -42,19 +43,29 @@ export const queryFnUseBalances = async ({ chainId, currencies, account }: Omit<
   })
 
   const _data = data.reduce<Record<string, Amount<Type>>>((acc, cur, i) => {
-    acc[validatedTokens[i].address] = Amount.fromRawAmount(validatedTokens[i], JSBI.BigInt(data[i]))
+    if (data[i]) {
+      const amount = Amount.fromRawAmount(validatedTokens[i], data[i].toString())
+      if (amount.greaterThan(ZERO)) {
+        acc[validatedTokens[i].address] = amount
+      }
+    }
+
     return acc
   }, {})
 
-  _data[AddressZero] = Amount.fromRawAmount(Native.onChain(chainId), JSBI.BigInt(native.value))
+  if (native.value) {
+    _data[AddressZero] = Amount.fromRawAmount(Native.onChain(chainId), native.value.toString())
+  }
 
   return _data
 }
 
 export const useBalancesWeb3 = ({ chainId, currencies, account, enabled = true }: UseBalanceParams) => {
   return useQuery({
-    queryKey: ['useBalances', { chainId, currencies, account }],
-    queryFn: () => queryFnUseBalances({ chainId, currencies, account }),
+    queryKey: ['useBalancesWeb3', { chainId, currencies, account }],
+    queryFn: async () => {
+      return await queryFnUseBalances({ chainId, currencies, account })
+    },
     refetchInterval: 10000,
     enabled: Boolean(chainId && account && enabled),
   })

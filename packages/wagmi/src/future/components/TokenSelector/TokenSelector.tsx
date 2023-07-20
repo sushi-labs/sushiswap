@@ -3,7 +3,7 @@ import { XMarkIcon } from '@heroicons/react/20/solid'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { useCustomTokens, usePinnedTokens } from '@sushiswap/hooks'
-import { useBalances, usePrices, useTokens } from '@sushiswap/react-query'
+import { usePrices, useTokens } from '@sushiswap/react-query'
 import { IconButton } from '@sushiswap/ui'
 import { SlideIn } from '@sushiswap/ui/components/animation'
 import { Button } from '@sushiswap/ui/components/button'
@@ -18,7 +18,7 @@ import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState }
 import { useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
-import { useTokenWithCache } from '../../hooks'
+import { useBalancesWeb3, useTokenWithCache } from '../../hooks'
 import { useSortedTokenList } from './hooks/useSortedTokenList'
 import { TokenSelectorCurrencyList } from './TokenSelectorCurrencyList'
 import { TokenSelectorCustomTokensOverlay } from './TokenSelectorCustomTokensOverlay'
@@ -44,7 +44,15 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
   const { data: pinnedTokenMap, mutate: pinnedTokenMutate, hasToken: isTokenPinned } = usePinnedTokens()
   const { data: tokenMap } = useTokens({ chainId })
   const { data: pricesMap } = usePrices({ chainId })
-  const { data: balancesMap } = useBalances({ chainId, account: address })
+
+  // Fetch balances for all tokens in the token selector
+  const tokens = useMemo(() => Object.values({ ...tokenMap, ...customTokenMap }), [tokenMap, customTokenMap])
+  const { data: balancesMap } = useBalancesWeb3({
+    chainId,
+    account: address,
+    currencies: tokens,
+    enabled: open,
+  })
 
   const { data: queryToken, isInitialLoading: isQueryTokenLoading } = useTokenWithCache({
     chainId,
@@ -59,7 +67,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
     customTokenMap: currencies ? {} : customTokenMap,
     tokenMap: currencies ? currencies : tokenMap,
     pricesMap,
-    balancesMap,
+    balancesMap: balancesMap ?? {},
     chainId,
     includeNative: true,
   })
@@ -101,6 +109,8 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
     },
     [_onSelect, customTokenMutate]
   )
+
+  console.log(balancesMap)
 
   return (
     <>
@@ -186,6 +196,8 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
                     pin={{ onPin: _onPin, isPinned: isTokenPinned }}
                     currencies={sortedTokenList}
                     chainId={chainId}
+                    balancesMap={balancesMap ?? {}}
+                    pricesMap={pricesMap}
                   />
                   {sortedTokenList?.length === 0 && !queryToken && chainId && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
