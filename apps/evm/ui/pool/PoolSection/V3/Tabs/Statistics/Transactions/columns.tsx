@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import formatDistance from 'date-fns/formatDistance/index.js'
 import React from 'react'
 
-import { Transaction, TransactionType, useTransactionsV3 } from './useTransactions'
+import { Transaction, TransactionType, useTransactions } from './useTransactions'
 
 export const TYPE_COLUMN: ColumnDef<Transaction, unknown> = {
   id: 'type',
@@ -34,7 +34,7 @@ export const SENDER_COLUMN: ColumnDef<Transaction, unknown> = {
 }
 
 export const AMOUNT_IN_COLUMN = (
-  type: Parameters<typeof useTransactionsV3>['2']['type']
+  type: Parameters<typeof useTransactions>['2']['type']
 ): ColumnDef<Transaction, unknown> => ({
   id: 'amounts_in',
   header: type === TransactionType.Swap ? 'Amount in' : 'Token 0',
@@ -69,7 +69,7 @@ export const AMOUNT_IN_COLUMN = (
 })
 
 export const AMOUNT_OUT_COLUMN = (
-  type: Parameters<typeof useTransactionsV3>['2']['type']
+  type: Parameters<typeof useTransactions>['2']['type']
 ): ColumnDef<Transaction, unknown> => ({
   id: 'amount_out',
   header: type === TransactionType.Swap ? 'Amount out' : 'Token 1',
