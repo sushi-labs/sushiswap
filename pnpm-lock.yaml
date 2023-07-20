@@ -496,6 +496,7 @@ importers:
       '@storybook/react-vite': 7.0.25
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
+      '@sushiswap/router-config': workspace:*
       '@sushiswap/tailwindcss-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
@@ -515,6 +516,7 @@ importers:
       '@heroicons/react': 2.0.13_react@18.2.0
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/router-config': link:../../config/router
       '@sushiswap/tailwindcss-config': link:../../config/tailwindcss
       '@sushiswap/ui': link:../../packages/ui
       class-variance-authority: 0.6.0_typescript@5.1.6
