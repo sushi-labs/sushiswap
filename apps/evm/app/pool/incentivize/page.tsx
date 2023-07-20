@@ -356,7 +356,13 @@ const Incentivize = withCheckerRoot(() => {
           />
           <p className={typographyVariants({ variant: 'muted', className: 'text-sm' })}>
             Rewards are distributed per hour. The minimum reward for this distribution is dependent on the selected
-            duration.
+            duration. <br />
+            <br /> Looking to get your token added here?{' '}
+            <Button variant="link" asChild>
+              <a target="_blank" rel="noreferrer noopener" href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe">
+                Get in touch with us.
+              </a>
+            </Button>
           </p>
         </ContentBlock>
         <Separator />
