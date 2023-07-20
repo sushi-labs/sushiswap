@@ -242,31 +242,13 @@ const _Add: FC = () => {
   // }
   const provider = new Provider(Network.TESTNET)
 
-  // useEffect(() => {
-  //   onChangeToken0TypedAmount(String(amount0))
-  // }, [account, connected, network, token0, isTransactionPending, balance0, poolPairRatio])
-
   useEffect(() => {
     onChangeToken0TypedAmount(String(amount0))
-    // PoolInputBalance1(String(amount1))
-  }, [account, connected, network, token0, token1, poolPairRatio])
+  }, [account, connected, network, amount0, token0, token1, balance0, poolPairRatio])
 
-  // useEffect(() => {
-  //   PoolInputBalance1(String(amount1))
-  //   // PoolInputBalance0(String(amount0))
-  //   // PoolInputBalance1(String(amount1))
-  // }, [account, connected, network, token1, poolPairRatio])
-
-  // useEffect(() => {
-  //   onChangeToken1TypedAmount(String(amount1))
-  // }, [account, connected, network, token1, isTransactionPending, balance1, poolPairRatio])
-
-  // useEffect(() => {
-  //   PoolInputBalance0(String(amount0))
-  // }, [account, connected, network, token0, balance0, poolPairRatio, amount0])
-  // useEffect(() => {
-  //   PoolInputBalance1(String(amount1))
-  // }, [account, connected, network, token1, balance1, poolPairRatio, amount1])
+  useEffect(() => {
+    onChangeToken1TypedAmount(String(amount1))
+  }, [account, connected, network, amount1, balance1, poolPairRatio])
 
   const PoolInputBalance0 = (tradeVal: string) => {
     console.log('-==================', tradeVal)
@@ -274,19 +256,13 @@ const _Add: FC = () => {
     if (regexPattern.test(tradeVal)) {
       setAmount0(tradeVal)
     }
-    if (setButtonError) setButtonError('')
-    console.log(balance0 / 10 ** token0.decimals < parseFloat(tradeVal))
     if (connected) {
       const priceEst = balance0 / 10 ** token0.decimals < parseFloat(tradeVal)
       if (priceEst) {
         setError0('Exceeds Balance')
-        if (setButtonError) setButtonError('Insufficient Balance')
       } else {
         setError0('')
-        if (setButtonError) setButtonError('')
       }
-    } else {
-      setError0('')
     }
   }
 
@@ -296,18 +272,13 @@ const _Add: FC = () => {
     if (regexPattern.test(tradeVal1)) {
       setAmount1(tradeVal1)
     }
-    if (setButtonError) setButtonError('')
     if (connected) {
       const priceEst = balance1 / 10 ** token1.decimals < parseFloat(tradeVal1)
       if (priceEst) {
         setError1('Exceeds Balance')
-        if (setButtonError) setButtonError('Insufficient Balance')
       } else {
         setError1('')
-        if (setButtonError) setButtonError('')
       }
-    } else {
-      setError1('')
     }
   }
 
@@ -330,7 +301,6 @@ const _Add: FC = () => {
             setLoadingPrice(false)
           }
         })
-      // setLoadingPrice(false)
     } else {
       setLoadingPrice(false)
     }
