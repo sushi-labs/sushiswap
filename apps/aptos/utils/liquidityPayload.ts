@@ -13,8 +13,8 @@ export function liquidityArgs(
     arguments: [amount0, amount1, 0, 0],
     function: `${
       networkType == Network.TESTNET
-        ? process.env.NEXT_PUBLIC_MAINNET_CONTRACT
-        : process.env.NEXT_PUBLIC_TESTNET_CONTRACT
+        ? process.env.NEXT_PUBLIC_TESTNET_CONTRACT
+        : process.env.NEXT_PUBLIC_MAINNET_CONTRACT
     }::router::add_liquidity`,
   }
 }

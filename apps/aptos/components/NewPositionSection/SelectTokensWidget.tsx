@@ -56,7 +56,13 @@ export const SelectTokensWidget: FC<Props> = ({ handleSwap }) => {
             )}
           </Modal.Trigger>
         </TokenListDialog>
-        <TokenListDialog id={`liquidity-to-1`} selected={token1} alteredSelected={token0} handleChangeToken={setToken1}>
+        <TokenListDialog
+          id={`liquidity-to-1`}
+          selected={token1}
+          alteredSelected={token0}
+          handleChangeToken={setToken1}
+          handleSwap={handleSwap}
+        >
           <Modal.Trigger tag={`liquidity-to-1-token-selector-modal`}>
             {({ open }) => (
               <>
