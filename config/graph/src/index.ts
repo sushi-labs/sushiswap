@@ -74,6 +74,8 @@ export const PENDING_METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/id'
 export const POLYGON_ZKEVM_HOST = 'api.studio.thegraph.com/query/32073'
 export const THUNDERCORE_HOST = 'graph-node.thundercore.com/subgraphs/name'
 
+export const SUSHI_HOST = 'subgraphs.sushi.com/subgraphs/name'
+
 export const CHAIN_NAME: Record<number, string> = {
   [ChainId.ARBITRUM]: 'Arbitrum',
   [ChainId.AVALANCHE]: 'Avalanche',
@@ -106,7 +108,7 @@ export const CHAIN_NAME: Record<number, string> = {
 
 export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.ARBITRUM]: GRAPH_HOST,
-  [ChainId.ARBITRUM_NOVA]: 'subgraphs.sushi.com/subgraphs/name',
+  [ChainId.ARBITRUM_NOVA]: SUSHI_HOST,
   [ChainId.AVALANCHE]: GRAPH_HOST,
   [ChainId.BSC]: GRAPH_HOST,
   [ChainId.CELO]: GRAPH_HOST,
@@ -120,13 +122,13 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.METIS]: METIS_HOST,
   [ChainId.MOONBEAM]: GRAPH_HOST,
   [ChainId.MOONRIVER]: GRAPH_HOST,
-  [ChainId.OPTIMISM]: 'api.thegraph.com/subgraphs/name',
+  [ChainId.OPTIMISM]: GRAPH_HOST,
   [ChainId.POLYGON]: GRAPH_HOST,
   [ChainId.POLYGON_ZKEVM]: POLYGON_ZKEVM_HOST,
   [ChainId.BOBA]: GRAPH_HOST,
-  [ChainId.BOBA_AVAX]: 'subgraphs.sushi.com/subgraphs/name',
-  [ChainId.BOBA_BNB]: 'subgraphs.sushi.com/subgraphs/name',
-  [ChainId.BTTC]: 'subgraphs.sushi.com/subgraphs/name',
+  [ChainId.BOBA_AVAX]: SUSHI_HOST,
+  [ChainId.BOBA_BNB]: SUSHI_HOST,
+  [ChainId.BTTC]: SUSHI_HOST,
   [ChainId.OKEX]: '',
   [ChainId.HECO]: '',
   [ChainId.KOVAN]: '',
@@ -349,6 +351,27 @@ export const CONCENTRATED_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.ETHEREUM]: 'uniswap/uniswap-v3',
   [ChainId.ARBITRUM]: 'ianlapham/arbitrum-minimal',
 }
+
+export const STEER_ENABLED_NETWORKS = [
+  ChainId.POLYGON,
+  ChainId.AVALANCHE,
+  ChainId.OPTIMISM,
+  ChainId.BSC,
+  ChainId.CELO,
+] as const
+
+export type SteerChainId = (typeof STEER_ENABLED_NETWORKS)[number]
+
+export const STEER_SUBGRAPGH_NAME: Record<SteerChainId, string> = {
+  [ChainId.POLYGON]: 'steerprotocol/steer-protocol-polygon',
+  [ChainId.AVALANCHE]: 'steerprotocol/steer-protocol-avalanche',
+  [ChainId.OPTIMISM]: 'steerprotocol/steer-protocol-optimism',
+  [ChainId.BSC]: 'steerprotocol/steer-protocol-bsc',
+  // [ChainId.THUNDERCORE]: 'steerprotocol/steer-thundercore', // https://subgraph.steer.finance/thundercore/subgraphs/name/steerprotocol/steer-thundercore
+  [ChainId.CELO]: 'steerprotocol/steer-protocol-celo',
+  // [ChainId.METIS]: 'steerprotocol/steer-protocol-metis', // https://subgraph.satsuma-prod.com/769a117cc018/steer/steer-protocol-metis/api
+  // [ChainId.POLYGON_ZKEVM]: 'steerprotocol/steer-zkevm', // https://subgraph.steer.finance/zkevm/subgraphs/name/steerprotocol/steer-zkevm
+} as const
 
 export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM
 export const DEFAULT_CHAIN_NAME = CHAIN_NAME[DEFAULT_CHAIN_ID]

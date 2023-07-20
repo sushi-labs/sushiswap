@@ -12,11 +12,11 @@ import { Search } from './Search'
 
 const TITLES = ['Whenever', 'Wherever', 'Whoever']
 const VALUES = [
-  { value0: '1', value1: '867.5' },
-  { value0: '1.', value1: '867.5' },
-  { value0: '1.4', value1: '1214.448' },
-  { value0: '1.43', value1: '1240.464' },
-  { value0: '1.435', value1: '1244.80654' },
+  { value0: '1', value1: '2812.18' },
+  { value0: '1.', value1: '2812.18' },
+  { value0: '1.4', value1: '3936.03' },
+  { value0: '1.43', value1: '4020.3' },
+  { value0: '1.435', value1: '4034.34' },
 ]
 
 export const Hero: FC = () => {
@@ -27,7 +27,7 @@ export const Hero: FC = () => {
 
   useEffect(() => {
     const setIndex = (i: number) => {
-      if (i < 5) {
+      if (i < VALUES.length) {
         setValueIndex(i)
         setTimeout(() => setIndex(i + 1), 100)
       }
@@ -44,7 +44,7 @@ export const Hero: FC = () => {
             <p className="text-5xl font-semibold text-neutral-50 leading-[3.5rem] tracking-tight">
               Buy and Sell Instantly on Sushi. <span className="text-blue"> {TITLES[index]}.</span>
             </p>
-            <p className="text-lg mt-3 text-neutral-400">
+            <p className="mt-3 text-lg text-neutral-400">
               No registration needed. Over 400 tokens to trade at your fingertips.
             </p>
             <div className="mt-10">
@@ -90,7 +90,7 @@ export const Hero: FC = () => {
               <div className="left-0 right-0 mt-[-9px] mb-[-9px] flex items-center justify-center">
                 <button
                   type="button"
-                  className="z-10 group bg-gray-100 hover:bg-gray-200 hover:dark:bg-slate-700 dark:bg-slate-900 p-2 border-white transition-all rounded-full cursor-pointer"
+                  className="z-10 p-2 transition-all bg-gray-100 border-white rounded-full cursor-pointer group hover:bg-gray-200 hover:dark:bg-slate-700 dark:bg-slate-900"
                 >
                   <div className="transition-transform rotate-0 group-hover:rotate-180">
                     <ArrowDownIcon strokeWidth={3} className="w-4 h-4 text-blue" />
@@ -101,8 +101,6 @@ export const Hero: FC = () => {
                 type="OUTPUT"
                 className="p-3 bg-white dark:bg-slate-800 rounded-xl"
                 value={valueIndex >= 0 ? VALUES[valueIndex].value1 : ''}
-                onChange={() => {}}
-                onSelect={() => {}}
                 currency={SUSHI[ChainId.ETHEREUM]}
                 chainId={ChainId.ETHEREUM}
                 disabled={true}

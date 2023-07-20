@@ -2,9 +2,9 @@
 
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { Chain, ChainId } from '@sushiswap/chain'
+import { NetworkSelector } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
-import { NetworkSelector } from '@sushiswap/ui/components/networkselector'
 import React, { useMemo, useState } from 'react'
 import useSWR from 'swr'
 
@@ -31,12 +31,7 @@ export default function BentoBoxStrategiesPage() {
     <div className="max-w-full px-4 py-12 mx-auto space-y-4 sm:px-6 lg:px-8">
       <p className="text-5xl font-semibold  text-slate-50">BentoBox Strategies</p>
       {strategyChainIds && (
-        <NetworkSelector
-          networks={strategyChainIds}
-          selected={selectedChainId}
-          onSelect={setSelectedChainId}
-          variant="menu"
-        >
+        <NetworkSelector networks={strategyChainIds} selected={selectedChainId} onSelect={setSelectedChainId}>
           <Button variant="secondary" className="!font-medium">
             <NetworkIcon chainId={selectedChainId} width={20} height={20} />
             <div>{Chain.from(selectedChainId).name}</div>

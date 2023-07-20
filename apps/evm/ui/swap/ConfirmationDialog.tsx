@@ -45,7 +45,7 @@ interface ConfirmationDialogProps {
 export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
-  const { setReview } = useSwapActions()
+  const { setReview, setValue } = useSwapActions()
   const { appType, network0, token0, token1, review } = useSwapState()
   const { approved } = useApproved('swap')
   const { data: trade } = useTrade({ crossChain: false, enabled: review })
@@ -110,6 +110,22 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
 
   const [open, setOpen] = useState(false)
   const [dialogState, setDialogState] = useState<ConfirmationDialogState>(ConfirmationDialogState.Undefined)
+
+  console.log(
+    Boolean(trade?.writeArgs) &&
+      appType === AppType.Swap &&
+      (isRouteProcessorChainId(network0) || isRouteProcessor3ChainId(network0)) &&
+      approved &&
+      trade?.route?.status !== 'NoWay',
+    [
+      trade,
+      Boolean(trade?.writeArgs),
+      appType === AppType.Swap,
+      isRouteProcessorChainId(network0) || isRouteProcessor3ChainId(network0),
+      approved,
+      trade?.route?.status !== 'NoWay',
+    ]
+  )
 
   const { config, isError, error } = usePrepareContractWrite({
     chainId: network0,
@@ -191,6 +207,9 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     ...(config.request && { request: { ...config.request, gasLimit: config.request.gasLimit.mul(120).div(100) } }),
     onSuccess: async (data) => {
       setReview(false)
+
+      // Clear input fields
+      setValue('')
 
       data
         .wait()

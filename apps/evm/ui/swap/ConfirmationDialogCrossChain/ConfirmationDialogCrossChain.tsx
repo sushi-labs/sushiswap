@@ -46,7 +46,7 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
   const { address } = useAccount()
   const { chain } = useNetwork()
   const { appType, review, network0, token0, token1, network1, tradeId } = useSwapState()
-  const { setReview, setTradeId } = useSwapActions()
+  const { setReview, setTradeId, setValue } = useSwapActions()
   const [open, setOpen] = useState(false)
   const { data: trade } = useTrade({ crossChain: true })
   const { setSignature } = useSignature(APPROVE_XSWAP_TAG)
@@ -126,6 +126,9 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     ...config,
     onSuccess: async (data) => {
       setReview(false)
+
+      // Clear input fields
+      setValue('')
 
       data
         .wait()

@@ -31,7 +31,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pool }) => {
           <p className="text-xs text-gray-600 dark:text-slate-500">{chains[pool.chainId].name}</p>
         </div>
         <div className="flex flex-col gap-6 sm:flex-row sm:justify-between sm:items-center">
-          <div className="flex">
+          <div className="flex gap-2">
             <Currency.IconList iconWidth={44} iconHeight={44}>
               <Currency.Icon currency={token0} />
               <Currency.Icon currency={token1} />
@@ -41,7 +41,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pool }) => {
               href={chains[pool.chainId].getTokenUrl(liquidityToken.wrapped.address)}
             >
               <div className="flex items-center gap-2">
-                <p className="text-lg font-semibold flex items-center gap-1 text-gray-900 dark:text-slate-50 group-hover:text-blue-400">
+                <p className="flex items-center gap-1 text-lg font-semibold text-gray-900 dark:text-slate-50 group-hover:text-blue-400">
                   {token0.symbol}/{token1.symbol}
                   <ExternalLinkIcon
                     width={20}
@@ -75,7 +75,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pool }) => {
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="flex gap-3 p-3 bg-white rounded-lg dark:bg-slate-800">
           <Currency.Icon currency={token0} width={20} height={20} />
-          <p className="text-sm font-semibold  text-gray-600 dark:text-slate-300">
+          <p className="text-sm font-semibold text-gray-600 dark:text-slate-300">
             <AppearOnMount>
               {token0.symbol} ={' '}
               {prices?.[token0.wrapped.address]
@@ -86,7 +86,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pool }) => {
         </div>
         <div className="flex gap-3 p-3 bg-white rounded-lg dark:bg-slate-800">
           <Currency.Icon currency={token1} width={20} height={20} />
-          <p className="text-sm font-semibold  text-gray-600 dark:text-slate-300">
+          <p className="text-sm font-semibold text-gray-600 dark:text-slate-300">
             <AppearOnMount>
               {token1.symbol} ={' '}
               {prices?.[token1.wrapped.address]
