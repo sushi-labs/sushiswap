@@ -1,6 +1,7 @@
 import { formatUSD } from '@sushiswap/format'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import ReactECharts, { EChartsOption } from 'echarts-for-react'
+import { useTheme } from 'next-themes'
 import React, { FC, useCallback, useMemo } from 'react'
 import colors from 'tailwindcss/colors'
 
@@ -16,6 +17,8 @@ const getTvlUSD = (liquidity: number | string, totalSupply: number | string, liq
   formatUSD((Number(liquidity) / Number(totalSupply)) * Number(liquidityUSD))
 
 export const PoolDepthChart: FC<PoolDepthChartProps> = ({ poolStats, series, current }) => {
+  const { resolvedTheme } = useTheme()
+
   // Transient update for performance
   const onMouseOver = useCallback(({ value }: { name: number[]; value: number[] }) => {
     const valueNodes = document.getElementsByClassName('hoveredItemValue')
@@ -67,10 +70,10 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({ poolStats, series, cur
         show: false,
       },
       grid: {
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
+        top: 5,
+        left: 15,
+        right: 15,
+        bottom: 20,
       },
       dataZoom: {
         show: false,
@@ -117,12 +120,13 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({ poolStats, series, cur
           markLine: {
             silent: true,
             symbol: 'none',
+            precision: 8,
             data: [
               {
                 xAxis: current,
                 symbol: 'none',
                 lineStyle: {
-                  color: 'white',
+                  color: resolvedTheme === 'light' ? 'black' : 'white',
                   type: 'solid',
                 },
               },
@@ -137,7 +141,7 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({ poolStats, series, cur
         },
       ],
     }),
-    [series, current, onMouseOver, poolStats]
+    [series, current, onMouseOver, poolStats, resolvedTheme]
   )
 
   const currentLiquidity = useMemo(
