@@ -75,7 +75,6 @@ export default function SwapPage() {
         })
         .finally(() => {
           setLoadingPrice(false)
-          setAmount('')
         })
     } else {
       setLoadingPrice(false)

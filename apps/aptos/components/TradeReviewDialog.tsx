@@ -55,7 +55,6 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
       setisTransactionPending(false)
       close()
       setAmount('')
-      setAmount(' ')
     } catch (error) {
       const toastId = `failed:${Math.random()}`
       createToast({ summery: `User rejected request`, toastId: toastId })
