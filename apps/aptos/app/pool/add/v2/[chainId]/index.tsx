@@ -246,9 +246,9 @@ const _Add: FC = () => {
     onChangeToken0TypedAmount(String(amount0))
   }, [account, connected, network, amount0, token0, token1, balance0, poolPairRatio])
 
-  useEffect(() => {
-    onChangeToken1TypedAmount(String(amount1))
-  }, [account, connected, network, amount1, balance1, poolPairRatio])
+  // useEffect(() => {
+  //   onChangeToken1TypedAmount(String(amount1))
+  // }, [account, connected, network, amount1, balance1, poolPairRatio])
 
   const PoolInputBalance0 = (tradeVal: string) => {
     console.log('-==================', tradeVal)

@@ -23,7 +23,7 @@ export default function SwapPage() {
   const { account, connected, disconnect, network } = useWallet()
   const [isLoading, setLoading] = useState<boolean>(true)
   const [slippageTolerance] = useSlippageTolerance('swapSlippage')
-  const { setBalance0, setBalance1, setLoadingPrice, setToken0, setToken1 } = useSwapActions()
+  const { setBalance0, setBalance1, setLoadingPrice, setToken0, setToken1, setAmount } = useSwapActions()
   const { token0, token1, isTransactionPending } = useSwapState()
   const [controller, setController] = useState<AbortController | null>(null)
   const tokensWithoutKey = getTokensWithoutKey(Number(network?.chainId) || 1)
@@ -75,6 +75,7 @@ export default function SwapPage() {
         })
         .finally(() => {
           setLoadingPrice(false)
+          setAmount('')
         })
     } else {
       setLoadingPrice(false)
