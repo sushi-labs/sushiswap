@@ -4,6 +4,7 @@ import { Amount, Type } from '@sushiswap/currency'
 import { Fraction, ZERO } from '@sushiswap/math'
 import { classNames } from '@sushiswap/ui'
 import { IconButton } from '@sushiswap/ui'
+import { SkeletonText } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Icon } from '@sushiswap/ui/components/currency/Icon'
 import React, { CSSProperties, FC, memo, useCallback } from 'react'
@@ -22,6 +23,7 @@ export interface TokenSelectorRow {
     onPin(): void
   }
   selected: boolean
+  isBalanceLoading: boolean
 }
 
 export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelectorRow({
@@ -34,6 +36,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
   onSelect,
   pin,
   selected,
+  isBalanceLoading,
 }) {
   const onClick = useCallback(() => {
     onSelect(currency)
@@ -75,31 +78,38 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
                 <Icon disableLink currency={currency} width={40} height={40} />
               </div>
             )}
-            <div className="flex flex-col items-start">
-              <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 dark:group-hover:text-white">
+            <div className="flex flex-col items-start max-w-[140px]">
+              <span className="truncate font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 dark:group-hover:text-white">
                 {currency.symbol}
               </span>
-              <span className="text-sm text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100">
+              <span className="truncate whitespace-nowrap truncate text-sm text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100">
                 {currency.name}
               </span>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            {balance?.greaterThan(ZERO) && (
-              <div className="flex flex-col">
-                <span
-                  className={classNames(
-                    selected ? 'font-semibold' : 'font-medium',
-                    'text-right text-gray-900 dark:text-slate-50'
-                  )}
-                >
-                  {balance?.toSignificant(6)}
-                </span>
-                <span className="text-sm font-medium text-right text-gray-500 dark:text-slate-400">
-                  {price ? `$${balance?.multiply(price).toFixed(2)}` : '-'}
-                </span>
+            {isBalanceLoading ? (
+              <div className="flex flex-col min-w-[60px]">
+                <SkeletonText className="w-[60px]" align="right" />
+                <SkeletonText fontSize="sm" className="w-[20px]" align="right" />
               </div>
+            ) : (
+              balance?.greaterThan(ZERO) && (
+                <div className="flex flex-col max-w-[140px]">
+                  <span
+                    className={classNames(
+                      selected ? 'font-semibold' : 'font-medium',
+                      'text-right text-gray-900 dark:text-slate-50 truncate'
+                    )}
+                  >
+                    {balance?.toSignificant(6)}
+                  </span>
+                  <span className="text-sm font-medium text-right text-gray-500 dark:text-slate-400">
+                    {price ? `$${balance?.multiply(price).toFixed(2)}` : '-'}
+                  </span>
+                </div>
+              )
             )}
             {pin && (
               <IconButton

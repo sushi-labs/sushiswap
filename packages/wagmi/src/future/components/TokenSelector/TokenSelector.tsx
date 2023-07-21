@@ -3,7 +3,7 @@ import { XMarkIcon } from '@heroicons/react/20/solid'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { useCustomTokens, usePinnedTokens } from '@sushiswap/hooks'
-import { usePrices, useTokens } from '@sushiswap/react-query'
+import { useBalances, usePrices, useTokens } from '@sushiswap/react-query'
 import { IconButton } from '@sushiswap/ui'
 import { SlideIn } from '@sushiswap/ui/components/animation'
 import { Button } from '@sushiswap/ui/components/button'
@@ -18,7 +18,7 @@ import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState }
 import { useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
-import { useBalancesWeb3, useTokenWithCache } from '../../hooks'
+import { useTokenWithCache } from '../../hooks'
 import { useSortedTokenList } from './hooks/useSortedTokenList'
 import { TokenSelectorCurrencyList } from './TokenSelectorCurrencyList'
 import { TokenSelectorCustomTokensOverlay } from './TokenSelectorCustomTokensOverlay'
@@ -46,11 +46,9 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
   const { data: pricesMap } = usePrices({ chainId })
 
   // Fetch balances for all tokens in the token selector
-  const tokens = useMemo(() => Object.values({ ...tokenMap, ...customTokenMap }), [tokenMap, customTokenMap])
-  const { data: balancesMap } = useBalancesWeb3({
+  const { data: balancesMap, isLoading: isBalanceLoading } = useBalances({
     chainId,
     account: address,
-    currencies: tokens,
     enabled: open,
   })
 
@@ -196,6 +194,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
                     chainId={chainId}
                     balancesMap={balancesMap ?? {}}
                     pricesMap={pricesMap}
+                    isBalanceLoading={isBalanceLoading}
                   />
                   {sortedTokenList?.length === 0 && !queryToken && chainId && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

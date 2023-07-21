@@ -1,5 +1,5 @@
 import { getAddress } from '@ethersproject/address'
-import {Amount, Native, Type} from '@sushiswap/currency'
+import { Amount, Native, Type } from '@sushiswap/currency'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 
@@ -12,15 +12,16 @@ type UseBalancesQuerySelect = (data: Record<string, string>) => Record<string, A
 interface UseBalances {
   account: string | undefined
   chainId: number
+  enabled?: boolean
 }
 
-export const useBalancesQuery = ({ chainId, account }: UseBalances, select: UseBalancesQuerySelect) =>
+export const useBalancesQuery = ({ chainId, account, enabled = true }: UseBalances, select: UseBalancesQuerySelect) =>
   useQuery({
-    queryKey: ['NoPersist', `https://balances.sushi.com/v0/${chainId}/${account}`],
+    queryKey: [`https://balances.sushi.com/v0/${chainId}/${account}`],
     queryFn: () => fetch(`https://balances.sushi.com/v0/${chainId}/${account}`).then((response) => response.json()),
     staleTime: 900000, // 15 mins
     cacheTime: 3600000, // 1hr
-    enabled: Boolean(chainId && account),
+    enabled: Boolean(chainId && account && enabled),
     select,
   })
 
@@ -33,14 +34,14 @@ export const useBalances = (variables: UseBalances) => {
       if (!tokens) return {}
 
       return Object.entries(data).reduce<Record<string, Amount<Type>>>((acc, [address, amount]) => {
-          if (address.toLowerCase() === NativeAddress) {
-              acc[address] = Amount.fromRawAmount(Native.onChain(chainId), amount)
-          } else {
-              const _address = getAddress(address)
-              if (tokens[_address]) {
-                  acc[_address] = Amount.fromRawAmount(tokens[_address], amount)
-              }
+        if (address.toLowerCase() === NativeAddress) {
+          acc[address] = Amount.fromRawAmount(Native.onChain(chainId), amount)
+        } else {
+          const _address = getAddress(address)
+          if (tokens[_address]) {
+            acc[_address] = Amount.fromRawAmount(tokens[_address], amount)
           }
+        }
         return acc
       }, {})
     },

@@ -1,6 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Type } from '@sushiswap/currency'
 import { Fraction } from '@sushiswap/math'
+import { NativeAddress } from '@sushiswap/react-query'
 import { Currency } from '@sushiswap/ui/components/currency'
 import React, { FC, memo, useMemo } from 'react'
 import { useAccount } from 'wagmi'
@@ -19,6 +20,7 @@ interface TokenSelectorCurrencyListProps {
   selected: Type | undefined
   balancesMap: Record<string, Amount<Type>> | undefined
   pricesMap: Record<string, Fraction> | undefined
+  isBalanceLoading: boolean
 }
 
 export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> = memo(function TokenSelectorCurrencyList({
@@ -29,6 +31,7 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> = mem
   pin,
   pricesMap,
   balancesMap,
+  isBalanceLoading,
 }) {
   const { address } = useAccount()
   const rowData = useMemo<TokenSelectorRow[]>(() => {
@@ -38,7 +41,7 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> = mem
       id: id,
       account: address,
       currency,
-      balance: balancesMap?.[currency.isNative ? '0x0000000000000000000000000000000000000000' : currency.address],
+      balance: balancesMap?.[currency.isNative ? NativeAddress : currency.address],
       price: pricesMap?.[currency.isNative ? Native.onChain(currency.chainId).wrapped.address : currency.address],
       onSelect: () => onSelect(currency),
       pin: pin
@@ -51,8 +54,9 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> = mem
         ? (currency.isNative === true && selected.isNative === true) ||
           (selected.isToken && currency.isToken && currency.wrapped.address === selected.wrapped.address)
         : false,
+      isBalanceLoading,
     }))
-  }, [address, balancesMap, currencies, id, onSelect, pricesMap, selected, pin])
+  }, [isBalanceLoading, address, balancesMap, currencies, id, onSelect, pricesMap, selected, pin])
 
   return <Currency.List className="scroll" rowHeight={64} rowRenderer={TokenSelectorRow} rowData={rowData} />
 })

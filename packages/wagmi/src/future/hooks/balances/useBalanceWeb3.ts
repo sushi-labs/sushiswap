@@ -1,9 +1,10 @@
+import { AddressZero } from '@ethersproject/constants'
+import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { useQuery } from '@tanstack/react-query'
-import { ChainId } from '@sushiswap/chain'
 import { Address } from 'wagmi'
+
 import { queryFnUseBalances } from './useBalancesWeb3'
-import { AddressZero } from '@ethersproject/constants'
 
 interface UseBalanceParams {
   chainId: ChainId | undefined
@@ -18,7 +19,7 @@ export const useBalanceWeb3 = ({ chainId, currency, account, enabled = true }: U
     queryFn: async () => {
       if (!currency) return null
       const data = await queryFnUseBalances({ chainId, currencies: [currency], account })
-      return data?.[currency.isNative ? AddressZero : currency.wrapped.address]
+      return data?.[currency.isNative ? AddressZero : currency.wrapped.address] ?? null
     },
     refetchInterval: 10000,
     enabled: Boolean(chainId && account && enabled),
