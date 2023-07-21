@@ -50,14 +50,18 @@ async function extractChain(chainId: SteerChainId) {
   const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: STEER_SUBGRAPGH_NAME[chainId] })
 
   const { vaults } = await sdk.SteerVaults()
-  const vaultsWithPayloads = await Promise.all(
+  const vaultsWithPayloads = await Promise.allSettled(
     vaults.map(async (vault) => {
-      const payload = await getPayload(vault.payloadIpfs)
-      return { ...vault, payload }
+      try {
+        const payload = await getPayload(vault.payloadIpfs)
+        return { ...vault, payload }
+      } catch {
+        throw new Error(`Failed to fetch payload for vault, ${vault.id}`)
+      }
     })
   )
 
-  return { chainId, vaults: vaultsWithPayloads }
+  return { chainId, vaults: vaultsWithPayloads.filter(isPromiseFulfilled).map((r) => r.value) }
 }
 
 async function extract() {

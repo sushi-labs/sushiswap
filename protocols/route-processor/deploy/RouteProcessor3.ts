@@ -1,4 +1,3 @@
-import { bentoBoxV1Address, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/dist/types'
 
@@ -27,10 +26,10 @@ const func: DeployFunction = async function ({
     waitConfirmations: 20,
   })
 
-  await run('verify:verify', {
-    address,
-    constructorArguments: args,
-  })
+  // await run('verify:verify', {
+  //   address,
+  //   constructorArguments: args,
+  // })
 
   console.log(`RouteProcessor3 deployed to ${address}`)
 }

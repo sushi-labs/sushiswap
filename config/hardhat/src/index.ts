@@ -497,7 +497,7 @@ export const defaultConfig: HardhatUserConfig = {
       saveDeployments: true,
     },
     telos: {
-      url: 'https://rpc1.us.telos.net/evm',
+      url: 'https://mainnet.telos.net/evm',
       accounts,
       chainId: 40,
       live: true,
