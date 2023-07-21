@@ -8,7 +8,7 @@ import { Row } from './types'
 export const PoolAPRCell: FC<Row<{ totalApr1d: number; incentives: Pool['incentives'] }>> = ({ row }) => {
   return (
     <TooltipProvider>
-      <Tooltip>
+      <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
           <span className="underline decoration-dotted flex items-center justify-end gap-1 text-sm text-gray-900 dark:text-slate-50">
             {formatPercent(row.totalApr1d)}

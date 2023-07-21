@@ -49,7 +49,7 @@ export const REWARDS_V3_APR_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
   accessorFn: (row) => row.meanAPR ?? 0,
   cell: (props) => (
     <TooltipProvider>
-      <Tooltip>
+      <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
           <span className="underline decoration-dotted flex items-center justify-end gap-1 text-sm text-gray-900 dark:text-slate-50">
             {formatNumber(props.row.original.meanAPR)}%

@@ -10,7 +10,7 @@ export const SwitchAppType: FC = () => {
         Swap
       </Button>
       <TooltipProvider>
-        <Tooltip>
+        <Tooltip delayDuration={0}>
           <TooltipTrigger className="cursor-default">
             <div
               role="button"
