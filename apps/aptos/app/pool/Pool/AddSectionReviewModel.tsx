@@ -22,21 +22,28 @@ export const AddSectionReviewModal: FC<Props> = ({ children }) => {
       {({ close }) => (
         <>
           <div className="flex justify-between items-center pb-4">
-            <h3 className="flex justify-center text-lg font-medium leading-6 text-slate-100">Add Liquidity</h3>
-            <Button variant="outlined" color="default" className="!p-2 !rounded-full" onClick={close}>
-              <XMarkIcon height={24} width={24} className="hover:text-slate-50 text-slate-100" />
+            <h3 className="flex justify-center text-lg font-medium leading-6 text-white-100 dark:text-slate-50">
+              Add Liquidity
+            </h3>
+            <Button
+              variant="outlined"
+              color="default"
+              className="hover:bg-slate-300 bg-slate-200 !p-2 !rounded-full"
+              onClick={close}
+            >
+              <XMarkIcon height={24} width={24} className="hover:text-white-50 text-white-100 dark:text-slate-50" />
             </Button>
           </div>
           <div className="!my-0 grid grid-cols-12 items-center">
-            <div className="relative flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
+            <div className="relative flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl dark:bg-slate-700/40 dark:border-slate-200/5">
               <div className="flex items-center gap-2">
                 <div className="flex items-center justify-between w-full gap-2">
-                  <Typography variant="h3" weight={500} className="truncate text-slate-50">
+                  <Typography variant="h3" weight={500} className="truncate text-white-50 dark:text-slate-50">
                     {amount0}
                   </Typography>
                   <div className="flex items-center justify-end gap-2 text-right">
                     <img src={token0.logoURI} className="rounded-full" width={26} height={56} />
-                    <Typography variant="h3" weight={500} className="text-right text-slate-50">
+                    <Typography variant="h3" weight={500} className="text-right text-white-50 dark:text-slate-50">
                       {token0?.symbol}
                     </Typography>
                   </div>
@@ -47,19 +54,19 @@ export const AddSectionReviewModal: FC<Props> = ({ children }) => {
               </Typography>
             </div>
             <div className="flex items-center justify-center col-span-12 -mt-2.5 -mb-2.5">
-              <div className="p-0.5 bg-slate-700 border-2 border-slate-800 ring-1 ring-slate-200/5 z-10 rounded-full">
-                <PlusIcon width={18} height={18} className="text-slate-200" />
+              <div className="p-0.5 dark:bg-slate-700 border-2 dark:border-slate-800 ring-1 ring-slate-200/5 z-10 rounded-full">
+                <PlusIcon width={18} height={18} className="dark:text-slate-50" />
               </div>
             </div>
-            <div className="flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
+            <div className="flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl dark:bg-slate-700/40 dark:border-slate-200/5">
               <div className="flex items-center gap-2">
                 <div className="flex items-center justify-between w-full gap-2">
-                  <Typography variant="h3" weight={500} className="truncate text-slate-50">
+                  <Typography variant="h3" weight={500} className="truncate text-white-50 dark:text-slate-50">
                     {amount1}
                   </Typography>
                   <div className="flex items-center justify-end gap-2 text-right">
                     <img src={token1.logoURI} className="rounded-full" width={26} height={56} />
-                    <Typography variant="h3" weight={500} className="text-right text-slate-50">
+                    <Typography variant="h3" weight={500} className="text-right text-white-50 dark:text-slate-50">
                       {token1?.symbol}
                     </Typography>
                   </div>
@@ -78,9 +85,9 @@ export const AddSectionReviewModal: FC<Props> = ({ children }) => {
                   onClick={() => toggleInvert()}
                   variant="sm"
                   weight={600}
-                  className="flex items-center gap-1 text-slate-100"
+                  className="flex items-center gap-1 text-white-100 dark:text-slate-50"
                 >
-                  {content} {<span className="font-normal text-slate-300">(${})</span>}
+                  {content} {<span className="font-normal text-white-300 dark:text-slate-50">(${})</span>}
                 </Typography>
               )}
             </Rate>

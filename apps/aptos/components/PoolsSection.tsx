@@ -14,8 +14,8 @@ export default function PoolsSection() {
                 <Button
                   size="sm"
                   variant={selected ? 'outlined' : 'empty'}
-                  color="default"
-                  className="!rounded-full !h-[36px]"
+                  color="bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12]"
+                  className="!rounded-full !h-[36px] !font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12] whitespace-nowrap"
                 >
                   All
                 </Button>

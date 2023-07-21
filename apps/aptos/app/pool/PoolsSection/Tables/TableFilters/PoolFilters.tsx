@@ -12,7 +12,7 @@ export const PoolFilters: FC = () => {
   return (
     <>
       <Tab.Group>
-        <Tab.Panels className="bg-gray-50 dark:bg-white/[0.02] pt-4">
+        <Tab.Panels className="bg-gray-50 dark:bg-white/[0.02] pt-4 ">
           <Container maxWidth="7xl" className="mx-auto px-4 lg:pb-[54px]">
             <div className="flex flex-col gap-4 mb-4">
               <div className="flex gap-4">

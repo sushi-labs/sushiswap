@@ -37,7 +37,7 @@ export function Add() {
   return (
     <Layout className="flex justify-center">
       <div className="flex flex-col gap-2">
-        <Link className="flex items-center gap-4 mb-2 group" href="/" shallow={true}>
+        <Link className="flex items-center gap-4 mb-2 group" href="/pool" shallow={true}>
           <IconButton
             icon={ArrowLeftIcon}
             iconProps={{
