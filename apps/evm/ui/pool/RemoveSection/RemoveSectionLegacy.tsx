@@ -237,6 +237,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
     chainId: _pool.chainId,
     prepare,
     onSettled,
+    onSuccess: () => {
+      setPercentage('')
+    },
     enabled: approved,
   })
 

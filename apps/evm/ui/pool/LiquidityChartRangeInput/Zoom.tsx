@@ -1,4 +1,4 @@
-import { ZoomInIcon, ZoomOutIcon } from '@heroicons/react-v1/solid'
+import { MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon } from '@heroicons/react/20/solid'
 import { Button } from '@sushiswap/ui/components/button'
 import { ScaleLinear, select, zoom, ZoomBehavior, zoomIdentity, ZoomTransform } from 'd3'
 import React, { FC, useEffect, useMemo, useRef } from 'react'
@@ -97,10 +97,10 @@ export const Zoom: FC<ZoomProps> = ({
       )}
       <div className="flex gap-2">
         <Button size="sm" variant="secondary" onClick={zoomIn} disabled={false}>
-          <ZoomInIcon width={20} height={20} />
+          <MagnifyingGlassPlusIcon width={20} height={20} />
         </Button>
         <Button size="sm" variant="secondary" onClick={zoomOut} disabled={false}>
-          <ZoomOutIcon width={20} height={20} />
+          <MagnifyingGlassMinusIcon width={20} height={20} />
         </Button>
       </div>
     </div>

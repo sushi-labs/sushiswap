@@ -36,6 +36,7 @@ interface AddSectionReviewModalTridentProps {
   token1: Type | undefined
   input0: Amount<Type> | undefined
   input1: Amount<Type> | undefined
+  onSuccess: () => void
   open: boolean
   close(): void
 }
@@ -51,6 +52,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   token1,
   input0,
   input1,
+  onSuccess,
   open,
   close,
 }) => {
@@ -246,7 +248,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
     onSettled,
     onSuccess: () => {
       setSignature(undefined)
-      close()
+      onSuccess()
     },
     enabled: approved,
   })

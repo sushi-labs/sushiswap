@@ -229,7 +229,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
       token0 &&
       token0Value &&
       Amount.fromRawAmount(token0, JSBI.subtract(token0Value.quotient, positionAmount0.quotient)),
-    [token0Value, position, token0]
+    [positionAmount0, token0, token0Value]
   )
 
   const refund1 = useMemo(
@@ -238,7 +238,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
       token1 &&
       token1Value &&
       Amount.fromRawAmount(token1, JSBI.subtract(token1Value.quotient, positionAmount1.quotient)),
-    [token1Value, position, token1]
+    [positionAmount1, token1, token1Value]
   )
 
   const [v3FiatValue0, v3FiatValue1, refund0FiatValue, refund1FiatValue] = useTokenAmountDollarValues({
@@ -300,7 +300,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
 
   return (
     <>
-      <div className="flex col-span-2 gap-6">
+      <div className="flex col-span-1 gap-6 sm:col-span-2">
         {v2SpotPrice && (
           <div className="flex flex-col col-span-2 gap-2">
             <List.Label className="!px-0">V2 Price</List.Label>

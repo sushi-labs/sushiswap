@@ -29,6 +29,7 @@ interface AddSectionReviewModalConcentratedProps
   existingPosition: Position | undefined
   tokenId: number | string | undefined
   children({ open, setOpen }: { open: boolean; setOpen(open: boolean): void }): ReactNode
+  onSuccess: () => void
   successLink?: string
 }
 
@@ -47,6 +48,7 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
   pricesAtTicks,
   ticksAtLimit,
   tokenId,
+  onSuccess,
   successLink,
 }) => {
   const [open, setOpen] = useState(false)
@@ -200,6 +202,7 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
               token1={token1}
               chainId={chainId}
               tokenId={tokenId}
+              onSuccess={onSuccess}
               successLink={successLink}
             >
               {({ onClick, isWritePending, isLoading, isError, error, isConfirming }) => (

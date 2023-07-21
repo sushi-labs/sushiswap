@@ -27,10 +27,10 @@ export const Hero: FC = () => {
     <section className="flex flex-col justify-between gap-12 lg:flex-row lg:items-center">
       <div className="flex flex-col items-center flex-grow gap-6 lg:items-start">
         <div className="flex flex-col gap-2">
-          <span className="tracking-tight text-center lg:text-left font-semibold text-5xl text-gray-800 dark:text-slate-200">
+          <span className="text-5xl font-semibold tracking-tight text-center text-gray-800 lg:text-left dark:text-slate-200">
             Provide Liquidity
             <span className="font-medium text-gray-500 dark:text-slate-500">
-              <br /> and receive fees & rewards<sup className="text-sm top-[-24px]">1</sup>
+              <br /> and receive fees & rewards
             </span>
           </span>
         </div>

@@ -16,10 +16,9 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewlilley.com>",
   "sideEffects": false,
-  "module": "dist/index.js",
+  "main": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
-  "type": "module",
   "files": [
     "dist"
   ],

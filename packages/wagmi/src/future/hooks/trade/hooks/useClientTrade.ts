@@ -1,20 +1,21 @@
-import { useQuery } from '@tanstack/react-query'
-import { usePoolsCodeMap } from '../../pools'
-import { useFeeData } from 'wagmi'
+import { calculateSlippageAmount } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Price, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { usePrice, UseTradeParams, UseTradeReturnWriteArgs } from '@sushiswap/react-query'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
-import { BigNumber } from 'ethers'
-import { LiquidityProviders, Router } from '@sushiswap/router'
+import { usePrice, UseTradeParams, UseTradeReturnWriteArgs } from '@sushiswap/react-query'
 import {
   isRouteProcessor3ChainId,
   isRouteProcessorChainId,
   routeProcessor3Address,
   routeProcessorAddress,
 } from '@sushiswap/route-processor'
+import { Router } from '@sushiswap/router'
 import { HexString } from '@sushiswap/types'
-import { calculateSlippageAmount } from '@sushiswap/amm'
+import { useQuery } from '@tanstack/react-query'
+import { BigNumber } from 'ethers'
+import { useFeeData } from 'wagmi'
+
+import { usePoolsCodeMap } from '../../pools'
 
 export const useClientTrade = (variables: UseTradeParams) => {
   const { chainId, fromToken, toToken, slippagePercentage, carbonOffset, amount, enabled, recipient } = variables
@@ -28,6 +29,8 @@ export const useClientTrade = (variables: UseTradeParams) => {
     enabled,
     withBentoPools: true,
   })
+
+  // console.debug('fee data', feeData)
 
   return useQuery({
     queryKey: [
@@ -185,7 +188,6 @@ ${logPools}
                     : undefined,
                 route,
                 functionName: isOffset ? 'transferValueAndprocessRoute' : 'processRoute',
-                // functionName: 'processRoute',
                 writeArgs,
                 overrides,
               }),

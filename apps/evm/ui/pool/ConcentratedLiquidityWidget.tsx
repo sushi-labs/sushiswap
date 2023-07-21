@@ -261,6 +261,10 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                     ticksAtLimit={ticksAtLimit}
                     tokenId={tokenId}
                     existingPosition={existingPosition}
+                    onSuccess={() => {
+                      _onFieldAInput('')
+                      _onFieldBInput('')
+                    }}
                     successLink={successLink}
                   >
                     {({ setOpen }) => (
