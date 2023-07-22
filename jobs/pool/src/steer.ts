@@ -3,6 +3,7 @@ import { STEER_ENABLED_NETWORKS, STEER_SUBGRAPGH_NAME, SteerChainId, SUBGRAPH_HO
 import { isPromiseFulfilled } from '@sushiswap/validate'
 
 import { getBuiltGraphSDK } from '../.graphclient/index.js'
+import { updatePoolsWithSteerVaults } from './etl/pool/load.js'
 import { upsertVaults } from './etl/steer/load.js'
 
 export async function steer() {
@@ -13,6 +14,7 @@ export async function steer() {
     const transformed = transform(chainsWithVaults)
 
     await upsertVaults(transformed)
+    await updatePoolsWithSteerVaults()
 
     const endTime = performance.now()
     console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)

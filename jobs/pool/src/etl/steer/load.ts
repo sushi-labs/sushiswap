@@ -192,5 +192,26 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
     }),
   ])
 
+  const currentVaults = await client.steerVault.findMany({
+    select: {
+      id: true,
+    },
+    where: {
+      isEnabled: true,
+      wasEnabled: false,
+    },
+  })
+
+  await client.steerVault.updateMany({
+    where: {
+      id: { in: currentVaults.map((vault) => vault.id) },
+    },
+    data: {
+      wasEnabled: true,
+    },
+  })
+
+  await client.$disconnect()
+
   console.log(`LOAD - Updated ${updated} and created ${created.count} vaults. `)
 }
