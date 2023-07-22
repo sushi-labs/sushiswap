@@ -74,7 +74,7 @@ const TOOLS_NAVIGATION_LINKS: { title: string; href: string; description: string
 ]
 
 const navigationContainerVariants = cva(
-  'px-4 sticky flex items-center flex-grow gap-4 top-0 z-[1070] min-h-[56px] max-h-[56px] h-[56px]',
+  'px-4 sticky flex items-center flex-grow gap-4 top-0 z-50 min-h-[56px] max-h-[56px] h-[56px]',
   {
     variants: {
       variant: {

@@ -12,6 +12,7 @@ import {
   getSortedRowModel,
   OnChangeFn,
   PaginationState,
+  Row,
   RowData,
   SortingState,
   type Table as TableType,
@@ -19,7 +20,7 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table'
-import { default as React } from 'react'
+import { default as React, ReactNode } from 'react'
 
 import { Table, TableBody, TableCell, TableCellAsLink, TableHead, TableHeader, TableRow } from '../tablenew'
 import { DataTableColumnHeader } from './data-table-column-header'
@@ -36,13 +37,14 @@ interface DataTableProps<TData, TValue> {
   testId?: string
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
-  toolbar?: (table: TableType<TData>) => React.ReactNode
+  toolbar?: (table: TableType<TData>) => ReactNode
   pagination?: boolean
   loading: boolean
   linkFormatter?: (value: TData) => string
   state?: Partial<TableState>
   onSortingChange?: OnChangeFn<SortingState>
   onPaginationChange?: OnChangeFn<PaginationState>
+  rowRenderer?: (row: Row<TData>, value: ReactNode) => ReactNode
 }
 
 export function DataTable<TData, TValue>({
@@ -56,6 +58,7 @@ export function DataTable<TData, TValue>({
   state,
   onSortingChange,
   onPaginationChange,
+  rowRenderer,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -121,25 +124,30 @@ export function DataTable<TData, TValue>({
                   </TableRow>
                 ))
             ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row, r) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'} testdata-id={`${testId}-${r}-tr`}>
-                  {row.getVisibleCells().map((cell, i) =>
-                    linkFormatter ? (
-                      <TableCellAsLink
-                        href={linkFormatter(row.original)}
-                        key={cell.id}
-                        testdata-id={`${testId}-${r}-${i}-td`}
-                      >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCellAsLink>
-                    ) : (
-                      <TableCell testdata-id={`${testId}-${r}-${i}-td`} key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    )
-                  )}
-                </TableRow>
-              ))
+              table.getRowModel().rows.map((row, r) => {
+                const _row = (
+                  <TableRow data-state={row.getIsSelected() && 'selected'} testdata-id={`${testId}-${r}-tr`}>
+                    {row.getVisibleCells().map((cell, i) =>
+                      linkFormatter ? (
+                        <TableCellAsLink
+                          href={linkFormatter(row.original)}
+                          key={cell.id}
+                          testdata-id={`${testId}-${r}-${i}-td`}
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCellAsLink>
+                      ) : (
+                        <TableCell testdata-id={`${testId}-${r}-${i}-td`} key={cell.id}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      )
+                    )}
+                  </TableRow>
+                )
+
+                if (rowRenderer) return rowRenderer(row, _row)
+                return _row
+              })
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">

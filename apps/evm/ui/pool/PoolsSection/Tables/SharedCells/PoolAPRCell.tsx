@@ -10,7 +10,7 @@ export const PoolAPRCell: FC<Row<{ totalApr1d: number; incentives: Pool['incenti
     <TooltipProvider>
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
-          <span className="underline decoration-dotted flex items-center justify-end gap-1 text-sm text-gray-900 dark:text-slate-50">
+          <span className="underline decoration-dotted text-sm text-gray-900 dark:text-slate-50">
             {formatPercent(row.totalApr1d)}
           </span>
         </TooltipTrigger>

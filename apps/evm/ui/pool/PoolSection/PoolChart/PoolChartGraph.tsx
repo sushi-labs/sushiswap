@@ -181,7 +181,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
   )
 
   return (
-    <>
+    <div className="rounded-xl bg-secondary p-4">
       <div className="flex flex-col">
         <p className="text-xl font-medium text-gray-900 dark:text-slate-50">
           <span className="hoveredItemValue">
@@ -206,6 +206,6 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
       ) : (
         <ReactECharts option={DEFAULT_OPTION} style={{ height: 400 }} />
       )}
-    </>
+    </div>
   )
 }

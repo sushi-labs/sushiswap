@@ -56,7 +56,7 @@ const DialogRoot: FC<DialogRootProps> = ({
 
   return (
     <Transition show={open} as={Fragment} afterLeave={afterLeave} unmount={unmount}>
-      <HeadlessDialog className="relative z-[1080]" onClose={onClose} {...rest}>
+      <HeadlessDialog className="relative z-50" onClose={onClose} {...rest}>
         {variant === 'transparent' && (
           <>
             <Transition.Child

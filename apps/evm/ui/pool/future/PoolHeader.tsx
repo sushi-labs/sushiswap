@@ -1,4 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
+import { usePool } from '@sushiswap/client'
+import { Token } from '@sushiswap/currency'
 import { formatPercent } from '@sushiswap/format'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Currency } from '@sushiswap/ui/components/currency'
@@ -12,7 +14,7 @@ import React, { FC, useMemo } from 'react'
 type PoolHeader = {
   title?: string
   isLoading: boolean
-  pool: Pool | null | undefined
+  pool: Pool | null | undefined | ReturnType<typeof usePool>['data']
   chainId: ChainId
   apy?: {
     fees: number | undefined
@@ -22,9 +24,30 @@ type PoolHeader = {
 }
 
 export const PoolHeader: FC<PoolHeader> = ({ title, isLoading, pool, chainId, apy, priceRange }) => {
-  const unwrappedTokens = useMemo(() => {
+  const [token0, token1] = useMemo(() => {
     if (!pool) return [undefined, undefined]
-    return [unwrapToken(pool.token0), unwrapToken(pool.token1)]
+    if (pool instanceof Pool) {
+      return [unwrapToken(pool.token0), unwrapToken(pool.token1)]
+    }
+
+    return [
+      unwrapToken(
+        new Token({
+          chainId: pool.chainId,
+          address: pool.token0.address,
+          decimals: pool.token0.decimals,
+          symbol: pool.token0.symbol,
+        })
+      ),
+      unwrapToken(
+        new Token({
+          chainId: pool.chainId,
+          address: pool.token1.address,
+          decimals: pool.token1.decimals,
+          symbol: pool.token1.symbol,
+        })
+      ),
+    ]
   }, [pool])
 
   if (isLoading) {
@@ -42,7 +65,7 @@ export const PoolHeader: FC<PoolHeader> = ({ title, isLoading, pool, chainId, ap
     )
   }
 
-  if (pool && unwrappedTokens[0] && unwrappedTokens[1])
+  if (pool && token0 && token1)
     return (
       <div className="flex gap-6 h-[52px]">
         <div className="flex min-w-[44px]">
@@ -52,25 +75,27 @@ export const PoolHeader: FC<PoolHeader> = ({ title, isLoading, pool, chainId, ap
             badgeContent={<NetworkIcon chainId={chainId} width={24} height={24} />}
           >
             <Currency.IconList iconWidth={48} iconHeight={48}>
-              <Currency.Icon currency={unwrappedTokens[0]} />
-              <Currency.Icon currency={unwrappedTokens[1]} />
+              <Currency.Icon currency={token0} />
+              <Currency.Icon currency={token1} />
             </Currency.IconList>
           </Badge>
         </div>
         <div className="flex flex-col flex-grow gap-0.5">
           <h1 className="text-xl font-semibold text-gray-900 dark:text-slate-50">
             {title && title}
-            {unwrapToken(pool.token0).symbol}/{unwrapToken(pool.token1).symbol}
+            {token0.symbol}/{token1.symbol}
           </h1>
           <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-400">
             {apy ? (
               <>
                 <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>{formatPercent((apy.fees || 0) + (apy.rewards || 0))} APR</TooltipTrigger>
-                    <TooltipContent>
-                      <p>{`${formatPercent(apy.fees)} fee APR + ${formatPercent(apy.rewards)} reward APR`}</p>
-                    </TooltipContent>
+                  <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      <span className="underline decoration-dotted text-sm text-gray-900 dark:text-slate-50">
+                        {formatPercent((apy.fees || 0) + (apy.rewards || 0))} APR
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>The APR displayed is algorithmic and subject to change.</TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
                 <span className="text-[10px]">•</span>
@@ -86,7 +111,7 @@ export const PoolHeader: FC<PoolHeader> = ({ title, isLoading, pool, chainId, ap
             ) : (
               <></>
             )}
-            {pool.fee / 10000}% Fee{' '}
+            {pool instanceof Pool ? pool.fee / 10000 : pool.swapFee * 100}% Fee{' '}
             {apy && apy.rewards ? (
               <>
                 <span className="text-[10px]">•</span> Farm rewards available ✨

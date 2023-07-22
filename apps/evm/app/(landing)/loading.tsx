@@ -6,7 +6,7 @@ import React from 'react'
 
 export default function Loading() {
   return (
-    <div className="fixed inset-0 z-[1080] bg-black flex items-center justify-center">
+    <div className="fixed inset-0 z-50 bg-black flex items-center justify-center">
       <Transition
         appear
         show={true}

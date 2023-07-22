@@ -28,7 +28,7 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
           <></>
         )}
         {data ? (
-          <span className={classNames('font-medium', data.liquidity1dChange > 0 ? 'text-green' : 'text-red')}>
+          <span className={classNames('text-xs', data.liquidity1dChange > 0 ? 'text-green' : 'text-red')}>
             {data.liquidity1dChange > 0 ? '+' : '-'}
             {formatPercent(Math.abs(data.liquidity1dChange))}
           </span>

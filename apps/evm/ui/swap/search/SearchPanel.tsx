@@ -70,7 +70,7 @@ export const SearchPanel: FC = () => {
   }, [network1, tokenList, tokenSearch])
 
   return (
-    <Dialog variant="opaque" open={open} onClose={onClose} className="fixed inset-0 z-[1080]">
+    <Dialog variant="opaque" open={open} onClose={onClose} className="fixed inset-0 z-50">
       <div>
         <div className="flex items-center gap-4">
           <TextField

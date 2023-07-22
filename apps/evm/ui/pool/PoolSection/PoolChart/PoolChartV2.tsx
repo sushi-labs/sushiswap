@@ -25,7 +25,7 @@ const PoolChartV2: FC<PoolChartV2Props> = ({ address, chainId }) => {
   const [period, setPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Month)
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-2">
       <div className="flex flex-col items-center justify-between gap-5 md:flex-row">
         <PoolChartTypes charts={charts} selectedChart={chart} setChart={setChart} />
         <PoolChartPeriods periods={periods} selectedPeriod={period} setPeriod={setPeriod} />

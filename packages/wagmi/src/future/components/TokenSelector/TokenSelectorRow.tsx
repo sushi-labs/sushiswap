@@ -114,7 +114,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
                 variant="ghost"
                 name="pin"
                 onClick={onPin}
-                className={classNames(pin.isPinned ? '' : 'grayscale opacity-50', 'z-[1080]')}
+                className={classNames(pin.isPinned ? '' : 'grayscale opacity-50', 'z-50')}
               />
             )}
           </div>

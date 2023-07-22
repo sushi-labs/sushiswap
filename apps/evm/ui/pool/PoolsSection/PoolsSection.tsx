@@ -1,5 +1,4 @@
 import { Tab } from '@headlessui/react'
-import { Bars3Icon } from '@heroicons/react/24/solid'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Container } from '@sushiswap/ui/components/container'
 import { Toggle } from '@sushiswap/ui/components/toggle'
@@ -31,7 +30,7 @@ export const PoolsSection: FC = () => {
             <Tab as={Fragment}>
               {({ selected }) => (
                 <Toggle size="sm" pressed={selected}>
-                  <Bars3Icon width={20} height={20} />
+                  All Pools
                 </Toggle>
               )}
             </Tab>
