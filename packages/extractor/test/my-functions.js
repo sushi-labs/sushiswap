@@ -10,7 +10,7 @@ const {
 const { ChainId } = require('@sushiswap/chain')
 
 function setQuery(context, events, done) {
-  const chainIds = [ChainId.ARBITRUM, ChainId.ETHEREUM]
+  const chainIds = [ChainId.ETHEREUM, ChainId.ARBITRUM, ChainId.OPTIMISM]
   const chainId = chainIds[Math.floor(Math.random() * chainIds.length)]
   const tokensIn = [Native.onChain(chainId)]
   const tokenIn = tokensIn[Math.floor(Math.random() * tokensIn.length)]
