@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { LiquidityProviders } from '@sushiswap/router'
 import { SUSHISWAP_V2_FACTORY_ADDRESS, SUSHISWAP_V2_INIT_CODE_HASH } from '@sushiswap/v2-sdk'
-import { POOL_INIT_CODE_HASH } from '@sushiswap/v3-sdk'
+import { POOL_INIT_CODE_HASH, SUSHISWAP_V3_INIT_CODE_HASH, V3_FACTORY_ADDRESS } from '@sushiswap/v3-sdk'
 import { mainnet } from '@sushiswap/viem-config'
 import { Address } from 'viem'
 
@@ -27,6 +27,14 @@ function sushiswapV2Factory(chain: 1) {
     provider: LiquidityProviders.SushiSwapV2,
     fee: 0.003,
     initCodeHash: SUSHISWAP_V2_INIT_CODE_HASH[chain],
+  } as const
+}
+
+function sushiswapV3Factory(chain: 1) {
+  return {
+    address: V3_FACTORY_ADDRESS[chain] as Address,
+    provider: LiquidityProviders.SushiSwapV3,
+    initCodeHash: SUSHISWAP_V3_INIT_CODE_HASH[chain],
   } as const
 }
 
@@ -62,7 +70,7 @@ export const EXTRACTOR_CONFIG = {
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
     factoriesV2: [uniswapV2Factory(ChainId.ETHEREUM), sushiswapV2Factory(ChainId.ETHEREUM)],
-    factoriesV3: [uniswapV3Factory(ChainId.ETHEREUM)],
+    factoriesV3: [uniswapV3Factory(ChainId.ETHEREUM), sushiswapV3Factory(ChainId.ETHEREUM)],
     tickHelperContract: TICK_LENS_ADDRESS[ChainId.ETHEREUM],
     cacheDir: './cache',
     logDepth: 50,
