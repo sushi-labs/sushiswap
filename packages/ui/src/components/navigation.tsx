@@ -92,8 +92,8 @@ interface NavContainerProps extends VariantProps<typeof navigationContainerVaria
 const NavigationContainer: React.FC<NavContainerProps> = ({ children, variant }) => {
   return (
     <div className={navigationContainerVariants({ variant })}>
-      <SushiIcon width={24} height={24} className="hidden sm:block" />
-      <div className="flex justify-between gap-4 items-center flex-grow">{children}</div>
+      <SushiIcon width={24} height={24} />
+      <div className="flex items-center justify-between flex-grow gap-4">{children}</div>
     </div>
   )
 }
@@ -156,7 +156,7 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant }) => {
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
-      <div className="flex gap-2 items-center">{rightElement}</div>
+      <div className="flex items-center gap-2">{rightElement}</div>
     </NavigationContainer>
   )
 }
@@ -175,7 +175,7 @@ const NavigationListItem = React.forwardRef<React.ElementRef<'a'>, React.Compone
             {...props}
           >
             <div className="text-sm font-medium leading-none">{title}</div>
-            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{children}</p>
+            <p className="text-sm leading-snug line-clamp-2 text-muted-foreground">{children}</p>
           </a>
         </NavigationMenuLink>
       </li>
