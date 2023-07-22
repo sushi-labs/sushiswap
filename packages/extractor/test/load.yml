@@ -33,14 +33,14 @@ scenarios:
   - flow:
       - function: "setQuery"
       - get:
-          url: "/?chainId={{ query.chainId }}&tokenIn={{ query.tokenIn }}&tokenOut={{ query.tokenOut }}&amount={{ query.amount }}"
+          url: "/?chainId={{ query.chainId }}&tokenIn={{ query.tokenIn }}&tokenOut={{ query.tokenOut }}&amount={{ query.amount }}&to={{ query.to }}"
           capture:
-            - json: "$.status"
-              as: status
+            - json: "$.route"
+              as: route
           expect:
             - statusCode: 200
             - contentType: json
-            - hasProperty: status
+            - hasProperty: route.status
             - equals:
                 - "Success"
-                - "{{ status }}"
+                - "{{ route.status }}"

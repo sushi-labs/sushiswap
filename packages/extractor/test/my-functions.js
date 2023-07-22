@@ -21,9 +21,10 @@ function setQuery(context, events, done) {
   context.vars['query'] = {
     ...context.vars['query'],
     chainId,
-    tokenIn: tokenIn.isNative ? '' : tokenIn.address,
+    tokenIn: tokenIn.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : tokenIn.address,
     tokenOut: tokenOut.address,
     amount: Math.floor(Math.random() * Math.pow(10, tokenIn.decimals)).toString(),
+    to: '0x8f54C8c2df62c94772ac14CcFc85603742976312',
   }
   return done()
 }
