@@ -29,7 +29,7 @@ config:
   # https://docs.art/reference/extensions
   plugins:
     ensure: {}
-    apdex: {}
+    # apdex: {}
     metrics-by-endpoint: {}
   apdex:
     threshold: 100
