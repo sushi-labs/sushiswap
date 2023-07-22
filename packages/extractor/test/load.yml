@@ -16,11 +16,6 @@ config:
       rampTo: 30
       name: Spike phase
   processor: "./my-functions.js"
-  # variables:
-  #   productIds:
-  #     - ["id1", "id2", "id3"]
-  #     - ["id4", "id5", "id6"]
-
   # Load & configure a couple of useful plugins
   # https://docs.art/reference/extensions
   plugins:
@@ -37,18 +32,6 @@ config:
 scenarios:
   - flow:
       - function: "setQuery"
-      - get:
-          url: "/?chainId={{ query.chainId }}&tokenIn={{ query.tokenIn }}&tokenOut={{ query.tokenOut }}&amount={{ query.amount }}"
-          capture:
-            - json: "$.status"
-              as: status
-          expect:
-            - statusCode: 200
-            - contentType: json
-            - hasProperty: status
-            - equals:
-                - "Success"
-                - "{{ status }}"
       - get:
           url: "/?chainId={{ query.chainId }}&tokenIn={{ query.tokenIn }}&tokenOut={{ query.tokenOut }}&amount={{ query.amount }}"
           capture:
