@@ -168,8 +168,9 @@ model SushiPool {
   wasIncentivized Boolean     @default(false)
   incentives      Incentive[]
 
-  hasSteerVault        Boolean @default(false)
-  steerVaults          SteerVault[]
+  hasEnabledSteerVault  Boolean @default(false)
+  hadEnabledSteerVault  Boolean @default(false)
+  steerVaults           SteerVault[]
 
   createdAtBlockNumber BigInt   @db.UnsignedBigInt
   isBlacklisted        Boolean  @default(false)
@@ -258,6 +259,9 @@ model SteerVault {
 
   adjustmentFrequency     Int
   lastAdjustmentTimestamp Int
+
+  isEnabled               Boolean @default(false)
+  wasEnabled              Boolean @default(false)
 
   generatedAt             DateTime @default(now())
   updatedAt               DateTime    @updatedAt
