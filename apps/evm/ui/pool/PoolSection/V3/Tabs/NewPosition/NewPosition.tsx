@@ -1,11 +1,12 @@
-import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
+// import { SteerStrategy } from '@sushiswap/database'
+// import { formatPercent } from '@sushiswap/format'
+// import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
+// import { Button } from '@sushiswap/ui'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { useAccount } from '@sushiswap/wagmi'
-import { unwrapToken } from 'lib/functions'
-import React, { FC, useMemo, useState } from 'react'
-import { ContentBlock } from 'ui/pool/AddPage/ContentBlock'
-import { ConcentratedLiquidityWidget } from 'ui/pool/ConcentratedLiquidityWidget'
-import { SelectPricesWidget } from 'ui/pool/NewPositionSection'
+import React, { FC /*, useMemo, useState*/ } from 'react'
+
+import { Manual } from './Manual'
+// import { SteerStrategies } from './Steer'
 
 interface NewPositionProps {
   address: string
@@ -13,53 +14,57 @@ interface NewPositionProps {
 }
 
 export const NewPosition: FC<NewPositionProps> = ({ address, chainId }) => {
-  const { address: account } = useAccount()
+  return <Manual address={address} chainId={chainId} />
 
-  const [invertTokens, setInvertTokens] = useState(false)
+  // const { data: poolStats, isLoading, isError } = useConcentratedLiquidityPoolStats({ chainId, address })
 
-  const { data: poolStats } = useConcentratedLiquidityPoolStats({ chainId, address })
-  const [_token0, _token1] = useMemo(() => {
-    const tokens = [
-      poolStats?.token0 ? unwrapToken(poolStats.token0) : undefined,
-      poolStats?.token1 ? unwrapToken(poolStats.token1) : undefined,
-    ]
+  // const [selectedStrategy, setStrategy] = useState<SteerStrategy | 'Manual'>('Manual')
 
-    return invertTokens ? tokens.reverse() : tokens
-  }, [invertTokens, poolStats?.token0, poolStats?.token1])
+  // const strategyComponent = useMemo(() => {
+  //   if (selectedStrategy === 'Manual') return <Manual address={address} chainId={chainId} />
 
-  return (
-    <div className="grid gap-10 md:grid-cols-2">
-      <div className="flex">
-        <SelectPricesWidget
-          chainId={chainId}
-          token0={_token0}
-          token1={_token1}
-          feeAmount={poolStats?.feeAmount}
-          tokenId={undefined}
-          switchTokens={() => setInvertTokens((prev) => !prev)}
-        />
-      </div>
-      <div className="flex flex-col gap-3">
-        <ContentBlock
-          title={
-            <>
-              How much <span className="text-gray-900 dark:text-white">liquidity</span> do you want to provide?
-            </>
-          }
-        >
-          <ConcentratedLiquidityWidget
-            chainId={chainId}
-            account={account}
-            token0={_token0}
-            token1={_token1}
-            feeAmount={poolStats?.feeAmount}
-            tokensLoading={false}
-            existingPosition={undefined}
-            tokenId={undefined}
-            successLink={`/pools/${chainId}:${address}?activeTab=myPositions`}
-          />
-        </ContentBlock>
-      </div>
-    </div>
-  )
+  //   return SteerStrategies[selectedStrategy]
+  // }, [address, chainId, selectedStrategy])
+
+  // const strategies = useMemo(() => {
+  //   const manualStrategy = {
+  //     id: 'Manual',
+  //     strategy: 'Manual',
+  //     apr: undefined,
+  //   } as const
+
+  //   if (!poolStats?.steerVaults) return [manualStrategy]
+
+  //   return [manualStrategy, ...poolStats.steerVaults]
+  // }, [poolStats?.steerVaults])
+
+  // if (isLoading) return <div>Loading...</div>
+  // if (isError || poolStats?.steerVaults.length === 0) return <Manual address={address} chainId={chainId} />
+
+  // Steer is WIP
+
+  // return (
+  //   <div>
+  //     <div className="grid grid-cols-2">
+  //       <div className="flex flex-col space-y-4">
+  //         {strategies.map((vault) => (
+  //           // Place a space before every capital letter
+  //           <Button
+  //             key={vault.id}
+  //             onClick={() => setStrategy(vault.strategy)}
+  //             variant="secondary"
+  //             className="justify-left"
+  //             size="xl"
+  //           >
+  //             <div className="inline-flex justify-between w-full">
+  //               <div>{vault.strategy.replace(/([A-Z])/g, ' $1').trim()}</div>
+  //               <div>{vault.apr ? formatPercent(vault.apr) : ''}</div>
+  //             </div>
+  //           </Button>
+  //         ))}
+  //       </div>
+  //     </div>
+  //     {strategyComponent}
+  //   </div>
+  // )
 }
