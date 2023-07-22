@@ -191,7 +191,7 @@ importers:
       prettier: 2.8.1
       ts-node: 10.9.1
       typescript: 5.1.6
-      viem: 1.0.2
+      viem: 1.4.0
       zod: 3.21.4
     dependencies:
       '@fastify/cors': 8.2.0
@@ -205,7 +205,7 @@ importers:
       '@whatwg-node/fetch': 0.8.4
       ethers: 5.7.2
       fastify: 4.11.0
-      viem: 1.0.2_zno6rcmvi3mruj4xg7lanqhjom
+      viem: 1.4.0_zno6rcmvi3mruj4xg7lanqhjom
       zod: 3.21.4
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
@@ -643,7 +643,7 @@ importers:
       tailwindcss: 3.3.2
       typescript: 5.1.6
       unimported: 1.28.0
-      viem: 1.0.2
+      viem: 1.4.0
       wagmi: legacy-v0
       zod: 3.21.4
     dependencies:
@@ -726,7 +726,7 @@ importers:
       react-slider: 2.0.4_react@18.2.0
       react-virtualized-auto-sizer: 1.0.7_biqbaboplfbrettd7655fr4n2y
       swr: 2.1.5_react@18.2.0
-      viem: 1.0.2_zno6rcmvi3mruj4xg7lanqhjom
+      viem: 1.4.0_zno6rcmvi3mruj4xg7lanqhjom
       wagmi: 0.12.19_thipbjmm77fmzin7qvxmor4o7e
       zod: 3.21.4
     devDependencies:
@@ -1096,7 +1096,7 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       tsup: 7.1.0
       typescript: 5.1.6
-      viem: 1.0.2
+      viem: 1.4.0
     dependencies:
       '@sushiswap/chain': link:../../packages/chain
     devDependencies:
@@ -1106,7 +1106,7 @@ importers:
       '@sushiswap/typescript-config': link:../typescript
       tsup: 7.1.0_typescript@5.1.6
       typescript: 5.1.6
-      viem: 1.0.2_typescript@5.1.6
+      viem: 1.4.0_typescript@5.1.6
 
   config/wagmi:
     specifiers:
@@ -1767,7 +1767,7 @@ importers:
       ethers: 5.7.2
       express: 4.18.2
       typescript: 5.1.6
-      viem: 1.0.2
+      viem: 1.4.0
       zod: 3.21.4
     dependencies:
       '@sushiswap/abi': link:../abi
@@ -1782,7 +1782,7 @@ importers:
       '@uniswap/v3-core': 1.0.1
       abitype: 0.8.2_zno6rcmvi3mruj4xg7lanqhjom
       ethers: 5.7.2
-      viem: 1.0.2_zno6rcmvi3mruj4xg7lanqhjom
+      viem: 1.4.0_zno6rcmvi3mruj4xg7lanqhjom
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -2148,7 +2148,7 @@ importers:
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
       typescript: 5.1.6
-      viem: 1.0.2
+      viem: 1.4.0
       zod: 3.21.4
     dependencies:
       '@ethersproject/abi': 5.7.0
@@ -2173,7 +2173,7 @@ importers:
       node-fetch: 2.6.6
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
-      viem: 1.0.2_zno6rcmvi3mruj4xg7lanqhjom
+      viem: 1.4.0_zno6rcmvi3mruj4xg7lanqhjom
       zod: 3.21.4
     devDependencies:
       '@sushiswap/database': link:../database
@@ -2672,7 +2672,7 @@ importers:
       tsup: 7.1.0
       typechain: ^8.0.0
       typescript: 5.1.6
-      viem: 1.0.2
+      viem: 1.4.0
       vitest: 0.33.0
       wagmi: 0.12.18
       zod: 3.21.4
@@ -2719,7 +2719,7 @@ importers:
       '@uniswap/v2-core': 1.0.1
       '@uniswap/v3-periphery': 1.4.1
       next-themes: 0.2.1_huavqdni4pobvfczobpbvo6vhq
-      viem: 1.0.2_zno6rcmvi3mruj4xg7lanqhjom
+      viem: 1.4.0_zno6rcmvi3mruj4xg7lanqhjom
       zod: 3.21.4
     optionalDependencies:
       next: 13.4.8_biqbaboplfbrettd7655fr4n2y
@@ -2899,7 +2899,7 @@ importers:
       ts-node: 10.9.1
       typechain: 8.1.1
       typescript: 5.1.6
-      viem: 1.0.2
+      viem: 1.4.0
     devDependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/providers': 5.7.2
@@ -2955,7 +2955,7 @@ importers:
       ts-node: 10.9.1_j2tenfqo3ojkwe6mxlyxo4e3lm
       typechain: 8.1.1_typescript@5.1.6
       typescript: 5.1.6
-      viem: 1.0.2_typescript@5.1.6
+      viem: 1.4.0_typescript@5.1.6
 
   protocols/sushixswap:
     specifiers:
@@ -3074,7 +3074,7 @@ importers:
       tsup: 7.1.0
       typechain: 8.1.1
       typescript: 5.1.6
-      viem: 1.0.2
+      viem: 1.4.0
     devDependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/bytes': 5.7.0
@@ -3132,7 +3132,7 @@ importers:
       tsup: 7.1.0_kg5gpyde6u3komamnnl67a6oc4
       typechain: 8.1.1_typescript@5.1.6
       typescript: 5.1.6
-      viem: 1.0.2_typescript@5.1.6
+      viem: 1.4.0_typescript@5.1.6
 
   protocols/trident:
     specifiers:
@@ -3201,7 +3201,7 @@ packages:
     dependencies:
       '@fastify/deepmerge': 1.3.0
       ajv: 8.12.0
-      ajv-formats: 2.1.1_ajv@8.12.0
+      ajv-formats: 2.1.1
       fast-deep-equal: 3.1.3
       rfdc: 1.3.0
 
@@ -18396,8 +18396,8 @@ packages:
     dependencies:
       typescript: 5.1.6
 
-  /@wagmi/chains/1.1.0_typescript@5.1.6:
-    resolution: {integrity: sha512-pWZlxBk0Ql8E7DV8DwqlbBpOyUdaG9UDlQPBxJNALuEK1I0tbQ3AVvSDnlsEIt06UPmPo5o27gzs3hwPQ/A+UA==}
+  /@wagmi/chains/1.6.0_typescript@5.1.6:
+    resolution: {integrity: sha512-5FRlVxse5P4ZaHG3GTvxwVANSmYJas1eQrTBHhjxVtqXoorm0aLmCHbhmN8Xo1yu09PaWKlleEvfE98yH4AgIw==}
     peerDependencies:
       typescript: '>=5.0.4'
     peerDependenciesMeta:
@@ -19588,24 +19588,28 @@ packages:
       zod: 3.21.4
     dev: false
 
-  /abitype/0.8.7_typescript@5.1.6:
-    resolution: {integrity: sha512-wQ7hV8Yg/yKmGyFpqrNZufCxbszDe5es4AZGYPBitocfSqXtjrTG9JMWFcc4N30ukl2ve48aBTwt7NJxVQdU3w==}
+  /abitype/0.9.3_typescript@5.1.6:
+    resolution: {integrity: sha512-dz4qCQLurx97FQhnb/EIYTk/ldQ+oafEDUqC0VVIeQS1Q48/YWt/9YNfMmp9SLFqN41ktxny3c8aYxHjmFIB/w==}
     peerDependencies:
       typescript: '>=5.0.4'
       zod: ^3 >=3.19.1
     peerDependenciesMeta:
+      typescript:
+        optional: true
       zod:
         optional: true
     dependencies:
       typescript: 5.1.6
     dev: true
 
-  /abitype/0.8.7_zno6rcmvi3mruj4xg7lanqhjom:
-    resolution: {integrity: sha512-wQ7hV8Yg/yKmGyFpqrNZufCxbszDe5es4AZGYPBitocfSqXtjrTG9JMWFcc4N30ukl2ve48aBTwt7NJxVQdU3w==}
+  /abitype/0.9.3_zno6rcmvi3mruj4xg7lanqhjom:
+    resolution: {integrity: sha512-dz4qCQLurx97FQhnb/EIYTk/ldQ+oafEDUqC0VVIeQS1Q48/YWt/9YNfMmp9SLFqN41ktxny3c8aYxHjmFIB/w==}
     peerDependencies:
       typescript: '>=5.0.4'
       zod: ^3 >=3.19.1
     peerDependenciesMeta:
+      typescript:
+        optional: true
       zod:
         optional: true
     dependencies:
@@ -19794,17 +19798,6 @@ packages:
 
   /ajv-formats/2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
-    peerDependenciesMeta:
-      ajv:
-        optional: true
-    dependencies:
-      ajv: 8.12.0
-    dev: false
-
-  /ajv-formats/2.1.1_ajv@8.12.0:
-    resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
-    peerDependencies:
-      ajv: ^8.0.0
     peerDependenciesMeta:
       ajv:
         optional: true
@@ -26611,7 +26604,7 @@ packages:
       '@whatwg-node/fetch': 0.8.8
       '@whatwg-node/server': 0.7.7
       ajv: 8.12.0
-      ajv-formats: 2.1.1_ajv@8.12.0
+      ajv-formats: 2.1.1
       hotscript: 1.0.12
       json-schema-to-ts: 2.9.1
       openapi-types: 12.1.3
@@ -40173,40 +40166,50 @@ packages:
       unist-util-stringify-position: 3.0.3
       vfile-message: 3.1.4
 
-  /viem/1.0.2_typescript@5.1.6:
-    resolution: {integrity: sha512-3Bn+CuInU8zsdKqqzFDWL018x4B9HDjPIISztReGcBjikY+04tP7CrQQCf1lbinK3wWrEoFU9VDiptCciNjUQA==}
+  /viem/1.4.0_typescript@5.1.6:
+    resolution: {integrity: sha512-TqkkQo0Tz3+qtL9YdaSa4ce4dBBE5WSj/iQG70SJMZPEPnuWv6iMjSWwD89CI1YnXeJJTsOMlzLRgjPEeTXxtw==}
+    peerDependencies:
+      typescript: '>=5.0.4'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
     dependencies:
       '@adraffy/ens-normalize': 1.9.0
       '@noble/curves': 1.0.0
       '@noble/hashes': 1.3.0
       '@scure/bip32': 1.3.0
       '@scure/bip39': 1.2.0
-      '@wagmi/chains': 1.1.0_typescript@5.1.6
-      abitype: 0.8.7_typescript@5.1.6
+      '@wagmi/chains': 1.6.0_typescript@5.1.6
+      abitype: 0.9.3_typescript@5.1.6
       isomorphic-ws: 5.0.0_ws@8.12.0
+      typescript: 5.1.6
       ws: 8.12.0
     transitivePeerDependencies:
       - bufferutil
-      - typescript
       - utf-8-validate
       - zod
     dev: true
 
-  /viem/1.0.2_zno6rcmvi3mruj4xg7lanqhjom:
-    resolution: {integrity: sha512-3Bn+CuInU8zsdKqqzFDWL018x4B9HDjPIISztReGcBjikY+04tP7CrQQCf1lbinK3wWrEoFU9VDiptCciNjUQA==}
+  /viem/1.4.0_zno6rcmvi3mruj4xg7lanqhjom:
+    resolution: {integrity: sha512-TqkkQo0Tz3+qtL9YdaSa4ce4dBBE5WSj/iQG70SJMZPEPnuWv6iMjSWwD89CI1YnXeJJTsOMlzLRgjPEeTXxtw==}
+    peerDependencies:
+      typescript: '>=5.0.4'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
     dependencies:
       '@adraffy/ens-normalize': 1.9.0
       '@noble/curves': 1.0.0
       '@noble/hashes': 1.3.0
       '@scure/bip32': 1.3.0
       '@scure/bip39': 1.2.0
-      '@wagmi/chains': 1.1.0_typescript@5.1.6
-      abitype: 0.8.7_zno6rcmvi3mruj4xg7lanqhjom
+      '@wagmi/chains': 1.6.0_typescript@5.1.6
+      abitype: 0.9.3_zno6rcmvi3mruj4xg7lanqhjom
       isomorphic-ws: 5.0.0_ws@8.12.0
+      typescript: 5.1.6
       ws: 8.12.0
     transitivePeerDependencies:
       - bufferutil
-      - typescript
       - utf-8-validate
       - zod
     dev: false

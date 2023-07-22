@@ -32,7 +32,7 @@ const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 export class Extractor {
   extractorV2?: UniV2Extractor
   extractorV3?: UniV3Extractor
-
+  multiCallAggregator?: MultiCallAggregator
   /// @param client
   /// @param factoriesV2 list of supported V2 factories
   /// @param factoriesV3 list of supported V3 factories
@@ -51,8 +51,12 @@ export class Extractor {
     logDepth: number
     logging?: boolean
   }) {
-    const multiCallAggregator = new MultiCallAggregator(args.client)
-    const tokenManager = new TokenManager(multiCallAggregator, args.cacheDir, `tokens-${multiCallAggregator.chainId}`)
+    this.multiCallAggregator = new MultiCallAggregator(args.client)
+    const tokenManager = new TokenManager(
+      this.multiCallAggregator,
+      args.cacheDir,
+      `tokens-${this.multiCallAggregator.chainId}`
+    )
     if (args.factoriesV2.length > 0)
       this.extractorV2 = new UniV2Extractor(
         args.client,
@@ -60,7 +64,7 @@ export class Extractor {
         args.cacheDir,
         args.logDepth,
         args.logging !== undefined ? args.logging : false,
-        multiCallAggregator,
+        this.multiCallAggregator,
         tokenManager
       )
     if (args.factoriesV3.length > 0)
@@ -71,7 +75,7 @@ export class Extractor {
         args.cacheDir,
         args.logDepth,
         args.logging !== undefined ? args.logging : false,
-        multiCallAggregator,
+        this.multiCallAggregator,
         tokenManager
       )
   }

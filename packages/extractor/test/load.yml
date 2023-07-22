@@ -3,10 +3,6 @@ config:
   # It's designed to be highly scalable
   target: http://localhost:3000
   phases:
-    # - duration: 10
-    #   arrivalRate: 1
-    #   rampTo: 5
-    #   name: Warm up phase
     - duration: 60
       arrivalRate: 1
       rampTo: 5
@@ -29,6 +25,7 @@ config:
   # https://docs.art/reference/extensions
   plugins:
     ensure: {}
+    expect: {}
     # apdex: {}
     metrics-by-endpoint: {}
   apdex:
@@ -42,15 +39,25 @@ scenarios:
       - function: "setQuery"
       - get:
           url: "/?chainId={{ query.chainId }}&tokenIn={{ query.tokenIn }}&tokenOut={{ query.tokenOut }}&amount={{ query.amount }}"
-      # - function: "setQueryForArbitrum"
-      # - get:
-      #     url: "/?chainId={{ query.chainId }}&tokenIn={{ query.tokenIn }}&tokenOut={{ query.tokenOut }}&amount={{ query.amount }}"
-      # - function: "setQueryForEthereum"
-      # - get:
-      #     url: "/?chainId={{ query.chainId }}&tokenIn={{ query.tokenIn }}&tokenOut={{ query.tokenOut }}&amount={{ query.amount }}"
-      # - loop:
-      #   - get:
-      #       url: "/get-pool-codes-for-tokens"
-      #   - get:
-      #       url: "/pool-codes"
-      #   count: 100
+          capture:
+            - json: "$.status"
+              as: status
+          expect:
+            - statusCode: 200
+            - contentType: json
+            - hasProperty: status
+            - equals:
+                - "Success"
+                - "{{ status }}"
+      - get:
+          url: "/?chainId={{ query.chainId }}&tokenIn={{ query.tokenIn }}&tokenOut={{ query.tokenOut }}&amount={{ query.amount }}"
+          capture:
+            - json: "$.status"
+              as: status
+          expect:
+            - statusCode: 200
+            - contentType: json
+            - hasProperty: status
+            - equals:
+                - "Success"
+                - "{{ status }}"

@@ -5,6 +5,7 @@ import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { config } from '@sushiswap/viem-config'
 import { BigNumber } from 'ethers'
 import express, { Express, Request, Response } from 'express'
+import path from 'path'
 import { Address, createPublicClient } from 'viem'
 import z from 'zod'
 
@@ -34,18 +35,17 @@ async function setup() {
     const client = createPublicClient(config[chainId])
     const extractor = new Extractor({ ...EXTRACTOR_CONFIG[chainId], client })
     await extractor.start()
+    extractors.set(chainId, extractor)
 
     const tokenManager = new TokenManager(
-      extractor.extractorV2?.multiCallAggregator || (extractor.extractorV3?.multiCallAggregator as MultiCallAggregator),
-      __dirname,
-      `tokens-${chainId}`
+      extractor?.multiCallAggregator as MultiCallAggregator,
+      path.resolve(__dirname, '../cache'),
+      `./tokens-${chainId}`
     )
     await tokenManager.addCachedTokens()
+    tokenManagers.set(chainId, tokenManager)
 
     const nativeProvider = new NativeWrapProvider(chainId, client)
-
-    extractors.set(chainId, extractor)
-    tokenManagers.set(chainId, tokenManager)
     nativeProviders.set(chainId, nativeProvider)
   }
 }
@@ -56,51 +56,41 @@ async function main() {
   const app: Express = express()
 
   app.get('/', async (req: Request, res: Response) => {
-    console.log('HTTP: GET /', req.query)
-    const { chainId, tokenIn, tokenOut, amount } = querySchema.parse(req.query)
-    // console.log('HTTP: GET /', chainId, tokenIn, tokenOut, amount)
-    if (!isSupportedChainId(chainId)) {
-      throw new Error('chainId is not supported')
-    }
-
+    console.log('HTTP: GET /', JSON.stringify(req.query))
+    const { chainId, tokenIn: _tokenIn, tokenOut: _tokenOut, amount } = querySchema.parse(req.query)
     const tokenManager = tokenManagers.get(chainId) as TokenManager
-
+    const [tokenIn, tokenOut] = await Promise.all([
+      _tokenIn === '' ? Native.onChain(chainId) : tokenManager.findToken(_tokenIn as Address),
+      tokenManager.findToken(_tokenOut as Address),
+    ])
+    if (!tokenIn || !tokenOut) {
+      throw new Error('tokenIn or tokenOut is not supported')
+    }
     const extractor = extractors.get(chainId) as Extractor
     const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId]
-    const poolCodes = extractor.getPoolCodesForTokens(tokens)
+    const poolCodes = extractor.getPoolCodesForTokens(
+      Array.from(new Set([tokenIn.wrapped, tokenOut.wrapped, ...tokens]))
+    )
 
     const poolCodesMap = new Map<string, PoolCode>()
     poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
     const nativeProvider = nativeProviders.get(chainId) as NativeWrapProvider
     nativeProvider.getCurrentPoolList().forEach((p) => poolCodesMap.set(p.pool.address, p))
 
-    const fetchTokens = Promise.all([
-      tokenIn === '' ? Native.onChain(chainId) : tokenManager.findToken(tokenIn as Address),
-      tokenManager.findToken(tokenOut as Address),
-    ])
-
-    fetchTokens.then(([tokenIn, tokenOut]) => {
-      if (!tokenIn || !tokenOut) {
-        throw new Error('tokenIn or tokenOut is not supported')
-      }
-      const bestRoute = Router['findBestRoute'](
-        poolCodesMap,
-        chainId,
-        Native.onChain(chainId),
-        BigNumber.from(amount.toString()),
-        tokenOut,
-        30e9
-      )
-      return res.json(bestRoute)
-    })
+    const bestRoute = Router['findBestRoute'](
+      poolCodesMap,
+      chainId,
+      tokenIn,
+      BigNumber.from(amount.toString()),
+      tokenOut,
+      30e9
+    )
+    return res.json(bestRoute)
   })
 
   app.get('/get-pool-codes-for-tokens', (req: Request, res: Response) => {
-    console.log('HTTP: GET /get-pool-codes-for-tokens', req.query)
+    console.log('HTTP: GET /get-pool-codes-for-tokens', JSON.stringify(req.query))
     const { chainId } = querySchema.parse(req.query)
-    if (!isSupportedChainId(chainId)) {
-      throw new Error('chainId is not supported')
-    }
     const extractor = extractors.get(chainId) as Extractor
     const tokenManager = tokenManagers.get(chainId) as TokenManager
     const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values()).slice(0, 100))
@@ -109,11 +99,8 @@ async function main() {
   })
 
   app.get('/pool-codes', (req: Request, res: Response) => {
-    console.log('HTTP: GET /pool-codes', req.query)
+    console.log('HTTP: GET /pool-codes', JSON.stringify(req.query))
     const { chainId } = querySchema.parse(req.query)
-    if (!isSupportedChainId(chainId)) {
-      throw new Error('chainId is not supported')
-    }
     const extractor = extractors.get(chainId) as Extractor
     const poolCodes = extractor.getCurrentPoolCodes()
     res.json(poolCodes)

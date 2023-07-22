@@ -45,7 +45,7 @@
     "@uniswap/v3-core": "1.0.1",
     "abitype": "0.8.2",
     "ethers": "5.7.2",
-    "viem": "1.0.2"
+    "viem": "1.4.0"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
