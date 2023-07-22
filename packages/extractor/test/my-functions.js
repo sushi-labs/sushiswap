@@ -1,49 +1,32 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { WETH9, Native, WETH9_ADDRESS } = require('@sushiswap/currency')
+const {
+  Native,
+  USDC,
+  USDT,
+  SUSHI,
+  WBTC,
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+} = require('@sushiswap/currency')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { ChainId } = require('@sushiswap/chain')
 
 function setQuery(context, events, done) {
-  // console.log({ context, events, done })
-  // Set the "query" variable for the virtual user.
-  context.vars['query'] = {
-    ...context.vars['query'],
-    chainId: '1',
-    tokenIn: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-    tokenOut: WETH9_ADDRESS[1],
-    amount: Math.floor(Math.random() * 1e18).toString(),
-  }
-  return done()
-}
+  const chainIds = [ChainId.ARBITRUM, ChainId.ETHEREUM]
+  const chainId = chainIds[Math.floor(Math.random() * chainIds.length)]
+  const tokensIn = [Native.onChain(chainId)]
+  const tokenIn = tokensIn[Math.floor(Math.random() * tokensIn.length)]
+  const tokensOut = [WBTC[chainId], USDC[chainId], USDT[chainId], SUSHI[chainId]]
+  const tokenOut = tokensOut[Math.floor(Math.random() * tokensOut.length)]
 
-function setQueryForEthereum(context, events, done) {
-  // console.log({ context, events, done })
-  // Set the "query" variable for the virtual user.
   context.vars['query'] = {
     ...context.vars['query'],
-    chainId: ChainId.ETHEREUM,
-    tokenIn: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-    tokenOut: WETH9_ADDRESS[ChainId.ETHEREUM],
-    amount: Math.floor(Math.random() * 1e18).toString(),
-  }
-  return done()
-}
-
-function setQueryForArbitrum(context, events, done) {
-  // console.log({ context, events, done })
-  // Set the "query" variable for the virtual user.
-  context.vars['query'] = {
-    ...context.vars['query'],
-    chainId: ChainId.ARBITRUM,
-    tokenIn: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-    tokenOut: WETH9_ADDRESS[ChainId.ARBITRUM],
-    amount: Math.floor(Math.random() * 1e18).toString(),
+    chainId,
+    tokenIn: tokenIn.isNative ? '' : tokenIn.address,
+    tokenOut: tokenOut.address,
+    amount: Math.floor(Math.random() * Math.pow(10, tokenIn.decimals)).toString(),
   }
   return done()
 }
 
 module.exports = {
   setQuery,
-  setQueryForEthereum,
-  setQueryForArbitrum,
 }

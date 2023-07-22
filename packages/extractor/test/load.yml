@@ -39,7 +39,7 @@ config:
         - http.response_time.p95: 75
 scenarios:
   - flow:
-      # - function: "setQuery"
+      - function: "setQuery"
       - get:
           url: "/?chainId={{ query.chainId }}&tokenIn={{ query.tokenIn }}&tokenOut={{ query.tokenOut }}&amount={{ query.amount }}"
       # - function: "setQueryForArbitrum"

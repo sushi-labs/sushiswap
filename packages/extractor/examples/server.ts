@@ -1,8 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
+import { Native } from '@sushiswap/currency'
+import { NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { config } from '@sushiswap/viem-config'
+import { BigNumber } from 'ethers'
 import express, { Express, Request, Response } from 'express'
-import { createPublicClient } from 'viem'
+import { Address, createPublicClient } from 'viem'
 import z from 'zod'
 
 import { Extractor, MultiCallAggregator, TokenManager } from '../src'
@@ -24,6 +27,7 @@ const querySchema = z.object({
 
 const extractors = new Map<SupportChainId, Extractor>()
 const tokenManagers = new Map<SupportChainId, TokenManager>()
+const nativeProviders = new Map<SupportChainId, NativeWrapProvider>()
 
 async function setup() {
   for (const chainId of SUPPORTED_CHAIN_IDS) {
@@ -38,8 +42,11 @@ async function setup() {
     )
     await tokenManager.addCachedTokens()
 
+    const nativeProvider = new NativeWrapProvider(chainId, client)
+
     extractors.set(chainId, extractor)
     tokenManagers.set(chainId, tokenManager)
+    nativeProviders.set(chainId, nativeProvider)
   }
 }
 
@@ -48,17 +55,44 @@ async function main() {
 
   const app: Express = express()
 
-  app.get('/', (req: Request, res: Response) => {
+  app.get('/', async (req: Request, res: Response) => {
     console.log('HTTP: GET /', req.query)
     const { chainId, tokenIn, tokenOut, amount } = querySchema.parse(req.query)
     // console.log('HTTP: GET /', chainId, tokenIn, tokenOut, amount)
     if (!isSupportedChainId(chainId)) {
       throw new Error('chainId is not supported')
     }
+
+    const tokenManager = tokenManagers.get(chainId) as TokenManager
+
     const extractor = extractors.get(chainId) as Extractor
     const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId]
     const poolCodes = extractor.getPoolCodesForTokens(tokens)
-    return res.json(poolCodes)
+
+    const poolCodesMap = new Map<string, PoolCode>()
+    poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
+    const nativeProvider = nativeProviders.get(chainId) as NativeWrapProvider
+    nativeProvider.getCurrentPoolList().forEach((p) => poolCodesMap.set(p.pool.address, p))
+
+    const fetchTokens = Promise.all([
+      tokenIn === '' ? Native.onChain(chainId) : tokenManager.findToken(tokenIn as Address),
+      tokenManager.findToken(tokenOut as Address),
+    ])
+
+    fetchTokens.then(([tokenIn, tokenOut]) => {
+      if (!tokenIn || !tokenOut) {
+        throw new Error('tokenIn or tokenOut is not supported')
+      }
+      const bestRoute = Router['findBestRoute'](
+        poolCodesMap,
+        chainId,
+        Native.onChain(chainId),
+        BigNumber.from(amount.toString()),
+        tokenOut,
+        30e9
+      )
+      return res.json(bestRoute)
+    })
   })
 
   app.get('/get-pool-codes-for-tokens', (req: Request, res: Response) => {
