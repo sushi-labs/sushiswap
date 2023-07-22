@@ -3,6 +3,10 @@ config:
   # It's designed to be highly scalable
   target: http://localhost:3000
   phases:
+    # - duration: 10
+    #   arrivalRate: 1
+    #   rampTo: 5
+    #   name: Warm up phase
     - duration: 60
       arrivalRate: 1
       rampTo: 5
@@ -15,6 +19,12 @@ config:
       arrivalRate: 10
       rampTo: 30
       name: Spike phase
+  processor: "./my-functions.js"
+  # variables:
+  #   productIds:
+  #     - ["id1", "id2", "id3"]
+  #     - ["id4", "id5", "id6"]
+
   # Load & configure a couple of useful plugins
   # https://docs.art/reference/extensions
   plugins:
@@ -29,9 +39,12 @@ config:
         - http.response_time.p95: 75
 scenarios:
   - flow:
-      - loop:
-        - get:
-            url: "/"
-        - get:
-            url: "/pool-codes"
-        count: 100
+      - function: "setQuery"
+      - get:
+          url: "/?chainId={{ query.chainId }}&tokenIn={{ query.tokenIn }}&tokenOut={{ query.tokenOut }}&amount={{ query.amount }}"
+      # - loop:
+      #   - get:
+      #       url: "/get-pool-codes-for-tokens"
+      #   - get:
+      #       url: "/pool-codes"
+      #   count: 100

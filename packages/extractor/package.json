@@ -57,6 +57,7 @@
     "@types/node": "18.11.18",
     "artillery": "2.0.0-35",
     "express": "4.18.2",
-    "typescript": "5.0.4"
+    "typescript": "5.0.4",
+    "zod": "3.21.4"
   }
 }
