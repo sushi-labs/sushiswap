@@ -6,14 +6,7 @@ import { createPublicClient } from 'viem'
 import z from 'zod'
 
 import { Extractor, MultiCallAggregator, TokenManager } from '../src'
-import { EXTRACTOR_CONFIG } from './config'
-
-const SUPPORTED_CHAIN_IDS = [1] as const
-
-type SupportChainId = (typeof SUPPORTED_CHAIN_IDS)[number]
-
-export const isSupportedChainId = (chainId: number): chainId is SupportChainId =>
-  SUPPORTED_CHAIN_IDS.includes(chainId as SupportChainId)
+import { EXTRACTOR_CONFIG, isSupportedChainId, SupportChainId, SUPPORTED_CHAIN_IDS } from './config'
 
 const querySchema = z.object({
   chainId: z.coerce

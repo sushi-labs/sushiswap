@@ -2,8 +2,15 @@ import { ChainId } from '@sushiswap/chain'
 import { LiquidityProviders } from '@sushiswap/router'
 import { SUSHISWAP_V2_FACTORY_ADDRESS, SUSHISWAP_V2_INIT_CODE_HASH } from '@sushiswap/v2-sdk'
 import { POOL_INIT_CODE_HASH, SUSHISWAP_V3_INIT_CODE_HASH, V3_FACTORY_ADDRESS } from '@sushiswap/v3-sdk'
-import { mainnet } from '@sushiswap/viem-config'
+import { arbitrum, mainnet } from '@sushiswap/viem-config'
 import { Address } from 'viem'
+
+export const SUPPORTED_CHAIN_IDS = [ChainId.ETHEREUM, ChainId.ARBITRUM] as const
+
+export type SupportChainId = (typeof SUPPORTED_CHAIN_IDS)[number]
+
+export const isSupportedChainId = (chainId: number): chainId is SupportChainId =>
+  SUPPORTED_CHAIN_IDS.includes(chainId as SupportChainId)
 
 export const ROUTE_PROCESSOR_3_ADDRESS = {
   [ChainId.ETHEREUM]: '0x827179dD56d07A7eeA32e3873493835da2866976' as Address,
@@ -41,7 +48,8 @@ function sushiswapV3Factory(chain: 1) {
 export const UniswapV2FactoryAddress = {
   [ChainId.ETHEREUM]: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
 } as const
-function uniswapV2Factory(chain: 1) {
+
+function uniswapV2Factory(chain: typeof ChainId.ETHEREUM) {
   return {
     address: UniswapV2FactoryAddress[chain] as Address,
     provider: LiquidityProviders.UniswapV2,
@@ -57,7 +65,7 @@ export const UniswapV3FactoryAddress = {
   [ChainId.BSC]: '0xdB1d10011AD0Ff90774D0C6Bb92e5C5c8b4461F7',
   [ChainId.CELO]: '0xAfE208a311B21f13EF87E33A90049fC17A7acDEc',
 } as const
-function uniswapV3Factory(chain: 1) {
+function uniswapV3Factory(chain: SupportChainId) {
   return {
     address: UniswapV3FactoryAddress[chain] as Address,
     provider: LiquidityProviders.UniswapV3,
@@ -76,5 +84,16 @@ export const EXTRACTOR_CONFIG = {
     logDepth: 50,
     logging: true,
     routeProcessor3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.ETHEREUM],
+  },
+  [ChainId.ARBITRUM]: {
+    providerURL: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
+    chain: arbitrum,
+    factoriesV2: [],
+    factoriesV3: [uniswapV3Factory(ChainId.ARBITRUM)],
+    tickHelperContract: TICK_LENS_ADDRESS[ChainId.ARBITRUM],
+    cacheDir: './cache',
+    logDepth: 300,
+    logging: true,
+    RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.ARBITRUM],
   },
 }
