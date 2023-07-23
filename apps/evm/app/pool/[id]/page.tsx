@@ -106,7 +106,7 @@ export default function Page({ params }: { params: { id: string } }) {
               </RadioGroup.Option>
             </RadioGroup>
           </div>
-          <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
+          <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-4 h-0.5" />
           <div className={tab === SelectedTab.Analytics ? 'flex' : 'hidden'}>
             <div className="flex flex-col gap-9">
               <UnknownTokenAlert pool={pool} />

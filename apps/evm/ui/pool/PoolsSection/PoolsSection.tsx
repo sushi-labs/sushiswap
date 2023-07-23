@@ -58,7 +58,7 @@ export const PoolsSection: FC = () => {
         </Container>
         <Tab.Panels className="bg-gray-50 dark:bg-white/[0.02] pb-20 h-full">
           <Tab.Panel unmount={false}>
-            <Container maxWidth="full" className="flex flex-col px-4 mx-auto h-full">
+            <Container maxWidth="full" className="flex flex-col mx-auto h-full">
               <PoolsTable />
             </Container>
           </Tab.Panel>
