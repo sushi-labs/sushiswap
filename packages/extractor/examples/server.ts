@@ -47,11 +47,7 @@ async function setup() {
     const client = createPublicClient(config[chainId])
     const extractor = new Extractor({ ...EXTRACTOR_CONFIG[chainId], client })
     await extractor.start()
-    // await Promise.all(
-    //   extractor?.extractorV2?.factories?.map((f) => extractor?.extractorV2?.addPoolsFromFactory(f?.address))
-    // )
     extractors.set(chainId, extractor)
-
     const tokenManager = new TokenManager(
       extractor?.multiCallAggregator as MultiCallAggregator,
       path.resolve(__dirname, '../cache'),
@@ -59,7 +55,6 @@ async function setup() {
     )
     await tokenManager.addCachedTokens()
     tokenManagers.set(chainId, tokenManager)
-
     const nativeProvider = new NativeWrapProvider(chainId, client)
     nativeProviders.set(chainId, nativeProvider)
   }
