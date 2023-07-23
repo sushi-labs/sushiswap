@@ -72,6 +72,7 @@ export default function Page({ params }: { params: { id: string } }) {
             />
             <RadioGroup value={tab} onChange={setTab} className="flex flex-wrap gap-2 mt-3">
               <RadioGroup.Option
+                size="sm"
                 value={SelectedTab.Analytics}
                 as={Button}
                 icon={ChartBarIcon}
@@ -81,6 +82,7 @@ export default function Page({ params }: { params: { id: string } }) {
                 Statistics
               </RadioGroup.Option>
               <RadioGroup.Option
+                size="sm"
                 value={SelectedTab.Rewards}
                 as={Button}
                 variant="secondary"
@@ -89,6 +91,7 @@ export default function Page({ params }: { params: { id: string } }) {
                 Rewards
               </RadioGroup.Option>
               <RadioGroup.Option
+                size="sm"
                 value={SelectedTab.IncreaseLiq}
                 as={Button}
                 icon={PlusIcon}
@@ -98,6 +101,7 @@ export default function Page({ params }: { params: { id: string } }) {
                 Increase Liquidity
               </RadioGroup.Option>{' '}
               <RadioGroup.Option
+                size="sm"
                 value={SelectedTab.DecreaseLiq}
                 as={Button}
                 icon={MinusIcon}
@@ -107,6 +111,7 @@ export default function Page({ params }: { params: { id: string } }) {
                 Decrease Liquidity
               </RadioGroup.Option>
               <RadioGroup.Option
+                size="sm"
                 value={SelectedTab.Transactions}
                 as={Button}
                 variant="secondary"
@@ -118,16 +123,12 @@ export default function Page({ params }: { params: { id: string } }) {
           </div>
           <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-4 h-0.5" />
           <div className={tab === SelectedTab.Analytics ? 'flex' : 'hidden'}>
-            <div className="flex flex-col gap-9">
+            <div className="flex flex-col gap-9 flex-1">
               <UnknownTokenAlert pool={pool} />
-              <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
-                <div className="flex flex-col order-1 gap-9">
-                  <PoolChartV2 address={address} chainId={chainId} />
-                  <PoolStats pool={pool} />
-                  <PoolComposition pool={pool} />
-                  <PoolRewards pool={pool} />
-                </div>
-              </div>
+              <PoolChartV2 address={address} chainId={chainId} />
+              <PoolStats pool={pool} />
+              <PoolComposition pool={pool} />
+              <PoolRewards pool={pool} />
             </div>
           </div>
           <div className={tab === SelectedTab.Transactions ? 'block' : 'hidden'}>
