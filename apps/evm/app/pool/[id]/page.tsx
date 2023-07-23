@@ -14,6 +14,7 @@ import {
   AddSectionTrident,
   PoolChartV2,
   PoolComposition,
+  PoolMyRewards,
   PoolPositionProvider,
   PoolPositionRewardsProvider,
   PoolPositionStakedProvider,
@@ -35,6 +36,7 @@ enum SelectedTab {
   IncreaseLiq,
   DecreaseLiq,
   Transactions,
+  Rewards,
 }
 
 export default function Page({ params }: { params: { id: string } }) {
@@ -79,6 +81,14 @@ export default function Page({ params }: { params: { id: string } }) {
                 Statistics
               </RadioGroup.Option>
               <RadioGroup.Option
+                value={SelectedTab.Rewards}
+                as={Button}
+                variant="secondary"
+                color={tab === SelectedTab.Rewards ? 'blue' : 'default'}
+              >
+                Rewards
+              </RadioGroup.Option>
+              <RadioGroup.Option
                 value={SelectedTab.IncreaseLiq}
                 as={Button}
                 icon={PlusIcon}
@@ -117,18 +127,17 @@ export default function Page({ params }: { params: { id: string } }) {
                   <PoolComposition pool={pool} />
                   <PoolRewards pool={pool} />
                 </div>
-
-                {/*<div className="flex flex-col order-2 gap-4">*/}
-                {/*  <PoolMyRewards pool={pool} />*/}
-                {/*</div>*/}
               </div>
             </div>
           </div>
           <div className={tab === SelectedTab.Transactions ? 'block' : 'hidden'}>
             <PoolTransactionsV2 pool={pool} poolId={address} />
           </div>
+          <div className={tab === SelectedTab.Rewards ? 'block' : 'hidden'}>
+            <PoolMyRewards pool={pool} />
+          </div>
           <div className={tab === SelectedTab.IncreaseLiq ? 'block' : 'hidden'}>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               {isTridentPoolProtocol(pool.protocol) ? (
                 <AddSectionTrident pool={pool} />
               ) : (
@@ -138,7 +147,7 @@ export default function Page({ params }: { params: { id: string } }) {
             </div>
           </div>
           <div className={tab === SelectedTab.DecreaseLiq ? 'block' : 'hidden'}>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <RemoveSectionUnstake poolId={pool.id} />
               {isTridentPoolProtocol(pool.protocol) ? (
                 <RemoveSectionTrident pool={pool} />
