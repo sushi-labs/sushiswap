@@ -438,6 +438,19 @@ export class UniV2Extractor {
     return pools.map((p) => p.poolCode)
   }
 
+  getTokensPoolsQuantity(tokenMap: Map<Token, number>) {
+    const add = (token: RToken) => {
+      const num = tokenMap.get(token as Token) || 0
+      tokenMap.set(token as Token, num + 1)
+    }
+    Array.from(this.poolMap.values()).forEach((p) => {
+      if (p.status == PoolStatus.ValidPool || p.status == PoolStatus.UpdatingPool) {
+        add(p.poolCode.pool.token0)
+        add(p.poolCode.pool.token1)
+      }
+    })
+  }
+
   readonly addressCache: Map<string, Address> = new Map()
   computeV2Address(factory: FactoryV2, tokenA: Token, tokenB: Token): Address {
     const key = `${tokenA.address}${tokenB.address}${factory.address}`
