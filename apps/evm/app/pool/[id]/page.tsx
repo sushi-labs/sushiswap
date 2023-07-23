@@ -34,6 +34,7 @@ enum SelectedTab {
   Analytics,
   IncreaseLiq,
   DecreaseLiq,
+  Transactions,
 }
 
 export default function Page({ params }: { params: { id: string } }) {
@@ -95,10 +96,18 @@ export default function Page({ params }: { params: { id: string } }) {
               >
                 Decrease Liquidity
               </RadioGroup.Option>
+              <RadioGroup.Option
+                value={SelectedTab.Transactions}
+                as={Button}
+                variant="secondary"
+                color={tab === SelectedTab.Transactions ? 'blue' : 'default'}
+              >
+                Transactions
+              </RadioGroup.Option>
             </RadioGroup>
           </div>
           <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
-          <div className={tab === SelectedTab.Analytics ? 'block' : 'hidden'}>
+          <div className={tab === SelectedTab.Analytics ? 'flex' : 'hidden'}>
             <div className="flex flex-col gap-9">
               <UnknownTokenAlert pool={pool} />
               <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
@@ -113,9 +122,10 @@ export default function Page({ params }: { params: { id: string } }) {
                 {/*  <PoolMyRewards pool={pool} />*/}
                 {/*</div>*/}
               </div>
-              <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 h-0.5" />
-              <PoolTransactionsV2 pool={pool} poolId={address} />
             </div>
+          </div>
+          <div className={tab === SelectedTab.Transactions ? 'block' : 'hidden'}>
+            <PoolTransactionsV2 pool={pool} poolId={address} />
           </div>
           <div className={tab === SelectedTab.IncreaseLiq ? 'block' : 'hidden'}>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

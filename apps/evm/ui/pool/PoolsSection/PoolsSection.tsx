@@ -20,7 +20,7 @@ export const PoolsSection: FC = () => {
   return (
     <section className="flex flex-col flex-1">
       <Tab.Group defaultIndex={0} selectedIndex={tab} onChange={setTab}>
-        <Container maxWidth="full" className="px-4 mx-auto border-b">
+        <Container maxWidth="full" className="px-4 mx-auto border-b border-accent">
           <div className="flex items-center gap-2 mb-4">
             <Tab as={Fragment}>
               {({ selected }) => (

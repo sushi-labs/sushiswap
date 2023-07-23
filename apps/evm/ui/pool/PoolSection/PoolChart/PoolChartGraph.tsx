@@ -1,6 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { formatPercent, formatUSD } from '@sushiswap/format'
 import { classNames } from '@sushiswap/ui'
+import { SkeletonText } from '@sushiswap/ui'
 import { AppearOnMount } from '@sushiswap/ui/components/animation'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 import { format } from 'date-fns'
@@ -181,7 +182,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
   )
 
   return (
-    <div className="rounded-xl bg-secondary p-4">
+    <div>
       <div className="flex flex-col">
         <p className="text-xl font-medium text-gray-900 dark:text-slate-50">
           <span className="hoveredItemValue">
@@ -195,10 +196,12 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
             </span>
           )}
         </p>
-        {xData.length && (
+        {xData.length ? (
           <p className="text-sm text-gray-500 dark:text-slate-500 hoveredItemName">
             <AppearOnMount>{format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}</AppearOnMount>
           </p>
+        ) : (
+          <SkeletonText fontSize="sm" />
         )}
       </div>
       {isLoading ? (
