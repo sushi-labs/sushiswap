@@ -17,12 +17,11 @@ function setQuery(context, events, done) {
   const tokenIn = tokensIn[Math.floor(Math.random() * tokensIn.length)]
   const tokensOut = [WBTC[chainId], DAI[chainId], USDC[chainId], USDT[chainId], SUSHI[chainId]]
   const tokenOut = tokensOut[Math.floor(Math.random() * tokensOut.length)]
-
   context.vars['query'] = {
     ...context.vars['query'],
     chainId,
     tokenIn: tokenIn.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : tokenIn.address,
-    tokenOut: tokenOut.address,
+    tokenOut: tokenOut.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : tokenOut.address,
     amount: Math.floor(Math.random() * Math.pow(10, tokenIn.decimals)).toString(),
     to: '0x8f54C8c2df62c94772ac14CcFc85603742976312',
   }

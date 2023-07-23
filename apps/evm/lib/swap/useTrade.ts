@@ -27,6 +27,7 @@ export function useTrade<T extends boolean>({
   const { signature } = useSignature(APPROVE_XSWAP_TAG)
 
   const { data: feeData } = useFeeData({ chainId: network0 })
+
   const sameChainTrade = _useTrade({
     chainId: network0,
     fromToken: token0,
@@ -37,7 +38,10 @@ export function useTrade<T extends boolean>({
     recipient,
     enabled: Boolean(enabled && !crossChain && network0 === network1 && !isFallback && value),
     carbonOffset,
-    onError: () => setFallback(true),
+    onError: () => {
+      console.error('same chain trade error, fallback')
+      setFallback(true)
+    },
   })
 
   const sameChainTradeFallback = useClientTrade({
@@ -71,6 +75,8 @@ export function useTrade<T extends boolean>({
     ),
     bentoboxSignature: signature,
   })
+
+  console.log({ sameChainTrade, sameChainTradeFallback, crossChainTrade })
 
   return useMemo(() => {
     if (network0 !== network1) return crossChainTrade

@@ -33,6 +33,7 @@ const querySchema = z.object({
   amount: z.string().transform((amount) => BigInt(amount)),
   gasPrice: z.optional(z.coerce.number().int().gt(0)),
   to: z.optional(z.string()),
+  preferSushi: z.optional(z.coerce.boolean()),
 })
 
 const PORT = 3000
@@ -46,6 +47,9 @@ async function setup() {
     const client = createPublicClient(config[chainId])
     const extractor = new Extractor({ ...EXTRACTOR_CONFIG[chainId], client })
     await extractor.start()
+    // await Promise.all(
+    //   extractor?.extractorV2?.factories?.map((f) => extractor?.extractorV2?.addPoolsFromFactory(f?.address))
+    // )
     extractors.set(chainId, extractor)
 
     const tokenManager = new TokenManager(
@@ -70,7 +74,15 @@ async function main() {
 
   app.get('/', async (req: Request, res: Response) => {
     console.log('HTTP: GET /', JSON.stringify(req.query))
-    const { chainId, tokenIn: _tokenIn, tokenOut: _tokenOut, amount, gasPrice, to } = querySchema.parse(req.query)
+    const {
+      chainId,
+      tokenIn: _tokenIn,
+      tokenOut: _tokenOut,
+      amount,
+      gasPrice,
+      to,
+      preferSushi,
+    } = querySchema.parse(req.query)
     const tokenManager = tokenManagers.get(chainId) as TokenManager
     const [tokenIn, tokenOut] = await Promise.all([
       _tokenIn === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
@@ -88,12 +100,16 @@ async function main() {
     const poolCodes = extractor.getPoolCodesForTokens(
       Array.from(new Set([tokenIn.wrapped, tokenOut.wrapped, ...tokens]))
     )
+    // const poolCodes = await extractor.getPoolCodesForTokensAsync(
+    //   Array.from(new Set([tokenIn.wrapped, tokenOut.wrapped, ...tokens])),
+    //   200
+    // )
     const poolCodesMap = new Map<string, PoolCode>()
     poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
     const nativeProvider = nativeProviders.get(chainId) as NativeWrapProvider
     nativeProvider.getCurrentPoolList().forEach((p) => poolCodesMap.set(p.pool.address, p))
 
-    const bestRoute = Router.findBestRoute(
+    const bestRoute = Router[preferSushi ? 'findSpecialRoute' : 'findBestRoute'](
       poolCodesMap,
       chainId,
       tokenIn,
