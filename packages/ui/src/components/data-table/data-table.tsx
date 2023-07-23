@@ -92,7 +92,7 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       {toolbar ? toolbar(table) : null}
-      <div className="border-t border-b border-accent">
+      <div className="border border-accent rounded-xl">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

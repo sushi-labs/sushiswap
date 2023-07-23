@@ -93,9 +93,9 @@ export const PoolsTable: FC = () => {
 
   if (is2xl) {
     return (
-      <div className="grid grid-cols-[auto_616px] divide-x divide-accent">
-        <div className="pt-4">
-          <div className="flex flex-col sm:flex-row gap-3 mb-4 px-4">
+      <div className="grid grid-cols-[auto_616px] pt-4">
+        <div className="pr-8">
+          <div className="flex flex-col sm:flex-row gap-3 pb-4">
             <TableFiltersSearchToken />
             <TableFiltersPoolType />
             <TableFiltersNetwork />
@@ -122,7 +122,7 @@ export const PoolsTable: FC = () => {
             />
           </InfiniteScroll>
         </div>
-        <div className="p-4">
+        <div className="pt-[56px]">
           <Page params={peekedId} />
         </div>
       </div>
