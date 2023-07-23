@@ -9,12 +9,7 @@ import { MigrateTab } from './MigrateTab'
 import { PositionsTab } from './PositionsTab'
 import { RewardsTab } from './RewardsTab'
 import { PoolsTable } from './Tables'
-import {
-  TableFiltersFarmsOnly,
-  TableFiltersPoolType,
-  TableFiltersResetButton,
-  TableFiltersSearchToken,
-} from './Tables/TableFilters'
+import { TableFiltersResetButton, TableFiltersSearchToken } from './Tables/TableFilters'
 import { TableFiltersNetwork } from './Tables/TableFilters/TableFiltersNetwork'
 
 export const PoolsSection: FC = () => {
@@ -25,7 +20,7 @@ export const PoolsSection: FC = () => {
   return (
     <section className="flex flex-col flex-1">
       <Tab.Group defaultIndex={0} selectedIndex={tab} onChange={setTab}>
-        <Container maxWidth="7xl" className="px-4 mx-auto">
+        <Container maxWidth="full" className="px-4 mx-auto border-b">
           <div className="flex items-center gap-2 mb-4">
             <Tab as={Fragment}>
               {({ selected }) => (
@@ -61,21 +56,14 @@ export const PoolsSection: FC = () => {
             )}
           </div>
         </Container>
-        <Tab.Panels className="bg-gray-50 dark:bg-white/[0.02] pt-4 pb-20 h-full">
+        <Tab.Panels className="bg-gray-50 dark:bg-white/[0.02] pb-20 h-full">
           <Tab.Panel unmount={false}>
-            <Container maxWidth="7xl" className="px-4 mx-auto h-full">
-              <div className="flex flex-col sm:flex-row gap-3 mb-4">
-                <TableFiltersSearchToken />
-                <TableFiltersPoolType />
-                <TableFiltersNetwork />
-                <TableFiltersFarmsOnly />
-                <TableFiltersResetButton />
-              </div>
+            <Container maxWidth="full" className="flex flex-col px-4 mx-auto h-full">
               <PoolsTable />
             </Container>
           </Tab.Panel>
           <Tab.Panel unmount={false}>
-            <Container maxWidth="7xl" className="px-4 mx-auto h-full">
+            <Container maxWidth="full" className="px-4 mx-auto h-full">
               <div className="flex flex-col sm:flex-row gap-3 mb-4">
                 <TableFiltersSearchToken />
                 <TableFiltersNetwork />

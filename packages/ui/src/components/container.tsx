@@ -7,6 +7,13 @@ const containerVariants = cva('w-full', {
   variants: {
     maxWidth: {
       full: 'max-w-full',
+      'screen-sm': 'max-w-screen-sm',
+      'screen-md': 'max-w-screen-md',
+      'screen-lg': 'max-w-screen-lg',
+      'screen-xl': 'max-w-screen-xl',
+      'screen-2xl': 'max-w-screen-2xl',
+      'screen-3xl': 'max-w-[1792px]',
+      'screen-4xl': 'max-w-[2048px]',
       '7xl': 'max-w-7xl',
       '6xl': 'max-w-6xl',
       '5xl': 'max-w-5xl',
