@@ -467,6 +467,6 @@ export class UniV2Extractor {
   }
 
   consoleLog(log: string) {
-    if (this.logging) console.log('V2: ' + log)
+    if (this.logging) console.log(`V2-${this.multiCallAggregator.chainId}: ` + log)
   }
 }
