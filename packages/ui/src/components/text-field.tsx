@@ -23,14 +23,14 @@ const textFieldVariants = cva(
   'truncate border-0 appearance-none dark:text-slate-50 focus:outline-none focus:ring-0 text-gray-900 w-full',
   {
     variants: {
+      size: {
+        sm: 'min-h-[36px] h-[36px] py-1',
+        default: 'min-h-[40px] h-[40px] py-2',
+      },
       variant: {
         default:
-          'flex items-center min-h-[40px] h-[40px] py-2 px-3 rounded-lg font-medium block bg-secondary group-hover:bg-muted group-focus:bg-accent',
+          'flex items-center px-3 rounded-lg font-medium block bg-secondary group-hover:bg-muted group-focus:bg-accent',
         naked: 'bg-transparent',
-      },
-      isError: {
-        yes: 'bg-red/10 text-red',
-        no: '',
       },
       hasIcon: {
         yes: 'pl-[40px]',
@@ -45,7 +45,7 @@ const textFieldVariants = cva(
       variant: 'default',
       hasIcon: 'no',
       hasUnit: 'no',
-      isError: 'no',
+      size: 'default',
     },
   }
 )
@@ -53,9 +53,8 @@ const textFieldVariants = cva(
 type InputType = 'text' | 'number' | 'percent'
 
 interface TextFieldBaseProps
-  extends React.InputHTMLAttributes<HTMLInputElement>,
-    Omit<VariantProps<typeof textFieldVariants>, 'isError'> {
-  isError?: boolean
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
+    VariantProps<typeof textFieldVariants> {
   id?: string
   icon?: IconComponent
   iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
@@ -68,7 +67,7 @@ interface TextFieldDynamicProps<T extends InputType> {
   onValueChange?(val: string): void
 }
 
-type TextFieldProps<T extends InputType> = TextFieldBaseProps & TextFieldDynamicProps<T>
+export type TextFieldProps<T extends InputType> = TextFieldBaseProps & TextFieldDynamicProps<T>
 
 const isTypeText = (type: InputType): type is 'text' => type === 'text'
 const isTypeNumber = (type: InputType): type is 'number' => type === 'number'
@@ -80,10 +79,11 @@ const Component = <T extends InputType>(
     iconProps,
     unit,
     variant,
-    isError = false,
     className,
     type,
     onChange,
+    maxDecimals,
+    size,
     onValueChange,
     ...props
   }: TextFieldProps<T>,
@@ -96,14 +96,13 @@ const Component = <T extends InputType>(
     }
 
     if (isTypeNumber(type)) {
-      console.log(nextUserInput)
       const val = `${nextUserInput}`.replace(/,/g, '.')
       if (onValueChange && val === '') onValueChange('')
 
       if (inputRegex.test(escapeRegExp(val))) {
-        if (props.maxDecimals && val?.includes('.')) {
+        if (maxDecimals && val?.includes('.')) {
           const [, decimals] = val.split('.')
-          if (onValueChange && decimals.length <= props.maxDecimals) {
+          if (onValueChange && decimals.length <= maxDecimals) {
             onValueChange(val)
           }
         } else {
@@ -132,7 +131,6 @@ const Component = <T extends InputType>(
       <input
         onChange={_onChange}
         className={textFieldVariants({
-          isError: isError ? 'yes' : 'no',
           variant,
           hasIcon: Icon ? 'yes' : 'no',
           hasUnit: unit ? 'yes' : 'no',
@@ -149,10 +147,7 @@ const Component = <T extends InputType>(
       />
       {unit ? (
         <div
-          className={textFieldVariants({
-            isError: isError ? 'yes' : 'no',
-            className: 'text-muted-foreground rounded-l-none !w-[unset]',
-          })}
+          className={textFieldVariants({ variant, size, className: 'text-muted-foreground rounded-l-none !w-[unset]' })}
         >
           {unit}
         </div>
@@ -164,4 +159,11 @@ const Component = <T extends InputType>(
 const TextField = React.forwardRef(Component)
 TextField.displayName = 'TextField'
 
-export { TextField, textFieldVariants }
+const TextFieldDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
+  ({ className, ...props }, ref) => {
+    return <p ref={ref} className={classNames('text-sm text-muted-foreground', className)} {...props} />
+  }
+)
+TextFieldDescription.displayName = 'TextFieldDescription'
+
+export { TextField, TextFieldDescription, textFieldVariants }

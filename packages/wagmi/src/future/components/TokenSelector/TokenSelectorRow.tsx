@@ -1,5 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
+import { Chain } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
 import { Fraction, ZERO } from '@sushiswap/math'
 import { classNames } from '@sushiswap/ui'
@@ -51,8 +52,8 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
         onClick={onClick}
         className={classNames(
           className,
-          selected ? 'bg-black/[0.06] dark:bg-white/[0.06]' : '',
-          `group flex items-center w-full active:bg-black/[0.06] dark:active:bg-white/[0.06] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] h-full rounded-lg px-3 token-${currency?.symbol}`
+          selected ? 'bg-primary' : '',
+          `group flex items-center w-full hover:bg-muted focus:bg-accent h-full rounded-lg px-3 token-${currency?.symbol}`
         )}
       >
         <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
@@ -79,9 +80,14 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
               <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 dark:group-hover:text-white">
                 {currency.symbol}
               </span>
-              <span className="text-sm text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100">
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href={Chain.from(currency.chainId).getTokenUrl(currency.wrapped.address)}
+                className="text-sm text-blue text-gray-500 dark:text-slate-400 hover:text-blue"
+              >
                 {currency.name}
-              </span>
+              </a>
             </div>
           </div>
 
@@ -108,7 +114,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
                 variant="ghost"
                 name="pin"
                 onClick={onPin}
-                className={classNames(pin.isPinned ? '' : 'grayscale opacity-50', 'z-[1080]')}
+                className={classNames(pin.isPinned ? '' : 'grayscale opacity-50', 'z-50')}
               />
             )}
           </div>

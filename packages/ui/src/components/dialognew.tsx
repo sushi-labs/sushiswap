@@ -55,7 +55,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={classNames(
-        'fixed z-50 grid w-full gap-4 rounded-2xl paper dark:bg-slate-800/90 bg-white/90 p-6 shadow-lg animate-in data-[state=open]:fade-in-90 data-[state=open]:slide-in-from-bottom-10 sm:max-w-lg sm:rounded-2xl sm:zoom-in-90 data-[state=open]:sm:slide-in-from-bottom-0',
+        'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 bg-gray-100 dark:bg-slate-800 p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-2xl md:w-full',
         className
       )}
       {...props}
@@ -85,7 +85,7 @@ const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={classNames('text-lg font-semibold leading-none tracking-tight', className)}
+    className={classNames('text-lg font-semibold leading-none tracking-tight mr-[64px]', className)}
     {...props}
   />
 ))
@@ -97,7 +97,7 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={classNames('text-sm text-muted-foreground', className)}
+    className={classNames('text-sm text-muted-foreground mr-[64px]', className)}
     {...props}
   />
 ))
@@ -122,7 +122,7 @@ interface DialogConfirmProps
   extends Omit<React.ComponentPropsWithoutRef<typeof DialogPrimitive.Root>, 'children' | 'open'> {
   chainId: ChainId
   testId: string
-  successMessage: string
+  successMessage: ReactNode
   buttonLink?: string
   buttonText?: string
   txHash: string | undefined
@@ -142,20 +142,13 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
   const { open, setOpen } = useDialog(DialogType.Confirm)
 
   return (
-    <DialogNew
-      {...props}
-      open={open}
-      onOpenChange={(val) => {
-        console.log(val)
-        setOpen(val)
-      }}
-    >
+    <DialogNew {...props} open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
             {status === 'loading' ? <Dots>Confirming</Dots> : status === 'success' ? 'Success!' : 'Oops!'}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="font-medium">
             {status === 'loading' ? (
               <>
                 Waiting for your{' '}
@@ -191,7 +184,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
           </DialogDescription>
           <div className="py-6 flex justify-center">
             {status === 'loading' ? (
-              <Loader size={132} strokeWidth={2} className="!text-blue" />
+              <Loader size={132} strokeWidth={1} className="!text-blue" />
             ) : status === 'success' ? (
               <CheckMarkIcon width={132} height={132} />
             ) : (

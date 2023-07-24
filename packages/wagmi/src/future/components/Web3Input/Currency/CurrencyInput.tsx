@@ -33,7 +33,6 @@ export interface CurrencyInputProps {
   currencies?: Record<string, Token>
   allowNative?: boolean
   error?: string
-  hidePinnedTokens?: boolean
 }
 
 export const Component: FC<CurrencyInputProps> = ({
@@ -53,7 +52,6 @@ export const Component: FC<CurrencyInputProps> = ({
   currencyLoading,
   currencies,
   allowNative = true,
-  hidePinnedTokens = false,
   error,
 }) => {
   const { address } = useAccount()
@@ -129,33 +127,26 @@ export const Component: FC<CurrencyInputProps> = ({
             chainId={chainId}
             onSelect={onSelect}
             includeNative={allowNative}
-            hidePinnedTokens={hidePinnedTokens}
           >
-            {({ setOpen }) => (
-              <Button
-                size="lg"
-                variant={currency ? 'secondary' : 'default'}
-                id={id}
-                type="button"
-                onClick={(e) => {
-                  setOpen(true)
-                  e.stopPropagation()
-                }}
-                className={classNames(currency ? 'pl-2 pr-3 text-xl' : '', '!rounded-full')}
-              >
-                {currency ? (
-                  <>
-                    <div className="w-[28px] h-[28px] mr-0.5">
-                      <Currency.Icon disableLink currency={currency} width={28} height={28} />
-                    </div>
-                    {currency.symbol}
-                    <SelectIcon />
-                  </>
-                ) : (
-                  'Select token'
-                )}
-              </Button>
-            )}
+            <Button
+              size="lg"
+              variant={currency ? 'secondary' : 'default'}
+              id={id}
+              type="button"
+              className={classNames(currency ? 'pl-2 pr-3 text-xl' : '', '!rounded-full')}
+            >
+              {currency ? (
+                <>
+                  <div className="w-[28px] h-[28px] mr-0.5">
+                    <Currency.Icon disableLink currency={currency} width={28} height={28} />
+                  </div>
+                  {currency.symbol}
+                  <SelectIcon />
+                </>
+              ) : (
+                'Select token'
+              )}
+            </Button>
           </TokenSelector>
         )}
         {!onSelect && (
