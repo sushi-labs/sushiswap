@@ -1,4 +1,4 @@
-import { routeProcessor2Abi } from '@sushiswap/abi'
+import { getReservesAbi, routeProcessor2Abi } from '@sushiswap/abi'
 import { FACTORY_ADDRESS, INIT_CODE_HASH } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
@@ -6,9 +6,14 @@ import { Extractor, FactoryV2, FactoryV3, MultiCallAggregator, TokenManager } fr
 import { ConstantProductPoolCode, LiquidityProviders, NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { getBigNumber, RouteStatus } from '@sushiswap/tines'
-import { POOL_INIT_CODE_HASH } from '@sushiswap/v3-sdk'
+import {
+  POOL_INIT_CODE_HASH,
+  SUSHISWAP_V3_INIT_CODE_HASH,
+  SushiSwapV3ChainId,
+  V3_FACTORY_ADDRESS,
+} from '@sushiswap/v3-sdk'
 import { Address, createPublicClient, http } from 'viem'
-import { arbitrum, celo, Chain, mainnet, optimism, polygon } from 'viem/chains'
+import { arbitrum, celo, Chain, mainnet, optimism, polygon, polygonZkEvm } from 'viem/chains'
 
 export const RP3Address = {
   [ChainId.ETHEREUM]: '0x827179dD56d07A7eeA32e3873493835da2866976' as Address,
@@ -16,6 +21,7 @@ export const RP3Address = {
   [ChainId.ARBITRUM]: '0xfc506AaA1340b4dedFfd88bE278bEe058952D674' as Address,
   [ChainId.OPTIMISM]: '0x4C5D5234f232BD2D76B96aA33F5AE4FCF0E4BFAb' as Address,
   [ChainId.CELO]: '0x2f686751b19a9d91cc3d57d90150Bc767f050066' as Address,
+  [ChainId.POLYGON_ZKEVM]: '0x2f686751b19a9d91cc3d57d90150Bc767f050066' as Address,
 }
 
 export const TickLensContract = {
@@ -24,6 +30,7 @@ export const TickLensContract = {
   [ChainId.ARBITRUM]: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573' as Address,
   [ChainId.OPTIMISM]: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573' as Address,
   [ChainId.CELO]: '0x5f115D9113F88e0a0Db1b5033D90D4a9690AcD3D' as Address,
+  [ChainId.POLYGON_ZKEVM]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904' as Address,
 }
 
 export const UniswapV2FactoryAddress: Record<number, string> = {
@@ -61,6 +68,14 @@ function uniswapV3Factory(chain: ChainId): FactoryV3 {
     provider: LiquidityProviders.UniswapV3,
     initCodeHash: POOL_INIT_CODE_HASH,
   }
+}
+
+function sushiswapV3Factory(chainId: SushiSwapV3ChainId) {
+  return {
+    address: V3_FACTORY_ADDRESS[chainId],
+    provider: LiquidityProviders.SushiSwapV3,
+    initCodeHash: SUSHISWAP_V3_INIT_CODE_HASH[chainId],
+  } as const
 }
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
@@ -247,4 +262,50 @@ it.skip('Extractor Celo infinit work test', async () => {
     logging: true,
     RP3Address: RP3Address[ChainId.CELO],
   })
+})
+
+it.only('Extractor Polygon zkevm infinit work test', async () => {
+  await startInfinitTest({
+    providerURL: `https://polygonzkevm-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
+    chain: polygonZkEvm,
+    factoriesV2: [],
+    factoriesV3: [sushiswapV3Factory(ChainId.POLYGON_ZKEVM)],
+    tickHelperContract: TickLensContract[ChainId.POLYGON_ZKEVM],
+    cacheDir: './cache',
+    logDepth: 100,
+    logging: true,
+    RP3Address: RP3Address[ChainId.POLYGON_ZKEVM],
+  })
+})
+
+it.skip('provider eth_call check', async () => {
+  const transport = http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`)
+  //const transport = http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/demo`)
+  const client = createPublicClient({
+    chain: polygonZkEvm,
+    transport: transport,
+  })
+  const res = await client.multicall({
+    allowFailure: true,
+    contracts: [
+      {
+        address: '0x4f9a0e7fd2bf6067db6994cf12e4495df938e6e9',
+        abi: getReservesAbi,
+        functionName: 'getReserves',
+      },
+    ],
+  })
+  //const res = await client.getBlockNumber()
+  console.log(res)
+  // const r = await fetch(`https://polygonzkevm-mainnet.g.alchemy.com/v2/demo`, {
+  //   method: 'POST',
+  //   body: JSON.stringify({
+  //     jsonrpc: '2.0',
+  //     id: 1,
+  //     method: 'eth_blockNumber',
+  //     params: [],
+  //   }),
+  // })
+  // const res = await r.json()
+  // console.log(r.status, res)
 })
