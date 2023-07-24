@@ -110,7 +110,7 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant }) => {
           <NavigationMenuItem className="block md:hidden">
             <NavigationMenuTrigger>Explore</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="w-[400px] gap-3 p-4">
+              <ul className="min-w-[240px] gap-3 p-4">
                 {EXPLORE_NAVIGATION_LINKS.map((component) => (
                   <NavigationListItem key={component.title} title={component.title} href={component.href}>
                     {component.description}
