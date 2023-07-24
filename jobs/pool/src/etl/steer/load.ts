@@ -180,6 +180,27 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
         )}
         ELSE lastAdjustmentTimestamp
       END,
+      creator = CASE
+        ${Prisma.join(
+          vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.creator}`),
+          ' '
+        )}
+        ELSE creator
+      END,
+      admin = CASE
+        ${Prisma.join(
+          vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.admin}`),
+          ' '
+        )}
+        ELSE admin
+      END,
+      manager = CASE
+        ${Prisma.join(
+          vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.manager}`),
+          ' '
+        )}
+        ELSE manager
+      END,
       updatedAt = NOW()
     WHERE id IN (${Prisma.join(vaultsToUpdate.map((update) => Prisma.sql`${update.id}`))});
   `

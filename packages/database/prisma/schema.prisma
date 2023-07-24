@@ -263,6 +263,10 @@ model SteerVault {
   isEnabled               Boolean @default(false)
   wasEnabled              Boolean @default(false)
 
+  creator                 String
+  admin                   String
+  manager                 String
+
   generatedAt             DateTime @default(now())
   updatedAt               DateTime    @updatedAt
 

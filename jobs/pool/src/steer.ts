@@ -125,7 +125,11 @@ function transform(chainsWithVaults: Awaited<ReturnType<typeof extract>>): Prism
 
         adjustmentFrequency: Number(vault.payload.strategyConfigData.epochLength),
         lastAdjustmentTimestamp: Math.floor(vault.payload.strategyConfigData.epochStart),
-      }
+
+        admin: vault.strategyToken.admin,
+        creator: vault.strategyToken.creator.id,
+        manager: vault.manager,
+      } satisfies Prisma.SteerVaultCreateManyInput
     })
   )
 }
