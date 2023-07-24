@@ -197,8 +197,10 @@ export class UniV3Extractor {
         factory: p.factory.address,
       })
     watcher.once('isUpdated', () => {
-      const delay = Math.round(performance.now() - startTime)
-      this.consoleLog(`add pool ${p.address} (${delay}ms, ${source}), watched pools total: ${++this.watchedPools}`)
+      if (source !== 'cache') {
+        const delay = Math.round(performance.now() - startTime)
+        this.consoleLog(`add pool ${p.address} (${delay}ms, ${source}), watched pools total: ${++this.watchedPools}`)
+      }
     })
     return watcher
   }

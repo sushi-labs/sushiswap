@@ -425,9 +425,10 @@ export class UniV2Extractor {
         factory: args.factory.address,
       })
     const delay = Math.round(performance.now() - startTime)
-    this.consoleLog(
-      `add pool ${args.address} (${delay}ms, ${args.source}), watched pools total: ${++this.watchedPools}`
-    )
+    if (args.source !== 'cache')
+      this.consoleLog(
+        `add pool ${args.address} (${delay}ms, ${args.source}), watched pools total: ${++this.watchedPools}`
+      )
     return poolState.poolCode
   }
 
