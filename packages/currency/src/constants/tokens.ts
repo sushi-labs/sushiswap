@@ -578,13 +578,8 @@ export const WNATIVE = {
     symbol: 'WCORE',
     name: 'Wrapped Core',
   }),
-  [ChainId.ZKSYNC_ERA]: new Token({
-    chainId: ChainId.ZKSYNC_ERA,
-    address: WNATIVE_ADDRESS[ChainId.ZKSYNC_ERA],
-    decimals: 18,
-    symbol: 'WETH',
-    name: 'Wrapped Ether',
-  }),
+  [ChainId.ZKSYNC_ERA]: WETH9[ChainId.ZKSYNC_ERA],
+  [ChainId.LINEA]: WETH9[ChainId.LINEA],
 } as const
 
 export const SUSHI = addressMapToTokenMap(

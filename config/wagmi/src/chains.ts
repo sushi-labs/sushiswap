@@ -696,6 +696,26 @@ export const otherChains: Chain[] = [
     ...telos,
     id: ChainId.TELOS,
   },
+  {
+    id: ChainId.LINEA,
+    name: 'Linea',
+    network: 'linea',
+    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.linea.build'],
+      },
+      public: {
+        http: ['https://rpc.linea.build'],
+      },
+    },
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 42,
+      },
+    },
+  },
 ]
 
 export const allChains = [...defaultChains, ...otherChains]

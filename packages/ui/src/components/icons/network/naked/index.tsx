@@ -87,4 +87,6 @@ export const NETWORK_NAKED_ICON: Record<number, IconComponent> = {
   [ChainId.THUNDERCORE]: ThunderCoreNaked,
   [ChainId.HAQQ]: HaqqNakked,
   [ChainId.CORE]: CoreNaked,
+  [ChainId.ZKSYNC_ERA]: EthereumNaked,
+  [ChainId.LINEA]: EthereumNaked,
 }

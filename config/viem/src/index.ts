@@ -592,6 +592,27 @@ const core = {
   },
 } as const
 
+const linea = {
+  id: ChainId.LINEA,
+  name: 'Linea',
+  network: 'linea',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.linea.build'],
+    },
+    public: {
+      http: ['https://rpc.linea.build'],
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 42,
+    },
+  },
+} as const
+
 const alchemyId = process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
 
 export const config: Record<number, PublicClientConfig> = {
@@ -831,5 +852,9 @@ export const config: Record<number, PublicClientConfig> = {
   [ChainId.ZKSYNC_ERA]: {
     chain: zkSync,
     transport: http(zkSync.rpcUrls.default.http[0]),
+  },
+  [ChainId.LINEA]: {
+    chain: linea,
+    transport: http(linea.rpcUrls.default.http[0]),
   },
 } as const

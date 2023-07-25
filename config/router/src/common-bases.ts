@@ -276,5 +276,6 @@ export const COMMON_BASES = {
     WBTC[ChainId.ZKSYNC_ERA],
     USDC[ChainId.ZKSYNC_ERA],
   ],
+  [ChainId.LINEA]: [Native.onChain(ChainId.LINEA), WNATIVE[ChainId.LINEA], DAI[ChainId.LINEA], USDC[ChainId.LINEA]],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const

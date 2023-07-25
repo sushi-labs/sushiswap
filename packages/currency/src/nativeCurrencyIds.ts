@@ -46,5 +46,6 @@ export const nativeCurrencyIds = {
   [ChainId.CORE]: 'CORE',
   [ChainId.HAQQ]: 'ISLM',
   [ChainId.ZKSYNC_ERA]: 'ETH',
+  [ChainId.LINEA]: 'ETH',
   // [ChainId.SEPOLIA]: 'ETH',
 } as const

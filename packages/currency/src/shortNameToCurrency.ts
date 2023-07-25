@@ -237,6 +237,12 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     ETH: Native.onChain(ChainId.ZKSYNC_ERA),
     WETH: WNATIVE[ChainId.ZKSYNC_ERA],
   },
+  [ChainId.LINEA]: {
+    NATIVE: Native.onChain(ChainId.LINEA),
+    WNATIVE: WNATIVE[ChainId.LINEA],
+    ETH: Native.onChain(ChainId.LINEA),
+    WETH: WNATIVE[ChainId.LINEA],
+  },
 } as const
 
 export type ShortCurrencyNameChainId = keyof typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY
