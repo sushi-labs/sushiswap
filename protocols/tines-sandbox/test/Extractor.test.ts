@@ -264,7 +264,7 @@ it.skip('Extractor Celo infinit work test', async () => {
   })
 })
 
-it.only('Extractor Polygon zkevm infinit work test', async () => {
+it.skip('Extractor Polygon zkevm infinit work test', async () => {
   await startInfinitTest({
     providerURL: `https://polygonzkevm-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: polygonZkEvm,
@@ -272,7 +272,7 @@ it.only('Extractor Polygon zkevm infinit work test', async () => {
     factoriesV3: [sushiswapV3Factory(ChainId.POLYGON_ZKEVM)],
     tickHelperContract: TickLensContract[ChainId.POLYGON_ZKEVM],
     cacheDir: './cache',
-    logDepth: 100,
+    logDepth: 1000,
     logging: true,
     RP3Address: RP3Address[ChainId.POLYGON_ZKEVM],
   })

@@ -260,24 +260,29 @@ export class UniV3Extractor {
   async addPoolByAddress(address: Address) {
     if (this.otherFactoryPoolSet.has(address.toLowerCase() as Address)) return
     if (this.multiCallAggregator.chainId === undefined) return
-    this.emptyAddressSet.delete(address)
-    const startTime = performance.now()
-    const factoryAddress = await this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'factory')
-    const factory = this.factoryMap.get((factoryAddress as Address).toLowerCase())
-    if (factory !== undefined) {
-      const [token0Address, token1Address, fee] = await Promise.all([
-        this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'token0'),
-        this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'token1'),
-        this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'fee'),
-      ])
-      const [token0, token1] = await Promise.all([
-        this.tokenManager.findToken(token0Address as Address),
-        this.tokenManager.findToken(token1Address as Address),
-      ])
-      if (token0 && token1) {
-        this.addPoolWatching({ address, token0, token1, fee: fee as FeeAmount, factory }, 'logs', true, startTime)
-        return
+    try {
+      this.emptyAddressSet.delete(address)
+      const startTime = performance.now()
+      const factoryAddress = await this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'factory')
+      const factory = this.factoryMap.get((factoryAddress as Address).toLowerCase())
+      if (factory !== undefined) {
+        const [token0Address, token1Address, fee] = await Promise.all([
+          this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'token0'),
+          this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'token1'),
+          this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'fee'),
+        ])
+        const [token0, token1] = await Promise.all([
+          this.tokenManager.findToken(token0Address as Address),
+          this.tokenManager.findToken(token1Address as Address),
+        ])
+        if (token0 && token1) {
+          this.addPoolWatching({ address, token0, token1, fee: fee as FeeAmount, factory }, 'logs', true, startTime)
+          return
+        }
       }
+    } catch (e) {
+      // adding pool failed - let's add its address in otherFactoryPoolSet in order to not
+      // spent resources for in the future
     }
     this.otherFactoryPoolSet.add(address.toLowerCase() as Address)
     this.consoleLog(`other factory pool ${address}, such pools known: ${this.otherFactoryPoolSet.size}`)

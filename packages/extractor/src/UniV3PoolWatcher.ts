@@ -11,6 +11,7 @@ import { decodeEventLog, Log } from 'viem'
 
 import { Counter } from './Counter'
 import { MultiCallAggregator } from './MulticallAggregator'
+import { warnLog } from './WarnLog'
 import { WordLoadManager } from './WordLoadManager'
 
 interface UniV3PoolSelfState {
@@ -154,7 +155,7 @@ export class UniV3PoolWatcher extends EventEmitter {
           break
         }
       } catch (e) {
-        // do nothing
+        warnLog(`Pool ${this.address} update failed: ` + e)
       }
       if (this.busyCounter) this.busyCounter.dec()
       this.updatePoolStateGuard = false
