@@ -555,7 +555,15 @@ const alchemyId = process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_
 export const config: Record<number, PublicClientConfig> = {
   [ChainId.ARBITRUM_NOVA]: {
     chain: arbitrumNova,
-    transport: http(arbitrumNova.rpcUrls.default.http[0]),
+    transport: fallback(
+      [
+        http(arbitrumNova.rpcUrls.default.http[0]),
+        // http('https://arbitrum-nova.public.blastapi.io'),
+        http('https://arbitrum-nova.blockpi.network/v1/rpc/public'),
+        http('https://arbitrum-nova.publicnode.com'),
+      ],
+      { rank: true }
+    ),
   },
   [ChainId.ARBITRUM]: {
     chain: arbitrum,
