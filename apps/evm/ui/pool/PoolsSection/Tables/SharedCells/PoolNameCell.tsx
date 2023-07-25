@@ -40,18 +40,20 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
         </span>
         <div className="flex gap-1">
           {row.protocol === Protocol.BENTOBOX_STABLE && (
-            <div className="bg-green/20 text-green text-[10px] px-2 rounded-full">Trident Stable</div>
+            <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">Trident Stable</div>
           )}
           {row.protocol === Protocol.BENTOBOX_CLASSIC && (
-            <div className="bg-green/20 text-green text-[10px] px-2 rounded-full">Trident Classic</div>
+            <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
+              Trident Classic
+            </div>
           )}
           {row.protocol === 'SUSHISWAP_V2' && (
-            <div className="bg-pink/20 text-pink text-[10px] px-2 rounded-full">
+            <div className="whitespace-nowrap bg-pink/20 text-pink text-[10px] px-2 rounded-full">
               SushiSwap<sup>v2</sup>
             </div>
           )}
           {row.protocol === 'SUSHISWAP_V3' && (
-            <div className="bg-blue/20 text-blue text-[10px] px-2 rounded-full">
+            <div className="whitespace-nowrap bg-blue/20 text-blue text-[10px] px-2 rounded-full">
               SushiSwap<sup>v3</sup>
             </div>
           )}
@@ -62,7 +64,7 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="bg-green/20 text-green text-[10px] px-2 rounded-full">
+                  <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
                     🧑‍🌾 {incentives.length > 1 ? `x ${incentives.length}` : ''}{' '}
                   </div>
                 </TooltipTrigger>

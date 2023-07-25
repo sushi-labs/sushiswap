@@ -72,7 +72,6 @@ export const PoolsTable: FC = () => {
     )
   }, [])
 
-  console.log(peekedId)
   return (
     <Sheet modal>
       <InfiniteScroll

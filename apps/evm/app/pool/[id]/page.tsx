@@ -12,7 +12,6 @@ import {
   AddSectionLegacy,
   AddSectionStake,
   AddSectionTrident,
-  Layout,
   PoolChartV2,
   PoolComposition,
   PoolMyRewards,
@@ -36,6 +35,8 @@ enum SelectedTab {
   Analytics,
   IncreaseLiq,
   DecreaseLiq,
+  Transactions,
+  Rewards,
 }
 
 export default function Page({ params }: { params: { id: string } }) {
@@ -61,86 +62,101 @@ export default function Page({ params }: { params: { id: string } }) {
     <PoolPositionProvider pool={pool}>
       <PoolPositionStakedProvider pool={pool}>
         <PoolPositionRewardsProvider pool={pool}>
-          <Layout>
-            <div className="flex flex-col gap-2">
-              <PoolHeader
-                title="Pool "
-                isLoading={isLoading}
-                chainId={chainId}
-                pool={pool}
-                apy={{ rewards: pool?.incentiveApr, fees: pool?.feeApr1d }}
-              />
-              <RadioGroup value={tab} onChange={setTab} className="flex flex-wrap gap-2 mt-3">
-                <RadioGroup.Option
-                  value={SelectedTab.Analytics}
-                  as={Button}
-                  icon={ChartBarIcon}
-                  variant="secondary"
-                  color={tab === SelectedTab.Analytics ? 'blue' : 'default'}
-                >
-                  Statistics
-                </RadioGroup.Option>
-                <RadioGroup.Option
-                  value={SelectedTab.IncreaseLiq}
-                  as={Button}
-                  icon={PlusIcon}
-                  variant="secondary"
-                  color={tab === SelectedTab.IncreaseLiq ? 'blue' : 'default'}
-                >
-                  Increase Liquidity
-                </RadioGroup.Option>{' '}
-                <RadioGroup.Option
-                  value={SelectedTab.DecreaseLiq}
-                  as={Button}
-                  icon={MinusIcon}
-                  variant="secondary"
-                  color={tab === SelectedTab.DecreaseLiq ? 'blue' : 'default'}
-                >
-                  Decrease Liquidity
-                </RadioGroup.Option>
-              </RadioGroup>
+          <div className="flex flex-col gap-2">
+            <PoolHeader
+              title="Pool "
+              isLoading={isLoading}
+              chainId={chainId}
+              pool={pool}
+              apy={{ rewards: pool?.incentiveApr, fees: pool?.feeApr1d }}
+            />
+            <RadioGroup value={tab} onChange={setTab} className="flex flex-wrap gap-2 mt-3">
+              <RadioGroup.Option
+                size="sm"
+                value={SelectedTab.Analytics}
+                as={Button}
+                icon={ChartBarIcon}
+                variant="secondary"
+                color={tab === SelectedTab.Analytics ? 'blue' : 'default'}
+              >
+                Statistics
+              </RadioGroup.Option>
+              <RadioGroup.Option
+                size="sm"
+                value={SelectedTab.Rewards}
+                as={Button}
+                variant="secondary"
+                color={tab === SelectedTab.Rewards ? 'blue' : 'default'}
+              >
+                Rewards
+              </RadioGroup.Option>
+              <RadioGroup.Option
+                size="sm"
+                value={SelectedTab.IncreaseLiq}
+                as={Button}
+                icon={PlusIcon}
+                variant="secondary"
+                color={tab === SelectedTab.IncreaseLiq ? 'blue' : 'default'}
+              >
+                Increase Liquidity
+              </RadioGroup.Option>{' '}
+              <RadioGroup.Option
+                size="sm"
+                value={SelectedTab.DecreaseLiq}
+                as={Button}
+                icon={MinusIcon}
+                variant="secondary"
+                color={tab === SelectedTab.DecreaseLiq ? 'blue' : 'default'}
+              >
+                Decrease Liquidity
+              </RadioGroup.Option>
+              <RadioGroup.Option
+                size="sm"
+                value={SelectedTab.Transactions}
+                as={Button}
+                variant="secondary"
+                color={tab === SelectedTab.Transactions ? 'blue' : 'default'}
+              >
+                Transactions
+              </RadioGroup.Option>
+            </RadioGroup>
+          </div>
+          <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-4 h-px" />
+          <div className={tab === SelectedTab.Analytics ? 'flex' : 'hidden'}>
+            <div className="flex flex-col gap-9 flex-1">
+              <UnknownTokenAlert pool={pool} />
+              <PoolChartV2 address={address} chainId={chainId} />
+              <PoolStats pool={pool} />
+              <PoolComposition pool={pool} />
+              <PoolRewards pool={pool} />
             </div>
-            <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
-            <div className={tab === SelectedTab.Analytics ? 'block' : 'hidden'}>
-              <div className="flex flex-col gap-9">
-                <UnknownTokenAlert pool={pool} />
-                <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
-                  <div className="flex flex-col order-1 gap-9">
-                    <PoolChartV2 address={address} chainId={chainId} />
-                    <PoolStats pool={pool} />
-                    <PoolComposition pool={pool} />
-                    <PoolRewards pool={pool} />
-                  </div>
-
-                  <div className="flex flex-col order-2 gap-4">
-                    <PoolMyRewards pool={pool} />
-                  </div>
-                </div>
-                <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
-                <PoolTransactionsV2 pool={pool} poolId={address} />
-              </div>
+          </div>
+          <div className={tab === SelectedTab.Transactions ? 'block' : 'hidden'}>
+            <PoolTransactionsV2 pool={pool} poolId={address} />
+          </div>
+          <div className={tab === SelectedTab.Rewards ? 'block' : 'hidden'}>
+            <PoolMyRewards pool={pool} />
+          </div>
+          <div className={tab === SelectedTab.IncreaseLiq ? 'block' : 'hidden'}>
+            <div className="grid grid-cols-1 gap-4">
+              {isTridentPoolProtocol(pool.protocol) ? (
+                <AddSectionTrident pool={pool} />
+              ) : (
+                <AddSectionLegacy pool={pool} />
+              )}
+              <AddSectionStake poolId={pool.id} />
             </div>
-            <div className={tab === SelectedTab.IncreaseLiq ? 'block' : 'hidden'}>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {isTridentPoolProtocol(pool.protocol) ? (
-                  <AddSectionTrident pool={pool} />
-                ) : (
-                  <AddSectionLegacy pool={pool} />
-                )}
-                <AddSectionStake poolId={pool.id} />
-              </div>
+          </div>
+          <div className={tab === SelectedTab.DecreaseLiq ? 'block' : 'hidden'}>
+            <div className="grid grid-cols-1 gap-4">
+              <RemoveSectionUnstake poolId={pool.id} />
+              {isTridentPoolProtocol(pool.protocol) ? (
+                <RemoveSectionTrident pool={pool} />
+              ) : (
+                <RemoveSectionLegacy pool={pool} />
+              )}
             </div>
-            <div className={tab === SelectedTab.DecreaseLiq ? 'block' : 'hidden'}>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <RemoveSectionUnstake poolId={pool.id} />
-                {isTridentPoolProtocol(pool.protocol) ? (
-                  <RemoveSectionTrident pool={pool} />
-                ) : (
-                  <RemoveSectionLegacy pool={pool} />
-                )}
-              </div>
-            </div>
-          </Layout>
+          </div>
         </PoolPositionRewardsProvider>
       </PoolPositionStakedProvider>
     </PoolPositionProvider>

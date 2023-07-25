@@ -18,7 +18,7 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
 
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <div className="flex flex-col gap-1 p-3 rounded-md bg-white dark:bg-slate-200 dark:bg-opacity-[0.04]">
+      <div className="flex flex-col gap-1">
         <span className="text-xs text-gray-500 dark:text-slate-400">Liquidity</span>
         {isLoading ? (
           <SkeletonText />
@@ -38,7 +38,7 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
           <></>
         )}
       </div>
-      <div className="flex flex-col gap-1 p-3 rounded-md bg-white dark:bg-slate-200 dark:bg-opacity-[0.04]">
+      <div className="flex flex-col gap-1">
         <span className="text-xs text-gray-500 dark:text-slate-400">Volume (24h)</span>
         {data ? (
           <span className="font-medium text-gray-900 dark:text-slate-50">{formatUSD(data.volume1d ?? 0)}</span>
@@ -58,7 +58,7 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
           <></>
         )}
       </div>
-      <div className="flex flex-col gap-1 p-3 rounded-md bg-white dark:bg-slate-200 dark:bg-opacity-[0.04]">
+      <div className="flex flex-col gap-1">
         <span className="text-xs text-gray-500 dark:text-slate-400">Fees (24h)</span>
 
         {data ? (
@@ -79,7 +79,7 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
           <></>
         )}
       </div>
-      <div className="flex flex-col gap-1 p-3 rounded-md bg-white dark:bg-slate-200 dark:bg-opacity-[0.04]">
+      <div className="flex flex-col gap-1">
         <span className="text-xs text-gray-500 dark:text-slate-400">Transactions (24h)</span>
         {data ? (
           <span className="font-medium text-gray-900 dark:text-slate-50">

@@ -1,8 +1,10 @@
 import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
+import { ZERO } from '@sushiswap/math'
 import { TextField } from '@sushiswap/ui'
 import { textFieldVariants, typographyVariants, WidgetDescription, WidgetFooter, WidgetTitle } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Widget, WidgetHeader } from '@sushiswap/ui/components/widget'
 import { useTotalSupply } from '@sushiswap/wagmi'
@@ -20,6 +22,7 @@ interface AddSectionStakeWidgetProps {
   reserve1: Amount<Type> | null
   liquidityToken: Token
   children: ReactNode
+  isFarm?: boolean
 }
 
 export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
@@ -31,6 +34,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
   reserve1,
   reserve0,
   children,
+  isFarm,
 }) => {
   const { balance } = usePoolPosition()
   const totalSupply = useTotalSupply(liquidityToken)
@@ -53,6 +57,16 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
 
   return (
     <Widget id="stakeLiquidity" maxWidth="xl" className="bg-white dark:bg-slate-800">
+      <div
+        data-state={balance?.[FundSource.WALLET]?.greaterThan(ZERO) ? 'closed' : 'open'}
+        className={classNames(
+          'hover:data-[state=open]:opacity-100 data-[state=closed]:pointer-events-none opacity-0 z-10 absolute inset-0'
+        )}
+      >
+        <div className="absolute inset-0 paper bg-white/50 dark:bg-slate-800/50 flex items-center justify-center">
+          <p className="text-sm">No liquidity tokens found{isFarm && '. Did you add liquidity first?'}</p>
+        </div>
+      </div>
       <WidgetHeader>
         <WidgetTitle>Stake Liquidity</WidgetTitle>
         <WidgetDescription>

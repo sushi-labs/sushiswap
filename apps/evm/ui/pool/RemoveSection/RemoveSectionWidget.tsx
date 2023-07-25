@@ -4,10 +4,12 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
+import { ZERO } from '@sushiswap/math'
 import { List, TextField } from '@sushiswap/ui'
 import { WidgetDescription } from '@sushiswap/ui'
 import { WidgetFooter } from '@sushiswap/ui'
 import { textFieldVariants, typographyVariants } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency as UICurrency } from '@sushiswap/ui/components/currency'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
@@ -38,11 +40,22 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
   token0Minimum,
   token1Minimum,
   children,
+  isFarm,
 }) => {
   const { balance, value0, value1 } = usePoolPosition()
 
   return (
-    <Widget id="removeLiquidity" maxWidth="xl" className="bg-white dark:bg-slate-800">
+    <Widget id="removeLiquidity" maxWidth="xl" className="relative bg-white dark:bg-slate-800">
+      <div
+        data-state={balance?.[FundSource.WALLET]?.greaterThan(ZERO) ? 'closed' : 'open'}
+        className={classNames(
+          'hover:data-[state=open]:opacity-100 data-[state=closed]:pointer-events-none opacity-0 z-10 absolute inset-0'
+        )}
+      >
+        <div className="absolute inset-0 paper bg-white/50 dark:bg-slate-800/50 flex items-center justify-center">
+          <p className="text-sm">No liquidity tokens found{isFarm && '. Did you unstake?'}</p>
+        </div>
+      </div>
       <WidgetHeader>
         <WidgetTitle>Remove Liquidity</WidgetTitle>
         <WidgetDescription>If you dont see your balance, maybe you forgot to unstake first?</WidgetDescription>
