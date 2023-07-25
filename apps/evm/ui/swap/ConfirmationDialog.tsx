@@ -4,6 +4,7 @@ import { routeProcessor2Abi } from '@sushiswap/abi'
 import { Chain } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { useSlippageTolerance } from '@sushiswap/hooks'
+import { UseTradeReturn } from '@sushiswap/react-query'
 import {
   isRouteProcessor3ChainId,
   isRouteProcessorChainId,
@@ -23,7 +24,7 @@ import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { log } from 'next-axiom'
-import { FC, ReactNode, useCallback, useState } from 'react'
+import { FC, ReactNode, useCallback, useRef, useState } from 'react'
 
 import { useTrade } from '../../lib/swap/useTrade'
 import { useSwapActions, useSwapState } from './trade/TradeProvider'
@@ -49,6 +50,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   const { appType, network0, token0, token1, review } = useSwapState()
   const { approved } = useApproved('swap')
   const { data: trade } = useTrade({ crossChain: false, enabled: review })
+  const tradeRef = useRef<UseTradeReturn | null>(null)
 
   // if (trade?.route && trade?.route?.status !== 'NoWay') {
   //   if (
@@ -125,7 +127,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       approved,
       trade?.route?.status !== 'NoWay',
     ]
-  ) 
+  )
 
   const { config, isError, error } = usePrepareContractWrite({
     chainId: network0,
@@ -214,9 +216,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       data
         .wait()
         .then((receipt) => {
-          // log.info('swap receipt', {
-          //   receipt,
-          // })
+          const trade = tradeRef.current
           if (receipt.status === 1) {
             if (
               trade?.route?.legs?.every(
@@ -378,6 +378,11 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     if (dialogState === ConfirmationDialogState.Pending) {
       setOpen(true)
     } else if (review) {
+      // Set reference of current trade
+      if (tradeRef && trade) {
+        tradeRef.current = trade
+      }
+
       const promise = writeAsync?.()
       if (promise) {
         promise
@@ -393,7 +398,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     } else {
       setReview(true)
     }
-  }, [dialogState, onComplete, review, setReview, writeAsync])
+  }, [dialogState, onComplete, review, setReview, trade, writeAsync])
 
   return (
     <>
