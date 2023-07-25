@@ -31,7 +31,7 @@ export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(function S
         )
       }
     >
-      <div className="flex relative z-[100]">
+      <div>
         <NetworkSelector
           networks={networks ?? SUSHISWAP_V3_SUPPORTED_CHAIN_IDS}
           selected={selectedNetwork}
