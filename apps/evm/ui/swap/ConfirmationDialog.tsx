@@ -207,6 +207,12 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   } = useContractWrite({
     ...config,
     ...(config.request && { request: { ...config.request, gasLimit: config.request.gasLimit.mul(120).div(100) } }),
+    onMutate: () => {
+      // Set reference of current trade
+      if (tradeRef && trade) {
+        tradeRef.current = trade
+      }
+    },
     onSuccess: async (data) => {
       setReview(false)
 
@@ -378,11 +384,6 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     if (dialogState === ConfirmationDialogState.Pending) {
       setOpen(true)
     } else if (review) {
-      // Set reference of current trade
-      if (tradeRef && trade) {
-        tradeRef.current = trade
-      }
-
       const promise = writeAsync?.()
       if (promise) {
         promise
@@ -398,7 +399,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     } else {
       setReview(true)
     }
-  }, [dialogState, onComplete, review, setReview, trade, writeAsync])
+  }, [dialogState, onComplete, review, setReview, writeAsync])
 
   return (
     <>
