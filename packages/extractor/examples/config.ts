@@ -29,6 +29,7 @@ export const SUPPORTED_CHAIN_IDS = [
   // ChainId.BSC,
   // ChainId.CELO,
   ChainId.ETHEREUM,
+  ChainId.FANTOM,
   ChainId.OPTIMISM,
   ChainId.POLYGON,
   // ChainId.POLYGON_ZKEVM,
@@ -258,7 +259,43 @@ export const EXTRACTOR_CONFIG = {
     logging: true,
     routeProcessor3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.ETHEREUM],
   },
-
+  [ChainId.FANTOM]: {
+    client: createPublicClient(config[ChainId.FANTOM]),
+    factoriesV2: [
+      // sushiswapV2Factory(ChainId.FANTOM),
+      // {
+      //   address: '0xd9820a17053d6314B20642E465a84Bf01a3D64f5' as Address,
+      //   provider: LiquidityProviders.Dfyn,
+      //   fee: 0.003,
+      //   initCodeHash: '0xd3ab2c392f54feb4b3b2a677f449b133c188ad2f1015eff3e94ea9315282c5f5',
+      // },
+      // {
+      //   address: '0x7Ba73c99e6f01a37f3e33854c8F544BbbadD3420' as Address,
+      //   provider: LiquidityProviders.Elk,
+      //   fee: 0.003,
+      //   initCodeHash: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
+      // },
+      // {
+      //   address: '0x152eE697f2E276fA89E96742e9bB9aB1F2E61bE3' as Address,
+      //   provider: LiquidityProviders.SpookySwap,
+      //   fee: 0.003,
+      //   initCodeHash: '0xcdf2deca40a0bd56de8e3ce5c7df6727e5b1bf2ac96f283fa9c4b3e6b42ea9d2',
+      // },
+    ],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.FANTOM),
+      {
+        address: '0xaf20f5f19698f1D19351028cd7103B63D30DE7d7' as Address,
+        provider: LiquidityProviders.Wagmi,
+        initCodeHash: '0x30146866f3a846fe3c636beb2756dbd24cf321bc52c9113c837c21f47470dfeb',
+      },
+    ],
+    tickHelperContract: V3_TICK_LENS[ChainId.FANTOM],
+    cacheDir: './cache',
+    logDepth: 300,
+    logging: true,
+    RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.FANTOM],
+  },
   [ChainId.OPTIMISM]: {
     client: createPublicClient(config[ChainId.OPTIMISM]),
     factoriesV2: [
