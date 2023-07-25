@@ -44,6 +44,7 @@
     "@sushiswap/database": "workspace:*",
     "@sushiswap/route-processor": "workspace:*",
     "@sushiswap/router": "workspace:*",
+    "@sushiswap/extractor": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",
     "@whatwg-node/fetch": "0.8.4",
     "ethers": "5.7.2",

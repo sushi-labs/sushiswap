@@ -173,6 +173,7 @@ importers:
       '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
       '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/extractor': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/route-processor': workspace:*
@@ -199,6 +200,7 @@ importers:
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/database': link:../../packages/database
+      '@sushiswap/extractor': link:../../packages/extractor
       '@sushiswap/route-processor': link:../../protocols/route-processor
       '@sushiswap/router': link:../../packages/router
       '@sushiswap/viem-config': link:../../config/viem

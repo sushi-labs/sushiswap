@@ -47,7 +47,7 @@ export const useTradeQuery = (
       return tradeValidator.parse(await res.json())
     },
     refetchOnWindowFocus: true,
-    refetchInterval: 10000,
+    refetchInterval: 2000,
     keepPreviousData: !!amount,
     cacheTime: 0,
     select,
