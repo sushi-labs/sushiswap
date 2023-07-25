@@ -604,9 +604,9 @@ export const config: Record<number, PublicClientConfig> = {
       [
         http(bsc.rpcUrls.default.http[0]),
         // http('https://lb.drpc.org/ogrpc?network=bsc&dkey=Ak765fp4zUm6uVwKu4annC8M80dnCZkR7pAEsm6XXi_w'),
-        http('https://bsc-dataseed.binance.org'),
-        http('https://bsc-dataseed1.binance.org'),
-        http('https://bsc-dataseed2.binance.org'),
+        // http('https://bsc-dataseed.binance.org'),
+        // http('https://bsc-dataseed1.binance.org'),
+        // http('https://bsc-dataseed2.binance.org'),
       ],
       {
         rank: true,

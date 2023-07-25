@@ -2,12 +2,11 @@ import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { config } from '@sushiswap/viem-config'
 import cors from 'cors'
 import { BigNumber } from 'ethers'
 import express, { Express, Request, Response } from 'express'
 import path from 'path'
-import { Address, createPublicClient } from 'viem'
+import { Address } from 'viem'
 import z from 'zod'
 
 import { Extractor, MultiCallAggregator, TokenManager } from '../src'
@@ -44,8 +43,7 @@ const nativeProviders = new Map<SupportChainId, NativeWrapProvider>()
 
 async function setup() {
   for (const chainId of SUPPORTED_CHAIN_IDS) {
-    const client = createPublicClient(config[chainId])
-    const extractor = new Extractor({ ...EXTRACTOR_CONFIG[chainId], client })
+    const extractor = new Extractor(EXTRACTOR_CONFIG[chainId])
     await extractor.start()
     extractors.set(chainId, extractor)
     const tokenManager = new TokenManager(
@@ -55,7 +53,7 @@ async function setup() {
     )
     await tokenManager.addCachedTokens()
     tokenManagers.set(chainId, tokenManager)
-    const nativeProvider = new NativeWrapProvider(chainId, client)
+    const nativeProvider = new NativeWrapProvider(chainId, extractor.client)
     nativeProviders.set(chainId, nativeProvider)
   }
 }

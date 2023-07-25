@@ -150,3 +150,13 @@ export const SUSHISWAP_V2_ROUTER_ADDRESS: Record<SushiSwapV2ChainId, `0x${string
 export const UNISWAP_V2_FACTORY_ADDRESS = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f' as `0x${string}`
 export const UNISWAP_V2_INIT_CODE_HASH =
   '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f' as `0x${string}`
+
+export const PANCAKESWAP_V2_FACTORY_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x1097053Fd2ea711dad45caCcc45EfF7548fCB362',
+  [ChainId.BSC]: '0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73',
+} as const
+
+export const PANCAKESWAP_V2_INIT_CODE_HASH = {
+  [ChainId.ETHEREUM]: '0x57224589c67f3f30a6b0d7a1b54cf3153ab84563bc609ef41dfb34f8b2974d2d',
+  [ChainId.BSC]: '0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5',
+} as const
