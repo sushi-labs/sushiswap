@@ -7,7 +7,7 @@ import React, { useMemo, useState } from 'react'
 
 import { useSwapState } from '../trade/TradeProvider'
 
-export const WidgetTitleV2 = () => {
+export const WidgetTitle = () => {
   const [invert, setInvert] = useState(false)
   const { network0, network1, token1, token0, tokensLoading } = useSwapState()
   const { data: prices0, isLoading: isPrice0Loading } = usePrice({

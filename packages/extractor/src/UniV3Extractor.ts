@@ -197,8 +197,10 @@ export class UniV3Extractor {
         factory: p.factory.address,
       })
     watcher.once('isUpdated', () => {
-      const delay = Math.round(performance.now() - startTime)
-      this.consoleLog(`add pool ${p.address} (${delay}ms, ${source}), watched pools total: ${++this.watchedPools}`)
+      if (source !== 'cache') {
+        const delay = Math.round(performance.now() - startTime)
+        this.consoleLog(`add pool ${p.address} (${delay}ms, ${source}), watched pools total: ${++this.watchedPools}`)
+      }
     })
     return watcher
   }
@@ -294,6 +296,17 @@ export class UniV3Extractor {
       .filter((pc) => pc !== undefined) as PoolCode[]
   }
 
+  getTokensPoolsQuantity(tokenMap: Map<Token, number>) {
+    const add = (token: Token) => {
+      const num = tokenMap.get(token) || 0
+      tokenMap.set(token, num + 1)
+    }
+    Array.from(this.poolMap.values()).forEach((p) => {
+      add(p.token0)
+      add(p.token1)
+    })
+  }
+
   readonly addressCache: Map<string, Address> = new Map()
   computeV3Address(factory: FactoryV3, tokenA: Token, tokenB: Token, fee: FeeAmount): Address {
     const key = `${tokenA.address}${tokenB.address}${fee}${factory.address}`
@@ -311,6 +324,6 @@ export class UniV3Extractor {
   }
 
   consoleLog(log: string) {
-    if (this.logging) console.log('V3: ' + log)
+    if (this.logging) console.log(`V3-${this.multiCallAggregator.chainId}: ` + log)
   }
 }

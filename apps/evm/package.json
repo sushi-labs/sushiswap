@@ -6,7 +6,7 @@
     "build": "next build",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient",
-    "dev": "next dev",
+    "dev": "next dev -p 1337",
     "lint": "TIMING=1 next lint",
     "lint:fix": "TIMING=1 next lint --fix",
     "start": "next start",
@@ -92,7 +92,7 @@
     "react-slider": "2.0.4",
     "react-virtualized-auto-sizer": "1.0.7",
     "swr": "2.1.5",
-    "viem": "1.0.2",
+    "viem": "1.4.0",
     "wagmi": "legacy-v0",
     "zod": "3.21.4"
   },

@@ -425,9 +425,10 @@ export class UniV2Extractor {
         factory: args.factory.address,
       })
     const delay = Math.round(performance.now() - startTime)
-    this.consoleLog(
-      `add pool ${args.address} (${delay}ms, ${args.source}), watched pools total: ${++this.watchedPools}`
-    )
+    if (args.source !== 'cache')
+      this.consoleLog(
+        `add pool ${args.address} (${delay}ms, ${args.source}), watched pools total: ${++this.watchedPools}`
+      )
     return poolState.poolCode
   }
 
@@ -436,6 +437,19 @@ export class UniV2Extractor {
       (p) => p.status == PoolStatus.ValidPool || p.status == PoolStatus.UpdatingPool
     ) as PoolStateValidPool[]
     return pools.map((p) => p.poolCode)
+  }
+
+  getTokensPoolsQuantity(tokenMap: Map<Token, number>) {
+    const add = (token: RToken) => {
+      const num = tokenMap.get(token as Token) || 0
+      tokenMap.set(token as Token, num + 1)
+    }
+    Array.from(this.poolMap.values()).forEach((p) => {
+      if (p.status == PoolStatus.ValidPool || p.status == PoolStatus.UpdatingPool) {
+        add(p.poolCode.pool.token0)
+        add(p.poolCode.pool.token1)
+      }
+    })
   }
 
   readonly addressCache: Map<string, Address> = new Map()
@@ -454,6 +468,6 @@ export class UniV2Extractor {
   }
 
   consoleLog(log: string) {
-    if (this.logging) console.log('V2: ' + log)
+    if (this.logging) console.log(`V2-${this.multiCallAggregator.chainId}: ` + log)
   }
 }

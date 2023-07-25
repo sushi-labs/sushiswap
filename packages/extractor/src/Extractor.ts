@@ -1,3 +1,6 @@
+import { open } from 'node:fs/promises'
+import path from 'node:path'
+
 import { Token } from '@sushiswap/currency'
 import { PoolCode } from '@sushiswap/router'
 import { Address, PublicClient } from 'viem'
@@ -17,8 +20,6 @@ const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
 // TODO: Back to LogFilter ? Faster events applying
 
-// TODO: The list of the best tokens
-
 // TODO: cache for not-existed pools?
 // TODO: to fill address cache from pool cache
 
@@ -32,6 +33,8 @@ const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 export class Extractor {
   extractorV2?: UniV2Extractor
   extractorV3?: UniV3Extractor
+  multiCallAggregator?: MultiCallAggregator
+  cacheDir: string
 
   /// @param client
   /// @param factoriesV2 list of supported V2 factories
@@ -51,8 +54,13 @@ export class Extractor {
     logDepth: number
     logging?: boolean
   }) {
-    const multiCallAggregator = new MultiCallAggregator(args.client)
-    const tokenManager = new TokenManager(multiCallAggregator, args.cacheDir, `tokens-${multiCallAggregator.chainId}`)
+    this.cacheDir = args.cacheDir
+    this.multiCallAggregator = new MultiCallAggregator(args.client)
+    const tokenManager = new TokenManager(
+      this.multiCallAggregator,
+      args.cacheDir,
+      `tokens-${this.multiCallAggregator.chainId}`
+    )
     if (args.factoriesV2.length > 0)
       this.extractorV2 = new UniV2Extractor(
         args.client,
@@ -60,7 +68,7 @@ export class Extractor {
         args.cacheDir,
         args.logDepth,
         args.logging !== undefined ? args.logging : false,
-        multiCallAggregator,
+        this.multiCallAggregator,
         tokenManager
       )
     if (args.factoriesV3.length > 0)
@@ -71,7 +79,7 @@ export class Extractor {
         args.cacheDir,
         args.logDepth,
         args.logging !== undefined ? args.logging : false,
-        multiCallAggregator,
+        this.multiCallAggregator,
         tokenManager
       )
   }
@@ -80,6 +88,7 @@ export class Extractor {
   async start(tokensPrefetch: Token[] = []) {
     await Promise.all([this.extractorV2?.start(), this.extractorV3?.start()].filter((e) => e !== undefined))
     this.getPoolCodesForTokens(tokensPrefetch)
+    this.printTokensPoolsQuantity(this.cacheDir, `TokensStatus-${this.multiCallAggregator?.chainId}`)
   }
 
   getPoolCodesForTokens(tokens: Token[]): PoolCode[] {
@@ -126,6 +135,27 @@ export class Extractor {
     await Promise.any([Promise.allSettled(promises), delay(timeout)])
     const poolsV3 = watchersV3.map((w) => w.getPoolCode()).filter((pc) => pc !== undefined) as PoolCode[]
     return poolsV3.concat(poolsV2)
+  }
+
+  getTokensPoolsQuantity(): [Token, number][] {
+    const tokenMap: Map<Token, number> = new Map()
+    if (this.extractorV2) this.extractorV2.getTokensPoolsQuantity(tokenMap)
+    if (this.extractorV3) this.extractorV3.getTokensPoolsQuantity(tokenMap)
+    return Array.from(tokenMap.entries()).sort(([, a], [, b]) => b - a)
+  }
+
+  async printTokensPoolsQuantity(...paths: string[]) {
+    const filePath = path.resolve(...paths)
+    const stats = this.getTokensPoolsQuantity()
+    const file = await open(filePath, 'w')
+    await file.writeFile(`Total tokens: ${stats.length}\n`)
+    await file.writeFile('Quantity of pools for tokens\n')
+    const tokenNum = Math.min(stats.length, 30)
+    for (let i = 0; i < tokenNum; ++i) {
+      const [token, num] = stats[i]
+      await file.writeFile(`${token.address} ${token.symbol} ${num}\n`)
+    }
+    await file.close()
   }
 
   getCurrentPoolCodes() {

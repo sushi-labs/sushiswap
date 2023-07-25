@@ -18,11 +18,11 @@ const tokenSchema = z.object({
   decimals: z.coerce.number().int().gte(0),
 })
 
-const tokenCache: Map<ChainId, Map<string, typeof tokenSchema['_type']>> = new Map()
+const tokenCache: Map<ChainId, Map<string, (typeof tokenSchema)['_type']>> = new Map()
 function getCache(chainId: ChainId, tokenId: string) {
   return tokenCache.get(chainId)?.get(tokenId.toLowerCase())
 }
-function setCache(chainId: ChainId, tokenId: string, token: typeof tokenSchema['_type']) {
+function setCache(chainId: ChainId, tokenId: string, token: (typeof tokenSchema)['_type']) {
   if (!tokenCache.get(chainId)) tokenCache.set(chainId, new Map())
   tokenCache.get(chainId)?.set(tokenId.toLowerCase(), token)
 }
@@ -67,7 +67,9 @@ async function fetcher(chainId: ChainId, tokenId: string) {
   if (cachedToken) return cachedToken
 
   const token = tokenSchema.parse(
-    await fetch(`https://tokens-git-feature-swap.sushi.com/v0/${chainId}/${getAddress(tokenId)}`).then((data) => data.json())
+    await fetch(`https://tokens-git-feature-swap.sushi.com/v0/${chainId}/${getAddress(tokenId)}`).then((data) =>
+      data.json()
+    )
   )
 
   setCache(chainId, tokenId, token)
@@ -76,10 +78,9 @@ async function fetcher(chainId: ChainId, tokenId: string) {
 }
 
 export async function getToken(chainId: ChainId, tokenId: string) {
-  const isShortNameSupported = isShortCurrencyNameSupported(chainId)
-  const tokenIdIsShortName = isShortCurrencyName(chainId, tokenId)
-
-  if (isShortNameSupported && tokenIdIsShortName) return currencyFromShortCurrencyName(chainId, tokenId)
+  if (isShortCurrencyNameSupported(chainId) && isShortCurrencyName(chainId, tokenId)) {
+    return currencyFromShortCurrencyName(chainId, tokenId)
+  }
 
   if (!isAddress(tokenId)) throw new Error(`Invalid token address: ${tokenId}`)
 
