@@ -32,6 +32,10 @@ const textFieldVariants = cva(
           'flex items-center px-3 rounded-lg font-medium block bg-secondary group-hover:bg-muted group-focus:bg-accent',
         naked: 'bg-transparent',
       },
+      isError: {
+        yes: 'bg-red/10 text-red',
+        no: '',
+      },
       hasIcon: {
         yes: 'pl-[40px]',
         no: '',
@@ -46,6 +50,7 @@ const textFieldVariants = cva(
       hasIcon: 'no',
       hasUnit: 'no',
       size: 'default',
+      isError: 'no',
     },
   }
 )
@@ -54,7 +59,8 @@ type InputType = 'text' | 'number' | 'percent'
 
 interface TextFieldBaseProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
-    VariantProps<typeof textFieldVariants> {
+    Omit<VariantProps<typeof textFieldVariants>, 'isError'> {
+  isError?: boolean
   id?: string
   icon?: IconComponent
   iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
@@ -85,6 +91,7 @@ const Component = <T extends InputType>(
     maxDecimals,
     size,
     onValueChange,
+    isError,
     ...props
   }: TextFieldProps<T>,
   ref: React.ForwardedRef<HTMLInputElement>
@@ -131,6 +138,7 @@ const Component = <T extends InputType>(
       <input
         onChange={_onChange}
         className={textFieldVariants({
+          isError: isError ? 'yes' : 'no',
           variant,
           hasIcon: Icon ? 'yes' : 'no',
           hasUnit: unit ? 'yes' : 'no',
@@ -147,7 +155,12 @@ const Component = <T extends InputType>(
       />
       {unit ? (
         <div
-          className={textFieldVariants({ variant, size, className: 'text-muted-foreground rounded-l-none !w-[unset]' })}
+          className={textFieldVariants({
+            isError: isError ? 'yes' : 'no',
+            variant,
+            size,
+            className: 'text-muted-foreground rounded-l-none !w-[unset]',
+          })}
         >
           {unit}
         </div>

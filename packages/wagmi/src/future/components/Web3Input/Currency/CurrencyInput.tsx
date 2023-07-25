@@ -33,6 +33,7 @@ export interface CurrencyInputProps {
   currencies?: Record<string, Token>
   allowNative?: boolean
   error?: string
+  hidePinnedTokens?: boolean
 }
 
 export const Component: FC<CurrencyInputProps> = ({
@@ -53,6 +54,7 @@ export const Component: FC<CurrencyInputProps> = ({
   currencies,
   allowNative = true,
   error,
+  hidePinnedTokens,
 }) => {
   const { address } = useAccount()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -127,6 +129,7 @@ export const Component: FC<CurrencyInputProps> = ({
             chainId={chainId}
             onSelect={onSelect}
             includeNative={allowNative}
+            hidePinnedTokens={hidePinnedTokens}
           >
             <Button
               size="lg"
