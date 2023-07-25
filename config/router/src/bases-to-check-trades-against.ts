@@ -266,9 +266,11 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
   ],
   [ChainId.HAQQ]: [
     WNATIVE[ChainId.HAQQ],
-    // WETH9[ChainId.HAQQ],
-    // USDC[ChainId.HAQQ],
-    // USDT[ChainId.HAQQ]
+    WETH9[ChainId.HAQQ],
+    WBTC[ChainId.HAQQ],
+    USDC[ChainId.HAQQ],
+    USDT[ChainId.HAQQ],
+    DAI[ChainId.HAQQ],
   ],
   [ChainId.CORE]: [WNATIVE[ChainId.CORE], WETH9[ChainId.CORE], USDC[ChainId.CORE], USDT[ChainId.CORE]],
 }
