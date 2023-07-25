@@ -90,4 +90,5 @@ export const NETWORK_CIRCLE_ICON: Record<number, IconComponent> = {
   [ChainId.CORE]: CoreCircle,
   [ChainId.ZKSYNC_ERA]: EthereumCircle,
   [ChainId.LINEA]: EthereumCircle,
+  [ChainId.BASE]: EthereumCircle,
 }

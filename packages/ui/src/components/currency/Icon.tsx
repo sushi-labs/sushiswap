@@ -74,6 +74,7 @@ const LOGO: Record<number, string> = {
   [ChainId.HAQQ]: IslmLogo,
   [ChainId.ZKSYNC_ERA]: EthereumLogo,
   [ChainId.LINEA]: EthereumLogo,
+  [ChainId.BASE]: EthereumLogo,
 }
 
 function djb2(str: string) {

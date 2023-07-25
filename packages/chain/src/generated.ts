@@ -855,6 +855,37 @@ export default [
     ]
   },
   {
+    "name": "Base",
+    "chain": "ETH",
+    "rpc": [
+      "https://developer-access-mainnet.base.org/"
+    ],
+    "faucets": [],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "infoURL": "https://base.org",
+    "shortName": "base",
+    "chainId": 8453,
+    "networkId": 8453,
+    "icon": "base",
+    "explorers": [
+      {
+        "name": "basescan",
+        "url": "https://basescan.org",
+        "standard": "none"
+      },
+      {
+        "name": "basescout",
+        "url": "https://base.blockscout.com",
+        "standard": "none"
+      }
+    ],
+    "status": "active"
+  },
+  {
     "name": "Haqq Network",
     "chain": "Haqq",
     "rpc": [

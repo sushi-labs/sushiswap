@@ -716,6 +716,26 @@ export const otherChains: Chain[] = [
       },
     },
   },
+  {
+    id: ChainId.BASE,
+    name: 'Base',
+    network: 'base',
+    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+    rpcUrls: {
+      default: {
+        http: ['https://developer-access-mainnet.base.org'],
+      },
+      public: {
+        http: ['https://developer-access-mainnet.base.org'],
+      },
+    },
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 5022,
+      },
+    },
+  },
 ]
 
 export const allChains = [...defaultChains, ...otherChains]
