@@ -127,7 +127,7 @@ async function cancelVest(page: Page) {
   await expect(confirmTransferLocator).toBeEnabled()
   await confirmTransferLocator.click()
 
-  const expectedText = '(Successfully cancelled Vest)'
+  const expectedText = '(Successfully cancelled vest)'
   const regex = new RegExp(expectedText)
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }
