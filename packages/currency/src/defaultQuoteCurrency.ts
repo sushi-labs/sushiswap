@@ -58,6 +58,7 @@ export const defaultQuoteCurrency = {
   // [ChainId.SCROLL_ALPHA_TESTNET]: WETH9[ChainId.SCROLL_ALPHA_TESTNET],
   // [ChainId.BASE_TESTNET]: WETH9[ChainId.BASE_TESTNET],
   [ChainId.POLYGON_ZKEVM]: USDC[ChainId.POLYGON_ZKEVM],
-  // [ChainId.HAQQ]: USDC[ChainId.HAQQ],
+  [ChainId.HAQQ]: USDC[ChainId.HAQQ],
   [ChainId.CORE]: USDC[ChainId.CORE],
+  [ChainId.ZKSYNC_ERA]: USDC[ChainId.ZKSYNC_ERA],
 } as const

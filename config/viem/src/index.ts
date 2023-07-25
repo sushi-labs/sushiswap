@@ -41,7 +41,7 @@ import {
   //  taraxa,
   // taraxaTestnet,
   telos,
-  //  zkSync,
+  zkSync,
   // zkSyncTestnet,
 } from 'viem/chains'
 
@@ -827,5 +827,9 @@ export const config: Record<number, PublicClientConfig> = {
   [ChainId.HECO]: {
     chain: heco,
     transport: http(heco.rpcUrls.default.http[0]),
+  },
+  [ChainId.ZKSYNC_ERA]: {
+    chain: zkSync,
+    transport: http(zkSync.rpcUrls.default.http[0]),
   },
 } as const

@@ -61,10 +61,10 @@ export const usePinnedTokens = () => {
           throw new Error('Address provided not a valid ERC20 address')
         }
 
-        return value[chainId].includes(`${chainId}:${getAddress(address)}`)
+        return value?.[chainId]?.includes(`${chainId}:${getAddress(address)}`)
       }
 
-      return !!value[currency.chainId].includes(currency.id)
+      return !!value?.[currency.chainId]?.includes(currency.id)
     },
     [value]
   )

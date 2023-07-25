@@ -112,6 +112,7 @@ export const ChainId = {
   // FILECOIN: 314,
   HAQQ: 11235,
   CORE: 1116,
+  ZKSYNC_ERA: 324,
 } as const
 export type ChainId = (typeof ChainId)[keyof typeof ChainId]
 
@@ -178,6 +179,7 @@ export const ChainKey = {
   [ChainId.THUNDERCORE]: 'thundercore',
   [ChainId.HAQQ]: 'haqq',
   [ChainId.CORE]: 'core',
+  [ChainId.ZKSYNC_ERA]: 'zksync-era',
   // [ChainId.FILECOIN]: 'filecoin',
   // [ChainId.SEPOLIA]: 'sepolia',
 } as const

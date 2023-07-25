@@ -45,5 +45,6 @@ export const nativeCurrencyIds = {
   [ChainId.POLYGON_ZKEVM]: 'ETH',
   [ChainId.CORE]: 'CORE',
   [ChainId.HAQQ]: 'ISLM',
+  [ChainId.ZKSYNC_ERA]: 'ETH',
   // [ChainId.SEPOLIA]: 'ETH',
 } as const
