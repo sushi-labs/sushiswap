@@ -50,6 +50,7 @@ interface AddSectionReviewModalTridentProps {
   input0: Amount<Type> | undefined
   input1: Amount<Type> | undefined
   children: ReactNode
+  onSuccess: () => void
 }
 
 const ZERO_PERCENT = new Percent('0')
@@ -64,6 +65,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   input0,
   input1,
   children,
+    onSuccess,
 }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
@@ -261,7 +263,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
     onSettled,
     onSuccess: () => {
       setSignature(undefined)
-      close()
+      onSuccess()
     },
     enabled: approved,
   })

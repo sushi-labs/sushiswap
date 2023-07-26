@@ -31,6 +31,7 @@ interface TokenSelectorProps {
   children: ReactNode
   currencies?: Record<string, Token>
   includeNative?: boolean
+  hidePinnedTokens?: boolean
 }
 
 export const TokenSelector: FC<TokenSelectorProps> = ({
@@ -41,6 +42,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   chainId,
   children,
   currencies,
+  hidePinnedTokens,
 }) => {
   const { address } = useAccount()
 

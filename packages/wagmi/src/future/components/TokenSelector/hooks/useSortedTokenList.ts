@@ -41,9 +41,15 @@ export const useSortedTokenList = ({
     queryKey: ['sortedTokenList', { debouncedQuery, tokenMap, customTokenMap, balancesMap, pricesMap, includeNative }],
     queryFn: async () => {
       const tokenMapValues = tokenMap ? Object.values(tokenMap) : []
-      const tokenMapIds: string[] = tokenMapValues ? tokenMapValues.map((el) => el.address) : []
+      const uniqTokenMapIds: string[] = []
+      const tokenMapValuesUniq = tokenMapValues.filter((el) => {
+        if (uniqTokenMapIds.includes(el.address)) return false
+        uniqTokenMapIds.push(el.address)
+        return true
+      })
+
       const customTokenMapValues = customTokenMap
-        ? Object.values(customTokenMap).filter((el) => el.chainId === chainId && !tokenMapIds.includes(el.address))
+        ? Object.values(customTokenMap).filter((el) => el.chainId === chainId && !uniqTokenMapIds.includes(el.address))
         : []
 
       const _includeNative =
@@ -51,7 +57,7 @@ export const useSortedTokenList = ({
         chainId &&
         (!debouncedQuery || debouncedQuery.toLowerCase().includes(Native.onChain(chainId).symbol.toLowerCase()))
 
-      const filteredTokens: Token[] = filterTokens(tokenMapValues, debouncedQuery)
+      const filteredTokens: Token[] = filterTokens(tokenMapValuesUniq, debouncedQuery)
       const filteredCustomTokens: Token[] = filterTokens(customTokenMapValues, debouncedQuery)
       const sortedTokens: Token[] = [...filteredTokens, ...filteredCustomTokens].sort(
         tokenComparator(balancesMap, pricesMap)

@@ -7,8 +7,6 @@
     "skipLibCheck": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
-    "module": "ESNext",
-    "moduleResolution": "NodeNext"
+    "sourceMap": true
   }
 }

@@ -164,6 +164,9 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
     chainId,
     prepare,
     onSettled,
+    onSuccess: () => {
+      setValue('0')
+    },
     enabled: +value > 0 && chainId === chain?.id,
   })
 

@@ -167,6 +167,9 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                           token1={token1}
                           input0={parsedInput0}
                           input1={parsedInput1}
+                          onSuccess={() => {
+                            setTypedAmounts({ input0: '', input1: '' })
+                          }}
                         >
                           <Button size="xl" fullWidth>
                             Add Liquidity

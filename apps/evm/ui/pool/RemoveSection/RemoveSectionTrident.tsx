@@ -280,6 +280,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
     onSettled,
     enabled: approved,
     onSuccess: () => {
+      setPercentage('')
       setSignature(undefined)
     },
   })

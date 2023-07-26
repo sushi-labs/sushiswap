@@ -13,6 +13,7 @@ import {
   optimism,
   polygon,
   polygonZkEvm,
+  telos,
 } from '@wagmi/core/chains'
 
 export const defaultChains: Chain[] = [
@@ -648,6 +649,10 @@ export const otherChains: Chain[] = [
         blockCreated: 100671921,
       },
     },
+  },
+  {
+    ...telos,
+    id: ChainId.TELOS,
   },
 ]
 

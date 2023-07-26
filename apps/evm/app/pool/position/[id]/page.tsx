@@ -76,9 +76,9 @@ const queryParamsSchema = z.object({
 })
 
 enum SelectedTab {
-  Analytics,
-  DecreaseLiq,
-  IncreaseLiq,
+  Analytics = 'Analytics',
+  DecreaseLiq = 'Decrease Liquidity',
+  IncreaseLiq = 'Increase Liquidity',
 }
 
 const Position: FC<{ id: string }> = ({ id }) => {
@@ -137,7 +137,7 @@ const Position: FC<{ id: string }> = ({ id }) => {
   )
 
   const amounts = useMemo(() => {
-    if (positionDetails && positionDetails.fees && _token0 && _token1)
+    if (positionDetails?.fees && _token0 && _token1)
       return [
         Amount.fromRawAmount(_token0, JSBI.BigInt(positionDetails.fees[0])),
         Amount.fromRawAmount(_token1, JSBI.BigInt(positionDetails.fees[1])),

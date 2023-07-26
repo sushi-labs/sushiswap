@@ -267,6 +267,9 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
                               token1={token1}
                               input0={parsedInput0}
                               input1={parsedInput1}
+                              onSuccess={() => {
+                                setTypedAmounts({ input0: '', input1: '' })
+                              }}
                             >
                               <Button size="xl" fullWidth testId="add-liquidity">
                                 {title}

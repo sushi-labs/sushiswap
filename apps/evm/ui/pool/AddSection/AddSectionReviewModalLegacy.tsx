@@ -46,6 +46,7 @@ interface AddSectionReviewModalLegacyProps {
   input0: Amount<Type> | undefined
   input1: Amount<Type> | undefined
   children: ReactNode
+  onSuccess: () => void
 }
 
 export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> = ({
@@ -57,6 +58,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
   input0,
   input1,
   children,
+    onSuccess
 }) => {
   const deadline = useTransactionDeadline(chainId)
   const contract = useSushiSwapRouterContract(chainId)
@@ -173,7 +175,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
     chainId,
     prepare,
     onSettled,
-    onSuccess: close,
+    onSuccess,
     enabled: approved,
     gasMargin: true,
   })
