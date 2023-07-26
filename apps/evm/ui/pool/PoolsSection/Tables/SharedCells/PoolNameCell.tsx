@@ -4,7 +4,7 @@ import { formatNumber } from '@sushiswap/format'
 import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Currency } from '@sushiswap/ui/components/currency'
-import { NetworkIcon, SteerIcon } from '@sushiswap/ui/components/icons'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
 import { useTokensFromPool } from 'lib/hooks'
 import { FC } from 'react'
@@ -76,7 +76,7 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
               </Tooltip>
             </TooltipProvider>
           )}
-          {row.steerVaults && row.steerVaults.length > 0 && (
+          {/* {row.hasEnabledSteerVault && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -89,7 +89,7 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-          )}
+          )} */}
         </div>
       </div>
     </div>
