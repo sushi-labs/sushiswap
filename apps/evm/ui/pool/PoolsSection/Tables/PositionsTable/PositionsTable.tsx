@@ -1,14 +1,13 @@
+import { Slot } from '@radix-ui/react-slot'
 import { Protocol } from '@sushiswap/database'
 import { DataTable } from '@sushiswap/ui'
-import { Sheet, SheetContent, SheetTrigger } from '@sushiswap/ui/components/sheet'
 import { useAccount } from '@sushiswap/wagmi'
 import { ColumnDef, Row } from '@tanstack/react-table'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import { useUserPositions } from 'lib/hooks'
-import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
+import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { PositionWithPool } from 'types'
 
-import Page from '../../../../../app/pool/[id]/page'
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { APR_COLUMN, NAME_COLUMN, VALUE_COLUMN } from './Cells/columns'
 
@@ -16,14 +15,15 @@ const COLUMNS = [NAME_COLUMN, VALUE_COLUMN, APR_COLUMN] satisfies ColumnDef<Posi
 
 interface PositionsTableProps {
   protocol: Protocol
+  onRowClick?(row: PositionWithPool): void
+  rowLink?(row: PositionWithPool): string
 }
 
 const tableState = { sorting: [{ id: 'value', desc: true }] }
 
-export const PositionsTable: FC<PositionsTableProps> = ({ protocol }) => {
+export const PositionsTable: FC<PositionsTableProps> = ({ protocol, onRowClick, rowLink }) => {
   const { address } = useAccount()
   const { chainIds, tokenSymbols } = usePoolFilters()
-  const [peekedId, setPeekedId] = useState<{ id: string }>({ id: '' })
 
   const { data: positions, isValidating } = useUserPositions({ id: address, chainIds: SUPPORTED_CHAIN_IDS })
 
@@ -42,43 +42,27 @@ export const PositionsTable: FC<PositionsTableProps> = ({ protocol }) => {
     return chainFiltered.filter((el) => el.pool?.protocol === protocol)
   }, [positions, tokenSymbols, chainIds, protocol])
 
-  const rowRenderer = useCallback((row: Row<PositionWithPool>, rowNode: ReactNode) => {
-    return (
-      <_SheetTrigger row={row} onPeek={setPeekedId}>
-        {rowNode}
-      </_SheetTrigger>
-    )
-  }, [])
-
-  console.log(peekedId)
-  return (
-    <Sheet modal>
-      <DataTable
-        state={tableState}
-        loading={isValidating}
-        rowRenderer={rowRenderer}
-        columns={COLUMNS}
-        data={_positions}
-      />
-      <SheetContent side="right" className="overflow-auto min-w-[calc(100vw-16px)] md:min-w-[unset] !max-w-7xl">
-        <Page params={peekedId} />
-      </SheetContent>
-    </Sheet>
+  const rowRenderer = useCallback(
+    (row: Row<PositionWithPool>, rowNode: ReactNode) => {
+      if (onRowClick)
+        return (
+          <Slot className="cursor-pointer" onClick={() => onRowClick?.(row.original)}>
+            {rowNode}
+          </Slot>
+        )
+      return rowNode
+    },
+    [onRowClick]
   )
-}
-
-const _SheetTrigger: FC<{
-  row: Row<PositionWithPool>
-  children: ReactNode
-  onPeek({ id }: { id: string }): void
-}> = ({ row, children, onPeek }) => {
-  const onMouseEnter = useCallback(() => {
-    onPeek({ id: row.original.pool.id.replace(':', '%3A') })
-  }, [onPeek, row.original.pool.id])
 
   return (
-    <SheetTrigger asChild onMouseEnter={onMouseEnter} type={undefined}>
-      {children}
-    </SheetTrigger>
+    <DataTable
+      state={tableState}
+      loading={isValidating}
+      rowRenderer={rowRenderer}
+      linkFormatter={rowLink}
+      columns={COLUMNS}
+      data={_positions}
+    />
   )
 }

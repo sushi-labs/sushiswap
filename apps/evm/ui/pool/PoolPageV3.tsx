@@ -150,7 +150,7 @@ const Pool: FC<{ id: string; positionId?: string }> = ({ id, positionId: _positi
           <>
             <div className="flex items-center gap-4">
               <IconButton size="sm" icon={ArrowLeftIcon} onClick={() => setPositionId(undefined)} name="Back" />
-              <span className="text-sm font-medium text-secondary-foreground">Go back to overview</span>
+              <span className="text-sm font-medium text-secondary-foreground">Go back to positions</span>
             </div>
             <Page params={{ id: `${chainId}%3A${positionId}` }} />
           </>
@@ -169,7 +169,7 @@ const Pool: FC<{ id: string; positionId?: string }> = ({ id, positionId: _positi
                 <PoolsFiltersProvider>
                   <ConcentratedPositionsTable
                     poolId={poolAddress}
-                    onRowClick={(row) => setPositionId(Number(row.original.tokenId.toString()))}
+                    onRowClick={(row) => setPositionId(Number(row.tokenId.toString()))}
                   />
                 </PoolsFiltersProvider>
               </TabsContent>

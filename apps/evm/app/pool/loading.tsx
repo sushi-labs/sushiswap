@@ -1,5 +1,3 @@
-'use client'
-
 import { Splash } from '@sushiswap/ui'
 import React from 'react'
 

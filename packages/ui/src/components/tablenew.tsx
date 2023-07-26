@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import * as React from 'react'
 
 import { classNames } from '../index'
@@ -79,7 +80,9 @@ interface TableCellAsLink extends React.TdHTMLAttributes<HTMLTableCellElement> {
 const TableCellAsLink = React.forwardRef<HTMLTableCellElement, TableCellAsLink>(
   ({ className, children, href, ...props }, ref) => (
     <td className="!p-0 h-[76px]" ref={ref} {...props}>
-      <a
+      <Link
+        scroll={false}
+        shallow={true}
         href={href}
         className={classNames(
           'flex items-center text-sm font-medium p-4 align-middle [&:has([role=checkbox])]:pr-0',
@@ -87,7 +90,7 @@ const TableCellAsLink = React.forwardRef<HTMLTableCellElement, TableCellAsLink>(
         )}
       >
         {children}
-      </a>
+      </Link>
     </td>
   )
 )

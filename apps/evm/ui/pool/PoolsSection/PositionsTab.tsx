@@ -91,16 +91,19 @@ export const PositionsTab = () => {
             ) : null}
           </div>
           <TabsContent value="v3">
-            <ConcentratedPositionsTable hideClosed={hide} variant="sheet" />
+            <ConcentratedPositionsTable
+              hideClosed={hide}
+              rowLink={(row) => `/pool/${row.chainId}:${row.address}?positionId=${row.tokenId}`}
+            />
           </TabsContent>
           <TabsContent value="v2">
-            <PositionsTable protocol={Protocol.SUSHISWAP_V2} />
+            <PositionsTable protocol={Protocol.SUSHISWAP_V2} rowLink={(row) => `/pool/${row.pool.id}`} />
           </TabsContent>
           <TabsContent value="stable">
-            <PositionsTable protocol={Protocol.BENTOBOX_STABLE} />
+            <PositionsTable protocol={Protocol.BENTOBOX_STABLE} rowLink={(row) => `/pool/${row.pool.id}`} />
           </TabsContent>
           <TabsContent value="classic">
-            <PositionsTable protocol={Protocol.BENTOBOX_CLASSIC} />
+            <PositionsTable protocol={Protocol.BENTOBOX_CLASSIC} rowLink={(row) => `/pool/${row.pool.id}`} />
           </TabsContent>
         </Tabs>
       </div>

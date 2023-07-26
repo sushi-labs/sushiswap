@@ -71,7 +71,7 @@ export const PoolsSection: FC = () => {
                 <TableFiltersFarmsOnly />
                 <TableFiltersResetButton />
               </div>
-              <PoolsTable />
+              <PoolsTable rowLink={(row) => `/pool/${row.id}`} />
             </Container>
           </Tab.Panel>
           <Tab.Panel unmount={false}>
