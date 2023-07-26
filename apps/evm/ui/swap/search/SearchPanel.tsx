@@ -9,10 +9,10 @@ import { usePrice, useTokenList, useTokenSearch } from '@sushiswap/react-query'
 import { COMMON_BASES } from '@sushiswap/router-config'
 import { classNames } from '@sushiswap/ui'
 import { TextField } from '@sushiswap/ui'
+import { DialogContent, DialogNew } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
-import { Dialog } from '@sushiswap/ui/components/dialog'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { List } from '@sushiswap/ui/components/list/List'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
@@ -70,8 +70,8 @@ export const SearchPanel: FC = () => {
   }, [network1, tokenList, tokenSearch])
 
   return (
-    <Dialog variant="opaque" open={open} onClose={onClose} className="fixed inset-0 z-50">
-      <div>
+    <DialogNew open={open} onOpenChange={setOpen}>
+      <DialogContent variant="opaque">
         <div className="flex items-center gap-4">
           <TextField
             placeholder="Search by token or address"
@@ -136,8 +136,8 @@ export const SearchPanel: FC = () => {
             </List.Control>
           </List>
         </div>
-      </div>
-    </Dialog>
+      </DialogContent>
+    </DialogNew>
   )
 }
 

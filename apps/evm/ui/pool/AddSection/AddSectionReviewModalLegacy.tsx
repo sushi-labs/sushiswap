@@ -3,6 +3,17 @@ import { calculateSlippageAmount } from '@sushiswap/amm'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Type } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
+import {
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogProvider,
+  DialogReview,
+  DialogTitle,
+} from '@sushiswap/ui'
+import { DialogConfirm } from '@sushiswap/ui'
+import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createToast } from '@sushiswap/ui/components/toast'
@@ -15,36 +26,37 @@ import {
   useNetwork,
   useSushiSwapRouterContract,
 } from '@sushiswap/wagmi'
+import { useWaitForTransaction } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { BigNumber } from 'ethers'
 import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
 import { useTransactionDeadline } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
-import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
+import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo } from 'react'
 
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface AddSectionReviewModalLegacyProps {
+  poolAddress: string | undefined
   poolState: PairState
   chainId: SushiSwapV2ChainId
   token0: Type | undefined
   token1: Type | undefined
   input0: Amount<Type> | undefined
   input1: Amount<Type> | undefined
-  open: boolean
-  close(): void
+  children: ReactNode
 }
 
 export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> = ({
+  poolAddress,
   poolState,
   chainId,
   token0,
   token1,
   input0,
   input1,
-  open,
-  close,
+  children,
 }) => {
   const deadline = useTransactionDeadline(chainId)
   const contract = useSushiSwapRouterContract(chainId)
@@ -153,7 +165,11 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
     [token0, token1, chain?.id, contract, input0, input1, address, minAmount0, minAmount1, deadline]
   )
 
-  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+  const {
+    sendTransactionAsync,
+    isLoading: isWritePending,
+    data,
+  } = useSendTransaction({
     chainId,
     prepare,
     onSettled,
@@ -161,24 +177,46 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
     enabled: approved,
     gasMargin: true,
   })
+
+  const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
+
   return (
-    <AddSectionReviewModal
-      chainId={chainId as BentoBoxV1ChainId}
-      input0={input0}
-      input1={input1}
-      open={open}
-      close={close}
-    >
-      <Button
-        size="xl"
-        disabled={isWritePending || !approved || !sendTransaction}
-        loading={Boolean(!sendTransaction)}
-        fullWidth
-        onClick={() => sendTransaction?.()}
-        testId="confirm-add-v2-liquidity"
-      >
-        {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
-      </Button>
-    </AddSectionReviewModal>
+    <DialogProvider>
+      <DialogReview>
+        {({ confirm }) => (
+          <>
+            <DialogTrigger asChild>{children}</DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add liquidity</DialogTitle>
+                <DialogDescription>Please review your entered details.</DialogDescription>
+              </DialogHeader>
+              <AddSectionReviewModal chainId={chainId as BentoBoxV1ChainId} input0={input0} input1={input1} />
+              <DialogFooter>
+                <Button
+                  size="xl"
+                  disabled={isWritePending || !approved || !sendTransactionAsync}
+                  loading={Boolean(!sendTransactionAsync)}
+                  fullWidth
+                  onClick={() => sendTransactionAsync?.().then(() => confirm())}
+                  testId="confirm-add-v2-liquidity"
+                >
+                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </>
+        )}
+      </DialogReview>
+      <DialogConfirm
+        chainId={chainId}
+        status={status}
+        testId="incentivize-confirmation-modal"
+        successMessage={`Successfully added liquidity`}
+        buttonText="Go to pool"
+        buttonLink={`/pools/${chainId}:${poolAddress}`}
+        txHash={data?.hash}
+      />
+    </DialogProvider>
   )
 }

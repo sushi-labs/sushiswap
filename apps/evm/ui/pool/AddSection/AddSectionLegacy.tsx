@@ -16,7 +16,6 @@ import { AddSectionWidget } from './AddSectionWidget'
 
 export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const chainId = _pool.chainId as SushiSwapV2ChainId
-  const [open, setOpen] = useState(false)
   const isMounted = useIsMounted()
   const { token0, token1 } = useTokensFromPool(_pool)
   const [{ input0, input1 }, setTypedAmounts] = useState<{
@@ -67,7 +66,6 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
     [pool, poolState, token1]
   )
 
-  const close = useCallback(() => setOpen(false), [])
   const amounts = useMemo(() => [parsedInput0, parsedInput1], [parsedInput1, parsedInput0])
 
   return (
@@ -104,9 +102,19 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                     contract={getSushiSwapRouterContractConfig(chainId).address as Address}
                   >
                     <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
-                      <Button size="xl" fullWidth onClick={() => setOpen(true)}>
-                        Add Liquidity
-                      </Button>
+                      <AddSectionReviewModalLegacy
+                        poolAddress={pool?.liquidityToken.address}
+                        poolState={poolState}
+                        chainId={_pool.chainId as SushiSwapV2ChainId}
+                        token0={token0}
+                        token1={token1}
+                        input0={parsedInput0}
+                        input1={parsedInput1}
+                      >
+                        <Button size="xl" fullWidth>
+                          Add Liquidity
+                        </Button>
+                      </AddSectionReviewModalLegacy>
                     </Checker.Success>
                   </Checker.ApproveERC20>
                 </Checker.ApproveERC20>
@@ -115,16 +123,6 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
           </Checker.Guard>
         </Checker.Connect>
       </AddSectionWidget>
-      <AddSectionReviewModalLegacy
-        poolState={poolState}
-        chainId={_pool.chainId as SushiSwapV2ChainId}
-        token0={token0}
-        token1={token1}
-        input0={parsedInput0}
-        input1={parsedInput1}
-        open={open}
-        close={close}
-      />
     </CheckerProvider>
   )
 }

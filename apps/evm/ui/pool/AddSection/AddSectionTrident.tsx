@@ -24,7 +24,6 @@ import { AddSectionReviewModalTrident } from './AddSectionReviewModalTrident'
 import { AddSectionWidget } from './AddSectionWidget'
 
 export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
-  const [open, setOpen] = useState(false)
   const chainId = _pool.chainId as BentoBoxV1ChainId
   const isMounted = useIsMounted()
   const { token0, token1 } = useTokensFromPool(_pool)
@@ -103,7 +102,6 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
     [pool, poolState, token1]
   )
 
-  const close = useCallback(() => setOpen(false), [])
   const amounts = useMemo(() => [parsedInput0, parsedInput1], [parsedInput0, parsedInput1])
 
   return (
@@ -160,9 +158,20 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                       enabled={isBentoBoxV1ChainId(chainId)}
                     >
                       <Checker.Success tag={APPROVE_TAG_ADD_TRIDENT}>
-                        <Button size="xl" fullWidth onClick={() => setOpen(true)}>
-                          Add Liquidity
-                        </Button>
+                        <AddSectionReviewModalTrident
+                          poolAddress={_pool.id}
+                          poolState={poolState}
+                          pool={pool}
+                          chainId={_pool.chainId as BentoBoxV1ChainId}
+                          token0={token0}
+                          token1={token1}
+                          input0={parsedInput0}
+                          input1={parsedInput1}
+                        >
+                          <Button size="xl" fullWidth>
+                            Add Liquidity
+                          </Button>
+                        </AddSectionReviewModalTrident>
                       </Checker.Success>
                     </Checker.ApproveERC20>
                   </Checker.ApproveERC20>
@@ -172,18 +181,6 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
           </Checker.Guard>
         </Checker.Connect>
       </AddSectionWidget>
-      <AddSectionReviewModalTrident
-        poolAddress={_pool.id}
-        poolState={poolState}
-        pool={pool}
-        chainId={_pool.chainId as BentoBoxV1ChainId}
-        token0={token0}
-        token1={token1}
-        input0={parsedInput0}
-        input1={parsedInput1}
-        open={open}
-        close={close}
-      />
     </CheckerProvider>
   )
 }

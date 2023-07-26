@@ -1,6 +1,5 @@
 'use client'
 
-import { Signature } from '@ethersproject/bytes'
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { ConstantProductPool, Fee, StablePool } from '@sushiswap/amm'
 import { bentoBoxV1Address, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
@@ -197,10 +196,6 @@ const _Add: FC<AddProps> = ({
   poolType,
   setPoolType,
 }) => {
-  const [open, setOpen] = useState(false)
-  const close = useCallback(() => setOpen(false), [])
-  const [permit, setPermit] = useState<Signature>()
-
   const [{ input0, input1 }, setTypedAmounts] = useState<{
     input0: string
     input1: string
@@ -336,26 +331,25 @@ const _Add: FC<AddProps> = ({
                             enabled={isBentoBoxV1ChainId(chainId)}
                           >
                             <Checker.Success tag={APPROVE_TAG_ADD_TRIDENT}>
-                              <Button size="xl" id="add-liquidity" fullWidth onClick={() => setOpen(true)}>
-                                {title}
-                              </Button>
+                              <AddSectionReviewModalTrident
+                                poolAddress={pool.liquidityToken.address}
+                                // TODO: Shouldnt need to cast if this is done right
+                                poolState={poolState as ConstantProductPoolState | StablePoolState}
+                                pool={pool as ConstantProductPool | StablePool}
+                                chainId={chainId}
+                                token0={token0}
+                                token1={token1}
+                                input0={parsedInput0}
+                                input1={parsedInput1}
+                              >
+                                <Button size="xl" id="add-liquidity" fullWidth>
+                                  {title}
+                                </Button>
+                              </AddSectionReviewModalTrident>
                             </Checker.Success>
                           </Checker.ApproveERC20>
                         </Checker.ApproveERC20>
                       </Checker.ApproveBentobox>
-                      <AddSectionReviewModalTrident
-                        poolAddress={pool.liquidityToken.address}
-                        // TODO: Shouldnt need to cast if this is done right
-                        poolState={poolState as ConstantProductPoolState | StablePoolState}
-                        pool={pool as ConstantProductPool | StablePool}
-                        chainId={chainId}
-                        token0={token0}
-                        token1={token1}
-                        input0={parsedInput0}
-                        input1={parsedInput1}
-                        open={open}
-                        close={close}
-                      />
                     </>
                   )}
                   {!pool && isBentoBoxV1ChainId(chainId) && (
@@ -386,24 +380,23 @@ const _Add: FC<AddProps> = ({
                             enabled={isBentoBoxV1ChainId(chainId)}
                           >
                             <Checker.Success tag={APPROVE_TAG_CREATE_TRIDENT}>
-                              <Button id="create-pool" fullWidth onClick={() => setOpen(true)}>
-                                {title}
-                              </Button>
+                              <CreateSectionReviewModalTrident
+                                chainId={chainId}
+                                token0={token0}
+                                token1={token1}
+                                input0={parsedInput0}
+                                input1={parsedInput1}
+                                fee={fee}
+                                poolType={poolType}
+                              >
+                                <Button size="xl" id="create-pool" fullWidth>
+                                  {title}
+                                </Button>
+                              </CreateSectionReviewModalTrident>
                             </Checker.Success>
                           </Checker.ApproveERC20>
                         </Checker.ApproveERC20>
                       </Checker.ApproveBentobox>
-                      <CreateSectionReviewModalTrident
-                        chainId={chainId}
-                        token0={token0}
-                        token1={token1}
-                        input0={parsedInput0}
-                        input1={parsedInput1}
-                        fee={fee}
-                        poolType={poolType}
-                        open={open}
-                        close={close}
-                      />
                     </>
                   )}
                 </Checker.Amounts>

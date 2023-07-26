@@ -9,7 +9,19 @@ import {
   StablePool,
 } from '@sushiswap/amm'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
+import {
+  DialogConfirm,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogProvider,
+  DialogReview,
+  DialogTitle,
+  DialogTrigger,
+} from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createToast } from '@sushiswap/ui/components/toast'
@@ -22,6 +34,7 @@ import {
   useNetwork,
   useStablePoolFactoryContract,
   useTridentRouterContract,
+  useWaitForTransaction,
 } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
@@ -33,7 +46,7 @@ import {
   LiquidityInput,
 } from 'lib/actions'
 import { APPROVE_TAG_CREATE_TRIDENT } from 'lib/constants'
-import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
+import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo } from 'react'
 
 import { AddSectionReviewModal } from '../AddSection'
 
@@ -45,8 +58,7 @@ interface CreateSectionReviewModalTridentProps {
   input1: Amount<Type> | undefined
   fee: Fee
   poolType: PoolFinderType
-  open: boolean
-  close(): void
+  children: ReactNode
 }
 
 export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTridentProps> = ({
@@ -57,8 +69,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   fee,
   poolType,
   chainId,
-  open,
-  close,
+  children,
 }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
@@ -275,7 +286,11 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
     ]
   )
 
-  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+  const {
+    sendTransactionAsync,
+    data,
+    isLoading: isWritePending,
+  } = useSendTransaction({
     chainId,
     prepare,
     onSettled,
@@ -286,23 +301,44 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
     enabled: approved,
   })
 
+  const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
+
   return (
-    <AddSectionReviewModal
-      chainId={chainId as BentoBoxV1ChainId}
-      input0={input0}
-      input1={input1}
-      open={open}
-      close={close}
-    >
-      <Button
-        id="confirm-add-liquidity"
-        size="xl"
-        disabled={!isValid || isWritePending}
-        fullWidth
-        onClick={() => sendTransaction?.()}
-      >
-        {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
-      </Button>
-    </AddSectionReviewModal>
+    <DialogProvider>
+      <DialogReview>
+        {({ confirm }) => (
+          <>
+            <DialogTrigger asChild>{children}</DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create pool</DialogTitle>
+                <DialogDescription>Please review your entered details.</DialogDescription>
+              </DialogHeader>
+              <AddSectionReviewModal chainId={chainId as BentoBoxV1ChainId} input0={input0} input1={input1} />
+              <DialogFooter>
+                <Button
+                  id="confirm-add-liquidity"
+                  size="xl"
+                  disabled={!isValid || isWritePending}
+                  fullWidth
+                  onClick={() => sendTransactionAsync?.().then(() => confirm())}
+                >
+                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </>
+        )}
+      </DialogReview>
+      <DialogConfirm
+        chainId={chainId as ChainId}
+        status={status}
+        testId="incentivize-confirmation-modal"
+        successMessage={`Successfully added liquidity`}
+        buttonText="Go to pool"
+        buttonLink={`/pools/${chainId}:${poolAddress}`}
+        txHash={data?.hash}
+      />
+    </DialogProvider>
   )
 }

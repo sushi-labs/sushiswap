@@ -3,8 +3,20 @@ import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount, ConstantProductPool, StablePool } from '@sushiswap/amm'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { ChainId } from '@sushiswap/chain'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import {
+  DialogConfirm,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogProvider,
+  DialogReview,
+  DialogTitle,
+} from '@sushiswap/ui'
+import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createToast } from '@sushiswap/ui/components/toast'
@@ -17,13 +29,14 @@ import {
   useNetwork,
   useTotalSupply,
   useTridentRouterContract,
+  useWaitForTransaction,
 } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { approveMasterContractAction, batchAction, getAsEncodedAction, LiquidityInput } from 'lib/actions'
 import { APPROVE_TAG_ADD_TRIDENT } from 'lib/constants'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
-import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
+import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo } from 'react'
 
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
@@ -36,8 +49,7 @@ interface AddSectionReviewModalTridentProps {
   token1: Type | undefined
   input0: Amount<Type> | undefined
   input1: Amount<Type> | undefined
-  open: boolean
-  close(): void
+  children: ReactNode
 }
 
 const ZERO_PERCENT = new Percent('0')
@@ -51,8 +63,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   token1,
   input0,
   input1,
-  open,
-  close,
+  children,
 }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
@@ -240,7 +251,11 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
     ]
   )
 
-  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+  const {
+    sendTransactionAsync,
+    data,
+    isLoading: isWritePending,
+  } = useSendTransaction({
     chainId,
     prepare,
     onSettled,
@@ -251,17 +266,44 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
     enabled: approved,
   })
 
+  const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
+
   return (
-    <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} close={close}>
-      <Button
-        size="xl"
-        id="confirm-add-liquidity"
-        disabled={isWritePending || !approved || !sendTransaction}
-        fullWidth
-        onClick={() => sendTransaction?.()}
-      >
-        {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
-      </Button>
-    </AddSectionReviewModal>
+    <DialogProvider>
+      <DialogReview>
+        {({ confirm }) => (
+          <>
+            <DialogTrigger asChild>{children}</DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add liquidity</DialogTitle>
+                <DialogDescription>Please review your entered details.</DialogDescription>
+              </DialogHeader>
+              <AddSectionReviewModal chainId={chainId as BentoBoxV1ChainId} input0={input0} input1={input1} />
+              <DialogFooter>
+                <Button
+                  size="xl"
+                  id="confirm-add-liquidity"
+                  disabled={isWritePending || !approved || !sendTransactionAsync}
+                  fullWidth
+                  onClick={() => sendTransactionAsync?.().then(() => confirm())}
+                >
+                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </>
+        )}
+      </DialogReview>
+      <DialogConfirm
+        chainId={chainId as ChainId}
+        status={status}
+        testId="incentivize-confirmation-modal"
+        successMessage={`Successfully added liquidity`}
+        buttonText="Go to pool"
+        buttonLink={`/pools/${chainId}:${poolAddress}`}
+        txHash={data?.hash}
+      />
+    </DialogProvider>
   )
 }

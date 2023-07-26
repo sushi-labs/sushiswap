@@ -145,9 +145,6 @@ interface AddProps {
 }
 
 const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token0, token1, setToken0, setToken1 }) => {
-  const [open, setOpen] = useState(false)
-  const close = useCallback(() => setOpen(false), [])
-
   const [{ input0, input1 }, setTypedAmounts] = useState<{
     input0: string
     input1: string
@@ -262,22 +259,22 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
                           contract={getSushiSwapRouterContractConfig(chainId).address as Address}
                         >
                           <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
-                            <Button size="xl" fullWidth onClick={() => setOpen(true)} testId="add-liquidity">
-                              {title}
-                            </Button>
+                            <AddSectionReviewModalLegacy
+                              poolAddress={pool?.liquidityToken.address}
+                              poolState={poolState as PairState}
+                              chainId={chainId}
+                              token0={token0}
+                              token1={token1}
+                              input0={parsedInput0}
+                              input1={parsedInput1}
+                            >
+                              <Button size="xl" fullWidth testId="add-liquidity">
+                                {title}
+                              </Button>
+                            </AddSectionReviewModalLegacy>
                           </Checker.Success>
                         </Checker.ApproveERC20>
                       </Checker.ApproveERC20>
-                      <AddSectionReviewModalLegacy
-                        poolState={poolState as PairState}
-                        chainId={chainId}
-                        token0={token0}
-                        token1={token1}
-                        input0={parsedInput0}
-                        input1={parsedInput1}
-                        open={open}
-                        close={close}
-                      />
                     </>
                   )}
                 </Checker.Amounts>

@@ -172,6 +172,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       _searchParams.set('fromCurrency', currency0.isNative ? 'NATIVE' : currency0.wrapped.address)
       _searchParams.set('toChainId', currency1.chainId.toString())
       _searchParams.set('toCurrency', currency1.isNative ? 'NATIVE' : currency1.wrapped.address)
+      alert('here')
       void push(`${pathname}?${_searchParams.toString()}`)
     }
     const setToken0 = (currency: Type) => {

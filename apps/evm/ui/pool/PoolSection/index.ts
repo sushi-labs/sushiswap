@@ -1,4 +1,3 @@
-export * from './PoolActionBar'
 export * from './PoolButtons'
 export * from './PoolChart/index'
 export * from './PoolComposition'

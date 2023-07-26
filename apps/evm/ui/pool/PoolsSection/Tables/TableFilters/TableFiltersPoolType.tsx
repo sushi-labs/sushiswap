@@ -21,7 +21,16 @@ export const POOL_TYPES = [
   Protocol.BENTOBOX_CLASSIC,
 ]
 
-const POOL_DESCRIPTIONS = {}
+const POOL_DESCRIPTIONS = {
+  [Protocol.SUSHISWAP_V3]:
+    'A pool type known as concentrated liquidity, which maximizes capital efficiency by providing the liquidity in a pre-defined range around the current price of the pair. If a user’s position moves out of range, it will not be capturing fees and will need to adjust their range or wait for the price to return to it.',
+  [Protocol.SUSHISWAP_V2]:
+    'The traditional pool type with a fixed fee of .30% that utilizes a constant product formula to ensure a 50/50 composition of each asset in the pool.',
+  [Protocol.BENTOBOX_STABLE]:
+    'A customizable pool type with a user-defined fee tier that is best suited for like-kind assets (eg. stablecoin pairs, ETH/stETH) that efficiently captures fees and utilizes a constant product formula to ensure a 50/50 composition of each asset in the pool.',
+  [Protocol.BENTOBOX_CLASSIC]:
+    'A customizable pool type with a user-defined fee tier that utilizes a constant product formula to ensure a 50/50 composition of each asset in the pool.',
+}
 
 export const TableFiltersPoolType: FC = () => {
   const [open, setOpen] = useState(false)
@@ -81,7 +90,7 @@ export const TableFiltersPoolType: FC = () => {
           <HoverCardContent side="left" align="start" forceMount>
             <div className="flex flex-col gap-2">
               <Label>{PROTOCOL_MAP[peekedProtocol]}</Label>
-              <div className="text-sm text-muted-foreground">Test description</div>
+              <div className="text-sm text-muted-foreground">{POOL_DESCRIPTIONS[peekedProtocol]}</div>
             </div>
           </HoverCardContent>
           <Command className="flex items-center gap-1">
