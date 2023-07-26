@@ -1,5 +1,5 @@
-import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { classNames } from '@sushiswap/ui'
+import { CheckMarkIcon } from '@sushiswap/ui/components/icons/CheckmarkIcon'
+import { FailedMarkIcon } from '@sushiswap/ui/components/icons/FailedMarkIcon'
 import { Loader } from '@sushiswap/ui/components/loader'
 import { FC, ReactNode } from 'react'
 
@@ -35,21 +35,16 @@ export const failedState = (state: { source: StepState; bridge: StepState; dest:
 
 const Completed = ({ partial }: { partial: boolean }) => {
   return (
-    <div
-      className={classNames(
-        !partial ? 'bg-blue' : 'bg-yellow',
-        'w-10 h-10 rounded-full flex justify-center items-center'
-      )}
-    >
-      <CheckIcon width={24} height={24} strokeWidth={2} className="text-white dark:text-slate-900" />
+    <div className="flex w-10 h-10 justify-center items-center">
+      <CheckMarkIcon width={40} height={40} className={partial ? '!text-yellow' : ''} />
     </div>
   )
 }
 
 const Failed = () => {
   return (
-    <div className="w-10 h-10 rounded-full flex justify-center items-center bg-red">
-      <XMarkIcon width={24} height={24} strokeWidth={2} className="text-white dark:text-slate-900" />
+    <div className="flex w-10 h-10 justify-center items-center">
+      <FailedMarkIcon width={40} height={40} />
     </div>
   )
 }

@@ -1,20 +1,21 @@
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ZERO } from '@sushiswap/math'
 import { sushiXSwapAddress, SushiXSwapChainId } from '@sushiswap/sushixswap'
+import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import React, { FC, useEffect, useState } from 'react'
 
 import { useTrade } from '../../../lib/swap/useTrade'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
-import { useSwapActions, useSwapState } from '../trade/TradeProvider'
+import { useSwapState } from '../trade/TradeProvider'
+import { TradeReviewDialogCrossChain } from '../trade/TradeReviewDialogCrossChain'
 
 export const APPROVE_XSWAP_TAG = 'APPROVE_XSWAP_TAG'
 
 export const SwapButtonCrossChain: FC = () => {
   const { amount, network0, network1, value } = useSwapState()
   const { isFetching, isLoading, data: trade } = useTrade({ crossChain: network0 !== network1 })
-  const { setReview } = useSwapActions()
   const [checked, setChecked] = useState(false)
 
   // Reset
@@ -25,7 +26,7 @@ export const SwapButtonCrossChain: FC = () => {
   }, [trade])
 
   return (
-    <>
+    <TradeReviewDialogCrossChain>
       <div className="pt-4">
         <Checker.Connect fullWidth>
           <Checker.Network fullWidth chainId={network0}>
@@ -44,25 +45,26 @@ export const SwapButtonCrossChain: FC = () => {
                   contract={bentoBoxV1Address[network0 as BentoBoxV1ChainId]}
                 >
                   <Checker.Success tag={APPROVE_XSWAP_TAG}>
-                    <Button
-                      disabled={
-                        !trade?.amountOut?.greaterThan(ZERO) ||
-                        trade?.route?.status === 'NoWay' ||
-                        Boolean(isLoading && +value > 0) ||
-                        isFetching ||
-                        (!checked && warningSeverity(trade?.priceImpact) > 3)
-                      }
-                      color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
-                      fullWidth
-                      onClick={() => setReview(true)}
-                      size="xl"
-                    >
-                      {!checked && warningSeverity(trade?.priceImpact) >= 3
-                        ? 'Price impact too high'
-                        : trade?.route?.status === 'NoWay'
-                        ? 'No trade found'
-                        : 'Swap'}
-                    </Button>
+                    <DialogTrigger asChild>
+                      <Button
+                        disabled={
+                          !trade?.amountOut?.greaterThan(ZERO) ||
+                          trade?.route?.status === 'NoWay' ||
+                          Boolean(isLoading && +value > 0) ||
+                          isFetching ||
+                          (!checked && warningSeverity(trade?.priceImpact) > 3)
+                        }
+                        color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
+                        fullWidth
+                        size="xl"
+                      >
+                        {!checked && warningSeverity(trade?.priceImpact) >= 3
+                          ? 'Price impact too high'
+                          : trade?.route?.status === 'NoWay'
+                          ? 'No trade found'
+                          : 'Swap'}
+                      </Button>
+                    </DialogTrigger>
                   </Checker.Success>
                 </Checker.ApproveERC20>
               </Checker.ApproveBentobox>
@@ -85,6 +87,6 @@ export const SwapButtonCrossChain: FC = () => {
           </label>
         </div>
       )}
-    </>
+    </TradeReviewDialogCrossChain>
   )
 }

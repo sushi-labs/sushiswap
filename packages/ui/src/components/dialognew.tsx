@@ -156,8 +156,22 @@ const DialogReview: FC<DialogReviewProps> = ({ children, ...props }) => {
 }
 DialogReview.displayName = 'DialogReview'
 
-interface DialogConfirmProps
-  extends Omit<React.ComponentPropsWithoutRef<typeof DialogPrimitive.Root>, 'children' | 'open'> {
+interface DialogCustomProps {
+  children: ReactNode
+  dialogType: DialogType
+}
+
+const DialogCustom: FC<DialogCustomProps> = ({ children, ...props }) => {
+  const { open, setOpen } = useDialog(DialogType.Confirm)
+  return (
+    <DialogNew {...props} open={open} onOpenChange={setOpen}>
+      {children}
+    </DialogNew>
+  )
+}
+DialogCustom.displayName = 'DialogCustom'
+
+interface DialogConfirmProps extends DialogContentProps {
   chainId: ChainId
   testId: string
   successMessage: ReactNode
@@ -243,7 +257,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
 }
 DialogConfirm.displayName = 'DialogConfirm'
 
-export enum DialogType {
+enum DialogType {
   Review,
   Confirm,
 }
@@ -313,6 +327,7 @@ export {
   DialogClose,
   DialogConfirm,
   DialogContent,
+  DialogCustom,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -323,5 +338,6 @@ export {
   DialogReview,
   DialogTitle,
   DialogTrigger,
+  DialogType,
   useDialog,
 }
