@@ -1,14 +1,9 @@
-'use client'
-
 import { RadioGroup } from '@headlessui/react'
 import { ChainId } from '@sushiswap/chain'
 import { Amount } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { useAngleRewards } from '@sushiswap/react-query'
-import { classNames } from '@sushiswap/ui'
-import { SplashController } from '@sushiswap/ui'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
-import { Separator } from '@sushiswap/ui'
+import { classNames, Separator, Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Explainer } from '@sushiswap/ui/components/explainer'
@@ -24,35 +19,19 @@ import {
   useTokenWithCache,
 } from '@sushiswap/wagmi/future/hooks'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { Bound } from 'lib/constants'
-import { formatTickPrice, getPriceOrderingFromPositionForUI, unwrapToken } from 'lib/functions'
-import { usePriceInverter } from 'lib/hooks'
 import useIsTickAtLimit from 'lib/hooks/useIsTickAtLimit'
 import { useSearchParams } from 'next/navigation'
 import React, { FC, Fragment, useMemo, useState } from 'react'
-import { ConcentratedLiquidityCollectButton } from 'ui/pool/ConcentratedLiquidityCollectButton'
-import { ConcentratedLiquidityProvider, useConcentratedDerivedMintInfo } from 'ui/pool/ConcentratedLiquidityProvider'
-import { ConcentratedLiquidityRemoveWidget } from 'ui/pool/ConcentratedLiquidityRemoveWidget'
-import { ConcentratedLiquidityWidget } from 'ui/pool/ConcentratedLiquidityWidget'
 import { z } from 'zod'
 
-import { ConcentratedLiquidityHarvestButton } from '../../../../ui/pool/ConcentratedLiquidityHarvestButton'
-
-// export async function generateMetadata({ params }: { params: { id: string } }) {
-//   return {
-//     title: `Position ${params.id}`,
-//   }
-// }
-
-export default function Page({ params }: { params: { id: string } }) {
-  return (
-    <SplashController>
-      <ConcentratedLiquidityProvider>
-        <Position id={params.id} />
-      </ConcentratedLiquidityProvider>
-    </SplashController>
-  )
-}
+import { Bound } from '../../lib/constants'
+import { formatTickPrice, getPriceOrderingFromPositionForUI, unwrapToken } from '../../lib/functions'
+import { usePriceInverter } from '../../lib/hooks'
+import { ConcentratedLiquidityCollectButton } from './ConcentratedLiquidityCollectButton'
+import { ConcentratedLiquidityHarvestButton } from './ConcentratedLiquidityHarvestButton'
+import { ConcentratedLiquidityProvider, useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
+import { ConcentratedLiquidityRemoveWidget } from './ConcentratedLiquidityRemoveWidget'
+import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
 
 const queryParamsSchema = z.object({
   id: z
@@ -67,32 +46,17 @@ const queryParamsSchema = z.object({
     .refine(([chainId]) => isSushiSwapV3ChainId(chainId), {
       message: 'ChainId not supported.',
     }),
-  activeTab: z.nullable(z.string()),
 })
 
-enum SelectedTab {
-  Analytics = 'Analytics',
-  DecreaseLiq = 'Decrease Liquidity',
-  IncreaseLiq = 'Increase Liquidity',
-}
-
-const Position: FC<{ id: string }> = ({ id }) => {
+const Component: FC<{ id: string }> = ({ id }) => {
   const { address } = useAccount()
   const searchParams = useSearchParams()!
   console.log(id)
   const {
     id: [chainId, tokenId],
-    activeTab,
   } = queryParamsSchema.parse({ id, activeTab: searchParams.get('activeTab') })
 
   const [invert, setInvert] = useState(false)
-  const [tab, setTab] = useState<SelectedTab>(
-    activeTab === 'analytics'
-      ? SelectedTab.Analytics
-      : activeTab === 'withdraw'
-      ? SelectedTab.DecreaseLiq
-      : SelectedTab.IncreaseLiq
-  )
 
   const { data: positionDetails } = useConcentratedLiquidityPositionsFromTokenId({
     chainId,
@@ -478,5 +442,13 @@ const Position: FC<{ id: string }> = ({ id }) => {
         </List>
       </div>
     </div>
+  )
+}
+
+export const PositionView = ({ params }: { params: { id: string } }) => {
+  return (
+    <ConcentratedLiquidityProvider>
+      <Component id={params.id} />
+    </ConcentratedLiquidityProvider>
   )
 }

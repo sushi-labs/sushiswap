@@ -20,7 +20,6 @@ import { useSearchParams } from 'next/navigation'
 import React, { FC, useMemo, useState } from 'react'
 import { z } from 'zod'
 
-import Page from '../../app/pool/position/[id]/page'
 import { ContentBlock } from './AddPage/ContentBlock'
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
 import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
@@ -30,6 +29,7 @@ import { PoolTransactionsV3 } from './PoolSection'
 import { PoolChartV3 } from './PoolSection/PoolChart/PoolChartV3'
 import { PoolsFiltersProvider } from './PoolsFiltersProvider'
 import { ConcentratedPositionsTable } from './PoolsSection/Tables/PositionsTable/ConcentratedPositionsTable'
+import { PositionView } from './PositionView'
 
 enum Granularity {
   Day,
@@ -152,7 +152,7 @@ const Pool: FC<{ id: string; positionId?: string }> = ({ id, positionId: _positi
               <IconButton size="sm" icon={ArrowLeftIcon} onClick={() => setPositionId(undefined)} name="Back" />
               <span className="text-sm font-medium text-secondary-foreground">Go back to positions</span>
             </div>
-            <Page params={{ id: `${chainId}%3A${positionId}` }} />
+            <PositionView params={{ id: `${chainId}%3A${positionId}` }} />
           </>
         ) : (
           <>
