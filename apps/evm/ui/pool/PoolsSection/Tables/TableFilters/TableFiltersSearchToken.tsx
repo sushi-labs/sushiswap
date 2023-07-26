@@ -1,20 +1,19 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
-import { useDebounce } from '@sushiswap/hooks'
 import { ChipInput } from '@sushiswap/ui'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useCallback } from 'react'
 
-import { usePoolFilters } from '../../../PoolsFiltersProvider'
+import { usePoolFilters, useSetPoolFilters } from '../../../PoolsFiltersProvider'
 
 export const TableFiltersSearchToken: FC = () => {
-  const { tokenSymbols, setFilters } = usePoolFilters()
-  const [_query, setQuery] = useState<string>(tokenSymbols ? tokenSymbols.join(' ') : '')
-  const debouncedQuery = useDebounce(_query, 400)
+  const { tokenSymbols } = usePoolFilters()
+  const setFilters = useSetPoolFilters()
 
-  useEffect(() => {
-    if (tokenSymbols?.join(' ') !== debouncedQuery) {
-      setFilters({ tokenSymbols: debouncedQuery.split(' ').filter((f) => f !== '') })
-    }
-  }, [_query, debouncedQuery, setFilters, tokenSymbols])
+  const onValueChange = useCallback(
+    (values: string[]) => {
+      setFilters((prev) => ({ ...prev, tokenSymbols: values }))
+    },
+    [setFilters]
+  )
 
   return (
     <div>
@@ -24,7 +23,7 @@ export const TableFiltersSearchToken: FC = () => {
         delimiters={[',', ' ', ';', ':']}
         variant="secondary"
         values={tokenSymbols ?? []}
-        onValueChange={(values: string[]) => setQuery(values.join(' '))}
+        onValueChange={onValueChange}
         placeholder="Search"
       />
     </div>

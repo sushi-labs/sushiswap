@@ -8,22 +8,26 @@ import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 
-import { usePoolFilters } from '../../../PoolsFiltersProvider'
+import { usePoolFilters, useSetPoolFilters } from '../../../PoolsFiltersProvider'
 
 export const TableFiltersNetwork: FC = () => {
   const [open, setOpen] = useState(false)
-  const { chainIds, setFilters } = usePoolFilters()
+  const { chainIds } = usePoolFilters()
+  const setFilters = useSetPoolFilters()
   const values = useMemo(() => (SUPPORTED_CHAIN_IDS.length === chainIds.length ? [] : chainIds), [chainIds])
+
   const onClick = useCallback(
     (chainId: ChainId) => {
-      if (values.includes(chainId)) {
-        const chains = values.filter((el) => el !== chainId)
-        setFilters({ chainIds: chains.length === 0 ? SUPPORTED_CHAIN_IDS : chains })
-      } else {
-        setFilters({ chainIds: [...values, chainId] })
-      }
+      setFilters((prev) => {
+        if (prev.chainIds?.includes(chainId)) {
+          const chains = prev.chainIds.filter((el) => el !== chainId)
+          return { ...prev, chainIds: chains }
+        } else {
+          return { ...prev, chainIds: [...(prev.chainIds ?? []), chainId] }
+        }
+      })
     },
-    [values, setFilters]
+    [setFilters]
   )
 
   return (
@@ -52,7 +56,7 @@ export const TableFiltersNetwork: FC = () => {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="!p-0 !overflow-x-hidden !overflow-y-scroll scroll">
+      <PopoverContent align="start" className="!p-0 !overflow-x-hidden !overflow-y-scroll scroll">
         <Command className="flex items-center gap-1">
           <CommandGroup>
             {SUPPORTED_CHAIN_IDS.map((chainId) => (

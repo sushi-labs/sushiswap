@@ -3,21 +3,22 @@ import { Button } from '@sushiswap/ui'
 import React, { FC, useCallback, useMemo } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../../../../../config'
-import { usePoolFilters } from '../../../PoolsFiltersProvider'
+import { usePoolFilters, useSetPoolFilters } from '../../../PoolsFiltersProvider'
 import { POOL_TYPES } from './TableFiltersPoolType'
 
 export const TableFiltersResetButton: FC = () => {
-  const { protocols, chainIds, tokenSymbols, farmsOnly, setFilters } = usePoolFilters()
+  const { protocols, chainIds, tokenSymbols, farmsOnly } = usePoolFilters()
+  const setFilters = useSetPoolFilters()
 
   const networks = useMemo(() => (SUPPORTED_CHAIN_IDS.length === chainIds.length ? [] : chainIds), [chainIds])
   const types = useMemo(() => (protocols.length === POOL_TYPES.length ? [] : protocols), [protocols])
 
   const reset = useCallback(() => {
     setFilters({
-      protocols: [],
-      chainIds: [],
-      tokenSymbols: [],
-      farmsOnly: false,
+      protocols: undefined,
+      chainIds: undefined,
+      tokenSymbols: undefined,
+      farmsOnly: undefined,
     })
   }, [setFilters])
 

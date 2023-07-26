@@ -13,7 +13,7 @@ import { CheckIcon } from '@sushiswap/ui/components/icons'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 
 import { PROTOCOL_MAP } from '../../../../../lib/constants'
-import { usePoolFilters } from '../../../PoolsFiltersProvider'
+import { usePoolFilters, useSetPoolFilters } from '../../../PoolsFiltersProvider'
 
 export const POOL_TYPES = [
   Protocol.SUSHISWAP_V3,
@@ -35,22 +35,24 @@ const POOL_DESCRIPTIONS = {
 
 export const TableFiltersPoolType: FC = () => {
   const [open, setOpen] = useState(false)
-  const { protocols, setFilters } = usePoolFilters()
+  const { protocols } = usePoolFilters()
+  const setFilters = useSetPoolFilters()
   const [peekedProtocol, setPeekedProtocol] = React.useState<Protocol>(POOL_TYPES[0])
 
   const values = useMemo(() => (protocols.length === POOL_TYPES.length ? [] : protocols), [protocols])
 
   const protocolHandler = useCallback(
     (item: Protocol) => {
-      const newProtocols = protocols?.includes(item)
-        ? protocols.filter((el) => el !== item)
-        : [...(protocols || []), item]
-
-      setFilters({
-        protocols: newProtocols.length === 0 ? undefined : newProtocols,
+      setFilters((prev) => {
+        if (prev.protocols?.includes(item)) {
+          const protocols = prev.protocols.filter((el) => el !== item)
+          return { ...prev, protocols }
+        } else {
+          return { ...prev, protocols: [...(prev.protocols ?? []), item] }
+        }
       })
     },
-    [protocols, setFilters]
+    [setFilters]
   )
 
   return (
@@ -86,7 +88,7 @@ export const TableFiltersPoolType: FC = () => {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="!w-[unset] !p-0">
+      <PopoverContent align="start" className="!w-[unset] !p-0">
         <HoverCard>
           <PopoverPrimitive.Portal>
             <HoverCardContent side="left" align="start" forceMount className="w-[240px]">
