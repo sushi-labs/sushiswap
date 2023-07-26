@@ -16,20 +16,22 @@ export const PoolRewards: FC<{ pool: Pool }> = ({ pool }) => {
         <List.Label>Reward APR: {pool.incentiveApr > 0 ? formatPercent(pool.incentiveApr) : 'n/a'}</List.Label>
       </div>
       <List.Control>
-        {pool.incentives.map((incentive, i) => (
-          <List.KeyValue key={i} flex title={`${incentive.rewardToken.symbol}`}>
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2">
-                <Currency.Icon
-                  currency={incentiveRewardToToken(pool.chainId as ChainId, incentive)}
-                  width={18}
-                  height={18}
-                />
-                {formatNumber(incentive.rewardPerDay)} {incentive.rewardToken.symbol} per day
+        {pool.incentives
+          .filter((incentive) => incentive.rewardPerDay > 0)
+          .map((incentive) => (
+            <List.KeyValue key={incentive.id} flex title={`${incentive.rewardToken.symbol}`}>
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <Currency.Icon
+                    currency={incentiveRewardToToken(pool.chainId as ChainId, incentive)}
+                    width={18}
+                    height={18}
+                  />
+                  {formatNumber(incentive.rewardPerDay)} {incentive.rewardToken.symbol} per day
+                </div>
               </div>
-            </div>
-          </List.KeyValue>
-        ))}
+            </List.KeyValue>
+          ))}
       </List.Control>
     </List>
   )
