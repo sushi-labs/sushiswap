@@ -29,7 +29,7 @@ export const TableFiltersNetwork: FC = () => {
   return (
     <Popover modal={true} open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button icon={PlusCircleIcon} variant="secondary" role="combobox" size="sm" aria-expanded={open}>
+        <Button icon={PlusCircleIcon} variant="outline" role="combobox" size="sm" aria-expanded={open}>
           <span>Networks</span>
           {values?.length > 0 && (
             <>

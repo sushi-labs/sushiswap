@@ -6,6 +6,7 @@ import { Chip, Separator } from '@sushiswap/ui'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
 import { CommandList } from '@sushiswap/ui'
 import { Label } from '@sushiswap/ui'
+import { PopoverPrimitive } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Command, CommandGroup, CommandItem } from '@sushiswap/ui/components/command'
 import { CheckIcon } from '@sushiswap/ui/components/icons'
@@ -58,7 +59,7 @@ export const TableFiltersPoolType: FC = () => {
         <Button
           icon={PlusCircleIcon}
           aria-label="Select a protocol"
-          variant="secondary"
+          variant="outline"
           role="combobox"
           size="sm"
           aria-expanded={open}
@@ -87,12 +88,14 @@ export const TableFiltersPoolType: FC = () => {
       </PopoverTrigger>
       <PopoverContent align="end" className="!w-[unset] !p-0">
         <HoverCard>
-          <HoverCardContent side="left" align="start" forceMount>
-            <div className="flex flex-col gap-2">
-              <Label>{PROTOCOL_MAP[peekedProtocol]}</Label>
-              <div className="text-sm text-muted-foreground">{POOL_DESCRIPTIONS[peekedProtocol]}</div>
-            </div>
-          </HoverCardContent>
+          <PopoverPrimitive.Portal>
+            <HoverCardContent side="left" align="start" forceMount className="w-[240px]">
+              <div className="flex flex-col gap-2">
+                <Label>{PROTOCOL_MAP[peekedProtocol]}</Label>
+                <div className="text-sm text-muted-foreground">{POOL_DESCRIPTIONS[peekedProtocol]}</div>
+              </div>
+            </HoverCardContent>
+          </PopoverPrimitive.Portal>
           <Command className="flex items-center gap-1">
             <CommandList>
               <HoverCardTrigger />
