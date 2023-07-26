@@ -2,7 +2,6 @@ import { ChainId } from '@sushiswap/chain'
 import { ChefType, Pool, usePool } from '@sushiswap/client'
 import { tryParseAmount } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
-import { AppearOnMount } from '@sushiswap/ui/components/animation'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { useMasterChefWithdraw } from '@sushiswap/wagmi'
@@ -30,13 +29,7 @@ export const RemoveSectionUnstake: FC<{ poolId: string }> = ({ poolId }) => {
   if (!pool?.incentives || pool.incentives.length === 0 || !isMounted) return <></>
 
   return (
-    <AppearOnMount show={true}>
-      <_RemoveSectionUnstake
-        pool={pool}
-        chefType={pool.incentives[0].chefType}
-        farmId={Number(pool.incentives[0].pid)}
-      />
-    </AppearOnMount>
+    <_RemoveSectionUnstake pool={pool} chefType={pool.incentives[0].chefType} farmId={Number(pool.incentives[0].pid)} />
   )
 }
 

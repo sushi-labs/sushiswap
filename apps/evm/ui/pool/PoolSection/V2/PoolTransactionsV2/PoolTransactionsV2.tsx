@@ -46,21 +46,21 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool, poolId }
       <RadioGroup value={type} onChange={setType} className="flex gap-2 mb-3">
         <RadioGroup.Option value={TransactionType.Swap}>
           {({ checked }) => (
-            <Toggle size="sm" pressed={checked}>
+            <Toggle size="xs" pressed={checked}>
               Swaps
             </Toggle>
           )}
         </RadioGroup.Option>
         <RadioGroup.Option value={TransactionType.Mint}>
           {({ checked }) => (
-            <Toggle size="sm" pressed={checked}>
+            <Toggle size="xs" pressed={checked}>
               Add liquidity
             </Toggle>
           )}
         </RadioGroup.Option>
         <RadioGroup.Option value={TransactionType.Burn}>
           {({ checked }) => (
-            <Toggle size="sm" pressed={checked}>
+            <Toggle size="xs" pressed={checked}>
               Remove liquidity
             </Toggle>
           )}

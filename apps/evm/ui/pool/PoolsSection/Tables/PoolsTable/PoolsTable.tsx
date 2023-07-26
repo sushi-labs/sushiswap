@@ -93,7 +93,7 @@ export const PoolsTable: FC = () => {
           data={data}
         />
       </InfiniteScroll>
-      <SheetContent side="right" className="overflow-auto min-w-[calc(100vw-16px)] md:min-w-[80vw] max-w-7xl">
+      <SheetContent side="right" className="overflow-auto min-w-[calc(100vw-16px)] md:min-w-[unset] !max-w-7xl">
         <Page params={peekedId} />
       </SheetContent>
     </Sheet>

@@ -1,27 +1,25 @@
 import { RadioGroup } from '@headlessui/react'
 import { Chain } from '@sushiswap/chain'
-import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
-import { Paginator } from '@sushiswap/ui/components/table/Paginator'
+import { DataTable } from '@sushiswap/ui'
 import { Toggle } from '@sushiswap/ui/components/toggle'
 import { Pool } from '@sushiswap/v3-sdk'
-import { getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
+import { PaginationState } from '@tanstack/react-table'
 import React, { FC, useMemo, useState } from 'react'
 
 import { AMOUNT_IN_COLUMN, AMOUNT_OUT_COLUMN, AMOUNT_USD_COLUMN, SENDER_COLUMN, TIME_COLUMN } from './columns'
-import { Transaction, TransactionType, useTransactionsV3 } from './useTransactionsV3'
+import { TransactionType, useTransactionsV3 } from './useTransactionsV3'
 
 interface PoolTransactionsV3Props {
   pool: Pool | undefined | null
   poolId: string
 }
 
-const TOTAL_ROWS = 200
-const PAGE_SIZE = 10
-const PAGE_COUNT = TOTAL_ROWS / PAGE_SIZE
-
 export const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }) => {
   const [type, setType] = useState<Parameters<typeof useTransactionsV3>['2']['type']>(TransactionType.Swap)
-  const [pageIndex, setPageIndex] = useState<number>(0)
+  const [paginationState, setPaginationState] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  })
 
   const COLUMNS = useMemo(() => {
     return [SENDER_COLUMN, AMOUNT_IN_COLUMN(type), AMOUNT_OUT_COLUMN(type), AMOUNT_USD_COLUMN, TIME_COLUMN]
@@ -31,71 +29,54 @@ export const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }
     () =>
       ({
         refetchInterval: 60_000,
-        // Fetch first 10 (+1 for paging) on initial load, then TOTAL_ROWS after
-        first: pageIndex === 0 ? PAGE_SIZE + 1 : TOTAL_ROWS,
+        first: paginationState.pageSize === 0 ? paginationState.pageIndex + 1 : 100,
         type,
       } as const),
-    [pageIndex, type]
+    [paginationState.pageIndex, paginationState.pageSize, type]
   )
 
   const { data, isLoading } = useTransactionsV3(pool, poolId, opts)
 
-  const dataPaginated = useMemo(
-    () => (data ? data.slice(pageIndex * PAGE_SIZE, (pageIndex + 1) * PAGE_SIZE) : []),
-    [data, pageIndex]
-  )
-
-  const table = useReactTable<Transaction>({
-    data: dataPaginated as Transaction[],
-    columns: COLUMNS,
-    pageCount: pageIndex + 1,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    manualPagination: true,
-  })
+  const _data = useMemo(() => {
+    return data ?? []
+  }, [data])
 
   return (
     <div>
-      <RadioGroup value={type} onChange={setType} className="flex gap-1 mb-6 justify-end px-2">
+      <RadioGroup value={type} onChange={setType} className="flex gap-2 mb-3">
         <RadioGroup.Option value={TransactionType.Swap}>
           {({ checked }) => (
-            <Toggle size="sm" pressed={checked}>
+            <Toggle size="xs" pressed={checked}>
               Swaps
             </Toggle>
           )}
         </RadioGroup.Option>
         <RadioGroup.Option value={TransactionType.Mint}>
           {({ checked }) => (
-            <Toggle size="sm" pressed={checked}>
+            <Toggle size="xs" pressed={checked}>
               Add liquidity
             </Toggle>
           )}
         </RadioGroup.Option>
         <RadioGroup.Option value={TransactionType.Burn}>
           {({ checked }) => (
-            <Toggle size="sm" pressed={checked}>
+            <Toggle size="xs" pressed={checked}>
               Remove liquidity
             </Toggle>
           )}
         </RadioGroup.Option>
       </RadioGroup>
 
-      <GenericTable<Transaction>
-        table={table}
-        loading={isLoading}
-        pageSize={PAGE_SIZE}
-        rowHeight={24}
-        placeholder="No Transactions Found."
+      <DataTable
         linkFormatter={(row) => Chain.from(row.pool.chainId).getTxUrl(row.id)}
-      />
-      <Paginator
-        page={pageIndex}
-        hasPrev={pageIndex > 0}
-        onNext={() => setPageIndex(pageIndex + 1)}
-        onPage={() => {}}
-        hasNext={pageIndex < PAGE_COUNT - 1 && !!data && data?.length > (pageIndex + 1) * PAGE_SIZE}
-        onPrev={() => setPageIndex(pageIndex - 1)}
-        pageSize={PAGE_SIZE}
+        loading={isLoading}
+        columns={COLUMNS}
+        data={_data}
+        pagination={true}
+        onPaginationChange={setPaginationState}
+        state={{
+          pagination: paginationState,
+        }}
       />
     </div>
   )

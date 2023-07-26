@@ -114,23 +114,23 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
 
   return (
     <div className={classNames('flex flex-col gap-4')}>
-      {!!existingPosition && !isOwner && !isOwnerLoading && (
+      {!!existingPosition && !isOwner && !isOwnerLoading ? (
         <div className="p-6 font-medium bg-red/10 text-red rounded-xl">
           You are not the owner of this LP position. You will not be able to withdraw the liquidity from this position
           unless you own the following address: {owner}
         </div>
-      )}
-      {outOfRange && (
+      ) : null}
+      {outOfRange ? (
         <div className="p-6 font-medium bg-yellow/10 text-yellow rounded-xl">
           Your position will not earn fees or be used in trades until the market price moves into your range.
         </div>
-      )}
+      ) : null}
 
-      {invalidRange && (
+      {invalidRange ? (
         <div className="p-6 font-medium bg-yellow/10 text-yellow rounded-xl">
           Invalid range selected. The minimum price must be lower than the maximum price.
         </div>
-      )}
+      ) : null}
       <div
         className={classNames(
           !isPoolLoading &&
@@ -142,16 +142,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
         )}
       >
         <div className="relative">
-          <Transition
-            as={Fragment}
-            show={depositADisabled && !depositBDisabled}
-            enter="transition duration-300 origin-center ease-out"
-            enterFrom="transform opacity-0"
-            enterTo="transform opacity-100"
-            leave="transition duration-75 ease-out"
-            leaveFrom="transform opacity-100"
-            leaveTo="transform opacity-0"
-          >
+          {depositADisabled && !depositBDisabled ? (
             <div className="bg-gray-200 dark:bg-slate-800 absolute inset-0 z-[1] rounded-xl flex items-center justify-center">
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-10 text-sm font-medium text-center">
                 <LockClosedIcon width={24} height={24} className="text-gray-400 dark:text-slate-400 text-slate-600" />
@@ -169,7 +160,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                 </span>
               </div>
             </div>
-          </Transition>
+          ) : null}
           <Web3Input.Currency
             id="add-liquidity-token0"
             type="INPUT"

@@ -1,4 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
+import { formatUSD } from '@sushiswap/format'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future/hooks'
 import { ColumnDef } from '@tanstack/react-table'
@@ -9,9 +10,7 @@ import { ICON_SIZE } from '../../PoolsTable/Cells/columns'
 import { PoolAPRCell, PoolChainCell, PoolNameCell, PoolVolume1dCell } from '../../SharedCells'
 import { PoolNameCellV3 } from '../../SharedCells/PoolNameCellV3'
 import { PairValueCell } from './PoolValueCell'
-import { PositionSizeCell } from './PositionSizeCell'
 import { PriceRangeCell } from './PriceRangeCell'
-import { UnclaimedCell } from './UnclaimedCell'
 
 type TData = PositionWithPool
 
@@ -115,7 +114,7 @@ export const POSITION_SIZE_CELL: ColumnDef<ConcentratedLiquidityPositionWithV3Po
   id: 'positionSize',
   accessorFn: (row) => row.position.positionUSD,
   header: 'Position Size',
-  cell: (props) => <PositionSizeCell row={props.row.original} ctx={props} />,
+  cell: (props) => formatUSD(props.row.original.position.positionUSD),
   size: 60,
   maxSize: 60,
   meta: {
@@ -128,7 +127,7 @@ export const POSITION_UNCLAIMED_CELL: ColumnDef<ConcentratedLiquidityPositionWit
   id: 'unclaimed',
   accessorFn: (row) => row.position.unclaimedUSD,
   header: 'Unclaimed',
-  cell: (props) => <UnclaimedCell row={props.row.original} ctx={props} />,
+  cell: (props) => formatUSD(props.row.original.position.unclaimedUSD),
   size: 60,
   maxSize: 60,
   meta: {

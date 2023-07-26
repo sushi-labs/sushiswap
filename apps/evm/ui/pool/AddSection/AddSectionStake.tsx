@@ -1,4 +1,3 @@
-import { Transition } from '@headlessui/react'
 import { ChainId } from '@sushiswap/chain'
 import { ChefType, Pool, usePool } from '@sushiswap/client'
 import { tryParseAmount } from '@sushiswap/currency'
@@ -31,23 +30,12 @@ export const AddSectionStake: FC<{ poolId: string; title?: string }> = ({ poolId
   if (!pool?.incentives || pool.incentives.length === 0 || !isMounted) return <></>
 
   return (
-    <Transition
-      appear
-      show={true}
-      enter="transition duration-300 origin-center ease-out"
-      enterFrom="transform scale-90 opacity-0"
-      enterTo="transform scale-100 opacity-100"
-      leave="transition duration-75 ease-out"
-      leaveFrom="transform opacity-100"
-      leaveTo="transform opacity-0"
-    >
-      <_AddSectionStake
-        pool={pool}
-        chefType={pool.incentives[0].chefType}
-        title={title}
-        farmId={Number(pool.incentives[0].pid)}
-      />
-    </Transition>
+    <_AddSectionStake
+      pool={pool}
+      chefType={pool.incentives[0].chefType}
+      title={title}
+      farmId={Number(pool.incentives[0].pid)}
+    />
   )
 }
 

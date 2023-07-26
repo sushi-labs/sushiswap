@@ -2,7 +2,6 @@ import { MinusIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/react-v1/s
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import { classNames, Label, TextField, TextFieldDescription } from '@sushiswap/ui'
-import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
 import { Button } from '@sushiswap/ui/components/button'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { Toggle } from '@sushiswap/ui/components/toggle'
@@ -87,7 +86,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
         </>
       }
     >
-      <Collapsible open={Boolean(noLiquidity)}>
+      {noLiquidity ? (
         <div className="p-6 font-medium bg-blue/10 text-blue rounded-xl">
           This pool must be initialized before you can add liquidity.{' '}
           {showStartPrice
@@ -95,7 +94,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
             : ''}
           Gas fees will be higher than usual due to the initialization transaction.
         </div>
-      </Collapsible>
+      ) : null}
       {children && children}
       <div className="bg-white dark:bg-secondary rounded-xl flex flex-col gap-4 p-4">
         {isMounted && showStartPrice && (

@@ -22,6 +22,7 @@ import {
 } from '@tanstack/react-table'
 import { default as React, ReactNode } from 'react'
 
+import { classNames } from '../../index'
 import { Table, TableBody, TableCell, TableCellAsLink, TableHead, TableHeader, TableRow } from '../tablenew'
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTablePagination } from './data-table-pagination'
@@ -99,7 +100,7 @@ export function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className={header.column.getCanSort() ? 'px-2' : 'px-4'}>
+                    <TableHead key={header.id} className={classNames(header.column.getCanSort() ? 'px-2' : 'px-4')}>
                       {header.isPlaceholder ? null : (
                         <DataTableColumnHeader
                           column={header.column}

@@ -91,7 +91,7 @@ export const PositionsTab = () => {
             ) : null}
           </div>
           <TabsContent value="v3">
-            <ConcentratedPositionsTable hideClosed={hide} />
+            <ConcentratedPositionsTable hideClosed={hide} variant="sheet" />
           </TabsContent>
           <TabsContent value="v2">
             <PositionsTable protocol={Protocol.SUSHISWAP_V2} />

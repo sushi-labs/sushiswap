@@ -1,93 +1,41 @@
-import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid'
-import { ChartBarIcon, DownloadIcon, PlusIcon, UploadIcon } from '@heroicons/react-v1/solid'
-import {
-  Button,
-  DataTable,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from '@sushiswap/ui'
+import { Slot } from '@radix-ui/react-slot'
+import { DataTable } from '@sushiswap/ui'
+import { Sheet, SheetContent, SheetTrigger } from '@sushiswap/ui/components/sheet'
 import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future'
-import { ConcentratedLiquidityPosition, useConcentratedLiquidityPositions } from '@sushiswap/wagmi/future/hooks'
-import { ColumnDef } from '@tanstack/react-table'
-import React, { FC, useCallback, useMemo } from 'react'
+import { useConcentratedLiquidityPositions } from '@sushiswap/wagmi/future/hooks'
+import { ColumnDef, Row } from '@tanstack/react-table'
+import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { Writeable } from 'zod'
 
+import Page from '../../../../../app/pool/[id]/page'
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { NAME_COLUMN_V3, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL, PRICE_RANGE_COLUMN } from './Cells/columns'
 
-const COLUMNS = [
-  NAME_COLUMN_V3,
-  PRICE_RANGE_COLUMN,
-  POSITION_SIZE_CELL,
-  POSITION_UNCLAIMED_CELL,
-  {
-    id: 'actions',
-    cell: ({ row }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button icon={EllipsisHorizontalIcon} variant="ghost" size="sm">
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-[160px]">
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Position</DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem asChild>
-                  <a href={`/pool/position/${row.original.chainId}:${row.original.id}?activeTab=deposit`}>
-                    <ChartBarIcon width={16} height={16} className="mr-2" /> Details
-                  </a>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <a href={`/pool/position/${row.original.chainId}:${row.original.id}?activeTab=deposit`}>
-                    <DownloadIcon width={16} height={16} className="mr-2" />
-                    Deposit
-                  </a>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <a href={`/pool/position/${row.original.chainId}:${row.original.id}?activeTab=withdraw`}>
-                    <UploadIcon width={16} height={16} className="mr-2" />
-                    Withdraw
-                  </a>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <a href={`/pool/${row.original.id}?activeTab=new`}>
-                    <PlusIcon width={16} height={16} className="mr-2" />
-                    Create
-                  </a>
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <a href={`/pool/${row.original.chainId}:${row.original.address}`}>View Pool</a>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
-  },
-] satisfies ColumnDef<ConcentratedLiquidityPositionWithV3Pool, unknown>[]
+const COLUMNS = [NAME_COLUMN_V3, PRICE_RANGE_COLUMN, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL] satisfies ColumnDef<
+  ConcentratedLiquidityPositionWithV3Pool,
+  unknown
+>[]
 
 const tableState = { sorting: [{ id: 'positionSize', desc: true }] }
 
-export const ConcentratedPositionsTable: FC<{
+interface ConcentratedPositionsTableProps {
   poolId?: string
   hideClosed?: boolean
-}> = ({ poolId, hideClosed }) => {
+  variant?: 'sheet' | 'default'
+  onRowClick?(row: Row<ConcentratedLiquidityPositionWithV3Pool>): void
+}
+
+export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> = ({
+  variant = 'default',
+  poolId,
+  hideClosed,
+  onRowClick,
+}) => {
   const { address } = useAccount()
   const { chainIds, tokenSymbols } = usePoolFilters()
+  const [peekedId, setPeekedId] = useState<{ id: string; positionId: string }>({ id: '', positionId: '' })
 
   const { data: positions, isInitialLoading } = useConcentratedLiquidityPositions({
     account: address,
@@ -113,18 +61,64 @@ export const ConcentratedPositionsTable: FC<{
       })
   }, [hideClosed, poolId, positions, chainIds, tokenSymbols])
 
-  const rowLink = useCallback((row: ConcentratedLiquidityPosition) => {
-    return `/pool/position/${row.chainId}:${row.tokenId}`
+  const rowRenderer = useCallback((row: Row<ConcentratedLiquidityPositionWithV3Pool>, rowNode: ReactNode) => {
+    return (
+      <_SheetTrigger row={row} onPeek={setPeekedId}>
+        {rowNode}
+      </_SheetTrigger>
+    )
   }, [])
 
+  const rowRendererDefault = useCallback(
+    (row: Row<ConcentratedLiquidityPositionWithV3Pool>, rowNode: ReactNode) => {
+      if (onRowClick) return <Slot onClick={() => onRowClick?.(row)}>{rowNode}</Slot>
+      return rowNode
+    },
+    [onRowClick]
+  )
+
+  if (variant === 'default') {
+    return (
+      <DataTable
+        testId="concentrated-positions"
+        state={tableState}
+        loading={isInitialLoading}
+        rowRenderer={rowRendererDefault}
+        columns={COLUMNS}
+        data={_positions}
+      />
+    )
+  }
+
   return (
-    <DataTable
-      testId="concentrated-positions"
-      state={tableState}
-      loading={isInitialLoading}
-      linkFormatter={rowLink}
-      columns={COLUMNS}
-      data={_positions}
-    />
+    <Sheet modal>
+      <DataTable
+        testId="concentrated-positions"
+        state={tableState}
+        loading={isInitialLoading}
+        rowRenderer={rowRenderer}
+        columns={COLUMNS}
+        data={_positions}
+      />
+      <SheetContent side="right" className="overflow-auto min-w-[calc(100vw-16px)] md:min-w-[unset] !max-w-7xl">
+        <Page params={peekedId} />
+      </SheetContent>
+    </Sheet>
+  )
+}
+
+const _SheetTrigger: FC<{
+  row: Row<ConcentratedLiquidityPositionWithV3Pool>
+  children: ReactNode
+  onPeek({ id, positionId }: { id: string; positionId: string }): void
+}> = ({ row, children, onPeek }) => {
+  const onMouseEnter = useCallback(() => {
+    onPeek({ id: `${row.original.chainId}%3A${row.original.address}`, positionId: row.original.tokenId.toString() })
+  }, [onPeek, row.original.address, row.original.chainId, row.original.tokenId])
+
+  return (
+    <SheetTrigger asChild onMouseEnter={onMouseEnter} type={undefined}>
+      {children}
+    </SheetTrigger>
   )
 }
