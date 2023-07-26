@@ -231,6 +231,8 @@ export async function getEarnPools(args: typeof PoolsApiSchema._output) {
           },
         },
       },
+      hadEnabledSteerVault: true,
+      hasEnabledSteerVault: true,
       steerVaults: {
         select: {
           id: true,
@@ -252,6 +254,11 @@ export async function getEarnPools(args: typeof PoolsApiSchema._output) {
           reserve1: true,
           state: true,
           strategy: true,
+          isEnabled: true,
+          wasEnabled: true,
+          admin: true,
+          creator: true,
+          manager: true,
           updatedAt: true,
         },
       },
