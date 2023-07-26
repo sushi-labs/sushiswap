@@ -19,6 +19,9 @@ const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 // TODO: correctness terst - now ofter fails? (needs good token list)
 
 // TODO: Back to LogFilter ? Faster events applying
+// TODO: spead up logs by calling only once (low level with topics)
+// TODO: chain number in warnLog
+// TODO: number of pending pools in getPoolCodesForTokens
 
 // TODO: cache for not-existed pools?
 // TODO: to fill address cache from pool cache

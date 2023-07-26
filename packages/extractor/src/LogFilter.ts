@@ -1,5 +1,6 @@
+import { ChainId } from '@sushiswap/chain'
 import { AbiEvent } from 'abitype'
-import { Block, Log, PublicClient, WatchBlocksReturnType } from 'viem'
+import { Block, encodeEventTopics, Log, PublicClient, WatchBlocksReturnType } from 'viem'
 
 import { warnLog } from './WarnLog'
 
@@ -56,6 +57,7 @@ export class LogFilter {
   readonly depth: number
   readonly onNewLogs: (arg?: Log[]) => void // undefined if LogFilter is stopped
   readonly events: AbiEvent[]
+  readonly topics: string[]
 
   unWatchBlocks?: WatchBlocksReturnType
 
@@ -72,6 +74,11 @@ export class LogFilter {
     this.depth = depth
     this.events = events
     this.onNewLogs = onNewLogs
+    this.topics = events.map((e) => {
+      return encodeEventTopics({
+        abi: [e],
+      })[0]
+    })
     this.start()
   }
 
@@ -123,20 +130,38 @@ export class LogFilter {
     if (!this.blockFrame.add(blockNumber, block.hash)) return
     this.blockHashMap.set(block.hash, block)
 
-    Promise.all(
-      this.events.map((event) =>
-        this.client.getLogs({
+    if (this.client.chain?.id == ChainId.POLYGON_ZKEVM) {
+      // alchemy provider fails to filter logs by blockhash and topics simultaniously, lets filter by ourself
+      this.client
+        .getLogs({
           blockHash: block.hash as `0x${string}`,
-          event,
         })
-      )
-    ).then((logss) => {
-      const logs = logss
-        .reduce((a, b) => a.concat(b), [])
-        .sort((a, b) => Number(a.logIndex || 0) - Number(b.logIndex || 0))
-      this.logHashMap.set(block.hash || '', logs)
-      this.processNewLogs()
-    })
+        .then(
+          (logs) => {
+            const filteredLogs = logs
+              .filter((l) => this.topics.includes(l.topics[0] ?? ''))
+              .sort((a, b) => Number(a.logIndex || 0) - Number(b.logIndex || 0))
+            this.logHashMap.set(block.hash || '', filteredLogs)
+            this.processNewLogs()
+          },
+          () => warnLog(`getLog failed for block ${block.hash}`)
+        )
+    } else {
+      Promise.all(
+        this.events.map((event) =>
+          this.client.getLogs({
+            blockHash: block.hash as `0x${string}`,
+            event,
+          })
+        )
+      ).then((logss) => {
+        const logs = logss
+          .reduce((a, b) => a.concat(b), [])
+          .sort((a, b) => Number(a.logIndex || 0) - Number(b.logIndex || 0))
+        this.logHashMap.set(block.hash || '', logs)
+        this.processNewLogs()
+      })
+    }
     if (this.lastProcessedBlock && !this.blockHashMap.has(block.parentHash))
       this.client.getBlock({ blockHash: block.parentHash }).then((b) => this.addBlock(b, false))
   }

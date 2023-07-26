@@ -1,4 +1,4 @@
-import { getReservesAbi, routeProcessor2Abi } from '@sushiswap/abi'
+import { routeProcessor2Abi } from '@sushiswap/abi'
 import { FACTORY_ADDRESS, INIT_CODE_HASH } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
@@ -12,6 +12,7 @@ import {
   SushiSwapV3ChainId,
   V3_FACTORY_ADDRESS,
 } from '@sushiswap/v3-sdk'
+import { parseAbiItem } from 'abitype'
 import { Address, createPublicClient, http } from 'viem'
 import { arbitrum, celo, Chain, mainnet, optimism, polygon, polygonZkEvm } from 'viem/chains'
 
@@ -269,7 +270,14 @@ it.skip('Extractor Polygon zkevm infinit work test', async () => {
     providerURL: `https://polygonzkevm-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: polygonZkEvm,
     factoriesV2: [],
-    factoriesV3: [sushiswapV3Factory(ChainId.POLYGON_ZKEVM)],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.POLYGON_ZKEVM),
+      // {
+      //   address: '0xdE474Db1Fa59898BC91314328D29507AcD0D593c' as Address,
+      //   provider: LiquidityProviders.DovishV3,
+      //   initCodeHash: '0xd3e7f58b9af034cfa7a0597e539bae7c6b393817a47a6fc1e1503cd6eaffe22a',
+      // },
+    ],
     tickHelperContract: TickLensContract[ChainId.POLYGON_ZKEVM],
     cacheDir: './cache',
     logDepth: 1000,
@@ -278,24 +286,29 @@ it.skip('Extractor Polygon zkevm infinit work test', async () => {
   })
 })
 
-it.skip('provider eth_call check', async () => {
-  const transport = http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`)
-  //const transport = http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/demo`)
+it.skip('viem issue #1', async () => {
   const client = createPublicClient({
     chain: polygonZkEvm,
-    transport: transport,
+    transport: http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/demo`),
   })
   const res = await client.multicall({
     allowFailure: true,
     contracts: [
       {
-        address: '0x4f9a0e7fd2bf6067db6994cf12e4495df938e6e9',
-        abi: getReservesAbi,
-        functionName: 'getReserves',
+        address: '0x6aa981bff95edfea36bdae98c26b274ffcafe8d3',
+        abi: [
+          {
+            inputs: [],
+            name: 'liquidity',
+            outputs: [{ internalType: 'uint128', name: '', type: 'uint128' }],
+            stateMutability: 'view',
+            type: 'function',
+          },
+        ],
+        functionName: 'liquidity',
       },
     ],
   })
-  //const res = await client.getBlockNumber()
   console.log(res)
   // const r = await fetch(`https://polygonzkevm-mainnet.g.alchemy.com/v2/demo`, {
   //   method: 'POST',
@@ -308,4 +321,45 @@ it.skip('provider eth_call check', async () => {
   // })
   // const res = await r.json()
   // console.log(r.status, res)
+})
+
+it.skip('Alchemy issue #1', async () => {
+  const client = createPublicClient({
+    chain: polygonZkEvm,
+    transport: http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/demo`),
+  })
+  const UniV3EventsAbi = parseAbiItem(
+    'event Mint(address sender, address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)'
+  )
+  const res = await client.getLogs({
+    blockHash: '0x17695bbbc7cb24f056472d70db4725a0ccb91aa1d8a3863c5c1fadba2916b966',
+    event: UniV3EventsAbi,
+  })
+  console.log(res.map((e) => e.eventName))
+
+  // const r = await fetch(`https://polygonzkevm-mainnet.g.alchemy.com/v2/demo`, {
+  //   method: 'POST',
+  //   body: JSON.stringify({
+  //     jsonrpc: '2.0',
+  //     id: 1,
+  //     method: 'eth_getLogs',
+  //     params: [
+  //       {
+  //         //blockHash: '0x17695bbbc7cb24f056472d70db4725a0ccb91aa1d8a3863c5c1fadba2916b966',
+  //         fromBlock: '0x2FE000',
+  //         topics: [
+  //           [
+  //             '0x7a53080ba414158be7ec69b987b5fb7d07dee101fe85488f0853ae16239d0bde',
+  //             '0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31',
+  //           ],
+  //         ],
+  //       },
+  //     ],
+  //   }),
+  // })
+  // const res = await r.json()
+  // console.log(
+  //   r.status,
+  //   res.result.map((w) => w.topics)
+  // )
 })
