@@ -65,6 +65,7 @@ export const TableFiltersPoolType: FC = () => {
           role="combobox"
           size="sm"
           aria-expanded={open}
+          className="!border-dashed"
         >
           <span>Type</span>
           {values?.length > 0 && (

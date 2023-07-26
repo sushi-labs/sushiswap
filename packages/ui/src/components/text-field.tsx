@@ -20,7 +20,7 @@ const percentInputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>> = 
 }
 
 const textFieldVariants = cva(
-  'truncate border-0 appearance-none dark:text-slate-50 focus:outline-none focus:ring-0 text-gray-900 w-full',
+  'truncate appearance-none dark:text-slate-50 focus:outline-none focus:ring-0 text-gray-900 w-full',
   {
     variants: {
       size: {
@@ -29,8 +29,10 @@ const textFieldVariants = cva(
       },
       variant: {
         default:
-          'flex items-center px-3 rounded-lg font-medium block bg-secondary group-hover:bg-muted group-focus:bg-accent',
-        naked: 'bg-transparent',
+          'border-0 flex items-center px-3 rounded-lg font-medium block bg-secondary group-hover:bg-muted group-focus:bg-accent',
+        naked: 'border-0 bg-transparent',
+        outline:
+          'flex items-center px-3 rounded-lg font-medium block border border-accent group-hover:border-black/20 group-focus:border-black/30 hover:border-black/30 focus-within:border-black/30',
       },
       isError: {
         yes: 'bg-red/10 text-red',
@@ -91,7 +93,8 @@ const Component = <T extends InputType>(
     maxDecimals,
     size,
     onValueChange,
-   isError, ...props
+    isError,
+    ...props
   }: TextFieldProps<T>,
   ref: React.ForwardedRef<HTMLInputElement>
 ) => {

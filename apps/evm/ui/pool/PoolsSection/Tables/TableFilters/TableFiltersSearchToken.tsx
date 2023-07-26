@@ -21,7 +21,7 @@ export const TableFiltersSearchToken: FC = () => {
         size="sm"
         icon={MagnifyingGlassIcon}
         delimiters={[',', ' ', ';', ':']}
-        variant="secondary"
+        variant="outline"
         values={tokenSymbols ?? []}
         onValueChange={onValueChange}
         placeholder="Search"
