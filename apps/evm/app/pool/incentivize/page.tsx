@@ -459,7 +459,6 @@ const Incentivize = withCheckerRoot(() => {
           <div className={classNames(includeBlacklist ? 'flex flex-col gap-2' : 'hidden')}>
             <ChipInput
               delimiters={[',', ' ', ';', ':']}
-              variant="secondary"
               values={blacklist}
               onValueChange={setBlacklist}
               placeholder="Address"

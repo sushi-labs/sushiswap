@@ -75,7 +75,9 @@ const ChipInput = React.forwardRef<HTMLInputElement, ChipInputProps>(
           <TooltipProvider key={i}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Chip className="!block truncate max-w-[80px]">{mutateValue ? mutateValue(value) : value}</Chip>
+                <Chip variant="secondary" className="!block truncate max-w-[80px]">
+                  {mutateValue ? mutateValue(value) : value}
+                </Chip>
               </TooltipTrigger>
               <TooltipContent>
                 <p>{value}</p>
