@@ -1,26 +1,15 @@
-import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid'
-import { ChartBarIcon, DownloadIcon, PlusIcon, UserCircleIcon } from '@heroicons/react-v1/solid'
+import { EllipsisHorizontalIcon, GiftIcon } from '@heroicons/react/24/outline'
 import { AngleRewardsPool, useAngleRewardsMultipleChains } from '@sushiswap/react-query'
-import {
-  Button,
-  Container,
-  DataTable,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from '@sushiswap/ui'
+import { Container, DataTable } from '@sushiswap/ui'
+import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@sushiswap/ui'
 import { Carousel } from '@sushiswap/ui/components/Carousel'
 import { useAccount } from '@sushiswap/wagmi'
 import { ColumnDef } from '@tanstack/react-table'
 import { ANGLE_ENABLED_NETWORKS } from 'config'
+import Link from 'next/link'
 import React, { FC, useCallback, useMemo } from 'react'
 
+import { unwrapToken } from '../../../lib/functions'
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import { RewardSlide, RewardSlideSkeleton } from './RewardSlide'
 import {
@@ -46,36 +35,20 @@ const COLUMNS = [
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[240px]">
           <DropdownMenuItem asChild>
-            <a href={`/pool/${row.original.id}`}>
-              <ChartBarIcon width={16} height={16} className="mr-2" /> Statistics
-            </a>
+            <Link
+              onClick={(e) => e.stopPropagation()}
+              shallow={true}
+              className="flex items-center"
+              href={`/pool/incentivize?chainId=${row.original.chainId}&fromCurrency=${
+                unwrapToken(row.original.token0).isNative ? 'NATIVE' : row.original.token0.address
+              }&toCurrency=${
+                unwrapToken(row.original.token1).isNative ? 'NATIVE' : row.original.token1.address
+              }&feeAmount=${row.original.poolFee * 10_000}`}
+            >
+              <GiftIcon width={16} height={16} className="mr-2" />
+              Add incentive
+            </Link>
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <a className="flex items-center" href={`/pool/${row.original.id}?activeTab=new`}>
-              <DownloadIcon width={16} height={16} className="mr-2" />
-              Deposit
-            </a>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Position</DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem asChild>
-                  <a href={`/pool/${row.original.id}?activeTab=new`}>
-                    <PlusIcon width={16} height={16} className="mr-2" />
-                    Create new position
-                  </a>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <a href={`/pool/${row.original.id}?activeTab=myPositions`}>
-                    <UserCircleIcon width={16} height={16} className="mr-2" /> My positions
-                  </a>
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
         </DropdownMenuContent>
       </DropdownMenu>
     ),

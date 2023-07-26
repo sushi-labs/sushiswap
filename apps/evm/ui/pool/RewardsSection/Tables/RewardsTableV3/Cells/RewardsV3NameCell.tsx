@@ -1,9 +1,14 @@
+import { InformationCircleIcon } from '@heroicons/react/24/outline'
+import { Chip } from '@sushiswap/ui'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@sushiswap/ui'
+import { TooltipProvider } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { unwrapToken } from 'lib/functions'
 import React, { FC } from 'react'
 
+import { RewardsTableV3RowPopover } from '../RewardsTableV3RowPopover'
 import { RewardTableV3CellProps } from './types'
 
 export const RewardsV3NameCell: FC<RewardTableV3CellProps> = ({ row }) => {
@@ -28,9 +33,20 @@ export const RewardsV3NameCell: FC<RewardTableV3CellProps> = ({ row }) => {
           {unwrapToken(row.token1).symbol}
           <span className="text-xs text-gray-500 dark:text-slate-500">{row.poolFee}%</span>
         </span>
-        <div className="rounded-full px-2 py-0.5 text-xs bg-black/[0.06] dark:bg-white/[0.06]">
-          {ongoingFarms.length} Ongoing Farms
-        </div>
+        <TooltipProvider>
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger asChild>
+              <Chip variant="secondary" icon={InformationCircleIcon}>
+                {ongoingFarms.length} Ongoing incentive{ongoingFarms.length > 1 ? 's' : ''}
+              </Chip>
+            </TooltipTrigger>
+            <TooltipContent asChild className="!w-fit !p-0 !border-none">
+              <div>
+                <RewardsTableV3RowPopover row={row} />
+              </div>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   )
