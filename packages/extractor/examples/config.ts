@@ -29,16 +29,16 @@ export const SUPPORTED_CHAIN_IDS = [
   // ChainId.BSC,
   // ChainId.CELO,
   ChainId.ETHEREUM,
-  ChainId.FANTOM,
+  // ChainId.FANTOM,
   ChainId.OPTIMISM,
   ChainId.POLYGON,
   // ChainId.POLYGON_ZKEVM,
 ] as const
 
-export type SupportChainId = (typeof SUPPORTED_CHAIN_IDS)[number]
+export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number]
 
-export const isSupportedChainId = (chainId: number): chainId is SupportChainId =>
-  SUPPORTED_CHAIN_IDS.includes(chainId as SupportChainId)
+export const isSupportedChainId = (chainId: number): chainId is SupportedChainId =>
+  SUPPORTED_CHAIN_IDS.includes(chainId as SupportedChainId)
 
 export const ROUTE_PROCESSOR_3_ADDRESS = {
   [ChainId.ARBITRUM]: '0xfc506AaA1340b4dedFfd88bE278bEe058952D674' as Address,

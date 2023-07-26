@@ -1,7 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
-import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
+import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
+import { RouteStatus } from '@sushiswap/tines'
 import cors from 'cors'
 import { BigNumber } from 'ethers'
 import express, { Express, Request, Response } from 'express'
@@ -14,8 +15,8 @@ import {
   EXTRACTOR_CONFIG,
   isSupportedChainId,
   ROUTE_PROCESSOR_3_ADDRESS,
-  SupportChainId,
   SUPPORTED_CHAIN_IDS,
+  SupportedChainId,
 } from './config'
 
 const querySchema = z.object({
@@ -26,7 +27,7 @@ const querySchema = z.object({
     .lte(2 ** 256)
     .default(ChainId.ETHEREUM)
     .refine((chainId) => isSupportedChainId(chainId), { message: 'ChainId not supported.' })
-    .transform((chainId) => chainId as SupportChainId),
+    .transform((chainId) => chainId as SupportedChainId),
   tokenIn: z.string(),
   tokenOut: z.string(),
   amount: z.string().transform((amount) => BigInt(amount)),
@@ -37,9 +38,9 @@ const querySchema = z.object({
 
 const PORT = 3000
 
-const extractors = new Map<SupportChainId, Extractor>()
-const tokenManagers = new Map<SupportChainId, TokenManager>()
-const nativeProviders = new Map<SupportChainId, NativeWrapProvider>()
+const extractors = new Map<SupportedChainId, Extractor>()
+const tokenManagers = new Map<SupportedChainId, TokenManager>()
+const nativeProviders = new Map<SupportedChainId, NativeWrapProvider>()
 
 async function setup() {
   for (const chainId of SUPPORTED_CHAIN_IDS) {
@@ -88,21 +89,21 @@ async function main() {
     if (!tokenIn || !tokenOut) {
       throw new Error('tokenIn or tokenOut is not supported')
     }
-    const extractor = extractors.get(chainId) as Extractor
-    const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId]
-    const poolCodes = extractor.getPoolCodesForTokens(
-      Array.from(new Set([tokenIn.wrapped, tokenOut.wrapped, ...tokens]))
-    )
-    // const poolCodes = await extractor.getPoolCodesForTokensAsync(
-    //   Array.from(new Set([tokenIn.wrapped, tokenOut.wrapped, ...tokens])),
-    //   200
-    // )
+
     const poolCodesMap = new Map<string, PoolCode>()
-    poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
     const nativeProvider = nativeProviders.get(chainId) as NativeWrapProvider
     nativeProvider.getCurrentPoolList().forEach((p) => poolCodesMap.set(p.pool.address, p))
 
-    const bestRoute = Router[preferSushi ? 'findSpecialRoute' : 'findBestRoute'](
+    const extractor = extractors.get(chainId) as Extractor
+    const common = chainId in BASES_TO_CHECK_TRADES_AGAINST ? BASES_TO_CHECK_TRADES_AGAINST[chainId] : []
+    const additionalA = tokenIn ? ADDITIONAL_BASES[chainId]?.[tokenIn.wrapped.address] ?? [] : []
+    const additionalB = tokenOut ? ADDITIONAL_BASES[chainId]?.[tokenOut.wrapped.address] ?? [] : []
+    const cachedPoolCodes = extractor.getPoolCodesForTokens(
+      Array.from(new Set([tokenIn.wrapped, tokenOut.wrapped, ...common, ...additionalA, ...additionalB]))
+    )
+    cachedPoolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
+
+    let bestRoute = Router[preferSushi ? 'findSpecialRoute' : 'findBestRoute'](
       poolCodesMap,
       chainId,
       tokenIn,
@@ -110,6 +111,25 @@ async function main() {
       tokenOut,
       gasPrice ?? 30e9
     )
+
+    // We check if there is a route found for the cached pool codes
+    // If not, we call again with async method and try to find a route again
+    if (bestRoute.status !== RouteStatus.Success) {
+      const poolCodes = await extractor.getPoolCodesForTokensAsync(
+        Array.from(new Set([tokenIn.wrapped, tokenOut.wrapped, ...common, ...additionalA, ...additionalB])),
+        2_000
+      )
+      poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
+      bestRoute = Router[preferSushi ? 'findSpecialRoute' : 'findBestRoute'](
+        poolCodesMap,
+        chainId,
+        tokenIn,
+        BigNumber.from(amount.toString()),
+        tokenOut,
+        gasPrice ?? 30e9
+      )
+    }
+
     return res.json({
       route: {
         status: bestRoute?.status,
