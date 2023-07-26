@@ -9,7 +9,7 @@ import { usePrice, useTokenList, useTokenSearch } from '@sushiswap/react-query'
 import { COMMON_BASES } from '@sushiswap/router-config'
 import { classNames } from '@sushiswap/ui'
 import { TextField } from '@sushiswap/ui'
-import { DialogContent, DialogNew } from '@sushiswap/ui'
+import { Dialog, DialogContent } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
@@ -70,7 +70,7 @@ export const SearchPanel: FC = () => {
   }, [network1, tokenList, tokenSearch])
 
   return (
-    <DialogNew open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent variant="opaque">
         <div className="flex items-center gap-4">
           <TextField
@@ -137,7 +137,7 @@ export const SearchPanel: FC = () => {
           </List>
         </div>
       </DialogContent>
-    </DialogNew>
+    </Dialog>
   )
 }
 

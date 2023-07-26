@@ -2,6 +2,7 @@ import { Transition } from '@headlessui/react'
 import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { Type } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui'
+import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { FeeAmount, Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
@@ -267,11 +268,11 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                     }}
                     successLink={successLink}
                   >
-                    {({ setOpen }) => (
-                      <Button fullWidth onClick={() => setOpen(true)} size="xl" testId="add-liquidity-preview">
+                    <DialogTrigger asChild>
+                      <Button fullWidth size="xl" testId="add-liquidity-preview">
                         Preview
                       </Button>
-                    )}
+                    </DialogTrigger>
                   </AddSectionReviewModalConcentrated>
                 </Checker.ApproveERC20>
               </Checker.ApproveERC20>

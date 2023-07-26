@@ -3,7 +3,7 @@
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import React, { FC, ReactNode } from 'react'
 
-import { DialogContent, DialogDescription, DialogHeader, DialogNew, DialogTitle, DialogTrigger } from '../dialognew'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../dialog'
 import { IconButton } from '../iconbutton'
 import { List } from '../list'
 import { CarbonOffset } from './CarbonOffset'
@@ -33,7 +33,7 @@ interface SettingsOverlayProps {
 
 export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules, children, options }) => {
   return (
-    <DialogNew>
+    <Dialog>
       <DialogTrigger asChild>
         {children ? children : <IconButton size="sm" name="Settings" icon={Cog6ToothIcon} />}
       </DialogTrigger>
@@ -67,6 +67,6 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules, children, o
           )}
         </div>
       </DialogContent>
-    </DialogNew>
+    </Dialog>
   )
 }

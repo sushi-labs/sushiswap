@@ -2,7 +2,7 @@ import { Chain } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { useTokenSecurity } from '@sushiswap/react-query'
-import { DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogNew, DialogTitle } from '@sushiswap/ui'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@sushiswap/ui'
 import { DialogTrigger } from '@sushiswap/ui'
 import { GoPlusLabsIcon } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
@@ -32,7 +32,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
   }, [onImport])
 
   return (
-    <DialogNew>
+    <Dialog>
       <div className="relative py-0.5 h-[64px]">
         <div className="flex items-center w-full hover:bg-muted focus:bg-accent h-full rounded-lg px-3">
           {currencies[0] ? (
@@ -161,6 +161,6 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
           </div>
         </DialogFooter>
       </DialogContent>
-    </DialogNew>
+    </Dialog>
   )
 }

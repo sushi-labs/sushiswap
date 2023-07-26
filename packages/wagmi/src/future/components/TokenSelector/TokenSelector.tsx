@@ -7,7 +7,7 @@ import { useCustomTokens, usePinnedTokens } from '@sushiswap/hooks'
 import { useBalances, useOtherTokenListsQuery, usePrices, useTokens } from '@sushiswap/react-query'
 import { IconButton } from '@sushiswap/ui'
 import { TextField } from '@sushiswap/ui'
-import { DialogContent, DialogNew } from '@sushiswap/ui'
+import { Dialog, DialogContent } from '@sushiswap/ui'
 import { DialogHeader, DialogTitle } from '@sushiswap/ui'
 import { DialogDescription } from '@sushiswap/ui'
 import { DialogTrigger } from '@sushiswap/ui'
@@ -120,7 +120,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   )
 
   return (
-    <DialogNew open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="!flex flex-col justify-start sm:min-h-[75vh]">
         <DialogHeader>
@@ -216,6 +216,6 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
           )}
         </List.Control>
       </DialogContent>
-    </DialogNew>
+    </Dialog>
   )
 }

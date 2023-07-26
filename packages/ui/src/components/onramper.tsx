@@ -4,7 +4,7 @@ import { Slot } from '@radix-ui/react-slot'
 import React, { createContext, Dispatch, FC, ReactNode, SetStateAction, useCallback, useContext, useState } from 'react'
 
 import { classNames } from '../index'
-import { DialogNew, DialogOverlay, DialogPrimitive } from './dialognew'
+import { Dialog, DialogOverlay, DialogPrimitive } from './dialog'
 import { IconButton } from './iconbutton'
 
 export const OnramperButton: FC<{ children: ReactNode; className?: string }> = ({ children, className }) => {
@@ -34,7 +34,7 @@ export const OnramperPanel: FC<OnramperPanelProps> = ({ address }) => {
   }
 
   return (
-    <DialogNew open={open} onOpenChange={() => {}}>
+    <Dialog open={open} onOpenChange={() => {}}>
       <DialogPrimitive.Portal>
         <DialogOverlay />
         <DialogPrimitive.Content
@@ -56,7 +56,7 @@ export const OnramperPanel: FC<OnramperPanelProps> = ({ address }) => {
           </div>
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
-    </DialogNew>
+    </Dialog>
   )
 }
 

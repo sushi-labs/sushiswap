@@ -64,7 +64,7 @@ const dialogCloseVariants = cva('', {
   },
 })
 
-const DialogNew = DialogPrimitive.Root
+const Dialog = DialogPrimitive.Root
 const DialogTrigger = DialogPrimitive.Trigger
 const DialogClose = DialogPrimitive.Close
 
@@ -149,9 +149,9 @@ interface DialogReviewProps
 const DialogReview: FC<DialogReviewProps> = ({ children, ...props }) => {
   const { confirm, open, setOpen } = useDialog(DialogType.Review)
   return (
-    <DialogNew {...props} open={open} onOpenChange={setOpen}>
+    <Dialog {...props} open={open} onOpenChange={setOpen}>
       {children({ confirm })}
-    </DialogNew>
+    </Dialog>
   )
 }
 DialogReview.displayName = 'DialogReview'
@@ -164,9 +164,9 @@ interface DialogCustomProps {
 const DialogCustom: FC<DialogCustomProps> = ({ children, ...props }) => {
   const { open, setOpen } = useDialog(DialogType.Confirm)
   return (
-    <DialogNew {...props} open={open} onOpenChange={setOpen}>
+    <Dialog {...props} open={open} onOpenChange={setOpen}>
       {children}
-    </DialogNew>
+    </Dialog>
   )
 }
 DialogCustom.displayName = 'DialogCustom'
@@ -194,7 +194,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
   const { open, setOpen } = useDialog(DialogType.Confirm)
 
   return (
-    <DialogNew {...props} open={open} onOpenChange={setOpen}>
+    <Dialog {...props} open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
@@ -252,7 +252,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
           </DialogFooter>
         </DialogHeader>
       </DialogContent>
-    </DialogNew>
+    </Dialog>
   )
 }
 DialogConfirm.displayName = 'DialogConfirm'
@@ -324,6 +324,7 @@ const useDialog = <T extends DialogType>(type: T): UseDialog<T> => {
 }
 
 export {
+  Dialog,
   DialogClose,
   DialogConfirm,
   DialogContent,
@@ -331,7 +332,6 @@ export {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogNew,
   DialogOverlay,
   DialogPrimitive,
   DialogProvider,

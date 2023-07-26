@@ -3,7 +3,7 @@ import { defaultQuoteCurrency, Native, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useTokenSecurity } from '@sushiswap/react-query'
-import { DialogContent, DialogDescription, DialogHeader, DialogNew, DialogTitle } from '@sushiswap/ui'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@sushiswap/ui'
 import { DialogFooter } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { GoPlusLabsIcon } from '@sushiswap/ui/components/icons'
@@ -81,7 +81,7 @@ export const TokenNotFoundDialog = () => {
   if (!tokenSecurity) return null
 
   return (
-    <DialogNew open={Boolean(!tokenFromLoading && !tokenToLoading && (token0NotInList || token1NotInList))}>
+    <Dialog open={Boolean(!tokenFromLoading && !tokenToLoading && (token0NotInList || token1NotInList))}>
       <DialogContent>
         <DialogHeader>
           {isNotHoneyPot ? (
@@ -281,6 +281,6 @@ export const TokenNotFoundDialog = () => {
           )}
         </DialogFooter>
       </DialogContent>
-    </DialogNew>
+    </Dialog>
   )
 }
