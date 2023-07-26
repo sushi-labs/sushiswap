@@ -119,6 +119,7 @@ export const ConcentratedPositionsTable: FC<{
 
   return (
     <DataTable
+      testId="concentrated-positions"
       state={tableState}
       loading={isInitialLoading}
       linkFormatter={rowLink}

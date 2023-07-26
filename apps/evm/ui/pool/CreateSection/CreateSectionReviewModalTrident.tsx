@@ -296,7 +296,6 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
     onSettled,
     onSuccess: () => {
       setSignature(undefined)
-      close()
     },
     enabled: approved,
   })
@@ -319,7 +318,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
                 <Button
                   id="confirm-add-liquidity"
                   size="xl"
-                  disabled={!isValid || isWritePending}
+                  disabled={!isValid || isWritePending || !sendTransactionAsync}
                   fullWidth
                   onClick={() => sendTransactionAsync?.().then(() => confirm())}
                 >
