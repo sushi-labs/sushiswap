@@ -1,5 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
 
+export const AMPL_ADDRESS = {
+  [ChainId.ETHEREUM]: '0xD46bA6D942050d489DBd938a2C909A5d5039A161',
+} as const
+
 export const MANA_ADDRESS = {
   [ChainId.POLYGON]: '0xA1c57f48F0Deb89f569dFbE6E2B7f46D33606fD4',
 } as const
@@ -143,7 +147,7 @@ export const UNI_ADDRESS = {
 
 export const BUSD_ADDRESS = {
   [ChainId.BSC]: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
-  [ChainId.THUNDERCORE]: '0xbeb0131d95ac3f03fd15894d0ade5dbf7451d171'
+  [ChainId.THUNDERCORE]: '0xbeb0131d95ac3f03fd15894d0ade5dbf7451d171',
 } as const
 
 export const MAI_ADDRESS = {

@@ -78,7 +78,6 @@ export const useCrossChainTradeQuery = (
 
   return useQuery({
     queryKey: [
-      'NoPersist',
       'crossChainTrade',
       {
         tradeId,
