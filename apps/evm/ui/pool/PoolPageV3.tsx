@@ -3,7 +3,6 @@ import { Bars3BottomLeftIcon, ChartBarIcon, FunnelIcon } from '@heroicons/react/
 import { ArrowLeftIcon } from '@heroicons/react-v1/outline'
 import { formatUSD } from '@sushiswap/format'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
-import { SplashController } from '@sushiswap/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { IconButton } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
@@ -38,11 +37,9 @@ enum Granularity {
 
 const PoolPageV3: FC<{ id: string; positionId?: string }> = ({ id, positionId }) => {
   return (
-    <SplashController>
-      <ConcentratedLiquidityProvider>
-        <Pool id={id} positionId={positionId} />
-      </ConcentratedLiquidityProvider>
-    </SplashController>
+    <ConcentratedLiquidityProvider>
+      <Pool id={id} positionId={positionId} />
+    </ConcentratedLiquidityProvider>
   )
 }
 
