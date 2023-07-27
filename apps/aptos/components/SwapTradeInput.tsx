@@ -4,6 +4,7 @@ import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { useAllCommonPairs } from 'utils/utilFunctions'
 import { useSlippageTolerance } from '@sushiswap/hooks'
+import { useTokenBalance } from 'utils/useTokenBalance'
 
 interface Props {
   handleSwap: () => void
@@ -12,9 +13,15 @@ interface Props {
 export const SwapTradeInput = ({ handleSwap }: Props) => {
   const { connected, account, network } = useWallet()
   const tradeVal = useRef<HTMLInputElement>(null)
-
   const [controller, setController] = useState<AbortController | null>(null)
-  const { balance0, amount, token0, token1, error, isLoadingPrice, isTransactionPending } = useSwapState()
+  const { amount, token0, token1, error, isTransactionPending } = useSwapState()
+  const { data: balance, isLoading } = useTokenBalance(
+    account?.address as string,
+    token0,
+    Number(network?.chainId) || 1
+  )
+  console.log('isLoading', isLoading)
+  console.log(balance)
   const [slippageTolerance] = useSlippageTolerance()
   const {
     setAmount,
@@ -61,17 +68,13 @@ export const SwapTradeInput = ({ handleSwap }: Props) => {
 
   useEffect(() => {
     checkBalance(String(amount))
-  }, [account, connected, network, token0, token1, isTransactionPending, slippageTolerance, amount, balance0])
+  }, [account, connected, network, token0, token1, isTransactionPending, slippageTolerance, amount, balance])
 
   const checkBalance = (value: string) => {
-    const regexPattern = /^[0-9]*(\.[0-9]*)?$/
-    if (regexPattern.test(value)) {
-      setAmount(value)
-      getSwapPrice(parseFloat(value))
-    }
-
+    setAmount(value)
+    getSwapPrice(parseFloat(value))
     if (connected) {
-      const priceEst = balance0 / 10 ** token0?.decimals < parseFloat(value)
+      const priceEst = balance / 10 ** token0?.decimals < parseFloat(value)
       if (priceEst) {
         setError('Exceeds Balance')
       } else {
@@ -89,9 +92,9 @@ export const SwapTradeInput = ({ handleSwap }: Props) => {
       token={token0}
       alteredSelected={token1}
       value={String(amount)}
-      balance={balance0}
+      balance={balance}
       error={error}
-      isLoadingPrice={isLoadingPrice}
+      isLoadingPrice={isLoading}
       onUserInput={checkBalance}
       tradeVal={tradeVal}
       setAmount={setAmount}

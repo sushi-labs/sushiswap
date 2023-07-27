@@ -2,7 +2,7 @@
 import Container from '@sushiswap/ui/future/components/Container'
 import Link from 'next/link'
 import React, { FC } from 'react'
-import { Add } from './v2/[chainId]'
+import { Add } from '../Pool/PoolPage'
 
 export function AddPage() {
   return (

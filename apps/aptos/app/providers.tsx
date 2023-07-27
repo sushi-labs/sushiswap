@@ -10,6 +10,7 @@ import { RiseWallet } from '@rise-wallet/wallet-adapter'
 import { ThemeProvider } from '@sushiswap/ui'
 // import { BloctoWallet } from '@blocto/aptos-wallet-adapter-plugin'
 import { NetworkName, Wallet } from '@aptos-labs/wallet-adapter-core'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 // import { SafePalWalletAdapter } from '@aptstats/safepal-wallet-extension'
 const wallets = [
   new PetraWallet(),
@@ -22,11 +23,14 @@ const wallets = [
 ]
 
 export function Providers({ children }: { children: React.ReactNode }) {
+  const queryClient = new QueryClient()
   return (
     <>
-      <AptosWalletAdapterProvider plugins={wallets} autoConnect={true}>
-        <ThemeProvider>{children}</ThemeProvider>
-      </AptosWalletAdapterProvider>
+      <QueryClientProvider client={queryClient}>
+        <AptosWalletAdapterProvider plugins={wallets} autoConnect={true}>
+          <ThemeProvider>{children}</ThemeProvider>
+        </AptosWalletAdapterProvider>
+      </QueryClientProvider>
     </>
   )
 }

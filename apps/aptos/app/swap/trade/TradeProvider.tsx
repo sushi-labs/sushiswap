@@ -9,8 +9,6 @@ interface SwapProviderProps {
 type State = {
   token0: Token
   token1: Token
-  balance0: number
-  balance1: number
   amount: string | null
   slippageAmount: number
   outputAmount: string
@@ -24,8 +22,6 @@ type State = {
 type SwapApi = {
   setToken0(token: Token): void
   setToken1(token: Token): void
-  setBalance0(value: number): void
-  setBalance1(value: number): void
   swapTokens(): void
   setAmount(amount: string): void
   setSlippageAmount(amount: number): void
@@ -44,8 +40,6 @@ export const SwapActionsContext = createContext<SwapApi>({} as SwapApi)
 type Actions =
   | { type: 'setToken0'; value: Token }
   | { type: 'setToken1'; value: Token }
-  | { type: 'setBalance0'; value: number }
-  | { type: 'setBalance1'; value: number }
   | { type: 'swapTokens' }
   | { type: 'setAmount'; value: string }
   | { type: 'setSlippageAmount'; value: number }
@@ -67,10 +61,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         return { ...state, token0: action.value }
       case 'setToken1':
         return { ...state, token1: action.value }
-      case 'setBalance0':
-        return { ...state, balance0: action.value }
-      case 'setBalance1':
-        return { ...state, balance1: action.value }
       case 'swapTokens':
         return { ...state, token0: state.token1, token1: state.token0 }
       case 'setAmount':
@@ -104,8 +94,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const [internalState, dispatch] = useReducer(reducer, {
     token0: baseTokens[0],
     token1: baseTokens[1],
-    balance0: 0,
-    balance1: 0,
     amount: '',
     slippageAmount: 0,
     outputAmount: '',
@@ -126,8 +114,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     const setAmount = (value: string) => dispatch({ type: 'setAmount', value })
     const setSlippageAmount = (value: number) => dispatch({ type: 'setSlippageAmount', value })
     const setOutputAmount = (value: string) => dispatch({ type: 'setOutputAmount', value })
-    const setBalance0 = (value: number) => dispatch({ type: 'setBalance0', value })
-    const setBalance1 = (value: number) => dispatch({ type: 'setBalance1', value })
     const setError = (value: string) => dispatch({ type: 'setError', value })
     const setLoadingPrice = (value: boolean) => dispatch({ type: 'setLoadingPrice', value })
     const setisTransactionPending = (value: boolean) => dispatch({ type: 'setisTransactionPending', value })
@@ -138,8 +124,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     return {
       setToken0,
       setToken1,
-      setBalance0,
-      setBalance1,
       swapTokens,
       setAmount,
       setSlippageAmount,

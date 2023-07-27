@@ -7,6 +7,9 @@ import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { ConnectView } from './ConnectView'
 import { DefaultView } from './DefaultView'
 import { SettingsView } from './SettingsView'
+import { useTokenBalance } from 'utils/useTokenBalance'
+import { useTokens } from 'utils/useTokens'
+import { Token } from 'utils/tokenType'
 
 type fullWidth = {
   fullWidth: boolean
@@ -33,26 +36,10 @@ export enum ProfileView {
 export default function WalletSelector({ hideChevron, varient, color, fullWidth, size }: Props) {
   const { account, connected, network } = useWallet()
   const [view, setView] = useState<ProfileView>(ProfileView.Default)
-  const [balance, setBalance] = useState<number>(0)
-  useEffect(() => {
-    if (account?.address && network?.name) {
-      fetch(`https://fullnode.${network?.name?.toLowerCase()}.aptoslabs.com/v1/accounts/${account?.address}/resources`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (!data.error_code) {
-            const balance = data?.filter((coin: coinType) => {
-              return coin?.type.includes('0x1::aptos_coin::AptosCoin')
-            })
-            setBalance(balance[0]?.data?.coin?.value / 10 ** 8)
-          } else {
-            setBalance(0)
-          }
-        })
-        .catch((err) => {})
-    } else {
-      setBalance(0)
-    }
-  }, [account, network, connected])
+  // const [balance, setBalance] = useState<number>(0)
+  const { data: tokens } = useTokens(Number(network?.chainId) || 1)
+  const nativeCurr = tokens?.['0x1::aptos_coin::AptosCoin']
+  const { data: balance } = useTokenBalance(account?.address as string, nativeCurr as Token, Number(network?.chainId))
   return (
     <Popover className={fullWidth ? 'relative w-full' : ''}>
       {({ open, close }) => (
@@ -114,7 +101,9 @@ export default function WalletSelector({ hideChevron, varient, color, fullWidth,
                 } flex flex-col w-full fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white/50 paper`}
               >
                 {!connected && <ConnectView close={close} />}
-                {connected && view == ProfileView.Default && <DefaultView balance={balance} setView={setView} />}
+                {connected && view == ProfileView.Default && (
+                  <DefaultView balance={balance / 10 ** 8} setView={setView} />
+                )}
                 {view == ProfileView.Settings && <SettingsView setView={setView} />}
               </Popover.Panel>
             </div>

@@ -718,6 +718,7 @@ importers:
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi': workspace:*
       '@tanstack/react-query': 4.28.0
+      '@tanstack/react-table': 8.9.1
       '@types/node': 18.11.18
       '@types/react': 18.2.6
       '@types/react-dom': 18.2.4
@@ -738,6 +739,7 @@ importers:
       react-toastify: 9.1.3
       react-virtualized-auto-sizer: 1.0.7
       react-window: 1.8.7
+      swr: ^2.2.0
       tailwindcss: 3.3.2
       typescript: 5.0.4
     dependencies:
@@ -761,6 +763,7 @@ importers:
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@tanstack/react-query': 4.28.0_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-table': 8.9.1_biqbaboplfbrettd7655fr4n2y
       '@vercel/analytics': 0.1.5_react@18.2.0
       aptos: 1.11.0
       fewcha-plugin-wallet-adapter: 0.1.2
@@ -773,6 +776,7 @@ importers:
       react-toastify: 9.1.3_biqbaboplfbrettd7655fr4n2y
       react-virtualized-auto-sizer: 1.0.7_biqbaboplfbrettd7655fr4n2y
       react-window: 1.8.7_biqbaboplfbrettd7655fr4n2y
+      swr: 2.2.0_react@18.2.0
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -35235,7 +35239,7 @@ packages:
     dependencies:
       '@types/json-schema': 7.0.12
       ajv: 8.12.0
-      ajv-formats: 2.1.1_ajv@8.12.0
+      ajv-formats: 2.1.1
       ajv-keywords: 5.1.0_ajv@8.12.0
     dev: false
 
@@ -36642,6 +36646,15 @@ packages:
 
   /swr/2.1.5_react@18.2.0:
     resolution: {integrity: sha512-/OhfZMcEpuz77KavXST5q6XE9nrOBOVcBLWjMT+oAE/kQHyE3PASrevXCtQDZ8aamntOfFkbVJp7Il9tNBQWrw==}
+    peerDependencies:
+      react: ^16.11.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+      use-sync-external-store: 1.2.0_react@18.2.0
+    dev: false
+
+  /swr/2.2.0_react@18.2.0:
+    resolution: {integrity: sha512-AjqHOv2lAhkuUdIiBu9xbuettzAzWXmCEcLONNKJRba87WAefz8Ca9d6ds/SzrPc235n1IxWYdhJ2zF3MNUaoQ==}
     peerDependencies:
       react: ^16.11.0 || ^17.0.0 || ^18.0.0
     dependencies:

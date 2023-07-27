@@ -121,6 +121,7 @@ export default function TokenListDialog<TData>({
                       !customTokens[`${queryToken.chainId}:${queryToken.address}`] &&
                       !tokens?.[`${queryToken.address}`] && (
                         <TokenSelectorImportRow
+                          id={id}
                           token={[queryToken]}
                           onImport={() => {
                             queryToken && handleImport(queryToken)

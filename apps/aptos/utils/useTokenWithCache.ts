@@ -9,6 +9,7 @@ interface GetTokenWithQueryCacheFn {
 }
 
 export const getTokenDetails = async ({ chainId, address, hasToken, customTokens }: GetTokenWithQueryCacheFn) => {
+  const network = chainId == 1 ? 'mainnet' : 'testnet'
   if (chainId && hasToken(`${chainId}:${address}`)) {
     const { address: tokenAddress, name, symbol, decimals } = customTokens[`${chainId}:${address}`]
     return {
@@ -22,7 +23,7 @@ export const getTokenDetails = async ({ chainId, address, hasToken, customTokens
   if (address) {
     const tokenAddress = address.split(':')
     const response = await fetch(
-      `https://fullnode.testnet.aptoslabs.com/v1/accounts/${tokenAddress[0]}/resource/0x1::coin::CoinInfo<${address}>`
+      `https://fullnode.${network}.aptoslabs.com/v1/accounts/${tokenAddress[0]}/resource/0x1::coin::CoinInfo<${address}>`
     )
     if (response.status == 200) {
       const data = await response.json()
@@ -56,7 +57,5 @@ export default function useTokenWithCache({
     refetchOnWindowFocus: false,
     keepPreviousData,
     retry: false,
-    staleTime: 900000, // 15 mins
-    cacheTime: 86400000, // 24hs
   })
 }

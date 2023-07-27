@@ -12,7 +12,6 @@ export async function useAllCommonPairs(
   controller: AbortController
 ) {
   const CONTRACT_ADDRESS = network == 'mainnet' ? MAINNET_CONTRACT : TESTNET_CONTRACT
-  console.log(TESTNET_CONTRACT)
   const basePairs: string[] = [
     '0x1::aptos_coin::AptosCoin',
     '0xb06483aa110a1d7cfdc0f5ba48545ee967564819014326b2767de4705048aab9::btc_coin::Bitcoin',
@@ -220,7 +219,6 @@ function RouteDemo(firstInput: any, ARR: any, tokenGraph: any, coinA: any, coinB
   const bestRoutePrice = bestFinder.length
     ? bestFinder.reduce((r: any, b: any) => (r.amountOut > b.amountOut ? r : b))
     : {}
-  console.log(bestRoutePrice)
   return bestRoutePrice
 }
 

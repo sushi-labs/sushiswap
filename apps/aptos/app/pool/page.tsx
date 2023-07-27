@@ -5,12 +5,15 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { DiscordIcon } from '@sushiswap/ui/future/components/icons'
 import Link from 'next/link'
 import PoolsSection from '../../components/PoolsSection'
-import { PoolFilters } from 'app/pool/PoolsSection/Tables/TableFilters/PoolFilters'
 import { Footer } from '@sushiswap/ui/app/Footer'
+import { useAccount } from 'utils/useAccount'
+import Loading from 'app/loading'
 
 export default function Pool() {
+  const { isLoadingAccount } = useAccount()
   return (
     <>
+      {isLoadingAccount && <Loading />}
       <Container maxWidth="7xl" className="mx-auto px-4 pt-[80px] lg:pb-[54px]">
         <div className="flex flex-col justify-between gap-12 lg:flex-row lg:items-center">
           <div className="flex flex-col items-center flex-grow gap-6 lg:items-start">
@@ -59,7 +62,7 @@ export default function Pool() {
         </div>
       </Container>
       <PoolsSection />
-      <PoolFilters />
+      {/* <PoolFilters /> */}
       <Footer />
     </>
   )

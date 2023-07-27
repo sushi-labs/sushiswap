@@ -36,7 +36,7 @@ interface ComplexRoutePathProps {
 
 const ComplexRoutePath = ({ fromTokenAddress, toTokenAddress }: ComplexRoutePathProps) => {
   const { network } = useWallet()
-  const { data: tokens } = useTokens(Number(network?.chainId))
+  const { data: tokens } = useTokens(Number(network?.chainId) || 1)
   const fromToken = tokens && tokens[fromTokenAddress]
   const toToken = tokens && tokens[toTokenAddress]
   return (
