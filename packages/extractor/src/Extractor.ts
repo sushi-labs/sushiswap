@@ -174,23 +174,23 @@ export class Extractor {
   }
 
   async printTokensPoolsQuantity(...paths: string[]) {
-    const filePath = path.resolve(...paths)
-    const stats = this.getTokensPoolsQuantity()
     try {
+      const filePath = path.resolve(...paths)
+      const stats = this.getTokensPoolsQuantity()
       const dirName = path.dirname(filePath)
       mkdir(dirName, { recursive: true })
+      const file = await open(filePath, 'w')
+      await file.writeFile(`Total tokens: ${stats.length}\n`)
+      await file.writeFile('Quantity of pools for tokens\n')
+      const tokenNum = Math.min(stats.length, 30)
+      for (let i = 0; i < tokenNum; ++i) {
+        const [token, num] = stats[i]
+        await file.writeFile(`${token.address} ${token.symbol} ${num}\n`)
+      }
+      await file.close()
     } catch (e) {
       // do nothing
     }
-    const file = await open(filePath, 'w')
-    await file.writeFile(`Total tokens: ${stats.length}\n`)
-    await file.writeFile('Quantity of pools for tokens\n')
-    const tokenNum = Math.min(stats.length, 30)
-    for (let i = 0; i < tokenNum; ++i) {
-      const [token, num] = stats[i]
-      await file.writeFile(`${token.address} ${token.symbol} ${num}\n`)
-    }
-    await file.close()
   }
 
   getCurrentPoolCodes() {

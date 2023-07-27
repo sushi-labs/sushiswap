@@ -44,7 +44,7 @@ const nativeProviders = new Map<SupportedChainId, NativeWrapProvider>()
 async function setup() {
   for (const chainId of SUPPORTED_CHAIN_IDS) {
     const extractor = new Extractor(EXTRACTOR_CONFIG[chainId])
-    await extractor.start()
+    await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId])
     extractors.set(chainId, extractor)
     const tokenManager = new TokenManager(
       extractor?.multiCallAggregator as MultiCallAggregator,

@@ -12,7 +12,8 @@ import {
   SushiSwapV3ChainId,
   V3_FACTORY_ADDRESS,
 } from '@sushiswap/v3-sdk'
-import { Address, createPublicClient, http } from 'viem'
+import { config } from '@sushiswap/viem-config'
+import { Address, createPublicClient, http, Transport } from 'viem'
 import { arbitrum, celo, Chain, mainnet, optimism, polygon, polygonZkEvm } from 'viem/chains'
 
 export const RP3Address = {
@@ -22,6 +23,7 @@ export const RP3Address = {
   [ChainId.OPTIMISM]: '0x4C5D5234f232BD2D76B96aA33F5AE4FCF0E4BFAb' as Address,
   [ChainId.CELO]: '0x2f686751b19a9d91cc3d57d90150Bc767f050066' as Address,
   [ChainId.POLYGON_ZKEVM]: '0x2f686751b19a9d91cc3d57d90150Bc767f050066' as Address,
+  [ChainId.AVALANCHE]: '0x717b7948AA264DeCf4D780aa6914482e5F46Da3e' as Address,
 }
 
 export const TickLensContract = {
@@ -31,6 +33,7 @@ export const TickLensContract = {
   [ChainId.OPTIMISM]: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573' as Address,
   [ChainId.CELO]: '0x5f115D9113F88e0a0Db1b5033D90D4a9690AcD3D' as Address,
   [ChainId.POLYGON_ZKEVM]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904' as Address,
+  [ChainId.AVALANCHE]: '0xDdC1b5920723F774d2Ec2C3c9355251A20819776' as Address,
 }
 
 export const UniswapV2FactoryAddress: Record<number, string> = {
@@ -81,7 +84,8 @@ function sushiswapV3Factory(chainId: SushiSwapV3ChainId) {
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
 async function startInfinitTest(args: {
-  providerURL: string
+  transport?: Transport
+  providerURL?: string
   chain: Chain
   factoriesV2: FactoryV2[]
   factoriesV3: FactoryV3[]
@@ -93,7 +97,7 @@ async function startInfinitTest(args: {
   RP3Address: Address
   account?: Address
 }) {
-  const transport = http(args.providerURL)
+  const transport = args.transport ?? http(args.providerURL)
   const client = createPublicClient({
     chain: args.chain,
     transport: transport,
@@ -284,6 +288,28 @@ it.skip('Extractor Polygon zkevm infinit work test', async () => {
     logging: true,
     maxCallsInOneBatch: 5,
     RP3Address: RP3Address[ChainId.POLYGON_ZKEVM],
+  })
+})
+
+it.skip('Extractor AVALANCH infinit work test', async () => {
+  await startInfinitTest({
+    transport: config[ChainId.AVALANCHE].transport,
+    chain: config[ChainId.AVALANCHE].chain as Chain,
+    factoriesV2: [
+      sushiswapV2Factory(ChainId.AVALANCHE),
+      {
+        address: '0x9Ad6C38BE94206cA50bb0d90783181662f0Cfa10' as Address,
+        provider: LiquidityProviders.TraderJoe,
+        fee: 0.003,
+        initCodeHash: '0x0bbca9af0511ad1a1da383135cf3a8d2ac620e549ef9f6ae3a4c33c2fed0af91',
+      },
+    ],
+    factoriesV3: [sushiswapV3Factory(ChainId.AVALANCHE)],
+    tickHelperContract: TickLensContract[ChainId.AVALANCHE],
+    cacheDir: './cache',
+    logDepth: 100,
+    logging: true,
+    RP3Address: RP3Address[ChainId.AVALANCHE],
   })
 })
 
