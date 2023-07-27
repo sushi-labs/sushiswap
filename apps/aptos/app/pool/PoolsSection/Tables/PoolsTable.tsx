@@ -13,7 +13,7 @@ export const PoolsTable = () => {
   const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
   const [, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 })
   const rowLink = useCallback((row: Pool) => {
-    return `/pools/${row.id}`
+    return `/pool/${row.id}`
   }, [])
   const data = useMemo(() => pools?.flat() || [], [pools])
   const table = useReactTable<Pool>({

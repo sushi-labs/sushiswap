@@ -23,7 +23,7 @@ export const PositionsTable = () => {
     getCoreRowModel: getCoreRowModel(),
   })
   const rowLink = useCallback((row: Pool) => {
-    return `/pools/${row.id}`
+    return `/pool/${row.id}`
   }, [])
   return (
     <Container maxWidth="7xl" className="px-4 mx-auto">
