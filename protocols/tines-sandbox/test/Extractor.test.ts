@@ -89,6 +89,7 @@ async function startInfinitTest(args: {
   cacheDir: string
   logDepth: number
   logging?: boolean
+  maxCallsInOneBatch?: number
   RP3Address: Address
   account?: Address
 }) {
@@ -271,16 +272,17 @@ it.skip('Extractor Polygon zkevm infinit work test', async () => {
     factoriesV2: [],
     factoriesV3: [
       sushiswapV3Factory(ChainId.POLYGON_ZKEVM),
-      // {
-      //   address: '0xdE474Db1Fa59898BC91314328D29507AcD0D593c' as Address,
-      //   provider: LiquidityProviders.DovishV3,
-      //   initCodeHash: '0xd3e7f58b9af034cfa7a0597e539bae7c6b393817a47a6fc1e1503cd6eaffe22a',
-      // },
+      {
+        address: '0xdE474Db1Fa59898BC91314328D29507AcD0D593c' as Address,
+        provider: LiquidityProviders.DovishV3,
+        initCodeHash: '0xd3e7f58b9af034cfa7a0597e539bae7c6b393817a47a6fc1e1503cd6eaffe22a',
+      },
     ],
     tickHelperContract: TickLensContract[ChainId.POLYGON_ZKEVM],
     cacheDir: './cache',
     logDepth: 1000,
     logging: true,
+    maxCallsInOneBatch: 5,
     RP3Address: RP3Address[ChainId.POLYGON_ZKEVM],
   })
 })

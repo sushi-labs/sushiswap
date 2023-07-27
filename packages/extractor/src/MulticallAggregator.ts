@@ -145,7 +145,7 @@ export class MultiCallAggregator {
           })),
         })
       } catch (e) {
-        //warnLog(`Multicall error ${pendingCalls.map((c) => `${c.address}:${c.functionName}`)}\n` + e)
+        // warnLog(`Multicall error ${pendingCalls.map((c) => `${c.address}:${c.functionName}(${c.args})`)}\n` + e)
         warnLog(`Multicall error }` + e)
         continue
       }

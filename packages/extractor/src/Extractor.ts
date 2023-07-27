@@ -56,9 +56,10 @@ export class Extractor {
     cacheDir: string
     logDepth: number
     logging?: boolean
+    maxCallsInOneBatch?: number
   }) {
     this.cacheDir = args.cacheDir
-    this.multiCallAggregator = new MultiCallAggregator(args.client)
+    this.multiCallAggregator = new MultiCallAggregator(args.client, args.maxCallsInOneBatch ?? 0)
     const tokenManager = new TokenManager(
       this.multiCallAggregator,
       args.cacheDir,
