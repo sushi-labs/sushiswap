@@ -12,7 +12,6 @@ import {
   SushiSwapV3ChainId,
   V3_FACTORY_ADDRESS,
 } from '@sushiswap/v3-sdk'
-import { parseAbiItem } from 'abitype'
 import { Address, createPublicClient, http } from 'viem'
 import { arbitrum, celo, Chain, mainnet, optimism, polygon, polygonZkEvm } from 'viem/chains'
 
@@ -324,42 +323,33 @@ it.skip('viem issue #1', async () => {
 })
 
 it.skip('Alchemy issue #1', async () => {
-  const client = createPublicClient({
-    chain: polygonZkEvm,
-    transport: http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/demo`),
-  })
-  const UniV3EventsAbi = parseAbiItem(
-    'event Mint(address sender, address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)'
-  )
-  const res = await client.getLogs({
-    blockHash: '0x17695bbbc7cb24f056472d70db4725a0ccb91aa1d8a3863c5c1fadba2916b966',
-    event: UniV3EventsAbi,
-  })
-  console.log(res.map((e) => e.eventName))
-
-  // const r = await fetch(`https://polygonzkevm-mainnet.g.alchemy.com/v2/demo`, {
-  //   method: 'POST',
-  //   body: JSON.stringify({
-  //     jsonrpc: '2.0',
-  //     id: 1,
-  //     method: 'eth_getLogs',
-  //     params: [
-  //       {
-  //         //blockHash: '0x17695bbbc7cb24f056472d70db4725a0ccb91aa1d8a3863c5c1fadba2916b966',
-  //         fromBlock: '0x2FE000',
-  //         topics: [
-  //           [
-  //             '0x7a53080ba414158be7ec69b987b5fb7d07dee101fe85488f0853ae16239d0bde',
-  //             '0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31',
-  //           ],
-  //         ],
-  //       },
-  //     ],
-  //   }),
+  // const client = createPublicClient({
+  //   chain: polygonZkEvm,
+  //   transport: http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/demo`),
   // })
-  // const res = await r.json()
-  // console.log(
-  //   r.status,
-  //   res.result.map((w) => w.topics)
+  // const UniV3EventsAbi = parseAbiItem(
+  //   'event Mint(address sender, address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)'
   // )
+  // const res = await client.getLogs({
+  //   blockHash: '0x17695bbbc7cb24f056472d70db4725a0ccb91aa1d8a3863c5c1fadba2916b966',
+  //   event: UniV3EventsAbi,
+  // })
+  // console.log(res.map((e) => e.eventName))
+
+  const r = await fetch(`https://polygonzkevm-mainnet.g.alchemy.com/v2/demo`, {
+    method: 'POST',
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      id: 1,
+      method: 'eth_getLogs',
+      params: [
+        {
+          blockHash: '0x17695bbbc7cb24f056472d70db4725a0ccb91aa1d8a3863c5c1fadba2916b966',
+          topics: ['0x7a53080ba414158be7ec69b987b5fb7d07dee101fe85488f0853ae16239d0bde'],
+        },
+      ],
+    }),
+  })
+  const res = await r.json()
+  console.log(r.status, res.result.length)
 })
