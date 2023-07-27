@@ -19,6 +19,9 @@ const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 // TODO: correctness terst - now ofter fails? (needs good token list)
 
 // TODO: Back to LogFilter ? Faster events applying
+// TODO: spead up logs by calling only once (low level with topics)
+// TODO: chain number in warnLog
+// TODO: number of pending pools in getPoolCodesForTokens
 
 // TODO: cache for not-existed pools?
 // TODO: to fill address cache from pool cache
@@ -102,6 +105,29 @@ export class Extractor {
           .filter((pc) => pc !== undefined) as PoolCode[])
       : []
     return pools2.concat(pools3)
+  }
+
+  getPoolCodesForTokensFull(tokens: Token[]): {
+    prefetched: PoolCode[]
+    fetchingNumber: number
+  } {
+    let prefetched: PoolCode[] = []
+    let fetchingNumber = 0
+    if (this.extractorV2) {
+      const pools2 = this.extractorV2.getPoolsForTokens(tokens)
+      prefetched = pools2.prefetched
+      fetchingNumber = pools2.fetching.length
+    }
+    if (this.extractorV3) {
+      const pools3 = this.extractorV3.getWatchersForTokens(tokens)
+      const pools3Prefetched = pools3.prefetched
+        .map((w) => w.getPoolCode())
+        .filter((pc) => pc !== undefined) as PoolCode[]
+
+      prefetched = prefetched.concat(pools3Prefetched)
+      fetchingNumber += pools3.fetching.length
+    }
+    return { prefetched, fetchingNumber }
   }
 
   async getPoolCodesForTokensAsync(tokens: Token[], timeout: number): Promise<PoolCode[]> {

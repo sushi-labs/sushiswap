@@ -8,6 +8,7 @@ import { BigNumber } from 'ethers'
 
 import { Counter } from './Counter'
 import { MultiCallAggregator } from './MulticallAggregator'
+import { warnLog } from './WarnLog'
 
 interface WordState {
   blockNumber: number
@@ -85,7 +86,7 @@ export class WordLoadManager extends EventEmitter {
           }
         }
       } catch (e) {
-        // do nothing
+        warnLog(`Pool ${this.poolAddress} ticks downloading failed`)
       }
       if (initialQueueLength > 0 && this.busyCounter) this.busyCounter.dec()
       this.emit('isUpdated')

@@ -19,9 +19,18 @@ type PoolHeader = {
     rewards: number | undefined
   }
   priceRange?: string
+  hasEnabledStrategies?: boolean
 }
 
-export const PoolHeader: FC<PoolHeader> = ({ title, isLoading, pool, chainId, apy, priceRange }) => {
+export const PoolHeader: FC<PoolHeader> = ({
+  title,
+  isLoading,
+  pool,
+  chainId,
+  apy,
+  priceRange,
+  hasEnabledStrategies,
+}) => {
   const unwrappedTokens = useMemo(() => {
     if (!pool) return [undefined, undefined]
     return [unwrapToken(pool.token0), unwrapToken(pool.token1)]
@@ -87,13 +96,17 @@ export const PoolHeader: FC<PoolHeader> = ({ title, isLoading, pool, chainId, ap
               <></>
             )}
             {pool.fee / 10000}% Fee{' '}
-            {apy && apy.rewards ? (
+            {apy?.rewards && (
               <>
                 <span className="text-[10px]">•</span> Farm rewards available ✨
               </>
-            ) : (
-              <></>
             )}
+            {/* {hasEnabledStrategies && (
+              <>
+                <span className="text-[10px]">•</span> Steer strategy available
+                <SteerIcon className="w-[10px] h-[14px] text-purple-500" />
+              </>
+            )} */}
           </div>
         </div>
       </div>
