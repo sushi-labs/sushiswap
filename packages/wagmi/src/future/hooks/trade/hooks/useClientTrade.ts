@@ -76,7 +76,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
         BigNumber.from(amount.quotient.toString()),
         toToken,
         feeData.gasPrice.toNumber(),
-        5 // 5% impact before dex aggregation
+        1 // 5% impact before dex aggregation
       )
 
       const logPools = Array.from(poolsCodeMap.values())

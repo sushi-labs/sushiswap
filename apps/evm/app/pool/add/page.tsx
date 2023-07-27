@@ -37,13 +37,13 @@ export default function Page() {
           <SWRConfig>
             <Layout>
               <div className="flex flex-col gap-2">
-                <Link className="group flex gap-4 items-center mb-2" href={'/pool'} shallow={true}>
+                <Link className="flex items-center gap-4 mb-2 group" href={'/pool'} shallow={true}>
                   <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
                   <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
                     Go back to pools list
                   </span>
                 </Link>
-                <h1 className="text-3xl font-medium mt-2">Add Liquidity</h1>
+                <h1 className="mt-2 text-3xl font-medium">Add Liquidity</h1>
                 <h1 className="text-lg text-gray-600 dark:dark:text-slate-400 text-slate-600">
                   Create a new pool or create a liquidity position on an existing pool.
                 </h1>
@@ -110,7 +110,7 @@ const _Add: FC = () => {
     <>
       <div className="hidden lg:block">
         <div className="lg:grid grid-cols-2 items-center gap-6 sticky top-[96px]">
-          <div className="col-span-2 flex gap-7">
+          <div className="flex col-span-2 gap-7">
             <div className="flex min-w-[44px] mb-4">
               <Badge
                 className="border-2 border-gray-100 dark:border-slate-900 rounded-full z-[11] !bottom-0 right-[-15%]"
@@ -119,7 +119,7 @@ const _Add: FC = () => {
                   chainId ? (
                     <NetworkIcon chainId={chainId} width={24} height={24} />
                   ) : (
-                    <div className="w-6 h-6 rounded-full bg-gray-300" />
+                    <div className="w-6 h-6 bg-gray-300 rounded-full" />
                   )
                 }
               >
@@ -140,7 +140,7 @@ const _Add: FC = () => {
             <div className="flex flex-col flex-grow">
               {token0 && token1 ? (
                 <>
-                  <h1 className="text-xl text-gray-900 dark:text-slate-50 font-semibold">
+                  <h1 className="text-xl font-semibold text-gray-900 dark:text-slate-50">
                     {token0.symbol}/{token1.symbol}
                   </h1>
                   <p className="font-medium text-gray-700 dark:dark:text-slate-400 text-slate-600">
@@ -157,21 +157,21 @@ const _Add: FC = () => {
               )}
             </div>
           </div>
-          <div className="col-span-2 flex flex-col gap-2">
+          <div className="flex flex-col col-span-2 gap-2">
             <List.Label className="!px-0">Network</List.Label>
-            <div className="flex font-medium items-center gap-2 rounded-xl ">
+            <div className="flex items-center gap-2 font-medium rounded-xl ">
               <NetworkIcon chainId={chainId} width={24} height={24} /> {Chain.from(chainId).name}
             </div>
           </div>
-          <div className="col-span-2 flex flex-col gap-2">
+          <div className="flex flex-col col-span-2 gap-2">
             <List.Label className="!px-0">Fee Tier</List.Label>
-            <div className="flex items-center font-medium gap-2 rounded-xl ">{feeAmount / 10000}% Fee</div>
+            <div className="flex items-center gap-2 font-medium rounded-xl ">{feeAmount / 10000}% Fee</div>
           </div>
-          <div className="col-span-2 flex flex-col gap-2">
+          <div className="flex flex-col col-span-2 gap-2">
             <List.Label className="!px-0">Pool Type</List.Label>
-            <div className="flex items-center font-medium gap-2 rounded-xl">Concentrated Liquidity</div>
+            <div className="flex items-center gap-2 font-medium rounded-xl">Concentrated Liquidity</div>
           </div>
-          <div className="col-span-2 flex flex-col gap-2">
+          <div className="flex flex-col col-span-2 gap-2">
             <List.Label className="!px-0">Current Price</List.Label>
             {!isInitialLoading && !pool ? (
               <span className="">N/A</span>
