@@ -14,15 +14,11 @@ type State = {
   amount1: string | null
   isLoadingPrice: boolean
   buttonError: string
-  balance0: number
-  balance1: number
   isTransactionPending: boolean
   isPriceFetching: boolean
   error: string
-  pairFound: boolean
   pairs: object
   poolPairRatio: number
-  notPairFound: boolean
 }
 
 type PoolApi = {
@@ -32,15 +28,11 @@ type PoolApi = {
   setAmount1(amount2: string): void
   setLoadingPrice(isLoadingPrice: boolean): void
   setButtonError(buttonError: string): void
-  setBalance0(value: number): void
-  setBalance1(value: number): void
   setisTransactionPending(value: boolean): void
   setPriceFetching(value: boolean): void
   setError(value: string): void
-  setPairFound(value: boolean): void
   setPairs(value: object): void
   setPoolPairRatio(value: number): void
-  setNotPairFound(value: boolean): void
 }
 
 export const PoolStateContext = createContext<State>({} as State)
@@ -53,15 +45,11 @@ type Actions =
   | { type: 'setAmount1'; value: string }
   | { type: 'setLoadingPrice'; value: boolean }
   | { type: 'setButtonError'; value: string }
-  | { type: 'setBalance0'; value: number }
-  | { type: 'setBalance1'; value: number }
   | { type: 'setisTransactionPending'; value: boolean }
   | { type: 'setPriceFetching'; value: boolean }
   | { type: 'setError'; value: string }
-  | { type: 'setPairFound'; value: boolean }
   | { type: 'setPairs'; value: object }
   | { type: 'setPoolPairRatio'; value: number }
-  | { type: 'setNotPairFound'; value: boolean }
 
 export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
   const { network } = useWallet()
@@ -80,24 +68,16 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
         return { ...state, isLoadingPrice: action.value }
       case 'setButtonError':
         return { ...state, buttonError: action.value }
-      case 'setBalance0':
-        return { ...state, balance0: action.value }
-      case 'setBalance1':
-        return { ...state, balance1: action.value }
       case 'setisTransactionPending':
         return { ...state, isTransactionPending: action.value }
       case 'setPriceFetching':
         return { ...state, isPriceFetching: action.value }
       case 'setError':
         return { ...state, error: action.value }
-      case 'setPairFound':
-        return { ...state, pairFound: action.value }
       case 'setPairs':
         return { ...state, pairs: action.value }
       case 'setPoolPairRatio':
         return { ...state, poolPairRatio: action.value }
-      case 'setNotPairFound':
-        return { ...state, notPairFound: action.value }
     }
   }
 
@@ -109,15 +89,11 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
     amount1: '',
     isLoadingPrice: false,
     buttonError: '',
-    balance0: 0,
-    balance1: 0,
     isTransactionPending: false,
     isPriceFetching: false,
     error: '',
-    pairFound: false,
     pairs: {},
     poolPairRatio: 0,
-    notPairFound: false,
   })
   const state = useMemo(() => {
     return { ...internalState }
@@ -129,15 +105,11 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
     const setAmount1 = (value: string) => dispatch({ type: 'setAmount1', value })
     const setLoadingPrice = (value: boolean) => dispatch({ type: 'setLoadingPrice', value })
     const setButtonError = (value: string) => dispatch({ type: 'setButtonError', value })
-    const setBalance0 = (value: number) => dispatch({ type: 'setBalance0', value })
-    const setBalance1 = (value: number) => dispatch({ type: 'setBalance1', value })
     const setisTransactionPending = (value: boolean) => dispatch({ type: 'setisTransactionPending', value })
     const setPriceFetching = (value: boolean) => dispatch({ type: 'setPriceFetching', value })
     const setError = (value: string) => dispatch({ type: 'setError', value })
-    const setPairFound = (value: boolean) => dispatch({ type: 'setPairFound', value })
     const setPairs = (value: object) => dispatch({ type: 'setPairs', value })
     const setPoolPairRatio = (value: number) => dispatch({ type: 'setPoolPairRatio', value })
-    const setNotPairFound = (value: boolean) => dispatch({ type: 'setNotPairFound', value })
 
     return {
       setToken0,
@@ -146,15 +118,11 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
       setAmount1,
       setLoadingPrice,
       setButtonError,
-      setBalance0,
-      setBalance1,
       setisTransactionPending,
       setPriceFetching,
       setError,
-      setPairFound,
       setPairs,
       setPoolPairRatio,
-      setNotPairFound,
     }
   }, [internalState, baseTokens])
   return (

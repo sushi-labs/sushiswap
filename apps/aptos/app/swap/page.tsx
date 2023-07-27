@@ -18,17 +18,15 @@ import { coinType } from 'utils/tokenData'
 import { SwapTradeOutput } from 'components/SwapTradeOutput'
 import { getTokensWithoutKey, useTokens } from 'utils/useTokens'
 import { TradeStats } from 'components/TradeStats'
+import { useAccount } from 'utils/useAccount'
 
 export default function SwapPage() {
-  const { account, connected, disconnect, network } = useWallet()
-  const [isLoading, setLoading] = useState<boolean>(true)
-  const [slippageTolerance] = useSlippageTolerance('swapSlippage')
-  const { setBalance0, setBalance1, setLoadingPrice, setToken0, setToken1, setAmount } = useSwapActions()
+  const { disconnect, network } = useWallet()
+  const { setToken0, setToken1 } = useSwapActions()
   const { token0, token1, isTransactionPending } = useSwapState()
-  const [controller, setController] = useState<AbortController | null>(null)
+  const { isLoadingAccount } = useAccount()
   const tokensWithoutKey = getTokensWithoutKey(Number(network?.chainId) || 1)
 
-  console.log(network)
   useEffect(() => {
     if (network?.name === undefined) {
       disconnect()
@@ -40,61 +38,6 @@ export default function SwapPage() {
     setToken0(tokensWithoutKey[0])
     setToken1(tokensWithoutKey[1])
   }, [network])
-  useEffect(() => {
-    // setValue({})
-    if (controller) {
-      controller.abort()
-    }
-    const newController = new AbortController()
-    setController(newController)
-    setLoadingPrice(true)
-    if (account?.address && network?.name && token0 && token1) {
-      fetch(
-        `https://fullnode.${network?.name?.toLowerCase()}.aptoslabs.com/v1/accounts/${account?.address}/resources`,
-        { signal: newController.signal }
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          if (!data.error_code) {
-            const coinData0 = data?.filter((coin: coinType) => {
-              return coin?.type.replaceAll(' ', '').includes(token0.address)
-            })
-            const coinData1 = data?.filter((coin: coinType) => {
-              return coin?.type.replaceAll(' ', '').includes(token1.address)
-            })
-            setBalance0(coinData0[0]?.data?.coin?.value)
-            setBalance1(coinData1[0]?.data?.coin?.value)
-            setLoadingPrice(false)
-          } else {
-            setBalance0(0)
-            setBalance1(0)
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-        .finally(() => {
-          setLoadingPrice(false)
-        })
-    } else {
-      setLoadingPrice(false)
-      setBalance0(0)
-      setBalance1(0)
-    }
-  }, [account, connected, network, token0, token1, isTransactionPending, slippageTolerance])
-
-  useEffect(() => {
-    if (connected) {
-      setLoading(false)
-    } else {
-      const loadingInterval = setTimeout(() => {
-        setLoading(false)
-      }, 1750)
-      return () => {
-        clearInterval(loadingInterval)
-      }
-    }
-  }, [connected])
 
   const swapTokenIfAlreadySelected = () => {
     setToken0(token1)
@@ -102,7 +45,7 @@ export default function SwapPage() {
   }
   return (
     <>
-      {isLoading && <Loading />}
+      {isLoadingAccount && <Loading />}
       <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
         <div className="flex flex-col gap-4">
           <Drawer.Root>

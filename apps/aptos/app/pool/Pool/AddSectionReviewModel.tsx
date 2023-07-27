@@ -7,6 +7,7 @@ import { Rate } from './Rate'
 import { usePoolActions, usePoolState } from './PoolProvider'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { Icon } from 'components/Icon'
 
 interface Props {
   children({ close }: { close: () => void }): ReactNode
@@ -42,8 +43,9 @@ export const AddSectionReviewModal: FC<Props> = ({ children }) => {
                     {amount0}
                   </Typography>
                   <div className="flex items-center justify-end gap-2 text-right">
-                    <img src={token0.logoURI} className="rounded-full" width={26} height={56} />
-                    <Typography variant="h3" weight={500} className="text-right text-white-50 dark:text-slate-50">
+                    {/* <img src={token0.logoURI} className="rounded-full" width={26} height={56} /> */}
+                    <Icon currency={token0} width={26} height={26} />
+                    <Typography variant="h3" weight={500} className="text-right text-slate-50">
                       {token0?.symbol}
                     </Typography>
                   </div>
@@ -65,8 +67,9 @@ export const AddSectionReviewModal: FC<Props> = ({ children }) => {
                     {amount1}
                   </Typography>
                   <div className="flex items-center justify-end gap-2 text-right">
-                    <img src={token1.logoURI} className="rounded-full" width={26} height={56} />
-                    <Typography variant="h3" weight={500} className="text-right text-white-50 dark:text-slate-50">
+                    <Icon currency={token1} width={26} height={26} />
+                    {/* <img src={token1.logoURI} className="rounded-full" width={26} height={56} /> */}
+                    <Typography variant="h3" weight={500} className="text-right text-slate-50">
                       {token1?.symbol}
                     </Typography>
                   </div>

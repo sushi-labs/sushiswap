@@ -19,7 +19,6 @@ const Icons: Record<string, (props: SVGProps<SVGSVGElement>) => JSX.Element | nu
 
 export const ConnectView: FC<{ close(): void }> = ({ close }) => {
   const { wallets, connect } = useWallet()
-  console.log(wallets)
   const onSelect = (name: WalletName) => {
     connect(name)
     close()

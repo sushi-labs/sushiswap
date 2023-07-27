@@ -27,11 +27,12 @@
     "@sushiswap/format": "workspace:0.1.0",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",
+    "@sushiswap/react-query": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
-    "@sushiswap/react-query": "workspace:*",
     "@tanstack/react-query": "4.28.0",
+    "@tanstack/react-table": "8.9.1",
     "@vercel/analytics": "0.1.5",
     "aptos": "^1.11.0",
     "fewcha-plugin-wallet-adapter": "^0.1.2",
@@ -43,7 +44,8 @@
     "react-dom": "18.2.0",
     "react-toastify": "9.1.3",
     "react-virtualized-auto-sizer": "1.0.7",
-    "react-window": "1.8.7"
+    "react-window": "1.8.7",
+    "swr": "^2.2.0"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

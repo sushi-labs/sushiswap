@@ -10,7 +10,7 @@ interface Props {
 
 export const AddLiquidityButton = ({ buttonError, token1Value }: Props) => {
   const { connected } = useWallet()
-  const { notPairFound, isPriceFetching, error, amount0, amount1 } = usePoolState()
+  const { isPriceFetching, amount0, amount1 } = usePoolState()
   return (
     <Modal.Trigger tag="add-liquidity">
       {({ open }) => (
@@ -18,7 +18,7 @@ export const AddLiquidityButton = ({ buttonError, token1Value }: Props) => {
           {connected ? (
             <button
               className={`btn w-full flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold ${
-                notPairFound || isPriceFetching || buttonError || Number(amount0) <= 0
+                isPriceFetching || buttonError || Number(amount0) <= 0 || Number(amount1) <= 0
                   ? 'pointer-events-none relative opacity-[0.4] overflow-hidden'
                   : ''
               }`}
@@ -27,11 +27,9 @@ export const AddLiquidityButton = ({ buttonError, token1Value }: Props) => {
                 token1Value ? open() : {}
               }}
             >
-              {notPairFound ? (
-                notPairFound
-              ) : buttonError ? (
+              {buttonError ? (
                 'Insufficient Balance'
-              ) : Number(amount0) > 0 ? (
+              ) : Number(amount0) > 0 && Number(amount1) > 0 ? (
                 <>Add Liquidity</>
               ) : (
                 <>Enter Amount</>

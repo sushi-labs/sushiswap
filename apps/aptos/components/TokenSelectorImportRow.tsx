@@ -7,12 +7,14 @@ import { Overlay } from '@sushiswap/ui/future/components/overlay'
 import React, { ReactNode, useCallback, useState } from 'react'
 import { Token } from 'utils/tokenType'
 import { Icon } from './Icon'
+import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 interface Props {
+  id: string
   token: Token[]
   onImport(): void
 }
 
-export const TokenSelectorImportRow = ({ token, onImport }: Props) => {
+export const TokenSelectorImportRow = ({ id, token, onImport }: Props) => {
   const [open, setOpen] = useState<boolean>(false)
   const { network } = useWallet()
   const onClick = useCallback(() => {
@@ -106,18 +108,22 @@ export const TokenSelectorImportRow = ({ token, onImport }: Props) => {
               </List.Control>
             </List>
             <div className="absolute bottom-3 left-3 right-3 flex flex-col gap-1">
-              <Button
-                fullWidth
-                size="xl"
-                variant="filled"
-                color="blue"
-                onClick={() => {
-                  onClick()
-                  close()
-                }}
-              >
-                Import
-              </Button>
+              <Modal.Trigger tag={`${id}-token-selector-modal`}>
+                {({ close }) => (
+                  <Button
+                    fullWidth
+                    size="xl"
+                    variant="filled"
+                    color="blue"
+                    onClick={() => {
+                      onClick()
+                      close()
+                    }}
+                  >
+                    Import
+                  </Button>
+                )}
+              </Modal.Trigger>
             </div>
           </div>
         </Overlay.Content>

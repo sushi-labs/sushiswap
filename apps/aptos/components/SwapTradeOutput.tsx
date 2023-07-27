@@ -2,13 +2,21 @@ import React from 'react'
 import TradeInput from './TradeInput'
 import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
 import { formatNumber } from 'utils/utilFunctions'
+import { useTokenBalance } from 'utils/useTokenBalance'
+import { useWallet } from '@aptos-labs/wallet-adapter-react'
 
 interface Props {
   handleSwap: () => void
 }
 
 export const SwapTradeOutput = ({ handleSwap }: Props) => {
-  const { token0, token1, balance1, isLoadingPrice, outputAmount, isPriceFetching } = useSwapState()
+  const { account, network } = useWallet()
+  const { token0, token1, outputAmount, isPriceFetching } = useSwapState()
+  const { data: balance, isLoading } = useTokenBalance(
+    account?.address as string,
+    token1,
+    Number(network?.chainId) || 1
+  )
   const outputSwapTokenAmount = outputAmount
     ? String(formatNumber(parseFloat(outputAmount), token1 ? token1.decimals : 8))
     : ''
@@ -17,9 +25,9 @@ export const SwapTradeOutput = ({ handleSwap }: Props) => {
     <TradeInput
       handleSwap={handleSwap}
       id="swap-to"
-      balance={balance1}
+      balance={balance}
       setToken={setToken1}
-      isLoadingPrice={isLoadingPrice || isPriceFetching}
+      isLoadingPrice={isLoading || isPriceFetching}
       token={token1}
       alteredSelected={token0}
       disabled={true}
