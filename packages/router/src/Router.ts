@@ -122,7 +122,7 @@ export class Router {
     amountIn: BigNumber,
     toToken: Type,
     gasPrice: number,
-    maxPriceImpact = 10 // 10%
+    maxPriceImpact = 1 // 1%
   ) {
     // Find preferrable route
     const preferrableRoute = Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice, [

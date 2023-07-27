@@ -29,7 +29,9 @@
     "dev": "tsc -w",
     "lint": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build",
-    "test": "npx ts-node --transpile-only --prefer-ts-exts --files examples/extractor.ts",
+    "start": "npx ts-node --transpile-only --files examples/server.ts",
+    "test": "jest --passWithNoTests",
+    "test:server": "npx ts-node --transpile-only --prefer-ts-exts --files examples/extractor.ts",
     "test:load": "artillery run test/load.yml"
   },
   "dependencies": {

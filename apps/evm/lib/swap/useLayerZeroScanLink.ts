@@ -17,7 +17,7 @@ export const useLayerZeroScanLink = ({
   txHash: string | undefined
 }) => {
   return useQuery({
-    queryKey: ['NoPersist', 'lzLink', { txHash, network0, network1, tradeId }],
+    queryKey: ['lzLink', { txHash, network0, network1, tradeId }],
     queryFn: async () => {
       if (txHash && network0 in STARGATE_CHAIN_ID && network1 in STARGATE_CHAIN_ID) {
         const result = await client.getMessagesBySrcTxHash(txHash)

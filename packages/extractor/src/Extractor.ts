@@ -1,4 +1,4 @@
-import { open } from 'node:fs/promises'
+import { mkdir, open } from 'node:fs/promises'
 import path from 'node:path'
 
 import { Token } from '@sushiswap/currency'
@@ -34,6 +34,7 @@ const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 //  - direct logs (std output) to console
 //  - direct warnings (std error) to a file
 export class Extractor {
+  client: PublicClient
   extractorV2?: UniV2Extractor
   extractorV3?: UniV3Extractor
   multiCallAggregator?: MultiCallAggregator
@@ -59,6 +60,7 @@ export class Extractor {
     maxCallsInOneBatch?: number
   }) {
     this.cacheDir = args.cacheDir
+    this.client = args.client
     this.multiCallAggregator = new MultiCallAggregator(args.client, args.maxCallsInOneBatch ?? 0)
     const tokenManager = new TokenManager(
       this.multiCallAggregator,
@@ -67,7 +69,7 @@ export class Extractor {
     )
     if (args.factoriesV2.length > 0)
       this.extractorV2 = new UniV2Extractor(
-        args.client,
+        this.client,
         args.factoriesV2,
         args.cacheDir,
         args.logDepth,
@@ -77,7 +79,7 @@ export class Extractor {
       )
     if (args.factoriesV3.length > 0)
       this.extractorV3 = new UniV3Extractor(
-        args.client,
+        this.client,
         args.tickHelperContract,
         args.factoriesV3,
         args.cacheDir,
@@ -174,6 +176,12 @@ export class Extractor {
   async printTokensPoolsQuantity(...paths: string[]) {
     const filePath = path.resolve(...paths)
     const stats = this.getTokensPoolsQuantity()
+    try {
+      const dirName = path.dirname(filePath)
+      mkdir(dirName, { recursive: true })
+    } catch (e) {
+      // do nothing
+    }
     const file = await open(filePath, 'w')
     await file.writeFile(`Total tokens: ${stats.length}\n`)
     await file.writeFile('Quantity of pools for tokens\n')

@@ -5,6 +5,7 @@ import { Token } from '../Token'
 import {
   AAVE_ADDRESS,
   AGEUR_ADDRESS,
+  AMPL_ADDRESS,
   ANKR_ADDRESS,
   APE_ADDRESS,
   ARB_ADDRESS,
@@ -52,6 +53,8 @@ import {
   XSUSHI_ADDRESS,
   YFI_ADDRESS,
 } from './token-addresses'
+
+export const AMPL = addressMapToTokenMap({ decimals: 9, symbol: 'AMPL', name: 'Ampleforth' }, AMPL_ADDRESS)
 
 export const MANA = addressMapToTokenMap(
   {

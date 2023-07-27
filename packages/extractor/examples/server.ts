@@ -1,13 +1,12 @@
 import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
-import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { config } from '@sushiswap/viem-config'
+import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import cors from 'cors'
 import { BigNumber } from 'ethers'
 import express, { Express, Request, Response } from 'express'
 import path from 'path'
-import { Address, createPublicClient } from 'viem'
+import { Address } from 'viem'
 import z from 'zod'
 
 import { Extractor, MultiCallAggregator, TokenManager } from '../src'
@@ -15,8 +14,8 @@ import {
   EXTRACTOR_CONFIG,
   isSupportedChainId,
   ROUTE_PROCESSOR_3_ADDRESS,
-  SupportChainId,
   SUPPORTED_CHAIN_IDS,
+  SupportedChainId,
 } from './config'
 
 const querySchema = z.object({
@@ -27,7 +26,7 @@ const querySchema = z.object({
     .lte(2 ** 256)
     .default(ChainId.ETHEREUM)
     .refine((chainId) => isSupportedChainId(chainId), { message: 'ChainId not supported.' })
-    .transform((chainId) => chainId as SupportChainId),
+    .transform((chainId) => chainId as SupportedChainId),
   tokenIn: z.string(),
   tokenOut: z.string(),
   amount: z.string().transform((amount) => BigInt(amount)),
@@ -36,16 +35,15 @@ const querySchema = z.object({
   preferSushi: z.optional(z.coerce.boolean()),
 })
 
-const PORT = 3000
+const PORT = process.env.PORT || 80
 
-const extractors = new Map<SupportChainId, Extractor>()
-const tokenManagers = new Map<SupportChainId, TokenManager>()
-const nativeProviders = new Map<SupportChainId, NativeWrapProvider>()
+const extractors = new Map<SupportedChainId, Extractor>()
+const tokenManagers = new Map<SupportedChainId, TokenManager>()
+const nativeProviders = new Map<SupportedChainId, NativeWrapProvider>()
 
 async function setup() {
   for (const chainId of SUPPORTED_CHAIN_IDS) {
-    const client = createPublicClient(config[chainId])
-    const extractor = new Extractor({ ...EXTRACTOR_CONFIG[chainId], client })
+    const extractor = new Extractor(EXTRACTOR_CONFIG[chainId])
     await extractor.start()
     extractors.set(chainId, extractor)
     const tokenManager = new TokenManager(
@@ -55,7 +53,7 @@ async function setup() {
     )
     await tokenManager.addCachedTokens()
     tokenManagers.set(chainId, tokenManager)
-    const nativeProvider = new NativeWrapProvider(chainId, client)
+    const nativeProvider = new NativeWrapProvider(chainId, extractor.client)
     nativeProviders.set(chainId, nativeProvider)
   }
 }
@@ -69,15 +67,11 @@ async function main() {
 
   app.get('/', async (req: Request, res: Response) => {
     console.log('HTTP: GET /', JSON.stringify(req.query))
-    const {
-      chainId,
-      tokenIn: _tokenIn,
-      tokenOut: _tokenOut,
-      amount,
-      gasPrice,
-      to,
-      preferSushi,
-    } = querySchema.parse(req.query)
+    const parsed = querySchema.safeParse(req.query)
+    if (!parsed.success) {
+      return res.status(422).send()
+    }
+    const { chainId, tokenIn: _tokenIn, tokenOut: _tokenOut, amount, gasPrice, to, preferSushi } = parsed.data
     const tokenManager = tokenManagers.get(chainId) as TokenManager
     const [tokenIn, tokenOut] = await Promise.all([
       _tokenIn === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
@@ -90,19 +84,24 @@ async function main() {
     if (!tokenIn || !tokenOut) {
       throw new Error('tokenIn or tokenOut is not supported')
     }
-    const extractor = extractors.get(chainId) as Extractor
-    const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId]
-    const poolCodes = extractor.getPoolCodesForTokens(
-      Array.from(new Set([tokenIn.wrapped, tokenOut.wrapped, ...tokens]))
-    )
-    // const poolCodes = await extractor.getPoolCodesForTokensAsync(
-    //   Array.from(new Set([tokenIn.wrapped, tokenOut.wrapped, ...tokens])),
-    //   200
-    // )
     const poolCodesMap = new Map<string, PoolCode>()
-    poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
     const nativeProvider = nativeProviders.get(chainId) as NativeWrapProvider
     nativeProvider.getCurrentPoolList().forEach((p) => poolCodesMap.set(p.pool.address, p))
+
+    const extractor = extractors.get(chainId) as Extractor
+    const common = chainId in BASES_TO_CHECK_TRADES_AGAINST ? BASES_TO_CHECK_TRADES_AGAINST[chainId] : []
+    const additionalA = tokenIn ? ADDITIONAL_BASES[chainId]?.[tokenIn.wrapped.address] ?? [] : []
+    const additionalB = tokenOut ? ADDITIONAL_BASES[chainId]?.[tokenOut.wrapped.address] ?? [] : []
+
+    const tokens = Array.from(new Set([tokenIn.wrapped, tokenOut.wrapped, ...common, ...additionalA, ...additionalB]))
+
+    const { prefetched: cachedPoolCodes, fetchingNumber } = extractor.getPoolCodesForTokensFull(tokens)
+    cachedPoolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
+
+    if (fetchingNumber > 0) {
+      const poolCodes = await extractor.getPoolCodesForTokensAsync(tokens, 2_000)
+      poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
+    }
 
     const bestRoute = Router[preferSushi ? 'findSpecialRoute' : 'findBestRoute'](
       poolCodesMap,
@@ -112,6 +111,7 @@ async function main() {
       tokenOut,
       gasPrice ?? 30e9
     )
+
     return res.json({
       route: {
         status: bestRoute?.status,

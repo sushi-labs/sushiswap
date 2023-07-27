@@ -16,7 +16,7 @@ export const useTradeQuery = (
   select: UseTradeQuerySelect
 ) => {
   return useQuery({
-    queryKey: ['NoPersist', 'getTrade', { chainId, fromToken, toToken, amount, gasPrice, recipient }],
+    queryKey: ['getTrade', { chainId, fromToken, toToken, amount, gasPrice, recipient }],
     queryFn: async () => {
       const params = new URL(
         process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com/v0'
@@ -49,7 +49,7 @@ export const useTradeQuery = (
     refetchOnWindowFocus: true,
     refetchInterval: 2000,
     keepPreviousData: !!amount,
-    cacheTime: 0,
+    // cacheTime: 0,
     select,
     enabled: enabled && Boolean(chainId && fromToken && toToken && amount && gasPrice),
     onError,
