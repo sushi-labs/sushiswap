@@ -2,7 +2,6 @@ import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { RouteStatus } from '@sushiswap/tines'
 import cors from 'cors'
 import { BigNumber } from 'ethers'
 import express, { Express, Request, Response } from 'express'
@@ -68,15 +67,11 @@ async function main() {
 
   app.get('/', async (req: Request, res: Response) => {
     console.log('HTTP: GET /', JSON.stringify(req.query))
-    const {
-      chainId,
-      tokenIn: _tokenIn,
-      tokenOut: _tokenOut,
-      amount,
-      gasPrice,
-      to,
-      preferSushi,
-    } = querySchema.parse(req.query)
+    const parsed = querySchema.safeParse(req.query)
+    if (!parsed.success) {
+      return res.status(422).send()
+    }
+    const { chainId, tokenIn: _tokenIn, tokenOut: _tokenOut, amount, gasPrice, to, preferSushi } = parsed.data
     const tokenManager = tokenManagers.get(chainId) as TokenManager
     const [tokenIn, tokenOut] = await Promise.all([
       _tokenIn === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
@@ -89,7 +84,6 @@ async function main() {
     if (!tokenIn || !tokenOut) {
       throw new Error('tokenIn or tokenOut is not supported')
     }
-
     const poolCodesMap = new Map<string, PoolCode>()
     const nativeProvider = nativeProviders.get(chainId) as NativeWrapProvider
     nativeProvider.getCurrentPoolList().forEach((p) => poolCodesMap.set(p.pool.address, p))
@@ -101,10 +95,15 @@ async function main() {
 
     const tokens = Array.from(new Set([tokenIn.wrapped, tokenOut.wrapped, ...common, ...additionalA, ...additionalB]))
 
-    const cachedPoolCodes = extractor.getPoolCodesForTokens(tokens)
+    const { prefetched: cachedPoolCodes, fetchingNumber } = extractor.getPoolCodesForTokensFull(tokens)
     cachedPoolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
 
-    let bestRoute = Router[preferSushi ? 'findSpecialRoute' : 'findBestRoute'](
+    if (fetchingNumber > 0) {
+      const poolCodes = await extractor.getPoolCodesForTokensAsync(tokens, 2_000)
+      poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
+    }
+
+    const bestRoute = Router[preferSushi ? 'findSpecialRoute' : 'findBestRoute'](
       poolCodesMap,
       chainId,
       tokenIn,
@@ -112,21 +111,6 @@ async function main() {
       tokenOut,
       gasPrice ?? 30e9
     )
-
-    // We check if there is a route found for the cached pool codes
-    // If not, we call again with async method and try to find a route again
-    if (bestRoute.status !== RouteStatus.Success) {
-      const poolCodes = await extractor.getPoolCodesForTokensAsync(tokens, 2_000)
-      poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
-      bestRoute = Router[preferSushi ? 'findSpecialRoute' : 'findBestRoute'](
-        poolCodesMap,
-        chainId,
-        tokenIn,
-        BigNumber.from(amount.toString()),
-        tokenOut,
-        gasPrice ?? 30e9
-      )
-    }
 
     return res.json({
       route: {

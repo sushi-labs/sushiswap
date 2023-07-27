@@ -711,9 +711,9 @@ export const config: Record<number, PublicClientConfig> = {
       [
         http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/${alchemyId}`),
         // http(`https://lb.drpc.org/ogrpc?network=polygon-zkevm&dkey=${drpcId}`),
-        http('https://zkevm-rpc.com'),
-        http('https://rpc.ankr.com/polygon_zkevm'),
-        http('https://rpc.polygon-zkevm.gateway.fm'),
+        // http('https://zkevm-rpc.com'),
+        // http('https://rpc.ankr.com/polygon_zkevm'),
+        // http('https://rpc.polygon-zkevm.gateway.fm'),
       ],
       { rank: true }
     ),
