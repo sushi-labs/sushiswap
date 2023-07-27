@@ -21,7 +21,7 @@ import {
   PoolTransactionsV2,
   UnknownTokenAlert,
 } from 'ui/pool'
-import { PoolPageV3 } from 'ui/pool/PoolPageV3'
+import { PoolPage as PoolPageV3 } from 'ui/pool/PoolSection/V3/PoolPage'
 
 // export async function generateMetadata({ params }: { params: { id: string } }) {
 //   return {

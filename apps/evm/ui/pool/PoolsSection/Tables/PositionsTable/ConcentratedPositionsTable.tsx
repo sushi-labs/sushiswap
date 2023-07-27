@@ -15,9 +15,9 @@ const COLUMNS = [NAME_COLUMN_V3, PRICE_RANGE_COLUMN, POSITION_SIZE_CELL, POSITIO
 
 export const ConcentratedPositionsTable: FC<{
   variant?: 'default' | 'minimal'
-  poolId?: string
+  poolAddress?: string
   hideClosed?: boolean
-}> = ({ variant = 'default', poolId, hideClosed }) => {
+}> = ({ variant = 'default', poolAddress, hideClosed }) => {
   const { address } = useAccount()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
@@ -48,10 +48,10 @@ export const ConcentratedPositionsTable: FC<{
       .filter((el) => {
         return (
           (hideClosed ? !el.liquidity?.eq('0') : true) &&
-          (poolId ? el.address.toLowerCase() === poolId.toLowerCase() : true)
+          (poolAddress ? el.address.toLowerCase() === poolAddress.toLowerCase() : true)
         )
       })
-  }, [hideClosed, poolId, positions, chainIds, tokenSymbols])
+  }, [hideClosed, poolAddress, positions, chainIds, tokenSymbols])
 
   const table = useReactTable<ConcentratedLiquidityPosition>({
     data: _positions,

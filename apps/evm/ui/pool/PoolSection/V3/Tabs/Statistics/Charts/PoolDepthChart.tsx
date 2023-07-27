@@ -5,7 +5,7 @@ import { useTheme } from 'next-themes'
 import React, { FC, useCallback, useMemo } from 'react'
 import colors from 'tailwindcss/colors'
 
-import { ChartEntry } from '../../../LiquidityChartRangeInput/types'
+import { ChartEntry } from '../../../../../LiquidityChartRangeInput/types'
 
 interface PoolDepthChartProps {
   poolStats: NonNullable<ReturnType<typeof useConcentratedLiquidityPoolStats>['data']>

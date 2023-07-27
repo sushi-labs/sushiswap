@@ -10,7 +10,6 @@ export interface PaginatorProps {
   page: number
   onPrev(): void
   onNext(): void
-  onPage(page: number): void
   pages?: number
   pageSize: number
   nextDisabled?: boolean
@@ -22,13 +21,12 @@ export const Paginator: FC<PaginatorProps> = ({
   hasPrev,
   hasNext,
   page,
-  onPage,
   pages,
   nextDisabled,
   pageSize,
 }) => {
   return (
-    <div className="flex justify-between items-center px-2 h-14">
+    <div className="flex items-center justify-between px-2 h-14">
       <p className="text-sm">
         Showing <b>{page * pageSize + 1}</b> to <b>{(page + 1) * pageSize}</b>{' '}
         {pages ? (
