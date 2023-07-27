@@ -35,7 +35,7 @@ const querySchema = z.object({
   preferSushi: z.optional(z.coerce.boolean()),
 })
 
-const PORT = 3000
+const PORT = process.env.PORT || 80
 
 const extractors = new Map<SupportedChainId, Extractor>()
 const tokenManagers = new Map<SupportedChainId, TokenManager>()
