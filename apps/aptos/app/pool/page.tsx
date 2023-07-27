@@ -32,6 +32,7 @@ export default function Pool() {
               >
                 Create Position
               </Button>
+              {/* <Link href={`/pool/aptos-btc`}>Remove</Link> */}
             </div>
           </div>
           <div className="relative z-10 group">

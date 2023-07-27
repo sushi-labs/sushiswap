@@ -1,58 +1,27 @@
 import { Disclosure, Transition } from '@headlessui/react'
-import { ChevronDownIcon, CogIcon } from '@heroicons/react/outline'
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Native, Type } from '@sushiswap/currency'
-import { formatUSD } from '@sushiswap/format'
+import { Cog8ToothIcon, CogIcon } from '@heroicons/react/24/outline'
+import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { ZERO } from '@sushiswap/math'
-import {
-  AppearOnMount,
-  classNames,
-  Currency as UICurrency,
-  DEFAULT_INPUT_UNSTYLED,
-  Input,
-  Typography,
-} from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui'
-import React, { FC, Fragment, ReactNode, useState } from 'react'
-import { useAccount } from '@sushiswap/wagmi'
-
-import { usePoolPosition } from '../PoolPositionProvider'
-import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
+import { AppearOnMount, DEFAULT_INPUT_UNSTYLED, Typography, Widget, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { Input } from '@sushiswap/ui/future/components/input'
+import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
+import WalletSelector from 'components/WalletSelector'
+import { FC, Fragment, ReactNode, useState } from 'react'
 
 interface RemoveSectionWidgetProps {
-  isFarm: boolean
-  chainId: ChainId
   percentage: string
-  token0: Type
-  token1: Type
-  token0Minimum?: Amount<Type>
-  token1Minimum?: Amount<Type>
   setPercentage(percentage: string): void
   children: ReactNode
 }
 
-export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
-  isFarm,
-  chainId,
-  percentage,
-  setPercentage,
-  token0,
-  token1,
-  token0Minimum,
-  token1Minimum,
-  children,
-}) => {
+export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({ percentage, setPercentage, children }) => {
   const isMounted = useIsMounted()
   const [hover, setHover] = useState(false)
-  const { address } = useAccount()
-  const { balance, value0, value1 } = usePoolPosition()
-
   return (
     <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       <Transition
-        show={Boolean(hover && !balance?.[FundSource.WALLET]?.greaterThan(ZERO) && address)}
+        show={Boolean(hover && '')}
         as={Fragment}
         enter="transition duration-300 origin-center ease-out"
         enterFrom="transform opacity-0"
@@ -63,7 +32,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
       >
         <div className="border border-slate-200/5 flex justify-center items-center z-[100] absolute inset-0 backdrop-blur bg-black bg-opacity-[0.24] rounded-2xl">
           <Typography variant="xs" weight={600} className="bg-white bg-opacity-[0.12] rounded-full p-2 px-3">
-            No liquidity tokens found {isFarm && ', did you unstake?'}
+            No liquidity tokens found
           </Typography>
         </div>
       </Transition>
@@ -72,8 +41,8 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
           <Disclosure defaultOpen={true}>
             {({ open }) => (
               <>
-                {isFarm && isMounted ? (
-                  <Widget.Header title="Remove Liquidity" className="!pb-3 ">
+                {isMounted ? (
+                  <Widget.Header title="Remove Liquidity" className="!pb-3">
                     <div className="flex gap-3">
                       <SettingsOverlay
                         options={{
@@ -87,7 +56,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                       >
                         {({ setOpen }) => (
                           <Button variant="outlined" color="default" onClick={() => setOpen(true)}>
-                            <CogIcon width={24} height={24} />
+                            <Cog8ToothIcon width={24} height={24} />
                           </Button>
                         )}
                       </SettingsOverlay>
@@ -110,7 +79,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                     </div>
                   </Widget.Header>
                 ) : (
-                  <Widget.Header title="Remove Liquidity" className="!pb-3 ">
+                  <Widget.Header title="Remove Liquidity" className="!pb-3">
                     <div className="flex gap-3">
                       <SettingsOverlay
                         options={{
@@ -124,10 +93,11 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                       >
                         {({ setOpen }) => (
                           <Button variant="outlined" color="default" onClick={() => setOpen(true)}>
-                            <CogIcon width={24} height={24} />
+                            <Cog8ToothIcon width={24} height={24} />
                           </Button>
                         )}
-                      </SettingsOverlay>{' '}
+                      </SettingsOverlay>
+                      {''}
                     </div>
                   </Widget.Header>
                 )}
@@ -157,43 +127,48 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                           <Button
                             size="xs"
                             onClick={() => setPercentage('25')}
+                            variant="outlined"
                             testdata-id="remove-liquidity-25-button"
+                            color="default"
                           >
                             25%
                           </Button>
                           <Button
                             size="xs"
                             onClick={() => setPercentage('50')}
+                            variant="outlined"
                             testdata-id="remove-liquidity-50-button"
+                            color="default"
                           >
                             50%
                           </Button>
                           <Button
                             size="xs"
                             onClick={() => setPercentage('75')}
+                            variant="outlined"
                             testdata-id="remove-liquidity-75-button"
+                            color="default"
                           >
                             75%
                           </Button>
                           <Button
                             size="xs"
                             onClick={() => setPercentage('100')}
+                            variant="outlined"
                             testdata-id="remove-liquidity-max-button"
+                            color="default"
                           >
                             MAX
                           </Button>
                         </div>
                       </div>
                       <div className="grid items-center justify-between grid-cols-3 pb-2">
-                        <AppearOnMount show={Boolean(balance?.[FundSource.WALLET])}>
+                        <AppearOnMount show={Boolean(FundSource.WALLET)}>
                           <Typography variant="sm" weight={500} className="text-gray-900 dark:text-slate-300">
-                            {formatUSD((value0 + value1) * (+percentage / 100))}
+                            {}
                           </Typography>
                         </AppearOnMount>
-                        <AppearOnMount
-                          className="flex justify-end col-span-2"
-                          show={Boolean(balance?.[FundSource.WALLET])}
-                        >
+                        <AppearOnMount className="flex justify-end col-span-2" show={Boolean(FundSource.WALLET)}>
                           <Typography
                             onClick={() => setPercentage('100')}
                             as="button"
@@ -201,12 +176,12 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                             weight={500}
                             className="text-gray-700 truncate hover:text-gray-800 dark:text-slate-300 dark:hover:text-slate-200"
                           >
-                            Balance: {balance?.[FundSource.WALLET].toSignificant(6)}
+                            Balance:{}
                           </Typography>
                         </AppearOnMount>
                       </div>
                       <Transition
-                        show={Boolean(+percentage > 0 && token0Minimum && token1Minimum)}
+                        show={Boolean(+percentage > 0)}
                         unmount={false}
                         className="transition-[max-height] overflow-hidden"
                         enter="duration-300 ease-in-out"
@@ -220,25 +195,21 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                           <Typography variant="sm" weight={400} className="pb-1 text-gray-600 dark:text-slate-400">
                             You&apos;ll receive at least:
                           </Typography>
-
                           <div className="flex items-center justify-between">
                             <Typography
                               variant="sm"
                               weight={500}
                               className="flex items-center gap-2 text-gray-900 dark:text-slate-50"
                             >
-                              {token0 && <UICurrency.Icon currency={token0} width={20} height={20} />}
+                              {}
                               <span className="text-gray-600 dark:text-slate-400">
-                                <span className="text-gray-900 dark:text-slate-50">
-                                  {token0Minimum?.toSignificant(6)}
-                                </span>{' '}
-                                {Native.onChain(chainId).wrapped.address === token0.wrapped.address
-                                  ? Native.onChain(chainId).symbol
-                                  : token0Minimum?.currency.symbol}
+                                <span className="text-gray-900 dark:text-slate-50">{}</span>
+                                {''}
+                                {}
                               </span>
                             </Typography>
                             <Typography variant="xs" className="text-gray-600 dark:text-slate-400">
-                              {formatUSD(value0 * (+percentage / 100))}
+                              {}
                             </Typography>
                           </div>
                           <div className="flex items-center justify-between">
@@ -247,18 +218,15 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                               weight={500}
                               className="flex items-center gap-2 text-gray-900 dark:text-slate-50"
                             >
-                              {token1 && <UICurrency.Icon currency={token1} width={20} height={20} />}
+                              {}
                               <span className="text-gray-600 dark:text-slate-400">
-                                <span className="text-gray-900 dark:text-slate-50">
-                                  {token1Minimum?.toSignificant(6)}
-                                </span>{' '}
-                                {Native.onChain(chainId).wrapped.address === token1.wrapped.address
-                                  ? Native.onChain(chainId).symbol
-                                  : token1Minimum?.currency.symbol}
+                                <span className="text-gray-900 dark:text-slate-50">{}</span>
+                                {''}
+                                {}
                               </span>
                             </Typography>
                             <Typography variant="xs" className="text-gray-600 dark:text-slate-400">
-                              {formatUSD(value1 * (+percentage / 100))}
+                              {}
                             </Typography>
                           </div>
                         </div>

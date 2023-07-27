@@ -25,7 +25,7 @@ export const ConnectView: FC<{ close(): void }> = ({ close }) => {
     close()
   }
   return (
-    <List className="!p-0">
+    <List className="!p-0 z-10">
       <List.Control className="bg-gray-100 dark:!bg-slate-700">
         {wallets.map((wallet, key) => {
           if (wallet.readyState == 'Installed') {
