@@ -40,7 +40,12 @@ export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(function S
         </NetworkSelector> */}
 
         <NetworkSelector>
-          <Popover as={Button} color="default" size="xl" className="!font-medium">
+          <Popover
+            as={Button}
+            color="bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12]"
+            size="xl"
+            className="flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full !font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12] whitespace-nowrap"
+          >
             <img
               src="https://cryptototem.com/wp-content/uploads/2022/08/aptos-logo.jpg"
               alt=""
