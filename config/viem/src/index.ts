@@ -559,7 +559,7 @@ export const config: Record<number, PublicClientConfig> = {
     transport: fallback(
       [
         http(arbitrumNova.rpcUrls.default.http[0]),
-        http(`https://lb.drpc.org/ogrpc?network=arbitrum-nova&dkey=${drpcId}`),
+        // http(`https://lb.drpc.org/ogrpc?network=arbitrum-nova&dkey=${drpcId}`),
       ],
       { rank: true }
     ),
@@ -569,7 +569,7 @@ export const config: Record<number, PublicClientConfig> = {
     transport: fallback(
       [
         http(`${arbitrum.rpcUrls.alchemy.http}/${alchemyId}`),
-        http(`https://lb.drpc.org/ogrpc?network=arbitrum&dkey=${drpcId}`),
+        // http(`https://lb.drpc.org/ogrpc?network=arbitrum&dkey=${drpcId}`),
       ],
       { rank: true }
     ),
@@ -603,7 +603,7 @@ export const config: Record<number, PublicClientConfig> = {
     transport: fallback(
       [
         http(bsc.rpcUrls.default.http[0]),
-        http(`https://lb.drpc.org/ogrpc?network=bsc&dkey=${drpcId}`),
+        // http(`https://lb.drpc.org/ogrpc?network=bsc&dkey=${drpcId}`),
         // http('https://bsc-dataseed.binance.org'),
         // http('https://bsc-dataseed1.binance.org'),
         // http('https://bsc-dataseed2.binance.org'),
@@ -626,7 +626,7 @@ export const config: Record<number, PublicClientConfig> = {
     transport: fallback(
       [
         http(`${mainnet.rpcUrls.alchemy.http}/${alchemyId}`),
-        http(`https://lb.drpc.org/ogrpc?network=ethereum&dkey=${drpcId}`),
+        // http(`https://lb.drpc.org/ogrpc?network=ethereum&dkey=${drpcId}`),
       ],
       { rank: true }
     ),
@@ -684,7 +684,7 @@ export const config: Record<number, PublicClientConfig> = {
     transport: fallback(
       [
         http(`${optimism.rpcUrls.alchemy.http}/${alchemyId}`),
-        http(`https://lb.drpc.org/ogrpc?network=optimism&dkey=${drpcId}`),
+        // http(`https://lb.drpc.org/ogrpc?network=optimism&dkey=${drpcId}`),
         // http('https://rpc.ankr.com/optimism'),
         // http('https://optimism-mainnet.public.blastapi.io'),
         // http('https://1rpc.io/op'),
@@ -699,7 +699,7 @@ export const config: Record<number, PublicClientConfig> = {
     transport: fallback(
       [
         http(`${polygon.rpcUrls.alchemy.http}/${alchemyId}`),
-        http(`https://lb.drpc.org/ogrpc?network=polygon&dkey=${drpcId}`),
+        // http(`https://lb.drpc.org/ogrpc?network=polygon&dkey=${drpcId}`),
       ],
       { rank: true }
     ),
@@ -710,7 +710,7 @@ export const config: Record<number, PublicClientConfig> = {
     transport: fallback(
       [
         http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/${alchemyId}`),
-        http(`https://lb.drpc.org/ogrpc?network=polygon-zkevm&dkey=${drpcId}`),
+        // http(`https://lb.drpc.org/ogrpc?network=polygon-zkevm&dkey=${drpcId}`),
         http('https://zkevm-rpc.com'),
         http('https://rpc.ankr.com/polygon_zkevm'),
         http('https://rpc.polygon-zkevm.gateway.fm'),

@@ -98,9 +98,10 @@ async function main() {
     const common = chainId in BASES_TO_CHECK_TRADES_AGAINST ? BASES_TO_CHECK_TRADES_AGAINST[chainId] : []
     const additionalA = tokenIn ? ADDITIONAL_BASES[chainId]?.[tokenIn.wrapped.address] ?? [] : []
     const additionalB = tokenOut ? ADDITIONAL_BASES[chainId]?.[tokenOut.wrapped.address] ?? [] : []
-    const cachedPoolCodes = extractor.getPoolCodesForTokens(
-      Array.from(new Set([tokenIn.wrapped, tokenOut.wrapped, ...common, ...additionalA, ...additionalB]))
-    )
+
+    const tokens = Array.from(new Set([tokenIn.wrapped, tokenOut.wrapped, ...common, ...additionalA, ...additionalB]))
+
+    const cachedPoolCodes = extractor.getPoolCodesForTokens(tokens)
     cachedPoolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
 
     let bestRoute = Router[preferSushi ? 'findSpecialRoute' : 'findBestRoute'](
@@ -115,10 +116,7 @@ async function main() {
     // We check if there is a route found for the cached pool codes
     // If not, we call again with async method and try to find a route again
     if (bestRoute.status !== RouteStatus.Success) {
-      const poolCodes = await extractor.getPoolCodesForTokensAsync(
-        Array.from(new Set([tokenIn.wrapped, tokenOut.wrapped, ...common, ...additionalA, ...additionalB])),
-        2_000
-      )
+      const poolCodes = await extractor.getPoolCodesForTokensAsync(tokens, 2_000)
       poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
       bestRoute = Router[preferSushi ? 'findSpecialRoute' : 'findBestRoute'](
         poolCodesMap,
