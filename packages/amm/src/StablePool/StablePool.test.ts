@@ -1,6 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Token, USDC_ADDRESS, WETH9, WETH9_ADDRESS } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
 import { stablePoolFactoryAddress } from '@sushiswap/trident-core'
 
 import { InsufficientInputAmountError } from '../errors'
@@ -40,8 +39,8 @@ describe('computePoolAddress', () => {
   })
 })
 
-const total0 = { base: JSBI.BigInt(1000), elastic: JSBI.BigInt(1000) }
-const total1 = { base: JSBI.BigInt(1000), elastic: JSBI.BigInt(1000) }
+const total0 = { base: 1000n, elastic: 1000n }
+const total1 = { base: 1000n, elastic: 1000n }
 
 describe('StablePool', () => {
   const USDC = new Token({
@@ -288,12 +287,12 @@ describe('StablePool', () => {
         Amount.fromRawAmount(tokenB, '0'),
         100,
         {
-          base: JSBI.BigInt('1116095462673148936623'),
-          elastic: JSBI.BigInt('1116117259112172411695'),
+          base: 1116095462673148936623n,
+          elastic: 1116117259112172411695n,
         },
         {
-          base: JSBI.BigInt('18648542897027618454566'),
-          elastic: JSBI.BigInt('18933448931872662869596'),
+          base: 18648542897027618454566n,
+          elastic: 18933448931872662869596n,
         }
         // total0,
         // total1

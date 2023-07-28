@@ -1,5 +1,4 @@
 import { Amount, Token } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
 
 import { Fee } from '../Fee'
 
@@ -12,10 +11,10 @@ export abstract class Pool {
   // wallet->wallet: ???
   // bento->wallet/wallet->bento: ???
   // bento->bento: ???
-  public abstract readonly swapGasCost: JSBI
+  public abstract readonly swapGasCost: bigint
 
   // Minimum pool liquidity, typically 1000
-  public abstract readonly minLiquidity: JSBI
+  public abstract readonly minLiquidity: bigint
 
   public abstract get chainId(): number
 
