@@ -1,11 +1,13 @@
 'use client'
 
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
+import { useSlippageTolerance } from '@sushiswap/hooks'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useState } from 'react'
 
+import { Button } from '../button'
 import { Dialog } from '../dialog'
-import { IconButton } from '../iconbutton'
 import { List } from '../list/List'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../tooltip'
 import { CarbonOffset } from './CarbonOffset'
 import { ExpertMode } from './ExpertMode'
 import { RoutingApi } from './RoutingApi'
@@ -33,13 +35,30 @@ interface SettingsOverlayProps {
 
 export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules, children, options }) => {
   const [open, setOpen] = useState(false)
+  const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(options?.storageKey)
 
   return (
     <>
       {children ? (
         children({ setOpen })
       ) : (
-        <IconButton size="sm" name="Settings" icon={Cog6ToothIcon} onClick={() => setOpen(true)} />
+        <>
+          <Button
+            variant={Number(slippageTolerance) > 2 ? 'warning' : 'secondary'}
+            size="sm"
+            icon={Cog6ToothIcon}
+            onClick={() => setOpen(true)}
+          >
+            {Number(slippageTolerance) > 0.5 && modules.includes(SettingsModule.SlippageTolerance) ? (
+              <TooltipProvider>
+                <Tooltip delayDuration={150}>
+                  <TooltipTrigger>{slippageTolerance}%</TooltipTrigger>
+                  <TooltipContent>Slippage tolerance</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : null}
+          </Button>
+        </>
       )}
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="flex flex-col gap-3">
