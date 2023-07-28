@@ -40,12 +40,14 @@ export class Native extends Currency {
 
     const { decimals, name, symbol } = nativeCurrency
 
-    return (this.cache[chainId] = new Native({
+    this.cache[chainId] = new Native({
       chainId,
       decimals,
       name,
       symbol,
-    }))
+    })
+
+    return this.cache[chainId]
   }
 
   public equals(other: Type): boolean {

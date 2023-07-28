@@ -1,4 +1,4 @@
-import { Big, BigintIsh, Fraction, JSBI, MAX_UINT128, Rounding, ZERO } from '@sushiswap/math'
+import { Big, BigintIsh, Fraction, MAX_UINT128, Rounding, ZERO } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
 import { Amount } from './Amount'
@@ -6,7 +6,7 @@ import { Type } from './Type'
 
 export class Share<T extends Type> extends Fraction {
   public readonly currency: T
-  public readonly scale: JSBI
+  public readonly scale: bigint
 
   public static fromRawShare<T extends Type>(currency: T, rawShare: BigintIsh = 0): Share<T> {
     return new Share(currency, rawShare)
@@ -14,21 +14,18 @@ export class Share<T extends Type> extends Fraction {
 
   protected constructor(currency: T, numerator: BigintIsh, denominator?: BigintIsh) {
     super(numerator, denominator)
-    invariant(JSBI.lessThanOrEqual(this.quotient, MAX_UINT128), 'SHARE')
+    invariant(this.quotient <= MAX_UINT128, 'SHARE')
     this.currency = currency
-    this.scale = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(currency.decimals))
+    this.scale = 10n ** BigInt(currency.decimals)
   }
 
-  public toAmount(rebase: { base: JSBI | bigint; elastic: JSBI | bigint }, roundUp = false) {
-    if (typeof rebase.base === 'bigint') rebase.base = JSBI.BigInt(String(rebase.base))
-    if (typeof rebase.elastic === 'bigint') rebase.elastic = JSBI.BigInt(String(rebase.elastic))
+  public toAmount(rebase: { base: bigint; elastic: bigint }, roundUp = false) {
+    if (rebase.base === ZERO) return Amount.fromRawAmount(this.currency, this.quotient)
 
-    if (JSBI.EQ(rebase.base, ZERO)) return Amount.fromRawAmount(this.currency, this.quotient)
+    const elastic = (this.quotient * rebase.elastic) / rebase.base
 
-    const elastic = JSBI.divide(JSBI.multiply(this.quotient, rebase.elastic), rebase.base)
-
-    if (roundUp && JSBI.LT(JSBI.divide(JSBI.multiply(elastic, rebase.base), rebase.elastic), this.quotient)) {
-      return Amount.fromRawAmount(this.currency, JSBI.add(elastic, JSBI.BigInt(1)))
+    if (roundUp && (elastic * rebase.base) / rebase.elastic < this.quotient) {
+      return Amount.fromRawAmount(this.currency, elastic + 1n)
     }
 
     return Amount.fromRawAmount(this.currency, elastic)
