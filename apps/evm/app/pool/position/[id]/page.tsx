@@ -131,8 +131,8 @@ const Position: FC<{ params: { id: string } }> = ({ params }) => {
   const amounts = useMemo(() => {
     if (positionDetails?.fees && _token0 && _token1)
       return [
-        Amount.fromRawAmount(_token0, JSBI.BigInt(positionDetails.fees[0])),
-        Amount.fromRawAmount(_token1, JSBI.BigInt(positionDetails.fees[1])),
+        Amount.fromRawAmount(_token0, JSBI.BigInt(positionDetails.fees[0].toString())),
+        Amount.fromRawAmount(_token1, JSBI.BigInt(positionDetails.fees[1].toString())),
       ]
 
     return [undefined, undefined]
@@ -277,8 +277,12 @@ const Position: FC<{ params: { id: string } }> = ({ params }) => {
                           ) : rewardsData &&
                             positionDetails &&
                             rewardsData.pools[positionDetails.address]?.rewardsPerToken ? (
-                            Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).map((el, i) => (
-                              <List.KeyValue key={i} flex title={`${el.accumulatedSinceInception.currency.symbol}`}>
+                            Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).map((el) => (
+                              <List.KeyValue
+                                key={`${el.symbol}-${el.accumulatedSinceInception.currency.symbol}`}
+                                flex
+                                title={`${el.accumulatedSinceInception.currency.symbol}`}
+                              >
                                 <div className="flex flex-col gap-2">
                                   <div className="flex items-center gap-2">
                                     <Currency.Icon currency={el.unclaimed.currency} width={18} height={18} />
@@ -327,7 +331,11 @@ const Position: FC<{ params: { id: string } }> = ({ params }) => {
                   <List.KeyValue skeleton />
                 ) : rewardsData && positionDetails && rewardsData.pools[positionDetails.address]?.rewardsPerToken ? (
                   Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).map((el, i) => (
-                    <List.KeyValue key={i} flex title={`${el.unclaimed.currency.symbol}`}>
+                    <List.KeyValue
+                      key={`${el.symbol}-${el.unclaimed.currency.symbol}`}
+                      flex
+                      title={`${el.unclaimed.currency.symbol}`}
+                    >
                       <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-2">
                           <Currency.Icon currency={el.unclaimed.currency} width={18} height={18} />
