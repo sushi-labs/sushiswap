@@ -13,6 +13,7 @@ const buttonVariants = cva(
       variant: {
         default: 'bg-blue hover:bg-blue-600 focus:bg-blue-700 active:bg-blue-600 text-white',
         destructive: 'bg-red hover:bg-red-600 focus:bg-red-700 active:bg-red-600 text-white',
+        warning: 'bg-amber-400 hover:bg-amber-500 focus:bg-amber-600 active:bg-amber-500 text-amber-900',
         outline: 'border dark:border-slate-200/5 border-gray-900/5 hover:bg-muted focus:bg-accent',
         secondary: 'bg-secondary hover:bg-muted focus:bg-accent',
         ghost: 'hover:bg-secondary focus:bg-accent',
@@ -68,6 +69,7 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> {
   icon?: IconComponent
   iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
+  iconPosition?: 'start' | 'end'
   asChild?: boolean
   loading?: boolean
   fullWidth?: boolean
@@ -80,6 +82,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       fullWidth,
       icon: Icon,
       iconProps,
+      iconPosition = 'start',
       disabled = false,
       className,
       variant,
@@ -107,10 +110,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         <ButtonContent asChild={asChild}>
           {loading ? (
             <Loader2 className={buttonLoaderVariants({ size })} />
-          ) : Icon ? (
+          ) : Icon && iconPosition === 'start' ? (
             <Icon {...iconProps} className={buttonIconVariants({ size, className: iconProps?.className })} />
           ) : null}
           {children}
+          {Icon && iconPosition === 'end' ? (
+            <Icon {...iconProps} className={buttonIconVariants({ size, className: iconProps?.className })} />
+          ) : null}
         </ButtonContent>
       </Comp>
     )
