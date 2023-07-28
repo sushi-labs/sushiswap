@@ -1,9 +1,15 @@
 import { Typography } from '@sushiswap/ui'
+import { Icon } from 'components/Icon'
 import { FC } from 'react'
+import { Pool } from 'utils/usePools'
+import { useTokensFromPools } from 'utils/useTokensFromPool'
 
-interface PoolPositionProps {}
+interface PoolPositionProps {
+  row: Pool
+}
 
-export const PoolPositionDesktop: FC<PoolPositionProps> = ({}) => {
+export const PoolPositionDesktop: FC<PoolPositionProps> = ({ row }) => {
+  const { token0, token1 } = useTokensFromPools(row)
   if ('') {
     return (
       <div className="flex flex-col gap-3 px-5 py-4">
@@ -37,8 +43,9 @@ export const PoolPositionDesktop: FC<PoolPositionProps> = ({}) => {
         }
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
+            <Icon currency={token0} width={20} height={20} />
             <Typography variant="sm" weight={600} className="dark:text-slate-300 text-gray-700">
-              {}
+              {token0.symbol}
             </Typography>
           </div>
           <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600 text-gray-600">
@@ -47,8 +54,9 @@ export const PoolPositionDesktop: FC<PoolPositionProps> = ({}) => {
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
+            <Icon currency={token1} width={20} height={20} />
             <Typography variant="sm" weight={600} className="dark:text-slate-300 text-gray-700">
-              {}
+              {token1.symbol}
             </Typography>
           </div>
           <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600 text-gray-600">

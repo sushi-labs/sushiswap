@@ -1,9 +1,12 @@
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { FC } from 'react'
+import { Pool } from 'utils/usePools'
 
-interface PoolCompositionProps {}
+interface PoolCompositionProps {
+  row: Pool
+}
 
-export const PoolComposition: FC<PoolCompositionProps> = ({}) => {
+export const PoolComposition: FC<PoolCompositionProps> = ({ row }) => {
   return (
     <List>
       <div className="flex items-center justify-between">
