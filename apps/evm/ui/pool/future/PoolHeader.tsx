@@ -87,12 +87,11 @@ export const PoolHeader: FC<PoolHeader> = ({ address, title, isLoading, pool, ch
             <Button
               asChild
               variant="link"
-              rel="noopener noreferrer"
               className="text-xl font-semibold text-gray-900 dark:text-slate-50 flex items-start gap-2"
               icon={ArrowTopRightOnSquareIcon}
               iconPosition="end"
             >
-              <a href={Chain.from(pool.chainId).getTokenUrl(address)}>
+              <a rel="noopener noreferrer" target="_blank" href={Chain.from(pool.chainId).getTokenUrl(address)}>
                 <span>
                   {title && title}
                   {token0.symbol}/{token1.symbol}
