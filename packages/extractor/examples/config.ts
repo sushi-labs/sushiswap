@@ -32,7 +32,7 @@ export const SUPPORTED_CHAIN_IDS = [
   // ChainId.FANTOM,
   ChainId.OPTIMISM,
   ChainId.POLYGON,
-  // ChainId.POLYGON_ZKEVM,
+  ChainId.POLYGON_ZKEVM,
 ] as const
 
 export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number]
