@@ -35,7 +35,7 @@ interface SettingsOverlayProps {
 
 export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules, children, options }) => {
   const [open, setOpen] = useState(false)
-  const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(options?.storageKey)
+  const [slippageTolerance] = useSlippageTolerance(options?.slippageTolerance?.storageKey)
 
   return (
     <>

@@ -38,7 +38,7 @@ const NetworkSelector = <T extends number>({
   const [open, setOpen] = useState(false)
 
   const _networks = useMemo(() => {
-    const INCLUDED_PREFERRED_CHAIN_IDS = PREFERRED_CHAINID_ORDER.filter((el) => networks.includes(el))
+    const INCLUDED_PREFERRED_CHAIN_IDS = PREFERRED_CHAINID_ORDER.filter((el) => networks.includes(el as T))
     return Array.from(new Set([...INCLUDED_PREFERRED_CHAIN_IDS, ...networks]))
   }, [networks])
 
