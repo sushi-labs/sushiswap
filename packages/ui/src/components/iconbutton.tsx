@@ -13,7 +13,7 @@ const iconButtonVariants = cva(
       variant: {
         default: 'bg-blue hover:bg-blue-600 focus:bg-blue-700 active:bg-blue-600 text-white',
         destructive: 'bg-red hover:bg-red-600 focus:bg-red-700 active:bg-red-600 text-white',
-        warning: 'bg-yellow/40 hover:bg-yellow-500 focus:bg-yellow-700 active:bg-yellow-600',
+        warning: 'bg-amber-400 hover:bg-amber-500 focus:bg-amber-600 active:bg-amber-500 text-amber-900',
         outline: 'border dark:border-slate-200/5 border-gray-900/5 hover:bg-muted focus:bg-accent',
         secondary: 'bg-secondary hover:bg-muted focus:bg-accent',
         ghost: 'hover:bg-secondary focus:bg-accent',
@@ -43,10 +43,14 @@ export interface IconButtonProps
   description?: string
   testId?: string
   asChild?: boolean
+  children?: React.ReactNode
 }
 
 const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
-  ({ className, asChild, icon: Icon, iconProps, description, size, variant = 'secondary', name, ...props }, ref) => {
+  (
+    { className, children, asChild, icon: Icon, iconProps, description, size, variant = 'secondary', name, ...props },
+    ref
+  ) => {
     const Comp = asChild ? Slot : 'span'
 
     const button = (
@@ -56,6 +60,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
         ) : (
           <Icon {...iconProps} className={buttonIconVariants({ size, className: iconProps?.className })} />
         )}
+        {children ? children : null}
       </Comp>
     )
 
@@ -77,4 +82,4 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
 )
 IconButton.displayName = 'ButtonNew'
 
-export { IconButton }
+export { IconButton, iconButtonVariants }
