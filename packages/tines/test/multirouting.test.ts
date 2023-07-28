@@ -1,13 +1,4 @@
-import { BigNumber } from '@ethersproject/bignumber'
-
-import {
-  closeValues,
-  findMultiRouteExactIn,
-  findMultiRouteExactOut,
-  getBigNumber,
-  MultiRoute,
-  RouteStatus,
-} from '../src'
+import { closeValues, findMultiRouteExactIn, findMultiRouteExactOut, getBigInt, MultiRoute, RouteStatus } from '../src'
 import { ConstantProductRPool, RToken } from '../src/PrimaryPools'
 import { checkRouteResult } from './snapshots/snapshot'
 
@@ -45,17 +36,17 @@ function getPool(
     { ...tokens[t0] },
     { ...tokens[t1] },
     fee,
-    getBigNumber(reserve),
-    getBigNumber(Math.round(reserve / (price[t1] / price[t0]) - imbalance))
+    getBigInt(reserve),
+    getBigInt(Math.round(reserve / (price[t1] / price[t0]) - imbalance))
   )
 }
 
 // ====================== Env 1 ==================
 const price = [1, 1, 1, 1, 1]
 const tokens = price.map((_, i) => ({
-  name: '' + (i + 1),
-  address: 'token_addres ' + (i + 1),
-  symbol: '' + (i + 1),
+  name: `${i + 1}`,
+  address: `token_addres ${i + 1}`,
+  symbol: `${i + 1}`,
   decimals: 18,
 }))
 
@@ -70,9 +61,9 @@ const testPools = [testPool0_1, testPool0_2, testPool1_3, testPool2_3, testPool1
 // ======================= Env2 ===================
 const price2 = [1, 2, 2.2, 15, 0.01]
 const tokens2 = price2.map((_, i) => ({
-  name: '' + (i + 1),
-  address: 'token_addres ' + (i + 1),
-  symbol: '' + (i + 1),
+  name: `${i + 1}`,
+  address: `token_addres ${i + 1}`,
+  symbol: `${i + 1}`,
   decimals: 18,
 }))
 
@@ -151,8 +142,8 @@ describe('Multirouting for bridge topology', () => {
           USDC,
           WNATIVE,
           0.003,
-          BigNumber.from('879752148'),
-          BigNumber.from('227627092068744941')
+          879752148n,
+          227627092068744941n
         ),
       ],
       WNATIVE,
@@ -234,7 +225,7 @@ describe('Multirouting for bridge topology', () => {
       const res2 = findMultiRouteExactOut(tokens[0], tokens[3], res.amountOut, testPools, tokens[2], gasPrice, s)
       checkExactOut(res, res2)
 
-      checkRouteResult('bridge-5-' + s, res.totalAmountOut)
+      checkRouteResult(`bridge-5-${s}`, res.totalAmountOut)
     })
   })
 
@@ -266,7 +257,7 @@ describe('Multirouting for bridge topology', () => {
       const res2 = findMultiRouteExactOut(tokens2[0], tokens2[3], res.amountOut, testPools2, tokens2[2], gasPrice, s)
       checkExactOut(res, res2)
 
-      checkRouteResult('bridge-7-' + s, res.totalAmountOut)
+      checkRouteResult(`bridge-7-${s}`, res.totalAmountOut)
     })
   })
 

@@ -30,7 +30,6 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@ethersproject/bignumber": "5.7.0",
     "@sushiswap/currency": "workspace:*"
   },
   "devDependencies": {

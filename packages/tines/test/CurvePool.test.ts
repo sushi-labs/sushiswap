@@ -1,8 +1,7 @@
-import { BigNumberish } from '@ethersproject/bignumber'
 import seedrandom from 'seedrandom'
 
 import { RToken } from '../dist'
-import { closeValues, CurvePool, getBigNumber } from '../src'
+import { closeValues, CurvePool, getBigInt } from '../src'
 
 const token0 = {
   name: 'Token0',
@@ -42,22 +41,16 @@ export function getRandomExp(rnd: () => number, min: number, max: number) {
   return res
 }
 
-function expectCloseValues(
-  v1: BigNumberish,
-  v2: BigNumberish,
-  precision: number,
-  description = '',
-  additionalInfo = ''
-) {
-  const a = typeof v1 == 'number' ? v1 : parseFloat(v1.toString())
-  const b = typeof v2 == 'number' ? v2 : parseFloat(v2.toString())
+function expectCloseValues(v1: number, v2: number, precision: number, description = '', additionalInfo = '') {
+  const a = v1
+  const b = v2
   const res = closeValues(a, b, precision)
   if (!res) {
     console.log('Close values expectation failed:', description)
     console.log('v1 =', a)
     console.log('v2 =', b)
     console.log('precision =', Math.abs(a / b - 1), ', expected <', precision)
-    if (additionalInfo != '') {
+    if (additionalInfo !== '') {
       console.log(additionalInfo)
     }
   }
@@ -76,8 +69,8 @@ function createPool(
     token1,
     params.fee,
     params.A,
-    getBigNumber(params.reserve0),
-    getBigNumber(params.reserve1)
+    getBigInt(params.reserve0),
+    getBigInt(params.reserve1)
   )
 }
 
@@ -116,7 +109,7 @@ function checkSwap(pool: CurvePool, amountIn: number, direction: boolean): numbe
   return out
 }
 
-const E33 = getBigNumber(1e33)
+const E33 = getBigInt(1e33)
 function checkPoolPriceCalculation(pool: CurvePool) {
   const price1 = pool.calcCurrentPriceWithoutFee(true)
   const price2 = pool.calcCurrentPriceWithoutFee(false)
@@ -137,15 +130,15 @@ function checkPoolPriceCalculation(pool: CurvePool) {
   expect(Math.abs(price1 * price2 - 1)).toBeLessThan(expectedPrecision)
 
   let poolScaled = pool
-  if (pool.reserve0.lt(E33) || pool.reserve1.lt(E33)) {
+  if (pool.reserve0 < E33 || pool.reserve1 < E33) {
     poolScaled = new CurvePool( // Scale E21 times
       pool.address,
       pool.token0,
       pool.token1,
       pool.fee,
       pool.A,
-      pool.getReserve0().mul(E33),
-      pool.getReserve1().mul(E33)
+      pool.getReserve0() * E33,
+      pool.getReserve1() * E33
     )
   }
   const inp = parseFloat(poolScaled.reserve0.toString()) / 1e15
@@ -179,7 +172,7 @@ describe('Curve1 2 tokens pools check', () => {
 
   it('Random test decimals 18-18', () => {
     for (let p = 0; p < 30; ++p) {
-      const testSeed = '18-18_' + p
+      const testSeed = `18-18_${p}`
       const rnd: () => number = seedrandom(testSeed) // random [0, 1)
       const pool = createRandomPool(rnd, token0, token1)
       checkPoolPriceCalculation(pool)
@@ -193,7 +186,7 @@ describe('Curve1 2 tokens pools check', () => {
 
   it('Random test decimals 18-6', () => {
     for (let p = 0; p < 30; ++p) {
-      const testSeed = '18-6_' + p
+      const testSeed = `18-6_${p}`
       const rnd: () => number = seedrandom(testSeed) // random [0, 1)
       const pool = createRandomPool(rnd, token1, token2)
       checkPoolPriceCalculation(pool)
@@ -207,7 +200,7 @@ describe('Curve1 2 tokens pools check', () => {
 
   it('Random test decimals 6-6', () => {
     for (let p = 0; p < 30; ++p) {
-      const testSeed = '6-6_' + p
+      const testSeed = `6-6_${p}`
       const rnd: () => number = seedrandom(testSeed) // random [0, 1)
       const pool = createRandomPool(rnd, token2, token3)
       checkPoolPriceCalculation(pool)

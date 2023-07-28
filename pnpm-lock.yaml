@@ -2161,7 +2161,6 @@ importers:
 
   packages/tines:
     specifiers:
-      '@ethersproject/bignumber': 5.7.0
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -2174,7 +2173,6 @@ importers:
       tsup: 7.1.0
       typescript: 5.1.6
     dependencies:
-      '@ethersproject/bignumber': 5.7.0
       '@sushiswap/currency': link:../currency
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint

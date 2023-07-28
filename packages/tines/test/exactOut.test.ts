@@ -3,7 +3,7 @@ import {
   ConstantProductRPool,
   findMultiRouteExactIn,
   findMultiRouteExactOut,
-  getBigNumber,
+  getBigInt,
   RouteStatus,
   RPool,
   RToken,
@@ -25,17 +25,17 @@ function getPool(
     { ...tokens[t0] },
     { ...tokens[t1] },
     fee,
-    getBigNumber(reserve),
-    getBigNumber(Math.round(reserve / (price[t1] / price[t0]) - imbalance))
+    getBigInt(reserve),
+    getBigInt(Math.round(reserve / (price[t1] / price[t0]) - imbalance))
   )
 }
 
 // ====================== Env 1 ==================
 const price = [1, 1, 1, 1, 1]
 const tokens = price.map((_, i) => ({
-  name: '' + (i + 1),
-  address: 'token_addres ' + (i + 1),
-  symbol: '' + (i + 1),
+  name: `${i + 1}`,
+  address: `token_addres ${i + 1}`,
+  symbol: `${i + 1}`,
   decimals: 18,
 }))
 
