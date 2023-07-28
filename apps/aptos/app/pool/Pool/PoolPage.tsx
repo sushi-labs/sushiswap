@@ -181,7 +181,9 @@ const _Add: FC = () => {
   useEffect(() => {
     onChangeToken0TypedAmount(String(amount0))
   }, [account, connected, network, amount0, token0, token1, balance0, poolPairRatio])
-
+  useEffect(() => {
+    PoolInputBalance1(String(amount1))
+  }, [amount1])
   // useEffect(() => {
   //   onChangeToken1TypedAmount(String(amount1))
   // }, [account, connected, network, amount1, balance1, poolPairRatio])
