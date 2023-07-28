@@ -1,4 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber'
 import { Token } from '@sushiswap/currency'
 import { findMultiRouteExactIn as TinesFindMultiRouteExactIn, MultiRoute, RToken } from '@sushiswap/tines'
 
@@ -9,7 +8,7 @@ import { convertPoolOrPairtoRPool } from './convertPoolOrPairtoRPool'
 export function findMultiRouteExactIn(
   from: Token,
   to: Token,
-  amountIn: BigNumber | number,
+  amountIn: bigint | number,
   pools: (Pool | Pair)[],
   baseToken: Token,
   gasPrice: number
@@ -18,7 +17,7 @@ export function findMultiRouteExactIn(
     from as RToken,
     to as RToken,
     amountIn,
-    pools.map(pool => convertPoolOrPairtoRPool(pool)),
+    pools.map((pool) => convertPoolOrPairtoRPool(pool)),
     baseToken as RToken,
     gasPrice
   )

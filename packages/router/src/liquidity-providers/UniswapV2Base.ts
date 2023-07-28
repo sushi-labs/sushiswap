@@ -6,7 +6,6 @@ import { PrismaClient } from '@sushiswap/database'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { add, getUnixTime } from 'date-fns'
-import { BigNumber } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
 import { Address, PublicClient } from 'viem'
 
@@ -54,8 +53,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   constructor(
     chainId: ChainId,
     web3Client: PublicClient,
-    factory: { [chainId: number]: Address },
-    initCodeHash: { [chainId: number]: string },
+    factory: Record<number, Address>,
+    initCodeHash: Record<number, string>,
     databaseClient?: PrismaClient
   ) {
     super(chainId, web3Client)
@@ -110,14 +109,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       if (res0 && res1) {
         const token0 = mapToken(this.chainId, pool.token0) as RToken
         const token1 = mapToken(this.chainId, pool.token1) as RToken
-        const rPool = new ConstantProductRPool(
-          pool.address,
-          token0,
-          token1,
-          this.fee,
-          BigNumber.from(res0),
-          BigNumber.from(res1)
-        )
+        const rPool = new ConstantProductRPool(pool.address, token0, token1, this.fee, res0, res1)
         const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
         this.topPools.set(pool.address, pc)
       } else {
@@ -175,14 +167,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         const token0 = pool.token0 as RToken
         const token1 = pool.token1 as RToken
 
-        const rPool = new ConstantProductRPool(
-          pool.address,
-          token0,
-          token1,
-          this.fee,
-          BigNumber.from(0),
-          BigNumber.from(0)
-        )
+        const rPool = new ConstantProductRPool(pool.address, token0, token1, this.fee, 0n, 0n)
         const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
         poolCodesToCreate.push(pc)
       } else {
@@ -216,7 +201,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       const res1 = reserves?.[i]?.result?.[1]
 
       if (res0 !== undefined && res1 !== undefined) {
-        pool.updateReserves(BigNumber.from(res0), BigNumber.from(res1))
+        pool.updateReserves(res0, res1)
         this.onDemandPools.set(pool.address, { poolCode, validUntilTimestamp })
         // console.debug(
         //   `${this.getLogPrefix()} - ON DEMAND CREATION: ${pool.address} (${pool.token0.symbol}/${pool.token1.symbol})`
@@ -364,14 +349,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       if (poolsToCreate) {
         const token0 = mapToken(this.chainId, poolsToCreate.token0) as RToken
         const token1 = mapToken(this.chainId, poolsToCreate.token1) as RToken
-        const rPool = new ConstantProductRPool(
-          poolsToCreate.address,
-          token0,
-          token1,
-          this.fee,
-          BigNumber.from(0),
-          BigNumber.from(0)
-        )
+        const rPool = new ConstantProductRPool(poolsToCreate.address, token0, token1, this.fee, 0n, 0n)
         const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
         this.topPools.set(poolsToCreate.address, pc)
 
@@ -407,10 +385,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       const res1 = reserves?.[i]?.result?.[1]
 
       if (res0 && res1) {
-        const res0BN = BigNumber.from(res0)
-        const res1BN = BigNumber.from(res1)
-        if (!pool.reserve0.eq(res0BN) || !pool.reserve1.eq(res1BN)) {
-          pool.updateReserves(res0BN, res1BN)
+        if (pool.reserve0 !== res0 || pool.reserve1 !== res1) {
+          pool.updateReserves(res0, res1)
           // console.info(
           //   `${this.getLogPrefix()} - SYNC, ${type}: ${pool.address} ${pool.token0.symbol}/${
           //     pool.token1.symbol

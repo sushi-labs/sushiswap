@@ -11,7 +11,6 @@ import {
   StablePoolFactoryChainId,
 } from '@sushiswap/trident-core'
 import { add, getUnixTime } from 'date-fns'
-import { BigNumber } from 'ethers'
 import { Address, PublicClient } from 'viem'
 
 import { discoverNewPools, filterOnDemandPools, filterTopPools, getAllPools, mapToken, PoolResponse2 } from '../lib/api'
@@ -21,10 +20,10 @@ import type { PoolCode } from '../pools/PoolCode'
 import { TridentStaticPool, TridentStaticPoolFetcher } from '../static-pool-fetcher/Trident'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
-export function convertToNumbers(arr: BigNumber[]): (number | undefined)[] {
+export function convertToNumbers(arr: bigint[]): (number | undefined)[] {
   return arr.map((a) => {
     if (a === undefined) return undefined
-    return parseInt(a._hex, 16)
+    return parseInt(a.toString(16), 16)
   })
 }
 
@@ -236,14 +235,7 @@ export class TridentProvider extends LiquidityProvider {
         convertTokenToBento(mapToken(this.chainId, pool.token0)),
         convertTokenToBento(mapToken(this.chainId, pool.token1)),
       ]
-      const rPool = new ConstantProductRPool(
-        pool.address,
-        tokens[0],
-        tokens[1],
-        pool.swapFee,
-        BigNumber.from(res0),
-        BigNumber.from(res1)
-      )
+      const rPool = new ConstantProductRPool(pool.address, tokens[0], tokens[1], pool.swapFee, res0, res1)
       const pc = new BentoPoolCode(rPool, this.getType(), this.getPoolProviderName())
       this.topClassicPools.set(pool.address, pc)
     })
@@ -259,17 +251,17 @@ export class TridentProvider extends LiquidityProvider {
         `Bento bridge for ${t.symbol}`,
         t as RToken,
         convertTokenToBento(t),
-        BigNumber.from(elastic),
-        BigNumber.from(base),
-        BigNumber.from(balance)
+        elastic,
+        base,
+        balance
       )
       this.bridges.set(
         t.address.toLowerCase(),
         new BentoBridgePoolCode(pool, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId])
       )
       rebases.set(t.address.toLowerCase(), {
-        elastic: BigNumber.from(elastic),
-        base: BigNumber.from(base),
+        elastic: elastic,
+        base: base,
       })
     })
 
@@ -290,8 +282,8 @@ export class TridentProvider extends LiquidityProvider {
         tokens[0],
         tokens[1],
         pool.swapFee,
-        toShareBN(BigNumber.from(res0), totals0),
-        toShareBN(BigNumber.from(res1), totals1),
+        toShareBN(res0, totals0),
+        toShareBN(res1, totals1),
         pool.token0.decimals,
         pool.token1.decimals,
         totals0,
@@ -464,14 +456,12 @@ export class TridentProvider extends LiquidityProvider {
       if (!elastic || !base || !balance) {
         return
       }
-      const elasticBN = BigNumber.from(elastic)
-      const baseBN = BigNumber.from(base)
       rebases.set(t.address.toLowerCase(), {
-        elastic: elasticBN,
-        base: baseBN,
+        elastic,
+        base,
       })
-      if (!bridge.reserve0.eq(elasticBN) || !bridge.reserve1.eq(baseBN)) {
-        bridge.updateReserves(elasticBN, baseBN)
+      if (bridge.reserve0 !== elastic || bridge.reserve1 === base) {
+        bridge.updateReserves(elastic, base)
         // console.debug(
         //   `${this.getLogPrefix()} - BRIDGE REBASE UPDATE: ${bridge.token0.symbol} ${bridge.reserve0} ${bridge.reserve1}`
         // )
@@ -536,14 +526,7 @@ export class TridentProvider extends LiquidityProvider {
       const fakeBridgeAddress = `Bento bridge for ${t.symbol}`
       if (excludePools?.has(fakeBridgeAddress)) return
       if (!this.bridges.has(t.address)) {
-        const pool = new BridgeBento(
-          fakeBridgeAddress,
-          t as RToken,
-          convertTokenToBento(t),
-          BigNumber.from(0),
-          BigNumber.from(0),
-          BigNumber.from(0)
-        )
+        const pool = new BridgeBento(fakeBridgeAddress, t as RToken, convertTokenToBento(t), 0n, 0n, 0n)
         bridgesToCreate.push(
           new BentoBridgePoolCode(pool, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId])
         )
@@ -560,8 +543,8 @@ export class TridentProvider extends LiquidityProvider {
           convertTokenToBento(pr.token0 as Token),
           convertTokenToBento(pr.token1 as Token),
           pr.swapFee,
-          BigNumber.from(0),
-          BigNumber.from(0)
+          0n,
+          0n
         )
         const pc = new BentoPoolCode(rPool, this.getType(), this.getPoolProviderName())
 
@@ -581,12 +564,12 @@ export class TridentProvider extends LiquidityProvider {
           convertTokenToBento(pr.token0 as Token),
           convertTokenToBento(pr.token1 as Token),
           pr.swapFee,
-          BigNumber.from(0),
-          BigNumber.from(0),
+          0n,
+          0n,
           pr.token0.decimals,
           pr.token1.decimals,
-          { elastic: BigNumber.from(0), base: BigNumber.from(0) },
-          { elastic: BigNumber.from(0), base: BigNumber.from(0) }
+          { elastic: 0n, base: 0n },
+          { elastic: 0n, base: 0n }
         )
 
         const pc = new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName())
@@ -689,7 +672,7 @@ export class TridentProvider extends LiquidityProvider {
       const res1 = classicReserves?.[i]?.result?.[1]
 
       if (res0 !== undefined && res1 !== undefined) {
-        pool.updateReserves(BigNumber.from(res0), BigNumber.from(res1))
+        pool.updateReserves(res0, res1)
         this.onDemandClassicPools.set(pool.address, { poolCode, validUntilTimestamp })
         ++created
         // console.debug(
@@ -714,13 +697,11 @@ export class TridentProvider extends LiquidityProvider {
       if (!elastic || !base || !balance) {
         return
       }
-      const elasticBN = BigNumber.from(elastic)
-      const baseBN = BigNumber.from(base)
       rebases.set(t.address.toLowerCase(), {
-        elastic: elasticBN,
-        base: baseBN,
+        elastic: elastic,
+        base: base,
       })
-      bridge.updateReserves(elasticBN, baseBN)
+      bridge.updateReserves(elastic, base)
       bridge.freeLiquidity = Number(balance)
       this.bridges.set(bridge.address.toLowerCase(), bc)
     })
@@ -731,7 +712,7 @@ export class TridentProvider extends LiquidityProvider {
 
       if (total0) {
         const current = pool.getTotal0()
-        if (!total0.elastic.eq(current.elastic) || !total0.base.eq(current.base)) {
+        if (total0.elastic !== current.elastic || total0.base !== current.base) {
           pool.updateTotal0(total0)
         }
       }
@@ -739,7 +720,7 @@ export class TridentProvider extends LiquidityProvider {
       const total1 = rebases.get(pool.token1.address.toLowerCase())
       if (total1) {
         const current = pool.getTotal1()
-        if (!total1.elastic.eq(current.elastic) || !total1.base.eq(current.base)) {
+        if (total1.elastic !== current.elastic || total1.base !== current.base) {
           pool.updateTotal1(total1)
         }
       }
@@ -747,13 +728,11 @@ export class TridentProvider extends LiquidityProvider {
       const res0 = stableReserves?.[i]?.result?.[0]
       const res1 = stableReserves?.[i]?.result?.[1]
 
-      const res0BN = BigNumber.from(res0)
-      const res1BN = BigNumber.from(res1)
       if (!res0 || !res1) {
         return
       }
       //pool.updateReserves(toShareBN(res0BN, pool.getTotal0()), toShareBN(res1BN, pool.getTotal1()))
-      pool.updateReservesAmounts(res0BN, res1BN)
+      pool.updateReservesAmounts(res0, res1)
 
       this.onDemandStablePools.set(pool.address, { poolCode, validUntilTimestamp })
 
@@ -860,8 +839,8 @@ export class TridentProvider extends LiquidityProvider {
           tokens[0],
           tokens[1],
           poolsToCreate.swapFee,
-          BigNumber.from(0),
-          BigNumber.from(0)
+          0n,
+          0n
         )
         this.topClassicPools.set(
           poolsToCreate.address,
@@ -896,12 +875,12 @@ export class TridentProvider extends LiquidityProvider {
           convertTokenToBento(token0),
           convertTokenToBento(token1),
           poolsToCreate.swapFee,
-          BigNumber.from(0),
-          BigNumber.from(0),
+          0n,
+          0n,
           poolsToCreate.token0.decimals,
           poolsToCreate.token1.decimals,
-          { elastic: BigNumber.from(0), base: BigNumber.from(0) },
-          { elastic: BigNumber.from(0), base: BigNumber.from(0) }
+          { elastic: 0n, base: 0n },
+          { elastic: 0n, base: 0n }
         )
 
         this.topStablePools.set(
@@ -921,14 +900,7 @@ export class TridentProvider extends LiquidityProvider {
 
     sortedTokens.forEach((t) => {
       if (!this.bridges.has(t.address)) {
-        const bridge = new BridgeBento(
-          `Bento bridge for ${t.symbol}`,
-          t as RToken,
-          convertTokenToBento(t),
-          BigNumber.from(0),
-          BigNumber.from(0),
-          BigNumber.from(0)
-        )
+        const bridge = new BridgeBento(`Bento bridge for ${t.symbol}`, t as RToken, convertTokenToBento(t), 0n, 0n, 0n)
         this.bridges.set(
           t.address.toLowerCase(),
           new BentoBridgePoolCode(bridge, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId])
@@ -1031,16 +1003,14 @@ export class TridentProvider extends LiquidityProvider {
       const res0 = reserves?.[i]?.result?.[0]
       const res1 = reserves?.[i]?.result?.[1]
 
-      const res0BN = BigNumber.from(res0)
-      const res1BN = BigNumber.from(res1)
       if (!res0 || !res1) {
         return
       }
-      if (pool.reserve0.eq(res0BN) && pool.reserve1.eq(res1BN)) {
+      if (pool.reserve0 === res0 && pool.reserve1 === res1) {
         return
       }
 
-      pool.updateReserves(res0BN, res1BN)
+      pool.updateReserves(res0, res1)
       // console.info(
       //   `${this.getLogPrefix()} - SYNC, classic pool: ${pool.address} ${pool.token0.symbol}/${
       //     pool.token1.symbol
@@ -1073,27 +1043,25 @@ export class TridentProvider extends LiquidityProvider {
       const total0 = rebases.get(pool.token0.address.toLowerCase())
       if (total0) {
         const current = pool.getTotal0()
-        if (!total0.elastic.eq(current.elastic) || !total0.base.eq(current.base)) {
+        if (total0.elastic !== current.elastic || total0.base !== current.base) {
           pool.updateTotal0(total0)
         }
       }
       const total1 = rebases.get(pool.token1.address.toLowerCase())
       if (total1) {
         const current = pool.getTotal1()
-        if (!total1.elastic.eq(current.elastic) || !total1.base.eq(current.base)) {
+        if (total1.elastic !== current.elastic || total1.base !== current.base) {
           pool.updateTotal1(total1)
         }
       }
       const res0 = reserves?.[i]?.result?.[0]
       const res1 = reserves?.[i]?.result?.[1]
 
-      const res0BN = BigNumber.from(res0)
-      const res1BN = BigNumber.from(res1)
       if (!res0 || !res1) {
         return
       }
 
-      pool.updateReservesAmounts(res0BN, res1BN)
+      pool.updateReservesAmounts(res0, res1)
       // Always updating because reserve0 and 1 is being converted to amount and adjusted to wei using realReservesToAdjusted()
       // but the res0 and res1 are not adjusted.
     })

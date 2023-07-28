@@ -1,4 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber'
 import { Token } from '@sushiswap/currency'
 import { findSingleRouteExactIn as TinesFindSingleRouteExactIn, MultiRoute, RToken } from '@sushiswap/tines'
 
@@ -9,7 +8,7 @@ import { convertPoolOrPairtoRPool } from './convertPoolOrPairtoRPool'
 export function findSingleRouteExactIn(
   from: Token,
   to: Token,
-  amountIn: BigNumber | number,
+  amountIn: bigint | number,
   pools: (Pool | Pair)[],
   baseToken: Token,
   gasPrice: number

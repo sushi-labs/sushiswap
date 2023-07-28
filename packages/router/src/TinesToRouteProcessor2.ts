@@ -1,6 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
 import { MultiRoute, RouteLeg, RouteStatus, RToken } from '@sushiswap/tines'
-import { BigNumber } from 'ethers'
 
 import { HEXer } from './HEXer'
 import { PoolCode } from './pools/PoolCode'
@@ -12,16 +11,16 @@ export enum TokenType {
 }
 
 export interface PermitData {
-  value: BigNumber
-  deadline: BigNumber
+  value: bigint
+  deadline: bigint
   v: number
   r: string
   s: string
 }
 
 export function getTokenType(token: RToken): TokenType {
-  if (token.address == '') return TokenType.NATIVE
-  return typeof token.chainId == 'string' && token.chainId.startsWith('Bento') ? TokenType.BENTO : TokenType.ERC20
+  if (token.address === '') return TokenType.NATIVE
+  return typeof token.chainId === 'string' && token.chainId.startsWith('Bento') ? TokenType.BENTO : TokenType.ERC20
 }
 
 export class TinesToRouteProcessor2 {
@@ -39,7 +38,7 @@ export class TinesToRouteProcessor2 {
 
   getRouteProcessorCode(route: MultiRoute, toAddress: string, permits: PermitData[] = []): string {
     // 0. Check for no route
-    if (route.status == RouteStatus.NoWay || route.legs.length == 0) return ''
+    if (route.status === RouteStatus.NoWay || route.legs.length === 0) return ''
 
     //this.presendedLegs = new Set()
     this.calcTokenOutputLegs(route)
@@ -54,12 +53,12 @@ export class TinesToRouteProcessor2 {
       processedTokens.add(token.tokenId)
 
       if (i > 0) {
-        if (token.address === '') throw new Error('unexpected native inside the route: ' + token.symbol)
+        if (token.address === '') throw new Error(`unexpected native inside the route: ${token.symbol}`)
         if (this.isOnePoolOptimization(token, route)) res += this.processOnePoolCode(token, route, toAddress)
-        else if (getTokenType(token) == TokenType.ERC20) res += this.processERC20Code(true, token, route, toAddress)
+        else if (getTokenType(token) === TokenType.ERC20) res += this.processERC20Code(true, token, route, toAddress)
         else res += this.processBentoCode(token, route, toAddress)
       } else {
-        if (token.address == '') res += this.processNativeCode(token, route, toAddress)
+        if (token.address === '') res += this.processNativeCode(token, route, toAddress)
         else res += this.processERC20Code(false, token, route, toAddress)
       }
     })
@@ -84,7 +83,7 @@ export class TinesToRouteProcessor2 {
   processNativeCode(token: RToken, route: MultiRoute, toAddress: string): string {
     const outputLegs = this.tokenOutputLegs.get(token.tokenId as string)
     if (!outputLegs || outputLegs.length !== 1) {
-      throw new Error('Not 1 output pool for native token: ' + outputLegs?.length)
+      throw new Error(`Not 1 output pool for native token: ${outputLegs?.length}`)
     }
 
     const hex = new HEXer()
@@ -99,8 +98,8 @@ export class TinesToRouteProcessor2 {
 
   processERC20Code(fromMe: boolean, token: RToken, route: MultiRoute, toAddress: string): string {
     const outputLegs = this.tokenOutputLegs.get(token.tokenId as string)
-    if (!outputLegs || outputLegs.length == 0) {
-      throw new Error('No output legs for token ' + token.symbol)
+    if (!outputLegs || outputLegs.length === 0) {
+      throw new Error(`No output legs for token ${token.symbol}`)
     }
 
     const hex = new HEXer()
@@ -116,8 +115,8 @@ export class TinesToRouteProcessor2 {
 
   processOnePoolCode(token: RToken, route: MultiRoute, toAddress: string): string {
     const outputLegs = this.tokenOutputLegs.get(token.tokenId as string)
-    if (!outputLegs || outputLegs.length != 1) {
-      throw new Error('1 output leg expected ' + outputLegs?.length)
+    if (!outputLegs || outputLegs.length !== 1) {
+      throw new Error(`1 output leg expected ${outputLegs?.length}`)
     }
 
     const hex = new HEXer()
@@ -129,8 +128,8 @@ export class TinesToRouteProcessor2 {
 
   processBentoCode(token: RToken, route: MultiRoute, toAddress: string): string {
     const outputLegs = this.tokenOutputLegs.get(token.tokenId as string)
-    if (!outputLegs || outputLegs.length == 0) {
-      throw new Error('No output legs for token ' + outputLegs?.length)
+    if (!outputLegs || outputLegs.length === 0) {
+      throw new Error(`No output legs for token ${outputLegs?.length}`)
     }
 
     const hex = new HEXer()
@@ -153,11 +152,11 @@ export class TinesToRouteProcessor2 {
   getPoolOutputAddress(l: RouteLeg, route: MultiRoute, toAddress: string): string {
     let outAddress
     const outputDistribution = this.tokenOutputLegs.get(l.tokenTo.tokenId as string) || []
-    if (outputDistribution.length == 0) {
+    if (outputDistribution.length === 0) {
       outAddress = toAddress
-    } else if (outputDistribution.length == 1) {
+    } else if (outputDistribution.length === 1) {
       outAddress = this.getPoolCode(outputDistribution[0]).getStartPoint(l, route)
-      if (outAddress == PoolCode.RouteProcessorAddress) outAddress = this.routeProcessorAddress
+      if (outAddress === PoolCode.RouteProcessorAddress) outAddress = this.routeProcessorAddress
       //else this.presendedLegs.add(outputDistribution[0])
     } else {
       outAddress = this.routeProcessorAddress
@@ -167,10 +166,10 @@ export class TinesToRouteProcessor2 {
 
   isOnePoolOptimization(token: RToken, route: MultiRoute) {
     const outputDistribution = this.tokenOutputLegs.get(token.tokenId as string) || []
-    if (outputDistribution.length != 1) return false
+    if (outputDistribution.length !== 1) return false
 
     const startPoint = this.getPoolCode(outputDistribution[0]).getStartPoint(outputDistribution[0], route)
-    return startPoint == outputDistribution[0].poolAddress
+    return startPoint === outputDistribution[0].poolAddress
   }
 
   getPoolCode(l: RouteLeg): PoolCode {

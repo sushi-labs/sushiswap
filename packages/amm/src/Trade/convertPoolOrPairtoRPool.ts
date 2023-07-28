@@ -1,4 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber'
 import { Token } from '@sushiswap/currency'
 import { ConstantProductRPool, RPool, RToken, StableSwapRPool } from '@sushiswap/tines'
 
@@ -28,8 +27,8 @@ export function convertPoolOrPairtoRPool(pool: Pool | Pair, convertTokensToBento
       pool.token0 as RToken,
       pool.token1 as RToken,
       Fee.DEFAULT / 10000,
-      BigNumber.from(pool.reserve0.quotient.toString()),
-      BigNumber.from(pool.reserve1.quotient.toString())
+      BigInt(pool.reserve0.quotient.toString()),
+      BigInt(pool.reserve1.quotient.toString())
     )
   } else if (pool instanceof ConstantProductPool) {
     return new ConstantProductRPool(
@@ -39,8 +38,8 @@ export function convertPoolOrPairtoRPool(pool: Pool | Pair, convertTokensToBento
       // pool.assets[0].wrapped as RToken,
       // pool.assets[1].wrapped as RToken,
       pool.fee / 10000,
-      BigNumber.from(pool.reserves[0].quotient.toString()),
-      BigNumber.from(pool.reserves[1].quotient.toString())
+      BigInt(pool.reserves[0].quotient.toString()),
+      BigInt(pool.reserves[1].quotient.toString())
     )
   } else if (pool instanceof StablePool) {
     return new StableSwapRPool(
@@ -50,7 +49,7 @@ export function convertPoolOrPairtoRPool(pool: Pool | Pair, convertTokensToBento
       convertTokensToBento ? convertTokenToBento(pool.token0.wrapped) : (pool.token0 as RToken),
       convertTokensToBento ? convertTokenToBento(pool.token1.wrapped) : (pool.token1 as RToken),
       pool.fee / 10000,
-      BigNumber.from(
+      BigInt(
         pool.reserve0
           .toShare({
             elastic: pool.total0.elastic,
@@ -58,7 +57,7 @@ export function convertPoolOrPairtoRPool(pool: Pool | Pair, convertTokensToBento
           })
           .quotient.toString()
       ),
-      BigNumber.from(
+      BigInt(
         pool.reserve1
           .toShare({
             elastic: pool.total1.elastic,
@@ -71,12 +70,12 @@ export function convertPoolOrPairtoRPool(pool: Pool | Pair, convertTokensToBento
       pool.token0.decimals,
       pool.token1.decimals,
       {
-        elastic: BigNumber.from(pool.total0.elastic.toString()),
-        base: BigNumber.from(pool.total0.base.toString()),
+        elastic: BigInt(pool.total0.elastic.toString()),
+        base: BigInt(pool.total0.base.toString()),
       },
       {
-        elastic: BigNumber.from(pool.total1.elastic.toString()),
-        base: BigNumber.from(pool.total1.base.toString()),
+        elastic: BigInt(pool.total1.elastic.toString()),
+        base: BigInt(pool.total1.base.toString()),
       }
     )
   } else {
