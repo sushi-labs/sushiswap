@@ -51,6 +51,7 @@
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/client": "workspace:*",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/database": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/types": "workspace:*",
@@ -60,6 +61,7 @@
     "ethers": "5.7.2",
     "idb-keyval": "6.2.0",
     "nanoid": "4.0.0",
+    "viem": "1.4.1",
     "zod": "3.21.4"
   },
   "devDependencies": {
