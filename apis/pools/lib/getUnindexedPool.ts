@@ -2,15 +2,15 @@ import { constantProductPoolAbi, uniswapV2PairAbi, v3baseAbi } from '@sushiswap/
 import { Protocol } from '@sushiswap/database'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import type { Address, FetchTokenResult } from '@wagmi/core'
-import { configureChains, createClient, fetchToken, readContracts } from '@wagmi/core'
+import { configureChains, createConfig, fetchToken, readContracts } from '@wagmi/core'
 
 import type { getEarnPool } from './api/index.js'
 
-const { provider } = configureChains(allChains, allProviders)
+const { publicClient } = configureChains(allChains, allProviders)
 
-createClient({
+createConfig({
   autoConnect: true,
-  provider,
+  publicClient,
 })
 
 interface GetPoolArgs {
@@ -63,7 +63,7 @@ async function getTridentPool({ chainId, address, protocol }: GetPoolArgs): Prom
     tokens: [token0, token1],
     totalSupply: totalSupply.toString(),
     // 30 => 0.003%
-    swapFee: swapFee.toNumber() / 10000,
+    swapFee: Number(swapFee) / 10000,
     twapEnabled: true,
     protocol,
   }

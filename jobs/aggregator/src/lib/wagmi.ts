@@ -1,5 +1,5 @@
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
-import { configureChains, createClient } from '@wagmi/core'
+import { configureChains, createConfig } from '@wagmi/core'
 
 const alchemyId = process.env['ALCHEMY_ID']
 
@@ -7,9 +7,9 @@ if (!alchemyId) {
   throw Error('NO ALCHEMY ID SET')
 }
 
-const { provider } = configureChains(allChains, allProviders)
+const { publicClient } = configureChains(allChains, allProviders)
 
-createClient({
+createConfig({
   autoConnect: true,
-  provider,
+  publicClient,
 })

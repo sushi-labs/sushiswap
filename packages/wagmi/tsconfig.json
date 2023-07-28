@@ -4,6 +4,7 @@
   "exclude": ["dist", "node_modules"],
   "compilerOptions": {
     "declaration": false,
-    "declarationMap": false
+    "declarationMap": false,
+    "target": "ES2020"
    }
 }

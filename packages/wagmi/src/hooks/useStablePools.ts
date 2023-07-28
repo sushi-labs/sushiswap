@@ -1,9 +1,7 @@
 import { computeStablePoolAddress, Fee, StablePool } from '@sushiswap/amm'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Currency, Token, Type } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
 import { isStablePoolFactoryChainId } from '@sushiswap/trident-core'
-import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
 
@@ -12,15 +10,15 @@ import { useBentoBoxTotals } from './useBentoBoxTotals'
 import { useStablePoolFactoryContract } from './useStablePoolFactoryContract'
 
 export enum StablePoolState {
-  LOADING,
-  NOT_EXISTS,
-  EXISTS,
-  INVALID,
+  LOADING = 'Loading',
+  NOT_EXISTS = 'Not Exists',
+  EXISTS = 'Exists',
+  INVALID = 'Invalid',
 }
 
 interface Rebase {
-  base: JSBI
-  elastic: JSBI
+  base: bigint
+  elastic: bigint
 }
 
 type PoolInput = [Type | undefined, Type | undefined, Fee, boolean, Rebase, Rebase]
@@ -76,25 +74,21 @@ export function useGetStablePools(
       chainId,
       address: contract?.address as Address,
       abi: stablePoolFactoryAbi,
-      functionName: 'poolsCount',
+      functionName: 'poolsCount' as const,
       args: el as [Address, Address],
     })),
     enabled: Boolean(pairsUniqueAddr.length > 0 && config?.enabled),
     watch: !config?.enabled,
+    select: (data) => data?.map((r) => r.result),
   })
 
   const callStatePoolsCountProcessed = useMemo(() => {
     return callStatePoolsCount
-      ?.map((s, i) => [i, s ? parseInt(s.toString()) : 0] as [number, number])
+      ?.map((s, i) => [i, s ? Number(s) : 0] as [number, number])
       .filter(([, length]) => length)
       .map(
         ([i, length]) =>
-          [
-            pairsUniqueAddr[i][0] as Address,
-            pairsUniqueAddr[i][1] as Address,
-            BigNumber.from(0),
-            BigNumber.from(length),
-          ] as const
+          [pairsUniqueAddr[i][0] as Address, pairsUniqueAddr[i][1] as Address, 0n, BigInt(length)] as const
       )
   }, [callStatePoolsCount, pairsUniqueAddr])
 
@@ -116,21 +110,20 @@ export function useGetStablePools(
         chainId,
         address: contract?.address as Address,
         abi: stablePoolFactoryAbi,
-        functionName: 'getPools',
+        functionName: 'getPools' as const,
         args,
       }))
     }, [callStatePoolsCountProcessed, chainId, contract?.address]),
     enabled: Boolean(callStatePoolsCountProcessed && callStatePoolsCountProcessed?.length > 0 && config?.enabled),
     watch: !config?.enabled,
+    select: (data) => data?.map((r) => r.result),
   })
 
   const pools = useMemo(() => {
     const pools: PoolData[] = []
     callStatePools?.forEach((s, i) => {
-      //       console.log({s})
-      // if (s !== undefined)
       if (s)
-        s.forEach((address) =>
+        s?.forEach((address) =>
           pools.push({
             address,
             token0: pairsUniqueProcessed?.[i][0] as Token,
@@ -152,10 +145,11 @@ export function useGetStablePools(
       chainId,
       address: address as Address,
       abi: stablePoolAbi,
-      functionName: 'getReserves',
+      functionName: 'getReserves' as const,
     })),
     enabled: poolsAddresses.length > 0 && config?.enabled,
     watch: !config?.enabled,
+    select: (data) => data?.map((r) => (r.result ? { reserve0: r.result[0], reserve1: r.result[1] } : undefined)),
   })
 
   const {
@@ -167,10 +161,11 @@ export function useGetStablePools(
       chainId,
       address: address as Address,
       abi: stablePoolAbi,
-      functionName: 'swapFee',
+      functionName: 'swapFee' as const,
     })),
     enabled: poolsAddresses.length > 0 && config?.enabled,
     watch: !config?.enabled,
+    select: (data) => data?.map((r) => r.result),
   })
 
   const totals = useBentoBoxTotals(chainId, tokensUnique)
@@ -180,20 +175,23 @@ export function useGetStablePools(
       isLoading: callStatePoolsCountLoading || callStatePoolsLoading || reservesLoading || feesLoading,
       isError: callStatePoolsCountError || callStatePoolsError || reservesError || feesError,
       data: pools.map((p, i) => {
+        const _reserves = reserves?.[i]
+
         if (
-          !reserves?.[i] ||
+          !_reserves ||
           !fees?.[i] ||
           !totals ||
           !(p.token0.wrapped.address in totals) ||
           !(p.token1.wrapped.address in totals)
-        )
+        ) {
           return [StablePoolState.LOADING, null]
+        }
         return [
           StablePoolState.EXISTS,
           new StablePool(
-            Amount.fromRawAmount(p.token0, reserves[i]._reserve0.toString()),
-            Amount.fromRawAmount(p.token1, reserves[i]._reserve1.toString()),
-            parseInt(fees[i].toString()),
+            Amount.fromRawAmount(p.token0, _reserves.reserve0),
+            Amount.fromRawAmount(p.token1, _reserves.reserve1),
+            Number(fees[i]),
             totals[p.token0.wrapped.address],
             totals[p.token1.wrapped.address]
           ),
@@ -270,11 +268,12 @@ export function useStablePools(chainId: number, pools: PoolInput[]): [StablePool
       chainId,
       address: address as Address,
       abi: stablePoolAbi,
-      functionName: 'getReserves',
+      functionName: 'getReserves' as const,
     })),
     enabled: poolsAddresses.length > 0 && isStablePoolFactoryChainId(chainId),
     watch: true,
     keepPreviousData: true,
+    select: (data) => data?.map((r) => r.result),
   })
 
   return useMemo(() => {
@@ -314,8 +313,8 @@ export function useStablePool(
   fee: Fee,
   twap: boolean,
   // TODO: Change this, just to satify TS for now
-  total0: Rebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) },
-  total1: Rebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) }
+  total0: Rebase = { base: 0n, elastic: 0n },
+  total1: Rebase = { base: 0n, elastic: 0n }
 ): [StablePoolState, StablePool | null] {
   const inputs: [PoolInput] = useMemo(
     () => [[tokenA, tokenB, Number(fee), Boolean(twap), total0, total1]],

@@ -1,7 +1,11 @@
-
+import { Pair } from '@sushiswap/amm'
 import { Amount, Token, Type as Currency, Type } from '@sushiswap/currency'
-import { SUSHISWAP_V2_FACTORY_ADDRESS, isSushiSwapV2ChainId, SushiSwapV2ChainId, computePairAddress } from '@sushiswap/v2-sdk'
-import { Pair } from "@sushiswap/amm"
+import {
+  computePairAddress,
+  isSushiSwapV2ChainId,
+  SUSHISWAP_V2_FACTORY_ADDRESS,
+  SushiSwapV2ChainId,
+} from '@sushiswap/v2-sdk'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
 
@@ -10,10 +14,10 @@ import { uniswapV2PairAbi } from '../abis'
 type UseContractReadsConfig = Parameters<typeof useContractReads>['0']
 
 export enum PairState {
-  LOADING,
-  NOT_EXISTS,
-  EXISTS,
-  INVALID,
+  LOADING = 'Loading',
+  NOT_EXISTS = 'Not Exists',
+  EXISTS = 'Exists',
+  INVALID = 'Invalid',
 }
 
 export function getPairs(
@@ -71,7 +75,8 @@ export function usePairs(
   const { data, isLoading, isError } = useContractReads({
     contracts: contracts,
     enabled: config?.enabled !== undefined ? config.enabled && contracts.length > 0 : contracts.length > 0,
-    watch: !(typeof config?.enabled !== undefined && !config?.enabled),
+    watch: !(typeof config?.enabled !== 'undefined' && !config?.enabled),
+    select: (results) => results.map((r) => r.result),
   })
   return useMemo(() => {
     if (contracts.length === 0) return { isLoading, isError, data: [[PairState.INVALID, null]] }

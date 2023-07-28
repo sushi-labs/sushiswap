@@ -14,6 +14,11 @@ interface Rebase {
   base: JSBI
 }
 
+interface RebaseBigInt {
+  elastic: bigint
+  base: bigint
+}
+
 export class StablePool implements Pool {
   public readonly liquidityToken: Token
   public readonly swapGasCost = JSBI.BigInt(60000)
@@ -35,7 +40,13 @@ export class StablePool implements Pool {
     })
   }
 
-  public constructor(amountA: Amount<Token>, amountB: Amount<Token>, fee: Fee, total0: Rebase, total1: Rebase) {
+  public constructor(
+    amountA: Amount<Token>,
+    amountB: Amount<Token>,
+    fee: Fee,
+    total0: Rebase | RebaseBigInt,
+    total1: Rebase | RebaseBigInt
+  ) {
     const tokenAmounts = amountA.currency.sortsBefore(amountB.currency) // does safety checks
       ? [amountA, amountB]
       : [amountB, amountA]
@@ -55,8 +66,15 @@ export class StablePool implements Pool {
     this.decimals0 = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(this.tokenAmounts[0].currency.decimals))
     this.decimals1 = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(this.tokenAmounts[1].currency.decimals))
 
-    this.total0 = total0
-    this.total1 = total1
+    this.total0 = {
+      elastic: JSBI.BigInt(total0.elastic.toString()),
+      base: JSBI.BigInt(total0.base.toString()),
+    }
+
+    this.total1 = {
+      elastic: JSBI.BigInt(total1.elastic.toString()),
+      base: JSBI.BigInt(total1.base.toString()),
+    }
   }
 
   /**

@@ -20,7 +20,6 @@ import {
 import { TICK_SPACINGS } from '@sushiswap/v3-sdk'
 import { Address, readContracts } from '@wagmi/core'
 import { fetchBlockNumber } from '@wagmi/core'
-import { BigNumber } from 'ethers'
 import { isAddress } from 'ethers/lib/utils.js'
 import { performance } from 'perf_hooks'
 
@@ -160,7 +159,9 @@ async function transform(chainId: ChainId, pools: Pool[]) {
   console.log(`ChainId ${chainId} got block number: ${blockNumber}. `)
   const rebases = isBentoBoxV1ChainId(chainId) ? await fetchRebases(stablePools, chainId, blockNumber) : undefined
 
-  const constantProductPoolIds = pools.filter((p) => p.protocol === Protocol.BENTOBOX_CLASSIC || p.protocol === Protocol.SUSHISWAP_V2).map((p) => p.id)
+  const constantProductPoolIds = pools
+    .filter((p) => p.protocol === Protocol.BENTOBOX_CLASSIC || p.protocol === Protocol.SUSHISWAP_V2)
+    .map((p) => p.id)
   const stablePoolIds = stablePools.map((p) => p.id)
   const concentratedLiquidityPools = pools.filter((p) => p.protocol === Protocol.SUSHISWAP_V3)
 
@@ -253,7 +254,7 @@ async function transform(chainId: ChainId, pools: Pool[]) {
   return { rPools, tokens }
 }
 
-async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId, blockNumber: number) {
+async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId, blockNumber: bigint) {
   const sortedTokens = poolsToUniqueTokens(pools)
 
   const totals = await readContracts({
@@ -266,9 +267,9 @@ async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId, blockNumb
           chainId: chainId,
           abi: totalsAbi,
           functionName: 'totals',
-          blockNumber,
         } as const)
     ),
+    blockNumber,
   })
 
   const rebases: Map<string, Rebase> = new Map()
@@ -335,19 +336,29 @@ async function fetchV3Info(pools: Pool[], chainId: ChainId, blockNumber: number)
   ])
   const poolInfo: Map<string, V3PoolInfo> = new Map()
   pools.forEach((pool, i) => {
-    const _slot0 = slot0[i]
-    const _liquidity = liquidity[i]
+    const _slot0 = slot0[i].result
+    const _liquidity = liquidity[i].result
     if (_slot0 && _liquidity) {
+      const [
+        sqrtPriceX96,
+        tick,
+        observationIndex,
+        observationCardinality,
+        observationCardinalityNext,
+        feeProtocol,
+        unlocked,
+      ] = _slot0
+
       poolInfo.set(pool.address, {
         address: pool.address,
         liquidity: _liquidity,
-        sqrtPriceX96: _slot0.sqrtPriceX96,
-        tick: _slot0.tick,
-        observationIndex: _slot0.observationIndex,
-        observationCardinality: _slot0.observationCardinality,
-        observationCardinalityNext: _slot0.observationCardinalityNext,
-        feeProtocol: _slot0.feeProtocol,
-        unlocked: _slot0.unlocked,
+        sqrtPriceX96: sqrtPriceX96,
+        tick: tick,
+        observationIndex: observationIndex,
+        observationCardinality: observationCardinality,
+        observationCardinalityNext: observationCardinalityNext,
+        feeProtocol: feeProtocol,
+        unlocked: unlocked,
       })
     }
   })
@@ -436,8 +447,8 @@ interface Pool {
 
 interface V3PoolInfo {
   address: string
-  liquidity: BigNumber
-  sqrtPriceX96: BigNumber
+  liquidity: bigint
+  sqrtPriceX96: bigint
   tick: number
   observationIndex: number
   observationCardinality: number

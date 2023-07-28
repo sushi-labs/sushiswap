@@ -1,9 +1,9 @@
+import { uniswapV2RouterAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { SUSHISWAP_V2_ROUTER_ADDRESS, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { uniswapV2RouterAbi } from "@sushiswap/abi"
-import { getContract } from '@wagmi/core'
 import { useMemo } from 'react'
-import { useProvider, useSigner } from 'wagmi'
+import { usePublicClient, useWalletClient } from 'wagmi'
+import { getContract } from 'wagmi/actions'
 
 export const getSushiSwapKlimaRouterContractConfig = (chainId: typeof ChainId.POLYGON) => ({
   address: '0x85B5cc3ec95AE5D0b02E7c17e53F97C4B02a78e4',
@@ -16,14 +16,14 @@ export const getSushiSwapRouterContractConfig = (chainId: SushiSwapV2ChainId) =>
 })
 
 export function useSushiSwapRouterContract(chainId: SushiSwapV2ChainId | undefined) {
-  const provider = useProvider({ chainId })
-  const { data: signer } = useSigner({ chainId })
+  const publicClient = usePublicClient({ chainId })
+  const walletClient = useWalletClient({ chainId })
 
   return useMemo(() => {
     if (!chainId) return null
 
-    return getContract({ ...getSushiSwapRouterContractConfig(chainId), signerOrProvider: signer ?? provider })
-  }, [chainId, provider, signer])
+    return getContract({ ...getSushiSwapRouterContractConfig(chainId), walletClient: walletClient ?? publicClient })
+  }, [chainId, publicClient, walletClient])
 }
 
 export type SushiSwapRouter = NonNullable<ReturnType<typeof useSushiSwapRouterContract>>

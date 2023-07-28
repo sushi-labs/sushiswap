@@ -6,15 +6,15 @@ import { ChainId, chainName } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { JSBI, ZERO } from '@sushiswap/math'
-import { getBentoBoxContractConfig } from '../useBentoBoxContract'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { Address, erc20ABI, useBalance as useWagmiBalance, useContractReads } from 'wagmi'
 
+import { getBentoBoxContractConfig } from '../useBentoBoxContract'
 import { BalanceMap } from './types'
 
 type UseBalancesParams = {
-  account: string | undefined
+  account: Address | undefined
   currencies: (Type | undefined)[]
   chainId?: number
   enabled?: boolean
@@ -68,12 +68,14 @@ export const useBalances: UseBalances = ({
   )
 
   const contracts = useMemo(() => {
+    if (!account) return []
+
     const input = validatedTokenAddresses.map((token) => {
       return {
         chainId,
         address: token[0] as Address,
         abi: erc20ABI,
-        functionName: 'balanceOf',
+        functionName: 'balanceOf' as const,
         args: [account],
       }
     })
@@ -89,7 +91,7 @@ export const useBalances: UseBalances = ({
         chainId,
         ...getBentoBoxContractConfig(chainId),
         abi: bentoBoxV1Abi,
-        functionName: 'totals',
+        functionName: 'totals' as const,
         args: token,
       }))
 
@@ -97,7 +99,7 @@ export const useBalances: UseBalances = ({
         chainId,
         ...getBentoBoxContractConfig(chainId),
         abi: bentoBoxV1Abi,
-        functionName: 'balanceOf',
+        functionName: 'balanceOf' as const,
         args: [validatedTokenAddresses[i][0], account],
       }))
 
@@ -183,7 +185,7 @@ export const useBalances: UseBalances = ({
 }
 
 type UseBalanceParams = {
-  account: string | undefined
+  account: Address | undefined
   currency: Type | undefined
   chainId?: ChainId
   enabled?: boolean

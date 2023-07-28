@@ -1,17 +1,16 @@
 import { constantProductPoolAbi, constantProductPoolFactoryAbi } from '@sushiswap/abi'
 import { computeConstantProductPoolAddress, ConstantProductPool, Fee } from '@sushiswap/amm'
 import { Amount, Currency, Token } from '@sushiswap/currency'
-import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
 
 import { useConstantProductPoolFactoryContract } from './useConstantProductPoolFactoryContract'
 
 export enum ConstantProductPoolState {
-  LOADING,
-  NOT_EXISTS,
-  EXISTS,
-  INVALID,
+  LOADING = 'Loading',
+  NOT_EXISTS = 'Not Exists',
+  EXISTS = 'Exists',
+  INVALID = 'Invalid',
 }
 
 type PoolInput = [Currency | undefined, Currency | undefined, Fee, boolean]
@@ -79,12 +78,7 @@ export function useGetConstantProductPools(
         .filter(([, length]) => length)
         .map(
           ([i, length]) =>
-            [
-              pairsUniqueAddr[i][0] as Address,
-              pairsUniqueAddr[i][1] as Address,
-              BigNumber.from(0),
-              BigNumber.from(length),
-            ] as const
+            [pairsUniqueAddr[i][0] as Address, pairsUniqueAddr[i][1] as Address, 0n, BigInt(length)] as const
         ) ?? []
     )
   }, [callStatePoolsCount, pairsUniqueAddr])
@@ -107,13 +101,14 @@ export function useGetConstantProductPools(
         chainId,
         address: contract?.address as Address,
         abi: constantProductPoolFactoryAbi,
-        functionName: 'getPools',
+        functionName: 'getPools' as const,
         args,
       }))
     }, [callStatePoolsCountProcessed, chainId, contract?.address]),
 
     enabled: Boolean(callStatePoolsCountProcessed && callStatePoolsCountProcessed?.length > 0 && config?.enabled),
     watch: !config?.enabled,
+    select: (results) => results.map((r) => r.result),
   })
 
   const pools = useMemo(() => {
@@ -156,6 +151,7 @@ export function useGetConstantProductPools(
     contracts,
     enabled: poolsAddresses.length > 0 && config?.enabled,
     watch: !config?.enabled,
+    select: (results) => results.map((r) => r.result),
   })
 
   return useMemo(() => {
@@ -163,17 +159,24 @@ export function useGetConstantProductPools(
       isLoading: callStatePoolsCountLoading || callStatePoolsLoading || reservesAndFeesLoading,
       isError: callStatePoolsCountError || callStatePoolsError || reservesAndFeesError,
       data: pools.map((p, i) => {
-        if (!reservesAndFees?.[i] || !reservesAndFees?.[i + poolsAddresses.length]) {
+        const _reserves = reservesAndFees?.[i]
+        const _swapFee = reservesAndFees?.[i + poolsAddresses.length]
+
+        if (!_reserves || !_swapFee) {
           return [ConstantProductPoolState.LOADING, null]
         }
 
-        const reserves = reservesAndFees[i] as {
-          _reserve0: BigNumber
-          _reserve1: BigNumber
-          _blockTimestampLast: number
+        if (typeof _reserves === 'bigint' || typeof _swapFee !== 'bigint') {
+          return [ConstantProductPoolState.LOADING, null]
         }
 
-        const swapFee = reservesAndFees[i + poolsAddresses.length]
+        const reserves = {
+          _reserve0: _reserves[0],
+          _reserve1: _reserves[1],
+          _blockTimestampLast: _reserves[2],
+        }
+
+        const swapFee = _swapFee
 
         return [
           ConstantProductPoolState.EXISTS,
@@ -247,16 +250,17 @@ export function useConstantProductPools(
     [constantProductPoolFactory, input]
   )
 
-  const { data, isLoading, isError } = useContractReads({
+  const { data } = useContractReads({
     contracts: poolsAddresses.map((address) => ({
       chainId,
       address,
       abi: constantProductPoolAbi,
-      functionName: 'getReserves',
+      functionName: 'getReserves' as const,
     })),
     enabled: poolsAddresses.length > 0,
     watch: true,
     keepPreviousData: true,
+    select: (results) => results.map((r) => r.result),
   })
 
   return useMemo(() => {
@@ -275,8 +279,8 @@ export function useConstantProductPools(
       return [
         ConstantProductPoolState.EXISTS,
         new ConstantProductPool(
-          Amount.fromRawAmount(token0, BigNumber.from(reserve0).toString()),
-          Amount.fromRawAmount(token1, BigNumber.from(reserve1).toString()),
+          Amount.fromRawAmount(token0, reserve0),
+          Amount.fromRawAmount(token1, reserve1),
           fee,
           twap
         ),

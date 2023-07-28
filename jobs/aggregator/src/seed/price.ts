@@ -223,9 +223,9 @@ async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId) {
 
   const rebases: Map<string, Rebase> = new Map()
   sortedTokens.forEach((t, i) => {
-    const total = totals[i]
-    if (total === undefined || total === null) return
-    rebases.set(t.address, total)
+    if (totals[i].error) return
+    const [base, elastic] = totals[i].result
+    rebases.set(t.address, { base: BigNumber.from(base), elastic: BigNumber.from(elastic) })
   })
   return rebases
 }

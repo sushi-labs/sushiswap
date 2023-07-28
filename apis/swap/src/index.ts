@@ -261,7 +261,7 @@ const start = async () => {
         createPublicClient({
           chain: polygon,
           transport: fallback([
-            http(polygon.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+            http(`${polygon.rpcUrls.alchemy.http}/${process.env.ALCHEMY_ID}`),
             http('https://polygon.llamarpc.com'),
           ]),
         }),
@@ -275,7 +275,7 @@ const start = async () => {
         createPublicClient({
           chain: arbitrum,
           transport: fallback([
-            http(arbitrum.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+            http(`${arbitrum.rpcUrls.alchemy.http}/${process.env.ALCHEMY_ID}`),
             // http(optimism.rpcUrls.default.http[0]),
             http('https://rpc.ankr.com/arbitrum'),
           ]),
@@ -290,11 +290,11 @@ const start = async () => {
         createPublicClient({
           chain: optimism,
           transport: fallback([
-            http(optimism.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+            http(`${optimism.rpcUrls.alchemy.http}/${process.env.ALCHEMY_ID}`),
             // http(optimism.rpcUrls.default.http[0]),
             http('https://rpc.ankr.com/optimism'),
           ]),
-        }),
+        }) as unknown as PublicClient,
         databaseClient
       )
     )
@@ -305,7 +305,7 @@ const start = async () => {
         createPublicClient({
           chain: celo,
           transport: http(celo.rpcUrls.default.http[0]),
-        }) as PublicClient,
+        }) as unknown as PublicClient,
         databaseClient
       )
     )

@@ -1,9 +1,10 @@
 import {
-  constantProductPoolFactoryAddress,
   constantProductPoolFactoryAbi,
+  constantProductPoolFactoryAddress,
   ConstantProductPoolFactoryChainId,
 } from '@sushiswap/trident-core'
-import { Address, useContract, useProvider } from 'wagmi'
+import { getContract } from 'viem'
+import { Address, usePublicClient } from 'wagmi'
 
 export const getConstantProductPoolFactoryContract = (chainId: number | undefined) => ({
   address: (constantProductPoolFactoryAddress?.[chainId as ConstantProductPoolFactoryChainId] ?? '') as Address,
@@ -11,8 +12,8 @@ export const getConstantProductPoolFactoryContract = (chainId: number | undefine
 })
 
 export function useConstantProductPoolFactoryContract(chainId: number | undefined) {
-  return useContract({
+  return getContract({
     ...getConstantProductPoolFactoryContract(chainId),
-    signerOrProvider: useProvider({ chainId }),
+    publicClient: usePublicClient({ chainId }),
   })
 }

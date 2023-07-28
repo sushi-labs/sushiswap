@@ -1,6 +1,13 @@
-import { Chain, CreateClientConfig, configureChains } from 'wagmi'
-import { arbitrum, foundry, mainnet, polygon } from 'wagmi/chains'
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
+import { foundry, polygon } from '../src/chains'
+
+const foundryPolygon = {
+  ...polygon,
+  rpcUrls: foundry.rpcUrls,
+} as const
+
+export const testChains = [foundryPolygon]
+export type TestChainId = (typeof testChains)[number]['id']
+
 // Default accounts from Anvil
 export const accounts = [
   {

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, FC, ReactNode, useCallback, useContext, useMemo, useState } from 'react'
-import { Signature } from '@ethersproject/bytes'
+import { Signature } from 'viem'
 
 type CheckerContext = {
   state: Record<string, boolean>

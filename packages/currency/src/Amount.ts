@@ -22,9 +22,12 @@ export class Amount<T extends Type> extends Fraction {
   public static fromShare<T extends Type>(
     currency: T,
     shares: BigintIsh,
-    rebase: { base: JSBI; elastic: JSBI },
+    rebase: { base: JSBI | bigint; elastic: JSBI | bigint },
     roundUp = false
   ): Amount<T> {
+    if (typeof rebase.base === 'bigint') rebase.base = JSBI.BigInt(String(rebase.base))
+    if (typeof rebase.elastic === 'bigint') rebase.elastic = JSBI.BigInt(String(rebase.elastic))
+
     if (JSBI.EQ(rebase.base, ZERO)) return new Amount(currency, shares)
 
     const elastic = JSBI.divide(
@@ -45,7 +48,10 @@ export class Amount<T extends Type> extends Fraction {
     return new Amount(currency, elastic)
   }
 
-  public toShare(rebase: { base: JSBI; elastic: JSBI }, roundUp = false) {
+  public toShare(rebase: { base: JSBI | bigint; elastic: JSBI | bigint }, roundUp = false) {
+    if (typeof rebase.base === 'bigint') rebase.base = JSBI.BigInt(String(rebase.base))
+    if (typeof rebase.elastic === 'bigint') rebase.elastic = JSBI.BigInt(String(rebase.elastic))
+
     if (JSBI.EQ(rebase.elastic, ZERO)) return Share.fromRawShare(this.currency, this.quotient)
 
     const base = JSBI.divide(JSBI.multiply(this.quotient, rebase.base), rebase.elastic)

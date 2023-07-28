@@ -145,7 +145,7 @@ export const useTrade: UseTrade = ({
             BigNumber.from(amountSpecified.quotient.toString()),
             filteredPools.filter((pool): pool is Pair => pool instanceof Pair),
             WNATIVE[amountSpecified.currency.chainId],
-            data.gasPrice.toNumber()
+            Number(data.gasPrice)
           )
 
           const tridentRoute = findMultiRouteExactIn(
@@ -154,7 +154,7 @@ export const useTrade: UseTrade = ({
             BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
             filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
             WNATIVE[amountSpecified.currency.chainId],
-            data.gasPrice.toNumber()
+            Number(data.gasPrice)
           )
 
           const useLegacy = Amount.fromRawAmount(currencyOut.wrapped, legacyRoute.amountOutBN.toString()).greaterThan(
@@ -181,7 +181,7 @@ export const useTrade: UseTrade = ({
           BigNumber.from(amountSpecified.quotient.toString()),
           filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof Pair),
           WNATIVE[amountSpecified.currency.chainId],
-          data.gasPrice.toNumber()
+          Number(data.gasPrice)
         )
 
         if (legacyRoute.status === RouteStatus.Success) {
@@ -202,7 +202,7 @@ export const useTrade: UseTrade = ({
           BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
           filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
           WNATIVE[amountSpecified.currency.chainId],
-          data.gasPrice.toNumber()
+          Number(data.gasPrice)
         )
         if (tridentRoute.status === RouteStatus.Success) {
           return {

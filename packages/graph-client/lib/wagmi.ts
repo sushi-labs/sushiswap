@@ -1,11 +1,11 @@
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
-import { Address, configureChains, createClient, erc20ABI, readContract } from '@wagmi/core'
+import { Address, configureChains, createConfig, erc20ABI, readContract } from '@wagmi/core'
 import { BigNumber } from 'ethers'
 
-const { provider } = configureChains(allChains, allProviders)
+const { publicClient } = configureChains(allChains, allProviders)
 
-createClient({ provider })
+createConfig({ publicClient })
 
 export async function fetchBalances(
   args: { token: string; user: string; chainId: number }[]
