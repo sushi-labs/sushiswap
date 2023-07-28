@@ -108,23 +108,32 @@ export async function useAllCommonPairs(
 }
 export async function getPoolPairs(network: string = 'mainnet') {
   const CONTRACT_ADDRESS = network == 'mainnet' ? MAINNET_CONTRACT : TESTNET_CONTRACT
-  const { token0, token1 } = usePoolState()
+  const { token0, token1, isTransactionPending } = usePoolState()
   const { setPairs, setLoadingPrice, setPoolPairRatio } = usePoolActions()
+  console.log(token0, token1)
   return useMemo(async () => {
     let reserves: any
+    let inverse: boolean = false
     try {
       setLoadingPrice(true)
       await fetch(`https://fullnode.${network}.aptoslabs.com/v1/accounts/${CONTRACT_ADDRESS}/resources`)
         .then((res) => res.json())
         .then((data) => {
           reserves = data.filter((d: any) => {
-            if (
-              d.type.includes('swap::TokenPairReserve') &&
-              d.type.includes(token0.address) &&
-              d.type.includes(token1.address)
-            ) {
+            if (d.type === `${CONTRACT_ADDRESS}::swap::TokenPairReserve<${token0.address}, ${token1.address}>`) {
+              inverse = false
+              return true
+            } else if (d.type === `${CONTRACT_ADDRESS}::swap::TokenPairReserve<${token1.address}, ${token0.address}>`) {
+              inverse = true
               return true
             }
+            // if (
+            //   d.type.includes('swap::TokenPairReserve') &&
+            //   d.type.includes(token0.address) &&
+            //   d.type.includes(token1.address)
+            // ) {
+            //   return true
+            // }
           })
         })
       setLoadingPrice(false)
@@ -133,15 +142,20 @@ export async function getPoolPairs(network: string = 'mainnet') {
     } finally {
       setLoadingPrice(false)
     }
+    console.log(reserves)
     if (reserves && reserves.length) {
       setPairs(reserves[0])
-      setPoolPairRatio(reserves[0]?.data?.reserve_y / reserves[0]?.data?.reserve_x)
+      if (inverse) {
+        setPoolPairRatio(reserves[0]?.data?.reserve_x / reserves[0]?.data?.reserve_y)
+      } else {
+        setPoolPairRatio(reserves[0]?.data?.reserve_y / reserves[0]?.data?.reserve_x)
+      }
     } else {
       setPairs({})
       setPoolPairRatio(0)
     }
     return reserves
-  }, [token0, token1])
+  }, [token0, token1, isTransactionPending])
 }
 
 const exactOutput = (amt_in: number, res_x: number, res_y: number) => {

@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { Layout } from 'components/Layout'
@@ -119,6 +119,7 @@ const _Add: FC = () => {
 
   const { setToken0, setToken1, setAmount0, setAmount1, setisTransactionPending } = usePoolActions()
   const { token0, token1, amount0, amount1, isPriceFetching, poolPairRatio, pairs } = usePoolState()
+  console.log('poolPairRatio', poolPairRatio)
   const { data: balance0, isLoading: isLoadingBalance0 } = useTokenBalance(
     account?.address as string,
     token0,
@@ -132,41 +133,49 @@ const _Add: FC = () => {
   const tradeVal = useRef<HTMLInputElement>(null)
   const tradeVal1 = useRef<HTMLInputElement>(null)
 
-  const onChangeToken0TypedAmount = (value: string) => {
-    PoolInputBalance0(value)
-    setAmount0(value)
-    console.log(pairs)
-    console.log(value, '---', pairs?.data?.reserve_x, pairs?.data?.reserve_y)
-    if (pairs?.data) {
-      if (value) {
-        const reserve_x = pairs?.data?.reserve_x
-        const reserve_y = pairs?.data?.reserve_y
-        setAmount1(String(parseFloat(String(value)) * poolPairRatio))
-        console.log(String(parseFloat(String(value)) * (reserve_y / reserve_x)))
-        console.log(pairs)
-      } else {
-        setAmount1('')
-      }
-    }
-  }
+  const onChangeToken0TypedAmount = useCallback(
+    (value: string) => {
+      console.log(poolPairRatio)
+      PoolInputBalance0(value)
+      setAmount0(value)
+      console.log(pairs)
+      console.log(value, '---', pairs?.data?.reserve_x, pairs?.data?.reserve_y)
+      if (pairs?.data) {
+        if (value) {
+          const reserve_x = pairs?.data?.reserve_x
+          const reserve_y = pairs?.data?.reserve_y
 
-  const onChangeToken1TypedAmount = (value: string) => {
-    PoolInputBalance1(value)
-    setAmount1(value)
-    console.log(pairs)
-    console.log(value, '---', pairs?.data?.reserve_x, pairs?.data?.reserve_y)
-    if (pairs?.data) {
-      if (value) {
-        const reserve_x = pairs?.data?.reserve_x
-        const reserve_y = pairs?.data?.reserve_y
-        setAmount0(String(parseFloat(String(value)) / poolPairRatio))
-        console.log(String(parseFloat(String(value)) * (reserve_x / reserve_y)))
-        console.log(pairs)
-      } else {
-        setAmount0('')
+          setAmount1(String(parseFloat(String(value)) * poolPairRatio))
+          console.log(String(parseFloat(String(value)) * (reserve_y / reserve_x)))
+          console.log(pairs)
+        } else {
+          setAmount1('')
+        }
       }
-    }
-  }
+    },
+    [poolPairRatio]
+  )
+
+  const onChangeToken1TypedAmount = useCallback(
+    (value: string) => {
+      PoolInputBalance1(value)
+      setAmount1(value)
+      console.log(pairs)
+      console.log(value, '---', pairs?.data?.reserve_x, pairs?.data?.reserve_y)
+      if (pairs?.data) {
+        if (value) {
+          const reserve_x = pairs?.data?.reserve_x
+          const reserve_y = pairs?.data?.reserve_y
+          setAmount0(String(parseFloat(String(value)) * poolPairRatio))
+          console.log(String(parseFloat(String(value)) * (reserve_x / reserve_y)))
+          console.log(pairs)
+        } else {
+          setAmount0('')
+        }
+      }
+    },
+    [poolPairRatio]
+  )
   const tokensWithoutKey = getTokensWithoutKey(Number(network?.chainId) || 1)
   useEffect(() => {
     if (network?.name === undefined) {
@@ -180,8 +189,10 @@ const _Add: FC = () => {
 
   useEffect(() => {
     onChangeToken0TypedAmount(String(amount0))
-  }, [account, connected, network, amount0, token0, token1, balance0, poolPairRatio])
-
+  }, [account, connected, network, token0, token1, balance0, poolPairRatio])
+  useEffect(() => {
+    PoolInputBalance1(String(amount1))
+  }, [amount1, token1])
   // useEffect(() => {
   //   onChangeToken1TypedAmount(String(amount1))
   // }, [account, connected, network, amount1, balance1, poolPairRatio])
