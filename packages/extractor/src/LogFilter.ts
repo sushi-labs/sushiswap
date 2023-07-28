@@ -155,9 +155,7 @@ export class LogFilter {
           })
         )
       ).then((logss) => {
-        const logs = logss
-          .reduce((a, b) => a.concat(b), [])
-          .sort((a, b) => Number(a.logIndex || 0) - Number(b.logIndex || 0))
+        const logs = logss.flat().sort((a, b) => Number(a.logIndex || 0) - Number(b.logIndex || 0))
         this.logHashMap.set(block.hash || '', logs)
         this.processNewLogs()
       })
