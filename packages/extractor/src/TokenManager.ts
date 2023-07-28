@@ -95,7 +95,7 @@ export class TokenManager {
       this.addToken(newToken)
       return newToken
     } catch (e) {
-      warnLog(`Token downloading error ${address}`)
+      warnLog(this.client.client.chain?.id, `Token downloading error ${address}`)
       return undefined
     }
   }

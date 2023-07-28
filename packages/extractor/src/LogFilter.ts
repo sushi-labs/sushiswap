@@ -122,7 +122,7 @@ export class LogFilter {
   addBlock(block: Block, isGoal: boolean) {
     const blockNumber = block.number === null ? null : Number(block.number)
     if (blockNumber === null || block.hash === null) {
-      warnLog(`Incorrect block: number=${blockNumber} hash=${block.hash}`)
+      warnLog(this.client.chain?.id, `Incorrect block: number=${blockNumber} hash=${block.hash}`)
       return
     }
     if (isGoal) if (!this.setNewGoal(blockNumber, block)) return
@@ -144,7 +144,7 @@ export class LogFilter {
             this.logHashMap.set(block.hash || '', filteredLogs)
             this.processNewLogs()
           },
-          () => warnLog(`getLog failed for block ${block.hash}`)
+          () => warnLog(this.client.chain?.id, `getLog failed for block ${block.hash}`)
         )
     } else {
       Promise.all(
@@ -194,7 +194,7 @@ export class LogFilter {
     for (let i = 0; i < downLine.length; ++i) {
       const l = this.logHashMap.get(downLine[i].hash || '')
       if (l == undefined) {
-        warnLog('Unexpected Error in LogFilter')
+        warnLog(this.client.chain?.id, 'Unexpected Error in LogFilter')
         this.stop()
         return
       }

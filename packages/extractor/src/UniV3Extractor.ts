@@ -105,11 +105,11 @@ export class UniV3Extractor {
           )
           if (logs.length > 0) this.lastProcessdBlock = Number(logs[logs.length - 1].blockNumber || 0)
         } catch (e) {
-          warnLog(`Block ${blockNumber} log process error: ${e}`)
+          warnLog(this.multiCallAggregator.chainId, `Block ${blockNumber} log process error: ${e}`)
         }
       } else {
         this.logFilter.start()
-        warnLog(`Log collecting failed. Pools refetching`)
+        warnLog(this.multiCallAggregator.chainId, `Log collecting failed. Pools refetching`)
         Array.from(this.poolMap.values()).forEach((p) => p.updatePoolState())
       }
     })
@@ -142,7 +142,10 @@ export class UniV3Extractor {
       })
       cachedPools.forEach((p) => this.addPoolWatching(p, 'cache', false))
       this.consoleLog(`${cachedPools.size} pools were taken from cache`)
-      warnLog(`ExtractorV3 was started (${Math.round(performance.now() - startTime)}ms)`)
+      warnLog(
+        this.multiCallAggregator.chainId,
+        `ExtractorV3 was started (${Math.round(performance.now() - startTime)}ms)`
+      )
     }
   }
 
@@ -155,7 +158,7 @@ export class UniV3Extractor {
       } else this.addPoolByAddress(l.address)
       return 'UnknPool'
     } catch (e) {
-      warnLog(`Log processing for pool ${l.address} throwed an exception ${e}`)
+      warnLog(this.multiCallAggregator.chainId, `Log processing for pool ${l.address} throwed an exception ${e}`)
       return 'Exception!!!'
     }
   }

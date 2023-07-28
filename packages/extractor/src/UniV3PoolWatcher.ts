@@ -155,7 +155,7 @@ export class UniV3PoolWatcher extends EventEmitter {
           break
         }
       } catch (e) {
-        warnLog(`Pool ${this.address} update failed: ` + e)
+        warnLog(this.client.chainId, `Pool ${this.address} update failed: ` + e)
       }
       if (this.busyCounter) this.busyCounter.dec()
       this.updatePoolStateGuard = false

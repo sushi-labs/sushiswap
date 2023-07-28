@@ -1,3 +1,5 @@
+import { ChainId } from '@sushiswap/chain'
+
 function nowDate(): string {
   const d = new Date()
   const year = (d.getFullYear() % 100).toString().padStart(2, '0')
@@ -9,6 +11,6 @@ function nowDate(): string {
   return `${year}-${month}-${day}T${hours}:${min}:${sec}`
 }
 
-export function warnLog(msg: string) {
-  console.warn(`${nowDate()}: ${msg}`)
+export function warnLog(chain: ChainId | number | undefined, msg: string) {
+  console.warn(`${nowDate()}-${chain}: ${msg}`)
 }

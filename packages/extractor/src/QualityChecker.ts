@@ -79,9 +79,9 @@ export class QualityChecker {
           return [undefined, PoolSyncState.Match, 1, 1]
         }
       }
-      warnLog('Quality check timeout error')
+      warnLog(pool.client.chainId, 'Quality check timeout error')
     } catch (e) {
-      warnLog('Quality check error: ' + e)
+      warnLog(pool.client.chainId, 'Quality check error: ' + e)
     }
     return [undefined, PoolSyncState.CheckFailed, 0, 0]
   }

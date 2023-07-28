@@ -147,7 +147,7 @@ export class UniV2Extractor {
         this.consoleLog(`Block ${blockNumber} ${logs.length} logs (${eventInfo}), jobs: ${this.taskCounter.counter}`)
       } else {
         this.logFilter.start()
-        warnLog(`Log collecting failed. Pools refetching`)
+        warnLog(this.multiCallAggregator.chainId, `Log collecting failed. Pools refetching`)
         Array.from(this.poolMap.values()).forEach((pc) => this.updatePoolState(pc))
       }
     })
@@ -186,7 +186,7 @@ export class UniV2Extractor {
           })
         } catch (e) {
           this.taskCounter.dec()
-          warnLog(`Ext2 pool ${r.address} reading from cache failed`)
+          warnLog(this.multiCallAggregator.chainId, `Ext2 pool ${r.address} reading from cache failed`)
           return
         }
         this.taskCounter.dec()
@@ -195,7 +195,10 @@ export class UniV2Extractor {
     this.consoleLog(`${cachedPools.size} pools were taken from cache`)
     await Promise.allSettled(promises)
 
-    warnLog(`ExtractorV2 was started (${Math.round(performance.now() - startTime)}ms)`)
+    warnLog(
+      this.multiCallAggregator.chainId,
+      `ExtractorV2 was started (${Math.round(performance.now() - startTime)}ms)`
+    )
   }
 
   async updatePoolState(poolState: PoolState) {
@@ -218,7 +221,7 @@ export class UniV2Extractor {
       pool.updateReserves(BigNumber.from(reserve0), BigNumber.from(reserve1))
       poolState.status = PoolStatus.ValidPool
     } catch (e) {
-      warnLog(`Ext2 pool ${poolState.poolCode.pool.address} update fail`)
+      warnLog(this.multiCallAggregator.chainId, `Ext2 pool ${poolState.poolCode.pool.address} update fail`)
     }
     this.taskCounter.dec()
   }
@@ -358,7 +361,7 @@ export class UniV2Extractor {
       token1 = tokens[1]
     } catch (e) {
       this.taskCounter.dec()
-      warnLog(`Ext2 add pool ${addr} by log failed`)
+      warnLog(this.multiCallAggregator.chainId, `Ext2 add pool ${addr} by log failed`)
       return
     }
     this.taskCounter.dec()

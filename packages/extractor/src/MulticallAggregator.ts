@@ -146,7 +146,7 @@ export class MultiCallAggregator {
         })
       } catch (e) {
         // warnLog(`Multicall error ${pendingCalls.map((c) => `${c.address}:${c.functionName}(${c.args})`)}\n` + e)
-        warnLog(`Multicall error ` + e)
+        warnLog(this.client.chain?.id, `Multicall error ` + e)
         continue
       }
       break

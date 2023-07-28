@@ -3050,6 +3050,7 @@ importers:
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/v3-sdk': workspace:*
+      '@sushiswap/viem-config': workspace:*
       '@typechain/ethers-v5': ^10.0.0
       '@typechain/hardhat': ^6.1.0
       '@types/chai': ^4.3.0
@@ -3109,6 +3110,7 @@ importers:
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/typescript-config': link:../../config/typescript
       '@sushiswap/v3-sdk': link:../../packages/v3-sdk
+      '@sushiswap/viem-config': link:../../config/viem
       '@typechain/ethers-v5': 10.2.1_rfqvgkelfvtqlb3tsy73ynfksm
       '@typechain/hardhat': 6.1.6_fm5kn2uwqd4heawpbyklcl3mqq
       '@types/chai': 4.3.5
