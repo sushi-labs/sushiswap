@@ -73,6 +73,7 @@ export default function Page({ params }: { params: { id: string; positionId?: st
               <div className="flex flex-col gap-2">
                 <PoolHeader
                   title="Pool "
+                  address={address}
                   isLoading={isLoading}
                   chainId={chainId}
                   pool={pool}

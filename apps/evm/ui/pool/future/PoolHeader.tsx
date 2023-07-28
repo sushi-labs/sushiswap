@@ -1,7 +1,9 @@
-import { ChainId } from '@sushiswap/chain'
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
+import { Chain, ChainId } from '@sushiswap/chain'
 import { usePool } from '@sushiswap/client'
 import { Token } from '@sushiswap/currency'
 import { formatPercent } from '@sushiswap/format'
+import { Button } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
@@ -10,8 +12,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushi
 import { Pool } from '@sushiswap/v3-sdk'
 import { unwrapToken } from 'lib/functions'
 import React, { FC, useMemo } from 'react'
-
 type PoolHeader = {
+  address: string
   title?: string
   isLoading: boolean
   pool: Pool | null | undefined | ReturnType<typeof usePool>['data']
@@ -23,7 +25,7 @@ type PoolHeader = {
   priceRange?: string
 }
 
-export const PoolHeader: FC<PoolHeader> = ({ title, isLoading, pool, chainId, apy, priceRange }) => {
+export const PoolHeader: FC<PoolHeader> = ({ address, title, isLoading, pool, chainId, apy, priceRange }) => {
   const [token0, token1] = useMemo(() => {
     if (!pool) return [undefined, undefined]
     if (pool instanceof Pool) {
@@ -81,10 +83,23 @@ export const PoolHeader: FC<PoolHeader> = ({ title, isLoading, pool, chainId, ap
           </Badge>
         </div>
         <div className="flex flex-col flex-grow gap-0.5">
-          <h1 className="text-xl font-semibold text-gray-900 dark:text-slate-50">
-            {title && title}
-            {token0.symbol}/{token1.symbol}
-          </h1>
+          <div>
+            <Button
+              asChild
+              variant="link"
+              rel="noopener noreferrer"
+              className="text-xl font-semibold text-gray-900 dark:text-slate-50 flex items-start gap-2"
+              icon={ArrowTopRightOnSquareIcon}
+              iconPosition="end"
+            >
+              <a href={Chain.from(pool.chainId).getTokenUrl(address)}>
+                <span>
+                  {title && title}
+                  {token0.symbol}/{token1.symbol}
+                </span>
+              </a>
+            </Button>
+          </div>
           <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-400">
             {apy ? (
               <>
