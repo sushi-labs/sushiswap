@@ -47,10 +47,15 @@ export default function TradeInput({
   }, [])
   const balanceClick = () => {
     if (setAmount && balance) {
-      if (token.symbol == 'APT') {
-        setAmount(((balance - 2000000) / 10 ** 8) as unknown as string)
-      } else {
-        setAmount((balance / 10 ** 8) as unknown as string)
+      // if (token.symbol == 'APT') {
+      //   setAmount(((balance - 2000000) / 10 ** 8) as unknown as string)
+      // } else {
+      //   setAmount((balance / 10 ** 8) as unknown as string)
+      // }
+      if (onUserInput) {
+        token.symbol == 'APT'
+          ? onUserInput(((balance - 2000000) / 10 ** 8) as unknown as string)
+          : onUserInput((balance / 10 ** 8) as unknown as string)
       }
     }
     if (!balance && setAmount) {
@@ -79,6 +84,7 @@ export default function TradeInput({
             ref={tradeVal}
             onUserInput={(value) => {
               if (onUserInput && token !== alteredSelected) {
+                console.log(value)
                 onUserInput(value)
               }
             }}

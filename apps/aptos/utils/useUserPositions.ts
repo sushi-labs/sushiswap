@@ -28,7 +28,7 @@ export type CoinStore = {
     }
   }
 }
-const userPositionsQueryFn = async (network: string, address: string, allPools: Pool[]) => {
+const userPositionsQueryFn = async (network: string, address: string, allPools: Pool[] = []) => {
   const CONTRACT =
     network == 'testnet' ? process.env.NEXT_PUBLIC_TESTNET_CONTRACT : process.env.NEXT_PUBLIC_MAINNET_CONTRACT
   if (address) {

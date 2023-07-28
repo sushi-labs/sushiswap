@@ -108,8 +108,9 @@ export async function useAllCommonPairs(
 }
 export async function getPoolPairs(network: string = 'mainnet') {
   const CONTRACT_ADDRESS = network == 'mainnet' ? MAINNET_CONTRACT : TESTNET_CONTRACT
-  const { token0, token1 } = usePoolState()
+  const { token0, token1, isTransactionPending } = usePoolState()
   const { setPairs, setLoadingPrice, setPoolPairRatio } = usePoolActions()
+  console.log(token0, token1)
   return useMemo(async () => {
     let reserves: any
     let inverse: boolean = false
@@ -141,6 +142,7 @@ export async function getPoolPairs(network: string = 'mainnet') {
     } finally {
       setLoadingPrice(false)
     }
+    console.log(reserves)
     if (reserves && reserves.length) {
       setPairs(reserves[0])
       if (inverse) {
@@ -153,7 +155,7 @@ export async function getPoolPairs(network: string = 'mainnet') {
       setPoolPairRatio(0)
     }
     return reserves
-  }, [token0, token1])
+  }, [token0, token1, isTransactionPending])
 }
 
 const exactOutput = (amt_in: number, res_x: number, res_y: number) => {

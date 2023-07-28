@@ -7,7 +7,6 @@ interface PoolButtonsProps {}
 
 export const PoolButtons: FC<PoolButtonsProps> = ({}) => {
   const router = useParams()
-  console.log(router?.id)
   return (
     <div className="flex flex-col w-full gap-2">
       <div className="flex gap-2">
