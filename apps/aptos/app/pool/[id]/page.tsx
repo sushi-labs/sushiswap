@@ -1,4 +1,5 @@
 'use client'
+import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { AppearOnMount } from '@sushiswap/ui'
 import { Layout } from 'components/Layout'
 import { PoolButtons } from 'components/PoolSection/PoolButtons'
@@ -7,6 +8,7 @@ import { PoolHeader } from 'components/PoolSection/PoolHeader'
 import { PoolPosition } from 'components/PoolSection/PoolPosition/PoolPosition'
 import { useParams } from 'next/navigation'
 import { FC } from 'react'
+import { usePool } from 'utils/usePool'
 
 const LINKS = () => [
   {
@@ -20,7 +22,11 @@ const Pool: FC = ({}) => {
 
 const _Pool = () => {
   const router = useParams()
-  console.log(router)
+  const [chainId, ...address] = decodeURIComponent(router?.id).split(':')
+  const tokenAddress = address.join(':')
+  const { network } = useWallet()
+  const { data: pool } = usePool(network?.name.toLowerCase(), tokenAddress)
+  console.log(pool)
   return (
     <>
       <Layout>
