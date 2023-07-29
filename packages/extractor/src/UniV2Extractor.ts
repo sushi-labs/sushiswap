@@ -7,7 +7,7 @@ import { BigNumber } from 'ethers'
 import { Address, decodeEventLog, Log, parseAbiItem, PublicClient } from 'viem'
 
 import { Counter } from './Counter'
-import { LogFilter } from './LogFilter'
+import { LogFilter, LogFilterType } from './LogFilter'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { PermanentCache } from './PermanentCache'
 import { TokenManager } from './TokenManager'
@@ -84,7 +84,8 @@ export class UniV2Extractor {
     logDepth: number,
     logging = true,
     multiCallAggregator?: MultiCallAggregator,
-    tokenManager?: TokenManager
+    tokenManager?: TokenManager,
+    logType = LogFilterType.OneCall
   ) {
     this.multiCallAggregator = multiCallAggregator || new MultiCallAggregator(client)
     this.factories = factories
@@ -98,7 +99,7 @@ export class UniV2Extractor {
     })
     this.poolPermanentCache = new PermanentCache(cacheDir, `uniV2Pools-${this.multiCallAggregator.chainId}`)
 
-    this.logFilter = new LogFilter(client, logDepth, UniV2EventsListenAbi, (logs?: Log[]) => {
+    this.logFilter = new LogFilter(client, logDepth, UniV2EventsListenAbi, logType, (logs?: Log[]) => {
       if (logs) {
         let eventKnown = 0
         let eventUnknown = 0

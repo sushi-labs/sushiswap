@@ -1,8 +1,13 @@
-import { ChainId } from '@sushiswap/chain'
 import { AbiEvent } from 'abitype'
 import { Block, encodeEventTopics, Log, PublicClient, WatchBlocksReturnType } from 'viem'
 
 import { warnLog } from './WarnLog'
+
+export enum LogFilterType {
+  OneCall, // one eth_getLogs call for all topict - the most preferrable
+  MultiCall, // separete eth_getLogs call for each topic - for those systems that fail at OneCall
+  SelfFilter, // Topic filtering doesn't support for provider. Filtering on the client
+}
 
 class BlockFrame {
   firstNumber?: number
@@ -58,6 +63,7 @@ export class LogFilter {
   readonly onNewLogs: (arg?: Log[]) => void // undefined if LogFilter is stopped
   readonly events: AbiEvent[]
   readonly topics: string[]
+  readonly logType: LogFilterType
 
   unWatchBlocks?: WatchBlocksReturnType
 
@@ -69,11 +75,18 @@ export class LogFilter {
   logHashMap: Map<string, Log[]> = new Map()
   blockFrame: BlockFrame = new BlockFrame()
 
-  constructor(client: PublicClient, depth: number, events: AbiEvent[], onNewLogs: (arg?: Log[]) => void) {
+  constructor(
+    client: PublicClient,
+    depth: number,
+    events: AbiEvent[],
+    logType: LogFilterType,
+    onNewLogs: (arg?: Log[]) => void
+  ) {
     this.client = client
     this.depth = depth
     this.events = events
     this.onNewLogs = onNewLogs
+    this.logType = logType
     this.topics = events.map((e) => {
       return encodeEventTopics({
         abi: [e],
@@ -119,6 +132,12 @@ export class LogFilter {
     return true
   }
 
+  sortAndProcessLogs(blockHash: string | null, logs: Log[]) {
+    const logsSorted = logs.sort((a, b) => Number(a.logIndex || 0) - Number(b.logIndex || 0))
+    this.logHashMap.set(blockHash || '', logsSorted)
+    this.processNewLogs()
+  }
+
   addBlock(block: Block, isGoal: boolean) {
     const blockNumber = block.number === null ? null : Number(block.number)
     if (blockNumber === null || block.hash === null) {
@@ -130,35 +149,34 @@ export class LogFilter {
     if (!this.blockFrame.add(blockNumber, block.hash)) return
     this.blockHashMap.set(block.hash, block)
 
-    if (this.client.chain?.id == ChainId.POLYGON_ZKEVM) {
-      // alchemy provider fails to filter logs by blockhash and topics simultaniously, lets filter by ourself
-      this.client
-        .getLogs({
-          blockHash: block.hash as `0x${string}`,
-        })
-        .then(
-          (logs) => {
-            const filteredLogs = logs
-              .filter((l) => this.topics.includes(l.topics[0] ?? ''))
-              .sort((a, b) => Number(a.logIndex || 0) - Number(b.logIndex || 0))
-            this.logHashMap.set(block.hash || '', filteredLogs)
-            this.processNewLogs()
-          },
+    switch (this.logType) {
+      case LogFilterType.OneCall:
+        this.client.transport
+          .request({ method: 'eth_getLogs', params: [{ blockHash: block.hash, topics: [this.topics] }] })
+          .then((logs) => this.sortAndProcessLogs(block.hash, logs as Log[]))
+        break
+      case LogFilterType.MultiCall:
+        Promise.all(
+          this.events.map((event) =>
+            this.client.getLogs({
+              blockHash: block.hash as `0x${string}`,
+              event,
+            })
+          )
+        ).then((logss) => this.sortAndProcessLogs(block.hash, logss.flat()))
+        break
+      case LogFilterType.SelfFilter:
+        this.client.getLogs({ blockHash: block.hash as `0x${string}` }).then(
+          (logs) =>
+            this.sortAndProcessLogs(
+              block.hash,
+              logs.filter((l) => this.topics.includes(l.topics[0] ?? ''))
+            ),
           () => warnLog(this.client.chain?.id, `getLog failed for block ${block.hash}`)
         )
-    } else {
-      Promise.all(
-        this.events.map((event) =>
-          this.client.getLogs({
-            blockHash: block.hash as `0x${string}`,
-            event,
-          })
-        )
-      ).then((logss) => {
-        const logs = logss.flat().sort((a, b) => Number(a.logIndex || 0) - Number(b.logIndex || 0))
-        this.logHashMap.set(block.hash || '', logs)
-        this.processNewLogs()
-      })
+        break
+      default:
+        warnLog(this.client.chain?.id, `Internal errror: Unknown Log Type: ${this.logType}`)
     }
     if (this.lastProcessedBlock && !this.blockHashMap.has(block.parentHash))
       this.client.getBlock({ blockHash: block.parentHash }).then((b) => this.addBlock(b, false))

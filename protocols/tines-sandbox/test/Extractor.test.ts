@@ -2,7 +2,7 @@ import { routeProcessor2Abi } from '@sushiswap/abi'
 import { FACTORY_ADDRESS, INIT_CODE_HASH } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
-import { Extractor, FactoryV2, FactoryV3, MultiCallAggregator, TokenManager } from '@sushiswap/extractor'
+import { Extractor, FactoryV2, FactoryV3, LogFilterType, MultiCallAggregator, TokenManager } from '@sushiswap/extractor'
 import { ConstantProductPoolCode, LiquidityProviders, NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { getBigNumber, RouteStatus } from '@sushiswap/tines'
@@ -92,6 +92,7 @@ async function startInfinitTest(args: {
   tickHelperContract: Address
   cacheDir: string
   logDepth: number
+  logType?: LogFilterType
   logging?: boolean
   maxCallsInOneBatch?: number
   RP3Address: Address
@@ -235,6 +236,7 @@ it.skip('Extractor Arbitrum infinit work test', async () => {
     tickHelperContract: TickLensContract[ChainId.ARBITRUM],
     cacheDir: './cache',
     logDepth: 300,
+    logType: LogFilterType.MultiCall,
     logging: true,
     RP3Address: RP3Address[ChainId.ARBITRUM],
   })
@@ -285,6 +287,7 @@ it.skip('Extractor Polygon zkevm infinit work test', async () => {
     tickHelperContract: TickLensContract[ChainId.POLYGON_ZKEVM],
     cacheDir: './cache',
     logDepth: 1000,
+    logType: LogFilterType.SelfFilter,
     logging: true,
     maxCallsInOneBatch: 5,
     RP3Address: RP3Address[ChainId.POLYGON_ZKEVM],
@@ -313,6 +316,7 @@ it.skip('Extractor AVALANCH infinit work test', async () => {
   })
 })
 
+// have been fixed in 1.4.2
 it.skip('viem issue #1', async () => {
   const client = createPublicClient({
     chain: polygonZkEvm,

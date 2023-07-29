@@ -7,7 +7,7 @@ import { Abi } from 'abitype'
 import { Address, Log, PublicClient } from 'viem'
 
 import { Counter } from './Counter'
-import { LogFilter } from './LogFilter'
+import { LogFilter, LogFilterType } from './LogFilter'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { PermanentCache } from './PermanentCache'
 import { QualityChecker, QualityCheckerCallBackArg } from './QualityChecker'
@@ -69,7 +69,8 @@ export class UniV3Extractor {
     logDepth: number,
     logging = true,
     multiCallAggregator?: MultiCallAggregator,
-    tokenManager?: TokenManager
+    tokenManager?: TokenManager,
+    logType = LogFilterType.OneCall
   ) {
     this.multiCallAggregator = multiCallAggregator || new MultiCallAggregator(client)
     this.tokenManager =
@@ -95,7 +96,7 @@ export class UniV3Extractor {
       return true
     })
 
-    this.logFilter = new LogFilter(client, logDepth, UniV3EventsAbi, (logs?: Log[]) => {
+    this.logFilter = new LogFilter(client, logDepth, UniV3EventsAbi, logType, (logs?: Log[]) => {
       if (logs) {
         const blockNumber = logs.length > 0 ? Number(logs[logs.length - 1].blockNumber || 0) : '<undefined>'
         try {

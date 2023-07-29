@@ -19,6 +19,8 @@ import {
 import { config } from '@sushiswap/viem-config'
 import { Address, createPublicClient } from 'viem'
 
+import { LogFilterType } from '../src/LogFilter'
+
 export const SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,
   // ChainId.ARBITRUM_NOVA,
@@ -32,7 +34,7 @@ export const SUPPORTED_CHAIN_IDS = [
   // ChainId.FANTOM,
   ChainId.OPTIMISM,
   ChainId.POLYGON,
-  ChainId.POLYGON_ZKEVM,
+  // ChainId.POLYGON_ZKEVM,
 ] as const
 
 export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number]
@@ -116,6 +118,7 @@ export const EXTRACTOR_CONFIG = {
     tickHelperContract: V3_TICK_LENS[ChainId.ARBITRUM],
     cacheDir: './cache',
     logDepth: 300,
+    logType: LogFilterType.SelfFilter,
     logging: true,
     RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.ARBITRUM],
   },
@@ -370,6 +373,7 @@ export const EXTRACTOR_CONFIG = {
     tickHelperContract: V3_TICK_LENS[ChainId.POLYGON_ZKEVM],
     cacheDir: './cache',
     logDepth: 300,
+    logType: LogFilterType.SelfFilter,
     logging: true,
     maxCallsInOneBatch: 5,
     RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.POLYGON_ZKEVM],

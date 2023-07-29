@@ -602,8 +602,8 @@ export const config: Record<number, PublicClientConfig> = {
     chain: bsc,
     transport: fallback(
       [
-        http(bsc.rpcUrls.default.http[0]),
-        // http(`https://lb.drpc.org/ogrpc?network=bsc&dkey=${drpcId}`),
+        //http(bsc.rpcUrls.default.http[0]),
+        http(`https://lb.drpc.org/ogrpc?network=bsc&dkey=${drpcId}`),
         // http('https://bsc-dataseed.binance.org'),
         // http('https://bsc-dataseed1.binance.org'),
         // http('https://bsc-dataseed2.binance.org'),
