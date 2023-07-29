@@ -15,7 +15,7 @@ import { convertTokenToBento, getBentoChainId } from './lib/convert'
 import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { PoolCode } from './pools/PoolCode'
 import { getRouteProcessorCode } from './TinesToRouteProcessor'
-import { getRouteProcessor2Code, PermitData } from './TinesToRouteProcessor2'
+import { getRouteProcessor2Code, PermitData, RouterLiquiditySource } from './TinesToRouteProcessor2'
 import { getRouteProcessor4Code } from './TinesToRouteProcessor4'
 
 function TokenToRToken(t: Type): RToken {
@@ -175,7 +175,8 @@ export class Router {
     to: string,
     RPAddr: string,
     permits: PermitData[] = [],
-    maxPriceImpact = 0.005
+    maxPriceImpact = 0.005,
+    source = RouterLiquiditySource.Sender
   ): RPParams {
     const tokenIn = fromToken instanceof Token ? fromToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
     const tokenOut = toToken instanceof Token ? toToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
@@ -183,11 +184,11 @@ export class Router {
 
     return {
       tokenIn,
-      amountIn: route.amountInBN,
+      amountIn: source == RouterLiquiditySource.Sender ? route.amountInBN : BigNumber.from(0),
       tokenOut,
       amountOutMin,
       to,
-      routeCode: getRouteProcessor2Code(route, RPAddr, to, poolCodesMap, permits),
+      routeCode: getRouteProcessor2Code(route, RPAddr, to, poolCodesMap, permits, source),
       value: fromToken instanceof Token ? undefined : route.amountInBN,
     }
   }
