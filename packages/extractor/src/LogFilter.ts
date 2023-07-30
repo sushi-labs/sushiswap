@@ -9,6 +9,18 @@ export enum LogFilterType {
   SelfFilter, // Topic filtering doesn't support for provider. Filtering on the client
 }
 
+async function repeatAsync(times: number, action: () => void, failed: () => void) {
+  for (let i = 0; i < times; ++i) {
+    try {
+      await action()
+      return
+    } catch (e) {
+      continue
+    }
+  }
+  failed()
+}
+
 class BlockFrame {
   firstNumber?: number
   lastNumber?: number
@@ -151,9 +163,17 @@ export class LogFilter {
 
     switch (this.logType) {
       case LogFilterType.OneCall:
-        this.client.transport
-          .request({ method: 'eth_getLogs', params: [{ blockHash: block.hash, topics: [this.topics] }] })
-          .then((logs) => this.sortAndProcessLogs(block.hash, logs as Log[]))
+        repeatAsync(
+          5, // For example dRPC for BSC often 'forgets' recently returned in watchBlock block. But returns at second request
+          async () => {
+            const logs = await this.client.transport.request({
+              method: 'eth_getLogs',
+              params: [{ blockHash: block.hash, topics: [this.topics] }],
+            })
+            this.sortAndProcessLogs(block.hash, logs as Log[])
+          },
+          () => warnLog(this.client.chain?.id, `getLog failed for block ${block.hash}`)
+        )
         break
       case LogFilterType.MultiCall:
         Promise.all(
@@ -163,7 +183,10 @@ export class LogFilter {
               event,
             })
           )
-        ).then((logss) => this.sortAndProcessLogs(block.hash, logss.flat()))
+        ).then(
+          (logss) => this.sortAndProcessLogs(block.hash, logss.flat()),
+          () => warnLog(this.client.chain?.id, `getLog failed for block ${block.hash}`)
+        )
         break
       case LogFilterType.SelfFilter:
         this.client.getLogs({ blockHash: block.hash as `0x${string}` }).then(

@@ -28,13 +28,13 @@ export const SUPPORTED_CHAIN_IDS = [
   // ChainId.BOBA,
   // ChainId.BOBA_AVAX,
   // ChainId.BOBA_BNB,
-  // ChainId.BSC,
+  ChainId.BSC,
   // ChainId.CELO,
   ChainId.ETHEREUM,
   // ChainId.FANTOM,
   ChainId.OPTIMISM,
   ChainId.POLYGON,
-  // ChainId.POLYGON_ZKEVM,
+  ChainId.POLYGON_ZKEVM,
 ] as const
 
 export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number]
