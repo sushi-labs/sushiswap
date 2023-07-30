@@ -24,6 +24,11 @@ export function getTokenType(token: RToken): TokenType {
   return typeof token.chainId == 'string' && token.chainId.startsWith('Bento') ? TokenType.BENTO : TokenType.ERC20
 }
 
+export enum RouterLiquiditySource {
+  Sender, // msg.sender
+  Self, // already aboard
+}
+
 export class TinesToRouteProcessor2 {
   routeProcessorAddress: string
   chainId: ChainId
@@ -37,7 +42,12 @@ export class TinesToRouteProcessor2 {
     this.pools = pools
   }
 
-  getRouteProcessorCode(route: MultiRoute, toAddress: string, permits: PermitData[] = []): string {
+  getRouteProcessorCode(
+    route: MultiRoute,
+    toAddress: string,
+    permits: PermitData[] = [],
+    source = RouterLiquiditySource.Sender
+  ): string {
     // 0. Check for no route
     if (route.status == RouteStatus.NoWay || route.legs.length == 0) return ''
 
@@ -60,7 +70,7 @@ export class TinesToRouteProcessor2 {
         else res += this.processBentoCode(token, route, toAddress)
       } else {
         if (token.address == '') res += this.processNativeCode(token, route, toAddress)
-        else res += this.processERC20Code(false, token, route, toAddress)
+        else res += this.processERC20Code(source == RouterLiquiditySource.Self, token, route, toAddress)
       }
     })
 
@@ -204,8 +214,9 @@ export function getRouteProcessor2Code(
   routeProcessorAddress: string,
   toAddress: string,
   pools: Map<string, PoolCode>,
-  permits: PermitData[] = []
+  permits: PermitData[] = [],
+  source = RouterLiquiditySource.Sender
 ): string {
   const rpc = new TinesToRouteProcessor2(routeProcessorAddress, route.fromToken.chainId as ChainId, pools)
-  return rpc.getRouteProcessorCode(route, toAddress, permits)
+  return rpc.getRouteProcessorCode(route, toAddress, permits, source)
 }
