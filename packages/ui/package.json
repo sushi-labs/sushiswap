@@ -19,29 +19,19 @@
     "./variables.css": "./src/variables.css",
     "./tailwind.js": "./tailwind.js",
     ".": [
-      "./src/index.ts",
-      "./src/index.tsx"
+      "./src/index.ts"
     ],
     "./*": [
       "./src/*.ts",
-      "./src/*.tsx",
       "./src/*/index.ts",
       "./src/*/index.tsx"
-    ],
-    "./future/*": [
-      "./src/future/*.ts",
-      "./src/future/*.tsx",
-      "./src/future/*/index.ts",
-      "./src/future/*/index.tsx"
     ]
   },
   "typesVersions": {
     "*": {
       "*": [
         "src/*",
-        "src/*/index",
-        "src/future/*",
-        "src/future/*/index"
+        "src/*/index"
       ]
     }
   },
