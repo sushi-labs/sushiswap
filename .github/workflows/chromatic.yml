@@ -5,7 +5,8 @@ name: 'Storybook Publish'
 
 # Event for the workflow
 on: push
-
+env:
+  ENABLE_EXPERIMENTAL_COREPACK: 1
 # List of jobs
 jobs:
   chromatic-deployment:
