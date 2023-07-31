@@ -5,12 +5,16 @@ import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { useCustomTokens, usePinnedTokens } from '@sushiswap/hooks'
 import { useBalances, useOtherTokenListsQuery, usePrices, useTokens } from '@sushiswap/react-query'
-import { IconButton } from '@sushiswap/ui'
-import { TextField } from '@sushiswap/ui'
-import { DialogContent, DialogNew } from '@sushiswap/ui'
-import { DialogHeader, DialogTitle } from '@sushiswap/ui'
-import { DialogDescription } from '@sushiswap/ui'
-import { DialogTrigger } from '@sushiswap/ui'
+import {
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogNew,
+  DialogTitle,
+  DialogTrigger,
+  IconButton,
+  TextField,
+} from '@sushiswap/ui'
 import { Button, buttonIconVariants } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { List } from '@sushiswap/ui/components/list/List'
@@ -62,6 +66,11 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
       ...otherTokenMap,
     }
   }, [defaultTokenMap, otherTokenMap])
+
+  const officialTokenIds = useMemo(() => {
+    if (!defaultTokenMap) return []
+    return Object.values(defaultTokenMap).map((el) => el.wrapped.address)
+  }, [defaultTokenMap])
 
   const { data: queryToken, isInitialLoading: isQueryTokenLoading } = useTokenWithCache({
     chainId,
@@ -204,6 +213,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
                 onSelect={_onSelect}
                 id={id}
                 pin={{ onPin: _onPin, isPinned: isTokenPinned }}
+                officialTokenIds={officialTokenIds}
                 currencies={sortedTokenList}
                 chainId={chainId}
               />
