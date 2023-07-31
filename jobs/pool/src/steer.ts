@@ -51,7 +51,7 @@ async function getPayload(ipfsHash: string): Promise<Payload> {
 async function extractChain(chainId: SteerChainId) {
   const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: STEER_SUBGRAPGH_NAME[chainId] })
 
-  const { Steer_vaults: vaults } = await sdk.SteerVaults()
+  const { vaults } = await sdk.SteerVaults()
   const vaultsWithPayloads = await Promise.allSettled(
     vaults.map(async (vault) => {
       try {

@@ -298,7 +298,7 @@ query CurrentBlock($first: Int = 1000, $skip: Int = 0) {
 }
 
 query SteerVaults($first: Int = 1000, $skip: Int = 0) {
-  Steer_vaults(first: $first, skip: $skip) {
+  vaults: Steer_vaults(first: $first, skip: $skip) {
     id
     feeTier
     reserve0: totalAmount0
