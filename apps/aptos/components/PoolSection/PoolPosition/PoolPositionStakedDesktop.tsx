@@ -6,12 +6,13 @@ import { useTokensFromPools } from 'utils/useTokensFromPool'
 
 interface PoolPositionStakedDesktopProps {
   row: Pool
+  isLoading: boolean
 }
 
-export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ row }) => {
+export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ row, isLoading }) => {
   const { token0, token1 } = useTokensFromPools(row)
   if ('') return <></>
-  if ('') {
+  if (isLoading) {
     return (
       <div className="flex flex-col gap-3 px-5 py-4">
         <div className="flex justify-between mb-1 py-0.5">
@@ -29,7 +30,7 @@ export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ 
       </div>
     )
   }
-  if ('')
+  if (!isLoading)
     return (
       <div className="flex flex-col gap-3 px-5 py-4">
         <div className="flex items-center justify-between mb-1">
