@@ -161,10 +161,15 @@ export class LogFilter {
     if (!this.blockFrame.add(blockNumber, block.hash)) return
     this.blockHashMap.set(block.hash, block)
 
+    const backupPlan = () => {
+      warnLog(this.client.chain?.id, `getLog failed for block ${block.hash}`)
+      this.stop()
+    }
+
     switch (this.logType) {
       case LogFilterType.OneCall:
         repeatAsync(
-          5, // For example dRPC for BSC often 'forgets' recently returned in watchBlock block. But returns at second request
+          3, // For example dRPC for BSC often 'forgets' recently returned watchBlock blocks. But 'recalls' at second request
           async () => {
             const logs = await this.client.transport.request({
               method: 'eth_getLogs',
@@ -172,7 +177,7 @@ export class LogFilter {
             })
             this.sortAndProcessLogs(block.hash, logs as Log[])
           },
-          () => warnLog(this.client.chain?.id, `getLog failed for block ${block.hash}`)
+          backupPlan
         )
         break
       case LogFilterType.MultiCall:
@@ -183,10 +188,7 @@ export class LogFilter {
               event,
             })
           )
-        ).then(
-          (logss) => this.sortAndProcessLogs(block.hash, logss.flat()),
-          () => warnLog(this.client.chain?.id, `getLog failed for block ${block.hash}`)
-        )
+        ).then((logss) => this.sortAndProcessLogs(block.hash, logss.flat()), backupPlan)
         break
       case LogFilterType.SelfFilter:
         this.client.getLogs({ blockHash: block.hash as `0x${string}` }).then(
@@ -195,7 +197,7 @@ export class LogFilter {
               block.hash,
               logs.filter((l) => this.topics.includes(l.topics[0] ?? ''))
             ),
-          () => warnLog(this.client.chain?.id, `getLog failed for block ${block.hash}`)
+          backupPlan
         )
         break
       default:

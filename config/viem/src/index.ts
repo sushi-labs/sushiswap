@@ -558,8 +558,8 @@ export const config: Record<number, PublicClientConfig> = {
     chain: arbitrumNova,
     transport: fallback(
       [
-        http(arbitrumNova.rpcUrls.default.http[0]),
-        // http(`https://lb.drpc.org/ogrpc?network=arbitrum-nova&dkey=${drpcId}`),
+        // http(arbitrumNova.rpcUrls.default.http[0]),
+        http(`https://lb.drpc.org/ogrpc?network=arbitrum-nova&dkey=${drpcId}`),
       ],
       { rank: true }
     ),
