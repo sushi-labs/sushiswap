@@ -1,6 +1,17 @@
 import '@sushiswap/ui/src/index.css'
 import './style.css'
 import { Preview } from '@storybook/react'
+import { ThemeProvider } from '@sushiswap/ui'
+
+export const withThemeProvider = (Story, context) => {
+  const theme = context.globals.theme
+
+  return (
+    <ThemeProvider forcedTheme={theme}>
+      <Story {...context} />
+    </ThemeProvider>
+  )
+}
 
 export const preview: Preview = {
   parameters: {
@@ -23,6 +34,7 @@ export const preview: Preview = {
       },
     },
   },
+  decorators: [withThemeProvider],
 }
 
 export default preview
