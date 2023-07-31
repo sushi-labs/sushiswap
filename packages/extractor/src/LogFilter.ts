@@ -9,12 +9,22 @@ export enum LogFilterType {
   SelfFilter, // Topic filtering doesn't support for provider. Filtering on the client
 }
 
-async function repeatAsync(times: number, action: () => void, failed: () => void) {
+const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
+
+async function repeatAsync(
+  times: number,
+  delayBetween: number,
+  action: () => void,
+  failed: () => void,
+  print?: string
+) {
   for (let i = 0; i < times; ++i) {
     try {
       await action()
+      if (print && i > 0) console.log(`attemps ${print}: ${i + 1}`)
       return
     } catch (e) {
+      if (delayBetween) await delay(delayBetween)
       continue
     }
   }
@@ -169,7 +179,8 @@ export class LogFilter {
     switch (this.logType) {
       case LogFilterType.OneCall:
         repeatAsync(
-          3, // For example dRPC for BSC often 'forgets' recently returned watchBlock blocks. But 'recalls' at second request
+          10, // For example dRPC for BSC often 'forgets' recently returned watchBlock blocks. But 'recalls' at second request
+          1000,
           async () => {
             const logs = await this.client.transport.request({
               method: 'eth_getLogs',
@@ -204,7 +215,12 @@ export class LogFilter {
         warnLog(this.client.chain?.id, `Internal errror: Unknown Log Type: ${this.logType}`)
     }
     if (this.lastProcessedBlock && !this.blockHashMap.has(block.parentHash))
-      this.client.getBlock({ blockHash: block.parentHash }).then((b) => this.addBlock(b, false))
+      repeatAsync(
+        10,
+        1000,
+        () => this.client.getBlock({ blockHash: block.parentHash }).then((b) => this.addBlock(b, false)),
+        () => warnLog(this.client.chain?.id, `getBlock failed !!!!!!!!!!!!!!!!!!!!!!1`)
+      )
   }
 
   processNewLogs() {

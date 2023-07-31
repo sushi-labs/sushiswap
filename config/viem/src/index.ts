@@ -576,8 +576,8 @@ export const config: Record<number, PublicClientConfig> = {
   },
   [ChainId.AVALANCHE]: {
     chain: avalanche,
-    transport: fallback([http(avalanche.rpcUrls.default.http[0]), http('https://rpc.ankr.com/avalanche')], {
-      rank: true,
+    transport: fallback([http('https://rpc.ankr.com/avalanche'), http(avalanche.rpcUrls.default.http[0])], {
+      rank: false,
     }),
   },
   [ChainId.BOBA]: {
