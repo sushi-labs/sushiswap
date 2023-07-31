@@ -16,14 +16,14 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewlilley.com>",
   "sideEffects": false,
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
   "source": "src/index.ts",
-  "typings": "dist/index.d.ts",
+  "typings": "dist/index.d.cts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsup src/index.ts --format cjs --dts",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
