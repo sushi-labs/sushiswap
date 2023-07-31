@@ -1,6 +1,4 @@
 import { ChainId } from '@sushiswap/chain'
-import { Label } from '@sushiswap/ui'
-import { TextField } from '@sushiswap/ui'
 import {
   FormControl,
   FormDescription,
@@ -9,11 +7,13 @@ import {
   FormMessage,
   FormSection,
 } from '@sushiswap/ui/components/form'
+import { Input } from '@sushiswap/ui/components/input'
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@sushiswap/ui/components/select'
@@ -73,19 +73,20 @@ export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) =>
         render={({ field: { onChange, value, onBlur, name } }) => {
           return (
             <FormItem>
-              <Label>
-                Payout per unlock
-                <sup>*</sup>
-              </Label>
               <FormControl>
-                <TextField
-                  type="number"
-                  onValueChange={onChange}
-                  value={value}
-                  name={name}
+                <Input.Numeric
+                  onUserInput={onChange}
                   onBlur={onBlur}
+                  name={name}
+                  value={value}
+                  id={`create-single-vest-graded-amount-input${index}`}
                   testdata-id={`create-single-vest-graded-amount-input${index}`}
-                  unit={currency?.symbol}
+                  label={
+                    <>
+                      Payout per unlock{currency ? ` (${currency.symbol})` : ''}
+                      <sup>*</sup>
+                    </>
+                  }
                 />
               </FormControl>
               <FormDescription>The amount the recipient receives for every unlock.</FormDescription>
@@ -100,17 +101,19 @@ export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) =>
         render={({ field: { onChange, value, onBlur, name } }) => {
           return (
             <FormItem>
-              <Label>
-                Number of unlocks<sup>*</sup>
-              </Label>
               <FormControl>
-                <TextField
-                  type="number"
-                  onValueChange={onChange}
-                  value={value}
-                  name={name}
+                <Input.Numeric
+                  onUserInput={(val) => onChange(+val)}
                   onBlur={onBlur}
+                  name={name}
+                  value={value}
+                  id={`create-single-vest-steps-input${index}`}
                   testdata-id={`create-single-vest-steps-input${index}`}
+                  label={
+                    <>
+                      Number of unlocks<sup>*</sup>
+                    </>
+                  }
                 />
               </FormControl>
               <FormDescription>
@@ -127,12 +130,14 @@ export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) =>
         name={`vestings.${index}.stepConfig`}
         render={({ field: { onChange, value } }) => (
           <FormItem>
-            <Label>Unlock frequency*</Label>
             <Select value={value} onValueChange={onChange} defaultValue={value}>
               <FormControl>
                 <SelectGroup>
                   <SelectTrigger testdata-id={`create-single-vest-graded-frequency-selection-button${index}`}>
-                    <SelectValue placeholder="Unlock frequency" />
+                    <SelectLabel aria-label={value}>
+                      Unlock frequency<sup>*</sup>
+                    </SelectLabel>
+                    <SelectValue />
                   </SelectTrigger>
                 </SelectGroup>
               </FormControl>

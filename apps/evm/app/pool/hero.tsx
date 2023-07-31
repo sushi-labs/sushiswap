@@ -1,10 +1,9 @@
 'use client'
 
-import { ChevronRightIcon, GiftIcon } from '@heroicons/react-v1/outline'
+import { ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { ChainId } from '@sushiswap/chain'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
 import { isTridentChainId } from '@sushiswap/trident-sdk'
-import { typographyVariants } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Chip } from '@sushiswap/ui/components/chip'
 import {
@@ -25,24 +24,23 @@ export const Hero: FC = () => {
   const { chain } = useNetwork()
   const chainId = chain?.id || ChainId.ETHEREUM
   return (
-    <section className="flex flex-col justify-between gap-12 lg:flex-row lg:items-start">
+    <section className="flex flex-col justify-between gap-12 lg:flex-row lg:items-center">
       <div className="flex flex-col items-center flex-grow gap-6 lg:items-start">
-        <div className="flex flex-col">
-          <h1 className={typographyVariants({ variant: 'h1' })}>
-            Put your funds <br /> to work by <br /> providing liquidity.
-          </h1>
-          <p className={typographyVariants({ variant: 'lead', className: 'max-w-[500px]' })}>
-            Providing liquidity to a pool allows you to earn a percentage of the pools traded volume as well as any
-            extra rewards if the pool is incentivized.
-          </p>
+        <div className="flex flex-col gap-2">
+          <span className="text-5xl font-semibold tracking-tight text-center text-gray-800 lg:text-left dark:text-slate-200">
+            Provide Liquidity
+            <span className="font-medium text-gray-500 dark:text-slate-500">
+              <br /> and receive fees & rewards
+            </span>
+          </span>
         </div>
-        <div className="flex gap-4">
+        <div className="relative z-10 group">
           <div className="flex items-center w-full">
             <Button asChild size="lg" className="rounded-r-none">
               <Link
                 href={isRouteProcessor3ChainId(chainId) ? `/pool/add?chainId=${chainId}` : `/pool/add/v2/${chainId}`}
               >
-                I want to create a position
+                Create Position
               </Link>
             </Button>
             <DropdownMenu>
@@ -96,9 +94,6 @@ export const Hero: FC = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <Button asChild icon={GiftIcon} variant="secondary" size="lg">
-            <Link href="/pools/incentivize">I want to incentivize a pool</Link>
-          </Button>
         </div>
       </div>
       <div className="flex flex-col items-center gap-4 lg:items-end">

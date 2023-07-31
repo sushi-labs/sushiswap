@@ -1,7 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
 import { expect, Page, test } from '@playwright/test'
 import { DAI, Native, SUSHI, Type, USDC, USDT, WBTC } from '@sushiswap/currency'
-
 import { SupportedChainId } from '../../config'
 
 type InputType = 'INPUT' | 'OUTPUT'

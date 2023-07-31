@@ -1,14 +1,18 @@
-import { ArrowLeftIcon } from '@heroicons/react/solid'
+import { DownloadIcon, XIcon } from '@heroicons/react/outline'
+import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon, RefreshIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { formatNumber, shortenAddress } from '@sushiswap/format'
 import { Percent } from '@sushiswap/math'
-import { SplashController } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
+import { Blink } from '@sushiswap/ui/components/Blink'
+import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { NetworkIcon, SushiIcon } from '@sushiswap/ui/components/icons'
 import { List } from '@sushiswap/ui/components/list/List'
 import { SkeletonBox, SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { SplashController } from '@sushiswap/ui/components/SplashController'
 import { Address, getFuroStreamContractConfig, useEnsName } from '@sushiswap/wagmi'
 import { format } from 'date-fns'
 import Link from 'next/link'
@@ -180,19 +184,48 @@ const _Streams: FC = () => {
               </div>
             </div>{' '}
             <div className="flex flex-wrap gap-2 mt-3">
-              <WithdrawModal stream={stream} chainId={chainId} />
-              <UpdateModal
-                stream={stream}
-                abi={getFuroStreamContractConfig(chainId)?.abi}
-                address={getFuroStreamContractConfig(chainId)?.address}
-                chainId={chainId}
-              />
+              <WithdrawModal stream={stream} chainId={chainId}>
+                {({ setOpen, disabled }) => (
+                  <Button
+                    disabled={disabled}
+                    onClick={() => setOpen(true)}
+                    icon={DownloadIcon}
+                    testId="stream-withdraw"
+                    variant="secondary"
+                  >
+                    Withdraw
+                  </Button>
+                )}
+              </WithdrawModal>
               <TransferModal
                 stream={stream}
                 abi={getFuroStreamContractConfig(chainId)?.abi}
                 address={getFuroStreamContractConfig(chainId)?.address}
                 chainId={chainId}
-              />
+              >
+                {({ setOpen }) => (
+                  <Button
+                    onClick={() => setOpen(true)}
+                    icon={ArrowRightIcon}
+                    testId="stream-transfer"
+                    variant="secondary"
+                  >
+                    Transfer
+                  </Button>
+                )}
+              </TransferModal>
+              <UpdateModal
+                stream={stream}
+                abi={getFuroStreamContractConfig(chainId)?.abi}
+                address={getFuroStreamContractConfig(chainId)?.address}
+                chainId={chainId}
+              >
+                {({ setOpen }) => (
+                  <Button onClick={() => setOpen(true)} icon={RefreshIcon} testId="stream-update" variant="secondary">
+                    Update
+                  </Button>
+                )}
+              </UpdateModal>
               <CancelModal
                 title="Cancel Stream"
                 stream={stream}
@@ -200,7 +233,19 @@ const _Streams: FC = () => {
                 address={getFuroStreamContractConfig(chainId)?.address}
                 fn="cancelStream"
                 chainId={chainId}
-              />
+              >
+                {({ setOpen }) => (
+                  <Button
+                    color="red"
+                    onClick={() => setOpen(true)}
+                    icon={XIcon}
+                    testId="stream-cancel"
+                    variant="secondary"
+                  >
+                    Cancel
+                  </Button>
+                )}
+              </CancelModal>
             </div>
           </div>
           <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
@@ -269,13 +314,31 @@ const _Streams: FC = () => {
                     </List.KeyValue>
                     <List.KeyValue title="Locked" subtitle="funds in stream">
                       <div className="flex flex-col items-end">
-                        <span className="flex items-center gap-1">{remainingAmount?.toSignificant(6)} </span>
+                        <Blink dep={remainingAmount?.toSignificant()} as="span" timeout={1500}>
+                          {(isBlinking) => (
+                            <span className={classNames(isBlinking ? 'text-red' : '', 'flex items-center gap-1')}>
+                              {remainingAmount?.toSignificant(6)}{' '}
+                              {isBlinking && (
+                                <ArrowDownIcon className="rotate-45" strokeWidth={3} width={14} height={14} />
+                              )}
+                            </span>
+                          )}
+                        </Blink>
                         <span className="text-[10px] font-medium text-slate-500">{balance?.currency.symbol}</span>
                       </div>
                     </List.KeyValue>
                     <List.KeyValue title="Streamed" subtitle="amount">
                       <div className="flex flex-col items-end">
-                        <span className="flex items-center gap-1">{streamedPercentage?.toSignificant(3)}%</span>
+                        <Blink dep={streamedPercentage?.toSignificant(3)} as="span" timeout={1500}>
+                          {(isBlinking) => (
+                            <span className={classNames(isBlinking ? 'text-green' : '', 'flex items-center gap-1')}>
+                              {streamedPercentage?.toSignificant(3)}%
+                              {isBlinking && (
+                                <ArrowUpIcon className="rotate-45" strokeWidth={3} width={14} height={14} />
+                              )}
+                            </span>
+                          )}
+                        </Blink>
                         <span className="text-[10px] font-medium text-slate-500">
                           {streamedAmount?.toSignificant(6)} {stream.streamedAmount?.currency.symbol}
                         </span>

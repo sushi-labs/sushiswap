@@ -1,6 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
 import { expect, Page, test } from '@playwright/test'
-import { Native, SUSHI, Token, Type, USDC_ADDRESS } from '@sushiswap/currency'
+import { Native, Token, Type, USDC_ADDRESS } from '@sushiswap/currency'
 
 export async function approve(page: Page, locator: string) {
   await timeout(500) // give the approve button time to load contracts, unrealistically fast when running test
@@ -42,11 +42,6 @@ interface V3PoolArgs {
   amount: string
   amountBelongsToToken0: boolean
   type: 'CREATE' | 'ADD'
-}
-
-interface IncenvitivePoolArgs {
-  token0: Type
-  token1: Type
 }
 
 if (!process.env.CHAIN_ID) {
@@ -375,55 +370,6 @@ async function removeLiquidityV2(page: Page) {
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }
 
-// test.describe('Incentivize', () => {
-//   test.beforeEach(async ({ page }) => {
-//     const url = BASE_URL.concat(`/incentivize`).concat(`?chainId=${CHAIN_ID}`)
-//     await page.goto(url)
-//     await switchNetwork(page, CHAIN_ID)
-//   })
-//
-//   test('Incentivize pool', async ({ page }) => {
-//     test.slow()
-//     await incentivizePool(page, { token0: NATIVE_TOKEN.wrapped, token1: USDC })
-//   })
-// })
-
-async function incentivizePool(page: Page, args: IncenvitivePoolArgs) {
-  await handleToken(page, args.token0, 'FIRST')
-  await handleToken(page, args.token1, 'SECOND')
-  const feeOptionSelector = page.locator('[testdata-id=fee-option-500]')
-  await expect(feeOptionSelector).toBeEnabled()
-  await feeOptionSelector.click()
-  await expect(feeOptionSelector).toBeChecked()
-
-  await selectDate(`[testdata-id=start-date]`, 1, '001', page)
-  await selectDate(`[testdata-id=end-date]`, 0, '002', page)
-
-  const input0 = page.locator(`[testdata-id=swap-from-input]`)
-  await expect(input0).toBeVisible()
-  await expect(input0).toBeEnabled()
-  await input0.fill('2.4')
-
-  const button0 = page.locator(`[testdata-id=swap-from-button-button]`)
-  await expect(button0).toBeVisible()
-  await expect(button0).toBeEnabled()
-  await button0.click()
-
-  await page.fill(`[testdata-id=swap-from-token-selector-address-input]`, 'SUSHI')
-  const rowSelector = page.locator(
-    `[testdata-id=swap-from-token-selector-row-${SUSHI[CHAIN_ID].address.toLowerCase()}]`
-  )
-  await expect(rowSelector).toBeVisible()
-  await rowSelector.click()
-
-  await approve(page, `approve-erc20-button`)
-  const previewLocator = page.locator('[testdata-id=incentivize-pool-review]')
-  await expect(previewLocator).toBeVisible({ timeout: 10_000 })
-  await expect(previewLocator).toBeEnabled()
-  await previewLocator.click()
-  await page.locator('[testdata-id=incentivize-pool-confirm]').click({ timeout: 5_000 })
-}
-
 async function handleToken(page: Page, currency: Type, order: 'FIRST' | 'SECOND') {
   const selectorInfix = `token${order === 'FIRST' ? 0 : 1}`
   const tokenSelector = page.locator(`[testdata-id=${selectorInfix}-select-button]`)
@@ -454,20 +400,4 @@ async function switchNetwork(page: Page, chainId: number) {
 
 function timeout(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-export async function selectDate(selector: string, months: number, day: string, page: Page) {
-  await page.locator(selector).click()
-  for (let i = 0; i < months; i++) {
-    await page.locator(`[aria-label="Next Month"]`).click()
-  }
-
-  await page
-    .locator(
-      `div.react-datepicker__day.react-datepicker__day--${day}, div.react-datepicker__day.react-datepicker__day--${day}.react-datepicker__day--weekend`
-    )
-    .last()
-    .click()
-
-  await page.locator('li.react-datepicker__time-list-item').first().click()
 }

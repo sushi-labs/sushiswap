@@ -40,10 +40,6 @@ const config: StorybookConfig = {
             find: '@sushiswap/ui',
             replacement: path.resolve(__dirname, '../../../packages/ui/'),
           },
-          {
-            find: '@sushiswap/router-config',
-            replacement: path.resolve(__dirname, '../../../config/router/'),
-          },
         ],
       },
     })

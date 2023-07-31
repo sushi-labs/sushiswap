@@ -6,15 +6,23 @@ import classNames from 'classnames'
 import * as React from 'react'
 import { FC } from 'react'
 
-import { textFieldVariants } from './text-field'
-
 export * as SelectPrimitive from '@radix-ui/react-select'
 
 const Select = SelectPrimitive.Root
 
 const SelectGroup = SelectPrimitive.Group
 
-const SelectValue = SelectPrimitive.Value
+const SelectValue = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.Value>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Value>
+>(({ className, ...props }, ref) => {
+  return (
+    <div className="pb-2 pt-[22px] font-medium">
+      <SelectPrimitive.Value ref={ref} className={classNames(className)} {...props}></SelectPrimitive.Value>
+    </div>
+  )
+})
+SelectValue.displayName = SelectPrimitive.Value.displayName
 
 const SelectIcon = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Icon>,
@@ -43,7 +51,10 @@ const SelectTrigger = React.forwardRef<
     <>
       <SelectPrimitive.Trigger
         ref={ref}
-        className={textFieldVariants({ className: classNames(className, 'flex justify-between items-center') })}
+        className={classNames(
+          'h-[54px] data-[state=open]:bg-accent group relative rounded-xl flex items-center justify-between gap-1 w-full text-gray-900 dark:text-slate-50 bg-secondary px-4',
+          className
+        )}
         {...props}
       >
         {content}
@@ -93,7 +104,10 @@ const SelectLabel = React.forwardRef<
     <input value={props['aria-label']} placeholder="hidden placeholder" className="hidden peer" />
     <SelectPrimitive.Label
       ref={ref}
-      className={classNames('py-1.5 pl-8 pr-2 text-sm font-semibold', className)}
+      className={classNames(
+        'pointer-events-none font-medium peer-focus:font-normal absolute text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-[15px] scale-75 top-4 z-10 origin-[0] left-4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-[15px]',
+        className
+      )}
       {...props}
     />
   </>
@@ -131,12 +145,12 @@ const SelectSeparator = React.forwardRef<
 ))
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName
 
-const SelectCaption: FC<{ children: React.ReactNode; isError?: boolean }> = ({ children, isError }) => {
-  if (!children) return <></>
+const SelectCaption: FC<{ caption?: string; isError?: boolean }> = ({ caption, isError }) => {
+  if (!caption) return <></>
 
   return (
-    <span className={classNames(isError ? 'text-red' : '', 'mt-1.5 inline-block px-3 text-sm text-gray-500')}>
-      {children}
+    <span className={classNames(isError ? 'text-red' : '', 'mt-1.5 inline-block px-4 text-xs text-gray-500')}>
+      {caption}
     </span>
   )
 }
