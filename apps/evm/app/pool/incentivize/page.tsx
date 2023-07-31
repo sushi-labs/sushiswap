@@ -29,9 +29,9 @@ import {
   Slider,
   SplashController,
   Switch,
+  TextField,
   typographyVariants,
 } from '@sushiswap/ui'
-import { TextField } from '@sushiswap/ui'
 import { ADDRESS_ZERO, Pool as V3Pool, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { Address, readContract, useAccount, useSignMessage } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
@@ -39,14 +39,14 @@ import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { DistributionCreator } from '@sushiswap/wagmi/future/hooks/rewards/abis/DistributionCreator'
 import { useIncentivizePoolWithRewards } from '@sushiswap/wagmi/future/hooks/rewards/hooks/useIncentivizePoolWithRewards'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { format } from 'date-fns'
 import { BigNumber } from 'ethers'
 import Link from 'next/link'
 import { useCallback, useMemo, useState } from 'react'
 import { useWaitForTransaction } from 'wagmi'
 
+import { ANGLE_ENABLED_NETWORKS } from '../../../config'
 import { useTokenAmountDollarValues } from '../../../lib/hooks'
 import { Layout, SelectNetworkWidget, SelectTokensWidget } from '../../../ui/pool'
 import { ContentBlock } from '../../../ui/pool/AddPage/ContentBlock'
@@ -127,7 +127,7 @@ const Incentivize = withCheckerRoot(() => {
 
   const { data: signature, signMessage } = useSignMessage()
 
-  const { data: angleRewards } = useAngleRewards({ chainId, account: address })
+  const { data: angleRewards, isLoading: angleRewardTokensLoading } = useAngleRewards({ chainId, account: address })
 
   const minAmount = useMemo(() => {
     if (!angleRewards) return undefined
@@ -283,6 +283,7 @@ const Incentivize = withCheckerRoot(() => {
           title="On which network would you like to add rewards?"
           selectedNetwork={chainId}
           onSelect={setNetwork}
+          networks={ANGLE_ENABLED_NETWORKS}
         />
         <SelectTokensWidget
           title="Which token pair would you like to incentivize?"
@@ -344,8 +345,8 @@ const Incentivize = withCheckerRoot(() => {
             onChange={setValue}
             currency={rewardToken}
             currencies={rewardTokens}
-            loading={tokensLoading}
-            currencyLoading={tokensLoading}
+            loading={angleRewardTokensLoading}
+            currencyLoading={angleRewardTokensLoading}
             allowNative={false}
             hidePinnedTokens
             {...(epochs &&
