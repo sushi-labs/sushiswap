@@ -12,7 +12,6 @@ interface PoolHeader {
 }
 
 export const PoolHeader: FC<PoolHeader> = ({ row }) => {
-  console.log(row)
   const { token0, token1 } = useTokensFromPools(row)
   return (
     <div className="flex flex-col gap-5">

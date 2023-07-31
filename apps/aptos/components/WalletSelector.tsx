@@ -21,10 +21,6 @@ interface Props {
   fullWidth?: boolean
   size: string
 }
-interface coinType {
-  type: string
-  data: any
-}
 
 export enum ProfileView {
   Disconnected,
@@ -36,10 +32,14 @@ export enum ProfileView {
 export default function WalletSelector({ hideChevron, varient, color, fullWidth, size }: Props) {
   const { account, connected, network } = useWallet()
   const [view, setView] = useState<ProfileView>(ProfileView.Default)
-  // const [balance, setBalance] = useState<number>(0)
   const { data: tokens } = useTokens(Number(network?.chainId) || 1)
   const nativeCurr = tokens?.['0x1::aptos_coin::AptosCoin']
-  const { data: balance } = useTokenBalance(account?.address as string, nativeCurr as Token, Number(network?.chainId))
+  const { data: balance } = useTokenBalance({
+    account: account?.address as string,
+    currency: nativeCurr?.address as string,
+    chainId: Number(network?.chainId),
+    refetchInterval: 2000,
+  })
   return (
     <Popover className={fullWidth ? 'relative w-full' : ''}>
       {({ open, close }) => (

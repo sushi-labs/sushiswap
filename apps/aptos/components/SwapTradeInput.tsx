@@ -15,13 +15,12 @@ export const SwapTradeInput = ({ handleSwap }: Props) => {
   const tradeVal = useRef<HTMLInputElement>(null)
   const [controller, setController] = useState<AbortController | null>(null)
   const { amount, token0, token1, error, isTransactionPending } = useSwapState()
-  const { data: balance, isLoading } = useTokenBalance(
-    account?.address as string,
-    token0,
-    Number(network?.chainId) || 1
-  )
-  console.log('isLoading', isLoading)
-  console.log(balance)
+  const { data: balance, isLoading } = useTokenBalance({
+    account: account?.address as string,
+    currency: token0.address,
+    chainId: Number(network?.chainId) || 1,
+    refetchInterval: 2000,
+  })
   const [slippageTolerance] = useSlippageTolerance()
   const {
     setAmount,

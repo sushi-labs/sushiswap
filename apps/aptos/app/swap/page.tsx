@@ -52,7 +52,7 @@ export default function SwapPage() {
             <WidgetTitleV2 />
             <div className="flex items-center justify-between">
               <SwitchAppType />
-              <SettingsOverlay modules={[SettingsModule.SlippageTolerance, SettingsModule.CarbonOffset]} />
+              <SettingsOverlay modules={[SettingsModule.SlippageTolerance]} />
             </div>
             <UIWidget.Content>
               <SwapTradeInput handleSwap={swapTokenIfAlreadySelected} />

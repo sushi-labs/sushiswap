@@ -10,7 +10,7 @@ export const PoolButtons: FC<PoolButtonsProps> = ({}) => {
   return (
     <div className="flex flex-col w-full gap-2">
       <div className="flex gap-2">
-        <Link.Internal href={`/pool/${router?.id}/remove`} passHref={true}>
+        <Link.Internal href={`/pool/${decodeURIComponent(router?.id)}/remove`} passHref={true}>
           <a className="w-full">
             <Button disabled={Boolean()} size="lg" color="default" fullWidth>
               Withdraw

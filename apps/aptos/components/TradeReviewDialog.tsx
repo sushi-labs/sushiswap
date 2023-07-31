@@ -34,8 +34,8 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
       parseInt(String(slippageAmount)),
       networkType
     )
+    if (!account?.address) return []
     setisTransactionPending(true)
-    if (!account) return []
     try {
       // sign and submit transaction to chain
       const response: any = await signAndSubmitTransaction(payload)
@@ -112,7 +112,7 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
               <List.Control>
                 <List.KeyValue title="Network">APTOS</List.KeyValue>
                 <List.KeyValue
-                  title="Price Impect"
+                  title="Price Impact"
                   subtitle="The impact your trade has on the market price of this pool."
                 >
                   <span className={'text-gray-700 text-right dark:text-slate-400'}>+0.13% (static right now)</span>

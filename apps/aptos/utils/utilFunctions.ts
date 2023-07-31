@@ -106,6 +106,16 @@ export async function useAllCommonPairs(
     })
   return returnRoutes
 }
+
+type coinPairReserve = {
+  type: string
+  data: {
+    block_timestamp_last: string
+    reserve_x: string
+    reserve_y: string
+  }
+}
+
 export async function getPoolPairs(network: string = 'mainnet') {
   const CONTRACT_ADDRESS = network == 'mainnet' ? MAINNET_CONTRACT : TESTNET_CONTRACT
   const { token0, token1, isTransactionPending } = usePoolState()
@@ -127,13 +137,6 @@ export async function getPoolPairs(network: string = 'mainnet') {
               inverse = true
               return true
             }
-            // if (
-            //   d.type.includes('swap::TokenPairReserve') &&
-            //   d.type.includes(token0.address) &&
-            //   d.type.includes(token1.address)
-            // ) {
-            //   return true
-            // }
           })
         })
       setLoadingPrice(false)

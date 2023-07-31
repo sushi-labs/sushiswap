@@ -12,11 +12,12 @@ interface Props {
 export const SwapTradeOutput = ({ handleSwap }: Props) => {
   const { account, network } = useWallet()
   const { token0, token1, outputAmount, isPriceFetching } = useSwapState()
-  const { data: balance, isLoading } = useTokenBalance(
-    account?.address as string,
-    token1,
-    Number(network?.chainId) || 1
-  )
+  const { data: balance, isLoading } = useTokenBalance({
+    account: account?.address as string,
+    currency: token1.address,
+    chainId: Number(network?.chainId) || 1,
+    refetchInterval: 2000,
+  })
   const outputSwapTokenAmount = outputAmount
     ? String(formatNumber(parseFloat(outputAmount), token1 ? token1.decimals : 8))
     : ''

@@ -1,27 +1,53 @@
+import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Disclosure, Transition } from '@headlessui/react'
-import { Cog8ToothIcon, CogIcon } from '@heroicons/react/24/outline'
+import { Cog8ToothIcon } from '@heroicons/react/24/outline'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
-import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { AppearOnMount, DEFAULT_INPUT_UNSTYLED, Typography, Widget, classNames } from '@sushiswap/ui'
+import { useIsMounted } from '@sushiswap/hooks'
+import { AppearOnMount, DEFAULT_INPUT_UNSTYLED, Tab, Typography, Widget, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
-import WalletSelector from 'components/WalletSelector'
-import { FC, Fragment, ReactNode, useState } from 'react'
+import { Icon } from 'components/Icon'
+import { useParams } from 'next/navigation'
+import { FC, Fragment, ReactNode, useMemo, useState } from 'react'
+import { Token } from 'utils/tokenType'
+import { usePool } from 'utils/usePool'
+import { Pool } from 'utils/usePools'
+import { useTokenBalance } from 'utils/useTokenBalance'
+import { useTokensFromPools } from 'utils/useTokensFromPool'
+import { useTotalSupply } from 'utils/useTotalSupply'
 
+const MAINNET_CONTRACT = process.env['MAINNET_CONTRACT'] || process.env['NEXT_PUBLIC_MAINNET_CONTRACT']
+const TESTNET_CONTRACT = process.env['TESTNET_CONTRACT'] || process.env['NEXT_PUBLIC_TESTNET_CONTRACT']
 interface RemoveSectionWidgetProps {
   percentage: string
   setPercentage(percentage: string): void
   children: ReactNode
+  token0: Token
+  token1: Token
+  balance: number
+  token0MinMinimum: number
+  token1MinMinimum: number
 }
 
-export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({ percentage, setPercentage, children }) => {
+export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
+  percentage,
+  setPercentage,
+  children,
+  token0,
+  token1,
+  balance,
+  token0MinMinimum,
+  token1MinMinimum,
+}) => {
   const isMounted = useIsMounted()
   const [hover, setHover] = useState(false)
+  const { account } = useWallet()
+  console.log(!(balance > 0), Boolean(account?.address))
   return (
     <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       <Transition
-        show={Boolean(hover && '')}
+        show={Boolean(hover && (!(balance > 0) || !account?.address))}
         as={Fragment}
         enter="transition duration-300 origin-center ease-out"
         enterFrom="transform opacity-0"
@@ -89,7 +115,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({ percentage, 
                             title: 'Remove Liquidity Slippage',
                           },
                         }}
-                        modules={[SettingsModule.CustomTokens, SettingsModule.SlippageTolerance]}
+                        modules={[SettingsModule.SlippageTolerance]}
                       >
                         {({ setOpen }) => (
                           <Button variant="outlined" color="default" onClick={() => setOpen(true)}>
@@ -163,12 +189,12 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({ percentage, 
                         </div>
                       </div>
                       <div className="grid items-center justify-between grid-cols-3 pb-2">
-                        <AppearOnMount show={Boolean(FundSource.WALLET)}>
+                        <AppearOnMount show={true}>
                           <Typography variant="sm" weight={500} className="text-gray-900 dark:text-slate-300">
-                            {}
+                            {`$0.00`}
                           </Typography>
                         </AppearOnMount>
-                        <AppearOnMount className="flex justify-end col-span-2" show={Boolean(FundSource.WALLET)}>
+                        <AppearOnMount className="flex justify-end col-span-2" show={true}>
                           <Typography
                             onClick={() => setPercentage('100')}
                             as="button"
@@ -176,7 +202,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({ percentage, 
                             weight={500}
                             className="text-gray-700 truncate hover:text-gray-800 dark:text-slate-300 dark:hover:text-slate-200"
                           >
-                            Balance:{}
+                            Balance: {balance}
                           </Typography>
                         </AppearOnMount>
                       </div>
@@ -201,15 +227,14 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({ percentage, 
                               weight={500}
                               className="flex items-center gap-2 text-gray-900 dark:text-slate-50"
                             >
-                              {}
+                              {token0 && <Icon currency={token0} width={20} height={20} />}
                               <span className="text-gray-600 dark:text-slate-400">
-                                <span className="text-gray-900 dark:text-slate-50">{}</span>
-                                {''}
-                                {}
+                                <span className="text-gray-900 dark:text-slate-50">{token0MinMinimum}</span>{' '}
+                                {token0.symbol}
                               </span>
                             </Typography>
                             <Typography variant="xs" className="text-gray-600 dark:text-slate-400">
-                              {}
+                              {`$0.00`}
                             </Typography>
                           </div>
                           <div className="flex items-center justify-between">
@@ -218,15 +243,14 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({ percentage, 
                               weight={500}
                               className="flex items-center gap-2 text-gray-900 dark:text-slate-50"
                             >
-                              {}
+                              {token1 && <Icon currency={token1} width={20} height={20} />}
                               <span className="text-gray-600 dark:text-slate-400">
-                                <span className="text-gray-900 dark:text-slate-50">{}</span>
-                                {''}
-                                {}
+                                <span className="text-gray-900 dark:text-slate-50">{token1MinMinimum}</span>{' '}
+                                {token1.symbol}
                               </span>
                             </Typography>
                             <Typography variant="xs" className="text-gray-600 dark:text-slate-400">
-                              {}
+                              {`$0.00`}
                             </Typography>
                           </div>
                         </div>

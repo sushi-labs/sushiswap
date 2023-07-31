@@ -120,16 +120,16 @@ const _Add: FC = () => {
   const { setToken0, setToken1, setAmount0, setAmount1, setisTransactionPending } = usePoolActions()
   const { token0, token1, amount0, amount1, isPriceFetching, poolPairRatio, pairs } = usePoolState()
   console.log('poolPairRatio', poolPairRatio)
-  const { data: balance0, isLoading: isLoadingBalance0 } = useTokenBalance(
-    account?.address as string,
-    token0,
-    Number(network?.chainId) || 1
-  )
-  const { data: balance1, isLoading: isLoadingBalance1 } = useTokenBalance(
-    account?.address as string,
-    token1,
-    Number(network?.chainId) || 1
-  )
+  const { data: balance0, isLoading: isLoadingBalance0 } = useTokenBalance({
+    account: account?.address as string,
+    currency: token0.address,
+    chainId: Number(network?.chainId) || 1,
+  })
+  const { data: balance1, isLoading: isLoadingBalance1 } = useTokenBalance({
+    account: account?.address as string,
+    currency: token1.address,
+    chainId: Number(network?.chainId) || 1,
+  })
   const tradeVal = useRef<HTMLInputElement>(null)
   const tradeVal1 = useRef<HTMLInputElement>(null)
 

@@ -26,7 +26,6 @@ const _Pool = () => {
   const router = useParams()
   const [chainId, ...address] = decodeURIComponent(router?.id).split(':')
   const tokenAddress = address.join(':')
-  const { network } = useWallet()
   const { data: pool } = usePool(Number(chainId), tokenAddress)
   console.log(pool)
 
