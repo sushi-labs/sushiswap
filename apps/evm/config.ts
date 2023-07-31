@@ -11,10 +11,16 @@ export const SWAP_API_ENABLED_NETWORKS = []
 
 export type SwapApiEnabledChainId = (typeof SWAP_API_ENABLED_NETWORKS)[number]
 
+export const DISABLED_CHAIN_IDS = [ChainId.BASE, ChainId.HAQQ, ChainId.LINEA]
+
 export const SUPPORTED_CHAIN_IDS = Array.from(
   new Set([...TridentChainIds, ...SushiSwapV2ChainIds, ...SushiSwapV3ChainIds])
 )
-  .filter((c) => !TESTNET_CHAIN_IDS.includes(c as (typeof TESTNET_CHAIN_IDS)[number]))
+  .filter(
+    (c) =>
+      !TESTNET_CHAIN_IDS.includes(c as (typeof TESTNET_CHAIN_IDS)[number]) &&
+      !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number])
+  )
   .sort((a: number, b: number) => {
     // Sort Thundercore
     if (

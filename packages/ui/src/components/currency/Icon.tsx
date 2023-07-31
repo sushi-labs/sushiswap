@@ -29,7 +29,8 @@ const MetisLogo = 'metis.svg'
 const BobaLogo = 'boba.svg'
 const BttcLogo = 'bttc.svg'
 const ThundercoreLogo = 'thundercore.svg'
-
+const CoreLogo = 'core.svg'
+const IslmLogo = 'islm.svg'
 const LOGO: Record<number, string> = {
   [ChainId.ETHEREUM]: EthereumLogo,
   [ChainId.KOVAN]: EthereumLogo,
@@ -69,6 +70,11 @@ const LOGO: Record<number, string> = {
   [ChainId.BTTC]: BttcLogo,
   [ChainId.POLYGON_ZKEVM]: EthereumLogo,
   [ChainId.THUNDERCORE]: ThundercoreLogo,
+  [ChainId.CORE]: CoreLogo,
+  [ChainId.HAQQ]: IslmLogo,
+  [ChainId.ZKSYNC_ERA]: EthereumLogo,
+  [ChainId.LINEA]: EthereumLogo,
+  [ChainId.BASE]: EthereumLogo,
 }
 
 function djb2(str: string) {
