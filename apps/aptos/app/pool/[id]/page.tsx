@@ -26,7 +26,7 @@ const _Pool = () => {
   const router = useParams()
   const [chainId, ...address] = decodeURIComponent(router?.id).split(':')
   const tokenAddress = address.join(':')
-  const { data: pool } = usePool(Number(chainId), tokenAddress)
+  const { data: pool, isLoading: isPoolLoading } = usePool(Number(chainId), tokenAddress)
   console.log(pool)
 
   return (
@@ -43,7 +43,7 @@ const _Pool = () => {
               <div className="flex flex-col order-2 gap-4">
                 <AppearOnMount>
                   <div className="flex flex-col gap-10">
-                    <PoolPosition row={pool} />
+                    <PoolPosition row={pool} isLoading={isPoolLoading} />
                   </div>
                 </AppearOnMount>
                 <div className="hidden lg:flex">
