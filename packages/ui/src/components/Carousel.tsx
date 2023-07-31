@@ -80,7 +80,7 @@ export const Carousel = <T,>({
         })
       }
     }
-  }, [defaultSlide, slideWidth])
+  }, [])
 
   return (
     <div className="relative group">

@@ -1,18 +1,19 @@
 'use client'
 
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
-import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { Chain } from '@sushiswap/chain'
 import { Native, Token } from '@sushiswap/currency'
 import { useCustomTokens, useDebounce, usePinnedTokens } from '@sushiswap/hooks'
 import { usePrice, useTokenList, useTokens, useTokenSearch } from '@sushiswap/react-query'
-import { Badge, classNames, NetworkIcon, SkeletonCircle, SkeletonText, TextField } from '@sushiswap/ui'
+import { Badge, classNames, NetworkIcon, SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Dialog } from '@sushiswap/ui/components/dialog'
+import { Search } from '@sushiswap/ui/components/input/Search'
 import { List } from '@sushiswap/ui/components/list/List'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
 import React, { FC, useCallback, useMemo, useState } from 'react'
+
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { useSearchContext } from './SearchProvider'
 
@@ -82,14 +83,7 @@ export const SearchPanel: FC = () => {
     <Dialog variant="opaque" open={open} onClose={onClose} className="fixed inset-0 z-[1080]">
       <div>
         <div className="flex items-center gap-4">
-          <TextField
-            placeholder="Search by token or address"
-            icon={MagnifyingGlassIcon}
-            type="text"
-            id="search-input"
-            value={query}
-            onValueChange={setQuery}
-          />
+          <Search id="search-input" loading={isLoading} onValueChange={setQuery} value={query ?? ''} />
           <Button variant="ghost" onClick={onClose} className="text-blue">
             Cancel
           </Button>

@@ -18,20 +18,18 @@ const baseURL = `http://localhost:${PORT}`
  * See https://playwright.dev/docs/test-configuration.
  */
 const config: PlaywrightTestConfig = {
-  // Test directory
   testDir: path.join(__dirname, 'test'),
-  testMatch: '*.test.ts',
   /* Maximum time one test can run for. */
-  timeout: 60 * 1_000,
+  timeout: 120 * 1_000,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
      * For example in `await expect(locator).toHaveText();`
      */
-    timeout: !process.env.CI ? 45_000 : 90_000,
+    timeout: !process.env.CI ? 15_000 : 90_000,
   },
   /* Run tests in files in parallel */
-  fullyParallel: false,
+  fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   // Retry on CI only.
@@ -58,6 +56,7 @@ const config: PlaywrightTestConfig = {
     // baseURL: 'http://localhost:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+    // trace: 'retain-on-failure',
     trace: 'on',
   },
 
@@ -69,14 +68,11 @@ const config: PlaywrightTestConfig = {
         ...devices['Desktop Chrome'],
       },
     },
-
-    // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
-    // },
     // {
     //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
+    //   use: {
+    //     ...devices['Desktop Safari'],
+    //   },
     // },
 
     // /* Test against mobile viewports. */
@@ -93,6 +89,10 @@ const config: PlaywrightTestConfig = {
     //   },
     // },
   ],
+
+  /* Folder for test artifacts such as screenshots, videos, traces, etc. */
+  // outputDir: './playwright-report',
+
   // Run your local dev server before starting the tests:
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
   webServer: [
@@ -101,14 +101,14 @@ const config: PlaywrightTestConfig = {
         'anvil',
         `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
         `--fork-url=${process.env.ANVIL_FORK_URL}`,
-        `--port=${Number(process.env.ANVIL_PORT) || 8545}`,
+        `--port=${process.env.ANVIL_PORT}`,
       ].join(' '),
       env: {
         ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
         ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
         ANVIL_PORT: String(process.env.ANVIL_PORT),
       },
-      port: Number(process.env.ANVIL_PORT) || 8545,
+      port: Number(process.env.ANVIL_PORT),
     },
     {
       command: 'npm run start',

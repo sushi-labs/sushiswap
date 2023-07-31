@@ -58,7 +58,7 @@ export const CreateStreamBaseSchema = z.object({
     .superRefine(dateRangeValidator),
   recipient: ZAddress,
   currency: ZToken,
-  amount: z.coerce.string().refine((val) => Number(val) > 0, 'Must be greater than 0'),
+  amount: z.string().refine((val) => Number(val) > 0, 'Must be greater than 0'),
   fundSource: z.string(),
 })
 

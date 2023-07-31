@@ -72,9 +72,7 @@ const config = {
         heartbeat: 'heartbeat 1s ease 0.2s infinite normal forwards',
         rotate: 'rotate360 1s cubic-bezier(0.83, 0, 0.17, 1) infinite',
         wave: 'shimmer 1.25s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        draw: 'draw 0.5s cubic-bezier(0.25, 0.25, 0.25, 1) forwards',
         dash: 'dash 1.5s 2s ease-out infinite',
-        grow: 'grow 1s cubic-bezier(0.25, 0.25, 0.25, 1) forwards',
         'dash-check': 'dash-check 1.5s 2s ease-out infinite',
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
@@ -138,26 +136,6 @@ const config = {
           },
           '100%': {
             strokeDashoffset: '900',
-          },
-        },
-        draw: {
-          '0%': { strokeOpacity: '1' },
-          '100%': { strokeOpacity: '1', strokeDashoffset: '0' },
-        },
-        grow: {
-          '0%': {
-            transform: 'scale(0)',
-          },
-          '60%': {
-            transform: 'scale(0.8)',
-            strokeWidth: '4px',
-            fillOpacity: '0',
-          },
-          '100%': {
-            transform: 'scale(0.9)',
-            strokeWidth: '8px',
-            fillOpacity: '1',
-            fill: 'currentColor',
           },
         },
       },

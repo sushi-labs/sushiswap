@@ -20,7 +20,6 @@ const baseURL = `http://localhost:${PORT}`
 const config: PlaywrightTestConfig = {
   // Test directory
   testDir: path.join(__dirname, 'test'),
-  testMatch: '*.test.ts',
   /* Maximum time one test can run for. */
   timeout: 60 * 1_000,
   expect: {
@@ -101,7 +100,7 @@ const config: PlaywrightTestConfig = {
         'anvil',
         `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
         `--fork-url=${process.env.ANVIL_FORK_URL}`,
-        `--port=${Number(process.env.ANVIL_PORT) || 8545}`,
+        `--port=${process.env.ANVIL_PORT}`,
       ].join(' '),
       env: {
         ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),

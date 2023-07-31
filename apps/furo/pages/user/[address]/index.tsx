@@ -1,4 +1,4 @@
-import { SplashController } from '@sushiswap/ui'
+import { SplashController } from '@sushiswap/ui/components/SplashController'
 import { Address } from '@sushiswap/wagmi'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'

@@ -4,30 +4,46 @@ import { IconComponent } from '../../types'
 
 export const FailedMarkIcon: IconComponent = (props) => {
   return (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true">
+    <svg {...props} version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
       <circle
-        fillOpacity="0"
-        className="circle animate-grow origin-center scale-0 text-red"
-        stroke="currentColor"
-        strokeWidth={16}
-        fill="currentColor"
-        cx="24"
-        cy="24"
-        r="22"
-      />
-      <path
-        className="tick animate-draw"
+        className="animate-[dash_1.5s_ease-in_forwards] text-red"
         fill="none"
-        stroke="#FFF"
-        strokeOpacity={0}
-        strokeDasharray={29}
-        strokeDashoffset={29}
-        strokeWidth="6"
+        strokeDasharray={1000}
+        strokeDashoffset={0}
+        stroke="currentColor"
+        strokeWidth="3"
+        strokeLinecap="round"
+        cx="65.1"
+        cy="65.1"
+        r="60.1"
+      />
+      <line
+        className="animate-[dash_1.5s_ease-in_forwards] text-red"
+        strokeDasharray={1000}
+        strokeDashoffset={1000}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeMiterlimit="10"
-        d="M 16 32 L 32 16 M 32 32 L 16 16"
-        style={{ animationDelay: '600ms' }}
+        x1="38.4"
+        y1="41.9"
+        x2="91.8"
+        y2="88.3"
+      />
+      <line
+        className="animate-[dash_1.5s_ease-in_forwards] text-red"
+        strokeDasharray={1000}
+        strokeDashoffset={1000}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        x1="91.8"
+        y1="41.9"
+        x2="38.4"
+        y2="88.3"
       />
     </svg>
   )

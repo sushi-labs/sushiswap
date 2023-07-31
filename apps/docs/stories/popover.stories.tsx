@@ -60,7 +60,7 @@ export const PopoverWithMenu = {
       </PopoverTrigger>
       <PopoverContent className="!p-0 !overflow-x-hidden !overflow-y-scroll scroll">
         <Command>
-          <CommandInput placeholder="Search network" />
+          <CommandInput placeholder="Search network..." />
           <CommandEmpty>No network found.</CommandEmpty>
           <CommandGroup>
             <CommandItem value="Item 0">Command Item 0</CommandItem>

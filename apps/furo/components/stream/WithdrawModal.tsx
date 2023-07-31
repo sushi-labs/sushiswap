@@ -1,39 +1,33 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
-import { DownloadIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { FuroStreamChainId } from '@sushiswap/furo'
-import { TextField } from '@sushiswap/ui'
-import { DialogDescription, DialogHeader, DialogTitle } from '@sushiswap/ui'
-import { DialogContent, DialogFooter, DialogTrigger } from '@sushiswap/ui'
-import { DialogConfirm, DialogProvider, DialogReview } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
+import { Dialog } from '@sushiswap/ui/components/dialog/Dialog'
 import { Dots } from '@sushiswap/ui/components/dots'
+import { Text } from '@sushiswap/ui/components/input/Text'
 import { createToast } from '@sushiswap/ui/components/toast'
-import {
-  _useSendTransaction as useSendTransaction,
-  useAccount,
-  useFuroStreamContract,
-  useWaitForTransaction,
-} from '@sushiswap/wagmi'
+import { _useSendTransaction as useSendTransaction, useAccount, useFuroStreamContract } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
-import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 
 import { Stream, useStreamBalance } from '../../lib'
 
 interface WithdrawModalProps {
   stream: Stream
   chainId: FuroStreamChainId
+  children?({ disabled, setOpen }: { disabled: boolean; setOpen: Dispatch<SetStateAction<boolean>> }): ReactNode
 }
 
-export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
+export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, children }) => {
   const { address } = useAccount()
   const { data: balance } = useStreamBalance({ chainId, streamId: stream.id, token: stream.token })
   const contract = useFuroStreamContract(chainId)
 
+  const [open, setOpen] = useState(false)
   const [input, setInput] = useState<string>('')
 
   const amount = useMemo(() => {
@@ -83,109 +77,89 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
     [stream, amount, chainId, contract, address]
   )
 
-  const {
-    sendTransactionAsync,
-    isLoading: isWritePending,
-    data,
-  } = useSendTransaction({
+  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
     chainId,
     prepare,
     onSettled,
+    onSuccess() {
+      setOpen(false)
+    },
     enabled: Boolean(!!stream && !!amount && !!chainId && !!contract),
   })
-
-  const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
 
   if (!address || !stream.canWithdraw(address)) return <></>
 
   return (
-    <DialogProvider>
-      <DialogReview>
-        {({ confirm }) => (
-          <>
-            <DialogTrigger asChild>
-              <Button
-                id="stream-withdraw"
-                icon={DownloadIcon}
-                variant="secondary"
-                disabled={!stream.canWithdraw(address)}
-              >
-                Withdraw
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Withdraw</DialogTitle>
-                <DialogDescription>
-                  You have{' '}
-                  <span
-                    onClick={() => setInput(balance?.toExact() ?? '')}
-                    role="button"
-                    className="font-semibold text-blue"
+    <>
+      {typeof children === 'function' ? (
+        children({ disabled: !stream.canWithdraw(address), setOpen })
+      ) : (
+        <Button
+          fullWidth
+          disabled={!stream.canWithdraw(address)}
+          onClick={() => {
+            setOpen(true)
+          }}
+        >
+          Withdraw
+        </Button>
+      )}
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <Dialog.Content className="space-y-4 !pb-3 !bg-white dark:!bg-slate-800">
+          <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
+          <div className="text-gray-700 dark:text-slate-400">
+            You have{' '}
+            <span onClick={() => setInput(balance?.toExact() ?? '')} role="button" className="font-semibold text-blue">
+              {balance?.toSignificant(6)} {balance?.currency.symbol}
+            </span>{' '}
+            available for withdrawal. <br />
+            Any withdrawn amount will be sent to{' '}
+            <a
+              target="_blank"
+              className="font-semibold text-blue"
+              href={Chain.from(stream.chainId).getAccountUrl(stream.recipient.id)}
+              rel="noreferrer"
+            >
+              {shortenAddress(stream.recipient.id)}
+            </a>
+          </div>
+          <Text
+            label="Amount"
+            value={input}
+            onChange={(val) => setInput(`${val}`)}
+            id="withdraw-modal-input"
+            testdata-id="withdraw-modal-input"
+          />
+          <div className="col-span-2 pt-2">
+            <Checker.Connect fullWidth>
+              <Checker.Network fullWidth chainId={chainId}>
+                <Checker.Custom guardWhen={!amount?.greaterThan(0)} guardText="Enter amount">
+                  <Checker.Custom
+                    guardWhen={Boolean(stream.balance && amount?.greaterThan(stream.balance))}
+                    guardText="Not enough available"
                   >
-                    {balance?.toSignificant(6)} {balance?.currency.symbol}
-                  </span>{' '}
-                  available for withdrawal. <br />
-                  Any withdrawn amount will be sent to{' '}
-                  <a
-                    target="_blank"
-                    className="font-semibold text-blue"
-                    href={Chain.from(stream.chainId).getAccountUrl(stream.recipient.id)}
-                    rel="noreferrer"
-                  >
-                    {shortenAddress(stream.recipient.id)}
-                  </a>
-                </DialogDescription>
-              </DialogHeader>
-              <div className="flex flex-col gap-4">
-                <TextField
-                  type="number"
-                  placeholder="Amount"
-                  testdata-id="withdraw-modal-input"
-                  value={input}
-                  onValueChange={setInput}
-                  unit={stream.token?.symbol}
-                />
-              </div>
-              <DialogFooter>
-                <Checker.Connect fullWidth>
-                  <Checker.Network fullWidth chainId={chainId}>
-                    <Checker.Guard guardWhen={!amount?.greaterThan(0)} guardText="Enter amount">
-                      <Checker.Guard
-                        guardWhen={Boolean(stream.balance && amount?.greaterThan(stream.balance))}
-                        guardText="No available tokens for withdrawal"
-                      >
-                        <Button
-                          size="xl"
-                          fullWidth
-                          disabled={isWritePending || !stream.balance}
-                          onClick={() => sendTransactionAsync?.().then(() => confirm())}
-                          testId="withdraw-modal-confirmation"
-                        >
-                          {!stream.token ? (
-                            'Invalid stream token'
-                          ) : isWritePending ? (
-                            <Dots>Confirm Withdraw</Dots>
-                          ) : (
-                            'Withdraw'
-                          )}
-                        </Button>
-                      </Checker.Guard>
-                    </Checker.Guard>
-                  </Checker.Network>
-                </Checker.Connect>
-              </DialogFooter>
-            </DialogContent>
-          </>
-        )}
-      </DialogReview>
-      <DialogConfirm
-        chainId={chainId}
-        status={status}
-        testId="withdraw-stream-confirmation-modal"
-        successMessage={`Successfully withdrawn from stream`}
-        txHash={data?.hash}
-      />
-    </DialogProvider>
+                    <Button
+                      size="xl"
+                      fullWidth
+                      disabled={isWritePending || !stream.balance}
+                      onClick={() => sendTransaction?.()}
+                      testId="withdraw-modal-confirmation"
+                    >
+                      {!stream.token ? (
+                        'Invalid stream token'
+                      ) : isWritePending ? (
+                        <Dots>Confirm Withdraw</Dots>
+                      ) : (
+                        'Withdraw'
+                      )}
+                    </Button>
+                  </Checker.Custom>
+                </Checker.Custom>
+              </Checker.Network>
+            </Checker.Connect>
+          </div>
+        </Dialog.Content>
+      </Dialog>
+    </>
   )
 }
