@@ -25,7 +25,7 @@ const Remove: FC = () => {
   return <_Remove />
 }
 
-const _Remove = () => {
+const _Remove: FC = () => {
   const { connected } = useWallet()
   const [isTransactionPending, setisTransactionPending] = useState<boolean>(false)
   const [percentage, setPercentage] = useState<string>('')
@@ -150,8 +150,8 @@ const _Remove = () => {
   }
 
   return (
-    pool?.id && (
-      <>
+    <>
+      {pool?.id && (
         <Layout>
           <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
             <div className="hidden md:block" />
@@ -219,8 +219,8 @@ const _Remove = () => {
             </div>
           </div>
         </Layout>
-      </>
-    )
+      )}
+    </>
   )
 }
 
