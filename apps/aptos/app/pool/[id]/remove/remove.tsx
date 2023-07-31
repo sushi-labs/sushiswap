@@ -75,6 +75,8 @@ const _Remove = () => {
     decimals: LPSupply?.data?.decimals,
   })
 
+  console.log('underlyinh', underlying0, underlying1)
+
   const currencyAToRemove = useMemo(() => {
     return token0
       ? underlying0
@@ -148,75 +150,77 @@ const _Remove = () => {
   }
 
   return (
-    <>
-      <Layout>
-        <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
-          <div className="hidden md:block" />
-          <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">
-            <RemoveSectionWidget
-              percentage={percentage}
-              setPercentage={setPercentage}
-              token0={token0}
-              token1={token1}
-              balance={balance}
-              token0MinMinimum={formatNumber(minAmount0 as number, token0.decimals)}
-              token1MinMinimum={formatNumber(minAmount1 as number, token1.decimals)}
-            >
-              <>
-                {connected ? (
-                  <button
-                    className={`btn w-full flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold ${
-                      Number(percentage) <= 0 || isTransactionPending
-                        ? 'pointer-events-none relative opacity-[0.4] overflow-hidden'
-                        : ''
-                    }`}
-                    disabled={Number(percentage) <= 0 || isTransactionPending}
-                    onClick={removeLiquidityHandler}
-                  >
-                    {isTransactionPending ? (
-                      <Dots>Confirm transaction</Dots>
-                    ) : Number(percentage) > 0 ? (
-                      <>Remove Liquidity</>
-                    ) : (
-                      <>Enter Amount</>
-                    )}
-                  </button>
-                ) : (
-                  <WalletSelector hideChevron color="blue" size="xl" fullWidth={true} />
-                )}
-              </>
-            </RemoveSectionWidget>
-            <Container className="flex justify-center">
-              <Link.External
-                href="https://docs.sushi.com/docs/Products/Sushiswap/Liquidity%20Pools"
-                className="flex justify-center px-6 py-4 decoration-slate-500 hover:bg-opacity-[0.06] cursor-pointer rounded-2xl"
-              >
-                <Typography
-                  variant="xs"
-                  weight={500}
-                  className="flex items-center gap-1 text-gray-600 dark:text-slate-500"
-                >
-                  Learn more about liquidity and yield farming
-                  {/* <Link.External width={16} height={16} className="text-gray-600 dark:text-slate-500" /> */}
-                  <ArrowTopRightOnSquareIcon height={20} width={20} />
-                </Typography>
-              </Link.External>
-            </Container>
-          </div>
-          <div className="order-1 sm:order-3">
-            <AppearOnMount>
-              <AddSectionMyPosition
-                balance={balance}
-                underlying0={parseFloat(underlying0?.toFixed(4) as string)}
-                underlying1={parseFloat(underlying1?.toFixed(4) as string)}
+    pool?.id && (
+      <>
+        <Layout>
+          <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
+            <div className="hidden md:block" />
+            <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">
+              <RemoveSectionWidget
+                percentage={percentage}
+                setPercentage={setPercentage}
                 token0={token0}
                 token1={token1}
-              />
-            </AppearOnMount>
+                balance={balance}
+                token0MinMinimum={formatNumber(minAmount0 as number, token0.decimals)}
+                token1MinMinimum={formatNumber(minAmount1 as number, token1.decimals)}
+              >
+                <>
+                  {connected ? (
+                    <button
+                      className={`btn w-full flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold ${
+                        Number(percentage) <= 0 || isTransactionPending
+                          ? 'pointer-events-none relative opacity-[0.4] overflow-hidden'
+                          : ''
+                      }`}
+                      disabled={Number(percentage) <= 0 || isTransactionPending}
+                      onClick={removeLiquidityHandler}
+                    >
+                      {isTransactionPending ? (
+                        <Dots>Confirm transaction</Dots>
+                      ) : Number(percentage) > 0 ? (
+                        <>Remove Liquidity</>
+                      ) : (
+                        <>Enter Amount</>
+                      )}
+                    </button>
+                  ) : (
+                    <WalletSelector hideChevron color="blue" size="xl" fullWidth={true} />
+                  )}
+                </>
+              </RemoveSectionWidget>
+              <Container className="flex justify-center">
+                <Link.External
+                  href="https://docs.sushi.com/docs/Products/Sushiswap/Liquidity%20Pools"
+                  className="flex justify-center px-6 py-4 decoration-slate-500 hover:bg-opacity-[0.06] cursor-pointer rounded-2xl"
+                >
+                  <Typography
+                    variant="xs"
+                    weight={500}
+                    className="flex items-center gap-1 text-gray-600 dark:text-slate-500"
+                  >
+                    Learn more about liquidity and yield farming
+                    {/* <Link.External width={16} height={16} className="text-gray-600 dark:text-slate-500" /> */}
+                    <ArrowTopRightOnSquareIcon height={20} width={20} />
+                  </Typography>
+                </Link.External>
+              </Container>
+            </div>
+            <div className="order-1 sm:order-3">
+              <AppearOnMount>
+                <AddSectionMyPosition
+                  balance={balance}
+                  underlying0={parseFloat(underlying0?.toFixed(4) as string)}
+                  underlying1={parseFloat(underlying1?.toFixed(4) as string)}
+                  token0={token0}
+                  token1={token1}
+                />
+              </AppearOnMount>
+            </div>
           </div>
-        </div>
-      </Layout>
-    </>
+        </Layout>
+      </>
+    )
   )
 }
 

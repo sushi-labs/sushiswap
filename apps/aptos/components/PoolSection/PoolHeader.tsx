@@ -61,8 +61,7 @@ export const PoolHeader: FC<PoolHeader> = ({ row }) => {
               as="span"
               className="text-gray-500 dark:text-slate-400 text-slate-600 sm:text-right"
             >
-              APR:{''}
-              <span className="font-semibold text-gray-900 dark:text-slate-50">{'0.00%'}</span>
+              APR: <span className="font-semibold text-gray-900 dark:text-slate-50">{'0.00%'}</span>
             </Typography>
             <div className="flex gap-2">
               <Typography
@@ -71,7 +70,7 @@ export const PoolHeader: FC<PoolHeader> = ({ row }) => {
                 as="span"
                 className="text-gray-600 dark:text-slate-400 text-slate-600"
               >
-                Fees:{'0.00%'}
+                Fees: {'0.00%'}
               </Typography>
             </div>
           </div>

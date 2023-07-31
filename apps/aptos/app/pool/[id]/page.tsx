@@ -31,7 +31,7 @@ const _Pool = () => {
 
   return (
     <>
-      {pool && (
+      {pool?.id && (
         <Layout>
           <div className="flex flex-col gap-9">
             <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
