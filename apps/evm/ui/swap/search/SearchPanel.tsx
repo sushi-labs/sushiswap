@@ -30,6 +30,7 @@ export const SearchPanel: FC = () => {
   const { data: customTokenMap } = useCustomTokens()
 
   const pinnedTokens = useMemo(() => {
+    if (!pinnedTokenMap[network1]) return []
     return pinnedTokenMap[network1]
       .map((id) => {
         const [, address] = id.split(':')

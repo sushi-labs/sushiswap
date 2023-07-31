@@ -2,6 +2,7 @@ import { getAddress as _getAddress, isAddress } from '@ethersproject/address'
 import { ChainId } from '@sushiswap/chain'
 import {
   ARB,
+  Currency,
   DAI,
   FRAX,
   GNO,
@@ -10,7 +11,6 @@ import {
   Native,
   SUSHI,
   Token,
-  Type,
   USDC,
   USDT,
   WBTC,
@@ -259,6 +259,30 @@ export const COMMON_BASES = {
     USDT[ChainId.THUNDERCORE],
     WBTC[ChainId.THUNDERCORE],
   ],
+  [ChainId.HAQQ]: [
+    Native.onChain(ChainId.HAQQ),
+    WNATIVE[ChainId.HAQQ],
+    WETH9[ChainId.HAQQ],
+    WBTC[ChainId.HAQQ],
+    USDC[ChainId.HAQQ],
+    USDT[ChainId.HAQQ],
+    DAI[ChainId.HAQQ],
+  ],
+  [ChainId.CORE]: [
+    Native.onChain(ChainId.CORE),
+    WNATIVE[ChainId.CORE],
+    WETH9[ChainId.CORE],
+    USDC[ChainId.CORE],
+    USDT[ChainId.CORE],
+  ],
+  [ChainId.ZKSYNC_ERA]: [
+    Native.onChain(ChainId.ZKSYNC_ERA),
+    WNATIVE[ChainId.ZKSYNC_ERA],
+    WBTC[ChainId.ZKSYNC_ERA],
+    USDC[ChainId.ZKSYNC_ERA],
+  ],
+  [ChainId.LINEA]: [Native.onChain(ChainId.LINEA), WNATIVE[ChainId.LINEA], DAI[ChainId.LINEA], USDC[ChainId.LINEA]],
+  [ChainId.BASE]: [Native.onChain(ChainId.BASE), WNATIVE[ChainId.BASE]],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const
 
@@ -306,7 +330,7 @@ export const usePinnedTokens = () => {
   )
 
   const hasToken = useCallback(
-    (currency: Type | string) => {
+    (currency: Currency | string) => {
       if (typeof currency === 'string') {
         if (!currency.includes(':')) {
           throw new Error('Address provided instead of id')
