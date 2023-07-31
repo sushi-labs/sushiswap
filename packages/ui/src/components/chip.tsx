@@ -9,11 +9,11 @@ const chipVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-blue hover:bg-blue-600 focus:bg-blue-700 border-transparent text-white',
-        destructive: 'bg-red hover:bg-red-600 focus:bg-red-700 border-transparent text-white',
-        secondary: 'bg-secondary hover:bg-muted focus:bg-accent border-transparent',
+        default: 'bg-blue hover:bg-blue-600 focus:bg-blue-700 border-transparent text-primary-foreground',
+        secondary: 'bg-secondary hover:bg-muted focus:bg-accent border-transparent text-secondary-foreground',
+        destructive: 'bg-red hover:bg-red-600 focus:bg-red-700 border-transparent text-destructive-foreground',
         ghost: 'hover:bg-muted focus:bg-accent',
-        outline: '',
+        outline: 'text-foreground',
       },
     },
     defaultVariants: {
@@ -27,16 +27,20 @@ export interface ChipProps extends React.HTMLAttributes<HTMLDivElement>, Variant
   iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
 }
 
-function Chip({ className, variant, icon: Icon, iconProps, children, ...props }: ChipProps) {
-  return (
-    <div
-      className={classNames(chipVariants({ variant, className: classNames(className, 'flex items-center gap-1') }))}
-      {...props}
-    >
-      {Icon ? <Icon {...iconProps} width={12} height={12} /> : null}
-      {children}
-    </div>
-  )
-}
+const Chip = React.forwardRef<HTMLDivElement, ChipProps>(
+  ({ className, variant, icon: Icon, iconProps, children, ...props }, ref) => {
+    return (
+      <div
+        className={classNames(chipVariants({ variant, className: classNames(className, 'flex items-center gap-1') }))}
+        ref={ref}
+        {...props}
+      >
+        {Icon ? <Icon {...iconProps} width={12} height={12} /> : null}
+        {children}
+      </div>
+    )
+  }
+)
+Chip.displayName = 'Chip'
 
 export { Chip, chipVariants }

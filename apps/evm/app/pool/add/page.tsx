@@ -3,6 +3,8 @@
 import { ArrowLeftIcon, SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
+import { typographyVariants } from '@sushiswap/ui'
+import { Separator } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
@@ -43,12 +45,12 @@ export default function Page() {
                     Go back to pools list
                   </span>
                 </Link>
-                <h1 className="mt-2 text-3xl font-medium">Add Liquidity</h1>
-                <h1 className="text-lg text-gray-600 dark:dark:text-slate-400 text-slate-600">
+                <h1 className={typographyVariants({ variant: 'h3' })}>Add Liquidity</h1>
+                <p className={typographyVariants({ variant: 'muted' })}>
                   Create a new pool or create a liquidity position on an existing pool.
-                </h1>
+                </p>
               </div>
-              <div className="h-0.5 w-full bg-gray-900/5 dark:bg-slate-200/5 my-10" />
+              <Separator orientation="horizontal" className="mt-4 mb-10" />
               <div className="flex justify-center">
                 <div className="flex lg:grid lg:grid-cols-[404px_auto] gap-20">
                   <ConcentratedLiquidityProvider>
@@ -192,7 +194,7 @@ const _Add: FC = () => {
           </div>
         </div>
       </div>
-      <div className="flex flex-col order-3 gap-[64px]  pb-40 sm:order-2">
+      <div className="flex flex-col order-3 gap-10  pb-40 sm:order-2">
         <SelectNetworkWidget selectedNetwork={chainId} onSelect={setNetwork} />
         <SelectTokensWidget
           chainId={chainId}

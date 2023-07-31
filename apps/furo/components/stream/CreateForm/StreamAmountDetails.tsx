@@ -1,8 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
+import { SelectIcon, TextField, textFieldVariants } from '@sushiswap/ui'
+import { Label } from '@sushiswap/ui'
 import { FormControl, FormField, FormItem, FormMessage, FormSection } from '@sushiswap/ui/components/form'
-import { Input } from '@sushiswap/ui/components/input'
 import { _useBalance as useBalance, useAccount } from '@sushiswap/wagmi'
 import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
 import React, { FC, useCallback, useEffect } from 'react'
@@ -80,8 +81,11 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
       <FormField
         control={control}
         name={`streams.${index}.currency`}
-        render={({ field: { onChange, onBlur, value } }) => (
+        render={({ field: { onChange, onBlur, name, value } }) => (
           <FormItem>
+            <Label>
+              Token<sup>*</sup>
+            </Label>
             <FormControl>
               <TokenSelector
                 id={`create-single-stream-token-selector${index}`}
@@ -89,20 +93,19 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
                 onSelect={(currency) => onSelect(onChange, currency)}
                 selected={_currency}
               >
-                {({ setOpen }) => (
-                  <Input.Select
-                    onBlur={onBlur}
-                    label={
-                      <>
-                        Token<sup>*</sup>
-                      </>
-                    }
+                <button onBlur={onBlur} className={textFieldVariants({ className: 'flex flex-1 justify-between' })}>
+                  <TextField
+                    name={name}
+                    readOnly
                     value={value?.isNative ? value?.symbol : value?.address}
-                    onClick={() => setOpen(true)}
-                    id={`create-single-stream-token-select${index}`}
+                    placeholder="Select a token"
                     testdata-id={`create-single-stream-token-select${index}`}
+                    variant="naked"
+                    type="text"
+                    className="cursor-pointer"
                   />
-                )}
+                  <SelectIcon />
+                </button>
               </TokenSelector>
             </FormControl>
             <FormMessage />
@@ -116,6 +119,9 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
           const _value = ZFundSourceToFundSource.parse(value)
           return (
             <FormItem>
+              <Label>
+                Stream from<sup>*</sup>
+              </Label>
               <FormControl>
                 <div className="flex flex-col">
                   <div className="flex items-center gap-4">
@@ -150,20 +156,19 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
         render={({ field: { onChange, value, onBlur, name } }) => {
           return (
             <FormItem>
+              <Label>
+                Amount
+                <sup>*</sup>
+              </Label>
               <FormControl>
-                <Input.Numeric
-                  onUserInput={onChange}
-                  onBlur={onBlur}
-                  name={name}
+                <TextField
+                  type="number"
+                  onValueChange={onChange}
                   value={value}
-                  id={`create-stream-amount-input${index}`}
+                  name={name}
+                  onBlur={onBlur}
                   testdata-id={`create-stream-amount-input${index}`}
-                  label={
-                    <>
-                      Amount{currency ? ` (${currency.symbol})` : ''}
-                      <sup>*</sup>
-                    </>
-                  }
+                  unit={currency?.symbol}
                 />
               </FormControl>
               <FormMessage />
