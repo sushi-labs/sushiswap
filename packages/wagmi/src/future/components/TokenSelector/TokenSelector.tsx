@@ -82,7 +82,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   })
 
   const pinnedTokens = useMemo(() => {
-    return pinnedTokenMap[chainId]
+    return (pinnedTokenMap?.[chainId] ?? [])
       .map((id) => {
         const [, address] = id.split(':')
         if (address === 'NATIVE') return Native.onChain(chainId)

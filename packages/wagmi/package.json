@@ -102,7 +102,7 @@
     "@wagmi/core": "legacy-v0",
     "eslint": "8.43.0",
     "ethers": "5.7.2",
-    "next": "13.4.8",
+    "next": "13.4.12",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tsup": "7.1.0",
@@ -136,6 +136,6 @@
     }
   },
   "optionalDependencies": {
-    "next": "13.4.8"
+    "next": "13.4.12"
   }
 }

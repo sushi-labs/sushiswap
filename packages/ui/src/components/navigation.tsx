@@ -1,4 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority'
+import Link from 'next/link'
 import * as React from 'react'
 
 import { classNames, navigationMenuTriggerStyle, SushiIcon } from '../index'
@@ -126,19 +127,19 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant }) => {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
-            <NavigationMenuLink href="/swap" className={navigationMenuTriggerStyle()}>
-              Swap
-            </NavigationMenuLink>
+            <Link href="/swap">
+              <NavigationMenuLink className={navigationMenuTriggerStyle()}>Swap</NavigationMenuLink>
+            </Link>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
-            <NavigationMenuLink href="/pools" className={navigationMenuTriggerStyle()}>
-              Pools
-            </NavigationMenuLink>
+            <Link href="/pools">
+              <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pools</NavigationMenuLink>
+            </Link>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
-            <NavigationMenuLink href="/furo" className={navigationMenuTriggerStyle()}>
-              Pay
-            </NavigationMenuLink>
+            <Link href="/furo">
+              <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pay</NavigationMenuLink>
+            </Link>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
             <NavigationMenuTrigger>Tools</NavigationMenuTrigger>
