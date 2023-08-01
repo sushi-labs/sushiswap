@@ -11,7 +11,7 @@ export const SWAP_API_ENABLED_NETWORKS = []
 
 export type SwapApiEnabledChainId = (typeof SWAP_API_ENABLED_NETWORKS)[number]
 
-export const DISABLED_CHAIN_IDS = [ChainId.BASE, ChainId.HAQQ, ChainId.LINEA]
+export const DISABLED_CHAIN_IDS = [ChainId.HAQQ, ChainId.LINEA]
 
 export const SUPPORTED_CHAIN_IDS = Array.from(
   new Set([...TridentChainIds, ...SushiSwapV2ChainIds, ...SushiSwapV3ChainIds])
