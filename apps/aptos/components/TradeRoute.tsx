@@ -3,6 +3,8 @@ import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 import React, { CSSProperties, ReactElement } from 'react'
 import { useTokens } from 'utils/useTokens'
 import { Icon } from './Icon'
+import { ModalType, useModal } from '@sushiswap/ui/future/components/modal/ModalProvider'
+import { useCustomTokens } from 'utils/useCustomTokens'
 interface Props {
   trade: string[]
 }
@@ -12,7 +14,7 @@ export const TradeRoute = ({ trade }: Props) => {
     rows.push(<ComplexRoutePath key={i} fromTokenAddress={trade[i]} toTokenAddress={trade[i + 1]} />)
   }
   return (
-    <Modal.Review variant="transparent" tag="trade-state-modal">
+    <Modal.Panel modalType={ModalType.Review} variant="transparent" tag={`trade-state-routes`}>
       {({}) => (
         <>
           <div className="flex flex-col gap-4">
@@ -25,7 +27,7 @@ export const TradeRoute = ({ trade }: Props) => {
           </div>
         </>
       )}
-    </Modal.Review>
+    </Modal.Panel>
   )
 }
 
@@ -37,8 +39,15 @@ interface ComplexRoutePathProps {
 const ComplexRoutePath = ({ fromTokenAddress, toTokenAddress }: ComplexRoutePathProps) => {
   const { network } = useWallet()
   const { data: tokens } = useTokens(Number(network?.chainId) || 1)
-  const fromToken = tokens && tokens[fromTokenAddress]
-  const toToken = tokens && tokens[toTokenAddress]
+  const { data: customTokens } = useCustomTokens()
+  const fromToken =
+    tokens && tokens[fromTokenAddress]
+      ? tokens[fromTokenAddress]
+      : customTokens && customTokens[`${network?.chainId}:${fromTokenAddress}`]
+  const toToken =
+    tokens && tokens[toTokenAddress]
+      ? tokens[toTokenAddress]
+      : customTokens && customTokens[`${network?.chainId}:${toTokenAddress}`]
   return (
     <div className="relative grid grid-cols-12 gap-3 rounded-full border-gray-200 dark:border-black/[0.12] bg-gray-200 dark:bg-black/[0.12] border-2 p-2">
       <div

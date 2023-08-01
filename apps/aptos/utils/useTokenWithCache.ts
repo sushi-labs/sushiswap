@@ -27,7 +27,14 @@ export const getTokenDetails = async ({ chainId, address, hasToken, customTokens
     )
     if (response.status == 200) {
       const data = await response.json()
-      return { address, chainId, decimals: data.data.decimals, name: data.data.name, symbol: data.data.symbol } as Token
+      const tokenAddress = data?.type.slice(20).slice(0, -1)
+      return {
+        address: tokenAddress,
+        chainId,
+        decimals: data.data.decimals,
+        name: data.data.name,
+        symbol: data.data.symbol,
+      } as Token
     } else {
       return null
     }
