@@ -7,7 +7,7 @@ import { Abi } from 'abitype'
 import { Address, Log, PublicClient } from 'viem'
 
 import { Counter } from './Counter'
-import { LogFilter, LogFilterType } from './LogFilter'
+import { LogFilter2 } from './LogFilter2'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { PermanentCache } from './PermanentCache'
 import { QualityChecker, QualityCheckerCallBackArg } from './QualityChecker'
@@ -53,7 +53,7 @@ export class UniV3Extractor {
   emptyAddressSet: Set<Address> = new Set()
   poolPermanentCache: PermanentCache<PoolCacheRecord>
   otherFactoryPoolSet: Set<Address> = new Set()
-  logFilter: LogFilter
+  logFilter: LogFilter2
   logProcessingStatus = LogsProcessing.NotStarted
   logging: boolean
   taskCounter: Counter
@@ -66,11 +66,10 @@ export class UniV3Extractor {
     tickHelperContract: Address,
     factories: FactoryV3[],
     cacheDir: string,
-    logDepth: number,
+    logFilter: LogFilter2,
     logging = true,
     multiCallAggregator?: MultiCallAggregator,
-    tokenManager?: TokenManager,
-    logType = LogFilterType.OneCall
+    tokenManager?: TokenManager
   ) {
     this.multiCallAggregator = multiCallAggregator || new MultiCallAggregator(client)
     this.tokenManager =
@@ -96,7 +95,8 @@ export class UniV3Extractor {
       return true
     })
 
-    this.logFilter = new LogFilter(client, logDepth, UniV3EventsAbi, logType, (logs?: Log[]) => {
+    this.logFilter = logFilter
+    logFilter.addFilter(UniV3EventsAbi, (logs?: Log[]) => {
       if (logs) {
         const blockNumber = logs.length > 0 ? Number(logs[logs.length - 1].blockNumber || 0) : '<undefined>'
         try {

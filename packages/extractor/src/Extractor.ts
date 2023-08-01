@@ -6,6 +6,7 @@ import { PoolCode } from '@sushiswap/router'
 import { Address, PublicClient } from 'viem'
 
 import { LogFilterType } from './LogFilter'
+import { LogFilter2 } from './LogFilter2'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { TokenManager } from './TokenManager'
 import { FactoryV2, UniV2Extractor } from './UniV2Extractor'
@@ -20,7 +21,6 @@ const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 // TODO: correctness terst - now ofter fails? (needs good token list)
 
 // TODO: Back to LogFilter ? Faster events applying
-// TODO: catch all not catched async! After fix all issues
 // TODO: Ignore uncaught exception? Not kill the process
 
 // TODO: cache for not-existed pools?
@@ -69,16 +69,16 @@ export class Extractor {
       args.cacheDir,
       `tokens-${this.multiCallAggregator.chainId}`
     )
+    const logFilter = new LogFilter2(this.client, args.logDepth, args.logType ?? LogFilterType.OneCall)
     if (args.factoriesV2.length > 0)
       this.extractorV2 = new UniV2Extractor(
         this.client,
         args.factoriesV2,
         args.cacheDir,
-        args.logDepth,
+        logFilter,
         args.logging !== undefined ? args.logging : false,
         this.multiCallAggregator,
-        tokenManager,
-        logType
+        tokenManager
       )
     if (args.factoriesV3.length > 0)
       this.extractorV3 = new UniV3Extractor(
@@ -86,11 +86,10 @@ export class Extractor {
         args.tickHelperContract,
         args.factoriesV3,
         args.cacheDir,
-        args.logDepth,
+        logFilter,
         args.logging !== undefined ? args.logging : false,
         this.multiCallAggregator,
-        tokenManager,
-        logType
+        tokenManager
       )
   }
 
