@@ -1,11 +1,9 @@
 import { Token } from '@sushiswap/currency'
 import { ConstantProductRPool, RPool, RToken, StableSwapRPool } from '@sushiswap/tines'
 
-import { ConstantProductPool } from '../ConstantProductPool'
-import { Fee } from '../Fee'
-import { Pair } from '../Pair'
-import { Pool } from '../Pool'
-import { StablePool } from '../StablePool'
+import { TridentConstantPool, TridentStablePool } from '@sushiswap/trident-sdk'
+import { Fee, Pool } from '@sushiswap/base-sdk'
+import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
 
 export function getBentoChainId(chainId: string | number | undefined): string {
   return `Bento ${chainId}`
@@ -20,8 +18,8 @@ export function convertTokenToBento(token: Token): RToken {
   return t
 }
 
-export function convertPoolOrPairtoRPool(pool: Pool | Pair, convertTokensToBento = false): RPool {
-  if (pool instanceof Pair) {
+export function convertPoolOrPairtoRPool(pool: Pool | SushiSwapV2Pool, convertTokensToBento = false): RPool {
+  if (pool instanceof SushiSwapV2Pool) {
     return new ConstantProductRPool(
       pool.liquidityToken.address,
       pool.token0 as RToken,
@@ -30,7 +28,7 @@ export function convertPoolOrPairtoRPool(pool: Pool | Pair, convertTokensToBento
       BigInt(pool.reserve0.quotient.toString()),
       BigInt(pool.reserve1.quotient.toString())
     )
-  } else if (pool instanceof ConstantProductPool) {
+  } else if (pool instanceof TridentConstantPool) {
     return new ConstantProductRPool(
       pool.liquidityToken.address,
       convertTokensToBento ? convertTokenToBento(pool.token0.wrapped) : (pool.assets[0].wrapped as RToken),
@@ -41,7 +39,7 @@ export function convertPoolOrPairtoRPool(pool: Pool | Pair, convertTokensToBento
       BigInt(pool.reserves[0].quotient.toString()),
       BigInt(pool.reserves[1].quotient.toString())
     )
-  } else if (pool instanceof StablePool) {
+  } else if (pool instanceof TridentStablePool) {
     return new StableSwapRPool(
       pool.liquidityToken.address,
       // pool.token0 as RToken,

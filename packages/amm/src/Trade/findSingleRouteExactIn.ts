@@ -1,15 +1,15 @@
 import { Token } from '@sushiswap/currency'
 import { findSingleRouteExactIn as TinesFindSingleRouteExactIn, MultiRoute, RToken } from '@sushiswap/tines'
 
-import { Pair } from '../Pair'
-import { Pool } from '../Pool'
+import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
+import { Pool } from '@sushiswap/base-sdk'
 import { convertPoolOrPairtoRPool } from './convertPoolOrPairtoRPool'
 
 export function findSingleRouteExactIn(
   from: Token,
   to: Token,
   amountIn: bigint | number,
-  pools: (Pool | Pair)[],
+  pools: (Pool | SushiSwapV2Pool)[],
   baseToken: Token,
   gasPrice: number
 ): MultiRoute {

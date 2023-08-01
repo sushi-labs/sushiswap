@@ -1,9 +1,7 @@
-export * from './ConstantProductPool'
-export * from './errors'
-export * from './Fee'
 export * from './functions'
-export * from './Pair'
 export * from './Route'
-export * from './StablePool'
 export * from './SushiSwapRouter'
 export * from './Trade'
+
+export { Fee, Pool } from '@sushiswap/base-sdk'
+export { TridentStablePool, TridentConstantPool } from '@sushiswap/trident-sdk'
