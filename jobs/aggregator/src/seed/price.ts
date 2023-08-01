@@ -1,6 +1,5 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
 import { isAddress } from '@ethersproject/address'
-import { BigNumber } from '@ethersproject/bignumber'
 import { totalsAbi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Prisma, PrismaClient, Token } from '@sushiswap/database'
@@ -166,8 +165,8 @@ async function transform(chainId: number, pools: Pool[]) {
           token0 as RToken,
           token1 as RToken,
           pool.swapFee,
-          BigNumber.from(pool.reserve0),
-          BigNumber.from(pool.reserve1)
+          BigInt(pool.reserve0),
+          BigInt(pool.reserve1)
         )
       )
     } else if (pool.type === PoolType.STABLE_POOL) {
@@ -180,8 +179,8 @@ async function transform(chainId: number, pools: Pool[]) {
             token0 as RToken,
             token1 as RToken,
             pool.swapFee,
-            BigNumber.from(pool.reserve0),
-            BigNumber.from(pool.reserve1),
+            BigInt(pool.reserve0),
+            BigInt(pool.reserve1),
             pool.token0.decimals,
             pool.token1.decimals,
             total0,
@@ -225,7 +224,7 @@ async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId) {
   sortedTokens.forEach((t, i) => {
     if (totals[i].error) return
     const [base, elastic] = totals[i].result
-    rebases.set(t.address, { base: BigNumber.from(base), elastic: BigNumber.from(elastic) })
+    rebases.set(t.address, { base, elastic })
   })
   return rebases
 }

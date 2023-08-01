@@ -1,7 +1,6 @@
 import { Token } from '@sushiswap/currency'
 import { createToast } from '@sushiswap/ui/components/toast'
-import { SendTransactionResult } from '@wagmi/core'
-import { BigNumber } from 'ethers'
+import { SendTransactionResult, waitForTransaction } from '@wagmi/core'
 import { useCallback, useMemo, useState } from 'react'
 import { Address, erc20ABI, useContractWrite, usePrepareContractWrite } from 'wagmi'
 
@@ -18,7 +17,7 @@ export const useTokenRevokeApproval = ({ account, spender, token }: UseTokenRevo
     abi: erc20ABI,
     chainId: token?.chainId,
     functionName: 'approve',
-    args: [spender, BigNumber.from(0)],
+    args: [spender, 0n],
     enabled: Boolean(token),
   })
 

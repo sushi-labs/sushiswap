@@ -1,7 +1,6 @@
 import { masterChefV1Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Address, readContract, readContracts } from '@wagmi/core'
-import { BigNumber } from 'ethers'
 
 import { MASTERCHEF_ADDRESS } from '../../../config.js'
 
@@ -32,7 +31,7 @@ export async function getPoolInfos(poolLength: number) {
     (_, i) =>
       ({
         address: MASTERCHEF_ADDRESS[ChainId.ETHEREUM] as Address,
-        args: [BigNumber.from(i)],
+        args: [BigInt(i)],
         chainId: ChainId.ETHEREUM,
         abi: masterChefV1Abi,
         functionName: 'poolInfo',

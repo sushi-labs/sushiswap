@@ -1,19 +1,17 @@
 import { constantProductPoolAbi, constantProductPoolFactoryAbi } from '@sushiswap/abi'
-import { ConstantProductPool } from '@sushiswap/amm'
+import { TridentConstantPool } from '@sushiswap/amm'
 import { Amount, Currency, Token } from '@sushiswap/currency'
-import { isConstantProductPoolFactoryChainId } from '@sushiswap/trident-core'
-import { BigNumber } from 'ethers'
 import { Address, readContracts } from 'wagmi'
-
 import { getContract } from 'wagmi/actions'
+
 import { getConstantProductPoolFactoryContract } from '../../../contracts/actions'
 import { pairsUnique } from './utils'
 
 export enum ConstantProductPoolState {
-  LOADING,
-  NOT_EXISTS,
-  EXISTS,
-  INVALID,
+  LOADING = 'Loading',
+  NOT_EXISTS = 'Not exists',
+  EXISTS = 'Exists',
+  INVALID = 'Invalid',
 }
 
 interface PoolData {
@@ -51,12 +49,7 @@ export const getConstantProductPools = async (
       .filter(([, length]) => length)
       .map(
         ([i, length]) =>
-          [
-            _pairsUniqueAddr[i][0] as Address,
-            _pairsUniqueAddr[i][1] as Address,
-            BigNumber.from(0),
-            BigNumber.from(length),
-          ] as const
+          [_pairsUniqueAddr[i][0] as Address, _pairsUniqueAddr[i][1] as Address, 0n, BigInt(length)] as const
       ) ?? []
 
   const pairsUniqueProcessed = callStatePoolsCount
@@ -76,8 +69,8 @@ export const getConstantProductPools = async (
 
   const pools: PoolData[] = []
   callStatePools?.forEach((s, i) => {
-    if (s !== undefined)
-      s?.forEach((address) => {
+    if (s.result !== undefined)
+      s.result.forEach((address) => {
         pools.push({
           address: address as Address,
           token0: pairsUniqueProcessed?.[i][0] as Token,
@@ -108,25 +101,20 @@ export const getConstantProductPools = async (
   })
 
   return pools.map((p, i) => {
-    if (!reservesAndFees?.[i] || !reservesAndFees?.[i + poolsAddresses.length]) {
+    if (!reservesAndFees?.[i].result || !reservesAndFees?.[i + poolsAddresses.length].result) {
       return [ConstantProductPoolState.LOADING, null]
     }
 
-    const reserves = reservesAndFees[i] as {
-      _reserve0: BigNumber
-      _reserve1: BigNumber
-      _blockTimestampLast: number
-    }
-
-    const swapFee = reservesAndFees[i + poolsAddresses.length]
+    const [reserve0, reserve1, blockTimestampLast] = reservesAndFees[i].result as [bigint, bigint, number]
+    const swapFee = reservesAndFees[i + poolsAddresses.length].result as bigint
 
     return [
       ConstantProductPoolState.EXISTS,
-      new ConstantProductPool(
-        Amount.fromRawAmount(p.token0, reserves._reserve0.toString()),
-        Amount.fromRawAmount(p.token1, reserves._reserve1.toString()),
+      new TridentConstantPool(
+        Amount.fromRawAmount(p.token0, reserve0),
+        Amount.fromRawAmount(p.token1, reserve1),
         parseInt(swapFee.toString()),
-        reserves._blockTimestampLast !== 0
+        blockTimestampLast !== 0
       ),
     ]
   })

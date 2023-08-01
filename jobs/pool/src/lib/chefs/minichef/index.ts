@@ -5,7 +5,7 @@ import type { Address } from '@wagmi/core'
 import { daysInYear, secondsInDay } from 'date-fns'
 
 import { MINICHEF_ADDRESS } from '../../../config.js'
-import { divBigNumberToNumber, getPairs, getTokenBalancesOf, getTokens } from '../../common/index.js'
+import { divBigIntToNumber, getPairs, getTokenBalancesOf, getTokens } from '../../common/index.js'
 import type { ChefReturn, Farm } from '../../types.js'
 import {
   getLpTokens,
@@ -32,7 +32,7 @@ export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): P
         getTokens([SUSHI_ADDRESS[ChainId.ETHEREUM]], ChainId.ETHEREUM),
       ])
     const sushiPerDay =
-      secondsInDay * divBigNumberToNumber(sushiPerSecond, SUSHI[chainId as keyof typeof SUSHI]?.decimals ?? 18)
+      secondsInDay * divBigIntToNumber(sushiPerSecond, SUSHI[chainId as keyof typeof SUSHI]?.decimals ?? 18)
 
     console.log(
       `MiniChef ${chainId} - pools: ${poolLength}, sushiPerDay: ${sushiPerDay}, rewarderInfos: ${rewarderInfos.length}, totalAllocPoint: ${totalAllocPoint}`
@@ -105,12 +105,12 @@ export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): P
                 // poolInfo.allocPoint.div(masterChefV2.totalAllocPoint).times(masterChefV2.sushiPerDay)
                 rewardPerSecond =
                   (poolInfo.allocPoint / pool.rewarder.totalAllocPoint) *
-                  divBigNumberToNumber(pool.rewarder.rewardPerSecond, token.decimals)
+                  divBigIntToNumber(pool.rewarder.rewardPerSecond, token.decimals)
               }
 
               // Singlepool rewarder
             } else {
-              rewardPerSecond = divBigNumberToNumber(pool.rewarder.rewardPerSecond, token.decimals)
+              rewardPerSecond = divBigIntToNumber(pool.rewarder.rewardPerSecond, token.decimals)
             }
 
             if (!isNaN(rewardPerSecond)) {

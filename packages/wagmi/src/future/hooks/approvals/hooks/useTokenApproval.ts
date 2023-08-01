@@ -1,7 +1,6 @@
 import { MaxUint256 } from '@ethersproject/constants'
 import { Amount, Type } from '@sushiswap/currency'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import { BigNumber } from 'ethers'
 import { useCallback, useMemo, useState } from 'react'
 import {
   Address,
@@ -55,10 +54,7 @@ export const useTokenApproval = ({
     abi: erc20ABI,
     address: amount?.currency?.wrapped?.address as Address,
     functionName: 'approve',
-    args: [
-      spender as Address,
-      approveMax ? MaxUint256 : amount ? BigNumber.from(amount.quotient.toString()) : BigNumber.from(0),
-    ],
+    args: [spender as Address, approveMax ? MaxUint256 : amount ? amount.quotient : 0n],
     enabled: Boolean(amount && spender && address && allowance && enabled && !isAllowanceLoading),
   })
 

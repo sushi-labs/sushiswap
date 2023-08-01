@@ -2,7 +2,6 @@ import { complexRewarderTimeAbi, miniChefAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { MINICHEF_SUBGRAPH_NAME, SUBGRAPH_HOST, SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
 import { Address, readContract, readContracts } from '@wagmi/core'
-import { BigNumber } from 'ethers'
 import zip from 'lodash.zip'
 
 import { MINICHEF_ADDRESS } from '../../../config.js'
@@ -45,7 +44,7 @@ export async function getPoolInfos(poolLength: number, chainId: ChainId) {
     (_, i) =>
       ({
         address: MINICHEF_ADDRESS[chainId] as Address,
-        args: [BigNumber.from(i)],
+        args: [BigInt(i)],
         chainId: chainId,
         abi: miniChefAbi,
         functionName: 'poolInfo',
@@ -63,7 +62,7 @@ export async function getLpTokens(poolLength: number, chainId: ChainId) {
     (_, i) =>
       ({
         address: MINICHEF_ADDRESS[chainId] as Address,
-        args: [BigNumber.from(i)],
+        args: [BigInt(i)],
         chainId: chainId,
         abi: miniChefAbi,
         functionName: 'lpToken',
@@ -81,7 +80,7 @@ export async function getRewarders(poolLength: number, chainId: ChainId) {
     (_, i) =>
       ({
         address: MINICHEF_ADDRESS[chainId] as Address,
-        args: [BigNumber.from(i)],
+        args: [BigInt(i)],
         chainId: chainId,
         abi: miniChefAbi,
         functionName: 'rewarder',
@@ -157,19 +156,19 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
           return {
             id: rewarder.id,
             rewardToken: rewarder.rewardToken,
-            rewardPerSecond: BigNumber.from(rewarder.rewardPerSecond),
+            rewardPerSecond: BigInt(rewarder.rewardPerSecond),
           }
         }
 
         const poolLength = await getPoolLength(chainId)
 
-        const poolIds = !poolLength?.isZero() ? [...Array(poolLength?.toNumber()).keys()] : []
+        const poolIds = poolLength !== 0n ? [...Array(Number(poolLength)).keys()] : []
 
         const poolInfoCalls = poolIds.map(
           (_, i) =>
             ({
               address: rewarder.id as Address,
-              args: [BigNumber.from(i)],
+              args: [BigInt(i)],
               chainId: chainId,
               abi: complexRewarderTimeAbi,
               functionName: 'poolInfo',
@@ -180,18 +179,25 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
           allowFailure: true,
           contracts: poolInfoCalls,
         })
+
         const zipped = zip(poolIds, poolInfos)
+        const successful = zipped
+          .filter(([, poolInfo]) => !!poolInfo.result)
+          .map(([poolId, poolInfo]) => [poolId, poolInfo.result] as const)
 
         return {
           id: rewarder.id,
-          pools: zipped.map(([id, { allocPoint }], i) => ({
+          pools: successful.map(([id, [, , allocPoint]]) => ({
             // Minichef pool ID
             id,
-            allocPoint: allocPoint.toNumber(),
+            allocPoint: Number(allocPoint),
           })),
-          totalAllocPoint: poolInfos.reduce((acc, cur) => (acc += cur.allocPoint.toNumber()), 0),
+          totalAllocPoint: successful.reduce((acc, [, [, , allocPoint]]) => {
+            acc += allocPoint
+            return acc
+          }, 0n),
           rewardToken: rewarder.rewardToken,
-          rewardPerSecond: BigNumber.from(rewarder.rewardPerSecond),
+          rewardPerSecond: BigInt(rewarder.rewardPerSecond),
         }
       } catch (error) {
         console.log('error', ChainId[chainId], rewarder.id, error)
@@ -200,7 +206,7 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
         return {
           id: rewarder.id,
           rewardToken: rewarder.rewardToken,
-          rewardPerSecond: BigNumber.from(rewarder.rewardPerSecond),
+          rewardPerSecond: BigInt(rewarder.rewardPerSecond),
         }
       }
     })

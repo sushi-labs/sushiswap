@@ -1,4 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, nativeCurrencyIds, Price, WNATIVE_ADDRESS } from '@sushiswap/currency'
@@ -62,19 +61,19 @@ export const useTrade = (variables: UseTradeParams) => {
         let writeArgs: UseTradeReturnWriteArgs = data?.args
           ? [
               data.args.tokenIn as HexString,
-              BigNumber.from(data.args.amountIn),
+              BigInt(data.args.amountIn),
               data.args.tokenOut as HexString,
-              BigNumber.from(data.args.amountOutMin),
+              data.args.amountOutMin,
               data.args.to as HexString,
               data.args.routeCode as HexString,
             ]
           : undefined
-        let overrides = fromToken.isNative && writeArgs?.[1] ? { value: BigNumber.from(writeArgs?.[1]) } : undefined
+        let overrides = fromToken.isNative && writeArgs?.[1] ? { value: writeArgs?.[1] } : undefined
 
         if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
-          writeArgs = ['0xbc4a6be1285893630d45c881c6c343a65fdbe278', BigNumber.from('20000000000000000'), ...writeArgs]
+          writeArgs = ['0xbc4a6be1285893630d45c881c6c343a65fdbe278', 20000000000000000n, ...writeArgs]
           overrides = {
-            value: BigNumber.from(fromToken.isNative ? writeArgs[3] : '0').add(BigNumber.from('20000000000000000')),
+            value: (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n,
           }
         }
 

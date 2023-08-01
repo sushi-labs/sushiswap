@@ -1,11 +1,10 @@
-import { BigNumber } from "@ethersproject/bignumber"
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Type } from '@sushiswap/currency'
-import {Percent} from "@sushiswap/math";
+import { Percent } from '@sushiswap/math'
 import { HexString } from '@sushiswap/types'
 import z from 'zod'
 
-import {legValidator, tradeValidator} from './validator'
+import { legValidator, tradeValidator } from './validator'
 
 export interface UseTradeParams {
   chainId: ChainId
@@ -20,7 +19,10 @@ export interface UseTradeParams {
   onError?(e: Error): void
 }
 
-export type UseTradeReturnWriteArgs = [HexString, BigNumber, HexString, BigNumber, HexString, BigNumber, HexString, HexString] | [HexString, BigNumber, HexString, BigNumber, HexString, HexString] | undefined
+export type UseTradeReturnWriteArgs =
+  | [HexString, bigint, HexString, bigint, HexString, bigint, HexString, HexString]
+  | [HexString, bigint, HexString, bigint, HexString, HexString]
+  | undefined
 
 export interface UseTradeReturn {
   swapPrice: Price<Type, Type> | undefined
@@ -32,7 +34,7 @@ export interface UseTradeReturn {
   functionName: 'processRoute' | 'transferValueAndprocessRoute'
   writeArgs: UseTradeReturnWriteArgs
   route: TradeType['route']
-  overrides: { value: BigNumber} | undefined
+  overrides: { value: bigint } | undefined
 }
 
 export type UseTradeQuerySelect = (data: TradeType) => UseTradeReturn

@@ -9,7 +9,7 @@ import {
 import { isSushiSwapChain, isTridentChain } from '@sushiswap/validate'
 import { Address, erc20ABI, readContracts } from '@wagmi/core'
 
-import { divBigNumberToNumber } from './utils.js'
+import { divBigIntToNumber } from './utils.js'
 
 interface Token {
   id: string
@@ -61,7 +61,7 @@ const getTridentTokens = async (ids: string[], chainId: TridentChainId): Promise
     symbol: token.symbol,
     name: token.name,
     decimals: Number(token.decimals),
-    liquidity: divBigNumberToNumber(token.liquidity, token.decimals),
+    liquidity: divBigIntToNumber(token.liquidity, token.decimals),
     derivedUSD: token.price?.derivedNative * bundle?.nativePrice,
   }))
 }
@@ -134,7 +134,7 @@ export async function getTokenBalancesOf(_tokens: string[], address: string, cha
       return {
         token,
         // so that we don't need to seed new pairs
-        balance: balancesOf[i]?.eq(0) ? 1 : divBigNumberToNumber(balancesOf[i], decimals[i]),
+        balance: balancesOf[i]?.eq(0) ? 1 : divBigIntToNumber(balancesOf[i], decimals[i]),
       }
     })
     .filter((token): token is NonNullable<typeof token> => Boolean(token))

@@ -21,7 +21,6 @@ import {
 import { RP2MerkleTreeClaimSchema } from '@sushiswap/wagmi/future/hooks/exploits/constants'
 import { RP2ClaimChainId } from '@sushiswap/wagmi/future/hooks/exploits/types'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
-import { BigNumber } from 'ethers'
 import React, { FC, useMemo } from 'react'
 import { z } from 'zod'
 

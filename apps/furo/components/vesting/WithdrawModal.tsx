@@ -1,16 +1,16 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { TransactionRequest } from '@ethersproject/providers'
 import { FuroVestingChainId } from '@sushiswap/furo'
 import { ZERO } from '@sushiswap/math'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dialog } from '@sushiswap/ui/components/dialog'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createToast } from '@sushiswap/ui/components/toast'
-import { useAccount, useFuroVestingContract } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { useAccount, useFuroVestingContract, usePrepareSendTransaction } from '@sushiswap/wagmi'
+import { useSendTransaction } from '@sushiswap/wagmi'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
+import { encodeFunctionData } from 'viem'
 
 import { useVestingBalance, Vesting } from '../../lib'
 
@@ -49,28 +49,33 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, childr
     [balance, chainId, address]
   )
 
-  const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!vesting || !balance || !contract || !address) return
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    if (!vesting || !balance || !contract || !address) return {}
 
-      setRequest({
-        from: address,
-        to: contract.address,
-        data: contract.interface.encodeFunctionData('withdraw', [BigNumber.from(vesting.id), '0x', false]),
-      })
-    },
-    [vesting, balance, contract, address]
-  )
+    return {
+      account: address,
+      to: contract.address,
+      data: encodeFunctionData({
+        abi: contract.abi,
+        functionName: 'withdraw',
+        args: [BigInt(vesting.id), '0x', false],
+      }),
+    }
+  }, [vesting, balance, contract, address])
+
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
+    enabled: Boolean(vesting && balance && contract),
+  })
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
-    chainId,
-    prepare,
+    ...config,
     onSettled,
     onSuccess() {
       setOpen(false)
     },
-    enabled: Boolean(vesting && balance && contract),
-    gasMargin: true,
+    gas: config?.gas ? (config.gas * 120n) / 100n : undefined,
   })
 
   return (
