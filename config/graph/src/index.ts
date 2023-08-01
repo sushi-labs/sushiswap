@@ -72,7 +72,7 @@ export const PENDING_KAVA_HOST = 'pvt.graph.kava.io/subgraphs/id'
 export const METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/name'
 export const PENDING_METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/id'
 
-export const POLYGON_ZKEVM_HOST = 'api.studio.thegraph.com/query/32073'
+export const STUDIO_HOST = 'api.studio.thegraph.com/query/32073'
 export const THUNDERCORE_HOST = 'graph-node.thundercore.com/subgraphs/name'
 export const CORE_HOST = 'thegraph.coredao.org/subgraphs/name'
 
@@ -107,6 +107,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.THUNDERCORE]: 'ThunderCore',
   [ChainId.POLYGON_ZKEVM]: 'Polygon zkEVM',
   [ChainId.CORE]: 'Core',
+  [ChainId.BASE]: 'Base',
 } as const
 
 export const SUBGRAPH_HOST: Record<number, string> = {
@@ -127,7 +128,7 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.MOONRIVER]: GRAPH_HOST,
   [ChainId.OPTIMISM]: GRAPH_HOST,
   [ChainId.POLYGON]: GRAPH_HOST,
-  [ChainId.POLYGON_ZKEVM]: POLYGON_ZKEVM_HOST,
+  [ChainId.POLYGON_ZKEVM]: STUDIO_HOST,
   [ChainId.BOBA]: GRAPH_HOST,
   [ChainId.BOBA_AVAX]: SUSHI_HOST,
   [ChainId.BOBA_BNB]: SUSHI_HOST,
@@ -137,6 +138,7 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.KOVAN]: '',
   [ChainId.THUNDERCORE]: THUNDERCORE_HOST,
   [ChainId.CORE]: CORE_HOST,
+  [ChainId.BASE]: STUDIO_HOST,
 } as const
 
 export const BENTOBOX_SUBGRAPH_NAME = {
@@ -187,6 +189,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.BTTC]: 'sushiswap/blocks-bttc',
   [ChainId.THUNDERCORE]: 'sushiswap/blocks-thundercore',
   [ChainId.CORE]: 'sushiswap/blocks-core',
+  [ChainId.BASE]: 'blocks-base/v0.0.1',
 } as const
 
 export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
@@ -272,6 +275,7 @@ export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.POLYGON_ZKEVM]: 'v3-polygon-zkevm/v0.0.2',
   [ChainId.THUNDERCORE]: 'sushi-v3/v3-thundercore',
   [ChainId.CORE]: 'sushi-v3/v3-core',
+  [ChainId.BASE]: 'v3-base/v0.0.1',
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number, string> = {
