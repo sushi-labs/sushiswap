@@ -49,7 +49,7 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
   })
 
   const amount = useMemo(
-    () => (token ? Amount.fromRawAmount(token, BigNumber.from(claim.amount).toString()) : undefined),
+    () => (token ? Amount.fromRawAmount(token, claim.amount.toString()) : undefined),
     [claim.amount, token]
   )
 

@@ -82,7 +82,7 @@ export const ExecuteMultipleSection: FC<{
         type: 'createVesting',
         chainId: chainId,
         txHash: data.hash,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Creating ${vestings.length} vests`,
           completed: `Created ${vestings.length} vests`,

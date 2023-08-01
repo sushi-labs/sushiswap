@@ -1,4 +1,4 @@
-import { Pair } from '@sushiswap/amm'
+import { SushiSwapV2Pool } from '@sushiswap/amm'
 import { Amount, Token, Type as Currency, Type } from '@sushiswap/currency'
 import {
   computePairAddress,
@@ -62,7 +62,7 @@ export function getPairs(
 interface UsePairsReturn {
   isLoading: boolean
   isError: boolean
-  data: [PairState, Pair | null][]
+  data: [PairState, SushiSwapV2Pool | null][]
 }
 
 export function usePairs(
@@ -99,7 +99,7 @@ export function usePairs(
         const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
         return [
           PairState.EXISTS,
-          new Pair(
+          new SushiSwapV2Pool(
             Amount.fromRawAmount(token0, reserve0.toString()),
             Amount.fromRawAmount(token1, reserve1.toString())
           ),
@@ -112,7 +112,7 @@ export function usePairs(
 interface UsePairReturn {
   isLoading: boolean
   isError: boolean
-  data: [PairState, Pair | null]
+  data: [PairState, SushiSwapV2Pool | null]
 }
 
 export function usePair(

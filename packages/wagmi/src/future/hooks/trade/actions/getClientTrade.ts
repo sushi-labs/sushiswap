@@ -1,5 +1,3 @@
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Type as Currency, Type, WNATIVE } from '@sushiswap/currency'
 import {
   findMultiRouteExactIn,
   findSingleRouteExactIn,
@@ -7,12 +5,13 @@ import {
   TradeType,
   Version as TradeVersion,
 } from '@sushiswap/amm'
-import {   SUSHISWAP_V2_FACTORY_ADDRESS} from '@sushiswap/v2-sdk'
-import { BigNumber } from 'ethers'
+import { ChainId } from '@sushiswap/chain'
+import { Amount, Type as Currency, Type, WNATIVE } from '@sushiswap/currency'
 import { RouteStatus } from '@sushiswap/tines'
-import { FetchFeeDataResult } from 'wagmi/actions'
-import { JSBI } from '@sushiswap/math'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
+import { SUSHISWAP_V2_FACTORY_ADDRESS } from '@sushiswap/v2-sdk'
+import { FetchFeeDataResult } from 'wagmi/actions'
+
 import { UsePoolsReturn } from '../../pools'
 
 export interface GetTradeParams {
@@ -24,7 +23,7 @@ export interface GetTradeParams {
   enabled?: boolean
   pools: UsePoolsReturn | undefined
   feeData: FetchFeeDataResult | undefined
-  rebases: { base: JSBI; elastic: JSBI }[] | null | undefined
+  rebases: { base: bigint; elastic: bigint }[] | null | undefined
 }
 
 export const getClientTrade = async ({
@@ -42,8 +41,7 @@ export const getClientTrade = async ({
   const [currencyInRebase, currencyOutRebase] = totals ? totals : [undefined, undefined]
 
   if (
-    feeData &&
-    feeData.gasPrice &&
+    feeData?.gasPrice &&
     currencyIn &&
     currencyInRebase &&
     currencyOut &&
@@ -62,19 +60,19 @@ export const getClientTrade = async ({
         const legacyRoute = findSingleRouteExactIn(
           currencyIn.wrapped,
           currencyOut.wrapped,
-          BigNumber.from(amount.quotient.toString()),
+          amount.quotient,
           pools.pairs || [],
           WNATIVE[amount.currency.chainId],
-          feeData.gasPrice.toNumber()
+          Number(feeData.gasPrice)
         )
 
         const tridentRoute = findMultiRouteExactIn(
           currencyIn.wrapped,
           currencyOut.wrapped,
-          BigNumber.from(amount.toShare(currencyInRebase).quotient.toString()),
+          amount.toShare(currencyInRebase).quotient,
           [...(pools.constantProductPools || []), ...(pools.stablePools || [])],
           WNATIVE[amount.currency.chainId],
-          feeData.gasPrice.toNumber()
+          Number(feeData.gasPrice)
         )
 
         const useLegacy = Amount.fromRawAmount(currencyOut.wrapped, legacyRoute.amountOutBN.toString()).greaterThan(
@@ -99,10 +97,10 @@ export const getClientTrade = async ({
       const legacyRoute = findSingleRouteExactIn(
         currencyIn.wrapped,
         currencyOut.wrapped,
-        BigNumber.from(amount.quotient.toString()),
+        amount.quotient,
         pools.pairs || [],
         WNATIVE[amount.currency.chainId],
-        feeData.gasPrice.toNumber()
+        Number(feeData.gasPrice)
       )
 
       if (legacyRoute.status === RouteStatus.Success) {
@@ -116,10 +114,10 @@ export const getClientTrade = async ({
       const tridentRoute = findMultiRouteExactIn(
         currencyIn.wrapped,
         currencyOut.wrapped,
-        BigNumber.from(amount.toShare(currencyInRebase).quotient.toString()),
+        amount.toShare(currencyInRebase).quotient,
         [...(pools.constantProductPools || []), ...(pools.stablePools || [])],
         WNATIVE[amount.currency.chainId],
-        feeData.gasPrice.toNumber()
+        Number(feeData.gasPrice)
       )
       if (tridentRoute.status === RouteStatus.Success) {
         console.debug('Found trident route', tridentRoute)

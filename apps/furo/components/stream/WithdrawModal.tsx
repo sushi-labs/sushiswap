@@ -1,5 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { TransactionRequest } from '@ethersproject/providers'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
@@ -9,10 +7,12 @@ import { Dialog } from '@sushiswap/ui/components/dialog/Dialog'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { Text } from '@sushiswap/ui/components/input/Text'
 import { createToast } from '@sushiswap/ui/components/toast'
-import { _useSendTransaction as useSendTransaction, useAccount, useFuroStreamContract } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { useAccount, useFuroStreamContract, usePrepareSendTransaction, useSendTransaction } from '@sushiswap/wagmi'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
+import { Address, encodeFunctionData } from 'viem'
 
 import { Stream, useStreamBalance } from '../../lib'
 
@@ -47,7 +47,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, childre
         chainId: chainId,
         timestamp: ts,
         groupTimestamp: ts,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Withdrawing ${amount.toSignificant(6)} ${amount.currency.symbol}`,
           completed: `Successfully withdrawn ${amount.toSignificant(6)} ${amount.currency.symbol}`,
@@ -58,33 +58,32 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, childre
     [amount, chainId, address]
   )
 
-  const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!stream || !amount || !chainId || !contract) return
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    if (!stream || !amount || !chainId || !contract) return
 
-      setRequest({
-        from: address,
-        to: contract.address,
-        data: contract.interface.encodeFunctionData('withdrawFromStream', [
-          BigNumber.from(stream.id),
-          BigNumber.from(amount.toShare(stream.rebase).quotient.toString()),
-          stream.recipient.id,
-          false,
-          '0x',
-        ]),
-      })
-    },
-    [stream, amount, chainId, contract, address]
-  )
+    return {
+      account: address,
+      to: contract.address,
+      data: encodeFunctionData({
+        abi: contract.abi,
+        functionName: 'withdrawFromStream',
+        args: [BigInt(stream.id), amount.toShare(stream.rebase).quotient, stream.recipient.id as Address, false, '0x'],
+      }),
+    }
+  }, [stream, amount, chainId, contract, address])
+
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
+    enabled: Boolean(!!stream && !!amount && !!chainId && !!contract),
+  })
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
-    chainId,
-    prepare,
+    ...config,
     onSettled,
     onSuccess() {
       setOpen(false)
     },
-    enabled: Boolean(!!stream && !!amount && !!chainId && !!contract),
   })
 
   if (!address || !stream.canWithdraw(address)) return <></>

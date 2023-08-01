@@ -125,7 +125,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       approved,
       trade?.route?.status !== 'NoWay',
     ]
-  ) 
+  )
 
   const { config, isError, error } = usePrepareContractWrite({
     chainId: network0,
@@ -175,7 +175,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         type: 'swap',
         chainId: network0,
         txHash: data.hash,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `${isWrap ? 'Wrapping' : isUnwrap ? 'Unwrapping' : 'Swapping'} ${trade.amountIn?.toSignificant(6)} ${
             trade.amountIn?.currency.symbol

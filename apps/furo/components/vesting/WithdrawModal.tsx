@@ -38,7 +38,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, childr
         chainId,
         timestamp: ts,
         groupTimestamp: ts,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Withdrawing ${balance.toSignificant(6)} ${balance.currency.symbol}`,
           completed: `Successfully withdrawn ${balance.toSignificant(6)} ${balance.currency.symbol}`,

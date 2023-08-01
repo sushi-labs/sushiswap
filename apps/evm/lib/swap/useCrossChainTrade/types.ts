@@ -1,4 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber'
 import { Signature } from '@ethersproject/bytes'
 import { Amount, Price, Type } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'

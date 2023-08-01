@@ -101,7 +101,7 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
         type: 'swap',
         chainId: network0,
         txHash: data.hash,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Swapping ${trade.amountIn?.toSignificant(6)} ${trade.amountIn?.currency.symbol} to bridge token ${
             srcCurrencyB?.symbol

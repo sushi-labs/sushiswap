@@ -1,3 +1,10 @@
+import { splitSignature } from '@ethersproject/bytes'
+import { HashZero } from '@ethersproject/constants'
+import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { createErrorToast, createFailedToast, createToast } from '@sushiswap/ui/components/toast'
+import { useQuery } from '@tanstack/react-query'
+import { readContract } from '@wagmi/core'
+import { useCallback, useMemo, useState } from 'react'
 import {
   Address,
   useAccount,
@@ -6,15 +13,9 @@ import {
   UserRejectedRequestError,
   useSignTypedData,
 } from 'wagmi'
-import { HashZero } from '@ethersproject/constants'
-import { useCallback, useMemo, useState } from 'react'
 import { SendTransactionResult } from 'wagmi/actions'
-import { createErrorToast, createFailedToast, createToast } from '@sushiswap/ui/components/toast'
-import { useQuery } from '@tanstack/react-query'
-import { readContract } from '@wagmi/core'
+
 import { getBentoBoxContractConfig } from '../../../../hooks'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { splitSignature } from '@ethersproject/bytes'
 import { useSignature } from '../../../systems/Checker/Provider'
 import { ApprovalState } from '../../approvals'
 
@@ -91,7 +92,7 @@ export const useBentoboxApproval = ({
           type: 'approval',
           chainId,
           txHash: data.hash,
-          promise: data.wait(),
+          promise: waitForTransaction({ hash: data.hash }),
           summary: {
             pending: `Approving BentoBox Master Contract`,
             completed: `Successfully approved the master contract`,

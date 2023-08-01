@@ -81,7 +81,7 @@ export const ExecuteMultipleSection: FC<{
         type: 'createStream',
         chainId: chainId,
         txHash: data.hash,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Creating ${streams.length} streams`,
           completed: `Created ${streams.length} streams`,

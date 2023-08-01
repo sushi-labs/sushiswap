@@ -1,19 +1,18 @@
-import { Amount, Currency, Token } from '@sushiswap/currency'
-import { StablePool } from '@sushiswap/amm'
-import { Address, readContracts } from 'wagmi'
-import { BigNumber } from 'ethers'
-import { getContract } from 'wagmi/actions'
-import { JSBI } from '@sushiswap/math'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { stablePoolAbi, stablePoolFactoryAbi } from '@sushiswap/abi'
+import { TridentStablePool } from '@sushiswap/amm'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { Amount, Currency, Token } from '@sushiswap/currency'
+import { Address, readContracts } from 'wagmi'
+import { getContract } from 'wagmi/actions'
+
 import { getStablePoolFactoryContract } from '../../../contracts/actions'
-import { pairsUnique, tokensUnique } from './utils'
+import { pairsUnique } from './utils'
 
 export enum StablePoolState {
-  LOADING,
-  NOT_EXISTS,
-  EXISTS,
-  INVALID,
+  LOADING = 'Loading',
+  NOT_EXISTS = 'Not Exists',
+  EXISTS = 'Exists',
+  INVALID = 'Invalid',
 }
 
 interface PoolData {
@@ -25,7 +24,7 @@ interface PoolData {
 export const getStablePools = async (
   chainId: BentoBoxV1ChainId,
   currencies: [Currency | undefined, Currency | undefined][],
-  totals: Map<string, { base: BigNumber; elastic: BigNumber }>
+  totals: Map<string, { base: bigint; elastic: bigint }>
 ) => {
   const contract = getContract({
     ...getStablePoolFactoryContract(chainId),
@@ -50,12 +49,7 @@ export const getStablePools = async (
     .filter(([, length]) => length)
     .map(
       ([i, length]) =>
-        [
-          _pairsUniqueAddr[i][0] as Address,
-          _pairsUniqueAddr[i][1] as Address,
-          BigNumber.from(0),
-          BigNumber.from(length),
-        ] as const
+        [_pairsUniqueAddr[i][0] as Address, _pairsUniqueAddr[i][1] as Address, 0n, BigInt(length)] as const
     )
 
   const pairsUniqueProcessed = callStatePoolsCount
@@ -68,15 +62,15 @@ export const getStablePools = async (
       chainId,
       address: contract?.address as Address,
       abi: stablePoolFactoryAbi,
-      functionName: 'getPools',
+      functionName: 'getPools' as const,
       args,
     })),
   })
 
   const pools: PoolData[] = []
   callStatePools?.forEach((s, i) => {
-    if (s)
-      s.forEach((address) =>
+    if (s.result)
+      s.result.forEach((address) =>
         pools.push({
           address,
           token0: pairsUniqueProcessed?.[i][0] as Token,
@@ -108,15 +102,17 @@ export const getStablePools = async (
   return pools.map((p, i) => {
     const total0 = totals.get(p.token0.address)
     const total1 = totals.get(p.token1.address)
-    if (!reserves?.[i] || !fees?.[i] || !total0 || !total1) return [StablePoolState.LOADING, null]
+
+    const [reserve0, reserve1] = reserves?.[i]?.result || []
+    if (!reserve0 || !reserve1 || !total0 || !total1) return [StablePoolState.LOADING, null]
     return [
       StablePoolState.EXISTS,
-      new StablePool(
-        Amount.fromRawAmount(p.token0, reserves[i]._reserve0.toString()),
-        Amount.fromRawAmount(p.token1, reserves[i]._reserve1.toString()),
+      new TridentStablePool(
+        Amount.fromRawAmount(p.token0, reserve0),
+        Amount.fromRawAmount(p.token1, reserve1),
         parseInt(fees[i].toString()),
-        { base: JSBI.BigInt(total0.base), elastic: JSBI.BigInt(total0.elastic) },
-        { base: JSBI.BigInt(total1.base), elastic: JSBI.BigInt(total1.elastic) }
+        { base: total0.base, elastic: total0.elastic },
+        { base: total1.base, elastic: total1.elastic }
       ),
     ]
   })

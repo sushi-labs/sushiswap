@@ -5,7 +5,6 @@ import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { JSBI, ZERO } from '@sushiswap/math'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { Address, erc20ABI, useBalance as useWagmiBalance, useContractReads } from 'wagmi'
@@ -121,13 +120,13 @@ export const useBalances: UseBalances = ({
     for (let i = 0; i < validatedTokenAddresses.length; i++) {
       if (loadBentobox) {
         const { base, elastic } = data[i + validatedTokenAddresses.length] as unknown as {
-          base: BigNumber
-          elastic: BigNumber
+          base: bigint
+          elastic: bigint
         }
         if (base && elastic && data[i + 2 * validatedTokenAddresses.length]) {
           const rebase = {
-            base: JSBI.BigInt(base.toString()),
-            elastic: JSBI.BigInt(elastic.toString()),
+            base: base,
+            elastic: elastic,
           }
           const amount = Amount.fromShare(
             validatedTokens[i],
@@ -147,8 +146,8 @@ export const useBalances: UseBalances = ({
         }
       }
 
-      const value = data[i] as unknown as BigNumber
-      const amount = value ? JSBI.BigInt(value.toString()) : undefined
+      const value = data[i].result as bigint
+      const amount = value ?? undefined
       if (!result[validatedTokens[i].address]) {
         result[validatedTokens[i].address] = {
           [FundSource.BENTOBOX]: Amount.fromRawAmount(validatedTokens[i], '0'),

@@ -68,7 +68,7 @@ export const CancelModal: FC<CancelModalProps> = ({
         chainId,
         timestamp: ts,
         groupTimestamp: ts,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Cancelling ${type}`,
           completed: `Successfully cancelled ${type}`,

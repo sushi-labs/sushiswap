@@ -30,7 +30,7 @@ import { useFormContext } from 'react-hook-form'
 
 import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreationAction } from '../../../lib'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
-import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS_LABEL,STEP_CONFIGURATIONS_MAP } from '../schema'
+import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS_LABEL, STEP_CONFIGURATIONS_MAP } from '../schema'
 import { calculateCliffDuration, calculateEndDate, calculateStepPercentage, calculateTotalAmount } from '../utils'
 
 const MODAL_ID = 'createVestingSingle'
@@ -104,7 +104,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
         type: 'createVesting',
         chainId: chainId,
         txHash: data.hash,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Creating ${_totalAmount.toSignificant(6)} ${_totalAmount.currency.symbol} vesting`,
           completed: `Created ${_totalAmount.toSignificant(6)} ${_totalAmount.currency.symbol} vesting`,

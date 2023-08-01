@@ -73,7 +73,7 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
           type: 'createStream',
           chainId: chainId,
           txHash: data.hash,
-          promise: data.wait(),
+          promise: waitForTransaction({ hash: data.hash }),
           summary: {
             pending: `Creating ${_amount.toSignificant(6)} ${_amount.currency.symbol} stream`,
             completed: `Created ${_amount.toSignificant(6)} ${_amount.currency.symbol} stream`,

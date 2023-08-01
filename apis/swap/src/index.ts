@@ -33,7 +33,6 @@ import {
   optimism,
   polygon,
 } from '@sushiswap/viem-config'
-import { BigNumber } from 'ethers'
 import { fastify } from 'fastify'
 import { performance } from 'perf_hooks'
 // import { createPublicClient, http } from 'viem'
@@ -91,7 +90,7 @@ server.get('/v0', async (request) => {
     poolCodesMap,
     chainId,
     fromToken,
-    BigNumber.from(amount.toString()),
+    amount,
     toToken,
     gasPrice ?? 30e9
   )

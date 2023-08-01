@@ -72,7 +72,7 @@ export const TransferModal: FC<TransferModalProps> = ({
         chainId,
         timestamp: ts,
         groupTimestamp: ts,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Transferring ${type}`,
           completed: `Successfully transferred ${type} to ${shortenAddress(resolvedAddress)}`,

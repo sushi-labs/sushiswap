@@ -1,7 +1,7 @@
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Price, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import { Percent } from '@sushiswap/math'
 import { usePrice, UseTradeParams, UseTradeReturnWriteArgs } from '@sushiswap/react-query'
 import {
   isRouteProcessor3ChainId,
@@ -77,9 +77,9 @@ export const useClientTrade = (variables: UseTradeParams) => {
         poolsCodeMap,
         chainId,
         fromToken,
-        BigNumber.from(amount.quotient.toString()),
+        amount.quotient,
         toToken,
-        feeData.gasPrice.toNumber(),
+        Number(feeData.gasPrice),
         1 // 5% impact before dex aggregation
       )
 
@@ -160,14 +160,14 @@ ${logPools}
           setTimeout(
             () =>
               res({
-                swapPrice: amountOut.greaterThan(ZERO)
+                swapPrice: amountOut.greaterThan(0n)
                   ? new Price({
                       baseAmount: amount,
                       quoteAmount: amountOut,
                     })
                   : undefined,
                 priceImpact: route.priceImpact
-                  ? new Percent(JSBI.BigInt(Math.round(route.priceImpact * 10000)), JSBI.BigInt(10000))
+                  ? new Percent(BigInt(Math.round(route.priceImpact * 10000)), 10000n)
                   : new Percent(0),
                 amountIn,
                 amountOut,
@@ -181,7 +181,7 @@ ${logPools}
                   price && feeData.gasPrice
                     ? Amount.fromRawAmount(
                         Native.onChain(chainId),
-                        JSBI.multiply(JSBI.BigInt(feeData.gasPrice), JSBI.BigInt(route.gasSpent * 1.2))
+                        BigInt(feeData.gasPrice) * BigInt(Math.floor(route.gasSpent * 1.2))
                       )
                         .multiply(price.asFraction)
                         .toSignificant(4)
