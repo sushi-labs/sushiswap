@@ -4,6 +4,7 @@ import { IconComponent } from '../../../../types'
 import { ArbitrumNaked } from './ArbitrumNaked'
 import { ArbitrumNovaNaked } from './ArbitrumNovaNaked'
 import { AvalancheNaked } from './AvalancheNaked'
+import { BaseNaked } from './BaseNaked'
 import { BinanceNaked } from './BinanceNaked'
 import { BobaAvaxNaked } from './BobaAvaxNaked'
 import { BobaBNBNaked } from './BobaBNBNaked'
@@ -33,6 +34,7 @@ import { ThunderCoreNaked } from './ThunderCoreNaked'
 export * from './ArbitrumNaked'
 export * from './ArbitrumNovaNaked'
 export * from './AvalancheNaked'
+export * from './BaseNaked'
 export * from './BinanceNaked'
 export * from './BobaAvaxNaked'
 export * from './BobaBNBNaked'
@@ -89,5 +91,5 @@ export const NETWORK_NAKED_ICON: Record<number, IconComponent> = {
   [ChainId.CORE]: CoreNaked,
   [ChainId.ZKSYNC_ERA]: EthereumNaked,
   [ChainId.LINEA]: EthereumNaked,
-  [ChainId.BASE]: EthereumNaked,
+  [ChainId.BASE]: BaseNaked,
 }

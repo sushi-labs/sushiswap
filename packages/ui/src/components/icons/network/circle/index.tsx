@@ -4,6 +4,7 @@ import { IconComponent } from '../../../../types'
 import { ArbitrumCircle } from './ArbitrumCircle'
 import { ArbitrumNovaCircle } from './ArbitrumNovaCircle'
 import { AvalancheCircle } from './AvalancheCircle'
+import { BaseCircle } from './BaseCircle'
 import { BinanceCircle } from './BinanceCircle'
 import { BobaAvaxCircle } from './BobaAvaxCircle'
 import { BobaBNBCircle } from './BobaBNBCircle'
@@ -33,6 +34,7 @@ import { ThunderCoreCircle } from './ThunderCoreCircle'
 export * from './ArbitrumCircle'
 export * from './ArbitrumNovaCircle'
 export * from './AvalancheCircle'
+export * from './BaseCircle'
 export * from './BinanceCircle'
 export * from './BobaAvaxCircle'
 export * from './BobaBNBCircle'
@@ -90,5 +92,5 @@ export const NETWORK_CIRCLE_ICON: Record<number, IconComponent> = {
   [ChainId.CORE]: CoreCircle,
   [ChainId.ZKSYNC_ERA]: EthereumCircle,
   [ChainId.LINEA]: EthereumCircle,
-  [ChainId.BASE]: EthereumCircle,
+  [ChainId.BASE]: BaseCircle,
 }
