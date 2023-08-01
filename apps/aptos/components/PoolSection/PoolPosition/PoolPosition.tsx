@@ -26,7 +26,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({ row, isLoading }) => {
         </div>
       </div>
       <PoolPositionDesktop row={row} isLoading={isLoading} />
-      {/* <PoolPositionStakedDesktop row={row} isLoading={isLoading} /> */}
+      <PoolPositionStakedDesktop row={row} isLoading={isLoading} />
     </div>
   )
 }

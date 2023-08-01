@@ -64,6 +64,16 @@ export const PoolHeader: FC<PoolHeader> = ({ row }) => {
               APR: <span className="font-semibold text-gray-900 dark:text-slate-50">{'0.00%'}</span>
             </Typography>
             <div className="flex gap-2">
+              {
+                <Typography
+                  variant="sm"
+                  weight={400}
+                  as="span"
+                  className="text-gray-600 dark:text-slate-400 text-slate-600"
+                >
+                  Rewards: {'0.00%'}
+                </Typography>
+              }
               <Typography
                 variant="sm"
                 weight={400}

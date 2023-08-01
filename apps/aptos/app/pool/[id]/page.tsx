@@ -5,7 +5,9 @@ import { Layout } from 'components/Layout'
 import { PoolButtons } from 'components/PoolSection/PoolButtons'
 import { PoolComposition } from 'components/PoolSection/PoolComposition'
 import { PoolHeader } from 'components/PoolSection/PoolHeader'
+import { PoolMyRewards } from 'components/PoolSection/PoolMyRewards'
 import { PoolPosition } from 'components/PoolSection/PoolPosition/PoolPosition'
+import { PoolRewards } from 'components/PoolSection/PoolRewards'
 import { useParams } from 'next/navigation'
 import { FC } from 'react'
 import { usePool } from 'utils/usePool'
@@ -39,10 +41,12 @@ const _Pool = () => {
                 <PoolHeader row={pool} />
                 <hr className="my-3 border-t border-gray-900/5 dark:border-slate-200/5" />
                 <PoolComposition row={pool} />
+                <PoolRewards />
               </div>
               <div className="flex flex-col order-2 gap-4">
                 <AppearOnMount>
                   <div className="flex flex-col gap-10">
+                    <PoolMyRewards />
                     <PoolPosition row={pool} isLoading={isPoolLoading} />
                   </div>
                 </AppearOnMount>

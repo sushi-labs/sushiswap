@@ -35,6 +35,10 @@ export const AddSectionMyPosition: FC<Props> = ({ balance, underlying0, underlyi
           <Typography variant="xs" weight={500} className="text-right text-gray-700 dark:text-slate-300">
             0.00%
           </Typography>
+          <Typography variant="xs" weight={500} className="text-gray-700 dark:text-slate-300">
+            Farming Rewards:
+          </Typography>
+          <div className={classNames()}></div>
         </div>
       </div>
       <div className="px-5">
@@ -48,7 +52,7 @@ export const AddSectionMyPosition: FC<Props> = ({ balance, underlying0, underlyi
           token0={token0}
           token1={token1}
         />
-        {/* <AddSectionMyPositionStaked /> */}
+        <AddSectionMyPositionStaked />
       </div>
     </div>
   )
