@@ -1,6 +1,6 @@
 import { Token } from '@sushiswap/currency'
 
-import { AllowedPermitArguments, SelfPermit, StandardPermitArguments } from './selfPermit'
+import { AllowedPermitArguments, SelfPermit, StandardPermitArguments } from './SelfPermit'
 
 const token = new Token({
   chainId: 1,

@@ -2,7 +2,7 @@ import { Currency } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
-import { Trade, TradeType, Version } from './Trade'
+import { Trade, TradeType, Version } from '../Trade'
 
 /**
  * Options for producing the arguments to send call to the router.

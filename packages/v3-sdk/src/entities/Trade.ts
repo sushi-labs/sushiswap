@@ -3,8 +3,8 @@ import { Amount as CurrencyAmount, Currency, Price, Token } from '@sushiswap/cur
 import { Fraction, Percent } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
-import { Pool } from './pool'
-import { Route } from './route'
+import { SushiSwapV3Pool } from './SushiSwapV3Pool'
+import { Route } from './Route'
 
 /**
  * Trades comparator, an extension of the input output comparator that also considers other dimensions of the trade in ranking them
@@ -422,7 +422,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
     const poolAddressSet = new Set<string>()
     for (const { route } of routes) {
       for (const pool of route.pools) {
-        poolAddressSet.add(Pool.getAddress(pool.token0, pool.token1, pool.fee))
+        poolAddressSet.add(SushiSwapV3Pool.getAddress(pool.token0, pool.token1, pool.fee))
       }
     }
 
@@ -495,12 +495,12 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
    * @returns The exact in trade
    */
   public static async bestTradeExactIn<TInput extends Currency, TOutput extends Currency>(
-    pools: Pool[],
+    pools: SushiSwapV3Pool[],
     currencyAmountIn: CurrencyAmount<TInput>,
     currencyOut: TOutput,
     { maxNumResults = 3, maxHops = 3 }: BestTradeOptions = {},
     // used in recursion.
-    currentPools: Pool[] = [],
+    currentPools: SushiSwapV3Pool[] = [],
     nextAmountIn: CurrencyAmount<Currency> = currencyAmountIn,
     bestTrades: Trade<TInput, TOutput, TradeType.EXACT_INPUT>[] = []
   ): Promise<Trade<TInput, TOutput, TradeType.EXACT_INPUT>[]> {
@@ -577,12 +577,12 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
    * @returns The exact out trade
    */
   public static async bestTradeExactOut<TInput extends Currency, TOutput extends Currency>(
-    pools: Pool[],
+    pools: SushiSwapV3Pool[],
     currencyIn: TInput,
     currencyAmountOut: CurrencyAmount<TOutput>,
     { maxNumResults = 3, maxHops = 3 }: BestTradeOptions = {},
     // used in recursion.
-    currentPools: Pool[] = [],
+    currentPools: SushiSwapV3Pool[] = [],
     nextAmountOut: CurrencyAmount<Currency> = currencyAmountOut,
     bestTrades: Trade<TInput, TOutput, TradeType.EXACT_OUTPUT>[] = []
   ): Promise<Trade<TInput, TOutput, TradeType.EXACT_OUTPUT>[]> {

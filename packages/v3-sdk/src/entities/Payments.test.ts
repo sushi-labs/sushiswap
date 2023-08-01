@@ -1,7 +1,7 @@
 import { Token } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
 
-import { Payments } from './payments'
+import { Payments } from './Payments'
 
 const recipient = '0x0000000000000000000000000000000000000003'
 const amount = 123n

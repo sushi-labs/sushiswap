@@ -1,6 +1,6 @@
 import invariant from 'tiny-invariant'
 
-import { Tick } from '../entities/tick'
+import { Tick } from '../entities/Tick'
 import { isSorted } from './isSorted'
 
 function tickComparator(a: Tick, b: Tick) {

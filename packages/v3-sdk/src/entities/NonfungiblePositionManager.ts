@@ -5,13 +5,13 @@ import { BigintIsh, Percent } from '@sushiswap/math'
 import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import invariant from 'tiny-invariant'
 
-import { ADDRESS_ZERO } from './constants'
-import { Pool } from './entities'
-import { Position } from './entities/position'
-import { Multicall } from './multicall'
-import { Payments } from './payments'
-import { PermitOptions, SelfPermit } from './selfPermit'
-import { MethodParameters, toHex } from './utils/calldata'
+import { ADDRESS_ZERO } from '../constants'
+import { SushiSwapV3Pool } from '.'
+import { Position } from './Position'
+import { Multicall } from './Multicall'
+import { Payments } from './Payments'
+import { PermitOptions, SelfPermit } from './SelfPermit'
+import { MethodParameters, toHex } from '../utils/calldata'
 
 const MaxUint128 = toHex(2n ** 128n - 1n)
 
@@ -173,7 +173,7 @@ export abstract class NonfungiblePositionManager {
    */
   private constructor() {}
 
-  private static encodeCreate(pool: Pool): string {
+  private static encodeCreate(pool: SushiSwapV3Pool): string {
     return NonfungiblePositionManager.INTERFACE.encodeFunctionData('createAndInitializePoolIfNecessary', [
       pool.token0.address,
       pool.token1.address,
@@ -182,7 +182,7 @@ export abstract class NonfungiblePositionManager {
     ])
   }
 
-  public static createCallParameters(pool: Pool): MethodParameters {
+  public static createCallParameters(pool: SushiSwapV3Pool): MethodParameters {
     return {
       calldata: this.encodeCreate(pool),
       value: toHex(0),

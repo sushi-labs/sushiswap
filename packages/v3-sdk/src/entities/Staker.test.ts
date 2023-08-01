@@ -1,10 +1,8 @@
 import { Token } from '@sushiswap/currency'
 
-import { FeeAmount } from './constants'
-import { Pool } from './entities/pool'
-import { NonfungiblePositionManager } from './nonfungiblePositionManager'
-import { Staker } from './staker'
-import { encodeSqrtRatioX96 } from './utils/encodeSqrtRatioX96'
+import { FeeAmount } from '../constants'
+import { SushiSwapV3Pool, NonfungiblePositionManager, Staker } from '.'
+import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96'
 
 describe('Staker', () => {
   const reward = new Token({
@@ -29,7 +27,7 @@ describe('Staker', () => {
     name: 'token1',
   })
 
-  const pool_0_1 = new Pool(token0, token1, FeeAmount.MEDIUM, encodeSqrtRatioX96(1, 1), 0, 0, [])
+  const pool_0_1 = new SushiSwapV3Pool(token0, token1, FeeAmount.MEDIUM, encodeSqrtRatioX96(1, 1), 0, 0, [])
 
   const incentiveKey = {
     rewardToken: reward,

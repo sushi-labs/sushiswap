@@ -4,7 +4,7 @@ import { Percent } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 import warning from 'tiny-warning'
 
-import { Trade, TradeType, Version } from './Trade'
+import { Trade, TradeType, Version } from '../Trade'
 
 // warns if addresses are not checksummed
 function validateAndParseAddress(address: string): string {
@@ -73,7 +73,7 @@ const ZERO_HEX = '0x0'
 /**
  * Represents the Uniswap V2 Router, and has static methods for helping execute trades.
  */
-export abstract class SushiSwapRouter {
+export abstract class SushiSwapV2Router {
   /**
    * Cannot be constructed.
    */

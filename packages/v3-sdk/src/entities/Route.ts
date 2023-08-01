@@ -1,7 +1,7 @@
 import { Currency, Price, Token } from '@sushiswap/currency'
 import invariant from 'tiny-invariant'
 
-import { Pool } from './pool'
+import { SushiSwapV3Pool } from './SushiSwapV3Pool'
 
 /**
  * Represents a list of pools through which a swap can occur
@@ -9,7 +9,7 @@ import { Pool } from './pool'
  * @template TOutput The output token
  */
 export class Route<TInput extends Currency, TOutput extends Currency> {
-  public readonly pools: Pool[]
+  public readonly pools: SushiSwapV3Pool[]
   public readonly tokenPath: Token[]
   public readonly input: TInput
   public readonly output: TOutput
@@ -22,7 +22,7 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
    * @param input The input token
    * @param output The output token
    */
-  public constructor(pools: Pool[], input: TInput, output: TOutput) {
+  public constructor(pools: SushiSwapV3Pool[], input: TInput, output: TOutput) {
     invariant(pools.length > 0, 'POOLS')
 
     const chainId = pools[0].chainId

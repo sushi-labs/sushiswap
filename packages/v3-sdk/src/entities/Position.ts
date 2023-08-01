@@ -8,10 +8,10 @@ import { maxLiquidityForAmounts } from '../utils/maxLiquidityForAmounts'
 import { tickToPrice } from '../utils/priceTickConversions'
 import { SqrtPriceMath } from '../utils/sqrtPriceMath'
 import { TickMath } from '../utils/tickMath'
-import { Pool } from './pool'
+import { SushiSwapV3Pool } from './SushiSwapV3Pool'
 
 interface PositionConstructorArgs {
-  pool: Pool
+  pool: SushiSwapV3Pool
   tickLower: number
   tickUpper: number
   liquidity: BigintIsh
@@ -21,7 +21,7 @@ interface PositionConstructorArgs {
  * Represents a position on a Uniswap V3 Pool
  */
 export class Position {
-  public readonly pool: Pool
+  public readonly pool: SushiSwapV3Pool
   public readonly tickLower: number
   public readonly tickUpper: number
   public readonly liquidity: bigint
@@ -160,7 +160,7 @@ export class Position {
     const { sqrtRatioX96Upper, sqrtRatioX96Lower } = this.ratiosAfterSlippage(slippageTolerance)
 
     // construct counterfactual pools
-    const poolLower = new Pool(
+    const poolLower = new SushiSwapV3Pool(
       this.pool.token0,
       this.pool.token1,
       this.pool.fee,
@@ -168,7 +168,7 @@ export class Position {
       0 /* liquidity doesn't matter */,
       TickMath.getTickAtSqrtRatio(sqrtRatioX96Lower)
     )
-    const poolUpper = new Pool(
+    const poolUpper = new SushiSwapV3Pool(
       this.pool.token0,
       this.pool.token1,
       this.pool.fee,
@@ -216,7 +216,7 @@ export class Position {
     const { sqrtRatioX96Upper, sqrtRatioX96Lower } = this.ratiosAfterSlippage(slippageTolerance)
 
     // construct counterfactual pools
-    const poolLower = new Pool(
+    const poolLower = new SushiSwapV3Pool(
       this.pool.token0,
       this.pool.token1,
       this.pool.fee,
@@ -224,7 +224,7 @@ export class Position {
       0 /* liquidity doesn't matter */,
       TickMath.getTickAtSqrtRatio(sqrtRatioX96Lower)
     )
-    const poolUpper = new Pool(
+    const poolUpper = new SushiSwapV3Pool(
       this.pool.token0,
       this.pool.token1,
       this.pool.fee,
@@ -318,7 +318,7 @@ export class Position {
     amount1,
     useFullPrecision,
   }: {
-    pool: Pool
+    pool: SushiSwapV3Pool
     tickLower: number
     tickUpper: number
     amount0: BigintIsh
@@ -359,7 +359,7 @@ export class Position {
     amount0,
     useFullPrecision,
   }: {
-    pool: Pool
+    pool: SushiSwapV3Pool
     tickLower: number
     tickUpper: number
     amount0: BigintIsh
@@ -382,7 +382,7 @@ export class Position {
     tickUpper,
     amount1,
   }: {
-    pool: Pool
+    pool: SushiSwapV3Pool
     tickLower: number
     tickUpper: number
     amount1: BigintIsh

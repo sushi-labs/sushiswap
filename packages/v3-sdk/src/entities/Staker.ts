@@ -4,9 +4,9 @@ import { Token } from '@sushiswap/currency'
 import { BigintIsh } from '@sushiswap/math'
 import IUniswapV3Staker from '@uniswap/v3-staker/artifacts/contracts/UniswapV3Staker.sol/UniswapV3Staker.json'
 
-import { Pool } from './entities'
-import { Multicall } from './multicall'
-import { MethodParameters, toHex } from './utils/calldata'
+import { SushiSwapV3Pool } from '.'
+import { Multicall } from './Multicall'
+import { MethodParameters, toHex } from '../utils/calldata'
 
 export type FullWithdrawOptions = ClaimOptions & WithdrawOptions
 /**
@@ -20,7 +20,7 @@ export interface IncentiveKey {
   /**
    * The pool that the staked positions must provide in.
    */
-  pool: Pool
+  pool: SushiSwapV3Pool
   /**
    * The time when the incentive program begins.
    */
@@ -200,7 +200,7 @@ export abstract class Staker {
     const refundee = validateAndParseAddress(incentiveKey.refundee)
     return {
       rewardToken: incentiveKey.rewardToken.address,
-      pool: Pool.getAddress(token0, token1, fee),
+      pool: SushiSwapV3Pool.getAddress(token0, token1, fee),
       startTime: toHex(incentiveKey.startTime),
       endTime: toHex(incentiveKey.endTime),
       refundee,

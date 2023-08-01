@@ -1,8 +1,8 @@
 import { BigintIsh } from '@sushiswap/math'
 
 import { TickList } from '../utils/tickList'
-import { Tick, TickConstructorArgs } from './tick'
-import { TickDataProvider } from './tickDataProvider'
+import { Tick, TickConstructorArgs } from './Tick'
+import { TickDataProvider } from './TickDataProvider'
 
 /**
  * A data provider for ticks that is backed by an in-memory array of ticks.

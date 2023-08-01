@@ -4,7 +4,7 @@ import { Token } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
 import IPeripheryPaymentsWithFee from '@uniswap/v3-periphery/artifacts/contracts/interfaces/IPeripheryPaymentsWithFee.sol/IPeripheryPaymentsWithFee.json'
 
-import { toHex } from './utils/calldata'
+import { toHex } from '../utils/calldata'
 
 export interface FeeOptions {
   /**

@@ -5,8 +5,8 @@ import { FeeAmount, TICK_SPACINGS } from '../constants'
 import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96'
 import { nearestUsableTick } from '../utils/nearestUsableTick'
 import { TickMath } from '../utils/tickMath'
-import { Pool } from './pool'
-import { Position } from './position'
+import { SushiSwapV3Pool } from './SushiSwapV3Pool'
+import { Position } from './Position'
 
 describe('Position', () => {
   const USDC = new Token({
@@ -26,7 +26,7 @@ describe('Position', () => {
   const POOL_SQRT_RATIO_START = encodeSqrtRatioX96(100e6, 100e18)
   const POOL_TICK_CURRENT = TickMath.getTickAtSqrtRatio(POOL_SQRT_RATIO_START)
   const TICK_SPACING = TICK_SPACINGS[FeeAmount.LOW]
-  const DAI_USDC_POOL = new Pool(DAI, USDC, FeeAmount.LOW, POOL_SQRT_RATIO_START, 0, POOL_TICK_CURRENT, [])
+  const DAI_USDC_POOL = new SushiSwapV3Pool(DAI, USDC, FeeAmount.LOW, POOL_SQRT_RATIO_START, 0, POOL_TICK_CURRENT, [])
 
   it('can be constructed around 0 tick', () => {
     const position = new Position({
@@ -278,7 +278,7 @@ describe('Position', () => {
 
       it('is correct for pool at min price', () => {
         const position = new Position({
-          pool: new Pool(DAI, USDC, FeeAmount.LOW, TickMath.MIN_SQRT_RATIO, 0, TickMath.MIN_TICK, []),
+          pool: new SushiSwapV3Pool(DAI, USDC, FeeAmount.LOW, TickMath.MIN_SQRT_RATIO, 0, TickMath.MIN_TICK, []),
           liquidity: 100e18,
           tickLower: nearestUsableTick(POOL_TICK_CURRENT, TICK_SPACING) + TICK_SPACING,
           tickUpper: nearestUsableTick(POOL_TICK_CURRENT, TICK_SPACING) + TICK_SPACING * 2,
@@ -291,7 +291,15 @@ describe('Position', () => {
 
       it('is correct for pool at max price', () => {
         const position = new Position({
-          pool: new Pool(DAI, USDC, FeeAmount.LOW, TickMath.MAX_SQRT_RATIO - 1n, 0, TickMath.MAX_TICK - 1, []),
+          pool: new SushiSwapV3Pool(
+            DAI,
+            USDC,
+            FeeAmount.LOW,
+            TickMath.MAX_SQRT_RATIO - 1n,
+            0,
+            TickMath.MAX_TICK - 1,
+            []
+          ),
           liquidity: 100e18,
           tickLower: nearestUsableTick(POOL_TICK_CURRENT, TICK_SPACING) + TICK_SPACING,
           tickUpper: nearestUsableTick(POOL_TICK_CURRENT, TICK_SPACING) + TICK_SPACING * 2,
@@ -393,7 +401,7 @@ describe('Position', () => {
 
       it('is correct for pool at min price', () => {
         const position = new Position({
-          pool: new Pool(DAI, USDC, FeeAmount.LOW, TickMath.MIN_SQRT_RATIO, 0, TickMath.MIN_TICK, []),
+          pool: new SushiSwapV3Pool(DAI, USDC, FeeAmount.LOW, TickMath.MIN_SQRT_RATIO, 0, TickMath.MIN_TICK, []),
           liquidity: 100e18,
           tickLower: nearestUsableTick(POOL_TICK_CURRENT, TICK_SPACING) + TICK_SPACING,
           tickUpper: nearestUsableTick(POOL_TICK_CURRENT, TICK_SPACING) + TICK_SPACING * 2,
@@ -406,7 +414,15 @@ describe('Position', () => {
 
       it('is correct for pool at max price', () => {
         const position = new Position({
-          pool: new Pool(DAI, USDC, FeeAmount.LOW, TickMath.MAX_SQRT_RATIO - 1n, 0, TickMath.MAX_TICK - 1, []),
+          pool: new SushiSwapV3Pool(
+            DAI,
+            USDC,
+            FeeAmount.LOW,
+            TickMath.MAX_SQRT_RATIO - 1n,
+            0,
+            TickMath.MAX_TICK - 1,
+            []
+          ),
           liquidity: 100e18,
           tickLower: nearestUsableTick(POOL_TICK_CURRENT, TICK_SPACING) + TICK_SPACING,
           tickUpper: nearestUsableTick(POOL_TICK_CURRENT, TICK_SPACING) + TICK_SPACING * 2,

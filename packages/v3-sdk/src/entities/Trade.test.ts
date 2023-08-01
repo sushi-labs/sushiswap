@@ -6,9 +6,9 @@ import { FeeAmount, TICK_SPACINGS } from '../constants'
 import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96'
 import { nearestUsableTick } from '../utils/nearestUsableTick'
 import { TickMath } from '../utils/tickMath'
-import { Pool } from './pool'
-import { Route } from './route'
-import { Trade } from './trade'
+import { SushiSwapV3Pool } from './SushiSwapV3Pool'
+import { Route } from './Route'
+import { Trade } from './Trade'
 
 describe('Trade', () => {
   const ETHER = Native.onChain(1)
@@ -48,7 +48,7 @@ describe('Trade', () => {
   ) {
     const sqrtRatioX96 = encodeSqrtRatioX96(reserve1.quotient, reserve0.quotient)
     const liquidity = sqrt(reserve0.quotient * reserve1.quotient)
-    return new Pool(
+    return new SushiSwapV3Pool(
       reserve0.currency,
       reserve1.currency,
       feeAmount,

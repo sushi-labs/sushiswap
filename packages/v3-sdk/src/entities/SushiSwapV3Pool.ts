@@ -8,9 +8,9 @@ import { computePoolAddress } from '../utils/computePoolAddress'
 import { LiquidityMath } from '../utils/liquidityMath'
 import { SwapMath } from '../utils/swapMath'
 import { TickMath } from '../utils/tickMath'
-import { Tick, TickConstructorArgs } from './tick'
-import { NoTickDataProvider, TickDataProvider } from './tickDataProvider'
-import { TickListDataProvider } from './tickListDataProvider'
+import { Tick, TickConstructorArgs } from './Tick'
+import { NoTickDataProvider, TickDataProvider } from './TickDataProvider'
+import { TickListDataProvider } from './TickListDataProvider'
 
 interface StepComputations {
   sqrtPriceStartX96: bigint
@@ -30,7 +30,7 @@ const NO_TICK_DATA_PROVIDER_DEFAULT = new NoTickDataProvider()
 /**
  * Represents a V3 pool
  */
-export class Pool {
+export class SushiSwapV3Pool {
   public readonly token0: Token
   public readonly token1: Token
   public readonly fee: FeeAmount
@@ -152,7 +152,7 @@ export class Pool {
   public async getOutputAmount(
     inputAmount: CurrencyAmount<Token>,
     sqrtPriceLimitX96?: bigint
-  ): Promise<[CurrencyAmount<Token>, Pool]> {
+  ): Promise<[CurrencyAmount<Token>, SushiSwapV3Pool]> {
     invariant(this.involvesToken(inputAmount.currency), 'TOKEN')
 
     const zeroForOne = inputAmount.currency.equals(this.token0)
@@ -166,7 +166,15 @@ export class Pool {
     const outputToken = zeroForOne ? this.token1 : this.token0
     return [
       CurrencyAmount.fromRawAmount(outputToken, outputAmount * -1n),
-      new Pool(this.token0, this.token1, this.fee, sqrtRatioX96, liquidity, tickCurrent, this.tickDataProvider),
+      new SushiSwapV3Pool(
+        this.token0,
+        this.token1,
+        this.fee,
+        sqrtRatioX96,
+        liquidity,
+        tickCurrent,
+        this.tickDataProvider
+      ),
     ]
   }
 
@@ -179,7 +187,7 @@ export class Pool {
   public async getInputAmount(
     outputAmount: CurrencyAmount<Token>,
     sqrtPriceLimitX96?: bigint
-  ): Promise<[CurrencyAmount<Token>, Pool]> {
+  ): Promise<[CurrencyAmount<Token>, SushiSwapV3Pool]> {
     invariant(outputAmount.currency.isToken && this.involvesToken(outputAmount.currency), 'TOKEN')
 
     const zeroForOne = outputAmount.currency.equals(this.token1)
@@ -193,7 +201,15 @@ export class Pool {
     const inputToken = zeroForOne ? this.token0 : this.token1
     return [
       CurrencyAmount.fromRawAmount(inputToken, inputAmount),
-      new Pool(this.token0, this.token1, this.fee, sqrtRatioX96, liquidity, tickCurrent, this.tickDataProvider),
+      new SushiSwapV3Pool(
+        this.token0,
+        this.token1,
+        this.fee,
+        sqrtRatioX96,
+        liquidity,
+        tickCurrent,
+        this.tickDataProvider
+      ),
     ]
   }
 

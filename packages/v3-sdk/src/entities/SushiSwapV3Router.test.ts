@@ -2,12 +2,9 @@ import { TradeType } from '@sushiswap/amm'
 import { Amount as CurrencyAmount, Native, Token, WETH9 } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
 
-import { FeeAmount, TICK_SPACINGS } from './constants'
-import { Route, Trade } from './entities'
-import { Pool } from './entities/pool'
-import { SwapRouter } from './swapRouter'
-import { nearestUsableTick, TickMath } from './utils'
-import { encodeSqrtRatioX96 } from './utils/encodeSqrtRatioX96'
+import { FeeAmount, TICK_SPACINGS } from '../constants'
+import { SushiSwapV3Pool, Route, Trade, SushiSwapV3Router } from '.'
+import { nearestUsableTick, TickMath, encodeSqrtRatioX96 } from '../utils'
 
 describe('SwapRouter', () => {
   const ETHER = Native.onChain(1)
@@ -46,18 +43,26 @@ describe('SwapRouter', () => {
   const WETH = WETH9[1]
 
   const makePool = (token0: Token, token1: Token) => {
-    return new Pool(token0, token1, feeAmount, sqrtRatioX96, liquidity, TickMath.getTickAtSqrtRatio(sqrtRatioX96), [
-      {
-        index: nearestUsableTick(TickMath.MIN_TICK, TICK_SPACINGS[feeAmount]),
-        liquidityNet: liquidity,
-        liquidityGross: liquidity,
-      },
-      {
-        index: nearestUsableTick(TickMath.MAX_TICK, TICK_SPACINGS[feeAmount]),
-        liquidityNet: -liquidity,
-        liquidityGross: liquidity,
-      },
-    ])
+    return new SushiSwapV3Pool(
+      token0,
+      token1,
+      feeAmount,
+      sqrtRatioX96,
+      liquidity,
+      TickMath.getTickAtSqrtRatio(sqrtRatioX96),
+      [
+        {
+          index: nearestUsableTick(TickMath.MIN_TICK, TICK_SPACINGS[feeAmount]),
+          liquidityNet: liquidity,
+          liquidityGross: liquidity,
+        },
+        {
+          index: nearestUsableTick(TickMath.MAX_TICK, TICK_SPACINGS[feeAmount]),
+          liquidityNet: -liquidity,
+          liquidityGross: liquidity,
+        },
+      ]
+    )
   }
 
   const pool_0_1 = makePool(token0, token1)
@@ -80,7 +85,7 @@ describe('SwapRouter', () => {
           CurrencyAmount.fromRawAmount(token0, 100),
           TradeType.EXACT_INPUT
         )
-        const { calldata, value } = SwapRouter.swapCallParameters(trade, {
+        const { calldata, value } = SushiSwapV3Router.swapCallParameters(trade, {
           slippageTolerance,
           recipient,
           deadline,
@@ -98,7 +103,7 @@ describe('SwapRouter', () => {
           CurrencyAmount.fromRawAmount(token1, 100),
           TradeType.EXACT_OUTPUT
         )
-        const { calldata, value } = SwapRouter.swapCallParameters(trade, {
+        const { calldata, value } = SushiSwapV3Router.swapCallParameters(trade, {
           slippageTolerance,
           recipient,
           deadline,
@@ -116,7 +121,7 @@ describe('SwapRouter', () => {
           CurrencyAmount.fromRawAmount(token0, 100),
           TradeType.EXACT_INPUT
         )
-        const { calldata, value } = SwapRouter.swapCallParameters(trade, {
+        const { calldata, value } = SushiSwapV3Router.swapCallParameters(trade, {
           slippageTolerance,
           recipient,
           deadline,
@@ -134,7 +139,7 @@ describe('SwapRouter', () => {
           CurrencyAmount.fromRawAmount(WETH, 100),
           TradeType.EXACT_OUTPUT
         )
-        const { calldata, value } = SwapRouter.swapCallParameters(trade, {
+        const { calldata, value } = SushiSwapV3Router.swapCallParameters(trade, {
           slippageTolerance,
           recipient,
           deadline,
@@ -152,7 +157,7 @@ describe('SwapRouter', () => {
           CurrencyAmount.fromRawAmount(Native.onChain(1), 100),
           TradeType.EXACT_INPUT
         )
-        const { calldata, value } = SwapRouter.swapCallParameters(trade, {
+        const { calldata, value } = SushiSwapV3Router.swapCallParameters(trade, {
           slippageTolerance,
           recipient,
           deadline,
@@ -170,7 +175,7 @@ describe('SwapRouter', () => {
           CurrencyAmount.fromRawAmount(token1, 100),
           TradeType.EXACT_OUTPUT
         )
-        const { calldata, value } = SwapRouter.swapCallParameters(trade, {
+        const { calldata, value } = SushiSwapV3Router.swapCallParameters(trade, {
           slippageTolerance,
           recipient,
           deadline,
@@ -188,7 +193,7 @@ describe('SwapRouter', () => {
           CurrencyAmount.fromRawAmount(token1, 100),
           TradeType.EXACT_INPUT
         )
-        const { calldata, value } = SwapRouter.swapCallParameters(trade, {
+        const { calldata, value } = SushiSwapV3Router.swapCallParameters(trade, {
           slippageTolerance,
           recipient,
           deadline,
@@ -206,7 +211,7 @@ describe('SwapRouter', () => {
           CurrencyAmount.fromRawAmount(Native.onChain(1), 100),
           TradeType.EXACT_OUTPUT
         )
-        const { calldata, value } = SwapRouter.swapCallParameters(trade, {
+        const { calldata, value } = SushiSwapV3Router.swapCallParameters(trade, {
           slippageTolerance,
           recipient,
           deadline,
@@ -224,7 +229,7 @@ describe('SwapRouter', () => {
           CurrencyAmount.fromRawAmount(token0, 100),
           TradeType.EXACT_INPUT
         )
-        const { calldata, value } = SwapRouter.swapCallParameters(trade, {
+        const { calldata, value } = SushiSwapV3Router.swapCallParameters(trade, {
           slippageTolerance,
           recipient,
           deadline,
@@ -243,7 +248,7 @@ describe('SwapRouter', () => {
           CurrencyAmount.fromRawAmount(token1, 100),
           TradeType.EXACT_INPUT
         )
-        const { calldata, value } = SwapRouter.swapCallParameters(trade, {
+        const { calldata, value } = SushiSwapV3Router.swapCallParameters(trade, {
           slippageTolerance,
           recipient,
           deadline,
@@ -265,7 +270,7 @@ describe('SwapRouter', () => {
           CurrencyAmount.fromRawAmount(token1, 10),
           TradeType.EXACT_OUTPUT
         )
-        const { calldata, value } = SwapRouter.swapCallParameters(trade, {
+        const { calldata, value } = SushiSwapV3Router.swapCallParameters(trade, {
           slippageTolerance,
           recipient,
           deadline,
@@ -287,7 +292,7 @@ describe('SwapRouter', () => {
           CurrencyAmount.fromRawAmount(token0, 100),
           TradeType.EXACT_INPUT
         )
-        const { calldata, value } = SwapRouter.swapCallParameters(trade, {
+        const { calldata, value } = SushiSwapV3Router.swapCallParameters(trade, {
           slippageTolerance,
           recipient,
           deadline,
@@ -319,7 +324,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_INPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade1, trade2], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade1, trade2], {
         slippageTolerance,
         recipient,
         deadline,
@@ -344,7 +349,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_INPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade1, trade2], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade1, trade2], {
         slippageTolerance,
         recipient,
         deadline,
@@ -369,7 +374,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_INPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade1, trade2], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade1, trade2], {
         slippageTolerance,
         recipient,
         deadline,
@@ -394,7 +399,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_INPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade1, trade2], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade1, trade2], {
         slippageTolerance,
         recipient,
         deadline,
@@ -419,7 +424,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_OUTPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade1, trade2], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade1, trade2], {
         slippageTolerance,
         recipient,
         deadline,
@@ -444,7 +449,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_INPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade1, trade2], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade1, trade2], {
         slippageTolerance,
         recipient,
         deadline,
@@ -469,7 +474,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_OUTPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade1, trade2], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade1, trade2], {
         slippageTolerance,
         recipient,
         deadline,
@@ -494,7 +499,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_OUTPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade1, trade2], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade1, trade2], {
         slippageTolerance,
         recipient,
         deadline,
@@ -519,7 +524,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_OUTPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade1, trade2], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade1, trade2], {
         slippageTolerance,
         recipient,
         deadline,
@@ -544,7 +549,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_OUTPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade1, trade2], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade1, trade2], {
         slippageTolerance,
         recipient,
         deadline,
@@ -570,7 +575,7 @@ describe('SwapRouter', () => {
       )
 
       expect(() =>
-        SwapRouter.swapCallParameters([trade1, trade2], {
+        SushiSwapV3Router.swapCallParameters([trade1, trade2], {
           slippageTolerance,
           recipient,
           deadline,
@@ -592,7 +597,7 @@ describe('SwapRouter', () => {
       )
 
       expect(() =>
-        SwapRouter.swapCallParameters([trade1, trade2], {
+        SushiSwapV3Router.swapCallParameters([trade1, trade2], {
           slippageTolerance,
           recipient,
           deadline,
@@ -612,7 +617,7 @@ describe('SwapRouter', () => {
         CurrencyAmount.fromRawAmount(token0, 100),
         TradeType.EXACT_INPUT
       )
-      const { calldata, value } = SwapRouter.swapCallParameters([trade1, trade2], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade1, trade2], {
         slippageTolerance,
         recipient,
         deadline,
@@ -638,7 +643,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_INPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade1, trade2], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade1, trade2], {
         slippageTolerance,
         recipient,
         deadline,
@@ -667,7 +672,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_OUTPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade1, trade2], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade1, trade2], {
         slippageTolerance,
         recipient,
         deadline,
@@ -696,7 +701,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_INPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade1, trade2], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade1, trade2], {
         slippageTolerance,
         recipient,
         deadline,
@@ -723,7 +728,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_INPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade], {
         slippageTolerance,
         recipient,
         deadline,
@@ -744,7 +749,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_INPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade], {
         slippageTolerance,
         recipient,
         deadline,
@@ -771,7 +776,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_INPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade], {
         slippageTolerance,
         recipient,
         deadline,
@@ -795,7 +800,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_OUTPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade], {
         slippageTolerance,
         recipient,
         deadline,
@@ -822,7 +827,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_INPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade], {
         slippageTolerance,
         recipient,
         deadline,
@@ -849,7 +854,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_OUTPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade], {
         slippageTolerance,
         recipient,
         deadline,
@@ -870,7 +875,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_OUTPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade], {
         slippageTolerance,
         recipient,
         deadline,
@@ -891,7 +896,7 @@ describe('SwapRouter', () => {
         TradeType.EXACT_OUTPUT
       )
 
-      const { calldata, value } = SwapRouter.swapCallParameters([trade], {
+      const { calldata, value } = SushiSwapV3Router.swapCallParameters([trade], {
         slippageTolerance,
         recipient,
         deadline,

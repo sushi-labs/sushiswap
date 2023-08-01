@@ -1,4 +1,4 @@
-import { TickListDataProvider } from './tickListDataProvider'
+import { TickListDataProvider } from './TickListDataProvider'
 
 describe('TickListDataProvider', () => {
   describe('constructor', () => {
