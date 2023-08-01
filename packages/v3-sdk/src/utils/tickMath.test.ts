@@ -1,6 +1,3 @@
-import { JSBI } from '@sushiswap/math'
-
-import { ONE } from '../internalConstants'
 import { TickMath } from './tickMath'
 
 describe('TickMath', () => {
@@ -34,7 +31,7 @@ describe('TickMath', () => {
     })
 
     it('returns the correct value for tick 0', () => {
-      expect(TickMath.getSqrtRatioAtTick(0)).toEqual(JSBI.leftShift(JSBI.BigInt(1), JSBI.BigInt(96)))
+      expect(TickMath.getSqrtRatioAtTick(0)).toEqual(1n << 96n)
     })
 
     it('returns the correct value for max tick', () => {
@@ -47,7 +44,7 @@ describe('TickMath', () => {
       expect(TickMath.getTickAtSqrtRatio(TickMath.MIN_SQRT_RATIO)).toEqual(TickMath.MIN_TICK)
     })
     it('returns the correct value for sqrt ratio at max tick', () => {
-      expect(TickMath.getTickAtSqrtRatio(JSBI.subtract(TickMath.MAX_SQRT_RATIO, ONE))).toEqual(TickMath.MAX_TICK - 1)
+      expect(TickMath.getTickAtSqrtRatio(TickMath.MAX_SQRT_RATIO - 1n)).toEqual(TickMath.MAX_TICK - 1)
     })
   })
 })

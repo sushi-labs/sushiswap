@@ -3,7 +3,6 @@ import { Amount as CurrencyAmount, Currency, Price, Token } from '@sushiswap/cur
 import { Fraction, Percent } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
-import { ONE, ZERO } from '../internalConstants'
 import { Pool } from './pool'
 import { Route } from './route'
 
@@ -439,11 +438,11 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
    * @returns The amount out
    */
   public minimumAmountOut(slippageTolerance: Percent, amountOut = this.outputAmount): CurrencyAmount<TOutput> {
-    invariant(!slippageTolerance.lessThan(ZERO), 'SLIPPAGE_TOLERANCE')
+    invariant(!slippageTolerance.lessThan(0n), 'SLIPPAGE_TOLERANCE')
     if (this.tradeType === TradeType.EXACT_OUTPUT) {
       return amountOut
     } else {
-      const slippageAdjustedAmountOut = new Fraction(ONE)
+      const slippageAdjustedAmountOut = new Fraction(1n)
         .add(slippageTolerance)
         .invert()
         .multiply(amountOut.quotient).quotient
@@ -457,11 +456,11 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
    * @returns The amount in
    */
   public maximumAmountIn(slippageTolerance: Percent, amountIn = this.inputAmount): CurrencyAmount<TInput> {
-    invariant(!slippageTolerance.lessThan(ZERO), 'SLIPPAGE_TOLERANCE')
+    invariant(!slippageTolerance.lessThan(0n), 'SLIPPAGE_TOLERANCE')
     if (this.tradeType === TradeType.EXACT_INPUT) {
       return amountIn
     } else {
-      const slippageAdjustedAmountIn = new Fraction(ONE).add(slippageTolerance).multiply(amountIn.quotient).quotient
+      const slippageAdjustedAmountIn = new Fraction(1n).add(slippageTolerance).multiply(amountIn.quotient).quotient
       return CurrencyAmount.fromRawAmount(amountIn.currency, slippageAdjustedAmountIn)
     }
   }

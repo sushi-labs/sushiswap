@@ -1,10 +1,10 @@
 import { Token } from '@sushiswap/currency'
-import { JSBI, Percent } from '@sushiswap/math'
+import { Percent } from '@sushiswap/math'
 
 import { Payments } from './payments'
 
 const recipient = '0x0000000000000000000000000000000000000003'
-const amount = JSBI.BigInt(123)
+const amount = 123n
 
 const feeOptions = {
   fee: new Percent(1, 1000),

@@ -1,11 +1,8 @@
-import { JSBI } from '@sushiswap/math'
-
 import { FeeAmount } from '../constants'
-import { NEGATIVE_ONE, ZERO } from '../internalConstants'
 import { FullMath } from './fullMath'
 import { SqrtPriceMath } from './sqrtPriceMath'
 
-const MAX_FEE = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(6))
+const MAX_FEE = 10n ** 6n
 
 export abstract class SwapMath {
   /**
@@ -14,31 +11,28 @@ export abstract class SwapMath {
   private constructor() {}
 
   public static computeSwapStep(
-    sqrtRatioCurrentX96: JSBI,
-    sqrtRatioTargetX96: JSBI,
-    liquidity: JSBI,
-    amountRemaining: JSBI,
+    sqrtRatioCurrentX96: bigint,
+    sqrtRatioTargetX96: bigint,
+    liquidity: bigint,
+    amountRemaining: bigint,
     feePips: FeeAmount
-  ): [JSBI, JSBI, JSBI, JSBI] {
+  ): [bigint, bigint, bigint, bigint] {
     const returnValues: Partial<{
-      sqrtRatioNextX96: JSBI
-      amountIn: JSBI
-      amountOut: JSBI
-      feeAmount: JSBI
+      sqrtRatioNextX96: bigint
+      amountIn: bigint
+      amountOut: bigint
+      feeAmount: bigint
     }> = {}
 
-    const zeroForOne = JSBI.greaterThanOrEqual(sqrtRatioCurrentX96, sqrtRatioTargetX96)
-    const exactIn = JSBI.greaterThanOrEqual(amountRemaining, ZERO)
+    const zeroForOne = sqrtRatioCurrentX96 >= sqrtRatioTargetX96
+    const exactIn = amountRemaining >= 0n
 
     if (exactIn) {
-      const amountRemainingLessFee = JSBI.divide(
-        JSBI.multiply(amountRemaining, JSBI.subtract(MAX_FEE, JSBI.BigInt(feePips))),
-        MAX_FEE
-      )
+      const amountRemainingLessFee = (amountRemaining * (MAX_FEE - BigInt(feePips))) / MAX_FEE
       returnValues.amountIn = zeroForOne
         ? SqrtPriceMath.getAmount0Delta(sqrtRatioTargetX96, sqrtRatioCurrentX96, liquidity, true)
         : SqrtPriceMath.getAmount1Delta(sqrtRatioCurrentX96, sqrtRatioTargetX96, liquidity, true)
-      if (JSBI.greaterThanOrEqual(amountRemainingLessFee, returnValues.amountIn!)) {
+      if (amountRemainingLessFee >= returnValues.amountIn!) {
         returnValues.sqrtRatioNextX96 = sqrtRatioTargetX96
       } else {
         returnValues.sqrtRatioNextX96 = SqrtPriceMath.getNextSqrtPriceFromInput(
@@ -52,19 +46,19 @@ export abstract class SwapMath {
       returnValues.amountOut = zeroForOne
         ? SqrtPriceMath.getAmount1Delta(sqrtRatioTargetX96, sqrtRatioCurrentX96, liquidity, false)
         : SqrtPriceMath.getAmount0Delta(sqrtRatioCurrentX96, sqrtRatioTargetX96, liquidity, false)
-      if (JSBI.greaterThanOrEqual(JSBI.multiply(amountRemaining, NEGATIVE_ONE), returnValues.amountOut)) {
+      if (amountRemaining * -1n >= returnValues.amountOut) {
         returnValues.sqrtRatioNextX96 = sqrtRatioTargetX96
       } else {
         returnValues.sqrtRatioNextX96 = SqrtPriceMath.getNextSqrtPriceFromOutput(
           sqrtRatioCurrentX96,
           liquidity,
-          JSBI.multiply(amountRemaining, NEGATIVE_ONE),
+          amountRemaining * -1n,
           zeroForOne
         )
       }
     }
 
-    const max = JSBI.equal(sqrtRatioTargetX96, returnValues.sqrtRatioNextX96)
+    const max = sqrtRatioTargetX96 === returnValues.sqrtRatioNextX96
 
     if (zeroForOne) {
       returnValues.amountIn =
@@ -86,18 +80,18 @@ export abstract class SwapMath {
           : SqrtPriceMath.getAmount0Delta(sqrtRatioCurrentX96, returnValues.sqrtRatioNextX96, liquidity, false)
     }
 
-    if (!exactIn && JSBI.greaterThan(returnValues.amountOut!, JSBI.multiply(amountRemaining, NEGATIVE_ONE))) {
-      returnValues.amountOut = JSBI.multiply(amountRemaining, NEGATIVE_ONE)
+    if (!exactIn && returnValues.amountOut! > amountRemaining * -1n) {
+      returnValues.amountOut = amountRemaining * -1n
     }
 
-    if (exactIn && JSBI.notEqual(returnValues.sqrtRatioNextX96, sqrtRatioTargetX96)) {
+    if (exactIn && returnValues.sqrtRatioNextX96 !== sqrtRatioTargetX96) {
       // we didn't reach the target, so take the remainder of the maximum input as fee
-      returnValues.feeAmount = JSBI.subtract(amountRemaining, returnValues.amountIn!)
+      returnValues.feeAmount = amountRemaining - returnValues.amountIn!
     } else {
       returnValues.feeAmount = FullMath.mulDivRoundingUp(
         returnValues.amountIn!,
-        JSBI.BigInt(feePips),
-        JSBI.subtract(MAX_FEE, JSBI.BigInt(feePips))
+        BigInt(feePips),
+        MAX_FEE - BigInt(feePips)
       )
     }
 

@@ -1,6 +1,6 @@
 import { TradeType } from '@sushiswap/amm'
 import { Amount as CurrencyAmount, Native, Token, WETH9 } from '@sushiswap/currency'
-import { JSBI, Percent } from '@sushiswap/math'
+import { Percent } from '@sushiswap/math'
 
 import { FeeAmount, TICK_SPACINGS } from './constants'
 import { Route, Trade } from './entities'
@@ -228,7 +228,7 @@ describe('SwapRouter', () => {
           slippageTolerance,
           recipient,
           deadline,
-          sqrtPriceLimitX96: JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(128)),
+          sqrtPriceLimitX96: 2n ** 128n,
         })
 
         expect(calldata).toBe(
@@ -616,7 +616,7 @@ describe('SwapRouter', () => {
         slippageTolerance,
         recipient,
         deadline,
-        sqrtPriceLimitX96: JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(128)),
+        sqrtPriceLimitX96: 2n ** 128n,
       })
 
       expect(calldata).toBe(

@@ -1,6 +1,5 @@
 import { TradeType } from '@sushiswap/amm'
 import { Amount as CurrencyAmount, Token, WETH9 } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
 
 import { FeeAmount, TICK_SPACINGS } from './constants'
 import { Pool, Route, Trade } from './entities'
@@ -118,7 +117,7 @@ describe('SwapQuoter', () => {
           TradeType.EXACT_INPUT
         )
         const { calldata, value } = SwapQuoter.quoteCallParameters(trade.route, trade.inputAmount, trade.tradeType, {
-          sqrtPriceLimitX96: JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(128)),
+          sqrtPriceLimitX96: 2n ** 128n,
         })
 
         expect(calldata).toBe(
