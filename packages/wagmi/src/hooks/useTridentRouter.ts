@@ -1,3 +1,5 @@
+'use client'
+
 import { TridentRouterChainId, tridentRouterExports } from '@sushiswap/trident-core'
 import { Address, useContract, useSigner } from 'wagmi'
 

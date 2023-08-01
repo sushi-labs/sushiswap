@@ -1,4 +1,7 @@
+'use client'
+
 import React, { FC, ReactNode, useEffect } from 'react'
+
 import { useApproved } from './Provider'
 
 export interface SuccessProps {

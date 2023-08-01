@@ -3,9 +3,7 @@
 import { ArrowLeftIcon, SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
-import { typographyVariants } from '@sushiswap/ui'
-import { Separator } from '@sushiswap/ui'
-import { SplashController } from '@sushiswap/ui'
+import { Separator, SplashController, typographyVariants } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
@@ -21,7 +19,7 @@ import { useTokenAmountDollarValues } from 'lib/hooks'
 import Link from 'next/link'
 import React, { FC, useMemo, useState } from 'react'
 import { SWRConfig } from 'swr'
-import { Layout, SelectNetworkWidget, SelectPricesWidget, SelectTokensWidget } from 'ui/pool'
+import { SelectNetworkWidget, SelectPricesWidget, SelectTokensWidget } from 'ui/pool'
 import { ContentBlock } from 'ui/pool/AddPage/ContentBlock'
 import { ConcentratedLiquidityProvider } from 'ui/pool/ConcentratedLiquidityProvider'
 import {
@@ -37,28 +35,26 @@ export default function Page() {
       {({ token0, chainId }) => (
         <SplashController show={Boolean(!token0 || !chainId)}>
           <SWRConfig>
-            <Layout>
-              <div className="flex flex-col gap-2">
-                <Link className="group flex gap-4 items-center mb-2" href={'/pool'} shallow={true}>
-                  <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
-                  <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
-                    Go back to pools list
-                  </span>
-                </Link>
-                <h1 className={typographyVariants({ variant: 'h3' })}>Add Liquidity</h1>
-                <p className={typographyVariants({ variant: 'muted' })}>
-                  Create a new pool or create a liquidity position on an existing pool.
-                </p>
+            <div className="flex flex-col gap-2">
+              <Link className="group flex gap-4 items-center mb-2" href={'/pool'} shallow={true}>
+                <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
+                <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
+                  Go back to pools list
+                </span>
+              </Link>
+              <h1 className={typographyVariants({ variant: 'h3' })}>Add Liquidity</h1>
+              <p className={typographyVariants({ variant: 'muted' })}>
+                Create a new pool or create a liquidity position on an existing pool.
+              </p>
+            </div>
+            <Separator orientation="horizontal" className="mt-4 mb-10" />
+            <div className="flex justify-center">
+              <div className="flex lg:grid lg:grid-cols-[404px_auto] gap-20">
+                <ConcentratedLiquidityProvider>
+                  <_Add />
+                </ConcentratedLiquidityProvider>
               </div>
-              <Separator orientation="horizontal" className="mt-4 mb-10" />
-              <div className="flex justify-center">
-                <div className="flex lg:grid lg:grid-cols-[404px_auto] gap-20">
-                  <ConcentratedLiquidityProvider>
-                    <_Add />
-                  </ConcentratedLiquidityProvider>
-                </div>
-              </div>
-            </Layout>
+            </div>
           </SWRConfig>
         </SplashController>
       )}

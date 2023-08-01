@@ -1,3 +1,5 @@
+'use client'
+
 import { furoStreamAbi, furoStreamAddress, FuroStreamChainId } from '@sushiswap/furo'
 import { getContract } from '@wagmi/core'
 import { useMemo } from 'react'

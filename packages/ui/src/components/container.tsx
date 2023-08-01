@@ -3,7 +3,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import classNames from 'classnames'
 import React from 'react'
 
-const containerVariants = cva('w-full', {
+const containerVariants = cva('w-full mx-auto', {
   variants: {
     maxWidth: {
       full: 'max-w-full',

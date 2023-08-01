@@ -1,3 +1,5 @@
+'use client'
+
 import { masterChefV1Abi, masterChefV2Abi, miniChefAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { ChefType } from '@sushiswap/client'

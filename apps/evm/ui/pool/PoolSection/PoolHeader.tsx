@@ -1,3 +1,5 @@
+'use client'
+
 import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
 import chains, { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'

@@ -1,6 +1,7 @@
 export * from './animation'
 export * from './avatar'
 export * from './Badge'
+export * from './breadcrumb'
 export * from './button'
 export * from './calendar'
 export * from './Carousel'

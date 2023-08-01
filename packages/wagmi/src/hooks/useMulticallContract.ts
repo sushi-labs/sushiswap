@@ -1,3 +1,5 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { Address, useContract, useProvider } from 'wagmi'
 

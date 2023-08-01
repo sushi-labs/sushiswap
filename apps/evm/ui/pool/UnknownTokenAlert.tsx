@@ -1,3 +1,5 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
 import { shortenAddress } from '@sushiswap/format'

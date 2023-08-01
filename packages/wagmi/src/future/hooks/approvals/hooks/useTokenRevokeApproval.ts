@@ -1,9 +1,11 @@
-import { useCallback, useMemo, useState } from 'react'
+'use client'
+
 import { Token } from '@sushiswap/currency'
-import { BigNumber } from 'ethers'
 import { createToast } from '@sushiswap/ui/components/toast'
-import { Address, erc20ABI, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import { SendTransactionResult } from '@wagmi/core'
+import { BigNumber } from 'ethers'
+import { useCallback, useMemo, useState } from 'react'
+import { Address, erc20ABI, useContractWrite, usePrepareContractWrite } from 'wagmi'
 
 interface UseTokenRevokeApproval {
   account: Address | undefined

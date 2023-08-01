@@ -7,8 +7,7 @@ import { defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/c
 import { Button } from '@sushiswap/ui/components/button'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { Loader } from '@sushiswap/ui/components/loader'
-import { isSushiSwapV2ChainId, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { SushiSwapV2ChainIds } from '@sushiswap/v2-sdk'
+import { isSushiSwapV2ChainId, SushiSwapV2ChainId, SushiSwapV2ChainIds } from '@sushiswap/v2-sdk'
 import { Address, getSushiSwapRouterContractConfig, PairState, PoolFinder } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import { Checker } from '@sushiswap/wagmi/future/systems'
@@ -19,7 +18,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { SWRConfig } from 'swr'
-import { AddSectionReviewModalLegacy, Layout, SelectNetworkWidget, SelectTokensWidget } from 'ui/pool'
+import { AddSectionReviewModalLegacy, SelectNetworkWidget, SelectTokensWidget } from 'ui/pool'
 import { ContentBlock } from 'ui/pool/AddPage/ContentBlock'
 
 // // This function gets called at build time on server-side.
@@ -66,7 +65,7 @@ export default function Page({ params }: { params: { chainId: string } }) {
 
   return (
     <SWRConfig>
-      <Layout className="flex justify-center">
+      <div className="flex justify-center">
         <div className="flex flex-col gap-2">
           <Link className="flex items-center gap-4 mb-2 group" href={'/pool'} shallow={true}>
             <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
@@ -127,7 +126,7 @@ export default function Page({ params }: { params: { chainId: string } }) {
             }}
           </PoolFinder>
         </div>
-      </Layout>
+      </div>
     </SWRConfig>
   )
 }

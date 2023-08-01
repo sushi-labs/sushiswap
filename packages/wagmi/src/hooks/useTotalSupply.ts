@@ -1,3 +1,5 @@
+'use client'
+
 import { Amount, Token } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'

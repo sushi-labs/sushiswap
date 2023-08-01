@@ -1,3 +1,5 @@
+'use client'
+
 import { bentoBoxV1Abi, bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { getContract } from '@wagmi/core'
 import { useMemo } from 'react'

@@ -29,9 +29,9 @@ import {
   Slider,
   SplashController,
   Switch,
+  TextField,
   typographyVariants,
 } from '@sushiswap/ui'
-import { TextField } from '@sushiswap/ui'
 import { ADDRESS_ZERO, Pool as V3Pool, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { Address, readContract, useAccount, useSignMessage } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
@@ -39,8 +39,7 @@ import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { DistributionCreator } from '@sushiswap/wagmi/future/hooks/rewards/abis/DistributionCreator'
 import { useIncentivizePoolWithRewards } from '@sushiswap/wagmi/future/hooks/rewards/hooks/useIncentivizePoolWithRewards'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { format } from 'date-fns'
 import { BigNumber } from 'ethers'
 import Link from 'next/link'
@@ -48,7 +47,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { useWaitForTransaction } from 'wagmi'
 
 import { useTokenAmountDollarValues } from '../../../lib/hooks'
-import { Layout, SelectNetworkWidget, SelectTokensWidget } from '../../../ui/pool'
+import { SelectNetworkWidget, SelectTokensWidget } from '../../../ui/pool'
 import { ContentBlock } from '../../../ui/pool/AddPage/ContentBlock'
 import { ConcentratedLiquidityProvider } from '../../../ui/pool/ConcentratedLiquidityProvider'
 import {
@@ -64,28 +63,26 @@ export default async function Page() {
     <ConcentratedLiquidityURLStateProvider>
       {({ token0, chainId }) => (
         <SplashController show={Boolean(!token0 || !chainId)}>
-          <Layout>
-            <div className="flex flex-col gap-2">
-              <Link className="group flex gap-4 items-center mb-2" href={'/pool'} shallow={true}>
-                <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
-                <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
-                  Go back to pools list
-                </span>
-              </Link>
-              <h1 className={typographyVariants({ variant: 'h3' })}>Incentivize Pool</h1>
-              <p className={typographyVariants({ variant: 'muted' })}>
-                Add rewards to a pool to incentivize liquidity providers joining in.
-              </p>
+          <div className="flex flex-col gap-2">
+            <Link className="group flex gap-4 items-center mb-2" href={'/pool'} shallow={true}>
+              <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
+              <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
+                Go back to pools list
+              </span>
+            </Link>
+            <h1 className={typographyVariants({ variant: 'h3' })}>Incentivize Pool</h1>
+            <p className={typographyVariants({ variant: 'muted' })}>
+              Add rewards to a pool to incentivize liquidity providers joining in.
+            </p>
+          </div>
+          <Separator orientation="horizontal" className="mt-4 mb-10" />
+          <div className="flex justify-between">
+            <div className="flex lg:grid lg:grid-cols-[404px_auto] gap-20">
+              <ConcentratedLiquidityProvider>
+                <Incentivize />
+              </ConcentratedLiquidityProvider>
             </div>
-            <Separator orientation="horizontal" className="mt-4 mb-10" />
-            <div className="flex justify-between">
-              <div className="flex lg:grid lg:grid-cols-[404px_auto] gap-20">
-                <ConcentratedLiquidityProvider>
-                  <Incentivize />
-                </ConcentratedLiquidityProvider>
-              </div>
-            </div>
-          </Layout>
+          </div>
         </SplashController>
       )}
     </ConcentratedLiquidityURLStateProvider>

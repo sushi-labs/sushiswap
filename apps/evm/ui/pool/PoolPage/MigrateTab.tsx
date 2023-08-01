@@ -6,16 +6,20 @@ import { Amount, Price, tryParseAmount } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { Fraction, JSBI, Percent, ZERO } from '@sushiswap/math'
-import { classNames, Currency, Dots, List } from '@sushiswap/ui'
-import { DialogConfirm, DialogProvider } from '@sushiswap/ui'
 import {
+  classNames,
+  Currency,
+  DialogConfirm,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogProvider,
   DialogReview,
   DialogTitle,
   DialogTrigger,
+  Dots,
+  List,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
@@ -34,8 +38,8 @@ import {
   useMasterChefWithdraw,
   usePair,
   useTotalSupply,
+  useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import { useWaitForTransaction } from '@sushiswap/wagmi'
 import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import { useV3Migrate, V3MigrateContractConfig } from '@sushiswap/wagmi/future/hooks/migrate/hooks/useV3Migrate'
 import { Checker } from '@sushiswap/wagmi/future/systems'
@@ -347,7 +351,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
         )}
       </div>
       <div className="flex flex-col gap-6 sm:order-2">
-        <List className="!pt-10">
+        <List className="!pt-8">
           <div className="flex justify-end">
             {stakedBalance?.greaterThan(ZERO) && (
               <List.Label>

@@ -1,3 +1,5 @@
+'use client'
+
 import { Amount, Currency, Price, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { JSBI, Rounding } from '@sushiswap/math'
 import {

@@ -1,3 +1,5 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { ChefType, Pool, usePool } from '@sushiswap/client'
 import { tryParseAmount } from '@sushiswap/currency'

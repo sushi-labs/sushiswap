@@ -1,10 +1,13 @@
+'use client'
+
+import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
-import { BigNumber } from 'ethers'
-import { getBentoboxTotals } from '../actions'
 import { useQuery } from '@tanstack/react-query'
-import { ChainId } from '@sushiswap/chain'
-import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BigNumber } from 'ethers'
+
+import { getBentoboxTotals } from '../actions'
 
 interface UseBentoboxTotalsParams {
   chainId: ChainId

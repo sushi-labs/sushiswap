@@ -1,3 +1,5 @@
+'use client'
+
 import { Type } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { FeeAmount, SushiSwapV3ChainId, TICK_SPACINGS, tickToPrice } from '@sushiswap/v3-sdk'

@@ -9,7 +9,7 @@ import { Hero } from './hero'
 export default async function PoolPage() {
   return (
     <>
-      <Container maxWidth="7xl" className="mx-auto px-4 pt-[80px] lg:pb-[54px]">
+      <Container maxWidth="7xl">
         <Hero />
       </Container>
       <PoolsFiltersProvider>

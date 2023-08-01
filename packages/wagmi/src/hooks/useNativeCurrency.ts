@@ -1,3 +1,5 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { useMemo } from 'react'

@@ -1,7 +1,8 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { formatPercent, formatUSD } from '@sushiswap/format'
-import { classNames } from '@sushiswap/ui'
-import { SkeletonText } from '@sushiswap/ui'
+import { classNames, SkeletonText } from '@sushiswap/ui'
 import { AppearOnMount } from '@sushiswap/ui/components/animation'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 import { format } from 'date-fns'
@@ -182,7 +183,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
   )
 
   return (
-    <div>
+    <div className="bg-white dark:bg-secondary p-4 rounded-2xl">
       <div className="flex flex-col">
         <p className="text-xl font-medium text-gray-900 dark:text-slate-50">
           <span className="hoveredItemValue">

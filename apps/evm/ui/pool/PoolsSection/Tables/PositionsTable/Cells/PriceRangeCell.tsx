@@ -1,3 +1,5 @@
+'use client'
+
 import { ArrowSmLeftIcon, ArrowSmRightIcon } from '@heroicons/react-v1/solid'
 import { JSBI } from '@sushiswap/math'
 import { classNames } from '@sushiswap/ui'

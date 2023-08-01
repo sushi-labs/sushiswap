@@ -1,10 +1,16 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
-import { TextField } from '@sushiswap/ui'
-import { WidgetDescription, WidgetFooter, WidgetTitle } from '@sushiswap/ui'
-import { textFieldVariants } from '@sushiswap/ui'
-import { typographyVariants } from '@sushiswap/ui'
+import {
+  TextField,
+  textFieldVariants,
+  typographyVariants,
+  WidgetDescription,
+  WidgetFooter,
+  WidgetTitle,
+} from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Widget, WidgetHeader } from '@sushiswap/ui/components/widget'
 import { useTotalSupply } from '@sushiswap/wagmi'
@@ -52,7 +58,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
   })
 
   return (
-    <Widget id="stakeLiquidity" maxWidth="xl" className="bg-white dark:bg-slate-800">
+    <Widget id="stakeLiquidity" variant="empty">
       <WidgetHeader>
         <WidgetTitle>Unstake Liquidity</WidgetTitle>
         <WidgetDescription>

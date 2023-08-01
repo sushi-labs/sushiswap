@@ -1,3 +1,5 @@
+'use client'
+
 import { Tab } from '@headlessui/react'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Container } from '@sushiswap/ui/components/container'
@@ -25,7 +27,7 @@ export const PoolsSection: FC = () => {
   return (
     <section className="flex flex-col flex-1">
       <Tab.Group defaultIndex={0} selectedIndex={tab} onChange={setTab}>
-        <Container maxWidth="7xl" className="px-4 mx-auto">
+        <Container maxWidth="7xl">
           <div className="flex items-center gap-2 mb-4">
             <Tab as={Fragment}>
               {({ selected }) => (
@@ -63,7 +65,7 @@ export const PoolsSection: FC = () => {
         </Container>
         <Tab.Panels className="bg-gray-50 dark:bg-white/[0.02] pt-4 pb-20 h-full">
           <Tab.Panel unmount={false}>
-            <Container maxWidth="7xl" className="px-4 mx-auto h-full">
+            <Container maxWidth="7xl">
               <div className="flex flex-col sm:flex-row gap-3 mb-4">
                 <TableFiltersSearchToken />
                 <TableFiltersPoolType />
@@ -75,7 +77,7 @@ export const PoolsSection: FC = () => {
             </Container>
           </Tab.Panel>
           <Tab.Panel unmount={false}>
-            <Container maxWidth="7xl" className="px-4 mx-auto h-full">
+            <Container maxWidth="7xl">
               <div className="flex flex-col sm:flex-row gap-3 mb-4">
                 <TableFiltersSearchToken />
                 <TableFiltersNetwork />

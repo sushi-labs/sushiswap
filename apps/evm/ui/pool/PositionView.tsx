@@ -1,9 +1,11 @@
+'use client'
+
 import { RadioGroup } from '@headlessui/react'
 import { ChainId } from '@sushiswap/chain'
 import { Amount } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { useAngleRewards } from '@sushiswap/react-query'
-import { classNames, Separator, Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
+import { classNames, Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Explainer } from '@sushiswap/ui/components/explainer'
@@ -51,7 +53,7 @@ const queryParamsSchema = z.object({
 const Component: FC<{ id: string }> = ({ id }) => {
   const { address } = useAccount()
   const searchParams = useSearchParams()!
-  console.log(id)
+
   const {
     id: [chainId, tokenId],
   } = queryParamsSchema.parse({ id, activeTab: searchParams.get('activeTab') })
@@ -125,8 +127,8 @@ const Component: FC<{ id: string }> = ({ id }) => {
   })
 
   return (
-    <div className="mt-10 flex flex-col lg:flex-row lg:flex-cols-[auto_auto_404px] gap-10">
-      <div className="flex flex-col w-full gap-10">
+    <div className="flex grid-cols-1 lg:grid-cols-2 gap-10">
+      <div className="flex flex-col flex-1 gap-10">
         <Tabs className="w-full" defaultValue="add">
           <TabsList className="!flex">
             <TabsTrigger value="add" className="flex flex-1">
@@ -164,10 +166,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
           </TabsContent>
         </Tabs>
       </div>
-      <div className="hidden lg:block">
-        <Separator orientation="vertical" className="h-full" />
-      </div>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col flex-1 gap-6">
         <List>
           <List.Label>Deposits</List.Label>
           <List.Control>

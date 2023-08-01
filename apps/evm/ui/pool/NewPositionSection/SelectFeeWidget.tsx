@@ -1,3 +1,5 @@
+'use client'
+
 import { RadioGroup } from '@headlessui/react'
 import { Fee } from '@sushiswap/amm'
 import { classNames } from '@sushiswap/ui'

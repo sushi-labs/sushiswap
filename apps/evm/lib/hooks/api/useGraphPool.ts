@@ -1,3 +1,5 @@
+'use client'
+
 import { Pool } from '@sushiswap/client'
 import { Amount } from '@sushiswap/currency'
 import { Pair } from '@sushiswap/graph-client'

@@ -1,3 +1,5 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
 import { formatNumber, formatPercent, formatUSD } from '@sushiswap/format'
@@ -17,7 +19,7 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
   })
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 justify-center">
+    <div className="py-4 grid grid-cols-2 gap-3 sm:grid-cols-4 justify-center">
       <div className="flex flex-col gap-1">
         <span className="text-xs text-gray-500 dark:text-slate-400">Liquidity</span>
         {isLoading ? (

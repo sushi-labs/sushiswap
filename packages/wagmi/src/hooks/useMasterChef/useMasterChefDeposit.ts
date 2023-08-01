@@ -1,13 +1,15 @@
+'use client'
+
 import { TransactionRequest } from '@ethersproject/providers'
 import { ChefType } from '@sushiswap/client'
 import { Amount, Token } from '@sushiswap/currency'
+import { createToast } from '@sushiswap/ui/components/toast'
 import { Dispatch, SetStateAction, useCallback } from 'react'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { useMasterChefContract } from '../useMasterChefContract'
 import { useSendTransaction } from '../useSendTransaction'
-import { createToast } from '@sushiswap/ui/components/toast'
 
 interface UseMasterChefDepositParams {
   chainId: number

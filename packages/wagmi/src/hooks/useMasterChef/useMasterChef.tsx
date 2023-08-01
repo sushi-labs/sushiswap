@@ -1,8 +1,11 @@
+'use client'
+
 import { Zero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
 import { ChefType } from '@sushiswap/client'
 import { Amount, SUSHI, SUSHI_ADDRESS, Token } from '@sushiswap/currency'
+import { createToast } from '@sushiswap/ui/components/toast'
 import { BigNumber } from 'ethers'
 import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
 import { Address, erc20ABI, useAccount, useContractReads, useNetwork } from 'wagmi'
@@ -15,7 +18,6 @@ import {
   useMasterChefContract,
 } from '../useMasterChefContract'
 import { useSendTransaction } from '../useSendTransaction'
-import { createToast } from '@sushiswap/ui/components/toast'
 
 interface UseMasterChefReturn extends Pick<ReturnType<typeof useContractReads>, 'isLoading' | 'isError'> {
   balance: Amount<Token> | undefined

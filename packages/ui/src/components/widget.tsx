@@ -1,20 +1,37 @@
+import { cva, type VariantProps } from 'class-variance-authority'
 import classNames from 'classnames'
 import React from 'react'
 
-import { Container, ContainerProps } from './container'
+import { Container } from './container'
 
-const Widget = React.forwardRef<HTMLDivElement, ContainerProps>(({ id, className, ...props }, ref) => {
-  return (
-    <Container
-      id={id}
-      ref={ref}
-      className={classNames(
-        className,
-        'p-6 flex flex-col mx-auto rounded-2xl relative overflow-hidden dark:shadow dark:shadow-slate-900 bg-white dark:bg-slate-800'
-      )}
-      {...props}
-    />
-  )
+const widgetVariants = cva('flex flex-col relative overflow-hidden', {
+  variants: {
+    variant: {
+      default: 'mx-auto p-6 dark:shadow dark:shadow-slate-900 bg-white dark:bg-slate-800',
+      empty: '',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+})
+
+const widgetActionVariants = cva('absolute', {
+  variants: {
+    variant: {
+      default: 'top-6 right-6',
+      empty: 'top-0 right-0',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+})
+
+export interface WidgetProps extends React.ButtonHTMLAttributes<HTMLDivElement>, VariantProps<typeof widgetVariants> {}
+
+const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(({ variant, id, className, ...props }, ref) => {
+  return <Container id={id} ref={ref} className={widgetVariants({ variant, className })} {...props} />
 })
 
 Widget.displayName = 'WidgetRoot'
@@ -34,8 +51,12 @@ const WidgetDescription = ({ className, ...props }: React.HTMLAttributes<HTMLDiv
 )
 WidgetDescription.displayName = 'WidgetDescription'
 
-const WidgetAction = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={classNames('absolute top-6 right-6', className)} {...props} />
+export interface WidgetActionProps
+  extends React.ButtonHTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof widgetActionVariants> {}
+
+const WidgetAction = ({ variant, className, ...props }: WidgetActionProps) => (
+  <div className={widgetActionVariants({ variant, className })} {...props} />
 )
 WidgetAction.displayName = 'WidgetAction'
 

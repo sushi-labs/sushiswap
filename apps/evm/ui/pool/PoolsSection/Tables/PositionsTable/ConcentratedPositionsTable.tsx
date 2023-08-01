@@ -1,14 +1,12 @@
-import { EllipsisHorizontalIcon, GiftIcon } from '@heroicons/react/24/outline'
+'use client'
+
 import { Slot } from '@radix-ui/react-slot'
-import { Native } from '@sushiswap/currency'
 import { DataTable } from '@sushiswap/ui'
-import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@sushiswap/ui'
 import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future'
 import { useConcentratedLiquidityPositions } from '@sushiswap/wagmi/future/hooks'
 import { ColumnDef, Row } from '@tanstack/react-table'
-import Link from 'next/link'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { Writeable } from 'zod'
 
@@ -20,39 +18,39 @@ const COLUMNS = [
   PRICE_RANGE_COLUMN,
   POSITION_SIZE_CELL,
   POSITION_UNCLAIMED_CELL,
-  {
-    id: 'actions',
-    cell: ({ row }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button icon={EllipsisHorizontalIcon} variant="ghost" size="sm">
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-[240px]">
-          <DropdownMenuItem asChild>
-            <Link
-              onClick={(e) => e.stopPropagation()}
-              shallow={true}
-              className="flex items-center"
-              href={`/pool/incentivize?chainId=${row.original.chainId}&fromCurrency=${
-                row.original.token0 === Native.onChain(row.original.chainId).wrapped.address
-                  ? 'NATIVE'
-                  : row.original.token0
-              }&toCurrency=${
-                row.original.token1 === Native.onChain(row.original.chainId).wrapped.address
-                  ? 'NATIVE'
-                  : row.original.token1
-              }&feeAmount=${row.original.fee}`}
-            >
-              <GiftIcon width={16} height={16} className="mr-2" />
-              Add incentive
-            </Link>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
-  },
+  // {
+  //   id: 'actions',
+  //   cell: ({ row }) => (
+  //     <DropdownMenu>
+  //       <DropdownMenuTrigger asChild>
+  //         <Button icon={EllipsisHorizontalIcon} variant="ghost" size="sm">
+  //           <span className="sr-only">Open menu</span>
+  //         </Button>
+  //       </DropdownMenuTrigger>
+  //       <DropdownMenuContent align="end" className="w-[240px]">
+  //         <DropdownMenuItem asChild>
+  //           <Link
+  //             onClick={(e) => e.stopPropagation()}
+  //             shallow={true}
+  //             className="flex items-center"
+  //             href={`/pool/incentivize?chainId=${row.original.chainId}&fromCurrency=${
+  //               row.original.token0 === Native.onChain(row.original.chainId).wrapped.address
+  //                 ? 'NATIVE'
+  //                 : row.original.token0
+  //             }&toCurrency=${
+  //               row.original.token1 === Native.onChain(row.original.chainId).wrapped.address
+  //                 ? 'NATIVE'
+  //                 : row.original.token1
+  //             }&feeAmount=${row.original.fee}`}
+  //           >
+  //             <GiftIcon width={16} height={16} className="mr-2" />
+  //             Add incentive
+  //           </Link>
+  //         </DropdownMenuItem>
+  //       </DropdownMenuContent>
+  //     </DropdownMenu>
+  //   ),
+  // },
 ] satisfies ColumnDef<ConcentratedLiquidityPositionWithV3Pool, unknown>[]
 
 const tableState = { sorting: [{ id: 'positionSize', desc: true }] }
@@ -61,15 +59,9 @@ interface ConcentratedPositionsTableProps {
   poolId?: string
   hideClosed?: boolean
   onRowClick?(row: ConcentratedLiquidityPositionWithV3Pool): void
-  rowLink?(row: ConcentratedLiquidityPositionWithV3Pool): string
 }
 
-export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> = ({
-  rowLink,
-  onRowClick,
-  poolId,
-  hideClosed,
-}) => {
+export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> = ({ onRowClick, poolId, hideClosed }) => {
   const { address } = useAccount()
   const { chainIds, tokenSymbols } = usePoolFilters()
 
@@ -115,7 +107,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> = (
       testId="concentrated-positions"
       state={tableState}
       loading={isInitialLoading}
-      linkFormatter={rowLink}
+      linkFormatter={(row) => `/pool/${row.chainId}:${row.address}/positions/${row.tokenId.toString()}`}
       rowRenderer={rowRenderer}
       columns={COLUMNS}
       data={_positions}

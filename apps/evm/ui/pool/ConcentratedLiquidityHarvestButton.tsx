@@ -1,3 +1,5 @@
+'use client'
+
 import { BigNumber } from '@ethersproject/bignumber'
 import { ChainId } from '@sushiswap/chain'
 import { useAngleRewards } from '@sushiswap/react-query'

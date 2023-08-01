@@ -1,3 +1,5 @@
+'use client'
+
 import { BigNumber } from '@ethersproject/bignumber'
 import { chainsL2 } from '@sushiswap/chain'
 import { useCurrentBlockTimestamp } from '@sushiswap/wagmi'

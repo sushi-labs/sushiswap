@@ -1,3 +1,5 @@
+'use client'
+
 import { parseArgs, Protocol } from '@sushiswap/client'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import { useRouter } from 'next/navigation'

@@ -1,4 +1,10 @@
+'use client'
+
+import { MaxUint256 } from '@ethersproject/constants'
 import { Amount, Type } from '@sushiswap/currency'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
+import { BigNumber } from 'ethers'
+import { useCallback, useMemo, useState } from 'react'
 import {
   Address,
   erc20ABI,
@@ -7,12 +13,9 @@ import {
   usePrepareContractWrite,
   UserRejectedRequestError,
 } from 'wagmi'
-import { MaxUint256 } from '@ethersproject/constants'
-import { BigNumber } from 'ethers'
-import { useTokenAllowance } from './useTokenAllowance'
-import { useCallback, useMemo, useState } from 'react'
 import { SendTransactionResult } from 'wagmi/actions'
-import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
+
+import { useTokenAllowance } from './useTokenAllowance'
 
 export enum ApprovalState {
   LOADING = 'LOADING',

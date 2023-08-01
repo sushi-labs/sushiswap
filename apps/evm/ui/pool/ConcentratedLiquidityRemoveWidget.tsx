@@ -1,3 +1,5 @@
+'use client'
+
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Type } from '@sushiswap/currency'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'

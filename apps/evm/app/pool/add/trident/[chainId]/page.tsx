@@ -28,7 +28,6 @@ import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect,
 import { SWRConfig } from 'swr'
 import {
   AddSectionReviewModalTrident,
-  Layout,
   SelectFeeWidget,
   SelectNetworkWidget,
   SelectPoolTypeWidget,
@@ -84,83 +83,79 @@ export default function Page({ params }: { params: { chainId: string } }) {
 
   return (
     <SWRConfig>
-      <Layout>
-        <div className="flex flex-col gap-2">
-          <Link className="flex items-center gap-4 mb-2 group" href={'/pool'} shallow={true}>
-            <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
-            <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
-              Go back to pools list
-            </span>
-          </Link>
-          <h1 className="mt-2 text-3xl font-medium">Add Liquidity</h1>
-          <h1 className="text-lg text-gray-600 dark:dark:text-slate-400 text-slate-600">
-            Create a new pool or create a liquidity position on an existing pool.
-          </h1>
-        </div>
-        <div className="grid grid-cols-1 sm:w-[340px] md:w-[572px] gap-10">
-          <div className="hidden md:block" />
-          <PoolFinder
-            components={
-              <PoolFinder.Components>
-                <PoolFinder.ConstantProductPool
-                  chainId={chainId}
-                  token0={token0}
-                  token1={token1}
-                  enabled={isTridentChainId(chainId) && poolType === PoolFinderType.Classic}
-                  fee={fee}
-                  twap={false}
-                />
-                <PoolFinder.StablePool
-                  chainId={chainId}
-                  token0={token0}
-                  token1={token1}
-                  enabled={isTridentChainId(chainId) && poolType === PoolFinderType.Stable}
-                  fee={fee}
-                  twap={false}
-                />
-              </PoolFinder.Components>
-            }
-          >
-            {({ pool: [poolState, pool] }) => {
-              const title =
-                !token0 || !token1 ? (
-                  'Select Tokens'
-                ) : [PairState.LOADING, ConstantProductPoolState.LOADING, StablePoolState.LOADING].includes(
-                    poolState
-                  ) ? (
-                  <div className="h-[20px] flex items-center justify-center">
-                    <Loader width={14} />
-                  </div>
-                ) : [PairState.EXISTS, ConstantProductPoolState.EXISTS, StablePoolState.EXISTS].includes(poolState) ? (
-                  'Add Liquidity'
-                ) : (
-                  'Create Pool'
-                )
-
-              return (
-                <_Add
-                  chainId={chainId}
-                  setChainId={(chainId) => {
-                    router.push(`/pool/add/trident/${chainId}`)
-                    setChainId(chainId as TridentChainId)
-                  }}
-                  fee={fee}
-                  setFee={setFee}
-                  pool={pool as ConstantProductPool | StablePool | null}
-                  poolState={poolState as ConstantProductPoolState | StablePoolState}
-                  title={title}
-                  token0={token0}
-                  token1={token1}
-                  setToken0={setToken0}
-                  setToken1={setToken1}
-                  poolType={poolType}
-                  setPoolType={setPoolType}
-                />
+      <div className="flex flex-col gap-2">
+        <Link className="flex items-center gap-4 mb-2 group" href={'/pool'} shallow={true}>
+          <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
+          <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
+            Go back to pools list
+          </span>
+        </Link>
+        <h1 className="mt-2 text-3xl font-medium">Add Liquidity</h1>
+        <h1 className="text-lg text-gray-600 dark:dark:text-slate-400 text-slate-600">
+          Create a new pool or create a liquidity position on an existing pool.
+        </h1>
+      </div>
+      <div className="grid grid-cols-1 sm:w-[340px] md:w-[572px] gap-10">
+        <div className="hidden md:block" />
+        <PoolFinder
+          components={
+            <PoolFinder.Components>
+              <PoolFinder.ConstantProductPool
+                chainId={chainId}
+                token0={token0}
+                token1={token1}
+                enabled={isTridentChainId(chainId) && poolType === PoolFinderType.Classic}
+                fee={fee}
+                twap={false}
+              />
+              <PoolFinder.StablePool
+                chainId={chainId}
+                token0={token0}
+                token1={token1}
+                enabled={isTridentChainId(chainId) && poolType === PoolFinderType.Stable}
+                fee={fee}
+                twap={false}
+              />
+            </PoolFinder.Components>
+          }
+        >
+          {({ pool: [poolState, pool] }) => {
+            const title =
+              !token0 || !token1 ? (
+                'Select Tokens'
+              ) : [PairState.LOADING, ConstantProductPoolState.LOADING, StablePoolState.LOADING].includes(poolState) ? (
+                <div className="h-[20px] flex items-center justify-center">
+                  <Loader width={14} />
+                </div>
+              ) : [PairState.EXISTS, ConstantProductPoolState.EXISTS, StablePoolState.EXISTS].includes(poolState) ? (
+                'Add Liquidity'
+              ) : (
+                'Create Pool'
               )
-            }}
-          </PoolFinder>
-        </div>
-      </Layout>
+
+            return (
+              <_Add
+                chainId={chainId}
+                setChainId={(chainId) => {
+                  router.push(`/pool/add/trident/${chainId}`)
+                  setChainId(chainId as TridentChainId)
+                }}
+                fee={fee}
+                setFee={setFee}
+                pool={pool as ConstantProductPool | StablePool | null}
+                poolState={poolState as ConstantProductPoolState | StablePoolState}
+                title={title}
+                token0={token0}
+                token1={token1}
+                setToken0={setToken0}
+                setToken1={setToken1}
+                poolType={poolType}
+                setPoolType={setPoolType}
+              />
+            )
+          }}
+        </PoolFinder>
+      </div>
     </SWRConfig>
   )
 }

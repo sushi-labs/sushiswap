@@ -1,4 +1,6 @@
-import { sushiXSwapAddress, sushiXSwapAbi, SushiXSwapChainId, isSushiXSwapChainId } from '@sushiswap/sushixswap'
+'use client'
+
+import { isSushiXSwapChainId, sushiXSwapAbi, sushiXSwapAddress, SushiXSwapChainId } from '@sushiswap/sushixswap'
 import { getContract } from '@wagmi/core'
 import { useMemo } from 'react'
 import { useProvider, useSigner } from 'wagmi'

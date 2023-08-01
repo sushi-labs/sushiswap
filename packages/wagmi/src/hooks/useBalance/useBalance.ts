@@ -1,3 +1,5 @@
+'use client'
+
 import { isAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { bentoBoxV1Abi } from '@sushiswap/abi'
@@ -6,11 +8,11 @@ import { ChainId, chainName } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { JSBI, ZERO } from '@sushiswap/math'
-import { getBentoBoxContractConfig } from '../useBentoBoxContract'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { Address, erc20ABI, useBalance as useWagmiBalance, useContractReads } from 'wagmi'
 
+import { getBentoBoxContractConfig } from '../useBentoBoxContract'
 import { BalanceMap } from './types'
 
 type UseBalancesParams = {

@@ -1,8 +1,5 @@
 import { Protocol } from '@sushiswap/database'
-import { Select, SelectTrigger, SelectValue } from '@sushiswap/ui'
-import { SelectContent } from '@sushiswap/ui'
-import { SelectItem } from '@sushiswap/ui'
-import { Switch } from '@sushiswap/ui'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Switch } from '@sushiswap/ui'
 import { Container } from '@sushiswap/ui/components/container'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui/components/tabsnew'
 import React, { useState } from 'react'
@@ -91,10 +88,7 @@ export const PositionsTab = () => {
             ) : null}
           </div>
           <TabsContent value="v3">
-            <ConcentratedPositionsTable
-              hideClosed={hide}
-              rowLink={(row) => `/pool/${row.chainId}:${row.address}?positionId=${row.tokenId}`}
-            />
+            <ConcentratedPositionsTable hideClosed={hide} />
           </TabsContent>
           <TabsContent value="v2">
             <PositionsTable protocol={Protocol.SUSHISWAP_V2} rowLink={(row) => `/pool/${row.pool.id}`} />

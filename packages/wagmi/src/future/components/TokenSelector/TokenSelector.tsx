@@ -1,3 +1,5 @@
+'use client'
+
 import { isAddress } from '@ethersproject/address'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
@@ -5,12 +7,16 @@ import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { useCustomTokens, usePinnedTokens } from '@sushiswap/hooks'
 import { useBalances, useOtherTokenListsQuery, usePrices, useTokens } from '@sushiswap/react-query'
-import { IconButton } from '@sushiswap/ui'
-import { TextField } from '@sushiswap/ui'
-import { Dialog, DialogContent } from '@sushiswap/ui'
-import { DialogHeader, DialogTitle } from '@sushiswap/ui'
-import { DialogDescription } from '@sushiswap/ui'
-import { DialogTrigger } from '@sushiswap/ui'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  IconButton,
+  TextField,
+} from '@sushiswap/ui'
 import { Button, buttonIconVariants } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { List } from '@sushiswap/ui/components/list/List'

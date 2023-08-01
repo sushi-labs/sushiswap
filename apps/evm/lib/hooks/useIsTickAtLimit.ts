@@ -1,3 +1,5 @@
+'use client'
+
 import { FeeAmount, nearestUsableTick, TICK_SPACINGS, TickMath } from '@sushiswap/v3-sdk'
 import { useMemo } from 'react'
 

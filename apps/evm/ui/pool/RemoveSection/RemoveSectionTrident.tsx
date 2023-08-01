@@ -1,3 +1,5 @@
+'use client'
+
 import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
@@ -121,7 +123,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
           ? Amount.fromRawAmount(token1, percentToRemove.multiply(underlying1.quotient).quotient || '0')
           : Amount.fromRawAmount(token1, '0')
         : undefined,
-    [token1, percentToRemove, underlying0]
+    [token1, percentToRemove, underlying1]
   )
 
   const [minAmount0, minAmount1] = useMemo(() => {

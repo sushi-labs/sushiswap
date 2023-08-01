@@ -37,11 +37,11 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
   children,
 }) => {
   return (
-    <Widget id="addLiquidity" maxWidth="xl">
+    <Widget id="addLiquidity" variant="empty">
       <WidgetHeader>
         <WidgetTitle>Add Liquidity</WidgetTitle>
         <WidgetDescription>Provide liquidity to receive SLP tokens.</WidgetDescription>
-        <WidgetAction>
+        <WidgetAction variant="empty">
           <SettingsOverlay
             options={{
               slippageTolerance: {

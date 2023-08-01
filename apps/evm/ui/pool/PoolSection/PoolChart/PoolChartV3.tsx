@@ -1,3 +1,5 @@
+'use client'
+
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import React, { FC, useMemo, useState } from 'react'
 
@@ -32,7 +34,7 @@ const PoolChartV3: FC<PoolChartV3Props> = ({ address, chainId }) => {
   }, [chart])
 
   return (
-    <div className="flex flex-col gap-6 h-[520px]">
+    <div className="flex flex-col gap-2">
       <div className="flex flex-col items-center justify-between gap-5 md:flex-row">
         <PoolChartTypes charts={charts} selectedChart={chart} setChart={setChart} />
         <PoolChartPeriods periods={periods} selectedPeriod={period} setPeriod={setPeriod} />

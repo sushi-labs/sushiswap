@@ -1,6 +1,10 @@
+'use client'
+
+import { isAddress } from '@ethersproject/address'
 import { Signature, splitSignature } from '@ethersproject/bytes'
 import { AddressZero, HashZero } from '@ethersproject/constants'
-import { getBentoBoxContractConfig } from './useBentoBoxContract'
+import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { createToast } from '@sushiswap/ui/components/toast'
 import { useCallback, useMemo, useState } from 'react'
 import {
   Address,
@@ -13,10 +17,8 @@ import {
   useWaitForTransaction,
 } from 'wagmi'
 
+import { getBentoBoxContractConfig } from './useBentoBoxContract'
 import { ApprovalState } from './useERC20ApproveCallback'
-import { isAddress } from '@ethersproject/address'
-import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { createToast } from '@sushiswap/ui/components/toast'
 
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useBentoBoxApproveCallback({

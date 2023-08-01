@@ -1,3 +1,5 @@
+'use client'
+
 import { RadioGroup } from '@headlessui/react'
 import { StarIcon } from '@heroicons/react-v1/solid'
 import { classNames } from '@sushiswap/ui'

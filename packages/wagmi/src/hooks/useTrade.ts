@@ -1,3 +1,5 @@
+'use client'
+
 import {
   ConstantProductPool,
   findMultiRouteExactIn,
@@ -10,8 +12,8 @@ import {
 import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Amount, Type as Currency, WNATIVE } from '@sushiswap/currency'
-import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { RouteStatus } from '@sushiswap/tines'
+import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { useFeeData } from 'wagmi'

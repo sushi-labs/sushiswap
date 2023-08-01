@@ -1,3 +1,5 @@
+'use client'
+
 import { MinusIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'

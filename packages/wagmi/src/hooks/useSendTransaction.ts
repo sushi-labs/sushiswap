@@ -1,3 +1,5 @@
+'use client'
+
 import { ErrorCode } from '@ethersproject/logger'
 import { TransactionRequest } from '@ethersproject/providers'
 import { createErrorToast } from '@sushiswap/ui/components/toast'

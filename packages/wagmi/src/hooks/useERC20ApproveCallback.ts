@@ -1,3 +1,5 @@
+'use client'
+
 import { AddressZero, MaxUint256 } from '@ethersproject/constants'
 import { ErrorCode } from '@ethersproject/logger'
 import { TransactionRequest } from '@ethersproject/providers'

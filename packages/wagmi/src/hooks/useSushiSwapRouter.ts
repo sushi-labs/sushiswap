@@ -1,6 +1,8 @@
+'use client'
+
+import { uniswapV2RouterAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { SUSHISWAP_V2_ROUTER_ADDRESS, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { uniswapV2RouterAbi } from "@sushiswap/abi"
 import { getContract } from '@wagmi/core'
 import { useMemo } from 'react'
 import { useProvider, useSigner } from 'wagmi'

@@ -1,3 +1,5 @@
+'use client'
+
 import { stablePoolFactoryAbi, stablePoolFactoryAddress, StablePoolFactoryChainId } from '@sushiswap/trident-core'
 import { Address, useContract, useProvider } from 'wagmi'
 

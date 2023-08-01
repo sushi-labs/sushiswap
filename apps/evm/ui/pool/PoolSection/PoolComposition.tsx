@@ -1,3 +1,5 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
 import { Native } from '@sushiswap/currency'
@@ -21,7 +23,7 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
   const fiatValues = useTokenAmountDollarValues({ chainId: pool.chainId, amounts: [data?.reserve0, data?.reserve1] })
 
   return (
-    <List>
+    <List className="!pt-1">
       <div className="flex items-center justify-between">
         <List.Label>Pool Liquidity</List.Label>
         <List.Label>

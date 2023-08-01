@@ -1,3 +1,5 @@
+'use client'
+
 import { Pool } from '@sushiswap/client'
 import { formatUSD } from '@sushiswap/format'
 import { useBreakpoint } from '@sushiswap/hooks'
@@ -16,7 +18,7 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pool }) => {
   const { pendingRewards, rewardTokens, harvest, isError, values, isLoading } = usePoolPositionRewards()
   const { isLg } = useBreakpoint('lg')
 
-  if (!isLg || (!pool?.incentives?.length && !pendingRewards?.length)) return <></>
+  if (!isLg || (!pool?.incentives?.length && !pendingRewards?.length)) return <span></span>
 
   return (
     <div className="flex flex-col gap-3">

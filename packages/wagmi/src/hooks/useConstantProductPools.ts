@@ -1,3 +1,5 @@
+'use client'
+
 import { constantProductPoolAbi, constantProductPoolFactoryAbi } from '@sushiswap/abi'
 import { computeConstantProductPoolAddress, ConstantProductPool, Fee } from '@sushiswap/amm'
 import { Amount, Currency, Token } from '@sushiswap/currency'

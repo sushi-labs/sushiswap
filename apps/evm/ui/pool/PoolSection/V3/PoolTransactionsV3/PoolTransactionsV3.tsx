@@ -1,3 +1,5 @@
+'use client'
+
 import { RadioGroup } from '@headlessui/react'
 import { Chain } from '@sushiswap/chain'
 import { DataTable } from '@sushiswap/ui'

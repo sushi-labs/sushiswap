@@ -1,6 +1,8 @@
+'use client'
+
 import { chainShortName } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { UseQueryOptions, useQuery } from '@tanstack/react-query'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
 export interface FarmMap<T> {

@@ -1,6 +1,7 @@
+'use client'
+
 import { chainName } from '@sushiswap/chain'
-import { Button } from '@sushiswap/ui/components/button'
-import { ButtonProps } from '@sushiswap/ui/components/button'
+import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import dynamic from 'next/dynamic'
 import React, { FC, ReactElement } from 'react'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
