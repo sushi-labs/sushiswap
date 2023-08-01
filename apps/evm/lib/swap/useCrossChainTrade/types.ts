@@ -37,9 +37,9 @@ export interface UseCrossChainTradeReturn {
   minAmountOut: Amount<Type> | undefined
   gasSpent: string | undefined
   functionName: 'cook'
-  writeArgs: [Action[], BigNumber[], `0x${string}`[]] | undefined
+  writeArgs: [Action[], bigint[], `0x${string}`[]] | undefined
   route: { status: string }
-  overrides: { value: BigNumber } | undefined
+  overrides: { value: bigint } | undefined
 }
 
 export type UseCrossChainTradeQuerySelect = (data: UseCrossChainSelect) => UseCrossChainTradeReturn

@@ -5,14 +5,14 @@ import { Pool } from '@sushiswap/client'
 import { Amount, Price, tryParseAmount } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
-import { Fraction, JSBI, Percent, ZERO } from '@sushiswap/math'
+import { Fraction, Percent, ZERO } from '@sushiswap/math'
 import { classNames, Currency, Dots, List } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Modal } from '@sushiswap/ui/components/modal/Modal'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   FeeAmount,
-  Pool as V3Pool,
+  SushiSwapV3Pool,
   Position,
   priceToClosestTick,
   SushiSwapV3ChainId,
@@ -115,13 +115,9 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
       token0 && pair?.[1] && totalSupply && balance
         ? Amount.fromRawAmount(
             token0?.wrapped,
-            JSBI.divide(
-              JSBI.multiply(
-                balance[FundSource.WALLET].quotient,
-                token0.wrapped.equals(pair[1].token0) ? pair[1].reserve0.quotient : pair[1].reserve1.quotient
-              ),
+            (balance[FundSource.WALLET].quotient *
+              (token0.wrapped.equals(pair[1].token0) ? pair[1].reserve0.quotient : pair[1].reserve1.quotient)) /
               totalSupply.quotient
-            )
           )
         : undefined,
     [token0, pair, totalSupply, balance]
@@ -132,13 +128,9 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
       token1 && pair?.[1]?.reserve1 && totalSupply && balance
         ? Amount.fromRawAmount(
             token1?.wrapped,
-            JSBI.divide(
-              JSBI.multiply(
-                balance[FundSource.WALLET].quotient,
-                token1.wrapped.equals(pair[1].token1) ? pair[1].reserve1.quotient : pair[1].reserve0.quotient
-              ),
+            (balance[FundSource.WALLET].quotient *
+              (token1.wrapped.equals(pair[1].token1) ? pair[1].reserve1.quotient : pair[1].reserve0.quotient)) /
               totalSupply.quotient
-            )
           )
         : undefined,
     [token1, pair, totalSupply, balance]
@@ -165,7 +157,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   })
 
   const v3Address =
-    token0 && token1 && feeAmount ? V3Pool.getAddress(token0.wrapped, token1.wrapped, feeAmount) : undefined
+    token0 && token1 && feeAmount ? SushiSwapV3Pool.getAddress(token0.wrapped, token1.wrapped, feeAmount) : undefined
   const v3SpotPrice = useMemo(() => (v3Pool ? v3Pool?.token0Price : undefined), [v3Pool])
   const v2SpotPrice = useMemo(
     () =>
@@ -181,7 +173,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
     priceDifferenceFraction = priceDifferenceFraction.multiply(-1)
   }
 
-  const largePriceDifference = priceDifferenceFraction && !priceDifferenceFraction?.lessThan(JSBI.BigInt(2))
+  const largePriceDifference = priceDifferenceFraction && !priceDifferenceFraction?.lessThan(2n)
 
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
 
@@ -202,7 +194,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
       sqrtPrice &&
       tick
         ? Position.fromAmounts({
-            pool: v3Pool ?? new V3Pool(token0.wrapped, token1.wrapped, feeAmount, sqrtPrice, 0, tick, []),
+            pool: v3Pool ?? new SushiSwapV3Pool(token0.wrapped, token1.wrapped, feeAmount, sqrtPrice, 0, tick, []),
             tickLower,
             tickUpper,
             amount0: token0.wrapped.sortsBefore(token1.wrapped) ? token0Value.quotient : token1Value.quotient,
@@ -228,7 +220,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
       positionAmount0 &&
       token0 &&
       token0Value &&
-      Amount.fromRawAmount(token0, JSBI.subtract(token0Value.quotient, positionAmount0.quotient)),
+      Amount.fromRawAmount(token0, token0Value.quotient - positionAmount0.quotient),
     [positionAmount0, token0, token0Value]
   )
 
@@ -237,7 +229,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
       positionAmount1 &&
       token1 &&
       token1Value &&
-      Amount.fromRawAmount(token1, JSBI.subtract(token1Value.quotient, positionAmount1.quotient)),
+      Amount.fromRawAmount(token1, token1Value.quotient - positionAmount1.quotient),
     [positionAmount1, token1, token1Value]
   )
 

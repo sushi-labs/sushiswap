@@ -1,5 +1,5 @@
 import { Amount, Type } from '@sushiswap/currency'
-import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import { Percent, ZERO } from '@sushiswap/math'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { List } from '@sushiswap/ui/components/list/List'
@@ -82,12 +82,8 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
 
   const [feeValue0, feeValue1] = useMemo(() => {
     if (positionDetails && token0 && token1) {
-      const feeValue0 = positionDetails.fees
-        ? Amount.fromRawAmount(token0, JSBI.BigInt(positionDetails.fees[0]))
-        : undefined
-      const feeValue1 = positionDetails.fees
-        ? Amount.fromRawAmount(token1, JSBI.BigInt(positionDetails.fees[1]))
-        : undefined
+      const feeValue0 = positionDetails.fees ? Amount.fromRawAmount(token0, positionDetails.fees[0]) : undefined
+      const feeValue1 = positionDetails.fees ? Amount.fromRawAmount(token1, positionDetails.fees[1]) : undefined
 
       return [feeValue0, feeValue1]
     }

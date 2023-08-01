@@ -2,7 +2,6 @@ import { ConstantProductPool, Pair, StablePool } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Pool, Protocol } from '@sushiswap/client'
 import { DAI, Native, Price, Token, Type, USDC, USDT, WBTC } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
 import {
   encodeSqrtRatioX96,
   FeeAmount,
@@ -63,13 +62,13 @@ export function tryParsePrice(baseToken?: Token, quoteToken?: Token, value?: str
   const [whole, fraction] = value.split('.')
 
   const decimals = fraction?.length ?? 0
-  const withoutDecimals = JSBI.BigInt((whole ?? '') + (fraction ?? ''))
+  const withoutDecimals = BigInt((whole ?? '') + (fraction ?? ''))
 
   return new Price(
     baseToken,
     quoteToken,
-    JSBI.multiply(JSBI.BigInt(10 ** decimals), JSBI.BigInt(10 ** baseToken.decimals)),
-    JSBI.multiply(withoutDecimals, JSBI.BigInt(10 ** quoteToken.decimals))
+    BigInt(10 ** decimals) * BigInt(10 ** baseToken.decimals),
+    withoutDecimals * BigInt(10 ** quoteToken.decimals)
   )
 }
 
@@ -94,9 +93,9 @@ export function tryParseTick(
   // check price is within min/max bounds, if outside return min/max
   const sqrtRatioX96 = encodeSqrtRatioX96(price.numerator, price.denominator)
 
-  if (JSBI.greaterThanOrEqual(sqrtRatioX96, TickMath.MAX_SQRT_RATIO)) {
+  if (sqrtRatioX96 >= TickMath.MAX_SQRT_RATIO) {
     tick = TickMath.MAX_TICK
-  } else if (JSBI.lessThanOrEqual(sqrtRatioX96, TickMath.MIN_SQRT_RATIO)) {
+  } else if (sqrtRatioX96 <= TickMath.MIN_SQRT_RATIO) {
     tick = TickMath.MIN_TICK
   } else {
     // this function is agnostic to the base, will always return the correct tick
@@ -193,7 +192,7 @@ export default function computeSurroundingTicks(
     const currentTickProcessed: TickProcessed = {
       liquidityActive: previousTickProcessed.liquidityActive,
       tick,
-      liquidityNet: JSBI.BigInt(sortedTickData[i].liquidityNet),
+      liquidityNet: sortedTickData[i].liquidityNet,
       price0: tickToPrice(token0, token1, tick).toFixed(PRICE_FIXED_DIGITS),
     }
 
@@ -202,16 +201,10 @@ export default function computeSurroundingTicks(
     // it to the current processed tick we are building.
     // If we are iterating descending, we don't want to apply the net liquidity until the following tick.
     if (ascending) {
-      currentTickProcessed.liquidityActive = JSBI.add(
-        previousTickProcessed.liquidityActive,
-        JSBI.BigInt(sortedTickData[i].liquidityNet)
-      )
-    } else if (!ascending && JSBI.notEqual(previousTickProcessed.liquidityNet, JSBI.BigInt(0))) {
+      currentTickProcessed.liquidityActive = previousTickProcessed.liquidityActive + sortedTickData[i].liquidityNet
+    } else if (!ascending && previousTickProcessed.liquidityNet !== 0n) {
       // We are iterating descending, so look at the previous tick and apply any net liquidity.
-      currentTickProcessed.liquidityActive = JSBI.subtract(
-        previousTickProcessed.liquidityActive,
-        previousTickProcessed.liquidityNet
-      )
+      currentTickProcessed.liquidityActive = previousTickProcessed.liquidityActive - previousTickProcessed.liquidityNet
     }
 
     processedTicks.push(currentTickProcessed)

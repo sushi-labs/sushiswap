@@ -1,6 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { isSushiSwapV3ChainId, NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
 import { useNetwork, usePrepareSendTransaction, useSendTransaction } from '@sushiswap/wagmi'
@@ -35,12 +34,8 @@ export const ConcentratedLiquidityCollectButton: FC<ConcentratedLiquidityCollect
 
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
     if (token0 && token1 && position && account && positionDetails && isSushiSwapV3ChainId(chainId)) {
-      const feeValue0 = positionDetails.fees
-        ? Amount.fromRawAmount(token0, JSBI.BigInt(positionDetails.fees[0]))
-        : undefined
-      const feeValue1 = positionDetails.fees
-        ? Amount.fromRawAmount(token0, JSBI.BigInt(positionDetails.fees[1]))
-        : undefined
+      const feeValue0 = positionDetails.fees ? Amount.fromRawAmount(token0, positionDetails.fees[0]) : undefined
+      const feeValue1 = positionDetails.fees ? Amount.fromRawAmount(token0, positionDetails.fees[1]) : undefined
 
       const { calldata, value } = NonfungiblePositionManager.collectCallParameters({
         tokenId: positionDetails.tokenId.toString(),

@@ -1206,6 +1206,9 @@ importers:
       react-hook-form:
         specifier: 7.41.2
         version: 7.41.2(react@18.2.0)
+      viem:
+        specifier: 1.4.1
+        version: 1.4.1(typescript@5.1.6)(zod@3.21.4)
       wagmi:
         specifier: 1.3.9
         version: 1.3.9(react-dom@18.2.0)(react-native@0.72.3)(react@18.2.0)(typescript@5.1.6)(viem@1.4.1)(zod@3.21.4)
@@ -14539,7 +14542,7 @@ packages:
     resolution: {integrity: sha512-gYw0ki/EAuV1oSyMxpqandHjnthZjYYy+YWpTAzf8BqfXM3ItcZLpjxfg+3+mXW8HIO+3jw6T9iiqEXsqHaMMw==}
     dependencies:
       '@safe-global/safe-gateway-typescript-sdk': 3.7.3
-      viem: 1.0.2(typescript@5.1.6)(zod@3.21.4)
+      viem: 1.4.1(typescript@5.1.6)(zod@3.21.4)
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -18423,16 +18426,6 @@ packages:
       loupe: 2.3.6
       pretty-format: 27.5.1
     dev: true
-
-  /@wagmi/chains@1.1.0(typescript@5.1.6):
-    resolution: {integrity: sha512-pWZlxBk0Ql8E7DV8DwqlbBpOyUdaG9UDlQPBxJNALuEK1I0tbQ3AVvSDnlsEIt06UPmPo5o27gzs3hwPQ/A+UA==}
-    peerDependencies:
-      typescript: '>=5.0.4'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-    dependencies:
-      typescript: 5.1.6
 
   /@wagmi/chains@1.6.0(typescript@5.1.6):
     resolution: {integrity: sha512-5FRlVxse5P4ZaHG3GTvxwVANSmYJas1eQrTBHhjxVtqXoorm0aLmCHbhmN8Xo1yu09PaWKlleEvfE98yH4AgIw==}
@@ -37609,24 +37602,6 @@ packages:
       is-buffer: 2.0.5
       unist-util-stringify-position: 3.0.3
       vfile-message: 3.1.4
-
-  /viem@1.0.2(typescript@5.1.6)(zod@3.21.4):
-    resolution: {integrity: sha512-3Bn+CuInU8zsdKqqzFDWL018x4B9HDjPIISztReGcBjikY+04tP7CrQQCf1lbinK3wWrEoFU9VDiptCciNjUQA==}
-    dependencies:
-      '@adraffy/ens-normalize': 1.9.0
-      '@noble/curves': 1.0.0
-      '@noble/hashes': 1.3.0
-      '@scure/bip32': 1.3.0
-      '@scure/bip39': 1.2.0
-      '@wagmi/chains': 1.1.0(typescript@5.1.6)
-      abitype: 0.8.7(typescript@5.1.6)(zod@3.21.4)
-      isomorphic-ws: 5.0.0(ws@8.12.0)
-      ws: 8.12.0
-    transitivePeerDependencies:
-      - bufferutil
-      - typescript
-      - utf-8-validate
-      - zod
 
   /viem@1.4.1(typescript@5.1.6)(zod@3.21.4):
     resolution: {integrity: sha512-MtaoBHDSJDqa+QyXKG5d+S6EQSebRO0tzw6anSP4zC7AbC614vMeg9Y8LbkmEkWCw8swFYkort+H9l7GkWB0uA==}

@@ -1,6 +1,6 @@
 {
   "extends": "@sushiswap/typescript-config/node18.json",
-  "include": ["src", "src/entities/SushiSwapV3Router.ts"],
+  "include": ["src/**/*"],
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",

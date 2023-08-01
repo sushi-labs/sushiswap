@@ -1,9 +1,9 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
 import { AddressZero } from '@ethersproject/constants'
-import { calculateSlippageAmount, ConstantProductPool, StablePool } from '@sushiswap/amm'
+import { calculateSlippageAmount, TridentConstantPool, TridentStablePool } from '@sushiswap/amm'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Token, Type } from '@sushiswap/currency'
-import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import { Percent, ZERO } from '@sushiswap/math'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
@@ -32,7 +32,7 @@ import { AddSectionReviewModal } from './AddSectionReviewModal'
 interface AddSectionReviewModalTridentProps {
   poolAddress: string
   poolState: ConstantProductPoolState | StablePoolState | undefined
-  pool: ConstantProductPool | StablePool | null | undefined
+  pool: TridentConstantPool | TridentStablePool | null | undefined
   chainId: BentoBoxV1ChainId
   token0: Type | undefined
   token1: Type | undefined
@@ -100,8 +100,8 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
     return (
       poolState === ConstantProductPoolState.NOT_EXISTS ||
       poolState === StablePoolState.NOT_EXISTS ||
-      Boolean(totalSupply && JSBI.equal(totalSupply.quotient, ZERO)) ||
-      Boolean(pool && JSBI.equal(pool.reserve0.quotient, ZERO) && JSBI.equal(pool.reserve1.quotient, ZERO))
+      Boolean(totalSupply && totalSupply.quotient === ZERO) ||
+      Boolean(pool && pool.reserve0.quotient === ZERO && pool.reserve1.quotient === ZERO)
     )
   }, [pool, poolState, totalSupply])
 

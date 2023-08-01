@@ -5,7 +5,6 @@ import { CogIcon } from '@heroicons/react-v1/outline'
 import { ArrowLeftIcon, MinusIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Amount } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
 import { useAngleRewards, useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
@@ -131,8 +130,8 @@ const Position: FC<{ params: { id: string } }> = ({ params }) => {
   const amounts = useMemo(() => {
     if (positionDetails?.fees && _token0 && _token1)
       return [
-        Amount.fromRawAmount(_token0, JSBI.BigInt(positionDetails.fees[0].toString())),
-        Amount.fromRawAmount(_token1, JSBI.BigInt(positionDetails.fees[1].toString())),
+        Amount.fromRawAmount(_token0, positionDetails.fees[0]),
+        Amount.fromRawAmount(_token1, positionDetails.fees[1]),
       ]
 
     return [undefined, undefined]
