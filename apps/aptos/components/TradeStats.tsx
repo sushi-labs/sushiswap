@@ -4,7 +4,7 @@ import { classNames } from '@sushiswap/ui'
 import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { useSwapState } from 'app/swap/trade/TradeProvider'
-import React, { useState } from 'react'
+import React from 'react'
 import { formatNumber } from 'utils/utilFunctions'
 import { TradeRoute } from './TradeRoute'
 
@@ -62,7 +62,7 @@ export const TradeStats = () => {
             {loading ? (
               <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
             ) : (
-              <Modal.Trigger tag="trade-state-modal">
+              <Modal.Trigger tag={`trade-state-routes`}>
                 {({ open }) => (
                   <button onClick={open} className="text-sm text-blue font-semibold">
                     View
@@ -73,7 +73,7 @@ export const TradeStats = () => {
             <TradeRoute trade={bestRoutes} />
           </span>
         </div>
-        {account && (
+        {account?.address && (
           <div className="flex justify-between items-center border-t border-gray-200 dark:border-slate-200/5 mt-2 pt-2">
             <span className="font-medium text-sm text-gray-700 dark:text-slate-300">Recipient</span>
             <span className="font-semibold text-gray-700 text-right dark:text-slate-400">

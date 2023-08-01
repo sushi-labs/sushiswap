@@ -1,10 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import TradeInput from './TradeInput'
 import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { useAllCommonPairs } from 'utils/utilFunctions'
-import { useSlippageTolerance } from '@sushiswap/hooks'
 import { useTokenBalance } from 'utils/useTokenBalance'
+import { useSwapRouter } from 'useSwapRouter'
 
 interface Props {
   handleSwap: () => void
@@ -13,15 +12,13 @@ interface Props {
 export const SwapTradeInput = ({ handleSwap }: Props) => {
   const { connected, account, network } = useWallet()
   const tradeVal = useRef<HTMLInputElement>(null)
-  const [controller, setController] = useState<AbortController | null>(null)
-  const { amount, token0, token1, error, isTransactionPending } = useSwapState()
+  const { amount, token0, token1, error } = useSwapState()
   const { data: balance, isLoading } = useTokenBalance({
     account: account?.address as string,
     currency: token0.address,
     chainId: Number(network?.chainId) || 1,
     refetchInterval: 2000,
   })
-  const [slippageTolerance] = useSlippageTolerance()
   const {
     setAmount,
     setError,
@@ -32,26 +29,19 @@ export const SwapTradeInput = ({ handleSwap }: Props) => {
     setBestRoutes,
     setNoRouteFound,
   } = useSwapActions()
-  useEffect(() => {}, [controller])
-  const getSwapPrice = async (tradeVal: number = 0): Promise<any> => {
-    if (controller) {
-      controller.abort()
-    }
-    const newController = new AbortController()
-    setController(newController)
-    setPriceFetching(true)
+
+  const { data: routes, isFetching: isPriceFetching } = useSwapRouter({
+    network: network?.name?.toLowerCase() || 'mainnet',
+    balance,
+  })
+  useEffect(() => {
     setOutputAmount('')
+    setSlippageAmount(0)
     setNoRouteFound('')
-    if (tradeVal > 0) {
-      const routes: any = await useAllCommonPairs(
-        tradeVal * 10 ** 8,
-        token0,
-        token1,
-        network?.name?.toLowerCase(),
-        newController
-      )
+    setPriceFetching(isPriceFetching)
+    if (Number(amount) > 0) {
       if (routes?.amountOut) {
-        setOutputAmount(routes.amountOut)
+        setOutputAmount(String(routes?.amountOut))
         setSlippageAmount(routes?.amountOut)
       }
       if (routes?.route) {
@@ -62,16 +52,10 @@ export const SwapTradeInput = ({ handleSwap }: Props) => {
         setNoRouteFound('Price Impact High')
       }
     }
-    setPriceFetching(false)
-  }
-
-  useEffect(() => {
-    checkBalance(String(amount))
-  }, [account, connected, network, token0, token1, isTransactionPending, slippageTolerance, amount, balance])
+  }, [amount, routes, isPriceFetching])
 
   const checkBalance = (value: string) => {
     setAmount(value)
-    getSwapPrice(parseFloat(value))
     if (connected) {
       const priceEst = balance / 10 ** token0?.decimals < parseFloat(value)
       if (priceEst) {
