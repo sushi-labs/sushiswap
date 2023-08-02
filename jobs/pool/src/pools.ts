@@ -766,33 +766,34 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
         .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
       const swapFee = Number(pair.feeTier) / 1_000_000
 
+      const currentVolumeUSD = Number(pair.volumeUSD)
+      const currentLiquidityUSD = Number(pair.totalValueLockedUSD)
+      const currentFeesUSD = Number(pair.feesUSD)
+
       const feeApr1h = calculateFeeApr(
         AprTimeRange.ONE_HOUR,
-        oneHourData.get(pair.id)?.feesUSD ?? 0,
+        oneHourData.get(pair.id)?.feesUSD ?? currentFeesUSD,
         pair.feesUSD,
         pair.totalValueLockedUSD
       )
       const feeApr1d = calculateFeeApr(
         AprTimeRange.ONE_DAY,
-        oneDayData.get(pair.id)?.feesUSD ?? 0,
+        oneDayData.get(pair.id)?.feesUSD ?? currentFeesUSD,
         pair.feesUSD,
         pair.totalValueLockedUSD
       )
       const feeApr1w = calculateFeeApr(
         AprTimeRange.ONE_WEEK,
-        oneWeekData.get(pair.id)?.feesUSD ?? 0,
+        oneWeekData.get(pair.id)?.feesUSD ?? currentFeesUSD,
         pair.feesUSD,
         pair.totalValueLockedUSD
       )
       const feeApr1m = calculateFeeApr(
         AprTimeRange.ONE_MONTH,
-        oneMonthData.get(pair.id)?.feesUSD ?? 0,
+        oneMonthData.get(pair.id)?.feesUSD ?? currentFeesUSD,
         pair.feesUSD,
         pair.totalValueLockedUSD
       )
-      const currentVolumeUSD = Number(pair.volumeUSD)
-      const currentLiquidityUSD = Number(pair.totalValueLockedUSD)
-      const currentFeesUSD = Number(pair.feesUSD)
 
       const fees1h = oneHourData.has(pair.id) ? currentFeesUSD - oneHourData.get(pair.id).feesUSD : currentFeesUSD
       const fees1d = oneDayData.has(pair.id) ? currentFeesUSD - oneDayData.get(pair.id).feesUSD : currentFeesUSD
