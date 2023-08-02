@@ -493,7 +493,7 @@ function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data 
         const feeApr1h = calculateFeeApr(AprTimeRange.ONE_HOUR, fees1h, pair.feesUSD, pair.liquidityUSD)
         const feeApr1d = calculateFeeApr(AprTimeRange.ONE_DAY, fees1d, pair.feesUSD, pair.liquidityUSD)
         const feeApr1w = calculateFeeApr(AprTimeRange.ONE_WEEK, fees1w, pair.feesUSD, pair.liquidityUSD)
-        const feeApr1m = calculateFeeApr(AprTimeRange.ONE_MONTH, feeApr1m, pair.feesUSD, pair.liquidityUSD)
+        const feeApr1m = calculateFeeApr(AprTimeRange.ONE_MONTH, fees1m, pair.feesUSD, pair.liquidityUSD)
 
         const feesChange1h = calculatePercentageChange(
           currentFeesUSD,
