@@ -1,6 +1,13 @@
 import { ChevronDoubleDownIcon } from '@heroicons/react/24/outline'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@sushiswap/ui/components/dropdown-menu'
+import {
   CoinbaseWalletIcon,
   FrameIcon,
   GnosisSafeIcon,
@@ -12,14 +19,8 @@ import {
   XDEFIWalletIcon,
 } from '@sushiswap/ui/components/icons'
 import React, { FC, useCallback, useMemo } from 'react'
+
 import { useConnect } from '../../hooks'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@sushiswap/ui/components/dropdown-menu'
 
 const Icons: Record<string, React.ElementType> = {
   Injected: ChevronDoubleDownIcon,
@@ -71,7 +72,10 @@ export const ConnectButton: FC<ButtonProps> = ({ children, ...props }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button {...props}>Connect Wallet</Button>
+        <Button {...props}>
+          <span className="hidden sm:block">Connect Wallet</span>
+          <span className="block sm:hidden">Connect</span>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuGroup>
@@ -79,10 +83,10 @@ export const ConnectButton: FC<ButtonProps> = ({ children, ...props }) => {
             const Icon = connector.name in Icons ? Icons[connector.name] : Icons.Injected
             return (
               <DropdownMenuItem onClick={() => onSelect(connector.id)} key={connector.id}>
-                <Icon className="mr-2 h-4 w-4" />
-                {connector.name == 'Safe'
+                <Icon className="w-4 h-4 mr-2" />
+                {connector.name === 'Safe'
                   ? 'Gnosis Safe'
-                  : connector.name == 'WalletConnectLegacy'
+                  : connector.name === 'WalletConnectLegacy'
                   ? 'WalletConnect'
                   : connector.name}
               </DropdownMenuItem>

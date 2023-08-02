@@ -1,10 +1,9 @@
 import { AddressZero } from '@ethersproject/constants'
-import { CheckCircleIcon } from '@heroicons/react/20/solid'
+import { ArrowTopRightOnSquareIcon, CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/20/solid'
 import { Chain } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
 import { Fraction, ZERO } from '@sushiswap/math'
-import { classNames } from '@sushiswap/ui'
-import { IconButton } from '@sushiswap/ui'
+import { classNames, IconButton, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Icon } from '@sushiswap/ui/components/currency/Icon'
 import React, { CSSProperties, FC, memo, useCallback } from 'react'
@@ -17,6 +16,7 @@ export interface TokenSelectorRow {
   className?: string
   onSelect(currency: Type): void
   balance?: Amount<Type> | undefined
+  showWarning: boolean
   price?: Fraction
   pin?: {
     isPinned: boolean
@@ -35,6 +35,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
   onSelect,
   pin,
   selected,
+  showWarning,
 }) {
   const onClick = useCallback(() => {
     onSelect(currency)
@@ -77,17 +78,38 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
               </div>
             )}
             <div className="flex flex-col items-start">
-              <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 dark:group-hover:text-white">
-                {currency.symbol}
-              </span>
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href={Chain.from(currency.chainId).getTokenUrl(currency.wrapped.address)}
-                className="text-sm text-blue text-gray-500 dark:text-slate-400 hover:text-blue"
-              >
-                {currency.name}
-              </a>
+              <div className="flex gap-1">
+                <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 dark:group-hover:text-white">
+                  {currency.symbol}
+                </span>
+                {showWarning ? (
+                  <TooltipProvider>
+                    <Tooltip delayDuration={0}>
+                      <TooltipTrigger asChild>
+                        <ExclamationCircleIcon width={20} height={20} className="text-yellow" />
+                      </TooltipTrigger>
+                      <TooltipContent>Not on our default token list</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ) : null}
+              </div>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={Chain.from(currency.chainId).getTokenUrl(currency.wrapped.address)}
+                      className="text-sm text-blue text-gray-500 dark:text-slate-400 hover:text-blue"
+                    >
+                      {currency.name}
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="flex items-center gap-1">
+                    Show on explorer <ArrowTopRightOnSquareIcon width={16} height={16} />
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
 

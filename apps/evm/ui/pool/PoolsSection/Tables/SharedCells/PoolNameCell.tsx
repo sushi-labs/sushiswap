@@ -1,3 +1,5 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { Pool, Protocol } from '@sushiswap/client'
 import { formatNumber } from '@sushiswap/format'
@@ -11,6 +13,25 @@ import { FC } from 'react'
 
 import { ICON_SIZE } from '../constants'
 import { Row } from './types'
+
+const ProtocolBadge: Record<Protocol, JSX.Element> = {
+  [Protocol.BENTOBOX_STABLE]: (
+    <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">Trident Stable</div>
+  ),
+  [Protocol.BENTOBOX_CLASSIC]: (
+    <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">Trident Classic</div>
+  ),
+  [Protocol.SUSHISWAP_V2]: (
+    <div className="whitespace-nowrap bg-pink/20 text-pink text-[10px] px-2 rounded-full">
+      SushiSwap<sup>v2</sup>
+    </div>
+  ),
+  [Protocol.SUSHISWAP_V3]: (
+    <div className="whitespace-nowrap bg-blue/20 text-blue text-[10px] px-2 rounded-full">
+      SushiSwap<sup>v3</sup>
+    </div>
+  ),
+}
 
 export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
   const { token0, token1 } = useTokensFromPool(row)
@@ -36,27 +57,10 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
       <div className="flex flex-col gap-0.5">
         <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50">
           {token0?.symbol} <span className="font-normal text-gray-900 dark:text-slate-500">/</span> {token1?.symbol}{' '}
-          <div className={classNames('text-[10px] bg-gray-200 dark:bg-slate-700 rounded-lg px-1 ml-1')}></div>
+          <div className={classNames('text-[10px] bg-gray-200 dark:bg-slate-700 rounded-lg px-1 ml-1')} />
         </span>
         <div className="flex gap-1">
-          {row.protocol === Protocol.BENTOBOX_STABLE && (
-            <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">Trident Stable</div>
-          )}
-          {row.protocol === Protocol.BENTOBOX_CLASSIC && (
-            <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
-              Trident Classic
-            </div>
-          )}
-          {row.protocol === 'SUSHISWAP_V2' && (
-            <div className="whitespace-nowrap bg-pink/20 text-pink text-[10px] px-2 rounded-full">
-              SushiSwap<sup>v2</sup>
-            </div>
-          )}
-          {row.protocol === 'SUSHISWAP_V3' && (
-            <div className="whitespace-nowrap bg-blue/20 text-blue text-[10px] px-2 rounded-full">
-              SushiSwap<sup>v3</sup>
-            </div>
-          )}
+          {ProtocolBadge[row.protocol]}
           <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
             {formatNumber(row.swapFee * 100)}%
           </div>

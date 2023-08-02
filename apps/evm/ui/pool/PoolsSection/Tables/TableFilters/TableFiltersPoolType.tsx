@@ -1,12 +1,21 @@
+'use client'
+
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { Protocol } from '@sushiswap/client'
 import { useMutationObserver } from '@sushiswap/hooks'
-import { Popover, PopoverContent, PopoverTrigger } from '@sushiswap/ui'
-import { Chip, Separator } from '@sushiswap/ui'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
-import { CommandList } from '@sushiswap/ui'
-import { Label } from '@sushiswap/ui'
-import { PopoverPrimitive } from '@sushiswap/ui'
+import {
+  Chip,
+  CommandList,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+  Label,
+  Popover,
+  PopoverContent,
+  PopoverPrimitive,
+  PopoverTrigger,
+  Separator,
+} from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Command, CommandGroup, CommandItem } from '@sushiswap/ui/components/command'
 import { CheckIcon } from '@sushiswap/ui/components/icons'

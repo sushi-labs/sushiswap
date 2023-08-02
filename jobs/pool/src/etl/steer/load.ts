@@ -180,6 +180,27 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
         )}
         ELSE lastAdjustmentTimestamp
       END,
+      creator = CASE
+        ${Prisma.join(
+          vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.creator}`),
+          ' '
+        )}
+        ELSE creator
+      END,
+      admin = CASE
+        ${Prisma.join(
+          vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.admin}`),
+          ' '
+        )}
+        ELSE admin
+      END,
+      manager = CASE
+        ${Prisma.join(
+          vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.manager}`),
+          ' '
+        )}
+        ELSE manager
+      END,
       updatedAt = NOW()
     WHERE id IN (${Prisma.join(vaultsToUpdate.map((update) => Prisma.sql`${update.id}`))});
   `
@@ -191,6 +212,27 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
       skipDuplicates: true,
     }),
   ])
+
+  const currentVaults = await client.steerVault.findMany({
+    select: {
+      id: true,
+    },
+    where: {
+      isEnabled: true,
+      wasEnabled: false,
+    },
+  })
+
+  await client.steerVault.updateMany({
+    where: {
+      id: { in: currentVaults.map((vault) => vault.id) },
+    },
+    data: {
+      wasEnabled: true,
+    },
+  })
+
+  await client.$disconnect()
 
   console.log(`LOAD - Updated ${updated} and created ${created.count} vaults. `)
 }

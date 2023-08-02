@@ -56,6 +56,7 @@ import { SelectFeeConcentratedWidget } from '../NewPositionSection/SelectFeeConc
 import { usePoolPosition } from '../PoolPositionProvider'
 import { usePoolPositionRewards } from '../PoolPositionRewardsProvider'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
+import { V3MigrateChainId } from '@sushiswap/wagmi/future/hooks/migrate/types'
 
 export const MODAL_MIGRATE_ID = 'migrate-modal'
 
@@ -296,7 +297,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
       sqrtPrice,
       noLiquidity,
     },
-    chainId: pool.chainId as SushiSwapV3ChainId,
+    chainId: pool.chainId as V3MigrateChainId,
     enabled: approvedMigrate,
   })
 
@@ -619,8 +620,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                     fullWidth
                     id="approve-token0"
                     amount={balance?.[FundSource.WALLET] ?? undefined}
-                    contract={V3MigrateContractConfig(pool.chainId as SushiSwapV3ChainId).address}
-                    enabled={Boolean(V3MigrateContractConfig(pool.chainId as SushiSwapV3ChainId).address)}
+                    contract={V3MigrateContractConfig(pool.chainId as V3MigrateChainId).address}
+                    enabled={Boolean(V3MigrateContractConfig(pool.chainId as V3MigrateChainId).address)}
                   >
                     <Checker.Success tag={APPROVE_TAG_MIGRATE}>
                       <DialogReview>

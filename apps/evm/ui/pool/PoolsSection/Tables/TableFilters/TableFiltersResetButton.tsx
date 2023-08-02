@@ -1,3 +1,5 @@
+'use client'
+
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import { Button } from '@sushiswap/ui'
 import React, { FC, useCallback, useMemo } from 'react'

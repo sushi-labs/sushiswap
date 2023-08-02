@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { SUBGRAPH_HOST, SUSHISWAP_V3_SUBGRAPH_NAME } from '@sushiswap/graph-config'
-import { isSushiSwapV3ChainId,Pool, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { isSushiSwapV3ChainId, Pool, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useQuery } from '@tanstack/react-query'
 
 export enum TransactionType {
@@ -142,7 +142,7 @@ const fetchCollects = async (poolId: string, chainId: SushiSwapV3ChainId, opts: 
 
 // Will only support the last 1k txs
 // The fact that there are different subtransactions aggregated under one transaction makes paging a bit difficult
-function useTransactionsV3(pool: Pool | undefined | null, poolId: string, opts: UseTransactionsV3Opts) {
+function useTransactions(pool: Pool | undefined | null, poolId: string, opts: UseTransactionsV3Opts) {
   return useQuery({
     queryKey: ['poolTransactionsV3', poolId, opts],
     queryFn: async () => {
@@ -223,7 +223,7 @@ function useTransactionsV3(pool: Pool | undefined | null, poolId: string, opts: 
   })
 }
 
-type Transaction = NonNullable<ReturnType<typeof useTransactionsV3>['data']>[0]
+type Transaction = NonNullable<ReturnType<typeof useTransactions>['data']>[0]
 
-export { useTransactionsV3 }
+export { useTransactions }
 export type { Transaction }

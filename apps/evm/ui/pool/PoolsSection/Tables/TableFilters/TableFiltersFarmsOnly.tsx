@@ -1,3 +1,5 @@
+'use client'
+
 import { Toggle } from '@sushiswap/ui'
 import React, { FC } from 'react'
 

@@ -8,7 +8,7 @@ import { SafeConnector } from 'wagmi/connectors/safe'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
-import { getSigners } from '../test/setup'
+import { getSigners } from './_test/setup'
 import { MockConnector } from './connectors/mock'
 
 const isTest =

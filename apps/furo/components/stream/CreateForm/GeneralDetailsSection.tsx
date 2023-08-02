@@ -1,6 +1,4 @@
-import { DateField } from '@sushiswap/ui'
-import { Label } from '@sushiswap/ui'
-import { FormControl, FormField, FormItem, FormMessage, FormSection } from '@sushiswap/ui/components/form'
+import { DateField, FormControl, FormField, FormItem, FormMessage, FormSection, Label } from '@sushiswap/ui'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'

@@ -1,8 +1,7 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
-import { typographyVariants } from '@sushiswap/ui'
-import { Container } from '@sushiswap/ui'
-import { Carousel } from '@sushiswap/ui'
-import { Label } from '@sushiswap/ui'
+import { Carousel, Container, Label, typographyVariants } from '@sushiswap/ui'
 import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import React from 'react'

@@ -1,5 +1,3 @@
-'use client'
-
 import { Container } from '@sushiswap/ui'
 import React from 'react'
 

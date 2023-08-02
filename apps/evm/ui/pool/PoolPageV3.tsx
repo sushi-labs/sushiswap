@@ -12,7 +12,7 @@ import { useTokenAmountDollarValues } from 'lib/hooks'
 import React, { FC, useMemo, useState } from 'react'
 
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
-import { PoolChartV3 } from './PoolSection/PoolChart/PoolChartV3'
+import { Charts } from './PoolSection/V3/Tabs/Statistics/Charts'
 
 enum Granularity {
   Day,
@@ -46,7 +46,7 @@ const Pool: FC<{ params: { id: string } }> = ({ params }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-10">
-      <PoolChartV3 address={address} chainId={chainId} />
+      <Charts address={address} chainId={chainId} />
       <div className="flex flex-col gap-6">
         <List className="!pt-0">
           <div className="flex items-center justify-between">

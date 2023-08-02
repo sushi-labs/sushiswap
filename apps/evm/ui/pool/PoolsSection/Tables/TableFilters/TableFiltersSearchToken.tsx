@@ -1,3 +1,5 @@
+'use client'
+
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { ChipInput } from '@sushiswap/ui'
 import React, { FC, useCallback } from 'react'

@@ -13,6 +13,7 @@ const buttonVariants = cva(
       variant: {
         default: 'bg-blue hover:bg-blue-600 focus:bg-blue-700 active:bg-blue-600 text-white',
         destructive: 'bg-red hover:bg-red-600 focus:bg-red-700 active:bg-red-600 text-white',
+        warning: 'bg-amber-400 hover:bg-amber-500 focus:bg-amber-600 active:bg-amber-500 text-amber-900',
         outline: '!border border-accent bg-background hover:bg-muted hover:text-accent-foreground',
         secondary: 'bg-secondary hover:bg-muted focus:bg-accent',
         ghost: 'hover:bg-secondary focus:bg-accent',

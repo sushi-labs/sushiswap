@@ -20,6 +20,7 @@ type PoolHeader = {
     rewards: number | undefined
   }
   priceRange?: string
+  hasEnabledStrategies?: boolean
 }
 
 export const PoolHeader: FC<PoolHeader> = ({ address, pool, apy, priceRange }) => {

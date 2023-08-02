@@ -46,6 +46,7 @@ import Link from 'next/link'
 import { useCallback, useMemo, useState } from 'react'
 import { useWaitForTransaction } from 'wagmi'
 
+import { ANGLE_ENABLED_NETWORKS } from '../../../config'
 import { useTokenAmountDollarValues } from '../../../lib/hooks'
 import { SelectNetworkWidget, SelectTokensWidget } from '../../../ui/pool'
 import { ContentBlock } from '../../../ui/pool/AddPage/ContentBlock'
@@ -124,7 +125,7 @@ const Incentivize = withCheckerRoot(() => {
 
   const { data: signature, signMessage } = useSignMessage()
 
-  const { data: angleRewards } = useAngleRewards({ chainId, account: address })
+  const { data: angleRewards, isLoading: angleRewardTokensLoading } = useAngleRewards({ chainId, account: address })
 
   const minAmount = useMemo(() => {
     if (!angleRewards) return undefined
@@ -280,6 +281,7 @@ const Incentivize = withCheckerRoot(() => {
           title="On which network would you like to add rewards?"
           selectedNetwork={chainId}
           onSelect={setNetwork}
+          networks={ANGLE_ENABLED_NETWORKS}
         />
         <SelectTokensWidget
           title="Which token pair would you like to incentivize?"
@@ -341,8 +343,8 @@ const Incentivize = withCheckerRoot(() => {
             onChange={setValue}
             currency={rewardToken}
             currencies={rewardTokens}
-            loading={tokensLoading}
-            currencyLoading={tokensLoading}
+            loading={angleRewardTokensLoading}
+            currencyLoading={angleRewardTokensLoading}
             allowNative={false}
             hidePinnedTokens
             {...(epochs &&

@@ -69,6 +69,11 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
     }
   }, [defaultTokenMap, otherTokenMap])
 
+  const officialTokenIds = useMemo(() => {
+    if (!defaultTokenMap) return []
+    return Object.values(defaultTokenMap).map((el) => el.wrapped.address)
+  }, [defaultTokenMap])
+
   const { data: queryToken, isInitialLoading: isQueryTokenLoading } = useTokenWithCache({
     chainId,
     address: query,
@@ -88,7 +93,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   })
 
   const pinnedTokens = useMemo(() => {
-    return pinnedTokenMap[chainId]
+    return (pinnedTokenMap?.[chainId] ?? [])
       .map((id) => {
         const [, address] = id.split(':')
         if (address === 'NATIVE') return Native.onChain(chainId)
@@ -146,7 +151,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
           />
         </div>
 
-        {pinnedTokens.length > 0 ? (
+        {pinnedTokens.length > 0 && !hidePinnedTokens ? (
           <div className="flex flex-wrap gap-2">
             {pinnedTokens.map((token) => (
               <div key={token.id} className="group">
@@ -210,6 +215,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
                 onSelect={_onSelect}
                 id={id}
                 pin={{ onPin: _onPin, isPinned: isTokenPinned }}
+                officialTokenIds={officialTokenIds}
                 currencies={sortedTokenList}
                 chainId={chainId}
               />
