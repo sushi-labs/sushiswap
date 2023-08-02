@@ -146,10 +146,9 @@ const COLUMNS = [
 
 interface PositionsTableProps {
   onRowClick?(row: Pool): void
-  rowLink?(row: Pool): string
 }
 
-export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick, rowLink }) => {
+export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
   const { chainIds, tokenSymbols, protocols, farmsOnly } = usePoolFilters()
   const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
 
@@ -211,7 +210,7 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick, rowLink }) => 
         state={state}
         onSortingChange={setSorting}
         loading={!pools && isValidating}
-        linkFormatter={rowLink}
+        linkFormatter={(row) => `/pool/${row.chainId}%3A${row.address}`}
         rowRenderer={rowRenderer}
         columns={COLUMNS}
         data={data}

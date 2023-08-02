@@ -1,6 +1,5 @@
 import { Protocol } from '@sushiswap/database'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Switch } from '@sushiswap/ui'
-import { Container } from '@sushiswap/ui/components/container'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui/components/tabsnew'
 import React, { useState } from 'react'
 
@@ -55,52 +54,50 @@ export const PositionsTab = () => {
   const [hide, setHide] = useState(true)
 
   return (
-    <Container maxWidth="7xl" className="px-4 mx-auto">
-      <div className="flex flex-col gap-4">
-        <Tabs value={tab} onValueChange={setTab} defaultValue="v3">
-          <div className="flex justify-between mb-4">
-            <div className="block sm:hidden">
-              <Select value={tab} onValueChange={setTab}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Pool type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {ITEMS.map((item) => (
-                    <SelectItem key={item.value} value={item.value}>
-                      {item.children}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <TabsList className="hidden sm:inline-flex">
-              {ITEMS.map((item) => (
-                <TabsTrigger key={item.value} value={item.value}>
-                  {item.children}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            {tab === 'v3' ? (
-              <div className="flex gap-3 items-center px-2.5">
-                <span className="text-sm font-medium text-gray-600 dark:text-slate-400">Include closed</span>
-                <Switch checked={hide} onCheckedChange={() => setHide((prev) => !prev)} />
-              </div>
-            ) : null}
+    <div className="flex flex-col gap-4">
+      <Tabs value={tab} onValueChange={setTab} defaultValue="v3">
+        <div className="flex justify-between mb-4">
+          <div className="block sm:hidden">
+            <Select value={tab} onValueChange={setTab}>
+              <SelectTrigger>
+                <SelectValue placeholder="Pool type" />
+              </SelectTrigger>
+              <SelectContent>
+                {ITEMS.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.children}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          <TabsContent value="v3">
-            <ConcentratedPositionsTable hideClosed={hide} />
-          </TabsContent>
-          <TabsContent value="v2">
-            <PositionsTable protocol={Protocol.SUSHISWAP_V2} rowLink={(row) => `/pool/${row.pool.id}`} />
-          </TabsContent>
-          <TabsContent value="stable">
-            <PositionsTable protocol={Protocol.BENTOBOX_STABLE} rowLink={(row) => `/pool/${row.pool.id}`} />
-          </TabsContent>
-          <TabsContent value="classic">
-            <PositionsTable protocol={Protocol.BENTOBOX_CLASSIC} rowLink={(row) => `/pool/${row.pool.id}`} />
-          </TabsContent>
-        </Tabs>
-      </div>
-    </Container>
+          <TabsList className="hidden sm:inline-flex">
+            {ITEMS.map((item) => (
+              <TabsTrigger key={item.value} value={item.value}>
+                {item.children}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {tab === 'v3' ? (
+            <div className="flex gap-3 items-center px-2.5">
+              <span className="text-sm font-medium text-gray-600 dark:text-slate-400">Include closed</span>
+              <Switch checked={hide} onCheckedChange={() => setHide((prev) => !prev)} />
+            </div>
+          ) : null}
+        </div>
+        <TabsContent value="v3">
+          <ConcentratedPositionsTable hideClosed={hide} />
+        </TabsContent>
+        <TabsContent value="v2">
+          <PositionsTable protocol={Protocol.SUSHISWAP_V2} rowLink={(row) => `/pool/${row.pool.id}`} />
+        </TabsContent>
+        <TabsContent value="stable">
+          <PositionsTable protocol={Protocol.BENTOBOX_STABLE} rowLink={(row) => `/pool/${row.pool.id}`} />
+        </TabsContent>
+        <TabsContent value="classic">
+          <PositionsTable protocol={Protocol.BENTOBOX_CLASSIC} rowLink={(row) => `/pool/${row.pool.id}`} />
+        </TabsContent>
+      </Tabs>
+    </div>
   )
 }
