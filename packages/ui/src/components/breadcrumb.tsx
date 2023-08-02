@@ -45,7 +45,7 @@ export const Breadcrumb = () => {
         size="sm"
         className={classNames(
           '!font-normal',
-          items.length === 2 ? 'text-gray-900 dark:text-slate-50' : 'text-accent-foreground'
+          pathname.split('/').length === 2 ? '!text-gray-900 !dark:text-slate-50' : '!text-accent-foreground'
         )}
       >
         <Link href={`/${pathname.split('/')[1]}`}>Home</Link>

@@ -1,15 +1,17 @@
 'use client'
 
-import ArrowTopRightOnSquareIcon from '@heroicons/react/20/solid/ArrowTopRightOnSquareIcon'
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
+import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 import { Chain } from '@sushiswap/chain'
 import { usePool } from '@sushiswap/client'
 import { Token } from '@sushiswap/currency'
 import { formatPercent, shortenAddress } from '@sushiswap/format'
-import { Button, Currency, typographyVariants } from '@sushiswap/ui'
+import { Button, Currency, IconButton, typographyVariants } from '@sushiswap/ui'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
 import { Pool } from '@sushiswap/v3-sdk'
 import { unwrapToken } from 'lib/functions'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import React, { FC, useMemo } from 'react'
 
 type PoolHeader = {
@@ -24,6 +26,8 @@ type PoolHeader = {
 }
 
 export const PoolHeader: FC<PoolHeader> = ({ address, pool, apy, priceRange }) => {
+  const { back } = useRouter()
+
   const [token0, token1] = useMemo(() => {
     if (!pool) return [undefined, undefined]
     if (pool instanceof Pool) {
@@ -54,21 +58,14 @@ export const PoolHeader: FC<PoolHeader> = ({ address, pool, apy, priceRange }) =
     return (
       <div className="flex flex-col gap-2">
         <div className="flex flex-col gap-2.5">
-          <div className="flex gap-4">
-            <Link target="_blank" href={Chain.from(pool.chainId).getTokenUrl(token0.wrapped.address)}>
-              <Button asChild variant="link" size="xs" className="!font-medium text-muted-foreground">
-                {shortenAddress(token0.wrapped.address, 4)}
-                <ArrowTopRightOnSquareIcon className="w-3 h-3" />
-              </Button>
-            </Link>
-            <Link target="_blank" href={Chain.from(pool.chainId).getTokenUrl(token1.wrapped.address)}>
-              <Button asChild variant="link" size="xs" className="!font-medium text-muted-foreground">
-                {shortenAddress(token1.wrapped.address, 4)}
-                <ArrowTopRightOnSquareIcon className="w-3 h-3" />
-              </Button>
-            </Link>
-          </div>
-          <div className="flex items-center gap-3">
+          <div className="relative flex items-center gap-3">
+            <IconButton
+              variant="ghost"
+              icon={ChevronLeftIcon}
+              onClick={back}
+              name="back"
+              className="xl:absolute xl:ml-[-56px]"
+            />
             <Currency.IconList iconWidth={36} iconHeight={36}>
               <Currency.Icon currency={token0} />
               <Currency.Icon currency={token1} />
@@ -87,7 +84,7 @@ export const PoolHeader: FC<PoolHeader> = ({ address, pool, apy, priceRange }) =
             </Button>
           </div>
         </div>
-        <div className="flex items-center gap-6 text-secondary-foreground mb-8 mt-1.5">
+        <div className="flex flex-wrap items-center gap-y-3 gap-x-6 text-secondary-foreground mb-8 mt-1.5">
           {apy ? (
             <div className="flex items-center gap-1.5">
               <span className="tracking-tighter font-semibold">APR</span>
@@ -116,6 +113,24 @@ export const PoolHeader: FC<PoolHeader> = ({ address, pool, apy, priceRange }) =
           <div className="flex items-center gap-1.5">
             <span className="tracking-tighter font-semibold">Network</span>
             {Chain.from(pool.chainId).name}
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="tracking-tighter font-semibold">{token0.symbol}</span>
+            <Link target="_blank" href={Chain.from(pool.chainId).getTokenUrl(token0.wrapped.address)}>
+              <Button asChild variant="link" size="sm" className="!font-medium !text-secondary-foreground">
+                {shortenAddress(token0.wrapped.address, 4)}
+                <ArrowTopRightOnSquareIcon className="w-3 h-3" />
+              </Button>
+            </Link>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="tracking-tighter font-semibold">{token1.symbol}</span>
+            <Link target="_blank" href={Chain.from(pool.chainId).getTokenUrl(token1.wrapped.address)}>
+              <Button asChild variant="link" size="sm" className="!font-medium !text-secondary-foreground">
+                {shortenAddress(token1.wrapped.address, 4)}
+                <ArrowTopRightOnSquareIcon className="w-3 h-3" />
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
