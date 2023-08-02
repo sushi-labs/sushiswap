@@ -349,8 +349,8 @@ const Incentivize = withCheckerRoot(() => {
             loading={angleRewardTokensLoading}
             currencyLoading={angleRewardTokensLoading}
             allowNative={false}
-            hidePinnedTokens
-            hideSearch
+            hidePinnedTokens={true}
+            hideSearch={true}
             {...(epochs &&
               rewardToken &&
               amount[0] &&
