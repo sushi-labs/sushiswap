@@ -481,34 +481,34 @@ function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data 
           throw new Error('Unknown pool type')
         }
 
+        const currentVolumeUSD = Number(pair.volumeUSD)
+        const currentLiquidityUSD = Number(pair.liquidityUSD)
+        const currentFeesUSD = Number(pair.feesUSD)
+
         const feeApr1h = calculateFeeApr(
           AprTimeRange.ONE_HOUR,
-          oneHourData.get(pair.id)?.feesUSD ?? 0,
+          oneHourData.get(pair.id)?.feesUSD ?? currentFeesUSD,
           pair.feesUSD,
           pair.liquidityUSD
         )
         const feeApr1d = calculateFeeApr(
           AprTimeRange.ONE_DAY,
-          oneDayData.get(pair.id)?.feesUSD ?? 0,
+          oneDayData.get(pair.id)?.feesUSD ?? currentFeesUSD,
           pair.feesUSD,
           pair.liquidityUSD
         )
         const feeApr1w = calculateFeeApr(
           AprTimeRange.ONE_WEEK,
-          oneWeekData.get(pair.id)?.feesUSD ?? 0,
+          oneWeekData.get(pair.id)?.feesUSD ?? currentFeesUSD,
           pair.feesUSD,
           pair.liquidityUSD
         )
         const feeApr1m = calculateFeeApr(
           AprTimeRange.ONE_MONTH,
-          oneMonthData.get(pair.id)?.feesUSD ?? 0,
+          oneMonthData.get(pair.id)?.feesUSD ?? currentFeesUSD,
           pair.feesUSD,
           pair.liquidityUSD
         )
-
-        const currentVolumeUSD = Number(pair.volumeUSD)
-        const currentLiquidityUSD = Number(pair.liquidityUSD)
-        const currentFeesUSD = Number(pair.feesUSD)
 
         const fees1h = oneHourData.has(pair.id) ? currentFeesUSD - oneHourData.get(pair.id).feesUSD : currentFeesUSD
         const fees1d = oneDayData.has(pair.id) ? currentFeesUSD - oneDayData.get(pair.id).feesUSD : currentFeesUSD
