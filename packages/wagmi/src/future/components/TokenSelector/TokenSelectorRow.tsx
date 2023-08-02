@@ -102,7 +102,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
                       href={Chain.from(currency.chainId).getTokenUrl(currency.wrapped.address)}
                       className="text-sm text-blue text-gray-500 dark:text-slate-400 hover:text-blue"
                     >
-                      {currency.name}
+                      {currency.name ?? currency.symbol}
                     </a>
                   </TooltipTrigger>
                   <TooltipContent side="bottom" className="flex items-center gap-1">

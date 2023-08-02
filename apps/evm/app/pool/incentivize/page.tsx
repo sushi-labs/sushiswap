@@ -3,7 +3,7 @@
 import { ArrowLeftIcon, SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { Chain } from '@sushiswap/chain'
 import { Token, tryParseAmount, Type } from '@sushiswap/currency'
-import { useAngleRewards } from '@sushiswap/react-query'
+import { useAngleRewardTokens } from '@sushiswap/react-query'
 import {
   Badge,
   Button,
@@ -127,13 +127,14 @@ const Incentivize = withCheckerRoot(() => {
 
   const { data: signature, signMessage } = useSignMessage()
 
-  const { data: angleRewards, isLoading: angleRewardTokensLoading } = useAngleRewards({ chainId, account: address })
+  const { data: angleRewardTokens, isLoading: angleRewardTokensLoading } = useAngleRewardTokens({ chainId })
 
+  console.log(angleRewardTokensLoading)
   const minAmount = useMemo(() => {
-    if (!angleRewards) return undefined
-    const token = angleRewards.validRewardTokens.find((el) => el.token.wrapped.address === rewardToken?.wrapped.address)
+    if (!angleRewardTokens) return undefined
+    const token = angleRewardTokens.find((el) => el.token.wrapped.address === rewardToken?.wrapped.address)
     if (token && epochs) return token.minimumAmountPerEpoch?.multiply(epochs)
-  }, [angleRewards, epochs, rewardToken])
+  }, [angleRewardTokens, epochs, rewardToken])
 
   const {
     writeAsync,
@@ -183,13 +184,13 @@ const Incentivize = withCheckerRoot(() => {
 
   const rewardTokens = useMemo(
     () =>
-      angleRewards
-        ? angleRewards.validRewardTokens.reduce<Record<string, Token>>((acc, cur) => {
+      angleRewardTokens
+        ? angleRewardTokens.reduce<Record<string, Token>>((acc, cur) => {
             acc[cur.token.wrapped.address] = cur.token
             return acc
           }, {})
         : {},
-    [angleRewards]
+    [angleRewardTokens]
   )
 
   return (
@@ -349,6 +350,7 @@ const Incentivize = withCheckerRoot(() => {
             currencyLoading={angleRewardTokensLoading}
             allowNative={false}
             hidePinnedTokens
+            hideSearch
             {...(epochs &&
               rewardToken &&
               amount[0] &&
