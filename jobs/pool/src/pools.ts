@@ -481,6 +481,31 @@ function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data 
           throw new Error('Unknown pool type')
         }
 
+        const feeApr1h = calculateFeeApr(
+          AprTimeRange.ONE_HOUR,
+          oneHourData.get(pair.id)?.feesUSD ?? 0,
+          pair.feesUSD,
+          pair.liquidityUSD
+        )
+        const feeApr1d = calculateFeeApr(
+          AprTimeRange.ONE_DAY,
+          oneDayData.get(pair.id)?.feesUSD ?? 0,
+          pair.feesUSD,
+          pair.liquidityUSD
+        )
+        const feeApr1w = calculateFeeApr(
+          AprTimeRange.ONE_WEEK,
+          oneWeekData.get(pair.id)?.feesUSD ?? 0,
+          pair.feesUSD,
+          pair.liquidityUSD
+        )
+        const feeApr1m = calculateFeeApr(
+          AprTimeRange.ONE_MONTH,
+          oneMonthData.get(pair.id)?.feesUSD ?? 0,
+          pair.feesUSD,
+          pair.liquidityUSD
+        )
+
         const currentVolumeUSD = Number(pair.volumeUSD)
         const currentLiquidityUSD = Number(pair.liquidityUSD)
         const currentFeesUSD = Number(pair.feesUSD)
@@ -489,12 +514,6 @@ function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data 
         const fees1d = oneDayData.has(pair.id) ? currentFeesUSD - oneDayData.get(pair.id).feesUSD : currentFeesUSD
         const fees1w = oneWeekData.has(pair.id) ? currentFeesUSD - oneWeekData.get(pair.id).feesUSD : currentFeesUSD
         const fees1m = oneMonthData.has(pair.id) ? currentFeesUSD - oneMonthData.get(pair.id).feesUSD : currentFeesUSD
-
-        const feeApr1h = calculateFeeApr(AprTimeRange.ONE_HOUR, fees1h, pair.feesUSD, pair.liquidityUSD)
-        const feeApr1d = calculateFeeApr(AprTimeRange.ONE_DAY, fees1d, pair.feesUSD, pair.liquidityUSD)
-        const feeApr1w = calculateFeeApr(AprTimeRange.ONE_WEEK, fees1w, pair.feesUSD, pair.liquidityUSD)
-        const feeApr1m = calculateFeeApr(AprTimeRange.ONE_MONTH, fees1m, pair.feesUSD, pair.liquidityUSD)
-
         const feesChange1h = calculatePercentageChange(
           currentFeesUSD,
           oneHourData.get(pair.id)?.feesUSD ?? 0,
@@ -747,6 +766,30 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
         .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
       const swapFee = Number(pair.feeTier) / 1_000_000
 
+      const feeApr1h = calculateFeeApr(
+        AprTimeRange.ONE_HOUR,
+        oneHourData.get(pair.id)?.feesUSD ?? 0,
+        pair.feesUSD,
+        pair.totalValueLockedUSD
+      )
+      const feeApr1d = calculateFeeApr(
+        AprTimeRange.ONE_DAY,
+        oneDayData.get(pair.id)?.feesUSD ?? 0,
+        pair.feesUSD,
+        pair.totalValueLockedUSD
+      )
+      const feeApr1w = calculateFeeApr(
+        AprTimeRange.ONE_WEEK,
+        oneWeekData.get(pair.id)?.feesUSD ?? 0,
+        pair.feesUSD,
+        pair.totalValueLockedUSD
+      )
+      const feeApr1m = calculateFeeApr(
+        AprTimeRange.ONE_MONTH,
+        oneMonthData.get(pair.id)?.feesUSD ?? 0,
+        pair.feesUSD,
+        pair.totalValueLockedUSD
+      )
       const currentVolumeUSD = Number(pair.volumeUSD)
       const currentLiquidityUSD = Number(pair.totalValueLockedUSD)
       const currentFeesUSD = Number(pair.feesUSD)
@@ -755,12 +798,6 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
       const fees1d = oneDayData.has(pair.id) ? currentFeesUSD - oneDayData.get(pair.id).feesUSD : currentFeesUSD
       const fees1w = oneWeekData.has(pair.id) ? currentFeesUSD - oneWeekData.get(pair.id).feesUSD : currentFeesUSD
       const fees1m = oneMonthData.has(pair.id) ? currentFeesUSD - oneMonthData.get(pair.id).feesUSD : currentFeesUSD
-
-      const feeApr1h = calculateFeeApr(AprTimeRange.ONE_HOUR, fees1h, pair.feesUSD, pair.totalValueLockedUSD)
-      const feeApr1d = calculateFeeApr(AprTimeRange.ONE_DAY, fees1d, pair.feesUSD, pair.totalValueLockedUSD)
-      const feeApr1w = calculateFeeApr(AprTimeRange.ONE_WEEK, fees1w, pair.feesUSD, pair.totalValueLockedUSD)
-      const feeApr1m = calculateFeeApr(AprTimeRange.ONE_MONTH, fees1m, pair.feesUSD, pair.totalValueLockedUSD)
-
       const feesChange1h = calculatePercentageChange(
         currentFeesUSD,
         oneHourData.get(pair.id)?.feesUSD ?? 0,
