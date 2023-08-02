@@ -78,17 +78,8 @@ export const angleRewardsBaseValidator = z.object({
 
 export const angleRewardsMultipleValidator = z.array(angleRewardsBaseValidator)
 
-export const angleRewardTokensValidator = z.array(
-  z.record(
-    z.string(),
-    z.record(
-      z.string(),
-      z.object({
-        address: z.string(),
-        name: z.string(),
-        decimals: z.number(),
-        symbol: z.string(),
-      })
-    )
-  )
-)
+export const angleRewardTokensValidator = z.object({
+  validRewardTokens: z.array(
+    z.object({ minimumAmountPerEpoch: z.number(), token: z.string(), decimals: z.number(), symbol: z.string() })
+  ),
+})
