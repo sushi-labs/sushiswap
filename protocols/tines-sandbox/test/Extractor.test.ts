@@ -261,7 +261,7 @@ it.skip('Extractor Celo infinit work test', async () => {
   await startInfinitTest({
     providerURL: `https://forno.celo.org`,
     chain: celo,
-    factoriesV2: [],
+    factoriesV2: [sushiswapV2Factory(ChainId.CELO)],
     factoriesV3: [uniswapV3Factory(ChainId.CELO)],
     tickHelperContract: TickLensContract[ChainId.CELO],
     cacheDir: './cache',

@@ -17,8 +17,7 @@ const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
 // TODO: UniV3 price diapason +-10% test
 // TODO: fullness test
-// TODO: All blockchains test
-// TODO: correctness terst - now ofter fails? (needs good token list)
+// TODO: correctness test - how ofter fails? (needs good token list)
 
 // TODO: Back to LogFilter ? Faster events applying
 // TODO: Ignore uncaught exception? Not kill the process
