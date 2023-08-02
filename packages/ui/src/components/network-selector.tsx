@@ -48,7 +48,7 @@ const NetworkSelector = <T extends number>({
       <PopoverPrimitive.Trigger asChild>{children}</PopoverPrimitive.Trigger>
       <PopoverContent className="!w-60 !p-0 !overflow-x-hidden !overflow-y-scroll scroll">
         <Command>
-          <CommandInput placeholder="Search network..." />
+          <CommandInput placeholder="Search network" />
           <CommandEmpty>No network found.</CommandEmpty>
           <CommandGroup>
             {_networks.map((el) => (

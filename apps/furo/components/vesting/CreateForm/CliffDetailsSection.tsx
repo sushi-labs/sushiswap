@@ -1,4 +1,6 @@
 import { classNames } from '@sushiswap/ui'
+import { Label, TextField } from '@sushiswap/ui'
+import { DateField } from '@sushiswap/ui'
 import {
   FormControl,
   FormDescription,
@@ -7,7 +9,6 @@ import {
   FormMessage,
   FormSection,
 } from '@sushiswap/ui/components/form'
-import { Input } from '@sushiswap/ui/components/input'
 import { Switch } from '@sushiswap/ui/components/switch'
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -45,22 +46,14 @@ export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
           render={({ field: { name, onChange, value, onBlur } }) => {
             return (
               <FormItem>
+                <Label>
+                  Cliff end date<sup>*</sup>
+                </Label>
                 <FormControl>
-                  <Input.DatePicker
+                  <DateField
+                    testId={`create-single-vest-cliff-date${index}`}
                     name={name}
                     onBlur={onBlur}
-                    customInput={
-                      <Input.DatePickerCustomInput
-                        name={name}
-                        id={`create-single-vest-cliff-date${index}`}
-                        testdata-id={`create-single-vest-cliff-date${index}`}
-                        label={
-                          <>
-                            End date<sup>*</sup>
-                          </>
-                        }
-                      />
-                    }
                     onChange={onChange}
                     selected={value}
                     portalId="root-portal"
@@ -93,20 +86,19 @@ export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
           render={({ field: { onChange, value, onBlur, name } }) => {
             return (
               <FormItem>
+                <Label>
+                  Amount
+                  <sup>*</sup>
+                </Label>
                 <FormControl>
-                  <Input.Numeric
-                    onUserInput={onChange}
-                    onBlur={onBlur}
-                    name={name}
+                  <TextField
+                    type="number"
+                    onValueChange={onChange}
                     value={value}
-                    id="create-single-vest-cliff-amount-input"
+                    name={name}
+                    onBlur={onBlur}
                     testdata-id={`create-single-vest-cliff-amount-input${index}`}
-                    label={
-                      <>
-                        Amount{currency ? ` (${currency.symbol})` : ''}
-                        <sup>*</sup>
-                      </>
-                    }
+                    unit={currency?.symbol}
                   />
                 </FormControl>
                 <FormDescription>The amount that gets unlocked after the cliff end date.</FormDescription>

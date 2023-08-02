@@ -11,22 +11,26 @@ interface SelectNetworkWidgetProps {
   networks: ChainId[]
   selectedNetwork: ChainId
   onSelect(chainId: ChainId): void
+  title?: string
 }
 
 export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(function SelectNetworkWidget({
   selectedNetwork,
   onSelect,
   networks,
+  title,
 }) {
   return (
     <ContentBlock
       title={
-        <>
-          Which <span className="text-gray-900 dark:text-white">network</span> would you like to provide liquidity on?
-        </>
+        title ?? (
+          <>
+            Which <span className="text-gray-900 dark:text-white">network</span> would you like to provide liquidity on?
+          </>
+        )
       }
     >
-      <div className="flex relative z-[100]">
+      <div>
         <NetworkSelector networks={networks} selected={selectedNetwork} onSelect={onSelect}>
           <Button variant="secondary" className="!font-medium">
             <NetworkIcon chainId={selectedNetwork} width={16} height={16} />

@@ -1,28 +1,36 @@
 import { isAddress } from '@ethersproject/address'
 import { TransactionRequest } from '@ethersproject/providers'
-import { ArrowLeftIcon } from '@heroicons/react/solid'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { FundSource } from '@sushiswap/hooks'
+import {
+  DialogConfirm,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogProvider,
+  DialogReview,
+  DialogTitle,
+  DialogTrigger,
+} from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { List } from '@sushiswap/ui/components/list/List'
-import { Modal } from '@sushiswap/ui/components/modal/Modal'
 import { createToast } from '@sushiswap/ui/components/toast'
 import {
   getFuroVestingRouterContractConfig,
   useAccount,
   useBentoBoxTotal,
   useFuroVestingRouterContract,
+  useWaitForTransaction,
 } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { useApproved, useSignature, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { format } from 'date-fns'
 import React, { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
@@ -30,10 +38,9 @@ import { useFormContext } from 'react-hook-form'
 
 import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreationAction } from '../../../lib'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
-import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS_LABEL,STEP_CONFIGURATIONS_MAP } from '../schema'
+import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS_LABEL, STEP_CONFIGURATIONS_MAP } from '../schema'
 import { calculateCliffDuration, calculateEndDate, calculateStepPercentage, calculateTotalAmount } from '../utils'
 
-const MODAL_ID = 'createVestingSingle'
 const APPROVE_TAG = 'createVestingSingle'
 
 interface CreateFormReviewModal {
@@ -218,11 +225,13 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
     ),
   })
 
+  const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
+
   const formValid = isValid && !isValidating && Object.keys(errors).length === 0
-  console.log({ stepConfig })
   if (stepConfig) console.log(STEP_CONFIGURATIONS_MAP[stepConfig])
+
   return (
-    <>
+    <DialogProvider>
       <div className="grid grid-cols-3 gap-x-10">
         <div />
         <Checker.Connect fullWidth type="button" className="col-span-3 md:col-span-2">
@@ -252,21 +261,130 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                   className="col-span-3 md:col-span-2"
                 >
                   <Checker.Success tag={APPROVE_TAG}>
-                    <Modal.Trigger tag={MODAL_ID}>
-                      {({ open }) => (
-                        <Button
-                          size="xl"
-                          type="button"
-                          fullWidth
-                          disabled={!formValid || !sendTransactionAsync}
-                          onClick={open}
-                          testId="review-single-vest"
-                          className="col-span-3 md:col-span-2"
-                        >
-                          {isLoading ? <Dots>Confirm transaction</Dots> : 'Review Vesting'}
-                        </Button>
+                    <DialogReview>
+                      {({ confirm }) => (
+                        <>
+                          <DialogTrigger asChild>
+                            <Button
+                              size="xl"
+                              type="button"
+                              fullWidth
+                              disabled={!formValid || !sendTransactionAsync}
+                              testId="review-single-vest"
+                              className="col-span-3 md:col-span-2"
+                            >
+                              Review vesting
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Create Vest</DialogTitle>
+                              <DialogDescription>
+                                {_totalAmount?.toSignificant(6)} {_totalAmount?.currency.symbol}
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="flex flex-col gap-4">
+                              <List className="!pt-0">
+                                <List.Control>
+                                  <List.KeyValue flex title="Network">
+                                    {Chain.from(chainId).name}
+                                  </List.KeyValue>
+                                  {_totalAmount && (
+                                    <List.KeyValue flex title="Total amount">
+                                      <div
+                                        className="flex items-center gap-2"
+                                        testdata-id="vesting-review-total-amount"
+                                      >
+                                        <Currency.Icon currency={_totalAmount.currency} width={18} height={18} />
+                                        {_totalAmount?.toSignificant(6)} {_totalAmount.currency.symbol}
+                                      </div>
+                                    </List.KeyValue>
+                                  )}
+                                  {endDate && (
+                                    <List.KeyValue flex title="End date">
+                                      {format(endDate, 'dd MMM yyyy hh:mm')}
+                                    </List.KeyValue>
+                                  )}
+                                </List.Control>
+                              </List>
+                              {cliffEnabled && cliffEndDate && _cliffAmount && (
+                                <List className="!pt-0">
+                                  <List.Control>
+                                    <List.KeyValue flex title="Cliff end date">
+                                      {format(cliffEndDate, 'dd MMM yyyy')}
+                                    </List.KeyValue>
+                                    <List.KeyValue flex title="Cliff amount">
+                                      <div
+                                        className="flex items-center gap-2"
+                                        testdata-id="vesting-review-cliff-amount"
+                                      >
+                                        <Currency.Icon currency={_cliffAmount.currency} width={18} height={18} />
+                                        {_cliffAmount?.toSignificant(6)} {_cliffAmount.currency.symbol}
+                                      </div>
+                                    </List.KeyValue>
+                                  </List.Control>
+                                </List>
+                              )}
+                              <List className="!pt-0">
+                                <List.Control>
+                                  {_stepAmount && (
+                                    <List.KeyValue flex title="Payout per unlock">
+                                      <div
+                                        className="flex items-center gap-2"
+                                        testdata-id="vesting-review-payment-per-period"
+                                      >
+                                        <Currency.Icon currency={_stepAmount.currency} width={18} height={18} />
+                                        {_stepAmount?.toSignificant(6)} {_stepAmount.currency.symbol}
+                                      </div>
+                                    </List.KeyValue>
+                                  )}
+                                  <List.KeyValue
+                                    flex
+                                    title="Number of unlocks"
+                                    testdata-id="vesting-review-amount-of-periods"
+                                  >
+                                    <div
+                                      className="flex items-center gap-2"
+                                      testdata-id="vesting-review-amount-of-periods"
+                                    >
+                                      {stepPayouts}
+                                    </div>
+                                  </List.KeyValue>
+                                  <List.KeyValue
+                                    flex
+                                    title="Unlock frequency"
+                                    testdata-id="vesting-review-period-length"
+                                  >
+                                    <div className="flex items-center gap-2" testdata-id="vesting-review-period-length">
+                                      {stepConfig ? STEP_CONFIGURATIONS_LABEL[stepConfig] : ''}
+                                    </div>
+                                  </List.KeyValue>
+                                </List.Control>
+                              </List>
+                            </div>
+                            <DialogFooter>
+                              <Button
+                                fullWidth
+                                size="xl"
+                                loading={isLoading && !isError}
+                                onClick={() => sendTransactionAsync?.().then(() => confirm())}
+                                disabled={isError || !sendTransactionAsync}
+                                color={isError ? 'red' : 'blue'}
+                                testId="create-single-vest-confirmation"
+                              >
+                                {isError ? (
+                                  'Shoot! Something went wrong :('
+                                ) : isLoading ? (
+                                  <Dots>Create</Dots>
+                                ) : (
+                                  'Create'
+                                )}
+                              </Button>
+                            </DialogFooter>
+                          </DialogContent>
+                        </>
                       )}
-                    </Modal.Trigger>
+                    </DialogReview>
                   </Checker.Success>
                 </Checker.ApproveERC20>
               </Checker.ApproveBentobox>
@@ -274,108 +392,13 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
           </Checker.Network>
         </Checker.Connect>
       </div>
-      <Modal.Review tag={MODAL_ID} variant="opaque">
-        {({ close, confirm }) => (
-          <div className="max-w-[504px] mx-auto">
-            <button onClick={close} className="p-3 pl-0">
-              <ArrowLeftIcon strokeWidth={3} width={24} height={24} />
-            </button>
-            <div className="flex items-start justify-between gap-4 py-2">
-              <div className="flex flex-col flex-grow gap-1">
-                <h1 className="text-3xl font-semibold text-gray-900 dark:text-slate-50">Create Vesting</h1>
-                <h1 className="text-lg font-medium text-gray-600 dark:text-slate-300">{_currency?.symbol}</h1>
-              </div>
-              <div>{_currency && <Currency.Icon currency={_currency} width={56} height={56} />}</div>
-            </div>
-            <div className="flex flex-col gap-3">
-              <List>
-                <List.Control>
-                  <List.KeyValue flex title="Network">
-                    {Chain.from(chainId).name}
-                  </List.KeyValue>
-                  {_totalAmount && (
-                    <List.KeyValue flex title="Total amount">
-                      <div className="flex items-center gap-2" testdata-id="vesting-review-total-amount">
-                        <Currency.Icon currency={_totalAmount.currency} width={18} height={18} />
-                        {_totalAmount?.toSignificant(6)} {_totalAmount.currency.symbol}
-                      </div>
-                    </List.KeyValue>
-                  )}
-                  {endDate && (
-                    <List.KeyValue flex title="End date">
-                      {format(endDate, 'dd MMM yyyy hh:mm')}
-                    </List.KeyValue>
-                  )}
-                </List.Control>
-              </List>
-              {cliffEnabled && cliffEndDate && _cliffAmount && (
-                <List>
-                  <List.Control>
-                    <List.KeyValue flex title="Cliff end date">
-                      {format(cliffEndDate, 'dd MMM yyyy')}
-                    </List.KeyValue>
-                    <List.KeyValue flex title="Cliff amount">
-                      <div className="flex items-center gap-2" testdata-id="vesting-review-cliff-amount">
-                        <Currency.Icon currency={_cliffAmount.currency} width={18} height={18} />
-                        {_cliffAmount?.toSignificant(6)} {_cliffAmount.currency.symbol}
-                      </div>
-                    </List.KeyValue>
-                  </List.Control>
-                </List>
-              )}
-              <List>
-                <List.Control>
-                  {_stepAmount && (
-                    <List.KeyValue flex title="Payout per unlock">
-                      <div className="flex items-center gap-2" testdata-id="vesting-review-payment-per-period">
-                        <Currency.Icon currency={_stepAmount.currency} width={18} height={18} />
-                        {_stepAmount?.toSignificant(6)} {_stepAmount.currency.symbol}
-                      </div>
-                    </List.KeyValue>
-                  )}
-                  <List.KeyValue flex title="Number of unlocks" testdata-id="vesting-review-amount-of-periods">
-                    <div className="flex items-center gap-2" testdata-id="vesting-review-amount-of-periods">
-                      {stepPayouts}
-                    </div>
-                  </List.KeyValue>
-                  <List.KeyValue flex title="Unlock frequency" testdata-id="vesting-review-period-length">
-                    <div className="flex items-center gap-2" testdata-id="vesting-review-period-length">
-                      {stepConfig ? STEP_CONFIGURATIONS_LABEL[stepConfig] : ''}
-                    </div>
-                  </List.KeyValue>
-                </List.Control>
-              </List>
-            </div>
-            <div className="pt-4">
-              <div className="space-y-4">
-                <Button
-                  fullWidth
-                  size="xl"
-                  loading={isLoading && !isError}
-                  onClick={() => sendTransactionAsync?.().then(() => confirm())}
-                  disabled={isError || !sendTransactionAsync}
-                  color={isError ? 'red' : 'blue'}
-                  testId="create-single-vest-confirmation"
-                >
-                  {isError ? 'Shoot! Something went wrong :(' : isLoading ? <Dots>Create</Dots> : 'Create'}
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-      </Modal.Review>
-      <Modal.Confirm tag={MODAL_ID} variant="transparent">
-        {({ close }) => (
-          <TxStatusModalContent
-            testId="vest-creation-success-modal"
-            tag={MODAL_ID}
-            chainId={chainId}
-            hash={data?.hash}
-            successMessage={'Successfully created vest'}
-            onClose={close}
-          />
-        )}
-      </Modal.Confirm>
-    </>
+      <DialogConfirm
+        chainId={chainId}
+        status={status}
+        testId="vest-creation-success-modal"
+        successMessage="Successfully created vest!"
+        txHash={data?.hash}
+      />
+    </DialogProvider>
   )
 })

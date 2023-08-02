@@ -256,12 +256,12 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
         setPercentage={setPercentage}
       >
         <Checker.Connect fullWidth>
-          <Checker.Custom
+          <Checker.Guard
             guardWhen={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
             guardText="Pool not found"
           >
             <Checker.Network fullWidth chainId={_pool.chainId}>
-              <Checker.Custom guardWhen={+percentage <= 0} guardText="Enter amount">
+              <Checker.Guard guardWhen={+percentage <= 0} guardText="Enter amount">
                 <Checker.ApproveERC20
                   fullWidth
                   id="approve-remove-liquidity-slp"
@@ -280,9 +280,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
                     </Button>
                   </Checker.Success>
                 </Checker.ApproveERC20>
-              </Checker.Custom>
+              </Checker.Guard>
             </Checker.Network>
-          </Checker.Custom>
+          </Checker.Guard>
         </Checker.Connect>
       </RemoveSectionWidget>
     </div>

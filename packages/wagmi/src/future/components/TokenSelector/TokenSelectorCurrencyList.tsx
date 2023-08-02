@@ -11,6 +11,7 @@ interface TokenSelectorCurrencyListProps {
   id: string
   currencies: Type[] | undefined
   chainId: ChainId
+  officialTokenIds: string[]
   onSelect(currency: Type): void
   pin?: {
     isPinned: (currencyId: string) => boolean
@@ -26,6 +27,7 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> = mem
   chainId,
   selected,
   pin,
+  officialTokenIds,
 }) {
   const { address } = useAccount()
   const { data: pricesMap } = usePrices({ chainId })
@@ -40,6 +42,7 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> = mem
       currency,
       balance: balancesMap?.[currency.isNative ? NativeAddress : currency.address],
       price: pricesMap?.[currency.isNative ? Native.onChain(currency.chainId).wrapped.address : currency.address],
+      showWarning: currency.isNative ? false : !officialTokenIds.includes(currency.address),
       onSelect: () => onSelect(currency),
       pin: pin
         ? {
