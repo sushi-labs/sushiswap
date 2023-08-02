@@ -287,7 +287,7 @@ const additional = [
 
 const RAW = [...raw, ...additional] as const
 
-const EIP3091_OVERRIDE = [ChainId.OPTIMISM, ChainId.BOBA] as number[]
+const EIP3091_OVERRIDE = [ChainId.OPTIMISM, ChainId.BOBA, ChainId.BASE] as number[]
 
 type Data = (typeof RAW)[number]
 
