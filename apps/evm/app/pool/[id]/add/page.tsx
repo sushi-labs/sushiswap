@@ -1,14 +1,10 @@
 import { ArrowDownIcon } from '@heroicons/react/20/solid'
 import { ChainId } from '@sushiswap/chain'
 
-import {
-  AddSectionLegacy,
-  AddSectionStake,
-  AddSectionTrident,
-  PoolPositionProvider,
-  PoolPositionRewardsProvider,
-  PoolPositionStakedProvider,
-} from '../../../../ui/pool'
+import { PoolPositionProvider, PoolPositionRewardsProvider, PoolPositionStakedProvider } from '../../../../ui/pool'
+import { AddSectionLegacy } from '../../../../ui/pool/AddSectionLegacy'
+import { AddSectionStake } from '../../../../ui/pool/AddSectionStake'
+import { AddSectionTrident } from '../../../../ui/pool/AddSectionTrident'
 import { getPool } from '../page'
 
 export default async function AddPage({ params }: { params: { id: string; positionId?: string } }) {

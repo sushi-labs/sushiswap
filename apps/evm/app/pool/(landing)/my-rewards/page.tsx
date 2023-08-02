@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-import { RewardsTab } from '../../../../ui/pool/PoolsSection/RewardsTab'
+import { RewardsTab } from '../../../../ui/pool/RewardsTab'
 
 export default function MyRewardsPage() {
   return <RewardsTab />

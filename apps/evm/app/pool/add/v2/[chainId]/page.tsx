@@ -18,8 +18,11 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { SWRConfig } from 'swr'
-import { AddSectionReviewModalLegacy, SelectNetworkWidget, SelectTokensWidget } from 'ui/pool'
-import { ContentBlock } from 'ui/pool/AddPage/ContentBlock'
+
+import { AddSectionReviewModalLegacy } from '../../../../../ui/pool/AddSectionReviewModalLegacy'
+import { ContentBlock } from '../../../../../ui/pool/ContentBlock'
+import { SelectNetworkWidget } from '../../../../../ui/pool/SelectNetworkWidget'
+import { SelectTokensWidget } from '../../../../../ui/pool/SelectTokensWidget'
 
 // // This function gets called at build time on server-side.
 // // It may be called again, on a serverless function, if

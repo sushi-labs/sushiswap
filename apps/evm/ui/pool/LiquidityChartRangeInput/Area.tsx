@@ -35,5 +35,5 @@ export const Area: FC<AreaProps> = ({ series, xScale, yScale, xValue, yValue, fi
         }
       />
     ),
-    [fill, series, xScale, xValue, yScale, yValue]
+    [fill, opacity, series, xScale, xValue, yScale, yValue]
   )

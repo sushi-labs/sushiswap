@@ -1,14 +1,10 @@
 import { ArrowDownIcon } from '@heroicons/react/20/solid'
 import { ChainId } from '@sushiswap/chain'
 
-import {
-  PoolPositionProvider,
-  PoolPositionRewardsProvider,
-  PoolPositionStakedProvider,
-  RemoveSectionLegacy,
-  RemoveSectionTrident,
-  RemoveSectionUnstake,
-} from '../../../../ui/pool'
+import { PoolPositionProvider, PoolPositionRewardsProvider, PoolPositionStakedProvider } from '../../../../ui/pool'
+import { RemoveSectionLegacy } from '../../../../ui/pool/RemoveSectionLegacy'
+import { RemoveSectionTrident } from '../../../../ui/pool/RemoveSectionTrident'
+import { RemoveSectionUnstake } from '../../../../ui/pool/RemoveSectionUnstake'
 import { getPool } from '../page'
 
 export default async function RemovePage({ params }: { params: { id: string; positionId?: string } }) {

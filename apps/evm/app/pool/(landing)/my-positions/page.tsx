@@ -3,9 +3,10 @@
 import { Container } from '@sushiswap/ui'
 import React from 'react'
 
-import { PositionsTab } from '../../../../ui/pool/PoolsSection/PositionsTab'
-import { TableFiltersResetButton, TableFiltersSearchToken } from '../../../../ui/pool/PoolsSection/Tables/TableFilters'
-import { TableFiltersNetwork } from '../../../../ui/pool/PoolsSection/Tables/TableFilters/TableFiltersNetwork'
+import { PositionsTab } from '../../../../ui/pool/PositionsTab'
+import { TableFiltersNetwork } from '../../../../ui/pool/TableFiltersNetwork'
+import { TableFiltersResetButton } from '../../../../ui/pool/TableFiltersResetButton'
+import { TableFiltersSearchToken } from '../../../../ui/pool/TableFiltersSearchToken'
 
 export default function MyPositionsPage() {
   return (

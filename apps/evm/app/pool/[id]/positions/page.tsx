@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
-import { ConcentratedPositionsTable } from 'ui/pool/PoolsSection/Tables/PositionsTable/ConcentratedPositionsTable'
 
 import { PoolsFiltersProvider } from '../../../../ui/pool'
+import { ConcentratedPositionsTable } from '../../../../ui/pool/ConcentratedPositionsTable'
 import { getPool } from '../page'
 
 export default async function PositionsPage({ params }: { params: { id: string } }) {

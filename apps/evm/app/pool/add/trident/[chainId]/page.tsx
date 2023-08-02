@@ -26,15 +26,14 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { SWRConfig } from 'swr'
-import {
-  AddSectionReviewModalTrident,
-  SelectFeeWidget,
-  SelectNetworkWidget,
-  SelectPoolTypeWidget,
-  SelectTokensWidget,
-} from 'ui/pool'
-import { ContentBlock } from 'ui/pool/AddPage/ContentBlock'
-import { CreateSectionReviewModalTrident } from 'ui/pool/CreateSection'
+
+import { AddSectionReviewModalTrident } from '../../../../../ui/pool/AddSectionReviewModalTrident'
+import { ContentBlock } from '../../../../../ui/pool/ContentBlock'
+import { CreateSectionReviewModalTrident } from '../../../../../ui/pool/CreateSectionReviewModalTrident'
+import { SelectFeeWidget } from '../../../../../ui/pool/SelectFeeWidget'
+import { SelectNetworkWidget } from '../../../../../ui/pool/SelectNetworkWidget'
+import { SelectPoolTypeWidget } from '../../../../../ui/pool/SelectPoolTypeWidget'
+import { SelectTokensWidget } from '../../../../../ui/pool/SelectTokensWidget'
 
 // // This function gets called at build time on server-side.
 // // It may be called again, on a serverless function, if

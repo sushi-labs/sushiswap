@@ -12,7 +12,7 @@ import { useTokenAmountDollarValues } from 'lib/hooks'
 import React, { FC, useMemo, useState } from 'react'
 
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
-import { Charts } from './PoolSection/V3/Tabs/Statistics/Charts'
+import { StatisticsCharts } from './StatisticsChart'
 
 enum Granularity {
   Day,
@@ -46,7 +46,7 @@ const Pool: FC<{ params: { id: string } }> = ({ params }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-10">
-      <Charts address={address} chainId={chainId} />
+      <StatisticsCharts address={address} chainId={chainId} />
       <div className="flex flex-col gap-6">
         <List className="!pt-0">
           <div className="flex items-center justify-between">
@@ -89,7 +89,7 @@ const Pool: FC<{ params: { id: string } }> = ({ params }) => {
           </div>
           <List.Control>
             {poolStats && poolStats.incentives.length > 0 ? (
-              poolStats.incentives.map((el, i) => (
+              poolStats.incentives.map((el) => (
                 <List.KeyValue key={el.id} flex title={`${el.reward.currency.symbol}`}>
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">

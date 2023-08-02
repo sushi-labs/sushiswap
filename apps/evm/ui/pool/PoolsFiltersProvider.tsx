@@ -7,7 +7,7 @@ import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, use
 import { z } from 'zod'
 
 import { useTypedSearchParams } from '../../lib/hooks'
-import { POOL_TYPES } from './PoolsSection/Tables/TableFilters'
+import { POOL_TYPES } from './TableFiltersPoolType'
 
 type FilterContext = z.TypeOf<typeof poolFiltersSchema>
 

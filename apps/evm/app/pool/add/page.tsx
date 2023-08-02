@@ -19,15 +19,18 @@ import { useTokenAmountDollarValues } from 'lib/hooks'
 import Link from 'next/link'
 import React, { FC, useMemo, useState } from 'react'
 import { SWRConfig } from 'swr'
-import { SelectNetworkWidget, SelectPricesWidget, SelectTokensWidget } from 'ui/pool'
-import { ContentBlock } from 'ui/pool/AddPage/ContentBlock'
-import { ConcentratedLiquidityProvider } from 'ui/pool/ConcentratedLiquidityProvider'
+
+import { ConcentratedLiquidityProvider } from '../../../ui/pool/ConcentratedLiquidityProvider'
 import {
   ConcentratedLiquidityURLStateProvider,
   useConcentratedLiquidityURLState,
-} from 'ui/pool/ConcentratedLiquidityURLStateProvider'
-import { ConcentratedLiquidityWidget } from 'ui/pool/ConcentratedLiquidityWidget'
-import { SelectFeeConcentratedWidget } from 'ui/pool/NewPositionSection/SelectFeeConcentratedWidget'
+} from '../../../ui/pool/ConcentratedLiquidityURLStateProvider'
+import { ConcentratedLiquidityWidget } from '../../../ui/pool/ConcentratedLiquidityWidget'
+import { ContentBlock } from '../../../ui/pool/ContentBlock'
+import { SelectFeeConcentratedWidget } from '../../../ui/pool/SelectFeeConcentratedWidget'
+import { SelectNetworkWidget } from '../../../ui/pool/SelectNetworkWidget'
+import { SelectPricesWidget } from '../../../ui/pool/SelectPricesWidget'
+import { SelectTokensWidget } from '../../../ui/pool/SelectTokensWidget'
 
 export default function Page() {
   return (

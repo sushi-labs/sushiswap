@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { MigrateTab } from '../../../../ui/pool/PoolsSection/MigrateTab'
+import { MigrateTabContent } from '../../../../ui/pool/MigrateTabContent'
 
 export default function MigratePage() {
-  return <MigrateTab />
+  return <MigrateTabContent />
 }

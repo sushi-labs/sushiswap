@@ -5,7 +5,7 @@ import Link from 'next/link'
 import React from 'react'
 
 import { PathnameButton } from '../../../ui/pool'
-import { PoolHeader } from '../../../ui/pool/future/PoolHeader'
+import { PoolHeader } from '../../../ui/pool/PoolHeader'
 import { getPool } from './page'
 
 export const metadata = {

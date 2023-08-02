@@ -1,8 +1,9 @@
+'use client'
+
 import { Transition } from '@headlessui/react'
 import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { Type } from '@sushiswap/currency'
-import { classNames } from '@sushiswap/ui'
-import { DialogTrigger } from '@sushiswap/ui'
+import { classNames, DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { FeeAmount, Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
@@ -12,7 +13,7 @@ import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Bound, Field } from 'lib/constants'
 import React, { FC, Fragment, useCallback, useMemo } from 'react'
 
-import { AddSectionReviewModalConcentrated } from './AddPage/AddSectionReviewModalConcentrated'
+import { AddSectionReviewModalConcentrated } from './AddSectionReviewModalConcentrated'
 import {
   useConcentratedDerivedMintInfo,
   useConcentratedMintActionHandlers,

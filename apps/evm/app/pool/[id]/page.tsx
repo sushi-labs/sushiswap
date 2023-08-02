@@ -1,8 +1,12 @@
 import { isAddress } from '@ethersproject/address'
 import { ChainId } from '@sushiswap/chain'
 
-import { PoolChartV2, PoolComposition, PoolRewards, PoolStats, UnknownTokenAlert } from '../../../ui/pool'
+import { UnknownTokenAlert } from '../../../ui/pool'
+import { PoolChartV2 } from '../../../ui/pool/PoolChartV2'
+import { PoolComposition } from '../../../ui/pool/PoolComposition'
 import { PoolPageV3 } from '../../../ui/pool/PoolPageV3'
+import { PoolRewards } from '../../../ui/pool/PoolRewards'
+import { PoolStats } from '../../../ui/pool/PoolStats'
 
 export async function getPool({ chainId, address }: { chainId: ChainId; address: string }) {
   if (typeof +chainId !== 'number' || !isAddress(address)) {

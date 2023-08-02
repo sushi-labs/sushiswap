@@ -48,14 +48,15 @@ import { useWaitForTransaction } from 'wagmi'
 
 import { ANGLE_ENABLED_NETWORKS } from '../../../config'
 import { useTokenAmountDollarValues } from '../../../lib/hooks'
-import { SelectNetworkWidget, SelectTokensWidget } from '../../../ui/pool'
-import { ContentBlock } from '../../../ui/pool/AddPage/ContentBlock'
 import { ConcentratedLiquidityProvider } from '../../../ui/pool/ConcentratedLiquidityProvider'
 import {
   ConcentratedLiquidityURLStateProvider,
   useConcentratedLiquidityURLState,
 } from '../../../ui/pool/ConcentratedLiquidityURLStateProvider'
-import { SelectFeeConcentratedWidget } from '../../../ui/pool/NewPositionSection/SelectFeeConcentratedWidget'
+import { ContentBlock } from '../../../ui/pool/ContentBlock'
+import { SelectFeeConcentratedWidget } from '../../../ui/pool/SelectFeeConcentratedWidget'
+import { SelectNetworkWidget } from '../../../ui/pool/SelectNetworkWidget'
+import { SelectTokensWidget } from '../../../ui/pool/SelectTokensWidget'
 
 const APPROVE_TAG = 'approve-incentivize'
 

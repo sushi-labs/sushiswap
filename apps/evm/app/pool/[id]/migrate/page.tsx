@@ -4,8 +4,8 @@ import { ChainId } from '@sushiswap/chain'
 import React from 'react'
 import { PoolPositionProvider, PoolPositionRewardsProvider, PoolPositionStakedProvider } from 'ui/pool'
 import { ConcentratedLiquidityProvider } from 'ui/pool/ConcentratedLiquidityProvider'
-import { MigrateTab } from 'ui/pool/PoolPage/MigrateTab'
 
+import { MigrateTab } from '../../../../ui/pool/MigrateTab'
 import { getPool } from '../page'
 
 export default async function MigratePage({ params }: { params: { id: string } }) {
