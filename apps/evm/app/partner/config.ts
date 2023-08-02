@@ -7,6 +7,7 @@ export const SUPPORTED_CHAINS = [
   ChainId.ARBITRUM,
   ChainId.POLYGON,
   ChainId.AVALANCHE,
+  ChainId.BASE,
   ChainId.MOONRIVER,
   ChainId.FANTOM,
   ChainId.BSC,
