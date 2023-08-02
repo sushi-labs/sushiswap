@@ -613,7 +613,7 @@ const linea = {
   },
 } as const
 
-const base = {
+export const base = {
   id: ChainId.BASE,
   name: 'Base',
   network: 'base',
