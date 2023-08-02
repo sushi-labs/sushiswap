@@ -22,6 +22,7 @@ import {
   WBTC_ADDRESS,
   WNATIVE,
 } from '@sushiswap/currency'
+import { abs } from '@sushiswap/math'
 import {
   DataFetcher,
   LiquidityProviders,
@@ -31,11 +32,11 @@ import {
   Router,
 } from '@sushiswap/router'
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
-import { BridgeBento, getBigNumber, RouteStatus, RPool, StableSwapRPool } from '@sushiswap/tines'
+import { BridgeBento, getBigInt, RouteStatus, RPool, StableSwapRPool } from '@sushiswap/tines'
 import { setTokenBalance } from '@sushiswap/tines-sandbox'
 import { expect } from 'chai'
 import { signERC2612Permit } from 'eth-permit'
-import { BigNumber, Contract } from 'ethers'
+import { Contract } from 'ethers'
 import { ethers, network } from 'hardhat'
 import seedrandom from 'seedrandom'
 import { createPublicClient } from 'viem'
@@ -144,12 +145,12 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   }
 }
 
-async function makePermit(env: TestEnvironment, token: Token, amount: BigNumber): Promise<PermitData> {
+async function makePermit(env: TestEnvironment, token: Token, amount: bigint): Promise<PermitData> {
   const userAddress = await env.user.getAddress()
-  const result = await signERC2612Permit(env.user, token.address, userAddress, env.rp.address, amount.toHexString())
+  const result = await signERC2612Permit(env.user, token.address, userAddress, env.rp.address, amount.toString(16))
   return {
-    value: BigNumber.from(result.value),
-    deadline: BigNumber.from(result.deadline),
+    value: BigInt(result.value),
+    deadline: BigInt(result.deadline),
     v: result.v,
     r: result.r,
     s: result.s,
@@ -160,17 +161,17 @@ async function makePermit(env: TestEnvironment, token: Token, amount: BigNumber)
 async function makeSwap(
   env: TestEnvironment,
   fromToken: Type,
-  amountIn: BigNumber,
+  amountIn: bigint,
   toToken: Type,
   usedPools: Set<string>,
   providers?: LiquidityProviders[],
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
   makeSankeyDiagram = false
-): Promise<[BigNumber, number] | undefined> {
+): Promise<[bigint, number] | undefined> {
   // console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
-  if (fromToken instanceof Token && permits.length == 0) {
+  if (fromToken instanceof Token && permits.length === 0) {
     //console.log(`Approve user's ${fromToken.symbol} to the route processor ...`)
     const WrappedBaseTokenContract = new ethers.Contract(fromToken.address, erc20Abi, env.user)
     await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
@@ -197,7 +198,7 @@ async function makeSwap(
   //       `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
   //   )
   // )
-  if (route.status == RouteStatus.NoWay) return
+  if (route.status === RouteStatus.NoWay) return
 
   const rpParams = Router.routeProcessor2Params(
     pcMap,
@@ -212,7 +213,7 @@ async function makeSwap(
 
   // console.log('Call route processor (may take long time for the first launch)...')
 
-  let balanceOutBNBefore: BigNumber
+  let balanceOutBNBefore: bigint
   let toTokenContract: Contract | undefined = undefined
   if (toToken instanceof Token) {
     toTokenContract = await new ethers.Contract(toToken.address, weth9Abi, env.user)
@@ -254,16 +255,16 @@ async function makeSwap(
   // printGasUsage(trace)
 
   // console.log("Fetching user's output balance ...")
-  let balanceOutBN: BigNumber
+  let balanceOutBN: bigint
   if (toTokenContract) {
     balanceOutBN = (await toTokenContract.connect(env.user).balanceOf(env.user.address)).sub(balanceOutBNBefore)
   } else {
-    balanceOutBN = (await env.user.getBalance()).sub(balanceOutBNBefore)
-    balanceOutBN = balanceOutBN.add(receipt.effectiveGasPrice.mul(receipt.gasUsed))
+    balanceOutBN = (await env.user.getBalance()) - balanceOutBNBefore
+    balanceOutBN = balanceOutBN + receipt.effectiveGasPrice * receipt.gasUsed
   }
-  const slippage = parseInt(balanceOutBN.sub(route.amountOutBN).mul(10_000).div(route.amountOutBN).toString())
+  const slippage = parseInt(balanceOutBN - (route.amountOutBN * 10_000n) / route.amountOutBN)
 
-  if (route.amountOutBN.sub(balanceOutBN).abs().gt(10)) {
+  if (abs(route.amountOutBN - balanceOutBN) > 10n) {
     if (slippage < 0) {
       console.log(`expected amountOut: ${route.amountOutBN.toString()}`)
       console.log(`real amountOut:     ${balanceOutBN.toString()}`)
@@ -287,14 +288,14 @@ async function updMakeSwap(
   env: TestEnvironment,
   fromToken: Type,
   toToken: Type,
-  lastCallResult: BigNumber | [BigNumber | undefined, number],
+  lastCallResult: bigint | [bigint | undefined, number],
   usedPools: Set<string> = new Set(),
   providers?: LiquidityProviders[],
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
   makeSankeyDiagram = false
-): Promise<[BigNumber | undefined, number]> {
-  const [amountIn, waitBlock] = lastCallResult instanceof BigNumber ? [lastCallResult, 1] : lastCallResult
+): Promise<[bigint | undefined, number]> {
+  const [amountIn, waitBlock] = typeof lastCallResult === 'bigint' ? [lastCallResult, 1] : lastCallResult
   if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
 
   //console.log('Wait data update for min block', waitBlock)
@@ -319,10 +320,10 @@ async function checkTransferAndRoute(
   env: TestEnvironment,
   fromToken: Type,
   toToken: Type,
-  lastCallResult: BigNumber | [BigNumber | undefined, number],
+  lastCallResult: bigint | [bigint | undefined, number],
   usedPools: Set<string>
-): Promise<[BigNumber | undefined, number]> {
-  const [amountIn, waitBlock] = lastCallResult instanceof BigNumber ? [lastCallResult, 1] : lastCallResult
+): Promise<[bigint | undefined, number]> {
+  const [amountIn, waitBlock] = lastCallResult instanceof bigint ? [lastCallResult, 1] : lastCallResult
   if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
   await dataUpdated(env, waitBlock)
 
@@ -344,12 +345,12 @@ async function checkTransferAndRoute(
 
   const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9)
   const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, env.user.address, env.rp.address)
-  const transferValue = getBigNumber(0.02 * Math.pow(10, Native.onChain(env.chainId).decimals))
-  rpParams.value = (rpParams.value || BigNumber.from(0)).add(transferValue)
+  const transferValue = getBigInt(0.02 * Math.pow(10, Native.onChain(env.chainId).decimals))
+  rpParams.value = (rpParams.value || 0n) + transferValue
 
   const balanceUser2Before = await env.user2.getBalance()
 
-  let balanceOutBNBefore: BigNumber
+  let balanceOutBNBefore: bigint
   let toTokenContract: Contract | undefined = undefined
   if (toToken instanceof Token) {
     toTokenContract = await new ethers.Contract(toToken.address, weth9Abi, env.user)
@@ -378,15 +379,15 @@ async function checkTransferAndRoute(
     })
   }
 
-  let balanceOutBN: BigNumber
+  let balanceOutBN: bigint
   if (toTokenContract) {
     balanceOutBN = (await toTokenContract.connect(env.user).balanceOf(env.user.address)).sub(balanceOutBNBefore)
   } else {
-    balanceOutBN = (await env.user.getBalance()).sub(balanceOutBNBefore)
-    balanceOutBN = balanceOutBN.add(receipt.effectiveGasPrice.mul(receipt.gasUsed))
-    balanceOutBN = balanceOutBN.add(transferValue)
+    balanceOutBN = (await env.user.getBalance()) - balanceOutBNBefore
+    balanceOutBN = balanceOutBN + receipt.effectiveGasPrice * receipt.gasUsed
+    balanceOutBN = balanceOutBN + transferValue
   }
-  expect(balanceOutBN.gte(rpParams.amountOutMin)).equal(true)
+  expect(balanceOutBN >= rpParams.amountOutMin).equal(true)
 
   const balanceUser2After = await env.user2.getBalance()
   const transferredValue = balanceUser2After.sub(balanceUser2Before)
@@ -399,7 +400,7 @@ async function checkTransferAndRoute(
 describe('End-to-end RouteProcessor3 test', async function () {
   let env: TestEnvironment
   let chainId: ChainId
-  let intermidiateResult: [BigNumber | undefined, number] = [undefined, 1]
+  let intermidiateResult: [bigint | undefined, number] = [undefined, 1]
   let testTokensSet: (Type | undefined)[]
   let SUSHI_LOCAL: Token
   let USDC_LOCAL: Token
@@ -432,10 +433,10 @@ describe('End-to-end RouteProcessor3 test', async function () {
     await env.snapshot.restore()
     const usedPools = new Set<string>()
     const token = FRAX[chainId as keyof typeof FRAX_ADDRESS]
-    const amountIn = getBigNumber(1000000 * 1e18)
+    const amountIn = BigInt(1e6) * BigInt(1e18)
     intermidiateResult[0] = amountIn
     intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), token, intermidiateResult, usedPools)
-    const permit = await makePermit(env, token, intermidiateResult[0] as BigNumber)
+    const permit = await makePermit(env, token, intermidiateResult[0] as bigint)
     intermidiateResult = await updMakeSwap(
       env,
       token,
@@ -451,7 +452,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
   it('Native => SUSHI => Native', async function () {
     await env.snapshot.restore()
     const usedPools = new Set<string>()
-    intermidiateResult[0] = getBigNumber(1000000 * 1e18)
+    intermidiateResult[0] = BigInt(1e6) * BigInt(1e18)
     intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult, usedPools)
     intermidiateResult = await updMakeSwap(env, SUSHI_LOCAL, Native.onChain(chainId), intermidiateResult, usedPools)
   })
@@ -459,7 +460,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
   it('Native => WrappedNative => Native', async function () {
     await env.snapshot.restore()
     const usedPools = new Set<string>()
-    intermidiateResult[0] = getBigNumber(1 * 1e18)
+    intermidiateResult[0] = BigInt(1e18)
     intermidiateResult = await updMakeSwap(
       env,
       Native.onChain(chainId),
@@ -480,7 +481,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
     if (chainId === ChainId.POLYGON) {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
-      intermidiateResult[0] = getBigNumber(10_000 * 1e18)
+      intermidiateResult[0] = BigInt(1e4) * BigInt(1e18)
       intermidiateResult = await updMakeSwap(
         env,
         Native.onChain(chainId),
@@ -506,7 +507,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
     if (chainId === ChainId.POLYGON) {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
-      intermidiateResult[0] = getBigNumber(10_000 * 1e18)
+      intermidiateResult[0] = BigInt(1e4) * BigInt(1e18)
       intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], intermidiateResult, usedPools)
       intermidiateResult = await updMakeSwap(
         env,
@@ -543,8 +544,8 @@ describe('End-to-end RouteProcessor3 test', async function () {
       if (chainId === ChainId.POLYGON) {
         await env.snapshot.restore()
         const usedPools = new Set<string>()
-        let amountAndBlock: [BigNumber | undefined, number] = [undefined, 1]
-        amountAndBlock[0] = getBigNumber(10_000_000 * 1e18) // should be partial
+        let amountAndBlock: [bigint | undefined, number] = [undefined, 1]
+        amountAndBlock[0] = BigInt(1e7) * BigInt(1e18) // should be partial
         amountAndBlock = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], amountAndBlock, usedPools, [
           LiquidityProviders.UniswapV3,
           LiquidityProviders.SushiSwapV3,
@@ -573,7 +574,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
       const usedPools = new Set<string>()
       let currentToken = 0
       const rnd: () => number = seedrandom(`testSeed ${i}`) // random [0, 1)
-      intermidiateResult[0] = getBigNumber(getRandomExp(rnd, 1e15, 1e24))
+      intermidiateResult[0] = getBigInt(getRandomExp(rnd, 1e15, 1e24))
       for (;;) {
         const nextToken = getNextToken(rnd, currentToken)
         console.log('Round # ', i + 1, ' Total Route # ', ++routeCounter)
@@ -585,7 +586,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
           usedPools
         )
         currentToken = nextToken
-        if (currentToken === 0 || intermidiateResult[0] == undefined || intermidiateResult[0].lte(1000)) break
+        if (currentToken === 0 || intermidiateResult[0] === undefined || intermidiateResult[0] <= 1000n) break
       }
     }
   })
@@ -599,14 +600,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
       pcMap = env.dataFetcher.getCurrentPoolCodeMap(Native.onChain(chainId), SUSHI_LOCAL)
     } else pcMap = env.poolCodes
 
-    const route = Router.findSpecialRoute(
-      pcMap,
-      chainId,
-      Native.onChain(chainId),
-      getBigNumber(1 * 1e18),
-      SUSHI_LOCAL,
-      30e9
-    )
+    const route = Router.findSpecialRoute(pcMap, chainId, Native.onChain(chainId), BigInt(1e18), SUSHI_LOCAL, 30e9)
     expect(route).not.undefined
   })
 
@@ -614,7 +608,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
     it('Transfer value and route 1', async function () {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
-      intermidiateResult[0] = getBigNumber(1e18)
+      intermidiateResult[0] = BigInt(1e18)
       intermidiateResult = await checkTransferAndRoute(
         env,
         Native.onChain(chainId),
@@ -635,7 +629,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
     it('Transfer value and route 2', async function () {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
-      intermidiateResult[0] = getBigNumber(1e18)
+      intermidiateResult[0] = BigInt(1e18)
       intermidiateResult = await checkTransferAndRoute(
         env,
         Native.onChain(chainId),
@@ -669,7 +663,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
     it('Transfer value and route 3 - check EOA', async function () {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
-      intermidiateResult[0] = getBigNumber(1e18)
+      intermidiateResult[0] = BigInt(1e18)
       env.user2 = await ethers.getSigner('0x0000000000000000000000000000000000000001')
       intermidiateResult = await checkTransferAndRoute(
         env,
@@ -691,7 +685,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
     it('Transfer value and route 4 - not payable address', async function () {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
-      intermidiateResult[0] = getBigNumber(1e18)
+      intermidiateResult[0] = BigInt(1e18)
       env.user2 = await ethers.getSigner('0x597A9bc3b24C2A578CCb3aa2c2C62C39427c6a49')
       let throwed = false
       try {

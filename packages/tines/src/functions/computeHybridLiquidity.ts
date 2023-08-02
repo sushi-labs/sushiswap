@@ -1,5 +1,6 @@
+import { abs } from '@sushiswap/math'
+
 import { A_PRECISION } from '../constants'
-import { abs } from './math'
 
 export function computeHybridLiquidity(r0: bigint, r1: bigint, a: number): bigint {
   if (r0 === 0n && r1 === 0n) {

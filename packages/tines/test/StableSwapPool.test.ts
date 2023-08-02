@@ -1,5 +1,6 @@
+import { abs } from '@sushiswap/math'
+
 import { closeValues, getBigInt, StableSwapRPool } from '../src'
-import { abs } from '../src/functions'
 
 const token0 = {
   name: 'Token0',

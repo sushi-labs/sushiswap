@@ -1,10 +1,10 @@
 import {
-  ConstantProductPool,
   findMultiRouteExactIn,
   findSingleRouteExactIn,
-  Pair,
+  SushiSwapV2Pool,
   Trade,
   TradeType,
+  TridentConstantPool,
   Version as TradeVersion,
 } from '@sushiswap/amm'
 import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
@@ -12,7 +12,6 @@ import { ChainId, chainName } from '@sushiswap/chain'
 import { Amount, Type as Currency, WNATIVE } from '@sushiswap/currency'
 import { RouteStatus } from '@sushiswap/tines'
 import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { useFeeData } from 'wagmi'
 
@@ -110,7 +109,9 @@ export const useTrade: UseTrade = ({
         pools
           // filter out invalid pools
           .filter(
-            (result): result is [PairState.EXISTS, Pair] | [ConstantProductPoolState.EXISTS, ConstantProductPool] =>
+            (
+              result
+            ): result is [PairState.EXISTS, SushiSwapV2Pool] | [ConstantProductPoolState.EXISTS, TridentConstantPool] =>
               Boolean(result[0] === PairState.EXISTS && result[1]) ||
               Boolean(result[0] === ConstantProductPoolState.EXISTS && result[1])
           )
@@ -142,8 +143,8 @@ export const useTrade: UseTrade = ({
           const legacyRoute = findSingleRouteExactIn(
             currencyIn.wrapped,
             currencyOut.wrapped,
-            BigNumber.from(amountSpecified.quotient.toString()),
-            filteredPools.filter((pool): pool is Pair => pool instanceof Pair),
+            amountSpecified.quotient,
+            filteredPools.filter((pool): pool is SushiSwapV2Pool => pool instanceof SushiSwapV2Pool),
             WNATIVE[amountSpecified.currency.chainId],
             Number(data.gasPrice)
           )
@@ -151,8 +152,8 @@ export const useTrade: UseTrade = ({
           const tridentRoute = findMultiRouteExactIn(
             currencyIn.wrapped,
             currencyOut.wrapped,
-            BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
-            filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
+            amountSpecified.toShare(currencyInRebase).quotient,
+            filteredPools.filter((pool): pool is TridentConstantPool => pool instanceof TridentConstantPool),
             WNATIVE[amountSpecified.currency.chainId],
             Number(data.gasPrice)
           )
@@ -178,8 +179,8 @@ export const useTrade: UseTrade = ({
         const legacyRoute = findSingleRouteExactIn(
           currencyIn.wrapped,
           currencyOut.wrapped,
-          BigNumber.from(amountSpecified.quotient.toString()),
-          filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof Pair),
+          amountSpecified.quotient,
+          filteredPools.filter((pool): pool is TridentConstantPool => pool instanceof SushiSwapV2Pool),
           WNATIVE[amountSpecified.currency.chainId],
           Number(data.gasPrice)
         )
@@ -199,8 +200,8 @@ export const useTrade: UseTrade = ({
         const tridentRoute = findMultiRouteExactIn(
           currencyIn.wrapped,
           currencyOut.wrapped,
-          BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
-          filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
+          amountSpecified.toShare(currencyInRebase).quotient,
+          filteredPools.filter((pool): pool is TridentConstantPool => pool instanceof TridentConstantPool),
           WNATIVE[amountSpecified.currency.chainId],
           Number(data.gasPrice)
         )

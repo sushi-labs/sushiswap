@@ -5,7 +5,6 @@ import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { Address, erc20ABI, useBalance as useWagmiBalance, useContractReads } from 'wagmi'
 
@@ -52,11 +51,11 @@ export const useBalances: UseBalances = ({
 
   const [validatedTokens, validatedTokenAddresses] = useMemo(
     () =>
-      currencies.reduce<[Token[], string[][]]>(
+      currencies.reduce<[Token[], string[]]>(
         (acc, currencies) => {
           if (chainId && currencies && isAddress(currencies.wrapped.address)) {
             acc[0].push(currencies.wrapped)
-            acc[1].push([currencies.wrapped.address])
+            acc[1].push(currencies.wrapped.address as Address)
           }
 
           return acc
@@ -75,7 +74,7 @@ export const useBalances: UseBalances = ({
         address: token[0] as Address,
         abi: erc20ABI,
         functionName: 'balanceOf' as const,
-        args: [account],
+        args: [account] as const,
       }
     })
 
@@ -91,7 +90,7 @@ export const useBalances: UseBalances = ({
         ...getBentoBoxContractConfig(chainId),
         abi: bentoBoxV1Abi,
         functionName: 'totals' as const,
-        args: token,
+        args: [token] as const,
       }))
 
       const balanceInputs = validatedTokenAddresses.map((token, i) => ({
@@ -99,7 +98,7 @@ export const useBalances: UseBalances = ({
         ...getBentoBoxContractConfig(chainId),
         abi: bentoBoxV1Abi,
         functionName: 'balanceOf' as const,
-        args: [validatedTokenAddresses[i][0], account],
+        args: [validatedTokenAddresses[i], account] as const,
       }))
 
       return [...input, ...totals, ...balanceInputs]
@@ -123,19 +122,19 @@ export const useBalances: UseBalances = ({
           base: bigint
           elastic: bigint
         }
-        if (base && elastic && data[i + 2 * validatedTokenAddresses.length]) {
+        if (base && elastic && data[i + 2 * validatedTokenAddresses.length].result) {
           const rebase = {
             base: base,
             elastic: elastic,
           }
           const amount = Amount.fromShare(
             validatedTokens[i],
-            (data[i + 2 * validatedTokenAddresses.length] as unknown as BigNumber).toString(),
+            data[i + 2 * validatedTokenAddresses.length].result as bigint,
             rebase
           )
 
           result[validatedTokens[i].address] = {
-            [FundSource.BENTOBOX]: amount.greaterThan(ZERO) ? amount : Amount.fromRawAmount(validatedTokens[i], '0'),
+            [FundSource.BENTOBOX]: amount.greaterThan(0n) ? amount : Amount.fromRawAmount(validatedTokens[i], '0'),
             [FundSource.WALLET]: Amount.fromRawAmount(validatedTokens[i], '0'),
           }
         } else {

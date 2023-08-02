@@ -1,4 +1,6 @@
-import { abs, computeHybridLiquidity } from './functions'
+import { abs } from '@sushiswap/math'
+
+import { computeHybridLiquidity } from './functions'
 import { getBigInt, revertPositive } from './Utils'
 
 export const TYPICAL_SWAP_GAS_COST = 60_000

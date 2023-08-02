@@ -2,7 +2,6 @@ import { ChainId } from '@sushiswap/chain'
 import { ChefType } from '@sushiswap/client'
 import { Amount, SUSHI, SUSHI_ADDRESS, Token } from '@sushiswap/currency'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import { BigNumber } from 'ethers'
 import { useCallback, useMemo } from 'react'
 import { encodeFunctionData, UserRejectedRequestError } from 'viem'
 import {
@@ -113,7 +112,7 @@ export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid,
                 } as const),
           ] as const,
           functionName: 'userInfo',
-          args: [BigNumber.from(pid), address as Address],
+          args: [pid, address as Address],
         } as const,
         {
           chainId: ChainId.ETHEREUM,
@@ -131,7 +130,7 @@ export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid,
             },
           ] as const,
           functionName: 'pendingSushi',
-          args: [BigNumber.from(pid), address as Address],
+          args: [pid, address as Address],
         } as const,
       ]
     }
@@ -164,7 +163,7 @@ export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid,
             } as const,
           ] as const,
           functionName: 'userInfo',
-          args: [BigNumber.from(pid), address as Address],
+          args: [pid, address as Address],
         } as const,
       ] as const
     }

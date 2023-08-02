@@ -1,7 +1,7 @@
 import { HardhatEthersHelpers } from '@nomiclabs/hardhat-ethers/types'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { CL_MAX_TICK, CL_MIN_TICK, CLTick, getBigNumber, RToken, UniV3Pool } from '@sushiswap/tines'
+import { CL_MAX_TICK, CL_MIN_TICK, CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
 import NonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import WETH9 from 'canonical-weth/build/contracts/WETH9.json'
 import { expect } from 'chai'
@@ -13,7 +13,7 @@ import TestRouter from '../artifacts/contracts/TestRouter.sol/TestRouter.json'
 import UniswapV3Factory from '../artifacts/contracts/UniswapV3FactoryFlat.sol/UniswapV3Factory.json'
 import UniswapV3Pool from '../artifacts/contracts/UniswapV3FactoryFlat.sol/UniswapV3Pool.json'
 
-const ZERO = getBigNumber(0)
+const ZERO = 0n
 
 const UniswapV3FactoryAddress: Record<number, string> = {
   [ChainId.ETHEREUM]: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
@@ -87,7 +87,7 @@ export async function createUniV3EnvZero(
     positionManager,
     swapper: minter,
     minter,
-    mint: async (pool: UniV3PoolInfo, from: number, to: number, liquidity: BigNumber) => {
+    mint: async (pool: UniV3PoolInfo, from: number, to: number, liquidity: bigint) => {
       await pool.env.minter.mint(pool.contract.address, from, to, liquidity)
       return liquidity
     },
@@ -122,7 +122,7 @@ export async function createUniV3EnvReal(
     positionManager,
     swapper: minter,
     minter,
-    mint: async (pool: UniV3PoolInfo, from: number, to: number, liquidity: BigNumber) => {
+    mint: async (pool: UniV3PoolInfo, from: number, to: number, liquidity: bigint) => {
       const MintParams = {
         token0: pool.token0Contract.address,
         token1: pool.token1Contract.address,
@@ -179,14 +179,14 @@ function isLess(a: Contract, b: Contract): boolean {
   return addrA < addrB
 }
 
-const tokenSupply = getBigNumber(Math.pow(2, 255))
+const tokenSupply = 2n ** 255n
 export async function createUniV3Pool(
   env: UniV3Environment,
   fee: number,
   price: number,
   positions: UniV3Position[]
 ): Promise<UniV3PoolInfo> {
-  const sqrtPriceX96 = getBigNumber(Math.sqrt(price) * Math.pow(2, 96))
+  const sqrtPriceX96 = BigInt(Math.sqrt(price) * Math.pow(2, 96))
   const tickSpacing = feeAmountTickSpacing[fee]
   expect(tickSpacing).not.undefined
 
@@ -220,7 +220,7 @@ export async function createUniV3Pool(
   await env.positionManager.createAndInitializePoolIfNecessary(
     token0Contract.address,
     token1Contract.address,
-    getBigNumber(fee),
+    BigInt(fee),
     sqrtPriceX96
   )
 
@@ -239,21 +239,21 @@ export async function createUniV3Pool(
     token1,
   }
 
-  const tickMap = new Map<number, BigNumber>()
+  const tickMap = new Map<number, bigint>()
   for (let i = 0; i < positions.length; ++i) {
     const position = positions[i]
     expect(position.from % tickSpacing).to.equal(0)
     expect(position.to % tickSpacing).to.equal(0)
 
-    const liquidityExpected = getBigNumber(position.val)
+    const liquidityExpected = BigInt(position.val)
     const liquidity = await env.mint(poolInfo, position.from, position.to, liquidityExpected)
 
     let tickLiquidity = tickMap.get(position.from)
-    tickLiquidity = tickLiquidity === undefined ? liquidity : tickLiquidity.add(liquidity)
+    tickLiquidity = tickLiquidity === undefined ? liquidity : tickLiquidity + liquidity
     tickMap.set(position.from, tickLiquidity)
 
     tickLiquidity = tickMap.get(position.to) || ZERO
-    tickLiquidity = tickLiquidity.sub(liquidity)
+    tickLiquidity = tickLiquidity - liquidity
     tickMap.set(position.to, tickLiquidity)
   }
 

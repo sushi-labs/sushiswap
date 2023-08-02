@@ -12,7 +12,6 @@ import {
 import { Router } from '@sushiswap/router'
 import { HexString } from '@sushiswap/types'
 import { useQuery } from '@tanstack/react-query'
-import { BigNumber } from 'ethers'
 import { useFeeData } from 'wagmi'
 
 import { usePoolsCodeMap } from '../../pools'
@@ -138,21 +137,21 @@ ${logPools}
         let writeArgs: UseTradeReturnWriteArgs = args
           ? [
               args.tokenIn as HexString,
-              BigNumber.from(args.amountIn),
+              args.amountIn,
               args.tokenOut as HexString,
-              BigNumber.from(args.amountOutMin),
+              args.amountOutMin,
               args.to as HexString,
               args.routeCode as HexString,
             ]
           : undefined
 
         // const overrides = fromToken.isNative && writeArgs?.[1] ? { value: BigNumber.from(writeArgs?.[1]) } : undefined
-        let overrides = fromToken.isNative && writeArgs?.[1] ? { value: BigNumber.from(writeArgs?.[1]) } : undefined
+        let overrides = fromToken.isNative && writeArgs?.[1] ? { value: writeArgs?.[1] } : undefined
 
         if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
-          writeArgs = ['0xbc4a6be1285893630d45c881c6c343a65fdbe278', BigNumber.from('20000000000000000'), ...writeArgs]
+          writeArgs = ['0xbc4a6be1285893630d45c881c6c343a65fdbe278', 20000000000000000n, ...writeArgs]
           overrides = {
-            value: BigNumber.from(fromToken.isNative ? writeArgs[3] : '0').add(BigNumber.from('20000000000000000')),
+            value: (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n,
           }
         }
 

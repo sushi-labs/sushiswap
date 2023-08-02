@@ -19,7 +19,7 @@
     "typechain"
   ],
   "scripts": {
-    "build": "TS_NODE_TRANSPILE_ONLY=1 hardhat compile && tsup-node src/index.ts",
+    "build": "TS_NODE_TRANSPILE_ONLY=1 hardhat compile && tsc",
     "clean": "rm -rf .turbo node_modules artifacts cache exports typechain",
     "console": "hardhat console",
     "get-deploy-code": "ts-node ./deploy/GetDeployCode.ts",
@@ -81,6 +81,7 @@
     "ts-node": "10.9.1",
     "tsup": "7.1.0",
     "typechain": "8.1.1",
-    "typescript": "5.1.6"
+    "typescript": "5.1.6",
+    "viem": "1.4.1"
   }
 }

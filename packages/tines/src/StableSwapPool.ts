@@ -1,4 +1,5 @@
-import { abs } from './functions'
+import { abs } from '@sushiswap/math'
+
 import { RPool, RToken } from './PrimaryPools'
 import { getBigInt } from './Utils'
 
