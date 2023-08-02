@@ -901,7 +901,7 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
         ...(oneDayData.get(pair.id)?.feesUSD && { feeApr1d }),
         ...(oneWeekData.get(pair.id)?.feesUSD && { feeApr1w }),
         ...(oneMonthData.get(pair.id)?.feesUSD && { feeApr1m }),
-        ...(oneHourData.get(pair.id)?.feesUSD && { totalApr1h: feeApr1h }),
+        ...(oneDayData.get(pair.id)?.feesUSD && { feeApr1d } || oneHourData.get(pair.id)?.feesUSD && { feeApr1d: feeApr1h }),
         ...(oneDayData.get(pair.id)?.feesUSD && { totalApr1d: feeApr1d }),
         ...(oneWeekData.get(pair.id)?.feesUSD && { totalApr1w: feeApr1w }),
         ...(oneMonthData.get(pair.id)?.feesUSD && { totalApr1m: feeApr1m }),
