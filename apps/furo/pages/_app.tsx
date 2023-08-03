@@ -2,7 +2,7 @@ import '@sushiswap/ui/index.css'
 
 import { queryClient } from '@sushiswap/react-query'
 import { ThemeProvider } from '@sushiswap/ui'
-import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
+import { GlobalFooter } from '@sushiswap/ui/components/global-footer'
 import { OnramperProvider } from '@sushiswap/ui/components/onramper'
 import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
 import { client, WagmiConfig } from '@sushiswap/wagmi'
@@ -58,7 +58,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
               <DefaultSeo {...SEO} />
               <Header />
               <Component {...pageProps} />
-              <GlobalFooter />
+              <GlobalFooter maxWidth="6xl" />
             </OnramperProvider>
           </ThemeProvider>
         </QueryClientProvider>

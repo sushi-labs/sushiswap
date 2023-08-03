@@ -4,7 +4,7 @@ import '../variables.css'
 
 import { Cloudinary } from '@cloudinary/url-gen'
 import { ThemeProvider } from '@sushiswap/ui'
-import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
+import { GlobalFooter } from '@sushiswap/ui/components/global-footer'
 import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
 import { Analytics } from '@vercel/analytics/react'
 import type { AppContext, AppProps } from 'next/app'
