@@ -5,6 +5,7 @@ import { currencyFromShortCurrencyName, isShortCurrencyName, Native, Token, Type
 import { FeeAmount, isSushiSwapV3ChainId, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
+import { SUPPORTED_CHAIN_IDS } from 'config'
 import { isAddress } from 'ethers/lib/utils'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useState } from 'react'
@@ -87,7 +88,7 @@ const getChainIdFromUrl = (
 
 export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLStateProvider> = ({
   children,
-  supportedNetworks,
+  supportedNetworks = SUPPORTED_CHAIN_IDS,
 }) => {
   const { push } = useRouter()
   const pathname = usePathname()
@@ -111,6 +112,8 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
 
   const tmp = getChainIdFromUrl(chainIdFromUrl, chainId as ChainId)
   const _chainId = supportedNetworks?.includes(tmp) ? tmp : ChainId.ETHEREUM
+
+  console.log({ _chainId, supportedNetworks })
 
   const { data: tokenFrom, isInitialLoading: isTokenFromLoading } = useTokenWithCache({
     chainId: _chainId,
