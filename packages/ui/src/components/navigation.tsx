@@ -1,4 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority'
+import Link from 'next/link'
 import * as React from 'react'
 
 import { classNames, navigationMenuTriggerStyle, SushiIcon } from '../index'
