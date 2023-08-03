@@ -1,3 +1,5 @@
+'use client'
+
 import { type VariantProps } from 'class-variance-authority'
 import { FC, useState } from 'react'
 import { default as ReactDatePicker, ReactDatePickerProps } from 'react-datepicker'
