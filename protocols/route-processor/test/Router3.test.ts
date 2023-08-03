@@ -1,5 +1,4 @@
 import { SnapshotRestorer, takeSnapshot } from '@nomicfoundation/hardhat-network-helpers'
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { erc20Abi, weth9Abi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId, chainName } from '@sushiswap/chain'
@@ -36,11 +35,9 @@ import { BridgeBento, getBigInt, RouteStatus, RPool, StableSwapRPool } from '@su
 import { setTokenBalance } from '@sushiswap/tines-sandbox'
 import { expect } from 'chai'
 import { signERC2612Permit } from 'eth-permit'
-import { Contract } from 'ethers'
-import { ethers, network } from 'hardhat'
+import { network } from 'hardhat'
 import seedrandom from 'seedrandom'
-import { createPublicClient } from 'viem'
-import { custom } from 'viem'
+import { Address, Client, createPublicClient, custom } from 'viem'
 import { hardhat } from 'viem/chains'
 
 import { getAllPoolCodes } from './utils/getAllPoolCodes'
@@ -59,9 +56,9 @@ function getRandomExp(rnd: () => number, min: number, max: number) {
   return res
 }
 
-async function setRouterPrimaryBalance(router: string, token?: string): Promise<void> {
+async function setRouterPrimaryBalance(client: Client, router: Address, token?: Address): Promise<void> {
   if (token) {
-    await setTokenBalance(token, router, 1n)
+    await setTokenBalance(client, token, router, 1n)
   }
 }
 
@@ -70,8 +67,8 @@ interface TestEnvironment {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   provider: any
   rp: Contract
-  user: SignerWithAddress
-  user2: SignerWithAddress
+  user: Address
+  user2: Address
   dataFetcher: DataFetcher
   poolCodes: Map<string, PoolCode>
   snapshot: SnapshotRestorer
@@ -120,14 +117,14 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   //console.log('    Block Number:', provider.blockNumber)
 
   // saturate router balance with wei of tokens
-  await setRouterPrimaryBalance(routeProcessor.address, WNATIVE[chainId].address)
-  await setRouterPrimaryBalance(routeProcessor.address, SUSHI_ADDRESS[chainId as keyof typeof SUSHI_ADDRESS])
-  await setRouterPrimaryBalance(routeProcessor.address, USDC_ADDRESS[chainId as keyof typeof USDC_ADDRESS])
-  await setRouterPrimaryBalance(routeProcessor.address, USDT_ADDRESS[chainId as keyof typeof USDT_ADDRESS])
-  await setRouterPrimaryBalance(routeProcessor.address, DAI_ADDRESS[chainId as keyof typeof DAI_ADDRESS])
-  await setRouterPrimaryBalance(routeProcessor.address, FRAX_ADDRESS[chainId as keyof typeof FRAX_ADDRESS])
-  await setRouterPrimaryBalance(routeProcessor.address, FXS_ADDRESS[chainId as keyof typeof FXS_ADDRESS])
-  await setRouterPrimaryBalance(routeProcessor.address, WBTC_ADDRESS[chainId as keyof typeof WBTC_ADDRESS])
+  await setRouterPrimaryBalance(client, routeProcessor.address, WNATIVE[chainId].address)
+  await setRouterPrimaryBalance(client, routeProcessor.address, SUSHI_ADDRESS[chainId as keyof typeof SUSHI_ADDRESS])
+  await setRouterPrimaryBalance(client, routeProcessor.address, USDC_ADDRESS[chainId as keyof typeof USDC_ADDRESS])
+  await setRouterPrimaryBalance(client, routeProcessor.address, USDT_ADDRESS[chainId as keyof typeof USDT_ADDRESS])
+  await setRouterPrimaryBalance(client, routeProcessor.address, DAI_ADDRESS[chainId as keyof typeof DAI_ADDRESS])
+  await setRouterPrimaryBalance(client, routeProcessor.address, FRAX_ADDRESS[chainId as keyof typeof FRAX_ADDRESS])
+  await setRouterPrimaryBalance(client, routeProcessor.address, FXS_ADDRESS[chainId as keyof typeof FXS_ADDRESS])
+  await setRouterPrimaryBalance(client, routeProcessor.address, WBTC_ADDRESS[chainId as keyof typeof WBTC_ADDRESS])
 
   console.log(`  Network: ${chainName[chainId]}, Forked Block: ${provider.blockNumber}`)
   //console.log('    User creation ...')

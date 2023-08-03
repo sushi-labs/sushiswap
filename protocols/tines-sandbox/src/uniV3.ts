@@ -1,19 +1,22 @@
-import { HardhatEthersHelpers } from '@nomiclabs/hardhat-ethers/types'
+import { erc20Abi, nonfungiblePositionManagerAbi, sushiV3FactoryAbi, sushiV3PoolAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { CL_MAX_TICK, CL_MIN_TICK, CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
 import NonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import WETH9 from 'canonical-weth/build/contracts/WETH9.json'
 import { expect } from 'chai'
-import { BigNumber, Contract, ContractFactory, ethers, Signer } from 'ethers'
 import seedrandom from 'seedrandom'
+import { Abi, Address, ContractFunctionConfig, DeployContractParameters, Hex, WalletClient } from 'viem'
+import { readContract, waitForTransactionReceipt } from 'viem/actions'
 
 import ERC20Mock from '../artifacts/contracts/ERC20Mock.sol/ERC20Mock.json'
 import TestRouter from '../artifacts/contracts/TestRouter.sol/TestRouter.json'
 import UniswapV3Factory from '../artifacts/contracts/UniswapV3FactoryFlat.sol/UniswapV3Factory.json'
-import UniswapV3Pool from '../artifacts/contracts/UniswapV3FactoryFlat.sol/UniswapV3Pool.json'
+import { testRouterAbi } from './abis'
 
 const ZERO = 0n
+
+export type Contract<TAbi extends Abi = []> = Omit<ContractFunctionConfig<TAbi>, 'functionName' | 'args'>
 
 const UniswapV3FactoryAddress: Record<number, string> = {
   [ChainId.ETHEREUM]: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
@@ -35,60 +38,89 @@ feeAmountTickSpacing[3000] = 60 // 0.3%
 feeAmountTickSpacing[10000] = 200 // 1%
 
 export interface UniV3Environment {
-  ethers: HardHatEthersType
-  user: Signer
-  tokenFactory: ContractFactory
-  UniV3Factory: Contract
-  positionManager: Contract
-  swapper: Contract
-  minter: Contract
-  mint: (pool: UniV3PoolInfo, from: number, to: number, liquidity: BigNumber) => Promise<BigNumber>
+  walletClient: WalletClient
+  user: Address
+  tokenFactory: DeployContractParameters<typeof erc20Abi>
+  SushiV3Factory: Contract<typeof sushiV3FactoryAbi>
+  PositionManager: Contract<typeof nonfungiblePositionManagerAbi>
+  swapper: Contract<typeof testRouterAbi>
+  minter: Contract<typeof testRouterAbi>
+  mint: (pool: UniV3PoolInfo, from: number, to: number, liquidity: bigint) => Promise<bigint>
 }
-
-type HardHatEthersType = typeof ethers & HardhatEthersHelpers
 
 // Makes artificial environment, deploys factory, smallpositionmanager for mint and swap
 export async function createUniV3EnvZero(
-  ethers: HardHatEthersType,
-  userDeployContracts?: Signer
+  walletClient: WalletClient,
+  userDeployContracts?: Address
 ): Promise<UniV3Environment> {
-  const user = userDeployContracts || (await ethers.getSigners())[0]
+  const user = userDeployContracts || (await walletClient.getAddresses())[0]
 
-  const tokenFactory = await ethers.getContractFactory(ERC20Mock.abi, ERC20Mock.bytecode, user)
+  const tokenFactory = {
+    chain: null,
+    abi: erc20Abi,
+    bytecode: ERC20Mock.bytecode as Hex,
+    account: user,
+  } satisfies DeployContractParameters
 
-  const UniV3FactoryFactory = await ethers.getContractFactory(UniswapV3Factory.abi, UniswapV3Factory.bytecode)
-  const UniV3Factory = await UniV3FactoryFactory.deploy()
-  await UniV3Factory.deployed()
+  const SushiV3FactoryAddress = await walletClient.deployContract({
+    chain: null,
+    abi: sushiV3FactoryAbi,
+    bytecode: UniswapV3Factory.bytecode as Hex,
+    account: user,
+  })
+  const SushiV3Factory = {
+    abi: sushiV3FactoryAbi,
+    address: SushiV3FactoryAddress,
+  }
 
-  const WETH9Factory = await ethers.getContractFactory(WETH9.abi, WETH9.bytecode)
-  const WETH9Contract = await WETH9Factory.deploy()
-  await WETH9Contract.deployed()
+  const WETH9Address = await walletClient.deployContract({
+    chain: null,
+    abi: WETH9.abi,
+    bytecode: WETH9.bytecode as Hex,
+    account: user,
+  })
 
-  const NonfungiblePositionManagerFactory = await ethers.getContractFactory(
-    NonfungiblePositionManager.abi,
-    NonfungiblePositionManager.bytecode
-  )
-  const NonfungiblePositionManagerContract = await NonfungiblePositionManagerFactory.deploy(
-    UniV3Factory.address,
-    WETH9Contract.address,
-    '0x0000000000000000000000000000000000000000'
-  )
-  const positionManager = await NonfungiblePositionManagerContract.deployed()
+  const NonfungiblePositionManagerAddress = await walletClient.deployContract({
+    chain: null,
+    abi: nonfungiblePositionManagerAbi,
+    bytecode: NonfungiblePositionManager.bytecode as Hex,
+    account: user,
+    args: [SushiV3Factory.address, WETH9Address, '0x0000000000000000000000000000000000000000'],
+  })
+  const PositionManager = {
+    abi: nonfungiblePositionManagerAbi,
+    address: NonfungiblePositionManagerAddress,
+  }
 
-  const TestRouterFactory = await ethers.getContractFactory(TestRouter.abi, TestRouter.bytecode)
-  const minter = await TestRouterFactory.deploy()
-  await minter.deployed()
+  const TestRouterAddress = await walletClient.deployContract({
+    chain: null,
+    abi: testRouterAbi,
+    bytecode: TestRouter.bytecode as Hex,
+    account: user,
+    args: [],
+  })
+  const TestRouterContract = {
+    abi: testRouterAbi,
+    address: TestRouterAddress,
+  }
 
   return {
-    ethers,
+    walletClient,
     user,
     tokenFactory,
-    UniV3Factory,
-    positionManager,
-    swapper: minter,
-    minter,
+    SushiV3Factory,
+    PositionManager,
+    swapper: TestRouterContract,
+    minter: TestRouterContract,
     mint: async (pool: UniV3PoolInfo, from: number, to: number, liquidity: bigint) => {
-      await pool.env.minter.mint(pool.contract.address, from, to, liquidity)
+      await pool.env.walletClient.writeContract({
+        ...pool.env.minter,
+        functionName: 'mint',
+        args: [pool.contract.address, from, to, liquidity],
+        account: pool.env.user,
+        chain: null,
+      })
+
       return liquidity
     },
   }
@@ -96,61 +128,88 @@ export async function createUniV3EnvZero(
 
 // Uses real environment
 export async function createUniV3EnvReal(
-  ethers: HardHatEthersType,
-  userDeployContracts?: Signer
+  walletClient: WalletClient,
+  userDeployContracts?: Address
 ): Promise<UniV3Environment | undefined> {
-  const user = userDeployContracts || (await ethers.getSigners())[0]
-  const provider = user.provider
-  if (provider === undefined) return
-  const chainId = (await provider.getNetwork()).chainId
-  if (UniswapV3FactoryAddress[chainId] === undefined || PositionManagerAddress[chainId] === undefined) return
-  const tokenFactory = await ethers.getContractFactory(ERC20Mock.abi, ERC20Mock.bytecode, user)
-  const UniV3FactoryFactory = await ethers.getContractFactory(UniswapV3Factory.abi, UniswapV3Factory.bytecode)
-  const UniV3Factory = UniV3FactoryFactory.attach(UniswapV3FactoryAddress[chainId])
-  const pmFactory = await ethers.getContractFactory(NonfungiblePositionManager.abi, NonfungiblePositionManager.bytecode)
-  const positionManager = pmFactory.attach(PositionManagerAddress[chainId])
+  const user = userDeployContracts || (await walletClient.getAddresses())[0]
+  const chainId = await walletClient.getChainId()
 
-  const TestRouterFactory = await ethers.getContractFactory(TestRouter.abi, TestRouter.bytecode)
-  const minter = await TestRouterFactory.deploy()
-  await minter.deployed()
+  if (UniswapV3FactoryAddress[chainId] === undefined || PositionManagerAddress[chainId] === undefined) return
+
+  const tokenFactory = {
+    chain: null,
+    abi: erc20Abi,
+    bytecode: ERC20Mock.bytecode as Hex,
+    account: user,
+  } satisfies DeployContractParameters
+
+  const SushiV3Factory = {
+    abi: sushiV3FactoryAbi,
+    address: UniswapV3FactoryAddress[chainId] as Address,
+  }
+
+  const PositionManager = {
+    abi: nonfungiblePositionManagerAbi,
+    address: PositionManagerAddress[chainId] as Address,
+  }
+
+  const TestRouterAddress = await walletClient.deployContract({
+    chain: null,
+    abi: testRouterAbi,
+    bytecode: TestRouter.bytecode as Hex,
+    account: user,
+    args: [],
+  })
+  const TestRouterContract = {
+    abi: testRouterAbi,
+    address: TestRouterAddress,
+  }
 
   return {
-    ethers,
+    walletClient,
     user,
     tokenFactory,
-    UniV3Factory,
-    positionManager,
-    swapper: minter,
-    minter,
+    SushiV3Factory,
+    PositionManager,
+    swapper: TestRouterContract,
+    minter: TestRouterContract,
     mint: async (pool: UniV3PoolInfo, from: number, to: number, liquidity: bigint) => {
-      const MintParams = {
-        token0: pool.token0Contract.address,
-        token1: pool.token1Contract.address,
-        fee: pool.fee,
-        tickLower: from,
-        tickUpper: to,
-        amount0Desired: liquidity,
-        amount1Desired: liquidity,
-        amount0Min: 0,
-        amount1Min: 0,
-        recipient: await pool.env.user.getAddress(),
-        deadline: 1e12,
-      }
-
       let res
       try {
-        res = await positionManager.mint(MintParams)
+        res = await pool.env.walletClient.writeContract({
+          ...pool.env.PositionManager,
+          functionName: 'mint',
+          args: [
+            {
+              token0: pool.token0Contract.address as Address,
+              token1: pool.token1Contract.address as Address,
+              fee: pool.fee,
+              tickLower: from,
+              tickUpper: to,
+              amount0Desired: liquidity,
+              amount1Desired: liquidity,
+              amount0Min: 0n,
+              amount1Min: 0n,
+              recipient: pool.env.user,
+              deadline: BigInt(1e12),
+            },
+          ],
+          account: pool.env.user,
+          chain: null,
+          value: 0n,
+        })
       } catch (e) {
         return ZERO
       }
-      const receipt = await res.wait()
+      const receipt = await waitForTransactionReceipt(walletClient, { hash: res })
 
       // event IncreaseLiquidity(uint256 indexed tokenId, uint128 liquidity, uint256 amount0, uint256 amount1);
-      const increaseLiquidityEvent = receipt.events.find(
+      const increaseLiquidityEvent = receipt.logs.find(
         (ev: { topics: string[] }) =>
-          ev.topics[0] == '0x3067048beee31b25b2f1681f88dac838c8bba36af25bfb2b7cf7473a5847e35f'
+          ev.topics[0] === '0x3067048beee31b25b2f1681f88dac838c8bba36af25bfb2b7cf7473a5847e35f'
       )
-      const liquidityReal = BigNumber.from(increaseLiquidityEvent.data.substring(0, 66))
+      if (increaseLiquidityEvent === undefined) throw new Error("Logs doesn't contain IncreaseLiquidity event")
+      const liquidityReal = BigInt(increaseLiquidityEvent.data.substring(0, 66))
       return liquidityReal
     },
   }
@@ -164,18 +223,18 @@ export interface UniV3Position {
 
 export interface UniV3PoolInfo {
   env: UniV3Environment
-  contract: Contract
+  contract: Contract<typeof sushiV3PoolAbi>
   fee: number
   tinesPool: UniV3Pool
-  token0Contract: Contract
-  token1Contract: Contract
+  token0Contract: Contract<typeof erc20Abi>
+  token1Contract: Contract<typeof erc20Abi>
   token0: Token
   token1: Token
 }
 
-function isLess(a: Contract, b: Contract): boolean {
-  const addrA = a.address.toLowerCase().substring(2).padStart(40, '0')
-  const addrB = b.address.toLowerCase().substring(2).padStart(40, '0')
+function isLess(a: Address, b: Address): boolean {
+  const addrA = a.toLowerCase().substring(2).padStart(40, '0')
+  const addrB = b.toLowerCase().substring(2).padStart(40, '0')
   return addrA < addrB
 }
 
@@ -190,47 +249,100 @@ export async function createUniV3Pool(
   const tickSpacing = feeAmountTickSpacing[fee]
   expect(tickSpacing).not.undefined
 
-  const _token0Contract = await env.tokenFactory.deploy('Token0', 'Token0', tokenSupply)
-  const _token1Contract = await env.tokenFactory.deploy('Token1', 'Token1', tokenSupply)
-  const [token0Contract, token1Contract] = isLess(_token0Contract, _token1Contract)
-    ? [_token0Contract, _token1Contract]
-    : [_token1Contract, _token0Contract]
+  const _token0Address = await env.walletClient.deployContract({
+    ...env.tokenFactory,
+    args: ['Token0', 'Token0', tokenSupply],
+  })
+  const _token1Address = await env.walletClient.deployContract({
+    ...env.tokenFactory,
+    args: ['Token1', 'Token1', tokenSupply],
+  })
+  const [token0Address, token1Address] = isLess(_token0Address, _token1Address)
+    ? [_token0Address, _token1Address]
+    : [_token1Address, _token0Address]
 
-  const chainId = env.ethers.provider.network.chainId
+  const chainId = await env.walletClient.getChainId()
   const token0 = new Token({
     chainId,
-    address: token0Contract.address,
+    address: token0Address,
     symbol: 'Token0',
     name: 'Token0',
     decimals: 18,
   })
   const token1 = new Token({
     chainId,
-    address: token1Contract.address,
+    address: token1Address,
     symbol: 'Token1',
     name: 'Token1',
     decimals: 18,
   })
 
-  await token0Contract.approve(env.minter.address, tokenSupply)
-  await token1Contract.approve(env.minter.address, tokenSupply)
-  await token0Contract.approve(env.positionManager.address, tokenSupply)
-  await token1Contract.approve(env.positionManager.address, tokenSupply)
+  await env.walletClient.writeContract({
+    abi: env.tokenFactory.abi,
+    address: token0Address,
+    functionName: 'approve',
+    args: [env.minter.address, tokenSupply],
+    account: env.user,
+    chain: null,
+  })
+  await env.walletClient.writeContract({
+    abi: env.tokenFactory.abi,
+    address: token1Address,
+    functionName: 'approve',
+    args: [env.minter.address, tokenSupply],
+    account: env.user,
+    chain: null,
+  })
+  await env.walletClient.writeContract({
+    abi: env.tokenFactory.abi,
+    address: token0Address,
+    functionName: 'approve',
+    args: [env.PositionManager.address, tokenSupply],
+    account: env.user,
+    chain: null,
+  })
+  await env.walletClient.writeContract({
+    abi: env.tokenFactory.abi,
+    address: token0Address,
+    functionName: 'approve',
+    args: [env.PositionManager.address, tokenSupply],
+    account: env.user,
+    chain: null,
+  })
 
-  await env.positionManager.createAndInitializePoolIfNecessary(
-    token0Contract.address,
-    token1Contract.address,
-    BigInt(fee),
-    sqrtPriceX96
-  )
+  await env.walletClient.writeContract({
+    ...env.PositionManager,
+    functionName: 'createAndInitializePoolIfNecessary',
+    args: [token0Address, token1Address, fee, sqrtPriceX96],
+    account: env.user,
+    chain: null,
+    value: 0n,
+  })
 
-  const poolAddress = await env.UniV3Factory.getPool(token0Contract.address, token1Contract.address, fee)
-  const poolF = await env.ethers.getContractFactory(UniswapV3Pool.abi, UniswapV3Pool.bytecode)
-  const pool = poolF.attach(poolAddress)
+  const poolAddress = await readContract(env.walletClient, {
+    ...env.SushiV3Factory,
+    functionName: 'getPool',
+    args: [token0Address, token1Address, fee],
+    account: env.user,
+  })
+
+  const SushiV3Pool = {
+    abi: sushiV3PoolAbi,
+    address: poolAddress,
+  }
+
+  const token0Contract = {
+    abi: erc20Abi,
+    address: token0Address,
+  }
+  const token1Contract = {
+    abi: erc20Abi,
+    address: token1Address,
+  }
 
   const poolInfo = {
     env,
-    contract: pool,
+    contract: SushiV3Pool,
     fee,
     tinesPool: undefined as unknown as UniV3Pool,
     token0Contract,
@@ -257,20 +369,37 @@ export async function createUniV3Pool(
     tickMap.set(position.to, tickLiquidity)
   }
 
-  const slot = await pool.slot0()
+  const slot = await readContract(env.walletClient, {
+    ...SushiV3Pool,
+    functionName: 'slot0',
+  })
+  const liquidity = await readContract(env.walletClient, {
+    ...SushiV3Pool,
+    functionName: 'liquidity',
+  })
+  const token0Balance = await readContract(env.walletClient, {
+    ...token0Contract,
+    functionName: 'balanceOf',
+    args: [poolAddress],
+  })
+  const token1Balance = await readContract(env.walletClient, {
+    ...token1Contract,
+    functionName: 'balanceOf',
+    args: [poolAddress],
+  })
   const ticks: CLTick[] = Array.from(tickMap.entries())
     .sort((a, b) => a[0] - b[0])
     .map(([index, DLiquidity]) => ({ index, DLiquidity }))
 
   poolInfo.tinesPool = new UniV3Pool(
-    pool.address,
+    SushiV3Pool.address,
     token0 as RToken,
     token1 as RToken,
     fee / 1e6,
-    await token0Contract.balanceOf(pool.address),
-    await token1Contract.balanceOf(pool.address),
+    token0Balance,
+    token1Balance,
     slot[1],
-    await pool.liquidity(),
+    liquidity,
     sqrtPriceX96,
     ticks
   )

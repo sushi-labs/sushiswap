@@ -4,6 +4,7 @@
   "exclude": ["node_modules"],
   "files": ["hardhat.config.ts"],
   "compilerOptions": {
+    "rootDirs": ["./src", "./artifacts"],
     "outDir": "./dist",
     "declaration": true
   }
