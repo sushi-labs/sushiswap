@@ -84,7 +84,12 @@ export const Header: FC = () => {
               <NavigationMenuContent>
                 <ul className="w-[400px] gap-3 p-4">
                   {EXPLORE_NAVIGATION_LINKS.map((component) => (
-                    <NavigationListItem key={component.title} title={component.title} href={component.href}>
+                    <NavigationListItem
+                      legacyBehavior={true}
+                      key={component.title}
+                      title={component.title}
+                      href={component.href}
+                    >
                       {component.description}
                     </NavigationListItem>
                   ))}
@@ -111,7 +116,12 @@ export const Header: FC = () => {
                   <NavigationMenuContent>
                     <ul className="w-[400px] gap-3 p-4">
                       {links?.map(({ name, href }) => (
-                        <NavigationListItem key={`${title}-${name}`} title={name.split('-')?.[0]} href={href}>
+                        <NavigationListItem
+                          legacyBehavior={true}
+                          key={`${title}-${name}`}
+                          title={name.split('-')?.[0]}
+                          href={href}
+                        >
                           {name.split('-')?.[1]}
                         </NavigationListItem>
                       ))}

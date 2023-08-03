@@ -1,5 +1,5 @@
 import { type VariantProps } from 'class-variance-authority'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { default as ReactDatePicker, ReactDatePickerProps } from 'react-datepicker'
 
 import { CalendarIcon } from './icons'
@@ -10,15 +10,25 @@ interface DateFieldProps extends ReactDatePickerProps, VariantProps<typeof textF
 }
 
 const DateField: FC<DateFieldProps> = ({ testId, className, variant, ...props }) => {
+  const [open, setOpen] = useState(false)
+
   return (
     <div className="relative w-full">
       <ReactDatePicker
-        {...props}
+        open={open}
+        onCalendarOpen={() => setOpen(true)}
+        onCalendarClose={() => setOpen(false)}
+        onClickOutside={() => setOpen(false)}
         wrapperClassName="w-full"
         customInput={<input testdata-id={testId} className={textFieldVariants({ variant, className })} />}
+        {...props}
       />
       {variant !== 'naked' ? (
-        <div className="absolute right-3 top-0 bottom-0 flex items-center">
+        <div
+          role="button"
+          onClick={() => setOpen((open) => !open)}
+          className="cursor-pointer absolute right-3 top-0 bottom-0 flex items-center"
+        >
           <CalendarIcon width={20} height={20} className="text-muted-foreground mt-[-1.5px]" />
         </div>
       ) : null}

@@ -50,6 +50,7 @@ export const ConcentratedLiquidityUrlStateContext = createContext<State>({} as S
 
 interface ConcentratedLiquidityURLStateProvider {
   children: ReactNode | ((state: State) => ReactNode)
+  supportedNetworks?: ChainId[]
 }
 
 const getTokenFromUrl = (
@@ -84,7 +85,10 @@ const getChainIdFromUrl = (
   return chainId
 }
 
-export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLStateProvider> = ({ children }) => {
+export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLStateProvider> = ({
+  children,
+  supportedNetworks,
+}) => {
   const { push } = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()!
@@ -105,7 +109,8 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
   const { chain } = useNetwork()
   const [chainId] = useState(chain?.id)
 
-  const _chainId = getChainIdFromUrl(chainIdFromUrl, chainId as ChainId)
+  const tmp = getChainIdFromUrl(chainIdFromUrl, chainId as ChainId)
+  const _chainId = supportedNetworks?.includes(tmp) ? tmp : ChainId.ETHEREUM
 
   const { data: tokenFrom, isInitialLoading: isTokenFromLoading } = useTokenWithCache({
     chainId: _chainId,
