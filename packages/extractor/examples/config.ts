@@ -373,7 +373,6 @@ export const EXTRACTOR_CONFIG = {
     tickHelperContract: V3_TICK_LENS[ChainId.POLYGON_ZKEVM],
     cacheDir: './cache',
     logDepth: 300,
-    logType: LogFilterType.SelfFilter,
     logging: true,
     maxCallsInOneBatch: 5,
     RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.POLYGON_ZKEVM],
