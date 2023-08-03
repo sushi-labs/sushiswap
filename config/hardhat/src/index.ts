@@ -608,6 +608,20 @@ export const defaultConfig: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
     },
+    linea: {
+      url: 'https://rpc.linea.build',
+      accounts,
+      chainId: 59144,
+      live: true,
+      saveDeployments: true,
+    },
+    base: {
+      url: 'https://developer-access-mainnet.base.org',
+      accounts,
+      chainId: 8453,
+      live: true,
+      saveDeployments: true,
+    },
   },
   namedAccounts: {
     // e.g. ledger://0x18dd4e0Eb8699eA4fee238dE41ecF115e32272F8

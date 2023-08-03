@@ -17,6 +17,7 @@ import { computePoolAddress } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import { useConcentratedLiquidityPool, useConcentratedPositionInfo } from '@sushiswap/wagmi/future/hooks'
 import { getV3FactoryContractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3FactoryContract'
+import { SUPPORTED_CHAIN_IDS } from 'config'
 import { useTokenAmountDollarValues } from 'lib/hooks'
 import Link from 'next/link'
 import React, { FC, useMemo, useState } from 'react'
@@ -195,7 +196,7 @@ const _Add: FC = () => {
         </div>
       </div>
       <div className="flex flex-col order-3 gap-10  pb-40 sm:order-2">
-        <SelectNetworkWidget selectedNetwork={chainId} onSelect={setNetwork} />
+        <SelectNetworkWidget selectedNetwork={chainId} onSelect={setNetwork} networks={SUPPORTED_CHAIN_IDS} />
         <SelectTokensWidget
           chainId={chainId}
           token0={token0}
