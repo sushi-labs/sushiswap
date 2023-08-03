@@ -71,7 +71,15 @@ export const angleRewardsBaseValidator = z.object({
       proof: z.array(z.string()),
     })
   ),
-  validRewardTokens: z.array(z.object({ minimumAmountPerEpoch: z.number(), token: z.string() })),
+  validRewardTokens: z.array(
+    z.object({ minimumAmountPerEpoch: z.number(), token: z.string(), decimals: z.number(), symbol: z.string() })
+  ),
 })
 
 export const angleRewardsMultipleValidator = z.array(angleRewardsBaseValidator)
+
+export const angleRewardTokensValidator = z.object({
+  validRewardTokens: z.array(
+    z.object({ minimumAmountPerEpoch: z.number(), token: z.string(), decimals: z.number(), symbol: z.string() })
+  ),
+})

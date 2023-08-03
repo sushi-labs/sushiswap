@@ -88,8 +88,8 @@ export const CreateVestingBaseSchema = z.object({
       'Must be at least 5 minutes from now'
     ),
   recipient: ZAddress,
-  stepAmount: z.string().refine((val) => (val !== '' ? Number(val) > 0 : true), 'Must be greater than 0'),
-  stepPayouts: z.number().min(1).int(),
+  stepAmount: z.coerce.string().refine((val) => (val !== '' ? Number(val) > 0 : true), 'Must be greater than 0'),
+  stepPayouts: z.coerce.number().min(1).int(),
   fundSource: ZFundSource,
   stepConfig: z.string(),
   cliffEnabled: z.boolean(),

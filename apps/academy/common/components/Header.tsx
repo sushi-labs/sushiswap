@@ -16,7 +16,6 @@ import {
 } from '@sushiswap/ui'
 import { DOCS_URL } from 'common/helpers'
 import { getDifficulties, getProducts } from 'lib/api'
-import Link from 'next/link'
 import React, { FC, useMemo } from 'react'
 import useSWR from 'swr'
 
@@ -99,9 +98,9 @@ export const Header: FC = () => {
               if (href && !links) {
                 return (
                   <NavigationMenuItem key={href}>
-                    <Link href={href} legacyBehavior passHref>
-                      <NavigationMenuLink className={navigationMenuTriggerStyle()}>{title}</NavigationMenuLink>
-                    </Link>
+                    <NavigationMenuLink href={href} className={navigationMenuTriggerStyle()}>
+                      {title}
+                    </NavigationMenuLink>
                   </NavigationMenuItem>
                 )
               }

@@ -73,17 +73,20 @@ const TOOLS_NAVIGATION_LINKS: { title: string; href: string; description: string
   },
 ]
 
-const navigationContainerVariants = cva('px-4 sticky flex items-center flex-grow gap-4 top-0 z-[1070] h-[56px]', {
-  variants: {
-    variant: {
-      default: 'bg-gray-100 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800',
-      transparent: '',
+const navigationContainerVariants = cva(
+  'px-4 sticky flex items-center flex-grow gap-4 top-0 z-50 min-h-[56px] max-h-[56px] h-[56px]',
+  {
+    variants: {
+      variant: {
+        default: 'bg-gray-100 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800',
+        transparent: '',
+      },
     },
-  },
-  defaultVariants: {
-    variant: 'default',
-  },
-})
+    defaultVariants: {
+      variant: 'default',
+    },
+  }
+)
 
 interface NavContainerProps extends VariantProps<typeof navigationContainerVariants> {
   children: React.ReactNode
@@ -133,9 +136,9 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant }) => {
             </a>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
-            <a href="/furo">
+            <Link href="/furo">
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pay</NavigationMenuLink>
-            </a>
+            </Link>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
             <NavigationMenuTrigger>Tools</NavigationMenuTrigger>

@@ -1,5 +1,4 @@
-import { FormControl, FormField, FormItem, FormMessage, FormSection } from '@sushiswap/ui/components/form'
-import { Input } from '@sushiswap/ui/components/input'
+import { DateField, FormControl, FormField, FormItem, FormMessage, FormSection, Label } from '@sushiswap/ui'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -27,21 +26,14 @@ export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
           render={({ field: { name, onChange, value, onBlur } }) => {
             return (
               <FormItem>
+                <Label>
+                  Start date<sup>*</sup>
+                </Label>
                 <FormControl>
-                  <Input.DatePicker
+                  <DateField
+                    testId={`stream-start-date${index}`}
                     name={name}
                     onBlur={onBlur}
-                    customInput={
-                      <Input.DatePickerCustomInput
-                        testdata-id={`stream-start-date${index}`}
-                        id={`stream-start-date${index}`}
-                        label={
-                          <>
-                            Start date<sup>*</sup>
-                          </>
-                        }
-                      />
-                    }
                     onChange={onChange}
                     selected={value}
                     portalId="root-portal"
@@ -72,21 +64,14 @@ export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
 
             return (
               <FormItem>
+                <Label>
+                  End date<sup>*</sup>
+                </Label>
                 <FormControl>
-                  <Input.DatePicker
+                  <DateField
+                    testId={`stream-end-date${index}`}
                     name={name}
                     onBlur={onBlur}
-                    customInput={
-                      <Input.DatePickerCustomInput
-                        testdata-id={`stream-end-date${index}`}
-                        id={`stream-end-date${index}`}
-                        label={
-                          <>
-                            End date<sup>*</sup>
-                          </>
-                        }
-                      />
-                    }
                     onChange={onChange}
                     selected={value}
                     portalId="root-portal"
@@ -113,19 +98,17 @@ export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
         render={({ field: { onChange, value, onBlur, name } }) => {
           return (
             <FormItem>
+              <Label>
+                Recipient<sup>*</sup>
+              </Label>
               <FormControl>
                 <Web3Input.Ens
-                  label={
-                    <>
-                      Address or ENS<sup>*</sup>
-                    </>
-                  }
+                  placeholder="Enter wallet address or ENS"
                   name={name}
                   onBlur={onBlur}
-                  id={`create-stream-recipient-input${index}`}
                   testdata-id={`create-stream-recipient-input${index}`}
                   value={value}
-                  onChange={onChange}
+                  onValueChange={onChange}
                 />
               </FormControl>
               <FormMessage />

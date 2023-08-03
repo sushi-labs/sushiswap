@@ -3,7 +3,6 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { Container } from '@sushiswap/ui/components/container'
 import { Toggle } from '@sushiswap/ui/components/toggle'
 import { useAccount } from '@sushiswap/wagmi'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { FC, Fragment, useState } from 'react'
 
 import { PositionsTab } from './PositionsTab'
@@ -15,9 +14,9 @@ export const PoolsSection: FC = () => {
   const { address } = useAccount()
   const [tab, setTab] = useState<number>(0)
   const isMounted = useIsMounted()
-  const { push } = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
+  // const { push } = useRouter()
+  // const pathname = usePathname()
+  // const searchParams = useSearchParams()
 
   return (
     <section className="flex flex-col">

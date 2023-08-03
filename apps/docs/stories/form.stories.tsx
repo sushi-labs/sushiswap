@@ -1,7 +1,16 @@
 // Form.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { Form, FormControl, FormDescription, FormItem, FormMessage, FormSection, Input, useForm } from '@sushiswap/ui'
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormItem,
+  FormMessage,
+  FormSection,
+  TextField,
+  useForm,
+} from '@sushiswap/ui'
 import * as React from 'react'
 
 const meta = {
@@ -32,15 +41,7 @@ export const Default = {
         >
           <FormItem>
             <FormControl>
-              <Input.Numeric
-                id="create-single-vest-cliff-amount-input"
-                label={
-                  <>
-                    Amount
-                    <sup>*</sup>
-                  </>
-                }
-              />
+              <TextField type="text" />
             </FormControl>
             <FormDescription>The amount that gets unlocked after the cliff end date.</FormDescription>
             <FormMessage />

@@ -1,5 +1,5 @@
 import { RadioGroup } from '@headlessui/react'
-import { ArrowDownIcon, ArrowLeftIcon, SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
+import { ArrowDownIcon, SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
 import { Amount, Price, tryParseAmount } from '@sushiswap/currency'
@@ -7,8 +7,17 @@ import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { Fraction, JSBI, Percent, ZERO } from '@sushiswap/math'
 import { classNames, Currency, Dots, List } from '@sushiswap/ui'
+import { DialogConfirm, DialogProvider } from '@sushiswap/ui'
+import {
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogReview,
+  DialogTitle,
+  DialogTrigger,
+} from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { Modal } from '@sushiswap/ui/components/modal/Modal'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   FeeAmount,
@@ -26,7 +35,7 @@ import {
   usePair,
   useTotalSupply,
 } from '@sushiswap/wagmi'
-import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
+import { useWaitForTransaction } from '@sushiswap/wagmi'
 import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import { useV3Migrate, V3MigrateContractConfig } from '@sushiswap/wagmi/future/hooks/migrate/hooks/useV3Migrate'
 import { Checker } from '@sushiswap/wagmi/future/systems'
@@ -35,7 +44,6 @@ import { APPROVE_TAG_MIGRATE, APPROVE_TAG_UNSTAKE, Bound, Field } from 'lib/cons
 import { unwrapToken } from 'lib/functions'
 import { useGraphPool, useTokenAmountDollarValues } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
-import { useRouter } from 'next/navigation'
 import React, { FC, useMemo, useState } from 'react'
 
 import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
@@ -54,7 +62,6 @@ enum PositionView {
 }
 
 export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
-  const { push } = useRouter()
   const { address } = useAccount()
   const [positionView, setPositionView] = useState(PositionView.Staked)
   const [feeAmount, setFeeAmount] = useState<FeeAmount>(FeeAmount.LOWEST)
@@ -256,15 +263,6 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   const midPrice = useMemo(() => (isSorted ? price : price?.invert()), [isSorted, price])
   const isFullRange = Boolean(ticksAtLimit[Bound.LOWER] && ticksAtLimit[Bound.UPPER])
 
-  const [minPriceDiff, maxPriceDiff] = useMemo(() => {
-    if (!midPrice || !token0 || !token1 || !leftPrice || !rightPrice) return [0, 0]
-    const min = +leftPrice?.toFixed(4)
-    const cur = +midPrice?.toFixed(4)
-    const max = +rightPrice?.toFixed(4)
-
-    return [((min - cur) / cur) * 100, ((max - cur) / cur) * 100]
-  }, [leftPrice, midPrice, rightPrice, token0, token1])
-
   const fiatAmounts = useMemo(() => [tryParseAmount('1', token0), tryParseAmount('1', token1)], [token0, token1])
   const fiatAmountsAsNumber = useTokenAmountDollarValues({ chainId: pool.chainId, amounts: fiatAmounts })
 
@@ -299,9 +297,11 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
     enabled: approvedMigrate,
   })
 
+  const { status } = useWaitForTransaction({ chainId: pool.chainId as SushiSwapV3ChainId, hash: data?.hash })
+
   return (
-    <>
-      <div className="flex col-span-1 gap-6 sm:col-span-2">
+    <DialogProvider>
+      <div className="flex gap-6 col-span-2">
         {v2SpotPrice && (
           <div className="flex flex-col col-span-2 gap-2">
             <List.Label className="!px-0">V2 Price</List.Label>
@@ -607,11 +607,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
           </SelectPricesWidget>
           <Checker.Connect fullWidth>
             <Checker.Network fullWidth chainId={pool.chainId}>
-              <Checker.Custom
-                guardWhen={!balance?.[FundSource.WALLET].greaterThan(ZERO)}
-                guardText="Not enough balance"
-              >
-                <Checker.Custom
+              <Checker.Guard guardWhen={!balance?.[FundSource.WALLET].greaterThan(ZERO)} guardText="Not enough balance">
+                <Checker.Guard
                   guardWhen={Boolean(!position || positionAmount0?.equalTo(ZERO) || positionAmount1?.equalTo(ZERO))}
                   guardText="Enter valid range"
                 >
@@ -623,199 +620,202 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                     enabled={Boolean(V3MigrateContractConfig(pool.chainId as V3MigrateChainId).address)}
                   >
                     <Checker.Success tag={APPROVE_TAG_MIGRATE}>
-                      <Modal.Trigger tag={MODAL_MIGRATE_ID}>
-                        {({ open }) => (
-                          <Button size="xl" onClick={open} fullWidth testId="unstake-liquidity">
-                            Migrate
-                          </Button>
+                      <DialogReview>
+                        {({ confirm }) => (
+                          <>
+                            <DialogTrigger asChild>
+                              <Button fullWidth size="xl" testId="swap">
+                                Incentivize pool
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Migrate Liquidity</DialogTitle>
+                                <DialogDescription>
+                                  {token0?.symbol}/{token1?.symbol} • SushiSwap V3 • {feeAmount / 10000}%
+                                </DialogDescription>
+                              </DialogHeader>
+                              <div className="flex flex-col gap-4">
+                                <List className="!pt-0">
+                                  <List.Control>
+                                    <List.KeyValue flex title="Network">
+                                      {Chain.from(pool.chainId).name}
+                                    </List.KeyValue>
+                                    {feeAmount && (
+                                      <List.KeyValue title="Fee Tier">{`${+feeAmount / 10000}%`}</List.KeyValue>
+                                    )}
+                                  </List.Control>
+                                </List>
+                                <List className="!pt-0">
+                                  <List.Control>
+                                    <List.KeyValue
+                                      flex
+                                      title={'Minimum Price'}
+                                      subtitle={`Your position will be 100% composed of ${input0?.currency.symbol} at this price`}
+                                    >
+                                      <div className="flex flex-col gap-1">
+                                        {isFullRange ? '0' : leftPrice?.toSignificant(6)} {token1?.symbol}
+                                      </div>
+                                    </List.KeyValue>
+                                    <List.KeyValue
+                                      flex
+                                      title={noLiquidity ? 'Starting Price' : 'Market Price'}
+                                      subtitle={
+                                        noLiquidity
+                                          ? 'Starting price as determined by you'
+                                          : 'Current price as determined by the ratio of the pool'
+                                      }
+                                    >
+                                      <div className="flex flex-col gap-1">
+                                        {midPrice?.toSignificant(6)} {token1?.symbol}
+                                        <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
+                                          ${fiatAmountsAsNumber[0].toFixed(2)}
+                                        </span>
+                                      </div>
+                                    </List.KeyValue>
+                                    <List.KeyValue
+                                      flex
+                                      title="Maximum Price"
+                                      subtitle={`Your position will be 100% composed of ${token1?.symbol} at this price`}
+                                    >
+                                      <div className="flex flex-col gap-1">
+                                        {isFullRange ? '∞' : rightPrice?.toSignificant(6)} {token1?.symbol}
+                                      </div>
+                                    </List.KeyValue>{' '}
+                                  </List.Control>
+                                </List>
+                                <List className="!pt-0">
+                                  <List.Control>
+                                    {positionAmount0 && (
+                                      <List.KeyValue
+                                        flex
+                                        title={`Migration`}
+                                        subtitle="The value of your position after migration"
+                                        className="!items-start"
+                                      >
+                                        <div className="flex flex-col gap-0.5">
+                                          <div className="flex items-center gap-2">
+                                            <Currency.Icon
+                                              currency={unwrapToken(positionAmount0.currency)}
+                                              width={18}
+                                              height={18}
+                                            />
+                                            {positionAmount0.toSignificant(6)}{' '}
+                                            {unwrapToken(positionAmount0.currency).symbol}
+                                          </div>
+                                          <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                                            {formatUSD(v3FiatValue0)}
+                                          </span>
+                                        </div>
+                                      </List.KeyValue>
+                                    )}
+                                    {positionAmount1 && (
+                                      <List.KeyValue flex title={``} className="!items-start">
+                                        <div className="flex flex-col gap-0.5">
+                                          <div className="flex items-center gap-2">
+                                            <Currency.Icon
+                                              currency={unwrapToken(positionAmount1.currency)}
+                                              width={18}
+                                              height={18}
+                                            />
+                                            {positionAmount1.toSignificant(6)}{' '}
+                                            {unwrapToken(positionAmount1.currency).symbol}
+                                          </div>
+                                          <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                                            {formatUSD(v3FiatValue1)}
+                                          </span>
+                                        </div>
+                                      </List.KeyValue>
+                                    )}
+                                    <div className="p-4">
+                                      <div className="h-0.5 w-full bg-gray-100 dark:bg-slate-200/5" />
+                                    </div>
+                                    {token0Value && (
+                                      <List.KeyValue
+                                        flex
+                                        title={`Refund`}
+                                        subtitle="The refund you receive after migration"
+                                        className="!items-start"
+                                      >
+                                        <div className="flex flex-col gap-0.5">
+                                          <div className="flex items-center gap-2">
+                                            <Currency.Icon
+                                              currency={unwrapToken(token0Value.currency)}
+                                              width={18}
+                                              height={18}
+                                            />
+                                            {refund0?.toSignificant(6) ?? '0.00'}{' '}
+                                            {unwrapToken(token0Value.currency).symbol}
+                                          </div>
+                                          <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                                            {formatUSD(refund0FiatValue)}
+                                          </span>
+                                        </div>
+                                      </List.KeyValue>
+                                    )}
+                                    {token1Value && (
+                                      <List.KeyValue flex title={``} className="!items-start">
+                                        <div className="flex flex-col gap-0.5">
+                                          <div className="flex items-center gap-2">
+                                            <Currency.Icon
+                                              currency={unwrapToken(token1Value.currency)}
+                                              width={18}
+                                              height={18}
+                                            />
+                                            {refund1?.toSignificant(6) ?? '0.00'}{' '}
+                                            {unwrapToken(token1Value.currency).symbol}
+                                          </div>
+                                          <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                                            {formatUSD(refund1FiatValue)}
+                                          </span>
+                                        </div>
+                                      </List.KeyValue>
+                                    )}
+                                  </List.Control>
+                                </List>
+                              </div>
+                              <DialogFooter>
+                                <Button
+                                  fullWidth
+                                  size="xl"
+                                  loading={isLoading && !isError}
+                                  onClick={() => writeAsync?.().then(() => confirm())}
+                                  disabled={isMigrateLoading || isError}
+                                  color={isError ? 'red' : 'blue'}
+                                  testId="unstake-liquidity"
+                                >
+                                  {isError ? (
+                                    'Shoot! Something went wrong :('
+                                  ) : isMigrateLoading ? (
+                                    <Dots>Confirm Migrate</Dots>
+                                  ) : (
+                                    `Confirm Migrate`
+                                  )}
+                                </Button>
+                              </DialogFooter>
+                            </DialogContent>
+                          </>
                         )}
-                      </Modal.Trigger>
+                      </DialogReview>
                     </Checker.Success>
                   </Checker.ApproveERC20>
-                </Checker.Custom>
-              </Checker.Custom>
+                </Checker.Guard>
+              </Checker.Guard>
             </Checker.Network>
           </Checker.Connect>
         </div>
       </div>
-      <Modal.Review tag={MODAL_MIGRATE_ID} variant="opaque">
-        {({ close, confirm }) => (
-          <div className="max-w-[504px] mx-auto">
-            <button type="button" onClick={close} className="p-3 pl-0">
-              <ArrowLeftIcon strokeWidth={3} width={24} height={24} />
-            </button>
-            <div className="flex items-start justify-between gap-4 py-2">
-              <div className="flex flex-col flex-grow gap-1">
-                <h1 className="text-3xl font-semibold text-gray-900 dark:text-slate-50">Migrate Liquidity</h1>
-                <h1 className="text-lg font-medium text-gray-600 dark:text-slate-300">
-                  {token0?.symbol}/{token1?.symbol} • SushiSwap V3 • {feeAmount / 10000}%
-                </h1>
-              </div>
-              <div>
-                {token0 && token1 && (
-                  <Currency.IconList iconWidth={56} iconHeight={56}>
-                    <Currency.Icon currency={token0} width={56} height={56} />
-                    <Currency.Icon currency={token1} width={56} height={56} />
-                  </Currency.IconList>
-                )}
-              </div>
-            </div>
-            <div className="flex flex-col gap-3">
-              <List>
-                <List.Control>
-                  <List.KeyValue flex title="Network">
-                    {Chain.from(pool.chainId).name}
-                  </List.KeyValue>
-                  {feeAmount && <List.KeyValue title="Fee Tier">{`${+feeAmount / 10000}%`}</List.KeyValue>}
-                </List.Control>
-              </List>
-              <List>
-                <List.Control>
-                  <List.KeyValue
-                    flex
-                    title={'Minimum Price'}
-                    subtitle={`Your position will be 100% composed of ${input0?.currency.symbol} at this price`}
-                  >
-                    <div className="flex flex-col gap-1">
-                      {isFullRange ? '0' : leftPrice?.toSignificant(6)} {token1?.symbol}
-                    </div>
-                  </List.KeyValue>
-                  <List.KeyValue
-                    flex
-                    title={noLiquidity ? 'Starting Price' : 'Market Price'}
-                    subtitle={
-                      noLiquidity
-                        ? 'Starting price as determined by you'
-                        : 'Current price as determined by the ratio of the pool'
-                    }
-                  >
-                    <div className="flex flex-col gap-1">
-                      {midPrice?.toSignificant(6)} {token1?.symbol}
-                      <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
-                        ${fiatAmountsAsNumber[0].toFixed(2)}
-                      </span>
-                    </div>
-                  </List.KeyValue>
-                  <List.KeyValue
-                    flex
-                    title="Maximum Price"
-                    subtitle={`Your position will be 100% composed of ${token1?.symbol} at this price`}
-                  >
-                    <div className="flex flex-col gap-1">
-                      {isFullRange ? '∞' : rightPrice?.toSignificant(6)} {token1?.symbol}
-                    </div>
-                  </List.KeyValue>{' '}
-                </List.Control>
-              </List>
-              <List>
-                <List.Control>
-                  {positionAmount0 && (
-                    <List.KeyValue
-                      flex
-                      title={'Migration'}
-                      subtitle="The value of your position after migration"
-                      className="!items-start"
-                    >
-                      <div className="flex flex-col gap-0.5">
-                        <div className="flex items-center gap-2">
-                          <Currency.Icon currency={unwrapToken(positionAmount0.currency)} width={18} height={18} />
-                          {positionAmount0.toSignificant(6)} {unwrapToken(positionAmount0.currency).symbol}
-                        </div>
-                        <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
-                          {formatUSD(v3FiatValue0)}
-                        </span>
-                      </div>
-                    </List.KeyValue>
-                  )}
-                  {positionAmount1 && (
-                    <List.KeyValue flex title={''} className="!items-start">
-                      <div className="flex flex-col gap-0.5">
-                        <div className="flex items-center gap-2">
-                          <Currency.Icon currency={unwrapToken(positionAmount1.currency)} width={18} height={18} />
-                          {positionAmount1.toSignificant(6)} {unwrapToken(positionAmount1.currency).symbol}
-                        </div>
-                        <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
-                          {formatUSD(v3FiatValue1)}
-                        </span>
-                      </div>
-                    </List.KeyValue>
-                  )}
-                  <div className="p-4">
-                    <div className="h-0.5 w-full bg-gray-100 dark:bg-slate-200/5" />
-                  </div>
-                  {token0Value && (
-                    <List.KeyValue
-                      flex
-                      title={'Refund'}
-                      subtitle="The refund you receive after migration"
-                      className="!items-start"
-                    >
-                      <div className="flex flex-col gap-0.5">
-                        <div className="flex items-center gap-2">
-                          <Currency.Icon currency={unwrapToken(token0Value.currency)} width={18} height={18} />
-                          {refund0?.toSignificant(6) ?? '0.00'} {unwrapToken(token0Value.currency).symbol}
-                        </div>
-                        <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
-                          {formatUSD(refund0FiatValue)}
-                        </span>
-                      </div>
-                    </List.KeyValue>
-                  )}
-                  {token1Value && (
-                    <List.KeyValue flex title={''} className="!items-start">
-                      <div className="flex flex-col gap-0.5">
-                        <div className="flex items-center gap-2">
-                          <Currency.Icon currency={unwrapToken(token1Value.currency)} width={18} height={18} />
-                          {refund1?.toSignificant(6) ?? '0.00'} {unwrapToken(token1Value.currency).symbol}
-                        </div>
-                        <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
-                          {formatUSD(refund1FiatValue)}
-                        </span>
-                      </div>
-                    </List.KeyValue>
-                  )}
-                </List.Control>
-              </List>
-            </div>
-            <div className="pt-4">
-              <div className="space-y-4">
-                <Button
-                  fullWidth
-                  size="xl"
-                  loading={isLoading && !isError}
-                  onClick={() => writeAsync?.().then(() => confirm())}
-                  disabled={isMigrateLoading || isError}
-                  color={isError ? 'red' : 'blue'}
-                  testId="confirm-swap"
-                >
-                  {isError ? (
-                    'Shoot! Something went wrong :('
-                  ) : isMigrateLoading ? (
-                    <Dots>Confirm Migrate</Dots>
-                  ) : (
-                    'Confirm Migrate'
-                  )}
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-      </Modal.Review>
-      <Modal.Confirm tag={MODAL_MIGRATE_ID} variant="transparent">
-        {({ close }) => (
-          <TxStatusModalContent
-            onComplete={() => push(`/pools/${pool.chainId}:${v3Address}?activeTab=myPositions`)}
-            testId="migrate-confirmation-modal"
-            tag={MODAL_MIGRATE_ID}
-            chainId={pool.chainId as ChainId}
-            hash={data?.hash}
-            successMessage={`Successfully migrated your ${token0.symbol}/${token1.symbol} position`}
-            onClose={close}
-            buttonSuccessText="Go to pool"
-            buttonSuccessLink={`/pools/${pool.chainId}:${v3Address}?activeTab=myPositions`}
-          />
-        )}
-      </Modal.Confirm>
-    </>
+      {pool && token0 && token1 ? (
+        <DialogConfirm
+          chainId={pool.chainId as SushiSwapV3ChainId}
+          status={status}
+          testId="migrate-confirmation-modal"
+          successMessage={`Successfully migrated your ${token0.symbol}/${token1.symbol} position`}
+          buttonText="Go to pool"
+          buttonLink={`/pools/${pool.chainId}:${v3Address}?activeTab=myPositions`}
+          txHash={data?.hash}
+        />
+      ) : null}
+    </DialogProvider>
   )
 })
