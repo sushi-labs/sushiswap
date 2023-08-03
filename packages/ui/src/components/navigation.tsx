@@ -104,9 +104,10 @@ const NavigationContainer: React.FC<NavContainerProps> = ({ children, variant })
 
 interface NavProps extends VariantProps<typeof navigationContainerVariants> {
   rightElement?: React.ReactNode
+  legacyBehavior?: boolean
 }
 
-const Navigation: React.FC<NavProps> = ({ rightElement, variant }) => {
+const Navigation: React.FC<NavProps> = ({ rightElement, variant, legacyBehavior = false }) => {
   return (
     <NavigationContainer variant={variant}>
       <NavigationMenu>
@@ -127,26 +128,49 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant }) => {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
-            <a href="/swap">
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>Swap</NavigationMenuLink>
-            </a>
+            {legacyBehavior ? (
+              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <a href="/swap">Swap</a>
+              </NavigationMenuLink>
+            ) : (
+              <Link href="/swap">
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Swap</NavigationMenuLink>
+              </Link>
+            )}
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
-            <a href="/pools">
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pools</NavigationMenuLink>
-            </a>
+            {legacyBehavior ? (
+              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <a href="/pools">Pools</a>
+              </NavigationMenuLink>
+            ) : (
+              <Link href="/pools">
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pools</NavigationMenuLink>
+              </Link>
+            )}
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
-            <Link href="/furo">
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pay</NavigationMenuLink>
-            </Link>
+            {legacyBehavior ? (
+              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <a href="/furo">Pay</a>
+              </NavigationMenuLink>
+            ) : (
+              <Link href="/furo">
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pay</NavigationMenuLink>
+              </Link>
+            )}
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
             <NavigationMenuTrigger>Tools</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="w-[400px] gap-3 p-4">
                 {TOOLS_NAVIGATION_LINKS.map((component) => (
-                  <NavigationListItem key={component.title} title={component.title} href={component.href}>
+                  <NavigationListItem
+                    key={component.title}
+                    title={component.title}
+                    href={component.href}
+                    legacyBehavior={legacyBehavior}
+                  >
                     {component.description}
                   </NavigationListItem>
                 ))}
@@ -165,22 +189,39 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant }) => {
   )
 }
 
-const NavigationListItem = React.forwardRef<React.ElementRef<'a'>, React.ComponentPropsWithoutRef<'a'>>(
-  ({ className, title, children, ...props }, ref) => {
+interface NavigationListItemProps extends React.ComponentPropsWithoutRef<'a'> {
+  legacyBehavior?: boolean
+}
+
+const NavigationListItem = React.forwardRef<React.ElementRef<'a'>, NavigationListItemProps>(
+  ({ className, title, children, legacyBehavior = false, href, ...props }, ref) => {
     return (
       <li>
         <NavigationMenuLink asChild>
-          <a
-            ref={ref}
-            className={classNames(
-              'cursor-pointer block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
-              className
-            )}
-            {...props}
-          >
-            <div className="text-sm font-medium leading-none">{title}</div>
-            <p className="text-sm leading-snug line-clamp-2 text-muted-foreground">{children}</p>
-          </a>
+          {legacyBehavior || !href ? (
+            <a
+              ref={ref}
+              className={classNames(
+                'cursor-pointer block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+                className
+              )}
+              {...props}
+            >
+              <div className="text-sm font-medium leading-none">{title}</div>
+              <p className="text-sm leading-snug line-clamp-2 text-muted-foreground">{children}</p>
+            </a>
+          ) : (
+            <Link
+              href={href}
+              className={classNames(
+                'cursor-pointer block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+                className
+              )}
+            >
+              <div className="text-sm font-medium leading-none">{title}</div>
+              <p className="text-sm leading-snug line-clamp-2 text-muted-foreground">{children}</p>
+            </Link>
+          )}
         </NavigationMenuLink>
       </li>
     )

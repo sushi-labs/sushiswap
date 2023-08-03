@@ -21,6 +21,7 @@ import {
   DialogTitle,
   DialogTrigger,
   Dots,
+  FormError,
   IconButton,
   List,
   NetworkIcon,
@@ -61,7 +62,7 @@ const APPROVE_TAG = 'approve-incentivize'
 
 export default async function Page() {
   return (
-    <ConcentratedLiquidityURLStateProvider>
+    <ConcentratedLiquidityURLStateProvider supportedNetworks={ANGLE_ENABLED_NETWORKS}>
       {({ token0, chainId }) => (
         <SplashController show={Boolean(!token0 || !chainId)}>
           <Layout>
@@ -129,7 +130,6 @@ const Incentivize = withCheckerRoot(() => {
 
   const { data: angleRewardTokens, isLoading: angleRewardTokensLoading } = useAngleRewardTokens({ chainId })
 
-  console.log(angleRewardTokensLoading)
   const minAmount = useMemo(() => {
     if (!angleRewardTokens) return undefined
     const token = angleRewardTokens.find((el) => el.token.wrapped.address === rewardToken?.wrapped.address)
@@ -192,6 +192,9 @@ const Incentivize = withCheckerRoot(() => {
         : {},
     [angleRewardTokens]
   )
+
+  const validStartDate = startDate ? startDate > new Date() : true
+  const validEndDate = endDate && startDate ? endDate > startDate && endDate > new Date() : true
 
   return (
     <DialogProvider>
@@ -305,34 +308,40 @@ const Incentivize = withCheckerRoot(() => {
         <Separator />
         <ContentBlock title="What is the duration for distributing rewards?">
           <div className="grid grid-cols-2 gap-3">
-            <DateField
-              selected={startDate}
-              onChange={setStartDate}
-              portalId="root-portal"
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              timeCaption="time"
-              startDate={new Date(Date.now() + 5 * 60 * 1000)}
-              minDate={new Date(Date.now() + 5 * 60 * 1000)}
-              dateFormat="MMM d, yyyy HH:mm"
-              placeholderText="Start date"
-              autoComplete="off"
-            />
-            <DateField
-              selected={endDate}
-              onChange={setEndDate}
-              portalId="root-portal"
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              timeCaption="time"
-              startDate={startDate ? startDate : new Date(Date.now() + 5 * 60 * 1000)}
-              minDate={startDate ? startDate : new Date(Date.now() + 5 * 60 * 1000)}
-              dateFormat="MMM d, yyyy HH:mm"
-              placeholderText="End date"
-              autoComplete="off"
-            />
+            <div className="flex flex-col gap-2">
+              <DateField
+                selected={startDate}
+                onChange={setStartDate}
+                portalId="root-portal"
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                timeCaption="time"
+                startDate={new Date(Date.now() + 5 * 60 * 1000)}
+                minDate={new Date(Date.now() + 5 * 60 * 1000)}
+                dateFormat="MMM d, yyyy HH:mm"
+                placeholderText="Start date"
+                autoComplete="off"
+              />
+              {!validStartDate ? <FormError>Invalid start date.</FormError> : null}
+            </div>
+            <div className="flex flex-col gap-2">
+              <DateField
+                selected={endDate}
+                onChange={setEndDate}
+                portalId="root-portal"
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                timeCaption="time"
+                startDate={startDate ? startDate : new Date(Date.now() + 5 * 60 * 1000)}
+                minDate={startDate ? startDate : new Date(Date.now() + 5 * 60 * 1000)}
+                dateFormat="MMM d, yyyy HH:mm"
+                placeholderText="End date"
+                autoComplete="off"
+              />
+              {!validEndDate ? <FormError>Invalid end date.</FormError> : null}
+            </div>
           </div>
         </ContentBlock>
         <ContentBlock title="How many rewards in total would you like to distribute?">
@@ -491,119 +500,124 @@ const Incentivize = withCheckerRoot(() => {
               <Checker.Amounts chainId={chainId} amounts={amount}>
                 <Checker.Guard guardWhen={!startDate || !endDate} guardText="Enter duration">
                   <Checker.Guard guardWhen={totalDistro !== 100} guardText="Invalid distribution">
-                    <Checker.ApproveERC20
-                      id="approve-erc20"
-                      amount={amount[0]}
-                      contract="0x8BB4C975Ff3c250e0ceEA271728547f3802B36Fd"
+                    <Checker.Guard
+                      guardWhen={!validEndDate || !validStartDate}
+                      guardText="Invalid distribution duration"
                     >
-                      <Checker.Custom
-                        showChildren={Boolean(signature)}
-                        onClick={sign}
-                        buttonText="Sign the terms & conditions"
+                      <Checker.ApproveERC20
+                        id="approve-erc20"
+                        amount={amount[0]}
+                        contract="0x8BB4C975Ff3c250e0ceEA271728547f3802B36Fd"
                       >
-                        <Checker.Success tag={APPROVE_TAG}>
-                          <DialogReview>
-                            {({ confirm }) => (
-                              <>
-                                <DialogTrigger asChild>
-                                  <Button fullWidth size="xl" testId="incentivize-pool-review">
-                                    Incentivize pool
-                                  </Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                  <DialogHeader>
-                                    <DialogTitle>Incentivize Pool</DialogTitle>
-                                    <DialogDescription>
-                                      {token0?.symbol}/{token1?.symbol} • SushiSwap V3 • {feeAmount / 10000}%
-                                    </DialogDescription>
-                                  </DialogHeader>
-                                  <div className="flex flex-col gap-4">
-                                    <List className="!pt-0">
-                                      <List.Control>
-                                        {pool ? (
-                                          <List.KeyValue flex title="Network">
-                                            {Chain.from(pool.chainId).name}
-                                          </List.KeyValue>
-                                        ) : null}
-                                        {feeAmount && (
-                                          <List.KeyValue title="Fee Tier">{`${+feeAmount / 10000}%`}</List.KeyValue>
-                                        )}
-                                      </List.Control>
-                                    </List>
-                                    <List className="!pt-0">
-                                      <List.Control>
-                                        {startDate ? (
-                                          <List.KeyValue flex title="Start date">
-                                            {format(startDate, 'dd MMM yyyy hh:mmaaa')}
-                                          </List.KeyValue>
-                                        ) : null}
-                                        {endDate ? (
-                                          <List.KeyValue flex title="End date">
-                                            {format(endDate, 'dd MMM yyyy hh:mmaaa')}
-                                          </List.KeyValue>
-                                        ) : null}
-                                        {amount[0] ? (
-                                          <List.KeyValue title={`Total distributed`}>
-                                            <div className="flex items-center gap-2">
-                                              <Currency.Icon currency={amount[0].currency} width={18} height={18} />
-                                              <span>
-                                                {amount[0].toSignificant(6)} {amount[0].currency.symbol}
-                                              </span>
-                                            </div>
-                                          </List.KeyValue>
-                                        ) : null}
-                                        <List.KeyValue
-                                          flex
-                                          title="Out of range incentivization"
-                                          subtitle="Distribute rewards to out of range positions"
-                                        >
-                                          {customizeOOR ? 'Yes' : 'No'}
-                                        </List.KeyValue>
-                                        <List.KeyValue
-                                          flex
-                                          title="Exclude addresses"
-                                          subtitle="Exluded addresses from receiving rewards"
-                                        >
-                                          {blacklist ? `${blacklist.length} Addresses` : 'No'}
-                                        </List.KeyValue>
-                                        {token0 && token1 ? (
+                        <Checker.Custom
+                          showChildren={Boolean(signature)}
+                          onClick={sign}
+                          buttonText="Sign the terms & conditions"
+                        >
+                          <Checker.Success tag={APPROVE_TAG}>
+                            <DialogReview>
+                              {({ confirm }) => (
+                                <>
+                                  <DialogTrigger asChild>
+                                    <Button fullWidth size="xl" testId="incentivize-pool-review">
+                                      Incentivize pool
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent>
+                                    <DialogHeader>
+                                      <DialogTitle>Incentivize Pool</DialogTitle>
+                                      <DialogDescription>
+                                        {token0?.symbol}/{token1?.symbol} • SushiSwap V3 • {feeAmount / 10000}%
+                                      </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="flex flex-col gap-4">
+                                      <List className="!pt-0">
+                                        <List.Control>
+                                          {pool ? (
+                                            <List.KeyValue flex title="Network">
+                                              {Chain.from(pool.chainId).name}
+                                            </List.KeyValue>
+                                          ) : null}
+                                          {feeAmount && (
+                                            <List.KeyValue title="Fee Tier">{`${+feeAmount / 10000}%`}</List.KeyValue>
+                                          )}
+                                        </List.Control>
+                                      </List>
+                                      <List className="!pt-0">
+                                        <List.Control>
+                                          {startDate ? (
+                                            <List.KeyValue flex title="Start date">
+                                              {format(startDate, 'dd MMM yyyy hh:mmaaa')}
+                                            </List.KeyValue>
+                                          ) : null}
+                                          {endDate ? (
+                                            <List.KeyValue flex title="End date">
+                                              {format(endDate, 'dd MMM yyyy hh:mmaaa')}
+                                            </List.KeyValue>
+                                          ) : null}
+                                          {amount[0] ? (
+                                            <List.KeyValue title={`Total distributed`}>
+                                              <div className="flex items-center gap-2">
+                                                <Currency.Icon currency={amount[0].currency} width={18} height={18} />
+                                                <span>
+                                                  {amount[0].toSignificant(6)} {amount[0].currency.symbol}
+                                                </span>
+                                              </div>
+                                            </List.KeyValue>
+                                          ) : null}
                                           <List.KeyValue
                                             flex
-                                            title="Customized distribution formula"
-                                            subtitle={`${token0.symbol} / ${token1.symbol} / Fees`}
+                                            title="Out of range incentivization"
+                                            subtitle="Distribute rewards to out of range positions"
                                           >
-                                            {customize ? `${distro1[0]}% / ${distro2[0]}% / ${distro3[0]}%` : 'No'}
+                                            {customizeOOR ? 'Yes' : 'No'}
                                           </List.KeyValue>
-                                        ) : null}
-                                      </List.Control>
-                                    </List>
-                                  </div>
-                                  <DialogFooter>
-                                    <Button
-                                      fullWidth
-                                      size="xl"
-                                      variant={isError ? 'destructive' : 'default'}
-                                      loading={isIncentivizeLoading && !isError}
-                                      onClick={() => writeAsync?.().then(() => confirm())}
-                                      disabled={isIncentivizeLoading || isError}
-                                      testId="incentivize-pool-confirm"
-                                    >
-                                      {isError ? (
-                                        'Shoot! Something went wrong :('
-                                      ) : isIncentivizeLoading ? (
-                                        <Dots>Incentivize Pool</Dots>
-                                      ) : (
-                                        `Incentivize Pool`
-                                      )}
-                                    </Button>
-                                  </DialogFooter>
-                                </DialogContent>
-                              </>
-                            )}
-                          </DialogReview>
-                        </Checker.Success>
-                      </Checker.Custom>
-                    </Checker.ApproveERC20>
+                                          <List.KeyValue
+                                            flex
+                                            title="Exclude addresses"
+                                            subtitle="Exluded addresses from receiving rewards"
+                                          >
+                                            {blacklist ? `${blacklist.length} Addresses` : 'No'}
+                                          </List.KeyValue>
+                                          {token0 && token1 ? (
+                                            <List.KeyValue
+                                              flex
+                                              title="Customized distribution formula"
+                                              subtitle={`${token0.symbol} / ${token1.symbol} / Fees`}
+                                            >
+                                              {customize ? `${distro1[0]}% / ${distro2[0]}% / ${distro3[0]}%` : 'No'}
+                                            </List.KeyValue>
+                                          ) : null}
+                                        </List.Control>
+                                      </List>
+                                    </div>
+                                    <DialogFooter>
+                                      <Button
+                                        fullWidth
+                                        size="xl"
+                                        variant={isError ? 'destructive' : 'default'}
+                                        loading={isIncentivizeLoading && !isError}
+                                        onClick={() => writeAsync?.().then(() => confirm())}
+                                        disabled={isIncentivizeLoading || isError}
+                                        testId="incentivize-pool-confirm"
+                                      >
+                                        {isError ? (
+                                          'Shoot! Something went wrong :('
+                                        ) : isIncentivizeLoading ? (
+                                          <Dots>Incentivize Pool</Dots>
+                                        ) : (
+                                          `Incentivize Pool`
+                                        )}
+                                      </Button>
+                                    </DialogFooter>
+                                  </DialogContent>
+                                </>
+                              )}
+                            </DialogReview>
+                          </Checker.Success>
+                        </Checker.Custom>
+                      </Checker.ApproveERC20>
+                    </Checker.Guard>
                   </Checker.Guard>
                 </Checker.Guard>
               </Checker.Amounts>
