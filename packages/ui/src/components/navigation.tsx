@@ -129,9 +129,9 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant, legacyBehavior 
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
             {legacyBehavior ? (
-              <a href="/swap">
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Swap</NavigationMenuLink>
-              </a>
+              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <a href="/swap">Swap</a>
+              </NavigationMenuLink>
             ) : (
               <Link href="/swap">
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Swap</NavigationMenuLink>
@@ -140,9 +140,9 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant, legacyBehavior 
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
             {legacyBehavior ? (
-              <a href="/pools">
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pools</NavigationMenuLink>
-              </a>
+              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <a href="/pools">Pools</a>
+              </NavigationMenuLink>
             ) : (
               <Link href="/pools">
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pools</NavigationMenuLink>
@@ -151,9 +151,9 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant, legacyBehavior 
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
             {legacyBehavior ? (
-              <a href="/furo">
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pay</NavigationMenuLink>
-              </a>
+              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <a href="/furo">Pay</a>
+              </NavigationMenuLink>
             ) : (
               <Link href="/furo">
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pay</NavigationMenuLink>
