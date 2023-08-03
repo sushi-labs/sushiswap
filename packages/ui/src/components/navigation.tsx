@@ -1,5 +1,4 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import Link from 'next/link'
 import * as React from 'react'
 
 import { classNames, navigationMenuTriggerStyle, SushiIcon } from '../index'
@@ -124,14 +123,14 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant }) => {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
-            <Link href="/swap">
+            <a href="/swap">
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>Swap</NavigationMenuLink>
-            </Link>
+            </a>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
-            <Link href="/pools">
+            <a href="/pools">
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pools</NavigationMenuLink>
-            </Link>
+            </a>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
             <a href="/furo">
