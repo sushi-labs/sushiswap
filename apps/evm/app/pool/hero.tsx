@@ -36,7 +36,7 @@ export const Hero: FC = () => {
             extra rewards if the pool is incentivized.
           </p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex flex-col md:flex-row gap-4">
           <div className="flex items-center w-full">
             <Button asChild size="lg" className="rounded-r-none">
               <Link
