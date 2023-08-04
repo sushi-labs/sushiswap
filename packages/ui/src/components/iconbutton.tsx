@@ -69,7 +69,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>{button}</TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent side="bottom">
               <p>{description}</p>
             </TooltipContent>
           </Tooltip>

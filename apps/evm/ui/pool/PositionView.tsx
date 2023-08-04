@@ -5,13 +5,12 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { useAngleRewards } from '@sushiswap/react-query'
-import { classNames, Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
+import { classNames, Tabs, TabsContent, TabsList, TabsTrigger, Toggle } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Explainer } from '@sushiswap/ui/components/explainer'
 import { List } from '@sushiswap/ui/components/list/List'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { Toggle } from '@sushiswap/ui/components/toggle'
 import { isSushiSwapV3ChainId, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import {
@@ -127,7 +126,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
   })
 
   return (
-    <div className="flex grid-cols-1 lg:grid-cols-2 gap-10">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
       <div className="flex flex-col flex-1 gap-10">
         <Tabs className="w-full" defaultValue="add">
           <TabsList className="!flex">
@@ -167,8 +166,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
         </Tabs>
       </div>
       <div className="flex flex-col flex-1 gap-6">
-        <List>
-          <List.Label>Deposits</List.Label>
+        <List className="!pt-0">
           <List.Control>
             {position?.amount0 && _token0 ? (
               <List.KeyValue flex title={`${_token0.symbol}`}>
@@ -338,59 +336,59 @@ const Component: FC<{ id: string }> = ({ id }) => {
           </List.Control>
         </List>
         <List className="!gap-2">
-          <div className="flex items-center justify-between">
-            <List.Label>Price Range</List.Label>
-            {_token0 && _token1 && (
-              <RadioGroup value={invert} onChange={setInvert} className="flex gap-1">
-                <RadioGroup.Option as={Fragment} value={true}>
-                  {({ checked }) => (
-                    <Toggle size="xs" pressed={checked}>
-                      {_token0.symbol}
-                    </Toggle>
-                  )}
-                </RadioGroup.Option>
-                <RadioGroup.Option as={Fragment} value={false}>
-                  {({ checked }) => (
-                    <Toggle size="xs" pressed={checked}>
-                      {_token1.symbol}
-                    </Toggle>
-                  )}
-                </RadioGroup.Option>
-              </RadioGroup>
-            )}
-          </div>
-          <List.Control className="flex flex-col gap-3 p-4">
-            <div className="p-4 inline-flex flex-col gap-2 bg-gray-50 dark:bg-white/[0.02] rounded-xl">
-              <div className="flex">
-                <div
-                  className={classNames(
-                    !inRange ? 'bg-yellow/10' : 'bg-green/10',
-                    'px-2 py-1 flex items-center gap-1 rounded-full'
-                  )}
-                >
-                  <div className={classNames(outOfRange ? 'bg-yellow' : 'bg-green', 'w-3 h-3 rounded-full')} />
-                  {outOfRange ? (
-                    <span className="text-xs font-medium text-yellow-900 dark:text-yellow">Out of Range</span>
-                  ) : (
-                    <span className="text-xs font-medium text-green">In Range</span>
+          <List.Control className="flex flex-col gap-3 !bg-transparent !p-0">
+            <div className="p-4 inline-flex flex-col gap-2 bg-white dark:bg-secondary rounded-xl">
+              <div className="flex justify-between items-center">
+                <div className="flex">
+                  <div
+                    className={classNames(
+                      !inRange ? 'bg-yellow/10' : 'bg-green/10',
+                      'px-2 py-1 flex items-center gap-1 rounded-full'
+                    )}
+                  >
+                    <div className={classNames(outOfRange ? 'bg-yellow' : 'bg-green', 'w-3 h-3 rounded-full')} />
+                    {outOfRange ? (
+                      <span className="text-xs font-medium text-yellow-900 dark:text-yellow">Out of Range</span>
+                    ) : (
+                      <span className="text-xs font-medium text-green">In Range</span>
+                    )}
+                  </div>
+                </div>
+                {pool && currencyBase && currencyQuote ? (
+                  <span className="px-1 text-sm text-gray-600 dark:text-slate-200">
+                    <b>
+                      1 {unwrapToken(currencyBase)?.symbol} ={' '}
+                      {(inverted ? pool?.token1Price : pool?.token0Price)?.toSignificant(6)}{' '}
+                      {unwrapToken(currencyQuote)?.symbol}
+                    </b>
+                  </span>
+                ) : (
+                  <SkeletonText fontSize="sm" />
+                )}
+                <div className="flex items-center justify-end">
+                  {_token0 && _token1 && (
+                    <RadioGroup value={invert} onChange={setInvert} className="flex gap-1">
+                      <RadioGroup.Option as={Fragment} value={true}>
+                        {({ checked }) => (
+                          <Toggle size="xs" pressed={checked}>
+                            {_token0.symbol}
+                          </Toggle>
+                        )}
+                      </RadioGroup.Option>
+                      <RadioGroup.Option as={Fragment} value={false}>
+                        {({ checked }) => (
+                          <Toggle size="xs" pressed={checked}>
+                            {_token1.symbol}
+                          </Toggle>
+                        )}
+                      </RadioGroup.Option>
+                    </RadioGroup>
                   )}
                 </div>
               </div>
-              {pool && currencyBase && currencyQuote ? (
-                <span className="px-1 text-sm text-gray-600 dark:text-slate-200">
-                  Current:{' '}
-                  <b>
-                    1 {unwrapToken(currencyBase)?.symbol} ={' '}
-                    {(inverted ? pool?.token1Price : pool?.token0Price)?.toSignificant(6)}{' '}
-                    {unwrapToken(currencyQuote)?.symbol}
-                  </b>
-                </span>
-              ) : (
-                <SkeletonText fontSize="sm" />
-              )}
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="p-4 flex flex-col gap-3 bg-gray-50 dark:bg-white/[0.02] rounded-xl">
+              <div className="p-4 flex flex-col gap-3 bg-white dark:bg-secondary rounded-xl">
                 <div className="flex">
                   <div className="gap-1 px-2 py-1 text-xs font-medium rounded-full bg-pink/10 text-pink">Min Price</div>
                 </div>
@@ -412,7 +410,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                   </span>
                 )}
               </div>
-              <div className="p-4 inline-flex flex-col gap-3 bg-gray-50 dark:bg-white/[0.02] rounded-xl">
+              <div className="p-4 inline-flex flex-col gap-3 bg-white dark:bg-secondary rounded-xl">
                 <div className="flex">
                   <div className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-blue/10 text-blue">
                     Max Price

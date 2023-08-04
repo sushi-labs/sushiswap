@@ -569,7 +569,7 @@ export function useRangeHopCallbacks(
   tickUpper: number | undefined,
   pool?: Pool | undefined | null
 ) {
-  const { setFullRange } = useConcentratedMintActionHandlers()
+  const { setFullRange, resetMintState } = useConcentratedMintActionHandlers()
   const baseToken = useMemo(() => baseCurrency?.wrapped, [baseCurrency])
   const quoteToken = useMemo(() => quoteCurrency?.wrapped, [quoteCurrency])
 
@@ -625,5 +625,12 @@ export function useRangeHopCallbacks(
     return ''
   }, [baseToken, quoteToken, tickUpper, feeAmount, pool])
 
-  return { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper, getSetFullRange: setFullRange }
+  return {
+    getDecrementLower,
+    getIncrementLower,
+    getDecrementUpper,
+    getIncrementUpper,
+    getSetFullRange: setFullRange,
+    resetMintState,
+  }
 }

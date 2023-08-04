@@ -1,12 +1,12 @@
 import { SteerStrategy } from '@sushiswap/database'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
+import { FormSection } from '@sushiswap/ui'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import { unwrapToken } from 'lib/functions'
 import React, { FC, useMemo, useState } from 'react'
 import { ConcentratedLiquidityWidget } from 'ui/pool/ConcentratedLiquidityWidget'
 
-import { ContentBlock } from './ContentBlock'
 import { SelectPricesWidget } from './SelectPricesWidget'
 
 export const SteerStrategies = {
@@ -39,8 +39,24 @@ export const SteerManual: FC<ManualProps> = ({ address, chainId }) => {
   }, [invertTokens, poolStats?.token0, poolStats?.token1])
 
   return (
-    <div className="grid gap-10 md:grid-cols-2">
-      <div className="flex">
+    <>
+      <FormSection
+        title="Range"
+        description={
+          <>
+            Select a price range to provide liquidity. You will not earn any fees when prices move outside of this
+            range.
+            <br />
+            <a
+              className="text-blue"
+              rel="noopener noreferrer"
+              href="https://docs.uniswap.org/concepts/protocol/concentrated-liquidity"
+            >
+              Learn more.
+            </a>
+          </>
+        }
+      >
         <SelectPricesWidget
           chainId={chainId}
           token0={_token0}
@@ -49,28 +65,23 @@ export const SteerManual: FC<ManualProps> = ({ address, chainId }) => {
           tokenId={undefined}
           switchTokens={() => setInvertTokens((prev) => !prev)}
         />
-      </div>
-      <div className="flex flex-col gap-3">
-        <ContentBlock
-          title={
-            <>
-              How much <span className="text-gray-900 dark:text-white">liquidity</span> do you want to provide?
-            </>
-          }
-        >
-          <ConcentratedLiquidityWidget
-            chainId={chainId}
-            account={account}
-            token0={_token0}
-            token1={_token1}
-            feeAmount={poolStats?.feeAmount}
-            tokensLoading={false}
-            existingPosition={undefined}
-            tokenId={undefined}
-            successLink={`/pools/${chainId}:${address}?activeTab=myPositions`}
-          />
-        </ContentBlock>
-      </div>
-    </div>
+      </FormSection>
+      <FormSection
+        title="Liquidity"
+        description="Depending on your range, the supplied tokens for this position will not always be a 50:50 ratio."
+      >
+        <ConcentratedLiquidityWidget
+          chainId={chainId}
+          account={account}
+          token0={_token0}
+          token1={_token1}
+          feeAmount={poolStats?.feeAmount}
+          tokensLoading={false}
+          existingPosition={undefined}
+          tokenId={undefined}
+          successLink={`/pools/${chainId}:${address}?activeTab=myPositions`}
+        />
+      </FormSection>
+    </>
   )
 }

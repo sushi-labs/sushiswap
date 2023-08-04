@@ -1,3 +1,5 @@
+'use client'
+
 // import { SteerStrategy } from '@sushiswap/database'
 // import { formatPercent } from '@sushiswap/format'
 // import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'

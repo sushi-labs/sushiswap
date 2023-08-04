@@ -133,9 +133,9 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant, legacyBehavior 
                 <a href="/swap">Swap</a>
               </NavigationMenuLink>
             ) : (
-              <Link href="/swap">
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Swap</NavigationMenuLink>
-              </Link>
+              <NavigationMenuLink href="/swap" className={navigationMenuTriggerStyle()}>
+                Swap
+              </NavigationMenuLink>
             )}
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
@@ -144,9 +144,9 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant, legacyBehavior 
                 <a href="/pools">Pools</a>
               </NavigationMenuLink>
             ) : (
-              <Link href="/pools">
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pools</NavigationMenuLink>
-              </Link>
+              <NavigationMenuLink href="/pools" className={navigationMenuTriggerStyle()}>
+                Pools
+              </NavigationMenuLink>
             )}
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
@@ -155,9 +155,9 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant, legacyBehavior 
                 <a href="/furo">Pay</a>
               </NavigationMenuLink>
             ) : (
-              <Link href="/furo">
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pay</NavigationMenuLink>
-              </Link>
+              <NavigationMenuLink href="/furo" className={navigationMenuTriggerStyle()}>
+                Pay
+              </NavigationMenuLink>
             )}
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">

@@ -4,7 +4,6 @@ import { MinusIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/react-v1/s
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import { classNames, Label, TextField, TextFieldDescription } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { Toggle } from '@sushiswap/ui/components/toggle'
 import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
@@ -20,7 +19,6 @@ import {
   useConcentratedMintState,
   useRangeHopCallbacks,
 } from './ConcentratedLiquidityProvider'
-import { ContentBlock } from './ContentBlock'
 import LiquidityChartRangeInput from './LiquidityChartRangeInput'
 
 interface SelectPricesWidget {
@@ -69,8 +67,14 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
 
-  const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper, getSetFullRange } =
-    useRangeHopCallbacks(token0, token1, feeAmount, tickLower, tickUpper, pool)
+  const {
+    getDecrementLower,
+    getIncrementLower,
+    getDecrementUpper,
+    getIncrementUpper,
+    getSetFullRange,
+    resetMintState,
+  } = useRangeHopCallbacks(token0, token1, feeAmount, tickLower, tickUpper, pool)
 
   const isSorted = token0 && token1 && token0.wrapped.sortsBefore(token1.wrapped)
   const leftPrice = useMemo(() => (isSorted ? priceLower : priceUpper?.invert()), [isSorted, priceLower, priceUpper])
@@ -78,16 +82,10 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
 
   const fiatAmounts = useMemo(() => [tryParseAmount('1', token0), tryParseAmount('1', token1)], [token0, token1])
   const fiatAmountsAsNumber = useTokenAmountDollarValues({ chainId, amounts: fiatAmounts })
+  const isFullRange = Boolean(ticksAtLimit[Bound.LOWER] && ticksAtLimit[Bound.UPPER])
 
   return (
-    <ContentBlock
-      disabled={!token0 || !token1}
-      title={
-        <>
-          Between which <span className="text-gray-900 dark:text-white">prices</span> do you want to provide liquidity?
-        </>
-      }
-    >
+    <div className={!token0 || !token1 ? 'opacity-40' : ''}>
       {noLiquidity ? (
         <div className="p-6 font-medium bg-blue/10 text-blue rounded-xl">
           This pool must be initialized before you can add liquidity.{' '}
@@ -98,7 +96,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
         </div>
       ) : null}
       {children && children}
-      <div className="bg-white dark:bg-secondary rounded-xl flex flex-col gap-4 p-4">
+      <div className="rounded-xl flex flex-col gap-4">
         {isMounted && showStartPrice && (
           <div className="flex flex-col gap-3">
             {noLiquidity && (
@@ -135,8 +133,8 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
             )}
           </div>
         )}
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between gap-2">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
             <div className="flex justify-end lg:hidden">
               {isLoading || !pool || !token0 || !token1 ? (
                 <SkeletonText fontSize="xs" />
@@ -156,8 +154,17 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                 </div>
               )}
             </div>
+            {!noLiquidity && (
+              <Toggle
+                size="xs"
+                pressed={isFullRange}
+                onClick={() => (isFullRange ? resetMintState() : getSetFullRange())}
+              >
+                Full Range
+              </Toggle>
+            )}
             {switchTokens ? (
-              <div className="flex gap-2 rounded-xl bg-gray-100 dark:bg-white/[0.02] p-1">
+              <div className="flex bg-secondary rounded-lg">
                 <Toggle onPressedChange={switchTokens} pressed={isSorted} size="xs">
                   {isSorted ? token0?.symbol : token1?.symbol}
                 </Toggle>
@@ -167,11 +174,6 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
               </div>
             ) : (
               <div />
-            )}
-            {!noLiquidity && (
-              <Button size="sm" variant="ghost" onClick={getSetFullRange}>
-                Full Range
-              </Button>
             )}
           </div>
           <div className="flex gap-2">
@@ -186,6 +188,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
               increment={isSorted ? getIncrementLower : getDecrementUpper}
               decrementDisabled={ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]}
               incrementDisabled={ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]}
+              focus={true}
             />
             <PriceBlock
               id={'max-price'}
@@ -202,7 +205,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
           </div>
         </div>
       </div>
-    </ContentBlock>
+    </div>
   )
 }
 
@@ -218,6 +221,7 @@ interface PriceBlockProps {
   decrementDisabled?: boolean
   incrementDisabled?: boolean
   locked?: boolean
+  focus?: boolean
 }
 
 export const PriceBlock: FC<PriceBlockProps> = ({
@@ -232,6 +236,7 @@ export const PriceBlock: FC<PriceBlockProps> = ({
   token1,
   label,
   value,
+  focus = false,
 }) => {
   const isMounted = useIsMounted()
   //  for focus state, styled components doesnt let you select input parent container
@@ -275,15 +280,13 @@ export const PriceBlock: FC<PriceBlockProps> = ({
     <div
       onBlur={handleOnBlur}
       onFocus={handleOnFocus}
-      className={classNames(
-        active ? 'ring-2 ring-blue' : '',
-        'flex flex-col gap-2 w-full bg-gray-100 dark:bg-white/[0.04] rounded-lg p-3'
-      )}
+      className={classNames(active ? 'ring-2 ring-blue' : '', 'flex flex-col gap-2 w-full bg-secondary rounded-lg p-3')}
     >
       <p className="text-sm font-medium text-gray-600 dark:text-slate-400">{label}</p>
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <TextField
+            autoFocus={focus}
             variant="naked"
             testdata-id={`${id}-input`}
             type="number"
