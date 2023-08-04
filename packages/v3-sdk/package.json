@@ -37,6 +37,8 @@
     "@ethersproject/abi": "5.7.0",
     "@ethersproject/address": "5.7.0",
     "@ethersproject/bignumber": "5.7.0",
+    "@ethersproject/bytes": "^5.7.0",
+    "@ethersproject/keccak256": "^5.7.0",
     "@ethersproject/solidity": "5.7.0",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/chain": "workspace:*",

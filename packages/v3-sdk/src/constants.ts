@@ -2,7 +2,30 @@ import { ChainId } from '@sushiswap/chain'
 
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
 
-export const POOL_INIT_CODE_HASH = '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54'
+const _poolInitCodeHash = '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54'
+const _zkSyncPoolInitCodeHash = '0x010013f177ea1fcbc4520f9a3ca7cd2d1d77959e05aa66484027cb38e712aeed'
+
+export const POOL_INIT_CODE_HASH = {
+  [ChainId.ARBITRUM_NOVA]: _poolInitCodeHash,
+  [ChainId.ARBITRUM]: _poolInitCodeHash,
+  [ChainId.AVALANCHE]: _poolInitCodeHash,
+  [ChainId.BSC]: _poolInitCodeHash,
+  [ChainId.ETHEREUM]: _poolInitCodeHash,
+  [ChainId.FANTOM]: _poolInitCodeHash,
+  [ChainId.FUSE]: _poolInitCodeHash,
+  [ChainId.GNOSIS]: _poolInitCodeHash,
+  [ChainId.MOONRIVER]: _poolInitCodeHash,
+  [ChainId.OPTIMISM]: _poolInitCodeHash,
+  [ChainId.POLYGON]: _poolInitCodeHash,
+  [ChainId.BOBA]: _poolInitCodeHash,
+  [ChainId.POLYGON_ZKEVM]: _poolInitCodeHash,
+  [ChainId.THUNDERCORE]: _poolInitCodeHash,
+  [ChainId.HAQQ]: _poolInitCodeHash,
+  [ChainId.CORE]: _poolInitCodeHash,
+  [ChainId.LINEA]: _poolInitCodeHash,
+  [ChainId.BASE]: _poolInitCodeHash,
+  [ChainId.ZKSYNC_ERA]: _zkSyncPoolInitCodeHash,
+} as const
 
 /**
  * The default factory enabled fee amounts, denominated in hundredths of bips.
@@ -47,7 +70,7 @@ export const V3_FACTORY_ADDRESS = {
   [ChainId.THUNDERCORE]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
   [ChainId.HAQQ]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
   [ChainId.CORE]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
-  [ChainId.ZKSYNC_ERA]: '0x7aDc30EE139D6216c9CdaDc09B6E1598d4236C26',
+  [ChainId.ZKSYNC_ERA]: '0x0bB5111bEB91cC1206386e416FC17BBF8838Aaf3',
   [ChainId.LINEA]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
   [ChainId.BASE]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
 } as const
@@ -74,7 +97,7 @@ export const V3_POSTIION_MANAGER = {
   [ChainId.THUNDERCORE]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3',
   [ChainId.HAQQ]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
   [ChainId.CORE]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3',
-  [ChainId.ZKSYNC_ERA]: '0x7fbF36429820d790392A0D9C96d29ce465Eb7D4A',
+  [ChainId.ZKSYNC_ERA]: '0x9E248c543f0B19D34C0B3f5e733715dB235b9fF3',
   [ChainId.LINEA]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
   [ChainId.BASE]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
 } as const
@@ -101,7 +124,7 @@ export const V3_TICK_LENS = {
   [ChainId.THUNDERCORE]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904',
   [ChainId.HAQQ]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3',
   [ChainId.CORE]: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
-  [ChainId.ZKSYNC_ERA]: '0x42BaDAaCb09C42bac83AC8F6B894922ec9a49B57',
+  [ChainId.ZKSYNC_ERA]: '0x8aA8A4409FdcE18D2C2d750ddf7B4abb5bCfcB87',
   [ChainId.LINEA]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3',
   [ChainId.BASE]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3',
 } as const
@@ -123,7 +146,7 @@ export const SUSHISWAP_V3_SUPPORTED_CHAIN_IDS = [
   ChainId.THUNDERCORE,
   ChainId.HAQQ,
   ChainId.CORE,
-  // ChainId.ZKSYNC_ERA,
+  ChainId.ZKSYNC_ERA,
   ChainId.LINEA,
   ChainId.BASE,
 ] as const
