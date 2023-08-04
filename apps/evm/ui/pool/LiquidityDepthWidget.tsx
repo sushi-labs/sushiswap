@@ -2,7 +2,7 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
 
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 import { useDensityChartData } from './LiquidityChartRangeInput/hooks'
@@ -36,16 +36,18 @@ export const LiquidityDepthWidget: FC<LiquidityDepthWidget> = ({ address, chainI
     feeAmount: poolStats?.feeAmount,
   })
 
+  const current = useMemo(() => {
+    if (!price) return null
+
+    return parseFloat((invertPrice ? price.invert() : price)?.toSignificant(8))
+  }, [invertPrice, price])
+
   return (
     <>
       {isLoading && <SkeletonBox className="w-full h-full" />}
 
-      {isMounted && !noLiquidity && !isLoading && formattedData && price && poolStats && (
-        <PoolDepthChart
-          poolStats={poolStats}
-          series={formattedData}
-          current={parseFloat((invertPrice ? price.invert() : price).toSignificant(8))}
-        />
+      {isMounted && !noLiquidity && !isLoading && formattedData && current && poolStats && (
+        <PoolDepthChart poolStats={poolStats} series={formattedData} current={current} />
       )}
     </>
   )

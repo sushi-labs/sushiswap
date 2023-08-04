@@ -1,9 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { usePrice } from '@sushiswap/react-query'
-import { classNames } from '@sushiswap/ui'
-import { Button, SelectIcon } from '@sushiswap/ui'
-import { TextField } from '@sushiswap/ui'
+import { Button, classNames, SelectIcon, TextField } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 import dynamic from 'next/dynamic'
@@ -34,6 +32,7 @@ export interface CurrencyInputProps {
   allowNative?: boolean
   error?: string
   hidePinnedTokens?: boolean
+  hideSearch?: boolean
 }
 
 export const Component: FC<CurrencyInputProps> = ({
@@ -54,7 +53,8 @@ export const Component: FC<CurrencyInputProps> = ({
   currencies,
   allowNative = true,
   error,
-  hidePinnedTokens,
+  hidePinnedTokens = false,
+  hideSearch = false,
 }) => {
   const { address } = useAccount()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -130,6 +130,8 @@ export const Component: FC<CurrencyInputProps> = ({
             onSelect={onSelect}
             includeNative={allowNative}
             hidePinnedTokens={hidePinnedTokens}
+            hideSearch={hideSearch}
+            isLoading={isLoading}
           >
             <Button
               size="lg"

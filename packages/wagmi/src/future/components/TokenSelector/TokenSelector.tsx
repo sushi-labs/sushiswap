@@ -38,6 +38,8 @@ interface TokenSelectorProps {
   currencies?: Record<string, Token>
   includeNative?: boolean
   hidePinnedTokens?: boolean
+  hideSearch?: boolean
+  isLoading?: boolean
 }
 
 export const TokenSelector: FC<TokenSelectorProps> = ({
@@ -49,6 +51,8 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   children,
   currencies,
   hidePinnedTokens,
+  hideSearch,
+  isLoading,
 }) => {
   const { address } = useAccount()
 
@@ -140,16 +144,18 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
             Select a token from our default list or search for a token by symbol or address.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex gap-2">
-          <TextField
-            placeholder="Search by token or address"
-            icon={MagnifyingGlassIcon}
-            type="text"
-            testdata-id={`${id}-address-input`}
-            value={query}
-            onValueChange={setQuery}
-          />
-        </div>
+        {!hideSearch ? (
+          <div className="flex gap-2">
+            <TextField
+              placeholder="Search by token or address"
+              icon={MagnifyingGlassIcon}
+              type="text"
+              testdata-id={`${id}-address-input`}
+              value={query}
+              onValueChange={setQuery}
+            />
+          </div>
+        ) : null}
 
         {pinnedTokens.length > 0 && !hidePinnedTokens ? (
           <div className="flex flex-wrap gap-2">
@@ -180,22 +186,22 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
           </div>
         ) : null}
 
-        <List.Control className="relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5">
-          {isQueryTokenLoading ? (
+        <List.Control className="relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 min-h-[128px]">
+          {isQueryTokenLoading || isLoading ? (
             <div className="py-0.5 h-[64px] -mb-3">
               <div className="flex items-center w-full h-full px-3 rounded-lg">
                 <div className="flex items-center justify-between flex-grow gap-2 rounded">
                   <div className="flex flex-row items-center flex-grow gap-4">
                     <SkeletonCircle radius={40} />
                     <div className="flex flex-col items-start">
-                      <SkeletonText className="w-full bg-gray-300 w-[100px]" />
-                      <SkeletonText fontSize="sm" className="w-full bg-gray-100 w-[60px]" />
+                      <SkeletonText className="w-full w-[100px]" />
+                      <SkeletonText fontSize="sm" className="w-full w-[60px]" />
                     </div>
                   </div>
 
-                  <div className="flex flex-col">
-                    <SkeletonText className="bg-gray-300 w-[80px]" />
-                    <SkeletonText fontSize="sm" align="right" className="bg-gray-200 w-[40px]" />
+                  <div className="flex flex-col w-full">
+                    <SkeletonText className="w-[80px]" />
+                    <SkeletonText fontSize="sm" align="right" className="w-[40px]" />
                   </div>
                 </div>
               </div>

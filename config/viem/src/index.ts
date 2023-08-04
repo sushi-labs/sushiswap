@@ -571,7 +571,7 @@ const haqq = {
   },
 } as const
 
-const core = {
+export const core = {
   id: ChainId.CORE,
   name: 'Core',
   network: 'core',
@@ -613,7 +613,7 @@ const linea = {
   },
 } as const
 
-const base = {
+export const base = {
   id: ChainId.BASE,
   name: 'Base',
   network: 'base',

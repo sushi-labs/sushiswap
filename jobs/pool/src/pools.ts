@@ -145,7 +145,7 @@ async function extract(protocol: Protocol) {
   const result: { chainId: ChainId; data: V2Data | V3Data }[] = []
   const subgraphs = createSubgraphConfig(protocol)
   const chains = Array.from(new Set(subgraphs.map((subgraph) => subgraph.chainId.toString())))
-  console.log(`EXTRACT - Extracting from ${chains.length} different chains, ${chains.join(', ')}`) 
+  console.log(`EXTRACT - Extracting from ${chains.length} different chains, ${chains.join(', ')}`)
   const sdk = getBuiltGraphSDK()
   const [
     oneHourBlocks,
@@ -208,7 +208,9 @@ async function fetchPairs(sdk: Sdk, config: SubgraphConfig, blocks: Blocks) {
       blocks.oneMonth ? fetchLegacyOrTridentPairs(sdk, config, blocks.oneMonth) : ([] as PairsQuery[]),
       blocks.twoMonth ? fetchLegacyOrTridentPairs(sdk, config, blocks.twoMonth) : ([] as PairsQuery[]),
     ])
-    console.log(`${config.name} results by timeframe\n  * current: ${currentPools.length}\n * 1h: ${pools1h.length}\n * 2h: ${pools2h.length}\n * 1d: ${pools1d.length}\n * 2d: ${pools2d.length}\n * 1w: ${pools1w.length}\n * 2w: ${pools2w.length}\n * 1m: ${pools1m.length}\n * 2m: ${pools2m.length}`)
+    console.log(
+      `${config.name} results by timeframe\n  * current: ${currentPools.length}\n * 1h: ${pools1h.length}\n * 2h: ${pools2h.length}\n * 1d: ${pools1d.length}\n * 2d: ${pools2d.length}\n * 1w: ${pools1w.length}\n * 2w: ${pools2w.length}\n * 1m: ${pools1m.length}\n * 2m: ${pools2m.length}`
+    )
     return { currentPools, pools1h, pools2h, pools1d, pools2d, pools1w, pools2w, pools1m, pools2m }
   } else if (config.protocol === Protocol.SUSHISWAP_V3) {
     const [currentPools, pools1h, pools2h, pools1d, pools2d, pools1w, pools2w, pools1m, pools2m] = await Promise.all([
@@ -222,7 +224,9 @@ async function fetchPairs(sdk: Sdk, config: SubgraphConfig, blocks: Blocks) {
       blocks.oneMonth ? fetchV3Pools(sdk, config, blocks.oneMonth) : ([] as V3PoolsQuery[]),
       blocks.twoMonth ? fetchV3Pools(sdk, config, blocks.twoMonth) : ([] as V3PoolsQuery[]),
     ])
-    console.log(`${config.name} results by timeframe\n * current: ${currentPools.length}\n * 1h: ${pools1h.length}\n * 2h: ${pools2h.length}\n * 1d: ${pools1d.length}\n * 2d: ${pools2d.length}\n * 1w: ${pools1w.length}\n * 2w: ${pools2w.length}\n * 1m: ${pools1m.length}\n * 2m: ${pools2m.length}`)
+    console.log(
+      `${config.name} results by timeframe\n * current: ${currentPools.length}\n * 1h: ${pools1h.length}\n * 2h: ${pools2h.length}\n * 1d: ${pools1d.length}\n * 2d: ${pools2d.length}\n * 1w: ${pools1w.length}\n * 2w: ${pools2w.length}\n * 1m: ${pools1m.length}\n * 2m: ${pools2m.length}`
+    )
     return { currentPools, pools1h, pools2h, pools1d, pools2d, pools1w, pools2w, pools1m, pools2m }
   } else {
     console.warn('fetchPairs: config.version is not LEGACY or TRIDENT or V3, skipping')
@@ -435,192 +439,202 @@ function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data 
 
   const tokens: Prisma.TokenCreateManyInput[] = []
 
-  return { pools: queryResult.data.currentPools.flatMap((batch) => {
-    if (!batch?.pairs) return []
-    return batch?.pairs.flatMap((pair) => {
-      tokens.push(
-        Prisma.validator<Prisma.TokenCreateManyInput>()({
-          id: queryResult.chainId.toString().concat(':').concat(pair.token0.id),
-          address: pair.token0.id,
-          chainId: queryResult.chainId,
-          name: pair.token0.name,
-          symbol: pair.token0.symbol,
-          decimals: Number(pair.token0.decimals),
-        })
-      )
-      tokens.push(
-        Prisma.validator<Prisma.TokenCreateManyInput>()({
-          id: queryResult.chainId.toString().concat(':').concat(pair.token1.id),
-          address: pair.token1.id,
-          chainId: queryResult.chainId,
-          name: pair.token1.name,
-          symbol: pair.token1.symbol,
-          decimals: Number(pair.token1.decimals),
-        })
-      )
+  return {
+    pools: queryResult.data.currentPools.flatMap((batch) => {
+      if (!batch?.pairs) return []
+      return batch?.pairs.flatMap((pair) => {
+        tokens.push(
+          Prisma.validator<Prisma.TokenCreateManyInput>()({
+            id: queryResult.chainId.toString().concat(':').concat(pair.token0.id),
+            address: pair.token0.id,
+            chainId: queryResult.chainId,
+            name: pair.token0.name,
+            symbol: pair.token0.symbol,
+            decimals: Number(pair.token0.decimals),
+          })
+        )
+        tokens.push(
+          Prisma.validator<Prisma.TokenCreateManyInput>()({
+            id: queryResult.chainId.toString().concat(':').concat(pair.token1.id),
+            address: pair.token1.id,
+            chainId: queryResult.chainId,
+            name: pair.token1.name,
+            symbol: pair.token1.symbol,
+            decimals: Number(pair.token1.decimals),
+          })
+        )
 
-      const regex = /([^\w ]|_|-)/g
-      const name = pair.token0.symbol
-        .replace(regex, '')
-        .slice(0, 15)
-        .concat('-')
-        .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
-      let protocol: Protocol
-      if (pair.source === 'LEGACY' && pair.type === 'CONSTANT_PRODUCT_POOL') {
-        protocol = Protocol.SUSHISWAP_V2
-      } else if (pair.source === 'TRIDENT' && pair.type === 'CONSTANT_PRODUCT_POOL') {
-        protocol = Protocol.BENTOBOX_CLASSIC
-      } else if (pair.source === 'TRIDENT' && pair.type === 'STABLE_POOL') {
-        protocol = Protocol.BENTOBOX_STABLE
-      } else {
-        throw new Error('Unknown pool type')
-      }
+        const regex = /([^\w ]|_|-)/g
+        const name = pair.token0.symbol
+          .replace(regex, '')
+          .slice(0, 15)
+          .concat('-')
+          .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
+        let protocol: Protocol
+        if (pair.source === 'LEGACY' && pair.type === 'CONSTANT_PRODUCT_POOL') {
+          protocol = Protocol.SUSHISWAP_V2
+        } else if (pair.source === 'TRIDENT' && pair.type === 'CONSTANT_PRODUCT_POOL') {
+          protocol = Protocol.BENTOBOX_CLASSIC
+        } else if (pair.source === 'TRIDENT' && pair.type === 'STABLE_POOL') {
+          protocol = Protocol.BENTOBOX_STABLE
+        } else {
+          throw new Error('Unknown pool type')
+        }
 
-      const feeApr1h = calculateFeeApr(
-        AprTimeRange.ONE_HOUR,
-        oneHourData.get(pair.id)?.feesUSD ?? 0,
-        pair.feesUSD,
-        pair.liquidityUSD
-      )
-      const feeApr1d = calculateFeeApr(
-        AprTimeRange.ONE_DAY,
-        oneDayData.get(pair.id)?.feesUSD ?? 0,
-        pair.feesUSD,
-        pair.liquidityUSD
-      )
-      const feeApr1w = calculateFeeApr(
-        AprTimeRange.ONE_WEEK,
-        oneWeekData.get(pair.id)?.feesUSD ?? 0,
-        pair.feesUSD,
-        pair.liquidityUSD
-      )
-      const feeApr1m = calculateFeeApr(
-        AprTimeRange.ONE_MONTH,
-        oneMonthData.get(pair.id)?.feesUSD ?? 0,
-        pair.feesUSD,
-        pair.liquidityUSD
-      )
+        const currentVolumeUSD = Number(pair.volumeUSD)
+        const currentLiquidityUSD = Number(pair.liquidityUSD)
+        const currentFeesUSD = Number(pair.feesUSD)
 
-      const currentVolumeUSD = Number(pair.volumeUSD)
-      const currentLiquidityUSD = Number(pair.liquidityUSD)
-      const currentFeesUSD = Number(pair.feesUSD)
-      
-      const fees1h = oneHourData.has(pair.id) ? currentFeesUSD - oneHourData.get(pair.id).feesUSD : currentFeesUSD
-      const fees1d = oneDayData.has(pair.id) ? currentFeesUSD - oneDayData.get(pair.id).feesUSD : currentFeesUSD
-      const fees1w = oneWeekData.has(pair.id) ? currentFeesUSD - oneWeekData.get(pair.id).feesUSD : currentFeesUSD
-      const fees1m = oneMonthData.has(pair.id) ? currentFeesUSD - oneMonthData.get(pair.id).feesUSD : currentFeesUSD
-      const feesChange1h = calculatePercentageChange(
-        currentFeesUSD,
-        oneHourData.get(pair.id)?.feesUSD ?? 0,
-        twoHourData.get(pair.id)?.feesUSD ?? 0
-      )
-      const feesChange1d = calculatePercentageChange(
-        currentFeesUSD,
-        oneDayData.get(pair.id)?.feesUSD ?? 0,
-        twoDayData.get(pair.id)?.feesUSD ?? 0
-      )
-      const feesChange1w= calculatePercentageChange(
-        currentFeesUSD,
-        oneWeekData.get(pair.id)?.feesUSD ?? 0,
-        twoWeekData.get(pair.id)?.feesUSD ?? 0
-      )
-      const feesChange1m= calculatePercentageChange(
-        currentFeesUSD,
-        oneMonthData.get(pair.id)?.feesUSD ?? 0,
-        twoMonthData.get(pair.id)?.feesUSD ?? 0
-      )
-      const volume1h = oneHourData.has(pair.id) ? currentVolumeUSD - oneHourData.get(pair.id).volumeUSD : currentVolumeUSD
-      const volume1d = oneDayData.has(pair.id) ? currentVolumeUSD - oneDayData.get(pair.id).volumeUSD : currentVolumeUSD
-      const volume1w = oneWeekData.has(pair.id) ? currentVolumeUSD - oneWeekData.get(pair.id).volumeUSD : currentVolumeUSD
-      const volume1m = oneMonthData.has(pair.id) ? currentVolumeUSD - oneMonthData.get(pair.id).volumeUSD : currentVolumeUSD
-      const volumeChange1h = calculatePercentageChange(
-        currentVolumeUSD,
-        oneHourData.get(pair.id)?.volumeUSD ?? 0,
-        twoHourData.get(pair.id)?.volumeUSD ?? 0
-      )
-      const volumeChange1d = calculatePercentageChange(
-        currentVolumeUSD,
-        oneDayData.get(pair.id)?.volumeUSD ?? 0,
-        twoDayData.get(pair.id)?.volumeUSD ?? 0
-      )
-      const volumeChange1w = calculatePercentageChange(
-        currentVolumeUSD,
-        oneWeekData.get(pair.id)?.volumeUSD ?? 0,
-        twoWeekData.get(pair.id)?.volumeUSD ?? 0
-      )
-      const volumeChange1m = calculatePercentageChange(
-        currentVolumeUSD,
-        oneMonthData.get(pair.id)?.volumeUSD ?? 0,
-        twoMonthData.get(pair.id)?.volumeUSD ?? 0
-      )
-      const liquidityUSDChange1h = oneHourData.get(pair.id)?.liquidityUSD
-        ? currentLiquidityUSD / oneHourData.get(pair.id)?.liquidityUSD - 1
-        : 0
+        const feeApr1h = calculateFeeApr(
+          AprTimeRange.ONE_HOUR,
+          oneHourData.get(pair.id)?.feesUSD ?? currentFeesUSD,
+          pair.feesUSD,
+          pair.liquidityUSD
+        )
+        const feeApr1d = calculateFeeApr(
+          AprTimeRange.ONE_DAY,
+          oneDayData.get(pair.id)?.feesUSD ?? currentFeesUSD,
+          pair.feesUSD,
+          pair.liquidityUSD
+        )
+        const feeApr1w = calculateFeeApr(
+          AprTimeRange.ONE_WEEK,
+          oneWeekData.get(pair.id)?.feesUSD ?? currentFeesUSD,
+          pair.feesUSD,
+          pair.liquidityUSD
+        )
+        const feeApr1m = calculateFeeApr(
+          AprTimeRange.ONE_MONTH,
+          oneMonthData.get(pair.id)?.feesUSD ?? currentFeesUSD,
+          pair.feesUSD,
+          pair.liquidityUSD
+        )
+
+        const fees1h = oneHourData.has(pair.id) ? currentFeesUSD - oneHourData.get(pair.id).feesUSD : currentFeesUSD
+        const fees1d = oneDayData.has(pair.id) ? currentFeesUSD - oneDayData.get(pair.id).feesUSD : currentFeesUSD
+        const fees1w = oneWeekData.has(pair.id) ? currentFeesUSD - oneWeekData.get(pair.id).feesUSD : currentFeesUSD
+        const fees1m = oneMonthData.has(pair.id) ? currentFeesUSD - oneMonthData.get(pair.id).feesUSD : currentFeesUSD
+        const feesChange1h = calculatePercentageChange(
+          currentFeesUSD,
+          oneHourData.get(pair.id)?.feesUSD ?? 0,
+          twoHourData.get(pair.id)?.feesUSD ?? 0
+        )
+        const feesChange1d = calculatePercentageChange(
+          currentFeesUSD,
+          oneDayData.get(pair.id)?.feesUSD ?? 0,
+          twoDayData.get(pair.id)?.feesUSD ?? 0
+        )
+        const feesChange1w = calculatePercentageChange(
+          currentFeesUSD,
+          oneWeekData.get(pair.id)?.feesUSD ?? 0,
+          twoWeekData.get(pair.id)?.feesUSD ?? 0
+        )
+        const feesChange1m = calculatePercentageChange(
+          currentFeesUSD,
+          oneMonthData.get(pair.id)?.feesUSD ?? 0,
+          twoMonthData.get(pair.id)?.feesUSD ?? 0
+        )
+        const volume1h = oneHourData.has(pair.id)
+          ? currentVolumeUSD - oneHourData.get(pair.id).volumeUSD
+          : currentVolumeUSD
+        const volume1d = oneDayData.has(pair.id)
+          ? currentVolumeUSD - oneDayData.get(pair.id).volumeUSD
+          : currentVolumeUSD
+        const volume1w = oneWeekData.has(pair.id)
+          ? currentVolumeUSD - oneWeekData.get(pair.id).volumeUSD
+          : currentVolumeUSD
+        const volume1m = oneMonthData.has(pair.id)
+          ? currentVolumeUSD - oneMonthData.get(pair.id).volumeUSD
+          : currentVolumeUSD
+        const volumeChange1h = calculatePercentageChange(
+          currentVolumeUSD,
+          oneHourData.get(pair.id)?.volumeUSD ?? 0,
+          twoHourData.get(pair.id)?.volumeUSD ?? 0
+        )
+        const volumeChange1d = calculatePercentageChange(
+          currentVolumeUSD,
+          oneDayData.get(pair.id)?.volumeUSD ?? 0,
+          twoDayData.get(pair.id)?.volumeUSD ?? 0
+        )
+        const volumeChange1w = calculatePercentageChange(
+          currentVolumeUSD,
+          oneWeekData.get(pair.id)?.volumeUSD ?? 0,
+          twoWeekData.get(pair.id)?.volumeUSD ?? 0
+        )
+        const volumeChange1m = calculatePercentageChange(
+          currentVolumeUSD,
+          oneMonthData.get(pair.id)?.volumeUSD ?? 0,
+          twoMonthData.get(pair.id)?.volumeUSD ?? 0
+        )
+        const liquidityUSDChange1h = oneHourData.get(pair.id)?.liquidityUSD
+          ? currentLiquidityUSD / oneHourData.get(pair.id)?.liquidityUSD - 1
+          : 0
         const liquidityUSDChange1d = oneDayData.get(pair.id)?.liquidityUSD
-        ? currentLiquidityUSD / oneDayData.get(pair.id)?.liquidityUSD - 1
-        : 0
-      
+          ? currentLiquidityUSD / oneDayData.get(pair.id)?.liquidityUSD - 1
+          : 0
+
         const liquidityUSDChange1w = oneWeekData.get(pair.id)?.liquidityUSD
-        ? currentLiquidityUSD / oneWeekData.get(pair.id)?.liquidityUSD - 1
-        : 0
-      
+          ? currentLiquidityUSD / oneWeekData.get(pair.id)?.liquidityUSD - 1
+          : 0
+
         const liquidityUSDChange1m = oneMonthData.get(pair.id)?.liquidityUSD
-        ? currentLiquidityUSD / oneMonthData.get(pair.id)?.liquidityUSD - 1
-        : 0
-  
+          ? currentLiquidityUSD / oneMonthData.get(pair.id)?.liquidityUSD - 1
+          : 0
+
         return {
-        id: queryResult.chainId.toString().concat(':').concat(pair.id),
-        address: pair.id,
-        name: name,
-        protocol,
-        chainId: queryResult.chainId,
-        swapFee: Number(pair.swapFee) / 10_000,
-        twapEnabled: pair.twapEnabled,
-        token0Id: queryResult.chainId.toString().concat(':').concat(pair.token0.id.toLowerCase()),
-        token1Id: queryResult.chainId.toString().concat(':').concat(pair.token1.id.toLowerCase()),
-        reserve0: pair.reserve0,
-        reserve1: pair.reserve1,
-        totalSupply: pair.liquidity,
-        liquidityUSD: currentLiquidityUSD,
-        liquidityNative: pair.liquidityNative,
-        volumeUSD: currentVolumeUSD,
-        feesUSD: currentFeesUSD,
-        volumeNative: pair.volumeNative,
-        token0Price: pair.token0Price,
-        token1Price: pair.token1Price,
-        ...(oneHourData.get(pair.id)?.feesUSD && {fees1h}),
-        ...(oneDayData.get(pair.id)?.feesUSD && {fees1d}),
-        ...(oneWeekData.get(pair.id)?.feesUSD && {fees1w}),
-        ...(oneMonthData.get(pair.id)?.feesUSD && {fees1m}),
-        ...(oneHourData.get(pair.id)?.feesUSD && {feesChange1h}),
-        ...(oneDayData.get(pair.id)?.feesUSD && {feesChange1d}),
-        ...(oneWeekData.get(pair.id)?.feesUSD && {feesChange1w}),
-        ...(oneMonthData.get(pair.id)?.feesUSD && {feesChange1m}),
-        ...(oneHourData.get(pair.id)?.volumeUSD && {volume1h}),
-        ...(oneDayData.get(pair.id)?.volumeUSD && {volume1d}),
-        ...(oneWeekData.get(pair.id)?.volumeUSD && {volume1w}),
-        ...(oneMonthData.get(pair.id)?.volumeUSD && {volume1m}),
-        ...(oneHourData.get(pair.id)?.volumeUSD && {volumeChange1h}),
-        ...(oneDayData.get(pair.id)?.volumeUSD && {volumeChange1d}),
-        ...(oneWeekData.get(pair.id)?.volumeUSD && {volumeChange1w}),
-        ...(oneMonthData.get(pair.id)?.volumeUSD && {volumeChange1m}),
-        ...(oneHourData.get(pair.id)?.liquidityUSD && {liquidityUSDChange1h}),
-        ...(oneDayData.get(pair.id)?.liquidityUSD && {liquidityUSDChange1d}),
-        ...(oneWeekData.get(pair.id)?.liquidityUSD && {liquidityUSDChange1w}),
-        ...(oneMonthData.get(pair.id)?.liquidityUSD && {liquidityUSDChange1m}),
-        ...(oneHourData.get(pair.id)?.feesUSD && {feeApr1h}),
-        ...(oneDayData.get(pair.id)?.feesUSD && {feeApr1d}),
-        ...(oneWeekData.get(pair.id)?.feesUSD && {feeApr1w}),
-        ...(oneMonthData.get(pair.id)?.feesUSD && {feeApr1m}),
-        ...(oneHourData.get(pair.id)?.feesUSD && {totalApr1h: feeApr1h}),
-        ...(oneDayData.get(pair.id)?.feesUSD && {totalApr1d: feeApr1d}),
-        ...(oneWeekData.get(pair.id)?.feesUSD && {totalApr1w: feeApr1w}),
-        ...(oneMonthData.get(pair.id)?.feesUSD && {totalApr1m: feeApr1m}),
-        createdAtBlockNumber: BigInt(pair.createdAtBlock),
-      } satisfies Prisma.SushiPoolCreateManyInput
-    }
-    )
-  }), tokens }
+          id: queryResult.chainId.toString().concat(':').concat(pair.id),
+          address: pair.id,
+          name: name,
+          protocol,
+          chainId: queryResult.chainId,
+          swapFee: Number(pair.swapFee) / 10_000,
+          twapEnabled: pair.twapEnabled,
+          token0Id: queryResult.chainId.toString().concat(':').concat(pair.token0.id.toLowerCase()),
+          token1Id: queryResult.chainId.toString().concat(':').concat(pair.token1.id.toLowerCase()),
+          reserve0: pair.reserve0,
+          reserve1: pair.reserve1,
+          totalSupply: pair.liquidity,
+          liquidityUSD: currentLiquidityUSD,
+          liquidityNative: pair.liquidityNative,
+          volumeUSD: currentVolumeUSD,
+          feesUSD: currentFeesUSD,
+          volumeNative: pair.volumeNative,
+          token0Price: pair.token0Price,
+          token1Price: pair.token1Price,
+          ...(oneHourData.get(pair.id)?.feesUSD && { fees1h }),
+          ...(oneDayData.get(pair.id)?.feesUSD && { fees1d }),
+          ...(oneWeekData.get(pair.id)?.feesUSD && { fees1w }),
+          ...(oneMonthData.get(pair.id)?.feesUSD && { fees1m }),
+          ...(oneHourData.get(pair.id)?.feesUSD && { feesChange1h }),
+          ...(oneDayData.get(pair.id)?.feesUSD && { feesChange1d }),
+          ...(oneWeekData.get(pair.id)?.feesUSD && { feesChange1w }),
+          ...(oneMonthData.get(pair.id)?.feesUSD && { feesChange1m }),
+          ...(oneHourData.get(pair.id)?.volumeUSD && { volume1h }),
+          ...(oneDayData.get(pair.id)?.volumeUSD && { volume1d }),
+          ...(oneWeekData.get(pair.id)?.volumeUSD && { volume1w }),
+          ...(oneMonthData.get(pair.id)?.volumeUSD && { volume1m }),
+          ...(oneHourData.get(pair.id)?.volumeUSD && { volumeChange1h }),
+          ...(oneDayData.get(pair.id)?.volumeUSD && { volumeChange1d }),
+          ...(oneWeekData.get(pair.id)?.volumeUSD && { volumeChange1w }),
+          ...(oneMonthData.get(pair.id)?.volumeUSD && { volumeChange1m }),
+          ...(oneHourData.get(pair.id)?.liquidityUSD && { liquidityUSDChange1h }),
+          ...(oneDayData.get(pair.id)?.liquidityUSD && { liquidityUSDChange1d }),
+          ...(oneWeekData.get(pair.id)?.liquidityUSD && { liquidityUSDChange1w }),
+          ...(oneMonthData.get(pair.id)?.liquidityUSD && { liquidityUSDChange1m }),
+          ...(oneHourData.get(pair.id)?.feesUSD && { feeApr1h }),
+          ...(oneDayData.get(pair.id)?.feesUSD && { feeApr1d }),
+          ...(oneWeekData.get(pair.id)?.feesUSD && { feeApr1w }),
+          ...(oneMonthData.get(pair.id)?.feesUSD && { feeApr1m }),
+          ...(oneHourData.get(pair.id)?.feesUSD && { totalApr1h: feeApr1h }),
+          ...(oneDayData.get(pair.id)?.feesUSD && { totalApr1d: feeApr1d }),
+          ...(oneWeekData.get(pair.id)?.feesUSD && { totalApr1w: feeApr1w }),
+          ...(oneMonthData.get(pair.id)?.feesUSD && { totalApr1m: feeApr1m }),
+          createdAtBlockNumber: BigInt(pair.createdAtBlock),
+        } satisfies Prisma.SushiPoolCreateManyInput
+      })
+    }),
+    tokens,
+  }
 }
 
 function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
@@ -752,35 +766,35 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
         .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
       const swapFee = Number(pair.feeTier) / 1_000_000
 
+      const currentVolumeUSD = Number(pair.volumeUSD)
+      const currentLiquidityUSD = Number(pair.totalValueLockedUSD)
+      const currentFeesUSD = Number(pair.feesUSD)
+
       const feeApr1h = calculateFeeApr(
         AprTimeRange.ONE_HOUR,
-        oneHourData.get(pair.id)?.feesUSD ?? 0,
+        oneHourData.get(pair.id)?.feesUSD ?? currentFeesUSD,
         pair.feesUSD,
         pair.totalValueLockedUSD
       )
       const feeApr1d = calculateFeeApr(
         AprTimeRange.ONE_DAY,
-        oneDayData.get(pair.id)?.feesUSD ?? 0,
+        oneDayData.get(pair.id)?.feesUSD ?? currentFeesUSD,
         pair.feesUSD,
         pair.totalValueLockedUSD
       )
       const feeApr1w = calculateFeeApr(
         AprTimeRange.ONE_WEEK,
-        oneWeekData.get(pair.id)?.feesUSD ?? 0,
+        oneWeekData.get(pair.id)?.feesUSD ?? currentFeesUSD,
         pair.feesUSD,
         pair.totalValueLockedUSD
       )
       const feeApr1m = calculateFeeApr(
         AprTimeRange.ONE_MONTH,
-        oneMonthData.get(pair.id)?.feesUSD ?? 0,
+        oneMonthData.get(pair.id)?.feesUSD ?? currentFeesUSD,
         pair.feesUSD,
         pair.totalValueLockedUSD
       )
-      const currentVolumeUSD = Number(pair.volumeUSD)
-      const currentLiquidityUSD = Number(pair.totalValueLockedUSD)
-      const currentFeesUSD = Number(pair.feesUSD)
 
-            
       const fees1h = oneHourData.has(pair.id) ? currentFeesUSD - oneHourData.get(pair.id).feesUSD : currentFeesUSD
       const fees1d = oneDayData.has(pair.id) ? currentFeesUSD - oneDayData.get(pair.id).feesUSD : currentFeesUSD
       const fees1w = oneWeekData.has(pair.id) ? currentFeesUSD - oneWeekData.get(pair.id).feesUSD : currentFeesUSD
@@ -795,20 +809,26 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
         oneDayData.get(pair.id)?.feesUSD ?? 0,
         twoDayData.get(pair.id)?.feesUSD ?? 0
       )
-      const feesChange1w= calculatePercentageChange(
+      const feesChange1w = calculatePercentageChange(
         currentFeesUSD,
         oneWeekData.get(pair.id)?.feesUSD ?? 0,
         twoWeekData.get(pair.id)?.feesUSD ?? 0
       )
-      const feesChange1m= calculatePercentageChange(
+      const feesChange1m = calculatePercentageChange(
         currentFeesUSD,
         oneMonthData.get(pair.id)?.feesUSD ?? 0,
         twoMonthData.get(pair.id)?.feesUSD ?? 0
       )
-      const volume1h = oneHourData.has(pair.id) ? currentVolumeUSD - oneHourData.get(pair.id).volumeUSD : currentVolumeUSD
+      const volume1h = oneHourData.has(pair.id)
+        ? currentVolumeUSD - oneHourData.get(pair.id).volumeUSD
+        : currentVolumeUSD
       const volume1d = oneDayData.has(pair.id) ? currentVolumeUSD - oneDayData.get(pair.id).volumeUSD : currentVolumeUSD
-      const volume1w = oneWeekData.has(pair.id) ? currentVolumeUSD - oneWeekData.get(pair.id).volumeUSD : currentVolumeUSD
-      const volume1m = oneMonthData.has(pair.id) ? currentVolumeUSD - oneMonthData.get(pair.id).volumeUSD : currentVolumeUSD
+      const volume1w = oneWeekData.has(pair.id)
+        ? currentVolumeUSD - oneWeekData.get(pair.id).volumeUSD
+        : currentVolumeUSD
+      const volume1m = oneMonthData.has(pair.id)
+        ? currentVolumeUSD - oneMonthData.get(pair.id).volumeUSD
+        : currentVolumeUSD
       const volumeChange1h = calculatePercentageChange(
         currentVolumeUSD,
         oneHourData.get(pair.id)?.volumeUSD ?? 0,
@@ -832,15 +852,15 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
       const liquidityUSDChange1h = oneHourData.get(pair.id)?.liquidityUSD
         ? currentLiquidityUSD / oneHourData.get(pair.id)?.liquidityUSD - 1
         : 0
-        const liquidityUSDChange1d = oneDayData.get(pair.id)?.liquidityUSD
+      const liquidityUSDChange1d = oneDayData.get(pair.id)?.liquidityUSD
         ? currentLiquidityUSD / oneDayData.get(pair.id)?.liquidityUSD - 1
         : 0
-      
-        const liquidityUSDChange1w = oneWeekData.get(pair.id)?.liquidityUSD
+
+      const liquidityUSDChange1w = oneWeekData.get(pair.id)?.liquidityUSD
         ? currentLiquidityUSD / oneWeekData.get(pair.id)?.liquidityUSD - 1
         : 0
-      
-        const liquidityUSDChange1m = oneMonthData.get(pair.id)?.liquidityUSD
+
+      const liquidityUSDChange1m = oneMonthData.get(pair.id)?.liquidityUSD
         ? currentLiquidityUSD / oneMonthData.get(pair.id)?.liquidityUSD - 1
         : 0
 
@@ -857,34 +877,34 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
         reserve0: (pair.totalValueLockedToken0 ** pair.token0.decimals).toFixed(0).toString(),
         reserve1: (pair.totalValueLockedToken1 ** pair.token1.decimals).toFixed(0).toString(),
         totalSupply: pair.liquidity,
-        ...(oneHourData.get(pair.id)?.feesUSD && {fees1h}),
-        ...(oneDayData.get(pair.id)?.feesUSD && {fees1d}),
-        ...(oneWeekData.get(pair.id)?.feesUSD && {fees1w}),
-        ...(oneMonthData.get(pair.id)?.feesUSD && {fees1m}),
-        ...(oneHourData.get(pair.id)?.feesUSD && {feesChange1h}),
-        ...(oneDayData.get(pair.id)?.feesUSD && {feesChange1d}),
-        ...(oneWeekData.get(pair.id)?.feesUSD && {feesChange1w}),
-        ...(oneMonthData.get(pair.id)?.feesUSD && {feesChange1m}),
-        ...(oneHourData.get(pair.id)?.volumeUSD && {volume1h}),
-        ...(oneDayData.get(pair.id)?.volumeUSD && {volume1d}),
-        ...(oneWeekData.get(pair.id)?.volumeUSD && {volume1w}),
-        ...(oneMonthData.get(pair.id)?.volumeUSD && {volume1m}),
-        ...(oneHourData.get(pair.id)?.volumeUSD && {volumeChange1h}),
-        ...(oneDayData.get(pair.id)?.volumeUSD && {volumeChange1d}),
-        ...(oneWeekData.get(pair.id)?.volumeUSD && {volumeChange1w}),
-        ...(oneMonthData.get(pair.id)?.volumeUSD && {volumeChange1m}),
-        ...(oneHourData.get(pair.id)?.liquidityUSD && {liquidityUSDChange1h}),
-        ...(oneDayData.get(pair.id)?.liquidityUSD && {liquidityUSDChange1d}),
-        ...(oneWeekData.get(pair.id)?.liquidityUSD && {liquidityUSDChange1w}),
-        ...(oneMonthData.get(pair.id)?.liquidityUSD && {liquidityUSDChange1m}),
-        ...(oneHourData.get(pair.id)?.feesUSD && {feeApr1h}),
-        ...(oneDayData.get(pair.id)?.feesUSD && {feeApr1d}),
-        ...(oneWeekData.get(pair.id)?.feesUSD && {feeApr1w}),
-        ...(oneMonthData.get(pair.id)?.feesUSD && {feeApr1m}),
-        ...(oneHourData.get(pair.id)?.feesUSD && {totalApr1h: feeApr1h}),
-        ...(oneDayData.get(pair.id)?.feesUSD && {totalApr1d: feeApr1d}),
-        ...(oneWeekData.get(pair.id)?.feesUSD && {totalApr1w: feeApr1w}),
-        ...(oneMonthData.get(pair.id)?.feesUSD && {totalApr1m: feeApr1m}),
+        fees1h,
+        fees1d,
+        fees1w,
+        fees1m,
+        ...(oneHourData.get(pair.id)?.feesUSD && { feesChange1h }),
+        ...(oneDayData.get(pair.id)?.feesUSD && { feesChange1d }),
+        ...(oneWeekData.get(pair.id)?.feesUSD && { feesChange1w }),
+        ...(oneMonthData.get(pair.id)?.feesUSD && { feesChange1m }),
+        volume1h,
+        volume1d,
+        volume1w,
+        volume1m,
+        ...(oneHourData.get(pair.id)?.volumeUSD && { volumeChange1h }),
+        ...(oneDayData.get(pair.id)?.volumeUSD && { volumeChange1d }),
+        ...(oneWeekData.get(pair.id)?.volumeUSD && { volumeChange1w }),
+        ...(oneMonthData.get(pair.id)?.volumeUSD && { volumeChange1m }),
+        ...(oneHourData.get(pair.id)?.liquidityUSD && { liquidityUSDChange1h }),
+        ...(oneDayData.get(pair.id)?.liquidityUSD && { liquidityUSDChange1d }),
+        ...(oneWeekData.get(pair.id)?.liquidityUSD && { liquidityUSDChange1w }),
+        ...(oneMonthData.get(pair.id)?.liquidityUSD && { liquidityUSDChange1m }),
+        ...(oneHourData.get(pair.id)?.feesUSD && { feeApr1h }),
+        ...(oneDayData.get(pair.id)?.feesUSD && { feeApr1d }),
+        ...(oneWeekData.get(pair.id)?.feesUSD && { feeApr1w }),
+        ...(oneMonthData.get(pair.id)?.feesUSD && { feeApr1m }),
+        ...(oneDayData.get(pair.id)?.feesUSD && { feeApr1d } || oneHourData.get(pair.id)?.feesUSD && { feeApr1d: feeApr1h }),
+        ...(oneDayData.get(pair.id)?.feesUSD && { totalApr1d: feeApr1d }),
+        ...(oneWeekData.get(pair.id)?.feesUSD && { totalApr1w: feeApr1w }),
+        ...(oneMonthData.get(pair.id)?.feesUSD && { totalApr1m: feeApr1m }),
         liquidityUSD: currentLiquidityUSD,
         liquidityNative: pair.totalValueLockedETH,
         volumeUSD: currentVolumeUSD,

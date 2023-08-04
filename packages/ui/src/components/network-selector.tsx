@@ -12,6 +12,7 @@ export type NetworkSelectorOnSelectCallback<T extends number = ChainId> = (chain
 const PREFERRED_CHAINID_ORDER: ChainId[] = [
   ChainId.ETHEREUM,
   ChainId.ARBITRUM,
+  ChainId.BASE,
   ChainId.POLYGON,
   ChainId.OPTIMISM,
   ChainId.BSC,

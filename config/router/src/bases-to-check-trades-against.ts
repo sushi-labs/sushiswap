@@ -275,4 +275,5 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
   [ChainId.CORE]: [WNATIVE[ChainId.CORE], WETH9[ChainId.CORE], USDC[ChainId.CORE], USDT[ChainId.CORE]],
   [ChainId.ZKSYNC_ERA]: [WNATIVE[ChainId.ZKSYNC_ERA], WBTC[ChainId.ZKSYNC_ERA], USDC[ChainId.ZKSYNC_ERA]],
   [ChainId.LINEA]: [WNATIVE[ChainId.LINEA], USDC[ChainId.LINEA], DAI[ChainId.LINEA]],
+  [ChainId.BASE]: [WNATIVE[ChainId.BASE], USDC[ChainId.BASE], DAI[ChainId.BASE]],
 }

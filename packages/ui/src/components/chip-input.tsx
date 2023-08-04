@@ -6,7 +6,7 @@ import * as React from 'react'
 import { useCallback, useState } from 'react'
 
 import { IconComponent } from '../types'
-import { buttonIconVariants } from './button'
+import { Button, buttonIconVariants } from './button'
 import { Chip, chipVariants } from './chip'
 import { textFieldVariants } from './text-field'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip'
@@ -40,24 +40,30 @@ const ChipInput = React.forwardRef<HTMLInputElement, ChipInputProps>(
       values,
       variant,
       onValueChange,
-      delimiters = [',', ';', ':'],
+      delimiters = [',', ';', ':', ' ', 'Enter', 'Tab'],
       mutateValue,
       ...props
     },
     ref
   ) => {
     const [state, setState] = useState<string>('')
+
+    const split = useCallback(() => {
+      const regExp = new RegExp(`(?:${delimiters.map((el) => el).join('|')})+`)
+      onValueChange([...values, ...state.split(regExp).filter((el) => el !== '')])
+      setState('')
+    }, [delimiters, onValueChange, state, values])
+
     const onKeyDown = useCallback(
       (e: React.KeyboardEvent) => {
-        if (delimiters.includes(e.key) && state !== '') {
-          const regExp = new RegExp(`(?:${delimiters.map((el) => el).join('|')})+`)
-          onValueChange([...values, ...state.split(regExp).filter((el) => el !== '')])
-          setState('')
+        console.log(delimiters, e.key, delimiters.includes(e.key))
+        if (delimiters.includes(e.key)) {
+          split()
         } else if (e.code === 'Backspace') {
           onValueChange(values.slice(0, -1))
         }
       },
-      [delimiters, onValueChange, state, values]
+      [delimiters, onValueChange, split, values]
     )
 
     const onChange = useCallback(
@@ -69,7 +75,7 @@ const ChipInput = React.forwardRef<HTMLInputElement, ChipInputProps>(
     )
 
     return (
-      <ChipInputRoot className={textFieldVariants({ variant, size, className: 'gap-2 flex-wrap' })}>
+      <ChipInputRoot className={textFieldVariants({ variant, size, className: 'relative gap-2 flex-wrap !h-[unset]' })}>
         {Icon ? <Icon {...iconProps} className={buttonIconVariants()} /> : null}
         {values.map((value, i) => (
           <TooltipProvider key={i}>
@@ -89,10 +95,19 @@ const ChipInput = React.forwardRef<HTMLInputElement, ChipInputProps>(
           value={state}
           onChange={onChange}
           onKeyDown={onKeyDown}
-          className={classNames(className, 'flex flex-grow bg-transparent')}
+          className={classNames(
+            className,
+            state.length > 0 ? 'pr-[60px]' : '',
+            'flex flex-grow bg-transparent truncate'
+          )}
           ref={ref}
           {...props}
         />
+        {state.length > 0 ? (
+          <Button onClick={split} size="xs" variant="secondary" className="absolute right-2">
+            Search
+          </Button>
+        ) : null}
       </ChipInputRoot>
     )
   }
