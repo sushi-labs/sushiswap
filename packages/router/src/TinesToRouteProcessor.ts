@@ -1,5 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { getBigInt, MultiRoute, RouteLeg, RouteStatus, RToken } from '@sushiswap/tines'
+import { Hex } from 'viem'
 
 import { HEXer } from './HEXer'
 import { PoolCode } from './pools/PoolCode'
@@ -30,7 +31,7 @@ export class TinesToRouteProcessor {
     this.tokenOutputLegs = new Map()
   }
 
-  getRouteProcessorCode(route: MultiRoute, toAddress: string): string {
+  getRouteProcessorCode(route: MultiRoute, toAddress: string): Hex | '' {
     // 0. Check for no route
     if (route.status === RouteStatus.NoWay || route.legs.length === 0) return ''
 
@@ -67,10 +68,10 @@ export class TinesToRouteProcessor {
       res += this.codeSwap(l, route, outAddress, exactAmount.get(l.poolAddress))
     })
 
-    return res
+    return res as Hex
   }
 
-  getRPCodeForsimpleWrapRoute(route: MultiRoute, toAddress: string): string {
+  getRPCodeForsimpleWrapRoute(route: MultiRoute, toAddress: string): Hex {
     const hex = new HEXer()
       .uint8(5) // wrapAndDistributeERC20Amounts
       .address(route.legs[0].poolAddress)

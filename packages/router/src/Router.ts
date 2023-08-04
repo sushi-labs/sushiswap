@@ -1,6 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token, Type, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { findMultiRouteExactIn, getBigInt, MultiRoute, NetworkInfo, RouteStatus, RPool, RToken } from '@sushiswap/tines'
+import { Address, Hex } from 'viem'
 
 import { convertTokenToBento, getBentoChainId } from './lib/convert'
 import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
@@ -22,12 +23,12 @@ function TokenToRToken(t: Type): RToken {
 }
 
 export interface RPParams {
-  tokenIn: string
+  tokenIn: Address
   amountIn: bigint
-  tokenOut: string
+  tokenOut: Address
   amountOutMin: bigint
-  to: string
-  routeCode: string
+  to: Address
+  routeCode: Hex
   value?: bigint
 }
 
@@ -134,17 +135,18 @@ export class Router {
     route: MultiRoute,
     fromToken: Type,
     toToken: Type,
-    to: string,
-    RPAddr: string,
+    to: Address,
+    RPAddr: Address,
     maxPriceImpact = 0.005
   ): RPParams {
     const tokenIn =
       fromToken instanceof Token
-        ? fromToken.address
+        ? (fromToken.address as Address)
         : fromToken.chainId === ChainId.CELO
         ? WNATIVE_ADDRESS[ChainId.CELO] /*CELO native coin has ERC20 interface*/
         : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-    const tokenOut = toToken instanceof Token ? toToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    const tokenOut =
+      toToken instanceof Token ? (toToken.address as Address) : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
     const amountOutMin = (route.amountOutBN * getBigInt((1 - maxPriceImpact) * 1_000_000)) / 1_000_000n
 
     return {
@@ -153,7 +155,7 @@ export class Router {
       tokenOut,
       amountOutMin,
       to,
-      routeCode: getRouteProcessorCode(route, RPAddr, to, poolCodesMap),
+      routeCode: getRouteProcessorCode(route, RPAddr, to, poolCodesMap) as Hex,
       value: fromToken instanceof Token ? undefined : route.amountInBN,
     }
   }
@@ -163,13 +165,15 @@ export class Router {
     route: MultiRoute,
     fromToken: Type,
     toToken: Type,
-    to: string,
-    RPAddr: string,
+    to: Address,
+    RPAddr: Address,
     permits: PermitData[] = [],
     maxPriceImpact = 0.005
   ): RPParams {
-    const tokenIn = fromToken instanceof Token ? fromToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-    const tokenOut = toToken instanceof Token ? toToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    const tokenIn =
+      fromToken instanceof Token ? (fromToken.address as Address) : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    const tokenOut =
+      toToken instanceof Token ? (toToken.address as Address) : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
     const amountOutMin = (route.amountOutBN * getBigInt((1 - maxPriceImpact) * 1_000_000)) / 1_000_000n
 
     return {
@@ -178,7 +182,7 @@ export class Router {
       tokenOut,
       amountOutMin,
       to,
-      routeCode: getRouteProcessor2Code(route, RPAddr, to, poolCodesMap, permits),
+      routeCode: getRouteProcessor2Code(route, RPAddr, to, poolCodesMap, permits) as Hex,
       value: fromToken instanceof Token ? undefined : route.amountInBN,
     }
   }
@@ -188,8 +192,8 @@ export class Router {
     route: MultiRoute,
     fromToken: Type,
     toToken: Type,
-    to: string,
-    RPAddr: string,
+    to: Address,
+    RPAddr: Address,
     permits: PermitData[] = [],
     maxPriceImpact = 0.005
   ): RPParams {
@@ -201,13 +205,15 @@ export class Router {
     route: MultiRoute,
     fromToken: Type,
     toToken: Type,
-    to: string,
-    RPAddr: string,
+    to: Address,
+    RPAddr: Address,
     permits: PermitData[] = [],
     maxPriceImpact = 0.005
   ): RPParams {
-    const tokenIn = fromToken instanceof Token ? fromToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-    const tokenOut = toToken instanceof Token ? toToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    const tokenIn =
+      fromToken instanceof Token ? (fromToken.address as Address) : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    const tokenOut =
+      toToken instanceof Token ? (toToken.address as Address) : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
     const amountOutMin = (route.amountOutBN * getBigInt((1 - maxPriceImpact) * 1_000_000)) / 1_000_000n
 
     return {
@@ -216,7 +222,7 @@ export class Router {
       tokenOut,
       amountOutMin,
       to,
-      routeCode: getRouteProcessor4Code(route, RPAddr, to, poolCodesMap, permits),
+      routeCode: getRouteProcessor4Code(route, RPAddr, to, poolCodesMap, permits) as Hex,
       value: fromToken instanceof Token ? undefined : route.amountInBN,
     }
   }

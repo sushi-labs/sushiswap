@@ -3,7 +3,7 @@ import { NumberLike } from '@nomicfoundation/hardhat-network-helpers/dist/src/ty
 import { erc20Abi } from '@sushiswap/abi'
 import { keccak256 } from 'ethers/lib/utils'
 import { Address, Client } from 'viem'
-import { readContract } from 'viem/actions'
+import { getBytecode, readContract } from 'viem/actions'
 
 // Sometimes token contract is a proxy without delegate call
 // So, its storage is in other contract and we need to work with it
@@ -45,6 +45,8 @@ export async function setTokenBalance(
     await setStorage(cashedSlot, balance, balance)
     return true
   }
+
+  console.log(await getBytecode(client, { address: token }))
 
   const balancePrimary = await readContract(client, {
     abi: erc20Abi,

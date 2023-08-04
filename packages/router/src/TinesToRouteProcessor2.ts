@@ -1,5 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { MultiRoute, RouteLeg, RouteStatus, RToken } from '@sushiswap/tines'
+import { Hex } from 'viem'
 
 import { HEXer } from './HEXer'
 import { PoolCode } from './pools/PoolCode'
@@ -36,7 +37,7 @@ export class TinesToRouteProcessor2 {
     this.pools = pools
   }
 
-  getRouteProcessorCode(route: MultiRoute, toAddress: string, permits: PermitData[] = []): string {
+  getRouteProcessorCode(route: MultiRoute, toAddress: string, permits: PermitData[] = []): Hex | '' {
     // 0. Check for no route
     if (route.status === RouteStatus.NoWay || route.legs.length === 0) return ''
 
@@ -63,7 +64,7 @@ export class TinesToRouteProcessor2 {
       }
     })
 
-    return res
+    return res as Hex
   }
 
   processPermits(permits: PermitData[]): string {
@@ -204,7 +205,7 @@ export function getRouteProcessor2Code(
   toAddress: string,
   pools: Map<string, PoolCode>,
   permits: PermitData[] = []
-): string {
+): Hex | '' {
   const rpc = new TinesToRouteProcessor2(routeProcessorAddress, route.fromToken.chainId as ChainId, pools)
   return rpc.getRouteProcessorCode(route, toAddress, permits)
 }

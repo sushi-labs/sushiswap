@@ -2,11 +2,12 @@ import { erc20Abi, nonfungiblePositionManagerAbi, sushiV3FactoryAbi, sushiV3Pool
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { CL_MAX_TICK, CL_MIN_TICK, CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
+import { Contract } from '@sushiswap/types'
 import NonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import WETH9 from 'canonical-weth/build/contracts/WETH9.json'
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
-import { Abi, Address, ContractFunctionConfig, DeployContractParameters, Hex, WalletClient } from 'viem'
+import { Address, DeployContractParameters, Hex, WalletClient } from 'viem'
 import { readContract, waitForTransactionReceipt } from 'viem/actions'
 
 import ERC20Mock from '../artifacts/contracts/ERC20Mock.sol/ERC20Mock.json'
@@ -15,8 +16,6 @@ import UniswapV3Factory from '../artifacts/contracts/UniswapV3FactoryFlat.sol/Un
 import { testRouterAbi } from './abis'
 
 const ZERO = 0n
-
-export type Contract<TAbi extends Abi = []> = Omit<ContractFunctionConfig<TAbi>, 'functionName' | 'args'>
 
 const UniswapV3FactoryAddress: Record<number, string> = {
   [ChainId.ETHEREUM]: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
