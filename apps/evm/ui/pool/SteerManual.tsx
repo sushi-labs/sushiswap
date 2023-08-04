@@ -1,6 +1,5 @@
 import { SteerStrategy } from '@sushiswap/database'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
-import { FormSection } from '@sushiswap/ui'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import { unwrapToken } from 'lib/functions'
@@ -40,48 +39,25 @@ export const SteerManual: FC<ManualProps> = ({ address, chainId }) => {
 
   return (
     <>
-      <FormSection
-        title="Range"
-        description={
-          <>
-            Select a price range to provide liquidity. You will not earn any fees when prices move outside of this
-            range.
-            <br />
-            <a
-              className="text-blue"
-              rel="noopener noreferrer"
-              href="https://docs.uniswap.org/concepts/protocol/concentrated-liquidity"
-            >
-              Learn more.
-            </a>
-          </>
-        }
-      >
-        <SelectPricesWidget
-          chainId={chainId}
-          token0={_token0}
-          token1={_token1}
-          feeAmount={poolStats?.feeAmount}
-          tokenId={undefined}
-          switchTokens={() => setInvertTokens((prev) => !prev)}
-        />
-      </FormSection>
-      <FormSection
-        title="Liquidity"
-        description="Depending on your range, the supplied tokens for this position will not always be a 50:50 ratio."
-      >
-        <ConcentratedLiquidityWidget
-          chainId={chainId}
-          account={account}
-          token0={_token0}
-          token1={_token1}
-          feeAmount={poolStats?.feeAmount}
-          tokensLoading={false}
-          existingPosition={undefined}
-          tokenId={undefined}
-          successLink={`/pools/${chainId}:${address}?activeTab=myPositions`}
-        />
-      </FormSection>
+      <SelectPricesWidget
+        chainId={chainId}
+        token0={_token0}
+        token1={_token1}
+        feeAmount={poolStats?.feeAmount}
+        tokenId={undefined}
+        switchTokens={() => setInvertTokens((prev) => !prev)}
+      />
+      <ConcentratedLiquidityWidget
+        chainId={chainId}
+        account={account}
+        token0={_token0}
+        token1={_token1}
+        feeAmount={poolStats?.feeAmount}
+        tokensLoading={false}
+        existingPosition={undefined}
+        tokenId={undefined}
+        successLink={`/pools/${chainId}:${address}?activeTab=myPositions`}
+      />
     </>
   )
 }

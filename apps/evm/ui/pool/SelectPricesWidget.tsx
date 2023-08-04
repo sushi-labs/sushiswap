@@ -3,7 +3,7 @@
 import { MinusIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
-import { classNames, Label, TextField, TextFieldDescription } from '@sushiswap/ui'
+import { classNames, FormSection, Label, Message, TextField, TextFieldDescription } from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { Toggle } from '@sushiswap/ui/components/toggle'
 import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
@@ -85,127 +85,144 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
   const isFullRange = Boolean(ticksAtLimit[Bound.LOWER] && ticksAtLimit[Bound.UPPER])
 
   return (
-    <div className={!token0 || !token1 ? 'opacity-40' : ''}>
-      {noLiquidity ? (
-        <div className="p-6 font-medium bg-blue/10 text-blue rounded-xl">
-          This pool must be initialized before you can add liquidity.{' '}
-          {showStartPrice
-            ? 'To initialize, select a starting price for the pool. Then, enter your liquidity price range and deposit amount. '
-            : ''}
-          Gas fees will be higher than usual due to the initialization transaction.
-        </div>
-      ) : null}
-      {children && children}
-      <div className="rounded-xl flex flex-col gap-4">
-        {isMounted && showStartPrice && (
-          <div className="flex flex-col gap-3">
-            {noLiquidity && (
-              <div className="flex flex-col gap-2">
-                <Label>Start price</Label>
-                <TextField
-                  value={startPriceTypedValue}
-                  onValueChange={onStartPriceInput}
-                  testdata-id="start-price-input"
-                  type="number"
-                  unit={`${token1?.symbol} per ${token0?.symbol}`}
-                />
-                <TextFieldDescription>
-                  Your pool needs a starting price somewhere between the min. and max. price
-                </TextFieldDescription>
-              </div>
-            )}
-            {!noLiquidity && (
-              <>
-                <LiquidityChartRangeInput
-                  chainId={chainId}
-                  currencyA={token0}
-                  currencyB={token1}
-                  feeAmount={feeAmount}
-                  ticksAtLimit={ticksAtLimit}
-                  price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}
-                  priceLower={priceLower}
-                  priceUpper={priceUpper}
-                  onLeftRangeInput={onLeftRangeInput}
-                  onRightRangeInput={onRightRangeInput}
-                  interactive={!hasExistingPosition}
-                />
-              </>
-            )}
-          </div>
-        )}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <div className="flex justify-end lg:hidden">
-              {isLoading || !pool || !token0 || !token1 ? (
-                <SkeletonText fontSize="xs" />
-              ) : (
-                <div
-                  onClick={() => setInvert((prev) => !prev)}
-                  role="button"
-                  className="text-xs flex items-center font-semibold gap-1.5 rounded-xl text-blue hover:text-blue-600"
-                >
-                  <SwitchHorizontalIcon width={16} height={16} />
-                  <div className="flex items-baseline gap-1.5">
-                    {invert ? token1.symbol : token0.symbol} ={' '}
-                    {pool.priceOf(invert ? token1.wrapped : token0.wrapped)?.toSignificant(4)}{' '}
-                    {invert ? token0.symbol : token1.symbol}
-                    <span className="text-xs font-normal">${fiatAmountsAsNumber[invert ? 1 : 0].toFixed(2)}</span>
-                  </div>
+    <FormSection
+      title="Range"
+      description={
+        <>
+          Select a price range to provide liquidity. You will not earn any fees when prices move outside of this range.{' '}
+          <a
+            target="_blank"
+            className="text-blue"
+            rel="noopener noreferrer"
+            href="https://docs.uniswap.org/concepts/protocol/concentrated-liquidity"
+          >
+            Learn more.
+          </a>
+        </>
+      }
+    >
+      <div className={classNames('flex flex-col gap-8', !token0 || !token1 ? 'opacity-40' : '')}>
+        {noLiquidity ? (
+          <Message>
+            This pool must be initialized before you can add liquidity.{' '}
+            {showStartPrice
+              ? 'To initialize, select a starting price for the pool. Then, enter your liquidity price range and deposit amount. '
+              : ''}
+            Gas fees will be higher than usual due to the initialization transaction.
+          </Message>
+        ) : null}
+        {children && children}
+        <div className="rounded-xl flex flex-col gap-8">
+          {isMounted && showStartPrice && (
+            <div className="flex flex-col gap-3">
+              {noLiquidity && (
+                <div className="flex flex-col gap-2">
+                  <Label>Start price</Label>
+                  <TextField
+                    value={startPriceTypedValue}
+                    onValueChange={onStartPriceInput}
+                    testdata-id="start-price-input"
+                    type="number"
+                    unit={`${token1?.symbol} per ${token0?.symbol}`}
+                  />
+                  <TextFieldDescription>
+                    Your pool needs a starting price somewhere between the min. and max. price
+                  </TextFieldDescription>
                 </div>
               )}
+              {!noLiquidity && (
+                <>
+                  <LiquidityChartRangeInput
+                    chainId={chainId}
+                    currencyA={token0}
+                    currencyB={token1}
+                    feeAmount={feeAmount}
+                    ticksAtLimit={ticksAtLimit}
+                    price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}
+                    priceLower={priceLower}
+                    priceUpper={priceUpper}
+                    onLeftRangeInput={onLeftRangeInput}
+                    onRightRangeInput={onRightRangeInput}
+                    interactive={!hasExistingPosition}
+                  />
+                </>
+              )}
             </div>
-            {!noLiquidity && (
-              <Toggle
-                size="xs"
-                pressed={isFullRange}
-                onClick={() => (isFullRange ? resetMintState() : getSetFullRange())}
-              >
-                Full Range
-              </Toggle>
-            )}
-            {switchTokens ? (
-              <div className="flex bg-secondary rounded-lg">
-                <Toggle onPressedChange={switchTokens} pressed={isSorted} size="xs">
-                  {isSorted ? token0?.symbol : token1?.symbol}
-                </Toggle>
-                <Toggle onPressedChange={switchTokens} pressed={!isSorted} size="xs">
-                  {isSorted ? token1?.symbol : token0?.symbol}
-                </Toggle>
+          )}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <div className="flex justify-end lg:hidden">
+                {isLoading || !pool || !token0 || !token1 ? (
+                  <SkeletonText fontSize="xs" />
+                ) : (
+                  <div
+                    onClick={() => setInvert((prev) => !prev)}
+                    role="button"
+                    className="text-xs flex items-center font-semibold gap-1.5 rounded-xl text-blue hover:text-blue-600"
+                  >
+                    <SwitchHorizontalIcon width={16} height={16} />
+                    <div className="flex items-baseline gap-1.5">
+                      {invert ? token1.symbol : token0.symbol} ={' '}
+                      {pool.priceOf(invert ? token1.wrapped : token0.wrapped)?.toSignificant(4)}{' '}
+                      {invert ? token0.symbol : token1.symbol}
+                      <span className="text-xs font-normal">${fiatAmountsAsNumber[invert ? 1 : 0].toFixed(2)}</span>
+                    </div>
+                  </div>
+                )}
               </div>
-            ) : (
-              <div />
-            )}
-          </div>
-          <div className="flex gap-2">
-            <PriceBlock
-              id={'min-price'}
-              token0={token0}
-              token1={token1}
-              label="Min Price"
-              value={ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER] ? '0' : leftPrice?.toSignificant(5) ?? ''}
-              onUserInput={onLeftRangeInput}
-              decrement={isSorted ? getDecrementLower : getIncrementUpper}
-              increment={isSorted ? getIncrementLower : getDecrementUpper}
-              decrementDisabled={ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]}
-              incrementDisabled={ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]}
-              focus={true}
-            />
-            <PriceBlock
-              id={'max-price'}
-              token0={token0}
-              token1={token1}
-              label="Max Price"
-              value={ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER] ? '∞' : rightPrice?.toSignificant(5) ?? ''}
-              onUserInput={onRightRangeInput}
-              decrement={isSorted ? getDecrementUpper : getIncrementLower}
-              increment={isSorted ? getIncrementUpper : getDecrementLower}
-              incrementDisabled={ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER]}
-              decrementDisabled={ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER]}
-            />
+              {!noLiquidity && (
+                <Toggle
+                  size="xs"
+                  pressed={isFullRange}
+                  onClick={() => (isFullRange ? resetMintState() : getSetFullRange())}
+                >
+                  Full Range
+                </Toggle>
+              )}
+              {switchTokens ? (
+                <div className="flex bg-secondary rounded-lg">
+                  <Toggle onPressedChange={switchTokens} pressed={isSorted} size="xs">
+                    {isSorted ? token0?.symbol : token1?.symbol}
+                  </Toggle>
+                  <Toggle onPressedChange={switchTokens} pressed={!isSorted} size="xs">
+                    {isSorted ? token1?.symbol : token0?.symbol}
+                  </Toggle>
+                </div>
+              ) : (
+                <div />
+              )}
+            </div>
+            <div className="flex gap-2">
+              <PriceBlock
+                id={'min-price'}
+                token0={token0}
+                token1={token1}
+                label="Min Price"
+                value={ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER] ? '0' : leftPrice?.toSignificant(5) ?? ''}
+                onUserInput={onLeftRangeInput}
+                decrement={isSorted ? getDecrementLower : getIncrementUpper}
+                increment={isSorted ? getIncrementLower : getDecrementUpper}
+                decrementDisabled={ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]}
+                incrementDisabled={ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]}
+                focus={true}
+              />
+              <PriceBlock
+                id={'max-price'}
+                token0={token0}
+                token1={token1}
+                label="Max Price"
+                value={ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER] ? '∞' : rightPrice?.toSignificant(5) ?? ''}
+                onUserInput={onRightRangeInput}
+                decrement={isSorted ? getDecrementUpper : getIncrementLower}
+                increment={isSorted ? getIncrementUpper : getDecrementLower}
+                incrementDisabled={ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER]}
+                decrementDisabled={ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER]}
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </FormSection>
   )
 }
 

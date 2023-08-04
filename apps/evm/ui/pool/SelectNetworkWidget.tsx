@@ -1,11 +1,9 @@
 import { ChainId, chainName } from '@sushiswap/chain'
-import { NetworkSelector } from '@sushiswap/ui'
+import { FormSection, NetworkSelector } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { SelectIcon } from '@sushiswap/ui/components/select'
 import React, { FC, memo } from 'react'
-
-import { ContentBlock } from './ContentBlock'
 
 interface SelectNetworkWidgetProps {
   networks: ChainId[]
@@ -21,15 +19,7 @@ export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(function S
   title,
 }) {
   return (
-    <ContentBlock
-      title={
-        title ?? (
-          <>
-            Which <span className="text-gray-900 dark:text-white">network</span> would you like to provide liquidity on?
-          </>
-        )
-      }
-    >
+    <FormSection title="Network" description="Select the network you would like to provide liquidity on.">
       <div>
         <NetworkSelector networks={networks} selected={selectedNetwork} onSelect={onSelect}>
           <Button variant="secondary" className="!font-medium">
@@ -39,6 +29,6 @@ export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(function S
           </Button>
         </NetworkSelector>
       </div>
-    </ContentBlock>
+    </FormSection>
   )
 })

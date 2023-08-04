@@ -28,7 +28,7 @@ const FormSection = ({
   children: React.ReactNode
 }) => {
   return (
-    <div className="grid grid-cols-3 gap-x-10 py-2">
+    <div className="grid grid-cols-3 gap-x-10 lg:gap-x-[56px] py-2">
       <div className="col-span-3 md:col-span-1 space-y-3 py-4">
         <div className="text-lg text-gray-900 font-medium dark:text-slate-200">{title}</div>
         <div className="text-gray-600 dark:text-slate-400">{description}</div>

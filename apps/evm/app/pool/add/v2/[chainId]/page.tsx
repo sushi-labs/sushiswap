@@ -1,11 +1,11 @@
 'use client'
 
-import { ArrowLeftIcon, PlusIcon } from '@heroicons/react-v1/solid'
+import { PlusIcon } from '@heroicons/react-v1/solid'
 import { Pair } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
+import { FormSection } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { Loader } from '@sushiswap/ui/components/loader'
 import { isSushiSwapV2ChainId, SushiSwapV2ChainId, SushiSwapV2ChainIds } from '@sushiswap/v2-sdk'
 import { Address, getSushiSwapRouterContractConfig, PairState, PoolFinder } from '@sushiswap/wagmi'
@@ -14,13 +14,11 @@ import { Checker } from '@sushiswap/wagmi/future/systems'
 import { CheckerProvider } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
 import { isLegacyPool } from 'lib/functions'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { SWRConfig } from 'swr'
 
 import { AddSectionReviewModalLegacy } from '../../../../../ui/pool/AddSectionReviewModalLegacy'
-import { ContentBlock } from '../../../../../ui/pool/ContentBlock'
 import { SelectNetworkWidget } from '../../../../../ui/pool/SelectNetworkWidget'
 import { SelectTokensWidget } from '../../../../../ui/pool/SelectTokensWidget'
 
@@ -68,68 +66,51 @@ export default function Page({ params }: { params: { chainId: string } }) {
 
   return (
     <SWRConfig>
-      <div className="flex justify-center">
-        <div className="flex flex-col gap-2">
-          <Link className="flex items-center gap-4 mb-2 group" href={'/pool'} shallow={true}>
-            <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
-            <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
-              Go back to pools list
-            </span>
-          </Link>
-          <h1 className="mt-2 text-3xl font-medium">Add Liquidity</h1>
-          <h1 className="text-lg text-gray-600 dark:dark:text-slate-400 text-slate-600">
-            Create a new pool or create a liquidity position on an existing pool.
-          </h1>
-        </div>
-        <div className="grid grid-cols-1 sm:w-[340px] md:w-[572px] gap-10">
-          <div className="hidden md:block" />
-          <PoolFinder
-            components={
-              <PoolFinder.Components>
-                <PoolFinder.LegacyPool
-                  chainId={chainId}
-                  token0={token0}
-                  token1={token1}
-                  enabled={isSushiSwapV2ChainId(chainId)}
-                />
-              </PoolFinder.Components>
-            }
-          >
-            {({ pool: [poolState, pool] }) => {
-              const title =
-                !token0 || !token1 ? (
-                  'Select Tokens'
-                ) : [PairState.LOADING].includes(poolState as PairState) ? (
-                  <div className="h-[20px] flex items-center justify-center">
-                    <Loader width={14} />
-                  </div>
-                ) : [PairState.EXISTS].includes(poolState as PairState) ? (
-                  'Add Liquidity'
-                ) : (
-                  'Create Pool'
-                )
+      <PoolFinder
+        components={
+          <PoolFinder.Components>
+            <PoolFinder.LegacyPool
+              chainId={chainId}
+              token0={token0}
+              token1={token1}
+              enabled={isSushiSwapV2ChainId(chainId)}
+            />
+          </PoolFinder.Components>
+        }
+      >
+        {({ pool: [poolState, pool] }) => {
+          const title =
+            !token0 || !token1 ? (
+              'Select Tokens'
+            ) : [PairState.LOADING].includes(poolState as PairState) ? (
+              <div className="h-[20px] flex items-center justify-center">
+                <Loader width={14} />
+              </div>
+            ) : [PairState.EXISTS].includes(poolState as PairState) ? (
+              'Add Liquidity'
+            ) : (
+              'Create Pool'
+            )
 
-              return (
-                <_Add
-                  chainId={chainId}
-                  setChainId={(chainId) => {
-                    if (!isSushiSwapV2ChainId(chainId)) return
-                    router.push(`/pool/add/v2/${chainId}`)
-                    setChainId(chainId)
-                  }}
-                  pool={pool as Pair | null}
-                  poolState={poolState as PairState}
-                  title={title}
-                  token0={token0}
-                  token1={token1}
-                  setToken0={setToken0}
-                  setToken1={setToken1}
-                />
-              )
-            }}
-          </PoolFinder>
-        </div>
-      </div>
+          return (
+            <_Add
+              chainId={chainId}
+              setChainId={(chainId) => {
+                if (!isSushiSwapV2ChainId(chainId)) return
+                router.push(`/pool/add/v2/${chainId}`)
+                setChainId(chainId)
+              }}
+              pool={pool as Pair | null}
+              poolState={poolState as PairState}
+              title={title}
+              token0={token0}
+              token1={token1}
+              setToken0={setToken0}
+              setToken1={setToken1}
+            />
+          )
+        }}
+      </PoolFinder>
     </SWRConfig>
   )
 }
@@ -201,7 +182,7 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
   }, [onChangeToken0TypedAmount])
 
   return (
-    <div className="flex flex-col order-3 gap-[64px] pb-40 sm:order-2">
+    <>
       <SelectNetworkWidget networks={SushiSwapV2ChainIds} selectedNetwork={chainId} onSelect={setChainId} />
       <SelectTokensWidget
         chainId={chainId}
@@ -210,7 +191,7 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
         setToken0={setToken0}
         setToken1={setToken1}
       />
-      <ContentBlock title={<span className="text-gray-900 dark:text-white">Deposit.</span>}>
+      <FormSection title="Deposit" description="Select the amount of tokens you want to deposit">
         <div className="flex flex-col gap-4">
           <Web3Input.Currency
             id="add-liquidity-token0"
@@ -287,7 +268,7 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
             </Checker.Connect>
           </CheckerProvider>
         </div>
-      </ContentBlock>
-    </div>
+      </FormSection>
+    </>
   )
 }

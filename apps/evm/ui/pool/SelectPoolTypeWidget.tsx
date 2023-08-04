@@ -2,12 +2,10 @@
 
 import { RadioGroup } from '@headlessui/react'
 import { StarIcon } from '@heroicons/react-v1/solid'
-import { classNames } from '@sushiswap/ui'
+import { classNames, FormSection } from '@sushiswap/ui'
 import { CheckIcon } from '@sushiswap/ui/components/icons'
 import { PoolFinderType } from '@sushiswap/wagmi'
 import React, { FC, memo } from 'react'
-
-import { ContentBlock } from './ContentBlock'
 
 const POOL_OPTIONS = [
   {
@@ -39,13 +37,7 @@ export const SelectPoolTypeWidget: FC<SelectPoolTypeWidgetProps> = memo(function
   includeConcentrated = true,
 }) {
   return (
-    <ContentBlock
-      title={
-        <>
-          Select your preferred <span className="text-gray-900 dark:text-white">pool type</span>.
-        </>
-      }
-    >
+    <FormSection title="Pool type" description="Select your preferred pool type.">
       <RadioGroup value={poolType} onChange={setPoolType} className="grid grid-cols-2 gap-4">
         {POOL_OPTIONS.filter((el) =>
           el.value === PoolFinderType.ConcentratedLiquidity ? includeConcentrated : true
@@ -82,6 +74,6 @@ export const SelectPoolTypeWidget: FC<SelectPoolTypeWidgetProps> = memo(function
           </RadioGroup.Option>
         ))}
       </RadioGroup>
-    </ContentBlock>
+    </FormSection>
   )
 })

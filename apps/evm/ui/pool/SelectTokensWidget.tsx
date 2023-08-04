@@ -1,12 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
+import { FormSection } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { SelectIcon } from '@sushiswap/ui/components/select'
 import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
 import React, { FC } from 'react'
-
-import { ContentBlock } from './ContentBlock'
 
 interface SelectTokensWidget {
   chainId: ChainId
@@ -26,15 +25,7 @@ export const SelectTokensWidget: FC<SelectTokensWidget> = ({
   setToken1,
 }) => {
   return (
-    <ContentBlock
-      title={
-        title ?? (
-          <>
-            Which <span className="text-gray-900 dark:text-white">token pair</span> would you like to add liquidity to?
-          </>
-        )
-      }
-    >
+    <FormSection title="Tokens" description="Which token pair would you like to add liquidity to.">
       <div className="flex gap-3">
         <TokenSelector id={'token0-token-selector'} selected={token0} chainId={chainId} onSelect={setToken0}>
           <Button variant="secondary" id={'token0-select-button'} testId={'token0-select'}>
@@ -68,6 +59,6 @@ export const SelectTokensWidget: FC<SelectTokensWidget> = ({
           </Button>
         </TokenSelector>
       </div>
-    </ContentBlock>
+    </FormSection>
   )
 }

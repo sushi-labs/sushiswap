@@ -2,10 +2,8 @@
 
 import { RadioGroup } from '@headlessui/react'
 import { Fee } from '@sushiswap/amm'
-import { classNames } from '@sushiswap/ui'
+import { classNames, FormSection } from '@sushiswap/ui'
 import React, { FC, memo } from 'react'
-
-import { ContentBlock } from './ContentBlock'
 
 interface SelectFeeWidgetProps {
   fee: number
@@ -33,12 +31,9 @@ export const FEE_OPTIONS = [
 
 export const SelectFeeWidget: FC<SelectFeeWidgetProps> = memo(function SelectFeeWidget({ fee, setFee }) {
   return (
-    <ContentBlock
-      title={
-        <>
-          Which <span className="text-gray-900 dark:text-white">fee tier</span> do you prefer?
-        </>
-      }
+    <FormSection
+      title="Fee tier"
+      description="Some fee tiers work better than others depending on the volatility of your pair. Lower fee tiers generally work better when pairing stable coins. Higher fee tiers generally work better when pairing exotic coins."
     >
       <RadioGroup value={fee} onChange={setFee} className="grid grid-cols-2 gap-4">
         {FEE_OPTIONS.map((option) => (
@@ -62,6 +57,6 @@ export const SelectFeeWidget: FC<SelectFeeWidgetProps> = memo(function SelectFee
           </RadioGroup.Option>
         ))}
       </RadioGroup>
-    </ContentBlock>
+    </FormSection>
   )
 })
