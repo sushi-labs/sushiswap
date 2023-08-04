@@ -184,7 +184,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
           </div>
         ) : null}
 
-        <List.Control className="relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5">
+        <List.Control className="relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 min-h-[128px]">
           {isQueryTokenLoading || isLoading ? (
             <div className="py-0.5 h-[64px] -mb-3">
               <div className="flex items-center w-full h-full px-3 rounded-lg">
