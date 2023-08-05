@@ -1,8 +1,10 @@
 'use client'
 
 import { TransactionRequest } from '@ethersproject/providers'
+import { CogIcon } from '@heroicons/react/24/outline'
 import { Amount, Type } from '@sushiswap/currency'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import { IconButton, SettingsModule, SettingsOverlay } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { List } from '@sushiswap/ui/components/list/List'
@@ -214,6 +216,18 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
               >
                 Max
               </Button>
+              <SettingsOverlay
+                options={{
+                  slippageTolerance: {
+                    storageKey: 'removeLiquidity',
+                    defaultValue: '0.5',
+                    title: 'Remove Liquidity Slippage',
+                  },
+                }}
+                modules={[SettingsModule.SlippageTolerance]}
+              >
+                <IconButton size="sm" name="Settings" icon={CogIcon} variant="secondary" className="!rounded-xl" />
+              </SettingsOverlay>
             </div>
           </div>
           <div className="px-1 pt-2 pb-3">

@@ -9,7 +9,7 @@ export default async function PositionsPage({ params }: { params: { id: string; 
   const [chainId] = params.id.split('%3A') as [ChainId, string]
 
   return (
-    <div className="relative">
+    <div className="relative mt-6">
       <div className="xl:absolute xl:ml-[-56px] mb-4 flex items-center gap-4">
         <Link href={`/pool/${params.id}/positions`} className="flex items-center gap-1 text-muted-foreground">
           <IconButton variant="ghost" name="go back" icon={ChevronLeftIcon} description="Go back to positions" />
