@@ -6,7 +6,7 @@ import { expect } from 'chai'
 import { Signer } from 'ethers'
 import { ethers } from 'hardhat'
 import { createPublicClient } from 'viem'
-import { http } from 'viem'
+import { Address, http } from 'viem'
 import { hardhat } from 'viem/chains'
 
 //const RouteProcessorAddr = '0x9B3fF703FA9C8B467F5886d7b61E61ba07a9b51c'
@@ -25,8 +25,8 @@ async function makeSwap(
   signer: Signer,
   fromToken: Type,
   toToken: Type,
-  from: string,
-  to: string,
+  from: Address,
+  to: Address,
   amountIn: bigint
 ): Promise<number | undefined> {
   await dataFetcher.fetchPoolsForToken(fromToken, toToken)
@@ -82,8 +82,8 @@ describe('Celo RP3', async () => {
       signer,
       fromToken,
       toToken,
-      WNATIVE[chainId].address,
-      WNATIVE[chainId].address,
+      WNATIVE[chainId].address as Address,
+      WNATIVE[chainId].address as Address,
       10n * BigInt(1e18)
     )
   })

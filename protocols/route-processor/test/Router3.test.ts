@@ -47,7 +47,7 @@ import { getAllPoolCodes } from './utils/getAllPoolCodes'
 
 // Updating  pools' state allows to test DF updating ability, but makes tests very-very slow (
 const UPDATE_POOL_STATES = false
-const POLLING_INTERVAL = 10 // process.env.ALCHEMY_ID ? 1_000 : 10_000
+const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
 function getRandomExp(rnd: () => number, min: number, max: number) {

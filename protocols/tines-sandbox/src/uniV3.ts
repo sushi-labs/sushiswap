@@ -36,22 +36,11 @@ feeAmountTickSpacing[500] = 10 // 0.05%
 feeAmountTickSpacing[3000] = 60 // 0.3%
 feeAmountTickSpacing[10000] = 200 // 1%
 
-export interface UniV3Environment {
-  walletClient: WalletClient
-  user: Address
-  tokenFactory: DeployContractParameters<typeof erc20Abi>
-  SushiV3Factory: Contract<typeof sushiV3FactoryAbi>
-  PositionManager: Contract<typeof nonfungiblePositionManagerAbi>
-  swapper: Contract<typeof testRouterAbi>
-  minter: Contract<typeof testRouterAbi>
-  mint: (pool: UniV3PoolInfo, from: number, to: number, liquidity: bigint) => Promise<bigint>
-}
+export const getDeploymentAddress = async (client: WalletClient, promise: Promise<Hex>) =>
+  waitForTransactionReceipt(client, { hash: await promise }).then((receipt) => receipt.contractAddress as Address)
 
 // Makes artificial environment, deploys factory, smallpositionmanager for mint and swap
-export async function createUniV3EnvZero(
-  walletClient: WalletClient,
-  userDeployContracts?: Address
-): Promise<UniV3Environment> {
+export async function createUniV3EnvZero(walletClient: WalletClient, userDeployContracts?: Address) {
   const user = userDeployContracts || (await walletClient.getAddresses())[0]
 
   const tokenFactory = {
@@ -61,43 +50,55 @@ export async function createUniV3EnvZero(
     account: user,
   } satisfies DeployContractParameters
 
-  const SushiV3FactoryAddress = await walletClient.deployContract({
-    chain: null,
-    abi: sushiV3FactoryAbi,
-    bytecode: UniswapV3Factory.bytecode as Hex,
-    account: user,
-  })
+  const SushiV3FactoryAddress = await getDeploymentAddress(
+    walletClient,
+    walletClient.deployContract({
+      chain: null,
+      abi: sushiV3FactoryAbi,
+      bytecode: UniswapV3Factory.bytecode as Hex,
+      account: user,
+    })
+  )
   const SushiV3Factory = {
     abi: sushiV3FactoryAbi,
     address: SushiV3FactoryAddress,
   }
 
-  const WETH9Address = await walletClient.deployContract({
-    chain: null,
-    abi: WETH9.abi,
-    bytecode: WETH9.bytecode as Hex,
-    account: user,
-  })
+  const WETH9Address = await getDeploymentAddress(
+    walletClient,
+    walletClient.deployContract({
+      chain: null,
+      abi: WETH9.abi,
+      bytecode: WETH9.bytecode as Hex,
+      account: user,
+    })
+  )
 
-  const NonfungiblePositionManagerAddress = await walletClient.deployContract({
-    chain: null,
-    abi: nonfungiblePositionManagerAbi,
-    bytecode: NonfungiblePositionManager.bytecode as Hex,
-    account: user,
-    args: [SushiV3Factory.address, WETH9Address, '0x0000000000000000000000000000000000000000'],
-  })
+  const NonfungiblePositionManagerAddress = await getDeploymentAddress(
+    walletClient,
+    walletClient.deployContract({
+      chain: null,
+      abi: nonfungiblePositionManagerAbi,
+      bytecode: NonfungiblePositionManager.bytecode as Hex,
+      account: user,
+      args: [SushiV3Factory.address, WETH9Address, '0x0000000000000000000000000000000000000000'],
+    })
+  )
   const PositionManager = {
     abi: nonfungiblePositionManagerAbi,
     address: NonfungiblePositionManagerAddress,
   }
 
-  const TestRouterAddress = await walletClient.deployContract({
-    chain: null,
-    abi: testRouterAbi,
-    bytecode: TestRouter.bytecode as Hex,
-    account: user,
-    args: [],
-  })
+  const TestRouterAddress = await getDeploymentAddress(
+    walletClient,
+    walletClient.deployContract({
+      chain: null,
+      abi: testRouterAbi,
+      bytecode: TestRouter.bytecode as Hex,
+      account: user,
+      args: [],
+    })
+  )
   const TestRouterContract = {
     abi: testRouterAbi,
     address: TestRouterAddress,
@@ -122,8 +123,19 @@ export async function createUniV3EnvZero(
 
       return liquidity
     },
+  } satisfies {
+    walletClient: WalletClient
+    user: Address
+    tokenFactory: Omit<DeployContractParameters<typeof erc20Abi>, 'args' | 'type'>
+    SushiV3Factory: Contract<typeof sushiV3FactoryAbi>
+    PositionManager: Contract<typeof nonfungiblePositionManagerAbi>
+    swapper: Contract<typeof testRouterAbi>
+    minter: Contract<typeof testRouterAbi>
+    mint: (pool: UniV3PoolInfo, from: number, to: number, liquidity: bigint) => Promise<bigint>
   }
 }
+
+export type UniV3Environment = Awaited<ReturnType<typeof createUniV3EnvZero>>
 
 // Uses real environment
 export async function createUniV3EnvReal(
@@ -152,13 +164,16 @@ export async function createUniV3EnvReal(
     address: PositionManagerAddress[chainId] as Address,
   }
 
-  const TestRouterAddress = await walletClient.deployContract({
-    chain: null,
-    abi: testRouterAbi,
-    bytecode: TestRouter.bytecode as Hex,
-    account: user,
-    args: [],
-  })
+  const TestRouterAddress = await getDeploymentAddress(
+    walletClient,
+    walletClient.deployContract({
+      chain: null,
+      abi: testRouterAbi,
+      bytecode: TestRouter.bytecode as Hex,
+      account: user,
+      args: [],
+    })
+  )
   const TestRouterContract = {
     abi: testRouterAbi,
     address: TestRouterAddress,
@@ -248,14 +263,20 @@ export async function createUniV3Pool(
   const tickSpacing = feeAmountTickSpacing[fee]
   expect(tickSpacing).not.undefined
 
-  const _token0Address = await env.walletClient.deployContract({
-    ...env.tokenFactory,
-    args: ['Token0', 'Token0', tokenSupply],
-  })
-  const _token1Address = await env.walletClient.deployContract({
-    ...env.tokenFactory,
-    args: ['Token1', 'Token1', tokenSupply],
-  })
+  const _token0Address = await getDeploymentAddress(
+    env.walletClient,
+    env.walletClient.deployContract({
+      ...env.tokenFactory,
+      args: ['Token0', 'Token0', tokenSupply],
+    })
+  )
+  const _token1Address = await getDeploymentAddress(
+    env.walletClient,
+    env.walletClient.deployContract({
+      ...env.tokenFactory,
+      args: ['Token1', 'Token1', tokenSupply],
+    })
+  )
   const [token0Address, token1Address] = isLess(_token0Address, _token1Address)
     ? [_token0Address, _token1Address]
     : [_token1Address, _token0Address]

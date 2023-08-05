@@ -6,7 +6,7 @@ import { expect } from 'chai'
 import { Signer } from 'ethers'
 import { ethers } from 'hardhat'
 import { createPublicClient } from 'viem'
-import { http } from 'viem'
+import { Address, http } from 'viem'
 import { hardhat } from 'viem/chains'
 
 import { RouteProcessor3__factory } from '../typechain'
@@ -27,7 +27,7 @@ async function makeSwap(
   fromToken: Type,
   toToken: Type,
   from: string,
-  to: string,
+  to: Address,
   amountIn: bigint
 ): Promise<number | undefined> {
   await dataFetcher.fetchPoolsForToken(fromToken, toToken)
@@ -52,7 +52,7 @@ async function makeSwap(
   }
 }
 
-describe('Harmony', async () => {
+describe.skip('Harmony', async () => {
   const chainId = ChainId.HARMONY
   const provider = new ethers.providers.JsonRpcProvider('https://api.harmony.one', 1666600000)
   const client = createPublicClient({

@@ -7,7 +7,7 @@ import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
 import { createRandomUniV3Pool, createUniV3EnvZero } from '@sushiswap/tines-sandbox'
 import { Contract } from '@sushiswap/types'
 import { config, network } from 'hardhat'
-import { Address, createWalletClient, custom, Hex, publicActions, WalletClient } from 'viem'
+import { Address, Client, createPublicClient, custom, Hex, testActions, walletActions } from 'viem'
 import { HDAccount, mnemonicToAccount } from 'viem/accounts'
 import { hardhat } from 'viem/chains'
 
@@ -40,7 +40,13 @@ async function getTestEnvironment() {
   const accounts = config.networks.hardhat.accounts as { mnemonic: string }
   const user = mnemonicToAccount(accounts.mnemonic, { accountIndex: 0 })
 
-  const walletClient = createWalletClient({
+  const client = createPublicClient({
+    batch: {
+      multicall: {
+        batchSize: 2048,
+        wait: 1,
+      },
+    },
     chain: {
       ...hardhat,
       contracts: {
@@ -52,17 +58,18 @@ async function getTestEnvironment() {
       pollingInterval: POLLING_INTERVAL,
     },
     transport: custom(network.provider),
-  }).extend(publicActions)
+  })
+    .extend(testActions({ mode: 'hardhat' }))
+    .extend(walletActions)
 
-  const RouteProcessorTx = await walletClient.deployContract({
+  const RouteProcessorTx = await client.deployContract({
     chain: null,
     abi: routeProcessor3Abi,
     bytecode: RouteProcessor3.bytecode as Hex,
     account: user.address,
     args: [bentoBoxV1Address[chainId as BentoBoxV1ChainId], []],
   })
-  const RouteProcessorAddress = (await walletClient.waitForTransactionReceipt({ hash: RouteProcessorTx }))
-    .contractAddress
+  const RouteProcessorAddress = (await client.waitForTransactionReceipt({ hash: RouteProcessorTx })).contractAddress
   if (!RouteProcessorAddress) throw new Error('RouteProcessorAddress is undefined')
   const RouteProcessor = {
     address: RouteProcessorAddress,
@@ -71,12 +78,12 @@ async function getTestEnvironment() {
 
   return {
     chainId,
-    walletClient,
+    client,
     rp: RouteProcessor,
     user,
   } satisfies {
     chainId: ChainId
-    walletClient: WalletClient
+    client: Client
     rp: Contract<typeof routeProcessor3Abi>
     user: HDAccount
   }
@@ -86,7 +93,7 @@ async function getTestEnvironment() {
 
 it('UniV3 Solo', async () => {
   const testEnv = await getTestEnvironment()
-  const env = await createUniV3EnvZero(testEnv.walletClient)
+  const env = await createUniV3EnvZero(testEnv.client)
   const pool = await createRandomUniV3Pool(env, 'test', 100)
 
   const fromToken = new Token({
@@ -116,14 +123,15 @@ it('UniV3 Solo', async () => {
     testEnv.rp.address
   )
 
-  await testEnv.walletClient.writeContract({
+  await testEnv.client.writeContract({
     ...pool.token0Contract,
-    account: testEnv.user,
+    chain: null,
+    account: testEnv.user.address,
     functionName: 'approve',
     args: [testEnv.rp.address, BigInt(1e19)],
   })
 
-  const balanceOutBNBefore = await testEnv.walletClient.readContract({
+  const balanceOutBNBefore = await testEnv.client.readContract({
     ...pool.token1Contract,
     functionName: 'balanceOf',
     args: [testEnv.user.address],
@@ -144,8 +152,8 @@ it('UniV3 Solo', async () => {
     value: rpParams.value || 0n,
   })
 
-  await testEnv.walletClient.waitForTransactionReceipt({ hash: tx })
-  const balanceOutBNAfter = await testEnv.walletClient.readContract({
+  await testEnv.client.waitForTransactionReceipt({ hash: tx })
+  const balanceOutBNAfter = await testEnv.client.readContract({
     ...pool.token1Contract,
     functionName: 'balanceOf',
     args: [testEnv.user.address],
