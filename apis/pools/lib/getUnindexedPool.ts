@@ -1,4 +1,4 @@
-import { constantProductPoolAbi, uniswapV2PairAbi, v3baseAbi } from '@sushiswap/abi'
+import { tridentConstantPoolAbi, uniswapV2PairAbi, v3baseAbi } from '@sushiswap/abi'
 import { Protocol } from '@sushiswap/database'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import type { Address, FetchTokenResult } from '@wagmi/core'
@@ -52,10 +52,10 @@ async function getTridentPool({ chainId, address, protocol }: GetPoolArgs): Prom
   const [token0, token1, totalSupply, swapFee] = await readContracts({
     allowFailure: false,
     contracts: [
-      { address: address as Address, abi: constantProductPoolAbi, functionName: 'token0', chainId },
-      { address: address as Address, abi: constantProductPoolAbi, functionName: 'token1', chainId },
-      { address: address as Address, abi: constantProductPoolAbi, functionName: 'totalSupply', chainId },
-      { address: address as Address, abi: constantProductPoolAbi, functionName: 'swapFee', chainId },
+      { address: address as Address, abi: tridentConstantPoolAbi, functionName: 'token0', chainId },
+      { address: address as Address, abi: tridentConstantPoolAbi, functionName: 'token1', chainId },
+      { address: address as Address, abi: tridentConstantPoolAbi, functionName: 'totalSupply', chainId },
+      { address: address as Address, abi: tridentConstantPoolAbi, functionName: 'swapFee', chainId },
     ],
   })
 

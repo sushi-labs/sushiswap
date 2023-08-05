@@ -1,4 +1,4 @@
-import { stablePoolAbi, stablePoolFactoryAbi } from '@sushiswap/abi'
+import { tridentStablePoolAbi, tridentStablePoolFactoryAbi } from '@sushiswap/abi'
 import { TridentStablePool } from '@sushiswap/amm'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Currency, Token } from '@sushiswap/currency'
@@ -8,7 +8,7 @@ import { getContract } from 'wagmi/actions'
 import { getStablePoolFactoryContract } from '../../../contracts/actions'
 import { pairsUnique } from './utils'
 
-export enum StablePoolState {
+export enum TridentStablePoolState {
   LOADING = 'Loading',
   NOT_EXISTS = 'Not Exists',
   EXISTS = 'Exists',
@@ -21,7 +21,7 @@ interface PoolData {
   token1: Token
 }
 
-export const getStablePools = async (
+export const getTridentStablePools = async (
   chainId: BentoBoxV1ChainId,
   currencies: [Currency | undefined, Currency | undefined][],
   totals: Map<string, { base: bigint; elastic: bigint }>
@@ -38,7 +38,7 @@ export const getStablePools = async (
     contracts: _pairsUniqueAddr.map((el) => ({
       chainId,
       address: contract?.address as Address,
-      abi: stablePoolFactoryAbi,
+      abi: tridentStablePoolFactoryAbi,
       functionName: 'poolsCount',
       args: el as [Address, Address],
     })),
@@ -61,7 +61,7 @@ export const getStablePools = async (
     contracts: (callStatePoolsCountProcessed || []).map((args) => ({
       chainId,
       address: contract?.address as Address,
-      abi: stablePoolFactoryAbi,
+      abi: tridentStablePoolFactoryAbi,
       functionName: 'getPools' as const,
       args,
     })),
@@ -85,7 +85,7 @@ export const getStablePools = async (
     contracts: poolsAddresses.map((address) => ({
       chainId,
       address: address as Address,
-      abi: stablePoolAbi,
+      abi: tridentStablePoolAbi,
       functionName: 'getReserves',
     })),
   })
@@ -94,7 +94,7 @@ export const getStablePools = async (
     contracts: poolsAddresses.map((address) => ({
       chainId,
       address: address as Address,
-      abi: stablePoolAbi,
+      abi: tridentStablePoolAbi,
       functionName: 'swapFee',
     })),
   })
@@ -104,9 +104,9 @@ export const getStablePools = async (
     const total1 = totals.get(p.token1.address)
 
     const [reserve0, reserve1] = reserves?.[i]?.result || []
-    if (!reserve0 || !reserve1 || !total0 || !total1) return [StablePoolState.LOADING, null]
+    if (!reserve0 || !reserve1 || !total0 || !total1) return [TridentStablePoolState.LOADING, null]
     return [
-      StablePoolState.EXISTS,
+      TridentStablePoolState.EXISTS,
       new TridentStablePool(
         Amount.fromRawAmount(p.token0, reserve0),
         Amount.fromRawAmount(p.token1, reserve1),

@@ -4,7 +4,8 @@ import { Button } from '@sushiswap/ui/components/button'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { createErrorToast } from '@sushiswap/ui/components/toast'
 import React, { FC, useCallback } from 'react'
-import { ProviderRpcError, useNetwork, UserRejectedRequestError, useSwitchNetwork } from 'wagmi'
+import { ProviderRpcError, UserRejectedRequestError } from 'viem'
+import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 export const HeaderNetworkSelector: FC<{
   networks: ChainId[]

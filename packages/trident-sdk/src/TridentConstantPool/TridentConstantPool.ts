@@ -1,12 +1,12 @@
+import { InsufficientInputAmountError, InsufficientReservesError } from '@sushiswap/base-sdk'
+import { Fee, Pool } from '@sushiswap/base-sdk'
 import { Amount, Price, Share, Token } from '@sushiswap/currency'
 import { ONE, sqrt, ZERO } from '@sushiswap/math'
 import { constantProductPoolFactoryAddress, ConstantProductPoolFactoryChainId } from '@sushiswap/trident-core'
 import invariant from 'tiny-invariant'
 
-import { InsufficientInputAmountError, InsufficientReservesError } from '@sushiswap/base-sdk'
-import { Fee, Pool } from '@sushiswap/base-sdk'
 import { computeTridentConstantPoolAddress } from './computeTridentConstantPoolAddress'
-import { constantPoolSchema, SerializedConstantPool } from './zod'
+import { SerializedConstantPool, tridentConstantPoolSchema } from './zod'
 
 export class TridentConstantPool implements Pool {
   public readonly liquidityToken: Token
@@ -280,7 +280,7 @@ export class TridentConstantPool implements Pool {
   }
 
   public serialize(): SerializedConstantPool {
-    return constantPoolSchema.parse({
+    return tridentConstantPoolSchema.parse({
       reserve0: this.tokenAmounts[0].serialize(),
       reserve1: this.tokenAmounts[1].serialize(),
       fee: this.fee,

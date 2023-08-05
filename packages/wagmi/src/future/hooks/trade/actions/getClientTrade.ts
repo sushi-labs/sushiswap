@@ -61,7 +61,7 @@ export const getClientTrade = async ({
           currencyIn.wrapped,
           currencyOut.wrapped,
           amount.quotient,
-          pools.pairs || [],
+          pools.sushiSwapV2Pools || [],
           WNATIVE[amount.currency.chainId],
           Number(feeData.gasPrice)
         )
@@ -70,7 +70,7 @@ export const getClientTrade = async ({
           currencyIn.wrapped,
           currencyOut.wrapped,
           amount.toShare(currencyInRebase).quotient,
-          [...(pools.constantProductPools || []), ...(pools.stablePools || [])],
+          [...(pools.tridentConstantPools || []), ...(pools.tridentStablePools || [])],
           WNATIVE[amount.currency.chainId],
           Number(feeData.gasPrice)
         )
@@ -98,7 +98,7 @@ export const getClientTrade = async ({
         currencyIn.wrapped,
         currencyOut.wrapped,
         amount.quotient,
-        pools.pairs || [],
+        pools.sushiSwapV2Pools || [],
         WNATIVE[amount.currency.chainId],
         Number(feeData.gasPrice)
       )
@@ -115,7 +115,7 @@ export const getClientTrade = async ({
         currencyIn.wrapped,
         currencyOut.wrapped,
         amount.toShare(currencyInRebase).quotient,
-        [...(pools.constantProductPools || []), ...(pools.stablePools || [])],
+        [...(pools.tridentConstantPools || []), ...(pools.tridentStablePools || [])],
         WNATIVE[amount.currency.chainId],
         Number(feeData.gasPrice)
       )

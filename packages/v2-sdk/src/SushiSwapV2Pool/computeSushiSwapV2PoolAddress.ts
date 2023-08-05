@@ -13,7 +13,7 @@ import { isSushiSwapV2ChainId, SUSHISWAP_V2_INIT_CODE_HASH } from '../constants'
  * @param initCodeHashManualOverride Override the init code hash used to compute the pool address if necessary
  * @returns The pair address
  */
-export const computePairAddress = ({
+export const computeSushiSwapV2PoolAddress = ({
   factoryAddress,
   tokenA,
   tokenB,

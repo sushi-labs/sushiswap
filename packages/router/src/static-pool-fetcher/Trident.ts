@@ -1,4 +1,4 @@
-import { constantProductPoolAbi, stablePoolAbi } from '@sushiswap/abi'
+import { tridentConstantPoolAbi, tridentStablePoolAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Currency, Token } from '@sushiswap/currency'
 import {
@@ -122,7 +122,7 @@ export class TridentStaticPoolFetcher {
           ({
             chainId,
             address: address as Address,
-            abi: type === 'STABLE_POOL' ? stablePoolAbi : constantProductPoolAbi,
+            abi: type === 'STABLE_POOL' ? tridentStablePoolAbi : tridentConstantPoolAbi,
             functionName: 'swapFee',
           } as const)
       ),

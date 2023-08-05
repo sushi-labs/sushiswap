@@ -1,5 +1,4 @@
 import { isAddress } from '@ethersproject/address'
-import { TransactionRequest } from '@ethersproject/providers'
 import { ArrowLeftIcon } from '@heroicons/react/solid'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Chain } from '@sushiswap/chain'
@@ -17,16 +16,19 @@ import {
   useAccount,
   useBentoBoxTotal,
   useFuroVestingRouterContract,
+  usePrepareSendTransaction,
+  useSendTransaction,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { format } from 'date-fns'
-import React, { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
+import React, { FC, useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { Hex } from 'viem'
 
 import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreationAction } from '../../../lib'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
@@ -117,86 +119,78 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
     [_totalAmount, chainId, address]
   )
 
-  const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (
-        !isValid ||
-        isValidating ||
-        !contract ||
-        !address ||
-        !chainId ||
-        !recipient ||
-        !isAddress(recipient) ||
-        !_currency ||
-        !startDate ||
-        !_cliffDuration ||
-        !stepConfig ||
-        !STEP_CONFIGURATIONS_MAP[stepConfig] ||
-        !_stepPercentage ||
-        !_totalAmount ||
-        !stepPayouts ||
-        !rebase ||
-        approved
-      ) {
-        return
-      }
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    if (
+      !isValid ||
+      isValidating ||
+      !contract ||
+      !address ||
+      !chainId ||
+      !recipient ||
+      !isAddress(recipient) ||
+      !_currency ||
+      !startDate ||
+      !_cliffDuration ||
+      !stepConfig ||
+      !STEP_CONFIGURATIONS_MAP[stepConfig] ||
+      !_stepPercentage ||
+      !_totalAmount ||
+      !stepPayouts ||
+      !rebase ||
+      approved
+    ) {
+      return
+    }
 
-      const actions: string[] = []
-      if (signature) {
-        actions.push(approveBentoBoxAction({ contract, user: address, signature }))
-      }
+    const actions: Hex[] = []
+    if (signature) {
+      actions.push(approveBentoBoxAction({ user: address, signature }))
+    }
 
-      actions.push(
-        vestingCreationAction({
-          contract,
-          recipient,
-          currency: _currency,
-          startDate,
-          cliffDuration: _cliffDuration.toString(),
-          stepDuration: STEP_CONFIGURATIONS_MAP[stepConfig].toString(),
-          steps: stepPayouts.toString(),
-          stepPercentage: _stepPercentage.toString(),
-          amount: _totalAmount.quotient.toString(),
-          fromBentobox: _fundSource === FundSource.BENTOBOX,
-          minShare: _totalAmount.toShare(rebase),
-        })
-      )
-
-      setRequest({
-        from: address,
-        to: contract.address,
-        data: batchAction({ contract, actions }),
-        value: _currency.isNative ? _totalAmount.quotient.toString() : '0',
+    actions.push(
+      vestingCreationAction({
+        recipient,
+        currency: _currency,
+        startDate,
+        cliffDuration: Number(_cliffDuration),
+        stepDuration: STEP_CONFIGURATIONS_MAP[stepConfig],
+        steps: Number(stepPayouts),
+        stepPercentage: _stepPercentage,
+        amount: _totalAmount.quotient,
+        fromBentoBox: _fundSource === FundSource.BENTOBOX,
+        minShare: _totalAmount.toShare(rebase),
       })
-    },
-    [
-      isValid,
-      isValidating,
-      contract,
-      address,
-      chainId,
-      recipient,
-      _currency,
-      startDate,
-      _cliffDuration,
-      stepConfig,
-      _stepPercentage,
-      _totalAmount,
-      stepPayouts,
-      rebase,
-      signature,
-      _fundSource,
-      approved,
-    ]
-  )
+    )
 
-  const { sendTransactionAsync, isLoading, isError, data } = useSendTransaction({
+    return {
+      account: address,
+      to: contract.address,
+      data: batchAction({ actions }),
+      value: _currency.isNative ? _totalAmount.quotient : 0n,
+    }
+  }, [
+    isValid,
+    isValidating,
+    contract,
+    address,
     chainId,
-    prepare,
-    onSettled,
-    onSuccess: () => {
-      setSignature(undefined)
-    },
+    recipient,
+    _currency,
+    startDate,
+    _cliffDuration,
+    stepConfig,
+    _stepPercentage,
+    _totalAmount,
+    stepPayouts,
+    rebase,
+    signature,
+    _fundSource,
+    approved,
+  ])
+
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
     enabled: Boolean(
       isValid &&
         !isValidating &&
@@ -216,6 +210,14 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
         rebase &&
         approved
     ),
+  })
+
+  const { sendTransactionAsync, isLoading, isError, data } = useSendTransaction({
+    ...config,
+    onSettled,
+    onSuccess: () => {
+      setSignature(undefined)
+    },
   })
 
   const formValid = isValid && !isValidating && Object.keys(errors).length === 0
@@ -277,7 +279,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
       <Modal.Review tag={MODAL_ID} variant="opaque">
         {({ close, confirm }) => (
           <div className="max-w-[504px] mx-auto">
-            <button onClick={close} className="p-3 pl-0">
+            <button onClick={close} onKeyDown={close} className="p-3 pl-0" type="button">
               <ArrowLeftIcon strokeWidth={3} width={24} height={24} />
             </button>
             <div className="flex items-start justify-between gap-4 py-2">

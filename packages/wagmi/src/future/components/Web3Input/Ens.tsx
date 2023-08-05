@@ -1,16 +1,13 @@
-import { ForwardedRef, forwardRef, useEffect, useState } from 'react'
-import { Input } from '@sushiswap/ui/components/input'
-import { useEnsResolver } from 'wagmi'
 import { ChainId } from '@sushiswap/chain'
+import { Input } from '@sushiswap/ui/components/input'
 import { TextInput } from '@sushiswap/ui/components/input/Text'
+import { ForwardedRef, forwardRef, useEffect, useState } from 'react'
+import { useEnsResolver } from 'wagmi'
 
 export type EnsInputProps = TextInput
 
 function Component(props: EnsInputProps, ref: ForwardedRef<HTMLInputElement>) {
-  const [state, setState] = useState({
-    name: '',
-    address: '',
-  })
+  const [address, setAddress] = useState('')
 
   useEnsResolver({
     name: `${props.value}`,
@@ -18,15 +15,15 @@ function Component(props: EnsInputProps, ref: ForwardedRef<HTMLInputElement>) {
     enabled: Boolean(props.value && typeof props.value === 'string' && props.value.length > 2),
     onSuccess(data) {
       if (props.onChange && data) {
-        setState({ name: data.name, address: data.address })
-        props.onChange(data.address)
+        setAddress(data)
+        props.onChange(data)
       }
     },
   })
 
   useEffect(() => {
     if (!props.value) {
-      setState({ name: '', address: '' })
+      setAddress('')
     }
   }, [props.value])
 

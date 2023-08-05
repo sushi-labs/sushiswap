@@ -1,7 +1,7 @@
 import { SushiSwapV2Pool } from '@sushiswap/amm'
 import { Amount, Token, Type as Currency, Type } from '@sushiswap/currency'
 import {
-  computePairAddress,
+  computeSushiSwapV2PoolAddress,
   isSushiSwapV2ChainId,
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SushiSwapV2ChainId,
@@ -13,14 +13,14 @@ import { uniswapV2PairAbi } from '../abis'
 
 type UseContractReadsConfig = Parameters<typeof useContractReads>['0']
 
-export enum PairState {
+export enum SushiSwapV2PoolState {
   LOADING = 'Loading',
   NOT_EXISTS = 'Not Exists',
   EXISTS = 'Exists',
   INVALID = 'Invalid',
 }
 
-export function getPairs(
+export function getSushiSwapV2Pools(
   chainId: SushiSwapV2ChainId | undefined,
   currencies: [Currency | undefined, Currency | undefined][]
 ) {
@@ -47,7 +47,7 @@ export function getPairs(
 
   const contracts = filtered.map(([currencyA, currencyB]) => ({
     chainId,
-    address: computePairAddress({
+    address: computeSushiSwapV2PoolAddress({
       factoryAddress: SUSHISWAP_V2_FACTORY_ADDRESS[currencyA.chainId as SushiSwapV2ChainId],
       tokenA: currencyA.wrapped,
       tokenB: currencyB.wrapped,
@@ -59,18 +59,18 @@ export function getPairs(
   return [tokensA, tokensB, contracts] as const
 }
 
-interface UsePairsReturn {
+interface UseSushiSwapV2PoolsReturn {
   isLoading: boolean
   isError: boolean
-  data: [PairState, SushiSwapV2Pool | null][]
+  data: [SushiSwapV2PoolState, SushiSwapV2Pool | null][]
 }
 
-export function usePairs(
+export function useSushiSwapV2Pools(
   chainId: SushiSwapV2ChainId | undefined,
   currencies: [Currency | undefined, Currency | undefined][],
   config?: Omit<NonNullable<UseContractReadsConfig>, 'contracts'>
-): UsePairsReturn {
-  const [tokensA, tokensB, contracts] = useMemo(() => getPairs(chainId, currencies), [chainId, currencies])
+): UseSushiSwapV2PoolsReturn {
+  const [tokensA, tokensB, contracts] = useMemo(() => getSushiSwapV2Pools(chainId, currencies), [chainId, currencies])
 
   const { data, isLoading, isError } = useContractReads({
     contracts: contracts,
@@ -79,12 +79,12 @@ export function usePairs(
     select: (results) => results.map((r) => r.result),
   })
   return useMemo(() => {
-    if (contracts.length === 0) return { isLoading, isError, data: [[PairState.INVALID, null]] }
+    if (contracts.length === 0) return { isLoading, isError, data: [[SushiSwapV2PoolState.INVALID, null]] }
     if (!data)
       return {
         isLoading,
         isError,
-        data: contracts.map(() => [PairState.LOADING, null]),
+        data: contracts.map(() => [SushiSwapV2PoolState.LOADING, null]),
       }
 
     return {
@@ -93,12 +93,12 @@ export function usePairs(
       data: data.map((result, i) => {
         const tokenA = tokensA[i]
         const tokenB = tokensB[i]
-        if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [PairState.INVALID, null]
-        if (!result) return [PairState.NOT_EXISTS, null]
+        if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [SushiSwapV2PoolState.INVALID, null]
+        if (!result) return [SushiSwapV2PoolState.NOT_EXISTS, null]
         const [reserve0, reserve1] = result
         const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
         return [
-          PairState.EXISTS,
+          SushiSwapV2PoolState.EXISTS,
           new SushiSwapV2Pool(
             Amount.fromRawAmount(token0, reserve0.toString()),
             Amount.fromRawAmount(token1, reserve1.toString())
@@ -109,20 +109,20 @@ export function usePairs(
   }, [contracts, data, isError, isLoading, tokensA, tokensB])
 }
 
-interface UsePairReturn {
+interface UseSushiSwapV2PoolReturn {
   isLoading: boolean
   isError: boolean
-  data: [PairState, SushiSwapV2Pool | null]
+  data: [SushiSwapV2PoolState, SushiSwapV2Pool | null]
 }
 
-export function usePair(
+export function useSushiSwapV2Pool(
   chainId: SushiSwapV2ChainId,
   tokenA?: Currency,
   tokenB?: Currency,
   config?: Omit<UseContractReadsConfig, 'contracts'>
-): UsePairReturn {
+): UseSushiSwapV2PoolReturn {
   const inputs: [[Currency | undefined, Currency | undefined]] = useMemo(() => [[tokenA, tokenB]], [tokenA, tokenB])
-  const { data, isLoading, isError } = usePairs(chainId, inputs, config)
+  const { data, isLoading, isError } = useSushiSwapV2Pools(chainId, inputs, config)
 
   return useMemo(
     () => ({

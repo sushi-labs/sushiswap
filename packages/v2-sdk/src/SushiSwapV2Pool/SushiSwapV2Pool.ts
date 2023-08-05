@@ -1,12 +1,12 @@
+import { InsufficientInputAmountError, InsufficientReservesError } from '@sushiswap/base-sdk'
+import { chainName } from '@sushiswap/chain'
 import { Amount, Price, Token } from '@sushiswap/currency'
 import { _997, _1000, BigintIsh, FIVE, ONE, sqrt, ZERO } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
-import { InsufficientInputAmountError, InsufficientReservesError } from '@sushiswap/base-sdk'
-import { computePairAddress } from './computePairAddress'
-import { SUSHISWAP_V2_FACTORY_ADDRESS, isSushiSwapV2ChainId } from '../constants'
-import { sushiSwapV2PoolSchema, SerializedSushiSwapV2Pool } from './zod'
-import { chainName } from '@sushiswap/chain'
+import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS } from '../constants'
+import { computeSushiSwapV2PoolAddress } from './computeSushiSwapV2PoolAddress'
+import { SerializedSushiSwapV2Pool, sushiSwapV2PoolSchema } from './zod'
 
 export class SushiSwapV2Pool {
   public readonly liquidityToken: Token
@@ -19,7 +19,7 @@ export class SushiSwapV2Pool {
       throw new Error(`ChainId Error: SushiSwapV2 is not available on ${chainName[tokenA.chainId]}`)
     }
 
-    return computePairAddress({
+    return computeSushiSwapV2PoolAddress({
       factoryAddress: SUSHISWAP_V2_FACTORY_ADDRESS[tokenA.chainId],
       tokenA,
       tokenB,

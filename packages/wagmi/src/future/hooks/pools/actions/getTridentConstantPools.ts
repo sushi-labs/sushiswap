@@ -1,13 +1,13 @@
-import { constantProductPoolAbi, constantProductPoolFactoryAbi } from '@sushiswap/abi'
+import { tridentConstantPoolAbi, tridentConstantPoolFactoryAbi } from '@sushiswap/abi'
 import { TridentConstantPool } from '@sushiswap/amm'
 import { Amount, Currency, Token } from '@sushiswap/currency'
 import { Address, readContracts } from 'wagmi'
 import { getContract } from 'wagmi/actions'
 
-import { getConstantProductPoolFactoryContract } from '../../../contracts/actions'
+import { getTridentConstantPoolFactoryContract } from '../../../contracts/actions'
 import { pairsUnique } from './utils'
 
-export enum ConstantProductPoolState {
+export enum TridentConstantPoolState {
   LOADING = 'Loading',
   NOT_EXISTS = 'Not exists',
   EXISTS = 'Exists',
@@ -20,7 +20,7 @@ interface PoolData {
   token1: Token
 }
 
-export const getConstantProductPools = async (
+export const getTridentConstantPools = async (
   chainId: number,
   currencies: [Currency | undefined, Currency | undefined][]
 ) => {
@@ -28,7 +28,7 @@ export const getConstantProductPools = async (
   //   return []
   // }
 
-  const contract = getContract(getConstantProductPoolFactoryContract(chainId))
+  const contract = getContract(getTridentConstantPoolFactoryContract(chainId))
 
   const _pairsUnique = pairsUnique(currencies)
   const _pairsUniqueAddr = _pairsUnique.map(([t0, t1]) => [t0.address, t1.address])
@@ -37,7 +37,7 @@ export const getConstantProductPools = async (
     contracts: _pairsUniqueAddr.map((el) => ({
       chainId,
       address: contract?.address as Address,
-      abi: constantProductPoolFactoryAbi,
+      abi: tridentConstantPoolFactoryAbi,
       functionName: 'poolsCount',
       args: el as [Address, Address],
     })),
@@ -61,7 +61,7 @@ export const getConstantProductPools = async (
     contracts: (callStatePoolsCountProcessed || []).map((args) => ({
       chainId,
       address: contract?.address as Address,
-      abi: constantProductPoolFactoryAbi,
+      abi: tridentConstantPoolFactoryAbi,
       functionName: 'getPools',
       args,
     })),
@@ -85,13 +85,13 @@ export const getConstantProductPools = async (
     ...poolsAddresses.map((address) => ({
       chainId,
       address,
-      abi: constantProductPoolAbi,
+      abi: tridentConstantPoolAbi,
       functionName: 'getReserves' as const,
     })),
     ...poolsAddresses.map((address) => ({
       chainId,
       address,
-      abi: constantProductPoolAbi,
+      abi: tridentConstantPoolAbi,
       functionName: 'swapFee' as const,
     })),
   ]
@@ -102,14 +102,14 @@ export const getConstantProductPools = async (
 
   return pools.map((p, i) => {
     if (!reservesAndFees?.[i].result || !reservesAndFees?.[i + poolsAddresses.length].result) {
-      return [ConstantProductPoolState.LOADING, null]
+      return [TridentConstantPoolState.LOADING, null]
     }
 
     const [reserve0, reserve1, blockTimestampLast] = reservesAndFees[i].result as [bigint, bigint, number]
     const swapFee = reservesAndFees[i + poolsAddresses.length].result as bigint
 
     return [
-      ConstantProductPoolState.EXISTS,
+      TridentConstantPoolState.EXISTS,
       new TridentConstantPool(
         Amount.fromRawAmount(p.token0, reserve0),
         Amount.fromRawAmount(p.token1, reserve1),

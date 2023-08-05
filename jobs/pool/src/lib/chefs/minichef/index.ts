@@ -22,7 +22,6 @@ export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): P
       return { chainId, farms: null }
     }
 
-    // @ts-ignore
     const [poolLength, totalAllocPoint, sushiPerSecond, rewarderInfos, [{ derivedUSD: sushiPriceUSD }]] =
       await Promise.all([
         getPoolLength(chainId),
@@ -39,9 +38,9 @@ export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): P
     )
 
     const [poolInfos, lpTokens, rewarders, tokens] = await Promise.all([
-      getPoolInfos(poolLength.toNumber(), chainId),
-      getLpTokens(poolLength.toNumber(), chainId),
-      getRewarders(poolLength.toNumber(), chainId),
+      getPoolInfos(poolLength, chainId),
+      getLpTokens(poolLength, chainId),
+      getRewarders(poolLength, chainId),
       getTokens(
         rewarderInfos.map((rewarder) => rewarder?.rewardToken),
         chainId
@@ -53,7 +52,7 @@ export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): P
       getTokenBalancesOf(lpTokens, MINICHEF_ADDRESS[chainId] as Address, chainId),
     ])
 
-    const pools = [...Array(poolLength.toNumber())].map((_, i) => ({
+    const pools = [...Array(poolLength)].map((_, i) => ({
       id: i,
       poolInfo: poolInfos[i],
       lpBalance: lpBalances.find(({ token }) => token === lpTokens[i])?.balance,
@@ -68,7 +67,7 @@ export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): P
 
         if (!pool.pair || typeof pool.lpBalance !== 'number' || !pool.poolInfo) return acc
 
-        const sushiRewardPerDay = sushiPerDay * (pool.poolInfo.allocPoint.toNumber() / totalAllocPoint.toNumber())
+        const sushiRewardPerDay = sushiPerDay * (Number(pool.poolInfo.allocPoint) / Number(totalAllocPoint))
         const sushiRewardPerYearUSD = daysInYear * sushiRewardPerDay * sushiPriceUSD
 
         const stakedLiquidityUSD = (pool.pair.liquidityUSD * pool.lpBalance) / pool.pair.totalSupply
@@ -104,7 +103,7 @@ export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): P
               if (poolInfo) {
                 // poolInfo.allocPoint.div(masterChefV2.totalAllocPoint).times(masterChefV2.sushiPerDay)
                 rewardPerSecond =
-                  (poolInfo.allocPoint / pool.rewarder.totalAllocPoint) *
+                  (poolInfo.allocPoint / Number(pool.rewarder.totalAllocPoint)) *
                   divBigIntToNumber(pool.rewarder.rewardPerSecond, token.decimals)
               }
 

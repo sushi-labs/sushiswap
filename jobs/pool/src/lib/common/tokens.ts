@@ -123,8 +123,8 @@ export async function getTokenBalancesOf(_tokens: string[], address: string, cha
 
   return tokens
     .map((token, i) => {
-      const balance = balancesOf[i]
-      const decimal = decimals[i]
+      const balance = balancesOf[i].result
+      const decimal = decimals[i].result
 
       if (balance === null || decimal === null) {
         console.log(`Balance / decimal fetch failed for ${token} on ${ChainId[chainId]}`)
@@ -134,7 +134,7 @@ export async function getTokenBalancesOf(_tokens: string[], address: string, cha
       return {
         token,
         // so that we don't need to seed new pairs
-        balance: balancesOf[i]?.eq(0) ? 1 : divBigIntToNumber(balancesOf[i], decimals[i]),
+        balance: balance === 0n ? 1 : divBigIntToNumber(balance, decimal),
       }
     })
     .filter((token): token is NonNullable<typeof token> => Boolean(token))

@@ -1,9 +1,8 @@
+import { Fee } from '@sushiswap/base-sdk'
 import { amountSchema } from '@sushiswap/currency'
 import z from 'zod'
 
-import { Fee } from '@sushiswap/base-sdk'
-
-export const stablePoolSchema = z.object({
+export const tridentStablePoolSchema = z.object({
   reserve0: amountSchema,
   reserve1: amountSchema,
   fee: z.nativeEnum(Fee),
@@ -17,4 +16,4 @@ export const stablePoolSchema = z.object({
   }),
 })
 
-export type SerializedStablePool = z.infer<typeof stablePoolSchema>
+export type SerializedStablePool = z.infer<typeof tridentStablePoolSchema>

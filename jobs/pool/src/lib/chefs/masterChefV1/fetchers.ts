@@ -26,7 +26,7 @@ export async function getTotalAllocPoint() {
   return readContract(totalAllocPointCall)
 }
 
-export async function getPoolInfos(poolLength: number) {
+export async function getPoolInfos(poolLength: bigint) {
   const poolInfoCalls = [...Array(poolLength)].map(
     (_, i) =>
       ({
@@ -41,5 +41,14 @@ export async function getPoolInfos(poolLength: number) {
   return readContracts({
     allowFailure: true,
     contracts: poolInfoCalls,
-  })
+  }).then((results) =>
+    results
+      .filter(({ result }) => !!result)
+      .map(({ result }) => ({
+        lpToken: result[0],
+        allocPoint: result[1],
+        lastRewardBlock: result[2],
+        accSushiPerShare: result[3],
+      }))
+  )
 }

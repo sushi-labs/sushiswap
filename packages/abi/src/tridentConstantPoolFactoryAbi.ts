@@ -1,4 +1,4 @@
-export const constantProductPoolFactoryAbi = [
+export const tridentConstantPoolFactoryAbi = [
   {
     inputs: [
       {

@@ -1,12 +1,12 @@
-import { constantProductPoolAbi, constantProductPoolFactoryAbi } from '@sushiswap/abi'
-import { computeConstantProductPoolAddress, ConstantProductPool, Fee } from '@sushiswap/amm'
+import { tridentConstantPoolAbi, tridentConstantPoolFactoryAbi } from '@sushiswap/abi'
+import { computeTridentConstantPoolAddress, Fee, TridentConstantPool } from '@sushiswap/amm'
 import { Amount, Currency, Token } from '@sushiswap/currency'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
 
-import { useConstantProductPoolFactoryContract } from './useConstantProductPoolFactoryContract'
+import { useTridentConstantPoolFactoryContract } from './useTridentConstantPoolFactoryContract'
 
-export enum ConstantProductPoolState {
+export enum TridentConstantPoolState {
   LOADING = 'Loading',
   NOT_EXISTS = 'Not Exists',
   EXISTS = 'Exists',
@@ -21,20 +21,20 @@ interface PoolData {
   token1: Token
 }
 
-interface UseGetConstantProductPoolsReturn {
+interface UseGetTridentConstantPoolsReturn {
   isLoading: boolean
   isError: boolean
-  data: [ConstantProductPoolState, ConstantProductPool | null][]
+  data: [TridentConstantPoolState, TridentConstantPool | null][]
 }
 
 type Config = Omit<NonNullable<Parameters<typeof useContractReads>['0']>, 'contracts'>
 
-export function useGetConstantProductPools(
+export function useGetTridentConstantPools(
   chainId: number | undefined,
   currencies: [Currency | undefined, Currency | undefined][],
   config: Config = { enabled: true }
-): UseGetConstantProductPoolsReturn {
-  const contract = useConstantProductPoolFactoryContract(chainId)
+): UseGetTridentConstantPoolsReturn {
+  const contract = useTridentConstantPoolFactoryContract(chainId)
   const pairsUnique = useMemo<[Token, Token][]>(() => {
     const pairsMap = new Map<string, [Token, Token]>()
     currencies.map(([c1, c2]) => {
@@ -63,7 +63,7 @@ export function useGetConstantProductPools(
     contracts: pairsUniqueAddr.map((el) => ({
       chainId,
       address: contract?.address as Address,
-      abi: constantProductPoolFactoryAbi,
+      abi: tridentConstantPoolFactoryAbi,
       functionName: 'poolsCount',
       args: el as [Address, Address],
     })),
@@ -100,7 +100,7 @@ export function useGetConstantProductPools(
       return callStatePoolsCountProcessed.map((args) => ({
         chainId,
         address: contract?.address as Address,
-        abi: constantProductPoolFactoryAbi,
+        abi: tridentConstantPoolFactoryAbi,
         functionName: 'getPools' as const,
         args,
       }))
@@ -132,13 +132,13 @@ export function useGetConstantProductPools(
     ...poolsAddresses.map((address) => ({
       chainId,
       address,
-      abi: constantProductPoolAbi,
+      abi: tridentConstantPoolAbi,
       functionName: 'getReserves' as const,
     })),
     ...poolsAddresses.map((address) => ({
       chainId,
       address,
-      abi: constantProductPoolAbi,
+      abi: tridentConstantPoolAbi,
       functionName: 'swapFee' as const,
     })),
   ]
@@ -163,11 +163,11 @@ export function useGetConstantProductPools(
         const _swapFee = reservesAndFees?.[i + poolsAddresses.length]
 
         if (!_reserves || !_swapFee) {
-          return [ConstantProductPoolState.LOADING, null]
+          return [TridentConstantPoolState.LOADING, null]
         }
 
         if (typeof _reserves === 'bigint' || typeof _swapFee !== 'bigint') {
-          return [ConstantProductPoolState.LOADING, null]
+          return [TridentConstantPoolState.LOADING, null]
         }
 
         const reserves = {
@@ -179,8 +179,8 @@ export function useGetConstantProductPools(
         const swapFee = _swapFee
 
         return [
-          ConstantProductPoolState.EXISTS,
-          new ConstantProductPool(
+          TridentConstantPoolState.EXISTS,
+          new TridentConstantPool(
             Amount.fromRawAmount(p.token0, reserves._reserve0.toString()),
             Amount.fromRawAmount(p.token1, reserves._reserve1.toString()),
             parseInt(swapFee.toString()),
@@ -205,8 +205,8 @@ export function useGetConstantProductPools(
 export function useConstantProductPools(
   chainId: number,
   pools: PoolInput[]
-): [ConstantProductPoolState, ConstantProductPool | null][] {
-  const constantProductPoolFactory = useConstantProductPoolFactoryContract(chainId)
+): [TridentConstantPoolState, TridentConstantPool | null][] {
+  const constantProductPoolFactory = useTridentConstantPoolFactoryContract(chainId)
 
   const input = useMemo(
     () =>
@@ -237,7 +237,7 @@ export function useConstantProductPools(
       input.reduce<Address[]>((acc, [tokenA, tokenB, fee, twap]) => {
         if (!constantProductPoolFactory) return acc
         acc.push(
-          computeConstantProductPoolAddress({
+          computeTridentConstantPoolAddress({
             factoryAddress: constantProductPoolFactory.address,
             tokenA,
             tokenB,
@@ -254,7 +254,7 @@ export function useConstantProductPools(
     contracts: poolsAddresses.map((address) => ({
       chainId,
       address,
-      abi: constantProductPoolAbi,
+      abi: tridentConstantPoolAbi,
       functionName: 'getReserves' as const,
     })),
     enabled: poolsAddresses.length > 0,
@@ -264,21 +264,21 @@ export function useConstantProductPools(
   })
 
   return useMemo(() => {
-    if (poolsAddresses.length === 0) return [[ConstantProductPoolState.INVALID, null]]
-    if (!data || !data.length) return poolsAddresses.map(() => [ConstantProductPoolState.LOADING, null])
+    if (poolsAddresses.length === 0) return [[TridentConstantPoolState.INVALID, null]]
+    if (!data || !data.length) return poolsAddresses.map(() => [TridentConstantPoolState.LOADING, null])
     return data.map((result, i) => {
       const tokenA = pools[i][0]?.wrapped
       const tokenB = pools[i][1]?.wrapped
       const fee = pools[i]?.[2]
       const twap = pools[i]?.[3]
-      if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [ConstantProductPoolState.INVALID, null]
-      if (!result) return [ConstantProductPoolState.NOT_EXISTS, null]
+      if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [TridentConstantPoolState.INVALID, null]
+      if (!result) return [TridentConstantPoolState.NOT_EXISTS, null]
       const [reserve0, reserve1] = result
       const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
 
       return [
-        ConstantProductPoolState.EXISTS,
-        new ConstantProductPool(
+        TridentConstantPoolState.EXISTS,
+        new TridentConstantPool(
           Amount.fromRawAmount(token0, reserve0),
           Amount.fromRawAmount(token1, reserve1),
           fee,
@@ -295,7 +295,7 @@ export function useConstantProductPool(
   tokenB: Currency | undefined,
   fee: Fee,
   twap: boolean
-): [ConstantProductPoolState, ConstantProductPool | null] {
+): [TridentConstantPoolState, TridentConstantPool | null] {
   const inputs: [PoolInput] = useMemo(() => [[tokenA, tokenB, Number(fee), Boolean(twap)]], [tokenA, tokenB, fee, twap])
   return useConstantProductPools(chainId, inputs)[0]
 }

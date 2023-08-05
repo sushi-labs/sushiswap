@@ -1,4 +1,4 @@
-export const stablePoolAbi = [
+export const tridentConstantPoolAbi = [
   {
     inputs: [],
     stateMutability: 'nonpayable',
@@ -7,6 +7,11 @@ export const stablePoolAbi = [
   {
     inputs: [],
     name: 'IdenticalAddress',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'InsufficientAmountIn',
     type: 'error',
   },
   {
@@ -32,6 +37,16 @@ export const stablePoolAbi = [
   {
     inputs: [],
     name: 'InvalidSwapFee',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'Overflow',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'PoolUninitialized',
     type: 'error',
   },
   {
@@ -403,36 +418,10 @@ export const stablePoolAbi = [
     type: 'function',
   },
   {
-    inputs: [],
-    name: 'decimals0',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'decimals1',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
     inputs: [
       {
         internalType: 'bytes',
-        name: '',
+        name: 'data',
         type: 'bytes',
       },
     ],
@@ -440,18 +429,18 @@ export const stablePoolAbi = [
     outputs: [
       {
         internalType: 'uint256',
-        name: '',
+        name: 'amountOut',
         type: 'uint256',
       },
     ],
-    stateMutability: 'pure',
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
     inputs: [
       {
         internalType: 'bytes',
-        name: '',
+        name: 'data',
         type: 'bytes',
       },
     ],
@@ -459,11 +448,11 @@ export const stablePoolAbi = [
     outputs: [
       {
         internalType: 'uint256',
-        name: '',
+        name: 'finalAmountIn',
         type: 'uint256',
       },
     ],
-    stateMutability: 'pure',
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -512,6 +501,11 @@ export const stablePoolAbi = [
         name: '_nativeReserve1',
         type: 'uint256',
       },
+      {
+        internalType: 'uint32',
+        name: '_blockTimestampLast',
+        type: 'uint32',
+      },
     ],
     stateMutability: 'view',
     type: 'function',
@@ -521,14 +515,19 @@ export const stablePoolAbi = [
     name: 'getReserves',
     outputs: [
       {
-        internalType: 'uint256',
+        internalType: 'uint112',
         name: '_reserve0',
-        type: 'uint256',
+        type: 'uint112',
       },
       {
-        internalType: 'uint256',
+        internalType: 'uint112',
         name: '_reserve1',
-        type: 'uint256',
+        type: 'uint112',
+      },
+      {
+        internalType: 'uint32',
+        name: '_blockTimestampLast',
+        type: 'uint32',
       },
     ],
     stateMutability: 'view',
@@ -669,9 +668,28 @@ export const stablePoolAbi = [
   },
   {
     inputs: [],
-    name: 'skim',
-    outputs: [],
-    stateMutability: 'nonpayable',
+    name: 'price0CumulativeLast',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'price1CumulativeLast',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -816,27 +834,6 @@ export const stablePoolAbi = [
     name: 'updateBarParameters',
     outputs: [],
     stateMutability: 'nonpayable',
-    type: 'function',
-  },
-] as const
-
-export const getStableReservesAbi = [
-  {
-    inputs: [],
-    name: 'getReserves',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '_reserve0',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: '_reserve1',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
     type: 'function',
   },
 ] as const

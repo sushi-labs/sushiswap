@@ -2,6 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Type } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
 import { HexString } from '@sushiswap/types'
+import { Address } from 'viem'
 import z from 'zod'
 
 import { legValidator, tradeValidator } from './validator'
@@ -13,7 +14,7 @@ export interface UseTradeParams {
   amount: Amount<Type> | undefined
   gasPrice?: number
   slippagePercentage: string
-  recipient: string | undefined
+  recipient: Address | undefined
   enabled: boolean
   carbonOffset: boolean
   onError?(e: Error): void

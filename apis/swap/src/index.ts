@@ -37,7 +37,7 @@ import { fastify } from 'fastify'
 import { performance } from 'perf_hooks'
 // import { createPublicClient, http } from 'viem'
 // import { arbitrum, bsc, celo, mainnet, optimism, polygon } from 'viem/chains'
-import { createPublicClient, fallback, http, PublicClient } from 'viem'
+import { Address, createPublicClient, fallback, http, PublicClient } from 'viem'
 import { z } from 'zod'
 
 import { getToken } from './tokens.js'
@@ -66,7 +66,7 @@ const querySchema = z.object({
   toTokenId: z.string().default('SUSHI'),
   gasPrice: z.coerce.number().int().gte(1),
   amount: z.coerce.bigint(),
-  to: z.optional(z.string()),
+  to: z.optional(z.string().transform((to) => to as Address)),
   preferSushi: z.coerce.boolean().default(false),
 })
 

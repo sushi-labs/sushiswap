@@ -1,4 +1,3 @@
-import { TransactionRequest } from '@ethersproject/providers'
 import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
@@ -8,17 +7,19 @@ import { Dialog } from '@sushiswap/ui/components/dialog/Dialog'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { Text } from '@sushiswap/ui/components/input/Text'
 import { createToast } from '@sushiswap/ui/components/toast'
-import { _useSendTransaction as useSendTransaction, useAccount, useContract, useEnsAddress } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { useAccount, useEnsAddress, usePrepareSendTransaction, useSendTransaction } from '@sushiswap/wagmi'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
+import { Abi, Address, encodeFunctionData } from 'viem'
 
 import { Stream, Vesting } from '../lib'
 
 interface TransferModalProps {
   stream?: Stream | Vesting
-  abi: NonNullable<Parameters<typeof useContract>['0']>['abi']
-  address: string
+  abi: Abi
+  address: Address
   fn?: string
   chainId: ChainId
   children?({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }): ReactNode
@@ -38,27 +39,20 @@ export const TransferModal: FC<TransferModalProps> = ({
 
   const type = stream instanceof Vesting ? 'Vest' : 'Stream'
 
-  const contract = useContract({
-    address: contractAddress,
-    abi: abi,
-  })
   const { data: resolvedAddress } = useEnsAddress({
     name: recipient,
     chainId: ChainId.ETHEREUM,
   })
 
-  const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!stream || !address || !recipient || !resolvedAddress) return
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    if (!stream || !address || !recipient || !resolvedAddress) return
 
-      setRequest({
-        from: address,
-        to: contractAddress,
-        data: contract?.interface.encodeFunctionData(fn, [address, resolvedAddress, stream?.id]),
-      })
-    },
-    [stream, address, recipient, resolvedAddress, contractAddress, contract?.interface, fn]
-  )
+    return {
+      from: address,
+      to: contractAddress,
+      data: encodeFunctionData({ abi, functionName: fn, args: [address, resolvedAddress, stream?.id] }),
+    }
+  }, [stream, address, recipient, resolvedAddress, contractAddress, abi, fn])
 
   const onSettled = useCallback(
     async (data: SendTransactionResult | undefined) => {
@@ -83,14 +77,18 @@ export const TransferModal: FC<TransferModalProps> = ({
     [address, chainId, resolvedAddress, type]
   )
 
-  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
     chainId,
-    prepare,
+    enabled: Boolean(stream && address && recipient && resolvedAddress),
+  })
+
+  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+    ...config,
     onSettled,
     onSuccess() {
       setOpen(false)
     },
-    enabled: Boolean(stream && address && recipient && resolvedAddress),
   })
 
   if (!stream || stream?.isEnded || !stream?.canTransfer(address) || !stream?.remainingAmount?.greaterThan(ZERO))

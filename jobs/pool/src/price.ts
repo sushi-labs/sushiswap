@@ -274,14 +274,14 @@ async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId, blockNumb
 
   const rebases: Map<string, Rebase> = new Map()
   sortedTokens.forEach((t, i) => {
-    const total = totals[i]
-    if (total === undefined || total === null) return
-    rebases.set(t.address, total)
+    const total = totals[i].result
+    if (!total) return
+    rebases.set(t.address, { base: total[0], elastic: total[1] })
   })
   return rebases
 }
 
-async function fetchV3Info(pools: Pool[], chainId: ChainId, blockNumber: number) {
+async function fetchV3Info(pools: Pool[], chainId: ChainId, blockNumber: bigint) {
   const [slot0, liquidity] = await Promise.all([
     readContracts({
       allowFailure: true,

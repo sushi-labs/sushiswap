@@ -40,7 +40,7 @@ export const useTokenRevokeApproval = ({ account, spender, token }: UseTokenRevo
           groupTimestamp: ts,
         })
 
-        data.wait().finally(() => {
+        waitForTransaction({ hash: data.hash }).finally(() => {
           setIsPending(false)
         })
       }

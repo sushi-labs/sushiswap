@@ -1,4 +1,4 @@
-export const stablePoolFactoryAbi = [
+export const tridentStablePoolFactoryAbi = [
   {
     inputs: [
       {

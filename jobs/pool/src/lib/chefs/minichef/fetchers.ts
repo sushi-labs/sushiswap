@@ -39,7 +39,7 @@ export async function getSushiPerSecond(chainId: ChainId) {
   return readContract(sushiPerSecondCall)
 }
 
-export async function getPoolInfos(poolLength: number, chainId: ChainId) {
+export async function getPoolInfos(poolLength: bigint, chainId: ChainId) {
   const poolInfoCalls = [...Array(poolLength)].map(
     (_, i) =>
       ({
@@ -54,10 +54,16 @@ export async function getPoolInfos(poolLength: number, chainId: ChainId) {
   return readContracts({
     allowFailure: true,
     contracts: poolInfoCalls,
-  })
+  }).then((results) =>
+    results.map(({ result }) => ({
+      accSushiPerShare: result[0],
+      lastRewardTime: result[1],
+      allocPoint: result[2],
+    }))
+  )
 }
 
-export async function getLpTokens(poolLength: number, chainId: ChainId) {
+export async function getLpTokens(poolLength: bigint, chainId: ChainId) {
   const lpTokenCalls = [...Array(poolLength)].map(
     (_, i) =>
       ({
@@ -72,10 +78,10 @@ export async function getLpTokens(poolLength: number, chainId: ChainId) {
   return readContracts({
     allowFailure: true,
     contracts: lpTokenCalls,
-  })
+  }).then((results) => results.map(({ result }) => result))
 }
 
-export async function getRewarders(poolLength: number, chainId: ChainId) {
+export async function getRewarders(poolLength: bigint, chainId: ChainId) {
   const rewarderCalls = [...Array(poolLength)].map(
     (_, i) =>
       ({
@@ -90,7 +96,7 @@ export async function getRewarders(poolLength: number, chainId: ChainId) {
   return readContracts({
     allowFailure: true,
     contracts: rewarderCalls,
-  })
+  }).then((results) => results.map(({ result }) => result))
 }
 
 // TODO: Fix type

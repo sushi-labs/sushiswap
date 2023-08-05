@@ -12,7 +12,6 @@ import { getPoolInfos, getPoolLength, getTotalAllocPoint } from './fetchers.js'
 const SUSHI_PER_BLOCK = 100
 
 export async function getMasterChefV1(): Promise<ChefReturn> {
-  // @ts-ignore
   const [poolLength, totalAllocPoint, [{ derivedUSD: sushiPriceUSD }], averageBlockTime] = await Promise.all([
     getPoolLength(),
     getTotalAllocPoint(),
@@ -26,7 +25,7 @@ export async function getMasterChefV1(): Promise<ChefReturn> {
     `MasterChefV1 - pools: ${poolLength}, sushiPerDay: ${sushiPerDay}, averageBlockTime: ${averageBlockTime}, totalAllocPoint: ${totalAllocPoint}`
   )
 
-  const poolInfos = await getPoolInfos(poolLength.toNumber())
+  const poolInfos = await getPoolInfos(poolLength)
 
   const [pairs, lpBalances] = await Promise.all([
     getPairs(
@@ -47,7 +46,7 @@ export async function getMasterChefV1(): Promise<ChefReturn> {
       const lpBalance = lpBalances.find(({ token }) => token === farm.lpToken)?.balance
       if (!pair || !lpBalance) return acc
 
-      const rewardPerDay = sushiPerDay * (farm.allocPoint.toNumber() / totalAllocPoint.toNumber())
+      const rewardPerDay = sushiPerDay * (Number(farm.allocPoint) / Number(totalAllocPoint))
       const rewardPerYearUSD = daysInYear * rewardPerDay * sushiPriceUSD
 
       const incentives: Farm['incentives'] = [

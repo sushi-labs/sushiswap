@@ -1,24 +1,25 @@
-import { getAllPools } from '../actions/getAllPools'
-import { PoolType, UsePoolsParams } from '../types'
-import { useQuery } from '@tanstack/react-query'
 import {
-  computeConstantProductPoolAddress,
-  computePairAddress,
-  computeStablePoolAddress,
-  ConstantProductPool,
+  computeSushiSwapV2PoolAddress,
+  computeTridentConstantPoolAddress,
+  computeTridentStablePoolAddress,
   Fee,
-  Pair,
-  StablePool,
+  SushiSwapV2Pool,
+  TridentConstantPool,
+  TridentStablePool,
 } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS } from '@sushiswap/v2-sdk'
 import {
   constantProductPoolFactoryAddress,
   isConstantProductPoolFactoryChainId,
   isStablePoolFactoryChainId,
   stablePoolFactoryAddress,
 } from '@sushiswap/trident-core'
+import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS } from '@sushiswap/v2-sdk'
+import { useQuery } from '@tanstack/react-query'
+
+import { getAllPools } from '../actions/getAllPools'
+import { PoolType, UsePoolsParams } from '../types'
 
 const getPoolAddress = ({
   chainId,
@@ -36,16 +37,16 @@ const getPoolAddress = ({
   const [tokenA, tokenB] = token0.wrapped.sortsBefore(token1.wrapped)
     ? [token0.wrapped, token1.wrapped]
     : [token1.wrapped, token0.wrapped]
-  if (poolType === PoolType.StablePool && isStablePoolFactoryChainId(chainId))
-    return computeStablePoolAddress({
+  if (poolType === PoolType.TridentStablePool && isStablePoolFactoryChainId(chainId))
+    return computeTridentStablePoolAddress({
       factoryAddress: stablePoolFactoryAddress[chainId],
       tokenA,
       tokenB,
       fee,
     })
 
-  if (poolType === PoolType.ConstantProduct && isConstantProductPoolFactoryChainId(chainId))
-    return computeConstantProductPoolAddress({
+  if (poolType === PoolType.TridentConstantPool && isConstantProductPoolFactoryChainId(chainId))
+    return computeTridentConstantPoolAddress({
       factoryAddress: constantProductPoolFactoryAddress[chainId],
       tokenA,
       tokenB,
@@ -53,8 +54,8 @@ const getPoolAddress = ({
       twap: false,
     })
 
-  if (poolType === PoolType.V2 && isSushiSwapV2ChainId(chainId)) {
-    return computePairAddress({
+  if (poolType === PoolType.SushiSwapV2Pool && isSushiSwapV2ChainId(chainId)) {
+    return computeSushiSwapV2PoolAddress({
       factoryAddress: SUSHISWAP_V2_FACTORY_ADDRESS[chainId],
       tokenA,
       tokenB,
@@ -75,9 +76,13 @@ export const usePoolsAsMap = ({ enabled = true, ...variables }: UsePoolsAsMapPar
     queryKey: ['usePoolsAsMap', { chainId, currencyA, currencyB }],
     queryFn: async () => {
       const data = await getAllPools({ ...variables, asMap: true, withCombinations: false, withBentoPools: false })
-      const pools = [...(data.pairs || []), ...(data.stablePools || []), ...(data.constantProductPools || [])]
+      const pools = [
+        ...(data.sushiSwapV2Pools || []),
+        ...(data.tridentStablePools || []),
+        ...(data.tridentConstantPools || []),
+      ]
       console.log({ data })
-      return pools.reduce<Record<string, Pair | ConstantProductPool | StablePool>>((acc, cur) => {
+      return pools.reduce<Record<string, SushiSwapV2Pool | TridentConstantPool | TridentStablePool>>((acc, cur) => {
         acc[cur.liquidityToken.address] = cur
         return acc
       }, {})

@@ -1,3 +1,3 @@
-export * from './SushiSwapV2Pool'
 export * from './constants'
 export * from './route'
+export * from './SushiSwapV2Pool'

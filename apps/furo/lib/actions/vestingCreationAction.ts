@@ -1,5 +1,5 @@
 import { Share, Type } from '@sushiswap/currency'
-import { Address, encodeFunctionData, zeroAddress } from 'viem'
+import { Address, encodeFunctionData, Hex, zeroAddress } from 'viem'
 
 declare const abiShard: [
   {
@@ -114,7 +114,7 @@ export const vestingCreationAction = ({
   amount,
   fromBentoBox,
   minShare,
-}: VestingCreationAction): string => {
+}: VestingCreationAction): Hex => {
   return encodeFunctionData({
     abi: abiShard,
     args: [

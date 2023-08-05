@@ -1,5 +1,5 @@
 import { Amount, Share, Type } from '@sushiswap/currency'
-import { Address, encodeFunctionData, zeroAddress } from 'viem'
+import { Address, encodeFunctionData, Hex, zeroAddress } from 'viem'
 
 declare const abiShard: [
   {
@@ -76,7 +76,7 @@ export const streamCreationAction = ({
   amount,
   fromBentobox,
   minShare,
-}: StreamCreationAction): string => {
+}: StreamCreationAction): Hex => {
   return encodeFunctionData({
     abi: abiShard,
     args: [

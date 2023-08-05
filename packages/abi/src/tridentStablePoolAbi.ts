@@ -1,4 +1,4 @@
-export const constantProductPoolAbi = [
+export const tridentStablePoolAbi = [
   {
     inputs: [],
     stateMutability: 'nonpayable',
@@ -7,11 +7,6 @@ export const constantProductPoolAbi = [
   {
     inputs: [],
     name: 'IdenticalAddress',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'InsufficientAmountIn',
     type: 'error',
   },
   {
@@ -37,16 +32,6 @@ export const constantProductPoolAbi = [
   {
     inputs: [],
     name: 'InvalidSwapFee',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'Overflow',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'PoolUninitialized',
     type: 'error',
   },
   {
@@ -418,10 +403,36 @@ export const constantProductPoolAbi = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'decimals0',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'decimals1',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [
       {
         internalType: 'bytes',
-        name: 'data',
+        name: '',
         type: 'bytes',
       },
     ],
@@ -429,18 +440,18 @@ export const constantProductPoolAbi = [
     outputs: [
       {
         internalType: 'uint256',
-        name: 'amountOut',
+        name: '',
         type: 'uint256',
       },
     ],
-    stateMutability: 'nonpayable',
+    stateMutability: 'pure',
     type: 'function',
   },
   {
     inputs: [
       {
         internalType: 'bytes',
-        name: 'data',
+        name: '',
         type: 'bytes',
       },
     ],
@@ -448,11 +459,11 @@ export const constantProductPoolAbi = [
     outputs: [
       {
         internalType: 'uint256',
-        name: 'finalAmountIn',
+        name: '',
         type: 'uint256',
       },
     ],
-    stateMutability: 'view',
+    stateMutability: 'pure',
     type: 'function',
   },
   {
@@ -501,11 +512,6 @@ export const constantProductPoolAbi = [
         name: '_nativeReserve1',
         type: 'uint256',
       },
-      {
-        internalType: 'uint32',
-        name: '_blockTimestampLast',
-        type: 'uint32',
-      },
     ],
     stateMutability: 'view',
     type: 'function',
@@ -515,19 +521,14 @@ export const constantProductPoolAbi = [
     name: 'getReserves',
     outputs: [
       {
-        internalType: 'uint112',
+        internalType: 'uint256',
         name: '_reserve0',
-        type: 'uint112',
+        type: 'uint256',
       },
       {
-        internalType: 'uint112',
+        internalType: 'uint256',
         name: '_reserve1',
-        type: 'uint112',
-      },
-      {
-        internalType: 'uint32',
-        name: '_blockTimestampLast',
-        type: 'uint32',
+        type: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -668,28 +669,9 @@ export const constantProductPoolAbi = [
   },
   {
     inputs: [],
-    name: 'price0CumulativeLast',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'price1CumulativeLast',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
+    name: 'skim',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -834,6 +816,27 @@ export const constantProductPoolAbi = [
     name: 'updateBarParameters',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+] as const
+
+export const getStableReservesAbi = [
+  {
+    inputs: [],
+    name: 'getReserves',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '_reserve0',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_reserve1',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
 ] as const
