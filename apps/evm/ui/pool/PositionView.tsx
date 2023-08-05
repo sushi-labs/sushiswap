@@ -140,6 +140,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
           <TabsContent value="add">
             <div className="mt-6">
               <ConcentratedLiquidityWidget
+                withTitleAndDescription={false}
                 chainId={chainId}
                 account={address}
                 token0={_token0}
