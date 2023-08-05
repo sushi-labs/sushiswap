@@ -47,7 +47,7 @@ import { getAllPoolCodes } from './utils/getAllPoolCodes'
 
 // Updating  pools' state allows to test DF updating ability, but makes tests very-very slow (
 const UPDATE_POOL_STATES = false
-const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
+const POLLING_INTERVAL = 10 // process.env.ALCHEMY_ID ? 1_000 : 10_000
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
 function getRandomExp(rnd: () => number, min: number, max: number) {
@@ -70,7 +70,7 @@ async function getTestEnvironment() {
     batch: {
       multicall: {
         batchSize: 2048,
-        wait: 16,
+        wait: 1,
       },
     },
     chain: {
@@ -122,6 +122,9 @@ async function getTestEnvironment() {
   }
 
   // saturate router balance with wei of tokens
+
+  const a = performance.now()
+
   await Promise.all([
     setRouterPrimaryBalance(client, RouteProcessorAddress, WNATIVE[chainId].address as Address),
     setRouterPrimaryBalance(client, RouteProcessorAddress, SUSHI_ADDRESS[chainId as keyof typeof SUSHI_ADDRESS]),
@@ -135,6 +138,8 @@ async function getTestEnvironment() {
 
   console.log(`  Network: ${chainName[chainId]}, Forked Block: ${await client.getBlockNumber()}`)
   //console.log('    User creation ...')
+
+  console.log('a', performance.now() - a)
 
   return {
     chainId,
@@ -195,7 +200,7 @@ async function makeSwap(
       chain: null,
       abi: erc20Abi,
       address: fromToken.address as Address,
-      account: env.user,
+      account: env.user.address,
       functionName: 'approve',
       args: [env.rp.address, amountIn],
     })
@@ -247,7 +252,7 @@ async function makeSwap(
 
     balanceOutBNBefore = await env.client.readContract({
       ...(toTokenContract as NonNullable<typeof toTokenContract>),
-      account: env.user,
+      account: env.user.address,
       functionName: 'balanceOf',
       args: [env.user.address],
     })
@@ -267,7 +272,7 @@ async function makeSwap(
       rpParams.to,
       rpParams.routeCode,
     ],
-    account: env.user,
+    account: env.user.address,
     value: rpParams.value || 0n,
   })
   const receipt = await env.client.waitForTransactionReceipt({ hash: txHash })
@@ -366,7 +371,7 @@ async function checkTransferAndRoute(
       chain: null,
       abi: erc20Abi,
       address: fromToken.address as Address,
-      account: env.user,
+      account: env.user.address,
       functionName: 'approve',
       args: [env.rp.address, amountIn],
     })
@@ -400,7 +405,7 @@ async function checkTransferAndRoute(
 
     balanceOutBNBefore = await env.client.readContract({
       ...(toTokenContract as NonNullable<typeof toTokenContract>),
-      account: env.user,
+      account: env.user.address,
       functionName: 'balanceOf',
       args: [env.user.address],
     })
@@ -421,7 +426,7 @@ async function checkTransferAndRoute(
       rpParams.to,
       rpParams.routeCode,
     ],
-    account: env.user,
+    account: env.user.address,
     value: rpParams.value,
   })
   const receipt = await env.client.waitForTransactionReceipt({ hash: tx })
@@ -439,7 +444,7 @@ async function checkTransferAndRoute(
     balanceOutBN =
       (await env.client.readContract({
         ...(toTokenContract as NonNullable<typeof toTokenContract>),
-        account: env.user,
+        account: env.user.address,
         functionName: 'balanceOf',
         args: [env.user.address],
       })) - balanceOutBNBefore
@@ -467,9 +472,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
   let USDC_LOCAL: Token
 
   before(async () => {
-    console.log('0')
     env = await getTestEnvironment()
-    console.log('1')
     chainId = env.chainId
 
     type SUSHI_CHAINS = keyof typeof SUSHI_ADDRESS

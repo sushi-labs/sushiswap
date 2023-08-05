@@ -52,23 +52,25 @@ export async function setTokenBalance(
     address: token as Address,
   })
 
-  for (let i = 0; i < 200; ++i) {
-    const [previousValue0, previousValue1] = await setStorage(i, balance, balance)
-    const resBalance = await readContract(client, {
-      abi: erc20Abi,
-      functionName: 'balanceOf',
-      args: [user],
-      address: token as Address,
-    })
-    //console.log(i, '0x' + user.padStart(64, '0') + Number(i).toString(16).padStart(64, '0'), resBalance.toString())
+  await Promise.all(
+    Array(200).map(async (_, i) => {
+      const [previousValue0, previousValue1] = await setStorage(i, balance, balance)
+      const resBalance = await readContract(client, {
+        abi: erc20Abi,
+        functionName: 'balanceOf',
+        args: [user],
+        address: token as Address,
+      })
+      //console.log(i, '0x' + user.padStart(64, '0') + Number(i).toString(16).padStart(64, '0'), resBalance.toString())
 
-    if (resBalance !== 0n) {
-      if (resBalance.toString() === balance.toString() || resBalance !== balancePrimary) {
-        cache[token.toLowerCase()] = i
-        return true
+      if (resBalance !== 0n) {
+        if (resBalance.toString() === balance.toString() || resBalance !== balancePrimary) {
+          cache[token.toLowerCase()] = i
+          return true
+        }
       }
-    }
-    await setStorage(i, previousValue0, previousValue1) // revert previous values back
-  }
+      await setStorage(i, previousValue0, previousValue1) // revert previous values back
+    })
+  )
   return false
 }
