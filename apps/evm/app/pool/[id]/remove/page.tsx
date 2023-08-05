@@ -18,7 +18,7 @@ export default async function RemovePage({ params }: { params: { id: string; pos
           <div className="grid-cols-1 max-w-xl grid gap-4 pt-4">
             <RemoveSectionUnstake poolId={pool.id} />
             <div className="flex justify-center py-2">
-              <ArrowDownIcon width={20} height={20} />
+              <ArrowDownIcon fill="currentColor" width={20} height={20} className="text-muted-foreground" />
             </div>
             {['BentoBox Classic', 'BentoBox Stable'].includes(pool.protocol) ? (
               <RemoveSectionTrident pool={pool} />

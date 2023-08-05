@@ -9,7 +9,7 @@ import { incentiveRewardToToken } from 'lib/functions'
 import React, { FC } from 'react'
 
 export const PoolRewards: FC<{ pool: Pool }> = ({ pool }) => {
-  if (!pool?.incentives?.length) return <></>
+  const incentives = pool.incentives.filter((incentive) => incentive.rewardPerDay > 0)
 
   return (
     <List>
@@ -18,9 +18,8 @@ export const PoolRewards: FC<{ pool: Pool }> = ({ pool }) => {
         <List.Label>Reward APR: {pool.incentiveApr > 0 ? formatPercent(pool.incentiveApr) : 'n/a'}</List.Label>
       </div>
       <List.Control>
-        {pool.incentives
-          .filter((incentive) => incentive.rewardPerDay > 0)
-          .map((incentive) => (
+        {incentives.length > 0 ? (
+          incentives.map((incentive) => (
             <List.KeyValue key={incentive.id} flex title={`${incentive.rewardToken.symbol}`}>
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
@@ -33,7 +32,12 @@ export const PoolRewards: FC<{ pool: Pool }> = ({ pool }) => {
                 </div>
               </div>
             </List.KeyValue>
-          ))}
+          ))
+        ) : (
+          <div className="flex items-center justify-center p-6 text-xs font-normal text-center text-gray-500 dark:text-slate-500">
+            This pool only emits fee rewards.
+          </div>
+        )}
       </List.Control>
     </List>
   )

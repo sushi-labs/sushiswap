@@ -45,7 +45,7 @@ export const Breadcrumb = () => {
         size="sm"
         className={classNames(
           '!font-normal',
-          pathname.split('/').length === 2 ? '!text-gray-900 !dark:text-slate-50' : '!text-accent-foreground'
+          pathname.split('/').length === 2 ? '!text-gray-900 dark:!text-slate-50' : '!text-accent-foreground'
         )}
       >
         <Link href={`/${pathname.split('/')[1]}`}>Home</Link>
@@ -64,8 +64,8 @@ export const Breadcrumb = () => {
                   className={classNames(
                     '!inline font-normal capitalize whitespace-nowrap max-w-[120px] truncate',
                     i < items.length - 1
-                      ? '!font-normal text-muted-foreground'
-                      : '!font-medium !text-gray-900 !dark:text-slate-50'
+                      ? '!font-normal !text-muted-foreground'
+                      : '!font-medium !text-gray-900 dark:!text-slate-50'
                   )}
                 >
                   {segment}

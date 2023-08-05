@@ -178,7 +178,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-3">
         <List.Label>Amount</List.Label>
-        <div className="p-3 pb-2 space-y-2 overflow-hidden bg-white rounded-xl dark:bg-slate-800">
+        <div className="p-3 pb-2 space-y-2 overflow-hidden bg-white rounded-xl dark:bg-secondary">
           <div className="flex justify-between gap-4">
             <div>
               <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">{value}%</h1>
