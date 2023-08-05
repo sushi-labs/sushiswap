@@ -1,9 +1,8 @@
 import { getStorageAt, setStorageAt } from '@nomicfoundation/hardhat-network-helpers'
 import { NumberLike } from '@nomicfoundation/hardhat-network-helpers/dist/src/types'
 import { erc20Abi } from '@sushiswap/abi'
-import { keccak256 } from 'ethers/lib/utils'
-import { Address, Client } from 'viem'
-import { getBytecode, readContract } from 'viem/actions'
+import { Address, Client, keccak256 } from 'viem'
+import { readContract } from 'viem/actions'
 
 // Sometimes token contract is a proxy without delegate call
 // So, its storage is in other contract and we need to work with it
@@ -25,12 +24,12 @@ export async function setTokenBalance(
 ): Promise<boolean> {
   const setStorage = async (slotNumber: number, value0: NumberLike, value1: NumberLike) => {
     // Solidity mapping
-    const slotData = `0x${user.padStart(64, '0')}${Number(slotNumber).toString(16).padStart(64, '0')}`
+    const slotData = `0x${user.padStart(64, '0')}${Number(slotNumber).toString(16).padStart(64, '0')}` as const
     const slot = keccak256(slotData)
     const previousValue0 = await getStorageAt(token, slot)
     await setStorageAt(token, slot, value0)
     // Vyper mapping
-    const slotData2 = `0x${Number(slotNumber).toString(16).padStart(64, '0')}${user.padStart(64, '0')}`
+    const slotData2 = `0x${Number(slotNumber).toString(16).padStart(64, '0')}${user.padStart(64, '0')}` as const
     const slot2 = keccak256(slotData2)
     const previousValue1 = await getStorageAt(token, slot)
     await setStorageAt(token, slot2, value1)
@@ -40,13 +39,11 @@ export async function setTokenBalance(
   const realContract = TokenProxyMap[token.toLowerCase() as Address]
   token = realContract || token
 
-  const cashedSlot = cache[token.toLowerCase()]
-  if (cashedSlot !== undefined) {
-    await setStorage(cashedSlot, balance, balance)
+  const cachedSlot = cache[token.toLowerCase()]
+  if (cachedSlot !== undefined) {
+    await setStorage(cachedSlot, balance, balance)
     return true
   }
-
-  console.log(await getBytecode(client, { address: token }))
 
   const balancePrimary = await readContract(client, {
     abi: erc20Abi,

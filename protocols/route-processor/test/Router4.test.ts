@@ -196,8 +196,7 @@ async function getTestEnvironment() {
 type TestEnvironment = Awaited<ReturnType<typeof getTestEnvironment>>
 
 async function makePermit(env: TestEnvironment, token: Token, amount: bigint): Promise<PermitData> {
-  const userAddress = env.user.address
-  const result = await signERC2612Permit(env.user, token.address, userAddress, env.rp.address, String(amount))
+  const result = await signERC2612Permit(env.user, token.address, env.user.address, env.rp.address, String(amount))
   return {
     value: BigInt(result.value),
     deadline: BigInt(result.deadline),
@@ -222,7 +221,6 @@ async function makeSwap(
   // console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
   if (fromToken instanceof Token && permits.length === 0) {
-    //console.log(`Approve user's ${fromToken.symbol} to the route processor ...`)
     await env.walletClient.writeContract({
       chain: null,
       abi: erc20Abi,
@@ -460,7 +458,7 @@ async function checkTransferAndRoute(
       rpParams.to,
       rpParams.routeCode,
     ],
-    account: env.user, // ! maybe env.user2?
+    account: env.user,
     value: rpParams.value,
   })
   const receipt = await env.publicClient.waitForTransactionReceipt({ hash: tx })

@@ -1,5 +1,5 @@
 import { SnapshotRestorer, takeSnapshot } from '@nomicfoundation/hardhat-network-helpers'
-import { erc20Abi, weth9Abi } from '@sushiswap/abi'
+import { erc20Abi, routeProcessor3Abi, weth9Abi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId, chainName } from '@sushiswap/chain'
 import {
@@ -33,13 +33,26 @@ import {
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
 import { BridgeBento, getBigInt, RouteStatus, RPool, StableSwapRPool } from '@sushiswap/tines'
 import { setTokenBalance } from '@sushiswap/tines-sandbox'
+import { Contract } from '@sushiswap/types'
 import { expect } from 'chai'
 import { signERC2612Permit } from 'eth-permit'
-import { network } from 'hardhat'
+import { config, network } from 'hardhat'
 import seedrandom from 'seedrandom'
-import { Address, Client, createPublicClient, custom } from 'viem'
+import {
+  Address,
+  Client,
+  createPublicClient,
+  createWalletClient,
+  custom,
+  Hex,
+  publicActions,
+  PublicClient,
+  WalletClient,
+} from 'viem'
+import { HDAccount, mnemonicToAccount } from 'viem/accounts'
 import { hardhat } from 'viem/chains'
 
+import RouteProcessor3 from '../artifacts/contracts/RouteProcessor3.sol/RouteProcessor3.json'
 import { getAllPoolCodes } from './utils/getAllPoolCodes'
 
 // Updating  pools' state allows to test DF updating ability, but makes tests very-very slow (
@@ -62,20 +75,8 @@ async function setRouterPrimaryBalance(client: Client, router: Address, token?: 
   }
 }
 
-interface TestEnvironment {
-  chainId: ChainId
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  provider: any
-  rp: Contract
-  user: Address
-  user2: Address
-  dataFetcher: DataFetcher
-  poolCodes: Map<string, PoolCode>
-  snapshot: SnapshotRestorer
-}
-
-async function getTestEnvironment(): Promise<TestEnvironment> {
-  const client = createPublicClient({
+async function getTestEnvironment() {
+  const publicClient = createPublicClient({
     batch: {
       multicall: {
         batchSize: 2048,
@@ -94,11 +95,28 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
     },
     transport: custom(network.provider),
   })
-  //await switchMulticallToEthers(client)
 
-  const provider = ethers.provider
+  const accounts = config.networks.hardhat.accounts as { mnemonic: string }
+
+  const user = mnemonicToAccount(accounts.mnemonic, { accountIndex: 0 })
+  const user2 = mnemonicToAccount(accounts.mnemonic, { accountIndex: 1 })
+
+  const walletClient = createWalletClient({
+    chain: {
+      ...hardhat,
+      contracts: {
+        multicall3: {
+          address: '0xca11bde05977b3631167028862be2a173976ca11',
+          blockCreated: 25770160,
+        },
+      },
+      pollingInterval: POLLING_INTERVAL,
+    },
+    transport: custom(network.provider),
+  }).extend(publicActions)
+
   const chainId = network.config.chainId as ChainId
-  const dataFetcher = new DataFetcher(chainId, client)
+  const dataFetcher = new DataFetcher(chainId, publicClient)
 
   dataFetcher.startDataFetching()
   const poolCodes = new Map<string, PoolCode>()
@@ -111,40 +129,71 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
     pc.forEach((p) => poolCodes.set(p.pool.address, p))
   }
 
-  const RouteProcessor = await ethers.getContractFactory('RouteProcessor3')
-  const routeProcessor = await RouteProcessor.deploy(bentoBoxV1Address[chainId as BentoBoxV1ChainId], [])
-  await routeProcessor.deployed()
-  //console.log('    Block Number:', provider.blockNumber)
+  const RouteProcessorTx = await walletClient.deployContract({
+    chain: null,
+    abi: routeProcessor3Abi,
+    bytecode: RouteProcessor3.bytecode as Hex,
+    account: user.address,
+    args: [bentoBoxV1Address[chainId as BentoBoxV1ChainId], []],
+  })
+  const RouteProcessorAddress = (await publicClient.waitForTransactionReceipt({ hash: RouteProcessorTx }))
+    .contractAddress
+  if (!RouteProcessorAddress) throw new Error('RouteProcessorAddress is undefined')
+  const RouteProcessor = {
+    address: RouteProcessorAddress,
+    abi: routeProcessor3Abi,
+  }
 
   // saturate router balance with wei of tokens
-  await setRouterPrimaryBalance(client, routeProcessor.address, WNATIVE[chainId].address)
-  await setRouterPrimaryBalance(client, routeProcessor.address, SUSHI_ADDRESS[chainId as keyof typeof SUSHI_ADDRESS])
-  await setRouterPrimaryBalance(client, routeProcessor.address, USDC_ADDRESS[chainId as keyof typeof USDC_ADDRESS])
-  await setRouterPrimaryBalance(client, routeProcessor.address, USDT_ADDRESS[chainId as keyof typeof USDT_ADDRESS])
-  await setRouterPrimaryBalance(client, routeProcessor.address, DAI_ADDRESS[chainId as keyof typeof DAI_ADDRESS])
-  await setRouterPrimaryBalance(client, routeProcessor.address, FRAX_ADDRESS[chainId as keyof typeof FRAX_ADDRESS])
-  await setRouterPrimaryBalance(client, routeProcessor.address, FXS_ADDRESS[chainId as keyof typeof FXS_ADDRESS])
-  await setRouterPrimaryBalance(client, routeProcessor.address, WBTC_ADDRESS[chainId as keyof typeof WBTC_ADDRESS])
+  await setRouterPrimaryBalance(publicClient, RouteProcessorAddress, WNATIVE[chainId].address as Address)
+  await setRouterPrimaryBalance(
+    publicClient,
+    RouteProcessorAddress,
+    SUSHI_ADDRESS[chainId as keyof typeof SUSHI_ADDRESS]
+  )
+  await setRouterPrimaryBalance(publicClient, RouteProcessorAddress, USDC_ADDRESS[chainId as keyof typeof USDC_ADDRESS])
+  await setRouterPrimaryBalance(publicClient, RouteProcessorAddress, USDT_ADDRESS[chainId as keyof typeof USDT_ADDRESS])
+  await setRouterPrimaryBalance(publicClient, RouteProcessorAddress, DAI_ADDRESS[chainId as keyof typeof DAI_ADDRESS])
+  await setRouterPrimaryBalance(publicClient, RouteProcessorAddress, FRAX_ADDRESS[chainId as keyof typeof FRAX_ADDRESS])
+  await setRouterPrimaryBalance(publicClient, RouteProcessorAddress, FXS_ADDRESS[chainId as keyof typeof FXS_ADDRESS])
+  await setRouterPrimaryBalance(publicClient, RouteProcessorAddress, WBTC_ADDRESS[chainId as keyof typeof WBTC_ADDRESS])
 
-  console.log(`  Network: ${chainName[chainId]}, Forked Block: ${provider.blockNumber}`)
+  console.log(`  Network: ${chainName[chainId]}, Forked Block: ${await publicClient.getBlockNumber()}`)
   //console.log('    User creation ...')
-  const [Alice, Bob] = await ethers.getSigners()
 
   return {
     chainId,
-    provider,
-    rp: routeProcessor,
-    user: Alice,
-    user2: Bob,
+    publicClient,
+    walletClient,
+    rp: RouteProcessor,
+    user,
+    user2,
     dataFetcher,
     poolCodes,
     snapshot: await takeSnapshot(),
+  } satisfies {
+    chainId: ChainId
+    publicClient: PublicClient
+    walletClient: WalletClient
+    rp: Contract<typeof routeProcessor3Abi>
+    user: HDAccount
+    user2: HDAccount
+    dataFetcher: DataFetcher
+    poolCodes: Map<string, PoolCode>
+    snapshot: SnapshotRestorer
   }
 }
 
+type TestEnvironment = Awaited<ReturnType<typeof getTestEnvironment>>
+
 async function makePermit(env: TestEnvironment, token: Token, amount: bigint): Promise<PermitData> {
-  const userAddress = await env.user.getAddress()
-  const result = await signERC2612Permit(env.user, token.address, userAddress, env.rp.address, amount.toString(16))
+  const result = await signERC2612Permit(
+    env.publicClient,
+    token.address,
+    env.user.address,
+    env.rp.address,
+    amount.toString(16)
+  )
   return {
     value: BigInt(result.value),
     deadline: BigInt(result.deadline),
@@ -165,13 +214,18 @@ async function makeSwap(
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
   makeSankeyDiagram = false
-): Promise<[bigint, number] | undefined> {
+): Promise<[bigint, bigint] | undefined> {
   // console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
   if (fromToken instanceof Token && permits.length === 0) {
-    //console.log(`Approve user's ${fromToken.symbol} to the route processor ...`)
-    const WrappedBaseTokenContract = new ethers.Contract(fromToken.address, erc20Abi, env.user)
-    await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
+    await env.walletClient.writeContract({
+      chain: null,
+      abi: erc20Abi,
+      address: fromToken.address as Address,
+      account: env.user,
+      functionName: 'approve',
+      args: [env.rp.address, amountIn],
+    })
   }
 
   let pcMap: Map<string, PoolCode>
@@ -211,34 +265,38 @@ async function makeSwap(
   // console.log('Call route processor (may take long time for the first launch)...')
 
   let balanceOutBNBefore: bigint
-  let toTokenContract: Contract | undefined = undefined
+  let toTokenContract: Contract<typeof weth9Abi> | undefined = undefined
   if (toToken instanceof Token) {
-    toTokenContract = await new ethers.Contract(toToken.address, weth9Abi, env.user)
-    balanceOutBNBefore = await toTokenContract.connect(env.user).balanceOf(env.user.address)
+    toTokenContract = {
+      abi: weth9Abi,
+      address: toToken.address as Address,
+    }
+
+    balanceOutBNBefore = await env.publicClient.readContract({
+      ...(toTokenContract as NonNullable<typeof toTokenContract>),
+      account: env.user,
+      functionName: 'balanceOf',
+      args: [env.user.address],
+    })
   } else {
-    balanceOutBNBefore = await env.user.getBalance()
+    balanceOutBNBefore = await env.publicClient.getBalance({ address: env.user.address })
   }
-  let tx
-  if (rpParams.value)
-    tx = await env.rp.processRoute(
-      rpParams.tokenIn,
+  const tx = await env.walletClient.writeContract({
+    chain: null,
+    ...env.rp,
+    functionName: 'processRoute',
+    args: [
+      rpParams.tokenIn as Address,
       rpParams.amountIn,
-      rpParams.tokenOut,
+      rpParams.tokenOut as Address,
       rpParams.amountOutMin,
       rpParams.to,
       rpParams.routeCode,
-      { value: rpParams.value }
-    )
-  else
-    tx = await env.rp.processRoute(
-      rpParams.tokenIn,
-      rpParams.amountIn,
-      rpParams.tokenOut,
-      rpParams.amountOutMin,
-      rpParams.to,
-      rpParams.routeCode
-    )
-  const receipt = await tx.wait()
+    ],
+    account: env.user,
+    value: rpParams.value || 0n,
+  })
+  const receipt = await env.publicClient.waitForTransactionReceipt({ hash: tx })
 
   if (!UPDATE_POOL_STATES) {
     route.legs.forEach((l) => {
@@ -254,12 +312,17 @@ async function makeSwap(
   // console.log("Fetching user's output balance ...")
   let balanceOutBN: bigint
   if (toTokenContract) {
-    balanceOutBN = (await toTokenContract.connect(env.user).balanceOf(env.user.address)).sub(balanceOutBNBefore)
+    balanceOutBN =
+      (await env.publicClient.readContract({
+        ...toTokenContract,
+        functionName: 'balanceOf',
+        args: [env.user.address],
+      })) - balanceOutBNBefore
   } else {
-    balanceOutBN = (await env.user.getBalance()) - balanceOutBNBefore
+    balanceOutBN = (await env.publicClient.getBalance({ address: env.user.address })) - balanceOutBNBefore
     balanceOutBN = balanceOutBN + receipt.effectiveGasPrice * receipt.gasUsed
   }
-  const slippage = parseInt(balanceOutBN - (route.amountOutBN * 10_000n) / route.amountOutBN)
+  const slippage = Number(((balanceOutBN - route.amountOutBN) * 10_000n) / route.amountOutBN)
 
   if (abs(route.amountOutBN - balanceOutBN) > 10n) {
     if (slippage < 0) {
@@ -273,7 +336,7 @@ async function makeSwap(
   return [balanceOutBN, receipt.blockNumber]
 }
 
-async function dataUpdated(env: TestEnvironment, minBlockNumber: number) {
+async function dataUpdated(env: TestEnvironment, minBlockNumber: bigint) {
   if (UPDATE_POOL_STATES)
     for (;;) {
       if (env.dataFetcher.getLastUpdateBlock() >= minBlockNumber) return
@@ -285,14 +348,14 @@ async function updMakeSwap(
   env: TestEnvironment,
   fromToken: Type,
   toToken: Type,
-  lastCallResult: bigint | [bigint | undefined, number],
+  lastCallResult: bigint | [bigint | undefined, bigint],
   usedPools: Set<string> = new Set(),
   providers?: LiquidityProviders[],
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
   makeSankeyDiagram = false
-): Promise<[bigint | undefined, number]> {
-  const [amountIn, waitBlock] = typeof lastCallResult === 'bigint' ? [lastCallResult, 1] : lastCallResult
+): Promise<[bigint | undefined, bigint]> {
+  const [amountIn, waitBlock] = typeof lastCallResult === 'bigint' ? [lastCallResult, 1n] : lastCallResult
   if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
 
   //console.log('Wait data update for min block', waitBlock)
@@ -317,16 +380,22 @@ async function checkTransferAndRoute(
   env: TestEnvironment,
   fromToken: Type,
   toToken: Type,
-  lastCallResult: bigint | [bigint | undefined, number],
+  lastCallResult: bigint | [bigint | undefined, bigint],
   usedPools: Set<string>
-): Promise<[bigint | undefined, number]> {
-  const [amountIn, waitBlock] = lastCallResult instanceof bigint ? [lastCallResult, 1] : lastCallResult
+): Promise<[bigint | undefined, bigint]> {
+  const [amountIn, waitBlock] = typeof lastCallResult === 'bigint' ? [lastCallResult, 1n] : lastCallResult
   if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
   await dataUpdated(env, waitBlock)
 
   if (fromToken instanceof Token) {
-    const WrappedBaseTokenContract = await new ethers.Contract(fromToken.address, erc20Abi, env.user)
-    await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
+    await env.walletClient.writeContract({
+      chain: null,
+      abi: erc20Abi,
+      address: fromToken.address as Address,
+      account: env.user,
+      functionName: 'approve',
+      args: [env.rp.address, amountIn],
+    })
   }
 
   let pcMap: Map<string, PoolCode>
@@ -345,28 +414,43 @@ async function checkTransferAndRoute(
   const transferValue = getBigInt(0.02 * Math.pow(10, Native.onChain(env.chainId).decimals))
   rpParams.value = (rpParams.value || 0n) + transferValue
 
-  const balanceUser2Before = await env.user2.getBalance()
+  const balanceUser2Before = await env.publicClient.getBalance({ address: env.user2.address })
 
   let balanceOutBNBefore: bigint
-  let toTokenContract: Contract | undefined = undefined
+  let toTokenContract: Contract<typeof weth9Abi> | undefined = undefined
   if (toToken instanceof Token) {
-    toTokenContract = await new ethers.Contract(toToken.address, weth9Abi, env.user)
-    balanceOutBNBefore = await toTokenContract.connect(env.user).balanceOf(env.user.address)
+    toTokenContract = {
+      abi: weth9Abi,
+      address: toToken.address as Address,
+    }
+
+    balanceOutBNBefore = await env.publicClient.readContract({
+      ...(toTokenContract as NonNullable<typeof toTokenContract>),
+      account: env.user,
+      functionName: 'balanceOf',
+      args: [env.user.address],
+    })
   } else {
-    balanceOutBNBefore = await env.user.getBalance()
+    balanceOutBNBefore = await env.publicClient.getBalance({ address: env.user.address })
   }
-  const tx = await env.rp.transferValueAndprocessRoute(
-    env.user2.address,
-    transferValue,
-    rpParams.tokenIn,
-    rpParams.amountIn,
-    rpParams.tokenOut,
-    rpParams.amountOutMin,
-    rpParams.to,
-    rpParams.routeCode,
-    { value: rpParams.value }
-  )
-  const receipt = await tx.wait()
+  const tx = await env.walletClient.writeContract({
+    ...env.rp,
+    chain: null,
+    functionName: 'transferValueAndprocessRoute',
+    args: [
+      env.user2.address,
+      transferValue,
+      rpParams.tokenIn,
+      rpParams.amountIn,
+      rpParams.tokenOut,
+      rpParams.amountOutMin,
+      rpParams.to,
+      rpParams.routeCode,
+    ],
+    account: env.user,
+    value: rpParams.value,
+  })
+  const receipt = await env.publicClient.waitForTransactionReceipt({ hash: tx })
 
   if (!UPDATE_POOL_STATES) {
     route.legs.forEach((l) => {
@@ -378,17 +462,24 @@ async function checkTransferAndRoute(
 
   let balanceOutBN: bigint
   if (toTokenContract) {
-    balanceOutBN = (await toTokenContract.connect(env.user).balanceOf(env.user.address)).sub(balanceOutBNBefore)
+    balanceOutBN =
+      (await env.publicClient.readContract({
+        ...(toTokenContract as NonNullable<typeof toTokenContract>),
+        account: env.user,
+        functionName: 'balanceOf',
+        args: [env.user.address],
+      })) - balanceOutBNBefore
   } else {
-    balanceOutBN = (await env.user.getBalance()) - balanceOutBNBefore
+    balanceOutBN = balanceOutBN =
+      (await env.publicClient.getBalance({ address: env.user.address })) - balanceOutBNBefore
     balanceOutBN = balanceOutBN + receipt.effectiveGasPrice * receipt.gasUsed
     balanceOutBN = balanceOutBN + transferValue
   }
   expect(balanceOutBN >= rpParams.amountOutMin).equal(true)
 
-  const balanceUser2After = await env.user2.getBalance()
-  const transferredValue = balanceUser2After.sub(balanceUser2Before)
-  expect(transferredValue.eq(transferValue)).equal(true)
+  const balanceUser2After = await env.publicClient.getBalance({ address: env.user2.address })
+  const transferredValue = balanceUser2After - balanceUser2Before
+  expect(transferredValue === transferValue).equal(true)
 
   return [balanceOutBN, receipt.blockNumber]
 }
@@ -397,7 +488,7 @@ async function checkTransferAndRoute(
 describe('End-to-end RouteProcessor3 test', async function () {
   let env: TestEnvironment
   let chainId: ChainId
-  let intermidiateResult: [bigint | undefined, number] = [undefined, 1]
+  let intermidiateResult: [bigint | undefined, bigint] = [undefined, 1n]
   let testTokensSet: (Type | undefined)[]
   let SUSHI_LOCAL: Token
   let USDC_LOCAL: Token
@@ -426,7 +517,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
     ]
   })
 
-  it('Permit: Native => FRAX => Native', async function () {
+  it.only('Permit: Native => FRAX => Native', async function () {
     await env.snapshot.restore()
     const usedPools = new Set<string>()
     const token = FRAX[chainId as keyof typeof FRAX_ADDRESS]
@@ -541,7 +632,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
       if (chainId === ChainId.POLYGON) {
         await env.snapshot.restore()
         const usedPools = new Set<string>()
-        let amountAndBlock: [bigint | undefined, number] = [undefined, 1]
+        let amountAndBlock: [bigint | undefined, bigint] = [undefined, 1n]
         amountAndBlock[0] = BigInt(1e7) * BigInt(1e18) // should be partial
         amountAndBlock = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], amountAndBlock, usedPools, [
           LiquidityProviders.UniswapV3,
@@ -661,7 +752,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       intermidiateResult[0] = BigInt(1e18)
-      env.user2 = await ethers.getSigner('0x0000000000000000000000000000000000000001')
+      env.user2.address = '0x0000000000000000000000000000000000000001'
       intermidiateResult = await checkTransferAndRoute(
         env,
         Native.onChain(chainId),
@@ -683,7 +774,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       intermidiateResult[0] = BigInt(1e18)
-      env.user2 = await ethers.getSigner('0x597A9bc3b24C2A578CCb3aa2c2C62C39427c6a49')
+      env.user2.address = '0x597A9bc3b24C2A578CCb3aa2c2C62C39427c6a49'
       let throwed = false
       try {
         await checkTransferAndRoute(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult, usedPools)

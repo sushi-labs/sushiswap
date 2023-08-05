@@ -96,15 +96,15 @@ export class ConstantProductRPool extends RPool {
 
   constructor(address: string, token0: RToken, token1: RToken, fee: number, reserve0: bigint, reserve1: bigint) {
     super(address, token0, token1, fee, reserve0, reserve1)
-    this.reserve0Number = parseInt(reserve0?.toString() || '0')
-    this.reserve1Number = parseInt(reserve1?.toString() || '0')
+    this.reserve0Number = Number(reserve0 || '0')
+    this.reserve1Number = Number(reserve1 || '0')
   }
 
   updateReserves(res0: bigint, res1: bigint) {
     this.reserve0 = res0
-    this.reserve0Number = parseInt(res0.toString())
+    this.reserve0Number = Number(res0)
     this.reserve1 = res1
-    this.reserve1Number = parseInt(res1.toString())
+    this.reserve1Number = Number(res1)
   }
 
   calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {

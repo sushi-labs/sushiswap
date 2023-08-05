@@ -43,8 +43,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
   fee = 0.003
   isInitialized = false
-  factory: { [chainId: number]: Address } = {}
-  initCodeHash: { [chainId: number]: string } = {}
+  factory: Record<number, Address> = {}
+  initCodeHash: Record<number, string> = {}
   latestPoolCreatedAtTimestamp = new Date()
   discoverNewPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }))
   refreshAvailablePoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.FETCH_AVAILABLE_POOLS_AFTER_SECONDS }))

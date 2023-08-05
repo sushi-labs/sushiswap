@@ -46,9 +46,9 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   unwatchBlockNumber?: () => void
 
   isInitialized = false
-  factory: { [chainId: number]: Address } = {}
-  initCodeHash: { [chainId: number]: string } = {}
-  tickLens: { [chainId: number]: string } = {}
+  factory: Record<number, Address> = {}
+  initCodeHash: Record<number, string> = {}
+  tickLens: Record<number, string> = {}
   databaseClient: PrismaClient | undefined
 
   constructor(
