@@ -40,18 +40,7 @@ import { expect } from 'chai'
 import { signERC2612Permit } from 'eth-permit'
 import { config, network } from 'hardhat'
 import seedrandom from 'seedrandom'
-import {
-  Address,
-  Client,
-  createPublicClient,
-  createWalletClient,
-  custom,
-  HDAccount,
-  Hex,
-  publicActions,
-  PublicClient,
-  WalletClient,
-} from 'viem'
+import { Address, Client, createPublicClient, custom, HDAccount, Hex, testActions, walletActions } from 'viem'
 import { mnemonicToAccount } from 'viem/accounts'
 import { hardhat } from 'viem/chains'
 
@@ -85,11 +74,11 @@ async function setRouterPrimaryBalance(
 }
 
 async function getTestEnvironment() {
-  const publicClient = createPublicClient({
+  const client = createPublicClient({
     batch: {
       multicall: {
         batchSize: 2048,
-        wait: 16,
+        wait: 1,
       },
     },
     chain: {
@@ -104,28 +93,16 @@ async function getTestEnvironment() {
     },
     transport: custom(network.provider),
   })
+    .extend(testActions({ mode: 'hardhat' }))
+    .extend(walletActions)
 
   const accounts = config.networks.hardhat.accounts as { mnemonic: string }
 
   const user = mnemonicToAccount(accounts.mnemonic, { accountIndex: 0 })
   const user2 = mnemonicToAccount(accounts.mnemonic, { accountIndex: 1 })
 
-  const walletClient = createWalletClient({
-    chain: {
-      ...hardhat,
-      contracts: {
-        multicall3: {
-          address: '0xca11bde05977b3631167028862be2a173976ca11',
-          blockCreated: 25770160,
-        },
-      },
-      pollingInterval: POLLING_INTERVAL,
-    },
-    transport: custom(network.provider),
-  }).extend(publicActions)
-
   const chainId = network.config.chainId as ChainId
-  const dataFetcher = new DataFetcher(chainId, publicClient)
+  const dataFetcher = new DataFetcher(chainId, client)
 
   dataFetcher.startDataFetching()
   const poolCodes = new Map<string, PoolCode>()
@@ -138,15 +115,14 @@ async function getTestEnvironment() {
     pc.forEach((p) => poolCodes.set(p.pool.address, p))
   }
 
-  const RouteProcessorTx = await walletClient.deployContract({
+  const RouteProcessorTx = await client.deployContract({
     chain: null,
     abi: routeProcessor4Abi,
     bytecode: RouteProcessor4.bytecode as Hex,
     account: user.address,
     args: [bentoBoxV1Address[chainId as BentoBoxV1ChainId], []],
   })
-  const RouteProcessorAddress = (await publicClient.waitForTransactionReceipt({ hash: RouteProcessorTx }))
-    .contractAddress
+  const RouteProcessorAddress = (await client.waitForTransactionReceipt({ hash: RouteProcessorTx })).contractAddress
   if (!RouteProcessorAddress) throw new Error('RouteProcessorAddress is undefined')
   const RouteProcessor = {
     address: RouteProcessorAddress,
@@ -154,26 +130,23 @@ async function getTestEnvironment() {
   }
 
   // saturate router balance with wei of tokens
-  await setRouterPrimaryBalance(publicClient, RouteProcessorAddress, WNATIVE[chainId].address as Address)
-  await setRouterPrimaryBalance(
-    publicClient,
-    RouteProcessorAddress,
-    SUSHI_ADDRESS[chainId as keyof typeof SUSHI_ADDRESS]
-  )
-  await setRouterPrimaryBalance(publicClient, RouteProcessorAddress, USDC_ADDRESS[chainId as keyof typeof USDC_ADDRESS])
-  await setRouterPrimaryBalance(publicClient, RouteProcessorAddress, USDT_ADDRESS[chainId as keyof typeof USDT_ADDRESS])
-  await setRouterPrimaryBalance(publicClient, RouteProcessorAddress, DAI_ADDRESS[chainId as keyof typeof DAI_ADDRESS])
-  await setRouterPrimaryBalance(publicClient, RouteProcessorAddress, FRAX_ADDRESS[chainId as keyof typeof FRAX_ADDRESS])
-  await setRouterPrimaryBalance(publicClient, RouteProcessorAddress, FXS_ADDRESS[chainId as keyof typeof FXS_ADDRESS])
-  await setRouterPrimaryBalance(publicClient, RouteProcessorAddress, WBTC_ADDRESS[chainId as keyof typeof WBTC_ADDRESS])
+  await Promise.all([
+    setRouterPrimaryBalance(client, RouteProcessorAddress, WNATIVE[chainId].address as Address),
+    setRouterPrimaryBalance(client, RouteProcessorAddress, SUSHI_ADDRESS[chainId as keyof typeof SUSHI_ADDRESS]),
+    setRouterPrimaryBalance(client, RouteProcessorAddress, USDC_ADDRESS[chainId as keyof typeof USDC_ADDRESS]),
+    setRouterPrimaryBalance(client, RouteProcessorAddress, USDT_ADDRESS[chainId as keyof typeof USDT_ADDRESS]),
+    setRouterPrimaryBalance(client, RouteProcessorAddress, DAI_ADDRESS[chainId as keyof typeof DAI_ADDRESS]),
+    setRouterPrimaryBalance(client, RouteProcessorAddress, FRAX_ADDRESS[chainId as keyof typeof FRAX_ADDRESS]),
+    setRouterPrimaryBalance(client, RouteProcessorAddress, FXS_ADDRESS[chainId as keyof typeof FXS_ADDRESS]),
+    setRouterPrimaryBalance(client, RouteProcessorAddress, WBTC_ADDRESS[chainId as keyof typeof WBTC_ADDRESS]),
+  ])
 
-  console.log(`  Network: ${chainName[chainId]}, Forked Block: ${await publicClient.getBlockNumber()}`)
+  console.log(`  Network: ${chainName[chainId]}, Forked Block: ${await client.getBlockNumber()}`)
   //console.log('    User creation ...')
 
   return {
     chainId,
-    publicClient,
-    walletClient,
+    client,
     rp: RouteProcessor,
     user,
     user2,
@@ -182,8 +155,7 @@ async function getTestEnvironment() {
     snapshot: await takeSnapshot(),
   } satisfies {
     chainId: ChainId
-    publicClient: PublicClient
-    walletClient: WalletClient
+    client: Client
     rp: Contract<typeof routeProcessor4Abi>
     user: HDAccount
     user2: HDAccount
@@ -196,7 +168,13 @@ async function getTestEnvironment() {
 type TestEnvironment = Awaited<ReturnType<typeof getTestEnvironment>>
 
 async function makePermit(env: TestEnvironment, token: Token, amount: bigint): Promise<PermitData> {
-  const result = await signERC2612Permit(env.user, token.address, env.user.address, env.rp.address, String(amount))
+  const result = await signERC2612Permit(
+    network.provider,
+    token.address,
+    env.user.address,
+    env.rp.address,
+    String(amount)
+  )
   return {
     value: BigInt(result.value),
     deadline: BigInt(result.deadline),
@@ -221,11 +199,11 @@ async function makeSwap(
   // console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
   if (fromToken instanceof Token && permits.length === 0) {
-    await env.walletClient.writeContract({
+    await env.client.writeContract({
       chain: null,
       abi: erc20Abi,
       address: fromToken.address as Address,
-      account: env.user,
+      account: env.user.address,
       functionName: 'approve',
       args: [env.rp.address, amountIn],
     })
@@ -241,7 +219,7 @@ async function makeSwap(
       if (!usedPools.has(e[0])) pcMap.set(e[0], e[1])
     })
   }
-  //await checkPoolsState(pcMap, env.user, env.chainId)
+  //await checkPoolsState(pcMap, env.user.address, env.chainId)
 
   const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
   // console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
@@ -284,16 +262,16 @@ async function makeSwap(
       address: toToken.address as Address,
     }
 
-    balanceOutBNBefore = await env.publicClient.readContract({
+    balanceOutBNBefore = await env.client.readContract({
       ...(toTokenContract as NonNullable<typeof toTokenContract>),
-      account: env.user,
+      account: env.user.address,
       functionName: 'balanceOf',
       args: [env.user.address],
     })
   } else {
-    balanceOutBNBefore = await env.publicClient.getBalance({ address: env.user.address })
+    balanceOutBNBefore = await env.client.getBalance({ address: env.user.address })
   }
-  const tx = await env.walletClient.writeContract({
+  const tx = await env.client.writeContract({
     chain: null,
     ...env.rp,
     functionName: 'processRoute',
@@ -305,11 +283,11 @@ async function makeSwap(
       rpParams.to,
       rpParams.routeCode,
     ],
-    account: env.user,
+    account: env.user.address,
     value: rpParams.value || 0n,
   })
 
-  const receipt = await env.publicClient.waitForTransactionReceipt({ hash: tx })
+  const receipt = await env.client.waitForTransactionReceipt({ hash: tx })
 
   if (!UPDATE_POOL_STATES) {
     route.legs.forEach((l) => {
@@ -324,13 +302,13 @@ async function makeSwap(
   let balanceOutBN: bigint
   if (toTokenContract) {
     balanceOutBN =
-      (await env.publicClient.readContract({
+      (await env.client.readContract({
         ...toTokenContract,
         functionName: 'balanceOf',
         args: [env.user.address],
       })) - balanceOutBNBefore
   } else {
-    balanceOutBN = (await env.publicClient.getBalance({ address: env.user.address })) - balanceOutBNBefore
+    balanceOutBN = (await env.client.getBalance({ address: env.user.address })) - balanceOutBNBefore
     balanceOutBN = balanceOutBN + receipt.effectiveGasPrice * receipt.gasUsed
   }
   const slippage = Number(((balanceOutBN - route.amountOutBN) * 10_000n) / route.amountOutBN)
@@ -399,11 +377,11 @@ async function checkTransferAndRoute(
   await dataUpdated(env, waitBlock)
 
   if (fromToken instanceof Token) {
-    await env.walletClient.writeContract({
+    await env.client.writeContract({
       chain: null,
       abi: erc20Abi,
       address: fromToken.address as Address,
-      account: env.user,
+      account: env.user.address,
       functionName: 'approve',
       args: [env.rp.address, amountIn],
     })
@@ -425,7 +403,7 @@ async function checkTransferAndRoute(
   const transferValue = getBigInt(0.02 * Math.pow(10, Native.onChain(env.chainId).decimals))
   rpParams.value = (rpParams.value || 0n) + transferValue
 
-  const balanceUser2Before = await env.publicClient.getBalance({ address: env.user2.address })
+  const balanceUser2Before = await env.client.getBalance({ address: env.user2.address })
 
   let balanceOutBNBefore: bigint
   let toTokenContract: Contract<typeof weth9Abi> | undefined = undefined
@@ -435,16 +413,16 @@ async function checkTransferAndRoute(
       address: toToken.address as Address,
     }
 
-    balanceOutBNBefore = await env.publicClient.readContract({
+    balanceOutBNBefore = await env.client.readContract({
       ...(toTokenContract as NonNullable<typeof toTokenContract>),
-      account: env.user,
+      account: env.user.address,
       functionName: 'balanceOf',
       args: [env.user.address],
     })
   } else {
-    balanceOutBNBefore = await env.publicClient.getBalance({ address: env.user.address })
+    balanceOutBNBefore = await env.client.getBalance({ address: env.user.address })
   }
-  const tx = await env.walletClient.writeContract({
+  const tx = await env.client.writeContract({
     ...env.rp,
     chain: null,
     functionName: 'transferValueAndprocessRoute',
@@ -458,10 +436,10 @@ async function checkTransferAndRoute(
       rpParams.to,
       rpParams.routeCode,
     ],
-    account: env.user,
+    account: env.user.address,
     value: rpParams.value,
   })
-  const receipt = await env.publicClient.waitForTransactionReceipt({ hash: tx })
+  const receipt = await env.client.waitForTransactionReceipt({ hash: tx })
 
   if (!UPDATE_POOL_STATES) {
     route.legs.forEach((l) => {
@@ -474,20 +452,20 @@ async function checkTransferAndRoute(
   let balanceOutBN: bigint
   if (toTokenContract) {
     balanceOutBN =
-      (await env.publicClient.readContract({
+      (await env.client.readContract({
         ...(toTokenContract as NonNullable<typeof toTokenContract>),
-        account: env.user,
+        account: env.user.address,
         functionName: 'balanceOf',
         args: [env.user.address],
       })) - balanceOutBNBefore
   } else {
-    balanceOutBN = (await env.publicClient.getBalance({ address: env.user.address })) - balanceOutBNBefore
+    balanceOutBN = (await env.client.getBalance({ address: env.user.address })) - balanceOutBNBefore
     balanceOutBN = balanceOutBN + receipt.effectiveGasPrice * receipt.gasUsed
     balanceOutBN = balanceOutBN + transferValue
   }
   expect(balanceOutBN >= rpParams.amountOutMin).equal(true)
 
-  const balanceUser2After = await env.publicClient.getBalance({ address: env.user2.address })
+  const balanceUser2After = await env.client.getBalance({ address: env.user2.address })
   const transferredValue = balanceUser2After - balanceUser2Before
   expect(transferredValue === transferValue).equal(true)
 
@@ -533,7 +511,7 @@ describe('End-to-end RouteProcessor4 test', async function () {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       const token = FRAX[chainId as keyof typeof FRAX_ADDRESS]
-      const amountIn = BigInt(1e6) * BigInt(1e18)
+      const amountIn = BigInt('999999999999999983222784') // BigInt(1e6 * 1e18) - copied over the value from the unrefactored test
       intermidiateResult[0] = amountIn
       intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), token, intermidiateResult, usedPools)
       const permit = await makePermit(env, token, intermidiateResult[0] as bigint)
@@ -823,7 +801,7 @@ describe('End-to-end RouteProcessor4 test', async function () {
     it('Curve pool 0xc5424b857f758e906013f3555dad202e4bdb4567: sETH => Native', async function () {
       await env.snapshot.restore()
       const amoutIn = BigInt(1e18)
-      await setRouterPrimaryBalance(env.walletClient, env.user.address, sETH.address as Address, amoutIn * 2n)
+      await setRouterPrimaryBalance(env.client, env.user.address, sETH.address as Address, amoutIn * 2n)
       intermidiateResult[0] = amoutIn
       intermidiateResult = await updMakeSwap(env, sETH, Native.onChain(chainId), intermidiateResult, undefined, [
         LiquidityProviders.CurveSwap,
@@ -833,7 +811,7 @@ describe('End-to-end RouteProcessor4 test', async function () {
     it('Curve Native inside: sETH - Native - WETH', async function () {
       await env.snapshot.restore()
       const amoutIn = BigInt(1e18)
-      await setRouterPrimaryBalance(env.walletClient, env.user.address, sETH.address as Address, amoutIn * 2n)
+      await setRouterPrimaryBalance(env.client, env.user.address, sETH.address as Address, amoutIn * 2n)
       intermidiateResult[0] = amoutIn
       intermidiateResult = await updMakeSwap(env, sETH, WNATIVE[chainId], intermidiateResult, undefined, [
         LiquidityProviders.CurveSwap,
@@ -847,7 +825,7 @@ describe('End-to-end RouteProcessor4 test', async function () {
         await env.snapshot.restore()
         const amoutIn = BigInt(1e12)
         if (from instanceof Token)
-          await setRouterPrimaryBalance(env.walletClient, env.user.address, from.address as Address, amoutIn * 2n)
+          await setRouterPrimaryBalance(env.client, env.user.address, from.address as Address, amoutIn * 2n)
         intermidiateResult[0] = amoutIn
         intermidiateResult = await updMakeSwap(env, from, to, intermidiateResult, undefined, [
           LiquidityProviders.CurveSwap,
