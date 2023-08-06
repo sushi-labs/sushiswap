@@ -35,7 +35,7 @@ export interface UseTradeReturn {
   functionName: 'processRoute' | 'transferValueAndprocessRoute'
   writeArgs: UseTradeReturnWriteArgs
   route: TradeType['route']
-  overrides: { value: bigint } | undefined
+  value?: bigint | undefined
 }
 
 export type UseTradeQuerySelect = (data: TradeType) => UseTradeReturn
