@@ -117,6 +117,8 @@ async function getSlippageStatistics(args: {
   })
   const diagram = new Diargam(diapasons)
   let positiveSurplus = 0
+  let mevedNumber = 0
+  let mevedOutputAmout = 0
 
   for (let i = 0; i < logs.length; ++i) {
     const args = logs[i].args
@@ -132,6 +134,18 @@ async function getSlippageStatistics(args: {
           //console.log(`Token ${args.tokenOut} price: ${price}`)
         } //else console.log(`Unknown token: ${args.tokenOut}`)
       }
+      if (diff < 0.0005) {
+        ++mevedNumber
+        const price = await getPrice(args.tokenOut)
+        if (price !== null) mevedOutputAmout += Number(args.amountOutMin) * price
+      }
+      if (diff > 1) {
+        const price = await getPrice(args.tokenOut)
+        const amount = Number(args.amountOut) - Number(args.amountOutMin) * 1.005
+        if (price !== null) {
+          console.log(`${args.tokenOut} ${logs[i].transactionHash} ${amount * price}`)
+        }
+      }
     } //else console.log(args)
   }
 
@@ -141,6 +155,7 @@ async function getSlippageStatistics(args: {
     console.log(`Total logs: ${logs.length} ${start} - ${finish}`)
     diagram.print()
     console.log(`Positive surplus: ${Math.round(positiveSurplus)} usd`)
+    console.log(`MEVed: ${mevedNumber} transactions, total value: ${mevedOutputAmout * 0.005} usd`)
   } else console.log(`Total logs: ${logs.length}`)
 }
 
