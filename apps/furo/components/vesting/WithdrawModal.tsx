@@ -1,15 +1,31 @@
+import { DownloadIcon } from '@heroicons/react/outline'
 import { FuroVestingChainId } from '@sushiswap/furo'
 import { ZERO } from '@sushiswap/math'
+import {
+  DialogConfirm,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogProvider,
+  DialogReview,
+  DialogTitle,
+  DialogTrigger,
+} from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { Dialog } from '@sushiswap/ui/components/dialog'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createToast } from '@sushiswap/ui/components/toast'
-import { useAccount, useFuroVestingContract, usePrepareSendTransaction } from '@sushiswap/wagmi'
-import { useSendTransaction } from '@sushiswap/wagmi'
+import {
+  useAccount,
+  useFuroVestingContract,
+  usePrepareSendTransaction,
+  useSendTransaction,
+  useWaitForTransaction,
+} from '@sushiswap/wagmi'
 import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
+import React, { FC, useCallback, useMemo } from 'react'
 import { encodeFunctionData } from 'viem'
 
 import { useVestingBalance, Vesting } from '../../lib'
@@ -17,11 +33,9 @@ import { useVestingBalance, Vesting } from '../../lib'
 interface WithdrawModalProps {
   vesting?: Vesting
   chainId: FuroVestingChainId
-  children?({ disabled, setOpen }: { disabled: boolean; setOpen: Dispatch<SetStateAction<boolean>> }): ReactNode
 }
 
-export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, children }) => {
-  const [open, setOpen] = useState(false)
+export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
   const { address } = useAccount()
   const { data: balance } = useVestingBalance({ vestingId: vesting?.id, chainId, token: vesting?.token })
   const contract = useFuroVestingContract(chainId)
@@ -69,57 +83,82 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, childr
     enabled: Boolean(vesting && balance && contract),
   })
 
-  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+  const {
+    sendTransactionAsync,
+    data,
+    isLoading: isWritePending,
+  } = useSendTransaction({
     ...config,
     onSettled,
-    onSuccess() {
-      setOpen(false)
-    },
     gas: config?.gas ? (config.gas * 120n) / 100n : undefined,
   })
 
+  const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
+
   return (
-    <>
-      {typeof children === 'function' ? (
-        children({ disabled: !vesting?.canWithdraw(address), setOpen })
-      ) : (
-        <Button
-          fullWidth
-          disabled={!address || !vesting?.canWithdraw(address) || !balance || !balance?.greaterThan(0)}
-          onClick={() => {
-            setOpen(true)
-          }}
-        >
-          Withdraw
-        </Button>
-      )}
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="space-y-4 !pb-3 !bg-white dark:!bg-slate-800">
-          <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
-          <div className="text-gray-700 dark:text-slate-400">
-            There are currently{' '}
-            <span className="font-semibold">
-              {balance?.toSignificant(6)} {balance?.currency.symbol}
-            </span>{' '}
-            unlocked tokens available for withdrawal.
-          </div>
-          <Checker.Connect fullWidth>
-            <Checker.Network fullWidth chainId={chainId}>
-              <Checker.Custom guardWhen={Boolean(!balance?.greaterThan(ZERO))} guardText="Not enough available">
-                <Button
-                  size="xl"
-                  fullWidth
-                  disabled={isWritePending || !sendTransaction}
-                  onClick={() => sendTransaction?.()}
-                  testId="withdraw-modal-confirmation"
-                >
-                  {!vesting?.token ? 'Invalid vest token' : isWritePending ? <Dots>Confirm Withdraw</Dots> : 'Withdraw'}
-                </Button>
-              </Checker.Custom>
-            </Checker.Network>
-          </Checker.Connect>
-        </Dialog.Content>
-      </Dialog>
-    </>
+    <DialogProvider>
+      <DialogReview>
+        {({ confirm }) => (
+          <>
+            <DialogTrigger asChild>
+              <Button
+                disabled={!vesting?.canWithdraw(address)}
+                icon={DownloadIcon}
+                testId="vest-withdraw"
+                variant="secondary"
+              >
+                Withdraw
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Withdraw</DialogTitle>
+                <DialogDescription>
+                  There are currently{' '}
+                  <span className="font-semibold">
+                    {balance?.toSignificant(6)} {balance?.currency.symbol}
+                  </span>{' '}
+                  unlocked tokens available for withdrawal.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex flex-col gap-4" />
+              <DialogFooter>
+                <Checker.Connect fullWidth>
+                  <Checker.Network fullWidth chainId={chainId}>
+                    <Checker.Guard
+                      guardWhen={Boolean(!balance?.greaterThan(ZERO))}
+                      guardText="No unlocked tokens for withdrawal"
+                    >
+                      <Button
+                        size="xl"
+                        fullWidth
+                        disabled={isWritePending || !sendTransactionAsync}
+                        onClick={() => sendTransactionAsync?.().then(() => confirm())}
+                        testId="withdraw-modal-confirmation"
+                      >
+                        {!vesting?.token ? (
+                          'Invalid vest token'
+                        ) : isWritePending ? (
+                          <Dots>Confirm Withdraw</Dots>
+                        ) : (
+                          'Withdraw'
+                        )}
+                      </Button>
+                    </Checker.Guard>
+                  </Checker.Network>
+                </Checker.Connect>
+              </DialogFooter>
+            </DialogContent>
+          </>
+        )}
+      </DialogReview>
+      <DialogConfirm
+        chainId={chainId}
+        status={status}
+        testId="withdraw-vest-confirmation-modal"
+        successMessage={'Successfully withdrawn from vest'}
+        txHash={data?.hash}
+      />
+    </DialogProvider>
   )
 }

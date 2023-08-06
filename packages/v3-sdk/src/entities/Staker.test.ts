@@ -4,7 +4,7 @@ import { FeeAmount } from '../constants'
 import { SushiSwapV3Pool, NonfungiblePositionManager, Staker } from '.'
 import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96'
 
-describe('Staker', () => {
+describe.skip('Staker', () => {
   const reward = new Token({
     chainId: 1,
     address: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984',

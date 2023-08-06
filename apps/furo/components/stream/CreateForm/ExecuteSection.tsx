@@ -1,16 +1,25 @@
 import { isAddress } from '@ethersproject/address'
-import { ArrowLeftIcon } from '@heroicons/react/solid'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
 import { FundSource } from '@sushiswap/hooks'
+import {
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogProvider,
+  DialogReview,
+  DialogTitle,
+  DialogTrigger,
+} from '@sushiswap/ui'
+import { DialogConfirm } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { List } from '@sushiswap/ui/components/list/List'
-import { Modal } from '@sushiswap/ui/components/modal/Modal'
 import { createToast } from '@sushiswap/ui/components/toast'
 import {
   getFuroStreamRouterContractConfig,
@@ -20,8 +29,8 @@ import {
   usePrepareSendTransaction,
 } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi'
+import { useWaitForTransaction } from '@sushiswap/wagmi'
 import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
-import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { useApproved, useSignature, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
@@ -35,7 +44,6 @@ import { ZFundSourceToFundSource, ZTokenToToken } from '../../../lib/zod'
 import { CreateMultipleStreamFormSchemaType } from '../schema'
 
 const APPROVE_TAG = 'createStreamSingle'
-const MODAL_ID = 'createStreamSingle'
 
 export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: number }> = withCheckerRoot(
   ({ chainId, index }) => {
@@ -166,8 +174,10 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
 
     const formValid = isValid && !isValidating && Object.keys(errors).length === 0
 
+    const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
+
     return (
-      <>
+      <DialogProvider>
         <div className="grid grid-cols-3 gap-x-10">
           <div />
           <Checker.Connect fullWidth type="button" className="col-span-3 md:col-span-2">
@@ -197,21 +207,89 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
                     className="col-span-3 md:col-span-2"
                   >
                     <Checker.Success tag={APPROVE_TAG}>
-                      <Modal.Trigger tag={MODAL_ID}>
-                        {({ open }) => (
-                          <Button
-                            size="xl"
-                            type="button"
-                            fullWidth
-                            disabled={!formValid}
-                            onClick={open}
-                            testId="review-single-stream"
-                            className="col-span-3 md:col-span-2"
-                          >
-                            {isLoading ? <Dots>Confirm transaction</Dots> : 'Review stream'}
-                          </Button>
+                      <DialogReview>
+                        {({ confirm }) => (
+                          <>
+                            <DialogTrigger asChild>
+                              <Button
+                                size="xl"
+                                type="button"
+                                fullWidth
+                                disabled={!formValid}
+                                testId="review-single-stream"
+                                className="col-span-3 md:col-span-2"
+                              >
+                                Review stream
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Create Stream</DialogTitle>
+                                <DialogDescription>
+                                  {_amount?.toSignificant(6)} {_amount?.currency.symbol}
+                                </DialogDescription>
+                              </DialogHeader>
+                              <div className="flex flex-col gap-4">
+                                <List className="!pt-0">
+                                  <List.Control>
+                                    <List.KeyValue flex title="Network">
+                                      {Chain.from(chainId).name}
+                                    </List.KeyValue>
+                                    {recipient && isAddress(recipient) && (
+                                      <List.KeyValue flex title="Recipient">
+                                        <a
+                                          target="_blank"
+                                          href={Chain.from(chainId).getAccountUrl(recipient)}
+                                          rel="noreferrer"
+                                        >
+                                          {shortenAddress(recipient)}
+                                        </a>
+                                      </List.KeyValue>
+                                    )}
+                                    {_amount && (
+                                      <List.KeyValue flex title="Total amount">
+                                        <div className="flex items-center gap-2">
+                                          <Currency.Icon currency={_amount.currency} width={18} height={18} />
+                                          {_amount?.toSignificant(6)} {_amount.currency.symbol}
+                                        </div>
+                                      </List.KeyValue>
+                                    )}
+                                    {dates?.startDate && (
+                                      <List.KeyValue flex title="End date">
+                                        {format(dates.startDate, 'dd MMM yyyy hh:mm')}
+                                      </List.KeyValue>
+                                    )}
+                                    {dates?.endDate && (
+                                      <List.KeyValue flex title="End date">
+                                        {format(dates.endDate, 'dd MMM yyyy hh:mm')}
+                                      </List.KeyValue>
+                                    )}
+                                  </List.Control>
+                                </List>
+                              </div>
+                              <DialogFooter>
+                                <Button
+                                  fullWidth
+                                  size="xl"
+                                  loading={isLoading && !isError}
+                                  onClick={() => sendTransactionAsync?.().then(() => confirm())}
+                                  disabled={isError || !sendTransactionAsync}
+                                  color={isError ? 'red' : 'blue'}
+                                  testId="confirm-stream-creation"
+                                >
+                                  {isError ? (
+                                    'Shoot! Something went wrong :('
+                                  ) : isLoading ? (
+                                    <Dots>Create</Dots>
+                                  ) : (
+                                    'Create'
+                                  )}
+                                </Button>
+                              </DialogFooter>
+                            </DialogContent>
+                          </>
                         )}
-                      </Modal.Trigger>
+                      </DialogReview>
                     </Checker.Success>
                   </Checker.ApproveERC20>
                 </Checker.ApproveBentobox>
@@ -219,84 +297,14 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
             </Checker.Network>
           </Checker.Connect>
         </div>
-        <Modal.Review tag={MODAL_ID} variant="opaque">
-          {({ close, confirm }) => (
-            <div className="max-w-[504px] mx-auto">
-              <button onClick={close} onKeyDown={close} className="p-3 pl-0" type="button">
-                <ArrowLeftIcon strokeWidth={3} width={24} height={24} />
-              </button>
-              <div className="flex items-start justify-between gap-4 py-2">
-                <div className="flex flex-col flex-grow gap-1">
-                  <h1 className="text-3xl font-semibold text-gray-900 dark:text-slate-50">Create Stream</h1>
-                  <h1 className="text-lg font-medium text-gray-600 dark:text-slate-300">{currency?.symbol}</h1>
-                </div>
-                <div>{_amount && <Currency.Icon currency={_amount.currency} width={56} height={56} />}</div>
-              </div>
-              <div className="flex flex-col gap-3">
-                <List>
-                  <List.Control>
-                    <List.KeyValue flex title="Network">
-                      {Chain.from(chainId).name}
-                    </List.KeyValue>
-                    {recipient && isAddress(recipient) && (
-                      <List.KeyValue flex title="Recipient">
-                        <a target="_blank" href={Chain.from(chainId).getAccountUrl(recipient)} rel="noreferrer">
-                          {shortenAddress(recipient)}
-                        </a>
-                      </List.KeyValue>
-                    )}
-                    {_amount && (
-                      <List.KeyValue flex title="Total amount">
-                        <div className="flex items-center gap-2">
-                          <Currency.Icon currency={_amount.currency} width={18} height={18} />
-                          {_amount?.toSignificant(6)} {_amount.currency.symbol}
-                        </div>
-                      </List.KeyValue>
-                    )}
-                    {dates?.startDate && (
-                      <List.KeyValue flex title="Start date">
-                        {format(dates.startDate, 'dd MMM yyyy hh:mm')}
-                      </List.KeyValue>
-                    )}
-                    {dates?.endDate && (
-                      <List.KeyValue flex title="End date">
-                        {format(dates.endDate, 'dd MMM yyyy hh:mm')}
-                      </List.KeyValue>
-                    )}
-                  </List.Control>
-                </List>
-              </div>
-              <div className="pt-4">
-                <div className="space-y-4">
-                  <Button
-                    fullWidth
-                    size="xl"
-                    loading={isLoading && !isError}
-                    onClick={() => sendTransactionAsync?.().then(() => confirm())}
-                    disabled={isError || !sendTransactionAsync}
-                    color={isError ? 'red' : 'blue'}
-                    testId="confirm-stream-creation"
-                  >
-                    {isError ? 'Shoot! Something went wrong :(' : isLoading ? <Dots>Create</Dots> : 'Create'}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
-        </Modal.Review>
-        <Modal.Confirm tag={MODAL_ID} variant="transparent">
-          {({ close }) => (
-            <TxStatusModalContent
-              testId="stream-confirmation-modal"
-              tag={MODAL_ID}
-              chainId={chainId}
-              hash={data?.hash}
-              successMessage={'Successfully created stream'}
-              onClose={close}
-            />
-          )}
-        </Modal.Confirm>
-      </>
+        <DialogConfirm
+          chainId={chainId}
+          status={status}
+          testId="stream-confirmation-modal"
+          successMessage="Successfully created stream!"
+          txHash={data?.hash}
+        />
+      </DialogProvider>
     )
   }
 )

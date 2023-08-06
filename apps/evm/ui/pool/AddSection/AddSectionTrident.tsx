@@ -116,7 +116,7 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
         onInput1={onChangeToken1TypedAmount}
       >
         <Checker.Connect fullWidth>
-          <Checker.Custom
+          <Checker.Guard
             guardWhen={
               isMounted &&
               !!poolState &&
@@ -166,7 +166,7 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                 </Checker.ApproveBentobox>
               </Checker.Amounts>
             </Checker.Network>
-          </Checker.Custom>
+          </Checker.Guard>
         </Checker.Connect>
       </AddSectionWidget>
       <AddSectionReviewModalTrident

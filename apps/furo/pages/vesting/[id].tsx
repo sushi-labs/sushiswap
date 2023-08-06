@@ -1,11 +1,8 @@
-import { DownloadIcon, TrashIcon } from '@heroicons/react/outline'
-import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon, CheckCircleIcon } from '@heroicons/react/solid'
+import { ArrowLeftIcon, CheckCircleIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { formatNumber, shortenAddress } from '@sushiswap/format'
-import { classNames } from '@sushiswap/ui'
+import { SplashController } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
-import { Blink } from '@sushiswap/ui/components/Blink'
-import { Button } from '@sushiswap/ui/components/button'
 import { Carousel } from '@sushiswap/ui/components/Carousel'
 import { Container } from '@sushiswap/ui/components/container'
 import { Currency } from '@sushiswap/ui/components/currency'
@@ -14,7 +11,6 @@ import { NetworkIcon, SushiIcon } from '@sushiswap/ui/components/icons'
 import { List } from '@sushiswap/ui/components/list/List'
 import { Progress } from '@sushiswap/ui/components/progress'
 import { SkeletonBox, SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { SplashController } from '@sushiswap/ui/components/SplashController'
 import { Address, getFuroVestingContractConfig, useEnsName } from '@sushiswap/wagmi'
 import { format } from 'date-fns'
 import Link from 'next/link'
@@ -200,36 +196,13 @@ const _VestingPage: FC = () => {
               </div>
             </div>{' '}
             <div className="flex flex-wrap gap-2 mt-3">
-              <WithdrawModal vesting={vesting} chainId={chainId}>
-                {({ setOpen, disabled }) => (
-                  <Button
-                    disabled={disabled}
-                    onClick={() => setOpen(true)}
-                    icon={DownloadIcon}
-                    testId="vest-withdraw"
-                    variant="secondary"
-                  >
-                    Withdraw
-                  </Button>
-                )}
-              </WithdrawModal>
+              <WithdrawModal vesting={vesting} chainId={chainId} />
               <TransferModal
                 stream={vesting}
                 abi={getFuroVestingContractConfig(chainId)?.abi}
                 address={getFuroVestingContractConfig(chainId)?.address}
                 chainId={chainId}
-              >
-                {({ setOpen }) => (
-                  <Button
-                    onClick={() => setOpen(true)}
-                    icon={ArrowRightIcon}
-                    variant="secondary"
-                    testId="vest-transfer"
-                  >
-                    Transfer
-                  </Button>
-                )}
-              </TransferModal>
+              />
               <CancelModal
                 title="Cancel Vesting"
                 stream={vesting}
@@ -237,13 +210,7 @@ const _VestingPage: FC = () => {
                 address={getFuroVestingContractConfig(chainId)?.address}
                 fn="stopVesting"
                 chainId={chainId}
-              >
-                {({ setOpen }) => (
-                  <Button variant="destructive" onClick={() => setOpen(true)} icon={TrashIcon} testId="vest-cancel">
-                    Cancel
-                  </Button>
-                )}
-              </CancelModal>
+              />
             </div>
           </div>
           <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
@@ -379,31 +346,13 @@ const _VestingPage: FC = () => {
                     </List.KeyValue>
                     <List.KeyValue title="Unlocked" subtitle="available for withdrawal">
                       <div className="flex flex-col items-end">
-                        <Blink dep={balance?.toSignificant()} as="span" timeout={1500}>
-                          {(isBlinking) => (
-                            <span className={classNames(isBlinking ? 'text-green' : '', 'flex items-center gap-1')}>
-                              {balance?.toSignificant(6)}{' '}
-                              {isBlinking && (
-                                <ArrowUpIcon className="rotate-45" strokeWidth={3} width={14} height={14} />
-                              )}
-                            </span>
-                          )}
-                        </Blink>
+                        <span>{balance?.toSignificant(6)} </span>
                         <span className="text-[10px] font-medium text-slate-500">{balance?.currency.symbol}</span>
                       </div>
                     </List.KeyValue>
                     <List.KeyValue title="Locked" subtitle="funds in vest">
                       <div className="flex flex-col items-end">
-                        <Blink dep={remainingAmount?.toSignificant()} as="span" timeout={1500}>
-                          {(isBlinking) => (
-                            <span className={classNames(isBlinking ? 'text-red' : '', 'flex items-center gap-1')}>
-                              {remainingAmount?.toSignificant(6)}{' '}
-                              {isBlinking && (
-                                <ArrowDownIcon className="rotate-45" strokeWidth={3} width={14} height={14} />
-                              )}
-                            </span>
-                          )}
-                        </Blink>
+                        <span>{remainingAmount?.toSignificant(6)} </span>
                         <span className="text-[10px] font-medium text-slate-500">{balance?.currency.symbol}</span>
                       </div>
                     </List.KeyValue>

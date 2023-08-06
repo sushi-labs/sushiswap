@@ -4,16 +4,19 @@ import { IconComponent } from '../../../../types'
 import { ArbitrumCircle } from './ArbitrumCircle'
 import { ArbitrumNovaCircle } from './ArbitrumNovaCircle'
 import { AvalancheCircle } from './AvalancheCircle'
+import { BaseCircle } from './BaseCircle'
 import { BinanceCircle } from './BinanceCircle'
 import { BobaAvaxCircle } from './BobaAvaxCircle'
 import { BobaBNBCircle } from './BobaBNBCircle'
 import { BobaCircle } from './BobaCircle'
 import { BttcCircle } from './BttcCircle'
 import { CeloCircle } from './CeloCircle'
+import { CoreCircle } from './CoreCircle'
 import { EthereumCircle } from './EthereumCircle'
 import { FantomCircle } from './FantomCircle'
 import { FuseCircle } from './FuseCircle'
 import { GnosisCircle } from './GnosisCircle'
+import { HaqqCircle } from './HaqqCircle'
 import { HarmonyCircle } from './HarmonyCircle'
 import { HecoCircle } from './HecoCircle'
 import { KavaCircle } from './KavaCircle'
@@ -31,16 +34,19 @@ import { ThunderCoreCircle } from './ThunderCoreCircle'
 export * from './ArbitrumCircle'
 export * from './ArbitrumNovaCircle'
 export * from './AvalancheCircle'
+export * from './BaseCircle'
 export * from './BinanceCircle'
 export * from './BobaAvaxCircle'
 export * from './BobaBNBCircle'
 export * from './BobaCircle'
 export * from './BttcCircle'
 export * from './CeloCircle'
+export * from './CoreCircle'
 export * from './EthereumCircle'
 export * from './FantomCircle'
 export * from './FuseCircle'
 export * from './GnosisCircle'
+export * from './HaqqCircle'
 export * from './HarmonyCircle'
 export * from './HecoCircle'
 export * from './KavaCircle'
@@ -82,4 +88,9 @@ export const NETWORK_CIRCLE_ICON: Record<number, IconComponent> = {
   [ChainId.BTTC]: BttcCircle,
   [ChainId.POLYGON_ZKEVM]: PolygonZKCircle,
   [ChainId.THUNDERCORE]: ThunderCoreCircle,
+  [ChainId.HAQQ]: HaqqCircle,
+  [ChainId.CORE]: CoreCircle,
+  [ChainId.ZKSYNC_ERA]: EthereumCircle,
+  [ChainId.LINEA]: EthereumCircle,
+  [ChainId.BASE]: BaseCircle,
 }

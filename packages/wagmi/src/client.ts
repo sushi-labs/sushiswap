@@ -8,7 +8,7 @@ import { SafeConnector } from 'wagmi/connectors/safe'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
-import { _createTestConfig } from '../test/setup'
+import { _createTestConfig } from './_test/setup'
 
 const isTest =
   process.env['APP_ENV'] === 'test' || process.env['TEST'] === 'true' || process.env['NEXT_PUBLIC_TEST'] === 'true'

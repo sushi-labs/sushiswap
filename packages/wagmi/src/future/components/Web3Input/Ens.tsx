@@ -1,12 +1,13 @@
 import { ChainId } from '@sushiswap/chain'
-import { Input } from '@sushiswap/ui/components/input'
+import { TextFieldProps } from '@sushiswap/ui'
+import { TextField } from '@sushiswap/ui'
 import { TextInput } from '@sushiswap/ui/components/input/Text'
 import { ForwardedRef, forwardRef, useEffect, useState } from 'react'
 import { useEnsResolver } from 'wagmi'
 
 export type EnsInputProps = TextInput
 
-function Component(props: EnsInputProps, ref: ForwardedRef<HTMLInputElement>) {
+function Component(props: Omit<TextFieldProps<'text'>, 'type'>, ref: ForwardedRef<HTMLInputElement>) {
   const [address, setAddress] = useState('')
 
   useEnsResolver({
@@ -14,9 +15,9 @@ function Component(props: EnsInputProps, ref: ForwardedRef<HTMLInputElement>) {
     chainId: ChainId.ETHEREUM,
     enabled: Boolean(props.value && typeof props.value === 'string' && props.value.length > 2),
     onSuccess(data) {
-      if (props.onChange && data) {
+      if (props.onValueChange && data) {
         setAddress(data)
-        props.onChange(data)
+        props.onValueChange(data)
       }
     },
   })
@@ -27,7 +28,7 @@ function Component(props: EnsInputProps, ref: ForwardedRef<HTMLInputElement>) {
     }
   }, [props.value])
 
-  return <Input.Text {...props} ref={ref} />
+  return <TextField {...props} type="text" ref={ref} />
 }
 
 export const EnsInput = forwardRef(Component)

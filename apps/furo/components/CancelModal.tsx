@@ -1,16 +1,26 @@
 import { TrashIcon } from '@heroicons/react/outline'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
+import {
+  DialogConfirm,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogProvider,
+  DialogReview,
+  DialogTitle,
+  DialogTrigger,
+} from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { Dialog } from '@sushiswap/ui/components/dialog/Dialog'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createToast } from '@sushiswap/ui/components/toast'
-import { useAccount, usePrepareSendTransaction } from '@sushiswap/wagmi'
+import { useAccount, usePrepareSendTransaction, useWaitForTransaction } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi'
 import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
+import React, { FC, useCallback, useMemo } from 'react'
 import { Abi, Address, encodeFunctionData } from 'viem'
 
 import { Stream, Vesting } from '../lib'
@@ -22,19 +32,9 @@ interface CancelModalProps {
   address: Address
   fn: string
   chainId: ChainId
-  children?({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }): ReactNode
 }
 
-export const CancelModal: FC<CancelModalProps> = ({
-  stream,
-  abi,
-  address: contractAddress,
-  fn,
-  title,
-  chainId,
-  children,
-}) => {
-  const [open, setOpen] = useState(false)
+export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contractAddress, fn, title, chainId }) => {
   const { address } = useAccount()
 
   const type = stream instanceof Vesting ? 'Vest' : 'Stream'
@@ -63,9 +63,9 @@ export const CancelModal: FC<CancelModalProps> = ({
         groupTimestamp: ts,
         promise: waitForTransaction({ hash: data.hash }),
         summary: {
-          pending: `Cancelling ${type}`,
-          completed: `Successfully cancelled ${type}`,
-          failed: `Something went wrong cancelling the ${type}`,
+          pending: `Cancelling ${type.toLowerCase()}`,
+          completed: `Successfully cancelled ${type.toLowerCase()}`,
+          failed: `Something went wrong cancelling the ${type.toLowerCase()}`,
         },
       })
     },
@@ -78,59 +78,76 @@ export const CancelModal: FC<CancelModalProps> = ({
     enabled: Boolean(stream && address),
   })
 
-  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+  const {
+    sendTransactionAsync,
+    data,
+    isLoading: isWritePending,
+  } = useSendTransaction({
     ...config,
     onSettled,
-    onSuccess() {
-      setOpen(false)
-    },
   })
+
+  const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
 
   if (!address || !stream?.canCancel(address)) return <></>
 
   return (
-    <>
-      {typeof children === 'function' ? (
-        children({ setOpen })
-      ) : (
-        <Button fullWidth variant="destructive" icon={TrashIcon} onClick={() => setOpen(true)}>
-          Cancel
-        </Button>
-      )}
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="space-y-4 !pb-3 !bg-white dark:!bg-slate-800">
-          <Dialog.Header title={title} onClose={() => setOpen(false)} />
-          <p className="text-sm text-gray-700 dark:text-slate-400">
-            This will send the remaining amount of{' '}
-            <span className="font-medium text-gray-900 dark:text-slate-200">
-              {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount?.currency.symbol}
-            </span>{' '}
-            to{' '}
-            <a
-              target="_blank"
-              className="font-semibold text-blue"
-              href={Chain.from(stream.chainId).getAccountUrl(stream.createdBy.id)}
-              rel="noreferrer"
-            >
-              {shortenAddress(stream?.createdBy.id)}
-            </a>
-            .
-          </p>
-          <Checker.Connect fullWidth>
-            <Checker.Network fullWidth chainId={chainId}>
-              <Button
-                size="xl"
-                fullWidth
-                disabled={isWritePending || stream?.isEnded}
-                onClick={() => sendTransaction?.()}
-                testId="cancel-confirmation"
-              >
-                {isWritePending ? <Dots>Confirm Cancel</Dots> : title}
+    <DialogProvider>
+      <DialogReview>
+        {({ confirm }) => (
+          <>
+            <DialogTrigger asChild>
+              <Button testId={`${type.toLowerCase()}-cancel`} variant="secondary" icon={TrashIcon}>
+                Cancel
               </Button>
-            </Checker.Network>
-          </Checker.Connect>
-        </Dialog.Content>
-      </Dialog>
-    </>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Cancel stream</DialogTitle>
+                <DialogDescription>
+                  This will send the remaining amount of{' '}
+                  <span className="font-medium text-gray-900 dark:text-slate-200">
+                    {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount?.currency.symbol}
+                  </span>{' '}
+                  to{' '}
+                  <a
+                    target="_blank"
+                    className="font-semibold text-blue"
+                    href={Chain.from(stream.chainId).getAccountUrl(stream.createdBy.id)}
+                    rel="noreferrer"
+                  >
+                    {shortenAddress(stream?.createdBy.id)}
+                  </a>
+                  .
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex flex-col gap-4" />
+              <DialogFooter>
+                <Checker.Connect fullWidth>
+                  <Checker.Network fullWidth chainId={chainId}>
+                    <Button
+                      size="xl"
+                      fullWidth
+                      disabled={isWritePending || stream?.isEnded}
+                      onClick={() => sendTransactionAsync?.().then(() => confirm())}
+                      testId="cancel-confirmation"
+                    >
+                      {isWritePending ? <Dots>Confirm Cancel</Dots> : title}
+                    </Button>
+                  </Checker.Network>
+                </Checker.Connect>
+              </DialogFooter>
+            </DialogContent>
+          </>
+        )}
+      </DialogReview>
+      <DialogConfirm
+        chainId={chainId}
+        status={status}
+        testId={`cancel-${type.toLowerCase()}-confirmation-modal`}
+        successMessage={`Successfully cancelled ${type.toLowerCase()}`}
+        txHash={data?.hash}
+      />
+    </DialogProvider>
   )
 }

@@ -1,6 +1,7 @@
 import { expect, Page, test } from '@playwright/test'
 import { Token, USDC_ADDRESS } from '@sushiswap/currency'
 import { addWeeks, getUnixTime, subWeeks } from 'date-fns'
+
 import {
   createSingleStream,
   createSnapshot,
@@ -15,6 +16,7 @@ if (!process.env.CHAIN_ID) {
 }
 
 let SNAPSHOT_ID = '0x0'
+const BASE_URL = process.env.PLAYWRIGHT_URL || 'http://localhost:3000/furo'
 const CHAIN_ID = parseInt(process.env.CHAIN_ID)
 const RECIPIENT = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
 const USDC = new Token({
@@ -45,7 +47,7 @@ test('Create, Withdraw, Update, Transfer, Cancel.', async ({ page }) => {
 })
 
 async function updateStream(page: Page, streamId: string) {
-  const url = (process.env.PLAYWRIGHT_URL as string).concat(`/stream/${CHAIN_ID}:${streamId}`)
+  const url = BASE_URL.concat(`/stream/${CHAIN_ID}:${streamId}`)
   await mockSubgraph(page)
   await page.goto(url)
   await switchNetwork(page, CHAIN_ID)
@@ -87,7 +89,7 @@ async function withdrawFromStream(page: Page, streamId: string, withdrawAmount: 
   await increaseEvmTime(middleOfStream, CHAIN_ID)
   await mockSubgraph(page)
 
-  const url = (process.env.PLAYWRIGHT_URL as string).concat(`/stream/${CHAIN_ID}:${streamId}`)
+  const url = BASE_URL.concat(`/stream/${CHAIN_ID}:${streamId}`)
   await page.goto(url)
   await switchNetwork(page, CHAIN_ID)
 
@@ -109,7 +111,7 @@ async function withdrawFromStream(page: Page, streamId: string, withdrawAmount: 
 }
 
 async function transferStream(page: Page, streamId: string, recipient: string) {
-  const url = (process.env.PLAYWRIGHT_URL as string).concat(`/stream/${CHAIN_ID}:${streamId}`)
+  const url = BASE_URL.concat(`/stream/${CHAIN_ID}:${streamId}`)
   await mockSubgraph(page)
   await page.goto(url)
   await switchNetwork(page, CHAIN_ID)
@@ -133,7 +135,7 @@ async function transferStream(page: Page, streamId: string, recipient: string) {
 }
 
 async function cancelStream(page: Page, streamId: string) {
-  const url = (process.env.PLAYWRIGHT_URL as string).concat(`/stream/${CHAIN_ID}:${streamId}`)
+  const url = BASE_URL.concat(`/stream/${CHAIN_ID}:${streamId}`)
   await mockSubgraph(page)
   await page.goto(url)
   await switchNetwork(page, CHAIN_ID)
@@ -147,7 +149,7 @@ async function cancelStream(page: Page, streamId: string) {
   await expect(confirmTransferLocator).toBeEnabled()
   await confirmTransferLocator.click()
 
-  const expectedText = '(Successfully cancelled Stream)'
+  const expectedText = '(Successfully cancelled stream)'
   const regex = new RegExp(expectedText)
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }

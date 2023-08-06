@@ -96,11 +96,11 @@ export const PoolHeader: FC<PoolHeader> = ({
               <></>
             )}
             {pool.fee / 10000}% Fee{' '}
-            {apy?.rewards && (
+            {apy?.rewards ? (
               <>
                 <span className="text-[10px]">•</span> Farm rewards available ✨
               </>
-            )}
+            ) : null}
             {/* {hasEnabledStrategies && (
               <>
                 <span className="text-[10px]">•</span> Steer strategy available
