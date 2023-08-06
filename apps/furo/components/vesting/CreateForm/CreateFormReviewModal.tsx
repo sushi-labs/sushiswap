@@ -1,6 +1,4 @@
 import { isAddress } from '@ethersproject/address'
-import { ArrowLeftIcon } from '@heroicons/react/solid'
-import { TransactionRequest } from '@ethersproject/providers'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
@@ -32,10 +30,9 @@ import {
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
 import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
-import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { useApproved, useSignature, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { format } from 'date-fns'
 import React, { FC, useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
