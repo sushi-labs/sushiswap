@@ -125,11 +125,11 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
           const value = BigInt((token1.isNative ? input1 : input0).quotient.toString())
           const args = [
             (token1.isNative ? token0 : token1).wrapped.address as Address,
-            BigInt((token1.isNative ? input0 : input1).quotient.toString()),
-            BigInt((token1.isNative ? minAmount0 : minAmount1).quotient.toString()),
-            BigInt((token1.isNative ? minAmount1 : minAmount0).quotient.toString()),
+            (token1.isNative ? input0 : input1).quotient,
+            (token1.isNative ? minAmount0 : minAmount1).quotient,
+            (token1.isNative ? minAmount1 : minAmount0).quotient,
             address,
-            BigInt(deadline.toHexString()),
+            deadline,
           ] as const
 
           const gasLimit = await contract.estimateGas.addLiquidityETH(args, {
@@ -148,12 +148,12 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
           const args = [
             token0.wrapped.address as Address,
             token1.wrapped.address as Address,
-            BigInt(input0.quotient.toString()),
-            BigInt(input1.quotient.toString()),
-            BigInt(minAmount0.quotient.toString()),
-            BigInt(minAmount1.quotient.toString()),
+            input0.quotient,
+            input1.quotient,
+            minAmount0.quotient,
+            minAmount1.quotient,
             address,
-            BigInt(deadline.toHexString()),
+            deadline,
           ] as const
 
           const gasLimit = await contract.estimateGas.addLiquidity(args, {

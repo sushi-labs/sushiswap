@@ -148,7 +148,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         trade?.route?.status !== 'NoWay' &&
         chain?.id === network0
     ),
-    overrides: trade?.overrides,
+    value: trade?.value || 0n,
     onError: (error) => {
       const message = error.message.toLowerCase()
       if (message.includes('user rejected') || message.includes('user cancelled')) {
