@@ -11,7 +11,7 @@ import { UseTradeParams, UseTradeQuerySelect, UseTradeReturnWriteArgs } from './
 import { tradeValidator } from './validator'
 
 export const useTradeQuery = (
-  { chainId, fromToken, toToken, amount, gasPrice = 50, recipient, enabled, onError }: UseTradeParams,
+  { chainId, fromToken, toToken, amount, gasPrice = 50n, recipient, enabled, onError }: UseTradeParams,
   select: UseTradeQuerySelect
 ) => {
   return useQuery({

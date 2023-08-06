@@ -6,11 +6,11 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button } from '@sushiswap/ui/components/button'
 import {
-  ConstantProductPoolState,
   getTridentRouterContractConfig,
-  StablePoolState,
-  useConstantProductPool,
-  useStablePool,
+  TridentConstantPoolState,
+  TridentStablePoolState,
+  useTridentConstantPool,
+  useTridentStablePool,
 } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { APPROVE_TAG_ADD_TRIDENT } from 'lib/constants'
@@ -31,14 +31,14 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   }>({ input0: '', input1: '' })
 
   // TODO: Standardize fee format
-  const [constantProductPoolState, constantProductPool] = useConstantProductPool(
+  const [constantProductPoolState, constantProductPool] = useTridentConstantPool(
     _pool.chainId,
     token0,
     token1,
     _pool.swapFee * 10000,
     _pool.twapEnabled
   )
-  const [stablePoolState, stablePool] = useStablePool(
+  const [stablePoolState, stablePool] = useTridentStablePool(
     _pool.chainId,
     token0,
     token1,
@@ -59,8 +59,8 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const onChangeToken0TypedAmount = useCallback(
     (value: string) => {
       if (
-        poolState === ConstantProductPoolState.NOT_EXISTS ||
-        poolState === StablePoolState.NOT_EXISTS ||
+        poolState === TridentConstantPoolState.NOT_EXISTS ||
+        poolState === TridentStablePoolState.NOT_EXISTS ||
         (pool?.reserve0.equalTo(ZERO) && pool?.reserve1.equalTo(ZERO))
       ) {
         setTypedAmounts((prev) => ({
@@ -81,8 +81,8 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const onChangeToken1TypedAmount = useCallback(
     (value: string) => {
       if (
-        poolState === ConstantProductPoolState.NOT_EXISTS ||
-        poolState === StablePoolState.NOT_EXISTS ||
+        poolState === TridentConstantPoolState.NOT_EXISTS ||
+        poolState === TridentStablePoolState.NOT_EXISTS ||
         (pool?.reserve0.equalTo(ZERO) && pool?.reserve1.equalTo(ZERO))
       ) {
         setTypedAmounts((prev) => ({
@@ -121,10 +121,10 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
               isMounted &&
               !!poolState &&
               [
-                ConstantProductPoolState.NOT_EXISTS,
-                ConstantProductPoolState.INVALID,
-                StablePoolState.NOT_EXISTS,
-                StablePoolState.INVALID,
+                TridentConstantPoolState.NOT_EXISTS,
+                TridentConstantPoolState.INVALID,
+                TridentStablePoolState.NOT_EXISTS,
+                TridentStablePoolState.INVALID,
               ].includes(poolState)
             }
             guardText="Pool not found"

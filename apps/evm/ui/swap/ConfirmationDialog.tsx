@@ -18,13 +18,14 @@ import {
 } from '@sushiswap/ui/components/dialog/ConfirmationDialog'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { AppType } from '@sushiswap/ui/types'
-import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from '@sushiswap/wagmi'
+import { useAccount, useContractWrite, usePrepareContractWrite } from '@sushiswap/wagmi'
 import { useNetwork } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { log } from 'next-axiom'
 import { FC, ReactNode, useCallback, useRef, useState } from 'react'
+import { UserRejectedRequestError } from 'viem'
 
 import { useTrade } from '../../lib/swap/useTrade'
 import { useSwapActions, useSwapState } from './trade/TradeProvider'
@@ -138,7 +139,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       : undefined,
     abi: routeProcessor2Abi,
     functionName: trade?.functionName,
-    args: trade?.writeArgs,
+    args: trade?.writeArgs as any,
     enabled: Boolean(
       trade?.writeArgs &&
         appType === AppType.Swap &&
@@ -206,7 +207,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     data,
   } = useContractWrite({
     ...config,
-    ...(config.request && { request: { ...config.request, gasLimit: config.request.gasLimit.mul(120).div(100) } }),
+    ...(config.request.gas && { request: { ...config.request, gas: (config.request.gas * 120n) / 100n } }),
     onMutate: () => {
       // Set reference of current trade
       if (tradeRef && trade) {
@@ -219,11 +220,10 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       // Clear input fields
       setValue('')
 
-      data
-        .wait()
+      waitForTransaction({ hash: data.hash })
         .then((receipt) => {
           const trade = tradeRef.current
-          if (receipt.status === 1) {
+          if (receipt.status === 'success') {
             if (
               trade?.route?.legs?.every(
                 (leg) =>

@@ -2,11 +2,11 @@ import { defaultAbiCoder } from '@ethersproject/abi'
 import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import {
-  computeConstantProductPoolAddress,
-  computeStablePoolAddress,
-  ConstantProductPool,
+  computeTridentConstantPoolAddress,
+  computeTridentStablePoolAddress,
   Fee,
-  StablePool,
+  TridentConstantPool,
+  TridentStablePool,
 } from '@sushiswap/amm'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Type } from '@sushiswap/currency'
@@ -17,11 +17,11 @@ import {
   PoolFinderType,
   useAccount,
   useBentoBoxTotals,
-  useConstantProductPoolFactoryContract,
   useNetwork,
   usePrepareSendTransaction,
   useSendTransaction,
   useStablePoolFactoryContract,
+  useTridentConstantPoolFactoryContract,
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
@@ -61,7 +61,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const { signature, setSignature } = useSignature(APPROVE_TAG_CREATE_TRIDENT)
   const { approved } = useApproved(APPROVE_TAG_CREATE_TRIDENT)
   const contract = useTridentRouterContract(chainId)
-  const constantProductPoolFactory = useConstantProductPoolFactoryContract(chainId)
+  const constantProductPoolFactory = useTridentConstantPoolFactoryContract(chainId)
   const stablePoolFactory = useStablePoolFactoryContract(chainId)
 
   const totals = useBentoBoxTotals(
@@ -72,7 +72,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const pool = useMemo(() => {
     if (!token0 || !token1 || !fee) return
     if (poolType === PoolFinderType.Classic) {
-      return new ConstantProductPool(
+      return new TridentConstantPool(
         Amount.fromRawAmount(token0.wrapped, 0),
         Amount.fromRawAmount(token1.wrapped, 0),
         fee,
@@ -84,7 +84,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
       token0.wrapped.address in totals &&
       token1.wrapped.address in totals
     ) {
-      return new StablePool(
+      return new TridentStablePool(
         Amount.fromRawAmount(token0.wrapped, 0),
         Amount.fromRawAmount(token1.wrapped, 0),
         fee,
@@ -110,7 +110,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
     if (!factory || !token0 || !token1 || !fee) return
     switch (poolType) {
       case PoolFinderType.Classic:
-        return computeConstantProductPoolAddress({
+        return computeTridentConstantPoolAddress({
           factoryAddress: factory.address,
           tokenA: token0.wrapped,
           tokenB: token1.wrapped,
@@ -118,7 +118,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
           twap: false,
         }) as Address
       case PoolFinderType.Stable:
-        return computeStablePoolAddress({
+        return computeTridentStablePoolAddress({
           factoryAddress: factory.address,
           tokenA: token0.wrapped,
           tokenB: token1.wrapped,

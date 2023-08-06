@@ -9,7 +9,7 @@ import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   Address,
-  PairState,
+  SushiSwapV2PoolState,
   useAccount,
   useNetwork,
   usePrepareSendTransaction,
@@ -28,7 +28,7 @@ import { encodeFunctionData, UserRejectedRequestError } from 'viem'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface AddSectionReviewModalLegacyProps {
-  poolState: PairState
+  poolState: SushiSwapV2PoolState
   chainId: SushiSwapV2ChainId
   token0: Type | undefined
   token1: Type | undefined
@@ -89,12 +89,12 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
       input0
-        ? poolState === PairState.NOT_EXISTS
+        ? poolState === SushiSwapV2PoolState.NOT_EXISTS
           ? input0
           : Amount.fromRawAmount(input0.currency, calculateSlippageAmount(input0, slippagePercent)[0])
         : undefined,
       input1
-        ? poolState === PairState.NOT_EXISTS
+        ? poolState === SushiSwapV2PoolState.NOT_EXISTS
           ? input1
           : Amount.fromRawAmount(input1.currency, calculateSlippageAmount(input1, slippagePercent)[0])
         : undefined,

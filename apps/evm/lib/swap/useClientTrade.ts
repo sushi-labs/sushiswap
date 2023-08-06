@@ -19,15 +19,15 @@ import {
 } from '@sushiswap/trident-sdk'
 import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
-  ConstantProductPoolState,
-  PairState,
-  StablePoolState,
+  SushiSwapV2PoolState,
+  TridentConstantPoolState,
+  TridentStablePoolState,
   useBentoBoxTotal,
   useCurrencyCombinations,
   useFeeData,
-  useGetConstantProductPools,
-  useGetStablePools,
-  usePairs,
+  useGetTridentConstantPools,
+  useGetTridentStablePools,
+  useSushiSwapV2Pools,
 } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
 
@@ -63,19 +63,19 @@ export function useTrade(
   const currencyCombinations = useCurrencyCombinations(chainId, currencyIn, currencyOut)
 
   // Legacy SushiSwap pairs
-  const { data: pairs } = usePairs(chainId as SushiSwapV2ChainId, currencyCombinations, {
+  const { data: pairs } = useSushiSwapV2Pools(chainId as SushiSwapV2ChainId, currencyCombinations, {
     enabled: isSushiSwapV2ChainId(chainId),
   })
 
   // Trident constant product pools
-  const { data: constantProductPools } = useGetConstantProductPools(
+  const { data: constantProductPools } = useGetTridentConstantPools(
     chainId as BentoBoxV1ChainId,
     currencyCombinations,
     { enabled: isBentoBoxV1ChainId(chainId) }
   )
 
   // Trident constant product pools
-  const { data: stablePools } = useGetStablePools(chainId as BentoBoxV1ChainId, currencyCombinations, {
+  const { data: stablePools } = useGetTridentStablePools(chainId as BentoBoxV1ChainId, currencyCombinations, {
     enabled: isBentoBoxV1ChainId(chainId),
   })
 
@@ -95,12 +95,12 @@ export function useTrade(
             (
               result
             ): result is
-              | [PairState.EXISTS, SushiSwapV2Pool]
-              | [ConstantProductPoolState.EXISTS, TridentConstantPool]
-              | [StablePoolState.EXISTS, TridentStablePool] =>
-              Boolean(result[0] === PairState.EXISTS && result[1]) ||
-              Boolean(result[0] === ConstantProductPoolState.EXISTS && result[1]) ||
-              Boolean(result[0] === StablePoolState.EXISTS && result[1])
+              | [SushiSwapV2PoolState.EXISTS, SushiSwapV2Pool]
+              | [TridentConstantPoolState.EXISTS, TridentConstantPool]
+              | [TridentStablePoolState.EXISTS, TridentStablePool] =>
+              Boolean(result[0] === SushiSwapV2PoolState.EXISTS && result[1]) ||
+              Boolean(result[0] === TridentConstantPoolState.EXISTS && result[1]) ||
+              Boolean(result[0] === TridentStablePoolState.EXISTS && result[1])
           )
           .map(([, pair]) => pair)
       ),

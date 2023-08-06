@@ -10,18 +10,18 @@ import { Dots } from '@sushiswap/ui/components/dots'
 import { createToast } from '@sushiswap/ui/components/toast'
 import {
   Address,
-  ConstantProductPoolState,
   getTridentRouterContractConfig,
-  StablePoolState,
+  TridentConstantPoolState,
+  TridentStablePoolState,
   useAccount,
   useBentoBoxTotals,
-  useConstantProductPool,
   useNetwork,
   usePrepareSendTransaction,
   useSendTransaction,
-  useStablePool,
   useTotalSupply,
+  useTridentConstantPool,
   useTridentRouterContract,
+  useTridentStablePool,
 } from '@sushiswap/wagmi'
 import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems'
@@ -72,7 +72,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
   }, [balance, percentToRemove])
 
   // TODO: Standardize fee format
-  const [constantProductPoolState, constantProductPool] = useConstantProductPool(
+  const [constantProductPoolState, constantProductPool] = useTridentConstantPool(
     _pool.chainId,
     token0,
     token1,
@@ -80,7 +80,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
     _pool.twapEnabled
   )
 
-  const [stablePoolState, stablePool] = useStablePool(
+  const [stablePoolState, stablePool] = useTridentStablePool(
     _pool.chainId,
     token0,
     token1,
@@ -206,7 +206,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
       const actions = [
         approveMasterContractAction({ signature }),
         burnLiquidityAction({
-          address: pool.liquidityToken.address,
+          address: pool.liquidityToken.address as Address,
           amount: slpAmountToRemove.quotient,
           recipient: indexOfWETH >= 0 ? contract.address : address,
           liquidityOutput,
@@ -286,10 +286,10 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
               isMounted &&
               !!poolState &&
               [
-                ConstantProductPoolState.NOT_EXISTS,
-                ConstantProductPoolState.INVALID,
-                StablePoolState.NOT_EXISTS,
-                StablePoolState.INVALID,
+                TridentConstantPoolState.NOT_EXISTS,
+                TridentConstantPoolState.INVALID,
+                TridentStablePoolState.NOT_EXISTS,
+                TridentStablePoolState.INVALID,
               ].includes(poolState)
             }
           >

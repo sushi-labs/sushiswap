@@ -1,3 +1,4 @@
+import { tridentStablePoolAbi, tridentStablePoolFactoryAbi } from '@sushiswap/abi'
 import { computeTridentStablePoolAddress, Fee, TridentStablePool } from '@sushiswap/amm'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Currency, Token, Type } from '@sushiswap/currency'
@@ -5,7 +6,6 @@ import { isStablePoolFactoryChainId } from '@sushiswap/trident-core'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
 
-import { stablePoolAbi, stablePoolFactoryAbi } from '../abis'
 import { useBentoBoxTotals } from './useBentoBoxTotals'
 import { useStablePoolFactoryContract } from './useStablePoolFactoryContract'
 
@@ -73,7 +73,7 @@ export function useGetTridentStablePools(
     contracts: pairsUniqueAddr.map((el) => ({
       chainId,
       address: contract?.address as Address,
-      abi: stablePoolFactoryAbi,
+      abi: tridentStablePoolFactoryAbi,
       functionName: 'poolsCount' as const,
       args: el as [Address, Address],
     })),
@@ -109,7 +109,7 @@ export function useGetTridentStablePools(
       return callStatePoolsCountProcessed.map((args) => ({
         chainId,
         address: contract?.address as Address,
-        abi: stablePoolFactoryAbi,
+        abi: tridentStablePoolFactoryAbi,
         functionName: 'getPools' as const,
         args,
       }))
@@ -144,7 +144,7 @@ export function useGetTridentStablePools(
     contracts: poolsAddresses.map((address) => ({
       chainId,
       address: address as Address,
-      abi: stablePoolAbi,
+      abi: tridentStablePoolAbi,
       functionName: 'getReserves' as const,
     })),
     enabled: poolsAddresses.length > 0 && config?.enabled,
@@ -160,7 +160,7 @@ export function useGetTridentStablePools(
     contracts: poolsAddresses.map((address) => ({
       chainId,
       address: address as Address,
-      abi: stablePoolAbi,
+      abi: tridentStablePoolAbi,
       functionName: 'swapFee' as const,
     })),
     enabled: poolsAddresses.length > 0 && config?.enabled,
@@ -214,7 +214,7 @@ export function useGetTridentStablePools(
   ])
 }
 
-export function useStablePools(
+export function useTridentStablePools(
   chainId: number,
   pools: PoolInput[]
 ): [TridentStablePoolState, TridentStablePool | null][] {
@@ -270,7 +270,7 @@ export function useStablePools(
     contracts: poolsAddresses.map((address) => ({
       chainId,
       address: address as Address,
-      abi: stablePoolAbi,
+      abi: tridentStablePoolAbi,
       functionName: 'getReserves' as const,
     })),
     enabled: poolsAddresses.length > 0 && isStablePoolFactoryChainId(chainId),
@@ -309,7 +309,7 @@ export function useStablePools(
   }, [data, pools, poolsAddresses])
 }
 
-export function useStablePool(
+export function useTridentStablePool(
   chainId: number,
   tokenA: Type | undefined,
   tokenB: Type | undefined,
@@ -323,5 +323,5 @@ export function useStablePool(
     () => [[tokenA, tokenB, Number(fee), Boolean(twap), total0, total1]],
     [tokenA, tokenB, fee, twap, total0, total1]
   )
-  return useStablePools(chainId, inputs)[0]
+  return useTridentStablePools(chainId, inputs)[0]
 }

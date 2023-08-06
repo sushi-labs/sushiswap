@@ -1,7 +1,7 @@
-import { Signature } from '@ethersproject/bytes'
 import { Amount, Price, Type } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
 import { SushiXSwapChainId } from '@sushiswap/sushixswap'
+import { Signature } from 'viem'
 
 import { Action } from '../SushiXSwap'
 
@@ -38,7 +38,7 @@ export interface UseCrossChainTradeReturn {
   functionName: 'cook'
   writeArgs: [Action[], bigint[], `0x${string}`[]] | undefined
   route: { status: string }
-  overrides: { value: bigint } | undefined
+  value?: bigint | undefined
 }
 
 export type UseCrossChainTradeQuerySelect = (data: UseCrossChainSelect) => UseCrossChainTradeReturn

@@ -1,7 +1,7 @@
 'use client'
 
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react-v1/solid'
-import { Pair } from '@sushiswap/amm'
+import { SushiSwapV2Pool } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { Button } from '@sushiswap/ui/components/button'
@@ -9,11 +9,11 @@ import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { Loader } from '@sushiswap/ui/components/loader'
 import { isSushiSwapV2ChainId, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { SushiSwapV2ChainIds } from '@sushiswap/v2-sdk'
-import { Address, getSushiSwapRouterContractConfig, PairState, PoolFinder } from '@sushiswap/wagmi'
+import { Address, getSushiSwapRouterContractConfig, PoolFinder, SushiSwapV2PoolState } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
-import { isLegacyPool } from 'lib/functions'
+import { isSushiSwapV2Pool } from 'lib/functions'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
@@ -83,7 +83,7 @@ export default function Page({ params }: { params: { chainId: string } }) {
           <PoolFinder
             components={
               <PoolFinder.Components>
-                <PoolFinder.LegacyPool
+                <PoolFinder.SushiSwapV2Pool
                   chainId={chainId}
                   token0={token0}
                   token1={token1}
@@ -96,11 +96,11 @@ export default function Page({ params }: { params: { chainId: string } }) {
               const title =
                 !token0 || !token1 ? (
                   'Select Tokens'
-                ) : [PairState.LOADING].includes(poolState as PairState) ? (
+                ) : [SushiSwapV2PoolState.LOADING].includes(poolState as SushiSwapV2PoolState) ? (
                   <div className="h-[20px] flex items-center justify-center">
                     <Loader width={14} />
                   </div>
-                ) : [PairState.EXISTS].includes(poolState as PairState) ? (
+                ) : [SushiSwapV2PoolState.EXISTS].includes(poolState as SushiSwapV2PoolState) ? (
                   'Add Liquidity'
                 ) : (
                   'Create Pool'
@@ -114,8 +114,8 @@ export default function Page({ params }: { params: { chainId: string } }) {
                     router.push(`/pool/add/v2/${chainId}`)
                     setChainId(chainId)
                   }}
-                  pool={pool as Pair | null}
-                  poolState={poolState as PairState}
+                  pool={pool as SushiSwapV2Pool | null}
+                  poolState={poolState as SushiSwapV2PoolState}
                   title={title}
                   token0={token0}
                   token1={token1}
@@ -134,8 +134,8 @@ export default function Page({ params }: { params: { chainId: string } }) {
 interface AddProps {
   chainId: ChainId
   setChainId(chainId: ChainId): void
-  pool: Pair | null
-  poolState: PairState
+  pool: SushiSwapV2Pool | null
+  poolState: SushiSwapV2PoolState
   title: ReactNode
   token0: Type | undefined
   token1: Type | undefined
@@ -158,7 +158,7 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
 
   const onChangeToken0TypedAmount = useCallback(
     (value: string) => {
-      if (poolState === PairState.NOT_EXISTS) {
+      if (poolState === SushiSwapV2PoolState.NOT_EXISTS) {
         setTypedAmounts((prev) => ({
           ...prev,
           input0: value,
@@ -176,7 +176,7 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
 
   const onChangeToken1TypedAmount = useCallback(
     (value: string) => {
-      if (poolState === PairState.NOT_EXISTS) {
+      if (poolState === SushiSwapV2PoolState.NOT_EXISTS) {
         setTypedAmounts((prev) => ({
           ...prev,
           input1: value,
@@ -238,13 +238,13 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
             onSelect={setToken1}
             currency={token1}
             disabled={!token1}
-            loading={poolState === PairState.LOADING}
+            loading={poolState === SushiSwapV2PoolState.LOADING}
           />
           <Checker.Root>
             <Checker.Connect fullWidth>
               <Checker.Network fullWidth chainId={chainId}>
                 <Checker.Amounts fullWidth chainId={chainId} amounts={[parsedInput0, parsedInput1]}>
-                  {(!pool || isLegacyPool(pool)) && isSushiSwapV2ChainId(chainId) && (
+                  {(!pool || isSushiSwapV2Pool(pool)) && isSushiSwapV2ChainId(chainId) && (
                     <>
                       <Checker.ApproveERC20
                         id="approve-token-0"
@@ -268,7 +268,7 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
                         </Checker.ApproveERC20>
                       </Checker.ApproveERC20>
                       <AddSectionReviewModalLegacy
-                        poolState={poolState as PairState}
+                        poolState={poolState as SushiSwapV2PoolState}
                         chainId={chainId}
                         token0={token0}
                         token1={token1}

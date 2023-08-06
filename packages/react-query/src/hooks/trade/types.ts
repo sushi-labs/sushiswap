@@ -1,8 +1,8 @@
+import { routeProcessor2Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Type } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
-import { HexString } from '@sushiswap/types'
-import { Address } from 'viem'
+import { Address, GetFunctionArgs } from 'viem'
 import z from 'zod'
 
 import { legValidator, tradeValidator } from './validator'
@@ -12,7 +12,7 @@ export interface UseTradeParams {
   fromToken: Type | undefined
   toToken: Type | undefined
   amount: Amount<Type> | undefined
-  gasPrice?: number
+  gasPrice?: bigint
   slippagePercentage: string
   recipient: Address | undefined
   enabled: boolean
@@ -21,8 +21,8 @@ export interface UseTradeParams {
 }
 
 export type UseTradeReturnWriteArgs =
-  | [HexString, bigint, HexString, bigint, HexString, bigint, HexString, HexString]
-  | [HexString, bigint, HexString, bigint, HexString, HexString]
+  | GetFunctionArgs<typeof routeProcessor2Abi, 'transferValueAndprocessRoute'>
+  | GetFunctionArgs<typeof routeProcessor2Abi, 'processRoute'>
   | undefined
 
 export interface UseTradeReturn {

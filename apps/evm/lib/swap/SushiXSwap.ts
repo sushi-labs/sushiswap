@@ -1,5 +1,4 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
-import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { Trade, TradeType, Version as TradeVersion } from '@sushiswap/amm'
 import { Amount, Currency, Native, Share, Token } from '@sushiswap/currency'
@@ -17,6 +16,7 @@ import { HexString } from '@sushiswap/types'
 import { Address, getSushiXSwapContractConfig, SushiXSwap as SushiXSwapContract } from '@sushiswap/wagmi'
 import { readContract } from '@sushiswap/wagmi/actions'
 import { formatBytes32String } from 'ethers/lib/utils'
+import { Signature } from 'viem'
 
 export type Complex = [
   {

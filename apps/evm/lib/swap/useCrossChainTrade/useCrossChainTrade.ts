@@ -226,7 +226,6 @@ export const useCrossChainTradeQuery = (
           writeArgs: undefined,
           route: { status: '' },
           functionName: 'cook',
-          overrides: undefined,
         } as UseCrossChainSelect
       }
 
@@ -251,8 +250,8 @@ export const useCrossChainTradeQuery = (
       if (transfer) {
         sushiXSwap.transfer(amount, srcShare)
       } else if (
-        (srcTrade && srcTrade.route.legs.length && srcMinimumAmountOut) ||
-        (dstTrade && dstTrade.route.legs.length && dstMinimumAmountOut)
+        (srcTrade?.route.legs.length && srcMinimumAmountOut) ||
+        (dstTrade?.route.legs.length && dstMinimumAmountOut)
       ) {
         sushiXSwap.crossChainSwap({
           srcAmount: amount,
@@ -300,7 +299,7 @@ export const useCrossChainTradeQuery = (
           status: '',
         },
         functionName: 'cook',
-        overrides: { value },
+        value,
       } as UseCrossChainSelect
     },
     refetchOnWindowFocus: true,

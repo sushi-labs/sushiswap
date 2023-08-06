@@ -202,11 +202,11 @@ export function useGetTridentConstantPools(
   ])
 }
 
-export function useConstantProductPools(
+export function useTridentConstantPools(
   chainId: number,
   pools: PoolInput[]
 ): [TridentConstantPoolState, TridentConstantPool | null][] {
-  const constantProductPoolFactory = useTridentConstantPoolFactoryContract(chainId)
+  const tridentConstantPoolFactory = useTridentConstantPoolFactoryContract(chainId)
 
   const input = useMemo(
     () =>
@@ -220,7 +220,7 @@ export function useConstantProductPools(
               twap !== undefined &&
               currencyA.chainId === currencyB.chainId &&
               !currencyA.wrapped.equals(currencyB.wrapped) &&
-              constantProductPoolFactory?.address
+              tridentConstantPoolFactory?.address
           )
         })
         .map<[Token, Token, Fee, boolean]>(([currencyA, currencyB, fee, twap]) => [
@@ -229,16 +229,16 @@ export function useConstantProductPools(
           fee,
           twap,
         ]),
-    [constantProductPoolFactory?.address, pools]
+    [tridentConstantPoolFactory?.address, pools]
   )
 
   const poolsAddresses = useMemo(
     () =>
       input.reduce<Address[]>((acc, [tokenA, tokenB, fee, twap]) => {
-        if (!constantProductPoolFactory) return acc
+        if (!tridentConstantPoolFactory) return acc
         acc.push(
           computeTridentConstantPoolAddress({
-            factoryAddress: constantProductPoolFactory.address,
+            factoryAddress: tridentConstantPoolFactory.address,
             tokenA,
             tokenB,
             fee,
@@ -247,7 +247,7 @@ export function useConstantProductPools(
         )
         return acc
       }, []),
-    [constantProductPoolFactory, input]
+    [tridentConstantPoolFactory, input]
   )
 
   const { data } = useContractReads({
@@ -289,7 +289,7 @@ export function useConstantProductPools(
   }, [data, pools, poolsAddresses])
 }
 
-export function useConstantProductPool(
+export function useTridentConstantPool(
   chainId: number,
   tokenA: Currency | undefined,
   tokenB: Currency | undefined,
@@ -297,5 +297,5 @@ export function useConstantProductPool(
   twap: boolean
 ): [TridentConstantPoolState, TridentConstantPool | null] {
   const inputs: [PoolInput] = useMemo(() => [[tokenA, tokenB, Number(fee), Boolean(twap)]], [tokenA, tokenB, fee, twap])
-  return useConstantProductPools(chainId, inputs)[0]
+  return useTridentConstantPools(chainId, inputs)[0]
 }

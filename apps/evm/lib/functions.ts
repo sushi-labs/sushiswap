@@ -1,4 +1,4 @@
-import { ConstantProductPool, Pair, StablePool } from '@sushiswap/amm'
+import { SushiSwapV2Pool, TridentConstantPool, TridentStablePool } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Pool, Protocol } from '@sushiswap/client'
 import { DAI, Native, Price, Token, Type, USDC, USDT, WBTC } from '@sushiswap/currency'
@@ -17,18 +17,20 @@ import { Bound } from './constants'
 import { useTicks } from './hooks'
 import { TickProcessed } from './hooks/useConcentratedActiveLiquidity'
 
-export const isConstantProductPool = (
-  pool: Pair | ConstantProductPool | StablePool | null
-): pool is ConstantProductPool => {
-  return pool instanceof ConstantProductPool
+export const isTridentConstantPool = (
+  pool: SushiSwapV2Pool | TridentConstantPool | TridentStablePool | null
+): pool is TridentConstantPool => {
+  return pool instanceof TridentConstantPool
 }
 
-export const isStablePool = (pool: Pair | StablePool | null): pool is StablePool => {
-  return pool instanceof StablePool
+export const isTridentStablePool = (pool: SushiSwapV2Pool | TridentStablePool | null): pool is TridentStablePool => {
+  return pool instanceof TridentStablePool
 }
 
-export const isLegacyPool = (pool: Pair | ConstantProductPool | StablePool | null): pool is Pair => {
-  return pool instanceof Pair
+export const isSushiSwapV2Pool = (
+  pool: SushiSwapV2Pool | TridentConstantPool | TridentStablePool | null
+): pool is SushiSwapV2Pool => {
+  return pool instanceof SushiSwapV2Pool
 }
 
 export const isTridentPoolProtocol = (protocol: Protocol) =>

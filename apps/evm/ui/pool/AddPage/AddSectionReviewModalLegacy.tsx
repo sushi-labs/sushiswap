@@ -8,7 +8,7 @@ import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   Address,
-  PairState,
+  SushiSwapV2PoolState,
   useAccount,
   useNetwork,
   usePrepareSendTransaction,
@@ -25,7 +25,7 @@ import { encodeFunctionData, UserRejectedRequestError } from 'viem'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface AddSectionReviewModalLegacyProps {
-  poolState: PairState
+  poolState: SushiSwapV2PoolState
   chainId: SushiSwapV2ChainId
   token0: Type | undefined
   token1: Type | undefined
@@ -84,12 +84,12 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
       input0
-        ? poolState === PairState.NOT_EXISTS
+        ? poolState === SushiSwapV2PoolState.NOT_EXISTS
           ? input0
           : Amount.fromRawAmount(input0.currency, calculateSlippageAmount(input0, slippagePercent)[0])
         : undefined,
       input1
-        ? poolState === PairState.NOT_EXISTS
+        ? poolState === SushiSwapV2PoolState.NOT_EXISTS
           ? input1
           : Amount.fromRawAmount(input1.currency, calculateSlippageAmount(input1, slippagePercent)[0])
         : undefined,
@@ -120,11 +120,11 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
           const value = BigInt((token1.isNative ? input1 : input0).quotient.toString())
           const args = [
             (token1.isNative ? token0 : token1).wrapped.address as Address,
-            BigInt((token1.isNative ? input0 : input1).quotient.toString()),
-            BigInt((token1.isNative ? minAmount0 : minAmount1).quotient.toString()),
-            BigInt((token1.isNative ? minAmount1 : minAmount0).quotient.toString()),
+            (token1.isNative ? input0 : input1).quotient,
+            (token1.isNative ? minAmount0 : minAmount1).quotient,
+            (token1.isNative ? minAmount1 : minAmount0).quotient,
             address,
-            BigInt(deadline.toHexString()),
+            deadline,
           ] as const
 
           const gasLimit = await contract.estimateGas.addLiquidityETH(args, {
@@ -143,12 +143,12 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
           const args = [
             token0.wrapped.address as Address,
             token1.wrapped.address as Address,
-            BigInt(input0.quotient.toString()),
-            BigInt(input1.quotient.toString()),
-            BigInt(minAmount0.quotient.toString()),
-            BigInt(minAmount1.quotient.toString()),
+            input0.quotient,
+            input1.quotient,
+            minAmount0.quotient,
+            minAmount1.quotient,
             address,
-            BigInt(deadline.toHexString()),
+            deadline,
           ] as const
 
           const gasLimit = await contract.estimateGas.addLiquidity(args, {

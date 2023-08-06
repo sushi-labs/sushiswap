@@ -11,15 +11,15 @@ import {
   useContractWrite,
   useNetwork,
   usePrepareContractWrite,
-  UserRejectedRequestError,
   useTransaction,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
 import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { nanoid } from 'nanoid'
 import { log } from 'next-axiom'
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+import { Address, UserRejectedRequestError } from 'viem'
 
 import { useLayerZeroScanLink } from '../../../lib/swap/useLayerZeroScanLink'
 import { useTrade } from '../../../lib/swap/useTrade'
@@ -81,7 +81,7 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
       chain?.id === network0 &&
       approved &&
       trade?.route?.status !== 'NoWay',
-    overrides: trade?.overrides,
+    value: trade?.value || 0n,
     onError: (error) => {
       if (error.message.startsWith('user rejected transaction')) return
       log.error('Cross Chain Swap prepare error', {
@@ -130,10 +130,9 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
       // Clear input fields
       setValue('')
 
-      data
-        .wait()
+      waitForTransaction({ hash: data.hash })
         .then((receipt) => {
-          if (receipt.status === 1) {
+          if (receipt.status === 'success') {
             log.info('cross chain swap success (source)', {
               trade,
             })
@@ -272,7 +271,8 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
         type: 'swap',
         chainId: network1,
         txHash: receipt.hash as `0x${string}`,
-        promise: receipt.wait(),
+        // ! Possibly wrong
+        promise: waitForTransaction({ hash: lzData?.dstTxHash as Address, chainId: network1 }),
         summary: {
           pending: `Swapping ${dstCurrencyA?.symbol} to ${trade?.amountOut?.toSignificant(6)} ${
             trade?.amountOut?.currency.symbol

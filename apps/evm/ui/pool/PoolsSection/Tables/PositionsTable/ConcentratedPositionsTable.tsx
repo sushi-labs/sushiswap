@@ -47,7 +47,7 @@ export const ConcentratedPositionsTable: FC<{
       )
       .filter((el) => {
         return (
-          (hideClosed ? !el.liquidity?.eq('0') : true) &&
+          (hideClosed ? el.liquidity !== 0n : true) &&
           (poolAddress ? el.address.toLowerCase() === poolAddress.toLowerCase() : true)
         )
       })

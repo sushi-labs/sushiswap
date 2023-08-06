@@ -21,10 +21,10 @@ import { Button } from '@sushiswap/ui/components/button'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   FeeAmount,
-  SushiSwapV3Pool,
   Position,
   priceToClosestTick,
   SushiSwapV3ChainId,
+  SushiSwapV3Pool,
   TickMath,
 } from '@sushiswap/v3-sdk'
 import {
@@ -32,12 +32,13 @@ import {
   getMasterChefContractConfig,
   useAccount,
   useMasterChefWithdraw,
-  usePair,
+  useSushiSwapV2Pool,
   useTotalSupply,
 } from '@sushiswap/wagmi'
 import { useWaitForTransaction } from '@sushiswap/wagmi'
 import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import { useV3Migrate, V3MigrateContractConfig } from '@sushiswap/wagmi/future/hooks/migrate/hooks/useV3Migrate'
+import { V3MigrateChainId } from '@sushiswap/wagmi/future/hooks/migrate/types'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_MIGRATE, APPROVE_TAG_UNSTAKE, Bound, Field } from 'lib/constants'
@@ -52,7 +53,6 @@ import { SelectFeeConcentratedWidget } from '../NewPositionSection/SelectFeeConc
 import { usePoolPosition } from '../PoolPositionProvider'
 import { usePoolPositionRewards } from '../PoolPositionRewardsProvider'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
-import { V3MigrateChainId } from '@sushiswap/wagmi/future/hooks/migrate/types'
 
 export const MODAL_MIGRATE_ID = 'migrate-modal'
 
@@ -94,7 +94,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
     [invertTokens, _token0, _token1, _value0, _value1, _underlying0, _underlying1]
   )
 
-  const { data: pair } = usePair(pool.chainId as SushiSwapV2ChainId, token0, token1)
+  const { data: pair } = useSushiSwapV2Pool(pool.chainId as SushiSwapV2ChainId, token0, token1)
   const totalSupply = useTotalSupply(liquidityToken)
 
   // Harvest & Withdraw
@@ -681,7 +681,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                     {positionAmount0 && (
                                       <List.KeyValue
                                         flex
-                                        title={`Migration`}
+                                        title={'Migration'}
                                         subtitle="The value of your position after migration"
                                         className="!items-start"
                                       >
@@ -702,7 +702,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                       </List.KeyValue>
                                     )}
                                     {positionAmount1 && (
-                                      <List.KeyValue flex title={``} className="!items-start">
+                                      <List.KeyValue flex title={''} className="!items-start">
                                         <div className="flex flex-col gap-0.5">
                                           <div className="flex items-center gap-2">
                                             <Currency.Icon
@@ -725,7 +725,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                     {token0Value && (
                                       <List.KeyValue
                                         flex
-                                        title={`Refund`}
+                                        title={'Refund'}
                                         subtitle="The refund you receive after migration"
                                         className="!items-start"
                                       >
@@ -746,7 +746,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                       </List.KeyValue>
                                     )}
                                     {token1Value && (
-                                      <List.KeyValue flex title={``} className="!items-start">
+                                      <List.KeyValue flex title={''} className="!items-start">
                                         <div className="flex flex-col gap-0.5">
                                           <div className="flex items-center gap-2">
                                             <Currency.Icon
@@ -781,7 +781,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                   ) : isMigrateLoading ? (
                                     <Dots>Confirm Migrate</Dots>
                                   ) : (
-                                    `Confirm Migrate`
+                                    'Confirm Migrate'
                                   )}
                                 </Button>
                               </DialogFooter>

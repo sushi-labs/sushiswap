@@ -2,9 +2,9 @@ import { Children, cloneElement, FC, isValidElement, ReactElement, ReactNode, us
 
 import { SushiSwapV2PoolState } from '../../hooks'
 import { ComponentsWrapper } from './ComponentsWrapper'
-import { ConstantProductPool } from './ConstantProductPool'
-import { StablePool } from './StablePool'
 import { SushiSwapV2Pool } from './SushiSwapV2Pool'
+import { TridentConstantPool } from './TridentConstantPool'
+import { TridentStablePool } from './TridentStablePool'
 import {
   ComponentsWrapperProps,
   PoolExistenceStateAction,
@@ -63,11 +63,11 @@ const Controller: FC<Props> = ({ components, children }) => {
 export const PoolFinder: typeof Controller & {
   Components: typeof ComponentsWrapper
   SushiSwapV2Pool: typeof SushiSwapV2Pool
-  ConstantProductPool: typeof ConstantProductPool
-  StablePool: typeof StablePool
+  TridentConstantPool: typeof TridentConstantPool
+  TridentStablePool: typeof TridentStablePool
 } = Object.assign(Controller, {
   Components: ComponentsWrapper,
   SushiSwapV2Pool,
-  ConstantProductPool,
-  StablePool,
+  TridentConstantPool,
+  TridentStablePool,
 })

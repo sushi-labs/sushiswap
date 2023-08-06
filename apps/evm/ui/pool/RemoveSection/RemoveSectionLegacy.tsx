@@ -12,13 +12,13 @@ import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   Address,
   getSushiSwapRouterContractConfig,
-  PairState,
+  SushiSwapV2PoolState,
   useAccount,
   useNetwork,
-  usePair,
   usePrepareSendTransaction,
   useSendTransaction,
   useSushiSwapRouterContract,
+  useSushiSwapV2Pool,
   useTotalSupply,
 } from '@sushiswap/wagmi'
 import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
@@ -56,7 +56,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
 
   const {
     data: [poolState, pool],
-  } = usePair(_pool.chainId as SushiSwapV2ChainId, token0, token1)
+  } = useSushiSwapV2Pool(_pool.chainId as SushiSwapV2ChainId, token0, token1)
   const { balance } = usePoolPosition()
   const totalSupply = useTotalSupply(liquidityToken)
 
@@ -270,7 +270,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
       >
         <Checker.Connect fullWidth>
           <Checker.Guard
-            guardWhen={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
+            guardWhen={isMounted && [SushiSwapV2PoolState.NOT_EXISTS, SushiSwapV2PoolState.INVALID].includes(poolState)}
             guardText="Pool not found"
           >
             <Checker.Network fullWidth chainId={_pool.chainId}>

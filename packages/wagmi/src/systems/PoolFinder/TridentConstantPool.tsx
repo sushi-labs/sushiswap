@@ -1,10 +1,10 @@
 import { Fee } from '@sushiswap/amm'
 import { FC, useEffect } from 'react'
 
-import { useStablePool } from '../../hooks'
+import { useTridentConstantPool } from '../../hooks'
 import { PoolFinderType, TridentPoolFinderProps } from './types'
 
-export const StablePool: FC<TridentPoolFinderProps> = ({
+export const TridentConstantPool: FC<TridentPoolFinderProps> = ({
   chainId,
   dispatch,
   token0,
@@ -13,7 +13,8 @@ export const StablePool: FC<TridentPoolFinderProps> = ({
   fee = Fee.DEFAULT,
   twap = false,
 }) => {
-  const state = useStablePool(chainId, token0, token1, fee, twap)
+  const state = useTridentConstantPool(chainId, token0, token1, fee, twap)
+
   useEffect(() => {
     if (!dispatch || index === undefined) return
 
@@ -22,7 +23,7 @@ export const StablePool: FC<TridentPoolFinderProps> = ({
       payload: {
         state,
         index,
-        poolType: PoolFinderType.Stable,
+        poolType: PoolFinderType.Classic,
       },
     })
   }, [dispatch, index, state])

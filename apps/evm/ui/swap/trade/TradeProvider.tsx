@@ -3,7 +3,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui/types'
-import { useAccount } from '@sushiswap/wagmi'
+import { Address, useAccount } from '@sushiswap/wagmi'
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
@@ -27,7 +27,7 @@ interface SwapState {
   amount: Amount<Type> | undefined
   appType: AppType
   tokensLoading: boolean
-  recipient: string | undefined
+  recipient: Address | undefined
 }
 
 type State = InternalSwapState & SwapState
@@ -94,7 +94,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   // const _toChainId = searchParams?.get('toChainId')
   const _toCurrency = searchParams?.get('toCurrency')
   const _amount = searchParams?.get('amount')
-  const _recipient = searchParams?.get('recipient')
+  const _recipient = searchParams?.get('recipient') as Address | null
   const _review = searchParams?.get('review')
 
   const { fromCurrency, toCurrency, amount, recipient, review } = queryParamsSchema.parse({
@@ -251,7 +251,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       }
       dispatch({ type: 'setValue', value })
     }
-    const setRecipient = (recipient: string) => {
+    const setRecipient = (recipient: Address) => {
       if (recipient !== _recipient) {
         const _searchParams = new URLSearchParams(searchParams)
         _searchParams.set('recipient', recipient)

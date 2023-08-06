@@ -8,8 +8,8 @@ import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
-  ConstantProductPoolState,
-  StablePoolState,
+  TridentConstantPoolState,
+  TridentStablePoolState,
   useAccount,
   useBentoBoxTotals,
   useNetwork,
@@ -31,7 +31,7 @@ import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface AddSectionReviewModalTridentProps {
   poolAddress: string
-  poolState: ConstantProductPoolState | StablePoolState | undefined
+  poolState: TridentConstantPoolState | TridentStablePoolState | undefined
   pool: TridentConstantPool | TridentStablePool | null | undefined
   chainId: BentoBoxV1ChainId
   token0: Type | undefined
@@ -84,12 +84,12 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
       input0
-        ? poolState === ConstantProductPoolState.NOT_EXISTS || poolState === StablePoolState.NOT_EXISTS
+        ? poolState === TridentConstantPoolState.NOT_EXISTS || poolState === TridentStablePoolState.NOT_EXISTS
           ? input0
           : Amount.fromRawAmount(input0.currency, calculateSlippageAmount(input0, slippagePercent)[0])
         : undefined,
       input1
-        ? poolState === ConstantProductPoolState.NOT_EXISTS || poolState === StablePoolState.NOT_EXISTS
+        ? poolState === TridentConstantPoolState.NOT_EXISTS || poolState === TridentStablePoolState.NOT_EXISTS
           ? input1
           : Amount.fromRawAmount(input1.currency, calculateSlippageAmount(input1, slippagePercent)[0])
         : undefined,
@@ -98,8 +98,8 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
 
   const noLiquidity = useMemo(() => {
     return (
-      poolState === ConstantProductPoolState.NOT_EXISTS ||
-      poolState === StablePoolState.NOT_EXISTS ||
+      poolState === TridentConstantPoolState.NOT_EXISTS ||
+      poolState === TridentStablePoolState.NOT_EXISTS ||
       Boolean(totalSupply && totalSupply.quotient === ZERO) ||
       Boolean(pool && pool.reserve0.quotient === ZERO && pool.reserve1.quotient === ZERO)
     )
