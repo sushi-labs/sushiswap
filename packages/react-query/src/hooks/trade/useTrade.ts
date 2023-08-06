@@ -59,22 +59,20 @@ export const useTrade = (variables: UseTradeParams) => {
         const isOffset = chainId === ChainId.POLYGON && carbonOffset
 
         let writeArgs: UseTradeReturnWriteArgs = data?.args
-          ? [
+          ? ([
               data.args.tokenIn as HexString,
               BigInt(data.args.amountIn),
               data.args.tokenOut as HexString,
               data.args.amountOutMin,
               data.args.to as HexString,
               data.args.routeCode as HexString,
-            ]
+            ] as const)
           : undefined
-        let overrides = fromToken.isNative && writeArgs?.[1] ? { value: writeArgs?.[1] } : undefined
+        let value = fromToken.isNative && (writeArgs?.[1] ?? undefined)
 
         if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
           writeArgs = ['0xbc4a6be1285893630d45c881c6c343a65fdbe278', 20000000000000000n, ...writeArgs]
-          overrides = {
-            value: (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n,
-          }
+          value = (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n
         }
 
         return {
@@ -99,7 +97,7 @@ export const useTrade = (variables: UseTradeParams) => {
           route: data.route,
           functionName: isOffset ? 'transferValueAndprocessRoute' : 'processRoute',
           writeArgs,
-          overrides,
+          value,
         }
       }
 

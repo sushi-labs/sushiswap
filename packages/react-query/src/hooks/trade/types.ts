@@ -21,8 +21,8 @@ export interface UseTradeParams {
 }
 
 export type UseTradeReturnWriteArgs =
-  | GetFunctionArgs<typeof routeProcessor2Abi, 'transferValueAndprocessRoute'>
-  | GetFunctionArgs<typeof routeProcessor2Abi, 'processRoute'>
+  | GetFunctionArgs<typeof routeProcessor2Abi, 'transferValueAndprocessRoute'>['args']
+  | GetFunctionArgs<typeof routeProcessor2Abi, 'processRoute'>['args']
   | undefined
 
 export interface UseTradeReturn {
