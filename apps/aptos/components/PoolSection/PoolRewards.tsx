@@ -1,7 +1,8 @@
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { FC } from 'react'
 
-export const PoolRewards: FC<{}> = ({}) => {
+export const PoolRewards: FC<{ isFarm: boolean }> = ({ isFarm }) => {
+  if (!isFarm) return <></>
   return (
     <List>
       <div className="flex items-center justify-between">

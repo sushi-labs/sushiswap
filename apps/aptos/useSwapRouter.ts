@@ -8,7 +8,7 @@ import { useAllCommonPairs } from 'utils/utilFunctions'
 
 type useSwapRouterArgs = {
   network: string
-  balance: number
+  balance: number | undefined
 }
 
 export function useSwapRouter({ network, balance }: useSwapRouterArgs) {

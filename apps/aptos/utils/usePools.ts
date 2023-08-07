@@ -43,8 +43,8 @@ export type Pool = {
 }
 
 export async function fetchPoolsQueryFn(chainId: number = 1) {
-  const CONTRACT_ADDRESS = chainId === 1 ? MAINNET_CONTRACT : TESTNET_CONTRACT
-  const network = chainId === 1 ? 'mainnet' : 'testnet'
+  const CONTRACT_ADDRESS = chainId === 2 ? TESTNET_CONTRACT : MAINNET_CONTRACT
+  const network = chainId === 2 ? 'testnet' : 'mainnet'
   const response = await fetch(`https://fullnode.${network}.aptoslabs.com/v1/accounts/${CONTRACT_ADDRESS}/resources`)
   if (response.status == 200) {
     const data = await response.json()

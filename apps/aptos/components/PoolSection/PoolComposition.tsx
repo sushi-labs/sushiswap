@@ -13,7 +13,6 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ row }) => {
   const { token0, token1 } = useTokensFromPools(row)
   const balanceX = formatNumber(Number(row?.data?.balance_x?.value), token0.decimals)
   const balanceY = formatNumber(Number(row?.data?.balance_y?.value), token1.decimals)
-  const {} = usePools()
   return (
     <List>
       <div className="flex items-center justify-between">

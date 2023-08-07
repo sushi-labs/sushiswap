@@ -7,7 +7,6 @@ export interface coinType {
 }
 
 export async function getTokenData(token: Token) {
-  console.log(token)
   const { account, network } = useWallet()
   let tokenData: any
   if (account?.address && token) {
@@ -21,7 +20,6 @@ export async function getTokenData(token: Token) {
       })
     }
   }
-  console.log(tokenData)
   if (tokenData && tokenData[0]?.data?.coin) return tokenData[0]?.data?.coin?.value
   return 0
 }

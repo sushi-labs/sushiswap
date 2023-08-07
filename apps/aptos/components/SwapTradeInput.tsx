@@ -56,7 +56,7 @@ export const SwapTradeInput = ({ handleSwap }: Props) => {
 
   const checkBalance = (value: string) => {
     setAmount(value)
-    if (connected) {
+    if (connected && balance) {
       const priceEst = balance / 10 ** token0?.decimals < parseFloat(value)
       if (priceEst) {
         setError('Exceeds Balance')

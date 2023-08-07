@@ -12,6 +12,7 @@ import { FC, Fragment, ReactNode, useState } from 'react'
 import { Token } from 'utils/tokenType'
 
 interface RemoveSectionWidgetProps {
+  isFarm: boolean
   percentage: string
   setPercentage(percentage: string): void
   children: ReactNode
@@ -23,6 +24,7 @@ interface RemoveSectionWidgetProps {
 }
 
 export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
+  isFarm,
   percentage,
   setPercentage,
   children,
@@ -35,7 +37,6 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
   const isMounted = useIsMounted()
   const [hover, setHover] = useState(false)
   const { account } = useWallet()
-  console.log(!(balance > 0), Boolean(account?.address))
   return (
     <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       <Transition

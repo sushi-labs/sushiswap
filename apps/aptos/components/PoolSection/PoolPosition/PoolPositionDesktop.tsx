@@ -22,26 +22,25 @@ const TESTNET_CONTRACT = process.env['TESTNET_CONTRACT'] || process.env['NEXT_PU
 export const PoolPositionDesktop: FC<PoolPositionProps> = ({ row, isLoading }) => {
   const router = useParams()
   const { token0, token1 } = useTokensFromPools(row)
-  const { network, account } = useWallet()
+  const { account } = useWallet()
   const [chainId, ...address] = decodeURIComponent(router?.id).split(':')
 
   const CONTRACT_ADDRESS = chainId === '2' ? TESTNET_CONTRACT : MAINNET_CONTRACT
   const tokenAddress = address.join(':')
-  const { data: pool } = usePool(Number(chainId), tokenAddress)
-  const { data: LPBalance } = useTokenBalance({
+  const { data: pool, isLoading: isPoolLoading } = usePool(Number(chainId), tokenAddress)
+  const { data: LPBalance, isLoading: isBalanceLoading } = useTokenBalance({
     account: account?.address as string,
     currency: `${CONTRACT_ADDRESS}::swap::LPToken<${tokenAddress}>`,
     chainId: Number(chainId),
     enabled: true,
     refetchInterval: 2000,
   })
-  console.log('LPBalance', LPBalance)
 
   const [reserve0, reserve1] = useMemo(() => {
     return [pool?.data?.balance_x?.value, pool?.data?.balance_y?.value]
   }, [pool])
 
-  const { data: LPSupply } = useTotalSupply(chainId, tokenAddress)
+  const { data: LPSupply, isLoading: isLoadingSupply } = useTotalSupply(chainId, tokenAddress)
   const totalSupply = LPSupply?.data?.supply?.vec?.[0]?.integer?.vec?.[0]?.value
   const [underlying0, underlying1] = useUnderlyingTokenBalanceFromPool({
     balance: LPBalance,
@@ -50,7 +49,7 @@ export const PoolPositionDesktop: FC<PoolPositionProps> = ({ row, isLoading }) =
     totalSupply: Number(totalSupply),
     decimals: LPSupply?.data?.decimals,
   })
-  if (isLoading) {
+  if (isLoading || isLoadingSupply || isPoolLoading || isBalanceLoading) {
     return (
       <div className="flex flex-col gap-3 px-5 py-4">
         <div className="flex justify-between mb-1 py-0.5">

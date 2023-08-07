@@ -25,7 +25,7 @@ export default function Pool() {
                 </span>
               </span>
             </div>
-            <div className="flex items-center w-full">
+            <div className="flex items-center">
               <Button
                 as="a"
                 variant="filled"

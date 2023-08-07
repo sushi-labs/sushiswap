@@ -12,7 +12,6 @@ export const TradeStats = () => {
   const { token1, amount, bestRoutes, isLoadingPrice, isPriceFetching, outputAmount, slippageAmount } = useSwapState()
   const { account, network } = useWallet()
   const loading = Boolean(isLoadingPrice && Number(amount) > 0) || isPriceFetching
-  // console.log(outputAmount)
   const outputSwapTokenAmount = outputAmount
     ? String(formatNumber(parseFloat(outputAmount), token1 ? token1.decimals : 8))
     : ''

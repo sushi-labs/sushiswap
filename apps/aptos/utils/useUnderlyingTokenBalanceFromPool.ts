@@ -26,7 +26,6 @@ export const useUnderlyingTokenBalanceFromPool: UseUnderlyingTokenBalanceFromPai
     if (totalSupply === 0) {
       return [0, 0]
     }
-    console.log(reserve0)
     const underlying0 = (reserve0 * balance) / totalSupply
     const underlying1 = (reserve1 * balance) / totalSupply
     return [formatNumber(underlying0, decimals as number), formatNumber(underlying1, decimals as number)]
