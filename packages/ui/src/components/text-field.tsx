@@ -19,40 +19,43 @@ const percentInputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>> = 
   maxLength: 3,
 }
 
-const textFieldVariants = cva('truncate appearance-none dark:text-slate-50text-gray-900 w-full !ring-0 !outline-none', {
-  variants: {
-    size: {
-      sm: 'min-h-[36px] h-[36px] py-1',
-      default: 'min-h-[40px] h-[40px] py-2',
+const textFieldVariants = cva(
+  'truncate appearance-none dark:text-slate-50 text-gray-900 w-full !ring-0 !outline-none',
+  {
+    variants: {
+      size: {
+        sm: 'min-h-[36px] h-[36px] py-1',
+        default: 'min-h-[40px] h-[40px] py-2',
+      },
+      variant: {
+        default:
+          'border-0 flex items-center px-3 rounded-lg font-medium block bg-secondary group-hover:bg-muted group-focus:bg-accent',
+        naked: 'border-0 bg-transparent',
+        outline:
+          'flex items-center px-3 rounded-lg font-medium block border border-accent group-hover:border-black/20 group-focus:border-black/30 hover:border-black/30 focus-within:border-black/30 dark:group-hover:border-white/20 dark:group-focus:border-white/30 dark:hover:border-white/30 dark:focus-within:border-white/30',
+      },
+      isError: {
+        yes: 'bg-red/10 text-red',
+        no: '',
+      },
+      hasIcon: {
+        yes: 'pl-[40px]',
+        no: '',
+      },
+      hasUnit: {
+        yes: 'rounded-r-none',
+        no: '',
+      },
     },
-    variant: {
-      default:
-        'border-0 flex items-center px-3 rounded-lg font-medium block bg-secondary group-hover:bg-muted group-focus:bg-accent',
-      naked: 'border-0 bg-transparent',
-      outline:
-        'flex items-center px-3 rounded-lg font-medium block border border-accent group-hover:border-black/20 group-focus:border-black/30 hover:border-black/30 focus-within:border-black/30 dark:group-hover:border-white/20 dark:group-focus:border-white/30 dark:hover:border-white/30 dark:focus-within:border-white/30',
+    defaultVariants: {
+      variant: 'default',
+      hasIcon: 'no',
+      hasUnit: 'no',
+      size: 'default',
+      isError: 'no',
     },
-    isError: {
-      yes: 'bg-red/10 text-red',
-      no: '',
-    },
-    hasIcon: {
-      yes: 'pl-[40px]',
-      no: '',
-    },
-    hasUnit: {
-      yes: 'rounded-r-none',
-      no: '',
-    },
-  },
-  defaultVariants: {
-    variant: 'default',
-    hasIcon: 'no',
-    hasUnit: 'no',
-    size: 'default',
-    isError: 'no',
-  },
-})
+  }
+)
 
 type InputType = 'text' | 'number' | 'percent'
 
@@ -130,7 +133,7 @@ const Component = <T extends InputType>(
   }
 
   return (
-    <div className="group relative flex items-center justify-between w-full ring-offset-background focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+    <div className="group relative flex items-center justify-between w-full">
       {Icon ? (
         <Icon
           {...iconProps}
@@ -146,7 +149,7 @@ const Component = <T extends InputType>(
           variant,
           hasIcon: Icon ? 'yes' : 'no',
           hasUnit: unit ? 'yes' : 'no',
-          className: classNames(className, 'flex-grow flex-1'),
+          className: classNames(className, 'flex-grow flex-1 !outline-none !ring-0'),
         })}
         ref={ref}
         autoCorrect="off"
