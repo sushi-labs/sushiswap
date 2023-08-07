@@ -26,6 +26,15 @@ export const PoolButtons: FC<PoolButtonsProps> = ({}) => {
       <Button className="col-span-2" size="lg" color="default" as="a" href={`/swap`}>
         Trade
       </Button>
+      <Button
+        className="col-span-2"
+        size="lg"
+        color="default"
+        as="a"
+        href={`/pool/${decodeURIComponent(router?.id)}/stake`}
+      >
+        Stake Liquidity
+      </Button>
     </div>
   )
 }

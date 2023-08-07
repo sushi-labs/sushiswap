@@ -50,13 +50,13 @@ export const AddSectionMyPositionUnstaked: FC<Props> = ({ balance, underlying0, 
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-4">{token0 && <Icon currency={token0} width={16} height={16} />}</div>
           <Typography variant="xs" weight={500} className="flex items-center gap-1 dark:text-slate-400 text-gray-600">
-            {balance && underlying0} {token0.symbol}
+            {balance && underlying0} {token0?.symbol}
           </Typography>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-4">{token1 && <Icon currency={token1} width={16} height={16} />}</div>
           <Typography variant="xs" weight={500} className="flex items-center gap-1 dark:text-slate-400 text-gray-600">
-            {balance && underlying1} {token1.symbol}
+            {balance && underlying1} {token1?.symbol}
           </Typography>
         </div>
       </div>

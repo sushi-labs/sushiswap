@@ -8,17 +8,9 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
 import { Icon } from 'components/Icon'
-import { useParams } from 'next/navigation'
-import { FC, Fragment, ReactNode, useMemo, useState } from 'react'
+import { FC, Fragment, ReactNode, useState } from 'react'
 import { Token } from 'utils/tokenType'
-import { usePool } from 'utils/usePool'
-import { Pool } from 'utils/usePools'
-import { useTokenBalance } from 'utils/useTokenBalance'
-import { useTokensFromPools } from 'utils/useTokensFromPool'
-import { useTotalSupply } from 'utils/useTotalSupply'
 
-const MAINNET_CONTRACT = process.env['MAINNET_CONTRACT'] || process.env['NEXT_PUBLIC_MAINNET_CONTRACT']
-const TESTNET_CONTRACT = process.env['TESTNET_CONTRACT'] || process.env['NEXT_PUBLIC_TESTNET_CONTRACT']
 interface RemoveSectionWidgetProps {
   percentage: string
   setPercentage(percentage: string): void
@@ -153,36 +145,28 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                           <Button
                             size="xs"
                             onClick={() => setPercentage('25')}
-                            variant="outlined"
                             testdata-id="remove-liquidity-25-button"
-                            color="default"
                           >
                             25%
                           </Button>
                           <Button
                             size="xs"
                             onClick={() => setPercentage('50')}
-                            variant="outlined"
                             testdata-id="remove-liquidity-50-button"
-                            color="default"
                           >
                             50%
                           </Button>
                           <Button
                             size="xs"
                             onClick={() => setPercentage('75')}
-                            variant="outlined"
                             testdata-id="remove-liquidity-75-button"
-                            color="default"
                           >
                             75%
                           </Button>
                           <Button
                             size="xs"
                             onClick={() => setPercentage('100')}
-                            variant="outlined"
                             testdata-id="remove-liquidity-max-button"
-                            color="default"
                           >
                             MAX
                           </Button>

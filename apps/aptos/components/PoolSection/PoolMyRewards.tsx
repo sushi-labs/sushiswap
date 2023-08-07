@@ -1,8 +1,17 @@
+import { useBreakpoint } from '@sushiswap/hooks'
 import { Typography } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { FC } from 'react'
+import { Pool } from 'utils/usePools'
+import { useTokensFromPools } from 'utils/useTokensFromPool'
 
-export const PoolMyRewards: FC<> = ({}) => {
+interface PoolMyRewardsProps {
+  row: Pool
+}
+
+export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ row }) => {
+  const { token0, token1 } = useTokensFromPools(row)
+  const { isLg } = useBreakpoint('lg')
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col bg-white dark:bg-slate-800 rounded-2xl">

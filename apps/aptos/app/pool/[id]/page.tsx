@@ -46,7 +46,7 @@ const _Pool = () => {
               <div className="flex flex-col order-2 gap-4">
                 <AppearOnMount>
                   <div className="flex flex-col gap-10">
-                    <PoolMyRewards />
+                    <PoolMyRewards row={pool} />
                     <PoolPosition row={pool} isLoading={isPoolLoading} />
                   </div>
                 </AppearOnMount>

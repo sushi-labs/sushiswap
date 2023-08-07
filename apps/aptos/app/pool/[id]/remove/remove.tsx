@@ -18,6 +18,8 @@ import { formatNumber } from 'utils/utilFunctions'
 import { Network, Provider } from 'aptos'
 import { Dots } from '@sushiswap/ui/future/components/Dots'
 import { createToast } from 'components/toast'
+import { RemoveSectionUnstakeWidget } from 'components/RemoveSection/RemoveSectionUnstakeWidget'
+import { RemoveSectionUnstake } from 'components/RemoveSection/RemoveSectionUnstake'
 
 const MAINNET_CONTRACT = process.env['MAINNET_CONTRACT'] || process.env['NEXT_PUBLIC_MAINNET_CONTRACT']
 const TESTNET_CONTRACT = process.env['TESTNET_CONTRACT'] || process.env['NEXT_PUBLIC_TESTNET_CONTRACT']
@@ -156,6 +158,7 @@ const _Remove: FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
             <div className="hidden md:block" />
             <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">
+              <RemoveSectionUnstake />
               <RemoveSectionWidget
                 percentage={percentage}
                 setPercentage={setPercentage}
