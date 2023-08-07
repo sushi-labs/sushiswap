@@ -31,6 +31,7 @@ export const SUPPORTED_CHAINS = [
   ChainId.BOBA_BNB,
   ChainId.BTTC,
   ChainId.POLYGON_ZKEVM,
+  ChainId.ZKSYNC_ERA,
 ] as const
 
 export type SupportedChainIds = typeof SUPPORTED_CHAINS

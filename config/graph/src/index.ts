@@ -109,6 +109,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.POLYGON_ZKEVM]: 'Polygon zkEVM',
   [ChainId.CORE]: 'Core',
   [ChainId.BASE]: 'Base',
+  [ChainId.ZKSYNC_ERA]: 'zkSync Era',
 } as const
 
 export const SUBGRAPH_HOST: Record<number, string> = {
