@@ -7,7 +7,10 @@ import { classNames, Currency, SkeletonText } from '..'
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={classNames('rounded-xl border border-secondary bg-white dark:bg-secondary shadow-sm', className)}
+    className={classNames(
+      'rounded-xl border border-secondary dark:border-accent bg-white dark:bg-background shadow-sm',
+      className
+    )}
     {...props}
   />
 ))
