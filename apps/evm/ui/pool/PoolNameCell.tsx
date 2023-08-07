@@ -119,7 +119,7 @@ export const PoolNameCellPool: FC<Row<Pool>> = ({ original }) => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="bg-green/20 text-green text-[10px] px-2 rounded-full">
+                  <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
                     🧑‍🌾 {incentives.length > 1 ? `x ${incentives.length}` : ''}{' '}
                   </div>
                 </TooltipTrigger>

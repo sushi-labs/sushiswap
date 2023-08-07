@@ -98,7 +98,7 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
         <Card>
           <CardHeader>
             <CardTitle>
-              <div className="flex flex-col md:flex-row justify-between">
+              <div className="flex flex-col md:flex-row justify-between gap-y-4">
                 Details
                 <div className="flex items-center gap-1">
                   <Toggle

@@ -11,7 +11,7 @@ export default function TabsLayout({ children }: { children: React.ReactNode }) 
         <Hero />
       </Container>
       <Container maxWidth="7xl" className="px-4">
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex flex-wrap items-center gap-2 mb-4">
           <LinkInternal shallow={true} scroll={false} href={`/pool/`}>
             <PathnameButton pathname={`/pool`} asChild size="sm">
               All Pools

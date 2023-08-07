@@ -11,6 +11,7 @@ export const TableFiltersFarmsOnly: FC = () => {
 
   return (
     <Toggle
+      variant="outline"
       onPressedChange={() => setFilters((prev) => ({ ...prev, farmsOnly: !prev.farmsOnly }))}
       pressed={farmsOnly}
       size="sm"

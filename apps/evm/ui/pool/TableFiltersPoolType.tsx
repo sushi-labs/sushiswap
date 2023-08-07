@@ -101,7 +101,7 @@ export const TableFiltersPoolType: FC = () => {
       <PopoverContent align="start" className="!w-[unset] !p-0">
         <HoverCard>
           <PopoverPrimitive.Portal>
-            <HoverCardContent side="left" align="start" forceMount className="w-[240px]">
+            <HoverCardContent side="left" align="start" forceMount className="hidden md:block w-[240px]">
               <div className="flex flex-col gap-2">
                 <Label>{PROTOCOL_MAP[peekedProtocol]}</Label>
                 <div className="text-sm text-muted-foreground">{POOL_DESCRIPTIONS[peekedProtocol]}</div>

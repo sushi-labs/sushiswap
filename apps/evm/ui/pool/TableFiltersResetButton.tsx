@@ -26,7 +26,7 @@ export const TableFiltersResetButton: FC = () => {
 
   if ((types?.length ?? 0) + (networks?.length ?? 0) + (tokenSymbols?.length ?? 0) > 0 || farmsOnly) {
     return (
-      <Button onClick={reset} icon={XMarkIcon} iconPosition="end" variant="ghost" size="sm">
+      <Button onClick={reset} icon={XMarkIcon} iconPosition="end" variant="outline" size="sm">
         Reset
       </Button>
     )

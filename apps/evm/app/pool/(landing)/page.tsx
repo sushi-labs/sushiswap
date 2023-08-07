@@ -14,7 +14,7 @@ export default async function PoolPage() {
     <>
       <PoolsFiltersProvider>
         <Container maxWidth="7xl" className="px-4">
-          <div className="flex flex-col sm:flex-row gap-3 mb-4">
+          <div className="flex flex-wrap gap-3 mb-4">
             <TableFiltersSearchToken />
             <TableFiltersPoolType />
             <TableFiltersNetwork />

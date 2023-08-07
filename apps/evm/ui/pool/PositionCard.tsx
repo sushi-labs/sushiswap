@@ -62,7 +62,7 @@ export const PositionCard: FC<PositionCard> = ({ position }) => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className="py-1 bg-green/20 text-green text-xs px-2 rounded-full">
+                <div className="whitespace-nowrap py-1 bg-green/20 text-green text-xs px-2 rounded-full">
                   🧑‍🌾 {position.pool.incentives.length > 1 ? `x ${position.pool.incentives.length}` : ''}{' '}
                 </div>
               </TooltipTrigger>
