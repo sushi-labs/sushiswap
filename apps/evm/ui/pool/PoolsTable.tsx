@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  Bars3BottomLeftIcon,
   ChartPieIcon,
   EllipsisHorizontalIcon,
   GiftIcon,
@@ -130,17 +129,6 @@ const COLUMNS = [
               </DropdownMenuItem>
             </>
           ) : null}
-          <DropdownMenuItem asChild>
-            <Link
-              onClick={(e) => e.stopPropagation()}
-              shallow={true}
-              className="flex items-center"
-              href={`/pool/${row.original.chainId}%3A${row.original.address}/transactions`}
-            >
-              <Bars3BottomLeftIcon width={16} height={16} className="mr-2" />
-              Transactions
-            </Link>
-          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     ),
