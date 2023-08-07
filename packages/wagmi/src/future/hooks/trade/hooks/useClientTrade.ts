@@ -182,10 +182,17 @@ ${logPools}
                     ? Amount.fromRawAmount(
                         Native.onChain(chainId),
                         JSBI.multiply(JSBI.BigInt(feeData.gasPrice), JSBI.BigInt(route.gasSpent * 1.2))
-                      )
-                        .multiply(price.asFraction)
-                        .toSignificant(4)
+                      ).toSignificant(4)
                     : undefined,
+                // gasSpentUsd:
+                //   price && feeData.gasPrice
+                //     ? Amount.fromRawAmount(
+                //         Native.onChain(chainId),
+                //         JSBI.multiply(JSBI.BigInt(feeData.gasPrice), JSBI.BigInt(route.gasSpent * 1.2))
+                //       )
+                //         .multiply(price.asFraction)
+                //         .toSignificant(4)
+                //     : undefined,
                 route,
                 functionName: isOffset ? 'transferValueAndprocessRoute' : 'processRoute',
                 writeArgs,

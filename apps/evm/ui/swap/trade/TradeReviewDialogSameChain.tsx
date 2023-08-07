@@ -126,11 +126,18 @@ export const TradeReviewDialogSameChain: FC = () => {
                   )}
                 </List.KeyValue>
               )}
-              <List.KeyValue title="Network fee">
+              {/* <List.KeyValue title="Network fee">
                 {isFetching ? (
                   <SkeletonText align="right" fontSize="sm" className="w-1/3" />
                 ) : (
                   `~$${trade?.gasSpent ?? '0.00'}`
+                )}
+              </List.KeyValue> */}
+              <List.KeyValue title="Network fee">
+                {isFetching ? (
+                  <SkeletonText align="right" fontSize="sm" className="w-1/3" />
+                ) : (
+                  `~${trade?.gasSpent} ${Native.onChain(network0).symbol}`
                 )}
               </List.KeyValue>
               {isSwap && (
