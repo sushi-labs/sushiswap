@@ -1,6 +1,16 @@
 import { Protocol } from '@sushiswap/database'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Switch } from '@sushiswap/ui'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui/components/tabsnew'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Switch,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@sushiswap/ui'
 import React, { useState } from 'react'
 
 import { ConcentratedPositionsTable } from './ConcentratedPositionsTable'
