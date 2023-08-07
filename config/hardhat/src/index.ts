@@ -257,6 +257,11 @@ export const defaultConfig: HardhatUserConfig = {
       ethNetwork: 'goerli', // Can also be the RPC URL of the Ethereum network (e.g. `https://goerli.infura.io/v3/<API_KEY>`)
       zksync: true,
     },
+    'zksync-era': {
+      url: 'https://mainnet.era.zksync.io', // URL of the zkSync network RPC
+      ethNetwork: 'ethereum', // Can also be the RPC URL of the Ethereum network (e.g. `https://infura.io/v3/<API_KEY>`)
+      zksync: true,
+    },
     'scroll-alpha-testnet': {
       url: 'https://alpha-rpc.scroll.io/l2',
       accounts,
