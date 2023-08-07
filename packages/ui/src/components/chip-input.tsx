@@ -98,7 +98,7 @@ const ChipInput = React.forwardRef<HTMLInputElement, ChipInputProps>(
           className={classNames(
             className,
             state.length > 0 ? 'pr-[60px]' : '',
-            'flex flex-grow bg-transparent truncate'
+            'flex flex-grow bg-transparent truncate !outline-none !ring-0'
           )}
           ref={ref}
           {...props}
