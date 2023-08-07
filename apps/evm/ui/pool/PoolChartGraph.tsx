@@ -2,8 +2,8 @@
 
 import { ChainId } from '@sushiswap/chain'
 import { formatPercent, formatUSD } from '@sushiswap/format'
-import { classNames, SkeletonText } from '@sushiswap/ui'
-import { AppearOnMount } from '@sushiswap/ui/components/animation'
+import { CardContent, CardHeader, classNames, SkeletonText } from '@sushiswap/ui'
+import { CardDescription, CardTitle } from '@sushiswap/ui/components/card'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 import { format } from 'date-fns'
 import ReactECharts from 'echarts-for-react'
@@ -183,9 +183,9 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
   )
 
   return (
-    <div className="bg-white dark:bg-secondary p-4 rounded-2xl">
-      <div className="flex flex-col">
-        <p className="text-xl font-medium text-gray-900 dark:text-slate-50">
+    <>
+      <CardHeader>
+        <CardTitle>
           <span className="hoveredItemValue">
             {chart === PoolChartType.APR ? formatPercent(yData[yData.length - 1]) : formatUSD(yData[yData.length - 1])}
           </span>{' '}
@@ -196,20 +196,24 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
               earned
             </span>
           )}
-        </p>
-        {xData.length ? (
-          <p className="text-sm text-gray-500 dark:text-slate-500 hoveredItemName">
-            <AppearOnMount>{format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}</AppearOnMount>
-          </p>
+        </CardTitle>
+        <CardDescription>
+          {xData.length ? (
+            <p className="text-sm text-gray-500 dark:text-slate-500 hoveredItemName">
+              {format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}
+            </p>
+          ) : (
+            <SkeletonText fontSize="sm" />
+          )}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <SkeletonBox className={classNames('h-[400px] w-full dark:via-slate-800 dark:to-slate-900')} />
         ) : (
-          <SkeletonText fontSize="sm" />
+          <ReactECharts option={DEFAULT_OPTION} style={{ height: 400 }} />
         )}
-      </div>
-      {isLoading ? (
-        <SkeletonBox className={classNames('h-[400px] w-full dark:via-slate-800 dark:to-slate-900')} />
-      ) : (
-        <ReactECharts option={DEFAULT_OPTION} style={{ height: 400 }} />
-      )}
-    </div>
+      </CardContent>
+    </>
   )
 }

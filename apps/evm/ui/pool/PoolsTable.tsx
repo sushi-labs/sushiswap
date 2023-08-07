@@ -14,6 +14,9 @@ import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/c
 import { Native } from '@sushiswap/currency'
 import {
   Button,
+  Card,
+  CardHeader,
+  CardTitle,
   DataTable,
   DropdownMenu,
   DropdownMenuContent,
@@ -206,15 +209,23 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
         </div>
       }
     >
-      <DataTable
-        state={state}
-        onSortingChange={setSorting}
-        loading={!pools && isValidating}
-        linkFormatter={(row) => `/pool/${row.chainId}%3A${row.address}`}
-        rowRenderer={rowRenderer}
-        columns={COLUMNS}
-        data={data}
-      />
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            Pools{' '}
+            {poolCount?.count ? <span className="text-gray-400 dark:text-slate-500">({poolCount.count})</span> : null}
+          </CardTitle>
+        </CardHeader>
+        <DataTable
+          state={state}
+          onSortingChange={setSorting}
+          loading={!pools && isValidating}
+          linkFormatter={(row) => `/pool/${row.chainId}%3A${row.address}`}
+          rowRenderer={rowRenderer}
+          columns={COLUMNS}
+          data={data}
+        />
+      </Card>
     </InfiniteScroll>
   )
 }

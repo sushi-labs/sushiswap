@@ -1,15 +1,29 @@
 'use client'
 
-import { RadioGroup } from '@headlessui/react'
-import { ChainId } from '@sushiswap/chain'
+import { Chain } from '@sushiswap/chain'
 import { Amount } from '@sushiswap/currency'
+import { formatUSD } from '@sushiswap/format'
 import { JSBI } from '@sushiswap/math'
 import { useAngleRewards } from '@sushiswap/react-query'
-import { classNames, Tabs, TabsContent, TabsList, TabsTrigger, Toggle } from '@sushiswap/ui'
+import {
+  Card,
+  CardContent,
+  CardCurrencyAmountItem,
+  CardDescription,
+  CardFooter,
+  CardGroup,
+  CardHeader,
+  CardItem,
+  CardLabel,
+  CardTitle,
+  classNames,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Toggle,
+} from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { Currency } from '@sushiswap/ui/components/currency'
-import { Explainer } from '@sushiswap/ui/components/explainer'
-import { List } from '@sushiswap/ui/components/list/List'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { isSushiSwapV3ChainId, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
@@ -25,9 +39,10 @@ import { useSearchParams } from 'next/navigation'
 import React, { FC, Fragment, useMemo, useState } from 'react'
 import { z } from 'zod'
 
+import { isAngleEnabledChainId } from '../../config'
 import { Bound } from '../../lib/constants'
 import { formatTickPrice, getPriceOrderingFromPositionForUI, unwrapToken } from '../../lib/functions'
-import { usePriceInverter } from '../../lib/hooks'
+import { usePriceInverter, useTokenAmountDollarValues } from '../../lib/hooks'
 import { ConcentratedLiquidityCollectButton } from './ConcentratedLiquidityCollectButton'
 import { ConcentratedLiquidityHarvestButton } from './ConcentratedLiquidityHarvestButton'
 import { ConcentratedLiquidityProvider, useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
@@ -67,7 +82,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
   const { data: token0, isLoading: token0Loading } = useTokenWithCache({ chainId, address: positionDetails?.token0 })
   const { data: token1, isLoading: token1Loading } = useTokenWithCache({ chainId, address: positionDetails?.token1 })
 
-  const { data: position } = useConcentratedPositionInfo({
+  const { data: position, isLoading: isPositionLoading } = useConcentratedPositionInfo({
     chainId,
     token0,
     tokenId,
@@ -125,35 +140,45 @@ const Component: FC<{ id: string }> = ({ id }) => {
     account: owner,
   })
 
+  const fiatValuesAmounts = useTokenAmountDollarValues({ chainId, amounts })
+  const positionAmounts = useMemo(() => [position?.amount0, position?.amount1], [position])
+  const fiatValuesPosition = useTokenAmountDollarValues({ chainId, amounts: positionAmounts })
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-      <div className="flex flex-col flex-1 gap-10">
-        <Tabs className="w-full" defaultValue="add">
-          <TabsList className="!flex">
-            <TabsTrigger value="add" className="flex flex-1">
-              Add liquidity
-            </TabsTrigger>
-            <TabsTrigger value="remove" className="flex flex-1">
-              Remove liquidity
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="add">
-            <div className="mt-6">
-              <ConcentratedLiquidityWidget
-                withTitleAndDescription={false}
-                chainId={chainId}
-                account={address}
-                token0={_token0}
-                token1={_token1}
-                feeAmount={positionDetails?.fee}
-                tokensLoading={token0Loading || token1Loading}
-                existingPosition={position ?? undefined}
-                tokenId={tokenId}
-              />
-            </div>
-          </TabsContent>
-          <TabsContent value="remove">
-            <div className="mt-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="flex flex-col flex-1 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Manage</CardTitle>
+            <CardDescription>Manage your position by adding/removing liquidity</CardDescription>
+          </CardHeader>
+          <Tabs className="w-full" defaultValue="add">
+            <CardContent>
+              <TabsList className="!flex">
+                <TabsTrigger value="add" className="flex flex-1">
+                  Add liquidity
+                </TabsTrigger>
+                <TabsTrigger value="remove" className="flex flex-1">
+                  Remove liquidity
+                </TabsTrigger>
+              </TabsList>
+            </CardContent>
+            <TabsContent value="add">
+              <CardContent>
+                <ConcentratedLiquidityWidget
+                  withTitleAndDescription={false}
+                  chainId={chainId}
+                  account={address}
+                  token0={_token0}
+                  token1={_token1}
+                  feeAmount={positionDetails?.fee}
+                  tokensLoading={token0Loading || token1Loading}
+                  existingPosition={position ?? undefined}
+                  tokenId={tokenId}
+                />
+              </CardContent>
+            </TabsContent>
+            <TabsContent value="remove">
               <ConcentratedLiquidityRemoveWidget
                 token0={_token0}
                 token1={_token1}
@@ -162,91 +187,42 @@ const Component: FC<{ id: string }> = ({ id }) => {
                 position={position ?? undefined}
                 positionDetails={positionDetails}
               />
-            </div>
-          </TabsContent>
-        </Tabs>
+            </TabsContent>
+          </Tabs>
+        </Card>
       </div>
       <div className="flex flex-col flex-1 gap-6">
-        <List className="!pt-0">
-          <List.Control>
-            {position?.amount0 && _token0 ? (
-              <List.KeyValue flex title={`${_token0.symbol}`}>
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2">
-                    <Currency.Icon currency={_token0} width={18} height={18} />
-                    {position.amount0.toSignificant(4)} {_token0.symbol}
-                  </div>
-                </div>
-              </List.KeyValue>
-            ) : (
-              <List.KeyValue skeleton />
-            )}
-            {position?.amount1 && _token1 ? (
-              <List.KeyValue flex title={`${_token1.symbol}`}>
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2">
-                    <Currency.Icon currency={_token1} width={18} height={18} />
-                    {position.amount1.toSignificant(4)} {_token1.symbol}
-                  </div>
-                </div>
-              </List.KeyValue>
-            ) : (
-              <List.KeyValue skeleton />
-            )}
-          </List.Control>
-        </List>
-        {chainId === ChainId.POLYGON && (
-          <List className="!gap-1">
-            <div className="flex items-center justify-between">
-              <div className="flex flex-col">
-                <List.Label className="flex gap-1">
-                  Unclaimed rewards{' '}
-                  <Explainer>
-                    <List className="!pt-0 ">
-                      <List.Label>Accumulated rewards since inception</List.Label>
-                      <List.Control>
-                        {rewardsLoading ? (
-                          <List.KeyValue skeleton />
-                        ) : rewardsData &&
-                          positionDetails &&
-                          rewardsData.pools[positionDetails.address]?.rewardsPerToken ? (
-                          Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).map((el, i) => (
-                            <List.KeyValue key={i} flex title={`${el.accumulatedSinceInception.currency.symbol}`}>
-                              <div className="flex flex-col gap-2">
-                                <div className="flex items-center gap-2">
-                                  <Currency.Icon currency={el.unclaimed.currency} width={18} height={18} />
-                                  {el.accumulatedSinceInception.toSignificant(4)} {el.unclaimed.currency.symbol}
-                                </div>
-                              </div>
-                            </List.KeyValue>
-                          ))
-                        ) : (
-                          <List.KeyValue
-                            flex
-                            title={
-                              <span className="text-xs italic font-normal text-center text-gray-500 dark:text-slate-400">
-                                No rewards found
-                              </span>
-                            }
-                          >
-                            {' '}
-                          </List.KeyValue>
-                        )}
-                      </List.Control>
-                    </List>
-                  </Explainer>
-                </List.Label>
-              </div>
+        {isAngleEnabledChainId(chainId) ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>Unclaimed rewards</CardTitle>
+              <CardDescription>
+                Claiming rewards will claim your rewards for every liquidity position on {Chain.from(chainId).name}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CardGroup>
+                <CardLabel>Tokens</CardLabel>
+                {rewardsData && positionDetails && rewardsData.pools[positionDetails.address]?.rewardsPerToken ? (
+                  Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).map((el, i) => (
+                    <CardCurrencyAmountItem key={i} amount={el.unclaimed} />
+                  ))
+                ) : (
+                  <CardItem skeleton />
+                )}
+              </CardGroup>
+            </CardContent>
+            <CardFooter>
               <ConcentratedLiquidityHarvestButton account={address} chainId={chainId}>
                 {({ write, isLoading }) => (
-                  <Checker.Connect size="xs" variant="link">
-                    <Checker.Network size="xs" variant="link" chainId={chainId}>
+                  <Checker.Connect fullWidth variant="outline" size="default">
+                    <Checker.Network fullWidth variant="outline" size="default" chainId={chainId}>
                       <Button
+                        variant="secondary"
+                        fullWidth
                         disabled={isLoading}
                         onClick={() => write?.()}
-                        size="xs"
-                        variant="link"
-                        className="!justify-end"
+                        size="default"
                       >
                         Harvest
                       </Button>
@@ -254,42 +230,30 @@ const Component: FC<{ id: string }> = ({ id }) => {
                   </Checker.Connect>
                 )}
               </ConcentratedLiquidityHarvestButton>
-            </div>
-            <List.Control>
-              {rewardsLoading ? (
-                <List.KeyValue skeleton />
-              ) : rewardsData && positionDetails && rewardsData.pools[positionDetails.address]?.rewardsPerToken ? (
-                Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).map((el, i) => (
-                  <List.KeyValue key={i} flex title={`${el.unclaimed.currency.symbol}`}>
-                    <div className="flex flex-col gap-2">
-                      <div className="flex items-center gap-2">
-                        <Currency.Icon currency={el.unclaimed.currency} width={18} height={18} />
-                        {el.unclaimed.toSignificant(4)} {el.unclaimed.currency.symbol}
-                      </div>
-                    </div>
-                  </List.KeyValue>
-                ))
-              ) : (
-                <List.KeyValue
-                  flex
-                  title={
-                    <span className="text-xs italic font-normal text-center text-gray-500 dark:text-slate-400">
-                      No rewards found
-                    </span>
-                  }
-                >
-                  {' '}
-                </List.KeyValue>
-              )}
-            </List.Control>
-            <List.Label className="pt-1.5 font-normal text-gray-500 dark:text-slate-400">
-              Harvest all available pool rewards on the current network.
-            </List.Label>
-          </List>
-        )}
-        <List>
-          <div className="flex items-center justify-between">
-            <List.Label className="whitespace-nowrap">Unclaimed fees</List.Label>
+            </CardFooter>
+          </Card>
+        ) : null}
+        <Card>
+          <CardHeader>
+            <CardTitle>Unclaimed fees</CardTitle>
+            <CardDescription>{formatUSD(fiatValuesAmounts[0] + fiatValuesAmounts[1])}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CardGroup>
+              <CardLabel>Tokens</CardLabel>
+              <CardCurrencyAmountItem
+                amount={amounts[0]}
+                isLoading={isPositionLoading}
+                fiatValue={formatUSD(fiatValuesAmounts[0])}
+              />
+              <CardCurrencyAmountItem
+                amount={amounts[1]}
+                isLoading={isPositionLoading}
+                fiatValue={formatUSD(fiatValuesAmounts[1])}
+              />
+            </CardGroup>
+          </CardContent>
+          <CardFooter>
             <ConcentratedLiquidityCollectButton
               position={position ?? undefined}
               positionDetails={positionDetails}
@@ -299,97 +263,84 @@ const Component: FC<{ id: string }> = ({ id }) => {
               chainId={chainId}
             >
               {({ sendTransaction, isLoading }) => (
-                <Checker.Connect fullWidth={false} size="xs" variant="link">
-                  <Checker.Network fullWidth={false} size="xs" variant="link" chainId={chainId}>
-                    <Button disabled={isLoading} onClick={() => sendTransaction?.()} size="xs" variant="link">
+                <Checker.Connect variant="outline" fullWidth size="default">
+                  <Checker.Network variant="outline" fullWidth size="default" chainId={chainId}>
+                    <Button
+                      variant="secondary"
+                      fullWidth
+                      disabled={isLoading}
+                      onClick={() => sendTransaction?.()}
+                      size="default"
+                    >
                       Collect
                     </Button>
                   </Checker.Network>
                 </Checker.Connect>
               )}
             </ConcentratedLiquidityCollectButton>
-          </div>
-          <List.Control>
-            {amounts[0] ? (
-              <List.KeyValue flex title={`${amounts[0].currency.symbol}`}>
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2">
-                    <Currency.Icon currency={amounts[0].currency} width={18} height={18} />
-                    {amounts[0].toSignificant(4)} {amounts[0].currency.symbol}
-                  </div>
-                </div>
-              </List.KeyValue>
-            ) : (
-              <List.KeyValue skeleton />
-            )}
-            {amounts[1] ? (
-              <List.KeyValue flex title={`${amounts[1].currency.symbol}`}>
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2">
-                    <Currency.Icon currency={amounts[1].currency} width={18} height={18} />
-                    {amounts[1].toSignificant(4)} {amounts[1].currency.symbol}
-                  </div>
-                </div>
-              </List.KeyValue>
-            ) : (
-              <List.KeyValue skeleton />
-            )}
-          </List.Control>
-        </List>
-        <List className="!gap-2">
-          <List.Control className="flex flex-col gap-3 !bg-transparent !p-0">
-            <div className="p-4 inline-flex flex-col gap-2 bg-white dark:bg-secondary rounded-xl">
-              <div className="flex justify-between items-center">
-                <div className="flex">
-                  <div
-                    className={classNames(
-                      !inRange ? 'bg-yellow/10' : 'bg-green/10',
-                      'px-2 py-1 flex items-center gap-1 rounded-full'
-                    )}
-                  >
-                    <div className={classNames(outOfRange ? 'bg-yellow' : 'bg-green', 'w-3 h-3 rounded-full')} />
-                    {outOfRange ? (
-                      <span className="text-xs font-medium text-yellow-900 dark:text-yellow">Out of Range</span>
-                    ) : (
-                      <span className="text-xs font-medium text-green">In Range</span>
-                    )}
-                  </div>
-                </div>
-                {pool && currencyBase && currencyQuote ? (
-                  <span className="px-1 text-sm text-gray-600 dark:text-slate-200">
-                    <b>
+          </CardFooter>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex justify-between items-center">
+              Position Details
+              <div
+                className={classNames(
+                  !inRange ? 'bg-yellow/10' : 'bg-green/10',
+                  'px-2 py-1 flex items-center gap-1 rounded-full'
+                )}
+              >
+                <div className={classNames(outOfRange ? 'bg-yellow' : 'bg-green', 'w-3 h-3 rounded-full')} />
+                {outOfRange ? (
+                  <span className="text-xs font-medium text-yellow-900 dark:text-yellow">Out of Range</span>
+                ) : (
+                  <span className="text-xs font-medium text-green">In Range</span>
+                )}
+              </div>
+            </CardTitle>
+            <CardDescription>{formatUSD(fiatValuesAmounts.reduce((acc, cur) => acc + cur, 0))}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CardGroup>
+              <CardLabel>Tokens</CardLabel>
+              <CardCurrencyAmountItem
+                isLoading={isPositionLoading}
+                amount={position?.amount0}
+                fiatValue={formatUSD(fiatValuesPosition[0])}
+              />
+              <CardCurrencyAmountItem
+                isLoading={isPositionLoading}
+                amount={position?.amount1}
+                fiatValue={formatUSD(fiatValuesPosition[1])}
+              />
+            </CardGroup>
+            <CardGroup>
+              <CardLabel>Current price</CardLabel>
+              {pool && currencyBase && currencyQuote ? (
+                <CardItem
+                  title={
+                    <>
                       1 {unwrapToken(currencyBase)?.symbol} ={' '}
                       {(inverted ? pool?.token1Price : pool?.token0Price)?.toSignificant(6)}{' '}
                       {unwrapToken(currencyQuote)?.symbol}
-                    </b>
-                  </span>
-                ) : (
-                  <SkeletonText fontSize="sm" />
-                )}
-                <div className="flex items-center justify-end">
-                  {_token0 && _token1 && (
-                    <RadioGroup value={invert} onChange={setInvert} className="flex gap-1">
-                      <RadioGroup.Option as={Fragment} value={true}>
-                        {({ checked }) => (
-                          <Toggle size="xs" pressed={checked}>
-                            {_token0.symbol}
-                          </Toggle>
-                        )}
-                      </RadioGroup.Option>
-                      <RadioGroup.Option as={Fragment} value={false}>
-                        {({ checked }) => (
-                          <Toggle size="xs" pressed={checked}>
-                            {_token1.symbol}
-                          </Toggle>
-                        )}
-                      </RadioGroup.Option>
-                    </RadioGroup>
-                  )}
-                </div>
-              </div>
-            </div>
+                    </>
+                  }
+                >
+                  <div className="flex items-center gap-1">
+                    <Toggle pressed={invert} onClick={() => setInvert(true)} size="xs" variant="outline">
+                      {_token0?.symbol}
+                    </Toggle>
+                    <Toggle pressed={!invert} onClick={() => setInvert(false)} size="xs" variant="outline">
+                      {_token1?.symbol}
+                    </Toggle>
+                  </div>
+                </CardItem>
+              ) : (
+                <SkeletonText fontSize="sm" />
+              )}
+            </CardGroup>
             <div className="grid grid-cols-2 gap-3">
-              <div className="p-4 flex flex-col gap-3 bg-white dark:bg-secondary rounded-xl">
+              <div className="border border-accent p-4 flex flex-col gap-3 rounded-xl">
                 <div className="flex">
                   <div className="gap-1 px-2 py-1 text-xs font-medium rounded-full bg-pink/10 text-pink">Min Price</div>
                 </div>
@@ -411,7 +362,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                   </span>
                 )}
               </div>
-              <div className="p-4 inline-flex flex-col gap-3 bg-white dark:bg-secondary rounded-xl">
+              <div className="border border-accent p-4 flex flex-col gap-3 rounded-xl">
                 <div className="flex">
                   <div className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-blue/10 text-blue">
                     Max Price
@@ -436,8 +387,8 @@ const Component: FC<{ id: string }> = ({ id }) => {
                 )}
               </div>
             </div>
-          </List.Control>
-        </List>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

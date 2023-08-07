@@ -1,3 +1,4 @@
+import { Card } from '@sushiswap/ui'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import React, { FC, useMemo, useState } from 'react'
 
@@ -24,8 +25,8 @@ export const StatisticsCharts: FC<Charts> = ({ address, chainId }) => {
   }, [chart])
 
   return (
-    <div className="flex flex-col gap-6 h-[520px]">
-      <div className="flex flex-col items-center justify-between gap-5 md:flex-row">
+    <Card>
+      <div className="border-b border-accent px-6 py-4 flex flex-col items-center justify-between gap-4 md:flex-row">
         <PoolChartTypes charts={statisticsChart} selectedChart={chart} setChart={setChart} />
         <PoolChartPeriods periods={periods} selectedPeriod={period} setPeriod={setPeriod} />
       </div>
@@ -34,6 +35,6 @@ export const StatisticsCharts: FC<Charts> = ({ address, chainId }) => {
       ) : (
         <PoolChartGraph chart={chart} period={period} address={address} chainId={chainId} />
       )}
-    </div>
+    </Card>
   )
 }

@@ -3,7 +3,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
 import { formatNumber, formatPercent, formatUSD } from '@sushiswap/format'
-import { classNames } from '@sushiswap/ui'
+import { Card, CardContent, CardHeader, CardLabel, CardTitle, classNames } from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { usePoolGraphData } from 'lib/hooks'
 import { FC } from 'react'
@@ -19,91 +19,70 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
   })
 
   return (
-    <div className="py-4 grid grid-cols-2 gap-3 sm:grid-cols-4 justify-center">
-      <div className="flex flex-col gap-1">
-        <span className="text-xs text-gray-500 dark:text-slate-400">Liquidity</span>
-        {isLoading ? (
-          <SkeletonText />
-        ) : data ? (
-          <span className="font-medium text-gray-900 dark:text-slate-50">{formatUSD(data.liquidityUSD ?? 0)}</span>
-        ) : (
-          <></>
-        )}
-        {data ? (
-          <span className={classNames('text-xs', data.liquidity1dChange > 0 ? 'text-green' : 'text-red')}>
-            {data.liquidity1dChange > 0 ? '+' : '-'}
-            {formatPercent(Math.abs(data.liquidity1dChange))}
-          </span>
-        ) : isLoading ? (
-          <SkeletonText fontSize="xs" />
-        ) : (
-          <></>
-        )}
-      </div>
-      <div className="flex flex-col gap-1">
-        <span className="text-xs text-gray-500 dark:text-slate-400">Volume (24h)</span>
-        {data ? (
-          <span className="font-medium text-gray-900 dark:text-slate-50">{formatUSD(data.volume1d ?? 0)}</span>
-        ) : isLoading ? (
-          <SkeletonText />
-        ) : (
-          <></>
-        )}
-        {data ? (
-          <span className={classNames('text-xs', data.volume1dChange > 0 ? 'text-green' : 'text-red')}>
-            {data.volume1dChange > 0 ? '+' : '-'}
-            {formatPercent(Math.abs(data.volume1dChange))}
-          </span>
-        ) : isLoading ? (
-          <SkeletonText fontSize="xs" />
-        ) : (
-          <></>
-        )}
-      </div>
-      <div className="flex flex-col gap-1">
-        <span className="text-xs text-gray-500 dark:text-slate-400">Fees (24h)</span>
-
-        {data ? (
-          <span className="font-medium text-gray-900 dark:text-slate-50">{formatUSD(data.fees1d ?? 0)}</span>
-        ) : isLoading ? (
-          <SkeletonText />
-        ) : (
-          <></>
-        )}
-        {data ? (
-          <span className={classNames('text-xs', data.fees1dChange > 0 ? 'text-green' : 'text-red')}>
-            {data.fees1dChange > 0 ? '+' : '-'}
-            {formatPercent(Math.abs(data.fees1dChange))}
-          </span>
-        ) : isLoading ? (
-          <SkeletonText fontSize="xs" />
-        ) : (
-          <></>
-        )}
-      </div>
-      <div className="flex flex-col gap-1">
-        <span className="text-xs text-gray-500 dark:text-slate-400">Transactions (24h)</span>
-        {data ? (
-          <span className="font-medium text-gray-900 dark:text-slate-50">
-            {/* Don't need decimals for a count */}
-            {formatNumber(data.txCount1d).replace('.00', '')}
-          </span>
-        ) : isLoading ? (
-          <SkeletonText />
-        ) : (
-          <></>
-        )}
-        {data ? (
-          <span className={classNames('text-xs', data.txCount1dChange > 0 ? 'text-green' : 'text-red')}>
-            {data.txCount1dChange > 0 ? '+' : '-'}
-            {formatPercent(Math.abs(data.txCount1dChange))}
-          </span>
-        ) : isLoading ? (
-          <SkeletonText fontSize="xs" />
-        ) : (
-          <></>
-        )}
-      </div>
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Details</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <CardLabel>Liquidity</CardLabel>
+            {isLoading ? (
+              <SkeletonText />
+            ) : data ? (
+              <div className="text-xl font-semibold">
+                {formatUSD(data.liquidityUSD ?? 0)}{' '}
+                <span className={classNames('text-xs', data.liquidity1dChange > 0 ? 'text-green' : 'text-red')}>
+                  {data.liquidity1dChange > 0 ? '+' : '-'}
+                  {formatPercent(Math.abs(data.liquidity1dChange))}
+                </span>
+              </div>
+            ) : null}
+          </div>
+          <div>
+            <CardLabel>Volume (24h)</CardLabel>
+            {data ? (
+              <div className="text-xl font-semibold">
+                {formatUSD(data.volume1d ?? 0)}{' '}
+                <span className={classNames('text-xs', data.volume1dChange > 0 ? 'text-green' : 'text-red')}>
+                  {data.volume1dChange > 0 ? '+' : '-'}
+                  {formatPercent(Math.abs(data.volume1dChange))}
+                </span>
+              </div>
+            ) : isLoading ? (
+              <SkeletonText />
+            ) : null}
+          </div>
+          <div>
+            <CardLabel>Fees (24h)</CardLabel>
+            {data ? (
+              <div className="text-xl font-semibold">
+                {formatUSD(data.fees1d ?? 0)}{' '}
+                <span className={classNames('text-xs', data.fees1dChange > 0 ? 'text-green' : 'text-red')}>
+                  {data.fees1dChange > 0 ? '+' : '-'}
+                  {formatPercent(Math.abs(data.fees1dChange))}
+                </span>
+              </div>
+            ) : isLoading ? (
+              <SkeletonText />
+            ) : null}
+          </div>
+          <div>
+            <CardLabel>Transactions (24h)</CardLabel>
+            {data ? (
+              <div className="text-xl font-semibold">
+                {formatNumber(data.txCount1d).replace('.00', '')}{' '}
+                <span className={classNames('text-xs', data.txCount1dChange > 0 ? 'text-green' : 'text-red')}>
+                  {data.txCount1dChange > 0 ? '+' : '-'}
+                  {formatPercent(Math.abs(data.txCount1dChange))}
+                </span>
+              </div>
+            ) : isLoading ? (
+              <SkeletonText />
+            ) : null}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   )
 }

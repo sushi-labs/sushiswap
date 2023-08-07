@@ -6,7 +6,7 @@ import { Chain } from '@sushiswap/chain'
 import { usePool } from '@sushiswap/client'
 import { Token } from '@sushiswap/currency'
 import { formatPercent, shortenAddress } from '@sushiswap/format'
-import { Button, Currency, IconButton, typographyVariants } from '@sushiswap/ui'
+import { Button, classNames, Currency, IconButton, typographyVariants } from '@sushiswap/ui'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
 import { Pool } from '@sushiswap/v3-sdk'
 import { unwrapToken } from 'lib/functions'
@@ -82,6 +82,26 @@ export const PoolHeader: FC<PoolHeader> = ({ address, pool, apy, priceRange }) =
                 {token0.symbol}/{token1.symbol}
               </Link>
             </Button>
+            {pool instanceof Pool ? null : (
+              <div
+                className={classNames(
+                  pool.protocol === 'SUSHISWAP_V3'
+                    ? 'bg-blue/20 text-blue'
+                    : pool.protocol === 'SUSHISWAP_V2'
+                    ? 'bg-pink/20 text-pink'
+                    : 'bg-green/20 text-green',
+                  'text-sm px-2 py-1 font-semibold rounded-full mt-0.5'
+                )}
+              >
+                {pool.protocol === 'SUSHISWAP_V3'
+                  ? 'V3'
+                  : pool.protocol === 'SUSHISWAP_V2'
+                  ? 'V2'
+                  : pool.protocol === 'BENTOBOX_CLASSIC'
+                  ? 'Classic'
+                  : 'Stable'}
+              </div>
+            )}
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-y-3 gap-x-6 text-secondary-foreground mb-8 mt-1.5">

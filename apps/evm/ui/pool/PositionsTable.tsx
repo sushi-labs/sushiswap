@@ -2,10 +2,10 @@ import { Slot } from '@radix-ui/react-slot'
 import { Protocol } from '@sushiswap/database'
 import { DataTable } from '@sushiswap/ui'
 import { useAccount } from '@sushiswap/wagmi'
-import { ColumnDef, Row } from '@tanstack/react-table'
+import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import { useUserPositions } from 'lib/hooks'
-import React, { FC, ReactNode, useCallback, useMemo } from 'react'
+import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { PositionWithPool } from 'types'
 
 import { APR_COLUMN, NAME_COLUMN_POSITION_WITH_POOL, VALUE_COLUMN } from './columns'
@@ -27,6 +27,10 @@ const tableState = { sorting: [{ id: 'value', desc: true }] }
 export const PositionsTable: FC<PositionsTableProps> = ({ protocol, onRowClick, rowLink }) => {
   const { address } = useAccount()
   const { chainIds, tokenSymbols } = usePoolFilters()
+  const [paginationState, setPaginationState] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  })
 
   const { data: positions, isValidating } = useUserPositions({ id: address, chainIds: SUPPORTED_CHAIN_IDS })
 
@@ -60,12 +64,17 @@ export const PositionsTable: FC<PositionsTableProps> = ({ protocol, onRowClick, 
 
   return (
     <DataTable
-      state={tableState}
       loading={isValidating}
       rowRenderer={rowRenderer}
       linkFormatter={rowLink}
       columns={COLUMNS}
       data={_positions}
+      pagination={true}
+      onPaginationChange={setPaginationState}
+      state={{
+        ...tableState,
+        pagination: paginationState,
+      }}
     />
   )
 }

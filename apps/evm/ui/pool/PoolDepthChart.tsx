@@ -1,6 +1,6 @@
 import { formatUSD } from '@sushiswap/format'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
-import { Toggle } from '@sushiswap/ui'
+import { CardContent, CardDescription, CardHeader, CardTitle, Toggle } from '@sushiswap/ui'
 import ReactECharts, { EChartsOption } from 'echarts-for-react'
 import { useTheme } from 'next-themes'
 import React, { FC, useCallback, useMemo, useState } from 'react'
@@ -54,11 +54,15 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({ poolStats, series: _se
       const valueNodes = document.getElementsByClassName('hoveredItemValue')
 
       if (valueNodes[0]) {
-        valueNodes[0].innerHTML = getTvlUSD(value[1], Number(poolStats.totalSupply), Number(poolStats.liquidityUSD))
+        valueNodes[0].innerHTML = `Total ${getTvlUSD(
+          value[1],
+          Number(poolStats.totalSupply),
+          Number(poolStats.liquidityUSD)
+        )}`
       }
 
       if (valueNodes[1]) {
-        valueNodes[1].innerHTML = `${value[0].toFixed(3)} ${token1.symbol} per ${token0.symbol}`
+        valueNodes[1].innerHTML = `At tick ${value[0].toFixed(3)} ${token1.symbol} per ${token0.symbol}`
       }
     },
     [poolStats.liquidityUSD, poolStats.totalSupply, token0.symbol, token1.symbol]
@@ -73,7 +77,7 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({ poolStats, series: _se
         backgroundColor: 'transparent',
         textStyle: {
           fontSize: 12,
-          fontWeight: 600,
+          fontWeight: 500,
         },
         // rome-ignore lint: echarts doesn't have types
         formatter: (params: any) => {
@@ -84,15 +88,12 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({ poolStats, series: _se
 
           const tvlUSD = getTvlUSD(params[0].data[1], poolStats.totalSupply, poolStats.liquidityUSD)
 
-          return `<div class="flex flex-col gap-0.5 paper bg-white/50 dark:bg-slate-800/50 px-3 py-2 rounded-xl overflow-hidden shadow-lg">
-                    <div>Tick stats</div>
-                    <div class="grid grid-cols-2 text-sm dark:text-slate-50 text-gray-900 font-medium">
-                      <div>${token0.symbol} Price:</div>
-                      <div class="flex w-full justify-end">${price0} ${token1.symbol}</div>
-                      <div>${token1.symbol} Price:</div>
-                      <div class="flex w-full justify-end">${price1} ${token0.symbol}</div>
-                      <div>Total Value:</div>
-                      <div class="flex w-full justify-end">${tvlUSD}</div>
+          return `<div class="flex flex-col gap-1.5 bg-white dark:bg-secondary p-4 rounded-lg overflow-hidden shadow-md">
+                    <div className="font-normal text-xs text-gray-400 dark:text-slate-500">Tick stats</div>
+                    <div class="flex flex-col gap-1 text-xs dark:text-slate-50 text-gray-900">
+                      <span>1 ${token0.symbol} = ${price0} ${token1.symbol}</span>
+                      <span>1 ${token1.symbol} = ${price1} ${token0.symbol}</span>
+                      <span>Cum. liquidity value: ${tvlUSD}</span>
                     </div>
                   </div>`
         },
@@ -173,7 +174,16 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({ poolStats, series: _se
         },
       ],
     }),
-    [series, current, onMouseOver, poolStats, resolvedTheme, invertTokens]
+    [
+      series,
+      current,
+      resolvedTheme,
+      onMouseOver,
+      poolStats.totalSupply,
+      poolStats.liquidityUSD,
+      token0.symbol,
+      token1.symbol,
+    ]
   )
 
   const currentLiquidity = useMemo(
@@ -185,31 +195,32 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({ poolStats, series: _se
   )
 
   return (
-    <div className="relative space-y-4">
-      <div className="flex flex-col">
-        <p className="space-x-1 text-xl font-medium text-gray-900 dark:text-slate-50">
-          <span className="hoveredItemValue">
-            {getTvlUSD(currentLiquidity, Number(poolStats.totalSupply), Number(poolStats.liquidityUSD))}
-          </span>
-          <span className="space-x-1 text-sm font-medium text-gray-600 dark:text-slate-300">
-            <span className="text-xs top-[-2px] relative">•</span>
+    <>
+      <CardHeader>
+        <CardTitle className="max-h-[18px]">
+          <div className="flex justify-between">
             <span className="hoveredItemValue">
-              {current.toFixed(3)} {token1.symbol} per {token0.symbol}
+              Total: {getTvlUSD(currentLiquidity, Number(poolStats.totalSupply), Number(poolStats.liquidityUSD))}
             </span>
+            <div className="flex items-center gap-1">
+              <Toggle variant="outline" onClick={() => setInvertTokens(false)} pressed={!invertTokens} size="xs">
+                {invertTokens ? token1?.symbol : token0?.symbol}
+              </Toggle>
+              <Toggle variant="outline" onClick={() => setInvertTokens(true)} pressed={invertTokens} size="xs">
+                {invertTokens ? token0?.symbol : token1?.symbol}
+              </Toggle>
+            </div>
+          </div>
+        </CardTitle>
+        <CardDescription>
+          <span className="hoveredItemValue">
+            At tick: {current.toFixed(3)} {token1.symbol} per {token0.symbol}
           </span>
-        </p>
-      </div>
-      <ReactECharts option={DEFAULT_OPTION} style={{ height: 405 }} />
-      <div>
-        <div className="flex w-min gap-2 rounded-xl bg-gray-100 dark:bg-white/[0.02] p-1">
-          <Toggle onPressedChange={() => setInvertTokens(false)} pressed={!invertTokens} size="xs">
-            {invertTokens ? token1?.symbol : token0?.symbol}
-          </Toggle>
-          <Toggle onPressedChange={() => setInvertTokens(true)} pressed={invertTokens} size="xs">
-            {invertTokens ? token0?.symbol : token1?.symbol}
-          </Toggle>
-        </div>
-      </div>
-    </div>
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ReactECharts option={DEFAULT_OPTION} style={{ height: 405 }} />
+      </CardContent>
+    </>
   )
 }

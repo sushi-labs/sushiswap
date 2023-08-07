@@ -22,7 +22,7 @@ import {
 } from '@tanstack/react-table'
 import { default as React, ReactNode } from 'react'
 
-import { classNames } from '../../index'
+import { CardContent, classNames } from '../../index'
 import { Table, TableBody, TableCell, TableCellAsLink, TableHead, TableHeader, TableRow } from '../tablenew'
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTablePagination } from './data-table-pagination'
@@ -46,9 +46,11 @@ interface DataTableProps<TData, TValue> {
   onSortingChange?: OnChangeFn<SortingState>
   onPaginationChange?: OnChangeFn<PaginationState>
   rowRenderer?: (row: Row<TData>, value: ReactNode) => ReactNode
+  border?: boolean
 }
 
 export function DataTable<TData, TValue>({
+  border = true,
   testId,
   columns,
   data,
@@ -91,75 +93,74 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 border-t border-secondary">
       {toolbar ? toolbar(table) : null}
-      <div className="border border-accent rounded-xl">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id} className={classNames(header.column.getCanSort() ? 'px-2' : 'px-4')}>
-                      {header.isPlaceholder ? null : (
-                        <DataTableColumnHeader
-                          column={header.column}
-                          title={header.column.columnDef.header as string}
-                        />
-                      )}
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              Array.from({ length: 3 })
-                .fill(null)
-                .map((_, i) => (
-                  <TableRow key={i}>
-                    {table.getVisibleFlatColumns().map((cell) => {
-                      return <TableCell key={cell.id}>{cell.columnDef.meta?.skeleton}</TableCell>
-                    })}
-                  </TableRow>
-                ))
-            ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row, r) => {
-                const _row = (
-                  <TableRow data-state={row.getIsSelected() && 'selected'} testdata-id={`${testId}-${r}-tr`}>
-                    {row.getVisibleCells().map((cell, i) =>
-                      linkFormatter ? (
-                        <TableCellAsLink
-                          href={linkFormatter(row.original)}
-                          key={cell.id}
-                          testdata-id={`${testId}-${r}-${i}-td`}
-                        >
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCellAsLink>
-                      ) : (
-                        <TableCell testdata-id={`${testId}-${r}-${i}-td`} key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      )
+      <Table className={pagination ? 'border-b border-secondary' : ''}>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead key={header.id} className={classNames(header.column.getCanSort() ? 'px-2' : 'px-4')}>
+                    {header.isPlaceholder ? null : (
+                      <DataTableColumnHeader column={header.column} title={header.column.columnDef.header as string} />
                     )}
-                  </TableRow>
+                  </TableHead>
                 )
+              })}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {loading ? (
+            Array.from({ length: 3 })
+              .fill(null)
+              .map((_, i) => (
+                <TableRow key={i}>
+                  {table.getVisibleFlatColumns().map((cell) => {
+                    return <TableCell key={cell.id}>{cell.columnDef.meta?.skeleton}</TableCell>
+                  })}
+                </TableRow>
+              ))
+          ) : table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row, r) => {
+              const _row = (
+                <TableRow data-state={row.getIsSelected() && 'selected'} testdata-id={`${testId}-${r}-tr`}>
+                  {row.getVisibleCells().map((cell, i) =>
+                    linkFormatter ? (
+                      <TableCellAsLink
+                        href={linkFormatter(row.original)}
+                        key={cell.id}
+                        testdata-id={`${testId}-${r}-${i}-td`}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCellAsLink>
+                    ) : (
+                      <TableCell testdata-id={`${testId}-${r}-${i}-td`} key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    )
+                  )}
+                </TableRow>
+              )
 
-                if (rowRenderer) return rowRenderer(row, _row)
-                return _row
-              })
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      {pagination ? <DataTablePagination table={table} /> : null}
+              if (rowRenderer) return rowRenderer(row, _row)
+              return _row
+            })
+          ) : (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-24 text-center">
+                No results.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+      {pagination ? (
+        <CardContent>
+          <DataTablePagination table={table} />
+        </CardContent>
+      ) : null}
     </div>
   )
 }

@@ -1,13 +1,13 @@
 'use client'
 
 import { Slot } from '@radix-ui/react-slot'
-import { DataTable } from '@sushiswap/ui'
+import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future'
 import { useConcentratedLiquidityPositions } from '@sushiswap/wagmi/future/hooks'
-import { ColumnDef, Row } from '@tanstack/react-table'
-import React, { FC, ReactNode, useCallback, useMemo } from 'react'
+import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
+import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { Writeable } from 'zod'
 
 import { NAME_COLUMN_V3, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL, PRICE_RANGE_COLUMN } from './columns'
@@ -64,6 +64,10 @@ interface ConcentratedPositionsTableProps {
 export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> = ({ onRowClick, poolId, hideClosed }) => {
   const { address } = useAccount()
   const { chainIds, tokenSymbols } = usePoolFilters()
+  const [paginationState, setPaginationState] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  })
 
   const { data: positions, isInitialLoading } = useConcentratedLiquidityPositions({
     account: address,
@@ -103,14 +107,26 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> = (
   )
 
   return (
-    <DataTable
-      testId="concentrated-positions"
-      state={tableState}
-      loading={isInitialLoading}
-      linkFormatter={(row) => `/pool/${row.chainId}:${row.address}/positions/${row.tokenId.toString()}`}
-      rowRenderer={rowRenderer}
-      columns={COLUMNS}
-      data={_positions}
-    />
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          My Positions <span className="text-gray-400 dark:text-slate-500">({_positions.length})</span>
+        </CardTitle>
+      </CardHeader>
+      <DataTable
+        testId="concentrated-positions"
+        loading={isInitialLoading}
+        linkFormatter={(row) => `/pool/${row.chainId}:${row.address}/positions/${row.tokenId.toString()}`}
+        rowRenderer={rowRenderer}
+        columns={COLUMNS}
+        data={_positions}
+        pagination={true}
+        onPaginationChange={setPaginationState}
+        state={{
+          ...tableState,
+          pagination: paginationState,
+        }}
+      />
+    </Card>
   )
 }

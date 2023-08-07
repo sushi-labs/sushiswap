@@ -1,6 +1,7 @@
 'use client'
 
 import { ChainId } from '@sushiswap/chain'
+import { Card } from '@sushiswap/ui'
 import React, { FC, useState } from 'react'
 
 import { PoolChartGraph } from './PoolChartGraph'
@@ -26,13 +27,13 @@ const PoolChartV2: FC<PoolChartV2Props> = ({ address, chainId }) => {
   const [period, setPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Month)
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex flex-col items-center justify-between gap-5 md:flex-row">
+    <Card>
+      <div className="border-b border-accent px-6 py-4 flex flex-col items-center justify-between gap-4 md:flex-row">
         <PoolChartTypes charts={charts} selectedChart={chart} setChart={setChart} />
         <PoolChartPeriods periods={periods} selectedPeriod={period} setPeriod={setPeriod} />
       </div>
       <PoolChartGraph chart={chart} period={period} address={address} chainId={chainId} />
-    </div>
+    </Card>
   )
 }
 

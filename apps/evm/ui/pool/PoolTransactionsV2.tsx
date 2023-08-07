@@ -1,11 +1,10 @@
 'use client'
 
-import { RadioGroup } from '@headlessui/react'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { SUBGRAPH_HOST, SUSHISWAP_SUBGRAPH_NAME } from '@sushiswap/graph-config'
-import { DataTable } from '@sushiswap/ui'
+import { Card, CardContent, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import { Toggle } from '@sushiswap/ui/components/toggle'
 import { isSushiSwapV2ChainId, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { useQuery } from '@tanstack/react-query'
@@ -250,43 +249,55 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool, poolId }) => {
   }, [data])
 
   return (
-    <div>
-      <RadioGroup value={type} onChange={setType} className="flex gap-2 mb-3">
-        <RadioGroup.Option value={TransactionType.Swap}>
-          {({ checked }) => (
-            <Toggle size="xs" pressed={checked}>
-              Swaps
-            </Toggle>
-          )}
-        </RadioGroup.Option>
-        <RadioGroup.Option value={TransactionType.Mint}>
-          {({ checked }) => (
-            <Toggle size="xs" pressed={checked}>
-              Add liquidity
-            </Toggle>
-          )}
-        </RadioGroup.Option>
-        <RadioGroup.Option value={TransactionType.Burn}>
-          {({ checked }) => (
-            <Toggle size="xs" pressed={checked}>
-              Remove liquidity
-            </Toggle>
-          )}
-        </RadioGroup.Option>
-      </RadioGroup>
-
-      <DataTable
-        linkFormatter={(row) => Chain.from(row.pool.chainId).getTxUrl(row.txHash)}
-        loading={isLoading}
-        columns={COLUMNS}
-        data={_data}
-        pagination={true}
-        onPaginationChange={setPaginationState}
-        state={{
-          pagination: paginationState,
-        }}
-      />
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          <div className="flex flex-col md:flex-row justify-between gap-y-4">
+            Transactions
+            <div className="flex items-center gap-1">
+              <Toggle
+                variant="outline"
+                size="xs"
+                pressed={type === TransactionType.Swap}
+                onClick={() => setType(TransactionType.Swap)}
+              >
+                Swaps
+              </Toggle>
+              <Toggle
+                variant="outline"
+                size="xs"
+                pressed={type === TransactionType.Mint}
+                onClick={() => setType(TransactionType.Mint)}
+              >
+                Add
+              </Toggle>
+              <Toggle
+                variant="outline"
+                size="xs"
+                pressed={type === TransactionType.Burn}
+                onClick={() => setType(TransactionType.Burn)}
+              >
+                Remove
+              </Toggle>
+            </div>
+          </div>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="!px-0">
+        <DataTable
+          border={false}
+          linkFormatter={(row) => Chain.from(row.pool.chainId).getTxUrl(row.txHash)}
+          loading={isLoading}
+          columns={COLUMNS}
+          data={_data}
+          pagination={true}
+          onPaginationChange={setPaginationState}
+          state={{
+            pagination: paginationState,
+          }}
+        />
+      </CardContent>
+    </Card>
   )
 }
 

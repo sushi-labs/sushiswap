@@ -1,4 +1,4 @@
-import { Bars3BottomLeftIcon, ChartPieIcon, MinusIcon, PlusIcon, UserIcon } from '@heroicons/react/24/outline'
+import { ChartPieIcon, MinusIcon, PlusIcon, UserIcon } from '@heroicons/react/24/outline'
 import { ChainId } from '@sushiswap/chain'
 import { Breadcrumb, Button, buttonIconVariants, Container } from '@sushiswap/ui'
 import Link from 'next/link'
@@ -56,12 +56,6 @@ export default async function Layout({ children, params }: { children: React.Rea
                 </PathnameButton>
               </Link>
             ) : null}
-            <Link shallow={true} href={`/pool/${params.id}/transactions`}>
-              <PathnameButton pathname={`/pool/${params.id}/transactions`} asChild size="sm">
-                <Bars3BottomLeftIcon className={buttonIconVariants({ size: 'sm' })} />
-                Transactions
-              </PathnameButton>
-            </Link>
           </div>
           {pool.protocol === 'SUSHISWAP_V3' ? (
             <Link shallow={true} href={`/pool/${params.id}/positions/create`}>
@@ -73,7 +67,7 @@ export default async function Layout({ children, params }: { children: React.Rea
         </div>
       </Container>
       <section className="flex flex-col flex-1">
-        <div className="bg-gray-50 dark:bg-white/[0.02] pt-4 pb-20 h-full">
+        <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-20 h-full">
           <Container maxWidth="5xl" className="px-4">
             {children}
           </Container>
