@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { Address, createPublicClient, http, Log, parseAbiItem, PublicClient } from 'viem'
-import { Chain, mainnet, polygon } from 'viem/chains'
+import { arbitrum, Chain, mainnet, optimism, polygon } from 'viem/chains'
 
 import { RP3Address } from './Extractor.test'
 
@@ -71,6 +71,8 @@ class Diargam {
 const coinGeckoPlatform: Record<ChainId, string> = {
   [ChainId.ETHEREUM]: 'ethereum',
   [ChainId.POLYGON]: 'polygon-pos',
+  [ChainId.ARBITRUM]: 'arbitrum-one',
+  [ChainId.OPTIMISM]: 'optimistic-ethereum',
 }
 const tokenCache: Map<Address, number | null> = new Map()
 async function getPrice(token: Address, chainId: ChainId): Promise<number | null> {
@@ -166,6 +168,7 @@ async function getSlippageStatistics(args: {
   } else console.log(`Total logs: ${logs.length}`)
 }
 
+// 10K/month + 10K/month if protected against MEV
 it.skip('RP3 Ethereum slippage statistics', async () => {
   await getSlippageStatistics({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
@@ -175,11 +178,32 @@ it.skip('RP3 Ethereum slippage statistics', async () => {
   })
 })
 
+// 1.5K/month
 it.skip('RP3 Polygon slippage statistics', async () => {
   await getSlippageStatistics({
     providerURL: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: polygon,
     blockQuantity: 100_000,
     RP3Address: RP3Address[ChainId.POLYGON] as Address,
+  })
+})
+
+// 5K/month
+it.skip('RP3 Arbitrum slippage statistics', async () => {
+  await getSlippageStatistics({
+    providerURL: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
+    chain: arbitrum,
+    blockQuantity: 1_000_000,
+    RP3Address: RP3Address[ChainId.ARBITRUM] as Address,
+  })
+})
+
+// 500/month
+it.skip('RP3 Optimism slippage statistics', async () => {
+  await getSlippageStatistics({
+    providerURL: `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
+    chain: optimism,
+    blockQuantity: 500_000,
+    RP3Address: RP3Address[ChainId.OPTIMISM] as Address,
   })
 })
