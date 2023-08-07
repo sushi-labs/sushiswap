@@ -17,7 +17,7 @@ interface PropType {
   setAmount?: (value: string) => void
   disabled?: boolean
   setToken: (token: Token) => void
-  balance: number
+  balance: number | undefined
   error?: string
   isLoadingPrice: boolean
   tradeVal?: React.RefObject<HTMLInputElement>
@@ -144,7 +144,7 @@ export default function TradeInput({
       <div className="flex flex-row items-center justify-between h-[36px]">
         <PricePanel isLoading={isLoadingPrice} error={error} />
         <BalancePanel
-          coinData={balance}
+          coinData={balance ? balance : 0}
           isLoading={isLoadingPrice}
           decimals={token?.decimals}
           onClick={balanceClick}

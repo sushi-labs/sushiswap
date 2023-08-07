@@ -1,8 +1,38 @@
+import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Typography } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { Network, Provider } from 'aptos'
+import WalletSelector from 'components/WalletSelector'
+import { useParams } from 'next/navigation'
 import { FC } from 'react'
-
-export const PoolMyRewards: FC<> = ({}) => {
+import { formatNumber } from 'utils/utilFunctions'
+interface Props {
+  isFarm: Boolean
+  reward: number
+  decimals: number | undefined
+  isLoading: boolean
+}
+const MASTERCHEF_CONTRACT = process.env['MASTERCHEF_CONTRACT'] || process.env['NEXT_PUBLIC_MASTERCHEF_CONTRACT']
+const MAINNET_CONTRACT = process.env['MAINNET_CONTRACT'] || process.env['NEXT_PUBLIC_MAINNET_CONTRACT']
+export const PoolMyRewards: FC<Props> = ({ isFarm, reward, decimals, isLoading }) => {
+  const router = useParams()
+  const { connected, signAndSubmitTransaction } = useWallet()
+  const [chainId, ...address] = decodeURIComponent(router?.id).split(':')
+  const tokenAddress = address.join(':')
+  const harvest = async () => {
+    const provider = new Provider(Network.MAINNET)
+    try {
+      const response = await signAndSubmitTransaction({
+        type: 'entry_function_payload',
+        type_arguments: [`${MAINNET_CONTRACT}::swap::LPToken<${tokenAddress}>`],
+        arguments: [0],
+        function: `${MASTERCHEF_CONTRACT}::masterchef::deposit`,
+      })
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  if (!isFarm) return <></>
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col bg-white dark:bg-slate-800 rounded-2xl">
@@ -17,25 +47,39 @@ export const PoolMyRewards: FC<> = ({}) => {
           </div>
         </div>
         <div className="flex flex-col gap-3 px-5 py-4">
-          {() => {
-            return (
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Typography variant="sm" weight={600} className="dark:text-slate-300 text-gray-700">
-                    {}
-                  </Typography>
-                </div>
-                <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600 text-gray-600">
-                  {`$0.00`}
+          {isLoading ? (
+            <div className="grid justify-between grid-cols-10 gap-2">
+              <div className="h-[20px] bg-slate-700 animate-pulse col-span-8 rounded-full" />
+              <div className="h-[20px] bg-slate-700 animate-pulse col-span-2 rounded-full" />
+            </div>
+          ) : (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <img
+                  src="https://cdn.sushi.com/image/upload/f_auto,c_limit,w_64,q_auto/tokens/137/0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a.jpg"
+                  className="rounded-full"
+                  height={20}
+                  width={20}
+                  alt=""
+                />
+                <Typography variant="sm" weight={600} className="dark:text-slate-300 text-gray-700">
+                  {reward ? formatNumber(reward, decimals as number) : 0} SUSHI
                 </Typography>
               </div>
-            )
-          }}
+              <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600">
+                {`$0.00`}
+              </Typography>
+            </div>
+          )}
         </div>
       </div>
-      <Button size="xl" fullWidth onClick={() => {}}>
-        Claim
-      </Button>
+      {!connected ? (
+        <WalletSelector color="blue" size="xl" fullWidth={true} />
+      ) : (
+        <Button size="xl" fullWidth onClick={harvest}>
+          Claim
+        </Button>
+      )}
     </div>
   )
 }

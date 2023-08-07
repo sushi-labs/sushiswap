@@ -8,9 +8,10 @@ import { useBreakpoint } from '@sushiswap/hooks'
 interface PoolPositionProps {
   row: Pool
   isLoading: boolean
+  stakeAmount: number
 }
 
-export const PoolPosition: FC<PoolPositionProps> = ({ row, isLoading }) => {
+export const PoolPosition: FC<PoolPositionProps> = ({ row, isLoading, stakeAmount }) => {
   const { isLg } = useBreakpoint('lg')
   if (!isLg) return <></>
   return (
@@ -26,7 +27,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({ row, isLoading }) => {
         </div>
       </div>
       <PoolPositionDesktop row={row} isLoading={isLoading} />
-      <PoolPositionStakedDesktop row={row} isLoading={isLoading} />
+      <PoolPositionStakedDesktop row={row} isLoading={isLoading} stakeAmount={stakeAmount} />
     </div>
   )
 }

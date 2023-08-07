@@ -29,8 +29,6 @@ export function Add() {
   const { isLoadingAccount } = useAccount()
 
   getPoolPairs(network?.name)
-  console.log(pairs)
-  console.log(poolPairRatio)
 
   return (
     <>
@@ -91,7 +89,6 @@ const _Add: FC = () => {
     if (!account) return []
     try {
       const response: any = await signAndSubmitTransaction(payload)
-      console.log(response)
       await provider.waitForTransaction(response?.hash)
       if (!response?.success) return
       const toastId = `completed:${response?.hash}`
@@ -119,7 +116,6 @@ const _Add: FC = () => {
 
   const { setToken0, setToken1, setAmount0, setAmount1, setisTransactionPending } = usePoolActions()
   const { token0, token1, amount0, amount1, isPriceFetching, poolPairRatio, pairs } = usePoolState()
-  console.log('poolPairRatio', poolPairRatio)
   const { data: balance0, isLoading: isLoadingBalance0 } = useTokenBalance({
     account: account?.address as string,
     currency: token0.address,
@@ -135,46 +131,37 @@ const _Add: FC = () => {
 
   const onChangeToken0TypedAmount = useCallback(
     (value: string) => {
-      console.log(poolPairRatio)
       PoolInputBalance0(value)
       setAmount0(value)
-      console.log(pairs)
-      console.log(value, '---', pairs?.data?.reserve_x, pairs?.data?.reserve_y)
       if (pairs?.data) {
         if (value) {
           const reserve_x = pairs?.data?.reserve_x
           const reserve_y = pairs?.data?.reserve_y
 
           setAmount1(String(parseFloat(String(value)) * poolPairRatio))
-          console.log(String(parseFloat(String(value)) * (reserve_y / reserve_x)))
-          console.log(pairs)
         } else {
           setAmount1('')
         }
       }
     },
-    [poolPairRatio]
+    [poolPairRatio, balance0]
   )
 
   const onChangeToken1TypedAmount = useCallback(
     (value: string) => {
       PoolInputBalance1(value)
       setAmount1(value)
-      console.log(pairs)
-      console.log(value, '---', pairs?.data?.reserve_x, pairs?.data?.reserve_y)
       if (pairs?.data) {
         if (value) {
           const reserve_x = pairs?.data?.reserve_x
           const reserve_y = pairs?.data?.reserve_y
           setAmount0(String(parseFloat(String(value)) * poolPairRatio))
-          console.log(String(parseFloat(String(value)) * (reserve_x / reserve_y)))
-          console.log(pairs)
         } else {
           setAmount0('')
         }
       }
     },
-    [poolPairRatio]
+    [poolPairRatio, balance1]
   )
   const tokensWithoutKey = getTokensWithoutKey(Number(network?.chainId) || 1)
   useEffect(() => {
@@ -192,18 +179,17 @@ const _Add: FC = () => {
   }, [account, connected, network, token0, token1, balance0, poolPairRatio])
   useEffect(() => {
     PoolInputBalance1(String(amount1))
-  }, [amount1, token1])
+  }, [amount1, token1, balance1])
   // useEffect(() => {
   //   onChangeToken1TypedAmount(String(amount1))
   // }, [account, connected, network, amount1, balance1, poolPairRatio])
 
   const PoolInputBalance0 = (tradeVal: string) => {
-    console.log('-==================', tradeVal)
     const regexPattern = /^[0-9]*(\.[0-9]*)?$/
     if (regexPattern.test(tradeVal)) {
       setAmount0(tradeVal)
     }
-    if (connected) {
+    if (connected && balance0) {
       const priceEst = balance0 / 10 ** token0.decimals < parseFloat(tradeVal)
       if (priceEst) {
         setError0('Exceeds Balance')
@@ -214,12 +200,11 @@ const _Add: FC = () => {
   }
 
   const PoolInputBalance1 = (tradeVal1: string) => {
-    console.log(tradeVal1)
     const regexPattern = /^[0-9]*(\.[0-9]*)?$/
     if (regexPattern.test(tradeVal1)) {
       setAmount1(tradeVal1)
     }
-    if (connected) {
+    if (connected && balance1) {
       const priceEst = balance1 / 10 ** token1.decimals < parseFloat(tradeVal1)
       if (priceEst) {
         setError1('Exceeds Balance')

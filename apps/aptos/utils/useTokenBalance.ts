@@ -9,7 +9,7 @@ export const tokenBalanceQueryFn = async (account: string, currency: string, cha
     )
     if (response.status == 200) {
       const data = await response.json()
-      return data.data.coin.value
+      return data.data.coin.value as number
     }
   }
   return 0

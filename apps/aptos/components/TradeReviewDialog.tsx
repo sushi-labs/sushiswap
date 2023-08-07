@@ -41,7 +41,6 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
     try {
       // sign and submit transaction to chain
       const response: any = await signAndSubmitTransaction(payload)
-      console.log(response)
       // wait for transaction
       await provider.waitForTransaction(response?.hash)
 

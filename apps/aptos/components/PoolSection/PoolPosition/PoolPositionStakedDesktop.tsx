@@ -1,17 +1,38 @@
+import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Typography } from '@sushiswap/ui'
 import { Icon } from 'components/Icon'
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
+import { useFarms } from 'utils/useFarms'
 import { Pool } from 'utils/usePools'
 import { useTokensFromPools } from 'utils/useTokensFromPool'
+import { useTotalSupply } from 'utils/useTotalSupply'
+import { useUnderlyingTokenBalanceFromPool } from 'utils/useUnderlyingTokenBalanceFromPool'
 
 interface PoolPositionStakedDesktopProps {
   row: Pool
   isLoading: boolean
+  stakeAmount: number
 }
 
-export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ row, isLoading }) => {
+export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ row, isLoading, stakeAmount }) => {
   const { token0, token1 } = useTokensFromPools(row)
-  if ('') return <></>
+  const [chainId, ...address] = row?.id.split(':')
+  const tokenAddress = address.join(':')
+  const { data: coinInfo } = useTotalSupply(chainId, tokenAddress)
+
+  const [reserve0, reserve1] = useMemo(() => {
+    return [row?.data?.balance_x?.value, row?.data?.balance_y?.value]
+  }, [row])
+
+  const totalSupply = coinInfo?.data?.supply?.vec?.[0]?.integer?.vec?.[0]?.value
+  const [underlying0, underlying1] = useUnderlyingTokenBalanceFromPool({
+    balance: stakeAmount,
+    reserve0: Number(reserve0),
+    reserve1: Number(reserve1),
+    totalSupply: Number(totalSupply),
+    decimals: coinInfo?.data?.decimals,
+  })
+
   if (isLoading) {
     return (
       <div className="flex flex-col gap-3 px-5 py-4">
@@ -44,22 +65,22 @@ export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Icon currency={token0} width={20} height={20} />
-            <Typography variant="sm" weight={500} className="dark:text-slate-300 text-gray-700">
-              {token0.symbol}
+            <Typography variant="sm" weight={600} className="dark:text-slate-300 text-gray-700">
+              {underlying0 ? underlying0.toFixed(6) : 0} {token0.symbol}
             </Typography>
           </div>
-          <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600 text-gray-600">
+          <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600">
             {`$0.00`}
           </Typography>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Icon currency={token1} width={20} height={20} />
-            <Typography variant="sm" weight={500} className="dark:text-slate-300 text-gray-700">
-              {token1.symbol}
+            <Typography variant="sm" weight={600} className="dark:text-slate-300 text-gray-700">
+              {underlying1 ? underlying1.toFixed(6) : 0} {token1.symbol}
             </Typography>
           </div>
-          <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600 text-gray-600">
+          <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600">
             {`$0.00`}
           </Typography>
         </div>

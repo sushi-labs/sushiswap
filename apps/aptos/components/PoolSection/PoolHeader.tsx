@@ -18,7 +18,6 @@ const TESTNET_CONTRACT = process.env['TESTNET_CONTRACT'] || process.env['NEXT_PU
 
 export const PoolHeader: FC<PoolHeader> = ({ row }) => {
   const { network } = useWallet()
-  console.log(row)
   const { token0, token1 } = useTokensFromPools(row)
   const networkName = network?.name === 'testnet' ? network?.name?.toLowerCase() : 'mainnet'
   const CONTRACT_ADDRESS = networkName === 'testnet' ? TESTNET_CONTRACT : MAINNET_CONTRACT
@@ -56,30 +55,16 @@ export const PoolHeader: FC<PoolHeader> = ({ row }) => {
             </Link.External>
           </div>
           <div className="flex flex-col gap-1">
-            <Typography
-              weight={400}
-              as="span"
-              className="text-gray-500 dark:text-slate-400 text-slate-600 sm:text-right"
-            >
+            <Typography weight={400} as="span" className="text-gray-500 dark:text-slate-400 sm:text-right">
               APR: <span className="font-semibold text-gray-900 dark:text-slate-50">{'0.00%'}</span>
             </Typography>
             <div className="flex gap-2">
               {
-                <Typography
-                  variant="sm"
-                  weight={400}
-                  as="span"
-                  className="text-gray-600 dark:text-slate-400 text-slate-600"
-                >
+                <Typography variant="sm" weight={400} as="span" className="text-gray-600 dark:text-slate-400">
                   Rewards: {'0.00%'}
                 </Typography>
               }
-              <Typography
-                variant="sm"
-                weight={400}
-                as="span"
-                className="text-gray-600 dark:text-slate-400 text-slate-600"
-              >
+              <Typography variant="sm" weight={400} as="span" className="text-gray-600 dark:text-slate-400">
                 Fees: {'0.00%'}
               </Typography>
             </div>
@@ -91,7 +76,7 @@ export const PoolHeader: FC<PoolHeader> = ({ row }) => {
           <Icon currency={token0} width={20} height={20} />
           <Typography variant="sm" weight={600} className="text-gray-600 dark:text-slate-300">
             <AppearOnMount>
-              {token0.symbol} = {'$00.00'}
+              {token0.symbol} = {'$0.00'}
               {}
             </AppearOnMount>
           </Typography>

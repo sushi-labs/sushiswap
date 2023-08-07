@@ -238,7 +238,7 @@ function RouteDemo(firstInput: any, ARR: any, tokenGraph: any, coinA: any, coinB
       bestFinder.push({ route: route, amountOut: lastOutput })
     }
   }
-  console.log(bestFinder)
+  // console.log(bestFinder)
   const bestRoutePrice = bestFinder.length
     ? bestFinder.reduce((r: any, b: any) => (r.amountOut > b.amountOut ? r : b))
     : {}

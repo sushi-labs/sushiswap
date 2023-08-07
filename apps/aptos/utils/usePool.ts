@@ -5,17 +5,14 @@ const TESTNET_CONTRACT = process.env['TESTNET_CONTRACT'] || process.env['NEXT_PU
 export const getPoolQueryFn = async (chainId: number, address: string) => {
   const CONTRACT_ADDRESS = chainId === 2 ? TESTNET_CONTRACT : MAINNET_CONTRACT
   const network = chainId === 2 ? 'testnet' : 'mainnet'
-  console.log(network)
   if (address) {
     const response = await fetch(
       `https://fullnode.${network}.aptoslabs.com/v1/accounts/${CONTRACT_ADDRESS}/resource/${CONTRACT_ADDRESS}::swap::TokenPairMetadata<${address}>`
     )
     if (response.status == 200) {
-      console.log(response)
       const pair = await response.json()
       pair.id =
         chainId + ':' + pair?.data?.token_x_details?.token_address + ', ' + pair?.data?.token_y_details?.token_address
-      console.log(pair)
       return pair as Pool
     }
   }

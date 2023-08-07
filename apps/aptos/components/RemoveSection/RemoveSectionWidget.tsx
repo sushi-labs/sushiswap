@@ -20,6 +20,7 @@ import { useTotalSupply } from 'utils/useTotalSupply'
 const MAINNET_CONTRACT = process.env['MAINNET_CONTRACT'] || process.env['NEXT_PUBLIC_MAINNET_CONTRACT']
 const TESTNET_CONTRACT = process.env['TESTNET_CONTRACT'] || process.env['NEXT_PUBLIC_TESTNET_CONTRACT']
 interface RemoveSectionWidgetProps {
+  isFarm: boolean
   percentage: string
   setPercentage(percentage: string): void
   children: ReactNode
@@ -31,6 +32,7 @@ interface RemoveSectionWidgetProps {
 }
 
 export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
+  isFarm,
   percentage,
   setPercentage,
   children,
@@ -43,7 +45,6 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
   const isMounted = useIsMounted()
   const [hover, setHover] = useState(false)
   const { account } = useWallet()
-  console.log(!(balance > 0), Boolean(account?.address))
   return (
     <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       <Transition

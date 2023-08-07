@@ -2,13 +2,18 @@ import React, { FC } from 'react'
 import { Row } from './types'
 import { Pool } from 'utils/usePools'
 import { useTokensFromPools } from 'utils/useTokensFromPool'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { IconList } from 'components/IconList'
 import { Icon } from 'components/Icon'
 import { classNames } from '@sushiswap/ui'
+import { isFarm, useFarms } from 'utils/useFarms'
+import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
 
 export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
   const { token0, token1 } = useTokensFromPools(row)
+  const [, ...address] = row?.id.split(':')
+  const lpAddress = address.join(':')
+  const { data: farms } = useFarms()
+  const _isFarm = isFarm(lpAddress, farms)
 
   return (
     <div className="flex items-center gap-1">
@@ -25,6 +30,13 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
           {token0?.symbol} <span className="font-normal text-gray-900 dark:text-slate-500">/</span> {token1?.symbol}{' '}
           <div className={classNames('text-[10px] bg-gray-200 dark:bg-slate-700 rounded-lg px-1 ml-1')}></div>
         </span>
+        <div className="flex gap-1">
+          {_isFarm !== -1 && (
+            <Tooltip description="Farm rewards available">
+              <div className="bg-green/20 text-green text-[10px] px-2 rounded-full">🧑‍🌾</div>
+            </Tooltip>
+          )}
+        </div>
       </div>
     </div>
   )
