@@ -1,5 +1,6 @@
 import { Chain } from '@sushiswap/chain'
 import { formatNumber, formatUSD } from '@sushiswap/format'
+import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
@@ -74,7 +75,7 @@ export const PositionCard: FC<PositionCard> = ({ position }) => {
       </div>
       <div className="absolute bottom-7 right-7">
         <Button size="sm" asChild>
-          <a href={`/pools/${position.pool.id}/migrate`}>Migrate</a>
+          <LinkInternal href={`/pools/${position.pool.id}/migrate`}>Migrate</LinkInternal>
         </Button>
       </div>
     </div>

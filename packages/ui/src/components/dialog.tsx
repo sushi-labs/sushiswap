@@ -17,7 +17,7 @@ import {
   useState,
 } from 'react'
 
-import { Button, classNames, Dots, IconButton, Loader } from '../index'
+import { Button, classNames, Dots, IconButton, LinkInternal, Loader } from '../index'
 import { CheckMarkIcon } from './icons/CheckmarkIcon'
 import { FailedMarkIcon } from './icons/FailedMarkIcon'
 
@@ -246,7 +246,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
           <DialogFooter>
             <DialogClose asChild>
               <Button testId={testId} asChild={!!buttonLink} fullWidth size="xl">
-                {buttonLink ? <a href={buttonLink}>{buttonText}</a> : <>{buttonText}</>}
+                {buttonLink ? <LinkInternal href={buttonLink}>{buttonText}</LinkInternal> : <>{buttonText}</>}
               </Button>
             </DialogClose>
           </DialogFooter>

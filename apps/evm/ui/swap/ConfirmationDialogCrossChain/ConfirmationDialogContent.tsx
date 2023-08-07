@@ -1,7 +1,7 @@
 import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_TOKEN } from '@sushiswap/stargate'
-import { Button } from '@sushiswap/ui'
+import { Button, LinkExternal } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { FC } from 'react'
@@ -33,9 +33,7 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHas
       <>
         Waiting for your{' '}
         <Button asChild size="sm" variant="link">
-          <a target="_blank" href={txHash ? Chain.from(network0).getTxUrl(txHash) : ''} rel="noreferrer">
-            transaction
-          </a>
+          <LinkExternal href={txHash ? Chain.from(network0).getTxUrl(txHash) : ''}>transaction</LinkExternal>
         </Button>{' '}
         to be confirmed on {Chain.from(network0).name}
       </>
@@ -56,9 +54,9 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHas
       <>
         Bridging{' '}
         <Button asChild size="sm" variant="link">
-          <a target="_blank" href={lzUrl || ''} rel="noreferrer">
+          <LinkExternal href={lzUrl || ''}>
             <Dots>to destination chain</Dots>
-          </a>
+          </LinkExternal>
         </Button>{' '}
         <span className="flex items-center gap-1">
           powered by{' '}
@@ -77,9 +75,9 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHas
         We {`couldn't`} swap {dstBridgeToken.symbol} into {token1?.symbol}, {dstBridgeToken.symbol} has been send to{' '}
         {recipient ? (
           <Button asChild size="sm" variant="link">
-            <a target="_blank" href={Chain.from(network1).getAccountUrl(recipient)} rel="noreferrer">
+            <LinkExternal href={Chain.from(network1).getAccountUrl(recipient)}>
               <Dots>{shortenAddress(recipient)}</Dots>
-            </a>
+            </LinkExternal>
           </Button>
         ) : (
           'recipient'
@@ -94,15 +92,15 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHas
         <>
           You sold{' '}
           <Button asChild size="sm" variant="link">
-            <a target="_blank" href={txHash ? Chain.from(network0).getTxUrl(txHash) : ''} rel="noreferrer">
+            <LinkExternal href={txHash ? Chain.from(network0).getTxUrl(txHash) : ''}>
               {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
-            </a>
+            </LinkExternal>
           </Button>{' '}
           for{' '}
           <Button asChild size="sm" variant="link">
-            <a target="_blank" href={dstTxHash ? Chain.from(network1).getTxUrl(dstTxHash) : ''} rel="noreferrer">
+            <LinkExternal href={dstTxHash ? Chain.from(network1).getTxUrl(dstTxHash) : ''}>
               {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
-            </a>
+            </LinkExternal>
           </Button>
         </>
       )
@@ -111,9 +109,9 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHas
         <>
           Sent{' '}
           <Button asChild size="sm" variant="link">
-            <a target="_blank" href={dstTxHash ? Chain.from(network1).getTxUrl(dstTxHash) : ''} rel="noreferrer">
+            <LinkExternal href={dstTxHash ? Chain.from(network1).getTxUrl(dstTxHash) : ''}>
               {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
-            </a>
+            </LinkExternal>
           </Button>{' '}
           to {recipient ? shortenAddress(recipient) : 'recipient'}
         </>

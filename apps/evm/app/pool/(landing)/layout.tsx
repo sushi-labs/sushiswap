@@ -1,6 +1,5 @@
 import React from '@sushiswap/prettier-config/dist/react'
-import { Container } from '@sushiswap/ui'
-import Link from 'next/link'
+import { Container, LinkInternal } from '@sushiswap/ui'
 
 import { PathnameButton, PoolsFiltersProvider } from '../../../ui/pool'
 import { Hero } from '../hero'
@@ -13,26 +12,26 @@ export default function TabsLayout({ children }: { children: React.ReactNode }) 
       </Container>
       <Container maxWidth="7xl" className="px-4">
         <div className="flex items-center gap-2 mb-4">
-          <Link shallow={true} href={`/pool/`}>
+          <LinkInternal shallow={true} scroll={false} href={`/pool/`}>
             <PathnameButton pathname={`/pool`} asChild size="sm">
               All Pools
             </PathnameButton>
-          </Link>
-          <Link shallow={true} href={`/pool/my-positions`}>
+          </LinkInternal>
+          <LinkInternal shallow={true} scroll={false} href={`/pool/my-positions`}>
             <PathnameButton pathname={`/pool/my-positions`} asChild size="sm">
               My Positions
             </PathnameButton>
-          </Link>
-          <Link shallow={true} href={`/pool/my-rewards`}>
+          </LinkInternal>
+          <LinkInternal shallow={true} scroll={false} href={`/pool/my-rewards`}>
             <PathnameButton pathname={`/pool/my-rewards`} asChild size="sm">
               My Rewards
             </PathnameButton>
-          </Link>
-          <Link shallow={true} href={`/pool/migrate`}>
+          </LinkInternal>
+          <LinkInternal shallow={true} scroll={false} href={`/pool/migrate`}>
             <PathnameButton pathname={`/pool/migrate`} asChild size="sm">
               Migrate
             </PathnameButton>
-          </Link>
+          </LinkInternal>
         </div>
       </Container>
       <section className="flex flex-col flex-1">

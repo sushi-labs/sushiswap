@@ -1,3 +1,4 @@
+import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Container } from '@sushiswap/ui/components/container'
 import { FC } from 'react'
@@ -18,7 +19,7 @@ export const Hero: FC<Hero> = ({ article }) => {
           <ArticleAuthors article={article} />
           <div className="mt-8">
             <Button asChild>
-              <a href={`/blog/${article?.attributes?.slug}`}>Read Article</a>
+              <LinkInternal href={`/blog/${article?.attributes?.slug}`}>Read Article</LinkInternal>
             </Button>
           </div>
         </div>

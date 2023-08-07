@@ -2,6 +2,7 @@ import { getAddress } from '@ethersproject/address'
 import { Pool } from '@sushiswap/client'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
+import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import Link from 'next/link'
 import { FC } from 'react'
@@ -27,10 +28,10 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ pool }) => {
           variant="secondary"
           fullWidth
         >
-          <Link href={`/pool/${pool.id}/remove`}>Withdraw</Link>
+          <LinkInternal href={`/pool/${pool.id}/remove`}>Withdraw</LinkInternal>
         </Button>
         <Button asChild size="lg" fullWidth>
-          <Link href={`/pool/${pool.id}/add`}>Deposit</Link>
+          <LinkInternal href={`/pool/${pool.id}/add`}>Deposit</LinkInternal>
         </Button>
       </div>
       <Button asChild className="col-span-2" size="lg" variant="secondary">

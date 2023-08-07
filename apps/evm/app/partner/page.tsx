@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ChainId } from '@sushiswap/chain'
-import { classNames } from '@sushiswap/ui'
+import { classNames, LinkExternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Loader } from '@sushiswap/ui/components/loader'
 import stringify from 'fast-json-stable-stringify'
@@ -198,9 +198,7 @@ export default function Partner() {
                 <div className="flex flex-col gap-1">
                   <span className="text-sm font-medium">List pull request</span>
                   <span className="text-sm text-blue-400 cursor-pointer hover:text-blue-600">
-                    <a target="_blank" rel="noreferrer" href={submitState.data?.listPr}>
-                      {submitState.data?.listPr}
-                    </a>
+                    <LinkExternal href={submitState.data?.listPr}>{submitState.data?.listPr}</LinkExternal>
                   </span>
                 </div>
               </div>

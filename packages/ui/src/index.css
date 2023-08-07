@@ -144,27 +144,6 @@ html[class='dark'] *.scroll::-webkit-scrollbar-thumb {
     -webkit-appearance: none;
   }
 
-  button:focus,
-  input:focus,
-  a:focus,
-  img:focus {
-    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0;
-  }
-
-  button:focus-within,
-  input:focus-within,
-  a:focus-within,
-  img:focus-within {
-    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0;
-  }
-
-  button:focus-visible,
-  input:focus-visible,
-  a:focus-visible,
-  img:focus-visible {
-    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0;
-  }
-
   input[type=range]::-webkit-slider-thumb {
     @apply appearance-none w-6 h-6 bg-blue rounded-full
   }

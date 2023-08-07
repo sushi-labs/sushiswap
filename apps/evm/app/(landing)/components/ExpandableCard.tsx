@@ -1,3 +1,4 @@
+import { LinkExternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
 import { nanoid } from 'nanoid'
@@ -75,9 +76,7 @@ export const ExpandableCard: FC<ExpandableCardProps> = ({ children, title, capti
                 </motion.div>
                 <motion.div className="mt-3">
                   <Button variant="secondary">
-                    <a target="_blank" href={link} rel="noopener noreferrer">
-                      {linkText}
-                    </a>
+                    <LinkExternal href={link}>{linkText}</LinkExternal>
                   </Button>
                 </motion.div>
               </motion.div>

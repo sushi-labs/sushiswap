@@ -1,3 +1,4 @@
+import { LinkExternal, LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Container } from '@sushiswap/ui/components/container'
 import { DiscordIcon, GithubIcon, TwitterIcon, YoutubeIcon } from '@sushiswap/ui/components/icons'
@@ -43,10 +44,10 @@ export const NeedHelp: FC = () => {
               <span className="text-lg text-neutral-400">Join the Sushi Discord community and ask away!</span>
               <div className="mt-4">
                 {SUPPORT_CHANNELS.map(({ title, icon: Icon, link }, index) => (
-                  <a href={link} className="flex items-center gap-4 cursor-pointer group py-2" key={index}>
+                  <LinkInternal href={link} className="flex items-center gap-4 cursor-pointer group py-2" key={index}>
                     <Icon width={24} height={24} className="text-blue group-hover:text-blue-300" />
                     <span className="text-sm font-medium text-blue group-hover:text-blue-300">{title}</span>
-                  </a>
+                  </LinkInternal>
                 ))}
               </div>
             </div>
@@ -61,7 +62,7 @@ export const NeedHelp: FC = () => {
                 </div>
                 <div className="flex justify-start mt-4">
                   <Button asChild variant="secondary">
-                    <a href="https://www.sushi.com/academy">Visit Academy</a>
+                    <LinkExternal href="https://www.sushi.com/academy">Visit Academy</LinkExternal>
                   </Button>
                 </div>
               </div>

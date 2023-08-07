@@ -7,7 +7,7 @@ import { buttonIconVariants, buttonVariants } from './button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip'
 
 const iconButtonVariants = cva(
-  'rounded-full cursor-pointer whitespace-nowrap inline-flex gap-2 items-center justify-center font-medium transition-colors !ring-0 disabled:opacity-50 disabled:pointer-events-none ring-offset-background',
+  'rounded-full cursor-pointer whitespace-nowrap inline-flex gap-2 items-center justify-center font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none  ring-offset-0 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-blue',
   {
     variants: {
       variant: {

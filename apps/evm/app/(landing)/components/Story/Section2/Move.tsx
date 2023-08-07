@@ -1,3 +1,4 @@
+import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Container } from '@sushiswap/ui/components/container'
 import { FC } from 'react'
@@ -19,9 +20,9 @@ export const Move: FC = () => {
               </span>
               <div className="flex gap-6 mt-3">
                 <Button asChild variant="secondary">
-                  <a target="_blank" href="https://www.sushi.com/xswap" rel="noreferrer">
+                  <LinkInternal target="_blank" href="/xswap" rel="noreferrer">
                     Visit xSwap
-                  </a>
+                  </LinkInternal>
                 </Button>
               </div>
             </div>

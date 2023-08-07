@@ -1,6 +1,7 @@
 import { ArrowDownIcon, MinusIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { formatPercent, formatUSD } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
+import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { List } from '@sushiswap/ui/components/list/List'
@@ -64,10 +65,10 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
       </div>
       <div className="flex flex-wrap gap-2">
         <Button icon={PlusIcon} asChild size="sm" variant="secondary">
-          <a href={`/pools/${row.pool.id}/add`}>Deposit</a>
+          <LinkInternal href={`/pools/${row.pool.id}/add`}>Deposit</LinkInternal>
         </Button>
         <Button icon={MinusIcon} asChild size="sm" variant="secondary">
-          <a href={`/pools/${row.pool.id}/remove`}>Withdraw</a>
+          <LinkInternal href={`/pools/${row.pool.id}/remove`}>Withdraw</LinkInternal>
         </Button>
         <Button icon={ArrowDownIcon} size="sm" variant="secondary" onClick={_harvest}>
           Claim

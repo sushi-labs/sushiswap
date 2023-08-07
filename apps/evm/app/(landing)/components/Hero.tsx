@@ -2,6 +2,7 @@ import { ArrowDownIcon } from '@heroicons/react/24/outline'
 import { ChainId } from '@sushiswap/chain'
 import { Native, SUSHI } from '@sushiswap/currency'
 import { useInterval } from '@sushiswap/hooks'
+import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Container } from '@sushiswap/ui/components/container'
 import { CurrencyInput } from '@sushiswap/wagmi/future/components/Web3Input/Currency'
@@ -115,7 +116,7 @@ export const Hero: FC = () => {
                 className="mt-4"
               >
                 <Button size="xl" asChild fullWidth>
-                  <a href="https://www.sushi.com/swap">Trade Now</a>
+                  <LinkInternal href="https://www.sushi.com/swap">Trade Now</LinkInternal>
                 </Button>
               </motion.div>
             </motion.div>

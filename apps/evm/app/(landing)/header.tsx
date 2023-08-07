@@ -4,6 +4,7 @@ import {
   Button,
   Container,
   EXPLORE_NAVIGATION_LINKS,
+  LinkInternal,
   NavigationContainer,
   NavigationListItem,
   NavigationMenu,
@@ -16,7 +17,6 @@ import {
   OnramperButton,
   TOOLS_NAVIGATION_LINKS,
 } from '@sushiswap/ui'
-import Link from 'next/link'
 import React, { FC } from 'react'
 
 export const Header: FC = () => {
@@ -41,19 +41,19 @@ export const Header: FC = () => {
               </NavigationMenuContent>
             </NavigationMenuItem>
             <NavigationMenuItem className="hidden md:block">
-              <Link href="/swap">
+              <LinkInternal href="/swap">
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Swap</NavigationMenuLink>
-              </Link>
+              </LinkInternal>
             </NavigationMenuItem>
             <NavigationMenuItem className="hidden md:block">
-              <Link href="/pools">
+              <LinkInternal href="/pools">
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pools</NavigationMenuLink>
-              </Link>
+              </LinkInternal>
             </NavigationMenuItem>
             <NavigationMenuItem className="hidden md:block">
-              <Link href="/furo">
+              <LinkInternal href="/furo">
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pay</NavigationMenuLink>
-              </Link>
+              </LinkInternal>
             </NavigationMenuItem>
             <NavigationMenuItem className="hidden md:block">
               <NavigationMenuTrigger>Tools</NavigationMenuTrigger>
@@ -69,11 +69,9 @@ export const Header: FC = () => {
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
-        <Link href="/swap" legacyBehavior passHref>
-          <a>
-            <Button asChild>Enter App</Button>
-          </a>
-        </Link>
+        <LinkInternal href="/swap">
+          <Button asChild>Enter App</Button>
+        </LinkInternal>
       </NavigationContainer>
     </Container>
   )

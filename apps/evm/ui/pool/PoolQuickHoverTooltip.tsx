@@ -2,6 +2,7 @@ import { PlusIcon, UserCircleIcon } from '@heroicons/react-v1/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Pool, Protocol } from '@sushiswap/client'
 import { formatNumber, formatPercent } from '@sushiswap/format'
+import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { List } from '@sushiswap/ui/components/list/List'
@@ -28,11 +29,13 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
       </div>
       <div className="flex gap-2">
         <Button icon={PlusIcon} asChild size="sm" variant="secondary">
-          <a href={row.protocol === Protocol.SUSHISWAP_V3 ? `/${row.id}?activeTab=new` : `/${row.id}/add`}>Deposit</a>
+          <LinkInternal href={row.protocol === Protocol.SUSHISWAP_V3 ? `/${row.id}` : `/${row.id}/add`}>
+            Deposit
+          </LinkInternal>
         </Button>
         {row.protocol === Protocol.SUSHISWAP_V3 && (
           <Button icon={UserCircleIcon} asChild size="sm" variant="secondary">
-            <a href={`/pools/${row.id}?activeTab=myPositions`}>My Positions</a>
+            <LinkInternal href={`/pools/${row.id}`}>My Positions</LinkInternal>
           </Button>
         )}
       </div>

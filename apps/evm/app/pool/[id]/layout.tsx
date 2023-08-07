@@ -1,7 +1,6 @@
 import { ChartPieIcon, MinusIcon, PlusIcon, UserIcon } from '@heroicons/react/24/outline'
 import { ChainId } from '@sushiswap/chain'
-import { Breadcrumb, Button, buttonIconVariants, Container } from '@sushiswap/ui'
-import Link from 'next/link'
+import { Breadcrumb, Button, buttonIconVariants, Container, LinkInternal } from '@sushiswap/ui'
 import React from 'react'
 
 import { PathnameButton } from '../../../ui/pool'
@@ -25,44 +24,44 @@ export default async function Layout({ children, params }: { children: React.Rea
         <PoolHeader address={pool.address} pool={pool} apy={{ rewards: pool?.incentiveApr, fees: pool?.feeApr1d }} />
         <div className="flex flex-wrap justify-between gap-2 my-4">
           <div className="flex flex-wrap gap-2">
-            <Link shallow={true} href={`/pool/${params.id}`}>
+            <LinkInternal shallow={true} href={`/pool/${params.id}`}>
               <PathnameButton pathname={`/pool/${params.id}`} asChild size="sm">
                 <ChartPieIcon className={buttonIconVariants({ size: 'sm' })} />
                 Pool
               </PathnameButton>
-            </Link>
+            </LinkInternal>
             {pool.protocol !== 'SUSHISWAP_V3' ? (
               <>
-                <Link shallow={true} href={`/pool/${params.id}/add`}>
+                <LinkInternal shallow={true} href={`/pool/${params.id}/add`}>
                   <PathnameButton pathname={`/pool/${params.id}/add`} asChild size="sm">
                     <PlusIcon className={buttonIconVariants({ size: 'sm' })} />
                     Add liquidity
                   </PathnameButton>
-                </Link>
-                <Link shallow={true} href={`/pool/${params.id}/remove`}>
+                </LinkInternal>
+                <LinkInternal shallow={true} href={`/pool/${params.id}/remove`}>
                   <PathnameButton pathname={`/pool/${params.id}/remove`} asChild size="sm">
                     <MinusIcon className={buttonIconVariants({ size: 'sm' })} />
                     Remove liquidity
                   </PathnameButton>
-                </Link>
+                </LinkInternal>
               </>
             ) : null}
 
             {pool.protocol === 'SUSHISWAP_V3' ? (
-              <Link shallow={true} href={`/pool/${params.id}/positions`}>
+              <LinkInternal shallow={true} href={`/pool/${params.id}/positions`}>
                 <PathnameButton pathname={`/pool/${params.id}/positions`} asChild size="sm">
                   <UserIcon className={buttonIconVariants({ size: 'sm' })} />
                   My Positions
                 </PathnameButton>
-              </Link>
+              </LinkInternal>
             ) : null}
           </div>
           {pool.protocol === 'SUSHISWAP_V3' ? (
-            <Link shallow={true} href={`/pool/${params.id}/positions/create`}>
+            <LinkInternal shallow={true} href={`/pool/${params.id}/positions/create`}>
               <Button icon={PlusIcon} asChild size="sm">
                 Create position
               </Button>
-            </Link>
+            </LinkInternal>
           ) : null}
         </div>
       </Container>

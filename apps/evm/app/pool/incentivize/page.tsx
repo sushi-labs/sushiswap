@@ -21,6 +21,7 @@ import {
   Dots,
   FormError,
   FormSection,
+  LinkExternal,
   List,
   Separator,
   Slider,
@@ -258,9 +259,7 @@ const Incentivize = withCheckerRoot(() => {
             duration. <br />
             <br /> Looking to get your token added here?{' '}
             <Button variant="link" asChild>
-              <a target="_blank" rel="noreferrer noopener" href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe">
-                Get in touch with us.
-              </a>
+              <LinkExternal href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe">Get in touch with us.</LinkExternal>
             </Button>
           </p>
           <Separator className="!my-10" />

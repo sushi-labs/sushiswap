@@ -1,11 +1,10 @@
 'use client'
 
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
-import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
 import React, { Suspense } from 'react'
 
-import { classNames } from '../index'
+import { classNames, LinkExternal } from '../index'
 import { Button } from './button'
 
 const Params = () => {
@@ -48,7 +47,7 @@ export const Breadcrumb = () => {
           pathname.split('/').length === 2 ? '!text-gray-900 dark:!text-slate-50' : '!text-accent-foreground'
         )}
       >
-        <Link href={`/${pathname.split('/')[1]}`}>Home</Link>
+        <LinkExternal href={`/${pathname.split('/')[1]}`}>Home</LinkExternal>
       </Button>
 
       {pathname ? (
