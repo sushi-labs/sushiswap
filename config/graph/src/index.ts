@@ -54,6 +54,7 @@ export const SUSHISWAP_V3_ENABLED_NETWORKS = [
   ChainId.THUNDERCORE,
   ChainId.CORE,
   ChainId.BASE,
+  ChainId.ZKSYNC_ERA,
 ]
 export type SushiSwapV3ChainId = (typeof SUSHISWAP_V3_ENABLED_NETWORKS)[number]
 
