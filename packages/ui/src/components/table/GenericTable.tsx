@@ -4,7 +4,7 @@ import { flexRender, RowData, Table as ReactTableType } from '@tanstack/react-ta
 import classNames from 'classnames'
 import React, { ReactNode, useCallback, useState } from 'react'
 
-import { Link } from '../link'
+import { LinkInternal } from '../link'
 import { LoadingOverlay } from '../loader'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../tooltip'
 import { Table } from '.'
@@ -131,7 +131,7 @@ export const GenericTable = <T extends { id: string }>({
                                   key={cell.id}
                                 >
                                   {linkFormatter ? (
-                                    <Link.Internal href={linkFormatter(row.original)} passHref={true} shallow={true}>
+                                    <LinkInternal href={linkFormatter(row.original)} passHref={true} shallow={true}>
                                       <a
                                         className={classNames(
                                           'absolute inset-0 flex items-center px-3 sm:px-4',
@@ -140,7 +140,7 @@ export const GenericTable = <T extends { id: string }>({
                                       >
                                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                       </a>
-                                    </Link.Internal>
+                                    </LinkInternal>
                                   ) : (
                                     <div
                                       className={classNames(
@@ -186,7 +186,7 @@ export const GenericTable = <T extends { id: string }>({
                             key={cell.id}
                           >
                             {linkFormatter ? (
-                              <Link.Internal href={linkFormatter(row.original)} passHref={true}>
+                              <LinkInternal href={linkFormatter(row.original)} passHref={true}>
                                 <a
                                   className={classNames(
                                     'absolute inset-0 flex items-center px-3 sm:px-4',
@@ -195,7 +195,7 @@ export const GenericTable = <T extends { id: string }>({
                                 >
                                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                 </a>
-                              </Link.Internal>
+                              </LinkInternal>
                             ) : (
                               <div
                                 className={classNames(
