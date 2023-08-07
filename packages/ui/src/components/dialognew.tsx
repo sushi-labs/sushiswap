@@ -3,6 +3,7 @@
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { Chain, ChainId } from '@sushiswap/chain'
+import { cva, type VariantProps } from 'class-variance-authority'
 import * as React from 'react'
 import {
   createContext,
@@ -20,6 +21,49 @@ import { Button, classNames, Dots, IconButton, Loader } from '../index'
 import { CheckMarkIcon } from './icons/CheckmarkIcon'
 import { FailedMarkIcon } from './icons/FailedMarkIcon'
 
+const dialogVariants = cva(
+  'duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+  {
+    variants: {
+      variant: {
+        default:
+          'rounded-b-none md:rounded-b-2xl bottom-0 md:bottom-[unset] fixed left-[50%] md:top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] md:translate-y-[-50%] gap-4 bg-gray-100 dark:bg-slate-800 p-6 shadow-lg rounded-2xl md:w-full data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-bottom-[48%] md:data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-bottom-[48%] md:data-[state=open]:slide-in-from-top-[48%]',
+        opaque: 'px-4 fixed z-50 top-4 grid w-full max-w-xl',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  }
+)
+
+const dialogOverlayVariants = cva(
+  'fixed inset-0 z-50 transition-all duration-100 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=open]:fade-in',
+  {
+    variants: {
+      variant: {
+        default: 'bg-black/10 backdrop-blur-sm',
+        opaque: 'bg-gray-100 dark:bg-slate-900',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  }
+)
+
+const dialogCloseVariants = cva('', {
+  variants: {
+    variant: {
+      default: 'absolute top-6 right-6',
+      opaque: 'hidden',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+})
+
 const DialogNew = DialogPrimitive.Root
 const DialogTrigger = DialogPrimitive.Trigger
 const DialogClose = DialogPrimitive.Close
@@ -31,42 +75,36 @@ const DialogPortal = ({ className, children, ...props }: DialogPrimitive.DialogP
 )
 DialogPortal.displayName = DialogPrimitive.Portal.displayName
 
-const DialogOverlay = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Overlay>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Overlay
-    ref={ref}
-    className={classNames(
-      'fixed inset-0 z-50 bg-black/10 backdrop-blur-sm transition-all duration-100 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=open]:fade-in',
-      className
-    )}
-    {...props}
-  />
-))
+interface DialogOverlay
+  extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>,
+    VariantProps<typeof dialogOverlayVariants> {}
+
+const DialogOverlay = React.forwardRef<React.ElementRef<typeof DialogPrimitive.Overlay>, DialogOverlay>(
+  ({ className, variant, ...props }, ref) => (
+    <DialogPrimitive.Overlay ref={ref} className={dialogOverlayVariants({ variant, className })} {...props} />
+  )
+)
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
-const DialogContent = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-  <DialogPortal>
-    <DialogOverlay />
-    <DialogPrimitive.Content
-      ref={ref}
-      className={classNames(
-        'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 bg-gray-100 dark:bg-slate-800 p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-2xl md:w-full',
-        className
-      )}
-      {...props}
-    >
-      {children}
-      <DialogPrimitive.Close asChild className="absolute right-6 top-6">
-        <IconButton icon={XMarkIcon} name="Close" />
-      </DialogPrimitive.Close>
-    </DialogPrimitive.Content>
-  </DialogPortal>
-))
+interface DialogContentProps
+  extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
+    VariantProps<typeof dialogVariants> {
+  hideClose?: boolean
+}
+
+const DialogContent = React.forwardRef<React.ElementRef<typeof DialogPrimitive.Content>, DialogContentProps>(
+  ({ className, hideClose = false, variant, children, ...props }, ref) => (
+    <DialogPortal>
+      <DialogOverlay variant={variant} />
+      <DialogPrimitive.Content ref={ref} className={dialogVariants({ variant, className })} {...props}>
+        {children}
+        <DialogPrimitive.Close asChild className={dialogCloseVariants({ variant })}>
+          <IconButton icon={XMarkIcon} name="Close" />
+        </DialogPrimitive.Close>
+      </DialogPrimitive.Content>
+    </DialogPortal>
+  )
+)
 DialogContent.displayName = DialogPrimitive.Content.displayName
 
 const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
@@ -118,8 +156,22 @@ const DialogReview: FC<DialogReviewProps> = ({ children, ...props }) => {
 }
 DialogReview.displayName = 'DialogReview'
 
-interface DialogConfirmProps
-  extends Omit<React.ComponentPropsWithoutRef<typeof DialogPrimitive.Root>, 'children' | 'open'> {
+interface DialogCustomProps {
+  children: ReactNode
+  dialogType: DialogType
+}
+
+const DialogCustom: FC<DialogCustomProps> = ({ children, ...props }) => {
+  const { open, setOpen } = useDialog(DialogType.Confirm)
+  return (
+    <DialogNew {...props} open={open} onOpenChange={setOpen}>
+      {children}
+    </DialogNew>
+  )
+}
+DialogCustom.displayName = 'DialogCustom'
+
+interface DialogConfirmProps extends DialogContentProps {
   chainId: ChainId
   testId: string
   successMessage: ReactNode
@@ -205,7 +257,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
 }
 DialogConfirm.displayName = 'DialogConfirm'
 
-export enum DialogType {
+enum DialogType {
   Review,
   Confirm,
 }
@@ -275,13 +327,17 @@ export {
   DialogClose,
   DialogConfirm,
   DialogContent,
+  DialogCustom,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogNew,
+  DialogOverlay,
+  DialogPrimitive,
   DialogProvider,
   DialogReview,
   DialogTitle,
   DialogTrigger,
+  DialogType,
   useDialog,
 }

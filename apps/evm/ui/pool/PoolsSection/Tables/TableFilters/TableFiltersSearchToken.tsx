@@ -19,11 +19,10 @@ export const TableFiltersSearchToken: FC = () => {
   return (
     <ChipInput
       icon={MagnifyingGlassIcon}
-      delimiters={[',', ' ', ';', ':']}
       variant="secondary"
       values={tokenSymbols ?? []}
       onValueChange={(values: string[]) => setQuery(values.join(' '))}
-      placeholder="Search"
+      placeholder="Type and press enter to add tokens"
     />
   )
 }
