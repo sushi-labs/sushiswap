@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { Address, createPublicClient, http, Log, parseAbiItem, PublicClient } from 'viem'
-import { Chain, mainnet } from 'viem/chains'
+import { Chain, mainnet, polygon } from 'viem/chains'
 
 import { RP3Address } from './Extractor.test'
 
@@ -68,16 +68,21 @@ class Diargam {
   }
 }
 
+const coinGeckoPlatform: Record<ChainId, string> = {
+  [ChainId.ETHEREUM]: 'ethereum',
+  [ChainId.POLYGON]: 'polygon-pos',
+}
 const tokenCache: Map<Address, number | null> = new Map()
-async function getPrice(token: Address): Promise<number | null> {
+async function getPrice(token: Address, chainId: ChainId): Promise<number | null> {
   const cached = tokenCache.get(token)
   if (cached !== undefined) return cached
 
-  const erc20 = token == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' ? WNATIVE_ADDRESS[ChainId.ETHEREUM] : token
-  const response = await fetch(`https://api.coingecko.com/api/v3/coins/ethereum/contract/${erc20}`)
+  const platform = coinGeckoPlatform[chainId]
+  const erc20 = token == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' ? WNATIVE_ADDRESS[chainId] : token
+  const response = await fetch(`https://api.coingecko.com/api/v3/coins/${platform}/contract/${erc20}`)
   const data = await response.json()
   const price = data?.market_data?.current_price?.usd
-  const decimals = data?.detail_platforms?.ethereum?.decimal_place
+  const decimals = data?.detail_platforms?.[platform].decimal_place
   if (price && decimals) {
     const priceWei = price / Math.pow(10, decimals)
     tokenCache.set(token, priceWei)
@@ -89,7 +94,7 @@ async function getPrice(token: Address): Promise<number | null> {
 }
 
 async function getLogTime(client: PublicClient, l: Log) {
-  const block = await client.getBlock({ blockNumber: l.blockNumber ?? 0n })
+  const block = await client.getBlock({ blockNumber: l.blockNumber ?? BigInt(0) })
   const date = new Date(Number(block.timestamp) * 1000)
   return `${date.toLocaleDateString('en-US')} ${date.toLocaleTimeString('en-US')}`
 }
@@ -98,6 +103,7 @@ async function getSlippageStatistics(args: {
   providerURL: string
   chain: Chain
   RP3Address: Address
+  blockQuantity: number
   fromBlock?: bigint
 }) {
   const transport = http(args.providerURL)
@@ -105,12 +111,13 @@ async function getSlippageStatistics(args: {
     chain: args.chain,
     transport: transport,
   })
+  const chainId = args.chain.id as ChainId
 
   const blockNumCurrent = await client.getBlockNumber()
 
   const logs = await client.getLogs({
     address: args.RP3Address,
-    fromBlock: blockNumCurrent - 100_000n,
+    fromBlock: blockNumCurrent - BigInt(args.blockQuantity),
     event: parseAbiItem(
       `event Route(address indexed from, address to, address indexed tokenIn, address indexed tokenOut, uint amountIn, uint amountOutMin, uint amountOut)`
     ),
@@ -121,29 +128,29 @@ async function getSlippageStatistics(args: {
   let mevedOutputAmout = 0
 
   for (let i = 0; i < logs.length; ++i) {
-    const args = logs[i].args
-    if (args.amountOut && args.amountOutMin && args.tokenOut) {
-      const diff = Number(args.amountOut) / Number(args.amountOutMin) - 1
+    const logArgs = logs[i].args
+    if (logArgs.amountOut && logArgs.amountOutMin && logArgs.tokenOut) {
+      const diff = Number(logArgs.amountOut) / Number(logArgs.amountOutMin) - 1
       diagram.addPoint(diff * 10_000)
       if (diff > 0.005 && diff < 0.025) {
-        const price = await getPrice(args.tokenOut)
-        const amount = Number(args.amountOut) - Number(args.amountOutMin) * 1.005
+        const price = await getPrice(logArgs.tokenOut, chainId)
+        const amount = Number(logArgs.amountOut) - Number(logArgs.amountOutMin) * 1.005
         if (price !== null) {
           positiveSurplus += amount * price
-          if (amount * price > 100) console.log(`${args.tokenOut} ${logs[i].transactionHash} ${amount * price}`)
-          //console.log(`Token ${args.tokenOut} price: ${price}`)
-        } //else console.log(`Unknown token: ${args.tokenOut}`)
+          if (amount * price > 100) console.log(`${logArgs.tokenOut} ${logs[i].transactionHash} ${amount * price}`)
+          //console.log(`Token ${logArgs.tokenOut} price: ${price}`)
+        } //else console.log(`Unknown token: ${logArgs.tokenOut}`)
       }
       if (diff < 0.0005) {
         ++mevedNumber
-        const price = await getPrice(args.tokenOut)
-        if (price !== null) mevedOutputAmout += Number(args.amountOutMin) * price
+        const price = await getPrice(logArgs.tokenOut, chainId)
+        if (price !== null) mevedOutputAmout += Number(logArgs.amountOutMin) * price
       }
       if (diff > 1) {
-        const price = await getPrice(args.tokenOut)
-        const amount = Number(args.amountOut) - Number(args.amountOutMin) * 1.005
+        const price = await getPrice(logArgs.tokenOut, chainId)
+        const amount = Number(logArgs.amountOut) - Number(logArgs.amountOutMin) * 1.005
         if (price !== null) {
-          console.log(`${args.tokenOut} ${logs[i].transactionHash} ${amount * price}`)
+          console.log(`${logArgs.tokenOut} ${logs[i].transactionHash} ${amount * price}`)
         }
       }
     } //else console.log(args)
@@ -163,6 +170,16 @@ it.skip('RP3 Ethereum slippage statistics', async () => {
   await getSlippageStatistics({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
+    blockQuantity: 100_000,
     RP3Address: RP3Address[ChainId.ETHEREUM] as Address,
+  })
+})
+
+it.skip('RP3 Polygon slippage statistics', async () => {
+  await getSlippageStatistics({
+    providerURL: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
+    chain: polygon,
+    blockQuantity: 100_000,
+    RP3Address: RP3Address[ChainId.POLYGON] as Address,
   })
 })
