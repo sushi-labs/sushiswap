@@ -20,7 +20,7 @@ const percentInputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>> = 
 }
 
 const textFieldVariants = cva(
-  'truncate appearance-none dark:text-slate-50 text-gray-900 w-full  ring-offset-0 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-blue',
+  'truncate appearance-none dark:text-slate-50 text-gray-900 w-full  ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-blue',
   {
     variants: {
       size: {

@@ -65,6 +65,7 @@ const config = {
         'muted-foreground': 'var(--muted-foreground)',
         accent: 'var(--accent)',
         'accent-foreground': 'var(--accent-foreground)',
+        background: 'var(--background)',
       },
       animation: {
         ellipsis: 'ellipsis 1.25s infinite',
