@@ -1,6 +1,6 @@
 import { Slot } from '@radix-ui/react-slot'
 import { Protocol } from '@sushiswap/database'
-import { DataTable } from '@sushiswap/ui'
+import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import { useAccount } from '@sushiswap/wagmi'
 import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import { SUPPORTED_CHAIN_IDS } from 'config'
@@ -63,18 +63,25 @@ export const PositionsTable: FC<PositionsTableProps> = ({ protocol, onRowClick, 
   )
 
   return (
-    <DataTable
-      loading={isValidating}
-      rowRenderer={rowRenderer}
-      linkFormatter={rowLink}
-      columns={COLUMNS}
-      data={_positions}
-      pagination={true}
-      onPaginationChange={setPaginationState}
-      state={{
-        ...tableState,
-        pagination: paginationState,
-      }}
-    />
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          My Positions <span className="text-gray-400 dark:text-slate-500">({_positions.length})</span>
+        </CardTitle>
+      </CardHeader>
+      <DataTable
+        loading={isValidating}
+        rowRenderer={rowRenderer}
+        linkFormatter={rowLink}
+        columns={COLUMNS}
+        data={_positions}
+        pagination={true}
+        onPaginationChange={setPaginationState}
+        state={{
+          ...tableState,
+          pagination: paginationState,
+        }}
+      />
+    </Card>
   )
 }

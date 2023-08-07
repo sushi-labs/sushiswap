@@ -298,7 +298,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                 )}
               </div>
             </CardTitle>
-            <CardDescription>{formatUSD(fiatValuesAmounts.reduce((acc, cur) => acc + cur, 0))}</CardDescription>
+            <CardDescription>{formatUSD(fiatValuesPosition.reduce((acc, cur) => acc + cur, 0))}</CardDescription>
           </CardHeader>
           <CardContent>
             <CardGroup>

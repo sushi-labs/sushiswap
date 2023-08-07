@@ -4,6 +4,9 @@ import { EllipsisHorizontalIcon, GiftIcon } from '@heroicons/react/24/outline'
 import { AngleRewardsPool, useAngleRewardsMultipleChains } from '@sushiswap/react-query'
 import {
   Button,
+  Card,
+  CardHeader,
+  CardTitle,
   Container,
   DataTable,
   DropdownMenu,
@@ -13,10 +16,10 @@ import {
 } from '@sushiswap/ui'
 import { Carousel } from '@sushiswap/ui/components/Carousel'
 import { useAccount } from '@sushiswap/wagmi'
-import { ColumnDef } from '@tanstack/react-table'
+import { ColumnDef, PaginationState } from '@tanstack/react-table'
 import { ANGLE_ENABLED_NETWORKS } from 'config'
 import Link from 'next/link'
-import React, { FC, useCallback, useMemo } from 'react'
+import React, { FC, useCallback, useMemo, useState } from 'react'
 
 import { unwrapToken } from '../../lib/functions'
 import {
@@ -72,6 +75,11 @@ export const RewardsSection: FC = () => {
     account: address,
   })
 
+  const [paginationState, setPaginationState] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  })
+
   const chainsSorted = useMemo(() => {
     if (!data) return undefined
     return data.sort((a, b) => {
@@ -118,7 +126,24 @@ export const RewardsSection: FC = () => {
         className="!pt-0 px-2"
       />
       <Container maxWidth="7xl" className="px-4 mx-auto">
-        <DataTable linkFormatter={rowLink} loading={isInitialLoading} columns={COLUMNS} data={positions} />
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              My Rewards <span className="text-gray-400 dark:text-slate-500">({positions.length})</span>
+            </CardTitle>
+          </CardHeader>
+          <DataTable
+            linkFormatter={rowLink}
+            loading={isInitialLoading}
+            columns={COLUMNS}
+            data={positions}
+            pagination={true}
+            onPaginationChange={setPaginationState}
+            state={{
+              pagination: paginationState,
+            }}
+          />
+        </Card>
       </Container>
     </>
   )
