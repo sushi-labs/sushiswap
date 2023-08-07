@@ -7,7 +7,7 @@ const messageVariants = cva('', {
     variant: {
       info: 'bg-blue/10 text-blue',
       destructive: 'bg-red/10 text-red',
-      warning: 'bg-amber-400 hover:bg-amber-500 focus:bg-amber-600 active:bg-amber-500 text-amber-900',
+      warning: 'bg-yellow/10 dark:text-yellow text-amber-900',
       muted: 'bg-secondary',
       success: 'bg-green/10 text-green',
     },
