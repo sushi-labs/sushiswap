@@ -3,7 +3,7 @@
 import { Transition } from '@headlessui/react'
 import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { Type } from '@sushiswap/currency'
-import { classNames, DialogTrigger, FormSection } from '@sushiswap/ui'
+import { classNames, DialogTrigger, FormSection, Message } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { FeeAmount, Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
@@ -118,21 +118,21 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
   const widget = (
     <div className={classNames('flex flex-col gap-4')}>
       {!!existingPosition && !isOwner && !isOwnerLoading ? (
-        <div className="p-6 font-medium bg-red/10 text-red rounded-xl">
+        <Message size="sm" variant="destructive">
           You are not the owner of this LP position. You will not be able to withdraw the liquidity from this position
           unless you own the following address: {owner}
-        </div>
+        </Message>
       ) : null}
       {outOfRange ? (
-        <div className="p-6 font-medium bg-yellow/10 text-yellow rounded-xl">
+        <Message size="sm" variant="warning">
           Your position will not earn fees or be used in trades until the market price moves into your range.
-        </div>
+        </Message>
       ) : null}
 
       {invalidRange ? (
-        <div className="p-6 font-medium bg-yellow/10 text-yellow rounded-xl">
+        <Message size="sm" variant="warning">
           Invalid range selected. The minimum price must be lower than the maximum price.
-        </div>
+        </Message>
       ) : null}
       <div
         className={classNames(

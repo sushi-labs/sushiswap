@@ -20,6 +20,7 @@ import {
   DialogTrigger,
   Dots,
   List,
+  Message,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
@@ -468,9 +469,9 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                 )}
               </List.Control>
             </List>
-            <div className="p-6 font-medium bg-blue/10 text-blue rounded-xl">
+            <Message variant="info" size="sm">
               You have staked liquidity balance. Please unstake and claim your rewards before migrating.
-            </div>
+            </Message>
             <Checker.Connect fullWidth>
               <Checker.Network fullWidth chainId={pool.chainId}>
                 <Checker.ApproveERC20
@@ -592,21 +593,21 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
             switchTokens={() => setInvertTokens((prev) => !prev)}
           >
             {outOfRange && (
-              <div className="p-6 font-medium bg-yellow/10 text-yellow rounded-xl">
+              <Message variant="warning" size="sm">
                 Your position will not earn fees or be used in trades until the market price moves into your range.
-              </div>
+              </Message>
             )}
             {invalidRange && (
-              <div className="p-6 font-medium bg-yellow/10 text-yellow rounded-xl">
+              <Message variant="warning" size="sm">
                 Invalid range selected. The minimum price must be lower than the maximum price.
-              </div>
+              </Message>
             )}
             {largePriceDifference && (
-              <div className="p-6 font-medium bg-yellow/10 text-yellow rounded-xl">
+              <Message variant="warning" size="sm">
                 You should only deposit liquidity into SushiSwap V3 at a price you believe is correct. <br />
                 If the price seems incorrect, you can either make a swap to move the price or wait for someone else to
                 do so.
-              </div>
+              </Message>
             )}
           </SelectPricesWidget>
           <Checker.Connect fullWidth>

@@ -4,6 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
 import { shortenAddress } from '@sushiswap/format'
 import { useCustomTokens } from '@sushiswap/hooks'
+import { Message } from '@sushiswap/ui'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import { FC, useMemo } from 'react'
 
@@ -44,16 +45,14 @@ export const UnknownTokenAlert: FC<UnknownTokenAlert> = ({ pool }) => {
   if (!(token0NotInList || token1NotInList)) return <></>
 
   return (
-    <div className="flex items-center justify-center bg-yellow/20 gap-6 md:gap-3 dark:text-yellow text-yellow-900 px-4 py-3 font-semibold rounded-xl">
-      <div>
-        {`${
-          token0NotInList && token1NotInList
-            ? `${tokenName(token0)} & ${tokenName(token1)} are unknown.`
-            : `${tokenName(token0NotInList ? token0 : token1)} is unknown.`
-        } Please conduct your own research before interacting with ${
-          token0NotInList && token1NotInList ? 'these tokens.' : 'this token.'
-        }`}
-      </div>
-    </div>
+    <Message size="sm" variant="warning">
+      {`${
+        token0NotInList && token1NotInList
+          ? `${tokenName(token0)} & ${tokenName(token1)} are unknown.`
+          : `${tokenName(token0NotInList ? token0 : token1)} is unknown.`
+      } Please conduct your own research before interacting with ${
+        token0NotInList && token1NotInList ? 'these tokens.' : 'this token.'
+      }`}
+    </Message>
   )
 }
