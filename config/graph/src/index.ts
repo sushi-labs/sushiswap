@@ -140,6 +140,7 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.THUNDERCORE]: THUNDERCORE_HOST,
   [ChainId.CORE]: CORE_HOST,
   [ChainId.BASE]: STUDIO_HOST,
+  [ChainId.ZKSYNC_ERA]: STUDIO_HOST,
 } as const
 
 export const BENTOBOX_SUBGRAPH_NAME = {
@@ -191,6 +192,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.THUNDERCORE]: 'sushiswap/blocks-thundercore',
   [ChainId.CORE]: 'sushiswap/blocks-core',
   [ChainId.BASE]: 'blocks-base/v0.0.1',
+  [ChainId.ZKSYNC_ERA]: 'blocks-zksync-era/v0.0.1',
 } as const
 
 export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
@@ -277,6 +279,7 @@ export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.THUNDERCORE]: 'sushi-v3/v3-thundercore',
   [ChainId.CORE]: 'sushi-v3/v3-core',
   [ChainId.BASE]: 'v3-base/v0.0.1',
+  [ChainId.ZKSYNC_ERA]: 'v3-zksync-era/v0.0.1',
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number, string> = {
