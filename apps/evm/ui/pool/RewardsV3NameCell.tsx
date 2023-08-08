@@ -1,6 +1,8 @@
+'use client'
+
 import { InformationCircleIcon } from '@heroicons/react/24/outline'
 import { AngleRewardsPool } from '@sushiswap/react-query'
-import { Chip, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
+import { Chip, HoverCard, HoverCardContent, HoverCardPrimitive, HoverCardTrigger } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
@@ -8,7 +10,7 @@ import { Row } from '@tanstack/react-table'
 import { unwrapToken } from 'lib/functions'
 import React, { FC } from 'react'
 
-import { RewardsTableV3RowPopover } from './RewardsTableV3RowPopover'
+import { DistributionDataTable } from './DistributionDataTable'
 
 export const RewardsV3NameCell: FC<Row<AngleRewardsPool>> = (props) => {
   const { original } = props
@@ -34,20 +36,18 @@ export const RewardsV3NameCell: FC<Row<AngleRewardsPool>> = (props) => {
           {unwrapToken(original.token1).symbol}
           <span className="text-xs text-gray-500 dark:text-slate-500">{original.poolFee}%</span>
         </span>
-        <TooltipProvider>
-          <Tooltip delayDuration={0}>
-            <TooltipTrigger asChild>
-              <Chip variant="secondary" icon={InformationCircleIcon}>
-                {ongoingFarms.length} Ongoing incentive{ongoingFarms.length > 1 ? 's' : ''}
-              </Chip>
-            </TooltipTrigger>
-            <TooltipContent asChild className="!w-fit !p-0 !border-none">
-              <div>
-                <RewardsTableV3RowPopover {...props} />
-              </div>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <HoverCard openDelay={0} closeDelay={0}>
+          <HoverCardTrigger>
+            <Chip variant="secondary" icon={InformationCircleIcon}>
+              {ongoingFarms.length} Ongoing incentive{ongoingFarms.length > 1 ? 's' : ''}
+            </Chip>
+          </HoverCardTrigger>
+          <HoverCardPrimitive.Portal>
+            <HoverCardContent className="!p-0">
+              <DistributionDataTable isLoading={false} data={original.distributionData.filter((el) => el.isLive)} />
+            </HoverCardContent>
+          </HoverCardPrimitive.Portal>
+        </HoverCard>
       </div>
     </div>
   )

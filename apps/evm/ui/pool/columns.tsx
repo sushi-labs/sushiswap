@@ -1,25 +1,13 @@
-import { CheckIcon } from '@heroicons/react/20/solid'
 import { Pool } from '@sushiswap/client'
 import { formatNumber, formatPercent, formatUSD, shortenAddress } from '@sushiswap/format'
 import { AngleRewardsPool } from '@sushiswap/react-query'
-import {
-  classNames,
-  Currency,
-  NetworkIcon,
-  TimeAgo,
-  Tooltip,
-  TooltipContent,
-  TooltipPrimitive,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@sushiswap/ui'
+import { classNames, NetworkIcon, Tooltip, TooltipPrimitive, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future'
 import { ColumnDef } from '@tanstack/react-table'
-import { format, formatDistance } from 'date-fns'
+import { formatDistance } from 'date-fns'
 import React from 'react'
 
-import { rewardPerDay } from '../../lib/functions'
 import { PositionWithPool } from '../../types'
 import { APRHoverCard } from './APRHoverCard'
 import { ConcentratedLiquidityPositionAPRCell } from './ConcentratedLiquidityPositionAPRCell'
@@ -480,83 +468,5 @@ export const TX_TIME_V3_COLUMN: ColumnDef<TransactionV3, unknown> = {
   cell: (props) => formatDistance(props.row.original.timestamp * 1000, new Date(), { addSuffix: true }),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
-
-export const DISTRIBUTION_DATA_REWARD_COLUMN: ColumnDef<AngleRewardsPool['distributionData'][0], unknown> = {
-  id: 'reward',
-  header: 'Reward (per day)',
-  cell: (props) => {
-    const { start, end, amount, token } = props.row.original
-    const _reward = rewardPerDay({ start, end, amount, token })
-    if (!_reward) return <>n/a</>
-
-    return (
-      <div className="whitespace-nowrap flex items-center gap-1">
-        <Currency.Icon currency={_reward.currency} width={18} height={18} />
-        {_reward.toSignificant(6)} {_reward.currency.symbol}
-      </div>
-    )
-  },
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-    headerDescription:
-      'The amount of tokens that gets distributed per day to everyone that provided liquidity to this pool.',
-  },
-}
-
-export const DISTRIBUTION_DATA_START_COLUMN: ColumnDef<AngleRewardsPool['distributionData'][0], unknown> = {
-  id: 'duration',
-  header: 'Started',
-  cell: (props) => {
-    const { start } = props.row.original
-    return (
-      <TooltipProvider>
-        <Tooltip delayDuration={0}>
-          <TooltipTrigger asChild>
-            <TimeAgo className="whitespace-nowrap underline decoration-dotted" value={new Date(start * 1000)} />
-          </TooltipTrigger>
-          <TooltipContent>{format(new Date(start * 1000), 'dd MMM yyyy HH:mm')}</TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    )
-  },
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
-
-export const DISTRIBUTION_DATA_END_COLUMN: ColumnDef<AngleRewardsPool['distributionData'][0], unknown> = {
-  id: 'end',
-  header: 'Ends in',
-  cell: (props) => {
-    const { end } = props.row.original
-    return (
-      <TooltipProvider>
-        <Tooltip delayDuration={0}>
-          <TooltipTrigger asChild>
-            <TimeAgo className="whitespace-nowrap underline decoration-dotted" value={new Date(end * 1000)} />
-          </TooltipTrigger>
-          <TooltipContent>{format(new Date(end * 1000), 'dd MMM yyyy HH:mm')}</TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    )
-  },
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
-
-export const DISTRIBUTION_DATA_OOR_INCENTIVIZED_COLUMN: ColumnDef<AngleRewardsPool['distributionData'][0], unknown> = {
-  id: 'oorIncentivized',
-  header: 'In-range only',
-  cell: (props) => {
-    const { isOutOfRangeIncentivized } = props.row.original
-    if (isOutOfRangeIncentivized) return <></>
-    return <CheckIcon width={20} height={20} className="text-green" />
-  },
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-    headerDescription: 'Only rewards in-range positions',
   },
 }
