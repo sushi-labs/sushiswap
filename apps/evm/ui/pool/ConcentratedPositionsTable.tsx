@@ -13,45 +13,10 @@ import { Writeable } from 'zod'
 import { NAME_COLUMN_V3, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL, PRICE_RANGE_COLUMN } from './columns'
 import { usePoolFilters } from './PoolsFiltersProvider'
 
-const COLUMNS = [
-  NAME_COLUMN_V3,
-  PRICE_RANGE_COLUMN,
-  POSITION_SIZE_CELL,
-  POSITION_UNCLAIMED_CELL,
-  // {
-  //   id: 'actions',
-  //   cell: ({ row }) => (
-  //     <DropdownMenu>
-  //       <DropdownMenuTrigger asChild>
-  //         <Button icon={EllipsisHorizontalIcon} variant="ghost" size="sm">
-  //           <span className="sr-only">Open menu</span>
-  //         </Button>
-  //       </DropdownMenuTrigger>
-  //       <DropdownMenuContent align="end" className="w-[240px]">
-  //         <DropdownMenuItem asChild>
-  //           <Link
-  //             onClick={(e) => e.stopPropagation()}
-  //             shallow={true}
-  //             className="flex items-center"
-  //             href={`/pool/incentivize?chainId=${row.original.chainId}&fromCurrency=${
-  //               row.original.token0 === Native.onChain(row.original.chainId).wrapped.address
-  //                 ? 'NATIVE'
-  //                 : row.original.token0
-  //             }&toCurrency=${
-  //               row.original.token1 === Native.onChain(row.original.chainId).wrapped.address
-  //                 ? 'NATIVE'
-  //                 : row.original.token1
-  //             }&feeAmount=${row.original.fee}`}
-  //           >
-  //             <GiftIcon width={16} height={16} className="mr-2" />
-  //             Add incentive
-  //           </Link>
-  //         </DropdownMenuItem>
-  //       </DropdownMenuContent>
-  //     </DropdownMenu>
-  //   ),
-  // },
-] satisfies ColumnDef<ConcentratedLiquidityPositionWithV3Pool, unknown>[]
+const COLUMNS = [NAME_COLUMN_V3, PRICE_RANGE_COLUMN, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL] satisfies ColumnDef<
+  ConcentratedLiquidityPositionWithV3Pool,
+  unknown
+>[]
 
 const tableState = { sorting: [{ id: 'positionSize', desc: true }] }
 
@@ -64,6 +29,7 @@ interface ConcentratedPositionsTableProps {
 export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> = ({ onRowClick, poolId, hideClosed }) => {
   const { address } = useAccount()
   const { chainIds, tokenSymbols } = usePoolFilters()
+
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,

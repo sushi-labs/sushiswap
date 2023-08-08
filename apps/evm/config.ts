@@ -7,8 +7,8 @@ export const ANGLE_ENABLED_NETWORKS = [ChainId.ETHEREUM, ChainId.POLYGON, ChainI
 
 export type AngleEnabledChainId = (typeof ANGLE_ENABLED_NETWORKS)[number]
 
-export const isAngleEnabledChainId = (chainId: number): chainId is AngleEnabledChainId =>
-  ANGLE_ENABLED_NETWORKS.includes(chainId as AngleEnabledChainId)
+export const isAngleEnabledChainId = (chainId: number | string): chainId is AngleEnabledChainId =>
+  ANGLE_ENABLED_NETWORKS.includes(+chainId as AngleEnabledChainId)
 
 export const SWAP_API_ENABLED_NETWORKS = []
 

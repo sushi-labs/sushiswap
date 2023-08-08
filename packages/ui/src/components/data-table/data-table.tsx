@@ -22,7 +22,7 @@ import {
 } from '@tanstack/react-table'
 import { default as React, ReactNode } from 'react'
 
-import { CardContent, classNames } from '../../index'
+import { classNames } from '../../index'
 import { Table, TableBody, TableCell, TableCellAsLink, TableHead, TableHeader, TableRow } from '../tablenew'
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTablePagination } from './data-table-pagination'
@@ -31,6 +31,7 @@ declare module '@tanstack/react-table' {
   interface ColumnMeta<TData extends RowData, TValue> {
     className?: string
     skeleton?: React.ReactNode
+    headerDescription?: string
   }
 }
 
@@ -46,11 +47,9 @@ interface DataTableProps<TData, TValue> {
   onSortingChange?: OnChangeFn<SortingState>
   onPaginationChange?: OnChangeFn<PaginationState>
   rowRenderer?: (row: Row<TData>, value: ReactNode) => ReactNode
-  border?: boolean
 }
 
 export function DataTable<TData, TValue>({
-  border = true,
   testId,
   columns,
   data,
@@ -103,7 +102,11 @@ export function DataTable<TData, TValue>({
                 return (
                   <TableHead key={header.id} className={classNames(header.column.getCanSort() ? 'px-2' : 'px-4')}>
                     {header.isPlaceholder ? null : (
-                      <DataTableColumnHeader column={header.column} title={header.column.columnDef.header as string} />
+                      <DataTableColumnHeader
+                        description={header.column.columnDef?.meta?.headerDescription}
+                        column={header.column}
+                        title={header.column.columnDef.header as string}
+                      />
                     )}
                   </TableHead>
                 )
@@ -157,9 +160,9 @@ export function DataTable<TData, TValue>({
         </TableBody>
       </Table>
       {pagination ? (
-        <CardContent>
+        <div className="px-6">
           <DataTablePagination table={table} />
-        </CardContent>
+        </div>
       ) : null}
     </div>
   )

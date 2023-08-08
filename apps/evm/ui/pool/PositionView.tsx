@@ -17,6 +17,7 @@ import {
   CardLabel,
   CardTitle,
   classNames,
+  LinkInternal,
   Tabs,
   TabsContent,
   TabsList,
@@ -25,7 +26,7 @@ import {
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { isSushiSwapV3ChainId, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import {
   useConcentratedLiquidityPositionsFromTokenId,
@@ -35,9 +36,7 @@ import {
 } from '@sushiswap/wagmi/future/hooks'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import useIsTickAtLimit from 'lib/hooks/useIsTickAtLimit'
-import { useSearchParams } from 'next/navigation'
 import React, { FC, Fragment, useMemo, useState } from 'react'
-import { z } from 'zod'
 
 import { isAngleEnabledChainId } from '../../config'
 import { Bound } from '../../lib/constants'
@@ -48,30 +47,11 @@ import { ConcentratedLiquidityHarvestButton } from './ConcentratedLiquidityHarve
 import { ConcentratedLiquidityProvider, useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 import { ConcentratedLiquidityRemoveWidget } from './ConcentratedLiquidityRemoveWidget'
 import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
-
-const queryParamsSchema = z.object({
-  id: z
-    .string()
-    .refine((val) => val.includes('%3A'), {
-      message: 'TokenId not in the right format',
-    })
-    .transform((val) => {
-      const [chainId, tokenId] = val.split('%3A')
-      return [+chainId, +tokenId] as [SushiSwapV3ChainId, number]
-    })
-    .refine(([chainId]) => isSushiSwapV3ChainId(chainId), {
-      message: 'ChainId not supported.',
-    }),
-})
+import { DistributionDataTable } from './DistributionDataTable'
 
 const Component: FC<{ id: string }> = ({ id }) => {
   const { address } = useAccount()
-  const searchParams = useSearchParams()!
-
-  const {
-    id: [chainId, tokenId],
-  } = queryParamsSchema.parse({ id, activeTab: searchParams.get('activeTab') })
-
+  const [chainId, poolId, tokenId] = id.split('%3A') as [SushiSwapV3ChainId, string, string]
   const [invert, setInvert] = useState(false)
 
   const { data: positionDetails } = useConcentratedLiquidityPositionsFromTokenId({
@@ -143,6 +123,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
   const fiatValuesAmounts = useTokenAmountDollarValues({ chainId, amounts })
   const positionAmounts = useMemo(() => [position?.amount0, position?.amount1], [position])
   const fiatValuesPosition = useTokenAmountDollarValues({ chainId, amounts: positionAmounts })
+  const currentAngleRewardsPool = rewardsData?.pools[poolId]
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -190,6 +171,51 @@ const Component: FC<{ id: string }> = ({ id }) => {
             </TabsContent>
           </Tabs>
         </Card>
+        {isAngleEnabledChainId(chainId) ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>Reward distributions</CardTitle>
+              <CardDescription>
+                Anyone can add distributions to this pool.{' '}
+                {_token0 && _token1 ? (
+                  <LinkInternal
+                    href={`/pool/incentivize?chainId=${chainId}&fromCurrency=${
+                      _token0.isNative ? 'NATIVE' : _token0.address
+                    }&toCurrency=${_token1.isNative ? 'NATIVE' : _token1.address}&feeAmount=${positionDetails?.fee}`}
+                  >
+                    <Button asChild variant="link">
+                      Want to add one?
+                    </Button>
+                  </LinkInternal>
+                ) : null}
+              </CardDescription>
+            </CardHeader>
+            <Tabs className="w-full" defaultValue="add">
+              <CardContent>
+                <TabsList className="!flex">
+                  <TabsTrigger value="add" className="flex flex-1">
+                    Active
+                  </TabsTrigger>
+                  <TabsTrigger value="remove" className="flex flex-1">
+                    Expired
+                  </TabsTrigger>
+                </TabsList>
+              </CardContent>
+              <TabsContent value="add">
+                <DistributionDataTable
+                  isLoading={rewardsLoading}
+                  data={currentAngleRewardsPool?.distributionData.filter((el) => el.isLive)}
+                />
+              </TabsContent>
+              <TabsContent value="remove">
+                <DistributionDataTable
+                  isLoading={rewardsLoading}
+                  data={currentAngleRewardsPool?.distributionData.filter((el) => !el.isLive)}
+                />
+              </TabsContent>
+            </Tabs>
+          </Card>
+        ) : null}
       </div>
       <div className="flex flex-col flex-1 gap-6">
         {isAngleEnabledChainId(chainId) ? (
