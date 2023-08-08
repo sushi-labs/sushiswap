@@ -1,5 +1,6 @@
 import { isAddress } from '@ethersproject/address'
 import { ChainId } from '@sushiswap/chain'
+import { Separator } from '@sushiswap/ui'
 import { ManageV2LiquidityCard } from 'ui/pool/ManageV2LiquidityCard'
 import { PoolTransactionsV2 } from 'ui/pool/PoolTransactionsV2'
 
@@ -39,27 +40,35 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
   return (
     <>
       <UnknownTokenAlert pool={pool} />
-      <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
-        <div className="flex flex-col gap-6">
-          <PoolChartV2 address={pool.address} chainId={pool.chainId as ChainId} />
+      <div className="flex flex-col gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
           <ManageV2LiquidityCard pool={pool} />
+          <div className="flex flex-col gap-6">
+            <PoolPositionProvider pool={pool}>
+              <PoolPositionStakedProvider pool={pool}>
+                <PoolPositionRewardsProvider pool={pool}>
+                  <PoolPosition pool={pool} />
+                  <PoolMyRewards pool={pool} />
+                </PoolPositionRewardsProvider>
+              </PoolPositionStakedProvider>
+            </PoolPositionProvider>
+          </div>
         </div>
-        <div className="flex flex-col gap-6">
-          <PoolComposition pool={pool} />
-          <PoolStats pool={pool} />
-          <PoolPositionProvider pool={pool}>
-            <PoolPositionStakedProvider pool={pool}>
-              <PoolPositionRewardsProvider pool={pool}>
-                <PoolPosition pool={pool} />
-                <PoolMyRewards pool={pool} />
-              </PoolPositionRewardsProvider>
-            </PoolPositionStakedProvider>
-          </PoolPositionProvider>
-          <PoolRewards pool={pool} />
+        <div className="py-4">
+          <Separator />
         </div>
-        <div className="col-span-1 md:col-span-2">
-          <PoolTransactionsV2 pool={pool} poolId={pool.address} />
+        <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
+          <PoolChartV2 address={pool.address} chainId={pool.chainId as ChainId} />
+          <div className="flex flex-col gap-6">
+            <PoolComposition pool={pool} />
+            <PoolStats pool={pool} />
+            <PoolRewards pool={pool} />
+          </div>
         </div>
+        <div className="py-4">
+          <Separator />
+        </div>
+        <PoolTransactionsV2 pool={pool} poolId={pool.address} />
       </div>
     </>
   )
