@@ -65,6 +65,7 @@ export const PoolHeader: FC<PoolHeader> = ({ address, pool, apy, priceRange }) =
               icon={ChevronLeftIcon}
               onClick={back}
               name="back"
+              iconProps={{ strokeWidth: 3 }}
               className="xl:absolute xl:ml-[-56px]"
             />
             <Currency.IconList iconWidth={36} iconHeight={36}>
