@@ -160,7 +160,7 @@ export function DataTable<TData, TValue>({
         </TableBody>
       </Table>
       {pagination ? (
-        <div className="px-6">
+        <div className="px-6 pb-6">
           <DataTablePagination table={table} />
         </div>
       ) : null}

@@ -3,13 +3,11 @@
 import { getPool } from '@sushiswap/client'
 import { formatUSD } from '@sushiswap/format'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
-import { CardLabel } from '@sushiswap/ui'
 import {
   Card,
   CardContent,
   CardCurrencyAmountItem,
   CardDescription,
-  CardGroup,
   CardHeader,
   CardItem,
   CardTitle,
@@ -21,6 +19,7 @@ import { useTokenAmountDollarValues } from 'lib/hooks'
 import React, { FC, useMemo, useState } from 'react'
 
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
+import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'
 import { PoolTransactionsV3 } from './PoolTransactionsV3'
 import { StatisticsCharts } from './StatisticsChart'
 
@@ -81,25 +80,25 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
             />
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Rewards</CardTitle>
-            <CardDescription>{formatUSD(fiatValuesIncentives.reduce((a, b) => a + b, 0))} per day</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <CardGroup>
-              <CardLabel>Tokens (per day)</CardLabel>
-              {poolStats?.incentives.map((el, i) => (
-                <CardCurrencyAmountItem key={i} amount={el.reward} fiatValue={formatUSD(fiatValuesIncentives[i])} />
-              ))}
-            </CardGroup>
-          </CardContent>
-        </Card>
+        {/*<Card>*/}
+        {/*  <CardHeader>*/}
+        {/*    <CardTitle>Rewards</CardTitle>*/}
+        {/*    <CardDescription>{formatUSD(fiatValuesIncentives.reduce((a, b) => a + b, 0))} per day</CardDescription>*/}
+        {/*  </CardHeader>*/}
+        {/*  <CardContent>*/}
+        {/*    <CardGroup>*/}
+        {/*      <CardLabel>Tokens (per day)</CardLabel>*/}
+        {/*      {poolStats?.incentives.map((el, i) => (*/}
+        {/*        <CardCurrencyAmountItem key={i} amount={el.reward} fiatValue={formatUSD(fiatValuesIncentives[i])} />*/}
+        {/*      ))}*/}
+        {/*    </CardGroup>*/}
+        {/*  </CardContent>*/}
+        {/*</Card>*/}
         <Card>
           <CardHeader>
             <CardTitle>
               <div className="flex flex-col md:flex-row justify-between gap-y-4">
-                Details
+                Statistics
                 <div className="flex items-center gap-1">
                   <Toggle
                     variant="outline"
@@ -154,7 +153,8 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
           </CardContent>
         </Card>
       </div>
-      <div className="col-span-1 md:col-span-2">
+      <div className="col-span-1 md:col-span-2 space-y-6">
+        <PoolRewardDistributionsCard pool={pool} />
         <PoolTransactionsV3 pool={pool} poolId={pool.address} />
       </div>
     </div>

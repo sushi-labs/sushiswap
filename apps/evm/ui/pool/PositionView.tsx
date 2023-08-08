@@ -171,94 +171,6 @@ const Component: FC<{ id: string }> = ({ id }) => {
             </TabsContent>
           </Tabs>
         </Card>
-        {isAngleEnabledChainId(chainId) ? (
-          <Card>
-            <CardHeader>
-              <CardTitle>Reward distributions</CardTitle>
-              <CardDescription>
-                Anyone can add distributions to this pool.{' '}
-                {_token0 && _token1 ? (
-                  <LinkInternal
-                    href={`/pool/incentivize?chainId=${chainId}&fromCurrency=${
-                      _token0.isNative ? 'NATIVE' : _token0.address
-                    }&toCurrency=${_token1.isNative ? 'NATIVE' : _token1.address}&feeAmount=${positionDetails?.fee}`}
-                  >
-                    <Button asChild variant="link">
-                      Want to add one?
-                    </Button>
-                  </LinkInternal>
-                ) : null}
-              </CardDescription>
-            </CardHeader>
-            <Tabs className="w-full" defaultValue="add">
-              <CardContent>
-                <TabsList className="!flex">
-                  <TabsTrigger value="add" className="flex flex-1">
-                    Active
-                  </TabsTrigger>
-                  <TabsTrigger value="remove" className="flex flex-1">
-                    Expired
-                  </TabsTrigger>
-                </TabsList>
-              </CardContent>
-              <TabsContent value="add">
-                <DistributionDataTable
-                  isLoading={rewardsLoading}
-                  data={currentAngleRewardsPool?.distributionData.filter((el) => el.isLive)}
-                />
-              </TabsContent>
-              <TabsContent value="remove">
-                <DistributionDataTable
-                  isLoading={rewardsLoading}
-                  data={currentAngleRewardsPool?.distributionData.filter((el) => !el.isLive)}
-                />
-              </TabsContent>
-            </Tabs>
-          </Card>
-        ) : null}
-      </div>
-      <div className="flex flex-col flex-1 gap-6">
-        {isAngleEnabledChainId(chainId) ? (
-          <Card>
-            <CardHeader>
-              <CardTitle>Unclaimed rewards</CardTitle>
-              <CardDescription>
-                Claiming rewards will claim your rewards for every liquidity position on {Chain.from(chainId).name}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CardGroup>
-                <CardLabel>Tokens</CardLabel>
-                {rewardsData && positionDetails && rewardsData.pools[positionDetails.address]?.rewardsPerToken ? (
-                  Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).map((el, i) => (
-                    <CardCurrencyAmountItem key={i} amount={el.unclaimed} />
-                  ))
-                ) : (
-                  <CardItem skeleton />
-                )}
-              </CardGroup>
-            </CardContent>
-            <CardFooter>
-              <ConcentratedLiquidityHarvestButton account={address} chainId={chainId}>
-                {({ write, isLoading }) => (
-                  <Checker.Connect fullWidth variant="outline" size="default">
-                    <Checker.Network fullWidth variant="outline" size="default" chainId={chainId}>
-                      <Button
-                        variant="secondary"
-                        fullWidth
-                        disabled={isLoading}
-                        onClick={() => write?.()}
-                        size="default"
-                      >
-                        Harvest
-                      </Button>
-                    </Checker.Network>
-                  </Checker.Connect>
-                )}
-              </ConcentratedLiquidityHarvestButton>
-            </CardFooter>
-          </Card>
-        ) : null}
         <Card>
           <CardHeader>
             <CardTitle>Unclaimed fees</CardTitle>
@@ -306,6 +218,8 @@ const Component: FC<{ id: string }> = ({ id }) => {
             </ConcentratedLiquidityCollectButton>
           </CardFooter>
         </Card>
+      </div>
+      <div className="flex flex-col flex-1 gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="flex justify-between items-center">
@@ -415,6 +329,94 @@ const Component: FC<{ id: string }> = ({ id }) => {
             </div>
           </CardContent>
         </Card>
+        {isAngleEnabledChainId(chainId) ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>Unclaimed rewards</CardTitle>
+              <CardDescription>
+                This will claim your rewards for <b>every</b> liquidity position on {Chain.from(chainId).name}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CardGroup>
+                <CardLabel>Tokens (accrued over all positions)</CardLabel>
+                {rewardsData && positionDetails && rewardsData.pools[positionDetails.address]?.rewardsPerToken ? (
+                  Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).map((el, i) => (
+                    <CardCurrencyAmountItem key={i} amount={el.unclaimed} />
+                  ))
+                ) : (
+                  <CardItem skeleton />
+                )}
+              </CardGroup>
+            </CardContent>
+            <CardFooter>
+              <ConcentratedLiquidityHarvestButton account={address} chainId={chainId}>
+                {({ write, isLoading }) => (
+                  <Checker.Connect fullWidth variant="outline" size="default">
+                    <Checker.Network fullWidth variant="outline" size="default" chainId={chainId}>
+                      <Button
+                        variant="secondary"
+                        fullWidth
+                        disabled={isLoading}
+                        onClick={() => write?.()}
+                        size="default"
+                      >
+                        Harvest
+                      </Button>
+                    </Checker.Network>
+                  </Checker.Connect>
+                )}
+              </ConcentratedLiquidityHarvestButton>
+            </CardFooter>
+          </Card>
+        ) : null}
+      </div>
+      <div className="col-span-1 lg:col-span-2">
+        {isAngleEnabledChainId(chainId) ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>Reward distributions</CardTitle>
+              <CardDescription>
+                Anyone can add distributions to this pool.{' '}
+                {_token0 && _token1 ? (
+                  <LinkInternal
+                    href={`/pool/incentivize?chainId=${chainId}&fromCurrency=${
+                      _token0.isNative ? 'NATIVE' : _token0.address
+                    }&toCurrency=${_token1.isNative ? 'NATIVE' : _token1.address}&feeAmount=${positionDetails?.fee}`}
+                  >
+                    <Button asChild variant="link">
+                      Want to add one?
+                    </Button>
+                  </LinkInternal>
+                ) : null}
+              </CardDescription>
+            </CardHeader>
+            <Tabs className="w-full" defaultValue="add">
+              <CardContent>
+                <TabsList className="!flex">
+                  <TabsTrigger value="add" className="flex flex-1">
+                    Active
+                  </TabsTrigger>
+                  <TabsTrigger value="remove" className="flex flex-1">
+                    Expired
+                  </TabsTrigger>
+                </TabsList>
+              </CardContent>
+              <TabsContent value="add">
+                <DistributionDataTable
+                  isLoading={rewardsLoading}
+                  data={currentAngleRewardsPool?.distributionData.filter((el) => el.isLive)}
+                />
+              </TabsContent>
+              <TabsContent value="remove">
+                <DistributionDataTable
+                  isLoading={rewardsLoading}
+                  data={currentAngleRewardsPool?.distributionData.filter((el) => !el.isLive)}
+                />
+              </TabsContent>
+            </Tabs>
+          </Card>
+        ) : null}
       </div>
     </div>
   )

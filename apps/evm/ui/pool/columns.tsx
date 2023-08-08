@@ -363,7 +363,7 @@ export const NAME_COLUMN_V3: ColumnDef<ConcentratedLiquidityPositionWithV3Pool, 
 export const PRICE_RANGE_COLUMN: ColumnDef<ConcentratedLiquidityPositionWithV3Pool, unknown> = {
   id: 'priceRange',
   header: 'Price Range',
-  cell: (props) => <ConcentratedLiquidityPositionAPRCell {...props.row} />,
+  cell: (props) => <PriceRangeCell {...props.row} />,
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
@@ -372,7 +372,7 @@ export const PRICE_RANGE_COLUMN: ColumnDef<ConcentratedLiquidityPositionWithV3Po
 export const CLIQ_APR_COLUMN: ColumnDef<ConcentratedLiquidityPositionWithV3Pool, unknown> = {
   id: 'priceRange',
   header: 'Price Range',
-  cell: (props) => <PriceRangeCell {...props.row} />,
+  cell: (props) => <ConcentratedLiquidityPositionAPRCell {...props.row} />,
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
@@ -391,7 +391,7 @@ export const POSITION_SIZE_CELL: ColumnDef<ConcentratedLiquidityPositionWithV3Po
 export const POSITION_UNCLAIMED_CELL: ColumnDef<ConcentratedLiquidityPositionWithV3Pool, unknown> = {
   id: 'unclaimed',
   accessorFn: (row) => row.position.unclaimedUSD,
-  header: 'Unclaimed',
+  header: 'Unclaimed fees',
   cell: (props) => formatUSD(props.row.original.position.unclaimedUSD),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
