@@ -1,4 +1,3 @@
-import { ArrowDownIcon } from '@heroicons/react/20/solid'
 import { Pool } from '@sushiswap/client'
 import {
   Card,
@@ -6,6 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  Separator,
   Tabs,
   TabsContent,
   TabsList,
@@ -45,6 +45,9 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool }) 
             </TabsTrigger>
           </TabsList>
         </CardContent>
+        <div className="py-4">
+          <Separator />
+        </div>
         <TabsContent value="add">
           <CardContent>
             <PoolPositionProvider pool={pool}>
@@ -56,8 +59,8 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool }) 
                     ) : (
                       <AddSectionLegacy pool={pool} />
                     )}
-                    <div className="flex justify-center py-2">
-                      <ArrowDownIcon width={20} height={20} />
+                    <div className="py-4">
+                      <Separator />
                     </div>
                     <AddSectionStake poolId={pool.id} />
                   </div>
@@ -73,8 +76,8 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool }) 
                 <PoolPositionRewardsProvider pool={pool}>
                   <div className="grid-cols-1 max-w-xl grid gap-4 pt-4">
                     <RemoveSectionUnstake poolId={pool.id} />
-                    <div className="flex justify-center py-2">
-                      <ArrowDownIcon fill="currentColor" width={20} height={20} className="text-muted-foreground" />
+                    <div className="py-4">
+                      <Separator />
                     </div>
                     {['BentoBox Classic', 'BentoBox Stable'].includes(pool.protocol) ? (
                       <RemoveSectionTrident pool={pool} />
