@@ -137,17 +137,24 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot(
           </List.Control>
         </List>
         <WidgetFooter>
-          <Checker.Connect fullWidth>
-            <Checker.Network fullWidth chainId={pool.chainId}>
-              <Checker.Guard guardWhen={Boolean(balance && balance.equalTo(ZERO))} guardText="No staked tokens">
+          <Checker.Connect size="default" variant="outline" fullWidth>
+            <Checker.Network size="default" variant="outline" fullWidth chainId={pool.chainId}>
+              <Checker.Guard
+                size="default"
+                variant="outline"
+                guardWhen={Boolean(balance && balance.equalTo(ZERO))}
+                guardText="No staked tokens"
+              >
                 <Checker.Guard
+                  size="default"
+                  variant="outline"
                   guardWhen={Boolean(amount && balance && amount.greaterThan(balance))}
                   guardText="Insufficient balance"
                 >
                   <Button
                     onClick={() => sendTransaction?.()}
                     fullWidth
-                    size="xl"
+                    size="default"
                     disabled={isWritePending || !sendTransaction}
                     testId="unstake-liquidity"
                   >

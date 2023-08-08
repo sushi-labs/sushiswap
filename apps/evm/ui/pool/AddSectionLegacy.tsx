@@ -82,14 +82,24 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
         onInput0={onChangeToken0TypedAmount}
         onInput1={onChangeToken1TypedAmount}
       >
-        <Checker.Connect fullWidth>
+        <Checker.Connect size="default" variant="outline" fullWidth>
           <Checker.Guard
+            size="default"
+            variant="outline"
             guardWhen={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
             guardText="Pool not found"
           >
-            <Checker.Network fullWidth chainId={_pool.chainId}>
-              <Checker.Amounts fullWidth chainId={_pool.chainId as ChainId} amounts={amounts}>
+            <Checker.Network size="default" variant="outline" fullWidth chainId={_pool.chainId}>
+              <Checker.Amounts
+                size="default"
+                variant="outline"
+                fullWidth
+                chainId={_pool.chainId as ChainId}
+                amounts={amounts}
+              >
                 <Checker.ApproveERC20
+                  size="default"
+                  variant="outline"
                   id="approve-token-0"
                   className="whitespace-nowrap"
                   fullWidth
@@ -97,6 +107,8 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                   contract={getSushiSwapRouterContractConfig(chainId).address as Address}
                 >
                   <Checker.ApproveERC20
+                    size="default"
+                    variant="outline"
                     id="approve-token-1"
                     className="whitespace-nowrap"
                     fullWidth
@@ -116,7 +128,7 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                           setTypedAmounts({ input0: '', input1: '' })
                         }}
                       >
-                        <Button size="xl" fullWidth>
+                        <Button size="default" fullWidth>
                           Add Liquidity
                         </Button>
                       </AddSectionReviewModalLegacy>

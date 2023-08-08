@@ -282,8 +282,10 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
         token1Minimum={minAmount1}
         setPercentage={setPercentage}
       >
-        <Checker.Connect fullWidth>
+        <Checker.Connect size="default" variant="outline" fullWidth>
           <Checker.Guard
+            size="default"
+            variant="outline"
             guardText="Pool not found"
             guardWhen={
               isMounted &&
@@ -296,9 +298,11 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
               ].includes(poolState)
             }
           >
-            <Checker.Network fullWidth chainId={_pool.chainId}>
-              <Checker.Guard guardWhen={+percentage <= 0} guardText="Enter amount">
+            <Checker.Network size="default" variant="outline" fullWidth chainId={_pool.chainId}>
+              <Checker.Guard size="default" variant="outline" guardWhen={+percentage <= 0} guardText="Enter amount">
                 <Checker.ApproveBentobox
+                  size="default"
+                  variant="outline"
                   tag={APPROVE_TAG_REMOVE_TRIDENT}
                   fullWidth
                   chainId={chainId}
@@ -306,6 +310,8 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
                   masterContract={getTridentRouterContractConfig(_pool.chainId).address}
                 >
                   <Checker.ApproveERC20
+                    size="default"
+                    variant="outline"
                     fullWidth
                     id="approve-remove-liquidity-slp"
                     amount={slpAmountToRemove}
@@ -313,7 +319,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
                   >
                     <Checker.Success tag={APPROVE_TAG_REMOVE_TRIDENT}>
                       <Button
-                        size="xl"
+                        size="default"
                         onClick={() => sendTransaction?.()}
                         fullWidth
                         disabled={!approved || isWritePending || !sendTransaction}

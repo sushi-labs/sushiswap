@@ -57,6 +57,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
       </WidgetHeader>
       <div className="flex flex-col gap-4">
         <Web3Input.Currency
+          size="sm"
           type="INPUT"
           className="bg-secondary px-3 py-1.5 !rounded-xl"
           loading={false}

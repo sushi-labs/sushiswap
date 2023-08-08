@@ -71,10 +71,18 @@ const _AddSectionStake: FC<AddSectionStakeProps> = withCheckerRoot(({ pool, chef
       liquidityToken={liquidityToken}
       isFarm={farmId !== undefined}
     >
-      <Checker.Connect fullWidth>
-        <Checker.Network fullWidth chainId={pool.chainId}>
-          <Checker.Amounts fullWidth chainId={pool.chainId as ChainId} amounts={amounts}>
+      <Checker.Connect size="default" variant="outline" fullWidth>
+        <Checker.Network size="default" variant="outline" fullWidth chainId={pool.chainId}>
+          <Checker.Amounts
+            size="default"
+            variant="outline"
+            fullWidth
+            chainId={pool.chainId as ChainId}
+            amounts={amounts}
+          >
             <Checker.ApproveERC20
+              size="default"
+              variant="outline"
               fullWidth
               id="stake-approve-slp"
               amount={amounts[0]}
@@ -83,7 +91,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = withCheckerRoot(({ pool, chef
             >
               <Checker.Success tag={APPROVE_TAG_STAKE}>
                 <Button
-                  size="xl"
+                  size="default"
                   onClick={() => sendTransaction?.()}
                   fullWidth
                   disabled={isWritePending || !approved || !sendTransaction}

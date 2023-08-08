@@ -130,11 +130,19 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
             }
             guardText="Pool not found"
           >
-            <Checker.Network fullWidth chainId={_pool.chainId}>
-              <Checker.Amounts fullWidth chainId={_pool.chainId as ChainId} amounts={amounts}>
+            <Checker.Network size="default" variant="outline" fullWidth chainId={_pool.chainId}>
+              <Checker.Amounts
+                size="default"
+                variant="outline"
+                fullWidth
+                chainId={_pool.chainId as ChainId}
+                amounts={amounts}
+              >
                 <Checker.ApproveBentobox
                   tag={APPROVE_TAG_ADD_TRIDENT}
                   chainId={chainId}
+                  size="default"
+                  variant="outline"
                   id="add-liquidity-trident-approve-bentobox"
                   className="whitespace-nowrap"
                   fullWidth
@@ -142,6 +150,8 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                   enabled={Boolean(getTridentRouterContractConfig(chainId).address)}
                 >
                   <Checker.ApproveERC20
+                    size="default"
+                    variant="outline"
                     id="add-liquidity-trident-approve-token0"
                     className="whitespace-nowrap"
                     fullWidth
@@ -150,6 +160,8 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                     enabled={isBentoBoxV1ChainId(chainId)}
                   >
                     <Checker.ApproveERC20
+                      size="default"
+                      variant="outline"
                       id="add-liquidity-trident-approve-token1"
                       className="whitespace-nowrap"
                       fullWidth
@@ -171,7 +183,7 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                             setTypedAmounts({ input0: '', input1: '' })
                           }}
                         >
-                          <Button size="xl" fullWidth>
+                          <Button variant="outline" size="default" fullWidth>
                             Add Liquidity
                           </Button>
                         </AddSectionReviewModalTrident>
