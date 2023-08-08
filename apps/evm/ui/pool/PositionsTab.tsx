@@ -96,7 +96,7 @@ export const PositionsTab = () => {
           ) : null}
         </div>
         <TabsContent value="v3">
-          <ConcentratedPositionsTable hideClosed={hide} />
+          <ConcentratedPositionsTable hideClosed={hide} hideNewPositionButton={true} />
         </TabsContent>
         <TabsContent value="v2">
           <PositionsTable protocol={Protocol.SUSHISWAP_V2} rowLink={(row) => `/pool/${row.pool.id}`} />

@@ -50,7 +50,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
         <WidgetTitle>Remove Liquidity</WidgetTitle>
         <WidgetDescription>If you dont see your balance, maybe you forgot to unstake first?</WidgetDescription>
       </WidgetHeader>
-      <div className="p-3 pb-2 space-y-2 overflow-hidden bg-white rounded-xl dark:bg-secondary">
+      <div className="p-3 pb-2 space-y-2 overflow-hidden bg-white rounded-xl dark:bg-secondary border border-accent">
         <div className="flex justify-between gap-4">
           <div>
             <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">{percentage}%</h1>

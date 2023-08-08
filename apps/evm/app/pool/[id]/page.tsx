@@ -1,5 +1,6 @@
 import { isAddress } from '@ethersproject/address'
 import { ChainId } from '@sushiswap/chain'
+import { ManageV2LiquidityCard } from 'ui/pool/ManageV2LiquidityCard'
 import { PoolTransactionsV2 } from 'ui/pool/PoolTransactionsV2'
 
 import {
@@ -41,18 +42,19 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
       <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
         <div className="flex flex-col gap-6">
           <PoolChartV2 address={pool.address} chainId={pool.chainId as ChainId} />
-          <PoolStats pool={pool} />
+          <ManageV2LiquidityCard pool={pool} />
         </div>
         <div className="flex flex-col gap-6">
+          <PoolComposition pool={pool} />
+          <PoolStats pool={pool} />
           <PoolPositionProvider pool={pool}>
             <PoolPositionStakedProvider pool={pool}>
               <PoolPositionRewardsProvider pool={pool}>
-                <PoolMyRewards pool={pool} />
                 <PoolPosition pool={pool} />
+                <PoolMyRewards pool={pool} />
               </PoolPositionRewardsProvider>
             </PoolPositionStakedProvider>
           </PoolPositionProvider>
-          <PoolComposition pool={pool} />
           <PoolRewards pool={pool} />
         </div>
         <div className="col-span-1 md:col-span-2">

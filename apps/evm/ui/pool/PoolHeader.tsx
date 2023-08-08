@@ -3,7 +3,7 @@
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 import { Chain } from '@sushiswap/chain'
-import { usePool } from '@sushiswap/client'
+import { Pool as PoolV2 } from '@sushiswap/client'
 import { Token } from '@sushiswap/currency'
 import { formatPercent, shortenAddress } from '@sushiswap/format'
 import { Button, classNames, Currency, IconButton, LinkExternal, typographyVariants } from '@sushiswap/ui'
@@ -13,9 +13,11 @@ import { unwrapToken } from 'lib/functions'
 import { useRouter } from 'next/navigation'
 import React, { FC, useMemo } from 'react'
 
+import { APRHoverCard } from './APRHoverCard'
+
 type PoolHeader = {
   address: string
-  pool: Pool | null | undefined | ReturnType<typeof usePool>['data']
+  pool: Pool | null | undefined | PoolV2
   apy?: {
     fees: number | undefined
     rewards: number | undefined
@@ -107,16 +109,24 @@ export const PoolHeader: FC<PoolHeader> = ({ address, pool, apy, priceRange }) =
           {apy ? (
             <div className="flex items-center gap-1.5">
               <span className="tracking-tighter font-semibold">APR</span>
-              <TooltipProvider>
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <span className="underline decoration-dotted">
-                      {formatPercent((apy.fees || 0) + (apy.rewards || 0))}
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent>The APR displayed is algorithmic and subject to change.</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              {pool instanceof Pool ? (
+                <TooltipProvider>
+                  <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      <span className="underline decoration-dotted">
+                        {formatPercent((apy.fees || 0) + (apy.rewards || 0))}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>The APR displayed is algorithmic and subject to change.</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <APRHoverCard pool={pool}>
+                  <span className="underline decoration-dotted">
+                    {formatPercent((apy.fees || 0) + (apy.rewards || 0))}
+                  </span>
+                </APRHoverCard>
+              )}
             </div>
           ) : null}
           {priceRange ? (

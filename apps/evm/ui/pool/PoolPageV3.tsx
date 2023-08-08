@@ -1,15 +1,16 @@
 'use client'
 
+import { ChainId } from '@sushiswap/chain'
 import { getPool } from '@sushiswap/client'
 import { formatUSD } from '@sushiswap/format'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
+import { CardLabel, classNames, SkeletonText } from '@sushiswap/ui'
 import {
   Card,
   CardContent,
   CardCurrencyAmountItem,
   CardDescription,
   CardHeader,
-  CardItem,
   CardTitle,
 } from '@sushiswap/ui/components/card'
 import { Toggle } from '@sushiswap/ui/components/toggle'
@@ -19,7 +20,9 @@ import { useTokenAmountDollarValues } from 'lib/hooks'
 import React, { FC, useMemo, useState } from 'react'
 
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
+import { ConcentratedPositionsTable } from './ConcentratedPositionsTable'
 import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'
+import { PoolsFiltersProvider } from './PoolsFiltersProvider'
 import { PoolTransactionsV3 } from './PoolTransactionsV3'
 import { StatisticsCharts } from './StatisticsChart'
 
@@ -80,20 +83,6 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
             />
           </CardContent>
         </Card>
-        {/*<Card>*/}
-        {/*  <CardHeader>*/}
-        {/*    <CardTitle>Rewards</CardTitle>*/}
-        {/*    <CardDescription>{formatUSD(fiatValuesIncentives.reduce((a, b) => a + b, 0))} per day</CardDescription>*/}
-        {/*  </CardHeader>*/}
-        {/*  <CardContent>*/}
-        {/*    <CardGroup>*/}
-        {/*      <CardLabel>Tokens (per day)</CardLabel>*/}
-        {/*      {poolStats?.incentives.map((el, i) => (*/}
-        {/*        <CardCurrencyAmountItem key={i} amount={el.reward} fiatValue={formatUSD(fiatValuesIncentives[i])} />*/}
-        {/*      ))}*/}
-        {/*    </CardGroup>*/}
-        {/*  </CardContent>*/}
-        {/*</Card>*/}
         <Card>
           <CardHeader>
             <CardTitle>
@@ -121,39 +110,57 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {poolStats ? (
-              <CardItem title="Volume">
-                <span className="flex items-center gap-2">
-                  {formatUSD(granularity === Granularity.Week ? poolStats.volume1w : poolStats.volume1d)}
-                  <span
-                    className={
-                      poolStats[granularity === Granularity.Week ? 'volumeChange1w' : 'volumeChange1d'].toFixed(2) ===
-                      '0.00'
-                        ? 'text-gray-600 dark:text-slate-400'
-                        : poolStats[granularity === Granularity.Week ? 'volumeChange1w' : 'volumeChange1d'] > 0
-                        ? 'text-green'
-                        : 'text-red'
-                    }
-                  >
-                    ({poolStats[granularity === Granularity.Week ? 'volumeChange1w' : 'volumeChange1d'].toFixed(2)}
-                    %)
-                  </span>
-                </span>
-              </CardItem>
-            ) : (
-              <CardItem skeleton />
-            )}
-            {poolStats ? (
-              <CardItem title="Fees">
-                {formatUSD(granularity === Granularity.Day ? poolStats.fees1d : poolStats.fees1w)}
-              </CardItem>
-            ) : (
-              <CardItem skeleton />
-            )}
+            <div className="grid grid-cols-1 gap-3">
+              <div>
+                <CardLabel>Volume (24h)</CardLabel>
+                {poolStats ? (
+                  <div className="text-xl font-semibold">
+                    {formatUSD(granularity === Granularity.Week ? poolStats.volume1w : poolStats.volume1d ?? 0)}{' '}
+                    <span
+                      className={classNames(
+                        'text-xs',
+                        poolStats[granularity === Granularity.Week ? 'volumeChange1w' : 'volumeChange1d'] > 0
+                          ? 'text-green'
+                          : 'text-red'
+                      )}
+                    >
+                      ({poolStats[granularity === Granularity.Week ? 'volumeChange1w' : 'volumeChange1d'].toFixed(2)}
+                      %)
+                    </span>
+                  </div>
+                ) : (
+                  <SkeletonText />
+                )}
+              </div>
+              <div>
+                <CardLabel>Fees (24h)</CardLabel>
+                {poolStats ? (
+                  <div className="text-xl font-semibold">
+                    {formatUSD(granularity === Granularity.Week ? poolStats.fees1w : poolStats.fees1d ?? 0)}{' '}
+                    <span
+                      className={classNames(
+                        'text-xs',
+                        poolStats[granularity === Granularity.Week ? 'feesChange1w' : 'feesChange1d'] > 0
+                          ? 'text-green'
+                          : 'text-red'
+                      )}
+                    >
+                      ({poolStats[granularity === Granularity.Week ? 'feesChange1w' : 'feesChange1d'].toFixed(2)}
+                      %)
+                    </span>
+                  </div>
+                ) : (
+                  <SkeletonText />
+                )}
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
       <div className="col-span-1 md:col-span-2 space-y-6">
+        <PoolsFiltersProvider>
+          <ConcentratedPositionsTable chainId={pool.chainId as ChainId} poolId={pool.address} />
+        </PoolsFiltersProvider>
         <PoolRewardDistributionsCard pool={pool} />
         <PoolTransactionsV3 pool={pool} poolId={pool.address} />
       </div>

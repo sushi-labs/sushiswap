@@ -334,7 +334,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
             <CardHeader>
               <CardTitle>Unclaimed rewards</CardTitle>
               <CardDescription>
-                This will claim your rewards for <b>every</b> liquidity position on {Chain.from(chainId).name}
+                This will claim your rewards for <b>every</b> V3 liquidity position on {Chain.from(chainId).name}
               </CardDescription>
             </CardHeader>
             <CardContent>

@@ -67,7 +67,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot(
             Unstake your liquidity tokens first if you mean to remove your liquidity position
           </WidgetDescription>
         </WidgetHeader>
-        <div className="p-3 pb-2 space-y-2 overflow-hidden bg-white rounded-xl dark:bg-secondary">
+        <div className="border border-accent p-3 pb-2 space-y-2 overflow-hidden bg-white rounded-xl dark:bg-secondary">
           <div className="flex justify-between gap-4">
             <div>
               <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">{value}%</h1>

@@ -172,6 +172,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
               </div>
               {!noLiquidity && (
                 <Toggle
+                  variant="outline"
                   size="xs"
                   pressed={isFullRange}
                   onClick={() => (isFullRange ? resetMintState() : getSetFullRange())}

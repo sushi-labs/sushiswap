@@ -1,30 +1,9 @@
 'use client'
 
-import {
-  ChartPieIcon,
-  EllipsisHorizontalIcon,
-  GiftIcon,
-  MinusIcon,
-  PlusIcon,
-  UserIcon,
-} from '@heroicons/react/24/outline'
 import { Slot } from '@radix-ui/react-slot'
 import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/client'
-import { Native } from '@sushiswap/currency'
-import {
-  Button,
-  Card,
-  CardHeader,
-  CardTitle,
-  DataTable,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  Loader,
-} from '@sushiswap/ui'
+import { Card, CardHeader, CardTitle, DataTable, Loader } from '@sushiswap/ui'
 import { ColumnDef, Row, SortingState, TableState } from '@tanstack/react-table'
-import Link from 'next/link'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useSWRConfig } from 'swr'
@@ -48,91 +27,6 @@ const COLUMNS = [
   VOLUME_1M_COLUMN,
   FEES_COLUMN,
   APR_COLUMN_POOL,
-  {
-    id: 'actions',
-    cell: ({ row }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button icon={EllipsisHorizontalIcon} variant="ghost" size="sm">
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-[240px]">
-          <DropdownMenuItem asChild>
-            <Link
-              onClick={(e) => e.stopPropagation()}
-              shallow={true}
-              className="flex items-center"
-              href={`/pool/${row.original.chainId}%3A${row.original.address}`}
-            >
-              <ChartPieIcon width={16} height={16} className="mr-2" />
-              Pool
-            </Link>
-          </DropdownMenuItem>
-          {row.original.protocol !== 'SUSHISWAP_V3' ? (
-            <>
-              <DropdownMenuItem asChild>
-                <Link
-                  onClick={(e) => e.stopPropagation()}
-                  shallow={true}
-                  className="flex items-center"
-                  href={`/pool/${row.original.chainId}%3A${row.original.address}/add`}
-                >
-                  <PlusIcon width={16} height={16} className="mr-2" />
-                  Add Liquidity
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link
-                  onClick={(e) => e.stopPropagation()}
-                  shallow={true}
-                  className="flex items-center"
-                  href={`/pool/${row.original.chainId}%3A${row.original.address}/remove`}
-                >
-                  <MinusIcon width={16} height={16} className="mr-2" />
-                  Remove Liquidity
-                </Link>
-              </DropdownMenuItem>
-            </>
-          ) : null}
-          {row.original.protocol === 'SUSHISWAP_V3' ? (
-            <>
-              <DropdownMenuItem asChild>
-                <Link
-                  onClick={(e) => e.stopPropagation()}
-                  shallow={true}
-                  className="flex items-center"
-                  href={`/pool/${row.original.chainId}%3A${row.original.address}/positions`}
-                >
-                  <UserIcon width={16} height={16} className="mr-2" />
-                  My Positions
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link
-                  onClick={(e) => e.stopPropagation()}
-                  shallow={true}
-                  className="flex items-center"
-                  href={`/pool/incentivize?chainId=${row.original.chainId}&fromCurrency=${
-                    row.original.token0.address === Native.onChain(row.original.chainId).wrapped.address
-                      ? 'NATIVE'
-                      : row.original.token0.address
-                  }&toCurrency=${
-                    row.original.token1.address === Native.onChain(row.original.chainId).wrapped.address
-                      ? 'NATIVE'
-                      : row.original.token1.address
-                  }&feeAmount=${row.original.swapFee * 10_000 * 100}`}
-                >
-                  <GiftIcon width={16} height={16} className="mr-2" />
-                  Add incentive
-                </Link>
-              </DropdownMenuItem>
-            </>
-          ) : null}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
-  },
 ] satisfies ColumnDef<Pool, unknown>[]
 
 interface PositionsTableProps {

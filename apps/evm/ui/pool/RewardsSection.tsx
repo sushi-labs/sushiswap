@@ -1,27 +1,13 @@
 'use client'
 
-import { EllipsisHorizontalIcon, GiftIcon } from '@heroicons/react/24/outline'
 import { AngleRewardsPool, useAngleRewardsMultipleChains } from '@sushiswap/react-query'
-import {
-  Button,
-  Card,
-  CardHeader,
-  CardTitle,
-  Container,
-  DataTable,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@sushiswap/ui'
+import { Card, CardHeader, CardTitle, Container, DataTable } from '@sushiswap/ui'
 import { Carousel } from '@sushiswap/ui/components/Carousel'
 import { useAccount } from '@sushiswap/wagmi'
 import { ColumnDef, PaginationState } from '@tanstack/react-table'
 import { ANGLE_ENABLED_NETWORKS } from 'config'
-import Link from 'next/link'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 
-import { unwrapToken } from '../../lib/functions'
 import {
   REWARDS_V3_APR_COLUMN,
   REWARDS_V3_CLAIMABLE_COLUMN,
@@ -34,37 +20,8 @@ import { RewardSlide, RewardSlideSkeleton } from './RewardSlide'
 const COLUMNS = [
   REWARDS_V3_NAME_COLUMN,
   REWARDS_V3_POSITION_SIZE_COLUMN,
-  REWARDS_V3_APR_COLUMN,
   REWARDS_V3_CLAIMABLE_COLUMN,
-  {
-    id: 'actions',
-    cell: ({ row }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button icon={EllipsisHorizontalIcon} variant="ghost" size="sm">
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-[240px]">
-          <DropdownMenuItem asChild>
-            <Link
-              onClick={(e) => e.stopPropagation()}
-              shallow={true}
-              className="flex items-center"
-              href={`/pool/incentivize?chainId=${row.original.chainId}&fromCurrency=${
-                unwrapToken(row.original.token0).isNative ? 'NATIVE' : row.original.token0.address
-              }&toCurrency=${
-                unwrapToken(row.original.token1).isNative ? 'NATIVE' : row.original.token1.address
-              }&feeAmount=${row.original.poolFee * 10_000}`}
-            >
-              <GiftIcon width={16} height={16} className="mr-2" />
-              Add incentive
-            </Link>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
-  },
+  REWARDS_V3_APR_COLUMN,
 ] satisfies ColumnDef<AngleRewardsPool, unknown>[]
 
 export const RewardsSection: FC = () => {

@@ -7,7 +7,7 @@ export default async function PositionsPage({ params }: { params: { id: string; 
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center gap-4">
-        <LinkInternal href={`/pool/${params.id}/positions`} className="flex items-center gap-1">
+        <LinkInternal href={`/pool/${params.id}`} className="flex items-center gap-1">
           <IconButton variant="ghost" size="sm" name="go back" icon={ArrowLeftIcon} />
           <span className="text-sm font-medium">View all positions</span>
         </LinkInternal>

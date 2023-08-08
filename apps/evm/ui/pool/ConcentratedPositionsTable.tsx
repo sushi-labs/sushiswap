@@ -1,7 +1,9 @@
 'use client'
 
+import { PlusIcon } from '@heroicons/react/20/solid'
 import { Slot } from '@radix-ui/react-slot'
-import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
+import { ChainId } from '@sushiswap/chain'
+import { Button, Card, CardHeader, CardTitle, DataTable, LinkInternal } from '@sushiswap/ui'
 import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future'
@@ -21,12 +23,20 @@ const COLUMNS = [NAME_COLUMN_V3, PRICE_RANGE_COLUMN, POSITION_SIZE_CELL, POSITIO
 const tableState = { sorting: [{ id: 'positionSize', desc: true }] }
 
 interface ConcentratedPositionsTableProps {
+  chainId?: ChainId
   poolId?: string
   hideClosed?: boolean
   onRowClick?(row: ConcentratedLiquidityPositionWithV3Pool): void
+  hideNewPositionButton?: boolean
 }
 
-export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> = ({ onRowClick, poolId, hideClosed }) => {
+export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> = ({
+  chainId,
+  onRowClick,
+  poolId,
+  hideClosed,
+  hideNewPositionButton = false,
+}) => {
   const { address } = useAccount()
   const { chainIds, tokenSymbols } = usePoolFilters()
 
@@ -76,7 +86,18 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> = (
     <Card>
       <CardHeader>
         <CardTitle>
-          My Positions <span className="text-gray-400 dark:text-slate-500">({_positions.length})</span>
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <span>
+              My Positions <span className="text-gray-400 dark:text-slate-500">({_positions.length})</span>
+            </span>
+            {!hideNewPositionButton ? (
+              <LinkInternal shallow={true} href={`/pool/${chainId}:${poolId}/positions/create`}>
+                <Button icon={PlusIcon} asChild size="sm">
+                  Create position
+                </Button>
+              </LinkInternal>
+            ) : null}
+          </div>
         </CardTitle>
       </CardHeader>
       <DataTable

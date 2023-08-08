@@ -21,10 +21,10 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Details</CardTitle>
+        <CardTitle>Statistics</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3">
           <div>
             <CardLabel>Liquidity</CardLabel>
             {isLoading ? (

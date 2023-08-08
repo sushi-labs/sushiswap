@@ -33,7 +33,7 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Liquidity</CardTitle>
+        <CardTitle>Pool Liquidity</CardTitle>
         <CardDescription>
           {formatUSD(
             (data?.liquidityNative ?? 0) * Number(prices?.[Native.onChain(pool.chainId).wrapped.address]?.toFixed(10))

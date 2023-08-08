@@ -1,5 +1,6 @@
 import { SteerStrategy } from '@sushiswap/database'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Separator } from '@sushiswap/ui'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import { unwrapToken } from 'lib/functions'
@@ -38,26 +39,33 @@ export const SteerManual: FC<ManualProps> = ({ address, chainId }) => {
   }, [invertTokens, poolStats?.token0, poolStats?.token1])
 
   return (
-    <>
-      <SelectPricesWidget
-        chainId={chainId}
-        token0={_token0}
-        token1={_token1}
-        feeAmount={poolStats?.feeAmount}
-        tokenId={undefined}
-        switchTokens={() => setInvertTokens((prev) => !prev)}
-      />
-      <ConcentratedLiquidityWidget
-        chainId={chainId}
-        account={account}
-        token0={_token0}
-        token1={_token1}
-        feeAmount={poolStats?.feeAmount}
-        tokensLoading={false}
-        existingPosition={undefined}
-        tokenId={undefined}
-        successLink={`/pools/${chainId}:${address}?activeTab=myPositions`}
-      />
-    </>
+    <Card>
+      <CardHeader>
+        <CardTitle>New position</CardTitle>
+        <CardDescription>Create a new concentrated liquidity position</CardDescription>
+      </CardHeader>
+      <Separator />
+      <CardContent>
+        <SelectPricesWidget
+          chainId={chainId}
+          token0={_token0}
+          token1={_token1}
+          feeAmount={poolStats?.feeAmount}
+          tokenId={undefined}
+          switchTokens={() => setInvertTokens((prev) => !prev)}
+        />
+        <ConcentratedLiquidityWidget
+          chainId={chainId}
+          account={account}
+          token0={_token0}
+          token1={_token1}
+          feeAmount={poolStats?.feeAmount}
+          tokensLoading={false}
+          existingPosition={undefined}
+          tokenId={undefined}
+          successLink={`/pools/${chainId}:${address}?activeTab=myPositions`}
+        />
+      </CardContent>
+    </Card>
   )
 }

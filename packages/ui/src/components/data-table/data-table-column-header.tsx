@@ -58,27 +58,34 @@ export function DataTableColumnHeader<TData, TValue>({
   return (
     <div className={classNames('flex items-center space-x-2', className)}>
       {description ? (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button onClick={onClick} variant="ghost" size="xs">
+        <Button onClick={onClick} variant="ghost" size="xs">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
                 <span className="underline decoration-dotted">{title}</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>{description}</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+                {column.getIsSorted() === 'desc' ? (
+                  <CaretDownIcon className="ml-2 h-4 w-4" />
+                ) : column.getIsSorted() === 'asc' ? (
+                  <CaretUpIcon className="ml-2 h-4 w-4" />
+                ) : (
+                  <CaretSortIcon className="ml-2 h-4 w-4" />
+                )}
+              </TooltipTrigger>
+              <TooltipContent>{description}</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </Button>
       ) : (
         <Button onClick={onClick} variant="ghost" size="xs">
           <span>{title}</span>
+          {column.getIsSorted() === 'desc' ? (
+            <CaretDownIcon className="ml-2 h-4 w-4" />
+          ) : column.getIsSorted() === 'asc' ? (
+            <CaretUpIcon className="ml-2 h-4 w-4" />
+          ) : (
+            <CaretSortIcon className="ml-2 h-4 w-4" />
+          )}
         </Button>
-      )}
-      {column.getIsSorted() === 'desc' ? (
-        <CaretDownIcon className="ml-2 h-4 w-4" />
-      ) : column.getIsSorted() === 'asc' ? (
-        <CaretUpIcon className="ml-2 h-4 w-4" />
-      ) : (
-        <CaretSortIcon className="ml-2 h-4 w-4" />
       )}
     </div>
   )
