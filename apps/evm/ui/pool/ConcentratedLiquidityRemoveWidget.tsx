@@ -5,6 +5,7 @@ import { CogIcon } from '@heroicons/react/24/outline'
 import { Amount, Type } from '@sushiswap/currency'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import {
+  Card,
   CardContent,
   CardCurrencyAmountItem,
   CardFooter,
@@ -249,16 +250,18 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
             </div>
           </div>
         </CardGroup>
-        <CardGroup>
-          <CardLabel>{"You'll"} receive</CardLabel>
-          <CardCurrencyAmountItem amount={position?.amount0.multiply(value).divide(100)} />
-          <CardCurrencyAmountItem amount={position?.amount1.multiply(value).divide(100)} />
-        </CardGroup>
-        <CardGroup>
-          <CardLabel>{"You'll"} receive collected fees</CardLabel>
-          <CardCurrencyAmountItem amount={feeValue0?.multiply(value).divide(100)} />
-          <CardCurrencyAmountItem amount={feeValue1?.multiply(value).divide(100)} />
-        </CardGroup>
+        <Card variant="outline" className="space-y-6 p-6">
+          <CardGroup>
+            <CardLabel>{"You'll"} receive</CardLabel>
+            <CardCurrencyAmountItem amount={position?.amount0.multiply(value).divide(100)} />
+            <CardCurrencyAmountItem amount={position?.amount1.multiply(value).divide(100)} />
+          </CardGroup>
+          <CardGroup>
+            <CardLabel>{"You'll"} receive collected fees</CardLabel>
+            <CardCurrencyAmountItem amount={feeValue0?.multiply(value).divide(100)} />
+            <CardCurrencyAmountItem amount={feeValue1?.multiply(value).divide(100)} />
+          </CardGroup>
+        </Card>
       </CardContent>
       <CardFooter>
         <Checker.Connect fullWidth variant="outline" size="xl">
