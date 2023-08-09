@@ -58,7 +58,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
       <div className="flex flex-col gap-4">
         <Web3Input.Currency
           type="INPUT"
-          className="bg-secondary px-3 py-1.5 !rounded-xl"
+          className="border border-accent px-3 py-1.5 !rounded-xl"
           loading={false}
           value={input0}
           onChange={onInput0}
@@ -67,13 +67,13 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
           chainId={chainId}
         />
         <div className="flex items-center justify-center mt-[-24px] mb-[-24px] z-10">
-          <div className="group p-1 bg-gray-100 dark:bg-slate-700 rounded-full">
-            <PlusIcon width={16} height={16} />
+          <div className="p-1 bg-background border border-accent rounded-full">
+            <PlusIcon width={16} height={16} className="text-muted-foreground" />
           </div>
         </div>
         <Web3Input.Currency
           type="INPUT"
-          className="bg-secondary px-3 py-1.5 !rounded-xl"
+          className="border border-accent px-3 py-1.5 !rounded-xl"
           value={input1}
           onChange={onInput1}
           currency={token1}
