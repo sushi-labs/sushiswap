@@ -54,6 +54,7 @@ export const Breadcrumb = () => {
         <>
           <ChevronRightIcon width={16} height={16} className="text-muted-foreground" />
           {items.map((segment, i) => {
+            const segments = [...items].slice(0, i + 1)
             return (
               <React.Fragment key={segment}>
                 <Button
@@ -67,7 +68,7 @@ export const Breadcrumb = () => {
                       : '!font-medium !text-gray-900 dark:!text-slate-50'
                   )}
                 >
-                  {segment}
+                  <LinkInternal href={`/pool/${segments.join('/')}`}>{segment}</LinkInternal>
                 </Button>
 
                 {i < items.length - 1 ? (

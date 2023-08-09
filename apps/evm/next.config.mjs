@@ -1,5 +1,5 @@
 import defaultNextConfig from '@sushiswap/nextjs-config'
-import { withAxiom } from 'next-axiom'
+import {withAxiom} from 'next-axiom'
 
 const { ANALYTICS_URL, BLOG_URL, EARN_URL, FURO_URL, SWAP_URL, ACADEMY_URL } = process.env
 
@@ -41,6 +41,11 @@ const nextConfig = {
       },
       {
         source: '/pools/:path*',
+        permanent: true,
+        destination: '/pool/:path*',
+      },
+      {
+        source: '/pool/:path*/positions',
         permanent: true,
         destination: '/pool/:path*',
       },
