@@ -37,7 +37,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(({ variant, id, cla
 Widget.displayName = 'WidgetRoot'
 
 const WidgetHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={classNames('flex flex-col gap-1.5 text-center sm:text-left mb-4', className)} {...props} />
+  <div className={classNames('flex flex-col space-y-1.5 text-left mb-4', className)} {...props} />
 )
 WidgetHeader.displayName = 'WidgetHeader'
 

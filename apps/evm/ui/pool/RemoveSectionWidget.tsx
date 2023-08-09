@@ -3,9 +3,7 @@
 import { CogIcon } from '@heroicons/react-v1/outline'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Type } from '@sushiswap/currency'
-import { FundSource } from '@sushiswap/hooks'
-import { ZERO } from '@sushiswap/math'
-import { classNames, List, WidgetDescription, WidgetFooter } from '@sushiswap/ui'
+import { List, WidgetDescription, WidgetFooter } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency as UICurrency } from '@sushiswap/ui/components/currency'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
@@ -40,12 +38,6 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
 
   return (
     <Widget id="removeLiquidity" variant="empty">
-      <div
-        data-state={balance?.[FundSource.WALLET]?.greaterThan(ZERO) ? 'closed' : 'open'}
-        className={classNames(
-          'data-[state=open]:opacity-80 bg-gray-50 dark:bg-slate-900 data-[state=closed]:pointer-events-none opacity-0 z-10 absolute inset-0'
-        )}
-      />
       <WidgetHeader>
         <WidgetTitle>Remove Liquidity</WidgetTitle>
         <WidgetDescription>If you dont see your balance, maybe you forgot to unstake first?</WidgetDescription>

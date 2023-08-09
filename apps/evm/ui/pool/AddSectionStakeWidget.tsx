@@ -1,9 +1,7 @@
 import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
-import { ZERO } from '@sushiswap/math'
 import {
-  classNames,
   TextField,
   textFieldVariants,
   typographyVariants,
@@ -61,12 +59,6 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
 
   return (
     <Widget id="stakeLiquidity" variant="empty">
-      <div
-        data-state={balance?.[FundSource.WALLET]?.greaterThan(ZERO) ? 'closed' : 'open'}
-        className={classNames(
-          'data-[state=open]:opacity-60 bg-gray-50 dark:bg-slate-900 data-[state=closed]:pointer-events-none opacity-0 z-10 absolute inset-0'
-        )}
-      />
       <WidgetHeader>
         <WidgetTitle>Stake Liquidity</WidgetTitle>
         <WidgetDescription>
