@@ -1,7 +1,7 @@
 'use client'
 
 import { Signature } from '@ethersproject/bytes'
-import { watchAccount } from '@wagmi/core'
+import { watchAccount, watchNetwork } from '@wagmi/core'
 import React, { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 type CheckerContext = {
@@ -47,14 +47,15 @@ export const CheckerProvider: FC<ProviderProps> = ({ children }) => {
     }))
   }, [])
 
-  // Reset state when address changes
+  // Reset state when address/wallet changes
   useEffect(() => {
-    const unwatch = watchAccount(() => {
-      // Reset state on account changes
-      setState(initialState)
-    })
+    const unwatchAccountListener = watchAccount(() => setState(initialState))
+    const unwatchChainListener = watchNetwork(() => setState(initialState))
 
-    return () => unwatch()
+    return () => {
+      unwatchAccountListener()
+      unwatchChainListener()
+    }
   }, [])
 
   return (
