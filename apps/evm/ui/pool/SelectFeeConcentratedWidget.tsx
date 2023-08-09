@@ -3,14 +3,17 @@ import { ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { Type } from '@sushiswap/currency'
 import {
   Button,
-  classNames,
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  Chip,
   FormSection,
-  Label,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-  typographyVariants,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+  Toggle,
 } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { FeeAmount } from '@sushiswap/v3-sdk'
@@ -87,93 +90,82 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> = memo
         >
           {FEE_OPTIONS.map((option, i) =>
             disableIfNotExists && !tvlDistribution.get(option.value) ? (
-              <TooltipProvider key={i}>
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger className="cursor-default">
-                    <RadioGroup.Option
-                      testdata-id={`fee-option-${option.value}`}
-                      key={option.value}
-                      value={option.value}
-                      disabled={true}
-                      className={({ checked, disabled }) =>
-                        classNames(
-                          disabled ? 'opacity-40 pointer-events-none' : '',
-                          checked ? 'ring-blue ring' : '',
-                          'hover:ring ring-primary px-5 py-4 flex items-center rounded-xl bg-white dark:bg-slate-800/40 cursor-pointer'
-                        )
-                      }
-                    >
-                      <div className="flex flex-col space-y-1">
-                        <span className="flex items-center space-x-2">
-                          <div className="font-medium text-gray-900 dark:text-slate-50">
-                            {option.value / 10000}% Fees{' '}
-                          </div>{' '}
+              <HoverCard key={i} openDelay={0} closeDelay={0}>
+                <HoverCardTrigger>
+                  <Card className="opacity-40">
+                    <CardHeader>
+                      <CardTitle>
+                        <span className="flex items-center gap-2">
+                          <span>{option.value / 10000}% Fees </span>
                           {tvlDistribution.get(option.value) && (
-                            <div className="px-2 py-1 text-xs text-gray-700 bg-gray-200 dark:bg-gray-700 dark:text-gray-200 rounded-[20px]">
+                            <Chip variant="secondary">
                               {isLoading ? (
                                 <Dots />
                               ) : (
                                 `${(tvlDistribution.get(option.value)! * 100)?.toFixed(0)}% Selected`
                               )}
-                            </div>
+                            </Chip>
                           )}
                         </span>
-                        <span className="text-sm text-gray-500 dark:text-slate-400">{option.subtitle}</span>
-                      </div>
-                    </RadioGroup.Option>
-                  </TooltipTrigger>
-                  <TooltipContent asChild>
-                    <div className="flex flex-col gap-2 !p-6 dark:!bg-secondary">
-                      <Label>Pool doesnt exist yet.</Label>
-                      <p className={typographyVariants({ variant: 'lead', className: '!text-sm !mt-0' })}>
-                        A pool for this fee tier {`doesn't`} exist yet. <br /> Anyone can create a pool. Want to
-                        <br />
-                        create this pool first?
-                      </p>
-                      <div className="mt-2">
-                        {token0 && token1 ? (
-                          <Button asChild icon={ChevronRightIcon} size="sm" variant="secondary">
-                            <a
-                              target="_blank"
-                              href={`/pool/add?chainId=${token0.chainId}&feeAmount=${option.value}&fromCurrency=${
-                                token0.isNative ? 'NATIVE' : token0.wrapped.address
-                              }&toCurrency=${token1.isNative ? 'NATIVE' : token1.wrapped.address}`}
-                            >
-                              Create Pool
-                            </a>
-                          </Button>
-                        ) : null}
-                      </div>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+                      </CardTitle>
+                      <CardDescription>{option.subtitle}</CardDescription>
+                    </CardHeader>
+                  </Card>
+                </HoverCardTrigger>
+                <HoverCardContent className="!p-0">
+                  <CardHeader>
+                    <CardTitle>Pool doesnt exist yet.</CardTitle>
+                    <CardDescription>
+                      A pool for this fee tier {`doesn't`} exist yet. <br /> Anyone can create a pool. Want to
+                      <br />
+                      create this pool first?
+                    </CardDescription>
+                  </CardHeader>
+                  {token0 && token1 ? (
+                    <CardFooter>
+                      <Button asChild icon={ChevronRightIcon} size="sm" variant="secondary">
+                        <a
+                          target="_blank"
+                          href={`/pool/add?chainId=${token0.chainId}&feeAmount=${option.value}&fromCurrency=${
+                            token0.isNative ? 'NATIVE' : token0.wrapped.address
+                          }&toCurrency=${token1.isNative ? 'NATIVE' : token1.wrapped.address}`}
+                        >
+                          Create Pool
+                        </a>
+                      </Button>
+                    </CardFooter>
+                  ) : null}
+                </HoverCardContent>
+              </HoverCard>
             ) : (
-              <RadioGroup.Option
+              <Toggle
+                pressed={feeAmount === option.value}
+                onClick={() => setFeeAmount(option.value)}
+                asChild
+                key={i}
                 testdata-id={`fee-option-${option.value}`}
-                key={option.value}
-                value={option.value}
-                disabled={disableIfNotExists && !tvlDistribution.get(option.value)}
-                className={({ checked, disabled }) =>
-                  classNames(
-                    disabled ? 'opacity-40 pointer-events-none' : '',
-                    checked ? 'ring-blue ring' : '',
-                    'hover:ring ring-primary px-5 py-4 flex items-center rounded-xl bg-white dark:bg-slate-800/40 cursor-pointer'
-                  )
-                }
+                className="!h-[unset] !w-[unset] !p-0 !text-left !justify-start cursor-pointer"
               >
-                <div className="flex flex-col space-y-1">
-                  <span className="flex items-center space-x-2">
-                    <div className="font-medium text-gray-900 dark:text-slate-50">{option.value / 10000}% Fees </div>{' '}
-                    {tvlDistribution.get(option.value) && (
-                      <div className="px-2 py-1 text-xs text-gray-700 bg-gray-200 dark:bg-gray-700 dark:text-gray-200 rounded-[20px]">
-                        {isLoading ? <Dots /> : `${(tvlDistribution.get(option.value)! * 100)?.toFixed(0)}% Selected`}
-                      </div>
-                    )}
-                  </span>
-                  <span className="text-sm text-gray-500 dark:text-slate-400">{option.subtitle}</span>
-                </div>
-              </RadioGroup.Option>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      <span className="flex items-center space-x-2">
+                        <>{option.value / 10000}% Fees </>{' '}
+                        {tvlDistribution.get(option.value) && (
+                          <Chip variant="secondary">
+                            {isLoading ? (
+                              <Dots />
+                            ) : (
+                              `${(tvlDistribution.get(option.value)! * 100)?.toFixed(0)}% Selected`
+                            )}
+                          </Chip>
+                        )}
+                      </span>
+                    </CardTitle>
+                    <CardDescription>{option.subtitle}</CardDescription>
+                  </CardHeader>
+                </Card>
+              </Toggle>
             )
           )}
         </RadioGroup>

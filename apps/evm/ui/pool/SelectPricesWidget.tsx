@@ -3,7 +3,19 @@
 import { MinusIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
-import { classNames, FormSection, Label, Message, TextField, TextFieldDescription } from '@sushiswap/ui'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  classNames,
+  FormSection,
+  Label,
+  Message,
+  TextField,
+  TextFieldDescription,
+} from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { Toggle } from '@sushiswap/ui/components/toggle'
 import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
@@ -101,9 +113,9 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
         </>
       }
     >
-      <div className={classNames('flex flex-col gap-8', !token0 || !token1 ? 'opacity-40' : '')}>
+      <div className={classNames('flex flex-col gap-6', !token0 || !token1 ? 'opacity-40' : '')}>
         {noLiquidity ? (
-          <Message>
+          <Message size="sm">
             This pool must be initialized before you can add liquidity.{' '}
             {showStartPrice
               ? 'To initialize, select a starting price for the pool. Then, enter your liquidity price range and deposit amount. '
@@ -111,7 +123,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
             Gas fees will be higher than usual due to the initialization transaction.
           </Message>
         ) : null}
-        {children && children}
+        {children ? children : null}
         <div className="rounded-xl flex flex-col gap-8">
           {isMounted && showStartPrice && (
             <div className="flex flex-col gap-3">
@@ -149,7 +161,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
               )}
             </div>
           )}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
               <div className="flex justify-end lg:hidden">
                 {isLoading || !pool || !token0 || !token1 ? (
@@ -170,28 +182,30 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                   </div>
                 )}
               </div>
-              {!noLiquidity && (
-                <Toggle
-                  variant="outline"
-                  size="xs"
-                  pressed={isFullRange}
-                  onClick={() => (isFullRange ? resetMintState() : getSetFullRange())}
-                >
-                  Full Range
-                </Toggle>
-              )}
-              {switchTokens ? (
-                <div className="flex bg-secondary rounded-lg">
-                  <Toggle onPressedChange={switchTokens} pressed={isSorted} size="xs">
-                    {isSorted ? token0?.symbol : token1?.symbol}
+              <div className="flex flex-1 justify-between">
+                {!noLiquidity && (
+                  <Toggle
+                    variant="outline"
+                    size="sm"
+                    pressed={isFullRange}
+                    onClick={() => (isFullRange ? resetMintState() : getSetFullRange())}
+                  >
+                    Full Range
                   </Toggle>
-                  <Toggle onPressedChange={switchTokens} pressed={!isSorted} size="xs">
-                    {isSorted ? token1?.symbol : token0?.symbol}
-                  </Toggle>
-                </div>
-              ) : (
-                <div />
-              )}
+                )}
+                {switchTokens ? (
+                  <div className="flex justify-end gap-1">
+                    <Toggle variant="outline" onPressedChange={switchTokens} pressed={isSorted} size="sm">
+                      {isSorted ? token0?.symbol : token1?.symbol}
+                    </Toggle>
+                    <Toggle variant="outline" onPressedChange={switchTokens} pressed={!isSorted} size="sm">
+                      {isSorted ? token1?.symbol : token0?.symbol}
+                    </Toggle>
+                  </div>
+                ) : (
+                  <div />
+                )}
+              </div>
             </div>
             <div className="flex gap-2">
               <PriceBlock
@@ -256,22 +270,16 @@ export const PriceBlock: FC<PriceBlockProps> = ({
   value,
   focus = false,
 }) => {
-  const isMounted = useIsMounted()
-  //  for focus state, styled components doesnt let you select input parent container
-  const [active, setActive] = useState(false)
-
   // let user type value and only update parent value on blur
   const [localValue, setLocalValue] = useState('')
   const [useLocalValue, setUseLocalValue] = useState(false)
 
   const handleOnFocus = () => {
     setUseLocalValue(true)
-    setActive(true)
   }
 
   const handleOnBlur = useCallback(() => {
     setUseLocalValue(false)
-    setActive(false)
     onUserInput(localValue) // trigger update on parent value
   }, [localValue, onUserInput])
 
@@ -295,14 +303,15 @@ export const PriceBlock: FC<PriceBlockProps> = ({
   }, [localValue, useLocalValue, value])
 
   return (
-    <div
-      onBlur={handleOnBlur}
-      onFocus={handleOnFocus}
-      className={classNames(active ? 'ring-2 ring-blue' : '', 'flex flex-col gap-2 w-full bg-secondary rounded-lg p-3')}
-    >
-      <p className="text-sm font-medium text-gray-600 dark:text-slate-400">{label}</p>
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col">
+    <Card className="bg-transparent shadow-none" onBlur={handleOnBlur} onFocus={handleOnFocus}>
+      <CardHeader>
+        <CardTitle>{label}</CardTitle>
+        <CardDescription>
+          {token1?.symbol} per {token0?.symbol}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex items-center justify-between">
           <TextField
             autoFocus={focus}
             variant="naked"
@@ -314,37 +323,32 @@ export const PriceBlock: FC<PriceBlockProps> = ({
             tabIndex={0}
             className="text-3xl font-medium pt-1 pb-2"
           />
-          {isMounted && (
-            <p className="text-sm font-medium text-gray-500 dark:text-slate-500">
-              {token1?.symbol} per {token0?.symbol}
-            </p>
-          )}
+          <div className="flex gap-1">
+            <button
+              disabled={decrementDisabled}
+              onClick={handleDecrement}
+              className={classNames(
+                decrementDisabled ? 'opacity-40' : 'hover:bg-gray-300 dark:hover:bg-slate-600',
+                'flex items-center justify-center w-5 h-5 bg-gray-200 dark:bg-slate-700 rounded-full'
+              )}
+              tabIndex={-1}
+            >
+              <MinusIcon width={12} height={12} />
+            </button>
+            <button
+              disabled={incrementDisabled}
+              onClick={handleIncrement}
+              className={classNames(
+                incrementDisabled ? 'opacity-40' : 'hover:bg-gray-300 dark:hover:bg-slate-600',
+                'flex items-center justify-center w-5 h-5 bg-gray-200 dark:bg-slate-700 rounded-full'
+              )}
+              tabIndex={-1}
+            >
+              <PlusIcon width={12} height={12} />
+            </button>
+          </div>
         </div>
-        <div className="flex flex-col gap-2">
-          <button
-            disabled={incrementDisabled}
-            onClick={handleIncrement}
-            className={classNames(
-              incrementDisabled ? 'opacity-40' : 'hover:bg-gray-300 dark:hover:bg-slate-600',
-              'flex items-center justify-center w-5 h-5 bg-gray-200 dark:bg-slate-700 rounded-full'
-            )}
-            tabIndex={-1}
-          >
-            <PlusIcon width={12} height={12} />
-          </button>
-          <button
-            disabled={decrementDisabled}
-            onClick={handleDecrement}
-            className={classNames(
-              decrementDisabled ? 'opacity-40' : 'hover:bg-gray-300 dark:hover:bg-slate-600',
-              'flex items-center justify-center w-5 h-5 bg-gray-200 dark:bg-slate-700 rounded-full'
-            )}
-            tabIndex={-1}
-          >
-            <MinusIcon width={12} height={12} />
-          </button>
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }

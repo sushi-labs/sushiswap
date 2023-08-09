@@ -12,9 +12,9 @@ const messageVariants = cva('', {
       success: 'bg-green/10 text-green',
     },
     size: {
-      xs: 'p-2 text-xs rounded-lg',
-      sm: 'p-2 text-sm rounded-lg',
-      default: 'p-3 rounded-xl',
+      xs: 'p-6 text-xs rounded-lg',
+      sm: 'p-6 text-sm rounded-lg',
+      default: 'p-6 rounded-xl',
     },
   },
   defaultVariants: {
