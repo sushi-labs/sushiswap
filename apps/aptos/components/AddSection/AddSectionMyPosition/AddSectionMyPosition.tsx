@@ -48,7 +48,15 @@ export const AddSectionMyPosition: FC<Props> = ({
           <Typography variant="xs" weight={500} className="text-gray-700 dark:text-slate-300">
             Farming Rewards:
           </Typography>
-          <div className={classNames()}></div>
+          <div className="flex justify-end">
+            <img
+              src="https://cdn.sushi.com/image/upload/f_auto,c_limit,w_64,q_auto/tokens/137/0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a.jpg"
+              className="rounded-full"
+              height={16}
+              width={16}
+              alt=""
+            />
+          </div>
         </div>
       </div>
       <div className="px-5">
