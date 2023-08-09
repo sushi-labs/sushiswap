@@ -1,15 +1,26 @@
-import { Amount, Type } from '@sushiswap/currency'
+import { Amount, Type, unwrapToken } from '@sushiswap/currency'
+import { cva, type VariantProps } from 'class-variance-authority'
 import * as React from 'react'
 import { ReactNode } from 'react'
 
 import { classNames, Currency, SkeletonText } from '..'
 
-const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={classNames('relative rounded-xl border border-accent bg-white dark:bg-background shadow-sm', className)}
-    {...props}
-  />
+const cardVariants = cva('relative rounded-xl border border-accent bg-white dark:bg-background shadow-sm', {
+  variants: {
+    variant: {
+      default: 'shadow-sm bg-white dark:bg-background',
+      outline: '',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+})
+
+export interface CardProps extends React.ButtonHTMLAttributes<HTMLDivElement>, VariantProps<typeof cardVariants> {}
+
+const Card = React.forwardRef<HTMLDivElement, CardProps>(({ variant, className, ...props }, ref) => (
+  <div ref={ref} className={cardVariants({ variant, className })} {...props} />
 ))
 Card.displayName = 'Card'
 
@@ -121,20 +132,23 @@ interface CardCurrencyAmountItemProps extends React.HTMLAttributes<HTMLDivElemen
   isLoading?: boolean
   amount?: Amount<Type>
   fiatValue?: string
+  unwrap?: boolean
 }
 
 const CardCurrencyAmountItem = React.forwardRef<HTMLDivElement, CardCurrencyAmountItemProps>(
-  ({ isLoading, amount, fiatValue, ...props }, ref) => {
+  ({ unwrap = true, isLoading, amount, fiatValue, ...props }, ref) => {
     if (isLoading) {
       return <CardItem ref={ref} skeleton />
     }
 
-    if (amount)
+    if (amount) {
+      const currency = unwrap ? unwrapToken(amount?.currency) : amount?.currency
+
       return (
         <CardItem
           title={
             <div className="font-medium flex items-center gap-2 text-muted-foreground">
-              <Currency.Icon currency={amount.currency} width={18} height={18} /> {amount.currency.symbol}
+              <Currency.Icon currency={currency} width={18} height={18} /> {currency.symbol}
             </div>
           }
           ref={ref}
@@ -145,6 +159,7 @@ const CardCurrencyAmountItem = React.forwardRef<HTMLDivElement, CardCurrencyAmou
           </span>
         </CardItem>
       )
+    }
 
     return null
   }

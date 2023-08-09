@@ -70,6 +70,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = withCheckerRoot(({ pool, chef
       reserve1={reserve1}
       liquidityToken={liquidityToken}
       isFarm={farmId !== undefined}
+      isIncentivized={pool.isIncentivized}
     >
       <Checker.Connect size="default" variant="outline" fullWidth>
         <Checker.Network size="default" variant="outline" fullWidth chainId={pool.chainId}>

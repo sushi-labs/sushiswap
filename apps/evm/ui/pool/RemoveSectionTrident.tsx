@@ -61,7 +61,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
     return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
   }, [slippageTolerance])
 
-  const [percentage, setPercentage] = useState<string>('')
+  const [percentage, setPercentage] = useState<string>('0')
   const percentToRemove = useMemo(() => new Percent(percentage, 100), [percentage])
   const tokens = useMemo(() => [token0, token1], [token0, token1])
   const rebases = useBentoBoxTotals(_pool.chainId as BentoBoxV1ChainId, tokens)

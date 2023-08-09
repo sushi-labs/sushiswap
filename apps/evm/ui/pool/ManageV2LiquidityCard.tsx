@@ -28,6 +28,8 @@ interface ManageV2LiquidityCardProps {
 }
 
 export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool }) => {
+  const isFarm = pool.wasIncentivized || pool.isIncentivized
+
   return (
     <Card>
       <CardHeader>
@@ -43,10 +45,10 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool }) 
             <TabsTrigger value="remove" className="flex flex-1">
               Remove
             </TabsTrigger>
-            <TabsTrigger value="stake" className="flex flex-1">
+            <TabsTrigger disabled={!isFarm} value="stake" className="flex flex-1">
               Stake
             </TabsTrigger>
-            <TabsTrigger value="unstake" className="flex flex-1">
+            <TabsTrigger disabled={!isFarm} value="unstake" className="flex flex-1">
               Unstake
             </TabsTrigger>
           </TabsList>

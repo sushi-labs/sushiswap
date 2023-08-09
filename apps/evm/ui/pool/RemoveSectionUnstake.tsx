@@ -4,9 +4,19 @@ import { ChainId } from '@sushiswap/chain'
 import { ChefType, Pool, usePool } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
-import { List, Widget, WidgetDescription, WidgetFooter, WidgetHeader, WidgetTitle } from '@sushiswap/ui'
+import {
+  Card,
+  CardCurrencyAmountItem,
+  CardGroup,
+  CardLabel,
+  Message,
+  Widget,
+  WidgetDescription,
+  WidgetFooter,
+  WidgetHeader,
+  WidgetTitle,
+} from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { Currency as UICurrency } from '@sushiswap/ui/components/currency'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { useMasterChefWithdraw } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/future/systems'
@@ -14,7 +24,6 @@ import { withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provide
 import { FC, useMemo, useState } from 'react'
 import { useSWRConfig } from 'swr'
 
-import { unwrapToken } from '../../lib/functions'
 import { usePoolPositionStaked } from './PoolPositionStakedProvider'
 
 interface AddSectionStakeProps {
@@ -44,10 +53,9 @@ export const RemoveSectionUnstake: FC<{ poolId: string }> = ({ poolId }) => {
 
 export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot(
   ({ chainId, pool, chefType, farmId }) => {
-    const [value, setValue] = useState('')
+    const [value, setValue] = useState('0')
     const { balance } = usePoolPositionStaked()
 
-    console.log(balance?.toExact())
     const amount = useMemo(() => {
       return balance?.multiply(value).divide(100)
     }, [balance, value])
@@ -67,104 +75,105 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot(
             Unstake your liquidity tokens first if you mean to remove your liquidity position
           </WidgetDescription>
         </WidgetHeader>
-        <div className="border border-accent p-3 pb-2 space-y-2 overflow-hidden bg-white rounded-xl dark:bg-secondary">
-          <div className="flex justify-between gap-4">
-            <div>
-              <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">{value}%</h1>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                fullWidth
-                size="sm"
-                variant={value === '25' ? 'default' : 'secondary'}
-                onClick={() => setValue('25')}
-                testId="unstake-25"
-              >
-                25%
-              </Button>
-              <Button
-                fullWidth
-                size="sm"
-                variant={value === '50' ? 'default' : 'secondary'}
-                onClick={() => setValue('50')}
-                testId="unstake-50"
-              >
-                50%
-              </Button>
-              <Button
-                fullWidth
-                size="sm"
-                variant={value === '75' ? 'default' : 'secondary'}
-                onClick={() => setValue('75')}
-                testId="unstake-75"
-              >
-                75%
-              </Button>
-              <Button
-                fullWidth
-                size="sm"
-                variant={value === '100' ? 'default' : 'secondary'}
-                onClick={() => setValue('100')}
-                testId="unstake-max"
-              >
-                MAX
-              </Button>
-            </div>
-          </div>
-          <div className="px-1 pt-2 pb-3">
-            <input
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              type="range"
-              min="1"
-              max="100"
-              className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg dark:bg-gray-700"
-            />
-          </div>
-        </div>
-        <List className="!pt-4">
-          <List.Control className="!bg-secondary">
-            {amount ? (
-              <List.KeyValue flex title={`SLP Received`}>
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2">
-                    <UICurrency.Icon currency={amount.currency} width={18} height={18} />
-                    {amount.toSignificant(4)} {unwrapToken(amount.currency).symbol}
-                  </div>
+        {balance?.equalTo(ZERO) ? (
+          <Message variant="warning" size="sm" className="mb-4">
+            We could not find any staked LP tokens for unstaking.
+          </Message>
+        ) : null}
+        <div className={balance?.equalTo(ZERO) ? 'opacity-40 pointer-events-none' : ''}>
+          <div className="flex flex-col gap-6">
+            <Card variant="outline" className="p-6">
+              <div className="flex justify-between gap-4">
+                <div>
+                  <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">{value}%</h1>
                 </div>
-              </List.KeyValue>
-            ) : null}
-          </List.Control>
-        </List>
-        <WidgetFooter>
-          <Checker.Connect size="default" variant="outline" fullWidth>
-            <Checker.Network size="default" variant="outline" fullWidth chainId={pool.chainId}>
-              <Checker.Guard
-                size="default"
-                variant="outline"
-                guardWhen={Boolean(balance && balance.equalTo(ZERO))}
-                guardText="No staked tokens"
-              >
+                <div className="flex items-center gap-2">
+                  <Button
+                    fullWidth
+                    size="sm"
+                    variant={value === '25' ? 'default' : 'secondary'}
+                    onClick={() => setValue('25')}
+                    testId="unstake-25"
+                  >
+                    25%
+                  </Button>
+                  <Button
+                    fullWidth
+                    size="sm"
+                    variant={value === '50' ? 'default' : 'secondary'}
+                    onClick={() => setValue('50')}
+                    testId="unstake-50"
+                  >
+                    50%
+                  </Button>
+                  <Button
+                    fullWidth
+                    size="sm"
+                    variant={value === '75' ? 'default' : 'secondary'}
+                    onClick={() => setValue('75')}
+                    testId="unstake-75"
+                  >
+                    75%
+                  </Button>
+                  <Button
+                    fullWidth
+                    size="sm"
+                    variant={value === '100' ? 'default' : 'secondary'}
+                    onClick={() => setValue('100')}
+                    testId="unstake-max"
+                  >
+                    MAX
+                  </Button>
+                </div>
+              </div>
+              <div className="px-1 pt-2 pb-3">
+                <input
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                  type="range"
+                  min="1"
+                  max="100"
+                  className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg dark:bg-gray-700"
+                />
+              </div>
+            </Card>
+            <Card variant="outline" className="p-6">
+              <CardGroup>
+                <CardLabel>You&apos;ll receive:</CardLabel>
+                <CardCurrencyAmountItem amount={amount} />
+              </CardGroup>
+            </Card>
+          </div>
+          <WidgetFooter>
+            <Checker.Connect size="default" variant="outline" fullWidth>
+              <Checker.Network size="default" variant="outline" fullWidth chainId={pool.chainId}>
                 <Checker.Guard
                   size="default"
                   variant="outline"
-                  guardWhen={Boolean(amount && balance && amount.greaterThan(balance))}
-                  guardText="Insufficient balance"
+                  guardWhen={Boolean(balance && balance.equalTo(ZERO))}
+                  guardText="No staked tokens"
                 >
-                  <Button
-                    onClick={() => sendTransaction?.()}
-                    fullWidth
+                  <Checker.Guard
                     size="default"
-                    disabled={isWritePending || !sendTransaction}
-                    testId="unstake-liquidity"
+                    variant="outline"
+                    guardWhen={Boolean(amount && balance && amount.greaterThan(balance))}
+                    guardText="Insufficient balance"
                   >
-                    {isWritePending ? <Dots>Confirm transaction</Dots> : 'Unstake Liquidity'}
-                  </Button>
+                    <Button
+                      onClick={() => sendTransaction?.()}
+                      fullWidth
+                      size="default"
+                      disabled={isWritePending || !sendTransaction}
+                      testId="unstake-liquidity"
+                    >
+                      {isWritePending ? <Dots>Confirm transaction</Dots> : 'Unstake Liquidity'}
+                    </Button>
+                  </Checker.Guard>
                 </Checker.Guard>
-              </Checker.Guard>
-            </Checker.Network>
-          </Checker.Connect>
-        </WidgetFooter>
+              </Checker.Network>
+            </Checker.Connect>
+          </WidgetFooter>
+        </div>
       </Widget>
     )
   }

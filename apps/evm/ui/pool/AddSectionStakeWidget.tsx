@@ -2,6 +2,7 @@ import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import {
+  Message,
   TextField,
   textFieldVariants,
   typographyVariants,
@@ -27,6 +28,7 @@ interface AddSectionStakeWidgetProps {
   liquidityToken: Token
   children: ReactNode
   isFarm?: boolean
+  isIncentivized?: boolean
 }
 
 export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
@@ -37,6 +39,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
   reserve1,
   reserve0,
   children,
+  isIncentivized,
 }) => {
   const { balance } = usePoolPosition()
   const totalSupply = useTotalSupply(liquidityToken)
@@ -65,75 +68,82 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
           Stake your liquidity tokens to receive incentive rewards on top of your pool fee rewards
         </WidgetDescription>
       </WidgetHeader>
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col items-center gap-2">
-          <div className={textFieldVariants({ className: 'flex flex-col gap-2 !h-[unset]' })}>
-            <TextField
-              id="stake-input"
-              variant="naked"
-              type="number"
-              onValueChange={setValue}
-              value={value}
-              placeholder="0"
-              className="!text-2xl"
-              unit="SLP"
-            />
-            <div className="flex w-full justify-between gap-2">
-              <span className={typographyVariants({ variant: 'muted', className: 'text-sm' })}>
-                {formatUSD(value0 + value1)}
-              </span>
+      {!isIncentivized ? (
+        <Message variant="warning" size="sm" className="mb-4">
+          This pool does not have any ongoing incentives being distributed to staked LP tokens.
+        </Message>
+      ) : null}
+      <div className={!isIncentivized ? 'opacity-40 pointer-events-none' : ''}>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col items-center gap-2">
+            <div className={textFieldVariants({ className: 'flex flex-col gap-2 !h-[unset]' })}>
+              <TextField
+                id="stake-input"
+                variant="naked"
+                type="number"
+                onValueChange={setValue}
+                value={value}
+                placeholder="0"
+                className="!text-2xl"
+                unit="SLP"
+              />
+              <div className="flex w-full justify-between gap-2">
+                <span className={typographyVariants({ variant: 'muted', className: 'text-sm' })}>
+                  {formatUSD(value0 + value1)}
+                </span>
+                <Button
+                  size="sm"
+                  variant="link"
+                  testId="stake-balance"
+                  onClick={() => setValue(balance?.[FundSource.WALLET]?.toExact() || '')}
+                >
+                  Balance: {balance?.[FundSource.WALLET].toSignificant(6)}
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex w-full gap-2">
               <Button
-                size="sm"
-                variant="link"
-                testId="stake-balance"
-                onClick={() => setValue(balance?.[FundSource.WALLET]?.toExact() || '')}
+                size="xs"
+                fullWidth
+                variant={value === '25' ? 'default' : 'secondary'}
+                onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(4)?.toExact() || '')}
+                testId="stake-25"
               >
-                Balance: {balance?.[FundSource.WALLET].toSignificant(6)}
+                25%
+              </Button>
+              <Button
+                size="xs"
+                fullWidth
+                variant={value === '50' ? 'default' : 'secondary'}
+                onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(2)?.toExact() || '')}
+                testId="stake-50"
+              >
+                50%
+              </Button>
+              <Button
+                size="xs"
+                fullWidth
+                variant={value === '75' ? 'default' : 'secondary'}
+                onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(4).multiply(3)?.toExact() || '')}
+                testId="stake-75"
+              >
+                75%
+              </Button>
+              <Button
+                size="xs"
+                fullWidth
+                variant={value === '100' ? 'default' : 'secondary'}
+                onClick={() => setValue(balance?.[FundSource.WALLET]?.toExact() || '')}
+                testId="stake-max"
+              >
+                MAX
               </Button>
             </div>
           </div>
-
-          <div className="flex w-full gap-2">
-            <Button
-              size="xs"
-              fullWidth
-              variant={value === '25' ? 'default' : 'secondary'}
-              onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(4)?.toExact() || '')}
-              testId="stake-25"
-            >
-              25%
-            </Button>
-            <Button
-              size="xs"
-              fullWidth
-              variant={value === '50' ? 'default' : 'secondary'}
-              onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(2)?.toExact() || '')}
-              testId="stake-50"
-            >
-              50%
-            </Button>
-            <Button
-              size="xs"
-              fullWidth
-              variant={value === '75' ? 'default' : 'secondary'}
-              onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(4).multiply(3)?.toExact() || '')}
-              testId="stake-75"
-            >
-              75%
-            </Button>
-            <Button
-              size="xs"
-              fullWidth
-              variant={value === '100' ? 'default' : 'secondary'}
-              onClick={() => setValue(balance?.[FundSource.WALLET]?.toExact() || '')}
-              testId="stake-max"
-            >
-              MAX
-            </Button>
-          </div>
         </div>
+        <WidgetFooter>{children}</WidgetFooter>
       </div>
-      <WidgetFooter>{children}</WidgetFooter>
     </Widget>
   )
 }
