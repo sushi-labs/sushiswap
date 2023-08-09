@@ -52,7 +52,8 @@ import { DistributionDataTable } from './DistributionDataTable'
 
 const Component: FC<{ id: string }> = ({ id }) => {
   const { address } = useAccount()
-  const [chainId, poolId, tokenId] = id.split('%3A') as [SushiSwapV3ChainId, string, string]
+  const [_chainId, poolId, tokenId] = id.split('%3A') as [SushiSwapV3ChainId, string, string]
+  const chainId = +_chainId as SushiSwapV3ChainId
   const [invert, setInvert] = useState(false)
 
   const { data: positionDetails } = useConcentratedLiquidityPositionsFromTokenId({
@@ -321,13 +322,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                 {({ sendTransaction, isLoading }) => (
                   <Checker.Connect variant="outline" fullWidth size="default">
                     <Checker.Network variant="outline" fullWidth size="default" chainId={chainId}>
-                      <Button
-                        variant="secondary"
-                        fullWidth
-                        disabled={isLoading}
-                        onClick={() => sendTransaction?.()}
-                        size="default"
-                      >
+                      <Button fullWidth disabled={isLoading} onClick={() => sendTransaction?.()} size="default">
                         Collect
                       </Button>
                     </Checker.Network>
@@ -361,13 +356,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                   {({ write, isLoading }) => (
                     <Checker.Connect fullWidth variant="outline" size="default">
                       <Checker.Network fullWidth variant="outline" size="default" chainId={chainId}>
-                        <Button
-                          variant="secondary"
-                          fullWidth
-                          disabled={isLoading}
-                          onClick={() => write?.()}
-                          size="default"
-                        >
+                        <Button fullWidth disabled={isLoading} onClick={() => write?.()} size="default">
                           Harvest
                         </Button>
                       </Checker.Network>
