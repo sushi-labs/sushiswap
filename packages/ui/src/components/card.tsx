@@ -7,11 +7,28 @@ import { classNames, Currency, SkeletonText } from '..'
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={classNames('rounded-xl border border-accent bg-white dark:bg-background shadow-sm', className)}
+    className={classNames('relative rounded-xl border border-accent bg-white dark:bg-background shadow-sm', className)}
     {...props}
   />
 ))
 Card.displayName = 'Card'
+
+interface CardOverlayProps extends React.HTMLAttributes<HTMLDivElement> {
+  show: boolean
+}
+
+const CardOverlay = React.forwardRef<HTMLDivElement, CardOverlayProps>(({ show, className, ...props }, ref) => (
+  <div
+    data-state={show ? 'active' : 'inactive'}
+    ref={ref}
+    className={classNames(
+      'data-[state=active]:flex data-[state=inactive]:hidden rounded-xl z-10 bg-white/[0.8] dark:bg-slate-900/[0.8] pointer-events-none absolute inset-0 justify-center items-center',
+      className
+    )}
+    {...props}
+  />
+))
+CardOverlay.displayName = 'CardOverlay'
 
 const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
@@ -158,5 +175,6 @@ export {
   CardHeader,
   CardItem,
   CardLabel,
+  CardOverlay,
   CardTitle,
 }

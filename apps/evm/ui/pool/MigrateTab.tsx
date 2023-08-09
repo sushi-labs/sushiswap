@@ -14,8 +14,8 @@ import {
   CardGroup,
   CardHeader,
   CardLabel,
+  CardOverlay,
   CardTitle,
-  classNames,
   Currency,
   DialogConfirm,
   DialogContent,
@@ -309,6 +309,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   return (
     <DialogProvider>
       <Card>
+        <CardOverlay show={Boolean(stakedBalance?.equalTo(ZERO))}>Already unstaked. You{`'`}re all set! ✅</CardOverlay>
         <CardHeader>
           <CardTitle>Unstake & Claim Rewards</CardTitle>
           <CardDescription>Please unstake & claim your rewards first before migrating.</CardDescription>
@@ -360,7 +361,10 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
           </Checker.Guard>
         </CardFooter>
       </Card>
-      <Card className={classNames(stakedBalance?.greaterThan(ZERO) ? 'opacity-40 pointer-events-none' : '')}>
+      <Card>
+        <CardOverlay show={Boolean(stakedBalance?.greaterThan(ZERO))}>
+          Please unstake first before migrating!
+        </CardOverlay>
         <CardHeader>
           <CardTitle>Migrate position</CardTitle>
           <CardDescription>
