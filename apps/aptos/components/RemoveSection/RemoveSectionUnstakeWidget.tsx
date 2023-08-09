@@ -131,7 +131,11 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                           leaveFrom="transform opacity-100"
                           leaveTo="transform opacity-0"
                         >
-                          <Typography variant="sm" weight={500} className="text-slate-300 hover:text-slate-20">
+                          <Typography
+                            variant="sm"
+                            weight={500}
+                            className="text-gray-700 dark:text-slate-300 hover:text-slate-20"
+                          >
                             {`$0.00`}
                           </Typography>
                         </Transition>
@@ -151,7 +155,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                             as="button"
                             variant="sm"
                             weight={500}
-                            className="flex justify-end col-span-2 truncate text-slate-300 hover:text-slate-200"
+                            className="flex justify-end col-span-2 text-gray-700 text-gray-800 truncate dark:text-slate-300 hover:dark:text-slate-200"
                           >
                             Balance: {balance}
                           </Typography>
