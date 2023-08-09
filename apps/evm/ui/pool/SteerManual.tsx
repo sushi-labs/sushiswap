@@ -44,7 +44,9 @@ export const SteerManual: FC<ManualProps> = ({ address, chainId }) => {
         <CardTitle>New position</CardTitle>
         <CardDescription>Create a new concentrated liquidity position</CardDescription>
       </CardHeader>
-      <Separator />
+      <div className="px-6">
+        <Separator />
+      </div>
       <CardContent>
         <SelectPricesWidget
           chainId={chainId}
