@@ -6,7 +6,7 @@ export default async function PositionsPage({ params }: { params: { id: string; 
   return (
     <div className="flex flex-col gap-4">
       <LinkInternal href={`/pool/${params.id}`} className="text-blue hover:underline text-sm">
-        ← Back
+        ← View all positions
       </LinkInternal>
       <PositionView params={{ id: `${params.id}%3A${params.positionId}` }} />
     </div>
