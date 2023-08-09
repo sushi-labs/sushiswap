@@ -32,64 +32,62 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool }) 
     <Card>
       <CardHeader>
         <CardTitle>Manage</CardTitle>
-        <CardDescription>Manage your position by adding/removing liquidity</CardDescription>
+        <CardDescription>Manage your position</CardDescription>
       </CardHeader>
       <Tabs className="w-full" defaultValue="add">
         <CardContent>
           <TabsList className="!flex">
             <TabsTrigger value="add" className="flex flex-1">
-              Add liquidity
+              Add
             </TabsTrigger>
             <TabsTrigger value="remove" className="flex flex-1">
-              Remove liquidity
+              Remove
+            </TabsTrigger>
+            <TabsTrigger value="stake" className="flex flex-1">
+              Stake
+            </TabsTrigger>
+            <TabsTrigger value="unstake" className="flex flex-1">
+              Unstake
             </TabsTrigger>
           </TabsList>
         </CardContent>
-        <div className="py-4">
+        <div className="pb-4 px-6">
           <Separator />
         </div>
-        <TabsContent value="add">
-          <CardContent>
-            <PoolPositionProvider pool={pool}>
-              <PoolPositionStakedProvider pool={pool}>
-                <PoolPositionRewardsProvider pool={pool}>
-                  <div className="grid-cols-1 max-w-xl grid gap-4 pt-4">
-                    {['BentoBox Classic', 'BentoBox Stable'].includes(pool.protocol) ? (
-                      <AddSectionTrident pool={pool} />
-                    ) : (
-                      <AddSectionLegacy pool={pool} />
-                    )}
-                    <div className="py-4">
-                      <Separator />
-                    </div>
-                    <AddSectionStake poolId={pool.id} />
-                  </div>
-                </PoolPositionRewardsProvider>
-              </PoolPositionStakedProvider>
-            </PoolPositionProvider>
-          </CardContent>
-        </TabsContent>
-        <TabsContent value="remove">
-          <CardContent>
-            <PoolPositionProvider pool={pool}>
-              <PoolPositionStakedProvider pool={pool}>
-                <PoolPositionRewardsProvider pool={pool}>
-                  <div className="grid-cols-1 max-w-xl grid gap-4 pt-4">
-                    <RemoveSectionUnstake poolId={pool.id} />
-                    <div className="py-4">
-                      <Separator />
-                    </div>
-                    {['BentoBox Classic', 'BentoBox Stable'].includes(pool.protocol) ? (
-                      <RemoveSectionTrident pool={pool} />
-                    ) : (
-                      <RemoveSectionLegacy pool={pool} />
-                    )}
-                  </div>
-                </PoolPositionRewardsProvider>
-              </PoolPositionStakedProvider>
-            </PoolPositionProvider>
-          </CardContent>
-        </TabsContent>
+        <PoolPositionProvider pool={pool}>
+          <PoolPositionStakedProvider pool={pool}>
+            <PoolPositionRewardsProvider pool={pool}>
+              <TabsContent value="add">
+                <CardContent>
+                  {['BentoBox Classic', 'BentoBox Stable'].includes(pool.protocol) ? (
+                    <AddSectionTrident pool={pool} />
+                  ) : (
+                    <AddSectionLegacy pool={pool} />
+                  )}
+                </CardContent>
+              </TabsContent>
+              <TabsContent value="remove">
+                <CardContent>
+                  {['BentoBox Classic', 'BentoBox Stable'].includes(pool.protocol) ? (
+                    <RemoveSectionTrident pool={pool} />
+                  ) : (
+                    <RemoveSectionLegacy pool={pool} />
+                  )}
+                </CardContent>
+              </TabsContent>
+              <TabsContent value="stake">
+                <CardContent>
+                  <AddSectionStake poolId={pool.id} />
+                </CardContent>
+              </TabsContent>
+              <TabsContent value="unstake">
+                <CardContent>
+                  <RemoveSectionUnstake poolId={pool.id} />
+                </CardContent>
+              </TabsContent>
+            </PoolPositionRewardsProvider>
+          </PoolPositionStakedProvider>
+        </PoolPositionProvider>
       </Tabs>
     </Card>
   )
