@@ -11,7 +11,6 @@ export function useRewards(
   farmIndex: number | undefined
 ) {
   return useMemo(() => {
-    console.log(stakes)
     return stakes &&
       stakes.data.current_table_items &&
       pIdIndex != undefined &&

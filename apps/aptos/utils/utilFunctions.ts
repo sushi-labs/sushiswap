@@ -257,7 +257,6 @@ export const formatNumber = (number: number, decimals: number) => {
   } else {
     number = 0
   }
-  console.log(number)
   if (number <= 0.000001) {
     return 0
   }
