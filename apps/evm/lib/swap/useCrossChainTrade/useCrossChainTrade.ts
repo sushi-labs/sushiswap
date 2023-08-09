@@ -78,7 +78,6 @@ export const useCrossChainTradeQuery = (
 
   return useQuery({
     queryKey: [
-      'NoPersist',
       'crossChainTrade',
       {
         tradeId,
@@ -91,6 +90,7 @@ export const useCrossChainTradeQuery = (
         recipient,
         srcPools,
         dstPools,
+        bentoboxSignature,
       },
     ],
     queryFn: async () => {
