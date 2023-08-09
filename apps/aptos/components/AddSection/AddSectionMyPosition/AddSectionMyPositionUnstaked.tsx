@@ -2,7 +2,6 @@ import { Typography } from '@sushiswap/ui'
 import { Icon } from 'components/Icon'
 import { FC } from 'react'
 import { Token } from 'utils/tokenType'
-import { formatNumber } from 'utils/utilFunctions'
 
 interface Props {
   balance: number

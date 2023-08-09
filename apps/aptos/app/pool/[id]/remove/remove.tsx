@@ -10,10 +10,8 @@ import { usePool } from 'utils/usePool'
 import { useTokensFromPools } from 'utils/useTokensFromPool'
 import { Pool } from 'utils/usePools'
 import { useTotalSupply } from 'utils/useTotalSupply'
-import { useSlippageTolerance } from '@sushiswap/hooks'
 import { useUnderlyingTokenBalanceFromPool } from 'utils/useUnderlyingTokenBalanceFromPool'
 import { RemoveSectionLegacy } from 'components/RemoveSection/RemoveSectionLegacy'
-import { RemoveSectionUnstakeWidget } from 'components/RemoveSection/RemoveSectionUnstakeWidget'
 import { RemoveSectionUnstake } from 'components/RemoveSection/RemoveSectionUnstake'
 
 const MAINNET_CONTRACT = process.env['MAINNET_CONTRACT'] || process.env['NEXT_PUBLIC_MAINNET_CONTRACT']

@@ -6,7 +6,6 @@ import './../app/swap/css/swap.css'
 import React from 'react'
 import { Providers } from './providers'
 import { Header } from './header'
-import Container from '@sushiswap/ui/future/components/Container'
 
 export const metadata: Metadata = {
   title: {

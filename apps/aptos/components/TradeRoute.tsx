@@ -1,9 +1,9 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
-import React, { CSSProperties, ReactElement } from 'react'
+import React from 'react'
 import { useTokens } from 'utils/useTokens'
 import { Icon } from './Icon'
-import { ModalType, useModal } from '@sushiswap/ui/future/components/modal/ModalProvider'
+import { ModalType } from '@sushiswap/ui/future/components/modal/ModalProvider'
 import { useCustomTokens } from 'utils/useCustomTokens'
 interface Props {
   trade: string[]

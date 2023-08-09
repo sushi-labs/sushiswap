@@ -5,7 +5,7 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { PoolsTable } from 'app/pool/PoolsSection/Tables/PoolsTable'
 import { PositionsTable } from 'app/pool/PoolsSection/Tables/PositionsTable'
 import { PoolFilters } from 'app/pool/PoolsSection/Tables/TableFilters/PoolFilters'
-import React, { FC, Fragment, useState } from 'react'
+import React, { Fragment, useState } from 'react'
 
 export default function PoolsSection() {
   const [tab, setTab] = useState<number>(0)

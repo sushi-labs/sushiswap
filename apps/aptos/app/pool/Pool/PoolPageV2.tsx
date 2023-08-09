@@ -6,7 +6,6 @@ import DEFAULT_TOKEN_LIST from '../../../config/tokenList.json'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { SwapButton } from '../../../components/SwapButton'
 import { Network, Provider } from 'aptos'
-import { getPoolPairs } from 'utils/utilFunctions'
 import { PlusIcon } from '@heroicons/react/20/solid'
 
 interface coinType {

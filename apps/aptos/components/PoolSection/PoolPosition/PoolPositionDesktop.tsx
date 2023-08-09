@@ -9,7 +9,6 @@ import { useTokenBalance } from 'utils/useTokenBalance'
 import { useTokensFromPools } from 'utils/useTokensFromPool'
 import { useTotalSupply } from 'utils/useTotalSupply'
 import { useUnderlyingTokenBalanceFromPool } from 'utils/useUnderlyingTokenBalanceFromPool'
-import { formatNumber } from 'utils/utilFunctions'
 
 interface PoolPositionProps {
   row: Pool

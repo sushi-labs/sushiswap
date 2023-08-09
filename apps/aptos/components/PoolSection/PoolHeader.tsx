@@ -2,12 +2,10 @@ import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid'
 import { AppearOnMount, Link, Typography } from '@sushiswap/ui'
 import { IconList } from 'components/IconList'
 import { Icon } from 'components/Icon'
-// import {} from '@heroicons/react/'
 import { FC } from 'react'
 import { Pool } from 'utils/usePools'
 import { useTokensFromPools } from 'utils/useTokensFromPool'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { Network } from 'aptos'
 
 interface PoolHeader {
   row: Pool
@@ -24,11 +22,6 @@ export const PoolHeader: FC<PoolHeader> = ({ row }) => {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-3">
-        {/* <div className="flex gap-1">
-          <Typography variant="xs" className="text-gray-600 dark:text-slate-500">
-            {}
-          </Typography>
-        </div> */}
         <div className="flex flex-col gap-6 sm:flex-row sm:justify-between sm:items-center">
           <div className="flex gap-2">
             <IconList iconWidth={44} iconHeight={44}>

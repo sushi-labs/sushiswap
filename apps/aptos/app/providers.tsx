@@ -8,19 +8,8 @@ import { FewchaWallet } from 'fewcha-plugin-wallet-adapter'
 import { MartianWallet } from '@martianwallet/aptos-wallet-adapter'
 import { RiseWallet } from '@rise-wallet/wallet-adapter'
 import { ThemeProvider } from '@sushiswap/ui'
-// import { BloctoWallet } from '@blocto/aptos-wallet-adapter-plugin'
-import { NetworkName, Wallet } from '@aptos-labs/wallet-adapter-core'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-// import { SafePalWalletAdapter } from '@aptstats/safepal-wallet-extension'
-const wallets = [
-  new PetraWallet(),
-  new PontemWallet(),
-  new FewchaWallet(),
-  new MartianWallet(),
-  new RiseWallet(),
-  // new BloctoWallet({ network: NetworkName.Mainnet, bloctoAppId: 'abc' }),
-  // new SafePalWalletAdapter(),
-]
+const wallets = [new PetraWallet(), new PontemWallet(), new FewchaWallet(), new MartianWallet(), new RiseWallet()]
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient()

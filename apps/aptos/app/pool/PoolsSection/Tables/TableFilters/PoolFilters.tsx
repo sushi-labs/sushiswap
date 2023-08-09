@@ -2,7 +2,6 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { FC, useState } from 'react'
 import { Search } from '../../../../../components/Search'
 import { Tab } from '@headlessui/react'
-import { Typography } from '@sushiswap/ui'
 
 export const PoolFilters: FC<{ showCategories: boolean }> = ({ showCategories = true }) => {
   const [query, setQuery] = useState<string>()

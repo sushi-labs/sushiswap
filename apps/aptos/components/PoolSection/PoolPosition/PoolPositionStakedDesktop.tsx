@@ -1,8 +1,6 @@
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Typography } from '@sushiswap/ui'
 import { Icon } from 'components/Icon'
 import { FC, useMemo } from 'react'
-import { useFarms } from 'utils/useFarms'
 import { Pool } from 'utils/usePools'
 import { useTokensFromPools } from 'utils/useTokensFromPool'
 import { useTotalSupply } from 'utils/useTotalSupply'

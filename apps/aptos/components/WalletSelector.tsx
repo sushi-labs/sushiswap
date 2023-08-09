@@ -2,14 +2,13 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Popover, Transition } from '@headlessui/react'
 import { JazzIcon, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/future/components/button'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { ConnectView } from './ConnectView'
 import { DefaultView } from './DefaultView'
 import { SettingsView } from './SettingsView'
 import { useTokenBalance } from 'utils/useTokenBalance'
 import { useTokens } from 'utils/useTokens'
-import { Token } from 'utils/tokenType'
 
 type fullWidth = {
   fullWidth: boolean

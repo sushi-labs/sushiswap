@@ -1,4 +1,3 @@
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import TOKENS from './../config/tokenList.json'
 import { Token } from './tokenType'
 import { useMemo } from 'react'
