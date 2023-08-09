@@ -38,9 +38,7 @@ export const PoolNameCellV3: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> = 
           <div className={classNames('text-[10px] bg-gray-200 dark:bg-slate-700 rounded-lg px-1 ml-1')}></div>
         </span>
         <div className="flex gap-1">
-          <div className="bg-blue/20 text-blue text-[10px] px-2 rounded-full">
-            SushiSwap<sup>v3</sup>
-          </div>
+          <div className="bg-blue/20 text-blue text-[10px] px-2 rounded-full">V3</div>
           <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
             {formatNumber(original.fee / 10000)}%
           </div>

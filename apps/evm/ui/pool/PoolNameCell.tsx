@@ -22,14 +22,10 @@ const ProtocolBadge: Record<Protocol, JSX.Element> = {
     <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">Trident Classic</div>
   ),
   [Protocol.SUSHISWAP_V2]: (
-    <div className="whitespace-nowrap bg-pink/20 text-pink text-[10px] px-2 rounded-full">
-      SushiSwap<sup>v2</sup>
-    </div>
+    <div className="whitespace-nowrap bg-pink/20 text-pink text-[10px] px-2 rounded-full">V2</div>
   ),
   [Protocol.SUSHISWAP_V3]: (
-    <div className="whitespace-nowrap bg-blue/20 text-blue text-[10px] px-2 rounded-full">
-      SushiSwap<sup>v3</sup>
-    </div>
+    <div className="whitespace-nowrap bg-blue/20 text-blue text-[10px] px-2 rounded-full">V3</div>
   ),
 }
 
