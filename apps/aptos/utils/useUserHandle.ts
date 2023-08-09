@@ -1,5 +1,6 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { useQuery } from '@tanstack/react-query'
+import { FarmLP } from './useFarms'
 const MASTERCHEF_CONTRACT = process.env['MASTERCHEF_CONTRACT'] || process.env['NEXT_PUBLIC_MASTERCHEF_CONTRACT']
 export type PoolUserInfo = {
   type: string
@@ -21,6 +22,7 @@ export type userStakes = {
         amount: string
         reward_debt: string
       }
+      decoded_key: string
     }[]
   }
 }
@@ -32,6 +34,7 @@ const userHandleQueryFn = async (handle: string | undefined) => {
 					where: {table_handle: {_eq: "${handle}"}}
 				) {
 					decoded_value
+          decoded_key
 				}
 			}
 		`
@@ -58,8 +61,10 @@ const userPoolQueryFn = async (address: string | undefined) => {
   return {} as PoolUserInfo
 }
 
-export const getPIdIndex = (farmIndex: number | undefined, pids: string[] | undefined) => {
-  return pids && pids?.length ? pids?.indexOf(String(farmIndex)) : -1
+export const getPIdIndex = (farmIndex: number | undefined, stakes: userStakes | undefined) => {
+  return stakes && stakes?.data?.current_table_items?.length
+    ? stakes?.data?.current_table_items?.map((key) => key.decoded_key).indexOf(String(farmIndex))
+    : -1
 }
 
 export function useUserPool(address: string | undefined) {
@@ -67,7 +72,7 @@ export function useUserPool(address: string | undefined) {
     queryKey: ['handle', { address }],
     queryFn: async () => userPoolQueryFn(address),
     enabled: Boolean(address),
-    refetchOnWindowFocus: false,
+    refetchInterval: 2000,
   })
 }
 
@@ -83,6 +88,6 @@ export function useUserHandle({
     queryKey: ['userStackes', { userHandle }],
     queryFn: async () => userHandleQueryFn(userHandle?.data?.pid_to_user_info?.inner?.handle),
     enabled: Boolean(userHandle?.data?.pid_to_user_info?.inner?.handle && address),
-    refetchOnWindowFocus: false,
+    refetchInterval: 2000,
   })
 }

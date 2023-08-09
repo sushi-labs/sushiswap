@@ -1,6 +1,7 @@
 'use client'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { AppearOnMount } from '@sushiswap/ui'
+import Loading from 'app/loading'
 import { Layout } from 'components/Layout'
 import { PoolButtons } from 'components/PoolSection/PoolButtons'
 import { PoolComposition } from 'components/PoolSection/PoolComposition'
@@ -10,6 +11,7 @@ import { PoolPosition } from 'components/PoolSection/PoolPosition/PoolPosition'
 import { PoolRewards } from 'components/PoolSection/PoolRewards'
 import { useParams } from 'next/navigation'
 import { FC, useMemo } from 'react'
+import { useAccount } from 'utils/useAccount'
 import { isFarm, useFarms } from 'utils/useFarms'
 import { usePool } from 'utils/usePool'
 import { Pool } from 'utils/usePools'
@@ -39,10 +41,10 @@ const _Pool = () => {
   const farmIndex = isFarm(tokenAddress, farms)
   const { data: coinInfo } = useTotalSupply(chainId, tokenAddress)
   const { data: userHandle } = useUserPool(account?.address)
-  const pIdIndex = useMemo(() => {
-    return getPIdIndex(farmIndex, userHandle?.data?.pids)
-  }, [userHandle?.data?.pids, farmIndex])
   const { data: stakes, isInitialLoading: isStakeLoading } = useUserHandle({ address: account?.address, userHandle })
+  const pIdIndex = useMemo(() => {
+    return getPIdIndex(farmIndex, stakes)
+  }, [stakes, farmIndex])
   const stakeAmount = useMemo(() => {
     if (stakes?.data.current_table_items.length && pIdIndex !== -1) {
       return Number(stakes?.data.current_table_items[pIdIndex]?.decoded_value?.amount)
@@ -51,9 +53,12 @@ const _Pool = () => {
     }
   }, [stakes, pIdIndex, coinInfo])
 
+  const { isLoadingAccount } = useAccount()
+
   const rewards = useRewards(farms, stakes, pIdIndex, farmIndex)
   return (
     <>
+      {isLoadingAccount && <Loading />}
       {pool?.id && (
         <Layout>
           <div className="flex flex-col gap-9">
@@ -67,17 +72,18 @@ const _Pool = () => {
               <div className="flex flex-col order-2 gap-4">
                 <AppearOnMount>
                   <div className="flex flex-col gap-10">
-                    <PoolMyRewards
-                      isFarm={farmIndex !== -1}
-                      reward={rewards}
-                      decimals={coinInfo?.data?.decimals}
-                      isLoading={isPoolLoading || isStakeLoading}
-                    />
+                    {farmIndex !== undefined && farmIndex !== -1 && (
+                      <PoolMyRewards
+                        reward={rewards}
+                        decimals={coinInfo?.data?.decimals}
+                        isLoading={isPoolLoading || isStakeLoading}
+                      />
+                    )}
                     <PoolPosition row={pool} isLoading={isPoolLoading || isStakeLoading} stakeAmount={stakeAmount} />
                   </div>
                 </AppearOnMount>
                 <div className="hidden lg:flex">
-                  <PoolButtons />
+                  <PoolButtons isFarm={farmIndex !== undefined && farmIndex !== -1} />
                 </div>
               </div>
             </div>

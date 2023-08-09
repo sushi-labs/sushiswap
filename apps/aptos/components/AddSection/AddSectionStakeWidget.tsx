@@ -1,21 +1,36 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
-import { Button, Currency, DEFAULT_INPUT_UNSTYLED, Input, Typography, Widget, classNames } from '@sushiswap/ui'
+import { Currency, DEFAULT_INPUT_UNSTYLED, Input, Typography, Widget, classNames } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { Icon } from 'components/Icon'
+import { IconList } from 'components/IconList'
 import { FC, Fragment, ReactNode, useMemo } from 'react'
+import { Token } from 'utils/tokenType'
 
 interface AddSectionStakeWidgetProps {
   title?: string
   setValue(value: string): void
   value: string
   children: ReactNode
+  token0: Token
+  token1: Token
+  balance: number
 }
 
-export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({ setValue, value, children, title }) => {
+export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
+  setValue,
+  value,
+  children,
+  title,
+  token0,
+  token1,
+  balance,
+}) => {
   return useMemo(
     () => (
       <Widget id="stakeLiquidity" maxWidth={400} className="bg-white dark:bg-slate-800">
         <Widget.Content>
-          <Disclosure>
+          <Disclosure defaultOpen={true}>
             {({ open }) => (
               <>
                 <Disclosure.Button className="w-full pr-4" testdata-id="stake-liquidity-header">
@@ -61,25 +76,28 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({ setValue
                           />
                         </div>
                         <div className="flex gap-2">
-                          <Button size="xs" onClick={() => setValue('')} testdata-id="stake-25-button">
+                          <Button size="xs" onClick={() => setValue(String(balance / 4))} testdata-id="stake-25-button">
                             25%
                           </Button>
-                          <Button size="xs" onClick={() => setValue('')} testdata-id="stake-50-button">
+                          <Button size="xs" onClick={() => setValue(String(balance / 2))} testdata-id="stake-50-button">
                             50%
                           </Button>
-                          <Button size="xs" onClick={() => setValue('')} testdata-id="stake-max-button">
+                          <Button size="xs" onClick={() => setValue(String(balance))} testdata-id="stake-max-button">
                             MAX
                           </Button>
                         </div>
                         <div className="min-w-[56px] -mr-[10px]">
-                          <Currency.IconList iconHeight={28} iconWidth={28}></Currency.IconList>
+                          <IconList iconHeight={28} iconWidth={28}>
+                            <Icon currency={token0} />
+                            <Icon currency={token1} />
+                          </IconList>
                         </div>
                       </div>
                       <div className="grid items-center justify-between grid-cols-3 pb-2">
                         <Transition
                           appear
                           as={Fragment}
-                          show={Boolean('')}
+                          show={Boolean(balance)}
                           enter="transition duration-300 origin-center ease-out"
                           enterFrom="transform scale-90 opacity-0"
                           enterTo="transform scale-100 opacity-100"
@@ -92,12 +110,12 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({ setValue
                             weight={500}
                             className="text-gray-700 dark:text-slate-300 hover:text-slate-20"
                           >
-                            {}
+                            {`$0.00`}
                           </Typography>
                         </Transition>
                         <Transition
                           appear
-                          show={Boolean('')}
+                          show={Boolean(balance)}
                           as={Fragment}
                           enter="transition duration-300 origin-center ease-out"
                           enterFrom="transform scale-90 opacity-0"
@@ -107,13 +125,13 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({ setValue
                           leaveTo="transform opacity-0"
                         >
                           <Typography
-                            onClick={() => setValue('')}
+                            onClick={() => setValue(String(balance))}
                             as="button"
                             variant="sm"
                             weight={500}
                             className="flex justify-end col-span-2 text-gray-700 text-gray-800 truncate dark:text-slate-300 hover:dark:text-slate-200"
                           >
-                            Balance:{}
+                            Balance: {balance}
                           </Typography>
                         </Transition>
                       </div>

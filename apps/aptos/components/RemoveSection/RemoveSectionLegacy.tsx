@@ -19,7 +19,6 @@ interface Props {
   liquidityBalance: number | undefined
   token0: Token
   token1: Token
-  LPSupply: CoinInfo | undefined
   balance: number
   underlying0: number | undefined
   underlying1: number | undefined
@@ -32,7 +31,6 @@ export const RemoveSectionLegacy = ({
   liquidityBalance,
   token0,
   token1,
-  LPSupply,
   balance,
   underlying0,
   underlying1,
@@ -78,12 +76,12 @@ export const RemoveSectionLegacy = ({
     return [
       currencyAToRemove
         ? slippagePercent === 0
-          ? currencyAToRemove
+          ? Math.floor(currencyAToRemove)
           : Math.floor(currencyAToRemove - (currencyAToRemove * slippagePercent) / 100)
         : undefined,
       currencyBToRemove
         ? slippagePercent === 0
-          ? currencyBToRemove
+          ? Math.floor(currencyBToRemove)
           : Math.floor(currencyBToRemove - (currencyBToRemove * slippagePercent) / 100)
         : undefined,
     ]

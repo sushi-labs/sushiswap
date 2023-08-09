@@ -10,9 +10,19 @@ interface Props {
   underlying1: number | undefined
   token0: Token
   token1: Token
+  farmUnderlying0: number | undefined
+  farmUnderlying1: number | undefined
 }
 
-export const AddSectionMyPosition: FC<Props> = ({ balance, underlying0, underlying1, token0, token1 }) => {
+export const AddSectionMyPosition: FC<Props> = ({
+  balance,
+  underlying0,
+  underlying1,
+  token0,
+  token1,
+  farmUnderlying0,
+  farmUnderlying1,
+}) => {
   return (
     <div className="flex flex-col bg-white dark:bg-opacity-[0.04] rounded-2xl">
       <div className="flex flex-col gap-4 p-5">
@@ -52,7 +62,13 @@ export const AddSectionMyPosition: FC<Props> = ({ balance, underlying0, underlyi
           token0={token0}
           token1={token1}
         />
-        <AddSectionMyPositionStaked />
+        <AddSectionMyPositionStaked
+          balance={balance}
+          underlying0={farmUnderlying0}
+          underlying1={farmUnderlying1}
+          token0={token0}
+          token1={token1}
+        />
       </div>
     </div>
   )
