@@ -177,10 +177,10 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
             loading={tokensLoading || isOwnerLoading || isPoolLoading}
           />
         </div>
-        <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
-          <button type="button" className="z-10 p-2 bg-gray-100 rounded-full dark:bg-slate-900">
-            <PlusIcon strokeWidth={3} className="w-4 h-4 text-gray-500 dark:text-slate-400 text-slate-600" />
-          </button>
+        <div className="flex items-center justify-center mt-[-24px] mb-[-24px] z-10">
+          <div className="p-1 bg-white dark:bg-slate-900 border border-accent rounded-full">
+            <PlusIcon width={16} height={16} className="text-muted-foreground" />
+          </div>
         </div>
         <div className="relative">
           <Transition
