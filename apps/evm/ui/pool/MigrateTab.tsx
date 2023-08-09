@@ -238,8 +238,6 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
     [invertTokens, position?.amount0, position?.amount1]
   )
 
-  console.log(position, !position, positionAmount0?.toSignificant(4), positionAmount1?.toSignificant(4))
-
   const refund0 = useMemo(
     () =>
       positionAmount0 &&
