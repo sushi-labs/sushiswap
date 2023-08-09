@@ -199,9 +199,9 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
         </CardTitle>
         <CardDescription>
           {xData.length ? (
-            <p className="text-sm text-gray-500 dark:text-slate-500 hoveredItemName">
+            <div className="text-sm text-gray-500 dark:text-slate-500 hoveredItemName">
               {format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}
-            </p>
+            </div>
           ) : (
             <SkeletonText fontSize="sm" />
           )}

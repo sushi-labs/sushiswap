@@ -32,7 +32,7 @@ CardTitle.displayName = 'CardTitle'
 
 const CardDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
   ({ className, ...props }, ref) => (
-    <p ref={ref} className={classNames('text-sm text-muted-foreground', className)} {...props} />
+    <div ref={ref} className={classNames('text-sm text-muted-foreground', className)} {...props} />
   )
 )
 CardDescription.displayName = 'CardDescription'
@@ -110,25 +110,24 @@ interface CardCurrencyAmountItemProps extends React.HTMLAttributes<HTMLDivElemen
 }
 
 const CardCurrencyAmountItem = React.forwardRef<HTMLDivElement, CardCurrencyAmountItemProps>(
-  ({ isLoading, ...props }, ref) => {
+  ({ isLoading, amount, fiatValue, ...props }, ref) => {
     if (isLoading) {
       return <CardItem ref={ref} skeleton />
     }
 
-    if (props.amount)
+    if (amount)
       return (
         <CardItem
           title={
             <div className="font-medium flex items-center gap-2 text-muted-foreground">
-              <Currency.Icon currency={props.amount.currency} width={18} height={18} /> {props.amount.currency.symbol}
+              <Currency.Icon currency={amount.currency} width={18} height={18} /> {amount.currency.symbol}
             </div>
           }
           ref={ref}
           {...props}
         >
           <span className="flex gap-1 font-semibold">
-            {props.amount.toSignificant(6)}{' '}
-            <span className="font-normal text-gray-400 dark:text-slate-600">{props.fiatValue}</span>
+            {amount.toSignificant(6)} <span className="font-normal text-gray-400 dark:text-slate-600">{fiatValue}</span>
           </span>
         </CardItem>
       )

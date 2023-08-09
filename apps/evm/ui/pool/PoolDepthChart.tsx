@@ -54,7 +54,7 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({ poolStats, series: _se
       const valueNodes = document.getElementsByClassName('hoveredItemValue')
 
       if (valueNodes[0]) {
-        valueNodes[0].innerHTML = `Total ${getTvlUSD(
+        valueNodes[0].innerHTML = `${getTvlUSD(
           value[1],
           Number(poolStats.totalSupply),
           Number(poolStats.liquidityUSD)
@@ -93,7 +93,7 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({ poolStats, series: _se
                     <div class="flex flex-col gap-1 text-xs dark:text-slate-50 text-gray-900">
                       <span>1 ${token0.symbol} = ${price0} ${token1.symbol}</span>
                       <span>1 ${token1.symbol} = ${price1} ${token0.symbol}</span>
-                      <span>Cum. liquidity value: ${tvlUSD}</span>
+                      <span>Value: ${tvlUSD}</span>
                     </div>
                   </div>`
         },
@@ -200,7 +200,7 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({ poolStats, series: _se
         <CardTitle className="max-h-[18px]">
           <div className="flex justify-between">
             <span className="hoveredItemValue">
-              Total: {getTvlUSD(currentLiquidity, Number(poolStats.totalSupply), Number(poolStats.liquidityUSD))}
+              {getTvlUSD(currentLiquidity, Number(poolStats.totalSupply), Number(poolStats.liquidityUSD))}
             </span>
             <div className="flex items-center gap-1">
               <Toggle variant="outline" onClick={() => setInvertTokens(false)} pressed={!invertTokens} size="xs">

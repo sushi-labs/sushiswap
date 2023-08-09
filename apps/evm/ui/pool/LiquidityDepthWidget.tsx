@@ -1,4 +1,5 @@
-import { useIsMounted } from '@sushiswap/hooks'
+'use client'
+
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
@@ -15,8 +16,6 @@ interface LiquidityDepthWidget {
 
 // ID has to be set (and unique) if there are multiple charts on the same page
 export const LiquidityDepthWidget: FC<LiquidityDepthWidget> = ({ address, chainId }) => {
-  const isMounted = useIsMounted()
-
   const { data: poolStats } = useConcentratedLiquidityPoolStats({ chainId, address })
 
   const { price, invertPrice, noLiquidity } = useConcentratedDerivedMintInfo({
@@ -46,7 +45,7 @@ export const LiquidityDepthWidget: FC<LiquidityDepthWidget> = ({ address, chainI
     <>
       {isLoading && <SkeletonBox className="w-full h-full" />}
 
-      {isMounted && !noLiquidity && !isLoading && formattedData && current && poolStats && (
+      {!noLiquidity && !isLoading && formattedData && current && poolStats && (
         <PoolDepthChart poolStats={poolStats} series={formattedData} current={current} />
       )}
     </>
