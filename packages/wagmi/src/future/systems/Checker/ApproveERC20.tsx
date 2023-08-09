@@ -6,7 +6,6 @@ import { Amount, Type } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import { Explainer } from '@sushiswap/ui/components/explainer'
-import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { Select, SelectContent, SelectItem, SelectPrimitive } from '@sushiswap/ui/components/select'
 import dynamic from 'next/dynamic'
 import React, { FC, useState } from 'react'
@@ -73,8 +72,10 @@ export const Component: FC<ApproveERC20Props> = ({
       </Explainer>
       <div className={classNames(fullWidth ? 'absolute' : '', 'right-1 top-1 bottom-1')}>
         <Select value={`${max}`} onValueChange={(val) => setMax(val === 'true')}>
-          <SelectPrimitive.Trigger>
-            <IconButton size={size} variant="ghost" icon={ChevronDownIcon} name="Select" />
+          <SelectPrimitive.Trigger asChild>
+            <Button asChild size="xs" variant="ghost" name="Select" className="!h-full !w-full">
+              <ChevronDownIcon className="h-4 w-4" />
+            </Button>
           </SelectPrimitive.Trigger>
           <SelectContent className="w-80">
             <SelectItem value="false">

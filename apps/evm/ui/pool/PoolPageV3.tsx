@@ -102,7 +102,7 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
                       pressed={granularity === Granularity.Day}
                       onClick={() => setGranularity(Granularity.Day)}
                     >
-                      1D
+                      24H
                     </Toggle>
                     <Toggle
                       variant="outline"
@@ -119,7 +119,7 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
             <CardContent>
               <div className="grid grid-cols-1 gap-3">
                 <div>
-                  <CardLabel>Volume (24h)</CardLabel>
+                  <CardLabel>Volume</CardLabel>
                   {poolStats ? (
                     <div className="text-xl font-semibold">
                       {formatUSD(granularity === Granularity.Week ? poolStats.volume1w : poolStats.volume1d ?? 0)}{' '}
@@ -140,7 +140,7 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
                   )}
                 </div>
                 <div>
-                  <CardLabel>Fees (24h)</CardLabel>
+                  <CardLabel>Fees</CardLabel>
                   {poolStats ? (
                     <div className="text-xl font-semibold">
                       {formatUSD(granularity === Granularity.Week ? poolStats.fees1w : poolStats.fees1d ?? 0)}{' '}
