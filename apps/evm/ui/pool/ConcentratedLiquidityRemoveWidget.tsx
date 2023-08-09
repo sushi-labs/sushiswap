@@ -185,7 +185,6 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
     <>
       <CardContent>
         <CardGroup>
-          <CardLabel>Amount</CardLabel>
           <div className="p-3 pb-2 space-y-2 overflow-hidden bg-white rounded-xl dark:bg-secondary border border-accent">
             <div className="flex justify-between gap-4">
               <div>

@@ -134,21 +134,36 @@ const Component: FC<{ id: string }> = ({ id }) => {
           <Card>
             <CardHeader>
               <CardTitle>Manage</CardTitle>
-              <CardDescription>Manage your position by adding/removing liquidity</CardDescription>
+              <CardDescription>Manage your concentrated liquidity position.</CardDescription>
             </CardHeader>
             <Tabs className="w-full" defaultValue="add">
               <CardContent>
                 <TabsList className="!flex">
                   <TabsTrigger value="add" className="flex flex-1">
-                    Add liquidity
+                    Add
                   </TabsTrigger>
                   <TabsTrigger value="remove" className="flex flex-1">
-                    Remove liquidity
+                    Remove
                   </TabsTrigger>
+                  <TabsTrigger value="fees" className="flex flex-1">
+                    Fees
+                  </TabsTrigger>
+                  {isAngleEnabledChainId(chainId) ? (
+                    <TabsTrigger value="rewards" className="flex flex-1">
+                      Rewards
+                    </TabsTrigger>
+                  ) : null}
                 </TabsList>
               </CardContent>
+              <div className="px-6">
+                <Separator />
+              </div>
               <TabsContent value="add">
                 <CardContent>
+                  <CardHeader className="px-0 pb-0">
+                    <CardTitle>Add liquidity</CardTitle>
+                    <CardDescription>Provide liquidity to earn fees & rewards.</CardDescription>
+                  </CardHeader>
                   <ConcentratedLiquidityWidget
                     withTitleAndDescription={false}
                     chainId={chainId}
@@ -163,6 +178,10 @@ const Component: FC<{ id: string }> = ({ id }) => {
                 </CardContent>
               </TabsContent>
               <TabsContent value="remove">
+                <CardHeader>
+                  <CardTitle>Remove liquidity</CardTitle>
+                  <CardDescription>Please enter how much of the position you want to remove.</CardDescription>
+                </CardHeader>
                 <ConcentratedLiquidityRemoveWidget
                   token0={_token0}
                   token1={_token1}
@@ -172,6 +191,82 @@ const Component: FC<{ id: string }> = ({ id }) => {
                   positionDetails={positionDetails}
                 />
               </TabsContent>
+              <TabsContent value="fees">
+                <CardHeader>
+                  <CardTitle>Unclaimed fees</CardTitle>
+                  <CardDescription>{formatUSD(fiatValuesAmounts[0] + fiatValuesAmounts[1])}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <CardGroup>
+                    <CardLabel>Tokens</CardLabel>
+                    <CardCurrencyAmountItem
+                      amount={amounts[0]}
+                      isLoading={isPositionLoading}
+                      fiatValue={formatUSD(fiatValuesAmounts[0])}
+                    />
+                    <CardCurrencyAmountItem
+                      amount={amounts[1]}
+                      isLoading={isPositionLoading}
+                      fiatValue={formatUSD(fiatValuesAmounts[1])}
+                    />
+                  </CardGroup>
+                </CardContent>
+                <CardFooter>
+                  <ConcentratedLiquidityCollectButton
+                    position={position ?? undefined}
+                    positionDetails={positionDetails}
+                    token0={token0}
+                    token1={token1}
+                    account={address}
+                    chainId={chainId}
+                  >
+                    {({ sendTransaction, isLoading }) => (
+                      <Checker.Connect variant="outline" fullWidth size="default">
+                        <Checker.Network variant="outline" fullWidth size="default" chainId={chainId}>
+                          <Button fullWidth disabled={isLoading} onClick={() => sendTransaction?.()} size="default">
+                            Collect
+                          </Button>
+                        </Checker.Network>
+                      </Checker.Connect>
+                    )}
+                  </ConcentratedLiquidityCollectButton>
+                </CardFooter>
+              </TabsContent>
+              {isAngleEnabledChainId(chainId) ? (
+                <TabsContent value="rewards">
+                  <CardHeader>
+                    <CardTitle>Unclaimed rewards</CardTitle>
+                    <CardDescription>
+                      This will claim your rewards for <b>every</b> V3 liquidity position on {Chain.from(chainId).name}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <CardGroup>
+                      <CardLabel>Tokens (accrued over all positions)</CardLabel>
+                      {rewardsData && positionDetails && rewardsData.pools[positionDetails.address]?.rewardsPerToken ? (
+                        Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).map((el, i) => (
+                          <CardCurrencyAmountItem key={i} amount={el.unclaimed} />
+                        ))
+                      ) : (
+                        <CardItem skeleton />
+                      )}
+                    </CardGroup>
+                  </CardContent>
+                  <CardFooter>
+                    <ConcentratedLiquidityHarvestButton account={address} chainId={chainId}>
+                      {({ write, isLoading }) => (
+                        <Checker.Connect fullWidth variant="outline" size="default">
+                          <Checker.Network fullWidth variant="outline" size="default" chainId={chainId}>
+                            <Button fullWidth disabled={isLoading} onClick={() => write?.()} size="default">
+                              Harvest
+                            </Button>
+                          </Checker.Network>
+                        </Checker.Connect>
+                      )}
+                    </ConcentratedLiquidityHarvestButton>
+                  </CardFooter>
+                </TabsContent>
+              ) : null}
             </Tabs>
           </Card>
           <Card>
@@ -285,87 +380,6 @@ const Component: FC<{ id: string }> = ({ id }) => {
               </div>
             </CardContent>
           </Card>
-        </div>
-        <div className="py-4">
-          <Separator />
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Unclaimed fees</CardTitle>
-              <CardDescription>{formatUSD(fiatValuesAmounts[0] + fiatValuesAmounts[1])}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CardGroup>
-                <CardLabel>Tokens</CardLabel>
-                <CardCurrencyAmountItem
-                  amount={amounts[0]}
-                  isLoading={isPositionLoading}
-                  fiatValue={formatUSD(fiatValuesAmounts[0])}
-                />
-                <CardCurrencyAmountItem
-                  amount={amounts[1]}
-                  isLoading={isPositionLoading}
-                  fiatValue={formatUSD(fiatValuesAmounts[1])}
-                />
-              </CardGroup>
-            </CardContent>
-            <CardFooter>
-              <ConcentratedLiquidityCollectButton
-                position={position ?? undefined}
-                positionDetails={positionDetails}
-                token0={token0}
-                token1={token1}
-                account={address}
-                chainId={chainId}
-              >
-                {({ sendTransaction, isLoading }) => (
-                  <Checker.Connect variant="outline" fullWidth size="default">
-                    <Checker.Network variant="outline" fullWidth size="default" chainId={chainId}>
-                      <Button fullWidth disabled={isLoading} onClick={() => sendTransaction?.()} size="default">
-                        Collect
-                      </Button>
-                    </Checker.Network>
-                  </Checker.Connect>
-                )}
-              </ConcentratedLiquidityCollectButton>
-            </CardFooter>
-          </Card>
-          {isAngleEnabledChainId(chainId) ? (
-            <Card>
-              <CardHeader>
-                <CardTitle>Unclaimed rewards</CardTitle>
-                <CardDescription>
-                  This will claim your rewards for <b>every</b> V3 liquidity position on {Chain.from(chainId).name}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <CardGroup>
-                  <CardLabel>Tokens (accrued over all positions)</CardLabel>
-                  {rewardsData && positionDetails && rewardsData.pools[positionDetails.address]?.rewardsPerToken ? (
-                    Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).map((el, i) => (
-                      <CardCurrencyAmountItem key={i} amount={el.unclaimed} />
-                    ))
-                  ) : (
-                    <CardItem skeleton />
-                  )}
-                </CardGroup>
-              </CardContent>
-              <CardFooter>
-                <ConcentratedLiquidityHarvestButton account={address} chainId={chainId}>
-                  {({ write, isLoading }) => (
-                    <Checker.Connect fullWidth variant="outline" size="default">
-                      <Checker.Network fullWidth variant="outline" size="default" chainId={chainId}>
-                        <Button fullWidth disabled={isLoading} onClick={() => write?.()} size="default">
-                          Harvest
-                        </Button>
-                      </Checker.Network>
-                    </Checker.Connect>
-                  )}
-                </ConcentratedLiquidityHarvestButton>
-              </CardFooter>
-            </Card>
-          ) : null}
         </div>
         {isAngleEnabledChainId(chainId) ? (
           <>
