@@ -149,8 +149,8 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> = memo
                 <Card>
                   <CardHeader>
                     <CardTitle>
-                      <span className="flex items-center space-x-2">
-                        <>{option.value / 10000}% Fees </>{' '}
+                      <span className="flex items-center gap-2">
+                        <span>{option.value / 10000}% Fees </span>
                         {tvlDistribution.get(option.value) && (
                           <Chip variant="secondary">
                             {isLoading ? (

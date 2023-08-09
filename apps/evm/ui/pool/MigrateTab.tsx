@@ -238,6 +238,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
     [invertTokens, position?.amount0, position?.amount1]
   )
 
+  console.log(position, !position, positionAmount0?.toSignificant(4), positionAmount1?.toSignificant(4))
+
   const refund0 = useMemo(
     () =>
       positionAmount0 &&
@@ -360,7 +362,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
           </Checker.Guard>
         </CardFooter>
       </Card>
-      <Card className={classNames(stakedBalance?.greaterThan(ZERO) ? 'opacity-40 pointer-events-noen' : '')}>
+      <Card className={classNames(stakedBalance?.greaterThan(ZERO) ? 'opacity-40 pointer-events-none' : '')}>
         <CardHeader>
           <CardTitle>Migrate position</CardTitle>
           <CardDescription>
@@ -389,26 +391,28 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                 <></>
               )}
             </CardGroup>
-            <CardGroup>
-              <CardLabel>V3 Price</CardLabel>
-              {token0 && token1 && pool ? (
-                <div>
-                  <Button
-                    icon={SwitchHorizontalIcon}
-                    variant="link"
-                    size="sm"
-                    onClick={() => setInvertPrice((prev) => !prev)}
-                  >
-                    1 {invertPrice ? _token1.symbol : _token0.symbol} ={' '}
-                    {invertPrice
-                      ? `${v3SpotPrice?.invert()?.toSignificant(6)} ${_token0.symbol}`
-                      : `${v3SpotPrice?.toSignificant(6)} ${_token1.symbol}`}
-                  </Button>
-                </div>
-              ) : (
-                <></>
-              )}
-            </CardGroup>
+            {v3SpotPrice ? (
+              <CardGroup>
+                <CardLabel>V3 Price</CardLabel>
+                {token0 && token1 && pool ? (
+                  <div>
+                    <Button
+                      icon={SwitchHorizontalIcon}
+                      variant="link"
+                      size="sm"
+                      onClick={() => setInvertPrice((prev) => !prev)}
+                    >
+                      1 {invertPrice ? _token1.symbol : _token0.symbol} ={' '}
+                      {invertPrice
+                        ? `${v3SpotPrice?.invert()?.toSignificant(6)} ${_token0.symbol}`
+                        : `${v3SpotPrice?.toSignificant(6)} ${_token1.symbol}`}
+                    </Button>
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </CardGroup>
+            ) : null}
           </div>
           <CardGroup className="max-w-[500px]">
             <CardLabel>Position</CardLabel>
@@ -429,7 +433,6 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
         </div>
         <CardContent className="!pb-0">
           <SelectFeeConcentratedWidget
-            disableIfNotExists={true}
             setFeeAmount={setFeeAmount}
             feeAmount={feeAmount}
             token0={token0}
@@ -443,26 +446,26 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
               token1={token1}
               feeAmount={feeAmount}
               tokenId={undefined}
-              showStartPrice={false}
+              showStartPrice={true}
               switchTokens={() => setInvertTokens((prev) => !prev)}
             >
-              {outOfRange && (
+              {outOfRange ? (
                 <Message variant="warning" size="sm">
                   Your position will not earn fees or be used in trades until the market price moves into your range.
                 </Message>
-              )}
-              {invalidRange && (
+              ) : null}
+              {invalidRange ? (
                 <Message variant="warning" size="sm">
                   Invalid range selected. The minimum price must be lower than the maximum price.
                 </Message>
-              )}
-              {largePriceDifference && (
+              ) : null}
+              {largePriceDifference ? (
                 <Message variant="warning" size="sm">
                   You should only deposit liquidity into SushiSwap V3 at a price you believe is correct. <br />
                   If the price seems incorrect, you can either make a swap to move the price or wait for someone else to
                   do so.
                 </Message>
-              )}
+              ) : null}
             </SelectPricesWidget>
           </div>
         </CardContent>

@@ -43,7 +43,7 @@ const textFieldVariants = cva(
         no: '',
       },
       hasUnit: {
-        yes: 'rounded-r-none',
+        yes: 'rounded-r-none !border-r-0',
         no: '',
       },
     },

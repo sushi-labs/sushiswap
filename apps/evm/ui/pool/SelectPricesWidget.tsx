@@ -131,6 +131,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                 <div className="flex flex-col gap-2">
                   <Label>Start price</Label>
                   <TextField
+                    variant="outline"
                     value={startPriceTypedValue}
                     onValueChange={onStartPriceInput}
                     testdata-id="start-price-input"
