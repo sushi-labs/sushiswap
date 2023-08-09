@@ -31,7 +31,7 @@ const COLUMNS = [
       if (!_reward) return <>n/a</>
 
       return (
-        <div className="whitespace-nowrap flex items-center gap-1">
+        <div className="whitespace-nowrap flex items-center gap-2">
           <Currency.Icon currency={_reward.currency} width={18} height={18} />
           {_reward.toSignificant(6)} {_reward.currency.symbol}
         </div>
