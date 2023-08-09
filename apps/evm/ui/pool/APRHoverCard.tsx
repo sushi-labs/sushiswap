@@ -81,9 +81,11 @@ export const APRHoverCard: FC<APRHoverCardProps> = ({ children, pool, showEmissi
           </HoverCardContent>
         </HoverCard>
       </div>
-      <div>
+      <div className="block sm:hidden">
         <Popover>
-          <PopoverTrigger asChild>{children}</PopoverTrigger>
+          <PopoverTrigger onClick={(e) => e.stopPropagation()} asChild>
+            {children}
+          </PopoverTrigger>
           <PopoverContent side="right" className="!p-0 max-w-[320px]">
             {card}
           </PopoverContent>
