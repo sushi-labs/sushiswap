@@ -13,6 +13,8 @@ import { useTotalSupply } from 'utils/useTotalSupply'
 import { useUnderlyingTokenBalanceFromPool } from 'utils/useUnderlyingTokenBalanceFromPool'
 import { RemoveSectionLegacy } from 'components/RemoveSection/RemoveSectionLegacy'
 import { RemoveSectionUnstake } from 'components/RemoveSection/RemoveSectionUnstake'
+import { isFarm, useFarms } from 'utils/useFarms'
+import { getPIdIndex, useUserHandle, useUserPool } from 'utils/useUserHandle'
 
 const MAINNET_CONTRACT = process.env['MAINNET_CONTRACT'] || process.env['NEXT_PUBLIC_MAINNET_CONTRACT']
 const TESTNET_CONTRACT = process.env['TESTNET_CONTRACT'] || process.env['NEXT_PUBLIC_TESTNET_CONTRACT']
@@ -21,15 +23,12 @@ const Remove: FC = () => {
 }
 
 const _Remove: FC = () => {
-  const [isTransactionPending, setisTransactionPending] = useState<boolean>(false)
-  const [percentage, setPercentage] = useState<string>('')
-
   const router = useParams()
   const [chainId, ...address] = decodeURIComponent(router?.id).split(':')
   const tokenAddress = address.join(':')
 
   const CONTRACT_ADDRESS = chainId === '2' ? TESTNET_CONTRACT : MAINNET_CONTRACT
-  const { account, signAndSubmitTransaction, network } = useWallet()
+  const { account } = useWallet()
   const { data: LPBalance } = useTokenBalance({
     account: account?.address as string,
     currency: `${CONTRACT_ADDRESS}::swap::LPToken<${tokenAddress}>`,
@@ -59,6 +58,34 @@ const _Remove: FC = () => {
     decimals: LPSupply?.data?.decimals,
   })
 
+  // farm
+
+  const { data: farms } = useFarms()
+  const farmIndex = isFarm(tokenAddress, farms)
+  const { data: coinInfo } = useTotalSupply(chainId, tokenAddress)
+  const { data: userHandle } = useUserPool(account?.address)
+  const { data: stakes, isInitialLoading: isStakeLoading } = useUserHandle({ address: account?.address, userHandle })
+  const pIdIndex = useMemo(() => {
+    return getPIdIndex(farmIndex, stakes)
+  }, [stakes, farmIndex])
+  const stakeAmount = useMemo(() => {
+    if (stakes?.data.current_table_items.length && pIdIndex !== -1) {
+      return Number(stakes?.data.current_table_items[pIdIndex]?.decoded_value?.amount)
+    } else {
+      return 0
+    }
+  }, [stakes, pIdIndex, coinInfo])
+
+  const farmBalance = LPSupply ? ((stakeAmount / 10 ** LPSupply?.data?.decimals) as number) : 0
+
+  const [farmUnderlying0, farmUnderlying1] = useUnderlyingTokenBalanceFromPool({
+    balance: stakeAmount,
+    reserve0: Number(reserve0),
+    reserve1: Number(reserve1),
+    totalSupply: Number(totalSupply),
+    decimals: coinInfo?.data?.decimals,
+  })
+
   return (
     <>
       {pool?.id && (
@@ -66,13 +93,19 @@ const _Remove: FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
             <div className="hidden md:block" />
             <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">
-              <RemoveSectionUnstake />
+              <RemoveSectionUnstake
+                token0={token0}
+                token1={token1}
+                stakeAmount={stakeAmount}
+                balance={farmBalance}
+                decimals={coinInfo?.data?.decimals}
+                lpTokenName={coinInfo?.data?.name}
+              />
               <RemoveSectionLegacy
                 pool={pool}
                 liquidityBalance={LPBalance}
                 token0={token0}
                 token1={token1}
-                LPSupply={LPSupply}
                 balance={balance}
                 underlying0={underlying0}
                 underlying1={underlying1}
@@ -103,6 +136,8 @@ const _Remove: FC = () => {
                   underlying1={parseFloat(underlying1?.toFixed(4) as string)}
                   token0={token0}
                   token1={token1}
+                  farmUnderlying0={farmUnderlying0}
+                  farmUnderlying1={farmUnderlying1}
                 />
               </AppearOnMount>
             </div>

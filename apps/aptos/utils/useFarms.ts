@@ -38,9 +38,9 @@ export type FarmLP = {
   }
 }
 
-const farmsQueryFn = async (networkName: string = 'mainnet') => {
+const farmsQueryFn = async () => {
   const response = await fetch(
-    `https://fullnode.${networkName}.aptoslabs.com/v1/accounts/${MASTERCHEF_CONTRACT}/resource/${MASTERCHEF_CONTRACT}::masterchef::MasterChef`
+    `https://fullnode.testnet.aptoslabs.com/v1/accounts/${MASTERCHEF_CONTRACT}/resource/${MASTERCHEF_CONTRACT}::masterchef::MasterChef`
   )
   if (response.status == 200) {
     const data: FarmLP = await response.json()
@@ -50,17 +50,12 @@ const farmsQueryFn = async (networkName: string = 'mainnet') => {
 }
 
 export const isFarm = (address: string, farms: FarmLP | undefined) => {
-  return useMemo(() => farms?.data.lps.indexOf(`${MAINNET_CONTRACT}::swap::LPToken<${address}>`), [farms])
+  return useMemo(() => farms?.data?.lps.indexOf(`${MAINNET_CONTRACT}::swap::LPToken<${address}>`), [farms])
 }
 
 export function useFarms() {
-  const { network } = useWallet()
-  const networkName = useMemo(() => {
-    return network?.name?.toLocaleLowerCase()
-  }, [network?.name])
   return useQuery({
-    queryKey: ['farms', { networkName }],
-    queryFn: () => farmsQueryFn(networkName),
-    enabled: Boolean(networkName),
+    queryKey: ['farms'],
+    queryFn: () => farmsQueryFn(),
   })
 }

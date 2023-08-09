@@ -1,20 +1,37 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
-import { Button, Currency, DEFAULT_INPUT_UNSTYLED, Input, Typography, Widget, classNames } from '@sushiswap/ui'
+import { Currency, DEFAULT_INPUT_UNSTYLED, Typography, Widget, classNames } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { Input } from '@sushiswap/ui/future/components/input'
+import { Icon } from 'components/Icon'
+import { IconList } from 'components/IconList'
 import { FC, Fragment, ReactNode, useState } from 'react'
+import { Token } from 'utils/tokenType'
 
 interface RemoveSectionUnstakeWidget {
+  token0: Token
+  token1: Token
   value: string
   setValue(value: string): void
+  stakeAmount: number
+  balance: number
   children: ReactNode
 }
 
-export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({ value, setValue, children }) => {
+export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
+  value,
+  setValue,
+  token0,
+  token1,
+  stakeAmount,
+  balance,
+  children,
+}) => {
   const [hover, setHover] = useState(false)
   return (
     <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       <Transition
-        show={Boolean()}
+        show={Boolean(hover && stakeAmount <= 0)}
         as={Fragment}
         enter="transition duration-300 origin-center ease-out"
         enterFrom="transform opacity-0"
@@ -77,25 +94,36 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({ val
                           />
                         </div>
                         <div className="flex gap-2">
-                          <Button size="xs" onClick={() => setValue('')} testdata-id="unstake-25-button">
+                          <Button
+                            size="xs"
+                            onClick={() => setValue(String(balance / 4))}
+                            testdata-id="unstake-25-button"
+                          >
                             25%
                           </Button>
-                          <Button size="xs" onClick={() => setValue('')} testdata-id="unstake-50-button">
+                          <Button
+                            size="xs"
+                            onClick={() => setValue(String(balance / 2))}
+                            testdata-id="unstake-50-button"
+                          >
                             50%
                           </Button>
-                          <Button size="xs" onClick={() => setValue('')} testdata-id="unstake-max-button">
+                          <Button size="xs" onClick={() => setValue(String(balance))} testdata-id="unstake-max-button">
                             MAX
                           </Button>
                         </div>
                         <div className="min-w-[56px] -mr-[10px]">
-                          <Currency.IconList iconHeight={28} iconWidth={28}></Currency.IconList>
+                          <IconList iconHeight={28} iconWidth={28}>
+                            <Icon currency={token0} />
+                            <Icon currency={token1} />
+                          </IconList>
                         </div>
                       </div>
                       <div className="grid items-center justify-between grid-cols-3 pb-2">
                         <Transition
                           appear
                           as={Fragment}
-                          show={Boolean()}
+                          show={Boolean(stakeAmount)}
                           enter="transition duration-300 origin-center ease-out"
                           enterFrom="transform scale-90 opacity-0"
                           enterTo="transform scale-100 opacity-100"
@@ -104,12 +132,12 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({ val
                           leaveTo="transform opacity-0"
                         >
                           <Typography variant="sm" weight={500} className="text-slate-300 hover:text-slate-20">
-                            {}
+                            {`$0.00`}
                           </Typography>
                         </Transition>
                         <Transition
                           appear
-                          show={Boolean()}
+                          show={Boolean(stakeAmount)}
                           as={Fragment}
                           enter="transition duration-300 origin-center ease-out"
                           enterFrom="transform scale-90 opacity-0"
@@ -119,13 +147,13 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({ val
                           leaveTo="transform opacity-0"
                         >
                           <Typography
-                            onClick={() => setValue('')}
+                            onClick={() => setValue(String(balance))}
                             as="button"
                             variant="sm"
                             weight={500}
                             className="flex justify-end col-span-2 truncate text-slate-300 hover:text-slate-200"
                           >
-                            Balance: {}
+                            Balance: {balance}
                           </Typography>
                         </Transition>
                       </div>

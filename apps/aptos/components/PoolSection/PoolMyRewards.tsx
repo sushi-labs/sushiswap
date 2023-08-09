@@ -1,26 +1,29 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Typography } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui/future/components/Dots'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Network, Provider } from 'aptos'
 import WalletSelector from 'components/WalletSelector'
+import { createToast } from 'components/toast'
 import { useParams } from 'next/navigation'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { formatNumber } from 'utils/utilFunctions'
 interface Props {
-  isFarm: Boolean
   reward: number
   decimals: number | undefined
   isLoading: boolean
 }
 const MASTERCHEF_CONTRACT = process.env['MASTERCHEF_CONTRACT'] || process.env['NEXT_PUBLIC_MASTERCHEF_CONTRACT']
 const MAINNET_CONTRACT = process.env['MAINNET_CONTRACT'] || process.env['NEXT_PUBLIC_MAINNET_CONTRACT']
-export const PoolMyRewards: FC<Props> = ({ isFarm, reward, decimals, isLoading }) => {
+export const PoolMyRewards: FC<Props> = ({ reward, decimals, isLoading }) => {
   const router = useParams()
   const { connected, signAndSubmitTransaction } = useWallet()
   const [chainId, ...address] = decodeURIComponent(router?.id).split(':')
   const tokenAddress = address.join(':')
+  const [isTransactionPending, setTransactionPending] = useState<boolean>(false)
   const harvest = async () => {
     const provider = new Provider(Network.MAINNET)
+    setTransactionPending(true)
     try {
       const response = await signAndSubmitTransaction({
         type: 'entry_function_payload',
@@ -28,11 +31,28 @@ export const PoolMyRewards: FC<Props> = ({ isFarm, reward, decimals, isLoading }
         arguments: [0],
         function: `${MASTERCHEF_CONTRACT}::masterchef::deposit`,
       })
+
+      await provider.waitForTransaction(response?.hash)
+
+      //return from here if response is failed
+      if (!response?.success) return
+      const toastId = `completed:${response?.hash}`
+      createToast({
+        summery: `Successfully claimed rewards`,
+        toastId: toastId,
+      })
+      setTransactionPending(false)
     } catch (err) {
       console.log(err)
+      const toastId = `failed:${Math.random()}`
+      createToast({
+        summery: `Something went wrong when claiming rewards`,
+        toastId: toastId,
+      })
+    } finally {
+      setTransactionPending(false)
     }
   }
-  if (!isFarm) return <></>
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col bg-white dark:bg-slate-800 rounded-2xl">
@@ -63,7 +83,7 @@ export const PoolMyRewards: FC<Props> = ({ isFarm, reward, decimals, isLoading }
                   alt=""
                 />
                 <Typography variant="sm" weight={600} className="dark:text-slate-300 text-gray-700">
-                  {reward ? formatNumber(reward, decimals as number) : 0} SUSHI
+                  {reward ? parseFloat(String(formatNumber(reward, decimals as number))) : 0} SUSHI
                 </Typography>
               </div>
               <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600">
@@ -76,8 +96,8 @@ export const PoolMyRewards: FC<Props> = ({ isFarm, reward, decimals, isLoading }
       {!connected ? (
         <WalletSelector color="blue" size="xl" fullWidth={true} />
       ) : (
-        <Button size="xl" fullWidth onClick={harvest}>
-          Claim
+        <Button size="xl" fullWidth onClick={harvest} disabled={isTransactionPending}>
+          {isTransactionPending ? <Dots>Claiming</Dots> : 'Claim'}
         </Button>
       )}
     </div>

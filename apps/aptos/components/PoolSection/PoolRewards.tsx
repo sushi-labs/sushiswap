@@ -10,13 +10,21 @@ export const PoolRewards: FC<{ isFarm: boolean }> = ({ isFarm }) => {
         <List.Label>Reward APR: {'0.00%'}</List.Label>
       </div>
       <List.Control>
-        {
-          <List.KeyValue key={``} flex title={`${''}`}>
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2">{}per day</div>
+        <List.KeyValue flex title={`SUSHI`}>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <img
+                src="https://cdn.sushi.com/image/upload/f_auto,c_limit,w_64,q_auto/tokens/137/0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a.jpg"
+                className="rounded-full"
+                height={20}
+                width={20}
+                alt=""
+              />
+              {}
+              SUSHI per day
             </div>
-          </List.KeyValue>
-        }
+          </div>
+        </List.KeyValue>
       </List.Control>
     </List>
   )

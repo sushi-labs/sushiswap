@@ -4,12 +4,31 @@ import { FC, Fragment, useState } from 'react'
 import { AddSectionStakeWidget } from './AddSectionStakeWidget'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { Token } from 'utils/tokenType'
+import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import { Network, Provider } from 'aptos'
+import { useParams } from 'next/navigation'
+import { createToast } from 'components/toast'
 
 interface AddSectionStakeProps {
   title?: string
+  token0: Token
+  token1: Token
+  balance: number
+  decimals: number | undefined
+  lpTokenName: string | undefined
 }
+const MASTERCHEF_CONTRACT = process.env['MASTERCHEF_CONTRACT'] || process.env['NEXT_PUBLIC_MASTERCHEF_CONTRACT']
+const MAINNET_CONTRACT = process.env['MAINNET_CONTRACT'] || process.env['NEXT_PUBLIC_MAINNET_CONTRACT']
 
-export const AddSectionStake: FC<{ title?: string }> = ({ title }) => {
+export const AddSectionStake: FC<{
+  title?: string
+  token0: Token
+  token1: Token
+  balance: number
+  decimals: number | undefined
+  lpTokenName: string | undefined
+}> = ({ title, token0, token1, balance, decimals, lpTokenName }) => {
   const isMounted = useIsMounted()
   return (
     <Transition
@@ -22,18 +41,61 @@ export const AddSectionStake: FC<{ title?: string }> = ({ title }) => {
       leaveFrom="transform opacity-100"
       leaveTo="transform opacity-0"
     >
-      <_AddSectionStake title={title} />
+      <_AddSectionStake
+        title={title}
+        token0={token0}
+        token1={token1}
+        balance={balance}
+        decimals={decimals}
+        lpTokenName={lpTokenName}
+      />
     </Transition>
   )
 }
 
-const _AddSectionStake: FC<AddSectionStakeProps> = ({ title }) => {
+const _AddSectionStake: FC<AddSectionStakeProps> = ({ title, token0, token1, balance, decimals, lpTokenName }) => {
   const [hover, setHover] = useState(false)
+  const router = useParams()
+  const [chainId, ...address] = decodeURIComponent(router?.id).split(':')
+  const tokenAddress = address.join(':')
   const [value, setValue] = useState('')
+  const { signAndSubmitTransaction } = useWallet()
+  const [isTransactionPending, setTransactionPending] = useState<boolean>(false)
+  const depositeLiquidity = async () => {
+    const provider = new Provider(Network.TESTNET)
+    setTransactionPending(true)
+
+    try {
+      const response = await signAndSubmitTransaction({
+        type: 'entry_function_payload',
+        type_arguments: [`${MAINNET_CONTRACT}::swap::LPToken<${tokenAddress}>`],
+        arguments: [parseInt(String(Number(value) * 10 ** decimals))],
+        function: `${MASTERCHEF_CONTRACT}::masterchef::deposit`,
+      })
+      await provider.waitForTransaction(response?.hash)
+      //return from here if response is failed
+      if (!response?.success) return
+      const toastId = `completed:${response?.hash}`
+      createToast({
+        summery: `Successfully staked ${value} ${lpTokenName} tokens`,
+        toastId: toastId,
+      })
+      setTransactionPending(false)
+    } catch (err) {
+      console.log(err)
+      const toastId = `failed:${Math.random()}`
+      createToast({
+        summery: `Something went wrong when staking ${lpTokenName} tokens`,
+        toastId: toastId,
+      })
+    } finally {
+      setTransactionPending(false)
+    }
+  }
   return (
     <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       <Transition
-        show={Boolean()}
+        show={Boolean(hover && balance <= 0)}
         as={Fragment}
         enter="transition duration-300 origin-center ease-out"
         enterFrom="transform opacity-0"
@@ -49,10 +111,30 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ title }) => {
         </div>
       </Transition>
       <div className={''}>
-        <AddSectionStakeWidget title={title} value={value} setValue={setValue}>
-          <Button onClick={() => ''} fullWidth size="xl" variant="filled" disabled testId="stake-liquidity">
-            {<Dots>Confirm transaction</Dots>}
-          </Button>
+        <AddSectionStakeWidget
+          title={title}
+          value={value}
+          setValue={setValue}
+          token0={token0}
+          token1={token1}
+          balance={balance}
+        >
+          {Number(value) > balance ? (
+            <Button size="xl" variant="filled" disabled testId="stake-liquidity">
+              Insufficient Balance
+            </Button>
+          ) : (
+            <Button
+              onClick={Number(value) > 0 ? depositeLiquidity : () => {}}
+              fullWidth
+              size="xl"
+              variant="filled"
+              disabled={isTransactionPending || !Boolean(value)}
+              testId="stake-liquidity"
+            >
+              {isTransactionPending ? <Dots>Confirm transaction</Dots> : 'Stake Liquidity'}
+            </Button>
+          )}
         </AddSectionStakeWidget>
       </div>
     </div>

@@ -14,10 +14,7 @@ interface Props {
 }
 
 export const AddSectionReviewModal: FC<Props> = ({ children }) => {
-  const { token0, token1, amount0, amount1, isPriceFetching } = usePoolState()
-  const { account, signAndSubmitTransaction } = useWallet()
-  const { setisTransactionPending } = usePoolActions()
-  const [open, setOpen] = useState(false)
+  const { token0, token1, amount0, amount1 } = usePoolState()
   return (
     <Modal.Review modalType={ModalType.Regular} variant="transparent" tag="add-liquidity">
       {({ close }) => (

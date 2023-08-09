@@ -3,9 +3,11 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { useParams } from 'next/navigation'
 import { FC } from 'react'
 
-interface PoolButtonsProps {}
+interface PoolButtonsProps {
+  isFarm: boolean
+}
 
-export const PoolButtons: FC<PoolButtonsProps> = ({}) => {
+export const PoolButtons: FC<PoolButtonsProps> = ({ isFarm }) => {
   const router = useParams()
   return (
     <div className="flex flex-col w-full gap-2">
@@ -26,15 +28,17 @@ export const PoolButtons: FC<PoolButtonsProps> = ({}) => {
       <Button className="col-span-2" size="lg" color="default" as="a" href={`/swap`}>
         Trade
       </Button>
-      <Button
-        className="col-span-2"
-        size="lg"
-        color="default"
-        as="a"
-        href={`/pool/${decodeURIComponent(router?.id)}/stake`}
-      >
-        Stake Liquidity
-      </Button>
+      {isFarm && (
+        <Button
+          className="col-span-2"
+          size="lg"
+          color="default"
+          as="a"
+          href={`/pool/${decodeURIComponent(router?.id)}/stake`}
+        >
+          Stake Liquidity
+        </Button>
+      )}
     </div>
   )
 }

@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import { Token } from './tokenType'
 
 export const tokenBalanceQueryFn = async (account: string, currency: string, chainId: number) => {
   const network = chainId == 1 ? 'mainnet' : 'testnet'
@@ -9,7 +8,7 @@ export const tokenBalanceQueryFn = async (account: string, currency: string, cha
     )
     if (response.status == 200) {
       const data = await response.json()
-      return data.data.coin.value as number
+      return Number(data.data.coin.value)
     }
   }
   return 0
