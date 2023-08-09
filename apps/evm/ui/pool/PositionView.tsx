@@ -18,6 +18,7 @@ import {
   CardTitle,
   classNames,
   LinkInternal,
+  Separator,
   Tabs,
   TabsContent,
   TabsList,
@@ -126,299 +127,309 @@ const Component: FC<{ id: string }> = ({ id }) => {
   const currentAngleRewardsPool = rewardsData?.pools[poolId]
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="flex flex-col flex-1 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Manage</CardTitle>
-            <CardDescription>Manage your position by adding/removing liquidity</CardDescription>
-          </CardHeader>
-          <Tabs className="w-full" defaultValue="add">
-            <CardContent>
-              <TabsList className="!flex">
-                <TabsTrigger value="add" className="flex flex-1">
-                  Add liquidity
-                </TabsTrigger>
-                <TabsTrigger value="remove" className="flex flex-1">
-                  Remove liquidity
-                </TabsTrigger>
-              </TabsList>
-            </CardContent>
-            <TabsContent value="add">
-              <CardContent>
-                <ConcentratedLiquidityWidget
-                  withTitleAndDescription={false}
-                  chainId={chainId}
-                  account={address}
-                  token0={_token0}
-                  token1={_token1}
-                  feeAmount={positionDetails?.fee}
-                  tokensLoading={token0Loading || token1Loading}
-                  existingPosition={position ?? undefined}
-                  tokenId={tokenId}
-                />
-              </CardContent>
-            </TabsContent>
-            <TabsContent value="remove">
-              <ConcentratedLiquidityRemoveWidget
-                token0={_token0}
-                token1={_token1}
-                account={address}
-                chainId={chainId}
-                position={position ?? undefined}
-                positionDetails={positionDetails}
-              />
-            </TabsContent>
-          </Tabs>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Unclaimed fees</CardTitle>
-            <CardDescription>{formatUSD(fiatValuesAmounts[0] + fiatValuesAmounts[1])}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <CardGroup>
-              <CardLabel>Tokens</CardLabel>
-              <CardCurrencyAmountItem
-                amount={amounts[0]}
-                isLoading={isPositionLoading}
-                fiatValue={formatUSD(fiatValuesAmounts[0])}
-              />
-              <CardCurrencyAmountItem
-                amount={amounts[1]}
-                isLoading={isPositionLoading}
-                fiatValue={formatUSD(fiatValuesAmounts[1])}
-              />
-            </CardGroup>
-          </CardContent>
-          <CardFooter>
-            <ConcentratedLiquidityCollectButton
-              position={position ?? undefined}
-              positionDetails={positionDetails}
-              token0={token0}
-              token1={token1}
-              account={address}
-              chainId={chainId}
-            >
-              {({ sendTransaction, isLoading }) => (
-                <Checker.Connect variant="outline" fullWidth size="default">
-                  <Checker.Network variant="outline" fullWidth size="default" chainId={chainId}>
-                    <Button
-                      variant="secondary"
-                      fullWidth
-                      disabled={isLoading}
-                      onClick={() => sendTransaction?.()}
-                      size="default"
-                    >
-                      Collect
-                    </Button>
-                  </Checker.Network>
-                </Checker.Connect>
-              )}
-            </ConcentratedLiquidityCollectButton>
-          </CardFooter>
-        </Card>
-      </div>
-      <div className="flex flex-col flex-1 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex justify-between items-center">
-              Position Details
-              <div
-                className={classNames(
-                  !inRange ? 'bg-yellow/10' : 'bg-green/10',
-                  'px-2 py-1 flex items-center gap-1 rounded-full'
-                )}
-              >
-                <div className={classNames(outOfRange ? 'bg-yellow' : 'bg-green', 'w-3 h-3 rounded-full')} />
-                {outOfRange ? (
-                  <span className="text-xs font-medium text-yellow-900 dark:text-yellow">Out of Range</span>
-                ) : (
-                  <span className="text-xs font-medium text-green">In Range</span>
-                )}
-              </div>
-            </CardTitle>
-            <CardDescription>{formatUSD(fiatValuesPosition.reduce((acc, cur) => acc + cur, 0))}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <CardGroup>
-              <CardLabel>Tokens</CardLabel>
-              <CardCurrencyAmountItem
-                isLoading={isPositionLoading}
-                amount={position?.amount0}
-                fiatValue={formatUSD(fiatValuesPosition[0])}
-              />
-              <CardCurrencyAmountItem
-                isLoading={isPositionLoading}
-                amount={position?.amount1}
-                fiatValue={formatUSD(fiatValuesPosition[1])}
-              />
-            </CardGroup>
-            <CardGroup>
-              <CardLabel>Current price</CardLabel>
-              {pool && currencyBase && currencyQuote ? (
-                <CardItem
-                  title={
-                    <>
-                      1 {unwrapToken(currencyBase)?.symbol} ={' '}
-                      {(inverted ? pool?.token1Price : pool?.token0Price)?.toSignificant(6)}{' '}
-                      {unwrapToken(currencyQuote)?.symbol}
-                    </>
-                  }
-                >
-                  <div className="flex items-center gap-1">
-                    <Toggle pressed={invert} onClick={() => setInvert(true)} size="xs" variant="outline">
-                      {_token0?.symbol}
-                    </Toggle>
-                    <Toggle pressed={!invert} onClick={() => setInvert(false)} size="xs" variant="outline">
-                      {_token1?.symbol}
-                    </Toggle>
-                  </div>
-                </CardItem>
-              ) : (
-                <SkeletonText fontSize="sm" />
-              )}
-            </CardGroup>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="border border-accent p-4 flex flex-col gap-3 rounded-xl">
-                <div className="flex">
-                  <div className="gap-1 px-2 py-1 text-xs font-medium rounded-full bg-pink/10 text-pink">Min Price</div>
-                </div>
-                <div className="flex flex-col">
-                  {pool && currencyBase && currencyQuote ? (
-                    <span className="font-medium">
-                      {fullRange
-                        ? '0'
-                        : formatTickPrice({ price: priceLower, atLimit: tickAtLimit, direction: Bound.UPPER })}{' '}
-                      {unwrapToken(currencyQuote)?.symbol}
-                    </span>
-                  ) : (
-                    <SkeletonText />
-                  )}
-                </div>
-                {currencyBase && (
-                  <span className="text-xs text-slate-500">
-                    Your position will be 100% {unwrapToken(currencyBase).symbol} at this price.
-                  </span>
-                )}
-              </div>
-              <div className="border border-accent p-4 flex flex-col gap-3 rounded-xl">
-                <div className="flex">
-                  <div className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-blue/10 text-blue">
-                    Max Price
-                  </div>
-                </div>
-                <div className="flex flex-col">
-                  {priceUpper && pool && currencyQuote && currencyBase ? (
-                    <span className="font-medium">
-                      {fullRange
-                        ? '∞'
-                        : formatTickPrice({ price: priceUpper, atLimit: tickAtLimit, direction: Bound.UPPER })}{' '}
-                      {unwrapToken(currencyQuote).symbol}
-                    </span>
-                  ) : (
-                    <SkeletonText />
-                  )}
-                </div>
-                {currencyQuote && (
-                  <span className="text-xs text-slate-500">
-                    Your position will be 100% {unwrapToken(currencyQuote).symbol} at this price.
-                  </span>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        {isAngleEnabledChainId(chainId) ? (
+    <>
+      <div className="flex flex-col gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Unclaimed rewards</CardTitle>
-              <CardDescription>
-                This will claim your rewards for <b>every</b> V3 liquidity position on {Chain.from(chainId).name}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CardGroup>
-                <CardLabel>Tokens (accrued over all positions)</CardLabel>
-                {rewardsData && positionDetails && rewardsData.pools[positionDetails.address]?.rewardsPerToken ? (
-                  Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).map((el, i) => (
-                    <CardCurrencyAmountItem key={i} amount={el.unclaimed} />
-                  ))
-                ) : (
-                  <CardItem skeleton />
-                )}
-              </CardGroup>
-            </CardContent>
-            <CardFooter>
-              <ConcentratedLiquidityHarvestButton account={address} chainId={chainId}>
-                {({ write, isLoading }) => (
-                  <Checker.Connect fullWidth variant="outline" size="default">
-                    <Checker.Network fullWidth variant="outline" size="default" chainId={chainId}>
-                      <Button
-                        variant="secondary"
-                        fullWidth
-                        disabled={isLoading}
-                        onClick={() => write?.()}
-                        size="default"
-                      >
-                        Harvest
-                      </Button>
-                    </Checker.Network>
-                  </Checker.Connect>
-                )}
-              </ConcentratedLiquidityHarvestButton>
-            </CardFooter>
-          </Card>
-        ) : null}
-      </div>
-      <div className="col-span-1 lg:col-span-2">
-        {isAngleEnabledChainId(chainId) ? (
-          <Card>
-            <CardHeader>
-              <CardTitle>Reward distributions</CardTitle>
-              <CardDescription>
-                Anyone can add distributions to this pool.{' '}
-                {_token0 && _token1 ? (
-                  <LinkInternal
-                    href={`/pool/incentivize?chainId=${chainId}&fromCurrency=${
-                      _token0.isNative ? 'NATIVE' : _token0.address
-                    }&toCurrency=${_token1.isNative ? 'NATIVE' : _token1.address}&feeAmount=${positionDetails?.fee}`}
-                  >
-                    <Button asChild variant="link">
-                      Want to add one?
-                    </Button>
-                  </LinkInternal>
-                ) : null}
-              </CardDescription>
+              <CardTitle>Manage</CardTitle>
+              <CardDescription>Manage your position by adding/removing liquidity</CardDescription>
             </CardHeader>
             <Tabs className="w-full" defaultValue="add">
               <CardContent>
                 <TabsList className="!flex">
                   <TabsTrigger value="add" className="flex flex-1">
-                    Active
+                    Add liquidity
                   </TabsTrigger>
                   <TabsTrigger value="remove" className="flex flex-1">
-                    Expired
+                    Remove liquidity
                   </TabsTrigger>
                 </TabsList>
               </CardContent>
               <TabsContent value="add">
-                <DistributionDataTable
-                  isLoading={rewardsLoading}
-                  data={currentAngleRewardsPool?.distributionData.filter((el) => el.isLive)}
-                />
+                <CardContent>
+                  <ConcentratedLiquidityWidget
+                    withTitleAndDescription={false}
+                    chainId={chainId}
+                    account={address}
+                    token0={_token0}
+                    token1={_token1}
+                    feeAmount={positionDetails?.fee}
+                    tokensLoading={token0Loading || token1Loading}
+                    existingPosition={position ?? undefined}
+                    tokenId={tokenId}
+                  />
+                </CardContent>
               </TabsContent>
               <TabsContent value="remove">
-                <DistributionDataTable
-                  isLoading={rewardsLoading}
-                  data={currentAngleRewardsPool?.distributionData.filter((el) => !el.isLive)}
+                <ConcentratedLiquidityRemoveWidget
+                  token0={_token0}
+                  token1={_token1}
+                  account={address}
+                  chainId={chainId}
+                  position={position ?? undefined}
+                  positionDetails={positionDetails}
                 />
               </TabsContent>
             </Tabs>
           </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex justify-between items-center">
+                Position Details
+                <div
+                  className={classNames(
+                    !inRange ? 'bg-yellow/10' : 'bg-green/10',
+                    'px-2 py-1 flex items-center gap-1 rounded-full'
+                  )}
+                >
+                  <div className={classNames(outOfRange ? 'bg-yellow' : 'bg-green', 'w-3 h-3 rounded-full')} />
+                  {outOfRange ? (
+                    <span className="text-xs font-medium text-yellow-900 dark:text-yellow">Out of Range</span>
+                  ) : (
+                    <span className="text-xs font-medium text-green">In Range</span>
+                  )}
+                </div>
+              </CardTitle>
+              <CardDescription>{formatUSD(fiatValuesPosition.reduce((acc, cur) => acc + cur, 0))}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CardGroup>
+                <CardLabel>Tokens</CardLabel>
+                <CardCurrencyAmountItem
+                  isLoading={isPositionLoading}
+                  amount={position?.amount0}
+                  fiatValue={formatUSD(fiatValuesPosition[0])}
+                />
+                <CardCurrencyAmountItem
+                  isLoading={isPositionLoading}
+                  amount={position?.amount1}
+                  fiatValue={formatUSD(fiatValuesPosition[1])}
+                />
+              </CardGroup>
+              <CardGroup>
+                <CardLabel>Current price</CardLabel>
+                {pool && currencyBase && currencyQuote ? (
+                  <CardItem
+                    title={
+                      <>
+                        1 {unwrapToken(currencyBase)?.symbol} ={' '}
+                        {(inverted ? pool?.token1Price : pool?.token0Price)?.toSignificant(6)}{' '}
+                        {unwrapToken(currencyQuote)?.symbol}
+                      </>
+                    }
+                  >
+                    <div className="flex items-center gap-1">
+                      <Toggle pressed={invert} onClick={() => setInvert(true)} size="xs" variant="outline">
+                        {_token0?.symbol}
+                      </Toggle>
+                      <Toggle pressed={!invert} onClick={() => setInvert(false)} size="xs" variant="outline">
+                        {_token1?.symbol}
+                      </Toggle>
+                    </div>
+                  </CardItem>
+                ) : (
+                  <SkeletonText fontSize="sm" />
+                )}
+              </CardGroup>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="border border-accent p-4 flex flex-col gap-3 rounded-xl">
+                  <div className="flex">
+                    <div className="gap-1 px-2 py-1 text-xs font-medium rounded-full bg-pink/10 text-pink">
+                      Min Price
+                    </div>
+                  </div>
+                  <div className="flex flex-col">
+                    {pool && currencyBase && currencyQuote ? (
+                      <span className="font-medium">
+                        {fullRange
+                          ? '0'
+                          : formatTickPrice({ price: priceLower, atLimit: tickAtLimit, direction: Bound.UPPER })}{' '}
+                        {unwrapToken(currencyQuote)?.symbol}
+                      </span>
+                    ) : (
+                      <SkeletonText />
+                    )}
+                  </div>
+                  {currencyBase && (
+                    <span className="text-xs text-slate-500">
+                      Your position will be 100% {unwrapToken(currencyBase).symbol} at this price.
+                    </span>
+                  )}
+                </div>
+                <div className="border border-accent p-4 flex flex-col gap-3 rounded-xl">
+                  <div className="flex">
+                    <div className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-blue/10 text-blue">
+                      Max Price
+                    </div>
+                  </div>
+                  <div className="flex flex-col">
+                    {priceUpper && pool && currencyQuote && currencyBase ? (
+                      <span className="font-medium">
+                        {fullRange
+                          ? '∞'
+                          : formatTickPrice({ price: priceUpper, atLimit: tickAtLimit, direction: Bound.UPPER })}{' '}
+                        {unwrapToken(currencyQuote).symbol}
+                      </span>
+                    ) : (
+                      <SkeletonText />
+                    )}
+                  </div>
+                  {currencyQuote && (
+                    <span className="text-xs text-slate-500">
+                      Your position will be 100% {unwrapToken(currencyQuote).symbol} at this price.
+                    </span>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        <div className="py-4">
+          <Separator />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Unclaimed fees</CardTitle>
+              <CardDescription>{formatUSD(fiatValuesAmounts[0] + fiatValuesAmounts[1])}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CardGroup>
+                <CardLabel>Tokens</CardLabel>
+                <CardCurrencyAmountItem
+                  amount={amounts[0]}
+                  isLoading={isPositionLoading}
+                  fiatValue={formatUSD(fiatValuesAmounts[0])}
+                />
+                <CardCurrencyAmountItem
+                  amount={amounts[1]}
+                  isLoading={isPositionLoading}
+                  fiatValue={formatUSD(fiatValuesAmounts[1])}
+                />
+              </CardGroup>
+            </CardContent>
+            <CardFooter>
+              <ConcentratedLiquidityCollectButton
+                position={position ?? undefined}
+                positionDetails={positionDetails}
+                token0={token0}
+                token1={token1}
+                account={address}
+                chainId={chainId}
+              >
+                {({ sendTransaction, isLoading }) => (
+                  <Checker.Connect variant="outline" fullWidth size="default">
+                    <Checker.Network variant="outline" fullWidth size="default" chainId={chainId}>
+                      <Button
+                        variant="secondary"
+                        fullWidth
+                        disabled={isLoading}
+                        onClick={() => sendTransaction?.()}
+                        size="default"
+                      >
+                        Collect
+                      </Button>
+                    </Checker.Network>
+                  </Checker.Connect>
+                )}
+              </ConcentratedLiquidityCollectButton>
+            </CardFooter>
+          </Card>
+          {isAngleEnabledChainId(chainId) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Unclaimed rewards</CardTitle>
+                <CardDescription>
+                  This will claim your rewards for <b>every</b> V3 liquidity position on {Chain.from(chainId).name}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <CardGroup>
+                  <CardLabel>Tokens (accrued over all positions)</CardLabel>
+                  {rewardsData && positionDetails && rewardsData.pools[positionDetails.address]?.rewardsPerToken ? (
+                    Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).map((el, i) => (
+                      <CardCurrencyAmountItem key={i} amount={el.unclaimed} />
+                    ))
+                  ) : (
+                    <CardItem skeleton />
+                  )}
+                </CardGroup>
+              </CardContent>
+              <CardFooter>
+                <ConcentratedLiquidityHarvestButton account={address} chainId={chainId}>
+                  {({ write, isLoading }) => (
+                    <Checker.Connect fullWidth variant="outline" size="default">
+                      <Checker.Network fullWidth variant="outline" size="default" chainId={chainId}>
+                        <Button
+                          variant="secondary"
+                          fullWidth
+                          disabled={isLoading}
+                          onClick={() => write?.()}
+                          size="default"
+                        >
+                          Harvest
+                        </Button>
+                      </Checker.Network>
+                    </Checker.Connect>
+                  )}
+                </ConcentratedLiquidityHarvestButton>
+              </CardFooter>
+            </Card>
+          ) : null}
+        </div>
+        {isAngleEnabledChainId(chainId) ? (
+          <>
+            <div className="py-4">
+              <Separator />
+            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Reward distributions</CardTitle>
+                <CardDescription>
+                  Anyone can add distributions to this pool.{' '}
+                  {_token0 && _token1 ? (
+                    <LinkInternal
+                      href={`/pool/incentivize?chainId=${chainId}&fromCurrency=${
+                        _token0.isNative ? 'NATIVE' : _token0.address
+                      }&toCurrency=${_token1.isNative ? 'NATIVE' : _token1.address}&feeAmount=${positionDetails?.fee}`}
+                    >
+                      <Button asChild variant="link">
+                        Want to add one?
+                      </Button>
+                    </LinkInternal>
+                  ) : null}
+                </CardDescription>
+              </CardHeader>
+              <Tabs className="w-full" defaultValue="add">
+                <CardContent>
+                  <TabsList className="!flex">
+                    <TabsTrigger value="add" className="flex flex-1">
+                      Active
+                    </TabsTrigger>
+                    <TabsTrigger value="remove" className="flex flex-1">
+                      Expired
+                    </TabsTrigger>
+                  </TabsList>
+                </CardContent>
+                <TabsContent value="add">
+                  <DistributionDataTable
+                    isLoading={rewardsLoading}
+                    data={currentAngleRewardsPool?.distributionData.filter((el) => el.isLive)}
+                  />
+                </TabsContent>
+                <TabsContent value="remove">
+                  <DistributionDataTable
+                    isLoading={rewardsLoading}
+                    data={currentAngleRewardsPool?.distributionData.filter((el) => !el.isLive)}
+                  />
+                </TabsContent>
+              </Tabs>
+            </Card>
+          </>
         ) : null}
       </div>
-    </div>
+    </>
   )
 }
 
