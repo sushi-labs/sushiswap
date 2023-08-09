@@ -4,7 +4,7 @@ import { PositionView } from '../../../../../ui/pool/PositionView'
 
 export default async function PositionsPage({ params }: { params: { id: string; positionId: string } }) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 mt-4">
       <LinkInternal href={`/pool/${params.id}`} className="text-blue hover:underline text-sm">
         ← Back
       </LinkInternal>

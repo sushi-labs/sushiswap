@@ -1,21 +1,20 @@
 'use client'
 
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
-import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 import { Chain } from '@sushiswap/chain'
 import { Pool as PoolV2 } from '@sushiswap/client'
 import { Token } from '@sushiswap/currency'
 import { formatPercent, shortenAddress } from '@sushiswap/format'
-import { Button, classNames, Currency, IconButton, LinkExternal, typographyVariants } from '@sushiswap/ui'
+import { Button, classNames, Currency, LinkExternal, LinkInternal, typographyVariants } from '@sushiswap/ui'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
 import { Pool } from '@sushiswap/v3-sdk'
 import { unwrapToken } from 'lib/functions'
-import { useRouter } from 'next/navigation'
 import React, { FC, useMemo } from 'react'
 
 import { APRHoverCard } from './APRHoverCard'
 
 type PoolHeader = {
+  backUrl: string
   address: string
   pool: Pool | null | undefined | PoolV2
   apy?: {
@@ -26,9 +25,7 @@ type PoolHeader = {
   hasEnabledStrategies?: boolean
 }
 
-export const PoolHeader: FC<PoolHeader> = ({ address, pool, apy, priceRange }) => {
-  const { back } = useRouter()
-
+export const PoolHeader: FC<PoolHeader> = ({ backUrl, address, pool, apy, priceRange }) => {
   const [token0, token1] = useMemo(() => {
     if (!pool) return [undefined, undefined]
     if (pool instanceof Pool) {
@@ -57,17 +54,12 @@ export const PoolHeader: FC<PoolHeader> = ({ address, pool, apy, priceRange }) =
 
   if (pool && token0 && token1)
     return (
-      <div className="flex flex-col gap-2">
-        <div className="flex flex-col gap-2.5">
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4">
+          <LinkInternal href={backUrl} className="text-blue hover:underline text-sm">
+            ← Pools
+          </LinkInternal>
           <div className="relative flex items-center gap-3">
-            <IconButton
-              variant="ghost"
-              icon={ChevronLeftIcon}
-              onClick={back}
-              name="back"
-              iconProps={{ strokeWidth: 3 }}
-              className="xl:absolute xl:ml-[-56px]"
-            />
             <Currency.IconList iconWidth={36} iconHeight={36}>
               <Currency.Icon currency={token0} />
               <Currency.Icon currency={token1} />
@@ -106,7 +98,7 @@ export const PoolHeader: FC<PoolHeader> = ({ address, pool, apy, priceRange }) =
             )}
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-y-3 gap-x-6 text-secondary-foreground mb-8 mt-1.5">
+        <div className="flex flex-wrap items-center gap-y-5 gap-x-[32px] text-secondary-foreground mb-8 mt-1.5">
           {apy ? (
             <div className="flex items-center gap-1.5">
               <span className="tracking-tighter font-semibold">APR</span>
