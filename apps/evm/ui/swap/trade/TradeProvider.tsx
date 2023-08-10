@@ -4,6 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui/types'
 import { useAccount } from '@sushiswap/wagmi'
+import { isSwapApiEnabledChainId } from 'config'
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
@@ -107,7 +108,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { token0, token1, fromChainId, toChainId } = useTokenState()
 
   const [internalState, dispatch] = useReducer(reducer, {
-    isFallback: true,
+    isFallback: !isSwapApiEnabledChainId(fromChainId),
     tradeId: nanoid(),
     review: review ? review : false,
     value: !amount || amount === '0' ? '' : amount,

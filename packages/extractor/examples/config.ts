@@ -69,6 +69,7 @@ export const ROUTE_PROCESSOR_3_ADDRESS = {
   [ChainId.POLYGON_ZKEVM]: '0x2f686751b19a9d91cc3d57d90150Bc767f050066' as Address,
   [ChainId.TELOS]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de' as Address,
   [ChainId.THUNDERCORE]: '0x1b9d177CcdeA3c79B6c8F40761fc8Dc9d0500EAa' as Address,
+  [ChainId.BASE]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904' as Address,
 }
 
 function sushiswapV2Factory(chainId: SushiSwapV2ChainId) {
@@ -376,5 +377,15 @@ export const EXTRACTOR_CONFIG = {
     logging: true,
     maxCallsInOneBatch: 5,
     RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.POLYGON_ZKEVM],
+  },
+  [ChainId.BASE]: {
+    client: createPublicClient(config[ChainId.BASE]),
+    factoriesV2: [],
+    factoriesV3: [sushiswapV3Factory(ChainId.BASE), uniswapV3Factory(ChainId.BASE)],
+    tickHelperContract: V3_TICK_LENS[ChainId.BASE],
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+    RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.BASE],
   },
 }
