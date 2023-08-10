@@ -20,9 +20,7 @@ export const Widget: FC = () => {
       <WidgetTitle />
       <div className="flex items-center justify-between">
         <SwitchAppType />
-        <SettingsOverlay
-          modules={[SettingsModule.SlippageTolerance, SettingsModule.CarbonOffset, SettingsModule.RoutingApi]}
-        />
+        <SettingsOverlay modules={[SettingsModule.SlippageTolerance, SettingsModule.CarbonOffset]} />
       </div>
       <WidgetContent>
         <CrossChainBanner />
