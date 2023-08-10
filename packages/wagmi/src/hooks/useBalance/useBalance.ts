@@ -118,7 +118,7 @@ export const useBalances: UseBalances = ({
     if (data?.length !== contracts.length) return result
     for (let i = 0; i < validatedTokenAddresses.length; i++) {
       if (loadBentobox) {
-        const { base, elastic } = data[i + validatedTokenAddresses.length] as unknown as {
+        const { base, elastic } = data[i + validatedTokenAddresses.length].result as unknown as {
           base: bigint
           elastic: bigint
         }

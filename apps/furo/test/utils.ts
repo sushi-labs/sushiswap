@@ -1,4 +1,3 @@
-import { AddressZero } from '@ethersproject/constants'
 import { expect, Page } from '@playwright/test'
 import { Type } from '@sushiswap/currency'
 import {
@@ -12,6 +11,7 @@ import {
   startOfMonth,
 } from 'date-fns'
 import { ethers } from 'ethers'
+import { zeroAddress } from 'viem'
 
 const BASE_URL = process.env.PLAYWRIGHT_URL || 'http://localhost:3000/furo'
 
@@ -185,9 +185,10 @@ async function handleStreamInputs(page: Page, args: StreamArgs, index = 0) {
   await page.fill(`[testdata-id=create-single-stream-token-selector${index}-address-input]`, token.symbol as string)
   const tokenRowSelector = page.locator(
     `[testdata-id=create-single-stream-token-selector${index}-row-${
-      token.isNative ? AddressZero : token.wrapped.address.toLowerCase()
+      token.isNative ? zeroAddress : token.wrapped.address.toLowerCase()
     }]`
   )
+
   await expect(tokenRowSelector).toBeVisible()
   await expect(tokenRowSelector).toBeEnabled()
   await tokenRowSelector.click()
@@ -277,7 +278,7 @@ async function handleGeneralDetails(page: Page, args: VestingArgs, index = 0) {
   await page.fill(`[testdata-id=create-single-vest${index}-address-input]`, args.token.symbol as string)
   const tokenRowSelector = page.locator(
     `[testdata-id=create-single-vest${index}-row-${
-      args.token.isNative ? AddressZero : args.token.wrapped.address.toLowerCase()
+      args.token.isNative ? zeroAddress : args.token.wrapped.address.toLowerCase()
     }]`
   )
   await expect(tokenRowSelector).toBeVisible()
