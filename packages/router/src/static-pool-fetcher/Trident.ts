@@ -14,7 +14,7 @@ import { Address, PublicClient } from 'viem'
 import { getCurrencyCombinations } from '../getCurrencyCombinations'
 
 export interface TridentStaticPool {
-  address: string
+  address: Address
   token0: Token
   token1: Token
   type: 'STABLE_POOL' | 'CONSTANT_PRODUCT_POOL'
@@ -104,7 +104,7 @@ export class TridentStaticPoolFetcher {
       if (s?.result)
         s.result.forEach((address) =>
           pools.push({
-            address: address.toLowerCase(),
+            address: address.toLowerCase() as Address,
             token0: pairsUniqueProcessed?.[i][0] as Token,
             token1: pairsUniqueProcessed?.[i][1] as Token,
             type,

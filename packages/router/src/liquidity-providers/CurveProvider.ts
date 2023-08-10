@@ -134,7 +134,7 @@ export enum CurvePoolType {
 }
 
 const ETH = Native.onChain(ChainId.ETHEREUM)
-export const CURVE_NON_FACTORY_POOLS: Record<number, [string, CurvePoolType, Type, Type][]> = {
+export const CURVE_NON_FACTORY_POOLS: Record<number, [Address, CurvePoolType, Type, Type][]> = {
   [ChainId.ETHEREUM]: [
     ['0xdc24316b9ae028f1497c275eb9192a3ea0f67022', CurvePoolType.Legacy, ETH, stETH],
     [
@@ -294,8 +294,8 @@ export class CurveProvider extends LiquidityProvider {
     t0: Token,
     t1: Token,
     excludePools?: Set<string>
-  ): Promise<Map<string, [CurvePoolType, Type, Type]>> {
-    const pools: Map<string, [CurvePoolType, Type, Type]> = new Map()
+  ): Promise<Map<Address, [CurvePoolType, Type, Type]>> {
+    const pools: Map<Address, [CurvePoolType, Type, Type]> = new Map()
     let currencyCombinations = getCurrencyCombinations(this.chainId, t0, t1)
     for (let i = 0; currencyCombinations.length > 0; ++i) {
       const calls = CURVE_FACTORY_ADDRESSES[this.chainId as keyof typeof CURVE_FACTORY_ADDRESSES].flatMap((factory) =>
@@ -313,8 +313,8 @@ export class CurveProvider extends LiquidityProvider {
         contracts: calls,
       })
       newFoundPools.forEach((pool, i) => {
-        if (pool.status === 'success' && excludePools?.has(pool.result as string) !== true)
-          pools.set(pool.result as string, [CurvePoolType.Factory, ...currencyCombinations[i]])
+        if (pool.status === 'success' && excludePools?.has(pool.result) !== true)
+          pools.set(pool.result, [CurvePoolType.Factory, ...currencyCombinations[i]])
       })
       currencyCombinations = newFoundPools
         .map((pool, i) => (pool.status === 'success' ? currencyCombinations[i] : undefined))
@@ -388,7 +388,7 @@ export class CurveProvider extends LiquidityProvider {
     } else return pools.map(() => 1)
   }
 
-  async getCurvePoolCodes(pools: Map<string, [CurvePoolType, Type, Type]>): Promise<PoolCode[]> {
+  async getCurvePoolCodes(pools: Map<Address, [CurvePoolType, Type, Type]>): Promise<PoolCode[]> {
     const poolArray = Array.from(pools.entries())
     const poolsMulticall = <
       T extends ContractFunctionConfig<(typeof curvePoolABI)[keyof typeof curvePoolABI]>['functionName']

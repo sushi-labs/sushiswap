@@ -1,7 +1,7 @@
 import { Amount, Price, Type } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
 import { SushiXSwapChainId } from '@sushiswap/sushixswap'
-import { Signature } from 'viem'
+import { Address, Signature } from 'viem'
 
 import { Action } from '../SushiXSwap'
 
@@ -13,7 +13,7 @@ export interface UseCrossChainTradeParams {
   token1: Type | undefined
   amount: Amount<Type> | undefined
   slippagePercentage: string
-  recipient: string | undefined
+  recipient: Address | undefined
   enabled: boolean
   bentoboxSignature?: Signature
 }

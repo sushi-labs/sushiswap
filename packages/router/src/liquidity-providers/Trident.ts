@@ -55,11 +55,11 @@ export class TridentProvider extends LiquidityProvider {
   readonly REFRESH_INITIAL_POOLS_INTERVAL = 60 // SECONDS
 
   isInitialized = false
-  topClassicPools: Map<string, PoolCode> = new Map()
-  topStablePools: Map<string, PoolCode> = new Map()
+  topClassicPools: Map<Address, PoolCode> = new Map()
+  topStablePools: Map<Address, PoolCode> = new Map()
 
-  onDemandClassicPools: Map<string, PoolInfo> = new Map()
-  onDemandStablePools: Map<string, PoolInfo> = new Map()
+  onDemandClassicPools: Map<Address, PoolInfo> = new Map()
+  onDemandStablePools: Map<Address, PoolInfo> = new Map()
   poolsByTrade: Map<string, string[]> = new Map()
   availablePools: Map<string, PoolResponse2> = new Map()
 
@@ -515,14 +515,14 @@ export class TridentProvider extends LiquidityProvider {
     const validUntilTimestamp = getUnixTime(add(Date.now(), { seconds: this.ON_DEMAND_POOLS_LIFETIME_IN_SECONDS }))
 
     const sortedTokens = this.poolResponseToSortedTokens([...onDemandClassicPools, ...onDemandStablePools].flat())
-    let newBridges = 0
-    let updated = 0
-    let created = 0
+    // let newBridges = 0
+    // let updated = 0
+    // let created = 0
     const classicPoolCodesToCreate: PoolCode[] = []
     const stablePoolCodesToCreate: PoolCode[] = []
     const bridgesToCreate: BentoBridgePoolCode[] = []
 
-    sortedTokens.forEach((t, i) => {
+    sortedTokens.forEach((t) => {
       const fakeBridgeAddress = `Bento bridge for ${t.symbol}`
       if (excludePools?.has(fakeBridgeAddress)) return
       if (!this.bridges.has(t.address)) {
@@ -530,7 +530,7 @@ export class TridentProvider extends LiquidityProvider {
         bridgesToCreate.push(
           new BentoBridgePoolCode(pool, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId])
         )
-        ++newBridges
+        // ++newBridges
       }
     })
 
@@ -551,7 +551,7 @@ export class TridentProvider extends LiquidityProvider {
         classicPoolCodesToCreate.push(pc)
       } else {
         existingPool.validUntilTimestamp = validUntilTimestamp
-        ++updated
+        // ++updated
       }
     })
 
@@ -577,7 +577,7 @@ export class TridentProvider extends LiquidityProvider {
         stablePoolCodesToCreate.push(pc)
       } else {
         existingPool.validUntilTimestamp = validUntilTimestamp
-        ++updated
+        // ++updated
       }
     })
 
@@ -674,7 +674,7 @@ export class TridentProvider extends LiquidityProvider {
       if (res0 !== undefined && res1 !== undefined) {
         pool.updateReserves(res0, res1)
         this.onDemandClassicPools.set(pool.address, { poolCode, validUntilTimestamp })
-        ++created
+        // ++created
         // console.debug(
         //   `${this.getLogPrefix()} - ON DEMAND CREATION: ${pool.address} classic (${pool.token0.symbol}/${
         //     pool.token1.symbol
@@ -741,7 +741,7 @@ export class TridentProvider extends LiquidityProvider {
       //     pool.token1.symbol
       //   })`
       // )
-      ++created
+      // ++created
     })
 
     // console.debug(

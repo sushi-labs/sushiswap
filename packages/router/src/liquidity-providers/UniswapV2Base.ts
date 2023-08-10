@@ -1,4 +1,3 @@
-import { keccak256, pack } from '@ethersproject/solidity'
 import { getReservesAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
@@ -6,8 +5,7 @@ import { PrismaClient } from '@sushiswap/database'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { add, getUnixTime } from 'date-fns'
-import { getCreate2Address } from 'ethers/lib/utils'
-import { Address, PublicClient } from 'viem'
+import { Address, encodePacked, getCreate2Address, Hex, keccak256, PublicClient } from 'viem'
 
 import { getCurrencyCombinations } from '../getCurrencyCombinations'
 import { discoverNewPools, filterOnDemandPools, filterTopPools, getAllPools, mapToken, PoolResponse2 } from '../lib/api'
@@ -20,7 +18,7 @@ interface PoolInfo {
 }
 
 interface StaticPool {
-  address: string
+  address: Address
   token0: Token
   token1: Token
   fee: number
@@ -32,11 +30,11 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   readonly ON_DEMAND_POOL_SIZE = 20
   readonly REFRESH_INITIAL_POOLS_INTERVAL = 60 // SECONDS
 
-  topPools: Map<string, PoolCode> = new Map()
-  poolsByTrade: Map<string, string[]> = new Map()
-  onDemandPools: Map<string, PoolInfo> = new Map()
-  availablePools: Map<string, PoolResponse2> = new Map()
-  staticPools: Map<string, PoolResponse2> = new Map()
+  topPools: Map<Address, PoolCode> = new Map()
+  poolsByTrade: Map<string, Address[]> = new Map()
+  onDemandPools: Map<Address, PoolInfo> = new Map()
+  availablePools: Map<Address, PoolResponse2> = new Map()
+  staticPools: Map<Address, PoolResponse2> = new Map()
 
   blockListener?: () => void
   unwatchBlockNumber?: () => void
@@ -44,7 +42,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   fee = 0.003
   isInitialized = false
   factory: Record<number, Address> = {}
-  initCodeHash: Record<number, string> = {}
+  initCodeHash: Record<number, Hex> = {}
   latestPoolCreatedAtTimestamp = new Date()
   discoverNewPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }))
   refreshAvailablePoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.FETCH_AVAILABLE_POOLS_AFTER_SECONDS }))
@@ -54,7 +52,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     chainId: ChainId,
     web3Client: PublicClient,
     factory: Record<number, Address>,
-    initCodeHash: Record<number, string>,
+    initCodeHash: Record<number, Hex>,
     databaseClient?: PrismaClient
   ) {
     super(chainId, web3Client)
@@ -120,7 +118,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     //console.debug(`${this.getLogPrefix()} - INIT, WATCHING ${this.topPools.size} POOLS`)
   }
 
-  private async getInitialPools(): Promise<Map<string, PoolResponse2>> {
+  private async getInitialPools(): Promise<Map<Address, PoolResponse2>> {
     if (this.databaseClient) {
       const pools = await getAllPools(
         this.databaseClient,
@@ -158,8 +156,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     )
     const validUntilTimestamp = getUnixTime(add(Date.now(), { seconds: this.ON_DEMAND_POOLS_LIFETIME_IN_SECONDS }))
 
-    let created = 0
-    let updated = 0
+    // let created = 0
+    // let updated = 0
     const poolCodesToCreate: PoolCode[] = []
     pools.forEach((pool) => {
       const existingPool = this.onDemandPools.get(pool.address)
@@ -172,7 +170,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         poolCodesToCreate.push(pc)
       } else {
         existingPool.validUntilTimestamp = validUntilTimestamp
-        ++updated
+        // ++updated
       }
     })
 
@@ -206,7 +204,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         // console.debug(
         //   `${this.getLogPrefix()} - ON DEMAND CREATION: ${pool.address} (${pool.token0.symbol}/${pool.token1.symbol})`
         // )
-        ++created
+        // ++created
       } else {
         // Pool doesn't exist?
         // console.error(`${this.getLogPrefix()} - ERROR FETCHING RESERVES, initialize on demand pool: ${pool.address}`)
@@ -403,12 +401,12 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     })
   }
 
-  _getPoolAddress(t1: Token, t2: Token): string {
-    return getCreate2Address(
-      this.factory[this.chainId as keyof typeof this.factory],
-      keccak256(['bytes'], [pack(['address', 'address'], [t1.address, t2.address])]),
-      this.initCodeHash[this.chainId as keyof typeof this.initCodeHash]
-    )
+  _getPoolAddress(t1: Token, t2: Token): Address {
+    return getCreate2Address({
+      from: this.factory[this.chainId as keyof typeof this.factory],
+      salt: keccak256(encodePacked(['address', 'address'], [t1.address as Address, t2.address as Address])),
+      bytecode: this.initCodeHash[this.chainId as keyof typeof this.initCodeHash],
+    })
   }
 
   // TODO: Decide if this is worth keeping as fallback in case fetching top pools fails? only used on initial load.

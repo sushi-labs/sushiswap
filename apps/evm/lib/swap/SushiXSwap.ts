@@ -10,7 +10,6 @@ import {
 } from '@sushiswap/stargate'
 import { SushiXSwapChainId } from '@sushiswap/sushixswap'
 import { getBigInt } from '@sushiswap/tines'
-import { HexString } from '@sushiswap/types'
 import { Address, getSushiXSwapContractConfig, SushiXSwap as SushiXSwapContract } from '@sushiswap/wagmi'
 import { readContract } from '@sushiswap/wagmi/actions'
 import { encodeAbiParameters, Hex, parseAbiParameters, Signature, stringToHex, zeroAddress } from 'viem'
@@ -232,10 +231,10 @@ export abstract class Cooker implements Cooker {
           trade.route.legs.map((leg, i) => {
             const isLastLeg = i === trade.route.legs.length - 1
             return {
-              pool: leg.poolAddress as Address,
+              pool: leg.poolAddress,
               data: encodeAbiParameters(parseAbiParameters('address, address, bool'), [
                 leg.tokenFrom.address as Address,
-                isLastLeg ? to : (trade.route.legs[i + 1].poolAddress as Address),
+                isLastLeg ? to : trade.route.legs[i + 1].poolAddress,
                 isLastLeg && unwrapBento,
               ]),
             }
@@ -271,7 +270,7 @@ export abstract class Cooker implements Cooker {
                     ...initialPath,
                     {
                       tokenIn: leg.tokenFrom.address as Address,
-                      pool: leg.poolAddress as Address,
+                      pool: leg.poolAddress,
                       amount:
                         initialPathCount > 1 && i === initialPathCount - 1
                           ? trade.route.amountInBN -
@@ -298,7 +297,7 @@ export abstract class Cooker implements Cooker {
                     ...percentagePath,
                     {
                       tokenIn: leg.tokenFrom.address as Address,
-                      pool: leg.poolAddress as Address,
+                      pool: leg.poolAddress,
                       balancePercentage: getBigInt(leg.swapPortion * 10 ** 8),
                       data: encodeAbiParameters(parseAbiParameters('address, address, bool'), [
                         leg.tokenFrom.address as Address,
@@ -768,40 +767,27 @@ export class SushiXSwap {
     // address to; // receiver bridge token incase of transaction reverts on dst chain
     // uint256 gas; // extra gas to be sent for dst chain operations
     // bytes32 srcContext; // random bytes32 as source context
-    const data = defaultAbiCoder.encode(
-      [
-        'uint16',
-        'address',
-        'uint256',
-        'uint256',
-        'uint256',
-        'uint256',
-        'uint256',
-        'address',
-        'address',
-        'uint256',
-        'bytes32',
-        'uint8[]',
-        'uint256[]',
-        'bytes[]',
-      ],
+    const data = encodeAbiParameters(
+      parseAbiParameters(
+        'uint16, address, uint256, uint256, uint256, uint256, uint256, address, address, uint256, bytes32, uint8[], uint256[], bytes[]'
+      ),
       [
         STARGATE_CHAIN_ID[this.dstCooker.chainId],
-        srcBridgeToken.address,
-        STARGATE_POOL_ID[this.srcCooker.chainId][srcBridgeToken.address],
-        STARGATE_POOL_ID[this.dstCooker.chainId][dstBridgeToken.address],
-        0,
-        amountMin.quotient.toString(),
-        dustAmount.quotient.toString(),
+        srcBridgeToken.address as Address,
+        BigInt(STARGATE_POOL_ID[this.srcCooker.chainId][srcBridgeToken.address]),
+        BigInt(STARGATE_POOL_ID[this.dstCooker.chainId][dstBridgeToken.address]),
+        0n,
+        amountMin.quotient,
+        dustAmount.quotient,
         this.dstCooker.masterContract,
         this.user,
-        gasSpent,
+        BigInt(gasSpent),
         stringToHex(id, { size: 32 }),
         this.dstCooker.actions,
         this.dstCooker.values,
         this.dstCooker.datas,
       ]
-    ) as HexString
+    )
 
     if (this.debug) {
       console.debug('cook teleport', [
@@ -837,10 +823,12 @@ export class SushiXSwap {
             this.dstCooker.masterContract,
             BigInt(gasSpent),
             0n,
-            defaultAbiCoder.encode(
-              ['address', 'uint8[]', 'uint256[]', 'bytes[]'],
-              [this.user, this.dstCooker.actions, this.dstCooker.values, this.dstCooker.datas]
-            ) as HexString,
+            encodeAbiParameters(parseAbiParameters('address, uint8[], uint256[], bytes[]'), [
+              this.user,
+              this.srcCooker.actions,
+              this.srcCooker.values,
+              this.srcCooker.datas,
+            ]),
           ],
         })
       : [0n, 0n]

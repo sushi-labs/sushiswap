@@ -12,14 +12,23 @@ export class BridgeBento extends RPool {
 
   // elastic is reserve0, base is reserve1
   constructor(
-    address: Address,
+    address: string,
     tokenEthereum: RToken,
     tokenBento: RToken,
     elastic: bigint,
     base: bigint,
     freeLiquidity?: bigint
   ) {
-    super(address, tokenEthereum, tokenBento, 0, elastic, base, BENTO_MINIMUM_SHARE_BALANCE, BRIDGING_GAS_COST)
+    super(
+      address as Address,
+      tokenEthereum,
+      tokenBento,
+      0,
+      elastic,
+      base,
+      BENTO_MINIMUM_SHARE_BALANCE,
+      BRIDGING_GAS_COST
+    )
     if (address !== undefined) {
       this.elastic = parseInt(elastic.toString())
       this.base = parseInt(base.toString())

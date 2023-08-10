@@ -546,13 +546,6 @@ importers:
 
   apps/evm:
     specifiers:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/constants': 5.7.0
-      '@ethersproject/contracts': 5.7.0
-      '@ethersproject/providers': 5.7.2
       '@headlessui/react': 1.7.7
       '@heroicons/react': 2.0.13
       '@heroicons/react-v1': npm:@heroicons/react@v1
@@ -621,7 +614,6 @@ importers:
       echarts: 5.4.2
       echarts-for-react: 3.0.2
       eslint: 8.43.0
-      ethers: 5.7.2
       fast-json-stable-stringify: 2.1.0
       framer-motion: 7.10.3
       graphql-request: 5.1.0
@@ -649,13 +641,6 @@ importers:
       wagmi: 1.3.9
       zod: 3.21.4
     dependencies:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/constants': 5.7.0
-      '@ethersproject/contracts': 5.7.0
-      '@ethersproject/providers': 5.7.2
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 2.0.13_react@18.2.0
       '@heroicons/react-v1': /@heroicons/react/1.0.6_react@18.2.0
@@ -708,7 +693,6 @@ importers:
       date-fns: 2.29.3
       echarts: 5.4.2
       echarts-for-react: 3.0.2_echarts@5.4.2+react@18.2.0
-      ethers: 5.7.2
       fast-json-stable-stringify: 2.1.0
       framer-motion: 7.10.3_biqbaboplfbrettd7655fr4n2y
       graphql-request: 5.1.0
@@ -1493,6 +1477,7 @@ importers:
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
       typescript: 5.1.6
+      viem: 1.5.3
       zod: 3.21.4
     dependencies:
       '@ethersproject/abi': 5.7.0
@@ -1510,6 +1495,7 @@ importers:
       '@sushiswap/v2-sdk': link:../v2-sdk
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
+      viem: 1.5.3_zno6rcmvi3mruj4xg7lanqhjom
       zod: 3.21.4
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint

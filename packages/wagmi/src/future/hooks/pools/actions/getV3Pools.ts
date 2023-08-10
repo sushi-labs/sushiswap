@@ -21,7 +21,7 @@ export enum V3PoolState {
 }
 
 interface PoolData {
-  address: string
+  address: Address
   token0: Token
   token1: Token
   fee: FeeAmount

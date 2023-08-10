@@ -1,5 +1,3 @@
-import { defaultAbiCoder } from '@ethersproject/abi'
-import { AddressZero } from '@ethersproject/constants'
 import { calculateSlippageAmount, TridentConstantPool, TridentStablePool } from '@sushiswap/amm'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Token, Type } from '@sushiswap/currency'
@@ -25,7 +23,14 @@ import { approveMasterContractAction, batchAction, LiquidityInput } from 'lib/ac
 import { APPROVE_TAG_ADD_TRIDENT } from 'lib/constants'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import { FC, useCallback, useMemo } from 'react'
-import { Address, encodeFunctionData, Hex, UserRejectedRequestError } from 'viem'
+import {
+  Address,
+  encodeAbiParameters,
+  encodeFunctionData,
+  parseAbiParameters,
+  UserRejectedRequestError,
+  zeroAddress,
+} from 'viem'
 
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
@@ -180,14 +185,14 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
 
       let value = 0n
       const liquidityInput: LiquidityInput[] = []
-      const encoded = defaultAbiCoder.encode(['address'], [address]) as Hex
+      const encoded = encodeAbiParameters(parseAbiParameters('address'), [address])
       if (input0) {
         if (input0.currency.isNative) {
           value = BigInt(input0.quotient.toString())
         }
 
         liquidityInput.push({
-          token: input0.currency.isNative ? AddressZero : (input0.currency.wrapped.address as Address),
+          token: input0.currency.isNative ? zeroAddress : (input0.currency.wrapped.address as Address),
           native: true,
           amount: BigInt(input0.quotient.toString()),
         })
@@ -199,7 +204,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
         }
 
         liquidityInput.push({
-          token: input1.currency.isNative ? AddressZero : (input1.currency.wrapped.address as Address),
+          token: input1.currency.isNative ? zeroAddress : (input1.currency.wrapped.address as Address),
           native: true,
           amount: BigInt(input1.quotient.toString()),
         })

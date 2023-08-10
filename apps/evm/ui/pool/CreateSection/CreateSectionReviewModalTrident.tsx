@@ -1,6 +1,3 @@
-import { defaultAbiCoder } from '@ethersproject/abi'
-import { AddressZero } from '@ethersproject/constants'
-import { TransactionRequest } from '@ethersproject/providers'
 import {
   computeTridentConstantPoolAddress,
   computeTridentStablePoolAddress,
@@ -26,10 +23,18 @@ import {
 } from '@sushiswap/wagmi'
 import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { approveMasterContractAction, batchAction, deployNewPoolAction, LiquidityInput } from 'lib/actions'
 import { APPROVE_TAG_CREATE_TRIDENT } from 'lib/constants'
-import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
-import { Address, encodeFunctionData, Hex, UserRejectedRequestError } from 'viem'
+import { FC, useCallback, useMemo } from 'react'
+import {
+  Address,
+  encodeAbiParameters,
+  encodeFunctionData,
+  parseAbiParameters,
+  UserRejectedRequestError,
+  zeroAddress,
+} from 'viem'
 
 import { AddSectionReviewModal } from '../AddSection'
 
@@ -170,111 +175,109 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
     [chain?.id, token0, token1, address]
   )
 
-  const prepare = useCallback(
-    async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      try {
-        if (
-          !chain?.id ||
-          !factory ||
-          !token0 ||
-          !token1 ||
-          !poolAddress ||
-          !input0 ||
-          !input1 ||
-          !totalSupply ||
-          !pool ||
-          !contract ||
-          !totals?.[token0.wrapped.address] ||
-          !totals?.[token1.wrapped.address]
-        ) {
-          return
-        }
-
-        let value
-        const liquidityInput: LiquidityInput[] = []
-        const encoded = defaultAbiCoder.encode(['address'], [address]) as Hex
-
-        if (input0) {
-          if (input0.currency.isNative) {
-            value = input0.quotient.toString()
-          }
-
-          liquidityInput.push({
-            token: input0.currency.isNative ? AddressZero : (input0.currency.wrapped.address as Address),
-            native: true,
-            amount: BigInt(input0.quotient.toString()),
-          })
-        }
-
-        if (input1) {
-          if (input1.currency.isNative) {
-            value = input1.quotient.toString()
-          }
-
-          liquidityInput.push({
-            token: input1.currency.isNative ? AddressZero : (input1.currency.wrapped.address as Address),
-            native: true,
-            amount: BigInt(input1.quotient.toString()),
-          })
-        }
-
-        setRequest({
-          from: address,
-          to: contract.address,
-          data: batchAction({
-            actions: [
-              approveMasterContractAction({
-                signature: signature,
-              }),
-              deployNewPoolAction({
-                assets: [input0.currency, input1.currency],
-                factory: factory.address,
-                feeTier: fee,
-                twap: false,
-              }),
-              encodeFunctionData({
-                ...contract,
-                functionName: 'addLiquidity',
-                args: [
-                  liquidityInput,
-                  poolAddress,
-                  BigInt(
-                    pool
-                      .getLiquidityMinted(
-                        totalSupply,
-                        input0.wrapped.toShare(totals?.[token0.wrapped.address]),
-                        input1.wrapped.toShare(totals?.[token1.wrapped.address])
-                      )
-                      .quotient.toString()
-                  ),
-                  encoded,
-                ],
-              }),
-            ],
-          }),
-          ...(value && { value }),
-        })
-      } catch (e: unknown) {
-        //
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    try {
+      if (
+        !chain?.id ||
+        !factory ||
+        !token0 ||
+        !token1 ||
+        !poolAddress ||
+        !input0 ||
+        !input1 ||
+        !totalSupply ||
+        !pool ||
+        !contract ||
+        !totals?.[token0.wrapped.address] ||
+        !totals?.[token1.wrapped.address] ||
+        !address
+      ) {
+        return
       }
-    },
-    [
-      address,
-      chain?.id,
-      contract,
-      factory,
-      fee,
-      input0,
-      input1,
-      pool,
-      poolAddress,
-      signature,
-      token0,
-      token1,
-      totalSupply,
-      totals,
-    ]
-  )
+
+      let value
+      const liquidityInput: LiquidityInput[] = []
+      const encoded = encodeAbiParameters(parseAbiParameters('address'), [address])
+
+      if (input0) {
+        if (input0.currency.isNative) {
+          value = input0.quotient
+        }
+
+        liquidityInput.push({
+          token: input0.currency.isNative ? zeroAddress : (input0.currency.wrapped.address as Address),
+          native: true,
+          amount: BigInt(input0.quotient.toString()),
+        })
+      }
+
+      if (input1) {
+        if (input1.currency.isNative) {
+          value = input1.quotient
+        }
+
+        liquidityInput.push({
+          token: input1.currency.isNative ? zeroAddress : (input1.currency.wrapped.address as Address),
+          native: true,
+          amount: BigInt(input1.quotient.toString()),
+        })
+      }
+
+      return {
+        from: address,
+        to: contract.address,
+        data: batchAction({
+          actions: [
+            approveMasterContractAction({
+              signature: signature,
+            }),
+            deployNewPoolAction({
+              assets: [input0.currency, input1.currency],
+              factory: factory.address,
+              feeTier: fee,
+              twap: false,
+            }),
+            encodeFunctionData({
+              ...contract,
+              functionName: 'addLiquidity',
+              args: [
+                liquidityInput,
+                poolAddress,
+                BigInt(
+                  pool
+                    .getLiquidityMinted(
+                      totalSupply,
+                      input0.wrapped.toShare(totals?.[token0.wrapped.address]),
+                      input1.wrapped.toShare(totals?.[token1.wrapped.address])
+                    )
+                    .quotient.toString()
+                ),
+                encoded,
+              ],
+            }),
+          ],
+        }),
+        ...(value && { value }),
+      }
+    } catch (e: unknown) {
+      //
+    }
+  }, [
+    address,
+    chain?.id,
+    contract,
+    factory,
+    fee,
+    input0,
+    input1,
+    pool,
+    poolAddress,
+    signature,
+    token0,
+    token1,
+    totalSupply,
+    totals,
+  ])
 
   const { config } = usePrepareSendTransaction({ ...prepare, chainId, enabled: approved })
 

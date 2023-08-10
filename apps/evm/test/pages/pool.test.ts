@@ -1,6 +1,6 @@
-import { AddressZero } from '@ethersproject/constants'
 import { expect, Page, test } from '@playwright/test'
 import { Native, SUSHI, Token, Type, USDC_ADDRESS } from '@sushiswap/currency'
+import { zeroAddress } from 'viem'
 
 export async function approve(page: Page, locator: string) {
   await timeout(500) // give the approve button time to load contracts, unrealistically fast when running test
@@ -396,27 +396,27 @@ async function incentivizePool(page: Page, args: IncenvitivePoolArgs) {
   await feeOptionSelector.click()
   await expect(feeOptionSelector).toBeChecked()
 
-  await selectDate(`[testdata-id=start-date]`, 1, '001', page)
-  await selectDate(`[testdata-id=end-date]`, 0, '002', page)
+  await selectDate('[testdata-id=start-date]', 1, '001', page)
+  await selectDate('[testdata-id=end-date]', 0, '002', page)
 
-  const input0 = page.locator(`[testdata-id=swap-from-input]`)
+  const input0 = page.locator('[testdata-id=swap-from-input]')
   await expect(input0).toBeVisible()
   await expect(input0).toBeEnabled()
   await input0.fill('2.4')
 
-  const button0 = page.locator(`[testdata-id=swap-from-button-button]`)
+  const button0 = page.locator('[testdata-id=swap-from-button-button]')
   await expect(button0).toBeVisible()
   await expect(button0).toBeEnabled()
   await button0.click()
 
-  await page.fill(`[testdata-id=swap-from-token-selector-address-input]`, 'SUSHI')
+  await page.fill('[testdata-id=swap-from-token-selector-address-input]', 'SUSHI')
   const rowSelector = page.locator(
     `[testdata-id=swap-from-token-selector-row-${SUSHI[CHAIN_ID].address.toLowerCase()}]`
   )
   await expect(rowSelector).toBeVisible()
   await rowSelector.click()
 
-  await approve(page, `approve-erc20-button`)
+  await approve(page, 'approve-erc20-button')
   const previewLocator = page.locator('[testdata-id=incentivize-pool-review]')
   await expect(previewLocator).toBeVisible({ timeout: 10_000 })
   await expect(previewLocator).toBeEnabled()
@@ -433,7 +433,7 @@ async function handleToken(page: Page, currency: Type, order: 'FIRST' | 'SECOND'
   await page.fill(`[testdata-id=${selectorInfix}-token-selector-address-input]`, currency.symbol as string)
   const rowSelector = page.locator(
     `[testdata-id=${selectorInfix}-token-selector-row-${
-      currency.isNative ? AddressZero : currency.wrapped.address.toLowerCase()
+      currency.isNative ? zeroAddress : currency.wrapped.address.toLowerCase()
     }]`
   )
   await expect(rowSelector).toBeVisible()
