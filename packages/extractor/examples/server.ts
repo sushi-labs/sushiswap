@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node'
 import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
@@ -63,7 +64,25 @@ async function main() {
 
   const app: Express = express()
 
-  app.use(cors())
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    integrations: [
+      // enable HTTP calls tracing
+      new Sentry.Integrations.Http({
+        tracing: true,
+      }),
+      // enable Express.js middleware tracing
+      new Sentry.Integrations.Express({
+        app,
+      }),
+    ],
+    // Performance Monitoring
+    tracesSampleRate: 1.0, // Capture 100% of the transactions, reduce in production!,
+  })
+
+  // Trace incoming requests
+  app.use(Sentry.Handlers.requestHandler())
+  app.use(Sentry.Handlers.tracingHandler())
 
   app.get('/', async (req: Request, res: Response) => {
     // console.log('HTTP: GET /', JSON.stringify(req.query))
@@ -147,23 +166,40 @@ async function main() {
     return res.status(200).send()
   })
 
-  // app.get('/get-pool-codes-for-tokens', (req: Request, res: Response) => {
-  //   console.log('HTTP: GET /get-pool-codes-for-tokens', JSON.stringify(req.query))
-  //   const { chainId } = querySchema.parse(req.query)
-  //   const extractor = extractors.get(chainId) as Extractor
-  //   const tokenManager = tokenManagers.get(chainId) as TokenManager
-  //   const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values()).slice(0, 100))
-  //   const poolCodes = extractor.getPoolCodesForTokens(tokens)
-  //   return res.json(poolCodes)
-  // })
+  app.get('/get-pool-codes-for-tokens', (req: Request, res: Response) => {
+    console.log('HTTP: GET /get-pool-codes-for-tokens', JSON.stringify(req.query))
+    const { chainId } = querySchema.parse(req.query)
+    const extractor = extractors.get(chainId) as Extractor
+    const tokenManager = tokenManagers.get(chainId) as TokenManager
+    const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values()).slice(0, 100))
+    const poolCodes = extractor.getPoolCodesForTokens(tokens)
+    return res.json(poolCodes)
+  })
 
-  // app.get('/pool-codes', (req: Request, res: Response) => {
-  //   console.log('HTTP: GET /pool-codes', JSON.stringify(req.query))
-  //   const { chainId } = querySchema.parse(req.query)
-  //   const extractor = extractors.get(chainId) as Extractor
-  //   const poolCodes = extractor.getCurrentPoolCodes()
-  //   res.json(poolCodes)
-  // })
+  app.get('/pool-codes', (req: Request, res: Response) => {
+    console.log('HTTP: GET /pool-codes', JSON.stringify(req.query))
+    const { chainId } = querySchema.parse(req.query)
+    const extractor = extractors.get(chainId) as Extractor
+    const poolCodes = extractor.getCurrentPoolCodes()
+    res.json(poolCodes)
+  })
+
+  app.get('/debug-sentry', function mainHandler(req, res) {
+    throw new Error('My first Sentry error!')
+  })
+
+  // The error handler must be registered before any other error middleware and after all controllers
+  app.use(Sentry.Handlers.errorHandler())
+
+  // Optional fallthrough error handler
+  app.use(function onError(err, req, res, next) {
+    // The error id is attached to `res.sentry` to be returned
+    // and optionally displayed to the user for support.
+    res.statusCode = 500
+    res.end(res.sentry + '\n')
+  })
+
+  app.use(cors())
 
   app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}`)
