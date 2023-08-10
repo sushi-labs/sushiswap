@@ -76,16 +76,21 @@ class BlockFrame {
   }
 }
 
+interface Filter {
+  topics: string[]
+  onNewLogs: (arg?: Log[]) => void // undefined if LogFilter is stopped
+}
+
 // - network fail/absence protection
 // - restores missed blocks
 // - correctly processes removed logs (like undos)
-export class LogFilter {
+export class LogFilter2 {
   readonly client: PublicClient
   readonly depth: number
-  readonly onNewLogs: (arg?: Log[]) => void // undefined if LogFilter is stopped
-  readonly events: AbiEvent[]
-  readonly topics: string[]
   readonly logType: LogFilterType
+  eventsAll: AbiEvent[] = []
+  topicsAll: string[] = []
+  filters: Filter[] = []
 
   unWatchBlocks?: WatchBlocksReturnType
 
@@ -97,27 +102,21 @@ export class LogFilter {
   logHashMap: Map<string, Log[]> = new Map()
   blockFrame: BlockFrame = new BlockFrame()
 
-  constructor(
-    client: PublicClient,
-    depth: number,
-    events: AbiEvent[],
-    logType: LogFilterType,
-    onNewLogs: (arg?: Log[]) => void
-  ) {
+  constructor(client: PublicClient, depth: number, logType: LogFilterType) {
     this.client = client
     this.depth = depth
-    this.events = events
-    this.onNewLogs = onNewLogs
     this.logType = logType
-    this.topics = events.map((e) => {
-      return encodeEventTopics({
-        abi: [e],
-      })[0]
-    })
-    this.start()
+  }
+
+  addFilter(events: AbiEvent[], onNewLogs: (arg?: Log[]) => void) {
+    this.eventsAll = this.eventsAll.concat(events)
+    const topics = events.map((e) => encodeEventTopics({ abi: [e] })[0])
+    this.topicsAll = this.topicsAll.concat(topics)
+    this.filters.push({ topics, onNewLogs })
   }
 
   start() {
+    if (this.unWatchBlocks) return // have been started
     this.unWatchBlocks = this.client.watchBlocks({
       onBlock: async (block) => {
         this.addBlock(block, true)
@@ -126,7 +125,7 @@ export class LogFilter {
   }
 
   stop() {
-    if (!this.unWatchBlocks) return
+    if (!this.unWatchBlocks) return // is stopped
     this.unWatchBlocks()
     this.unWatchBlocks = undefined
     this.lastProcessedBlock = undefined
@@ -135,7 +134,7 @@ export class LogFilter {
     this.blockHashMap = new Map()
     this.logHashMap = new Map()
     this.blockFrame.deleteFrame()
-    this.onNewLogs() // Signal about stopping
+    this.filters.forEach((f) => f.onNewLogs()) // Signal about stopping
   }
 
   setNewGoal(blockNumber: number, block: Block): boolean {
@@ -184,7 +183,7 @@ export class LogFilter {
           async () => {
             const logs = await this.client.transport.request({
               method: 'eth_getLogs',
-              params: [{ blockHash: block.hash, topics: [this.topics] }],
+              params: [{ blockHash: block.hash, topics: [this.topicsAll] }],
             })
             this.sortAndProcessLogs(block.hash, logs as Log[])
           },
@@ -193,7 +192,7 @@ export class LogFilter {
         break
       case LogFilterType.MultiCall:
         Promise.all(
-          this.events.map((event) =>
+          this.eventsAll.map((event) =>
             this.client.getLogs({
               blockHash: block.hash as `0x${string}`,
               event,
@@ -206,7 +205,7 @@ export class LogFilter {
           (logs) =>
             this.sortAndProcessLogs(
               block.hash,
-              logs.filter((l) => this.topics.includes(l.topics[0] ?? ''))
+              logs.filter((l) => this.topicsAll.includes(l.topics[0] ?? ''))
             ),
           backupPlan
         )
@@ -277,6 +276,9 @@ export class LogFilter {
       this.lastProcessedBlock = upLine[i]
     }
 
-    if (logs.length > 0) this.onNewLogs(logs)
+    this.filters.forEach((f) => {
+      const logsFiltered = logs.filter((l) => f.topics.includes(l.topics[0] ?? ''))
+      if (logsFiltered.length > 0) f.onNewLogs(logsFiltered)
+    })
   }
 }

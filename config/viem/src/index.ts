@@ -642,8 +642,8 @@ export const config: Record<number, PublicClientConfig> = {
     chain: arbitrumNova,
     transport: fallback(
       [
-        http(arbitrumNova.rpcUrls.default.http[0]),
-        // http(`https://lb.drpc.org/ogrpc?network=arbitrum-nova&dkey=${drpcId}`),
+        // http(arbitrumNova.rpcUrls.default.http[0]),
+        http(`https://lb.drpc.org/ogrpc?network=arbitrum-nova&dkey=${drpcId}`),
       ],
       { rank: true }
     ),
@@ -660,8 +660,8 @@ export const config: Record<number, PublicClientConfig> = {
   },
   [ChainId.AVALANCHE]: {
     chain: avalanche,
-    transport: fallback([http(avalanche.rpcUrls.default.http[0]), http('https://rpc.ankr.com/avalanche')], {
-      rank: true,
+    transport: fallback([http('https://rpc.ankr.com/avalanche'), http(avalanche.rpcUrls.default.http[0])], {
+      rank: false,
     }),
   },
   [ChainId.BOBA]: {
