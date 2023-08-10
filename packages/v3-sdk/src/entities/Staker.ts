@@ -4,9 +4,9 @@ import { Token } from '@sushiswap/currency'
 import { BigintIsh } from '@sushiswap/math'
 import IUniswapV3Staker from '@uniswap/v3-staker/artifacts/contracts/UniswapV3Staker.sol/UniswapV3Staker.json'
 
+import { MethodParameters, toHex } from '../utils/calldata'
 import { SushiSwapV3Pool } from '.'
 import { Multicall } from './Multicall'
-import { MethodParameters, toHex } from '../utils/calldata'
 
 export type FullWithdrawOptions = ClaimOptions & WithdrawOptions
 /**

@@ -6,12 +6,12 @@ import ISwapRouter from '@uniswap/v3-periphery/artifacts/contracts/SwapRouter.so
 import invariant from 'tiny-invariant'
 
 import { ADDRESS_ZERO } from '../constants'
-import { Trade } from './Trade'
+import { encodeRouteToPath } from '../utils'
+import { MethodParameters, toHex } from '../utils/calldata'
 import { Multicall } from './Multicall'
 import { FeeOptions, Payments } from './Payments'
 import { PermitOptions, SelfPermit } from './SelfPermit'
-import { encodeRouteToPath } from '../utils'
-import { MethodParameters, toHex } from '../utils/calldata'
+import { Trade } from './Trade'
 
 /**
  * Options for producing the arguments to send calls to the router.

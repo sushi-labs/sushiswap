@@ -2,9 +2,9 @@ import { TradeType } from '@sushiswap/amm'
 import { Amount as CurrencyAmount, Token, WETH9 } from '@sushiswap/currency'
 
 import { FeeAmount, TICK_SPACINGS } from '../constants'
-import { SushiSwapV3Pool, Route, Trade } from '.'
-import { SwapQuoter } from './Quoter'
 import { encodeSqrtRatioX96, nearestUsableTick, TickMath } from '../utils'
+import { Route, SushiSwapV3Pool, Trade } from '.'
+import { SwapQuoter } from './Quoter'
 
 describe('SwapQuoter', () => {
   const token0 = new Token({

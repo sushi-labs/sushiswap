@@ -2,7 +2,7 @@ import { Amount as CurrencyAmount, Price, Token } from '@sushiswap/currency'
 import { BigintIsh } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
-import { FeeAmount, SushiSwapV3ChainId, TICK_SPACINGS, SUSHISWAP_V3_FACTORY_ADDRESS } from '../constants'
+import { FeeAmount, SUSHISWAP_V3_FACTORY_ADDRESS,SushiSwapV3ChainId, TICK_SPACINGS } from '../constants'
 import { Q192 } from '../internalConstants'
 import { computePoolAddress } from '../utils/computePoolAddress'
 import { LiquidityMath } from '../utils/liquidityMath'

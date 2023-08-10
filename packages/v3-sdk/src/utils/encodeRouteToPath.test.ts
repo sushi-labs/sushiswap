@@ -1,8 +1,8 @@
 import { Native, Token, WETH9 } from '@sushiswap/currency'
 
 import { FeeAmount } from '../constants'
-import { SushiSwapV3Pool } from '../entities/SushiSwapV3Pool'
 import { Route } from '../entities/Route'
+import { SushiSwapV3Pool } from '../entities/SushiSwapV3Pool'
 import { encodeRouteToPath } from './encodeRouteToPath'
 import { encodeSqrtRatioX96 } from './encodeSqrtRatioX96'
 

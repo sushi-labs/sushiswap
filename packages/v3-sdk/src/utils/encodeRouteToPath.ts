@@ -1,8 +1,8 @@
 import { pack } from '@ethersproject/solidity'
 import { Currency, Token } from '@sushiswap/currency'
 
-import { SushiSwapV3Pool } from '../entities/SushiSwapV3Pool'
 import { Route } from '../entities/Route'
+import { SushiSwapV3Pool } from '../entities/SushiSwapV3Pool'
 
 /**
  * Converts a route to a hex encoded path

@@ -3,8 +3,8 @@ import { Amount as CurrencyAmount, Native, Token, WETH9 } from '@sushiswap/curre
 import { Percent } from '@sushiswap/math'
 
 import { FeeAmount, TICK_SPACINGS } from '../constants'
-import { SushiSwapV3Pool, Route, Trade, SushiSwapV3Router } from '.'
-import { nearestUsableTick, TickMath, encodeSqrtRatioX96 } from '../utils'
+import { encodeSqrtRatioX96,nearestUsableTick, TickMath } from '../utils'
+import { Route, SushiSwapV3Pool, SushiSwapV3Router,Trade } from '.'
 
 describe('SwapRouter', () => {
   const ETHER = Native.onChain(1)

@@ -3,8 +3,8 @@ import { Amount as CurrencyAmount, Currency, Price, Token } from '@sushiswap/cur
 import { Fraction, Percent } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
-import { SushiSwapV3Pool } from './SushiSwapV3Pool'
 import { Route } from './Route'
+import { SushiSwapV3Pool } from './SushiSwapV3Pool'
 
 /**
  * Trades comparator, an extension of the input output comparator that also considers other dimensions of the trade in ranking them

@@ -6,8 +6,8 @@ import { FeeAmount, TICK_SPACINGS } from '../constants'
 import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96'
 import { nearestUsableTick } from '../utils/nearestUsableTick'
 import { TickMath } from '../utils/tickMath'
-import { SushiSwapV3Pool } from './SushiSwapV3Pool'
 import { Route } from './Route'
+import { SushiSwapV3Pool } from './SushiSwapV3Pool'
 import { Trade } from './Trade'
 
 describe('Trade', () => {

@@ -5,8 +5,8 @@ import { FeeAmount, TICK_SPACINGS } from '../constants'
 import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96'
 import { nearestUsableTick } from '../utils/nearestUsableTick'
 import { TickMath } from '../utils/tickMath'
-import { SushiSwapV3Pool } from './SushiSwapV3Pool'
 import { Position } from './Position'
+import { SushiSwapV3Pool } from './SushiSwapV3Pool'
 
 describe('Position', () => {
   const USDC = new Token({

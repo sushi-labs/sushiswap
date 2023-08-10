@@ -2,8 +2,8 @@ import { Amount as CurrencyAmount, Native, Token, WETH9 } from '@sushiswap/curre
 import { Percent } from '@sushiswap/math'
 
 import { FeeAmount, TICK_SPACINGS } from '../constants'
-import { SushiSwapV3Pool, Position, NonfungiblePositionManager } from '.'
 import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96'
+import { NonfungiblePositionManager,Position, SushiSwapV3Pool } from '.'
 
 describe('NonfungiblePositionManager', () => {
   const token0 = new Token({

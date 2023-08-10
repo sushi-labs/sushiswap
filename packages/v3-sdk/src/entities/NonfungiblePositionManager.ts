@@ -6,12 +6,12 @@ import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contrac
 import invariant from 'tiny-invariant'
 
 import { ADDRESS_ZERO } from '../constants'
+import { MethodParameters, toHex } from '../utils/calldata'
 import { SushiSwapV3Pool } from '.'
-import { Position } from './Position'
 import { Multicall } from './Multicall'
 import { Payments } from './Payments'
+import { Position } from './Position'
 import { PermitOptions, SelfPermit } from './SelfPermit'
-import { MethodParameters, toHex } from '../utils/calldata'
 
 const MaxUint128 = toHex(2n ** 128n - 1n)
 

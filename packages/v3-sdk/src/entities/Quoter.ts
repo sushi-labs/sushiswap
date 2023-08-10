@@ -7,8 +7,8 @@ import IQuoter from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Q
 import invariant from 'tiny-invariant'
 
 import { FeeAmount } from '../constants'
-import { Route } from '.'
 import { encodeRouteToPath, MethodParameters, toHex } from '../utils'
+import { Route } from '.'
 
 /**
  * Optional arguments to send to the quoter.
