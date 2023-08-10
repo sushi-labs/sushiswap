@@ -38,8 +38,14 @@ export interface LiquidityChartRangeInputProps {
     area: {
       // color of the ticks in range
       selection: string
-
       opacity?: number
+    }
+
+    brush: {
+      handle: {
+        west: string
+        east: string
+      }
     }
   }
 
@@ -48,17 +54,10 @@ export interface LiquidityChartRangeInputProps {
 
   interactive?: boolean
 
-  brush?: {
-    brushLabels: (d: 'w' | 'e', x: number) => string
-    brushDomain: [number, number] | undefined
-    onBrushDomainChange: (domain: [number, number], mode: string | undefined) => void
-    style: {
-      handle: {
-        west: string
-        east: string
-      }
-    }
-  }
+  brushLabels: (d: 'w' | 'e', x: number) => string
+  brushDomain?: [number, number]
+  onBrushDomainChange: (domain: [number, number], mode: string | undefined) => void
 
   zoomLevels: ZoomLevels
+  hideBrushes?: boolean
 }

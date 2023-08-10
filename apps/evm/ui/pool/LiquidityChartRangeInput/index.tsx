@@ -68,6 +68,7 @@ export default function LiquidityChartRangeInput({
   onLeftRangeInput,
   onRightRangeInput,
   interactive,
+  hideBrushes = false,
 }: {
   chainId: SushiSwapV3ChainId
   currencyA: Type | undefined
@@ -80,10 +81,11 @@ export default function LiquidityChartRangeInput({
   onLeftRangeInput: (typedValue: string) => void
   onRightRangeInput: (typedValue: string) => void
   interactive: boolean
+  hideBrushes?: boolean
 }) {
   const isSorted = currencyA && currencyB && currencyA?.wrapped.sortsBefore(currencyB?.wrapped)
 
-  const { isLoading, error, formattedData } = useDensityChartData({
+  const { isLoading, error, data } = useDensityChartData({
     chainId,
     token0: currencyA,
     token1: currencyB,
@@ -118,7 +120,7 @@ export default function LiquidityChartRangeInput({
     [isSorted, onLeftRangeInput, onRightRangeInput, ticksAtLimit]
   )
 
-  interactive = interactive && Boolean(formattedData?.length)
+  interactive = interactive && Boolean(data?.length)
 
   const brushDomain: [number, number] | undefined = useMemo(() => {
     const leftPrice = isSorted ? priceLower : priceUpper?.invert()
@@ -143,10 +145,10 @@ export default function LiquidityChartRangeInput({
     [isSorted, price, ticksAtLimit]
   )
 
-  const isUninitialized = !currencyA || !currencyB || (formattedData === undefined && !isLoading)
+  const isUninitialized = !currencyA || !currencyB || (data === undefined && !isLoading)
 
   return (
-    <div className="grid auto-rows-auto gap-3 min-h-[200px]">
+    <div className="grid auto-rows-auto gap-3 min-h-[300px] overflow-hidden">
       {isUninitialized ? (
         <InfoBox
           message="Your position will appear here."
@@ -159,7 +161,7 @@ export default function LiquidityChartRangeInput({
           message="Liquidity data not available."
           icon={<StopIcon width={16} stroke="currentColor" className="dark:text-slate-400 text-slate-600" />}
         />
-      ) : !formattedData || formattedData.length === 0 || !price ? (
+      ) : !data || data.length === 0 || !price ? (
         <InfoBox
           message="There is no liquidity data."
           icon={<ChartBarIcon width={16} stroke="currentColor" className="dark:text-slate-400 text-slate-600" />}
@@ -167,28 +169,27 @@ export default function LiquidityChartRangeInput({
       ) : (
         <div className="relative items-center justify-center">
           <Chart
-            data={{ series: formattedData, current: price }}
-            dimensions={{ width: 400, height: 200 }}
+            data={{ series: data, current: price }}
+            dimensions={{ width: 400, height: 300 }}
             margins={{ top: 10, right: 2, bottom: 20, left: 0 }}
             styles={{
               area: {
                 selection: colors.blue['500'],
               },
-            }}
-            interactive={interactive}
-            brush={{
-              brushDomain,
-              brushLabels: brushLabelValue,
-              onBrushDomainChange: onBrushDomainChangeEnded,
-              style: {
+              brush: {
                 handle: {
                   west: colors.blue['600'],
                   east: colors.blue['600'],
                 },
               },
             }}
+            interactive={interactive}
+            brushLabels={brushLabelValue}
+            brushDomain={brushDomain}
+            onBrushDomainChange={onBrushDomainChangeEnded}
             zoomLevels={ZOOM_LEVELS[feeAmount ?? FeeAmount.MEDIUM]}
             ticksAtLimit={ticksAtLimit}
+            hideBrushes={hideBrushes}
           />
         </div>
       )}

@@ -23,18 +23,18 @@ import { LogFilterType } from '../src/LogFilter'
 
 export const SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,
-  ChainId.ARBITRUM_NOVA,
-  ChainId.AVALANCHE,
-  ChainId.BOBA,
-  ChainId.BOBA_AVAX,
-  ChainId.BOBA_BNB,
-  ChainId.BSC,
-  ChainId.CELO,
+  // ChainId.ARBITRUM_NOVA,
+  // ChainId.AVALANCHE,
+  // ChainId.BOBA,
+  // ChainId.BOBA_AVAX,
+  // ChainId.BOBA_BNB,
+  // ChainId.BSC,
+  // ChainId.CELO,
   ChainId.ETHEREUM,
-  ChainId.FANTOM,
+  // ChainId.FANTOM,
   ChainId.OPTIMISM,
   ChainId.POLYGON,
-  ChainId.POLYGON_ZKEVM,
+  // ChainId.POLYGON_ZKEVM,
   ChainId.BASE,
 ] as const
 
