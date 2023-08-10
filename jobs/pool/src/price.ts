@@ -52,7 +52,7 @@ export async function prices() {
         console.log(`Base token (${base}) does not exist in the database. chainId: ${chainId}. SKIPPING`)
         continue
       }
-      const minimumLiquidity = 500 * Math.pow(10, baseToken.decimals) // 500 USDC
+      const minimumLiquidity = 500 * 10 ** baseToken.decimals // 500 USDC
       const pools = await getPools(client, chainId)
       const { rPools, tokens } = await transform(chainId, pools)
       const tokensToUpdate = calculatePrices(rPools, minimumLiquidity, baseToken, tokens)
@@ -196,7 +196,7 @@ async function transform(chainId: ChainId, pools: Pool[]) {
     if (pool.protocol === Protocol.BENTOBOX_CLASSIC || pool.protocol === Protocol.SUSHISWAP_V2) {
       rPools.push(
         new ConstantProductRPool(
-          pool.address,
+          pool.address as Address,
           token0 as RToken,
           token1 as RToken,
           pool.swapFee,
@@ -211,7 +211,7 @@ async function transform(chainId: ChainId, pools: Pool[]) {
       if (total0 && total1) {
         rPools.push(
           new StableSwapRPool(
-            pool.address,
+            pool.address as Address,
             token0 as RToken,
             token1 as RToken,
             pool.swapFee,
@@ -231,7 +231,7 @@ async function transform(chainId: ChainId, pools: Pool[]) {
       if (v3 && tickSpacing) {
         rPools.push(
           new CLRPool(
-            pool.address,
+            pool.address as Address,
             token0 as RToken,
             token1 as RToken,
             pool.swapFee,
@@ -403,7 +403,7 @@ function calculatePrices(
       console.log(`Price null: ${rToken.symbol}~${rToken.address}~${value}`)
     }
 
-    const price = Number((value / Math.pow(10, baseToken.decimals - token.decimals)).toFixed(12))
+    const price = Number((value / 10 ** (baseToken.decimals - token.decimals)).toFixed(12))
     if (price > Number.MAX_SAFE_INTEGER) continue
     // console.log(`${token.symbol}~${token.address}~${price}`)
     tokensWithPrices.push({ id: token.id, price })

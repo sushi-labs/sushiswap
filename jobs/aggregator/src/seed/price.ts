@@ -161,7 +161,7 @@ async function transform(chainId: number, pools: Pool[]) {
     if (pool.type === PoolType.CONSTANT_PRODUCT_POOL) {
       rPools.push(
         new ConstantProductRPool(
-          pool.address,
+          pool.address as Address,
           token0 as RToken,
           token1 as RToken,
           pool.swapFee,
@@ -175,7 +175,7 @@ async function transform(chainId: number, pools: Pool[]) {
       if (total0 && total1) {
         rPools.push(
           new StableSwapRPool(
-            pool.address,
+            pool.address as Address,
             token0 as RToken,
             token1 as RToken,
             pool.swapFee,
@@ -252,7 +252,7 @@ function calculatePrices(
       console.log(`Price null: ${rToken.symbol}~${rToken.address}~${value}`)
     }
 
-    const price = Number((value / Math.pow(10, baseToken.decimals - token.decimals)).toFixed(12))
+    const price = Number((value / 10 ** (baseToken.decimals - token.decimals)).toFixed(12))
     if (price > Number.MAX_SAFE_INTEGER) continue
     // console.log(`${token.symbol}~${token.address}~${price}`)
     tokensWithPrices.push({ id: token.id, price })
