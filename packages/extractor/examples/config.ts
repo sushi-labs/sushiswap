@@ -220,7 +220,7 @@ export const EXTRACTOR_CONFIG = {
     client: createPublicClient(config[ChainId.CELO]),
     factoriesV2: [sushiswapV2Factory(ChainId.CELO)],
     factoriesV3: [uniswapV3Factory(ChainId.CELO)],
-    tickHelperContract: '0x5f115D9113F88e0a0Db1b5033D90D4a9690AcD3D',
+    tickHelperContract: '0x5f115D9113F88e0a0Db1b5033D90D4a9690AcD3D' as Address,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,

@@ -66,7 +66,7 @@ async function main() {
   app.use(cors())
 
   app.get('/', async (req: Request, res: Response) => {
-    console.log('HTTP: GET /', JSON.stringify(req.query))
+    // console.log('HTTP: GET /', JSON.stringify(req.query))
     const parsed = querySchema.safeParse(req.query)
     if (!parsed.success) {
       return res.status(422).send()
