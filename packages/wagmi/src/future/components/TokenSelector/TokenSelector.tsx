@@ -37,7 +37,6 @@ interface TokenSelectorProps {
   includeNative?: boolean
   hidePinnedTokens?: boolean
   hideSearch?: boolean
-  isLoading?: boolean
 }
 
 export const TokenSelector: FC<TokenSelectorProps> = ({
@@ -50,7 +49,6 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   currencies,
   hidePinnedTokens,
   hideSearch,
-  isLoading,
 }) => {
   const { address } = useAccount()
 
@@ -59,8 +57,8 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
 
   const { data: customTokenMap, mutate: customTokenMutate } = useCustomTokens()
   const { data: pinnedTokenMap, mutate: pinnedTokenMutate, hasToken: isTokenPinned } = usePinnedTokens()
-  const { data: defaultTokenMap } = useTokens({ chainId })
-  const { data: otherTokenMap } = useOtherTokenListsQuery({ chainId, query })
+  const { data: defaultTokenMap, isLoading: isTokensLoading } = useTokens({ chainId })
+  const { data: otherTokenMap, isLoading: isOtherTokensLoading } = useOtherTokenListsQuery({ chainId, query })
   const { data: pricesMap } = usePrices({ chainId })
   const { data: balancesMap } = useBalances({ chainId, account: address })
 
@@ -132,6 +130,8 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
     [_onSelect, customTokenMutate]
   )
 
+  const isLoading = isTokensLoading || isOtherTokensLoading || isQueryTokenLoading
+
   return (
     <DialogNew open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -185,7 +185,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
         ) : null}
 
         <List.Control className="relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 min-h-[128px]">
-          {isQueryTokenLoading || isLoading ? (
+          {isLoading ? (
             <div className="py-0.5 h-[64px] -mb-3">
               <div className="flex items-center w-full h-full px-3 rounded-lg">
                 <div className="flex items-center justify-between flex-grow gap-2 rounded">

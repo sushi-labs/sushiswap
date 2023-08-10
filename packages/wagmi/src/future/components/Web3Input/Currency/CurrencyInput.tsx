@@ -92,6 +92,43 @@ export const Component: FC<CurrencyInputProps> = ({
   const isLoading = loading || currencyLoading || isBalanceLoading
   const _error = error ? error : insufficientBalance ? 'Exceeds Balance' : undefined
 
+  const selector = useMemo(() => {
+    if (!onSelect) return null
+
+    return (
+      <TokenSelector
+        id={`${id}-token-selector`}
+        currencies={currencies}
+        selected={currency}
+        chainId={chainId}
+        onSelect={onSelect}
+        includeNative={allowNative}
+        hidePinnedTokens={hidePinnedTokens}
+        hideSearch={hideSearch}
+      >
+        <Button
+          size="lg"
+          variant={currency ? 'secondary' : 'default'}
+          id={id}
+          type="button"
+          className={classNames(currency ? 'pl-2 pr-3 text-xl' : '', '!rounded-full')}
+        >
+          {currency ? (
+            <>
+              <div className="w-[28px] h-[28px] mr-0.5">
+                <Currency.Icon disableLink currency={currency} width={28} height={28} />
+              </div>
+              {currency.symbol}
+              <SelectIcon />
+            </>
+          ) : (
+            'Select token'
+          )}
+        </Button>
+      </TokenSelector>
+    )
+  }, [id, onSelect, currencies, currency, chainId, allowNative, hidePinnedTokens, hideSearch])
+
   return (
     <div
       className={classNames(
@@ -121,40 +158,8 @@ export const Component: FC<CurrencyInputProps> = ({
             className="p-0 py-1 !text-3xl font-medium"
           />
         )}
-        {onSelect && (
-          <TokenSelector
-            id={`${id}-token-selector`}
-            currencies={currencies}
-            selected={currency}
-            chainId={chainId}
-            onSelect={onSelect}
-            includeNative={allowNative}
-            hidePinnedTokens={hidePinnedTokens}
-            hideSearch={hideSearch}
-            isLoading={isLoading}
-          >
-            <Button
-              size="lg"
-              variant={currency ? 'secondary' : 'default'}
-              id={id}
-              type="button"
-              className={classNames(currency ? 'pl-2 pr-3 text-xl' : '', '!rounded-full')}
-            >
-              {currency ? (
-                <>
-                  <div className="w-[28px] h-[28px] mr-0.5">
-                    <Currency.Icon disableLink currency={currency} width={28} height={28} />
-                  </div>
-                  {currency.symbol}
-                  <SelectIcon />
-                </>
-              ) : (
-                'Select token'
-              )}
-            </Button>
-          </TokenSelector>
-        )}
-        {!onSelect && (
+        {selector}
+        {!onSelect ? (
           <div
             id={`${id}-button`}
             className={classNames(
@@ -172,7 +177,7 @@ export const Component: FC<CurrencyInputProps> = ({
               <span className="text-gray-400 dark:text-slate-500">No token selected</span>
             )}
           </div>
-        )}
+        ) : null}
       </div>
       <div className="flex flex-row items-center justify-between h-[36px]">
         <PricePanel
