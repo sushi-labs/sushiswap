@@ -870,9 +870,6 @@ export const config: Record<number, PublicClientConfig> = {
   },
   [ChainId.BASE]: {
     chain: base,
-    transport: fallback([
-      http(`https://lb.drpc.org/ogrpc?network=base&dkey=${drpcId}`),
-      http(base.rpcUrls.default.http[0]),
-    ]),
+    transport: fallback([http(`https://lb.drpc.org/ogrpc?network=base&dkey=${drpcId}`)]),
   },
 } as const
