@@ -17,6 +17,9 @@ import {
   CardLabel,
   CardTitle,
   classNames,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
   LinkInternal,
   Separator,
   Tabs,
@@ -338,10 +341,46 @@ const Component: FC<{ id: string }> = ({ id }) => {
                   <div className="flex flex-col">
                     {pool && currencyBase && currencyQuote ? (
                       <span className="font-medium">
-                        {fullRange
-                          ? '0'
-                          : formatTickPrice({ price: priceLower, atLimit: tickAtLimit, direction: Bound.UPPER })}{' '}
-                        {unwrapToken(currencyQuote)?.symbol}
+                        {fullRange ? (
+                          '0'
+                        ) : (
+                          <>
+                            {formatTickPrice({
+                              price: priceLower,
+                              atLimit: tickAtLimit,
+                              direction: Bound.UPPER,
+                            })}{' '}
+                            {unwrapToken(currencyQuote)?.symbol}{' '}
+                            <HoverCard closeDelay={0} openDelay={0}>
+                              <HoverCardTrigger asChild>
+                                <span className="text-sm underline decoration-dotted underline-offset-2 text-muted-foreground font-normal">
+                                  (
+                                  {priceLower
+                                    ?.subtract(invert ? pool.token1Price : pool.token0Price)
+                                    .divide(invert ? pool.token1Price : pool.token0Price)
+                                    .multiply(100)
+                                    .toSignificant(2)}
+                                  %)
+                                </span>
+                              </HoverCardTrigger>
+                              <HoverCardContent className="!p-0 max-w-[320px]">
+                                <CardHeader>
+                                  <CardTitle>Min. Price</CardTitle>
+                                  <CardDescription>
+                                    If the current price moves down{' '}
+                                    {priceLower
+                                      ?.subtract(invert ? pool.token1Price : pool.token0Price)
+                                      .divide(invert ? pool.token1Price : pool.token0Price)
+                                      .multiply(100)
+                                      .toSignificant(2)}
+                                    % from the current price, your position will be 100%{' '}
+                                    {unwrapToken(currencyBase).symbol}
+                                  </CardDescription>
+                                </CardHeader>
+                              </HoverCardContent>
+                            </HoverCard>
+                          </>
+                        )}
                       </span>
                     ) : (
                       <SkeletonText />
@@ -362,10 +401,42 @@ const Component: FC<{ id: string }> = ({ id }) => {
                   <div className="flex flex-col">
                     {priceUpper && pool && currencyQuote && currencyBase ? (
                       <span className="font-medium">
-                        {fullRange
-                          ? '∞'
-                          : formatTickPrice({ price: priceUpper, atLimit: tickAtLimit, direction: Bound.UPPER })}{' '}
-                        {unwrapToken(currencyQuote).symbol}
+                        {fullRange ? (
+                          '∞'
+                        ) : (
+                          <>
+                            {formatTickPrice({ price: priceUpper, atLimit: tickAtLimit, direction: Bound.UPPER })}{' '}
+                            {unwrapToken(currencyQuote)?.symbol}{' '}
+                            <HoverCard closeDelay={0} openDelay={0}>
+                              <HoverCardTrigger asChild>
+                                <span className="text-sm underline decoration-dotted underline-offset-2 text-muted-foreground font-normal">
+                                  ( +
+                                  {priceUpper
+                                    ?.subtract(invert ? pool.token1Price : pool.token0Price)
+                                    .divide(invert ? pool.token1Price : pool.token0Price)
+                                    .multiply(100)
+                                    .toSignificant(2)}
+                                  %)
+                                </span>
+                              </HoverCardTrigger>
+                              <HoverCardContent className="!p-0 max-w-[320px]">
+                                <CardHeader>
+                                  <CardTitle>Max. Price</CardTitle>
+                                  <CardDescription>
+                                    If the current price moves up +
+                                    {priceUpper
+                                      ?.subtract(invert ? pool.token1Price : pool.token0Price)
+                                      .divide(invert ? pool.token1Price : pool.token0Price)
+                                      .multiply(100)
+                                      .toSignificant(2)}
+                                    % from the current price, your position will be 100%{' '}
+                                    {unwrapToken(currencyQuote).symbol}
+                                  </CardDescription>
+                                </CardHeader>
+                              </HoverCardContent>
+                            </HoverCard>
+                          </>
+                        )}
                       </span>
                     ) : (
                       <SkeletonText />
