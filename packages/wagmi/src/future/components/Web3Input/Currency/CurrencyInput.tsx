@@ -48,7 +48,6 @@ export const Component: FC<CurrencyInputProps> = ({
   usdPctChange,
   disableMaxButton = false,
   type,
-  fetching,
   currencyLoading,
   currencies,
   allowNative = true,
@@ -131,33 +130,39 @@ export const Component: FC<CurrencyInputProps> = ({
 
   return (
     <div
+      onClick={focusInput}
       className={classNames(
-        fetching && type === 'OUTPUT' ? 'shimmer-fast' : '',
         _error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
         'space-y-2 overflow-hidden pb-2',
         className
       )}
-      onClick={focusInput}
     >
       <div className="relative flex items-center gap-4">
-        {isLoading ? (
-          <div className="flex gap-1 items-center justify-between flex-grow h-[44px]">
-            <SkeletonBox className="w-1/2 h-[32px] rounded-lg" />
-          </div>
-        ) : (
-          <TextField
-            testdata-id={`${id}-input`}
-            type="number"
-            ref={inputRef}
-            variant="naked"
-            disabled={disabled}
-            onValueChange={onChange}
-            value={value}
-            readOnly={disabled}
-            maxDecimals={currency?.decimals}
-            className="p-0 py-1 !text-3xl font-medium"
-          />
-        )}
+        <div
+          data-state={isLoading ? 'active' : 'inactive'}
+          className={classNames(
+            'data-[state=inactive]:hidden data-[state=active]:flex',
+            'gap-1 items-center justify-between flex-grow h-[44px]'
+          )}
+        >
+          <SkeletonBox className="w-1/2 h-[32px] rounded-lg" />
+        </div>
+        <TextField
+          testdata-id={`${id}-input`}
+          type="number"
+          ref={inputRef}
+          variant="naked"
+          disabled={disabled}
+          onValueChange={onChange}
+          value={value}
+          readOnly={disabled}
+          maxDecimals={currency?.decimals}
+          data-state={isLoading ? 'inactive' : 'active'}
+          className={classNames(
+            'data-[state=inactive]:hidden data-[state=active]:flex',
+            'p-0 py-1 !text-3xl font-medium'
+          )}
+        />
         {selector}
         {!onSelect ? (
           <div
