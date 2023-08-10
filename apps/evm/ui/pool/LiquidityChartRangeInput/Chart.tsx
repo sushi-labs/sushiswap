@@ -20,8 +20,11 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
   dimensions: { width, height },
   margins,
   interactive = true,
-  brush,
+  brushDomain,
+  brushLabels,
+  onBrushDomainChange,
   zoomLevels,
+  hideBrushes,
 }) => {
   const zoomRef = useRef<SVGRectElement | null>(null)
 
@@ -56,10 +59,10 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
   }, [zoomLevels])
 
   useEffect(() => {
-    if (brush && !brush.brushDomain) {
-      brush.onBrushDomainChange(xScale.domain() as [number, number], undefined)
+    if (!brushDomain) {
+      onBrushDomainChange(xScale.domain() as [number, number], undefined)
     }
-  }, [brush, xScale])
+  }, [brushDomain, onBrushDomainChange, xScale])
 
   return (
     <div className="relative flex flex-col">
@@ -73,9 +76,7 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
           height
         }
         resetBrush={() => {
-          if (!brush) return
-
-          brush.onBrushDomainChange(
+          onBrushDomainChange(
             [current * zoomLevels.initialMin, current * zoomLevels.initialMax] as [number, number],
             'reset'
           )
@@ -89,18 +90,18 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
             <rect x="0" y="0" width={innerWidth} height={height} />
           </clipPath>
 
-          {brush?.brushDomain && (
+          {brushDomain && !hideBrushes ? (
             // mask to highlight selected area
             <mask id={`${id}-chart-area-mask`}>
               <rect
                 fill="white"
-                x={xScale(brush.brushDomain[0])}
+                x={xScale(brushDomain[0])}
                 y="0"
-                width={xScale(brush.brushDomain[1]) - xScale(brush.brushDomain[0])}
+                width={xScale(brushDomain[1]) - xScale(brushDomain[0])}
                 height={innerHeight}
               />
             </mask>
-          )}
+          ) : null}
         </defs>
 
         <g transform={`translate(${margins.left},${margins.top})`}>
@@ -115,7 +116,7 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
               opacity={styles.area.opacity}
             />
 
-            {brush?.brushDomain && (
+            {brushDomain && !hideBrushes ? (
               // duplicate area chart with mask for selected area
               <g mask={`url(#${id}-chart-area-mask)`}>
                 <Area
@@ -127,21 +128,9 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
                   fill={styles.area.selection}
                 />
               </g>
-            )}
+            ) : null}
 
             <Line value={current} xScale={xScale} innerHeight={innerHeight} />
-
-            <line
-              opacity={0.7}
-              strokeWidth={1}
-              stroke="currentColor"
-              fill="none"
-              className="text-gray-900 dark:text-slate-500"
-              x1={0}
-              y1={innerHeight}
-              x2={innerWidth}
-              y2={innerHeight}
-            />
 
             <AxisBottom xScale={xScale} innerHeight={innerHeight} />
           </g>
@@ -154,20 +143,20 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
             ref={zoomRef}
           />
 
-          {brush && (
+          {!hideBrushes ? (
             <Brush
               id={id}
               xScale={xScale}
               interactive={interactive}
-              brushLabelValue={brush.brushLabels}
-              brushExtent={brush.brushDomain ?? (xScale.domain() as [number, number])}
+              brushLabelValue={brushLabels}
+              brushExtent={brushDomain ?? (xScale.domain() as [number, number])}
               innerWidth={innerWidth}
               innerHeight={innerHeight}
-              setBrushExtent={brush.onBrushDomainChange}
-              westHandleColor={brush.style.handle.west}
-              eastHandleColor={brush.style.handle.east}
+              setBrushExtent={onBrushDomainChange}
+              westHandleColor={styles.brush.handle.west}
+              eastHandleColor={styles.brush.handle.east}
             />
-          )}
+          ) : null}
         </g>
       </svg>
     </div>

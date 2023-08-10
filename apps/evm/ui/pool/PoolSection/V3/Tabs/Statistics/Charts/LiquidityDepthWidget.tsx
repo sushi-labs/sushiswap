@@ -4,9 +4,10 @@ import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import React, { FC, useMemo } from 'react'
 
+import { Bound } from '../../../../../../../lib/constants'
 import { useConcentratedDerivedMintInfo } from '../../../../../ConcentratedLiquidityProvider'
+import LiquidityChartRangeInput from '../../../../../LiquidityChartRangeInput'
 import { useDensityChartData } from '../../../../../LiquidityChartRangeInput/hooks'
-import { PoolDepthChart } from './PoolDepthChart'
 
 interface LiquidityDepthWidget {
   address: string
@@ -29,7 +30,7 @@ export const LiquidityDepthWidget: FC<LiquidityDepthWidget> = ({ address, chainI
     existingPosition: undefined,
   })
 
-  const { isLoading, formattedData } = useDensityChartData({
+  const { isLoading, data } = useDensityChartData({
     chainId,
     token0: poolStats?.token0,
     token1: poolStats?.token1,
@@ -46,8 +47,21 @@ export const LiquidityDepthWidget: FC<LiquidityDepthWidget> = ({ address, chainI
     <>
       {isLoading && <SkeletonBox className="w-full h-full" />}
 
-      {isMounted && !noLiquidity && !isLoading && formattedData && current && poolStats && (
-        <PoolDepthChart poolStats={poolStats} series={formattedData} current={current} />
+      {isMounted && !noLiquidity && !isLoading && data && current && poolStats && (
+        <LiquidityChartRangeInput
+          chainId={chainId}
+          currencyA={poolStats.token0}
+          currencyB={poolStats.token1}
+          feeAmount={poolStats.feeAmount}
+          ticksAtLimit={{ [Bound.LOWER]: false, [Bound.UPPER]: false }}
+          price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}
+          priceLower={undefined}
+          priceUpper={undefined}
+          interactive={false}
+          hideBrushes={true}
+          onLeftRangeInput={() => {}}
+          onRightRangeInput={() => {}}
+        />
       )}
     </>
   )
