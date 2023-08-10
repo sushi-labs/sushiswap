@@ -381,7 +381,14 @@ export const EXTRACTOR_CONFIG = {
   },
   [ChainId.BASE]: {
     client: createPublicClient(config[ChainId.BASE]),
-    factoriesV2: [],
+    factoriesV2: [
+      {
+        address: '0xFDa619b6d20975be80A10332cD39b9a4b0FAa8BB' as Address,
+        provider: LiquidityProviders.BaseSwap,
+        fee: 0.0025,
+        initCodeHash: '0xb618a2730fae167f5f8ac7bd659dd8436d571872655bcb6fd11f2158c8a64a3b',
+      },
+    ],
     factoriesV3: [sushiswapV3Factory(ChainId.BASE), uniswapV3Factory(ChainId.BASE)],
     tickHelperContract: V3_TICK_LENS[ChainId.BASE],
     cacheDir: './cache',
