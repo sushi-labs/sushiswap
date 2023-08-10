@@ -5,7 +5,6 @@ import { getBigNumber } from './Utils'
 
 const ZERO = BigNumber.from(0)
 const MIN_LIQUIDITY = 1000
-const MIN_LIQUIDITY_BN = BigNumber.from(MIN_LIQUIDITY)
 const SWAP_GAS_COST = 90_000
 
 export class CurveMultitokenPool extends RPool {
@@ -51,6 +50,8 @@ export class CurveMultitokenPool extends RPool {
   }
 }
 
+const E18 = getBigNumber(1e18)
+
 class CurveMultitokenCore {
   address: string
   tokens: RToken[]
@@ -58,7 +59,7 @@ class CurveMultitokenCore {
   A: number
   reserves: BigNumber[]
   rates: number[]
-  ratesBN: BigNumber[]
+  ratesBN18: BigNumber[]
   reservesRated: BigNumber[]
   D: BigNumber
 
@@ -75,9 +76,10 @@ class CurveMultitokenCore {
     this.fee = fee
     this.A = A
     this.reserves = reserves
-    this.rates = rates || reserves.map((_) => 1)
-    this.ratesBN = this.rates.map(getBigNumber)
-    this.reservesRated = this.reserves.map((r, i) => r.mul(this.ratesBN[i]))
+    const decimalsMax = Math.max(...tokens.map((t) => t.decimals))
+    this.rates = tokens.map((t, i) => Math.pow(10, decimalsMax - t.decimals) * (rates?.[i] ?? 1))
+    this.ratesBN18 = this.rates.map((r) => getBigNumber(r * 1e18)) // precision is 18 digits
+    this.reservesRated = this.reserves.map((r, i) => r.mul(this.ratesBN18[i]).div(E18))
     this.D = ZERO
 
     this.Ann = getBigNumber(A * this.tokens.length)
@@ -90,7 +92,7 @@ class CurveMultitokenCore {
   updateReserve(index: number, res: BigNumber) {
     this.D = ZERO
     this.reserves[index] = res
-    this.reservesRated[index] = res.mul(this.ratesBN[index])
+    this.reservesRated[index] = res.mul(this.ratesBN18[index]).div(E18) // remove precision 1e18
   }
 
   computeLiquidity(): BigNumber {
@@ -121,7 +123,7 @@ class CurveMultitokenCore {
   computeY(x: BigNumber): BigNumber {
     const D = this.computeLiquidity()
 
-    const nA = this.A * 2
+    const nA = this.A * 2 // TODO!
 
     const c = D.mul(D)
       .div(x.mul(2))
@@ -150,7 +152,7 @@ class CurveMultitokenCore {
     const yNewBN = this.computeY(xNewBN)
     if (yNewBN.lt(MIN_LIQUIDITY)) throw 'Curve pool OutOfLiquidity'
     const dy = parseInt(yBN.sub(yNewBN).toString()) / this.rates[to]
-    return { out: dy * (1 - this.fee), gasSpent: this.swapGasCost }
+    return { out: dy * (1 - this.fee), gasSpent: SWAP_GAS_COST }
   }
 
   calcInByOut(amountOut: number, from: number, to: number): { inp: number; gasSpent: number } {
@@ -166,7 +168,7 @@ class CurveMultitokenCore {
     const input = Math.round(parseInt(xNewBN.sub(xBN).toString()) / this.rates[from])
 
     //if (input < 1) input = 1
-    return { inp: input, gasSpent: this.swapGasCost }
+    return { inp: input, gasSpent: SWAP_GAS_COST }
   }
 
   calcCurrentPriceWithoutFee(from: number, to: number): number {
@@ -179,6 +181,21 @@ class CurveMultitokenCore {
     const Ds = Math.sqrt(b * b + 4 * A * ac4)
     const price = 0.5 - (2 * b - ac4 / x) / Ds / 4
     const scale = this.rates[from] / this.rates[to]
-    return direction ? price * scale : price / scale
+    return price * scale
   }
+}
+
+export function createCurvePoolsForMultipool(
+  address: string,
+  tokens: RToken[],
+  fee: number,
+  A: number,
+  reserves: BigNumber[],
+  rates?: number[]
+) {
+  const core = new CurveMultitokenCore(address, tokens, fee, A, reserves, rates)
+  const pools: CurveMultitokenPool[] = []
+  for (let i = 0; i < tokens.length; ++i)
+    for (let j = i + 1; j < tokens.length; ++j) pools.push(new CurveMultitokenPool(core, i, j))
+  return pools
 }
