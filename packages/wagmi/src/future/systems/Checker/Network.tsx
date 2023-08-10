@@ -7,7 +7,7 @@ import React, { FC, ReactElement } from 'react'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 export interface NetworkProps extends ButtonProps {
-  chainId: number | undefined
+  chainId: number | string | undefined
 }
 
 export const Component: FC<NetworkProps> = ({
@@ -22,10 +22,11 @@ export const Component: FC<NetworkProps> = ({
 
   if (!chainId) return null
 
-  if (chain?.id !== chainId)
+  const _chainId = Number(chainId)
+  if (chain?.id !== _chainId)
     return (
-      <Button fullWidth={fullWidth} size={size} onClick={() => switchNetwork?.(chainId)} {...rest}>
-        Switch to {chainName[chainId]}
+      <Button fullWidth={fullWidth} size={size} onClick={() => switchNetwork?.(_chainId)} {...rest}>
+        Switch to {chainName[_chainId]}
       </Button>
     )
 
