@@ -2,6 +2,7 @@
 
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import { Chain, chainName } from '@sushiswap/chain'
+import { Native } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
@@ -101,13 +102,20 @@ export const TradeReviewDialogCrossChain: FC = () => {
                   `${trade?.minAmountOut?.toSignificant(6)} ${token1?.symbol}`
                 )}
               </List.KeyValue>
-              {/*<List.KeyValue title="Network fee">*/}
-              {/*  {isFetching ? (*/}
-              {/*    <SkeletonText align="right" fontSize="sm" className="w-1/3" />*/}
-              {/*  ) : (*/}
-              {/*    `~$${trade?.gasSpent ?? '0.00'}`*/}
-              {/*  )}*/}
-              {/*</List.KeyValue>*/}
+              {/* <List.KeyValue title="Network fee">
+                {isFetching ? (
+                  <SkeletonText align="right" fontSize="sm" className="w-1/3" />
+                ) : (
+                  `~$${trade?.gasSpent ?? '0.00'}`
+                )}
+              </List.KeyValue> */}
+              <List.KeyValue title="Network fee">
+                {isFetching ? (
+                  <SkeletonText align="right" fontSize="sm" className="w-1/3" />
+                ) : (
+                  `~${trade?.gasSpent} ${Native.onChain(network0).symbol}`
+                )}
+              </List.KeyValue>
             </List.Control>
           </List>
           {recipient && (

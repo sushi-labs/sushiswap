@@ -1,23 +1,18 @@
 'use client'
 
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { Chain } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
-import { useDebounce } from '@sushiswap/hooks'
-import { usePrice, useTokenList, useTokenSearch } from '@sushiswap/react-query'
-import { COMMON_BASES } from '@sushiswap/router-config'
-import { classNames } from '@sushiswap/ui'
-import { Badge } from '@sushiswap/ui/components/Badge'
+import { Native, Token } from '@sushiswap/currency'
+import { useCustomTokens, useDebounce, usePinnedTokens } from '@sushiswap/hooks'
+import { usePrice, useTokenList, useTokens, useTokenSearch } from '@sushiswap/react-query'
+import { Badge, classNames, NetworkIcon, SkeletonCircle, SkeletonText, TextField } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Dialog } from '@sushiswap/ui/components/dialog'
-import { NetworkIcon } from '@sushiswap/ui/components/icons'
-import { Search } from '@sushiswap/ui/components/input/Search'
 import { List } from '@sushiswap/ui/components/list/List'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
 import React, { FC, useCallback, useMemo, useState } from 'react'
-
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { useSearchContext } from './SearchProvider'
 
@@ -29,9 +24,24 @@ export const SearchPanel: FC = () => {
 
   const { data: tokenSearch } = useTokenSearch({ address: debouncedQuery })
   const { data: tokenList } = useTokenList(filter)
+  const { data: pinnedTokenMap } = usePinnedTokens()
+  const { data: tokenMap } = useTokens({ chainId: network1 })
+  const { data: customTokenMap } = useCustomTokens()
+
+  const pinnedTokens = useMemo(() => {
+    if (!pinnedTokenMap[network1]) return []
+    return pinnedTokenMap[network1]
+      .map((id) => {
+        const [, address] = id.split(':')
+        if (address === 'NATIVE') return Native.onChain(network1)
+        return tokenMap?.[address] || customTokenMap?.[address]
+      })
+      .filter((token): token is Token => !!token)
+  }, [customTokenMap, network1, pinnedTokenMap, tokenMap])
+
   const { data: popularTokensList, isLoading: isPopularListLoading } = useTokenList(
     // TODO: we should have ETH as an option...
-    useMemo(() => [...COMMON_BASES[network1].map((t) => t.wrapped.address)], [network1])
+    useMemo(() => [...pinnedTokens.map((t) => t.wrapped.address)], [pinnedTokens])
   )
   const { open, setOpen } = useSearchContext()
 
@@ -72,7 +82,14 @@ export const SearchPanel: FC = () => {
     <Dialog variant="opaque" open={open} onClose={onClose} className="fixed inset-0 z-[1080]">
       <div>
         <div className="flex items-center gap-4">
-          <Search id="search-input" loading={isLoading} onValueChange={setQuery} value={query ?? ''} />
+          <TextField
+            placeholder="Search by token or address"
+            icon={MagnifyingGlassIcon}
+            type="text"
+            id="search-input"
+            value={query}
+            onValueChange={setQuery}
+          />
           <Button variant="ghost" onClick={onClose} className="text-blue">
             Cancel
           </Button>

@@ -115,7 +115,9 @@ const Component = ({ children, maxWidth = '5xl', ...props }: FooterProps) => {
     (title: string, items: Record<string, { href: string; rel?: string; target?: string }>) => {
       return (
         <div key={title} className="flex flex-col gap-[10px]">
-          <span className="text-sm sm:text-xs text-gray-900 dark:text-slate-100">{title}</span>
+          <span className="font-semibold tracking-tighter text-sm sm:text-xs text-gray-900 dark:text-slate-100">
+            {title}
+          </span>
           {Object.entries(items).map(([item, { href, rel, target }]) => (
             <a
               key={item}
@@ -134,16 +136,16 @@ const Component = ({ children, maxWidth = '5xl', ...props }: FooterProps) => {
   )
 
   return (
-    <footer className="bg-gray-100 dark:bg-slate-900 hidden sm:flex flex-col pt-[72px]" {...props}>
+    <footer className="bg-secondary hidden sm:flex flex-col pt-[72px]" {...props}>
       <Container maxWidth={maxWidth} className="grid grid-cols-1 md:grid-cols-[176px_auto] mx-auto px-4 gap-4">
         <div className="col-span-2">{children && children}</div>
         <div className="flex flex-col gap-5">
           <div className="flex items-center justify-start gap-3 pt-2">
             <SushiWithTextIcon height={20} className="text-gray-700 dark:text-slate-50" />
           </div>
-          <div className="text-sm sm:text-[0.625rem] leading-5 sm:leading-4 text-gray-600 dark:text-slate-400">
+          <p className="text-xs text-gray-600 dark:text-slate-400">
             Our community is building a comprehensive decentralized trading platform for the future of finance. Join us!
-          </div>
+          </p>
           <div className="flex items-center gap-4">
             <a href="https://github.com/sushiswap" target="_blank" rel="noopener noreferrer">
               <GithubIcon
@@ -189,10 +191,10 @@ const Component = ({ children, maxWidth = '5xl', ...props }: FooterProps) => {
           })}
         </div>
       </Container>
-      <Container maxWidth={maxWidth} className="mx-auto mt-20 mb-5">
-        <div className="flex justify-between py-2 mx-4 border-t text-gray-600 border-gray-200 dark:border-slate-800">
+      <Container maxWidth={maxWidth} className="mx-auto mt-20 mb-3">
+        <div className="flex justify-between py-2 mx-4 border-t border-accent">
           <span className="text-xs text-gray-600 dark:text-slate-400">
-            Copyright © 2022 Sushi. All rights reserved.
+            Copyright © 2023 Sushi. All rights reserved.
           </span>
           <div className="flex divide-x dark:divide-slate-200/20 gap-">
             <a

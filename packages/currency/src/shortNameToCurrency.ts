@@ -219,6 +219,36 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     ETH: Native.onChain(ChainId.POLYGON_ZKEVM),
     WETH: WNATIVE[ChainId.POLYGON_ZKEVM],
   },
+  [ChainId.CORE]: {
+    NATIVE: Native.onChain(ChainId.CORE),
+    WNATIVE: WNATIVE[ChainId.CORE],
+    ETH: WETH9[ChainId.CORE],
+    WETH: WETH9[ChainId.CORE],
+  },
+  [ChainId.HAQQ]: {
+    NATIVE: Native.onChain(ChainId.HAQQ),
+    WNATIVE: WNATIVE[ChainId.HAQQ],
+    ETH: WETH9[ChainId.HAQQ],
+    WETH: WETH9[ChainId.HAQQ],
+  },
+  [ChainId.ZKSYNC_ERA]: {
+    NATIVE: Native.onChain(ChainId.ZKSYNC_ERA),
+    WNATIVE: WNATIVE[ChainId.ZKSYNC_ERA],
+    ETH: Native.onChain(ChainId.ZKSYNC_ERA),
+    WETH: WNATIVE[ChainId.ZKSYNC_ERA],
+  },
+  [ChainId.LINEA]: {
+    NATIVE: Native.onChain(ChainId.LINEA),
+    WNATIVE: WNATIVE[ChainId.LINEA],
+    ETH: Native.onChain(ChainId.LINEA),
+    WETH: WNATIVE[ChainId.LINEA],
+  },
+  [ChainId.BASE]: {
+    NATIVE: Native.onChain(ChainId.BASE),
+    WNATIVE: WNATIVE[ChainId.BASE],
+    ETH: Native.onChain(ChainId.BASE),
+    WETH: WNATIVE[ChainId.BASE],
+  },
 } as const
 
 export type ShortCurrencyNameChainId = keyof typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY

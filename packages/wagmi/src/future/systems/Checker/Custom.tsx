@@ -1,14 +1,26 @@
-import React, { FC} from 'react'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
+import React, { FC } from 'react'
 
 export interface CustomProps extends ButtonProps {
-  guardWhen: boolean
-  guardText: string
+  showChildren?: boolean
+  onClick(): void
+  buttonText: string
 }
 
-export const Custom: FC<CustomProps> = ({ guardWhen, guardText, children, fullWidth = true, size = 'xl',  ...props }) => {
-  if (guardWhen) {
-    return <Button size={size} fullWidth={fullWidth} disabled {...props}>{guardText}</Button>
+export const Custom: FC<CustomProps> = ({
+  showChildren,
+  buttonText,
+  children,
+  fullWidth = true,
+  size = 'xl',
+  ...props
+}) => {
+  if (!showChildren) {
+    return (
+      <Button size={size} fullWidth={fullWidth} {...props}>
+        {buttonText}
+      </Button>
+    )
   }
 
   return <>{children}</>

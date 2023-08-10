@@ -63,6 +63,11 @@ sources:
       graphql:
         endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:steerprotocol/steer-protocol-polygon}
         retry: 3
+    transforms:
+      - prefix:
+          value: Steer_
+          includeRootOperations: true
+          includeTypes: true
 
 additionalTypeDefs: |
   # Type Extensions

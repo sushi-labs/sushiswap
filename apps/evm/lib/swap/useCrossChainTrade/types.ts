@@ -36,6 +36,7 @@ export interface UseCrossChainTradeReturn {
   amountOut: Amount<Type> | undefined
   minAmountOut: Amount<Type> | undefined
   gasSpent: string | undefined
+  gasSpentUsd: string | undefined
   functionName: 'cook'
   writeArgs: [Action[], BigNumber[], `0x${string}`[]] | undefined
   route: { status: string }

@@ -1,4 +1,4 @@
-import { classNames } from '@sushiswap/ui'
+import { classNames, typographyVariants } from '@sushiswap/ui'
 import React, { FC, ReactNode } from 'react'
 
 export const ContentBlock: FC<{ title: ReactNode; children: ReactNode; disabled?: boolean }> = ({
@@ -7,8 +7,8 @@ export const ContentBlock: FC<{ title: ReactNode; children: ReactNode; disabled?
   disabled = false,
 }) => {
   return (
-    <div className={classNames(disabled ? 'opacity-40 pointer-events-none' : '', 'flex flex-col gap-6')}>
-      <h1 className="text-gray-500 dark:text-slate-400 text-slate-600 text-xl font-medium">{title}</h1>
+    <div className={classNames(disabled ? 'opacity-40 pointer-events-none' : '', 'flex flex-col gap-3')}>
+      <h1 className={typographyVariants({ variant: 'p' })}>{title}</h1>
       {children}
     </div>
   )
