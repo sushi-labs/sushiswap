@@ -6,7 +6,7 @@ import { SushiSwapV3ChainIds } from '@sushiswap/v3-sdk'
 export const ANGLE_ENABLED_NETWORKS = [ChainId.ETHEREUM, ChainId.POLYGON, ChainId.ARBITRUM, ChainId.OPTIMISM]
 export type AngleEnabledChainId = (typeof ANGLE_ENABLED_NETWORKS)[number]
 export const isAngleEnabledChainId = (chainId: number): chainId is AngleEnabledChainId =>
-  chainId in ANGLE_ENABLED_NETWORKS
+  ANGLE_ENABLED_NETWORKS.includes(chainId as AngleEnabledChainId)
 
 export const SWAP_API_ENABLED_NETWORKS = [
   ChainId.ETHEREUM,
@@ -17,7 +17,7 @@ export const SWAP_API_ENABLED_NETWORKS = [
 ]
 export type SwapApiEnabledChainId = (typeof SWAP_API_ENABLED_NETWORKS)[number]
 export const isSwapApiEnabledChainId = (chainId: number): chainId is SwapApiEnabledChainId =>
-  chainId in SWAP_API_ENABLED_NETWORKS
+  SWAP_API_ENABLED_NETWORKS.includes(chainId as SwapApiEnabledChainId)
 
 export const DISABLED_CHAIN_IDS = [ChainId.HAQQ, ChainId.LINEA]
 
