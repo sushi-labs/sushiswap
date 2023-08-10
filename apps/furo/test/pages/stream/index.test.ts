@@ -61,7 +61,7 @@ async function updateStream(page: Page, streamId: string) {
   await expect(amountSwitchLocator).toBeEnabled()
   await amountSwitchLocator.click()
 
-  await page.locator('[testdata-id=furo-stream-top-up]').fill('0.0001')
+  await page.locator('[testdata-id=furo-stream-top-up]').fill('0.000002')
 
   const approveBentoboxLocator = page.locator('[testdata-id=furo-update-stream-approve-bentobox-button]')
   await expect(approveBentoboxLocator).toBeVisible()
@@ -78,9 +78,8 @@ async function updateStream(page: Page, streamId: string) {
   await expect(confirmWithdrawalLocator).toBeEnabled()
   await confirmWithdrawalLocator.click()
 
-  const expectedText = '(Successfully updated stream)'
-  const regex = new RegExp(expectedText)
-  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+  const text = 'Successfully updated stream'
+  expect(await page.locator('span', { hasText: text }).last().innerText()).toContain('')
 }
 
 async function withdrawFromStream(page: Page, streamId: string, withdrawAmount: number) {

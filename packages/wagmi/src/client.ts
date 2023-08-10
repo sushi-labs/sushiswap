@@ -10,17 +10,16 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
 import { _createTestConfig } from './_test/setup'
 
-const isTest =
-  process.env['APP_ENV'] === 'test' || process.env['TEST'] === 'true' || process.env['NEXT_PUBLIC_TEST'] === 'true'
+const isTest = process.env.APP_ENV === 'test' || process.env.TEST === 'true' || process.env.NEXT_PUBLIC_TEST === 'true'
 
 export const createWagmiConfig = () => {
   const anvilRpcUrl =
-    process.env['ANVIL_RPC_URL'] ||
-    process.env['NEXT_PUBLIC_ANVIL_RPC_URL'] ||
-    `http://127.0.0.1:${process.env['ANVIL_PORT'] || process.env['NEXT_PUBLIC_ANVIL_PORT'] || 8545}`
+    process.env.ANVIL_RPC_URL ||
+    process.env.NEXT_PUBLIC_ANVIL_RPC_URL ||
+    `http://127.0.0.1:${process.env.ANVIL_PORT || process.env.NEXT_PUBLIC_ANVIL_PORT || 8545}`
 
   const testWalletIndex =
-    Number(process.env['TEST_WALLET_INDEX']) || Number(process.env['NEXT_PUBLIC_TEST_WALLET_INDEX']) || 0
+    Number(process.env.TEST_WALLET_INDEX) || Number(process.env.NEXT_PUBLIC_TEST_WALLET_INDEX) || 0
 
   // console.log({
   //   isTest,

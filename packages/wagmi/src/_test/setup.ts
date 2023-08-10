@@ -6,7 +6,7 @@ import { Chain, configureChains, createConfig } from 'wagmi'
 import { MockConnector } from '../connectors/mock'
 import { accounts, TestChainId, testChains } from './constants'
 
-const foundryPort = String(process.env['ANVIL_PORT'] || process.env['NEXT_PUBLIC_ANVIL_PORT'] || 8545)
+const foundryPort = String(process.env.ANVIL_PORT || process.env.NEXT_PUBLIC_ANVIL_PORT || 8545)
 
 const { publicClient } = configureChains(
   testChains,

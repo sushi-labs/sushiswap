@@ -137,16 +137,16 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
       !isAddress(recipient) ||
       !_currency ||
       !startDate ||
-      !_cliffDuration ||
+      !(cliffEnabled || !_cliffDuration) ||
       !stepConfig ||
       !STEP_CONFIGURATIONS_MAP[stepConfig] ||
       !_stepPercentage ||
       !_totalAmount ||
       !stepPayouts ||
       !rebase ||
-      approved
+      !approved
     ) {
-      return
+      return {}
     }
 
     const actions: Hex[] = []
@@ -184,15 +184,16 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
     recipient,
     _currency,
     startDate,
+    cliffEnabled,
     _cliffDuration,
     stepConfig,
     _stepPercentage,
     _totalAmount,
     stepPayouts,
     rebase,
+    approved,
     signature,
     _fundSource,
-    approved,
   ])
 
   const { config } = usePrepareSendTransaction({
@@ -208,7 +209,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
         isAddress(recipient) &&
         _currency &&
         startDate &&
-        _cliffDuration &&
+        (!cliffEnabled || _cliffDuration) &&
         stepConfig &&
         STEP_CONFIGURATIONS_MAP[stepConfig] &&
         _stepPercentage &&
@@ -229,6 +230,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
   const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
 
   const formValid = isValid && !isValidating && Object.keys(errors).length === 0
+
   if (stepConfig) console.log(STEP_CONFIGURATIONS_MAP[stepConfig])
 
   return (

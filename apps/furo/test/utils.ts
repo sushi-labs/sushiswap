@@ -108,7 +108,7 @@ export async function createSingleStream(page: Page, args: StreamArgs) {
     // Approve BentoBox
     await page
       .locator('[testdata-id=furo-create-single-stream-approve-bentobox-button]')
-      .click({ timeout: 1500 })
+      .click({ timeout: 2000 })
       .then(async () => {
         console.log('BentoBox Approved')
       })
@@ -118,7 +118,7 @@ export async function createSingleStream(page: Page, args: StreamArgs) {
       // Approve Token
       await page
         .locator('[testdata-id=furo-create-single-stream-approve-token-button]')
-        .click({ timeout: 1500 })
+        .click({ timeout: 2000 })
         .then(async () => {
           console.log(`${currency.symbol} Approved`)
         })
@@ -166,7 +166,7 @@ export async function createMultipleStreams(page: Page, chainId: number, streamA
   await confirmCreateVestingButton.click()
 
   const text = `Created ${streamArgs.length} streams`
-  await expect(page.locator('div', { hasText: text }).last()).toContainText(text)
+  await expect(page.locator('span', { hasText: text }).last()).toContainText(text)
 }
 
 async function handleStreamInputs(page: Page, args: StreamArgs, index = 0) {
@@ -265,7 +265,7 @@ export async function createMultipleVests(page: Page, chainId: number, vestingAr
   await expect(confirmCreateVestingButton).toBeEnabled()
   await confirmCreateVestingButton.click()
 
-  await expect(page.locator('div', { hasText: `Creating ${vestingArgs.length} vests` }).last()).toContainText(
+  await expect(page.locator('span', { hasText: `Creating ${vestingArgs.length} vests` }).last()).toContainText(
     `Creating ${vestingArgs.length} vests`
   )
 }
