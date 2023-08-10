@@ -2,32 +2,32 @@ import { Fee } from '@sushiswap/amm'
 import { Type } from '@sushiswap/currency'
 import { Address, encodeAbiParameters, encodeFunctionData, Hex, parseAbiParameters } from 'viem'
 
-declare const abiShard: [
+const abiShard = [
   {
-    readonly inputs: readonly [
+    inputs: [
       {
-        readonly internalType: 'address'
-        readonly name: 'factory'
-        readonly type: 'address'
+        internalType: 'address',
+        name: 'factory',
+        type: 'address',
       },
       {
-        readonly internalType: 'bytes'
-        readonly name: 'deployData'
-        readonly type: 'bytes'
-      }
-    ]
-    readonly name: 'deployPool'
-    readonly outputs: readonly [
+        internalType: 'bytes',
+        name: 'deployData',
+        type: 'bytes',
+      },
+    ],
+    name: 'deployPool',
+    outputs: [
       {
-        readonly internalType: 'address'
-        readonly name: ''
-        readonly type: 'address'
-      }
-    ]
-    readonly stateMutability: 'payable'
-    readonly type: 'function'
-  }
-]
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+] as const
 
 export interface DeployNewPoolAction {
   assets: [Type, Type]

@@ -1,26 +1,26 @@
 import { encodeFunctionData, Hex } from 'viem'
 
-declare const abiShard: [
+const abiShard = [
   {
-    readonly inputs: readonly [
+    inputs: [
       {
-        readonly internalType: 'bytes[]'
-        readonly name: 'data'
-        readonly type: 'bytes[]'
-      }
-    ]
-    readonly name: 'multicall'
-    readonly outputs: readonly [
+        internalType: 'bytes[]',
+        name: 'data',
+        type: 'bytes[]',
+      },
+    ],
+    name: 'multicall',
+    outputs: [
       {
-        readonly internalType: 'bytes[]'
-        readonly name: 'results'
-        readonly type: 'bytes[]'
-      }
-    ]
-    readonly stateMutability: 'payable'
-    readonly type: 'function'
-  }
-]
+        internalType: 'bytes[]',
+        name: 'results',
+        type: 'bytes[]',
+      },
+    ],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+] as const
 
 interface BatchAction {
   actions: (Hex | undefined)[]
@@ -43,6 +43,6 @@ export const batchAction = ({ actions = [] }: BatchAction): Hex | undefined => {
 
   // Call batch function with valid actions
   if (validated.length > 1) {
-    return encodeFunctionData({ abi: abiShard, args: [validated] })
+    return encodeFunctionData({ abi: abiShard, functionName: 'multicall', args: [validated] })
   }
 }

@@ -1,35 +1,35 @@
 import { Address, encodeAbiParameters, encodeFunctionData, parseAbiParameters } from 'viem'
 
-declare const abiShard: [
+const abiShard = [
   {
-    readonly inputs: readonly [
+    inputs: [
       {
-        readonly internalType: 'address'
-        readonly name: 'pool'
-        readonly type: 'address'
+        internalType: 'address',
+        name: 'pool',
+        type: 'address',
       },
       {
-        readonly internalType: 'uint256'
-        readonly name: 'liquidity'
-        readonly type: 'uint256'
+        internalType: 'uint256',
+        name: 'liquidity',
+        type: 'uint256',
       },
       {
-        readonly internalType: 'bytes'
-        readonly name: 'data'
-        readonly type: 'bytes'
+        internalType: 'bytes',
+        name: 'data',
+        type: 'bytes',
       },
       {
-        readonly internalType: 'uint256'
-        readonly name: 'minWithdrawal'
-        readonly type: 'uint256'
-      }
-    ]
-    readonly name: 'burnLiquiditySingle'
-    readonly outputs: readonly []
-    readonly stateMutability: 'payable'
-    readonly type: 'function'
-  }
-]
+        internalType: 'uint256',
+        name: 'minWithdrawal',
+        type: 'uint256',
+      },
+    ],
+    name: 'burnLiquiditySingle',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+] as const
 
 interface BurnLiquiditySingleAction {
   token: Address

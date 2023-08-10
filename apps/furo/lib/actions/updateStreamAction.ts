@@ -1,41 +1,41 @@
 import { encodeFunctionData } from 'viem'
 
-declare const abiShard: [
+const abiShard = [
   {
     inputs: [
       {
-        internalType: 'uint256'
-        name: 'streamId'
-        type: 'uint256'
+        internalType: 'uint256',
+        name: 'streamId',
+        type: 'uint256',
       },
       {
-        internalType: 'uint128'
-        name: 'topUpAmount'
-        type: 'uint128'
+        internalType: 'uint128',
+        name: 'topUpAmount',
+        type: 'uint128',
       },
       {
-        internalType: 'uint64'
-        name: 'extendTime'
-        type: 'uint64'
+        internalType: 'uint64',
+        name: 'extendTime',
+        type: 'uint64',
       },
       {
-        internalType: 'bool'
-        name: 'fromBentoBox'
-        type: 'bool'
-      }
-    ]
-    name: 'updateStream'
+        internalType: 'bool',
+        name: 'fromBentoBox',
+        type: 'bool',
+      },
+    ],
+    name: 'updateStream',
     outputs: [
       {
-        internalType: 'uint256'
-        name: 'depositedShares'
-        type: 'uint256'
-      }
-    ]
-    stateMutability: 'payable'
-    type: 'function'
-  }
-]
+        internalType: 'uint256',
+        name: 'depositedShares',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+] as const
 
 interface UpdateStreamAction {
   streamId: bigint
@@ -47,6 +47,7 @@ interface UpdateStreamAction {
 export const updateStreamAction = ({ streamId, topUpAmount, difference, fromBentoBox }: UpdateStreamAction) => {
   return encodeFunctionData({
     abi: abiShard,
+    functionName: 'updateStream',
     args: [streamId, topUpAmount, difference, fromBentoBox],
   })
 }

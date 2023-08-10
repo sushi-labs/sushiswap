@@ -1,40 +1,40 @@
 import { Address, encodeFunctionData, Hex, Signature } from 'viem'
 
-declare const abiShard: [
+const abiShard = [
   {
-    readonly inputs: readonly [
+    inputs: [
       {
-        readonly internalType: 'address'
-        readonly name: 'user'
-        readonly type: 'address'
+        internalType: 'address',
+        name: 'user',
+        type: 'address',
       },
       {
-        readonly internalType: 'bool'
-        readonly name: 'approved'
-        readonly type: 'bool'
+        internalType: 'bool',
+        name: 'approved',
+        type: 'bool',
       },
       {
-        readonly internalType: 'uint8'
-        readonly name: 'v'
-        readonly type: 'uint8'
+        internalType: 'uint8',
+        name: 'v',
+        type: 'uint8',
       },
       {
-        readonly internalType: 'bytes32'
-        readonly name: 'r'
-        readonly type: 'bytes32'
+        internalType: 'bytes32',
+        name: 'r',
+        type: 'bytes32',
       },
       {
-        readonly internalType: 'bytes32'
-        readonly name: 's'
-        readonly type: 'bytes32'
-      }
-    ]
-    readonly name: 'setBentoBoxApproval'
-    readonly outputs: readonly []
-    readonly stateMutability: 'payable'
-    readonly type: 'function'
-  }
-]
+        internalType: 'bytes32',
+        name: 's',
+        type: 'bytes32',
+      },
+    ],
+    name: 'setBentoBoxApproval',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+] as const
 
 interface ApproveBentoBoxAction {
   user: Address
@@ -44,5 +44,5 @@ interface ApproveBentoBoxAction {
 export const approveBentoBoxAction = ({ user, signature }: ApproveBentoBoxAction): Hex => {
   const { v, r, s } = signature
 
-  return encodeFunctionData({ abi: abiShard, args: [user, true, Number(v), r, s] })
+  return encodeFunctionData({ abi: abiShard, functionName: 'setBentoBoxApproval', args: [user, true, Number(v), r, s] })
 }

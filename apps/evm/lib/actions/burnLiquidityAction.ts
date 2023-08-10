@@ -5,48 +5,48 @@ export type LiquidityOutput = {
   amount: bigint
 }
 
-declare const abiShard: [
+const abiShard = [
   {
-    readonly inputs: readonly [
+    inputs: [
       {
-        readonly internalType: 'address'
-        readonly name: 'pool'
-        readonly type: 'address'
+        internalType: 'address',
+        name: 'pool',
+        type: 'address',
       },
       {
-        readonly internalType: 'uint256'
-        readonly name: 'liquidity'
-        readonly type: 'uint256'
+        internalType: 'uint256',
+        name: 'liquidity',
+        type: 'uint256',
       },
       {
-        readonly internalType: 'bytes'
-        readonly name: 'data'
-        readonly type: 'bytes'
+        internalType: 'bytes',
+        name: 'data',
+        type: 'bytes',
       },
       {
-        readonly components: readonly [
+        components: [
           {
-            readonly internalType: 'address'
-            readonly name: 'token'
-            readonly type: 'address'
+            internalType: 'address',
+            name: 'token',
+            type: 'address',
           },
           {
-            readonly internalType: 'uint256'
-            readonly name: 'amount'
-            readonly type: 'uint256'
-          }
-        ]
-        readonly internalType: 'struct IPool.TokenAmount[]'
-        readonly name: 'minWithdrawals'
-        readonly type: 'tuple[]'
-      }
-    ]
-    readonly name: 'burnLiquidity'
-    readonly outputs: readonly []
-    readonly stateMutability: 'payable'
-    readonly type: 'function'
-  }
-]
+            internalType: 'uint256',
+            name: 'amount',
+            type: 'uint256',
+          },
+        ],
+        internalType: 'struct IPool.TokenAmount[]',
+        name: 'minWithdrawals',
+        type: 'tuple[]',
+      },
+    ],
+    name: 'burnLiquidity',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+] as const
 
 interface BurnLiquidityAction {
   address: Address
@@ -73,6 +73,7 @@ export const burnLiquidityAction = ({
 }: BurnLiquidityAction) => {
   return encodeFunctionData({
     abi: abiShard,
+    functionName: 'burnLiquidity',
     args: [
       address,
       amount,

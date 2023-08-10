@@ -1,30 +1,30 @@
 import { encodeFunctionData, Signature } from 'viem'
 
-declare const abiShard: [
+const abiShard = [
   {
-    readonly inputs: readonly [
+    inputs: [
       {
-        readonly internalType: 'uint8'
-        readonly name: 'v'
-        readonly type: 'uint8'
+        internalType: 'uint8',
+        name: 'v',
+        type: 'uint8',
       },
       {
-        readonly internalType: 'bytes32'
-        readonly name: 'r'
-        readonly type: 'bytes32'
+        internalType: 'bytes32',
+        name: 'r',
+        type: 'bytes32',
       },
       {
-        readonly internalType: 'bytes32'
-        readonly name: 's'
-        readonly type: 'bytes32'
-      }
-    ]
-    readonly name: 'approveMasterContract'
-    readonly outputs: readonly []
-    readonly stateMutability: 'payable'
-    readonly type: 'function'
-  }
-]
+        internalType: 'bytes32',
+        name: 's',
+        type: 'bytes32',
+      },
+    ],
+    name: 'approveMasterContract',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+] as const
 
 export interface ApproveMasterContractAction {
   signature?: Signature

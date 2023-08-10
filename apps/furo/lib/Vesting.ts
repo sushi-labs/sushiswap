@@ -17,7 +17,6 @@ export class Vesting extends Furo {
   public readonly stepDuration: number
   public readonly vestingType: VestingType
 
-  // rome-ignore lint: ???
   public constructor({
     chainId,
     furo: vesting,
@@ -33,7 +32,10 @@ export class Vesting extends Furo {
     this.cliffAmount = Amount.fromShare(this.token, vesting.cliffShares, this.rebase)
     this.stepShares = Amount.fromRawAmount(this.token, vesting.stepShares)
     this.stepAmount = Amount.fromShare(this.token, vesting.stepShares, this.rebase)
-    this.totalAmount = Amount.fromRawAmount(this.token, this._remainingAmount.quotient + vesting.withdrawnAmount)
+    this.totalAmount = Amount.fromRawAmount(
+      this.token,
+      this._remainingAmount.quotient + BigInt(vesting.withdrawnAmount)
+    )
     this.cliffDuration = parseInt(vesting.cliffDuration)
     this.stepDuration = parseInt(vesting.stepDuration)
     if (this.stepDuration && this.cliffDuration) {

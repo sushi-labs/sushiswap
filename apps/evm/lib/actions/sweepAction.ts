@@ -1,30 +1,30 @@
 import { Address, encodeFunctionData } from 'viem'
 
-declare const abiShard: [
+const abiShard = [
   {
-    readonly inputs: readonly [
+    inputs: [
       {
-        readonly internalType: 'address'
-        readonly name: 'token'
-        readonly type: 'address'
+        internalType: 'address',
+        name: 'token',
+        type: 'address',
       },
       {
-        readonly internalType: 'address'
-        readonly name: 'recipient'
-        readonly type: 'address'
+        internalType: 'address',
+        name: 'recipient',
+        type: 'address',
       },
       {
-        readonly internalType: 'bool'
-        readonly name: 'fromBento'
-        readonly type: 'bool'
-      }
-    ]
-    readonly name: 'sweep'
-    readonly outputs: readonly []
-    readonly stateMutability: 'payable'
-    readonly type: 'function'
-  }
-]
+        internalType: 'bool',
+        name: 'fromBento',
+        type: 'bool',
+      },
+    ],
+    name: 'sweep',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+] as const
 
 interface SweepAction {
   token: Address

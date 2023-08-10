@@ -1,19 +1,19 @@
 import { Address, encodeFunctionData } from 'viem'
 
-declare const abiShard: [
+const abiShard = [
   {
-    readonly inputs: readonly [
+    inputs: [
       {
-        readonly internalType: 'address'
-        readonly name: 'recipient'
-        readonly type: 'address'
-      }
-    ]
-    readonly name: 'unwrapWETH'
-    readonly outputs: readonly []
-    readonly stateMutability: 'payable'
-    readonly type: 'function'
-  }
+        internalType: 'address',
+        name: 'recipient',
+        type: 'address',
+      },
+    ],
+    name: 'unwrapWETH',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
 ]
 
 interface UnwrapETHAction {

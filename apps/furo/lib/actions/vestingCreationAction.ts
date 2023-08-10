@@ -1,94 +1,94 @@
 import { Share, Type } from '@sushiswap/currency'
 import { Address, encodeFunctionData, Hex, zeroAddress } from 'viem'
 
-declare const abiShard: [
+const abiShard = [
   {
-    readonly inputs: readonly [
+    inputs: [
       {
-        readonly components: [
+        components: [
           {
-            readonly internalType: 'contract IERC20'
-            readonly name: 'token'
-            readonly type: 'address'
+            internalType: 'contract IERC20',
+            name: 'token',
+            type: 'address',
           },
           {
-            readonly internalType: 'address'
-            readonly name: 'recipient'
-            readonly type: 'address'
+            internalType: 'address',
+            name: 'recipient',
+            type: 'address',
           },
           {
-            readonly internalType: 'uint32'
-            readonly name: 'start'
-            readonly type: 'uint32'
+            internalType: 'uint32',
+            name: 'start',
+            type: 'uint32',
           },
           {
-            readonly internalType: 'uint32'
-            readonly name: 'cliffDuration'
-            readonly type: 'uint32'
+            internalType: 'uint32',
+            name: 'cliffDuration',
+            type: 'uint32',
           },
           {
-            readonly internalType: 'uint32'
-            readonly name: 'stepDuration'
-            readonly type: 'uint32'
+            internalType: 'uint32',
+            name: 'stepDuration',
+            type: 'uint32',
           },
           {
-            readonly internalType: 'uint32'
-            readonly name: 'steps'
-            readonly type: 'uint32'
+            internalType: 'uint32',
+            name: 'steps',
+            type: 'uint32',
           },
           {
-            readonly internalType: 'uint128'
-            readonly name: 'stepPercentage'
-            readonly type: 'uint128'
+            internalType: 'uint128',
+            name: 'stepPercentage',
+            type: 'uint128',
           },
           {
-            readonly internalType: 'uint128'
-            readonly name: 'amount'
-            readonly type: 'uint128'
+            internalType: 'uint128',
+            name: 'amount',
+            type: 'uint128',
           },
           {
-            readonly internalType: 'bool'
-            readonly name: 'fromBentoBox'
-            readonly type: 'bool'
-          }
-        ]
-        readonly internalType: 'struct IFuroVesting.VestParams'
-        readonly name: 'vestParams'
-        readonly type: 'tuple'
+            internalType: 'bool',
+            name: 'fromBentoBox',
+            type: 'bool',
+          },
+        ],
+        internalType: 'struct IFuroVesting.VestParams',
+        name: 'vestParams',
+        type: 'tuple',
       },
       {
-        readonly internalType: 'uint256'
-        readonly name: 'minShare'
-        readonly type: 'uint256'
-      }
-    ]
-    readonly name: 'createVesting'
-    readonly outputs: readonly [
+        internalType: 'uint256',
+        name: 'minShare',
+        type: 'uint256',
+      },
+    ],
+    name: 'createVesting',
+    outputs: [
       {
-        readonly internalType: 'uint256'
-        readonly name: 'depositedShares'
-        readonly type: 'uint256'
+        internalType: 'uint256',
+        name: 'depositedShares',
+        type: 'uint256',
       },
       {
-        readonly internalType: 'uint256'
-        readonly name: 'vestId'
-        readonly type: 'uint256'
+        internalType: 'uint256',
+        name: 'vestId',
+        type: 'uint256',
       },
       {
-        readonly internalType: 'uint128'
-        readonly name: 'stepShares'
-        readonly type: 'uint128'
+        internalType: 'uint128',
+        name: 'stepShares',
+        type: 'uint128',
       },
       {
-        readonly internalType: 'uint128'
-        readonly name: 'cliffShares'
-        readonly type: 'uint128'
-      }
-    ]
-    readonly stateMutability: 'payable'
-    readonly type: 'function'
-  }
-]
+        internalType: 'uint128',
+        name: 'cliffShares',
+        type: 'uint128',
+      },
+    ],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+] as const
 
 export interface VestingCreationAction {
   recipient: Address
@@ -117,6 +117,7 @@ export const vestingCreationAction = ({
 }: VestingCreationAction): Hex => {
   return encodeFunctionData({
     abi: abiShard,
+    functionName: 'createVesting',
     args: [
       {
         token: currency.isNative ? zeroAddress : (currency.wrapped.address as Address),

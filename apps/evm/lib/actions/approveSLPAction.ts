@@ -1,44 +1,44 @@
 import { Address, encodeFunctionData, Hex } from 'viem'
 
-declare const abiShard: [
+const abiShard = [
   {
-    readonly inputs: readonly [
+    inputs: [
       {
-        readonly internalType: 'address'
-        readonly name: 'token'
-        readonly type: 'address'
+        internalType: 'address',
+        name: 'token',
+        type: 'address',
       },
       {
-        readonly internalType: 'uint256'
-        readonly name: 'value'
-        readonly type: 'uint256'
+        internalType: 'uint256',
+        name: 'value',
+        type: 'uint256',
       },
       {
-        readonly internalType: 'uint256'
-        readonly name: 'deadline'
-        readonly type: 'uint256'
+        internalType: 'uint256',
+        name: 'deadline',
+        type: 'uint256',
       },
       {
-        readonly internalType: 'uint8'
-        readonly name: 'v'
-        readonly type: 'uint8'
+        internalType: 'uint8',
+        name: 'v',
+        type: 'uint8',
       },
       {
-        readonly internalType: 'bytes32'
-        readonly name: 'r'
-        readonly type: 'bytes32'
+        internalType: 'bytes32',
+        name: 'r',
+        type: 'bytes32',
       },
       {
-        readonly internalType: 'bytes32'
-        readonly name: 's'
-        readonly type: 'bytes32'
-      }
-    ]
-    readonly name: 'selfPermit'
-    readonly outputs: readonly []
-    readonly stateMutability: 'payable'
-    readonly type: 'function'
-  }
+        internalType: 'bytes32',
+        name: 's',
+        type: 'bytes32',
+      },
+    ],
+    name: 'selfPermit',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
 ]
 
 enum PermitType {

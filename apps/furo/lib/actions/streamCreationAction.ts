@@ -1,62 +1,62 @@
 import { Amount, Share, Type } from '@sushiswap/currency'
 import { Address, encodeFunctionData, Hex, zeroAddress } from 'viem'
 
-declare const abiShard: [
+const abiShard = [
   {
-    readonly inputs: readonly [
+    inputs: [
       {
-        readonly internalType: 'address'
-        readonly name: 'recipient'
-        readonly type: 'address'
+        internalType: 'address',
+        name: 'recipient',
+        type: 'address',
       },
       {
-        readonly internalType: 'address'
-        readonly name: 'token'
-        readonly type: 'address'
+        internalType: 'address',
+        name: 'token',
+        type: 'address',
       },
       {
-        readonly internalType: 'uint64'
-        readonly name: 'startTime'
-        readonly type: 'uint64'
+        internalType: 'uint64',
+        name: 'startTime',
+        type: 'uint64',
       },
       {
-        readonly internalType: 'uint64'
-        readonly name: 'endTime'
-        readonly type: 'uint64'
+        internalType: 'uint64',
+        name: 'endTime',
+        type: 'uint64',
       },
       {
-        readonly internalType: 'uint256'
-        readonly name: 'amount'
-        readonly type: 'uint256'
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
       },
       {
-        readonly internalType: 'bool'
-        readonly name: 'fromBentoBox'
-        readonly type: 'bool'
+        internalType: 'bool',
+        name: 'fromBentoBox',
+        type: 'bool',
       },
       {
-        readonly internalType: 'uint256'
-        readonly name: 'minShare'
-        readonly type: 'uint256'
-      }
-    ]
-    readonly name: 'createStream'
-    readonly outputs: readonly [
+        internalType: 'uint256',
+        name: 'minShare',
+        type: 'uint256',
+      },
+    ],
+    name: 'createStream',
+    outputs: [
       {
-        readonly internalType: 'uint256'
-        readonly name: 'streamId'
-        readonly type: 'uint256'
+        internalType: 'uint256',
+        name: 'streamId',
+        type: 'uint256',
       },
       {
-        readonly internalType: 'uint256'
-        readonly name: 'depositedShares'
-        readonly type: 'uint256'
-      }
-    ]
-    readonly stateMutability: 'payable'
-    readonly type: 'function'
-  }
-]
+        internalType: 'uint256',
+        name: 'depositedShares',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+] as const
 
 export interface StreamCreationAction {
   recipient: Address
@@ -79,6 +79,7 @@ export const streamCreationAction = ({
 }: StreamCreationAction): Hex => {
   return encodeFunctionData({
     abi: abiShard,
+    functionName: 'createStream',
     args: [
       recipient,
       currency.isNative ? zeroAddress : (currency.wrapped.address as Address),
