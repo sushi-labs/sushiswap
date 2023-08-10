@@ -1,4 +1,5 @@
-import { DateField, FormControl, FormField, FormItem, FormMessage, FormSection, Label, TextField } from '@sushiswap/ui'
+import { DateField, FormControl, FormField, FormItem, FormMessage, FormSection, Label } from '@sushiswap/ui'
+import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 
@@ -101,9 +102,8 @@ export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
                 Recipient<sup>*</sup>
               </Label>
               <FormControl>
-                <TextField
-                  type="text"
-                  placeholder="Recipient address"
+                <Web3Input.Ens
+                  placeholder="Enter wallet address or ENS"
                   name={name}
                   onBlur={onBlur}
                   testdata-id={`create-stream-recipient-input${index}`}
