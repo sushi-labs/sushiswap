@@ -6,6 +6,7 @@ import { Native, Token, Type } from '@sushiswap/currency'
 import { useCustomTokens, usePinnedTokens } from '@sushiswap/hooks'
 import { useBalances, useOtherTokenListsQuery, usePrices, useTokens } from '@sushiswap/react-query'
 import {
+  classNames,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -185,51 +186,57 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
         ) : null}
 
         <List.Control className="relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 min-h-[128px]">
-          {isLoading ? (
-            <div className="py-0.5 h-[64px] -mb-3">
-              <div className="flex items-center w-full h-full px-3 rounded-lg">
-                <div className="flex items-center justify-between flex-grow gap-2 rounded">
-                  <div className="flex flex-row items-center flex-grow gap-4">
-                    <SkeletonCircle radius={40} />
-                    <div className="flex flex-col items-start">
-                      <SkeletonText className="w-full w-[100px]" />
-                      <SkeletonText fontSize="sm" className="w-full w-[60px]" />
-                    </div>
+          <div
+            data-state={isLoading ? 'active' : 'inactive'}
+            className={classNames(
+              'data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden',
+              'py-0.5 h-[64px] -mb-3'
+            )}
+          >
+            <div className="flex items-center w-full h-full px-3 rounded-lg">
+              <div className="flex items-center justify-between flex-grow gap-2 rounded">
+                <div className="flex flex-row items-center flex-grow gap-4">
+                  <SkeletonCircle radius={40} />
+                  <div className="flex flex-col items-start">
+                    <SkeletonText className="w-full w-[100px]" />
+                    <SkeletonText fontSize="sm" className="w-full w-[60px]" />
                   </div>
+                </div>
 
-                  <div className="flex flex-col w-full">
-                    <SkeletonText className="w-[80px]" />
-                    <SkeletonText fontSize="sm" align="right" className="w-[40px]" />
-                  </div>
+                <div className="flex flex-col w-full">
+                  <SkeletonText className="w-[80px]" />
+                  <SkeletonText fontSize="sm" align="right" className="w-[40px]" />
                 </div>
               </div>
             </div>
-          ) : (
-            <>
-              {queryToken &&
-                !customTokenMap[`${queryToken.chainId}:${queryToken.wrapped.address}`] &&
-                !tokenMap?.[`${queryToken.wrapped.address}`] && (
-                  <TokenSelectorImportRow
-                    currencies={[queryToken]}
-                    onImport={() => queryToken && handleImport(queryToken)}
-                  />
-                )}
-              <TokenSelectorCurrencyList
-                selected={selected}
-                onSelect={_onSelect}
-                id={id}
-                pin={{ onPin: _onPin, isPinned: isTokenPinned }}
-                officialTokenIds={officialTokenIds}
-                currencies={sortedTokenList}
-                chainId={chainId}
-              />
-              {sortedTokenList?.length === 0 && !queryToken && chainId && (
-                <span className="h-10 flex items-center justify-center text-center text-sm text-gray-500 dark:text-slate-500">
-                  No results found.
-                </span>
+          </div>
+          <div
+            data-state={isLoading ? 'inactive' : 'active'}
+            className={classNames('data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden')}
+          >
+            {queryToken &&
+              !customTokenMap[`${queryToken.chainId}:${queryToken.wrapped.address}`] &&
+              !tokenMap?.[`${queryToken.wrapped.address}`] && (
+                <TokenSelectorImportRow
+                  currencies={[queryToken]}
+                  onImport={() => queryToken && handleImport(queryToken)}
+                />
               )}
-            </>
-          )}
+            <TokenSelectorCurrencyList
+              selected={selected}
+              onSelect={_onSelect}
+              id={id}
+              pin={{ onPin: _onPin, isPinned: isTokenPinned }}
+              officialTokenIds={officialTokenIds}
+              currencies={sortedTokenList}
+              chainId={chainId}
+            />
+            {sortedTokenList?.length === 0 && !queryToken && chainId && (
+              <span className="h-10 flex items-center justify-center text-center text-sm text-gray-500 dark:text-slate-500">
+                No results found.
+              </span>
+            )}
+          </div>
         </List.Control>
       </DialogContent>
     </DialogNew>
