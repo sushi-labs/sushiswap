@@ -66,7 +66,7 @@ function expectCloseValues(
 }
 
 function createPool(
-  params: { A: number; fee: number; reserve0: number; reserve1: number },
+  params: { A: number; fee: number; reserve0: number; reserve1: number; ratio: number },
   token0: RToken,
   token1: RToken
 ): CurvePool {
@@ -77,19 +77,24 @@ function createPool(
     params.fee,
     params.A,
     getBigNumber(params.reserve0),
-    getBigNumber(params.reserve1)
+    getBigNumber(params.reserve1),
+    params.ratio
   )
 }
 
 function createMultiPool(
-  params: { A: number; fee: number; reserve0: number; reserve1: number },
+  params: { A: number; fee: number; reserve0: number; reserve1: number; ratio: number },
   token0: RToken,
   token1: RToken
 ): CurveMultitokenPool {
-  return createCurvePoolsForMultipool('curve multipool', [token0, token1], params.fee, params.A, [
-    getBigNumber(params.reserve0),
-    getBigNumber(params.reserve1),
-  ])[0]
+  return createCurvePoolsForMultipool(
+    'curve multipool',
+    [token0, token1],
+    params.fee,
+    params.A,
+    [getBigNumber(params.reserve0), getBigNumber(params.reserve1)],
+    [1, params.ratio]
+  )[0]
 }
 
 function checkSwap(pool: CurvePool, multipool: CurveMultitokenPool, amountIn: number, direction: boolean): number {
@@ -125,6 +130,7 @@ function createRandomPool(rnd: () => number, token0: RToken, token1: RToken) {
     fee: Math.round(getRandomLin(rnd, 1, 100)) / 10_000,
     reserve0,
     reserve1: reserve0 * Math.pow(10, token1.decimals - token0.decimals) * getRandomExp(rnd, 1 / 1000, 1000),
+    ratio: getRandomExp(rnd, 0.5, 2),
   }
   return {
     pool: createPool(params, token0, token1),
