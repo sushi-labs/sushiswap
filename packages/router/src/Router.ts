@@ -172,10 +172,8 @@ export class Router {
     }
     let pools = Array.from(poolCodes).map((pc) => pc.pool)
 
-    // console.log('before', pools.length)
     if (poolFilter) pools = pools.filter(poolFilter)
-    // console.log('after', pools.length)
-    // console.log({pools})
+
     const route = findMultiRouteExactIn(
       TokenToRToken(fromToken),
       TokenToRToken(toToken),
@@ -184,11 +182,6 @@ export class Router {
       networks,
       gasPrice
     )
-
-    // return {
-    //   type: Router.findRouteType(poolCodesMap, route.legs.map((l) => l.poolAddress))
-    //   route
-    // }
 
     return {
       ...route,
@@ -262,9 +255,20 @@ export class Router {
     to: string,
     RPAddr: string,
     permits: PermitData[] = [],
-    maxPriceImpact = 0.005
+    maxPriceImpact = 0.005,
+    source = RouterLiquiditySource.Sender
   ): RPParams {
-    return Router.routeProcessor2Params(poolCodesMap, route, fromToken, toToken, to, RPAddr, permits, maxPriceImpact)
+    return Router.routeProcessor2Params(
+      poolCodesMap,
+      route,
+      fromToken,
+      toToken,
+      to,
+      RPAddr,
+      permits,
+      maxPriceImpact,
+      source
+    )
   }
 
   static routeProcessor4Params(

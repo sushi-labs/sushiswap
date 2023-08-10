@@ -143,6 +143,10 @@ async function main() {
     })
   })
 
+  app.get('/health', (req: Request, res: Response) => {
+    return res.status(200).send()
+  })
+
   // app.get('/get-pool-codes-for-tokens', (req: Request, res: Response) => {
   //   console.log('HTTP: GET /get-pool-codes-for-tokens', JSON.stringify(req.query))
   //   const { chainId } = querySchema.parse(req.query)

@@ -26,7 +26,7 @@ importers:
       eslint: 8.43.0
       eslint-config-next: 13.4.7
       eslint-config-prettier: 8.8.0
-      eslint-config-turbo: 1.10.6
+      eslint-config-turbo: 1.10.12
       eslint-plugin-prettier: 4.2.1
       eslint-plugin-simple-import-sort: 10.0.0
       eslint-plugin-testing-library: 5.11.0
@@ -59,7 +59,7 @@ importers:
       eslint: 8.43.0
       eslint-config-next: 13.4.7_eslint@8.43.0
       eslint-config-prettier: 8.8.0_eslint@8.43.0
-      eslint-config-turbo: 1.10.6_eslint@8.43.0
+      eslint-config-turbo: 1.10.12_eslint@8.43.0
       eslint-plugin-prettier: 4.2.1_rq4fpy2d6n64xyb3nxqqtsfbhq
       eslint-plugin-simple-import-sort: 10.0.0_eslint@8.43.0
       eslint-plugin-testing-library: 5.11.0_eslint@8.43.0
@@ -897,7 +897,7 @@ importers:
       '@types/node': '18'
       eslint-config-next: 13.4.7
       eslint-config-prettier: 8.8.0
-      eslint-config-turbo: 1.10.6
+      eslint-config-turbo: 1.10.12
       eslint-plugin-prettier: 4.2.1
       eslint-plugin-react-hooks: 4.6.0
       eslint-plugin-simple-import-sort: 10.0.0
@@ -907,7 +907,7 @@ importers:
       '@next/eslint-plugin-next': 13.4.7
       eslint-config-next: 13.4.7
       eslint-config-prettier: 8.8.0
-      eslint-config-turbo: 1.10.6
+      eslint-config-turbo: 1.10.12
       eslint-plugin-prettier: 4.2.1_oaez6fkrrb5zzrowm57o6j34fq
       eslint-plugin-react-hooks: 4.6.0
       eslint-plugin-simple-import-sort: 10.0.0
@@ -3221,7 +3221,7 @@ packages:
     dependencies:
       '@fastify/deepmerge': 1.3.0
       ajv: 8.12.0
-      ajv-formats: 2.1.1
+      ajv-formats: 2.1.1_ajv@8.12.0
       fast-deep-equal: 3.1.3
       rfdc: 1.3.0
 
@@ -19956,6 +19956,17 @@ packages:
         optional: true
     dependencies:
       ajv: 8.12.0
+    dev: false
+
+  /ajv-formats/2.1.1_ajv@8.12.0:
+    resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
+    peerDependencies:
+      ajv: ^8.0.0
+    peerDependenciesMeta:
+      ajv:
+        optional: true
+    dependencies:
+      ajv: 8.12.0
 
   /ajv/6.12.6:
     resolution: {integrity: sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==}
@@ -25163,21 +25174,21 @@ packages:
       eslint: 8.43.0
     dev: true
 
-  /eslint-config-turbo/1.10.6:
-    resolution: {integrity: sha512-iZ63etePRUdEIDY5MxdUhU2ekV9TDbVdHg0BK00QqVFgQTXUYuJ7rsQj/wUKTsw3jwhbLfaY6H5sknAgYyWZ2g==}
+  /eslint-config-turbo/1.10.12:
+    resolution: {integrity: sha512-z3jfh+D7UGYlzMWGh+Kqz++hf8LOE96q3o5R8X4HTjmxaBWlLAWG+0Ounr38h+JLR2TJno0hU9zfzoPNkR9BdA==}
     peerDependencies:
       eslint: '>6.6.0'
     dependencies:
-      eslint-plugin-turbo: 1.10.6
+      eslint-plugin-turbo: 1.10.12
     dev: false
 
-  /eslint-config-turbo/1.10.6_eslint@8.43.0:
-    resolution: {integrity: sha512-iZ63etePRUdEIDY5MxdUhU2ekV9TDbVdHg0BK00QqVFgQTXUYuJ7rsQj/wUKTsw3jwhbLfaY6H5sknAgYyWZ2g==}
+  /eslint-config-turbo/1.10.12_eslint@8.43.0:
+    resolution: {integrity: sha512-z3jfh+D7UGYlzMWGh+Kqz++hf8LOE96q3o5R8X4HTjmxaBWlLAWG+0Ounr38h+JLR2TJno0hU9zfzoPNkR9BdA==}
     peerDependencies:
       eslint: '>6.6.0'
     dependencies:
       eslint: 8.43.0
-      eslint-plugin-turbo: 1.10.6_eslint@8.43.0
+      eslint-plugin-turbo: 1.10.12_eslint@8.43.0
     dev: true
 
   /eslint-import-resolver-node/0.3.7:
@@ -25543,13 +25554,22 @@ packages:
       - typescript
     dev: true
 
-  /eslint-plugin-turbo/1.10.6:
-    resolution: {integrity: sha512-jlzfxYaK8hcz1DTk8Glxxi1r0kgdy85191a4CbFOTiiBulmKHMLJgzhsyE9Ong796MA62n91KFpc20BiKjlHwg==}
+  /eslint-plugin-turbo/1.10.12:
+    resolution: {integrity: sha512-uNbdj+ohZaYo4tFJ6dStRXu2FZigwulR1b3URPXe0Q8YaE7thuekKNP+54CHtZPH9Zey9dmDx5btAQl9mfzGOw==}
     peerDependencies:
       eslint: '>6.6.0'
     dependencies:
       dotenv: 16.0.3
     dev: false
+
+  /eslint-plugin-turbo/1.10.12_eslint@8.43.0:
+    resolution: {integrity: sha512-uNbdj+ohZaYo4tFJ6dStRXu2FZigwulR1b3URPXe0Q8YaE7thuekKNP+54CHtZPH9Zey9dmDx5btAQl9mfzGOw==}
+    peerDependencies:
+      eslint: '>6.6.0'
+    dependencies:
+      dotenv: 16.0.3
+      eslint: 8.43.0
+    dev: true
 
   /eslint-plugin-turbo/1.10.6_eslint@8.43.0:
     resolution: {integrity: sha512-jlzfxYaK8hcz1DTk8Glxxi1r0kgdy85191a4CbFOTiiBulmKHMLJgzhsyE9Ong796MA62n91KFpc20BiKjlHwg==}
@@ -26761,7 +26781,7 @@ packages:
       '@whatwg-node/fetch': 0.8.8
       '@whatwg-node/server': 0.7.7
       ajv: 8.12.0
-      ajv-formats: 2.1.1
+      ajv-formats: 2.1.1_ajv@8.12.0
       hotscript: 1.0.12
       json-schema-to-ts: 2.9.1
       openapi-types: 12.1.3
