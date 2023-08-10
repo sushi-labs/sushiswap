@@ -13,6 +13,8 @@ import {
 } from 'date-fns'
 import { ethers } from 'ethers'
 
+const BASE_URL = process.env.PLAYWRIGHT_URL || 'http://localhost:3000/furo'
+
 export async function switchNetwork(page: Page, chainId: number) {
   const networkSelector = page.locator('[testdata-id=network-selector-button]')
   await expect(networkSelector).toBeVisible()
@@ -81,7 +83,7 @@ export async function selectDate(selector: string, months: number, page: Page) {
 
 export async function createSingleStream(page: Page, args: StreamArgs) {
   const { chainId, token } = args
-  const url = (process.env.PLAYWRIGHT_URL as string).concat('/stream/create/single')
+  const url = BASE_URL.concat('/stream/create/single')
   await page.goto(url)
   await switchNetwork(page, chainId)
   // Date
@@ -126,7 +128,7 @@ export async function createSingleStream(page: Page, args: StreamArgs) {
 }
 
 export async function createMultipleStreams(page: Page, chainId: number, streamArgs: StreamArgs[]) {
-  const url = (process.env.PLAYWRIGHT_URL as string).concat('/stream/create/multiple')
+  const url = BASE_URL.concat('/stream/create/multiple')
   await page.goto(url)
   await switchNetwork(page, chainId)
   let index = 0
@@ -195,7 +197,7 @@ async function handleStreamInputs(page: Page, args: StreamArgs, index = 0) {
 }
 
 export async function createSingleVest(page: Page, args: VestingArgs) {
-  const url = (process.env.PLAYWRIGHT_URL as string).concat('/vesting/create/single')
+  const url = BASE_URL.concat('/vesting/create/single')
   await page.goto(url)
   await switchNetwork(page, args.chainId)
   await handleGeneralDetails(page, args)
@@ -222,7 +224,7 @@ export async function createSingleVest(page: Page, args: VestingArgs) {
 }
 
 export async function createMultipleVests(page: Page, chainId: number, vestingArgs: VestingArgs[]) {
-  const url = (process.env.PLAYWRIGHT_URL as string).concat('/vesting/create/multiple')
+  const url = BASE_URL.concat('/vesting/create/multiple')
   await page.goto(url)
   await switchNetwork(page, chainId)
   let index = 0

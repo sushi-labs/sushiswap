@@ -1,4 +1,4 @@
-import sharedConfig from 'sushiswap/tailwindcss-config'
+import sharedConfig from '@sushiswap/tailwindcss-config'
 
 // @ts-check
 /** @type {import('tailwindcss').Config} */

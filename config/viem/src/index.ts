@@ -41,7 +41,7 @@ import {
   //  taraxa,
   // taraxaTestnet,
   telos,
-  //  zkSync,
+  zkSync,
   // zkSyncTestnet,
 } from 'viem/chains'
 
@@ -550,6 +550,90 @@ const thundercore = {
   },
 } as const
 
+const haqq = {
+  id: ChainId.HAQQ,
+  name: 'Haqq',
+  network: 'haqq',
+  nativeCurrency: { name: 'Islam', symbol: 'ISLM', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.eth.haqq.network'],
+    },
+    public: {
+      http: ['https://rpc.eth.haqq.network'],
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xfe2D04A5018AC1B366F599A13BF4e0C760b2aE6b',
+      blockCreated: 6589598,
+    },
+  },
+} as const
+
+export const core = {
+  id: ChainId.CORE,
+  name: 'Core',
+  network: 'core',
+  nativeCurrency: { name: 'Core', symbol: 'CORE', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.coredao.org', 'https://rpc-core.icecreamswap.com'],
+    },
+    public: {
+      http: ['https://rpc.coredao.org', 'https://rpc-core.icecreamswap.com'],
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xC4b2e1718E850535A0f3e79F7fC522d966821688',
+      blockCreated: 5087121,
+    },
+  },
+} as const
+
+const linea = {
+  id: ChainId.LINEA,
+  name: 'Linea',
+  network: 'linea',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.linea.build'],
+    },
+    public: {
+      http: ['https://rpc.linea.build'],
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 42,
+    },
+  },
+} as const
+
+export const base = {
+  id: ChainId.BASE,
+  name: 'Base',
+  network: 'base',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://developer-access-mainnet.base.org'],
+    },
+    public: {
+      http: ['https://developer-access-mainnet.base.org'],
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 5022,
+    },
+  },
+} as const
+
 const alchemyId = process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
 const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
 
@@ -728,6 +812,24 @@ export const config: Record<number, PublicClientConfig> = {
       }
     ),
   },
+  [ChainId.HAQQ]: {
+    chain: haqq,
+    transport: fallback(
+      haqq.rpcUrls.default.http.map((url) => http(url)),
+      {
+        rank: true,
+      }
+    ),
+  },
+  [ChainId.CORE]: {
+    chain: core,
+    transport: fallback(
+      core.rpcUrls.default.http.map((url) => http(url)),
+      {
+        rank: true,
+      }
+    ),
+  },
   [ChainId.TELOS]: {
     chain: telos,
     transport: fallback(
@@ -750,5 +852,17 @@ export const config: Record<number, PublicClientConfig> = {
   [ChainId.HECO]: {
     chain: heco,
     transport: http(heco.rpcUrls.default.http[0]),
+  },
+  [ChainId.ZKSYNC_ERA]: {
+    chain: zkSync,
+    transport: http(zkSync.rpcUrls.default.http[0]),
+  },
+  [ChainId.LINEA]: {
+    chain: linea,
+    transport: http(linea.rpcUrls.default.http[0]),
+  },
+  [ChainId.BASE]: {
+    chain: base,
+    transport: http(base.rpcUrls.default.http[0]),
   },
 } as const

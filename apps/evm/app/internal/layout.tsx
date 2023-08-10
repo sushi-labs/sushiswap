@@ -24,7 +24,7 @@ export default function InternalLayout({
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
-              <Link href="/internal" legacyBehavior passHref>
+              <Link href="/internal">
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Dashboard</NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
@@ -42,12 +42,12 @@ export default function InternalLayout({
               </NavigationMenuContent>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <Link href="/internal/tokens" legacyBehavior passHref>
+              <Link href="/internal/tokens">
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Tokens</NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <Link href="/internal/subgraphs" legacyBehavior passHref>
+              <Link href="/internal/subgraphs">
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Subgraphs</NavigationMenuLink>
               </Link>
             </NavigationMenuItem>

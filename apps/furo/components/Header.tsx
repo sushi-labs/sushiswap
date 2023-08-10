@@ -7,5 +7,5 @@ import React, { FC } from 'react'
 import { SUPPORTED_CHAINS } from '../config'
 
 export const Header: FC = () => {
-  return <Navigation rightElement={<WagmiHeaderComponents chainIds={SUPPORTED_CHAINS} />} />
+  return <Navigation legacyBehavior={true} rightElement={<WagmiHeaderComponents chainIds={SUPPORTED_CHAINS} />} />
 }

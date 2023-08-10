@@ -16,7 +16,6 @@ import {
 } from '@sushiswap/ui'
 import { DOCS_URL } from 'common/helpers'
 import { getDifficulties, getProducts } from 'lib/api'
-import Link from 'next/link'
 import React, { FC, useMemo } from 'react'
 import useSWR from 'swr'
 
@@ -85,7 +84,12 @@ export const Header: FC = () => {
               <NavigationMenuContent>
                 <ul className="w-[400px] gap-3 p-4">
                   {EXPLORE_NAVIGATION_LINKS.map((component) => (
-                    <NavigationListItem key={component.title} title={component.title} href={component.href}>
+                    <NavigationListItem
+                      legacyBehavior={true}
+                      key={component.title}
+                      title={component.title}
+                      href={component.href}
+                    >
                       {component.description}
                     </NavigationListItem>
                   ))}
@@ -99,9 +103,9 @@ export const Header: FC = () => {
               if (href && !links) {
                 return (
                   <NavigationMenuItem key={href}>
-                    <Link href={href} legacyBehavior passHref>
-                      <NavigationMenuLink className={navigationMenuTriggerStyle()}>{title}</NavigationMenuLink>
-                    </Link>
+                    <NavigationMenuLink href={href} className={navigationMenuTriggerStyle()}>
+                      {title}
+                    </NavigationMenuLink>
                   </NavigationMenuItem>
                 )
               }
@@ -112,7 +116,12 @@ export const Header: FC = () => {
                   <NavigationMenuContent>
                     <ul className="w-[400px] gap-3 p-4">
                       {links?.map(({ name, href }) => (
-                        <NavigationListItem key={`${title}-${name}`} title={name.split('-')?.[0]} href={href}>
+                        <NavigationListItem
+                          legacyBehavior={true}
+                          key={`${title}-${name}`}
+                          title={name.split('-')?.[0]}
+                          href={href}
+                        >
                           {name.split('-')?.[1]}
                         </NavigationListItem>
                       ))}

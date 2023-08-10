@@ -567,6 +567,23 @@ export const WNATIVE = {
     name: 'Wrapped Thunder Token',
   }),
   [ChainId.POLYGON_ZKEVM]: WETH9[ChainId.POLYGON_ZKEVM],
+  [ChainId.HAQQ]: new Token({
+    chainId: ChainId.HAQQ,
+    address: WNATIVE_ADDRESS[ChainId.HAQQ],
+    decimals: 18,
+    symbol: 'WISLM',
+    name: 'Wrapped Islamic Coin',
+  }),
+  [ChainId.CORE]: new Token({
+    chainId: ChainId.CORE,
+    address: WNATIVE_ADDRESS[ChainId.CORE],
+    decimals: 18,
+    symbol: 'WCORE',
+    name: 'Wrapped Core',
+  }),
+  [ChainId.ZKSYNC_ERA]: WETH9[ChainId.ZKSYNC_ERA],
+  [ChainId.LINEA]: WETH9[ChainId.LINEA],
+  [ChainId.BASE]: WETH9[ChainId.BASE],
 } as const
 
 export const SUSHI = addressMapToTokenMap(

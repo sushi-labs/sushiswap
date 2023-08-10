@@ -248,12 +248,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDT[ChainId.BOBA_BNB],
     USDC[ChainId.BOBA_BNB],
   ],
-  [ChainId.BTTC]: [
-    WNATIVE[ChainId.BTTC],
-    WETH9[ChainId.BTTC], 
-    USDC[ChainId.BTTC], 
-    USDT[ChainId.BTTC]
-  ],
+  [ChainId.BTTC]: [WNATIVE[ChainId.BTTC], WETH9[ChainId.BTTC], USDC[ChainId.BTTC], USDT[ChainId.BTTC]],
   [ChainId.POLYGON_ZKEVM]: [
     WNATIVE[ChainId.POLYGON_ZKEVM],
     MATIC[ChainId.POLYGON_ZKEVM],
@@ -269,4 +264,16 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDC[ChainId.THUNDERCORE],
     USDT[ChainId.THUNDERCORE],
   ],
+  [ChainId.HAQQ]: [
+    WNATIVE[ChainId.HAQQ],
+    WETH9[ChainId.HAQQ],
+    WBTC[ChainId.HAQQ],
+    USDC[ChainId.HAQQ],
+    USDT[ChainId.HAQQ],
+    DAI[ChainId.HAQQ],
+  ],
+  [ChainId.CORE]: [WNATIVE[ChainId.CORE], WETH9[ChainId.CORE], USDC[ChainId.CORE], USDT[ChainId.CORE]],
+  [ChainId.ZKSYNC_ERA]: [WNATIVE[ChainId.ZKSYNC_ERA], WBTC[ChainId.ZKSYNC_ERA], USDC[ChainId.ZKSYNC_ERA]],
+  [ChainId.LINEA]: [WNATIVE[ChainId.LINEA], USDC[ChainId.LINEA], DAI[ChainId.LINEA]],
+  [ChainId.BASE]: [WNATIVE[ChainId.BASE], USDC[ChainId.BASE], DAI[ChainId.BASE]],
 }

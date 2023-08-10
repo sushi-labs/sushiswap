@@ -7,43 +7,44 @@ export const ANGLE_ENABLED_NETWORKS = [ChainId.ETHEREUM, ChainId.POLYGON, ChainI
 
 export type AngleEnabledChainId = (typeof ANGLE_ENABLED_NETWORKS)[number]
 
+export const isAngleEnabledChainId = (chainId: number): chainId is AngleEnabledChainId =>
+  chainId in ANGLE_ENABLED_NETWORKS
+
 export const SWAP_API_ENABLED_NETWORKS = []
 
 export type SwapApiEnabledChainId = (typeof SWAP_API_ENABLED_NETWORKS)[number]
 
+export const DISABLED_CHAIN_IDS = [ChainId.HAQQ, ChainId.LINEA]
+
+const PREFERRED_CHAINID_ORDER: ChainId[] = [
+  ChainId.ETHEREUM,
+  ChainId.ARBITRUM,
+  ChainId.BASE,
+  ChainId.POLYGON,
+  ChainId.OPTIMISM,
+  ChainId.BSC,
+  ChainId.THUNDERCORE,
+  ChainId.GNOSIS,
+  ChainId.AVALANCHE,
+  ChainId.FANTOM,
+  ChainId.ARBITRUM_NOVA,
+  ChainId.HARMONY,
+]
+
+// const INCLUDED_PREFERRED_CHAIN_IDS = PREFERRED_CHAINID_ORDER.filter((el) => networks.includes(el as T))
+// return Array.from(new Set([...INCLUDED_PREFERRED_CHAIN_IDS, ...networks]))
+
+export const CHAIN_IDS = [...TridentChainIds, ...SushiSwapV2ChainIds, ...SushiSwapV3ChainIds]
+
 export const SUPPORTED_CHAIN_IDS = Array.from(
-  new Set([...TridentChainIds, ...SushiSwapV2ChainIds, ...SushiSwapV3ChainIds])
+  new Set([
+    ...PREFERRED_CHAINID_ORDER.filter((el) => CHAIN_IDS.includes(el as (typeof CHAIN_IDS)[number])),
+    ...CHAIN_IDS,
+  ])
+).filter(
+  (c) =>
+    !TESTNET_CHAIN_IDS.includes(c as (typeof TESTNET_CHAIN_IDS)[number]) &&
+    !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number])
 )
-  .filter((c) => !TESTNET_CHAIN_IDS.includes(c as (typeof TESTNET_CHAIN_IDS)[number]))
-  .sort((a: number, b: number) => {
-    // Sort Thundercore
-    if (
-      (
-        [
-          ChainId.ETHEREUM,
-          ChainId.ARBITRUM,
-          ChainId.POLYGON,
-          ChainId.OPTIMISM,
-          ChainId.AVALANCHE,
-          ChainId.FANTOM,
-          ChainId.BSC,
-          ChainId.GNOSIS,
-        ] as number[]
-      ).includes(b) &&
-      a === ChainId.THUNDERCORE
-    )
-      return 1
-    if (a === ChainId.THUNDERCORE) return -1
-
-    // Sort optimism
-    if (
-      ([ChainId.ETHEREUM, ChainId.ARBITRUM, ChainId.POLYGON, ChainId.OPTIMISM] as number[]).includes(b) &&
-      a === ChainId.OPTIMISM
-    )
-      return 1
-    if (a === ChainId.OPTIMISM) return -1
-
-    return 1
-  })
 
 export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number]

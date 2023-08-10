@@ -140,7 +140,7 @@ export default [
     ]
   },
   {
-    "name": "Optimism",
+    "name": "OP Mainnet",
     "chain": "ETH",
     "rpc": [
       "https://mainnet.optimism.io/"
@@ -188,46 +188,50 @@ export default [
     ]
   },
   {
-    "name": "Kovan",
-    "title": "Ethereum Testnet Kovan",
-    "chain": "ETH",
+    "name": "LUKSO Mainnet",
+    "chain": "LUKSO",
+    "icon": "lukso",
     "rpc": [
-      "https://kovan.poa.network",
-      "http://kovan.poa.network:8545",
-      "https://kovan.infura.io/v3/${INFURA_API_KEY}",
-      "wss://kovan.infura.io/ws/v3/${INFURA_API_KEY}",
-      "ws://kovan.poa.network:8546"
+      "https://rpc.mainnet.lukso.network",
+      "wss://ws-rpc.mainnet.lukso.network"
     ],
-    "faucets": [
-      "http://fauceth.komputing.org?chain=42&address=${ADDRESS}",
-      "https://faucet.kovan.network",
-      "https://gitter.im/kovan-testnet/faucet"
-    ],
+    "faucets": [],
     "nativeCurrency": {
-      "name": "Kovan Ether",
-      "symbol": "ETH",
+      "name": "LUKSO",
+      "symbol": "LYX",
       "decimals": 18
     },
     "explorers": [
       {
-        "name": "etherscan",
-        "url": "https://kovan.etherscan.io",
+        "name": "Blockscout",
+        "url": "https://explorer.execution.mainnet.lukso.network",
         "standard": "EIP3091"
       }
     ],
-    "infoURL": "https://kovan-testnet.github.io/website",
-    "shortName": "kov",
+    "infoURL": "https://lukso.network",
+    "shortName": "lukso",
     "chainId": 42,
-    "networkId": 42
+    "networkId": 42,
+    "features": [
+      {
+        "name": "EIP155"
+      },
+      {
+        "name": "EIP1559"
+      }
+    ],
+    "redFlags": [
+      "reusedChainId"
+    ]
   },
   {
-    "name": "Binance Smart Chain Mainnet",
+    "name": "BNB Smart Chain Mainnet",
     "chain": "BSC",
     "rpc": [
-      "https://bsc-dataseed1.binance.org",
-      "https://bsc-dataseed2.binance.org",
-      "https://bsc-dataseed3.binance.org",
-      "https://bsc-dataseed4.binance.org",
+      "https://bsc-dataseed1.bnbchain.org",
+      "https://bsc-dataseed2.bnbchain.org",
+      "https://bsc-dataseed3.bnbchain.org",
+      "https://bsc-dataseed4.bnbchain.org",
       "https://bsc-dataseed1.defibit.io",
       "https://bsc-dataseed2.defibit.io",
       "https://bsc-dataseed3.defibit.io",
@@ -243,11 +247,11 @@ export default [
       "https://free-online-app.com/faucet-for-eth-evm-chains/"
     ],
     "nativeCurrency": {
-      "name": "Binance Chain Native Token",
+      "name": "BNB Chain Native Token",
       "symbol": "BNB",
       "decimals": 18
     },
-    "infoURL": "https://www.binance.org",
+    "infoURL": "https://www.bnbchain.org/en",
     "shortName": "bnb",
     "chainId": 56,
     "networkId": 56,
@@ -314,26 +318,26 @@ export default [
     ]
   },
   {
-    "name": "Binance Smart Chain Testnet",
+    "name": "BNB Smart Chain Testnet",
     "chain": "BSC",
     "rpc": [
-      "https://data-seed-prebsc-1-s1.binance.org:8545",
-      "https://data-seed-prebsc-2-s1.binance.org:8545",
-      "https://data-seed-prebsc-1-s2.binance.org:8545",
-      "https://data-seed-prebsc-2-s2.binance.org:8545",
-      "https://data-seed-prebsc-1-s3.binance.org:8545",
-      "https://data-seed-prebsc-2-s3.binance.org:8545",
+      "https://data-seed-prebsc-1-s1.bnbchain.org:8545",
+      "https://data-seed-prebsc-2-s1.bnbchain.org:8545",
+      "https://data-seed-prebsc-1-s2.bnbchain.org:8545",
+      "https://data-seed-prebsc-2-s2.bnbchain.org:8545",
+      "https://data-seed-prebsc-1-s3.bnbchain.org:8545",
+      "https://data-seed-prebsc-2-s3.bnbchain.org:8545",
       "https://bsc-testnet.publicnode.com"
     ],
     "faucets": [
-      "https://testnet.binance.org/faucet-smart"
+      "https://testnet.bnbchain.org/faucet-smart"
     ],
     "nativeCurrency": {
-      "name": "Binance Chain Native Token",
+      "name": "BNB Chain Native Token",
       "symbol": "tBNB",
       "decimals": 18
     },
-    "infoURL": "https://testnet.binance.org/",
+    "infoURL": "https://www.bnbchain.org/en",
     "shortName": "bnbt",
     "chainId": 97,
     "networkId": 97,
@@ -351,20 +355,23 @@ export default [
     "icon": "gnosis",
     "rpc": [
       "https://rpc.gnosischain.com",
+      "https://rpc.gnosis.gateway.fm",
       "https://rpc.ankr.com/gnosis",
       "https://gnosischain-rpc.gateway.pokt.network",
       "https://gnosis-mainnet.public.blastapi.io",
+      "https://gnosis.api.onfinality.io/public",
+      "https://gnosis.blockpi.network/v1/rpc/public",
+      "https://web3endpoints.com/gnosischain-mainnet",
       "wss://rpc.gnosischain.com/wss"
     ],
     "faucets": [
       "https://gnosisfaucet.com",
-      "https://faucet.gimlu.com/gnosis",
       "https://stakely.io/faucet/gnosis-chain-xdai",
       "https://faucet.prussia.dev/xdai"
     ],
     "nativeCurrency": {
       "name": "xDAI",
-      "symbol": "xDAI",
+      "symbol": "XDAI",
       "decimals": 18
     },
     "infoURL": "https://docs.gnosischain.com",
@@ -569,7 +576,12 @@ export default [
     "name": "Boba Network",
     "chain": "ETH",
     "rpc": [
-      "https://mainnet.boba.network/"
+      "https://mainnet.boba.network",
+      "https://replica.boba.network",
+      "http://boba-ethereum.gateway.tenderly.co",
+      "http://gateway.tenderly.co/public/boba-ethereum",
+      "wss://boba-ethereum.gateway.tenderly.co/",
+      "wss://gateway.tenderly.co/public/boba-ethereum"
     ],
     "faucets": [],
     "nativeCurrency": {
@@ -599,6 +611,41 @@ export default [
       "bridges": [
         {
           "url": "https://gateway.boba.network"
+        }
+      ]
+    }
+  },
+  {
+    "name": "zkSync Era Mainnet",
+    "chain": "ETH",
+    "rpc": [
+      "https://mainnet.era.zksync.io"
+    ],
+    "faucets": [],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "infoURL": "https://zksync.io/",
+    "shortName": "zksync",
+    "chainId": 324,
+    "networkId": 324,
+    "icon": "zksync-era",
+    "explorers": [
+      {
+        "name": "zkSync Era Block Explorer",
+        "url": "https://explorer.zksync.io",
+        "icon": "zksync-era",
+        "standard": "EIP3091"
+      }
+    ],
+    "parent": {
+      "type": "L2",
+      "chain": "eip155-1",
+      "bridges": [
+        {
+          "url": "https://bridge.zksync.io/"
         }
       ]
     }
@@ -671,6 +718,33 @@ export default [
         }
       ]
     }
+  },
+  {
+    "name": "Core Blockchain Mainnet",
+    "chain": "Core",
+    "icon": "core",
+    "rpc": [
+      "https://rpc.coredao.org/",
+      "https://rpc-core.icecreamswap.com"
+    ],
+    "faucets": [],
+    "nativeCurrency": {
+      "name": "Core Blockchain Native Token",
+      "symbol": "CORE",
+      "decimals": 18
+    },
+    "infoURL": "https://www.coredao.org",
+    "shortName": "core",
+    "chainId": 1116,
+    "networkId": 1116,
+    "explorers": [
+      {
+        "name": "Core Scan",
+        "url": "https://scan.coredao.org",
+        "icon": "core",
+        "standard": "EIP3091"
+      }
+    ]
   },
   {
     "name": "Moonbeam",
@@ -776,6 +850,61 @@ export default [
         "name": "ftmscan",
         "url": "https://testnet.ftmscan.com",
         "icon": "ftmscan",
+        "standard": "EIP3091"
+      }
+    ]
+  },
+  {
+    "name": "Base",
+    "chain": "ETH",
+    "rpc": [
+      "https://developer-access-mainnet.base.org/"
+    ],
+    "faucets": [],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "infoURL": "https://base.org",
+    "shortName": "base",
+    "chainId": 8453,
+    "networkId": 8453,
+    "icon": "base",
+    "explorers": [
+      {
+        "name": "basescan",
+        "url": "https://basescan.org",
+        "standard": "none"
+      },
+      {
+        "name": "basescout",
+        "url": "https://base.blockscout.com",
+        "standard": "none"
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "name": "Haqq Network",
+    "chain": "Haqq",
+    "rpc": [
+      "https://rpc.eth.haqq.network"
+    ],
+    "faucets": [],
+    "nativeCurrency": {
+      "name": "Islamic Coin",
+      "symbol": "ISLM",
+      "decimals": 18
+    },
+    "infoURL": "https://islamiccoin.net",
+    "shortName": "ISLM",
+    "chainId": 11235,
+    "networkId": 11235,
+    "explorers": [
+      {
+        "name": "Mainnet HAQQ Explorer",
+        "url": "https://explorer.haqq.network",
         "standard": "EIP3091"
       }
     ]
@@ -980,9 +1109,11 @@ export default [
     "chain": "Boba BNB Mainnet",
     "rpc": [
       "https://bnb.boba.network",
-      "wss://wss.bnb.boba.network",
+      "http://boba-bnb.gateway.tenderly.co/",
+      "http://gateway.tenderly.co/public/boba-bnb",
       "https://replica.bnb.boba.network",
-      "wss://replica-wss.bnb.boba.network"
+      "wss://boba-bnb.gateway.tenderly.co/",
+      "wss://gateway.tenderly.co/public/boba-bnb"
     ],
     "faucets": [],
     "nativeCurrency": {
@@ -1000,7 +1131,62 @@ export default [
         "url": "https://blockexplorer.bnb.boba.network",
         "standard": "none"
       }
-    ]
+    ],
+    "parent": {
+      "type": "L2",
+      "chain": "eip155-5",
+      "bridges": [
+        {
+          "url": "https://gateway.boba.network"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Linea",
+    "title": "Linea Mainnet",
+    "chain": "ETH",
+    "rpc": [
+      "https://rpc.linea.build",
+      "wss://rpc.linea.build",
+      "https://linea-mainnet.infura.io/v3/${INFURA_API_KEY}",
+      "wss://linea-mainnet.infura.io/ws/v3/${INFURA_API_KEY}"
+    ],
+    "faucets": [],
+    "nativeCurrency": {
+      "name": "Linea Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "infoURL": "https://linea.build",
+    "shortName": "linea",
+    "chainId": 59144,
+    "networkId": 59144,
+    "icon": "linea",
+    "parent": {
+      "type": "L2",
+      "chain": "eip155-1",
+      "bridges": [
+        {
+          "url": "https://bridge.linea.build"
+        }
+      ]
+    },
+    "explorers": [
+      {
+        "name": "Etherscan",
+        "url": "https://lineascan.build",
+        "standard": "EIP3091",
+        "icon": "linea"
+      },
+      {
+        "name": "Blockscout",
+        "url": "https://explorer.linea.build",
+        "standard": "EIP3091",
+        "icon": "linea"
+      }
+    ],
+    "status": "active"
   },
   {
     "name": "Mumbai",

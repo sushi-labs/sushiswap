@@ -12,6 +12,7 @@ export type NetworkSelectorOnSelectCallback<T extends number = ChainId> = (chain
 const PREFERRED_CHAINID_ORDER: ChainId[] = [
   ChainId.ETHEREUM,
   ChainId.ARBITRUM,
+  ChainId.BASE,
   ChainId.POLYGON,
   ChainId.OPTIMISM,
   ChainId.BSC,
@@ -38,7 +39,7 @@ const NetworkSelector = <T extends number>({
   const [open, setOpen] = useState(false)
 
   const _networks = useMemo(() => {
-    const INCLUDED_PREFERRED_CHAIN_IDS = PREFERRED_CHAINID_ORDER.filter((el) => networks.includes(el))
+    const INCLUDED_PREFERRED_CHAIN_IDS = PREFERRED_CHAINID_ORDER.filter((el) => networks.includes(el as T))
     return Array.from(new Set([...INCLUDED_PREFERRED_CHAIN_IDS, ...networks]))
   }, [networks])
 
@@ -47,7 +48,7 @@ const NetworkSelector = <T extends number>({
       <PopoverPrimitive.Trigger asChild>{children}</PopoverPrimitive.Trigger>
       <PopoverContent className="!w-60 !p-0 !overflow-x-hidden !overflow-y-scroll scroll">
         <Command>
-          <CommandInput placeholder="Search network..." />
+          <CommandInput placeholder="Search network" />
           <CommandEmpty>No network found.</CommandEmpty>
           <CommandGroup>
             {_networks.map((el) => (

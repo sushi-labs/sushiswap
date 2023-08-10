@@ -1,4 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority'
+import Link from 'next/link'
 import * as React from 'react'
 
 import { classNames, navigationMenuTriggerStyle, SushiIcon } from '../index'
@@ -73,17 +74,20 @@ const TOOLS_NAVIGATION_LINKS: { title: string; href: string; description: string
   },
 ]
 
-const navigationContainerVariants = cva('px-4 sticky flex items-center flex-grow gap-4 top-0 z-[1070] h-[56px]', {
-  variants: {
-    variant: {
-      default: 'bg-gray-100 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800',
-      transparent: '',
+const navigationContainerVariants = cva(
+  'px-4 sticky flex items-center flex-grow gap-4 top-0 z-50 min-h-[56px] max-h-[56px] h-[56px]',
+  {
+    variants: {
+      variant: {
+        default: 'bg-gray-100 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800',
+        transparent: '',
+      },
     },
-  },
-  defaultVariants: {
-    variant: 'default',
-  },
-})
+    defaultVariants: {
+      variant: 'default',
+    },
+  }
+)
 
 interface NavContainerProps extends VariantProps<typeof navigationContainerVariants> {
   children: React.ReactNode
@@ -92,17 +96,18 @@ interface NavContainerProps extends VariantProps<typeof navigationContainerVaria
 const NavigationContainer: React.FC<NavContainerProps> = ({ children, variant }) => {
   return (
     <div className={navigationContainerVariants({ variant })}>
-      <SushiIcon width={24} height={24} className="hidden sm:block" />
-      <div className="flex justify-between gap-4 items-center flex-grow">{children}</div>
+      <SushiIcon width={24} height={24} />
+      <div className="flex items-center justify-between flex-grow gap-4">{children}</div>
     </div>
   )
 }
 
 interface NavProps extends VariantProps<typeof navigationContainerVariants> {
   rightElement?: React.ReactNode
+  legacyBehavior?: boolean
 }
 
-const Navigation: React.FC<NavProps> = ({ rightElement, variant }) => {
+const Navigation: React.FC<NavProps> = ({ rightElement, variant, legacyBehavior = false }) => {
   return (
     <NavigationContainer variant={variant}>
       <NavigationMenu>
@@ -110,7 +115,7 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant }) => {
           <NavigationMenuItem className="block md:hidden">
             <NavigationMenuTrigger>Explore</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="w-[400px] gap-3 p-4">
+              <ul className="min-w-[240px] gap-3 p-4">
                 {EXPLORE_NAVIGATION_LINKS.map((component) => (
                   <NavigationListItem key={component.title} title={component.title} href={component.href}>
                     {component.description}
@@ -123,26 +128,49 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant }) => {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
-            <a href="/swap">
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>Swap</NavigationMenuLink>
-            </a>
+            {legacyBehavior ? (
+              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <a href="/swap">Swap</a>
+              </NavigationMenuLink>
+            ) : (
+              <Link href="/swap">
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Swap</NavigationMenuLink>
+              </Link>
+            )}
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
-            <a href="/pools">
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pools</NavigationMenuLink>
-            </a>
+            {legacyBehavior ? (
+              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <a href="/pools">Pools</a>
+              </NavigationMenuLink>
+            ) : (
+              <Link href="/pools">
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pools</NavigationMenuLink>
+              </Link>
+            )}
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
-            <a href="/furo">
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pay</NavigationMenuLink>
-            </a>
+            {legacyBehavior ? (
+              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <a href="/furo">Pay</a>
+              </NavigationMenuLink>
+            ) : (
+              <Link href="/furo">
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pay</NavigationMenuLink>
+              </Link>
+            )}
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
             <NavigationMenuTrigger>Tools</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="w-[400px] gap-3 p-4">
                 {TOOLS_NAVIGATION_LINKS.map((component) => (
-                  <NavigationListItem key={component.title} title={component.title} href={component.href}>
+                  <NavigationListItem
+                    key={component.title}
+                    title={component.title}
+                    href={component.href}
+                    legacyBehavior={legacyBehavior}
+                  >
                     {component.description}
                   </NavigationListItem>
                 ))}
@@ -156,27 +184,44 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant }) => {
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
-      <div className="flex gap-2 items-center">{rightElement}</div>
+      <div className="flex items-center gap-2">{rightElement}</div>
     </NavigationContainer>
   )
 }
 
-const NavigationListItem = React.forwardRef<React.ElementRef<'a'>, React.ComponentPropsWithoutRef<'a'>>(
-  ({ className, title, children, ...props }, ref) => {
+interface NavigationListItemProps extends React.ComponentPropsWithoutRef<'a'> {
+  legacyBehavior?: boolean
+}
+
+const NavigationListItem = React.forwardRef<React.ElementRef<'a'>, NavigationListItemProps>(
+  ({ className, title, children, legacyBehavior = false, href, ...props }, ref) => {
     return (
       <li>
         <NavigationMenuLink asChild>
-          <a
-            ref={ref}
-            className={classNames(
-              'cursor-pointer block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
-              className
-            )}
-            {...props}
-          >
-            <div className="text-sm font-medium leading-none">{title}</div>
-            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{children}</p>
-          </a>
+          {legacyBehavior || !href ? (
+            <a
+              ref={ref}
+              className={classNames(
+                'cursor-pointer block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+                className
+              )}
+              {...props}
+            >
+              <div className="text-sm font-medium leading-none">{title}</div>
+              <p className="text-sm leading-snug line-clamp-2 text-muted-foreground">{children}</p>
+            </a>
+          ) : (
+            <Link
+              href={href}
+              className={classNames(
+                'cursor-pointer block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+                className
+              )}
+            >
+              <div className="text-sm font-medium leading-none">{title}</div>
+              <p className="text-sm leading-snug line-clamp-2 text-muted-foreground">{children}</p>
+            </Link>
+          )}
         </NavigationMenuLink>
       </li>
     )
