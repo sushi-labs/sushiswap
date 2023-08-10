@@ -76,9 +76,10 @@ export const useCrossChainTradeQuery = (
 
   const contract = useSushiXSwapContract(network0)
 
+  const { data: feeData } = useFeeData({ chainId: network0, enabled: enabled })
+
   return useQuery({
     queryKey: [
-      'NoPersist',
       'crossChainTrade',
       {
         tradeId,
@@ -91,6 +92,7 @@ export const useCrossChainTradeQuery = (
         recipient,
         srcPools,
         dstPools,
+        bentoboxSignature,
       },
     ],
     queryFn: async () => {
@@ -215,7 +217,8 @@ export const useCrossChainTradeQuery = (
         !dstOutputCurrencyRebase ||
         !contract ||
         !token0 ||
-        !token1
+        !token1 ||
+        !feeData?.gasPrice
       ) {
         return {
           priceImpact: [priceImpact.numerator.toString(), priceImpact.denominator.toString()],
@@ -283,9 +286,21 @@ export const useCrossChainTradeQuery = (
       if (!sushiXSwap.srcCooker.actions.includes(Action.STARGATE_TELEPORT))
         throw new Error('Stargate teleport action not included')
 
-      // need async to get fee for final value... this should be moved to exec?
-      const [fee] = await sushiXSwap.getFee(dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined)
+      const gasBuffer = 1_000_000
+      const [fee] = await sushiXSwap.getFee(dstTrade ? dstTrade.route.gasSpent + gasBuffer : undefined)
+
       const value = sushiXSwap.srcCooker.values.reduce((a, b) => a + b, fee)
+
+      console.log({
+        srcTradeGasSpent: srcTrade?.route?.gasSpent,
+        quoteLayerZeroFee: fee.toString(),
+        dstTradeGasSpent: dstTrade?.route?.gasSpent,
+        // gasEstimate: gasEstimate.toString(),
+        value: value.toString(),
+      })
+
+      const srcTypicalGasCost = 600_000
+      const srcTradeGasSpent = srcTrade?.route?.gasSpent || 0
 
       // Needs to be parsed to string because react-query entities are serialized to cache
       return {
@@ -293,7 +308,11 @@ export const useCrossChainTradeQuery = (
         amountIn: amount.quotient.toString(),
         amountOut: dstAmountOut?.quotient.toString(),
         minAmountOut: dstMinimumAmountOut?.quotient.toString(),
-        gasSpent: fee.toString(),
+        // gasSpent: gasSpent.toString(),
+        gasSpent: Amount.fromRawAmount(
+          Native.onChain(network0),
+          feeData.gasPrice * BigInt(srcTypicalGasCost + srcTradeGasSpent) + fee
+        ).toSignificant(4),
         writeArgs: [sushiXSwap.srcCooker.actions, sushiXSwap.srcCooker.values, sushiXSwap.srcCooker.datas],
         route: {
           status: '',
@@ -328,7 +347,7 @@ export const useCrossChainTradeQuery = (
 export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
   const { token0, token1 } = variables
   const { data: price } = usePrice({ chainId: variables.network0, address: WNATIVE_ADDRESS[variables.network0] })
-
+  const { data: feeData } = useFeeData({ chainId: variables.network0, enabled: variables.enabled })
   const select: UseCrossChainTradeQuerySelect = useCallback(
     (data) => {
       const amountIn = data.amountIn && token0 ? Amount.fromRawAmount(token0, data.amountIn) : undefined
@@ -339,18 +358,23 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
         ? new Percent(BigInt(data.priceImpact[0]), BigInt(data.priceImpact[1]))
         : undefined
 
-      if (data && amountIn && amountOut && data.priceImpact && data.minAmountOut) {
+      if (data?.gasSpent && feeData?.gasPrice && amountIn && amountOut && data.priceImpact && data.minAmountOut) {
         return {
           ...data,
           route: {
             status: amountIn?.greaterThan(ZERO) && !amountOut ? 'NoWay' : '',
           },
-          gasSpent:
-            data.gasSpent && price
-              ? Amount.fromRawAmount(Native.onChain(variables.network0), data.gasSpent)
-                  .multiply(price.asFraction)
-                  .toSignificant(4)
-              : '0',
+          gasSpent: data.gasSpent,
+          // gasSpent: Amount.fromRawAmount(
+          //   Native.onChain(variables?.network0),
+          //   JSBI.multiply(JSBI.BigInt(feeData.gasPrice), JSBI.BigInt(data.gasSpent))
+          // ).toSignificant(4),
+          // gasSpentUsd:
+          //   data.gasSpent && price
+          //     ? Amount.fromRawAmount(Native.onChain(variables.network0), data.gasSpent)
+          //         .multiply(price.asFraction)
+          //         .toSignificant(4)
+          //     : undefined,
           swapPrice,
           priceImpact,
           amountIn,
@@ -366,6 +390,7 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
         amountOut,
         minAmountOut,
         gasSpent: undefined,
+        gasSpentUsd: undefined,
         writeArgs: undefined,
         route: {
           status: amountIn?.greaterThan(ZERO) && !amountOut ? 'NoWay' : '',
@@ -374,7 +399,7 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
         overrides: undefined,
       }
     },
-    [price, token0, token1, variables.network0]
+    [feeData?.gasPrice, price, token0, token1, variables.network0]
   )
 
   return useCrossChainTradeQuery(variables, select)

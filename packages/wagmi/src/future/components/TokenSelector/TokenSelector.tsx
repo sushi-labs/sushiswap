@@ -135,7 +135,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   return (
     <DialogNew open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="!flex flex-col justify-start sm:min-h-[75vh]">
+      <DialogContent className="!flex flex-col justify-start min-h-[85vh]">
         <DialogHeader>
           <DialogTitle>Select a token</DialogTitle>
           <DialogDescription>

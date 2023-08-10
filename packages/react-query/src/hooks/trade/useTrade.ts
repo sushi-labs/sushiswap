@@ -75,6 +75,8 @@ export const useTrade = (variables: UseTradeParams) => {
           value = (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n
         }
 
+        const gasSpent = Amount.fromRawAmount(Native.onChain(chainId), data.route.gasSpent * 1e9)
+
         return {
           swapPrice: amountOut.greaterThan(ZERO)
             ? new Price({
@@ -89,11 +91,8 @@ export const useTrade = (variables: UseTradeParams) => {
             toToken,
             calculateSlippageAmount(amountOut, new Percent(Math.floor(+slippagePercentage * 100), 10_000))[0]
           ),
-          gasSpent: price
-            ? Amount.fromRawAmount(Native.onChain(chainId), data.route.gasSpent * 1e9)
-                .multiply(price.asFraction)
-                .toSignificant(4)
-            : undefined,
+          gasSpent: gasSpent.toSignificant(6),
+          gasSpentUsd: price ? gasSpent.multiply(price.asFraction).toSignificant(4) : undefined,
           route: data.route,
           functionName: isOffset ? 'transferValueAndprocessRoute' : 'processRoute',
           writeArgs,
@@ -108,6 +107,7 @@ export const useTrade = (variables: UseTradeParams) => {
         amountOut: undefined,
         minAmountOut: undefined,
         gasSpent: undefined,
+        gasSpentUsd: undefined,
         writeArgs: undefined,
         route: undefined,
         functionName: 'processRoute',
