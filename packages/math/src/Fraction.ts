@@ -126,6 +126,13 @@ class Fraction {
     return new Big(this.numerator.toString()).div(this.denominator.toString()).toFormat(decimalPlaces, format)
   }
 
+  public toJSON() {
+    return {
+      n: this.numerator.toString(),
+      d: this.denominator.toString(),
+    }
+  }
+
   /**
    * Helper method for converting any super class back to a fraction
    */

@@ -145,7 +145,7 @@ export const useBalances: UseBalances = ({
         }
       }
 
-      const value = data[i].result as bigint
+      const value = data[i]?.result as bigint | undefined
       const amount = value ?? undefined
       if (!result[validatedTokens[i].address]) {
         result[validatedTokens[i].address] = {
