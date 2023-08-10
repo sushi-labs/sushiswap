@@ -114,7 +114,7 @@ export const useBentoboxApproval = ({
   })
 
   const _execute = useCallback(() => {
-    if (address && data?.nonces) {
+    if (address && typeof data?.nonces === 'bigint') {
       signTypedDataAsync({
         primaryType: 'SetMasterContractApproval',
         domain: {

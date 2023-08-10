@@ -93,7 +93,11 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
                 onSelect={(currency) => onSelect(onChange, currency)}
                 selected={_currency}
               >
-                <button onBlur={onBlur} className={textFieldVariants({ className: 'flex flex-1 justify-between' })}>
+                <button
+                  onBlur={onBlur}
+                  className={textFieldVariants({ className: 'flex flex-1 justify-between' })}
+                  type="button"
+                >
                   <TextField
                     name={name}
                     readOnly
