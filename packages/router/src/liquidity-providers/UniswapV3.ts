@@ -23,7 +23,6 @@ export class UniswapV3Provider extends UniswapV3BaseProvider {
       [ChainId.BSC]: '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
       [ChainId.BASE]: '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
     } as const
-
     const tickLens = {
       [ChainId.ETHEREUM]: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
       [ChainId.POLYGON]: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',

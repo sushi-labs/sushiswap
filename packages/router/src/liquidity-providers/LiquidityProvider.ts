@@ -25,7 +25,9 @@ export enum LiquidityProviders {
   Biswap = 'Biswap',
   CurveSwap = 'CurveSwap',
   DovishV3 = 'DovishV3',
+  Wagmi = 'Wagmi',
   LaserSwap = 'LaserSwap',
+  BaseSwap = 'BaseSwap',
 }
 
 export abstract class LiquidityProvider {
