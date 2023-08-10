@@ -71,8 +71,8 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies, config
   return useMemo(() => {
     return totals?.reduce<Record<string, { base: bigint; elastic: bigint }>>((previousValue, currentValue, i) => {
       if (!currentValue) return previousValue
-      const [base, elastic] = currentValue
-      previousValue[addresses[i]] = { base, elastic }
+      const [elastic, base] = currentValue
+      previousValue[addresses[i]] = { elastic, base }
       return previousValue
     }, {})
   }, [totals, addresses])

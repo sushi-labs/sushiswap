@@ -56,7 +56,7 @@ export const getBentoboxTotals = async (chainId: BentoBoxV1ChainId, currencies: 
     return readContracts({
       allowFailure: false,
       contracts,
-    })
+    }).then((results) => results.map((result) => ({ elastic: result[0], base: result[1] })))
   } catch {
     return null
   }

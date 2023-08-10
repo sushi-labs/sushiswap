@@ -71,7 +71,7 @@ export const useBalances: UseBalances = ({
     const input = validatedTokenAddresses.map((token) => {
       return {
         chainId,
-        address: token[0] as Address,
+        address: token as Address,
         abi: erc20ABI,
         functionName: 'balanceOf' as const,
         args: [account] as const,
@@ -147,6 +147,7 @@ export const useBalances: UseBalances = ({
 
       const value = data[i]?.result as bigint | undefined
       const amount = value ?? undefined
+
       if (!result[validatedTokens[i].address]) {
         result[validatedTokens[i].address] = {
           [FundSource.BENTOBOX]: Amount.fromRawAmount(validatedTokens[i], '0'),

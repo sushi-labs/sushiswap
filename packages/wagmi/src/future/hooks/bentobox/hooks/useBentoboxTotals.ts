@@ -28,7 +28,7 @@ export const useBentoboxTotals = ({ enabled = true, ...variables }: UseBentoboxT
       const data = await queryFn(variables)
       if (!data) return null
 
-      return data.map(([base, elastic]) => ({
+      return data.map(({ base, elastic }) => ({
         base,
         elastic,
       }))

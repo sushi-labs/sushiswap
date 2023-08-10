@@ -66,6 +66,9 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
   useEffect(() => {
     const cAmount = tryParseAmount(amount, _currency)
     if (!_fundSource || !balance?.[_fundSource] || !cAmount) return
+
+    console.log(balance.WALLET.quotient, cAmount)
+
     if (balance[_fundSource].lessThan(cAmount)) {
       setError(`FORM_ERRORS.${index}.amount`, { type: 'min', message: 'Insufficient Balance' })
     } else {
