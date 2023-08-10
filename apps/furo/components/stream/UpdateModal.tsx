@@ -151,15 +151,13 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
       ...prepare,
       chainId,
       enabled: Boolean(
-        !(
-          !stream?.canUpdate(address) ||
-          !contractAddress ||
-          !stream ||
-          !chainId ||
-          !isTopUpValid ||
-          !isChangeEndDateValid ||
-          !approved
-        )
+        stream?.canUpdate(address) &&
+          contractAddress &&
+          stream &&
+          chainId &&
+          isTopUpValid &&
+          isChangeEndDateValid &&
+          approved
       ),
     })
 
@@ -172,9 +170,6 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
       onSettled,
     })
 
-    // console.log('isTopUpValid', isTopUpValid)
-    // console.log('isChangeEndDateValid', isChangeEndDateValid)
-    // if (!stream || !address || !stream?.canUpdate(address)) return <></>
     const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
 
     return (

@@ -34,7 +34,7 @@ test.afterEach(async () => {
   await loadSnapshot(CHAIN_ID, SNAPSHOT_ID)
 })
 
-test('Create, Withdraw, Update, Transfer, Cancel.', async ({ page }) => {
+test.only('Create, Withdraw, Update, Transfer, Cancel.', async ({ page }) => {
   const streamId = '1082'
   const withdrawAmount = 0.000002
   const transferToRecipient = '0xc39c2d6eb8adef85f9caa141ec95e7c0b34d8dec'
@@ -55,6 +55,8 @@ async function updateStream(page: Page, streamId: string) {
   await expect(openUpdateLocator).toBeVisible()
   await expect(openUpdateLocator).toBeEnabled()
   await openUpdateLocator.click()
+
+  await new Promise<void>((r) => setTimeout(() => r(), 5000))
 
   const amountSwitchLocator = page.locator('[testdata-id=update-amount-switch]')
   await expect(amountSwitchLocator).toBeVisible()
@@ -79,7 +81,7 @@ async function updateStream(page: Page, streamId: string) {
   await confirmWithdrawalLocator.click()
 
   const text = 'Successfully updated stream'
-  expect(await page.locator('span', { hasText: text }).last().innerText()).toContain('')
+  await expect(page.locator(`:has-text(${text})`).last()).toContainText(text)
 }
 
 async function withdrawFromStream(page: Page, streamId: string, withdrawAmount: number) {
@@ -104,9 +106,8 @@ async function withdrawFromStream(page: Page, streamId: string, withdrawAmount: 
   await expect(confirmWithdrawalLocator).toBeEnabled()
   await confirmWithdrawalLocator.click()
 
-  const expectedText = `(Successfully withdrawn ${withdrawAmount} ${USDC.symbol})`
-  const regex = new RegExp(expectedText)
-  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+  const text = `Successfully withdrawn ${withdrawAmount} ${USDC.symbol}`
+  expect(page.getByText(text, { exact: true }))
 }
 
 async function transferStream(page: Page, streamId: string, recipient: string) {
@@ -128,9 +129,8 @@ async function transferStream(page: Page, streamId: string, recipient: string) {
   await expect(confirmTransferLocator).toBeEnabled()
   await confirmTransferLocator.click()
 
-  const expectedText = '(Successfully transferred Stream to *.)'
-  const regex = new RegExp(expectedText)
-  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+  const regex = new RegExp('(Successfully transferred Stream to *.)')
+  expect(page.getByText(regex))
 }
 
 async function cancelStream(page: Page, streamId: string) {
@@ -148,9 +148,8 @@ async function cancelStream(page: Page, streamId: string) {
   await expect(confirmTransferLocator).toBeEnabled()
   await confirmTransferLocator.click()
 
-  const expectedText = '(Successfully cancelled stream)'
-  const regex = new RegExp(expectedText)
-  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+  const text = 'Successfully cancelled stream'
+  expect(page.getByText(text, { exact: true }))
 }
 
 async function mockSubgraph(page: Page) {

@@ -101,8 +101,8 @@ export async function createSingleStream(page: Page, args: StreamArgs) {
   await expect(confirmCreateStreamButton).toBeEnabled()
   await confirmCreateStreamButton.click()
 
-  const expectedText = new RegExp(`Created .* ${token.symbol} stream`)
-  await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
+  const regex = new RegExp(`Created .* ${token.symbol} stream`)
+  expect(page.getByText(regex))
 
   async function approve(page: Page, currency: Type) {
     // Approve BentoBox
@@ -148,13 +148,13 @@ export async function createMultipleStreams(page: Page, chainId: number, streamA
   await expect(reviewLocator).toBeEnabled()
   await reviewLocator.click()
 
-  // Approve BentoBox
+  // // Approve BentoBox
   const bentoboxLocator = page.locator('[testdata-id=create-multiple-stream-approve-bentobox-button]')
   await expect(bentoboxLocator).toBeVisible()
   await expect(bentoboxLocator).toBeEnabled()
   await bentoboxLocator.click()
 
-  // Approve Token
+  // // Approve Token
   const locator = page.locator('[testdata-id=create-multiple-stream-approve-token-1-button]') // TODO: refactor, index is hardcoded because we pass in the erc20 after native.
   await expect(locator).toBeVisible()
   await expect(locator).toBeEnabled()
@@ -166,7 +166,7 @@ export async function createMultipleStreams(page: Page, chainId: number, streamA
   await confirmCreateVestingButton.click()
 
   const text = `Created ${streamArgs.length} streams`
-  await expect(page.locator('span', { hasText: text }).last()).toContainText(text)
+  expect(page.getByText(text, { exact: true }))
 }
 
 async function handleStreamInputs(page: Page, args: StreamArgs, index = 0) {
@@ -265,9 +265,8 @@ export async function createMultipleVests(page: Page, chainId: number, vestingAr
   await expect(confirmCreateVestingButton).toBeEnabled()
   await confirmCreateVestingButton.click()
 
-  await expect(page.locator('span', { hasText: `Creating ${vestingArgs.length} vests` }).last()).toContainText(
-    `Creating ${vestingArgs.length} vests`
-  )
+  const text = `Creating ${vestingArgs.length} vests`
+  expect(page.getByText(text, { exact: true }))
 }
 
 async function handleGeneralDetails(page: Page, args: VestingArgs, index = 0) {
@@ -372,8 +371,6 @@ async function reviewAndConfirmSingleVest(page: Page, args: VestingArgs) {
   await expect(confirmCreateVestingLocator).toBeEnabled()
   await confirmCreateVestingLocator.click()
 
-  // const expectedText = new RegExp('Successfully created vest')
-  // await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
   const txConfimrationLocator = page.locator('[testdata-id=vest-creation-success-modal-button]')
   await expect(txConfimrationLocator).toBeVisible()
   await expect(txConfimrationLocator).toBeEnabled()

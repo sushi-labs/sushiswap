@@ -26,7 +26,7 @@ import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/acti
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import React, { FC, useCallback, useMemo, useState } from 'react'
-import { Abi, Address, encodeFunctionData } from 'viem'
+import { Abi, Address, encodeFunctionData, isAddress } from 'viem'
 
 import { Stream, Vesting } from '../lib'
 
@@ -53,21 +53,24 @@ export const TransferModal: FC<TransferModalProps> = ({
   const { data: resolvedAddress } = useEnsAddress({
     name: recipient,
     chainId: ChainId.ETHEREUM,
+    enabled: Boolean(recipient.includes('.eth')),
   })
 
+  const recipientAddress = isAddress(recipient) ? recipient : resolvedAddress
+
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
-    if (!stream || !address || !recipient || !resolvedAddress) return
+    if (!stream || !address || !recipientAddress) return
 
     return {
       from: address,
       to: contractAddress,
-      data: encodeFunctionData({ abi, functionName: fn, args: [address, resolvedAddress, stream?.id] }),
+      data: encodeFunctionData({ abi, functionName: fn, args: [address, recipientAddress, stream?.id] }),
     }
-  }, [stream, address, recipient, resolvedAddress, contractAddress, abi, fn])
+  }, [stream, address, recipientAddress, contractAddress, abi, fn])
 
   const onSettled = useCallback(
     async (data: SendTransactionResult | undefined) => {
-      if (!data || !resolvedAddress || !address) return
+      if (!data || !recipientAddress || !address) return
 
       const ts = new Date().getTime()
       void createToast({
@@ -80,18 +83,18 @@ export const TransferModal: FC<TransferModalProps> = ({
         promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Transferring ${type}`,
-          completed: `Successfully transferred ${type} to ${shortenAddress(resolvedAddress)}`,
+          completed: `Successfully transferred ${type} to ${shortenAddress(recipientAddress)}`,
           failed: `Something went wrong transferring the ${type}`,
         },
       })
     },
-    [address, chainId, resolvedAddress, type]
+    [address, chainId, recipientAddress, type]
   )
 
   const { config } = usePrepareSendTransaction({
     ...prepare,
     chainId,
-    enabled: Boolean(stream && address && recipient && resolvedAddress),
+    enabled: Boolean(stream && address && recipient && recipientAddress),
   })
 
   const {
@@ -155,8 +158,8 @@ export const TransferModal: FC<TransferModalProps> = ({
                       fullWidth
                       disabled={
                         isWritePending ||
-                        !resolvedAddress ||
-                        resolvedAddress.toLowerCase() === stream?.recipient.id.toLowerCase() ||
+                        !recipientAddress ||
+                        recipientAddress?.toLowerCase() === stream?.recipient.id.toLowerCase() ||
                         !sendTransactionAsync
                       }
                       onClick={() => sendTransactionAsync?.().then(() => confirm())}
@@ -164,9 +167,9 @@ export const TransferModal: FC<TransferModalProps> = ({
                     >
                       {isWritePending ? (
                         <Dots>Confirm Transfer</Dots>
-                      ) : resolvedAddress?.toLowerCase() === stream?.recipient.id.toLowerCase() ? (
+                      ) : recipientAddress?.toLowerCase() === stream?.recipient.id.toLowerCase() ? (
                         'Invalid recipient'
-                      ) : !resolvedAddress ? (
+                      ) : !recipientAddress ? (
                         'Enter recipient'
                       ) : (
                         'Transfer'
@@ -184,7 +187,7 @@ export const TransferModal: FC<TransferModalProps> = ({
         status={status}
         testId={`update-${type.toLowerCase()}-confirmation-modal`}
         successMessage={`Successfully transferred ${type.toLowerCase()} to ${
-          recipient ? shortenAddress(recipient) : ''
+          recipientAddress ? shortenAddress(recipientAddress) : ''
         }`}
         txHash={data?.hash}
       />
