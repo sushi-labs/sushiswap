@@ -1,4 +1,5 @@
 import { abs } from '@sushiswap/math'
+import { Address } from 'viem'
 
 import { RPool, RToken } from './PrimaryPools'
 import { getBigInt } from './Utils'
@@ -48,11 +49,11 @@ export class RebaseInternal {
 
 export function realReservesToAdjusted(reserve: bigint, total: Rebase, decimals: number) {
   const amount = toAmountBN(reserve, total)
-  return (amount * getBigInt(1e12)) / getBigInt(Math.pow(10, decimals))
+  return (amount * getBigInt(1e12)) / getBigInt(10 ** decimals)
 }
 
 export function adjustedReservesToReal(reserve: bigint, total: Rebase, decimals: number) {
-  const amount = (reserve * getBigInt(Math.pow(10, decimals))) / getBigInt(1e12)
+  const amount = (reserve * getBigInt(10 ** decimals)) / getBigInt(1e12)
   return toShareBN(amount, total)
 }
 
@@ -67,7 +68,7 @@ export class StableSwapRPool extends RPool {
   total1: RebaseInternal
 
   constructor(
-    address: string,
+    address: Address,
     token0: RToken,
     token1: RToken,
     fee: number,
@@ -94,8 +95,8 @@ export class StableSwapRPool extends RPool {
     this.decimals0 = decimals0
     this.decimals1 = decimals1
     if (address) {
-      this.decimalsCompensation0 = Math.pow(10, 12 - decimals0)
-      this.decimalsCompensation1 = Math.pow(10, 12 - decimals1)
+      this.decimalsCompensation0 = 10 ** (12 - decimals0)
+      this.decimalsCompensation1 = 10 ** (12 - decimals1)
       this.total0 = new RebaseInternal(total0)
       this.total1 = new RebaseInternal(total1)
     } else {
@@ -128,8 +129,8 @@ export class StableSwapRPool extends RPool {
 
   updateReservesAmounts(res0: bigint, res1: bigint) {
     this.k = 0n
-    this.reserve0 = (res0 * getBigInt(1e12)) / getBigInt(Math.pow(10, this.decimals0))
-    this.reserve1 = (res1 * getBigInt(1e12)) / getBigInt(Math.pow(10, this.decimals1))
+    this.reserve0 = (res0 * getBigInt(1e12)) / getBigInt(10 ** this.decimals0)
+    this.reserve1 = (res1 * getBigInt(1e12)) / getBigInt(10 ** this.decimals1)
   }
 
   getTotal0() {
@@ -228,17 +229,17 @@ export class StableSwapRPool extends RPool {
     const k = parseInt(this.computeK().toString())
     const q = k / x / 2
     const qD = -q / x // devivative of q
-    const Q = Math.pow(x, 6) / 27 + q * q
-    const QD = (6 * Math.pow(x, 5)) / 27 + 2 * q * qD // derivative of Q
+    const Q = x ** 6 / 27 + q * q
+    const QD = (6 * x ** 5) / 27 + 2 * q * qD // derivative of Q
     const sqrtQ = Math.sqrt(Q)
     const sqrtQD = (1 / 2 / sqrtQ) * QD // derivative of sqrtQ
     const a = sqrtQ + q
     const aD = sqrtQD + qD
     const b = sqrtQ - q
     const bD = sqrtQD - qD
-    const a3 = Math.pow(a, 1 / 3)
+    const a3 = a ** (1 / 3)
     const a3D = (((1 / 3) * a3) / a) * aD
-    const b3 = Math.pow(b, 1 / 3)
+    const b3 = b ** (1 / 3)
     const b3D = (((1 / 3) * b3) / b) * bD
     const yD = a3D - b3D
     const yDShares = calcDirection

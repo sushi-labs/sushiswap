@@ -1,3 +1,5 @@
+import { Address } from 'viem'
+
 import { CL_MAX_TICK, CL_MIN_TICK, CLTick } from './CLPool'
 import { RPool, RToken, TYPICAL_MINIMAL_LIQUIDITY, TYPICAL_SWAP_GAS_COST } from './PrimaryPools'
 
@@ -60,7 +62,7 @@ function getSqrtRatioAtTick(tick: number): bigint {
   return ratio >> 32n
 }
 
-const two96 = Math.pow(2, 96)
+const two96 = 2 ** 96
 
 export class UniV3Pool extends RPool {
   liquidity: bigint
@@ -79,7 +81,7 @@ export class UniV3Pool extends RPool {
   /// @param sqrtPriceX96 Square root of the current pool price multiplied 2^96 - (await pool.slot0())[0]
   /// @param ticks The list of all initialized ticks, sorted by index from low ho high
   constructor(
-    address: string,
+    address: Address,
     token0: RToken,
     token1: RToken,
     fee: number,
@@ -156,7 +158,7 @@ export class UniV3Pool extends RPool {
         priceDiff = parseInt((currentPriceBN - nextTickPriceBN).toString()) / two96
         startFlag = false
       } else {
-        nextTickPrice = Math.sqrt(Math.pow(1.0001, this.ticks[nextTickToCross].index))
+        nextTickPrice = Math.sqrt(1.0001 ** this.ticks[nextTickToCross].index)
         priceDiff = currentPrice - nextTickPrice
       }
 
@@ -241,7 +243,7 @@ export class UniV3Pool extends RPool {
         priceDiff = parseInt((currentPriceBN - nextTickPriceBN).toString()) / two96
         startFlag = false
       } else {
-        nextTickPrice = Math.sqrt(Math.pow(1.0001, this.ticks[nextTickToCross].index))
+        nextTickPrice = Math.sqrt(1.0001 ** this.ticks[nextTickToCross].index)
         priceDiff = currentPrice - nextTickPrice
       }
 

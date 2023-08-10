@@ -1,4 +1,5 @@
 import { abs } from '@sushiswap/math'
+import { Address } from 'viem'
 
 import { computeHybridLiquidity } from './functions'
 import { getBigInt, revertPositive } from './Utils'
@@ -22,7 +23,7 @@ export function setTokenId(...tokens: RToken[]) {
 }
 
 export abstract class RPool {
-  readonly address: string
+  readonly address: Address
   token0: RToken
   token1: RToken
   readonly fee: number
@@ -32,7 +33,7 @@ export abstract class RPool {
   readonly swapGasCost: number
 
   constructor(
-    address: string,
+    address: Address,
     token0: RToken,
     token1: RToken,
     fee: number,
@@ -94,7 +95,7 @@ export class ConstantProductRPool extends RPool {
   reserve0Number: number
   reserve1Number: number
 
-  constructor(address: string, token0: RToken, token1: RToken, fee: number, reserve0: bigint, reserve1: bigint) {
+  constructor(address: Address, token0: RToken, token1: RToken, fee: number, reserve0: bigint, reserve1: bigint) {
     super(address, token0, token1, fee, reserve0, reserve1)
     this.reserve0Number = Number(reserve0 || '0')
     this.reserve1Number = Number(reserve1 || '0')
@@ -165,7 +166,7 @@ export class HybridRPool extends RPool {
   D: bigint // set it to 0 if reserves are changed !!
 
   constructor(
-    address: string,
+    address: Address,
     token0: RToken,
     token1: RToken,
     fee: number,

@@ -239,14 +239,14 @@ export class Router {
   ): string {
     let res = ''
     res += `${shiftPrimary}Route Status: ${route.status}\n`
-    res += `${shiftPrimary}Input: ${route.amountIn / Math.pow(10, fromToken.decimals)} ${fromToken.symbol}\n`
+    res += `${shiftPrimary}Input: ${route.amountIn / 10 ** fromToken.decimals} ${fromToken.symbol}\n`
     route.legs.forEach((l, i) => {
       res += `${shiftSub}${i + 1}. ${l.tokenFrom.symbol} ${Math.round(l.absolutePortion * 100)}% -> [${
         poolCodesMap.get(l.poolAddress)?.poolName
       }] -> ${l.tokenTo.symbol}\n`
       //console.log(l.poolAddress, l.assumedAmountIn, l.assumedAmountOut)
     })
-    const output = parseInt(route.amountOutBN.toString()) / Math.pow(10, toToken.decimals)
+    const output = parseInt(route.amountOutBN.toString()) / 10 ** toToken.decimals
     res += `${shiftPrimary}Output: ${output} ${route.toToken.symbol}`
 
     return res

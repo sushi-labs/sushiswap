@@ -1,4 +1,5 @@
 import { abs } from '@sushiswap/math'
+import { Address } from 'viem'
 
 import { RPool, RToken } from './PrimaryPools'
 import { getBigInt } from './Utils'
@@ -15,7 +16,7 @@ export class CurvePool extends RPool {
   reserve1Rated: bigint
 
   constructor(
-    address: string,
+    address: Address,
     token0: RToken,
     token1: RToken,
     fee: number,
@@ -29,8 +30,8 @@ export class CurvePool extends RPool {
     this.D = 0n
     if (address) {
       const decimalsMin = Math.min(this.token0.decimals, this.token1.decimals)
-      this.rate0 = Math.pow(10, this.token1.decimals - decimalsMin)
-      this.rate1 = Math.pow(10, this.token0.decimals - decimalsMin) * ratio
+      this.rate0 = 10 ** (this.token1.decimals - decimalsMin)
+      this.rate1 = 10 ** (this.token0.decimals - decimalsMin) * ratio
       this.rate0BN = getBigInt(this.rate0)
       this.rate1BN18 = getBigInt(this.rate1 * 1e18) // 18 digits for precision
       this.reserve0Rated = this.reserve0 * this.rate0BN

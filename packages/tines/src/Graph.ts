@@ -1,3 +1,5 @@
+import { Address } from 'viem'
+
 import { ConstantProductRPool, RPool, RToken, setTokenId } from './PrimaryPools'
 import { StableSwapRPool } from './StableSwapPool'
 import { ASSERT, closeValues, DEBUG, getBigInt } from './Utils'
@@ -7,7 +9,7 @@ const ROUTER_DISTRIBUTION_PORTION = 65535
 // Routing info about each one swap
 export interface RouteLeg {
   poolType: 'Stable' | 'Classic' | 'Unknown'
-  poolAddress: string // which pool use for swap
+  poolAddress: Address // which pool use for swap
   poolFee: number
 
   tokenFrom: RToken // from what token to swap

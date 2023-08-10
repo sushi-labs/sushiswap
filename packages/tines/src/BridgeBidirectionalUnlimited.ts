@@ -1,7 +1,9 @@
+import { Address } from 'viem'
+
 import { RPool, RToken } from './PrimaryPools'
 
 export class BridgeUnlimited extends RPool {
-  constructor(address: string, token0: RToken, token1: RToken, fee: number, swapGasCost = 150_000) {
+  constructor(address: Address, token0: RToken, token1: RToken, fee: number, swapGasCost = 150_000) {
     super(address, token0, token1, fee, -1n, -1n, 0, swapGasCost)
   }
 

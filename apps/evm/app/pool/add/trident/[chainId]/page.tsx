@@ -1,6 +1,5 @@
 'use client'
 
-import { Signature } from '@ethersproject/bytes'
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { Fee, TridentConstantPool, TridentStablePool } from '@sushiswap/amm'
 import { bentoBoxV1Address, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
@@ -204,7 +203,7 @@ const _Add: FC<AddProps> = ({
 }) => {
   const [open, setOpen] = useState(false)
   const close = useCallback(() => setOpen(false), [])
-  const [permit, setPermit] = useState<Signature>()
+  // const [permit, setPermit] = useState<Signature>()
 
   const [{ input0, input1 }, setTypedAmounts] = useState<{
     input0: string

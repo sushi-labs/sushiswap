@@ -1,5 +1,3 @@
-import { defaultAbiCoder } from '@ethersproject/abi'
-import { AddressZero } from '@ethersproject/constants'
 import { Trade, TradeType, Version as TradeVersion } from '@sushiswap/amm'
 import { Amount, Currency, Native, Share, Token } from '@sushiswap/currency'
 import { BigintIsh } from '@sushiswap/math'
@@ -15,28 +13,27 @@ import { getBigInt } from '@sushiswap/tines'
 import { HexString } from '@sushiswap/types'
 import { Address, getSushiXSwapContractConfig, SushiXSwap as SushiXSwapContract } from '@sushiswap/wagmi'
 import { readContract } from '@sushiswap/wagmi/actions'
-import { formatBytes32String } from 'ethers/lib/utils'
-import { Signature } from 'viem'
+import { encodeAbiParameters, Hex, parseAbiParameters, Signature, stringToHex, zeroAddress } from 'viem'
 
 export type Complex = [
   {
-    tokenIn: string
-    pool: string
+    tokenIn: Address
+    pool: Address
     native: boolean
-    amount: BigintIsh
-    data: string
+    amount: bigint
+    data: Hex
   }[],
   {
-    tokenIn: string
-    pool: string
-    balancePercentage: BigintIsh
-    data: string
+    tokenIn: Address
+    pool: Address
+    balancePercentage: bigint
+    data: Hex
   }[],
   {
-    token: string
-    to: string
+    token: Address
+    to: Address
     unwrapBento: boolean
-    minAmount: BigintIsh
+    minAmount: bigint
   }[]
 ]
 
@@ -82,7 +79,7 @@ export abstract class Cooker implements Cooker {
   readonly chainId: StargateChainId
   readonly debug: boolean
   readonly masterContract: Address
-  readonly user: string
+  readonly user: Address
   constructor({
     chainId,
     debug = false,
@@ -92,7 +89,7 @@ export abstract class Cooker implements Cooker {
     chainId: StargateChainId
     debug?: boolean
     masterContract: Address
-    user: string
+    user: Address
   }) {
     this.chainId = chainId
     this.debug = debug
@@ -113,15 +110,12 @@ export abstract class Cooker implements Cooker {
         amount,
         share,
       })
-    const data = defaultAbiCoder.encode(
-      ['address', 'address', 'uint256', 'uint256'],
-      [
-        currency.isToken ? currency.address : AddressZero,
-        recipient,
-        BigInt(amount.toString()),
-        BigInt(share.toString()),
-      ]
-    )
+    const data = encodeAbiParameters(parseAbiParameters('address, address, uint256, uint256'), [
+      currency.isToken ? (currency.address as Address) : zeroAddress,
+      recipient,
+      BigInt(amount.toString()),
+      BigInt(share.toString()),
+    ])
 
     const value = currency.isNative ? amount : 0n
 
@@ -130,7 +124,7 @@ export abstract class Cooker implements Cooker {
 
   srcTransferFromBentoBox(
     token: Currency,
-    to: string,
+    to: Address,
     amount: BigintIsh,
     share: BigintIsh = 0n,
     unwrap: boolean
@@ -145,42 +139,54 @@ export abstract class Cooker implements Cooker {
       })
     this.add(
       Action.SRC_TRANSFER_FROM_BENTOBOX,
-      defaultAbiCoder.encode(
-        ['address', 'address', 'uint256', 'uint256', 'bool'],
-        [token.wrapped.address, to, BigInt(amount.toString()), BigInt(share.toString()), unwrap]
-      ) as HexString
+      encodeAbiParameters(parseAbiParameters('address, address, uint256, uint256, bool'), [
+        token.wrapped.address as Address,
+        to,
+        BigInt(amount.toString()),
+        BigInt(share.toString()),
+        unwrap,
+      ])
     )
   }
 
-  dstDepositToBentoBox(token: Currency, to: string = this.user, amount: BigintIsh = 0n, share: BigintIsh = 0n): void {
+  dstDepositToBentoBox(token: Currency, to: Address = this.user, amount: BigintIsh = 0n, share: BigintIsh = 0n): void {
     this.add(
       Action.DST_DEPOSIT_TO_BENTOBOX,
-      defaultAbiCoder.encode(
-        ['address', 'address', 'uint256', 'uint256'],
-        [token.isToken ? token.address : AddressZero, to, BigInt(amount.toString()), BigInt(share.toString())]
-      ),
+      encodeAbiParameters(parseAbiParameters('address, address, uint256, uint256'), [
+        token.isToken ? (token.address as Address) : zeroAddress,
+        to,
+        BigInt(amount.toString()),
+        BigInt(share.toString()),
+      ]),
       token.isNative ? amount : 0n
     )
   }
 
-  dstWithdraw(token: Currency, to: string = this.user, amount = 0n): void {
+  dstWithdraw(token: Currency, to: Address = this.user, amount = 0n): void {
     this.add(
       Action.DST_WITHDRAW,
-      defaultAbiCoder.encode(['address', 'address', 'uint256'], [token.wrapped.address, to, amount]) as HexString
+      encodeAbiParameters(parseAbiParameters('address, address, uint256'), [
+        token.wrapped.address as Address,
+        to,
+        amount,
+      ])
     )
   }
 
   dstWithdrawFromBentoBox(
     token: Currency,
-    to: string = this.user,
+    to: Address = this.user,
     amount: BigintIsh = 0n,
     share: BigintIsh = 0n,
     unwrap: boolean
   ): void {
-    const data = defaultAbiCoder.encode(
-      ['address', 'address', 'uint256', 'uint256', 'bool'],
-      [token.isToken ? token.address : AddressZero, to, BigInt(amount.toString()), BigInt(share.toString()), unwrap]
-    )
+    const data = encodeAbiParameters(parseAbiParameters('address, address, uint256, uint256, bool'), [
+      token.isToken ? (token.address as Address) : zeroAddress,
+      to,
+      BigInt(amount.toString()),
+      BigInt(share.toString()),
+      unwrap,
+    ])
     const value = token.isNative ? amount : 0n
     this.add(Action.DST_WITHDRAW_FROM_BENTOBOX, data, value)
   }
@@ -189,72 +195,59 @@ export abstract class Cooker implements Cooker {
     trade: Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>,
     amountIn: BigintIsh,
     amountOutMin: BigintIsh,
-    recipient: string = this.user
+    recipient: Address = this.user
   ): void {
     this.add(
       Action.LEGACY_EXACT_INPUT,
-      defaultAbiCoder.encode(
-        ['uint256', 'uint256', 'address[]', 'address'],
-        [
-          BigInt(amountIn.toString()),
-          amountOutMin.toString(),
-          trade.route.legs.reduce<string[]>(
-            (previousValue, currentValue) => [...previousValue, currentValue.tokenTo.address],
-            [trade.route.legs[0].tokenFrom.address]
-          ),
-          recipient,
-        ]
-      ) as HexString
+
+      encodeAbiParameters(parseAbiParameters('uint256, uint256, address[], address'), [
+        BigInt(amountIn.toString()),
+        BigInt(amountOutMin.toString()),
+        trade.route.legs.reduce<Address[]>(
+          (acc, cur) => {
+            acc.push(cur.tokenTo.address as Address)
+            return acc
+          },
+          [trade.route.legs[0].tokenFrom.address as Address]
+        ),
+        recipient,
+      ])
     )
   }
 
   tridentExactInput(
     trade: Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>,
-    to: string,
+    to: Address,
     shareIn: BigintIsh = 0n,
     shareOutMinimum: BigintIsh,
     unwrapBento: boolean
   ): void {
     this.add(
       Action.TRIDENT_EXACT_INPUT,
-      defaultAbiCoder.encode(
-        ['tuple(address, uint256, uint256, tuple(address pool, bytes data)[])'],
+      encodeAbiParameters(parseAbiParameters('(address, uint256, uint256, (address pool, bytes data)[])'), [
         [
-          [
-            trade.inputAmount.currency.wrapped.address,
-            BigInt(shareIn.toString()),
-            BigInt(shareOutMinimum.toString()),
-            trade.route.legs.map((leg, i) => {
-              const isLastLeg = i === trade.route.legs.length - 1
-              // console.log({
-              //   pool: leg.poolAddress,
-              //   data: [
-              //     leg.tokenFrom.address,
-              //     isLastLeg ? to : trade.route.legs[i + 1].poolAddress,
-              //     isLastLeg && unwrapBento,
-              //   ],
-              // })
-              return {
-                pool: leg.poolAddress,
-                data: defaultAbiCoder.encode(
-                  ['address', 'address', 'bool'],
-                  [
-                    leg.tokenFrom.address,
-                    isLastLeg ? to : trade.route.legs[i + 1].poolAddress,
-                    isLastLeg && unwrapBento,
-                  ]
-                ),
-              }
-            }),
-          ],
-        ]
-      ) as HexString
+          trade.inputAmount.currency.wrapped.address as Address,
+          BigInt(shareIn.toString()),
+          BigInt(shareOutMinimum.toString()),
+          trade.route.legs.map((leg, i) => {
+            const isLastLeg = i === trade.route.legs.length - 1
+            return {
+              pool: leg.poolAddress as Address,
+              data: encodeAbiParameters(parseAbiParameters('address, address, bool'), [
+                leg.tokenFrom.address as Address,
+                isLastLeg ? to : (trade.route.legs[i + 1].poolAddress as Address),
+                isLastLeg && unwrapBento,
+              ]),
+            }
+          }),
+        ],
+      ])
     )
   }
 
   tridentComplex(
     trade: Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>,
-    to: string,
+    to: Address,
     minAmount: BigintIsh,
     unwrapBento: boolean
   ): void {
@@ -263,21 +256,22 @@ export abstract class Cooker implements Cooker {
     ).length
     this.add(
       Action.TRIDENT_COMPLEX,
-      defaultAbiCoder.encode(
-        [
-          'tuple(tuple(address tokenIn, address pool, bool native, uint256 amount, bytes data)[], tuple(address tokenIn, address pool, uint64 balancePercentage, bytes data)[], tuple(address token, address to, bool unwrapBento, uint256 minAmount)[])',
-        ],
+      encodeAbiParameters(
+        parseAbiParameters(
+          '((address tokenIn, address pool, bool native, uint256 amount, bytes data)[], (address tokenIn, address pool, uint64 balancePercentage, bytes data)[], (address token, address to, bool unwrapBento, uint256 minAmount)[])'
+        ),
         [
           trade.route.legs.reduce<Complex>(
             ([initialPath, percentagePath, output], leg, i) => {
               const isInitialPath = leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
+
               if (isInitialPath) {
                 return [
                   [
                     ...initialPath,
                     {
-                      tokenIn: leg.tokenFrom.address,
-                      pool: leg.poolAddress,
+                      tokenIn: leg.tokenFrom.address as Address,
+                      pool: leg.poolAddress as Address,
                       amount:
                         initialPathCount > 1 && i === initialPathCount - 1
                           ? trade.route.amountInBN -
@@ -287,36 +281,30 @@ export abstract class Cooker implements Cooker {
                             )
                           : getBigInt(trade.route.amountIn * leg.absolutePortion),
                       native: false,
-                      data: defaultAbiCoder.encode(
-                        ['address', 'address', 'bool'],
-                        [
-                          leg.tokenFrom.address,
-                          getSushiXSwapContractConfig(trade.inputAmount.currency.chainId as SushiXSwapChainId).address,
-                          false,
-                        ]
-                      ),
+                      data: encodeAbiParameters(parseAbiParameters('address, address, bool'), [
+                        leg.tokenFrom.address as Address,
+                        getSushiXSwapContractConfig(trade.inputAmount.currency.chainId as SushiXSwapChainId).address,
+                        false,
+                      ]),
                     },
                   ],
                   percentagePath,
                   output,
-                ]
+                ] satisfies Complex
               } else {
                 return [
                   initialPath,
                   [
                     ...percentagePath,
                     {
-                      tokenIn: leg.tokenFrom.address,
-                      pool: leg.poolAddress,
+                      tokenIn: leg.tokenFrom.address as Address,
+                      pool: leg.poolAddress as Address,
                       balancePercentage: getBigInt(leg.swapPortion * 10 ** 8),
-                      data: defaultAbiCoder.encode(
-                        ['address', 'address', 'bool'],
-                        [
-                          leg.tokenFrom.address,
-                          getSushiXSwapContractConfig(trade.inputAmount.currency.chainId as SushiXSwapChainId).address,
-                          false,
-                        ]
-                      ),
+                      data: encodeAbiParameters(parseAbiParameters('address, address, bool'), [
+                        leg.tokenFrom.address as Address,
+                        getSushiXSwapContractConfig(trade.inputAmount.currency.chainId as SushiXSwapChainId).address,
+                        false,
+                      ]),
                     },
                   ],
                   output,
@@ -328,23 +316,23 @@ export abstract class Cooker implements Cooker {
               [],
               [
                 {
-                  token: trade.outputAmount.currency.wrapped.address,
+                  token: trade.outputAmount.currency.wrapped.address as Address,
                   to,
                   unwrapBento,
-                  minAmount,
+                  minAmount: BigInt(minAmount.toString()),
                 },
               ],
             ]
           ),
         ]
-      ) as HexString
+      )
     )
   }
 
-  unwrapAndTransfer(token: Currency, to: string = this.user): void {
+  unwrapAndTransfer(token: Currency, to: Address = this.user): void {
     this.add(
       Action.UNWRAP_AND_TRANSFER,
-      defaultAbiCoder.encode(['address', 'address'], [token.wrapped.address, to]) as HexString
+      encodeAbiParameters(parseAbiParameters('address, address'), [token.wrapped.address as Address, to])
     )
   }
 }
@@ -354,10 +342,13 @@ export class SrcCooker extends Cooker {
     if (this.debug) console.log('cook set master contract address', signature)
     this.add(
       Action.SET_MASTER_CONTRACT_APPROVAL,
-      defaultAbiCoder.encode(
-        ['address', 'bool', 'uint8', 'bytes32', 'bytes32'],
-        [this.user, true, signature.v, signature.r, signature.s]
-      ) as HexString
+      encodeAbiParameters(parseAbiParameters('address, bool, uint8, bytes32, bytes32'), [
+        this.user,
+        true,
+        Number(signature.v),
+        signature.r,
+        signature.s,
+      ])
     )
   }
 
@@ -365,7 +356,7 @@ export class SrcCooker extends Cooker {
     trade: Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>,
     amountIn: BigintIsh,
     amountOutMinimum: BigintIsh,
-    recipient: string = this.user
+    recipient: Address = this.user
   ): void {
     if (this.debug) console.debug('cook src legacy exact input')
     super.legacyExactInput(trade, amountIn, amountOutMinimum, recipient)
@@ -373,7 +364,7 @@ export class SrcCooker extends Cooker {
 
   tridentExactInput(
     trade: Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>,
-    to: string,
+    to: Address,
     shareIn: BigintIsh,
     shareOutMinimum: BigintIsh,
     unwrapBento: boolean
@@ -426,7 +417,7 @@ export class SushiXSwap {
   readonly srcUseBentoBox: boolean
   readonly dstUseBentoBox: boolean
 
-  readonly user: string
+  readonly user: Address
   readonly debug: boolean
 
   constructor({
@@ -450,7 +441,7 @@ export class SushiXSwap {
       | undefined
     srcUseBentoBox: boolean
     dstUseBentoBox: boolean
-    user: string
+    user: Address
     contract: SushiXSwapContract
     debug?: boolean
   }) {
@@ -805,7 +796,7 @@ export class SushiXSwap {
         this.dstCooker.masterContract,
         this.user,
         gasSpent,
-        formatBytes32String(id),
+        stringToHex(id, { size: 32 }),
         this.dstCooker.actions,
         this.dstCooker.values,
         this.dstCooker.datas,

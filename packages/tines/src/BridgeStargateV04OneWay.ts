@@ -1,3 +1,5 @@
+import { Address } from 'viem'
+
 import { RPool, RToken } from './PrimaryPools'
 import { BridgeState, getStarGateFeesV04 } from './StarGateFeesV04'
 import { getBigInt } from './Utils'
@@ -7,7 +9,7 @@ export class BridgeStargateV04OneWay extends RPool {
   whitelisted: boolean
 
   constructor(
-    id: string, // some kind of bridge ID. Used for tines output
+    id: Address, // some kind of bridge ID. Used for tines output
     token0: RToken, // from token
     token1: RToken, // to token
     bridgeState: BridgeState,

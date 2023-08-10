@@ -1,3 +1,5 @@
+import { Address } from 'viem'
+
 import { RPool, RToken } from './PrimaryPools'
 
 const BENTO_MINIMUM_SHARE_BALANCE = 1000 // Bento Shares
@@ -10,7 +12,7 @@ export class BridgeBento extends RPool {
 
   // elastic is reserve0, base is reserve1
   constructor(
-    address: string,
+    address: Address,
     tokenEthereum: RToken,
     tokenBento: RToken,
     elastic: bigint,
