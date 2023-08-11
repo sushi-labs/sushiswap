@@ -51,13 +51,13 @@ export function NoWayMultiRoute(from: RToken, to: RToken) {
     fromToken: from,
     toToken: to,
     amountIn: 0,
-    amountInBN: BigNumber.from(0),
+    amountInBN: 0n,
     amountOut: 0,
-    amountOutBN: BigNumber.from(0),
+    amountOutBN: 0n,
     legs: [],
     gasSpent: 0,
     totalAmountOut: 0,
-    totalAmountOutBN: BigNumber.from(0),
+    totalAmountOutBN: 0n,
   }
 }
 
