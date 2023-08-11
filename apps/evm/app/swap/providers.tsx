@@ -8,11 +8,11 @@ import { SwapProvider } from 'ui/swap/trade/TradeProvider'
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
-      <TokenProvider>
-        <SplashController>
+      <SplashController>
+        <TokenProvider>
           <SwapProvider>{children}</SwapProvider>
-        </SplashController>
-      </TokenProvider>
+        </TokenProvider>
+      </SplashController>
     </ThemeProvider>
   )
 }
