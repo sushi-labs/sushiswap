@@ -80,6 +80,8 @@ async function main() {
     tracesSampleRate: 1.0, // Capture 100% of the transactions, reduce in production!,
   })
 
+  app.use(cors())
+
   // Trace incoming requests
   app.use(Sentry.Handlers.requestHandler())
   app.use(Sentry.Handlers.tracingHandler())
@@ -198,8 +200,6 @@ async function main() {
     res.statusCode = 500
     res.end(res.sentry + '\n')
   })
-
-  app.use(cors())
 
   app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}`)
