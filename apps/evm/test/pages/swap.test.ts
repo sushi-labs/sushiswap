@@ -128,6 +128,14 @@ async function maxSwap(page: Page, inputCurrency: Type, outputCurrency: Type) {
 
   const swapButton = page.locator('[testdata-id=swap-button]')
   await expect(swapButton).toBeVisible()
+
+  if (!(await swapButton.isEnabled())) {
+    const priceImpactCheckbox = page.locator('[testdata-id=price-impact-checkbox]')
+    if (await priceImpactCheckbox.isVisible()) {
+      await priceImpactCheckbox.check()
+    }
+  }
+
   await expect(swapButton).toBeEnabled()
   await swapButton.click()
 
@@ -191,6 +199,14 @@ async function swap(page: Page, inputCurrency: Type, outputCurrency: Type, amoun
 
   const swapButton = page.locator('[testdata-id=swap-button]')
   await expect(swapButton).toBeVisible()
+
+  if (!(await swapButton.isEnabled())) {
+    const priceImpactCheckbox = page.locator('[testdata-id=price-impact-checkbox]')
+    if (await priceImpactCheckbox.isVisible()) {
+      await priceImpactCheckbox.check()
+    }
+  }
+
   await expect(swapButton).toBeEnabled()
   await swapButton.click()
 
@@ -201,10 +217,10 @@ async function swap(page: Page, inputCurrency: Type, outputCurrency: Type, amoun
   await confirmSwap.click()
 
   const expectedSwappingText = new RegExp(`(Swapping .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol}.)`)
-  await expect(page.getByText(expectedSwappingText))
+  expect(page.getByText(expectedSwappingText))
 
   const expectedSwapText = new RegExp(`(Swap .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol}.)`)
-  await expect(page.getByText(expectedSwapText))
+  expect(page.getByText(expectedSwapText))
 
   // Make another swap
   const makeAnotherSwap = page.locator('[testdata-id=make-another-swap-button]')
@@ -234,7 +250,9 @@ async function handleToken(page: Page, currency: Type, type: InputType) {
   await tokenSearch.fill(currency.symbol as string)
 
   const tokenToSelect = page.locator(
-    `[testdata-id=swap-${selectorInfix}-token-selector-row-${currency.isNative ? zeroAddress : currency}]`
+    `[testdata-id=swap-${selectorInfix}-token-selector-row-${
+      currency.isNative ? zeroAddress : currency.address.toLowerCase()
+    }]`
   )
   await expect(tokenToSelect).toBeVisible()
   // await expect(tokenSearch).toBeEnabled()

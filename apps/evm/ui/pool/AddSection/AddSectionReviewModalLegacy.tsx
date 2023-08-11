@@ -181,6 +181,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
     onSettled,
     onSuccess: onSuccess,
   })
+
   return (
     <AddSectionReviewModal
       chainId={chainId as BentoBoxV1ChainId}

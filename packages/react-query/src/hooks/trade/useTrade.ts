@@ -5,6 +5,7 @@ import { Percent, ZERO } from '@sushiswap/math'
 import { HexString } from '@sushiswap/types'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
+import { stringify } from 'viem'
 
 import { usePrice } from '../prices'
 import { UseTradeParams, UseTradeQuerySelect, UseTradeReturnWriteArgs } from './types'
@@ -52,6 +53,7 @@ export const useTradeQuery = (
     select,
     enabled: enabled && Boolean(chainId && fromToken && toToken && amount && gasPrice),
     onError,
+    queryKeyHashFn: stringify,
   })
 }
 
@@ -77,6 +79,8 @@ export const useTrade = (variables: UseTradeParams) => {
             ] as const)
           : undefined
         let value = fromToken.isNative ? writeArgs?.[1] ?? undefined : undefined
+
+        console.log(fromToken.isNative, writeArgs, value)
 
         if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
           writeArgs = ['0xbc4a6be1285893630d45c881c6c343a65fdbe278', 20000000000000000n, ...writeArgs]

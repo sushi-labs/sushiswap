@@ -120,8 +120,10 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     [trade, network0, srcCurrencyB?.symbol, address]
   )
 
-  const gasLimit = config?.request?.gas ? (config.request.gas * 120n) / 100n : undefined
-  config.request.gas = gasLimit
+  if (config?.request?.gas) {
+    const gasLimit = (config.request.gas * 120n) / 100n
+    config.request.gas = gasLimit
+  }
 
   const {
     writeAsync,

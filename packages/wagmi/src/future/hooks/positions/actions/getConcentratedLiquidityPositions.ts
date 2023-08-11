@@ -8,32 +8,32 @@ import { ConcentratedLiquidityPosition } from '../types'
 import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
 import { getConcentratedLiquidityPositionsFromTokenIds } from './getConcentratedLiquidityPositionsFromTokenIds'
 
-declare const abiShard: readonly [
+const abiShard = [
   {
-    readonly inputs: readonly [
+    inputs: [
       {
-        readonly internalType: 'address'
-        readonly name: 'owner'
-        readonly type: 'address'
+        internalType: 'address',
+        name: 'owner',
+        type: 'address',
       },
       {
-        readonly internalType: 'uint256'
-        readonly name: 'index'
-        readonly type: 'uint256'
-      }
-    ]
-    readonly name: 'tokenOfOwnerByIndex'
-    readonly outputs: [
+        internalType: 'uint256',
+        name: 'index',
+        type: 'uint256',
+      },
+    ],
+    name: 'tokenOfOwnerByIndex',
+    outputs: [
       {
-        readonly internalType: 'uint256'
-        readonly name: ''
-        readonly type: 'uint256'
-      }
-    ]
-    readonly stateMutability: 'view'
-    readonly type: 'function'
-  }
-]
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const
 
 export const getConcentratedLiquidityPositions = async ({
   account,
@@ -60,7 +60,7 @@ export const getConcentratedLiquidityPositions = async ({
   // we don't expect any account balance to ever exceed the bounds of max safe int
   const accountBalances = result.reduce<Record<ChainId, number>>((acc, el, i) => {
     if (el.result && el.result > 0n) {
-      acc[chainIds[i]] = Number(el)
+      acc[chainIds[i]] = Number(el.result)
     }
     return acc
   }, {} as Record<ChainId, number>)

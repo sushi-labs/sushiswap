@@ -6,54 +6,54 @@ import { getConcentratedPositionOwners } from '../../pools/actions/getConcentrat
 
 const MAX_UINT128 = 2n ** 128n - 1n
 
-declare const abiShard: [
+const abiShard = [
   {
-    readonly inputs: readonly [
+    inputs: [
       {
-        readonly components: readonly [
+        components: [
           {
-            readonly internalType: 'uint256'
-            readonly name: 'tokenId'
-            readonly type: 'uint256'
+            internalType: 'uint256',
+            name: 'tokenId',
+            type: 'uint256',
           },
           {
-            readonly internalType: 'address'
-            readonly name: 'recipient'
-            readonly type: 'address'
+            internalType: 'address',
+            name: 'recipient',
+            type: 'address',
           },
           {
-            readonly internalType: 'uint128'
-            readonly name: 'amount0Max'
-            readonly type: 'uint128'
+            internalType: 'uint128',
+            name: 'amount0Max',
+            type: 'uint128',
           },
           {
-            readonly internalType: 'uint128'
-            readonly name: 'amount1Max'
-            readonly type: 'uint128'
-          }
-        ]
-        readonly internalType: 'struct INonfungiblePositionManager.CollectParams'
-        readonly name: 'params'
-        readonly type: 'tuple'
-      }
-    ]
-    readonly name: 'collect'
-    readonly outputs: [
+            internalType: 'uint128',
+            name: 'amount1Max',
+            type: 'uint128',
+          },
+        ],
+        internalType: 'struct INonfungiblePositionManager.CollectParams',
+        name: 'params',
+        type: 'tuple',
+      },
+    ],
+    name: 'collect',
+    outputs: [
       {
-        readonly internalType: 'uint256'
-        readonly name: 'amount0'
-        readonly type: 'uint256'
+        internalType: 'uint256',
+        name: 'amount0',
+        type: 'uint256',
       },
       {
-        readonly internalType: 'uint256'
-        readonly name: 'amount1'
-        readonly type: 'uint256'
-      }
-    ]
-    readonly stateMutability: 'payable'
-    readonly type: 'function'
-  }
-]
+        internalType: 'uint256',
+        name: 'amount1',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+] as const
 
 export const getConcentratedLiquidityPositionFees = async ({
   tokenIds,

@@ -65,7 +65,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
           writeArgs: undefined,
           route: undefined,
           functionName: 'processRoute',
-          overrides: undefined,
+          value: undefined,
         }
 
       const route = Router.findSpecialRoute(
@@ -142,13 +142,11 @@ ${logPools}
           : undefined
 
         // const overrides = fromToken.isNative && writeArgs?.[1] ? { value: BigNumber.from(writeArgs?.[1]) } : undefined
-        let overrides = fromToken.isNative && writeArgs?.[1] ? { value: writeArgs?.[1] } : undefined
+        let value = fromToken.isNative && writeArgs?.[1] ? writeArgs?.[1] : undefined
 
         if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
           writeArgs = ['0xbc4a6be1285893630d45c881c6c343a65fdbe278', 20000000000000000n, ...writeArgs]
-          overrides = {
-            value: (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n,
-          }
+          value = (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n
         }
 
         return new Promise((res) =>
@@ -191,7 +189,7 @@ ${logPools}
                 route,
                 functionName: isOffset ? 'transferValueAndprocessRoute' : 'processRoute',
                 writeArgs,
-                overrides,
+                value,
               }),
             250
           )

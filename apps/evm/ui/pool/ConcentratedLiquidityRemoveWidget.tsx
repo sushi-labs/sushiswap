@@ -97,9 +97,13 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
     const discountedAmount1 = position ? liquidityPercentage.multiply(position.amount1.quotient).quotient : undefined
 
     const liquidityValue0 =
-      token0 && discountedAmount0 ? Amount.fromRawAmount(unwrapToken(token0), discountedAmount0) : undefined
+      token0 && typeof discountedAmount0 === 'bigint'
+        ? Amount.fromRawAmount(unwrapToken(token0), discountedAmount0)
+        : undefined
     const liquidityValue1 =
-      token1 && discountedAmount1 ? Amount.fromRawAmount(unwrapToken(token1), discountedAmount1) : undefined
+      token1 && typeof discountedAmount1 === 'bigint'
+        ? Amount.fromRawAmount(unwrapToken(token1), discountedAmount1)
+        : undefined
 
     if (
       token0 &&
@@ -256,7 +260,6 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
           )}
         </List.Control>
       </List>
-
       {(feeValue0?.greaterThan(0) || feeValue1?.greaterThan(0)) && (
         <List>
           <List.Label>{"You'll"} receive collected fees</List.Label>
