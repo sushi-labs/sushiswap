@@ -45,6 +45,22 @@ export interface MultiRoute {
   totalAmountOutBN: BigNumber
 }
 
+export function NoWayMultiRoute(from: RToken, to: RToken) {
+  return {
+    status: RouteStatus.NoWay,
+    fromToken: from,
+    toToken: to,
+    amountIn: 0,
+    amountInBN: BigNumber.from(0),
+    amountOut: 0,
+    amountOutBN: BigNumber.from(0),
+    legs: [],
+    gasSpent: 0,
+    totalAmountOut: 0,
+    totalAmountOutBN: BigNumber.from(0),
+  }
+}
+
 // Tines input info about blockchains
 export interface NetworkInfo {
   chainId?: number | string
@@ -427,7 +443,7 @@ export class Graph {
       processedVert.add(v)
     }
 
-    if (logging) console.log(`Pricing: Initial token ${from.token.symbol} price=${price}` )
+    if (logging) console.log(`Pricing: Initial token ${from.token.symbol} price=${price}`)
     addVertice(from, price)
     while (nextEdges.length > 0) {
       const bestEdge = nextEdges.pop() as Edge
@@ -436,10 +452,11 @@ export class Graph {
         : [bestEdge.vert0, bestEdge.vert1]
       if (processedVert.has(vTo)) continue
       const p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1)
-      if (logging) 
+      if (logging)
         console.log(
-          `Pricing: + Token ${vTo.token.symbol} price=${vFrom.price * p}`
-          + ` from ${vFrom.token.symbol} pool=${bestEdge.pool.address} liquidity=${edgeValues.get(bestEdge)}` )
+          `Pricing: + Token ${vTo.token.symbol} price=${vFrom.price * p}` +
+            ` from ${vFrom.token.symbol} pool=${bestEdge.pool.address} liquidity=${edgeValues.get(bestEdge)}`
+        )
       addVertice(vTo, vFrom.price * p)
     }
 
@@ -902,20 +919,7 @@ export class Graph {
         totalrouted += routeValues[step]
       }
     }
-    if (step == 0 || output == 0)
-      return {
-        status: RouteStatus.NoWay,
-        fromToken: from,
-        toToken: to,
-        amountIn: 0,
-        amountInBN: BigNumber.from(0),
-        amountOut: 0,
-        amountOutBN: BigNumber.from(0),
-        legs: [],
-        gasSpent: 0,
-        totalAmountOut: 0,
-        totalAmountOutBN: BigNumber.from(0),
-      }
+    if (step == 0 || output == 0) return NoWayMultiRoute(from, to)
     let status
     if (step < routeValues.length) status = RouteStatus.Partial
     else status = RouteStatus.Success
@@ -1000,20 +1004,7 @@ export class Graph {
         // }
       }
     }
-    if (step == 0)
-      return {
-        status: RouteStatus.NoWay,
-        fromToken: from,
-        toToken: to,
-        amountIn: 0,
-        amountInBN: BigNumber.from(0),
-        amountOut: 0,
-        amountOutBN: BigNumber.from(0),
-        legs: [],
-        gasSpent: 0,
-        totalAmountOut: 0,
-        totalAmountOutBN: BigNumber.from(0),
-      }
+    if (step == 0) return NoWayMultiRoute(from, to)
     let status
     if (step < routeValues.length) status = RouteStatus.Partial
     else status = RouteStatus.Success
