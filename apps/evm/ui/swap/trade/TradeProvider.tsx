@@ -114,9 +114,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     value: !amount || amount === '0' ? '' : amount,
   })
 
-  console.log(isSwapApiEnabledChainId(fromChainId), internalState.isFallback)
-  // console.log({ token0, token1 })
-
   const state = useMemo(() => {
     return {
       ...internalState,
@@ -185,10 +182,20 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         'toChainId',
         toCurrency === _fromCurrency && toChainId === fromChainId ? fromChainId.toString() : toChainId.toString()
       )
-      _searchParams.set(
-        'toCurrency',
-        toCurrency === _fromCurrency && toChainId === fromChainId ? fromCurrency : toCurrency
-      )
+      if (toCurrency && toChainId && fromChainId && toChainId === fromChainId) {
+        _searchParams.set(
+          'toCurrency',
+          fromCurrency &&
+            toCurrency &&
+            toChainId &&
+            fromChainId &&
+            toChainId === fromChainId &&
+            toCurrency === _fromCurrency
+            ? fromCurrency
+            : toCurrency
+        )
+      }
+
       void push(`${pathname}?${_searchParams.toString()}`)
     }
     const setToken1 = (currency: Type) => {
@@ -198,10 +205,19 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         'fromChainId',
         fromCurrency === _toCurrency && toChainId === fromChainId ? toChainId.toString() : fromChainId.toString()
       )
-      _searchParams.set(
-        'fromCurrency',
-        fromCurrency === _toCurrency && toChainId === fromChainId ? toCurrency : fromCurrency
-      )
+      if (fromCurrency && toChainId && fromChainId && toChainId === fromChainId) {
+        _searchParams.set(
+          'fromCurrency',
+          fromCurrency &&
+            toCurrency &&
+            toChainId &&
+            fromChainId &&
+            toChainId === fromChainId &&
+            fromCurrency === _toCurrency
+            ? toCurrency
+            : fromCurrency
+        )
+      }
       _searchParams.set('toChainId', currency.chainId.toString())
       _searchParams.set('toCurrency', _toCurrency)
       void push(`${pathname}?${_searchParams.toString()}`)
@@ -209,9 +225,9 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     const switchTokens = () => {
       const _searchParams = new URLSearchParams(searchParams)
       _searchParams.set('fromChainId', toChainId.toString())
-      _searchParams.set('fromCurrency', toCurrency)
+      if (toCurrency) _searchParams.set('fromCurrency', toCurrency)
       _searchParams.set('toChainId', fromChainId.toString())
-      _searchParams.set('toCurrency', fromCurrency)
+      if (fromCurrency) _searchParams.set('toCurrency', fromCurrency)
       void push(`${pathname}?${_searchParams.toString()}`)
     }
     const setAppType = (appType: AppType) => {

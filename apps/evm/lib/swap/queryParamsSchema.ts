@@ -23,7 +23,7 @@ export const queryParamsSchema = z.object({
   //   .string()
   //   .nullable()
   //   .transform((arg) => (arg ? arg : 'NATIVE')),
-  fromCurrency: z.optional(z.nullable(z.string())).transform((val) => val ?? 'NATIVE'),
+  fromCurrency: z.optional(z.nullable(z.string())),
   toChainId: z.coerce
     .number()
     .int()
@@ -31,7 +31,7 @@ export const queryParamsSchema = z.object({
     .lte(2 ** 256)
     .optional()
     .transform((chainId) => chainId as SwapChainId | undefined),
-  toCurrency: z.optional(z.nullable(z.string())).transform((val) => val ?? 'SUSHI'),
+  toCurrency: z.optional(z.nullable(z.string())),
   // toCurrency: z
   //   .string()
   //   .nullable()
