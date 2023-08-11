@@ -65,6 +65,7 @@ class CurveMultitokenCore {
 
   // For faster calculation
   Ann: BigNumber
+  Annn: BigNumber
   AnnMinus1: BigNumber
   nn: BigNumber
   n: BigNumber
@@ -83,6 +84,7 @@ class CurveMultitokenCore {
     this.D = ZERO
 
     this.Ann = getBigNumber(A * this.tokens.length)
+    this.Annn = this.Ann.mul(this.tokens.length)
     this.AnnMinus1 = this.Ann.sub(1)
     this.nn = getBigNumber(Math.pow(this.tokens.length, this.tokens.length))
     this.n = BigNumber.from(this.tokens.length)
@@ -120,24 +122,27 @@ class CurveMultitokenCore {
     return D
   }
 
-  computeY(x: BigNumber): BigNumber {
+  computeY(xIndex: number, x: BigNumber, yIndex: number): BigNumber {
     const D = this.computeLiquidity()
+    let c = D
+    let S_ = ZERO
+    for (let i = 0; i < this.tokens.length; ++i) {
+      let _x = ZERO
+      if (i == xIndex) _x = x
+      else if (i != yIndex) _x = this.reservesRated[i]
+      else continue
+      S_ = S_.add(_x)
+      c = c.mul(D).div(_x).div(this.tokens.length)
+    }
+    c = c.mul(D).div(this.Annn)
+    const b = D.div(this.Ann).add(S_)
 
-    const nA = this.A * 2 // TODO!
-
-    const c = D.mul(D)
-      .div(x.mul(2))
-      .mul(D)
-      .div(nA * 2)
-    const b = D.div(nA).add(x)
-
-    let yPrev
+    let y_prev = ZERO
     let y = D
     for (let i = 0; i < 256; i++) {
-      yPrev = y
-
+      y_prev = y
       y = y.mul(y).add(c).div(y.mul(2).add(b).sub(D))
-      if (y.sub(yPrev).abs().lte(1)) {
+      if (y.sub(y_prev).abs().lte(1)) {
         break
       }
     }
@@ -149,7 +154,7 @@ class CurveMultitokenCore {
     const xBN = this.reservesRated[from]
     const yBN = this.reservesRated[to]
     const xNewBN = xBN.add(getBigNumber(amountIn))
-    const yNewBN = this.computeY(xNewBN)
+    const yNewBN = this.computeY(from, xNewBN, to)
     if (yNewBN.lt(MIN_LIQUIDITY)) throw 'Curve pool OutOfLiquidity'
     const dy = parseInt(yBN.sub(yNewBN).toString()) / this.rates[to]
     return { out: dy * (1 - this.fee), gasSpent: SWAP_GAS_COST }
@@ -164,7 +169,7 @@ class CurveMultitokenCore {
       // lack of precision
       yNewBN = BigNumber.from(1)
 
-    const xNewBN = this.computeY(yNewBN)
+    const xNewBN = this.computeY(to, yNewBN, from)
     const input = Math.round(parseInt(xNewBN.sub(xBN).toString()) / this.rates[from])
 
     //if (input < 1) input = 1
@@ -172,14 +177,22 @@ class CurveMultitokenCore {
   }
 
   calcCurrentPriceWithoutFee(from: number, to: number): number {
-    const xBN = this.reservesRated[from]
-    const x = parseInt(xBN.toString())
+    const xInp = parseInt(this.reservesRated[from].toString())
     const D = parseInt(this.computeLiquidity().toString())
-    const A = this.A / 2 //// TODO !!!!
-    const b = 4 * A * x + D - 4 * A * D
-    const ac4 = (D * D * D) / x
-    const Ds = Math.sqrt(b * b + 4 * A * ac4)
-    const price = 0.5 - (2 * b - ac4 / x) / Ds / 4
+    let Sx = 0,
+      Px = 1
+    this.tokens.forEach((_, i) => {
+      if (i == to) return
+      const x = parseInt(this.reservesRated[i].toString())
+      Sx += x
+      Px *= x
+    })
+    const n = this.tokens.length
+    const b = Sx + D / this.A / n - D
+    const c = Math.pow(D / n, n + 1) / Px / this.A
+    const Ds = Math.sqrt(b * b + 4 * c)
+    const dD = 2 * b - (4 * c) / xInp
+    const price = 0.5 - dD / Ds / 4
     const scale = this.rates[from] / this.rates[to]
     return price * scale
   }
