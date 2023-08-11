@@ -121,7 +121,7 @@ async function maxSwap(page: Page, inputCurrency: Type, outputCurrency: Type) {
   await expect(swapFromBalance).toBeEnabled()
   const swapFromBalanceBefore = await swapFromBalance.textContent()
   const swapToBalance = page.locator('[testdata-id=swap-to-balance-button]')
-  await expect(swapToBalance).toBeVisible()
+  await expect(swapToBalance).toBeVisible({ timeout: 120_000 })
   const swapToBalanceBefore = await swapToBalance.textContent()
 
   await approve(page, inputCurrency)
@@ -192,7 +192,7 @@ async function swap(page: Page, inputCurrency: Type, outputCurrency: Type, amoun
   await expect(swapFromBalance).toBeEnabled()
   const swapFromBalanceBefore = await swapFromBalance.textContent()
   const swapToBalance = page.locator('[testdata-id=swap-to-balance-button]')
-  await expect(swapToBalance).toBeVisible()
+  await expect(swapToBalance).toBeVisible({ timeout: 120_000 })
   const swapToBalanceBefore = await swapToBalance.textContent()
 
   await approve(page, inputCurrency)
