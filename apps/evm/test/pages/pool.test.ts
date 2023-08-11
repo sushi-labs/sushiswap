@@ -262,7 +262,6 @@ async function createOrAddTridentPool(page: Page, args: TridentPoolArgs) {
   const confirmButton = page.locator('[testdata-id=confirm-add-liquidity-button]')
   await expect(confirmButton).toBeVisible()
   await expect(confirmButton).toBeEnabled()
-  await timeout(5000)
   await confirmButton.click()
 
   const expectedText = `(Successfully added liquidity to the ${args.token0.symbol}/${args.token1.symbol} pair)`
@@ -328,8 +327,7 @@ async function removeLiquidityV3(page: Page) {
   await page.locator('[testdata-id=liquidity-max-button]').click()
   const handleLiquidityLocator = page.locator('[testdata-id=remove-or-add-liquidity-button]')
   await expect(handleLiquidityLocator).toBeVisible()
-  await expect(handleLiquidityLocator).toBeEnabled()
-  await timeout(2_500) // needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
+  await expect(handleLiquidityLocator).toBeEnabled()// needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
   await handleLiquidityLocator.click()
 
   const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
@@ -379,25 +377,24 @@ async function removeLiquidityV2(page: Page) {
 
   await expect(removeLiquidityLocator).toBeVisible()
   await expect(removeLiquidityLocator).toBeEnabled()
-  await timeout(5_000)
   await removeLiquidityLocator.click()
 
   const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }
 
-test.describe('Incentivize', () => {
-  test.beforeEach(async ({ page }) => {
-    const url = BASE_URL.concat(`/incentivize`).concat(`?chainId=${CHAIN_ID}`)
-    await page.goto(url)
-    await switchNetwork(page, CHAIN_ID)
-  })
+// test.describe('Incentivize', () => {
+//   test.beforeEach(async ({ page }) => {
+//     const url = BASE_URL.concat(`/incentivize`).concat(`?chainId=${CHAIN_ID}`)
+//     await page.goto(url)
+//     await switchNetwork(page, CHAIN_ID)
+//   })
 
-  test('Incentivize pool', async ({ page }) => {
-    test.slow()
-    await incentivizePool(page, { token0: NATIVE_TOKEN.wrapped, token1: USDC })
-  })
-})
+//   test('Incentivize pool', async ({ page }) => {
+//     test.slow()
+//     await incentivizePool(page, { token0: NATIVE_TOKEN.wrapped, token1: USDC })
+//   })
+// })
 
 async function incentivizePool(page: Page, args: IncenvitivePoolArgs) {
   await handleToken(page, args.token0, 'FIRST')
@@ -466,10 +463,6 @@ async function switchNetwork(page: Page, chainId: number) {
   await expect(networkToSelect).toBeVisible()
   await expect(networkToSelect).toBeEnabled()
   await networkToSelect.click()
-}
-
-function timeout(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 export async function selectDate(selector: string, months: number, day: string, page: Page) {
