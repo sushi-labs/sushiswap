@@ -50,7 +50,7 @@ const farmsQueryFn = async () => {
 }
 
 export const isFarm = (address: string, farms: FarmLP | undefined) => {
-  return useMemo(() => farms?.data?.lps.indexOf(`${MAINNET_CONTRACT}::swap::LPToken<${address}>`), [farms])
+  return useMemo(() => farms?.data?.lps.indexOf(`${MAINNET_CONTRACT}::swap::LPToken<${address}>`), [address, farms])
 }
 
 export function useFarms() {

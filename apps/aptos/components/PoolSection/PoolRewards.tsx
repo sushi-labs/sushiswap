@@ -1,7 +1,8 @@
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { FC } from 'react'
+import { formatNumber } from 'utils/utilFunctions'
 
-export const PoolRewards: FC<{ isFarm: boolean }> = ({ isFarm }) => {
+export const PoolRewards: FC<{ isFarm: boolean; rewardsPerDay: number }> = ({ isFarm, rewardsPerDay }) => {
   if (!isFarm) return <></>
   return (
     <List>
@@ -20,8 +21,7 @@ export const PoolRewards: FC<{ isFarm: boolean }> = ({ isFarm }) => {
                 width={20}
                 alt=""
               />
-              {}
-              SUSHI per day
+              {rewardsPerDay} SUSHI per day
             </div>
           </div>
         </List.KeyValue>
