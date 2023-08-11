@@ -1,14 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { SelectIcon } from '@sushiswap/ui'
-import { textFieldVariants } from '@sushiswap/ui'
-import { Label } from '@sushiswap/ui'
-import { TextField } from '@sushiswap/ui'
-import { DateField } from '@sushiswap/ui'
+import { DateField, Label, SelectIcon, TextField, textFieldVariants } from '@sushiswap/ui'
 import { FormControl, FormField, FormItem, FormMessage, FormSection } from '@sushiswap/ui/components/form'
 import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
-import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import React, { FC, useCallback } from 'react'
 import { ControllerRenderProps, useFormContext } from 'react-hook-form'
 
@@ -133,8 +128,9 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
                 Recipient<sup>*</sup>
               </Label>
               <FormControl>
-                <Web3Input.Ens
-                  placeholder="Enter wallet address or ENS"
+                <TextField
+                  type="text"
+                  placeholder="Recipient address"
                   name={name}
                   onBlur={onBlur}
                   testdata-id={`create-single-vest-recipient-input${index}`}

@@ -46,8 +46,6 @@ export const useClientTrade = (variables: UseTradeParams) => {
       },
     ],
     queryFn: async () => {
-      console.log('useClientTrade')
-
       if (
         !poolsCodeMap ||
         (!isRouteProcessorChainId(chainId) && !isRouteProcessor3ChainId(chainId)) ||
@@ -70,8 +68,6 @@ export const useClientTrade = (variables: UseTradeParams) => {
           functionName: 'processRoute',
           overrides: undefined,
         }
-
-      console.log('useClientTrade 2')
 
       const route = Router.findSpecialRoute(
         poolsCodeMap,
@@ -182,10 +178,17 @@ ${logPools}
                     ? Amount.fromRawAmount(
                         Native.onChain(chainId),
                         JSBI.multiply(JSBI.BigInt(feeData.gasPrice), JSBI.BigInt(route.gasSpent * 1.2))
-                      )
-                        .multiply(price.asFraction)
-                        .toSignificant(4)
+                      ).toSignificant(4)
                     : undefined,
+                // gasSpentUsd:
+                //   price && feeData.gasPrice
+                //     ? Amount.fromRawAmount(
+                //         Native.onChain(chainId),
+                //         JSBI.multiply(JSBI.BigInt(feeData.gasPrice), JSBI.BigInt(route.gasSpent * 1.2))
+                //       )
+                //         .multiply(price.asFraction)
+                //         .toSignificant(4)
+                //     : undefined,
                 route,
                 functionName: isOffset ? 'transferValueAndprocessRoute' : 'processRoute',
                 writeArgs,

@@ -2,6 +2,7 @@
 
 import { Transition } from '@headlessui/react'
 import { Chain } from '@sushiswap/chain'
+import { Native } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
 import { UseTradeReturn } from '@sushiswap/react-query'
@@ -76,8 +77,7 @@ export const TradeStats: FC = () => {
           </span>
         </div>
 
-        {/*{(appType === AppType.Swap || (appType === AppType.xSwap && recipient)) && (*/}
-        {appType === AppType.Swap && (
+        {/* {appType === AppType.Swap || appType === AppType.xSwap ? (
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-700 dark:text-slate-400">Network fee</span>
             <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
@@ -88,7 +88,21 @@ export const TradeStats: FC = () => {
               ) : null}
             </span>
           </div>
-        )}
+        ) : null} */}
+
+        {appType === AppType.Swap || appType === AppType.xSwap ? (
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-700 dark:text-slate-400">Network fee</span>
+            <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+              {loading || !trade?.gasSpent || trade.gasSpent === '0' ? (
+                <SkeletonText fontSize="sm" className="w-[120px]" />
+              ) : trade?.gasSpent ? (
+                `${trade.gasSpent} ${Native.onChain(network0).symbol}`
+              ) : null}
+            </span>
+          </div>
+        ) : null}
+
         {appType === AppType.Swap && (
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-700 dark:text-slate-400">Route</span>

@@ -1,7 +1,8 @@
 'use client'
 
-import React, { createContext, FC, ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 import { Signature } from '@ethersproject/bytes'
+import { watchAccount, watchNetwork } from '@wagmi/core'
+import React, { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 type CheckerContext = {
   state: Record<string, boolean>
@@ -16,22 +17,45 @@ export interface ProviderProps {
   children: ReactNode
 }
 
+interface State {
+  state: Record<string, boolean>
+  signatureState: Record<string, Signature | undefined>
+}
+
+const initialState = { state: {}, signatureState: {} }
+
 export const CheckerProvider: FC<ProviderProps> = ({ children }) => {
-  const [state, setState] = useState<Record<string, boolean>>({})
-  const [signatureState, setSignatureState] = useState<Record<string, Signature | undefined>>({})
+  const [{ state, signatureState }, setState] = useState<State>(initialState)
 
   const setApproved = useCallback((tag: string, approved: boolean) => {
     setState((prevState) => ({
       ...prevState,
-      [tag]: approved,
+      state: {
+        ...prevState.state,
+        [tag]: approved,
+      },
     }))
   }, [])
 
   const setSignature = useCallback((tag: string, signature: Signature | undefined) => {
-    setSignatureState((prevState) => ({
+    setState((prevState) => ({
       ...prevState,
-      [tag]: signature,
+      signatureState: {
+        ...prevState.signatureState,
+        [tag]: signature,
+      },
     }))
+  }, [])
+
+  // Reset state when address/wallet changes
+  useEffect(() => {
+    const unwatchAccountListener = watchAccount(() => setState(initialState))
+    const unwatchChainListener = watchNetwork(() => setState(initialState))
+
+    return () => {
+      unwatchAccountListener()
+      unwatchChainListener()
+    }
   }, [])
 
   return (

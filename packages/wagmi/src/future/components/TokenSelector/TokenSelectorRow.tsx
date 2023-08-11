@@ -96,17 +96,19 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
+                    <span className="text-sm text-muted-foreground hover:underline">
+                      {currency.name ?? currency.symbol}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="flex items-center gap-1">
                     <a
                       target="_blank"
                       rel="noopener noreferrer"
                       href={Chain.from(currency.chainId).getTokenUrl(currency.wrapped.address)}
-                      className="text-sm text-blue text-gray-500 dark:text-slate-400 hover:text-blue"
+                      className="text-blue hover:underline flex gap-1"
                     >
-                      {currency.name ?? currency.symbol}
+                      Show on explorer <ArrowTopRightOnSquareIcon width={16} height={16} />
                     </a>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" className="flex items-center gap-1">
-                    Show on explorer <ArrowTopRightOnSquareIcon width={16} height={16} />
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

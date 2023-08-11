@@ -53,12 +53,12 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "18",
     "ethers": "5.7.2",
-    "hardhat": "2.12.7",
+    "hardhat": "2.17.0",
     "tsup": "7.1.0",
     "typescript": "5.1.6"
   },
   "peerDependencies": {
     "ethers": "5.7.2",
-    "hardhat": "2.12.7"
+    "hardhat": "2.17.0"
   }
 }
