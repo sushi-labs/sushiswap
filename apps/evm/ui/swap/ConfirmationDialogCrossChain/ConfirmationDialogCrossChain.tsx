@@ -120,13 +120,15 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     [trade, network0, srcCurrencyB?.symbol, address]
   )
 
+  const gasLimit = config?.request?.gas ? (config.request.gas * 120n) / 100n : undefined
+  config.request.gas = gasLimit
+
   const {
     writeAsync,
     isLoading: isWritePending,
     data,
   } = useContractWrite({
     ...config,
-    ...(config.request && { request: { ...config.request, gasLimit: config.request.gasLimit.mul(120).div(100) } }),
     onMutate: () => {
       // Set reference of current trade
       if (tradeRef && trade) {

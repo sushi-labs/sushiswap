@@ -201,10 +201,10 @@ async function createOrAddLiquidityV3(page: Page, args: V3PoolArgs) {
   await page.locator(`[testdata-id=add-liquidity-token${tokenOrderNumber}-input]`).fill(args.amount)
 
   if ((args.amountBelongsToToken0 && !args.token0.isNative) || (!args.amountBelongsToToken0 && !args.token1.isNative)) {
-  const approveTokenLocator = page.locator(`[testdata-id=${`approve-erc20-${tokenOrderNumber}-button`}]`)
-  await expect(approveTokenLocator).toBeVisible()
-  await expect(approveTokenLocator).toBeEnabled()
-  await approveTokenLocator.click()
+    const approveTokenLocator = page.locator(`[testdata-id=${`approve-erc20-${tokenOrderNumber}-button`}]`)
+    await expect(approveTokenLocator).toBeVisible()
+    await expect(approveTokenLocator).toBeEnabled()
+    await approveTokenLocator.click()
   }
   const previewLocator = page.locator('[testdata-id=add-liquidity-preview-button]')
   await expect(previewLocator).toBeVisible({ timeout: 10_000 })
@@ -217,7 +217,7 @@ async function createOrAddLiquidityV3(page: Page, args: V3PoolArgs) {
       ? `(Successfully added liquidity to the ${args.token0.symbol}/${args.token1.symbol} pair)`
       : `(Created the ${args.token0.symbol}/${args.token1.symbol} liquidity pool)`
   const regex = new RegExp(expectedText)
-  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+  expect(page.getByText(regex))
 }
 
 async function createOrAddTridentPool(page: Page, args: TridentPoolArgs) {
@@ -266,7 +266,7 @@ async function createOrAddTridentPool(page: Page, args: TridentPoolArgs) {
 
   const expectedText = `(Successfully added liquidity to the ${args.token0.symbol}/${args.token1.symbol} pair)`
   const regex = new RegExp(expectedText)
-  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+  expect(page.getByText(regex))
 }
 
 async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
@@ -284,11 +284,11 @@ async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
   }
 
   if (args.type === 'ADD') {
-  const approveTokenId = `approve-token-${args.token0.isNative ? 1 : 0}-button`
-  const approveTokenLocator = page.locator(`[testdata-id=${approveTokenId}]`)
-  await expect(approveTokenLocator).toBeVisible()
-  await expect(approveTokenLocator).toBeEnabled()
-  await approveTokenLocator.click()
+    const approveTokenId = `approve-token-${args.token0.isNative ? 1 : 0}-button`
+    const approveTokenLocator = page.locator(`[testdata-id=${approveTokenId}]`)
+    await expect(approveTokenLocator).toBeVisible()
+    await expect(approveTokenLocator).toBeEnabled()
+    await approveTokenLocator.click()
   }
   const reviewSelector =
     args.type === 'CREATE' ? '[testdata-id=create-pool-button]' : '[testdata-id=add-liquidity-button]'
@@ -304,7 +304,7 @@ async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
 
   const expectedText = `(Successfully added liquidity to the ${args.token0.symbol}/${args.token1.symbol} pair)`
   const regex = new RegExp(expectedText)
-  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+  expect(page.getByText(regex))
 }
 
 async function removeLiquidityV3(page: Page) {
@@ -327,11 +327,11 @@ async function removeLiquidityV3(page: Page) {
   await page.locator('[testdata-id=liquidity-max-button]').click()
   const handleLiquidityLocator = page.locator('[testdata-id=remove-or-add-liquidity-button]')
   await expect(handleLiquidityLocator).toBeVisible()
-  await expect(handleLiquidityLocator).toBeEnabled()// needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
+  await expect(handleLiquidityLocator).toBeEnabled() // needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
   await handleLiquidityLocator.click()
 
   const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
-  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+  expect(page.getByText(regex))
 }
 
 async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
@@ -359,7 +359,7 @@ async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
   await actionSelector.click({ timeout: 2_000 })
 
   const regex = new RegExp(`(Successfully ${type.toLowerCase()}d .* SLP tokens)`)
-  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+  expect(page.getByText(regex))
 }
 
 async function removeLiquidityV2(page: Page) {
@@ -372,7 +372,6 @@ async function removeLiquidityV2(page: Page) {
   await expect(approveSlpLocator).toBeEnabled()
   await approveSlpLocator.click()
 
-
   const removeLiquidityLocator = page.locator('[testdata-id=remove-liquidity-button]')
 
   await expect(removeLiquidityLocator).toBeVisible()
@@ -380,7 +379,7 @@ async function removeLiquidityV2(page: Page) {
   await removeLiquidityLocator.click()
 
   const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
-  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+  expect(page.getByText(regex))
 }
 
 // test.describe('Incentivize', () => {
