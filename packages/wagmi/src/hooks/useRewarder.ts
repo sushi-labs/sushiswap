@@ -144,11 +144,11 @@ export const useRewarder: UseRewarder = ({
         .filter((el): el is NonNullable<(typeof data)[0]> => !!el)
         .reduce<(Amount<Token> | undefined)[]>((acc, result, index) => {
           if (typeof result === 'bigint') {
-            acc.push(result ? Amount.fromRawAmount(rewardTokens[index], result.toString()) : undefined)
+            acc.push(result ? Amount.fromRawAmount(rewardTokens[index], result) : undefined)
           } else {
             acc.push(
-              ...result[0].map((rewardAmount, index2: number) => {
-                return Amount.fromRawAmount(rewardTokens[index + index2], rewardAmount.toString())
+              ...result[1].map((rewardAmount, index2: number) => {
+                return Amount.fromRawAmount(rewardTokens[index + index2], rewardAmount)
               })
             )
           }

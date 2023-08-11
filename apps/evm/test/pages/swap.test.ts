@@ -45,11 +45,15 @@ test('Wrap and unwrap', async ({ page }) => {
 })
 
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
+  test.slow()
+
   await swap(page, native, sushi, '100')
   await maxSwap(page, sushi, native)
 })
 
 test('Swap Native to USDC, USDC to USDT then USDT to NATIVE', async ({ page }) => {
+  test.slow()
+
   await swap(page, native, usdc, '100')
   await maxSwap(page, usdc, usdt)
   await maxSwap(page, usdt, native)
