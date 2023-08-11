@@ -34,7 +34,7 @@ test.afterEach(async () => {
   await loadSnapshot(CHAIN_ID, SNAPSHOT_ID)
 })
 
-test.only('Create, Withdraw, Update, Transfer, Cancel.', async ({ page }) => {
+test('Create, Withdraw, Update, Transfer, Cancel.', async ({ page }) => {
   const streamId = '1082'
   const withdrawAmount = 0.000002
   const transferToRecipient = '0xc39c2d6eb8adef85f9caa141ec95e7c0b34d8dec'
