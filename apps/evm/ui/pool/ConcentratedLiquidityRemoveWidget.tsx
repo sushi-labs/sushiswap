@@ -294,7 +294,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
           <Button
             size="xl"
             loading={isWritePending}
-            disabled={+value === 0}
+            disabled={+value === 0 || !sendTransaction}
             fullWidth
             onClick={() => sendTransaction?.()}
             testId="remove-or-add-liquidity"

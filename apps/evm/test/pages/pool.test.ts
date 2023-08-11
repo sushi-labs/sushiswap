@@ -2,20 +2,6 @@ import { expect, Page, test } from '@playwright/test'
 import { Native, SUSHI, Token, Type, USDC_ADDRESS } from '@sushiswap/currency'
 import { zeroAddress } from 'viem'
 
-export async function approve(page: Page, locator: string) {
-  await timeout(500) // give the approve button time to load contracts, unrealistically fast when running test
-  const pageLocator = page.locator(`[testdata-id=${locator}]`)
-  await expect(pageLocator)
-    .toBeEnabled({ timeout: 1000 })
-    .then(async () => {
-      await pageLocator.click({ timeout: 2000 })
-      const expectedText = '(Successfully approved .*)'
-      const regex = new RegExp(expectedText)
-      await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex, { timeout: 1_000 })
-    })
-    .catch(() => console.log('already approved or not needed'))
-}
-
 interface TridentPoolArgs {
   token0: Type
   token1: Type
@@ -67,7 +53,7 @@ const BASE_URL = process.env.PLAYWRIGHT_URL || 'http://localhost:3000/pool'
 
 // test.beforeAll(async ({ page }) => {})
 
-// // Tests will only work for polygon atm
+// Tests will only work for polygon atm
 test.describe('V3', () => {
   test.beforeEach(async ({ page }) => {
     const url = BASE_URL.concat('/add').concat(`?chainId=${CHAIN_ID}`)
@@ -214,9 +200,12 @@ async function createOrAddLiquidityV3(page: Page, args: V3PoolArgs) {
   const tokenOrderNumber = args.amountBelongsToToken0 ? 0 : 1
   await page.locator(`[testdata-id=add-liquidity-token${tokenOrderNumber}-input]`).fill(args.amount)
 
-  // if ((args.amountBelongsToToken0 && !args.token0.isNative) || (!args.amountBelongsToToken0 && !args.token1.isNative)) {
-  await approve(page, `approve-erc20-${tokenOrderNumber}-button`)
-  // }
+  if ((args.amountBelongsToToken0 && !args.token0.isNative) || (!args.amountBelongsToToken0 && !args.token1.isNative)) {
+  const approveTokenLocator = page.locator(`[testdata-id=${`approve-erc20-${tokenOrderNumber}-button`}]`)
+  await expect(approveTokenLocator).toBeVisible()
+  await expect(approveTokenLocator).toBeEnabled()
+  await approveTokenLocator.click()
+  }
   const previewLocator = page.locator('[testdata-id=add-liquidity-preview-button]')
   await expect(previewLocator).toBeVisible({ timeout: 10_000 })
   await expect(previewLocator).toBeEnabled()
@@ -247,14 +236,21 @@ async function createOrAddTridentPool(page: Page, args: TridentPoolArgs) {
   await page.locator('[testdata-id=add-liquidity-token0-input]').fill(args.amount0)
   await page.locator('[testdata-id=add-liquidity-token1-input]').fill(args.amount1)
 
-  const approveBentoId =
-    args.type === 'CREATE' ? 'create-trident-approve-bentobox-button' : 'add-liquidity-trident-approve-bentobox-button'
-  await approve(page, approveBentoId)
+  if (args.type === 'CREATE') {
+    const approveBentoLocator = page.locator(`[testdata-id=${'create-trident-approve-bentobox-button'}]`)
+    await expect(approveBentoLocator).toBeVisible()
+    await expect(approveBentoLocator).toBeEnabled()
+    await approveBentoLocator.click()
+  }
   const approveTokenId =
     args.type === 'CREATE'
       ? `create-trident-approve-token${args.token0.isNative ? 1 : 0}-button`
       : `add-liquidity-trident-approve-token${args.token0.isNative ? 1 : 0}-button`
-  await approve(page, approveTokenId)
+
+  const approveTokenLocator = page.locator(`[testdata-id=${approveTokenId}]`)
+  await expect(approveTokenLocator).toBeVisible()
+  await expect(approveTokenLocator).toBeEnabled()
+  await approveTokenLocator.click()
 
   const reviewSelector =
     args.type === 'CREATE' ? '[testdata-id=create-pool-button]' : '[testdata-id=add-liquidity-button]'
@@ -266,7 +262,6 @@ async function createOrAddTridentPool(page: Page, args: TridentPoolArgs) {
   const confirmButton = page.locator('[testdata-id=confirm-add-liquidity-button]')
   await expect(confirmButton).toBeVisible()
   await expect(confirmButton).toBeEnabled()
-  await timeout(5000)
   await confirmButton.click()
 
   const expectedText = `(Successfully added liquidity to the ${args.token0.symbol}/${args.token1.symbol} pair)`
@@ -288,8 +283,13 @@ async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
       .fill(args.token0.isNative ? args.amount1 : args.amount0)
   }
 
-  await approve(page, `approve-token-${args.token0.isNative ? 1 : 0}-button`)
-
+  if (args.type === 'ADD') {
+  const approveTokenId = `approve-token-${args.token0.isNative ? 1 : 0}-button`
+  const approveTokenLocator = page.locator(`[testdata-id=${approveTokenId}]`)
+  await expect(approveTokenLocator).toBeVisible()
+  await expect(approveTokenLocator).toBeEnabled()
+  await approveTokenLocator.click()
+  }
   const reviewSelector =
     args.type === 'CREATE' ? '[testdata-id=create-pool-button]' : '[testdata-id=add-liquidity-button]'
   const reviewButton = page.locator(reviewSelector)
@@ -327,8 +327,7 @@ async function removeLiquidityV3(page: Page) {
   await page.locator('[testdata-id=liquidity-max-button]').click()
   const handleLiquidityLocator = page.locator('[testdata-id=remove-or-add-liquidity-button]')
   await expect(handleLiquidityLocator).toBeVisible()
-  await expect(handleLiquidityLocator).toBeEnabled()
-  await timeout(2_500) // needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
+  await expect(handleLiquidityLocator).toBeEnabled()// needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
   await handleLiquidityLocator.click()
 
   const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
@@ -347,7 +346,11 @@ async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
   await expect(maxButtonSelector).toBeEnabled()
   await maxButtonSelector.click()
   if (type === 'STAKE') {
-    await approve(page, `${type.toLowerCase()}-approve-slp-button`)
+    const approveSlpId = `${type.toLowerCase()}-approve-slp-button`
+    const approveSlpLocator = page.locator(`[testdata-id=${approveSlpId}]`)
+    await expect(approveSlpLocator).toBeVisible()
+    await expect(approveSlpLocator).toBeEnabled()
+    await approveSlpLocator.click()
   }
 
   const actionSelector = page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-button]`)
@@ -362,13 +365,18 @@ async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
 async function removeLiquidityV2(page: Page) {
   await switchNetwork(page, CHAIN_ID)
   await page.locator('[testdata-id=remove-liquidity-max-button]').click()
-  await approve(page, 'approve-remove-liquidity-slp-button')
+
+  const approveSlpId = 'approve-remove-liquidity-slp-button'
+  const approveSlpLocator = page.locator(`[testdata-id=${approveSlpId}]`)
+  await expect(approveSlpLocator).toBeVisible()
+  await expect(approveSlpLocator).toBeEnabled()
+  await approveSlpLocator.click()
+
 
   const removeLiquidityLocator = page.locator('[testdata-id=remove-liquidity-button]')
 
   await expect(removeLiquidityLocator).toBeVisible()
   await expect(removeLiquidityLocator).toBeEnabled()
-  await timeout(5_000)
   await removeLiquidityLocator.click()
 
   const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
@@ -381,7 +389,7 @@ async function removeLiquidityV2(page: Page) {
 //     await page.goto(url)
 //     await switchNetwork(page, CHAIN_ID)
 //   })
-//
+
 //   test('Incentivize pool', async ({ page }) => {
 //     test.slow()
 //     await incentivizePool(page, { token0: NATIVE_TOKEN.wrapped, token1: USDC })
@@ -416,7 +424,12 @@ async function incentivizePool(page: Page, args: IncenvitivePoolArgs) {
   await expect(rowSelector).toBeVisible()
   await rowSelector.click()
 
-  await approve(page, 'approve-erc20-button')
+  const approveTokenId = 'approve-erc20-button'
+  const approveTokenLocator = page.locator(`[testdata-id=${approveTokenId}]`)
+  await expect(approveTokenLocator).toBeVisible()
+  await expect(approveTokenLocator).toBeEnabled()
+  await approveTokenLocator.click()
+
   const previewLocator = page.locator('[testdata-id=incentivize-pool-review]')
   await expect(previewLocator).toBeVisible({ timeout: 10_000 })
   await expect(previewLocator).toBeEnabled()
@@ -450,10 +463,6 @@ async function switchNetwork(page: Page, chainId: number) {
   await expect(networkToSelect).toBeVisible()
   await expect(networkToSelect).toBeEnabled()
   await networkToSelect.click()
-}
-
-function timeout(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 export async function selectDate(selector: string, months: number, day: string, page: Page) {
