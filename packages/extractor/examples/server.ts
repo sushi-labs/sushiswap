@@ -42,26 +42,7 @@ const extractors = new Map<SupportedChainId, Extractor>()
 const tokenManagers = new Map<SupportedChainId, TokenManager>()
 const nativeProviders = new Map<SupportedChainId, NativeWrapProvider>()
 
-async function setup() {
-  for (const chainId of SUPPORTED_CHAIN_IDS) {
-    const extractor = new Extractor(EXTRACTOR_CONFIG[chainId])
-    await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId])
-    extractors.set(chainId, extractor)
-    const tokenManager = new TokenManager(
-      extractor?.multiCallAggregator as MultiCallAggregator,
-      path.resolve(__dirname, '../cache'),
-      `./tokens-${chainId}`
-    )
-    await tokenManager.addCachedTokens()
-    tokenManagers.set(chainId, tokenManager)
-    const nativeProvider = new NativeWrapProvider(chainId, extractor.client)
-    nativeProviders.set(chainId, nativeProvider)
-  }
-}
-
 async function main() {
-  await setup()
-
   const app: Express = express()
 
   Sentry.init({
@@ -81,6 +62,21 @@ async function main() {
     // Performance Monitoring
     tracesSampleRate: 1.0, // Capture 100% of the transactions, reduce in production!,
   })
+
+  for (const chainId of SUPPORTED_CHAIN_IDS) {
+    const extractor = new Extractor(EXTRACTOR_CONFIG[chainId])
+    await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId])
+    extractors.set(chainId, extractor)
+    const tokenManager = new TokenManager(
+      extractor?.multiCallAggregator as MultiCallAggregator,
+      path.resolve(__dirname, '../cache'),
+      `./tokens-${chainId}`
+    )
+    await tokenManager.addCachedTokens()
+    tokenManagers.set(chainId, tokenManager)
+    const nativeProvider = new NativeWrapProvider(chainId, extractor.client)
+    nativeProviders.set(chainId, nativeProvider)
+  }
 
   app.use(cors())
 
