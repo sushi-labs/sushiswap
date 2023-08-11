@@ -109,7 +109,7 @@ export async function createUniV3EnvZero(walletClient: WalletClient, userDeployC
   }
 
   return {
-    walletClient,
+    walletClient: walletClient as any,
     user,
     tokenFactory,
     SushiV3Factory,
@@ -263,7 +263,7 @@ export async function createUniV3Pool(
   price: number,
   positions: UniV3Position[]
 ): Promise<UniV3PoolInfo> {
-  const sqrtPriceX96 = BigInt(Math.sqrt(price) * (2 ** 96))
+  const sqrtPriceX96 = BigInt(Math.sqrt(price) * 2 ** 96)
   const tickSpacing = feeAmountTickSpacing[fee]
   expect(tickSpacing).not.undefined
 
