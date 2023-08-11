@@ -16,12 +16,20 @@ export const useTradeQuery = (
   select: UseTradeQuerySelect
 ) => {
   return useQuery({
-    queryKey: ['NoPersist', 'getTrade', { chainId, fromToken, toToken, amount, gasPrice, recipient }],
+    queryKey: ['getTrade', { chainId, fromToken, toToken, amount, gasPrice, recipient }],
     queryFn: async () => {
       const params = new URL(
         process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com/v0'
       )
       params.searchParams.set('chainId', `${chainId}`)
+      params.searchParams.set(
+        'tokenIn',
+        `${fromToken?.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : fromToken?.wrapped.address}`
+      )
+      params.searchParams.set(
+        'tokenOut',
+        `${toToken?.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : toToken?.wrapped.address}`
+      )
       params.searchParams.set(
         'fromTokenId',
         `${fromToken?.isNative ? nativeCurrencyIds[chainId] : fromToken?.wrapped.address}`
@@ -39,7 +47,7 @@ export const useTradeQuery = (
       return tradeValidator.parse(await res.json())
     },
     refetchOnWindowFocus: true,
-    refetchInterval: 10000,
+    refetchInterval: 2500,
     keepPreviousData: !!amount,
     cacheTime: 0,
     select,

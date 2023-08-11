@@ -1,5 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
 
+export const AMPL_ADDRESS = {
+  [ChainId.ETHEREUM]: '0xD46bA6D942050d489DBd938a2C909A5d5039A161',
+}
+
 export const axlUSDC_ADDRESS = {
   [ChainId.ARBITRUM]: '0xEB466342C4d449BC9f53A865D5Cb90586f405215',
   [ChainId.AVALANCHE]: '0xfaB550568C688d5D8A52C7d794cb93Edc26eC0eC',
