@@ -1,6 +1,7 @@
-import { UsePoolsParams } from '../types'
-import { DataFetcher, LiquidityProviders, PoolCode } from '@sushiswap/router'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
+import { DataFetcher, LiquidityProviders, PoolCode } from '@sushiswap/router'
+
+import { UsePoolsParams } from '../types'
 
 const isTest = process.env.NEXT_PUBLIC_TEST === 'true' || process.env.TEST === 'true'
 
@@ -37,7 +38,6 @@ export const getAllPoolsCodeMap = async ({ currencyA, currencyB, chainId }: Omit
   const testLiquidityProviders = [...sushiLiquidityProviders]
 
   const dataFetcher = DataFetcher.onChain(chainId)
-  console.log('IS TEST', isTest)
   dataFetcher.startDataFetching(isTest ? testLiquidityProviders : liquidityProviders)
   await dataFetcher.fetchPoolsForToken(currencyA, currencyB)
   dataFetcher.stopDataFetching()

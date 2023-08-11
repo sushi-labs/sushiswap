@@ -16,6 +16,7 @@ import {
 import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
 import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { UseCrossChainTradeReturn } from 'lib/swap/useCrossChainTrade/types'
 import { nanoid } from 'nanoid'
 import { log } from 'next-axiom'
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
@@ -49,6 +50,7 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
   const { setReview, setTradeId, setValue } = useSwapActions()
   const [open, setOpen] = useState(false)
   const { data: trade } = useTrade({ crossChain: true })
+  const tradeRef = useRef<UseCrossChainTradeReturn | null>(null)
   const { setSignature } = useSignature(APPROVE_XSWAP_TAG)
   const { approved } = useApproved(APPROVE_XSWAP_TAG)
   const groupTs = useRef<number>()
@@ -124,6 +126,13 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     data,
   } = useContractWrite({
     ...config,
+    ...(config.request && { request: { ...config.request, gasLimit: config.request.gasLimit.mul(120).div(100) } }),
+    onMutate: () => {
+      // Set reference of current trade
+      if (tradeRef && trade) {
+        tradeRef.current = trade
+      }
+    },
     onSuccess: async (data) => {
       setReview(false)
 
@@ -134,11 +143,17 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
         .then((receipt) => {
           if (receipt.status === 'success') {
             log.info('cross chain swap success (source)', {
-              trade,
+              chainId: network0,
+              txHash: data.hash,
+              exporerLink: Chain.txUrl(network0, data.hash),
+              args: trade?.writeArgs,
             })
           } else {
-            log.info('cross chain swap failed (source)', {
-              trade,
+            log.error('cross chain swap failed (source)', {
+              chainId: network0,
+              txHash: data.hash,
+              exporerLink: Chain.txUrl(network0, data.hash),
+              args: trade?.writeArgs,
             })
           }
 
@@ -149,9 +164,6 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
           })
         })
         .catch(() => {
-          log.info('cross chain swap error (source)', {
-            trade,
-          })
           setStepStates({
             source: StepState.Failed,
             bridge: StepState.NotStarted,
@@ -167,9 +179,10 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     onSettled,
     onError: (error) => {
       if (error.message.startsWith('user rejected transaction')) return
-      log.error('Cross Chain Swap error', {
-        trade,
-        error,
+      log.error('cross chain swap error (source)', {
+        route: trade?.route,
+        args: trade?.writeArgs,
+        error: error,
       })
       createErrorToast(error.message, false)
     },

@@ -114,6 +114,19 @@ export const TokenProvider: FC<TokenProvider> = ({ children }) => {
     const token0 = getTokenFromUrl(fromChainId, _fromCurrency, tokenFrom, isTokenFromLoading)
     const token1 = getTokenFromUrl(toChainId, _toCurrency, tokenTo, isTokenToLoading)
 
+    // console.log({
+    //   token0,
+    //   fromChainId,
+    //   _fromCurrency,
+    //   tokenFrom,
+    //   isTokenFromLoading,
+    //   token1,
+    //   toChainId,
+    //   _toCurrency,
+    //   tokenTo,
+    //   isTokenToLoading,
+    // })
+
     return {
       token0,
       token1,

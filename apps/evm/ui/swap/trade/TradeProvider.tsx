@@ -3,10 +3,11 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui/types'
-import { Address, useAccount } from '@sushiswap/wagmi'
+import { Address, useAccount, watchNetwork } from '@sushiswap/wagmi'
+import { isSwapApiEnabledChainId } from 'config'
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
+import React, { createContext, FC, ReactNode, useContext, useEffect, useMemo, useReducer } from 'react'
 import { SwapChainId } from 'types'
 
 import { queryParamsSchema } from '../../../lib/swap/queryParamsSchema'
@@ -94,7 +95,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   // const _toChainId = searchParams?.get('toChainId')
   const _toCurrency = searchParams?.get('toCurrency')
   const _amount = searchParams?.get('amount')
-  const _recipient = searchParams?.get('recipient') as Address | null
+  const _recipient = searchParams?.get('recipient') as Address
   const _review = searchParams?.get('review')
 
   const { fromCurrency, toCurrency, amount, recipient, review } = queryParamsSchema.parse({
@@ -107,12 +108,13 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { token0, token1, fromChainId, toChainId } = useTokenState()
 
   const [internalState, dispatch] = useReducer(reducer, {
-    isFallback: true,
+    isFallback: !isSwapApiEnabledChainId(fromChainId),
     tradeId: nanoid(),
     review: review ? review : false,
     value: !amount || amount === '0' ? '' : amount,
   })
 
+  console.log(isSwapApiEnabledChainId(fromChainId), internalState.isFallback)
   // console.log({ token0, token1 })
 
   const state = useMemo(() => {
@@ -293,6 +295,22 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     toChainId,
     toCurrency,
   ])
+
+  useEffect(() => {
+    const unwatch = watchNetwork(({ chain }) => {
+      if (chain) {
+        if (isSwapApiEnabledChainId(chain?.id)) {
+          api.setFallback(false)
+        } else {
+          api.setFallback(true)
+        }
+      }
+    })
+
+    return () => {
+      unwatch()
+    }
+  }, [])
 
   return (
     <SwapActionsContext.Provider value={api}>

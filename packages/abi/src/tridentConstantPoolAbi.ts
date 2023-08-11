@@ -752,6 +752,19 @@ export const tridentConstantPoolAbi = [
   },
   {
     inputs: [],
+    name: 'factory',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'token1',
     outputs: [
       {

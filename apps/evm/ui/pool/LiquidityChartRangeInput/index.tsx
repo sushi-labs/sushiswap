@@ -148,7 +148,7 @@ export default function LiquidityChartRangeInput({
   const isUninitialized = !currencyA || !currencyB || (data === undefined && !isLoading)
 
   return (
-    <div className="grid auto-rows-auto gap-3 min-h-[300px]">
+    <div className="grid auto-rows-auto gap-3 min-h-[300px] overflow-hidden">
       {isUninitialized ? (
         <InfoBox
           message="Your position will appear here."

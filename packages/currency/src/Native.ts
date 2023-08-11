@@ -25,6 +25,10 @@ export class Native extends Currency {
     return wnative
   }
 
+  // public get tokenURI(): string {
+  //   return `native-currency/${this.symbol.toLowerCase()}.svg`
+  // }
+
   private static cache: Record<number, Native> = {}
 
   public static onChain(chainId: number): Native {

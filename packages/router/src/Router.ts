@@ -5,6 +5,7 @@ import { Address, Hex } from 'viem'
 
 import { convertTokenToBento, getBentoChainId } from './lib/convert'
 import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
+import { Bridge } from './pools/Bridge'
 import { PoolCode } from './pools/PoolCode'
 import { getRouteProcessorCode } from './TinesToRouteProcessor'
 import { getRouteProcessor2Code, PermitData, RouterLiquiditySource } from './TinesToRouteProcessor2'
@@ -35,6 +36,61 @@ export interface RPParams {
 export type PoolFilter = (list: RPool) => boolean
 
 export class Router {
+  static findRouteType(poolCodesMap: Map<string, PoolCode>, addresses: string[]) {
+    if (
+      addresses?.every((address) => {
+        const poolName = poolCodesMap.get(address)?.poolName
+        return (
+          poolName?.startsWith('Wrap') ||
+          poolName?.startsWith(LiquidityProviders.SushiSwapV2) ||
+          poolName?.startsWith(LiquidityProviders.SushiSwapV3) ||
+          poolName?.startsWith(LiquidityProviders.Trident) ||
+          poolName?.startsWith(Bridge.BentoBox)
+        )
+      })
+    ) {
+      return 'Internal'
+    } else if (
+      addresses?.some((address) => {
+        const poolName = poolCodesMap.get(address)?.poolName
+        return (
+          !poolName?.startsWith('Wrap') &&
+          (poolName?.startsWith(LiquidityProviders.SushiSwapV2) ||
+            poolName?.startsWith(LiquidityProviders.SushiSwapV3) ||
+            poolName?.startsWith(LiquidityProviders.Trident) ||
+            poolName?.startsWith(Bridge.BentoBox))
+        )
+      }) &&
+      addresses?.some((address) => {
+        const poolName = poolCodesMap.get(address)?.poolName
+        return (
+          !poolName?.startsWith('Wrap') &&
+          (!poolName?.startsWith(LiquidityProviders.SushiSwapV2) ||
+            !poolName?.startsWith(LiquidityProviders.SushiSwapV3) ||
+            !poolName?.startsWith(LiquidityProviders.Trident) ||
+            !poolName?.startsWith(Bridge.BentoBox))
+        )
+      })
+    ) {
+      return 'Mix'
+    } else if (
+      addresses?.some((address) => {
+        const poolName = poolCodesMap.get(address)?.poolName
+        return (
+          poolName?.startsWith('Wrap') ||
+          (!poolName?.startsWith(LiquidityProviders.SushiSwapV2) &&
+            !poolName?.startsWith(LiquidityProviders.SushiSwapV3) &&
+            !poolName?.startsWith(LiquidityProviders.Trident) &&
+            !poolName?.startsWith(Bridge.BentoBox))
+        )
+      })
+    ) {
+      return 'External'
+    }
+
+    return 'Unknown'
+  }
+
   static findSushiRoute(
     poolCodesMap: Map<string, PoolCode>,
     chainId: ChainId,
@@ -58,7 +114,7 @@ export class Router {
     amountIn: bigint,
     toToken: Type,
     gasPrice: number,
-    maxPriceImpact = 10 // 10%
+    maxPriceImpact = 1 // 1%
   ) {
     // Find preferrable route
     const preferrableRoute = Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice, [
@@ -108,10 +164,8 @@ export class Router {
     }
     let pools = Array.from(poolCodes).map((pc) => pc.pool)
 
-    // console.log('before', pools.length)
     if (poolFilter) pools = pools.filter(poolFilter)
-    // console.log('after', pools.length)
-    // console.log({pools})
+
     const route = findMultiRouteExactIn(
       TokenToRToken(fromToken),
       TokenToRToken(toToken),
@@ -196,9 +250,20 @@ export class Router {
     to: Address,
     RPAddr: Address,
     permits: PermitData[] = [],
-    maxPriceImpact = 0.005
+    maxPriceImpact = 0.005,
+    source = RouterLiquiditySource.Sender
   ): RPParams {
-    return Router.routeProcessor2Params(poolCodesMap, route, fromToken, toToken, to, RPAddr, permits, maxPriceImpact)
+    return Router.routeProcessor2Params(
+      poolCodesMap,
+      route,
+      fromToken,
+      toToken,
+      to,
+      RPAddr,
+      permits,
+      maxPriceImpact,
+      source
+    )
   }
 
   static routeProcessor4Params(
