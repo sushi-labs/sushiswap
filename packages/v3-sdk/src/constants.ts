@@ -105,7 +105,7 @@ export const SUSHISWAP_V3_POSTIION_MANAGER: Record<SushiSwapV3ChainId, `0x${stri
   [ChainId.BASE]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
 } as const
 
-export const SUSHISWAP_V3_POSTIION_MANAGER: Record<SushiSwapV3ChainId, `0x${string}`> = {
+export const SUSHISWAP_V3_TICK_LENS: Record<SushiSwapV3ChainId, `0x${string}`> = {
   [ChainId.ARBITRUM_NOVA]: '0xF60e5f4A44a510742457D8064ffd360B12d8D9AF',
   [ChainId.ARBITRUM]: '0x8516944E89f296eb6473d79aED1Ba12088016c9e',
   [ChainId.AVALANCHE]: '0xDdC1b5920723F774d2Ec2C3c9355251A20819776',
