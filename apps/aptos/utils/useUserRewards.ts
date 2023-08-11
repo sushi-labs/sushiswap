@@ -4,7 +4,7 @@ import { FarmLP } from './useFarms'
 
 export const ACC_SUSHI_PRECISION = 1000000000000
 
-export function useRewards(
+export function useUserRewards(
   farms: FarmLP | undefined,
   stakes: userStakes | undefined,
   pIdIndex: number | undefined,

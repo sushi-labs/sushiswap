@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import TradeInput from './TradeInput'
 import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
@@ -67,6 +67,9 @@ export const SwapTradeInput = ({ handleSwap }: Props) => {
       setError('')
     }
   }
+  useEffect(() => {
+    checkBalance(String(amount))
+  }, [token0, token1, balance])
   return (
     <TradeInput
       id="swap-from"

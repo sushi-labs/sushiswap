@@ -16,9 +16,10 @@ import { useAccount } from 'utils/useAccount'
 import { isFarm, useFarms } from 'utils/useFarms'
 import { usePool } from 'utils/usePool'
 import { Pool } from 'utils/usePools'
-import { useRewards } from 'utils/useRewards'
+import { useUserRewards } from 'utils/useUserRewards'
 import { useTotalSupply } from 'utils/useTotalSupply'
 import { getPIdIndex, useUserHandle, useUserPool } from 'utils/useUserHandle'
+import { useRewardsPerDay } from 'utils/useRewardsPerDay'
 
 const LINKS = (row: Pool) => [
   {
@@ -56,7 +57,9 @@ const _Pool = () => {
 
   const { isLoadingAccount } = useAccount()
 
-  const rewards = useRewards(farms, stakes, pIdIndex, farmIndex)
+  const rewards = useUserRewards(farms, stakes, pIdIndex, farmIndex)
+  const rewardsPerDay = useRewardsPerDay(farms, farmIndex, coinInfo?.data?.decimals)
+
   return (
     <>
       {isLoadingAccount && <Loading />}
@@ -68,7 +71,7 @@ const _Pool = () => {
                 <PoolHeader row={pool} />
                 <hr className="my-3 border-t border-gray-900/5 dark:border-slate-200/5" />
                 <PoolComposition row={pool} />
-                <PoolRewards isFarm={farmIndex !== -1} />
+                <PoolRewards isFarm={farmIndex !== -1} rewardsPerDay={rewardsPerDay} />
               </div>
               <div className="flex flex-col order-2 gap-4">
                 <AppearOnMount>
