@@ -88,9 +88,9 @@ export class TokenManager {
       const newToken = new Token({
         chainId: this.client.client.chain?.id as ChainId,
         address: address,
-        decimals: decimals.status == 'fulfilled' ? Number(decimals.value as bigint) : 18,
-        symbol: symbol.status == 'fulfilled' ? (symbol.value as string) : `Unknown_${address.substring(2, 10)}`,
-        name: name.status == 'fulfilled' ? (name.value as string) : `Unknown_${address.substring(2, 10)}`,
+        decimals: decimals.status === 'fulfilled' ? Number(decimals.value as bigint) : 18,
+        symbol: symbol.status === 'fulfilled' ? (symbol.value as string) : `Unknown_${address.substring(2, 10)}`,
+        name: name.status === 'fulfilled' ? (name.value as string) : `Unknown_${address.substring(2, 10)}`,
       })
       this.addToken(newToken)
       return newToken

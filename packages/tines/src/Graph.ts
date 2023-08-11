@@ -1,15 +1,15 @@
-import { BigNumber } from '@ethersproject/bignumber'
+import { Address } from 'viem'
 
 import { ConstantProductRPool, RPool, RToken, setTokenId } from './PrimaryPools'
 import { StableSwapRPool } from './StableSwapPool'
-import { ASSERT, closeValues, DEBUG, getBigNumber } from './Utils'
+import { ASSERT, closeValues, DEBUG, getBigInt } from './Utils'
 
 const ROUTER_DISTRIBUTION_PORTION = 65535
 
 // Routing info about each one swap
 export interface RouteLeg {
   poolType: 'Stable' | 'Classic' | 'Unknown'
-  poolAddress: string // which pool use for swap
+  poolAddress: Address // which pool use for swap
   poolFee: number
 
   tokenFrom: RToken // from what token to swap
@@ -36,13 +36,13 @@ export interface MultiRoute {
   swapPrice?: number
   priceImpact?: number
   amountIn: number
-  amountInBN: BigNumber
+  amountInBN: bigint
   amountOut: number
-  amountOutBN: BigNumber
+  amountOutBN: bigint
   legs: RouteLeg[]
   gasSpent: number
   totalAmountOut: number
-  totalAmountOutBN: BigNumber
+  totalAmountOutBN: bigint
 }
 
 // Tines input info about blockchains
@@ -89,7 +89,7 @@ export class Edge {
     this.bestEdgeIncome = 0
   }
 
-  reserve(v: Vertice): BigNumber {
+  reserve(v: Vertice): bigint {
     return v === this.vert0 ? this.pool.getReserve0() : this.pool.getReserve1()
   }
 
@@ -280,7 +280,7 @@ export class Edge {
           precision
         )
       }
-    }, `Error 225`)
+    }, 'Error 225')
   }
 }
 
@@ -427,7 +427,7 @@ export class Graph {
       processedVert.add(v)
     }
 
-    if (logging) console.log(`Pricing: Initial token ${from.token.symbol} price=${price}` )
+    if (logging) console.log(`Pricing: Initial token ${from.token.symbol} price=${price}`)
     addVertice(from, price)
     while (nextEdges.length > 0) {
       const bestEdge = nextEdges.pop() as Edge
@@ -436,10 +436,12 @@ export class Graph {
         : [bestEdge.vert0, bestEdge.vert1]
       if (processedVert.has(vTo)) continue
       const p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1)
-      if (logging) 
+      if (logging)
         console.log(
-          `Pricing: + Token ${vTo.token.symbol} price=${vFrom.price * p}`
-          + ` from ${vFrom.token.symbol} pool=${bestEdge.pool.address} liquidity=${edgeValues.get(bestEdge)}` )
+          `Pricing: + Token ${vTo.token.symbol} price=${vFrom.price * p} from ${vFrom.token.symbol} pool=${
+            bestEdge.pool.address
+          } liquidity=${edgeValues.get(bestEdge)}`
+        )
       addVertice(vTo, vFrom.price * p)
     }
 
@@ -622,7 +624,7 @@ export class Graph {
     const processedVert = new Set<Vertice>()
     const nextVertList = [start] // TODO: Use sorted Set!
 
-    let debug_info = ``
+    let debug_info = ''
     let checkLine = 0
     for (;;) {
       let closestVert: Vertice | undefined
@@ -688,8 +690,8 @@ export class Graph {
         if (!v2.bestSource) nextVertList.push(v2)
         if (!v2.bestSource || newTotal > v2.bestTotal) {
           DEBUG(() => {
-            const st = closestVert?.token == from ? '*' : ''
-            const fn = v2?.token == to ? '*' : ''
+            const st = closestVert?.token === from ? '*' : ''
+            const fn = v2?.token === to ? '*' : ''
             debug_info += `${st}${closestVert?.token.name}->${v2.token.name}${fn} ${v2.bestIncome} -> ${newIncome}\n`
           })
           v2.bestIncome = newIncome
@@ -795,8 +797,8 @@ export class Graph {
         if (!v2.bestSource) nextVertList.push(v2)
         if (!v2.bestSource || newTotal < v2.bestTotal) {
           DEBUG(() => {
-            const st = v2?.token == from ? '*' : ''
-            const fn = closestVert?.token == to ? '*' : ''
+            const st = v2?.token === from ? '*' : ''
+            const fn = closestVert?.token === to ? '*' : ''
             debug_info += `${st}${closestVert?.token.name}<-${v2.token.name}${fn} ${v2.bestIncome} -> ${newIncome}\n`
           })
           v2.bestIncome = newIncome
@@ -862,13 +864,13 @@ export class Graph {
     return p
   }
 
-  findBestRouteExactIn(from: RToken, to: RToken, amountIn: BigNumber | number, mode: number | number[]): MultiRoute {
-    let amountInBN: BigNumber
-    if (amountIn instanceof BigNumber) {
+  findBestRouteExactIn(from: RToken, to: RToken, amountIn: bigint | number, mode: number | number[]): MultiRoute {
+    let amountInBN: bigint
+    if (typeof amountIn === 'bigint') {
       amountInBN = amountIn
       amountIn = parseInt(amountIn.toString())
     } else {
-      amountInBN = getBigNumber(amountIn)
+      amountInBN = getBigInt(amountIn)
     }
 
     let routeValues = []
@@ -902,19 +904,19 @@ export class Graph {
         totalrouted += routeValues[step]
       }
     }
-    if (step == 0 || output == 0)
+    if (step === 0 || output === 0)
       return {
         status: RouteStatus.NoWay,
         fromToken: from,
         toToken: to,
         amountIn: 0,
-        amountInBN: BigNumber.from(0),
+        amountInBN: 0n,
         amountOut: 0,
-        amountOutBN: BigNumber.from(0),
+        amountOutBN: 0n,
         legs: [],
         gasSpent: 0,
         totalAmountOut: 0,
-        totalAmountOutBN: BigNumber.from(0),
+        totalAmountOutBN: 0n,
       }
     let status
     if (step < routeValues.length) status = RouteStatus.Partial
@@ -930,7 +932,7 @@ export class Graph {
     //if (topologyWasChanged || removedEdgesNumber > 0) {
     output = this.updateLegsAmountOut(legs, amountIn * totalrouted)
     totalOutput = output - toVert.gasPrice * gasSpent
-    if (output == 0) {
+    if (output === 0) {
       status = RouteStatus.NoWay
       totalOutput = 0
     }
@@ -955,13 +957,13 @@ export class Graph {
       swapPrice,
       priceImpact,
       amountIn: amountIn * totalrouted,
-      amountInBN: status == RouteStatus.Success ? amountInBN : getBigNumber(amountIn * totalrouted),
+      amountInBN: status === RouteStatus.Success ? amountInBN : getBigInt(amountIn * totalrouted),
       amountOut: output,
-      amountOutBN: getBigNumber(output),
+      amountOutBN: getBigInt(output),
       legs,
       gasSpent,
       totalAmountOut: totalOutput,
-      totalAmountOutBN: getBigNumber(totalOutput),
+      totalAmountOutBN: getBigInt(totalOutput),
     }
   }
 
@@ -1000,19 +1002,19 @@ export class Graph {
         // }
       }
     }
-    if (step == 0)
+    if (step === 0)
       return {
         status: RouteStatus.NoWay,
         fromToken: from,
         toToken: to,
         amountIn: 0,
-        amountInBN: BigNumber.from(0),
+        amountInBN: 0n,
         amountOut: 0,
-        amountOutBN: BigNumber.from(0),
+        amountOutBN: 0n,
         legs: [],
         gasSpent: 0,
         totalAmountOut: 0,
-        totalAmountOutBN: BigNumber.from(0),
+        totalAmountOutBN: 0n,
       }
     let status
     if (step < routeValues.length) status = RouteStatus.Partial
@@ -1048,13 +1050,13 @@ export class Graph {
       swapPrice,
       priceImpact,
       amountIn: input,
-      amountInBN: getBigNumber(input),
+      amountInBN: getBigInt(input),
       amountOut: amountOut * totalrouted,
-      amountOutBN: getBigNumber(amountOut * totalrouted),
+      amountOutBN: getBigInt(amountOut * totalrouted),
       legs,
       gasSpent,
       totalAmountOut: amountOut - gasSpent * toVert.gasPrice, // TODO: should be totalAmountIn instead !!!!
-      totalAmountOutBN: getBigNumber(amountOut - gasSpent * toVert.gasPrice), // TODO: should be totalAmountInBN instead !!!!
+      totalAmountOutBN: getBigInt(amountOut - gasSpent * toVert.gasPrice), // TODO: should be totalAmountInBN instead !!!!
     }
   }
 
@@ -1143,12 +1145,17 @@ export class Graph {
         if (data !== undefined) return data.amount
         console.error('Tines: Internal Error 1123')
       }) as number[]
-      const totalOut = amounts.reduce((a, b) => (a += b), 0)
+      const totalOut = amounts.reduce((a, b) => {
+        a += b
+        return a
+      }, 0)
       outEdges.forEach((e, i) => {
         if (amounts[i] / totalOut < minFraction) weakEdgeList.push(e)
       })
     })
-    weakEdgeList.forEach((e) => (e.canBeUsed = false))
+    weakEdgeList.forEach((e) => {
+      e.canBeUsed = false
+    })
     return weakEdgeList.length
   }
 
@@ -1287,7 +1294,7 @@ export class Graph {
       const state = vertState.get(current)
       if (state === 2 || state === 3) return state
       if (state === 1) {
-        console.assert(foundCycle.length == 0, 'Internal Error 566')
+        console.assert(foundCycle.length === 0, 'Internal Error 566')
         foundCycle.push(current)
         return 1
       }

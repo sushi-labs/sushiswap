@@ -1,12 +1,12 @@
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type, USDC, WNATIVE } from '@sushiswap/currency'
 import { DataFetcher, Router } from '@sushiswap/router'
-import { getBigNumber, RouteStatus } from '@sushiswap/tines'
+import { RouteStatus } from '@sushiswap/tines'
 import { expect } from 'chai'
-import { BigNumber, Signer } from 'ethers'
+import { Signer } from 'ethers'
 import { ethers } from 'hardhat'
 import { createPublicClient } from 'viem'
-import { http } from 'viem'
+import { Address, http } from 'viem'
 import { hardhat } from 'viem/chains'
 
 //const RouteProcessorAddr = '0x9B3fF703FA9C8B467F5886d7b61E61ba07a9b51c'
@@ -25,9 +25,9 @@ async function makeSwap(
   signer: Signer,
   fromToken: Type,
   toToken: Type,
-  from: string,
-  to: string,
-  amountIn: BigNumber
+  from: Address,
+  to: Address,
+  amountIn: bigint
 ): Promise<number | undefined> {
   await dataFetcher.fetchPoolsForToken(fromToken, toToken)
   const pcMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
@@ -82,9 +82,9 @@ describe('Celo RP3', async () => {
       signer,
       fromToken,
       toToken,
-      WNATIVE[chainId].address,
-      WNATIVE[chainId].address,
-      getBigNumber(10 * 1e18)
+      WNATIVE[chainId].address as Address,
+      WNATIVE[chainId].address as Address,
+      10n * BigInt(1e18)
     )
   })
 
@@ -93,7 +93,7 @@ describe('Celo RP3', async () => {
     const toToken = WNATIVE[chainId]
     const user = '0xed30404098da5948d8B3cBD7958ceB641F2C352c' // has cUSDC and approved 800000 to the RP
     const signer = await provider.getUncheckedSigner(user)
-    await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, getBigNumber(800000))
+    await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, 800000n)
   })
 
   it('cUSDC => Native CELO', async () => {
@@ -101,7 +101,6 @@ describe('Celo RP3', async () => {
     const toToken = Native.onChain(chainId)
     const user = '0xed30404098da5948d8B3cBD7958ceB641F2C352c' // has cUSDC and approved 800000 to the RP
     const signer = await provider.getUncheckedSigner(user)
-    await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, getBigNumber(800000))
+    await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, 800000n)
   })
 })
-

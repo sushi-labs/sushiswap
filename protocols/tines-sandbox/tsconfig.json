@@ -1,6 +1,11 @@
 {
   "extends": "@sushiswap/typescript-config/hardhat.json",
-  "include": ["."],
+  "include": ["src"],
   "exclude": ["node_modules"],
-  "files": ["hardhat.config.ts"]
+  "files": ["hardhat.config.ts"],
+  "compilerOptions": {
+    "rootDirs": ["./src", "./artifacts"],
+    "outDir": "./dist",
+    "declaration": true
+  }
 }

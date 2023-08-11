@@ -1,20 +1,14 @@
-import {
-  Address,
-  useAccount,
-  useContractWrite,
-  usePrepareContractWrite,
-  UserRejectedRequestError,
-  useSignTypedData,
-} from 'wagmi'
 import { HashZero } from '@ethersproject/constants'
-import { useCallback, useMemo, useState } from 'react'
-import { SendTransactionResult } from 'wagmi/actions'
+import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { createErrorToast, createFailedToast, createToast } from '@sushiswap/ui/components/toast'
 import { useQuery } from '@tanstack/react-query'
 import { readContract } from '@wagmi/core'
+import { useCallback, useMemo, useState } from 'react'
+import { hexToSignature, UserRejectedRequestError } from 'viem'
+import { Address, useAccount, useContractWrite, usePrepareContractWrite, useSignTypedData } from 'wagmi'
+import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
+
 import { getBentoBoxContractConfig } from '../../../../hooks'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { splitSignature } from '@ethersproject/bytes'
 import { useSignature } from '../../../systems/Checker/Provider'
 import { ApprovalState } from '../../approvals'
 
@@ -91,10 +85,10 @@ export const useBentoboxApproval = ({
           type: 'approval',
           chainId,
           txHash: data.hash,
-          promise: data.wait(),
+          promise: waitForTransaction({ hash: data.hash }),
           summary: {
-            pending: `Approving BentoBox Master Contract`,
-            completed: `Successfully approved the master contract`,
+            pending: 'Approving BentoBox Master Contract',
+            completed: 'Successfully approved the master contract',
             failed: 'Something went wrong approving the master contract',
           },
           groupTimestamp: ts,
@@ -109,8 +103,7 @@ export const useBentoboxApproval = ({
     ...config,
     onSettled,
     onSuccess: (data) => {
-      data
-        .wait()
+      waitForTransaction({ hash: data.hash })
         .then(() => {
           refetch().then(() => {
             setPending(false)
@@ -121,8 +114,9 @@ export const useBentoboxApproval = ({
   })
 
   const _execute = useCallback(() => {
-    if (address && data?.nonces) {
+    if (address && typeof data?.nonces === 'bigint') {
       signTypedDataAsync({
+        primaryType: 'SetMasterContractApproval',
         domain: {
           name: 'BentoBox V1',
           chainId,
@@ -137,7 +131,7 @@ export const useBentoboxApproval = ({
             { name: 'nonce', type: 'uint256' },
           ],
         },
-        value: {
+        message: {
           warning: 'Give FULL access to funds in (and approved to) BentoBox?',
           user: address,
           masterContract: masterContract as Address,
@@ -146,7 +140,7 @@ export const useBentoboxApproval = ({
         },
       })
         .then((data) => {
-          const signature = splitSignature(data)
+          const signature = hexToSignature(data)
           setSignature(signature)
         })
 
@@ -169,7 +163,7 @@ export const useBentoboxApproval = ({
   return useMemo(() => {
     let state = ApprovalState.UNKNOWN
     if (signature) state = ApprovalState.APPROVED
-    else if (data && data.isApproved) state = ApprovalState.APPROVED
+    else if (data?.isApproved) state = ApprovalState.APPROVED
     else if (pending) state = ApprovalState.PENDING
     else if (isLoading) state = ApprovalState.LOADING
 

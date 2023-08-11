@@ -1,5 +1,4 @@
 import type { MultiRoute, RouteLeg, RPool } from '@sushiswap/tines'
-import type { BigNumber } from 'ethers'
 
 import { LiquidityProviders } from '../liquidity-providers'
 
@@ -23,7 +22,7 @@ export abstract class PoolCode {
     return this.pool.address
   }
 
-  abstract getSwapCodeForRouteProcessor(leg: RouteLeg, route: MultiRoute, to: string, exactAmount?: BigNumber): string
+  abstract getSwapCodeForRouteProcessor(leg: RouteLeg, route: MultiRoute, to: string, exactAmount?: bigint): string
 
   getSwapCodeForRouteProcessor2(_leg: RouteLeg, _route: MultiRoute, _to: string): string {
     return 'unimplemented'

@@ -45,14 +45,8 @@ export const tradeValidator = z.object({
     .optional(),
   args: z.optional(
     z.object({
-      amountIn: z.object({
-        type: z.string(),
-        hex: z.string(),
-      }),
-      amountOutMin: z.object({
-        type: z.string(),
-        hex: z.string(),
-      }),
+      amountIn: z.bigint(),
+      amountOutMin: z.bigint(),
       to: z.string(),
       tokenIn: z.string(),
       tokenOut: z.string(),

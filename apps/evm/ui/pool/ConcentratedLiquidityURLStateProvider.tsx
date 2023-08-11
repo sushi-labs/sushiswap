@@ -6,9 +6,9 @@ import { FeeAmount, isSushiSwapV3ChainId, SushiSwapV3ChainId } from '@sushiswap/
 import { useNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import { SUPPORTED_CHAIN_IDS } from 'config'
-import { isAddress } from 'ethers/lib/utils'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useState } from 'react'
+import { isAddress } from 'viem'
 import { z } from 'zod'
 
 export const queryParamsSchema = z.object({

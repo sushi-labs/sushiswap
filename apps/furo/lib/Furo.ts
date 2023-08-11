@@ -1,6 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
 
 import { type Rebase, streamQuery, vestingQuery } from '../.graphclient'
 import { FuroStatus } from './enums'
@@ -37,17 +36,17 @@ export abstract class Furo {
     rebase: Pick<Rebase, 'id' | 'base' | 'elastic'>
   }) {
     this.rebase = {
-      base: JSBI.BigInt(Math.round(Math.floor(rebase.base * 1e5))),
-      elastic: JSBI.BigInt(Math.round(Math.floor(rebase.elastic * 1e5))),
+      base: BigInt(Math.round(Math.floor(rebase.base * 1e5))),
+      elastic: BigInt(Math.round(Math.floor(rebase.elastic * 1e5))),
     }
     this.id = furo.id
     this.chainId = chainId
     this.type = furo.__typename
     this.token = toToken(furo.token, chainId)
-    this.initialShares = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.initialShares))
-    this.inititalAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.initialAmount))
-    this.remainingShares = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.remainingShares))
-    this._remainingAmount = Amount.fromShare(this.token, JSBI.BigInt(furo.remainingShares), this.rebase)
+    this.initialShares = Amount.fromRawAmount(this.token, BigInt(furo.initialShares))
+    this.inititalAmount = Amount.fromRawAmount(this.token, BigInt(furo.initialAmount))
+    this.remainingShares = Amount.fromRawAmount(this.token, BigInt(furo.remainingShares))
+    this._remainingAmount = Amount.fromShare(this.token, BigInt(furo.remainingShares), this.rebase)
     this.startTime = new Date(parseInt(furo.startedAt) * 1000)
     this.endTime = new Date(parseInt(furo.expiresAt) * 1000)
     this.modifiedAtTimestamp = new Date(parseInt(furo.modifiedAtTimestamp) * 1000)
@@ -55,7 +54,7 @@ export abstract class Furo {
     this.recipient = furo.recipient
     this.createdBy = furo.createdBy
     this.txHash = furo.txHash
-    this._withdrawnAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.withdrawnAmount))
+    this._withdrawnAmount = Amount.fromRawAmount(this.token, BigInt(furo.withdrawnAmount))
     this._balance = Amount.fromRawAmount(this.token, 0)
   }
 

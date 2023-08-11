@@ -3,7 +3,7 @@ import { Chain } from '@sushiswap/chain'
 import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
 import { Paginator } from '@sushiswap/ui/components/table/Paginator'
 import { Toggle } from '@sushiswap/ui/components/toggle'
-import { Pool } from '@sushiswap/v3-sdk'
+import { SushiSwapV3Pool } from '@sushiswap/v3-sdk'
 import { getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 import React, { FC, useMemo, useState } from 'react'
 
@@ -11,7 +11,7 @@ import { AMOUNT_IN_COLUMN, AMOUNT_OUT_COLUMN, AMOUNT_USD_COLUMN, SENDER_COLUMN, 
 import { Transaction, TransactionType, useTransactions } from './useTransactions'
 
 interface TransactionsProps {
-  pool: Pool | undefined | null
+  pool: SushiSwapV3Pool | undefined | null
   poolId: string
 }
 

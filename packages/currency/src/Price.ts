@@ -1,4 +1,4 @@
-import { BigintIsh, Fraction, JSBI, Rounding } from '@sushiswap/math'
+import { BigintIsh, Fraction, Rounding } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
 import { Amount } from './Amount'
@@ -40,10 +40,7 @@ export class Price<TBase extends Type, TQuote extends Type> extends Fraction {
 
     this.baseCurrency = baseCurrency
     this.quoteCurrency = quoteCurrency
-    this.scalar = new Fraction(
-      JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(baseCurrency.decimals)),
-      JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(quoteCurrency.decimals))
-    )
+    this.scalar = new Fraction(10n ** BigInt(baseCurrency.decimals), 10n ** BigInt(quoteCurrency.decimals))
   }
 
   /**

@@ -10,7 +10,7 @@ import {
 } from './utils'
 
 function chooseRandomTokenWithChainId(rnd: () => number, network: Network, chainId?: number) {
-  const tokens = network.tokens.filter((t) => t.chainId == chainId)
+  const tokens = network.tokens.filter((t) => t.chainId === chainId)
   expect(tokens.length).toBeGreaterThan(0)
   return tokens[Math.floor(rnd() * tokens.length)]
 }

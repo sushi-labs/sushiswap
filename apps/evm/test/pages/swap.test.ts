@@ -1,6 +1,6 @@
-import { AddressZero } from '@ethersproject/constants'
 import { expect, Page, test } from '@playwright/test'
 import { DAI, Native, SUSHI, Type, USDC, USDT, WBTC } from '@sushiswap/currency'
+import { zeroAddress } from 'viem'
 
 import { SupportedChainId } from '../../config'
 
@@ -234,9 +234,7 @@ async function handleToken(page: Page, currency: Type, type: InputType) {
   await tokenSearch.fill(currency.symbol as string)
 
   const tokenToSelect = page.locator(
-    `[testdata-id=swap-${selectorInfix}-token-selector-row-${
-      currency.isNative ? AddressZero : currency.address.toLowerCase()
-    }]`
+    `[testdata-id=swap-${selectorInfix}-token-selector-row-${currency.isNative ? zeroAddress : currency}]`
   )
   await expect(tokenToSelect).toBeVisible()
   // await expect(tokenSearch).toBeEnabled()

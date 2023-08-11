@@ -1,4 +1,4 @@
-import { constantProductPoolAbi, stablePoolAbi } from '@sushiswap/abi'
+import { tridentConstantPoolAbi, tridentStablePoolAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Currency, Token } from '@sushiswap/currency'
 import {
@@ -14,7 +14,7 @@ import { Address, PublicClient } from 'viem'
 import { getCurrencyCombinations } from '../getCurrencyCombinations'
 
 export interface TridentStaticPool {
-  address: string
+  address: Address
   token0: Token
   token1: Token
   type: 'STABLE_POOL' | 'CONSTANT_PRODUCT_POOL'
@@ -104,7 +104,7 @@ export class TridentStaticPoolFetcher {
       if (s?.result)
         s.result.forEach((address) =>
           pools.push({
-            address: address.toLowerCase(),
+            address: address.toLowerCase() as Address,
             token0: pairsUniqueProcessed?.[i][0] as Token,
             token1: pairsUniqueProcessed?.[i][1] as Token,
             type,
@@ -122,7 +122,7 @@ export class TridentStaticPoolFetcher {
           ({
             chainId,
             address: address as Address,
-            abi: type === 'STABLE_POOL' ? stablePoolAbi : constantProductPoolAbi,
+            abi: type === 'STABLE_POOL' ? tridentStablePoolAbi : tridentConstantPoolAbi,
             functionName: 'swapFee',
           } as const)
       ),

@@ -7,7 +7,7 @@ import { BigNumber, Contract, Signer } from 'ethers'
 import { ethers } from 'hardhat'
 import seedrandom from 'seedrandom'
 
-import { setTokenBalance } from '../src/SetTokenBalance'
+import { setTokenBalance } from '../src/setTokenBalance'
 
 enum CurvePoolType {
   Legacy = 'Legacy', // 'exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) -> uint256'

@@ -15,7 +15,9 @@
         "noDelete": "off"
       },
       "style": {
-        "noParameterAssign": "off"
+        "noParameterAssign": "off",
+        "useSingleVarDeclarator": "off",
+        "useTemplate": "warn"
       },
       "complexity": {
         "noExtraSemicolon": "off"

@@ -36,7 +36,6 @@
   "dependencies": {
     "@ethersproject/abi": "5.7.0",
     "@ethersproject/address": "5.7.0",
-    "@ethersproject/bignumber": "5.7.0",
     "@ethersproject/solidity": "5.7.0",
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/amm": "workspace:*",

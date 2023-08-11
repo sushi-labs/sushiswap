@@ -4,9 +4,9 @@ import { Block, encodeEventTopics, Log, PublicClient, WatchBlocksReturnType } fr
 import { warnLog } from './WarnLog'
 
 export enum LogFilterType {
-  OneCall, // one eth_getLogs call for all topict - the most preferrable
-  MultiCall, // separete eth_getLogs call for each topic - for those systems that fail at OneCall
-  SelfFilter, // Topic filtering doesn't support for provider. Filtering on the client
+  OneCall = 'OneCall', // one eth_getLogs call for all topict - the most preferrable
+  MultiCall = 'MultiCall', // separete eth_getLogs call for each topic - for those systems that fail at OneCall
+  SelfFilter = 'SelfFilter', // Topic filtering doesn't support for provider. Filtering on the client
 }
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
@@ -14,7 +14,7 @@ const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 async function repeatAsync(
   times: number,
   delayBetween: number,
-  action: () => void,
+  action: () => Promise<void>,
   failed: () => void,
   print?: string
 ) {
@@ -25,7 +25,6 @@ async function repeatAsync(
       return
     } catch (e) {
       if (delayBetween) await delay(delayBetween)
-      continue
     }
   }
   failed()
@@ -39,7 +38,7 @@ class BlockFrame {
   // return deleted block hashes
   setFrame(from: number, to: number): string[] {
     let deletedHashes: string[] = []
-    if (this.firstNumber != undefined && this.lastNumber != undefined) {
+    if (this.firstNumber !== undefined && this.lastNumber !== undefined) {
       for (let i = this.firstNumber; i < from; ++i) {
         const hashes = this.hashNumerMap.get(i)
         if (hashes !== undefined) {
@@ -61,7 +60,7 @@ class BlockFrame {
   }
 
   add(blockNumber: number, blockHash: string): boolean {
-    if (this.firstNumber == undefined || this.lastNumber == undefined) return false
+    if (this.firstNumber === undefined || this.lastNumber === undefined) return false
     if (blockNumber < this.firstNumber) return false
     if (blockNumber >= this.lastNumber) return false
     const hashes = this.hashNumerMap.get(blockNumber)
@@ -145,7 +144,7 @@ export class LogFilter2 {
       this.logHashMap.delete(hash)
       this.processedBlockHash.delete(hash)
     })
-    if (initProcessedBlocksNumber > 0 && this.processedBlockHash.size == 0) {
+    if (initProcessedBlocksNumber > 0 && this.processedBlockHash.size === 0) {
       this.stop()
       return false
     }
@@ -218,7 +217,7 @@ export class LogFilter2 {
         10,
         1000,
         () => this.client.getBlock({ blockHash: block.parentHash }).then((b) => this.addBlock(b, false)),
-        () => warnLog(this.client.chain?.id, `getBlock failed !!!!!!!!!!!!!!!!!!!!!!1`)
+        () => warnLog(this.client.chain?.id, 'getBlock failed !!!!!!!!!!!!!!!!!!!!!!1')
       )
   }
 
@@ -227,7 +226,7 @@ export class LogFilter2 {
     const upLine: Block[] = []
     let cornerBlock: Block | undefined = this.nextGoalBlock
     for (;;) {
-      if (cornerBlock == undefined)
+      if (cornerBlock === undefined)
         if (this.lastProcessedBlock) return
         else break
       if (this.processedBlockHash.has(cornerBlock.hash || '')) break
@@ -239,8 +238,8 @@ export class LogFilter2 {
     if (cornerBlock) {
       let b: Block | undefined = this.lastProcessedBlock
       for (;;) {
-        if (b == undefined) return
-        if (b.hash == cornerBlock.hash) break
+        if (b === undefined) return
+        if (b.hash === cornerBlock.hash) break
         downLine.push(b)
         b = this.blockHashMap.get(b.parentHash)
       }
@@ -249,7 +248,7 @@ export class LogFilter2 {
     let logs: Log[] = []
     for (let i = 0; i < downLine.length; ++i) {
       const l = this.logHashMap.get(downLine[i].hash || '')
-      if (l == undefined) {
+      if (l === undefined) {
         warnLog(this.client.chain?.id, 'Unexpected Error in LogFilter')
         this.stop()
         return
@@ -265,7 +264,7 @@ export class LogFilter2 {
     this.lastProcessedBlock = cornerBlock
     for (let i = upLine.length - 1; i >= 0; --i) {
       const l = this.logHashMap.get(upLine[i].hash || '')
-      if (l == undefined) break
+      if (l === undefined) break
       logs = logs.concat(
         l.map((l) => {
           l.removed = false

@@ -4,7 +4,6 @@ import { Native } from '@sushiswap/currency'
 import { NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import cors from 'cors'
-import { BigNumber } from 'ethers'
 import express, { Express, Request, Response } from 'express'
 import path from 'path'
 import { Address } from 'viem'
@@ -32,7 +31,7 @@ const querySchema = z.object({
   tokenOut: z.string(),
   amount: z.string().transform((amount) => BigInt(amount)),
   gasPrice: z.optional(z.coerce.number().int().gt(0)),
-  to: z.optional(z.string()),
+  to: z.optional(z.string()).transform((to) => (to ? (to as Address) : undefined)),
   preferSushi: z.optional(z.coerce.boolean()),
 })
 
@@ -126,7 +125,7 @@ async function main() {
       poolCodesMap,
       chainId,
       tokenIn,
-      BigNumber.from(amount.toString()),
+      amount,
       tokenOut,
       gasPrice ?? 30e9
     )
