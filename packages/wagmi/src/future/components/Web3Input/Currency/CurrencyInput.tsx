@@ -147,22 +147,25 @@ export const Component: FC<CurrencyInputProps> = ({
         >
           <SkeletonBox className="w-1/2 h-[32px] rounded-lg" />
         </div>
-        <TextField
-          testdata-id={`${id}-input`}
-          type="number"
-          ref={inputRef}
-          variant="naked"
-          disabled={disabled}
-          onValueChange={onChange}
-          value={value}
-          readOnly={disabled}
-          maxDecimals={currency?.decimals}
+        <div
           data-state={isLoading ? 'inactive' : 'active'}
-          className={classNames(
-            'data-[state=inactive]:hidden data-[state=active]:flex',
-            'p-0 py-1 !text-3xl font-medium'
-          )}
-        />
+          className="data-[state=inactive]:hidden data-[state=active]:flex"
+        >
+          <TextField
+            testdata-id={`${id}-input`}
+            type="number"
+            ref={inputRef}
+            variant="naked"
+            disabled={disabled}
+            onValueChange={onChange}
+            value={value}
+            readOnly={disabled}
+            maxDecimals={currency?.decimals}
+            data-state={isLoading ? 'inactive' : 'active'}
+            className={classNames('p-0 py-1 !text-3xl font-medium')}
+          />
+        </div>
+
         {selector}
         {!onSelect ? (
           <div
