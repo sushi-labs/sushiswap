@@ -4,7 +4,7 @@ import { FC, ReactNode } from 'react'
 
 import { useTokenState } from './token/TokenProvider'
 
-export const SplashController: FC<{ show: boolean; children: ReactNode }> = ({ show = false, children }) => {
+export const SplashController: FC<{ show?: boolean; children: ReactNode }> = ({ show = false, children }) => {
   const { token0, token1, toChainId, fromChainId } = useTokenState()
   const { status } = useAccount()
   return (
