@@ -72,7 +72,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
   }, [balance, percentToRemove])
 
   // TODO: Standardize fee format
-  const [constantProductPoolState, constantProductPool] = useTridentConstantPool(
+  const [tridentConstantPoolState, tridentConstantPool] = useTridentConstantPool(
     _pool.chainId,
     token0,
     token1,
@@ -80,7 +80,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
     _pool.twapEnabled
   )
 
-  const [stablePoolState, stablePool] = useTridentStablePool(
+  const [tridentStablePoolState, tridentStablePool] = useTridentStablePool(
     _pool.chainId,
     token0,
     token1,
@@ -89,11 +89,11 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
   )
 
   const [poolState, pool] = useMemo(() => {
-    if (_pool.protocol === Protocol.BENTOBOX_STABLE) return [stablePoolState, stablePool]
-    if (_pool.protocol === Protocol.BENTOBOX_CLASSIC) return [constantProductPoolState, constantProductPool]
+    if (_pool.protocol === Protocol.BENTOBOX_STABLE) return [tridentStablePoolState, tridentStablePool]
+    if (_pool.protocol === Protocol.BENTOBOX_CLASSIC) return [tridentConstantPoolState, tridentConstantPool]
 
     return [undefined, undefined]
-  }, [_pool.protocol, constantProductPool, constantProductPoolState, stablePool, stablePoolState])
+  }, [_pool.protocol, tridentConstantPool, tridentConstantPoolState, tridentStablePool, tridentStablePoolState])
 
   const totalSupply = useTotalSupply(liquidityToken)
 

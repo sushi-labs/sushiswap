@@ -182,14 +182,8 @@ export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid,
 
   const [sushiBalance, balance, pendingSushi] = useMemo(() => {
     const _sushiBalance = data?.[0] ? data?.[0] : undefined
-    const _balance = data?.[1]
-      ? (
-          data?.[1] as {
-            amount: bigint
-            rewardDebt: bigint
-          }
-        ).amount
-      : undefined
+    const _balance = data?.[1] ? (data?.[1] as [bigint, bigint])[0] : undefined
+
     const _pendingSushi = data?.[2] ? data?.[2] : undefined
     const balance = Amount.fromRawAmount(token, _balance ? _balance.toString() : 0)
     const pendingSushi = SUSHI[chainId as keyof typeof SUSHI]
