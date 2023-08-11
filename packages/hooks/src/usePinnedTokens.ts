@@ -282,7 +282,19 @@ export const COMMON_BASES = {
     USDC[ChainId.ZKSYNC_ERA],
   ],
   [ChainId.LINEA]: [Native.onChain(ChainId.LINEA), WNATIVE[ChainId.LINEA], DAI[ChainId.LINEA], USDC[ChainId.LINEA]],
-  [ChainId.BASE]: [Native.onChain(ChainId.BASE), WNATIVE[ChainId.BASE], DAI[ChainId.BASE], USDC[ChainId.BASE]],
+  [ChainId.BASE]: [
+    Native.onChain(ChainId.BASE),
+    WNATIVE[ChainId.BASE],
+    DAI[ChainId.BASE],
+    new Token({
+      chainId: ChainId.BASE,
+      symbol: 'USDbC',
+      name: 'USD Base Coin',
+      decimals: 6,
+      address: '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA',
+    }),
+    USDC[ChainId.BASE],
+  ],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const
 
