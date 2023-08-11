@@ -9,6 +9,7 @@ import { PoolHeader } from 'components/PoolSection/PoolHeader'
 import { PoolMyRewards } from 'components/PoolSection/PoolMyRewards'
 import { PoolPosition } from 'components/PoolSection/PoolPosition/PoolPosition'
 import { PoolRewards } from 'components/PoolSection/PoolRewards'
+import { PoolTransactionsV2 } from 'components/PoolSection/V2/PoolTransactionsV2/PoolTransactionsV2'
 import { useParams } from 'next/navigation'
 import { FC, useMemo } from 'react'
 import { useAccount } from 'utils/useAccount'
@@ -87,6 +88,8 @@ const _Pool = () => {
                 </div>
               </div>
             </div>
+            <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
+            {/* <PoolTransactionsV2 pool={pool} poolId="" /> */}
           </div>
         </Layout>
       )}
