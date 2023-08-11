@@ -3,7 +3,7 @@
 import React, { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { Signature } from 'viem'
 
-import { watchAccount, watchNetwork } from '../../..'
+import { watchAccount } from '../../../actions'
 
 type CheckerContext = {
   state: Record<string, boolean>

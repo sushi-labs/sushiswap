@@ -32,7 +32,7 @@ export const queryParamsSchema = z.object({
     .lte(2 ** 256)
     .optional()
     .transform((chainId) => chainId as SwapChainId | undefined),
-  toCurrency: z.optional(z.nullable(z.string())).transform((val) => val),
+  toCurrency: z.optional(z.nullable(z.string())).transform((val) => val ?? 'SUSHI'),
   // toCurrency: z
   //   .string()
   //   .nullable()
@@ -41,3 +41,7 @@ export const queryParamsSchema = z.object({
   recipient: z.optional(z.nullable(z.string()).transform((val) => (val && isAddress(val) ? (val as Address) : null))),
   review: z.optional(z.nullable(z.boolean())),
 })
+// .transform((val) => ({
+//   ...val,
+//   toCurrency: defaultQuoteCurrency[val.fromChainId].wrapped.address,
+// }))
