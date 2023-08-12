@@ -15,10 +15,12 @@ export const CrossChainBanner: FC = () => {
   const handleChange = useCallback(
     (checked: boolean) => {
       setChecked(checked)
-      startTransition(() => {
-        if (checked) push('/swap/cross-chain')
-        else push('/swap')
-      })
+      setTimeout(() => {
+        startTransition(() => {
+          if (checked) push('/swap/cross-chain')
+          else push('/swap')
+        })
+      }, 100)
     },
     [push]
   )
