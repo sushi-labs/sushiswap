@@ -23,8 +23,8 @@ export const CrossChainSwapTradeStats: FC = () => {
   const {
     state: { chainId0, swapAmountString, recipient },
   } = useDerivedStateCrossChainSwap()
-  const { isLoading, isFetching, data: trade } = useCrossChainSwapTrade()
-  const loading = Boolean(isLoading && +swapAmountString > 0) || isFetching
+  const { isInitialLoading: isLoading, data: trade } = useCrossChainSwapTrade()
+  const loading = Boolean(isLoading && +swapAmountString > 0)
 
   return (
     <Collapsible open={+swapAmountString > 0 && trade?.route?.status !== 'NoWay'}>

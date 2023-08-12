@@ -19,9 +19,9 @@ import { useDerivedStateSimpleSwap, useSimpleSwapTrade } from './derivedstate-si
 import { SimpleSwapTradeReviewDialog } from './simple-swap-trade-review-dialog'
 
 export const SimpleSwapTradeButton: FC = () => {
-  const { isFetching, isLoading, data: trade } = useSimpleSwapTrade()
+  const { data: trade } = useSimpleSwapTrade()
   const {
-    state: { swapAmount, chainId, token0, token1 },
+    state: { swapAmount, swapAmountString, chainId, token0, token1 },
   } = useDerivedStateSimpleSwap()
   const [checked, setChecked] = useState(false)
 
@@ -57,13 +57,12 @@ export const SimpleSwapTradeButton: FC = () => {
                     <DialogTrigger asChild>
                       <Button
                         size="xl"
-                        disabled={
+                        disabled={Boolean(
                           !trade?.amountOut?.greaterThan(ZERO) ||
-                          trade?.route?.status === 'NoWay' ||
-                          Boolean(isLoading && swapAmount?.greaterThan(ZERO)) ||
-                          isFetching ||
-                          (!checked && warningSeverity(trade?.priceImpact) > 3)
-                        }
+                            trade?.route?.status === 'NoWay' ||
+                            +swapAmountString === 0 ||
+                            (!checked && warningSeverity(trade?.priceImpact) > 3)
+                        )}
                         color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
                         fullWidth
                         testId="swap"

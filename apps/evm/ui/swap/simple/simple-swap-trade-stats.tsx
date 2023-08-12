@@ -23,8 +23,8 @@ export const SimpleSwapTradeStats: FC = () => {
   const {
     state: { chainId, swapAmountString, recipient },
   } = useDerivedStateSimpleSwap()
-  const { isLoading, isFetching, data: trade } = useSimpleSwapTrade()
-  const loading = Boolean(isLoading && +swapAmountString > 0) || isFetching
+  const { isInitialLoading: isLoading, data: trade } = useSimpleSwapTrade()
+  const loading = Boolean(isLoading && +swapAmountString > 0)
 
   return (
     <Collapsible open={+swapAmountString > 0 && trade?.route?.status !== 'NoWay'}>

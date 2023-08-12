@@ -17,7 +17,7 @@ export const CrossChainSwapTradeButton: FC = () => {
   const {
     state: { swapAmount, swapAmountString, chainId0 },
   } = useDerivedStateCrossChainSwap()
-  const { isFetching, isLoading, data: trade } = useCrossChainSwapTrade()
+  const { data: trade } = useCrossChainSwapTrade()
   const [checked, setChecked] = useState(false)
 
   // Reset
@@ -49,13 +49,12 @@ export const CrossChainSwapTradeButton: FC = () => {
                   <Checker.Success tag={APPROVE_TAG_XSWAP}>
                     <DialogTrigger asChild>
                       <Button
-                        disabled={
+                        disabled={Boolean(
                           !trade?.amountOut?.greaterThan(ZERO) ||
-                          trade?.route?.status === 'NoWay' ||
-                          Boolean(isLoading && +swapAmountString > 0) ||
-                          isFetching ||
-                          (!checked && warningSeverity(trade?.priceImpact) > 3)
-                        }
+                            trade?.route?.status === 'NoWay' ||
+                            +swapAmountString === 0 ||
+                            (!checked && warningSeverity(trade?.priceImpact) > 3)
+                        )}
                         color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
                         fullWidth
                         size="xl"
