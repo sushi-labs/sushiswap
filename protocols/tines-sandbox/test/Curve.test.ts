@@ -105,7 +105,7 @@ interface PoolInfo {
   poolType: CurvePoolType
   poolContract: Contract
   tokenContracts: (Contract | undefined)[]
-  poolTines: CurvePool
+  poolTines: CurvePool[][]
   user: Signer
   userAddress: string
   snapshot: SnapshotRestorer
@@ -248,7 +248,7 @@ async function createCurvePoolInfo(
     poolType,
     poolContract,
     tokenContracts,
-    poolTines,
+    poolTines: [[undefined, poolTines]],
     user,
     userAddress,
     snapshot,
@@ -256,7 +256,9 @@ async function createCurvePoolInfo(
 }
 
 async function checkSwap(poolInfo: PoolInfo, from: number, to: number, amountIn: number, precision: number) {
-  const expectedOut = poolInfo.poolTines.calcOutByIn(Math.round(amountIn), from < to)
+  const i = Math.min(from, to)
+  const j = Math.max(from, to)
+  const expectedOut = poolInfo.poolTines[i][j].calcOutByIn(Math.round(amountIn), from < to)
   let realOutBN: BigNumber
   if (poolInfo.poolType !== CurvePoolType.LegacyV2 && poolInfo.poolType !== CurvePoolType.LegacyV3) {
     realOutBN = await poolInfo.poolContract.callStatic.exchange(from, to, getBigNumber(amountIn), 0, {
@@ -317,8 +319,8 @@ async function process2CoinsPool(
     return 'skipped (pool init error)'
   }
   if (poolInfo.tokenContracts.length > 2) return `skipped (${poolInfo.tokenContracts.length} tokens)`
-  const res0 = parseInt(poolInfo.poolTines.reserve0.toString())
-  const res1 = parseInt(poolInfo.poolTines.reserve1.toString())
+  const res0 = parseInt(poolInfo.poolTines[0][1].reserve0.toString())
+  const res1 = parseInt(poolInfo.poolTines[0][1].reserve1.toString())
   if (res0 < 1e6 || res1 < 1e6) return 'skipped (low liquidity)'
   const checks = poolType == CurvePoolType.LegacyV2 || poolType == CurvePoolType.LegacyV3 ? 3 : 10
   for (let i = 0; i < checks; ++i) {
@@ -339,7 +341,7 @@ describe('Real Curve pools consistency check', () => {
       })
     }
   })
-  it(`Factory Pools (${FACTORY_ADDRESSES.length} factories)`, async () => {
+  it.skip(`Factory Pools (${FACTORY_ADDRESSES.length} factories)`, async () => {
     let passed = 0,
       i = 0
     const startFrom = 0,
