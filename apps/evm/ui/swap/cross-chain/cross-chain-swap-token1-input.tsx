@@ -19,7 +19,7 @@ export const CrossChainSwapToken1Input = () => {
   const loading = Boolean(isLoading && +swapAmountString > 0) || isFetching || tokensLoading
 
   return (
-    <div className="border border-accent flex flex-col bg-white dark:bg-slate-800 rounded-xl">
+    <div className="border border-accent flex flex-col bg-white dark:bg-slate-800 rounded-xl overflow-hidden">
       <Collapsible open={true}>
         <div className="p-3 border-b border-accent flex gap-2 items-center">
           <Label className="text-xs tracking-tighter text-muted-foreground">Network</Label>
@@ -43,7 +43,7 @@ export const CrossChainSwapToken1Input = () => {
         id="swap-to"
         type="OUTPUT"
         disabled
-        className="p-3 bg-white dark:bg-slate-800 rounded-xl"
+        className="p-3 bg-white dark:bg-slate-800"
         value={trade?.amountOut?.toSignificant() ?? ''}
         chainId={chainId1}
         onSelect={setToken1}

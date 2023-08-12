@@ -331,14 +331,16 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
       <DialogReview>
         {({ confirm }) => (
           <>
-            <>
+            <div className="flex flex-col">
               <Collapsible open={insufficientFunds}>
-                <Message size="sm" variant="destructive">
-                  Insufficient funds to pay for gas on the destination chain. Please lower your input amount.
-                </Message>
+                <div className="pt-4">
+                  <Message size="sm" variant="destructive">
+                    Insufficient funds to pay for gas on the destination chain. Please lower your input amount.
+                  </Message>
+                </div>
               </Collapsible>
-              {children}
-            </>
+              <div className="mt-4">{children}</div>
+            </div>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>

@@ -25,7 +25,7 @@ export const CrossChainSwapToken0Input = () => {
   }
 
   return (
-    <div className="border border-accent flex flex-col bg-white dark:bg-slate-800 rounded-xl">
+    <div className="border border-accent flex flex-col bg-white dark:bg-slate-800 rounded-xl overflow-hidden">
       <div className="p-3 border-b border-accent flex gap-2 items-center">
         <Label className="text-xs tracking-tighter text-muted-foreground">Network</Label>
         <NetworkSelector
@@ -46,7 +46,7 @@ export const CrossChainSwapToken0Input = () => {
       <Web3Input.Currency
         id="swap-from"
         type="INPUT"
-        className="p-3 bg-white dark:bg-slate-800 rounded-xl"
+        className="p-3 bg-white dark:bg-slate-800"
         chainId={chainId0}
         onSelect={setToken0}
         value={isPending ? value : swapAmountString}
