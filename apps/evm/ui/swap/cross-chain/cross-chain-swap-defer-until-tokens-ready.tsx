@@ -1,4 +1,4 @@
-import Loading from 'app/swap/loading'
+import CrossChainSwapLoading from 'app/swap/cross-chain/loading'
 import { FC, ReactNode } from 'react'
 
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
@@ -7,7 +7,7 @@ export const CrossChainSwapDeferUntilTokensReady: FC<{ children: ReactNode }> = 
   const { isLoading } = useDerivedStateCrossChainSwap()
 
   if (isLoading) {
-    return <Loading />
+    return <CrossChainSwapLoading />
   }
 
   return <>{children}</>

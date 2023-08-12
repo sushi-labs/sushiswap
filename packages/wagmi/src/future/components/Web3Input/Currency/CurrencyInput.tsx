@@ -4,7 +4,6 @@ import { usePrice } from '@sushiswap/react-query'
 import { Button, classNames, SelectIcon, TextField } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
-import dynamic from 'next/dynamic'
 import { FC, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -13,7 +12,7 @@ import { TokenSelector } from '../../TokenSelector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
 
-export interface CurrencyInputProps {
+interface CurrencyInputProps {
   id?: string
   disabled?: boolean
   value: string
@@ -35,7 +34,7 @@ export interface CurrencyInputProps {
   hideSearch?: boolean
 }
 
-export const Component: FC<CurrencyInputProps> = ({
+const CurrencyInput: FC<CurrencyInputProps> = ({
   id,
   disabled,
   value,
@@ -212,6 +211,4 @@ export const Component: FC<CurrencyInputProps> = ({
   )
 }
 
-export const CurrencyInput = dynamic(() => Promise.resolve(Component), {
-  ssr: false,
-})
+export { CurrencyInput, type CurrencyInputProps }

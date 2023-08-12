@@ -1,13 +1,13 @@
-import React, { FC } from 'react'
-import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import { ChevronRightIcon } from '@heroicons/react/24/solid'
-import { Address } from 'wagmi'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
-import dynamic from 'next/dynamic'
-import { ApprovalState, useBentoboxApproval } from '../../hooks'
+import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import { Explainer } from '@sushiswap/ui/components/explainer'
+import React, { FC } from 'react'
+import { Address } from 'wagmi'
 
-export interface ApproveBentoboxProps extends ButtonProps {
+import { ApprovalState, useBentoboxApproval } from '../../hooks'
+
+interface ApproveBentoboxProps extends ButtonProps {
   chainId: BentoBoxV1ChainId
   id: string
   masterContract: Address
@@ -15,7 +15,7 @@ export interface ApproveBentoboxProps extends ButtonProps {
   tag: string
 }
 
-export const Component: FC<ApproveBentoboxProps> = ({
+const ApproveBentobox: FC<ApproveBentoboxProps> = ({
   id,
   chainId,
   masterContract,
@@ -61,6 +61,4 @@ export const Component: FC<ApproveBentoboxProps> = ({
   )
 }
 
-export const ApproveBentobox = dynamic(() => Promise.resolve(Component), {
-  ssr: false,
-})
+export { ApproveBentobox, type ApproveBentoboxProps }
