@@ -13,7 +13,7 @@ export default function SwapLayout({ children }: { children: React.ReactNode }) 
     <>
       <Providers>
         <Header />
-        <div className="flex flex-col flex-1">{children}</div>
+        <div className="p-4 mt-16 mb-[86px]">{children}</div>
       </Providers>
       <HotJar />
     </>

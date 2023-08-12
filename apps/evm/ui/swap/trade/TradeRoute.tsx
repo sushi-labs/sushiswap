@@ -1,8 +1,20 @@
+'use client'
+
 import { Native, Token, Type } from '@sushiswap/currency'
 import { TradeLegType, UseTradeReturn } from '@sushiswap/react-query'
+import {
+  Button,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogNew,
+  DialogTitle,
+  DialogTrigger,
+} from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
-import { Dialog } from '@sushiswap/ui/components/dialog'
-import React, { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
+import React, { FC, ReactNode, useEffect, useRef, useState } from 'react'
 
 const tokenFromRToken = (token: TradeLegType['tokenFrom']) => {
   if (token.address === '' || !token.address) return Native.onChain(Number(token.chainId))
@@ -21,18 +33,20 @@ const tokenFromRToken = (token: TradeLegType['tokenFrom']) => {
 // Can render a tines multi route
 export const TradeRoute: FC<{
   trade: UseTradeReturn | undefined
-  open: boolean
-  setOpen: Dispatch<SetStateAction<boolean>>
-}> = ({ open, setOpen, trade }) => {
-  const onClose = useCallback(() => {
-    setOpen(false)
-  }, [setOpen])
-
+  children: ReactNode
+}> = ({ children, trade }) => {
   return (
-    <Dialog open={open} onClose={onClose}>
-      <Dialog.Content className="max-h-[320px] sm:max-h-[560px] overflow-y-scroll scroll dark:!bg-slate-800 bg-white">
+    <DialogNew>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Route</DialogTitle>
+          <DialogDescription>
+            Our routing system is designed to find the best possible price for your trade. This is done by splitting
+            your trade across multiple pools.
+          </DialogDescription>
+        </DialogHeader>
         <div className="flex flex-col gap-4">
-          <Dialog.Header title="Optimized route" />
           {trade?.route?.legs?.map((directPath, i) => (
             <ComplexRoutePath
               key={i}
@@ -45,8 +59,15 @@ export const TradeRoute: FC<{
             />
           ))}
         </div>
-      </Dialog.Content>
-    </Dialog>
+        <DialogFooter>
+          <DialogClose className="w-full">
+            <Button fullWidth size="xl">
+              Close
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </DialogNew>
   )
 }
 

@@ -3,7 +3,7 @@
 import { isAddress } from '@ethersproject/address'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
-import { useNetwork, watchNetwork } from '@sushiswap/wagmi'
+import { useAccount, useNetwork, watchNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { createContext, FC, useCallback, useContext, useEffect, useMemo } from 'react'
@@ -27,6 +27,7 @@ interface State {
     chainId: ChainId
     swapAmountString: string
     swapAmount: Amount<Type> | undefined
+    recipient: string | undefined
   }
   isLoading: boolean
 }
@@ -45,6 +46,7 @@ interface DerivedStateSimpleSwapProviderProps {
  */
 const DerivedStateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = ({ children }) => {
   const { push } = useRouter()
+  const { address } = useAccount()
   const { chain } = useNetwork()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -57,9 +59,10 @@ const DerivedStateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
     if (!params.has('chainId')) params.set('chainId', (chain ? chain.id : ChainId.ETHEREUM).toString())
     if (!params.has('token0')) params.set('token0', 'NATIVE')
     if (!params.has('token1')) params.set('token1', getQuoteCurrency(Number(params.get('chainId'))))
+    if (!params.has('recipient')) params.set('recipient', address ?? '')
 
     return params
-  }, [chain, searchParams])
+  }, [address, chain, searchParams])
 
   // Get a new searchParams string by merging the current
   // searchParams with a provided key/value pair
@@ -201,6 +204,7 @@ const DerivedStateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
             setSwapAmount,
           },
           state: {
+            recipient: defaultedParams.get('recipient') || '',
             chainId,
             swapAmountString,
             swapAmount: tryParseAmount(swapAmountString, _token0),

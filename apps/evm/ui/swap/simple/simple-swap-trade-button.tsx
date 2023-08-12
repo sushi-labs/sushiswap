@@ -1,3 +1,5 @@
+'use client'
+
 import { Native } from '@sushiswap/currency'
 import { ZERO } from '@sushiswap/math'
 import {
@@ -8,24 +10,24 @@ import {
 } from '@sushiswap/route-processor'
 import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { AppType } from '@sushiswap/ui/types'
 import { Checker } from '@sushiswap/wagmi/future/systems'
+import { withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { useSimpleSwapTrade } from 'lib/swap/useSimpleSwapTrade'
 import React, { FC, useEffect, useState } from 'react'
 
-import { useTrade } from '../../../lib/swap/useTrade'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
-import { useSwapState } from '../trade/TradeProvider'
-import { TradeReviewDialogSameChain } from '../trade/TradeReviewDialogSameChain'
+import { useDerivedStateSimpleSwap } from './derivedstate-simpleswap-provider'
+import { SimpleSwapTradeReviewDialog } from './simple-swap-trade-review-dialog'
 
-export const SwapButton: FC = () => {
-  const { appType, amount, network0, network1, value, token0, token1 } = useSwapState()
-  const { isFetching, isLoading, data: trade } = useTrade({ crossChain: network0 !== network1 })
+export const SimpleSwapTradeButton: FC = withCheckerRoot(() => {
+  const { isFetching, isLoading, data: trade } = useSimpleSwapTrade()
+  const {
+    state: { swapAmount, chainId, token0, token1 },
+  } = useDerivedStateSimpleSwap()
   const [checked, setChecked] = useState(false)
 
-  const isWrap =
-    appType === AppType.Swap && token0?.isNative && token1?.wrapped.address === Native.onChain(network0).wrapped.address
-  const isUnwrap =
-    appType === AppType.Swap && token1?.isNative && token0?.wrapped.address === Native.onChain(network0).wrapped.address
+  const isWrap = token0?.isNative && token1?.wrapped.address === Native.onChain(chainId).wrapped.address
+  const isUnwrap = token1?.isNative && token0?.wrapped.address === Native.onChain(chainId).wrapped.address
 
   // Reset
   useEffect(() => {
@@ -36,19 +38,19 @@ export const SwapButton: FC = () => {
 
   return (
     <>
-      <TradeReviewDialogSameChain>
-        <div className="pt-4">
+      <SimpleSwapTradeReviewDialog>
+        <div>
           <Checker.Connect>
-            <Checker.Network chainId={network0}>
-              <Checker.Amounts chainId={network0} amounts={[amount]}>
+            <Checker.Network chainId={chainId}>
+              <Checker.Amounts chainId={chainId} amounts={[swapAmount]}>
                 <Checker.ApproveERC20
                   id="approve-erc20"
-                  amount={amount}
+                  amount={swapAmount}
                   contract={
-                    isRouteProcessor3ChainId(network0)
-                      ? routeProcessor3Address[network0]
-                      : isRouteProcessorChainId(network0)
-                      ? routeProcessorAddress[network0]
+                    isRouteProcessor3ChainId(chainId)
+                      ? routeProcessor3Address[chainId]
+                      : isRouteProcessorChainId(chainId)
+                      ? routeProcessorAddress[chainId]
                       : undefined
                   }
                 >
@@ -59,7 +61,7 @@ export const SwapButton: FC = () => {
                         disabled={
                           !trade?.amountOut?.greaterThan(ZERO) ||
                           trade?.route?.status === 'NoWay' ||
-                          Boolean(isLoading && +value > 0) ||
+                          Boolean(isLoading && swapAmount?.greaterThan(ZERO)) ||
                           isFetching ||
                           (!checked && warningSeverity(trade?.priceImpact) > 3)
                         }
@@ -84,7 +86,7 @@ export const SwapButton: FC = () => {
             </Checker.Network>
           </Checker.Connect>
         </div>
-      </TradeReviewDialogSameChain>
+      </SimpleSwapTradeReviewDialog>
       {warningSeverity(trade?.priceImpact) > 3 && (
         <div className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20">
           <input
@@ -102,4 +104,4 @@ export const SwapButton: FC = () => {
       )}
     </>
   )
-}
+})
