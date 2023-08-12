@@ -192,12 +192,12 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           currency={currency}
           usdPctChange={usdPctChange}
           error={_error}
-          loading={isLoading || isPriceLoading}
+          loading={isPriceLoading}
           price={price}
         />
         <BalancePanel
           id={id}
-          loading={isLoading}
+          loading={isBalanceLoading}
           chainId={chainId}
           account={address}
           onChange={onChange}
