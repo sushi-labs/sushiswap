@@ -106,36 +106,6 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
     [defaultedParams]
   )
 
-  // Update the URL with new from chainId
-  const setChainId0 = useCallback<{ (chainId: number): void }>(
-    (chainId) => {
-      push(
-        `${pathname}?${createQueryString([
-          { name: 'swapAmount', value: null },
-          { name: 'chainId0', value: chainId.toString() },
-          { name: 'token0', value: 'NATIVE' },
-        ])}`,
-        { scroll: false }
-      )
-    },
-    [createQueryString, pathname, push]
-  )
-
-  // Update the URL with new to chainId
-  const setChainId1 = useCallback<{ (chainId: number): void }>(
-    (chainId) => {
-      push(
-        `${pathname}?${createQueryString([
-          { name: 'swapAmount', value: null },
-          { name: 'chainId1', value: chainId.toString() },
-          { name: 'token1', value: getQuoteCurrency(chainId) },
-        ])}`,
-        { scroll: false }
-      )
-    },
-    [createQueryString, pathname, push]
-  )
-
   // Switch token0 and token1
   const switchTokens = useCallback(() => {
     const params = new URLSearchParams(defaultedParams)
@@ -155,6 +125,44 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
 
     push(`${pathname}?${params.toString()}`, { scroll: false })
   }, [pathname, push, defaultedParams])
+
+  // Update the URL with new from chainId
+  const setChainId0 = useCallback<{ (chainId: number): void }>(
+    (chainId) => {
+      if (defaultedParams.get('chainId1') === chainId.toString()) {
+        switchTokens()
+      } else {
+        push(
+          `${pathname}?${createQueryString([
+            { name: 'swapAmount', value: null },
+            { name: 'chainId0', value: chainId.toString() },
+            { name: 'token0', value: 'NATIVE' },
+          ])}`,
+          { scroll: false }
+        )
+      }
+    },
+    [createQueryString, defaultedParams, pathname, push, switchTokens]
+  )
+
+  // Update the URL with new to chainId
+  const setChainId1 = useCallback<{ (chainId: number): void }>(
+    (chainId) => {
+      if (defaultedParams.get('chainId0') === chainId.toString()) {
+        switchTokens()
+      } else {
+        push(
+          `${pathname}?${createQueryString([
+            { name: 'swapAmount', value: null },
+            { name: 'chainId1', value: chainId.toString() },
+            { name: 'token1', value: getQuoteCurrency(chainId) },
+          ])}`,
+          { scroll: false }
+        )
+      }
+    },
+    [createQueryString, pathname, push]
+  )
 
   // Update the URL with a new token0
   const setToken0 = useCallback<{ (token0: string | Type): void }>(
