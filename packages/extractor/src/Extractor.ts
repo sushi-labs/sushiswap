@@ -12,6 +12,7 @@ import { TokenManager } from './TokenManager'
 import { FactoryV2, UniV2Extractor } from './UniV2Extractor'
 import { FactoryV3, UniV3Extractor } from './UniV3Extractor'
 import { UniV3PoolWatcher, UniV3PoolWatcherStatus } from './UniV3PoolWatcher'
+import { setWarningMessageHandler, WarningMessageHandler } from './WarnLog'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -58,8 +59,8 @@ export class Extractor {
     logDepth: number
     logging?: boolean
     maxCallsInOneBatch?: number
+    warningMessageHandler?: WarningMessageHandler
   }) {
-    const logType = args.logType ?? LogFilterType.OneCall // default value
     this.cacheDir = args.cacheDir
     this.client = args.client
     this.multiCallAggregator = new MultiCallAggregator(args.client, args.maxCallsInOneBatch ?? 0)
@@ -90,6 +91,7 @@ export class Extractor {
         this.multiCallAggregator,
         tokenManager
       )
+    setWarningMessageHandler(args.warningMessageHandler)
   }
 
   /// @param tokensPrefetch Prefetch all pools between these tokens
