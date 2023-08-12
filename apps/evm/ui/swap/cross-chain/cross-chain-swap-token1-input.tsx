@@ -50,6 +50,7 @@ export const CrossChainSwapToken1Input = () => {
         currency={token1}
         loading={loading}
         disableMaxButton
+        fetching={isFetching}
         currencyLoading={tokensLoading}
       />
     </div>

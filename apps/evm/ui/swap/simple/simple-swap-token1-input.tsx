@@ -6,13 +6,12 @@ import { useDerivedStateSimpleSwap, useSimpleSwapTrade } from './derivedstate-si
 
 export const SimpleSwapToken1Input = () => {
   const {
-    state: { swapAmountString, chainId, token1 },
+    state: { chainId, token1 },
     mutate: { setToken1 },
     isLoading: tokensLoading,
   } = useDerivedStateSimpleSwap()
 
-  const { isLoading, isFetching, data: trade } = useSimpleSwapTrade()
-  const loading = Boolean(isLoading && +swapAmountString > 0) || isFetching || tokensLoading
+  const { isInitialLoading: isLoading, isFetching, data: trade } = useSimpleSwapTrade()
 
   return (
     <Web3Input.Currency
@@ -24,7 +23,8 @@ export const SimpleSwapToken1Input = () => {
       chainId={chainId}
       onSelect={setToken1}
       currency={token1}
-      loading={loading}
+      loading={isLoading}
+      fetching={isFetching}
       disableMaxButton
       currencyLoading={tokensLoading}
     />

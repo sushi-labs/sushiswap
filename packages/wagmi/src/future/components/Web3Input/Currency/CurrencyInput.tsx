@@ -53,6 +53,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   error,
   hidePinnedTokens = false,
   hideSearch = false,
+  fetching,
 }) => {
   const { address } = useAccount()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -132,10 +133,14 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
       onClick={focusInput}
       className={classNames(
         _error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
-        'space-y-2 overflow-hidden pb-2',
+        'relative space-y-2 overflow-hidden pb-2',
         className
       )}
     >
+      <div
+        data-state={fetching ? 'active' : 'inactive'}
+        className="transition-all data-[state=inactive]:hidden data-[state=active]:block absolute inset-0 overflow-hidden p-4 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_.5s_infinite] before:bg-gradient-to-r before:from-transparent dark:before:via-slate-50/10 before:via-gray-900/[0.07] before:to-transparent"
+      />
       <div className="relative flex items-center gap-4">
         <div
           data-state={isLoading ? 'active' : 'inactive'}
@@ -148,7 +153,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         </div>
         <div
           data-state={isLoading ? 'inactive' : 'active'}
-          className="data-[state=inactive]:hidden data-[state=active]:flex"
+          className="data-[state=inactive]:hidden data-[state=active]:flex items-center"
         >
           <TextField
             testdata-id={`${id}-input`}
