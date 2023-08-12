@@ -17,7 +17,9 @@ import {
   DialogReview,
   DialogTitle,
   DialogType,
+  Message,
 } from '@sushiswap/ui'
+import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { List } from '@sushiswap/ui/components/list/List'
@@ -56,6 +58,7 @@ import { useCrossChainSwapTrade, useDerivedStateCrossChainSwap } from './derived
 
 export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ children }) => {
   const [review, setReview] = useState(false)
+  const [insufficientFunds, setInsufficientFunds] = useState(false)
   const [slippageTolerance] = useSlippageTolerance()
   const { address } = useAccount()
   const { chain } = useNetwork()
@@ -88,17 +91,29 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
 
   const { config, isError } = usePrepareContractWrite({
     ...getSushiXSwapContractConfig(chainId0 as SushiXSwapChainId),
-    functionName: trade?.functionName,
+    functionName: 'cook',
     args: trade?.writeArgs,
-    enabled: Boolean(trade?.writeArgs) && chain?.id === chainId0 && approved && trade?.route?.status !== 'NoWay',
+    enabled: Boolean(
+      trade?.writeArgs &&
+        trade?.writeArgs.length > 0 &&
+        chain?.id === chainId0 &&
+        approved &&
+        trade?.route?.status !== 'NoWay'
+    ),
     overrides: trade?.overrides,
     onError: (error) => {
+      // @ts-ignore
+      if (error.data && error.data.message.includes('insufficient funds')) {
+        setInsufficientFunds(true)
+      }
+
       if (error.message.startsWith('user rejected transaction')) return
       log.error('Cross Chain Swap prepare error', {
         trade,
         error,
       })
     },
+    onSuccess: () => setInsufficientFunds(false),
   })
 
   const onSettled = useCallback(
@@ -244,7 +259,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         setReview(true)
       }
     },
-    [onComplete, stepStates, writeAsync]
+    [onComplete, review, stepStates, writeAsync]
   )
 
   const { data: lzData } = useLayerZeroScanLink({ tradeId, network1: chainId1, network0: chainId0, txHash: data?.hash })
@@ -316,7 +331,14 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
       <DialogReview>
         {({ confirm }) => (
           <>
-            {children}
+            <>
+              <Collapsible open={insufficientFunds}>
+                <Message size="sm" variant="destructive">
+                  Insufficient funds to pay for gas on the destination chain. Please lower your input amount.
+                </Message>
+              </Collapsible>
+              {children}
+            </>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>
