@@ -139,12 +139,16 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
   // Switch token0 and token1
   const switchTokens = useCallback(() => {
     const params = new URLSearchParams(defaultedParams)
+    const chainId0 = params.get('chainId0')
+    const chainId1 = params.get('chainId1')
     const token0 = params.get('token0')
     const token1 = params.get('token1')
 
     // Can safely cast as defaultedParams are always defined
     params.set('token0', token1 as string)
     params.set('token1', token0 as string)
+    params.set('chainId0', chainId1 as string)
+    params.set('chainId1', chainId0 as string)
     if (params.has('swapAmount')) {
       params.delete('swapAmount')
     }
@@ -157,18 +161,9 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
     (_token0) => {
       // If entity is provided, parse it to a string
       const token0 = getTokenAsString(_token0)
-
-      // Switch tokens if the new token0 is the same as the current token1
-      if (defaultedParams.get('token1')?.toLowerCase() === token0.toLowerCase()) {
-        switchTokens()
-      }
-
-      // Push new route
-      else {
-        push(`${pathname}?${createQueryString([{ name: 'token0', value: token0 }])}`, { scroll: false })
-      }
+      push(`${pathname}?${createQueryString([{ name: 'token0', value: token0 }])}`, { scroll: false })
     },
-    [createQueryString, defaultedParams, pathname, push, switchTokens]
+    [createQueryString, pathname, push]
   )
 
   // Update the URL with a new token1
@@ -176,18 +171,9 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
     (_token1) => {
       // If entity is provided, parse it to a string
       const token1 = getTokenAsString(_token1)
-
-      // Switch tokens if the new token0 is the same as the current token1
-      if (defaultedParams.get('token0')?.toLowerCase() === token1.toLowerCase()) {
-        switchTokens()
-      }
-
-      // Push new route
-      else {
-        push(`${pathname}?${createQueryString([{ name: 'token1', value: token1 }])}`, { scroll: false })
-      }
+      push(`${pathname}?${createQueryString([{ name: 'token1', value: token1 }])}`, { scroll: false })
     },
-    [createQueryString, defaultedParams, pathname, push, switchTokens]
+    [createQueryString, pathname, push]
   )
 
   // Update the URL with both tokens
