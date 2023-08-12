@@ -48,8 +48,6 @@ async function main() {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
     integrations: [
-      // enable console tracing
-      new Sentry.Integrations.Console(),
       // enable HTTP calls tracing
       new Sentry.Integrations.Http({
         tracing: true,
