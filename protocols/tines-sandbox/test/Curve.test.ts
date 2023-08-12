@@ -1,7 +1,14 @@
 import { Provider } from '@ethersproject/providers'
 import { SnapshotRestorer, takeSnapshot } from '@nomicfoundation/hardhat-network-helpers'
 import { erc20Abi } from '@sushiswap/abi'
-import { CurvePool, getBigNumber, RToken } from '@sushiswap/tines'
+import {
+  createCurvePoolsForMultipool,
+  CurveMultitokenPool,
+  CurvePool,
+  getBigNumber,
+  RPool,
+  RToken,
+} from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber, Contract, Signer } from 'ethers'
 import { ethers } from 'hardhat'
@@ -105,7 +112,7 @@ interface PoolInfo {
   poolType: CurvePoolType
   poolContract: Contract
   tokenContracts: (Contract | undefined)[]
-  poolTines: CurvePool[][]
+  poolTines: (CurvePool | CurveMultitokenPool | undefined)[][]
   user: Signer
   userAddress: string
   snapshot: SnapshotRestorer
@@ -232,33 +239,55 @@ async function createCurvePoolInfo(
   const fee = await poolContract.fee()
   const reserves = await Promise.all(tokenContracts.map((_, i) => poolContract.balances(i)))
 
-  const poolTines = new CurvePool(
-    poolAddress,
-    tokenTines[0],
-    tokenTines[1],
-    fee.toNumber() / 1e10,
-    A.toNumber(),
-    reserves[0],
-    reserves[1],
-    await getPoolRatio(poolAddress, poolType, user.provider as Provider)
-  )
+  if (tokenContracts.length == 2) {
+    const poolTines = new CurvePool(
+      poolAddress,
+      tokenTines[0],
+      tokenTines[1],
+      fee.toNumber() / 1e10,
+      A.toNumber(),
+      reserves[0],
+      reserves[1],
+      await getPoolRatio(poolAddress, poolType, user.provider as Provider)
+    )
 
-  const snapshot = await takeSnapshot()
-  return {
-    poolType,
-    poolContract,
-    tokenContracts,
-    poolTines: [[undefined, poolTines]],
-    user,
-    userAddress,
-    snapshot,
+    const snapshot = await takeSnapshot()
+    return {
+      poolType,
+      poolContract,
+      tokenContracts,
+      poolTines: [[undefined, poolTines]],
+      user,
+      userAddress,
+      snapshot,
+    }
+  } else {
+    const pools = createCurvePoolsForMultipool(poolAddress, tokenTines, fee.toNumber() / 1e10, A.toNumber(), reserves)
+    const poolTines: (CurvePool | CurveMultitokenPool | undefined)[][] = []
+    let n = 0
+    for (let i = 0; i < tokenContracts.length; ++i) {
+      poolTines[i] = []
+      for (let j = i + 1; j < tokenContracts.length; ++j) poolTines[i][j] = pools[n++]
+    }
+    console.assert(n == pools.length)
+
+    const snapshot = await takeSnapshot()
+    return {
+      poolType,
+      poolContract,
+      tokenContracts,
+      poolTines,
+      user,
+      userAddress,
+      snapshot,
+    }
   }
 }
 
 async function checkSwap(poolInfo: PoolInfo, from: number, to: number, amountIn: number, precision: number) {
   const i = Math.min(from, to)
   const j = Math.max(from, to)
-  const expectedOut = poolInfo.poolTines[i][j].calcOutByIn(Math.round(amountIn), from < to)
+  const expectedOut = (poolInfo.poolTines[i][j] as CurvePool).calcOutByIn(Math.round(amountIn), from < to)
   let realOutBN: BigNumber
   if (poolInfo.poolType !== CurvePoolType.LegacyV2 && poolInfo.poolType !== CurvePoolType.LegacyV3) {
     realOutBN = await poolInfo.poolContract.callStatic.exchange(from, to, getBigNumber(amountIn), 0, {
@@ -319,8 +348,8 @@ async function process2CoinsPool(
     return 'skipped (pool init error)'
   }
   if (poolInfo.tokenContracts.length > 2) return `skipped (${poolInfo.tokenContracts.length} tokens)`
-  const res0 = parseInt(poolInfo.poolTines[0][1].reserve0.toString())
-  const res1 = parseInt(poolInfo.poolTines[0][1].reserve1.toString())
+  const res0 = parseInt((poolInfo.poolTines[0][1] as CurvePool).reserve0.toString())
+  const res1 = parseInt((poolInfo.poolTines[0][1] as CurvePool).reserve1.toString())
   if (res0 < 1e6 || res1 < 1e6) return 'skipped (low liquidity)'
   const checks = poolType == CurvePoolType.LegacyV2 || poolType == CurvePoolType.LegacyV3 ? 3 : 10
   for (let i = 0; i < checks; ++i) {
@@ -331,17 +360,48 @@ async function process2CoinsPool(
   return 'passed'
 }
 
+async function processMultiTokenPool(
+  poolAddress: string,
+  name: string,
+  poolType: CurvePoolType,
+  precision: number
+): Promise<string> {
+  const testSeed = poolAddress
+  const rnd: () => number = seedrandom(testSeed) // random [0, 1)
+  const [user] = await ethers.getSigners()
+  let poolInfo
+  try {
+    poolInfo = await createCurvePoolInfo(poolAddress, poolType, user, BigInt(1e30))
+  } catch (e) {
+    return 'skipped (pool init error)'
+  }
+  const n = poolInfo.tokenContracts.length
+  for (let i = 0; i < n; ++i)
+    for (let j = i + 1; j < n; ++j) {
+      const res0 = parseInt((poolInfo.poolTines[i][j] as RPool).reserve0.toString())
+      const res1 = parseInt((poolInfo.poolTines[i][j] as RPool).reserve1.toString())
+      if (res0 < 1e6 || res1 < 1e6) return 'skipped (low liquidity)'
+      const checks = poolType == CurvePoolType.LegacyV2 || poolType == CurvePoolType.LegacyV3 ? 3 : 10
+      for (let k = 0; k < checks; ++k) {
+        const amountInPortion = getRandomExp(rnd, 1e-5, 1)
+        await checkSwap(poolInfo, i, j, res0 * amountInPortion, precision)
+        await checkSwap(poolInfo, j, i, res1 * amountInPortion, precision)
+      }
+    }
+  return 'passed'
+}
+
 describe('Real Curve pools consistency check', () => {
   describe('Not-Factory pools by whitelist', () => {
     for (let i = 0; i < NON_FACTORY_POOLS.length; ++i) {
       const [poolAddress, name, poolType, precision = 1e-9] = NON_FACTORY_POOLS[i]
       it(`${name} (${poolAddress}, ${poolType})`, async () => {
-        const result = await process2CoinsPool(poolAddress, name, poolType, precision)
+        const result = await processMultiTokenPool(poolAddress, name, poolType, precision)
         expect(result).equal('passed')
       })
     }
   })
-  it.skip(`Factory Pools (${FACTORY_ADDRESSES.length} factories)`, async () => {
+  it(`Factory Pools (${FACTORY_ADDRESSES.length} factories)`, async () => {
     let passed = 0,
       i = 0
     const startFrom = 0,
@@ -356,7 +416,12 @@ describe('Real Curve pools consistency check', () => {
         return
       }
       const precision = FACTORY_POOL_PRECISION_SPECIAL[poolAddress.toLowerCase()] || 1e-9
-      const result = await process2CoinsPool(poolAddress, `Factory ${factoryName}`, CurvePoolType.Factory, precision)
+      const result = await processMultiTokenPool(
+        poolAddress,
+        `Factory ${factoryName}`,
+        CurvePoolType.Factory,
+        precision
+      )
       console.log(result)
       if (result == 'passed') ++passed
     })
