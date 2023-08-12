@@ -31,7 +31,10 @@ export const CrossChainSwapToken0Input = () => {
         <NetworkSelector
           networks={STARGATE_SUPPORTED_CHAIN_IDS}
           selected={chainId0 as StargateChainId}
-          onSelect={setChainId0}
+          onSelect={(chainId, close) => {
+            setChainId0(chainId)
+            close()
+          }}
         >
           <Button variant="secondary" size="xs">
             <NetworkIcon chainId={chainId0} width={16} height={16} />
