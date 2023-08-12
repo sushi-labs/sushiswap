@@ -4,13 +4,18 @@ import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { Explainer } from '@sushiswap/ui/components/explainer'
 import { Switch } from '@sushiswap/ui/components/switch'
 import { usePathname, useRouter } from 'next/navigation'
-import React, { FC, useCallback, useState, useTransition } from 'react'
+import React, { FC, useCallback, useEffect, useState, useTransition } from 'react'
 
 export const CrossChainBanner: FC = () => {
   const pathname = usePathname()
   const [, startTransition] = useTransition()
   const [checked, setChecked] = useState(pathname === '/swap/cross-chain')
-  const { push } = useRouter()
+  const { push, prefetch } = useRouter()
+
+  useEffect(() => {
+    prefetch('/swap/cross-chain')
+    prefetch('/swap')
+  }, [prefetch])
 
   const handleChange = useCallback(
     (checked: boolean) => {
