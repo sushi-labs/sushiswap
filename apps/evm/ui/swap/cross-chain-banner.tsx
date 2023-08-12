@@ -1,38 +1,31 @@
+'use client'
+
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
-import { STARGATE_SUPPORTED_CHAIN_IDS, StargateChainId } from '@sushiswap/stargate'
-import { classNames } from '@sushiswap/ui'
 import { Explainer } from '@sushiswap/ui/components/explainer'
 import { Switch } from '@sushiswap/ui/components/switch'
-import { AppType } from '@sushiswap/ui/types'
-import React, { FC, useCallback } from 'react'
-
-import { useSwapActions, useSwapState } from '../trade/TradeProvider'
-import { ChainSelectors } from './ChainSelectors'
+import { usePathname, useRouter } from 'next/navigation'
+import React, { FC, useCallback, useState, useTransition } from 'react'
 
 export const CrossChainBanner: FC = () => {
-  const { appType, network0 } = useSwapState()
-  const { setAppType } = useSwapActions()
+  const pathname = usePathname()
+  const [, startTransition] = useTransition()
+  const [checked, setChecked] = useState(pathname === '/swap/cross-chain')
+  const { push } = useRouter()
 
   const handleChange = useCallback(
     (checked: boolean) => {
-      if (checked) setAppType(AppType.xSwap)
-      else setAppType(AppType.Swap)
+      setChecked(checked)
+      startTransition(() => {
+        if (checked) push('/swap/cross-chain')
+        else push('/swap')
+      })
     },
-    [setAppType]
+    [push]
   )
 
   return (
-    <div
-      className={classNames(
-        !STARGATE_SUPPORTED_CHAIN_IDS.includes(network0 as StargateChainId) ? 'opacity-40 pointer-events-none' : '',
-        'bg-white dark:bg-slate-900 rounded-xl mb-4'
-      )}
-    >
-      <div
-        className={classNames(
-          'flex flex-col bg-gradient-to-r from-blue/[0.15] to-pink/[0.15] hover:from-blue/20 hover:to-pink/20 saturate-[2] dark:saturate-[1] p-6 rounded-xl'
-        )}
-      >
+    <div className="bg-white dark:bg-slate-900 rounded-xl">
+      <div className="flex flex-col bg-gradient-to-r from-blue/[0.15] to-pink/[0.15] hover:from-blue/20 hover:to-pink/20 saturate-[2] dark:saturate-[1] p-6 rounded-xl">
         <div className="flex gap-3 items-center">
           <div className="flex flex-col">
             <h1 className="flex gap-1.5 items-center font-semibold text-gray-900 dark:text-slate-50">
@@ -59,10 +52,9 @@ export const CrossChainBanner: FC = () => {
             <span className="text-sm text-muted-foreground">Swap tokens from one network to another.</span>
           </div>
           <div className="flex justify-end flex-grow">
-            <Switch checked={appType === AppType.xSwap} onCheckedChange={handleChange} />
+            <Switch checked={checked} onCheckedChange={handleChange} />
           </div>
         </div>
-        <ChainSelectors open={appType === AppType.xSwap} />
       </div>
     </div>
   )

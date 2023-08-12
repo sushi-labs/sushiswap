@@ -1,9 +1,8 @@
 'use client'
 
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
-import { useSimpleSwapTrade } from 'lib/swap/useSimpleSwapTrade'
 
-import { useDerivedStateSimpleSwap } from './derivedstate-simpleswap-provider'
+import { useDerivedStateSimpleSwap, useSimpleSwapTrade } from './derivedstate-simple-swap-provider'
 
 export const SimpleSwapToken1Input = () => {
   const {
@@ -20,7 +19,7 @@ export const SimpleSwapToken1Input = () => {
       id="swap-to"
       type="OUTPUT"
       disabled
-      className="p-3 bg-white dark:bg-slate-800 rounded-xl"
+      className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
       value={trade?.amountOut?.toSignificant() ?? ''}
       chainId={chainId}
       onSelect={setToken1}

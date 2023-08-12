@@ -31,7 +31,7 @@ const tokenFromRToken = (token: TradeLegType['tokenFrom']) => {
 }
 
 // Can render a tines multi route
-export const TradeRoute: FC<{
+export const TradeRoutePathView: FC<{
   trade: UseTradeReturn | undefined
   children: ReactNode
 }> = ({ children, trade }) => {

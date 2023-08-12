@@ -38,13 +38,13 @@ import {
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { useSimpleSwapTrade } from 'lib/swap/useSimpleSwapTrade'
+import { APPROVE_TAG_SWAP } from 'lib/constants'
+import { warningSeverity, warningSeverityClassName } from 'lib/swap/warningSeverity'
 import { log } from 'next-axiom'
 import React, { FC, ReactNode, useCallback } from 'react'
 
-import { warningSeverity, warningSeverityClassName } from '../../../lib/swap/warningSeverity'
-import { TradeRoute } from '../trade/TradeRoute'
-import { useDerivedStateSimpleSwap } from './derivedstate-simpleswap-provider'
+import { TradeRoutePathView } from '../trade-route-path-view'
+import { useDerivedStateSimpleSwap, useSimpleSwapTrade } from './derivedstate-simple-swap-provider'
 
 export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ children }) => {
   const {
@@ -52,7 +52,7 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
     mutate: { setSwapAmount },
   } = useDerivedStateSimpleSwap()
 
-  const { approved } = useApproved('swap')
+  const { approved } = useApproved(APPROVE_TAG_SWAP)
   const [slippageTolerance] = useSlippageTolerance()
   const { data: trade, isFetching } = useSimpleSwapTrade()
   const { address } = useAccount()
@@ -370,11 +370,11 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
                         {isFetching ? (
                           <SkeletonText align="right" fontSize="sm" className="w-1/3" />
                         ) : (
-                          <TradeRoute trade={trade}>
+                          <TradeRoutePathView trade={trade}>
                             <Button size="sm" variant="link">
                               Show route
                             </Button>
-                          </TradeRoute>
+                          </TradeRoutePathView>
                         )}
                       </List.KeyValue>
                     )}

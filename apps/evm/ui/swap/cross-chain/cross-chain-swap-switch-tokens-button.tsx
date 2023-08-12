@@ -2,12 +2,12 @@
 
 import ArrowsUpDownIcon from '@heroicons/react/24/solid/ArrowsUpDownIcon'
 
-import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
+import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
-export const SimpleSwapSwitchTokensButton = () => {
+export const CrossChainSwapSwitchTokensButton = () => {
   const {
     mutate: { switchTokens },
-  } = useDerivedStateSimpleSwap()
+  } = useDerivedStateCrossChainSwap()
 
   return (
     <div className="left-0 right-0 mt-[-26px] mb-[-26px] flex items-center justify-center">

@@ -1,8 +1,6 @@
-import { Button } from '@sushiswap/ui/components/button'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
-import React, { FC } from 'react'
+import { Button, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
 
-export const SwitchAppType: FC = () => {
+export const SwapModeButtons = () => {
   return (
     <div className="flex gap-2">
       <Button size="sm" variant="secondary">

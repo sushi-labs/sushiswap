@@ -11,15 +11,14 @@ import {
 import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { useSimpleSwapTrade } from 'lib/swap/useSimpleSwapTrade'
+import { APPROVE_TAG_SWAP } from 'lib/constants'
+import { warningSeverity } from 'lib/swap/warningSeverity'
 import React, { FC, useEffect, useState } from 'react'
 
-import { warningSeverity } from '../../../lib/swap/warningSeverity'
-import { useDerivedStateSimpleSwap } from './derivedstate-simpleswap-provider'
+import { useDerivedStateSimpleSwap, useSimpleSwapTrade } from './derivedstate-simple-swap-provider'
 import { SimpleSwapTradeReviewDialog } from './simple-swap-trade-review-dialog'
 
-export const SimpleSwapTradeButton: FC = withCheckerRoot(() => {
+export const SimpleSwapTradeButton: FC = () => {
   const { isFetching, isLoading, data: trade } = useSimpleSwapTrade()
   const {
     state: { swapAmount, chainId, token0, token1 },
@@ -54,7 +53,7 @@ export const SimpleSwapTradeButton: FC = withCheckerRoot(() => {
                       : undefined
                   }
                 >
-                  <Checker.Success tag="swap">
+                  <Checker.Success tag={APPROVE_TAG_SWAP}>
                     <DialogTrigger asChild>
                       <Button
                         size="xl"
@@ -104,4 +103,4 @@ export const SimpleSwapTradeButton: FC = withCheckerRoot(() => {
       )}
     </>
   )
-})
+}

@@ -1,7 +1,7 @@
 'use client'
 
 import { ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
-import { Price, tryParseAmount } from '@sushiswap/currency'
+import { Amount, Price, Token, tryParseAmount } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { usePrices } from '@sushiswap/react-query'
 import { Button, typographyVariants } from '@sushiswap/ui'
@@ -9,43 +9,49 @@ import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { useTokenAmountDollarValues } from 'lib/hooks'
 import React, { useMemo, useState } from 'react'
 
-import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
+import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
-export const SimpleSwapHeader = () => {
+export const CrossChainSwapHeader = () => {
   const [invert, setInvert] = useState(false)
   const {
-    state: { chainId, token0, token1 },
+    state: { chainId0, chainId1, token0, token1 },
     isLoading,
-  } = useDerivedStateSimpleSwap()
+  } = useDerivedStateCrossChainSwap()
 
   const amounts = useMemo(() => {
-    return [tryParseAmount('1', token0), tryParseAmount('1', token1)]
+    return [[tryParseAmount('1', token0)], [tryParseAmount('1', token1)]]
   }, [token0, token1])
 
-  const [token0FiatPrice, token1FiatPrice] = useTokenAmountDollarValues({ chainId, amounts })
+  const [token0FiatPrice] = useTokenAmountDollarValues({ chainId: chainId0, amounts: amounts[0] })
+  const [token1FiatPrice] = useTokenAmountDollarValues({ chainId: chainId1, amounts: amounts[0] })
 
-  const { data: prices } = usePrices({ chainId })
+  const { data: prices0 } = usePrices({ chainId: chainId0 })
+  const { data: prices1 } = usePrices({ chainId: chainId1 })
 
   const price = useMemo(() => {
     if (!token0 || !token1) return '0.00'
 
-    const token0Price = prices?.[token0.wrapped.address]
-      ? tryParseAmount('1', token0)?.multiply(prices[token0.wrapped.address])
+    // To make sure both tokens have same chainId when creating the price entity
+    const dummy0 = new Token({ address: token0.wrapped.address, chainId: 1, decimals: token0.decimals })
+    const dummy1 = new Token({ address: token1.wrapped.address, chainId: 1, decimals: token1.decimals })
+
+    const token0Price = prices0?.[token0.wrapped.address]
+      ? tryParseAmount('1', token0)?.multiply(prices0[token0.wrapped.address])
       : undefined
-    const token1Price = prices?.[token1.wrapped.address]
-      ? tryParseAmount('1', token1)?.multiply(prices[token1.wrapped.address])
+    const token1Price = prices1?.[token1.wrapped.address]
+      ? tryParseAmount('1', token1)?.multiply(prices1[token1.wrapped.address])
       : undefined
 
     let price
     if (token0Price && token1Price) {
       price = new Price({
-        baseAmount: token0Price,
-        quoteAmount: token1Price,
+        baseAmount: Amount.fromRawAmount(dummy0, token0Price.quotient.toString()),
+        quoteAmount: Amount.fromRawAmount(dummy1, token1Price.quotient.toString()),
       })
     }
 
     return price ? (invert ? price.invert().toSignificant(4) : price.toSignificant(4)) : '0.00'
-  }, [invert, prices, token0, token1])
+  }, [invert, prices0, prices1, token0, token1])
 
   return (
     <div className="flex flex-col items-start gap-2 mb-4 sm:mt-10 mt-2">

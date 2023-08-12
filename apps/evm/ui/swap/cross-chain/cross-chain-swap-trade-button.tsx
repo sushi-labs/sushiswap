@@ -1,31 +1,24 @@
-import { Native } from '@sushiswap/currency'
+'use client'
+
+import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ZERO } from '@sushiswap/math'
-import {
-  isRouteProcessor3ChainId,
-  isRouteProcessorChainId,
-  routeProcessor3Address,
-  routeProcessorAddress,
-} from '@sushiswap/route-processor'
+import { sushiXSwapAddress, SushiXSwapChainId } from '@sushiswap/sushixswap'
 import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { AppType } from '@sushiswap/ui/types'
 import { Checker } from '@sushiswap/wagmi/future/systems'
+import { APPROVE_TAG_XSWAP } from 'lib/constants'
 import React, { FC, useEffect, useState } from 'react'
 
-import { useTrade } from '../../../lib/swap/useTrade'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
-import { useSwapState } from '../trade/TradeProvider'
-import { TradeReviewDialogSameChain } from '../trade/TradeReviewDialogSameChain'
+import { CrossChainSwapTradeReviewDialog } from './cross-chain-swap-trade-review-dialog'
+import { useCrossChainSwapTrade, useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
-export const SwapButton: FC = () => {
-  const { appType, amount, network0, network1, value, token0, token1 } = useSwapState()
-  const { isFetching, isLoading, data: trade } = useTrade({ crossChain: network0 !== network1 })
+export const CrossChainSwapTradeButton: FC = () => {
+  const {
+    state: { swapAmount, swapAmountString, chainId0 },
+  } = useDerivedStateCrossChainSwap()
+  const { isFetching, isLoading, data: trade } = useCrossChainSwapTrade()
   const [checked, setChecked] = useState(false)
-
-  const isWrap =
-    appType === AppType.Swap && token0?.isNative && token1?.wrapped.address === Native.onChain(network0).wrapped.address
-  const isUnwrap =
-    appType === AppType.Swap && token1?.isNative && token0?.wrapped.address === Native.onChain(network0).wrapped.address
 
   // Reset
   useEffect(() => {
@@ -35,56 +28,52 @@ export const SwapButton: FC = () => {
   }, [trade])
 
   return (
-    <>
-      <TradeReviewDialogSameChain>
-        <div className="pt-4">
-          <Checker.Connect>
-            <Checker.Network chainId={network0}>
-              <Checker.Amounts chainId={network0} amounts={[amount]}>
+    <CrossChainSwapTradeReviewDialog>
+      <div>
+        <Checker.Connect fullWidth>
+          <Checker.Network fullWidth chainId={chainId0}>
+            <Checker.Amounts fullWidth chainId={chainId0} amounts={[swapAmount]}>
+              <Checker.ApproveBentobox
+                tag={APPROVE_TAG_XSWAP}
+                fullWidth
+                chainId={chainId0 as BentoBoxV1ChainId}
+                id="approve-bentobox"
+                masterContract={sushiXSwapAddress[chainId0 as SushiXSwapChainId]}
+              >
                 <Checker.ApproveERC20
                   id="approve-erc20"
-                  amount={amount}
-                  contract={
-                    isRouteProcessor3ChainId(network0)
-                      ? routeProcessor3Address[network0]
-                      : isRouteProcessorChainId(network0)
-                      ? routeProcessorAddress[network0]
-                      : undefined
-                  }
+                  fullWidth
+                  amount={swapAmount}
+                  contract={bentoBoxV1Address[chainId0 as BentoBoxV1ChainId]}
                 >
-                  <Checker.Success tag="swap">
+                  <Checker.Success tag={APPROVE_TAG_XSWAP}>
                     <DialogTrigger asChild>
                       <Button
-                        size="xl"
                         disabled={
                           !trade?.amountOut?.greaterThan(ZERO) ||
                           trade?.route?.status === 'NoWay' ||
-                          Boolean(isLoading && +value > 0) ||
+                          Boolean(isLoading && +swapAmountString > 0) ||
                           isFetching ||
                           (!checked && warningSeverity(trade?.priceImpact) > 3)
                         }
                         color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
                         fullWidth
-                        testId="swap"
+                        size="xl"
                       >
                         {!checked && warningSeverity(trade?.priceImpact) >= 3
                           ? 'Price impact too high'
                           : trade?.route?.status === 'NoWay'
                           ? 'No trade found'
-                          : isWrap
-                          ? 'Wrap'
-                          : isUnwrap
-                          ? 'Unwrap'
                           : 'Swap'}
                       </Button>
                     </DialogTrigger>
                   </Checker.Success>
                 </Checker.ApproveERC20>
-              </Checker.Amounts>
-            </Checker.Network>
-          </Checker.Connect>
-        </div>
-      </TradeReviewDialogSameChain>
+              </Checker.ApproveBentobox>
+            </Checker.Amounts>
+          </Checker.Network>
+        </Checker.Connect>
+      </div>
       {warningSeverity(trade?.priceImpact) > 3 && (
         <div className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20">
           <input
@@ -100,6 +89,6 @@ export const SwapButton: FC = () => {
           </label>
         </div>
       )}
-    </>
+    </CrossChainSwapTradeReviewDialog>
   )
 }

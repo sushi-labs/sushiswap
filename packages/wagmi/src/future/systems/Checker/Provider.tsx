@@ -1,9 +1,8 @@
 'use client'
 
 import { Signature } from '@ethersproject/bytes'
+import { watchAccount, watchNetwork } from '@wagmi/core'
 import React, { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-
-import { watchAccount, watchNetwork } from '../../..'
 
 type CheckerContext = {
   state: Record<string, boolean>

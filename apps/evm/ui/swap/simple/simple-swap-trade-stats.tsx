@@ -12,12 +12,11 @@ import { SkeletonBox, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { useAccount } from '@sushiswap/wagmi'
 import { AddressToEnsResolver } from '@sushiswap/wagmi/future/components/Account/AddressToEnsResolver'
 import { isAddress } from 'ethers/lib/utils'
-import { useSimpleSwapTrade } from 'lib/swap/useSimpleSwapTrade'
 import React, { FC } from 'react'
 
 import { warningSeverity, warningSeverityClassName } from '../../../lib/swap/warningSeverity'
-import { TradeRoute } from '../trade/TradeRoute'
-import { useDerivedStateSimpleSwap } from './derivedstate-simpleswap-provider'
+import { TradeRoutePathView } from '../trade-route-path-view'
+import { useDerivedStateSimpleSwap, useSimpleSwapTrade } from './derivedstate-simple-swap-provider'
 
 export const SimpleSwapTradeStats: FC = () => {
   const { address } = useAccount()
@@ -87,9 +86,9 @@ export const SimpleSwapTradeStats: FC = () => {
             {loading ? (
               <SkeletonText fontSize="sm" className="w-[120px]" />
             ) : (
-              <TradeRoute trade={trade as UseTradeReturn | undefined}>
+              <TradeRoutePathView trade={trade as UseTradeReturn | undefined}>
                 <button className="text-sm text-blue font-semibold">View</button>
-              </TradeRoute>
+              </TradeRoutePathView>
             )}
           </span>
         </div>

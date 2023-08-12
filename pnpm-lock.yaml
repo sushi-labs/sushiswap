@@ -2692,7 +2692,7 @@ importers:
       typescript: 5.1.6
       viem: 1.5.4
       vitest: 0.33.0
-      wagmi: 0.12.18
+      wagmi: legacy-v0
       zod: 3.21.4
     dependencies:
       '@ethersproject/abi': 5.7.0
@@ -2758,7 +2758,7 @@ importers:
       typechain: 8.1.1_typescript@5.1.6
       typescript: 5.1.6
       vitest: 0.33.0
-      wagmi: 0.12.18_thipbjmm77fmzin7qvxmor4o7e
+      wagmi: 0.12.19_thipbjmm77fmzin7qvxmor4o7e
 
   protocols/bentobox:
     specifiers:
@@ -18672,6 +18672,7 @@ packages:
       - supports-color
       - utf-8-validate
       - zod
+    dev: false
 
   /@wagmi/connectors/0.3.24_bet7ntoougo6crri6k7ojfnzwq:
     resolution: {integrity: sha512-1pI0G9HRblc651dCz9LXuEu/zWQk23XwOUYqJEINb/c2TTLtw5TnTRIcefxxK6RnxeJvcKfnmK0rdZp/4ujFAA==}
@@ -18899,6 +18900,7 @@ packages:
       - supports-color
       - utf-8-validate
       - zod
+    dev: false
 
   /@wagmi/core/0.10.17_czjxidtjmaw3qtgg47uy3dpeka:
     resolution: {integrity: sha512-qud45y3IlHp7gYWzoFeyysmhyokRie59Xa5tcx5F1E/v4moD5BY0kzD26mZW/ZQ3WZuVK/lZwiiPRqpqWH52Gw==}
@@ -19157,6 +19159,7 @@ packages:
       - encoding
       - lokijs
       - utf-8-validate
+    dev: false
 
   /@walletconnect/ethereum-provider/2.9.0_@walletconnect+modal@2.5.9:
     resolution: {integrity: sha512-rSXkC0SXMigJRdIi/M2RMuEuATY1AwtlTWQBnqyxoht7xbO2bQNPCXn0XL4s/GRNrSUtoKSY4aPMHXV4W4yLBA==}
@@ -40601,6 +40604,7 @@ packages:
       - supports-color
       - utf-8-validate
       - zod
+    dev: false
 
   /wagmi/0.12.19_i4rjfizg7pnsmg7p6yi76gfzdq:
     resolution: {integrity: sha512-S/el9BDb/HNeQWh1v8TvntMPX/CgKLDAoJqDb8i7jifLfWPqFL7gor3vnI1Vs6ZlB8uh7m+K1Qyg+mKhbITuDQ==}
@@ -40663,7 +40667,6 @@ packages:
       - supports-color
       - utf-8-validate
       - zod
-    dev: false
 
   /walk-sync/0.3.4:
     resolution: {integrity: sha512-ttGcuHA/OBnN2pcM6johpYlEms7XpO5/fyKIr48541xXedan4roO8cS1Q2S/zbbjGH/BarYDAMeS2Mi9HE5Tig==}
