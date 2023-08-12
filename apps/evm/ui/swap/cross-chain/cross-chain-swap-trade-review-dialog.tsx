@@ -58,7 +58,6 @@ import { useCrossChainSwapTrade, useDerivedStateCrossChainSwap } from './derived
 
 export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ children }) => {
   const [review, setReview] = useState(false)
-  const [insufficientFunds, setInsufficientFunds] = useState(false)
   const [slippageTolerance] = useSlippageTolerance()
   const { address } = useAccount()
   const { chain } = useNetwork()
@@ -89,7 +88,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
   const dstCurrencyA = crossChainSwap || transferSwap ? dstBridgeToken : undefined
   const tradeRef = useRef<UseCrossChainTradeReturn | null>(null)
 
-  const { config, isError } = usePrepareContractWrite({
+  const { config, isError, error } = usePrepareContractWrite({
     ...getSushiXSwapContractConfig(chainId0 as SushiXSwapChainId),
     functionName: 'cook',
     args: trade?.writeArgs,
@@ -102,18 +101,12 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
     ),
     overrides: trade?.overrides,
     onError: (error) => {
-      // @ts-ignore
-      if (error.data && error.data.message.includes('insufficient funds')) {
-        setInsufficientFunds(true)
-      }
-
       if (error.message.startsWith('user rejected transaction')) return
       log.error('Cross Chain Swap prepare error', {
         trade,
         error,
       })
     },
-    onSuccess: () => setInsufficientFunds(false),
   })
 
   const onSettled = useCallback(
@@ -332,7 +325,9 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         {({ confirm }) => (
           <>
             <div className="flex flex-col">
-              <Collapsible open={insufficientFunds}>
+              <Collapsible
+                open={Boolean(+swapAmountString > 0 && JSON.stringify(error).includes('insufficient funds'))}
+              >
                 <div className="pt-4">
                   <Message size="sm" variant="destructive">
                     Insufficient funds to pay for gas on the destination chain. Please lower your input amount.
