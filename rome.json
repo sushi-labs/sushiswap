@@ -18,9 +18,6 @@
         "noParameterAssign": "off",
         "useSingleVarDeclarator": "off",
         "useTemplate": "warn"
-      },
-      "complexity": {
-        "noExtraSemicolon": "off"
       }
     }
   },

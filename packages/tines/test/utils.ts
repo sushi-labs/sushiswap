@@ -1,3 +1,5 @@
+import { Address } from 'viem'
+
 import {
   closeValues,
   ConstantProductRPool,
@@ -22,7 +24,7 @@ const MAX_POOL_RESERVE = 1e31
 const MIN_POOL_IMBALANCE = 1 / (1 + 1e-3)
 export const MAX_POOL_IMBALANCE = 1 + 1e-3
 const MIN_LIQUIDITY = 1000
-const MAX_LIQUIDITY = Math.pow(2, 110)
+const MAX_LIQUIDITY = 2 ** 110
 const MIN_HYBRID_A = 200
 const MAX_HYBRID_A = 300000
 
@@ -64,11 +66,11 @@ export function createNetwork(
         // third pool
         pools.push(getRandomPool(rnd, tokens[i], tokens[j]))
       }
-      if (r < Math.pow(density, 4)) {
+      if (r < density ** 4) {
         // third pool
         pools.push(getRandomPool(rnd, tokens[i], tokens[j]))
       }
-      if (r < Math.pow(density, 5)) {
+      if (r < density ** 5) {
         // third pool
         pools.push(getRandomPool(rnd, tokens[i], tokens[j]))
       }
@@ -185,12 +187,12 @@ function getCPPool(rnd: () => number, t0: TToken, t1: TToken) {
   console.assert(reserve1 >= MIN_LIQUIDITY && reserve1 <= MAX_LIQUIDITY, `Error reserve1 clculation ${reserve1}`)
 
   return new ConstantProductRPool(
-    `pool cp ${t0.name} ${t1.name} ${reserve0} ${price} ${fee}`,
+    `pool cp ${t0.name} ${t1.name} ${reserve0} ${price} ${fee}` as Address,
     t0,
     t1,
     fee,
-    getBigInt(reserve0 * Math.pow(10, t0.decimals - 6)),
-    getBigInt(reserve1 * Math.pow(10, t1.decimals - 6))
+    getBigInt(reserve0 * (10 ** t0.decimals - 6)),
+    getBigInt(reserve1 * (10 ** t1.decimals - 6))
   )
 }
 
@@ -225,12 +227,12 @@ function getStableSwapPool(rnd: () => number, t0: TToken, t1: TToken) {
   const total1 = { base: 0n, elastic: 0n }
 
   const pool = new StableSwapRPool(
-    `pool ss ${t0.name} ${t1.name} ${reserve0} ${fee}`,
+    `pool ss ${t0.name} ${t1.name} ${reserve0} ${fee}` as Address,
     t0,
     t1,
     fee,
-    getBigInt(reserve0 * Math.pow(10, t0.decimals - 6)),
-    getBigInt(reserve1 * Math.pow(10, t1.decimals - 6)),
+    getBigInt(reserve0 * (10 ** t0.decimals - 6)),
+    getBigInt(reserve1 * (10 ** t1.decimals - 6)),
     t0.decimals,
     t1.decimals,
     total0,
@@ -267,7 +269,7 @@ export function getHybridPool(rnd: () => number, t0: RToken, t1: RToken) {
   console.assert(reserve1 >= MIN_LIQUIDITY && reserve1 <= MAX_LIQUIDITY, `Error reserve1 clculation ${reserve1}`)
 
   return new HybridRPool(
-    `pool hb ${t0.name} ${t1.name} ${reserve0} ${1} ${fee}`,
+    `pool hb ${t0.name} ${t1.name} ${reserve0} ${1} ${fee}` as Address,
     t0,
     t1,
     fee,
@@ -481,7 +483,7 @@ export function expectCloseValues(v1: number, v2: number, precision: number, des
 }
 
 export function atomPrice(token: TToken | RToken) {
-  return (token as TToken).price / Math.pow(10, token.decimals)
+  return (token as TToken).price / 10 ** token.decimals
 }
 
 export function checkRoute(

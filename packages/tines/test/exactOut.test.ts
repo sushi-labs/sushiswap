@@ -1,3 +1,5 @@
+import { Address } from 'viem'
+
 import {
   closeValues,
   ConstantProductRPool,
@@ -21,7 +23,7 @@ function getPool(
   imbalance = 0
 ) {
   return new ConstantProductRPool(
-    `pool-${t0}-${t1}-${reserve}-${fee}`,
+    `pool-${t0}-${t1}-${reserve}-${fee}` as Address,
     { ...tokens[t0] },
     { ...tokens[t1] },
     fee,

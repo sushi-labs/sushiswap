@@ -1,11 +1,12 @@
 import { default as seedrandom } from 'seedrandom'
+import { Address } from 'viem'
 
 import { CL_MAX_TICK, CL_MIN_TICK, CLRPool, CLTick, getBigInt } from '../src'
 
 const testSeed = '2' // Change it to change random generator values
 const rnd: () => number = seedrandom(testSeed) // random [0, 1)
 
-const two96 = Math.pow(2, 96)
+const two96 = 2 ** 96
 const two96BI = 2n ** 96n
 
 export function getRandomLin(rnd: () => number, min: number, max: number) {
@@ -43,7 +44,7 @@ function addLiquidity(pool: CLRPool, from: number, to: number, L: bigint) {
 }
 
 function getTickPrice(pool: CLRPool, tick: number): number {
-  return Math.sqrt(Math.pow(1.0001, pool.ticks[tick].index))
+  return Math.sqrt(1.0001 ** pool.ticks[tick].index)
 }
 
 function getTickLiquidity(pool: CLRPool, tick: number): bigint {
@@ -74,7 +75,7 @@ function getRandomRange(rnd: () => number, tickSpacing: number) {
 function getRandomCLPool(rnd: () => number, rangeNumber: number, minLiquidity: number, maxLiquidity: number): CLRPool {
   const tickSpacing = rnd() > 0.5 ? 5 : 60
   const pool = new CLRPool(
-    'CLRPool',
+    'CLRPool' as Address,
     { name: 'Token0', address: 'Token0', symbol: 'Token0Symbol', decimals: 18 },
     { name: 'Token1', address: 'Token1', symbol: 'Token0Symbol', decimals: 18 },
     0.003,
@@ -82,7 +83,7 @@ function getRandomCLPool(rnd: () => number, rangeNumber: number, minLiquidity: n
     0n,
     0n,
     0n,
-    two96BN,
+    two96BI,
     -1,
     []
   )

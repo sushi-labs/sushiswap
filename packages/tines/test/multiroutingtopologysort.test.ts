@@ -1,4 +1,5 @@
 import seedrandom from 'seedrandom'
+import { Address } from 'viem'
 
 import { Edge, getBigInt, Graph, Vertice } from '../src'
 import { ConstantProductRPool, RToken } from '../src/PrimaryPools'
@@ -12,7 +13,7 @@ function createTopology(t: Topology): [Graph, Vertice, Vertice] {
   }
   const bn = getBigInt(1e6)
   const pools = t[1].map((e, i) => {
-    return new ConstantProductRPool(`${i}`, tokens[e[0]], tokens[e[1]], 0.003, bn, bn)
+    return new ConstantProductRPool(`${i}` as Address, tokens[e[0]], tokens[e[1]], 0.003, bn, bn)
   })
   const g = new Graph(pools, tokens[0], tokens[0], 0) // just a dummy
   g.edges.forEach((e) => {
@@ -35,7 +36,7 @@ function createCorrectTopology(t: Topology, paths: number): [Graph, Vertice, Ver
   }
   const bn = getBigInt(1e6)
   const pools = t[1].map((e, i) => {
-    return new ConstantProductRPool(`${i}`, tokens[e[0]], tokens[e[1]], 0.003, bn, bn)
+    return new ConstantProductRPool(`${i}` as Address, tokens[e[0]], tokens[e[1]], 0.003, bn, bn)
   })
   const g = new Graph(pools, tokens[0], tokens[0], 0) // just a dummy
   const from = g.getOrCreateVertice(tokens[0])

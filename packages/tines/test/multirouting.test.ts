@@ -1,3 +1,5 @@
+import { Address } from 'viem'
+
 import { closeValues, findMultiRouteExactIn, findMultiRouteExactOut, getBigInt, MultiRoute, RouteStatus } from '../src'
 import { ConstantProductRPool, RToken } from '../src/PrimaryPools'
 import { checkRouteResult } from './snapshots/snapshot'
@@ -32,7 +34,7 @@ function getPool(
   imbalance = 0
 ) {
   return new ConstantProductRPool(
-    `pool-${t0}-${t1}-${reserve}-${fee}`,
+    `pool-${t0}-${t1}-${reserve}-${fee}` as Address,
     { ...tokens[t0] },
     { ...tokens[t1] },
     fee,

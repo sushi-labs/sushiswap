@@ -9,14 +9,14 @@ export class BridgeStargateV04OneWay extends RPool {
   whitelisted: boolean
 
   constructor(
-    id: Address, // some kind of bridge ID. Used for tines output
+    id: string, // some kind of bridge ID. Used for tines output
     token0: RToken, // from token
     token1: RToken, // to token
     bridgeState: BridgeState,
     whitelisted: boolean,
     swapGasCost = 150_000
   ) {
-    super(id, token0, token1, Number.NaN, 0n, 0n, 0, swapGasCost)
+    super(id as Address, token0, token1, Number.NaN, 0n, 0n, 0, swapGasCost)
     this.bridgeState = bridgeState
     this.whitelisted = whitelisted
   }

@@ -1,4 +1,5 @@
 import seedrandom from 'seedrandom'
+import { Address } from 'viem'
 
 import { RToken } from '../dist'
 import { closeValues, CurvePool, getBigInt } from '../src'
@@ -64,7 +65,7 @@ function createPool(
   token1: RToken
 ): CurvePool {
   return new CurvePool(
-    'curve pool',
+    'curve pool' as Address,
     token0,
     token1,
     params.fee,
@@ -149,13 +150,13 @@ function checkPoolPriceCalculation(pool: CurvePool) {
 }
 
 function createRandomPool(rnd: () => number, token0: RToken, token1: RToken) {
-  const reserve0 = Math.pow(10, token0.decimals) * getRandomExp(rnd, 1, 1e12)
+  const reserve0 = 10 ** token0.decimals * getRandomExp(rnd, 1, 1e12)
   return createPool(
     {
       A: Math.round(getRandomExp(rnd, 1, 10_000)),
       fee: Math.round(getRandomLin(rnd, 1, 100)) / 10_000,
       reserve0,
-      reserve1: reserve0 * Math.pow(10, token1.decimals - token0.decimals) * getRandomExp(rnd, 1 / 1000, 1000),
+      reserve1: reserve0 * 10 ** (token1.decimals - token0.decimals) * getRandomExp(rnd, 1 / 1000, 1000),
     },
     token0,
     token1
