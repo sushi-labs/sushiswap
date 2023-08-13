@@ -14,12 +14,12 @@ importers:
       '@changesets/changelog-github': 0.4.8
       '@changesets/cli': 2.26.1
       '@graphql-eslint/eslint-plugin': 3.14.3
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
       '@types/jest': 29.2.5
-      '@types/node': ^18.17.5
+      '@types/node': '18'
       '@typescript-eslint/eslint-plugin': 5.48.1
       '@typescript-eslint/parser': 5.48.1
       dotenv-cli: 6.0.0
@@ -30,7 +30,7 @@ importers:
       eslint-plugin-prettier: 4.2.1
       eslint-plugin-simple-import-sort: 10.0.0
       eslint-plugin-testing-library: 5.11.0
-      eslint-plugin-turbo: ^1.10.12
+      eslint-plugin-turbo: ^1.10.6
       eslint-plugin-unused-imports: 2.0.0
       husky: 8.0.3
       is-ci: 3.0.1
@@ -79,16 +79,16 @@ importers:
 
   apis/balances:
     specifiers:
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/wagmi-config': workspace:0.1.0
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/wagmi-config': workspace:*
       '@tsconfig/esm': 1.0.3
       '@tsconfig/node18': 2.0.0
       '@tsconfig/strictest': 2.0.1
       '@types/lodash.zip': 4.2.7
-      '@types/node': ^18.17.5
+      '@types/node': '18'
       '@types/node-fetch': 2.6.2
       '@vercel/node': 2.14.3
       '@wagmi/core': 1.3.8
@@ -122,18 +122,18 @@ importers:
 
   apis/pools:
     specifiers:
-      '@sushiswap/abi': workspace:0.0.1
-      '@sushiswap/database': workspace:0.0.1
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/types': workspace:0.0.2
-      '@sushiswap/validate': workspace:0.1.0
-      '@sushiswap/wagmi-config': workspace:0.1.0
+      '@sushiswap/abi': workspace:*
+      '@sushiswap/database': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/types': workspace:*
+      '@sushiswap/validate': workspace:*
+      '@sushiswap/wagmi-config': workspace:*
       '@tsconfig/esm': 1.0.3
       '@tsconfig/node18': 2.0.0
       '@tsconfig/strictest': 2.0.1
-      '@types/node': ^18.17.5
+      '@types/node': '18'
       '@vercel/node': 2.14.3
       '@wagmi/core': 1.3.8
       deepmerge-ts: ^4.3.0
@@ -169,16 +169,16 @@ importers:
     specifiers:
       '@fastify/cors': 8.2.0
       '@fastify/rate-limit': 8.0.0
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/database': workspace:0.0.1
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/extractor': workspace:0.0.0
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/route-processor': workspace:0.0.0
-      '@sushiswap/router': workspace:0.0.13
-      '@sushiswap/viem-config': workspace:1.0.2
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/database': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/extractor': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/route-processor': workspace:*
+      '@sushiswap/router': workspace:*
+      '@sushiswap/viem-config': workspace:*
       '@swc/core': 1.3.26
       '@swc/helpers': 0.4.14
       '@tsconfig/node18': 2.0.0
@@ -225,10 +225,10 @@ importers:
   apis/token-list:
     specifiers:
       '@sushiswap/chainlink-token-list': ^0.1.0
-      '@sushiswap/default-token-list': ^41.5.0
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
+      '@sushiswap/default-token-list': ^41.4.0
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
       '@tsconfig/node18': 2.0.0
       '@tsconfig/strictest': 2.0.1
       '@vercel/node': 2.14.3
@@ -251,15 +251,15 @@ importers:
 
   apis/token-price:
     specifiers:
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/database': workspace:0.0.1
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/database': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
       '@tsconfig/esm': 1.0.3
       '@tsconfig/node18': 2.0.0
       '@tsconfig/strictest': 2.0.1
-      '@types/node': ^18.17.5
+      '@types/node': '18'
       '@vercel/node': 2.14.3
       date-fns: 2.29.3
       eslint: 8.43.0
@@ -288,15 +288,15 @@ importers:
 
   apis/tokens:
     specifiers:
-      '@sushiswap/database': workspace:0.0.1
+      '@sushiswap/database': workspace:*
       '@sushiswap/default-token-list': 41.4.0
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/wagmi-config': workspace:0.1.0
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/wagmi-config': workspace:*
       '@tsconfig/esm': 1.0.3
       '@tsconfig/strictest': 2.0.1
-      '@types/node': ^18.17.5
+      '@types/node': '18'
       '@vercel/node': 2.14.3
       '@wagmi/core': 1.3.8
       eslint: 8.43.0
@@ -323,21 +323,21 @@ importers:
 
   apps/academy:
     specifiers:
-      '@cloudinary/url-gen': ^1.11.1
+      '@cloudinary/url-gen': ^1.8.0
       '@graphql-mesh/cli': 0.82.3
       '@graphql-mesh/graphql': 0.94.2
       '@headlessui/react': 1.7.7
       '@heroicons/react': 2.0.13
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/hooks': workspace:1.0.0
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/nextjs-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/tailwindcss-config': workspace:0.0.0
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@sushiswap/ui': workspace:0.0.0
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/hooks': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/nextjs-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/tailwindcss-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/ui': workspace:*
       '@tailwindcss/typography': 0.5.9
-      '@types/node': ^18.17.5
+      '@types/node': '18'
       '@types/qs': ^6.9.7
       '@types/react': 18.2.14
       '@types/react-dom': 18.2.6
@@ -352,10 +352,10 @@ importers:
       next-seo: 5.15.0
       next-sitemap: 3.1.43
       postcss: 8.4.23
-      qs: ^6.11.2
+      qs: ^6.10.3
       react: 18.2.0
       react-dom: 18.2.0
-      react-markdown: ^8.0.7
+      react-markdown: ^8.0.3
       sharp: 0.31.3
       swr: 2.1.5
       tailwindcss: 3.3.2
@@ -402,21 +402,21 @@ importers:
 
   apps/blog:
     specifiers:
-      '@cloudinary/url-gen': ^1.11.1
+      '@cloudinary/url-gen': ^1.8.0
       '@graphql-mesh/cli': 0.82.3
       '@graphql-mesh/graphql': 0.94.2
       '@heroicons/react': 1.0.6
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/hooks': workspace:1.0.0
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/nextjs-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/tailwindcss-config': workspace:0.0.0
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@sushiswap/ui': workspace:0.0.0
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/hooks': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/nextjs-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/tailwindcss-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/ui': workspace:*
       '@tailwindcss/typography': 0.5.9
-      '@types/node': ^18.17.5
+      '@types/node': '18'
       '@types/qs': ^6.9.7
       '@types/react': 18.2.14
       '@types/react-dom': 18.2.6
@@ -431,10 +431,10 @@ importers:
       next-seo: 5.15.0
       next-sitemap: 3.1.43
       postcss: 8.4.23
-      qs: ^6.11.2
+      qs: ^6.10.3
       react: 18.2.0
       react-dom: 18.2.0
-      react-markdown: ^8.0.7
+      react-markdown: ^8.0.3
       sharp: 0.31.3
       swr: 2.1.5
       tailwindcss: 3.3.2
@@ -484,7 +484,7 @@ importers:
       '@heroicons/react': 2.0.13
       '@storybook/addon-a11y': 7.0.25
       '@storybook/addon-actions': 7.0.25
-      '@storybook/addon-designs': ^7.0.4
+      '@storybook/addon-designs': ^7.0.0
       '@storybook/addon-docs': 7.0.25
       '@storybook/addon-essentials': 7.0.25
       '@storybook/addon-links': 7.0.25
@@ -494,16 +494,16 @@ importers:
       '@storybook/cli': 7.0.25
       '@storybook/react': 7.0.25
       '@storybook/react-vite': 7.0.25
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/router-config': workspace:2.0.0
-      '@sushiswap/tailwindcss-config': workspace:0.0.0
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@sushiswap/ui': workspace:0.0.0
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/router-config': workspace:*
+      '@sushiswap/tailwindcss-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/ui': workspace:*
       '@vitejs/plugin-react': 4.0.1
       autoprefixer: 10.4.14
-      chromatic: ^6.21.0
-      class-variance-authority: ^0.6.1
+      chromatic: ^6.19.9
+      class-variance-authority: ^0.6.0
       postcss: 8.4.23
       react: 18.2.0
       react-dom: 18.2.0
@@ -550,48 +550,48 @@ importers:
     specifiers:
       '@headlessui/react': 1.7.7
       '@heroicons/react': 2.0.13
-      '@heroicons/react-v1': npm:@heroicons/react@^1.0.6
+      '@heroicons/react-v1': npm:@heroicons/react@v1
       '@hookform/resolvers': 2.9.10
       '@layerzerolabs/scan-client': 0.0.0-beta.6
       '@octokit/auth-app': 4.0.7
       '@playwright/test': 1.32.1
-      '@sushiswap/abi': workspace:0.0.1
-      '@sushiswap/amm': workspace:0.1.13
-      '@sushiswap/bentobox': workspace:1.0.1
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/client': workspace:0.0.0
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/database': workspace:0.0.1
-      '@sushiswap/dexie': workspace:0.0.6
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/format': workspace:0.1.0
-      '@sushiswap/gas': workspace:0.0.0
-      '@sushiswap/graph-client': workspace:0.2.3
-      '@sushiswap/graph-config': workspace:0.1.3
-      '@sushiswap/hooks': workspace:1.0.0
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/math': workspace:0.1.0
-      '@sushiswap/nextjs-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/react-query': workspace:0.0.0
-      '@sushiswap/route-processor': workspace:0.0.0
-      '@sushiswap/router': workspace:0.0.13
-      '@sushiswap/router-config': workspace:2.0.0
-      '@sushiswap/stargate': workspace:1.0.0
-      '@sushiswap/sushixswap': workspace:1.0.10
-      '@sushiswap/tailwindcss-config': workspace:0.0.0
-      '@sushiswap/tines': workspace:1.0.9
-      '@sushiswap/token-lists': workspace:0.0.6
-      '@sushiswap/trident-sdk': workspace:0.0.1
-      '@sushiswap/types': workspace:0.0.2
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@sushiswap/ui': workspace:0.0.0
-      '@sushiswap/v2-sdk': workspace:0.0.9
-      '@sushiswap/v3-sdk': workspace:1.0.10
-      '@sushiswap/validate': workspace:0.1.0
-      '@sushiswap/viem-config': workspace:1.0.2
-      '@sushiswap/wagmi': workspace:0.0.0
-      '@sushiswap/wagmi-config': workspace:0.1.0
+      '@sushiswap/abi': workspace:*
+      '@sushiswap/amm': workspace:*
+      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/client': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/database': workspace:*
+      '@sushiswap/dexie': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/format': workspace:*
+      '@sushiswap/gas': workspace:*
+      '@sushiswap/graph-client': workspace:*
+      '@sushiswap/graph-config': workspace:*
+      '@sushiswap/hooks': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/nextjs-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/react-query': workspace:*
+      '@sushiswap/route-processor': workspace:*
+      '@sushiswap/router': workspace:*
+      '@sushiswap/router-config': workspace:*
+      '@sushiswap/stargate': workspace:*
+      '@sushiswap/sushixswap': workspace:*
+      '@sushiswap/tailwindcss-config': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/token-lists': workspace:*
+      '@sushiswap/trident-sdk': workspace:*
+      '@sushiswap/types': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/ui': workspace:*
+      '@sushiswap/v2-sdk': workspace:*
+      '@sushiswap/v3-sdk': workspace:*
+      '@sushiswap/validate': workspace:*
+      '@sushiswap/viem-config': workspace:*
+      '@sushiswap/wagmi': workspace:*
+      '@sushiswap/wagmi-config': workspace:*
       '@tanstack/query-sync-storage-persister': 4.27.1
       '@tanstack/react-query': 4.28.0
       '@tanstack/react-query-devtools': 4.28.0
@@ -600,7 +600,7 @@ importers:
       '@tsconfig/next': 1.0.5
       '@types/cors': 2.8.13
       '@types/d3': 7.4.0
-      '@types/node': ^18.17.5
+      '@types/node': '18'
       '@types/numeral': 2.0.2
       '@types/react': 18.2.14
       '@types/react-dom': 18.2.6
@@ -756,30 +756,30 @@ importers:
       '@hookform/devtools': 4.3.0
       '@hookform/resolvers': 2.9.10
       '@playwright/test': 1.32.1
-      '@sushiswap/bentobox': workspace:1.0.1
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/format': workspace:0.1.0
-      '@sushiswap/furo': workspace:1.0.11
-      '@sushiswap/graph-client': workspace:0.2.3
-      '@sushiswap/graph-config': workspace:0.1.3
-      '@sushiswap/hooks': workspace:1.0.0
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/math': workspace:0.1.0
-      '@sushiswap/nextjs-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/react-query': workspace:0.0.0
-      '@sushiswap/tailwindcss-config': workspace:0.0.0
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@sushiswap/ui': workspace:0.0.0
-      '@sushiswap/wagmi': workspace:0.0.0
-      '@sushiswap/wagmi-config': workspace:0.1.0
+      '@sushiswap/bentobox': 1.0.1
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/format': workspace:*
+      '@sushiswap/furo': workspace:*
+      '@sushiswap/graph-client': workspace:*
+      '@sushiswap/graph-config': workspace:*
+      '@sushiswap/hooks': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/nextjs-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/react-query': workspace:*
+      '@sushiswap/tailwindcss-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/ui': workspace:*
+      '@sushiswap/wagmi': workspace:*
+      '@sushiswap/wagmi-config': workspace:*
       '@tanstack/react-query': 4.28.0
       '@tanstack/react-table': 8.9.1
       '@testing-library/react': 14.0.0
       '@types/lodash.clonedeep': ^4.5.7
-      '@types/node': ^18.17.5
+      '@types/node': '18'
       '@types/react': 18.2.14
       '@types/react-dom': 18.2.6
       '@vercel/analytics': 1.0.1
@@ -801,7 +801,7 @@ importers:
       react-dom: 18.2.0
       react-hook-form: 7.41.2
       tailwindcss: 3.3.2
-      ts-jest: ^29.1.1
+      ts-jest: ^29.0.0
       typescript: 5.1.6
       viem: 1.5.4
       wagmi: 1.3.9
@@ -876,9 +876,9 @@ importers:
 
   config/eslint:
     specifiers:
-      '@next/eslint-plugin-next': ^13.4.13
+      '@next/eslint-plugin-next': ^13.4.7
       '@types/eslint': 8.40.2
-      '@types/node': ^18.17.5
+      '@types/node': '18'
       eslint-config-next: 13.4.7
       eslint-config-prettier: 8.8.0
       eslint-config-turbo: 1.10.12
@@ -903,11 +903,11 @@ importers:
 
   config/graph:
     specifiers:
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
       typescript: 5.1.6
     devDependencies:
       '@sushiswap/chain': link:../../packages/chain
@@ -925,15 +925,15 @@ importers:
       '@nomiclabs/hardhat-etherscan': 3.1.3
       '@nomiclabs/hardhat-solhint': 2.0.1
       '@nomiclabs/hardhat-waffle': 2.0.3
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/types': workspace:0.0.2
-      '@sushiswap/typescript-config': workspace:0.1.0
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/types': workspace:*
+      '@sushiswap/typescript-config': workspace:*
       '@tenderly/hardhat-tenderly': 1.3.2
       '@typechain/ethers-v5': 10.1.1
       '@typechain/hardhat': 6.1.4
-      '@types/node': ^18.17.5
+      '@types/node': '18'
       dotenv: 16.0.3
       ethereum-waffle: 3.4.4
       ethers: 5.7.2
@@ -972,8 +972,8 @@ importers:
 
   config/jest:
     specifiers:
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@types/node': ^18.17.5
+      '@sushiswap/eslint-config': workspace:*
+      '@types/node': '18'
       jest-environment-jsdom: 29.3.1
     dependencies:
       jest-environment-jsdom: 29.3.1
@@ -989,7 +989,7 @@ importers:
 
   config/prettier:
     specifiers:
-      '@sushiswap/typescript-config': workspace:0.1.0
+      '@sushiswap/typescript-config': workspace:*
       '@types/prettier': 2.7.1
       prettier: 2.8.1
       prettier-plugin-solidity: '*'
@@ -1006,11 +1006,11 @@ importers:
 
   config/react-query:
     specifiers:
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
       '@tanstack/react-query': 4.28.0
       '@tanstack/react-query-devtools': 4.28.0
       tsup: 7.1.0
@@ -1029,12 +1029,12 @@ importers:
 
   config/router:
     specifiers:
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
       tsup: 7.1.0
       typescript: 5.1.6
     devDependencies:
@@ -1049,15 +1049,15 @@ importers:
 
   config/tailwindcss:
     specifiers:
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
       '@tailwindcss/aspect-ratio': 0.4.2
       '@tailwindcss/forms': 0.5.3
       '@tailwindcss/typography': 0.5.9
       tailwindcss: 3.3.2
-      tailwindcss-animate: ^1.0.6
+      tailwindcss-animate: ^1.0.5
       tsup: 7.1.0
       typescript: 5.1.6
     dependencies:
@@ -1079,11 +1079,11 @@ importers:
 
   config/viem:
     specifiers:
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
       tsup: 7.1.0
       typescript: 5.1.6
       viem: 1.5.4
@@ -1100,11 +1100,11 @@ importers:
 
   config/wagmi:
     specifiers:
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
       '@wagmi/core': 1.3.8
       typescript: 5.1.6
     devDependencies:
@@ -1119,13 +1119,13 @@ importers:
   examples/next-13:
     specifiers:
       '@next/font': 13.4.7
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/nextjs-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/tailwindcss-config': workspace:0.0.0
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@types/node': ^18.17.5
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/nextjs-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/tailwindcss-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/node': '18'
       '@types/react': 18.2.14
       '@types/react-dom': 18.2.6
       eslint: 8.43.0
@@ -1153,11 +1153,11 @@ importers:
 
   examples/node-18:
     specifiers:
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
       '@tsconfig/node18': 2.0.0
-      '@types/node': ^18.17.5
+      '@types/node': '18'
       eslint: 8.43.0
       typescript: 5.1.6
     devDependencies:
@@ -1185,18 +1185,18 @@ importers:
       '@graphql-mesh/transform-rename': 0.94.2
       '@graphql-mesh/transform-type-merging': 0.94.1
       '@graphql-tools/merge': 9.0.0
-      '@sushiswap/abi': workspace:0.0.1
-      '@sushiswap/bentobox': workspace:1.0.1
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/database': workspace:0.0.1
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/math': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/tines': workspace:1.0.9
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@sushiswap/wagmi-config': workspace:0.1.0
+      '@sushiswap/abi': workspace:*
+      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/database': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/wagmi-config': workspace:*
       '@swc/core': 1.3.26
       '@swc/helpers': 0.4.14
       '@types/connect-timeout': 0.0.36
@@ -1278,20 +1278,20 @@ importers:
       '@graphql-mesh/transform-type-merging': 0.94.1
       '@graphql-mesh/utils': 0.94.1
       '@graphql-tools/merge': 9.0.0
-      '@sushiswap/abi': workspace:0.0.1
-      '@sushiswap/bentobox': workspace:1.0.1
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/database': workspace:0.0.1
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/graph-config': workspace:0.1.3
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/tines': workspace:1.0.9
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@sushiswap/v3-sdk': workspace:1.0.10
-      '@sushiswap/validate': workspace:0.1.0
-      '@sushiswap/wagmi-config': workspace:0.1.0
+      '@sushiswap/abi': workspace:*
+      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/database': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/graph-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/v3-sdk': workspace:*
+      '@sushiswap/validate': workspace:*
+      '@sushiswap/wagmi-config': workspace:*
       '@swc/core': 1.3.26
       '@swc/helpers': 0.4.14
       '@types/connect-timeout': 0.0.36
@@ -1375,12 +1375,12 @@ importers:
       '@graphprotocol/client-auto-pagination': 2.0.0
       '@graphprotocol/client-auto-type-merging': 2.0.0
       '@graphprotocol/client-cli': 3.0.0
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/graph-config': workspace:0.1.3
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/graph-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
       '@swc/core': 1.3.26
       '@swc/helpers': 0.4.14
       '@types/express': 4.17.15
@@ -1426,10 +1426,10 @@ importers:
 
   packages/_core:
     specifiers:
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/math': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
       eslint: 8.43.0
       ethers: 5.7.2
       typescript: 5.1.6
@@ -1445,9 +1445,9 @@ importers:
 
   packages/abi:
     specifiers:
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
       eslint: 8.43.0
       typescript: 5.1.6
     devDependencies:
@@ -1463,20 +1463,20 @@ importers:
       '@ethersproject/address': 5.7.0
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/solidity': 5.7.0
-      '@sushiswap/base-sdk': workspace:0.0.1
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/math': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/tines': workspace:1.0.9
-      '@sushiswap/trident-core': workspace:1.0.8
-      '@sushiswap/trident-sdk': workspace:0.0.1
-      '@sushiswap/types': workspace:0.0.2
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@sushiswap/v2-sdk': workspace:0.0.9
-      '@types/node': ^18.17.5
+      '@sushiswap/base-sdk': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/trident-core': workspace:*
+      '@sushiswap/trident-sdk': workspace:*
+      '@sushiswap/types': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/v2-sdk': workspace:*
+      '@types/node': '18'
       eslint: 8.43.0
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
@@ -1512,11 +1512,11 @@ importers:
 
   packages/base-sdk:
     specifiers:
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@types/node': ^18.17.5
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/node': '18'
       eslint: 8.43.0
       typescript: 5.1.6
     dependencies:
@@ -1531,15 +1531,15 @@ importers:
 
   packages/chain:
     specifiers:
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@types/jest': ^29.5.3
-      '@types/node-fetch': ^2.6.4
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/jest': ^29.2.0
+      '@types/node-fetch': ^2.6.2
       eslint: 8.43.0
       jest: 29.3.1
-      node-fetch: ^2.6.12
+      node-fetch: ^2.6.2
       tsup: 7.1.0
       typescript: 5.1.6
     devDependencies:
@@ -1557,19 +1557,19 @@ importers:
 
   packages/cli:
     specifiers:
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/client': workspace:0.0.0
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/format': workspace:0.1.0
-      '@sushiswap/graph-client': workspace:0.2.3
-      '@sushiswap/graph-config': workspace:0.1.3
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/log': workspace:0.1.2
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@sushiswap/validate': workspace:0.1.0
-      '@types/node': ^18.17.5
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/client': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/format': workspace:*
+      '@sushiswap/graph-client': workspace:*
+      '@sushiswap/graph-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/log': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/validate': workspace:*
+      '@types/node': '18'
       '@types/numeral': 2.0.2
       chalk: 4.1.2
       cli-table3: 0.6.3
@@ -1616,14 +1616,14 @@ importers:
 
   packages/client:
     specifiers:
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/database': workspace:0.0.1
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/pools-api': workspace:0.0.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@types/node': ^18.17.5
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/database': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/pools-api': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/node': '18'
       '@whatwg-node/fetch': 0.8.4
       eslint: 8.43.0
       swr: 2.1.5
@@ -1651,13 +1651,13 @@ importers:
     specifiers:
       '@ethersproject/address': 5.7.0
       '@ethersproject/units': ^5.7.0
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/math': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@types/jest': ^29.5.3
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/jest': ^29.2.0
       '@types/lodash.flatmap': 4.5.7
       '@types/react': 18.2.14
       '@types/react-dom': 18.2.6
@@ -1693,12 +1693,12 @@ importers:
   packages/database:
     specifiers:
       '@prisma/client': 4.12.0
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@types/jest': ^29.5.3
-      '@types/node': ^18.17.5
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/jest': ^29.2.0
+      '@types/node': '18'
       dotenv: 16.0.3
       eslint: 8.43.0
       jest: 29.3.1
@@ -1723,17 +1723,17 @@ importers:
 
   packages/dexie:
     specifiers:
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
       '@types/lodash.groupby': ^4.6.7
       '@types/react': 18.2.14
       '@types/react-dom': 18.2.6
-      dexie: ^3.2.4
-      dexie-react-hooks: ^1.1.6
+      dexie: ^3.2.3
+      dexie-react-hooks: ^1.1.3
       eslint: 8.43.0
       lodash.groupby: ^4.6.0
       react: 18.2.0
@@ -1763,20 +1763,20 @@ importers:
   packages/extractor:
     specifiers:
       '@sentry/node': 7.63.0
-      '@sushiswap/abi': workspace:0.0.1
-      '@sushiswap/amm': workspace:0.1.13
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/router': workspace:0.0.13
-      '@sushiswap/router-config': workspace:2.0.0
-      '@sushiswap/tines': workspace:1.0.9
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@sushiswap/v2-sdk': workspace:0.0.9
-      '@sushiswap/v3-sdk': workspace:1.0.10
-      '@sushiswap/viem-config': workspace:1.0.2
+      '@sushiswap/abi': workspace:*
+      '@sushiswap/amm': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/router': workspace:*
+      '@sushiswap/router-config': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/v2-sdk': workspace:*
+      '@sushiswap/v3-sdk': workspace:*
+      '@sushiswap/viem-config': workspace:*
       '@types/cors': 2.8.13
       '@types/express': 4.17.17
       '@types/node': 18.11.18
@@ -1822,15 +1822,15 @@ importers:
   packages/format:
     specifiers:
       '@ethersproject/address': 5.7.0
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@types/jest': ^29.5.3
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/jest': ^29.2.0
       '@types/numeral': 2.0.2
       eslint: 8.43.0
       jest: 29.3.1
-      millify: ^4.0.1
+      millify: ^4.0.0
       numeral: 2.0.6
       tsup: 7.1.0
       typescript: 5.1.6
@@ -1852,11 +1852,11 @@ importers:
 
   packages/gas:
     specifiers:
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@types/jest': ^29.5.3
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/jest': ^29.2.0
       eslint: 8.43.0
       jest: 29.3.1
       tsup: 7.1.0
@@ -1893,16 +1893,16 @@ importers:
       '@graphql-mesh/types': 0.94.1
       '@graphql-mesh/utils': 0.94.1
       '@graphql-tools/merge': 9.0.0
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/graph-config': workspace:0.1.3
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@sushiswap/validate': workspace:0.1.0
-      '@sushiswap/wagmi-config': workspace:0.1.0
-      '@types/jest': ^29.5.3
-      '@types/node': ^18.17.5
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/graph-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/validate': workspace:*
+      '@sushiswap/wagmi-config': workspace:*
+      '@types/jest': ^29.2.0
+      '@types/node': '18'
       '@types/numeral': 2.0.2
       '@wagmi/core': 1.3.8-cjs
       date-fns: 2.29.3
@@ -1961,18 +1961,18 @@ importers:
     specifiers:
       '@ethersproject/address': 5.7.0
       '@ethersproject/providers': 5.7.2
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/math': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/router-config': workspace:2.0.0
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@types/jest': ^29.5.3
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/router-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/jest': ^29.2.0
       '@types/react': 18.2.14
       '@types/react-dom': 18.2.6
-      copy-to-clipboard: ^3.3.3
+      copy-to-clipboard: ^3.3.1
       eslint: 8.43.0
       jest: 29.3.1
       react: 18.2.0
@@ -2006,14 +2006,14 @@ importers:
 
   packages/log:
     specifiers:
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@types/jest': ^29.5.3
-      '@types/node': ^18.17.5
-      chalk: ^4.1.2
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/jest': ^29.2.0
+      '@types/node': '18'
+      chalk: ^4.0.0
       eslint: 8.43.0
       isomorphic-unfetch: 4.0.2
       jest: 29.3.1
@@ -2037,14 +2037,14 @@ importers:
 
   packages/math:
     specifiers:
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/format': workspace:0.1.0
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@types/big.js': ^6.2.0
-      '@types/jest': ^29.5.3
-      big.js: ^6.2.1
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/format': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/big.js': ^6.1.3
+      '@types/jest': ^29.2.0
+      big.js: ^6.1.1
       decimal.js-light: ^2.5.1
       eslint: 8.43.0
       jest: 29.3.1
@@ -2075,20 +2075,20 @@ importers:
       '@ethersproject/address': 5.7.0
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/units': ^5.7.0
-      '@sushiswap/abi': workspace:0.0.1
-      '@sushiswap/amm': workspace:0.1.13
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/client': workspace:0.0.0
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/database': workspace:0.0.1
-      '@sushiswap/dexie': workspace:0.0.6
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/math': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/react-query-config': workspace:0.1.2
-      '@sushiswap/types': workspace:0.0.2
-      '@sushiswap/typescript-config': workspace:0.1.0
+      '@sushiswap/abi': workspace:*
+      '@sushiswap/amm': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/client': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/database': workspace:*
+      '@sushiswap/dexie': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/react-query-config': workspace:*
+      '@sushiswap/types': workspace:*
+      '@sushiswap/typescript-config': workspace:*
       '@tanstack/react-query': 4.28.0
       '@tanstack/react-query-devtools': 4.28.0
       '@tanstack/react-query-persist-client': 4.28.0
@@ -2146,25 +2146,25 @@ importers:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/address': 5.7.0
       '@ethersproject/solidity': 5.7.0
-      '@sushiswap/abi': workspace:0.0.1
-      '@sushiswap/amm': workspace:0.1.13
-      '@sushiswap/bentobox': workspace:1.0.1
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/database': workspace:0.0.1
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/math': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/router-config': workspace:2.0.0
-      '@sushiswap/tines': workspace:1.0.9
-      '@sushiswap/trident-sdk': workspace:0.0.1
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@sushiswap/v2-sdk': workspace:0.0.9
-      '@sushiswap/v3-sdk': workspace:1.0.10
-      '@sushiswap/viem-config': workspace:1.0.2
+      '@sushiswap/abi': workspace:*
+      '@sushiswap/amm': workspace:*
+      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/database': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/router-config': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/trident-sdk': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/v2-sdk': workspace:*
+      '@sushiswap/v3-sdk': workspace:*
+      '@sushiswap/viem-config': workspace:*
       '@types/lodash.flatmap': ^4.5.7
-      '@types/node': ^18.17.5
+      '@types/node': '18'
       '@types/node-fetch': 2.6.2
       date-fns: 2.29.3
       eslint: 8.43.0
@@ -2214,14 +2214,14 @@ importers:
 
   packages/stargate:
     specifiers:
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/math': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@types/jest': ^29.5.3
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/jest': ^29.2.0
       eslint: 8.43.0
       jest: 29.3.1
       tiny-invariant: 1.3.1
@@ -2243,14 +2243,14 @@ importers:
 
   packages/tines:
     specifiers:
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/math': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@types/node': ^18.17.5
-      '@types/seedrandom': ^3.0.5
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/node': '18'
+      '@types/seedrandom': ^3.0.1
       eslint: 8.43.0
       seedrandom: ^3.0.5
       tsup: 7.1.0
@@ -2275,17 +2275,17 @@ importers:
   packages/token-lists:
     specifiers:
       '@ethersproject/address': 5.7.0
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/math': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@types/jest': ^29.5.3
-      '@types/node': ^18.17.5
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/jest': ^29.2.0
+      '@types/node': '18'
       '@types/react': 18.2.14
-      '@uniswap/token-lists': ^1.0.0-beta.33
+      '@uniswap/token-lists': ^1.0.0-beta.31
       eslint: 8.43.0
       jest: 29.3.1
       react: 18.2.0
@@ -2317,16 +2317,16 @@ importers:
       '@ethersproject/address': 5.7.0
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/solidity': 5.7.0
-      '@sushiswap/base-sdk': workspace:0.0.1
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/math': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/trident-core': workspace:1.0.8
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@types/node': ^18.17.5
+      '@sushiswap/base-sdk': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/trident-core': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/node': '18'
       eslint: 8.43.0
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
@@ -2356,11 +2356,11 @@ importers:
 
   packages/types:
     specifiers:
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@types/jest': ^29.5.3
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/jest': ^29.2.0
       '@wagmi/core': 1.3.8
       eslint: 8.43.0
       jest: 29.3.1
@@ -2404,17 +2404,17 @@ importers:
       '@radix-ui/react-toggle': 1.0.3
       '@radix-ui/react-tooltip': 1.0.6
       '@react-hook/window-scroll': 1.3.0
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/dexie': workspace:0.0.6
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/hooks': workspace:1.0.0
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/react-query': workspace:0.0.0
-      '@sushiswap/tailwindcss-config': workspace:0.0.0
-      '@sushiswap/token-lists': workspace:0.0.6
-      '@sushiswap/typescript-config': workspace:0.1.0
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/dexie': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/hooks': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/react-query': workspace:*
+      '@sushiswap/tailwindcss-config': workspace:*
+      '@sushiswap/token-lists': workspace:*
+      '@sushiswap/typescript-config': workspace:*
       '@tailwindcss/aspect-ratio': 0.4.2
       '@tailwindcss/forms': 0.5.3
       '@tailwindcss/typography': 0.5.9
@@ -2537,15 +2537,15 @@ importers:
       '@ethersproject/address': 5.7.0
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/solidity': 5.7.0
-      '@sushiswap/base-sdk': workspace:0.0.1
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/math': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@types/node': ^18.17.5
+      '@sushiswap/base-sdk': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/node': '18'
       eslint: 8.43.0
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
@@ -2578,16 +2578,16 @@ importers:
       '@ethersproject/address': 5.7.0
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/solidity': 5.7.0
-      '@sushiswap/amm': workspace:0.1.13
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/math': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/tines': workspace:1.0.9
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@types/node': ^18.17.5
+      '@sushiswap/amm': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/node': '18'
       '@uniswap/swap-router-contracts': 1.3.0
       '@uniswap/v3-core': 1.0.1
       '@uniswap/v3-periphery': 1.4.3
@@ -2627,13 +2627,13 @@ importers:
 
   packages/validate:
     specifiers:
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/graph-config': workspace:0.1.3
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@types/jest': ^29.5.3
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/graph-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/jest': ^29.2.0
       eslint: 8.43.0
       jest: 29.3.1
       typescript: 5.1.6
@@ -2661,40 +2661,40 @@ importers:
       '@headlessui/react': 1.7.7
       '@heroicons/react': 2.0.13
       '@radix-ui/react-slot': ^1.0.2
-      '@sushiswap/abi': workspace:0.0.1
-      '@sushiswap/amm': workspace:0.1.13
-      '@sushiswap/bentobox': workspace:1.0.1
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/client': workspace:0.0.0
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/dexie': workspace:0.0.6
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/format': workspace:0.1.0
-      '@sushiswap/furo': workspace:1.0.11
-      '@sushiswap/gas': workspace:0.0.0
-      '@sushiswap/hooks': workspace:1.0.0
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/math': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/react-query': workspace:0.0.0
-      '@sushiswap/route-processor': workspace:0.0.0
-      '@sushiswap/router': workspace:0.0.13
-      '@sushiswap/router-config': workspace:2.0.0
-      '@sushiswap/sushixswap': workspace:1.0.10
-      '@sushiswap/tines': workspace:1.0.9
-      '@sushiswap/trident-sdk': workspace:0.0.1
-      '@sushiswap/types': workspace:0.0.2
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@sushiswap/ui': workspace:0.0.0
-      '@sushiswap/v2-sdk': workspace:0.0.9
-      '@sushiswap/v3-sdk': workspace:1.0.10
-      '@sushiswap/validate': workspace:0.1.0
-      '@sushiswap/viem-config': workspace:1.0.2
-      '@sushiswap/wagmi-config': workspace:0.1.0
+      '@sushiswap/abi': workspace:*
+      '@sushiswap/amm': workspace:*
+      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/client': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/dexie': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/format': workspace:*
+      '@sushiswap/furo': workspace:*
+      '@sushiswap/gas': workspace:*
+      '@sushiswap/hooks': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/react-query': workspace:*
+      '@sushiswap/route-processor': workspace:*
+      '@sushiswap/router': workspace:*
+      '@sushiswap/router-config': workspace:*
+      '@sushiswap/sushixswap': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/trident-sdk': workspace:*
+      '@sushiswap/types': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/ui': workspace:*
+      '@sushiswap/v2-sdk': workspace:*
+      '@sushiswap/v3-sdk': workspace:*
+      '@sushiswap/validate': workspace:*
+      '@sushiswap/viem-config': workspace:*
+      '@sushiswap/wagmi-config': workspace:*
       '@tanstack/query-sync-storage-persister': 4.27.1
       '@tanstack/react-query': 4.28.0
       '@tanstack/react-query-persist-client': 4.28.0
-      '@types/jest': ^29.5.3
+      '@types/jest': ^29.5.1
       '@types/react': 18.2.14
       '@types/react-dom': 18.2.6
       '@uniswap/v2-core': 1.0.1
@@ -2707,7 +2707,7 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0
       tsup: 7.1.0
-      typechain: ^8.3.1
+      typechain: ^8.0.0
       typescript: 5.1.6
       viem: 1.5.4
       vitest: 0.33.0
@@ -2781,21 +2781,21 @@ importers:
 
   protocols/bentobox:
     specifiers:
-      '@boringcrypto/boring-solidity': github:boringcrypto/BoringSolidity#8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc
+      '@boringcrypto/boring-solidity': boringcrypto/BoringSolidity#8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc
       '@ethersproject/abi': 5.7.0
       '@ethersproject/providers': 5.7.2
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
       '@nomiclabs/hardhat-etherscan': 3.1.3
       '@nomiclabs/hardhat-solhint': 2.0.1
       '@nomiclabs/hardhat-waffle': 2.0.3
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/hardhat-config': workspace:0.1.3
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/types': workspace:0.0.2
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@types/node': ^18.17.5
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/hardhat-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/types': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/node': '18'
       eslint: 8.43.0
       ethers: 5.7.2
       hardhat: 2.17.0
@@ -2830,22 +2830,22 @@ importers:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/providers': 5.7.2
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
-      '@nomiclabs/hardhat-etherscan': ^3.1.7
-      '@openzeppelin/contracts': ^4.9.3
+      '@nomiclabs/hardhat-etherscan': ^3.1.0
+      '@openzeppelin/contracts': ^4.6.0
       '@rari-capital/solmate': 6.2.0
-      '@sushiswap/bentobox': workspace:1.0.1
-      '@sushiswap/chain': workspace:0.1.2
+      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/chain': workspace:*
       '@sushiswap/core': ^1.4.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/hardhat-config': workspace:0.1.3
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/stargate': workspace:1.0.0
-      '@sushiswap/types': workspace:0.0.2
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@sushiswap/v2-sdk': workspace:0.0.9
-      '@types/node': ^18.17.5
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/hardhat-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/stargate': workspace:*
+      '@sushiswap/types': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/v2-sdk': workspace:*
+      '@types/node': '18'
       eslint: 8.43.0
       ethers: 5.7.2
       hardhat: 2.17.0
@@ -2891,30 +2891,30 @@ importers:
       '@nomiclabs/hardhat-solhint': 2.0.1
       '@nomiclabs/hardhat-waffle': 2.0.3
       '@openzeppelin/contracts': 4.8.0
-      '@sushiswap/abi': workspace:0.0.1
-      '@sushiswap/amm': workspace:0.1.13
-      '@sushiswap/bentobox': workspace:1.0.1
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/hardhat-config': workspace:0.1.3
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/math': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/router': workspace:0.0.13
-      '@sushiswap/tines': workspace:1.0.9
-      '@sushiswap/tines-sandbox': workspace:0.0.0
-      '@sushiswap/types': workspace:0.0.2
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@sushiswap/viem-config': workspace:1.0.2
-      '@typechain/ethers-v5': ^10.2.1
-      '@typechain/hardhat': ^6.1.6
-      '@types/chai': ^4.3.5
-      '@types/mocha': ^9.1.1
-      '@types/node': ^18.17.5
-      '@types/seedrandom': ^3.0.5
-      chai: ^4.3.7
-      cross-env: ^7.0.3
+      '@sushiswap/abi': workspace:*
+      '@sushiswap/amm': workspace:*
+      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/hardhat-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/router': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/tines-sandbox': workspace:*
+      '@sushiswap/types': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/viem-config': workspace:*
+      '@typechain/ethers-v5': ^10.0.0
+      '@typechain/hardhat': ^6.1.0
+      '@types/chai': ^4.3.0
+      '@types/mocha': ^9.0.0
+      '@types/node': '18'
+      '@types/seedrandom': ^3.0.1
+      chai: ^4.3.0
+      cross-env: ^7.0.0
       dotenv: 16.0.3
       eslint: 8.43.0
       eth-permit: ^0.2.3
@@ -2999,25 +2999,25 @@ importers:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/providers': 5.7.2
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
-      '@openzeppelin/contracts': ^4.9.3
-      '@sushiswap/amm': workspace:0.1.13
-      '@sushiswap/bentobox': workspace:1.0.1
-      '@sushiswap/chain': workspace:0.1.2
+      '@openzeppelin/contracts': ^4.6.0
+      '@sushiswap/amm': workspace:*
+      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/chain': workspace:*
       '@sushiswap/core': ^1.4.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/hardhat-config': workspace:0.1.3
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/stargate': workspace:1.0.0
-      '@sushiswap/tines': workspace:1.0.9
-      '@sushiswap/types': workspace:0.0.2
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@tenderly/hardhat-tenderly': ^1.7.7
-      '@types/chai': ^4.3.5
-      '@types/node': ^18.17.5
-      '@types/seedrandom': ^3.0.5
-      chai: ^4.3.7
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/hardhat-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/stargate': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/types': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@tenderly/hardhat-tenderly': ^1.0.13
+      '@types/chai': ^4.3.3
+      '@types/node': '18'
+      '@types/seedrandom': ^3.0.1
+      chai: ^4.3.6
       eslint: 8.43.0
       ethers: 5.7.2
       hardhat: 2.17.0
@@ -3060,7 +3060,7 @@ importers:
   protocols/tines-sandbox:
     specifiers:
       '@ethersproject/abi': 5.7.0
-      '@ethersproject/bytes': ^5.7.0
+      '@ethersproject/bytes': ^5.0.0
       '@ethersproject/providers': 5.7.2
       '@ethersproject/solidity': 5.7.0
       '@nomicfoundation/hardhat-network-helpers': ^1.0.8
@@ -3068,34 +3068,34 @@ importers:
       '@nomiclabs/hardhat-etherscan': 3.1.3
       '@nomiclabs/hardhat-solhint': 2.0.1
       '@openzeppelin/contracts': 4.8.0
-      '@sushiswap/abi': workspace:0.0.1
-      '@sushiswap/amm': workspace:0.1.13
-      '@sushiswap/chain': workspace:0.1.2
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/extractor': workspace:0.0.0
-      '@sushiswap/hardhat-config': workspace:0.1.3
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/router': workspace:0.0.13
-      '@sushiswap/router-config': workspace:2.0.0
-      '@sushiswap/tines': workspace:1.0.9
-      '@sushiswap/types': workspace:0.0.2
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@sushiswap/v3-sdk': workspace:1.0.10
-      '@sushiswap/viem-config': workspace:1.0.2
-      '@typechain/ethers-v5': ^10.2.1
-      '@typechain/hardhat': ^6.1.6
-      '@types/chai': ^4.3.5
-      '@types/mocha': ^9.1.1
-      '@types/node': ^18.17.5
-      '@types/seedrandom': ^3.0.5
+      '@sushiswap/abi': workspace:*
+      '@sushiswap/amm': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/extractor': workspace:*
+      '@sushiswap/hardhat-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/router': workspace:*
+      '@sushiswap/router-config': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/types': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/v3-sdk': workspace:*
+      '@sushiswap/viem-config': workspace:*
+      '@typechain/ethers-v5': ^10.0.0
+      '@typechain/hardhat': ^6.1.0
+      '@types/chai': ^4.3.0
+      '@types/mocha': ^9.0.0
+      '@types/node': '18'
+      '@types/seedrandom': ^3.0.1
       '@uniswap/v3-core': 1.0.1
       '@uniswap/v3-periphery': 1.4.3
       abitype: 0.8.2
       canonical-weth: 1.4.0
-      chai: ^4.3.7
-      cross-env: ^7.0.3
+      chai: ^4.3.0
+      cross-env: ^7.0.0
       dotenv: 16.0.3
       eslint: 8.43.0
       ethers: 5.7.2
@@ -3184,16 +3184,16 @@ importers:
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
       '@openzeppelin/contracts': 4.7.3
       '@rari-capital/solmate': 6.2.0
-      '@sushiswap/bentobox': workspace:1.0.1
-      '@sushiswap/currency': workspace:0.1.2
-      '@sushiswap/eslint-config': workspace:0.1.1
-      '@sushiswap/hardhat-config': workspace:0.1.3
-      '@sushiswap/jest-config': workspace:0.1.0
-      '@sushiswap/prettier-config': workspace:0.1.1
-      '@sushiswap/types': workspace:0.0.2
-      '@sushiswap/typescript-config': workspace:0.1.0
-      '@tenderly/hardhat-tenderly': ^1.7.7
-      '@types/node': ^18.17.5
+      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/hardhat-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/types': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@tenderly/hardhat-tenderly': ^1.0.13
+      '@types/node': '18'
       eslint: 8.43.0
       ethers: 5.7.2
       hardhat: 2.17.0
@@ -3251,7 +3251,7 @@ packages:
     dependencies:
       '@fastify/deepmerge': 1.3.0
       ajv: 8.12.0
-      ajv-formats: 2.1.1
+      ajv-formats: 2.1.1_ajv@8.12.0
       fast-deep-equal: 3.1.3
       rfdc: 1.3.0
 
@@ -11255,7 +11255,7 @@ packages:
     dependencies:
       '@jest/fake-timers': 29.6.2
       '@jest/types': 29.6.1
-      '@types/node': 18.17.5
+      '@types/node': 20.4.10
       jest-mock: 29.6.2
 
   /@jest/expect-utils/29.6.2:
@@ -11281,7 +11281,7 @@ packages:
     dependencies:
       '@jest/types': 29.6.1
       '@sinonjs/fake-timers': 10.3.0
-      '@types/node': 18.17.5
+      '@types/node': 20.4.10
       jest-message-util: 29.6.2
       jest-mock: 29.6.2
       jest-util: 29.6.2
@@ -11400,7 +11400,7 @@ packages:
       '@jest/schemas': 29.6.0
       '@types/istanbul-lib-coverage': 2.0.4
       '@types/istanbul-reports': 3.0.1
-      '@types/node': 18.17.5
+      '@types/node': 20.4.10
       '@types/yargs': 17.0.24
       chalk: 4.1.2
 
@@ -12222,7 +12222,7 @@ packages:
     resolution: {integrity: sha512-8KG5RD0GVP4ydEzRn/I4BNDuxDtqVbOdm8675T49OIG/NGhaK0pjPX7ZcDlvKYbA+ulvVK3ztfcF4uBdOxuJbQ==}
     dependencies:
       '@gar/promisify': 1.1.3
-      semver: 7.3.8
+      semver: 7.5.4
     dev: true
 
   /@npmcli/move-file/1.1.2:
@@ -12661,7 +12661,7 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 20.4.10
       playwright-core: 1.32.1
     optionalDependencies:
       fsevents: 2.3.2
@@ -17255,12 +17255,12 @@ packages:
   /@types/bn.js/4.11.6:
     resolution: {integrity: sha512-pqr857jrp2kPuO9uRjZ3PwnJTjoQy+fcdxvBTvHm6dkmEL9q+hDD/2j/0ELOBPtPnS8LjCX0gI9nbl8lVkadpg==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 20.4.10
 
   /@types/bn.js/5.1.1:
     resolution: {integrity: sha512-qNrYbZqMx0uJAfKnKclPh+dTwK33KfLHYqtyODwd5HnXOjnkhc4qgn3BrK6RWyGZm5+sIFE7Q7Vz6QQtJB7w7g==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 20.4.10
 
   /@types/body-parser/1.19.2:
     resolution: {integrity: sha512-ALYone6pm6QmwZoAgeyNksccT9Q4AWZQ6PvfwR37GT6r6FWUPguq6sUmNGSMV2Wr761oQoBxwGGa6DR5o1DC9g==}
@@ -17278,7 +17278,7 @@ packages:
     dependencies:
       '@types/http-cache-semantics': 4.0.1
       '@types/keyv': 3.1.4
-      '@types/node': 18.11.18
+      '@types/node': 20.4.10
       '@types/responselike': 1.0.0
 
   /@types/chai-subset/1.3.3:
@@ -17299,7 +17299,7 @@ packages:
   /@types/concat-stream/1.6.1:
     resolution: {integrity: sha512-eHE4cQPoj6ngxBZMvVf6Hw7Mh4jMW4U9lpGmS5GBPB9RYxlFg+CHaVN7ErNY4W9XfLIEn20b4VDYaIrbq0q4uA==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 20.4.10
     dev: true
 
   /@types/connect-timeout/0.0.36:
@@ -17590,7 +17590,7 @@ packages:
   /@types/form-data/0.0.33:
     resolution: {integrity: sha512-8BSvG1kGm83cyJITQMZSulnl6QV8jqAGreJsc5tPu1Jq0vTSOiY/k24Wx82JRpWwZSqrala6sd5rWi6aNXvqcw==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 20.4.10
     dev: true
 
   /@types/geojson/7946.0.10:
@@ -17601,7 +17601,7 @@ packages:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
     dependencies:
       '@types/minimatch': 5.1.2
-      '@types/node': 18.17.5
+      '@types/node': 20.4.10
     dev: true
 
   /@types/glob/8.1.0:
@@ -17671,7 +17671,7 @@ packages:
   /@types/jsdom/20.0.1:
     resolution: {integrity: sha512-d0r18sZPmMQr1eG35u12FZfhIXNrnsPU/g5wvRKCUf/tOGilKKwYMYGqh33BNR6ba+2gkHw1EUiHoN3mn7E5IQ==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 20.4.10
       '@types/tough-cookie': 4.0.2
       parse5: 7.1.2
     dev: false
@@ -17685,13 +17685,13 @@ packages:
   /@types/jsonwebtoken/9.0.2:
     resolution: {integrity: sha512-drE6uz7QBKq1fYqqoFKTDRdFCPHd5TCub75BM+D+cMx7NU9hUz7SESLfC2fSCXVFMO5Yj8sOWHuGqPgjc+fz0Q==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 20.4.10
     dev: false
 
   /@types/keyv/3.1.4:
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
     dependencies:
-      '@types/node': 18.11.18
+      '@types/node': 20.4.10
 
   /@types/linkify-it/3.0.2:
     resolution: {integrity: sha512-HZQYqbiFVWufzCwexrvh694SOim8z2d+xJl5UNamcvQFejLY/2YUtzXHYi3cHdI7PMlS8ejH2slRAOJQ32aNbA==}
@@ -17773,7 +17773,7 @@ packages:
   /@types/mkdirp/0.5.2:
     resolution: {integrity: sha512-U5icWpv7YnZYGsN4/cmh3WD2onMY0aJIiTE6+51TwJCttdHvtCYmkBNOobHlXwrJRL0nkH9jH4kD+1FAdMN4Tg==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 20.4.10
 
   /@types/mocha/9.1.1:
     resolution: {integrity: sha512-Z61JK7DKDtdKTWwLeElSEBcWGRLY8g95ic5FoQqI9CMx0ns/Ghep3B4DfcEimiKMvtamNVULVNKEsiwV3aQmXw==}
@@ -17785,7 +17785,7 @@ packages:
   /@types/node-fetch/2.6.2:
     resolution: {integrity: sha512-DHqhlq5jeESLy19TYhLakJ07kNumXWjcDdxXsLUMJZ6ue8VZJj4kLPQVE/2mdHh3xZziNF1xppu5lwmS53HR+A==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 20.4.10
       form-data: 3.0.1
     dev: true
 
@@ -17817,6 +17817,7 @@ packages:
 
   /@types/node/18.11.18:
     resolution: {integrity: sha512-DHQpWGjyQKSHj3ebjFI/wRKcqQcdR+MoFBygntYOZytCqNfkd2ZC4ARDJ2DQqhjH5p85Nnd3jhUJIXrszFX/JA==}
+    dev: true
 
   /@types/node/18.17.5:
     resolution: {integrity: sha512-xNbS75FxH6P4UXTPUJp/zNPq6/xsfdJKussCWNOnz4aULWIRwMgP1LgaB5RiBnMX1DPCYenuqGZfnIAx5mbFLA==}
@@ -17847,7 +17848,7 @@ packages:
   /@types/pbkdf2/3.1.0:
     resolution: {integrity: sha512-Cf63Rv7jCQ0LaL8tNXmEyqTHuIJxRdlS5vMh1mj5voN4+QFhVZnlZruezqpWYDiJ8UTzhP0VmeLXCmBk66YrMQ==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 20.4.10
 
   /@types/prettier/2.7.1:
     resolution: {integrity: sha512-ri0UmynRRvZiiUJdiz38MmIblKK+oH30MztdBVR95dv/Ubw6neWSb8u1XpRb72L4qsZOhz+L+z9JD40SJmfWow==}
@@ -17915,18 +17916,18 @@ packages:
   /@types/readable-stream/2.3.15:
     resolution: {integrity: sha512-oM5JSKQCcICF1wvGgmecmHldZ48OZamtMxcGGVICOJA8o8cahXC1zEVAif8iwoc5j8etxFaRFnf095+CDsuoFQ==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 20.4.10
       safe-buffer: 5.1.2
 
   /@types/resolve/0.0.8:
     resolution: {integrity: sha512-auApPaJf3NPfe18hSoJkp8EbZzer2ISk7o8mCC3M9he/a04+gbMF97NkpD2S8riMGvm4BMRI59/SZQSaLTKpsQ==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 20.4.10
 
   /@types/responselike/1.0.0:
     resolution: {integrity: sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA==}
     dependencies:
-      '@types/node': 18.11.18
+      '@types/node': 20.4.10
 
   /@types/rimraf/3.0.2:
     resolution: {integrity: sha512-F3OznnSLAUxFrCEu/L5PY8+ny8DtcFRjx7fZZ9bycvXRi3KPTRS9HOitGZwvPg0juRhXFWIeKX58cnX5YqLohQ==}
@@ -17941,7 +17942,7 @@ packages:
   /@types/secp256k1/4.0.3:
     resolution: {integrity: sha512-Da66lEIFeIz9ltsdMZcpQvmrmmoqrfju8pm1BH8WbYjZSwUgCwXLb9C+9XYogwBITnbsSaMdVPb2ekf7TV+03w==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 20.4.10
 
   /@types/seedrandom/3.0.5:
     resolution: {integrity: sha512-kopEpYpFQvQdYsZkZVwht/0THHmTFFYXDaqV/lM45eweJ8kcGVDgZHs0RVTolSq55UPZNmjhKc9r7UvLu/mQQg==}
@@ -18680,7 +18681,7 @@ packages:
       recast: 0.21.5
       remark-frontmatter: 4.0.1
       remark-mdx-frontmatter: 1.1.1
-      semver: 7.3.8
+      semver: 7.5.4
       sort-package-json: 1.57.0
       tar-fs: 2.1.1
       tsconfig-paths: 4.2.0
@@ -18758,7 +18759,7 @@ packages:
       recast: 0.21.5
       remark-frontmatter: 4.0.1
       remark-mdx-frontmatter: 1.1.1
-      semver: 7.3.8
+      semver: 7.5.4
       sort-package-json: 1.57.0
       tar-fs: 2.1.1
       tsconfig-paths: 4.2.0
@@ -20146,6 +20147,17 @@ packages:
 
   /ajv-formats/2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
+    peerDependenciesMeta:
+      ajv:
+        optional: true
+    dependencies:
+      ajv: 8.12.0
+    dev: false
+
+  /ajv-formats/2.1.1_ajv@8.12.0:
+    resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
+    peerDependencies:
+      ajv: ^8.0.0
     peerDependenciesMeta:
       ajv:
         optional: true
@@ -26963,7 +26975,7 @@ packages:
       '@whatwg-node/fetch': 0.8.4
       '@whatwg-node/server': 0.7.7
       ajv: 8.12.0
-      ajv-formats: 2.1.1
+      ajv-formats: 2.1.1_ajv@8.12.0
       hotscript: 1.0.13
       json-schema-to-ts: 2.9.2
       openapi-types: 12.1.3
@@ -27989,7 +28001,7 @@ packages:
       '@types/glob': 7.2.0
       array-union: 2.1.0
       dir-glob: 3.0.1
-      fast-glob: 3.2.11
+      fast-glob: 3.3.1
       glob: 7.2.3
       ignore: 5.2.4
       merge2: 1.4.1
@@ -30347,7 +30359,7 @@ packages:
       '@jest/fake-timers': 29.6.2
       '@jest/types': 29.6.1
       '@types/jsdom': 20.0.1
-      '@types/node': 18.17.5
+      '@types/node': 20.4.10
       jest-mock: 29.6.2
       jest-util: 29.6.2
       jsdom: 20.0.3
@@ -30430,7 +30442,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/types': 29.6.1
-      '@types/node': 18.17.5
+      '@types/node': 20.4.10
       jest-util: 29.6.2
 
   /jest-pnp-resolver/1.2.3_jest-resolve@29.6.2:
@@ -30567,7 +30579,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/types': 29.6.1
-      '@types/node': 18.17.5
+      '@types/node': 20.4.10
       chalk: 4.1.2
       ci-info: 3.8.0
       graceful-fs: 4.2.11
