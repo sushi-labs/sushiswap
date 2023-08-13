@@ -148,7 +148,7 @@ async function main() {
         amountOutBI: bestRoute?.amountOutBI.toString(),
         priceImpact: bestRoute?.priceImpact,
         totalAmountOut: bestRoute?.totalAmountOut,
-        totalAmountOutBN: bestRoute?.totalAmountOutBN.toString(),
+        totalAmountOutBI: bestRoute?.totalAmountOutBI.toString(),
         gasSpent: bestRoute?.gasSpent,
         legs: bestRoute?.legs,
       },

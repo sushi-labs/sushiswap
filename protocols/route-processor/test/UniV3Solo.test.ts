@@ -131,7 +131,7 @@ it('UniV3 Solo', async () => {
     args: [testEnv.rp.address, BigInt(1e19)],
   })
 
-  const balanceOutBNBefore = await testEnv.client.readContract({
+  const balanceOutBIBefore = await testEnv.client.readContract({
     ...pool.token1Contract,
     functionName: 'balanceOf',
     args: [testEnv.user.address],
@@ -153,11 +153,11 @@ it('UniV3 Solo', async () => {
   })
 
   await testEnv.client.waitForTransactionReceipt({ hash: tx })
-  const balanceOutBNAfter = await testEnv.client.readContract({
+  const balanceOutBIAfter = await testEnv.client.readContract({
     ...pool.token1Contract,
     functionName: 'balanceOf',
     args: [testEnv.user.address],
   })
-  const output = balanceOutBNAfter - balanceOutBNBefore
+  const output = balanceOutBIAfter - balanceOutBIBefore
   expectCloseValues(output, route.amountOut, 1e-6)
 })

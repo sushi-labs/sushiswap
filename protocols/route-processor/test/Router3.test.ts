@@ -242,7 +242,7 @@ async function makeSwap(
 
   // console.log('Call route processor (may take long time for the first launch)...')
 
-  let balanceOutBNBefore: bigint
+  let balanceOutBIBefore: bigint
   let toTokenContract: Contract<typeof weth9Abi> | undefined = undefined
   if (toToken instanceof Token) {
     toTokenContract = {
@@ -250,14 +250,14 @@ async function makeSwap(
       address: toToken.address as Address,
     }
 
-    balanceOutBNBefore = await env.client.readContract({
+    balanceOutBIBefore = await env.client.readContract({
       ...(toTokenContract as NonNullable<typeof toTokenContract>),
       account: env.user.address,
       functionName: 'balanceOf',
       args: [env.user.address],
     })
   } else {
-    balanceOutBNBefore = await env.client.getBalance({ address: env.user.address })
+    balanceOutBIBefore = await env.client.getBalance({ address: env.user.address })
   }
 
   const txHash = await env.client.writeContract({
@@ -289,30 +289,30 @@ async function makeSwap(
   // printGasUsage(trace)
 
   // console.log("Fetching user's output balance ...")
-  let balanceOutBN: bigint
+  let balanceOutBI: bigint
   if (toTokenContract) {
     balanceOutBI =
       (await env.client.readContract({
         ...toTokenContract,
         functionName: 'balanceOf',
         args: [env.user.address],
-      })) - balanceOutBNBefore
+      })) - balanceOutBIBefore
   } else {
-    balanceOutBI = (await env.client.getBalance({ address: env.user.address })) - balanceOutBNBefore
+    balanceOutBI = (await env.client.getBalance({ address: env.user.address })) - balanceOutBIBefore
     balanceOutBI = balanceOutBI + receipt.effectiveGasPrice * receipt.gasUsed
   }
   const slippage = Number(((balanceOutBI - route.amountOutBI) * 10_000n) / route.amountOutBI)
 
-  if (abs(route.amountOutBI - balanceOutBN) > 10n) {
+  if (abs(route.amountOutBI - balanceOutBI) > 10n) {
     if (slippage < 0) {
       console.log(`expected amountOut: ${route.amountOutBI.toString()}`)
-      console.log(`real amountOut:     ${balanceOutBN.toString()}`)
+      console.log(`real amountOut:     ${balanceOutBI.toString()}`)
       console.log(`slippage: ${slippage / 100}%`)
     }
     expect(slippage).greaterThanOrEqual(0) // positive slippage could be if we 'gather' some liquidity on the route
   }
 
-  return [balanceOutBN, receipt.blockNumber]
+  return [balanceOutBI, receipt.blockNumber]
 }
 
 async function dataUpdated(env: TestEnvironment, minBlockNumber: bigint) {
@@ -390,12 +390,12 @@ async function checkTransferAndRoute(
 
   const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9)
   const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, env.user.address, env.rp.address)
-  const transferValue = getBigInt(0.02 * Math.pow(10, Native.onChain(env.chainId).decimals))
+  const transferValue = getBigInt(0.02 * 10 ** Native.onChain(env.chainId).decimals)
   rpParams.value = (rpParams.value || 0n) + transferValue
 
   const balanceUser2Before = await env.client.getBalance({ address: env.user2.address })
 
-  let balanceOutBNBefore: bigint
+  let balanceOutBIBefore: bigint
   let toTokenContract: Contract<typeof weth9Abi> | undefined = undefined
   if (toToken instanceof Token) {
     toTokenContract = {
@@ -403,14 +403,14 @@ async function checkTransferAndRoute(
       address: toToken.address as Address,
     }
 
-    balanceOutBNBefore = await env.client.readContract({
+    balanceOutBIBefore = await env.client.readContract({
       ...(toTokenContract as NonNullable<typeof toTokenContract>),
       account: env.user.address,
       functionName: 'balanceOf',
       args: [env.user.address],
     })
   } else {
-    balanceOutBNBefore = await env.client.getBalance({ address: env.user.address })
+    balanceOutBIBefore = await env.client.getBalance({ address: env.user.address })
   }
   const tx = await env.client.writeContract({
     ...env.rp,
@@ -439,7 +439,7 @@ async function checkTransferAndRoute(
     })
   }
 
-  let balanceOutBN: bigint
+  let balanceOutBI: bigint
   if (toTokenContract) {
     balanceOutBI =
       (await env.client.readContract({
@@ -447,9 +447,9 @@ async function checkTransferAndRoute(
         account: env.user.address,
         functionName: 'balanceOf',
         args: [env.user.address],
-      })) - balanceOutBNBefore
+      })) - balanceOutBIBefore
   } else {
-    balanceOutBI = balanceOutBI = (await env.client.getBalance({ address: env.user.address })) - balanceOutBNBefore
+    balanceOutBI = balanceOutBI = (await env.client.getBalance({ address: env.user.address })) - balanceOutBIBefore
     balanceOutBI = balanceOutBI + receipt.effectiveGasPrice * receipt.gasUsed
     balanceOutBI = balanceOutBI + transferValue
   }
@@ -459,7 +459,7 @@ async function checkTransferAndRoute(
   const transferredValue = balanceUser2After - balanceUser2Before
   expect(transferredValue === transferValue).equal(true)
 
-  return [balanceOutBN, receipt.blockNumber]
+  return [balanceOutBI, receipt.blockNumber]
 }
 
 // skipped because took too long time. Unskip to check the RP

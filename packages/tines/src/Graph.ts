@@ -42,7 +42,7 @@ export interface MultiRoute {
   legs: RouteLeg[]
   gasSpent: number
   totalAmountOut: number
-  totalAmountOutBN: bigint
+  totalAmountOutBI: bigint
 }
 
 export function NoWayMultiRoute(from: RToken, to: RToken) {
@@ -57,7 +57,7 @@ export function NoWayMultiRoute(from: RToken, to: RToken) {
     legs: [],
     gasSpent: 0,
     totalAmountOut: 0,
-    totalAmountOutBN: 0n,
+    totalAmountOutBI: 0n,
   }
 }
 
@@ -965,7 +965,7 @@ export class Graph {
       legs,
       gasSpent,
       totalAmountOut: totalOutput,
-      totalAmountOutBN: getBigInt(totalOutput),
+      totalAmountOutBI: getBigInt(totalOutput),
     }
   }
 
@@ -1045,7 +1045,7 @@ export class Graph {
       legs,
       gasSpent,
       totalAmountOut: amountOut - gasSpent * toVert.gasPrice, // TODO: should be totalAmountIn instead !!!!
-      totalAmountOutBN: getBigInt(amountOut - gasSpent * toVert.gasPrice), // TODO: should be totalAmountInBI instead !!!!
+      totalAmountOutBI: getBigInt(amountOut - gasSpent * toVert.gasPrice), // TODO: should be totalAmountInBI instead !!!!
     }
   }
 

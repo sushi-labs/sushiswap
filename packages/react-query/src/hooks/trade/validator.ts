@@ -40,7 +40,7 @@ export const tradeValidator = z.object({
       legs: z.array(legValidator).optional(),
       gasSpent: z.number(),
       totalAmountOut: z.number(),
-      totalAmountOutBN: z.string(),
+      totalAmountOutBI: z.string(),
     })
     .optional(),
   args: z.optional(
