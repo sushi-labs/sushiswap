@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { Graph, MultiRoute, NetworkInfo, RouteStatus } from './Graph'
+import { Graph, MultiRoute, NetworkInfo, NoWayMultiRoute, RouteStatus } from './Graph'
 import { RPool, RToken, setTokenId } from './PrimaryPools'
 
 // Assumes route is a single path
@@ -64,6 +64,7 @@ export function findMultiRouteExactIn(
   pools = deduplicatePools(pools)
   checkChainId(pools, baseTokenOrNetworks)
   setTokenId(from, to)
+  if (from.tokenId === to.tokenId) return NoWayMultiRoute(from, to)
   const g = new Graph(pools, from, baseTokenOrNetworks, gasPrice)
 
   if (flows !== undefined) return g.findBestRouteExactIn(from, to, amountIn, flows)
@@ -102,6 +103,7 @@ export function findMultiRouteExactOut(
   pools = deduplicatePools(pools)
   checkChainId(pools, baseTokenOrNetworks)
   setTokenId(from, to)
+  if (from.tokenId === to.tokenId) return NoWayMultiRoute(from, to)
   if (amountOut instanceof BigNumber) {
     amountOut = parseInt(amountOut.toString())
   }
@@ -134,6 +136,7 @@ export function findSingleRouteExactIn(
   pools = deduplicatePools(pools)
   checkChainId(pools, baseTokenOrNetworks)
   setTokenId(from, to)
+  if (from.tokenId === to.tokenId) return NoWayMultiRoute(from, to)
   const g = new Graph(pools, from, baseTokenOrNetworks, gasPrice)
 
   const out = g.findBestRouteExactIn(from, to, amountIn, 1)
@@ -151,6 +154,7 @@ export function findSingleRouteExactOut(
   pools = deduplicatePools(pools)
   checkChainId(pools, baseTokenOrNetworks)
   setTokenId(from, to)
+  if (from.tokenId === to.tokenId) return NoWayMultiRoute(from, to)
   const g = new Graph(pools, from, baseTokenOrNetworks, gasPrice)
 
   if (amountOut instanceof BigNumber) {
@@ -161,7 +165,12 @@ export function findSingleRouteExactOut(
   return out
 }
 
-export function calcTokenPrices(pools: RPool[], baseToken: RToken, minPriceLiquidity = 0, priceLogging = false): Map<RToken, number> {
+export function calcTokenPrices(
+  pools: RPool[],
+  baseToken: RToken,
+  minPriceLiquidity = 0,
+  priceLogging = false
+): Map<RToken, number> {
   setTokenId(baseToken)
   const g = new Graph(pools, baseToken, baseToken, 0, minPriceLiquidity, priceLogging)
   const res = new Map<RToken, number>()
