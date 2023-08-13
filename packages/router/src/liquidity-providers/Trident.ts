@@ -3,7 +3,7 @@ import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import type { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
-import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBN } from '@sushiswap/tines'
+import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBI } from '@sushiswap/tines'
 import {
   constantProductPoolFactoryAddress,
   ConstantProductPoolFactoryChainId,
@@ -282,8 +282,8 @@ export class TridentProvider extends LiquidityProvider {
         tokens[0],
         tokens[1],
         pool.swapFee,
-        toShareBN(res0, totals0),
-        toShareBN(res1, totals1),
+        toShareBI(res0, totals0),
+        toShareBI(res1, totals1),
         pool.token0.decimals,
         pool.token1.decimals,
         totals0,
@@ -731,7 +731,7 @@ export class TridentProvider extends LiquidityProvider {
       if (!res0 || !res1) {
         return
       }
-      //pool.updateReserves(toShareBN(res0BN, pool.getTotal0()), toShareBN(res1BN, pool.getTotal1()))
+      //pool.updateReserves(toShareBI(res0BN, pool.getTotal0()), toShareBI(res1BN, pool.getTotal1()))
       pool.updateReservesAmounts(res0, res1)
 
       this.onDemandStablePools.set(pool.address, { poolCode, validUntilTimestamp })

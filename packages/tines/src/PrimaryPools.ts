@@ -238,25 +238,25 @@ export class HybridRPool extends RPool {
   }
 
   calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
-    const xBN = direction ? this.reserve0 : this.reserve1
-    const yBN = direction ? this.reserve1 : this.reserve0
-    const xNewBN = xBN + getBigInt(amountIn * (1 - this.fee))
-    const yNewBN = this.computeY(xNewBN)
-    const dy = parseInt((yBN - yNewBN).toString())
-    if (parseInt(yNewBN.toString()) < this.minLiquidity) throw 'Hybrid OutOfLiquidity'
+    const xBI = direction ? this.reserve0 : this.reserve1
+    const yBI = direction ? this.reserve1 : this.reserve0
+    const xNewBI = xBI + getBigInt(amountIn * (1 - this.fee))
+    const yNewBI = this.computeY(xNewBI)
+    const dy = parseInt((yBI - yNewBI).toString())
+    if (parseInt(yNewBI.toString()) < this.minLiquidity) throw 'Hybrid OutOfLiquidity'
     return { out: dy, gasSpent: this.swapGasCost }
   }
 
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
-    const xBN = direction ? this.reserve0 : this.reserve1
-    const yBN = direction ? this.reserve1 : this.reserve0
-    let yNewBN = yBN - getBigInt(amountOut)
-    if (yNewBN < 1n)
+    const xBI = direction ? this.reserve0 : this.reserve1
+    const yBI = direction ? this.reserve1 : this.reserve0
+    let yNewBI = yBI - getBigInt(amountOut)
+    if (yNewBI < 1n)
       // lack of precision
-      yNewBN = 1n
+      yNewBI = 1n
 
-    const xNewBN = this.computeY(yNewBN)
-    const input = Math.round(parseInt((xNewBN - xBN).toString()) / (1 - this.fee))
+    const xNewBI = this.computeY(yNewBI)
+    const input = Math.round(parseInt((xNewBI - xBI).toString()) / (1 - this.fee))
 
     //if (input < 1) input = 1
     return { inp: input, gasSpent: this.swapGasCost }
@@ -267,8 +267,8 @@ export class HybridRPool extends RPool {
   }
 
   calcPrice(amountIn: number, direction: boolean, takeFeeIntoAccount: boolean): number {
-    const xBN = direction ? this.reserve0 : this.reserve1
-    const x = parseInt(xBN.toString())
+    const xBI = direction ? this.reserve0 : this.reserve1
+    const x = parseInt(xBI.toString())
     const oneMinusFee = takeFeeIntoAccount ? 1 - this.fee : 1
     const D = parseInt(this.computeLiquidity().toString())
     const A = this.A / this.A_PRECISION

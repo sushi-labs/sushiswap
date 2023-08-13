@@ -136,9 +136,9 @@ export class UniV3Pool extends RPool {
 
   calcOutByIn(amountIn: number, direction: boolean, throwIfOutOfLiquidity = true): { out: number; gasSpent: number } {
     let nextTickToCross = direction ? this.nearestTick : this.nearestTick + 1
-    const currentPriceBN = this.sqrtPriceX96
-    let currentPrice = parseInt(currentPriceBN.toString()) / two96
-    let currentLiquidityBN = this.liquidity
+    const currentPriceBI = this.sqrtPriceX96
+    let currentPrice = parseInt(currentPriceBI.toString()) / two96
+    let currentLiquidityBI = this.liquidity
     let outAmount = 0
     let input = amountIn * (1 - this.fee)
 
@@ -153,9 +153,9 @@ export class UniV3Pool extends RPool {
       let nextTickPrice, priceDiff
       if (startFlag) {
         // Increasing precision at first step only - otherwise its too slow
-        const nextTickPriceBN = getSqrtRatioAtTick(this.ticks[nextTickToCross].index)
-        nextTickPrice = parseInt(nextTickPriceBN.toString()) / two96
-        priceDiff = parseInt((currentPriceBN - nextTickPriceBN).toString()) / two96
+        const nextTickPriceBI = getSqrtRatioAtTick(this.ticks[nextTickToCross].index)
+        nextTickPrice = parseInt(nextTickPriceBI.toString()) / two96
+        priceDiff = parseInt((currentPriceBI - nextTickPriceBI).toString()) / two96
         startFlag = false
       } else {
         nextTickPrice = Math.sqrt(1.0001 ** this.ticks[nextTickToCross].index)
@@ -163,7 +163,7 @@ export class UniV3Pool extends RPool {
       }
 
       let output = 0
-      const currentLiquidity = parseInt(currentLiquidityBN.toString())
+      const currentLiquidity = parseInt(currentLiquidityBI.toString())
 
       if (direction) {
         const maxDx = (currentLiquidity * priceDiff) / currentPrice / nextTickPrice
@@ -183,12 +183,12 @@ export class UniV3Pool extends RPool {
           input = 0
         } else {
           output = currentLiquidity * priceDiff
-          //currentPriceBN = nextTickPriceBN
+          //currentPriceBI = nextTickPriceBI
           currentPrice = nextTickPrice
           input -= maxDx
-          currentLiquidityBN = currentLiquidityBN - this.ticks[nextTickToCross].DLiquidity
+          currentLiquidityBI = currentLiquidityBI - this.ticks[nextTickToCross].DLiquidity
           nextTickToCross--
-          if (nextTickToCross === 0) currentLiquidityBN = ZERO // Protection if we know not all ticks
+          if (nextTickToCross === 0) currentLiquidityBI = ZERO // Protection if we know not all ticks
         }
       } else {
         const maxDy = currentLiquidity * -priceDiff
@@ -198,12 +198,12 @@ export class UniV3Pool extends RPool {
           input = 0
         } else {
           output = (currentLiquidity * -priceDiff) / currentPrice / nextTickPrice
-          //currentPriceBN = nextTickPriceBN
+          //currentPriceBI = nextTickPriceBI
           currentPrice = nextTickPrice
           input -= maxDy
-          currentLiquidityBN = currentLiquidityBN + this.ticks[nextTickToCross].DLiquidity
+          currentLiquidityBI = currentLiquidityBI + this.ticks[nextTickToCross].DLiquidity
           nextTickToCross++
-          if (nextTickToCross === this.ticks.length - 1) currentLiquidityBN = ZERO // Protection if we know not all ticks
+          if (nextTickToCross === this.ticks.length - 1) currentLiquidityBI = ZERO // Protection if we know not all ticks
         }
       }
 
@@ -222,9 +222,9 @@ export class UniV3Pool extends RPool {
 
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
     let nextTickToCross = direction ? this.nearestTick : this.nearestTick + 1
-    const currentPriceBN = this.sqrtPriceX96
-    let currentPrice = parseInt(currentPriceBN.toString()) / two96
-    let currentLiquidityBN = this.liquidity
+    const currentPriceBI = this.sqrtPriceX96
+    let currentPrice = parseInt(currentPriceBI.toString()) / two96
+    let currentLiquidityBI = this.liquidity
     let input = 0
     let outBeforeFee = amountOut
 
@@ -238,9 +238,9 @@ export class UniV3Pool extends RPool {
       let nextTickPrice, priceDiff
       if (startFlag) {
         // Increasing precision at first step only - otherwise its too slow
-        const nextTickPriceBN = getSqrtRatioAtTick(this.ticks[nextTickToCross].index)
-        nextTickPrice = parseInt(nextTickPriceBN.toString()) / two96
-        priceDiff = parseInt((currentPriceBN - nextTickPriceBN).toString()) / two96
+        const nextTickPriceBI = getSqrtRatioAtTick(this.ticks[nextTickToCross].index)
+        nextTickPrice = parseInt(nextTickPriceBI.toString()) / two96
+        priceDiff = parseInt((currentPriceBI - nextTickPriceBI).toString()) / two96
         startFlag = false
       } else {
         nextTickPrice = Math.sqrt(1.0001 ** this.ticks[nextTickToCross].index)
@@ -249,7 +249,7 @@ export class UniV3Pool extends RPool {
 
       // console.log('L, P, tick, nextP', currentLiquidity,
       //     currentPrice, this.ticks[nextTickToCross].index, nextTickPrice);
-      const currentLiquidity = parseInt(currentLiquidityBN.toString())
+      const currentLiquidity = parseInt(currentLiquidityBI.toString())
 
       if (direction) {
         const maxDy = currentLiquidity * priceDiff
@@ -259,12 +259,12 @@ export class UniV3Pool extends RPool {
           outBeforeFee = 0
         } else {
           input += (currentLiquidity * priceDiff) / currentPrice / nextTickPrice
-          //currentPriceBN = nextTickPriceBN
+          //currentPriceBI = nextTickPriceBI
           currentPrice = nextTickPrice
           outBeforeFee -= maxDy
-          currentLiquidityBN = currentLiquidityBN - this.ticks[nextTickToCross].DLiquidity
+          currentLiquidityBI = currentLiquidityBI - this.ticks[nextTickToCross].DLiquidity
           nextTickToCross--
-          if (nextTickToCross === 0) currentLiquidityBN = ZERO // Protection if we know not all ticks
+          if (nextTickToCross === 0) currentLiquidityBI = ZERO // Protection if we know not all ticks
         }
       } else {
         const maxDx = (currentLiquidity * -priceDiff) / currentPrice / nextTickPrice
@@ -275,12 +275,12 @@ export class UniV3Pool extends RPool {
           outBeforeFee = 0
         } else {
           input += currentLiquidity * -priceDiff
-          //currentPriceBN = nextTickPriceBN
+          //currentPriceBI = nextTickPriceBI
           currentPrice = nextTickPrice
           outBeforeFee -= maxDx
-          currentLiquidityBN = currentLiquidityBN + this.ticks[nextTickToCross].DLiquidity
+          currentLiquidityBI = currentLiquidityBI + this.ticks[nextTickToCross].DLiquidity
           nextTickToCross++
-          if (nextTickToCross === this.ticks.length - 1) currentLiquidityBN = ZERO // Protection if we know not all ticks
+          if (nextTickToCross === this.ticks.length - 1) currentLiquidityBI = ZERO // Protection if we know not all ticks
         }
       }
     }

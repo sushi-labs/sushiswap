@@ -301,21 +301,21 @@ async function makeSwap(
   // console.log("Fetching user's output balance ...")
   let balanceOutBN: bigint
   if (toTokenContract) {
-    balanceOutBN =
+    balanceOutBI =
       (await env.client.readContract({
         ...toTokenContract,
         functionName: 'balanceOf',
         args: [env.user.address],
       })) - balanceOutBNBefore
   } else {
-    balanceOutBN = (await env.client.getBalance({ address: env.user.address })) - balanceOutBNBefore
-    balanceOutBN = balanceOutBN + receipt.effectiveGasPrice * receipt.gasUsed
+    balanceOutBI = (await env.client.getBalance({ address: env.user.address })) - balanceOutBNBefore
+    balanceOutBI = balanceOutBI + receipt.effectiveGasPrice * receipt.gasUsed
   }
-  const slippage = Number(((balanceOutBN - route.amountOutBN) * 10_000n) / route.amountOutBN)
+  const slippage = Number(((balanceOutBI - route.amountOutBI) * 10_000n) / route.amountOutBI)
 
-  if (abs(route.amountOutBN - balanceOutBN) > 10n) {
+  if (abs(route.amountOutBI - balanceOutBN) > 10n) {
     if (slippage < 0) {
-      console.log(`expected amountOut: ${route.amountOutBN.toString()}`)
+      console.log(`expected amountOut: ${route.amountOutBI.toString()}`)
       console.log(`real amountOut:     ${balanceOutBN.toString()}`)
       console.log(`slippage: ${slippage / 100}%`)
     }
@@ -451,7 +451,7 @@ async function checkTransferAndRoute(
 
   let balanceOutBN: bigint
   if (toTokenContract) {
-    balanceOutBN =
+    balanceOutBI =
       (await env.client.readContract({
         ...(toTokenContract as NonNullable<typeof toTokenContract>),
         account: env.user.address,
@@ -459,11 +459,11 @@ async function checkTransferAndRoute(
         args: [env.user.address],
       })) - balanceOutBNBefore
   } else {
-    balanceOutBN = (await env.client.getBalance({ address: env.user.address })) - balanceOutBNBefore
-    balanceOutBN = balanceOutBN + receipt.effectiveGasPrice * receipt.gasUsed
-    balanceOutBN = balanceOutBN + transferValue
+    balanceOutBI = (await env.client.getBalance({ address: env.user.address })) - balanceOutBNBefore
+    balanceOutBI = balanceOutBI + receipt.effectiveGasPrice * receipt.gasUsed
+    balanceOutBI = balanceOutBI + transferValue
   }
-  expect(balanceOutBN >= rpParams.amountOutMin).equal(true)
+  expect(balanceOutBI >= rpParams.amountOutMin).equal(true)
 
   const balanceUser2After = await env.client.getBalance({ address: env.user2.address })
   const transferredValue = balanceUser2After - balanceUser2Before

@@ -259,7 +259,7 @@ async function checkSwap(poolInfo: PoolInfo, from: number, to: number, amountIn:
   const expectedOut = poolInfo.poolTines.calcOutByIn(Math.round(amountIn), from < to)
   let realOutBN: BigNumber
   if (poolInfo.poolType !== CurvePoolType.LegacyV2 && poolInfo.poolType !== CurvePoolType.LegacyV3) {
-    realOutBN = await poolInfo.poolContract.callStatic.exchange(from, to, getBigNumber(amountIn), 0, {
+    realOutBI = await poolInfo.poolContract.callStatic.exchange(from, to, getBigNumber(amountIn), 0, {
       value: poolInfo.tokenContracts[from] === undefined ? getBigNumber(amountIn) : 0,
     })
   } else {
@@ -269,7 +269,7 @@ async function checkSwap(poolInfo: PoolInfo, from: number, to: number, amountIn:
       value: poolInfo.tokenContracts[from] === undefined ? getBigNumber(amountIn) : 0,
     })
     const balanceAfter = await poolInfo.tokenContracts[to]?.balanceOf(poolInfo.userAddress)
-    realOutBN = balanceAfter.sub(balanceBefore)
+    realOutBI = balanceAfter.sub(balanceBefore)
   }
   const realOut = parseInt(realOutBN.toString())
 

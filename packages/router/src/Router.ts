@@ -201,16 +201,16 @@ export class Router {
         : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
     const tokenOut =
       toToken instanceof Token ? (toToken.address as Address) : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-    const amountOutMin = (route.amountOutBN * getBigInt((1 - maxPriceImpact) * 1_000_000)) / 1_000_000n
+    const amountOutMin = (route.amountOutBI * getBigInt((1 - maxPriceImpact) * 1_000_000)) / 1_000_000n
 
     return {
       tokenIn,
-      amountIn: route.amountInBN,
+      amountIn: route.amountInBI,
       tokenOut,
       amountOutMin,
       to,
       routeCode: getRouteProcessorCode(route, RPAddr, to, poolCodesMap) as Hex,
-      value: fromToken instanceof Token ? undefined : route.amountInBN,
+      value: fromToken instanceof Token ? undefined : route.amountInBI,
     }
   }
 
@@ -229,16 +229,16 @@ export class Router {
       fromToken instanceof Token ? (fromToken.address as Address) : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
     const tokenOut =
       toToken instanceof Token ? (toToken.address as Address) : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-    const amountOutMin = (route.amountOutBN * getBigInt((1 - maxPriceImpact) * 1_000_000)) / 1_000_000n
+    const amountOutMin = (route.amountOutBI * getBigInt((1 - maxPriceImpact) * 1_000_000)) / 1_000_000n
 
     return {
       tokenIn,
-      amountIn: source === RouterLiquiditySource.Sender ? route.amountInBN : 0n,
+      amountIn: source === RouterLiquiditySource.Sender ? route.amountInBI : 0n,
       tokenOut,
       amountOutMin,
       to,
       routeCode: getRouteProcessor2Code(route, RPAddr, to, poolCodesMap, permits, source) as Hex,
-      value: fromToken instanceof Token ? undefined : route.amountInBN,
+      value: fromToken instanceof Token ? undefined : route.amountInBI,
     }
   }
 
@@ -280,16 +280,16 @@ export class Router {
       fromToken instanceof Token ? (fromToken.address as Address) : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
     const tokenOut =
       toToken instanceof Token ? (toToken.address as Address) : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-    const amountOutMin = (route.amountOutBN * getBigInt((1 - maxPriceImpact) * 1_000_000)) / 1_000_000n
+    const amountOutMin = (route.amountOutBI * getBigInt((1 - maxPriceImpact) * 1_000_000)) / 1_000_000n
 
     return {
       tokenIn,
-      amountIn: route.amountInBN,
+      amountIn: route.amountInBI,
       tokenOut,
       amountOutMin,
       to,
       routeCode: getRouteProcessor4Code(route, RPAddr, to, poolCodesMap, permits) as Hex,
-      value: fromToken instanceof Token ? undefined : route.amountInBN,
+      value: fromToken instanceof Token ? undefined : route.amountInBI,
     }
   }
 
@@ -311,7 +311,7 @@ export class Router {
       }] -> ${l.tokenTo.symbol}\n`
       //console.log(l.poolAddress, l.assumedAmountIn, l.assumedAmountOut)
     })
-    const output = parseInt(route.amountOutBN.toString()) / 10 ** toToken.decimals
+    const output = parseInt(route.amountOutBI.toString()) / 10 ** toToken.decimals
     res += `${shiftPrimary}Output: ${output} ${route.toToken.symbol}`
 
     return res

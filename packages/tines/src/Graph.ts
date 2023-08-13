@@ -36,9 +36,9 @@ export interface MultiRoute {
   swapPrice?: number
   priceImpact?: number
   amountIn: number
-  amountInBN: bigint
+  amountInBI: bigint
   amountOut: number
-  amountOutBN: bigint
+  amountOutBI: bigint
   legs: RouteLeg[]
   gasSpent: number
   totalAmountOut: number
@@ -51,9 +51,9 @@ export function NoWayMultiRoute(from: RToken, to: RToken) {
     fromToken: from,
     toToken: to,
     amountIn: 0,
-    amountInBN: 0n,
+    amountInBI: 0n,
     amountOut: 0,
-    amountOutBN: 0n,
+    amountOutBI: 0n,
     legs: [],
     gasSpent: 0,
     totalAmountOut: 0,
@@ -880,12 +880,12 @@ export class Graph {
   }
 
   findBestRouteExactIn(from: RToken, to: RToken, amountIn: bigint | number, mode: number | number[]): MultiRoute {
-    let amountInBN: bigint
+    let amountInBI: bigint
     if (typeof amountIn === 'bigint') {
-      amountInBN = amountIn
+      amountInBI = amountIn
       amountIn = parseInt(amountIn.toString())
     } else {
-      amountInBN = getBigInt(amountIn)
+      amountInBI = getBigInt(amountIn)
     }
 
     let routeValues = []
@@ -959,9 +959,9 @@ export class Graph {
       swapPrice,
       priceImpact,
       amountIn: amountIn * totalrouted,
-      amountInBN: status === RouteStatus.Success ? amountInBN : getBigInt(amountIn * totalrouted),
+      amountInBI: status === RouteStatus.Success ? amountInBI : getBigInt(amountIn * totalrouted),
       amountOut: output,
-      amountOutBN: getBigInt(output),
+      amountOutBI: getBigInt(output),
       legs,
       gasSpent,
       totalAmountOut: totalOutput,
@@ -1039,13 +1039,13 @@ export class Graph {
       swapPrice,
       priceImpact,
       amountIn: input,
-      amountInBN: getBigInt(input),
+      amountInBI: getBigInt(input),
       amountOut: amountOut * totalrouted,
-      amountOutBN: getBigInt(amountOut * totalrouted),
+      amountOutBI: getBigInt(amountOut * totalrouted),
       legs,
       gasSpent,
       totalAmountOut: amountOut - gasSpent * toVert.gasPrice, // TODO: should be totalAmountIn instead !!!!
-      totalAmountOutBN: getBigInt(amountOut - gasSpent * toVert.gasPrice), // TODO: should be totalAmountInBN instead !!!!
+      totalAmountOutBN: getBigInt(amountOut - gasSpent * toVert.gasPrice), // TODO: should be totalAmountInBI instead !!!!
     }
   }
 

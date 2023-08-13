@@ -8,7 +8,7 @@ export class CurvePool extends RPool {
   readonly A: number
   D: bigint // set it to 0 if reserves are changed !!
 
-  rate0BN: bigint
+  rate0BI: bigint
   rate1BN18: bigint
   rate0: number
   rate1: number
@@ -32,15 +32,15 @@ export class CurvePool extends RPool {
       const decimalsMin = Math.min(this.token0.decimals, this.token1.decimals)
       this.rate0 = 10 ** (this.token1.decimals - decimalsMin)
       this.rate1 = 10 ** (this.token0.decimals - decimalsMin) * ratio
-      this.rate0BN = getBigInt(this.rate0)
+      this.rate0BI = getBigInt(this.rate0)
       this.rate1BN18 = getBigInt(this.rate1 * 1e18) // 18 digits for precision
-      this.reserve0Rated = this.reserve0 * this.rate0BN
+      this.reserve0Rated = this.reserve0 * this.rate0BI
       this.reserve1Rated = (this.reserve1 * this.rate1BN18) / getBigInt(1e18)
     } else {
       // for deserialization
       this.rate0 = 0
       this.rate1 = 0
-      this.rate0BN = undefined as unknown as bigint
+      this.rate0BI = undefined as unknown as bigint
       this.rate1BN18 = undefined as unknown as bigint
       this.reserve0Rated = undefined as unknown as bigint
       this.reserve1Rated = undefined as unknown as bigint
@@ -51,7 +51,7 @@ export class CurvePool extends RPool {
     this.D = 0n
     this.reserve0 = res0
     this.reserve1 = res1
-    this.reserve0Rated = this.reserve0 * this.rate0BN
+    this.reserve0Rated = this.reserve0 * this.rate0BI
     this.reserve1Rated = (this.reserve1 * this.rate1BN18) / getBigInt(1e18)
   }
 
@@ -107,27 +107,27 @@ export class CurvePool extends RPool {
 
   calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
     amountIn *= direction ? this.rate0 : this.rate1
-    const xBN = direction ? this.reserve0Rated : this.reserve1Rated
-    const yBN = direction ? this.reserve1Rated : this.reserve0Rated
-    const xNewBN = xBN + getBigInt(amountIn /* * (1 - this.fee)*/)
-    const yNewBN = this.computeY(xNewBN)
-    const dy = parseInt((yBN - yNewBN).toString()) / (direction ? this.rate1 : this.rate0)
-    if (parseInt(yNewBN.toString()) < this.minLiquidity) throw 'Curve pool OutOfLiquidity'
+    const xBI = direction ? this.reserve0Rated : this.reserve1Rated
+    const yBI = direction ? this.reserve1Rated : this.reserve0Rated
+    const xNewBI = xBI + getBigInt(amountIn /* * (1 - this.fee)*/)
+    const yNewBI = this.computeY(xNewBI)
+    const dy = parseInt((yBI - yNewBI).toString()) / (direction ? this.rate1 : this.rate0)
+    if (parseInt(yNewBI.toString()) < this.minLiquidity) throw 'Curve pool OutOfLiquidity'
     return { out: dy * (1 - this.fee), gasSpent: this.swapGasCost }
   }
 
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
     amountOut *= direction ? this.rate1 : this.rate0
-    const xBN = direction ? this.reserve0Rated : this.reserve1Rated
-    const yBN = direction ? this.reserve1Rated : this.reserve0Rated
-    let yNewBN = yBN - getBigInt(amountOut / (1 - this.fee))
-    if (yNewBN < 1)
+    const xBI = direction ? this.reserve0Rated : this.reserve1Rated
+    const yBI = direction ? this.reserve1Rated : this.reserve0Rated
+    let yNewBI = yBI - getBigInt(amountOut / (1 - this.fee))
+    if (yNewBI < 1)
       // lack of precision
-      yNewBN = 1n
+      yNewBI = 1n
 
-    const xNewBN = this.computeY(yNewBN)
+    const xNewBI = this.computeY(yNewBI)
     const input = Math.round(
-      parseInt((xNewBN - xBN).toString()) /* / (1 - this.fee)*/ / (direction ? this.rate0 : this.rate1)
+      parseInt((xNewBI - xBI).toString()) /* / (1 - this.fee)*/ / (direction ? this.rate0 : this.rate1)
     )
 
     //if (input < 1) input = 1
@@ -139,8 +139,8 @@ export class CurvePool extends RPool {
   }
 
   calcPrice(amountIn: number, direction: boolean, takeFeeIntoAccount: boolean): number {
-    const xBN = direction ? this.reserve0Rated : this.reserve1Rated
-    const x = parseInt(xBN.toString())
+    const xBI = direction ? this.reserve0Rated : this.reserve1Rated
+    const x = parseInt(xBI.toString())
     const oneMinusFee = takeFeeIntoAccount ? 1 - this.fee : 1
     const D = parseInt(this.computeLiquidity().toString())
     const A = this.A / 2

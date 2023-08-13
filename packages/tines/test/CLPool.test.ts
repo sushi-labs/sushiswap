@@ -6,7 +6,7 @@ const testSeed = '2' // Change it to change random generator values
 const rnd: () => number = seedrandom(testSeed) // random [0, 1)
 
 const two96 = Math.pow(2, 96)
-const two96BN = 2n ** 96n
+const two96BI = 2n ** 96n
 
 export function getRandomLin(rnd: () => number, min: number, max: number) {
   return rnd() * (max - min) + min

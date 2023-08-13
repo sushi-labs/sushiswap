@@ -15,7 +15,7 @@ import {
   RPool,
   RToken,
   StableSwapRPool,
-  toShareBN,
+  toShareBI,
 } from '@sushiswap/tines'
 import { TICK_SPACINGS } from '@sushiswap/v3-sdk'
 import { Address, readContracts } from '@wagmi/core'
@@ -215,8 +215,8 @@ async function transform(chainId: ChainId, pools: Pool[]) {
             token0 as RToken,
             token1 as RToken,
             pool.swapFee,
-            toShareBN(reserves.reserve0, total0),
-            toShareBN(reserves.reserve1, total1),
+            toShareBI(reserves.reserve0, total0),
+            toShareBI(reserves.reserve1, total1),
             pool.token0.decimals,
             pool.token1.decimals,
             total0,

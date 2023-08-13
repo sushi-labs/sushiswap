@@ -50,14 +50,14 @@
 //       const reserves = await poolContract.getReserves()
 //       expectCloseValues(
 //         pool.getReserve0(),
-//         toShareBN(reserves[0], pool.getTotal0()),
+//         toShareBI(reserves[0], pool.getTotal0()),
 //         1e-10,
 //         1e6,
 //         `StableSwapRPool ${addr} reserve0`
 //       )
 //       expectCloseValues(
 //         pool.getReserve1(),
-//         toShareBN(reserves[1], pool.getTotal1()),
+//         toShareBI(reserves[1], pool.getTotal1()),
 //         1e-10,
 //         1e6,
 //         `StableSwapRPool ${addr} reserve1`

@@ -40,7 +40,6 @@
 
 // const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
-
 // interface TestEnvironment {
 //   chainId: ChainId
 //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -77,7 +76,7 @@
 //           blockCreated: 25770160,
 //         },
 //       },
-//       pollingInterval: 1_000, 
+//       pollingInterval: 1_000,
 //     },
 
 //     transport: custom(network.provider),
@@ -176,15 +175,15 @@
 //   //console.log("Fetching user's output balance ...")
 //   let balanceOutBN: BigNumber
 //   if (toTokenContract) {
-//     balanceOutBN = (await toTokenContract.connect(env.user).balanceOf(env.user.address)).sub(balanceOutBNBefore)
+//     balanceOutBI = (await toTokenContract.connect(env.user).balanceOf(env.user.address)).sub(balanceOutBNBefore)
 //   } else {
-//     balanceOutBN = (await env.user.getBalance()).sub(balanceOutBNBefore)
-//     balanceOutBN = balanceOutBN.add(receipt.effectiveGasPrice.mul(receipt.gasUsed))
+//     balanceOutBI = (await env.user.getBalance()).sub(balanceOutBNBefore)
+//     balanceOutBI = balanceOutBN.add(receipt.effectiveGasPrice.mul(receipt.gasUsed))
 //   }
-//   const slippage = parseInt(balanceOutBN.sub(route.amountOutBN).mul(10_000).div(route.amountOutBN).toString())
+//   const slippage = parseInt(balanceOutBN.sub(route.amountOutBI).mul(10_000).div(route.amountOutBI).toString())
 
 //   if (slippage !== 0) {
-//     console.log(`expected amountOut: ${route.amountOutBN.toString()}`)
+//     console.log(`expected amountOut: ${route.amountOutBI.toString()}`)
 //     console.log(`real amountOut:     ${balanceOutBN.toString()}`)
 //     console.log(`slippage: ${slippage / 100}%`)
 //   }
@@ -272,11 +271,11 @@
 
 //   let balanceOutBN: BigNumber
 //   if (toTokenContract) {
-//     balanceOutBN = (await toTokenContract.connect(env.user).balanceOf(env.user.address)).sub(balanceOutBNBefore)
+//     balanceOutBI = (await toTokenContract.connect(env.user).balanceOf(env.user.address)).sub(balanceOutBNBefore)
 //   } else {
-//     balanceOutBN = (await env.user.getBalance()).sub(balanceOutBNBefore)
-//     balanceOutBN = balanceOutBN.add(receipt.effectiveGasPrice.mul(receipt.gasUsed))
-//     balanceOutBN = balanceOutBN.add(transferValue)
+//     balanceOutBI = (await env.user.getBalance()).sub(balanceOutBNBefore)
+//     balanceOutBI = balanceOutBN.add(receipt.effectiveGasPrice.mul(receipt.gasUsed))
+//     balanceOutBI = balanceOutBN.add(transferValue)
 //   }
 //   expect(balanceOutBN.gte(rpParams.amountOutMin)).equal(true)
 

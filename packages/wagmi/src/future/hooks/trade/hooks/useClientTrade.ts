@@ -125,8 +125,8 @@ ${logPools}
       }
 
       if (route) {
-        const amountIn = Amount.fromRawAmount(fromToken, route.amountInBN.toString())
-        const amountOut = Amount.fromRawAmount(toToken, route.amountOutBN.toString())
+        const amountIn = Amount.fromRawAmount(fromToken, route.amountInBI.toString())
+        const amountOut = Amount.fromRawAmount(toToken, route.amountOutBI.toString())
         const isOffset = chainId === ChainId.POLYGON && carbonOffset
 
         // let writeArgs: UseTradeReturnWriteArgs = args

@@ -273,7 +273,7 @@ export abstract class Cooker implements Cooker {
                       pool: leg.poolAddress,
                       amount:
                         initialPathCount > 1 && i === initialPathCount - 1
-                          ? trade.route.amountInBN -
+                          ? trade.route.amountInBI -
                             initialPath.reduce(
                               (previousValue, currentValue) => previousValue + BigInt(currentValue.amount.toString()),
                               0n

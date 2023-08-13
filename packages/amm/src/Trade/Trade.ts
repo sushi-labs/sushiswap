@@ -137,14 +137,14 @@ export class Trade<
 
     const amountIn = Amount.fromShare(
       route.fromToken as TInput,
-      route.amountInBN.toString(),
+      route.amountInBI.toString(),
       currencyInRebase,
       tradeVersion === Version.V2
     )
 
     const amountOut = Amount.fromShare(
       route.toToken as TOutput,
-      route.amountOutBN.toString(),
+      route.amountOutBI.toString(),
       currencyOutRebase,
       tradeVersion === Version.V2
     )

@@ -75,8 +75,8 @@ export const getClientTrade = async ({
           Number(feeData.gasPrice)
         )
 
-        const useLegacy = Amount.fromRawAmount(currencyOut.wrapped, legacyRoute.amountOutBN.toString()).greaterThan(
-          Amount.fromShare(currencyOut.wrapped, tridentRoute.amountOutBN.toString(), currencyOutRebase)
+        const useLegacy = Amount.fromRawAmount(currencyOut.wrapped, legacyRoute.amountOutBI.toString()).greaterThan(
+          Amount.fromShare(currencyOut.wrapped, tridentRoute.amountOutBI.toString(), currencyOutRebase)
         )
 
         if (legacyRoute.status === RouteStatus.Success || tridentRoute.status === RouteStatus.Success) {

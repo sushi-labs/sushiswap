@@ -563,7 +563,7 @@ async function startInfinitTest(args: {
           value: BigInt(rpParams.value?.toString() as string),
           account: args.account,
         })
-        const amountOutExp = BigInt(route.amountOutBN.toString())
+        const amountOutExp = BigInt(route.amountOutBI.toString())
         const diff =
           amountOutExp == 0n ? amountOutReal - amountOutExp : Number(amountOutReal - amountOutExp) / route.amountOut
         console.log(

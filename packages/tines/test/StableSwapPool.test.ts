@@ -134,8 +134,8 @@ function checkPoolPriceCalculation(pool: StableSwapRPool) {
       pool.getReserve1() * E33,
       pool.decimals0,
       pool.decimals1,
-      pool.total0.rebaseBN,
-      pool.total1.rebaseBN
+      pool.total0.rebaseBI,
+      pool.total1.rebaseBI
     )
   }
   const inp = parseFloat(poolScaled.reserve0.toString()) / 1e15

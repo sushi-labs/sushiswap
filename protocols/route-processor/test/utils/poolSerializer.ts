@@ -48,10 +48,10 @@ function makeSerializable(poolCodes: PoolCode[]) {
     pool.token1 = { ...pool.token1 } as RToken
     if (pool instanceof StableSwapRPool) {
       pool.k = String(pool.k) as unknown as bigint
-      pool.total0.rebaseBN.base = String(pool.total0.rebaseBN.base) as unknown as bigint
-      pool.total0.rebaseBN.elastic = String(pool.total0.rebaseBN.elastic) as unknown as bigint
-      pool.total1.rebaseBN.base = String(pool.total1.rebaseBN.base) as unknown as bigint
-      pool.total1.rebaseBN.elastic = String(pool.total1.rebaseBN.elastic) as unknown as bigint
+      pool.total0.rebaseBI.base = String(pool.total0.rebaseBI.base) as unknown as bigint
+      pool.total0.rebaseBI.elastic = String(pool.total0.rebaseBI.elastic) as unknown as bigint
+      pool.total1.rebaseBI.base = String(pool.total1.rebaseBI.base) as unknown as bigint
+      pool.total1.rebaseBI.elastic = String(pool.total1.rebaseBI.elastic) as unknown as bigint
     } else if (pool instanceof UniV3Pool) {
       pool.liquidity = String(pool.liquidity) as unknown as bigint
       pool.sqrtPriceX96 = String(pool.sqrtPriceX96) as unknown as bigint
@@ -60,7 +60,7 @@ function makeSerializable(poolCodes: PoolCode[]) {
       })
     } else if (pool instanceof CurvePool) {
       pool.D = String(pool.D) as unknown as bigint
-      pool.rate0BN = String(pool.rate0BN) as unknown as bigint
+      pool.rate0BI = String(pool.rate0BI) as unknown as bigint
       pool.rate1BN18 = String(pool.rate1BN18) as unknown as bigint
       pool.reserve0Rated = String(pool.reserve0Rated) as unknown as bigint
       pool.reserve1Rated = String(pool.reserve1Rated) as unknown as bigint
@@ -74,10 +74,10 @@ function restoreAfterSerialization(poolCodes: PoolCode[]) {
     pool.reserve1 = BigInt(pool.reserve1)
     if (pool instanceof StableSwapRPool) {
       pool.k = BigInt(pool.k)
-      pool.total0.rebaseBN.base = BigInt(pool.total0.rebaseBN.base)
-      pool.total0.rebaseBN.elastic = BigInt(pool.total0.rebaseBN.elastic)
-      pool.total1.rebaseBN.base = BigInt(pool.total1.rebaseBN.base)
-      pool.total1.rebaseBN.elastic = BigInt(pool.total1.rebaseBN.elastic)
+      pool.total0.rebaseBI.base = BigInt(pool.total0.rebaseBI.base)
+      pool.total0.rebaseBI.elastic = BigInt(pool.total0.rebaseBI.elastic)
+      pool.total1.rebaseBI.base = BigInt(pool.total1.rebaseBI.base)
+      pool.total1.rebaseBI.elastic = BigInt(pool.total1.rebaseBI.elastic)
     } else if (pool instanceof UniV3Pool) {
       pool.liquidity = BigInt(pool.liquidity)
       pool.sqrtPriceX96 = BigInt(pool.sqrtPriceX96)
@@ -86,7 +86,7 @@ function restoreAfterSerialization(poolCodes: PoolCode[]) {
       })
     } else if (pool instanceof CurvePool) {
       pool.D = BigInt(pool.D)
-      pool.rate0BN = BigInt(pool.rate0BN)
+      pool.rate0BI = BigInt(pool.rate0BI)
       pool.rate1BN18 = BigInt(pool.rate1BN18)
       pool.reserve0Rated = BigInt(pool.reserve0Rated)
       pool.reserve1Rated = BigInt(pool.reserve1Rated)

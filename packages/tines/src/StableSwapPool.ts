@@ -9,22 +9,22 @@ export interface Rebase {
   base: bigint
 }
 
-export function toAmountBN(share: bigint, total: Rebase) {
+export function toAmountBI(share: bigint, total: Rebase) {
   if (total.base === 0n || total.elastic === 0n) return share
   return (share * total.elastic) / total.base
 }
 
-export function toShareBN(elastic: bigint, total: Rebase) {
+export function toShareBI(elastic: bigint, total: Rebase) {
   if (total.base === 0n || total.elastic === 0n) return elastic
   return (elastic * total.base) / total.elastic
 }
 
 export class RebaseInternal {
   elastic2Base: number
-  rebaseBN: Rebase
+  rebaseBI: Rebase
 
   constructor(rebase: Rebase) {
-    this.rebaseBN = rebase
+    this.rebaseBI = rebase
     if (rebase !== undefined) {
       if (rebase.base === 0n || rebase.elastic === 0n) this.elastic2Base = 1
       else this.elastic2Base = parseInt(rebase.elastic.toString()) / parseInt(rebase.base.toString())
@@ -42,19 +42,19 @@ export class RebaseInternal {
     return amount / this.elastic2Base
   }
 
-  toAmountBN(share: bigint) {
-    return toAmountBN(share, this.rebaseBN)
+  toAmountBI(share: bigint) {
+    return toAmountBI(share, this.rebaseBI)
   }
 }
 
 export function realReservesToAdjusted(reserve: bigint, total: Rebase, decimals: number) {
-  const amount = toAmountBN(reserve, total)
+  const amount = toAmountBI(reserve, total)
   return (amount * getBigInt(1e12)) / getBigInt(10 ** decimals)
 }
 
 export function adjustedReservesToReal(reserve: bigint, total: Rebase, decimals: number) {
   const amount = (reserve * getBigInt(10 ** decimals)) / getBigInt(1e12)
-  return toShareBN(amount, total)
+  return toShareBI(amount, total)
 }
 
 // xy(xx+yy) = k
@@ -109,10 +109,10 @@ export class StableSwapRPool extends RPool {
   }
 
   getReserve0() {
-    return adjustedReservesToReal(this.reserve0, this.total0.rebaseBN, this.decimals0)
+    return adjustedReservesToReal(this.reserve0, this.total0.rebaseBI, this.decimals0)
   }
   getReserve1() {
-    return adjustedReservesToReal(this.reserve1, this.total1.rebaseBN, this.decimals1)
+    return adjustedReservesToReal(this.reserve1, this.total1.rebaseBI, this.decimals1)
   }
   granularity0(): number {
     return Math.max(1 / this.decimalsCompensation0, 1)
@@ -123,8 +123,8 @@ export class StableSwapRPool extends RPool {
 
   updateReserves(res0: bigint, res1: bigint) {
     this.k = 0n
-    this.reserve0 = realReservesToAdjusted(res0, this.total0.rebaseBN, this.decimals0)
-    this.reserve1 = realReservesToAdjusted(res1, this.total1.rebaseBN, this.decimals1)
+    this.reserve0 = realReservesToAdjusted(res0, this.total0.rebaseBI, this.decimals0)
+    this.reserve1 = realReservesToAdjusted(res1, this.total1.rebaseBI, this.decimals1)
   }
 
   updateReservesAmounts(res0: bigint, res1: bigint) {
@@ -134,11 +134,11 @@ export class StableSwapRPool extends RPool {
   }
 
   getTotal0() {
-    return this.total0.rebaseBN
+    return this.total0.rebaseBI
   }
 
   getTotal1() {
-    return this.total1.rebaseBN
+    return this.total1.rebaseBI
   }
 
   updateTotals(total0: Rebase, total1: Rebase) {
@@ -224,8 +224,8 @@ export class StableSwapRPool extends RPool {
 
   calcCurrentPriceWithoutFee(direction: boolean): number {
     const calcDirection = this.reserve0 > this.reserve1
-    const xBN = calcDirection ? this.reserve0 : this.reserve1
-    const x = parseInt(xBN.toString())
+    const xBI = calcDirection ? this.reserve0 : this.reserve1
+    const x = parseInt(xBI.toString())
     const k = parseInt(this.computeK().toString())
     const q = k / x / 2
     const qD = -q / x // devivative of q
