@@ -4,6 +4,7 @@ import { routeProcessor2Abi } from '@sushiswap/abi'
 import { Chain } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { useSlippageTolerance } from '@sushiswap/hooks'
+import { UseTradeReturn } from '@sushiswap/react-query'
 import {
   isRouteProcessor3ChainId,
   isRouteProcessorChainId,
@@ -17,13 +18,14 @@ import {
 } from '@sushiswap/ui/components/dialog/ConfirmationDialog'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { AppType } from '@sushiswap/ui/types'
-import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from '@sushiswap/wagmi'
+import { useAccount, useContractWrite, usePrepareContractWrite } from '@sushiswap/wagmi'
 import { useNetwork } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { log } from 'next-axiom'
-import { FC, ReactNode, useCallback, useState } from 'react'
+import { FC, ReactNode, useCallback, useRef, useState } from 'react'
+import { stringify, UserRejectedRequestError } from 'viem'
 
 import { useTrade } from '../../lib/swap/useTrade'
 import { useSwapActions, useSwapState } from './trade/TradeProvider'
@@ -49,6 +51,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   const { appType, network0, token0, token1, review } = useSwapState()
   const { approved } = useApproved('swap')
   const { data: trade } = useTrade({ crossChain: false, enabled: review })
+  const tradeRef = useRef<UseTradeReturn | null>(null)
 
   // if (trade?.route && trade?.route?.status !== 'NoWay') {
   //   if (
@@ -125,7 +128,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       approved,
       trade?.route?.status !== 'NoWay',
     ]
-  ) 
+  )
 
   const { config, isError, error } = usePrepareContractWrite({
     chainId: network0,
@@ -136,7 +139,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       : undefined,
     abi: routeProcessor2Abi,
     functionName: trade?.functionName,
-    args: trade?.writeArgs,
+    args: trade?.writeArgs as any,
     enabled: Boolean(
       trade?.writeArgs &&
         appType === AppType.Swap &&
@@ -145,7 +148,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         trade?.route?.status !== 'NoWay' &&
         chain?.id === network0
     ),
-    overrides: trade?.overrides,
+    value: trade?.value || 0n,
     onError: (error) => {
       const message = error.message.toLowerCase()
       if (message.includes('user rejected') || message.includes('user cancelled')) {
@@ -153,9 +156,9 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       }
 
       log.error('Swap prepare error', {
-        route: trade?.route,
+        route: stringify(trade?.route),
         slippageTolerance,
-        error,
+        error: error,
       })
     },
   })
@@ -175,7 +178,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         type: 'swap',
         chainId: network0,
         txHash: data.hash,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `${isWrap ? 'Wrapping' : isUnwrap ? 'Unwrapping' : 'Swapping'} ${trade.amountIn?.toSignificant(6)} ${
             trade.amountIn?.currency.symbol
@@ -198,26 +201,33 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     [trade, network0, address, isWrap, isUnwrap]
   )
 
+  if (config?.request?.gas) {
+    const gasLimit = (config.request.gas * 120n) / 100n
+    config.request.gas = gasLimit
+  }
+
   const {
     writeAsync,
     isLoading: isWritePending,
     data,
   } = useContractWrite({
     ...config,
-    ...(config.request && { request: { ...config.request, gasLimit: config.request.gasLimit.mul(120).div(100) } }),
+    onMutate: () => {
+      // Set reference of current trade
+      if (tradeRef && trade) {
+        tradeRef.current = trade
+      }
+    },
     onSuccess: async (data) => {
       setReview(false)
 
       // Clear input fields
       setValue('')
 
-      data
-        .wait()
+      waitForTransaction({ hash: data.hash })
         .then((receipt) => {
-          // log.info('swap receipt', {
-          //   receipt,
-          // })
-          if (receipt.status === 1) {
+          const trade = tradeRef.current
+          if (receipt.status === 'success') {
             if (
               trade?.route?.legs?.every(
                 (leg) =>
@@ -232,7 +242,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 chainId: network0,
                 txHash: data.hash,
                 exporerLink: Chain.txUrl(network0, data.hash),
-                route: trade?.route,
+                route: stringify(trade?.route),
               })
             } else if (
               trade?.route?.legs?.some(
@@ -256,7 +266,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 chainId: network0,
                 txHash: data.hash,
                 exporerLink: Chain.txUrl(network0, data.hash),
-                route: trade?.route,
+                route: stringify(trade?.route),
               })
             } else if (
               trade?.route?.legs?.every(
@@ -272,7 +282,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 chainId: network0,
                 txHash: data.hash,
                 exporerLink: Chain.txUrl(network0, data.hash),
-                route: trade?.route,
+                route: stringify(trade?.route),
               })
             } else {
               log.info('unknown', {
@@ -280,7 +290,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 txHash: data.hash,
                 exporerLink: Chain.txUrl(network0, data.hash),
                 route: trade?.route,
-                args: trade?.writeArgs,
+                args: stringify(trade?.writeArgs),
               })
             }
             setDialogState(ConfirmationDialogState.Success)
@@ -298,7 +308,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               log.error('internal route', {
                 chainId: network0,
                 txHash: data.hash,
-                route: trade?.route,
+                route: stringify(trade?.route),
               })
             } else if (
               trade?.route?.legs?.some(
@@ -321,7 +331,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               log.error('mix route', {
                 chainId: network0,
                 txHash: data.hash,
-                route: trade?.route,
+                route: stringify(trade?.route),
               })
             } else if (
               trade?.route?.legs?.every(
@@ -336,14 +346,14 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               log.error('external route', {
                 chainId: network0,
                 txHash: data.hash,
-                route: trade?.route,
+                route: stringify(trade?.route),
               })
             } else {
               log.error('unknown', {
                 chainId: network0,
                 txHash: data.hash,
                 route: trade?.route,
-                args: trade?.writeArgs,
+                args: stringify(trade?.writeArgs),
               })
             }
             setDialogState(ConfirmationDialogState.Failed)

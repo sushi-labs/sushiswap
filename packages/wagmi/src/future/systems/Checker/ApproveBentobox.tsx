@@ -1,11 +1,12 @@
-import React, { FC } from 'react'
-import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import { ChevronRightIcon } from '@heroicons/react/24/solid'
-import { Address } from 'wagmi'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
-import dynamic from 'next/dynamic'
-import { ApprovalState, useBentoboxApproval } from '../../hooks'
+import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import { Explainer } from '@sushiswap/ui/components/explainer'
+import dynamic from 'next/dynamic'
+import React, { FC } from 'react'
+import { Address } from 'wagmi'
+
+import { ApprovalState, useBentoboxApproval } from '../../hooks'
 
 export interface ApproveBentoboxProps extends ButtonProps {
   chainId: BentoBoxV1ChainId

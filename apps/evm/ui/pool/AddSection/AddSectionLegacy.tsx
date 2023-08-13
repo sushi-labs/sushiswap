@@ -4,7 +4,7 @@ import { tryParseAmount } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { Address, getSushiSwapRouterContractConfig, PairState, usePair } from '@sushiswap/wagmi'
+import { Address, getSushiSwapRouterContractConfig, SushiSwapV2PoolState, useSushiSwapV2Pool } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
 import { useTokensFromPool } from 'lib/hooks'
@@ -24,7 +24,7 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   }>({ input0: '', input1: '' })
   const {
     data: [poolState, pool],
-  } = usePair(_pool.chainId as SushiSwapV2ChainId, token0, token1)
+  } = useSushiSwapV2Pool(_pool.chainId as SushiSwapV2ChainId, token0, token1)
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
     return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
@@ -32,7 +32,7 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
 
   const onChangeToken0TypedAmount = useCallback(
     (value: string) => {
-      if (poolState === PairState.NOT_EXISTS) {
+      if (poolState === SushiSwapV2PoolState.NOT_EXISTS) {
         setTypedAmounts((prev) => ({
           ...prev,
           input0: value,
@@ -50,7 +50,7 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
 
   const onChangeToken1TypedAmount = useCallback(
     (value: string) => {
-      if (poolState === PairState.NOT_EXISTS) {
+      if (poolState === SushiSwapV2PoolState.NOT_EXISTS) {
         setTypedAmounts((prev) => ({
           ...prev,
           input1: value,
@@ -82,8 +82,8 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
         onInput1={onChangeToken1TypedAmount}
       >
         <Checker.Connect fullWidth>
-          <Checker.Custom
-            guardWhen={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
+          <Checker.Guard
+            guardWhen={isMounted && [SushiSwapV2PoolState.NOT_EXISTS, SushiSwapV2PoolState.INVALID].includes(poolState)}
             guardText="Pool not found"
           >
             <Checker.Network fullWidth chainId={_pool.chainId}>
@@ -111,7 +111,7 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                 </Checker.ApproveERC20>
               </Checker.Amounts>
             </Checker.Network>
-          </Checker.Custom>
+          </Checker.Guard>
         </Checker.Connect>
       </AddSectionWidget>
       <AddSectionReviewModalLegacy

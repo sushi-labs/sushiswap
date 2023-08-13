@@ -4,29 +4,30 @@ import { IconComponent } from '../../types'
 
 export const CheckMarkIcon: IconComponent = (props) => {
   return (
-    <svg {...props} version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true">
       <circle
-        className="animate-[dash_1.5s_ease-in_forwards] text-blue"
-        fill="none"
-        strokeDasharray={1000}
-        strokeDashoffset={0}
+        fillOpacity="0"
+        className="circle animate-grow origin-center text-green"
         stroke="currentColor"
-        strokeWidth="3"
-        strokeLinecap="round"
-        cx="65.1"
-        cy="65.1"
-        r="60.1"
+        strokeWidth={16}
+        fill="currentColor"
+        cx="24"
+        cy="24"
+        r="22"
       />
-      <polyline
-        strokeDasharray={1000}
-        strokeDashoffset={-100}
-        className="animate-[dash-check_2s_0.5s_ease-in_forwards] text-blue"
+      <path
+        className="tick animate-draw"
         fill="none"
-        stroke="currentColor"
-        strokeWidth="3"
+        stroke="#FFF"
+        strokeOpacity={0}
+        strokeDasharray={29}
+        strokeDashoffset={29}
+        strokeWidth="6"
         strokeLinecap="round"
         strokeLinejoin="round"
-        points="100.2,40.2 51.5,88.8 29.8,67.5 "
+        strokeMiterlimit="10"
+        d="M14 27l5.917 4.917L34 17"
+        style={{ animationDelay: '600ms' }}
       />
     </svg>
   )

@@ -73,6 +73,10 @@ export class Token extends Currency {
     return this
   }
 
+  // public get tokenURI(): string {
+  //   return `tokens/${this.chainId}/${this.address}.jpg`
+  // }
+
   /**
    * Serialize to JSON object
    */

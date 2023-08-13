@@ -1,27 +1,41 @@
-import { TransactionRequest } from '@ethersproject/providers'
-import { PaperAirplaneIcon } from '@heroicons/react/outline'
+import { ArrowRightIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
+import {
+  DialogConfirm,
+  DialogFooter,
+  DialogProvider,
+  DialogReview,
+  DialogTitle,
+  DialogTrigger,
+  TextField,
+} from '@sushiswap/ui'
+import { DialogContent, DialogDescription, DialogHeader, Label } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { Dialog } from '@sushiswap/ui/components/dialog/Dialog'
 import { Dots } from '@sushiswap/ui/components/dots'
-import { Text } from '@sushiswap/ui/components/input/Text'
 import { createToast } from '@sushiswap/ui/components/toast'
-import { _useSendTransaction as useSendTransaction, useAccount, useContract, useEnsAddress } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import {
+  useAccount,
+  useEnsAddress,
+  usePrepareSendTransaction,
+  useSendTransaction,
+  useWaitForTransaction,
+} from '@sushiswap/wagmi'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import React, { FC, useCallback, useMemo, useState } from 'react'
+import { Abi, Address, encodeFunctionData, isAddress } from 'viem'
 
 import { Stream, Vesting } from '../lib'
 
 interface TransferModalProps {
   stream?: Stream | Vesting
-  abi: NonNullable<Parameters<typeof useContract>['0']>['abi']
-  address: string
+  abi: Abi
+  address: Address
   fn?: string
   chainId: ChainId
-  children?({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }): ReactNode
 }
 
 export const TransferModal: FC<TransferModalProps> = ({
@@ -30,39 +44,33 @@ export const TransferModal: FC<TransferModalProps> = ({
   address: contractAddress,
   fn = 'transferFrom',
   chainId,
-  children,
 }) => {
   const { address } = useAccount()
-  const [open, setOpen] = useState(false)
   const [recipient, setRecipient] = useState<string>('')
 
   const type = stream instanceof Vesting ? 'Vest' : 'Stream'
 
-  const contract = useContract({
-    address: contractAddress,
-    abi: abi,
-  })
   const { data: resolvedAddress } = useEnsAddress({
     name: recipient,
     chainId: ChainId.ETHEREUM,
+    enabled: Boolean(recipient.includes('.eth')),
   })
 
-  const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!stream || !address || !recipient || !resolvedAddress) return
+  const recipientAddress = isAddress(recipient) ? recipient : resolvedAddress
 
-      setRequest({
-        from: address,
-        to: contractAddress,
-        data: contract?.interface.encodeFunctionData(fn, [address, resolvedAddress, stream?.id]),
-      })
-    },
-    [stream, address, recipient, resolvedAddress, contractAddress, contract?.interface, fn]
-  )
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    if (!stream || !address || !recipientAddress) return
+
+    return {
+      from: address,
+      to: contractAddress,
+      data: encodeFunctionData({ abi, functionName: fn, args: [address, recipientAddress, stream?.id] }),
+    }
+  }, [stream, address, recipientAddress, contractAddress, abi, fn])
 
   const onSettled = useCallback(
     async (data: SendTransactionResult | undefined) => {
-      if (!data || !resolvedAddress || !address) return
+      if (!data || !recipientAddress || !address) return
 
       const ts = new Date().getTime()
       void createToast({
@@ -72,93 +80,117 @@ export const TransferModal: FC<TransferModalProps> = ({
         chainId,
         timestamp: ts,
         groupTimestamp: ts,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Transferring ${type}`,
-          completed: `Successfully transferred ${type} to ${shortenAddress(resolvedAddress)}`,
+          completed: `Successfully transferred ${type} to ${shortenAddress(recipientAddress)}`,
           failed: `Something went wrong transferring the ${type}`,
         },
       })
     },
-    [address, chainId, resolvedAddress, type]
+    [address, chainId, recipientAddress, type]
   )
 
-  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
     chainId,
-    prepare,
-    onSettled,
-    onSuccess() {
-      setOpen(false)
-    },
-    enabled: Boolean(stream && address && recipient && resolvedAddress),
+    enabled: Boolean(stream && address && recipient && recipientAddress),
   })
 
-  if (!stream || stream?.isEnded || !stream?.canTransfer(address) || !stream?.remainingAmount?.greaterThan(ZERO))
-    return <></>
+  const {
+    sendTransactionAsync,
+    data,
+    isLoading: isWritePending,
+  } = useSendTransaction({
+    ...config,
+    onSettled,
+  })
+
+  const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
+
+  if (!stream) return <></>
 
   return (
-    <>
-      {typeof children === 'function' ? (
-        children({ setOpen })
-      ) : (
-        <Button
-          fullWidth
-          icon={PaperAirplaneIcon}
-          iconProps={{ className: 'transform rotate-45 mt-[-4px] ml-0.5' }}
-          onClick={() => setOpen(true)}
-        >
-          Transfer
-        </Button>
-      )}
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="space-y-4 !pb-3 !bg-white dark:!bg-slate-800">
-          <Dialog.Header title="Transfer Stream" onClose={() => setOpen(false)} />
-          <div className="text-gray-700 dark:text-slate-400">
-            This will transfer a {type.toLowerCase()} consisting of{' '}
-            <span className="font-medium text-gray-900 dark:text-slate-200">
-              {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount?.currency.symbol}
-            </span>{' '}
-            to the entered recipient.
-            <p className="mt-2">
-              Please note that this will transfer ownership of the entire {type.toLowerCase()} to the recipient. You
-              will not be able to withdraw from this {type.toLowerCase()} after transferring
-            </p>
-          </div>
-          <Text
-            label="Address"
-            value={recipient}
-            onChange={(val) => setRecipient(`${val}`)}
-            id="ens-input"
-            testdata-id="transfer-recipient-input"
-          />
-          <Checker.Connect fullWidth>
-            <Checker.Network fullWidth chainId={chainId}>
+    <DialogProvider>
+      <DialogReview>
+        {({ confirm }) => (
+          <>
+            <DialogTrigger asChild>
               <Button
-                size="xl"
-                fullWidth
+                variant="secondary"
+                testId={`${type.toLowerCase()}-transfer`}
                 disabled={
-                  isWritePending ||
-                  !resolvedAddress ||
-                  resolvedAddress.toLowerCase() === stream?.recipient.id.toLowerCase() ||
-                  !sendTransaction
+                  stream?.isEnded || !stream?.canTransfer(address) || !stream?.remainingAmount?.greaterThan(ZERO)
                 }
-                onClick={() => sendTransaction?.()}
-                testId="transfer-confirmation"
+                icon={ArrowRightIcon}
               >
-                {isWritePending ? (
-                  <Dots>Confirm Transfer</Dots>
-                ) : resolvedAddress?.toLowerCase() === stream?.recipient.id.toLowerCase() ? (
-                  'Invalid recipient'
-                ) : !resolvedAddress ? (
-                  'Enter recipient'
-                ) : (
-                  'Transfer'
-                )}
+                Transfer
               </Button>
-            </Checker.Network>
-          </Checker.Connect>
-        </Dialog.Content>
-      </Dialog>
-    </>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Transfer stream</DialogTitle>
+                <DialogDescription>
+                  This will transfer a {type.toLowerCase()} consisting of{' '}
+                  <span className="font-medium text-gray-900 dark:text-slate-200">
+                    {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount?.currency.symbol}
+                  </span>{' '}
+                  to the entered recipient. Please note that this will transfer ownership of the entire{' '}
+                  {type.toLowerCase()} to the recipient. You will not be able to withdraw from this {type.toLowerCase()}{' '}
+                  after transferring
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex flex-col gap-4">
+                <Label>Recipient</Label>
+                <TextField
+                  type="text"
+                  value={recipient}
+                  onValueChange={setRecipient}
+                  testdata-id="transfer-recipient-input"
+                  placeholder="0x..."
+                />
+              </div>
+              <DialogFooter>
+                <Checker.Connect fullWidth>
+                  <Checker.Network fullWidth chainId={chainId}>
+                    <Button
+                      size="xl"
+                      fullWidth
+                      disabled={
+                        isWritePending ||
+                        !recipientAddress ||
+                        recipientAddress?.toLowerCase() === stream?.recipient.id.toLowerCase() ||
+                        !sendTransactionAsync
+                      }
+                      onClick={() => sendTransactionAsync?.().then(() => confirm())}
+                      testId="transfer-confirmation"
+                    >
+                      {isWritePending ? (
+                        <Dots>Confirm Transfer</Dots>
+                      ) : recipientAddress?.toLowerCase() === stream?.recipient.id.toLowerCase() ? (
+                        'Invalid recipient'
+                      ) : !recipientAddress ? (
+                        'Enter recipient'
+                      ) : (
+                        'Transfer'
+                      )}
+                    </Button>
+                  </Checker.Network>
+                </Checker.Connect>
+              </DialogFooter>
+            </DialogContent>
+          </>
+        )}
+      </DialogReview>
+      <DialogConfirm
+        chainId={chainId}
+        status={status}
+        testId={`update-${type.toLowerCase()}-confirmation-modal`}
+        successMessage={`Successfully transferred ${type.toLowerCase()} to ${
+          recipientAddress ? shortenAddress(recipientAddress) : ''
+        }`}
+        txHash={data?.hash}
+      />
+    </DialogProvider>
   )
 }

@@ -21,7 +21,6 @@ import {
 import { RP2MerkleTreeClaimSchema } from '@sushiswap/wagmi/future/hooks/exploits/constants'
 import { RP2ClaimChainId } from '@sushiswap/wagmi/future/hooks/exploits/types'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
-import { BigNumber } from 'ethers'
 import React, { FC, useMemo } from 'react'
 import { z } from 'zod'
 
@@ -49,7 +48,7 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
   })
 
   const amount = useMemo(
-    () => (token ? Amount.fromRawAmount(token, BigNumber.from(claim.amount).toString()) : undefined),
+    () => (token ? Amount.fromRawAmount(token, claim.amount.toString()) : undefined),
     [claim.amount, token]
   )
 

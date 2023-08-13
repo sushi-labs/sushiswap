@@ -298,7 +298,7 @@ query CurrentBlock($first: Int = 1000, $skip: Int = 0) {
 }
 
 query SteerVaults($first: Int = 1000, $skip: Int = 0) {
-  vaults(first: $first, skip: $skip) {
+  vaults: Steer_vaults(first: $first, skip: $skip) {
     id
     feeTier
     reserve0: totalAmount0
@@ -310,6 +310,11 @@ query SteerVaults($first: Int = 1000, $skip: Int = 0) {
       id
       executionBundle
       name # "Elastic Expansion Strategy"
+
+      creator {
+        id
+      }
+      admin
     #   # creator: {
     #   #     id
     #   # }
@@ -328,5 +333,7 @@ query SteerVaults($first: Int = 1000, $skip: Int = 0) {
     token1
     fees0
     fees1
+
+    manager: vaultManager
   }
 }

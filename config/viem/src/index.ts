@@ -41,7 +41,7 @@ import {
   //  taraxa,
   // taraxaTestnet,
   telos,
-  //  zkSync,
+  zkSync,
   // zkSyncTestnet,
 } from 'viem/chains'
 
@@ -550,35 +550,126 @@ const thundercore = {
   },
 } as const
 
+const haqq = {
+  id: ChainId.HAQQ,
+  name: 'Haqq',
+  network: 'haqq',
+  nativeCurrency: { name: 'Islam', symbol: 'ISLM', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.eth.haqq.network'],
+    },
+    public: {
+      http: ['https://rpc.eth.haqq.network'],
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xfe2D04A5018AC1B366F599A13BF4e0C760b2aE6b',
+      blockCreated: 6589598,
+    },
+  },
+} as const
+
+export const core = {
+  id: ChainId.CORE,
+  name: 'Core',
+  network: 'core',
+  nativeCurrency: { name: 'Core', symbol: 'CORE', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.coredao.org', 'https://rpc-core.icecreamswap.com'],
+    },
+    public: {
+      http: ['https://rpc.coredao.org', 'https://rpc-core.icecreamswap.com'],
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xC4b2e1718E850535A0f3e79F7fC522d966821688',
+      blockCreated: 5087121,
+    },
+  },
+} as const
+
+const linea = {
+  id: ChainId.LINEA,
+  name: 'Linea',
+  network: 'linea',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.linea.build'],
+    },
+    public: {
+      http: ['https://rpc.linea.build'],
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 42,
+    },
+  },
+} as const
+
+export const base = {
+  id: ChainId.BASE,
+  name: 'Base',
+  network: 'base',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://developer-access-mainnet.base.org'],
+    },
+    public: {
+      http: ['https://developer-access-mainnet.base.org'],
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 5022,
+    },
+  },
+} as const
+
 const alchemyId = process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
+const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
 
 export const config: Record<number, PublicClientConfig> = {
   [ChainId.ARBITRUM_NOVA]: {
     chain: arbitrumNova,
-    transport: http(arbitrumNova.rpcUrls.default.http[0]),
+    transport: fallback(
+      [
+        // http(arbitrumNova.rpcUrls.default.http[0]),
+        http(`https://lb.drpc.org/ogrpc?network=arbitrum-nova&dkey=${drpcId}`),
+      ],
+      { rank: true }
+    ),
   },
   [ChainId.ARBITRUM]: {
     chain: arbitrum,
     transport: fallback(
       [
         http(`${arbitrum.rpcUrls.alchemy.http}/${alchemyId}`),
-        // http('https://lb.drpc.org/ogrpc?network=arbitrum&dkey=Ak765fp4zUm6uVwKu4annC8M80dnCZkR7pAEsm6XXi_w'),
-        // http('https://rpc.ankr.com/arbitrum'),
-        // http('https://arbitrum-one.public.blastapi.io'),
-        // http('https://endpoints.omniatech.io/v1/arbitrum/one/public'),
-        // http('https://arb1.croswap.com/rpc'),
-        // http('https://1rpc.io/arb'),
-        // http('https://arbitrum.blockpi.network/v1/rpc/public'),
-        // http('https://arb-mainnet-public.unifra.io'),
+        http(`https://lb.drpc.org/ogrpc?network=arbitrum&dkey=${drpcId}`),
       ],
       { rank: true }
     ),
   },
   [ChainId.AVALANCHE]: {
     chain: avalanche,
-    transport: fallback([http(avalanche.rpcUrls.default.http[0]), http('https://rpc.ankr.com/avalanche')], {
-      rank: true,
-    }),
+    transport: fallback(
+      [
+        http(`https://lb.drpc.org/ogrpc?network=avalanche&dkey=${drpcId}`),
+        // http('https://rpc.ankr.com/avalanche'),
+        // http(avalanche.rpcUrls.default.http[0])
+      ],
+      {
+        rank: false,
+      }
+    ),
   },
   [ChainId.BOBA]: {
     chain: boba,
@@ -602,11 +693,8 @@ export const config: Record<number, PublicClientConfig> = {
     chain: bsc,
     transport: fallback(
       [
-        http(bsc.rpcUrls.default.http[0]),
-        // http('https://lb.drpc.org/ogrpc?network=bsc&dkey=Ak765fp4zUm6uVwKu4annC8M80dnCZkR7pAEsm6XXi_w'),
-        http('https://bsc-dataseed.binance.org'),
-        http('https://bsc-dataseed1.binance.org'),
-        http('https://bsc-dataseed2.binance.org'),
+        //http(bsc.rpcUrls.default.http[0]),
+        http(`https://lb.drpc.org/ogrpc?network=bsc&dkey=${drpcId}`),
       ],
       {
         rank: true,
@@ -626,15 +714,7 @@ export const config: Record<number, PublicClientConfig> = {
     transport: fallback(
       [
         http(`${mainnet.rpcUrls.alchemy.http}/${alchemyId}`),
-        // http('https://lb.drpc.org/ogrpc?network=ethereum&dkey=Ak765fp4zUm6uVwKu4annC8M80dnCZkR7pAEsm6XXi_w'),
-        // http('https://eth.llamarpc.com'),
-        // http('https://eth.rpc.blxrbdn.com'),
-        // http('https://virginia.rpc.blxrbdn.com'),
-        // http('https://singapore.rpc.blxrbdn.com'),
-        // http('https://uk.rpc.blxrbdn.com'),
-        // http('https://1rpc.io/eth'),
-        // http('https://ethereum.publicnode.com'),
-        // http('https://cloudflare-eth.com'),
+        http(`https://lb.drpc.org/ogrpc?network=ethereum&dkey=${drpcId}`),
       ],
       { rank: true }
     ),
@@ -642,7 +722,12 @@ export const config: Record<number, PublicClientConfig> = {
   [ChainId.FANTOM]: {
     chain: fantom,
     transport: fallback(
-      [http(fantom.rpcUrls.default.http[0]), http('https://rpc.fantom.network'), http('https://rpc2.fantom.network')],
+      [
+        http(`https://lb.drpc.org/ogrpc?network=fantom&dkey=${drpcId}`),
+        // http(fantom.rpcUrls.default.http[0]),
+        // http('https://rpc.fantom.network'),
+        // http('https://rpc2.fantom.network')
+      ],
       {
         rank: true,
       }
@@ -654,9 +739,16 @@ export const config: Record<number, PublicClientConfig> = {
   },
   [ChainId.GNOSIS]: {
     chain: gnosis,
-    transport: fallback([http(gnosis.rpcUrls.default.http[0]), http('https://rpc.ankr.com/gnosis')], {
-      rank: true,
-    }),
+    transport: fallback(
+      [
+        http(`https://lb.drpc.org/ogrpc?network=gnosis&dkey=${drpcId}`),
+        // http(gnosis.rpcUrls.default.http[0]),
+        // http('https://rpc.ankr.com/gnosis')
+      ],
+      {
+        rank: true,
+      }
+    ),
   },
   [ChainId.HARMONY]: {
     chain: harmony,
@@ -692,12 +784,7 @@ export const config: Record<number, PublicClientConfig> = {
     transport: fallback(
       [
         http(`${optimism.rpcUrls.alchemy.http}/${alchemyId}`),
-        // http('https://lb.drpc.org/ogrpc?network=optimism&dkey=Ak765fp4zUm6uVwKu4annC8M80dnCZkR7pAEsm6XXi_w'),
-        // http('https://rpc.ankr.com/optimism'),
-        // http('https://optimism-mainnet.public.blastapi.io'),
-        // http('https://1rpc.io/op'),
-        // http('https://optimism.blockpi.network/v1/rpc/public'),
-        // http('https://mainnet.optimism.io'),
+        http(`https://lb.drpc.org/ogrpc?network=optimism&dkey=${drpcId}`),
       ],
       { rank: true }
     ),
@@ -707,17 +794,7 @@ export const config: Record<number, PublicClientConfig> = {
     transport: fallback(
       [
         http(`${polygon.rpcUrls.alchemy.http}/${alchemyId}`),
-        // http('https://polygon.llamarpc.com'),
-        // http('https://polygon.rpc.blxrbdn.com'),
-        // http('https://polygon-mainnet.public.blastapi.io'),
-        // http('https://polygon.blockpi.network/v1/rpc/public'),
-        // http('https://polygon-rpc.com'),
-        // http('https://rpc.ankr.com/polygon'),
-        // http('https://matic-mainnet.chainstacklabs.com'),
-        // http('https://polygon-bor.publicnode.com'),
-        // http('https://rpc-mainnet.matic.quiknode.pro'),
-        // http('https://rpc-mainnet.maticvigil.com'),
-        // ...polygon.rpcUrls.default.http.map((url) => http(url)),
+        http(`https://lb.drpc.org/ogrpc?network=polygon&dkey=${drpcId}`),
       ],
       { rank: true }
     ),
@@ -727,19 +804,34 @@ export const config: Record<number, PublicClientConfig> = {
     chain: polygonZkEvm,
     transport: fallback(
       [
-        // http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/${alchemyId}`),
-        http('https://zkevm-rpc.com'),
-        http('https://rpc.ankr.com/polygon_zkevm'),
-        http('https://rpc.polygon-zkevm.gateway.fm'),
+        http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/${alchemyId}`),
+        http(`https://lb.drpc.org/ogrpc?network=polygon-zkevm&dkey=${drpcId}`),
       ],
       { rank: true }
     ),
-    // transport: fallback([http(`${polygon.rpcUrls.alchemy.http}/${alchemyId}`), http('https://polygon.llamarpc.com')]),
   },
   [ChainId.THUNDERCORE]: {
     chain: thundercore,
     transport: fallback(
       thundercore.rpcUrls.default.http.map((url) => http(url)),
+      {
+        rank: true,
+      }
+    ),
+  },
+  [ChainId.HAQQ]: {
+    chain: haqq,
+    transport: fallback(
+      haqq.rpcUrls.default.http.map((url) => http(url)),
+      {
+        rank: true,
+      }
+    ),
+  },
+  [ChainId.CORE]: {
+    chain: core,
+    transport: fallback(
+      core.rpcUrls.default.http.map((url) => http(url)),
       {
         rank: true,
       }
@@ -767,5 +859,17 @@ export const config: Record<number, PublicClientConfig> = {
   [ChainId.HECO]: {
     chain: heco,
     transport: http(heco.rpcUrls.default.http[0]),
+  },
+  [ChainId.ZKSYNC_ERA]: {
+    chain: zkSync,
+    transport: http(zkSync.rpcUrls.default.http[0]),
+  },
+  [ChainId.LINEA]: {
+    chain: linea,
+    transport: http(linea.rpcUrls.default.http[0]),
+  },
+  [ChainId.BASE]: {
+    chain: base,
+    transport: fallback([http(`https://lb.drpc.org/ogrpc?network=base&dkey=${drpcId}`)]),
   },
 } as const

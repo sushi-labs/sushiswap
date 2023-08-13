@@ -1,11 +1,8 @@
-import { SplashController as UISplashController } from '@sushiswap/ui/components/SplashController'
+import { SplashController as _SplashController } from '@sushiswap/ui/components/SplashController'
+import { useAccount } from '@sushiswap/wagmi'
 import { FC, ReactNode } from 'react'
 
-import { useTokenState } from './token/TokenProvider'
-
-export const SplashController: FC<{ show: boolean; children: ReactNode }> = ({ show = true, children }) => {
-  const { token0, token1, toChainId, fromChainId } = useTokenState()
-  return (
-    <UISplashController show={show || !token0 || !token1 || !toChainId || !fromChainId}>{children}</UISplashController>
-  )
+export const SplashController: FC<{ children: ReactNode }> = ({ children }) => {
+  const { status } = useAccount()
+  return <_SplashController show={status === 'connecting' || status === 'reconnecting'}>{children}</_SplashController>
 }

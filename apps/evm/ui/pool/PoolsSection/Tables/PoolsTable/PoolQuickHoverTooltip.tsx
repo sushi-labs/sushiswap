@@ -45,16 +45,18 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
               <List.Label>per day</List.Label>
             </div>
             <List.Control className="bg-gray-100 dark:bg-slate-700">
-              {row.incentives.map((incentive) => (
-                <List.Item
-                  key={incentive.id}
-                  icon={Currency.Icon}
-                  iconProps={{
-                    currency: incentiveRewardToToken(row.chainId as ChainId, incentive),
-                  }}
-                  title={`${formatNumber(incentive.rewardPerDay)} ${incentive.rewardToken.symbol}`}
-                />
-              ))}
+              {row.incentives
+                .filter((incentive) => incentive.rewardPerDay > 0)
+                .map((incentive) => (
+                  <List.Item
+                    key={incentive.id}
+                    icon={Currency.Icon}
+                    iconProps={{
+                      currency: incentiveRewardToToken(row.chainId as ChainId, incentive),
+                    }}
+                    title={`${formatNumber(incentive.rewardPerDay)} ${incentive.rewardToken.symbol}`}
+                  />
+                ))}
             </List.Control>
           </List>
         </>

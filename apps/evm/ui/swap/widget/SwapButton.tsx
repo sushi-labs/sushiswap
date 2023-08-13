@@ -85,6 +85,7 @@ export const SwapButton: FC = () => {
         <div className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20">
           <input
             id="expert-checkbox"
+            testdata-id="price-impact-checkbox"
             type="checkbox"
             checked={checked}
             onChange={(e) => setChecked(e.target.checked)}

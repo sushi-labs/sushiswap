@@ -5,9 +5,10 @@ import { currencyFromShortCurrencyName, isShortCurrencyName, Native, Token, Type
 import { FeeAmount, isSushiSwapV3ChainId, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
-import { isAddress } from 'ethers/lib/utils'
+import { SUPPORTED_CHAIN_IDS } from 'config'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useState } from 'react'
+import { isAddress } from 'viem'
 import { z } from 'zod'
 
 export const queryParamsSchema = z.object({
@@ -50,6 +51,7 @@ export const ConcentratedLiquidityUrlStateContext = createContext<State>({} as S
 
 interface ConcentratedLiquidityURLStateProvider {
   children: ReactNode | ((state: State) => ReactNode)
+  supportedNetworks?: ChainId[]
 }
 
 const getTokenFromUrl = (
@@ -84,7 +86,10 @@ const getChainIdFromUrl = (
   return chainId
 }
 
-export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLStateProvider> = ({ children }) => {
+export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLStateProvider> = ({
+  children,
+  supportedNetworks = SUPPORTED_CHAIN_IDS,
+}) => {
   const { push } = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()!
@@ -105,7 +110,10 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
   const { chain } = useNetwork()
   const [chainId] = useState(chain?.id)
 
-  const _chainId = getChainIdFromUrl(chainIdFromUrl, chainId as ChainId)
+  const tmp = getChainIdFromUrl(chainIdFromUrl, chainId as ChainId)
+  const _chainId = supportedNetworks?.includes(tmp) ? tmp : ChainId.ETHEREUM
+
+  console.log({ _chainId, supportedNetworks })
 
   const { data: tokenFrom, isInitialLoading: isTokenFromLoading } = useTokenWithCache({
     chainId: _chainId,

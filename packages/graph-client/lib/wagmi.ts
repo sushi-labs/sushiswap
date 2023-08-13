@@ -1,11 +1,10 @@
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
-import { Address, configureChains, createClient, erc20ABI, readContract } from '@wagmi/core'
-import { BigNumber } from 'ethers'
+import { Address, configureChains, createConfig, erc20ABI, readContract } from '@wagmi/core'
 
-const { provider } = configureChains(allChains, allProviders)
+const { publicClient } = configureChains(allChains, allProviders)
 
-createClient({ provider })
+createConfig({ publicClient })
 
 export async function fetchBalances(
   args: { token: string; user: string; chainId: number }[]
@@ -42,14 +41,12 @@ export async function fetchBalances(
     return promiseSettledResults.map((promiseSettledResult, i) => {
       return {
         ...args[i],
-        value: isPromiseFulfilled(promiseSettledResult) ? promiseSettledResult.value : BigNumber.from(0),
+        value: isPromiseFulfilled(promiseSettledResult) ? promiseSettledResult.value : 0n,
       }
     })
   })
 
   return Object.fromEntries(
-    balances
-      // .filter(({ value }) => BigNumber.isBigNumber(value) && value.gt(0))
-      .map((balance) => [`${balance.chainId}:${balance.token}`, balance.value.toString()])
+    balances.map((balance) => [`${balance.chainId}:${balance.token}`, balance.value.toString()])
   )
 }

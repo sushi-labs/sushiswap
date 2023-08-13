@@ -454,3 +454,42 @@ export async function updatePoolsWithIncentivesTotalApr() {
     `LOAD - Updated ${updatedPools.length} pools with total APR (${((endTime - startTime) / 1000).toFixed(1)}s) `
   )
 }
+
+export async function updatePoolsWithSteerVaults() {
+  const client = await createClient()
+  const poolsWithSteerVaults = await client.sushiPool.findMany({
+    where: {
+      steerVaults: { some: {} },
+    },
+    include: {
+      steerVaults: {
+        include: {
+          pool: true,
+        },
+      },
+    },
+  })
+
+  const poolsToUpdate = poolsWithSteerVaults.map((pool) => {
+    const hasSteerVault = pool.steerVaults.some((steerVault) => steerVault.isEnabled)
+    const hadSteerVault = hasSteerVault || pool.steerVaults.some((steerVault) => steerVault.wasEnabled)
+
+    return client.sushiPool.update({
+      select: { id: true },
+      where: {
+        id: pool.id,
+      },
+      data: {
+        hasEnabledSteerVault: hasSteerVault,
+        hadEnabledSteerVault: hadSteerVault,
+      },
+    })
+  })
+
+  const startTime = performance.now()
+  const updatedPools = await Promise.all(poolsToUpdate)
+  const endTime = performance.now()
+  console.log(
+    `LOAD - Updated ${updatedPools.length} pools with steer vaults (${((endTime - startTime) / 1000).toFixed(1)}s) `
+  )
+}

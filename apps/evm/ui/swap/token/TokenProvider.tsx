@@ -14,9 +14,9 @@ import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
-import { isAddress } from 'ethers/lib/utils'
 import { useSearchParams } from 'next/navigation'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useState } from 'react'
+import { isAddress } from 'viem'
 
 import { queryParamsSchema } from '../../../lib/swap/queryParamsSchema'
 import { SwapChainId } from '../../../types'
@@ -35,12 +35,7 @@ interface TokenProvider {
   children: ReactNode
 }
 
-const getTokenFromUrl = (
-  chainId: ChainId,
-  currencyId: string | undefined,
-  token: Token | undefined,
-  isLoading: boolean
-) => {
+const getTokenFromUrl = (chainId: ChainId, currencyId: string | null, token: Token | undefined, isLoading: boolean) => {
   if (isLoading) {
     return undefined
   } else if (!currencyId) {
@@ -111,8 +106,25 @@ export const TokenProvider: FC<TokenProvider> = ({ children }) => {
   const state = useMemo(() => {
     const fromChainId = getChainIdFromUrl(_fromChainId, chainId as ChainId)
     const toChainId = getChainIdFromUrl(_toChainId, chainId as ChainId)
-    const token0 = getTokenFromUrl(fromChainId, _fromCurrency, tokenFrom, isTokenFromLoading)
-    const token1 = getTokenFromUrl(toChainId, _toCurrency, tokenTo, isTokenToLoading)
+    const token0 = _fromCurrency
+      ? getTokenFromUrl(fromChainId, _fromCurrency, tokenFrom, isTokenFromLoading)
+      : Native.onChain(fromChainId)
+    const token1 = _toCurrency
+      ? getTokenFromUrl(toChainId, _toCurrency, tokenTo, isTokenToLoading)
+      : defaultQuoteCurrency[toChainId as keyof typeof defaultQuoteCurrency]
+
+    // console.log({
+    //   token0,
+    //   fromChainId,
+    //   _fromCurrency,
+    //   tokenFrom,
+    //   isTokenFromLoading,
+    //   token1,
+    //   toChainId,
+    //   _toCurrency,
+    //   tokenTo,
+    //   isTokenToLoading,
+    // })
 
     return {
       token0,

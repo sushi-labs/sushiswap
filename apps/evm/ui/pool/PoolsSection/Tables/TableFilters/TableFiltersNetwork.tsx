@@ -1,6 +1,6 @@
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Button } from '@sushiswap/ui/components/button'
-import { Command, CommandEmpty, CommandGroup, CommandItem } from '@sushiswap/ui/components/command'
+import { Command, CommandGroup, CommandItem } from '@sushiswap/ui/components/command'
 import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
 import { PopoverContent, PopoverNew, PopoverTrigger } from '@sushiswap/ui/components/popovernew'
 import { SelectIcon } from '@sushiswap/ui/components/select'

@@ -1,6 +1,7 @@
 import { expect, Page, test } from '@playwright/test'
 import { Token, USDC_ADDRESS } from '@sushiswap/currency'
 import { addWeeks, getUnixTime, subWeeks } from 'date-fns'
+
 import {
   createSingleVest,
   createSnapshot,
@@ -17,6 +18,7 @@ if (!process.env.CHAIN_ID) {
 }
 
 let SNAPSHOT_ID = '0x0'
+const BASE_URL = process.env.PLAYWRIGHT_URL || 'http://localhost:3000/furo'
 const CHAIN_ID = parseInt(process.env.CHAIN_ID)
 const VEST_ID = '100'
 const RECIPIENT = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
@@ -67,7 +69,7 @@ test.describe('Vest', () => {
 async function withdrawVest(page: Page) {
   await mockSubgraph(page)
 
-  const url = (process.env.PLAYWRIGHT_URL as string).concat(`/vesting/${CHAIN_ID}:${VEST_ID}`)
+  const url = BASE_URL.concat(`/vesting/${CHAIN_ID}:${VEST_ID}`)
   await page.goto(url)
   await switchNetwork(page, CHAIN_ID)
 
@@ -81,13 +83,12 @@ async function withdrawVest(page: Page) {
   await expect(confirmWithdrawalLocator).toBeEnabled()
   await confirmWithdrawalLocator.click()
 
-  const expectedText = `(Successfully withdrawn .* ${USDC.symbol})`
-  const regex = new RegExp(expectedText)
-  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+  const regex = new RegExp(`(Successfully withdrawn .* ${USDC.symbol})`)
+  expect(page.getByText(regex))
 }
 
 async function transferVest(page: Page, recipient: string) {
-  const url = (process.env.PLAYWRIGHT_URL as string).concat(`/vesting/${CHAIN_ID}:${VEST_ID}`)
+  const url = BASE_URL.concat(`/vesting/${CHAIN_ID}:${VEST_ID}`)
   await mockSubgraph(page)
   await page.goto(url)
   await switchNetwork(page, CHAIN_ID)
@@ -105,13 +106,12 @@ async function transferVest(page: Page, recipient: string) {
   await expect(confirmTransferLocator).toBeEnabled()
   await confirmTransferLocator.click()
 
-  const expectedText = '(Successfully transferred Vest to *.)'
-  const regex = new RegExp(expectedText)
-  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+  const regex = new RegExp('(Successfully transferred Vest to *.)')
+  expect(page.getByText(regex))
 }
 
 async function cancelVest(page: Page) {
-  const url = (process.env.PLAYWRIGHT_URL as string).concat(`/vesting/${CHAIN_ID}:${VEST_ID}`)
+  const url = BASE_URL.concat(`/vesting/${CHAIN_ID}:${VEST_ID}`)
   await mockSubgraph(page)
   await page.goto(url)
   await switchNetwork(page, CHAIN_ID)
@@ -125,9 +125,8 @@ async function cancelVest(page: Page) {
   await expect(confirmTransferLocator).toBeEnabled()
   await confirmTransferLocator.click()
 
-  const expectedText = '(Successfully cancelled Vest)'
-  const regex = new RegExp(expectedText)
-  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+  const text = 'Successfully cancelled vest'
+  expect(page.getByText(text))
 }
 async function mockSubgraph(page: Page) {
   await page.route('https://api.thegraph.com/subgraphs/name/sushi-subgraphs/furo-polygon', async (route, request) => {

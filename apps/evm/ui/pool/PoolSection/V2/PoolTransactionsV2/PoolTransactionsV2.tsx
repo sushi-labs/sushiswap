@@ -56,7 +56,7 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool, poolId }
 
   return (
     <div>
-      <RadioGroup value={type} onChange={setType} className="flex gap-1 mb-6 justify-end px-2">
+      <RadioGroup value={type} onChange={setType} className="flex justify-end gap-1 px-2 mb-6">
         <RadioGroup.Option value={TransactionType.Swap}>
           {({ checked }) => (
             <Toggle size="sm" pressed={checked}>
@@ -92,7 +92,6 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool, poolId }
         page={pageIndex}
         hasPrev={pageIndex > 0}
         onNext={() => setPageIndex(pageIndex + 1)}
-        onPage={() => {}}
         hasNext={pageIndex < PAGE_COUNT - 1 && !!data && data?.length > (pageIndex + 1) * PAGE_SIZE}
         onPrev={() => setPageIndex(pageIndex - 1)}
         pageSize={PAGE_SIZE}

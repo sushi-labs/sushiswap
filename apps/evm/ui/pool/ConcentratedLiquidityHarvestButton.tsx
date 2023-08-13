@@ -1,4 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber'
 import { ChainId } from '@sushiswap/chain'
 import { useAngleRewards } from '@sushiswap/react-query'
 import { Address } from '@sushiswap/wagmi'
@@ -29,7 +28,7 @@ export const ConcentratedLiquidityHarvestButton: FC<ConcentratedLiquidityHarvest
     const tokens: Address[] = Object.keys(rewards.transactionData)
       .filter((k) => rewards.transactionData[k].proof !== undefined)
       .map((el) => el as Address)
-    const claims: BigNumber[] = tokens.map((t) => BigNumber.from(rewards.transactionData[t].claim))
+    const claims: bigint[] = tokens.map((t) => BigInt(rewards.transactionData[t].claim))
     const proofs: Address[][] = tokens.map((t) => rewards.transactionData[t].proof as Address[])
 
     return {

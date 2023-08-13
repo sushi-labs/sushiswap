@@ -1,6 +1,7 @@
 'use client'
 
 import { ChainId } from '@sushiswap/chain'
+import { AppearOnMount } from '@sushiswap/ui'
 
 import { HeaderNetworkSelector } from './HeaderNetworkSelector'
 import { UserProfile } from './UserProfile'
@@ -19,7 +20,9 @@ export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
   return (
     <>
       <HeaderNetworkSelector networks={chainIds} selectedNetwork={selectedNetwork} onChange={onChange} />
-      <UserProfile networks={chainIds} />
+      <AppearOnMount>
+        <UserProfile networks={chainIds} />
+      </AppearOnMount>
     </>
   )
 }

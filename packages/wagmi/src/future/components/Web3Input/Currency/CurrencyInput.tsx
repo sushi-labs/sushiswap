@@ -1,20 +1,17 @@
-import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { ChainId } from '@sushiswap/chain'
 import { Token, tryParseAmount, Type } from '@sushiswap/currency'
-import { classNames } from '@sushiswap/ui'
+import { usePrice } from '@sushiswap/react-query'
+import { Button, classNames, SelectIcon, TextField } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
-import { Input } from '@sushiswap/ui/components/input'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
-
+import dynamic from 'next/dynamic'
 import { FC, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useAccount } from 'wagmi'
 
+import { useBalanceWeb3 } from '../../../hooks'
 import { TokenSelector } from '../../TokenSelector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
-import { usePrice } from '@sushiswap/react-query'
-import { useBalanceWeb3 } from '../../../hooks'
-import dynamic from 'next/dynamic'
 
 export interface CurrencyInputProps {
   id?: string
@@ -32,6 +29,10 @@ export interface CurrencyInputProps {
   fetching?: boolean
   currencyLoading?: boolean
   currencies?: Record<string, Token>
+  allowNative?: boolean
+  error?: string
+  hidePinnedTokens?: boolean
+  hideSearch?: boolean
 }
 
 export const Component: FC<CurrencyInputProps> = ({
@@ -47,9 +48,12 @@ export const Component: FC<CurrencyInputProps> = ({
   usdPctChange,
   disableMaxButton = false,
   type,
-  fetching,
   currencyLoading,
   currencies,
+  allowNative = true,
+  error,
+  hidePinnedTokens = false,
+  hideSearch = false,
 }) => {
   const { address } = useAccount()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -85,76 +89,82 @@ export const Component: FC<CurrencyInputProps> = ({
   }, [currency])
 
   const isLoading = loading || currencyLoading || isBalanceLoading
+  const _error = error ? error : insufficientBalance ? 'Exceeds Balance' : undefined
+
+  const selector = useMemo(() => {
+    if (!onSelect) return null
+
+    return (
+      <TokenSelector
+        id={`${id}-token-selector`}
+        currencies={currencies}
+        selected={currency}
+        chainId={chainId}
+        onSelect={onSelect}
+        includeNative={allowNative}
+        hidePinnedTokens={hidePinnedTokens}
+        hideSearch={hideSearch}
+      >
+        <Button
+          size="lg"
+          variant={currency ? 'secondary' : 'default'}
+          id={id}
+          type="button"
+          className={classNames(currency ? 'pl-2 pr-3 text-xl' : '', '!rounded-full')}
+        >
+          {currency ? (
+            <>
+              <div className="w-[28px] h-[28px] mr-0.5">
+                <Currency.Icon disableLink currency={currency} width={28} height={28} />
+              </div>
+              {currency.symbol}
+              <SelectIcon />
+            </>
+          ) : (
+            'Select token'
+          )}
+        </Button>
+      </TokenSelector>
+    )
+  }, [id, onSelect, currencies, currency, chainId, allowNative, hidePinnedTokens, hideSearch])
 
   return (
     <div
+      onClick={focusInput}
       className={classNames(
-        fetching && type === 'OUTPUT' ? 'shimmer-fast' : '',
-        insufficientBalance ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
+        _error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
         'space-y-2 overflow-hidden pb-2',
         className
       )}
-      onClick={focusInput}
     >
       <div className="relative flex items-center gap-4">
-        {isLoading ? (
-          <div className="flex gap-1 items-center justify-between flex-grow h-[44px]">
-            <SkeletonBox className="w-1/2 h-[32px] rounded-lg" />
-          </div>
-        ) : (
-          <Input.Numeric
-            label="input"
-            id={`${id}-input`}
-            testdata-id={`${id}-input`}
-            ref={inputRef}
-            variant="unstyled"
-            disabled={disabled}
-            onUserInput={onChange}
-            className={classNames(
-              'p-0 bg-transparent w-full truncate without-ring !text-3xl py-1 font-medium text-base'
-            )}
-            value={value}
-            readOnly={disabled}
-            maxDecimals={currency?.decimals}
-          />
-        )}
-        {onSelect && (
-          <TokenSelector
-            id={`${id}-token-selector`}
-            currencies={currencies}
-            selected={currency}
-            chainId={chainId}
-            onSelect={onSelect}
-          >
-            {({ setOpen }) => (
-              <button
-                id={`${id}-button`}
-                type="button"
-                testdata-id={`${id}-button`}
-                onClick={(e) => {
-                  setOpen(true)
-                  e.stopPropagation()
-                }}
-                className={classNames(
-                  'flex items-center gap-1.5 text-xl py-1.5 pl-[6px] pr-3 rounded-full font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12] whitespace-nowrap'
-                )}
-              >
-                {currency ? (
-                  <>
-                    <div className="w-[28px] h-[28px] mr-0.5">
-                      <Currency.Icon disableLink currency={currency} width={28} height={28} />
-                    </div>
-                    {currency.symbol}
-                    <ChevronDownIcon className="ml-0.5" strokeWidth={3} width={16} height={16} />
-                  </>
-                ) : (
-                  'Select'
-                )}
-              </button>
-            )}
-          </TokenSelector>
-        )}
-        {!onSelect && (
+        <div
+          data-state={isLoading ? 'active' : 'inactive'}
+          className={classNames(
+            'data-[state=inactive]:hidden data-[state=active]:flex',
+            'gap-1 items-center justify-between flex-grow h-[44px]'
+          )}
+        >
+          <SkeletonBox className="w-1/2 h-[32px] rounded-lg" />
+        </div>
+        <TextField
+          testdata-id={`${id}-input`}
+          type="number"
+          ref={inputRef}
+          variant="naked"
+          disabled={disabled}
+          onValueChange={onChange}
+          value={value}
+          readOnly={disabled}
+          maxDecimals={currency?.decimals}
+          data-state={isLoading ? 'inactive' : 'active'}
+          className={classNames(
+            'data-[state=inactive]:hidden data-[state=active]:flex',
+            'p-0 py-1 !text-3xl font-medium'
+          )}
+        />
+        {selector}
+        {!onSelect ? (
           <div
             id={`${id}-button`}
             className={classNames(
@@ -172,14 +182,14 @@ export const Component: FC<CurrencyInputProps> = ({
               <span className="text-gray-400 dark:text-slate-500">No token selected</span>
             )}
           </div>
-        )}
+        ) : null}
       </div>
       <div className="flex flex-row items-center justify-between h-[36px]">
         <PricePanel
           value={value}
           currency={currency}
           usdPctChange={usdPctChange}
-          error={insufficientBalance ? 'Exceeds Balance' : undefined}
+          error={_error}
           loading={isLoading || isPriceLoading}
           price={price}
         />

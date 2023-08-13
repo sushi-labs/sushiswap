@@ -1,5 +1,6 @@
+import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { useDebounce } from '@sushiswap/hooks'
-import { Search } from '@sushiswap/ui/components/input/Search'
+import { TextField } from '@sushiswap/ui'
 import React, { FC, useEffect, useState } from 'react'
 
 import { useFilters } from './FilterProvider'
@@ -30,5 +31,14 @@ export const SearchFilter: FC = () => {
     }
   }, [extra, setFilters])
 
-  return <Search id="search" value={_query} loading={false} onValueChange={setQuery} className="max-w-full" />
+  return (
+    <TextField
+      placeholder="Search by token or address"
+      icon={MagnifyingGlassIcon}
+      type="text"
+      id="search"
+      value={_query}
+      onValueChange={setQuery}
+    />
+  )
 }
