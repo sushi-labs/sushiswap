@@ -8,7 +8,7 @@ import {
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type as Currency, Type, WNATIVE } from '@sushiswap/currency'
 import { RouteStatus } from '@sushiswap/tines'
-import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
+import { isTridentConstantPoolFactoryChainId, isTridentStablePoolFactoryChainId } from '@sushiswap/trident-sdk'
 import { SUSHISWAP_V2_FACTORY_ADDRESS } from '@sushiswap/v2-sdk'
 import { FetchFeeDataResult } from 'wagmi/actions'
 
@@ -55,7 +55,7 @@ export const getClientTrade = async ({
     if (tradeType === TradeType.EXACT_INPUT) {
       if (
         chainId in SUSHISWAP_V2_FACTORY_ADDRESS &&
-        (isConstantProductPoolFactoryChainId(chainId) || isStablePoolFactoryChainId(chainId))
+        (isTridentConstantPoolFactoryChainId(chainId) || isTridentStablePoolFactoryChainId(chainId))
       ) {
         const legacyRoute = findSingleRouteExactIn(
           currencyIn.wrapped,

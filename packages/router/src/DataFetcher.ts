@@ -2,7 +2,7 @@ import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
-import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
+import { isTridentConstantPoolFactoryChainId, isTridentStablePoolFactoryChainId } from '@sushiswap/trident-sdk'
 import { config } from '@sushiswap/viem-config'
 import { createPublicClient, http, PublicClient } from 'viem'
 
@@ -31,7 +31,7 @@ import { UniswapV3Provider } from './liquidity-providers/UniswapV3'
 import type { PoolCode } from './pools/PoolCode'
 
 // import { create } from 'viem'
-const isTest = process.env['NODE_ENV'] === 'test' || process.env['NEXT_PUBLIC_TEST'] === 'true'
+const isTest = process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_TEST === 'true'
 
 // Gathers pools info, creates routing in 'incremental' mode
 // This means that new routing recalculates each time new pool fetching data comes
@@ -110,7 +110,7 @@ export class DataFetcher {
     if (
       this._providerIsIncluded(LiquidityProviders.Trident, providers) &&
       isBentoBoxV1ChainId(this.chainId) &&
-      (isConstantProductPoolFactoryChainId(this.chainId) || isStablePoolFactoryChainId(this.chainId))
+      (isTridentConstantPoolFactoryChainId(this.chainId) || isTridentStablePoolFactoryChainId(this.chainId))
     ) {
       try {
         const provider = new TridentProvider(this.chainId, this.web3Client, this.databaseClient)

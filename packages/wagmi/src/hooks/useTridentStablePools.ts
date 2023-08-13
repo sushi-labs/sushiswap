@@ -2,7 +2,7 @@ import { tridentStablePoolAbi, tridentStablePoolFactoryAbi } from '@sushiswap/ab
 import { computeTridentStablePoolAddress, Fee, TridentStablePool } from '@sushiswap/amm'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Currency, Token, Type } from '@sushiswap/currency'
-import { isStablePoolFactoryChainId } from '@sushiswap/trident-core'
+import { isTridentStablePoolFactoryChainId } from '@sushiswap/trident-sdk'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
 
@@ -273,7 +273,7 @@ export function useTridentStablePools(
       abi: tridentStablePoolAbi,
       functionName: 'getReserves' as const,
     })),
-    enabled: poolsAddresses.length > 0 && isStablePoolFactoryChainId(chainId),
+    enabled: poolsAddresses.length > 0 && isTridentStablePoolFactoryChainId(chainId),
     watch: true,
     keepPreviousData: true,
     select: (data) => data?.map((r) => r.result),

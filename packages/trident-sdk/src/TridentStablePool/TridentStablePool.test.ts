@@ -1,8 +1,8 @@
+import { InsufficientInputAmountError } from '@sushiswap/base-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Token, USDC_ADDRESS, WETH9, WETH9_ADDRESS } from '@sushiswap/currency'
-import { stablePoolFactoryAddress } from '@sushiswap/trident-core'
 
-import { InsufficientInputAmountError } from '@sushiswap/base-sdk'
+import { tridentStablePoolFactoryAddress } from '../'
 import { computeTridentStablePoolAddress } from './computeTridentStablePoolAddress'
 import { TridentStablePool } from './TridentStablePool'
 
@@ -29,7 +29,7 @@ describe('computePoolAddress', () => {
     const fee = 30
 
     const address = computeTridentStablePoolAddress({
-      factoryAddress: stablePoolFactoryAddress[ChainId.OPTIMISM],
+      factoryAddress: tridentStablePoolFactoryAddress[ChainId.OPTIMISM],
       tokenA,
       tokenB,
       fee,

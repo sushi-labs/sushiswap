@@ -1,8 +1,8 @@
 import {
-  constantProductPoolFactoryAbi as tridentConstantPoolFactoryAbi,
-  constantProductPoolFactoryAddress as tridentConstantPoolFactoryAddress,
-  ConstantProductPoolFactoryChainId as TridentConstantPoolFactoryChainId,
-} from '@sushiswap/trident-core'
+  tridentConstantPoolFactoryAbi,
+  tridentConstantPoolFactoryAddress,
+  TridentConstantPoolFactoryChainId,
+} from '@sushiswap/trident-sdk'
 import { getContract } from 'viem'
 import { Address, usePublicClient } from 'wagmi'
 

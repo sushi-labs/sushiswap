@@ -5,11 +5,11 @@ import { Token } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
 import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBI } from '@sushiswap/tines'
 import {
-  constantProductPoolFactoryAddress,
-  ConstantProductPoolFactoryChainId,
-  stablePoolFactoryAddress,
-  StablePoolFactoryChainId,
-} from '@sushiswap/trident-core'
+  tridentConstantPoolFactoryAddress,
+  TridentConstantPoolFactoryChainId,
+  tridentStablePoolFactoryAddress,
+  TridentStablePoolFactoryChainId,
+} from '@sushiswap/trident-sdk'
 import { add, getUnixTime } from 'date-fns'
 import { Address, PublicClient } from 'viem'
 
@@ -47,7 +47,7 @@ interface PoolInfo {
 
 export class TridentProvider extends LiquidityProvider {
   // Need to override for type narrowing
-  chainId: Extract<ChainId, BentoBoxV1ChainId & ConstantProductPoolFactoryChainId & StablePoolFactoryChainId>
+  chainId: Extract<ChainId, BentoBoxV1ChainId & TridentConstantPoolFactoryChainId & TridentStablePoolFactoryChainId>
 
   readonly TOP_POOL_SIZE = 155
   readonly TOP_POOL_LIQUIDITY_THRESHOLD = 1000
@@ -65,8 +65,8 @@ export class TridentProvider extends LiquidityProvider {
 
   bridges: Map<string, PoolCode> = new Map()
   bentoBox = bentoBoxV1Address
-  constantProductPoolFactory = constantProductPoolFactoryAddress
-  stablePoolFactory = stablePoolFactoryAddress
+  constantProductPoolFactory = tridentConstantPoolFactoryAddress
+  stablePoolFactory = tridentStablePoolFactoryAddress
   latestPoolCreatedAtTimestamp = new Date()
   discoverNewPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }))
   refreshAvailablePoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.FETCH_AVAILABLE_POOLS_AFTER_SECONDS }))
@@ -77,7 +77,7 @@ export class TridentProvider extends LiquidityProvider {
   databaseClient: PrismaClient | undefined
 
   constructor(
-    chainId: Extract<ChainId, BentoBoxV1ChainId & ConstantProductPoolFactoryChainId & StablePoolFactoryChainId>,
+    chainId: Extract<ChainId, BentoBoxV1ChainId & TridentConstantPoolFactoryChainId & TridentStablePoolFactoryChainId>,
     web3Client: PublicClient,
     databaseClient?: PrismaClient
   ) {

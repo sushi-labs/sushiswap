@@ -20,7 +20,11 @@ import { FC, useCallback, useMemo, useState } from 'react'
 import { AddSectionReviewModalTrident } from './AddSectionReviewModalTrident'
 import { AddSectionWidget } from './AddSectionWidget'
 
-export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
+interface AddSectionTrident {
+  pool: Pool
+}
+
+export const AddSectionTrident: FC<AddSectionTrident> = ({ pool: _pool }) => {
   const [open, setOpen] = useState(false)
   const chainId = _pool.chainId as BentoBoxV1ChainId
   const isMounted = useIsMounted()

@@ -1,8 +1,8 @@
 import {
-  stablePoolFactoryAbi as tridentStablePoolFactoryAbi,
-  stablePoolFactoryAddress as tridentStablePoolFactoryAddress,
-  StablePoolFactoryChainId as TridentStablePoolFactoryChainId,
-} from '@sushiswap/trident-core'
+  tridentStablePoolFactoryAbi,
+  tridentStablePoolFactoryAddress,
+  TridentStablePoolFactoryChainId,
+} from '@sushiswap/trident-sdk'
 import { Address } from 'wagmi'
 
 export const getStablePoolFactoryContract = (chainId: number | undefined) => ({

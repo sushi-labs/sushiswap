@@ -2,9 +2,9 @@ import { Fee, Pool } from '@sushiswap/base-sdk'
 import { InsufficientInputAmountError, InsufficientReservesError } from '@sushiswap/base-sdk'
 import { Amount, Price, Share, Token } from '@sushiswap/currency'
 import { sqrt, ZERO } from '@sushiswap/math'
-import { stablePoolFactoryAddress, StablePoolFactoryChainId } from '@sushiswap/trident-core'
 import invariant from 'tiny-invariant'
 
+import { tridentStablePoolFactoryAddress, TridentStablePoolFactoryChainId } from '../'
 import { Rebase } from '../types'
 import { computeTridentStablePoolAddress } from './computeTridentStablePoolAddress'
 import { SerializedStablePool, tridentStablePoolSchema } from './zod'
@@ -23,7 +23,7 @@ export class TridentStablePool implements Pool {
 
   public static getAddress(tokenA: Token, tokenB: Token, fee: Fee): string {
     return computeTridentStablePoolAddress({
-      factoryAddress: stablePoolFactoryAddress[tokenA.chainId as StablePoolFactoryChainId],
+      factoryAddress: tridentStablePoolFactoryAddress[tokenA.chainId as TridentStablePoolFactoryChainId],
       tokenA,
       tokenB,
       fee,

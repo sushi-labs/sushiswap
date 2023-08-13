@@ -1,4 +1,4 @@
-import { TridentRouterChainId, tridentRouterExports } from '@sushiswap/trident-core'
+import { TridentRouterChainId, tridentRouterExports } from '@sushiswap/trident-sdk'
 import { useMemo } from 'react'
 import { WalletClient } from 'viem'
 import { Address, useWalletClient } from 'wagmi'
