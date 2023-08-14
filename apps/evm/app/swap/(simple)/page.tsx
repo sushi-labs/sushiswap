@@ -4,7 +4,7 @@ import { SimpleSwapWidget } from 'ui/swap/simple/simple-swap-widget'
 import { Providers } from './providers'
 
 export const metadata = {
-  title: 'SushiSwap Simple',
+  title: 'Sushi - Swap',
 }
 
 export default function SwapSimplePage() {
