@@ -1,8 +1,9 @@
+import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { BigNumber } from 'ethers'
 import { getContract, getProvider } from 'wagmi/actions'
-import { getConcentratedPositionOwners } from '../../pools/actions/getConcentratedPositionOwner'
+
 import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
-import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { getConcentratedPositionOwners } from '../../pools/actions/getConcentratedPositionOwner'
 
 const MAX_UINT128 = BigNumber.from(2).pow(128).sub(1)
 
@@ -66,23 +67,27 @@ export const getConcentratedLiquidityPositionFees = async ({
       signerOrProvider: getProvider({ chainId: el.chainId }),
     })
 
-    const result = await contract.callStatic.collect(
-      {
-        tokenId: el.tokenId,
-        recipient: owners[i],
-        amount0Max: MAX_UINT128,
-        amount1Max: MAX_UINT128,
-      },
-      { from: owners[i] }
-    )
+    try {
+      const result = await contract.callStatic.collect(
+        {
+          tokenId: el.tokenId,
+          recipient: owners[i],
+          amount0Max: MAX_UINT128,
+          amount1Max: MAX_UINT128,
+        },
+        { from: owners[i] }
+      )
 
-    if (result) {
-      const typed = result as unknown as {
-        amount0: BigNumber
-        amount1: BigNumber
+      if (result) {
+        const typed = result as unknown as {
+          amount0: BigNumber
+          amount1: BigNumber
+        }
+
+        return [typed.amount0, typed.amount1]
       }
-
-      return [typed.amount0, typed.amount1]
+    } catch (e) {
+      return [BigNumber.from(0), BigNumber.from(0)]
     }
 
     return undefined
