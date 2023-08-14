@@ -281,7 +281,7 @@ export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.THUNDERCORE]: 'sushi-v3/v3-thundercore',
   [ChainId.CORE]: 'sushi-v3/v3-core',
   [ChainId.BASE]: 'v3-base/v0.0.1',
-  [ChainId.ZKSYNC_ERA]: 'v3-zksync-era/v0.0.1',
+  [ChainId.ZKSYNC_ERA]: 'v3-zksync-era/v0.0.2',
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number, string> = {
