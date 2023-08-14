@@ -74,7 +74,11 @@ export const getConcentratedLiquidityPositionFees = async ({
       value: 0n,
     })
 
-    return result.result
+    if (result.result) {
+      return [result.result[0], result.result[1]]
+    } else {
+      return [0n, 0n]
+    }
   })
 
   return Promise.all(promises)
