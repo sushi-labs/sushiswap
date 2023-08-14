@@ -24,6 +24,21 @@ enum CurvePoolType {
 }
 
 const NON_FACTORY_POOLS: [string, string, CurvePoolType, number?][] = [
+  // Multitoken
+  ['0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7', '3pool', CurvePoolType.LegacyV3],
+  ['0xed279fdd11ca84beef15af5d39bb4d4bee23f0ca', 'lusd', CurvePoolType.Legacy],
+  ['0xa5407eae9ba41422680e2e00537571bcc53efbfd', 'susd', CurvePoolType.Legacy],
+  ['0xecd5e75afb02efa118af914515d6521aabd189f1', 'tusd', CurvePoolType.Legacy],
+  ['0xd632f22692fac7611d2aa1c0d552930d43caed3b', 'frax', CurvePoolType.Legacy],
+  ['0x43b4fdfd4ff969587185cdb6f0bd875c5fc83f8c', 'alusd', CurvePoolType.Legacy],
+  //['0x618788357d0ebd8a37e763adab3bc575d54c2c7d', 'rai', CurvePoolType.Legacy],
+  ['0x4807862aa8b2bf68830e4c8dc86d0e9a998e085a', 'busdv2', CurvePoolType.Legacy],
+  //['0x4f062658eaaf2c1ccf8c8e36d6824cdf41167956', 'qusd', CurvePoolType.Legacy],
+  //['0xdebf20617708857ebe4f679508e7b7863a8a8eee', 'aave', CurvePoolType.Legacy],
+  ['0x5a6a4d54456819380173272a5e8e9b9904bdf41b', 'mim', CurvePoolType.Legacy],
+  ['0x8474ddbe98f5aa3179b3b3f5942d724afcdec9f6', 'musd', CurvePoolType.Legacy],
+  ['0x52ea46506b9cc5ef470c5bf89f17dc28bb35d85c', 'usdt', CurvePoolType.Legacy],
+  // 2 coins
   ['0xdc24316b9ae028f1497c275eb9192a3ea0f67022', 'steth', CurvePoolType.Legacy],
   ['0xdcef968d416a41cdac0ed8702fac8128a64241a2', 'fraxusdc', CurvePoolType.Legacy],
   ['0x828b154032950c8ff7cf8085d841723db2696056', 'stETH concentrated', CurvePoolType.Factory],
