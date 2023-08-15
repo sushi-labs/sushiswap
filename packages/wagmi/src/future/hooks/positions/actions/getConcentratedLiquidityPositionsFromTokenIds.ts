@@ -110,6 +110,7 @@ export const getConcentratedLiquidityPositionsFromTokenIds = async ({
         factoryAddress: getV3FactoryContractConfig(chainId).address,
         tokenA: result.token0,
         tokenB: result.token1,
+        chainId,
         fee: result.fee,
       }),
       chainId,
