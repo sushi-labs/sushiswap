@@ -7,28 +7,39 @@ import { Button } from '@sushiswap/ui/components/button'
 import { Command, CommandGroup, CommandItem } from '@sushiswap/ui/components/command'
 import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
 import { SUPPORTED_CHAIN_IDS } from 'config'
-import React, { FC, useCallback, useMemo, useState } from 'react'
+import React, { FC, useCallback, useState, useTransition } from 'react'
 
 import { usePoolFilters, useSetPoolFilters } from './PoolsFiltersProvider'
 
 export const TableFiltersNetwork: FC = () => {
+  const [, startTransition] = useTransition()
   const [open, setOpen] = useState(false)
   const { chainIds } = usePoolFilters()
   const setFilters = useSetPoolFilters()
-  const values = useMemo(() => (SUPPORTED_CHAIN_IDS.length === chainIds.length ? [] : chainIds), [chainIds])
+  const [values, setValues] = useState<number[]>(SUPPORTED_CHAIN_IDS.length === chainIds.length ? [] : chainIds)
 
   const onClick = useCallback(
     (chainId: ChainId) => {
-      setFilters((prev) => {
-        if (prev.chainIds?.includes(chainId)) {
-          const chains = prev.chainIds.filter((el) => el !== chainId)
-          return { ...prev, chainIds: chains }
-        } else {
-          return { ...prev, chainIds: [...(prev.chainIds ?? []), chainId] }
-        }
+      let _newValues: number[]
+      if (values.includes(chainId)) {
+        _newValues = values.filter((el) => el !== chainId)
+      } else {
+        _newValues = [...(values ?? []), chainId]
+      }
+      setValues(_newValues)
+
+      startTransition(() => {
+        setFilters((prev) => {
+          if (prev.chainIds?.includes(chainId)) {
+            const chains = prev.chainIds.filter((el) => el !== chainId)
+            return { ...prev, chainIds: chains }
+          } else {
+            return { ...prev, chainIds: [...(prev.chainIds ?? []), chainId] }
+          }
+        })
       })
     },
-    [setFilters]
+    [setFilters, values]
   )
 
   return (

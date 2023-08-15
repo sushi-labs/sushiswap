@@ -19,7 +19,7 @@ import {
 import { Button } from '@sushiswap/ui/components/button'
 import { Command, CommandGroup, CommandItem } from '@sushiswap/ui/components/command'
 import { CheckIcon } from '@sushiswap/ui/components/icons'
-import React, { FC, useCallback, useMemo, useState } from 'react'
+import React, { FC, useCallback, useState, useTransition } from 'react'
 
 import { PROTOCOL_MAP } from '../../lib/constants'
 import { usePoolFilters, useSetPoolFilters } from './PoolsFiltersProvider'
@@ -43,25 +43,35 @@ const POOL_DESCRIPTIONS = {
 }
 
 export const TableFiltersPoolType: FC = () => {
+  const [, startTransition] = useTransition()
   const [open, setOpen] = useState(false)
   const { protocols } = usePoolFilters()
   const setFilters = useSetPoolFilters()
   const [peekedProtocol, setPeekedProtocol] = React.useState<Protocol>(POOL_TYPES[0])
-
-  const values = useMemo(() => (protocols.length === POOL_TYPES.length ? [] : protocols), [protocols])
+  const [values, setValues] = useState<Protocol[]>(protocols.length === POOL_TYPES.length ? [] : protocols)
 
   const protocolHandler = useCallback(
     (item: Protocol) => {
-      setFilters((prev) => {
-        if (prev.protocols?.includes(item)) {
-          const protocols = prev.protocols.filter((el) => el !== item)
-          return { ...prev, protocols }
-        } else {
-          return { ...prev, protocols: [...(prev.protocols ?? []), item] }
-        }
+      let _newValues: Protocol[]
+      if (values?.includes(item)) {
+        _newValues = values.filter((el) => el !== item)
+      } else {
+        _newValues = [...(values ?? []), item]
+      }
+      setValues(_newValues)
+
+      startTransition(() => {
+        setFilters((prev) => {
+          if (prev.protocols?.includes(item)) {
+            const protocols = prev.protocols.filter((el) => el !== item)
+            return { ...prev, protocols }
+          } else {
+            return { ...prev, protocols: [...(prev.protocols ?? []), item] }
+          }
+        })
       })
     },
-    [setFilters]
+    [setFilters, values]
   )
 
   return (
@@ -151,7 +161,13 @@ const ProtocolItem: FC<ProtocolItemProps> = ({ selected, protocol, onSelect, onP
   })
 
   return (
-    <CommandItem ref={ref} key={protocol} value={protocol} onSelect={onSelect} className="py-2 pl-8 pr-2">
+    <CommandItem
+      ref={ref}
+      key={protocol}
+      value={protocol}
+      onSelect={onSelect}
+      className="py-2 pl-8 pr-2 cursor-pointer"
+    >
       {selected.includes(protocol) ? (
         <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
           <CheckIcon strokeWidth={3} width={16} height={16} className="text-blue" />

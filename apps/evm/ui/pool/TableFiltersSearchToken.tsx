@@ -2,17 +2,22 @@
 
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { ChipInput } from '@sushiswap/ui'
-import React, { FC, useCallback } from 'react'
+import React, { FC, useCallback, useState, useTransition } from 'react'
 
 import { usePoolFilters, useSetPoolFilters } from './PoolsFiltersProvider'
 
 export const TableFiltersSearchToken: FC = () => {
+  const [isPending, startTransition] = useTransition()
   const { tokenSymbols } = usePoolFilters()
   const setFilters = useSetPoolFilters()
+  const [values, setValues] = useState<string[]>(tokenSymbols)
 
   const onValueChange = useCallback(
     (values: string[]) => {
-      setFilters((prev) => ({ ...prev, tokenSymbols: values }))
+      setValues(values)
+      startTransition(() => {
+        setFilters((prev) => ({ ...prev, tokenSymbols: values }))
+      })
     },
     [setFilters]
   )
@@ -24,7 +29,7 @@ export const TableFiltersSearchToken: FC = () => {
         icon={MagnifyingGlassIcon}
         delimiters={[',', ' ', ';', ':']}
         variant="outline"
-        values={tokenSymbols ?? []}
+        values={isPending ? values : tokenSymbols ?? []}
         onValueChange={onValueChange}
         placeholder="Search"
       />
