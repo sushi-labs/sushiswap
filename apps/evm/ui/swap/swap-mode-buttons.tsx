@@ -1,23 +1,68 @@
-import { Button, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
+'use client'
+
+import { useLocalStorage } from '@sushiswap/hooks'
+import {
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@sushiswap/ui'
+import { motion } from 'framer-motion'
+import Link from 'next/link'
+
+import { PathnameButton } from '../pool/PathnameButton'
 
 export const SwapModeButtons = () => {
+  const [bannerMinimized] = useLocalStorage('xswap-banner-minimized', false)
+
   return (
     <div className="flex gap-2">
-      <Button size="sm" variant="secondary">
-        Swap
-      </Button>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger className="cursor-default">
-            <Button className="pointer-events-none opacity-40" size="sm" variant="ghost">
-              Limit
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Coming soon!</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <Link href="/swap">
+        <PathnameButton pathname="/swap" size="sm">
+          Swap
+        </PathnameButton>
+      </Link>
+      {bannerMinimized ? (
+        <HoverCard>
+          <motion.div layoutId="container">
+            <motion.div layout layoutId="title">
+              <Link href="/swap/cross-chain">
+                <PathnameButton pathname="/swap/cross-chain" size="sm">
+                  <HoverCardTrigger asChild>
+                    <span>
+                      <sub>
+                        <b className="italic">X</b>
+                      </sub>
+                      Swap
+                    </span>
+                  </HoverCardTrigger>
+                </PathnameButton>
+              </Link>
+            </motion.div>
+          </motion.div>
+          <HoverCardContent className="!p-0 max-w-[320px]">
+            <CardHeader>
+              <CardTitle>Cross-chain Swap</CardTitle>
+              <CardDescription>
+                Swap your funds on one network and swap them into a token on a different network.{' '}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <a
+                target="_blank"
+                className="text-sm text-blue hover:underline"
+                href="https://www.sushi.com/academy/articles/sushi-xswap-a-crosschain-dex"
+                rel="noreferrer"
+              >
+                Learn more.
+              </a>
+            </CardContent>
+          </HoverCardContent>
+        </HoverCard>
+      ) : null}
     </div>
   )
 }
