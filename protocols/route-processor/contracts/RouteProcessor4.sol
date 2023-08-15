@@ -157,7 +157,7 @@ contract RouteProcessor4 is Ownable {
     require(balanceInFinal + amountIn >= balanceInInitial, 'RouteProcessor: Minimal imput balance violation');
 
     uint256 balanceOutFinal = tokenOut == NATIVE_ADDRESS ? address(to).balance : IERC20(tokenOut).balanceOf(to);
-    if (balanceOutFinal >= balanceOutInitial + amountOutMin)
+    if (balanceOutFinal < balanceOutInitial + amountOutMin)
       revert MinimalOutputBalanceViolation(balanceOutFinal - balanceOutInitial);
 
     amountOut = balanceOutFinal - balanceOutInitial;
