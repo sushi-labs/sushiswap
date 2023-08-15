@@ -9,6 +9,7 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
+  ShuffleIcon,
 } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
@@ -30,14 +31,9 @@ export const SwapModeButtons = () => {
           <motion.div layoutId="container">
             <motion.div layout layoutId="title">
               <Link href="/swap/cross-chain">
-                <PathnameButton pathname="/swap/cross-chain" size="sm">
+                <PathnameButton icon={ShuffleIcon} pathname="/swap/cross-chain" size="sm">
                   <HoverCardTrigger asChild>
-                    <span>
-                      <sub>
-                        <b className="italic">X</b>
-                      </sub>
-                      Swap
-                    </span>
+                    <span>Cross Chain</span>
                   </HoverCardTrigger>
                 </PathnameButton>
               </Link>
