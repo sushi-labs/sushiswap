@@ -198,7 +198,8 @@ export class UniV2Extractor {
 
     warnLog(
       this.multiCallAggregator.chainId,
-      `ExtractorV2 was started (${Math.round(performance.now() - startTime)}ms)`
+      `ExtractorV2 was started (${Math.round(performance.now() - startTime)}ms)`,
+      'info'
     )
   }
 
