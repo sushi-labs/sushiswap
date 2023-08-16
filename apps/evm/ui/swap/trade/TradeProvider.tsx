@@ -82,6 +82,8 @@ interface SwapProviderProps {
   children: ReactNode
 }
 
+const SWAP_API_BASE_URL = process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL
+
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { address } = useAccount()
   // const { query, push, pathname } = useRouter()
@@ -108,7 +110,9 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { token0, token1, fromChainId, toChainId } = useTokenState()
 
   const [internalState, dispatch] = useReducer(reducer, {
-    isFallback: !isSwapApiEnabledChainId(fromChainId),
+    isFallback:
+      !isSwapApiEnabledChainId(fromChainId) ||
+      (isSwapApiEnabledChainId(fromChainId) && typeof SWAP_API_BASE_URL === 'undefined'),
     tradeId: nanoid(),
     review: review ? review : false,
     value: !amount || amount === '0' ? '' : amount,
