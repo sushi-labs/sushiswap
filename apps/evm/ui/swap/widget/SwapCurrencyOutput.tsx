@@ -9,10 +9,9 @@ import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 
 export const SwapCurrencyOutput: FC = () => {
   const { tokensLoading } = useTokenState()
-  const { value, network0, token1, network1 } = useSwapState()
+  const { network0, token1, network1 } = useSwapState()
   const { setToken1 } = useSwapActions()
-  const { isLoading, isFetching, data: trade } = useTrade({ crossChain: network0 !== network1 })
-  const loading = Boolean(isLoading && +value > 0) || isFetching || tokensLoading
+  const { isInitialLoading: isLoading, isFetching, data: trade } = useTrade({ crossChain: network0 !== network1 })
 
   return (
     <Web3Input.Currency
@@ -25,9 +24,10 @@ export const SwapCurrencyOutput: FC = () => {
       value={trade?.amountOut?.toSignificant() ?? ''}
       currency={token1}
       usdPctChange={undefined}
-      loading={loading}
+      loading={isLoading}
       disableMaxButton
       currencyLoading={tokensLoading}
+      fetching={isFetching}
     />
   )
 }
