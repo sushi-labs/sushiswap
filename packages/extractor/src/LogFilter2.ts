@@ -1,12 +1,13 @@
 import { AbiEvent } from 'abitype'
-import { Block, encodeEventTopics, Log, PublicClient, WatchBlocksReturnType } from 'viem'
+import { Block, encodeEventTopics, Filter, Log, PublicClient, WatchBlocksReturnType } from 'viem'
 
 import { warnLog } from './WarnLog'
 
 export enum LogFilterType {
-  OneCall = 'OneCall', // one eth_getLogs call for all topict - the most preferrable
-  MultiCall = 'MultiCall', // separete eth_getLogs call for each topic - for those systems that fail at OneCall
-  SelfFilter = 'SelfFilter', // Topic filtering doesn't support for provider. Filtering on the client
+  Native, // getFilterChanges - is not supported widely
+  OneCall, // one eth_getLogs call for all topict - the most preferrable
+  MultiCall, // separete eth_getLogs call for each topic - for those systems that fail at OneCall
+  SelfFilter, // Topic filtering doesn't support for provider. Filtering on the client
 }
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
@@ -75,7 +76,7 @@ class BlockFrame {
   }
 }
 
-interface Filter {
+interface FilterMy {
   topics: string[]
   onNewLogs: (arg?: Log[]) => void // undefined if LogFilter is stopped
 }
@@ -89,7 +90,9 @@ export class LogFilter2 {
   readonly logType: LogFilterType
   eventsAll: AbiEvent[] = []
   topicsAll: string[] = []
-  filters: Filter[] = []
+  filters: FilterMy[] = []
+  logFilter?: Filter<'event'>
+  blockProcessing = false
 
   unWatchBlocks?: WatchBlocksReturnType
 
@@ -116,11 +119,34 @@ export class LogFilter2 {
 
   start() {
     if (this.unWatchBlocks) return // have been started
-    this.unWatchBlocks = this.client.watchBlocks({
-      onBlock: async (block) => {
-        this.addBlock(block, true)
-      },
-    })
+    if (this.logType == LogFilterType.Native) {
+      this.client.createEventFilter({ events: this.eventsAll }).then((filter) => {
+        this.logFilter = filter as unknown as Filter<'event'>
+        this.unWatchBlocks = this.client.watchBlocks({
+          onBlock: async () => {
+            if (this.blockProcessing) return
+            this.blockProcessing = true
+            try {
+              const logs = await this.client.getFilterChanges({ filter })
+              this.filters.forEach((f) => {
+                const logsFiltered = logs.filter((l) => f.topics.includes(l.topics[0] ?? ''))
+                if (logsFiltered.length > 0) f.onNewLogs(logsFiltered)
+              })
+            } catch (e) {
+              warnLog(this.client.chain?.id, `getFilterChanges failed ${e}`)
+              this.stop()
+            }
+            this.blockProcessing = false
+          },
+        })
+      })
+    } else {
+      this.unWatchBlocks = this.client.watchBlocks({
+        onBlock: async (block) => {
+          this.addBlock(block, true)
+        },
+      })
+    }
   }
 
   stop() {
