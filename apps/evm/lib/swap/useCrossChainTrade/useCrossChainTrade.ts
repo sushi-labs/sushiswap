@@ -7,6 +7,7 @@ import { useFeeData, useSushiXSwapContract } from '@sushiswap/wagmi'
 import { getClientTrade, useBentoboxTotals, usePools } from '@sushiswap/wagmi/future/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
+import { stringify } from 'viem'
 
 import { Action, SushiXSwap } from '../SushiXSwap'
 import { getBridgeFees } from './getBridgeFees'
@@ -341,6 +342,7 @@ export const useCrossChainTradeQuery = (
           srcRebases &&
           dstRebases
       ),
+    queryKeyHashFn: stringify,
   })
 }
 

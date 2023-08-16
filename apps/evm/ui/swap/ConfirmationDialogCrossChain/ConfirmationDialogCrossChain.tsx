@@ -1,4 +1,5 @@
 import { Chain } from '@sushiswap/chain'
+import { calculateGasMargin } from '@sushiswap/gas'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
 import { SushiXSwapChainId } from '@sushiswap/sushixswap'
 import { Button } from '@sushiswap/ui/components/button'
@@ -120,17 +121,16 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     [trade, network0, srcCurrencyB?.symbol, address]
   )
 
-  if (config?.request?.gas) {
-    const gasLimit = (config.request.gas * 120n) / 100n
-    config.request.gas = gasLimit
-  }
-
   const {
     writeAsync,
     isLoading: isWritePending,
     data,
   } = useContractWrite({
     ...config,
+    request: {
+      ...config?.request,
+      gas: config?.request?.gas ? calculateGasMargin(config.request.gas) : undefined,
+    },
     onMutate: () => {
       // Set reference of current trade
       if (tradeRef && trade) {
@@ -282,14 +282,15 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
   }, [lzData?.link])
 
   useEffect(() => {
+    console.log('ahoj', receipt, groupTs, lzData)
+
     if (receipt && groupTs.current) {
       void createToast({
         account: address,
         type: 'swap',
         chainId: network1,
         txHash: receipt.hash as `0x${string}`,
-        // ! Possibly wrong
-        promise: waitForTransaction({ hash: lzData?.dstTxHash as Address, chainId: network1 }),
+        promise: waitForTransaction({ hash: receipt?.hash as Address, chainId: network1 }),
         summary: {
           pending: `Swapping ${dstCurrencyA?.symbol} to ${trade?.amountOut?.toSignificant(6)} ${
             trade?.amountOut?.currency.symbol

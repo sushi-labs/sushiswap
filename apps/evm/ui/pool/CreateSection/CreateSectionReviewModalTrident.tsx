@@ -257,7 +257,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
             }),
           ],
         }),
-        ...(value && { value }),
+        value: value ?? 0n,
       }
     } catch (e: unknown) {
       //

@@ -3,6 +3,7 @@
 import { routeProcessor2Abi } from '@sushiswap/abi'
 import { Chain } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
+import { calculateGasMargin } from '@sushiswap/gas'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { UseTradeReturn } from '@sushiswap/react-query'
 import {
@@ -201,17 +202,16 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     [trade, network0, address, isWrap, isUnwrap]
   )
 
-  if (config?.request?.gas) {
-    const gasLimit = (config.request.gas * 120n) / 100n
-    config.request.gas = gasLimit
-  }
-
   const {
     writeAsync,
     isLoading: isWritePending,
     data,
   } = useContractWrite({
     ...config,
+    request: {
+      ...config?.request,
+      gas: config?.request?.gas ? calculateGasMargin(config.request.gas) : undefined,
+    },
     onMutate: () => {
       // Set reference of current trade
       if (tradeRef && trade) {
