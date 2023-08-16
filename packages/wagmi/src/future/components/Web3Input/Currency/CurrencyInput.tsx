@@ -13,7 +13,7 @@ import { TokenSelector } from '../../TokenSelector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
 
-export interface CurrencyInputProps {
+interface CurrencyInputProps {
   id?: string
   disabled?: boolean
   value: string
@@ -35,7 +35,7 @@ export interface CurrencyInputProps {
   hideSearch?: boolean
 }
 
-export const Component: FC<CurrencyInputProps> = ({
+const Component: FC<CurrencyInputProps> = ({
   id,
   disabled,
   value,
@@ -54,6 +54,7 @@ export const Component: FC<CurrencyInputProps> = ({
   error,
   hidePinnedTokens = false,
   hideSearch = false,
+  fetching,
 }) => {
   const { address } = useAccount()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -133,10 +134,14 @@ export const Component: FC<CurrencyInputProps> = ({
       onClick={focusInput}
       className={classNames(
         _error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
-        'space-y-2 overflow-hidden pb-2',
+        'relative space-y-2 overflow-hidden pb-2',
         className
       )}
     >
+      <div
+        data-state={fetching ? 'active' : 'inactive'}
+        className="transition-all data-[state=inactive]:hidden data-[state=active]:block absolute inset-0 overflow-hidden p-4 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_.5s_infinite] before:bg-gradient-to-r before:from-transparent dark:before:via-slate-50/10 before:via-gray-900/[0.07] before:to-transparent"
+      />
       <div className="relative flex items-center gap-4">
         <div
           data-state={isLoading ? 'active' : 'inactive'}
@@ -147,22 +152,25 @@ export const Component: FC<CurrencyInputProps> = ({
         >
           <SkeletonBox className="w-1/2 h-[32px] rounded-lg" />
         </div>
-        <TextField
-          testdata-id={`${id}-input`}
-          type="number"
-          ref={inputRef}
-          variant="naked"
-          disabled={disabled}
-          onValueChange={onChange}
-          value={value}
-          readOnly={disabled}
-          maxDecimals={currency?.decimals}
+        <div
           data-state={isLoading ? 'inactive' : 'active'}
-          className={classNames(
-            'data-[state=inactive]:hidden data-[state=active]:flex',
-            'p-0 py-1 !text-3xl font-medium'
-          )}
-        />
+          className="data-[state=inactive]:hidden data-[state=active]:flex items-center"
+        >
+          <TextField
+            testdata-id={`${id}-input`}
+            type="number"
+            ref={inputRef}
+            variant="naked"
+            disabled={disabled}
+            onValueChange={onChange}
+            value={value}
+            readOnly={disabled}
+            maxDecimals={currency?.decimals}
+            data-state={isLoading ? 'inactive' : 'active'}
+            className={classNames('p-0 py-1 !text-3xl font-medium')}
+          />
+        </div>
+
         {selector}
         {!onSelect ? (
           <div
@@ -190,12 +198,12 @@ export const Component: FC<CurrencyInputProps> = ({
           currency={currency}
           usdPctChange={usdPctChange}
           error={_error}
-          loading={isLoading || isPriceLoading}
+          loading={isPriceLoading}
           price={price}
         />
         <BalancePanel
           id={id}
-          loading={isLoading}
+          loading={isBalanceLoading}
           chainId={chainId}
           account={address}
           onChange={onChange}
@@ -209,6 +217,8 @@ export const Component: FC<CurrencyInputProps> = ({
   )
 }
 
-export const CurrencyInput = dynamic(() => Promise.resolve(Component), {
+const CurrencyInput = dynamic(() => Promise.resolve(Component), {
   ssr: false,
 })
+
+export { CurrencyInput, type CurrencyInputProps }
