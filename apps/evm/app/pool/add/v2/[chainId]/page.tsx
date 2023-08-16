@@ -4,6 +4,7 @@ import { ArrowLeftIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { Pair } from '@sushiswap/amm'
 import { ChainId, TESTNET_CHAIN_IDS } from '@sushiswap/chain'
 import { defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
+import { ZERO } from '@sushiswap/math'
 import { Button } from '@sushiswap/ui/components/button'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { Loader } from '@sushiswap/ui/components/loader'
@@ -156,9 +157,13 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
     return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
   }, [input0, input1, token0, token1])
 
+  const noLiquidity = useMemo(() => {
+    return pool && pool.reserve0.equalTo(ZERO) && pool.reserve1.equalTo(ZERO)
+  }, [pool])
+
   const onChangeToken0TypedAmount = useCallback(
     (value: string) => {
-      if (poolState === PairState.NOT_EXISTS) {
+      if (poolState === PairState.NOT_EXISTS || noLiquidity) {
         setTypedAmounts((prev) => ({
           ...prev,
           input0: value,
@@ -171,12 +176,12 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
         })
       }
     },
-    [pool, poolState, token0]
+    [noLiquidity, pool, poolState, token0]
   )
 
   const onChangeToken1TypedAmount = useCallback(
     (value: string) => {
-      if (poolState === PairState.NOT_EXISTS) {
+      if (poolState === PairState.NOT_EXISTS || noLiquidity) {
         setTypedAmounts((prev) => ({
           ...prev,
           input1: value,
@@ -189,7 +194,7 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
         })
       }
     },
-    [pool, poolState, token1]
+    [noLiquidity, pool, poolState, token1]
   )
 
   useEffect(() => {
