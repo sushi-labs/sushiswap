@@ -48,7 +48,7 @@
     "@sentry/node": "7.63.0",
     "abitype": "0.8.2",
     "ethers": "5.7.2",
-    "viem": "1.5.4"
+    "viem": "1.6.0"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
