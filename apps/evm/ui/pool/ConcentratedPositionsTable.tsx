@@ -3,7 +3,18 @@
 import { PlusIcon } from '@heroicons/react/20/solid'
 import { Slot } from '@radix-ui/react-slot'
 import { ChainId } from '@sushiswap/chain'
-import { Button, Card, CardHeader, CardTitle, DataTable, LinkInternal } from '@sushiswap/ui'
+import {
+  Button,
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  DataTable,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+  LinkInternal,
+} from '@sushiswap/ui'
 import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future'
@@ -91,11 +102,38 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> = (
               My Positions <span className="text-gray-400 dark:text-slate-500">({_positions.length})</span>
             </span>
             {!hideNewPositionButton ? (
-              <LinkInternal shallow={true} href={`/pool/${chainId}:${poolId}/positions/create`}>
-                <Button icon={PlusIcon} asChild size="sm">
-                  Create position
-                </Button>
-              </LinkInternal>
+              <div className="flex gap-2">
+                <HoverCard>
+                  <HoverCardTrigger>
+                    <LinkInternal shallow={true} href={`/pool/${chainId}:${poolId}/positions/create/manual`}>
+                      <Button variant="outline" icon={PlusIcon} asChild size="sm">
+                        Manual position
+                      </Button>
+                    </LinkInternal>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="!p-0">
+                    <CardHeader>
+                      <CardTitle>Manual</CardTitle>
+                      <CardDescription>Create a V3 position manually by setting the range yourself.</CardDescription>
+                    </CardHeader>
+                  </HoverCardContent>
+                </HoverCard>
+                <HoverCard>
+                  <HoverCardTrigger>
+                    <LinkInternal shallow={true} href={`/pool/${chainId}:${poolId}/positions/create`}>
+                      <Button icon={PlusIcon} asChild size="sm">
+                        Smart position
+                      </Button>
+                    </LinkInternal>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="!p-0">
+                    <CardHeader>
+                      <CardTitle>Smart pool</CardTitle>
+                      <CardDescription>Have the position managed automatically for you.</CardDescription>
+                    </CardHeader>
+                  </HoverCardContent>
+                </HoverCard>
+              </div>
             ) : null}
           </div>
         </CardTitle>

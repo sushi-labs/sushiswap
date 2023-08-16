@@ -37,7 +37,7 @@ export default function PositionsCreatePage({ params }: { params: { id: string }
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Stable Pool</CardTitle>
+            <CardTitle>Elastic Expansion Pool</CardTitle>
             <CardDescription>
               This strategy determines a range for its liquidity by calculating the midpoint using the simple moving
               average (SMA) of an asset’s price over a given period of time{' '}
