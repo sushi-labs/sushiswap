@@ -1656,6 +1656,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/steer-vault-api': workspace:*
       '@sushiswap/token-price-api': workspace:*
+      '@sushiswap/tokens-api': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/node': '18'
       '@whatwg-node/fetch': 0.8.4
@@ -1676,6 +1677,7 @@ importers:
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/steer-vault-api': link:../../apis/steer-vault
       '@sushiswap/token-price-api': link:../../apis/token-price
+      '@sushiswap/tokens-api': link:../../apis/tokens
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/node': 18.11.18
       eslint: 8.43.0
