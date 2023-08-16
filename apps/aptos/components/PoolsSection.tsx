@@ -1,19 +1,22 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Tab } from '@headlessui/react'
+import { useDebounce } from '@sushiswap/hooks'
 import Container from '@sushiswap/ui/future/components/Container'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { PoolsTable } from 'app/pool/PoolsSection/Tables/PoolsTable'
 import { PositionsTable } from 'app/pool/PoolsSection/Tables/PositionsTable'
 import { PoolFilters } from 'app/pool/PoolsSection/Tables/TableFilters/PoolFilters'
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 
 export default function PoolsSection() {
   const [tab, setTab] = useState<number>(0)
   const { account } = useWallet()
   const [farmsOnly, setFarmsOnly] = useState<boolean>(false)
+  const [query, setQuery] = useState<string>('')
   const farmHandler = () => {
     setFarmsOnly((farmsOnly) => !farmsOnly)
   }
+
   return (
     <div className="flex flex-col">
       <Tab.Group defaultIndex={0} selectedIndex={tab} onChange={setTab}>
@@ -65,16 +68,22 @@ export default function PoolsSection() {
         </Container>
         <Tab.Panels className="bg-gray-50 dark:bg-white/[0.02] py-4">
           <Container maxWidth="7xl" className="px-4 mx-auto">
-            <PoolFilters showCategories={tab === 0} farmHandler={farmHandler} farmsOnly={farmsOnly} />
+            <PoolFilters
+              showCategories={tab === 0}
+              farmHandler={farmHandler}
+              farmsOnly={farmsOnly}
+              query={query}
+              setQuery={setQuery}
+            />
           </Container>
           <Tab.Panel>
             <Container maxWidth="7xl" className="px-4 mx-auto">
-              <PoolsTable farmsOnly={farmsOnly} />
+              <PoolsTable farmsOnly={farmsOnly} query={query} />
               {/* Pools Table */}
             </Container>
           </Tab.Panel>
           <Tab.Panel>
-            <PositionsTable />
+            <PositionsTable query={query} />
           </Tab.Panel>
           <Tab.Panel></Tab.Panel>
         </Tab.Panels>

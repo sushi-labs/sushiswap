@@ -10,12 +10,11 @@ interface Props {
 }
 
 export const SwapTradeOutput = ({ handleSwap }: Props) => {
-  const { account, network } = useWallet()
+  const { account } = useWallet()
   const { token0, token1, outputAmount, isPriceFetching } = useSwapState()
   const { data: balance, isLoading } = useTokenBalance({
     account: account?.address as string,
-    currency: token1.address,
-    chainId: Number(network?.chainId) || 1,
+    currency: token1?.address,
     refetchInterval: 2000,
   })
   const outputSwapTokenAmount = outputAmount

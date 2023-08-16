@@ -28,23 +28,22 @@ export type CoinStore = {
     }
   }
 }
-const userPositionsQueryFn = async (network: string, address: string, allPools: Pool[] = []) => {
-  const CONTRACT =
-    network == 'testnet' ? process.env.NEXT_PUBLIC_TESTNET_CONTRACT : process.env.NEXT_PUBLIC_MAINNET_CONTRACT
+const CONTRACT_ADDRESS = process.env['NEXT_PUBLIC_SWAP_CONTRACT']
+
+const userPositionsQueryFn = async (address: string, allPools: Pool[] = []) => {
   if (address) {
-    const response = await fetch(`https://fullnode.${network}.aptoslabs.com/v1/accounts/${address}/resources`)
+    const response = await fetch(`https://fullnode.mainnet.aptoslabs.com/v1/accounts/${address}/resources`)
     if (response.status == 200) {
       const data = await response.json()
       const userLPTokens: CoinStore[] = data?.filter((coin: CoinStore) => {
-        return coin?.type.includes(`0x1::coin::CoinStore<${CONTRACT}::swap::LPToken`)
+        return coin?.type.includes(`0x1::coin::CoinStore<${CONTRACT_ADDRESS}::swap::LPToken`)
       })
       if (allPools.length) {
         const userPositions = allPools.filter((pool: Pool) => {
-          const [, ...address] = pool.id.split(':')
-          const poolAddress = address.join(':')
+          const poolAddress = pool.id
           return userLPTokens.some((userLPToken) => {
             const tokenAddress = userLPToken.type
-              .replaceAll(`0x1::coin::CoinStore<${CONTRACT}::swap::LPToken<`, '')
+              .replaceAll(`0x1::coin::CoinStore<${CONTRACT_ADDRESS}::swap::LPToken<`, '')
               .slice(0, -2)
             return tokenAddress === poolAddress
           })
@@ -60,13 +59,12 @@ const userPositionsQueryFn = async (network: string, address: string, allPools: 
   return [] as Pool[]
 }
 
-export function useUserPositions(network: string = 'mainnet', address: string, enabled: boolean = true) {
-  const chainId = network == 'testnet' ? 2 : 1
-  const { data: allPools } = usePools(chainId)
+export function useUserPositions(address: string, enabled: boolean = true) {
+  const { data: allPools } = usePools()
   return useQuery({
-    queryKey: ['userPositions', { network, address, allPools }],
-    queryFn: async () => userPositionsQueryFn(network, address, allPools as Pool[]),
-    enabled: Boolean(enabled && network && address),
+    queryKey: ['userPositions', { address, allPools }],
+    queryFn: async () => userPositionsQueryFn(address, allPools as Pool[]),
+    enabled: Boolean(enabled && address),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
   })

@@ -37,17 +37,16 @@ interface ComplexRoutePathProps {
 }
 
 const ComplexRoutePath = ({ fromTokenAddress, toTokenAddress }: ComplexRoutePathProps) => {
-  const { network } = useWallet()
-  const { data: tokens } = useTokens(Number(network?.chainId) || 1)
+  const { data: tokens } = useTokens()
   const { data: customTokens } = useCustomTokens()
   const fromToken =
     tokens && tokens[fromTokenAddress]
       ? tokens[fromTokenAddress]
-      : customTokens && customTokens[`${network?.chainId}:${fromTokenAddress}`]
+      : customTokens && customTokens[`${fromTokenAddress}`]
   const toToken =
     tokens && tokens[toTokenAddress]
       ? tokens[toTokenAddress]
-      : customTokens && customTokens[`${network?.chainId}:${toTokenAddress}`]
+      : customTokens && customTokens[`${toTokenAddress}`]
   return (
     <div className="relative grid grid-cols-12 gap-3 rounded-full border-gray-200 dark:border-black/[0.12] bg-gray-200 dark:bg-black/[0.12] border-2 p-2">
       <div

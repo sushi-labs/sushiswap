@@ -25,16 +25,14 @@ interface Props {
 export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
   const { bestRoutes, token0, token1, slippageAmount, amount, outputAmount, isPriceFetching } = useSwapState()
   const { account, signAndSubmitTransaction, network } = useWallet()
-  const networkType = network?.name?.toLowerCase() == 'testnet' ? Network.TESTNET : Network.MAINNET
   const { setisTransactionPending, setAmount } = useSwapActions()
   const minOutput = slippageAmount ? formatNumber(slippageAmount, token1 ? token1.decimals : 8) : 0
   const swapToken = async (close: () => void) => {
-    const provider = new Provider(networkType)
+    const provider = new Provider(Network.MAINNET)
     const payload: any = payloadArgs(
       parseInt((parseFloat(String(amount)) * 10 ** token0.decimals) as unknown as string),
       bestRoutes,
-      parseInt(String(slippageAmount)),
-      networkType
+      parseInt(String(slippageAmount))
     )
     if (!account?.address) return []
     setisTransactionPending(true)
@@ -152,9 +150,7 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
                       <List.KeyValue title="Recipient">
                         <a
                           target="_blank"
-                          href={`https://explorer.aptoslabs.com/account/${
-                            account?.address
-                          }?network=${network?.name?.toLowerCase()}`}
+                          href={`https://explorer.aptoslabs.com/account/${account?.address}?network=mainnet`}
                           className={classNames('flex items-center gap-2 cursor-pointer text-blue')}
                           rel="noreferrer"
                         >

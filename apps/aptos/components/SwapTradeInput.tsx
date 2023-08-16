@@ -1,22 +1,23 @@
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import TradeInput from './TradeInput'
 import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { useTokenBalance } from 'utils/useTokenBalance'
-import { useSwapRouter } from 'useSwapRouter'
+import { useSwapRouter } from 'utils/useSwapRouter'
+import { useIsMounted } from '@sushiswap/hooks'
 
 interface Props {
   handleSwap: () => void
 }
 
 export const SwapTradeInput = ({ handleSwap }: Props) => {
-  const { connected, account, network } = useWallet()
+  const { connected, account } = useWallet()
   const tradeVal = useRef<HTMLInputElement>(null)
+  const isMounted = useIsMounted()
   const { amount, token0, token1, error } = useSwapState()
-  const { data: balance, isLoading } = useTokenBalance({
+  const { data: balance, isLoading: isPriceLoading } = useTokenBalance({
     account: account?.address as string,
-    currency: token0.address,
-    chainId: Number(network?.chainId) || 1,
+    currency: token0?.address,
     refetchInterval: 2000,
   })
   const {
@@ -30,8 +31,7 @@ export const SwapTradeInput = ({ handleSwap }: Props) => {
     setNoRouteFound,
   } = useSwapActions()
 
-  const { data: routes, isFetching: isPriceFetching } = useSwapRouter({
-    network: network?.name?.toLowerCase() || 'mainnet',
+  const { data:  routes, isFetching: isPriceFetching } = useSwapRouter({
     balance,
   })
   useEffect(() => {
@@ -70,6 +70,9 @@ export const SwapTradeInput = ({ handleSwap }: Props) => {
   useEffect(() => {
     checkBalance(String(amount))
   }, [token0, token1, balance])
+
+  if(!isMounted) return <></>
+  
   return (
     <TradeInput
       id="swap-from"
@@ -80,7 +83,7 @@ export const SwapTradeInput = ({ handleSwap }: Props) => {
       value={String(amount)}
       balance={balance}
       error={error}
-      isLoadingPrice={isLoading}
+      isLoadingPrice={isPriceLoading}
       onUserInput={checkBalance}
       tradeVal={tradeVal}
       setAmount={setAmount}

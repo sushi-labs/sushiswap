@@ -4,7 +4,7 @@ import { Icon } from 'components/Icon'
 import { useParams } from 'next/navigation'
 import { FC, useMemo } from 'react'
 import { usePool } from 'utils/usePool'
-import { Pool, usePools } from 'utils/usePools'
+import { Pool } from 'utils/usePools'
 import { useTokenBalance } from 'utils/useTokenBalance'
 import { useTokensFromPools } from 'utils/useTokensFromPool'
 import { useTotalSupply } from 'utils/useTotalSupply'
@@ -15,22 +15,17 @@ interface PoolPositionProps {
   isLoading: boolean
 }
 
-const MAINNET_CONTRACT = process.env['MAINNET_CONTRACT'] || process.env['NEXT_PUBLIC_MAINNET_CONTRACT']
-const TESTNET_CONTRACT = process.env['TESTNET_CONTRACT'] || process.env['NEXT_PUBLIC_TESTNET_CONTRACT']
+const CONTRACT_ADDRESS = process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
 
 export const PoolPositionDesktop: FC<PoolPositionProps> = ({ row, isLoading }) => {
   const router = useParams()
   const { token0, token1 } = useTokensFromPools(row)
   const { account } = useWallet()
-  const [chainId, ...address] = decodeURIComponent(router?.id).split(':')
-
-  const CONTRACT_ADDRESS = chainId === '2' ? TESTNET_CONTRACT : MAINNET_CONTRACT
-  const tokenAddress = address.join(':')
-  const { data: pool, isLoading: isPoolLoading } = usePool(Number(chainId), tokenAddress)
+  const tokenAddress = decodeURIComponent(router?.id)
+  const { data: pool, isLoading: isPoolLoading } = usePool(tokenAddress)
   const { data: LPBalance, isLoading: isBalanceLoading } = useTokenBalance({
     account: account?.address as string,
     currency: `${CONTRACT_ADDRESS}::swap::LPToken<${tokenAddress}>`,
-    chainId: Number(chainId),
     enabled: true,
     refetchInterval: 2000,
   })
@@ -39,7 +34,7 @@ export const PoolPositionDesktop: FC<PoolPositionProps> = ({ row, isLoading }) =
     return [pool?.data?.balance_x?.value, pool?.data?.balance_y?.value]
   }, [pool])
 
-  const { data: LPSupply, isLoading: isLoadingSupply } = useTotalSupply(chainId, tokenAddress)
+  const { data: LPSupply, isLoading: isLoadingSupply } = useTotalSupply(tokenAddress)
   const totalSupply = LPSupply?.data?.supply?.vec?.[0]?.integer?.vec?.[0]?.value
   const [underlying0, underlying1] = useUnderlyingTokenBalanceFromPool({
     balance: LPBalance,

@@ -9,10 +9,11 @@ interface Props {
   underlying1: number | undefined
   token0: Token
   token1: Token
+  isLoading:boolean
 }
 
-export const AddSectionMyPositionStaked: FC<Props> = ({ balance, underlying0, underlying1, token0, token1 }) => {
-  if ('') {
+export const AddSectionMyPositionStaked: FC<Props> = ({ balance, underlying0, underlying1, token0, token1, isLoading }) => {
+  if (isLoading) {
     return (
       <div className="flex flex-col gap-2">
         <div className="flex gap-1 justify-between items-center">

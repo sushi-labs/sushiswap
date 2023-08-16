@@ -10,9 +10,6 @@ import { SettingsView } from './SettingsView'
 import { useTokenBalance } from 'utils/useTokenBalance'
 import { useTokens } from 'utils/useTokens'
 
-type fullWidth = {
-  fullWidth: boolean
-}
 interface Props {
   hideChevron?: boolean
   varient?: string
@@ -29,14 +26,13 @@ export enum ProfileView {
 }
 
 export default function WalletSelector({ hideChevron, varient, color, fullWidth, size }: Props) {
-  const { account, connected, network } = useWallet()
+  const { account, connected } = useWallet()
   const [view, setView] = useState<ProfileView>(ProfileView.Default)
-  const { data: tokens } = useTokens(Number(network?.chainId) || 1)
+  const { data: tokens } = useTokens()
   const nativeCurr = tokens?.['0x1::aptos_coin::AptosCoin']
   const { data: balance } = useTokenBalance({
     account: account?.address as string,
     currency: nativeCurr?.address as string,
-    chainId: Number(network?.chainId),
     refetchInterval: 2000,
   })
   return (
@@ -101,7 +97,7 @@ export default function WalletSelector({ hideChevron, varient, color, fullWidth,
               >
                 {!connected && <ConnectView close={close} />}
                 {connected && view == ProfileView.Default && (
-                  <DefaultView balance={balance / 10 ** 8} setView={setView} />
+                  <DefaultView balance={balance && balance / 10 ** 8} setView={setView} />
                 )}
                 {view == ProfileView.Settings && <SettingsView setView={setView} />}
               </Popover.Panel>

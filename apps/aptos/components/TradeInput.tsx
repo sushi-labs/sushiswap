@@ -44,7 +44,7 @@ export default function TradeInput({
     if (tradeVal) {
       tradeVal.current?.focus()
     }
-  }, [])
+  }, [tradeVal])
   const balanceClick = () => {
     if (setAmount && balance) {
       // if (token.symbol == 'APT') {
@@ -110,9 +110,9 @@ export default function TradeInput({
                 >
                   {token ? (
                     <>
-                      <div className="w-[28px] h-[28px] mr-0.5">
+                      <span className="w-[28px] h-[28px] mr-0.5">
                         <Icon currency={token} height={28} width={28} />
-                      </div>
+                      </span>
                       {token.symbol}
                       <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />
                     </>

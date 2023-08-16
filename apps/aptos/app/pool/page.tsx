@@ -8,9 +8,22 @@ import PoolsSection from '../../components/PoolsSection'
 import { Footer } from '@sushiswap/ui/app/Footer'
 import { useAccount } from 'utils/useAccount'
 import Loading from 'app/loading'
+import { useEffect } from 'react'
+import { useWallet } from '@aptos-labs/wallet-adapter-react'
 
 export default function Pool() {
   const { isLoadingAccount } = useAccount()
+  const { network, disconnect } = useWallet()
+  console.log(network)
+  useEffect(() => {
+    if (network?.name?.toLowerCase() === undefined) {
+      disconnect()
+    }
+    if (network?.name?.toLowerCase() === 'testnet' || network?.name?.toLowerCase() === 'devnet') {
+      disconnect()
+      alert('Please switch network to mainnet')
+    }
+  }, [network])
   return (
     <>
       {isLoadingAccount && <Loading />}

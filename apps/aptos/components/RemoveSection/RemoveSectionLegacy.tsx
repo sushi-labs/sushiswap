@@ -1,9 +1,7 @@
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { Network, Provider } from 'aptos'
-import { useParams } from 'next/navigation'
 import React, { useMemo, useState } from 'react'
 import { Pool } from 'utils/usePools'
-import { CoinInfo } from 'utils/useTotalSupply'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 import { formatNumber } from 'utils/utilFunctions'
 import { createToast } from 'components/toast'
@@ -21,8 +19,8 @@ interface Props {
   underlying1: number | undefined
   totalSupply: string | undefined
 }
-const MAINNET_CONTRACT = process.env['MAINNET_CONTRACT'] || process.env['NEXT_PUBLIC_MAINNET_CONTRACT']
-const TESTNET_CONTRACT = process.env['TESTNET_CONTRACT'] || process.env['NEXT_PUBLIC_TESTNET_CONTRACT']
+const CONTRACT_ADDRESS = process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
+
 export const RemoveSectionLegacy = ({
   pool,
   liquidityBalance,
@@ -33,7 +31,6 @@ export const RemoveSectionLegacy = ({
   underlying1,
   totalSupply,
 }: Props) => {
-  const router = useParams()
   const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
   const slippagePercent = useMemo(() => {
     return (
@@ -45,13 +42,9 @@ export const RemoveSectionLegacy = ({
     return [pool?.data?.balance_x?.value, pool?.data?.balance_y?.value]
   }, [pool])
 
-  const [chainId, ...address] = decodeURIComponent(router?.id).split(':')
   const [percentage, setPercentage] = useState<string>('')
   const [isTransactionPending, setisTransactionPending] = useState<boolean>(false)
-  const CONTRACT_ADDRESS = chainId === '2' ? TESTNET_CONTRACT : MAINNET_CONTRACT
-  const { account, signAndSubmitTransaction, network, connected } = useWallet()
-
-  const networkType = network?.name?.toLowerCase() == 'testnet' ? Network.TESTNET : Network.MAINNET
+  const { account, signAndSubmitTransaction, connected } = useWallet()
 
   const currencyAToRemove = useMemo(() => {
     return token0
@@ -85,7 +78,7 @@ export const RemoveSectionLegacy = ({
   }, [slippagePercent, currencyAToRemove, currencyBToRemove])
 
   const removeLiquidityHandler = async () => {
-    const provider = new Provider(networkType)
+    const provider = new Provider(Network.MAINNET)
     if (!account?.address) return []
     setisTransactionPending(true)
     if (!liquidityBalance) return

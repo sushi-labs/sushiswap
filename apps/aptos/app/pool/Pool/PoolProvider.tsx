@@ -52,8 +52,7 @@ type Actions =
   | { type: 'setPoolPairRatio'; value: number }
 
 export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
-  const { network } = useWallet()
-  const baseTokens = getTokensWithoutKey(Number(network?.chainId) || 1)
+  const baseTokens = getTokensWithoutKey()
   const reducer = (state: State, action: Actions) => {
     switch (action.type) {
       case 'setToken0':
@@ -81,7 +80,6 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
     }
   }
 
-  // const { tokens } = useTokens(Number(network?.chainId) || 1)
   const [internalState, dispatch] = useReducer(reducer, {
     token0: baseTokens[0],
     token1: baseTokens[1],

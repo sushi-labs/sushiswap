@@ -4,14 +4,13 @@ import { RemoveSectionUnstakeWidget } from './RemoveSectionUnstakeWidget'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Token } from 'utils/tokenType'
-import { Pool } from 'utils/usePools'
 import { useParams } from 'next/navigation'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Network, Provider } from 'aptos'
 import { createToast } from 'components/toast'
 
 const MASTERCHEF_CONTRACT = process.env['MASTERCHEF_CONTRACT'] || process.env['NEXT_PUBLIC_MASTERCHEF_CONTRACT']
-const MAINNET_CONTRACT = process.env['MAINNET_CONTRACT'] || process.env['NEXT_PUBLIC_MAINNET_CONTRACT']
+const CONTRACT_ADDRESS = process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
 interface AddSectionStakeProps {
   token0: Token
   token1: Token
@@ -56,18 +55,17 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
   const [value, setValue] = useState('')
 
   const router = useParams()
-  const [chainId, ...address] = decodeURIComponent(router?.id).split(':')
-  const tokenAddress = address.join(':')
+  const tokenAddress = decodeURIComponent(router?.id)
   const { signAndSubmitTransaction } = useWallet()
   const [isTransactionPending, setTransactionPending] = useState<boolean>(false)
   const withdrawLiquidity = async () => {
-    const provider = new Provider(Network.TESTNET)
+    const provider = new Provider(Network.MAINNET)
     setTransactionPending(true)
 
     try {
       const response = await signAndSubmitTransaction({
         type: 'entry_function_payload',
-        type_arguments: [`${MAINNET_CONTRACT}::swap::LPToken<${tokenAddress}>`],
+        type_arguments: [`${CONTRACT_ADDRESS}::swap::LPToken<${tokenAddress}>`],
         arguments: [parseInt(String(Number(value) * 10 ** decimals))],
         function: `${MASTERCHEF_CONTRACT}::masterchef::withdraw`,
       })

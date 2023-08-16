@@ -1,8 +1,7 @@
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 const MASTERCHEF_CONTRACT = process.env['MASTERCHEF_CONTRACT'] || process.env['NEXT_PUBLIC_MASTERCHEF_CONTRACT']
-const MAINNET_CONTRACT = process.env['MAINNET_CONTRACT'] || process.env['NEXT_PUBLIC_MAINNET_CONTRACT']
+const CONTRACT_ADDRESS = process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
 
 type PoolInfo = {
   acc_sushi_per_share: string
@@ -40,7 +39,7 @@ export type FarmLP = {
 
 const farmsQueryFn = async () => {
   const response = await fetch(
-    `https://fullnode.testnet.aptoslabs.com/v1/accounts/${MASTERCHEF_CONTRACT}/resource/${MASTERCHEF_CONTRACT}::masterchef::MasterChef`
+    `https://fullnode.mainnet.aptoslabs.com/v1/accounts/${MASTERCHEF_CONTRACT}/resource/${MASTERCHEF_CONTRACT}::masterchef::MasterChef`
   )
   if (response.status == 200) {
     const data: FarmLP = await response.json()
@@ -50,7 +49,7 @@ const farmsQueryFn = async () => {
 }
 
 export const isFarm = (address: string, farms: FarmLP | undefined) => {
-  return useMemo(() => farms?.data?.lps.indexOf(`${MAINNET_CONTRACT}::swap::LPToken<${address}>`), [address, farms])
+  return useMemo(() => farms?.data?.lps.indexOf(`${CONTRACT_ADDRESS}::swap::LPToken<${address}>`), [address, farms])
 }
 
 export function useFarms() {

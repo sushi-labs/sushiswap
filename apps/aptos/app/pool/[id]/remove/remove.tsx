@@ -16,28 +16,24 @@ import { RemoveSectionUnstake } from 'components/RemoveSection/RemoveSectionUnst
 import { isFarm, useFarms } from 'utils/useFarms'
 import { getPIdIndex, useUserHandle, useUserPool } from 'utils/useUserHandle'
 
-const MAINNET_CONTRACT = process.env['MAINNET_CONTRACT'] || process.env['NEXT_PUBLIC_MAINNET_CONTRACT']
-const TESTNET_CONTRACT = process.env['TESTNET_CONTRACT'] || process.env['NEXT_PUBLIC_TESTNET_CONTRACT']
+const CONTRACT_ADDRESS = process.env['NEXT_PUBLIC_SWAP_CONTRACT'] || process.env['SWAP_CONTRACT']
 const Remove: FC = () => {
   return <_Remove />
 }
 
 const _Remove: FC = () => {
   const router = useParams()
-  const [chainId, ...address] = decodeURIComponent(router?.id).split(':')
-  const tokenAddress = address.join(':')
+  const tokenAddress = decodeURIComponent(router?.id)
 
-  const CONTRACT_ADDRESS = chainId === '2' ? TESTNET_CONTRACT : MAINNET_CONTRACT
   const { account } = useWallet()
-  const { data: LPBalance } = useTokenBalance({
+  const { data: LPBalance, isInitialLoading: isLoadingBalance } = useTokenBalance({
     account: account?.address as string,
     currency: `${CONTRACT_ADDRESS}::swap::LPToken<${tokenAddress}>`,
-    chainId: Number(chainId),
     enabled: true,
     refetchInterval: 2000,
   })
 
-  const { data: pool } = usePool(Number(chainId), tokenAddress)
+  const { data: pool } = usePool(tokenAddress)
 
   const [reserve0, reserve1] = useMemo(() => {
     return [pool?.data?.balance_x?.value, pool?.data?.balance_y?.value]
@@ -45,24 +41,23 @@ const _Remove: FC = () => {
 
   const { token0, token1 } = useTokensFromPools(pool as Pool)
 
-  const { data: LPSupply } = useTotalSupply(chainId, tokenAddress)
+  const { data: coinInfo } = useTotalSupply(tokenAddress)
 
-  const balance = LPSupply && LPBalance ? ((LPBalance / 10 ** LPSupply?.data?.decimals) as number) : 0
-  const totalSupply = LPSupply?.data?.supply?.vec?.[0]?.integer?.vec?.[0]?.value
+  const balance = coinInfo && LPBalance ? ((LPBalance / 10 ** coinInfo?.data?.decimals) as number) : 0
+  const totalSupply = coinInfo?.data?.supply?.vec?.[0]?.integer?.vec?.[0]?.value
 
   const [underlying0, underlying1] = useUnderlyingTokenBalanceFromPool({
     balance: LPBalance,
     reserve0: Number(reserve0),
     reserve1: Number(reserve1),
     totalSupply: Number(totalSupply),
-    decimals: LPSupply?.data?.decimals,
+    decimals: coinInfo?.data?.decimals,
   })
 
   // farm
 
   const { data: farms } = useFarms()
   const farmIndex = isFarm(tokenAddress, farms)
-  const { data: coinInfo } = useTotalSupply(chainId, tokenAddress)
   const { data: userHandle } = useUserPool(account?.address)
   const { data: stakes, isInitialLoading: isStakeLoading } = useUserHandle({ address: account?.address, userHandle })
   const pIdIndex = useMemo(() => {
@@ -76,7 +71,7 @@ const _Remove: FC = () => {
     }
   }, [stakes, pIdIndex, coinInfo])
 
-  const farmBalance = LPSupply ? ((stakeAmount / 10 ** LPSupply?.data?.decimals) as number) : 0
+  const farmBalance = coinInfo ? ((stakeAmount / 10 ** coinInfo?.data?.decimals) as number) : 0
 
   const [farmUnderlying0, farmUnderlying1] = useUnderlyingTokenBalanceFromPool({
     balance: stakeAmount,
@@ -138,6 +133,7 @@ const _Remove: FC = () => {
                   token1={token1}
                   farmUnderlying0={farmUnderlying0}
                   farmUnderlying1={farmUnderlying1}
+                  isLoading={isStakeLoading || isLoadingBalance}
                 />
               </AppearOnMount>
             </div>

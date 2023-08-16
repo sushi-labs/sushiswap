@@ -1,27 +1,26 @@
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import React, { useCallback, useMemo, useState } from 'react'
 import { Pool, usePools } from 'utils/usePools'
 import { PaginationState, SortingState, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 import { NAME_COLUMN } from './Cells/columns'
-import { isFarm, useFarms } from 'utils/useFarms'
+import { useFarms } from 'utils/useFarms'
+import { useDebounce } from '@sushiswap/hooks'
 
 const columns = [NAME_COLUMN] as any
-const MAINNET_CONTRACT = process.env['MAINNET_CONTRACT'] || process.env['NEXT_PUBLIC_MAINNET_CONTRACT']
+const CONTRACT_ADDRESS = process.env['NEXT_PUBLIC_SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
 interface Props {
   farmsOnly: boolean
+  query: string
 }
-export const PoolsTable = ({ farmsOnly }: Props) => {
-  const { network } = useWallet()
-  const { data: pools, isLoading } = usePools(Number(network?.chainId) || 1)
+export const PoolsTable = ({ farmsOnly, query }: Props) => {
+  const { data: pools, isLoading } = usePools()
   const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
   const [, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 })
   const { data: farms } = useFarms()
   const farmFilter = useMemo(() => {
     return pools?.filter((pool) => {
-      const [chainId, ...address] = pool.id.split(':')
-      const lpAddress = address.join(':')
-      const _isFarm = farms?.data?.lps.indexOf(`${MAINNET_CONTRACT}::swap::LPToken<${lpAddress}>`)
+      const lpAddress = pool.id
+      const _isFarm = farms?.data?.lps.indexOf(`${CONTRACT_ADDRESS}::swap::LPToken<${lpAddress}>`)
       return _isFarm !== -1
     })
   }, [pools, farms])
@@ -32,8 +31,18 @@ export const PoolsTable = ({ farmsOnly }: Props) => {
     () => (!farmsOnly ? pools?.flat() || [] : farmFilter?.flat() || []),
     [pools, farmsOnly, farmFilter]
   )
+  const debouncedQuery = useDebounce(query.trimStart().toLowerCase(), 400)
+  const tableData = useMemo(() => {
+    if (debouncedQuery.split(' ')[0] == '') return data
+    return data.filter(
+      (pool) =>
+        debouncedQuery?.split(' ').includes(pool.data.token_x_details.symbol.toLowerCase()) ||
+        debouncedQuery?.split(' ').includes(pool.data.token_y_details.symbol.toLowerCase())
+    )
+  }, [debouncedQuery, data])
+
   const table = useReactTable<Pool>({
-    data,
+    data: tableData,
     state: {
       sorting,
     },
@@ -50,7 +59,7 @@ export const PoolsTable = ({ farmsOnly }: Props) => {
     <GenericTable<Pool>
       table={table}
       placeholder="No Pools Found"
-      pageSize={data?.length ? data?.length : 5}
+      pageSize={tableData?.length ? tableData?.length : 5}
       loading={!pools || isLoading}
       testId="pools"
       linkFormatter={rowLink}

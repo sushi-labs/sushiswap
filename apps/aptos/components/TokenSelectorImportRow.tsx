@@ -91,7 +91,7 @@ export const TokenSelectorImportRow = ({ id, token, onImport }: Props) => {
                                 target="_blank"
                                 href={`https://explorer.aptoslabs.com/account/${
                                   cur.address.split('::')[0]
-                                }?network=${network?.name?.toLowerCase()}`}
+                                }?network=mainnet`}
                                 className="flex gap-1 text-sm items-center text-blue font-medium justify-end"
                                 rel="noreferrer"
                               >

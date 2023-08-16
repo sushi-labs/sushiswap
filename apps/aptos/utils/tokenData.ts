@@ -7,12 +7,10 @@ export interface coinType {
 }
 
 export async function getTokenData(token: Token) {
-  const { account, network } = useWallet()
+  const { account } = useWallet()
   let tokenData: any
   if (account?.address && token) {
-    const res = await fetch(
-      `https://fullnode.${network?.name?.toLowerCase()}.aptoslabs.com/v1/accounts/${account?.address}/resources`
-    )
+    const res = await fetch(`https://fullnode.mainnet.aptoslabs.com/v1/accounts/${account?.address}/resources`)
     const data = await res.json()
     if (!data.error_code) {
       tokenData = data?.filter((coin: coinType) => {

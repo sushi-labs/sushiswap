@@ -5,20 +5,15 @@ import { Icon } from 'components/Icon'
 import { FC } from 'react'
 import { Pool } from 'utils/usePools'
 import { useTokensFromPools } from 'utils/useTokensFromPool'
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
 
 interface PoolHeader {
   row: Pool
 }
 
-const MAINNET_CONTRACT = process.env['MAINNET_CONTRACT'] || process.env['NEXT_PUBLIC_MAINNET_CONTRACT']
-const TESTNET_CONTRACT = process.env['TESTNET_CONTRACT'] || process.env['NEXT_PUBLIC_TESTNET_CONTRACT']
+const CONTRACT_ADDRESS = process.env['NEXT_PUBLIC_SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
 
 export const PoolHeader: FC<PoolHeader> = ({ row }) => {
-  const { network } = useWallet()
   const { token0, token1 } = useTokensFromPools(row)
-  const networkName = network?.name === 'testnet' ? network?.name?.toLowerCase() : 'mainnet'
-  const CONTRACT_ADDRESS = networkName === 'testnet' ? TESTNET_CONTRACT : MAINNET_CONTRACT
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-3">
@@ -30,7 +25,7 @@ export const PoolHeader: FC<PoolHeader> = ({ row }) => {
             </IconList>
             <Link.External
               className="flex flex-col !no-underline group"
-              href={`https://explorer.aptoslabs.com/account/${CONTRACT_ADDRESS}/coins?network=${networkName}`}
+              href={`https://explorer.aptoslabs.com/account/${CONTRACT_ADDRESS}/coins?network=mainnet`}
             >
               <div className="flex items-center gap-2">
                 <Typography

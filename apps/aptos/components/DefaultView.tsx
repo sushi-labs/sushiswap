@@ -7,12 +7,12 @@ import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import React, { Dispatch, SetStateAction } from 'react'
 import { ProfileView } from './WalletSelector'
 interface Props {
-  balance: number
+  balance: number | undefined
   setView: Dispatch<SetStateAction<ProfileView>>
 }
 
 export const DefaultView = ({ balance, setView }: Props) => {
-  const { account, disconnect, network, wallet } = useWallet()
+  const { account, disconnect } = useWallet()
 
   let [big, portion] = (balance ? `${balance}` : '0.00').split('.')
   portion = portion ? portion.substring(0, 2) : ''
@@ -52,7 +52,7 @@ export const DefaultView = ({ balance, setView }: Props) => {
             iconProps={{ width: 18, height: 18 }}
             as="a"
             target="_blank"
-            href={`https://explorer.aptoslabs.com/account/${account?.address}?network=${network?.name?.toLowerCase()}`}
+            href={`https://explorer.aptoslabs.com/account/${account?.address}?network=mainnet`}
             description="View on Explorer"
           />
           <IconButton
