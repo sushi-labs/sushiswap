@@ -143,36 +143,33 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
       // Clear input fields
       setValue('')
 
-      waitForTransaction({ hash: data.hash })
+      waitForTransaction({ chainId: network0, hash: data.hash })
         .then((receipt) => {
           if (receipt.status === 'success') {
-            log.info('cross chain swap success (source)', {
-              chainId: network0,
-              txHash: data.hash,
-              exporerLink: Chain.txUrl(network0, data.hash),
-              args: trade?.writeArgs,
+            // log.info('cross chain swap success (source)', {
+            //   chainId: network0,
+            //   txHash: data.hash,
+            //   exporerLink: Chain.txUrl(network0, data.hash),
+            //   args: trade?.writeArgs,
+            // })
+            setStepStates({
+              source: StepState.Success,
+              bridge: StepState.Pending,
+              dest: StepState.NotStarted,
             })
           } else {
-            log.error('cross chain swap failed (source)', {
-              chainId: network0,
-              txHash: data.hash,
-              exporerLink: Chain.txUrl(network0, data.hash),
-              args: trade?.writeArgs,
+            // log.error('cross chain swap failed (source)', {
+            //   chainId: network0,
+            //   txHash: data.hash,
+            //   exporerLink: Chain.txUrl(network0, data.hash),
+            //   args: trade?.writeArgs,
+            // })
+            setStepStates({
+              source: StepState.Failed,
+              bridge: StepState.NotStarted,
+              dest: StepState.NotStarted,
             })
           }
-
-          setStepStates({
-            source: StepState.Success,
-            bridge: StepState.Pending,
-            dest: StepState.NotStarted,
-          })
-        })
-        .catch(() => {
-          setStepStates({
-            source: StepState.Failed,
-            bridge: StepState.NotStarted,
-            dest: StepState.NotStarted,
-          })
         })
         .finally(async () => {
           await refetchBalances()
@@ -282,8 +279,6 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
   }, [lzData?.link])
 
   useEffect(() => {
-    console.log('ahoj', receipt, groupTs, lzData)
-
     if (receipt && groupTs.current) {
       void createToast({
         account: address,
