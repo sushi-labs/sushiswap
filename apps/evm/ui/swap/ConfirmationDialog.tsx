@@ -210,7 +210,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     ...config,
     request: {
       ...config?.request,
-      gas: config?.request?.gas ? calculateGasMargin(config.request.gas) : undefined,
+      gas: config?.request?.gas ? calculateGasMargin(config.request.gas ?? 0n) : undefined,
     },
     onMutate: () => {
       // Set reference of current trade
