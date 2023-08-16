@@ -59,7 +59,7 @@ export function Add() {
 }
 
 const _Add: FC = () => {
-  const { network, disconnect, account, signAndSubmitTransaction } = useWallet()
+  const { network, disconnect, account, signAndSubmitTransaction, connected } = useWallet()
   const [error0, setError0] = useState('')
   const [error1, setError1] = useState('')
 
@@ -71,12 +71,12 @@ const _Add: FC = () => {
   }
 
   const addLiquidity = async (close: () => void) => {
-    const provider = new Provider(Network.TESTNET)
+    const provider = new Provider(Network.MAINNET)
     const payload: payloadType = liquidityArgs(
       token0.address,
       token1.address,
       parseInt(String(Number(amount0) * 10 ** token0.decimals)),
-      parseInt(String(Number(amount1) * 10 ** token1.decimals)),
+      parseInt(String(Number(amount1) * 10 ** token1.decimals))
     )
     setisTransactionPending(true)
     if (!account) return []
@@ -105,8 +105,6 @@ const _Add: FC = () => {
     }
   }
 
-  const { connected } = useWallet()
-
   const { setToken0, setToken1, setAmount0, setAmount1, setisTransactionPending } = usePoolActions()
   const { token0, token1, amount0, amount1, isPriceFetching, poolPairRatio, pairs } = usePoolState()
   const { data: balance0, isLoading: isLoadingBalance0 } = useTokenBalance({
@@ -125,7 +123,6 @@ const _Add: FC = () => {
       setAmount0(value)
       if (pairs?.data) {
         if (value) {
-
           setAmount1(String(parseFloat(String(value)) * poolPairRatio))
         } else {
           setAmount1('')

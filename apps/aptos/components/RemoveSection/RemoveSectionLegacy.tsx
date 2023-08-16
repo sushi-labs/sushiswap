@@ -46,7 +46,6 @@ export const RemoveSectionLegacy = ({
   const [isTransactionPending, setisTransactionPending] = useState<boolean>(false)
   const { account, signAndSubmitTransaction, connected } = useWallet()
 
-
   const currencyAToRemove = useMemo(() => {
     return token0
       ? underlying0 && liquidityBalance
@@ -79,7 +78,7 @@ export const RemoveSectionLegacy = ({
   }, [slippagePercent, currencyAToRemove, currencyBToRemove])
 
   const removeLiquidityHandler = async () => {
-    const provider = new Provider(Network.TESTNET)
+    const provider = new Provider(Network.MAINNET)
     if (!account?.address) return []
     setisTransactionPending(true)
     if (!liquidityBalance) return

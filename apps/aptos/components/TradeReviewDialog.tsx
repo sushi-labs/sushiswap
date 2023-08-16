@@ -28,7 +28,7 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
   const { setisTransactionPending, setAmount } = useSwapActions()
   const minOutput = slippageAmount ? formatNumber(slippageAmount, token1 ? token1.decimals : 8) : 0
   const swapToken = async (close: () => void) => {
-    const provider = new Provider(Network.TESTNET)
+    const provider = new Provider(Network.MAINNET)
     const payload: any = payloadArgs(
       parseInt((parseFloat(String(amount)) * 10 ** token0.decimals) as unknown as string),
       bestRoutes,

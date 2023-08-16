@@ -4,7 +4,6 @@ import { RemoveSectionUnstakeWidget } from './RemoveSectionUnstakeWidget'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Token } from 'utils/tokenType'
-import { Pool } from 'utils/usePools'
 import { useParams } from 'next/navigation'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Network, Provider } from 'aptos'
@@ -60,7 +59,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
   const { signAndSubmitTransaction } = useWallet()
   const [isTransactionPending, setTransactionPending] = useState<boolean>(false)
   const withdrawLiquidity = async () => {
-    const provider = new Provider(Network.TESTNET)
+    const provider = new Provider(Network.MAINNET)
     setTransactionPending(true)
 
     try {
