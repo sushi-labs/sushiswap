@@ -11,7 +11,7 @@ export function useTokensFromPools(row: Pool) {
     return row?.id?.split(':')[0]
   }, [row])
 
-  const { data: tokens } = useTokens(Number(chainId))
+  const { data: tokens } = useTokens()
   const address0 = row?.data?.token_x_details?.token_address
   const address1 = row?.data?.token_y_details?.token_address
   if (tokens?.[address0]) {

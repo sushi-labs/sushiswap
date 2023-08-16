@@ -10,8 +10,7 @@ import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
 
 export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
   const { token0, token1 } = useTokensFromPools(row)
-  const [, ...address] = row?.id.split(':')
-  const lpAddress = address.join(':')
+  const lpAddress = row?.id
   const { data: farms } = useFarms()
   const _isFarm = isFarm(lpAddress, farms)
 

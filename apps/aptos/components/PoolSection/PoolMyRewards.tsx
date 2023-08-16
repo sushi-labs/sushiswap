@@ -14,12 +14,11 @@ interface Props {
   isLoading: boolean
 }
 const MASTERCHEF_CONTRACT = process.env['MASTERCHEF_CONTRACT'] || process.env['NEXT_PUBLIC_MASTERCHEF_CONTRACT']
-const MAINNET_CONTRACT = process.env['MAINNET_CONTRACT'] || process.env['NEXT_PUBLIC_MAINNET_CONTRACT']
+const CONTRACT_ADDRESS = process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
 export const PoolMyRewards: FC<Props> = ({ reward, decimals, isLoading }) => {
   const router = useParams()
   const { connected, signAndSubmitTransaction } = useWallet()
-  const [chainId, ...address] = decodeURIComponent(router?.id).split(':')
-  const tokenAddress = address.join(':')
+  const tokenAddress = decodeURIComponent(router?.id)
   const [isTransactionPending, setTransactionPending] = useState<boolean>(false)
   const harvest = async () => {
     const provider = new Provider(Network.MAINNET)
@@ -27,7 +26,7 @@ export const PoolMyRewards: FC<Props> = ({ reward, decimals, isLoading }) => {
     try {
       const response = await signAndSubmitTransaction({
         type: 'entry_function_payload',
-        type_arguments: [`${MAINNET_CONTRACT}::swap::LPToken<${tokenAddress}>`],
+        type_arguments: [`${CONTRACT_ADDRESS}::swap::LPToken<${tokenAddress}>`],
         arguments: [0],
         function: `${MASTERCHEF_CONTRACT}::masterchef::deposit`,
       })

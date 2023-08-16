@@ -37,6 +37,12 @@ export default [
         "name": "etherscan",
         "url": "https://etherscan.io",
         "standard": "EIP3091"
+      },
+      {
+        "name": "blockscout",
+        "url": "https://eth.blockscout.com",
+        "icon": "blockscout",
+        "standard": "EIP3091"
       }
     ]
   },
@@ -136,6 +142,12 @@ export default [
         "name": "etherscan-goerli",
         "url": "https://goerli.etherscan.io",
         "standard": "EIP3091"
+      },
+      {
+        "name": "blockscout-goerli",
+        "url": "https://eth-goerli.blockscout.com",
+        "icon": "blockscout",
+        "standard": "EIP3091"
       }
     ]
   },
@@ -143,7 +155,8 @@ export default [
     "name": "OP Mainnet",
     "chain": "ETH",
     "rpc": [
-      "https://mainnet.optimism.io/"
+      "https://mainnet.optimism.io",
+      "https://optimism.publicnode.com"
     ],
     "faucets": [],
     "nativeCurrency": {
@@ -159,6 +172,12 @@ export default [
       {
         "name": "etherscan",
         "url": "https://optimistic.etherscan.io",
+        "standard": "EIP3091"
+      },
+      {
+        "name": "blockscout",
+        "url": "https://optimism.blockscout.com",
+        "icon": "blockscout",
         "standard": "EIP3091"
       }
     ]
@@ -225,13 +244,13 @@ export default [
     ]
   },
   {
-    "name": "Binance Smart Chain Mainnet",
+    "name": "BNB Smart Chain Mainnet",
     "chain": "BSC",
     "rpc": [
-      "https://bsc-dataseed1.binance.org",
-      "https://bsc-dataseed2.binance.org",
-      "https://bsc-dataseed3.binance.org",
-      "https://bsc-dataseed4.binance.org",
+      "https://bsc-dataseed1.bnbchain.org",
+      "https://bsc-dataseed2.bnbchain.org",
+      "https://bsc-dataseed3.bnbchain.org",
+      "https://bsc-dataseed4.bnbchain.org",
       "https://bsc-dataseed1.defibit.io",
       "https://bsc-dataseed2.defibit.io",
       "https://bsc-dataseed3.defibit.io",
@@ -247,11 +266,11 @@ export default [
       "https://free-online-app.com/faucet-for-eth-evm-chains/"
     ],
     "nativeCurrency": {
-      "name": "Binance Chain Native Token",
+      "name": "BNB Chain Native Token",
       "symbol": "BNB",
       "decimals": 18
     },
-    "infoURL": "https://www.binance.org",
+    "infoURL": "https://www.bnbchain.org/en",
     "shortName": "bnb",
     "chainId": 56,
     "networkId": 56,
@@ -318,26 +337,26 @@ export default [
     ]
   },
   {
-    "name": "Binance Smart Chain Testnet",
+    "name": "BNB Smart Chain Testnet",
     "chain": "BSC",
     "rpc": [
-      "https://data-seed-prebsc-1-s1.binance.org:8545",
-      "https://data-seed-prebsc-2-s1.binance.org:8545",
-      "https://data-seed-prebsc-1-s2.binance.org:8545",
-      "https://data-seed-prebsc-2-s2.binance.org:8545",
-      "https://data-seed-prebsc-1-s3.binance.org:8545",
-      "https://data-seed-prebsc-2-s3.binance.org:8545",
+      "https://data-seed-prebsc-1-s1.bnbchain.org:8545",
+      "https://data-seed-prebsc-2-s1.bnbchain.org:8545",
+      "https://data-seed-prebsc-1-s2.bnbchain.org:8545",
+      "https://data-seed-prebsc-2-s2.bnbchain.org:8545",
+      "https://data-seed-prebsc-1-s3.bnbchain.org:8545",
+      "https://data-seed-prebsc-2-s3.bnbchain.org:8545",
       "https://bsc-testnet.publicnode.com"
     ],
     "faucets": [
-      "https://testnet.binance.org/faucet-smart"
+      "https://testnet.bnbchain.org/faucet-smart"
     ],
     "nativeCurrency": {
-      "name": "Binance Chain Native Token",
+      "name": "BNB Chain Native Token",
       "symbol": "tBNB",
       "decimals": 18
     },
-    "infoURL": "https://testnet.binance.org/",
+    "infoURL": "https://www.bnbchain.org/en",
     "shortName": "bnbt",
     "chainId": 97,
     "networkId": 97,
@@ -387,7 +406,7 @@ export default [
       },
       {
         "name": "blockscout",
-        "url": "https://blockscout.com/xdai/mainnet",
+        "url": "https://gnosis.blockscout.com",
         "icon": "blockscout",
         "standard": "EIP3091"
       }
@@ -576,7 +595,12 @@ export default [
     "name": "Boba Network",
     "chain": "ETH",
     "rpc": [
-      "https://mainnet.boba.network/"
+      "https://mainnet.boba.network",
+      "https://replica.boba.network",
+      "http://boba-ethereum.gateway.tenderly.co",
+      "http://gateway.tenderly.co/public/boba-ethereum",
+      "wss://boba-ethereum.gateway.tenderly.co/",
+      "wss://gateway.tenderly.co/public/boba-ethereum"
     ],
     "faucets": [],
     "nativeCurrency": {
@@ -730,13 +754,16 @@ export default [
     ]
   },
   {
-    "name": "Kava EVM",
+    "name": "Kava",
     "chain": "KAVA",
     "rpc": [
       "https://evm.kava.io",
       "https://evm2.kava.io",
+      "https://kava-rpc.gateway.pokt.network",
+      "https://kava-evm.rpc.thirdweb.com",
       "wss://wevm.kava.io",
-      "wss://wevm2.kava.io"
+      "wss://wevm2.kava.io",
+      "https://kava-evm.publicnode.com"
     ],
     "faucets": [],
     "nativeCurrency": {
@@ -752,7 +779,7 @@ export default [
     "explorers": [
       {
         "name": "Kava EVM Explorer",
-        "url": "https://explorer.kava.io",
+        "url": "https://kavascan.com",
         "standard": "EIP3091",
         "icon": "kava"
       }
@@ -801,7 +828,8 @@ export default [
     "rpc": [
       "https://arbitrum-mainnet.infura.io/v3/${INFURA_API_KEY}",
       "https://arb-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}",
-      "https://arb1.arbitrum.io/rpc"
+      "https://arb1.arbitrum.io/rpc",
+      "https://arbitrum-one.publicnode.com"
     ],
     "faucets": [],
     "explorers": [
@@ -839,7 +867,8 @@ export default [
       "decimals": 18
     },
     "rpc": [
-      "https://nova.arbitrum.io/rpc"
+      "https://nova.arbitrum.io/rpc",
+      "https://arbitrum-nova.publicnode.com"
     ],
     "faucets": [],
     "explorers": [
@@ -987,9 +1016,11 @@ export default [
     "chain": "Boba BNB Mainnet",
     "rpc": [
       "https://bnb.boba.network",
-      "wss://wss.bnb.boba.network",
+      "http://boba-bnb.gateway.tenderly.co/",
+      "http://gateway.tenderly.co/public/boba-bnb",
       "https://replica.bnb.boba.network",
-      "wss://replica-wss.bnb.boba.network"
+      "wss://boba-bnb.gateway.tenderly.co/",
+      "wss://gateway.tenderly.co/public/boba-bnb"
     ],
     "faucets": [],
     "nativeCurrency": {
@@ -1007,7 +1038,16 @@ export default [
         "url": "https://blockexplorer.bnb.boba.network",
         "standard": "none"
       }
-    ]
+    ],
+    "parent": {
+      "type": "L2",
+      "chain": "eip155-5",
+      "bridges": [
+        {
+          "url": "https://gateway.boba.network"
+        }
+      ]
+    }
   },
   {
     "name": "Mumbai",
@@ -1045,17 +1085,23 @@ export default [
     "chain": "Harmony",
     "rpc": [
       "https://api.harmony.one",
-      "https://api.s0.t.hmny.io"
+      "https://a.api.s0.t.hmny.io",
+      "https://api.s0.t.hmny.io",
+      "https://rpc.ankr.com/harmony",
+      "https://harmony.api.onfinality.io/public",
+      "https://1rpc.io/one"
     ],
-    "faucets": [
-      "https://free-online-app.com/faucet-for-eth-evm-chains/"
-    ],
+    "faucets": [],
     "nativeCurrency": {
       "name": "ONE",
       "symbol": "ONE",
       "decimals": 18
     },
     "infoURL": "https://www.harmony.one/",
+    "slip44": 1023,
+    "ens": {
+      "registry": "0x4cd2563118e57b19179d8dc033f2b0c5b5d69ff5"
+    },
     "shortName": "hmy-s0",
     "chainId": 1666600000,
     "networkId": 1666600000,
@@ -1088,7 +1134,7 @@ export default [
     "explorers": [
       {
         "name": "Harmony Testnet Block Explorer",
-        "url": "https://explorer.pops.one",
+        "url": "https://explorer.testnet.harmony.one",
         "standard": "EIP3091"
       }
     ]

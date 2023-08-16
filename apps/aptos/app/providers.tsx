@@ -1,7 +1,6 @@
 'use client'
 
 import { AptosWalletAdapterProvider } from '@aptos-labs/wallet-adapter-react'
-import { WalletSelector } from '@aptos-labs/wallet-adapter-ant-design'
 import { PetraWallet } from 'petra-plugin-wallet-adapter'
 import { PontemWallet } from '@pontem/wallet-adapter-plugin'
 import { FewchaWallet } from 'fewcha-plugin-wallet-adapter'

@@ -19,7 +19,7 @@ interface AddSectionStakeProps {
   lpTokenName: string | undefined
 }
 const MASTERCHEF_CONTRACT = process.env['MASTERCHEF_CONTRACT'] || process.env['NEXT_PUBLIC_MASTERCHEF_CONTRACT']
-const MAINNET_CONTRACT = process.env['MAINNET_CONTRACT'] || process.env['NEXT_PUBLIC_MAINNET_CONTRACT']
+const CONTRACT_ADDRESS = process.env['NEXT_PUBLIC_SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
 
 export const AddSectionStake: FC<{
   title?: string
@@ -56,8 +56,7 @@ export const AddSectionStake: FC<{
 const _AddSectionStake: FC<AddSectionStakeProps> = ({ title, token0, token1, balance, decimals, lpTokenName }) => {
   const [hover, setHover] = useState(false)
   const router = useParams()
-  const [chainId, ...address] = decodeURIComponent(router?.id).split(':')
-  const tokenAddress = address.join(':')
+  const tokenAddress = decodeURIComponent(router?.id)
   const [value, setValue] = useState('')
   const { signAndSubmitTransaction } = useWallet()
   const [isTransactionPending, setTransactionPending] = useState<boolean>(false)
@@ -68,7 +67,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ title, token0, token1, bal
     try {
       const response = await signAndSubmitTransaction({
         type: 'entry_function_payload',
-        type_arguments: [`${MAINNET_CONTRACT}::swap::LPToken<${tokenAddress}>`],
+        type_arguments: [`${CONTRACT_ADDRESS}::swap::LPToken<${tokenAddress}>`],
         arguments: [parseInt(String(Number(value) * 10 ** decimals))],
         function: `${MASTERCHEF_CONTRACT}::masterchef::deposit`,
       })

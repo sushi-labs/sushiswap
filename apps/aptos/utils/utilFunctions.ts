@@ -2,27 +2,16 @@ import { useMemo } from 'react'
 import { Token } from './tokenType'
 import { usePoolActions, usePoolState } from 'app/pool/Pool/PoolProvider'
 import { Pool } from './usePools'
-const MAINNET_CONTRACT = process.env['MAINNET_CONTRACT'] || process.env['NEXT_PUBLIC_MAINNET_CONTRACT']
-const TESTNET_CONTRACT = process.env['TESTNET_CONTRACT'] || process.env['NEXT_PUBLIC_TESTNET_CONTRACT']
+import { baseTokens } from './baseTokens'
+
 export type Route = {
   route: string[]
   amountOut: number
 }
-export async function useAllCommonPairs(
-  amount_in: number = 0,
-  coinA: Token,
-  coinB: Token,
-  network: string = 'mainnet',
-  pairs: Pool[] | undefined
-) {
-  const CONTRACT_ADDRESS = network == 'mainnet' ? MAINNET_CONTRACT : TESTNET_CONTRACT
-  const basePairs = new Set([
-    '0x1::aptos_coin::AptosCoin',
-    '0xb06483aa110a1d7cfdc0f5ba48545ee967564819014326b2767de4705048aab9::btc_coin::Bitcoin',
-    '0xd2f34ece0b838b770eac6d23a1e139d28008c806af944f779728629867d17538::ether_coin::Ether',
-    coinA.address,
-    coinB.address,
-  ])
+export async function useAllCommonPairs(amount_in = 0, coinA: Token, coinB: Token, pairs: Pool[] | undefined) {
+  const CONTRACT_ADDRESS = process.env['NEXT_PUBLIC_SWAP_CONTRACT']
+  // all base pairs
+  const basePairs = new Set([...baseTokens, coinA.address, coinB.address])
 
   pairs?.map((pair) => {
     basePairs.add(pair?.data?.token_x_details?.token_address)
@@ -31,7 +20,7 @@ export async function useAllCommonPairs(
   const pairArray = [...basePairs]
   let returnRoutes: Route = {} as Route
 
-  var allPairs: string[][] = []
+  const allPairs: string[][] = []
 
   for (let i = 0; i < pairArray.length; i++) {
     for (let j = i + 1; j < pairArray.length; j++) {
@@ -39,12 +28,12 @@ export async function useAllCommonPairs(
     }
   }
   let reserves
-  await fetch(`https://fullnode.${network}.aptoslabs.com/v1/accounts/${CONTRACT_ADDRESS}/resources`)
+  await fetch(`https://fullnode.mainnet.aptoslabs.com/v1/accounts/${CONTRACT_ADDRESS}/resources`)
     .then((res) => res.json())
     .then((data) => {
       let t: any = {}
-      let reserve_tokens: any = {}
-      let reserve_token_info: any = {}
+      const reserve_tokens: any = {}
+      const reserve_token_info: any = {}
       if (data?.error_code) return
       reserves = data.filter((d: any) => {
         if (d.type.includes('swap::TokenPairReserve')) {
@@ -91,7 +80,7 @@ export async function useAllCommonPairs(
         }
       })
 
-      let graph = Object.values(t).reduce((data: any, coin: any) => {
+      const graph = Object.values(t).reduce((data: any, coin: any) => {
         const coins_data = coin.pairs.split('|||')
 
         if (data[coins_data[0]]) {
@@ -123,16 +112,16 @@ type TokenPairReserve = {
   }
 }
 
-export async function getPoolPairs(network: string = 'mainnet') {
-  const CONTRACT_ADDRESS = network == 'mainnet' ? MAINNET_CONTRACT : TESTNET_CONTRACT
+export async function getPoolPairs() {
+  const CONTRACT_ADDRESS = process.env['NEXT_PUBLIC_SWAP_CONTRACT']
   const { token0, token1, isTransactionPending } = usePoolState()
   const { setPairs, setLoadingPrice, setPoolPairRatio } = usePoolActions()
   return useMemo(async () => {
     let reserves: TokenPairReserve[] = [{}] as TokenPairReserve[]
-    let inverse: boolean = false
+    let inverse = false
     try {
       setLoadingPrice(true)
-      await fetch(`https://fullnode.${network}.aptoslabs.com/v1/accounts/${CONTRACT_ADDRESS}/resources`)
+      await fetch(`https://fullnode.mainnet.aptoslabs.com/v1/accounts/${CONTRACT_ADDRESS}/resources`)
         .then((res) => res.json())
         .then((data) => {
           reserves = data.filter((d: TokenPairReserve) => {
@@ -145,6 +134,7 @@ export async function getPoolPairs(network: string = 'mainnet') {
             }
           })
         })
+
       setLoadingPrice(false)
     } catch (err) {
       console.log(err)

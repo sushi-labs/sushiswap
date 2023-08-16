@@ -23,18 +23,15 @@ export default function SwapPage() {
   const { setToken0, setToken1 } = useSwapActions()
   const { token0, token1, isTransactionPending } = useSwapState()
   const { isLoadingAccount } = useAccount()
-  const tokensWithoutKey = getTokensWithoutKey(Number(network?.chainId) || 1)
-
+  // const tokensWithoutKey = getTokensWithoutKey()
   useEffect(() => {
-    if (network?.name === undefined) {
+    if (network?.name?.toLowerCase() === undefined) {
       disconnect()
     }
-    if (network?.name?.toLowerCase() === 'devnet') {
+    if (network?.name?.toLowerCase() === 'testnet' || network?.name?.toLowerCase() === 'devnet') {
       disconnect()
-      alert('Devnet chain is not supported, please select to mainnet or testnet')
+      alert('Please switch network to mainnet')
     }
-    setToken0(tokensWithoutKey[0])
-    setToken1(tokensWithoutKey[1])
   }, [network])
 
   const swapTokenIfAlreadySelected = () => {

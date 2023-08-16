@@ -7,7 +7,7 @@ import { AddSectionMyPosition } from 'components/AddSection/AddSectionMyPosition
 import { AddSectionStake } from 'components/AddSection/AddSectionStake'
 import { Layout } from 'components/Layout'
 import { useParams } from 'next/navigation'
-import { FC, useMemo } from 'react'
+import { FC, useEffect, useMemo } from 'react'
 import { useAccount } from 'utils/useAccount'
 import { isFarm, useFarms } from 'utils/useFarms'
 import { usePool } from 'utils/usePool'
@@ -21,26 +21,22 @@ import { getPIdIndex, useUserHandle, useUserPool } from 'utils/useUserHandle'
 const Add: FC = ({}) => {
   return <_Add />
 }
-const MAINNET_CONTRACT = process.env['MAINNET_CONTRACT'] || process.env['NEXT_PUBLIC_MAINNET_CONTRACT']
-const TESTNET_CONTRACT = process.env['TESTNET_CONTRACT'] || process.env['NEXT_PUBLIC_TESTNET_CONTRACT']
+const SWAP_CONTRACT = process.env['NEXT_PUBLIC_SWAP_CONTRACT']
 
 const _Add = () => {
   const router = useParams()
-  const [chainId, ...address] = decodeURIComponent(router?.id).split(':')
-  const tokenAddress = address.join(':')
+  const tokenAddress = decodeURIComponent(router?.id)
 
-  const CONTRACT_ADDRESS = chainId === '2' ? TESTNET_CONTRACT : MAINNET_CONTRACT
-  const { account } = useWallet()
+  const { account, network, disconnect } = useWallet()
   const { isLoadingAccount } = useAccount()
-  const { data: LPBalance } = useTokenBalance({
+  const { data: LPBalance, isInitialLoading: isBalanceLoading } = useTokenBalance({
     account: account?.address as string,
-    currency: `${CONTRACT_ADDRESS}::swap::LPToken<${tokenAddress}>`,
-    chainId: Number(chainId),
+    currency: `${SWAP_CONTRACT}::swap::LPToken<${tokenAddress}>`,
     enabled: true,
     refetchInterval: 2000,
   })
 
-  const { data: pool } = usePool(Number(chainId), tokenAddress)
+  const { data: pool } = usePool(tokenAddress)
 
   const [reserve0, reserve1] = useMemo(() => {
     return [pool?.data?.balance_x?.value, pool?.data?.balance_y?.value]
@@ -48,24 +44,23 @@ const _Add = () => {
 
   const { token0, token1 } = useTokensFromPools(pool as Pool)
 
-  const { data: LPSupply } = useTotalSupply(chainId, tokenAddress)
+  const { data: coinInfo } = useTotalSupply(tokenAddress)
 
-  const balance = LPSupply && LPBalance ? ((LPBalance / 10 ** LPSupply?.data?.decimals) as number) : 0
-  const totalSupply = LPSupply?.data?.supply?.vec?.[0]?.integer?.vec?.[0]?.value
+  const balance = coinInfo && LPBalance ? ((LPBalance / 10 ** coinInfo?.data?.decimals) as number) : 0
+  const totalSupply = coinInfo?.data?.supply?.vec?.[0]?.integer?.vec?.[0]?.value
 
   const [underlying0, underlying1] = useUnderlyingTokenBalanceFromPool({
     balance: LPBalance,
     reserve0: Number(reserve0),
     reserve1: Number(reserve1),
     totalSupply: Number(totalSupply),
-    decimals: LPSupply?.data?.decimals,
+    decimals: coinInfo?.data?.decimals,
   })
 
   // farm
 
   const { data: farms } = useFarms()
   const farmIndex = isFarm(tokenAddress, farms)
-  const { data: coinInfo } = useTotalSupply(chainId, tokenAddress)
   const { data: userHandle } = useUserPool(account?.address)
   const { data: stakes, isInitialLoading: isStakeLoading } = useUserHandle({ address: account?.address, userHandle })
   const pIdIndex = useMemo(() => {
@@ -79,7 +74,7 @@ const _Add = () => {
     }
   }, [stakes, pIdIndex, coinInfo])
 
-  // const farmBalance = LPSupply ? ((stakeAmount / 10 ** LPSupply?.data?.decimals) as number) : 0
+  // const farmBalance = coinInfo ? ((stakeAmount / 10 ** coinInfo?.data?.decimals) as number) : 0
 
   const [farmUnderlying0, farmUnderlying1] = useUnderlyingTokenBalanceFromPool({
     balance: stakeAmount,
@@ -88,6 +83,16 @@ const _Add = () => {
     totalSupply: Number(totalSupply),
     decimals: coinInfo?.data?.decimals,
   })
+
+  useEffect(() => {
+    if (network?.name?.toLowerCase() === undefined) {
+      disconnect()
+    }
+    if (network?.name?.toLowerCase() === 'testnet' || network?.name?.toLowerCase() === 'devnet') {
+      disconnect()
+      alert('Please switch network to mainnet')
+    }
+  }, [network])
   if (!pool?.id) return <></>
   return (
     <>
@@ -129,6 +134,7 @@ const _Add = () => {
                 underlying1={underlying1}
                 farmUnderlying0={farmUnderlying0}
                 farmUnderlying1={farmUnderlying1}
+                isLoading={isBalanceLoading || isStakeLoading}
               />
             </AppearOnMount>
           </div>

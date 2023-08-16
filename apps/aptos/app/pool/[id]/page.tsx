@@ -9,24 +9,15 @@ import { PoolHeader } from 'components/PoolSection/PoolHeader'
 import { PoolMyRewards } from 'components/PoolSection/PoolMyRewards'
 import { PoolPosition } from 'components/PoolSection/PoolPosition/PoolPosition'
 import { PoolRewards } from 'components/PoolSection/PoolRewards'
-import { PoolTransactionsV2 } from 'components/PoolSection/V2/PoolTransactionsV2/PoolTransactionsV2'
 import { useParams } from 'next/navigation'
-import { FC, useMemo } from 'react'
+import { FC, useEffect, useMemo } from 'react'
 import { useAccount } from 'utils/useAccount'
 import { isFarm, useFarms } from 'utils/useFarms'
 import { usePool } from 'utils/usePool'
-import { Pool } from 'utils/usePools'
 import { useUserRewards } from 'utils/useUserRewards'
 import { useTotalSupply } from 'utils/useTotalSupply'
 import { getPIdIndex, useUserHandle, useUserPool } from 'utils/useUserHandle'
 import { useRewardsPerDay } from 'utils/useRewardsPerDay'
-
-const LINKS = (row: Pool) => [
-  {
-    href: `/${row.id}`,
-    label: ``,
-  },
-]
 
 const Pool: FC = ({}) => {
   return <_Pool />
@@ -34,14 +25,12 @@ const Pool: FC = ({}) => {
 
 const _Pool = () => {
   const router = useParams()
-  const { account } = useWallet()
-  const [chainId, ...address] = decodeURIComponent(router?.id).split(':')
-  const tokenAddress = address.join(':')
-  const { data: pool, isLoading: isPoolLoading } = usePool(Number(chainId), tokenAddress)
-
+  const { account, network, disconnect } = useWallet()
+  const tokenAddress = decodeURIComponent(router?.id)
+  const { data: pool, isLoading: isPoolLoading } = usePool(tokenAddress)
   const { data: farms } = useFarms()
   const farmIndex = isFarm(tokenAddress, farms)
-  const { data: coinInfo } = useTotalSupply(chainId, tokenAddress)
+  const { data: coinInfo } = useTotalSupply(tokenAddress)
   const { data: userHandle } = useUserPool(account?.address)
   const { data: stakes, isInitialLoading: isStakeLoading } = useUserHandle({ address: account?.address, userHandle })
   const pIdIndex = useMemo(() => {
@@ -53,12 +42,20 @@ const _Pool = () => {
     } else {
       return 0
     }
-  }, [stakes, pIdIndex, coinInfo])
-
+  }, [stakes, pIdIndex])
   const { isLoadingAccount } = useAccount()
 
   const rewards = useUserRewards(farms, stakes, pIdIndex, farmIndex)
   const rewardsPerDay = useRewardsPerDay(farms, farmIndex, coinInfo?.data?.decimals)
+  useEffect(() => {
+    if (network?.name?.toLowerCase() === undefined) {
+      disconnect()
+    }
+    if (network?.name?.toLowerCase() === 'testnet' || network?.name?.toLowerCase() === 'devnet') {
+      disconnect()
+      alert('Please switch network to mainnet')
+    }
+  }, [network])
 
   return (
     <>

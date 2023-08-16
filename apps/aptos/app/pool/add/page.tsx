@@ -1,10 +1,21 @@
 'use client'
 import Container from '@sushiswap/ui/future/components/Container'
 import Link from 'next/link'
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import { Add } from '../Pool/PoolPage'
+import { useWallet } from '@aptos-labs/wallet-adapter-react'
 
 export function AddPage() {
+  const { network, disconnect } = useWallet()
+  useEffect(() => {
+    if (network?.name?.toLowerCase() === undefined) {
+      disconnect()
+    }
+    if (network?.name?.toLowerCase() === 'testnet' || network?.name?.toLowerCase() === 'devnet') {
+      disconnect()
+      alert('Please switch network to mainnet')
+    }
+  }, [network])
   return (
     <>
       <Container maxWidth={'5xl'} className="flex justify-center lg:mx-auto px-4 h-full">

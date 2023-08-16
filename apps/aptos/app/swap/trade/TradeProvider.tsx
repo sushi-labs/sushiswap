@@ -54,7 +54,7 @@ type Actions =
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const [slippageTolerance] = useSlippageTolerance()
   const { account, network } = useWallet()
-  const baseTokens = getTokensWithoutKey(Number(network?.chainId) || 1)
+  const baseTokens = getTokensWithoutKey()
   const reducer = (state: State, action: Actions) => {
     switch (action.type) {
       case 'setToken0':
@@ -90,7 +90,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         return { ...state, noRouteFound: action.value }
     }
   }
-  // const filteredTokenList = getFilterTokenList(Number(network?.chainId))
   const [internalState, dispatch] = useReducer(reducer, {
     token0: baseTokens[0],
     token1: baseTokens[1],

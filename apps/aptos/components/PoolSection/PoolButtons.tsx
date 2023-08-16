@@ -14,7 +14,7 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ isFarm }) => {
       <div className="flex gap-2">
         <Link.Internal href={`/pool/${decodeURIComponent(router?.id)}/remove`} passHref={true}>
           <a className="w-full">
-            <Button disabled={Boolean()} size="lg" color="default" fullWidth>
+            <Button size="lg" color="default" fullWidth>
               Withdraw
             </Button>
           </a>
@@ -29,15 +29,11 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ isFarm }) => {
         Trade
       </Button>
       {isFarm && (
-        <Button
-          className="col-span-2"
-          size="lg"
-          color="default"
-          as="a"
-          href={`/pool/${decodeURIComponent(router?.id)}/stake`}
-        >
-          Stake Liquidity
-        </Button>
+        <Link.Internal href={`/pool/${decodeURIComponent(router?.id)}/stake`}>
+          <Button className="col-span-2" size="lg" color="default">
+            Stake Liquidity
+          </Button>
+        </Link.Internal>
       )}
     </div>
   )

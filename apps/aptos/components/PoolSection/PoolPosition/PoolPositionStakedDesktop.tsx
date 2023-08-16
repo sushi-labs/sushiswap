@@ -14,9 +14,8 @@ interface PoolPositionStakedDesktopProps {
 
 export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ row, isLoading, stakeAmount }) => {
   const { token0, token1 } = useTokensFromPools(row)
-  const [chainId, ...address] = row?.id.split(':')
-  const tokenAddress = address.join(':')
-  const { data: coinInfo } = useTotalSupply(chainId, tokenAddress)
+  const tokenAddress = row?.id
+  const { data: coinInfo } = useTotalSupply(tokenAddress)
 
   const [reserve0, reserve1] = useMemo(() => {
     return [row?.data?.balance_x?.value, row?.data?.balance_y?.value]

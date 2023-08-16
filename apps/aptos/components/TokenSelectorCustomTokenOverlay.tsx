@@ -11,7 +11,6 @@ import { useCustomTokens } from 'utils/useCustomTokens'
 
 export const TokenSelectorCustomTokenOverlay = () => {
   const isMounted = useIsMounted()
-  const { network } = useWallet()
   const { data: customTokens, mutate } = useCustomTokens()
 
   const [open, setOpen] = useState<boolean>(false)
@@ -47,7 +46,7 @@ export const TokenSelectorCustomTokenOverlay = () => {
                   <List.MenuItem
                     key={token.address}
                     title={token.symbol || ''}
-                    subtitle={`APTOS - ${network?.name}`}
+                    subtitle={`APTOS`}
                     onClick={() => mutate('remove', [token])}
                     hoverIcon={TrashIcon}
                   />

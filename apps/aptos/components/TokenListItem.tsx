@@ -33,7 +33,7 @@ export default function TokenListItem({
               `group flex items-center w-full active:bg-black/[0.06] dark:active:bg-white/[0.06] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] h-full rounded-lg px-3 token-$TRDL cursor-pointer`
             )}
             onClick={() => {
-              if (token.address == alteredSelected.address) {
+              if (token?.address == alteredSelected?.address) {
                 handleSwap()
               } else {
                 handleChangeToken(token)

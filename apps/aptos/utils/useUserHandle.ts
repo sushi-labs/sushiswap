@@ -38,7 +38,7 @@ const userHandleQueryFn = async (handle: string | undefined) => {
 				}
 			}
 		`
-  const result = await fetch('https://indexer-testnet.staging.gcp.aptosdev.com/v1/graphql', {
+  const result = await fetch('https://indexer.mainnet.aptoslabs.com/v1/graphql', {
     method: 'POST',
     body: JSON.stringify({
       query: operationsDoc,
@@ -52,7 +52,7 @@ const userHandleQueryFn = async (handle: string | undefined) => {
 
 const userPoolQueryFn = async (address: string | undefined) => {
   const response = await fetch(
-    `https://fullnode.testnet.aptoslabs.com/v1/accounts/${address}/resource/${MASTERCHEF_CONTRACT}::masterchef::PoolUserInfo`
+    `https://fullnode.mainnet.aptoslabs.com/v1/accounts/${address}/resource/${MASTERCHEF_CONTRACT}::masterchef::PoolUserInfo`
   )
   if (response.status == 200) {
     const userPoolInfo: PoolUserInfo = await response.json()

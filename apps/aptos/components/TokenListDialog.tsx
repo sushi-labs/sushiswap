@@ -27,10 +27,6 @@ interface PropType {
   handleChangeToken: (token: Token) => void
   handleSwap: () => void
 }
-interface RowType {
-  index: number
-  style: CSSProperties
-}
 
 export default function TokenListDialog<TData>({
   id,
@@ -41,11 +37,9 @@ export default function TokenListDialog<TData>({
   handleChangeToken,
 }: PropType) {
   const [query, setQuery] = useState('')
-  const { network } = useWallet()
-  const { data: tokens } = useTokens(Number(network?.chainId) || 1)
+  const { data: tokens } = useTokens()
   const { data: customTokens, mutate: customTokenMutate } = useCustomTokens()
   const { data: queryToken, isInitialLoading: isQueryTokenLoading } = useTokenWithCache({
-    chainId: Number(network?.chainId || 1),
     address: query,
     enabled: (query.startsWith('0x') && query.length > 65) || query == '0x1::aptos_coin::AptosCoin',
     keepPreviousData: false,
@@ -54,7 +48,6 @@ export default function TokenListDialog<TData>({
     query,
     tokenMap: tokens,
     customTokenMap: customTokens,
-    chainId: Number(network?.chainId || 1),
   })
   const handleImport = useCallback(
     (currency: Token) => {
@@ -70,7 +63,7 @@ export default function TokenListDialog<TData>({
           <TokenListItem
             style={style}
             token={sortedTokenList ? sortedTokenList[index] : ({} as Token)}
-            selected={selected.address === sortedTokenList?.[index]?.address}
+            selected={selected?.address === sortedTokenList?.[index]?.address}
             alteredSelected={alteredSelected}
             handleChangeToken={handleChangeToken}
             id={id}
@@ -118,7 +111,7 @@ export default function TokenListDialog<TData>({
                 ) : (
                   <>
                     {queryToken &&
-                      !customTokens[`${queryToken.chainId}:${queryToken.address}`] &&
+                      !customTokens[`${queryToken.address}`] &&
                       !tokens?.[`${queryToken.address}`] && (
                         <TokenSelectorImportRow
                           id={id}
@@ -145,7 +138,7 @@ export default function TokenListDialog<TData>({
                     </AutoSizer>
                   </>
                 )}
-                {sortedTokenList?.length === 0 && !queryToken && network?.chainId && (
+                {sortedTokenList?.length === 0 && !queryToken && (
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <div className="flex flex-col items-center justify-center gap-1">
                       <span className="flex items-center text-xs text-gray-500 dark:text-slate-500">

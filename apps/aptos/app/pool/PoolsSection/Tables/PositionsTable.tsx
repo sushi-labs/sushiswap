@@ -6,19 +6,33 @@ import { NAME_COLUMN } from './Cells/columns'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { Pool } from 'utils/usePools'
+import { useDebounce } from '@sushiswap/hooks'
 
 const columns = [NAME_COLUMN] as any
+interface Props {
+  query: string
+}
 
-export const PositionsTable = () => {
-  const { network, account } = useWallet()
+export const PositionsTable = ({ query }: Props) => {
+  const { account } = useWallet()
   const { data: userPositions, isLoading } = useUserPositions(
-    network?.name.toLowerCase() as string,
     account?.address as string,
     true
   )
   const data = useMemo(() => userPositions?.flat() || [], [userPositions])
+
+  const debouncedQuery = useDebounce(query.trimStart().toLowerCase(), 400)
+  const tableData = useMemo(() => {
+    if (debouncedQuery.split(' ')[0] == '') return data
+    return data.filter(
+      (pool) =>
+        debouncedQuery?.split(' ').includes(pool.data.token_x_details.symbol.toLowerCase()) ||
+        debouncedQuery?.split(' ').includes(pool.data.token_y_details.symbol.toLowerCase())
+    )
+  }, [debouncedQuery, data])
+
   const table = useReactTable<Pool>({
-    data,
+    data: tableData?.length ? tableData : data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
@@ -29,7 +43,7 @@ export const PositionsTable = () => {
     <Container maxWidth="7xl" className="px-4 mx-auto">
       <GenericTable<Pool>
         table={table}
-        pageSize={data?.length ? data?.length : 5}
+        pageSize={tableData?.length ? tableData?.length : data?.length ? data?.length : 5}
         loading={!userPositions || isLoading}
         testId="positions"
         placeholder="No positions found"

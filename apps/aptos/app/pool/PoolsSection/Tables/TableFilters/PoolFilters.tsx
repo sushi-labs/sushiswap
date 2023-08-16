@@ -1,19 +1,17 @@
 import { Button } from '@sushiswap/ui/future/components/button'
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { Search } from '../../../../../components/Search'
 import { Tab } from '@headlessui/react'
-import { useDebounce } from '@sushiswap/hooks'
 
 interface Props {
   showCategories: boolean
   farmHandler: () => void
   farmsOnly: boolean
+  query: string
+  setQuery: React.Dispatch<React.SetStateAction<string>>
 }
 
-export const PoolFilters: FC<Props> = ({ showCategories = true, farmHandler, farmsOnly }) => {
-  const [query, setQuery] = useState<string>('')
-  const debouncedQuery = useDebounce(query, 400)
-
+export const PoolFilters: FC<Props> = ({ showCategories = true, farmHandler, farmsOnly, query, setQuery }) => {
   return (
     <>
       <Tab.Group>

@@ -8,8 +8,8 @@ export function useCustomTokens() {
 
   const hydrate = useCallback((data: Record<string, Data>) => {
     return Object.entries(data).reduce<Record<string, Token>>(
-      (acc, [k, { address, chainId, decimals, name, symbol }]) => {
-        acc[k] = { address, chainId, decimals, name: String(name), symbol: String(symbol) }
+      (acc, [k, { address, decimals, name, symbol }]) => {
+        acc[k] = { address, decimals, name: String(name), symbol: String(symbol) }
         return acc
       },
       {}
@@ -19,7 +19,6 @@ export function useCustomTokens() {
   const addCustomToken = useCallback(
     (currencies: Token[]) => {
       const data: Data[] = currencies.map((currency) => ({
-        chainId: currency.chainId,
         // id: 'currency.id',
         address: currency.address,
         name: currency.name,
@@ -31,7 +30,7 @@ export function useCustomTokens() {
       setValue((prev) => {
         return data.reduce(
           (acc, cur) => {
-            acc[`${cur.chainId}:${cur.address}`] = cur
+            acc[`${cur.address}`] = cur
             return acc
           },
           { ...prev }
@@ -45,7 +44,7 @@ export function useCustomTokens() {
     (currency: Token) => {
       setValue((prev) => {
         return Object.entries(prev).reduce<Record<string, Data>>((acc, cur) => {
-          if (cur[0] === `${currency.chainId}:${currency.address}`) {
+          if (cur[0] === `${currency.address}`) {
             return acc // filter
           }
           acc[cur[0]] = cur[1] // add
@@ -59,13 +58,9 @@ export function useCustomTokens() {
   const hasToken = useCallback(
     (currency: Token | string) => {
       if (typeof currency === 'string') {
-        if (!currency.includes(':')) {
-          throw new Error('Address provided instead of id')
-        }
-        const [_chainId, ..._currency] = currency.split(':')
-        return !!value[`${_chainId}:${_currency.join(':')}`]
+        return !!value[`${currency}`]
       }
-      return !!value[`${currency.chainId}:${currency.address}`]
+      return !!value[`${currency.address}`]
     },
     [value]
   )

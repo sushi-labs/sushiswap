@@ -22,13 +22,8 @@ import { useAccount } from 'utils/useAccount'
 
 export function Add() {
   // const router = useRouter()
-
-  const { pairs, poolPairRatio } = usePoolState()
-
-  const { network } = useWallet()
   const { isLoadingAccount } = useAccount()
-
-  getPoolPairs(network?.name)
+  getPoolPairs()
 
   return (
     <>
@@ -76,14 +71,12 @@ const _Add: FC = () => {
   }
 
   const addLiquidity = async (close: () => void) => {
-    const networkType = network?.name?.toLocaleLowerCase() == 'testnet' ? Network.TESTNET : Network.MAINNET
-    const provider = new Provider(networkType)
+    const provider = new Provider(Network.TESTNET)
     const payload: payloadType = liquidityArgs(
       token0.address,
       token1.address,
       parseInt(String(Number(amount0) * 10 ** token0.decimals)),
       parseInt(String(Number(amount1) * 10 ** token1.decimals)),
-      networkType
     )
     setisTransactionPending(true)
     if (!account) return []
@@ -119,24 +112,19 @@ const _Add: FC = () => {
   const { data: balance0, isLoading: isLoadingBalance0 } = useTokenBalance({
     account: account?.address as string,
     currency: token0.address,
-    chainId: Number(network?.chainId) || 1,
   })
   const { data: balance1, isLoading: isLoadingBalance1 } = useTokenBalance({
     account: account?.address as string,
     currency: token1.address,
-    chainId: Number(network?.chainId) || 1,
   })
   const tradeVal = useRef<HTMLInputElement>(null)
   const tradeVal1 = useRef<HTMLInputElement>(null)
-
   const onChangeToken0TypedAmount = useCallback(
     (value: string) => {
       PoolInputBalance0(value)
       setAmount0(value)
       if (pairs?.data) {
         if (value) {
-          const reserve_x = pairs?.data?.reserve_x
-          const reserve_y = pairs?.data?.reserve_y
 
           setAmount1(String(parseFloat(String(value)) * poolPairRatio))
         } else {
@@ -153,8 +141,6 @@ const _Add: FC = () => {
       setAmount1(value)
       if (pairs?.data) {
         if (value) {
-          const reserve_x = pairs?.data?.reserve_x
-          const reserve_y = pairs?.data?.reserve_y
           setAmount0(String(parseFloat(String(value)) * poolPairRatio))
         } else {
           setAmount0('')
@@ -163,7 +149,7 @@ const _Add: FC = () => {
     },
     [poolPairRatio, balance1]
   )
-  const tokensWithoutKey = getTokensWithoutKey(Number(network?.chainId) || 1)
+  const tokensWithoutKey = getTokensWithoutKey()
   useEffect(() => {
     if (network?.name === undefined) {
       disconnect()
@@ -171,8 +157,6 @@ const _Add: FC = () => {
     setToken0(tokensWithoutKey[0])
     setToken1(tokensWithoutKey[1])
   }, [network])
-
-  const provider = new Provider(Network.TESTNET)
 
   useEffect(() => {
     onChangeToken0TypedAmount(String(amount0))
