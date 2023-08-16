@@ -61,6 +61,7 @@
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",
+    "@sushiswap/client": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/database": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
