@@ -21,7 +21,7 @@ export const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool, poolId }
   const [pageIndex, setPageIndex] = useState<number>(0)
 
   const COLUMNS = useMemo(() => {
-    return [SENDER_COLUMN, AMOUNT_IN_COLUMN(type), AMOUNT_OUT_COLUMN(type), AMOUNT_USD_COLUMN, TIME_COLUMN]
+    return [SENDER_COLUMN, AMOUNT_IN_COLUMN, AMOUNT_OUT_COLUMN, AMOUNT_USD_COLUMN, TIME_COLUMN]
   }, [type])
 
   const opts = useMemo(
