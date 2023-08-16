@@ -1,5 +1,5 @@
 export * from './Extractor'
-export * from './LogFilter'
+export * from './LogFilter2'
 export * from './MulticallAggregator'
 export * from './TokenManager'
 export * from './UniV2Extractor'
