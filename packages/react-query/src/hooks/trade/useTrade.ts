@@ -95,7 +95,9 @@ export const useTrade = (variables: UseTradeParams) => {
                 quoteAmount: amountOut,
               })
             : undefined,
-          priceImpact: new Percent(JSBI.BigInt(Math.round(data.route.priceImpact * 10000)), JSBI.BigInt(10000)),
+          priceImpact: data.route.priceImpact
+            ? new Percent(JSBI.BigInt(Math.round(data.route.priceImpact * 10000)), JSBI.BigInt(10000))
+            : undefined,
           amountIn,
           amountOut,
           minAmountOut: Amount.fromRawAmount(
