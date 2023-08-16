@@ -58,7 +58,7 @@ async function main() {
       }),
     ],
     // Performance Monitoring
-    tracesSampleRate: 1.0, // Capture 100% of the transactions, reduce in production!,
+    tracesSampleRate: 0.1, // Capture 100% of the transactions, reduce in production!,
   })
 
   for (const chainId of SUPPORTED_CHAIN_IDS) {
