@@ -41,7 +41,25 @@ const extractors = new Map<SupportedChainId, Extractor>()
 const tokenManagers = new Map<SupportedChainId, TokenManager>()
 const nativeProviders = new Map<SupportedChainId, NativeWrapProvider>()
 
-async function setup() {
+async function main() {
+  const app: Express = express()
+
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    integrations: [
+      // enable HTTP calls tracing
+      new Sentry.Integrations.Http({
+        tracing: true,
+      }),
+      // enable Express.js middleware tracing
+      new Sentry.Integrations.Express({
+        app,
+      }),
+    ],
+    // Performance Monitoring
+    tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
+  })
+
   for (const chainId of SUPPORTED_CHAIN_IDS) {
     const extractor = new Extractor({
       ...EXTRACTOR_CONFIG[chainId],
@@ -61,28 +79,8 @@ async function setup() {
     const nativeProvider = new NativeWrapProvider(chainId, extractor.client)
     nativeProviders.set(chainId, nativeProvider)
   }
-}
 
-async function main() {
-  await setup()
-
-  const app: Express = express()
-
-  Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    integrations: [
-      // enable HTTP calls tracing
-      new Sentry.Integrations.Http({
-        tracing: true,
-      }),
-      // enable Express.js middleware tracing
-      new Sentry.Integrations.Express({
-        app,
-      }),
-    ],
-    // Performance Monitoring
-    tracesSampleRate: 1.0, // Capture 100% of the transactions, reduce in production!,
-  })
+  app.use(cors())
 
   // Trace incoming requests
   app.use(Sentry.Handlers.requestHandler())
@@ -202,8 +200,6 @@ async function main() {
     res.statusCode = 500
     res.end(res.sentry + '\n')
   })
-
-  app.use(cors())
 
   app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}`)
