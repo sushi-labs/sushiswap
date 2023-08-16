@@ -1,6 +1,5 @@
 import React from '@sushiswap/prettier-config/dist/react'
-import { CardDescription, CardHeader, CardTitle, Container, LinkInternal, Separator } from '@sushiswap/ui'
-import { SteerPoolCards } from 'ui/pool/SteerPoolCards'
+import { CardDescription, CardHeader, CardTitle, Container, LinkInternal } from '@sushiswap/ui'
 
 export default async function Layout({ children, params }: { children: React.ReactNode; params: { id: string } }) {
   return (
@@ -12,7 +11,7 @@ export default async function Layout({ children, params }: { children: React.Rea
         </CardHeader>
       </Container>
       <Container maxWidth="screen-3xl" className="px-2 sm:px-4">
-        <SteerPoolCards params={params} />
+        {children}
       </Container>
       <LinkInternal
         href={`/pool/${params.id}/positions/create/manual`}
@@ -20,10 +19,6 @@ export default async function Layout({ children, params }: { children: React.Rea
       >
         No thanks, i{`'`}ll manage the position myself.
       </LinkInternal>
-      <div className="py-6">
-        <Separator />
-      </div>
-      {children}
     </>
   )
 }

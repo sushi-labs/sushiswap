@@ -74,6 +74,18 @@ export const PoolNameCell: FC<Row<PositionWithPool>> = ({ original }) => {
               </Tooltip>
             </TooltipProvider>
           )}
+          {original.pool.hasEnabledSteerVault && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="bg-[#F2E9D6] dark:bg-yellow/60 text-[10px] px-2 rounded-full">💡</div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Smart Pool available</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </div>
       </div>
     </div>
@@ -121,6 +133,18 @@ export const PoolNameCellPool: FC<Row<Pool>> = ({ original }) => {
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Farm rewards available</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+          {original.hasEnabledSteerVault && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="bg-[#F2E9D6] dark:bg-yellow/60 text-[10px] px-2 rounded-full">💡</div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Smart Pool available</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

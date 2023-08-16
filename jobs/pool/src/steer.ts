@@ -48,18 +48,25 @@ async function getPayload(ipfsHash: string): Promise<Payload> {
   return response.json()
 }
 
+async function getApr(chainId: SteerChainId, vaultId: string): Promise<number> {
+  const response = await fetch(
+    `https://ro81h8hq6b.execute-api.us-east-1.amazonaws.com/pool/weekly-apr?address=${vaultId}&chain=${chainId}`
+  )
+  return response.json()
+}
+
 async function extractChain(chainId: SteerChainId) {
   const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: STEER_SUBGRAPGH_NAME[chainId] })
 
   const { vaults } = await sdk.SteerVaults()
   const vaultsWithPayloads = await Promise.allSettled(
     vaults.map(async (vault) => {
-      try {
-        const payload = await getPayload(vault.payloadIpfs)
-        return { ...vault, payload }
-      } catch {
-        throw new Error(`Failed to fetch payload for vault, ${vault.id}`)
-      }
+      const [payloadP, aprP] = await Promise.allSettled([getPayload(vault.payloadIpfs), getApr(chainId, vault.id)])
+
+      const payload = isPromiseFulfilled(payloadP) ? payloadP.value : null
+      const apr = isPromiseFulfilled(aprP) ? aprP.value : 0
+
+      return { ...vault, payload, annualFeeAPR: apr }
     })
   )
 
@@ -101,7 +108,9 @@ function transform(chainsWithVaults: Awaited<ReturnType<typeof extract>>): Prism
         poolId: `${chainId}:${vault.pool}`.toLowerCase(),
         feeTier: Number(vault.feeTier) / 1000000,
 
-        apr: Number(vault.annualFeeARR),
+        // APR is the weekly APR, temporary solution, waiting for Steer to fix the subgraph
+        // apr1d, apr1m, apr1y are inaccurate
+        apr: Number(vault.annualFeeAPR),
         apr1d: Number(vault.annualPercentageDailyYield),
         apr1m: Number(vault.annualPercentageMonthlyYield),
         apr1y: Number(vault.annualPercentageYearlyYield),
