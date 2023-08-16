@@ -9,7 +9,7 @@ import path from 'path'
 import { Address } from 'viem'
 import z from 'zod'
 
-import { Extractor, MultiCallAggregator, TokenManager } from '../src'
+import { Extractor, MultiCallAggregator, TokenManager, WarningLevel } from '../src'
 import {
   EXTRACTOR_CONFIG,
   isSupportedChainId,
@@ -45,8 +45,8 @@ async function setup() {
   for (const chainId of SUPPORTED_CHAIN_IDS) {
     const extractor = new Extractor({
       ...EXTRACTOR_CONFIG[chainId],
-      warningMessageHandler: (chain: ChainId | number | undefined, message: string) => {
-        Sentry.captureMessage(`${chain}: ${message}`, 'warning')
+      warningMessageHandler: (chain: ChainId | number | undefined, message: string, level: WarningLevel) => {
+        Sentry.captureMessage(`${chain}: ${message}`, level)
       },
     })
     await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId])

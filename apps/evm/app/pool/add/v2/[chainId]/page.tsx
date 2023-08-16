@@ -2,16 +2,17 @@
 
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { SushiSwapV2Pool } from '@sushiswap/amm'
-import { ChainId } from '@sushiswap/chain'
+import { ChainId, TESTNET_CHAIN_IDS } from '@sushiswap/chain'
 import { defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
+import { ZERO } from '@sushiswap/math'
 import { Button } from '@sushiswap/ui/components/button'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { Loader } from '@sushiswap/ui/components/loader'
-import { isSushiSwapV2ChainId, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { SushiSwapV2ChainIds } from '@sushiswap/v2-sdk'
+import { isSushiSwapV2ChainId, SUSHISWAP_V2_SUPPORTED_CHAIN_IDS, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { Address, getSushiSwapRouterContractConfig, PoolFinder, SushiSwapV2PoolState } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import { Checker } from '@sushiswap/wagmi/future/systems'
+import { DISABLED_CHAIN_IDS } from 'config'
 import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
 import { isSushiSwapV2Pool } from 'lib/functions'
 import Link from 'next/link'
@@ -156,9 +157,13 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
     return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
   }, [input0, input1, token0, token1])
 
+  const noLiquidity = useMemo(() => {
+    return pool?.reserve0.equalTo(ZERO) && pool.reserve1.equalTo(ZERO)
+  }, [pool])
+
   const onChangeToken0TypedAmount = useCallback(
     (value: string) => {
-      if (poolState === SushiSwapV2PoolState.NOT_EXISTS) {
+      if (poolState === SushiSwapV2PoolState.NOT_EXISTS || noLiquidity) {
         setTypedAmounts((prev) => ({
           ...prev,
           input0: value,
@@ -171,12 +176,12 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
         })
       }
     },
-    [pool, poolState, token0]
+    [noLiquidity, pool, poolState, token0]
   )
 
   const onChangeToken1TypedAmount = useCallback(
     (value: string) => {
-      if (poolState === SushiSwapV2PoolState.NOT_EXISTS) {
+      if (poolState === SushiSwapV2PoolState.NOT_EXISTS || noLiquidity) {
         setTypedAmounts((prev) => ({
           ...prev,
           input1: value,
@@ -189,7 +194,7 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
         })
       }
     },
-    [pool, poolState, token1]
+    [noLiquidity, pool, poolState, token1]
   )
 
   useEffect(() => {
@@ -200,9 +205,19 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onChangeToken0TypedAmount])
 
+  const networks = useMemo(
+    () =>
+      SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.filter(
+        (chainId) =>
+          !TESTNET_CHAIN_IDS.includes(chainId as (typeof TESTNET_CHAIN_IDS)[number]) &&
+          !DISABLED_CHAIN_IDS.includes(chainId as (typeof DISABLED_CHAIN_IDS)[number])
+      ),
+    []
+  )
+
   return (
     <div className="flex flex-col order-3 gap-[64px] pb-40 sm:order-2">
-      <SelectNetworkWidget networks={SushiSwapV2ChainIds} selectedNetwork={chainId} onSelect={setChainId} />
+      <SelectNetworkWidget networks={networks} selectedNetwork={chainId} onSelect={setChainId} />
       <SelectTokensWidget
         chainId={chainId}
         token0={token0}
