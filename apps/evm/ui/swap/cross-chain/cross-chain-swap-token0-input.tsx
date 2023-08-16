@@ -4,25 +4,15 @@ import { Chain } from '@sushiswap/chain'
 import { STARGATE_SUPPORTED_CHAIN_IDS, StargateChainId } from '@sushiswap/stargate'
 import { Button, Label, NetworkIcon, NetworkSelector, SelectIcon } from '@sushiswap/ui'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
-import { useState, useTransition } from 'react'
 
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapToken0Input = () => {
-  const [value, setValue] = useState('')
-  const [isPending, startTransition] = useTransition()
   const {
     state: { swapAmountString, chainId0, token0 },
     mutate: { setSwapAmount, setToken0, setChainId0 },
     isLoading,
   } = useDerivedStateCrossChainSwap()
-
-  const handleChange = (val: string) => {
-    setValue(val)
-    startTransition(() => {
-      setSwapAmount(val)
-    })
-  }
 
   return (
     <div className="border border-accent flex flex-col bg-white dark:bg-slate-800 rounded-xl overflow-hidden">
@@ -49,8 +39,8 @@ export const CrossChainSwapToken0Input = () => {
         className="p-3 bg-white dark:bg-slate-800"
         chainId={chainId0}
         onSelect={setToken0}
-        value={isPending ? value : swapAmountString}
-        onChange={handleChange}
+        value={swapAmountString}
+        onChange={setSwapAmount}
         currency={token0}
         loading={isLoading}
         currencyLoading={isLoading}
