@@ -62,7 +62,7 @@
     "ethers": "5.7.2",
     "idb-keyval": "6.2.0",
     "nanoid": "4.0.0",
-    "viem": "1.5.4",
+    "viem": "1.6.0",
     "zod": "3.21.4"
   },
   "devDependencies": {
