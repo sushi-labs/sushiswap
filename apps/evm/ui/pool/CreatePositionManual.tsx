@@ -1,3 +1,5 @@
+'use client'
+
 import { SteerStrategy } from '@sushiswap/database'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Separator } from '@sushiswap/ui'
@@ -23,7 +25,7 @@ interface ManualProps {
   chainId: SushiSwapV3ChainId
 }
 
-export const SteerManual: FC<ManualProps> = ({ address, chainId }) => {
+export const CreatePositionManual: FC<ManualProps> = ({ address, chainId }) => {
   const { address: account } = useAccount()
 
   const [invertTokens, setInvertTokens] = useState(false)

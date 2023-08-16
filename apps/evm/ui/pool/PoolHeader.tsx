@@ -5,7 +5,17 @@ import { Chain } from '@sushiswap/chain'
 import { Pool as PoolV2 } from '@sushiswap/client'
 import { Token } from '@sushiswap/currency'
 import { formatPercent, shortenAddress } from '@sushiswap/format'
-import { Button, classNames, Currency, LinkExternal, LinkInternal, typographyVariants } from '@sushiswap/ui'
+import {
+  Button,
+  classNames,
+  Currency,
+  LinkExternal,
+  LinkInternal,
+  Stat,
+  StatLabel,
+  StatValue,
+  typographyVariants,
+} from '@sushiswap/ui'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
 import { Pool } from '@sushiswap/v3-sdk'
 import { unwrapToken } from 'lib/functions'
@@ -98,62 +108,70 @@ export const PoolHeader: FC<PoolHeader> = ({ backUrl, address, pool, apy, priceR
             )}
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-y-5 gap-x-[32px] text-secondary-foreground mb-8 mt-1.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-secondary-foreground mb-8 mt-1.5">
           {apy ? (
-            <div className="flex items-center gap-1.5">
-              <span className="tracking-tighter font-semibold">APR</span>
-              {pool instanceof Pool ? (
-                <TooltipProvider>
-                  <Tooltip delayDuration={0}>
-                    <TooltipTrigger asChild>
-                      <span className="underline decoration-dotted">
-                        {formatPercent((apy.fees || 0) + (apy.rewards || 0))}
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent>The APR displayed is algorithmic and subject to change.</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              ) : (
-                <APRHoverCard pool={pool}>
-                  <span className="underline decoration-dotted">
-                    {formatPercent((apy.fees || 0) + (apy.rewards || 0))}
-                  </span>
-                </APRHoverCard>
-              )}
-            </div>
+            <Stat>
+              <StatLabel size="sm">APR</StatLabel>
+              <StatValue size="sm">
+                {pool instanceof Pool ? (
+                  <TooltipProvider>
+                    <Tooltip delayDuration={0}>
+                      <TooltipTrigger asChild>
+                        <span className="underline decoration-dotted">
+                          {formatPercent((apy.fees || 0) + (apy.rewards || 0))}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>The APR displayed is algorithmic and subject to change.</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ) : (
+                  <APRHoverCard pool={pool}>
+                    <span className="underline decoration-dotted">
+                      {formatPercent((apy.fees || 0) + (apy.rewards || 0))}
+                    </span>
+                  </APRHoverCard>
+                )}
+              </StatValue>
+            </Stat>
           ) : null}
           {priceRange ? (
-            <div className="flex items-center gap-1.5">
-              <span className="tracking-tighter font-semibold">Price Range</span>
-              {priceRange}
-            </div>
+            <Stat>
+              <StatLabel size="sm">Price Range</StatLabel>
+              <StatValue size="sm">{priceRange}</StatValue>
+            </Stat>
           ) : null}
-          <div className="flex items-center gap-1.5">
-            <span className="tracking-tighter font-semibold">Fee</span>
-            {pool instanceof Pool ? pool.fee / 10000 : pool.swapFee * 100}%
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="tracking-tighter font-semibold">Network</span>
-            {Chain.from(pool.chainId).name}
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="tracking-tighter font-semibold">{token0.symbol}</span>
-            <LinkExternal href={Chain.from(pool.chainId).getTokenUrl(token0.wrapped.address)}>
-              <Button asChild variant="link" size="sm" className="!font-medium !text-secondary-foreground">
-                {shortenAddress(token0.wrapped.address, 4)}
-                <ArrowTopRightOnSquareIcon className="w-3 h-3" />
-              </Button>
-            </LinkExternal>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="tracking-tighter font-semibold">{token1.symbol}</span>
-            <LinkExternal target="_blank" href={Chain.from(pool.chainId).getTokenUrl(token1.wrapped.address)}>
-              <Button asChild variant="link" size="sm" className="!font-medium !text-secondary-foreground">
-                {shortenAddress(token1.wrapped.address, 4)}
-                <ArrowTopRightOnSquareIcon className="w-3 h-3" />
-              </Button>
-            </LinkExternal>
-          </div>
+          <Stat>
+            <StatLabel size="sm">Swap Fee</StatLabel>
+            <StatValue size="sm">
+              {(pool instanceof Pool ? pool.fee / 10000 : pool.swapFee * 100).toFixed(2)}%
+            </StatValue>
+          </Stat>
+          <Stat>
+            <StatLabel size="sm">Network</StatLabel>
+            <StatValue size="sm">{Chain.from(pool.chainId).name}</StatValue>
+          </Stat>
+          <Stat>
+            <StatLabel size="sm">{token0.symbol} Contract Address</StatLabel>
+            <StatValue size="sm">
+              <LinkExternal href={Chain.from(pool.chainId).getTokenUrl(token0.wrapped.address)}>
+                <Button asChild variant="link" size="sm" className="!font-medium !text-secondary-foreground">
+                  {shortenAddress(token0.wrapped.address, 4)}
+                  <ArrowTopRightOnSquareIcon className="w-3 h-3" />
+                </Button>
+              </LinkExternal>
+            </StatValue>
+          </Stat>
+          <Stat>
+            <StatLabel size="sm">{token1.symbol} Contract Address</StatLabel>
+            <StatValue size="sm">
+              <LinkExternal target="_blank" href={Chain.from(pool.chainId).getTokenUrl(token1.wrapped.address)}>
+                <Button asChild variant="link" size="sm" className="!font-medium !text-secondary-foreground">
+                  {shortenAddress(token1.wrapped.address, 4)}
+                  <ArrowTopRightOnSquareIcon className="w-3 h-3" />
+                </Button>
+              </LinkExternal>
+            </StatValue>
+          </Stat>
         </div>
       </div>
     )
