@@ -1,4 +1,4 @@
-import { getTokenPricesChain } from '@sushiswap/client'
+import { getPools, getTokenPricesChain } from '@sushiswap/client'
 import { Prisma, SteerStrategy, VaultState } from '@sushiswap/database'
 import { STEER_ENABLED_NETWORKS, STEER_SUBGRAPGH_NAME, SteerChainId, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 import { isPromiseFulfilled } from '@sushiswap/validate'
@@ -49,7 +49,7 @@ async function getPayload(ipfsHash: string): Promise<Payload> {
   return response.json()
 }
 
-async function getApr(chainId: SteerChainId, vaultId: string): Promise<number> {
+async function getApr(chainId: SteerChainId, vaultId: string): Promise<{ apr: number }> {
   const response = await fetch(
     `https://ro81h8hq6b.execute-api.us-east-1.amazonaws.com/pool/weekly-apr?address=${vaultId}&chain=${chainId}`
   )
@@ -61,27 +61,45 @@ async function extractChain(chainId: SteerChainId) {
 
   const prices = await getTokenPricesChain({ chainId })
   const { vaults } = await sdk.SteerVaults()
+  const pools = await getPools({
+    ids: vaults.map((vault) => `${chainId}:${vault.pool.toLowerCase()}`),
+    chainIds: [chainId],
+  })
 
   const vaultsWithPayloads = await Promise.allSettled(
     vaults.map(async (vault) => {
+      const poolId = `${chainId}:${vault.pool.toLowerCase()}`
+      const pool = pools.find((pool) => pool.id === poolId)
+
       const token0Price = prices[vault.token0] || 0
       const token1Price = prices[vault.token1] || 0
 
-      const reserve0USD = Number(vault.reserve0) * token0Price
-      const fees0USD = Number(vault.fees0) * token0Price
+      const reserve0USD = pool ? (Number(vault.reserve0) / 10 ** pool.token0.decimals) * token0Price : 0
+      const fees0USD = pool ? (Number(vault.fees0) / 10 ** pool.token0.decimals) * token0Price : 0
 
-      const reserve1USD = Number(vault.reserve1) * token1Price
-      const fees1USD = Number(vault.fees1) * token1Price
+      const reserve1USD = pool ? (Number(vault.reserve1) / 10 ** pool.token1.decimals) * token1Price : 0
+      const fees1USD = pool ? (Number(vault.fees1) / 10 ** pool.token1.decimals) * token1Price : 0
 
       const reserveUSD = reserve0USD + reserve1USD
-      const feesUSD = fees0USD + fees1USD
+      const feesUSD = Number(fees0USD) + Number(fees1USD)
 
       const [payloadP, aprP] = await Promise.allSettled([getPayload(vault.payloadIpfs), getApr(chainId, vault.id)])
 
       const payload = isPromiseFulfilled(payloadP) ? payloadP.value : null
-      const apr = isPromiseFulfilled(aprP) ? aprP.value : 0
+      const apr = isPromiseFulfilled(aprP) ? aprP.value.apr : '0'
 
-      return { ...vault, payload, annualFeeAPR: apr, reserve0USD, fees0USD, reserve1USD, fees1USD, reserveUSD, feesUSD }
+      return {
+        ...vault,
+        poolId,
+        payload,
+        annualFeeAPR: apr,
+        reserve0USD,
+        fees0USD,
+        reserve1USD,
+        fees1USD,
+        reserveUSD,
+        feesUSD,
+      }
     })
   )
 
@@ -115,12 +133,12 @@ function transform(chainsWithVaults: Awaited<ReturnType<typeof extract>>): Prism
       )
 
       // ! Missing strategies will be ignored
-      const strategyType = StrategyTypes[vault.payload.strategyConfigData.name]
+      const strategyType = StrategyTypes[vault?.payload?.strategyConfigData.name]
       if (!strategyType) return []
 
       return {
         id: `${chainId}:${vault.id}`.toLowerCase(),
-        poolId: `${chainId}:${vault.pool}`.toLowerCase(),
+        poolId: vault.poolId,
         feeTier: Number(vault.feeTier) / 1000000,
 
         // APR is the weekly APR, temporary solution, waiting for Steer to fix the subgraph
@@ -143,7 +161,7 @@ function transform(chainsWithVaults: Awaited<ReturnType<typeof extract>>): Prism
         fees1USD: vault.fees1USD,
 
         reserveUSD: vault.reserveUSD,
-        feesUSD: vault.reserveUSD,
+        feesUSD: vault.feesUSD,
 
         strategy: strategyType,
         description: vault.payload.strategyConfigData.description,

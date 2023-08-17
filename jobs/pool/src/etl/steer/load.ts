@@ -96,12 +96,26 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
         )}
         ELSE reserve0
       END,
+      reserve0USD = CASE
+        ${Prisma.join(
+          vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.reserve0USD}`),
+          ' '
+        )}
+        ELSE reserve0USD
+      END,
       fees0 = CASE
         ${Prisma.join(
           vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.fees0}`),
           ' '
         )}
         ELSE fees0
+      END,
+      fees0USD = CASE
+        ${Prisma.join(
+          vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.fees0USD}`),
+          ' '
+        )}
+        ELSE fees0USD
       END,
       token1Id = CASE
         ${Prisma.join(
@@ -117,12 +131,40 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
         )}
         ELSE reserve1
       END,
+      reserve1USD = CASE
+        ${Prisma.join(
+          vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.reserve1USD}`),
+          ' '
+        )}
+        ELSE reserve1USD
+      END,
       fees1 = CASE
         ${Prisma.join(
           vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.fees1}`),
           ' '
         )}
         ELSE fees1
+      END,
+      fees1USD = CASE
+        ${Prisma.join(
+          vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.fees1USD}`),
+          ' '
+        )}
+        ELSE fees1USD
+      END,
+      reserveUSD = CASE
+        ${Prisma.join(
+          vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.reserveUSD}`),
+          ' '
+        )}
+        ELSE reserveUSD
+      END,
+      feesUSD = CASE
+        ${Prisma.join(
+          vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.feesUSD}`),
+          ' '
+        )}
+        ELSE feesUSD
       END,
       strategy = CASE
         ${Prisma.join(
