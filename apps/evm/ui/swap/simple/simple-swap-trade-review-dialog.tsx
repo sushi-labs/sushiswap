@@ -292,9 +292,9 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
     onSettled,
     onError: (error) => {
       if (error.message.startsWith('user rejected transaction')) return
-      log.error('Swap error', {
-        route: trade?.route,
-        args: trade?.writeArgs,
+      log.error('swap error', {
+        route: serialize(trade?.route),
+        args: serialize(trade?.writeArgs),
         error,
       })
       createErrorToast(error.message, false)

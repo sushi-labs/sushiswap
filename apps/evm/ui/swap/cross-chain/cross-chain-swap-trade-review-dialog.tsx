@@ -2,10 +2,11 @@
 
 import { Chain, chainName } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
+import { calculateGasMargin } from '@sushiswap/gas'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
-import { SushiXSwapChainId } from '@sushiswap/sushixswap'
+import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap'
 import {
   DialogClose,
   DialogContent,
@@ -26,7 +27,9 @@ import { List } from '@sushiswap/ui/components/list/List'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { createErrorToast, createInfoToast, createToast } from '@sushiswap/ui/components/toast'
 import {
+  Address,
   getSushiXSwapContractConfig,
+  serialize,
   useAccount,
   useContractWrite,
   useNetwork,
@@ -34,7 +37,7 @@ import {
   UserRejectedRequestError,
   useTransaction,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
 import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { nanoid } from 'nanoid'
@@ -93,17 +96,20 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
     functionName: 'cook',
     args: trade?.writeArgs,
     enabled: Boolean(
-      trade?.writeArgs &&
+      isSushiXSwapChainId(chainId0) &&
+        isSushiXSwapChainId(chainId1) &&
+        trade?.writeArgs &&
         trade?.writeArgs.length > 0 &&
         chain?.id === chainId0 &&
         approved &&
         trade?.route?.status !== 'NoWay'
     ),
-    overrides: trade?.overrides,
+    value: trade?.value || 0n,
     onError: (error) => {
+      console.error('cross chain swap prepare error', error)
       if (error.message.startsWith('user rejected transaction')) return
       log.error('cross chain swap prepare error', {
-        trade,
+        trade: serialize(trade),
         error,
       })
     },
@@ -119,7 +125,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         type: 'swap',
         chainId: chainId0,
         txHash: data.hash,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Swapping ${trade.amountIn?.toSignificant(6)} ${trade.amountIn?.currency.symbol} to bridge token ${
             srcCurrencyB?.symbol
@@ -142,6 +148,12 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
     data,
   } = useContractWrite({
     ...config,
+    request: config?.request
+      ? {
+          ...config.request,
+          gas: typeof config.request.gas === 'bigint' ? calculateGasMargin(config.request.gas) : undefined,
+        }
+      : undefined,
     onSuccess: async (data) => {
       if (tradeRef && trade) {
         tradeRef.current = trade
@@ -150,16 +162,15 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
       // Clear input fields
       setSwapAmount('')
 
-      data
-        .wait()
+      waitForTransaction({ hash: data.hash })
         .then((receipt) => {
-          if (receipt.status === 1) {
+          if (receipt.status === 'success') {
             log.info('cross chain swap success (source)', {
-              trade: tradeRef?.current,
+              trade: serialize(tradeRef?.current),
             })
           } else {
-            log.info('cross chain swap failed (source)', {
-              trade: tradeRef?.current,
+            log.error('cross chain swap failed (source)', {
+              trade: serialize(tradeRef?.current),
             })
 
             setStepStates({
@@ -176,8 +187,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
           })
         })
         .catch(() => {
-          log.info('cross chain swap error (source)', {
-            trade: tradeRef?.current,
+          log.error('cross chain swap error (source)', {
+            trade: serialize(tradeRef?.current),
           })
           setStepStates({
             source: StepState.Failed,
@@ -194,8 +205,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
     onSettled,
     onError: (error) => {
       if (error.message.startsWith('user rejected transaction')) return
-      log.error('Cross Chain Swap error', {
-        trade: tradeRef?.current,
+      log.error('cross chain swap error', {
+        trade: serialize(tradeRef?.current),
         error,
       })
       createErrorToast(error.message, false)
@@ -300,7 +311,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         type: 'swap',
         chainId: chainId1,
         txHash: receipt.hash as `0x${string}`,
-        promise: receipt.wait(),
+        promise: waitForTransaction({ hash: receipt?.hash as Address, chainId: chainId1 }),
         summary: {
           pending: `Swapping ${dstCurrencyA?.symbol} to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${
             tradeRef?.current?.amountOut?.currency.symbol
