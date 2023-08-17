@@ -134,8 +134,6 @@ async function main() {
       gasPrice ?? 30e9
     )
 
-    console.log('best route', bestRoute)
-
     return res.json(
       serialize({
         route: {

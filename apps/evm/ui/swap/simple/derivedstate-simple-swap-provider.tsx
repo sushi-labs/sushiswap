@@ -1,6 +1,5 @@
 'use client'
 
-import { isAddress } from '@ethersproject/address'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { useSlippageTolerance } from '@sushiswap/hooks'
@@ -11,7 +10,9 @@ import { useTokenWithCache } from '@sushiswap/wagmi/future'
 import { useClientTrade } from '@sushiswap/wagmi/future/hooks'
 import { useCarbonOffset } from 'lib/swap/useCarbonOffset'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useLogger } from 'next-axiom'
 import { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { isAddress } from 'viem'
 
 import { isSwapApiEnabledChainId, SUPPORTED_CHAIN_IDS } from '../../../config'
 
@@ -281,6 +282,7 @@ const useDerivedStateSimpleSwap = () => {
 const SWAP_API_BASE_URL = process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL
 
 const useSimpleSwapTrade = () => {
+  const log = useLogger()
   const {
     state: { token0, chainId, swapAmount, token1, recipient },
   } = useDerivedStateSimpleSwap()
@@ -301,7 +303,10 @@ const useSimpleSwapTrade = () => {
     recipient: recipient as Address,
     enabled: Boolean(!isFallback && swapAmount?.greaterThan(ZERO)),
     carbonOffset,
-    onError: () => setIsFallback(true),
+    onError: () => {
+      log.error('api trade error')
+      setIsFallback(true)
+    },
   })
 
   const clientTrade = useClientTrade({
@@ -314,6 +319,9 @@ const useSimpleSwapTrade = () => {
     recipient: recipient as Address,
     enabled: Boolean(isFallback && swapAmount?.greaterThan(ZERO)),
     carbonOffset,
+    onError: () => {
+      log.error('client trade error')
+    },
   })
 
   return (isFallback ? clientTrade : apiTrade) as ReturnType<typeof useApiTrade>

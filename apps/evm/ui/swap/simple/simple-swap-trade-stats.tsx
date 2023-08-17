@@ -8,10 +8,10 @@ import { classNames } from '@sushiswap/ui'
 import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
 import { Explainer } from '@sushiswap/ui/components/explainer'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
-import { useAccount } from '@sushiswap/wagmi'
+import { Address, useAccount } from '@sushiswap/wagmi'
 import { AddressToEnsResolver } from '@sushiswap/wagmi/future/components/Account/AddressToEnsResolver'
-import { isAddress } from 'ethers/lib/utils'
 import React, { FC } from 'react'
+import { isAddress } from 'viem'
 
 import { warningSeverity, warningSeverityClassName } from '../../../lib/swap/warningSeverity'
 import { TradeRoutePathView } from '../trade-route-path-view'
@@ -104,7 +104,7 @@ export const SimpleSwapTradeStats: FC = () => {
                 )}
                 rel="noreferrer"
               >
-                <AddressToEnsResolver address={recipient}>
+                <AddressToEnsResolver address={recipient as Address}>
                   {({ isLoading, data }) => {
                     return <>{isLoading || !data ? shortenAddress(recipient) : data}</>
                   }}

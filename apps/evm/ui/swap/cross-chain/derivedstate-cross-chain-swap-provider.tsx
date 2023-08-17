@@ -1,6 +1,5 @@
 'use client'
 
-import { isAddress } from '@ethersproject/address'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { useSlippageTolerance } from '@sushiswap/hooks'
@@ -25,6 +24,7 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { isAddress } from 'viem'
 
 const getTokenAsString = (token: Type | string) =>
   typeof token === 'string' ? token : token.isNative ? 'NATIVE' : token.wrapped.address

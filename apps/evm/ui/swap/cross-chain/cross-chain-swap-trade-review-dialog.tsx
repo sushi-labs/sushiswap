@@ -34,7 +34,6 @@ import {
   useContractWrite,
   useNetwork,
   usePrepareContractWrite,
-  UserRejectedRequestError,
   useTransaction,
 } from '@sushiswap/wagmi'
 import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
@@ -43,6 +42,7 @@ import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Check
 import { nanoid } from 'nanoid'
 import { log } from 'next-axiom'
 import React, { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+import { UserRejectedRequestError } from 'viem'
 
 import { APPROVE_TAG_XSWAP } from '../../../lib/constants'
 import { UseCrossChainTradeReturn } from '../../../lib/swap/useCrossChainTrade/types'
