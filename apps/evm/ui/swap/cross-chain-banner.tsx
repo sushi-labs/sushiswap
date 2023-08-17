@@ -2,7 +2,16 @@
 
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import { useLocalStorage } from '@sushiswap/hooks'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, IconButton, Switch } from '@sushiswap/ui'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  IconButton,
+  ShuffleIcon,
+  Switch,
+} from '@sushiswap/ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { FC, useCallback, useState, useTransition } from 'react'
@@ -34,11 +43,11 @@ export const CrossChainBanner: FC = () => {
           <Card>
             <CardHeader>
               <CardTitle>
-                <motion.div
-                  layoutId="title"
-                  className="text-base flex gap-1.5 items-center bg-gradient-to-r from-blue to-pink text-transparent bg-clip-text tracking-tighter"
-                >
-                  Cross-chain Swap
+                <motion.div layoutId="title">
+                  <span className=" text-base tracking-tighter saturate-200 flex items-center gap-2 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
+                    <ShuffleIcon width={20} height={20} className="text-blue" />
+                    Cross-chain Swap
+                  </span>
                 </motion.div>
               </CardTitle>
               <CardDescription>
