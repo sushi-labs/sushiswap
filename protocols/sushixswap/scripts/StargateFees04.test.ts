@@ -1,15 +1,20 @@
-import { BigNumber } from 'ethers'
-import hre, { ethers } from 'hardhat'
+import { ChainId } from '@sushiswap/chain'
+import {
+  STARGATE_CHAIN_ID,
+  STARGATE_POOL_ADDRESS,
+  STARGATE_POOL_ID,
+  STARGATE_USDC_ADDRESS,
+  StargateChainId,
+} from '@sushiswap/stargate'
+import { BridgeState, getBigInt, getStarGateFeesV04 } from '@sushiswap/tines'
 import { expect } from 'chai'
+import hre, { ethers } from 'hardhat'
 import seedrandom from 'seedrandom'
-import { ChainId, chainIds } from '@sushiswap/chain'
-import { getBigNumber, getStarGateFeesV04, BridgeState } from '@sushiswap/tines'
-import { STARGATE_CHAIN_ID, STARGATE_POOL_ADDRESS, STARGATE_POOL_ID, STARGATE_USDC_ADDRESS } from '@sushiswap/stargate'
-import { StargatePoolABI } from './ABI/StargatePoolABI'
-import { StargateFeeLibraryABI } from './ABI/StargateFeeLibraryABI'
-import { StargateFactoryABI } from './ABI/StargateFactoryABI'
+
 import { ERC20ABI } from './ABI/ERC20ABI'
+import { StargateFeeLibraryABI } from './ABI/StargateFeeLibraryABI'
 import { StargateLPStakingABI } from './ABI/StargateLPStakingABI'
+import { StargatePoolABI } from './ABI/StargatePoolABI'
 
 export function getRandom(rnd: () => number, min: number, max: number) {
   const minL = Math.log(min)
@@ -17,7 +22,7 @@ export function getRandom(rnd: () => number, min: number, max: number) {
   const v = rnd() * (maxL - minL) + minL
   const res = Math.exp(v)
   console.assert(res <= max && res >= min, 'Random value is out of the range')
-  return getBigNumber(res)
+  return getBigInt(res)
 }
 
 describe('Stargate fees', function () {
@@ -46,14 +51,10 @@ describe('Stargate fees', function () {
         const feesContract = await FeeCalcContract.getFees(bridgeState, whitelisted, amountSD)
         const feesTypescript = getStarGateFeesV04(bridgeState, whitelisted, amountSD)
 
-        // console.log(feesContract)
-        // console.log(feesTypescript)
-        // console.log(i, j)
-
-        expect(feesTypescript.eqFee.eq(feesContract.eqFee)).equal(true)
-        expect(feesTypescript.eqReward.eq(feesContract.eqReward)).equal(true)
-        expect(feesTypescript.lpFee.eq(feesContract.lpFee)).equal(true)
-        expect(feesTypescript.protocolFee.eq(feesContract.protocolFee)).equal(true)
+        expect(feesTypescript.eqFee === BigInt(feesContract.eqFee)).equal(true)
+        expect(feesTypescript.eqReward === BigInt(feesContract.eqReward)).equal(true)
+        expect(feesTypescript.lpFee === BigInt(feesContract.lpFee)).equal(true)
+        expect(feesTypescript.protocolFee === BigInt(feesContract.protocolFee)).equal(true)
       }
     }
   })
@@ -67,8 +68,8 @@ describe('Stargate fees', function () {
     )
 
     for (let n = 1; n <= 10; ++n) {
-      const amountSD = BigNumber.from(10).pow(n + 3)
-      if (amountSD.gt(state.currentBalance)) break
+      const amountSD = 10n ** BigInt(n + 3)
+      if (amountSD > state.currentBalance) break
       const bridgeFees = await getStargateBridgeFees_USDC_USDC(
         ChainId.ETHEREUM,
         ChainId.POLYGON,
@@ -86,12 +87,12 @@ describe('Stargate fees', function () {
   })
 })
 
-async function getStargateBridgeState_USDC_USDC(srcChain: ChainId, dstChain: ChainId, from: string) {
+async function getStargateBridgeState_USDC_USDC(srcChain: StargateChainId, dstChain: StargateChainId, from: string) {
   return getStargateBridgeState(
-    STARGATE_CHAIN_ID[srcChain],
+    srcChain,
     STARGATE_USDC_ADDRESS[srcChain],
     STARGATE_POOL_ID[srcChain][STARGATE_USDC_ADDRESS[srcChain]],
-    STARGATE_CHAIN_ID[dstChain],
+    dstChain,
     STARGATE_POOL_ID[dstChain][STARGATE_USDC_ADDRESS[dstChain]],
     from
   )
@@ -141,10 +142,10 @@ async function getStargateBridgeState(
 }
 
 async function getStargateBridgeFees_USDC_USDC(
-  srcChain: ChainId,
-  dstChain: ChainId,
+  srcChain: StargateChainId,
+  dstChain: StargateChainId,
   from: string,
-  amountSD: BigNumber
+  amountSD: bigint
 ) {
   return getStargateFees(
     STARGATE_CHAIN_ID[srcChain],
@@ -164,7 +165,7 @@ async function getStargateFees(
   dstChainId: number,
   dstPoolId: number,
   from: string,
-  amountSD: BigNumber
+  amountSD: bigint
 ) {
   const poolAddress = STARGATE_POOL_ADDRESS[srcChainId][srcTokenAddress]
   const pool = await new ethers.Contract(poolAddress, StargatePoolABI, ethers.getDefaultProvider())

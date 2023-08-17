@@ -8,10 +8,10 @@ import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/components/settin
 import { SplashController } from '@sushiswap/ui/components/SplashController'
 import { isSushiSwapV3ChainId, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
-import { isAddress } from 'ethers/lib/utils'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import React, { FC, useState } from 'react'
+import { isAddress } from 'viem'
 import { z } from 'zod'
 
 import { ConcentratedLiquidityProvider } from '../../ConcentratedLiquidityProvider'

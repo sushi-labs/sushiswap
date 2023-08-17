@@ -5,14 +5,14 @@ import { Currency } from '@sushiswap/ui/components/currency'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
-import { Pool } from '@sushiswap/v3-sdk'
+import { SushiSwapV3Pool } from '@sushiswap/v3-sdk'
 import { unwrapToken } from 'lib/functions'
 import React, { FC, useMemo } from 'react'
 
 type PoolHeader = {
   title?: string
   isLoading: boolean
-  pool: Pool | null | undefined
+  pool: SushiSwapV3Pool | null | undefined
   chainId: ChainId
   apy?: {
     fees: number | undefined

@@ -1,15 +1,15 @@
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import type { Address } from '@wagmi/core'
-import { configureChains, createClient, erc20ABI, fetchBalance, readContracts } from '@wagmi/core'
+import { configureChains, createConfig, erc20ABI, fetchBalance, readContracts } from '@wagmi/core'
 import { fetch } from '@whatwg-node/fetch'
 import zip from 'lodash.zip'
 import { z } from 'zod'
 
-const { provider } = configureChains(allChains, allProviders)
-createClient({
+const { publicClient } = configureChains(allChains, allProviders)
+createConfig({
   autoConnect: true,
-  provider,
+  publicClient,
 })
 
 const querySchema = z.object({
@@ -55,7 +55,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   return response.status(200).json({
     '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee': balance.value.toString(),
     ...Object.fromEntries(
-      zipped.filter(([, balance]) => !balance?.isZero()).map(([token, balance]) => [token, balance?.toString()])
+      zipped.filter(([, balance]) => balance?.result !== 0n).map(([token, balance]) => [token, balance?.toString()])
     ),
   })
 }

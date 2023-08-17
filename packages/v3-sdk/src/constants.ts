@@ -9,9 +9,13 @@ export const POOL_INIT_CODE_HASH = '0xe34f199b19b2b4f47f68442619d555527d244f78a3
  */
 
 export enum FeeAmount {
+  /** 0.01% */
   LOWEST = 100,
+  /** 0.1% */
   LOW = 500,
+  /** 0.3% */
   MEDIUM = 3000,
+  /** 1% */
   HIGH = 10000,
 }
 
@@ -25,7 +29,7 @@ export const TICK_SPACINGS: { [amount in FeeAmount]: number } = {
   [FeeAmount.HIGH]: 200,
 }
 
-export const V3_FACTORY_ADDRESS: Record<SushiSwapV3ChainId, `0x${string}`> = {
+export const SUSHISWAP_V3_FACTORY_ADDRESS: Record<SushiSwapV3ChainId, `0x${string}`> = {
   [ChainId.ARBITRUM_NOVA]: '0xaa26771d497814E81D305c511Efbb3ceD90BF5bd',
   [ChainId.ARBITRUM]: '0x1af415a1EbA07a4986a52B6f2e7dE7003D82231e',
   [ChainId.AVALANCHE]: '0x3e603C14aF37EBdaD31709C4f848Fc6aD5BEc715',
@@ -74,7 +78,7 @@ export const SUSHISWAP_V3_INIT_CODE_HASH: Record<SushiSwapV3ChainId, `0x${string
   [ChainId.BASE]: '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
 } as const
 
-export const V3_POSTIION_MANAGER: Record<SushiSwapV3ChainId, `0x${string}`> = {
+export const SUSHISWAP_V3_POSTIION_MANAGER: Record<SushiSwapV3ChainId, `0x${string}`> = {
   [ChainId.ARBITRUM_NOVA]: '0x258f7E97149afd7D7F84fa63b10e4A3f0C38B788',
   [ChainId.ARBITRUM]: '0xF0cBce1942A68BEB3d1b73F0dd86C8DCc363eF49',
   [ChainId.AVALANCHE]: '0x18350b048AB366ed601fFDbC669110Ecb36016f3',
@@ -101,7 +105,7 @@ export const V3_POSTIION_MANAGER: Record<SushiSwapV3ChainId, `0x${string}`> = {
   [ChainId.BASE]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
 } as const
 
-export const V3_TICK_LENS: Record<SushiSwapV3ChainId, `0x${string}`> = {
+export const SUSHISWAP_V3_TICK_LENS: Record<SushiSwapV3ChainId, `0x${string}`> = {
   [ChainId.ARBITRUM_NOVA]: '0xF60e5f4A44a510742457D8064ffd360B12d8D9AF',
   [ChainId.ARBITRUM]: '0x8516944E89f296eb6473d79aED1Ba12088016c9e',
   [ChainId.AVALANCHE]: '0xDdC1b5920723F774d2Ec2C3c9355251A20819776',

@@ -153,14 +153,14 @@ export class Extractor {
       const { prefetched, fetching } = this.extractorV3.getWatchersForTokens(tokens)
       watchersV3 = prefetched
       prefetched.forEach((w) => {
-        if (w.getStatus() != UniV3PoolWatcherStatus.All) promises.push(w.statusAll())
+        if (w.getStatus() !== UniV3PoolWatcherStatus.All) promises.push(w.statusAll())
       })
       promises = promises.concat(
         fetching.map(async (p) => {
           const w = await p
-          if (w == undefined) return
+          if (w === undefined) return
           watchersV3.push(w)
-          if (w.getStatus() != UniV3PoolWatcherStatus.All) await w.statusAll()
+          if (w.getStatus() !== UniV3PoolWatcherStatus.All) await w.statusAll()
         })
       )
     }

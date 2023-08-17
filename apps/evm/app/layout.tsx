@@ -4,6 +4,7 @@ import { SanctionedAddressDialog } from '@sushiswap/wagmi/future/components/Sanc
 import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
 import React from 'react'
+
 import { Providers } from './providers'
 import { Trackers } from './trackers'
 

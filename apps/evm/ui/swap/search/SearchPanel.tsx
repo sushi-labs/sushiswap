@@ -13,6 +13,7 @@ import { Dialog } from '@sushiswap/ui/components/dialog'
 import { List } from '@sushiswap/ui/components/list/List'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
 import React, { FC, useCallback, useMemo, useState } from 'react'
+
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { useSearchContext } from './SearchProvider'
 

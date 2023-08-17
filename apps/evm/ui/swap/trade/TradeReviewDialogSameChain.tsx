@@ -173,36 +173,38 @@ export const TradeReviewDialogSameChain: FC = () => {
         </div>
         <div className="pt-4">
           <ConfirmationDialog>
-            {({ onClick, isWritePending, isLoading, isError, error, isConfirming }) => (
-              <div className="space-y-4">
-                <Button
-                  fullWidth
-                  size="xl"
-                  loading={isLoading && !isError}
-                  onClick={onClick}
-                  disabled={isWritePending || Boolean(isLoading && +value > 0) || isError}
-                  color={isError ? 'red' : warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
-                  testId="confirm-swap"
-                >
-                  {isError ? (
-                    'Shoot! Something went wrong :('
-                  ) : isConfirming ? (
-                    <Dots>Confirming transaction</Dots>
-                  ) : isWritePending ? (
-                    <Dots>Confirm Swap</Dots>
-                  ) : isWrap ? (
-                    'Wrap'
-                  ) : isUnwrap ? (
-                    'Unwrap'
-                  ) : (
-                    `Swap ${token0?.symbol} for ${token1?.symbol}`
-                  )}
-                </Button>
-                <Collapsible open={Boolean(error)}>
-                  <div className="scroll bg-red/10 text-red-700 p-2 px-3 rounded-lg break-all">{error?.message}</div>
-                </Collapsible>
-              </div>
-            )}
+            {({ onClick, isWritePending, isLoading, isError, error, isConfirming }) => {
+              return (
+                <div className="space-y-4">
+                  <Button
+                    fullWidth
+                    size="xl"
+                    loading={isLoading && !isError}
+                    onClick={onClick}
+                    disabled={isWritePending || Boolean(isLoading && +value > 0) || isError}
+                    color={isError ? 'red' : warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
+                    testId="confirm-swap"
+                  >
+                    {isError ? (
+                      'Shoot! Something went wrong :('
+                    ) : isConfirming ? (
+                      <Dots>Confirming transaction</Dots>
+                    ) : isWritePending ? (
+                      <Dots>Confirm Swap</Dots>
+                    ) : isWrap ? (
+                      'Wrap'
+                    ) : isUnwrap ? (
+                      'Unwrap'
+                    ) : (
+                      `Swap ${token0?.symbol} for ${token1?.symbol}`
+                    )}
+                  </Button>
+                  <Collapsible open={Boolean(error)}>
+                    <div className="scroll bg-red/10 text-red-700 p-2 px-3 rounded-lg break-all">{error?.message}</div>
+                  </Collapsible>
+                </div>
+              )
+            }}
           </ConfirmationDialog>
         </div>
       </div>

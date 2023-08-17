@@ -3,7 +3,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui/types'
-import { useAccount } from '@sushiswap/wagmi'
+import { Address, useAccount } from '@sushiswap/wagmi'
 import { isSwapApiEnabledChainId } from 'config'
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -28,7 +28,7 @@ interface SwapState {
   amount: Amount<Type> | undefined
   appType: AppType
   tokensLoading: boolean
-  recipient: string | undefined
+  recipient: Address | undefined
 }
 
 type State = InternalSwapState & SwapState
@@ -82,6 +82,8 @@ interface SwapProviderProps {
   children: ReactNode
 }
 
+const SWAP_API_BASE_URL = process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL
+
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { address } = useAccount()
   // const { query, push, pathname } = useRouter()
@@ -95,7 +97,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   // const _toChainId = searchParams?.get('toChainId')
   const _toCurrency = searchParams?.get('toCurrency')
   const _amount = searchParams?.get('amount')
-  const _recipient = searchParams?.get('recipient')
+  const _recipient = searchParams?.get('recipient') as Address
   const _review = searchParams?.get('review')
 
   const { fromCurrency, toCurrency, amount, recipient, review } = queryParamsSchema.parse({
@@ -108,13 +110,13 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { token0, token1, fromChainId, toChainId } = useTokenState()
 
   const [internalState, dispatch] = useReducer(reducer, {
-    isFallback: !isSwapApiEnabledChainId(fromChainId),
+    isFallback:
+      !isSwapApiEnabledChainId(fromChainId) ||
+      (isSwapApiEnabledChainId(fromChainId) && typeof SWAP_API_BASE_URL === 'undefined'),
     tradeId: nanoid(),
     review: review ? review : false,
     value: !amount || amount === '0' ? '' : amount,
   })
-
-  // console.log({ token0, token1 })
 
   const state = useMemo(() => {
     return {
@@ -138,7 +140,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
             ? 'NATIVE'
             : state.token1.wrapped.address
           : defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency].address
-      const _searchParams = new URLSearchParams(searchParams)
+      const _searchParams = new URLSearchParams(Array.from(searchParams.entries()))
       _searchParams.set('fromChainId', chainId.toString())
       _searchParams.set('fromCurrency', token0.isNative ? 'NATIVE' : token0.wrapped.address)
       _searchParams.set('toChainId', chainId.toString())
@@ -150,7 +152,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     const setNetwork0 = (chainId: SwapChainId) => {
       const fromCurrency =
         state.token0?.chainId === chainId ? (state.token0.isNative ? 'NATIVE' : state.token0.wrapped.address) : 'NATIVE'
-      const _searchParams = new URLSearchParams(searchParams)
+      const _searchParams = new URLSearchParams(Array.from(searchParams.entries()))
       _searchParams.set('fromChainId', chainId.toString())
       _searchParams.set('fromCurrency', fromCurrency)
       void push(`${pathname}?${_searchParams.toString()}`)
@@ -162,13 +164,13 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
             ? 'NATIVE'
             : state.token1.wrapped.address
           : defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency].address
-      const _searchParams = new URLSearchParams(searchParams)
+      const _searchParams = new URLSearchParams(Array.from(searchParams.entries()))
       _searchParams.set('toChainId', chainId.toString())
       _searchParams.set('toCurrency', toCurrency)
       void push(`${pathname}?${_searchParams.toString()}`)
     }
     const setTokens = (currency0: Type, currency1: Type) => {
-      const _searchParams = new URLSearchParams(searchParams)
+      const _searchParams = new URLSearchParams(Array.from(searchParams.entries()))
       _searchParams.set('fromChainId', currency0.chainId.toString())
       _searchParams.set('fromCurrency', currency0.isNative ? 'NATIVE' : currency0.wrapped.address)
       _searchParams.set('toChainId', currency1.chainId.toString())
@@ -176,10 +178,9 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       void push(`${pathname}?${_searchParams.toString()}`)
     }
     const setToken0 = (currency: Type) => {
-      const _searchParams = new URLSearchParams(searchParams)
+      const _searchParams = new URLSearchParams(Array.from(searchParams.entries()))
       // If the same
       if (state.token0 && state.token1 && state.token1.equals(currency)) {
-        console.log('same', state)
         _searchParams.set('toCurrency', state.token0.isNative ? 'NATIVE' : state.token0.wrapped.address)
         _searchParams.set('fromCurrency', state.token1.isNative ? 'NATIVE' : state.token1.wrapped.address)
         _searchParams.set('toChainId', state.token0.chainId.toString())
@@ -191,7 +192,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       void push(`${pathname}?${_searchParams.toString()}`)
     }
     const setToken1 = (currency: Type) => {
-      const _searchParams = new URLSearchParams(searchParams)
+      const _searchParams = new URLSearchParams(Array.from(searchParams.entries()))
       // If the same
       if (state.token0 && state.token1 && state.token0.equals(currency)) {
         _searchParams.set('fromCurrency', state.token1.isNative ? 'NATIVE' : state.token1.wrapped.address)
@@ -205,7 +206,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       void push(`${pathname}?${_searchParams.toString()}`)
     }
     const switchTokens = () => {
-      const _searchParams = new URLSearchParams(searchParams)
+      const _searchParams = new URLSearchParams(Array.from(searchParams.entries()))
       _searchParams.set('fromChainId', toChainId.toString())
       _searchParams.set('fromCurrency', toCurrency)
       _searchParams.set('toChainId', fromChainId.toString())
@@ -229,13 +230,13 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
           : state.token0?.symbol === defaultQuoteCurrency[network1 as keyof typeof defaultQuoteCurrency].symbol
           ? 'NATIVE'
           : defaultQuoteCurrency[network1 as keyof typeof defaultQuoteCurrency].address
-      const _searchParams = new URLSearchParams(searchParams)
+      const _searchParams = new URLSearchParams(Array.from(searchParams.entries()))
       _searchParams.set('toChainId', network1.toString())
       _searchParams.set('toCurrency', token1)
       void push(`${pathname}?${_searchParams.toString()}`)
     }
     const setSearch = (currency: Type) => {
-      const _searchParams = new URLSearchParams(searchParams)
+      const _searchParams = new URLSearchParams(Array.from(searchParams.entries()))
       _searchParams.set('fromChainId', currency.chainId.toString())
       _searchParams.set('fromCurrency', 'NATIVE')
       _searchParams.set('toChainId', currency.chainId.toString())
@@ -245,15 +246,15 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
 
     const setValue = (value: string) => {
       if (value !== _amount) {
-        const _searchParams = new URLSearchParams(searchParams)
+        const _searchParams = new URLSearchParams(Array.from(searchParams.entries()))
         _searchParams.set('amount', value)
         void push(`${pathname}?${_searchParams.toString()}`)
       }
       dispatch({ type: 'setValue', value })
     }
-    const setRecipient = (recipient: string) => {
+    const setRecipient = (recipient: Address) => {
       if (recipient !== _recipient) {
-        const _searchParams = new URLSearchParams(searchParams)
+        const _searchParams = new URLSearchParams(Array.from(searchParams.entries()))
         _searchParams.set('recipient', recipient)
         void push(`${pathname}?${_searchParams.toString()}`)
       }

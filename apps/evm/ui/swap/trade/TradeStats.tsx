@@ -11,8 +11,8 @@ import { Explainer } from '@sushiswap/ui/components/explainer'
 import { SkeletonBox, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { useAccount } from '@sushiswap/wagmi'
 import { AddressToEnsResolver } from '@sushiswap/wagmi/future/components/Account/AddressToEnsResolver'
-import { isAddress } from 'ethers/lib/utils'
 import React, { FC, useState } from 'react'
+import { isAddress } from 'viem'
 
 import { useTrade } from '../../../lib/swap/useTrade'
 import { warningSeverity, warningSeverityClassName } from '../../../lib/swap/warningSeverity'
@@ -110,7 +110,12 @@ export const TradeStats: FC = () => {
               {loading ? (
                 <SkeletonText fontSize="sm" className="w-[120px]" />
               ) : (
-                <button onClick={() => setOpen(true)} className="text-sm text-blue font-semibold">
+                <button
+                  onClick={() => setOpen(true)}
+                  onKeyDown={() => setOpen(true)}
+                  className="text-sm text-blue font-semibold"
+                  type="button"
+                >
                   View
                 </button>
               )}

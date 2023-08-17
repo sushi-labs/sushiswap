@@ -1,4 +1,4 @@
-import { Big, BigintIsh, Fraction, JSBI, MAX_UINT256, Rounding, ZERO } from '@sushiswap/math'
+import { Big, BigintIsh, Fraction, MAX_UINT256, Rounding, ZERO } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
 import { Native } from './Native'
@@ -9,7 +9,7 @@ import { amountSchema, SerializedAmount } from './zod'
 
 export class Amount<T extends Type> extends Fraction {
   public readonly currency: T
-  public readonly scale: JSBI
+  public readonly scale: bigint
   /**
    * Returns a new currency amount instance from the unitless amount of token, i.e. the raw amount
    * @param currency the currency in the amount
@@ -22,36 +22,29 @@ export class Amount<T extends Type> extends Fraction {
   public static fromShare<T extends Type>(
     currency: T,
     shares: BigintIsh,
-    rebase: { base: JSBI; elastic: JSBI },
+    rebase: { base: bigint; elastic: bigint },
     roundUp = false
   ): Amount<T> {
-    if (JSBI.EQ(rebase.base, ZERO)) return new Amount(currency, shares)
+    if (rebase.base === ZERO) return new Amount(currency, shares)
 
-    const elastic = JSBI.divide(
-      JSBI.multiply(JSBI.BigInt(typeof shares === 'bigint' ? shares.toString() : shares), rebase.elastic),
-      rebase.base
-    )
+    const sharesBI = typeof shares === 'bigint' ? shares : BigInt(shares.toString())
 
-    if (
-      roundUp &&
-      JSBI.LT(
-        JSBI.divide(JSBI.multiply(elastic, rebase.base), rebase.elastic),
-        JSBI.BigInt(typeof shares === 'bigint' ? shares.toString() : shares)
-      )
-    ) {
-      return new Amount(currency, JSBI.add(elastic, JSBI.BigInt(1)))
+    const elastic = (sharesBI * rebase.elastic) / rebase.base
+
+    if (roundUp && (elastic * rebase.base) / rebase.elastic < sharesBI) {
+      return new Amount(currency, elastic + 1n)
     }
 
     return new Amount(currency, elastic)
   }
 
-  public toShare(rebase: { base: JSBI; elastic: JSBI }, roundUp = false) {
-    if (JSBI.EQ(rebase.elastic, ZERO)) return Share.fromRawShare(this.currency, this.quotient)
+  public toShare(rebase: { base: bigint; elastic: bigint }, roundUp = false) {
+    if (rebase.elastic === ZERO) return Share.fromRawShare(this.currency, this.quotient)
 
-    const base = JSBI.divide(JSBI.multiply(this.quotient, rebase.base), rebase.elastic)
+    const base = (this.quotient * rebase.base) / rebase.elastic
 
-    if (roundUp && JSBI.LT(JSBI.divide(JSBI.multiply(base, rebase.elastic), rebase.base), this.quotient)) {
-      return Share.fromRawShare(this.currency, JSBI.add(base, JSBI.BigInt(1)))
+    if (roundUp && (base * rebase.elastic) / rebase.base < this.quotient) {
+      return Share.fromRawShare(this.currency, base + 1n)
     }
 
     return Share.fromRawShare(this.currency, base)
@@ -73,9 +66,9 @@ export class Amount<T extends Type> extends Fraction {
 
   protected constructor(currency: T, numerator: BigintIsh, denominator?: BigintIsh) {
     super(numerator, denominator)
-    invariant(JSBI.lessThanOrEqual(this.quotient, MAX_UINT256), 'AMOUNT')
+    invariant(this.quotient <= MAX_UINT256, 'AMOUNT')
     this.currency = currency
-    this.scale = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(currency.decimals))
+    this.scale = 10n ** BigInt(currency.decimals)
   }
 
   public add(other: Amount<T>): Amount<T> {

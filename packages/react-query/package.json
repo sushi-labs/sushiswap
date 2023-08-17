@@ -47,10 +47,12 @@
     "@ethersproject/address": "5.7.0",
     "@ethersproject/bignumber": "5.7.0",
     "@ethersproject/units": "^5.7.0",
+    "@sushiswap/abi": "workspace:*",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/client": "workspace:*",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/database": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/types": "workspace:*",
@@ -60,6 +62,7 @@
     "ethers": "5.7.2",
     "idb-keyval": "6.2.0",
     "nanoid": "4.0.0",
+    "viem": "1.6.0",
     "zod": "3.21.4"
   },
   "devDependencies": {

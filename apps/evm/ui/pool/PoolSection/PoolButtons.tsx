@@ -1,10 +1,10 @@
-import { getAddress } from '@ethersproject/address'
 import { Pool } from '@sushiswap/client'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button } from '@sushiswap/ui/components/button'
 import Link from 'next/link'
 import { FC } from 'react'
+import { getAddress } from 'viem'
 
 import { usePoolPosition } from '../PoolPositionProvider'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
