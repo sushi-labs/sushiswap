@@ -5,6 +5,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
+import { STARGATE_SUPPORTED_CHAIN_IDS, StargateChainId } from '@sushiswap/stargate'
 import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap'
 import { useAccount, useNetwork, watchNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future'
@@ -80,7 +81,16 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
   const defaultedParams = useMemo(() => {
     const params = new URLSearchParams(searchParams)
 
-    if (!params.has('chainId0')) params.set('chainId0', (chain ? chain.id : ChainId.ETHEREUM).toString())
+    if (!params.has('chainId0'))
+      params.set(
+        'chainId0',
+        (chain
+          ? STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId)
+            ? chain.id
+            : ChainId.ETHEREUM
+          : ChainId.ETHEREUM
+        ).toString()
+      )
     if (!params.has('chainId1')) params.set('chainId1', ChainId.ARBITRUM.toString())
     if (!params.has('token0')) params.set('token0', 'NATIVE')
     if (!params.has('token1')) params.set('token1', getQuoteCurrency(Number(params.get('chainId1'))))

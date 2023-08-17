@@ -13,6 +13,8 @@ import { useCarbonOffset } from 'lib/swap/useCarbonOffset'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
+import { SUPPORTED_CHAIN_IDS } from '../../../config'
+
 const getTokenAsString = (token: Type | string) =>
   typeof token === 'string' ? token : token.isNative ? 'NATIVE' : token.wrapped.address
 const getQuoteCurrency = (chainId: number) =>
@@ -62,7 +64,16 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
   const defaultedParams = useMemo(() => {
     const params = new URLSearchParams(searchParams)
 
-    if (!params.has('chainId')) params.set('chainId', (chain ? chain.id : ChainId.ETHEREUM).toString())
+    if (!params.has('chainId'))
+      params.set(
+        'chainId',
+        (chain
+          ? SUPPORTED_CHAIN_IDS.includes(chain.id as ChainId)
+            ? chain.id
+            : ChainId.ETHEREUM
+          : ChainId.ETHEREUM
+        ).toString()
+      )
     if (!params.has('token0')) params.set('token0', 'NATIVE')
     if (!params.has('token1')) params.set('token1', getQuoteCurrency(Number(params.get('chainId'))))
     if (!params.has('recipient')) params.set('recipient', address ?? '')
