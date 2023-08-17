@@ -88,6 +88,17 @@ export const ADDITIONAL_BASES: {
       SNX[ChainId.POLYGON],
       CRV[ChainId.POLYGON],
       YFI[ChainId.POLYGON],
+      GNS[ChainId.POLYGON],
+      SAND[ChainId.POLYGON],
+      STG[ChainId.POLYGON],
+      UNI[ChainId.POLYGON],
+      SUSHI[ChainId.POLYGON],
+      RNDR[ChainId.POLYGON],
+      TEL[ChainId.POLYGON],
+      GRT[ChainId.POLYGON],
+      BAL[ChainId.POLYGON],
+      QUICK[ChainId.POLYGON],
+      OCEAN[ChainId.POLYGON],
       // ENJ[ChainId.POLYGON], // could not find on polygon
     ],
   },
@@ -133,5 +144,15 @@ export const ADDITIONAL_BASES: {
   [ChainId.OPTIMISM]: {
     [FRAX_ADDRESS[ChainId.OPTIMISM]]: [FXS[ChainId.OPTIMISM]],
     [FXS_ADDRESS[ChainId.OPTIMISM]]: [FRAX[ChainId.OPTIMISM]],
+    ['0x9E8862e39496BD336565Dd15cE2C0B90bc7dc121']: [
+      // FIVE
+      WNATIVE[ChainId.OPTIMISM],
+      WETH9[ChainId.OPTIMISM],
+      SNX[ChainId.OPTIMISM],
+      WBTC[ChainId.OPTIMISM],
+      LINK[ChainId.OPTIMISM],
+      SUSHI[ChainId.OPTIMISM],
+      XSUSHI[ChainId.OPTIMISM],
+    ],
   },
 }
