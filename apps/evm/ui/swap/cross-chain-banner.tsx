@@ -5,19 +5,14 @@ import { useLocalStorage } from '@sushiswap/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, IconButton, Switch } from '@sushiswap/ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { usePathname, useRouter } from 'next/navigation'
-import React, { FC, useCallback, useEffect, useState, useTransition } from 'react'
+import React, { FC, useCallback, useState, useTransition } from 'react'
 
 export const CrossChainBanner: FC = () => {
   const [minimized, setBannerMinimize] = useLocalStorage('xswap-banner-minimized', false)
   const pathname = usePathname()
   const [, startTransition] = useTransition()
   const [checked, setChecked] = useState(pathname === '/swap/cross-chain')
-  const { push, prefetch } = useRouter()
-
-  useEffect(() => {
-    prefetch('/swap/cross-chain')
-    prefetch('/swap')
-  }, [prefetch])
+  const { push } = useRouter()
 
   const handleChange = useCallback(
     (checked: boolean) => {
