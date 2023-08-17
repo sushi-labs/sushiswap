@@ -1,3 +1,4 @@
+import { getCreate2Address } from '@ethersproject/address'
 import { getReservesAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
@@ -5,7 +6,7 @@ import { PrismaClient } from '@sushiswap/database'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { add, getUnixTime } from 'date-fns'
-import { Address, encodePacked, getCreate2Address, Hex, keccak256, PublicClient } from 'viem'
+import { Address, encodePacked, Hex, keccak256, PublicClient } from 'viem'
 
 import { getCurrencyCombinations } from '../getCurrencyCombinations'
 import { discoverNewPools, filterOnDemandPools, filterTopPools, getAllPools, mapToken, PoolResponse2 } from '../lib/api'
@@ -402,11 +403,11 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   }
 
   _getPoolAddress(t1: Token, t2: Token): Address {
-    return getCreate2Address({
-      from: this.factory[this.chainId as keyof typeof this.factory],
-      salt: keccak256(encodePacked(['address', 'address'], [t1.address as Address, t2.address as Address])),
-      bytecode: this.initCodeHash[this.chainId as keyof typeof this.initCodeHash],
-    })
+    return getCreate2Address(
+      this.factory[this.chainId as keyof typeof this.factory],
+      keccak256(encodePacked(['address', 'address'], [t1.address as Address, t2.address as Address])),
+      this.initCodeHash[this.chainId as keyof typeof this.initCodeHash]
+    ) as Address
   }
 
   // TODO: Decide if this is worth keeping as fallback in case fetching top pools fails? only used on initial load.
