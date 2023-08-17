@@ -241,12 +241,17 @@ model SteerVault {
   token0                  Token       @relation("token0", fields: [token0Id], references: [id])
   token0Id                String
   reserve0                String
+  reserve0USD             Decimal     @default(0)
   fees0                   String
 
   token1                  Token       @relation("token1", fields: [token1Id], references: [id])
   token1Id                String 
   reserve1                String
+  reserve1USD             Decimal     @default(0)
   fees1                   String
+
+  reserveUSD              Decimal     @default(0)
+  feesUSD                 Decimal     @default(0)
 
   strategy                SteerStrategy
   description             String @db.Text
