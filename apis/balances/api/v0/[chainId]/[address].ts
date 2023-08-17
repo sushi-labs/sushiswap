@@ -51,11 +51,14 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
     ),
   })
 
-  const zipped = zip(tokens, balances)
+  const zipped = zip(
+    tokens,
+    balances.map((balance) => balance?.result || 0n)
+  )
   return response.status(200).json({
     '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee': balance.value.toString(),
     ...Object.fromEntries(
-      zipped.filter(([, balance]) => balance?.result !== 0n).map(([token, balance]) => [token, balance?.toString()])
+      zipped.filter(([, balance]) => balance !== 0n).map(([token, balance]) => [token, balance?.toString()])
     ),
   })
 }
