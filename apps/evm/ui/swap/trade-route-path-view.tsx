@@ -12,6 +12,7 @@ import {
   DialogNew,
   DialogTitle,
   DialogTrigger,
+  ScrollArea,
 } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import React, { FC, ReactNode, useEffect, useRef, useState } from 'react'
@@ -46,19 +47,21 @@ export const TradeRoutePathView: FC<{
             your trade across multiple pools.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-4">
-          {trade?.route?.legs?.map((directPath, i) => (
-            <ComplexRoutePath
-              key={i}
-              fromToken={tokenFromRToken(directPath.tokenFrom)}
-              toToken={tokenFromRToken(directPath.tokenTo)}
-              poolType={directPath.poolType}
-              poolFee={directPath.poolFee}
-              portion={directPath.absolutePortion}
-              title={`${directPath.poolName}`}
-            />
-          ))}
-        </div>
+        <ScrollArea className="bg-secondary border border-accent rounded-xl">
+          <div className="flex flex-col max-h-[300px] divide-y divide-accent">
+            {trade?.route?.legs?.map((directPath, i) => (
+              <ComplexRoutePath
+                key={i}
+                fromToken={tokenFromRToken(directPath.tokenFrom)}
+                toToken={tokenFromRToken(directPath.tokenTo)}
+                poolType={directPath.poolType}
+                poolFee={directPath.poolFee}
+                portion={directPath.absolutePortion}
+                title={`${directPath.poolName}`}
+              />
+            ))}
+          </div>
+        </ScrollArea>
         <DialogFooter>
           <DialogClose className="w-full">
             <Button fullWidth size="xl">
@@ -86,30 +89,24 @@ const ComplexRoutePath: FC<ComplexRoutePathProps> = ({ fromToken, toToken, porti
 
   useEffect(() => {
     if (ref.current) {
-      setWidth((ref.current.offsetWidth - 28) * Number(portion))
+      setWidth(ref.current.offsetWidth * Number(portion))
     }
   }, [portion])
 
   return (
-    <div
-      ref={ref}
-      className="relative grid grid-cols-12 gap-3 rounded-full border-gray-200 dark:border-black/[0.12] bg-gray-200 dark:bg-black/[0.12] border-2 p-2"
-    >
-      <div
-        className="absolute z-[0] inset-0 rounded-full pointer-events-none bg-white dark:bg-slate-700/[0.6]"
-        style={{ width: `calc(24px + ${width}px)` }}
-      />
-      <div className="z-[1] col-span-3 text-xs font-semibold text-gray-900 dark:text-slate-200 flex items-center gap-2">
+    <div ref={ref} className="p-3 relative grid grid-cols-12 gap-3 items-center">
+      <div className="absolute z-[0] inset-0 pointer-events-none bg-secondary" style={{ width }} />
+      <div className="z-[1] font-medium col-span-4 text-sm flex items-center gap-2">
         <Currency.Icon disableLink currency={fromToken} width={16} height={16} />
         <span className="truncate">{fromToken.symbol}</span>
       </div>
-      <div className="z-[1] col-span-2 text-xs font-semibold text-gray-500 dark:text-slate-500 truncate text-right">
-        {Number(portion * 100).toFixed(2)}%
+      <div className="flex flex-col col-span-4">
+        <div className="z-[1] col-span-2 text-sm truncate">{Number(portion * 100).toFixed(2)}%</div>
+        <div className="z-[1] col-span-4 text-[10px] text-muted-foreground truncate">{title}</div>
       </div>
-      <div className="z-[1] col-span-4 text-xs font-semibold text-gray-900 dark:text-slate-200 truncate">{title}</div>
-      <div className="z-[1] col-span-3 text-xs font-semibold text-gray-900 dark:text-slate-200 flex items-center justify-end gap-2">
+      <div className="z-[1] font-medium col-span-4 text-sm flex items-center justify-end gap-2">
         <Currency.Icon disableLink currency={toToken} width={16} height={16} />
-        <span className="text-xs font-semibold text-gray-900 dark:text-slate-200 truncate">{toToken.symbol}</span>
+        <span className="text-sm truncate">{toToken.symbol}</span>
       </div>
     </div>
   )
