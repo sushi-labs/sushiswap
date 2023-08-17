@@ -20,7 +20,7 @@ export const CrossChainSwapToken1Input = () => {
   return (
     <div className="border border-accent flex flex-col bg-white dark:bg-slate-800 rounded-xl overflow-hidden">
       <Collapsible open={true}>
-        <div className="flex p-3 py-4 border-b border-accent gap-2 items-center">
+        <div className="flex p-3 border-b border-accent gap-2 items-center">
           <Label className="text-xs tracking-tighter text-muted-foreground">To</Label>
           <div>
             <NetworkSelector
