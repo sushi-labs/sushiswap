@@ -1,9 +1,10 @@
 'use client'
 
-import { routeProcessor2Abi } from '@sushiswap/abi'
+import { routeProcessor3Abi, routeProcessorAbi } from '@sushiswap/abi'
 import { Chain } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
+import { calculateGasMargin } from '@sushiswap/gas'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import {
@@ -29,13 +30,14 @@ import { List } from '@sushiswap/ui/components/list/List'
 import { SkeletonBox, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
+  serialize,
   useAccount,
   useContractWrite,
   useNetwork,
   usePrepareContractWrite,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_SWAP } from 'lib/constants'
@@ -70,9 +72,13 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
       : isRouteProcessorChainId(chainId)
       ? routeProcessorAddress[chainId]
       : undefined,
-    abi: routeProcessor2Abi,
+    abi: (isRouteProcessor3ChainId(chainId)
+      ? routeProcessor3Abi
+      : isRouteProcessorChainId(chainId)
+      ? routeProcessorAbi
+      : undefined) as any,
     functionName: trade?.functionName,
-    args: trade?.writeArgs,
+    args: trade?.writeArgs as any,
     enabled: Boolean(
       trade?.writeArgs &&
         (isRouteProcessorChainId(chainId) || isRouteProcessor3ChainId(chainId)) &&
@@ -80,17 +86,18 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
         trade?.route?.status !== 'NoWay' &&
         chain?.id === chainId
     ),
-    overrides: trade?.overrides,
+    value: trade?.value || 0n,
     onError: (error) => {
+      console.error('swap prepare error', error)
       const message = error.message.toLowerCase()
       if (message.includes('user rejected') || message.includes('user cancelled')) {
         return
       }
 
-      log.error('Swap prepare error', {
-        route: trade?.route,
+      log.error('swap prepare error', {
+        route: serialize(trade?.route),
         slippageTolerance,
-        error,
+        error: error,
       })
     },
   })
@@ -105,7 +112,7 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
         type: 'swap',
         chainId: chainId,
         txHash: data.hash,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `${isWrap ? 'Wrapping' : isUnwrap ? 'Unwrapping' : 'Swapping'} ${trade.amountIn?.toSignificant(6)} ${
             trade.amountIn?.currency.symbol
@@ -134,17 +141,21 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
     data,
   } = useContractWrite({
     ...config,
-    ...(config.request && { request: { ...config.request, gasLimit: config.request.gasLimit.mul(120).div(100) } }),
+    request: config?.request
+      ? {
+          ...config.request,
+          gas: typeof config.request.gas === 'bigint' ? calculateGasMargin(config.request.gas) : undefined,
+        }
+      : undefined,
     onSuccess: async (data) => {
       setSwapAmount('')
 
-      data
-        .wait()
+      waitForTransaction({ hash: data.hash })
         .then((receipt) => {
           // log.info('swap receipt', {
           //   receipt,
           // })
-          if (receipt.status === 1) {
+          if (receipt.status === 'success') {
             if (
               trade?.route?.legs?.every(
                 (leg) =>
@@ -159,7 +170,7 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
                 chainId: chainId,
                 txHash: data.hash,
                 exporerLink: Chain.txUrl(chainId, data.hash),
-                route: trade?.route,
+                route: serialize(trade?.route),
               })
             } else if (
               trade?.route?.legs?.some(
@@ -183,7 +194,7 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
                 chainId: chainId,
                 txHash: data.hash,
                 exporerLink: Chain.txUrl(chainId, data.hash),
-                route: trade?.route,
+                route: serialize(trade?.route),
               })
             } else if (
               trade?.route?.legs?.every(
@@ -199,15 +210,15 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
                 chainId: chainId,
                 txHash: data.hash,
                 exporerLink: Chain.txUrl(chainId, data.hash),
-                route: trade?.route,
+                route: serialize(trade?.route),
               })
             } else {
               log.info('unknown', {
                 chainId: chainId,
                 txHash: data.hash,
                 exporerLink: Chain.txUrl(chainId, data.hash),
-                route: trade?.route,
-                args: trade?.writeArgs,
+                route: serialize(trade?.route),
+                args: serialize(trade?.writeArgs),
               })
             }
           } else {
@@ -224,7 +235,7 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
               log.error('internal route', {
                 chainId: chainId,
                 txHash: data.hash,
-                route: trade?.route,
+                route: serialize(trade?.route),
               })
             } else if (
               trade?.route?.legs?.some(
@@ -247,7 +258,7 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
               log.error('mix route', {
                 chainId: chainId,
                 txHash: data.hash,
-                route: trade?.route,
+                route: serialize(trade?.route),
               })
             } else if (
               trade?.route?.legs?.every(
@@ -262,14 +273,14 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
               log.error('external route', {
                 chainId: chainId,
                 txHash: data.hash,
-                route: trade?.route,
+                route: serialize(trade?.route),
               })
             } else {
               log.error('unknown', {
                 chainId: chainId,
                 txHash: data.hash,
-                route: trade?.route,
-                args: trade?.writeArgs,
+                route: serialize(trade?.route),
+                args: serialize(trade?.writeArgs),
               })
             }
           }

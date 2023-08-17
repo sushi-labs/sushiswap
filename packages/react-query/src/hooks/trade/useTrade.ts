@@ -47,7 +47,6 @@ export const useTradeQuery = (
 
       const res = await fetch(params.toString())
       const json = await res.json()
-      console.log('json', json)
       return tradeValidator.parse(deserialize(json))
     },
     refetchOnWindowFocus: true,
