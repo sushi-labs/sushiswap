@@ -40,11 +40,11 @@ export const CrossChainBanner: FC = () => {
     <AnimatePresence mode="popLayout">
       {!minimized ? (
         <motion.div layout layoutId="container">
-          <Card>
+          <Card className="bg-gradient-to-r from-blue/20 to-pink/20">
             <CardHeader>
               <CardTitle>
                 <motion.div layoutId="title">
-                  <span className=" text-base tracking-tighter saturate-200 flex items-center gap-2 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
+                  <span className="text-base tracking-tighter saturate-200 flex items-center gap-2 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
                     <ShuffleIcon width={20} height={20} className="text-blue" />
                     Cross-chain Swap
                   </span>
