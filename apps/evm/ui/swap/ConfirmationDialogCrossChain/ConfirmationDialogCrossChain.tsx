@@ -19,7 +19,6 @@ import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
 import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { UseCrossChainTradeReturn } from 'lib/swap/useCrossChainTrade/types'
 import { nanoid } from 'nanoid'
-import { log } from 'next-axiom'
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { Address, UserRejectedRequestError } from 'viem'
 
@@ -87,10 +86,10 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     value: trade?.value || 0n,
     onError: (error) => {
       if (error.message.startsWith('user rejected transaction')) return
-      log.error('Cross Chain Swap prepare error', {
-        trade,
-        error,
-      })
+      // log.error('cross chain swap prepare error', {
+      //   trade,
+      //   error,
+      // })
     },
   })
 
@@ -127,10 +126,12 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     data,
   } = useContractWrite({
     ...config,
-    request: {
-      ...config?.request,
-      gas: config?.request?.gas ? calculateGasMargin(config.request.gas ?? 0n) : undefined,
-    },
+    request: config?.request
+      ? {
+          ...config.request,
+          gas: typeof config.request.gas === 'bigint' ? calculateGasMargin(config.request.gas) : undefined,
+        }
+      : undefined,
     onMutate: () => {
       // Set reference of current trade
       if (tradeRef && trade) {
@@ -180,11 +181,11 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     onSettled,
     onError: (error) => {
       if (error.message.startsWith('user rejected transaction')) return
-      log.error('cross chain swap error (source)', {
-        route: trade?.route,
-        args: trade?.writeArgs,
-        error: error,
-      })
+      // log.error('cross chain swap error (source)', {
+      //   route: trade?.route,
+      //   args: trade?.writeArgs,
+      //   error: error,
+      // })
       createErrorToast(error.message, false)
     },
   })

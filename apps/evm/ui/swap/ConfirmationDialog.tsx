@@ -3,6 +3,7 @@
 import { routeProcessor3Abi, routeProcessorAbi } from '@sushiswap/abi'
 import { Chain } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
+import { calculateGasMargin } from '@sushiswap/gas'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { UseTradeReturn } from '@sushiswap/react-query'
 import {
@@ -12,18 +13,17 @@ import {
   routeProcessorAddress,
 } from '@sushiswap/route-processor'
 import { Bridge, LiquidityProviders } from '@sushiswap/router'
+import { AppType } from '@sushiswap/ui'
 import {
   ConfirmationDialog as UIConfirmationDialog,
   ConfirmationDialogState,
 } from '@sushiswap/ui/components/dialog/ConfirmationDialog'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import { AppType } from '@sushiswap/ui/types'
-import { serialize, useAccount, useContractWrite, usePrepareContractWrite } from '@sushiswap/wagmi'
-import { useNetwork } from '@sushiswap/wagmi'
+import { serialize, useAccount, useContractWrite, useNetwork, usePrepareContractWrite } from '@sushiswap/wagmi'
 import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { log } from 'next-axiom'
+import { useLogger } from 'next-axiom'
 import { FC, ReactNode, useCallback, useRef, useState } from 'react'
 import { UserRejectedRequestError } from 'viem'
 
@@ -46,6 +46,7 @@ interface ConfirmationDialogProps {
 
 export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) => {
   const { address } = useAccount()
+  const log = useLogger()
   const { chain } = useNetwork()
   const { setReview, setValue } = useSwapActions()
   const { appType, network0, token0, token1, review } = useSwapState()
@@ -90,12 +91,11 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       if (message.includes('user rejected') || message.includes('user cancelled')) {
         return
       }
-
-      // log.error('Swap prepare error', {
-      //   route: stringify(trade?.route),
-      //   slippageTolerance,
-      //   error: error,
-      // })
+      log.error('swap prepare error', {
+        route: serialize(trade?.route),
+        slippageTolerance,
+        error: error,
+      })
     },
   })
 
@@ -143,10 +143,12 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     data,
   } = useContractWrite({
     ...config,
-    // request: {
-    //   ...config?.request,
-    //   gas: config?.request?.gas ? calculateGasMargin(config.request.gas ?? 0n) : undefined,
-    // },
+    request: config?.request
+      ? {
+          ...config.request,
+          gas: typeof config.request.gas === 'bigint' ? calculateGasMargin(config.request.gas) : undefined,
+        }
+      : undefined,
     onMutate: () => {
       // Set reference of current trade
       if (tradeRef && trade) {
@@ -154,8 +156,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       }
     },
     onSuccess: async (data) => {
-      console.log('onSuccess', data)
-
+      // Reset review
       setReview(false)
 
       // Clear input fields
@@ -303,11 +304,11 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     onSettled,
     onError: (error) => {
       if (error.message.startsWith('user rejected transaction')) return
-      // log.error('Swap error', {
-      //   route: trade?.route,
-      //   args: trade?.writeArgs,
-      //   error,
-      // })
+      log.error('swap error', {
+        route: serialize(trade?.route),
+        args: serialize(trade?.writeArgs),
+        error,
+      })
       createErrorToast(error.message, false)
     },
   })
@@ -327,14 +328,13 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     } else if (review) {
       const promise = writeAsync?.()
       if (promise) {
-        console.log('exec swap', writeAsync)
         promise
           .then(() => {
             setDialogState(ConfirmationDialogState.Pending)
             setOpen(true)
           })
           .catch((e: unknown) => {
-            console.log('error executing swap', e)
+            console.error('error executing swap', e)
             if (e instanceof UserRejectedRequestError) onComplete()
             else setDialogState(ConfirmationDialogState.Failed)
           })

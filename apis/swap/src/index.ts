@@ -45,8 +45,8 @@ server.get('/v0', async (request) => {
 const start = async () => {
   try {
     await server.listen({ host: process.env.HOST, port: process.env.PORT })
-  } catch (err) {
-    server.log.error(err)
+  } catch (error) {
+    server.log.error(error)
     process.exit(1)
   }
 }

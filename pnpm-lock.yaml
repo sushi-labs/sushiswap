@@ -621,7 +621,7 @@ importers:
       graphql-request: 5.1.0
       nanoid: 4.0.0
       next: 13.4.12
-      next-axiom: 0.18.0
+      next-axiom: 1.0.0-rc.1
       next-themes: 0.2.1
       octokit: 2.1.0
       postcss: 8.4.23
@@ -700,7 +700,7 @@ importers:
       graphql-request: 5.1.0
       nanoid: 4.0.0
       next: 13.4.12_biqbaboplfbrettd7655fr4n2y
-      next-axiom: 0.18.0_next@13.4.12
+      next-axiom: 1.0.0-rc.1_next@13.4.12+react@18.2.0
       next-themes: 0.2.1_54ux7fu2vrztxgcjbkegvwjefy
       octokit: 2.1.0
       react: 18.2.0
@@ -33296,13 +33296,15 @@ packages:
     engines: {node: '>= 0.4.0'}
     dev: true
 
-  /next-axiom/0.18.0_next@13.4.12:
-    resolution: {integrity: sha512-OexBGAQ3l/EPCIxbaGVee+JmJZfW6DMT/NCqaRw6tsZ7dO72rsZCAMhDh6qT41+dCyb+X10Dzx3yHVy+3p1qyw==}
-    engines: {node: '>=15'}
+  /next-axiom/1.0.0-rc.1_next@13.4.12+react@18.2.0:
+    resolution: {integrity: sha512-UPU0kHzTsVa+aqAb9TZOKCwHWVZHLv3TU3UYkPMXBnSlbcF4jmbPWorta5xeELtKJbw2ta2a8sVkwZfFfyW7Mw==}
+    engines: {node: '>=18'}
     peerDependencies:
-      next: ^12.1.4 || ^13
+      next: '>=13.4'
+      react: '>=18.0.0'
     dependencies:
       next: 13.4.12_biqbaboplfbrettd7655fr4n2y
+      react: 18.2.0
       whatwg-fetch: 3.6.17
     dev: false
 

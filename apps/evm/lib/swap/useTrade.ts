@@ -4,7 +4,7 @@ import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap'
 import { useFeeData } from '@sushiswap/wagmi'
 import { useClientTrade } from '@sushiswap/wagmi/future/hooks'
 import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { log } from 'next-axiom'
+import { useLogger } from 'next-axiom'
 import { useMemo } from 'react'
 
 import { useSwapActions, useSwapState } from '../../ui/swap/trade/TradeProvider'
@@ -21,6 +21,7 @@ export function useTrade<T extends boolean>({
   crossChain: T
   enabled?: boolean
 }): ObjectType<T> {
+  const log = useLogger()
   const { value, token0, token1, network0, network1, amount, recipient, tradeId, isFallback } = useSwapState()
   const { setFallback } = useSwapActions()
   const [slippageTolerance] = useSlippageTolerance()
