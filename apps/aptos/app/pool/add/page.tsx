@@ -13,7 +13,7 @@ export function AddPage() {
     }
     if (network?.name?.toLowerCase() === 'testnet' || network?.name?.toLowerCase() === 'devnet') {
       disconnect()
-      alert('Please switch network to testnet')
+      alert('Please switch network to mainnet')
     }
   }, [network])
   return (
