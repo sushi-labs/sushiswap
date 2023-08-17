@@ -39,19 +39,19 @@ test.beforeEach(async ({ page }) => {
 // test.afterAll(async () => {})
 // test.afterEach(async ({ page }) => {})
 
-test.only('Wrap and unwrap', async ({ page }) => {
+test('Wrap and unwrap', async ({ page }) => {
   await wrap(page, native, wnative, '10')
   await wrap(page, wnative, native, '10')
 })
 
-test.only('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
+test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   test.slow()
 
   await swap(page, native, sushi, '100')
   await maxSwap(page, sushi, native)
 })
 
-test.only('Swap Native to USDC, USDC to USDT then USDT to NATIVE', async ({ page }) => {
+test('Swap Native to USDC, USDC to USDT then USDT to NATIVE', async ({ page }) => {
   test.slow()
 
   await swap(page, native, usdc, '100')
@@ -66,7 +66,7 @@ test.only('Swap Native to USDC, USDC to USDT then USDT to NATIVE', async ({ page
 //   await maxSwap(page, usdt, native)
 // })
 
-test.only('Swap Native to WBTC', async ({ page }) => {
+test('Swap Native to WBTC', async ({ page }) => {
   await swap(page, native, wbtc, '100')
 })
 
