@@ -99,7 +99,6 @@ const _Add: FC = () => {
     } catch (error) {
       const toastId = `failed:${Math.random()}`
       createToast({ summery: `User rejected request`, toastId: toastId })
-      close()
     } finally {
       setisTransactionPending(false)
     }

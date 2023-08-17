@@ -14,14 +14,13 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react'
 export default function Pool() {
   const { isLoadingAccount } = useAccount()
   const { network, disconnect } = useWallet()
-  console.log(network)
   useEffect(() => {
     if (network?.name?.toLowerCase() === undefined) {
       disconnect()
     }
     if (network?.name?.toLowerCase() === 'testnet' || network?.name?.toLowerCase() === 'devnet') {
       disconnect()
-      alert('Please switch network to mainnet')
+      alert('Please switch network to testnet')
     }
   }, [network])
   return (

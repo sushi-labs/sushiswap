@@ -60,7 +60,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
           <Disclosure defaultOpen={true}>
             {({ open }) => (
               <>
-                {isMounted ? (
+                {isFarm && isMounted ? (
                   <Widget.Header title="Remove Liquidity" className="!pb-3">
                     <div className="flex gap-3">
                       <SettingsOverlay

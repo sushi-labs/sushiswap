@@ -1,5 +1,5 @@
 import { Typography, classNames } from '@sushiswap/ui'
-import { FC, ReactElement, ReactNode, useCallback, useState } from 'react'
+import { FC, ReactElement, ReactNode, useCallback, useMemo, useState } from 'react'
 import { usePoolState } from './PoolProvider'
 
 interface RenderPayload {
@@ -13,18 +13,38 @@ interface Rate {
 }
 
 export const Rate: FC<Rate> = ({ children }) => {
-  const { token0, token1, poolPairRatio } = usePoolState()
+  const { token0, token1, poolPairRatio, pairs, amount0, amount1 } = usePoolState()
+  console.log(pairs?.data)
+  const noPairRatio = useMemo(() => {
+    return Number(amount1) / Number(amount0)
+  }, [amount0, amount1])
   const [invert, setInvert] = useState(false)
 
   const content = (
     <>
-      {invert ? (
+      {pairs?.data ? (
         <>
-          1 {token1?.symbol} = {1 / poolPairRatio} {token0?.symbol}
+          {invert ? (
+            <>
+              1 {token1?.symbol} = {1 / poolPairRatio} {token0?.symbol}
+            </>
+          ) : (
+            <>
+              1 {token0?.symbol} = {poolPairRatio} {token1?.symbol}
+            </>
+          )}
         </>
       ) : (
         <>
-          1 {token0?.symbol} = {poolPairRatio} {token1?.symbol}
+          {invert ? (
+            <>
+              1 {token1?.symbol} = {1 / noPairRatio} {token0?.symbol}
+            </>
+          ) : (
+            <>
+              1 {token0?.symbol} = {noPairRatio} {token1?.symbol}
+            </>
+          )}
         </>
       )}
     </>

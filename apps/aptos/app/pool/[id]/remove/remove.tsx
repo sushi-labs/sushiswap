@@ -88,14 +88,16 @@ const _Remove: FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
             <div className="hidden md:block" />
             <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">
-              <RemoveSectionUnstake
-                token0={token0}
-                token1={token1}
-                stakeAmount={stakeAmount}
-                balance={farmBalance}
-                decimals={coinInfo?.data?.decimals}
-                lpTokenName={coinInfo?.data?.name}
-              />
+              {farmIndex !== -1 && (
+                <RemoveSectionUnstake
+                  token0={token0}
+                  token1={token1}
+                  stakeAmount={stakeAmount}
+                  balance={farmBalance}
+                  decimals={coinInfo?.data?.decimals}
+                  lpTokenName={coinInfo?.data?.name}
+                />
+              )}
               <RemoveSectionLegacy
                 pool={pool}
                 liquidityBalance={LPBalance}
@@ -105,6 +107,7 @@ const _Remove: FC = () => {
                 underlying0={underlying0}
                 underlying1={underlying1}
                 totalSupply={totalSupply}
+                isFarm={farmIndex !== -1}
               />
               <Container className="flex justify-center">
                 <Link.External

@@ -18,6 +18,7 @@ interface Props {
   underlying0: number | undefined
   underlying1: number | undefined
   totalSupply: string | undefined
+  isFarm: boolean
 }
 const CONTRACT_ADDRESS = process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
 
@@ -30,6 +31,7 @@ export const RemoveSectionLegacy = ({
   underlying0,
   underlying1,
   totalSupply,
+  isFarm,
 }: Props) => {
   const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
   const slippagePercent = useMemo(() => {
@@ -108,7 +110,7 @@ export const RemoveSectionLegacy = ({
   }
   return (
     <RemoveSectionWidget
-      isFarm={true}
+      isFarm={isFarm}
       percentage={percentage}
       setPercentage={setPercentage}
       token0={token0}

@@ -90,10 +90,11 @@ const _Add = () => {
     }
     if (network?.name?.toLowerCase() === 'testnet' || network?.name?.toLowerCase() === 'devnet') {
       disconnect()
-      alert('Please switch network to mainnet')
+      alert('Please switch network to testnet')
     }
   }, [network])
   if (!pool?.id) return <></>
+  if (farmIndex === -1) return <>\</>
   return (
     <>
       {isLoadingAccount && <Loading />}

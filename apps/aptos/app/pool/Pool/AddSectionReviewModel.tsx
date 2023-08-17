@@ -42,7 +42,7 @@ export const AddSectionReviewModal: FC<Props> = ({ children }) => {
                   <div className="flex items-center justify-end gap-2 text-right">
                     {/* <img src={token0.logoURI} className="rounded-full" width={26} height={56} /> */}
                     <Icon currency={token0} width={26} height={26} />
-                    <Typography variant="h3" weight={500} className="text-right text-slate-50">
+                    <Typography variant="h3" weight={500} className="text-right dark:text-slate-50">
                       {token0?.symbol}
                     </Typography>
                   </div>
@@ -66,7 +66,7 @@ export const AddSectionReviewModal: FC<Props> = ({ children }) => {
                   <div className="flex items-center justify-end gap-2 text-right">
                     <Icon currency={token1} width={26} height={26} />
                     {/* <img src={token1.logoURI} className="rounded-full" width={26} height={56} /> */}
-                    <Typography variant="h3" weight={500} className="text-right text-slate-50">
+                    <Typography variant="h3" weight={500} className="text-right dark:text-slate-50">
                       {token1?.symbol}
                     </Typography>
                   </div>

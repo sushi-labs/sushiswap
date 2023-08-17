@@ -1,10 +1,10 @@
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 import React from 'react'
 import { useTokens } from 'utils/useTokens'
 import { Icon } from './Icon'
 import { ModalType } from '@sushiswap/ui/future/components/modal/ModalProvider'
-import { useCustomTokens } from 'utils/useCustomTokens'
+import useTokenWithCache from 'utils/useTokenWithCache'
+import { Token } from 'utils/tokenType'
 interface Props {
   trade: string[]
 }
@@ -38,15 +38,14 @@ interface ComplexRoutePathProps {
 
 const ComplexRoutePath = ({ fromTokenAddress, toTokenAddress }: ComplexRoutePathProps) => {
   const { data: tokens } = useTokens()
-  const { data: customTokens } = useCustomTokens()
-  const fromToken =
-    tokens && tokens[fromTokenAddress]
-      ? tokens[fromTokenAddress]
-      : customTokens && customTokens[`${fromTokenAddress}`]
-  const toToken =
-    tokens && tokens[toTokenAddress]
-      ? tokens[toTokenAddress]
-      : customTokens && customTokens[`${toTokenAddress}`]
+
+  const { data: queryToken0 } = useTokenWithCache({ address: fromTokenAddress })
+  const { data: queryToken1 } = useTokenWithCache({ address: toTokenAddress })
+
+  const fromToken = (
+    tokens && tokens[fromTokenAddress] ? tokens[fromTokenAddress] : queryToken0 && queryToken0
+  ) as Token
+  const toToken = (tokens && tokens[toTokenAddress] ? tokens[toTokenAddress] : queryToken1 && queryToken1) as Token
   return (
     <div className="relative grid grid-cols-12 gap-3 rounded-full border-gray-200 dark:border-black/[0.12] bg-gray-200 dark:bg-black/[0.12] border-2 p-2">
       <div
