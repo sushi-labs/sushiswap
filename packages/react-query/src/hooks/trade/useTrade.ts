@@ -6,7 +6,7 @@ import { HexString } from '@sushiswap/types'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { stringify } from 'viem'
-import { serialize } from 'wagmi'
+import { deserialize } from 'wagmi'
 
 import { usePrice } from '../prices'
 import { UseTradeParams, UseTradeQuerySelect, UseTradeReturnWriteArgs } from './types'
@@ -46,7 +46,7 @@ export const useTradeQuery = (
 
       const res = await fetch(params.toString())
       const json = await res.json()
-      return tradeValidator.parse(serialize(json))
+      return tradeValidator.parse(deserialize(json))
     },
     refetchOnWindowFocus: true,
     refetchInterval: 2500,

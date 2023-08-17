@@ -34,13 +34,13 @@ export const tradeValidator = z.object({
       swapPrice: z.number().optional(),
       priceImpact: z.number().optional(),
       amountIn: z.number(),
-      amountInBI: z.string(),
+      amountInBI: z.bigint(),
       amountOut: z.number(),
-      amountOutBI: z.string(),
+      amountOutBI: z.bigint(),
       legs: z.array(legValidator).optional(),
       gasSpent: z.number(),
       totalAmountOut: z.number(),
-      totalAmountOutBI: z.string(),
+      totalAmountOutBI: z.bigint(),
     })
     .optional(),
   args: z.optional(
