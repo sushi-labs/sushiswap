@@ -25,8 +25,9 @@ import {
 import { Account, privateKeyToAccount } from 'viem/accounts'
 import { arbitrum, celo, Chain, hardhat, mainnet, optimism, polygon } from 'viem/chains'
 
-import { setTokenBalance, UniswapV3FactoryAddress } from '../src'
+import { setTokenBalance } from '../src'
 import { comparePoolCodes, isSubpool } from '../src/ComparePoolCodes'
+import { UniswapV3FactoryAddress } from './Extractor.test'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
