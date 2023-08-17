@@ -52,7 +52,7 @@ export default function WalletSelector({ hideChevron, varient, color, fullWidth,
                 <div className="hidden md:flex">
                   <JazzIcon diameter={20} address={account?.address} />
                 </div>
-                {`${account?.address.substring(0, 5)}...${account?.address.substring(66 - 3)}`}
+                {`${account?.address?.substring(0, 5)}...${account?.address?.substring(66 - 3)}`}
                 {!hideChevron && (
                   <ChevronDownIcon
                     width={24}

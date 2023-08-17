@@ -20,11 +20,11 @@ export const DefaultView = ({ balance, setView }: Props) => {
     <div className="flex flex-col gap-8 p-4">
       <div className="flex justify-between gap-3">
         <div className="text-sm font-semibold flex items-center gap-1.5 text-gray-700 dark:text-slate-200">
-          <JazzIcon diameter={16} address={account?.address as string} />
+          {account?.address && <JazzIcon diameter={16} address={account?.address as string} />}
           <ClipboardController>
             {({ setCopied }) => (
               <span className="cursor-pointer" onClick={() => setCopied(account?.address as string)}>
-                {`${account?.address.substring(0, 6)}...${account?.address.substring(66 - 4)}`}
+                {`${account?.address?.substring(0, 6)}...${account?.address?.substring(66 - 4)}`}
               </span>
             )}
           </ClipboardController>
