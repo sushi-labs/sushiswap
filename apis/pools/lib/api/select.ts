@@ -1,6 +1,6 @@
 import type { Prisma } from '@sushiswap/database'
 
-export const SushiPoolSelect: Prisma.SushiPoolSelect = {
+export const SushiPoolSelect = {
   id: true,
   address: true,
   name: true,
@@ -113,4 +113,4 @@ export const SushiPoolSelect: Prisma.SushiPoolSelect = {
       updatedAt: true,
     },
   },
-}
+} as const satisfies Prisma.SushiPoolSelect
