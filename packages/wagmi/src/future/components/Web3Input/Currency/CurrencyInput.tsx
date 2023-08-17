@@ -1,10 +1,12 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { usePrice } from '@sushiswap/react-query'
 import { Button, classNames, SelectIcon, TextField } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
-import { FC, useCallback, useEffect, useMemo, useRef } from 'react'
+import { FC, useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useBalanceWeb3 } from '../../../hooks'
@@ -55,7 +57,10 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   hideSearch = false,
   fetching,
 }) => {
+  const [localValue, setLocalValue] = useState<string>('')
   const { address } = useAccount()
+  const [pending, startTransition] = useTransition()
+
   const inputRef = useRef<HTMLInputElement>(null)
   const focusInput = useCallback(() => {
     if (disabled) return
@@ -90,6 +95,13 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
 
   const isLoading = loading || currencyLoading || isBalanceLoading
   const _error = error ? error : insufficientBalance ? 'Exceeds Balance' : undefined
+
+  const _onChange = useCallback((value: string) => {
+    setLocalValue(value)
+    startTransition(() => {
+      onChange?.(value)
+    })
+  }, [])
 
   const selector = useMemo(() => {
     if (!onSelect) return null
@@ -161,8 +173,8 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
             ref={inputRef}
             variant="naked"
             disabled={disabled}
-            onValueChange={onChange}
-            value={value}
+            onValueChange={_onChange}
+            value={pending ? localValue : value}
             readOnly={disabled}
             maxDecimals={currency?.decimals}
             data-state={isLoading ? 'inactive' : 'active'}
