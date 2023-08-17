@@ -7,7 +7,7 @@ import { useSlippageTolerance } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { STARGATE_SUPPORTED_CHAIN_IDS, StargateChainId } from '@sushiswap/stargate'
 import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap'
-import { useAccount, useNetwork, watchNetwork } from '@sushiswap/wagmi'
+import { Address, useAccount, useNetwork, watchNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future'
 import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_XSWAP } from 'lib/constants'
@@ -171,7 +171,7 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
         )
       }
     },
-    [createQueryString, pathname, push]
+    [createQueryString, defaultedParams, pathname, push, switchTokens]
   )
 
   // Update the URL with a new token0
@@ -328,7 +328,7 @@ const useCrossChainSwapTrade = () => {
     token1,
     amount: swapAmount,
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
-    recipient,
+    recipient: recipient as Address,
     enabled: Boolean(isSushiXSwapChainId(chainId0) && isSushiXSwapChainId(chainId1) && swapAmount?.greaterThan(ZERO)),
     bentoboxSignature: signature,
   })
