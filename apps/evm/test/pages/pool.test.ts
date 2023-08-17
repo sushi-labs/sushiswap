@@ -49,7 +49,7 @@ const USDC = new Token({
   name: 'USDC Stablecoin',
 })
 
-const BASE_URL = process.env.PLAYWRIGHT_URL || 'http://localhost:3000/pool'
+const BASE_URL = 'http://localhost:3000/pool'
 
 // test.beforeAll(async ({ page }) => {})
 
@@ -237,7 +237,7 @@ async function createOrAddTridentPool(page: Page, args: TridentPoolArgs) {
   await page.locator('[testdata-id=add-liquidity-token1-input]').fill(args.amount1)
 
   if (args.type === 'CREATE') {
-    const approveBentoLocator = page.locator(`[testdata-id=${'create-trident-approve-bentobox-button'}]`)
+    const approveBentoLocator = page.locator(`[testdata-id=create-trident-approve-bentobox-button]`)
     await expect(approveBentoLocator).toBeVisible()
     await expect(approveBentoLocator).toBeEnabled()
     await approveBentoLocator.click()

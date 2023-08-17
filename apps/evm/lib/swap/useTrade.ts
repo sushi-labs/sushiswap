@@ -55,6 +55,9 @@ export function useTrade<T extends boolean>({
     recipient,
     enabled: Boolean(enabled && !crossChain && network0 === network1 && isFallback && value),
     carbonOffset,
+    onError: () => {
+      log.error('client trade error')
+    },
   })
 
   const crossChainTrade = useCrossChainTrade({

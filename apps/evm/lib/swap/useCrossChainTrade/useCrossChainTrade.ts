@@ -288,17 +288,10 @@ export const useCrossChainTradeQuery = (
         throw new Error('Stargate teleport action not included')
 
       const gasBuffer = 1_000_000
+
       const [fee] = await sushiXSwap.getFee(dstTrade ? dstTrade.route.gasSpent + gasBuffer : undefined)
 
       const value = sushiXSwap.srcCooker.values.reduce((a, b) => a + b, fee)
-
-      console.log({
-        srcTradeGasSpent: srcTrade?.route?.gasSpent,
-        quoteLayerZeroFee: fee.toString(),
-        dstTradeGasSpent: dstTrade?.route?.gasSpent,
-        // gasEstimate: gasEstimate.toString(),
-        value: value.toString(),
-      })
 
       const srcTypicalGasCost = 600_000
       const srcTradeGasSpent = srcTrade?.route?.gasSpent || 0

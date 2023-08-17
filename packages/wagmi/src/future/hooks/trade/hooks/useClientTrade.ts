@@ -97,8 +97,6 @@ ${logPools}
 
       let args = undefined
 
-      console.log({ recipient })
-
       if (recipient) {
         if (isRouteProcessor3ChainId(chainId)) {
           args = Router.routeProcessor2Params(

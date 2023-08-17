@@ -40,6 +40,8 @@ test.beforeEach(async ({ page }) => {
 // test.afterEach(async ({ page }) => {})
 
 test('Wrap and unwrap', async ({ page }) => {
+  test.slow()
+
   await wrap(page, native, wnative, '10')
   await wrap(page, wnative, native, '10')
 })
@@ -83,31 +85,34 @@ async function wrap(page: Page, inputCurrency: Type, outputCurrency: Type, amoun
     await expect(approveButton).toBeEnabled()
 
     await page.locator('[testdata-id=approve-erc20-button]', { hasText: `Approve ${inputCurrency.symbol}` }).click()
-    // .then(() => console.log(`Approved ${inputCurrency.symbol}`))
-    // .catch(() => console.log(`${inputCurrency.symbol} already approved or not needed`))
 
     const expectedApprovingText = `Approving ${inputCurrency.symbol}`
-    expect(page.getByText(expectedApprovingText))
+    expect(page.getByText(expectedApprovingText)).toBeVisible()
 
     const expectedApproveText = `Successfully approved ${inputCurrency.symbol}`
-    expect(page.getByText(expectedApproveText))
+    expect(page.getByText(expectedApproveText)).toBeVisible()
   }
 
-  const unwrapButton = page.locator('[testdata-id=swap-button]')
-  // const unwrapButton = page.getByRole('button', { name: 'Wrap' })
-  await expect(unwrapButton).toBeVisible()
-  await expect(unwrapButton).toBeEnabled()
-  await unwrapButton.click()
+  const swapButton = page.locator('[testdata-id=swap-button]')
+  await expect(swapButton).toBeVisible()
+  await expect(swapButton).toBeEnabled()
+  await expect(swapButton).toHaveText(inputCurrency.isNative ? 'Wrap' : 'Unwrap')
+  await swapButton.click()
 
-  const confirmUnwrap = page.locator('[testdata-id=confirm-swap-button]')
-  await expect(confirmUnwrap).toBeVisible()
-  await expect(confirmUnwrap).toBeEnabled()
-  await confirmUnwrap.click()
+  const confirmSwapButton = page.locator('[testdata-id=confirm-swap-button]')
 
+  await expect(confirmSwapButton).toBeVisible()
+  await expect(confirmSwapButton).toBeEnabled()
+  await confirmSwapButton.click()
+
+  // TODO: This isn't great because there could be and is places where this text is repeated
+  // so it's not testing the right thing
   const expectedText = new RegExp(`(Wrap|Unwrap .* ${inputCurrency.symbol} to .* ${outputCurrency.symbol})`)
   expect(page.getByText(expectedText))
 
-  const makeAnotherSwap = page.locator('[testdata-id=make-another-swap-button]')
+  const makeAnotherSwap = page.locator('[testdata-id=make-another-swap-button]', {
+    hasText: 'Make another swap',
+  })
   await expect(makeAnotherSwap).toBeVisible()
   await expect(makeAnotherSwap).toBeEnabled()
   await makeAnotherSwap.click()
@@ -125,7 +130,7 @@ async function maxSwap(page: Page, inputCurrency: Type, outputCurrency: Type) {
   await expect(swapFromBalance).toBeEnabled()
   const swapFromBalanceBefore = await swapFromBalance.textContent()
   const swapToBalance = page.locator('[testdata-id=swap-to-balance-button]')
-  await expect(swapToBalance).toBeVisible({ timeout: 120_000 })
+  await expect(swapToBalance).toBeVisible()
   const swapToBalanceBefore = await swapToBalance.textContent()
 
   await approve(page, inputCurrency)
@@ -150,10 +155,10 @@ async function maxSwap(page: Page, inputCurrency: Type, outputCurrency: Type) {
   await confirmSwap.click()
 
   const expectedSwappingText = new RegExp(`(Swapping .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol}.)`)
-  expect(page.getByText(expectedSwappingText))
+  expect(page.getByText(expectedSwappingText)).toBeVisible()
 
   const expectedSwapText = new RegExp(`(Swap .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol}.)`)
-  expect(page.getByText(expectedSwapText))
+  expect(page.getByText(expectedSwapText)).toBeVisible()
 
   // Make another swap
   const makeAnotherSwap = page.locator('[testdata-id=make-another-swap-button]')
@@ -178,10 +183,10 @@ async function approve(page: Page, currency: Type) {
     // .catch(() => console.log(`${inputCurrency.symbol} already approved or not needed`))
 
     const expectedApprovingText = `Approving ${currency.symbol}`
-    expect(page.getByText(expectedApprovingText))
+    expect(page.getByText(expectedApprovingText)).toBeVisible()
 
     const expectedApproveText = `Successfully approved ${currency.symbol}`
-    expect(page.getByText(expectedApproveText))
+    expect(page.getByText(expectedApproveText)).toBeVisible()
   }
 }
 
@@ -220,10 +225,10 @@ async function swap(page: Page, inputCurrency: Type, outputCurrency: Type, amoun
   await confirmSwap.click()
 
   const expectedSwappingText = new RegExp(`(Swapping .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol}.)`)
-  expect(page.getByText(expectedSwappingText))
+  expect(page.getByText(expectedSwappingText)).toBeVisible()
 
   const expectedSwapText = new RegExp(`(Swap .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol}.)`)
-  expect(page.getByText(expectedSwapText))
+  expect(page.getByText(expectedSwapText)).toBeVisible()
 
   // Make another swap
   const makeAnotherSwap = page.locator('[testdata-id=make-another-swap-button]')

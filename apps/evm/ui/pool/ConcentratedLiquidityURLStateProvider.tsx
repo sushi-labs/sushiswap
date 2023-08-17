@@ -113,8 +113,6 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
   const tmp = getChainIdFromUrl(chainIdFromUrl, chainId as ChainId)
   const _chainId = supportedNetworks?.includes(tmp) ? tmp : ChainId.ETHEREUM
 
-  console.log({ _chainId, supportedNetworks })
-
   const { data: tokenFrom, isInitialLoading: isTokenFromLoading } = useTokenWithCache({
     chainId: _chainId,
     address: fromCurrency,

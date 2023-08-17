@@ -217,9 +217,8 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
             gas: safeGasEstimate,
           }
         }
-      } catch (e: unknown) {
-        //
-        console.log({ e })
+      } catch (error: unknown) {
+        console.error('remove prepare error', error)
         return {}
       }
     }

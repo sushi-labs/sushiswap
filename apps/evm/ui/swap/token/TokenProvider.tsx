@@ -113,19 +113,6 @@ export const TokenProvider: FC<TokenProvider> = ({ children }) => {
       ? getTokenFromUrl(toChainId, _toCurrency, tokenTo, isTokenToLoading)
       : defaultQuoteCurrency[toChainId as keyof typeof defaultQuoteCurrency]
 
-    // console.log({
-    //   token0,
-    //   fromChainId,
-    //   _fromCurrency,
-    //   tokenFrom,
-    //   isTokenFromLoading,
-    //   token1,
-    //   toChainId,
-    //   _toCurrency,
-    //   tokenTo,
-    //   isTokenToLoading,
-    // })
-
     return {
       token0,
       token1,

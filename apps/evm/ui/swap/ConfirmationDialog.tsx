@@ -1,9 +1,8 @@
 'use client'
 
-import { routeProcessor2Abi } from '@sushiswap/abi'
+import { routeProcessor3Abi, routeProcessorAbi } from '@sushiswap/abi'
 import { Chain } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
-import { calculateGasMargin } from '@sushiswap/gas'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { UseTradeReturn } from '@sushiswap/react-query'
 import {
@@ -19,14 +18,14 @@ import {
 } from '@sushiswap/ui/components/dialog/ConfirmationDialog'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { AppType } from '@sushiswap/ui/types'
-import { useAccount, useContractWrite, usePrepareContractWrite } from '@sushiswap/wagmi'
+import { serialize, useAccount, useContractWrite, usePrepareContractWrite } from '@sushiswap/wagmi'
 import { useNetwork } from '@sushiswap/wagmi'
 import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { log } from 'next-axiom'
 import { FC, ReactNode, useCallback, useRef, useState } from 'react'
-import { stringify, UserRejectedRequestError } from 'viem'
+import { UserRejectedRequestError } from 'viem'
 
 import { useTrade } from '../../lib/swap/useTrade'
 import { useSwapActions, useSwapState } from './trade/TradeProvider'
@@ -54,81 +53,19 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   const { data: trade } = useTrade({ crossChain: false, enabled: review })
   const tradeRef = useRef<UseTradeReturn | null>(null)
 
-  // if (trade?.route && trade?.route?.status !== 'NoWay') {
-  //   if (
-  //     trade?.route?.legs?.every(
-  //       (leg) =>
-  //         leg.poolName.startsWith('Wrap') ||
-  //         leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-  //         leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
-  //         leg.poolName.startsWith(LiquidityProviders.Trident) ||
-  //         leg.poolName.startsWith(Bridge.BentoBox)
-  //     )
-  //   ) {
-  //     console.log('Swap success (internal)', {
-  //       route: trade?.route,
-  //     })
-  //   } else if (
-  //     trade?.route?.legs?.some(
-  //       (leg) =>
-  //         !leg.poolName.startsWith('Wrap') &&
-  //         (leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-  //           leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
-  //           leg.poolName.startsWith(LiquidityProviders.Trident) ||
-  //           leg.poolName.startsWith(Bridge.BentoBox))
-  //     ) &&
-  //     trade?.route?.legs?.some(
-  //       (leg) =>
-  //         !leg.poolName.startsWith('Wrap') &&
-  //         (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-  //           !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
-  //           !leg.poolName.startsWith(LiquidityProviders.Trident) ||
-  //           !leg.poolName.startsWith(Bridge.BentoBox))
-  //     )
-  //   ) {
-  //     console.log('Swap success (mix)', {
-  //       route: trade?.route,
-  //     })
-  //   } else if (
-  //     trade?.route?.legs?.every(
-  //       (leg) =>
-  //         leg.poolName.startsWith('Wrap') ||
-  //         (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
-  //           !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) &&
-  //           !leg.poolName.startsWith(LiquidityProviders.Trident) &&
-  //           !leg.poolName.startsWith(Bridge.BentoBox))
-  //     )
-  //   ) {
-  //     console.log('Swap success (external)', {
-  //       route: trade?.route,
-  //     })
-  //   } else {
-  //     console.log('Swap success (unknown)', {
-  //       route: trade?.route,
-  //     })
-  //   }
-  // }
-
   const [slippageTolerance] = useSlippageTolerance()
   const refetchBalances = useBalanceWeb3Refetch()
 
   const [open, setOpen] = useState(false)
   const [dialogState, setDialogState] = useState<ConfirmationDialogState>(ConfirmationDialogState.Undefined)
 
-  console.log(
-    Boolean(trade?.writeArgs) &&
-      appType === AppType.Swap &&
+  const enabled = Boolean(
+    appType === AppType.Swap &&
+      trade?.writeArgs &&
       (isRouteProcessorChainId(network0) || isRouteProcessor3ChainId(network0)) &&
       approved &&
-      trade?.route?.status !== 'NoWay',
-    [
-      trade,
-      Boolean(trade?.writeArgs),
-      appType === AppType.Swap,
-      isRouteProcessorChainId(network0) || isRouteProcessor3ChainId(network0),
-      approved,
-      trade?.route?.status !== 'NoWay',
-    ]
+      trade?.route?.status !== 'NoWay' &&
+      chain?.id === network0
   )
 
   const { config, isError, error } = usePrepareContractWrite({
@@ -138,29 +75,27 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       : isRouteProcessorChainId(network0)
       ? routeProcessorAddress[network0]
       : undefined,
-    abi: routeProcessor2Abi,
+    abi: (isRouteProcessor3ChainId(network0)
+      ? routeProcessor3Abi
+      : isRouteProcessorChainId(network0)
+      ? routeProcessorAbi
+      : undefined) as any,
     functionName: trade?.functionName,
     args: trade?.writeArgs as any,
-    enabled: Boolean(
-      trade?.writeArgs &&
-        appType === AppType.Swap &&
-        (isRouteProcessorChainId(network0) || isRouteProcessor3ChainId(network0)) &&
-        approved &&
-        trade?.route?.status !== 'NoWay' &&
-        chain?.id === network0
-    ),
+    enabled,
     value: trade?.value || 0n,
     onError: (error) => {
+      console.error('swap prepare error', error)
       const message = error.message.toLowerCase()
       if (message.includes('user rejected') || message.includes('user cancelled')) {
         return
       }
 
-      log.error('Swap prepare error', {
-        route: stringify(trade?.route),
-        slippageTolerance,
-        error: error,
-      })
+      // log.error('Swap prepare error', {
+      //   route: stringify(trade?.route),
+      //   slippageTolerance,
+      //   error: error,
+      // })
     },
   })
 
@@ -208,10 +143,10 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     data,
   } = useContractWrite({
     ...config,
-    request: {
-      ...config?.request,
-      gas: config?.request?.gas ? calculateGasMargin(config.request.gas ?? 0n) : undefined,
-    },
+    // request: {
+    //   ...config?.request,
+    //   gas: config?.request?.gas ? calculateGasMargin(config.request.gas ?? 0n) : undefined,
+    // },
     onMutate: () => {
       // Set reference of current trade
       if (tradeRef && trade) {
@@ -219,6 +154,8 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       }
     },
     onSuccess: async (data) => {
+      console.log('onSuccess', data)
+
       setReview(false)
 
       // Clear input fields
@@ -242,7 +179,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 chainId: network0,
                 txHash: data.hash,
                 exporerLink: Chain.txUrl(network0, data.hash),
-                route: stringify(trade?.route),
+                route: serialize(trade?.route),
               })
             } else if (
               trade?.route?.legs?.some(
@@ -266,7 +203,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 chainId: network0,
                 txHash: data.hash,
                 exporerLink: Chain.txUrl(network0, data.hash),
-                route: stringify(trade?.route),
+                route: serialize(trade?.route),
               })
             } else if (
               trade?.route?.legs?.every(
@@ -282,15 +219,15 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 chainId: network0,
                 txHash: data.hash,
                 exporerLink: Chain.txUrl(network0, data.hash),
-                route: stringify(trade?.route),
+                route: serialize(trade?.route),
               })
             } else {
               log.info('unknown', {
                 chainId: network0,
                 txHash: data.hash,
                 exporerLink: Chain.txUrl(network0, data.hash),
-                route: trade?.route,
-                args: stringify(trade?.writeArgs),
+                route: serialize(trade?.route),
+                args: serialize(trade?.writeArgs),
               })
             }
             setDialogState(ConfirmationDialogState.Success)
@@ -308,7 +245,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               log.error('internal route', {
                 chainId: network0,
                 txHash: data.hash,
-                route: stringify(trade?.route),
+                route: serialize(trade?.route),
               })
             } else if (
               trade?.route?.legs?.some(
@@ -331,7 +268,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               log.error('mix route', {
                 chainId: network0,
                 txHash: data.hash,
-                route: stringify(trade?.route),
+                route: serialize(trade?.route),
               })
             } else if (
               trade?.route?.legs?.every(
@@ -346,14 +283,14 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               log.error('external route', {
                 chainId: network0,
                 txHash: data.hash,
-                route: stringify(trade?.route),
+                route: serialize(trade?.route),
               })
             } else {
               log.error('unknown', {
                 chainId: network0,
                 txHash: data.hash,
-                route: trade?.route,
-                args: stringify(trade?.writeArgs),
+                route: serialize(trade?.route),
+                args: serialize(trade?.writeArgs),
               })
             }
             setDialogState(ConfirmationDialogState.Failed)
@@ -366,11 +303,11 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     onSettled,
     onError: (error) => {
       if (error.message.startsWith('user rejected transaction')) return
-      log.error('Swap error', {
-        route: trade?.route,
-        args: trade?.writeArgs,
-        error,
-      })
+      // log.error('Swap error', {
+      //   route: trade?.route,
+      //   args: trade?.writeArgs,
+      //   error,
+      // })
       createErrorToast(error.message, false)
     },
   })
@@ -390,12 +327,14 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     } else if (review) {
       const promise = writeAsync?.()
       if (promise) {
+        console.log('exec swap', writeAsync)
         promise
           .then(() => {
             setDialogState(ConfirmationDialogState.Pending)
             setOpen(true)
           })
           .catch((e: unknown) => {
+            console.log('error executing swap', e)
             if (e instanceof UserRejectedRequestError) onComplete()
             else setDialogState(ConfirmationDialogState.Failed)
           })

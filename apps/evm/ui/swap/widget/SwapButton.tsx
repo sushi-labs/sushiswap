@@ -33,7 +33,6 @@ export const SwapButton: FC = () => {
     }
   }, [trade])
 
-  console.log(trade?.route?.status)
   return (
     <>
       <div className="pt-4">

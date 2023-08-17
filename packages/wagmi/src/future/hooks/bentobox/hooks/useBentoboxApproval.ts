@@ -31,7 +31,7 @@ export const useBentoboxApproval = ({
   const { signature, setSignature } = useSignature(tag)
   const { signTypedDataAsync } = useSignTypedData()
 
-  const { data, refetch, isLoading } = useQuery({
+  const { data, refetch, isLoading, error } = useQuery({
     queryKey: [],
     queryFn: async () => {
       if (masterContract && address) {
@@ -57,14 +57,22 @@ export const useBentoboxApproval = ({
 
       return null
     },
+    onError: (error) => {
+      console.error('error fetching master contract approval', error)
+    },
     enabled,
   })
+
+  console.log('error', error)
 
   const { config } = usePrepareContractWrite({
     ...getBentoBoxContractConfig(chainId),
     chainId,
     functionName: 'setMasterContractApproval',
     args: masterContract && address ? [address, masterContract, true, 0, HashZero, HashZero] : undefined,
+    onError: (error) => {
+      console.error('error preparing master contract approval', error)
+    },
     enabled: Boolean(enabled && masterContract && address && chainId && fallback),
   })
 
@@ -111,9 +119,13 @@ export const useBentoboxApproval = ({
         })
         .catch(() => setPending(false))
     },
+    onError: (error) => {
+      console.error('error executing master contract approval', error)
+    },
   })
 
   const _execute = useCallback(() => {
+    console.log('execute', address, data)
     if (address && typeof data?.nonces === 'bigint') {
       signTypedDataAsync({
         primaryType: 'SetMasterContractApproval',
@@ -144,7 +156,8 @@ export const useBentoboxApproval = ({
           setSignature(signature)
         })
 
-        .catch(() => {
+        .catch((error) => {
+          console.error('error signing master contract approval', error)
           const ts = new Date().getTime()
           void createFailedToast({
             account: address,

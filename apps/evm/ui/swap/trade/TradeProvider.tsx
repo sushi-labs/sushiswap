@@ -4,7 +4,6 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui/types'
 import { Address, useAccount } from '@sushiswap/wagmi'
-import { isSwapApiEnabledChainId } from 'config'
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
@@ -110,15 +109,14 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { token0, token1, fromChainId, toChainId } = useTokenState()
 
   const [internalState, dispatch] = useReducer(reducer, {
-    isFallback:
-      !isSwapApiEnabledChainId(fromChainId) ||
-      (isSwapApiEnabledChainId(fromChainId) && typeof SWAP_API_BASE_URL === 'undefined'),
+    isFallback: true,
+    // isFallback:
+    //   !isSwapApiEnabledChainId(fromChainId) ||
+    //   (isSwapApiEnabledChainId(fromChainId) && typeof SWAP_API_BASE_URL === 'undefined'),
     tradeId: nanoid(),
     review: review ? review : false,
     value: !amount || amount === '0' ? '' : amount,
   })
-
-  // console.log({ token0, token1 })
 
   const state = useMemo(() => {
     return {
@@ -183,7 +181,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       const _searchParams = new URLSearchParams(Array.from(searchParams.entries()))
       // If the same
       if (state.token0 && state.token1 && state.token1.equals(currency)) {
-        console.log('same', state)
         _searchParams.set('toCurrency', state.token0.isNative ? 'NATIVE' : state.token0.wrapped.address)
         _searchParams.set('fromCurrency', state.token1.isNative ? 'NATIVE' : state.token1.wrapped.address)
         _searchParams.set('toChainId', state.token0.chainId.toString())

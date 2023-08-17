@@ -60,9 +60,9 @@ export const createWagmiConfig = () => {
     // logger: {
     //   warn: process.env.NODE_ENV !== 'production' ? console.warn : null,
     // },
-    logger: {
-      warn: null,
-    },
+    // logger: {
+    //   warn: null,
+    // },
     autoConnect: true,
     connectors: [
       new InjectedConnector({

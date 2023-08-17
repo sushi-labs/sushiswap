@@ -80,7 +80,7 @@ export const useTrade = (variables: UseTradeParams) => {
           : undefined
         let value = fromToken.isNative ? writeArgs?.[1] ?? undefined : undefined
 
-        console.log(fromToken.isNative, writeArgs, value)
+        // console.debug(fromToken.isNative, writeArgs, value)
 
         if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
           writeArgs = ['0xbc4a6be1285893630d45c881c6c343a65fdbe278', 20000000000000000n, ...writeArgs]

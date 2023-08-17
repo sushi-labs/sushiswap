@@ -13,9 +13,8 @@ interface UseBentoboxTotalsParams {
 
 const queryFn = async ({ chainId, currencies }: UseBentoboxTotalsParams) => {
   if (isBentoBoxV1ChainId(chainId)) {
-    return await getBentoboxTotals(chainId, currencies)
+    return getBentoboxTotals(chainId, currencies)
   }
-
   return undefined
 }
 

@@ -81,7 +81,6 @@ export const usePoolsAsMap = ({ enabled = true, ...variables }: UsePoolsAsMapPar
         ...(data.tridentStablePools || []),
         ...(data.tridentConstantPools || []),
       ]
-      console.log({ data })
       return pools.reduce<Record<string, SushiSwapV2Pool | TridentConstantPool | TridentStablePool>>((acc, cur) => {
         acc[cur.liquidityToken.address] = cur
         return acc
