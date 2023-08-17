@@ -7,9 +7,9 @@ export const metadata = {
   title: 'Sushi - Cross-chain Swap',
 }
 
-export default function SwapCrossChainPage() {
+export default function SwapCrossChainPage({ searchParams }: { searchParams: URLSearchParams }) {
   return (
-    <Providers>
+    <Providers searchParams={searchParams}>
       <Container maxWidth="lg" className="px-4">
         <CrossChainSwapWidget />
       </Container>

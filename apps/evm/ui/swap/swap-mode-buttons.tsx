@@ -31,9 +31,12 @@ export const SwapModeButtons = () => {
           <motion.div layoutId="container">
             <motion.div layout layoutId="title">
               <Link href="/swap/cross-chain">
-                <PathnameButton icon={ShuffleIcon} pathname="/swap/cross-chain" size="sm">
+                <PathnameButton pathname="/swap/cross-chain" size="sm">
                   <HoverCardTrigger asChild>
-                    <span>Cross Chain</span>
+                    <span className="saturate-200 flex items-center gap-2 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
+                      <ShuffleIcon width={20} height={20} className="text-blue" />
+                      Cross Chain
+                    </span>
                   </HoverCardTrigger>
                 </PathnameButton>
               </Link>

@@ -17,7 +17,7 @@ export const CrossChainSwapToken0Input = () => {
   return (
     <div className="border border-accent flex flex-col bg-white dark:bg-slate-800 rounded-xl overflow-hidden">
       <div className="p-3 border-b border-accent flex gap-2 items-center">
-        <Label className="text-xs tracking-tighter text-muted-foreground">Network</Label>
+        <Label className="text-xs tracking-tighter text-muted-foreground">From</Label>
         <NetworkSelector
           networks={STARGATE_SUPPORTED_CHAIN_IDS}
           selected={chainId0 as StargateChainId}

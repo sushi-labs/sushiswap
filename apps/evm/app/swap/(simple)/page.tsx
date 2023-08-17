@@ -7,9 +7,9 @@ export const metadata = {
   title: 'Sushi - Swap',
 }
 
-export default function SwapSimplePage() {
+export default function SwapSimplePage({ searchParams }: { searchParams: URLSearchParams }) {
   return (
-    <Providers>
+    <Providers searchParams={searchParams}>
       <Container maxWidth="lg" className="px-4">
         <SimpleSwapWidget />
       </Container>

@@ -4,7 +4,6 @@ import { Chain } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
-import { UseTradeReturn } from '@sushiswap/react-query'
 import { classNames } from '@sushiswap/ui'
 import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
 import { Explainer } from '@sushiswap/ui/components/explainer'
@@ -83,10 +82,10 @@ export const SimpleSwapTradeStats: FC = () => {
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-slate-400">Route</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {loading ? (
+            {loading || !trade ? (
               <SkeletonBox className="h-4 py-0.5 w-[40px]" />
             ) : (
-              <TradeRoutePathView trade={trade as UseTradeReturn | undefined}>
+              <TradeRoutePathView trade={trade}>
                 <button className="text-sm text-blue font-semibold">View</button>
               </TradeRoutePathView>
             )}

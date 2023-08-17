@@ -13,7 +13,7 @@ import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_XSWAP } from 'lib/constants'
 import { useCrossChainTrade } from 'lib/swap/useCrossChainTrade/useCrossChainTrade'
 import { nanoid } from 'nanoid'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   createContext,
   Dispatch,
@@ -60,6 +60,7 @@ const DerivedStateCrossChainSwapContext = createContext<State>({} as State)
 
 interface DerivedStateCrossChainSwapProviderProps {
   children: React.ReactNode
+  searchParams: URLSearchParams
 }
 
 /* Parses the URL and provides the chainId, token0, and token1 globally.
@@ -68,12 +69,14 @@ interface DerivedStateCrossChainSwapProviderProps {
  *
  * If no chainId is provided, it defaults to current connected chainId or Ethereum if wallet is not connected.
  */
-const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderProps> = ({ children }) => {
+const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderProps> = ({
+  searchParams,
+  children,
+}) => {
   const { push } = useRouter()
   const { address } = useAccount()
   const { chain } = useNetwork()
   const pathname = usePathname()
-  const searchParams = useSearchParams()
   const [tradeId, setTradeId] = useState(nanoid())
 
   // Get the searchParams and complete with defaults.

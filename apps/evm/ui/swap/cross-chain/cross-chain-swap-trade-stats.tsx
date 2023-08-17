@@ -4,7 +4,6 @@ import { Chain } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
-import { UseTradeReturn } from '@sushiswap/react-query'
 import { classNames } from '@sushiswap/ui'
 import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
 import { Explainer } from '@sushiswap/ui/components/explainer'
@@ -15,7 +14,6 @@ import React, { FC } from 'react'
 import { isAddress } from 'viem'
 
 import { warningSeverity, warningSeverityClassName } from '../../../lib/swap/warningSeverity'
-import { TradeRoutePathView } from '../trade-route-path-view'
 import { useCrossChainSwapTrade, useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapTradeStats: FC = () => {
@@ -80,18 +78,6 @@ export const CrossChainSwapTradeStats: FC = () => {
           </span>
         </div>
 
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-700 dark:text-slate-400">Route</span>
-          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {loading ? (
-              <SkeletonBox className="h-4 py-0.5 w-[40px]" />
-            ) : (
-              <TradeRoutePathView trade={trade as UseTradeReturn | undefined}>
-                <button className="text-sm text-blue font-semibold">View</button>
-              </TradeRoutePathView>
-            )}
-          </span>
-        </div>
         {recipient && isAddress(recipient) && (
           <div className="flex justify-between items-center border-t border-gray-200 dark:border-slate-200/5 mt-2 pt-2">
             <span className="font-medium text-sm text-gray-700 dark:text-slate-300">Recipient</span>
