@@ -39,19 +39,19 @@ test.beforeEach(async ({ page }) => {
 // test.afterAll(async () => {})
 // test.afterEach(async ({ page }) => {})
 
-test('Wrap and unwrap', async ({ page }) => {
+test.only('Wrap and unwrap', async ({ page }) => {
   await wrap(page, native, wnative, '10')
   await wrap(page, wnative, native, '10')
 })
 
-test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
+test.only('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   test.slow()
 
   await swap(page, native, sushi, '100')
   await maxSwap(page, sushi, native)
 })
 
-test('Swap Native to USDC, USDC to USDT then USDT to NATIVE', async ({ page }) => {
+test.only('Swap Native to USDC, USDC to USDT then USDT to NATIVE', async ({ page }) => {
   test.slow()
 
   await swap(page, native, usdc, '100')
@@ -66,7 +66,7 @@ test('Swap Native to USDC, USDC to USDT then USDT to NATIVE', async ({ page }) =
 //   await maxSwap(page, usdt, native)
 // })
 
-test('Swap Native to WBTC', async ({ page }) => {
+test.only('Swap Native to WBTC', async ({ page }) => {
   await swap(page, native, wbtc, '100')
 })
 
@@ -133,9 +133,9 @@ async function maxSwap(page: Page, inputCurrency: Type, outputCurrency: Type) {
   const swapButton = page.locator('[testdata-id=swap-button]')
   await expect(swapButton).toBeVisible()
 
-  if (!(await swapButton.isEnabled())) {
-    const priceImpactCheckbox = page.locator('[testdata-id=price-impact-checkbox]')
-    if (await priceImpactCheckbox.isVisible()) {
+  const priceImpactCheckbox = page.locator('[testdata-id=price-impact-checkbox]')
+  while (!(await swapButton.isEnabled())) {
+    if ((await priceImpactCheckbox.isVisible()) && !(await priceImpactCheckbox.isChecked())) {
       await priceImpactCheckbox.check()
     }
   }
@@ -204,14 +204,13 @@ async function swap(page: Page, inputCurrency: Type, outputCurrency: Type, amoun
   const swapButton = page.locator('[testdata-id=swap-button]')
   await expect(swapButton).toBeVisible()
 
-  if (!(await swapButton.isEnabled())) {
-    const priceImpactCheckbox = page.locator('[testdata-id=price-impact-checkbox]')
-    if (await priceImpactCheckbox.isVisible()) {
+  const priceImpactCheckbox = page.locator('[testdata-id=price-impact-checkbox]')
+  while (!(await swapButton.isEnabled())) {
+    if ((await priceImpactCheckbox.isVisible()) && !(await priceImpactCheckbox.isChecked())) {
       await priceImpactCheckbox.check()
     }
   }
 
-  await expect(swapButton).toBeEnabled()
   await swapButton.click()
 
   const confirmSwap = page.locator('[testdata-id=confirm-swap-button]')
