@@ -19,7 +19,7 @@ const Icons: Record<string, (props: SVGProps<SVGSVGElement>) => JSX.Element | nu
 
 export const ConnectView: FC<{ close(): void }> = ({ close }) => {
   const { wallets, connect } = useWallet()
-  const onSelect = (name: WalletName) => {
+  const onSelect = (name: string) => {
     connect(name)
     close()
   }
@@ -31,7 +31,7 @@ export const ConnectView: FC<{ close(): void }> = ({ close }) => {
             return (
               <List.MenuItem
                 className="p-0"
-                onClick={() => onSelect(wallet.name as WalletName)}
+                onClick={() => onSelect(wallet.name)}
                 title={wallet.name}
                 icon={Icons[wallet.name]}
                 key={wallet.name}
