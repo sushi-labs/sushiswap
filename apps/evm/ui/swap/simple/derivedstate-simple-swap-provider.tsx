@@ -6,7 +6,7 @@ import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sus
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
-import { useAccount, useFeeData, useNetwork, watchNetwork } from '@sushiswap/wagmi'
+import { Address, useAccount, useFeeData, useNetwork, watchNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future'
 import { useClientTrade } from '@sushiswap/wagmi/future/hooks'
 import { useCarbonOffset } from 'lib/swap/useCarbonOffset'
@@ -283,8 +283,8 @@ const useSimpleSwapTrade = () => {
     toToken: token1,
     amount: swapAmount,
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
-    gasPrice: feeData?.gasPrice?.toNumber(),
-    recipient,
+    gasPrice: feeData?.gasPrice,
+    recipient: recipient as Address,
     enabled: Boolean(!isFallback && swapAmount?.greaterThan(ZERO)),
     carbonOffset,
     onError: () => setIsFallback(true),
@@ -296,8 +296,8 @@ const useSimpleSwapTrade = () => {
     toToken: token1,
     amount: swapAmount,
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
-    gasPrice: feeData?.gasPrice?.toNumber(),
-    recipient,
+    gasPrice: feeData?.gasPrice,
+    recipient: recipient as Address,
     enabled: Boolean(isFallback && swapAmount?.greaterThan(ZERO)),
     carbonOffset,
   })

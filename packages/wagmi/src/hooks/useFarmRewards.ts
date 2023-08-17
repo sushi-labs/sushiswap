@@ -1,6 +1,6 @@
 import { chainShortName } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { UseQueryOptions, useQuery } from '@tanstack/react-query'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
 export interface FarmMap<T> {
@@ -60,7 +60,7 @@ export const useFarmRewards = ({
     data: farmsMap,
     isError,
     isLoading,
-  } = useQuery(queryKey, () => fetch(`https://farm.sushi.com/v0`).then((response) => response.json()), {
+  } = useQuery(queryKey, () => fetch('https://farm.sushi.com/v0').then((response) => response.json()), {
     staleTime: 2000,
     ...options,
   })

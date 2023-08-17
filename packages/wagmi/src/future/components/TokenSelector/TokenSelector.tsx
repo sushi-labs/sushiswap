@@ -115,7 +115,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   )
 
   const _onPin = useCallback((currencyId: string) => {
-    console.log('onPin', currencyId, isTokenPinned(currencyId))
+    console.debug('onPin', currencyId, isTokenPinned(currencyId))
     if (isTokenPinned(currencyId)) {
       pinnedTokenMutate('remove', currencyId)
     } else {

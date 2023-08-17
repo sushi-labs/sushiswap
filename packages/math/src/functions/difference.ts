@@ -1,8 +1,6 @@
-import JSBI from 'jsbi'
-
-export function difference(a: JSBI, b: JSBI): JSBI {
-  if (JSBI.greaterThan(a, b)) {
-    return JSBI.subtract(a, b)
+export function difference(a: bigint, b: bigint): bigint {
+  if (a > b) {
+    return a - b
   }
-  return JSBI.subtract(b, a)
+  return b - a
 }

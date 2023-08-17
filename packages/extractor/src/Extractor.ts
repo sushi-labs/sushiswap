@@ -5,13 +5,13 @@ import { Token } from '@sushiswap/currency'
 import { PoolCode } from '@sushiswap/router'
 import { Address, PublicClient } from 'viem'
 
-import { LogFilterType } from './LogFilter'
-import { LogFilter2 } from './LogFilter2'
+import { LogFilter2, LogFilterType } from './LogFilter2'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { TokenManager } from './TokenManager'
 import { FactoryV2, UniV2Extractor } from './UniV2Extractor'
 import { FactoryV3, UniV3Extractor } from './UniV3Extractor'
 import { UniV3PoolWatcher, UniV3PoolWatcherStatus } from './UniV3PoolWatcher'
+import { setWarningMessageHandler, WarningMessageHandler } from './WarnLog'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -58,8 +58,8 @@ export class Extractor {
     logDepth: number
     logging?: boolean
     maxCallsInOneBatch?: number
+    warningMessageHandler?: WarningMessageHandler
   }) {
-    const logType = args.logType ?? LogFilterType.OneCall // default value
     this.cacheDir = args.cacheDir
     this.client = args.client
     this.multiCallAggregator = new MultiCallAggregator(args.client, args.maxCallsInOneBatch ?? 0)
@@ -90,6 +90,7 @@ export class Extractor {
         this.multiCallAggregator,
         tokenManager
       )
+    setWarningMessageHandler(args.warningMessageHandler)
   }
 
   /// @param tokensPrefetch Prefetch all pools between these tokens
@@ -151,14 +152,14 @@ export class Extractor {
       const { prefetched, fetching } = this.extractorV3.getWatchersForTokens(tokens)
       watchersV3 = prefetched
       prefetched.forEach((w) => {
-        if (w.getStatus() != UniV3PoolWatcherStatus.All) promises.push(w.statusAll())
+        if (w.getStatus() !== UniV3PoolWatcherStatus.All) promises.push(w.statusAll())
       })
       promises = promises.concat(
         fetching.map(async (p) => {
           const w = await p
-          if (w == undefined) return
+          if (w === undefined) return
           watchersV3.push(w)
-          if (w.getStatus() != UniV3PoolWatcherStatus.All) await w.statusAll()
+          if (w.getStatus() !== UniV3PoolWatcherStatus.All) await w.statusAll()
         })
       )
     }

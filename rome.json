@@ -15,10 +15,9 @@
         "noDelete": "off"
       },
       "style": {
-        "noParameterAssign": "off"
-      },
-      "complexity": {
-        "noExtraSemicolon": "off"
+        "noParameterAssign": "off",
+        "useSingleVarDeclarator": "off",
+        "useTemplate": "warn"
       }
     }
   },

@@ -4,13 +4,12 @@ import { Native } from '@sushiswap/currency'
 import { NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import cors from 'cors'
-import { BigNumber } from 'ethers'
 import express, { Express, Request, Response } from 'express'
 import path from 'path'
 import { Address } from 'viem'
 import z from 'zod'
 
-import { Extractor, MultiCallAggregator, TokenManager } from '../src'
+import { Extractor, MultiCallAggregator, TokenManager, WarningLevel } from '../src'
 import {
   EXTRACTOR_CONFIG,
   isSupportedChainId,
@@ -32,7 +31,7 @@ const querySchema = z.object({
   tokenOut: z.string(),
   amount: z.string().transform((amount) => BigInt(amount)),
   gasPrice: z.optional(z.coerce.number().int().gt(0)),
-  to: z.optional(z.string()),
+  to: z.optional(z.string()).transform((to) => (to ? (to as Address) : undefined)),
   preferSushi: z.optional(z.coerce.boolean()),
 })
 
@@ -42,9 +41,32 @@ const extractors = new Map<SupportedChainId, Extractor>()
 const tokenManagers = new Map<SupportedChainId, TokenManager>()
 const nativeProviders = new Map<SupportedChainId, NativeWrapProvider>()
 
-async function setup() {
+async function main() {
+  const app: Express = express()
+
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    integrations: [
+      // enable HTTP calls tracing
+      new Sentry.Integrations.Http({
+        tracing: true,
+      }),
+      // enable Express.js middleware tracing
+      new Sentry.Integrations.Express({
+        app,
+      }),
+    ],
+    // Performance Monitoring
+    tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
+  })
+
   for (const chainId of SUPPORTED_CHAIN_IDS) {
-    const extractor = new Extractor(EXTRACTOR_CONFIG[chainId])
+    const extractor = new Extractor({
+      ...EXTRACTOR_CONFIG[chainId],
+      warningMessageHandler: (chain: ChainId | number | undefined, message: string, level: WarningLevel) => {
+        Sentry.captureMessage(`${chain}: ${message}`, level)
+      },
+    })
     await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId])
     extractors.set(chainId, extractor)
     const tokenManager = new TokenManager(
@@ -57,30 +79,6 @@ async function setup() {
     const nativeProvider = new NativeWrapProvider(chainId, extractor.client)
     nativeProviders.set(chainId, nativeProvider)
   }
-}
-
-async function main() {
-  await setup()
-
-  const app: Express = express()
-
-  Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    integrations: [
-      // enable console tracing
-      new Sentry.Integrations.Console(),
-      // enable HTTP calls tracing
-      new Sentry.Integrations.Http({
-        tracing: true,
-      }),
-      // enable Express.js middleware tracing
-      new Sentry.Integrations.Express({
-        app,
-      }),
-    ],
-    // Performance Monitoring
-    tracesSampleRate: 1.0, // Capture 100% of the transactions, reduce in production!,
-  })
 
   app.use(cors())
 
@@ -130,7 +128,7 @@ async function main() {
       poolCodesMap,
       chainId,
       tokenIn,
-      BigNumber.from(amount.toString()),
+      amount,
       tokenOut,
       gasPrice ?? 30e9
     )
@@ -143,12 +141,12 @@ async function main() {
         primaryPrice: bestRoute?.primaryPrice,
         swapPrice: bestRoute?.swapPrice,
         amountIn: bestRoute?.amountIn,
-        amountInBN: bestRoute?.amountInBN.toString(),
+        amountInBI: bestRoute?.amountInBI.toString(),
         amountOut: bestRoute?.amountOut,
-        amountOutBN: bestRoute?.amountOutBN.toString(),
+        amountOutBI: bestRoute?.amountOutBI.toString(),
         priceImpact: bestRoute?.priceImpact,
         totalAmountOut: bestRoute?.totalAmountOut,
-        totalAmountOutBN: bestRoute?.totalAmountOutBN.toString(),
+        totalAmountOutBI: bestRoute?.totalAmountOutBI.toString(),
         gasSpent: bestRoute?.gasSpent,
         legs: bestRoute?.legs,
       },

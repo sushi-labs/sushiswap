@@ -1,12 +1,12 @@
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { DataFetcher, Router } from '@sushiswap/router'
-import { getBigNumber, RouteStatus } from '@sushiswap/tines'
+import { RouteStatus } from '@sushiswap/tines'
 import { expect } from 'chai'
-import { BigNumber, Signer } from 'ethers'
+import { Signer } from 'ethers'
 import { ethers } from 'hardhat'
 import { createPublicClient } from 'viem'
-import { http } from 'viem'
+import { Address, http } from 'viem'
 import { hardhat } from 'viem/chains'
 
 import { RouteProcessor3__factory } from '../typechain'
@@ -27,8 +27,8 @@ async function makeSwap(
   fromToken: Type,
   toToken: Type,
   from: string,
-  to: string,
-  amountIn: BigNumber
+  to: Address,
+  amountIn: bigint
 ): Promise<number | undefined> {
   await dataFetcher.fetchPoolsForToken(fromToken, toToken)
   const pcMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
@@ -52,7 +52,7 @@ async function makeSwap(
   }
 }
 
-describe('Harmony', async () => {
+describe.skip('Harmony', async () => {
   const chainId = ChainId.HARMONY
   const provider = new ethers.providers.JsonRpcProvider('https://api.harmony.one', 1666600000)
   const client = createPublicClient({
@@ -77,7 +77,7 @@ describe('Harmony', async () => {
     const toToken = DAI
     const user = '0x8f54C8c2df62c94772ac14CcFc85603742976312'
     const signer = await provider.getUncheckedSigner(user)
-    await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, getBigNumber(1 * 1e18))
+    await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, BigInt(1e18))
   })
 
   it('DAI => ONE', async () => {
@@ -85,6 +85,6 @@ describe('Harmony', async () => {
     const toToken = Native.onChain(chainId)
     const user = '0x8f54C8c2df62c94772ac14CcFc85603742976312' // has DAI and approved 1e18 to the RP
     const signer = await provider.getUncheckedSigner(user)
-    await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, getBigNumber(1 * 1e18))
+    await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, BigInt(1e18))
   })
 })

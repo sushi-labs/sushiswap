@@ -1,5 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { MultiRoute, RouteLeg, RouteStatus, RToken } from '@sushiswap/tines'
+import { Hex } from 'viem'
 
 import { PoolCode } from './pools/PoolCode'
 import { getTokenType, PermitData, TinesToRouteProcessor2, TokenType } from './TinesToRouteProcessor2'
@@ -9,9 +10,9 @@ class TinesToRouteProcessor4 extends TinesToRouteProcessor2 {
     super(routeProcessorAddress, chainId, pools)
   }
 
-  override getRouteProcessorCode(route: MultiRoute, toAddress: string, permits: PermitData[] = []): string {
+  override getRouteProcessorCode(route: MultiRoute, toAddress: string, permits: PermitData[] = []): Hex | '' {
     // 0. Check for no route
-    if (route.status == RouteStatus.NoWay || route.legs.length == 0) return ''
+    if (route.status === RouteStatus.NoWay || route.legs.length === 0) return ''
 
     //this.presendedLegs = new Set()
     this.calcTokenOutputLegs(route)
@@ -38,22 +39,22 @@ class TinesToRouteProcessor4 extends TinesToRouteProcessor2 {
             res += this.processBentoCode(token, route, toAddress)
             break
           default:
-            throw new Error('Unknown token type of token ' + token.symbol)
+            throw new Error(`Unknown token type of token ${token.symbol}`)
         }
       }
     })
 
-    return res
+    return res as Hex
   }
 
   override isOnePoolOptimization(token: RToken, route: MultiRoute) {
-    if (getTokenType(token) == TokenType.NATIVE) return false
+    if (getTokenType(token) === TokenType.NATIVE) return false
     const outputDistribution = this.tokenOutputLegs.get(token.tokenId as string) || []
-    if (outputDistribution.length != 1) return false
-    if (token.tokenId == route.fromToken.tokenId) return false
+    if (outputDistribution.length !== 1) return false
+    if (token.tokenId === route.fromToken.tokenId) return false
 
     const startPoint = this.getPoolCode(outputDistribution[0]).getStartPoint(outputDistribution[0], route)
-    return startPoint == outputDistribution[0].poolAddress
+    return startPoint === outputDistribution[0].poolAddress
   }
 
   override swapCode(leg: RouteLeg, route: MultiRoute, toAddress: string): string {

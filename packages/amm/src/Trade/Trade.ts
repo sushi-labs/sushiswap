@@ -1,5 +1,5 @@
 import { Amount, Price, Type as Currency } from '@sushiswap/currency'
-import { Fraction, JSBI, ONE, Percent, ZERO } from '@sushiswap/math'
+import { Fraction, ONE, Percent, ZERO } from '@sushiswap/math'
 import { MultiRoute, RToken } from '@sushiswap/tines'
 import invariant from 'tiny-invariant'
 
@@ -57,15 +57,15 @@ export class Trade<
   /**
    * The percent difference between the mid price before the trade and the trade execution price.
    */
-  public readonly priceImpact: Percent = new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
+  public readonly priceImpact: Percent = new Percent(0n, 10000n)
 
   public readonly currencyInRebase = {
-    base: JSBI.BigInt(0),
-    elastic: JSBI.BigInt(0),
+    base: 0n,
+    elastic: 0n,
   }
   public readonly currencyOutRebase = {
-    base: JSBI.BigInt(0),
-    elastic: JSBI.BigInt(0),
+    base: 0n,
+    elastic: 0n,
   }
 
   /**
@@ -79,8 +79,8 @@ export class Trade<
     amountIn: Amount<TInput>,
     currencyOut: TOutput,
     version: TVersion,
-    currencyInRebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) },
-    currencyOutRebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) }
+    currencyInRebase = { base: 0n, elastic: 0n },
+    currencyOutRebase = { base: 0n, elastic: 0n }
   ): Trade<TInput, TOutput, Type.EXACT_INPUT, TVersion> {
     return new Trade(
       {
@@ -106,8 +106,8 @@ export class Trade<
     currencyIn: TInput,
     amountOut: Amount<TOutput>,
     version: TVersion,
-    currencyInRebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) },
-    currencyOutRebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) }
+    currencyInRebase = { base: 0n, elastic: 0n },
+    currencyOutRebase = { base: 0n, elastic: 0n }
   ): Trade<TInput, TOutput, Type.EXACT_OUTPUT, TVersion> {
     return new Trade(
       {
@@ -126,8 +126,8 @@ export class Trade<
     route: MultiRoute,
     tradeType: TradeType,
     tradeVersion: TradeVersion,
-    currencyInRebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) },
-    currencyOutRebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) }
+    currencyInRebase = { base: 0n, elastic: 0n },
+    currencyOutRebase = { base: 0n, elastic: 0n }
   ) {
     this.route = route
     this.tradeType = tradeType
@@ -137,14 +137,14 @@ export class Trade<
 
     const amountIn = Amount.fromShare(
       route.fromToken as TInput,
-      route.amountInBN.toString(),
+      route.amountInBI.toString(),
       currencyInRebase,
       tradeVersion === Version.V2
     )
 
     const amountOut = Amount.fromShare(
       route.toToken as TOutput,
-      route.amountOutBN.toString(),
+      route.amountOutBI.toString(),
       currencyOutRebase,
       tradeVersion === Version.V2
     )
@@ -166,7 +166,7 @@ export class Trade<
 
     // Shouldn't really have to check this, but tines makes us
     if (this.route.priceImpact) {
-      this.priceImpact = new Percent(JSBI.BigInt(Math.round(this.route.priceImpact * 10000)), JSBI.BigInt(10000))
+      this.priceImpact = new Percent(BigInt(Math.round(this.route.priceImpact * 10000)), 10000n)
     }
   }
 

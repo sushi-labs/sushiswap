@@ -1,7 +1,6 @@
 import { bentoBoxV1Abi, bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { getContract } from '@wagmi/core'
-import { useMemo } from 'react'
-import { useProvider } from 'wagmi'
+import { getContract } from 'viem'
+import { usePublicClient } from 'wagmi'
 
 export const getBentoBoxContractConfig = (chainId: BentoBoxV1ChainId) => ({
   address: bentoBoxV1Address[chainId],
@@ -9,12 +8,9 @@ export const getBentoBoxContractConfig = (chainId: BentoBoxV1ChainId) => ({
 })
 
 export function useBentoBoxContract(chainId: BentoBoxV1ChainId | undefined) {
-  const signerOrProvider = useProvider({ chainId })
+  const publicClient = usePublicClient({ chainId })
 
-  return useMemo(() => {
-    if (!chainId) return null
-
-    return getContract({ ...getBentoBoxContractConfig(chainId), signerOrProvider })
-  }, [chainId, signerOrProvider])
+  if (!chainId) return null
+  return getContract({ ...getBentoBoxContractConfig(chainId), publicClient })
 }
 export type BentoBox = NonNullable<ReturnType<typeof useBentoBoxContract>>
