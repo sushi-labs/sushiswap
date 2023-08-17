@@ -3,7 +3,7 @@ import { Block, encodeEventTopics, Log, PublicClient, WatchBlocksReturnType } fr
 
 import { warnLog } from './WarnLog'
 
-export enum LogFilterType {
+enum LogFilterType {
   OneCall, // one eth_getLogs call for all topict - the most preferrable
   MultiCall, // separete eth_getLogs call for each topic - for those systems that fail at OneCall
   SelfFilter, // Topic filtering doesn't support for provider. Filtering on the client
