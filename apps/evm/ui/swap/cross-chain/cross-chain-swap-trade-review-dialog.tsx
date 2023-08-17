@@ -102,7 +102,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
     overrides: trade?.overrides,
     onError: (error) => {
       if (error.message.startsWith('user rejected transaction')) return
-      log.error('Cross Chain Swap prepare error', {
+      log.error('cross chain swap prepare error', {
         trade,
         error,
       })
