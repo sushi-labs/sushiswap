@@ -3082,6 +3082,7 @@ importers:
       '@sushiswap/tines': workspace:*
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/v2-sdk': workspace:*
       '@sushiswap/v3-sdk': workspace:*
       '@sushiswap/viem-config': workspace:*
       '@typechain/ethers-v5': ^10.0.0
@@ -3142,6 +3143,7 @@ importers:
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/typescript-config': link:../../config/typescript
+      '@sushiswap/v2-sdk': link:../../packages/v2-sdk
       '@sushiswap/v3-sdk': link:../../packages/v3-sdk
       '@sushiswap/viem-config': link:../../config/viem
       '@typechain/ethers-v5': 10.2.1_rfqvgkelfvtqlb3tsy73ynfksm
