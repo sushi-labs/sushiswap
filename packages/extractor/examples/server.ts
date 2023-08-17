@@ -133,6 +133,8 @@ async function main() {
       gasPrice ?? 30e9
     )
 
+    console.log('best route', bestRoute)
+
     return res.json({
       route: {
         status: bestRoute?.status,
@@ -151,14 +153,17 @@ async function main() {
         legs: bestRoute?.legs,
       },
       args: to
-        ? Router.routeProcessor3Params(
-            poolCodesMap,
-            bestRoute,
-            tokenIn,
-            tokenOut,
-            to,
-            ROUTE_PROCESSOR_3_ADDRESS[chainId],
-            []
+        ? JSON.stringify(
+            Router.routeProcessor3Params(
+              poolCodesMap,
+              bestRoute,
+              tokenIn,
+              tokenOut,
+              to,
+              ROUTE_PROCESSOR_3_ADDRESS[chainId],
+              []
+            ),
+            (key, value) => (typeof value === 'bigint' ? value.toString() : value)
           )
         : undefined,
     })
