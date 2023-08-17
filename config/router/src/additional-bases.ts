@@ -160,7 +160,6 @@ export const ADDITIONAL_BASES: {
       WBTC[ChainId.OPTIMISM],
       LINK[ChainId.OPTIMISM],
       SUSHI[ChainId.OPTIMISM],
-      XSUSHI[ChainId.OPTIMISM],
     ],
   },
 }
