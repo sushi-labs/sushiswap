@@ -10,7 +10,7 @@ import { Address, useAccount, useFeeData, useNetwork, watchNetwork } from '@sush
 import { useTokenWithCache } from '@sushiswap/wagmi/future'
 import { useClientTrade } from '@sushiswap/wagmi/future/hooks'
 import { useCarbonOffset } from 'lib/swap/useCarbonOffset'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../../../config'
@@ -44,7 +44,6 @@ const DerivedStateSimpleSwapContext = createContext<State>({} as State)
 
 interface DerivedStateSimpleSwapProviderProps {
   children: React.ReactNode
-  searchParams: URLSearchParams
 }
 
 /* Parses the URL and provides the chainId, token0, and token1 globally.
@@ -53,11 +52,12 @@ interface DerivedStateSimpleSwapProviderProps {
  *
  * If no chainId is provided, it defaults to current connected chainId or Ethereum if wallet is not connected.
  */
-const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = ({ searchParams, children }) => {
+const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = ({ children }) => {
   const { push } = useRouter()
   const { address } = useAccount()
   const { chain } = useNetwork()
   const pathname = usePathname()
+  const searchParams = useSearchParams()
 
   // Get the searchParams and complete with defaults.
   // This handles the case where some params might not be provided by the user
