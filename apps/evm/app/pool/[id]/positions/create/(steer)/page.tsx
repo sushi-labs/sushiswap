@@ -18,8 +18,8 @@ export default async function PositionsCreatePage({ params }: { params: { id: st
 
   return (
     <div className="flex justify-center gap-4">
-      {enabledVaults?.map((vault) => (
-        <SteerPoolCard key={vault.id} poolId={poolId} vault={vault} />
+      {(pool && enabledVaults)?.map((vault) => (
+        <SteerPoolCard key={vault.id} pool={pool} vault={vault} />
       ))}
     </div>
   )

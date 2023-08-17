@@ -32,7 +32,7 @@ export default function PositionsCreatePage({ params }: { params: { id: string }
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col gap-4"></div>
+            <div className="flex flex-col gap-4" />
           </CardContent>
         </Card>
         <Card>

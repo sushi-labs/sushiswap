@@ -22,13 +22,13 @@ import {
 import { usePathname } from 'next/navigation'
 import { FC } from 'react'
 
-import { SteerStrategyDescription, SteerStrategyName } from './constants'
+import { SteerStrategyConfig } from './constants'
 
-export const SteerPoolCard: FC<{ poolId: string; vault: Pool['steerVaults'][0] }> = ({ poolId, vault }) => {
+export const SteerPoolCard: FC<{ pool: Pool; vault: Pool['steerVaults'][0] }> = ({ pool, vault }) => {
   const pathname = usePathname()
 
   return (
-    <LinkInternal href={`/pool/${poolId}/positions/create/stable-pool`}>
+    <LinkInternal href={`/pool/${pool.id}/positions/create/${vault.id}`}>
       <Card
         className={classNames(
           pathname.includes('stable-pool') ? 'border-blue' : '',
@@ -42,14 +42,14 @@ export const SteerPoolCard: FC<{ poolId: string; vault: Pool['steerVaults'][0] }
               Lowest risk
             </Chip>
           </div>
-          <CardTitle>{SteerStrategyName[vault.strategy]}</CardTitle>
-          <CardDescription>{SteerStrategyDescription[vault.strategy]}</CardDescription>
+          <CardTitle>{SteerStrategyConfig[vault.strategy].name}</CardTitle>
+          <CardDescription>{SteerStrategyConfig[vault.strategy].description}</CardDescription>
         </CardHeader>
         <Separator />
         <CardContent className="pt-6">
           <Stat className="!p-0">
-            <StatLabel>APR</StatLabel>
-            {/* Cannot use APR from subgraph, have to either query from the client or push the correct version to the db */}
+            {/* Gotta use the weekly APR for now, as that's what's provided by Steer, can look into getting custom APRs later */}
+            <StatLabel>Weekly APR</StatLabel>
             <StatValue size="3xl">{formatPercent(vault.apr)}</StatValue>
           </Stat>
           <div className="h-[200px] bg-secondary rounded-xl flex items-center justify-center">
@@ -60,11 +60,13 @@ export const SteerPoolCard: FC<{ poolId: string; vault: Pool['steerVaults'][0] }
         <div className="grid grid-cols-2 divide-x divide-accent">
           <Stat className="px-6 py-4">
             <StatLabel size="sm">TVL</StatLabel>
+            {/* vault.reserveUSD */}
             <StatValue size="sm">{formatUSD(123444)}</StatValue>
           </Stat>
           <Stat className="px-6 py-4">
-            <StatLabel size="sm">Fees 24h</StatLabel>
-            <StatValue size="sm">{formatUSD(vault.fees0)}</StatValue>
+            <StatLabel size="sm">Total Fees</StatLabel>
+            {/* vault.feesUSD, will have to be total for now, will fix later */}
+            <StatValue size="sm">{formatUSD(123)}</StatValue>
           </Stat>
         </div>
         <Separator />

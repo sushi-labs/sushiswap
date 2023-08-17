@@ -17,7 +17,7 @@ export default async function Layout({ children, params }: { children: React.Rea
         href={`/pool/${params.id}/positions/create/manual`}
         className="text-center text-blue hover:underline text-sm mt-4"
       >
-        No thanks, i{`'`}ll manage the position myself.
+        No thanks, I{`'`}ll manage the position myself.
       </LinkInternal>
     </>
   )
