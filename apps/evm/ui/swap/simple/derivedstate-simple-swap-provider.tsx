@@ -13,7 +13,7 @@ import { useCarbonOffset } from 'lib/swap/useCarbonOffset'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
-import { SUPPORTED_CHAIN_IDS } from '../../../config'
+import { isSwapApiEnabledChainId, SUPPORTED_CHAIN_IDS } from '../../../config'
 
 const getTokenAsString = (token: Type | string) =>
   typeof token === 'string' ? token : token.isNative ? 'NATIVE' : token.wrapped.address
@@ -278,12 +278,15 @@ const useDerivedStateSimpleSwap = () => {
   return context
 }
 
+const SWAP_API_BASE_URL = process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL
+
 const useSimpleSwapTrade = () => {
-  const [isFallback, setIsFallback] = useState(false)
   const {
     state: { token0, chainId, swapAmount, token1, recipient },
   } = useDerivedStateSimpleSwap()
-
+  const [isFallback, setIsFallback] = useState(
+    !isSwapApiEnabledChainId(chainId) || (isSwapApiEnabledChainId(chainId) && typeof SWAP_API_BASE_URL === 'undefined')
+  )
   const [slippageTolerance] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
   const { data: feeData } = useFeeData({ chainId })

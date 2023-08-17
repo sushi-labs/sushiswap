@@ -6,6 +6,7 @@ import { HexString } from '@sushiswap/types'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { stringify } from 'viem'
+import { deserialize } from 'wagmi'
 
 import { usePrice } from '../prices'
 import { UseTradeParams, UseTradeQuerySelect, UseTradeReturnWriteArgs } from './types'
@@ -45,7 +46,8 @@ export const useTradeQuery = (
       params.searchParams.set('preferSushi', 'true')
 
       const res = await fetch(params.toString())
-      return tradeValidator.parse(await res.json())
+      const json = await res.json()
+      return tradeValidator.parse(deserialize(json))
     },
     refetchOnWindowFocus: true,
     refetchInterval: 2500,
@@ -64,6 +66,7 @@ export const useTrade = (variables: UseTradeParams) => {
 
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
+      // console.log('data.args', data?.args)
       if (data && amount && data.route && fromToken && toToken) {
         const amountIn = Amount.fromRawAmount(fromToken, data.route.amountInBI)
         const amountOut = Amount.fromRawAmount(toToken, data.route.amountOutBI)

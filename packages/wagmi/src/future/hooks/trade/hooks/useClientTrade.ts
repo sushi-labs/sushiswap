@@ -147,6 +147,8 @@ ${logPools}
           value = (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n
         }
 
+        console.log({ writeArgs })
+
         return new Promise((res) =>
           setTimeout(
             () =>
@@ -162,12 +164,13 @@ ${logPools}
                   : new Percent(0),
                 amountIn,
                 amountOut,
-                minAmountOut: writeArgs?.[3]
-                  ? Amount.fromRawAmount(toToken, writeArgs[3].toString())
-                  : Amount.fromRawAmount(
-                      toToken,
-                      calculateSlippageAmount(amountOut, new Percent(Math.floor(0.5 * 100), 10_000))[0]
-                    ),
+                minAmountOut:
+                  typeof writeArgs?.[3] === 'bigint'
+                    ? Amount.fromRawAmount(toToken, writeArgs[3])
+                    : Amount.fromRawAmount(
+                        toToken,
+                        calculateSlippageAmount(amountOut, new Percent(Math.floor(0.5 * 100), 10_000))[0]
+                      ),
                 gasSpent:
                   price && feeData.gasPrice
                     ? Amount.fromRawAmount(

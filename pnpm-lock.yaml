@@ -1788,6 +1788,7 @@ importers:
       express: 4.18.2
       typescript: 5.1.6
       viem: 1.6.0
+      wagmi: 1.3.10-cjs
       zod: 3.21.4
     dependencies:
       '@sentry/node': 7.63.0
@@ -1817,6 +1818,7 @@ importers:
       cors: 2.8.5
       express: 4.18.2
       typescript: 5.1.6
+      wagmi: 1.3.10-cjs_qjnanceizqmagmyk7joel72yym
       zod: 3.21.4
 
   packages/format:
@@ -2104,6 +2106,7 @@ importers:
       tsup: 7.1.0
       typescript: 5.1.6
       viem: 1.6.0
+      wagmi: 1.3.10
       zod: 3.21.4
     dependencies:
       '@ethersproject/address': 5.7.0
@@ -2125,6 +2128,7 @@ importers:
       idb-keyval: 6.2.0
       nanoid: 4.0.0
       viem: 1.6.0_zno6rcmvi3mruj4xg7lanqhjom
+      wagmi: 1.3.10_myqdxwbogxb7ukseeh5h3xzg4i
       zod: 3.21.4
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
@@ -3253,7 +3257,7 @@ packages:
     dependencies:
       '@fastify/deepmerge': 1.3.0
       ajv: 8.12.0
-      ajv-formats: 2.1.1
+      ajv-formats: 2.1.1_ajv@8.12.0
       fast-deep-equal: 3.1.3
       rfdc: 1.3.0
 
@@ -17143,6 +17147,22 @@ packages:
       use-sync-external-store: 1.2.0_react@18.2.0
     dev: false
 
+  /@tanstack/react-query/4.32.6:
+    resolution: {integrity: sha512-AITu/IKJJJXsHHeXNBy5bclu12t08usMCY0vFC2dh9SP/w6JAk5U9GwfjOIPj3p+ATADZvxQPe8UiCtMLNeQbg==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-native: '*'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      '@tanstack/query-core': 4.32.6
+      use-sync-external-store: 1.2.0
+    dev: true
+
   /@tanstack/react-query/4.32.6_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-AITu/IKJJJXsHHeXNBy5bclu12t08usMCY0vFC2dh9SP/w6JAk5U9GwfjOIPj3p+ATADZvxQPe8UiCtMLNeQbg==}
     peerDependencies:
@@ -19122,6 +19142,42 @@ packages:
       - zod
     dev: true
 
+  /@wagmi/connectors/2.7.0-cjs_usresoaca4ggu6rri7ocude2nm:
+    resolution: {integrity: sha512-d2kQnVkWFlTEobL9xRy4aWPDkUb2M6eMQgLhAUme0+Fn+yX++u19fP4cGr+SRP4ppB3slNwebA8qi/sl8X43sg==}
+    peerDependencies:
+      '@wagmi/chains': '>=1.7.0'
+      typescript: '>=5.0.4'
+      viem: '>=0.3.35'
+    peerDependenciesMeta:
+      '@wagmi/chains':
+        optional: true
+      typescript:
+        optional: true
+    dependencies:
+      '@coinbase/wallet-sdk': 3.7.1
+      '@ledgerhq/connect-kit-loader': 1.1.2
+      '@safe-global/safe-apps-provider': 0.17.1_zno6rcmvi3mruj4xg7lanqhjom
+      '@safe-global/safe-apps-sdk': 8.1.0_zno6rcmvi3mruj4xg7lanqhjom
+      '@wagmi/chains': 1.7.0-cjs_typescript@5.1.6
+      '@walletconnect/ethereum-provider': 2.9.2_@walletconnect+modal@2.6.1
+      '@walletconnect/legacy-provider': 2.0.0
+      '@walletconnect/modal': 2.6.1
+      '@walletconnect/utils': 2.9.2
+      abitype: 0.8.7_zno6rcmvi3mruj4xg7lanqhjom
+      eventemitter3: 4.0.7
+      typescript: 5.1.6
+      viem: 1.6.0_zno6rcmvi3mruj4xg7lanqhjom
+    transitivePeerDependencies:
+      - '@react-native-async-storage/async-storage'
+      - bufferutil
+      - encoding
+      - lokijs
+      - react
+      - supports-color
+      - utf-8-validate
+      - zod
+    dev: true
+
   /@wagmi/connectors/2.7.0_2wxudog7tnraiqvzlx5m6a7qae:
     resolution: {integrity: sha512-1KOL0HTJl5kzSC/YdKwFwiokr6poUQn1V/tcT0TpG3iH2x0lSM7FTkvCjVVY/6lKzTXrLlo9y2aE7AsOPnkvqg==}
     peerDependencies:
@@ -19333,6 +19389,35 @@ packages:
       - utf-8-validate
       - zod
     dev: false
+
+  /@wagmi/core/1.3.9-cjs_qjnanceizqmagmyk7joel72yym:
+    resolution: {integrity: sha512-IZk+ZZ0bShsl47zw8/ZykzQMd2l7bpiLe0bzlfDZ2JARJIvgF1q67e8PcjooEKQKcUEXPj8ZCIKSRtEMer1GxQ==}
+    peerDependencies:
+      typescript: '>=5.0.4'
+      viem: '>=0.3.35'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      '@wagmi/chains': 1.7.0-cjs_typescript@5.1.6
+      '@wagmi/connectors': 2.7.0-cjs_usresoaca4ggu6rri7ocude2nm
+      abitype: 0.8.7_zno6rcmvi3mruj4xg7lanqhjom
+      eventemitter3: 4.0.7
+      typescript: 5.1.6
+      viem: 1.6.0_zno6rcmvi3mruj4xg7lanqhjom
+      zustand: 4.4.1
+    transitivePeerDependencies:
+      - '@react-native-async-storage/async-storage'
+      - '@types/react'
+      - bufferutil
+      - encoding
+      - immer
+      - lokijs
+      - react
+      - supports-color
+      - utf-8-validate
+      - zod
+    dev: true
 
   /@wagmi/core/1.3.9-cjs_typescript@5.1.6:
     resolution: {integrity: sha512-IZk+ZZ0bShsl47zw8/ZykzQMd2l7bpiLe0bzlfDZ2JARJIvgF1q67e8PcjooEKQKcUEXPj8ZCIKSRtEMer1GxQ==}
@@ -20337,6 +20422,17 @@ packages:
 
   /ajv-formats/2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
+    peerDependenciesMeta:
+      ajv:
+        optional: true
+    dependencies:
+      ajv: 8.12.0
+    dev: false
+
+  /ajv-formats/2.1.1_ajv@8.12.0:
+    resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
+    peerDependencies:
+      ajv: ^8.0.0
     peerDependenciesMeta:
       ajv:
         optional: true
@@ -27186,7 +27282,7 @@ packages:
       '@whatwg-node/fetch': 0.8.8
       '@whatwg-node/server': 0.7.7
       ajv: 8.12.0
-      ajv-formats: 2.1.1
+      ajv-formats: 2.1.1_ajv@8.12.0
       hotscript: 1.0.13
       json-schema-to-ts: 2.9.2
       openapi-types: 12.1.3
@@ -41119,6 +41215,38 @@ packages:
     dependencies:
       xml-name-validator: 4.0.0
     dev: false
+
+  /wagmi/1.3.10-cjs_qjnanceizqmagmyk7joel72yym:
+    resolution: {integrity: sha512-IOE5EytnsPUkLQ1L7H2JoHdMy+alon9+U9/5qgXKUwSJrIRqztxgENTTnQqlWX4dxABudwK9ts9gJB71lzHzag==}
+    peerDependencies:
+      react: '>=17.0.0'
+      typescript: '>=5.0.4'
+      viem: '>=0.3.35'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      '@tanstack/query-sync-storage-persister': 4.32.6
+      '@tanstack/react-query': 4.32.6
+      '@tanstack/react-query-persist-client': 4.32.6_izs5bbiiyrkgk6gcbzwtdp5vim
+      '@wagmi/core': 1.3.9-cjs_qjnanceizqmagmyk7joel72yym
+      abitype: 0.8.7_zno6rcmvi3mruj4xg7lanqhjom
+      typescript: 5.1.6
+      use-sync-external-store: 1.2.0
+      viem: 1.6.0_zno6rcmvi3mruj4xg7lanqhjom
+    transitivePeerDependencies:
+      - '@react-native-async-storage/async-storage'
+      - '@types/react'
+      - bufferutil
+      - encoding
+      - immer
+      - lokijs
+      - react-dom
+      - react-native
+      - supports-color
+      - utf-8-validate
+      - zod
+    dev: true
 
   /wagmi/1.3.10_myqdxwbogxb7ukseeh5h3xzg4i:
     resolution: {integrity: sha512-MMGJcnxOmeUZWDmzUxgRGcB1cqxbJoSFSa+pNY4vBCWMz0n4ptpE5F8FKISLCx+BGoDwsaz2ldcMALcdJZ+29w==}
