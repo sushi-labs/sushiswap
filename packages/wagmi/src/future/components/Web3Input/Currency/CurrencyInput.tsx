@@ -96,12 +96,15 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   const isLoading = loading || currencyLoading || isBalanceLoading
   const _error = error ? error : insufficientBalance ? 'Exceeds Balance' : undefined
 
-  const _onChange = useCallback((value: string) => {
-    setLocalValue(value)
-    startTransition(() => {
-      onChange?.(value)
-    })
-  }, [])
+  const _onChange = useCallback(
+    (value: string) => {
+      setLocalValue(value)
+      startTransition(() => {
+        onChange?.(value)
+      })
+    },
+    [onChange]
+  )
 
   const selector = useMemo(() => {
     if (!onSelect) return null
