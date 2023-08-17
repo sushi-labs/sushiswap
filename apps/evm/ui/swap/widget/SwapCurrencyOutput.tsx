@@ -11,7 +11,7 @@ export const SwapCurrencyOutput: FC = () => {
   const { tokensLoading } = useTokenState()
   const { network0, token1, network1 } = useSwapState()
   const { setToken1 } = useSwapActions()
-  const { isInitialLoading: isLoading, isFetching, data: trade } = useTrade({ crossChain: network0 !== network1 })
+  const { isLoading, isFetching, data: trade } = useTrade({ crossChain: network0 !== network1 })
 
   return (
     <Web3Input.Currency

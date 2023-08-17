@@ -6,10 +6,9 @@
       "dependsOn": ["^build"],
       "env": [
         "ACADEMY_URL",
-        "ANALYTICS_URL",
         "ALCHEMY_ID",
         "BLOG_URL",
-        "EARN_URL",
+        "DRPC_ID",
         "FURO_URL",
         "TOKEN_LIST_PR_WEBHOOK_URL",
         "OCTOKIT_KEY",
@@ -28,6 +27,7 @@
         "ANVIL_BLOCK_NUMBER",
         "ANVIL_PORT",
         "ALCHEMY_ID",
+        "DRPC_ID",
         "TEST"
       ]
     },

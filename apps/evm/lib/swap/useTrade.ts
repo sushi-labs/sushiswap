@@ -4,7 +4,7 @@ import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap'
 import { useFeeData } from '@sushiswap/wagmi'
 import { useClientTrade } from '@sushiswap/wagmi/future/hooks'
 import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { log } from 'next-axiom'
+import { useLogger } from 'next-axiom'
 import { useMemo } from 'react'
 
 import { useSwapActions, useSwapState } from '../../ui/swap/trade/TradeProvider'
@@ -21,6 +21,7 @@ export function useTrade<T extends boolean>({
   crossChain: T
   enabled?: boolean
 }): ObjectType<T> {
+  const log = useLogger()
   const { value, token0, token1, network0, network1, amount, recipient, tradeId, isFallback } = useSwapState()
   const { setFallback } = useSwapActions()
   const [slippageTolerance] = useSlippageTolerance()
@@ -35,7 +36,7 @@ export function useTrade<T extends boolean>({
     toToken: token1,
     amount: amount,
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
-    gasPrice: feeData?.gasPrice?.toNumber(),
+    gasPrice: feeData?.gasPrice || undefined,
     recipient,
     enabled: Boolean(enabled && !crossChain && network0 === network1 && !isFallback && value),
     carbonOffset,
@@ -51,10 +52,13 @@ export function useTrade<T extends boolean>({
     toToken: token1,
     amount: amount,
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
-    gasPrice: feeData?.gasPrice?.toNumber(),
+    gasPrice: feeData?.gasPrice || undefined,
     recipient,
     enabled: Boolean(enabled && !crossChain && network0 === network1 && isFallback && value),
     carbonOffset,
+    onError: () => {
+      log.error('client trade error')
+    },
   })
 
   const crossChainTrade = useCrossChainTrade({

@@ -34,25 +34,19 @@ export const tradeValidator = z.object({
       swapPrice: z.number().optional(),
       priceImpact: z.number().optional(),
       amountIn: z.number(),
-      amountInBN: z.string(),
+      amountInBI: z.string(),
       amountOut: z.number(),
-      amountOutBN: z.string(),
+      amountOutBI: z.string(),
       legs: z.array(legValidator).optional(),
       gasSpent: z.number(),
       totalAmountOut: z.number(),
-      totalAmountOutBN: z.string(),
+      totalAmountOutBI: z.string(),
     })
     .optional(),
   args: z.optional(
     z.object({
-      amountIn: z.object({
-        type: z.string(),
-        hex: z.string(),
-      }),
-      amountOutMin: z.object({
-        type: z.string(),
-        hex: z.string(),
-      }),
+      amountIn: z.bigint(),
+      amountOutMin: z.bigint(),
       to: z.string(),
       tokenIn: z.string(),
       tokenOut: z.string(),

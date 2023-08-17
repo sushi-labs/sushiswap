@@ -7,7 +7,7 @@ import { BigNumber, Contract, Signer } from 'ethers'
 import { ethers } from 'hardhat'
 import seedrandom from 'seedrandom'
 
-import { setTokenBalance } from '../src/SetTokenBalance'
+import { setTokenBalance } from '../src/setTokenBalance'
 
 enum CurvePoolType {
   Legacy = 'Legacy', // 'exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) -> uint256'
@@ -257,9 +257,9 @@ async function createCurvePoolInfo(
 
 async function checkSwap(poolInfo: PoolInfo, from: number, to: number, amountIn: number, precision: number) {
   const expectedOut = poolInfo.poolTines.calcOutByIn(Math.round(amountIn), from < to)
-  let realOutBN: BigNumber
+  let realOutBI: BigNumber
   if (poolInfo.poolType !== CurvePoolType.LegacyV2 && poolInfo.poolType !== CurvePoolType.LegacyV3) {
-    realOutBN = await poolInfo.poolContract.callStatic.exchange(from, to, getBigNumber(amountIn), 0, {
+    realOutBI = await poolInfo.poolContract.callStatic.exchange(from, to, getBigNumber(amountIn), 0, {
       value: poolInfo.tokenContracts[from] === undefined ? getBigNumber(amountIn) : 0,
     })
   } else {
@@ -269,9 +269,9 @@ async function checkSwap(poolInfo: PoolInfo, from: number, to: number, amountIn:
       value: poolInfo.tokenContracts[from] === undefined ? getBigNumber(amountIn) : 0,
     })
     const balanceAfter = await poolInfo.tokenContracts[to]?.balanceOf(poolInfo.userAddress)
-    realOutBN = balanceAfter.sub(balanceBefore)
+    realOutBI = balanceAfter.sub(balanceBefore)
   }
-  const realOut = parseInt(realOutBN.toString())
+  const realOut = parseInt(realOutBI.toString())
 
   expectCloseValues(realOut, expectedOut.out, precision)
 }

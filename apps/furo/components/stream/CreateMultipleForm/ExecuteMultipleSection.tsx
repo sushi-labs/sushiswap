@@ -1,5 +1,4 @@
 import { AddressZero } from '@ethersproject/constants'
-import { TransactionRequest } from '@ethersproject/providers'
 import { bentoBoxV1Address } from '@sushiswap/bentobox'
 import { Amount, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
@@ -13,14 +12,17 @@ import {
   useAccount,
   useBentoBoxTotals,
   useFuroStreamRouterContract,
+  usePrepareSendTransaction,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { useSendTransaction } from '@sushiswap/wagmi'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import React, { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import React, { FC, useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { Hex } from 'viem'
 
 import { approveBentoBoxAction, batchAction, streamCreationAction, useDeepCompareMemoize } from '../../../lib'
 import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
@@ -81,7 +83,7 @@ export const ExecuteMultipleSection: FC<{
         type: 'createStream',
         chainId: chainId,
         txHash: data.hash,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Creating ${streams.length} streams`,
           completed: `Created ${streams.length} streams`,
@@ -94,66 +96,62 @@ export const ExecuteMultipleSection: FC<{
     [address, chainId, streams]
   )
 
-  const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!isReview || !contract || !address || !chainId || !streams || streams?.length === 0 || !rebases) return
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    if (!isReview || !contract || !address || !chainId || !streams || streams?.length === 0 || !rebases) return
 
-      const summedValue = summedAmounts[AddressZero] || Amount.fromRawAmount(Native.onChain(chainId), '0')
+    const summedValue = summedAmounts[AddressZero] || Amount.fromRawAmount(Native.onChain(chainId), '0')
 
-      const actions: string[] = []
+    const actions: Hex[] = []
 
-      if (signature) {
-        actions.push(approveBentoBoxAction({ contract, user: address, signature }))
+    if (signature) {
+      actions.push(approveBentoBoxAction({ user: address, signature }))
+    }
+
+    streams
+      .reduce<Hex[]>((acc, { recipient, dates, fundSource }, idx) => {
+        const _amount = _amounts[idx]
+        const _fundSource = ZFundSourceToFundSource.parse(fundSource)
+
+        if (recipient && _amount && dates?.startDate && dates?.endDate && rebases?.[_amount.currency.wrapped.address]) {
+          acc.push(
+            streamCreationAction({
+              recipient,
+              currency: _amount.currency,
+              startDate: dates.startDate,
+              endDate: dates.endDate,
+              amount: _amount,
+              fromBentobox: _fundSource === FundSource.BENTOBOX,
+              minShare: _amount.toShare(rebases[_amount.currency.wrapped.address]),
+            })
+          )
+        }
+
+        return acc
+      }, [])
+      .forEach((action) => actions.push(action))
+
+    if (actions.length > 0) {
+      return {
+        account: address,
+        to: contract?.address,
+        data: batchAction({ actions }),
+        value: summedValue.quotient,
       }
+    }
 
-      streams
-        .reduce<string[]>((acc, { recipient, dates, fundSource }, idx) => {
-          const _amount = _amounts[idx]
-          const _fundSource = ZFundSourceToFundSource.parse(fundSource)
+    return {}
+  }, [_amounts, address, chainId, contract, isReview, rebases, signature, streams, summedAmounts])
 
-          if (
-            recipient &&
-            _amount &&
-            dates?.startDate &&
-            dates?.endDate &&
-            rebases?.[_amount.currency.wrapped.address]
-          ) {
-            acc.push(
-              streamCreationAction({
-                contract,
-                recipient,
-                currency: _amount.currency,
-                startDate: dates.startDate,
-                endDate: dates.endDate,
-                amount: _amount,
-                fromBentobox: _fundSource === FundSource.BENTOBOX,
-                minShare: _amount.toShare(rebases[_amount.currency.wrapped.address]),
-              })
-            )
-          }
-
-          return acc
-        }, [])
-        .forEach((action) => actions.push(action))
-
-      if (actions.length > 0) {
-        setRequest({
-          from: address,
-          to: contract?.address,
-          data: batchAction({ contract, actions }),
-          value: summedValue.quotient.toString(),
-        })
-      }
-    },
-    [_amounts, address, chainId, contract, isReview, rebases, signature, streams, summedAmounts]
-  )
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
+    enabled: Boolean(isValid && !isValidating && isReview && approved),
+  })
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
-    chainId,
-    prepare,
+    ...config,
     onSettled,
     onSuccess: () => setSignature(undefined),
-    enabled: Boolean(isValid && !isValidating && isReview && approved),
   })
 
   const approveAmounts = useMemo(

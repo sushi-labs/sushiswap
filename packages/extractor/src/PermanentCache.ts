@@ -19,7 +19,7 @@ class Mutex {
 
   returnTurn() {
     const res = this.resolves.shift()
-    if (res == undefined) this.taken = false
+    if (res === undefined) this.taken = false
     else {
       res()
     }

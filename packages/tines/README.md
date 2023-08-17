@@ -79,7 +79,7 @@ Tines interface:
 function findMultiRouteExactIn(
   from: RToken,                                 // input token
   to: RToken,                                   // output token
-  amountIn: BigNumber | number,                 // amount of input tokens
+  amountIn: bigint | number,                    // amount of input tokens
   pools: RPool[],                               // List of pools that could be used in the multiroute
   baseTokenOrNetworks: RToken | NetworkInfo[],  // If RToken, then the main token of the network, used for gas prices
                                                 // For example, WETH for Ethereum.
@@ -95,7 +95,7 @@ function findMultiRouteExactIn(
 function findMultiRouteExactOut(
   from: RToken,
   to: RToken,
-  amountOut: BigNumber | number,
+  amountOut: bigint | number,
   pools: RPool[],
   baseTokenOrNetworks: RToken | NetworkInfo[],
   gasPrice?: number,
@@ -106,7 +106,7 @@ function findMultiRouteExactOut(
 function findSingleRouteExactIn(
   from: RToken,
   to: RToken,
-  amountIn: BigNumber | number,
+  amountIn: bigint | number,
   pools: RPool[],
   baseTokenOrNetworks: RToken | NetworkInfo[],
   gasPrice?: number
@@ -116,7 +116,7 @@ function findSingleRouteExactIn(
 function findSingleRouteExactOut(
   from: RToken,
   to: RToken,
-  amountOut: BigNumber | number,
+  amountOut: bigint | number,
   pools: RPool[],
   baseTokenOrNetworks: RToken | NetworkInfo[],
   gasPrice?: number

@@ -1,3 +1,4 @@
+import { Address, isAddress } from 'viem'
 import { z } from 'zod'
 
 import { SwapChainId } from '../../types'
@@ -45,7 +46,7 @@ export const queryParamsSchema = z.object({
   //   .nullable()
   //   .transform((arg) => (arg ? arg : 'SUSHI')),
   amount: z.optional(z.nullable(z.string())).transform((val) => val ?? ''),
-  recipient: z.optional(z.nullable(z.string())),
+  recipient: z.optional(z.nullable(z.string()).transform((val) => (val && isAddress(val) ? (val as Address) : null))),
   review: z.optional(z.nullable(z.boolean())),
 })
 // .transform((val) => ({
