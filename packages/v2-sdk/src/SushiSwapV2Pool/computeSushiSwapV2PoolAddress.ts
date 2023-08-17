@@ -25,6 +25,7 @@ export const computeSushiSwapV2PoolAddress = ({
   initCodeHashManualOverride?: string
 }): string => {
   const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA] // does safety checks
+  invariant(token0.chainId === token1.chainId, 'CHAIN_ID')
   invariant(initCodeHashManualOverride && isSushiSwapV2ChainId(token0.chainId), 'CHAIN_ID')
   invariant(initCodeHashManualOverride && isSushiSwapV2ChainId(token1.chainId), 'CHAIN_ID')
   return getCreate2Address(
