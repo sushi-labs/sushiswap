@@ -79,15 +79,13 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
   // Get the searchParams and complete with defaults.
   // This handles the case where some params might not be provided by the user
   const defaultedParams = useMemo(() => {
-    const params = new URLSearchParams(searchParams)
+    const params = new URLSearchParams(Array.from(searchParams.entries()))
 
     if (!params.has('chainId0'))
       params.set(
         'chainId0',
-        (chain
-          ? STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId)
-            ? chain.id
-            : ChainId.ETHEREUM
+        (chain?.id && STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId)
+          ? chain.id
           : ChainId.ETHEREUM
         ).toString()
       )
