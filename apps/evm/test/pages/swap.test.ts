@@ -49,7 +49,7 @@ test('Wrap and unwrap', async ({ page }) => {
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   test.slow()
 
-  await swap(page, native, sushi, '100')
+  await swap(page, native, sushi, '10')
   await maxSwap(page, sushi, native)
 })
 

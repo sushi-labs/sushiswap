@@ -12,6 +12,9 @@ import { usePrice } from '../prices'
 import { UseTradeParams, UseTradeQuerySelect, UseTradeReturnWriteArgs } from './types'
 import { tradeValidator } from './validator'
 
+const SWAP_BASE_URL =
+  process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com/v0'
+
 export const useTradeQuery = (
   { chainId, fromToken, toToken, amount, gasPrice = 50n, recipient, enabled, onError }: UseTradeParams,
   select: UseTradeQuerySelect
@@ -19,9 +22,7 @@ export const useTradeQuery = (
   return useQuery({
     queryKey: ['getTrade', { chainId, fromToken, toToken, amount, gasPrice, recipient }],
     queryFn: async () => {
-      const params = new URL(
-        process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com/v0'
-      )
+      const params = new URL(SWAP_BASE_URL)
       params.searchParams.set('chainId', `${chainId}`)
       params.searchParams.set(
         'tokenIn',
@@ -51,7 +52,8 @@ export const useTradeQuery = (
     refetchOnWindowFocus: true,
     refetchInterval: 2500,
     keepPreviousData: !!amount,
-    cacheTime: 0,
+    cacheTime: 0, // the length of time before inactive data gets removed from the cache
+    retry: false, // dont retry on failure, immediately fallback
     select,
     enabled: enabled && Boolean(chainId && fromToken && toToken && amount && gasPrice),
     onError,
@@ -65,6 +67,7 @@ export const useTrade = (variables: UseTradeParams) => {
 
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
+      // console.log('data.args', data?.args)
       if (data && amount && data.route && fromToken && toToken) {
         const amountIn = Amount.fromRawAmount(fromToken, data.route.amountInBI)
         const amountOut = Amount.fromRawAmount(toToken, data.route.amountOutBI)
