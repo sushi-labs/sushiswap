@@ -81,7 +81,11 @@ async function main() {
     nativeProviders.set(chainId, nativeProvider)
   }
 
-  app.use(cors())
+  app.use(
+    cors({
+      origin: 'https://www.sushi.com',
+    })
+  )
 
   // Trace incoming requests
   app.use(Sentry.Handlers.requestHandler())
