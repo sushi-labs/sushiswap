@@ -30,7 +30,6 @@ import { List } from '@sushiswap/ui/components/list/List'
 import { SkeletonBox, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
-  serialize,
   useAccount,
   useContractWrite,
   useNetwork,
@@ -44,6 +43,7 @@ import { APPROVE_TAG_SWAP } from 'lib/constants'
 import { warningSeverity, warningSeverityClassName } from 'lib/swap/warningSeverity'
 import { log } from 'next-axiom'
 import React, { FC, ReactNode, useCallback } from 'react'
+import { stringify } from 'viem'
 
 import { TradeRoutePathView } from '../trade-route-path-view'
 import { useDerivedStateSimpleSwap, useSimpleSwapTrade } from './derivedstate-simple-swap-provider'
@@ -95,9 +95,9 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
       }
 
       log.error('swap prepare error', {
-        route: serialize(trade?.route),
+        route: stringify(trade?.route),
         slippageTolerance,
-        error: error,
+        error: stringify(error),
       })
     },
   })
@@ -170,7 +170,7 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
                 chainId: chainId,
                 txHash: data.hash,
                 exporerLink: Chain.txUrl(chainId, data.hash),
-                route: serialize(trade?.route),
+                route: stringify(trade?.route),
               })
             } else if (
               trade?.route?.legs?.some(
@@ -194,7 +194,7 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
                 chainId: chainId,
                 txHash: data.hash,
                 exporerLink: Chain.txUrl(chainId, data.hash),
-                route: serialize(trade?.route),
+                route: stringify(trade?.route),
               })
             } else if (
               trade?.route?.legs?.every(
@@ -210,15 +210,15 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
                 chainId: chainId,
                 txHash: data.hash,
                 exporerLink: Chain.txUrl(chainId, data.hash),
-                route: serialize(trade?.route),
+                route: stringify(trade?.route),
               })
             } else {
               log.info('unknown', {
                 chainId: chainId,
                 txHash: data.hash,
                 exporerLink: Chain.txUrl(chainId, data.hash),
-                route: serialize(trade?.route),
-                args: serialize(trade?.writeArgs),
+                route: stringify(trade?.route),
+                args: stringify(trade?.writeArgs),
               })
             }
           } else {
@@ -235,7 +235,7 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
               log.error('internal route', {
                 chainId: chainId,
                 txHash: data.hash,
-                route: serialize(trade?.route),
+                route: stringify(trade?.route),
               })
             } else if (
               trade?.route?.legs?.some(
@@ -258,7 +258,7 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
               log.error('mix route', {
                 chainId: chainId,
                 txHash: data.hash,
-                route: serialize(trade?.route),
+                route: stringify(trade?.route),
               })
             } else if (
               trade?.route?.legs?.every(
@@ -273,14 +273,14 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
               log.error('external route', {
                 chainId: chainId,
                 txHash: data.hash,
-                route: serialize(trade?.route),
+                route: stringify(trade?.route),
               })
             } else {
               log.error('unknown', {
                 chainId: chainId,
                 txHash: data.hash,
-                route: serialize(trade?.route),
-                args: serialize(trade?.writeArgs),
+                route: stringify(trade?.route),
+                args: stringify(trade?.writeArgs),
               })
             }
           }
@@ -293,9 +293,9 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
     onError: (error) => {
       if (error.message.startsWith('user rejected transaction')) return
       log.error('swap error', {
-        route: serialize(trade?.route),
-        args: serialize(trade?.writeArgs),
-        error,
+        route: stringify(trade?.route),
+        args: stringify(trade?.writeArgs),
+        error: stringify(error),
       })
       createErrorToast(error.message, false)
     },
