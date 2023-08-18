@@ -47,6 +47,7 @@
     "@sushiswap/router": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
     "@sushiswap/stargate": "workspace:*",
+    "@sushiswap/steer-sdk": "workspace:*",
     "@sushiswap/sushixswap": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/tines": "workspace:*",
@@ -93,7 +94,7 @@
     "react-slider": "2.0.4",
     "react-virtualized-auto-sizer": "1.0.7",
     "swr": "2.1.5",
-    "viem": "1.0.2",
+    "viem": "1.6.2",
     "wagmi": "legacy-v0",
     "zod": "3.21.4"
   },

@@ -16,19 +16,17 @@ import {
 import { useEffect, useRef } from 'react'
 
 import { SteerStrategyConfig } from '../constants'
-import { useNextAdjustmentCountdown } from '../hooks/useNextAdjustmentCountdown'
+import { SteerStrategyLiquidityDistribution } from '../LiquidityChart/SteerStrategyLiquidityDistribution'
 import { SteerStrategyComponent } from '.'
 
 export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
   vault,
-  generic: { priceExtremes, tokenRatios },
+  generic: { priceExtremes, tokenRatios, adjustment, positions },
 }) => {
   const container = useRef<HTMLDivElement>(null)
   useEffect(() => {
     container.current?.scrollIntoView({ behavior: 'smooth' })
   }, [])
-
-  const nextAdjustment = useNextAdjustmentCountdown(vault)
 
   return (
     <Container ref={container} maxWidth="5xl" className="px-2 sm:px-4">
@@ -70,24 +68,24 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
             <Stat className="px-6 py-3">
               <StatLabel size="sm">Adjustment frequency</StatLabel>
               {/* TODO: Improve */}
-              <StatValue size="sm">Every {Math.floor(vault.adjustmentFrequency / 3600)} Hours</StatValue>
+              <StatValue size="sm">Every {adjustment.frequency}</StatValue>
             </Stat>
             <Stat className="px-6 py-3">
-              <StatLabel size="sm">Next Adjustment</StatLabel>
-              <StatValue size="sm">{nextAdjustment}s</StatValue>
+              <StatLabel size="sm">{adjustment.next.includes('ago') ? 'Last' : 'Next'} Adjustment</StatLabel>
+              <StatValue size="sm">{adjustment.next}</StatValue>
             </Stat>
             <Stat className="px-6 py-3">
               <StatLabel size="sm">Liquidity pool fee</StatLabel>
               <StatValue size="sm">{formatPercent(vault.pool.swapFee)}</StatValue>
             </Stat>
-            <Stat className="px-6 py-3">
+            {/* <Stat className="px-6 py-3">
               <StatLabel size="sm">Time frame</StatLabel>
               <StatValue size="sm">20 days</StatValue>
             </Stat>
             <Stat className="px-6 py-3">
               <StatLabel size="sm">Deviation</StatLabel>
               <StatValue size="sm">2</StatValue>
-            </Stat>
+            </Stat> */}
             <Stat className="px-6 py-3">
               <StatLabel size="sm">Management fee</StatLabel>
               <StatValue size="sm">{formatPercent(vault.performanceFee)}</StatValue>
@@ -98,8 +96,9 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
             <CardTitle>Liquidity Distribution</CardTitle>
           </CardHeader>
           <div className="px-6">
-            <div className="h-[200px] bg-secondary rounded-xl flex items-center justify-center">
-              <span className="text-xs text-muted-foreground">Liquidity distribution here</span>
+            <div className="h-[200px] w-full bg-secondary rounded-xl flex items-center justify-center">
+              {/* <span className="text-xs text-muted-foreground">Liquidity distribution here</span> */}
+              <SteerStrategyLiquidityDistribution pool={vault.pool} positions={positions} />
             </div>
           </div>
           <div className="grid grid-cols-2">

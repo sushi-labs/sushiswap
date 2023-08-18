@@ -18,6 +18,15 @@ export interface SteerStrategyGeneric {
     min: string
     max: string
   }
+  adjustment: {
+    next: string
+    frequency: string
+  }
+  positions: {
+    lowerTick: bigint
+    upperTick: bigint
+    relativeWeight: bigint
+  }[]
 }
 
 export type SteerStrategyComponent = FC<{

@@ -1,9 +1,9 @@
 import { steerMultiPositionManager } from '@sushiswap/abi'
 import { getChainIdAddressFromId } from '@sushiswap/format'
-import { readContracts } from '@wagmi/core'
+import { PublicClient } from 'viem'
 
-async function getSteerVaultsPositions(vaultIds: string[]) {
-  const result = await readContracts({
+async function getSteerVaultsPositions(client: PublicClient, vaultIds: string[]) {
+  const result = await client.multicall({
     allowFailure: true,
     contracts: vaultIds.map((id) => {
       const { chainId, address } = getChainIdAddressFromId(id)
@@ -18,20 +18,22 @@ async function getSteerVaultsPositions(vaultIds: string[]) {
   })
 
   return result.map((res) => {
-    const lowerTicks = res[0]
-    const upperTicks = res[1]
-    const relativeWeights = res[2]
+    if (!res.result) return null
 
-    return res.map((_, i) => ({
+    const lowerTicks = res.result[0]
+    const upperTicks = res.result[1]
+    const relativeWeights = res.result[2]
+
+    return lowerTicks.map((_, i) => ({
       lowerTick: BigInt(lowerTicks[i].toString()),
       upperTick: BigInt(upperTicks[i].toString()),
-      liquidity: BigInt(relativeWeights[i].toString()),
+      relativeWeight: BigInt(relativeWeights[i].toString()),
     }))
   })
 }
 
-async function getSteerVaultPositions(vaultId: string) {
-  return (await getSteerVaultsPositions([vaultId]))[0]
+async function getSteerVaultPositions(client: PublicClient, vaultId: string) {
+  return (await getSteerVaultsPositions(client, [vaultId]))[0]
 }
 
 export { getSteerVaultPositions, getSteerVaultsPositions }

@@ -5,19 +5,15 @@ import { useCallback, useMemo } from 'react'
 
 import { ChartEntry } from './types'
 
-export function useDensityChartData({
-  chainId,
-  token0,
-  token1,
-  feeAmount,
-  enabled = true,
-}: {
+interface UseDensityChartData {
   chainId: SushiSwapV3ChainId
   token0: Type | undefined
   token1: Type | undefined
   feeAmount: FeeAmount | undefined
   enabled?: boolean
-}) {
+}
+
+export function useDensityChartData({ chainId, token0, token1, feeAmount, enabled = true }: UseDensityChartData) {
   const { isLoading, error, data } = useConcentratedActiveLiquidity({
     chainId,
     token0,

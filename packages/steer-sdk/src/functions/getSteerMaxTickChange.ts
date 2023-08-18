@@ -1,9 +1,9 @@
 import { steerMultiPositionManager } from '@sushiswap/abi'
 import { getChainIdAddressFromId } from '@sushiswap/format'
-import { readContracts } from '@wagmi/core'
+import { PublicClient } from 'viem'
 
-async function getSteerVaultsMaxTickChange(vaultIds: string[]) {
-  const result = await readContracts({
+async function getSteerVaultsMaxTickChange(client: PublicClient, vaultIds: string[]) {
+  const result = await client.multicall({
     allowFailure: true,
     contracts: vaultIds.map((id) => {
       const { chainId, address } = getChainIdAddressFromId(id)
@@ -17,11 +17,11 @@ async function getSteerVaultsMaxTickChange(vaultIds: string[]) {
     }),
   })
 
-  return result.map((r) => BigInt(r))
+  return result.map((r) => (r.result ? BigInt(r.result) : null))
 }
 
-async function getSteerVaultMaxTickChange(vaultId: string) {
-  return (await getSteerVaultsMaxTickChange([vaultId]))[0]
+async function getSteerVaultMaxTickChange(client: PublicClient, vaultId: string) {
+  return (await getSteerVaultsMaxTickChange(client, [vaultId]))[0]
 }
 
 export { getSteerVaultMaxTickChange, getSteerVaultsMaxTickChange }

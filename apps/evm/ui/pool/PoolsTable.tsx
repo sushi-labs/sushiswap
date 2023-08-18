@@ -1,7 +1,8 @@
 'use client'
 
 import { Slot } from '@radix-ui/react-slot'
-import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/client'
+import { GetPoolsArgs, Pool } from '@sushiswap/client'
+import { usePoolCount, usePoolsInfinite } from '@sushiswap/client/hooks'
 import { Card, CardHeader, CardTitle, DataTable, Loader } from '@sushiswap/ui'
 import { ColumnDef, Row, SortingState, TableState } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'

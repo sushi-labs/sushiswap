@@ -1,5 +1,4 @@
 import { SteerStrategyComponent } from '.'
+import { SteerElasticExpansionStrategy } from './SteerElasticExpansionStrategy'
 
-export const SteerDeltaNeutralStablesStrategy: SteerStrategyComponent = () => {
-  return <></>
-}
+export const SteerDeltaNeutralStablesStrategy: SteerStrategyComponent = SteerElasticExpansionStrategy
