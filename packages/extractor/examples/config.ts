@@ -22,7 +22,7 @@ import { Address, createPublicClient } from 'viem'
 import { LogFilterType } from '../src/LogFilter2'
 
 export const SUPPORTED_CHAIN_IDS = [
-  ChainId.ARBITRUM,
+  // ChainId.ARBITRUM,
   // ChainId.ARBITRUM_NOVA,
   // ChainId.AVALANCHE,
   // ChainId.BOBA,
@@ -32,10 +32,10 @@ export const SUPPORTED_CHAIN_IDS = [
   // ChainId.CELO,
   ChainId.ETHEREUM,
   // ChainId.FANTOM,
-  ChainId.OPTIMISM,
-  ChainId.POLYGON,
+  // ChainId.OPTIMISM,
+  // ChainId.POLYGON,
   // ChainId.POLYGON_ZKEVM,
-  ChainId.BASE,
+  // ChainId.BASE,
 ] as const
 
 export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number]
