@@ -86,7 +86,7 @@ async function extractChain(chainId: SteerChainId) {
       const [payloadP, aprP] = await Promise.allSettled([getPayload(vault.payloadIpfs), getApr(chainId, vault.id)])
 
       const payload = isPromiseFulfilled(payloadP) ? payloadP.value : null
-      const apr = isPromiseFulfilled(aprP) ? aprP.value.apr : '0'
+      const apr = isPromiseFulfilled(aprP) ? aprP.value.apr / 100 : '0'
 
       return {
         ...vault,
