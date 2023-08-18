@@ -12,7 +12,7 @@ export interface UseTradeParams {
   fromToken: Type | undefined
   toToken: Type | undefined
   amount: Amount<Type> | undefined
-  gasPrice?: bigint | null | undefined
+  gasPrice?: bigint
   slippagePercentage: string
   recipient: Address | undefined
   enabled: boolean

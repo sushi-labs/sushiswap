@@ -1,11 +1,11 @@
-import { Amount, Type } from '@sushiswap/currency'
-import { ButtonProps } from '@sushiswap/ui/components/button'
 import React, { FC } from 'react'
+import { ButtonProps } from '@sushiswap/ui/components/button'
+import { Amount, Type } from '@sushiswap/currency'
 import { Address } from 'wagmi'
-
+import dynamic from 'next/dynamic'
 import { ApproveERC20 } from './ApproveERC20'
 
-interface ApproveERC20MultipleProps extends ButtonProps {
+export interface ApproveERC20MultipleProps extends ButtonProps {
   id: string
   amounts: { amount: Amount<Type>; contract: Address }[]
   enabled?: boolean
@@ -15,33 +15,21 @@ interface ApproveERC20MultipleProps extends ButtonProps {
 /*
  * Recursive component for multiple ApproveERC20s
  */
-const ApproveERC20Multiple: FC<ApproveERC20MultipleProps> = ({
-  fullWidth = true,
-  size = 'xl',
-  index,
-  id,
-  amounts,
-  children,
-  ...props
-}) => {
+export const Component: FC<ApproveERC20MultipleProps> = ({    fullWidth = true,
+                                                           size = 'xl', index, id, amounts, children, ...props }) => {
   if (amounts === undefined) return <>{children}</>
   const _index = typeof index === 'number' ? index : amounts.length - 1
   if (_index < 0) return <>{children}</>
 
   return (
-    <ApproveERC20
-      {...props}
-      fullWidth={fullWidth}
-      size={size}
-      id={`${id}-${_index}`}
-      amount={amounts[_index].amount}
-      contract={amounts[_index].contract}
-    >
-      <ApproveERC20Multiple {...props} index={_index - 1} id={id} amounts={amounts}>
+    <ApproveERC20 {...props} fullWidth={fullWidth} size={size} id={`${id}-${_index}`} amount={amounts[_index].amount} contract={amounts[_index].contract}>
+      <Component {...props} index={_index - 1} id={id} amounts={amounts}>
         {children}
-      </ApproveERC20Multiple>
+      </Component>
     </ApproveERC20>
   )
 }
 
-export { ApproveERC20Multiple, type ApproveERC20MultipleProps }
+export const ApproveERC20Multiple = dynamic(() => Promise.resolve(Component), {
+  ssr: false,
+})

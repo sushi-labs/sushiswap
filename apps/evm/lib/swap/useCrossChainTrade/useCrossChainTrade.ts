@@ -394,7 +394,7 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
         overrides: undefined,
       }
     },
-    [feeData?.gasPrice, token0, token1]
+    [feeData?.gasPrice, price, token0, token1, variables.network0]
   )
 
   return useCrossChainTradeQuery(variables, select)

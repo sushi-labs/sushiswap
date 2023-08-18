@@ -7,7 +7,6 @@ import cors from 'cors'
 import express, { Express, Request, Response } from 'express'
 import path from 'path'
 import { Address } from 'viem'
-import { serialize } from 'wagmi'
 import z from 'zod'
 
 import { Extractor, MultiCallAggregator, TokenManager, WarningLevel } from '../src'
@@ -134,37 +133,35 @@ async function main() {
       gasPrice ?? 30e9
     )
 
-    return res.json(
-      serialize({
-        route: {
-          status: bestRoute?.status,
-          fromToken: bestRoute?.fromToken?.address === '' ? Native.onChain(chainId) : bestRoute?.fromToken,
-          toToken: bestRoute?.toToken?.address === '' ? Native.onChain(chainId) : bestRoute?.toToken,
-          primaryPrice: bestRoute?.primaryPrice,
-          swapPrice: bestRoute?.swapPrice,
-          amountIn: bestRoute?.amountIn,
-          amountInBI: bestRoute?.amountInBI,
-          amountOut: bestRoute?.amountOut,
-          amountOutBI: bestRoute?.amountOutBI,
-          priceImpact: bestRoute?.priceImpact,
-          totalAmountOut: bestRoute?.totalAmountOut,
-          totalAmountOutBI: bestRoute?.totalAmountOutBI,
-          gasSpent: bestRoute?.gasSpent,
-          legs: bestRoute?.legs,
-        },
-        args: to
-          ? Router.routeProcessor3Params(
-              poolCodesMap,
-              bestRoute,
-              tokenIn,
-              tokenOut,
-              to,
-              ROUTE_PROCESSOR_3_ADDRESS[chainId],
-              []
-            )
-          : undefined,
-      })
-    )
+    return res.json({
+      route: {
+        status: bestRoute?.status,
+        fromToken: bestRoute?.fromToken?.address === '' ? Native.onChain(chainId) : bestRoute?.fromToken,
+        toToken: bestRoute?.toToken?.address === '' ? Native.onChain(chainId) : bestRoute?.toToken,
+        primaryPrice: bestRoute?.primaryPrice,
+        swapPrice: bestRoute?.swapPrice,
+        amountIn: bestRoute?.amountIn,
+        amountInBI: bestRoute?.amountInBI.toString(),
+        amountOut: bestRoute?.amountOut,
+        amountOutBI: bestRoute?.amountOutBI.toString(),
+        priceImpact: bestRoute?.priceImpact,
+        totalAmountOut: bestRoute?.totalAmountOut,
+        totalAmountOutBI: bestRoute?.totalAmountOutBI.toString(),
+        gasSpent: bestRoute?.gasSpent,
+        legs: bestRoute?.legs,
+      },
+      args: to
+        ? Router.routeProcessor3Params(
+            poolCodesMap,
+            bestRoute,
+            tokenIn,
+            tokenOut,
+            to,
+            ROUTE_PROCESSOR_3_ADDRESS[chainId],
+            []
+          )
+        : undefined,
+    })
   })
 
   app.get('/health', (req: Request, res: Response) => {

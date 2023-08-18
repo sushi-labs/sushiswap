@@ -31,7 +31,6 @@ describe('computePoolAddress', () => {
     const address = computeTridentStablePoolAddress({
       factoryAddress: tridentStablePoolFactoryAddress[ChainId.OPTIMISM],
       tokenA,
-      
       tokenB,
       fee,
     })

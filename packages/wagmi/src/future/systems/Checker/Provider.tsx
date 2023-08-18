@@ -1,8 +1,9 @@
 'use client'
 
-import { watchAccount, watchNetwork } from '@wagmi/core'
 import React, { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { Signature } from 'viem'
+
+import { watchAccount, watchNetwork } from '../../../actions'
 
 type CheckerContext = {
   state: Record<string, boolean>
@@ -13,7 +14,7 @@ type CheckerContext = {
 
 const CheckerContext = createContext<CheckerContext | undefined>(undefined)
 
-interface ProviderProps {
+export interface ProviderProps {
   children: ReactNode
 }
 
@@ -24,7 +25,7 @@ interface State {
 
 const initialState = { state: {}, signatureState: {} }
 
-const CheckerProvider: FC<ProviderProps> = ({ children }) => {
+export const CheckerProvider: FC<ProviderProps> = ({ children }) => {
   const [{ state, signatureState }, setState] = useState<State>(initialState)
 
   const setApproved = useCallback((tag: string, approved: boolean) => {
@@ -70,9 +71,9 @@ const CheckerProvider: FC<ProviderProps> = ({ children }) => {
   )
 }
 
-const useCheckerContext = () => useContext(CheckerContext)
+export const useCheckerContext = () => useContext(CheckerContext)
 
-const useApproved = (tag: string) => {
+export const useApproved = (tag: string) => {
   const context = useCheckerContext()
   if (!context) {
     throw new Error('Hook can only be used inside Checker Context')
@@ -87,7 +88,7 @@ const useApproved = (tag: string) => {
   )
 }
 
-const useSignature = (tag: string) => {
+export const useSignature = (tag: string) => {
   const context = useCheckerContext()
   if (!context) {
     throw new Error('Hook can only be used inside Checker Context')
@@ -104,7 +105,7 @@ const useSignature = (tag: string) => {
 
 // HOC component
 // useful for when the useApproved hook and the Checker.Success component are in the same component
-const withCheckerRoot = <P extends object>(Component: React.FunctionComponent<P>): FC<P> =>
+export const withCheckerRoot = <P extends object>(Component: React.FunctionComponent<P>): FC<P> =>
   function WithCheckerRootComponent(props: P) {
     return (
       <CheckerProvider>
@@ -112,13 +113,3 @@ const withCheckerRoot = <P extends object>(Component: React.FunctionComponent<P>
       </CheckerProvider>
     )
   }
-
-export {
-  type CheckerContext,
-  CheckerProvider,
-  type ProviderProps,
-  useApproved,
-  useCheckerContext,
-  useSignature,
-  withCheckerRoot,
-}

@@ -1,12 +1,12 @@
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import React, { FC } from 'react'
 
-interface GuardProps extends ButtonProps {
+export interface GuardProps extends ButtonProps {
   guardWhen: boolean
   guardText: string
 }
 
-const Guard: FC<GuardProps> = ({ guardWhen, guardText, children, fullWidth = true, size = 'xl', ...props }) => {
+export const Guard: FC<GuardProps> = ({ guardWhen, guardText, children, fullWidth = true, size = 'xl', ...props }) => {
   if (guardWhen) {
     return (
       <Button size={size} fullWidth={fullWidth} disabled {...props}>
@@ -17,5 +17,3 @@ const Guard: FC<GuardProps> = ({ guardWhen, guardText, children, fullWidth = tru
 
   return <>{children}</>
 }
-
-export { Guard, type GuardProps }

@@ -304,12 +304,12 @@ export const EXTRACTOR_CONFIG = {
   [ChainId.OPTIMISM]: {
     client: createPublicClient(config[ChainId.OPTIMISM]),
     factoriesV2: [
-      // {
-      //   address: '0xedfad3a0F42A8920B011bb0332aDe632e552d846' as Address,
-      //   provider: LiquidityProviders.Elk,
-      //   fee: 0.003,
-      //   initCodeHash: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
-      // },
+      {
+        address: '0xedfad3a0F42A8920B011bb0332aDe632e552d846' as Address,
+        provider: LiquidityProviders.Elk,
+        fee: 0.003,
+        initCodeHash: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
+      },
     ],
     factoriesV3: [uniswapV3Factory(ChainId.OPTIMISM), sushiswapV3Factory(ChainId.OPTIMISM)],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.OPTIMISM],

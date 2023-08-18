@@ -1,15 +1,18 @@
 'use client'
 
 import { ThemeProvider } from '@sushiswap/ui'
-import { CheckerProvider } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { DeferUntilWalletReady } from 'ui/swap/defer-until-wallet-ready'
+import { SplashController } from 'ui/swap/SplashController'
+import { TokenProvider } from 'ui/swap/token/TokenProvider'
+import { SwapProvider } from 'ui/swap/trade/TradeProvider'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
-      <DeferUntilWalletReady>
-        <CheckerProvider>{children}</CheckerProvider>
-      </DeferUntilWalletReady>
+      <SplashController>
+        <TokenProvider>
+          <SwapProvider>{children}</SwapProvider>
+        </TokenProvider>
+      </SplashController>
     </ThemeProvider>
   )
 }

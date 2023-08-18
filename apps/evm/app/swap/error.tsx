@@ -7,8 +7,9 @@ export default function SwapError({ error, reset }: { error: Error; reset: () =>
   const log = useLogger()
   useEffect(() => {
     // Log the error to an error reporting service
-    log.error('swap page error', error)
+    log.error('swap error', error)
   }, [log, error])
+
   return (
     <div>
       <h2>Something went wrong!</h2>

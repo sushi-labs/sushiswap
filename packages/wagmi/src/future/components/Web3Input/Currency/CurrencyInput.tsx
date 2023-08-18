@@ -1,12 +1,11 @@
-'use client'
-
 import { ChainId } from '@sushiswap/chain'
 import { Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { usePrice } from '@sushiswap/react-query'
 import { Button, classNames, SelectIcon, TextField } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
-import { FC, useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
+import dynamic from 'next/dynamic'
+import { FC, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useBalanceWeb3 } from '../../../hooks'
@@ -36,7 +35,7 @@ interface CurrencyInputProps {
   hideSearch?: boolean
 }
 
-const CurrencyInput: FC<CurrencyInputProps> = ({
+const Component: FC<CurrencyInputProps> = ({
   id,
   disabled,
   value,
@@ -57,10 +56,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   hideSearch = false,
   fetching,
 }) => {
-  const [localValue, setLocalValue] = useState<string>('')
   const { address } = useAccount()
-  const [pending, startTransition] = useTransition()
-
   const inputRef = useRef<HTMLInputElement>(null)
   const focusInput = useCallback(() => {
     if (disabled) return
@@ -95,16 +91,6 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
 
   const isLoading = loading || currencyLoading || isBalanceLoading
   const _error = error ? error : insufficientBalance ? 'Exceeds Balance' : undefined
-
-  const _onChange = useCallback(
-    (value: string) => {
-      setLocalValue(value)
-      startTransition(() => {
-        onChange?.(value)
-      })
-    },
-    [onChange]
-  )
 
   const selector = useMemo(() => {
     if (!onSelect) return null
@@ -176,8 +162,8 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
             ref={inputRef}
             variant="naked"
             disabled={disabled}
-            onValueChange={_onChange}
-            value={pending ? localValue : value}
+            onValueChange={onChange}
+            value={value}
             readOnly={disabled}
             maxDecimals={currency?.decimals}
             data-state={isLoading ? 'inactive' : 'active'}
@@ -230,5 +216,9 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     </div>
   )
 }
+
+const CurrencyInput = dynamic(() => Promise.resolve(Component), {
+  ssr: false,
+})
 
 export { CurrencyInput, type CurrencyInputProps }
