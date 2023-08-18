@@ -1786,6 +1786,7 @@ importers:
       cors: 2.8.5
       ethers: 5.7.2
       express: 4.18.2
+      express-rate-limit: 6.9.0
       typescript: 5.1.6
       viem: 1.6.0
       wagmi: 1.3.10-cjs
@@ -1817,6 +1818,7 @@ importers:
       artillery: 2.0.0-35_j2tenfqo3ojkwe6mxlyxo4e3lm
       cors: 2.8.5
       express: 4.18.2
+      express-rate-limit: 6.9.0_express@4.18.2
       typescript: 5.1.6
       wagmi: 1.3.10-cjs_qjnanceizqmagmyk7joel72yym
       zod: 3.21.4
@@ -26963,6 +26965,15 @@ packages:
       jest-matcher-utils: 29.6.2
       jest-message-util: 29.6.2
       jest-util: 29.6.2
+    dev: true
+
+  /express-rate-limit/6.9.0_express@4.18.2:
+    resolution: {integrity: sha512-AnISR3V8qy4gpKM62/TzYdoFO9NV84fBx0POXzTryHU/qGUJBWuVGd+JhbvtVmKBv37t8/afmqdnv16xWoQxag==}
+    engines: {node: '>= 14.0.0'}
+    peerDependencies:
+      express: ^4 || ^5
+    dependencies:
+      express: 4.18.2
     dev: true
 
   /express/4.18.2:

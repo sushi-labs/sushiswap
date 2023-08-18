@@ -5,6 +5,7 @@ import { NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import cors from 'cors'
 import express, { Express, Request, Response } from 'express'
+import rateLimit from 'express-rate-limit'
 import path from 'path'
 import { Address } from 'viem'
 import { serialize } from 'wagmi'
@@ -82,6 +83,16 @@ async function main() {
   }
 
   app.use(cors())
+
+  app.use(
+    rateLimit({
+      windowMs: 60 * 1000, // 1 minute
+      max: 50, // Limit each IP to 50 requests per `window` (here, per 1 minutes)
+      standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+      legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+      // store: ... , // Use an external store for more precise rate limiting
+    })
+  )
 
   // Trace incoming requests
   app.use(Sentry.Handlers.requestHandler())
