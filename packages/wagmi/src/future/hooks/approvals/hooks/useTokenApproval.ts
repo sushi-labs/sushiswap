@@ -1,8 +1,8 @@
 import { Amount, Type } from '@sushiswap/currency'
+import { MAX_UINT256 } from '@sushiswap/math'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { useCallback, useMemo, useState } from 'react'
 import { UserRejectedRequestError } from 'viem'
-import { maxUint256 } from 'viem'
 import { Address, erc20ABI, useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
@@ -48,7 +48,7 @@ export const useTokenApproval = ({
     abi: erc20ABI,
     address: amount?.currency?.wrapped?.address as Address,
     functionName: 'approve',
-    args: [spender as Address, approveMax ? maxUint256 : amount ? amount.quotient : 0n],
+    args: [spender as Address, approveMax ? MAX_UINT256 : amount ? amount.quotient : 0n],
     enabled: Boolean(amount && spender && address && allowance && enabled && !isAllowanceLoading),
   })
 
