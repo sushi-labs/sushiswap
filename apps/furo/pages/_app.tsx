@@ -6,6 +6,7 @@ import { GlobalFooter } from '@sushiswap/ui/components/global-footer'
 import { OnramperProvider } from '@sushiswap/ui/components/onramper'
 import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
 import { config, WagmiConfig } from '@sushiswap/wagmi'
+import { WagmiStoreVersionCheck } from '@sushiswap/wagmi/future'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Analytics } from '@vercel/analytics/react'
 import type { AppProps } from 'next/app'
@@ -53,14 +54,16 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       </Head>
       <WagmiConfig config={config}>
         <QueryClientProvider client={queryClient}>
-          <ThemeProvider>
-            <OnramperProvider>
-              <DefaultSeo {...SEO} />
-              <Header />
-              <Component {...pageProps} />
-              <GlobalFooter maxWidth="6xl" />
-            </OnramperProvider>
-          </ThemeProvider>
+          <WagmiStoreVersionCheck>
+            <ThemeProvider>
+              <OnramperProvider>
+                <DefaultSeo {...SEO} />
+                <Header />
+                <Component {...pageProps} />
+                <GlobalFooter maxWidth="6xl" />
+              </OnramperProvider>
+            </ThemeProvider>
+          </WagmiStoreVersionCheck>
         </QueryClientProvider>
       </WagmiConfig>
       <GoogleAnalytics />

@@ -165,6 +165,49 @@ importers:
       typescript: 5.1.6
       vercel: 29.4.0_@types+node@18.17.5
 
+  apis/steer-vault:
+    specifiers:
+      '@sushiswap/abi': workspace:*
+      '@sushiswap/database': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/pools-api': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/types': workspace:*
+      '@sushiswap/validate': workspace:*
+      '@tsconfig/esm': 1.0.3
+      '@tsconfig/node18': 2.0.0
+      '@tsconfig/strictest': 2.0.1
+      '@types/node': '18'
+      '@vercel/node': 2.14.3
+      deepmerge-ts: ^4.3.0
+      dotenv: 16.0.3
+      eslint: 8.43.0
+      typescript: 5.1.6
+      vercel: 29.4.0
+      zod: 3.21.4
+    dependencies:
+      '@sushiswap/abi': link:../../packages/abi
+      '@sushiswap/database': link:../../packages/database
+      '@sushiswap/pools-api': link:../pools
+      '@sushiswap/types': link:../../packages/types
+      '@sushiswap/validate': link:../../packages/validate
+      '@vercel/node': 2.14.3
+      deepmerge-ts: 4.3.0
+      zod: 3.21.4
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/prettier-config': link:../../config/prettier
+      '@tsconfig/esm': 1.0.3
+      '@tsconfig/node18': 2.0.0
+      '@tsconfig/strictest': 2.0.1
+      '@types/node': 18.17.5
+      dotenv: 16.0.3
+      eslint: 8.43.0
+      typescript: 5.1.6
+      vercel: 29.4.0_@types+node@18.17.5
+
   apis/swap:
     specifiers:
       '@fastify/cors': 8.2.0
@@ -1622,6 +1665,7 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/pools-api': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/steer-vault-api': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/node': '18'
       '@whatwg-node/fetch': 0.8.4
@@ -1640,6 +1684,7 @@ importers:
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/pools-api': link:../../apis/pools
       '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/steer-vault-api': link:../../apis/steer-vault
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/node': 18.17.5
       eslint: 8.43.0
@@ -17988,7 +18033,7 @@ packages:
   /@types/node-fetch/2.6.3:
     resolution: {integrity: sha512-ETTL1mOEdq/sxUtgtOhKjyB2Irra4cjxksvcMUR5Zr4n+PxVhsCD9WS46oPbHL3et9Zde7CNRr+WUNlcHvsX+w==}
     dependencies:
-      '@types/node': 14.18.33
+      '@types/node': 20.4.10
       form-data: 3.0.1
 
   /@types/node-fetch/2.6.4:
