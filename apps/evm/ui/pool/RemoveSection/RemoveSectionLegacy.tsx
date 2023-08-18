@@ -141,89 +141,107 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
 
   useEffect(() => {
     const prep = async (): Promise<UsePrepareSendTransactionConfig> => {
-      try {
-        if (
-          !token0 ||
-          !token1 ||
-          !chain?.id ||
-          !contract ||
-          !underlying0 ||
-          !underlying1 ||
-          !address ||
-          !pool ||
-          !balance?.[FundSource.WALLET] ||
-          !minAmount0 ||
-          !minAmount1 ||
-          !deadline
-        ) {
-          return
-        }
+      // console.log('prepare', [
+      //   !token0,
+      //   !token1,
+      //   !chain?.id,
+      //   !contract,
+      //   !underlying0,
+      //   !underlying1,
+      //   !address,
+      //   !pool,
+      //   !balance?.[FundSource.WALLET],
+      //   !minAmount0,
+      //   !minAmount1,
+      //   !deadline,
+      // ])
+      if (
+        !token0 ||
+        !token1 ||
+        !chain?.id ||
+        !contract ||
+        !underlying0 ||
+        !underlying1 ||
+        !address ||
+        !pool ||
+        !balance?.[FundSource.WALLET] ||
+        !minAmount0 ||
+        !minAmount1 ||
+        !deadline
+      ) {
+        return
+      }
 
-        const withNative =
-          Native.onChain(_pool.chainId).wrapped.address === pool.token0.address ||
-          Native.onChain(_pool.chainId).wrapped.address === pool.token1.address
+      const withNative =
+        Native.onChain(_pool.chainId).wrapped.address === pool.token0.address ||
+        Native.onChain(_pool.chainId).wrapped.address === pool.token1.address
 
-        const config = (function () {
-          if (withNative) {
-            const token1IsNative = Native.onChain(_pool.chainId).wrapped.address === pool.token1.wrapped.address
-
-            return {
-              functionNames: ['removeLiquidityETH', 'removeLiquidityETHSupportingFeeOnTransferTokens'],
-              args: [
-                token1IsNative ? (pool.token0.wrapped.address as Address) : (pool.token1.wrapped.address as Address),
-                balance[FundSource.WALLET].multiply(percentToRemove).quotient,
-                token1IsNative ? minAmount0.quotient : minAmount1.quotient,
-                token1IsNative ? minAmount1.quotient : minAmount0.quotient,
-                address,
-                deadline,
-              ],
-            } as const
-          }
+      const config = (function () {
+        if (withNative) {
+          const token1IsNative = Native.onChain(_pool.chainId).wrapped.address === pool.token1.wrapped.address
 
           return {
-            functionNames: ['removeLiquidity'],
+            functionNames: ['removeLiquidityETH', 'removeLiquidityETHSupportingFeeOnTransferTokens'],
             args: [
-              pool.token0.wrapped.address as Address,
-              pool.token1.wrapped.address as Address,
+              token1IsNative ? (pool.token0.wrapped.address as Address) : (pool.token1.wrapped.address as Address),
               balance[FundSource.WALLET].multiply(percentToRemove).quotient,
-              minAmount0.quotient,
-              minAmount1.quotient,
+              token1IsNative ? minAmount0.quotient : minAmount1.quotient,
+              token1IsNative ? minAmount1.quotient : minAmount0.quotient,
               address,
               deadline,
             ],
           } as const
-        })()
-
-        const safeGasEstimates = await Promise.all(
-          config.functionNames.map((methodName) =>
-            contract.estimateGas[methodName](...(config.args as any))
-              .then(calculateGasMargin)
-              .catch(() => undefined)
-          )
-        )
-
-        const indexOfSuccessfulEstimation = safeGasEstimates.findIndex(
-          (safeGasEstimate) => typeof safeGasEstimate === 'bigint'
-        )
-
-        if (indexOfSuccessfulEstimation !== -1) {
-          const methodName = config.functionNames[indexOfSuccessfulEstimation]
-          const safeGasEstimate = safeGasEstimates[indexOfSuccessfulEstimation]
-
-          return {
-            account: address,
-            to: contract.address,
-            data: encodeFunctionData({ abi: contract.abi, functionName: methodName, args: config.args as any }),
-            gas: safeGasEstimate,
-          }
         }
-      } catch (error: unknown) {
-        console.error('remove prepare error', error)
-        return {}
+
+        return {
+          functionNames: ['removeLiquidity'],
+          args: [
+            pool.token0.wrapped.address as Address,
+            pool.token1.wrapped.address as Address,
+            balance[FundSource.WALLET].multiply(percentToRemove).quotient,
+            minAmount0.quotient,
+            minAmount1.quotient,
+            address,
+            deadline,
+          ],
+        } as const
+      })()
+
+      const safeGasEstimates = await Promise.all(
+        config.functionNames.map((methodName) =>
+          contract.estimateGas[methodName](config.args as any)
+            .then(calculateGasMargin)
+            .catch((e) => {
+              console.error(e)
+              return undefined
+            })
+        )
+      )
+
+      const indexOfSuccessfulEstimation = safeGasEstimates.findIndex(
+        (safeGasEstimate) => typeof safeGasEstimate === 'bigint'
+      )
+
+      if (indexOfSuccessfulEstimation !== -1) {
+        const methodName = config.functionNames[indexOfSuccessfulEstimation]
+        const safeGasEstimate = safeGasEstimates[indexOfSuccessfulEstimation]
+
+        return {
+          account: address,
+          to: contract.address,
+          data: encodeFunctionData({ abi: contract.abi, functionName: methodName, args: config.args as any }),
+          gas: safeGasEstimate,
+        }
       }
     }
 
-    prep().then(setPrepare)
+    prep()
+      .then((config) => {
+        setPrepare(config)
+      })
+      .catch((e) => {
+        console.error('remove prepare error', e)
+      })
   }, [
     token0,
     token1,
