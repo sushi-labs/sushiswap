@@ -1,5 +1,13 @@
 # @sushiswap/trident
 
+## 1.0.9
+
+### Patch Changes
+
+- Updated dependencies [[`2d8510984`](https://github.com/sushiswap/sushiswap/commit/2d85109847583b2cda7ce45c9ffb377043ea46cd)]:
+  - @sushiswap/currency@0.1.3
+  - @sushiswap/bentobox@1.0.1
+
 ## 1.0.8
 
 ### Patch Changes
