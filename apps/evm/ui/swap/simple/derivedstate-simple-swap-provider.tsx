@@ -281,9 +281,18 @@ const useSimpleSwapTrade = () => {
   const {
     state: { token0, chainId, swapAmount, token1, recipient },
   } = useDerivedStateSimpleSwap()
-  const [isFallback, setIsFallback] = useState(
+
+  const shouldFallback =
     !isSwapApiEnabledChainId(chainId) || (isSwapApiEnabledChainId(chainId) && typeof SWAP_API_BASE_URL === 'undefined')
-  )
+
+  const [isFallback, setIsFallback] = useState(shouldFallback)
+
+  useEffect(() => {
+    if (shouldFallback !== isFallback) {
+      setIsFallback(shouldFallback)
+    }
+  }, [isFallback, shouldFallback])
+
   const [slippageTolerance] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
   const { data: feeData } = useFeeData({ chainId })
