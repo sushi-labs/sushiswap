@@ -83,16 +83,6 @@ async function main() {
 
   app.use(cors())
 
-  // app.use(
-  //   rateLimit({
-  //     windowMs: 60 * 1000, // 1 minute
-  //     max: 50, // Limit each IP to 50 requests per `window` (here, per 1 minutes)
-  //     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  //     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  //     // store: ... , // Use an external store for more precise rate limiting
-  //   })
-  // )
-
   // Trace incoming requests
   app.use(Sentry.Handlers.requestHandler())
   app.use(Sentry.Handlers.tracingHandler())
@@ -181,38 +171,30 @@ async function main() {
     return res.status(200).send()
   })
 
-  app.get('/get-pool-codes-for-tokens', (req: Request, res: Response) => {
-    console.log('HTTP: GET /get-pool-codes-for-tokens', JSON.stringify(req.query))
-    const { chainId } = querySchema.parse(req.query)
-    const extractor = extractors.get(chainId) as Extractor
-    const tokenManager = tokenManagers.get(chainId) as TokenManager
-    const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values()).slice(0, 100))
-    const poolCodes = extractor.getPoolCodesForTokens(tokens)
-    return res.json(poolCodes)
-  })
+  // app.get('/get-pool-codes-for-tokens', (req: Request, res: Response) => {
+  //   console.log('HTTP: GET /get-pool-codes-for-tokens', JSON.stringify(req.query))
+  //   const { chainId } = querySchema.parse(req.query)
+  //   const extractor = extractors.get(chainId) as Extractor
+  //   const tokenManager = tokenManagers.get(chainId) as TokenManager
+  //   const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values()).slice(0, 100))
+  //   const poolCodes = extractor.getPoolCodesForTokens(tokens)
+  //   return res.json(poolCodes)
+  // })
 
-  app.get('/pool-codes', (req: Request, res: Response) => {
-    console.log('HTTP: GET /pool-codes', JSON.stringify(req.query))
-    const { chainId } = querySchema.parse(req.query)
-    const extractor = extractors.get(chainId) as Extractor
-    const poolCodes = extractor.getCurrentPoolCodes()
-    res.json(poolCodes)
-  })
+  // app.get('/pool-codes', (req: Request, res: Response) => {
+  //   console.log('HTTP: GET /pool-codes', JSON.stringify(req.query))
+  //   const { chainId } = querySchema.parse(req.query)
+  //   const extractor = extractors.get(chainId) as Extractor
+  //   const poolCodes = extractor.getCurrentPoolCodes()
+  //   res.json(poolCodes)
+  // })
 
-  app.get('/debug-sentry', function mainHandler(req, res) {
-    throw new Error('My first Sentry error!')
-  })
+  // app.get('/debug-sentry', function mainHandler(req, res) {
+  //   throw new Error('My first Sentry error!')
+  // })
 
   // The error handler must be registered before any other error middleware and after all controllers
   app.use(Sentry.Handlers.errorHandler())
-
-  // Optional fallthrough error handler
-  app.use(function onError(err, req, res, next) {
-    // The error id is attached to `res.sentry` to be returned
-    // and optionally displayed to the user for support.
-    res.statusCode = 500
-    res.end(res.sentry + '\n')
-  })
 
   app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}`)
