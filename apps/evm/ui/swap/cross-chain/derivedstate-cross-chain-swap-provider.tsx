@@ -92,10 +92,9 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
     if (!params.has('chainId1')) params.set('chainId1', ChainId.ARBITRUM.toString())
     if (!params.has('token0')) params.set('token0', 'NATIVE')
     if (!params.has('token1')) params.set('token1', getQuoteCurrency(Number(params.get('chainId1'))))
-    if (!params.has('recipient')) params.set('recipient', address ?? '')
 
     return params
-  }, [address, chain, searchParams])
+  }, [chain, searchParams])
 
   // Get a new searchParams string by merging the current
   // searchParams with a provided key/value pair
@@ -268,7 +267,7 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
           },
           state: {
             tradeId,
-            recipient: defaultedParams.get('recipient') || '',
+            recipient: address ?? '',
             chainId0,
             chainId1,
             swapAmountString,
@@ -279,6 +278,7 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
           isLoading: token0Loading || token1Loading,
         }
       }, [
+        address,
         chainId0,
         chainId1,
         defaultedParams,
