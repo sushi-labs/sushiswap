@@ -1,4 +1,4 @@
-import { SteerStrategyComponent } from '../constants'
+import { SteerStrategyComponent } from '.'
 
 export const SteerMovingVolatilityChannelMediumStrategy: SteerStrategyComponent = () => {
   return <></>
