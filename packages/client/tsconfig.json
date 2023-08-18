@@ -1,14 +1,14 @@
 {
-  "extends": "@sushiswap/typescript-config/node18.json",
+  "extends": ["@sushiswap/typescript-config/node18.json"],
   "exclude": ["node_modules", "dist"],
   "include": ["src"],
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "./dist",
-    "rootDir": ".",
-    "resolveJsonModule": true,
+    "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
+    "esModuleInterop": true,
+    "module": "ESNext"
   }
 }
