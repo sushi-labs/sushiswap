@@ -10,7 +10,6 @@ import { Button } from '@sushiswap/ui/components/button'
 import { Currency as UICurrency } from '@sushiswap/ui/components/currency'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { Input } from '@sushiswap/ui/components/input'
-import { SelectIcon } from '@sushiswap/ui/components/select'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/components/settings'
 import { Widget, WidgetContent, WidgetHeader } from '@sushiswap/ui/components/widget'
 import { useAccount } from '@sushiswap/wagmi'
@@ -93,9 +92,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                         )}
                       </SettingsOverlay>
                       <Disclosure.Button as={Fragment}>
-                        <IconButton size="sm" icon={ChevronDownIcon} name="Select">
-                          <SelectIcon />
-                        </IconButton>
+                        <IconButton size="sm" icon={ChevronDownIcon} name="Select" />
                       </Disclosure.Button>
                     </div>
                   </WidgetHeader>
