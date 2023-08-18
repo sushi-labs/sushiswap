@@ -1,5 +1,0 @@
----
-'@sushiswap/currency': patch
----
-
-.

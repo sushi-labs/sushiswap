@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/extractor",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "description": "Sushi Extractor",
   "keywords": [
@@ -53,8 +53,8 @@
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",        
-    "@sushiswap/typescript-config": "workspace:*",    
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",
     "@types/cors": "2.8.13",
     "@types/express": "4.17.17",
