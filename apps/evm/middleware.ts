@@ -25,6 +25,24 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+  if (pathname === '/swap/cross-chain' && search !== '') {
+    const url = req.nextUrl.clone()
+    if (searchParams.has('chainId0') && searchParams.has('chainId1')) {
+      const chainId0 = searchParams.get('chainId0')?.toLowerCase()
+      const chainId1 = searchParams.get('chainId1')?.toLowerCase()
+
+      // ChainIds cant be the same
+      if (chainId0 === chainId1) {
+        searchParams.delete('chainId0')
+        searchParams.delete('chainId1')
+        searchParams.delete('token0')
+        searchParams.delete('token1')
+        url.search = `?${searchParams.toString()}`
+        return NextResponse.redirect(url)
+      }
+    }
+  }
+
   if (pathname.startsWith('/pool')) {
     if (pathname === '/pool/add' && search === '') {
       const url = req.nextUrl.clone()

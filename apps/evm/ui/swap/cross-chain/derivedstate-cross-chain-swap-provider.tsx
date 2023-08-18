@@ -89,7 +89,13 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
           : ChainId.ETHEREUM
         ).toString()
       )
-    if (!params.has('chainId1')) params.set('chainId1', ChainId.ARBITRUM.toString())
+    if (!params.has('chainId1'))
+      params.set(
+        'chainId1',
+        params.get('chainId0') === ChainId.ARBITRUM.toString()
+          ? ChainId.ETHEREUM.toString()
+          : ChainId.ARBITRUM.toString()
+      )
     if (!params.has('token0')) params.set('token0', 'NATIVE')
     if (!params.has('token1')) params.set('token1', getQuoteCurrency(Number(params.get('chainId1'))))
 
@@ -217,18 +223,6 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
     [createQueryString, pathname, push]
   )
 
-  // Make sure the searchParams are updated whenever a user switches networks
-  useEffect(() => {
-    const unwatch = watchNetwork(({ chain }) => {
-      if (chain?.id && STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId)) {
-        setChainId0(chain.id)
-      }
-    })
-
-    return () => unwatch()
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   // Derive chainId from defaultedParams
   const chainId0 = Number(defaultedParams.get('chainId0')) as ChainId
   const chainId1 = Number(defaultedParams.get('chainId1')) as ChainId
@@ -246,6 +240,18 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
     address: defaultedParams.get('token1') as string,
     enabled: isAddress(defaultedParams.get('token1') as string),
   })
+
+  // Make sure the searchParams are updated whenever a user switches networks
+  useEffect(() => {
+    const unwatch = watchNetwork(({ chain }) => {
+      if (chain?.id && STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId)) {
+        setChainId0(chain.id)
+      }
+    })
+
+    return () => unwatch()
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <DerivedStateCrossChainSwapContext.Provider
