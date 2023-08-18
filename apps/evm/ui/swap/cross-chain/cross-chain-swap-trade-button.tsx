@@ -49,15 +49,12 @@ export const CrossChainSwapTradeButton: FC = () => {
                   <Checker.Success tag={APPROVE_TAG_XSWAP}>
                     <DialogTrigger asChild>
                       <Button
-                        disabled={
-                          true ||
-                          Boolean(
-                            !trade?.amountOut?.greaterThan(ZERO) ||
-                              trade?.route?.status === 'NoWay' ||
-                              +swapAmountString === 0 ||
-                              (!checked && warningSeverity(trade?.priceImpact) > 3)
-                          )
-                        }
+                        disabled={Boolean(
+                          !trade?.amountOut?.greaterThan(ZERO) ||
+                            trade?.route?.status === 'NoWay' ||
+                            +swapAmountString === 0 ||
+                            (!checked && warningSeverity(trade?.priceImpact) > 3)
+                        )}
                         color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
                         fullWidth
                         size="xl"
