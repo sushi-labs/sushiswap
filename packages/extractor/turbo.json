@@ -6,7 +6,8 @@
       "env": [
         "PORT",
         "ALCHEMY_ID",
-        "DRPC_ID"
+        "DRPC_ID",
+        "SENTRY_DSN"
       ],
       "cache": false,
       "persistent": true

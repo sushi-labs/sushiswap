@@ -9,11 +9,11 @@ export const isAngleEnabledChainId = (chainId: number): chainId is AngleEnabledC
   ANGLE_ENABLED_NETWORKS.includes(chainId as AngleEnabledChainId)
 
 export const SWAP_API_ENABLED_NETWORKS = [
-  ChainId.ETHEREUM,
-  ChainId.ARBITRUM,
-  ChainId.OPTIMISM,
-  ChainId.POLYGON,
-  ChainId.BASE,
+  // ChainId.ETHEREUM,
+  // ChainId.ARBITRUM,
+  // ChainId.OPTIMISM,
+  // ChainId.POLYGON,
+  // ChainId.BASE,
 ]
 export type SwapApiEnabledChainId = (typeof SWAP_API_ENABLED_NETWORKS)[number]
 export const isSwapApiEnabledChainId = (chainId: number): chainId is SwapApiEnabledChainId =>
