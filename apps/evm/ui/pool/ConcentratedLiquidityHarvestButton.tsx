@@ -23,13 +23,18 @@ export const ConcentratedLiquidityHarvestButton: FC<ConcentratedLiquidityHarvest
   })
 
   const args = useMemo(() => {
-    if (!rewards || !account) return undefined
-
-    const tokens: Address[] = Object.keys(rewards.transactionData)
-      .filter((k) => rewards.transactionData[k].proof !== undefined)
-      .map((el) => el as Address)
-    const claims: bigint[] = tokens.map((t) => BigInt(rewards.transactionData[t].claim))
-    const proofs: Address[][] = tokens.map((t) => rewards.transactionData[t].proof as Address[])
+    if (!rewards || !account || !rewards.transactionData) return undefined
+    const [tokens, claims, proofs] = Object.entries(rewards.transactionData).reduce<[Address[], bigint[], Address[][]]>(
+      (acc, [k, v]) => {
+        if (v.proof !== undefined) {
+          acc[0].push(k as Address)
+          acc[1].push(BigInt(v.claim))
+          acc[2].push(v.proof as Address[])
+        }
+        return acc
+      },
+      [[], [], []]
+    )
 
     return {
       users: tokens.map(() => account),
