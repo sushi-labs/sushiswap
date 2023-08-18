@@ -79,7 +79,7 @@ export default function WalletSelector({ hideChevron, varient, color, fullWidth,
             show={open}
             enter="transition duration-200 ease-out"
             enterFrom="transform scale-[0.95]"
-            enterTo="transform scale-[1]"
+            enterTo="transform scale-[1] z-10 relative"
             leave="transition duration-200 ease-out"
             leaveFrom="transform scale-[1] opacity-1"
             leaveTo="transform scale-[0.95] opacity-0"
