@@ -1,7 +1,7 @@
 import type { ChainId } from '@sushiswap/chain'
 import type {} from '@sushiswap/database'
-import type { getEarnPool as getEarnPoolOriginal } from '@sushiswap/pools-api/lib/api'
-import { PoolApiSchema } from '@sushiswap/pools-api/lib/schemas'
+import type { getEarnPool as getEarnPoolOriginal } from '@sushiswap/pools-api/lib/api/index.js'
+import { PoolApiSchema } from '@sushiswap/pools-api/lib/schemas/pool'
 import { fetch } from '@whatwg-node/fetch'
 
 import { POOL_API } from '../../constants.js'

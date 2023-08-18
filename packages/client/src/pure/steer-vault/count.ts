@@ -1,5 +1,5 @@
 import { getSteerVaultCount as _getSteerVaultCount } from '@sushiswap/steer-vault-api/lib/api/index.js'
-import { SteerVaultCountApiSchema } from '@sushiswap/steer-vault-api/lib/schemas/count.js'
+import { SteerVaultCountApiSchema } from '@sushiswap/steer-vault-api/lib/schemas/count'
 import { fetch } from '@whatwg-node/fetch'
 
 import { STEER_VAULT_API } from '../../constants.js'

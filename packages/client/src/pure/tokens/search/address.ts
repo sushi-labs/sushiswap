@@ -1,5 +1,5 @@
 import type { getTokensByAddress } from '@sushiswap/tokens-api/lib/api.js'
-import { SearchTokenApiSchema } from '@sushiswap/tokens-api/lib/schemas/search/address.js'
+import { SearchTokenApiSchema } from '@sushiswap/tokens-api/lib/schemas/search/address'
 import { TOKENS_API } from 'src/constants.js'
 import { GetApiInputFromOutput } from 'src/types.js'
 

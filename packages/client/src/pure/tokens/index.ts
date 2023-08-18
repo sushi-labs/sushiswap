@@ -1,5 +1,5 @@
 import type { getTokens as _getTokens } from '@sushiswap/tokens-api/lib/api.js'
-import { TokensApiSchema } from '@sushiswap/tokens-api/lib/schemas/index.js'
+import { TokensApiSchema } from '@sushiswap/tokens-api/lib/schemas/index'
 import { TOKENS_API } from 'src/constants.js'
 import { GetApiInputFromOutput } from 'src/types.js'
 

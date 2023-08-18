@@ -1,7 +1,8 @@
-import { GetPoolsArgs, getPoolsUrl, Pools } from 'src/pure/pools/pools.js'
 import { InfiniteSWRHookConfig, SWRHookConfig } from 'src/types.js'
 import useSWR from 'swr'
 import useSWRInfinite from 'swr/infinite'
+
+import { GetPoolsArgs, getPoolsUrl, Pools } from '../../pure/pools/pools.js'
 
 export const usePools = ({ args, shouldFetch }: SWRHookConfig<GetPoolsArgs>) => {
   return useSWR<Pools>(shouldFetch !== false ? getPoolsUrl(args) : null, async (url) =>

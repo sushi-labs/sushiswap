@@ -1,6 +1,6 @@
 'use client'
 
-import { usePool } from '@sushiswap/client'
+import { usePool } from '@sushiswap/client/hooks'
 import { unsanitize } from '@sushiswap/format'
 import { useMemo } from 'react'
 import { SteerPoolCard } from 'ui/pool/Steer/SteerPoolCard'
