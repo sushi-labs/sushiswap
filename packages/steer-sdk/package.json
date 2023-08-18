@@ -1,0 +1,93 @@
+{
+  "name": "@sushiswap/steer-sdk",
+  "version": "0.0.0",
+  "description": "Sushi Steer SDK",
+  "keywords": [
+    "sushi",
+    "steer"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "packages/steer-sdk"
+  },
+  "license": "MIT",
+  "author": "LufyCZ <me@lufy.cz>",
+  "type": "module",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "./dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./hooks": {
+      "types": "./dist/hooks/index.d.ts",
+      "import": "./dist/hooks/index.js",
+      "default": "./dist/hooks/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      ".": [
+        "src/index"
+      ],
+      "hooks": [
+        "src/hooks/index"
+      ]
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts src/hooks/index.ts",
+    "check": "tsc --pretty --noEmit",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "tsc --watch",
+    "lint": "TIMING=1 eslint src",
+    "lint:fix": "TIMING=1 eslint src --fix",
+    "prepublishOnly": "pnpm build"
+  },
+  "jest": {
+    "preset": "@sushiswap/jest-config/node"
+  },
+  "dependencies": {
+    "@steerprotocol/contracts": "2.1.0-beta.14",
+    "@sushiswap/abi": "workspace:*",
+    "@sushiswap/chain": "workspace:*",
+    "@sushiswap/client": "workspace:*",
+    "@sushiswap/database": "workspace:*",
+    "@sushiswap/format": "workspace:*",
+    "@sushiswap/wagmi-config": "workspace:*",
+    "@tanstack/react-query": "4.28.0",
+    "@tanstack/react-query-persist-client": "4.29.7",
+    "@whatwg-node/fetch": "0.8.4",
+    "tslib": "latest",
+    "wagmi": "legacy-v0",
+    "@wagmi/core": "legacy-v0"
+  },
+  "devDependencies": {
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
+    "@tanstack/react-query-devtools": "4.28.0",
+    "@types/node": "18",
+    "eslint": "8.43.0",
+    "tsup": "7.1.0",
+    "typescript": "5.1.6"
+  },
+  "peerDependencies": {
+    "react": "18.2.0",
+    "wagmi": "legacy-v0",
+    "@wagmi/core": "legacy-v0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  }
+}
