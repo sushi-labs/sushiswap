@@ -9,8 +9,20 @@ import { SteerHighLowChannelStrategy } from './SteerHighLowChannelStrategy'
 import { SteerMovingVolatilityChannelMediumStrategy } from './SteerMovingVolatilityChannelMediumStrategy'
 import { SteerStaticStableStrategy } from './SteerStaticStableStrategy'
 
+export interface SteerStrategyGeneric {
+  tokenRatios: {
+    token0: number
+    token1: number
+  }
+  priceExtremes: {
+    min: string
+    max: string
+  }
+}
+
 export type SteerStrategyComponent = FC<{
   vault: SteerVault
+  generic: SteerStrategyGeneric
 }>
 
 export const SteerStrategyComponents: Record<SteerStrategy, SteerStrategyComponent> = {

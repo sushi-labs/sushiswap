@@ -61,12 +61,12 @@ export const SteerPoolCard: FC<{ pool: Pool; vault: Pool['steerVaults'][0] }> = 
           <Stat className="px-6 py-4">
             <StatLabel size="sm">TVL</StatLabel>
             {/* vault.reserveUSD */}
-            <StatValue size="sm">{formatUSD(123444)}</StatValue>
+            <StatValue size="sm">{formatUSD(vault.reserveUSD)}</StatValue>
           </Stat>
           <Stat className="px-6 py-4">
             <StatLabel size="sm">Total Fees</StatLabel>
             {/* vault.feesUSD, will have to be total for now, will fix later */}
-            <StatValue size="sm">{formatUSD(123)}</StatValue>
+            <StatValue size="sm">{formatUSD(vault.feesUSD)}</StatValue>
           </Stat>
         </div>
         <Separator />

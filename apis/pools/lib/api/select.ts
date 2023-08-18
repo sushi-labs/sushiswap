@@ -93,16 +93,26 @@ export const SushiPoolSelect = {
       apr1m: true,
       apr1y: true,
       description: true,
-      fees0: true,
-      fees1: true,
       feeTier: true,
       lastAdjustmentTimestamp: true,
       generatedAt: true,
       lowerTick: true,
       upperTick: true,
       performanceFee: true,
+
       reserve0: true,
+      reserve0USD: true,
+      fees0: true,
+      fees0USD: true,
+
       reserve1: true,
+      reserve1USD: true,
+      fees1: true,
+      fees1USD: true,
+
+      reserveUSD: true,
+      feesUSD: true,
+
       state: true,
       strategy: true,
       isEnabled: true,
