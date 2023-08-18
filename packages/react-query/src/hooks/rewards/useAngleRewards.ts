@@ -37,6 +37,7 @@ type TransformedPools = Record<string, AngleRewardsPool>
 interface UseAngleRewardsParams {
   chainId: ChainId
   account: string | undefined
+  enabled?: boolean
 }
 
 export const angleRewardsQueryFn = async ({ chainId, account }: UseAngleRewardsParams) => {
@@ -130,7 +131,7 @@ export const angleRewardsSelect = ({ chainId, data, prices }: AngleRewardsSelect
     }
   })
 
-  const validRewardTokens = data.validRewardTokens
+  const validRewardTokens = (data.validRewardTokens ?? [])
     .map((el) => {
       const token = new Token({ chainId, address: el.token, symbol: el.symbol, decimals: el.decimals })
       return {
@@ -148,13 +149,14 @@ export const angleRewardsSelect = ({ chainId, data, prices }: AngleRewardsSelect
   }
 }
 
-export const useAngleRewards = ({ chainId, account }: UseAngleRewardsParams) => {
+export const useAngleRewards = ({ chainId, account, enabled = true }: UseAngleRewardsParams) => {
   const { data: prices } = usePrices({ chainId })
   return useQuery({
-    queryKey: ['getAngleRewards', { chainId, account, prices }],
+    queryKey: ['getAngleRewards', { chainId, account }],
     queryFn: async () => await angleRewardsQueryFn({ chainId, account }),
     select: (data) => angleRewardsSelect({ chainId, data, prices }),
     staleTime: 15000, // 15 seconds
     cacheTime: 60000, // 1min
+    enabled: Boolean(enabled && prices && chainId && account),
   })
 }

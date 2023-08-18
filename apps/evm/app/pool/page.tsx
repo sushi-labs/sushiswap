@@ -12,7 +12,7 @@ import { PositionCardList } from 'ui/migrate/position-card-list'
 import { PoolsFiltersProvider, PoolsSection } from '../../ui/pool'
 import { Hero } from './hero'
 
-export default async function PoolPage() {
+export default function PoolPage() {
   const { address } = useAccount()
   return (
     <>

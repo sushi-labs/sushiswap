@@ -4,7 +4,7 @@ import { CrossChainSwapWidget } from 'ui/swap/cross-chain/cross-chain-swap-widge
 import { Providers } from './providers'
 
 export const metadata = {
-  title: 'Sushi - Cross-chain Swap',
+  title: 'Cross-Chain Swap',
 }
 
 export default function SwapCrossChainPage() {

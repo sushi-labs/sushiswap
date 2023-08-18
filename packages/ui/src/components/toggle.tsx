@@ -7,7 +7,7 @@ import * as React from 'react'
 import { classNames } from '../index'
 
 const toggleVariants = cva(
-  'inline-flex gap-2 items-center justify-center text-sm font-medium transition-colors data-[state=on]:bg-accent data-[state=on]:text-accent-foreground !ring-0 disabled:pointer-events-none disabled:opacity-50 hover:bg-muted hover:text-muted-foreground',
+  'inline-flex gap-2 items-center justify-center text-sm font-medium transition-colors data-[state=on]:bg-accent data-[state=on]:text-accent-foreground transition-colors !ring-0 disabled:opacity-50 disabled:pointer-events-none ring-offset-background disabled:pointer-events-none disabled:opacity-50 hover:bg-muted hover:text-muted-foreground',
   {
     variants: {
       variant: {

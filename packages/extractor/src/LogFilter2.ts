@@ -1,5 +1,5 @@
 import { AbiEvent } from 'abitype'
-import { Block, encodeEventTopics, Filter, Log, PublicClient, WatchBlocksReturnType } from 'viem'
+import { Block, encodeEventTopics, Log, PublicClient, WatchBlocksReturnType } from 'viem'
 
 import { warnLog } from './WarnLog'
 
@@ -91,7 +91,6 @@ export class LogFilter2 {
   eventsAll: AbiEvent[] = []
   topicsAll: string[] = []
   filters: FilterMy[] = []
-  logFilter?: Filter<'event'>
   blockProcessing = false
 
   unWatchBlocks?: WatchBlocksReturnType
@@ -121,7 +120,6 @@ export class LogFilter2 {
     if (this.unWatchBlocks) return // have been started
     if (this.logType == LogFilterType.Native) {
       this.client.createEventFilter({ events: this.eventsAll }).then((filter) => {
-        this.logFilter = filter as unknown as Filter<'event'>
         this.unWatchBlocks = this.client.watchBlocks({
           onBlock: async () => {
             if (this.blockProcessing) return

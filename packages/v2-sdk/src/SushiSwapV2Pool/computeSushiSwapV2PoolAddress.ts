@@ -7,7 +7,7 @@ import { SUSHISWAP_V2_INIT_CODE_HASH, SushiSwapV2ChainId } from '../constants'
 
 /**
  * Computes a pair address
- * @param factoryAddress The Uniswap V3 factory address
+ * @param factoryAddress The Uniswap V2 factory address
  * @param tokenA The first token of the pair, irrespective of sort order
  * @param tokenB The second token of the pair, irrespective of sort order
  * @param initCodeHashManualOverride Override the init code hash used to compute the pool address if necessary

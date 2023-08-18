@@ -29,7 +29,6 @@ import { createErrorToast, createInfoToast, createToast } from '@sushiswap/ui/co
 import {
   Address,
   getSushiXSwapContractConfig,
-  serialize,
   useAccount,
   useContractWrite,
   useNetwork,
@@ -42,7 +41,7 @@ import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Check
 import { nanoid } from 'nanoid'
 import { log } from 'next-axiom'
 import React, { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
-import { UserRejectedRequestError } from 'viem'
+import { stringify, UserRejectedRequestError } from 'viem'
 
 import { APPROVE_TAG_XSWAP } from '../../../lib/constants'
 import { UseCrossChainTradeReturn } from '../../../lib/swap/useCrossChainTrade/types'
@@ -109,8 +108,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
       console.error('cross chain swap prepare error', error)
       if (error.message.startsWith('user rejected transaction')) return
       log.error('cross chain swap prepare error', {
-        trade: serialize(trade),
-        error,
+        trade: stringify(trade),
+        error: stringify(error),
       })
     },
   })
@@ -154,23 +153,26 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
           gas: typeof config.request.gas === 'bigint' ? calculateGasMargin(config.request.gas) : undefined,
         }
       : undefined,
-    onSuccess: async (data) => {
+    onMutate: () => {
+      // Set reference of current trade
       if (tradeRef && trade) {
         tradeRef.current = trade
       }
-
+    },
+    onSuccess: async (data) => {
       // Clear input fields
       setSwapAmount('')
 
       waitForTransaction({ hash: data.hash })
         .then((receipt) => {
+          const trade = tradeRef.current
           if (receipt.status === 'success') {
             log.info('cross chain swap success (source)', {
-              trade: serialize(tradeRef?.current),
+              trade: stringify(trade),
             })
           } else {
             log.error('cross chain swap failed (source)', {
-              trade: serialize(tradeRef?.current),
+              trade: stringify(trade),
             })
 
             setStepStates({
@@ -188,7 +190,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         })
         .catch(() => {
           log.error('cross chain swap error (source)', {
-            trade: serialize(tradeRef?.current),
+            trade: stringify(trade),
           })
           setStepStates({
             source: StepState.Failed,
@@ -206,8 +208,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
     onError: (error) => {
       if (error.message.startsWith('user rejected transaction')) return
       log.error('cross chain swap error', {
-        trade: serialize(tradeRef?.current),
-        error,
+        trade: stringify(trade),
+        error: stringify(error),
       })
       createErrorToast(error.message, false)
     },
@@ -336,9 +338,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         {({ confirm }) => (
           <>
             <div className="flex flex-col">
-              <Collapsible
-                open={Boolean(+swapAmountString > 0 && JSON.stringify(error).includes('insufficient funds'))}
-              >
+              <Collapsible open={Boolean(+swapAmountString > 0 && stringify(error).includes('insufficient funds'))}>
                 <div className="pt-4">
                   <Message size="sm" variant="destructive">
                     Insufficient funds to pay for gas on the destination chain. Please lower your input amount.

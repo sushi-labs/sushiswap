@@ -97,8 +97,7 @@ export const getConcentratedLiquidityPools = async ({
     if (!liquidities[index]) return null
     const liquidity = liquidities[index].result
 
-    if (!tokens || !slot0 || !liquidity) return null
-    if (!slot0 || !liquidity) return null
+    if (!tokens || !slot0 || typeof liquidity === 'undefined') return null
 
     const sqrtPriceX96 = slot0.result?.[0]
     if (!sqrtPriceX96 || sqrtPriceX96 === 0n) return null

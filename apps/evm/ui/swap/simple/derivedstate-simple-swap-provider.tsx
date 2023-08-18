@@ -72,10 +72,10 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
       )
     if (!params.has('token0')) params.set('token0', 'NATIVE')
     if (!params.has('token1')) params.set('token1', getQuoteCurrency(Number(params.get('chainId'))))
-    if (!params.has('recipient')) params.set('recipient', address ?? '')
+    // if (!params.has('recipient')) params.set('recipient', address ?? '')
 
     return params
-  }, [address, chain, searchParams])
+  }, [chain, searchParams])
 
   // Get a new searchParams string by merging the current
   // searchParams with a provided key/value pair
@@ -236,7 +236,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
             setSwapAmount,
           },
           state: {
-            recipient: defaultedParams.get('recipient') || '',
+            recipient: address ?? '',
             chainId,
             swapAmountString,
             swapAmount: tryParseAmount(swapAmountString, _token0),
@@ -246,6 +246,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
           isLoading: token0Loading || token1Loading,
         }
       }, [
+        address,
         chainId,
         defaultedParams,
         setChainId,
@@ -281,6 +282,7 @@ const useSimpleSwapTrade = () => {
   const {
     state: { token0, chainId, swapAmount, token1, recipient },
   } = useDerivedStateSimpleSwap()
+
   const [isFallback, setIsFallback] = useState(
     !isSwapApiEnabledChainId(chainId) || (isSwapApiEnabledChainId(chainId) && typeof SWAP_API_BASE_URL === 'undefined')
   )
@@ -318,6 +320,22 @@ const useSimpleSwapTrade = () => {
       log.error('client trade error')
     },
   })
+
+  // Reset the fallback on network switch
+  useEffect(() => {
+    const unwatch = watchNetwork(({ chain }) => {
+      if (chain) {
+        const shouldFallback =
+          !isSwapApiEnabledChainId(chain.id) ||
+          (isSwapApiEnabledChainId(chain.id) && typeof SWAP_API_BASE_URL === 'undefined')
+
+        setIsFallback(shouldFallback)
+      }
+    })
+
+    return () => unwatch()
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (isFallback ? clientTrade : apiTrade) as ReturnType<typeof useApiTrade>
 }

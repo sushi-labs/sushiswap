@@ -52,7 +52,8 @@ export const useTradeQuery = (
     refetchOnWindowFocus: true,
     refetchInterval: 2500,
     keepPreviousData: !!amount,
-    cacheTime: 0,
+    cacheTime: 0, // the length of time before inactive data gets removed from the cache
+    retry: false, // dont retry on failure, immediately fallback
     select,
     enabled: enabled && Boolean(chainId && fromToken && toToken && amount && gasPrice),
     onError,
