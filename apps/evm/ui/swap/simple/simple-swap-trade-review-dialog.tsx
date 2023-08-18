@@ -7,6 +7,7 @@ import { shortenAddress } from '@sushiswap/format'
 import { calculateGasMargin } from '@sushiswap/gas'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
+import { UseTradeReturn } from '@sushiswap/react-query'
 import {
   isRouteProcessor3ChainId,
   isRouteProcessorChainId,
@@ -42,7 +43,7 @@ import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_SWAP } from 'lib/constants'
 import { warningSeverity, warningSeverityClassName } from 'lib/swap/warningSeverity'
 import { log } from 'next-axiom'
-import React, { FC, ReactNode, useCallback } from 'react'
+import React, { FC, ReactNode, useCallback, useRef } from 'react'
 import { stringify } from 'viem'
 
 import { TradeRoutePathView } from '../trade-route-path-view'
@@ -59,6 +60,8 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
   const { data: trade, isFetching } = useSimpleSwapTrade()
   const { address } = useAccount()
   const { chain } = useNetwork()
+  const tradeRef = useRef<UseTradeReturn | null>(null)
+
   const refetchBalances = useBalanceWeb3Refetch()
 
   const isWrap = token0?.isNative && token1?.wrapped.address === Native.onChain(chainId).wrapped.address
@@ -147,14 +150,18 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
           gas: typeof config.request.gas === 'bigint' ? calculateGasMargin(config.request.gas) : undefined,
         }
       : undefined,
+    onMutate: () => {
+      // Set reference of current trade
+      if (tradeRef && trade) {
+        tradeRef.current = trade
+      }
+    },
     onSuccess: async (data) => {
       setSwapAmount('')
 
       waitForTransaction({ hash: data.hash })
         .then((receipt) => {
-          // log.info('swap receipt', {
-          //   receipt,
-          // })
+          const trade = tradeRef.current
           if (receipt.status === 'success') {
             if (
               trade?.route?.legs?.every(
@@ -443,11 +450,11 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
         testId="make-another-swap"
         buttonText="Make another swap"
         txHash={data?.hash}
-        successMessage={`You ${isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'} ${trade?.amountIn?.toSignificant(
-          6
-        )} ${token0?.symbol} ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'} ${trade?.amountOut?.toSignificant(6)} ${
-          token1?.symbol
-        }`}
+        successMessage={`You ${
+          isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'
+        } ${tradeRef.current?.amountIn?.toSignificant(6)} ${token0?.symbol} ${
+          isWrap ? 'to' : isUnwrap ? 'to' : 'for'
+        } ${tradeRef.current?.amountOut?.toSignificant(6)} ${token1?.symbol}`}
       />
     </DialogProvider>
   )

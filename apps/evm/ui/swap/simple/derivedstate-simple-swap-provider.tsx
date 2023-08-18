@@ -283,17 +283,9 @@ const useSimpleSwapTrade = () => {
     state: { token0, chainId, swapAmount, token1, recipient },
   } = useDerivedStateSimpleSwap()
 
-  const shouldFallback =
+  const [isFallback, setIsFallback] = useState(
     !isSwapApiEnabledChainId(chainId) || (isSwapApiEnabledChainId(chainId) && typeof SWAP_API_BASE_URL === 'undefined')
-
-  const [isFallback, setIsFallback] = useState(shouldFallback)
-
-  useEffect(() => {
-    if (shouldFallback !== isFallback) {
-      setIsFallback(shouldFallback)
-    }
-  }, [isFallback, shouldFallback])
-
+  )
   const [slippageTolerance] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
   const { data: feeData } = useFeeData({ chainId })
@@ -328,6 +320,22 @@ const useSimpleSwapTrade = () => {
       log.error('client trade error')
     },
   })
+
+  // Reset the fallback on network switch
+  useEffect(() => {
+    const unwatch = watchNetwork(({ chain }) => {
+      if (chain) {
+        const shouldFallback =
+          !isSwapApiEnabledChainId(chain.id) ||
+          (isSwapApiEnabledChainId(chain.id) && typeof SWAP_API_BASE_URL === 'undefined')
+
+        setIsFallback(shouldFallback)
+      }
+    })
+
+    return () => unwatch()
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (isFallback ? clientTrade : apiTrade) as ReturnType<typeof useApiTrade>
 }

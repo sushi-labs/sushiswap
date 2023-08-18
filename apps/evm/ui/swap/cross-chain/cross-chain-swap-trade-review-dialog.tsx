@@ -153,23 +153,26 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
           gas: typeof config.request.gas === 'bigint' ? calculateGasMargin(config.request.gas) : undefined,
         }
       : undefined,
-    onSuccess: async (data) => {
+    onMutate: () => {
+      // Set reference of current trade
       if (tradeRef && trade) {
         tradeRef.current = trade
       }
-
+    },
+    onSuccess: async (data) => {
       // Clear input fields
       setSwapAmount('')
 
       waitForTransaction({ hash: data.hash })
         .then((receipt) => {
+          const trade = tradeRef.current
           if (receipt.status === 'success') {
             log.info('cross chain swap success (source)', {
-              trade: stringify(tradeRef?.current),
+              trade: stringify(trade),
             })
           } else {
             log.error('cross chain swap failed (source)', {
-              trade: stringify(tradeRef?.current),
+              trade: stringify(trade),
             })
 
             setStepStates({
@@ -187,7 +190,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         })
         .catch(() => {
           log.error('cross chain swap error (source)', {
-            trade: stringify(tradeRef?.current),
+            trade: stringify(trade),
           })
           setStepStates({
             source: StepState.Failed,
@@ -205,7 +208,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
     onError: (error) => {
       if (error.message.startsWith('user rejected transaction')) return
       log.error('cross chain swap error', {
-        trade: stringify(tradeRef?.current),
+        trade: stringify(trade),
         error: stringify(error),
       })
       createErrorToast(error.message, false)
