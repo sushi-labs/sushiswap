@@ -58,7 +58,8 @@ export const SimpleSwapTradeButton: FC = () => {
                       <Button
                         size="xl"
                         disabled={Boolean(
-                          !trade?.amountOut?.greaterThan(ZERO) ||
+                          true ||
+                            !trade?.amountOut?.greaterThan(ZERO) ||
                             trade?.route?.status === 'NoWay' ||
                             +swapAmountString === 0 ||
                             (!checked && warningSeverity(trade?.priceImpact) > 3)
