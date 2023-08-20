@@ -31,6 +31,7 @@ export const UserProfile: FC<ProfileProps> = () => {
   const { address } = useAccount()
 
   const { data: name } = useEnsName({
+    chainId: ChainId.ETHEREUM,
     address,
   })
 
