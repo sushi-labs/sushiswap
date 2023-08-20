@@ -92,17 +92,17 @@ export const getConcentratedLiquidityPools = async ({
     const [token0, token1, fee] = tokens
 
     if (!slot0s[index]) return null
-    const slot0 = slot0s[index]
+    const slot0 = slot0s[index].result
 
     if (!liquidities[index]) return null
     const liquidity = liquidities[index].result
 
     if (!tokens || !slot0 || typeof liquidity === 'undefined') return null
 
-    const sqrtPriceX96 = slot0.result?.[0]
+    const sqrtPriceX96 = slot0[0]
     if (!sqrtPriceX96 || sqrtPriceX96 === 0n) return null
 
-    const tick = slot0.result?.[1]
+    const tick = slot0[1]
     if (typeof tick === 'undefined') return null
 
     return new SushiSwapV3Pool(token0, token1, fee, sqrtPriceX96, liquidity, tick)
