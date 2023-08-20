@@ -4,7 +4,7 @@ import { Amount, Currency, Token } from '@sushiswap/currency'
 import { Address, readContracts } from 'wagmi'
 import { getContract } from 'wagmi/actions'
 
-import { getTridentConstantPoolFactoryContract } from '../../../contracts/actions'
+import { getTridentConstantPoolFactoryContract } from '../../../contracts'
 import { pairsUnique } from './utils'
 
 export enum TridentConstantPoolState {
@@ -45,7 +45,7 @@ export const getTridentConstantPools = async (
 
   const callStatePoolsCountProcessed =
     callStatePoolsCount
-      ?.map((s, i) => [i, s ? parseInt(s.toString()) : 0] as [number, number])
+      ?.map((s, i) => [i, s.status === 'success' ? s.result : 0] as [number, bigint])
       .filter(([, length]) => length)
       .map(
         ([i, length]) =>
@@ -53,7 +53,7 @@ export const getTridentConstantPools = async (
       ) ?? []
 
   const pairsUniqueProcessed = callStatePoolsCount
-    ?.map((s, i) => [i, s ? parseInt(s.toString()) : 0] as [number, number])
+    ?.map((s, i) => [i, s.status === 'success' ? s.result : 0] as [number, bigint])
     .filter(([, length]) => length)
     .map(([i]) => [_pairsUnique[i][0], _pairsUnique[i][1]])
 

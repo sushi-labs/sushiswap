@@ -45,7 +45,7 @@ export const getTridentStablePools = async (
   })
 
   const callStatePoolsCountProcessed = callStatePoolsCount
-    ?.map((s, i) => [i, s ? parseInt(s.toString()) : 0] as [number, number])
+    ?.map((s, i) => [i, s.status === 'success' ? s.result : 0] as [number, bigint])
     .filter(([, length]) => length)
     .map(
       ([i, length]) =>
@@ -53,7 +53,7 @@ export const getTridentStablePools = async (
     )
 
   const pairsUniqueProcessed = callStatePoolsCount
-    ?.map((s, i) => [i, s ? parseInt(s.toString()) : 0] as [number, number])
+    ?.map((s, i) => [i, s.status === 'success' ? s.result : 0] as [number, bigint])
     .filter(([, length]) => length)
     .map(([i]) => [_pairsUnique[i][0], _pairsUnique[i][1]])
 
@@ -79,38 +79,44 @@ export const getTridentStablePools = async (
       )
   })
 
-  const poolsAddresses = pools.map((p) => p.address)
+  const poolsAddresses = pools.map((p) => p.address as Address)
 
-  const reserves = await readContracts({
-    contracts: poolsAddresses.map((address) => ({
+  const contracts = [
+    ...poolsAddresses.map((address) => ({
       chainId,
-      address: address as Address,
+      address,
       abi: tridentStablePoolAbi,
-      functionName: 'getReserves',
+      functionName: 'getReserves' as const,
     })),
-  })
+    ...poolsAddresses.map((address) => ({
+      chainId,
+      address,
+      abi: tridentStablePoolAbi,
+      functionName: 'swapFee' as const,
+    })),
+  ]
 
-  const fees = await readContracts({
-    contracts: poolsAddresses.map((address) => ({
-      chainId,
-      address: address as Address,
-      abi: tridentStablePoolAbi,
-      functionName: 'swapFee',
-    })),
+  const reservesAndFees = await readContracts({
+    contracts,
   })
 
   return pools.map((p, i) => {
+    if (!reservesAndFees?.[i].result || !reservesAndFees?.[i + poolsAddresses.length].result) {
+      return [TridentStablePoolState.LOADING, null]
+    }
+
     const total0 = totals.get(p.token0.address)
     const total1 = totals.get(p.token1.address)
+    const [reserve0, reserve1] = reservesAndFees[i].result as [bigint, bigint]
+    const swapFee = reservesAndFees[i + poolsAddresses.length].result as bigint
 
-    const [reserve0, reserve1] = reserves?.[i]?.result || []
     if (!reserve0 || !reserve1 || !total0 || !total1) return [TridentStablePoolState.LOADING, null]
     return [
       TridentStablePoolState.EXISTS,
       new TridentStablePool(
         Amount.fromRawAmount(p.token0, reserve0),
         Amount.fromRawAmount(p.token1, reserve1),
-        parseInt(fees[i].toString()),
+        parseInt(swapFee.toString()),
         { base: total0.base, elastic: total0.elastic },
         { base: total1.base, elastic: total1.elastic }
       ),
