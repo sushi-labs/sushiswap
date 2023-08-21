@@ -364,7 +364,7 @@ export class UniV2Extractor {
       token1 = tokens[1]
     } catch (e) {
       this.taskCounter.dec()
-      warnLog(this.multiCallAggregator.chainId, `Ext2 add pool ${addr} by log failed`)
+      warnLog(this.multiCallAggregator.chainId, `Ext2 add pool ${addr} by log failed: ${e}`)
       return
     }
     this.taskCounter.dec()
