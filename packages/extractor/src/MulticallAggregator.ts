@@ -1,7 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Abi, Narrow } from 'abitype'
-import { Address, PublicClient } from 'viem'
-import { Contract, MulticallContracts } from 'viem/dist/types/types/multicall'
+import { Address, MulticallContract, MulticallContracts, PublicClient } from 'viem'
 
 import { warnLog } from './WarnLog'
 
@@ -18,7 +17,7 @@ const getBlockNumberAbi: Abi = [
 // aggregates several calls in one multicall
 export class MultiCallAggregator {
   client: PublicClient
-  pendingCalls: MulticallContracts<Contract[]> = []
+  pendingCalls: MulticallContracts<MulticallContract[]> = []
   pendingResolves: ((arg: any) => void)[] = []
   pendingRejects: ((arg: unknown) => void)[] = []
   timer?: NodeJS.Timeout
@@ -91,7 +90,7 @@ export class MultiCallAggregator {
   }
 
   async callSameBlock(
-    calls: MulticallContracts<Contract[]>
+    calls: MulticallContracts<MulticallContract[]>
   ): Promise<{ blockNumber: number; returnValues: unknown[] }> {
     if (calls.length === 0) return { blockNumber: -1, returnValues: [] }
     this.sheduleMulticall()

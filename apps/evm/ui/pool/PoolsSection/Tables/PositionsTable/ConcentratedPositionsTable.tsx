@@ -25,11 +25,7 @@ export const ConcentratedPositionsTable: FC<{
   const [columnVisibility, setColumnVisibility] = useState({})
   const [sorting, setSorting] = useState<SortingState>([{ id: 'positionSize', desc: true }])
 
-  const {
-    data: positions,
-    isLoading,
-    isInitialLoading,
-  } = useConcentratedLiquidityPositions({
+  const { data: positions, isInitialLoading } = useConcentratedLiquidityPositions({
     account: address,
     chainIds: SUSHISWAP_V3_SUPPORTED_CHAIN_IDS as Writeable<typeof SUSHISWAP_V3_SUPPORTED_CHAIN_IDS>,
   })
@@ -99,7 +95,7 @@ export const ConcentratedPositionsTable: FC<{
     <div className="mb-[120px]">
       <GenericTable<ConcentratedLiquidityPosition>
         table={table}
-        loading={Boolean(isLoading && address)}
+        loading={isInitialLoading}
         placeholder="No positions found"
         pageSize={_positions?.length ? _positions.length : 1}
         linkFormatter={rowLink}

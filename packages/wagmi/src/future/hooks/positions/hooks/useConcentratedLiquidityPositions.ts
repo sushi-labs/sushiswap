@@ -8,6 +8,16 @@ import { Address } from 'wagmi'
 import { getConcentratedLiquidityPool } from '../../pools'
 import { getTokenWithCacheQueryFn, getTokenWithQueryCacheHydrate } from '../../tokens'
 import { getConcentratedLiquidityPositions } from '../actions'
+import { ConcentratedLiquidityPosition } from '../types'
+
+interface UseConcentratedLiquidityPositionsData extends ConcentratedLiquidityPosition {
+  pool: SushiSwapV3Pool
+  position: {
+    position: Position
+    positionUSD: number
+    unclaimedUSD: number
+  }
+}
 
 interface UseConcentratedLiquidityPositionsParams {
   account: Address | undefined
@@ -32,7 +42,7 @@ export const useConcentratedLiquidityPositions = ({
       })
 
       if (data && prices) {
-        const pools = await Promise.all(
+        const pools = await Promise.allSettled(
           data.map(async (el) => {
             const [token0Data, token1Data] = await Promise.all([
               getTokenWithCacheQueryFn({ chainId: el.chainId, hasToken, customTokens, address: el.token0 }),
@@ -84,17 +94,21 @@ export const useConcentratedLiquidityPositions = ({
           })
         )
 
-        return data.map((el, i) => ({
-          ...el,
-          ...pools[i],
-        }))
+        return pools.reduce<UseConcentratedLiquidityPositionsData[]>((acc, el, i) => {
+          if (el.status === 'fulfilled') {
+            acc.push({
+              ...data[i],
+              ...el.value,
+            })
+          }
+
+          return acc
+        }, [])
       }
 
       return []
     },
-    refetchInterval: 10000,
+    refetchInterval: 3000,
     enabled: Boolean(account && chainIds && enabled),
-    staleTime: 15000,
-    cacheTime: 60000,
   })
 }
