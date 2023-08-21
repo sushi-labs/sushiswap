@@ -20,6 +20,7 @@ import { HaqqCircle } from './HaqqCircle'
 import { HarmonyCircle } from './HarmonyCircle'
 import { HecoCircle } from './HecoCircle'
 import { KavaCircle } from './KavaCircle'
+import { LineaCircle } from './LineaCircle'
 import { MetisCircle } from './MetisCircle'
 import { MoonbeamCircle } from './MoonbeamCircle'
 import { MoonriverCircle } from './MoonriverCircle'
@@ -50,6 +51,7 @@ export * from './HaqqCircle'
 export * from './HarmonyCircle'
 export * from './HecoCircle'
 export * from './KavaCircle'
+export * from './LineaCircle'
 export * from './MetisCircle'
 export * from './MoonbeamCircle'
 export * from './MoonriverCircle'
@@ -91,6 +93,6 @@ export const NETWORK_CIRCLE_ICON: Record<number, IconComponent> = {
   [ChainId.HAQQ]: HaqqCircle,
   [ChainId.CORE]: CoreCircle,
   [ChainId.ZKSYNC_ERA]: EthereumCircle,
-  [ChainId.LINEA]: EthereumCircle,
+  [ChainId.LINEA]: LineaCircle,
   [ChainId.BASE]: BaseCircle,
 }

@@ -592,7 +592,7 @@ export const core = {
   },
 } as const
 
-const linea = {
+export const linea = {
   id: ChainId.LINEA,
   name: 'Linea',
   network: 'linea',
