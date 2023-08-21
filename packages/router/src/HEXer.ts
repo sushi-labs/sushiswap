@@ -1,5 +1,3 @@
-import type { BigNumber } from 'ethers'
-
 export class HEXer {
   private hex: string
 
@@ -22,7 +20,7 @@ export class HEXer {
 
   uint8(data: number): HEXer {
     if (data > 255 || data < 0 || data !== Math.round(data)) {
-      throw new Error('Wrong uint8: ' + data)
+      throw new Error(`Wrong uint8: ${data}`)
     }
     this.hex += data.toString(16).padStart(2, '0')
 
@@ -35,7 +33,7 @@ export class HEXer {
 
   uint16(data: number): HEXer {
     if (data >= 256 * 256 || data < 0 || data !== Math.round(data)) {
-      throw new Error('Wrong uint16: ' + data)
+      throw new Error(`Wrong uint16: ${data}`)
     }
     this.hex += data.toString(16).padStart(4, '0')
 
@@ -44,7 +42,7 @@ export class HEXer {
 
   uint24(data: number): HEXer {
     if (data >= 256 * 256 * 256 || data < 0 || data !== Math.round(data)) {
-      throw new Error('Wrong uint24: ' + data)
+      throw new Error(`Wrong uint24: ${data}`)
     }
     this.hex += data.toString(16).padStart(6, '0')
 
@@ -57,25 +55,25 @@ export class HEXer {
 
   uint32(data: number): HEXer {
     if (data >= 256 * 256 * 256 * 256 || data < 0 || data !== Math.round(data)) {
-      throw new Error('Wrong uint32: ' + data)
+      throw new Error(`Wrong uint32: ${data}`)
     }
     this.hex += data.toString(16).padStart(8, '0')
 
     return this
   }
 
-  uint256(data: BigNumber | number): HEXer {
-    if (typeof data == 'number') {
+  uint256(data: bigint | number): HEXer {
+    if (typeof data === 'number') {
       if (data > Number.MAX_SAFE_INTEGER || data < 0 || data !== Math.round(data)) {
-        throw new Error('Wrong uint256: ' + data)
+        throw new Error(`Wrong uint256: ${data}`)
       }
       this.hex += data.toString(16).padStart(64, '0')
 
       return this
     } else {
-      const hex = data.toHexString().slice(2).padStart(64, '0')
-      if (data.lt(0) || hex.length > 64) {
-        throw new Error('Wrong uin256: ' + data.toString())
+      const hex = data.toString(16).padStart(64, '0')
+      if (data < 0n || hex.length > 64) {
+        throw new Error(`Wrong uin256: ${data.toString()}`)
       }
       this.hex += hex
 
@@ -83,13 +81,13 @@ export class HEXer {
     }
   }
 
-  uint(data: BigNumber | number): HEXer {
+  uint(data: bigint | number): HEXer {
     return this.uint256(data)
   }
 
   address(addr: string): HEXer {
     if (addr.length > 42 || addr === 'RouteProcessor') {
-      throw new Error('Wrong address: ' + addr)
+      throw new Error(`Wrong address: ${addr}`)
     }
     // 0xabcd => 0000abcd
     this.hex += addr.slice(2).padStart(40, '0')
@@ -98,8 +96,8 @@ export class HEXer {
   }
 
   hexData(data: string): HEXer {
-    if (data.length % 2 != 0) {
-      throw new Error('Wrong hex data length: ' + data.length)
+    if (data.length % 2 !== 0) {
+      throw new Error(`Wrong hex data length: ${data.length}`)
     }
 
     if (data.startsWith('0x')) data = data.slice(2)
@@ -109,8 +107,8 @@ export class HEXer {
   }
 
   bytes(data: string): HEXer {
-    if (data.length % 2 != 0) {
-      throw new Error('Wrong bytes length: ' + data.length)
+    if (data.length % 2 !== 0) {
+      throw new Error(`Wrong bytes length: ${data.length}`)
     }
     if (data.startsWith('0x')) data = data.slice(2)
     this.uint(data.length / 2)
@@ -122,7 +120,7 @@ export class HEXer {
   bytes32(data: string): HEXer {
     if (data.startsWith('0x')) data = data.slice(2)
     if (data.length > 64) {
-      throw new Error('Wrong bytes32 length: ' + data.length)
+      throw new Error(`Wrong bytes32 length: ${data.length}`)
     }
 
     this.hex += data.padEnd(64, '0')

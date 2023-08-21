@@ -104,4 +104,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: playwright-report
-          path: ./apps/_root/test-results/
+          path: ./apps/evm/test-results/

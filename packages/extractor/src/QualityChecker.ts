@@ -51,7 +51,7 @@ export class QualityChecker {
           pool.isStable() &&
           pool.state &&
           newPool.state &&
-          pool.latestEventBlockNumber == newPool.latestEventBlockNumber
+          pool.latestEventBlockNumber === newPool.latestEventBlockNumber
         ) {
           //this.totalCheckCounter++
           if (pool.state.liquidity !== newPool.state.liquidity) return [newPool, PoolSyncState.LiquidityMismatch, 1, 0]
@@ -65,11 +65,11 @@ export class QualityChecker {
           ticks1.shift()
           ticks1.pop()
           if (ticks1.length > 0) {
-            const start = ticks0.findIndex((t) => t.index == ticks1[0].index)
-            if (start == -1) return [newPool, PoolSyncState.TicksStartMismatch, 1, 0]
+            const start = ticks0.findIndex((t) => t.index === ticks1[0].index)
+            if (start === -1) return [newPool, PoolSyncState.TicksStartMismatch, 1, 0]
             if (ticks0.length < start + ticks1.length) [newPool, PoolSyncState.TicksFinishMismatch]
             for (let i = 0; i < ticks1.length; ++i) {
-              if (ticks0[i + start].index !== ticks1[i].index || !ticks0[i + start].DLiquidity.eq(ticks1[i].DLiquidity))
+              if (ticks0[i + start].index !== ticks1[i].index || ticks0[i + start].DLiquidity !== ticks1[i].DLiquidity)
                 return [newPool, PoolSyncState.TicksMismatch, 1, 0]
             }
           }
@@ -81,7 +81,7 @@ export class QualityChecker {
       }
       warnLog(pool.client.chainId, 'Quality check timeout error')
     } catch (e) {
-      warnLog(pool.client.chainId, 'Quality check error: ' + e)
+      warnLog(pool.client.chainId, `Quality check error: ${e}`)
     }
     return [undefined, PoolSyncState.CheckFailed, 0, 0]
   }

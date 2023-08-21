@@ -1,8 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { useCallback } from 'react'
-import { Address, useContractWrite, useNetwork, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
-import { PrepareWriteContractConfig, SendTransactionResult } from 'wagmi/actions'
+import { UserRejectedRequestError } from 'viem'
+import { Address, useContractWrite, useNetwork, usePrepareContractWrite } from 'wagmi'
+import { PrepareWriteContractConfig, SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
 import { DistributionCreator } from '../abis/DistributionCreator'
 
@@ -39,11 +40,11 @@ export const useIncentivizePoolWithRewards = ({ account, chainId, args, enabled 
           type: 'approval',
           chainId,
           txHash: data.hash,
-          promise: data.wait(),
+          promise: waitForTransaction({ hash: data.hash }),
           summary: {
-            pending: `Harvesting rewards`,
-            completed: `Successfully harvested rewards`,
-            failed: `Something went wrong harvesting rewards`,
+            pending: 'Harvesting rewards',
+            completed: 'Successfully harvested rewards',
+            failed: 'Something went wrong harvesting rewards',
           },
           groupTimestamp: ts,
           timestamp: ts,

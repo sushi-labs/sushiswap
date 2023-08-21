@@ -1,5 +1,5 @@
 import { tryParseAmount } from '@sushiswap/currency'
-import { Fraction, JSBI, ZERO } from '@sushiswap/math'
+import { Fraction, ZERO } from '@sushiswap/math'
 
 import { ZTokenToToken } from '../../lib/zod'
 import { CreateVestingFormSchemaType, STEP_CONFIGURATIONS_MAP } from './schema'
@@ -29,7 +29,7 @@ export const calculateTotalAmount = ({
   if (!currency || !stepPayouts) return undefined
   const _currency = ZTokenToToken.parse(currency)
   const _cliffAmount = cliffEnabled ? tryParseAmount(cliffAmount?.toString(), _currency) : undefined
-  const _totalStep = tryParseAmount(stepAmount?.toString(), _currency)?.multiply(JSBI.BigInt(stepPayouts))
+  const _totalStep = tryParseAmount(stepAmount?.toString(), _currency)?.multiply(BigInt(stepPayouts))
 
   if (_cliffAmount && !_totalStep) return _cliffAmount
   if (!_cliffAmount && _totalStep) return _totalStep
@@ -43,9 +43,9 @@ export const calculateCliffDuration = ({
   cliffEndDate,
   startDate,
 }: Pick<CreateVestingFormSchemaType, 'cliffEndDate' | 'cliffEnabled' | 'startDate'>) => {
-  let cliffDuration = JSBI.BigInt(0)
+  let cliffDuration = 0n
   if (cliffEnabled && cliffEndDate && startDate && cliffEndDate > startDate) {
-    cliffDuration = JSBI.BigInt(Math.floor((cliffEndDate.getTime() - startDate.getTime()) / 1000))
+    cliffDuration = BigInt(Math.floor((cliffEndDate.getTime() - startDate.getTime()) / 1000))
   }
 
   return cliffDuration
@@ -70,6 +70,6 @@ export const calculateStepPercentage = ({
   const _stepAmount = tryParseAmount(stepAmount.toString(), _currency)
 
   return totalAmount?.greaterThan(ZERO) && _stepAmount
-    ? new Fraction(_stepAmount.multiply(JSBI.BigInt(1e18)).quotient, totalAmount.quotient).quotient
-    : JSBI.BigInt(0)
+    ? new Fraction(_stepAmount.multiply(BigInt(1e18)).quotient, totalAmount.quotient).quotient
+    : 0n
 }

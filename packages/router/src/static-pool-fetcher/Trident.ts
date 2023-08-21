@@ -1,20 +1,20 @@
-import { constantProductPoolAbi, stablePoolAbi } from '@sushiswap/abi'
+import { tridentConstantPoolAbi, tridentStablePoolAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Currency, Token } from '@sushiswap/currency'
 import {
-  constantProductPoolFactoryAbi,
-  constantProductPoolFactoryAddress,
-  ConstantProductPoolFactoryChainId,
-  stablePoolFactoryAbi,
-  stablePoolFactoryAddress,
-  StablePoolFactoryChainId,
-} from '@sushiswap/trident-core'
+  tridentConstantPoolFactoryAbi,
+  tridentConstantPoolFactoryAddress,
+  TridentConstantPoolFactoryChainId,
+  tridentStablePoolFactoryAbi,
+  tridentStablePoolFactoryAddress,
+  TridentStablePoolFactoryChainId,
+} from '@sushiswap/trident-sdk'
 import { Address, PublicClient } from 'viem'
 
 import { getCurrencyCombinations } from '../getCurrencyCombinations'
 
 export interface TridentStaticPool {
-  address: string
+  address: Address
   token0: Token
   token1: Token
   type: 'STABLE_POOL' | 'CONSTANT_PRODUCT_POOL'
@@ -49,12 +49,12 @@ export class TridentStaticPoolFetcher {
     const _pairsUniqueAddr = _pairsUnique.map(([t0, t1]) => [t0.address, t1.address])
     const factoryAddress =
       type === 'STABLE_POOL'
-        ? (stablePoolFactoryAddress[chainId as StablePoolFactoryChainId] as Address)
-        : (constantProductPoolFactoryAddress[chainId as ConstantProductPoolFactoryChainId] as Address)
+        ? (tridentStablePoolFactoryAddress[chainId as TridentStablePoolFactoryChainId] as Address)
+        : (tridentConstantPoolFactoryAddress[chainId as TridentConstantPoolFactoryChainId] as Address)
     const factoryAbi =
       type === 'STABLE_POOL'
-        ? stablePoolFactoryAbi[chainId as StablePoolFactoryChainId]
-        : constantProductPoolFactoryAbi[chainId as ConstantProductPoolFactoryChainId]
+        ? tridentStablePoolFactoryAbi[chainId as TridentStablePoolFactoryChainId]
+        : tridentConstantPoolFactoryAbi[chainId as TridentConstantPoolFactoryChainId]
 
     const callStatePoolsCount = await client.multicall({
       multicallAddress: client.chain?.contracts?.multicall3?.address as Address,
@@ -104,7 +104,7 @@ export class TridentStaticPoolFetcher {
       if (s?.result)
         s.result.forEach((address) =>
           pools.push({
-            address: address.toLowerCase(),
+            address: address.toLowerCase() as Address,
             token0: pairsUniqueProcessed?.[i][0] as Token,
             token1: pairsUniqueProcessed?.[i][1] as Token,
             type,
@@ -122,7 +122,7 @@ export class TridentStaticPoolFetcher {
           ({
             chainId,
             address: address as Address,
-            abi: type === 'STABLE_POOL' ? stablePoolAbi : constantProductPoolAbi,
+            abi: type === 'STABLE_POOL' ? tridentStablePoolAbi : tridentConstantPoolAbi,
             functionName: 'swapFee',
           } as const)
       ),

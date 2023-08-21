@@ -20,7 +20,7 @@ export const CREATE_STREAM_DEFAULT_VALUES: CreateStreamFormSchemaType = {
   dates: undefined,
   currency: undefined,
   amount: '',
-  recipient: '',
+  recipient: undefined,
   fundSource: FundSource.WALLET,
 }
 

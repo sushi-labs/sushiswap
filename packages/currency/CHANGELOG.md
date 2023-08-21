@@ -1,5 +1,11 @@
 # @sushiswap/currency
 
+## 0.1.3
+
+### Patch Changes
+
+- [#1095](https://github.com/sushiswap/sushiswap/pull/1095) [`2d8510984`](https://github.com/sushiswap/sushiswap/commit/2d85109847583b2cda7ce45c9ffb377043ea46cd) Thanks [@OlaStenberg](https://github.com/OlaStenberg)! - .
+
 ## 0.1.2
 
 ### Patch Changes

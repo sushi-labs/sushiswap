@@ -1,4 +1,3 @@
-import { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
@@ -6,19 +5,16 @@ import {
   ConfirmationDialog as UIConfirmationDialog,
   ConfirmationDialogState,
 } from '@sushiswap/ui/components/dialog/ConfirmationDialog'
-import { createToast } from '@sushiswap/ui/components/toast'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { isSushiSwapV3ChainId, NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
-import {
-  _useSendTransaction as useSendTransaction,
-  useAccount,
-  useNetwork,
-  UserRejectedRequestError,
-} from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { useAccount, useNetwork, usePrepareSendTransaction, useSendTransaction } from '@sushiswap/wagmi'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
-import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
+import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
+import { Hex, UserRejectedRequestError } from 'viem'
 
 import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
 
@@ -72,7 +68,10 @@ export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcen
   }, [slippageTolerance])
 
   const onSettled = useCallback(
-    (data: SendTransactionResult | undefined) => {
+    (data: SendTransactionResult | undefined, error: Error | null) => {
+      if (error instanceof UserRejectedRequestError) {
+        createErrorToast(error?.message, true)
+      }
       if (!data || !token0 || !token1) return
 
       const ts = new Date().getTime()
@@ -81,7 +80,7 @@ export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcen
         type: 'mint',
         chainId,
         txHash: data.hash,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: noLiquidity
             ? `Creating the ${token0.symbol}/${token1.symbol} liquidity pool`
@@ -100,37 +99,36 @@ export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcen
     [token0, token1, address, chainId, noLiquidity]
   )
 
-  const prepare = useCallback(
-    async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!chainId || !address || !token0 || !token1 || !isSushiSwapV3ChainId(chainId)) return
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    if (!chainId || !address || !token0 || !token1 || !isSushiSwapV3ChainId(chainId)) return {}
 
-      if (position && deadline) {
-        const useNative = token0.isNative ? token0 : token1.isNative ? token1 : undefined
-        const { calldata, value } =
-          hasExistingPosition && tokenId
-            ? NonfungiblePositionManager.addCallParameters(position, {
-                tokenId,
-                slippageTolerance: slippagePercent,
-                deadline: deadline.toString(),
-                useNative,
-              })
-            : NonfungiblePositionManager.addCallParameters(position, {
-                slippageTolerance: slippagePercent,
-                recipient: address,
-                deadline: deadline.toString(),
-                useNative,
-                createPool: noLiquidity,
-              })
+    if (position && deadline) {
+      const useNative = token0.isNative ? token0 : token1.isNative ? token1 : undefined
+      const { calldata, value } =
+        hasExistingPosition && tokenId
+          ? NonfungiblePositionManager.addCallParameters(position, {
+              tokenId,
+              slippageTolerance: slippagePercent,
+              deadline: deadline.toString(),
+              useNative,
+            })
+          : NonfungiblePositionManager.addCallParameters(position, {
+              slippageTolerance: slippagePercent,
+              recipient: address,
+              deadline: deadline.toString(),
+              useNative,
+              createPool: noLiquidity,
+            })
 
-        setRequest({
-          to: getV3NonFungiblePositionManagerConractConfig(chainId).address,
-          data: calldata,
-          value,
-        })
+      return {
+        to: getV3NonFungiblePositionManagerConractConfig(chainId).address,
+        data: calldata as Hex,
+        value: BigInt(value),
       }
-    },
-    [address, chainId, deadline, hasExistingPosition, noLiquidity, position, slippagePercent, token0, token1, tokenId]
-  )
+    }
+
+    return {}
+  }, [address, chainId, deadline, hasExistingPosition, noLiquidity, position, slippagePercent, token0, token1, tokenId])
 
   const onComplete = useCallback(() => {
     setOpen(false)
@@ -141,22 +139,26 @@ export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcen
     }, 500)
   }, [])
 
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
+    enabled: chainId === chain?.id,
+  })
+
   const {
     sendTransactionAsync,
     isLoading: isWritePending,
     data,
   } = useSendTransaction({
-    chainId,
-    prepare,
+    ...config,
     onSettled,
-    enabled: chainId === chain?.id,
     onSuccess: (data) => {
       closeReview()
 
       onSuccess()
 
-      data.wait().then((receipt) => {
-        if (receipt.status === 1) {
+      waitForTransaction({ hash: data.hash }).then((receipt) => {
+        if (receipt.status === 'success') {
           setDialogState(ConfirmationDialogState.Success)
         } else {
           setDialogState(ConfirmationDialogState.Failed)

@@ -1,12 +1,13 @@
 import { TradeType } from '@sushiswap/amm'
 import { Amount, Native, Price, Token, tryParseAmount, Type, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { Fraction, JSBI, ONE, Percent, ZERO } from '@sushiswap/math'
+import { Fraction, ONE, Percent, ZERO } from '@sushiswap/math'
 import { usePrice } from '@sushiswap/react-query'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, StargateChainId } from '@sushiswap/stargate'
 import { useFeeData, useSushiXSwapContract } from '@sushiswap/wagmi'
 import { getClientTrade, useBentoboxTotals, usePools } from '@sushiswap/wagmi/future/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
+import { stringify } from 'viem'
 
 import { Action, SushiXSwap } from '../SushiXSwap'
 import { getBridgeFees } from './getBridgeFees'
@@ -186,7 +187,7 @@ export const useCrossChainTradeQuery = (
 
       const bridgeImpact =
         !bridgeFee || !amount || !srcMinimumAmountOut
-          ? new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
+          ? new Percent(0n, 10000n)
           : new Percent(bridgeFee.quotient, srcMinimumAmountOut ? srcMinimumAmountOut.quotient : amount.quotient)
 
       let priceImpact: Percent
@@ -199,7 +200,7 @@ export const useCrossChainTradeQuery = (
       } else if (swapTransfer && srcTrade && !dstTrade) {
         priceImpact = srcTrade.priceImpact.add(bridgeImpact)
       } else {
-        priceImpact = new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
+        priceImpact = new Percent(0n, 10000n)
       }
 
       // console.log({ recipient, amount, network0, network1, dstMinimumAmountOut, srcRebases, dstRebases, contract })
@@ -229,7 +230,6 @@ export const useCrossChainTradeQuery = (
           writeArgs: undefined,
           route: { status: '' },
           functionName: 'cook',
-          overrides: undefined,
         } as UseCrossChainSelect
       }
 
@@ -254,8 +254,8 @@ export const useCrossChainTradeQuery = (
       if (transfer) {
         sushiXSwap.transfer(amount, srcShare)
       } else if (
-        (srcTrade && srcTrade.route.legs.length && srcMinimumAmountOut) ||
-        (dstTrade && dstTrade.route.legs.length && dstMinimumAmountOut)
+        (srcTrade?.route.legs.length && srcMinimumAmountOut) ||
+        (dstTrade?.route.legs.length && dstMinimumAmountOut)
       ) {
         sushiXSwap.crossChainSwap({
           srcAmount: amount,
@@ -288,17 +288,10 @@ export const useCrossChainTradeQuery = (
         throw new Error('Stargate teleport action not included')
 
       const gasBuffer = 1_000_000
+
       const [fee] = await sushiXSwap.getFee(dstTrade ? dstTrade.route.gasSpent + gasBuffer : undefined)
 
-      const value = sushiXSwap.srcCooker.values.reduce((a, b) => a.add(b), fee)
-
-      console.log({
-        srcTradeGasSpent: srcTrade?.route?.gasSpent,
-        quoteLayerZeroFee: fee.toString(),
-        dstTradeGasSpent: dstTrade?.route?.gasSpent,
-        // gasEstimate: gasEstimate.toString(),
-        value: value.toString(),
-      })
+      const value = sushiXSwap.srcCooker.values.reduce((a, b) => a + b, fee)
 
       const srcTypicalGasCost = 600_000
       const srcTradeGasSpent = srcTrade?.route?.gasSpent || 0
@@ -312,17 +305,14 @@ export const useCrossChainTradeQuery = (
         // gasSpent: gasSpent.toString(),
         gasSpent: Amount.fromRawAmount(
           Native.onChain(network0),
-          JSBI.add(
-            JSBI.multiply(JSBI.BigInt(feeData.gasPrice), JSBI.BigInt(srcTypicalGasCost + srcTradeGasSpent)),
-            JSBI.BigInt(fee)
-          )
+          feeData.gasPrice * BigInt(srcTypicalGasCost + srcTradeGasSpent) + fee
         ).toSignificant(4),
         writeArgs: [sushiXSwap.srcCooker.actions, sushiXSwap.srcCooker.values, sushiXSwap.srcCooker.datas],
         route: {
           status: '',
         },
         functionName: 'cook',
-        overrides: { value },
+        value,
       } as UseCrossChainSelect
     },
     refetchOnWindowFocus: true,
@@ -345,6 +335,7 @@ export const useCrossChainTradeQuery = (
           srcRebases &&
           dstRebases
       ),
+    queryKeyHashFn: stringify,
   })
 }
 
@@ -359,18 +350,10 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
       const minAmountOut = data.minAmountOut && token1 ? Amount.fromRawAmount(token1, data.minAmountOut) : undefined
       const swapPrice = amountIn && amountOut ? new Price({ baseAmount: amountIn, quoteAmount: amountOut }) : undefined
       const priceImpact = data.priceImpact
-        ? new Percent(JSBI.BigInt(data.priceImpact[0]), JSBI.BigInt(data.priceImpact[1]))
+        ? new Percent(BigInt(data.priceImpact[0]), BigInt(data.priceImpact[1]))
         : undefined
 
-      if (
-        data &&
-        data?.gasSpent &&
-        feeData?.gasPrice &&
-        amountIn &&
-        amountOut &&
-        data.priceImpact &&
-        data.minAmountOut
-      ) {
+      if (data?.gasSpent && feeData?.gasPrice && amountIn && amountOut && data.priceImpact && data.minAmountOut) {
         return {
           ...data,
           route: {
@@ -411,7 +394,7 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
         overrides: undefined,
       }
     },
-    [feeData?.gasPrice, price, token0, token1, variables.network0]
+    [feeData?.gasPrice, token0, token1]
   )
 
   return useCrossChainTradeQuery(variables, select)

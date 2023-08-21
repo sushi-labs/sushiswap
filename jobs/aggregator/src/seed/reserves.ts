@@ -1,6 +1,6 @@
 import '../lib/wagmi.js'
 
-import { constantProductPoolAbi, stablePoolAbi } from '@sushiswap/abi'
+import { tridentConstantPoolAbi, tridentStablePoolAbi } from '@sushiswap/abi'
 import { createClient, Prisma, PrismaClient } from '@sushiswap/database'
 import { Address, readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
@@ -127,7 +127,7 @@ async function getReserves(chainId: number, pools: Map<string, PoolResult>) {
           ({
             address: pool.address as Address,
             chainId,
-            abi: pool.type === PoolType.CONSTANT_PRODUCT_POOL ? constantProductPoolAbi : stablePoolAbi,
+            abi: pool.type === PoolType.CONSTANT_PRODUCT_POOL ? tridentConstantPoolAbi : tridentStablePoolAbi,
             functionName: 'getReserves',
             allowFailure: true,
           } as const)

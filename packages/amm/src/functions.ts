@@ -1,12 +1,12 @@
 import { getAddress } from '@ethersproject/address'
 import { Amount, Currency } from '@sushiswap/currency'
-import { Fraction, JSBI, Percent } from '@sushiswap/math'
+import { Fraction, Percent } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 import warning from 'tiny-warning'
 
 const ONE = new Fraction(1, 1)
 
-export function calculateSlippageAmount(value: Amount<Currency>, slippage: Percent): [JSBI, JSBI] {
+export function calculateSlippageAmount(value: Amount<Currency>, slippage: Percent): [bigint, bigint] {
   if (slippage.lessThan(0) || slippage.greaterThan(ONE)) throw new Error('Unexpected slippage')
   return [value.multiply(ONE.subtract(slippage)).quotient, value.multiply(ONE.add(slippage)).quotient]
 }
@@ -52,6 +52,6 @@ export function sortedInsert<T>(items: T[], add: T, maxSize: number, comparator:
       }
     }
     items.splice(lo, 0, add)
-    return isFull ? items.pop()! : null
+    return isFull ? items.pop() || null : null
   }
 }

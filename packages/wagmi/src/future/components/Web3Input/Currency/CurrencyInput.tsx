@@ -1,11 +1,12 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { usePrice } from '@sushiswap/react-query'
 import { Button, classNames, SelectIcon, TextField } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
-import dynamic from 'next/dynamic'
-import { FC, useCallback, useEffect, useMemo, useRef } from 'react'
+import { FC, useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useBalanceWeb3 } from '../../../hooks'
@@ -35,7 +36,7 @@ interface CurrencyInputProps {
   hideSearch?: boolean
 }
 
-const Component: FC<CurrencyInputProps> = ({
+const CurrencyInput: FC<CurrencyInputProps> = ({
   id,
   disabled,
   value,
@@ -56,7 +57,10 @@ const Component: FC<CurrencyInputProps> = ({
   hideSearch = false,
   fetching,
 }) => {
+  const [localValue, setLocalValue] = useState<string>('')
   const { address } = useAccount()
+  const [pending, startTransition] = useTransition()
+
   const inputRef = useRef<HTMLInputElement>(null)
   const focusInput = useCallback(() => {
     if (disabled) return
@@ -91,6 +95,16 @@ const Component: FC<CurrencyInputProps> = ({
 
   const isLoading = loading || currencyLoading || isBalanceLoading
   const _error = error ? error : insufficientBalance ? 'Exceeds Balance' : undefined
+
+  const _onChange = useCallback(
+    (value: string) => {
+      setLocalValue(value)
+      startTransition(() => {
+        onChange?.(value)
+      })
+    },
+    [onChange]
+  )
 
   const selector = useMemo(() => {
     if (!onSelect) return null
@@ -154,7 +168,7 @@ const Component: FC<CurrencyInputProps> = ({
         </div>
         <div
           data-state={isLoading ? 'inactive' : 'active'}
-          className="data-[state=inactive]:hidden data-[state=active]:flex items-center"
+          className="data-[state=inactive]:hidden data-[state=active]:flex flex-1 items-center"
         >
           <TextField
             testdata-id={`${id}-input`}
@@ -162,8 +176,8 @@ const Component: FC<CurrencyInputProps> = ({
             ref={inputRef}
             variant="naked"
             disabled={disabled}
-            onValueChange={onChange}
-            value={value}
+            onValueChange={_onChange}
+            value={pending ? localValue : value}
             readOnly={disabled}
             maxDecimals={currency?.decimals}
             data-state={isLoading ? 'inactive' : 'active'}
@@ -216,9 +230,5 @@ const Component: FC<CurrencyInputProps> = ({
     </div>
   )
 }
-
-const CurrencyInput = dynamic(() => Promise.resolve(Component), {
-  ssr: false,
-})
 
 export { CurrencyInput, type CurrencyInputProps }

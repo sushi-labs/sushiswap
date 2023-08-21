@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/sushixswap",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "SushiXSwap",
   "keywords": [
     "sushixswap",
@@ -44,8 +44,10 @@
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/core": "^1.4.2",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/tines": "workspace:*",
     "@sushiswap/hardhat-config": "workspace:*",
-    "@sushiswap/types": "workspace:*"
+    "@sushiswap/types": "workspace:*",
+    "@sushiswap/stargate": "workspace:*"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
