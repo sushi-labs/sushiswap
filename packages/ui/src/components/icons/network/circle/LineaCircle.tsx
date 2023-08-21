@@ -3,7 +3,7 @@ import * as React from 'react'
 import { IconComponent } from '../../../../types'
 
 export const LineaCircle: IconComponent = (props) => (
-  <svg {...props} width="129" height="128" viewBox="0 0 129 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg {...props} viewBox="0 0 129 128" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect x="0.265137" width="128" height="128" rx="64" fill="black" />
     <mask
       id="mask0_1001_72"

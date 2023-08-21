@@ -3,7 +3,7 @@ import * as React from 'react'
 import { IconComponent } from '../../../../types'
 
 export const LineaNaked: IconComponent = (props) => (
-  <svg {...props} width="129" height="128" viewBox="0 0 129 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg {...props} viewBox="0 0 129 128" fill="none" xmlns="http://www.w3.org/2000/svg">
     <mask
       id="mask0_1001_65"
       style={{ maskType: 'luminance' }}
