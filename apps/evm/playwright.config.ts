@@ -22,7 +22,7 @@ const config: PlaywrightTestConfig = {
   testDir: path.join(__dirname, 'test'),
   testMatch: '*.test.ts',
   /* Maximum time one test can run for. */
-  timeout: 60 * 1_000,
+  timeout: 60_000,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
@@ -107,6 +107,7 @@ const config: PlaywrightTestConfig = {
         ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
         ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
         ANVIL_PORT: String(process.env.ANVIL_PORT),
+        CHAIN_ID: String(process.env.CHAIN_ID),
       },
       port: Number(process.env.ANVIL_PORT) || 8545,
     },

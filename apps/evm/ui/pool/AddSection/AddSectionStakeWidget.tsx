@@ -8,7 +8,6 @@ import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { Input } from '@sushiswap/ui/components/input'
-import { SelectIcon } from '@sushiswap/ui/components/select'
 import { Widget, WidgetContent, WidgetHeader } from '@sushiswap/ui/components/widget'
 import { useTotalSupply } from '@sushiswap/wagmi'
 import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPool } from 'lib/hooks'
@@ -71,9 +70,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                       icon={ChevronDownIcon}
                       name="Select"
                       testdata-id="stake-liquidity-header-button"
-                    >
-                      <SelectIcon />
-                    </IconButton>
+                    />
                   </div>
                 </Disclosure.Button>
                 <Transition

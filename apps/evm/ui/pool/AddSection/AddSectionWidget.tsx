@@ -5,7 +5,6 @@ import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
-import { SelectIcon } from '@sushiswap/ui/components/select'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/components/settings'
 import { Widget, WidgetContent, WidgetHeader } from '@sushiswap/ui/components/widget'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
@@ -70,9 +69,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                       )}
                     </SettingsOverlay>
                     <Disclosure.Button as={Fragment}>
-                      <IconButton size="sm" icon={ChevronDownIcon} name="Select">
-                        <SelectIcon />
-                      </IconButton>
+                      <IconButton size="sm" icon={ChevronDownIcon} name="Select" />
                     </Disclosure.Button>
                   </div>
                 </WidgetHeader>

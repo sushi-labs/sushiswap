@@ -1,2 +1,2 @@
-export * from './useStablePoolFactoryContract'
-export * from './useContantProductPoolFactoryContract'
+export * from './useTridentContantPoolFactoryContract'
+export * from './useTridentStablePoolFactoryContract'

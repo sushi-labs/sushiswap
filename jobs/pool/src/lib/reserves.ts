@@ -1,43 +1,40 @@
 import './wagmi.js'
 
-import { BigNumber } from '@ethersproject/bignumber'
 import { balanceOfAbi, getReservesAbi, getStableReservesAbi } from '@sushiswap/abi'
 import { Token } from '@sushiswap/database'
 import { Address, readContracts } from '@wagmi/core'
 
 export interface PoolWithReserves {
   id: string
-  reserve0: BigNumber
-  reserve1: BigNumber
+  reserve0: bigint
+  reserve1: bigint
 }
 
-export async function getConstantProductPoolReserves(poolIds: string[], blockNumber: number) {
+export async function getConstantProductPoolReserves(poolIds: string[], blockNumber: bigint) {
   const startTime = performance.now()
   const updatedPools: Map<string, PoolWithReserves> = new Map()
 
-  
-  const contracts = poolIds.map((id) => ({
-    allowFailure: true,
-    address: id.split(':')[1] as Address,
-    chainId: Number(id.split(':')[0]),
-    abi: getReservesAbi,
-    functionName: 'getReserves',
-    blockNumber
-  } as const))
+  const contracts = poolIds.map(
+    (id) =>
+      ({
+        allowFailure: true,
+        address: id.split(':')[1] as Address,
+        chainId: Number(id.split(':')[0]),
+        abi: getReservesAbi,
+        functionName: 'getReserves',
+      } as const)
+  )
 
   let failures = 0
 
   const batchSize = contracts.length > 250 ? 250 : contracts.length
-  const batches: Promise<(readonly [BigNumber, BigNumber, number] & {
-    _reserve0: BigNumber;
-    _reserve1: BigNumber;
-    _blockTimestampLast: number;
-})[]>[] = []
+  const batches: Promise<(readonly [bigint, bigint, number])[]>[] = []
 
   for (let i = 0; i < contracts.length; i += batchSize) {
     const contractBatch = readContracts({
-      contracts: contracts.slice(i, i+batchSize),
-    })
+      contracts: contracts.slice(i, i + batchSize),
+      blockNumber,
+    }).then((res) => res.map((r) => r.result))
     batches.push(contractBatch)
   }
   const allReserves = await Promise.all(batches).then((res) => res.flat())
@@ -65,7 +62,7 @@ export async function getConstantProductPoolReserves(poolIds: string[], blockNum
   return updatedPools
 }
 
-export async function getStablePoolReserves(poolIds: string[], blockNumber: number) {
+export async function getStablePoolReserves(poolIds: string[], blockNumber: bigint) {
   const startTime = performance.now()
   const updatedPools: Map<string, PoolWithReserves> = new Map()
   const reserves = await readContracts({
@@ -75,8 +72,8 @@ export async function getStablePoolReserves(poolIds: string[], blockNumber: numb
       chainId: Number(id.split(':')[0]),
       abi: getStableReservesAbi,
       functionName: 'getReserves',
-      blockNumber
     })),
+    blockNumber,
   })
   let failures = 0
 
@@ -109,8 +106,8 @@ export async function getConcentratedLiquidityPoolReserves(
     chainId: number
     token0: Token
     token1: Token
-  }[], 
-  blockNumber: number
+  }[],
+  blockNumber: bigint
 ) {
   const startTime = performance.now()
   const updatedPools: Map<string, PoolWithReserves> = new Map()
@@ -123,7 +120,6 @@ export async function getConcentratedLiquidityPoolReserves(
         chainId: p.chainId,
         abi: balanceOfAbi,
         functionName: 'balanceOf',
-        blockNumber
       } as const,
       {
         args: [p.address as Address],
@@ -131,7 +127,6 @@ export async function getConcentratedLiquidityPoolReserves(
         chainId: p.chainId,
         abi: balanceOfAbi,
         functionName: 'balanceOf',
-        blockNumber
       } as const,
     ].flat()
   )
@@ -140,11 +135,12 @@ export async function getConcentratedLiquidityPoolReserves(
   const balances = await readContracts({
     allowFailure: true,
     contracts: balanceContracts.flat(),
+    blockNumber,
   })
 
   pools.forEach((pool, i) => {
-    const balance0 = balances[i * 2]
-    const balance1 = balances[i * 2 + 1]
+    const balance0 = balances[i * 2].result
+    const balance1 = balances[i * 2 + 1].result
     if (balances) {
       const reserve0 = balance0
       const reserve1 = balance1
@@ -160,9 +156,7 @@ export async function getConcentratedLiquidityPoolReserves(
 
   const success = pools.length - failures
   const endTime = performance.now()
-  console.log(
-    `Fetched ${success}/${pools.length} cl balances (${((endTime - startTime) / 1000).toFixed(1)}s). `
-  )
+  console.log(`Fetched ${success}/${pools.length} cl balances (${((endTime - startTime) / 1000).toFixed(1)}s). `)
 
   return updatedPools
 }

@@ -5,7 +5,8 @@ import { ThemeProvider } from '@sushiswap/ui'
 import { GlobalFooter } from '@sushiswap/ui/components/global-footer'
 import { OnramperProvider } from '@sushiswap/ui/components/onramper'
 import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
-import { client, WagmiConfig } from '@sushiswap/wagmi'
+import { config, WagmiConfig } from '@sushiswap/wagmi'
+import { WagmiStoreVersionCheck } from '@sushiswap/wagmi/future'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Analytics } from '@vercel/analytics/react'
 import type { AppProps } from 'next/app'
@@ -51,16 +52,18 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="mask-icon" href="/furo/safari-pinned-tab.svg?v=1" color="#fa52a0" />
         <link rel="shortcut icon" href="/furo/favicon.ico?v=1" />
       </Head>
-      <WagmiConfig client={client}>
+      <WagmiConfig config={config}>
         <QueryClientProvider client={queryClient}>
-          <ThemeProvider>
-            <OnramperProvider>
-              <DefaultSeo {...SEO} />
-              <Header />
-              <Component {...pageProps} />
-              <GlobalFooter maxWidth="6xl" />
-            </OnramperProvider>
-          </ThemeProvider>
+          <WagmiStoreVersionCheck>
+            <ThemeProvider>
+              <OnramperProvider>
+                <DefaultSeo {...SEO} />
+                <Header />
+                <Component {...pageProps} />
+                <GlobalFooter maxWidth="6xl" />
+              </OnramperProvider>
+            </ThemeProvider>
+          </WagmiStoreVersionCheck>
         </QueryClientProvider>
       </WagmiConfig>
       <GoogleAnalytics />

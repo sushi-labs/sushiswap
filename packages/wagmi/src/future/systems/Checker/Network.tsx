@@ -1,15 +1,13 @@
 import { chainName } from '@sushiswap/chain'
-import { Button } from '@sushiswap/ui/components/button'
-import { ButtonProps } from '@sushiswap/ui/components/button'
-import dynamic from 'next/dynamic'
+import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import React, { FC, ReactElement } from 'react'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 
-export interface NetworkProps extends ButtonProps {
+interface NetworkProps extends ButtonProps {
   chainId: number | undefined
 }
 
-export const Component: FC<NetworkProps> = ({
+const Network: FC<NetworkProps> = ({
   chainId,
   fullWidth = true,
   size = 'xl',
@@ -31,7 +29,4 @@ export const Component: FC<NetworkProps> = ({
   return <>{children}</>
 }
 
-// Temp solution until app dir
-export const Network = dynamic(() => Promise.resolve(Component), {
-  ssr: false,
-})
+export { Network, type NetworkProps }

@@ -1,34 +1,29 @@
-import { BigNumberish } from '@ethersproject/bignumber'
 import seedrandom from 'seedrandom'
 
-import { RToken } from '../src'
-import { BridgeBento, getBigNumber } from '../src'
+import { getBigInt, RToken } from '../src'
+import { BridgeBento } from '../src'
 
 function calcPrecision(a: number, b: number): number {
   if (a === b) return 0
-  if (a == 0) return b
-  if (b == 0) return a
+  if (a === 0) return b
+  if (b === 0) return a
   return Math.abs(a / b - 1)
 }
 
-function expectCloseValues(
-  v1: BigNumberish,
-  v2: BigNumberish,
-  precisionExpected: number,
-  description = '',
-  additionalInfo = ''
-) {
-  const a = typeof v1 == 'number' ? v1 : parseFloat(v1.toString())
-  const b = typeof v2 == 'number' ? v2 : parseFloat(v2.toString())
+function expectCloseValues(v1: number, v2: number, precisionExpected: number, description = '', additionalInfo = '') {
+  // const a = typeof v1 === 'number' ? v1 : parseFloat(v1.toString())
+  // const b = typeof v2 === 'number' ? v2 : parseFloat(v2.toString())
+  const a = v1
+  const b = v2
   const precision = calcPrecision(a, b)
   if (precision > precisionExpected) {
     console.log(
-      `Close values expectation failed: ${description}\n` +
-        `v1 = ${a}\n` +
-        `v2= ${b}\n` +
-        `precision = ${precision}, expected < ${precisionExpected}`
+      `Close values expectation failed: ${description}
+      v1 = ${a}\
+      v2= ${b}\
+      precision = ${precision}, expected < ${precisionExpected}`
     )
-    if (additionalInfo != '') {
+    if (additionalInfo !== '') {
       console.log(additionalInfo)
     }
     // debugger
@@ -46,7 +41,7 @@ function checkBridging(bridge: BridgeBento, amount: number) {
   } catch (e) {
     expect(bridge.freeLiquidity).toBeDefined()
     let out
-    if (bridge.base == 0) {
+    if (bridge.base === 0) {
       out = share
     } else {
       out = (share * bridge.elastic) / bridge.base
@@ -64,12 +59,12 @@ function checkBridging(bridge: BridgeBento, amount: number) {
     expectCloseValues(share, share2, 1e-10)
   }
 
-  if (amount != 0) {
+  if (amount !== 0) {
     const price = bridge.calcCurrentPriceWithoutFee(true)
     expectCloseValues(share / amount, price, 1e-10)
   }
 
-  if (share != 0) {
+  if (share !== 0) {
     const price = bridge.calcCurrentPriceWithoutFee(false)
     expectCloseValues(amount / share, price, 1e-10)
   }
@@ -100,7 +95,7 @@ function getRandomBridge(rnd: () => number) {
   const elastic = Math.floor(getRandomExp(rnd, 1, 1e20))
   const base = Math.floor(getRandomExp(rnd, 1, 1e20))
 
-  return new BridgeBento('aaa', token1, token2, getBigNumber(elastic), getBigNumber(base), getBigNumber(elastic / 2))
+  return new BridgeBento('aaa', token1, token2, getBigInt(elastic), getBigInt(base), getBigInt(elastic / 2))
 }
 
 function getBridge(elastic: number, base: number) {
@@ -116,7 +111,7 @@ function getBridge(elastic: number, base: number) {
     address: 'token2',
     decimals: 18,
   }
-  return new BridgeBento('aaa', token1, token2, getBigNumber(elastic), getBigNumber(base))
+  return new BridgeBento('aaa', token1, token2, getBigInt(elastic), getBigInt(base))
 }
 
 describe('Bento Bridge test', () => {

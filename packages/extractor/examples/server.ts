@@ -4,10 +4,10 @@ import { Native } from '@sushiswap/currency'
 import { NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import cors from 'cors'
-import { BigNumber } from 'ethers'
 import express, { Express, Request, Response } from 'express'
 import path from 'path'
 import { Address } from 'viem'
+import { serialize } from 'wagmi'
 import z from 'zod'
 
 import { Extractor, MultiCallAggregator, TokenManager, WarningLevel } from '../src'
@@ -32,7 +32,7 @@ const querySchema = z.object({
   tokenOut: z.string(),
   amount: z.string().transform((amount) => BigInt(amount)),
   gasPrice: z.optional(z.coerce.number().int().gt(0)),
-  to: z.optional(z.string()),
+  to: z.optional(z.string()).transform((to) => (to ? (to as Address) : undefined)),
   preferSushi: z.optional(z.coerce.boolean()),
 })
 
@@ -42,7 +42,25 @@ const extractors = new Map<SupportedChainId, Extractor>()
 const tokenManagers = new Map<SupportedChainId, TokenManager>()
 const nativeProviders = new Map<SupportedChainId, NativeWrapProvider>()
 
-async function setup() {
+async function main() {
+  const app: Express = express()
+
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    integrations: [
+      // enable HTTP calls tracing
+      new Sentry.Integrations.Http({
+        tracing: true,
+      }),
+      // enable Express.js middleware tracing
+      new Sentry.Integrations.Express({
+        app,
+      }),
+    ],
+    // Performance Monitoring
+    tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
+  })
+
   for (const chainId of SUPPORTED_CHAIN_IDS) {
     const extractor = new Extractor({
       ...EXTRACTOR_CONFIG[chainId],
@@ -62,28 +80,8 @@ async function setup() {
     const nativeProvider = new NativeWrapProvider(chainId, extractor.client)
     nativeProviders.set(chainId, nativeProvider)
   }
-}
 
-async function main() {
-  await setup()
-
-  const app: Express = express()
-
-  Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    integrations: [
-      // enable HTTP calls tracing
-      new Sentry.Integrations.Http({
-        tracing: true,
-      }),
-      // enable Express.js middleware tracing
-      new Sentry.Integrations.Express({
-        app,
-      }),
-    ],
-    // Performance Monitoring
-    tracesSampleRate: 1.0, // Capture 100% of the transactions, reduce in production!,
-  })
+  app.use(cors())
 
   // Trace incoming requests
   app.use(Sentry.Handlers.requestHandler())
@@ -131,40 +129,42 @@ async function main() {
       poolCodesMap,
       chainId,
       tokenIn,
-      BigNumber.from(amount.toString()),
+      amount,
       tokenOut,
       gasPrice ?? 30e9
     )
 
-    return res.json({
-      route: {
-        status: bestRoute?.status,
-        fromToken: bestRoute?.fromToken?.address === '' ? Native.onChain(chainId) : bestRoute?.fromToken,
-        toToken: bestRoute?.toToken?.address === '' ? Native.onChain(chainId) : bestRoute?.toToken,
-        primaryPrice: bestRoute?.primaryPrice,
-        swapPrice: bestRoute?.swapPrice,
-        amountIn: bestRoute?.amountIn,
-        amountInBN: bestRoute?.amountInBN.toString(),
-        amountOut: bestRoute?.amountOut,
-        amountOutBN: bestRoute?.amountOutBN.toString(),
-        priceImpact: bestRoute?.priceImpact,
-        totalAmountOut: bestRoute?.totalAmountOut,
-        totalAmountOutBN: bestRoute?.totalAmountOutBN.toString(),
-        gasSpent: bestRoute?.gasSpent,
-        legs: bestRoute?.legs,
-      },
-      args: to
-        ? Router.routeProcessor3Params(
-            poolCodesMap,
-            bestRoute,
-            tokenIn,
-            tokenOut,
-            to,
-            ROUTE_PROCESSOR_3_ADDRESS[chainId],
-            []
-          )
-        : undefined,
-    })
+    return res.json(
+      serialize({
+        route: {
+          status: bestRoute?.status,
+          fromToken: bestRoute?.fromToken?.address === '' ? Native.onChain(chainId) : bestRoute?.fromToken,
+          toToken: bestRoute?.toToken?.address === '' ? Native.onChain(chainId) : bestRoute?.toToken,
+          primaryPrice: bestRoute?.primaryPrice,
+          swapPrice: bestRoute?.swapPrice,
+          amountIn: bestRoute?.amountIn,
+          amountInBI: bestRoute?.amountInBI,
+          amountOut: bestRoute?.amountOut,
+          amountOutBI: bestRoute?.amountOutBI,
+          priceImpact: bestRoute?.priceImpact,
+          totalAmountOut: bestRoute?.totalAmountOut,
+          totalAmountOutBI: bestRoute?.totalAmountOutBI,
+          gasSpent: bestRoute?.gasSpent,
+          legs: bestRoute?.legs,
+        },
+        args: to
+          ? Router.routeProcessor3Params(
+              poolCodesMap,
+              bestRoute,
+              tokenIn,
+              tokenOut,
+              to,
+              ROUTE_PROCESSOR_3_ADDRESS[chainId],
+              []
+            )
+          : undefined,
+      })
+    )
   })
 
   app.get('/health', (req: Request, res: Response) => {
@@ -203,8 +203,6 @@ async function main() {
     res.statusCode = 500
     res.end(res.sentry + '\n')
   })
-
-  app.use(cors())
 
   app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}`)

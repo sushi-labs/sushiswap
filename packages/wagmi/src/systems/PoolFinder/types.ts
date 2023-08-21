@@ -1,10 +1,10 @@
-import { ConstantProductPool, Fee, Pair, StablePool } from '@sushiswap/amm'
+import { Fee, SushiSwapV2Pool, TridentConstantPool, TridentStablePool } from '@sushiswap/amm'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Type } from '@sushiswap/currency'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { ReactElement } from 'react'
 
-import { ConstantProductPoolState, PairState, StablePoolState } from '../../hooks'
+import { SushiSwapV2PoolState, TridentConstantPoolState, TridentStablePoolState } from '../../hooks'
 
 export type ComponentsWrapperProps<T> = {
   children:
@@ -22,7 +22,7 @@ interface PoolFinderProps {
   enabled: boolean
 }
 
-export interface LegacyPoolFinderProps extends PoolFinderProps {
+export interface SushiSwapV2PoolFinderProps extends PoolFinderProps {
   chainId: SushiSwapV2ChainId
   token0: Type | undefined
   token1: Type | undefined
@@ -38,14 +38,14 @@ export interface TridentPoolFinderProps extends PoolFinderProps {
 }
 
 export type PoolStateUnion = [
-  PairState | ConstantProductPoolState | StablePoolState,
-  Pair | ConstantProductPool | StablePool | null
+  SushiSwapV2PoolState | TridentConstantPoolState | TridentStablePoolState,
+  SushiSwapV2Pool | TridentConstantPool | TridentStablePool | null
 ]
 
 export enum PoolFinderType {
-  Classic,
-  Stable,
-  ConcentratedLiquidity,
+  Classic = 'Classic',
+  Stable = 'Stable',
+  ConcentratedLiquidity = 'Concentrated Liquidity',
 }
 
 export type PoolExistenceStateAction = {

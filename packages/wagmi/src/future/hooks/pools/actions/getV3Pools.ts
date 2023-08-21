@@ -1,25 +1,31 @@
-import { Currency, Token, Type } from '@sushiswap/currency'
-import { Address, readContracts } from 'wagmi'
-import { BigNumber } from 'ethers'
 import { erc20Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
-import { uniswapV3PoolAbi } from '../../../../abis/uniswapV3PoolAbi'
+import { Currency, Token, Type } from '@sushiswap/currency'
 import { RToken, UniV3Pool } from '@sushiswap/tines'
-import { SushiSwapV3ChainId, V3_FACTORY_ADDRESS, computePoolAddress, FeeAmount, V3_TICK_LENS } from '@sushiswap/v3-sdk'
+import {
+  computePoolAddress,
+  FeeAmount,
+  SUSHISWAP_V3_FACTORY_ADDRESS,
+  SUSHISWAP_V3_TICK_LENS,
+  SushiSwapV3ChainId,
+} from '@sushiswap/v3-sdk'
+import { Address, readContracts } from 'wagmi'
+
+import { uniswapV3PoolAbi } from '../../../../abis/uniswapV3PoolAbi'
 
 export enum V3PoolState {
-  LOADING,
-  NOT_EXISTS,
-  EXISTS,
-  INVALID,
+  LOADING = 'Loading',
+  NOT_EXISTS = 'Not exists',
+  EXISTS = 'Exists',
+  INVALID = 'Invalid',
 }
 
 interface PoolData {
-  address: string
+  address: Address
   token0: Token
   token1: Token
   fee: FeeAmount
-  sqrtPriceX96: BigNumber
+  sqrtPriceX96: bigint
   activeTick: number
 }
 
@@ -102,7 +108,7 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
       ({
         chainId,
         address: computePoolAddress({
-          factoryAddress: V3_FACTORY_ADDRESS[chainId as SushiSwapV3ChainId],
+          factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[chainId as SushiSwapV3ChainId],
           tokenA: currencyA.wrapped,
           tokenB: currencyB.wrapped,
           fee,
@@ -123,8 +129,8 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
 
   filtered.forEach(([token0, token1, fee], i) => {
     if (!slot0[i]) return
-    const [sqrtPriceX96, tick] = slot0[i]
-    if (!sqrtPriceX96 || sqrtPriceX96.eq(0)) return
+    const [sqrtPriceX96, tick] = slot0[i].result || []
+    if (!sqrtPriceX96 || sqrtPriceX96 === 0n || typeof tick === 'undefined') return
     // const [tokenA, tokenB, fee] = tokens[index]
     existingPools.push([
       V3PoolState.LOADING,
@@ -188,7 +194,7 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
     ([, poolData], i) =>
       ({
         chainId,
-        address: V3_TICK_LENS[chainId as SushiSwapV3ChainId] as Address,
+        address: SUSHISWAP_V3_TICK_LENS[chainId as SushiSwapV3ChainId] as Address,
         args: [poolData.address as Address, minIndexes[i]],
         abi: tickLensAbi,
         functionName: 'getPopulatedTicksInWord',
@@ -199,7 +205,7 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
     ([, poolData], i) =>
       ({
         chainId,
-        address: V3_TICK_LENS[chainId as SushiSwapV3ChainId] as Address,
+        address: SUSHISWAP_V3_TICK_LENS[chainId as SushiSwapV3ChainId] as Address,
         args: [poolData.address as Address, maxIndexes[i]],
         abi: tickLensAbi,
         functionName: 'getPopulatedTicksInWord',
@@ -235,22 +241,21 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
     return existingPools.map(() => [V3PoolState.LOADING, null])
 
   return existingPools.map(([, pool], i) => {
-    if (
-      !liquidity?.[i] ||
-      !token0Balances?.[i] ||
-      !token1Balances?.[i] ||
-      !lowerTickResults?.[i] ||
-      !upperTickResults?.[i]
-    )
+    const token0Balance = token0Balances[i].result
+    const token1Balance = token1Balances[i].result
+
+    const _liquidity = liquidity?.[i].result
+
+    if (!_liquidity || !token0Balance || !token1Balance || !lowerTickResults?.[i] || !upperTickResults?.[i])
       return [V3PoolState.LOADING, null]
 
     const lowerTicks =
-      lowerTickResults[i].map((tick) => ({
+      lowerTickResults[i].result?.map((tick) => ({
         index: tick.tick,
         DLiquidity: tick.liquidityGross,
       })) ?? []
     const upperTicks =
-      upperTickResults[i].map((tick) => ({
+      upperTickResults[i].result?.map((tick) => ({
         index: tick.tick,
         DLiquidity: tick.liquidityGross,
       })) ?? []
@@ -263,10 +268,10 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
         pool.token0 as RToken,
         pool.token1 as RToken,
         pool.fee / 1_000_000,
-        token0Balances[i],
-        token1Balances[i],
+        token0Balance,
+        token1Balance,
         pool.activeTick,
-        liquidity[i],
+        _liquidity,
         pool.sqrtPriceX96,
         ticks
       ),

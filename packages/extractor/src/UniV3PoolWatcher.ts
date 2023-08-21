@@ -6,7 +6,6 @@ import { LiquidityProviders, PoolCode, UniV3PoolCode } from '@sushiswap/router'
 import { CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
 import { FeeAmount, TICK_SPACINGS } from '@sushiswap/v3-sdk'
 import { Abi, Address, parseAbiItem } from 'abitype'
-import { BigNumber } from 'ethers'
 import { decodeEventLog, Log } from 'viem'
 
 import { Counter } from './Counter'
@@ -73,9 +72,9 @@ export const UniV3EventsAbi = [
 ]
 
 export enum UniV3PoolWatcherStatus {
-  Nothing,
-  Something,
-  All,
+  Nothing = 'Nothing',
+  Something = 'Something',
+  All = 'All',
 }
 
 // TODO: more ticks and priority depending on resources
@@ -118,7 +117,9 @@ export class UniV3PoolWatcher extends EventEmitter {
 
     this.client = client
     this.wordLoadManager = new WordLoadManager(address, this.spacing, tickHelperContract, client, busyCounter)
-    this.wordLoadManager.on('ticksChanged', () => (this.lastPoolCode = undefined))
+    this.wordLoadManager.on('ticksChanged', () => {
+      this.lastPoolCode = undefined
+    })
     this.busyCounter = busyCounter
   }
 
@@ -155,7 +156,7 @@ export class UniV3PoolWatcher extends EventEmitter {
           break
         }
       } catch (e) {
-        warnLog(this.client.chainId, `Pool ${this.address} update failed: ` + e)
+        warnLog(this.client.chainId, `Pool ${this.address} update failed: ${e}`)
       }
       if (this.busyCounter) this.busyCounter.dec()
       this.updatePoolStateGuard = false
@@ -258,18 +259,18 @@ export class UniV3PoolWatcher extends EventEmitter {
     if (this.lastPoolCode) return this.lastPoolCode
     if (this.state === undefined) return
     const ticks = this.wordLoadManager.getMaxTickDiapason(this.state.tick)
-    if (ticks.length == 0) return
+    if (ticks.length === 0) return
 
     const v3Pool = new UniV3Pool(
       this.address,
       this.token0 as RToken,
       this.token1 as RToken,
       this.fee / 1_000_000,
-      BigNumber.from(this.state.reserve0),
-      BigNumber.from(this.state.reserve1),
+      this.state.reserve0,
+      this.state.reserve1,
       this.state.tick,
-      BigNumber.from(this.state.liquidity),
-      BigNumber.from(this.state.sqrtPriceX96),
+      this.state.liquidity,
+      this.state.sqrtPriceX96,
       ticks
     )
     const pc = new UniV3PoolCode(v3Pool, this.provider, this.provider)

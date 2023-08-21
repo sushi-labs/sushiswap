@@ -29,6 +29,7 @@
     "@sushiswap/pool-job",
     "@sushiswap/price-job",
     "@sushiswap/route-processor",
-    "@sushiswap/docs"
+    "@sushiswap/docs",
+    "@sushiswap/steer-vault-api"
   ]
 }

@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/v2-sdk",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "SushiSwap V2 SDK",
   "keywords": [
     "sushiswap",
@@ -38,6 +38,7 @@
     "@ethersproject/address": "5.7.0",
     "@ethersproject/bignumber": "5.7.0",
     "@ethersproject/solidity": "5.7.0",
+    "@sushiswap/base-sdk": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/math": "workspace:*",

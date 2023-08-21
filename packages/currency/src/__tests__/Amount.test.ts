@@ -2,7 +2,7 @@ import { Native } from '../Native'
 import { Token } from '../Token'
 import { Amount } from '../Amount'
 
-import { JSBI, MAX_UINT256, Percent } from '@sushiswap/math'
+import { MAX_UINT256, Percent } from '@sushiswap/math'
 
 describe('Amount', () => {
   const ADDRESS_ONE = '0x0000000000000000000000000000000000000001'
@@ -15,7 +15,7 @@ describe('Amount', () => {
         decimals: 18,
       })
       const amount = Amount.fromRawAmount(token, 100)
-      expect(amount.quotient).toEqual(JSBI.BigInt(100))
+      expect(amount.quotient).toEqual(100n)
     })
   })
 
@@ -27,14 +27,14 @@ describe('Amount', () => {
         decimals: 18,
       })
       const amount = Amount.fromRawAmount(token, 100).multiply(new Percent(15, 100))
-      expect(amount.quotient).toEqual(JSBI.BigInt(15))
+      expect(amount.quotient).toEqual(15n)
     })
   })
 
   describe('#ether', () => {
     it('produces ether amount', () => {
       const amount = Amount.fromRawAmount(Native.onChain(1), 100)
-      expect(amount.quotient).toEqual(JSBI.BigInt(100))
+      expect(amount.quotient).toEqual(100n)
       expect(amount.currency).toEqual(Native.onChain(1))
     })
   })
@@ -45,28 +45,25 @@ describe('Amount', () => {
   })
   it('token amount cannot exceed max uint256', () => {
     expect(() =>
-      Amount.fromRawAmount(
-        new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 }),
-        JSBI.add(MAX_UINT256, JSBI.BigInt(1))
-      )
+      Amount.fromRawAmount(new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 }), MAX_UINT256 + 1n)
     ).toThrow('AMOUNT')
   })
   it('token amount quotient cannot exceed max uint256', () => {
     expect(() =>
       Amount.fromFractionalAmount(
         new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 }),
-        JSBI.add(JSBI.multiply(MAX_UINT256, JSBI.BigInt(2)), JSBI.BigInt(2)),
-        JSBI.BigInt(2)
+        MAX_UINT256 * 2n + 2n,
+        2n
       )
     ).toThrow('AMOUNT')
   })
   it('token amount numerator can be gt. uint256 if denominator is gt. 1', () => {
     const amount = Amount.fromFractionalAmount(
       new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 }),
-      JSBI.add(MAX_UINT256, JSBI.BigInt(2)),
+      MAX_UINT256 + 2n,
       2
     )
-    expect(amount.numerator).toEqual(JSBI.add(JSBI.BigInt(2), MAX_UINT256))
+    expect(amount.numerator).toEqual(2n + MAX_UINT256)
   })
 
   describe('#toFixed', () => {

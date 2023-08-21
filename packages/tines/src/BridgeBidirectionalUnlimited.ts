@@ -1,10 +1,10 @@
-import { BigNumber } from '@ethersproject/bignumber'
+import { Address } from 'viem'
 
 import { RPool, RToken } from './PrimaryPools'
 
 export class BridgeUnlimited extends RPool {
   constructor(address: string, token0: RToken, token1: RToken, fee: number, swapGasCost = 150_000) {
-    super(address, token0, token1, fee, BigNumber.from(-1), BigNumber.from(-1), 0, swapGasCost)
+    super(address as Address, token0, token1, fee, -1n, -1n, 0, swapGasCost)
   }
 
   calcOutByIn(amountIn: number, _direction: boolean): { out: number; gasSpent: number } {

@@ -6,9 +6,9 @@ import { FeeAmount, isSushiSwapV3ChainId, SushiSwapV3ChainId } from '@sushiswap/
 import { useNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import { SUPPORTED_CHAIN_IDS } from 'config'
-import { isAddress } from 'ethers/lib/utils'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useState } from 'react'
+import { isAddress } from 'viem'
 import { z } from 'zod'
 
 export const queryParamsSchema = z.object({
@@ -113,8 +113,6 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
   const tmp = getChainIdFromUrl(chainIdFromUrl, chainId as ChainId)
   const _chainId = supportedNetworks?.includes(tmp) ? tmp : ChainId.ETHEREUM
 
-  console.log({ _chainId, supportedNetworks })
-
   const { data: tokenFrom, isInitialLoading: isTokenFromLoading } = useTokenWithCache({
     chainId: _chainId,
     address: fromCurrency,
@@ -147,7 +145,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
             : state.token1.wrapped.address
           : undefined
 
-      const _searchParams = new URLSearchParams(searchParams)
+      const _searchParams = new URLSearchParams(Array.from(searchParams.entries()))
       _searchParams.set('chainId', chainId.toString())
       _searchParams.set('fromCurrency', fromCurrency)
       if (toCurrency) _searchParams.set('toCurrency', toCurrency)
@@ -157,7 +155,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
     const setToken0 = (currency: Type) => {
       const same = currency.wrapped.address === token1?.wrapped.address
       const _fromCurrency = currency.isNative ? 'NATIVE' : currency.wrapped.address
-      const _searchParams = new URLSearchParams(searchParams)
+      const _searchParams = new URLSearchParams(Array.from(searchParams.entries()))
       _searchParams.set('chainId', currency.chainId.toString())
       _searchParams.set('fromCurrency', _fromCurrency)
       if (toCurrency) {
@@ -168,7 +166,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
     const setToken1 = (currency: Type) => {
       const same = currency.wrapped.address === token0?.wrapped.address
       const _toCurrency = currency.isNative ? 'NATIVE' : currency.wrapped.address
-      const _searchParams = new URLSearchParams(searchParams)
+      const _searchParams = new URLSearchParams(Array.from(searchParams.entries()))
       _searchParams.set('chainId', currency.chainId.toString())
       _searchParams.set('toCurrency', _toCurrency)
       if (fromCurrency) {
@@ -177,12 +175,12 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
       void push(`${pathname}?${_searchParams.toString()}`)
     }
     const setFeeAmount = (feeAmount: FeeAmount) => {
-      const _searchParams = new URLSearchParams(searchParams)
+      const _searchParams = new URLSearchParams(Array.from(searchParams.entries()))
       _searchParams.set('feeAmount', feeAmount.toString())
       void push(`${pathname}?${_searchParams.toString()}`)
     }
     const switchTokens = () => {
-      const _searchParams = new URLSearchParams(searchParams)
+      const _searchParams = new URLSearchParams(Array.from(searchParams.entries()))
       _searchParams.set('fromCurrency', !token1 || token1.isNative ? 'NATIVE' : token1.wrapped.address)
       _searchParams.set('toCurrency', !token0 || token0.isNative ? 'NATIVE' : token0.wrapped.address)
       void push(`${pathname}?${_searchParams.toString()}`)

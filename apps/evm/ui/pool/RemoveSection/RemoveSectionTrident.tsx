@@ -1,4 +1,3 @@
-import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId } from '@sushiswap/chain'
@@ -10,33 +9,36 @@ import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createToast } from '@sushiswap/ui/components/toast'
 import {
-  _useSendTransaction as useSendTransaction,
-  ConstantProductPoolState,
+  Address,
   getTridentRouterContractConfig,
-  StablePoolState,
+  TridentConstantPoolState,
+  TridentStablePoolState,
   useAccount,
   useBentoBoxTotals,
-  useConstantProductPool,
   useNetwork,
-  useStablePool,
+  usePrepareSendTransaction,
+  useSendTransaction,
   useTotalSupply,
+  useTridentConstantPool,
   useTridentRouterContract,
+  useTridentStablePool,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useApproved, useSignature, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import {
   approveMasterContractAction,
   batchAction,
   burnLiquidityAction,
   LiquidityOutput,
-  sweep,
+  sweepAction,
   unwrapWETHAction,
 } from 'lib/actions'
 import { APPROVE_TAG_REMOVE_TRIDENT } from 'lib/constants'
 import { useTokensFromPool, useUnderlyingTokenBalanceFromPool } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
-import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
+import { FC, useCallback, useMemo, useState } from 'react'
 
 import { usePoolPosition } from '../PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
@@ -70,7 +72,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
   }, [balance, percentToRemove])
 
   // TODO: Standardize fee format
-  const [constantProductPoolState, constantProductPool] = useConstantProductPool(
+  const [tridentConstantPoolState, tridentConstantPool] = useTridentConstantPool(
     _pool.chainId,
     token0,
     token1,
@@ -78,7 +80,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
     _pool.twapEnabled
   )
 
-  const [stablePoolState, stablePool] = useStablePool(
+  const [tridentStablePoolState, tridentStablePool] = useTridentStablePool(
     _pool.chainId,
     token0,
     token1,
@@ -87,11 +89,11 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
   )
 
   const [poolState, pool] = useMemo(() => {
-    if (_pool.protocol === Protocol.BENTOBOX_STABLE) return [stablePoolState, stablePool]
-    if (_pool.protocol === Protocol.BENTOBOX_CLASSIC) return [constantProductPoolState, constantProductPool]
+    if (_pool.protocol === Protocol.BENTOBOX_STABLE) return [tridentStablePoolState, tridentStablePool]
+    if (_pool.protocol === Protocol.BENTOBOX_CLASSIC) return [tridentConstantPoolState, tridentConstantPool]
 
     return [undefined, undefined]
-  }, [_pool.protocol, constantProductPool, constantProductPoolState, stablePool, stablePoolState])
+  }, [_pool.protocol, tridentConstantPool, tridentConstantPoolState, tridentStablePool, tridentStablePoolState])
 
   const totalSupply = useTotalSupply(liquidityToken)
 
@@ -121,7 +123,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
           ? Amount.fromRawAmount(token1, percentToRemove.multiply(underlying1.quotient).quotient || '0')
           : Amount.fromRawAmount(token1, '0')
         : undefined,
-    [token1, percentToRemove, underlying0]
+    [token1, percentToRemove, underlying1]
   )
 
   const [minAmount0, minAmount1] = useMemo(() => {
@@ -151,7 +153,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
         type: 'burn',
         chainId: chain.id,
         txHash: data.hash,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Removing liquidity from the ${token0.symbol}/${token1.symbol} pair`,
           completed: `Successfully removed liquidity from the ${token0.symbol}/${token1.symbol} pair`,
@@ -164,121 +166,101 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
     [address, chain?.id, token0.symbol, token1.symbol]
   )
 
-  const prepare = useCallback(
-    async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      try {
-        // console.log('prepare trident')
-        const isInvalid =
-          !chain?.id ||
-          !pool ||
-          !token0 ||
-          !token1 ||
-          !_pool.chainId ||
-          !contract ||
-          !minAmount0 ||
-          !minAmount1 ||
-          !address ||
-          !minAmount0 ||
-          !minAmount1 ||
-          !rebases?.[token0.wrapped.address] ||
-          !rebases?.[token1.wrapped.address] ||
-          !slpAmountToRemove
-        // console.log({ isInvalid })
-        if (
-          !chain?.id ||
-          !pool ||
-          !token0 ||
-          !token1 ||
-          !_pool.chainId ||
-          !contract ||
-          !minAmount0 ||
-          !minAmount1 ||
-          !address ||
-          !minAmount0 ||
-          !minAmount1 ||
-          !rebases?.[token0.wrapped.address] ||
-          !rebases?.[token1.wrapped.address] ||
-          !slpAmountToRemove
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    try {
+      if (
+        !chain?.id ||
+        !pool ||
+        !token0 ||
+        !token1 ||
+        !_pool.chainId ||
+        !contract ||
+        !minAmount0 ||
+        !minAmount1 ||
+        !address ||
+        !minAmount0 ||
+        !minAmount1 ||
+        !rebases?.[token0.wrapped.address] ||
+        !rebases?.[token1.wrapped.address] ||
+        !slpAmountToRemove
+      )
+        return {}
+
+      const liquidityOutput: LiquidityOutput[] = [
+        {
+          token: minAmount0.wrapped.currency.address as Address,
+          amount: minAmount0.toShare(rebases?.[token0.wrapped.address]).quotient,
+        },
+        {
+          token: minAmount1.wrapped.currency.address as Address,
+          amount: minAmount1.toShare(rebases?.[token1.wrapped.address]).quotient,
+        },
+      ]
+
+      let indexOfWETH = -1
+      indexOfWETH =
+        minAmount0.wrapped.currency.address === Native.onChain(_pool.chainId).wrapped.address ? 0 : indexOfWETH
+      indexOfWETH =
+        minAmount1.wrapped.currency.address === Native.onChain(_pool.chainId).wrapped.address ? 1 : indexOfWETH
+
+      const actions = [
+        approveMasterContractAction({ signature }),
+        burnLiquidityAction({
+          address: pool.liquidityToken.address as Address,
+          amount: slpAmountToRemove.quotient,
+          recipient: indexOfWETH >= 0 ? contract.address : address,
+          liquidityOutput,
+          receiveToWallet: true,
+        }),
+      ]
+
+      if (indexOfWETH >= 0) {
+        actions.push(
+          unwrapWETHAction({
+            recipient: address,
+          }),
+          sweepAction({
+            token: liquidityOutput[indexOfWETH === 0 ? 1 : 0].token,
+            recipient: address,
+            fromBento: false,
+          })
         )
-          return
-
-        const liquidityOutput: LiquidityOutput[] = [
-          {
-            token: minAmount0.wrapped.currency.address,
-            amount: minAmount0.toShare(rebases?.[token0.wrapped.address]).quotient.toString(),
-          },
-          {
-            token: minAmount1.wrapped.currency.address,
-            amount: minAmount1.toShare(rebases?.[token1.wrapped.address]).quotient.toString(),
-          },
-        ]
-
-        let indexOfWETH = -1
-        indexOfWETH =
-          minAmount0.wrapped.currency.address === Native.onChain(_pool.chainId).wrapped.address ? 0 : indexOfWETH
-        indexOfWETH =
-          minAmount1.wrapped.currency.address === Native.onChain(_pool.chainId).wrapped.address ? 1 : indexOfWETH
-
-        const actions = [
-          approveMasterContractAction({ router: contract, signature }),
-          burnLiquidityAction({
-            router: contract,
-            address: pool.liquidityToken.address,
-            amount: slpAmountToRemove.quotient.toString(),
-            recipient: indexOfWETH >= 0 ? contract.address : address,
-            liquidityOutput,
-            receiveToWallet: true,
-          }),
-        ]
-
-        if (indexOfWETH >= 0) {
-          actions.push(
-            unwrapWETHAction({
-              router: contract,
-              recipient: address,
-            }),
-            sweep({
-              router: contract,
-              token: liquidityOutput[indexOfWETH === 0 ? 1 : 0].token,
-              recipient: address,
-              fromBento: false,
-            })
-          )
-        }
-
-        setRequest({
-          from: address,
-          to: contract.address,
-          data: batchAction({
-            contract,
-            actions,
-          }),
-        })
-      } catch (e: unknown) {
-        //
       }
-    },
-    [
-      chain?.id,
-      pool,
-      token0,
-      token1,
-      _pool.chainId,
-      contract,
-      minAmount0,
-      minAmount1,
-      address,
-      rebases,
-      slpAmountToRemove,
-      signature,
-    ]
-  )
+
+      return {
+        from: address,
+        to: contract.address,
+        data: batchAction({
+          actions,
+        }),
+      }
+    } catch (e: unknown) {
+      return {}
+    }
+  }, [
+    chain?.id,
+    pool,
+    token0,
+    token1,
+    _pool.chainId,
+    contract,
+    minAmount0,
+    minAmount1,
+    address,
+    rebases,
+    slpAmountToRemove,
+    signature,
+  ])
+
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId: _pool.chainId,
+    enabled: approved,
+  })
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
-    chainId: _pool.chainId,
-    prepare,
+    ...config,
     onSettled,
-    enabled: approved,
     onSuccess: () => {
       setPercentage('')
       setSignature(undefined)
@@ -304,10 +286,10 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
               isMounted &&
               !!poolState &&
               [
-                ConstantProductPoolState.NOT_EXISTS,
-                ConstantProductPoolState.INVALID,
-                StablePoolState.NOT_EXISTS,
-                StablePoolState.INVALID,
+                TridentConstantPoolState.NOT_EXISTS,
+                TridentConstantPoolState.INVALID,
+                TridentStablePoolState.NOT_EXISTS,
+                TridentStablePoolState.INVALID,
               ].includes(poolState)
             }
           >

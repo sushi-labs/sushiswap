@@ -56,7 +56,7 @@ export const PositionsTab = () => {
           </div>
           <div className="flex gap-3 items-center px-2.5">
             <span className="text-sm font-medium text-gray-600 dark:text-slate-400">Include closed</span>
-            <Switch checked={hide} onCheckedChange={() => setHide((prev) => !prev)} />
+            <Switch checked={!hide} onCheckedChange={() => setHide((prev) => !prev)} />
           </div>
         </div>
         <Tab.Panels>

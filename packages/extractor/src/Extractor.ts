@@ -5,8 +5,7 @@ import { Token } from '@sushiswap/currency'
 import { PoolCode } from '@sushiswap/router'
 import { Address, PublicClient } from 'viem'
 
-import { LogFilterType } from './LogFilter'
-import { LogFilter2 } from './LogFilter2'
+import { LogFilter2, LogFilterType } from './LogFilter2'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { TokenManager } from './TokenManager'
 import { FactoryV2, UniV2Extractor } from './UniV2Extractor'
@@ -153,14 +152,14 @@ export class Extractor {
       const { prefetched, fetching } = this.extractorV3.getWatchersForTokens(tokens)
       watchersV3 = prefetched
       prefetched.forEach((w) => {
-        if (w.getStatus() != UniV3PoolWatcherStatus.All) promises.push(w.statusAll())
+        if (w.getStatus() !== UniV3PoolWatcherStatus.All) promises.push(w.statusAll())
       })
       promises = promises.concat(
         fetching.map(async (p) => {
           const w = await p
-          if (w == undefined) return
+          if (w === undefined) return
           watchersV3.push(w)
-          if (w.getStatus() != UniV3PoolWatcherStatus.All) await w.statusAll()
+          if (w.getStatus() !== UniV3PoolWatcherStatus.All) await w.statusAll()
         })
       )
     }

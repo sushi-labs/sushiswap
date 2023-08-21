@@ -8,18 +8,18 @@ import {
   UNISWAP_V2_INIT_CODE_HASH,
 } from '@sushiswap/v2-sdk'
 import {
+  SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_INIT_CODE_HASH,
+  SUSHISWAP_V3_TICK_LENS,
   SushiSwapV3ChainId,
   UNISWAP_V3_FACTORY_ADDRESS,
   UNISWAP_V3_INIT_CODE_HASH,
   UniswapV3ChainId,
-  V3_FACTORY_ADDRESS,
-  V3_TICK_LENS,
 } from '@sushiswap/v3-sdk'
 import { config } from '@sushiswap/viem-config'
 import { Address, createPublicClient } from 'viem'
 
-import { LogFilterType } from '../src/LogFilter'
+import { LogFilterType } from '../src/LogFilter2'
 
 export const SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,
@@ -84,7 +84,7 @@ function sushiswapV2Factory(chainId: SushiSwapV2ChainId) {
 
 function sushiswapV3Factory(chainId: SushiSwapV3ChainId) {
   return {
-    address: V3_FACTORY_ADDRESS[chainId],
+    address: SUSHISWAP_V3_FACTORY_ADDRESS[chainId],
     provider: LiquidityProviders.SushiSwapV3,
     initCodeHash: SUSHISWAP_V3_INIT_CODE_HASH[chainId],
   } as const
@@ -117,10 +117,10 @@ export const EXTRACTOR_CONFIG = {
       },
     ],
     factoriesV3: [uniswapV3Factory(ChainId.ARBITRUM), sushiswapV3Factory(ChainId.ARBITRUM)],
-    tickHelperContract: V3_TICK_LENS[ChainId.ARBITRUM],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.ARBITRUM],
     cacheDir: './cache',
     logDepth: 300,
-    logType: LogFilterType.SelfFilter,
+    logType: LogFilterType.Native,
     logging: true,
     RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.ARBITRUM],
   },
@@ -128,7 +128,7 @@ export const EXTRACTOR_CONFIG = {
     client: createPublicClient(config[ChainId.ARBITRUM_NOVA]),
     factoriesV2: [sushiswapV2Factory(ChainId.ARBITRUM_NOVA)],
     factoriesV3: [sushiswapV3Factory(ChainId.ARBITRUM_NOVA)],
-    tickHelperContract: V3_TICK_LENS[ChainId.ARBITRUM_NOVA],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.ARBITRUM_NOVA],
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
@@ -146,7 +146,7 @@ export const EXTRACTOR_CONFIG = {
       },
     ],
     factoriesV3: [sushiswapV3Factory(ChainId.AVALANCHE)],
-    tickHelperContract: V3_TICK_LENS[ChainId.AVALANCHE],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.AVALANCHE],
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -156,7 +156,7 @@ export const EXTRACTOR_CONFIG = {
     client: createPublicClient(config[ChainId.BOBA]),
     factoriesV2: [sushiswapV2Factory(ChainId.BOBA)],
     factoriesV3: [sushiswapV3Factory(ChainId.BOBA)],
-    tickHelperContract: V3_TICK_LENS[ChainId.BOBA],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BOBA],
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -166,7 +166,7 @@ export const EXTRACTOR_CONFIG = {
     client: createPublicClient(config[ChainId.BOBA_AVAX]),
     factoriesV2: [sushiswapV2Factory(ChainId.BOBA_AVAX)],
     factoriesV3: [],
-    tickHelperContract: V3_TICK_LENS[ChainId.BOBA_AVAX],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BOBA_AVAX],
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -176,7 +176,7 @@ export const EXTRACTOR_CONFIG = {
     client: createPublicClient(config[ChainId.BOBA_BNB]),
     factoriesV2: [sushiswapV2Factory(ChainId.BOBA_BNB)],
     factoriesV3: [],
-    tickHelperContract: V3_TICK_LENS[ChainId.BOBA_BNB],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BOBA_BNB],
     cacheDir: './cache',
     logDepth: 500,
     logging: true,
@@ -212,7 +212,7 @@ export const EXTRACTOR_CONFIG = {
       },
     ],
     factoriesV3: [uniswapV3Factory(ChainId.BSC), sushiswapV3Factory(ChainId.BSC)],
-    tickHelperContract: V3_TICK_LENS[ChainId.BSC],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BSC],
     cacheDir: './cache',
     logDepth: 1000,
     logging: true,
@@ -258,7 +258,7 @@ export const EXTRACTOR_CONFIG = {
       },
     ],
     factoriesV3: [uniswapV3Factory(ChainId.ETHEREUM), sushiswapV3Factory(ChainId.ETHEREUM)],
-    tickHelperContract: V3_TICK_LENS[ChainId.ETHEREUM],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.ETHEREUM],
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -295,7 +295,7 @@ export const EXTRACTOR_CONFIG = {
         initCodeHash: '0x30146866f3a846fe3c636beb2756dbd24cf321bc52c9113c837c21f47470dfeb',
       },
     ],
-    tickHelperContract: V3_TICK_LENS[ChainId.FANTOM],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.FANTOM],
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
@@ -304,15 +304,15 @@ export const EXTRACTOR_CONFIG = {
   [ChainId.OPTIMISM]: {
     client: createPublicClient(config[ChainId.OPTIMISM]),
     factoriesV2: [
-      {
-        address: '0xedfad3a0F42A8920B011bb0332aDe632e552d846' as Address,
-        provider: LiquidityProviders.Elk,
-        fee: 0.003,
-        initCodeHash: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
-      },
+      // {
+      //   address: '0xedfad3a0F42A8920B011bb0332aDe632e552d846' as Address,
+      //   provider: LiquidityProviders.Elk,
+      //   fee: 0.003,
+      //   initCodeHash: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
+      // },
     ],
     factoriesV3: [uniswapV3Factory(ChainId.OPTIMISM), sushiswapV3Factory(ChainId.OPTIMISM)],
-    tickHelperContract: V3_TICK_LENS[ChainId.OPTIMISM],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.OPTIMISM],
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -355,7 +355,7 @@ export const EXTRACTOR_CONFIG = {
       },
     ],
     factoriesV3: [uniswapV3Factory(ChainId.POLYGON), sushiswapV3Factory(ChainId.POLYGON)],
-    tickHelperContract: V3_TICK_LENS[ChainId.POLYGON],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.POLYGON],
     cacheDir: './cache',
     logDepth: 100,
     logging: true,
@@ -372,7 +372,7 @@ export const EXTRACTOR_CONFIG = {
         initCodeHash: '0xd3e7f58b9af034cfa7a0597e539bae7c6b393817a47a6fc1e1503cd6eaffe22a',
       },
     ],
-    tickHelperContract: V3_TICK_LENS[ChainId.POLYGON_ZKEVM],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.POLYGON_ZKEVM],
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
@@ -391,7 +391,7 @@ export const EXTRACTOR_CONFIG = {
       },
     ],
     factoriesV3: [sushiswapV3Factory(ChainId.BASE), uniswapV3Factory(ChainId.BASE)],
-    tickHelperContract: V3_TICK_LENS[ChainId.BASE],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BASE],
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
