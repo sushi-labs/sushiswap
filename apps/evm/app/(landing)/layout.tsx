@@ -7,10 +7,10 @@ import { Providers } from './providers'
 export default function LandingLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <div className="bg-black">
+      <div className="flex flex-col flex-1 bg-slate-950">
         <Providers>
           <Header />
-          {children}
+          <div className="flex flex-col flex-1">{children}</div>
         </Providers>
       </div>
       <HotJar />
