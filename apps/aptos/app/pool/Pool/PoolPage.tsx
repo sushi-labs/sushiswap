@@ -137,7 +137,7 @@ const _Add: FC = () => {
       setAmount1(value)
       if (pairs?.data) {
         if (value) {
-          setAmount0(String(parseFloat(String(value)) * poolPairRatio))
+          setAmount0(String(parseFloat(String(value)) / poolPairRatio))
         } else {
           setAmount0('')
         }
