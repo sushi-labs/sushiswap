@@ -1,26 +1,29 @@
-import { BigNumber } from "@ethersproject/bignumber"
+import { routeProcessor2Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Type } from '@sushiswap/currency'
-import {Percent} from "@sushiswap/math";
-import { HexString } from '@sushiswap/types'
+import { Percent } from '@sushiswap/math'
+import { Address, GetFunctionArgs } from 'viem'
 import z from 'zod'
 
-import {legValidator, tradeValidator} from './validator'
+import { legValidator, tradeValidator } from './validator'
 
 export interface UseTradeParams {
   chainId: ChainId
   fromToken: Type | undefined
   toToken: Type | undefined
   amount: Amount<Type> | undefined
-  gasPrice?: number
+  gasPrice?: bigint | null | undefined
   slippagePercentage: string
-  recipient: string | undefined
+  recipient: Address | undefined
   enabled: boolean
   carbonOffset: boolean
   onError?(e: Error): void
 }
 
-export type UseTradeReturnWriteArgs = [HexString, BigNumber, HexString, BigNumber, HexString, BigNumber, HexString, HexString] | [HexString, BigNumber, HexString, BigNumber, HexString, HexString] | undefined
+export type UseTradeReturnWriteArgs =
+  | GetFunctionArgs<typeof routeProcessor2Abi, 'transferValueAndprocessRoute'>['args']
+  | GetFunctionArgs<typeof routeProcessor2Abi, 'processRoute'>['args']
+  | undefined
 
 export interface UseTradeReturn {
   swapPrice: Price<Type, Type> | undefined
@@ -29,10 +32,11 @@ export interface UseTradeReturn {
   amountOut: Amount<Type> | undefined
   minAmountOut: Amount<Type> | undefined
   gasSpent: string | undefined
+  gasSpentUsd: string | undefined
   functionName: 'processRoute' | 'transferValueAndprocessRoute'
   writeArgs: UseTradeReturnWriteArgs
   route: TradeType['route']
-  overrides: { value: BigNumber} | undefined
+  value?: bigint | undefined
 }
 
 export type UseTradeQuerySelect = (data: TradeType) => UseTradeReturn

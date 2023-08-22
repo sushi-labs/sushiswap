@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/trident-core",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Trident is a experimental framework for building AMM's.",
   "keywords": [
     "trident",
@@ -52,7 +52,7 @@
     "@types/node": "18",
     "eslint": "8.43.0",
     "ethers": "5.7.2",
-    "hardhat": "2.12.4",
+    "hardhat": "2.17.0",
     "hardhat-deploy": "0.11.22",
     "ts-node": "10.9.1",
     "typescript": "5.1.6"

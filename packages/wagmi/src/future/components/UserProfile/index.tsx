@@ -7,7 +7,7 @@ import { JazzIcon } from '@sushiswap/ui/components/icons/JazzIcon'
 import { Popover, PopoverContent, PopoverTrigger } from '@sushiswap/ui/components/popover'
 import { useBreakpoint } from '@sushiswap/ui/lib/useBreakpoint'
 import React, { FC, useState } from 'react'
-import { useAccount, useEnsAvatar, useNetwork } from 'wagmi'
+import { useAccount, useEnsAvatar, useEnsName, useNetwork } from 'wagmi'
 
 import { ConnectButton } from '../ConnectButton'
 import { ConnectView } from './ConnectView'
@@ -16,10 +16,10 @@ import { SettingsView } from './SettingsView'
 import { TransactionsView } from './TransactionsView'
 
 export enum ProfileView {
-  Disconnected,
-  Default,
-  Transactions,
-  Settings,
+  Disconnected = 'Disconnected',
+  Default = 'Default',
+  Transactions = 'Transactions',
+  Settings = 'Settings',
 }
 
 interface ProfileProps {
@@ -31,8 +31,14 @@ export const UserProfile: FC<ProfileProps> = () => {
   const [view, setView] = useState<ProfileView>(ProfileView.Default)
   const { chain } = useNetwork()
   const { address } = useAccount()
-  const { data: avatar } = useEnsAvatar({
+
+  const { data: name } = useEnsName({
+    chainId: ChainId.ETHEREUM,
     address,
+  })
+
+  const { data: avatar } = useEnsAvatar({
+    name,
     chainId: ChainId.ETHEREUM,
   })
 

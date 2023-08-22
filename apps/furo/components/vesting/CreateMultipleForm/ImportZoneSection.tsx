@@ -99,7 +99,7 @@ export const Component: FC<ImportZoneSection> = ({ chainId }) => {
 
                 let _startDate: Date | undefined = new Date(Number(startDate) * 1000)
                 let _cliffEndDate: Date | undefined = new Date(Number(cliffEndDate) * 1000)
-                let _recipient: string | undefined = recipient
+                let _recipient: Address | undefined = recipient as Address
                 const _currency: Type | undefined =
                   tokenAddress.toLowerCase() === AddressZero.toLowerCase()
                     ? Native.onChain(chainId)

@@ -7,7 +7,7 @@ import { Token } from '@sushiswap/currency'
 import { formatPercent, shortenAddress } from '@sushiswap/format'
 import { Button, classNames, Currency, LinkExternal, LinkInternal, typographyVariants } from '@sushiswap/ui'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
-import { Pool } from '@sushiswap/v3-sdk'
+import { SushiSwapV3Pool } from '@sushiswap/v3-sdk'
 import { unwrapToken } from 'lib/functions'
 import React, { FC, useMemo } from 'react'
 
@@ -16,7 +16,7 @@ import { APRHoverCard } from './APRHoverCard'
 type PoolHeader = {
   backUrl: string
   address: string
-  pool: Pool | null | undefined | PoolV2
+  pool: SushiSwapV3Pool | null | undefined | PoolV2
   apy?: {
     fees: number | undefined
     rewards: number | undefined
@@ -28,7 +28,7 @@ type PoolHeader = {
 export const PoolHeader: FC<PoolHeader> = ({ backUrl, address, pool, apy, priceRange }) => {
   const [token0, token1] = useMemo(() => {
     if (!pool) return [undefined, undefined]
-    if (pool instanceof Pool) {
+    if (pool instanceof SushiSwapV3Pool) {
       return [unwrapToken(pool.token0), unwrapToken(pool.token1)]
     }
 
@@ -76,7 +76,7 @@ export const PoolHeader: FC<PoolHeader> = ({ backUrl, address, pool, apy, priceR
                 {token0.symbol}/{token1.symbol}
               </LinkExternal>
             </Button>
-            {pool instanceof Pool ? null : (
+            {pool instanceof SushiSwapV3Pool ? null : (
               <div
                 className={classNames(
                   pool.protocol === 'SUSHISWAP_V3'
@@ -102,7 +102,7 @@ export const PoolHeader: FC<PoolHeader> = ({ backUrl, address, pool, apy, priceR
           {apy ? (
             <div className="flex items-center gap-1.5">
               <span className="tracking-tighter font-semibold">APR</span>
-              {pool instanceof Pool ? (
+              {pool instanceof SushiSwapV3Pool ? (
                 <TooltipProvider>
                   <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
@@ -130,7 +130,7 @@ export const PoolHeader: FC<PoolHeader> = ({ backUrl, address, pool, apy, priceR
           ) : null}
           <div className="flex items-center gap-1.5">
             <span className="tracking-tighter font-semibold">Fee</span>
-            {pool instanceof Pool ? pool.fee / 10000 : pool.swapFee * 100}%
+            {pool instanceof SushiSwapV3Pool ? pool.fee / 10000 : pool.swapFee * 100}%
           </div>
           <div className="flex items-center gap-1.5">
             <span className="tracking-tighter font-semibold">Network</span>

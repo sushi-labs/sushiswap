@@ -1,7 +1,6 @@
 'use client'
 
 import { ArrowSmLeftIcon, ArrowSmRightIcon } from '@heroicons/react-v1/solid'
-import { JSBI } from '@sushiswap/math'
 import { classNames } from '@sushiswap/ui'
 import { Position } from '@sushiswap/v3-sdk'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future/hooks'
@@ -18,7 +17,7 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> = 
     if (original.liquidity) {
       return new Position({
         pool: original.pool,
-        liquidity: JSBI.BigInt(original.liquidity),
+        liquidity: original.liquidity,
         tickLower: original.tickLower,
         tickUpper: original.tickUpper,
       })
@@ -27,7 +26,7 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> = 
     return undefined
   }, [original.liquidity, original.pool, original.tickLower, original.tickUpper])
 
-  const closed = original.liquidity?.eq('0')
+  const closed = original.liquidity === 0n
   const pricesFromPosition = getPriceOrderingFromPositionForUI(position)
 
   const { priceLower, priceUpper, base } = usePriceInverter({

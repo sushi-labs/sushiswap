@@ -12,13 +12,12 @@ import {
   LinkExternal,
 } from '@sushiswap/ui'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
-import dynamic from 'next/dynamic'
 import React, { FC } from 'react'
 import { Address } from 'wagmi'
 
 import { ApprovalState, useBentoboxApproval } from '../../hooks'
 
-export interface ApproveBentoboxProps extends ButtonProps {
+interface ApproveBentoboxProps extends ButtonProps {
   chainId: BentoBoxV1ChainId
   id: string
   masterContract: Address
@@ -26,7 +25,7 @@ export interface ApproveBentoboxProps extends ButtonProps {
   tag: string
 }
 
-export const Component: FC<ApproveBentoboxProps> = ({
+const ApproveBentobox: FC<ApproveBentoboxProps> = ({
   id,
   chainId,
   masterContract,
@@ -79,6 +78,4 @@ export const Component: FC<ApproveBentoboxProps> = ({
   )
 }
 
-export const ApproveBentobox = dynamic(() => Promise.resolve(Component), {
-  ssr: false,
-})
+export { ApproveBentobox, type ApproveBentoboxProps }

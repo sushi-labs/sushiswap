@@ -1,7 +1,8 @@
 'use client'
 
 import { allChains } from '@sushiswap/wagmi-config'
-import { Address, useContract, useProvider } from 'wagmi'
+import { getContract } from 'viem'
+import { Address, usePublicClient } from 'wagmi'
 
 import { multicall3Abi } from '../abis'
 
@@ -12,9 +13,11 @@ export const getMulticall3ContractConfig = (chainId: Multicall3ChainId | undefin
   abi: multicall3Abi,
 })
 
-export function useMulticall3Contract(chainId: Multicall3ChainId): ReturnType<typeof useContract> {
-  return useContract({
+export function useMulticall3Contract(chainId: Multicall3ChainId) {
+  const publicClient = usePublicClient({ chainId })
+
+  return getContract({
     ...getMulticall3ContractConfig(chainId),
-    signerOrProvider: useProvider({ chainId }),
+    publicClient,
   })
 }

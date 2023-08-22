@@ -15,20 +15,19 @@ import {
 } from '@sushiswap/ui'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import { Select, SelectContent, SelectItem, SelectPrimitive } from '@sushiswap/ui/components/select'
-import dynamic from 'next/dynamic'
 import React, { FC, useState } from 'react'
 import { Address } from 'wagmi'
 
 import { ApprovalState, useTokenApproval } from '../../hooks'
 
-export interface ApproveERC20Props extends ButtonProps {
+interface ApproveERC20Props extends ButtonProps {
   id: string
   amount: Amount<Type> | undefined
   contract: Address | undefined
   enabled?: boolean
 }
 
-export const Component: FC<ApproveERC20Props> = ({
+const ApproveERC20: FC<ApproveERC20Props> = ({
   id,
   amount,
   contract,
@@ -117,6 +116,4 @@ export const Component: FC<ApproveERC20Props> = ({
   )
 }
 
-export const ApproveERC20 = dynamic(() => Promise.resolve(Component), {
-  ssr: false,
-})
+export { ApproveERC20, type ApproveERC20Props }

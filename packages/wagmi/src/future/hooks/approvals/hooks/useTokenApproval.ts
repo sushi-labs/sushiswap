@@ -1,19 +1,11 @@
 'use client'
 
-import { MaxUint256 } from '@ethersproject/constants'
 import { Amount, Type } from '@sushiswap/currency'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import { BigNumber } from 'ethers'
 import { useCallback, useMemo, useState } from 'react'
-import {
-  Address,
-  erc20ABI,
-  useAccount,
-  useContractWrite,
-  usePrepareContractWrite,
-  UserRejectedRequestError,
-} from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { maxUint256, UserRejectedRequestError } from 'viem'
+import { Address, erc20ABI, useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi'
+import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
 import { useTokenAllowance } from './useTokenAllowance'
 
@@ -57,10 +49,7 @@ export const useTokenApproval = ({
     abi: erc20ABI,
     address: amount?.currency?.wrapped?.address as Address,
     functionName: 'approve',
-    args: [
-      spender as Address,
-      approveMax ? MaxUint256 : amount ? BigNumber.from(amount.quotient.toString()) : BigNumber.from(0),
-    ],
+    args: [spender as Address, approveMax ? maxUint256 : amount ? amount.quotient : 0n],
     enabled: Boolean(amount && spender && address && allowance && enabled && !isAllowanceLoading),
   })
 
@@ -81,7 +70,7 @@ export const useTokenApproval = ({
           type: 'approval',
           chainId: amount.currency.chainId,
           txHash: data.hash,
-          promise: data.wait(),
+          promise: waitForTransaction({ hash: data.hash }),
           summary: {
             pending: `Approving ${amount.currency.symbol}`,
             completed: `Successfully approved ${amount.currency.symbol}`,
@@ -99,8 +88,7 @@ export const useTokenApproval = ({
     ...config,
     onSettled,
     onSuccess: (data) => {
-      data
-        .wait()
+      waitForTransaction({ hash: data.hash })
         .then(() => {
           refetch().then(() => {
             setPending(false)

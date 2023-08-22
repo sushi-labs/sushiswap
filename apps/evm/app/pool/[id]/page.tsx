@@ -1,8 +1,8 @@
-import { isAddress } from '@ethersproject/address'
 import { ChainId } from '@sushiswap/chain'
 import { Separator } from '@sushiswap/ui'
 import { ManageV2LiquidityCard } from 'ui/pool/ManageV2LiquidityCard'
 import { PoolTransactionsV2 } from 'ui/pool/PoolTransactionsV2'
+import { isAddress } from 'viem'
 
 import {
   PoolPositionProvider,

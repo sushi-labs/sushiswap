@@ -1,18 +1,19 @@
 import { Token } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
+import { Address } from 'viem'
 
 import { getAllPools as getAllPoolsFromDb, getNewPools } from './database'
 
 export interface PoolResponse2 {
   type: string
-  address: string
+  address: Address
   twapEnabled: boolean
   swapFee: number
   liquidityUSD: string
   isWhitelisted: true
   token0: {
     symbol: string
-    address: string
+    address: Address
     status: string
     id: string
     name: string
@@ -22,7 +23,7 @@ export interface PoolResponse2 {
   }
   token1: {
     symbol: string
-    address: string
+    address: Address
     status: string
     id: string
     name: string
@@ -40,7 +41,7 @@ export async function getAllPools(
   poolTypes: ('CONSTANT_PRODUCT_POOL' | 'CONCENTRATED_LIQUIDITY_POOL' | 'STABLE_POOL')[]
 ) {
   const pools = await getAllPoolsFromDb(client, { chainId, protocol, version, poolTypes })
-  const poolMap = new Map(pools.map((pool) => [pool.address, pool as PoolResponse2]))
+  const poolMap = new Map(pools.map((pool) => [pool.address as Address, pool as PoolResponse2]))
   return poolMap
 }
 

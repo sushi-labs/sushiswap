@@ -4,7 +4,6 @@ import { Currency, Token, Type } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
 import { RToken, UniV3Pool } from '@sushiswap/tines'
 import { computePoolAddress, FeeAmount, TICK_SPACINGS } from '@sushiswap/v3-sdk'
-import { BigNumber } from 'ethers'
 import { Address, PublicClient } from 'viem'
 
 import { getCurrencyCombinations } from '../getCurrencyCombinations'
@@ -39,6 +38,8 @@ const bitmapIndex = (tick: number, tickSpacing: number) => {
   return Math.floor(tick / tickSpacing / 256)
 }
 
+type PoolFilter = { has: (arg: string) => boolean }
+
 export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   poolsByTrade: Map<string, string[]> = new Map()
   pools: Map<string, PoolCode> = new Map()
@@ -47,17 +48,17 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   unwatchBlockNumber?: () => void
 
   isInitialized = false
-  factory: { [chainId: number]: Address } = {}
-  initCodeHash: { [chainId: number]: string } = {}
-  tickLens: { [chainId: number]: string } = {}
+  factory: Record<number, Address> = {}
+  initCodeHash: Record<number, string> = {}
+  tickLens: Record<number, string> = {}
   databaseClient: PrismaClient | undefined
 
   constructor(
     chainId: ChainId,
     web3Client: PublicClient,
-    factory: { [chainId: number]: Address },
-    initCodeHash: { [chainId: number]: string },
-    tickLens: { [chainId: number]: string },
+    factory: Record<number, Address>,
+    initCodeHash: Record<number, string>,
+    tickLens: Record<number, string>,
     databaseClient?: PrismaClient
   ) {
     super(chainId, web3Client)
@@ -70,7 +71,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     this.databaseClient = databaseClient
   }
 
-  async fetchPoolsForToken(t0: Token, t1: Token, excludePools?: Set<string>): Promise<void> {
+  async fetchPoolsForToken(t0: Token, t1: Token, excludePools?: Set<string> | PoolFilter): Promise<void> {
     let staticPools = this.getStaticPools(t0, t1)
     if (excludePools) staticPools = staticPools.filter((p) => !excludePools.has(p.address))
     const slot0 = await this.client
@@ -185,18 +186,18 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       bitmapIndex(pool.activeTick + NUMBER_OF_SURROUNDING_TICKS, TICK_SPACINGS[pool.fee])
     )
 
-    const wordList: any = []
-    existingPools.forEach((pool, i) => {
-      for (let j = minIndexes[i]; j <= maxIndexes[i]; ++j) {
-        wordList.push({
-          chainId: this.chainId,
-          address: this.tickLens[this.chainId as keyof typeof this.tickLens] as Address,
-          args: [pool.address, j],
-          abi: tickLensAbi,
-          functionName: 'getPopulatedTicksInWord',
-          index: i,
-        })
-      }
+    const wordList = existingPools.flatMap((pool, i) => {
+      const minIndex = minIndexes[i]
+      const maxIndex = maxIndexes[i]
+
+      return Array.from({ length: maxIndex - minIndex + 1 }, (_, i) => minIndex + i).flatMap((j) => ({
+        chainId: this.chainId,
+        address: this.tickLens[this.chainId as keyof typeof this.tickLens] as Address,
+        args: [pool.address, j] as const,
+        abi: tickLensAbi,
+        functionName: 'getPopulatedTicksInWord' as const,
+        index: i,
+      }))
     })
 
     const ticksContracts = this.client.multicall({
@@ -212,11 +213,10 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       ticksContracts,
     ])
 
-    const ticks: any = []
+    const ticks: NonNullable<(typeof tickResults)[number]['result']>[] = []
     tickResults.forEach((t, i) => {
       const index = wordList[i].index
-      if (ticks[index] === undefined) ticks[index] = []
-      ticks[index] = ticks[index].concat(t.result || [])
+      ticks[index] = (ticks[index] || []).concat(t.result || [])
     })
 
     const transformedV3Pools: PoolCode[] = []
@@ -228,11 +228,11 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       if (balance0 === undefined || balance1 === undefined || liquidity === undefined) return
 
       const poolTicks = ticks[i]
-        .map((tick: any) => ({
+        .map((tick) => ({
           index: tick.tick,
-          DLiquidity: BigNumber.from(tick.liquidityNet),
+          DLiquidity: tick.liquidityNet,
         }))
-        .sort((a: any, b: any) => a.index - b.index)
+        .sort((a, b) => a.index - b.index)
 
       const lowerUnknownTick = minIndexes[i] * TICK_SPACINGS[pool.fee] * 256 - TICK_SPACINGS[pool.fee]
       console.assert(
@@ -241,13 +241,13 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       )
       poolTicks.unshift({
         index: lowerUnknownTick,
-        DLiquidity: BigNumber.from(0),
+        DLiquidity: 0n,
       })
       const upperUnknownTick = (maxIndexes[i] + 1) * TICK_SPACINGS[pool.fee] * 256
       console.assert(poolTicks[poolTicks.length - 1].index < upperUnknownTick, 'Error 244: unexpected max tick index')
       poolTicks.push({
         index: upperUnknownTick,
-        DLiquidity: BigNumber.from(0),
+        DLiquidity: 0n,
       })
       //console.log(pool.fee, TICK_SPACINGS[pool.fee], pool.activeTick, minIndexes[i], maxIndexes[i], poolTicks)
 
@@ -256,11 +256,11 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
         pool.token0 as RToken,
         pool.token1 as RToken,
         pool.fee / 1_000_000,
-        BigNumber.from(balance0),
-        BigNumber.from(balance1),
+        balance0,
+        balance1,
         pool.activeTick,
-        BigNumber.from(liquidity),
-        BigNumber.from(pool.sqrtPriceX96),
+        liquidity,
+        pool.sqrtPriceX96,
         poolTicks
       )
 

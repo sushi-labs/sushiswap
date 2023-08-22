@@ -1,9 +1,7 @@
 import { Amount, Token } from '@sushiswap/currency'
 import { FuroStreamChainId } from '@sushiswap/furo'
-import { JSBI } from '@sushiswap/math'
 import { Address, getBentoBoxContractConfig, getFuroVestingContractConfig, readContract } from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
-import { BigNumber } from 'ethers'
 
 interface UseVestingBalance {
   chainId: FuroStreamChainId
@@ -23,7 +21,7 @@ export function useVestingBalance({ chainId, vestingId, token, enabled = true }:
           ...getFuroVestingContractConfig(chainId),
           functionName: 'vestBalance',
           chainId,
-          args: [BigNumber.from(vestingId)],
+          args: [BigInt(vestingId)],
         }),
         readContract({
           ...getBentoBoxContractConfig(chainId),
@@ -33,9 +31,9 @@ export function useVestingBalance({ chainId, vestingId, token, enabled = true }:
         }),
       ])
 
-      return Amount.fromShare(token, JSBI.BigInt(balance), {
-        elastic: JSBI.BigInt(rebase[0]),
-        base: JSBI.BigInt(rebase[1]),
+      return Amount.fromShare(token, balance, {
+        elastic: rebase[0],
+        base: rebase[1],
       })
     },
     refetchInterval: 2000,

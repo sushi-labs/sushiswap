@@ -56,7 +56,7 @@ const ChipInput = React.forwardRef<HTMLInputElement, ChipInputProps>(
 
     const onKeyDown = useCallback(
       (e: React.KeyboardEvent) => {
-        console.log(delimiters, e.key, delimiters.includes(e.key))
+        console.debug(delimiters, e.key, delimiters.includes(e.key))
         if (delimiters.includes(e.key)) {
           split()
         } else if (e.code === 'Backspace') {

@@ -5,26 +5,17 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
 import { ZERO } from '@sushiswap/math'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
-import dynamic from 'next/dynamic'
 import React, { FC, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useBalancesWeb3 } from '../../hooks'
 
-export interface AmountsProps extends ButtonProps {
+interface AmountsProps extends ButtonProps {
   chainId: ChainId | undefined
   amounts: (Amount<Type> | undefined)[]
 }
 
-export const Component: FC<AmountsProps> = ({
-  type,
-  amounts,
-  chainId,
-  children,
-  fullWidth = true,
-  size = 'xl',
-  ...props
-}) => {
+const Amounts: FC<AmountsProps> = ({ type, amounts, chainId, children, fullWidth = true, size = 'xl', ...props }) => {
   const { address } = useAccount()
   const amountsAreDefined = useMemo(() => amounts.every((el) => el?.greaterThan(ZERO)), [amounts])
   const currencies = useMemo(() => amounts.map((amount) => amount?.currency), [amounts])
@@ -60,6 +51,4 @@ export const Component: FC<AmountsProps> = ({
   return <>{children}</>
 }
 
-export const Amounts = dynamic(() => Promise.resolve(Component), {
-  ssr: false,
-})
+export { Amounts, type AmountsProps }

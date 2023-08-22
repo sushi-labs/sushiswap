@@ -3,7 +3,6 @@
 import { Chain } from '@sushiswap/chain'
 import { Amount } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
-import { JSBI } from '@sushiswap/math'
 import { useAngleRewards } from '@sushiswap/react-query'
 import {
   Card,
@@ -94,8 +93,8 @@ const Component: FC<{ id: string }> = ({ id }) => {
   const amounts = useMemo(() => {
     if (positionDetails?.fees && _token0 && _token1)
       return [
-        Amount.fromRawAmount(_token0, JSBI.BigInt(positionDetails.fees[0])),
-        Amount.fromRawAmount(_token1, JSBI.BigInt(positionDetails.fees[1])),
+        Amount.fromRawAmount(_token0, BigInt(positionDetails.fees[0])),
+        Amount.fromRawAmount(_token1, BigInt(positionDetails.fees[1])),
       ]
 
     return [undefined, undefined]

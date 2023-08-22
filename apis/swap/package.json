@@ -44,11 +44,11 @@
     "@sushiswap/database": "workspace:*",
     "@sushiswap/route-processor": "workspace:*",
     "@sushiswap/router": "workspace:*",
+    "@sushiswap/extractor": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",
     "@whatwg-node/fetch": "0.8.4",
-    "ethers": "5.7.2",
     "fastify": "4.11.0",
-    "viem": "1.0.2",
+    "viem": "1.6.3",
     "zod": "3.21.4"
   },
   "devDependencies": {

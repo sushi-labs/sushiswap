@@ -1,5 +1,4 @@
 import { isAddress } from '@ethersproject/address'
-import { TransactionRequest } from '@ethersproject/providers'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
@@ -27,15 +26,18 @@ import {
   useAccount,
   useBentoBoxTotal,
   useFuroStreamRouterContract,
+  usePrepareSendTransaction,
 } from '@sushiswap/wagmi'
+import { useSendTransaction } from '@sushiswap/wagmi'
 import { useWaitForTransaction } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { useApproved, useSignature, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { format } from 'date-fns'
-import React, { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
+import React, { FC, useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { Hex } from 'viem'
 
 import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../../lib'
 import { ZFundSourceToFundSource, ZTokenToToken } from '../../../lib/zod'
@@ -81,7 +83,7 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
           type: 'createStream',
           chainId: chainId,
           txHash: data.hash,
-          promise: data.wait(),
+          promise: waitForTransaction({ hash: data.hash }),
           summary: {
             pending: `Creating ${_amount.toSignificant(6)} ${_amount.currency.symbol} stream`,
             completed: `Created ${_amount.toSignificant(6)} ${_amount.currency.symbol} stream`,
@@ -94,56 +96,59 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
       [_amount, chainId, address]
     )
 
-    const prepare = useCallback(
-      async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-        if (
-          !_amount ||
-          !contract ||
-          !address ||
-          !chainId ||
-          !rebase ||
-          !dates?.startDate ||
-          !dates?.endDate ||
-          !recipient ||
-          !isAddress(recipient)
-        )
-          return
+    const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+      if (
+        !_amount ||
+        !contract ||
+        !address ||
+        !chainId ||
+        !rebase ||
+        !dates?.startDate ||
+        !dates?.endDate ||
+        !recipient ||
+        !isAddress(recipient)
+      )
+        return
 
-        const actions: string[] = []
-        if (signature) {
-          actions.push(approveBentoBoxAction({ contract, user: address, signature }))
-        }
+      const actions: Hex[] = []
+      if (signature) {
+        actions.push(approveBentoBoxAction({ user: address, signature }))
+      }
 
-        actions.push(
-          streamCreationAction({
-            contract,
-            recipient,
-            currency: _amount.currency,
-            startDate: new Date(dates.startDate),
-            endDate: new Date(dates.endDate),
-            amount: _amount,
-            fromBentobox: _fundSource === FundSource.BENTOBOX,
-            minShare: _amount.toShare(rebase),
-          })
-        )
-
-        setRequest({
-          from: address,
-          to: contract?.address,
-          data: batchAction({ contract, actions }),
-          value: _amount.currency.isNative ? _amount.quotient.toString() : '0',
+      actions.push(
+        streamCreationAction({
+          recipient,
+          currency: _amount.currency,
+          startDate: new Date(dates.startDate),
+          endDate: new Date(dates.endDate),
+          amount: _amount,
+          fromBentobox: _fundSource === FundSource.BENTOBOX,
+          minShare: _amount.toShare(rebase),
         })
-      },
-      [_amount, _fundSource, address, chainId, contract, dates?.endDate, dates?.startDate, rebase, recipient, signature]
-    )
+      )
 
-    const { sendTransactionAsync, isLoading, data, isError } = useSendTransaction({
+      return {
+        account: address,
+        to: contract?.address,
+        data: batchAction({ actions }),
+        value: _amount.currency.isNative ? _amount.quotient : 0n,
+      }
+    }, [
+      _amount,
+      _fundSource,
+      address,
       chainId,
-      prepare,
-      onSettled,
-      onSuccess: () => {
-        setSignature(undefined)
-      },
+      contract,
+      dates?.endDate,
+      dates?.startDate,
+      rebase,
+      recipient,
+      signature,
+    ])
+
+    const { config } = usePrepareSendTransaction({
+      ...prepare,
+      chainId,
       enabled: Boolean(
         isValid &&
           _amount &&
@@ -157,6 +162,14 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
           isAddress(recipient) &&
           approved
       ),
+    })
+
+    const { sendTransactionAsync, isLoading, data, isError } = useSendTransaction({
+      ...config,
+      onSettled,
+      onSuccess: () => {
+        setSignature(undefined)
+      },
     })
 
     const formValid = isValid && !isValidating && Object.keys(errors).length === 0

@@ -1,9 +1,8 @@
 'use client'
 
 import { furoVestingAbi, furoVestingAddress, FuroVestingChainId } from '@sushiswap/furo'
-import { getContract } from '@wagmi/core'
-import { useMemo } from 'react'
-import { useProvider } from 'wagmi'
+import { getContract } from 'viem'
+import { usePublicClient } from 'wagmi'
 
 export const getFuroVestingContractConfig = (chainId: FuroVestingChainId) => ({
   address: furoVestingAddress[chainId],
@@ -11,13 +10,10 @@ export const getFuroVestingContractConfig = (chainId: FuroVestingChainId) => ({
 })
 
 export function useFuroVestingContract(chainId: FuroVestingChainId | undefined) {
-  const signerOrProvider = useProvider({ chainId })
+  const publicClient = usePublicClient({ chainId })
 
-  return useMemo(() => {
-    if (!chainId) return null
-
-    return getContract({ ...getFuroVestingContractConfig(chainId), signerOrProvider })
-  }, [chainId, signerOrProvider])
+  if (!chainId) return null
+  return getContract({ ...getFuroVestingContractConfig(chainId), publicClient })
 }
 
 export type FuroVesting = NonNullable<ReturnType<typeof useFuroVestingContract>>

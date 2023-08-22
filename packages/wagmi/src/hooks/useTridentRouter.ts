@@ -1,7 +1,10 @@
 'use client'
 
-import { TridentRouterChainId, tridentRouterExports } from '@sushiswap/trident-core'
-import { Address, useContract, useSigner } from 'wagmi'
+import {TridentRouterChainId, tridentRouterExports} from '@sushiswap/trident-sdk'
+import {useMemo} from 'react'
+import {WalletClient} from 'viem'
+import {Address, useWalletClient} from 'wagmi'
+import {getContract} from 'wagmi/actions'
 
 // TODO: exports should be in protocol folder
 export const getTridentRouterContractConfig = (chainId: number | undefined) => ({
@@ -10,9 +13,14 @@ export const getTridentRouterContractConfig = (chainId: number | undefined) => (
 })
 
 export function useTridentRouterContract(chainId: number | undefined) {
-  const { data: signerOrProvider } = useSigner()
-  return useContract({
-    ...getTridentRouterContractConfig(chainId),
-    signerOrProvider,
-  })
+  const { data: walletClient } = useWalletClient()
+
+  return useMemo(
+    () =>
+      getContract({
+        ...getTridentRouterContractConfig(chainId),
+        walletClient: walletClient as WalletClient,
+      }),
+    [walletClient, chainId]
+  )
 }

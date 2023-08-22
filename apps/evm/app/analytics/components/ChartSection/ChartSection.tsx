@@ -33,7 +33,7 @@ export const ChartSection: FC = () => {
   const { chainIds } = useFilters()
 
   const args = useMemo(() => ({ chainIds }), [chainIds])
-  const { data, isValidating, isLoading } = useSWR({ url: '/analytics/api/charts', args }, fetcher)
+  const { data, isLoading } = useSWR({ url: '/analytics/api/charts', args }, fetcher)
 
   return (
     <Container maxWidth="7xl" className="px-4 mx-auto">

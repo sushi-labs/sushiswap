@@ -80,7 +80,11 @@ export function useTicks({
     return reads
   }, [chainId, maxIndex, minIndex, poolAddress])
 
-  const reads = useContractReads({ contracts: contractReads, enabled: true })
+  const reads = useContractReads({
+    contracts: contractReads,
+    enabled: true,
+    allowFailure: false,
+  })
 
   return useMemo(() => {
     const { data } = reads

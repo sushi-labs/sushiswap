@@ -1,15 +1,15 @@
 'use client'
 
 import { Amount, Currency, Price, Token, tryParseAmount, Type } from '@sushiswap/currency'
-import { JSBI, Rounding } from '@sushiswap/math'
+import { Rounding } from '@sushiswap/math'
 import {
   encodeSqrtRatioX96,
   FeeAmount,
   nearestUsableTick,
-  Pool,
   Position,
   priceToClosestTick,
   SushiSwapV3ChainId,
+  SushiSwapV3Pool,
   TICK_SPACINGS,
   TickMath,
   tickToPrice,
@@ -171,7 +171,7 @@ export function useConcentratedDerivedMintInfo({
   feeAmount: FeeAmount | undefined
   existingPosition?: Position
 }): {
-  pool?: Pool | null
+  pool?: SushiSwapV3Pool | null
   ticks: { [bound in Bound]?: number | undefined }
   price?: Price<Token, Token>
   pricesAtTicks: {
@@ -264,14 +264,7 @@ export function useConcentratedDerivedMintInfo({
   // check for invalid price input (converts to invalid ratio)
   const invalidPrice = useMemo(() => {
     const sqrtRatioX96 = price ? encodeSqrtRatioX96(price.numerator, price.denominator) : undefined
-    return (
-      price &&
-      sqrtRatioX96 &&
-      !(
-        JSBI.greaterThanOrEqual(sqrtRatioX96, TickMath.MIN_SQRT_RATIO) &&
-        JSBI.lessThan(sqrtRatioX96, TickMath.MAX_SQRT_RATIO)
-      )
-    )
+    return price && sqrtRatioX96 && !(sqrtRatioX96 >= TickMath.MIN_SQRT_RATIO && sqrtRatioX96 < TickMath.MAX_SQRT_RATIO)
   }, [price])
 
   // used for ratio calculation when pool not initialized
@@ -279,14 +272,14 @@ export function useConcentratedDerivedMintInfo({
     if (tokenA && tokenB && feeAmount && price && !invalidPrice) {
       const currentTick = priceToClosestTick(price)
       const currentSqrt = TickMath.getSqrtRatioAtTick(currentTick)
-      return new Pool(tokenA, tokenB, feeAmount, currentSqrt, JSBI.BigInt(0), currentTick, [])
+      return new SushiSwapV3Pool(tokenA, tokenB, feeAmount, currentSqrt, 0n, currentTick, [])
     } else {
       return undefined
     }
   }, [feeAmount, invalidPrice, price, tokenA, tokenB])
 
   // if pool exists use it, if not use the mock pool
-  const poolForPosition: Pool | undefined = pool ?? mockPool
+  const poolForPosition: SushiSwapV3Pool | undefined = pool ?? mockPool
 
   // lower and upper limits in the tick space for `feeAmoun<Trans>
   const tickSpaceLimits = useMemo(
@@ -464,10 +457,10 @@ export function useConcentratedDerivedMintInfo({
     // mark as 0 if disabled because out of range
     const amount0 = !deposit0Disabled
       ? parsedAmounts?.[tokenA.equals(poolForPosition.token0) ? Field.CURRENCY_A : Field.CURRENCY_B]?.quotient
-      : JSBI.BigInt(0)
+      : 0n
     const amount1 = !deposit1Disabled
       ? parsedAmounts?.[tokenA.equals(poolForPosition.token0) ? Field.CURRENCY_B : Field.CURRENCY_A]?.quotient
-      : JSBI.BigInt(0)
+      : 0n
 
     if (amount0 !== undefined && amount1 !== undefined) {
       return Position.fromAmounts({
@@ -567,7 +560,7 @@ export function useRangeHopCallbacks(
   feeAmount: FeeAmount | undefined,
   tickLower: number | undefined,
   tickUpper: number | undefined,
-  pool?: Pool | undefined | null
+  pool?: SushiSwapV3Pool | undefined | null
 ) {
   const { setFullRange, resetMintState } = useConcentratedMintActionHandlers()
   const baseToken = useMemo(() => baseCurrency?.wrapped, [baseCurrency])

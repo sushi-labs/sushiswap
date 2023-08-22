@@ -83,9 +83,8 @@ async function withdrawVest(page: Page) {
   await expect(confirmWithdrawalLocator).toBeEnabled()
   await confirmWithdrawalLocator.click()
 
-  const expectedText = `(Successfully withdrawn .* ${USDC.symbol})`
-  const regex = new RegExp(expectedText)
-  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+  const regex = new RegExp(`(Successfully withdrawn .* ${USDC.symbol})`)
+  expect(page.getByText(regex))
 }
 
 async function transferVest(page: Page, recipient: string) {
@@ -107,9 +106,8 @@ async function transferVest(page: Page, recipient: string) {
   await expect(confirmTransferLocator).toBeEnabled()
   await confirmTransferLocator.click()
 
-  const expectedText = '(Successfully transferred Vest to *.)'
-  const regex = new RegExp(expectedText)
-  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+  const regex = new RegExp('(Successfully transferred Vest to *.)')
+  expect(page.getByText(regex))
 }
 
 async function cancelVest(page: Page) {
@@ -127,9 +125,8 @@ async function cancelVest(page: Page) {
   await expect(confirmTransferLocator).toBeEnabled()
   await confirmTransferLocator.click()
 
-  const expectedText = '(Successfully cancelled vest)'
-  const regex = new RegExp(expectedText)
-  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+  const text = 'Successfully cancelled vest'
+  expect(page.getByText(text))
 }
 async function mockSubgraph(page: Page) {
   await page.route('https://api.thegraph.com/subgraphs/name/sushi-subgraphs/furo-polygon', async (route, request) => {

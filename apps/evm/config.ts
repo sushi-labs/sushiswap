@@ -4,15 +4,20 @@ import { SushiSwapV2ChainIds } from '@sushiswap/v2-sdk'
 import { SushiSwapV3ChainIds } from '@sushiswap/v3-sdk'
 
 export const ANGLE_ENABLED_NETWORKS = [ChainId.ETHEREUM, ChainId.POLYGON, ChainId.ARBITRUM, ChainId.OPTIMISM]
-
 export type AngleEnabledChainId = (typeof ANGLE_ENABLED_NETWORKS)[number]
+export const isAngleEnabledChainId = (chainId: number): chainId is AngleEnabledChainId =>
+  ANGLE_ENABLED_NETWORKS.includes(chainId as AngleEnabledChainId)
 
-export const isAngleEnabledChainId = (chainId: number | string): chainId is AngleEnabledChainId =>
-  ANGLE_ENABLED_NETWORKS.includes(+chainId as AngleEnabledChainId)
-
-export const SWAP_API_ENABLED_NETWORKS = []
-
+export const SWAP_API_ENABLED_NETWORKS = [
+  ChainId.ETHEREUM,
+  ChainId.ARBITRUM,
+  ChainId.OPTIMISM,
+  ChainId.POLYGON,
+  ChainId.BASE,
+]
 export type SwapApiEnabledChainId = (typeof SWAP_API_ENABLED_NETWORKS)[number]
+export const isSwapApiEnabledChainId = (chainId: number): chainId is SwapApiEnabledChainId =>
+  SWAP_API_ENABLED_NETWORKS.includes(chainId as SwapApiEnabledChainId)
 
 export const DISABLED_CHAIN_IDS = [ChainId.HAQQ, ChainId.LINEA]
 

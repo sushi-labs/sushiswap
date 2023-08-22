@@ -1,8 +1,8 @@
 'use client'
 
-import { isAddress } from '@ethersproject/address'
 import { ChainId } from '@sushiswap/chain'
 import useSWR from 'swr'
+import { isAddress } from 'viem'
 
 import { Token } from '..'
 

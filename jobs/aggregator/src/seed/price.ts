@@ -1,6 +1,5 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
 import { isAddress } from '@ethersproject/address'
-import { BigNumber } from '@ethersproject/bignumber'
 import { totalsAbi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Prisma, PrismaClient, Token } from '@sushiswap/database'
@@ -162,12 +161,12 @@ async function transform(chainId: number, pools: Pool[]) {
     if (pool.type === PoolType.CONSTANT_PRODUCT_POOL) {
       rPools.push(
         new ConstantProductRPool(
-          pool.address,
+          pool.address as Address,
           token0 as RToken,
           token1 as RToken,
           pool.swapFee,
-          BigNumber.from(pool.reserve0),
-          BigNumber.from(pool.reserve1)
+          BigInt(pool.reserve0),
+          BigInt(pool.reserve1)
         )
       )
     } else if (pool.type === PoolType.STABLE_POOL) {
@@ -176,12 +175,12 @@ async function transform(chainId: number, pools: Pool[]) {
       if (total0 && total1) {
         rPools.push(
           new StableSwapRPool(
-            pool.address,
+            pool.address as Address,
             token0 as RToken,
             token1 as RToken,
             pool.swapFee,
-            BigNumber.from(pool.reserve0),
-            BigNumber.from(pool.reserve1),
+            BigInt(pool.reserve0),
+            BigInt(pool.reserve1),
             pool.token0.decimals,
             pool.token1.decimals,
             total0,
@@ -223,9 +222,9 @@ async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId) {
 
   const rebases: Map<string, Rebase> = new Map()
   sortedTokens.forEach((t, i) => {
-    const total = totals[i]
-    if (total === undefined || total === null) return
-    rebases.set(t.address, total)
+    if (totals[i].error) return
+    const [elastic, base] = totals[i].result
+    rebases.set(t.address, { elastic, base })
   })
   return rebases
 }
@@ -253,7 +252,7 @@ function calculatePrices(
       console.log(`Price null: ${rToken.symbol}~${rToken.address}~${value}`)
     }
 
-    const price = Number((value / Math.pow(10, baseToken.decimals - token.decimals)).toFixed(12))
+    const price = Number((value / 10 ** (baseToken.decimals - token.decimals)).toFixed(12))
     if (price > Number.MAX_SAFE_INTEGER) continue
     // console.log(`${token.symbol}~${token.address}~${price}`)
     tokensWithPrices.push({ id: token.id, price })

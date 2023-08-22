@@ -8,8 +8,8 @@ import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { useQuery, useToken } from '@sushiswap/wagmi'
 import type { TokenList } from '@uniswap/token-lists'
-import { isAddress } from 'ethers/lib/utils'
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
+import { isAddress } from 'viem'
 
 import { SUPPORTED_CHAIN_IDS } from '../../../config'
 
@@ -128,7 +128,7 @@ export const Search: FC = () => {
             </div>
             <p
               onClick={() => setSelectNetwork((prev) => !prev)}
-              role="button"
+              onKeyDown={() => setSelectNetwork((prev) => !prev)}
               className="font-semibold text-sm flex items-center gap-1 py-2 pl-3 pr-2 rounded-lg cursor-pointer bg-neutral-700 hover:bg-neutral-600 text-neutral-300 hover:text-neutral-200"
             >
               {chainShortName[chainId].toUpperCase()} <ChevronDownIcon width={16} height={16} />
