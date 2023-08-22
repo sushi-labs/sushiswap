@@ -190,6 +190,7 @@ async function startInfinitTest(args: {
             ` diff = ${diff > 0 ? '+' : ''}${diff} `
         )
         if (Math.abs(Number(diff)) > 0.001) console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
+        console.log(rpParams)
       } catch (e) {
         console.log('Routing failed. No connection ? ' + e)
       }
@@ -201,8 +202,9 @@ it.skip('Extractor Ethereum infinit work test', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
-    factoriesV2: [uniswapV2Factory(ChainId.ETHEREUM), sushiswapV2Factory(ChainId.ETHEREUM)],
-    factoriesV3: [uniswapV3Factory(ChainId.ETHEREUM)],
+    //[], //uniswapV2Factory(ChainId.ETHEREUM)], //,
+    factoriesV2: [sushiswapV2Factory(ChainId.ETHEREUM)],
+    factoriesV3: [], //uniswapV3Factory(ChainId.ETHEREUM)],
     tickHelperContract: TickLensContract[ChainId.ETHEREUM],
     cacheDir: './cache',
     logDepth: 50,

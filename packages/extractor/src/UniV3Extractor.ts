@@ -10,7 +10,7 @@ import { Counter } from './Counter'
 import { LogFilter2 } from './LogFilter2'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { PermanentCache } from './PermanentCache'
-import { QualityChecker, QualityCheckerCallBackArg } from './QualityChecker'
+import { PoolSyncState, QualityChecker, QualityCheckerCallBackArg } from './QualityChecker'
 import { TokenManager } from './TokenManager'
 import { UniV3EventsAbi, UniV3PoolWatcher } from './UniV3PoolWatcher'
 import { warnLog } from './WarnLog'
@@ -92,6 +92,13 @@ export class UniV3Extractor {
           `${arg.correctPool ? 'pool was updated ' : ''}` +
           `(${this.qualityChecker.totalMatchCounter}/${this.qualityChecker.totalCheckCounter})`
       )
+      if (arg.status !== PoolSyncState.Match && arg.status !== PoolSyncState.ReservesMismatch)
+        warnLog(
+          this.multiCallAggregator.chainId,
+          `Pool ${arg.ethalonPool.address} quality check: ${arg.status} ` +
+            `${arg.correctPool ? 'pool was updated ' : ''}` +
+            `(${this.qualityChecker.totalMatchCounter}/${this.qualityChecker.totalCheckCounter})`
+        )
       return true
     })
 
