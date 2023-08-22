@@ -3,8 +3,8 @@ import { Native, Token, WETH9 } from '@sushiswap/currency'
 import { FeeAmount } from '../constants'
 import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96'
 import { TickMath } from '../utils/tickMath'
-import { Pool } from './pool'
-import { Route } from './route'
+import { Route } from './Route'
+import { SushiSwapV3Pool } from './SushiSwapV3Pool'
 
 describe('Route', () => {
   const ETHER = Native.onChain(1)
@@ -28,9 +28,9 @@ describe('Route', () => {
   })
   const weth = WETH9[1]
 
-  const pool_0_1 = new Pool(token0, token1, FeeAmount.MEDIUM, encodeSqrtRatioX96(1, 1), 0, 0, [])
-  const pool_0_weth = new Pool(token0, weth, FeeAmount.MEDIUM, encodeSqrtRatioX96(1, 1), 0, 0, [])
-  const pool_1_weth = new Pool(token1, weth, FeeAmount.MEDIUM, encodeSqrtRatioX96(1, 1), 0, 0, [])
+  const pool_0_1 = new SushiSwapV3Pool(token0, token1, FeeAmount.MEDIUM, encodeSqrtRatioX96(1, 1), 0, 0, [])
+  const pool_0_weth = new SushiSwapV3Pool(token0, weth, FeeAmount.MEDIUM, encodeSqrtRatioX96(1, 1), 0, 0, [])
+  const pool_1_weth = new SushiSwapV3Pool(token1, weth, FeeAmount.MEDIUM, encodeSqrtRatioX96(1, 1), 0, 0, [])
 
   describe('path', () => {
     it('constructs a path from the tokens', () => {
@@ -71,7 +71,7 @@ describe('Route', () => {
   })
 
   describe('#midPrice', () => {
-    const pool_0_1 = new Pool(
+    const pool_0_1 = new SushiSwapV3Pool(
       token0,
       token1,
       FeeAmount.MEDIUM,
@@ -80,7 +80,7 @@ describe('Route', () => {
       TickMath.getTickAtSqrtRatio(encodeSqrtRatioX96(1, 5)),
       []
     )
-    const pool_1_2 = new Pool(
+    const pool_1_2 = new SushiSwapV3Pool(
       token1,
       token2,
       FeeAmount.MEDIUM,
@@ -89,7 +89,7 @@ describe('Route', () => {
       TickMath.getTickAtSqrtRatio(encodeSqrtRatioX96(15, 30)),
       []
     )
-    const pool_0_weth = new Pool(
+    const pool_0_weth = new SushiSwapV3Pool(
       token0,
       weth,
       FeeAmount.MEDIUM,
@@ -98,7 +98,7 @@ describe('Route', () => {
       TickMath.getTickAtSqrtRatio(encodeSqrtRatioX96(3, 1)),
       []
     )
-    const pool_1_weth = new Pool(
+    const pool_1_weth = new SushiSwapV3Pool(
       token1,
       weth,
       FeeAmount.MEDIUM,

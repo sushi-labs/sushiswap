@@ -1,10 +1,10 @@
 import { Interface } from '@ethersproject/abi'
 import { validateAndParseAddress } from '@sushiswap/amm'
 import { Token } from '@sushiswap/currency'
-import { JSBI, Percent } from '@sushiswap/math'
+import { Percent } from '@sushiswap/math'
 import IPeripheryPaymentsWithFee from '@uniswap/v3-periphery/artifacts/contracts/interfaces/IPeripheryPaymentsWithFee.sol/IPeripheryPaymentsWithFee.json'
 
-import { toHex } from './utils/calldata'
+import { toHex } from '../utils/calldata'
 
 export interface FeeOptions {
   /**
@@ -30,7 +30,7 @@ export abstract class Payments {
     return toHex(fee.multiply(10_000).quotient)
   }
 
-  public static encodeUnwrapWETH9(amountMinimum: JSBI, recipient: string, feeOptions?: FeeOptions): string {
+  public static encodeUnwrapWETH9(amountMinimum: bigint, recipient: string, feeOptions?: FeeOptions): string {
     recipient = validateAndParseAddress(recipient)
 
     if (feeOptions) {
@@ -50,7 +50,7 @@ export abstract class Payments {
 
   public static encodeSweepToken(
     token: Token,
-    amountMinimum: JSBI,
+    amountMinimum: bigint,
     recipient: string,
     feeOptions?: FeeOptions
   ): string {

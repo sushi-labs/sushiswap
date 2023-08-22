@@ -1,20 +1,19 @@
 import { Interface } from '@ethersproject/abi'
 import { validateAndParseAddress } from '@sushiswap/amm'
 import { Amount as CurrencyAmount, Currency, Native, Token } from '@sushiswap/currency'
-import { BigintIsh, JSBI, Percent } from '@sushiswap/math'
+import { BigintIsh, Percent } from '@sushiswap/math'
 import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import invariant from 'tiny-invariant'
 
-import { ADDRESS_ZERO } from './constants'
-import { Pool } from './entities'
-import { Position } from './entities/position'
-import { ONE, ZERO } from './internalConstants'
-import { Multicall } from './multicall'
-import { Payments } from './payments'
-import { PermitOptions, SelfPermit } from './selfPermit'
-import { MethodParameters, toHex } from './utils/calldata'
+import { ADDRESS_ZERO } from '../constants'
+import { MethodParameters, toHex } from '../utils/calldata'
+import { SushiSwapV3Pool } from '.'
+import { Multicall } from './Multicall'
+import { Payments } from './Payments'
+import { Position } from './Position'
+import { PermitOptions, SelfPermit } from './SelfPermit'
 
-const MaxUint128 = toHex(JSBI.subtract(JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(128)), JSBI.BigInt(1)))
+const MaxUint128 = toHex(2n ** 128n - 1n)
 
 export interface MintSpecificOptions {
   /**
@@ -174,7 +173,7 @@ export abstract class NonfungiblePositionManager {
    */
   private constructor() {}
 
-  private static encodeCreate(pool: Pool): string {
+  private static encodeCreate(pool: SushiSwapV3Pool): string {
     return NonfungiblePositionManager.INTERFACE.encodeFunctionData('createAndInitializePoolIfNecessary', [
       pool.token0.address,
       pool.token1.address,
@@ -183,7 +182,7 @@ export abstract class NonfungiblePositionManager {
     ])
   }
 
-  public static createCallParameters(pool: Pool): MethodParameters {
+  public static createCallParameters(pool: SushiSwapV3Pool): MethodParameters {
     return {
       calldata: this.encodeCreate(pool),
       value: toHex(0),
@@ -191,7 +190,7 @@ export abstract class NonfungiblePositionManager {
   }
 
   public static addCallParameters(position: Position, options: AddLiquidityOptions): MethodParameters {
-    invariant(JSBI.greaterThan(position.liquidity, ZERO), 'ZERO_LIQUIDITY')
+    invariant(position.liquidity > 0n, 'ZERO_LIQUIDITY')
 
     const calldatas: string[] = []
 
@@ -264,7 +263,7 @@ export abstract class NonfungiblePositionManager {
       const wrappedValue = position.pool.token0.equals(wrapped) ? amount0Desired : amount1Desired
 
       // we only need to refund if we're actually sending ETH
-      if (JSBI.greaterThan(wrappedValue, ZERO)) {
+      if (wrappedValue > 0n) {
         calldatas.push(Payments.encodeRefundETH())
       }
 
@@ -345,7 +344,7 @@ export abstract class NonfungiblePositionManager {
       tickLower: position.tickLower,
       tickUpper: position.tickUpper,
     })
-    invariant(JSBI.greaterThan(partialPosition.liquidity, ZERO), 'ZERO_LIQUIDITY')
+    invariant(partialPosition.liquidity > 0n, 'ZERO_LIQUIDITY')
 
     // slippage-adjusted underlying amounts
     const { amount0: amount0Min, amount1: amount1Min } = partialPosition.burnAmountsWithSlippage(
@@ -393,7 +392,7 @@ export abstract class NonfungiblePositionManager {
       })
     )
 
-    if (options.liquidityPercentage.equalTo(ONE)) {
+    if (options.liquidityPercentage.equalTo(1n)) {
       if (options.burnToken) {
         calldatas.push(NonfungiblePositionManager.INTERFACE.encodeFunctionData('burn', [tokenId]))
       }

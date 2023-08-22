@@ -1,11 +1,9 @@
 import { Amount as CurrencyAmount, Native, Token, WETH9 } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
 
-import { FeeAmount, TICK_SPACINGS } from './constants'
-import { Pool } from './entities/pool'
-import { Position } from './entities/position'
-import { NonfungiblePositionManager } from './nonfungiblePositionManager'
-import { encodeSqrtRatioX96 } from './utils/encodeSqrtRatioX96'
+import { FeeAmount, TICK_SPACINGS } from '../constants'
+import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96'
+import { NonfungiblePositionManager,Position, SushiSwapV3Pool } from '.'
 
 describe('NonfungiblePositionManager', () => {
   const token0 = new Token({
@@ -25,8 +23,8 @@ describe('NonfungiblePositionManager', () => {
 
   const fee = FeeAmount.MEDIUM
 
-  const pool_0_1 = new Pool(token0, token1, fee, encodeSqrtRatioX96(1, 1), 0, 0, [])
-  const pool_1_weth = new Pool(token1, WETH9[1], fee, encodeSqrtRatioX96(1, 1), 0, 0, [])
+  const pool_0_1 = new SushiSwapV3Pool(token0, token1, fee, encodeSqrtRatioX96(1, 1), 0, 0, [])
+  const pool_1_weth = new SushiSwapV3Pool(token1, WETH9[1], fee, encodeSqrtRatioX96(1, 1), 0, 0, [])
 
   const recipient = '0x0000000000000000000000000000000000000003'
   const sender = '0x0000000000000000000000000000000000000004'

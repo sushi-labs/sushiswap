@@ -5,13 +5,13 @@ import { BigintIsh, Percent } from '@sushiswap/math'
 import ISwapRouter from '@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
 import invariant from 'tiny-invariant'
 
-import { ADDRESS_ZERO } from './constants'
-import { Trade } from './entities/trade'
-import { Multicall } from './multicall'
-import { FeeOptions, Payments } from './payments'
-import { PermitOptions, SelfPermit } from './selfPermit'
-import { encodeRouteToPath } from './utils'
-import { MethodParameters, toHex } from './utils/calldata'
+import { ADDRESS_ZERO } from '../constants'
+import { encodeRouteToPath } from '../utils'
+import { MethodParameters, toHex } from '../utils/calldata'
+import { Multicall } from './Multicall'
+import { FeeOptions, Payments } from './Payments'
+import { PermitOptions, SelfPermit } from './SelfPermit'
+import { Trade } from './Trade'
 
 /**
  * Options for producing the arguments to send calls to the router.
@@ -51,7 +51,7 @@ export interface SwapOptions {
 /**
  * Represents the Uniswap V3 SwapRouter, and has static methods for helping execute trades.
  */
-export abstract class SwapRouter {
+export abstract class SushiSwapV3Router {
   public static INTERFACE: Interface = new Interface(ISwapRouter.abi)
 
   /**
@@ -137,7 +137,7 @@ export abstract class SwapRouter {
               sqrtPriceLimitX96: toHex(options.sqrtPriceLimitX96 ?? 0),
             }
 
-            calldatas.push(SwapRouter.INTERFACE.encodeFunctionData('exactInputSingle', [exactInputSingleParams]))
+            calldatas.push(SushiSwapV3Router.INTERFACE.encodeFunctionData('exactInputSingle', [exactInputSingleParams]))
           } else {
             const exactOutputSingleParams = {
               tokenIn: route.tokenPath[0].address,
@@ -150,7 +150,9 @@ export abstract class SwapRouter {
               sqrtPriceLimitX96: toHex(options.sqrtPriceLimitX96 ?? 0),
             }
 
-            calldatas.push(SwapRouter.INTERFACE.encodeFunctionData('exactOutputSingle', [exactOutputSingleParams]))
+            calldatas.push(
+              SushiSwapV3Router.INTERFACE.encodeFunctionData('exactOutputSingle', [exactOutputSingleParams])
+            )
           }
         } else {
           invariant(options.sqrtPriceLimitX96 === undefined, 'MULTIHOP_PRICE_LIMIT')
@@ -166,7 +168,7 @@ export abstract class SwapRouter {
               amountOutMinimum: amountOut,
             }
 
-            calldatas.push(SwapRouter.INTERFACE.encodeFunctionData('exactInput', [exactInputParams]))
+            calldatas.push(SushiSwapV3Router.INTERFACE.encodeFunctionData('exactInput', [exactInputParams]))
           } else {
             const exactOutputParams = {
               path,
@@ -176,7 +178,7 @@ export abstract class SwapRouter {
               amountInMaximum: amountIn,
             }
 
-            calldatas.push(SwapRouter.INTERFACE.encodeFunctionData('exactOutput', [exactOutputParams]))
+            calldatas.push(SushiSwapV3Router.INTERFACE.encodeFunctionData('exactOutput', [exactOutputParams]))
           }
         }
       }

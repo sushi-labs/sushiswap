@@ -6,9 +6,9 @@ import IQuoterV2 from '@uniswap/swap-router-contracts/artifacts/contracts/lens/Q
 import IQuoter from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json'
 import invariant from 'tiny-invariant'
 
-import { FeeAmount } from './constants'
-import { Route } from './entities'
-import { encodeRouteToPath, MethodParameters, toHex } from './utils'
+import { FeeAmount } from '../constants'
+import { encodeRouteToPath, MethodParameters, toHex } from '../utils'
+import { Route } from '.'
 
 /**
  * Optional arguments to send to the quoter.

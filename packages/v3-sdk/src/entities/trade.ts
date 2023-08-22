@@ -3,9 +3,8 @@ import { Amount as CurrencyAmount, Currency, Price, Token } from '@sushiswap/cur
 import { Fraction, Percent } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
-import { ONE, ZERO } from '../internalConstants'
-import { Pool } from './pool'
-import { Route } from './route'
+import { Route } from './Route'
+import { SushiSwapV3Pool } from './SushiSwapV3Pool'
 
 /**
  * Trades comparator, an extension of the input output comparator that also considers other dimensions of the trade in ranking them
@@ -423,7 +422,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
     const poolAddressSet = new Set<string>()
     for (const { route } of routes) {
       for (const pool of route.pools) {
-        poolAddressSet.add(Pool.getAddress(pool.token0, pool.token1, pool.fee))
+        poolAddressSet.add(SushiSwapV3Pool.getAddress(pool.token0, pool.token1, pool.fee))
       }
     }
 
@@ -439,11 +438,11 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
    * @returns The amount out
    */
   public minimumAmountOut(slippageTolerance: Percent, amountOut = this.outputAmount): CurrencyAmount<TOutput> {
-    invariant(!slippageTolerance.lessThan(ZERO), 'SLIPPAGE_TOLERANCE')
+    invariant(!slippageTolerance.lessThan(0n), 'SLIPPAGE_TOLERANCE')
     if (this.tradeType === TradeType.EXACT_OUTPUT) {
       return amountOut
     } else {
-      const slippageAdjustedAmountOut = new Fraction(ONE)
+      const slippageAdjustedAmountOut = new Fraction(1n)
         .add(slippageTolerance)
         .invert()
         .multiply(amountOut.quotient).quotient
@@ -457,11 +456,11 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
    * @returns The amount in
    */
   public maximumAmountIn(slippageTolerance: Percent, amountIn = this.inputAmount): CurrencyAmount<TInput> {
-    invariant(!slippageTolerance.lessThan(ZERO), 'SLIPPAGE_TOLERANCE')
+    invariant(!slippageTolerance.lessThan(0n), 'SLIPPAGE_TOLERANCE')
     if (this.tradeType === TradeType.EXACT_INPUT) {
       return amountIn
     } else {
-      const slippageAdjustedAmountIn = new Fraction(ONE).add(slippageTolerance).multiply(amountIn.quotient).quotient
+      const slippageAdjustedAmountIn = new Fraction(1n).add(slippageTolerance).multiply(amountIn.quotient).quotient
       return CurrencyAmount.fromRawAmount(amountIn.currency, slippageAdjustedAmountIn)
     }
   }
@@ -496,12 +495,12 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
    * @returns The exact in trade
    */
   public static async bestTradeExactIn<TInput extends Currency, TOutput extends Currency>(
-    pools: Pool[],
+    pools: SushiSwapV3Pool[],
     currencyAmountIn: CurrencyAmount<TInput>,
     currencyOut: TOutput,
     { maxNumResults = 3, maxHops = 3 }: BestTradeOptions = {},
     // used in recursion.
-    currentPools: Pool[] = [],
+    currentPools: SushiSwapV3Pool[] = [],
     nextAmountIn: CurrencyAmount<Currency> = currencyAmountIn,
     bestTrades: Trade<TInput, TOutput, TradeType.EXACT_INPUT>[] = []
   ): Promise<Trade<TInput, TOutput, TradeType.EXACT_INPUT>[]> {
@@ -578,12 +577,12 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
    * @returns The exact out trade
    */
   public static async bestTradeExactOut<TInput extends Currency, TOutput extends Currency>(
-    pools: Pool[],
+    pools: SushiSwapV3Pool[],
     currencyIn: TInput,
     currencyAmountOut: CurrencyAmount<TOutput>,
     { maxNumResults = 3, maxHops = 3 }: BestTradeOptions = {},
     // used in recursion.
-    currentPools: Pool[] = [],
+    currentPools: SushiSwapV3Pool[] = [],
     nextAmountOut: CurrencyAmount<Currency> = currencyAmountOut,
     bestTrades: Trade<TInput, TOutput, TradeType.EXACT_OUTPUT>[] = []
   ): Promise<Trade<TInput, TOutput, TradeType.EXACT_OUTPUT>[]> {

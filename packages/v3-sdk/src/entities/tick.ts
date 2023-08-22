@@ -1,4 +1,4 @@
-import { BigintIsh, JSBI } from '@sushiswap/math'
+import { BigintIsh } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
 import { TickMath } from '../utils'
@@ -11,13 +11,13 @@ export interface TickConstructorArgs {
 
 export class Tick {
   public readonly index: number
-  public readonly liquidityGross: JSBI
-  public readonly liquidityNet: JSBI
+  public readonly liquidityGross: bigint
+  public readonly liquidityNet: bigint
 
   constructor({ index, liquidityGross, liquidityNet }: TickConstructorArgs) {
     invariant(index >= TickMath.MIN_TICK && index <= TickMath.MAX_TICK, 'TICK')
     this.index = index
-    this.liquidityGross = JSBI.BigInt(liquidityGross.toString())
-    this.liquidityNet = JSBI.BigInt(liquidityNet.toString())
+    this.liquidityGross = BigInt(liquidityGross.toString())
+    this.liquidityNet = BigInt(liquidityNet.toString())
   }
 }

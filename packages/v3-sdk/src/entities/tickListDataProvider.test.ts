@@ -1,6 +1,4 @@
-import { JSBI } from '@sushiswap/math'
-
-import { TickListDataProvider } from './tickListDataProvider'
+import { TickListDataProvider } from './TickListDataProvider'
 
 describe('TickListDataProvider', () => {
   describe('constructor', () => {
@@ -44,8 +42,8 @@ describe('TickListDataProvider', () => {
         1
       )
       const { liquidityNet, liquidityGross } = await provider.getTick(-1)
-      expect(liquidityNet).toEqual(JSBI.BigInt(-1))
-      expect(liquidityGross).toEqual(JSBI.BigInt(1))
+      expect(liquidityNet).toEqual(-1n)
+      expect(liquidityGross).toEqual(1n)
     })
     it('gets the largest tick from the list', async () => {
       const provider = new TickListDataProvider(
@@ -56,8 +54,8 @@ describe('TickListDataProvider', () => {
         1
       )
       const { liquidityNet, liquidityGross } = await provider.getTick(1)
-      expect(liquidityNet).toEqual(JSBI.BigInt(1))
-      expect(liquidityGross).toEqual(JSBI.BigInt(1))
+      expect(liquidityNet).toEqual(1n)
+      expect(liquidityGross).toEqual(1n)
     })
   })
 })

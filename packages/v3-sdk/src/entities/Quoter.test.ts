@@ -1,11 +1,10 @@
 import { TradeType } from '@sushiswap/amm'
 import { Amount as CurrencyAmount, Token, WETH9 } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
 
-import { FeeAmount, TICK_SPACINGS } from './constants'
-import { Pool, Route, Trade } from './entities'
-import { SwapQuoter } from './quoter'
-import { encodeSqrtRatioX96, nearestUsableTick, TickMath } from './utils'
+import { FeeAmount, TICK_SPACINGS } from '../constants'
+import { encodeSqrtRatioX96, nearestUsableTick, TickMath } from '../utils'
+import { Route, SushiSwapV3Pool, Trade } from '.'
+import { SwapQuoter } from './Quoter'
 
 describe('SwapQuoter', () => {
   const token0 = new Token({
@@ -29,18 +28,26 @@ describe('SwapQuoter', () => {
   const WETH = WETH9[1]
 
   const makePool = (token0: Token, token1: Token) => {
-    return new Pool(token0, token1, feeAmount, sqrtRatioX96, liquidity, TickMath.getTickAtSqrtRatio(sqrtRatioX96), [
-      {
-        index: nearestUsableTick(TickMath.MIN_TICK, TICK_SPACINGS[feeAmount]),
-        liquidityNet: liquidity,
-        liquidityGross: liquidity,
-      },
-      {
-        index: nearestUsableTick(TickMath.MAX_TICK, TICK_SPACINGS[feeAmount]),
-        liquidityNet: -liquidity,
-        liquidityGross: liquidity,
-      },
-    ])
+    return new SushiSwapV3Pool(
+      token0,
+      token1,
+      feeAmount,
+      sqrtRatioX96,
+      liquidity,
+      TickMath.getTickAtSqrtRatio(sqrtRatioX96),
+      [
+        {
+          index: nearestUsableTick(TickMath.MIN_TICK, TICK_SPACINGS[feeAmount]),
+          liquidityNet: liquidity,
+          liquidityGross: liquidity,
+        },
+        {
+          index: nearestUsableTick(TickMath.MAX_TICK, TICK_SPACINGS[feeAmount]),
+          liquidityNet: -liquidity,
+          liquidityGross: liquidity,
+        },
+      ]
+    )
   }
 
   const pool_0_1 = makePool(token0, token1)
@@ -118,7 +125,7 @@ describe('SwapQuoter', () => {
           TradeType.EXACT_INPUT
         )
         const { calldata, value } = SwapQuoter.quoteCallParameters(trade.route, trade.inputAmount, trade.tradeType, {
-          sqrtPriceLimitX96: JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(128)),
+          sqrtPriceLimitX96: 2n ** 128n,
         })
 
         expect(calldata).toBe(
