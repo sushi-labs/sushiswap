@@ -80,7 +80,7 @@ export default async function PartnerPage() {
           </div>
         </div>
         <div className="relative sm:pb-12 sm:ml-[calc(2rem+1px)] md:ml-[calc(3.5rem+1px)] lg:ml-[max(calc(14.5rem+1px),calc(100%-48rem))]">
-          <div className="hidden absolute top-3 bottom-0 right-full mr-7 md:mr-[3.25rem] w-px bg-slate-200 dark:bg-slate-800 sm:block" />
+          <div className="hidden absolute top-3 bottom-0 right-full mr-7 md:mr-[3.25rem] w-px bg-slate-200 dark:bg-slate-900 sm:block" />
           <div className="space-y-16">
             {STEPS.map((step) => (
               <article key={step.label} className="relative group">
@@ -89,14 +89,7 @@ export default async function PartnerPage() {
                   viewBox="0 0 9 9"
                   className="hidden absolute right-full mr-6 top-2 text-blue md:mr-12 w-[calc(0.5rem+1px)] h-[calc(0.5rem+1px)] overflow-visible sm:block"
                 >
-                  <circle
-                    cx="4.5"
-                    cy="4.5"
-                    r="4.5"
-                    stroke="currentColor"
-                    className="fill-white dark:fill-slate-900"
-                    strokeWidth="2"
-                  />
+                  <circle cx="4.5" cy="4.5" r="4.5" stroke="currentColor" className="fill-blue-900" strokeWidth="2" />
                 </svg>
                 <div className="relative">
                   <h3 className="text-base font-semibold tracking-tight text-slate-900 dark:text-slate-200 pt-8 lg:pt-0">
