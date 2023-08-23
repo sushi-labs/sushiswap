@@ -39,16 +39,16 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool }) 
       <Tabs className="w-full" defaultValue="add">
         <CardContent>
           <TabsList className="!flex">
-            <TabsTrigger value="add" className="flex flex-1">
+            <TabsTrigger testdata-id="add-tab" value="add" className="flex flex-1">
               Add
             </TabsTrigger>
-            <TabsTrigger value="remove" className="flex flex-1">
+            <TabsTrigger testdata-id="remove-tab" value="remove" className="flex flex-1">
               Remove
             </TabsTrigger>
-            <TabsTrigger disabled={!isFarm} value="stake" className="flex flex-1">
+            <TabsTrigger testdata-id="stake-tab" disabled={!isFarm} value="stake" className="flex flex-1">
               Stake
             </TabsTrigger>
-            <TabsTrigger disabled={!isFarm} value="unstake" className="flex flex-1">
+            <TabsTrigger testdata-id="unstake-tab" disabled={!isFarm} value="unstake" className="flex flex-1">
               Unstake
             </TabsTrigger>
           </TabsList>

@@ -152,11 +152,11 @@ test.describe('Trident', () => {
       type: 'ADD',
     })
 
-    const addLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/add')
+    const addLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b')
     await page.goto(addLiquidityUrl, { timeout: 25_000 })
     await manageStaking(page, 'STAKE')
 
-    const removeLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/remove')
+    const removeLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b')
     await page.goto(removeLiquidityUrl, { timeout: 25_000 })
     await manageStaking(page, 'UNSTAKE')
     await page.reload({ timeout: 25_000 })
@@ -189,7 +189,7 @@ async function createOrAddLiquidityV3(page: Page, args: V3PoolArgs) {
   const feeOptionSelector = page.locator('[testdata-id=fee-option-10000]')
   await expect(feeOptionSelector).toBeEnabled()
   await feeOptionSelector.click()
-  await expect(feeOptionSelector).toBeChecked()
+  await expect(feeOptionSelector).toHaveAttribute('data-state', 'on')
 
   if (args.type === 'CREATE' && args.startPrice) {
     await page.locator('[testdata-id=start-price-input]').fill(args.startPrice)
@@ -318,9 +318,9 @@ async function removeLiquidityV3(page: Page) {
   await expect(firstPositionSelector).toBeVisible()
   await firstPositionSelector.click()
 
-  const decreaseLiquiditySelector = page.locator('[testdata-id=decrease-liquidity-button]')
-  await expect(decreaseLiquiditySelector).toBeVisible({ timeout: 25_000 })
-  await decreaseLiquiditySelector.click()
+  const removeLiquidityTabSelector = page.locator('[testdata-id=remove-tab]')
+  await expect(removeLiquidityTabSelector).toBeVisible()
+  await removeLiquidityTabSelector.click()
 
   await switchNetwork(page, CHAIN_ID)
 
@@ -336,6 +336,11 @@ async function removeLiquidityV3(page: Page) {
 
 async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
   await switchNetwork(page, CHAIN_ID)
+
+  const removeLiquidityTabSelector = page.locator(`[testdata-id=${type.toLowerCase()}-tab]`)
+  await expect(removeLiquidityTabSelector).toBeVisible()
+  await removeLiquidityTabSelector.click()
+
   const maxButtonSelector = page.locator(`[testdata-id=${type.toLowerCase()}-max-button]`)
 
   await expect(maxButtonSelector).toBeVisible()
@@ -360,6 +365,11 @@ async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
 
 async function removeLiquidityV2(page: Page) {
   await switchNetwork(page, CHAIN_ID)
+
+  const removeLiquidityTabSelector = page.locator(`[testdata-id=remove-tab]`)
+  await expect(removeLiquidityTabSelector).toBeVisible()
+  await removeLiquidityTabSelector.click()
+
   await page.locator('[testdata-id=remove-liquidity-max-button]').click()
 
   const approveSlpId = 'approve-remove-liquidity-slp-button'

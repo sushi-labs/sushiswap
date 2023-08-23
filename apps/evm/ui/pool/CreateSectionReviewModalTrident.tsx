@@ -271,7 +271,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
         value: value ?? 0n,
       }
     } catch (e: unknown) {
-      //
+      console.log(e)
     }
   }, [
     address,
@@ -290,7 +290,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
     totals,
   ])
 
-  const { config } = usePrepareSendTransaction({ ...prepare, chainId, enabled: approved })
+  const { config, error } = usePrepareSendTransaction({ ...prepare, chainId, enabled: Boolean(approved && totals) })
 
   const {
     sendTransactionAsync,

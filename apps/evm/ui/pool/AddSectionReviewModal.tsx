@@ -54,7 +54,14 @@ export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({ chainId, inpu
           <List.KeyValue flex title="Rate">
             <Rate price={price}>
               {({ toggleInvert, content, usdPrice }) => (
-                <Button size="sm" asChild variant="link" role="button" onClick={() => toggleInvert()}>
+                <Button
+                  size="sm"
+                  asChild
+                  variant="link"
+                  role="button"
+                  className="!no-underline"
+                  onClick={() => toggleInvert()}
+                >
                   {content} {usdPrice && <span className="font-normal text-slate-300">(${usdPrice})</span>}
                 </Button>
               )}

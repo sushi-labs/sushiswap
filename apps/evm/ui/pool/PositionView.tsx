@@ -141,17 +141,17 @@ const Component: FC<{ id: string }> = ({ id }) => {
             <Tabs className="w-full" defaultValue="add">
               <CardContent>
                 <TabsList className="!flex">
-                  <TabsTrigger value="add" className="flex flex-1">
+                  <TabsTrigger testdata-id="add-tab" value="add" className="flex flex-1">
                     Add
                   </TabsTrigger>
-                  <TabsTrigger value="remove" className="flex flex-1">
+                  <TabsTrigger testdata-id="remove-tab" value="remove" className="flex flex-1">
                     Remove
                   </TabsTrigger>
-                  <TabsTrigger value="fees" className="flex flex-1">
+                  <TabsTrigger testdata-id="fees-tab" value="fees" className="flex flex-1">
                     Fees
                   </TabsTrigger>
                   {isAngleEnabledChainId(chainId) ? (
-                    <TabsTrigger value="rewards" className="flex flex-1">
+                    <TabsTrigger testdata-id="rewards-tab" value="rewards" className="flex flex-1">
                       Rewards
                     </TabsTrigger>
                   ) : null}

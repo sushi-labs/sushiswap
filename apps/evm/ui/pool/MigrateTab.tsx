@@ -439,7 +439,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
               token1={token1}
               feeAmount={feeAmount}
               tokenId={undefined}
-              showStartPrice={true}
+              showStartPrice={false}
               switchTokens={() => setInvertTokens((prev) => !prev)}
             >
               {outOfRange ? (
