@@ -1,6 +1,7 @@
 import { AbiEvent } from 'abitype'
 import { Block, encodeEventTopics, Log, PublicClient, WatchBlocksReturnType } from 'viem'
 
+import { repeatAsync } from './Utils'
 import { warnLog } from './WarnLog'
 
 export enum LogFilterType {
@@ -8,27 +9,6 @@ export enum LogFilterType {
   OneCall, // one eth_getLogs call for all topict - the most preferrable
   MultiCall, // separete eth_getLogs call for each topic - for those systems that fail at OneCall
   SelfFilter, // Topic filtering doesn't support for provider. Filtering on the client
-}
-
-const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
-
-async function repeatAsync(
-  times: number,
-  delayBetween: number,
-  action: () => Promise<void>,
-  failed: () => void,
-  print?: string
-) {
-  for (let i = 0; i < times; ++i) {
-    try {
-      await action()
-      if (print && i > 0) console.log(`attemps ${print}: ${i + 1}`)
-      return
-    } catch (e) {
-      if (delayBetween) await delay(delayBetween)
-    }
-  }
-  failed()
 }
 
 class BlockFrame {
