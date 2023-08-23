@@ -140,7 +140,7 @@ async function main() {
     }
 
     const bestRoute = preferSushi
-      ? Router.findSpecialRoute(poolCodesMap, chainId, tokenIn, amount, tokenOut, gasPrice ?? 30e9, maxPriceImpact)
+      ? Router.findSpecialRoute(poolCodesMap, chainId, tokenIn, amount, tokenOut, gasPrice ?? 30e9)
       : Router.findBestRoute(poolCodesMap, chainId, tokenIn, amount, tokenOut, gasPrice ?? 30e9)
 
     return res.json(
