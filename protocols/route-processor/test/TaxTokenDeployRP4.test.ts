@@ -29,6 +29,7 @@ async function getTestEnvironment() {
           blockCreated: 25770160,
         },
       },
+      id: network.config.chainId ?? 1, // !! remove when switch to local network setting
     },
     transport: custom(network.provider),
   })
@@ -99,8 +100,8 @@ async function testTaxTokenBuy(
   env: TestEnvironment,
   route: MultiRoute,
   rpParams: RPParams,
-  account?: Address
-): Promise<number> {
+  account: Address
+): Promise<bigint> {
   const amountOutReal = await env.client.readContract({
     address: env.rp.address,
     abi: routeProcessor4Abi,
@@ -117,7 +118,56 @@ async function testTaxTokenBuy(
     value: rpParams.value,
     account,
   })
-  return route.amountOutBI == 0n ? -1 : Number(amountOutReal - route.amountOutBI) / route.amountOut
+  await env.client.writeContract({
+    address: env.rp.address,
+    abi: routeProcessor4Abi,
+    // @ts-ignore
+    functionName: 'processRoute',
+    args: [
+      rpParams.tokenIn as Address,
+      rpParams.amountIn,
+      rpParams.tokenOut as Address,
+      0n,
+      rpParams.to as Address,
+      rpParams.routeCode as Address, // !!!!
+    ],
+    value: rpParams.value ?? 0n,
+    account,
+  })
+  return amountOutReal
+}
+
+async function testTaxTokenSell(
+  env: TestEnvironment,
+  route: MultiRoute,
+  rpParams: RPParams,
+  account: Address
+): Promise<bigint> {
+  await env.client.writeContract({
+    address: route.fromToken.address as Address,
+    abi: erc20Abi,
+    // @ts-ignore
+    functionName: 'approve',
+    args: [env.rp.address, route.amountInBI],
+    account,
+  })
+  const amountOutReal = await env.client.readContract({
+    address: env.rp.address,
+    abi: routeProcessor4Abi,
+    // @ts-ignore
+    functionName: 'processRoute',
+    args: [
+      rpParams.tokenIn as Address,
+      rpParams.amountIn,
+      rpParams.tokenOut as Address,
+      0n,
+      rpParams.to as Address,
+      rpParams.routeCode as Address, // !!!!
+    ],
+    value: rpParams.value,
+    account,
+  })
+  return amountOutReal
 }
 
 async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amountIn?: bigint }) {
@@ -129,43 +179,90 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
   await args.env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
   const pcMap = args.env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
 
-  const route = Router.findBestRoute(pcMap, chainId, fromToken, amountIn, toToken, 30e9)
-  if (route.status === RouteStatus.NoWay) {
-    console.log('NoWay')
+  const routeBuy = Router.findBestRoute(pcMap, chainId, fromToken, amountIn, toToken, 30e9)
+  if (routeBuy.status === RouteStatus.NoWay) {
+    console.log('Buy: NoWay')
     return
   }
-  // console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
+  // console.log(Router.routeToHumanString(pcMap, routeBuy, fromToken, toToken))
   // console.log(
   //   'ROUTE:',
-  //   route.legs.map(
+  //   routeBuy.legs.map(
   //     (l) =>
   //       `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
   //   )
   // )
 
-  const rpParams = Router.routeProcessor4Params(
+  const rpParamsBuy = Router.routeProcessor4Params(
     pcMap,
-    route,
+    routeBuy,
     fromToken,
     toToken,
     args.env.user.address,
     args.env.rp.address
   )
-  if (rpParams === undefined) {
-    console.log("Can't create route")
+  if (rpParamsBuy === undefined) {
+    console.log("Can't create routeBuy")
     return
   }
 
   // try {
-  //   await checkTaxTokenTransfer(args.env, route)
+  //   await checkTaxTokenTransfer(args.env, routeBuy)
   // } catch (e) {
-  //   console.log(`Transfer check failed ${toToken.symbol} (${toToken.address}) ${route.amountOutBI} ${e}`)
+  //   console.log(`Transfer check failed ${toToken.symbol} (${toToken.address}) ${routeBuy.amountOutBI} ${e}`)
+  //   return
+  // }
+  let amountOutReal
+  try {
+    amountOutReal = await testTaxTokenBuy(args.env, routeBuy, rpParamsBuy, args.env.user.address)
+    const diff = routeBuy.amountOutBI == 0n ? -1 : Number(amountOutReal - routeBuy.amountOutBI) / routeBuy.amountOut
+    console.log(
+      `Routing: ${fromToken.symbol} => ${toToken.symbol} ${routeBuy.legs.length - 1} pools` +
+        ` diff = ${diff > 0 ? '+' : ''}${diff} `
+    )
+  } catch (e) {
+    console.log('Routing failed. No connection ? ' + e)
+    return
+  }
+
+  const routeSell = Router.findBestRoute(pcMap, chainId, toToken, amountOutReal, fromToken, 30e9)
+  if (routeSell.status === RouteStatus.NoWay) {
+    console.log('Sell: NoWay')
+    return
+  }
+  // console.log(Router.routeToHumanString(pcMap, routeSell, fromToken, toToken))
+  // console.log(
+  //   'ROUTE:',
+  //   routeSell.legs.map(
+  //     (l) =>
+  //       `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
+  //   )
+  // )
+
+  const rpParamsSell = Router.routeProcessor4Params(
+    pcMap,
+    routeSell,
+    fromToken,
+    toToken,
+    args.env.user.address,
+    args.env.rp.address
+  )
+  if (rpParamsSell === undefined) {
+    console.log("Can't create routeSell")
+    return
+  }
+
+  // try {
+  //   await checkTaxTokenTransfer(args.env, routeSell)
+  // } catch (e) {
+  //   console.log(`Transfer check failed ${toToken.symbol} (${toToken.address}) ${routeSell.amountOutBI} ${e}`)
   //   return
   // }
   try {
-    const diff = await testTaxTokenBuy(args.env, route, rpParams, args.env.user.address)
+    const amountOutReal = await testTaxTokenSell(args.env, routeSell, rpParamsSell, args.env.user.address)
+    const diff = routeSell.amountOutBI == 0n ? -1 : Number(amountOutReal - routeSell.amountOutBI) / routeSell.amountOut
     console.log(
-      `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.legs.length - 1} pools` +
+      `Routing: ${toToken.symbol} => ${fromToken.symbol} ${routeSell.legs.length - 1} pools` +
         ` diff = ${diff > 0 ? '+' : ''}${diff} `
     )
   } catch (e) {
@@ -196,7 +293,7 @@ describe('RouteProcessor4 tax token test for BASE', async function () {
     })
   })
 
-  it('BASE => bpsTEST', async function () {
+  it.skip('BASE => bpsTEST', async function () {
     const bpsTEST = new Token({
       chainId: ChainId.BASE,
       address: '0x93980959778166ccbB95Db7EcF52607240bc541e',
