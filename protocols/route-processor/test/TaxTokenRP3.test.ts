@@ -1,9 +1,9 @@
-import { routeProcessor2Abi } from '@sushiswap/abi'
+import { erc20Abi, routeProcessor2Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token } from '@sushiswap/currency'
-import { DataFetcher, Router } from '@sushiswap/router'
-import { RouteStatus } from '@sushiswap/tines'
-import { Address, createPublicClient, http } from 'viem'
+import { DataFetcher, Router, RPParams } from '@sushiswap/router'
+import { MultiRoute, RouteStatus } from '@sushiswap/tines'
+import { Address, createPublicClient, http, PublicClient } from 'viem'
 import { base, Chain } from 'viem/chains'
 
 const ROUTE_PROCESSOR_3_ADDRESS: Record<number, Address> = {
@@ -36,6 +36,46 @@ const ROUTE_PROCESSOR_3_ADDRESS: Record<number, Address> = {
   [ChainId.BASE]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904' as Address,
 }
 
+async function checkTaxTokenTransfer(client: PublicClient, route: MultiRoute): Promise<boolean | undefined> {
+  if (route.legs.length >= 2) {
+    const chainId = client.chain?.id as ChainId
+    return await client.readContract({
+      address: route.toToken.address as Address, //'0x8b2060CC6E55Fa68204B3Bc8B226FC61B3512C1f', //bpsTest
+      abi: erc20Abi,
+      // @ts-ignore
+      functionName: 'transfer',
+      args: [ROUTE_PROCESSOR_3_ADDRESS[chainId], route.amountOutBI],
+      account: route.legs[1].poolAddress, // '0x9bd731319718d417f47083c9653de5f35fce5698', // sushiswap pair
+    })
+  }
+}
+
+async function testTaxTokenBuy(
+  client: PublicClient,
+  route: MultiRoute,
+  rpParams: RPParams,
+  account?: Address
+): Promise<number> {
+  const chainId = client.chain?.id as ChainId
+  const amountOutReal = await client.readContract({
+    address: ROUTE_PROCESSOR_3_ADDRESS[chainId],
+    abi: routeProcessor2Abi,
+    // @ts-ignore
+    functionName: 'processRoute',
+    args: [
+      rpParams.tokenIn as Address,
+      rpParams.amountIn,
+      rpParams.tokenOut as Address,
+      0n,
+      rpParams.to as Address,
+      rpParams.routeCode as Address, // !!!!
+    ],
+    value: rpParams.value,
+    account,
+  })
+  return route.amountOutBI == 0n ? -1 : Number(amountOutReal - route.amountOutBI) / route.amountOut
+}
+
 async function testTaxToken(args: {
   providerURL: string
   chain: Chain
@@ -64,41 +104,36 @@ async function testTaxToken(args: {
     console.log('NoWay')
     return
   }
-  console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
+  // console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
+  // console.log(
+  //   'ROUTE:',
+  //   route.legs.map(
+  //     (l) =>
+  //       `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
+  //   )
+  // )
 
   const rpParams = Router.routeProcessor2Params(
     pcMap,
     route,
     fromToken,
     toToken,
-    '0x0000000000000000000000000000000000000111', //ROUTE_PROCESSOR_3_ADDRESS[chainId],
+    ROUTE_PROCESSOR_3_ADDRESS[chainId],
     ROUTE_PROCESSOR_3_ADDRESS[chainId]
   )
   if (rpParams === undefined) {
     console.log("Can't create route")
     return
   }
+
   try {
-    const amountOutReal = await client.readContract({
-      address: ROUTE_PROCESSOR_3_ADDRESS[chainId],
-      abi: routeProcessor2Abi,
-      // @ts-ignore
-      functionName: 'processRoute',
-      args: [
-        rpParams.tokenIn as Address,
-        rpParams.amountIn,
-        rpParams.tokenOut as Address,
-        0n,
-        rpParams.to as Address,
-        rpParams.routeCode as Address, // !!!!
-      ],
-      value: rpParams.value,
-      account: args.account,
-    })
-    const diff =
-      route.amountOutBI == 0n
-        ? amountOutReal - route.amountOutBI
-        : Number(amountOutReal - route.amountOutBI) / route.amountOut
+    await checkTaxTokenTransfer(client, route)
+  } catch (e) {
+    console.log(`Transfer check failed ${toToken.symbol} (${toToken.address}) ${route.amountOutBI} ${e}`)
+    return
+  }
+  try {
+    const diff = await testTaxTokenBuy(client, route, rpParams, args.account)
     console.log(
       `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.legs.length - 1} pools` +
         ` diff = ${diff > 0 ? '+' : ''}${diff} `
@@ -108,14 +143,7 @@ async function testTaxToken(args: {
   }
 }
 
-it.only('Base tax token test: BASE => bpsTEST => BASE', async function () {
-  const bpsTEST = new Token({
-    chainId: ChainId.BASE,
-    address: '0x93980959778166ccbB95Db7EcF52607240bc541e',
-    name: 'bpsTEST',
-    symbol: 'bpsTEST',
-    decimals: 18,
-  })
+it('Base tax token test: BASE => LCRV', async function () {
   const LCRV = new Token({
     chainId: ChainId.BASE,
     address: '0x8b2060CC6E55Fa68204B3Bc8B226FC61B3512C1f',
@@ -128,5 +156,23 @@ it.only('Base tax token test: BASE => bpsTEST => BASE', async function () {
     chain: base,
     taxToken: LCRV,
     account: '0x4200000000000000000000000000000000000006',
+    amountIn: BigInt(1e15),
+  })
+})
+
+it('Base tax token test: BASE => bpsTEST', async function () {
+  const bpsTEST = new Token({
+    chainId: ChainId.BASE,
+    address: '0x93980959778166ccbB95Db7EcF52607240bc541e',
+    name: 'bpsTEST',
+    symbol: 'bpsTEST',
+    decimals: 18,
+  })
+  await testTaxToken({
+    providerURL: `https://lb.drpc.org/ogrpc?network=base&dkey=${process.env.DRPC_ID}`,
+    chain: base,
+    taxToken: bpsTEST,
+    account: '0x4200000000000000000000000000000000000006',
+    amountIn: BigInt(1e12),
   })
 })
