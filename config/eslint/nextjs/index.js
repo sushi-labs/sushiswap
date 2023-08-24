@@ -47,6 +47,11 @@ const eslintConfig = {
     'react/display-name': 'warn',
     // 'testing-library/prefer-screen-queries': 'warn',
     'turbo/no-undeclared-env-vars': 'warn',
+    'prefer-const': 'warn',
+    '@next/next/no-img-element': 'warn',
+    '@typescript-eslint/no-empty-interface': 'warn',
+    'react-hooks/exhaustive-deps': 'warn',
+    'react/jsx-no-target-blank': 'warn',
   },
   // overrides: [
   //   // Only uses Testing Library lint rules in test files
