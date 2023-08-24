@@ -61,7 +61,7 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool }) 
             <PoolPositionRewardsProvider pool={pool}>
               <TabsContent value="add">
                 <CardContent>
-                  {['BentoBox Classic', 'BentoBox Stable'].includes(pool.protocol) ? (
+                  {pool.protocol === 'BENTOBOX_CLASSIC' || pool.protocol === 'BENTOBOX_STABLE' ? (
                     <AddSectionTrident pool={pool} />
                   ) : (
                     <AddSectionLegacy pool={pool} />
@@ -70,7 +70,7 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool }) 
               </TabsContent>
               <TabsContent value="remove">
                 <CardContent>
-                  {['BentoBox Classic', 'BentoBox Stable'].includes(pool.protocol) ? (
+                  {pool.protocol === 'BENTOBOX_CLASSIC' || pool.protocol === 'BENTOBOX_STABLE' ? (
                     <RemoveSectionTrident pool={pool} />
                   ) : (
                     <RemoveSectionLegacy pool={pool} />
