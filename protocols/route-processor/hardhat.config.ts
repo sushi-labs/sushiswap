@@ -53,30 +53,30 @@ const config: HardhatUserConfig = {
     //   },
     //   chainId: 1,
     // },
-    // hardhat: {
-    //   forking: {
-    //     enabled: process.env.FORKING === 'true',
-    //     url: process.env.ALCHEMY_ID
-    //       ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`
-    //       : 'https://polygon-mainnet.g.alchemy.com/v2/demo',
-    //     blockNumber: 42053000,
-    //   },
-    //   accounts: {
-    //     accountsBalance: '10000000000000000000000000', //(10_000_000 MATIC).
-    //   },
-    //   chainId: 137,
-    // },
     hardhat: {
       forking: {
         enabled: process.env.FORKING === 'true',
-        url: `https://lb.drpc.org/ogrpc?network=base&dkey=${process.env.DRPC_ID}`,
-        blockNumber: 3033333,
+        url: process.env.ALCHEMY_ID
+          ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`
+          : 'https://polygon-mainnet.g.alchemy.com/v2/demo',
+        blockNumber: 42053000,
       },
       accounts: {
-        accountsBalance: '10000000000000000000000000', //(10_000_000 BASE).
+        accountsBalance: '10000000000000000000000000', //(10_000_000 MATIC).
       },
-      chainId: 8453,
+      chainId: 137,
     },
+    // hardhat: {
+    //   forking: {
+    //     enabled: process.env.FORKING === 'true',
+    //     url: `https://lb.drpc.org/ogrpc?network=base&dkey=${process.env.DRPC_ID}`,
+    //     blockNumber: 3033333,
+    //   },
+    //   accounts: {
+    //     accountsBalance: '10000000000000000000000000', //(10_000_000 BASE).
+    //   },
+    //   chainId: 8453,
+    // },
     // hardhat: {
     //   forking: {
     //     enabled: process.env.FORKING === 'true',

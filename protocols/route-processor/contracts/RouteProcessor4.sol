@@ -12,7 +12,6 @@ import '../interfaces/ICurve.sol';
 import './InputStream.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "hardhat/console.sol";
 
 address constant NATIVE_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 address constant IMPOSSIBLE_POOL_ADDRESS = 0x0000000000000000000000000000000000000001;
@@ -334,14 +333,10 @@ contract RouteProcessor4 is Ownable {
     if (amountIn != 0) {
       if (from == address(this)) IERC20(tokenIn).safeTransfer(pool, amountIn);
       else IERC20(tokenIn).safeTransferFrom(msg.sender, pool, amountIn);
-    } 
-    console.log(1, amountIn);
-    amountIn = IERC20(tokenIn).balanceOf(pool) - reserveIn;  // tokens already were transferred
-    console.log(2, amountIn);
+    } else amountIn = IERC20(tokenIn).balanceOf(pool) - reserveIn;  // tokens already were transferred
 
     uint256 amountInWithFee = amountIn * (1_000_000 - fee);
-    uint256 amountOut = (amountInWithFee * reserveOut) / (reserveIn * 1_000_000 + amountInWithFee)/10;
-    console.log(3, amountOut);
+    uint256 amountOut = (amountInWithFee * reserveOut) / (reserveIn * 1_000_000 + amountInWithFee);
     (uint256 amount0Out, uint256 amount1Out) = direction == 1 ? (uint256(0), amountOut) : (amountOut, uint256(0));
     IUniswapV2Pair(pool).swap(amount0Out, amount1Out, to, new bytes(0));
   }
