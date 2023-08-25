@@ -6,6 +6,7 @@ import { Native, Token } from '@sushiswap/currency'
 import { DataFetcher, Router, RPParams } from '@sushiswap/router'
 import { MultiRoute, RouteStatus } from '@sushiswap/tines'
 import { Contract } from '@sushiswap/types'
+import { expect } from 'chai'
 import { config, network } from 'hardhat'
 import { Address, Client, createPublicClient, custom, HDAccount, Hex, testActions, walletActions } from 'viem'
 import { mnemonicToAccount } from 'viem/accounts'
@@ -180,10 +181,7 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
   const pcMap = args.env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
 
   const routeBuy = Router.findBestRoute(pcMap, chainId, fromToken, amountIn, toToken, 30e9)
-  if (routeBuy.status === RouteStatus.NoWay) {
-    console.log('Buy: NoWay')
-    return
-  }
+  expect(routeBuy.status).not.eq(RouteStatus.NoWay)
   // console.log(Router.routeToHumanString(pcMap, routeBuy, fromToken, toToken))
   // console.log(
   //   'ROUTE:',
@@ -201,10 +199,7 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
     args.env.user.address,
     args.env.rp.address
   )
-  if (rpParamsBuy === undefined) {
-    console.log("Can't create routeBuy")
-    return
-  }
+  expect(rpParamsBuy).not.undefined
 
   // try {
   //   await checkTaxTokenTransfer(args.env, routeBuy)
@@ -212,6 +207,7 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
   //   console.log(`Transfer check failed ${toToken.symbol} (${toToken.address}) ${routeBuy.amountOutBI} ${e}`)
   //   return
   // }
+
   let amountOutReal
   try {
     amountOutReal = await testTaxTokenBuy(args.env, routeBuy, rpParamsBuy, args.env.user.address)
@@ -222,14 +218,12 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
     )
   } catch (e) {
     console.log('Routing failed. No connection ? ' + e)
+    expect(e).equal(undefined)
     return
   }
 
   const routeSell = Router.findBestRoute(pcMap, chainId, toToken, amountOutReal, fromToken, 30e9)
-  if (routeSell.status === RouteStatus.NoWay) {
-    console.log('Sell: NoWay')
-    return
-  }
+  expect(routeSell.status).not.eq(RouteStatus.NoWay)
   // console.log(Router.routeToHumanString(pcMap, routeSell, toToken, fromToken))
   // console.log(
   //   'ROUTE:',
@@ -247,10 +241,7 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
     args.env.user.address,
     args.env.rp.address
   )
-  if (rpParamsSell === undefined) {
-    console.log("Can't create routeSell")
-    return
-  }
+  expect(rpParamsSell).not.undefined
 
   // try {
   //   await checkTaxTokenTransfer(args.env, routeSell)
@@ -267,6 +258,7 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
     )
   } catch (e) {
     console.log('Routing failed. No connection ? ' + e)
+    expect(e).equal(undefined)
   }
 }
 
