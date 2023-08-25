@@ -1,15 +1,17 @@
-import React, { FC, ReactNode } from 'react'
+'use client'
 
-import { SushiIcon } from './icons'
+import React, { FC, ReactNode } from 'react'
 
 const Splash: FC = () => {
   return (
     <div className="fixed inset-0 bg-gray-100 dark:bg-slate-900 z-50 flex items-center justify-center">
+      {/*next image doesnt work with animated webp*/}
+      <img alt="loader" src="/breaking-bad-loader.webp" width={300} />
       <div className="absolute top-[calc(50%-20px)] left-[calc(50%-20px)]">
-        <div className="w-[50px] h-[50px] animate-[bounce_.5s_linear_infinite_0.17s] absolute">
-          <SushiIcon width={50} height={50} />
-        </div>
-        <div className="w-[50px] h-[5px] bg-black opacity-20 absolute top-[51px] left-0 rounded-[50%] animate-shadow" />
+        {/*<div className="w-[50px] h-[50px] animate-[bounce_.5s_linear_infinite_0.17s] absolute">*/}
+        {/*  <SushiIcon width={50} height={50} />*/}
+        {/*</div>*/}
+        {/*<div className="w-[50px] h-[5px] bg-black opacity-20 absolute top-[51px] left-0 rounded-[50%] animate-shadow" />*/}
       </div>
     </div>
   )
