@@ -1,10 +1,10 @@
-import { createAppAuth } from '@octoKit/auth-app'
+import { createAppAuth } from '@octokit/auth-app'
 import { ChainId, ChainKey } from '@sushiswap/chain'
 import { formatUSD } from '@sushiswap/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import stringify from 'fast-json-stable-stringify'
 import { NextResponse } from 'next/server'
-import { Octokit } from 'octoKit'
+import { Octokit } from 'octokit'
 
 import { ApplyForTokenListTokenSchemaType } from '../../../../../lib/tokenlist-request/ApplyForTokenListSchema'
 
