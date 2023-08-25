@@ -23,6 +23,7 @@ import {
 } from '@sushiswap/currency'
 import { abs } from '@sushiswap/math'
 import {
+  CurvePoolCode,
   DataFetcher,
   LiquidityProviders,
   NativeWrapBridgePoolCode,
@@ -212,7 +213,7 @@ async function makeSwap(
   } else {
     pcMap = new Map()
     Array.from(env.poolCodes.entries()).forEach((e) => {
-      if (!usedPools.has(e[0])) pcMap.set(e[0], e[1])
+      if (!usedPools.has(e[0]) && !(e[1] instanceof CurvePoolCode)) pcMap.set(e[0], e[1]) //Curve is not supported by RP3
     })
   }
   //await checkPoolsState(pcMap, env.user, env.chainId)
