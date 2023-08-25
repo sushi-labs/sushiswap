@@ -130,9 +130,9 @@ export default async function PartnerPage() {
             Projects that wish to have their token show in the default swap list will need to submit their information
             via our partner portal. Otherwise users can search for any supported token via the contract address.
           </p>
-          <LinkExternal href="/tokenlist-request">
+          <LinkInternal href="/tokenlist-request">
             <Button className="!px-10 mt-4">Apply Now</Button>{' '}
-          </LinkExternal>
+          </LinkInternal>
         </div>
         <div className="py-12">
           <Separator />

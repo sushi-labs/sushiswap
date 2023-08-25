@@ -19,14 +19,15 @@ export const Partners: FC = () => {
   const diff = Math.floor((new Date().getTime() - INCEPTION_DATE.getTime()) / (60 * 60 * 24 * 1000))
 
   return (
-    <section className="py-20 sm:py-40 px-4 border-t border-neutral-200/10 bg-gradient-to-b from-white/[0.04] to-black">
-      <Container maxWidth="6xl" className="px-4 mx-auto space-y-20">
-        <div className="flex flex-col items-center">
-          <p className="text-4xl font-semibold  text-center">{diff} Days.</p>
-          <p className="text-lg text-center mt-2 max-w-[420px]">
-            Since the inception of Sushi. We appreciate all the friends we’ve made along the way to the Future of
-            Finance.
-          </p>
+    <section className="py-20 sm:py-40 px-4 bg-gradient-to-b from-secondary to-transparent">
+      <Container maxWidth="5xl" className="px-4 mx-auto space-y-20">
+        <div className="flex flex-col items-center text-center prose dark:prose-invert mx-auto">
+          <h1>{diff} Days.</h1>
+          <h5>
+            Ever since the inception of Sushi, our journey has been enriched by the invaluable connections we{`'`}ve
+            forged. As we pave the way towards the Future of Finance, we want to express our deep gratitude to the
+            incredible community of friends and supporters who have accompanied us on this remarkable path
+          </h5>
         </div>
         <div className="flex flex-col gap-y-10">
           <div className="flex flex-wrap items-center justify-center gap-10">
