@@ -122,9 +122,6 @@ async function getTestEnvironment() {
   }
 
   // saturate router balance with wei of tokens
-
-  const a = performance.now()
-
   await Promise.all([
     setRouterPrimaryBalance(client, RouteProcessorAddress, WNATIVE[chainId].address as Address),
     setRouterPrimaryBalance(client, RouteProcessorAddress, SUSHI_ADDRESS[chainId as keyof typeof SUSHI_ADDRESS]),
@@ -138,8 +135,6 @@ async function getTestEnvironment() {
 
   console.log(`  Network: ${chainName[chainId]}, Forked Block: ${await client.getBlockNumber()}`)
   //console.log('    User creation ...')
-
-  console.log('a', performance.now() - a)
 
   return {
     chainId,

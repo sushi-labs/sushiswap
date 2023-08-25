@@ -123,9 +123,6 @@ async function getTestEnvironment() {
   }
 
   // saturate router balance with wei of tokens
-
-  const a = performance.now()
-
   await Promise.all([
     setRouterPrimaryBalance(client, RouteProcessorAddress, WNATIVE[chainId].address as Address),
     setRouterPrimaryBalance(client, RouteProcessorAddress, SUSHI_ADDRESS[chainId as keyof typeof SUSHI_ADDRESS]),
@@ -139,8 +136,6 @@ async function getTestEnvironment() {
 
   console.log(`  Network: ${chainName[chainId]}, Forked Block: ${await client.getBlockNumber()}`)
   //console.log('    User creation ...')
-
-  console.log('a', performance.now() - a)
 
   return {
     chainId,
@@ -484,25 +479,28 @@ describe('End-to-end RouteProcessor3_1 test', async function () {
     ]
   })
 
-  it('Permit: Native => FRAX => Native', async function () {
-    await env.snapshot.restore()
-    const usedPools = new Set<string>()
-    const token = FRAX[chainId as keyof typeof FRAX_ADDRESS]
-    const amountIn = BigInt('999999999999999983222784') // BigInt(1e6 * 1e18) - copied over the value from the unrefactored test
-    intermidiateResult[0] = amountIn
-    intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), token, intermidiateResult, usedPools)
-    const permit = await makePermit(env, token, intermidiateResult[0] as bigint)
-    intermidiateResult = await updMakeSwap(
-      env,
-      token,
-      Native.onChain(chainId),
-      intermidiateResult,
-      usedPools,
-      undefined,
-      undefined,
-      [permit]
-    )
-  })
+  if (network.config.chainId === 137) {
+    // permit in FRAX is implemented only for POLYGON
+    it('Permit: Native => FRAX => Native', async function () {
+      await env.snapshot.restore()
+      const usedPools = new Set<string>()
+      const token = FRAX[chainId as keyof typeof FRAX_ADDRESS]
+      const amountIn = BigInt('999999999999999983222784') // BigInt(1e6 * 1e18) - copied over the value from the unrefactored test
+      intermidiateResult[0] = amountIn
+      intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), token, intermidiateResult, usedPools)
+      const permit = await makePermit(env, token, intermidiateResult[0] as bigint)
+      intermidiateResult = await updMakeSwap(
+        env,
+        token,
+        Native.onChain(chainId),
+        intermidiateResult,
+        usedPools,
+        undefined,
+        undefined,
+        [permit]
+      )
+    })
+  }
 
   it('Native => SUSHI => Native', async function () {
     await env.snapshot.restore()

@@ -494,7 +494,7 @@ describe('End-to-end RouteProcessor4 test', async function () {
   })
 
   if (network.config.chainId === 137) {
-    // permit in FRAX is implemented only for POLUGON
+    // permit in FRAX is implemented only for POLYGON
     it('Permit: Native => FRAX => Native', async function () {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
