@@ -6,7 +6,7 @@ import stringify from 'fast-json-stable-stringify'
 import { NextResponse } from 'next/server'
 import { Octokit } from 'octoKit'
 
-import { ApplyForTokenListTokenSchemaType } from '../../page'
+import { ApplyForTokenListTokenSchemaType } from '../../../../../lib/tokenlist-request/ApplyForTokenListSchema'
 
 const owner = 'sushiswap'
 
