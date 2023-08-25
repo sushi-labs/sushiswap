@@ -1,5 +1,5 @@
 import { SnapshotRestorer, takeSnapshot } from '@nomicfoundation/hardhat-network-helpers'
-import { routeProcessor4Abi } from '@sushiswap/abi'
+import { routeProcessor2Abi } from '@sushiswap/abi'
 import { erc20Abi } from '@sushiswap/abi'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Native, Token } from '@sushiswap/currency'
@@ -12,7 +12,7 @@ import { Address, Client, createPublicClient, custom, HDAccount, Hex, testAction
 import { mnemonicToAccount } from 'viem/accounts'
 import { hardhat } from 'viem/chains'
 
-import RouteProcessor4 from '../artifacts/contracts/RouteProcessor4.sol/RouteProcessor4.json'
+import RouteProcessor3_1 from '../artifacts/contracts/RouteProcessor3_1.sol/RouteProcessor3_1.json'
 
 async function getTestEnvironment() {
   const client = createPublicClient({
@@ -48,8 +48,8 @@ async function getTestEnvironment() {
 
   const RouteProcessorTx = await client.deployContract({
     chain: null,
-    abi: routeProcessor4Abi,
-    bytecode: RouteProcessor4.bytecode as Hex,
+    abi: routeProcessor2Abi,
+    bytecode: RouteProcessor3_1.bytecode as Hex,
     account: user.address,
     args: ['0x0000000000000000000000000000000000000000', []],
   })
@@ -57,7 +57,7 @@ async function getTestEnvironment() {
   if (!RouteProcessorAddress) throw new Error('RouteProcessorAddress is undefined')
   const RouteProcessor = {
     address: RouteProcessorAddress,
-    abi: routeProcessor4Abi,
+    abi: routeProcessor2Abi,
   }
 
   console.log(`  Network: ${chainName[chainId]}, Forked Block: ${await client.getBlockNumber()}`)
@@ -74,7 +74,7 @@ async function getTestEnvironment() {
   } satisfies {
     chainId: ChainId
     client: Client
-    rp: Contract<typeof routeProcessor4Abi>
+    rp: Contract<typeof routeProcessor2Abi>
     user: HDAccount
     user2: HDAccount
     dataFetcher: DataFetcher
@@ -105,7 +105,7 @@ async function testTaxTokenBuy(
 ): Promise<bigint> {
   const amountOutReal = await env.client.readContract({
     address: env.rp.address,
-    abi: routeProcessor4Abi,
+    abi: routeProcessor2Abi,
     // @ts-ignore
     functionName: 'processRoute',
     args: [
@@ -121,7 +121,7 @@ async function testTaxTokenBuy(
   })
   await env.client.writeContract({
     address: env.rp.address,
-    abi: routeProcessor4Abi,
+    abi: routeProcessor2Abi,
     // @ts-ignore
     functionName: 'processRoute',
     args: [
@@ -154,7 +154,7 @@ async function testTaxTokenSell(
   })
   const amountOutReal = await env.client.readContract({
     address: env.rp.address,
-    abi: routeProcessor4Abi,
+    abi: routeProcessor2Abi,
     // @ts-ignore
     functionName: 'processRoute',
     args: [
@@ -191,7 +191,7 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
   //   )
   // )
 
-  const rpParamsBuy = Router.routeProcessor4Params(
+  const rpParamsBuy = Router.routeProcessor3_1Params(
     pcMap,
     routeBuy,
     fromToken,
@@ -233,7 +233,7 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
   //   )
   // )
 
-  const rpParamsSell = Router.routeProcessor4Params(
+  const rpParamsSell = Router.routeProcessor3_1Params(
     pcMap,
     routeSell,
     toToken,
@@ -262,7 +262,7 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
   }
 }
 
-describe('RouteProcessor4 tax token test for BASE', async function () {
+describe('RouteProcessor3_1 tax token test for BASE', async function () {
   let env: TestEnvironment
 
   before(async () => {
@@ -311,7 +311,7 @@ describe('RouteProcessor4 tax token test for BASE', async function () {
     await testTaxToken({
       env,
       taxToken: uniBOT,
-      amountIn: BigInt(1e12),
+      amountIn: BigInt(1e18),
     })
   })
 })

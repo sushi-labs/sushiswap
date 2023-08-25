@@ -190,8 +190,7 @@ async function makeSwap(
   usedPools: Set<string>,
   providers?: LiquidityProviders[],
   poolFilter?: PoolFilter,
-  permits: PermitData[] = [],
-  makeSankeyDiagram = false
+  permits: PermitData[] = []
 ): Promise<[bigint, bigint] | undefined> {
   // console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
@@ -331,8 +330,7 @@ async function updMakeSwap(
   usedPools: Set<string> = new Set(),
   providers?: LiquidityProviders[],
   poolFilter?: PoolFilter,
-  permits: PermitData[] = [],
-  makeSankeyDiagram = false
+  permits: PermitData[] = []
 ): Promise<[bigint | undefined, bigint]> {
   const [amountIn, waitBlock] = typeof lastCallResult === 'bigint' ? [lastCallResult, 1n] : lastCallResult
   if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
@@ -340,17 +338,7 @@ async function updMakeSwap(
   //console.log('Wait data update for min block', waitBlock)
   await dataUpdated(env, waitBlock)
 
-  const res = await makeSwap(
-    env,
-    fromToken,
-    amountIn,
-    toToken,
-    usedPools,
-    providers,
-    poolFilter,
-    permits,
-    makeSankeyDiagram
-  )
+  const res = await makeSwap(env, fromToken, amountIn, toToken, usedPools, providers, poolFilter, permits)
   if (res === undefined) return [undefined, waitBlock]
   else return res
 }

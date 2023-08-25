@@ -22,8 +22,8 @@ uint160 constant MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970
 
 /// @title A route processor for the Sushi Aggregator
 /// @author Ilya Lyalin
-/// version 2.1
-contract RouteProcessor3 is Ownable {
+/// version 3.1
+contract RouteProcessor3_1 is Ownable {
   using SafeERC20 for IERC20;
   using SafeERC20 for IERC20Permit;
   using InputStream for uint256;
@@ -327,7 +327,9 @@ contract RouteProcessor3 is Ownable {
     if (amountIn != 0) {
       if (from == address(this)) IERC20(tokenIn).safeTransfer(pool, amountIn);
       else IERC20(tokenIn).safeTransferFrom(from, pool, amountIn);
-    } else amountIn = IERC20(tokenIn).balanceOf(pool) - reserveIn;  // tokens already were transferred
+    }
+    // without 'else' in order to support tax tokens
+    amountIn = IERC20(tokenIn).balanceOf(pool) - reserveIn;  // tokens already were transferred
 
     uint256 amountInWithFee = amountIn * 997;
     uint256 amountOut = (amountInWithFee * reserveOut) / (reserveIn * 1000 + amountInWithFee);
