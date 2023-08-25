@@ -158,10 +158,17 @@ const FormMessage = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<
       return null
     }
 
+    if (error)
+      return (
+        <FormError id={formMessageId} ref={ref} {...props}>
+          {body}
+        </FormError>
+      )
+
     return (
-      <FormError id={formMessageId} ref={ref} {...props}>
+      <FormDescription id={formMessageId} ref={ref} {...props}>
         {body}
-      </FormError>
+      </FormDescription>
     )
   }
 )
@@ -170,7 +177,7 @@ FormMessage.displayName = 'FormMessage'
 const FormError = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
   ({ className, children, ...props }, ref) => {
     return (
-      <p ref={ref} className={classNames('px-3 text-sm font-medium text-red', className)} {...props}>
+      <p ref={ref} className={classNames('text-sm font-medium text-red', className)} {...props}>
         {children}
       </p>
     )

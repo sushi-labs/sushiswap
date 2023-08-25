@@ -2,6 +2,7 @@
 
 import { CogIcon } from '@heroicons/react/24/outline'
 import { Amount, Type } from '@sushiswap/currency'
+import { useDebounce } from '@sushiswap/hooks'
 import { Percent, ZERO } from '@sushiswap/math'
 import {
   Card,
@@ -51,6 +52,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
   const [value, setValue] = useState<string>('0')
   const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
   const { data: deadline } = useTransactionDeadline({ chainId })
+  const debouncedValue = useDebounce(value, 300)
 
   const slippagePercent = useMemo(() => {
     return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
@@ -104,7 +106,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
   }, [positionDetails, token0, token1])
 
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
-    const liquidityPercentage = new Percent(value, 100)
+    const liquidityPercentage = new Percent(debouncedValue, 100)
     const discountedAmount0 = position ? liquidityPercentage.multiply(position.amount0.quotient).quotient : undefined
     const discountedAmount1 = position ? liquidityPercentage.multiply(position.amount1.quotient).quotient : undefined
 
@@ -170,7 +172,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
     slippagePercent,
     token0,
     token1,
-    value,
+    debouncedValue,
   ])
 
   const { config } = usePrepareSendTransaction({
