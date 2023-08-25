@@ -230,7 +230,7 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
     console.log('Sell: NoWay')
     return
   }
-  // console.log(Router.routeToHumanString(pcMap, routeSell, fromToken, toToken))
+  // console.log(Router.routeToHumanString(pcMap, routeSell, toToken, fromToken))
   // console.log(
   //   'ROUTE:',
   //   routeSell.legs.map(
@@ -242,8 +242,8 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
   const rpParamsSell = Router.routeProcessor4Params(
     pcMap,
     routeSell,
-    fromToken,
     toToken,
+    fromToken,
     args.env.user.address,
     args.env.rp.address
   )
@@ -278,7 +278,7 @@ describe('RouteProcessor4 tax token test for BASE', async function () {
     env = await getTestEnvironment()
   })
 
-  it('BASE => LCRV', async function () {
+  it.skip('BASE => LCRV', async function () {
     const LCRV = new Token({
       chainId: ChainId.BASE,
       address: '0x8b2060CC6E55Fa68204B3Bc8B226FC61B3512C1f',
@@ -293,7 +293,7 @@ describe('RouteProcessor4 tax token test for BASE', async function () {
     })
   })
 
-  it.skip('BASE => bpsTEST', async function () {
+  it('BASE => bpsTEST', async function () {
     const bpsTEST = new Token({
       chainId: ChainId.BASE,
       address: '0x93980959778166ccbB95Db7EcF52607240bc541e',
