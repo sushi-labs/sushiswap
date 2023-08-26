@@ -7,14 +7,38 @@ import { DataFetcher, LiquidityProviders, Router, RPParams } from '@sushiswap/ro
 import { MultiRoute, RouteStatus } from '@sushiswap/tines'
 import { Contract } from '@sushiswap/types'
 import { expect } from 'chai'
-import { config, network } from 'hardhat'
-import { Address, Client, createPublicClient, custom, HDAccount, Hex, testActions, walletActions } from 'viem'
+import { config } from 'hardhat'
+import { createProvider } from 'hardhat/internal/core/providers/construction'
+import { Address, Client, createPublicClient, custom, HDAccount, Hex, walletActions } from 'viem'
 import { mnemonicToAccount } from 'viem/accounts'
 import { hardhat } from 'viem/chains'
 
 import RouteProcessor3_1 from '../artifacts/contracts/RouteProcessor3_1.sol/RouteProcessor3_1.json'
 
-async function getTestEnvironment() {
+async function createHardhatProvider(chainId: ChainId, url: string, blockNumber: number) {
+  return await createProvider(
+    {
+      ...config,
+      defaultNetwork: 'hardhat',
+      networks: {
+        ...config.networks,
+        hardhat: {
+          ...config.networks.hardhat,
+          chainId,
+          forking: {
+            enabled: true,
+            url,
+            blockNumber,
+          },
+        },
+      },
+    },
+    'hardhat'
+  )
+}
+
+async function getTestEnvironment(chainId: ChainId, url: string, blockNumber: number) {
+  const provider = await createHardhatProvider(chainId, url, blockNumber)
   const client = createPublicClient({
     batch: {
       multicall: {
@@ -30,19 +54,14 @@ async function getTestEnvironment() {
           blockCreated: 25770160,
         },
       },
-      id: network.config.chainId ?? 1, // !! remove when switch to local network setting
+      id: chainId,
     },
-    transport: custom(network.provider),
-  })
-    .extend(testActions({ mode: 'hardhat' }))
-    .extend(walletActions)
+    transport: custom(provider),
+  }).extend(walletActions)
 
   const accounts = config.networks.hardhat.accounts as { mnemonic: string }
-
   const user = mnemonicToAccount(accounts.mnemonic, { accountIndex: 0 })
-  const user2 = mnemonicToAccount(accounts.mnemonic, { accountIndex: 1 })
 
-  const chainId = network.config.chainId as ChainId
   const dataFetcher = new DataFetcher(chainId, client)
   dataFetcher.startDataFetching([LiquidityProviders.SushiSwapV2, LiquidityProviders.UniswapV2])
 
@@ -61,14 +80,12 @@ async function getTestEnvironment() {
   }
 
   console.log(`  Network: ${chainName[chainId]}, Forked Block: ${await client.getBlockNumber()}`)
-  //console.log('    User creation ...')
 
   return {
     chainId,
     client,
     rp: RouteProcessor,
     user,
-    user2,
     dataFetcher,
     snapshot: await takeSnapshot(),
   } satisfies {
@@ -76,7 +93,6 @@ async function getTestEnvironment() {
     client: Client
     rp: Contract<typeof routeProcessor2Abi>
     user: HDAccount
-    user2: HDAccount
     dataFetcher: DataFetcher
     snapshot: SnapshotRestorer
   }
@@ -266,8 +282,11 @@ describe('RouteProcessor3_1 tax token test for BASE', async function () {
   let env: TestEnvironment
 
   before(async () => {
-    //await reset(`https://lb.drpc.org/ogrpc?network=base&dkey=${process.env.DRPC_ID}`, 3033333)
-    env = await getTestEnvironment()
+    env = await getTestEnvironment(
+      ChainId.BASE,
+      `https://lb.drpc.org/ogrpc?network=base&dkey=${process.env.DRPC_ID}`,
+      3033333
+    )
   })
 
   it.skip('BASE <=> LCRV', async function () {
@@ -285,7 +304,7 @@ describe('RouteProcessor3_1 tax token test for BASE', async function () {
     })
   })
 
-  it.skip('BASE <=> bpsTEST', async function () {
+  it('BASE <=> bpsTEST', async function () {
     const bpsTEST = new Token({
       chainId: ChainId.BASE,
       address: '0x93980959778166ccbB95Db7EcF52607240bc541e',
@@ -298,6 +317,18 @@ describe('RouteProcessor3_1 tax token test for BASE', async function () {
       taxToken: bpsTEST,
       amountIn: BigInt(1e12),
     })
+  })
+})
+
+describe('RouteProcessor3_1 tax token test for ETHEREUM', async function () {
+  let env: TestEnvironment
+
+  before(async () => {
+    env = await getTestEnvironment(
+      ChainId.ETHEREUM,
+      `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
+      17980000
+    )
   })
 
   it('ETH => UniBot', async function () {
