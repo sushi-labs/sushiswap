@@ -1,5 +1,5 @@
 import { SnapshotRestorer, takeSnapshot } from '@nomicfoundation/hardhat-network-helpers'
-import { routeProcessor2Abi } from '@sushiswap/abi'
+import { routeProcessor3Abi } from '@sushiswap/abi'
 import { erc20Abi } from '@sushiswap/abi'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Native, Token } from '@sushiswap/currency'
@@ -9,8 +9,7 @@ import { Contract } from '@sushiswap/types'
 import { expect } from 'chai'
 import { config } from 'hardhat'
 import { createProvider } from 'hardhat/internal/core/providers/construction'
-import { Address, Client, createPublicClient, custom, HDAccount, Hex, walletActions } from 'viem'
-import { mnemonicToAccount } from 'viem/accounts'
+import { Address, Client, createPublicClient, custom, Hex, walletActions } from 'viem'
 import { hardhat } from 'viem/chains'
 
 import RouteProcessor3_1 from '../artifacts/contracts/RouteProcessor3_1.sol/RouteProcessor3_1.json'
@@ -40,12 +39,6 @@ async function createHardhatProvider(chainId: ChainId, url: string, blockNumber:
 async function getTestEnvironment(chainId: ChainId, url: string, blockNumber: number) {
   const provider = await createHardhatProvider(chainId, url, blockNumber)
   const client = createPublicClient({
-    batch: {
-      multicall: {
-        batchSize: 2048,
-        wait: 1,
-      },
-    },
     chain: {
       ...hardhat,
       contracts: {
@@ -59,24 +52,22 @@ async function getTestEnvironment(chainId: ChainId, url: string, blockNumber: nu
     transport: custom(provider),
   }).extend(walletActions)
 
-  const accounts = config.networks.hardhat.accounts as { mnemonic: string }
-  const user = mnemonicToAccount(accounts.mnemonic, { accountIndex: 0 })
+  const [userAddress] = await client.getAddresses()
 
   const dataFetcher = new DataFetcher(chainId, client)
   dataFetcher.startDataFetching([LiquidityProviders.SushiSwapV2, LiquidityProviders.UniswapV2])
 
   const RouteProcessorTx = await client.deployContract({
-    chain: null,
-    abi: routeProcessor2Abi,
+    abi: routeProcessor3Abi,
     bytecode: RouteProcessor3_1.bytecode as Hex,
-    account: user.address,
+    account: userAddress,
     args: ['0x0000000000000000000000000000000000000000', []],
   })
   const RouteProcessorAddress = (await client.waitForTransactionReceipt({ hash: RouteProcessorTx })).contractAddress
   if (!RouteProcessorAddress) throw new Error('RouteProcessorAddress is undefined')
   const RouteProcessor = {
     address: RouteProcessorAddress,
-    abi: routeProcessor2Abi,
+    abi: routeProcessor3Abi,
   }
 
   console.log(`  Network: ${chainName[chainId]}, Forked Block: ${await client.getBlockNumber()}`)
@@ -85,14 +76,14 @@ async function getTestEnvironment(chainId: ChainId, url: string, blockNumber: nu
     chainId,
     client,
     rp: RouteProcessor,
-    user,
+    userAddress,
     dataFetcher,
     snapshot: await takeSnapshot(),
   } satisfies {
     chainId: ChainId
     client: Client
-    rp: Contract<typeof routeProcessor2Abi>
-    user: HDAccount
+    rp: Contract<typeof routeProcessor3Abi>
+    userAddress: Address
     dataFetcher: DataFetcher
     snapshot: SnapshotRestorer
   }
@@ -103,12 +94,12 @@ type TestEnvironment = Awaited<ReturnType<typeof getTestEnvironment>>
 export async function checkTaxTokenTransfer(env: TestEnvironment, route: MultiRoute): Promise<boolean | undefined> {
   if (route.legs.length >= 2) {
     return await env.client.readContract({
-      address: route.toToken.address as Address, //'0x8b2060CC6E55Fa68204B3Bc8B226FC61B3512C1f', //bpsTest
+      address: route.toToken.address as Address,
       abi: erc20Abi,
       // @ts-ignore
       functionName: 'transfer',
       args: [env.rp.address, route.amountOutBI],
-      account: route.legs[1].poolAddress, // '0x9bd731319718d417f47083c9653de5f35fce5698', // sushiswap pair
+      account: route.legs[1].poolAddress,
     })
   }
 }
@@ -121,7 +112,7 @@ async function testTaxTokenBuy(
 ): Promise<bigint> {
   const amountOutReal = await env.client.readContract({
     address: env.rp.address,
-    abi: routeProcessor2Abi,
+    abi: routeProcessor3Abi,
     // @ts-ignore
     functionName: 'processRoute',
     args: [
@@ -137,7 +128,7 @@ async function testTaxTokenBuy(
   })
   await env.client.writeContract({
     address: env.rp.address,
-    abi: routeProcessor2Abi,
+    abi: routeProcessor3Abi,
     // @ts-ignore
     functionName: 'processRoute',
     args: [
@@ -170,7 +161,7 @@ async function testTaxTokenSell(
   })
   const amountOutReal = await env.client.readContract({
     address: env.rp.address,
-    abi: routeProcessor2Abi,
+    abi: routeProcessor3Abi,
     // @ts-ignore
     functionName: 'processRoute',
     args: [
@@ -212,7 +203,7 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
     routeBuy,
     fromToken,
     toToken,
-    args.env.user.address,
+    args.env.userAddress,
     args.env.rp.address
   )
   expect(rpParamsBuy).not.undefined
@@ -226,10 +217,10 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
 
   let amountOutReal
   try {
-    amountOutReal = await testTaxTokenBuy(args.env, routeBuy, rpParamsBuy, args.env.user.address)
+    amountOutReal = await testTaxTokenBuy(args.env, routeBuy, rpParamsBuy, args.env.userAddress)
     const diff = routeBuy.amountOutBI == 0n ? -1 : Number(amountOutReal - routeBuy.amountOutBI) / routeBuy.amountOut
     console.log(
-      `Routing: ${fromToken.symbol} => ${toToken.symbol} ${routeBuy.legs.length - 1} pools` +
+      `     Routing: ${fromToken.symbol} => ${toToken.symbol} ${routeBuy.legs.length - 1} pools` +
         ` diff = ${diff > 0 ? '+' : ''}${diff} `
     )
   } catch (e) {
@@ -254,7 +245,7 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
     routeSell,
     toToken,
     fromToken,
-    args.env.user.address,
+    args.env.userAddress,
     args.env.rp.address
   )
   expect(rpParamsSell).not.undefined
@@ -266,10 +257,10 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
   //   return
   // }
   try {
-    const amountOutReal = await testTaxTokenSell(args.env, routeSell, rpParamsSell, args.env.user.address)
+    const amountOutReal = await testTaxTokenSell(args.env, routeSell, rpParamsSell, args.env.userAddress)
     const diff = routeSell.amountOutBI == 0n ? -1 : Number(amountOutReal - routeSell.amountOutBI) / routeSell.amountOut
     console.log(
-      `Routing: ${toToken.symbol} => ${fromToken.symbol} ${routeSell.legs.length - 1} pools` +
+      `     Routing: ${toToken.symbol} => ${fromToken.symbol} ${routeSell.legs.length - 1} pools` +
         ` diff = ${diff > 0 ? '+' : ''}${diff} `
     )
   } catch (e) {
