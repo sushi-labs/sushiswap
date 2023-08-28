@@ -53,14 +53,15 @@ export const SimpleSwapErrorMessage: FC<{ isSuccess: boolean; error: Error | nul
                 <CardTitle
                   className={classNames(isSlippageError ? 'text-red' : 'text-green', 'flex gap-2 items-center')}
                 >
-                  {isSlippageError ? 'Low slippage' : 'Enough slippage'}
+                  {isSlippageError ? 'Low slippage' : 'That works!'}
                 </CardTitle>
                 <CardDescription className={classNames(isSlippageError ? 'text-red' : 'text-green')}>
                   {isSlippageError ? (
                     'This transaction will not succeed either due to price movement or fee on transfer. Try increasing your slippage tolerance.'
                   ) : (
                     <>
-                      Seems like you have enough slippage tolerance. <br /> You{`'`}re all set!
+                      Please be aware that with regards to tax tokens, the preferred slippage incorporates the standard
+                      slippage value along with the additional tax amount. E.g.: 0.5% slippage + 5% tax = 5.5%
                     </>
                   )}
                 </CardDescription>
