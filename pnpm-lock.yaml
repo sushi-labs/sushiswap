@@ -599,7 +599,7 @@ importers:
       '@octokit/auth-app': 4.0.7
       '@playwright/test': 1.37.0
       '@radix-ui/react-slot': ^1.0.2
-      '@sentry/nextjs': ^7.65.0
+      '@sentry/nextjs': 7.65.0
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
       '@sushiswap/bentobox': workspace:*
@@ -11686,7 +11686,7 @@ packages:
       '@motionone/types': 10.15.1
       '@motionone/utils': 10.15.1
       hey-listen: 1.0.8
-      tslib: 2.4.0
+      tslib: 2.6.2
 
   /@motionone/easing/10.15.1:
     resolution: {integrity: sha512-6hIHBSV+ZVehf9dcKZLT7p5PEKHGhDwky2k8RKkmOvUoYP3S+dXsKupyZpqx5apjd9f+php4vXk4LuS+ADsrWw==}
@@ -19995,7 +19995,7 @@ packages:
       '@walletconnect/jsonrpc-provider': 1.0.13
       '@walletconnect/jsonrpc-types': 1.0.3
       '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/modal': 2.6.1_react@18.2.0
+      '@walletconnect/modal': 2.6.1
       '@walletconnect/sign-client': 2.9.2
       '@walletconnect/types': 2.9.2
       '@walletconnect/universal-provider': 2.9.2

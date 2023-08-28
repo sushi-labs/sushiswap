@@ -1,6 +1,6 @@
-import { withSentryConfig } from '@sentry/nextjs'
-import defaultNextConfig from '@sushiswap/nextjs-config'
-import { withAxiom } from 'next-axiom'
+const { withSentryConfig } = require('@sentry/nextjs')
+const defaultNextConfig = require('@sushiswap/nextjs-config')
+const { withAxiom } = require('next-axiom')
 
 const { ANALYTICS_URL, BLOG_URL, EARN_URL, FURO_URL, SWAP_URL, ACADEMY_URL } = process.env
 
@@ -90,7 +90,7 @@ const nextConfig = {
   },
 }
 
-export default withSentryConfig(
+module.exports = withSentryConfig(
   withAxiom(nextConfig),
   {
     // For all available options, see:
