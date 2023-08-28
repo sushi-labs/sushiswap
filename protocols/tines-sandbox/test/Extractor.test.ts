@@ -123,7 +123,7 @@ async function startInfinitTest(args: {
     args.checkTokens ??
     BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values()).slice(0, 100))
   for (;;) {
-    for (let i = 1; i < tokens.length; ++i) {
+    for (let i = 0; i < tokens.length; ++i) {
       await delay(1000)
       const time0 = performance.now()
       const pools0 = extractor.getPoolCodesForTokens(BASES_TO_CHECK_TRADES_AGAINST[chainId].concat([tokens[i]]))
@@ -359,6 +359,13 @@ it.skip('Extractor Base infinit work test', async () => {
     //     name: 'Moshi',
     //     decimals: 18,
     //   }),
+    // new Token({
+    //   chainId: ChainId.BASE,
+    //   address: '0x93980959778166ccbB95Db7EcF52607240bc541e',
+    //   name: 'bpsTEST',
+    //   symbol: 'bpsTEST',
+    //   decimals: 18,
+    // }),
     // ],
   })
 })

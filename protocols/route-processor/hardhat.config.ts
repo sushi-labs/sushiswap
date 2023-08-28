@@ -46,7 +46,7 @@ const config: HardhatUserConfig = {
     //   forking: {
     //     enabled: true,
     //     url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
-    //     blockNumber: 17195000,
+    //     blockNumber: 17980000,
     //   },
     //   accounts: {
     //     accountsBalance: '10000000000000000000000000', //(10_000_000 ETH).
@@ -66,6 +66,17 @@ const config: HardhatUserConfig = {
       },
       chainId: 137,
     },
+    // hardhat: {
+    //   forking: {
+    //     enabled: process.env.FORKING === 'true',
+    //     url: `https://lb.drpc.org/ogrpc?network=base&dkey=${process.env.DRPC_ID}`,
+    //     blockNumber: 3033333,
+    //   },
+    //   accounts: {
+    //     accountsBalance: '10000000000000000000000000', //(10_000_000 BASE).
+    //   },
+    //   chainId: 8453,
+    // },
     // hardhat: {
     //   forking: {
     //     enabled: process.env.FORKING === 'true',
