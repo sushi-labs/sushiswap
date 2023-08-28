@@ -20,7 +20,7 @@ const percentInputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>> = 
 }
 
 const textFieldVariants = cva(
-  'truncate border-0 appearance-none dark:text-slate-50 focus:outline-none focus:ring-0 text-gray-900 w-full',
+  'truncate appearance-none dark:text-slate-50 text-gray-900 w-full !ring-0 !outline-none',
   {
     variants: {
       size: {
@@ -29,8 +29,10 @@ const textFieldVariants = cva(
       },
       variant: {
         default:
-          'flex items-center px-3 rounded-lg font-medium block bg-secondary group-hover:bg-muted group-focus:bg-accent',
-        naked: 'bg-transparent',
+          'border-0 flex items-center px-3 rounded-lg font-medium block bg-secondary group-hover:bg-muted group-focus:bg-accent',
+        naked: 'border-0 bg-transparent',
+        outline:
+          'bg-secondary flex items-center px-3 rounded-lg font-medium block border border-accent group-hover:border-black/20 group-focus:border-black/30 hover:border-black/30 focus-within:border-black/30 dark:group-hover:border-white/20 dark:group-focus:border-white/30 dark:hover:border-white/30 dark:focus-within:border-white/30',
       },
       isError: {
         yes: 'bg-red/10 text-red',
@@ -41,7 +43,7 @@ const textFieldVariants = cva(
         no: '',
       },
       hasUnit: {
-        yes: 'rounded-r-none',
+        yes: 'rounded-r-none !border-r-0',
         no: '',
       },
     },
@@ -133,7 +135,12 @@ const Component = <T extends InputType>(
   return (
     <div className="group relative flex items-center justify-between w-full">
       {Icon ? (
-        <Icon {...iconProps} className={buttonIconVariants({ className: 'text-muted-foreground absolute left-3' })} />
+        <Icon
+          {...iconProps}
+          className={buttonIconVariants({
+            className: classNames('text-muted-foreground absolute left-3', iconProps?.className),
+          })}
+        />
       ) : null}
       <input
         onChange={_onChange}
@@ -142,7 +149,7 @@ const Component = <T extends InputType>(
           variant,
           hasIcon: Icon ? 'yes' : 'no',
           hasUnit: unit ? 'yes' : 'no',
-          className: classNames(className, 'flex-grow flex-1'),
+          className: classNames(className, 'flex-grow flex-1 !outline-none !ring-0'),
         })}
         ref={ref}
         autoCorrect="off"

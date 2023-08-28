@@ -5,7 +5,9 @@ import { useLocalStorage } from '@sushiswap/hooks'
 import React, { FC } from 'react'
 
 import { NetworkIcon } from '../icons'
+import { Label } from '../label'
 import { Switch } from '../switch'
+import { typographyVariants } from '../typography'
 
 export const CarbonOffset: FC = () => {
   const [carbonOffset, setCarbonOffset] = useLocalStorage('carbonOffset', false)
@@ -14,8 +16,8 @@ export const CarbonOffset: FC = () => {
     <div className="p-4 rounded-lg">
       <div className="flex justify-between items-center gap-4">
         <div className="flex flex-col gap-2">
-          <h1 className="text-sm font-semibold text-gray-900 dark:text-slate-50">Carbon Offset</h1>
-          <span className="text-sm text-gray-600 dark:text-slate-500">
+          <Label>Carbon Offset</Label>
+          <span className={typographyVariants({ variant: 'muted', className: 'text-sm' })}>
             Make transactions climate positive by offsetting them with Klima Infinity. The average cost to offset a
             transaction on Polygon is less than $0.01.
           </span>

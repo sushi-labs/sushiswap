@@ -21,6 +21,7 @@ export const ZAddress = z
   .string()
   .refine((val) => (val ? isAddress(val) : false), 'Invalid address')
   .transform((val) => val as Address)
+
 export const ZFundSource = z.string()
 
 export const ZTokenToToken = ZToken.transform(({ address, decimals, chainId, symbol, name, isNative }) => {

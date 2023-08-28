@@ -3,7 +3,6 @@ import { Container } from '@sushiswap/ui/components/container'
 import { motion } from 'framer-motion'
 import React, { FC } from 'react'
 
-import { AnimatedTitle } from './AnimatedTitle'
 import { ExpandableCard } from './ExpandableCard'
 import { BentoBoxSVG, SwitchSVG } from './svgs'
 
@@ -64,54 +63,55 @@ export const BuildFuture: FC = () => {
   return (
     <section className="px-4 py-20 sm:py-40">
       <Container maxWidth="5xl" className="mx-auto">
-        <div className="flex flex-col gap-20">
-          <AnimatedTitle className="text-center md:text-left !max-w-full tracking-tight">
+        <div className="prose dark:prose-invert mx-auto text-center flex flex-col">
+          <h1>
             Help build <span className="text-pink">the future</span> with Sushi.{' '}
-            <span className="text-neutral-400">{`We invite all developers to explore Sushi's frameworks.`}</span>
-          </AnimatedTitle>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {DATA.map(({ caption, title, content, link, linkText, icon: Icon, category }) => (
-              <ExpandableCard
-                key={title}
-                caption={caption}
-                title={title}
-                content={content}
-                link={link}
-                linkText={linkText}
-              >
-                {({ setOpen, containerId, titleId }) => (
-                  <div
-                    className="relative h-[285px] flex flex-grow"
-                    onClick={() => setOpen(true)}
-                    onKeyDown={() => setOpen(true)}
-                  >
-                    <div className="w-full h-full relative block pointer-events-none hover:scale-[1.02] transition-all">
-                      <motion.div
-                        className="bg-neutral-800 pointer-events-auto relative rounded-[20px] overflow-hidden w-full h-full m-[0_auto] cursor-pointer"
-                        layoutId={containerId}
-                      >
-                        <motion.div
-                          animate
-                          className="absolute top-[30px] left-[30px] max-w-[300px] flex flex-col gap-4"
-                        >
-                          <div className="flex items-center gap-3">
-                            <Icon width={40} height={40} className="text-neutral-50 opacity-1" />
-                            <span className="font-medium text-neutral-400">{category}</span>
-                          </div>
-                          <motion.h1 layoutId={titleId} className="text-4xl font-semibold text-left text-neutral-50">
-                            {title}
-                          </motion.h1>
-                          <div>
-                            <Button variant="ghost">View More</Button>
-                          </div>
-                        </motion.div>
+          </h1>
+          <h5>
+            We extend a warm invitation to all developers, innovators, and visionaries to delve into the intricate
+            frameworks that power Sushi. Our doors are open for you to unravel the possibilities, tap into the
+            potentials, and reshape the future of decentralized finance.
+          </h5>
+        </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 mt-20">
+          {DATA.map(({ caption, title, content, link, linkText, icon: Icon, category }) => (
+            <ExpandableCard
+              key={title}
+              caption={caption}
+              title={title}
+              content={content}
+              link={link}
+              linkText={linkText}
+            >
+              {({ setOpen, containerId, titleId }) => (
+                <div
+                  className="relative h-[285px] flex flex-grow"
+                  onClick={() => setOpen(true)}
+                  onKeyDown={() => setOpen(true)}
+                >
+                  <div className="w-full h-full relative block pointer-events-none hover:scale-[1.02] transition-all">
+                    <motion.div
+                      className="relative bg-secondary pointer-events-auto rounded-[20px] overflow-hidden w-full h-full m-[0_auto] cursor-pointer"
+                      layoutId={containerId}
+                    >
+                      <motion.div animate className="absolute top-[30px] left-[30px] max-w-[300px] flex flex-col gap-4">
+                        <div className="flex items-center gap-3">
+                          <Icon width={40} height={40} className="opacity-1" />
+                          <span className="font-medium text-muted-foreground">{category}</span>
+                        </div>
+                        <motion.h1 layoutId={titleId} className="text-3xl font-semibold text-left">
+                          {title}
+                        </motion.h1>
+                        <div>
+                          <Button variant="secondary">View More</Button>
+                        </div>
                       </motion.div>
-                    </div>
+                    </motion.div>
                   </div>
-                )}
-              </ExpandableCard>
-            ))}
-          </div>
+                </div>
+              )}
+            </ExpandableCard>
+          ))}
         </div>
       </Container>
     </section>

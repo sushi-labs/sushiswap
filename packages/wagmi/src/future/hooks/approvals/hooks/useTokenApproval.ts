@@ -1,3 +1,5 @@
+'use client'
+
 import { Amount, Type } from '@sushiswap/currency'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { useCallback, useMemo, useState } from 'react'

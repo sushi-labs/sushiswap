@@ -1,9 +1,11 @@
-import { tridentRouterAbi } from '@sushiswap/abi'
-import { TRIDENT_ROUTER_ADDRESS, TridentChainId } from '@sushiswap/trident-sdk'
-import { useMemo } from 'react'
-import { WalletClient } from 'viem'
-import { Address, useWalletClient } from 'wagmi'
-import { getContract } from 'wagmi/actions'
+'use client'
+
+import {tridentRouterAbi } from '@sushiswap/abi'
+import { TRIDENT_ROUTER_ADDRESS, TridentChainId} from '@sushiswap/trident-sdk'
+import {useMemo} from 'react'
+import {WalletClient} from 'viem'
+import {Address, useWalletClient} from 'wagmi'
+import {getContract} from 'wagmi/actions'
 
 export const getTridentRouterContractConfig = (chainId: number | undefined) => ({
   address: (TRIDENT_ROUTER_ADDRESS[chainId as TridentChainId] ?? '') as Address,

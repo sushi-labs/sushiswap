@@ -1,10 +1,10 @@
 import { RadioGroup } from '@headlessui/react'
 import { InformationCircleIcon } from '@heroicons/react/20/solid'
-import { useDebounce, useSlippageTolerance } from '@sushiswap/hooks'
+import { useSlippageTolerance } from '@sushiswap/hooks'
 import classNames from 'classnames'
-import React, { FC, useCallback, useState } from 'react'
+import React, { FC, useCallback } from 'react'
 
-import { Collapsible } from '../animation/Collapsible'
+import { Collapsible } from '../animation'
 import { CardDescription, CardHeader, CardTitle } from '../card'
 import { HoverCard, HoverCardContent, HoverCardPrimitive, HoverCardTrigger } from '../hover-card'
 import { Label } from '../label'
@@ -26,9 +26,6 @@ export const SlippageTolerance: FC<{
   showAutoSelector?: boolean
 }> = ({ options, className, showAutoSelector = true }) => {
   const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(options?.storageKey)
-  const [value, setLocalValue] = useState(slippageTolerance)
-
-  const debouncedValue = useDebounce(slippageTolerance, 500)
 
   const onChange = useCallback(
     (value: string) => {

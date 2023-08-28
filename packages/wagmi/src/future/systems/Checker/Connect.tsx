@@ -1,3 +1,5 @@
+'use client'
+
 import { useIsMounted } from '@sushiswap/hooks'
 import { ButtonProps } from '@sushiswap/ui/components/button'
 import { FC } from 'react'

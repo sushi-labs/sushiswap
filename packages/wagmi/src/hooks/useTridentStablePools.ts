@@ -1,3 +1,5 @@
+'use client'
+
 import { tridentStablePoolAbi, tridentStablePoolFactoryAbi } from '@sushiswap/abi'
 import { computeTridentStablePoolAddress, Fee, TridentStablePool } from '@sushiswap/amm'
 import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'

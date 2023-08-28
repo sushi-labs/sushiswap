@@ -1,3 +1,5 @@
+'use client'
+
 import { isAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { bentoBoxV1Abi } from '@sushiswap/abi'

@@ -1,3 +1,5 @@
+'use client'
+
 import { sushiXSwapAbi } from '@sushiswap/abi'
 import { isSushiXSwapChainId, SUSHIXSWAP_ADDRESS, SushiXSwapChainId } from '@sushiswap/sushixswap-sdk'
 import { useMemo } from 'react'

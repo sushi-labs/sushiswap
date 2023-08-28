@@ -1,3 +1,5 @@
+'use client'
+
 import { isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'

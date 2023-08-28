@@ -1,3 +1,5 @@
+'use client'
+
 import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
