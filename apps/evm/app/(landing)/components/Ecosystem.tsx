@@ -1,7 +1,6 @@
 import { Button } from '@sushiswap/ui/components/button'
 import { Container } from '@sushiswap/ui/components/container'
 import { motion } from 'framer-motion'
-import Image from 'next/legacy/image'
 import React, { FC } from 'react'
 
 import { ExpandableCard, ExpendableCardData } from './ExpandableCard'
@@ -120,18 +119,14 @@ export const Ecosystem: FC = () => {
             <div className="rounded-full w-[10px] h-[10px] bg-yellow" />
             <div className="rounded-full w-[10px] h-[10px] bg-green" />
           </div>
-          <div className="flex flex-col gap-3 pt-10">
-            <span className="text-center text-slate-400">Ecosystem</span>
-            <span className="font-semibold !text-4xl !md:text-5xl px-4 text-center">
+          <div className="prose dark:prose-invert justify-center flex flex-col gap-3 pt-10">
+            <span className="text-center text-muted-foreground">Ecosystem</span>
+            <h2 className="px-4 text-center">
               Explore our <span className="text-blue">DeFi</span> Payment Solution
-            </span>
+            </h2>
             <div className="flex items-center p-10 min-h-[420px]">
               {TABS.map(({ title, content, image, summary, link, linkText, caption }) => (
                 <div key={title} className="grid items-center grid-cols-1 gap-20 md:grid-cols-2">
-                  <div className="relative h-[420px] md:max-w-[420px] md:max-h-[420px] w-full h-full flex items-center justify-center">
-                    <div className="absolute w-[210px] h-[210px] bg-pink rounded-full blur-[200px]" />
-                    <Image alt="stellar" objectFit="contain" src={image} width={420} height={420} />
-                  </div>
                   <ExpandableCard title={title} caption={caption} content={content} link={link} linkText={linkText}>
                     {({ setOpen, containerId, titleId }) => (
                       <motion.div layoutId={containerId} className="flex flex-col items-center lg:items-start">

@@ -5,7 +5,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
 import { Amount, Native } from '@sushiswap/currency'
 import { calculateGasMargin } from '@sushiswap/gas'
-import { FundSource, useIsMounted } from '@sushiswap/hooks'
+import { FundSource, useDebounce, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
 import { Dots } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
@@ -55,6 +55,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
 
   const [percentage, setPercentage] = useState<string>('0')
   const percentToRemove = useMemo(() => new Percent(percentage, 100), [percentage])
+  const percentToRemoveDebounced = useDebounce(percentToRemove, 300)
 
   const {
     data: [poolState, pool],
@@ -112,6 +113,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
     ]
   }, [slippagePercent, currencyAToRemove, currencyBToRemove])
 
+  const debouncedMinAmount0 = useDebounce(minAmount0, 500)
+  const debouncedMinAmount1 = useDebounce(minAmount1, 500)
+
   const amountToRemove = useMemo(
     () => balance?.[FundSource.WALLET].multiply(percentToRemove),
     [balance, percentToRemove]
@@ -167,8 +171,8 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
         !address ||
         !pool ||
         !balance?.[FundSource.WALLET] ||
-        !minAmount0 ||
-        !minAmount1 ||
+        !debouncedMinAmount0 ||
+        !debouncedMinAmount1 ||
         !deadline
       ) {
         return
@@ -186,9 +190,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
             functionNames: ['removeLiquidityETH', 'removeLiquidityETHSupportingFeeOnTransferTokens'],
             args: [
               token1IsNative ? (pool.token0.wrapped.address as Address) : (pool.token1.wrapped.address as Address),
-              balance[FundSource.WALLET].multiply(percentToRemove).quotient,
-              token1IsNative ? minAmount0.quotient : minAmount1.quotient,
-              token1IsNative ? minAmount1.quotient : minAmount0.quotient,
+              balance[FundSource.WALLET].multiply(percentToRemoveDebounced).quotient,
+              token1IsNative ? debouncedMinAmount0.quotient : debouncedMinAmount1.quotient,
+              token1IsNative ? debouncedMinAmount1.quotient : debouncedMinAmount0.quotient,
               address,
               deadline,
             ],
@@ -200,9 +204,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
           args: [
             pool.token0.wrapped.address as Address,
             pool.token1.wrapped.address as Address,
-            balance[FundSource.WALLET].multiply(percentToRemove).quotient,
-            minAmount0.quotient,
-            minAmount1.quotient,
+            balance[FundSource.WALLET].multiply(percentToRemoveDebounced).quotient,
+            debouncedMinAmount0.quotient,
+            debouncedMinAmount1.quotient,
             address,
             deadline,
           ],
@@ -254,11 +258,11 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
     address,
     pool,
     balance,
-    minAmount0,
-    minAmount1,
+    debouncedMinAmount0,
+    debouncedMinAmount1,
     deadline,
     _pool.chainId,
-    percentToRemove,
+    percentToRemoveDebounced,
   ])
 
   const { config } = usePrepareSendTransaction({

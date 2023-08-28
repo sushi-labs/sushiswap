@@ -44,6 +44,16 @@ const EXPLORE_NAVIGATION_LINKS: { title: string; href: string; description: stri
     href: '/academy',
     description: 'Everything you need to get up to speed with DeFi.',
   },
+  {
+    title: 'Partner with Sushi',
+    href: '/partner',
+    description: 'Incentivize your token with Sushi rewards.',
+  },
+  {
+    title: 'List enquiry',
+    href: '/tokenlist-request',
+    description: 'Get your token on our default token list.',
+  },
 ]
 
 const TOOLS_NAVIGATION_LINKS: { title: string; href: string; description: string }[] = [
@@ -71,6 +81,19 @@ const TOOLS_NAVIGATION_LINKS: { title: string; href: string; description: string
     title: 'Participate',
     href: 'https://snapshot.org/#/sushigov.eth',
     description: 'As a Sushi holder, you can vote on proposals to shape the future of SushiSwap.',
+  },
+]
+
+const PARTNER_NAVIGATION_LINKS: { title: string; href: string; description: string }[] = [
+  {
+    title: 'Partner with Sushi',
+    href: '/partner',
+    description: 'Incentivize your token with Sushi rewards.',
+  },
+  {
+    title: 'List enquiry',
+    href: '/tokenlist-request',
+    description: 'Get your token on our default token list.',
   },
 ]
 
@@ -178,6 +201,23 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant, legacyBehavior 
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
+            <NavigationMenuTrigger>Partners</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className="w-[400px] gap-3 p-4">
+                {PARTNER_NAVIGATION_LINKS.map((component) => (
+                  <NavigationListItem
+                    key={component.title}
+                    title={component.title}
+                    href={component.href}
+                    legacyBehavior={legacyBehavior}
+                  >
+                    {component.description}
+                  </NavigationListItem>
+                ))}
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          <NavigationMenuItem className="hidden md:block">
             <OnramperButton>
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>Buy Crypto</NavigationMenuLink>
             </OnramperButton>
@@ -230,4 +270,11 @@ const NavigationListItem = React.forwardRef<React.ElementRef<'a'>, NavigationLis
 
 NavigationListItem.displayName = 'NavListItem'
 
-export { EXPLORE_NAVIGATION_LINKS, Navigation, NavigationContainer, NavigationListItem, TOOLS_NAVIGATION_LINKS }
+export {
+  EXPLORE_NAVIGATION_LINKS,
+  Navigation,
+  NavigationContainer,
+  NavigationListItem,
+  PARTNER_NAVIGATION_LINKS,
+  TOOLS_NAVIGATION_LINKS,
+}

@@ -1,3 +1,4 @@
+import { classNames } from '@sushiswap/ui'
 import { HotJar } from '@sushiswap/ui/components/scripts'
 import React from 'react'
 
@@ -7,12 +8,12 @@ import { Providers } from './providers'
 export default function LandingLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <div className="flex flex-col flex-1 bg-slate-950">
-        <Providers>
+      <Providers>
+        <div className={classNames('flex flex-col flex-1')}>
           <Header />
           <div className="flex flex-col flex-1">{children}</div>
-        </Providers>
-      </div>
+        </div>
+      </Providers>
       <HotJar />
     </>
   )
