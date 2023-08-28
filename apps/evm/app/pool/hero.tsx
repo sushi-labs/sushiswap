@@ -2,7 +2,6 @@
 
 import { ChevronRightIcon, GiftIcon } from '@heroicons/react-v1/outline'
 import { ChainId } from '@sushiswap/chain'
-import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
 import { isTridentChainId } from '@sushiswap/trident-sdk'
 import { typographyVariants } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
@@ -17,6 +16,7 @@ import {
 import { DiscordIcon } from '@sushiswap/ui/components/icons'
 import { SelectIcon } from '@sushiswap/ui/components/select'
 import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
+import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useNetwork } from '@sushiswap/wagmi'
 import Link from 'next/link'
 import { FC } from 'react'
@@ -40,7 +40,11 @@ export const Hero: FC = () => {
           <div className="flex items-center w-full">
             <Button asChild size="lg" className="rounded-r-none">
               <Link
-                href={isRouteProcessor3ChainId(chainId) ? `/pool/add?chainId=${chainId}` : `/pool/add/v2/${chainId}`}
+                href={
+                  SUSHISWAP_V3_SUPPORTED_CHAIN_IDS.includes(chainId as SushiSwapV3ChainId)
+                    ? `/pool/add?chainId=${chainId}`
+                    : `/pool/add/v2/${chainId}`
+                }
               >
                 I want to create a position
               </Link>
@@ -53,14 +57,21 @@ export const Hero: FC = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-80">
                 <DropdownMenuGroup>
-                  <DropdownMenuItem disabled={!isRouteProcessor3ChainId(chainId)} asChild>
+                  <DropdownMenuItem
+                    disabled={!SUSHISWAP_V3_SUPPORTED_CHAIN_IDS.includes(chainId as SushiSwapV3ChainId)}
+                    asChild
+                  >
                     <Link
                       href={`/pool/add?chainId=${chainId}`}
                       className="flex flex-col !items-start gap-1 cursor-pointer"
                     >
                       <div className="flex items-center gap-1 font-medium leading-none">
                         V3 Position
-                        <Chip variant="secondary">{isRouteProcessor3ChainId(chainId) ? 'New 🔥' : 'Unavailable'}</Chip>
+                        <Chip variant="secondary">
+                          {SUSHISWAP_V3_SUPPORTED_CHAIN_IDS.includes(chainId as SushiSwapV3ChainId)
+                            ? 'New 🔥'
+                            : 'Unavailable'}
+                        </Chip>
                       </div>
                       <p className="text-sm leading-snug text-muted-foreground">
                         Provide liquidity to a V3 liquidity pool.

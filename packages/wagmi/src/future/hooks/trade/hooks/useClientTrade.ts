@@ -9,6 +9,7 @@ import {
   routeProcessor3Address,
   routeProcessorAddress,
 } from '@sushiswap/route-processor'
+import { isRouteProcessor3_1ChainId } from '@sushiswap/route-processor'
 import { Router } from '@sushiswap/router'
 import { HexString } from '@sushiswap/types'
 import { useQuery } from '@tanstack/react-query'
@@ -47,7 +48,9 @@ export const useClientTrade = (variables: UseTradeParams) => {
     queryFn: async () => {
       if (
         !poolsCodeMap ||
-        (!isRouteProcessorChainId(chainId) && !isRouteProcessor3ChainId(chainId)) ||
+        (!isRouteProcessorChainId(chainId) &&
+          !isRouteProcessor3ChainId(chainId) &&
+          !isRouteProcessor3_1ChainId(chainId)) ||
         !fromToken ||
         !amount ||
         !toToken ||
@@ -98,8 +101,19 @@ ${logPools}
       let args = undefined
 
       if (recipient) {
-        if (isRouteProcessor3ChainId(chainId)) {
-          args = Router.routeProcessor2Params(
+        if (isRouteProcessor3_1ChainId(chainId)) {
+          args = Router.routeProcessor3_1Params(
+            poolsCodeMap,
+            route,
+            fromToken,
+            toToken,
+            recipient,
+            routeProcessor3Address[chainId],
+            [],
+            +slippagePercentage / 100
+          )
+        } else if (isRouteProcessor3ChainId(chainId)) {
+          args = Router.routeProcessor3Params(
             poolsCodeMap,
             route,
             fromToken,

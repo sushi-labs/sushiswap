@@ -14,6 +14,9 @@ import {
   routeProcessor3Address,
   routeProcessorAddress,
 } from '@sushiswap/route-processor'
+import { routeProcessor3_1Address } from '@sushiswap/route-processor'
+import { isRouteProcessor3_1ChainId } from '@sushiswap/route-processor'
+import { routeProcessor3_1Abi } from '@sushiswap/route-processor'
 import { Bridge, LiquidityProviders } from '@sushiswap/router'
 import {
   classNames,
@@ -70,12 +73,16 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
 
   const { config, isError, error } = usePrepareContractWrite({
     chainId: chainId,
-    address: isRouteProcessor3ChainId(chainId)
+    address: isRouteProcessor3_1ChainId(chainId)
+      ? routeProcessor3_1Address[chainId]
+      : isRouteProcessor3ChainId(chainId)
       ? routeProcessor3Address[chainId]
       : isRouteProcessorChainId(chainId)
       ? routeProcessorAddress[chainId]
       : undefined,
-    abi: (isRouteProcessor3ChainId(chainId)
+    abi: (isRouteProcessor3_1ChainId(chainId)
+      ? routeProcessor3_1Abi[chainId]
+      : isRouteProcessor3ChainId(chainId)
       ? routeProcessor3Abi
       : isRouteProcessorChainId(chainId)
       ? routeProcessorAbi
@@ -84,7 +91,9 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
     args: trade?.writeArgs as any,
     enabled: Boolean(
       trade?.writeArgs &&
-        (isRouteProcessorChainId(chainId) || isRouteProcessor3ChainId(chainId)) &&
+        (isRouteProcessorChainId(chainId) ||
+          isRouteProcessor3ChainId(chainId) ||
+          isRouteProcessor3_1ChainId(chainId)) &&
         approved &&
         trade?.route?.status !== 'NoWay' &&
         chain?.id === chainId

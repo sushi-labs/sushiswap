@@ -8,6 +8,8 @@ import {
   routeProcessor3Address,
   routeProcessorAddress,
 } from '@sushiswap/route-processor'
+import { isRouteProcessor3_1ChainId } from '@sushiswap/route-processor'
+import { routeProcessor3_1Address } from '@sushiswap/route-processor'
 import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Checker } from '@sushiswap/wagmi/future/systems'
@@ -46,7 +48,9 @@ export const SimpleSwapTradeButton: FC = () => {
                   id="approve-erc20"
                   amount={swapAmount}
                   contract={
-                    isRouteProcessor3ChainId(chainId)
+                    isRouteProcessor3_1ChainId(chainId)
+                      ? routeProcessor3_1Address[chainId]
+                      : isRouteProcessor3ChainId(chainId)
                       ? routeProcessor3Address[chainId]
                       : isRouteProcessorChainId(chainId)
                       ? routeProcessorAddress[chainId]
