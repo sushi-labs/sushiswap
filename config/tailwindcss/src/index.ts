@@ -65,6 +65,7 @@ const config = {
         'muted-foreground': 'var(--muted-foreground)',
         accent: 'var(--accent)',
         'accent-foreground': 'var(--accent-foreground)',
+        background: 'var(--background)',
       },
       animation: {
         ellipsis: 'ellipsis 1.25s infinite',
@@ -78,6 +79,8 @@ const config = {
         'dash-check': 'dash-check 1.5s 2s ease-out infinite',
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        walk: 'walk 0.5s linear infinite',
+        shadow: 'shadow 0.5s linear infinite',
       },
       keyframes: {
         'accordion-down': {
@@ -89,7 +92,9 @@ const config = {
           to: { height: '0' },
         },
         shimmer: {
-          '100%': { transform: 'translateX(100%)' },
+          '100%': {
+            transform: 'translateX(100%)',
+          },
         },
         ellipsis: {
           '0%': { content: '"."' },
@@ -158,6 +163,29 @@ const config = {
             strokeWidth: '8px',
             fillOpacity: '1',
             fill: 'currentColor',
+          },
+        },
+        walk: {
+          '17%': {
+            'border-bottom-right-radius': '3px',
+          },
+          '25%': {
+            transform: 'translateY(9px) translateX(9px)',
+          },
+          '50%': {
+            transform: 'translateY(18px) translateX(18px) scale(1,.9)',
+            'border-bottom-right-radius': '40px',
+          },
+          '75%': {
+            transform: 'translateY(9px) translateX(9px)',
+          },
+          '100%': {
+            transform: 'translateY(0) translateX(0)',
+          },
+        },
+        shadow: {
+          '50%': {
+            transform: 'scale(1.2,1)',
           },
         },
       },

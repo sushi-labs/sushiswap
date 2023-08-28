@@ -1,14 +1,14 @@
-import { Type as Currency } from '@sushiswap/currency'
-import { Address, readContracts } from 'wagmi'
-import { BentoBoxV1ChainId, bentoBoxV1Address } from '@sushiswap/bentobox'
 import { bentoBoxV1TotalsAbi } from '@sushiswap/abi'
-import { BigNumber } from 'ethers'
+import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { Type as Currency } from '@sushiswap/currency'
+import { Rebase } from '@sushiswap/tines'
+import { Address, readContracts } from 'wagmi'
 
-const totalsMap = new Map<string, { elastic: BigNumber; base: BigNumber }>()
+const totalsMap = new Map<string, Rebase>()
 
 export const getBentoboxTotalsMap = async (chainId: BentoBoxV1ChainId, currencies: (Currency | undefined)[]) => {
   const addresses = currencies
-    .filter((currency): currency is Currency => Boolean(currency && currency.wrapped))
+    .filter((currency): currency is Currency => Boolean(currency?.wrapped))
     .map((token) => token.wrapped.address)
 
   const contracts = addresses.map(
@@ -28,7 +28,7 @@ export const getBentoboxTotalsMap = async (chainId: BentoBoxV1ChainId, currencie
       contracts,
     })
 
-    totals.forEach((total, i) => totalsMap.set(addresses[i], total))
+    totals.forEach((total, i) => totalsMap.set(addresses[i], { base: total[0], elastic: total[1] }))
 
     return totalsMap
   } catch {
@@ -38,7 +38,7 @@ export const getBentoboxTotalsMap = async (chainId: BentoBoxV1ChainId, currencie
 
 export const getBentoboxTotals = async (chainId: BentoBoxV1ChainId, currencies: (Currency | undefined)[]) => {
   const addresses = currencies
-    .filter((currency): currency is Currency => Boolean(currency && currency.wrapped))
+    .filter((currency): currency is Currency => Boolean(currency?.wrapped))
     .map((token) => token.wrapped.address)
 
   const contracts = addresses.map(
@@ -56,7 +56,7 @@ export const getBentoboxTotals = async (chainId: BentoBoxV1ChainId, currencies: 
     return readContracts({
       allowFailure: false,
       contracts,
-    })
+    }).then((results) => results.map((result) => ({ elastic: result[0], base: result[1] })))
   } catch {
     return null
   }

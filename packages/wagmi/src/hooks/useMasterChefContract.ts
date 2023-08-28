@@ -1,7 +1,8 @@
 import { masterChefV1Abi, masterChefV2Abi, miniChefAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { ChefType } from '@sushiswap/client'
-import { Address, useContract, useProvider } from 'wagmi'
+import { getContract } from 'viem'
+import { Address, usePublicClient } from 'wagmi'
 
 // TODO move to package
 export const MASTERCHEF_ADDRESS = {
@@ -66,10 +67,11 @@ export const getMasterChefContractConfig = (chainId: number, chef: ChefType) => 
 }
 
 export function useMasterChefContract(chainId: number, chef: ChefType) {
-  const signerOrProvider = useProvider({ chainId })
+  const publicClient = usePublicClient({ chainId })
+
   // @ts-ignore - Workaround for TS#4058
-  return useContract({
+  return getContract({
     ...getMasterChefContractConfig(chainId, chef),
-    signerOrProvider,
+    publicClient,
   })
 }

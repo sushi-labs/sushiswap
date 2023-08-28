@@ -1,8 +1,8 @@
 import { pack } from '@ethersproject/solidity'
 import { Currency, Token } from '@sushiswap/currency'
 
-import { Pool } from '../entities/pool'
-import { Route } from '../entities/route'
+import { Route } from '../entities/Route'
+import { SushiSwapV3Pool } from '../entities/SushiSwapV3Pool'
 
 /**
  * Converts a route to a hex encoded path
@@ -15,7 +15,7 @@ export function encodeRouteToPath(route: Route<Currency, Currency>, exactOutput:
   const { path, types } = route.pools.reduce(
     (
       { inputToken, path, types }: { inputToken: Token; path: (string | number)[]; types: string[] },
-      pool: Pool,
+      pool: SushiSwapV3Pool,
       index
     ): { inputToken: Token; path: (string | number)[]; types: string[] } => {
       const outputToken: Token = pool.token0.equals(inputToken) ? pool.token1 : pool.token0

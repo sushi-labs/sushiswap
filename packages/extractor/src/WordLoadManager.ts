@@ -4,7 +4,6 @@ import { tickLensAbi } from '@sushiswap/abi'
 import { NUMBER_OF_SURROUNDING_TICKS } from '@sushiswap/router'
 import { CLTick } from '@sushiswap/tines'
 import { Address } from 'abitype'
-import { BigNumber } from 'ethers'
 
 import { Counter } from './Counter'
 import { MultiCallAggregator } from './MulticallAggregator'
@@ -19,7 +18,7 @@ interface WordState {
 // if positiveFirst == false returns 0, -1, 1, -2, 2, -3, 3, ...
 function getJump(index: number, positiveFirst: boolean): number {
   let res
-  if (index % 2 == 0) res = -index / 2
+  if (index % 2 === 0) res = -index / 2
   else res = (index + 1) / 2
   return positiveFirst ? res : -res
 }
@@ -77,7 +76,7 @@ export class WordLoadManager extends EventEmitter {
               ticks: ticks
                 .map(({ tick, liquidityNet }) => ({
                   index: Number(tick),
-                  DLiquidity: BigNumber.from(liquidityNet),
+                  DLiquidity: liquidityNet,
                 }))
                 .sort((a: CLTick, b: CLTick) => a.index - b.index),
             })
@@ -114,7 +113,7 @@ export class WordLoadManager extends EventEmitter {
       const wordIndex = currentTickWord + getJump(i, direction)
       if (wordIndex === pendingWord) continue // will be set at the end
       const wordState = this.words.get(wordIndex)
-      if (updateAll || wordState == undefined) queue.push(wordIndex)
+      if (updateAll || wordState === undefined) queue.push(wordIndex)
     }
     if (pendingWord !== undefined) queue.push(pendingWord)
     this.downloadQueue = queue
@@ -125,7 +124,8 @@ export class WordLoadManager extends EventEmitter {
   getMaxTickDiapason(tick: number): CLTick[] {
     const currentTickIndex = this.wordIndex(tick)
     if (!this.words.has(currentTickIndex)) return []
-    let minIndex, maxIndex
+    let minIndex
+    let maxIndex
     for (minIndex = currentTickIndex; this.words.has(minIndex); --minIndex);
     for (maxIndex = currentTickIndex + 1; this.words.has(maxIndex); ++maxIndex);
     if (maxIndex - minIndex <= 1) return []
@@ -134,16 +134,16 @@ export class WordLoadManager extends EventEmitter {
     for (let i = minIndex + 1; i < maxIndex; ++i) ticks = ticks.concat((this.words.get(i) as WordState).ticks)
 
     const lowerUnknownTick = (minIndex + 1) * this.poolSpacing * 256 - this.poolSpacing
-    console.assert(ticks.length == 0 || lowerUnknownTick < ticks[0].index, 'Error 85: unexpected min tick index')
+    console.assert(ticks.length === 0 || lowerUnknownTick < ticks[0].index, 'Error 85: unexpected min tick index')
     ticks.unshift({
       index: lowerUnknownTick,
-      DLiquidity: BigNumber.from(0),
+      DLiquidity: 0n,
     })
     const upperUnknownTick = maxIndex * this.poolSpacing * 256
     console.assert(ticks[ticks.length - 1].index < upperUnknownTick, 'Error 91: unexpected max tick index')
     ticks.push({
       index: upperUnknownTick,
-      DLiquidity: BigNumber.from(0),
+      DLiquidity: 0n,
     })
 
     return ticks
@@ -161,30 +161,30 @@ export class WordLoadManager extends EventEmitter {
     if (state !== undefined) {
       const { blockNumber, ticks } = state
       if (eventBlockNumber <= blockNumber) return
-      if (ticks.length == 0 || tick < ticks[0].index) {
-        ticks.unshift({ index: tick, DLiquidity: BigNumber.from(amount) })
+      if (ticks.length === 0 || tick < ticks[0].index) {
+        ticks.unshift({ index: tick, DLiquidity: amount })
         return
       }
-      if (tick == ticks[0].index) {
-        ticks[0].DLiquidity = ticks[0].DLiquidity.add(amount)
-        if (ticks[0].DLiquidity.isZero()) ticks.splice(0, 1)
+      if (tick === ticks[0].index) {
+        ticks[0].DLiquidity = ticks[0].DLiquidity + amount
+        if (ticks[0].DLiquidity === 0n) ticks.splice(0, 1)
         return
       }
 
-      let start = 0,
-        end = ticks.length
+      let start = 0
+      let end = ticks.length
       while (end - start > 1) {
         const middle = Math.floor((start + end) / 2)
         const index = ticks[middle].index
         if (index < tick) start = middle
         else if (index > tick) end = middle
         else {
-          ticks[middle].DLiquidity = ticks[middle].DLiquidity.add(amount)
-          if (ticks[middle].DLiquidity.isZero()) ticks.splice(middle, 1)
+          ticks[middle].DLiquidity = ticks[middle].DLiquidity + amount
+          if (ticks[middle].DLiquidity === 0n) ticks.splice(middle, 1)
           return
         }
       }
-      ticks.splice(start + 1, 0, { index: tick, DLiquidity: BigNumber.from(amount) })
+      ticks.splice(start + 1, 0, { index: tick, DLiquidity: amount })
     }
   }
 }

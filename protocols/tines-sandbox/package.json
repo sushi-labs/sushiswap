@@ -5,10 +5,9 @@
   "description": "Sandbox for Tines testing",
   "license": "UNLICENSED",
   "author": "Ilya Lyalin",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "main": "dist/src/index.js",
   "source": "src/index.ts",
-  "typings": "dist/index.d.ts",
+  "typings": "dist/src/index.d.ts",
   "files": [
     "artifacts",
     "contracts",
@@ -19,7 +18,7 @@
     "typechain"
   ],
   "scripts": {
-    "build": "TS_NODE_TRANSPILE_ONLY=1 hardhat compile && tsup-node src/index.ts",
+    "build": "TS_NODE_TRANSPILE_ONLY=1 hardhat compile && tsc",
     "clean": "rm -rf .turbo node_modules artifacts cache exports typechain",
     "console": "hardhat console",
     "get-deploy-code": "ts-node ./deploy/GetDeployCode.ts",
@@ -55,6 +54,7 @@
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/types": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
+    "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",
     "@typechain/ethers-v5": "^10.0.0",
@@ -90,6 +90,6 @@
     "tsup": "7.1.0",
     "typechain": "8.1.1",
     "typescript": "5.1.6",
-    "viem": "1.5.4"
+    "viem": "1.6.3"
   }
 }

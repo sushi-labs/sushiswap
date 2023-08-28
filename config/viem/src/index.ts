@@ -653,7 +653,7 @@ export const config: Record<number, PublicClientConfig> = {
     transport: fallback(
       [
         http(`${arbitrum.rpcUrls.alchemy.http}/${alchemyId}`),
-        http(`https://lb.drpc.org/ogrpc?network=arbitrum&dkey=${drpcId}`),
+        // http(`https://lb.drpc.org/ogrpc?network=arbitrum&dkey=${drpcId}`),
       ],
       { rank: true }
     ),

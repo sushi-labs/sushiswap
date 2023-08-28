@@ -1,11 +1,12 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { usePrice } from '@sushiswap/react-query'
 import { Button, classNames, SelectIcon, TextField } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
-import dynamic from 'next/dynamic'
-import { FC, useCallback, useEffect, useMemo, useRef } from 'react'
+import { FC, useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useBalanceWeb3 } from '../../../hooks'
@@ -13,7 +14,7 @@ import { TokenSelector } from '../../TokenSelector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
 
-export interface CurrencyInputProps {
+interface CurrencyInputProps {
   id?: string
   disabled?: boolean
   value: string
@@ -35,7 +36,7 @@ export interface CurrencyInputProps {
   hideSearch?: boolean
 }
 
-export const Component: FC<CurrencyInputProps> = ({
+const CurrencyInput: FC<CurrencyInputProps> = ({
   id,
   disabled,
   value,
@@ -54,8 +55,12 @@ export const Component: FC<CurrencyInputProps> = ({
   error,
   hidePinnedTokens = false,
   hideSearch = false,
+  fetching,
 }) => {
+  const [localValue, setLocalValue] = useState<string>('')
   const { address } = useAccount()
+  const [pending, startTransition] = useTransition()
+
   const inputRef = useRef<HTMLInputElement>(null)
   const focusInput = useCallback(() => {
     if (disabled) return
@@ -90,6 +95,16 @@ export const Component: FC<CurrencyInputProps> = ({
 
   const isLoading = loading || currencyLoading || isBalanceLoading
   const _error = error ? error : insufficientBalance ? 'Exceeds Balance' : undefined
+
+  const _onChange = useCallback(
+    (value: string) => {
+      setLocalValue(value)
+      startTransition(() => {
+        onChange?.(value)
+      })
+    },
+    [onChange]
+  )
 
   const selector = useMemo(() => {
     if (!onSelect) return null
@@ -133,10 +148,14 @@ export const Component: FC<CurrencyInputProps> = ({
       onClick={focusInput}
       className={classNames(
         _error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
-        'space-y-2 overflow-hidden pb-2',
+        'relative space-y-2 overflow-hidden pb-2',
         className
       )}
     >
+      <div
+        data-state={fetching ? 'active' : 'inactive'}
+        className="transition-all data-[state=inactive]:hidden data-[state=active]:block absolute inset-0 overflow-hidden p-4 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_.5s_infinite] before:bg-gradient-to-r before:from-transparent dark:before:via-slate-50/10 before:via-gray-900/[0.07] before:to-transparent"
+      />
       <div className="relative flex items-center gap-4">
         <div
           data-state={isLoading ? 'active' : 'inactive'}
@@ -147,22 +166,25 @@ export const Component: FC<CurrencyInputProps> = ({
         >
           <SkeletonBox className="w-1/2 h-[32px] rounded-lg" />
         </div>
-        <TextField
-          testdata-id={`${id}-input`}
-          type="number"
-          ref={inputRef}
-          variant="naked"
-          disabled={disabled}
-          onValueChange={onChange}
-          value={value}
-          readOnly={disabled}
-          maxDecimals={currency?.decimals}
+        <div
           data-state={isLoading ? 'inactive' : 'active'}
-          className={classNames(
-            'data-[state=inactive]:hidden data-[state=active]:flex',
-            'p-0 py-1 !text-3xl font-medium'
-          )}
-        />
+          className="data-[state=inactive]:hidden data-[state=active]:flex flex-1 items-center"
+        >
+          <TextField
+            testdata-id={`${id}-input`}
+            type="number"
+            ref={inputRef}
+            variant="naked"
+            disabled={disabled}
+            onValueChange={_onChange}
+            value={pending ? localValue : value}
+            readOnly={disabled}
+            maxDecimals={currency?.decimals}
+            data-state={isLoading ? 'inactive' : 'active'}
+            className={classNames('p-0 py-1 !text-3xl font-medium')}
+          />
+        </div>
+
         {selector}
         {!onSelect ? (
           <div
@@ -190,12 +212,12 @@ export const Component: FC<CurrencyInputProps> = ({
           currency={currency}
           usdPctChange={usdPctChange}
           error={_error}
-          loading={isLoading || isPriceLoading}
+          loading={isPriceLoading}
           price={price}
         />
         <BalancePanel
           id={id}
-          loading={isLoading}
+          loading={isBalanceLoading}
           chainId={chainId}
           account={address}
           onChange={onChange}
@@ -209,6 +231,4 @@ export const Component: FC<CurrencyInputProps> = ({
   )
 }
 
-export const CurrencyInput = dynamic(() => Promise.resolve(Component), {
-  ssr: false,
-})
+export { CurrencyInput, type CurrencyInputProps }

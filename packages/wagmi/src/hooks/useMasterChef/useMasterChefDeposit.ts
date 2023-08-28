@@ -1,13 +1,14 @@
-import { TransactionRequest } from '@ethersproject/providers'
+import { masterChefV1Abi, masterChefV2Abi } from '@sushiswap/abi'
 import { ChefType } from '@sushiswap/client'
 import { Amount, Token } from '@sushiswap/currency'
-import { Dispatch, SetStateAction, useCallback } from 'react'
-import { useAccount } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
+import { useCallback, useMemo } from 'react'
+import { encodeFunctionData, UserRejectedRequestError } from 'viem'
+import { useAccount, usePrepareSendTransaction, useSendTransaction } from 'wagmi'
+import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
 import { useMasterChefContract } from '../useMasterChefContract'
-import { useSendTransaction } from '../useSendTransaction'
-import { createToast } from '@sushiswap/ui/components/toast'
+import { UsePrepareSendTransactionConfig } from '../useSendTransaction'
 
 interface UseMasterChefDepositParams {
   chainId: number
@@ -24,7 +25,10 @@ export const useMasterChefDeposit: UseMasterChefDeposit = ({ chainId, amount, ch
   const contract = useMasterChefContract(chainId, chef)
 
   const onSettled = useCallback(
-    (data: SendTransactionResult | undefined) => {
+    (data: SendTransactionResult | undefined, error: Error | null) => {
+      if (error instanceof UserRejectedRequestError) {
+        createErrorToast(error?.message, true)
+      }
       if (data && amount) {
         const ts = new Date().getTime()
         createToast({
@@ -32,7 +36,7 @@ export const useMasterChefDeposit: UseMasterChefDeposit = ({ chainId, amount, ch
           type: 'mint',
           chainId,
           txHash: data.hash,
-          promise: data.wait(),
+          promise: waitForTransaction({ hash: data.hash }),
           summary: {
             pending: `Staking ${amount.toSignificant(6)} ${amount.currency.symbol} tokens`,
             completed: `Successfully staked ${amount.toSignificant(6)} ${amount.currency.symbol} tokens`,
@@ -46,28 +50,39 @@ export const useMasterChefDeposit: UseMasterChefDeposit = ({ chainId, amount, ch
     [amount, chainId, address]
   )
 
-  const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!address || !chainId || !amount || !contract) return
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    if (!address || !chainId || !amount || !contract) return
 
-      setRequest({
-        from: address,
-        to: contract.address,
-        data: contract.interface.encodeFunctionData(
-          'deposit',
-          chef === ChefType.MasterChefV1
-            ? [pid, amount.quotient.toString()]
-            : [pid, amount.quotient.toString(), address]
-        ),
+    let data
+    if (chef === ChefType.MasterChefV1) {
+      data = encodeFunctionData({
+        abi: masterChefV1Abi,
+        functionName: 'deposit',
+        args: [BigInt(pid), BigInt(amount.quotient.toString())],
       })
-    },
-    [address, amount, chainId, chef, contract, pid]
-  )
+    } else {
+      data = encodeFunctionData({
+        abi: masterChefV2Abi,
+        functionName: 'deposit',
+        args: [BigInt(pid), BigInt(amount.quotient.toString()), address],
+      })
+    }
+
+    return {
+      account: address,
+      to: contract.address,
+      data,
+    }
+  }, [address, amount, chainId, chef, contract, pid])
+
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
+    enabled,
+  })
 
   return useSendTransaction({
-    chainId,
+    ...config,
     onSettled,
-    prepare,
-    enabled,
   })
 }

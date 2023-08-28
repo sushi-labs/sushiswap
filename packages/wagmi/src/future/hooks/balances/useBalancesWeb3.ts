@@ -1,10 +1,10 @@
-import { Amount, Native, Token, Type } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
-import { useQuery } from '@tanstack/react-query'
-import { ChainId } from '@sushiswap/chain'
-import { fetchBalance, Address, erc20ABI, readContracts } from '../../..'
 import { isAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
+import { ChainId } from '@sushiswap/chain'
+import { Amount, Native, Token, Type } from '@sushiswap/currency'
+import { useQuery } from '@tanstack/react-query'
+
+import { Address, erc20ABI, fetchBalance, readContracts } from '../../..'
 
 interface UseBalanceParams {
   chainId: ChainId | undefined
@@ -20,7 +20,7 @@ export const queryFnUseBalances = async ({ chainId, currencies, account }: Omit<
     (acc, currencies) => {
       if (chainId && currencies && isAddress(currencies.wrapped.address)) {
         acc[0].push(currencies.wrapped)
-        acc[1].push(currencies.wrapped.address)
+        acc[1].push(currencies.wrapped.address as Address)
       }
 
       return acc
@@ -42,11 +42,14 @@ export const queryFnUseBalances = async ({ chainId, currencies, account }: Omit<
   })
 
   const _data = data.reduce<Record<string, Amount<Type>>>((acc, cur, i) => {
-    acc[validatedTokens[i].address] = Amount.fromRawAmount(validatedTokens[i], JSBI.BigInt(data[i]))
+    const amount = data[i].result
+    if (typeof amount === 'bigint') {
+      acc[validatedTokens[i].address] = Amount.fromRawAmount(validatedTokens[i], amount)
+    }
     return acc
   }, {})
 
-  _data[AddressZero] = Amount.fromRawAmount(Native.onChain(chainId), JSBI.BigInt(native.value))
+  _data[AddressZero] = Amount.fromRawAmount(Native.onChain(chainId), native.value)
 
   return _data
 }

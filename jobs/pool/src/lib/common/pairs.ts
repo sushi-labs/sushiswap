@@ -6,10 +6,9 @@ import {
   TridentChainId,
 } from '@sushiswap/graph-config'
 import { isSushiSwapChain, isTridentChain } from '@sushiswap/validate'
-import { BigNumber } from 'ethers'
 
 import type { Farm } from '../types.js'
-import { divBigNumberToNumber } from './utils.js'
+import { divBigIntToNumber } from './utils.js'
 
 interface Pair {
   id: string
@@ -37,7 +36,7 @@ async function getExchangePairs(ids: string[], chainId: SushiSwapChainId): Promi
 
     return {
       id: pair.id,
-      totalSupply: divBigNumberToNumber(BigNumber.from(pair.liquidity), 18),
+      totalSupply: divBigIntToNumber(BigInt(pair.liquidity), 18),
       liquidityUSD: liquidityUSD,
       type: 'Legacy',
     }
@@ -63,7 +62,7 @@ async function getTridentPairs(
   return pairs.map((pair) => {
     return {
       id: pair.id,
-      totalSupply: divBigNumberToNumber(BigNumber.from(pair.liquidity), 18),
+      totalSupply: divBigIntToNumber(BigInt(pair.liquidity), 18),
       liquidityUSD: pair.liquidityNative * bundle?.nativePrice,
       type: 'Trident',
     }

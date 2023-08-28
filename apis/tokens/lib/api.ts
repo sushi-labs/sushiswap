@@ -1,14 +1,14 @@
 import { createClient } from '@sushiswap/database'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import type { Address } from '@wagmi/core'
-import { configureChains, createClient as createWagmiClient, fetchToken } from '@wagmi/core'
+import { configureChains, createConfig, fetchToken } from '@wagmi/core'
 
 // import * as defaultTokenList from '@sushiswap/default-token-list' assert { type: 'json' }
 
-const { provider } = configureChains(allChains, allProviders)
-createWagmiClient({
+const { publicClient } = configureChains(allChains, allProviders)
+createConfig({
   autoConnect: true,
-  provider,
+  publicClient,
 })
 
 export async function getToken(chainId: number, address: string) {

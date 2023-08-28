@@ -15,10 +15,10 @@ export class ConstantProductPoolCode extends PoolCode {
       .uint8(10) // swapUniswapPool
       .address(this.pool.address)
       .address(leg.tokenFrom.address)
-      .bool(leg.tokenFrom.address == this.pool.token0.address)
+      .bool(leg.tokenFrom.address === this.pool.token0.address)
       .address(to)
       .toString()
-    console.assert(code.length == 62 * 2, 'getSwapCodeForRouteProcessor unexpected code length')
+    console.assert(code.length === 62 * 2, 'getSwapCodeForRouteProcessor unexpected code length')
     return code
   }
 
@@ -26,7 +26,7 @@ export class ConstantProductPoolCode extends PoolCode {
     const code = new HEXer()
       .uint8(0) // uniV2 pool
       .address(this.pool.address)
-      .bool(leg.tokenFrom.address == this.pool.token0.address)
+      .bool(leg.tokenFrom.address === this.pool.token0.address)
       .address(to)
       //.bool(presended)
       .toString()
@@ -37,7 +37,7 @@ export class ConstantProductPoolCode extends PoolCode {
     const code = new HEXer()
       .uint8(0) // uniV2 pool
       .address(this.pool.address)
-      .bool(leg.tokenFrom.address == this.pool.token0.address)
+      .bool(leg.tokenFrom.address === this.pool.token0.address)
       .address(to)
       .uint24(Math.round(leg.poolFee * 1_000_000)) // new part - before fee was always 0.3%
       .toString()

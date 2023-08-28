@@ -1,9 +1,8 @@
-import { useCallback, useMemo, useState } from 'react'
 import { Token } from '@sushiswap/currency'
-import { BigNumber } from 'ethers'
 import { createToast } from '@sushiswap/ui/components/toast'
+import { SendTransactionResult, waitForTransaction } from '@wagmi/core'
+import { useCallback, useMemo, useState } from 'react'
 import { Address, erc20ABI, useContractWrite, usePrepareContractWrite } from 'wagmi'
-import { SendTransactionResult } from '@wagmi/core'
 
 interface UseTokenRevokeApproval {
   account: Address | undefined
@@ -18,7 +17,7 @@ export const useTokenRevokeApproval = ({ account, spender, token }: UseTokenRevo
     abi: erc20ABI,
     chainId: token?.chainId,
     functionName: 'approve',
-    args: [spender, BigNumber.from(0)],
+    args: [spender, 0n],
     enabled: Boolean(token),
   })
 
@@ -31,7 +30,7 @@ export const useTokenRevokeApproval = ({ account, spender, token }: UseTokenRevo
           type: 'swap',
           chainId: token.chainId,
           txHash: data.hash,
-          promise: data.wait(),
+          promise: waitForTransaction({ hash: data.hash }),
           summary: {
             pending: `Revoking approval for ${token.symbol}`,
             completed: `Successfully revoked approval for ${token.symbol}`,
@@ -41,7 +40,7 @@ export const useTokenRevokeApproval = ({ account, spender, token }: UseTokenRevo
           groupTimestamp: ts,
         })
 
-        data.wait().finally(() => {
+        waitForTransaction({ hash: data.hash }).finally(() => {
           setIsPending(false)
         })
       }

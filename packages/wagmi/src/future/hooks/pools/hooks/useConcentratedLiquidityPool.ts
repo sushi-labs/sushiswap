@@ -1,7 +1,8 @@
-import { useQuery } from '@tanstack/react-query'
-import { getConcentratedLiquidityPool } from '../actions'
 import { Type } from '@sushiswap/currency'
 import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { useQuery } from '@tanstack/react-query'
+
+import { getConcentratedLiquidityPool } from '../actions'
 
 interface UseConcentratedLiquidityPool {
   token0: Type | undefined

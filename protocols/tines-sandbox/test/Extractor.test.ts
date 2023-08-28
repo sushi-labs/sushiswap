@@ -1,16 +1,16 @@
 import { routeProcessor2Abi } from '@sushiswap/abi'
-import { FACTORY_ADDRESS, INIT_CODE_HASH } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
-import { Native } from '@sushiswap/currency'
+import { Native, Token } from '@sushiswap/currency'
 import { Extractor, FactoryV2, FactoryV3, LogFilterType, MultiCallAggregator, TokenManager } from '@sushiswap/extractor'
 import { ConstantProductPoolCode, LiquidityProviders, NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { getBigNumber, RouteStatus } from '@sushiswap/tines'
+import { getBigInt, RouteStatus } from '@sushiswap/tines'
+import { SUSHISWAP_V2_FACTORY_ADDRESS, SUSHISWAP_V2_INIT_CODE_HASH } from '@sushiswap/v2-sdk'
 import {
   POOL_INIT_CODE_HASH,
+  SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_INIT_CODE_HASH,
   SushiSwapV3ChainId,
-  V3_FACTORY_ADDRESS,
 } from '@sushiswap/v3-sdk'
 import { config } from '@sushiswap/viem-config'
 import { Address, createPublicClient, http, Transport } from 'viem'
@@ -24,6 +24,7 @@ export const RP3Address = {
   [ChainId.CELO]: '0x2f686751b19a9d91cc3d57d90150Bc767f050066' as Address,
   [ChainId.POLYGON_ZKEVM]: '0x2f686751b19a9d91cc3d57d90150Bc767f050066' as Address,
   [ChainId.AVALANCHE]: '0x717b7948AA264DeCf4D780aa6914482e5F46Da3e' as Address,
+  [ChainId.BASE]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904' as Address,
 }
 
 export const TickLensContract = {
@@ -34,6 +35,7 @@ export const TickLensContract = {
   [ChainId.CELO]: '0x5f115D9113F88e0a0Db1b5033D90D4a9690AcD3D' as Address,
   [ChainId.POLYGON_ZKEVM]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904' as Address,
   [ChainId.AVALANCHE]: '0xDdC1b5920723F774d2Ec2C3c9355251A20819776' as Address,
+  [ChainId.BASE]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3' as Address,
 }
 
 export const UniswapV2FactoryAddress: Record<number, string> = {
@@ -50,10 +52,10 @@ function uniswapV2Factory(chain: ChainId): FactoryV2 {
 
 function sushiswapV2Factory(chain: ChainId): FactoryV2 {
   return {
-    address: FACTORY_ADDRESS[chain] as Address,
+    address: SUSHISWAP_V2_FACTORY_ADDRESS[chain] as Address,
     provider: LiquidityProviders.SushiSwapV2,
     fee: 0.003,
-    initCodeHash: INIT_CODE_HASH[chain],
+    initCodeHash: SUSHISWAP_V2_INIT_CODE_HASH[chain],
   }
 }
 
@@ -64,6 +66,7 @@ export const UniswapV3FactoryAddress: Record<number, string> = {
   [ChainId.OPTIMISM]: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
   [ChainId.BSC]: '0xdB1d10011AD0Ff90774D0C6Bb92e5C5c8b4461F7',
   [ChainId.CELO]: '0xAfE208a311B21f13EF87E33A90049fC17A7acDEc',
+  [ChainId.BASE]: '0x33128a8fC17869897dcE68Ed026d694621f6FDfD',
 }
 function uniswapV3Factory(chain: ChainId): FactoryV3 {
   return {
@@ -75,7 +78,7 @@ function uniswapV3Factory(chain: ChainId): FactoryV3 {
 
 function sushiswapV3Factory(chainId: SushiSwapV3ChainId) {
   return {
-    address: V3_FACTORY_ADDRESS[chainId],
+    address: SUSHISWAP_V3_FACTORY_ADDRESS[chainId],
     provider: LiquidityProviders.SushiSwapV3,
     initCodeHash: SUSHISWAP_V3_INIT_CODE_HASH[chainId],
   } as const
@@ -97,6 +100,7 @@ async function startInfinitTest(args: {
   maxCallsInOneBatch?: number
   RP3Address: Address
   account?: Address
+  checkTokens?: Token[]
 }) {
   const transport = args.transport ?? http(args.providerURL)
   const client = createPublicClient({
@@ -106,7 +110,7 @@ async function startInfinitTest(args: {
   const chainId = client.chain?.id as ChainId
 
   const extractor = new Extractor({ ...args, client })
-  await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId])
+  await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(args.checkTokens ?? []))
 
   const nativeProvider = new NativeWrapProvider(chainId, client)
   const tokenManager = new TokenManager(
@@ -115,9 +119,11 @@ async function startInfinitTest(args: {
     `tokens-${client.chain?.id}`
   )
   await tokenManager.addCachedTokens()
-  const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values()).slice(0, 100))
+  const tokens =
+    args.checkTokens ??
+    BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values()).slice(0, 100))
   for (;;) {
-    for (let i = 1; i < tokens.length; ++i) {
+    for (let i = 0; i < tokens.length; ++i) {
       await delay(1000)
       const time0 = performance.now()
       const pools0 = extractor.getPoolCodesForTokens(BASES_TO_CHECK_TRADES_AGAINST[chainId].concat([tokens[i]]))
@@ -141,7 +147,7 @@ async function startInfinitTest(args: {
       nativeProvider.getCurrentPoolList().forEach((p) => poolMap.set(p.pool.address, p))
       const fromToken = Native.onChain(chainId),
         toToken = tokens[i]
-      const route = Router.findBestRoute(poolMap, chainId, fromToken, getBigNumber(1e18), toToken, 30e9)
+      const route = Router.findBestRoute(poolMap, chainId, fromToken, getBigInt(1e18), toToken, 30e9)
       if (route.status == RouteStatus.NoWay) {
         console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ` + timingLine)
         continue
@@ -175,7 +181,7 @@ async function startInfinitTest(args: {
           value: BigInt(rpParams.value?.toString() as string),
           account: args.account,
         })
-        const amountOutExp = BigInt(route.amountOutBN.toString())
+        const amountOutExp = BigInt(route.amountOutBI.toString())
         const diff =
           amountOutExp == 0n ? amountOutReal - amountOutExp : Number(amountOutReal - amountOutExp) / route.amountOut
         console.log(
@@ -184,8 +190,9 @@ async function startInfinitTest(args: {
             ` diff = ${diff > 0 ? '+' : ''}${diff} `
         )
         if (Math.abs(Number(diff)) > 0.001) console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
+        console.log(rpParams)
       } catch (e) {
-        console.log('Routing failed. No connection ?')
+        console.log('Routing failed. No connection ? ' + e)
       }
     }
   }
@@ -195,8 +202,9 @@ it.skip('Extractor Ethereum infinit work test', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
-    factoriesV2: [uniswapV2Factory(ChainId.ETHEREUM), sushiswapV2Factory(ChainId.ETHEREUM)],
-    factoriesV3: [uniswapV3Factory(ChainId.ETHEREUM)],
+    //[], //uniswapV2Factory(ChainId.ETHEREUM)], //,
+    factoriesV2: [sushiswapV2Factory(ChainId.ETHEREUM)],
+    factoriesV3: [], //uniswapV3Factory(ChainId.ETHEREUM)],
     tickHelperContract: TickLensContract[ChainId.ETHEREUM],
     cacheDir: './cache',
     logDepth: 50,
@@ -313,6 +321,52 @@ it.skip('Extractor AVALANCH infinit work test', async () => {
     logDepth: 100,
     logging: true,
     RP3Address: RP3Address[ChainId.AVALANCHE],
+  })
+})
+
+it.skip('Extractor Base infinit work test', async () => {
+  await startInfinitTest({
+    ...config[ChainId.BASE],
+    chain: config[ChainId.BASE].chain as Chain,
+    factoriesV2: [
+      sushiswapV2Factory(ChainId.BASE),
+      {
+        address: '0xFDa619b6d20975be80A10332cD39b9a4b0FAa8BB' as Address,
+        provider: LiquidityProviders.BaseSwap,
+        fee: 0.0025,
+        initCodeHash: '0xb618a2730fae167f5f8ac7bd659dd8436d571872655bcb6fd11f2158c8a64a3b',
+      },
+    ],
+    factoriesV3: [sushiswapV3Factory(ChainId.BASE), uniswapV3Factory(ChainId.BASE)],
+    tickHelperContract: TickLensContract[ChainId.BASE],
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+    RP3Address: RP3Address[ChainId.BASE],
+    account: '0x4200000000000000000000000000000000000006', // just a whale because base eth_call needs gas (
+    // checkTokens: [
+    //   new Token({
+    //     chainId: ChainId.BASE,
+    //     address: '0x8544fe9d190fd7ec52860abbf45088e81ee24a8c',
+    //     symbol: 'TOSHI',
+    //     name: 'Toshi',
+    //     decimals: 18,
+    //   }),
+    //   new Token({
+    //     chainId: ChainId.BASE,
+    //     address: '0xa4220a2B0Cb10BF5FDC3B8c3D9E13728f5E7ca56',
+    //     symbol: 'MOCHI',
+    //     name: 'Moshi',
+    //     decimals: 18,
+    //   }),
+    // new Token({
+    //   chainId: ChainId.BASE,
+    //   address: '0x93980959778166ccbB95Db7EcF52607240bc541e',
+    //   name: 'bpsTEST',
+    //   symbol: 'bpsTEST',
+    //   decimals: 18,
+    // }),
+    // ],
   })
 })
 

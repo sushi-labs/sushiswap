@@ -16,11 +16,11 @@ export async function fetchBalances(
           abi: erc20ABI,
         } as const)
     ),
-  }).then((values) => values.map((value, i) => ({ ...args[i], value })))
+  }).then((values) => values.map((value, i) => ({ ...args[i], value: value.result })))
 
   return Object.fromEntries(
     balances
-      .filter(({ value }) => value !== null && value.gt(0))
-      .map((balance) => [`${balance.chainId}:${balance.token}`, balance.value.toString()])
+      .filter(({ value }) => value !== undefined && value > 0n)
+      .map((balance) => [`${balance.chainId}:${balance.token}`, String(balance.value)])
   )
 }

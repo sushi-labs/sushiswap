@@ -4,13 +4,13 @@ import { Native } from '@sushiswap/currency'
 import { NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import cors from 'cors'
-import { BigNumber } from 'ethers'
 import express, { Express, Request, Response } from 'express'
 import path from 'path'
 import { Address } from 'viem'
+import { serialize } from 'wagmi'
 import z from 'zod'
 
-import { Extractor, MultiCallAggregator, TokenManager } from '../src'
+import { Extractor, MultiCallAggregator, TokenManager, WarningLevel } from '../src'
 import {
   EXTRACTOR_CONFIG,
   isSupportedChainId,
@@ -32,8 +32,9 @@ const querySchema = z.object({
   tokenOut: z.string(),
   amount: z.string().transform((amount) => BigInt(amount)),
   gasPrice: z.optional(z.coerce.number().int().gt(0)),
-  to: z.optional(z.string()),
+  to: z.optional(z.string()).transform((to) => (to ? (to as Address) : undefined)),
   preferSushi: z.optional(z.coerce.boolean()),
+  maxPriceImpact: z.optional(z.coerce.number()),
 })
 
 const PORT = process.env.PORT || 80
@@ -42,31 +43,7 @@ const extractors = new Map<SupportedChainId, Extractor>()
 const tokenManagers = new Map<SupportedChainId, TokenManager>()
 const nativeProviders = new Map<SupportedChainId, NativeWrapProvider>()
 
-async function setup() {
-  for (const chainId of SUPPORTED_CHAIN_IDS) {
-    const extractor = new Extractor({
-      ...EXTRACTOR_CONFIG[chainId],
-      warningMessageHandler: (chain: ChainId | number | undefined, message: string) => {
-        Sentry.captureMessage(`${chain}: ${message}`, 'warning')
-      },
-    })
-    await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId])
-    extractors.set(chainId, extractor)
-    const tokenManager = new TokenManager(
-      extractor?.multiCallAggregator as MultiCallAggregator,
-      path.resolve(__dirname, '../cache'),
-      `./tokens-${chainId}`
-    )
-    await tokenManager.addCachedTokens()
-    tokenManagers.set(chainId, tokenManager)
-    const nativeProvider = new NativeWrapProvider(chainId, extractor.client)
-    nativeProviders.set(chainId, nativeProvider)
-  }
-}
-
 async function main() {
-  await setup()
-
   const app: Express = express()
 
   Sentry.init({
@@ -82,8 +59,34 @@ async function main() {
       }),
     ],
     // Performance Monitoring
-    tracesSampleRate: 1.0, // Capture 100% of the transactions, reduce in production!,
+    tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
   })
+
+  for (const chainId of SUPPORTED_CHAIN_IDS) {
+    const extractor = new Extractor({
+      ...EXTRACTOR_CONFIG[chainId],
+      warningMessageHandler: (chain: ChainId | number | undefined, message: string, level: WarningLevel) => {
+        Sentry.captureMessage(`${chain}: ${message}`, level)
+      },
+    })
+    await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId])
+    extractors.set(chainId, extractor)
+    const tokenManager = new TokenManager(
+      extractor?.multiCallAggregator as MultiCallAggregator,
+      path.resolve(__dirname, '../cache'),
+      `./tokens-${chainId}`
+    )
+    await tokenManager.addCachedTokens()
+    tokenManagers.set(chainId, tokenManager)
+    const nativeProvider = new NativeWrapProvider(chainId, extractor.client)
+    nativeProviders.set(chainId, nativeProvider)
+  }
+
+  app.use(
+    cors({
+      origin: 'https://www.sushi.com',
+    })
+  )
 
   // Trace incoming requests
   app.use(Sentry.Handlers.requestHandler())
@@ -95,7 +98,16 @@ async function main() {
     if (!parsed.success) {
       return res.status(422).send()
     }
-    const { chainId, tokenIn: _tokenIn, tokenOut: _tokenOut, amount, gasPrice, to, preferSushi } = parsed.data
+    const {
+      chainId,
+      tokenIn: _tokenIn,
+      tokenOut: _tokenOut,
+      amount,
+      gasPrice,
+      to,
+      preferSushi,
+      maxPriceImpact,
+    } = parsed.data
     const tokenManager = tokenManagers.get(chainId) as TokenManager
     const [tokenIn, tokenOut] = await Promise.all([
       _tokenIn === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
@@ -127,84 +139,72 @@ async function main() {
       poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
     }
 
-    const bestRoute = Router[preferSushi ? 'findSpecialRoute' : 'findBestRoute'](
-      poolCodesMap,
-      chainId,
-      tokenIn,
-      BigNumber.from(amount.toString()),
-      tokenOut,
-      gasPrice ?? 30e9
-    )
+    const bestRoute = preferSushi
+      ? Router.findSpecialRoute(poolCodesMap, chainId, tokenIn, amount, tokenOut, gasPrice ?? 30e9)
+      : Router.findBestRoute(poolCodesMap, chainId, tokenIn, amount, tokenOut, gasPrice ?? 30e9)
 
-    return res.json({
-      route: {
-        status: bestRoute?.status,
-        fromToken: bestRoute?.fromToken?.address === '' ? Native.onChain(chainId) : bestRoute?.fromToken,
-        toToken: bestRoute?.toToken?.address === '' ? Native.onChain(chainId) : bestRoute?.toToken,
-        primaryPrice: bestRoute?.primaryPrice,
-        swapPrice: bestRoute?.swapPrice,
-        amountIn: bestRoute?.amountIn,
-        amountInBN: bestRoute?.amountInBN.toString(),
-        amountOut: bestRoute?.amountOut,
-        amountOutBN: bestRoute?.amountOutBN.toString(),
-        priceImpact: bestRoute?.priceImpact,
-        totalAmountOut: bestRoute?.totalAmountOut,
-        totalAmountOutBN: bestRoute?.totalAmountOutBN.toString(),
-        gasSpent: bestRoute?.gasSpent,
-        legs: bestRoute?.legs,
-      },
-      args: to
-        ? Router.routeProcessor3Params(
-            poolCodesMap,
-            bestRoute,
-            tokenIn,
-            tokenOut,
-            to,
-            ROUTE_PROCESSOR_3_ADDRESS[chainId],
-            []
-          )
-        : undefined,
-    })
+    return res.json(
+      serialize({
+        route: {
+          status: bestRoute?.status,
+          fromToken: bestRoute?.fromToken?.address === '' ? Native.onChain(chainId) : bestRoute?.fromToken,
+          toToken: bestRoute?.toToken?.address === '' ? Native.onChain(chainId) : bestRoute?.toToken,
+          primaryPrice: bestRoute?.primaryPrice,
+          swapPrice: bestRoute?.swapPrice,
+          amountIn: bestRoute?.amountIn,
+          amountInBI: bestRoute?.amountInBI,
+          amountOut: bestRoute?.amountOut,
+          amountOutBI: bestRoute?.amountOutBI,
+          priceImpact: bestRoute?.priceImpact,
+          totalAmountOut: bestRoute?.totalAmountOut,
+          totalAmountOutBI: bestRoute?.totalAmountOutBI,
+          gasSpent: bestRoute?.gasSpent,
+          legs: bestRoute?.legs,
+        },
+        args: to
+          ? Router.routeProcessor3Params(
+              poolCodesMap,
+              bestRoute,
+              tokenIn,
+              tokenOut,
+              to,
+              ROUTE_PROCESSOR_3_ADDRESS[chainId],
+              [],
+              maxPriceImpact
+            )
+          : undefined,
+      })
+    )
   })
 
   app.get('/health', (req: Request, res: Response) => {
     return res.status(200).send()
   })
 
-  app.get('/get-pool-codes-for-tokens', (req: Request, res: Response) => {
-    console.log('HTTP: GET /get-pool-codes-for-tokens', JSON.stringify(req.query))
-    const { chainId } = querySchema.parse(req.query)
-    const extractor = extractors.get(chainId) as Extractor
-    const tokenManager = tokenManagers.get(chainId) as TokenManager
-    const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values()).slice(0, 100))
-    const poolCodes = extractor.getPoolCodesForTokens(tokens)
-    return res.json(poolCodes)
-  })
+  // app.get('/get-pool-codes-for-tokens', (req: Request, res: Response) => {
+  //   console.log('HTTP: GET /get-pool-codes-for-tokens', JSON.stringify(req.query))
+  //   const { chainId } = querySchema.parse(req.query)
+  //   const extractor = extractors.get(chainId) as Extractor
+  //   const tokenManager = tokenManagers.get(chainId) as TokenManager
+  //   const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values()).slice(0, 100))
+  //   const poolCodes = extractor.getPoolCodesForTokens(tokens)
+  //   return res.json(poolCodes)
+  // })
 
-  app.get('/pool-codes', (req: Request, res: Response) => {
-    console.log('HTTP: GET /pool-codes', JSON.stringify(req.query))
-    const { chainId } = querySchema.parse(req.query)
-    const extractor = extractors.get(chainId) as Extractor
-    const poolCodes = extractor.getCurrentPoolCodes()
-    res.json(poolCodes)
-  })
+  // app.get('/pool-codes', (req: Request, res: Response) => {
+  //   console.log('HTTP: GET /pool-codes', JSON.stringify(req.query))
+  //   const { chainId } = querySchema.parse(req.query)
+  //   const extractor = extractors.get(chainId) as Extractor
+  //   const poolCodes = extractor.getCurrentPoolCodes()
+  //   res.json(poolCodes)
+  // })
 
-  app.get('/debug-sentry', function mainHandler(req, res) {
-    throw new Error('My first Sentry error!')
-  })
+  // app.get('/debug-sentry', function mainHandler(req, res) {
+  //   throw new Error('My first Sentry error!')
+  // })
 
   // The error handler must be registered before any other error middleware and after all controllers
   app.use(Sentry.Handlers.errorHandler())
-
-  // Optional fallthrough error handler
-  app.use(function onError(err, req, res, next) {
-    // The error id is attached to `res.sentry` to be returned
-    // and optionally displayed to the user for support.
-    res.statusCode = 500
-    res.end(res.sentry + '\n')
-  })
-
-  app.use(cors())
 
   app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}`)

@@ -10,7 +10,7 @@ import { Counter } from './Counter'
 import { LogFilter2 } from './LogFilter2'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { PermanentCache } from './PermanentCache'
-import { QualityChecker, QualityCheckerCallBackArg } from './QualityChecker'
+import { PoolSyncState, QualityChecker, QualityCheckerCallBackArg } from './QualityChecker'
 import { TokenManager } from './TokenManager'
 import { UniV3EventsAbi, UniV3PoolWatcher } from './UniV3PoolWatcher'
 import { warnLog } from './WarnLog'
@@ -30,9 +30,9 @@ export interface PoolInfo {
 }
 
 enum LogsProcessing {
-  NotStarted,
-  Starting,
-  Started,
+  NotStarted = 'NotStarted',
+  Starting = 'Starting',
+  Started = 'Started',
 }
 
 interface PoolCacheRecord {
@@ -92,6 +92,13 @@ export class UniV3Extractor {
           `${arg.correctPool ? 'pool was updated ' : ''}` +
           `(${this.qualityChecker.totalMatchCounter}/${this.qualityChecker.totalCheckCounter})`
       )
+      if (arg.status !== PoolSyncState.Match && arg.status !== PoolSyncState.ReservesMismatch)
+        warnLog(
+          this.multiCallAggregator.chainId,
+          `Pool ${arg.ethalonPool.address} quality check: ${arg.status} ` +
+            `${arg.correctPool ? 'pool was updated ' : ''}` +
+            `(${this.qualityChecker.totalMatchCounter}/${this.qualityChecker.totalCheckCounter})`
+        )
       return true
     })
 
@@ -110,7 +117,7 @@ export class UniV3Extractor {
         }
       } else {
         this.logFilter.start()
-        warnLog(this.multiCallAggregator.chainId, `Log collecting failed. Pools refetching`)
+        warnLog(this.multiCallAggregator.chainId, 'Log collecting failed. Pools refetching')
         Array.from(this.poolMap.values()).forEach((p) => p.updatePoolState())
       }
     })
@@ -118,12 +125,12 @@ export class UniV3Extractor {
 
   // TODO: stop ?
   async start() {
-    if (this.logProcessingStatus == LogsProcessing.NotStarted) {
+    if (this.logProcessingStatus === LogsProcessing.NotStarted) {
       this.logProcessingStatus = LogsProcessing.Started
       const startTime = performance.now()
       this.logFilter.start()
 
-      if (this.tokenManager.tokens.size == 0) await this.tokenManager.addCachedTokens()
+      if (this.tokenManager.tokens.size === 0) await this.tokenManager.addCachedTokens()
 
       // Add cached pools to watching
       const cachedPools: Map<string, PoolInfo> = new Map() // map instead of array to avoid duplicates
@@ -145,7 +152,8 @@ export class UniV3Extractor {
       this.consoleLog(`${cachedPools.size} pools were taken from cache`)
       warnLog(
         this.multiCallAggregator.chainId,
-        `ExtractorV3 was started (${Math.round(performance.now() - startTime)}ms)`
+        `ExtractorV3 was started (${Math.round(performance.now() - startTime)}ms)`,
+        'info'
       )
     }
   }
@@ -216,12 +224,12 @@ export class UniV3Extractor {
   } {
     const prefetched: UniV3PoolWatcher[] = []
     const fetching: Promise<UniV3PoolWatcher | undefined>[] = []
-    const fees = Object.values(FeeAmount).filter((fee) => typeof fee == 'number') as FeeAmount[]
+    const fees = Object.values(FeeAmount).filter((fee) => typeof fee === 'number') as FeeAmount[]
     const startTime = performance.now()
     for (let i = 0; i < tokens.length; ++i) {
       this.tokenManager.findToken(tokens[i].address as Address) // to let save it in the cache
       for (let j = i + 1; j < tokens.length; ++j) {
-        if (tokens[i].address == tokens[j].address) continue
+        if (tokens[i].address === tokens[j].address) continue
         const [t0, t1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i], tokens[j]] : [tokens[j], tokens[i]]
         this.factories.forEach((factory) => {
           fees.forEach((fee) => {
@@ -237,7 +245,7 @@ export class UniV3Extractor {
               .callValue(factory.address, IUniswapV3Factory.abi as Abi, 'getPool', [t0.address, t1.address, fee])
               .then(
                 (checkedAddress) => {
-                  if (checkedAddress == '0x0000000000000000000000000000000000000000') {
+                  if (checkedAddress === '0x0000000000000000000000000000000000000000') {
                     this.emptyAddressSet.add(addr)
                     return
                   }
@@ -334,6 +342,6 @@ export class UniV3Extractor {
   }
 
   consoleLog(log: string) {
-    if (this.logging) console.log(`V3-${this.multiCallAggregator.chainId}: ` + log)
+    if (this.logging) console.log(`V3-${this.multiCallAggregator.chainId}: ${log}`)
   }
 }

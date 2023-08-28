@@ -6,6 +6,7 @@ import { ChainId } from '@sushiswap/chain'
 import { nativeCurrencyIds } from '@sushiswap/currency'
 import { isRouteProcessorChainId, RouteProcessorChainId } from '@sushiswap/route-processor'
 import { fastify } from 'fastify'
+import { Address } from 'viem'
 import { z } from 'zod'
 
 const server = fastify({ logger: true })
@@ -30,7 +31,7 @@ const querySchema = z.object({
   toTokenId: z.string().default('SUSHI'),
   gasPrice: z.coerce.number().int().gte(1),
   amount: z.coerce.bigint(),
-  to: z.optional(z.string()),
+  to: z.optional(z.string().transform((to) => to as Address)),
   preferSushi: z.coerce.boolean().default(false),
 })
 
@@ -43,9 +44,9 @@ server.get('/v0', async (request) => {
 // Run the server!
 const start = async () => {
   try {
-    await server.listen({ host: process.env['HOST'], port: process.env['PORT'] })
-  } catch (err) {
-    server.log.error(err)
+    await server.listen({ host: process.env.HOST, port: process.env.PORT })
+  } catch (error) {
+    server.log.error(error)
     process.exit(1)
   }
 }

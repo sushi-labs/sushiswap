@@ -1,5 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber'
-
 import { ConstantProductRPool, findMultiRouteExactIn, RouteStatus } from '../src'
 
 // Tests that Tines doesn't fail if input token == output token
@@ -21,16 +19,16 @@ it('token0 = token1', () => {
     token0,
     token1,
     0.003,
-    BigNumber.from('0x0f4240'), // 1e6
-    BigNumber.from('0xe8d4a51000') // 1e12
+    BigInt(1e6),
+    BigInt(1e12)
   )
   const pool2 = new ConstantProductRPool(
     '0x253029F0D3593Afd4187500F1CB243F1EceaABAB',
     token0,
     token1,
     0.003,
-    BigNumber.from('0x0f4240'), // 1e6
-    BigNumber.from('0xe8d4a51000') // 1e12
+    BigInt(1e6),
+    BigInt(1e12)
   )
   const res = findMultiRouteExactIn(
     token0,

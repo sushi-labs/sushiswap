@@ -2,14 +2,11 @@
 
 import { ThemeProvider } from '@sushiswap/ui'
 import { SplashController } from '@sushiswap/ui/components/SplashController'
-import { TokenProvider } from 'ui/swap/token/TokenProvider'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
-      <TokenProvider>
-        <SplashController>{children}</SplashController>
-      </TokenProvider>
+      <SplashController>{children}</SplashController>
     </ThemeProvider>
   )
 }

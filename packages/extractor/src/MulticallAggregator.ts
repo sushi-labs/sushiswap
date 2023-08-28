@@ -1,7 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Abi, Narrow } from 'abitype'
-import { Address, PublicClient } from 'viem'
-import { Contract, MulticallContracts } from 'viem/dist/types/types/multicall'
+import { Address, MulticallContract, MulticallContracts, PublicClient } from 'viem'
 
 import { warnLog } from './WarnLog'
 
@@ -18,7 +17,7 @@ const getBlockNumberAbi: Abi = [
 // aggregates several calls in one multicall
 export class MultiCallAggregator {
   client: PublicClient
-  pendingCalls: MulticallContracts<Contract[]> = []
+  pendingCalls: MulticallContracts<MulticallContract[]> = []
   pendingResolves: ((arg: any) => void)[] = []
   pendingRejects: ((arg: unknown) => void)[] = []
   timer?: NodeJS.Timeout
@@ -82,7 +81,7 @@ export class MultiCallAggregator {
     abi: Abi,
     functions: [string, unknown[] | undefined][]
   ): Promise<{ blockNumber: number; returnValues: unknown[] }> {
-    if (functions.length == 0) return { blockNumber: -1, returnValues: [] }
+    if (functions.length === 0) return { blockNumber: -1, returnValues: [] }
     this.sheduleMulticall()
     const promise = Promise.all(functions.map(([name, args]) => this.call(address, abi, name, args, false)))
     this.makeMulticallIfMaxBatchSizeExceeds()
@@ -91,9 +90,9 @@ export class MultiCallAggregator {
   }
 
   async callSameBlock(
-    calls: MulticallContracts<Contract[]>
+    calls: MulticallContracts<MulticallContract[]>
   ): Promise<{ blockNumber: number; returnValues: unknown[] }> {
-    if (calls.length == 0) return { blockNumber: -1, returnValues: [] }
+    if (calls.length === 0) return { blockNumber: -1, returnValues: [] }
     this.sheduleMulticall()
     const promise = Promise.all(
       calls.map(({ address, abi, functionName, args }) =>
@@ -115,7 +114,7 @@ export class MultiCallAggregator {
   }
 
   async makeMulticallIfMaxBatchSizeExceeds(): Promise<void> {
-    if (this.maxCallsInOneBatch == 0 || this.pendingCalls.length < this.maxCallsInOneBatch) return
+    if (this.maxCallsInOneBatch === 0 || this.pendingCalls.length < this.maxCallsInOneBatch) return
     await this.makeMulticallNow()
   }
 
@@ -126,7 +125,7 @@ export class MultiCallAggregator {
     this.pendingCalls = []
     this.pendingResolves = []
     this.pendingRejects = []
-    if (pendingCalls.length == 0) return
+    if (pendingCalls.length === 0) return
     pendingCalls.unshift({
       address: this.getBlockNumberContractAddress(),
       abi: getBlockNumberAbi,
@@ -149,7 +148,7 @@ export class MultiCallAggregator {
         //   this.client.chain?.id,
         //   `Multicall error ${pendingCalls.map((c) => `${c.address}:${c.functionName}(${c.args})`)}\n` + e
         // )
-        warnLog(this.client.chain?.id, `Multicall error ` + e)
+        warnLog(this.client.chain?.id, `Multicall error ${e}`)
         continue
       }
       break
@@ -160,14 +159,14 @@ export class MultiCallAggregator {
     } else {
       const blockNumber = res[0].result as number
       for (let i = 1; i < res.length; ++i) {
-        if (res[i].status == 'success') pendingResolves[i - 1]({ blockNumber, returnValue: res[i].result })
+        if (res[i].status === 'success') pendingResolves[i - 1]({ blockNumber, returnValue: res[i].result })
         else pendingRejects[i - 1](res[i].error)
       }
     }
   }
 
   getBlockNumberContractAddress(): Address {
-    if (this.client.chain?.id == ChainId.ARBITRUM) {
+    if (this.client.chain?.id === ChainId.ARBITRUM) {
       // multicall3.getBlockNumber returns address for L1 Ethereum, not local L2
       // this is Arbitrum-adapted multicall2 contract
       return '0x842eC2c7D803033Edf55E478F461FC547Bc54EB2'

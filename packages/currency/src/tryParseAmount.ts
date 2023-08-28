@@ -1,5 +1,4 @@
 import { parseUnits } from '@ethersproject/units'
-import { JSBI } from '@sushiswap/math'
 
 import { Amount } from './Amount'
 import { Type } from './Type'
@@ -12,7 +11,7 @@ export function tryParseAmount<T extends Type>(value?: string, currency?: T): Am
   try {
     const typedValueParsed = parseUnits(value, currency.decimals).toString()
     if (typedValueParsed !== '0') {
-      return Amount.fromRawAmount(currency, JSBI.BigInt(typedValueParsed))
+      return Amount.fromRawAmount(currency, BigInt(typedValueParsed))
     }
   } catch (error) {
     // should fail if the user specifies too many decimal places of precision (or maybe exceed max uint?)
