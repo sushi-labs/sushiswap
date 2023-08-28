@@ -2,8 +2,11 @@ import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
 import { shortenAddress } from '@sushiswap/format'
 import { useCustomTokens } from '@sushiswap/hooks'
+import { isTokenSecurityChainId } from '@sushiswap/react-query'
+import { GoPlusLabsIcon } from '@sushiswap/ui'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import { FC, useMemo } from 'react'
+import { TaxTokenDialog } from './TaxTokenDialog'
 
 interface UnknownTokenAlert {
   pool: Pool
@@ -13,7 +16,7 @@ const tokenName = (token: Pool['token0']) =>
   token.name ? `${token.name} (${token.symbol})` : shortenAddress(token.address)
 
 export const UnknownTokenAlert: FC<UnknownTokenAlert> = ({ pool }) => {
-  const { token0, token1 } = pool
+  const { token0, token1, protocol } = pool
 
   const { hasToken } = useCustomTokens()
 
@@ -42,16 +45,30 @@ export const UnknownTokenAlert: FC<UnknownTokenAlert> = ({ pool }) => {
   if (!(token0NotInList || token1NotInList)) return <></>
 
   return (
-    <div className="flex items-center justify-center bg-yellow/20 gap-6 md:gap-3 dark:text-yellow text-yellow-900 px-4 py-3 font-semibold rounded-xl">
-      <div>
-        {`${
-          token0NotInList && token1NotInList
-            ? `${tokenName(token0)} & ${tokenName(token1)} are unknown.`
-            : `${tokenName(token0NotInList ? token0 : token1)} is unknown.`
-        } Please conduct your own research before interacting with ${
-          token0NotInList && token1NotInList ? 'these tokens.' : 'this token.'
-        }`}
+    <>
+      <div className="relative flex items-center justify-center gap-2 bg-yellow/20 dark:text-yellow text-yellow-900 px-4 py-3.5 rounded-xl">
+        <div className="font-semibold">
+          {`${
+            token0NotInList && token1NotInList
+              ? `${tokenName(token0)} & ${tokenName(token1)} are unknown.`
+              : `${tokenName(token0NotInList ? token0 : token1)} is unknown.`
+          } Please conduct your own research before interacting with ${
+            token0NotInList && token1NotInList ? 'these tokens.' : 'this token.'
+          }`}
+        </div>
+        {protocol === 'SUSHISWAP_V3' && tokenFrom?.token?.chainId && isTokenSecurityChainId(tokenFrom.token.chainId) ? (
+          <div className="text-right whitespace-nowrap absolute bottom-0 right-4">
+            <span className="text-xs">Token security powered by GoPlus</span>
+            <GoPlusLabsIcon width={16} height={20} className="inline-flex" />
+          </div>
+        ) : null}
       </div>
-    </div>
+      {protocol === 'SUSHISWAP_V3' &&
+      tokenTo?.token &&
+      tokenFrom?.token &&
+      isTokenSecurityChainId(tokenFrom.token.chainId) ? (
+        <TaxTokenDialog token0={tokenFrom.token} token1={tokenTo.token} />
+      ) : null}
+    </>
   )
 }

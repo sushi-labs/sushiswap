@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { z } from 'zod'
 
 const SUPPORTED_CHAIN_IDS = [
@@ -160,9 +160,9 @@ const fetchTokenSecurityQueryFn = async (currencies: (Token | undefined)[]) => {
 export const useTokenSecurity = ({
   currencies,
   enabled = true,
-}: {
+  ...rest
+}: UseQueryOptions<Awaited<ReturnType<typeof fetchTokenSecurityQueryFn>>> & {
   currencies: (Token | undefined)[]
-  enabled?: boolean
 }) => {
   return useQuery({
     queryKey: ['useTokenSecurity', currencies?.map((currency) => currency?.id)],
@@ -171,5 +171,6 @@ export const useTokenSecurity = ({
     keepPreviousData: true,
     staleTime: 900000, // 15 mins
     cacheTime: 86400000, // 24hs
+    ...rest,
   })
 }

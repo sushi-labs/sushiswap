@@ -3,13 +3,14 @@
 import { ArrowLeftIcon, SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
+import { isTokenSecurityChainId } from '@sushiswap/react-query'
 import { typographyVariants } from '@sushiswap/ui'
 import { Separator } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
-import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { GoPlusLabsIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
 import { List } from '@sushiswap/ui/components/list/List'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { SplashController } from '@sushiswap/ui/components/SplashController'
@@ -31,6 +32,7 @@ import {
 } from 'ui/pool/ConcentratedLiquidityURLStateProvider'
 import { ConcentratedLiquidityWidget } from 'ui/pool/ConcentratedLiquidityWidget'
 import { SelectFeeConcentratedWidget } from 'ui/pool/NewPositionSection/SelectFeeConcentratedWidget'
+import { TaxTokenDialog } from 'ui/pool/TaxTokenDialog'
 
 export default function Page() {
   return (
@@ -111,6 +113,7 @@ const _Add: FC = () => {
 
   return (
     <>
+      {token0 && isTokenSecurityChainId(token0.chainId) ? <TaxTokenDialog token0={token0} token1={token1} /> : null}
       <div className="hidden lg:block">
         <div className="lg:grid grid-cols-2 items-center gap-6 sticky top-[96px]">
           <div className="flex col-span-2 gap-7">
@@ -241,6 +244,12 @@ const _Add: FC = () => {
             successLink={`/pools/${chainId}:${poolAddress}?activeTab=myPositions`}
           />
         </ContentBlock>
+        {token0?.chainId && isTokenSecurityChainId(token0.chainId) ? (
+          <div className="text-right">
+            <span className="text-xs">Token security powered by GoPlus</span>
+            <GoPlusLabsIcon width={16} height={20} className="inline-flex" />
+          </div>
+        ) : null}
       </div>
     </>
   )
