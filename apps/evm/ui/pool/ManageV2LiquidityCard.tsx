@@ -1,4 +1,6 @@
-import { Pool } from '@sushiswap/client'
+'use client'
+
+import { Pool, Protocol } from '@sushiswap/client'
 import {
   Card,
   CardContent,
@@ -60,20 +62,18 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool }) 
             <PoolPositionRewardsProvider pool={pool}>
               <TabsContent value="add">
                 <CardContent>
-                  {pool.protocol === 'BENTOBOX_CLASSIC' || pool.protocol === 'BENTOBOX_STABLE' ? (
+                  {pool.protocol === Protocol.BENTOBOX_CLASSIC || pool.protocol === Protocol.BENTOBOX_STABLE ? (
                     <AddSectionTrident pool={pool} />
-                  ) : (
-                    <AddSectionLegacy pool={pool} />
-                  )}
+                  ) : null}
+                  {pool.protocol === Protocol.SUSHISWAP_V2 ? <AddSectionLegacy pool={pool} /> : null}
                 </CardContent>
               </TabsContent>
               <TabsContent value="remove">
                 <CardContent>
-                  {pool.protocol === 'BENTOBOX_CLASSIC' || pool.protocol === 'BENTOBOX_STABLE' ? (
+                  {pool.protocol === Protocol.BENTOBOX_CLASSIC || pool.protocol === Protocol.BENTOBOX_STABLE ? (
                     <RemoveSectionTrident pool={pool} />
-                  ) : (
-                    <RemoveSectionLegacy pool={pool} />
-                  )}
+                  ) : null}
+                  {pool.protocol === Protocol.SUSHISWAP_V2 ? <RemoveSectionLegacy pool={pool} /> : null}
                 </CardContent>
               </TabsContent>
               <TabsContent value="stake">
