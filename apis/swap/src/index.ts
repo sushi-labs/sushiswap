@@ -25,7 +25,9 @@ const querySchema = z.object({
     .gte(0)
     .lte(2 ** 256)
     .default(ChainId.ETHEREUM)
-    .refine((chainId) => isRouteProcessorChainId(chainId), { message: 'ChainId not supported.' })
+    .refine((chainId) => isRouteProcessorChainId(chainId as RouteProcessorChainId), {
+      message: 'ChainId not supported.',
+    })
     .transform((chainId) => chainId as RouteProcessorChainId),
   fromTokenId: z.string().default(nativeCurrencyIds[ChainId.ETHEREUM]),
   toTokenId: z.string().default('SUSHI'),
