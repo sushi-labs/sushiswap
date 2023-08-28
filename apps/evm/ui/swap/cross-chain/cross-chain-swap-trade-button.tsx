@@ -2,7 +2,7 @@
 
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ZERO } from '@sushiswap/math'
-import { sushiXSwapAddress, SushiXSwapChainId } from '@sushiswap/sushixswap'
+import { SUSHIXSWAP_ADDRESS, SushiXSwapChainId } from '@sushiswap/sushixswap-sdk'
 import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Checker } from '@sushiswap/wagmi/future/systems'
@@ -38,7 +38,7 @@ export const CrossChainSwapTradeButton: FC = () => {
                 fullWidth
                 chainId={chainId0 as BentoBoxChainId}
                 id="approve-bentobox"
-                masterContract={sushiXSwapAddress[chainId0 as SushiXSwapChainId]}
+                masterContract={SUSHIXSWAP_ADDRESS[chainId0 as SushiXSwapChainId]}
               >
                 <Checker.ApproveERC20
                   id="approve-erc20"

@@ -1,4 +1,5 @@
-import { isSushiXSwapChainId, sushiXSwapAbi, sushiXSwapAddress, SushiXSwapChainId } from '@sushiswap/sushixswap'
+import { sushiXSwapAbi } from '@sushiswap/abi'
+import { isSushiXSwapChainId, SUSHIXSWAP_ADDRESS, SushiXSwapChainId } from '@sushiswap/sushixswap-sdk'
 import { useMemo } from 'react'
 import { WalletClient } from 'viem'
 import { usePublicClient, useWalletClient } from 'wagmi'
@@ -6,8 +7,8 @@ import { getContract } from 'wagmi/actions'
 
 export const getSushiXSwapContractConfig = (chainId: SushiXSwapChainId) => ({
   chainId,
-  address: sushiXSwapAddress[chainId],
-  abi: sushiXSwapAbi[chainId],
+  address: SUSHIXSWAP_ADDRESS[chainId],
+  abi: sushiXSwapAbi,
 })
 
 export function useSushiXSwapContract(chainId: SushiXSwapChainId | undefined) {

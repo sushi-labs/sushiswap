@@ -39,7 +39,7 @@
     "@sushiswap/router": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
     "@sushiswap/stargate": "workspace:*",
-    "@sushiswap/sushixswap": "workspace:*",
+    "@sushiswap/sushixswap-sdk": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/token-lists": "workspace:*",

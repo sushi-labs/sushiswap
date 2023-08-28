@@ -621,7 +621,7 @@ importers:
       '@sushiswap/router': workspace:*
       '@sushiswap/router-config': workspace:*
       '@sushiswap/stargate': workspace:*
-      '@sushiswap/sushixswap': workspace:*
+      '@sushiswap/sushixswap-sdk': workspace:*
       '@sushiswap/tailwindcss-config': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/token-lists': workspace:*
@@ -712,7 +712,7 @@ importers:
       '@sushiswap/router': link:../../packages/router
       '@sushiswap/router-config': link:../../config/router
       '@sushiswap/stargate': link:../../packages/stargate
-      '@sushiswap/sushixswap': link:../../protocols/sushixswap
+      '@sushiswap/sushixswap-sdk': link:../../packages/sushixswap-sdk
       '@sushiswap/tailwindcss-config': link:../../config/tailwindcss
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/token-lists': link:../../packages/token-lists
@@ -2313,6 +2313,27 @@ importers:
       jest: 29.3.1
       typescript: 5.1.6
 
+  packages/sushixswap-sdk:
+    specifiers:
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/node': '18'
+      eslint: 8.43.0
+      typescript: 5.1.6
+    dependencies:
+      '@sushiswap/chain': link:../chain
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/typescript-config': link:../../config/typescript
+      '@types/node': 18.17.5
+      eslint: 8.43.0
+      typescript: 5.1.6
+
   packages/tines:
     specifiers:
       '@sushiswap/currency': workspace:*
@@ -2752,7 +2773,7 @@ importers:
       '@sushiswap/route-processor': workspace:*
       '@sushiswap/router': workspace:*
       '@sushiswap/router-config': workspace:*
-      '@sushiswap/sushixswap': workspace:*
+      '@sushiswap/sushixswap-sdk': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/trident-sdk': workspace:*
       '@sushiswap/types': workspace:*
@@ -2812,7 +2833,7 @@ importers:
       '@sushiswap/route-processor': link:../../protocols/route-processor
       '@sushiswap/router': link:../router
       '@sushiswap/router-config': link:../../config/router
-      '@sushiswap/sushixswap': link:../../protocols/sushixswap
+      '@sushiswap/sushixswap-sdk': link:../sushixswap-sdk
       '@sushiswap/tines': link:../tines
       '@sushiswap/trident-sdk': link:../trident-sdk
       '@sushiswap/types': link:../types
