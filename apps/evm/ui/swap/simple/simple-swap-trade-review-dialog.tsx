@@ -1,6 +1,6 @@
 'use client'
 
-import { routeProcessor3Abi, routeProcessorAbi } from '@sushiswap/abi'
+import { routeProcessor3_1Abi, routeProcessor3Abi, routeProcessorAbi } from '@sushiswap/abi'
 import { Chain } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
@@ -9,11 +9,13 @@ import { useSlippageTolerance } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { UseTradeReturn } from '@sushiswap/react-query'
 import {
+  isRouteProcessor3_1ChainId,
   isRouteProcessor3ChainId,
   isRouteProcessorChainId,
-  routeProcessor3Address,
-  routeProcessorAddress,
-} from '@sushiswap/route-processor'
+  ROUTE_PROCESSOR_3_1_ADDRESS,
+  ROUTE_PROCESSOR_3_ADDRESS,
+  ROUTE_PROCESSOR_ADDRESS,
+} from '@sushiswap/route-processor-sdk'
 import { Bridge, LiquidityProviders } from '@sushiswap/router'
 import {
   classNames,
@@ -48,8 +50,9 @@ import { stringify } from 'viem'
 
 import { TradeRoutePathView } from '../trade-route-path-view'
 import { useDerivedStateSimpleSwap, useSimpleSwapTrade } from './derivedstate-simple-swap-provider'
+import { SimpleSwapErrorMessage } from './simple-swap-error-message'
 
-export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ children }) => {
+export const SimpleSwapTradeReviewDialog: FC<{ children(error: Error | null): ReactNode }> = ({ children }) => {
   const {
     state: { token0, token1, chainId, swapAmount, recipient },
     mutate: { setSwapAmount },
@@ -68,14 +71,24 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
   const isUnwrap = token1?.isNative && token0?.wrapped.address === Native.onChain(chainId).wrapped.address
   const isSwap = !isWrap && !isUnwrap
 
-  const { config, isError, error } = usePrepareContractWrite({
+  const {
+    config,
+    isError,
+    error,
+    isFetching: isPrepareFetching,
+    isSuccess: isPrepareSuccess,
+  } = usePrepareContractWrite({
     chainId: chainId,
-    address: isRouteProcessor3ChainId(chainId)
-      ? routeProcessor3Address[chainId]
+    address: isRouteProcessor3_1ChainId(chainId)
+      ? ROUTE_PROCESSOR_3_1_ADDRESS[chainId]
+      : isRouteProcessor3ChainId(chainId)
+      ? ROUTE_PROCESSOR_3_ADDRESS[chainId]
       : isRouteProcessorChainId(chainId)
-      ? routeProcessorAddress[chainId]
+      ? ROUTE_PROCESSOR_ADDRESS[chainId]
       : undefined,
-    abi: (isRouteProcessor3ChainId(chainId)
+    abi: (isRouteProcessor3_1ChainId(chainId)
+      ? routeProcessor3_1Abi
+      : isRouteProcessor3ChainId(chainId)
       ? routeProcessor3Abi
       : isRouteProcessorChainId(chainId)
       ? routeProcessorAbi
@@ -84,7 +97,9 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
     args: trade?.writeArgs as any,
     enabled: Boolean(
       trade?.writeArgs &&
-        (isRouteProcessorChainId(chainId) || isRouteProcessor3ChainId(chainId)) &&
+        (isRouteProcessorChainId(chainId) ||
+          isRouteProcessor3ChainId(chainId) ||
+          isRouteProcessor3_1ChainId(chainId)) &&
         approved &&
         trade?.route?.status !== 'NoWay' &&
         chain?.id === chainId
@@ -315,7 +330,10 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
       <DialogReview>
         {({ confirm }) => (
           <>
-            {children}
+            <div className="flex flex-col">
+              <SimpleSwapErrorMessage error={error} isSuccess={isPrepareSuccess} isLoading={isPrepareFetching} />
+              <div className="mt-4">{children(error)}</div>
+            </div>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>
@@ -423,7 +441,9 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
                     size="xl"
                     loading={!writeAsync && !isError}
                     onClick={() => writeAsync?.().then(() => confirm())}
-                    disabled={isWritePending || Boolean(!writeAsync && swapAmount?.greaterThan(ZERO)) || isError}
+                    disabled={Boolean(
+                      !!error || isWritePending || Boolean(!writeAsync && swapAmount?.greaterThan(ZERO)) || isError
+                    )}
                     color={isError ? 'red' : warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
                     testId="confirm-swap"
                   >
@@ -435,9 +455,6 @@ export const SimpleSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ child
                       ? 'Unwrap'
                       : `Swap ${token0?.symbol} for ${token1?.symbol}`}
                   </Button>
-                  {error ? (
-                    <div className="scroll bg-red/10 text-red-700 p-2 px-3 rounded-lg break-all">{error?.message}</div>
-                  ) : null}
                 </div>
               </DialogFooter>
             </DialogContent>

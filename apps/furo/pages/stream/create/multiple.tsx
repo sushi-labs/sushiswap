@@ -1,6 +1,6 @@
 import { ArrowLeftIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
-import { FuroStreamRouterChainId } from '@sushiswap/furo'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { useNetwork } from '@sushiswap/wagmi'
 import Link from 'next/link'
@@ -12,7 +12,7 @@ import { CreateMultipleForm } from '../../../components/stream/CreateMultipleFor
 
 const MultipleStream = () => {
   const { chain } = useNetwork()
-  const chainId = (chain?.id || ChainId.ETHEREUM) as FuroStreamRouterChainId
+  const chainId = (chain?.id || ChainId.ETHEREUM) as FuroChainId
 
   return (
     <>

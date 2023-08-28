@@ -1,5 +1,5 @@
 import { calculateSlippageAmount, TridentConstantPool, TridentStablePool } from '@sushiswap/amm'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { Percent, ZERO } from '@sushiswap/math'
@@ -51,7 +51,7 @@ interface AddSectionReviewModalTridentProps {
   poolAddress: string
   poolState: TridentConstantPoolState | TridentStablePoolState | undefined
   pool: TridentConstantPool | TridentStablePool | null | undefined
-  chainId: BentoBoxV1ChainId
+  chainId: BentoBoxChainId
   token0: Type | undefined
   token1: Type | undefined
   input0: Amount<Type> | undefined
@@ -291,7 +291,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
                 <DialogTitle>Add liquidity</DialogTitle>
                 <DialogDescription>Please review your entered details.</DialogDescription>
               </DialogHeader>
-              <AddSectionReviewModal chainId={chainId as BentoBoxV1ChainId} input0={input0} input1={input1} />
+              <AddSectionReviewModal chainId={chainId as BentoBoxChainId} input0={input0} input1={input1} />
               <DialogFooter>
                 <Button
                   size="xl"

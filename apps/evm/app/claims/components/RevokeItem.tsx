@@ -1,7 +1,7 @@
 import { CheckIcon } from '@heroicons/react-v1/solid'
 import { Token } from '@sushiswap/currency'
 import { ZERO } from '@sushiswap/math'
-import { routeProcessor2Address, RouteProcessor2ChainId } from '@sushiswap/route-processor/exports/exports'
+import { ROUTE_PROCESSOR_2_ADDRESS, RouteProcessor2ChainId } from '@sushiswap/route-processor-sdk'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
@@ -17,13 +17,13 @@ export const RevokeItem: FC<{ token: Token; account: Address }> = ({ account, to
     chainId: token.chainId,
     token,
     owner: account,
-    spender: routeProcessor2Address[token.chainId as RouteProcessor2ChainId],
+    spender: ROUTE_PROCESSOR_2_ADDRESS[token.chainId as RouteProcessor2ChainId],
   })
 
   const { write, isPending } = useTokenRevokeApproval({
     account,
     token,
-    spender: routeProcessor2Address[token.chainId as RouteProcessor2ChainId],
+    spender: ROUTE_PROCESSOR_2_ADDRESS[token.chainId as RouteProcessor2ChainId],
   })
 
   if (isLoading) return <List.KeyValue skeleton />

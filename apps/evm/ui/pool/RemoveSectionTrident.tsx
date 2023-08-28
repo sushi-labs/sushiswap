@@ -1,7 +1,7 @@
 'use client'
 
 import { calculateSlippageAmount } from '@sushiswap/amm'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { Pool, Protocol } from '@sushiswap/client'
 import { Amount, Native } from '@sushiswap/currency'
@@ -50,7 +50,7 @@ interface RemoveSectionTridentProps {
 }
 
 export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRoot(({ pool: _pool }) => {
-  const chainId = _pool.chainId as BentoBoxV1ChainId
+  const chainId = _pool.chainId as BentoBoxChainId
   const { address } = useAccount()
   const { chain } = useNetwork()
   const { token0, token1, liquidityToken } = useTokensFromPool(_pool)
@@ -66,7 +66,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
   const [percentage, setPercentage] = useState<string>('0')
   const percentToRemove = useMemo(() => new Percent(percentage, 100), [percentage])
   const tokens = useMemo(() => [token0, token1], [token0, token1])
-  const rebases = useBentoBoxTotals(_pool.chainId as BentoBoxV1ChainId, tokens)
+  const rebases = useBentoBoxTotals(_pool.chainId as BentoBoxChainId, tokens)
   const { balance } = usePoolPosition()
 
   const slpAmountToRemove = useMemo(() => {

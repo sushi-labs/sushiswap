@@ -1,6 +1,7 @@
 import { AbiEvent } from 'abitype'
-import { Block, encodeEventTopics, Filter, Log, PublicClient, WatchBlocksReturnType } from 'viem'
+import { Block, encodeEventTopics, Log, PublicClient, WatchBlocksReturnType } from 'viem'
 
+import { repeatAsync } from './Utils'
 import { warnLog } from './WarnLog'
 
 export enum LogFilterType {
@@ -8,27 +9,6 @@ export enum LogFilterType {
   OneCall, // one eth_getLogs call for all topict - the most preferrable
   MultiCall, // separete eth_getLogs call for each topic - for those systems that fail at OneCall
   SelfFilter, // Topic filtering doesn't support for provider. Filtering on the client
-}
-
-const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
-
-async function repeatAsync(
-  times: number,
-  delayBetween: number,
-  action: () => Promise<void>,
-  failed: () => void,
-  print?: string
-) {
-  for (let i = 0; i < times; ++i) {
-    try {
-      await action()
-      if (print && i > 0) console.log(`attemps ${print}: ${i + 1}`)
-      return
-    } catch (e) {
-      if (delayBetween) await delay(delayBetween)
-    }
-  }
-  failed()
 }
 
 class BlockFrame {
@@ -91,7 +71,6 @@ export class LogFilter2 {
   eventsAll: AbiEvent[] = []
   topicsAll: string[] = []
   filters: FilterMy[] = []
-  logFilter?: Filter<'event'>
   blockProcessing = false
 
   unWatchBlocks?: WatchBlocksReturnType
@@ -121,7 +100,6 @@ export class LogFilter2 {
     if (this.unWatchBlocks) return // have been started
     if (this.logType == LogFilterType.Native) {
       this.client.createEventFilter({ events: this.eventsAll }).then((filter) => {
-        this.logFilter = filter as unknown as Filter<'event'>
         this.unWatchBlocks = this.client.watchBlocks({
           onBlock: async () => {
             if (this.blockProcessing) return

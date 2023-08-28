@@ -1,4 +1,4 @@
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Price, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { Button, List } from '@sushiswap/ui'
@@ -9,7 +9,7 @@ import { FC, useMemo } from 'react'
 import { Rate } from './Rate'
 
 interface AddSectionReviewModal {
-  chainId: BentoBoxV1ChainId
+  chainId: BentoBoxChainId
   input0: Amount<Type> | undefined
   input1: Amount<Type> | undefined
 }

@@ -1,8 +1,8 @@
-import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
-import { isTridentConstantPoolFactoryChainId, isTridentStablePoolFactoryChainId } from '@sushiswap/trident-sdk'
+import { isTridentChainId } from '@sushiswap/trident-sdk'
 import { config } from '@sushiswap/viem-config'
 import { createPublicClient, http, PublicClient } from 'viem'
 
@@ -109,8 +109,8 @@ export class DataFetcher {
 
     if (
       this._providerIsIncluded(LiquidityProviders.Trident, providers) &&
-      isBentoBoxV1ChainId(this.chainId) &&
-      (isTridentConstantPoolFactoryChainId(this.chainId) || isTridentStablePoolFactoryChainId(this.chainId))
+      isBentoBoxChainId(this.chainId) &&
+      isTridentChainId(this.chainId)
     ) {
       try {
         const provider = new TridentProvider(this.chainId, this.web3Client, this.databaseClient)

@@ -1,7 +1,7 @@
 'use client'
 
 import { HashZero } from '@ethersproject/constants'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { createErrorToast, createFailedToast, createToast } from '@sushiswap/ui/components/toast'
 import { useQuery } from '@tanstack/react-query'
 import { readContract } from '@wagmi/core'
@@ -16,7 +16,7 @@ import { ApprovalState } from '../../approvals'
 
 interface UseBentoboxApprovalParams {
   enabled?: boolean
-  chainId: BentoBoxV1ChainId
+  chainId: BentoBoxChainId
   masterContract?: Address
   tag: string
 }
@@ -134,7 +134,7 @@ export const useBentoboxApproval = ({
         domain: {
           name: 'BentoBox V1',
           chainId,
-          verifyingContract: bentoBoxV1Address[chainId],
+          verifyingContract: BENTOBOX_ADDRESS[chainId],
         },
         types: {
           SetMasterContractApproval: [

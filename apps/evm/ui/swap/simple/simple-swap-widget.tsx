@@ -22,8 +22,10 @@ export const SimpleSwapWidget = () => {
       <CrossChainBanner />
       <SimpleSwapToken0Input />
       <SimpleSwapSwitchTokensButton />
-      <SimpleSwapToken1Input />
-      <SimpleSwapTradeButton />
+      <div className="flex flex-col">
+        <SimpleSwapToken1Input />
+        <SimpleSwapTradeButton />
+      </div>
       <SimpleSwapTradeStats />
       <SimpleSwapTokenNotFoundDialog />
     </div>

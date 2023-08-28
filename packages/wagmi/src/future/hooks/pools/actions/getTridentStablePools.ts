@@ -1,11 +1,11 @@
 import { tridentStablePoolAbi, tridentStablePoolFactoryAbi } from '@sushiswap/abi'
 import { TridentStablePool } from '@sushiswap/amm'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Currency, Token } from '@sushiswap/currency'
 import { Address, readContracts } from 'wagmi'
 import { getContract } from 'wagmi/actions'
 
-import { getStablePoolFactoryContract } from '../../../contracts/actions'
+import { getTridentStablePoolFactoryContract } from '../../../contracts/actions'
 import { pairsUnique } from './utils'
 
 export enum TridentStablePoolState {
@@ -22,13 +22,11 @@ interface PoolData {
 }
 
 export const getTridentStablePools = async (
-  chainId: BentoBoxV1ChainId,
+  chainId: BentoBoxChainId,
   currencies: [Currency | undefined, Currency | undefined][],
   totals: Map<string, { base: bigint; elastic: bigint }>
 ) => {
-  const contract = getContract({
-    ...getStablePoolFactoryContract(chainId),
-  })
+  const contract = getContract(getTridentStablePoolFactoryContract(chainId))
 
   const _pairsUnique = pairsUnique(currencies)
   const _pairsUniqueAddr = _pairsUnique.map(([t0, t1]) => [t0.address, t1.address])
