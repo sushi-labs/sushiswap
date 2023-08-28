@@ -21,7 +21,7 @@
     "@octokit/auth-app": "4.0.7",
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/amm": "workspace:*",
-    "@sushiswap/bentobox": "workspace:*",
+    "@sushiswap/bentobox-sdk": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/client": "workspace:*",
     "@sushiswap/currency": "workspace:*",

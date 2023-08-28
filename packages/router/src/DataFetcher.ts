@@ -1,4 +1,4 @@
-import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
@@ -109,7 +109,7 @@ export class DataFetcher {
 
     if (
       this._providerIsIncluded(LiquidityProviders.Trident, providers) &&
-      isBentoBoxV1ChainId(this.chainId) &&
+      isBentoBoxChainId(this.chainId) &&
       (isTridentConstantPoolFactoryChainId(this.chainId) || isTridentStablePoolFactoryChainId(this.chainId))
     ) {
       try {

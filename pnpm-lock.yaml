@@ -600,7 +600,7 @@ importers:
       '@playwright/test': 1.37.0
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
-      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/bentobox-sdk': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/client': workspace:*
       '@sushiswap/currency': workspace:*
@@ -694,7 +694,7 @@ importers:
       '@octokit/auth-app': 4.0.7
       '@sushiswap/abi': link:../../packages/abi
       '@sushiswap/amm': link:../../packages/amm
-      '@sushiswap/bentobox': link:../../protocols/bentobox
+      '@sushiswap/bentobox-sdk': link:../../packages/bentobox-sdk
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/client': link:../../packages/client
       '@sushiswap/currency': link:../../packages/currency
@@ -799,7 +799,7 @@ importers:
       '@hookform/devtools': 4.3.0
       '@hookform/resolvers': 2.9.10
       '@playwright/test': 1.37.0
-      '@sushiswap/bentobox': 1.0.1
+      '@sushiswap/bentobox-sdk': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
@@ -860,7 +860,7 @@ importers:
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
       '@hookform/resolvers': 2.9.10_react-hook-form@7.41.2
-      '@sushiswap/bentobox': link:../../protocols/bentobox
+      '@sushiswap/bentobox-sdk': link:../../packages/bentobox-sdk
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/format': link:../../packages/format
@@ -1229,7 +1229,7 @@ importers:
       '@graphql-mesh/transform-type-merging': 0.94.1
       '@graphql-tools/merge': 9.0.0
       '@sushiswap/abi': workspace:*
-      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/bentobox-sdk': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
@@ -1262,7 +1262,7 @@ importers:
       '@google-cloud/run': 0.4.1
       '@google-cloud/scheduler': 3.3.0
       '@sushiswap/abi': link:../../packages/abi
-      '@sushiswap/bentobox': link:../../protocols/bentobox
+      '@sushiswap/bentobox-sdk': link:../../packages/bentobox-sdk
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/database': link:../../packages/database
@@ -1322,7 +1322,7 @@ importers:
       '@graphql-mesh/utils': 0.94.1
       '@graphql-tools/merge': 9.0.0
       '@sushiswap/abi': workspace:*
-      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/bentobox-sdk': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
@@ -1376,7 +1376,7 @@ importers:
       '@graphql-mesh/utils': 0.94.1_pzrbozn5wmlingtkfux56ukjgi
       '@graphql-tools/merge': 9.0.0_graphql@16.6.0
       '@sushiswap/abi': link:../../packages/abi
-      '@sushiswap/bentobox': link:../../protocols/bentobox
+      '@sushiswap/bentobox-sdk': link:../../packages/bentobox-sdk
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/database': link:../../packages/database
@@ -1566,6 +1566,29 @@ importers:
       '@sushiswap/currency': link:../currency
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/typescript-config': link:../../config/typescript
+      '@types/node': 18.17.5
+      eslint: 8.43.0
+      typescript: 5.1.6
+
+  packages/bentobox-sdk:
+    specifiers:
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/node': '18'
+      eslint: 8.43.0
+      typescript: 5.1.6
+      zod: 3.21.4
+    dependencies:
+      '@sushiswap/chain': link:../chain
+      zod: 3.21.4
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/node': 18.17.5
@@ -2199,7 +2222,7 @@ importers:
       '@ethersproject/solidity': 5.7.0
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
-      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/bentobox-sdk': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
@@ -2233,7 +2256,7 @@ importers:
       '@ethersproject/solidity': 5.7.0
       '@sushiswap/abi': link:../abi
       '@sushiswap/amm': link:../amm
-      '@sushiswap/bentobox': link:../../protocols/bentobox
+      '@sushiswap/bentobox-sdk': link:../bentobox-sdk
       '@sushiswap/chain': link:../chain
       '@sushiswap/currency': link:../currency
       '@sushiswap/math': link:../math
@@ -2716,7 +2739,7 @@ importers:
       '@radix-ui/react-slot': ^1.0.2
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
-      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/bentobox-sdk': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/client': workspace:*
       '@sushiswap/currency': workspace:*
@@ -2779,7 +2802,7 @@ importers:
       '@radix-ui/react-slot': 1.0.2_i73ekzlbntu7jol6ph2fvy4mga
       '@sushiswap/abi': link:../abi
       '@sushiswap/amm': link:../amm
-      '@sushiswap/bentobox': link:../../protocols/bentobox
+      '@sushiswap/bentobox-sdk': link:../bentobox-sdk
       '@sushiswap/chain': link:../chain
       '@sushiswap/client': link:../client
       '@sushiswap/currency': link:../currency
@@ -2946,7 +2969,7 @@ importers:
       '@openzeppelin/contracts': 4.8.0
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
-      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/bentobox-sdk': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
@@ -3002,7 +3025,7 @@ importers:
       '@openzeppelin/contracts': 4.8.0
       '@sushiswap/abi': link:../../packages/abi
       '@sushiswap/amm': link:../../packages/amm
-      '@sushiswap/bentobox': link:../bentobox
+      '@sushiswap/bentobox-sdk': link:../../packages/bentobox-sdk
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/eslint-config': link:../../config/eslint
@@ -3239,7 +3262,7 @@ importers:
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
       '@openzeppelin/contracts': 4.7.3
       '@rari-capital/solmate': 6.2.0
-      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/bentobox-sdk': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/hardhat-config': workspace:*
@@ -3258,7 +3281,7 @@ importers:
     dependencies:
       '@openzeppelin/contracts': 4.7.3
       '@rari-capital/solmate': 6.2.0
-      '@sushiswap/bentobox': link:../bentobox
+      '@sushiswap/bentobox-sdk': link:../../packages/bentobox-sdk
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/hardhat-config': link:../../config/hardhat
       '@sushiswap/types': link:../../packages/types
@@ -3306,7 +3329,7 @@ packages:
     dependencies:
       '@fastify/deepmerge': 1.3.0
       ajv: 8.12.0
-      ajv-formats: 2.1.1
+      ajv-formats: 2.1.1_ajv@8.12.0
       fast-deep-equal: 3.1.3
       rfdc: 1.3.0
 
@@ -3620,7 +3643,7 @@ packages:
       '@smithy/util-defaults-mode-node': 2.0.4
       '@smithy/util-retry': 2.0.0
       '@smithy/util-utf8': 2.0.0
-      tslib: 2.6.1
+      tslib: 2.6.2
     transitivePeerDependencies:
       - aws-crt
     dev: true
@@ -3661,7 +3684,7 @@ packages:
       '@smithy/util-defaults-mode-node': 2.0.4
       '@smithy/util-retry': 2.0.0
       '@smithy/util-utf8': 2.0.0
-      tslib: 2.6.1
+      tslib: 2.6.2
     transitivePeerDependencies:
       - aws-crt
     dev: true
@@ -3719,7 +3742,7 @@ packages:
       '@aws-sdk/types': 3.391.0
       '@smithy/property-provider': 2.0.4
       '@smithy/types': 2.2.1
-      tslib: 2.6.1
+      tslib: 2.6.2
     transitivePeerDependencies:
       - aws-crt
     dev: true
@@ -3731,7 +3754,7 @@ packages:
       '@aws-sdk/types': 3.391.0
       '@smithy/property-provider': 2.0.4
       '@smithy/types': 2.2.1
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: true
 
   /@aws-sdk/credential-provider-ini/3.391.0:
@@ -3747,7 +3770,7 @@ packages:
       '@smithy/property-provider': 2.0.4
       '@smithy/shared-ini-file-loader': 2.0.4
       '@smithy/types': 2.2.1
-      tslib: 2.6.1
+      tslib: 2.6.2
     transitivePeerDependencies:
       - aws-crt
     dev: true
@@ -3779,7 +3802,7 @@ packages:
       '@smithy/property-provider': 2.0.4
       '@smithy/shared-ini-file-loader': 2.0.4
       '@smithy/types': 2.2.1
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: true
 
   /@aws-sdk/credential-provider-sso/3.391.0:
@@ -3792,7 +3815,7 @@ packages:
       '@smithy/property-provider': 2.0.4
       '@smithy/shared-ini-file-loader': 2.0.4
       '@smithy/types': 2.2.1
-      tslib: 2.6.1
+      tslib: 2.6.2
     transitivePeerDependencies:
       - aws-crt
     dev: true
@@ -3804,7 +3827,7 @@ packages:
       '@aws-sdk/types': 3.391.0
       '@smithy/property-provider': 2.0.4
       '@smithy/types': 2.2.1
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: true
 
   /@aws-sdk/credential-providers/3.391.0:
@@ -12316,7 +12339,7 @@ packages:
       chalk: 4.1.2
       strip-ansi: 6.0.1
       supports-color: 8.1.1
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: true
 
   /@oclif/core/2.11.8_j2tenfqo3ojkwe6mxlyxo4e3lm:
@@ -15030,7 +15053,7 @@ packages:
       '@smithy/property-provider': 2.0.4
       '@smithy/types': 2.2.1
       '@smithy/url-parser': 2.0.4
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: true
 
   /@smithy/eventstream-codec/2.0.4:
@@ -15150,7 +15173,7 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@smithy/types': 2.2.1
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: true
 
   /@smithy/protocol-http/2.0.4:
@@ -20461,6 +20484,17 @@ packages:
 
   /ajv-formats/2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
+    peerDependenciesMeta:
+      ajv:
+        optional: true
+    dependencies:
+      ajv: 8.12.0
+    dev: false
+
+  /ajv-formats/2.1.1_ajv@8.12.0:
+    resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
+    peerDependencies:
+      ajv: ^8.0.0
     peerDependenciesMeta:
       ajv:
         optional: true
@@ -27319,7 +27353,7 @@ packages:
       '@whatwg-node/fetch': 0.8.8
       '@whatwg-node/server': 0.7.7
       ajv: 8.12.0
-      ajv-formats: 2.1.1
+      ajv-formats: 2.1.1_ajv@8.12.0
       hotscript: 1.0.13
       json-schema-to-ts: 2.9.2
       openapi-types: 12.1.3
@@ -40153,7 +40187,7 @@ packages:
       mkdirp: 2.1.6
       reflect-metadata: 0.1.13
       sha.js: 2.4.11
-      tslib: 2.6.1
+      tslib: 2.6.2
       typeorm-aurora-data-api-driver: 2.4.4
       uuid: 9.0.0
       yargs: 17.7.2

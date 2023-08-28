@@ -1,12 +1,12 @@
 import { bentoBoxV1TotalsAbi } from '@sushiswap/abi'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Type as Currency } from '@sushiswap/currency'
 import { Rebase } from '@sushiswap/tines'
 import { Address, readContracts } from 'wagmi'
 
 const totalsMap = new Map<string, Rebase>()
 
-export const getBentoboxTotalsMap = async (chainId: BentoBoxV1ChainId, currencies: (Currency | undefined)[]) => {
+export const getBentoboxTotalsMap = async (chainId: BentoBoxChainId, currencies: (Currency | undefined)[]) => {
   const addresses = currencies
     .filter((currency): currency is Currency => Boolean(currency?.wrapped))
     .map((token) => token.wrapped.address)
@@ -15,7 +15,7 @@ export const getBentoboxTotalsMap = async (chainId: BentoBoxV1ChainId, currencie
     (address) =>
       ({
         chainId,
-        address: bentoBoxV1Address[chainId] as Address,
+        address: BENTOBOX_ADDRESS[chainId] as Address,
         abi: bentoBoxV1TotalsAbi,
         functionName: 'totals',
         args: [address as Address],
@@ -36,7 +36,7 @@ export const getBentoboxTotalsMap = async (chainId: BentoBoxV1ChainId, currencie
   }
 }
 
-export const getBentoboxTotals = async (chainId: BentoBoxV1ChainId, currencies: (Currency | undefined)[]) => {
+export const getBentoboxTotals = async (chainId: BentoBoxChainId, currencies: (Currency | undefined)[]) => {
   const addresses = currencies
     .filter((currency): currency is Currency => Boolean(currency?.wrapped))
     .map((token) => token.wrapped.address)
@@ -45,7 +45,7 @@ export const getBentoboxTotals = async (chainId: BentoBoxV1ChainId, currencies: 
     (address) =>
       ({
         chainId,
-        address: bentoBoxV1Address[chainId] as Address,
+        address: BENTOBOX_ADDRESS[chainId] as Address,
         abi: bentoBoxV1TotalsAbi,
         functionName: 'totals',
         args: [address as Address],

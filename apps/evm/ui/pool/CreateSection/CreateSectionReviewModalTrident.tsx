@@ -5,7 +5,7 @@ import {
   TridentConstantPool,
   TridentStablePool,
 } from '@sushiswap/amm'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Type } from '@sushiswap/currency'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
@@ -39,7 +39,7 @@ import {
 import { AddSectionReviewModal } from '../AddSection'
 
 interface CreateSectionReviewModalTridentProps {
-  chainId: BentoBoxV1ChainId
+  chainId: BentoBoxChainId
   token0: Type | undefined
   token1: Type | undefined
   input0: Amount<Type> | undefined
@@ -292,7 +292,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
 
   return (
     <AddSectionReviewModal
-      chainId={chainId as BentoBoxV1ChainId}
+      chainId={chainId as BentoBoxChainId}
       input0={input0}
       input1={input1}
       open={open}

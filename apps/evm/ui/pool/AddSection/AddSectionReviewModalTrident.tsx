@@ -1,5 +1,5 @@
 import { calculateSlippageAmount, TridentConstantPool, TridentStablePool } from '@sushiswap/amm'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { Percent, ZERO } from '@sushiswap/math'
 import { Button } from '@sushiswap/ui/components/button'
@@ -38,7 +38,7 @@ interface AddSectionReviewModalTridentProps {
   poolAddress: string
   poolState: TridentConstantPoolState | TridentStablePoolState | undefined
   pool: TridentConstantPool | TridentStablePool | null | undefined
-  chainId: BentoBoxV1ChainId
+  chainId: BentoBoxChainId
   token0: Type | undefined
   token1: Type | undefined
   input0: Amount<Type> | undefined

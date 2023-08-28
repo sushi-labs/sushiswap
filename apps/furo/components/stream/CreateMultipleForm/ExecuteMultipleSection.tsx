@@ -1,5 +1,5 @@
 import { AddressZero } from '@ethersproject/constants'
-import { bentoBoxV1Address } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
 import { FundSource } from '@sushiswap/hooks'
@@ -57,7 +57,7 @@ export const ExecuteMultipleSection: FC<{
     return amounts.map((el, index) => tryParseAmount(el, _tokens[index]))
   }, [_tokens, amounts])
 
-  const rebases = useBentoBoxTotals(chainId, _tokens)
+  const rebases = useBentoBoxTotals(chainId as BentoBoxChainId, _tokens)
   const summedAmounts = useMemo(
     () =>
       _amounts.reduce<Record<string, Amount<Type>>>((acc, cur) => {
@@ -158,7 +158,7 @@ export const ExecuteMultipleSection: FC<{
     () =>
       Object.values(summedAmounts).map((amount) => ({
         amount,
-        contract: bentoBoxV1Address[chainId] as Address,
+        contract: BENTOBOX_ADDRESS[chainId as BentoBoxChainId] as Address,
       })),
     [chainId, summedAmounts]
   )
@@ -175,7 +175,7 @@ export const ExecuteMultipleSection: FC<{
             fullWidth={false}
             tag={APPROVE_TAG}
             id="create-multiple-stream-approve-bentobox"
-            chainId={chainId}
+            chainId={chainId as BentoBoxChainId}
             masterContract={getFuroStreamRouterContractConfig(chainId).address}
           >
             <Checker.ApproveERC20Multiple

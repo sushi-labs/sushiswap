@@ -1,4 +1,4 @@
-import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId, isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { Pool, Protocol } from '@sushiswap/client'
 import { tryParseAmount } from '@sushiswap/currency'
@@ -26,7 +26,7 @@ interface AddSectionTrident {
 
 export const AddSectionTrident: FC<AddSectionTrident> = ({ pool: _pool }) => {
   const [open, setOpen] = useState(false)
-  const chainId = _pool.chainId as BentoBoxV1ChainId
+  const chainId = _pool.chainId as BentoBoxChainId
   const isMounted = useIsMounted()
   const { token0, token1 } = useTokensFromPool(_pool)
   const [{ input0, input1 }, setTypedAmounts] = useState<{
@@ -149,16 +149,16 @@ export const AddSectionTrident: FC<AddSectionTrident> = ({ pool: _pool }) => {
                     className="whitespace-nowrap"
                     fullWidth
                     amount={parsedInput0}
-                    contract={bentoBoxV1Address[chainId]}
-                    enabled={isBentoBoxV1ChainId(chainId)}
+                    contract={BENTOBOX_ADDRESS[chainId]}
+                    enabled={isBentoBoxChainId(chainId)}
                   >
                     <Checker.ApproveERC20
                       id="add-liquidity-trident-approve-token1"
                       className="whitespace-nowrap"
                       fullWidth
                       amount={parsedInput1}
-                      contract={bentoBoxV1Address[chainId]}
-                      enabled={isBentoBoxV1ChainId(chainId)}
+                      contract={BENTOBOX_ADDRESS[chainId]}
+                      enabled={isBentoBoxChainId(chainId)}
                     >
                       <Checker.Success tag={APPROVE_TAG_ADD_TRIDENT}>
                         <Button size="xl" fullWidth onClick={() => setOpen(true)}>
@@ -177,7 +177,7 @@ export const AddSectionTrident: FC<AddSectionTrident> = ({ pool: _pool }) => {
         poolAddress={_pool.id}
         poolState={poolState}
         pool={pool}
-        chainId={_pool.chainId as BentoBoxV1ChainId}
+        chainId={_pool.chainId as BentoBoxChainId}
         token0={token0}
         token1={token1}
         input0={parsedInput0}

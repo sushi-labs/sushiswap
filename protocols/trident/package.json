@@ -37,7 +37,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "4.7.3",
     "@rari-capital/solmate": "6.2.0",
-    "@sushiswap/bentobox": "workspace:*",
+    "@sushiswap/bentobox-sdk": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/hardhat-config": "workspace:*",
     "@sushiswap/types": "workspace:*"

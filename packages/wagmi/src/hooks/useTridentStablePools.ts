@@ -1,6 +1,6 @@
 import { tridentStablePoolAbi, tridentStablePoolFactoryAbi } from '@sushiswap/abi'
 import { computeTridentStablePoolAddress, Fee, TridentStablePool } from '@sushiswap/amm'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Currency, Token, Type } from '@sushiswap/currency'
 import { isTridentStablePoolFactoryChainId } from '@sushiswap/trident-sdk'
 import { useMemo } from 'react'
@@ -32,7 +32,7 @@ interface PoolData {
 type Config = Omit<NonNullable<Parameters<typeof useContractReads>['0']>, 'contracts'>
 
 export function useGetTridentStablePools(
-  chainId: BentoBoxV1ChainId | undefined,
+  chainId: BentoBoxChainId | undefined,
   currencies: [Currency | undefined, Currency | undefined][],
   config: Config = { enabled: true }
 ): {
