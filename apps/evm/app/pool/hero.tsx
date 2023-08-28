@@ -16,7 +16,7 @@ import {
 import { DiscordIcon } from '@sushiswap/ui/components/icons'
 import { SelectIcon } from '@sushiswap/ui/components/select'
 import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { isSushiSwapV3ChainId, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useNetwork } from '@sushiswap/wagmi'
 import Link from 'next/link'
 import { FC } from 'react'
@@ -41,7 +41,7 @@ export const Hero: FC = () => {
             <Button asChild size="lg" className="rounded-r-none">
               <Link
                 href={
-                  SUSHISWAP_V3_SUPPORTED_CHAIN_IDS.includes(chainId as SushiSwapV3ChainId)
+                  isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
                     ? `/pool/add?chainId=${chainId}`
                     : `/pool/add/v2/${chainId}`
                 }
@@ -57,10 +57,7 @@ export const Hero: FC = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-80">
                 <DropdownMenuGroup>
-                  <DropdownMenuItem
-                    disabled={!SUSHISWAP_V3_SUPPORTED_CHAIN_IDS.includes(chainId as SushiSwapV3ChainId)}
-                    asChild
-                  >
+                  <DropdownMenuItem disabled={!isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)} asChild>
                     <Link
                       href={`/pool/add?chainId=${chainId}`}
                       className="flex flex-col !items-start gap-1 cursor-pointer"
@@ -68,9 +65,7 @@ export const Hero: FC = () => {
                       <div className="flex items-center gap-1 font-medium leading-none">
                         V3 Position
                         <Chip variant="secondary">
-                          {SUSHISWAP_V3_SUPPORTED_CHAIN_IDS.includes(chainId as SushiSwapV3ChainId)
-                            ? 'New 🔥'
-                            : 'Unavailable'}
+                          {isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId) ? 'New 🔥' : 'Unavailable'}
                         </Chip>
                       </div>
                       <p className="text-sm leading-snug text-muted-foreground">
