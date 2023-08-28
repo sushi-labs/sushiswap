@@ -10,6 +10,7 @@ import {
   routeProcessorAddress,
 } from '@sushiswap/route-processor'
 import { isRouteProcessor3_1ChainId } from '@sushiswap/route-processor'
+import { routeProcessor3_1Address } from '@sushiswap/route-processor'
 import { Router } from '@sushiswap/router'
 import { HexString } from '@sushiswap/types'
 import { useQuery } from '@tanstack/react-query'
@@ -108,7 +109,7 @@ ${logPools}
             fromToken,
             toToken,
             recipient,
-            routeProcessor3Address[chainId],
+            routeProcessor3_1Address[chainId],
             [],
             +slippagePercentage / 100
           )
@@ -154,7 +155,7 @@ ${logPools}
           : undefined
 
         // const overrides = fromToken.isNative && writeArgs?.[1] ? { value: BigNumber.from(writeArgs?.[1]) } : undefined
-        let value = fromToken.isNative && writeArgs?.[1] ? writeArgs?.[1] : undefined
+        let value = fromToken.isNative && writeArgs?.[1] ? writeArgs[1] : undefined
 
         if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
           writeArgs = ['0xbc4a6be1285893630d45c881c6c343a65fdbe278', 20000000000000000n, ...writeArgs]
