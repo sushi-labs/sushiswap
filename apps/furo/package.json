@@ -29,7 +29,7 @@
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/format": "workspace:*",
-    "@sushiswap/furo": "workspace:*",
+    "@sushiswap/furo-sdk": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/hooks": "workspace:*",

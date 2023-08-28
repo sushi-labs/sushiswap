@@ -1,6 +1,6 @@
 import { DuplicateIcon, PlusIcon, TrashIcon } from '@heroicons/react/solid'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FuroVestingRouterChainId } from '@sushiswap/furo/exports/exports'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import { Button } from '@sushiswap/ui/components/button'
 import { Form } from '@sushiswap/ui/components/form'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
@@ -19,7 +19,7 @@ import { ExecuteMultipleSection } from './ExecuteMultipleSection'
 import { ImportZoneSection } from './ImportZoneSection'
 import { ReviewSection } from './ReviewSection'
 
-export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ chainId }) => {
+export const CreateMultipleForm: FC<{ chainId: FuroChainId }> = ({ chainId }) => {
   const [review, setReview] = useState(false)
   const methods = useForm<CreateMultipleVestingFormSchemaType & CreateMultipleVestingBaseSchemaFormErrorsType>({
     resolver: zodResolver(CreateMultipleVestingModelSchema),

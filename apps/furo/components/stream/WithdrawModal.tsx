@@ -2,7 +2,7 @@ import { DownloadIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
-import { FuroStreamChainId } from '@sushiswap/furo'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import { TextField } from '@sushiswap/ui'
 import { DialogDescription, DialogHeader, DialogTitle } from '@sushiswap/ui'
 import { DialogContent, DialogFooter, DialogTrigger } from '@sushiswap/ui'
@@ -27,7 +27,7 @@ import { Stream, useStreamBalance } from '../../lib'
 
 interface WithdrawModalProps {
   stream: Stream
-  chainId: FuroStreamChainId
+  chainId: FuroChainId
 }
 
 export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {

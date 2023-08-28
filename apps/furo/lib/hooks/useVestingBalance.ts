@@ -1,11 +1,11 @@
 import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Token } from '@sushiswap/currency'
-import { FuroStreamChainId } from '@sushiswap/furo'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import { Address, getBentoBoxContractConfig, getFuroVestingContractConfig, readContract } from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
 
 interface UseVestingBalance {
-  chainId: FuroStreamChainId
+  chainId: FuroChainId
   vestingId: string | undefined
   token: Token | undefined
   enabled?: boolean

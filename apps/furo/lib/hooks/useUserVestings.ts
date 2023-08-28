@@ -1,5 +1,5 @@
 import { Token } from '@sushiswap/currency'
-import { FuroVestingChainId } from '@sushiswap/furo/exports/exports'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { useQuery } from '@tanstack/react-query'
 
@@ -29,12 +29,12 @@ export const useUserVestings = ({ account }: UseUserVestings) => {
         })
       )
 
-      const data: { chainId: FuroVestingChainId; data: userVestingsQuery }[] = []
+      const data: { chainId: FuroChainId; data: userVestingsQuery }[] = []
       const results = await Promise.allSettled(sdks.map((sdk) => sdk.userVestings({ id: account.toLowerCase() })))
       results.forEach((result, i) => {
         if (result.status === 'fulfilled') {
           data.push({
-            chainId: SUPPORTED_CHAINS[i],
+            chainId: SUPPORTED_CHAINS[i] as FuroChainId,
             data: result.value,
           })
         }
@@ -42,7 +42,7 @@ export const useUserVestings = ({ account }: UseUserVestings) => {
 
       const vestings: {
         vesting: userVestingsQuery['incomingVestings'][0] | userVestingsQuery['outgoingVestings'][0]
-        chainId: FuroVestingChainId
+        chainId: FuroChainId
         vestingId: string
         token: Token
       }[] = []

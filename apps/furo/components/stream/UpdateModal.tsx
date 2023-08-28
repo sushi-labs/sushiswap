@@ -2,7 +2,7 @@ import { parseUnits } from '@ethersproject/units'
 import { PencilIcon } from '@heroicons/react/outline'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Token } from '@sushiswap/currency'
-import { FuroStreamChainId } from '@sushiswap/furo'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import {
   DateField,
   DialogConfirm,
@@ -45,7 +45,7 @@ interface UpdateModalProps {
   stream: Stream
   abi: NonNullable<Parameters<typeof getContract>['0']>['abi']
   address: Address
-  chainId: FuroStreamChainId
+  chainId: FuroChainId
 }
 
 export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(

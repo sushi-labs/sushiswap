@@ -1,7 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Native, tryParseAmount, Type } from '@sushiswap/currency'
-import { FuroStreamRouterChainId } from '@sushiswap/furo'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import { FundSource } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
@@ -31,7 +31,7 @@ import { CreateMultipleStreamFormSchemaType } from '../schema'
 const APPROVE_TAG = 'approve-multiple-streams'
 
 export const ExecuteMultipleSection: FC<{
-  chainId: FuroStreamRouterChainId
+  chainId: FuroChainId
   isReview: boolean
   onBack(): void
 }> = withCheckerRoot(({ chainId, isReview, onBack }) => {

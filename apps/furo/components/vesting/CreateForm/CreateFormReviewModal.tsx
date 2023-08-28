@@ -2,7 +2,7 @@ import { isAddress } from '@ethersproject/address'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
-import { FuroVestingRouterChainId } from '@sushiswap/furo'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import { FundSource } from '@sushiswap/hooks'
 import {
   DialogConfirm,
@@ -46,7 +46,7 @@ import { calculateCliffDuration, calculateEndDate, calculateStepPercentage, calc
 const APPROVE_TAG = 'createVestingSingle'
 
 interface CreateFormReviewModal {
-  chainId: FuroVestingRouterChainId
+  chainId: FuroChainId
 }
 
 export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(({ chainId }) => {

@@ -804,7 +804,7 @@ importers:
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
-      '@sushiswap/furo': workspace:*
+      '@sushiswap/furo-sdk': workspace:*
       '@sushiswap/graph-client': workspace:*
       '@sushiswap/graph-config': workspace:*
       '@sushiswap/hooks': workspace:*
@@ -864,7 +864,7 @@ importers:
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/format': link:../../packages/format
-      '@sushiswap/furo': link:../../protocols/furo
+      '@sushiswap/furo-sdk': link:../../packages/furo-sdk
       '@sushiswap/graph-client': link:../../packages/graph-client
       '@sushiswap/graph-config': link:../../config/graph
       '@sushiswap/hooks': link:../../packages/hooks
@@ -1920,6 +1920,27 @@ importers:
       tsup: 7.1.0_typescript@5.1.6
       typescript: 5.1.6
 
+  packages/furo-sdk:
+    specifiers:
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/node': '18'
+      eslint: 8.43.0
+      typescript: 5.1.6
+    dependencies:
+      '@sushiswap/chain': link:../chain
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/typescript-config': link:../../config/typescript
+      '@types/node': 18.17.5
+      eslint: 8.43.0
+      typescript: 5.1.6
+
   packages/gas:
     specifiers:
       '@sushiswap/eslint-config': workspace:*
@@ -2763,7 +2784,7 @@ importers:
       '@sushiswap/dexie': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
-      '@sushiswap/furo': workspace:*
+      '@sushiswap/furo-sdk': workspace:*
       '@sushiswap/gas': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -2825,7 +2846,7 @@ importers:
       '@sushiswap/currency': link:../currency
       '@sushiswap/dexie': link:../dexie
       '@sushiswap/format': link:../format
-      '@sushiswap/furo': link:../../protocols/furo
+      '@sushiswap/furo-sdk': link:../furo-sdk
       '@sushiswap/gas': link:../gas
       '@sushiswap/hooks': link:../hooks
       '@sushiswap/math': link:../math
