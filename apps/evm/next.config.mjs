@@ -1,5 +1,6 @@
+import { withSentryConfig } from '@sentry/nextjs'
 import defaultNextConfig from '@sushiswap/nextjs-config'
-import {withAxiom} from 'next-axiom'
+import { withAxiom } from 'next-axiom'
 
 const { ANALYTICS_URL, BLOG_URL, EARN_URL, FURO_URL, SWAP_URL, ACADEMY_URL } = process.env
 
@@ -89,4 +90,35 @@ const nextConfig = {
   },
 }
 
-export default withAxiom(nextConfig)
+export default withSentryConfig(
+  withAxiom(nextConfig),
+  {
+    // For all available options, see:
+    // https://github.com/getsentry/sentry-webpack-plugin#options
+
+    // Suppresses source map uploading logs during build
+    silent: true,
+
+    org: 'sushi-j9',
+    project: 'evm',
+  },
+  {
+    // For all available options, see:
+    // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+
+    // Upload a larger set of source maps for prettier stack traces (increases build time)
+    widenClientFileUpload: true,
+
+    // Transpiles SDK to be compatible with IE11 (increases bundle size)
+    transpileClientSDK: true,
+
+    // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
+    tunnelRoute: '/monitoring',
+
+    // Hides source maps from generated client bundles
+    hideSourceMaps: true,
+
+    // Automatically tree-shake Sentry logger statements to reduce bundle size
+    disableLogger: true,
+  }
+)
