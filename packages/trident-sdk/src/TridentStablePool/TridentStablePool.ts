@@ -4,7 +4,7 @@ import { Amount, Price, Share, Token } from '@sushiswap/currency'
 import { sqrt, ZERO } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
-import { tridentStablePoolFactoryAddress, TridentStablePoolFactoryChainId } from '../'
+import { TRIDENT_STABLE_POOL_FACTORY_ADDRESS, TridentChainId } from '../constants'
 import { Rebase } from '../types'
 import { computeTridentStablePoolAddress } from './computeTridentStablePoolAddress'
 import { SerializedStablePool, tridentStablePoolSchema } from './zod'
@@ -23,7 +23,7 @@ export class TridentStablePool implements Pool {
 
   public static getAddress(tokenA: Token, tokenB: Token, fee: Fee): string {
     return computeTridentStablePoolAddress({
-      factoryAddress: tridentStablePoolFactoryAddress[tokenA.chainId as TridentStablePoolFactoryChainId],
+      factoryAddress: TRIDENT_STABLE_POOL_FACTORY_ADDRESS[tokenA.chainId as TridentChainId],
       tokenA,
       tokenB,
       fee,

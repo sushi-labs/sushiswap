@@ -3,7 +3,7 @@ import { isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Type } from '@sushiswap/currency'
 import { getCurrencyCombinations } from '@sushiswap/router'
 import { BridgeBento, UniV3Pool } from '@sushiswap/tines'
-import { isTridentConstantPoolFactoryChainId, isTridentStablePoolFactoryChainId } from '@sushiswap/trident-sdk'
+import { isTridentChainId } from '@sushiswap/trident-sdk'
 import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 
@@ -42,10 +42,10 @@ const queryFn = async ({
 
   const [pairs, constantProductPools, stablePools, bridgeBentoPools, v3Pools] = await Promise.all([
     isSushiSwapV2ChainId(chainId) ? getSushiSwapV2Pools(chainId, currencyCombinations) : Promise.resolve([]),
-    isTridentConstantPoolFactoryChainId(chainId) && isBentoBoxChainId(chainId)
+    isTridentChainId(chainId) && isBentoBoxChainId(chainId)
       ? getTridentConstantPools(chainId, currencyCombinations)
       : Promise.resolve([]),
-    isTridentStablePoolFactoryChainId(chainId) && isBentoBoxChainId(chainId) && totalsMap
+    isTridentChainId(chainId) && isBentoBoxChainId(chainId) && totalsMap
       ? getTridentStablePools(chainId, currencyCombinations, totalsMap)
       : Promise.resolve([]),
     isBentoBoxChainId(chainId) && withBentoPools && totalsMap
