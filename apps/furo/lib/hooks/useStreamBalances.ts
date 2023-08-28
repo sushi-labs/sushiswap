@@ -1,3 +1,4 @@
+import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Token } from '@sushiswap/currency'
 import { FuroStreamChainId } from '@sushiswap/furo/exports/exports'
 import { Address, getBentoBoxContractConfig, getFuroStreamContractConfig, readContracts } from '@sushiswap/wagmi'
@@ -28,7 +29,7 @@ export const useStreamBalances = ({ streams }: UseStreamBalances) => {
           contracts: streams.map(
             (stream) =>
               ({
-                ...getBentoBoxContractConfig(stream.chainId),
+                ...getBentoBoxContractConfig(stream.chainId  as BentoBoxChainId),
                 functionName: 'totals',
                 chainId: stream.chainId,
                 args: [stream.token.address as Address],

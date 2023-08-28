@@ -1,5 +1,5 @@
 import { balanceOfAbi, getReservesAbi, getStableReservesAbi, totalsAbi } from '@sushiswap/abi'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import type { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
@@ -47,7 +47,7 @@ interface PoolInfo {
 
 export class TridentProvider extends LiquidityProvider {
   // Need to override for type narrowing
-  chainId: Extract<ChainId, BentoBoxV1ChainId & TridentConstantPoolFactoryChainId & TridentStablePoolFactoryChainId>
+  chainId: Extract<ChainId, BentoBoxChainId & TridentConstantPoolFactoryChainId & TridentStablePoolFactoryChainId>
 
   readonly TOP_POOL_SIZE = 155
   readonly TOP_POOL_LIQUIDITY_THRESHOLD = 1000
@@ -64,7 +64,7 @@ export class TridentProvider extends LiquidityProvider {
   availablePools: Map<string, PoolResponse2> = new Map()
 
   bridges: Map<string, PoolCode> = new Map()
-  bentoBox = bentoBoxV1Address
+  bentoBox = BENTOBOX_ADDRESS
   constantProductPoolFactory = tridentConstantPoolFactoryAddress
   stablePoolFactory = tridentStablePoolFactoryAddress
   latestPoolCreatedAtTimestamp = new Date()
@@ -77,7 +77,7 @@ export class TridentProvider extends LiquidityProvider {
   databaseClient: PrismaClient | undefined
 
   constructor(
-    chainId: Extract<ChainId, BentoBoxV1ChainId & TridentConstantPoolFactoryChainId & TridentStablePoolFactoryChainId>,
+    chainId: Extract<ChainId, BentoBoxChainId & TridentConstantPoolFactoryChainId & TridentStablePoolFactoryChainId>,
     web3Client: PublicClient,
     databaseClient?: PrismaClient
   ) {

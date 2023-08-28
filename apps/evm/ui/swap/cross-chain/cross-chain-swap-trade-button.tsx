@@ -1,6 +1,6 @@
 'use client'
 
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ZERO } from '@sushiswap/math'
 import { sushiXSwapAddress, SushiXSwapChainId } from '@sushiswap/sushixswap'
 import { DialogTrigger } from '@sushiswap/ui'
@@ -36,7 +36,7 @@ export const CrossChainSwapTradeButton: FC = () => {
               <Checker.ApproveBentobox
                 tag={APPROVE_TAG_XSWAP}
                 fullWidth
-                chainId={chainId0 as BentoBoxV1ChainId}
+                chainId={chainId0 as BentoBoxChainId}
                 id="approve-bentobox"
                 masterContract={sushiXSwapAddress[chainId0 as SushiXSwapChainId]}
               >
@@ -44,7 +44,7 @@ export const CrossChainSwapTradeButton: FC = () => {
                   id="approve-erc20"
                   fullWidth
                   amount={swapAmount}
-                  contract={bentoBoxV1Address[chainId0 as BentoBoxV1ChainId]}
+                  contract={BENTOBOX_ADDRESS[chainId0 as BentoBoxChainId]}
                 >
                   <Checker.Success tag={APPROVE_TAG_XSWAP}>
                     <DialogTrigger asChild>

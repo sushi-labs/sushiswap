@@ -1,5 +1,5 @@
 import { isAddress } from '@ethersproject/address'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
@@ -70,7 +70,7 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
       [amount, currency]
     )
     const _fundSource = ZFundSourceToFundSource.parse(fundSource)
-    const rebase = useBentoBoxTotal(chainId, _amount?.currency)
+    const rebase = useBentoBoxTotal(chainId as BentoBoxChainId, _amount?.currency)
 
     const onSettled = useCallback(
       async (data: SendTransactionResult | undefined) => {
@@ -194,14 +194,14 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
                   type="button"
                   fullWidth
                   id="furo-create-single-stream-approve-bentobox"
-                  chainId={chainId as BentoBoxV1ChainId}
+                  chainId={chainId as BentoBoxChainId}
                   masterContract={getFuroStreamRouterContractConfig(chainId).address}
                   className="col-span-3 md:col-span-2"
                 >
                   <Checker.ApproveERC20
                     fullWidth
                     type="button"
-                    contract={bentoBoxV1Address[chainId]}
+                    contract={BENTOBOX_ADDRESS[chainId as BentoBoxChainId]}
                     id="furo-create-single-stream-approve-token"
                     amount={_amount}
                     className="col-span-3 md:col-span-2"

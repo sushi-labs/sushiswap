@@ -1,6 +1,6 @@
 import { tridentStablePoolAbi, tridentStablePoolFactoryAbi } from '@sushiswap/abi'
 import { TridentStablePool } from '@sushiswap/amm'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Currency, Token } from '@sushiswap/currency'
 import { Address, readContracts } from 'wagmi'
 import { getContract } from 'wagmi/actions'
@@ -22,7 +22,7 @@ interface PoolData {
 }
 
 export const getTridentStablePools = async (
-  chainId: BentoBoxV1ChainId,
+  chainId: BentoBoxChainId,
   currencies: [Currency | undefined, Currency | undefined][],
   totals: Map<string, { base: bigint; elastic: bigint }>
 ) => {

@@ -1,5 +1,5 @@
 import { ChevronRightIcon } from '@heroicons/react/24/solid'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import { Explainer } from '@sushiswap/ui/components/explainer'
 import React, { FC } from 'react'
@@ -8,7 +8,7 @@ import { Address } from 'wagmi'
 import { ApprovalState, useBentoboxApproval } from '../../hooks'
 
 interface ApproveBentoboxProps extends ButtonProps {
-  chainId: BentoBoxV1ChainId
+  chainId: BentoBoxChainId
   id: string
   masterContract: Address
   enabled?: boolean

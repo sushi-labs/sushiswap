@@ -2,7 +2,7 @@
 
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { Fee, TridentConstantPool, TridentStablePool } from '@sushiswap/amm'
-import { bentoBoxV1Address, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { isTridentChainId, TridentChainId, TridentChainIds } from '@sushiswap/trident-sdk'
@@ -312,66 +312,64 @@ const _Add: FC<AddProps> = ({
             <Checker.Connect fullWidth>
               <Checker.Network fullWidth chainId={chainId}>
                 <Checker.Amounts fullWidth chainId={chainId} amounts={[parsedInput0, parsedInput1]}>
-                  {pool &&
-                    (isTridentConstantPool(pool) || isTridentStablePool(pool)) &&
-                    isBentoBoxV1ChainId(chainId) && (
-                      <>
-                        <Checker.ApproveBentobox
-                          tag={APPROVE_TAG_ADD_TRIDENT}
-                          chainId={chainId}
-                          id="add-liquidity-trident-approve-bentobox"
+                  {pool && (isTridentConstantPool(pool) || isTridentStablePool(pool)) && isBentoBoxChainId(chainId) && (
+                    <>
+                      <Checker.ApproveBentobox
+                        tag={APPROVE_TAG_ADD_TRIDENT}
+                        chainId={chainId}
+                        id="add-liquidity-trident-approve-bentobox"
+                        className="whitespace-nowrap"
+                        fullWidth
+                        masterContract={getTridentRouterContractConfig(chainId).address}
+                        enabled={Boolean(getTridentRouterContractConfig(chainId).address)}
+                      >
+                        <Checker.ApproveERC20
+                          id="add-liquidity-trident-approve-token0"
                           className="whitespace-nowrap"
                           fullWidth
-                          masterContract={getTridentRouterContractConfig(chainId).address}
-                          enabled={Boolean(getTridentRouterContractConfig(chainId).address)}
+                          amount={parsedInput0}
+                          contract={BENTOBOX_ADDRESS[chainId]}
+                          enabled={isBentoBoxChainId(chainId)}
                         >
                           <Checker.ApproveERC20
-                            id="add-liquidity-trident-approve-token0"
+                            id="add-liquidity-trident-approve-token1"
                             className="whitespace-nowrap"
                             fullWidth
-                            amount={parsedInput0}
-                            contract={bentoBoxV1Address[chainId]}
-                            enabled={isBentoBoxV1ChainId(chainId)}
+                            amount={parsedInput1}
+                            contract={BENTOBOX_ADDRESS[chainId]}
+                            enabled={isBentoBoxChainId(chainId)}
                           >
-                            <Checker.ApproveERC20
-                              id="add-liquidity-trident-approve-token1"
-                              className="whitespace-nowrap"
-                              fullWidth
-                              amount={parsedInput1}
-                              contract={bentoBoxV1Address[chainId]}
-                              enabled={isBentoBoxV1ChainId(chainId)}
-                            >
-                              <Checker.Success tag={APPROVE_TAG_ADD_TRIDENT}>
-                                <Button size="xl" id="add-liquidity" fullWidth onClick={() => setOpen(true)}>
-                                  {title}
-                                </Button>
-                              </Checker.Success>
-                            </Checker.ApproveERC20>
+                            <Checker.Success tag={APPROVE_TAG_ADD_TRIDENT}>
+                              <Button size="xl" id="add-liquidity" fullWidth onClick={() => setOpen(true)}>
+                                {title}
+                              </Button>
+                            </Checker.Success>
                           </Checker.ApproveERC20>
-                        </Checker.ApproveBentobox>
-                        <AddSectionReviewModalTrident
-                          poolAddress={pool.liquidityToken.address}
-                          poolState={poolState}
-                          pool={pool as TridentConstantPool | TridentStablePool}
-                          chainId={chainId}
-                          token0={token0}
-                          token1={token1}
-                          input0={parsedInput0}
-                          input1={parsedInput1}
-                          onSuccess={() => {
-                            // Clear inputs
-                            setTypedAmounts({
-                              input0: '',
-                              input1: '',
-                            })
-                            close()
-                          }}
-                          open={open}
-                          close={close}
-                        />
-                      </>
-                    )}
-                  {!pool && isBentoBoxV1ChainId(chainId) && (
+                        </Checker.ApproveERC20>
+                      </Checker.ApproveBentobox>
+                      <AddSectionReviewModalTrident
+                        poolAddress={pool.liquidityToken.address}
+                        poolState={poolState}
+                        pool={pool as TridentConstantPool | TridentStablePool}
+                        chainId={chainId}
+                        token0={token0}
+                        token1={token1}
+                        input0={parsedInput0}
+                        input1={parsedInput1}
+                        onSuccess={() => {
+                          // Clear inputs
+                          setTypedAmounts({
+                            input0: '',
+                            input1: '',
+                          })
+                          close()
+                        }}
+                        open={open}
+                        close={close}
+                      />
+                    </>
+                  )}
+                  {!pool && isBentoBoxChainId(chainId) && (
                     <>
                       <Checker.ApproveBentobox
                         tag={APPROVE_TAG_CREATE_TRIDENT}
@@ -387,16 +385,16 @@ const _Add: FC<AddProps> = ({
                           className="whitespace-nowrap"
                           fullWidth
                           amount={parsedInput0}
-                          contract={bentoBoxV1Address[chainId]}
-                          enabled={isBentoBoxV1ChainId(chainId)}
+                          contract={BENTOBOX_ADDRESS[chainId]}
+                          enabled={isBentoBoxChainId(chainId)}
                         >
                           <Checker.ApproveERC20
                             id="create-trident-approve-token1"
                             className="whitespace-nowrap"
                             fullWidth
                             amount={parsedInput1}
-                            contract={bentoBoxV1Address[chainId]}
-                            enabled={isBentoBoxV1ChainId(chainId)}
+                            contract={BENTOBOX_ADDRESS[chainId]}
+                            enabled={isBentoBoxChainId(chainId)}
                           >
                             <Checker.Success tag={APPROVE_TAG_CREATE_TRIDENT}>
                               <Button id="create-pool" fullWidth onClick={() => setOpen(true)}>

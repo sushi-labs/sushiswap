@@ -25,7 +25,7 @@
     "@headlessui/react": "1.7.7",
     "@heroicons/react": "1.0.6",
     "@hookform/resolvers": "2.9.10",
-    "@sushiswap/bentobox": "1.0.1",
+    "@sushiswap/bentobox-sdk": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/format": "workspace:*",

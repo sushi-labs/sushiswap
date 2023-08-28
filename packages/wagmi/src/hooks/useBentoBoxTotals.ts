@@ -1,10 +1,10 @@
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Type as Currency } from '@sushiswap/currency'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
 
 type UseBentoBoxTotals = (
-  chainId: BentoBoxV1ChainId | undefined,
+  chainId: BentoBoxChainId | undefined,
   currencies: (Currency | undefined)[],
   config?: Parameters<typeof useContractReads>[0]
 ) => Record<string, { base: bigint; elastic: bigint }> | undefined
@@ -25,7 +25,7 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies, config
             (address) =>
               ({
                 chainId,
-                address: bentoBoxV1Address[chainId],
+                address: BENTOBOX_ADDRESS[chainId],
                 abi: [
                   {
                     inputs: [
@@ -79,7 +79,7 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies, config
 }
 
 export const useBentoBoxTotal = (
-  chainId: BentoBoxV1ChainId | undefined,
+  chainId: BentoBoxChainId | undefined,
   currency: Currency | undefined,
   config?: Parameters<typeof useContractReads>[0]
 ): { base: bigint; elastic: bigint } | undefined => {
