@@ -219,7 +219,7 @@ importers:
       '@sushiswap/extractor': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/route-processor': workspace:*
+      '@sushiswap/route-processor-sdk': workspace:*
       '@sushiswap/router': workspace:*
       '@sushiswap/viem-config': workspace:*
       '@swc/core': 1.3.26
@@ -243,7 +243,7 @@ importers:
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/database': link:../../packages/database
       '@sushiswap/extractor': link:../../packages/extractor
-      '@sushiswap/route-processor': link:../../protocols/route-processor
+      '@sushiswap/route-processor-sdk': link:../../packages/route-processor-sdk
       '@sushiswap/router': link:../../packages/router
       '@sushiswap/viem-config': link:../../config/viem
       '@whatwg-node/fetch': 0.8.4
@@ -617,7 +617,7 @@ importers:
       '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/react-query': workspace:*
-      '@sushiswap/route-processor': workspace:*
+      '@sushiswap/route-processor-sdk': workspace:*
       '@sushiswap/router': workspace:*
       '@sushiswap/router-config': workspace:*
       '@sushiswap/stargate': workspace:*
@@ -708,7 +708,7 @@ importers:
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/nextjs-config': link:../../config/nextjs
       '@sushiswap/react-query': link:../../packages/react-query
-      '@sushiswap/route-processor': link:../../protocols/route-processor
+      '@sushiswap/route-processor-sdk': link:../../packages/route-processor-sdk
       '@sushiswap/router': link:../../packages/router
       '@sushiswap/router-config': link:../../config/router
       '@sushiswap/stargate': link:../../packages/stargate
@@ -2234,6 +2234,27 @@ importers:
       tsup: 7.1.0_typescript@5.1.6
       typescript: 5.1.6
 
+  packages/route-processor-sdk:
+    specifiers:
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/node': '18'
+      eslint: 8.43.0
+      typescript: 5.1.6
+    dependencies:
+      '@sushiswap/chain': link:../chain
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/typescript-config': link:../../config/typescript
+      '@types/node': 18.17.5
+      eslint: 8.43.0
+      typescript: 5.1.6
+
   packages/router:
     specifiers:
       '@ethersproject/abi': 5.7.0
@@ -2791,7 +2812,7 @@ importers:
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/react-query': workspace:*
-      '@sushiswap/route-processor': workspace:*
+      '@sushiswap/route-processor-sdk': workspace:*
       '@sushiswap/router': workspace:*
       '@sushiswap/router-config': workspace:*
       '@sushiswap/sushixswap-sdk': workspace:*
@@ -2851,7 +2872,7 @@ importers:
       '@sushiswap/hooks': link:../hooks
       '@sushiswap/math': link:../math
       '@sushiswap/react-query': link:../react-query
-      '@sushiswap/route-processor': link:../../protocols/route-processor
+      '@sushiswap/route-processor-sdk': link:../route-processor-sdk
       '@sushiswap/router': link:../router
       '@sushiswap/router-config': link:../../config/router
       '@sushiswap/sushixswap-sdk': link:../sushixswap-sdk
@@ -2892,107 +2913,6 @@ importers:
       typescript: 5.1.6
       vitest: 0.33.0
       wagmi: 1.3.10_ka2jh7cxh6gmbf7nlffect66tm
-
-  protocols/bentobox:
-    specifiers:
-      '@boringcrypto/boring-solidity': boringcrypto/BoringSolidity#8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/providers': 5.7.2
-      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
-      '@nomiclabs/hardhat-etherscan': 3.1.3
-      '@nomiclabs/hardhat-solhint': 2.0.1
-      '@nomiclabs/hardhat-waffle': 2.0.3
-      '@sushiswap/currency': workspace:*
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/hardhat-config': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/types': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@types/node': '18'
-      eslint: 8.43.0
-      ethers: 5.7.2
-      hardhat: 2.17.0
-      hardhat-deploy: 0.11.22
-      ts-node: 10.9.1
-      typescript: 5.1.6
-    devDependencies:
-      '@boringcrypto/boring-solidity': github.com/boringcrypto/BoringSolidity/8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/providers': 5.7.2
-      '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_bkkpb2yha37fb5qmrvuonf2bhi
-      '@nomiclabs/hardhat-etherscan': 3.1.3_hardhat@2.17.0
-      '@nomiclabs/hardhat-solhint': 2.0.1_hardhat@2.17.0
-      '@nomiclabs/hardhat-waffle': 2.0.3_wxrfs2gxdddv5xbkxhv7sbwynm
-      '@sushiswap/currency': link:../../packages/currency
-      '@sushiswap/eslint-config': link:../../config/eslint
-      '@sushiswap/hardhat-config': link:../../config/hardhat
-      '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/types': link:../../packages/types
-      '@sushiswap/typescript-config': link:../../config/typescript
-      '@types/node': 18.17.5
-      eslint: 8.43.0
-      ethers: 5.7.2
-      hardhat: 2.17.0_kg5gpyde6u3komamnnl67a6oc4
-      hardhat-deploy: 0.11.22
-      ts-node: 10.9.1_ap5mag36e7cblb6xe6xs6asdwu
-      typescript: 5.1.6
-
-  protocols/furo:
-    specifiers:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/providers': 5.7.2
-      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
-      '@nomiclabs/hardhat-etherscan': ^3.1.0
-      '@openzeppelin/contracts': ^4.6.0
-      '@rari-capital/solmate': 6.2.0
-      '@sushiswap/bentobox': workspace:*
-      '@sushiswap/chain': workspace:*
-      '@sushiswap/core': ^1.4.2
-      '@sushiswap/currency': workspace:*
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/hardhat-config': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/stargate': workspace:*
-      '@sushiswap/types': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@sushiswap/v2-sdk': workspace:*
-      '@types/node': '18'
-      eslint: 8.43.0
-      ethers: 5.7.2
-      hardhat: 2.17.0
-      hardhat-deploy: 0.11.22
-      ts-node: 10.9.1
-      typescript: 5.1.6
-    dependencies:
-      '@openzeppelin/contracts': 4.9.3
-      '@rari-capital/solmate': 6.2.0
-      '@sushiswap/bentobox': link:../bentobox
-      '@sushiswap/chain': link:../../packages/chain
-      '@sushiswap/core': 1.4.2
-      '@sushiswap/currency': link:../../packages/currency
-      '@sushiswap/stargate': link:../../packages/stargate
-      '@sushiswap/types': link:../../packages/types
-      '@sushiswap/v2-sdk': link:../../packages/v2-sdk
-    devDependencies:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/providers': 5.7.2
-      '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_bkkpb2yha37fb5qmrvuonf2bhi
-      '@nomiclabs/hardhat-etherscan': 3.1.7_hardhat@2.17.0
-      '@sushiswap/eslint-config': link:../../config/eslint
-      '@sushiswap/hardhat-config': link:../../config/hardhat
-      '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/typescript-config': link:../../config/typescript
-      '@types/node': 18.17.5
-      eslint: 8.43.0
-      ethers: 5.7.2
-      hardhat: 2.17.0_kg5gpyde6u3komamnnl67a6oc4
-      hardhat-deploy: 0.11.22
-      ts-node: 10.9.1_ap5mag36e7cblb6xe6xs6asdwu
-      typescript: 5.1.6
 
   protocols/route-processor:
     specifiers:
@@ -3107,69 +3027,6 @@ importers:
       typechain: 8.1.1_typescript@5.1.6
       typescript: 5.1.6
       viem: 1.6.3_typescript@5.1.6
-
-  protocols/sushixswap:
-    specifiers:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/providers': 5.7.2
-      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
-      '@openzeppelin/contracts': ^4.6.0
-      '@sushiswap/amm': workspace:*
-      '@sushiswap/bentobox': workspace:*
-      '@sushiswap/chain': workspace:*
-      '@sushiswap/core': ^1.4.2
-      '@sushiswap/currency': workspace:*
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/hardhat-config': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/stargate': workspace:*
-      '@sushiswap/tines': workspace:*
-      '@sushiswap/types': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@tenderly/hardhat-tenderly': ^1.0.13
-      '@types/chai': ^4.3.3
-      '@types/node': '18'
-      '@types/seedrandom': ^3.0.1
-      chai: ^4.3.6
-      eslint: 8.43.0
-      ethers: 5.7.2
-      hardhat: 2.17.0
-      hardhat-deploy: 0.11.22
-      seedrandom: ^3.0.5
-      ts-node: 10.9.1
-      typescript: 5.1.6
-    dependencies:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/providers': 5.7.2
-      '@openzeppelin/contracts': 4.9.3
-      '@sushiswap/amm': link:../../packages/amm
-      '@sushiswap/bentobox': link:../bentobox
-      '@sushiswap/chain': link:../../packages/chain
-      '@sushiswap/core': 1.4.2
-      '@sushiswap/currency': link:../../packages/currency
-      '@sushiswap/hardhat-config': link:../../config/hardhat
-      '@sushiswap/stargate': link:../../packages/stargate
-      '@sushiswap/tines': link:../../packages/tines
-      '@sushiswap/types': link:../../packages/types
-    devDependencies:
-      '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_bkkpb2yha37fb5qmrvuonf2bhi
-      '@sushiswap/eslint-config': link:../../config/eslint
-      '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/typescript-config': link:../../config/typescript
-      '@tenderly/hardhat-tenderly': 1.7.7_gdui6bp346pi36off3o6wa7ylm
-      '@types/chai': 4.3.5
-      '@types/node': 18.17.5
-      '@types/seedrandom': 3.0.5
-      chai: 4.3.7
-      eslint: 8.43.0
-      ethers: 5.7.2
-      hardhat: 2.17.0_kg5gpyde6u3komamnnl67a6oc4
-      hardhat-deploy: 0.11.22
-      seedrandom: 3.0.5
-      ts-node: 10.9.1_ap5mag36e7cblb6xe6xs6asdwu
-      typescript: 5.1.6
 
   protocols/tines-sandbox:
     specifiers:
@@ -3294,49 +3151,6 @@ importers:
       typechain: 8.1.1_typescript@5.1.6
       typescript: 5.1.6
       viem: 1.6.3_typescript@5.1.6
-
-  protocols/trident:
-    specifiers:
-      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
-      '@openzeppelin/contracts': 4.7.3
-      '@rari-capital/solmate': 6.2.0
-      '@sushiswap/bentobox-sdk': workspace:*
-      '@sushiswap/currency': workspace:*
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/hardhat-config': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/types': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@tenderly/hardhat-tenderly': ^1.0.13
-      '@types/node': '18'
-      eslint: 8.43.0
-      ethers: 5.7.2
-      hardhat: 2.17.0
-      hardhat-deploy: 0.11.22
-      ts-node: 10.9.1
-      typescript: 5.1.6
-    dependencies:
-      '@openzeppelin/contracts': 4.7.3
-      '@rari-capital/solmate': 6.2.0
-      '@sushiswap/bentobox-sdk': link:../../packages/bentobox-sdk
-      '@sushiswap/currency': link:../../packages/currency
-      '@sushiswap/hardhat-config': link:../../config/hardhat
-      '@sushiswap/types': link:../../packages/types
-    devDependencies:
-      '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_bkkpb2yha37fb5qmrvuonf2bhi
-      '@sushiswap/eslint-config': link:../../config/eslint
-      '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/typescript-config': link:../../config/typescript
-      '@tenderly/hardhat-tenderly': 1.7.7_gdui6bp346pi36off3o6wa7ylm
-      '@types/node': 18.17.5
-      eslint: 8.43.0
-      ethers: 5.7.2
-      hardhat: 2.17.0_kg5gpyde6u3komamnnl67a6oc4
-      hardhat-deploy: 0.11.22
-      ts-node: 10.9.1_ap5mag36e7cblb6xe6xs6asdwu
-      typescript: 5.1.6
 
 packages:
 
@@ -12285,26 +12099,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /@nomiclabs/hardhat-etherscan/3.1.7_hardhat@2.17.0:
-    resolution: {integrity: sha512-tZ3TvSgpvsQ6B6OGmo1/Au6u8BrAkvs1mIC/eURA3xgIfznUZBhmpne8hv7BXUzw9xNL3fXdpOYgOQlVMTcoHQ==}
-    peerDependencies:
-      hardhat: ^2.0.4
-    dependencies:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/address': 5.7.0
-      cbor: 8.1.0
-      chalk: 2.4.2
-      debug: 4.3.4
-      fs-extra: 7.0.1
-      hardhat: 2.17.0_kg5gpyde6u3komamnnl67a6oc4
-      lodash: 4.17.21
-      semver: 6.3.1
-      table: 6.8.1
-      undici: 5.23.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
   /@nomiclabs/hardhat-solhint/2.0.1_hardhat@2.17.0:
     resolution: {integrity: sha512-SrTLufY21t78KLpJL5fS6gHIsCwVv0yWsHp1aQOPL1qwRWpe0Mnh5wb2YzBHd3Dbr/KzUYys+j2ui0PsSVU9pg==}
     peerDependencies:
@@ -12743,17 +12537,9 @@ packages:
   /@openzeppelin/contracts/3.4.2-solc-0.7:
     resolution: {integrity: sha512-W6QmqgkADuFcTLzHL8vVoNBtkwjvQRpYIAom7KiUNoLKghyx3FgH0GBjt8NRvigV1ZmMOBllvE1By1C+bi8WpA==}
 
-  /@openzeppelin/contracts/4.7.3:
-    resolution: {integrity: sha512-dGRS0agJzu8ybo44pCIf3xBaPQN/65AIXNgK8+4gzKd5kbvlqyxryUYVLJv7fK98Seyd2hDZzVEHSWAh0Bt1Yw==}
-    dev: false
-
   /@openzeppelin/contracts/4.8.0:
     resolution: {integrity: sha512-AGuwhRRL+NaKx73WKRNzeCxOCOCxpaqF+kp8TJ89QzAipSwZy/NoflkWaL9bywXFRhIzXt8j38sfF7KBKCPWLw==}
     dev: true
-
-  /@openzeppelin/contracts/4.9.3:
-    resolution: {integrity: sha512-He3LieZ1pP2TNt5JbkPA4PNT9WC3gOTOlDcFGJW4Le4QKqwmiNJCRt44APfxMxvq7OugU/cqYuPcSBzOw38DAg==}
-    dev: false
 
   /@peculiar/asn1-schema/2.3.6:
     resolution: {integrity: sha512-izNRxPoaeJeg/AyH8hER6s+H7p4itk+03QCa4sbxI3lNdseQYCuxzgsuNK8bTXChtLTjpJz6NmXKA73qLa3rCA==}
@@ -14500,11 +14286,6 @@ packages:
     resolution: {integrity: sha512-fyrgCaedtvMg9NK3en0pnOYJdtfwxUcNolezkNPUsoX57X8oQk+NkqcvzHXD2uKNij6GXmWU9NDru2IWjrO4BQ==}
     dependencies:
       '@babel/runtime': 7.22.10
-
-  /@rari-capital/solmate/6.2.0:
-    resolution: {integrity: sha512-g94F+Ra9ixyJyNgvnOIufNjUz488uEG0nxIEEtJ7+g+tA1XGUupRB2kB5b+VO7WYO26RNOVD2fW6xE4e14iWpg==}
-    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
-    dev: false
 
   /@react-hook/event/1.2.6_react@18.2.0:
     resolution: {integrity: sha512-JUL5IluaOdn5w5Afpe/puPa1rj8X6udMlQ9dt4hvMuKmTrBS1Ya6sb4sVgvfe2eU4yDuOfAhik8xhbcCekbg9Q==}
@@ -16963,10 +16744,6 @@ packages:
     resolution: {integrity: sha512-OQwr4BIYbF3FlMKYMslYhjGXXzdsduW+CfSTq86tUQZm9okJG4fKBmyA8ZYkZ+oW8dTDRuI5LGGidUYVQUFH7A==}
     dev: false
 
-  /@sushiswap/core/1.4.2:
-    resolution: {integrity: sha512-Khd2i6Bob9uk7dCgVkhUioEoxRP28m6aj25MegAHvnJyxZPVzZDhxSkeL6wdv5MeAp2DwHkYqUq03KDfVTTP4Q==}
-    dev: false
-
   /@sushiswap/default-token-list/41.4.0:
     resolution: {integrity: sha512-2mN2QxAeRWywsWrh598DKqKjOiHlsdi0OXlmcBIlHJY9DYbMz8lZFl9v/2sL3Xj8c1WQ0i9xyktfObv3hhn6KQ==}
     dev: false
@@ -17329,30 +17106,6 @@ packages:
       - typescript
       - utf-8-validate
     dev: false
-
-  /@tenderly/hardhat-tenderly/1.7.7_gdui6bp346pi36off3o6wa7ylm:
-    resolution: {integrity: sha512-p/jLzRPpoD7J0LGvUFEQjgniDzmP5AzfTgy41qqzyjhOsW0voe7wZI8lXjadl5MEr7rAXN1iH3VncT13qG6+Zw==}
-    peerDependencies:
-      hardhat: ^2.10.2
-    dependencies:
-      '@ethersproject/bignumber': 5.7.0
-      '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_bkkpb2yha37fb5qmrvuonf2bhi
-      axios: 0.27.2
-      ethers: 5.7.2
-      fs-extra: 10.1.0
-      hardhat: 2.17.0_kg5gpyde6u3komamnnl67a6oc4
-      hardhat-deploy: 0.11.22
-      js-yaml: 4.1.0
-      tenderly: 0.5.3_kg5gpyde6u3komamnnl67a6oc4
-      tslog: 4.9.1
-    transitivePeerDependencies:
-      - bufferutil
-      - debug
-      - supports-color
-      - ts-node
-      - typescript
-      - utf-8-validate
-    dev: true
 
   /@testing-library/dom/9.3.1:
     resolution: {integrity: sha512-0DGPd9AR3+iDTjGoMpxIkAsUihHZ3Ai6CneU6bRRrffXMgzCdlNk43jTrD2/5LT6CBb3MWTP8v510JzYtahD2w==}
@@ -21331,6 +21084,7 @@ packages:
       form-data: 4.0.0
     transitivePeerDependencies:
       - debug
+    dev: false
 
   /axios/0.27.2_debug@4.3.4:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
@@ -23408,6 +23162,7 @@ packages:
   /commander/9.5.0:
     resolution: {integrity: sha512-KRs7WVDKg86PWiuAqhDrAQnTXZKraVcCc6vFdL14qrZ/DcWwuRo7VoiYXalXO7S5GKpqYiVEwCbgFDfxNHKJBQ==}
     engines: {node: ^12.20.0 || >=14}
+    dev: false
 
   /common-tags/1.8.2:
     resolution: {integrity: sha512-gk/Z852D2Wtb//0I+kRFNKKE9dIIVirjoqPoA1wJU+XePVXZfGeBpk45+A1rKO4Q43prqWBNY/MiIeRLbPWUaA==}
@@ -39062,33 +38817,6 @@ packages:
       - supports-color
     dev: false
 
-  /tenderly/0.5.3_kg5gpyde6u3komamnnl67a6oc4:
-    resolution: {integrity: sha512-sR+sbZKZzt3b2+moXJsrkBvbava1/4mGulIfuZw8bwr2OpCH8N00dME1t89JC8RjVnQjy4VewVFHyWANdn5zYQ==}
-    peerDependencies:
-      ts-node: '*'
-      typescript: '*'
-    peerDependenciesMeta:
-      ts-node:
-        optional: true
-      typescript:
-        optional: true
-    dependencies:
-      axios: 0.27.2
-      cli-table3: 0.6.3
-      commander: 9.5.0
-      express: 4.18.2
-      hyperlinker: 1.0.0
-      js-yaml: 4.1.0
-      open: 8.4.2
-      prompts: 2.4.2
-      ts-node: 10.9.1_ap5mag36e7cblb6xe6xs6asdwu
-      tslog: 4.9.1
-      typescript: 5.1.6
-    transitivePeerDependencies:
-      - debug
-      - supports-color
-    dev: true
-
   /term-size/2.2.1:
     resolution: {integrity: sha512-wK0Ri4fOGjv/XPy8SBHZChl8CM7uMc5VML7SqiQ0zG7+J5Vr+RMQDoHa2CNT6KHUnTGIXH34UDMkPzAUyapBZg==}
     engines: {node: '>=8'}
@@ -39754,11 +39482,6 @@ packages:
 
   /tslib/2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
-
-  /tslog/4.9.1:
-    resolution: {integrity: sha512-N6SkH+ApNh65tyKV7CfXmcShfw7KTnoTASQkKr+nZbhM73iwi/3a9ZJeYKRRvboLxkx3UNnNViMo1s/hNdSZLg==}
-    engines: {node: '>=16'}
-    dev: true
 
   /tsort/0.0.1:
     resolution: {integrity: sha512-Tyrf5mxF8Ofs1tNoxA13lFeZ2Zrbd6cKbuH3V+MQ5sb6DtBj5FjrXVsRWT8YvNAQTqNoz66dz1WsbigI22aEnw==}
@@ -42604,12 +42327,6 @@ packages:
 
   /zwitch/2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
-    dev: true
-
-  github.com/boringcrypto/BoringSolidity/8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc:
-    resolution: {tarball: https://codeload.github.com/boringcrypto/BoringSolidity/tar.gz/8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc}
-    name: '@boringcrypto/boring-solidity'
-    version: 1.2.0
     dev: true
 
   github.com/ethereumjs/ethereumjs-abi/ee3994657fa7a427238e6ba92a84d0b529bbcde0:

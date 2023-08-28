@@ -1,6 +1,6 @@
 'use client'
 
-import { routeProcessor3Abi, routeProcessorAbi } from '@sushiswap/abi'
+import { routeProcessor3_1Abi, routeProcessor3Abi, routeProcessorAbi } from '@sushiswap/abi'
 import { Chain } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
@@ -12,11 +12,10 @@ import {
   isRouteProcessor3_1ChainId,
   isRouteProcessor3ChainId,
   isRouteProcessorChainId,
-  routeProcessor3_1Abi,
-  routeProcessor3_1Address,
-  routeProcessor3Address,
-  routeProcessorAddress,
-} from '@sushiswap/route-processor'
+  ROUTE_PROCESSOR_3_1_ADDRESS,
+  ROUTE_PROCESSOR_3_ADDRESS,
+  ROUTE_PROCESSOR_ADDRESS,
+} from '@sushiswap/route-processor-sdk'
 import { Bridge, LiquidityProviders } from '@sushiswap/router'
 import {
   classNames,
@@ -81,14 +80,14 @@ export const SimpleSwapTradeReviewDialog: FC<{ children(error: Error | null): Re
   } = usePrepareContractWrite({
     chainId: chainId,
     address: isRouteProcessor3_1ChainId(chainId)
-      ? routeProcessor3_1Address[chainId]
+      ? ROUTE_PROCESSOR_3_1_ADDRESS[chainId]
       : isRouteProcessor3ChainId(chainId)
-      ? routeProcessor3Address[chainId]
+      ? ROUTE_PROCESSOR_3_ADDRESS[chainId]
       : isRouteProcessorChainId(chainId)
-      ? routeProcessorAddress[chainId]
+      ? ROUTE_PROCESSOR_ADDRESS[chainId]
       : undefined,
     abi: (isRouteProcessor3_1ChainId(chainId)
-      ? routeProcessor3_1Abi[chainId]
+      ? routeProcessor3_1Abi
       : isRouteProcessor3ChainId(chainId)
       ? routeProcessor3Abi
       : isRouteProcessorChainId(chainId)

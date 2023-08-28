@@ -35,7 +35,7 @@
     "@sushiswap/math": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
-    "@sushiswap/route-processor": "workspace:*",
+    "@sushiswap/route-processor-sdk": "workspace:*",
     "@sushiswap/router": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
     "@sushiswap/stargate": "workspace:*",

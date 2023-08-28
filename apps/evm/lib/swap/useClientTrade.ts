@@ -10,7 +10,7 @@ import {
 } from '@sushiswap/amm'
 import { BentoBoxChainId, isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Type as Currency, WNATIVE } from '@sushiswap/currency'
-import { RouteProcessor3ChainId } from '@sushiswap/route-processor'
+import { RouteProcessor3ChainId } from '@sushiswap/route-processor-sdk'
 import { RouteStatus } from '@sushiswap/tines'
 import {
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,

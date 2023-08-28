@@ -4,13 +4,13 @@ import { Amount, Native, Price, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
 import { usePrice, UseTradeParams, UseTradeReturnWriteArgs } from '@sushiswap/react-query'
 import {
+  isRouteProcessor3_1ChainId,
   isRouteProcessor3ChainId,
   isRouteProcessorChainId,
-  routeProcessor3Address,
-  routeProcessorAddress,
-} from '@sushiswap/route-processor'
-import { isRouteProcessor3_1ChainId } from '@sushiswap/route-processor'
-import { routeProcessor3_1Address } from '@sushiswap/route-processor'
+  ROUTE_PROCESSOR_3_1_ADDRESS,
+  ROUTE_PROCESSOR_3_ADDRESS,
+  ROUTE_PROCESSOR_ADDRESS,
+} from '@sushiswap/route-processor-sdk'
 import { Router } from '@sushiswap/router'
 import { HexString } from '@sushiswap/types'
 import { useQuery } from '@tanstack/react-query'
@@ -109,7 +109,7 @@ ${logPools}
             fromToken,
             toToken,
             recipient,
-            routeProcessor3_1Address[chainId],
+            ROUTE_PROCESSOR_3_1_ADDRESS[chainId],
             [],
             +slippagePercentage / 100
           )
@@ -120,7 +120,7 @@ ${logPools}
             fromToken,
             toToken,
             recipient,
-            routeProcessor3Address[chainId],
+            ROUTE_PROCESSOR_3_ADDRESS[chainId],
             [],
             +slippagePercentage / 100
           )
@@ -131,7 +131,7 @@ ${logPools}
             fromToken,
             toToken,
             recipient,
-            routeProcessorAddress[chainId],
+            ROUTE_PROCESSOR_ADDRESS[chainId],
             +slippagePercentage / 100
           )
         }

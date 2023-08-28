@@ -69,7 +69,7 @@
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
-    "@sushiswap/route-processor": "workspace:*",
+    "@sushiswap/route-processor-sdk": "workspace:*",
     "@sushiswap/router": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
     "@sushiswap/sushixswap-sdk": "workspace:*",
