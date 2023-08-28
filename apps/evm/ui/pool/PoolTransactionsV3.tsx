@@ -320,6 +320,7 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }) => {
           columns={COLUMNS}
           data={_data}
           pagination={true}
+          externalLink={true}
           onPaginationChange={setPaginationState}
           state={{
             pagination: paginationState,

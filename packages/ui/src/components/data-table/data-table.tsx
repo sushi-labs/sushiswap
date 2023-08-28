@@ -43,6 +43,7 @@ interface DataTableProps<TData, TValue> {
   pagination?: boolean
   loading: boolean
   linkFormatter?: (value: TData) => string
+  externalLink?: boolean
   state?: Partial<TableState>
   onSortingChange?: OnChangeFn<SortingState>
   onPaginationChange?: OnChangeFn<PaginationState>
@@ -57,6 +58,7 @@ export function DataTable<TData, TValue>({
   pagination = false,
   loading,
   linkFormatter,
+  externalLink = false,
   state,
   onSortingChange,
   onPaginationChange,
@@ -142,6 +144,7 @@ export function DataTable<TData, TValue>({
                       <TableCellAsLink
                         style={{ width: cell.column.getSize() }}
                         href={linkFormatter(row.original)}
+                        external={externalLink}
                         key={cell.id}
                         testdata-id={`${testId}-${r}-${i}-td`}
                       >
