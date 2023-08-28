@@ -56,7 +56,7 @@ export const Header: FC = () => {
               </LinkInternal>
             </NavigationMenuItem>
             <NavigationMenuItem className="hidden md:block">
-              <NavigationMenuTrigger>Tools</NavigationMenuTrigger>
+              <NavigationMenuTrigger>More</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="w-[400px] gap-3 p-4">
                   {TOOLS_NAVIGATION_LINKS.map((component) => (
