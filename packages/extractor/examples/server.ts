@@ -34,6 +34,7 @@ const querySchema = z.object({
   gasPrice: z.optional(z.coerce.number().int().gt(0)),
   to: z.optional(z.string()).transform((to) => (to ? (to as Address) : undefined)),
   preferSushi: z.optional(z.coerce.boolean()),
+  maxPriceImpact: z.optional(z.coerce.number()),
 })
 
 const PORT = process.env.PORT || 80
@@ -81,7 +82,11 @@ async function main() {
     nativeProviders.set(chainId, nativeProvider)
   }
 
-  app.use(cors())
+  app.use(
+    cors({
+      origin: 'https://www.sushi.com',
+    })
+  )
 
   // Trace incoming requests
   app.use(Sentry.Handlers.requestHandler())
@@ -93,7 +98,16 @@ async function main() {
     if (!parsed.success) {
       return res.status(422).send()
     }
-    const { chainId, tokenIn: _tokenIn, tokenOut: _tokenOut, amount, gasPrice, to, preferSushi } = parsed.data
+    const {
+      chainId,
+      tokenIn: _tokenIn,
+      tokenOut: _tokenOut,
+      amount,
+      gasPrice,
+      to,
+      preferSushi,
+      maxPriceImpact,
+    } = parsed.data
     const tokenManager = tokenManagers.get(chainId) as TokenManager
     const [tokenIn, tokenOut] = await Promise.all([
       _tokenIn === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
@@ -125,14 +139,9 @@ async function main() {
       poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
     }
 
-    const bestRoute = Router[preferSushi ? 'findSpecialRoute' : 'findBestRoute'](
-      poolCodesMap,
-      chainId,
-      tokenIn,
-      amount,
-      tokenOut,
-      gasPrice ?? 30e9
-    )
+    const bestRoute = preferSushi
+      ? Router.findSpecialRoute(poolCodesMap, chainId, tokenIn, amount, tokenOut, gasPrice ?? 30e9)
+      : Router.findBestRoute(poolCodesMap, chainId, tokenIn, amount, tokenOut, gasPrice ?? 30e9)
 
     return res.json(
       serialize({
@@ -160,7 +169,8 @@ async function main() {
               tokenOut,
               to,
               ROUTE_PROCESSOR_3_ADDRESS[chainId],
-              []
+              [],
+              maxPriceImpact
             )
           : undefined,
       })
@@ -171,38 +181,30 @@ async function main() {
     return res.status(200).send()
   })
 
-  app.get('/get-pool-codes-for-tokens', (req: Request, res: Response) => {
-    console.log('HTTP: GET /get-pool-codes-for-tokens', JSON.stringify(req.query))
-    const { chainId } = querySchema.parse(req.query)
-    const extractor = extractors.get(chainId) as Extractor
-    const tokenManager = tokenManagers.get(chainId) as TokenManager
-    const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values()).slice(0, 100))
-    const poolCodes = extractor.getPoolCodesForTokens(tokens)
-    return res.json(poolCodes)
-  })
+  // app.get('/get-pool-codes-for-tokens', (req: Request, res: Response) => {
+  //   console.log('HTTP: GET /get-pool-codes-for-tokens', JSON.stringify(req.query))
+  //   const { chainId } = querySchema.parse(req.query)
+  //   const extractor = extractors.get(chainId) as Extractor
+  //   const tokenManager = tokenManagers.get(chainId) as TokenManager
+  //   const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values()).slice(0, 100))
+  //   const poolCodes = extractor.getPoolCodesForTokens(tokens)
+  //   return res.json(poolCodes)
+  // })
 
-  app.get('/pool-codes', (req: Request, res: Response) => {
-    console.log('HTTP: GET /pool-codes', JSON.stringify(req.query))
-    const { chainId } = querySchema.parse(req.query)
-    const extractor = extractors.get(chainId) as Extractor
-    const poolCodes = extractor.getCurrentPoolCodes()
-    res.json(poolCodes)
-  })
+  // app.get('/pool-codes', (req: Request, res: Response) => {
+  //   console.log('HTTP: GET /pool-codes', JSON.stringify(req.query))
+  //   const { chainId } = querySchema.parse(req.query)
+  //   const extractor = extractors.get(chainId) as Extractor
+  //   const poolCodes = extractor.getCurrentPoolCodes()
+  //   res.json(poolCodes)
+  // })
 
-  app.get('/debug-sentry', function mainHandler(req, res) {
-    throw new Error('My first Sentry error!')
-  })
+  // app.get('/debug-sentry', function mainHandler(req, res) {
+  //   throw new Error('My first Sentry error!')
+  // })
 
   // The error handler must be registered before any other error middleware and after all controllers
   app.use(Sentry.Handlers.errorHandler())
-
-  // Optional fallthrough error handler
-  app.use(function onError(err, req, res, next) {
-    // The error id is attached to `res.sentry` to be returned
-    // and optionally displayed to the user for support.
-    res.statusCode = 500
-    res.end(res.sentry + '\n')
-  })
 
   app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}`)

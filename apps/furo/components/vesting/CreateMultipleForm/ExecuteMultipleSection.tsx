@@ -1,7 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
-import { bentoBoxV1Address } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Native, Type } from '@sushiswap/currency'
-import { FuroVestingRouterChainId } from '@sushiswap/furo'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import { FundSource } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
@@ -32,7 +32,7 @@ import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount }
 const APPROVE_TAG = 'approve-multiple-vestings'
 
 export const ExecuteMultipleSection: FC<{
-  chainId: FuroVestingRouterChainId
+  chainId: FuroChainId
   isReview: boolean
   onBack(): void
 }> = withCheckerRoot(({ chainId, isReview, onBack }) => {
@@ -57,7 +57,7 @@ export const ExecuteMultipleSection: FC<{
 
   const currencies = useMemo(() => _vestings?.map((el) => el.currency) || [], [_vestings])
   const _tokens = useTokensFromZTokens(currencies)
-  const rebases = useBentoBoxTotals(chainId, _tokens)
+  const rebases = useBentoBoxTotals(chainId as BentoBoxChainId, _tokens)
 
   const summedAmounts = useMemo(
     () =>
@@ -217,7 +217,7 @@ export const ExecuteMultipleSection: FC<{
     () =>
       Object.values(summedAmounts).map((amount) => ({
         amount,
-        contract: bentoBoxV1Address[chainId] as Address,
+        contract: BENTOBOX_ADDRESS[chainId as BentoBoxChainId] as Address,
       })),
     [chainId, summedAmounts]
   )
@@ -234,7 +234,7 @@ export const ExecuteMultipleSection: FC<{
             fullWidth={false}
             tag={APPROVE_TAG}
             id="create-multiple-vest-approve-bentobox"
-            chainId={chainId}
+            chainId={chainId as BentoBoxChainId}
             masterContract={getFuroVestingRouterContractConfig(chainId).address}
           >
             <Checker.ApproveERC20Multiple

@@ -1,8 +1,8 @@
 import { parseUnits } from '@ethersproject/units'
 import { PencilIcon } from '@heroicons/react/outline'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Token } from '@sushiswap/currency'
-import { FuroStreamChainId } from '@sushiswap/furo'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import {
   DateField,
   DialogConfirm,
@@ -45,7 +45,7 @@ interface UpdateModalProps {
   stream: Stream
   abi: NonNullable<Parameters<typeof getContract>['0']>['abi']
   address: Address
-  chainId: FuroStreamChainId
+  chainId: FuroChainId
 }
 
 export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
@@ -245,7 +245,7 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                             tag={APPROVE_TAG}
                             type="button"
                             id="furo-update-stream-approve-bentobox"
-                            chainId={chainId satisfies BentoBoxV1ChainId}
+                            chainId={chainId as BentoBoxChainId}
                             masterContract={contractAddress as Address}
                             className="col-span-3 md:col-span-2"
                           >
@@ -253,7 +253,7 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                               id="approve-erc20-update-stream"
                               type="button"
                               amount={amountAsEntity}
-                              contract={bentoBoxV1Address[chainId] as Address}
+                              contract={BENTOBOX_ADDRESS[chainId as BentoBoxChainId] as Address}
                               enabled={topUp}
                             >
                               <Checker.Success tag={APPROVE_TAG}>

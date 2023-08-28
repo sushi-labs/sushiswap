@@ -154,8 +154,8 @@ contract RouteProcessor4 is Ownable {
     }
 
     uint256 balanceInFinal = tokenIn == NATIVE_ADDRESS ? address(this).balance : IERC20(tokenIn).balanceOf(msg.sender);
-    require(balanceInFinal + amountIn >= balanceInInitial, 'RouteProcessor: Minimal imput balance violation');
-
+    require(balanceInFinal + amountIn >= balanceInInitial, 'RouteProcessor: Minimal input balance violation');
+    
     uint256 balanceOutFinal = tokenOut == NATIVE_ADDRESS ? address(to).balance : IERC20(tokenOut).balanceOf(to);
     if (balanceOutFinal < balanceOutInitial + amountOutMin)
       revert MinimalOutputBalanceViolation(balanceOutFinal - balanceOutInitial);
@@ -333,7 +333,9 @@ contract RouteProcessor4 is Ownable {
     if (amountIn != 0) {
       if (from == address(this)) IERC20(tokenIn).safeTransfer(pool, amountIn);
       else IERC20(tokenIn).safeTransferFrom(msg.sender, pool, amountIn);
-    } else amountIn = IERC20(tokenIn).balanceOf(pool) - reserveIn;  // tokens already were transferred
+    }
+    // without 'else' in order to support tax tokens
+    amountIn = IERC20(tokenIn).balanceOf(pool) - reserveIn;  // tokens already were transferred
 
     uint256 amountInWithFee = amountIn * (1_000_000 - fee);
     uint256 amountOut = (amountInWithFee * reserveOut) / (reserveIn * 1_000_000 + amountInWithFee);

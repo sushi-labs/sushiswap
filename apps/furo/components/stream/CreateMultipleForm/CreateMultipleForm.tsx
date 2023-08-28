@@ -1,6 +1,6 @@
 import { DuplicateIcon, PlusIcon, TrashIcon } from '@heroicons/react/solid'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FuroStreamRouterChainId } from '@sushiswap/furo'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import { Button } from '@sushiswap/ui/components/button'
 import { Form } from '@sushiswap/ui/components/form'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
@@ -16,7 +16,7 @@ import {
 } from '../schema'
 import { ExecuteMultipleSection, ImportZoneSection, ReviewSection } from '.'
 
-export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
+export const CreateMultipleForm: FC<{ chainId: FuroChainId }> = ({ chainId }) => {
   const [review, setReview] = useState(false)
   const methods = useForm<CreateMultipleStreamFormSchemaType & CreateMultipleStreamBaseSchemaFormErrorsType>({
     resolver: zodResolver(CreateMultipleStreamModelSchema),

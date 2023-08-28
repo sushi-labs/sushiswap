@@ -5,7 +5,7 @@ import {
   TridentConstantPool,
   TridentStablePool,
 } from '@sushiswap/amm'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
 import {
@@ -52,7 +52,7 @@ import {
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface CreateSectionReviewModalTridentProps {
-  chainId: BentoBoxV1ChainId
+  chainId: BentoBoxChainId
   token0: Type | undefined
   token1: Type | undefined
   input0: Amount<Type> | undefined
@@ -317,7 +317,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
                 <DialogTitle>Create pool</DialogTitle>
                 <DialogDescription>Please review your entered details.</DialogDescription>
               </DialogHeader>
-              <AddSectionReviewModal chainId={chainId as BentoBoxV1ChainId} input0={input0} input1={input1} />
+              <AddSectionReviewModal chainId={chainId as BentoBoxChainId} input0={input0} input1={input1} />
               <DialogFooter>
                 <Button
                   id="confirm-add-liquidity"

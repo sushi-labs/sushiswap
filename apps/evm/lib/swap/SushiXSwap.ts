@@ -8,7 +8,7 @@ import {
   STARGATE_POOL_ID,
   StargateChainId,
 } from '@sushiswap/stargate'
-import { SushiXSwapChainId } from '@sushiswap/sushixswap'
+import { SushiXSwapChainId } from '@sushiswap/sushixswap-sdk'
 import { getBigInt } from '@sushiswap/tines'
 import { Address, getSushiXSwapContractConfig, SushiXSwap as SushiXSwapContract } from '@sushiswap/wagmi'
 import { readContract } from '@sushiswap/wagmi/actions'

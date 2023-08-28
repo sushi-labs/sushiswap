@@ -123,7 +123,7 @@ async function startInfinitTest(args: {
     args.checkTokens ??
     BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values()).slice(0, 100))
   for (;;) {
-    for (let i = 1; i < tokens.length; ++i) {
+    for (let i = 0; i < tokens.length; ++i) {
       await delay(1000)
       const time0 = performance.now()
       const pools0 = extractor.getPoolCodesForTokens(BASES_TO_CHECK_TRADES_AGAINST[chainId].concat([tokens[i]]))
@@ -190,6 +190,7 @@ async function startInfinitTest(args: {
             ` diff = ${diff > 0 ? '+' : ''}${diff} `
         )
         if (Math.abs(Number(diff)) > 0.001) console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
+        console.log(rpParams)
       } catch (e) {
         console.log('Routing failed. No connection ? ' + e)
       }
@@ -201,8 +202,9 @@ it.skip('Extractor Ethereum infinit work test', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
-    factoriesV2: [uniswapV2Factory(ChainId.ETHEREUM), sushiswapV2Factory(ChainId.ETHEREUM)],
-    factoriesV3: [uniswapV3Factory(ChainId.ETHEREUM)],
+    //[], //uniswapV2Factory(ChainId.ETHEREUM)], //,
+    factoriesV2: [sushiswapV2Factory(ChainId.ETHEREUM)],
+    factoriesV3: [], //uniswapV3Factory(ChainId.ETHEREUM)],
     tickHelperContract: TickLensContract[ChainId.ETHEREUM],
     cacheDir: './cache',
     logDepth: 50,
@@ -357,6 +359,13 @@ it.skip('Extractor Base infinit work test', async () => {
     //     name: 'Moshi',
     //     decimals: 18,
     //   }),
+    // new Token({
+    //   chainId: ChainId.BASE,
+    //   address: '0x93980959778166ccbB95Db7EcF52607240bc541e',
+    //   name: 'bpsTEST',
+    //   symbol: 'bpsTEST',
+    //   decimals: 18,
+    // }),
     // ],
   })
 })
