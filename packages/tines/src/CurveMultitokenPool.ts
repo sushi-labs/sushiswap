@@ -1,4 +1,4 @@
-import { BigNumber } from '@ethersproject/bignumber'
+/*import { BigNumber } from '@ethersproject/bignumber'
 
 import { RPool, RToken } from './PrimaryPools'
 import { getBigNumber } from './Utils'
@@ -212,3 +212,4 @@ export function createCurvePoolsForMultipool(
     for (let j = i + 1; j < tokens.length; ++j) pools.push(new CurveMultitokenPool(core, i, j))
   return pools
 }
+*/
