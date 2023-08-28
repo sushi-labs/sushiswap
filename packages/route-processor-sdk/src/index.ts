@@ -154,11 +154,16 @@ export const isRouteProcessor3ChainId = (chainId: ChainId): chainId is RouteProc
   ROUTE_PROCESSOR_3_SUPPORTED_CHAIN_IDS.includes(chainId as RouteProcessor3ChainId)
 
 // v3.1
-export const ROUTE_PROCESSOR_3_1_SUPPORTED_CHAIN_IDS = [ChainId.ETHEREUM, ChainId.BASE] as const
+export const ROUTE_PROCESSOR_3_1_SUPPORTED_CHAIN_IDS = [
+  ChainId.ARBITRUM,
+  ChainId.BASE,
+  ChainId.ETHEREUM,
+  ] as const
 export type RouteProcessor3_1ChainId = (typeof ROUTE_PROCESSOR_3_1_SUPPORTED_CHAIN_IDS)[number]
 export const ROUTE_PROCESSOR_3_1_ADDRESS: Record<RouteProcessor3_1ChainId, `0x${string}`> = {
+  [ChainId.ARBITRUM]: '0x3c1fBA3bCEE7CE410B155a8C71F9fF1312852C82',
   [ChainId.BASE]: '0x9B77032075806975B3bd3bcFc69E5DE36ee6D176',
-  [ChainId.ETHEREUM]: '0xF0cBce1942A68BEB3d1b73F0dd86C8DCc363eF49',
+  [ChainId.ETHEREUM]: '0x8516944E89f296eb6473d79aED1Ba12088016c9e',
 } as const
 export const isRouteProcessor3_1ChainId = (chainId: ChainId): chainId is RouteProcessor3_1ChainId =>
   ROUTE_PROCESSOR_3_1_SUPPORTED_CHAIN_IDS.includes(chainId as RouteProcessor3_1ChainId)
