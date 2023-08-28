@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FuroVestingRouterChainId } from '@sushiswap/furo'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import { FundSource } from '@sushiswap/hooks'
 import { Form } from '@sushiswap/ui/components/form'
 import { nanoid } from 'nanoid'
@@ -28,7 +28,7 @@ export const CREATE_VEST_DEFAULT_VALUES: CreateVestingFormSchemaType = {
   cliffEndDate: undefined,
 }
 
-export const CreateForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ chainId }) => {
+export const CreateForm: FC<{ chainId: FuroChainId }> = ({ chainId }) => {
   const methods = useForm<CreateMultipleVestingFormSchemaType>({
     resolver: zodResolver(CreateMultipleVestingModelSchema),
     mode: 'all',

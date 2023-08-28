@@ -1,5 +1,5 @@
 import { Token } from '@sushiswap/currency'
-import { FuroStreamChainId } from '@sushiswap/furo/exports/exports'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { useQuery } from '@tanstack/react-query'
 
@@ -22,7 +22,7 @@ export const queryRebasesDTO = async ({ tokens }: Omit<UseRebaseDTO, 'enabled'>)
     })
   )
 
-  const data: { chainId: FuroStreamChainId; data: NonNullable<bentoBoxRebaseQuery> }[] = []
+  const data: { chainId: FuroChainId; data: NonNullable<bentoBoxRebaseQuery> }[] = []
   await Promise.allSettled(
     sdks.map((sdk, i) =>
       sdk.bentoBoxRebase({
@@ -33,7 +33,7 @@ export const queryRebasesDTO = async ({ tokens }: Omit<UseRebaseDTO, 'enabled'>)
     results.forEach((result, i) => {
       if (result.status === 'fulfilled') {
         data.push({
-          chainId: SUPPORTED_CHAINS[i],
+          chainId: SUPPORTED_CHAINS[i] as FuroChainId,
           data: result.value as NonNullable<bentoBoxRebaseQuery>,
         })
       }

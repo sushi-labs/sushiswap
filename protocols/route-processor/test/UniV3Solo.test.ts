@@ -1,5 +1,5 @@
 import { routeProcessor3Abi } from '@sushiswap/abi'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { LiquidityProviders, Router, UniV3PoolCode } from '@sushiswap/router'
@@ -67,7 +67,7 @@ async function getTestEnvironment() {
     abi: routeProcessor3Abi,
     bytecode: RouteProcessor3.bytecode as Hex,
     account: user.address,
-    args: [bentoBoxV1Address[chainId as BentoBoxV1ChainId], []],
+    args: [BENTOBOX_ADDRESS[chainId as BentoBoxChainId], []],
   })
   const RouteProcessorAddress = (await client.waitForTransactionReceipt({ hash: RouteProcessorTx })).contractAddress
   if (!RouteProcessorAddress) throw new Error('RouteProcessorAddress is undefined')

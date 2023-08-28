@@ -1,4 +1,4 @@
-import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
+import { isRouteProcessor3_1ChainId, isRouteProcessor3ChainId } from '@sushiswap/route-processor-sdk'
 import { DataFetcher, LiquidityProviders, PoolCode } from '@sushiswap/router'
 
 import { UsePoolsParams } from '../types'
@@ -11,7 +11,7 @@ export const getAllPoolsCodeMap = async ({ currencyA, currencyB, chainId }: Omit
   }
 
   const sushiLiquidityProviders = [LiquidityProviders.SushiSwapV2, LiquidityProviders.Trident]
-  if (isRouteProcessor3ChainId(chainId)) {
+  if (isRouteProcessor3ChainId(chainId) || isRouteProcessor3_1ChainId(chainId)) {
     sushiLiquidityProviders.push(LiquidityProviders.SushiSwapV3)
   }
 

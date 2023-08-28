@@ -162,7 +162,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
           }
         }
       } catch (e: unknown) {
-        //
+        console.error('failed to prepare add liquidity v2 transaction', e)
       }
     }
 

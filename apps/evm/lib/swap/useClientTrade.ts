@@ -8,9 +8,9 @@ import {
   TridentStablePool,
   Version as TradeVersion,
 } from '@sushiswap/amm'
-import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxChainId, isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Type as Currency, WNATIVE } from '@sushiswap/currency'
-import { RouteProcessor3ChainId } from '@sushiswap/route-processor'
+import { RouteProcessor3ChainId } from '@sushiswap/route-processor-sdk'
 import { RouteStatus } from '@sushiswap/tines'
 import {
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
@@ -68,15 +68,13 @@ export function useTrade(
   })
 
   // Trident constant product pools
-  const { data: constantProductPools } = useGetTridentConstantPools(
-    chainId as BentoBoxV1ChainId,
-    currencyCombinations,
-    { enabled: isBentoBoxV1ChainId(chainId) }
-  )
+  const { data: constantProductPools } = useGetTridentConstantPools(chainId as BentoBoxChainId, currencyCombinations, {
+    enabled: isBentoBoxChainId(chainId),
+  })
 
   // Trident constant product pools
-  const { data: stablePools } = useGetTridentStablePools(chainId as BentoBoxV1ChainId, currencyCombinations, {
-    enabled: isBentoBoxV1ChainId(chainId),
+  const { data: stablePools } = useGetTridentStablePools(chainId as BentoBoxChainId, currencyCombinations, {
+    enabled: isBentoBoxChainId(chainId),
   })
 
   // Combined legacy and trident pools
@@ -107,11 +105,11 @@ export function useTrade(
     [pools]
   )
 
-  const currencyInRebase = useBentoBoxTotal(chainId as BentoBoxV1ChainId, currencyIn, {
-    enabled: isBentoBoxV1ChainId(chainId),
+  const currencyInRebase = useBentoBoxTotal(chainId as BentoBoxChainId, currencyIn, {
+    enabled: isBentoBoxChainId(chainId),
   })
-  const currencyOutRebase = useBentoBoxTotal(chainId as BentoBoxV1ChainId, currencyOut, {
-    enabled: isBentoBoxV1ChainId(chainId),
+  const currencyOutRebase = useBentoBoxTotal(chainId as BentoBoxChainId, currencyOut, {
+    enabled: isBentoBoxChainId(chainId),
   })
 
   return useMemo(() => {

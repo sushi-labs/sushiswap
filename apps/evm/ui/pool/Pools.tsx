@@ -2,7 +2,6 @@
 
 import { ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { ChainId } from '@sushiswap/chain'
-import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
 import { isTridentChainId } from '@sushiswap/trident-sdk'
 import { Button } from '@sushiswap/ui/components/button'
 import { Carousel } from '@sushiswap/ui/components/Carousel'
@@ -18,7 +17,7 @@ import {
 import { DiscordIcon } from '@sushiswap/ui/components/icons'
 import { SelectIcon } from '@sushiswap/ui/components/select'
 import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { isSushiSwapV3ChainId, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useAccount, useNetwork } from '@sushiswap/wagmi'
 import React, { FC } from 'react'
 
@@ -49,7 +48,9 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                 <Button asChild size="lg" className="rounded-r-none">
                   <a
                     href={
-                      isRouteProcessor3ChainId(chainId) ? `/pools/add?chainId=${chainId}` : `/pools/add/v2/${chainId}`
+                      isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
+                        ? `/pools/add?chainId=${chainId}`
+                        : `/pools/add/v2/${chainId}`
                     }
                   >
                     Create Position
@@ -63,7 +64,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-80">
                     <DropdownMenuGroup>
-                      <DropdownMenuItem disabled={!isRouteProcessor3ChainId(chainId)} asChild>
+                      <DropdownMenuItem disabled={!isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)} asChild>
                         <a
                           href={`/pools/add?chainId=${chainId}`}
                           className="flex flex-col !items-start gap-1 cursor-pointer"
@@ -71,7 +72,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                           <div className="flex items-center gap-1 font-medium leading-none">
                             V3 Position
                             <Chip variant="secondary">
-                              {isRouteProcessor3ChainId(chainId) ? 'New 🔥' : 'Unavailable'}
+                              {isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId) ? 'New 🔥' : 'Unavailable'}
                             </Chip>
                           </div>
                           <p className="text-sm leading-snug text-muted-foreground">

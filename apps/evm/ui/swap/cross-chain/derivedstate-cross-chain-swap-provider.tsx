@@ -5,7 +5,7 @@ import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sus
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { STARGATE_SUPPORTED_CHAIN_IDS, StargateChainId } from '@sushiswap/stargate'
-import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap'
+import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap-sdk'
 import { Address, useAccount, useNetwork, watchNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future'
 import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'

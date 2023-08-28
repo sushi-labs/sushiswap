@@ -4,11 +4,13 @@ import { Amount, Native, Price, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
 import { usePrice, UseTradeParams, UseTradeReturnWriteArgs } from '@sushiswap/react-query'
 import {
+  isRouteProcessor3_1ChainId,
   isRouteProcessor3ChainId,
   isRouteProcessorChainId,
-  routeProcessor3Address,
-  routeProcessorAddress,
-} from '@sushiswap/route-processor'
+  ROUTE_PROCESSOR_3_1_ADDRESS,
+  ROUTE_PROCESSOR_3_ADDRESS,
+  ROUTE_PROCESSOR_ADDRESS,
+} from '@sushiswap/route-processor-sdk'
 import { Router } from '@sushiswap/router'
 import { HexString } from '@sushiswap/types'
 import { useQuery } from '@tanstack/react-query'
@@ -47,7 +49,9 @@ export const useClientTrade = (variables: UseTradeParams) => {
     queryFn: async () => {
       if (
         !poolsCodeMap ||
-        (!isRouteProcessorChainId(chainId) && !isRouteProcessor3ChainId(chainId)) ||
+        (!isRouteProcessorChainId(chainId) &&
+          !isRouteProcessor3ChainId(chainId) &&
+          !isRouteProcessor3_1ChainId(chainId)) ||
         !fromToken ||
         !amount ||
         !toToken ||
@@ -98,14 +102,25 @@ ${logPools}
       let args = undefined
 
       if (recipient) {
-        if (isRouteProcessor3ChainId(chainId)) {
-          args = Router.routeProcessor2Params(
+        if (isRouteProcessor3_1ChainId(chainId)) {
+          args = Router.routeProcessor3_1Params(
             poolsCodeMap,
             route,
             fromToken,
             toToken,
             recipient,
-            routeProcessor3Address[chainId],
+            ROUTE_PROCESSOR_3_1_ADDRESS[chainId],
+            [],
+            +slippagePercentage / 100
+          )
+        } else if (isRouteProcessor3ChainId(chainId)) {
+          args = Router.routeProcessor3Params(
+            poolsCodeMap,
+            route,
+            fromToken,
+            toToken,
+            recipient,
+            ROUTE_PROCESSOR_3_ADDRESS[chainId],
             [],
             +slippagePercentage / 100
           )
@@ -116,7 +131,7 @@ ${logPools}
             fromToken,
             toToken,
             recipient,
-            routeProcessorAddress[chainId],
+            ROUTE_PROCESSOR_ADDRESS[chainId],
             +slippagePercentage / 100
           )
         }
@@ -140,7 +155,7 @@ ${logPools}
           : undefined
 
         // const overrides = fromToken.isNative && writeArgs?.[1] ? { value: BigNumber.from(writeArgs?.[1]) } : undefined
-        let value = fromToken.isNative && writeArgs?.[1] ? writeArgs?.[1] : undefined
+        let value = fromToken.isNative && writeArgs?.[1] ? writeArgs[1] : undefined
 
         if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
           writeArgs = ['0xbc4a6be1285893630d45c881c6c343a65fdbe278', 20000000000000000n, ...writeArgs]

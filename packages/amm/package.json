@@ -42,7 +42,6 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/tines": "workspace:*",
-    "@sushiswap/trident-core": "workspace:*",
     "@sushiswap/trident-sdk": "workspace:*",
     "@sushiswap/types": "workspace:*",
     "@sushiswap/v2-sdk": "workspace:*",

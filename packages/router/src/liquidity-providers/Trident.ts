@@ -1,14 +1,13 @@
 import { balanceOfAbi, getReservesAbi, getStableReservesAbi, totalsAbi } from '@sushiswap/abi'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import type { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
 import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBI } from '@sushiswap/tines'
 import {
-  tridentConstantPoolFactoryAddress,
-  TridentConstantPoolFactoryChainId,
-  tridentStablePoolFactoryAddress,
-  TridentStablePoolFactoryChainId,
+  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
+  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
+  TridentChainId,
 } from '@sushiswap/trident-sdk'
 import { add, getUnixTime } from 'date-fns'
 import { Address, PublicClient } from 'viem'
@@ -47,7 +46,7 @@ interface PoolInfo {
 
 export class TridentProvider extends LiquidityProvider {
   // Need to override for type narrowing
-  chainId: Extract<ChainId, BentoBoxV1ChainId & TridentConstantPoolFactoryChainId & TridentStablePoolFactoryChainId>
+  chainId: Extract<ChainId, BentoBoxChainId & TridentChainId>
 
   readonly TOP_POOL_SIZE = 155
   readonly TOP_POOL_LIQUIDITY_THRESHOLD = 1000
@@ -64,9 +63,9 @@ export class TridentProvider extends LiquidityProvider {
   availablePools: Map<string, PoolResponse2> = new Map()
 
   bridges: Map<string, PoolCode> = new Map()
-  bentoBox = bentoBoxV1Address
-  constantProductPoolFactory = tridentConstantPoolFactoryAddress
-  stablePoolFactory = tridentStablePoolFactoryAddress
+  bentoBox = BENTOBOX_ADDRESS
+  constantProductPoolFactory = TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS
+  stablePoolFactory = TRIDENT_STABLE_POOL_FACTORY_ADDRESS
   latestPoolCreatedAtTimestamp = new Date()
   discoverNewPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }))
   refreshAvailablePoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.FETCH_AVAILABLE_POOLS_AFTER_SECONDS }))
@@ -77,7 +76,7 @@ export class TridentProvider extends LiquidityProvider {
   databaseClient: PrismaClient | undefined
 
   constructor(
-    chainId: Extract<ChainId, BentoBoxV1ChainId & TridentConstantPoolFactoryChainId & TridentStablePoolFactoryChainId>,
+    chainId: Extract<ChainId, BentoBoxChainId & TridentChainId>,
     web3Client: PublicClient,
     databaseClient?: PrismaClient
   ) {
@@ -190,7 +189,7 @@ export class TridentProvider extends LiquidityProvider {
           (t) =>
             ({
               args: [t.address as Address],
-              address: this.bentoBox[this.chainId],
+              address: this.bentoBox[this.chainId as BentoBoxChainId],
               chainId: this.chainId,
               abi: totalsAbi,
               functionName: 'totals',
@@ -208,7 +207,7 @@ export class TridentProvider extends LiquidityProvider {
         contracts: sortedTokens.map(
           (t) =>
             ({
-              args: [this.bentoBox[this.chainId] as Address],
+              args: [this.bentoBox[this.chainId as BentoBoxChainId] as Address],
               address: t.address as Address,
               chainId: this.chainId,
               abi: balanceOfAbi,
@@ -257,7 +256,12 @@ export class TridentProvider extends LiquidityProvider {
       )
       this.bridges.set(
         t.address.toLowerCase(),
-        new BentoBridgePoolCode(pool, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId])
+        new BentoBridgePoolCode(
+          pool,
+          this.getType(),
+          this.getPoolProviderName(),
+          this.bentoBox[this.chainId as BentoBoxChainId]
+        )
       )
       rebases.set(t.address.toLowerCase(), {
         elastic: elastic,
@@ -400,7 +404,7 @@ export class TridentProvider extends LiquidityProvider {
           (b) =>
             ({
               args: [b.pool.token0.address as Address],
-              address: this.bentoBox[this.chainId] as Address,
+              address: this.bentoBox[this.chainId as BentoBoxChainId] as Address,
               chainId: this.chainId,
               abi: totalsAbi,
               functionName: 'totals',
@@ -419,7 +423,7 @@ export class TridentProvider extends LiquidityProvider {
         contracts: bridges.map(
           (b) =>
             ({
-              args: [this.bentoBox[this.chainId] as Address],
+              args: [this.bentoBox[this.chainId as BentoBoxChainId] as Address],
               address: b.pool.token0.address as Address,
               chainId: this.chainId,
               abi: balanceOfAbi,
@@ -528,7 +532,12 @@ export class TridentProvider extends LiquidityProvider {
       if (!this.bridges.has(t.address)) {
         const pool = new BridgeBento(fakeBridgeAddress, t as RToken, convertTokenToBento(t), 0n, 0n, 0n)
         bridgesToCreate.push(
-          new BentoBridgePoolCode(pool, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId])
+          new BentoBridgePoolCode(
+            pool,
+            this.getType(),
+            this.getPoolProviderName(),
+            this.bentoBox[this.chainId as BentoBoxChainId]
+          )
         )
         // ++newBridges
       }
@@ -627,7 +636,7 @@ export class TridentProvider extends LiquidityProvider {
           (b) =>
             ({
               args: [b.pool.token0.address as Address],
-              address: this.bentoBox[this.chainId] as Address,
+              address: this.bentoBox[this.chainId as BentoBoxChainId] as Address,
               chainId: this.chainId,
               abi: totalsAbi,
               functionName: 'totals',
@@ -646,7 +655,7 @@ export class TridentProvider extends LiquidityProvider {
         contracts: bridgesToCreate.map(
           (b) =>
             ({
-              args: [this.bentoBox[this.chainId] as Address],
+              args: [this.bentoBox[this.chainId as BentoBoxChainId] as Address],
               address: b.pool.token0.address as Address,
               chainId: this.chainId,
               abi: balanceOfAbi,
@@ -903,7 +912,12 @@ export class TridentProvider extends LiquidityProvider {
         const bridge = new BridgeBento(`Bento bridge for ${t.symbol}`, t as RToken, convertTokenToBento(t), 0n, 0n, 0n)
         this.bridges.set(
           t.address.toLowerCase(),
-          new BentoBridgePoolCode(bridge, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId])
+          new BentoBridgePoolCode(
+            bridge,
+            this.getType(),
+            this.getPoolProviderName(),
+            this.bentoBox[this.chainId as BentoBoxChainId]
+          )
         )
         //console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Added bridge ${bridge.address}`)
       }
