@@ -5,7 +5,9 @@ import { ConcentratedLiquidityProvider } from '../../../../../ui/pool/Concentrat
 import { NewPosition } from '../../../../../ui/pool/NewPosition'
 
 export default async function PositionsCreatePage({ params }: { params: { id: string } }) {
-  const [chainId, address] = params.id.split('%3A') as [SushiSwapV3ChainId, string]
+  const [_chainId, address] = params.id.split(params.id.includes('%3A') ? '%3A' : ':') as [string, string]
+  const chainId = Number(_chainId) as SushiSwapV3ChainId
+
   return (
     <div className="flex flex-col gap-4">
       <LinkInternal href={`/pool/${params.id}`} className="text-blue hover:underline text-sm">
