@@ -17,9 +17,11 @@ export const DeferUntilWalletReady: FC<{ children: ReactNode }> = ({ children })
     show ? null : 2000
   )
 
-  if ((status !== 'connecting' && status !== 'reconnecting') || show) {
-    return <>{children}</>
+  if (show) return <>{children}</>
+
+  if (status === 'connecting' || status === 'reconnecting') {
+    return <Loading />
   }
 
-  return <Loading />
+  return <>{children}</>
 }
