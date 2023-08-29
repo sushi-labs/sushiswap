@@ -106,6 +106,14 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     [onChange]
   )
 
+  useEffect(() => {
+    if (currency && chainId && currency?.chainId !== chainId) {
+      console.error(
+        `Selected token chainId not equal to passed chainId, impossible state. Currency chainId: ${currency.chainId}, chainId: ${chainId}`
+      )
+    }
+  }, [currency?.chainId, chainId])
+
   const selector = useMemo(() => {
     if (!onSelect) return null
 
