@@ -1,3 +1,5 @@
+'use client'
+
 import { Type } from '@sushiswap/currency'
 import { computePoolAddress, FeeAmount, nearestUsableTick, SushiSwapV3ChainId, TICK_SPACINGS } from '@sushiswap/v3-sdk'
 import { Address, useContractReads } from '@sushiswap/wagmi'

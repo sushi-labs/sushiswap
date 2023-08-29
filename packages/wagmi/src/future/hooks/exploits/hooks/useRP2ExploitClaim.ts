@@ -1,3 +1,5 @@
+'use client'
+
 import { Token } from '@sushiswap/currency'
 import { createToast } from '@sushiswap/ui/components/toast'
 import { SendTransactionResult, waitForTransaction } from '@wagmi/core'

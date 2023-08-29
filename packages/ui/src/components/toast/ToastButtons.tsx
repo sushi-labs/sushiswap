@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import { FC } from 'react'
 
 import { Button } from '../button'
+import { LinkExternal } from '../link'
 
 interface ToastButtons {
   href?: string
@@ -17,9 +18,7 @@ export const ToastButtons: FC<ToastButtons> = ({ href, onDismiss }) => {
 
       {href && (
         <Button asChild size="sm" variant="secondary">
-          <a href={href} rel="noopener noreferrer" target="_blank">
-            Transaction
-          </a>
+          <LinkExternal href={href}>Transaction</LinkExternal>
         </Button>
       )}
     </div>

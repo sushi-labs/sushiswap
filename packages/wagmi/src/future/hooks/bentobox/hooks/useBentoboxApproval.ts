@@ -1,12 +1,14 @@
+'use client'
+
 import { HashZero } from '@ethersproject/constants'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { createErrorToast, createFailedToast, createToast } from '@sushiswap/ui/components/toast'
 import { useQuery } from '@tanstack/react-query'
 import { readContract } from '@wagmi/core'
 import { useCallback, useMemo, useState } from 'react'
-import { hexToSignature, UserRejectedRequestError } from 'viem'
 import { Address, useAccount, useContractWrite, usePrepareContractWrite, useSignTypedData } from 'wagmi'
 import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
+import { hexToSignature, UserRejectedRequestError } from 'viem'
 
 import { getBentoBoxContractConfig } from '../../../../hooks'
 import { useSignature } from '../../../systems/Checker/Provider'

@@ -1,3 +1,5 @@
+'use client'
+
 import { useContractRead } from 'wagmi'
 
 import { getMulticall3ContractConfig } from './useMulticall3Contract'

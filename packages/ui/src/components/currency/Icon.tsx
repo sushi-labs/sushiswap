@@ -7,6 +7,7 @@ import { FC } from 'react'
 
 import { cloudinaryImageLoader } from '../../cloudinary'
 import { Avatar, AvatarFallback, AvatarImage } from '../avatar'
+import { LinkExternal } from '../link'
 
 const AvaxLogo = 'avax.svg'
 const BnbLogo = 'bnb.svg'
@@ -124,9 +125,5 @@ export const Icon: FC<IconProps> = ({ currency, disableLink = true, ...rest }) =
     return avatar
   }
 
-  return (
-    <a target="_blank" rel="noopener noreferrer" href={Chain.tokenUrl(currency.chainId, currency.wrapped.address)}>
-      {avatar}
-    </a>
-  )
+  return <LinkExternal href={Chain.tokenUrl(currency.chainId, currency.wrapped.address)}>{avatar}</LinkExternal>
 }

@@ -1,3 +1,5 @@
+'use client'
+
 import { isAddress } from '@ethersproject/address'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
@@ -7,10 +9,10 @@ import { useCustomTokens, usePinnedTokens } from '@sushiswap/hooks'
 import { useBalances, useOtherTokenListsQuery, usePrices, useTokens } from '@sushiswap/react-query'
 import {
   classNames,
+  Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogNew,
   DialogTitle,
   DialogTrigger,
   IconButton,
@@ -134,7 +136,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   const isLoading = isTokensLoading || isOtherTokensLoading || isQueryTokenLoading
 
   return (
-    <DialogNew open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="!flex flex-col justify-start min-h-[85vh]">
         <DialogHeader>
@@ -239,6 +241,6 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
           </div>
         </List.Control>
       </DialogContent>
-    </DialogNew>
+    </Dialog>
   )
 }

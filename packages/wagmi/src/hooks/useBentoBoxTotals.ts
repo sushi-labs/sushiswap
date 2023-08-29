@@ -1,3 +1,5 @@
+'use client'
+
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Type as Currency } from '@sushiswap/currency'
 import { useMemo } from 'react'

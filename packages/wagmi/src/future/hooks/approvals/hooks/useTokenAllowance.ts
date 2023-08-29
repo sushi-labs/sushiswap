@@ -1,3 +1,5 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { Address, erc20ABI, useContractRead } from 'wagmi'

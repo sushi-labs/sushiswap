@@ -1,63 +1,71 @@
-import { Slot } from '@radix-ui/react-slot'
+import { cva, type VariantProps } from 'class-variance-authority'
 import classNames from 'classnames'
-import React, { ReactNode } from 'react'
+import React from 'react'
 
-import { Container, ContainerProps } from './container'
+import { Container } from './container'
 
-const Widget = React.forwardRef<HTMLDivElement, ContainerProps>(({ id, className, ...props }, ref) => {
-  return (
-    <Container
-      id={id}
-      ref={ref}
-      className={classNames(
-        className,
-        'p-4 flex flex-col mx-auto rounded-2xl relative overflow-hidden dark:shadow dark:shadow-slate-900 bg-white dark:bg-slate-800'
-      )}
-      {...props}
-    />
-  )
+const widgetVariants = cva('flex flex-col relative overflow-hidden', {
+  variants: {
+    variant: {
+      default: 'mx-auto p-6 dark:shadow dark:shadow-slate-900 bg-white dark:bg-slate-800',
+      empty: '',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+})
+
+const widgetActionVariants = cva('absolute', {
+  variants: {
+    variant: {
+      default: 'top-6 right-6',
+      empty: 'top-0 right-0',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+})
+
+export interface WidgetProps extends React.ButtonHTMLAttributes<HTMLDivElement>, VariantProps<typeof widgetVariants> {}
+
+const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(({ variant, id, className, ...props }, ref) => {
+  return <Container id={id} ref={ref} className={widgetVariants({ variant, className })} {...props} />
 })
 
 Widget.displayName = 'WidgetRoot'
 
-interface WidgetContentProps {
-  asChild?: boolean
-  children: ReactNode
-}
-
-const WidgetContent = React.forwardRef<HTMLDivElement, WidgetContentProps>(({ asChild, children, ...props }, ref) => {
-  const Comp = asChild ? Slot : 'div'
-  return (
-    <Comp ref={ref} {...props}>
-      {children}
-    </Comp>
-  )
-})
-
-WidgetContent.displayName = 'WidgetContent'
-
-interface WidgetHeaderProps {
-  asChild?: boolean
-  title: ReactNode
-  children?: ReactNode
-  className?: string
-}
-
-const WidgetHeader = React.forwardRef<HTMLDivElement, WidgetHeaderProps>(
-  ({ asChild, title, children, className, ...props }, ref) => {
-    const Comp = asChild ? Slot : 'div'
-
-    return (
-      <Comp ref={ref} className={classNames(className, 'grid grid-cols-2 items-center font-medium')} {...props}>
-        <p className="font-medium flex items-center gap-2 text-gray-700 hover:text-gray-900 dark:text-slate-100 dark:hover:text-slate-200">
-          {title}
-        </p>
-        <div className="flex justify-end">{children}</div>
-      </Comp>
-    )
-  }
+const WidgetHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div className={classNames('flex flex-col space-y-1.5 text-left mb-4', className)} {...props} />
 )
-
 WidgetHeader.displayName = 'WidgetHeader'
 
-export { Widget, WidgetContent, WidgetHeader }
+const WidgetTitle = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div className={classNames('text-lg font-semibold leading-none tracking-tight mr-[64px]', className)} {...props} />
+)
+WidgetTitle.displayName = 'WidgetTitle'
+
+const WidgetDescription = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div className={classNames('text-sm text-muted-foreground mr-[64px]', className)} {...props} />
+)
+WidgetDescription.displayName = 'WidgetDescription'
+
+export interface WidgetActionProps
+  extends React.ButtonHTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof widgetActionVariants> {}
+
+const WidgetAction = ({ variant, className, ...props }: WidgetActionProps) => (
+  <div className={widgetActionVariants({ variant, className })} {...props} />
+)
+WidgetAction.displayName = 'WidgetAction'
+
+const WidgetFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={classNames('flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 mt-4', className)}
+    {...props}
+  />
+)
+WidgetFooter.displayName = 'WidgetFooter'
+
+export { Widget, WidgetAction, WidgetDescription, WidgetFooter, WidgetHeader, WidgetTitle }

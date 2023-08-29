@@ -44,14 +44,10 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
             <div className="bg-green/20 text-green text-[10px] px-2 rounded-full">Trident Classic</div>
           )}
           {row.protocol === 'SUSHISWAP_V2' && (
-            <div className="bg-pink/20 text-pink text-[10px] px-2 rounded-full">
-              SushiSwap<sup>v2</sup>
-            </div>
+            <div className="bg-pink/20 text-pink text-[10px] px-2 rounded-full">V2</div>
           )}
           {row.protocol === 'SUSHISWAP_V3' && (
-            <div className="bg-blue/20 text-blue text-[10px] px-2 rounded-full">
-              SushiSwap<sup>v3</sup>
-            </div>
+            <div className="bg-blue/20 text-blue text-[10px] px-2 rounded-full">V3</div>
           )}
           <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
             {formatNumber(row.swapFee * 100)}%

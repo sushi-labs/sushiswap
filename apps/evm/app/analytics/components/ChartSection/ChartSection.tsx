@@ -1,3 +1,5 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { Container } from '@sushiswap/ui/components/container'
 import { SkeletonBox, SkeletonText } from '@sushiswap/ui/components/skeleton'

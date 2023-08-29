@@ -1,3 +1,5 @@
+'use client'
+
 import {
   findMultiRouteExactIn,
   findSingleRouteExactIn,

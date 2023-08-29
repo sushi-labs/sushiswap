@@ -1,3 +1,5 @@
+'use client'
+
 import { furoVestingAbi } from '@sushiswap/abi'
 import { FURO_VESTING_ADDRESS, FuroChainId } from '@sushiswap/furo-sdk'
 import { getContract } from 'viem'

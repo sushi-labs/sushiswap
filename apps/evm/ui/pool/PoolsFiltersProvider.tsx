@@ -1,12 +1,15 @@
+'use client'
+
 import { parseArgs, Protocol } from '@sushiswap/client'
 import { SUPPORTED_CHAIN_IDS } from 'config'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { createContext, FC, ReactNode, useCallback, useContext, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
+import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useMemo } from 'react'
 import { z } from 'zod'
 
-interface FilterContext extends z.TypeOf<typeof poolFiltersSchema> {
-  setFilters(filters: Partial<Omit<FilterContext, 'setFilters'>>): void
-}
+import { useTypedSearchParams } from '../../lib/hooks'
+import { POOL_TYPES } from './TableFiltersPoolType'
+
+type FilterContext = z.TypeOf<typeof poolFiltersSchema>
 
 const FilterContext = createContext<FilterContext | undefined>(undefined)
 
@@ -18,50 +21,38 @@ interface PoolsFiltersProvider {
 }
 
 export const poolFiltersSchema = z.object({
-  tokenSymbols: z.nullable(z.string()).transform((tokenSymbols) => {
-    return tokenSymbols !== null && tokenSymbols !== ',' ? tokenSymbols.split(',') : undefined
+  tokenSymbols: z.coerce.string().transform((symbols) => {
+    return symbols.split(',')
   }),
-  chainIds: z
-    .nullable(z.string())
+  chainIds: z.coerce
+    .string()
+    .default(SUPPORTED_CHAIN_IDS.join(','))
     .transform((chainIds) =>
       chainIds !== null && chainIds !== ','
         ? chainIds.split(',').map((chainId) => Number(chainId))
         : SUPPORTED_CHAIN_IDS
     ),
   protocols: z
-    .nullable(z.string())
+    .string()
     .transform((protocols) => (protocols !== null && protocols !== ',' ? (protocols.split(',') as Protocol[]) : [])),
-  farmsOnly: z.nullable(z.string()).transform((bool) => (bool ? bool === 'true' : undefined)),
+  farmsOnly: z.string().transform((bool) => (bool ? bool === 'true' : undefined)),
 })
 
 export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => {
-  const { push } = useRouter()
-
-  const searchParams = useSearchParams()
-
-  const tokenSymbols = searchParams?.get('tokenSymbols')
-  const chainIds = searchParams?.get('chainIds')
-  const protocols = searchParams?.get('protocols')
-  const farmsOnly = searchParams?.get('farmsOnly')
-
-  const parsed = useMemo(() => {
-    return poolFiltersSchema.parse({ tokenSymbols, chainIds, protocols, farmsOnly })
-  }, [tokenSymbols, chainIds, protocols, farmsOnly])
-
-  const setFilters = useCallback(
-    (filters: PoolFilters) => {
-      const newFilters = { ...parsed, ...filters }
-      void push(parseArgs(newFilters))
-    },
-    [parsed, push]
-  )
+  const urlFilters = useTypedSearchParams(poolFiltersSchema.partial())
+  const { tokenSymbols, chainIds, protocols, farmsOnly } = urlFilters
 
   return (
     <FilterContext.Provider
-      value={{
-        ...parsed,
-        setFilters,
-      }}
+      value={useMemo(
+        () => ({
+          tokenSymbols: tokenSymbols ? tokenSymbols : [],
+          chainIds: chainIds ? chainIds : SUPPORTED_CHAIN_IDS,
+          protocols: protocols ? protocols : POOL_TYPES,
+          farmsOnly: farmsOnly ? farmsOnly : false,
+        }),
+        [chainIds, farmsOnly, protocols, tokenSymbols]
+      )}
     >
       {children}
     </FilterContext.Provider>
@@ -75,4 +66,19 @@ export const usePoolFilters = () => {
   }
 
   return context
+}
+
+export const useSetPoolFilters = () => {
+  const { push } = useRouter()
+  const urlFilters = useTypedSearchParams(poolFiltersSchema.partial())
+
+  const setFilters: Dispatch<SetStateAction<typeof urlFilters>> = (filters) => {
+    if (typeof filters === 'function') {
+      void push(parseArgs(filters(urlFilters)))
+    } else {
+      void push(parseArgs(filters))
+    }
+  }
+
+  return setFilters
 }
