@@ -244,7 +244,7 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
   // Make sure the searchParams are updated whenever a user switches networks
   useEffect(() => {
     const unwatch = watchNetwork(({ chain }) => {
-      if (chain?.id && STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId)) {
+      if (chain && STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId) && chain.id !== chainId0) {
         setChainId0(chain.id)
       }
     })
