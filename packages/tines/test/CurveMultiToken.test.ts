@@ -1,8 +1,7 @@
-/*import { BigNumberish } from '@ethersproject/bignumber'
 import seedrandom from 'seedrandom'
 
 import { RToken } from '../dist'
-import { closeValues, createCurvePoolsForMultipool, CurveMultitokenPool, CurvePool, getBigNumber } from '../src'
+import { closeValues, createCurvePoolsForMultipool, CurveMultitokenPool, CurvePool, getBigInt } from '../src'
 
 const token0 = {
   name: 'Token0',
@@ -43,8 +42,8 @@ export function getRandomExp(rnd: () => number, min: number, max: number) {
 }
 
 function expectCloseValues(
-  v1: BigNumberish,
-  v2: BigNumberish,
+  v1: bigint | number,
+  v2: bigint | number,
   precision: number,
   description = '',
   additionalInfo = ''
@@ -66,24 +65,24 @@ function expectCloseValues(
 }
 
 function createPool(
-  params: { A: number; fee: number; reserve0: number; reserve1: number; ratio: number },
+  params: { A: number; fee: number; reserve0: bigint; reserve1: bigint; ratio: number },
   token0: RToken,
   token1: RToken
 ): CurvePool {
   return new CurvePool(
-    'curve pool',
+    '0xcurve pool',
     token0,
     token1,
     params.fee,
     params.A,
-    getBigNumber(params.reserve0),
-    getBigNumber(params.reserve1),
+    params.reserve0,
+    params.reserve1,
     params.ratio
   )
 }
 
 function createMultiPool(
-  params: { A: number; fee: number; reserve0: number; reserve1: number; ratio: number },
+  params: { A: number; fee: number; reserve0: bigint; reserve1: bigint; ratio: number },
   token0: RToken,
   token1: RToken
 ): CurveMultitokenPool {
@@ -92,7 +91,7 @@ function createMultiPool(
     [token0, token1],
     params.fee,
     params.A,
-    [getBigNumber(params.reserve0), getBigNumber(params.reserve1)],
+    [params.reserve0, params.reserve1],
     [1, params.ratio]
   )[0]
 }
@@ -128,8 +127,8 @@ function createRandomPool(rnd: () => number, token0: RToken, token1: RToken) {
   const params = {
     A: Math.round(getRandomExp(rnd, 1, 10_000)),
     fee: Math.round(getRandomLin(rnd, 1, 100)) / 10_000,
-    reserve0,
-    reserve1: reserve0 * Math.pow(10, token1.decimals - token0.decimals) * getRandomExp(rnd, 1 / 1000, 1000),
+    reserve0: getBigInt(reserve0),
+    reserve1: getBigInt(reserve0 * Math.pow(10, token1.decimals - token0.decimals) * getRandomExp(rnd, 1 / 1000, 1000)),
     ratio: getRandomExp(rnd, 0.5, 2),
   }
   return {
@@ -181,4 +180,3 @@ describe('Curve pool-multipool tests', () => {
     }
   })
 })
-*/
