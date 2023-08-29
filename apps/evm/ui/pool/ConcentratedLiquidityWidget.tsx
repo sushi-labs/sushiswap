@@ -243,7 +243,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                   enabled={!depositBDisabled}
                 >
                   <AddSectionReviewModalConcentrated
-                    chainId={chainId}
+                    chainId={Number(chainId)}
                     feeAmount={feeAmount}
                     token0={token0}
                     token1={token1}
