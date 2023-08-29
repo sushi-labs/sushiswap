@@ -1840,6 +1840,7 @@ importers:
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/route-processor-sdk': workspace:*
       '@sushiswap/router': workspace:*
       '@sushiswap/router-config': workspace:*
       '@sushiswap/tines': workspace:*
@@ -1867,6 +1868,7 @@ importers:
       '@sushiswap/amm': link:../amm
       '@sushiswap/chain': link:../chain
       '@sushiswap/currency': link:../currency
+      '@sushiswap/route-processor-sdk': link:../route-processor-sdk
       '@sushiswap/router': link:../router
       '@sushiswap/router-config': link:../../config/router
       '@sushiswap/tines': link:../tines

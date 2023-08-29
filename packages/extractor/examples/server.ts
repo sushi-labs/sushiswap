@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/node'
 import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
+import { isRouteProcessor3_1ChainId } from '@sushiswap/route-processor-sdk'
 import { NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import cors from 'cors'
@@ -162,7 +163,7 @@ async function main() {
           legs: bestRoute?.legs,
         },
         args: to
-          ? Router.routeProcessor3Params(
+          ? Router[isRouteProcessor3_1ChainId(chainId) ? 'routeProcessor3_1Params' : 'routeProcessor3Params'](
               poolCodesMap,
               bestRoute,
               tokenIn,
