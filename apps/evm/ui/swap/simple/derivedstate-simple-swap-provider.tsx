@@ -65,6 +65,8 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
   const defaultedParams = useMemo(() => {
     const params = new URLSearchParams(Array.from(searchParams.entries()))
 
+    console.log({ params: params.toString() })
+
     if (!params.has('chainId'))
       params.set(
         'chainId',
@@ -193,7 +195,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
   // Make sure the searchParams are updated whenever a user switches networks
   useEffect(() => {
     const unwatch = watchNetwork(({ chain }) => {
-      if (chain) {
+      if (chain && chain.id !== chainId) {
         setChainId(chain.id)
       }
     })
