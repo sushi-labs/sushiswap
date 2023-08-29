@@ -85,7 +85,7 @@ async function main() {
 
   app.use(
     cors({
-      origin: 'https://www.sushi.com',
+      origin: ['https://*.sushi.com'],
     })
   )
 
