@@ -191,7 +191,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
   // Make sure the searchParams are updated whenever a user switches networks
   useEffect(() => {
     const unwatch = watchNetwork(({ chain }) => {
-      if (chain && chain.id !== chainId) {
+      if (chain) {
         setChainId(chain.id)
       }
     })
