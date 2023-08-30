@@ -883,7 +883,7 @@ export class Graph {
     let amountInBI: bigint
     if (typeof amountIn === 'bigint') {
       amountInBI = amountIn
-      amountIn = parseInt(amountIn.toString())
+      amountIn = Number(amountIn)
     } else {
       amountInBI = getBigInt(amountIn)
     }
