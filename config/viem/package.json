@@ -38,7 +38,7 @@
     "@sushiswap/typescript-config": "workspace:*",
     "tsup": "7.1.0",
     "typescript": "5.1.6",
-    "viem": "1.6.3"
+    "viem": "0.0.0-jxom-refactor-multicall.20230830T113622"
   },
   "peerDependencies": {
     "viem": "*"
