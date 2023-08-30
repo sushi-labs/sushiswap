@@ -59,72 +59,72 @@ const BASE_URL = 'http://localhost:3000/pool'
 // test.beforeAll(async ({ page }) => {})
 
 // Tests will only work for polygon atm
-// test.describe('V3', () => {
-//   test.beforeEach(async ({ page }) => {
-//     const url = BASE_URL.concat('/add').concat(`?chainId=${CHAIN_ID}`)
-//     await page.goto(url)
-//     await switchNetwork(page, CHAIN_ID)
-//   })
-//
-//   test('Create pool', async ({ page }) => {
-//     test.slow()
-//     await createOrAddLiquidityV3(page, {
-//       token0: NATIVE_TOKEN,
-//       token1: USDC,
-//       startPrice: '0.5',
-//       minPrice: '0.1',
-//       maxPrice: '0.9',
-//       amount: '0.001',
-//       amountBelongsToToken0: false,
-//       type: 'CREATE',
-//     })
-//   })
-//
-//   // TODO: most of the tests below are dependent to the Create Pool test. Consider if we should put the creation in a beforeAll.
-//   test('Add liquidity, both sides', async ({ page }) => {
-//     test.slow()
-//     await createOrAddLiquidityV3(page, {
-//       token0: NATIVE_TOKEN,
-//       token1: USDC,
-//       minPrice: '0.3',
-//       maxPrice: '0.7',
-//       amount: '0.0001',
-//       amountBelongsToToken0: false,
-//       type: 'ADD',
-//     })
-//   })
-//
-//   test('Add liquidity, only one side(NATIVE)', async ({ page }) => {
-//     test.slow()
-//     await createOrAddLiquidityV3(page, {
-//       token0: NATIVE_TOKEN,
-//       token1: USDC,
-//       minPrice: '0.8',
-//       maxPrice: '0.9',
-//       amount: '1',
-//       amountBelongsToToken0: true,
-//       type: 'ADD',
-//     })
-//   })
-//
-//   test('Add liquidity, only one side(USDC)', async ({ page }) => {
-//     test.slow()
-//     await createOrAddLiquidityV3(page, {
-//       token0: NATIVE_TOKEN,
-//       token1: USDC,
-//       minPrice: '0.2',
-//       maxPrice: '0.4',
-//       amount: '0.0001',
-//       amountBelongsToToken0: false,
-//       type: 'ADD',
-//     })
-//   })
-//
-//   test('Remove liquidity', async ({ page }) => {
-//     test.slow()
-//     await removeLiquidityV3(page)
-//   })
-// })
+test.describe('V3', () => {
+  test.beforeEach(async ({ page }) => {
+    const url = BASE_URL.concat('/add').concat(`?chainId=${CHAIN_ID}`)
+    await page.goto(url)
+    await switchNetwork(page, CHAIN_ID)
+  })
+
+  test('Create pool', async ({ page }) => {
+    test.slow()
+    await createOrAddLiquidityV3(page, {
+      token0: NATIVE_TOKEN,
+      token1: USDC,
+      startPrice: '0.5',
+      minPrice: '0.1',
+      maxPrice: '0.9',
+      amount: '0.001',
+      amountBelongsToToken0: false,
+      type: 'CREATE',
+    })
+  })
+
+  // TODO: most of the tests below are dependent to the Create Pool test. Consider if we should put the creation in a beforeAll.
+  test('Add liquidity, both sides', async ({ page }) => {
+    test.slow()
+    await createOrAddLiquidityV3(page, {
+      token0: NATIVE_TOKEN,
+      token1: USDC,
+      minPrice: '0.3',
+      maxPrice: '0.7',
+      amount: '0.0001',
+      amountBelongsToToken0: false,
+      type: 'ADD',
+    })
+  })
+
+  test('Add liquidity, only one side(NATIVE)', async ({ page }) => {
+    test.slow()
+    await createOrAddLiquidityV3(page, {
+      token0: NATIVE_TOKEN,
+      token1: USDC,
+      minPrice: '0.8',
+      maxPrice: '0.9',
+      amount: '1',
+      amountBelongsToToken0: true,
+      type: 'ADD',
+    })
+  })
+
+  test('Add liquidity, only one side(USDC)', async ({ page }) => {
+    test.slow()
+    await createOrAddLiquidityV3(page, {
+      token0: NATIVE_TOKEN,
+      token1: USDC,
+      minPrice: '0.2',
+      maxPrice: '0.4',
+      amount: '0.0001',
+      amountBelongsToToken0: false,
+      type: 'ADD',
+    })
+  })
+
+  test('Remove liquidity', async ({ page }) => {
+    test.slow()
+    await removeLiquidityV3(page)
+  })
+})
 
 test.describe('Trident', () => {
   test.beforeEach(async ({ page }) => {
@@ -133,40 +133,40 @@ test.describe('Trident', () => {
     await switchNetwork(page, CHAIN_ID)
   })
 
-  // test('Create pool', async ({ page }) => {
-  //   test.slow()
-  //   await createOrAddTridentPool(page, {
-  //     // 0.01% fee is not created at block 42259027
-  //     token0: NATIVE_TOKEN,
-  //     token1: USDC,
-  //     amount0: '0.0001',
-  //     amount1: '0.0001',
-  //     fee: '1',
-  //     type: 'CREATE',
-  //   })
-  // })
-  //
-  // test('Add, stake, unstake and remove', async ({ page }) => {
-  //   test.slow()
-  //   await createOrAddTridentPool(page, {
-  //     token0: NATIVE_TOKEN,
-  //     token1: USDC,
-  //     amount0: '0.0001',
-  //     amount1: '0.0001',
-  //     fee: '5',
-  //     type: 'ADD',
-  //   })
-  //
-  //   const addLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b')
-  //   await page.goto(addLiquidityUrl, { timeout: 25_000 })
-  //   await manageStaking(page, 'STAKE')
-  //
-  //   const removeLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b')
-  //   await page.goto(removeLiquidityUrl, { timeout: 25_000 })
-  //   await manageStaking(page, 'UNSTAKE')
-  //   await page.reload({ timeout: 25_000 })
-  //   await removeLiquidityV2(page)
-  // })
+  test('Create pool', async ({ page }) => {
+    test.slow()
+    await createOrAddTridentPool(page, {
+      // 0.01% fee is not created at block 42259027
+      token0: NATIVE_TOKEN,
+      token1: USDC,
+      amount0: '0.0001',
+      amount1: '0.0001',
+      fee: '1',
+      type: 'CREATE',
+    })
+  })
+
+  test('Add, stake, unstake and remove', async ({ page }) => {
+    test.slow()
+    await createOrAddTridentPool(page, {
+      token0: NATIVE_TOKEN,
+      token1: USDC,
+      amount0: '0.0001',
+      amount1: '0.0001',
+      fee: '5',
+      type: 'ADD',
+    })
+
+    const addLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b')
+    await page.goto(addLiquidityUrl, { timeout: 25_000 })
+    await manageStaking(page, 'STAKE')
+
+    const removeLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b')
+    await page.goto(removeLiquidityUrl, { timeout: 25_000 })
+    await manageStaking(page, 'UNSTAKE')
+    await page.reload({ timeout: 25_000 })
+    await removeLiquidityV2(page)
+  })
 
   test('Migrate', async ({ page }) => {
     test.slow()
@@ -190,24 +190,24 @@ test.describe('Trident', () => {
   })
 })
 
-// test.describe('V2', () => {
-//   test.beforeEach(async ({ page }) => {
-//     const url = BASE_URL.concat(`/add/v2/${CHAIN_ID}`)
-//     await page.goto(url)
-//     await switchNetwork(page, CHAIN_ID)
-//   })
-//
-//   test('Add liquidity', async ({ page }) => {
-//     test.slow()
-//     await createOrAddV2Pool(page, {
-//       token0: NATIVE_TOKEN,
-//       token1: USDC,
-//       amount0: '0.0001',
-//       amount1: '0.0001',
-//       type: 'ADD',
-//     })
-//   })
-// })
+test.describe('V2', () => {
+  test.beforeEach(async ({ page }) => {
+    const url = BASE_URL.concat(`/add/v2/${CHAIN_ID}`)
+    await page.goto(url)
+    await switchNetwork(page, CHAIN_ID)
+  })
+
+  test('Add liquidity', async ({ page }) => {
+    test.slow()
+    await createOrAddV2Pool(page, {
+      token0: NATIVE_TOKEN,
+      token1: USDC,
+      amount0: '0.0001',
+      amount1: '0.0001',
+      type: 'ADD',
+    })
+  })
+})
 
 async function createOrAddLiquidityV3(page: Page, args: V3PoolArgs) {
   await handleToken(page, args.token0, 'FIRST')
