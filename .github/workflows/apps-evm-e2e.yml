@@ -98,7 +98,7 @@ jobs:
           ANALYTICS_URL: 'https://analytics.sushi.com'
           BLOG_URL: 'https://blog.sushi.com'
           FURO_URL: 'https://furo.sushi.com'
-          ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+          ALCHEMY_ID: ${{ secrets.ALCHEMY_ID }}
           CHAIN_ID: ${{ matrix.chain-id }}
           DRPC_ID: ${{ secrets.DRPC_ID }}
           ANVIL_BLOCK_NUMBER: ${{ matrix.block-number }}

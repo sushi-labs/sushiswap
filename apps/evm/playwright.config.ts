@@ -104,10 +104,12 @@ const config: PlaywrightTestConfig = {
         `--port=${Number(process.env.ANVIL_PORT) || 8545}`,
       ].join(' '),
       env: {
+        ALCHEMY_ID: String(process.env.ALCHEMY_ID),
         ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
         ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
         ANVIL_PORT: String(process.env.ANVIL_PORT),
         CHAIN_ID: String(process.env.CHAIN_ID),
+        DRPC_ID: String(process.env.DRPC_ID),
       },
       port: Number(process.env.ANVIL_PORT) || 8545,
     },
