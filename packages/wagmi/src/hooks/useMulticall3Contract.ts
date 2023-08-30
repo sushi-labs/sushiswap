@@ -1,3 +1,5 @@
+'use client'
+
 import { allChains } from '@sushiswap/wagmi-config'
 import { getContract } from 'viem'
 import { Address, usePublicClient } from 'wagmi'

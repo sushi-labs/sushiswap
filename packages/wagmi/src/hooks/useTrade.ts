@@ -1,3 +1,5 @@
+'use client'
+
 import {
   findMultiRouteExactIn,
   findSingleRouteExactIn,
@@ -7,7 +9,7 @@ import {
   TridentConstantPool,
   Version as TradeVersion,
 } from '@sushiswap/amm'
-import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxChainId, isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Amount, Type as Currency, WNATIVE } from '@sushiswap/currency'
 import { RouteStatus } from '@sushiswap/tines'
@@ -66,7 +68,7 @@ export const useTrade: UseTrade = ({
     throw new Error(`ChainId Error: SushiSwapV2 is not available on ${chainName[chainId]} and ammEnabled is enabled.`)
 
   // TODO: Use trident chainId instead of Bento
-  if (tridentEnabled && !isBentoBoxV1ChainId(chainId))
+  if (tridentEnabled && !isBentoBoxChainId(chainId))
     throw new Error(`ChainId Error: BentoBox is not available on ${chainName[chainId]} and tridentEnabled is enabled.`)
 
   const { data } = useFeeData({
@@ -122,7 +124,7 @@ export const useTrade: UseTrade = ({
     [pools]
   )
 
-  const rebases = useBentoBoxTotals(chainId as BentoBoxV1ChainId, currencies)
+  const rebases = useBentoBoxTotals(chainId as BentoBoxChainId, currencies)
   const currencyInRebase = currencyIn ? rebases?.[currencyIn.wrapped.address] : undefined
   const currencyOutRebase = currencyOut ? rebases?.[currencyOut.wrapped.address] : undefined
 

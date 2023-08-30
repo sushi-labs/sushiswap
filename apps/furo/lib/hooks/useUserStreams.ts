@@ -1,5 +1,5 @@
 import { Token } from '@sushiswap/currency'
-import { FuroStreamChainId } from '@sushiswap/furo/exports/exports'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { useQuery } from '@tanstack/react-query'
 
@@ -29,12 +29,12 @@ export const useUserStreams = ({ account }: UseUserStreams) => {
         })
       )
 
-      const data: { chainId: FuroStreamChainId; data: userStreamsQuery }[] = []
+      const data: { chainId: FuroChainId; data: userStreamsQuery }[] = []
       const results = await Promise.allSettled(sdks.map((sdk) => sdk.userStreams({ id: account.toLowerCase() })))
       results.forEach((result, i) => {
         if (result.status === 'fulfilled') {
           data.push({
-            chainId: SUPPORTED_CHAINS[i],
+            chainId: SUPPORTED_CHAINS[i] as FuroChainId,
             data: result.value,
           })
         }
@@ -42,7 +42,7 @@ export const useUserStreams = ({ account }: UseUserStreams) => {
 
       const streams: {
         stream: userStreamsQuery['incomingStreams'][0] | userStreamsQuery['outgoingStreams'][0]
-        chainId: FuroStreamChainId
+        chainId: FuroChainId
         streamId: string
         token: Token
       }[] = []

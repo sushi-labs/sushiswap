@@ -1,7 +1,7 @@
 import { SushiSwapV2Pool, TridentConstantPool, TridentStablePool } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Pool, Protocol } from '@sushiswap/client'
-import { DAI, Native, Price, Token, Type, USDC, USDT, WBTC } from '@sushiswap/currency'
+import { DAI, Native, Price, Token, tryParseAmount, Type, USDC, USDT, WBTC } from '@sushiswap/currency'
 import {
   encodeSqrtRatioX96,
   FeeAmount,
@@ -237,4 +237,19 @@ export function formatTickPrice({ price, atLimit, direction, placeholder }: Form
   }
 
   return price?.toSignificant(4)
+}
+
+export const rewardPerDay = ({
+  start,
+  end,
+  amount,
+  token,
+}: {
+  start: number
+  end: number
+  amount: number
+  token: Token
+}) => {
+  const days = (end - start) / 3600 / 24
+  return tryParseAmount((amount / days).toFixed(8), token)
 }

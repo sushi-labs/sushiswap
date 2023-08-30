@@ -1,6 +1,8 @@
 import classNames from 'classnames'
 import { FC, ReactNode } from 'react'
 
+import { Card } from '../card'
+
 export interface ListControlProps {
   children: ReactNode
   className?: string
@@ -8,6 +10,10 @@ export interface ListControlProps {
 
 export const ListControl: FC<ListControlProps> = ({ children, className }) => {
   return (
-    <div className={classNames('bg-white dark:bg-secondary rounded-xl overflow-hidden', className)}>{children}</div>
+    <Card
+      className={classNames('!border-none bg-white dark:!bg-secondary rounded-xl overflow-hidden shadow-sm', className)}
+    >
+      {children}
+    </Card>
   )
 }

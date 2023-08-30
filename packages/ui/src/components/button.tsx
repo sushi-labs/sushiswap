@@ -7,17 +7,17 @@ import { classNames } from '../index'
 import { IconComponent } from '../types'
 
 const buttonVariants = cva(
-  'cursor-pointer whitespace-nowrap inline-flex gap-2 items-center justify-center font-medium transition-colors !ring-0 disabled:opacity-50 disabled:pointer-events-none ring-offset-background',
+  'cursor-pointer whitespace-nowrap inline-flex gap-2 items-center justify-center font-medium disabled:opacity-50 disabled:pointer-events-none ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-blue',
   {
     variants: {
       variant: {
         default: 'bg-blue hover:bg-blue-600 focus:bg-blue-700 active:bg-blue-600 text-white',
         destructive: 'bg-red hover:bg-red-600 focus:bg-red-700 active:bg-red-600 text-white',
         warning: 'bg-amber-400 hover:bg-amber-500 focus:bg-amber-600 active:bg-amber-500 text-amber-900',
-        outline: 'border dark:border-slate-200/5 border-gray-900/5 hover:bg-muted focus:bg-accent',
+        outline: '!border border-accent bg-background hover:bg-muted hover:text-accent-foreground',
         secondary: 'bg-secondary hover:bg-muted focus:bg-accent',
         ghost: 'hover:bg-secondary focus:bg-accent',
-        link: 'text-blue hover:text-blue-700 font-semibold !p-0 !h-[unset] !min-h-[unset]',
+        link: 'text-blue hover:underline hover:text-blue-700 font-semibold !p-0 !h-[unset] !min-h-[unset]',
       },
       size: {
         xs: 'min-h-[26px] h-[26px] px-2 text-xs rounded-lg',

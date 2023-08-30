@@ -1,13 +1,16 @@
-import { furoVestingAbi, furoVestingAddress, FuroVestingChainId } from '@sushiswap/furo'
+'use client'
+
+import { furoVestingAbi } from '@sushiswap/abi'
+import { FURO_VESTING_ADDRESS, FuroChainId } from '@sushiswap/furo-sdk'
 import { getContract } from 'viem'
 import { usePublicClient } from 'wagmi'
 
-export const getFuroVestingContractConfig = (chainId: FuroVestingChainId) => ({
-  address: furoVestingAddress[chainId],
-  abi: furoVestingAbi[chainId],
+export const getFuroVestingContractConfig = (chainId: FuroChainId) => ({
+  address: FURO_VESTING_ADDRESS[chainId],
+  abi: furoVestingAbi,
 })
 
-export function useFuroVestingContract(chainId: FuroVestingChainId | undefined) {
+export function useFuroVestingContract(chainId: FuroChainId | undefined) {
   const publicClient = usePublicClient({ chainId })
 
   if (!chainId) return null

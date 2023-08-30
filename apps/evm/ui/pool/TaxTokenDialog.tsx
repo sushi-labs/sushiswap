@@ -1,7 +1,7 @@
 import { Currency } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { useTokenSecurity } from '@sushiswap/react-query'
-import { Button, DialogContent, DialogFooter, DialogHeader, DialogNew, DialogTitle } from '@sushiswap/ui'
+import { Button, DialogContent, DialogFooter, DialogHeader, Dialog, DialogTitle } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 
@@ -15,7 +15,7 @@ export const TaxTokenDialog = ({ token0, token1 }: { token0: Currency | undefine
 
   const { data: tokenSecurityResponse } = useTokenSecurity({
     currencies: useMemo(
-      () => [...(token0 ? [token0.wrapped] : []), ...(token1 ? [token1.wrapped] : [])],
+      () => [...(token0?.isToken ? [token0] : []), ...(token1?.isToken ? [token1] : [])],
       [token0, token1]
     ),
     onSuccess(data) {
@@ -38,7 +38,7 @@ export const TaxTokenDialog = ({ token0, token1 }: { token0: Currency | undefine
       tokenSecurityResponse?.[token1.wrapped.address]?.sell_tax)
 
   return (
-    <DialogNew open={open} onOpenChange={(open) => setOpen(open)}>
+    <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Tax token detected</DialogTitle>
@@ -65,6 +65,6 @@ export const TaxTokenDialog = ({ token0, token1 }: { token0: Currency | undefine
           </div>
         </DialogFooter>
       </DialogContent>
-    </DialogNew>
+    </Dialog>
   )
 }

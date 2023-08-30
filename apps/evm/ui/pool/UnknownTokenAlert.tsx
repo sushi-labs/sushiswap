@@ -1,9 +1,11 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
 import { shortenAddress } from '@sushiswap/format'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { isTokenSecurityChainId } from '@sushiswap/react-query'
-import { GoPlusLabsIcon } from '@sushiswap/ui'
+import { GoPlusLabsIcon, Message } from '@sushiswap/ui'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import { FC, useMemo } from 'react'
 import { TaxTokenDialog } from './TaxTokenDialog'
@@ -34,41 +36,39 @@ export const UnknownTokenAlert: FC<UnknownTokenAlert> = ({ pool }) => {
 
   const token0NotInList = useMemo(
     () => Boolean(tokenFrom?.status !== 'APPROVED' && tokenFrom?.token && !hasToken(tokenFrom?.token)),
-    [tokenFrom?.status, tokenFrom?.token]
+    [hasToken, tokenFrom?.status, tokenFrom?.token]
   )
 
   const token1NotInList = useMemo(
     () => Boolean(tokenTo?.status !== 'APPROVED' && tokenTo?.token && !hasToken(tokenTo?.token)),
-    [tokenTo?.status, tokenTo?.token]
+    [hasToken, tokenTo?.status, tokenTo?.token]
   )
 
   if (!(token0NotInList || token1NotInList)) return <></>
 
   return (
     <>
-      <div className="relative flex items-center justify-center gap-2 bg-yellow/20 dark:text-yellow text-yellow-900 px-4 py-3.5 rounded-xl">
-        <div className="font-semibold">
-          {`${
-            token0NotInList && token1NotInList
-              ? `${tokenName(token0)} & ${tokenName(token1)} are unknown.`
-              : `${tokenName(token0NotInList ? token0 : token1)} is unknown.`
-          } Please conduct your own research before interacting with ${
-            token0NotInList && token1NotInList ? 'these tokens.' : 'this token.'
-          }`}
-        </div>
-        {protocol === 'SUSHISWAP_V3' && tokenFrom?.token?.chainId && isTokenSecurityChainId(tokenFrom.token.chainId) ? (
-          <div className="text-right whitespace-nowrap absolute bottom-0 right-4">
-            <span className="text-xs">Token security powered by GoPlus</span>
-            <GoPlusLabsIcon width={16} height={20} className="inline-flex" />
-          </div>
-        ) : null}
-      </div>
       {protocol === 'SUSHISWAP_V3' &&
       tokenTo?.token &&
       tokenFrom?.token &&
       isTokenSecurityChainId(tokenFrom.token.chainId) ? (
         <TaxTokenDialog token0={tokenFrom.token} token1={tokenTo.token} />
       ) : null}
+      <Message size="sm" variant="warning" className="relative">
+        {`${
+          token0NotInList && token1NotInList
+            ? `${tokenName(token0)} & ${tokenName(token1)} are unknown.`
+            : `${tokenName(token0NotInList ? token0 : token1)} is unknown.`
+        } Please conduct your own research before interacting with ${
+          token0NotInList && token1NotInList ? 'these tokens.' : 'this token.'
+        }`}
+        {protocol === 'SUSHISWAP_V3' && tokenFrom?.token?.chainId && isTokenSecurityChainId(tokenFrom.token.chainId) ? (
+          <div className="text-right whitespace-nowrap absolute bottom-2 right-2">
+            <span className="text-xs">Token security powered by GoPlus</span>
+            <GoPlusLabsIcon width={16} height={20} className="inline-flex" />
+          </div>
+        ) : null}
+      </Message>
     </>
   )
 }

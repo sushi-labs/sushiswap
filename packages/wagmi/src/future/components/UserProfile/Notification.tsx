@@ -14,14 +14,14 @@ import {
 } from '@heroicons/react/24/outline'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { classNames } from '@sushiswap/ui'
+import { ResolvedNotification } from '@sushiswap/dexie'
+import { classNames, LinkExternal } from '@sushiswap/ui'
 import { Currency as UICurrency } from '@sushiswap/ui/components/currency'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { Loader } from '@sushiswap/ui/components/loader'
 import { TimeAgo } from '@sushiswap/ui/components/time-ago'
 import React, { FC } from 'react'
 import { useWaitForTransaction } from 'wagmi'
-import { ResolvedNotification } from '@sushiswap/dexie'
 
 export const STARGATE_TOKEN = new Token({
   chainId: ChainId.ETHEREUM,
@@ -72,7 +72,7 @@ export const Notification: FC<{
           )}
         </Disclosure.Button>
       )}
-      <a target="_blank" rel="noopener noreferrer"
+      <LinkExternal
         href={
           notification.href
             ? notification.href
@@ -144,7 +144,7 @@ export const Notification: FC<{
             </span>
           </div>
         </div>
-      </a>
+      </LinkExternal>
     </div>
   )
 }

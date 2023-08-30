@@ -1,3 +1,4 @@
+import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { format } from 'date-fns'
 import { FC } from 'react'
@@ -21,7 +22,7 @@ export const ArticleFooter: FC<ArticleFooter> = ({ articles }) => {
               </time>
             )}
             <Button asChild size="sm" variant="secondary" className="order-1 mt-6">
-              <a href={`/blog/${article?.attributes?.slug}`}>Read more</a>
+              <LinkInternal href={`/blog/${article?.attributes?.slug}`}>Read more</LinkInternal>
             </Button>
           </article>
         ))}

@@ -2,8 +2,7 @@ import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
 import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { Token as GraphToken } from '@sushiswap/graph-client'
-import { Link } from '@sushiswap/ui'
-import { ClipboardController } from '@sushiswap/ui/components/ClipboardController'
+import { ClipboardController, LinkExternal } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Table } from '@sushiswap/ui/components/table'
 import { FC } from 'react'
@@ -60,13 +59,13 @@ export const TokenInformation: FC<TokenInformation> = ({ token }) => {
                 </ClipboardController>
               </Table.td>
               <Table.td>
-                <Link.External
+                <LinkExternal
                   href={chain.getTokenUrl(_token.wrapped.address)}
                   className="flex items-center gap-1 !no-underline"
                 >
                   <p className="font-medium text-sm text-slate-100">View</p>
                   <ExternalLinkIcon width={18} height={18} />
-                </Link.External>
+                </LinkExternal>
               </Table.td>
             </Table.tr>
           </Table.tbody>

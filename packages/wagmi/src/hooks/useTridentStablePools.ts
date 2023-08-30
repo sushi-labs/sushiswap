@@ -1,8 +1,10 @@
+'use client'
+
 import { tridentStablePoolAbi, tridentStablePoolFactoryAbi } from '@sushiswap/abi'
 import { computeTridentStablePoolAddress, Fee, TridentStablePool } from '@sushiswap/amm'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Currency, Token, Type } from '@sushiswap/currency'
-import { isTridentStablePoolFactoryChainId } from '@sushiswap/trident-sdk'
+import { isTridentChainId, TridentChainId } from '@sushiswap/trident-sdk'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
 
@@ -32,7 +34,7 @@ interface PoolData {
 type Config = Omit<NonNullable<Parameters<typeof useContractReads>['0']>, 'contracts'>
 
 export function useGetTridentStablePools(
-  chainId: BentoBoxV1ChainId | undefined,
+  chainId: BentoBoxChainId | undefined,
   currencies: [Currency | undefined, Currency | undefined][],
   config: Config = { enabled: true }
 ): {
@@ -273,7 +275,7 @@ export function useTridentStablePools(
       abi: tridentStablePoolAbi,
       functionName: 'getReserves' as const,
     })),
-    enabled: poolsAddresses.length > 0 && isTridentStablePoolFactoryChainId(chainId),
+    enabled: poolsAddresses.length > 0 && isTridentChainId(chainId as TridentChainId),
     watch: true,
     keepPreviousData: true,
     select: (data) => data?.map((r) => r.result),

@@ -4,12 +4,12 @@ import { Native, Token, Type } from '@sushiswap/currency'
 import { TradeLegType, UseTradeReturn } from '@sushiswap/react-query'
 import {
   Button,
+  Dialog,
   DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogNew,
   DialogTitle,
   DialogTrigger,
   ScrollArea,
@@ -37,7 +37,7 @@ export const TradeRoutePathView: FC<{
   children: ReactNode
 }> = ({ children, trade }) => {
   return (
-    <DialogNew>
+    <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -70,7 +70,7 @@ export const TradeRoutePathView: FC<{
           </DialogClose>
         </DialogFooter>
       </DialogContent>
-    </DialogNew>
+    </Dialog>
   )
 }
 

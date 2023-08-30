@@ -9,8 +9,7 @@ import {
 import chains, { ChainId } from '@sushiswap/chain'
 import { Amount, Native } from '@sushiswap/currency'
 import { usePrice } from '@sushiswap/react-query'
-import { OnramperButton } from '@sushiswap/ui'
-import { ClipboardController } from '@sushiswap/ui/components/ClipboardController'
+import { ClipboardController, LinkExternal, OnramperButton } from '@sushiswap/ui'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { List } from '@sushiswap/ui/components/list/List'
 import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
@@ -65,9 +64,9 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
                 />
               )}
             </ClipboardController>
-            <a target="_blank" href={chains[chainId].getAccountUrl(address)}>
+            <LinkExternal href={chains[chainId].getAccountUrl(address)}>
               <IconButton size="sm" icon={LinkIcon} description="View on Explorer" name="View on Explorer" />
-            </a>
+            </LinkExternal>
 
             <IconButton
               size="sm"

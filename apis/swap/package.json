@@ -42,7 +42,7 @@
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/database": "workspace:*",
-    "@sushiswap/route-processor": "workspace:*",
+    "@sushiswap/route-processor-sdk": "workspace:*",
     "@sushiswap/router": "workspace:*",
     "@sushiswap/extractor": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",

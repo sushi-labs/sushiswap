@@ -6,11 +6,11 @@ import { shortenAddress } from '@sushiswap/format'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { isTokenSecurityChainId, useTokenSecurity } from '@sushiswap/react-query'
 import {
+  Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogNew,
   DialogTitle,
   NetworkIcon,
 } from '@sushiswap/ui'
@@ -82,11 +82,11 @@ export const SimpleSwapTokenNotFoundDialog = () => {
   if (isTokenSecurityChainId(chainId) && tokenSecurityLoading) return null
 
   return (
-    <DialogNew
+    <Dialog
       open={Boolean(!tokenFromLoading && !tokenToLoading && (token0NotInList || token1NotInList))}
       onOpenChange={(open) => !open && reset()}
     >
-      <DialogContent className="!max-h-screen overflow-y-auto">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>
             <div className="flex gap-4 pb-2">
@@ -216,6 +216,6 @@ export const SimpleSwapTokenNotFoundDialog = () => {
           )}
         </DialogFooter>
       </DialogContent>
-    </DialogNew>
+    </Dialog>
   )
 }

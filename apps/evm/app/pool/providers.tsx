@@ -1,7 +1,6 @@
 'use client'
 
-import { ThemeProvider } from '@sushiswap/ui'
-import { SplashController } from '@sushiswap/ui/components/SplashController'
+import { SplashController, ThemeProvider } from '@sushiswap/ui'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (

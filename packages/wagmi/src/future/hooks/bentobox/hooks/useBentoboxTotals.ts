@@ -1,4 +1,6 @@
-import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+'use client'
+
+import { isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { useQuery } from '@tanstack/react-query'
@@ -12,7 +14,7 @@ interface UseBentoboxTotalsParams {
 }
 
 const queryFn = async ({ chainId, currencies }: UseBentoboxTotalsParams) => {
-  if (isBentoBoxV1ChainId(chainId)) {
+  if (isBentoBoxChainId(chainId)) {
     return getBentoboxTotals(chainId, currencies)
   }
   return undefined

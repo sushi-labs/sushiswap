@@ -1,3 +1,5 @@
+'use client'
+
 import { QueryFunction } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { Address, useQuery } from 'wagmi'

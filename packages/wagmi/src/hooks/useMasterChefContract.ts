@@ -1,8 +1,10 @@
-import { masterChefV1Abi, masterChefV2Abi, miniChefAbi } from '@sushiswap/abi'
-import { ChainId } from '@sushiswap/chain'
-import { ChefType } from '@sushiswap/client'
-import { getContract } from 'viem'
-import { Address, usePublicClient } from 'wagmi'
+'use client'
+
+import {masterChefV1Abi, masterChefV2Abi, miniChefAbi} from '@sushiswap/abi'
+import {ChainId} from '@sushiswap/chain'
+import {ChefType} from '@sushiswap/client'
+import {getContract} from 'viem'
+import {Address, usePublicClient} from 'wagmi'
 
 // TODO move to package
 export const MASTERCHEF_ADDRESS = {

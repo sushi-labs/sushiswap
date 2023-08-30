@@ -5,7 +5,7 @@ import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sus
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { STARGATE_SUPPORTED_CHAIN_IDS, StargateChainId } from '@sushiswap/stargate'
-import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap'
+import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap-sdk'
 import { Address, useAccount, useNetwork, watchNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future'
 import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
@@ -243,10 +243,13 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
 
   // Make sure the searchParams are updated whenever a user switches networks
   useEffect(() => {
+    let i = 0
+
     const unwatch = watchNetwork(({ chain }) => {
-      if (chain?.id && STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId)) {
+      if (chain && STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId) && i > 0) {
         setChainId0(chain.id)
       }
+      i++
     })
 
     return () => unwatch()

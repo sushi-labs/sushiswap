@@ -2,15 +2,15 @@ import { Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { isTokenSecurityChainId, useTokenSecurity } from '@sushiswap/react-query'
 import {
+  Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogNew,
   DialogTitle,
+  DialogTrigger,
   NetworkIcon,
 } from '@sushiswap/ui'
-import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Icon } from '@sushiswap/ui/components/currency/Icon'
 import { List } from '@sushiswap/ui/components/list/List'
@@ -42,7 +42,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currency, o
   const honeypot = Boolean(currency && tokenSecurityResponse?.[currency.address]?.is_honeypot)
 
   return (
-    <DialogNew onOpenChange={(open) => !open && setOpen(false)}>
+    <Dialog onOpenChange={(open) => !open && setOpen(false)}>
       <div className="relative py-0.5 h-[64px]">
         <div className="flex items-center w-full hover:bg-muted focus:bg-accent h-full rounded-lg px-3">
           <div className="flex flex-row items-center flex-grow gap-4">
@@ -131,6 +131,6 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currency, o
           </DialogFooter>
         </DialogContent>
       ) : null}
-    </DialogNew>
+    </Dialog>
   )
 }

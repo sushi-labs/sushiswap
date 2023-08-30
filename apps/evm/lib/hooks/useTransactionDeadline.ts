@@ -1,3 +1,5 @@
+'use client'
+
 import { chainsL2 } from '@sushiswap/chain'
 import { useCurrentBlockTimestamp } from '@sushiswap/wagmi'
 import { useMemo } from 'react'

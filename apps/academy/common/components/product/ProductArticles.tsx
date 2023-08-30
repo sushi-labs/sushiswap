@@ -1,11 +1,11 @@
-import { Link } from '@sushiswap/ui'
+import { LinkInternal } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/components/button'
 import { FC } from 'react'
 
 import { ArticleList } from '../ArticleList'
 import { Card } from '../Card'
 import { ProductSectionTitle } from './ProductSectionTitle'
 import { ArticleEntity } from '.mesh'
-import { Button } from '@sushiswap/ui/components/button'
 
 interface ProductArticles {
   title: string
@@ -21,9 +21,9 @@ export const ProductArticles: FC<ProductArticles> = ({ title, productName, artic
       <div className="flex items-center justify-between w-full">
         <ProductSectionTitle title={title} subtitle={subtitle} />
 
-        <Link.Internal href={`/articles?product=${productName}`}>
+        <LinkInternal href={`/articles?product=${productName}`}>
           <Button variant="secondary">View All</Button>
-        </Link.Internal>
+        </LinkInternal>
       </div>
       <div className="mt-8 sm:mt-20">
         {articles && (
