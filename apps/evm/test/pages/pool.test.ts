@@ -176,7 +176,7 @@ test.describe('Trident', () => {
       amount0: '0.0001',
       amount1: '0.0001',
       fee: '5',
-      type: 'ADD',
+      type: 'CREATE',
     })
 
     const addLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b')
@@ -274,7 +274,6 @@ async function createOrAddTridentPool(page: Page, args: TridentPoolArgs) {
       : `add-liquidity-trident-approve-token${args.token0.isNative ? 1 : 0}-button`
 
   const approveTokenLocator = page.locator(`[testdata-id=${approveTokenId}]`)
-  await approveTokenLocator.scrollIntoViewIfNeeded()
   await expect(approveTokenLocator).toBeVisible()
   await expect(approveTokenLocator).toBeEnabled()
   await approveTokenLocator.click()
