@@ -176,7 +176,7 @@ test.describe('Trident', () => {
       amount0: '0.0001',
       amount1: '0.0001',
       fee: '5',
-      type: 'CREATE',
+      type: 'ADD',
     })
 
     const addLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b')
