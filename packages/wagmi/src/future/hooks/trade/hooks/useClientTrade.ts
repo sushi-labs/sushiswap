@@ -19,7 +19,8 @@ import { useFeeData } from 'wagmi'
 import { usePoolsCodeMap } from '../../pools'
 
 export const useClientTrade = (variables: UseTradeParams) => {
-  const { chainId, fromToken, toToken, slippagePercentage, carbonOffset, amount, enabled, recipient } = variables
+  const { chainId, fromToken, toToken, slippagePercentage, carbonOffset, amount, enabled, recipient, source } =
+    variables
 
   const { data: feeData } = useFeeData({ chainId, enabled })
   const { data: price } = usePrice({ chainId, address: WNATIVE_ADDRESS[chainId] })
@@ -44,6 +45,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
         slippagePercentage,
         recipient,
         poolsCodeMap,
+        source,
       },
     ],
     queryFn: async () => {
@@ -122,7 +124,8 @@ ${logPools}
             recipient,
             ROUTE_PROCESSOR_3_ADDRESS[chainId],
             [],
-            +slippagePercentage / 100
+            +slippagePercentage / 100,
+            source
           )
         } else if (isRouteProcessorChainId(chainId)) {
           args = Router.routeProcessorParams(

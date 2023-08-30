@@ -1,6 +1,6 @@
 import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
-import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_TOKEN } from '@sushiswap/stargate'
+import { STARGATE_TOKEN } from '@sushiswap/stargate'
 import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Dots } from '@sushiswap/ui/components/dots'
@@ -10,6 +10,7 @@ import { Loader } from '@sushiswap/ui/components/loader'
 import { FC, ReactNode } from 'react'
 
 import { useCrossChainSwapTrade, useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
+import { TransactionType } from 'lib/swap/useCrossChainTrade/SushiXSwapV2'
 
 interface ConfirmationDialogContent {
   txHash?: string
@@ -24,8 +25,9 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHas
   } = useDerivedStateCrossChainSwap()
   const { data: trade } = useCrossChainSwapTrade()
 
-  const swapOnDest = !isStargateBridgeToken(token1)
-  const dstBridgeToken = token1?.isToken && isStargateBridgeToken(token1) ? token1 : STARGATE_BRIDGE_TOKENS[chainId1][0]
+  const swapOnDest =
+    trade?.transactionType &&
+    [TransactionType.BridgeAndSwap, TransactionType.CrossChainSwap].includes(trade.transactionType)
 
   if (dialogState.source === StepState.Sign) {
     return <>Please sign order with your wallet.</>
@@ -77,7 +79,8 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHas
   if (dialogState.dest === StepState.PartialSuccess) {
     return (
       <>
-        We {`couldn't`} swap {dstBridgeToken.symbol} into {token1?.symbol}, {dstBridgeToken.symbol} has been send to{' '}
+        We {`couldn't`} swap {trade?.dstBridgeToken?.symbol} into {token1?.symbol}, {trade?.dstBridgeToken?.symbol} has
+        been send to{' '}
         {recipient ? (
           <Button asChild size="sm" variant="link">
             <a target="_blank" rel="noopener noreferer" href={Chain.from(chainId1).getAccountUrl(recipient)}>

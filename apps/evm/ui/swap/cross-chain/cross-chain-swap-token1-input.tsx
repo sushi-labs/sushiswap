@@ -15,7 +15,7 @@ export const CrossChainSwapToken1Input = () => {
     isLoading: tokensLoading,
   } = useDerivedStateCrossChainSwap()
 
-  const { isInitialLoading: isLoading, isFetching, data: trade } = useCrossChainSwapTrade()
+  const { isInitialLoading: isLoading, isFetching, data: trade, error } = useCrossChainSwapTrade()
 
   return (
     <div className="border border-accent flex flex-col bg-white dark:bg-slate-800 rounded-xl overflow-hidden">

@@ -2186,6 +2186,7 @@ importers:
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/react-query-config': workspace:*
+      '@sushiswap/router': workspace:^0.0.14
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@tanstack/react-query': 4.28.0
@@ -2217,6 +2218,7 @@ importers:
       '@sushiswap/database': link:../database
       '@sushiswap/dexie': link:../dexie
       '@sushiswap/math': link:../math
+      '@sushiswap/router': link:../router
       '@sushiswap/types': link:../types
       '@tanstack/react-query': 4.28.0_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-devtools': 4.28.0_q4teel2yjbizrm4naiaqcdpjum
@@ -17285,7 +17287,7 @@ packages:
       '@tanstack/react-query': ^4.32.6
     dependencies:
       '@tanstack/query-persist-client-core': 4.32.6
-      '@tanstack/react-query': 4.32.6_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query': 4.32.6
 
   /@tanstack/react-query/4.28.0:
     resolution: {integrity: sha512-8cGBV5300RHlvYdS4ea+G1JcZIt5CIuprXYFnsWggkmGoC0b5JaqG0fIX3qwDL9PTNkKvG76NGThIWbpXivMrQ==}
@@ -17335,7 +17337,6 @@ packages:
     dependencies:
       '@tanstack/query-core': 4.32.6
       use-sync-external-store: 1.2.0
-    dev: true
 
   /@tanstack/react-query/4.32.6_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-AITu/IKJJJXsHHeXNBy5bclu12t08usMCY0vFC2dh9SP/w6JAk5U9GwfjOIPj3p+ATADZvxQPe8UiCtMLNeQbg==}

@@ -5,11 +5,17 @@ import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sus
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { STARGATE_SUPPORTED_CHAIN_IDS, StargateChainId } from '@sushiswap/stargate'
-import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap-sdk'
-import { Address, useAccount, useNetwork, watchNetwork } from '@sushiswap/wagmi'
+import {
+  Address,
+  isSushiXSwapV2ChainId,
+  SushiXSwapV2ChainId,
+  useAccount,
+  useNetwork,
+  watchNetwork,
+} from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future'
-import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { APPROVE_TAG_XSWAP } from 'lib/constants'
+import { UseQueryResult } from '@tanstack/react-query'
+import { UseCrossChainTradeReturn } from 'lib/swap/useCrossChainTrade/types'
 import { useCrossChainTrade } from 'lib/swap/useCrossChainTrade/useCrossChainTrade'
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -324,21 +330,21 @@ const useCrossChainSwapTrade = () => {
     state: { tradeId, token0, chainId0, chainId1, swapAmount, token1, recipient },
   } = useDerivedStateCrossChainSwap()
 
-  const { signature } = useSignature(APPROVE_TAG_XSWAP)
   const [slippageTolerance] = useSlippageTolerance()
 
   return useCrossChainTrade({
     tradeId,
-    network0: chainId0 as SushiXSwapChainId,
-    network1: chainId1 as SushiXSwapChainId,
+    network0: chainId0 as SushiXSwapV2ChainId,
+    network1: chainId1 as SushiXSwapV2ChainId,
     token0,
     token1,
     amount: swapAmount,
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
     recipient: recipient as Address,
-    enabled: Boolean(isSushiXSwapChainId(chainId0) && isSushiXSwapChainId(chainId1) && swapAmount?.greaterThan(ZERO)),
-    bentoboxSignature: signature,
-  })
+    enabled: Boolean(
+      isSushiXSwapV2ChainId(chainId0) && isSushiXSwapV2ChainId(chainId1) && swapAmount?.greaterThan(ZERO)
+    ),
+  }) as UseQueryResult<UseCrossChainTradeReturn>
 }
 
 export { DerivedstateCrossChainSwapProvider, useCrossChainSwapTrade, useDerivedStateCrossChainSwap }

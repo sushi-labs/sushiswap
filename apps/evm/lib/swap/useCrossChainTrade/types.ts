@@ -1,21 +1,18 @@
 import { Amount, Price, Type } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
-import { SushiXSwapChainId } from '@sushiswap/sushixswap-sdk'
-import { Address, Signature } from 'viem'
-
-import { Action } from '../SushiXSwap'
+import { Address, SushiXSwapV2ChainId } from '@sushiswap/wagmi'
+import { TransactionType } from './SushiXSwapV2'
 
 export interface UseCrossChainTradeParams {
   tradeId: string
-  network0: SushiXSwapChainId
-  network1: SushiXSwapChainId
+  network0: SushiXSwapV2ChainId
+  network1: SushiXSwapV2ChainId
   token0: Type | undefined
   token1: Type | undefined
   amount: Amount<Type> | undefined
   slippagePercentage: string
   recipient: Address | undefined
   enabled: boolean
-  bentoboxSignature?: Signature
 }
 
 export type UseCrossChainSelect = Omit<
@@ -35,11 +32,13 @@ export interface UseCrossChainTradeReturn {
   amountOut: Amount<Type> | undefined
   minAmountOut: Amount<Type> | undefined
   gasSpent: string | undefined
-  gasSpentUsd: string | undefined
-  functionName: 'cook'
-  writeArgs: [Action[], bigint[], `0x${string}`[]] | undefined
+  functionName: string
+  writeArgs: [] | undefined
   route: { status: string }
-  value?: bigint | undefined
+  overrides: { value: bigint } | undefined
+  transactionType: TransactionType | undefined
+  srcBridgeToken: Type | undefined
+  dstBridgeToken: Type | undefined
 }
 
 export type UseCrossChainTradeQuerySelect = (data: UseCrossChainSelect) => UseCrossChainTradeReturn

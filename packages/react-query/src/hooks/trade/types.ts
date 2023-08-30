@@ -3,6 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Type } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
 import { Address, GetFunctionArgs } from 'viem'
+import { RouterLiquiditySource } from '@sushiswap/router'
 import z from 'zod'
 
 import { legValidator, tradeValidator } from './validator'
@@ -15,6 +16,7 @@ export interface UseTradeParams {
   gasPrice?: bigint | null | undefined
   slippagePercentage: string
   recipient: Address | undefined
+  source?: RouterLiquiditySource
   enabled: boolean
   carbonOffset: boolean
   onError?(e: Error): void

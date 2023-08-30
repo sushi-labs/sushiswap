@@ -5,8 +5,6 @@ import { shortenAddress } from '@sushiswap/format'
 import { calculateGasMargin } from '@sushiswap/gas'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
-import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
-import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap-sdk'
 import {
   DialogClose,
   DialogContent,
@@ -28,7 +26,9 @@ import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { createErrorToast, createInfoToast, createToast } from '@sushiswap/ui/components/toast'
 import {
   Address,
-  getSushiXSwapContractConfig,
+  getSushiXSwapV2ContractConfig,
+  isSushiXSwapV2ChainId,
+  SushiXSwapV2ChainId,
   useAccount,
   useContractWrite,
   useNetwork,
@@ -37,13 +37,11 @@ import {
 } from '@sushiswap/wagmi'
 import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
-import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { nanoid } from 'nanoid'
 import { log } from 'next-axiom'
 import React, { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { stringify, UserRejectedRequestError } from 'viem'
 
-import { APPROVE_TAG_XSWAP } from '../../../lib/constants'
 import { UseCrossChainTradeReturn } from '../../../lib/swap/useCrossChainTrade/types'
 import { useLayerZeroScanLink } from '../../../lib/swap/useLayerZeroScanLink'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
@@ -68,8 +66,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
     state: { recipient, swapAmount, swapAmountString, chainId0, token0, token1, chainId1, tradeId },
   } = useDerivedStateCrossChainSwap()
   const { data: trade, isFetching } = useCrossChainSwapTrade()
-  const { setSignature } = useSignature(APPROVE_TAG_XSWAP)
-  const { approved } = useApproved(APPROVE_TAG_XSWAP)
   const groupTs = useRef<number>()
   const refetchBalances = useBalanceWeb3Refetch()
 
@@ -79,33 +75,22 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
     dest: StepState.Success,
   })
 
-  const srcBridgeToken =
-    token0?.isToken && isStargateBridgeToken(token0) ? token0 : STARGATE_BRIDGE_TOKENS[chainId0]?.[0]
-  const dstBridgeToken =
-    token1?.isToken && isStargateBridgeToken(token1) ? token1 : STARGATE_BRIDGE_TOKENS[chainId1]?.[0]
-  const crossChainSwap = !isStargateBridgeToken(token0) && !isStargateBridgeToken(token1)
-  const swapTransfer = !isStargateBridgeToken(token0) && isStargateBridgeToken(token1)
-  const transferSwap = isStargateBridgeToken(token0) && !isStargateBridgeToken(token1)
-  const srcCurrencyB = crossChainSwap || swapTransfer ? srcBridgeToken : token1
-  const dstCurrencyA = crossChainSwap || transferSwap ? dstBridgeToken : undefined
   const tradeRef = useRef<UseCrossChainTradeReturn | null>(null)
 
   const { config, isError, error } = usePrepareContractWrite({
-    ...getSushiXSwapContractConfig(chainId0 as SushiXSwapChainId),
-    functionName: 'cook',
+    ...getSushiXSwapV2ContractConfig(chainId0 as SushiXSwapV2ChainId),
+    functionName: trade?.functionName,
     args: trade?.writeArgs,
     enabled: Boolean(
-      isSushiXSwapChainId(chainId0) &&
-        isSushiXSwapChainId(chainId1) &&
+      isSushiXSwapV2ChainId(chainId0) &&
+        isSushiXSwapV2ChainId(chainId1) &&
         trade?.writeArgs &&
         trade?.writeArgs.length > 0 &&
         chain?.id === chainId0 &&
-        approved &&
         trade?.route?.status !== 'NoWay'
     ),
-    value: trade?.value || 0n,
+    value: trade?.overrides?.value || 0n,
     onError: (error) => {
-      console.error('cross chain swap prepare error', error)
       if (error.message.startsWith('user rejected transaction')) return
       log.error('cross chain swap prepare error', {
         trade: stringify(trade),
@@ -127,10 +112,10 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Swapping ${trade.amountIn?.toSignificant(6)} ${trade.amountIn?.currency.symbol} to bridge token ${
-            srcCurrencyB?.symbol
+            trade?.srcBridgeToken?.symbol
           }`,
           completed: `Swap ${trade.amountIn?.toSignificant(6)} ${trade.amountIn?.currency.symbol} to bridge token ${
-            srcCurrencyB?.symbol
+            trade?.srcBridgeToken?.symbol
           }`,
           failed: `Something went wrong when trying to swap ${trade.amountIn?.currency.symbol} to bridge token`,
         },
@@ -138,13 +123,14 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         groupTimestamp: groupTs.current,
       })
     },
-    [trade, chainId0, srcCurrencyB?.symbol, address]
+    [trade, chainId0, trade?.srcBridgeToken?.symbol, address]
   )
 
   const {
     writeAsync,
     isLoading: isWritePending,
     data,
+    error: useContractWriteError,
   } = useContractWrite({
     ...config,
     request: config?.request
@@ -200,7 +186,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         })
         .finally(async () => {
           await refetchBalances()
-          setSignature(undefined)
           setTradeId(nanoid())
         })
     },
@@ -298,7 +283,9 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         chainId: chainId0,
         txHash: '0x',
         href: lzData.link,
-        summary: `Bridging ${srcCurrencyB?.symbol} from ${Chain.from(chainId0).name} to ${Chain.from(chainId1).name}`,
+        summary: `Bridging ${trade?.srcBridgeToken?.symbol} from ${Chain.from(chainId0).name} to ${
+          Chain.from(chainId1).name
+        }`,
         timestamp: new Date().getTime(),
         groupTimestamp: groupTs.current,
       })
@@ -315,14 +302,14 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         txHash: receipt.hash as `0x${string}`,
         promise: waitForTransaction({ hash: receipt?.hash as Address, chainId: chainId1 }),
         summary: {
-          pending: `Swapping ${dstCurrencyA?.symbol} to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${
+          pending: `Swapping ${trade?.dstBridgeToken?.symbol} to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${
             tradeRef?.current?.amountOut?.currency.symbol
           }`,
-          completed: `Swap ${dstCurrencyA?.symbol} to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${
+          completed: `Swap ${trade?.dstBridgeToken?.symbol} to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${
             tradeRef?.current?.amountOut?.currency.symbol
           }`,
           failed: `Something went wrong when trying to swap ${
-            dstCurrencyA?.symbol
+            trade?.dstBridgeToken?.symbol
           } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${tradeRef?.current?.amountOut?.currency.symbol}`,
         },
         timestamp: new Date().getTime(),

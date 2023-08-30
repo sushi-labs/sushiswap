@@ -1,8 +1,7 @@
 import * as Sentry from '@sentry/node'
 import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
-import { isRouteProcessor3_1ChainId, ROUTE_PROCESSOR_3_1_ADDRESS } from '@sushiswap/route-processor-sdk'
-import { NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
+import { NativeWrapProvider, PoolCode, Router, RouterLiquiditySource } from '@sushiswap/router'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import cors from 'cors'
 import express, { Express, Request, Response } from 'express'
@@ -10,8 +9,9 @@ import path from 'path'
 import { Address } from 'viem'
 import { serialize } from 'wagmi'
 import z from 'zod'
+import { isRouteProcessor3_1ChainId, ROUTE_PROCESSOR_3_1_ADDRESS } from '@sushiswap/route-processor-sdk'
 
-import { Extractor, MultiCallAggregator, TokenManager, WarningLevel } from '../src'
+import { Extractor, TokenManager, WarningLevel } from '../src'
 import {
   EXTRACTOR_CONFIG,
   isSupportedChainId,
@@ -33,6 +33,7 @@ const querySchema = z.object({
   tokenOut: z.string(),
   amount: z.string().transform((amount) => BigInt(amount)),
   gasPrice: z.optional(z.coerce.number().int().gt(0)),
+  source: z.optional(z.coerce.string().refine((source) => source in RouterLiquiditySource)),
   to: z.optional(z.string()).transform((to) => (to ? (to as Address) : undefined)),
   preferSushi: z.optional(z.coerce.boolean()),
   maxPriceImpact: z.optional(z.coerce.number()),
@@ -105,6 +106,7 @@ async function main() {
       tokenOut: _tokenOut,
       amount,
       gasPrice,
+      source,
       to,
       preferSushi,
       maxPriceImpact,
@@ -173,7 +175,8 @@ async function main() {
                 ? ROUTE_PROCESSOR_3_1_ADDRESS[chainId]
                 : ROUTE_PROCESSOR_3_ADDRESS[chainId],
               [],
-              maxPriceImpact
+              maxPriceImpact,
+              source as RouterLiquiditySource
             )
           : undefined,
       })
