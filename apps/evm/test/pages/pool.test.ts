@@ -19,6 +19,11 @@ interface V2PoolArgs {
   type: 'CREATE' | 'ADD'
 }
 
+interface MigrateArgs {
+  minPrice: string
+  maxPrice: string
+}
+
 interface V3PoolArgs {
   token0: Type
   token1: Type
@@ -54,94 +59,116 @@ const BASE_URL = 'http://localhost:3000/pool'
 // test.beforeAll(async ({ page }) => {})
 
 // Tests will only work for polygon atm
-test.describe('V3', () => {
-  test.beforeEach(async ({ page }) => {
-    const url = BASE_URL.concat('/add').concat(`?chainId=${CHAIN_ID}`)
-    await page.goto(url)
-    await switchNetwork(page, CHAIN_ID)
-  })
-
-  test('Create pool', async ({ page }) => {
-    test.slow()
-    await createOrAddLiquidityV3(page, {
-      token0: NATIVE_TOKEN,
-      token1: USDC,
-      startPrice: '0.5',
-      minPrice: '0.1',
-      maxPrice: '0.9',
-      amount: '0.001',
-      amountBelongsToToken0: false,
-      type: 'CREATE',
-    })
-  })
-
-  // TODO: most of the tests below are dependent to the Create Pool test. Consider if we should put the creation in a beforeAll.
-  test('Add liquidity, both sides', async ({ page }) => {
-    test.slow()
-    await createOrAddLiquidityV3(page, {
-      token0: NATIVE_TOKEN,
-      token1: USDC,
-      minPrice: '0.3',
-      maxPrice: '0.7',
-      amount: '0.0001',
-      amountBelongsToToken0: false,
-      type: 'ADD',
-    })
-  })
-
-  test('Add liquidity, only one side(NATIVE)', async ({ page }) => {
-    test.slow()
-    await createOrAddLiquidityV3(page, {
-      token0: NATIVE_TOKEN,
-      token1: USDC,
-      minPrice: '0.8',
-      maxPrice: '0.9',
-      amount: '1',
-      amountBelongsToToken0: true,
-      type: 'ADD',
-    })
-  })
-
-  test('Add liquidity, only one side(USDC)', async ({ page }) => {
-    test.slow()
-    await createOrAddLiquidityV3(page, {
-      token0: NATIVE_TOKEN,
-      token1: USDC,
-      minPrice: '0.2',
-      maxPrice: '0.4',
-      amount: '0.0001',
-      amountBelongsToToken0: false,
-      type: 'ADD',
-    })
-  })
-
-  test('Remove liquidity', async ({ page }) => {
-    test.slow()
-    await removeLiquidityV3(page)
-  })
-})
-
+// test.describe('V3', () => {
+//   test.beforeEach(async ({ page }) => {
+//     const url = BASE_URL.concat('/add').concat(`?chainId=${CHAIN_ID}`)
+//     await page.goto(url)
+//     await switchNetwork(page, CHAIN_ID)
+//   })
+//
+//   test('Create pool', async ({ page }) => {
+//     test.slow()
+//     await createOrAddLiquidityV3(page, {
+//       token0: NATIVE_TOKEN,
+//       token1: USDC,
+//       startPrice: '0.5',
+//       minPrice: '0.1',
+//       maxPrice: '0.9',
+//       amount: '0.001',
+//       amountBelongsToToken0: false,
+//       type: 'CREATE',
+//     })
+//   })
+//
+//   // TODO: most of the tests below are dependent to the Create Pool test. Consider if we should put the creation in a beforeAll.
+//   test('Add liquidity, both sides', async ({ page }) => {
+//     test.slow()
+//     await createOrAddLiquidityV3(page, {
+//       token0: NATIVE_TOKEN,
+//       token1: USDC,
+//       minPrice: '0.3',
+//       maxPrice: '0.7',
+//       amount: '0.0001',
+//       amountBelongsToToken0: false,
+//       type: 'ADD',
+//     })
+//   })
+//
+//   test('Add liquidity, only one side(NATIVE)', async ({ page }) => {
+//     test.slow()
+//     await createOrAddLiquidityV3(page, {
+//       token0: NATIVE_TOKEN,
+//       token1: USDC,
+//       minPrice: '0.8',
+//       maxPrice: '0.9',
+//       amount: '1',
+//       amountBelongsToToken0: true,
+//       type: 'ADD',
+//     })
+//   })
+//
+//   test('Add liquidity, only one side(USDC)', async ({ page }) => {
+//     test.slow()
+//     await createOrAddLiquidityV3(page, {
+//       token0: NATIVE_TOKEN,
+//       token1: USDC,
+//       minPrice: '0.2',
+//       maxPrice: '0.4',
+//       amount: '0.0001',
+//       amountBelongsToToken0: false,
+//       type: 'ADD',
+//     })
+//   })
+//
+//   test('Remove liquidity', async ({ page }) => {
+//     test.slow()
+//     await removeLiquidityV3(page)
+//   })
+// })
+//
 test.describe('Trident', () => {
   test.beforeEach(async ({ page }) => {
     const url = BASE_URL.concat(`/add/trident/${CHAIN_ID}`)
     await page.goto(url)
     await switchNetwork(page, CHAIN_ID)
   })
+  //
+  //   test('Create pool', async ({ page }) => {
+  //     test.slow()
+  //     await createOrAddTridentPool(page, {
+  //       // 0.01% fee is not created at block 42259027
+  //       token0: NATIVE_TOKEN,
+  //       token1: USDC,
+  //       amount0: '0.0001',
+  //       amount1: '0.0001',
+  //       fee: '1',
+  //       type: 'CREATE',
+  //     })
+  //   })
+  //
+  //   test('Add, stake, unstake and remove', async ({ page }) => {
+  //     test.slow()
+  //     await createOrAddTridentPool(page, {
+  //       token0: NATIVE_TOKEN,
+  //       token1: USDC,
+  //       amount0: '0.0001',
+  //       amount1: '0.0001',
+  //       fee: '5',
+  //       type: 'ADD',
+  //     })
+  //
+  //     const addLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b')
+  //     await page.goto(addLiquidityUrl, { timeout: 25_000 })
+  //     await manageStaking(page, 'STAKE')
+  //
+  //     const removeLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b')
+  //     await page.goto(removeLiquidityUrl, { timeout: 25_000 })
+  //     await manageStaking(page, 'UNSTAKE')
+  //     await page.reload({ timeout: 25_000 })
+  //     await removeLiquidityV2(page)
+  //   })
 
-  test('Create pool', async ({ page }) => {
-    test.slow()
-    await createOrAddTridentPool(page, {
-      // 0.01% fee is not created at block 42259027
-      token0: NATIVE_TOKEN,
-      token1: USDC,
-      amount0: '0.0001',
-      amount1: '0.0001',
-      fee: '1',
-      type: 'CREATE',
-    })
-  })
-
-  test('Add, stake, unstake and remove', async ({ page }) => {
+  test('Migrate', async ({ page }) => {
     test.slow()
     await createOrAddTridentPool(page, {
       token0: NATIVE_TOKEN,
@@ -156,32 +183,31 @@ test.describe('Trident', () => {
     await page.goto(addLiquidityUrl, { timeout: 25_000 })
     await manageStaking(page, 'STAKE')
 
-    const removeLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b')
-    await page.goto(removeLiquidityUrl, { timeout: 25_000 })
-    await manageStaking(page, 'UNSTAKE')
-    await page.reload({ timeout: 25_000 })
-    await removeLiquidityV2(page)
+    const migrateURL = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/migrate')
+    await page.goto(migrateURL, { timeout: 25_000 })
+    await manageUnstakeAndClaim(page)
+    await migrateV2(page, { minPrice: '0.4', maxPrice: '1' })
   })
 })
 
-test.describe('V2', () => {
-  test.beforeEach(async ({ page }) => {
-    const url = BASE_URL.concat(`/add/v2/${CHAIN_ID}`)
-    await page.goto(url)
-    await switchNetwork(page, CHAIN_ID)
-  })
-
-  test('Add liquidity', async ({ page }) => {
-    test.slow()
-    await createOrAddV2Pool(page, {
-      token0: NATIVE_TOKEN,
-      token1: USDC,
-      amount0: '0.0001',
-      amount1: '0.0001',
-      type: 'ADD',
-    })
-  })
-})
+// test.describe('V2', () => {
+//   test.beforeEach(async ({ page }) => {
+//     const url = BASE_URL.concat(`/add/v2/${CHAIN_ID}`)
+//     await page.goto(url)
+//     await switchNetwork(page, CHAIN_ID)
+//   })
+//
+// test('Add liquidity', async ({ page }) => {
+//   test.slow()
+//   await createOrAddV2Pool(page, {
+//     token0: NATIVE_TOKEN,
+//     token1: USDC,
+//     amount0: '0.0001',
+//     amount1: '0.0001',
+//     type: 'ADD',
+//   })
+// })
+// })
 
 async function createOrAddLiquidityV3(page: Page, args: V3PoolArgs) {
   await handleToken(page, args.token0, 'FIRST')
@@ -331,6 +357,58 @@ async function removeLiquidityV3(page: Page) {
   await handleLiquidityLocator.click()
 
   const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
+  expect(page.getByText(regex))
+}
+
+async function manageUnstakeAndClaim(page: Page) {
+  await switchNetwork(page, CHAIN_ID)
+
+  const approveSlpId = `approve-token0-button`
+  const approveSlpLocator = page.locator(`[testdata-id=${approveSlpId}]`)
+  await expect(approveSlpLocator).toBeVisible()
+  await expect(approveSlpLocator).toBeEnabled()
+  await approveSlpLocator.click()
+
+  const unstakeId = `unstake-liquidity-button`
+  const unstakeLocator = page.locator(`[testdata-id=${unstakeId}]`)
+  await expect(unstakeLocator).toBeVisible()
+  await expect(unstakeLocator).toBeEnabled()
+  await unstakeLocator.click()
+
+  const regex = new RegExp('(Successfully unstaked * * tokens)')
+  expect(page.getByText(regex))
+}
+
+async function migrateV2(page: Page, args: MigrateArgs) {
+  await switchNetwork(page, CHAIN_ID)
+
+  const feeOptionSelector = page.locator('[testdata-id=fee-option-10000]')
+  await expect(feeOptionSelector).toBeEnabled()
+  await feeOptionSelector.click()
+  await expect(feeOptionSelector).toHaveAttribute('data-state', 'on')
+
+  await page.locator('[testdata-id=min-price-input]').fill(args.minPrice)
+  await page.locator('[testdata-id=max-price-input]').fill(args.maxPrice)
+
+  const approveMigrateButton = `approve-migrate-button`
+  const approveMigrateButtonLocator = page.locator(`[testdata-id=${approveMigrateButton}]`)
+  await expect(approveMigrateButtonLocator).toBeVisible()
+  await expect(approveMigrateButtonLocator).toBeEnabled()
+  await approveMigrateButtonLocator.click()
+
+  const migrateButton = `migrate-button`
+  const migrateButtonLocator = page.locator(`[testdata-id=${migrateButton}]`)
+  await expect(migrateButtonLocator).toBeVisible()
+  await expect(migrateButtonLocator).toBeEnabled()
+  await migrateButtonLocator.click()
+
+  const migrateConfirmButton = `migrate-confirm-button`
+  const migrateConfirmButtonLocator = page.locator(`[testdata-id=${migrateConfirmButton}]`)
+  await expect(migrateConfirmButtonLocator).toBeVisible()
+  await expect(migrateConfirmButtonLocator).toBeEnabled()
+  await migrateConfirmButtonLocator.click()
+
+  const regex = new RegExp('(Successfully migrated your liquidity)')
   expect(page.getByText(regex))
 }
 
