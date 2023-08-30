@@ -100,7 +100,7 @@ const config: PlaywrightTestConfig = {
       command: [
         'anvil',
         `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
-        `--fork-url=${process.env.ANVIL_FORK_URL}`,
+        `--fork-url=${process.env.ANVIL_FORK_URL}/${process.env.ALCHEMY_ID}}}`,
         `--port=${Number(process.env.ANVIL_PORT) || 8545}`,
       ].join(' '),
       env: {

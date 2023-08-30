@@ -34,14 +34,21 @@ jobs:
   e2e:
     timeout-minutes: 30
     runs-on: ubuntu-latest
-    env:
-      ANVIL_BLOCK_NUMBER: 42259027
     strategy:
       matrix:
-        chain-id: [137]
+        chain-id: [1,137,42161]
         node-version: [18]
         pnpm-version: [7.9.5]
-        block-number: [42259027]
+        include:
+          - chain-id: 1
+            block-number: 17284226
+            rpc-url: https://eth-mainnet.g.alchemy.com/v2
+          - chain-id: 137
+            block-number: 42259027
+            rpc-url: https://polygon-mainnet.g.alchemy.com/v2
+          - chain-id: 42161
+            block-number: 91850294
+            rpc-url: https://arb-mainnet.g.alchemy.com/v2
     steps:
       - name: Check out
         uses: actions/checkout@v3
@@ -93,9 +100,12 @@ jobs:
           FURO_URL: 'https://furo.sushi.com'
           ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
           CHAIN_ID: ${{ matrix.chain-id }}
-          ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
+          DRPC_ID: ${{ secrets.DRPC_ID }}
+          ANVIL_BLOCK_NUMBER: ${{ matrix.block-number }}
+          ANVIL_FORK_URL: ${{ matrix.rpc-url }}
           ANVIL_PORT: 8545
           NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+          NEXT_PUBLIC_DRPC_ID: ${{ secrets.NEXT_PUBLIC_DRPC_ID }}
           NEXT_PUBLIC_TEST: true
         working-directory: .
 

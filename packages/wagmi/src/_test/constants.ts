@@ -1,11 +1,7 @@
-import { foundry, polygon } from '../chains'
+import { foundry, polygon, mainnet, arbitrum } from '../chains'
 
-const foundryPolygon = {
-  ...polygon,
-  rpcUrls: foundry.rpcUrls,
-} as const
 
-export const testChains = [foundryPolygon]
+export const testChains = [polygon, mainnet, arbitrum]
 export type TestChainId = (typeof testChains)[number]['id']
 
 // Default accounts from Anvil
