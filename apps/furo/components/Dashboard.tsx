@@ -38,7 +38,7 @@ export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress 
                 </div>
                 <div>
                   <Button asChild size="lg">
-                    <LinkInternal href="/furo/create">Pay Someone</LinkInternal>
+                    <LinkInternal href="/create">Pay Someone</LinkInternal>
                   </Button>
                 </div>
               </div>

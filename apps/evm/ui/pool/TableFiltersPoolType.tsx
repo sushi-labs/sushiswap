@@ -42,13 +42,17 @@ const POOL_DESCRIPTIONS = {
     'A customizable pool type with a user-defined fee tier that utilizes a constant product formula to ensure a 50/50 composition of each asset in the pool.',
 }
 
+const isAllThenNone = (protocols: Protocol[]) => (protocols.length === POOL_TYPES.length ? [] : protocols)
+
 export const TableFiltersPoolType: FC = () => {
-  const [, startTransition] = useTransition()
+  const [pending, startTransition] = useTransition()
   const [open, setOpen] = useState(false)
   const { protocols } = usePoolFilters()
   const setFilters = useSetPoolFilters()
   const [peekedProtocol, setPeekedProtocol] = React.useState<Protocol>(POOL_TYPES[0])
-  const [values, setValues] = useState<Protocol[]>(protocols.length === POOL_TYPES.length ? [] : protocols)
+  const [localValue, setValues] = useState<Protocol[]>(isAllThenNone(protocols))
+
+  const values = pending ? localValue : isAllThenNone(protocols)
 
   const protocolHandler = useCallback(
     (item: Protocol) => {

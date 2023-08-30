@@ -64,9 +64,6 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
   // This handles the case where some params might not be provided by the user
   const defaultedParams = useMemo(() => {
     const params = new URLSearchParams(Array.from(searchParams.entries()))
-
-    console.log({ params: params.toString() })
-
     if (!params.has('chainId'))
       params.set(
         'chainId',
@@ -75,7 +72,6 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
     if (!params.has('token0')) params.set('token0', 'NATIVE')
     if (!params.has('token1')) params.set('token1', getQuoteCurrency(Number(params.get('chainId'))))
     // if (!params.has('recipient')) params.set('recipient', address ?? '')
-
     return params
   }, [chain, searchParams])
 
@@ -194,11 +190,15 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
 
   // Make sure the searchParams are updated whenever a user switches networks
   useEffect(() => {
+    let i = 0
     const unwatch = watchNetwork(({ chain }) => {
-      if (chain && chain.id !== chainId) {
+      // Avoid first call
+      if (chain && i > 0) {
         setChainId(chain.id)
       }
-    })
+
+      i++
+    }, {})
 
     return () => unwatch()
     //eslint-disable-next-line react-hooks/exhaustive-deps
