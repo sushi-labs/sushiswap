@@ -9,6 +9,7 @@ const shortNameIdRegexp = new RegExp(/(\w+):0x.*?(?=(?:\/|$))/)
 
 export async function middleware(req: NextRequest) {
   const { pathname, searchParams, search } = req.nextUrl
+  // force
   if (pathname === '/swap' && search !== '') {
     const url = req.nextUrl.clone()
     if (searchParams.has('token0') && searchParams.has('token1')) {

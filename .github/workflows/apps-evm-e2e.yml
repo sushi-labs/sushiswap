@@ -1,6 +1,5 @@
 name: Sushi - apps / evm
 
-# force
 on:
   pull_request:
     types: [opened, synchronize]
