@@ -274,6 +274,7 @@ async function createOrAddTridentPool(page: Page, args: TridentPoolArgs) {
       : `add-liquidity-trident-approve-token${args.token0.isNative ? 1 : 0}-button`
 
   const approveTokenLocator = page.locator(`[testdata-id=${approveTokenId}]`)
+  await approveTokenLocator.scrollIntoViewIfNeeded()
   await expect(approveTokenLocator).toBeVisible()
   await expect(approveTokenLocator).toBeEnabled()
   await approveTokenLocator.click()
