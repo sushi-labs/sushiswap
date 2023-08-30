@@ -3,6 +3,7 @@
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { InformationCircleIcon } from '@heroicons/react/24/solid'
 import { Amount, Type } from '@sushiswap/currency'
+import { useIsMounted } from '@sushiswap/hooks'
 import {
   CardDescription,
   CardHeader,
@@ -38,6 +39,7 @@ const ApproveERC20: FC<ApproveERC20Props> = ({
   enabled = true,
   ...props
 }) => {
+  const isMounted = useIsMounted()
   const [max, setMax] = useState(false)
   const [state, { write }] = useTokenApproval({
     amount,
@@ -46,7 +48,7 @@ const ApproveERC20: FC<ApproveERC20Props> = ({
     approveMax: max,
   })
 
-  if (state === ApprovalState.APPROVED || !enabled) {
+  if (state === ApprovalState.APPROVED || !enabled || !isMounted) {
     return <>{children}</>
   }
 

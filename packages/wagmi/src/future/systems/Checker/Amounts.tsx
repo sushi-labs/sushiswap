@@ -3,6 +3,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
+import { useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import React, { FC, useMemo } from 'react'
@@ -16,6 +17,7 @@ interface AmountsProps extends ButtonProps {
 }
 
 const Amounts: FC<AmountsProps> = ({ type, amounts, chainId, children, fullWidth = true, size = 'xl', ...props }) => {
+  const isMounted = useIsMounted()
   const { address } = useAccount()
   const amountsAreDefined = useMemo(() => amounts.every((el) => el?.greaterThan(ZERO)), [amounts])
   const currencies = useMemo(() => amounts.map((amount) => amount?.currency), [amounts])
@@ -33,6 +35,8 @@ const Amounts: FC<AmountsProps> = ({ type, amounts, chainId, children, fullWidth
       return !balances?.[amount.currency.isNative ? AddressZero : amount.currency.wrapped.address]?.lessThan(amount)
     })
   }, [amounts, balances])
+
+  if (!isMounted) return <>{children}</>
 
   if (!amountsAreDefined)
     return (

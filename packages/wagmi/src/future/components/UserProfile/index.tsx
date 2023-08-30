@@ -2,6 +2,7 @@
 
 import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
+import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'
 import { JazzIcon } from '@sushiswap/ui/components/icons/JazzIcon'
 import { Popover, PopoverContent, PopoverTrigger } from '@sushiswap/ui/components/popover'
@@ -27,6 +28,7 @@ interface ProfileProps {
 }
 
 export const UserProfile: FC<ProfileProps> = () => {
+  const isMounted = useIsMounted()
   const { isSm } = useBreakpoint('sm')
   const [view, setView] = useState<ProfileView>(ProfileView.Default)
   const { chain } = useNetwork()
@@ -44,7 +46,7 @@ export const UserProfile: FC<ProfileProps> = () => {
 
   const chainId = (chain?.id as ChainId) || ChainId.ETHEREUM
 
-  if (!address) return <ConnectButton variant="secondary" />
+  if (!address || !isMounted) return <ConnectButton variant="secondary" />
 
   return (
     <Popover>

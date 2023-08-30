@@ -2,6 +2,7 @@
 
 import { InformationCircleIcon } from '@heroicons/react/24/solid'
 import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
+import { useIsMounted } from '@sushiswap/hooks'
 import {
   CardDescription,
   CardHeader,
@@ -36,9 +37,10 @@ const ApproveBentobox: FC<ApproveBentoboxProps> = ({
   size = 'xl',
   ...props
 }) => {
+  const isMounted = useIsMounted()
   const [state, execute] = useBentoboxApproval({ enabled, chainId, masterContract, tag })
 
-  if (state === ApprovalState.APPROVED || !enabled) {
+  if (state === ApprovalState.APPROVED || !enabled || !isMounted) {
     return <>{children}</>
   }
 
