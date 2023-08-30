@@ -127,7 +127,8 @@ export default function Partner() {
         <h4>Create your request</h4>
         <p>
           Kindly complete the provided form; this action will initiate the creation of a pull request on our GitHub
-          repository. For your convenience, you can track the progress and updates there. Thank you for your
+          repository. For your convenience, you can track the progress and updates{' '}
+          <LinkExternal href="https://github.com/sushiswap/list/pulls">there</LinkExternal>. Thank you for your
           participation.
         </p>
         <Form {...methods}>
