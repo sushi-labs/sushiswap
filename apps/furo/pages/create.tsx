@@ -90,10 +90,10 @@ export default function CreatePage() {
                     >
                       <div className="flex justify-center gap-2">
                         <Button asChild size="lg">
-                          <LinkInternal href="/furo/stream/create/single">Single stream</LinkInternal>
+                          <LinkInternal href="/stream/create/single">Single stream</LinkInternal>
                         </Button>
                         <Button asChild size="lg">
-                          <LinkInternal href="/furo/stream/create/multiple">Multiple streams</LinkInternal>
+                          <LinkInternal href="/stream/create/multiple">Multiple streams</LinkInternal>
                         </Button>
                       </div>
                     </Transition>
@@ -145,10 +145,10 @@ export default function CreatePage() {
                     >
                       <div className="flex justify-center gap-2">
                         <Button asChild size="lg">
-                          <LinkInternal href="/furo/vesting/create/single">Single vest</LinkInternal>
+                          <LinkInternal href="/vesting/create/single">Single vest</LinkInternal>
                         </Button>
                         <Button asChild size="lg">
-                          <LinkInternal href="/furo/vesting/create/multiple">Multiple vests</LinkInternal>
+                          <LinkInternal href="/vesting/create/multiple">Multiple vests</LinkInternal>
                         </Button>
                       </div>
                     </Transition>
