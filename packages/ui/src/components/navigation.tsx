@@ -2,7 +2,8 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import Link from 'next/link'
 import * as React from 'react'
 
-import { classNames, navigationMenuTriggerStyle, SushiIcon } from '../index'
+import { classNames, navigationMenuTriggerStyle } from '../index'
+import { BirthdayIcon } from './icons/BirthdayIcon'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -119,7 +120,7 @@ interface NavContainerProps extends VariantProps<typeof navigationContainerVaria
 const NavigationContainer: React.FC<NavContainerProps> = ({ children, variant }) => {
   return (
     <div className={navigationContainerVariants({ variant })}>
-      <SushiIcon width={24} height={24} />
+      <BirthdayIcon width={26} height={26} className="mb-[4px]" />
       <div className="flex items-center justify-between flex-grow gap-4">{children}</div>
     </div>
   )
