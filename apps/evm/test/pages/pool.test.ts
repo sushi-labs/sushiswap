@@ -392,18 +392,24 @@ async function migrateV2(page: Page, args: MigrateArgs) {
 
   const approveMigrateButton = `approve-migrate-button`
   const approveMigrateButtonLocator = page.locator(`[testdata-id=${approveMigrateButton}]`)
+  await approveMigrateButtonLocator.scrollIntoViewIfNeeded()
+
   await expect(approveMigrateButtonLocator).toBeVisible()
   await expect(approveMigrateButtonLocator).toBeEnabled()
   await approveMigrateButtonLocator.click()
 
   const migrateButton = `migrate-button`
   const migrateButtonLocator = page.locator(`[testdata-id=${migrateButton}]`)
+  await migrateButtonLocator.scrollIntoViewIfNeeded()
+
   await expect(migrateButtonLocator).toBeVisible()
   await expect(migrateButtonLocator).toBeEnabled()
   await migrateButtonLocator.click()
 
   const migrateConfirmButton = `migrate-confirm-button`
   const migrateConfirmButtonLocator = page.locator(`[testdata-id=${migrateConfirmButton}]`)
+  await migrateConfirmButtonLocator.scrollIntoViewIfNeeded()
+
   await expect(migrateConfirmButtonLocator).toBeVisible()
   await expect(migrateConfirmButtonLocator).toBeEnabled()
   await migrateConfirmButtonLocator.click()
