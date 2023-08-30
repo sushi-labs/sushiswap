@@ -40,6 +40,7 @@ export function checkRouteResult(id: string, amountOut: number) {
     testCount++
     const avgInc = totalIncrease / testCount
     console.assert(increase >= -1e-4, `Routing result ${id} ${increase}%`)
+    expect(increase).toBeGreaterThanOrEqual(-1e-4)
     fs.writeFileSync(
       `${__dirname}/${REPORT_FILE}`,
       `${testCount}:"${id}": ${prevOut} -> ${amountOut} (${increase}%) avg:${avgInc}%\n`,
