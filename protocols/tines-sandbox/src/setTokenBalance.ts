@@ -31,7 +31,7 @@ export async function setTokenBalance(
     // Vyper mapping
     const slotData2 = encodeAbiParameters(parseAbiParameters('uint256, address'), [BigInt(slotNumber), user] as const)
     const slot2 = keccak256(slotData2)
-    const previousValue1 = await getStorageAt(token, slot)
+    const previousValue1 = await getStorageAt(token, slot2)
     await setStorageAt(token, slot2, value1)
     return [previousValue0, previousValue1]
   }
