@@ -79,6 +79,7 @@ export function DataTable<TData, TValue>({
       sorting: state?.sorting ? state.sorting : sorting,
       ...(state?.pagination && { pagination: state?.pagination }),
     },
+    autoResetPageIndex: false,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: onSortingChange ? onSortingChange : setSorting,

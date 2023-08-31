@@ -3,7 +3,7 @@
 import { PlusIcon } from '@heroicons/react/20/solid'
 import { Slot } from '@radix-ui/react-slot'
 import { ChainId } from '@sushiswap/chain'
-import { Button, Card, CardHeader, CardTitle, DataTable, LinkInternal } from '@sushiswap/ui'
+import { Button, Card, CardHeader, CardTitle, DataTable, LinkInternal, Switch } from '@sushiswap/ui'
 import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future'
@@ -25,7 +25,6 @@ const tableState = { sorting: [{ id: 'positionSize', desc: true }] }
 interface ConcentratedPositionsTableProps {
   chainId?: ChainId
   poolId?: string
-  hideClosed?: boolean
   onRowClick?(row: ConcentratedLiquidityPositionWithV3Pool): void
   hideNewPositionButton?: boolean
 }
@@ -34,11 +33,11 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> = (
   chainId,
   onRowClick,
   poolId,
-  hideClosed,
   hideNewPositionButton = false,
 }) => {
   const { address } = useAccount()
   const { chainIds, tokenSymbols } = usePoolFilters()
+  const [hide, setHide] = useState(true)
 
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
@@ -63,11 +62,10 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> = (
       )
       .filter((el) => {
         return (
-          (hideClosed ? el.liquidity !== 0n : true) &&
-          (poolId ? el.address.toLowerCase() === poolId.toLowerCase() : true)
+          (hide ? el.liquidity !== 0n : true) && (poolId ? el.address.toLowerCase() === poolId.toLowerCase() : true)
         )
       })
-  }, [hideClosed, poolId, positions, chainIds, tokenSymbols])
+  }, [tokenSymbols, positions, chainIds, hide, poolId])
 
   const rowRenderer = useCallback(
     (row: Row<ConcentratedLiquidityPositionWithV3Pool>, rowNode: ReactNode) => {
@@ -90,13 +88,19 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> = (
             <span>
               My Positions <span className="text-gray-400 dark:text-slate-500">({_positions.length})</span>
             </span>
-            {!hideNewPositionButton ? (
-              <LinkInternal shallow={true} href={`/pool/${chainId}:${poolId}/positions/create`}>
-                <Button icon={PlusIcon} asChild size="sm">
-                  Create position
-                </Button>
-              </LinkInternal>
-            ) : null}
+            <div className="flex gap-4">
+              <div className="flex gap-3 items-center px-2.5">
+                <span className="text-sm font-medium text-gray-600 dark:text-slate-400">Hide closed</span>
+                <Switch checked={hide} onCheckedChange={() => setHide((prev) => !prev)} />
+              </div>
+              {!hideNewPositionButton ? (
+                <LinkInternal shallow={true} href={`/pool/${chainId}:${poolId}/positions/create`}>
+                  <Button icon={PlusIcon} asChild size="sm">
+                    Create position
+                  </Button>
+                </LinkInternal>
+              ) : null}
+            </div>
           </div>
         </CardTitle>
       </CardHeader>

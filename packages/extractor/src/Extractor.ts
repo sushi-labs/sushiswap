@@ -36,7 +36,7 @@ export class Extractor {
   client: PublicClient
   extractorV2?: UniV2Extractor
   extractorV3?: UniV3Extractor
-  multiCallAggregator?: MultiCallAggregator
+  multiCallAggregator: MultiCallAggregator
   cacheDir: string
 
   /// @param client

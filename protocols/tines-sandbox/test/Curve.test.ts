@@ -1,6 +1,13 @@
 import { SnapshotRestorer, takeSnapshot } from '@nomicfoundation/hardhat-network-helpers'
 import { erc20Abi } from '@sushiswap/abi'
-import { CurvePool, getBigInt, RToken } from '@sushiswap/tines'
+import {
+  createCurvePoolsForMultipool,
+  CurveMultitokenPool,
+  CurvePool,
+  getBigInt,
+  RPool,
+  RToken,
+} from '@sushiswap/tines'
 import { Contract } from '@sushiswap/types'
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
@@ -18,6 +25,21 @@ enum CurvePoolType {
 }
 
 const NON_FACTORY_POOLS: [Address, string, CurvePoolType, number?][] = [
+  // Multitoken
+  ['0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7', '3pool', CurvePoolType.LegacyV3],
+  ['0xed279fdd11ca84beef15af5d39bb4d4bee23f0ca', 'lusd', CurvePoolType.Legacy],
+  ['0xa5407eae9ba41422680e2e00537571bcc53efbfd', 'susd', CurvePoolType.Legacy],
+  ['0xecd5e75afb02efa118af914515d6521aabd189f1', 'tusd', CurvePoolType.Legacy],
+  ['0xd632f22692fac7611d2aa1c0d552930d43caed3b', 'frax', CurvePoolType.Legacy],
+  ['0x43b4fdfd4ff969587185cdb6f0bd875c5fc83f8c', 'alusd', CurvePoolType.Legacy],
+  ['0x618788357d0ebd8a37e763adab3bc575d54c2c7d', 'rai', CurvePoolType.LegacyV2],
+  ['0x4807862aa8b2bf68830e4c8dc86d0e9a998e085a', 'busdv2', CurvePoolType.Legacy],
+  ['0x4f062658eaaf2c1ccf8c8e36d6824cdf41167956', 'qusd', CurvePoolType.LegacyV2],
+  ['0xdebf20617708857ebe4f679508e7b7863a8a8eee', 'aave', CurvePoolType.LegacyV2],
+  ['0x5a6a4d54456819380173272a5e8e9b9904bdf41b', 'mim', CurvePoolType.Legacy],
+  ['0x8474ddbe98f5aa3179b3b3f5942d724afcdec9f6', 'musd', CurvePoolType.Legacy],
+  ['0x52ea46506b9cc5ef470c5bf89f17dc28bb35d85c', 'usdt', CurvePoolType.Legacy],
+  // 2 coins
   ['0xdc24316b9ae028f1497c275eb9192a3ea0f67022', 'steth', CurvePoolType.Legacy],
   ['0xdcef968d416a41cdac0ed8702fac8128a64241a2', 'fraxusdc', CurvePoolType.Legacy],
   ['0x828b154032950c8ff7cf8085d841723db2696056', 'stETH concentrated', CurvePoolType.Factory],
@@ -106,7 +128,7 @@ interface PoolInfo {
   poolType: CurvePoolType
   poolContract: Contract<any>
   tokenContracts: (Contract<typeof erc20Abi> | undefined)[]
-  poolTines: CurvePool
+  poolTines: (CurvePool | CurveMultitokenPool | undefined)[][]
   user: Address
   snapshot: SnapshotRestorer
 }
@@ -252,25 +274,46 @@ async function createCurvePoolInfo(
     )
   )
 
-  const poolTines = new CurvePool(
-    poolAddress,
-    tokenTines[0],
-    tokenTines[1],
-    Number(fee) / 1e10,
-    Number(A),
-    reserves[0],
-    reserves[1],
-    await getPoolRatio(config, poolAddress, poolType)
-  )
+  if (tokenContracts.length === 2) {
+    const poolTines = new CurvePool(
+      poolAddress,
+      tokenTines[0],
+      tokenTines[1],
+      Number(fee) / 1e10,
+      Number(A),
+      reserves[0],
+      reserves[1],
+      await getPoolRatio(config, poolAddress, poolType)
+    )
 
-  const snapshot = await takeSnapshot()
-  return {
-    poolType,
-    poolContract,
-    tokenContracts,
-    poolTines,
-    user: config.user.address,
-    snapshot,
+    const snapshot = await takeSnapshot()
+    return {
+      poolType,
+      poolContract,
+      tokenContracts,
+      poolTines: [[undefined, poolTines]],
+      user: config.user.address,
+      snapshot,
+    }
+  } else {
+    const pools = createCurvePoolsForMultipool(poolAddress, tokenTines, Number(fee) / 1e10, Number(A), reserves)
+    const poolTines: (CurvePool | CurveMultitokenPool | undefined)[][] = []
+    let n = 0
+    for (let i = 0; i < tokenContracts.length; ++i) {
+      poolTines[i] = []
+      for (let j = i + 1; j < tokenContracts.length; ++j) poolTines[i][j] = pools[n++]
+    }
+    console.assert(n === pools.length)
+
+    const snapshot = await takeSnapshot()
+    return {
+      poolType,
+      poolContract,
+      tokenContracts,
+      poolTines,
+      user: config.user.address,
+      snapshot,
+    }
   }
 }
 
@@ -282,7 +325,9 @@ async function checkSwap(
   amountIn: number,
   precision: number
 ) {
-  const expectedOut = poolInfo.poolTines.calcOutByIn(Math.round(amountIn), from < to)
+  const i = Math.min(from, to)
+  const j = Math.max(from, to)
+  const expectedOut = (poolInfo.poolTines[i][j] as CurvePool).calcOutByIn(Math.round(amountIn), from < to)
   let realOutBI: bigint
   if (poolInfo.poolType !== CurvePoolType.LegacyV2 && poolInfo.poolType !== CurvePoolType.LegacyV3) {
     realOutBI = (
@@ -374,8 +419,8 @@ async function process2CoinsPool(
     return 'skipped (pool init error)'
   }
   if (poolInfo.tokenContracts.length > 2) return `skipped (${poolInfo.tokenContracts.length} tokens)`
-  const res0 = parseInt(poolInfo.poolTines.reserve0.toString())
-  const res1 = parseInt(poolInfo.poolTines.reserve1.toString())
+  const res0 = parseInt((poolInfo.poolTines[0][1] as CurvePool).reserve0.toString())
+  const res1 = parseInt((poolInfo.poolTines[0][1] as CurvePool).reserve1.toString())
   if (res0 < 1e6 || res1 < 1e6) return 'skipped (low liquidity)'
   const checks = poolType === CurvePoolType.LegacyV2 || poolType === CurvePoolType.LegacyV3 ? 3 : 10
   for (let i = 0; i < checks; ++i) {
@@ -383,6 +428,36 @@ async function process2CoinsPool(
     await checkSwap(config, poolInfo, 0, 1, res0 * amountInPortion, precision)
     await checkSwap(config, poolInfo, 1, 0, res1 * amountInPortion, precision)
   }
+  return 'passed'
+}
+
+async function processMultiTokenPool(
+  config: TestConfig,
+  poolAddress: Address,
+  poolType: CurvePoolType,
+  precision: number
+): Promise<string> {
+  const testSeed = poolAddress
+  const rnd: () => number = seedrandom(testSeed) // random [0, 1)
+  let poolInfo
+  try {
+    poolInfo = await createCurvePoolInfo(config, poolAddress, poolType, BigInt(1e30))
+  } catch (e) {
+    return 'skipped (pool init error)'
+  }
+  const n = poolInfo.tokenContracts.length
+  for (let i = 0; i < n; ++i)
+    for (let j = i + 1; j < n; ++j) {
+      const res0 = parseInt((poolInfo.poolTines[i][j] as RPool).reserve0.toString())
+      const res1 = parseInt((poolInfo.poolTines[i][j] as RPool).reserve1.toString())
+      if (res0 < 1e6 || res1 < 1e6) return 'skipped (low liquidity)'
+      const checks = poolType === CurvePoolType.LegacyV2 || poolType === CurvePoolType.LegacyV3 ? 3 : 10
+      for (let k = 0; k < checks; ++k) {
+        const amountInPortion = getRandomExp(rnd, 1e-5, 1)
+        await checkSwap(config, poolInfo, i, j, res0 * amountInPortion, precision)
+        await checkSwap(config, poolInfo, j, i, res1 * amountInPortion, precision)
+      }
+    }
   return 'passed'
 }
 
@@ -397,7 +472,7 @@ describe('Real Curve pools consistency check', () => {
     for (let i = 0; i < NON_FACTORY_POOLS.length; ++i) {
       const [poolAddress, name, poolType, precision = 1e-9] = NON_FACTORY_POOLS[i]
       it(`${name} (${poolAddress}, ${poolType})`, async () => {
-        const result = await process2CoinsPool(config, poolAddress, name, poolType, precision)
+        const result = await processMultiTokenPool(config, poolAddress, poolType, precision)
         expect(result).equal('passed')
       })
     }
@@ -417,13 +492,7 @@ describe('Real Curve pools consistency check', () => {
         return
       }
       const precision = FACTORY_POOL_PRECISION_SPECIAL[poolAddress.toLowerCase()] || 1e-9
-      const result = await process2CoinsPool(
-        config,
-        poolAddress,
-        `Factory ${factoryName}`,
-        CurvePoolType.Factory,
-        precision
-      )
+      const result = await processMultiTokenPool(config, poolAddress, CurvePoolType.Factory, precision)
       console.log(result)
       if (result === 'passed') ++passed
     })
