@@ -1,7 +1,7 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
 import { isAddress } from '@ethersproject/address'
 import { totalsAbi } from '@sushiswap/abi'
-import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId, isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Prisma, PrismaClient, Token } from '@sushiswap/database'
 import { calcTokenPrices, ConstantProductRPool, Rebase, RPool, RToken, StableSwapRPool } from '@sushiswap/tines'
 import { Address, readContracts } from '@wagmi/core'
@@ -140,7 +140,9 @@ async function getPoolsByPagination(
 async function transform(chainId: number, pools: Pool[]) {
   const tokens: Map<string, Token> = new Map()
   const stablePools = pools.filter((pool) => pool.type === PoolType.STABLE_POOL)
-  const rebases = isBentoBoxV1ChainId(chainId) ? await fetchRebases(stablePools, chainId) : undefined
+  const rebases = isBentoBoxChainId(chainId as BentoBoxChainId)
+    ? await fetchRebases(stablePools, chainId as BentoBoxChainId)
+    : undefined
 
   const rPools: RPool[] = []
   pools.forEach((pool) => {
@@ -193,7 +195,7 @@ async function transform(chainId: number, pools: Pool[]) {
   return { rPools, tokens }
 }
 
-async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId) {
+async function fetchRebases(pools: Pool[], chainId: BentoBoxChainId) {
   const tokenMap = new Map<string, Token>()
   pools.forEach((pool) => {
     tokenMap.set(pool.token0.address, pool.token0)
@@ -212,7 +214,7 @@ async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId) {
       (t) =>
         ({
           args: [t.address as Address],
-          address: bentoBoxV1Address[chainId],
+          address: BENTOBOX_ADDRESS[chainId],
           chainId,
           abi: totalsAbi,
           functionName: 'totals',

@@ -87,9 +87,9 @@ export const Carousel = <T,>({
       <div ref={container} className="overflow-hidden">
         <div
           ref={ref}
-          className="relative overflow-x-scroll overflow-x-contain whitespace-nowrap snap-x hide-scrollbar scroll-smooth"
+          className="relative overflow-x-scroll overflow-x-contain whitespace-nowrap snap-x hide-scrollbar scroll-smooth pt-4 pb-10"
         >
-          <div className={classNames(className, 'w-full align-top inline-flex pt-2.5 pb-10')}>
+          <div className={classNames(className, 'w-full align-top inline-flex')}>
             {slides.map((el, i) => (
               <div key={i} className="inline-block snap-start">
                 <div

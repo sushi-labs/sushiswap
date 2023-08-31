@@ -2,7 +2,6 @@ import { Container } from '@sushiswap/ui/components/container'
 import Image from 'next/legacy/image'
 import React, { FC } from 'react'
 
-import { AnimatedTitle } from './AnimatedTitle'
 import { ExpandableCard } from './ExpandableCard'
 
 export const BuildWealth: FC = () => {
@@ -10,10 +9,6 @@ export const BuildWealth: FC = () => {
     <section className="px-4 py-20 sm:py-40">
       <Container maxWidth="5xl" className="mx-auto">
         <div className="flex flex-col gap-[120px]">
-          <AnimatedTitle className="text-center !max-w-full">
-            Build <span className="text-blue">wealth</span> with Sushi. <br />
-            <span className="text-neutral-400">{'It doesnt stop at trading.'}</span>
-          </AnimatedTitle>
           <div className="grid items-center grid-cols-1 gap-20 md:grid-cols-2 justify-items-center">
             <div className="relative h-[420px] md:max-w-[420px] md:max-h-[420px] w-full h-full flex items-center justify-center">
               <div className="absolute w-[210px] h-[210px] bg-pink rounded-full blur-[200px]" />
@@ -24,14 +19,14 @@ export const BuildWealth: FC = () => {
                 layout="fill"
               />
             </div>
-            <div className="flex flex-col items-center md:items-start">
-              <p className="text-4xl font-semibold  text-center md:text-left">
+            <div className="prose dark:prose-invert flex flex-col items-center md:items-start">
+              <h1 className="text-center md:text-left">
                 Earn passive income with <br /> your coins.
-              </p>
-              <p className="text-lg mt-2 text-center md:text-left">
+              </h1>
+              <h5 className="mb-8 text-center md:text-left">
                 With multiple ways to passively earn yield on your coins, you can choose your own yield stack and make
                 your money work for you, all in the background, 24/7.
-              </p>
+              </h5>
               <div className="flex flex-wrap justify-center md:justify-start gap-x-3">
                 <ExpandableCard
                   caption="For Retail Users"

@@ -1,5 +1,5 @@
 import { balanceOfAbi } from '@sushiswap/abi'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Token } from '@sushiswap/currency'
 import { convertTokenToBento } from '@sushiswap/router/dist/liquidity-providers/Trident'
 import { BridgeBento, Rebase, RToken } from '@sushiswap/tines'
@@ -13,7 +13,7 @@ export enum BridgeBentoState {
 }
 
 export const getBridgeBentoPools = async (
-  chainId: BentoBoxV1ChainId,
+  chainId: BentoBoxChainId,
   currencies: Token[],
   totals: Map<string, Rebase>
 ) => {
@@ -25,7 +25,7 @@ export const getBridgeBentoPools = async (
           chainId,
           abi: balanceOfAbi,
           functionName: 'balanceOf',
-          args: [bentoBoxV1Address[chainId] as Address],
+          args: [BENTOBOX_ADDRESS[chainId] as Address],
         } as const)
     ),
   })

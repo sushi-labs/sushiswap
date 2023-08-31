@@ -1,3 +1,5 @@
+'use client'
+
 import { Amount, Token } from '@sushiswap/currency'
 import { useMemo } from 'react'
 import { Address, erc20ABI, useContractReads } from 'wagmi'

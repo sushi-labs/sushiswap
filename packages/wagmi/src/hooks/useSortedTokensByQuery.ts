@@ -1,3 +1,5 @@
+'use client'
+
 import { isAddress } from '@ethersproject/address'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { Fraction } from '@sushiswap/math'

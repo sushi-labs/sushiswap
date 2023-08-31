@@ -1,3 +1,5 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { parseArgs, Pools } from '@sushiswap/client'
 import { UserPosition } from '@sushiswap/graph-client'

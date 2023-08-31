@@ -3,7 +3,9 @@
 import { useLocalStorage } from '@sushiswap/hooks'
 import React, { FC } from 'react'
 
+import { Label } from '../label'
 import { Switch } from '../switch'
+import { typographyVariants } from '../typography'
 
 export const RoutingApi: FC = () => {
   const [routingApi, setRoutingApi] = useLocalStorage('routingApi', false)
@@ -12,8 +14,8 @@ export const RoutingApi: FC = () => {
     <div className="p-4 rounded-lg">
       <div className="flex justify-between items-center gap-4">
         <div className="flex flex-col gap-2">
-          <h1 className="text-sm font-semibold text-gray-900 dark:text-slate-50">Routing API</h1>
-          <span className="text-sm text-gray-600 dark:text-slate-500">...</span>
+          <Label>Routing API</Label>
+          <span className={typographyVariants({ variant: 'muted', className: 'text-sm' })}>...</span>
         </div>
         <Switch checked={routingApi} onCheckedChange={(checked) => setRoutingApi(checked)} />
       </div>

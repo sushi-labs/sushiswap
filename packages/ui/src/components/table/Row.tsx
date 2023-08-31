@@ -19,7 +19,7 @@ const Row = forwardRef<HTMLTableRowElement, RowProps>(function Row(
       ref={ref}
       className={classNames(
         className,
-        'w-full hover:bg-gray-50 dark:hover:bg-gray-700/20 font-medium border-t border-gray-200 dark:!border-slate-200/5'
+        'w-full hover:bg-secondary focus:bg-accent font-medium border-t border-gray-200 dark:!border-slate-200/5'
       )}
       style={{ height: rowHeight }}
     >

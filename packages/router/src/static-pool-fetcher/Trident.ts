@@ -1,13 +1,10 @@
-import { tridentConstantPoolAbi, tridentStablePoolAbi } from '@sushiswap/abi'
+import { tridentGetPoolsAbi, tridentPoolsCountAbi, tridentSwapFeeAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Currency, Token } from '@sushiswap/currency'
 import {
-  tridentConstantPoolFactoryAbi,
-  tridentConstantPoolFactoryAddress,
-  TridentConstantPoolFactoryChainId,
-  tridentStablePoolFactoryAbi,
-  tridentStablePoolFactoryAddress,
-  TridentStablePoolFactoryChainId,
+  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
+  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
+  TridentChainId,
 } from '@sushiswap/trident-sdk'
 import { Address, PublicClient } from 'viem'
 
@@ -49,12 +46,8 @@ export class TridentStaticPoolFetcher {
     const _pairsUniqueAddr = _pairsUnique.map(([t0, t1]) => [t0.address, t1.address])
     const factoryAddress =
       type === 'STABLE_POOL'
-        ? (tridentStablePoolFactoryAddress[chainId as TridentStablePoolFactoryChainId] as Address)
-        : (tridentConstantPoolFactoryAddress[chainId as TridentConstantPoolFactoryChainId] as Address)
-    const factoryAbi =
-      type === 'STABLE_POOL'
-        ? tridentStablePoolFactoryAbi[chainId as TridentStablePoolFactoryChainId]
-        : tridentConstantPoolFactoryAbi[chainId as TridentConstantPoolFactoryChainId]
+        ? (TRIDENT_STABLE_POOL_FACTORY_ADDRESS[chainId as TridentChainId] as Address)
+        : (TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[chainId as TridentChainId] as Address)
 
     const callStatePoolsCount = await client.multicall({
       multicallAddress: client.chain?.contracts?.multicall3?.address as Address,
@@ -64,7 +57,7 @@ export class TridentStaticPoolFetcher {
           ({
             chainId,
             address: factoryAddress,
-            abi: factoryAbi,
+            abi: tridentPoolsCountAbi,
             functionName: 'poolsCount',
             args: el as [Address, Address],
           } as const)
@@ -92,7 +85,7 @@ export class TridentStaticPoolFetcher {
           ({
             chainId,
             address: factoryAddress,
-            abi: factoryAbi,
+            abi: tridentGetPoolsAbi,
             functionName: 'getPools',
             args,
           } as const)
@@ -122,7 +115,7 @@ export class TridentStaticPoolFetcher {
           ({
             chainId,
             address: address as Address,
-            abi: type === 'STABLE_POOL' ? tridentStablePoolAbi : tridentConstantPoolAbi,
+            abi: tridentSwapFeeAbi,
             functionName: 'swapFee',
           } as const)
       ),

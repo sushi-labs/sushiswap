@@ -2,13 +2,12 @@ import { ArrowDownIcon } from '@heroicons/react/24/outline'
 import { ChainId } from '@sushiswap/chain'
 import { Native, SUSHI } from '@sushiswap/currency'
 import { useInterval } from '@sushiswap/hooks'
+import { LinkInternal, typographyVariants } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Container } from '@sushiswap/ui/components/container'
 import { CurrencyInput } from '@sushiswap/wagmi/future/components/Web3Input/Currency'
 import { motion } from 'framer-motion'
 import React, { FC, useEffect, useState } from 'react'
-
-import { Search } from './Search'
 
 const TITLES = ['Whenever', 'Wherever', 'Whoever']
 const VALUES = [
@@ -41,14 +40,14 @@ export const Hero: FC = () => {
       <Container maxWidth="5xl" className="px-4 mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[auto_400px] flex justify-between gap-[100px]">
           <div className="flex flex-col">
-            <p className="text-5xl font-semibold text-neutral-50 leading-[3.5rem] tracking-tight">
-              Buy and Sell Instantly on Sushi. <span className="text-blue"> {TITLES[index]}.</span>
-            </p>
-            <p className="mt-3 text-lg text-neutral-400">
-              No registration needed. Over 400 tokens to trade at your fingertips.
-            </p>
-            <div className="mt-10">
-              <Search />
+            <div className="flex flex-col">
+              <h1 className={typographyVariants({ variant: 'h1' })}>
+                Buy and Sell Instantly on Sushi. <span className="text-blue"> {TITLES[index]}.</span>
+              </h1>
+              <p className={typographyVariants({ variant: 'lead', className: 'max-w-[500px]' })}>
+                Unlock the world of cryptocurrency trading. Experience the freedom to trade over 400 tokens instantly,
+                no registration needed.
+              </p>
             </div>
           </div>
           <div className="relative justify-end hidden lg:flex">
@@ -115,7 +114,7 @@ export const Hero: FC = () => {
                 className="mt-4"
               >
                 <Button size="xl" asChild fullWidth>
-                  <a href="https://www.sushi.com/swap">Trade Now</a>
+                  <LinkInternal href="https://www.sushi.com/swap">Trade Now</LinkInternal>
                 </Button>
               </motion.div>
             </motion.div>

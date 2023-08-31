@@ -1,13 +1,16 @@
-import { bentoBoxV1Abi, bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+'use client'
+
+import { bentoBoxV1Abi } from '@sushiswap/abi'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { getContract } from 'viem'
 import { usePublicClient } from 'wagmi'
 
-export const getBentoBoxContractConfig = (chainId: BentoBoxV1ChainId) => ({
-  address: bentoBoxV1Address[chainId],
-  abi: bentoBoxV1Abi[chainId],
+export const getBentoBoxContractConfig = (chainId: BentoBoxChainId) => ({
+  address: BENTOBOX_ADDRESS[chainId],
+  abi: bentoBoxV1Abi,
 })
 
-export function useBentoBoxContract(chainId: BentoBoxV1ChainId | undefined) {
+export function useBentoBoxContract(chainId: BentoBoxChainId | undefined) {
   const publicClient = usePublicClient({ chainId })
 
   if (!chainId) return null

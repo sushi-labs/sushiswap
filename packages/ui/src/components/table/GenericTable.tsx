@@ -4,15 +4,14 @@ import { flexRender, RowData, Table as ReactTableType } from '@tanstack/react-ta
 import classNames from 'classnames'
 import React, { ReactNode, useCallback, useState } from 'react'
 
-import { Link } from '../link'
+import { LinkInternal } from '../link'
 import { LoadingOverlay } from '../loader'
-import { Popover } from '../Popover'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../tooltip'
 import { Table } from '.'
 
 interface GenericTableProps<C> {
   table: ReactTableType<C>
   HoverElement?: React.FunctionComponent<{ row: C }>
-  HoverElementWidth?: number
   loading?: boolean
   placeholder: ReactNode
   pageSize: number
@@ -34,7 +33,6 @@ declare module '@tanstack/react-table' {
 export const GenericTable = <T extends { id: string }>({
   table,
   HoverElement,
-  HoverElementWidth,
   loading,
   placeholder,
   pageSize,
@@ -109,75 +107,60 @@ export const GenericTable = <T extends { id: string }>({
               table.getRowModel().rows.map((row, r) => {
                 if (HoverElement && isMounted) {
                   return (
-                    <Popover
-                      key={row.id}
-                      options={{
-                        placement: 'top',
-                        modifiers: [
-                          { name: 'offset', options: { offset: [0, 0] } },
-                          {
-                            name: 'sameWidth',
-                            enabled: true,
-                            fn: ({ state }) => {
-                              state.styles.popper.width = HoverElementWidth ? `${HoverElementWidth}px` : '320px'
-                            },
-                            phase: 'beforeWrite',
-                            requires: ['computeStyles'],
-                          },
-                        ],
-                      }}
-                    >
-                      <Popover.Button>
-                        <Table.tr
-                          testId={`${testId}-${r}-tr`}
-                          onClick={(e) => onClick(e, row.original)}
-                          className={linkFormatter || _onClick ? 'cursor-pointer' : ''}
-                          rowHeight={rowHeight}
-                        >
-                          {row.getVisibleCells().map((cell, i) => {
-                            return (
-                              <Table.td
-                                testId={`${testId}-${r}-${i}-td`}
-                                className="!px-0 relative"
-                                style={{
-                                  ...(cell.column.columnDef.size && {
-                                    minWidth: cell.column.columnDef.size,
-                                    width: cell.column.columnDef.size,
-                                    maxWidth: cell.column.columnDef.size,
-                                  }),
-                                }}
-                                key={cell.id}
-                              >
-                                {linkFormatter ? (
-                                  <Link.Internal href={linkFormatter(row.original)} passHref={true} shallow={true}>
-                                    <a
+                    <TooltipProvider key={r}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Table.tr
+                            testId={`${testId}-${r}-tr`}
+                            onClick={(e) => onClick(e, row.original)}
+                            className={linkFormatter || _onClick ? 'cursor-pointer' : ''}
+                            rowHeight={rowHeight}
+                          >
+                            {row.getVisibleCells().map((cell, i) => {
+                              return (
+                                <Table.td
+                                  testId={`${testId}-${r}-${i}-td`}
+                                  className="!px-0 relative"
+                                  style={{
+                                    ...(cell.column.columnDef.size && {
+                                      minWidth: cell.column.columnDef.size,
+                                      width: cell.column.columnDef.size,
+                                      maxWidth: cell.column.columnDef.size,
+                                    }),
+                                  }}
+                                  key={cell.id}
+                                >
+                                  {linkFormatter ? (
+                                    <LinkInternal href={linkFormatter(row.original)} passHref={true} shallow={true}>
+                                      <a
+                                        className={classNames(
+                                          'absolute inset-0 flex items-center px-3 sm:px-4',
+                                          cell.column.columnDef.meta?.className
+                                        )}
+                                      >
+                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                      </a>
+                                    </LinkInternal>
+                                  ) : (
+                                    <div
                                       className={classNames(
                                         'absolute inset-0 flex items-center px-3 sm:px-4',
                                         cell.column.columnDef.meta?.className
                                       )}
                                     >
                                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                    </a>
-                                  </Link.Internal>
-                                ) : (
-                                  <div
-                                    className={classNames(
-                                      'absolute inset-0 flex items-center px-3 sm:px-4',
-                                      cell.column.columnDef.meta?.className
-                                    )}
-                                  >
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                  </div>
-                                )}
-                              </Table.td>
-                            )
-                          })}
-                        </Table.tr>
-                      </Popover.Button>
-                      <Popover.Panel>
-                        <HoverElement row={row.original} />
-                      </Popover.Panel>
-                    </Popover>
+                                    </div>
+                                  )}
+                                </Table.td>
+                              )
+                            })}
+                          </Table.tr>
+                        </TooltipTrigger>
+                        <TooltipContent className="w-fit min-w-[min(90vw,_420px)]">
+                          <HoverElement row={row.original} />
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   )
                 } else {
                   return (
@@ -203,7 +186,7 @@ export const GenericTable = <T extends { id: string }>({
                             key={cell.id}
                           >
                             {linkFormatter ? (
-                              <Link.Internal href={linkFormatter(row.original)} passHref={true}>
+                              <LinkInternal href={linkFormatter(row.original)} passHref={true}>
                                 <a
                                   className={classNames(
                                     'absolute inset-0 flex items-center px-3 sm:px-4',
@@ -212,7 +195,7 @@ export const GenericTable = <T extends { id: string }>({
                                 >
                                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                 </a>
-                              </Link.Internal>
+                              </LinkInternal>
                             ) : (
                               <div
                                 className={classNames(

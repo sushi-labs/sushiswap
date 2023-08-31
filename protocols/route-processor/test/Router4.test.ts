@@ -1,6 +1,6 @@
 import { SnapshotRestorer, takeSnapshot } from '@nomicfoundation/hardhat-network-helpers'
 import { erc20Abi, routeProcessor4Abi, weth9Abi } from '@sushiswap/abi'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId, chainName } from '@sushiswap/chain'
 import {
   DAI,
@@ -120,7 +120,7 @@ async function getTestEnvironment() {
     abi: routeProcessor4Abi,
     bytecode: RouteProcessor4.bytecode as Hex,
     account: user.address,
-    args: [bentoBoxV1Address[chainId as BentoBoxV1ChainId], []],
+    args: [BENTOBOX_ADDRESS[chainId as BentoBoxChainId], []],
   })
   const RouteProcessorAddress = (await client.waitForTransactionReceipt({ hash: RouteProcessorTx })).contractAddress
   if (!RouteProcessorAddress) throw new Error('RouteProcessorAddress is undefined')

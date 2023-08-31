@@ -1,3 +1,5 @@
+'use client'
+
 import { useLocalStorage } from '@sushiswap/hooks'
 
 export const useSlippageTolerance = (key: string | undefined = 'swapSlippage') => {

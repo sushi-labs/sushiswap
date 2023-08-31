@@ -1,5 +1,6 @@
 import { SearchIcon } from '@heroicons/react/outline'
 import { useDebounce } from '@sushiswap/hooks'
+import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Container } from '@sushiswap/ui/components/container'
 import BlogSeo from 'components/Seo/BlogSeo'
@@ -105,7 +106,7 @@ const _Home: FC = () => {
             )}
             <div className="flex justify-center">
               <Button asChild variant="secondary">
-                <a href="/blog/archive">View Archive</a>
+                <LinkInternal href="/blog/archive">View Archive</LinkInternal>
               </Button>
             </div>
           </Container>

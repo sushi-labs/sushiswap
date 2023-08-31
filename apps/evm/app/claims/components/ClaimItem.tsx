@@ -3,7 +3,7 @@
 import { CheckIcon } from '@heroicons/react-v1/solid'
 import { Amount } from '@sushiswap/currency'
 import { ZERO } from '@sushiswap/math'
-import { routeProcessor2Address } from '@sushiswap/route-processor/exports/exports'
+import { ROUTE_PROCESSOR_2_ADDRESS } from '@sushiswap/route-processor-sdk'
 import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Button } from '@sushiswap/ui/components/button'
@@ -38,13 +38,13 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
     token,
     chainId,
     owner: account,
-    spender: routeProcessor2Address[chainId],
+    spender: ROUTE_PROCESSOR_2_ADDRESS[chainId],
   })
 
   const { write: revoke, isPending: isRevokePending } = useTokenRevokeApproval({
     account,
     token,
-    spender: routeProcessor2Address[chainId],
+    spender: ROUTE_PROCESSOR_2_ADDRESS[chainId],
   })
 
   const amount = useMemo(

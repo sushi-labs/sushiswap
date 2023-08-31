@@ -1,5 +1,5 @@
 import { DownloadIcon } from '@heroicons/react/outline'
-import { FuroVestingChainId } from '@sushiswap/furo'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import { ZERO } from '@sushiswap/math'
 import {
   DialogConfirm,
@@ -32,7 +32,7 @@ import { useVestingBalance, Vesting } from '../../lib'
 
 interface WithdrawModalProps {
   vesting?: Vesting
-  chainId: FuroVestingChainId
+  chainId: FuroChainId
 }
 
 export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {

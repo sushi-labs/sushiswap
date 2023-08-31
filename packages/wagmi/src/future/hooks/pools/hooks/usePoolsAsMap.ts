@@ -10,10 +10,9 @@ import {
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import {
-  isTridentConstantPoolFactoryChainId,
-  isTridentStablePoolFactoryChainId,
-  tridentConstantPoolFactoryAddress,
-  tridentStablePoolFactoryAddress,
+  isTridentChainId,
+  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
+  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
 } from '@sushiswap/trident-sdk'
 import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS } from '@sushiswap/v2-sdk'
 import { useQuery } from '@tanstack/react-query'
@@ -37,17 +36,17 @@ const getPoolAddress = ({
   const [tokenA, tokenB] = token0.wrapped.sortsBefore(token1.wrapped)
     ? [token0.wrapped, token1.wrapped]
     : [token1.wrapped, token0.wrapped]
-  if (poolType === PoolType.TridentStablePool && isTridentStablePoolFactoryChainId(chainId))
+  if (poolType === PoolType.TridentStablePool && isTridentChainId(chainId))
     return computeTridentStablePoolAddress({
-      factoryAddress: tridentStablePoolFactoryAddress[chainId],
+      factoryAddress: TRIDENT_STABLE_POOL_FACTORY_ADDRESS[chainId],
       tokenA,
       tokenB,
       fee,
     })
 
-  if (poolType === PoolType.TridentConstantPool && isTridentConstantPoolFactoryChainId(chainId))
+  if (poolType === PoolType.TridentConstantPool && isTridentChainId(chainId))
     return computeTridentConstantPoolAddress({
-      factoryAddress: tridentConstantPoolFactoryAddress[chainId],
+      factoryAddress: TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[chainId],
       tokenA,
       tokenB,
       fee,

@@ -1,5 +1,5 @@
 import { Chain, ChainId } from '@sushiswap/chain'
-import { AppearOnMount, NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui'
+import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { createErrorToast } from '@sushiswap/ui/components/toast'
@@ -41,13 +41,11 @@ export const HeaderNetworkSelector: FC<{
   const selected = selectedNetwork || (chain?.id as ChainId) || ChainId.ETHEREUM
 
   return (
-    <AppearOnMount>
-      <NetworkSelector selected={selected} onSelect={onSwitchNetwork} networks={networks}>
-        <Button variant="secondary" testId="network-selector">
-          <NetworkIcon chainId={selected} width={20} height={20} />
-          <div className="hidden xl:block">{Chain.from(selected)?.name}</div>
-        </Button>
-      </NetworkSelector>
-    </AppearOnMount>
+    <NetworkSelector selected={selected} onSelect={onSwitchNetwork} networks={networks}>
+      <Button variant="secondary" testId="network-selector">
+        <NetworkIcon chainId={selected} width={20} height={20} />
+        <div className="hidden xl:block">{Chain.from(selected)?.name}</div>
+      </Button>
+    </NetworkSelector>
   )
 }

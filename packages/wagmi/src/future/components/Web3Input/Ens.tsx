@@ -1,11 +1,9 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
-import { TextFieldProps } from '@sushiswap/ui'
-import { TextField } from '@sushiswap/ui'
-import { TextInput } from '@sushiswap/ui/components/input/Text'
+import { TextField, TextFieldProps } from '@sushiswap/ui'
 import { ForwardedRef, forwardRef, useEffect } from 'react'
 import { useEnsAddress } from 'wagmi'
-
-export type EnsInputProps = TextInput
 
 function Component(props: Omit<TextFieldProps<'text'>, 'type'>, ref: ForwardedRef<HTMLInputElement>) {
   const { data } = useEnsAddress({

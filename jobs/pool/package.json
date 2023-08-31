@@ -59,7 +59,7 @@
     "@graphql-mesh/utils": "0.94.1",
     "@graphql-tools/merge": "9.0.0",
     "@sushiswap/abi": "workspace:*",
-    "@sushiswap/bentobox": "workspace:*",
+    "@sushiswap/bentobox-sdk": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/database": "workspace:*",
@@ -75,7 +75,7 @@
     "express": "4.18.2",
     "graphql": "16.6.0",
     "lodash.zip": "4.2.0",
-    "viem": "1.6.3",
+    "viem": "0.0.0-jxom-refactor-multicall.20230830T113622",
     "zod": "3.21.4"
   },
   "devDependencies": {

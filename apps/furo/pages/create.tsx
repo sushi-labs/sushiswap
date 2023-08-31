@@ -2,9 +2,7 @@ import { RadioGroup, Transition } from '@headlessui/react'
 import { ArrowLeftIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
-import { classNames } from '@sushiswap/ui'
-import { typographyVariants } from '@sushiswap/ui'
-import { SplashController } from '@sushiswap/ui'
+import { classNames, LinkInternal, SplashController, typographyVariants } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { SushiIcon } from '@sushiswap/ui/components/icons'
@@ -92,10 +90,10 @@ export default function CreatePage() {
                     >
                       <div className="flex justify-center gap-2">
                         <Button asChild size="lg">
-                          <a href="/furo/stream/create/single">Single stream</a>
+                          <LinkInternal href="/stream/create/single">Single stream</LinkInternal>
                         </Button>
                         <Button asChild size="lg">
-                          <a href="/furo/stream/create/multiple">Multiple streams</a>
+                          <LinkInternal href="/stream/create/multiple">Multiple streams</LinkInternal>
                         </Button>
                       </div>
                     </Transition>
@@ -147,10 +145,10 @@ export default function CreatePage() {
                     >
                       <div className="flex justify-center gap-2">
                         <Button asChild size="lg">
-                          <a href="/furo/vesting/create/single">Single vest</a>
+                          <LinkInternal href="/vesting/create/single">Single vest</LinkInternal>
                         </Button>
                         <Button asChild size="lg">
-                          <a href="/furo/vesting/create/multiple">Multiple vests</a>
+                          <LinkInternal href="/vesting/create/multiple">Multiple vests</LinkInternal>
                         </Button>
                       </div>
                     </Transition>

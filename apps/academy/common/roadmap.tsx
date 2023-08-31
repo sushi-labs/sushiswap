@@ -1,4 +1,4 @@
-import { Link } from '@sushiswap/ui'
+import { LinkExternal } from '@sushiswap/ui'
 
 export const roadmapSections = [
   {
@@ -62,12 +62,12 @@ export const roadmapSections = [
         </p>
         <p>
           More info on our initial launch and future plans can be found under this{' '}
-          <Link.External
+          <LinkExternal
             href="https://medium.com/sushiswap-org/trident-pool-1-constant-product-pool-5ef0ea7468e7"
             className="underline"
           >
             medium post
-          </Link.External>
+          </LinkExternal>
           .
         </p>
       </div>

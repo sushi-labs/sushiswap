@@ -1,3 +1,5 @@
+'use client'
+
 import { Price, Type } from '@sushiswap/currency'
 import { usePrices } from '@sushiswap/react-query'
 import { classNames } from '@sushiswap/ui'

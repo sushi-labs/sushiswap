@@ -4,7 +4,7 @@ import cors from '@fastify/cors'
 import rateLimit from '@fastify/rate-limit'
 import { ChainId } from '@sushiswap/chain'
 import { nativeCurrencyIds } from '@sushiswap/currency'
-import { isRouteProcessorChainId, RouteProcessorChainId } from '@sushiswap/route-processor'
+import { isRouteProcessorChainId, RouteProcessorChainId } from '@sushiswap/route-processor-sdk'
 import { fastify } from 'fastify'
 import { Address } from 'viem'
 import { z } from 'zod'
@@ -25,7 +25,9 @@ const querySchema = z.object({
     .gte(0)
     .lte(2 ** 256)
     .default(ChainId.ETHEREUM)
-    .refine((chainId) => isRouteProcessorChainId(chainId), { message: 'ChainId not supported.' })
+    .refine((chainId) => isRouteProcessorChainId(chainId as RouteProcessorChainId), {
+      message: 'ChainId not supported.',
+    })
     .transform((chainId) => chainId as RouteProcessorChainId),
   fromTokenId: z.string().default(nativeCurrencyIds[ChainId.ETHEREUM]),
   toTokenId: z.string().default('SUSHI'),

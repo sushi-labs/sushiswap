@@ -58,21 +58,21 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/amm": "workspace:*",
-    "@sushiswap/bentobox": "workspace:*",
+    "@sushiswap/bentobox-sdk": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/client": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/format": "workspace:*",
-    "@sushiswap/furo": "workspace:*",
+    "@sushiswap/furo-sdk": "workspace:*",
     "@sushiswap/gas": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
-    "@sushiswap/route-processor": "workspace:*",
+    "@sushiswap/route-processor-sdk": "workspace:*",
     "@sushiswap/router": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
-    "@sushiswap/sushixswap": "workspace:*",
+    "@sushiswap/sushixswap-sdk": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/trident-sdk": "workspace:*",
     "@sushiswap/types": "workspace:*",
@@ -88,7 +88,7 @@
     "@uniswap/v2-core": "1.0.1",
     "@uniswap/v3-periphery": "1.4.1",
     "next-themes": "^0.2.1",
-    "viem": "1.6.3",
+    "viem": "0.0.0-jxom-refactor-multicall.20230830T113622",
     "zod": "3.21.4"
   },
   "devDependencies": {
@@ -102,7 +102,7 @@
     "@wagmi/core": "1.3.9",
     "eslint": "8.43.0",
     "ethers": "5.7.2",
-    "next": "13.4.17",
+    "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tsup": "7.1.0",
@@ -136,6 +136,6 @@
     }
   },
   "optionalDependencies": {
-    "next": "13.4.17"
+    "next": "13.4.19"
   }
 }

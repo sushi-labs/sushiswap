@@ -1,3 +1,5 @@
+'use client'
+
 import { Pool } from '@sushiswap/client'
 import { Native, Token } from '@sushiswap/currency'
 import { useMemo } from 'react'

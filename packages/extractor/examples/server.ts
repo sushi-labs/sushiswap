@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/node'
 import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
+import { isRouteProcessor3_1ChainId, ROUTE_PROCESSOR_3_1_ADDRESS } from '@sushiswap/route-processor-sdk'
 import { NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import cors from 'cors'
@@ -72,7 +73,7 @@ async function main() {
     await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId])
     extractors.set(chainId, extractor)
     const tokenManager = new TokenManager(
-      extractor?.multiCallAggregator as MultiCallAggregator,
+      extractor.multiCallAggregator,
       path.resolve(__dirname, '../cache'),
       `./tokens-${chainId}`
     )
@@ -84,7 +85,7 @@ async function main() {
 
   app.use(
     cors({
-      origin: 'https://www.sushi.com',
+      origin: /sushi\.com$/,
     })
   )
 
@@ -162,13 +163,15 @@ async function main() {
           legs: bestRoute?.legs,
         },
         args: to
-          ? Router.routeProcessor3Params(
+          ? Router[isRouteProcessor3_1ChainId(chainId) ? 'routeProcessor3_1Params' : 'routeProcessor3Params'](
               poolCodesMap,
               bestRoute,
               tokenIn,
               tokenOut,
               to,
-              ROUTE_PROCESSOR_3_ADDRESS[chainId],
+              isRouteProcessor3_1ChainId(chainId)
+                ? ROUTE_PROCESSOR_3_1_ADDRESS[chainId]
+                : ROUTE_PROCESSOR_3_ADDRESS[chainId],
               [],
               maxPriceImpact
             )

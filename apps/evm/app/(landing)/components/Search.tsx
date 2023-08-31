@@ -2,7 +2,7 @@ import { ChevronDownIcon, SearchIcon, StarIcon } from '@heroicons/react-v1/solid
 import chains, { ChainId, chainShortName } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { useDebounce, useOnClickOutside } from '@sushiswap/hooks'
-import { classNames } from '@sushiswap/ui'
+import { classNames, LinkInternal } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
@@ -247,8 +247,8 @@ const Row: FC<{ currency: Type; onClick?(): void; isNetwork?: boolean }> = ({
   }
 
   return (
-    <a href={`https://www.sushi.com/swap?token0=NATIVE&token1=${currency.wrapped.address}&chainId=${currency.chainId}`}>
+    <LinkInternal href={`/swap?token0=NATIVE&token1=${currency.wrapped.address}&chainId=${currency.chainId}`}>
       {content}
-    </a>
+    </LinkInternal>
   )
 }

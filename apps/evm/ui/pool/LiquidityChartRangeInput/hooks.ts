@@ -10,7 +10,7 @@ export function useDensityChartData({
   token0,
   token1,
   feeAmount,
-  enabled,
+  enabled = true,
 }: {
   chainId: SushiSwapV3ChainId
   token0: Type | undefined

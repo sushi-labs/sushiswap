@@ -1,6 +1,7 @@
-import { FC } from 'react'
+import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Container } from '@sushiswap/ui/components/container'
+import { FC } from 'react'
 
 interface PreviewBanner {
   show: boolean
@@ -17,7 +18,7 @@ export const PreviewBanner: FC<PreviewBanner> = ({ show }) => {
           <span className="text-xs text-slate-300">You are viewing an unpublished article</span>
         </div>
         <Button>
-          <a href="/api/exit-preview">Exit Preview Mode</a>
+          <LinkInternal href="/api/exit-preview">Exit Preview Mode</LinkInternal>
         </Button>
       </Container>
     </div>
