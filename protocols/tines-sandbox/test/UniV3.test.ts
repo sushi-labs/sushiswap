@@ -3,9 +3,11 @@ import { CL_MAX_TICK, CL_MIN_TICK, UniV3Pool } from '@sushiswap/tines'
 import { Contract } from '@sushiswap/types'
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
+import { WalletClient } from 'viem'
 import { readContract } from 'viem/actions'
 
 import { createRandomUniV3Pool, createUniV3EnvZero, createUniV3Pool, UniV3Environment, UniV3PoolInfo } from '../src'
+import { getTestConfig } from '../src/getTestConfig'
 
 // Map of fee to tickSpacing
 const feeAmountTickSpacing: number[] = []
@@ -252,7 +254,8 @@ describe('Uni V3', () => {
   let env: UniV3Environment
 
   before(async () => {
-    env = await createUniV3EnvZero(ethers)
+    const { client } = await getTestConfig()
+    env = await createUniV3EnvZero(client as WalletClient)
   })
 
   it('Empty pool', async () => {

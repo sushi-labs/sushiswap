@@ -1,12 +1,13 @@
-import { Provider } from '@ethersproject/providers'
 import { SnapshotRestorer, takeSnapshot } from '@nomicfoundation/hardhat-network-helpers'
 import { erc20Abi } from '@sushiswap/abi'
-import { CurvePool, getBigNumber, RToken } from '@sushiswap/tines'
+import { CurvePool, getBigInt, RToken } from '@sushiswap/tines'
+import { Contract } from '@sushiswap/types'
 import { expect } from 'chai'
-import { BigNumber, Contract, Signer } from 'ethers'
-import { ethers } from 'hardhat'
 import seedrandom from 'seedrandom'
+import { Address, parseAbi, WalletClient } from 'viem'
+import { readContract, simulateContract } from 'viem/actions'
 
+import { getTestConfig, TestConfig } from '../src/getTestConfig'
 import { setTokenBalance } from '../src/setTokenBalance'
 
 enum CurvePoolType {
@@ -16,7 +17,7 @@ enum CurvePoolType {
   Factory = 'Factory',
 }
 
-const NON_FACTORY_POOLS: [string, string, CurvePoolType, number?][] = [
+const NON_FACTORY_POOLS: [Address, string, CurvePoolType, number?][] = [
   ['0xdc24316b9ae028f1497c275eb9192a3ea0f67022', 'steth', CurvePoolType.Legacy],
   ['0xdcef968d416a41cdac0ed8702fac8128a64241a2', 'fraxusdc', CurvePoolType.Legacy],
   ['0x828b154032950c8ff7cf8085d841723db2696056', 'stETH concentrated', CurvePoolType.Factory],
@@ -43,7 +44,7 @@ const FACTORY_ADDRESSES = [
   '0x0959158b6040d32d04c301a72cbfd6b39e21c9ae',
   '0xb9fc157394af804a3578134a6585c0dc9cc990d4',
   //'0xf18056bbd320e96a48e3fbf8bc061322531aac99', for crypto2 pools only
-]
+] as const
 
 // We don't test these pools - problems with exchange function call
 const FACTORY_POOL_EXCEPTIONS_LIST = [
@@ -59,14 +60,14 @@ const FACTORY_POOL_EXCEPTIONS_LIST = [
 
   '0xc8a7C1c4B748970F57cA59326BcD49F5c9dc43E3',
   '0xf03bD3cfE85f00bF5819AC20f0870cE8a8d1F0D8',
-]
+] as const
 const FACTORY_POOL_EXCEPTION_SET = new Set(FACTORY_POOL_EXCEPTIONS_LIST.map((p) => p.toLowerCase()))
-const FACTORY_POOL_PRECISION_SPECIAL: Record<string, number> = {
+const FACTORY_POOL_PRECISION_SPECIAL: Record<Address, number> = {
   //'0x6a274de3e2462c7614702474d64d376729831dca': 1e-3, //TODO!!!
   '0x5a59fd6018186471727faaeae4e57890abc49b08': 1e-8,
 }
 
-const METAPOOL_COIN_TO_BASEPOOL: Record<string, string> = {
+const METAPOOL_COIN_TO_BASEPOOL: Record<Address, Address> = {
   '0x6c3f90f043a72fa612cbac8115ee7e52bde6e490': '0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7', // 3-pool
   '0x075b1bb99792c9e1041ba13afef80c91a1e70fb3': '0x7fC77b5c7614E1533320Ea6DDc2Eb61fa00A9714', // sBTC
   '0x3175df0976dfa876431c2e9ee6bc45b65d3473cc': '0xDcEF968d416a41Cdac0ED8702fAC8128A64241A2', // fraxUSD
@@ -82,16 +83,16 @@ export function getRandomExp(rnd: () => number, min: number, max: number) {
   return res
 }
 
-function closeValues(_a: number | BigNumber, _b: number | BigNumber, accuracy: number): boolean {
-  const a: number = typeof _a == 'number' ? _a : parseInt(_a.toString())
-  const b: number = typeof _b == 'number' ? _b : parseInt(_b.toString())
+function closeValues(_a: number | bigint, _b: number | bigint, accuracy: number): boolean {
+  const a: number = typeof _a === 'number' ? _a : parseInt(_a.toString())
+  const b: number = typeof _b === 'number' ? _b : parseInt(_b.toString())
   if (accuracy === 0) return a === b
   if (Math.abs(a) < 1 / accuracy) return Math.abs(a - b) <= 10
   if (Math.abs(b) < 1 / accuracy) return Math.abs(a - b) <= 10
   return Math.abs(a / b - 1) < accuracy
 }
 
-function expectCloseValues(_a: number | BigNumber, _b: number | BigNumber, accuracy: number, logInfoIfFalse = '') {
+function expectCloseValues(_a: number | bigint, _b: number | bigint, accuracy: number, logInfoIfFalse = '') {
   const res = closeValues(_a, _b, accuracy)
   if (!res) {
     console.log(`Expected close: ${_a}, ${_b}, ${accuracy} ${logInfoIfFalse}`)
@@ -103,29 +104,37 @@ function expectCloseValues(_a: number | BigNumber, _b: number | BigNumber, accur
 
 interface PoolInfo {
   poolType: CurvePoolType
-  poolContract: Contract
-  tokenContracts: (Contract | undefined)[]
+  poolContract: Contract<any>
+  tokenContracts: (Contract<typeof erc20Abi> | undefined)[]
   poolTines: CurvePool
-  user: Signer
-  userAddress: string
+  user: Address
   snapshot: SnapshotRestorer
 }
 
-async function getPoolRatio(poolAddress: string, poolType: CurvePoolType, provider: Provider): Promise<number> {
-  const pool = new Contract(
-    poolAddress,
-    [
+async function getPoolRatio(config: TestConfig, poolAddress: Address, poolType: CurvePoolType): Promise<number> {
+  const pool = {
+    address: poolAddress,
+    abi: parseAbi([
       poolType !== CurvePoolType.LegacyV2
         ? 'function coins(uint256) pure returns (address)'
         : 'function coins(int128) pure returns (address)',
-    ],
-    provider
-  )
-  const token1 = await pool.coins(1)
-  const basePoolAddress = METAPOOL_COIN_TO_BASEPOOL[token1.toLowerCase()]
+    ]),
+  }
+
+  const token1Address = await readContract(config.client, {
+    ...pool,
+    functionName: 'coins',
+    args: [1n],
+  })
+
+  const basePoolAddress = METAPOOL_COIN_TO_BASEPOOL[token1Address.toLowerCase()]
   if (basePoolAddress !== undefined) {
-    const basePool = new Contract(basePoolAddress, ['function get_virtual_price() pure returns (uint256)'], provider)
-    const price = await basePool.get_virtual_price()
+    const basePool = {
+      address: basePoolAddress,
+      abi: parseAbi(['function get_virtual_price() pure returns (uint256)']),
+    }
+
+    const price = await readContract(config.client, { ...basePool, functionName: 'get_virtual_price' })
     // 1e18 is not always appropriate, but there is no way to find self.rate_multiplier value
     return parseInt(price.toString()) / 1e18
   }
@@ -134,39 +143,39 @@ async function getPoolRatio(poolAddress: string, poolType: CurvePoolType, provid
   switch (poolAddress.toLowerCase()) {
     case '0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2': {
       //ankrETH pool
-      const ankrETH = new Contract(
-        '0xE95A203B1a91a908F9B9CE46459d101078c2c3cb',
-        ['function ratio() pure returns (uint256)'],
-        provider
-      )
-      const ratio = await ankrETH.ratio()
+      const ankrETH = {
+        address: '0xE95A203B1a91a908F9B9CE46459d101078c2c3cb' as const,
+        abi: parseAbi(['function ratio() pure returns (uint256)']),
+      }
+
+      const ratio = await readContract(config.client, { ...ankrETH, functionName: 'ratio' })
       return 1e18 / parseInt(ratio.toString())
     }
     case '0xf9440930043eb3997fc70e1339dbb11f341de7a8': {
       // rETH pool
-      const rETH = new Contract(
-        '0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593',
-        ['function getExchangeRate() pure returns (uint256)'],
-        provider
-      )
-      const ratio = await rETH.getExchangeRate()
+      const rETH = {
+        address: '0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593' as const,
+        abi: parseAbi(['function getExchangeRate() pure returns (uint256)']),
+      }
+
+      const ratio = await readContract(config.client, { ...rETH, functionName: 'getExchangeRate' })
       return parseInt(ratio.toString()) / 1e18
     }
     case '0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56': {
       // compound pool cUSDC-cDAI
-      const cUSDC = new Contract(
-        '0x39aa39c021dfbae8fac545936693ac917d5e7563',
-        ['function exchangeRateCurrent() pure returns (uint256)'],
-        provider
-      )
-      const cDAI = new Contract(
-        '0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643',
-        ['function exchangeRateCurrent() pure returns (uint256)'],
-        provider
-      )
-      const ratio0 = await cUSDC.exchangeRateCurrent()
-      const ratio1 = await cDAI.exchangeRateCurrent()
-      return (parseInt(ratio0.toString()) * 1e12) / parseInt(ratio1.toString())
+      const cUSDC = {
+        address: '0x39aa39c021dfbae8fac545936693ac917d5e7563' as const,
+        abi: parseAbi(['function exchangeRateCurrent() pure returns (uint256)']),
+      }
+
+      const cDAI = {
+        address: '0x5d3a536e4d6dbd6114cc1ead35777bab948e3643' as const,
+        abi: parseAbi(['function exchangeRateCurrent() pure returns (uint256)']),
+      }
+
+      const ratio0 = await readContract(config.client, { ...cUSDC, functionName: 'exchangeRateCurrent' })
+      const ratio1 = await readContract(config.client, { ...cDAI, functionName: 'exchangeRateCurrent' })
+      return Number(ratio0 * BigInt(1e12)) / parseInt(ratio1.toString())
     }
     default:
       return 1
@@ -174,14 +183,14 @@ async function getPoolRatio(poolAddress: string, poolType: CurvePoolType, provid
 }
 
 async function createCurvePoolInfo(
-  poolAddress: string,
+  config: TestConfig,
+  poolAddress: Address,
   poolType: CurvePoolType,
-  user: Signer,
   initialBalance: bigint
 ): Promise<PoolInfo> {
-  const poolContract = new Contract(
-    poolAddress,
-    [
+  const poolContract = {
+    address: poolAddress,
+    abi: parseAbi([
       poolType !== CurvePoolType.LegacyV2 && poolType !== CurvePoolType.LegacyV3
         ? 'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns (uint256)'
         : 'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns ()',
@@ -193,54 +202,65 @@ async function createCurvePoolInfo(
       poolType !== CurvePoolType.LegacyV2
         ? 'function balances(uint256) pure returns (uint256)'
         : 'function balances(int128) pure returns (uint256)',
-    ],
-    user
-  )
+    ]),
+  }
 
-  const userAddress = await user.getAddress()
-  const tokenContracts = []
+  const tokenContracts: Array<Contract<typeof erc20Abi> | undefined> = []
   const tokenTines: RToken[] = []
-  for (let i = 0; i < 100; ++i) {
-    let token
+  for (let i = 0n; i < 100n; ++i) {
+    let token: Address
     try {
-      token = await poolContract.coins(i)
+      token = await readContract(config.client, { ...poolContract, functionName: 'coins', args: [i] })
     } catch (e) {
       break
     }
-    if (token == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
+    if (token === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
       // native
       tokenContracts.push(undefined)
       tokenTines.push({ address: token, name: token, symbol: token, chainId: 1, decimals: 18 })
     } else {
-      const res = await setTokenBalance(token, userAddress, initialBalance)
-      expect(res).equal(true, 'Wrong setTokenBalance for ' + token)
+      const res = await setTokenBalance(config.client, token, config.user.address, initialBalance)
+      expect(res).equal(true, `Wrong setTokenBalance for ${token}`)
 
-      const tokenContract = new Contract(token, erc20Abi, user)
+      const tokenContract = {
+        address: token,
+        abi: erc20Abi,
+      }
       try {
-        await tokenContract.approve(poolAddress, initialBalance.toString())
+        await (config.client as WalletClient).writeContract({
+          ...tokenContract,
+          account: config.user.address,
+          functionName: 'approve',
+          args: [poolAddress, initialBalance],
+          chain: null,
+        })
       } catch (_) {
         // in try block because crv token (0xD533a949740bb3306d119CC777fa900bA034cd52) doesn't allow re-approve (((
       }
       tokenContracts.push(tokenContract)
 
-      const decimals = await tokenContract.decimals()
+      const decimals = await readContract(config.client, { ...tokenContract, functionName: 'decimals' })
       tokenTines.push({ address: token, name: token, symbol: token, chainId: 1, decimals })
     }
   }
 
-  const A = await poolContract.A()
-  const fee = await poolContract.fee()
-  const reserves = await Promise.all(tokenContracts.map((_, i) => poolContract.balances(i)))
+  const A = await readContract(config.client, { ...poolContract, functionName: 'A' })
+  const fee = await readContract(config.client, { ...poolContract, functionName: 'fee' })
+  const reserves = await Promise.all(
+    tokenContracts.map((_, i) =>
+      readContract(config.client, { ...poolContract, functionName: 'balances', args: [BigInt(i)] })
+    )
+  )
 
   const poolTines = new CurvePool(
     poolAddress,
     tokenTines[0],
     tokenTines[1],
-    fee.toNumber() / 1e10,
-    A.toNumber(),
+    Number(fee) / 1e10,
+    Number(A),
     reserves[0],
     reserves[1],
-    await getPoolRatio(poolAddress, poolType, user.provider as Provider)
+    await getPoolRatio(config, poolAddress, poolType)
   )
 
   const snapshot = await takeSnapshot()
@@ -249,50 +269,87 @@ async function createCurvePoolInfo(
     poolContract,
     tokenContracts,
     poolTines,
-    user,
-    userAddress,
+    user: config.user.address,
     snapshot,
   }
 }
 
-async function checkSwap(poolInfo: PoolInfo, from: number, to: number, amountIn: number, precision: number) {
+async function checkSwap(
+  config: TestConfig,
+  poolInfo: PoolInfo,
+  from: number,
+  to: number,
+  amountIn: number,
+  precision: number
+) {
   const expectedOut = poolInfo.poolTines.calcOutByIn(Math.round(amountIn), from < to)
-  let realOutBI: BigNumber
+  let realOutBI: bigint
   if (poolInfo.poolType !== CurvePoolType.LegacyV2 && poolInfo.poolType !== CurvePoolType.LegacyV3) {
-    realOutBI = await poolInfo.poolContract.callStatic.exchange(from, to, getBigNumber(amountIn), 0, {
-      value: poolInfo.tokenContracts[from] === undefined ? getBigNumber(amountIn) : 0,
-    })
+    realOutBI = (
+      await simulateContract(config.client, {
+        ...poolInfo.poolContract,
+        functionName: 'exchange',
+        args: [BigInt(from), BigInt(to), getBigInt(amountIn), 0n],
+        value: poolInfo.tokenContracts[from] === undefined ? getBigInt(amountIn) : 0n,
+      })
+    ).result[0] as bigint
   } else {
     poolInfo.snapshot.restore()
-    const balanceBefore = await poolInfo.tokenContracts[to]?.balanceOf(poolInfo.userAddress)
-    await poolInfo.poolContract.exchange(from, to, getBigNumber(amountIn), 0, {
-      value: poolInfo.tokenContracts[from] === undefined ? getBigNumber(amountIn) : 0,
+
+    let balanceBefore = 0n
+    const tokenContractTo = poolInfo.tokenContracts[to]
+    if (tokenContractTo !== undefined) {
+      balanceBefore = await readContract(config.client, {
+        ...tokenContractTo,
+        functionName: 'balanceOf',
+        args: [poolInfo.user],
+      })
+    }
+    await (config.client as WalletClient).writeContract({
+      ...poolInfo.poolContract,
+      account: poolInfo.user,
+      functionName: 'exchange',
+      args: [BigInt(from), BigInt(to), getBigInt(amountIn), 0n],
+      chain: null,
+      value: poolInfo.tokenContracts[from] === undefined ? getBigInt(amountIn) : 0n,
     })
-    const balanceAfter = await poolInfo.tokenContracts[to]?.balanceOf(poolInfo.userAddress)
-    realOutBI = balanceAfter.sub(balanceBefore)
+
+    let balanceAfter = 0n
+    const tokenContractFrom = poolInfo.tokenContracts[from]
+    if (tokenContractFrom !== undefined) {
+      balanceAfter = await readContract(config.client, {
+        ...tokenContractFrom,
+        functionName: 'balanceOf',
+        args: [poolInfo.user],
+      })
+    }
+    realOutBI = balanceAfter - balanceBefore
   }
-  const realOut = parseInt(realOutBI.toString())
+  const realOut = Number(realOutBI)
 
   expectCloseValues(realOut, expectedOut.out, precision)
 }
 
-async function forEachFactoryPool(provider: Provider, func: (address: string, factoryName: string) => void) {
+async function forEachFactoryPool(config: TestConfig, func: (address: Address, factoryName: string) => Promise<void>) {
   const processedPoolSet = new Set<string>()
   for (let f = 0; f < FACTORY_ADDRESSES.length; ++f) {
     const factoryAddress = FACTORY_ADDRESSES[f]
-    const factoryContract = new Contract(
-      factoryAddress,
-      [
+    const factoryContract = {
+      address: factoryAddress,
+      abi: parseAbi([
         'function pool_count() pure returns (uint256)',
         'function pool_list(uint256) pure returns (address)',
         'function get_n_coins(address) pure returns (uint256)',
-      ],
-      provider
-    )
+      ]),
+    }
 
-    const poolNum = await factoryContract.pool_count()
-    for (let i = 0; i < poolNum; ++i) {
-      const poolAddress = await factoryContract.pool_list(i)
+    const poolNum = await readContract(config.client, { ...factoryContract, functionName: 'pool_count' })
+    for (let i = 0n; i < poolNum; ++i) {
+      const poolAddress = await readContract(config.client, {
+        ...factoryContract,
+        functionName: 'pool_list',
+        args: [i],
+      })
       if (processedPoolSet.has(poolAddress)) continue
       processedPoolSet.add(poolAddress)
       //const coins = await factoryContract.get_n_coins(poolAddress)
@@ -302,17 +359,17 @@ async function forEachFactoryPool(provider: Provider, func: (address: string, fa
 }
 
 async function process2CoinsPool(
-  poolAddress: string,
+  config: TestConfig,
+  poolAddress: Address,
   name: string,
   poolType: CurvePoolType,
   precision: number
 ): Promise<string> {
   const testSeed = poolAddress
   const rnd: () => number = seedrandom(testSeed) // random [0, 1)
-  const [user] = await ethers.getSigners()
   let poolInfo
   try {
-    poolInfo = await createCurvePoolInfo(poolAddress, poolType, user, BigInt(1e30))
+    poolInfo = await createCurvePoolInfo(config, poolAddress, poolType, BigInt(1e30))
   } catch (e) {
     return 'skipped (pool init error)'
   }
@@ -320,32 +377,38 @@ async function process2CoinsPool(
   const res0 = parseInt(poolInfo.poolTines.reserve0.toString())
   const res1 = parseInt(poolInfo.poolTines.reserve1.toString())
   if (res0 < 1e6 || res1 < 1e6) return 'skipped (low liquidity)'
-  const checks = poolType == CurvePoolType.LegacyV2 || poolType == CurvePoolType.LegacyV3 ? 3 : 10
+  const checks = poolType === CurvePoolType.LegacyV2 || poolType === CurvePoolType.LegacyV3 ? 3 : 10
   for (let i = 0; i < checks; ++i) {
     const amountInPortion = getRandomExp(rnd, 1e-5, 1)
-    await checkSwap(poolInfo, 0, 1, res0 * amountInPortion, precision)
-    await checkSwap(poolInfo, 1, 0, res1 * amountInPortion, precision)
+    await checkSwap(config, poolInfo, 0, 1, res0 * amountInPortion, precision)
+    await checkSwap(config, poolInfo, 1, 0, res1 * amountInPortion, precision)
   }
   return 'passed'
 }
 
 describe('Real Curve pools consistency check', () => {
+  let config: TestConfig
+
+  before(async () => {
+    config = await getTestConfig()
+  })
+
   describe('Not-Factory pools by whitelist', () => {
     for (let i = 0; i < NON_FACTORY_POOLS.length; ++i) {
       const [poolAddress, name, poolType, precision = 1e-9] = NON_FACTORY_POOLS[i]
       it(`${name} (${poolAddress}, ${poolType})`, async () => {
-        const result = await process2CoinsPool(poolAddress, name, poolType, precision)
+        const result = await process2CoinsPool(config, poolAddress, name, poolType, precision)
         expect(result).equal('passed')
       })
     }
   })
+
   it(`Factory Pools (${FACTORY_ADDRESSES.length} factories)`, async () => {
     let passed = 0,
       i = 0
     const startFrom = 0,
       finishAt = 10
-    const [user] = await ethers.getSigners()
-    await forEachFactoryPool(user.provider as Provider, async (poolAddress: string, factoryName: string) => {
+    await forEachFactoryPool(config, async (poolAddress: Address, factoryName: string) => {
       if (++i < startFrom) return
       if (i > finishAt) return
       process.stdout.write(`Factory ${factoryName} pool ${i} ${poolAddress} ... `)
@@ -354,9 +417,15 @@ describe('Real Curve pools consistency check', () => {
         return
       }
       const precision = FACTORY_POOL_PRECISION_SPECIAL[poolAddress.toLowerCase()] || 1e-9
-      const result = await process2CoinsPool(poolAddress, `Factory ${factoryName}`, CurvePoolType.Factory, precision)
+      const result = await process2CoinsPool(
+        config,
+        poolAddress,
+        `Factory ${factoryName}`,
+        CurvePoolType.Factory,
+        precision
+      )
       console.log(result)
-      if (result == 'passed') ++passed
+      if (result === 'passed') ++passed
     })
     console.log('passed', passed)
   })
