@@ -1,3 +1,4 @@
+import { LinkExternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
 import { nanoid } from 'nanoid'
@@ -46,44 +47,32 @@ export const ExpandableCard: FC<ExpandableCardProps> = ({ children, title, capti
         </motion.div>
       )}
       <AnimatePresence>
-        {open && (
+        {open ? (
           <>
-            {/*<motion.div*/}
-            {/*  initial={{ opacity: 0 }}*/}
-            {/*  animate={{ opacity: 1 }}*/}
-            {/*  exit={{ opacity: 0, transition: { duration: 0.15 } }}*/}
-            {/*  transition={{ duration: 0.2, delay: 0.15 }}*/}
-            {/*  style={{ pointerEvents: 'auto' }}*/}
-            {/*  className="z-[2000] fixed bg-[rgba(0,0,0,0.9)] will-change-[opacity] inset-0 w-full"*/}
-            {/*  onClick={handleClose}*/}
-            {/*/>*/}
+            <div className="fixed inset-0 backdrop-blur" />
             <article
               onClick={handleClose}
               onKeyDown={handleClose}
-              className="w-full h-full top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] fixed z-[2001] overflow-hidden p-4 md:px-[36px] py-0 flex items-center justify-center"
+              className="w-full h-full top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] fixed z-[2001] p-4 md:px-[36px] py-0 flex items-center justify-center"
             >
               <motion.div
                 layoutId={`container-${id}`}
-                className="bg-neutral-800 p-4 md:p-[36px] max-h-[80vh] overflow-y-scroll scroll overflow-x-hidden rounded-xl flex flex-col gap-2 items-start"
+                className="border border-secondary shadow-lg prose dark:prose-invert bg-white dark:bg-slate-800 p-4 md:p-[36px] max-h-[80vh] overflow-y-scroll scroll overflow-x-hidden rounded-xl flex flex-col items-start"
               >
-                <span className="text-xs font-medium mb-1 uppercase text-neutral-400">{caption}</span>
-                <motion.h1 layoutId={`container-title-${id}`} className="text-4xl font-semibold text-left">
+                <span className="text-xs font-medium mb-1 uppercase text-muted-foreground">{caption}</span>
+                <motion.h1 layoutId={`container-title-${id}`} className="text-3xl text-left">
                   {title}
                 </motion.h1>
-                <motion.div className="max-w-[700px] prose !prose-invert prose-neutral mt-5 pt-5 border-t border-neutral-200/5">
-                  {content}
-                </motion.div>
-                <motion.div className="mt-3">
-                  <Button variant="secondary">
-                    <a target="_blank" href={link} rel="noopener noreferrer">
-                      {linkText}
-                    </a>
-                  </Button>
+                <motion.p>{content}</motion.p>
+                <motion.div>
+                  <LinkExternal href={link}>
+                    <Button variant="secondary">{linkText}</Button>
+                  </LinkExternal>
                 </motion.div>
               </motion.div>
             </article>
           </>
-        )}
+        ) : null}
       </AnimatePresence>
     </AnimateSharedLayout>
   )

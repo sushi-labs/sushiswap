@@ -3,12 +3,12 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import {
   Button,
+  Dialog,
   DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogNew,
   DialogTitle,
   DialogTrigger,
   List,
@@ -17,7 +17,7 @@ import * as React from 'react'
 
 const meta = {
   title: 'Primitives/Dialog/Simple',
-  component: DialogNew,
+  component: Dialog,
   argTypes: {},
   parameters: {
     docs: {
@@ -25,17 +25,17 @@ const meta = {
     },
     controls: { expanded: true },
   },
-} satisfies Meta<typeof DialogNew>
+} satisfies Meta<typeof Dialog>
 
 export default meta
-type Story = StoryObj<typeof DialogNew>
+type Story = StoryObj<typeof Dialog>
 
 export const LosslessDialog = {
   storyName: 'Simple dialog with no followup',
   args: {},
   render: () => {
     return (
-      <DialogNew>
+      <Dialog>
         <DialogTrigger asChild>
           <Button>Trigger</Button>
         </DialogTrigger>
@@ -66,7 +66,7 @@ export const LosslessDialog = {
             </DialogClose>
           </DialogFooter>
         </DialogContent>
-      </DialogNew>
+      </Dialog>
     )
   },
 } satisfies Story

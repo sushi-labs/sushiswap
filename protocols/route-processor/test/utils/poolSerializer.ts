@@ -42,7 +42,7 @@ const snapshotDirDefault = path.resolve(__dirname, '../pool-snapshots/')
 
 function makeSerializable(poolCodes: PoolCode[]) {
   poolCodes.forEach(({ pool }) => {
-    pool.reserve0 = String(pool.reserve0.toString) as unknown as bigint
+    pool.reserve0 = String(pool.reserve0) as unknown as bigint
     pool.reserve1 = String(pool.reserve1) as unknown as bigint
     pool.token0 = { ...pool.token0 } as RToken
     pool.token1 = { ...pool.token1 } as RToken

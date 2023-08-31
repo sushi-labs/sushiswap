@@ -1,5 +1,5 @@
 import { Disclosure, Transition } from '@headlessui/react'
-import { classNames, Link } from '@sushiswap/ui'
+import { classNames, LinkExternal } from '@sushiswap/ui'
 import { Container } from '@sushiswap/ui/components/container'
 import sushiPulse from 'common/assets/sushi-pulse.png'
 import sushidilly from 'common/assets/sushidilly.png'
@@ -52,19 +52,19 @@ const About: NextPage = () => {
             <h2 className="font-medium text-slate-50 text-xl sm:text-4xl">Product Roadmap Sushi 2.0</h2>
             <p className="text-slate-300 mt-5 sm:mt-[30px] text-sm sm:text-xl">
               On 11th May 2022 the
-              <Link.External
+              <LinkExternal
                 href="https://snapshot.org/#/sushigov.eth/proposal/QmVfGe7ZqUS4HZhpxssPXPKJF8sCctcEsN1Sybo3p4F4zb"
                 className="mx-2 underline"
               >
                 Implementation Proposal
-              </Link.External>
+              </LinkExternal>
               for
-              <Link.External
+              <LinkExternal
                 href="https://mirror.xyz/0x4bb4c1B0745ef7B4642fEECcd0740deC417ca0a0/dFUiMYBl_xp2aN_F_Hc1abgP8NMv5Js5UYnup77MN0k"
                 className="mx-2 underline !whitespace-normal"
               >
                 {"Sushi 2.0 'A Restructure for the Road Ahead'"}
-              </Link.External>
+              </LinkExternal>
               was passed by the community with 92% of the votes (9.6 mln SushiPowah) in favor. The current team has
               collectively worked together on a long term roadmap & vision for what we would like to accomplish for
               Sushi. This roadmap has been outlined below.

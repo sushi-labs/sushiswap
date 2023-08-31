@@ -6,6 +6,7 @@ import { ReactNode, useCallback } from 'react'
 import { ExtractProps } from '../types'
 import { Container, ContainerProps } from './container'
 import { DiscordIcon, GithubIcon, InstagramIcon, SushiWithTextIcon, TwitterIcon } from './icons'
+import { LinkExternal } from './link'
 
 export interface FooterProps extends React.HTMLProps<HTMLDivElement>, Pick<ExtractProps<ContainerProps>, 'maxWidth'> {
   children?: ReactNode
@@ -147,30 +148,30 @@ const Component = ({ children, maxWidth = '5xl', ...props }: FooterProps) => {
             Our community is building a comprehensive decentralized trading platform for the future of finance. Join us!
           </p>
           <div className="flex items-center gap-4">
-            <a href="https://github.com/sushiswap" target="_blank" rel="noopener noreferrer">
+            <LinkExternal href="https://github.com/sushiswap">
               <GithubIcon
                 width={16}
                 className="text-gray-700 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
               />
-            </a>
-            <a href="https://twitter.com/sushiswap" target="_blank" rel="noopener noreferrer">
+            </LinkExternal>
+            <LinkExternal href="https://twitter.com/sushiswap">
               <TwitterIcon
                 width={16}
                 className="text-gray-700 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
               />
-            </a>
-            <a href="https://instagram.com/instasushiswap" target="_blank" rel="noopener noreferrer">
+            </LinkExternal>
+            <LinkExternal href="https://instagram.com/instasushiswap">
               <InstagramIcon
                 width={16}
                 className="text-gray-700 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
               />
-            </a>
-            <a href="https://discord.gg/NVPXN4e" target="_blank" rel="noopener noreferrer">
+            </LinkExternal>
+            <LinkExternal href="https://discord.gg/NVPXN4e">
               <DiscordIcon
                 width={16}
                 className="text-gray-700 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
               />
-            </a>
+            </LinkExternal>
           </div>
         </div>
         <div className="md:px-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-[40px] sm:mt-[10px]">

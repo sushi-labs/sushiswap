@@ -1,3 +1,5 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { ChefType } from '@sushiswap/client'
 import { Amount, SUSHI, SUSHI_ADDRESS, Token } from '@sushiswap/currency'
@@ -22,6 +24,7 @@ import {
   MINICHEF_ADDRESS,
   useMasterChefContract,
 } from '../useMasterChefContract'
+import { UsePrepareSendTransactionConfig } from '../useSendTransaction'
 
 interface UseMasterChefReturn extends Pick<ReturnType<typeof useContractReads>, 'isLoading' | 'isError'> {
   balance: Amount<Token> | undefined
@@ -221,7 +224,7 @@ export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid,
     [chainId, address]
   )
 
-  const prepare = useMemo(() => {
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
     if (!address || !chainId || !data || !contract) return
     switch (chef) {
       case ChefType.MasterChefV1:

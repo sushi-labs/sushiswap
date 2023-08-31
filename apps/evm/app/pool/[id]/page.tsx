@@ -1,125 +1,76 @@
-'use client'
-
 import { ChainId } from '@sushiswap/chain'
-import { Protocol, usePool } from '@sushiswap/client'
-import { AppearOnMount } from '@sushiswap/ui/components/animation'
-import { useSWRConfig } from 'swr'
+import { Separator } from '@sushiswap/ui'
+import { ManageV2LiquidityCard } from 'ui/pool/ManageV2LiquidityCard'
+import { PoolTransactionsV2 } from 'ui/pool/PoolTransactionsV2'
+import { isAddress } from 'viem'
+
 import {
-  Layout,
-  PoolActionBar,
-  PoolButtons,
-  PoolChartV2,
-  PoolComposition,
-  PoolHeader,
-  PoolMyRewards,
-  PoolPosition,
   PoolPositionProvider,
   PoolPositionRewardsProvider,
   PoolPositionStakedProvider,
-  PoolRewards,
-  PoolStats,
-  PoolTransactionsV2,
   UnknownTokenAlert,
-} from 'ui/pool'
-import { PoolPage as PoolPageV3 } from 'ui/pool/PoolSection/V3/PoolPage'
+} from '../../../ui/pool'
+import { PoolChartV2 } from '../../../ui/pool/PoolChartV2'
+import { PoolComposition } from '../../../ui/pool/PoolComposition'
+import { PoolMyRewards } from '../../../ui/pool/PoolMyRewards'
+import { PoolPageV3 } from '../../../ui/pool/PoolPageV3'
+import { PoolPosition } from '../../../ui/pool/PoolPosition'
+import { PoolRewards } from '../../../ui/pool/PoolRewards'
+import { PoolStats } from '../../../ui/pool/PoolStats'
 
-// export async function generateMetadata({ params }: { params: { id: string } }) {
-//   return {
-//     title: `Pool ${params.id}`,
-//   }
-// }
+export async function getPool({ chainId, address }: { chainId: ChainId; address: string }) {
+  if (typeof +chainId !== 'number' || !isAddress(address)) {
+    throw new Error(`The page you're looking for can't be found.`)
+  }
 
-export default function Page({ params }: { params: { id: string } }) {
-  // 1. figure out the pool type from the id
-  // 2. use the pool type to determine which pool page to render
+  const data = await fetch(`https://pools.sushi.com/api/v0/${chainId}/${address}`).then((data) => data.json())
+  if (!data) throw new Error(`The page you're looking for can't be found.`)
 
-  const [chainId, address] = params.id.split('%3A') as [ChainId, string]
+  return data
+}
 
-  const { data: pool } = usePool({
-    args: { chainId, address },
-    swrConfig: useSWRConfig(),
-    shouldFetch: Boolean(chainId && address),
-  })
+export default async function PoolPage({ params }: { params: { id: string } }) {
+  const [_chainId, address] = params.id.split(params.id.includes('%3A') ? '%3A' : ':') as [string, string]
+  const chainId = Number(_chainId) as ChainId
+  const pool = await getPool({ chainId, address })
 
-  if (!pool) return <></>
-
-  if (pool.protocol === Protocol.SUSHISWAP_V3) {
-    return <PoolPageV3 id={params.id} />
+  if (pool.protocol === 'SUSHISWAP_V3') {
+    return <PoolPageV3 pool={pool} />
   }
 
   return (
     <>
-      <PoolPositionProvider pool={pool}>
-        <PoolPositionStakedProvider pool={pool}>
-          <PoolPositionRewardsProvider pool={pool}>
-            <Layout>
-              <div className="flex flex-col gap-9">
-                <UnknownTokenAlert pool={pool} />
-                <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
-                  <div className="flex flex-col order-1 gap-9">
-                    <PoolHeader pool={pool} />
-                    <hr className="my-3 border-t border-gray-900/5 dark:border-slate-200/5" />
-                    <PoolChartV2 address={address} chainId={chainId} />
-                    <PoolStats pool={pool} />
-                    <PoolComposition pool={pool} />
-                    <PoolRewards pool={pool} />
-                  </div>
-
-                  <div className="flex flex-col order-2 gap-4">
-                    <AppearOnMount>
-                      <div className="flex flex-col gap-10">
-                        <PoolMyRewards pool={pool} />
-                        <PoolPosition pool={pool} />
-                      </div>
-                    </AppearOnMount>
-                    <div className="hidden lg:flex">
-                      <PoolButtons pool={pool} />
-                    </div>
-                  </div>
-                </div>
-                <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
-                <PoolTransactionsV2 pool={pool} poolId={address} />
-              </div>
-            </Layout>
-            <PoolActionBar pool={pool} />
-          </PoolPositionRewardsProvider>
-        </PoolPositionStakedProvider>
-      </PoolPositionProvider>
+      <UnknownTokenAlert pool={pool} />
+      <div className="flex flex-col gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
+          <ManageV2LiquidityCard pool={pool} />
+          <div className="flex flex-col gap-6">
+            <PoolPositionProvider pool={pool}>
+              <PoolPositionStakedProvider pool={pool}>
+                <PoolPositionRewardsProvider pool={pool}>
+                  <PoolPosition pool={pool} />
+                  <PoolMyRewards pool={pool} />
+                </PoolPositionRewardsProvider>
+              </PoolPositionStakedProvider>
+            </PoolPositionProvider>
+          </div>
+        </div>
+        <div className="py-4">
+          <Separator />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
+          <PoolChartV2 address={pool.address} chainId={pool.chainId as ChainId} />
+          <div className="flex flex-col gap-6">
+            <PoolComposition pool={pool} />
+            <PoolStats pool={pool} />
+            <PoolRewards pool={pool} />
+          </div>
+        </div>
+        <div className="py-4">
+          <Separator />
+        </div>
+        <PoolTransactionsV2 pool={pool} poolId={pool.address} />
+      </div>
     </>
   )
 }
-
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   const pools = await getPools({ take: 100, orderBy: 'liquidityUSD', orderDir: 'desc', chainIds: SUPPORTED_CHAIN_IDS })
-
-//   // Get the paths we want to pre-render based on pairs
-//   const paths = pools
-//     .sort(({ liquidityUSD: a }, { liquidityUSD: b }) => {
-//       return Number(b) - Number(a)
-//     })
-//     .slice(0, 50)
-//     .map((pool) => ({
-//       params: { id: pool.id },
-//     }))
-
-//   // We'll pre-render only these paths at build time.
-//   // { fallback: blocking } will server-render pages
-//   // on-demand if the path doesn't exist.
-//   return { paths, fallback: 'blocking' }
-// }
-
-// export const getStaticProps: GetStaticProps = async ({ params }) => {
-//   const [chainId, address] = (params?.id as string).split(':') as [ChainId, string]
-//   const pool = await getPool({ chainId, address })
-//   if (!pool) {
-//     throw new Error(`Failed to fetch pool, received ${pool}`)
-//   }
-//   return {
-//     props: {
-//       fallback: {
-//         [getPoolUrl({ chainId, address })]: pool,
-//       },
-//     },
-//     revalidate: 60,
-//   }
-// }

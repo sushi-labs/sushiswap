@@ -1,8 +1,21 @@
+'use client'
+
+import { CogIcon } from '@heroicons/react/24/outline'
 import { Amount, Type } from '@sushiswap/currency'
+import { useDebounce } from '@sushiswap/hooks'
 import { Percent, ZERO } from '@sushiswap/math'
+import {
+  Card,
+  CardContent,
+  CardCurrencyAmountItem,
+  CardFooter,
+  CardGroup,
+  CardLabel,
+  IconButton,
+  SettingsModule,
+  SettingsOverlay,
+} from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { Currency } from '@sushiswap/ui/components/currency'
-import { List } from '@sushiswap/ui/components/list/List'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { isSushiSwapV3ChainId, NonfungiblePositionManager, Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useNetwork, usePrepareSendTransaction, useSendTransaction } from '@sushiswap/wagmi'
@@ -39,6 +52,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
   const [value, setValue] = useState<string>('0')
   const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
   const { data: deadline } = useTransactionDeadline({ chainId })
+  const debouncedValue = useDebounce(value, 300)
 
   const slippagePercent = useMemo(() => {
     return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
@@ -92,7 +106,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
   }, [positionDetails, token0, token1])
 
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
-    const liquidityPercentage = new Percent(value, 100)
+    const liquidityPercentage = new Percent(debouncedValue, 100)
     const discountedAmount0 = position ? liquidityPercentage.multiply(position.amount0.quotient).quotient : undefined
     const discountedAmount1 = position ? liquidityPercentage.multiply(position.amount1.quotient).quotient : undefined
 
@@ -158,7 +172,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
     slippagePercent,
     token0,
     token1,
-    value,
+    debouncedValue,
   ])
 
   const { config } = usePrepareSendTransaction({
@@ -176,136 +190,102 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
   })
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-3">
-        <List.Label>Amount</List.Label>
-        <div className="p-3 pb-2 space-y-2 overflow-hidden bg-white rounded-xl dark:bg-slate-800">
-          <div className="flex justify-between gap-4">
-            <div>
-              <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">{value}%</h1>
+    <>
+      <CardContent>
+        <CardGroup>
+          <div className="p-3 pb-2 space-y-2 overflow-hidden bg-white rounded-xl dark:bg-secondary border border-accent">
+            <div className="flex justify-between gap-4">
+              <div>
+                <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">{value}%</h1>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={value === '25' ? 'default' : 'secondary'}
+                  size="sm"
+                  onClick={() => _onChange('25')}
+                  testId="liquidity-25"
+                >
+                  25%
+                </Button>
+                <Button
+                  variant={value === '50' ? 'default' : 'secondary'}
+                  size="sm"
+                  onClick={() => _onChange('50')}
+                  testId="liquidity-50"
+                >
+                  50%
+                </Button>
+                <Button
+                  variant={value === '75' ? 'default' : 'secondary'}
+                  size="sm"
+                  onClick={() => _onChange('75')}
+                  testId="liquidity-75"
+                >
+                  75%
+                </Button>
+                <Button
+                  variant={value === '100' ? 'default' : 'secondary'}
+                  size="sm"
+                  onClick={() => _onChange('100')}
+                  testId="liquidity-max"
+                >
+                  Max
+                </Button>
+                <SettingsOverlay
+                  options={{
+                    slippageTolerance: {
+                      storageKey: 'removeLiquidity',
+                      defaultValue: '0.5',
+                      title: 'Remove Liquidity Slippage',
+                    },
+                  }}
+                  modules={[SettingsModule.SlippageTolerance]}
+                >
+                  <IconButton size="sm" name="Settings" icon={CogIcon} variant="secondary" className="!rounded-xl" />
+                </SettingsOverlay>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant={value === '25' ? 'default' : 'secondary'}
-                size="sm"
-                onClick={() => _onChange('25')}
-                testId="liquidity-25"
-              >
-                25%
-              </Button>
-              <Button
-                variant={value === '50' ? 'default' : 'secondary'}
-                size="sm"
-                onClick={() => _onChange('50')}
-                testId="liquidity-50"
-              >
-                50%
-              </Button>
-              <Button
-                variant={value === '75' ? 'default' : 'secondary'}
-                size="sm"
-                onClick={() => _onChange('75')}
-                testId="liquidity-75"
-              >
-                75%
-              </Button>
-              <Button
-                variant={value === '100' ? 'default' : 'secondary'}
-                size="sm"
-                onClick={() => _onChange('100')}
-                testId="liquidity-max"
-              >
-                Max
-              </Button>
+            <div className="px-1 pt-2 pb-3">
+              <input
+                value={value}
+                onChange={(e) => _onChange(e.target.value)}
+                type="range"
+                min="1"
+                max="100"
+                className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg dark:bg-gray-700"
+              />
             </div>
           </div>
-          <div className="px-1 pt-2 pb-3">
-            <input
-              value={value}
-              onChange={(e) => _onChange(e.target.value)}
-              type="range"
-              min="1"
-              max="100"
-              className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg dark:bg-gray-700"
-            />
-          </div>
-        </div>
-      </div>
-      <List>
-        <List.Label>{"You'll"} receive liquidity</List.Label>
-        <List.Control>
-          {position?.amount0 ? (
-            <List.KeyValue title={`${position?.amount0.currency.symbol}`}>
-              <div className="flex items-center gap-2">
-                <Currency.Icon currency={unwrapToken(position.amount0.currency)} width={18} height={18} />
-                <span>
-                  {position.amount0.multiply(value).divide(100).toSignificant(6)} {position.amount0.currency.symbol}
-                </span>
-              </div>
-            </List.KeyValue>
-          ) : (
-            <List.KeyValue skeleton />
-          )}
-          {position?.amount1 ? (
-            <List.KeyValue flex title={`${position?.amount1.currency.symbol}`}>
-              <div className="flex items-center gap-2">
-                <Currency.Icon currency={unwrapToken(position.amount1.currency)} width={18} height={18} />
-                <span>
-                  {position.amount1.multiply(value).divide(100).toSignificant(6)} {position.amount1.currency.symbol}
-                </span>
-              </div>
-            </List.KeyValue>
-          ) : (
-            <List.KeyValue skeleton />
-          )}
-        </List.Control>
-      </List>
-      {(feeValue0?.greaterThan(0) || feeValue1?.greaterThan(0)) && (
-        <List>
-          <List.Label>{"You'll"} receive collected fees</List.Label>
-          <List.Control>
-            {feeValue0 ? (
-              <List.KeyValue flex title={`${feeValue0.currency.symbol}`}>
-                <div className="flex items-center gap-2">
-                  <Currency.Icon currency={unwrapToken(feeValue0.currency)} width={18} height={18} />
-                  <span>
-                    {feeValue0.multiply(value).divide(100).toSignificant(6)} {feeValue0.currency.symbol}
-                  </span>
-                </div>
-              </List.KeyValue>
-            ) : (
-              <List.KeyValue skeleton />
-            )}
-            {feeValue1 ? (
-              <List.KeyValue title={`${feeValue1.currency.symbol}`}>
-                <div className="flex items-center gap-2">
-                  <Currency.Icon currency={unwrapToken(feeValue1.currency)} width={18} height={18} />
-                  <span>
-                    {feeValue1.multiply(value).divide(100).toSignificant(6)} {feeValue1.currency.symbol}
-                  </span>
-                </div>
-              </List.KeyValue>
-            ) : (
-              <List.KeyValue skeleton />
-            )}
-          </List.Control>
-        </List>
-      )}
-
-      <Checker.Connect fullWidth>
-        <Checker.Network fullWidth chainId={chainId}>
-          <Button
-            size="xl"
-            loading={isWritePending}
-            disabled={+value === 0 || !sendTransaction}
-            fullWidth
-            onClick={() => sendTransaction?.()}
-            testId="remove-or-add-liquidity"
-          >
-            {+value === 0 ? 'Enter Amount' : 'Remove'}
-          </Button>
-        </Checker.Network>
-      </Checker.Connect>
-    </div>
+        </CardGroup>
+        <Card variant="outline" className="space-y-6 p-6">
+          <CardGroup>
+            <CardLabel>{"You'll"} receive</CardLabel>
+            <CardCurrencyAmountItem amount={position?.amount0.multiply(value).divide(100)} />
+            <CardCurrencyAmountItem amount={position?.amount1.multiply(value).divide(100)} />
+          </CardGroup>
+          <CardGroup>
+            <CardLabel>{"You'll"} receive collected fees</CardLabel>
+            <CardCurrencyAmountItem amount={feeValue0?.multiply(value).divide(100)} />
+            <CardCurrencyAmountItem amount={feeValue1?.multiply(value).divide(100)} />
+          </CardGroup>
+        </Card>
+      </CardContent>
+      <CardFooter>
+        <Checker.Connect fullWidth variant="outline" size="xl">
+          <Checker.Network fullWidth variant="outline" size="xl" chainId={chainId}>
+            <Button
+              size="xl"
+              loading={isWritePending}
+              disabled={+value === 0}
+              fullWidth
+              onClick={() => sendTransaction?.()}
+              testId="remove-or-add-liquidity"
+            >
+              {+value === 0 ? 'Enter Amount' : 'Remove'}
+            </Button>
+          </Checker.Network>
+        </Checker.Connect>
+      </CardFooter>
+    </>
   )
 }

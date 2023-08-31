@@ -1,5 +1,5 @@
 import { Fee, SushiSwapV2Pool, TridentConstantPool, TridentStablePool } from '@sushiswap/amm'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Type } from '@sushiswap/currency'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { ReactElement } from 'react'
@@ -32,7 +32,7 @@ export interface SushiSwapV2PoolFinderProps extends PoolFinderProps {
 }
 
 export interface TridentPoolFinderProps extends PoolFinderProps {
-  chainId: BentoBoxV1ChainId
+  chainId: BentoBoxChainId
   fee?: Fee
   twap?: boolean
 }

@@ -13,7 +13,7 @@ import {
   useFormContext,
 } from 'react-hook-form'
 
-import { classNames } from '../index'
+import { CardDescription, CardHeader, CardTitle, classNames } from '../index'
 import { Label } from './label'
 
 const Form = FormProvider
@@ -28,10 +28,12 @@ const FormSection = ({
   children: React.ReactNode
 }) => {
   return (
-    <div className="grid grid-cols-3 gap-x-10 py-2">
-      <div className="col-span-3 md:col-span-1 space-y-3 py-4">
-        <div className="text-lg text-gray-900 font-medium dark:text-slate-200">{title}</div>
-        <div className="text-gray-600 dark:text-slate-400">{description}</div>
+    <div className="grid grid-cols-3 gap-x-10 lg:gap-x-[56px] py-2">
+      <div className="col-span-3 md:col-span-1 py-4">
+        <CardHeader className="!p-0">
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
+        </CardHeader>
       </div>
       <div className="col-span-3 md:col-span-2 space-y-6 py-4">{children}</div>
     </div>
@@ -156,10 +158,17 @@ const FormMessage = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<
       return null
     }
 
+    if (error)
+      return (
+        <FormError id={formMessageId} ref={ref} {...props}>
+          {body}
+        </FormError>
+      )
+
     return (
-      <FormError id={formMessageId} ref={ref} {...props}>
+      <FormDescription id={formMessageId} ref={ref} {...props}>
         {body}
-      </FormError>
+      </FormDescription>
     )
   }
 )
@@ -168,7 +177,7 @@ FormMessage.displayName = 'FormMessage'
 const FormError = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
   ({ className, children, ...props }, ref) => {
     return (
-      <p ref={ref} className={classNames('px-3 text-sm font-medium text-red', className)} {...props}>
+      <p ref={ref} className={classNames('text-sm font-medium text-red', className)} {...props}>
         {children}
       </p>
     )

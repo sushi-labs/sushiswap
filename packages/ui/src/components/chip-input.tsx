@@ -3,7 +3,7 @@
 import { VariantProps } from 'class-variance-authority'
 import classNames from 'classnames'
 import * as React from 'react'
-import { useCallback, useImperativeHandle, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { IconComponent } from '../types'
 import { Button, buttonIconVariants } from './button'
@@ -18,7 +18,10 @@ const ChipInputRoot = React.forwardRef<HTMLDivElement, ChipInputRootProps>(({ ..
 })
 ChipInputRoot.displayName = 'ChipInputRoot'
 
-interface ChipInputProps extends React.HTMLAttributes<HTMLInputElement>, VariantProps<typeof chipVariants> {
+interface ChipInputProps
+  extends Omit<React.HTMLAttributes<HTMLInputElement>, 'size'>,
+    Omit<VariantProps<typeof chipVariants>, 'variant'>,
+    VariantProps<typeof textFieldVariants> {
   icon?: IconComponent
   iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
   onValueChange(values: string[]): void
@@ -33,6 +36,7 @@ const ChipInput = React.forwardRef<HTMLInputElement, ChipInputProps>(
       className,
       icon: Icon,
       iconProps,
+      size,
       values,
       variant,
       onValueChange,
@@ -42,10 +46,7 @@ const ChipInput = React.forwardRef<HTMLInputElement, ChipInputProps>(
     },
     ref
   ) => {
-    const fallbackRef = useRef<HTMLInputElement>(null)
     const [state, setState] = useState<string>('')
-
-    useImperativeHandle<HTMLInputElement | null, HTMLInputElement | null>(ref, () => fallbackRef.current)
 
     const split = useCallback(() => {
       const regExp = new RegExp(`(?:${delimiters.map((el) => el).join('|')})+`)
@@ -74,13 +75,13 @@ const ChipInput = React.forwardRef<HTMLInputElement, ChipInputProps>(
     )
 
     return (
-      <ChipInputRoot className={textFieldVariants({ className: 'relative gap-2 flex-wrap !h-[unset]' })}>
+      <ChipInputRoot className={textFieldVariants({ variant, size, className: 'relative gap-2 flex-wrap !h-[unset]' })}>
         {Icon ? <Icon {...iconProps} className={buttonIconVariants()} /> : null}
         {values.map((value, i) => (
           <TooltipProvider key={i}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Chip variant={variant} className="!block truncate max-w-[80px]">
+                <Chip variant="secondary" className="!block truncate max-w-[80px]">
                   {mutateValue ? mutateValue(value) : value}
                 </Chip>
               </TooltipTrigger>
@@ -97,9 +98,9 @@ const ChipInput = React.forwardRef<HTMLInputElement, ChipInputProps>(
           className={classNames(
             className,
             state.length > 0 ? 'pr-[60px]' : '',
-            'flex flex-grow bg-transparent truncate'
+            'flex flex-grow bg-transparent truncate !outline-none !ring-0'
           )}
-          ref={fallbackRef}
+          ref={ref}
           {...props}
         />
         {state.length > 0 ? (

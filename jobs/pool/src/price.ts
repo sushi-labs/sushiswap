@@ -2,7 +2,7 @@
 import './lib/wagmi.js'
 
 import { totalsAbi } from '@sushiswap/abi'
-import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId, isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { USDC_ADDRESS } from '@sushiswap/currency'
 import { Prisma, PrismaClient, Protocol, Token } from '@sushiswap/database'
@@ -18,8 +18,7 @@ import {
   toShareBI,
 } from '@sushiswap/tines'
 import { TICK_SPACINGS } from '@sushiswap/v3-sdk'
-import { Address, readContracts } from '@wagmi/core'
-import { fetchBlockNumber } from '@wagmi/core'
+import { Address, fetchBlockNumber, readContracts } from '@wagmi/core'
 import { isAddress } from 'ethers/lib/utils.js'
 import { performance } from 'perf_hooks'
 
@@ -157,7 +156,7 @@ async function transform(chainId: ChainId, pools: Pool[]) {
   const stablePools = pools.filter((pool) => pool.protocol === Protocol.BENTOBOX_STABLE)
   const blockNumber = await fetchBlockNumber({ chainId })
   console.log(`ChainId ${chainId} got block number: ${blockNumber}. `)
-  const rebases = isBentoBoxV1ChainId(chainId) ? await fetchRebases(stablePools, chainId, blockNumber) : undefined
+  const rebases = isBentoBoxChainId(chainId) ? await fetchRebases(stablePools, chainId, blockNumber) : undefined
 
   const constantProductPoolIds = pools
     .filter((p) => p.protocol === Protocol.BENTOBOX_CLASSIC || p.protocol === Protocol.SUSHISWAP_V2)
@@ -254,7 +253,7 @@ async function transform(chainId: ChainId, pools: Pool[]) {
   return { rPools, tokens }
 }
 
-async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId, blockNumber: bigint) {
+async function fetchRebases(pools: Pool[], chainId: BentoBoxChainId, blockNumber: bigint) {
   const sortedTokens = poolsToUniqueTokens(pools)
 
   const totals = await readContracts({
@@ -263,7 +262,7 @@ async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId, blockNumb
       (t) =>
         ({
           args: [t.address as Address],
-          address: bentoBoxV1Address[chainId],
+          address: BENTOBOX_ADDRESS[chainId],
           chainId: chainId,
           abi: totalsAbi,
           functionName: 'totals',

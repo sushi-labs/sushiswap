@@ -1,8 +1,8 @@
-import { classNames } from '@sushiswap/ui'
+import { classNames, LinkExternal } from '@sushiswap/ui'
+import { DiscordIcon, GithubIcon, TwitterIcon, YoutubeIcon } from '@sushiswap/ui/components/icons'
 import { FC } from 'react'
 
 import { DEFAULT_SIDE_PADDING } from '../helpers'
-import { DiscordIcon, GithubIcon, TwitterIcon, YoutubeIcon } from '@sushiswap/ui/components/icons'
 
 const heroIconProps = {
   width: 24,
@@ -26,18 +26,18 @@ export const Hero: FC = () => {
         between.
       </span>
       <div className="absolute hidden right-12 lg:grid top-[184px] gap-8">
-        <a href="https://github.com/sushiswap" target="_blank" rel="noopener noreferrer">
+        <LinkExternal href="https://github.com/sushiswap">
           <GithubIcon {...heroIconProps} />
-        </a>
-        <a href="https://twitter.com/sushiswap" target="_blank" rel="noopener noreferrer">
+        </LinkExternal>
+        <LinkExternal href="https://twitter.com/sushiswap">
           <TwitterIcon {...heroIconProps} />
-        </a>
-        <a href="https://discord.gg/NVPXN4e" target="_blank" rel="noopener noreferrer">
+        </LinkExternal>
+        <LinkExternal href="https://discord.gg/NVPXN4e">
           <DiscordIcon {...heroIconProps} />
-        </a>
-        <a href="https://www.youtube.com/c/SushiOfficial" target="_blank" rel="noopener noreferrer">
+        </LinkExternal>
+        <LinkExternal href="https://www.youtube.com/c/SushiOfficial">
           <YoutubeIcon {...heroIconProps} />
-        </a>
+        </LinkExternal>
       </div>
     </section>
   )

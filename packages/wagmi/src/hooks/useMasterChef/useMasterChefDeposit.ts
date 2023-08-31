@@ -1,3 +1,5 @@
+'use client'
+
 import { masterChefV1Abi, masterChefV2Abi } from '@sushiswap/abi'
 import { ChefType } from '@sushiswap/client'
 import { Amount, Token } from '@sushiswap/currency'

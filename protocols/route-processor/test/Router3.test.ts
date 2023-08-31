@@ -1,6 +1,6 @@
 import { SnapshotRestorer, takeSnapshot } from '@nomicfoundation/hardhat-network-helpers'
 import { erc20Abi, routeProcessor3Abi, weth9Abi } from '@sushiswap/abi'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId, chainName } from '@sushiswap/chain'
 import {
   DAI,
@@ -112,7 +112,7 @@ async function getTestEnvironment() {
     abi: routeProcessor3Abi,
     bytecode: RouteProcessor3.bytecode as Hex,
     account: user.address,
-    args: [bentoBoxV1Address[chainId as BentoBoxV1ChainId], []],
+    args: [BENTOBOX_ADDRESS[chainId as BentoBoxChainId], []],
   })
   const RouteProcessorAddress = (await client.waitForTransactionReceipt({ hash: RouteProcessorTx })).contractAddress
   if (!RouteProcessorAddress) throw new Error('RouteProcessorAddress is undefined')
@@ -122,9 +122,6 @@ async function getTestEnvironment() {
   }
 
   // saturate router balance with wei of tokens
-
-  const a = performance.now()
-
   await Promise.all([
     setRouterPrimaryBalance(client, RouteProcessorAddress, WNATIVE[chainId].address as Address),
     setRouterPrimaryBalance(client, RouteProcessorAddress, SUSHI_ADDRESS[chainId as keyof typeof SUSHI_ADDRESS]),
@@ -138,8 +135,6 @@ async function getTestEnvironment() {
 
   console.log(`  Network: ${chainName[chainId]}, Forked Block: ${await client.getBlockNumber()}`)
   //console.log('    User creation ...')
-
-  console.log('a', performance.now() - a)
 
   return {
     chainId,
@@ -190,8 +185,7 @@ async function makeSwap(
   usedPools: Set<string>,
   providers?: LiquidityProviders[],
   poolFilter?: PoolFilter,
-  permits: PermitData[] = [],
-  makeSankeyDiagram = false
+  permits: PermitData[] = []
 ): Promise<[bigint, bigint] | undefined> {
   // console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
@@ -331,8 +325,7 @@ async function updMakeSwap(
   usedPools: Set<string> = new Set(),
   providers?: LiquidityProviders[],
   poolFilter?: PoolFilter,
-  permits: PermitData[] = [],
-  makeSankeyDiagram = false
+  permits: PermitData[] = []
 ): Promise<[bigint | undefined, bigint]> {
   const [amountIn, waitBlock] = typeof lastCallResult === 'bigint' ? [lastCallResult, 1n] : lastCallResult
   if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
@@ -340,17 +333,7 @@ async function updMakeSwap(
   //console.log('Wait data update for min block', waitBlock)
   await dataUpdated(env, waitBlock)
 
-  const res = await makeSwap(
-    env,
-    fromToken,
-    amountIn,
-    toToken,
-    usedPools,
-    providers,
-    poolFilter,
-    permits,
-    makeSankeyDiagram
-  )
+  const res = await makeSwap(env, fromToken, amountIn, toToken, usedPools, providers, poolFilter, permits)
   if (res === undefined) return [undefined, waitBlock]
   else return res
 }

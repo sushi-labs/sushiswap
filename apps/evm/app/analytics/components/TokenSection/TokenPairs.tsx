@@ -3,9 +3,8 @@ import { usePools } from '@sushiswap/client'
 import { Native, Token } from '@sushiswap/currency'
 import { formatPercent, formatUSD } from '@sushiswap/format'
 import { Token as GraphToken } from '@sushiswap/graph-client'
-import { Link } from '@sushiswap/ui'
+import { LinkExternal, LinkInternal, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
-import { Popover } from '@sushiswap/ui/components/Popover'
 import { Table } from '@sushiswap/ui/components/table'
 import React, { FC } from 'react'
 import { useSWRConfig } from 'swr'
@@ -43,7 +42,7 @@ export const TokenPairs: FC<TokenPairs> = ({ token }) => {
           </Table.thead>
           <Table.tbody>
             {pools &&
-              token.pairs.map(({ pair }) => {
+              token.pairs.map(({ pair }, i) => {
                 const pool = pools.find((pool) => pool.id === pair.id)
 
                 const [token0, token1] = [
@@ -69,74 +68,57 @@ export const TokenPairs: FC<TokenPairs> = ({ token }) => {
                 const volume1w = formatUSD(pair.volume1w)
 
                 return (
-                  <>
-                    <Popover
-                      key={pair.id}
-                      options={{
-                        placement: 'top',
-                        modifiers: [
-                          { name: 'offset', options: { offset: [0, 0] } },
-                          {
-                            name: 'sameWidth',
-                            enabled: true,
-                            fn: ({ state }) => {
-                              state.styles.popper.width = '320px'
-                            },
-                            phase: 'beforeWrite',
-                            requires: ['computeStyles'],
-                          },
-                        ],
-                      }}
-                    >
-                      <Popover.Button>
+                  <TooltipProvider key={i}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
                         <Table.tr>
                           <Table.td>
-                            <Link.External href={`/earn/${pair.id}`} className="!no-underline">
+                            <LinkInternal href={`/pool/${pair.id}`}>
                               <div className="flex items-center">
                                 <Currency.IconList iconWidth={24} iconHeight={24}>
                                   <Currency.Icon currency={token0} />
                                   <Currency.Icon currency={token1} />
                                 </Currency.IconList>
-                                <Link.External
+                                <LinkExternal
                                   className="flex flex-col !no-underline group"
                                   href={chains[token.chainId].getTokenUrl(pair.id.split(':')[1])}
                                 >
                                   <p className="text-sm font-semibold">
                                     {token0.symbol} <span className="text-slate-400">/</span> {token1.symbol}
                                   </p>
-                                </Link.External>
+                                </LinkExternal>
                               </div>
-                            </Link.External>
+                            </LinkInternal>
                           </Table.td>
                           <Table.td>
-                            <Link.External href={`/earn/${pair.id}`} className="!no-underline">
+                            <LinkInternal href={`/pool/${pair.id}`} className="!no-underline">
                               <p className="font-semibold text-sm text-slate-100">
                                 {liquidityUSD.includes('NaN') ? '$0.00' : liquidityUSD}
                               </p>
-                            </Link.External>
+                            </LinkInternal>
                           </Table.td>
                           <Table.td>
-                            <Link.External href={`/earn/${pair.id}`} className="!no-underline">
+                            <LinkInternal href={`/pool/${pair.id}`} className="!no-underline">
                               <p className="font-semibold text-sm text-slate-100">
                                 {volume1w.includes('NaN') ? '$0.00' : volume1w}
                               </p>
-                            </Link.External>
+                            </LinkInternal>
                           </Table.td>
                           <Table.td>
-                            <Link.External href={`/earn/${pair.id}`} className="!no-underline">
+                            <LinkInternal href={`/pool/${pair.id}`} className="!no-underline">
                               <p className="font-semibold text-sm text-slate-100">
                                 {formatPercent(pair.feeApr)}{' '}
                                 {pool && pool.incentives.length > 0 && pool.incentiveApr > 0 && (
                                   <FarmRewardsAvailableTooltip />
                                 )}
                               </p>
-                            </Link.External>
+                            </LinkInternal>
                           </Table.td>
                         </Table.tr>
-                      </Popover.Button>
-                      <Popover.Panel>{pool ? <PoolQuickHoverTooltip row={pool} /> : <></>}</Popover.Panel>
-                    </Popover>
-                  </>
+                      </TooltipTrigger>
+                    </Tooltip>
+                    <TooltipContent>{pool ? <PoolQuickHoverTooltip row={pool} /> : <></>}</TooltipContent>
+                  </TooltipProvider>
                 )
               })}
           </Table.tbody>

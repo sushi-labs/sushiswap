@@ -1,9 +1,11 @@
-import { FC, useEffect, useState } from 'react'
+'use client'
+
+import { Chain, ChainId, chainName } from '@sushiswap/chain'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'
-import { Chain, ChainId, chainName } from '@sushiswap/chain'
-import { useNetwork, useSwitchNetwork } from 'wagmi'
+import { FC, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
+import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 export const NetworkCheck: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const [open, setOpen] = useState(false)
@@ -14,7 +16,7 @@ export const NetworkCheck: FC<{ chainId: ChainId }> = ({ chainId }) => {
   // Delay couple seconds
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout> | undefined = undefined
-    if (Boolean(isMounted && chain && chainId !== chain.id)) {
+    if (isMounted && chain && chainId !== chain.id) {
       timeout = setTimeout(() => setOpen(true), 1500)
     } else {
       setOpen(false)
@@ -36,14 +38,7 @@ export const NetworkCheck: FC<{ chainId: ChainId }> = ({ chainId }) => {
         {chain?.id ? chainName[chain.id] : ''}).
       </p>
       <div className="block flex justify-end px-3 w-full sm:w-[unset]">
-        <Button
-          fullWidth
-          onClick={() => switchNetwork?.(chainId)}
-          
-          
-          size="sm"
-          className="whitespace-nowrap"
-        >
+        <Button fullWidth onClick={() => switchNetwork?.(chainId)} size="sm" className="whitespace-nowrap">
           Switch to {Chain.fromChainId(chainId).name}
         </Button>
       </div>

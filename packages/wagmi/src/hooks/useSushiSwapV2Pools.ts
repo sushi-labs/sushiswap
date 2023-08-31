@@ -1,3 +1,5 @@
+'use client'
+
 import { SushiSwapV2Pool } from '@sushiswap/amm'
 import { Amount, Token, Type as Currency, Type } from '@sushiswap/currency'
 import {

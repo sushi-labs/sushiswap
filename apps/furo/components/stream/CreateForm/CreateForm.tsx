@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FuroStreamRouterChainId } from '@sushiswap/furo'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import { FundSource } from '@sushiswap/hooks'
 import { Form } from '@sushiswap/ui/components/form'
 import { nanoid } from 'nanoid'
@@ -24,7 +24,7 @@ export const CREATE_STREAM_DEFAULT_VALUES: CreateStreamFormSchemaType = {
   fundSource: FundSource.WALLET,
 }
 
-export const CreateForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
+export const CreateForm: FC<{ chainId: FuroChainId }> = ({ chainId }) => {
   const methods = useForm<CreateMultipleStreamFormSchemaType & CreateMultipleStreamBaseSchemaFormErrorsType>({
     resolver: zodResolver(CreateMultipleStreamModelSchema),
     mode: 'all',

@@ -10,6 +10,7 @@ import { LogFilter2 } from './LogFilter2'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { PermanentCache } from './PermanentCache'
 import { TokenManager } from './TokenManager'
+import { repeat } from './Utils'
 import { warnLog } from './WarnLog'
 
 export interface FactoryV2 {
@@ -334,7 +335,7 @@ export class UniV2Extractor {
       }
       return
     }
-    this.poolMap.set(addr.toLowerCase(), { status: PoolStatus.AddingPool, reserve0, reserve1 })
+    this.poolMap.set(addrL, { status: PoolStatus.AddingPool, reserve0, reserve1 })
     let factory
     let token0
     let token1
@@ -343,7 +344,11 @@ export class UniV2Extractor {
     try {
       if (trustedFactory) factory = trustedFactory
       else {
-        const factoryAddr = await this.multiCallAggregator.callValue(addr, tridentConstantPoolAbi, 'factory')
+        const factoryAddr = await repeat(2, () =>
+          this.multiCallAggregator.callValue(addr, tridentConstantPoolAbi, 'factory')
+        )
+
+        this.multiCallAggregator.callValue(addr, tridentConstantPoolAbi, 'factory')
         factory = this.factoryMap.get((factoryAddr as string).toLowerCase() as Address)
         if (!factory) {
           this.poolMap.set(addrL, { status: PoolStatus.IgnorePool })
@@ -352,10 +357,12 @@ export class UniV2Extractor {
           return
         }
       }
-      const [token0Addr, token1Addr] = await Promise.all([
-        this.multiCallAggregator.callValue(addr, tridentConstantPoolAbi, 'token0'),
-        this.multiCallAggregator.callValue(addr, tridentConstantPoolAbi, 'token1'),
-      ])
+      const [token0Addr, token1Addr] = await repeat(2, () => {
+        return Promise.all([
+          this.multiCallAggregator.callValue(addr, tridentConstantPoolAbi, 'token0'),
+          this.multiCallAggregator.callValue(addr, tridentConstantPoolAbi, 'token1'),
+        ])
+      })
       const tokens = await Promise.all([
         this.tokenManager.findToken(token0Addr as Address),
         this.tokenManager.findToken(token1Addr as Address),
@@ -364,7 +371,7 @@ export class UniV2Extractor {
       token1 = tokens[1]
     } catch (e) {
       this.taskCounter.dec()
-      warnLog(this.multiCallAggregator.chainId, `Ext2 add pool ${addr} by log failed`)
+      warnLog(this.multiCallAggregator.chainId, `Ext2 add pool ${addr} by log failed: ${e}`)
       return
     }
     this.taskCounter.dec()

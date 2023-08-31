@@ -1,3 +1,5 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { useNetwork } from '@sushiswap/wagmi'
 import { useParams, useSearchParams } from 'next/navigation'

@@ -48,7 +48,7 @@ export const createWagmiConfig = () => {
         }
       )
     : configureChains(allChains, allProviders, {
-        pollingInterval: 8_000,
+        pollingInterval: 4_000,
       })
 
   if (isTest) {

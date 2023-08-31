@@ -1,3 +1,5 @@
+'use client'
+
 import { ChainId, chainShortName } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'

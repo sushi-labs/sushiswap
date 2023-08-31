@@ -16,13 +16,24 @@ const SWAP_BASE_URL =
   process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com/v0'
 
 export const useTradeQuery = (
-  { chainId, fromToken, toToken, amount, gasPrice = 50n, recipient, enabled, onError }: UseTradeParams,
+  {
+    chainId,
+    fromToken,
+    toToken,
+    amount,
+    gasPrice = 50n,
+    slippagePercentage,
+    recipient,
+    enabled,
+    onError,
+  }: UseTradeParams,
   select: UseTradeQuerySelect
 ) => {
   return useQuery({
-    queryKey: ['getTrade', { chainId, fromToken, toToken, amount, gasPrice, recipient }],
+    queryKey: ['getTrade', { chainId, fromToken, toToken, amount, slippagePercentage, gasPrice, recipient }],
     queryFn: async () => {
       const params = new URL(SWAP_BASE_URL)
+
       params.searchParams.set('chainId', `${chainId}`)
       params.searchParams.set(
         'tokenIn',
@@ -41,6 +52,7 @@ export const useTradeQuery = (
         `${toToken?.isNative ? nativeCurrencyIds[chainId] : toToken?.wrapped.address}`
       )
       params.searchParams.set('amount', `${amount?.quotient.toString()}`)
+      params.searchParams.set('maxPriceImpact', `${+slippagePercentage / 100}`)
       params.searchParams.set('gasPrice', `${gasPrice}`)
       params.searchParams.set('to', `${recipient}`)
       params.searchParams.set('preferSushi', 'true')

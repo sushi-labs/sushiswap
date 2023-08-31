@@ -1,3 +1,5 @@
+'use client'
+
 import { Amount, Type } from '@sushiswap/currency'
 import { ButtonProps } from '@sushiswap/ui/components/button'
 import React, { FC } from 'react'

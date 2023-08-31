@@ -1,8 +1,8 @@
 import { isAddress } from '@ethersproject/address'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
-import { FuroVestingRouterChainId } from '@sushiswap/furo'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import { FundSource } from '@sushiswap/hooks'
 import {
   DialogConfirm,
@@ -46,7 +46,7 @@ import { calculateCliffDuration, calculateEndDate, calculateStepPercentage, calc
 const APPROVE_TAG = 'createVestingSingle'
 
 interface CreateFormReviewModal {
-  chainId: FuroVestingRouterChainId
+  chainId: FuroChainId
 }
 
 export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(({ chainId }) => {
@@ -89,7 +89,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
     () => calculateStepPercentage({ currency, cliffEnabled, cliffAmount, stepAmount, stepPayouts }),
     [cliffAmount, cliffEnabled, currency, stepAmount, stepPayouts]
   )
-  const rebase = useBentoBoxTotal(chainId, _currency)
+  const rebase = useBentoBoxTotal(chainId as BentoBoxChainId, _currency)
   const endDate = useMemo(
     () => calculateEndDate({ cliffEndDate, cliffEnabled, startDate, stepPayouts, stepConfig }),
     [cliffEnabled, cliffEndDate, startDate, stepConfig, stepPayouts]
@@ -251,14 +251,14 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                 type="button"
                 fullWidth
                 id="create-single-vest-approve-bentobox"
-                chainId={chainId as BentoBoxV1ChainId}
+                chainId={chainId as BentoBoxChainId}
                 masterContract={getFuroVestingRouterContractConfig(chainId).address}
                 className="col-span-3 md:col-span-2"
               >
                 <Checker.ApproveERC20
                   type="button"
                   fullWidth
-                  contract={bentoBoxV1Address[chainId]}
+                  contract={BENTOBOX_ADDRESS[chainId as BentoBoxChainId]}
                   id="create-single-vest-approve-token"
                   amount={_totalAmount}
                   className="col-span-3 md:col-span-2"

@@ -1,7 +1,9 @@
+'use client'
+
 import { isAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { bentoBoxV1Abi } from '@sushiswap/abi'
-import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
@@ -14,7 +16,7 @@ import { BalanceMap } from './types'
 type UseBalancesParams = {
   account: Address | undefined
   currencies: (Type | undefined)[]
-  chainId?: number
+  chainId?: ChainId
   enabled?: boolean
   loadBentobox?: boolean
   watch?: boolean
@@ -79,7 +81,7 @@ export const useBalances: UseBalances = ({
     })
 
     if (loadBentobox && chainId) {
-      if (!isBentoBoxV1ChainId(chainId)) {
+      if (!isBentoBoxChainId(chainId)) {
         throw new Error(
           `ChainId Error: BentoBox is not available on ${chainName[chainId]} and loadBentobox is enabled.`
         )

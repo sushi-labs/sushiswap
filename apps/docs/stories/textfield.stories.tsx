@@ -3,7 +3,7 @@
 import { CreditCardIcon } from '@heroicons/react/24/outline'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import type { Meta, StoryObj } from '@storybook/react'
-import { TextField } from '@sushiswap/ui'
+import { TextField, TextFieldDescription } from '@sushiswap/ui'
 
 const meta = {
   title: 'Primitives/TextField',
@@ -64,5 +64,22 @@ export const Adornments = {
     unit: 'CVV',
     icon: CreditCardIcon,
     placeholder: '',
+  },
+} satisfies Story
+
+export const Description = {
+  args: {
+    id: 'input',
+    unit: 'CVV',
+    icon: CreditCardIcon,
+    placeholder: '',
+    render: (args) => {
+      return (
+        <div className="flex flex-col gap-2">
+          <TextField {...args} />
+          <TextFieldDescription>This is a description</TextFieldDescription>
+        </div>
+      )
+    },
   },
 } satisfies Story

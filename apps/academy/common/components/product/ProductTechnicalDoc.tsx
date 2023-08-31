@@ -1,8 +1,8 @@
 import { ArrowRightIcon } from '@heroicons/react/24/solid'
-import { classNames, Link } from '@sushiswap/ui'
+import { classNames, LinkExternal } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/components/button'
 import { DocsIcon } from 'common/icons'
 import { FC } from 'react'
-import { Button } from '@sushiswap/ui/components/button'
 
 interface ProductTechnicalDoc {
   color: string
@@ -11,11 +11,11 @@ interface ProductTechnicalDoc {
 }
 
 const DocsButton: FC<{ className: string; url: string }> = ({ className, url }) => (
-  <Link.External href={url}>
+  <LinkExternal href={url}>
     <Button className={classNames(className)} variant="secondary">
       <ArrowRightIcon width={20} height={20} />
     </Button>
-  </Link.External>
+  </LinkExternal>
 )
 
 export const ProductTechnicalDoc: FC<ProductTechnicalDoc> = ({ color, secondaryColor, url }) => {

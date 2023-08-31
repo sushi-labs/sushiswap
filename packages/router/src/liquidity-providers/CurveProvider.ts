@@ -196,10 +196,7 @@ export async function getAllSupportedCurvePools(publicClient: PublicClient): Pro
     }
   })
   await Promise.all(promises)
-
-  CURVE_NON_FACTORY_POOLS[chainId as keyof typeof CURVE_FACTORY_ADDRESSES].forEach((pool) =>
-    result.set(pool[0], pool[1])
-  )
+  ;(CURVE_NON_FACTORY_POOLS[chainId] ?? []).forEach((pool) => result.set(pool[0], pool[1]))
 
   return result
 }
@@ -298,7 +295,7 @@ export class CurveProvider extends LiquidityProvider {
     const pools: Map<Address, [CurvePoolType, Type, Type]> = new Map()
     let currencyCombinations = getCurrencyCombinations(this.chainId, t0, t1)
     for (let i = 0; currencyCombinations.length > 0; ++i) {
-      const calls = CURVE_FACTORY_ADDRESSES[this.chainId as keyof typeof CURVE_FACTORY_ADDRESSES].flatMap((factory) =>
+      const calls = (CURVE_FACTORY_ADDRESSES[this.chainId] ?? []).flatMap((factory) =>
         currencyCombinations.map(([t0, t1]) => ({
           address: factory,
           chainId: this.chainId,
@@ -321,7 +318,7 @@ export class CurveProvider extends LiquidityProvider {
         .filter((c) => c !== undefined) as [Token, Token][]
     }
 
-    CURVE_NON_FACTORY_POOLS[this.chainId as keyof typeof CURVE_NON_FACTORY_POOLS].forEach((pool) => {
+    ;(CURVE_NON_FACTORY_POOLS[this.chainId] ?? []).forEach((pool) => {
       if (excludePools?.has(pool[0]) !== true) pools.set(pool[0], [pool[1], pool[2], pool[3]])
     })
 

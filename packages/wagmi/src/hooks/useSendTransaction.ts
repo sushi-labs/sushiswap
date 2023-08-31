@@ -1,3 +1,5 @@
+'use client'
+
 import { usePrepareSendTransaction, useSendTransaction as useSendTransaction_ } from 'wagmi'
 
 export type UsePrepareSendTransactionConfig = Parameters<typeof usePrepareSendTransaction>['0']

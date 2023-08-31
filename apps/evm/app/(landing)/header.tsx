@@ -4,6 +4,7 @@ import {
   Button,
   Container,
   EXPLORE_NAVIGATION_LINKS,
+  LinkInternal,
   NavigationContainer,
   NavigationListItem,
   NavigationMenu,
@@ -14,9 +15,9 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
   OnramperButton,
+  PARTNER_NAVIGATION_LINKS,
   TOOLS_NAVIGATION_LINKS,
 } from '@sushiswap/ui'
-import Link from 'next/link'
 import React, { FC } from 'react'
 
 export const Header: FC = () => {
@@ -41,22 +42,22 @@ export const Header: FC = () => {
               </NavigationMenuContent>
             </NavigationMenuItem>
             <NavigationMenuItem className="hidden md:block">
-              <Link href="/swap">
+              <LinkInternal href="/swap">
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Swap</NavigationMenuLink>
-              </Link>
+              </LinkInternal>
             </NavigationMenuItem>
             <NavigationMenuItem className="hidden md:block">
-              <Link href="/pools">
+              <LinkInternal href="/pools">
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pools</NavigationMenuLink>
-              </Link>
+              </LinkInternal>
             </NavigationMenuItem>
             <NavigationMenuItem className="hidden md:block">
-              <Link href="/furo">
+              <LinkInternal href="/furo">
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pay</NavigationMenuLink>
-              </Link>
+              </LinkInternal>
             </NavigationMenuItem>
             <NavigationMenuItem className="hidden md:block">
-              <NavigationMenuTrigger>Tools</NavigationMenuTrigger>
+              <NavigationMenuTrigger>More</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="w-[400px] gap-3 p-4">
                   {TOOLS_NAVIGATION_LINKS.map((component) => (
@@ -67,13 +68,23 @@ export const Header: FC = () => {
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
+            <NavigationMenuItem className="hidden md:block">
+              <NavigationMenuTrigger>Partners</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="w-[400px] gap-3 p-4">
+                  {PARTNER_NAVIGATION_LINKS.map((component) => (
+                    <NavigationListItem key={component.title} title={component.title} href={component.href}>
+                      {component.description}
+                    </NavigationListItem>
+                  ))}
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
-        <Link href="/swap" legacyBehavior passHref>
-          <a>
-            <Button asChild>Enter App</Button>
-          </a>
-        </Link>
+        <LinkInternal href="/swap">
+          <Button asChild>Enter App</Button>
+        </LinkInternal>
       </NavigationContainer>
     </Container>
   )

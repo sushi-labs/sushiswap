@@ -8,32 +8,32 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  Popover,
   PopoverContent,
-  PopoverNew,
   PopoverTrigger,
   SelectIcon,
 } from '@sushiswap/ui'
 
 const meta = {
   title: 'Primitives/Popover',
-  component: PopoverNew,
+  component: Popover,
   parameters: {
     docs: {
       page: null,
     },
     controls: { expanded: true },
   },
-} satisfies Meta<typeof PopoverNew>
+} satisfies Meta<typeof Popover>
 
 export default meta
-type Story = StoryObj<typeof PopoverNew>
+type Story = StoryObj<typeof Popover>
 
 export const Default = {
   args: {
     children: 'Popover',
   },
   render: () => (
-    <PopoverNew>
+    <Popover>
       <PopoverTrigger>
         <Button>Click me</Button>
       </PopoverTrigger>
@@ -41,7 +41,7 @@ export const Default = {
       <PopoverContent>
         <h1>This is popover content</h1>
       </PopoverContent>
-    </PopoverNew>
+    </Popover>
   ),
 } satisfies Story
 
@@ -51,7 +51,7 @@ export const PopoverWithMenu = {
     children: 'Popover',
   },
   render: () => (
-    <PopoverNew>
+    <Popover>
       <PopoverTrigger asChild>
         <Button variant="secondary" role="combobox">
           <span>Networks</span>
@@ -70,6 +70,6 @@ export const PopoverWithMenu = {
           </CommandGroup>
         </Command>
       </PopoverContent>
-    </PopoverNew>
+    </Popover>
   ),
 } satisfies Story

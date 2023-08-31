@@ -1,3 +1,5 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
 import { getCurrencyCombinations } from '@sushiswap/router'

@@ -1,5 +1,6 @@
 import React from 'react'
 
+import { classNames } from '../../index'
 import { IconComponent } from '../../types'
 
 export const CheckMarkIcon: IconComponent = (props) => {
@@ -7,7 +8,7 @@ export const CheckMarkIcon: IconComponent = (props) => {
     <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true">
       <circle
         fillOpacity="0"
-        className="circle animate-grow origin-center text-green"
+        className={classNames('circle animate-grow origin-center text-green', props.className)}
         stroke="currentColor"
         strokeWidth={16}
         fill="currentColor"

@@ -1,6 +1,5 @@
 import { Tab } from '@headlessui/react'
-import { typographyVariants } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui'
+import { Button, LinkInternal, typographyVariants } from '@sushiswap/ui'
 import { Container } from '@sushiswap/ui/components/container'
 import { SushiIcon } from '@sushiswap/ui/components/icons'
 import { Toggle } from '@sushiswap/ui/components/toggle'
@@ -39,7 +38,7 @@ export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress 
                 </div>
                 <div>
                   <Button asChild size="lg">
-                    <a href="/furo/create">Pay Someone</a>
+                    <LinkInternal href="/create">Pay Someone</LinkInternal>
                   </Button>
                 </div>
               </div>

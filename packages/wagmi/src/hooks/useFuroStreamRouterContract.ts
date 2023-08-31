@@ -1,13 +1,16 @@
-import { furoStreamRouterAbi, furoStreamRouterAddress, FuroStreamRouterChainId } from '@sushiswap/furo'
+'use client'
+
+import { furoStreamRouterAbi } from '@sushiswap/abi'
+import { FURO_STREAM_ROUTER_ADDRESS, FuroChainId } from '@sushiswap/furo-sdk'
 import { getContract } from 'viem'
 import { usePublicClient } from 'wagmi'
 
-export const getFuroStreamRouterContractConfig = (chainId: FuroStreamRouterChainId) => ({
-  address: furoStreamRouterAddress[chainId],
-  abi: furoStreamRouterAbi[chainId],
+export const getFuroStreamRouterContractConfig = (chainId: FuroChainId) => ({
+  address: FURO_STREAM_ROUTER_ADDRESS[chainId],
+  abi: furoStreamRouterAbi,
 })
 
-export function useFuroStreamRouterContract(chainId: FuroStreamRouterChainId | undefined) {
+export function useFuroStreamRouterContract(chainId: FuroChainId | undefined) {
   const publicClient = usePublicClient({ chainId })
 
   if (!chainId) return null

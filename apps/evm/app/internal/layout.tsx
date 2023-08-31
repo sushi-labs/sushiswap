@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  LinkInternal,
   NavigationContainer,
   NavigationListItem,
   NavigationMenu,
@@ -11,7 +12,6 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@sushiswap/ui'
-import Link from 'next/link'
 
 export default function InternalLayout({
   children, // will be a page or nested layout
@@ -24,9 +24,9 @@ export default function InternalLayout({
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
-              <Link href="/internal">
+              <LinkInternal href="/internal">
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Dashboard</NavigationMenuLink>
-              </Link>
+              </LinkInternal>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuTrigger>Bentobox</NavigationMenuTrigger>
@@ -42,14 +42,14 @@ export default function InternalLayout({
               </NavigationMenuContent>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <Link href="/internal/tokens">
+              <LinkInternal href="/internal/tokens">
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Tokens</NavigationMenuLink>
-              </Link>
+              </LinkInternal>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <Link href="/internal/subgraphs">
+              <LinkInternal href="/internal/subgraphs">
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>Subgraphs</NavigationMenuLink>
-              </Link>
+              </LinkInternal>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>

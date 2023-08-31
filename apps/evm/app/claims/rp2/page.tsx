@@ -2,6 +2,7 @@
 
 import { Disclosure } from '@headlessui/react'
 import { ChevronRightIcon } from '@heroicons/react-v1/solid'
+import { LinkExternal, LinkInternal } from '@sushiswap/ui'
 import { Container } from '@sushiswap/ui/components/container'
 import { List } from '@sushiswap/ui/components/list/List'
 import { useAccount } from '@sushiswap/wagmi'
@@ -37,9 +38,9 @@ const RP2ClaimPage = () => {
             including: Arbitrum, Arbitrum Nova, Avalanche, Boba, BSC, Ethereum, Fantom, Fuse, Gnosis, Moonbeam,
             Moonriver, Optimism, Polygon, and Polygon ZkEVM. Unfortunately the contract had a critical vulnerability. To
             read more about what happened, please refer to our{' '}
-            <a className="text-blue" href="https://www.sushi.com/blog/routeprocessor2-post-mortem">
+            <LinkExternal className="text-blue" href="https://www.sushi.com/blog/routeprocessor2-post-mortem">
               post-mortem
-            </a>
+            </LinkExternal>
             .
           </span>
           <hr />
@@ -151,9 +152,9 @@ const RP2ClaimPage = () => {
                   </p>
                   <p>
                     Please refer to our{' '}
-                    <a className="text-blue" href="https://www.sushi.com/blog/routeprocessor2-post-mortem">
+                    <LinkInternal className="text-blue" href="/blog/routeprocessor2-post-mortem">
                       post-mortem
-                    </a>{' '}
+                    </LinkInternal>{' '}
                     for more information.
                   </p>
                 </Disclosure.Panel>

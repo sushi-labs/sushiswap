@@ -1,6 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
 import { formatNumber, formatPercent } from '@sushiswap/format'
+import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Chip } from '@sushiswap/ui/components/chip'
 import { Currency } from '@sushiswap/ui/components/currency'
@@ -76,7 +77,7 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
       )}
       <div className="flex justify-end gap-2 mt-4 mb-2">
         <Button asChild fullWidth>
-          <a href={`/pools/${row.id}/add`}>Earn</a>
+          <LinkInternal href={`/pools/${row.id}/add`}>Earn</LinkInternal>
         </Button>
       </div>
     </div>

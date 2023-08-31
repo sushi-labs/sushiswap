@@ -1,3 +1,5 @@
+'use client'
+
 import { chainShortName } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'

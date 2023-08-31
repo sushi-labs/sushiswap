@@ -42,13 +42,13 @@
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/database": "workspace:*",
-    "@sushiswap/route-processor": "workspace:*",
+    "@sushiswap/route-processor-sdk": "workspace:*",
     "@sushiswap/router": "workspace:*",
     "@sushiswap/extractor": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",
     "@whatwg-node/fetch": "0.8.4",
     "fastify": "4.11.0",
-    "viem": "1.6.3",
+    "viem": "0.0.0-jxom-refactor-multicall.20230830T113622",
     "zod": "3.21.4"
   },
   "devDependencies": {

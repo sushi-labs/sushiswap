@@ -1,42 +1,12 @@
 import '@nomiclabs/hardhat-ethers'
 
-import { defaultConfig, EXPORT_TASK } from '@sushiswap/hardhat-config'
-import { TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD } from 'hardhat/builtin-tasks/task-names'
-import { HardhatUserConfig, subtask } from 'hardhat/config'
-import path from 'path'
+import { defaultConfig } from '@sushiswap/hardhat-config'
+import { HardhatUserConfig } from 'hardhat/config'
 
 const accounts = {
   mnemonic: process.env.MNEMONIC || 'test test test test test test test test test test test junk',
   accountsBalance: '10000000000000000000000000',
 }
-
-EXPORT_TASK()
-
-subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVersion: string }, hre, runSuper) => {
-  if (solcVersion === '0.8.10') {
-    const compilerPath = path.join(__dirname, 'soljson-v0.8.10+commit.fc410830.js')
-    return {
-      compilerPath,
-      isSolcJs: true, // if you are using a native compiler, set this to false
-      version: solcVersion,
-      // this is used as extra information in the build-info files, but other than
-      // that is not important
-      longVersion: '0.8.10+commit.fc410830',
-    }
-  } else if (solcVersion === '0.6.12') {
-    const compilerPath = path.join(__dirname, 'soljson-v0.6.12+commit.27d51765.js')
-    return {
-      compilerPath,
-      isSolcJs: true, // if you are using a native compiler, set this to false
-      version: solcVersion,
-      // this is used as extra information in the build-info files, but other than
-      // that is not important
-      longVersion: '0.6.12+commit.27d51765',
-    }
-  }
-  // we just use the default subtask if the version is not 0.8.5
-  return runSuper()
-})
 
 const config: HardhatUserConfig = {
   ...defaultConfig,
@@ -46,7 +16,7 @@ const config: HardhatUserConfig = {
     //   forking: {
     //     enabled: true,
     //     url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
-    //     blockNumber: 17195000,
+    //     blockNumber: 17980000,
     //   },
     //   accounts: {
     //     accountsBalance: '10000000000000000000000000', //(10_000_000 ETH).
@@ -66,6 +36,17 @@ const config: HardhatUserConfig = {
       },
       chainId: 137,
     },
+    // hardhat: {
+    //   forking: {
+    //     enabled: process.env.FORKING === 'true',
+    //     url: `https://lb.drpc.org/ogrpc?network=base&dkey=${process.env.DRPC_ID}`,
+    //     blockNumber: 3033333,
+    //   },
+    //   accounts: {
+    //     accountsBalance: '10000000000000000000000000', //(10_000_000 BASE).
+    //   },
+    //   chainId: 8453,
+    // },
     // hardhat: {
     //   forking: {
     //     enabled: process.env.FORKING === 'true',

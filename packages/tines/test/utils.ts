@@ -191,8 +191,8 @@ function getCPPool(rnd: () => number, t0: TToken, t1: TToken) {
     t0,
     t1,
     fee,
-    getBigInt(reserve0 * (10 ** t0.decimals - 6)),
-    getBigInt(reserve1 * (10 ** t1.decimals - 6))
+    getBigInt(reserve0 * (10 ** (t0.decimals - 6))),
+    getBigInt(reserve1 * (10 ** (t1.decimals - 6)))
   )
 }
 
@@ -231,8 +231,8 @@ function getStableSwapPool(rnd: () => number, t0: TToken, t1: TToken) {
     t0,
     t1,
     fee,
-    getBigInt(reserve0 * (10 ** t0.decimals - 6)),
-    getBigInt(reserve1 * (10 ** t1.decimals - 6)),
+    getBigInt(reserve0 * (10 ** (t0.decimals - 6))),
+    getBigInt(reserve1 * (10 ** (t1.decimals - 6))),
     t0.decimals,
     t1.decimals,
     total0,

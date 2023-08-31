@@ -2,9 +2,17 @@ import { Chain } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { useTokenSecurity } from '@sushiswap/react-query'
-import { DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogNew, DialogTitle } from '@sushiswap/ui'
-import { DialogTrigger } from '@sushiswap/ui'
-import { GoPlusLabsIcon } from '@sushiswap/ui'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  GoPlusLabsIcon,
+  LinkExternal,
+} from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Icon } from '@sushiswap/ui/components/currency/Icon'
 import { List } from '@sushiswap/ui/components/list/List'
@@ -32,7 +40,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
   }, [onImport])
 
   return (
-    <DialogNew>
+    <Dialog>
       <div className="relative py-0.5 h-[64px]">
         <div className="flex items-center w-full hover:bg-muted focus:bg-accent h-full rounded-lg px-3">
           {currencies[0] ? (
@@ -77,9 +85,9 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
                   ? 'These tokens have been identified as potential honeypot scams and are not supported. Do not interact with these tokens to safeguard your assets.'
                   : 'This token has been identified as a potential honeypot scam and is not supported. Do not interact with this token to safeguard your assets.'}{' '}
                 <Button asChild variant="link" size="sm">
-                  <a rel="noreferrer" target="_blank" href="https://coinbrain.com/dictionary/honeypot-scam">
+                  <LinkExternal href="https://coinbrain.com/dictionary/honeypot-scam">
                     Learn more about honeypot tokens
-                  </a>
+                  </LinkExternal>
                 </Button>
               </DialogDescription>
             </>
@@ -161,6 +169,6 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
           </div>
         </DialogFooter>
       </DialogContent>
-    </DialogNew>
+    </Dialog>
   )
 }

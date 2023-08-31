@@ -1,3 +1,5 @@
+'use client'
+
 import { Amount, Currency, Price, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { Rounding } from '@sushiswap/math'
 import {
@@ -560,7 +562,7 @@ export function useRangeHopCallbacks(
   tickUpper: number | undefined,
   pool?: SushiSwapV3Pool | undefined | null
 ) {
-  const { setFullRange } = useConcentratedMintActionHandlers()
+  const { setFullRange, resetMintState } = useConcentratedMintActionHandlers()
   const baseToken = useMemo(() => baseCurrency?.wrapped, [baseCurrency])
   const quoteToken = useMemo(() => quoteCurrency?.wrapped, [quoteCurrency])
 
@@ -616,5 +618,12 @@ export function useRangeHopCallbacks(
     return ''
   }, [baseToken, quoteToken, tickUpper, feeAmount, pool])
 
-  return { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper, getSetFullRange: setFullRange }
+  return {
+    getDecrementLower,
+    getIncrementLower,
+    getDecrementUpper,
+    getIncrementUpper,
+    getSetFullRange: setFullRange,
+    resetMintState,
+  }
 }

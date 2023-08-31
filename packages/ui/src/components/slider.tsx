@@ -21,18 +21,18 @@ const Slider = React.forwardRef<
       props.defaultValue.map((el, i) => (
         <SliderPrimitive.Thumb
           key={i}
-          className="block h-5 w-5 rounded-full border-2 border-primary bg-blue hover:ring-4 !ring-offset-0 ring-accent transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+          className="block h-5 w-5 rounded-full border-2 border-primary bg-blue hover:ring-4 ring-offset-background ring-accent transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
         />
       ))
     ) : props.value ? (
       props.value.map((el, i) => (
         <SliderPrimitive.Thumb
           key={i}
-          className="block h-5 w-5 rounded-full border-2 border-primary bg-blue hover:ring-4 !ring-offset-0 ring-accent transition-colors disabled:pointer-events-none disabled:opacity-50"
+          className="block h-5 w-5 rounded-full border-2 border-primary bg-blue hover:ring-4 ring-offset-background ring-accent transition-colors disabled:pointer-events-none disabled:opacity-50"
         />
       ))
     ) : (
-      <SliderPrimitive.Thumb className="block h-5 w-5 rounded-full border-2 border-primary bg-blue hover:ring-4 !ring-offset-0 ring-accent transition-colors disabled:pointer-events-none disabled:opacity-50" />
+      <SliderPrimitive.Thumb className="block h-5 w-5 rounded-full border-2 border-primary bg-blue hover:ring-4 ring-offset-background ring-accent transition-colors disabled:pointer-events-none disabled:opacity-50" />
     )}
   </SliderPrimitive.Root>
 ))
