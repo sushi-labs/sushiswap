@@ -317,7 +317,6 @@ async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
 
 async function removeLiquidityV3(page: Page) {
   await mockPoolApi(page, NATIVE_TOKEN.wrapped, FAKE_TOKEN, 10000, 'SUSHISWAP_V3')
-  await mockPoolApi(page, NATIVE_TOKEN.wrapped, FAKE_TOKEN, 10000, 'SUSHISWAP_V3')
   await page.goto(BASE_URL)
   await page.locator('[testdata-id=my-positions-button]').click()
 
@@ -517,18 +516,21 @@ async function mockPoolApi(
   fee: number,
   protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3'
 ) {
-  await page.route('https://pools.sushi.com/api/v0/**', async (route, request) => {
-    const response = await route.fetch()
-    const json = await response.json()
-    if (Array.isArray(json)) {
+  const address = computePoolAddress({
+    factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[CHAIN_ID],
+    tokenA: token0,
+    tokenB: token1,
+    fee: fee,
+  })
+  // MOCK NOT WORKING.. WHY?
+  await page.route(`https://pools.sushi.com/api/v0/${CHAIN_ID}/${address}`, async (route, request) => {
+    // const response = await route.fetch()
+    console.log({route})
+    // const json = await response.json()
+    // if (Array.isArray(json)) {
       const [tokenA, tokenB] = token0.sortsBefore(token1) ? [token0, token1] : [token1, token0] // does safety checks
-      const address = computePoolAddress({
-        factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[CHAIN_ID],
-        tokenA,
-        tokenB,
-        fee: fee,
-      }).toLowerCase()
-      json.push({
+
+      const json = {
         id: `${CHAIN_ID}:${address}`.toLowerCase(),
         address,
         name: `${token0.symbol}-${token1.symbol}`,
@@ -571,17 +573,31 @@ async function mockPoolApi(
         liquidityUSDChange1w: 0.02286513758143083,
         liquidityUSDChange1m: -0.03222759286580335,
         isBlacklisted: false,
-        token0: tokenA,
-        token1: tokenB,
+        token0: {
+          id: `${tokenA.chainId}:${tokenA.address}`.toLowerCase(),
+          address: tokenA.address.toLowerCase(),
+          name: tokenA.name,
+          symbol: tokenA.symbol,
+          decimals: tokenA.decimals,
+          chainId: tokenA.chainId,
+        },
+        token1: {
+          id: `${tokenB.chainId}:${tokenB.address}`.toLowerCase(),
+          address: tokenB.address.toLowerCase(),
+          name: tokenB.name,
+          symbol: tokenB.symbol,
+          decimals: tokenB.decimals,
+          chainId: tokenB.chainId,
+        },
         incentives: [],
         hadEnabledSteerVault: false,
         hasEnabledSteerVault: false,
         steerVaults: [],
-      })
-    } else {
-      const count = json.count + 1
-      return await route.fulfill({ json: count })
-    }
+      }
+    // } else {
+    //   const count = json.count + 1
+    //   return await route.fulfill({ json: count })
+    // }
     return await route.fulfill({ json })
   })
 }
