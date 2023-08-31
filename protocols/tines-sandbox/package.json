@@ -52,6 +52,7 @@
     "@sushiswap/router": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
     "@sushiswap/tines": "workspace:*",
+    "@sushiswap/math": "workspace:*",
     "@sushiswap/types": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@sushiswap/v2-sdk": "workspace:*",

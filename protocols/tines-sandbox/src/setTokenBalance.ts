@@ -1,7 +1,7 @@
 import { getStorageAt, setStorageAt } from '@nomicfoundation/hardhat-network-helpers'
 import { NumberLike } from '@nomicfoundation/hardhat-network-helpers/dist/src/types'
 import { erc20Abi } from '@sushiswap/abi'
-import { Address, Client, keccak256 } from 'viem'
+import { Address, Client, encodeAbiParameters, keccak256, parseAbiParameters } from 'viem'
 import { readContract } from 'viem/actions'
 
 // Sometimes token contract is a proxy without delegate call
@@ -24,12 +24,12 @@ export async function setTokenBalance(
 ): Promise<boolean> {
   const setStorage = async (slotNumber: number, value0: NumberLike, value1: NumberLike) => {
     // Solidity mapping
-    const slotData = `0x${user.padStart(64, '0')}${Number(slotNumber).toString(16).padStart(64, '0')}` as const
+    const slotData = encodeAbiParameters(parseAbiParameters('address, uint256'), [user, BigInt(slotNumber)] as const)
     const slot = keccak256(slotData)
     const previousValue0 = await getStorageAt(token, slot)
     await setStorageAt(token, slot, value0)
     // Vyper mapping
-    const slotData2 = `0x${Number(slotNumber).toString(16).padStart(64, '0')}${user.padStart(64, '0')}` as const
+    const slotData2 = encodeAbiParameters(parseAbiParameters('uint256, address'), [BigInt(slotNumber), user] as const)
     const slot2 = keccak256(slotData2)
     const previousValue1 = await getStorageAt(token, slot)
     await setStorageAt(token, slot2, value1)
@@ -45,32 +45,33 @@ export async function setTokenBalance(
     return true
   }
 
-  const balancePrimary = await readContract(client, {
-    abi: erc20Abi,
-    functionName: 'balanceOf',
-    args: [user],
-    address: token as Address,
-  })
+  const result = await Promise.all(
+    Array(200)
+      .fill(null)
+      .map(async (_, i) => {
+        const testVal = BigInt(i + 97382)
 
-  await Promise.all(
-    Array(200).map(async (_, i) => {
-      const [previousValue0, previousValue1] = await setStorage(i, balance, balance)
-      const resBalance = await readContract(client, {
-        abi: erc20Abi,
-        functionName: 'balanceOf',
-        args: [user],
-        address: token as Address,
-      })
-      //console.log(i, '0x' + user.padStart(64, '0') + Number(i).toString(16).padStart(64, '0'), resBalance.toString())
+        const [previousValue0, previousValue1] = await setStorage(i, testVal, testVal)
+        const resBalance = await readContract(client, {
+          abi: erc20Abi,
+          functionName: 'balanceOf',
+          args: [user],
+          address: token as Address,
+        })
 
-      if (resBalance !== 0n) {
-        if (resBalance.toString() === balance.toString() || resBalance !== balancePrimary) {
-          cache[token.toLowerCase()] = i
-          return true
+        if (resBalance !== 0n) {
+          if (resBalance === testVal) {
+            await setStorage(i, balance, balance)
+            cache[token.toLowerCase()] = i
+            return true
+          }
         }
-      }
-      await setStorage(i, previousValue0, previousValue1) // revert previous values back
-    })
+
+        await setStorage(i, previousValue0, previousValue1) // revert previous values back
+
+        return false
+      })
   )
-  return false
+
+  return result.some(Boolean)
 }

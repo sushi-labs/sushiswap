@@ -1,22 +1,28 @@
 import { ChainId } from '@sushiswap/chain'
 import { config, network } from 'hardhat'
-import { Client, createPublicClient, custom, testActions, walletActions } from 'viem'
-import { HDAccount, mnemonicToAccount } from 'viem/accounts'
+import { Client, createPublicClient, custom, Hex, testActions, walletActions } from 'viem'
+import { HDAccount, mnemonicToAccount, PrivateKeyAccount, privateKeyToAccount } from 'viem/accounts'
 import { hardhat } from 'viem/chains'
 
 const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
 
 export interface TestConfig {
   client: Client
-  user: HDAccount
+  user: HDAccount | PrivateKeyAccount
   chainId: ChainId
 }
 
 export async function getTestConfig(): Promise<TestConfig> {
   const chainId = network.config.chainId as ChainId
 
-  const accounts = config.networks.hardhat.accounts as { mnemonic: string }
-  const user = mnemonicToAccount(accounts.mnemonic, { accountIndex: 0 })
+  let user
+
+  const accounts = config.networks.hardhat.accounts as { mnemonic: string } | [{ privateKey: Hex }]
+  if (Array.isArray(accounts)) {
+    user = privateKeyToAccount(accounts[0].privateKey)
+  } else {
+    user = mnemonicToAccount(accounts.mnemonic, { accountIndex: 0 })
+  }
 
   const client = createPublicClient({
     batch: {

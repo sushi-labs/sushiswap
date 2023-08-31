@@ -368,11 +368,11 @@ async function checkSwap(
         args: [poolInfo.user],
       })
     }
+
     realOutBI = balanceAfter - balanceBefore
   }
-  const realOut = Number(realOutBI)
 
-  expectCloseValues(realOut, expectedOut.out, precision)
+  expectCloseValues(realOutBI, expectedOut.out, precision)
 }
 
 async function forEachFactoryPool(config: TestConfig, func: (address: Address, factoryName: string) => Promise<void>) {
@@ -491,7 +491,7 @@ describe('Real Curve pools consistency check', () => {
         console.log('skipped (exception list: function "exchange" failes)')
         return
       }
-      const precision = FACTORY_POOL_PRECISION_SPECIAL[poolAddress.toLowerCase()] || 1e-9
+      const precision = FACTORY_POOL_PRECISION_SPECIAL[poolAddress.toLowerCase()] || BigInt(1e9)
       const result = await processMultiTokenPool(config, poolAddress, CurvePoolType.Factory, precision)
       console.log(result)
       if (result === 'passed') ++passed

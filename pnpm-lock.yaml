@@ -3057,6 +3057,7 @@ importers:
       '@sushiswap/extractor': workspace:*
       '@sushiswap/hardhat-config': workspace:*
       '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/router': workspace:*
       '@sushiswap/router-config': workspace:*
@@ -3117,6 +3118,7 @@ importers:
       '@sushiswap/extractor': link:../../packages/extractor
       '@sushiswap/hardhat-config': link:../../config/hardhat
       '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/math': link:../../packages/math
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/router': link:../../packages/router
       '@sushiswap/router-config': link:../../config/router
@@ -3189,7 +3191,7 @@ packages:
     dependencies:
       '@fastify/deepmerge': 1.3.0
       ajv: 8.12.0
-      ajv-formats: 2.1.1_ajv@8.12.0
+      ajv-formats: 2.1.1
       fast-deep-equal: 3.1.3
       rfdc: 1.3.0
 
@@ -20550,17 +20552,6 @@ packages:
         optional: true
     dependencies:
       ajv: 8.12.0
-    dev: false
-
-  /ajv-formats/2.1.1_ajv@8.12.0:
-    resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
-    peerDependencies:
-      ajv: ^8.0.0
-    peerDependenciesMeta:
-      ajv:
-        optional: true
-    dependencies:
-      ajv: 8.12.0
 
   /ajv/6.12.6:
     resolution: {integrity: sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==}
@@ -27413,7 +27404,7 @@ packages:
       '@whatwg-node/fetch': 0.8.8
       '@whatwg-node/server': 0.7.7
       ajv: 8.12.0
-      ajv-formats: 2.1.1_ajv@8.12.0
+      ajv-formats: 2.1.1
       hotscript: 1.0.13
       json-schema-to-ts: 2.9.2
       openapi-types: 12.1.3
