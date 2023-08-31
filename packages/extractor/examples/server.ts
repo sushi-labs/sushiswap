@@ -73,7 +73,7 @@ async function main() {
     await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId])
     extractors.set(chainId, extractor)
     const tokenManager = new TokenManager(
-      extractor?.multiCallAggregator as MultiCallAggregator,
+      extractor.multiCallAggregator,
       path.resolve(__dirname, '../cache'),
       `./tokens-${chainId}`
     )
