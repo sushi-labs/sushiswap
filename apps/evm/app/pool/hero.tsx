@@ -2,7 +2,7 @@
 
 import { ChevronRightIcon, GiftIcon } from '@heroicons/react-v1/outline'
 import { ChainId } from '@sushiswap/chain'
-import { isTridentChainId } from '@sushiswap/trident-sdk'
+import { isTridentChainId, TridentChainId } from '@sushiswap/trident-sdk'
 import { LinkExternal, LinkInternal, typographyVariants } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Chip } from '@sushiswap/ui/components/chip'
@@ -42,7 +42,11 @@ export const Hero: FC = () => {
                 href={
                   isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
                     ? `/pool/add?chainId=${chainId}`
-                    : `/pool/add/v2/${chainId}`
+                    : isSushiSwapV2ChainId(chainId as SushiSwapV3ChainId)
+                    ? `/pool/add/v2/${chainId}`
+                    : isTridentChainId(chainId as TridentChainId)
+                    ? `/pool/add/trident/${chainId}`
+                    : ''
                 }
               >
                 I want to create a position
