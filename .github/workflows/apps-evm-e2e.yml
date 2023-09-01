@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [opened, synchronize]
     paths:
-      - ".github/workflows/apps-swap-e2e.yml"
+      - ".github/workflows/apps-evm-e2e.yml"
       - "apps/evm/**"
       - "config/nextjs/**"
       - "config/react-query/**"
@@ -88,7 +88,6 @@ jobs:
         run: pnpm test-evm-app
         env:
           ACADEMY_URL: 'https://academy.sushi.com'
-          ANALYTICS_URL: 'https://analytics.sushi.com'
           BLOG_URL: 'https://blog.sushi.com'
           FURO_URL: 'https://furo.sushi.com'
           ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}

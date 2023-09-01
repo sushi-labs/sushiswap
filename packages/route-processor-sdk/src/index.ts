@@ -157,7 +157,7 @@ export const isRouteProcessor3ChainId = (chainId: ChainId): chainId is RouteProc
 export const ROUTE_PROCESSOR_3_1_SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,
   ChainId.BASE,
-  ChainId.BSC,
+  // ChainId.BSC,
   ChainId.ETHEREUM,
   ChainId.POLYGON,
 ] as const
@@ -165,7 +165,7 @@ export type RouteProcessor3_1ChainId = (typeof ROUTE_PROCESSOR_3_1_SUPPORTED_CHA
 export const ROUTE_PROCESSOR_3_1_ADDRESS: Record<RouteProcessor3_1ChainId, `0x${string}`> = {
   [ChainId.ARBITRUM]: '0x3c1fBA3bCEE7CE410B155a8C71F9fF1312852C82',
   [ChainId.BASE]: '0x9B77032075806975B3bd3bcFc69E5DE36ee6D176',
-  [ChainId.BSC]: '0xbACEB8eC6b9355Dfc0269C18bac9d6E2Bdc29C4F',
+  // [ChainId.BSC]: '0xbACEB8eC6b9355Dfc0269C18bac9d6E2Bdc29C4F',
   [ChainId.ETHEREUM]: '0x8516944E89f296eb6473d79aED1Ba12088016c9e',
   [ChainId.POLYGON]: '0x9cfEAdcC38377283aDB944205c5238d04d4dD8A1',
 } as const
