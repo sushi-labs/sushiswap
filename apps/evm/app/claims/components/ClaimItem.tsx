@@ -3,7 +3,7 @@
 import { CheckIcon } from '@heroicons/react-v1/solid'
 import { Amount } from '@sushiswap/currency'
 import { ZERO } from '@sushiswap/math'
-import { routeProcessor2Address } from '@sushiswap/route-processor/exports/exports'
+import { ROUTE_PROCESSOR_2_ADDRESS } from '@sushiswap/route-processor-sdk'
 import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Button } from '@sushiswap/ui/components/button'
@@ -21,7 +21,6 @@ import {
 import { RP2MerkleTreeClaimSchema } from '@sushiswap/wagmi/future/hooks/exploits/constants'
 import { RP2ClaimChainId } from '@sushiswap/wagmi/future/hooks/exploits/types'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
-import { BigNumber } from 'ethers'
 import React, { FC, useMemo } from 'react'
 import { z } from 'zod'
 
@@ -39,17 +38,17 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
     token,
     chainId,
     owner: account,
-    spender: routeProcessor2Address[chainId],
+    spender: ROUTE_PROCESSOR_2_ADDRESS[chainId],
   })
 
   const { write: revoke, isPending: isRevokePending } = useTokenRevokeApproval({
     account,
     token,
-    spender: routeProcessor2Address[chainId],
+    spender: ROUTE_PROCESSOR_2_ADDRESS[chainId],
   })
 
   const amount = useMemo(
-    () => (token ? Amount.fromRawAmount(token, BigNumber.from(claim.amount).toString()) : undefined),
+    () => (token ? Amount.fromRawAmount(token, claim.amount.toString()) : undefined),
     [claim.amount, token]
   )
 

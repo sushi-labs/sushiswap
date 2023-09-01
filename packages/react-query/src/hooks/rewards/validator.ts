@@ -6,7 +6,7 @@ export const angleRewardsPoolsValidator = z.object({
   decimalToken1: z.number(),
   distributionData: z.array(
     z.object({
-      amm: z.number(),
+      amm: z.number().optional(),
       amount: z.number(),
       breakdown: z.record(z.string(), z.number()).optional(),
       end: z.number(),
@@ -58,22 +58,24 @@ export const angleRewardsPoolsValidator = z.object({
 })
 
 export const angleRewardsBaseValidator = z.object({
-  feeRebate: z.number(),
-  message: z.string(),
+  feeRebate: z.number().optional(),
+  message: z.string().optional(),
   pools: z.record(z.string(), angleRewardsPoolsValidator),
-  signed: z.boolean(),
-  transactionData: z.record(
-    z.string(),
-    z.object({
-      claim: z.string(),
-      leaf: z.string(),
-      token: z.string(),
-      proof: z.array(z.string()),
-    })
-  ),
-  validRewardTokens: z.array(
-    z.object({ minimumAmountPerEpoch: z.number(), token: z.string(), decimals: z.number(), symbol: z.string() })
-  ),
+  signed: z.boolean().optional(),
+  transactionData: z
+    .record(
+      z.string(),
+      z.object({
+        claim: z.string(),
+        leaf: z.string(),
+        token: z.string(),
+        proof: z.array(z.string()),
+      })
+    )
+    .optional(),
+  validRewardTokens: z
+    .array(z.object({ minimumAmountPerEpoch: z.number(), token: z.string(), decimals: z.number(), symbol: z.string() }))
+    .optional(),
 })
 
 export const angleRewardsMultipleValidator = z.array(angleRewardsBaseValidator)

@@ -1,4 +1,3 @@
-import { TransactionRequest } from '@ethersproject/providers'
 import { ArrowRightIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
@@ -17,22 +16,24 @@ import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createToast } from '@sushiswap/ui/components/toast'
 import {
-  _useSendTransaction as useSendTransaction,
   useAccount,
-  useContract,
   useEnsAddress,
+  usePrepareSendTransaction,
+  useSendTransaction,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
-import React, { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import React, { FC, useCallback, useMemo, useState } from 'react'
+import { Abi, Address, encodeFunctionData, isAddress } from 'viem'
 
 import { Stream, Vesting } from '../lib'
 
 interface TransferModalProps {
   stream?: Stream | Vesting
-  abi: NonNullable<Parameters<typeof useContract>['0']>['abi']
-  address: string
+  abi: Abi
+  address: Address
   fn?: string
   chainId: ChainId
 }
@@ -49,31 +50,27 @@ export const TransferModal: FC<TransferModalProps> = ({
 
   const type = stream instanceof Vesting ? 'Vest' : 'Stream'
 
-  const contract = useContract({
-    address: contractAddress,
-    abi: abi,
-  })
   const { data: resolvedAddress } = useEnsAddress({
     name: recipient,
     chainId: ChainId.ETHEREUM,
+    enabled: Boolean(recipient.includes('.eth')),
   })
 
-  const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!stream || !address || !recipient || !resolvedAddress) return
+  const recipientAddress = isAddress(recipient) ? recipient : resolvedAddress
 
-      setRequest({
-        from: address,
-        to: contractAddress,
-        data: contract?.interface.encodeFunctionData(fn, [address, resolvedAddress, stream?.id]),
-      })
-    },
-    [stream, address, recipient, resolvedAddress, contractAddress, contract?.interface, fn]
-  )
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    if (!stream || !address || !recipientAddress) return
+
+    return {
+      from: address,
+      to: contractAddress,
+      data: encodeFunctionData({ abi, functionName: fn, args: [address, recipientAddress, stream?.id] }),
+    }
+  }, [stream, address, recipientAddress, contractAddress, abi, fn])
 
   const onSettled = useCallback(
     async (data: SendTransactionResult | undefined) => {
-      if (!data || !resolvedAddress || !address) return
+      if (!data || !recipientAddress || !address) return
 
       const ts = new Date().getTime()
       void createToast({
@@ -83,26 +80,30 @@ export const TransferModal: FC<TransferModalProps> = ({
         chainId,
         timestamp: ts,
         groupTimestamp: ts,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Transferring ${type}`,
-          completed: `Successfully transferred ${type} to ${shortenAddress(resolvedAddress)}`,
+          completed: `Successfully transferred ${type} to ${shortenAddress(recipientAddress)}`,
           failed: `Something went wrong transferring the ${type}`,
         },
       })
     },
-    [address, chainId, resolvedAddress, type]
+    [address, chainId, recipientAddress, type]
   )
+
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
+    enabled: Boolean(stream && address && recipient && recipientAddress),
+  })
 
   const {
     sendTransactionAsync,
     data,
     isLoading: isWritePending,
   } = useSendTransaction({
-    chainId,
-    prepare,
+    ...config,
     onSettled,
-    enabled: Boolean(stream && address && recipient && resolvedAddress),
   })
 
   const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
@@ -157,8 +158,8 @@ export const TransferModal: FC<TransferModalProps> = ({
                       fullWidth
                       disabled={
                         isWritePending ||
-                        !resolvedAddress ||
-                        resolvedAddress.toLowerCase() === stream?.recipient.id.toLowerCase() ||
+                        !recipientAddress ||
+                        recipientAddress?.toLowerCase() === stream?.recipient.id.toLowerCase() ||
                         !sendTransactionAsync
                       }
                       onClick={() => sendTransactionAsync?.().then(() => confirm())}
@@ -166,9 +167,9 @@ export const TransferModal: FC<TransferModalProps> = ({
                     >
                       {isWritePending ? (
                         <Dots>Confirm Transfer</Dots>
-                      ) : resolvedAddress?.toLowerCase() === stream?.recipient.id.toLowerCase() ? (
+                      ) : recipientAddress?.toLowerCase() === stream?.recipient.id.toLowerCase() ? (
                         'Invalid recipient'
-                      ) : !resolvedAddress ? (
+                      ) : !recipientAddress ? (
                         'Enter recipient'
                       ) : (
                         'Transfer'
@@ -186,7 +187,7 @@ export const TransferModal: FC<TransferModalProps> = ({
         status={status}
         testId={`update-${type.toLowerCase()}-confirmation-modal`}
         successMessage={`Successfully transferred ${type.toLowerCase()} to ${
-          recipient ? shortenAddress(recipient) : ''
+          recipientAddress ? shortenAddress(recipientAddress) : ''
         }`}
         txHash={data?.hash}
       />

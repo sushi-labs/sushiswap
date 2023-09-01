@@ -1,7 +1,6 @@
 import { masterChefV1Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Address, readContract, readContracts } from '@wagmi/core'
-import { BigNumber } from 'ethers'
 
 import { MASTERCHEF_ADDRESS } from '../../../config.js'
 
@@ -27,12 +26,12 @@ export async function getTotalAllocPoint() {
   return readContract(totalAllocPointCall)
 }
 
-export async function getPoolInfos(poolLength: number) {
+export async function getPoolInfos(poolLength: bigint) {
   const poolInfoCalls = [...Array(poolLength)].map(
     (_, i) =>
       ({
         address: MASTERCHEF_ADDRESS[ChainId.ETHEREUM] as Address,
-        args: [BigNumber.from(i)],
+        args: [BigInt(i)],
         chainId: ChainId.ETHEREUM,
         abi: masterChefV1Abi,
         functionName: 'poolInfo',
@@ -42,5 +41,14 @@ export async function getPoolInfos(poolLength: number) {
   return readContracts({
     allowFailure: true,
     contracts: poolInfoCalls,
-  })
+  }).then((results) =>
+    results
+      .filter(({ result }) => !!result)
+      .map(({ result }) => ({
+        lpToken: result[0],
+        allocPoint: result[1],
+        lastRewardBlock: result[2],
+        accSushiPerShare: result[3],
+      }))
+  )
 }

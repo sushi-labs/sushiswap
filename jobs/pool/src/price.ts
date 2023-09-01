@@ -2,7 +2,7 @@
 import './lib/wagmi.js'
 
 import { totalsAbi } from '@sushiswap/abi'
-import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId, isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { USDC_ADDRESS } from '@sushiswap/currency'
 import { Prisma, PrismaClient, Protocol, Token } from '@sushiswap/database'
@@ -15,12 +15,10 @@ import {
   RPool,
   RToken,
   StableSwapRPool,
-  toShareBN,
+  toShareBI,
 } from '@sushiswap/tines'
 import { TICK_SPACINGS } from '@sushiswap/v3-sdk'
-import { Address, readContracts } from '@wagmi/core'
-import { fetchBlockNumber } from '@wagmi/core'
-import { BigNumber } from 'ethers'
+import { Address, fetchBlockNumber, readContracts } from '@wagmi/core'
 import { isAddress } from 'ethers/lib/utils.js'
 import { performance } from 'perf_hooks'
 
@@ -53,7 +51,7 @@ export async function prices() {
         console.log(`Base token (${base}) does not exist in the database. chainId: ${chainId}. SKIPPING`)
         continue
       }
-      const minimumLiquidity = 500 * Math.pow(10, baseToken.decimals) // 500 USDC
+      const minimumLiquidity = 500 * 10 ** baseToken.decimals // 500 USDC
       const pools = await getPools(client, chainId)
       const { rPools, tokens } = await transform(chainId, pools)
       const tokensToUpdate = calculatePrices(rPools, minimumLiquidity, baseToken, tokens)
@@ -158,9 +156,11 @@ async function transform(chainId: ChainId, pools: Pool[]) {
   const stablePools = pools.filter((pool) => pool.protocol === Protocol.BENTOBOX_STABLE)
   const blockNumber = await fetchBlockNumber({ chainId })
   console.log(`ChainId ${chainId} got block number: ${blockNumber}. `)
-  const rebases = isBentoBoxV1ChainId(chainId) ? await fetchRebases(stablePools, chainId, blockNumber) : undefined
+  const rebases = isBentoBoxChainId(chainId) ? await fetchRebases(stablePools, chainId, blockNumber) : undefined
 
-  const constantProductPoolIds = pools.filter((p) => p.protocol === Protocol.BENTOBOX_CLASSIC || p.protocol === Protocol.SUSHISWAP_V2).map((p) => p.id)
+  const constantProductPoolIds = pools
+    .filter((p) => p.protocol === Protocol.BENTOBOX_CLASSIC || p.protocol === Protocol.SUSHISWAP_V2)
+    .map((p) => p.id)
   const stablePoolIds = stablePools.map((p) => p.id)
   const concentratedLiquidityPools = pools.filter((p) => p.protocol === Protocol.SUSHISWAP_V3)
 
@@ -195,7 +195,7 @@ async function transform(chainId: ChainId, pools: Pool[]) {
     if (pool.protocol === Protocol.BENTOBOX_CLASSIC || pool.protocol === Protocol.SUSHISWAP_V2) {
       rPools.push(
         new ConstantProductRPool(
-          pool.address,
+          pool.address as Address,
           token0 as RToken,
           token1 as RToken,
           pool.swapFee,
@@ -210,12 +210,12 @@ async function transform(chainId: ChainId, pools: Pool[]) {
       if (total0 && total1) {
         rPools.push(
           new StableSwapRPool(
-            pool.address,
+            pool.address as Address,
             token0 as RToken,
             token1 as RToken,
             pool.swapFee,
-            toShareBN(reserves.reserve0, total0),
-            toShareBN(reserves.reserve1, total1),
+            toShareBI(reserves.reserve0, total0),
+            toShareBI(reserves.reserve1, total1),
             pool.token0.decimals,
             pool.token1.decimals,
             total0,
@@ -230,7 +230,7 @@ async function transform(chainId: ChainId, pools: Pool[]) {
       if (v3 && tickSpacing) {
         rPools.push(
           new CLRPool(
-            pool.address,
+            pool.address as Address,
             token0 as RToken,
             token1 as RToken,
             pool.swapFee,
@@ -253,7 +253,7 @@ async function transform(chainId: ChainId, pools: Pool[]) {
   return { rPools, tokens }
 }
 
-async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId, blockNumber: number) {
+async function fetchRebases(pools: Pool[], chainId: BentoBoxChainId, blockNumber: bigint) {
   const sortedTokens = poolsToUniqueTokens(pools)
 
   const totals = await readContracts({
@@ -262,25 +262,25 @@ async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId, blockNumb
       (t) =>
         ({
           args: [t.address as Address],
-          address: bentoBoxV1Address[chainId],
+          address: BENTOBOX_ADDRESS[chainId],
           chainId: chainId,
           abi: totalsAbi,
           functionName: 'totals',
-          blockNumber,
         } as const)
     ),
+    blockNumber,
   })
 
   const rebases: Map<string, Rebase> = new Map()
   sortedTokens.forEach((t, i) => {
-    const total = totals[i]
-    if (total === undefined || total === null) return
-    rebases.set(t.address, total)
+    const total = totals[i].result
+    if (!total) return
+    rebases.set(t.address, { base: total[0], elastic: total[1] })
   })
   return rebases
 }
 
-async function fetchV3Info(pools: Pool[], chainId: ChainId, blockNumber: number) {
+async function fetchV3Info(pools: Pool[], chainId: ChainId, blockNumber: bigint) {
   const [slot0, liquidity] = await Promise.all([
     readContracts({
       allowFailure: true,
@@ -335,19 +335,29 @@ async function fetchV3Info(pools: Pool[], chainId: ChainId, blockNumber: number)
   ])
   const poolInfo: Map<string, V3PoolInfo> = new Map()
   pools.forEach((pool, i) => {
-    const _slot0 = slot0[i]
-    const _liquidity = liquidity[i]
+    const _slot0 = slot0[i].result
+    const _liquidity = liquidity[i].result
     if (_slot0 && _liquidity) {
+      const [
+        sqrtPriceX96,
+        tick,
+        observationIndex,
+        observationCardinality,
+        observationCardinalityNext,
+        feeProtocol,
+        unlocked,
+      ] = _slot0
+
       poolInfo.set(pool.address, {
         address: pool.address,
         liquidity: _liquidity,
-        sqrtPriceX96: _slot0.sqrtPriceX96,
-        tick: _slot0.tick,
-        observationIndex: _slot0.observationIndex,
-        observationCardinality: _slot0.observationCardinality,
-        observationCardinalityNext: _slot0.observationCardinalityNext,
-        feeProtocol: _slot0.feeProtocol,
-        unlocked: _slot0.unlocked,
+        sqrtPriceX96: sqrtPriceX96,
+        tick: tick,
+        observationIndex: observationIndex,
+        observationCardinality: observationCardinality,
+        observationCardinalityNext: observationCardinalityNext,
+        feeProtocol: feeProtocol,
+        unlocked: unlocked,
       })
     }
   })
@@ -392,7 +402,7 @@ function calculatePrices(
       console.log(`Price null: ${rToken.symbol}~${rToken.address}~${value}`)
     }
 
-    const price = Number((value / Math.pow(10, baseToken.decimals - token.decimals)).toFixed(12))
+    const price = Number((value / 10 ** (baseToken.decimals - token.decimals)).toFixed(12))
     if (price > Number.MAX_SAFE_INTEGER) continue
     // console.log(`${token.symbol}~${token.address}~${price}`)
     tokensWithPrices.push({ id: token.id, price })
@@ -436,8 +446,8 @@ interface Pool {
 
 interface V3PoolInfo {
   address: string
-  liquidity: BigNumber
-  sqrtPriceX96: BigNumber
+  liquidity: bigint
+  sqrtPriceX96: bigint
   tick: number
   observationIndex: number
   observationCardinality: number

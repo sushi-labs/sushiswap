@@ -43,6 +43,7 @@ interface DataTableProps<TData, TValue> {
   pagination?: boolean
   loading: boolean
   linkFormatter?: (value: TData) => string
+  externalLink?: boolean
   state?: Partial<TableState>
   onSortingChange?: OnChangeFn<SortingState>
   onPaginationChange?: OnChangeFn<PaginationState>
@@ -57,6 +58,7 @@ export function DataTable<TData, TValue>({
   pagination = false,
   loading,
   linkFormatter,
+  externalLink = false,
   state,
   onSortingChange,
   onPaginationChange,
@@ -77,6 +79,7 @@ export function DataTable<TData, TValue>({
       sorting: state?.sorting ? state.sorting : sorting,
       ...(state?.pagination && { pagination: state?.pagination }),
     },
+    autoResetPageIndex: false,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: onSortingChange ? onSortingChange : setSorting,
@@ -100,7 +103,11 @@ export function DataTable<TData, TValue>({
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id} className={classNames(header.column.getCanSort() ? 'px-2' : 'px-4')}>
+                  <TableHead
+                    style={{ width: header.getSize() }}
+                    key={header.id}
+                    className={classNames(header.column.getCanSort() ? 'px-2' : 'px-4')}
+                  >
                     {header.isPlaceholder ? null : (
                       <DataTableColumnHeader
                         description={header.column.columnDef?.meta?.headerDescription}
@@ -120,8 +127,12 @@ export function DataTable<TData, TValue>({
               .fill(null)
               .map((_, i) => (
                 <TableRow key={i}>
-                  {table.getVisibleFlatColumns().map((cell) => {
-                    return <TableCell key={cell.id}>{cell.columnDef.meta?.skeleton}</TableCell>
+                  {table.getVisibleFlatColumns().map((column, i) => {
+                    return (
+                      <TableCell style={{ width: column.getSize() }} key={column.id}>
+                        {column.columnDef.meta?.skeleton}
+                      </TableCell>
+                    )
                   })}
                 </TableRow>
               ))
@@ -132,14 +143,20 @@ export function DataTable<TData, TValue>({
                   {row.getVisibleCells().map((cell, i) =>
                     linkFormatter ? (
                       <TableCellAsLink
+                        style={{ width: cell.column.getSize() }}
                         href={linkFormatter(row.original)}
+                        external={externalLink}
                         key={cell.id}
                         testdata-id={`${testId}-${r}-${i}-td`}
                       >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCellAsLink>
                     ) : (
-                      <TableCell testdata-id={`${testId}-${r}-${i}-td`} key={cell.id}>
+                      <TableCell
+                        style={{ width: cell.column.getSize() }}
+                        testdata-id={`${testId}-${r}-${i}-td`}
+                        key={cell.id}
+                      >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     )

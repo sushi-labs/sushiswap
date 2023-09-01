@@ -1,5 +1,4 @@
 import type { BridgeBento, MultiRoute, RouteLeg } from '@sushiswap/tines'
-import type { BigNumber } from 'ethers'
 
 import { HEXer } from '../HEXer'
 import { LiquidityProviders } from '../liquidity-providers'
@@ -20,7 +19,7 @@ export class BentoBridgePoolCode extends PoolCode {
   }
 
   override getStartPoint(leg: RouteLeg): string {
-    if (leg.tokenFrom.chainId == this.pool.token0.chainId) {
+    if (leg.tokenFrom.chainId === this.pool.token0.chainId) {
       // bento deposit
       return this.bentoBoxAddress
     } else {
@@ -28,8 +27,8 @@ export class BentoBridgePoolCode extends PoolCode {
     }
   }
 
-  getSwapCodeForRouteProcessor(leg: RouteLeg, route: MultiRoute, to: string, exactAmount?: BigNumber): string {
-    if (leg.tokenFrom.chainId == this.pool.token0.chainId) {
+  getSwapCodeForRouteProcessor(leg: RouteLeg, route: MultiRoute, to: string, exactAmount?: bigint): string {
+    if (leg.tokenFrom.chainId === this.pool.token0.chainId) {
       // bento deposit
       if (leg.tokenFrom.tokenId === route.fromToken.tokenId) {
         // input token with exactAmount
@@ -39,7 +38,7 @@ export class BentoBridgePoolCode extends PoolCode {
             .address(to)
             .uint(exactAmount)
             .toString()
-          console.assert(code.length == 53 * 2, 'BentoBridge deposit unexpected code length')
+          console.assert(code.length === 53 * 2, 'BentoBridge deposit unexpected code length')
           return code
         } else {
           throw new Error("Bento deposit from input token can't work without exact amount")
@@ -51,7 +50,7 @@ export class BentoBridgePoolCode extends PoolCode {
           .address(to)
           .address(leg.tokenFrom.address)
           .toString()
-        console.assert(code.length == 41 * 2, 'BentoBridge deposit unexpected code length')
+        console.assert(code.length === 41 * 2, 'BentoBridge deposit unexpected code length')
         return code
       }
     } else {
@@ -64,7 +63,7 @@ export class BentoBridgePoolCode extends PoolCode {
             .address(to)
             .uint(exactAmount)
             .toString()
-          console.assert(code.length == 53 * 2, 'BentoBridge withdraw unexpected code length')
+          console.assert(code.length === 53 * 2, 'BentoBridge withdraw unexpected code length')
           return code
         } else {
           throw new Error("Bento withdraw from input token can't work without exact amount")
@@ -76,7 +75,7 @@ export class BentoBridgePoolCode extends PoolCode {
           .address(leg.tokenFrom.address)
           .address(to)
           .toString()
-        console.assert(code.length == 41 * 2, 'BentoBridge deposit unexpected code length')
+        console.assert(code.length === 41 * 2, 'BentoBridge deposit unexpected code length')
         return code
       }
     }
@@ -85,7 +84,7 @@ export class BentoBridgePoolCode extends PoolCode {
   getSwapCodeForRouteProcessor2(leg: RouteLeg, _route: MultiRoute, to: string): string {
     const code = new HEXer()
       .uint8(3) // bentoBridge
-      .uint8(leg.tokenFrom.chainId == this.pool.token0.chainId ? 1 : 0) // direction = deposit/withdraw
+      .uint8(leg.tokenFrom.chainId === this.pool.token0.chainId ? 1 : 0) // direction = deposit/withdraw
       .address(to)
       .toString()
     return code

@@ -115,6 +115,7 @@ export const NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
       </div>
     ),
   },
+  size: 300,
 }
 
 export const TVL_COLUMN: ColumnDef<Pool, unknown> = {

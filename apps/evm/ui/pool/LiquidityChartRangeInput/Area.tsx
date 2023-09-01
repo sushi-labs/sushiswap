@@ -28,9 +28,8 @@ export const Area: FC<AreaProps> = ({ series, xScale, yScale, xValue, yValue, fi
             .y0(yScale(0))(
             series.filter((d) => {
               const value = xScale(xValue(d))
-
-              return value <= window.innerWidth
-            }) as unknown as [number, number][]
+              return value > 0 && value <= window.innerWidth
+            }) as Iterable<[number, number]>
           ) ?? undefined
         }
       />

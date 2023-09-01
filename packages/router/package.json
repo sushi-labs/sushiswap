@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/router",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Sushi Router",
   "keywords": [
     "sushi",
@@ -12,7 +12,7 @@
     "url": "https://github.com/sushiswap/sushiswap.git",
     "directory": "packages/router"
   },
-  "license": "MIT",
+  "license": "UNLICENSED",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "main": "dist/index.js",
   "source": "src/index.ts",
@@ -36,17 +36,16 @@
   "dependencies": {
     "@ethersproject/abi": "5.7.0",
     "@ethersproject/address": "5.7.0",
-    "@ethersproject/bignumber": "5.7.0",
     "@ethersproject/solidity": "5.7.0",
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/amm": "workspace:*",
-    "@sushiswap/bentobox": "workspace:*",
+    "@sushiswap/bentobox-sdk": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
     "@sushiswap/tines": "workspace:*",
-    "@sushiswap/trident-core": "workspace:*",
+    "@sushiswap/trident-sdk": "workspace:*",
     "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",

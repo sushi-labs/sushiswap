@@ -1,15 +1,15 @@
 import { Price, Token, Type as Currency } from '@sushiswap/currency'
 import invariant from 'tiny-invariant'
 
-import { Pair } from './pair'
+import { SushiSwapV2Pool } from './SushiSwapV2Pool/SushiSwapV2Pool'
 
 export class Route<TInput extends Currency, TOutput extends Currency> {
-  public readonly pairs: Pair[]
+  public readonly pairs: SushiSwapV2Pool[]
   public readonly path: Token[]
   public readonly input: TInput
   public readonly output: TOutput
 
-  public constructor(pairs: Pair[], input: TInput, output: TOutput) {
+  public constructor(pairs: SushiSwapV2Pool[], input: TInput, output: TOutput) {
     invariant(pairs.length > 0, 'PAIRS')
     const chainId: number = pairs[0].chainId
     invariant(

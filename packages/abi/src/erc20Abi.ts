@@ -1,5 +1,26 @@
 export const erc20Abi = [
   {
+    inputs: [
+      {
+        internalType: 'string',
+        name: 'name',
+        type: 'string',
+      },
+      {
+        internalType: 'string',
+        name: 'symbol',
+        type: 'string',
+      },
+      {
+        internalType: 'uint256',
+        name: 'supply',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'constructor',
+  },
+  {
     constant: true,
     inputs: [],
     name: 'name',

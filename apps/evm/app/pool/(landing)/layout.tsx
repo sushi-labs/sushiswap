@@ -1,4 +1,3 @@
-import React from '@sushiswap/prettier-config/dist/react'
 import { Container, LinkInternal } from '@sushiswap/ui'
 
 import { PathnameButton, PoolsFiltersProvider } from '../../../ui/pool'

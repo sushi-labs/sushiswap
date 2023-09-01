@@ -10,7 +10,8 @@ import { MigrateTab } from '../../../../ui/pool/MigrateTab'
 import { getPool } from '../page'
 
 export default async function MigratePage({ params }: { params: { id: string } }) {
-  const [chainId, address] = params.id.split('%3A') as [ChainId, string]
+  const [_chainId, address] = params.id.split(params.id.includes('%3A') ? '%3A' : ':') as [string, string]
+  const chainId = Number(_chainId) as ChainId
   const pool = await getPool({ chainId, address })
 
   return (

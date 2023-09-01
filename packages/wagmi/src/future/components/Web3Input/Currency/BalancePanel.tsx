@@ -1,12 +1,10 @@
 import { Amount, Native, Type } from '@sushiswap/currency'
+import { classNames } from '@sushiswap/ui'
+import { WalletIcon } from '@sushiswap/ui/components/icons'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
-
 import { FC, memo, useCallback } from 'react'
 
 import { CurrencyInputProps } from './CurrencyInput'
-import { JSBI } from '@sushiswap/math'
-import { WalletIcon } from '@sushiswap/ui/components/icons'
-import { classNames } from '@sushiswap/ui'
 
 type BalancePanel = Pick<CurrencyInputProps, 'chainId' | 'onChange' | 'currency' | 'disableMaxButton' | 'loading'> & {
   id?: string
@@ -15,7 +13,7 @@ type BalancePanel = Pick<CurrencyInputProps, 'chainId' | 'onChange' | 'currency'
   type: 'INPUT' | 'OUTPUT'
 }
 
-const MIN_NATIVE_CURRENCY_FOR_GAS: JSBI = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(16)) // .01 ETH
+const MIN_NATIVE_CURRENCY_FOR_GAS = 10n ** 16n // .01 ETH
 
 export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
   id,

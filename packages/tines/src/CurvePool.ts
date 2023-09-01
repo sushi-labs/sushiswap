@@ -1,105 +1,104 @@
-import { BigNumber } from '@ethersproject/bignumber'
+import { abs } from '@sushiswap/math'
+import { Address } from 'viem'
 
 import { RPool, RToken } from './PrimaryPools'
-import { getBigNumber } from './Utils'
+import { getBigInt } from './Utils'
 
 export class CurvePool extends RPool {
   readonly A: number
-  D: BigNumber // set it to 0 if reserves are changed !!
+  D: bigint // set it to 0 if reserves are changed !!
 
-  rate0BN: BigNumber
-  rate1BN18: BigNumber
+  rate0BI: bigint
+  rate1BN18: bigint
   rate0: number
   rate1: number
-  reserve0Rated: BigNumber
-  reserve1Rated: BigNumber
+  reserve0Rated: bigint
+  reserve1Rated: bigint
 
   constructor(
-    address: string,
+    address: Address,
     token0: RToken,
     token1: RToken,
     fee: number,
     A: number,
-    reserve0: BigNumber,
-    reserve1: BigNumber,
+    reserve0: bigint,
+    reserve1: bigint,
     ratio = 1 // is used for some pools with liquid stake tokens - like ankrETH
   ) {
     super(address, token0, token1, fee, reserve0, reserve1, undefined, 90_000)
     this.A = A
-    this.D = BigNumber.from(0)
+    this.D = 0n
     if (address) {
       const decimalsMin = Math.min(this.token0.decimals, this.token1.decimals)
-      this.rate0 = Math.pow(10, this.token1.decimals - decimalsMin)
-      this.rate1 = Math.pow(10, this.token0.decimals - decimalsMin) * ratio
-      this.rate0BN = getBigNumber(this.rate0)
-      this.rate1BN18 = getBigNumber(this.rate1 * 1e18) // 18 digits for precision
-      this.reserve0Rated = this.reserve0.mul(this.rate0BN)
-      this.reserve1Rated = this.reserve1.mul(this.rate1BN18).div(getBigNumber(1e18))
+      this.rate0 = 10 ** (this.token1.decimals - decimalsMin)
+      this.rate1 = 10 ** (this.token0.decimals - decimalsMin) * ratio
+      this.rate0BI = getBigInt(this.rate0)
+      this.rate1BN18 = getBigInt(this.rate1 * 1e18) // 18 digits for precision
+      this.reserve0Rated = this.reserve0 * this.rate0BI
+      this.reserve1Rated = (this.reserve1 * this.rate1BN18) / getBigInt(1e18)
     } else {
       // for deserialization
       this.rate0 = 0
       this.rate1 = 0
-      this.rate0BN = undefined as unknown as BigNumber
-      this.rate1BN18 = undefined as unknown as BigNumber
-      this.reserve0Rated = undefined as unknown as BigNumber
-      this.reserve1Rated = undefined as unknown as BigNumber
+      this.rate0BI = undefined as unknown as bigint
+      this.rate1BN18 = undefined as unknown as bigint
+      this.reserve0Rated = undefined as unknown as bigint
+      this.reserve1Rated = undefined as unknown as bigint
     }
   }
 
-  updateReserves(res0: BigNumber, res1: BigNumber) {
-    this.D = BigNumber.from(0)
+  updateReserves(res0: bigint, res1: bigint) {
+    this.D = 0n
     this.reserve0 = res0
     this.reserve1 = res1
-    this.reserve0Rated = this.reserve0.mul(this.rate0BN)
-    this.reserve1Rated = this.reserve1.mul(this.rate1BN18).div(getBigNumber(1e18))
+    this.reserve0Rated = this.reserve0 * this.rate0BI
+    this.reserve1Rated = (this.reserve1 * this.rate1BN18) / getBigInt(1e18)
   }
 
-  computeLiquidity(): BigNumber {
-    if (!this.D.isZero()) return this.D // already calculated
+  computeLiquidity(): bigint {
+    if (this.D !== 0n) return this.D // already calculated
 
     const r0 = this.reserve0Rated
     const r1 = this.reserve1Rated
 
-    if (r0.isZero() && r1.isZero()) return BigNumber.from(0)
+    if (r0 === 0n && r1 === 0n) {
+      return 0n
+    }
 
-    const s = r0.add(r1)
-    const nA = BigNumber.from(this.A * 2)
+    const s = r0 + r1
+
+    const nA = BigInt(this.A * 2)
+
     let prevD
+
     let D = s
     for (let i = 0; i < 256; i++) {
-      const dP = D.mul(D).div(r0).mul(D).div(r1).div(4)
+      const dP = (((D * D) / r0) * D) / r1 / 4n
       prevD = D
-      D = nA
-        .mul(s)
-        .add(dP.mul(2))
-        .mul(D)
-        .div(nA.sub(1).mul(D).add(dP.mul(3)))
-      if (D.sub(prevD).abs().lte(1)) {
-        break
-      }
+      D = ((nA * s + 2n * dP) * D) / ((nA - 1n) * D + 3n * dP)
+
+      if (abs(D - prevD) <= 1) break
     }
+
     this.D = D
     return D
   }
 
-  computeY(x: BigNumber): BigNumber {
+  computeY(x: bigint): bigint {
     const D = this.computeLiquidity()
 
-    const nA = this.A * 2
+    const nA = BigInt(this.A * 2)
 
-    const c = D.mul(D)
-      .div(x.mul(2))
-      .mul(D)
-      .div(nA * 2)
-    const b = D.div(nA).add(x)
+    const c = (((D * D) / (x * 2n)) * D) / (nA * 2n)
+    const b = D / nA + x
 
     let yPrev
     let y = D
     for (let i = 0; i < 256; i++) {
       yPrev = y
 
-      y = y.mul(y).add(c).div(y.mul(2).add(b).sub(D))
-      if (y.sub(yPrev).abs().lte(1)) {
+      y = (y * y + c) / (y * 2n + b - D)
+      if (abs(y - yPrev) <= 1) {
         break
       }
     }
@@ -108,27 +107,27 @@ export class CurvePool extends RPool {
 
   calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
     amountIn *= direction ? this.rate0 : this.rate1
-    const xBN = direction ? this.reserve0Rated : this.reserve1Rated
-    const yBN = direction ? this.reserve1Rated : this.reserve0Rated
-    const xNewBN = xBN.add(getBigNumber(amountIn /* * (1 - this.fee)*/))
-    const yNewBN = this.computeY(xNewBN)
-    const dy = parseInt(yBN.sub(yNewBN).toString()) / (direction ? this.rate1 : this.rate0)
-    if (parseInt(yNewBN.toString()) < this.minLiquidity) throw 'Curve pool OutOfLiquidity'
+    const xBI = direction ? this.reserve0Rated : this.reserve1Rated
+    const yBI = direction ? this.reserve1Rated : this.reserve0Rated
+    const xNewBI = xBI + getBigInt(amountIn /* * (1 - this.fee)*/)
+    const yNewBI = this.computeY(xNewBI)
+    const dy = parseInt((yBI - yNewBI).toString()) / (direction ? this.rate1 : this.rate0)
+    if (parseInt(yNewBI.toString()) < this.minLiquidity) throw 'Curve pool OutOfLiquidity'
     return { out: dy * (1 - this.fee), gasSpent: this.swapGasCost }
   }
 
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
     amountOut *= direction ? this.rate1 : this.rate0
-    const xBN = direction ? this.reserve0Rated : this.reserve1Rated
-    const yBN = direction ? this.reserve1Rated : this.reserve0Rated
-    let yNewBN = yBN.sub(getBigNumber(amountOut / (1 - this.fee)))
-    if (yNewBN.lt(1))
+    const xBI = direction ? this.reserve0Rated : this.reserve1Rated
+    const yBI = direction ? this.reserve1Rated : this.reserve0Rated
+    let yNewBI = yBI - getBigInt(amountOut / (1 - this.fee))
+    if (yNewBI < 1)
       // lack of precision
-      yNewBN = BigNumber.from(1)
+      yNewBI = 1n
 
-    const xNewBN = this.computeY(yNewBN)
+    const xNewBI = this.computeY(yNewBI)
     const input = Math.round(
-      parseInt(xNewBN.sub(xBN).toString()) /* / (1 - this.fee)*/ / (direction ? this.rate0 : this.rate1)
+      parseInt((xNewBI - xBI).toString()) /* / (1 - this.fee)*/ / (direction ? this.rate0 : this.rate1)
     )
 
     //if (input < 1) input = 1
@@ -140,8 +139,8 @@ export class CurvePool extends RPool {
   }
 
   calcPrice(amountIn: number, direction: boolean, takeFeeIntoAccount: boolean): number {
-    const xBN = direction ? this.reserve0Rated : this.reserve1Rated
-    const x = parseInt(xBN.toString())
+    const xBI = direction ? this.reserve0Rated : this.reserve1Rated
+    const x = parseInt(xBI.toString())
     const oneMinusFee = takeFeeIntoAccount ? 1 - this.fee : 1
     const D = parseInt(this.computeLiquidity().toString())
     const A = this.A / 2

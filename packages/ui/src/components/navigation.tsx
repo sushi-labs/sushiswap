@@ -2,7 +2,8 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import Link from 'next/link'
 import * as React from 'react'
 
-import { classNames, navigationMenuTriggerStyle, SushiIcon } from '../index'
+import { classNames, navigationMenuTriggerStyle } from '../index'
+import { BirthdayIcon } from './icons/BirthdayIcon'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -44,6 +45,16 @@ const EXPLORE_NAVIGATION_LINKS: { title: string; href: string; description: stri
     href: '/academy',
     description: 'Everything you need to get up to speed with DeFi.',
   },
+  {
+    title: 'Partner with Sushi',
+    href: '/partner',
+    description: 'Incentivize your token with Sushi rewards.',
+  },
+  {
+    title: 'List enquiry',
+    href: '/tokenlist-request',
+    description: 'Get your token on our default token list.',
+  },
 ]
 
 const TOOLS_NAVIGATION_LINKS: { title: string; href: string; description: string }[] = [
@@ -74,6 +85,19 @@ const TOOLS_NAVIGATION_LINKS: { title: string; href: string; description: string
   },
 ]
 
+const PARTNER_NAVIGATION_LINKS: { title: string; href: string; description: string }[] = [
+  {
+    title: 'Partner with Sushi',
+    href: '/partner',
+    description: 'Incentivize your token with Sushi rewards.',
+  },
+  {
+    title: 'List enquiry',
+    href: '/tokenlist-request',
+    description: 'Get your token on our default token list.',
+  },
+]
+
 const navigationContainerVariants = cva(
   'px-4 sticky flex items-center flex-grow gap-4 top-0 z-50 min-h-[56px] max-h-[56px] h-[56px]',
   {
@@ -96,7 +120,7 @@ interface NavContainerProps extends VariantProps<typeof navigationContainerVaria
 const NavigationContainer: React.FC<NavContainerProps> = ({ children, variant }) => {
   return (
     <div className={navigationContainerVariants({ variant })}>
-      <SushiIcon width={24} height={24} />
+      <BirthdayIcon width={26} height={26} className="mb-[4px]" />
       <div className="flex items-center justify-between flex-grow gap-4">{children}</div>
     </div>
   )
@@ -161,10 +185,27 @@ const Navigation: React.FC<NavProps> = ({ rightElement, variant, legacyBehavior 
             )}
           </NavigationMenuItem>
           <NavigationMenuItem className="hidden md:block">
-            <NavigationMenuTrigger>Tools</NavigationMenuTrigger>
+            <NavigationMenuTrigger>More</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="w-[400px] gap-3 p-4">
                 {TOOLS_NAVIGATION_LINKS.map((component) => (
+                  <NavigationListItem
+                    key={component.title}
+                    title={component.title}
+                    href={component.href}
+                    legacyBehavior={legacyBehavior}
+                  >
+                    {component.description}
+                  </NavigationListItem>
+                ))}
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          <NavigationMenuItem className="hidden md:block">
+            <NavigationMenuTrigger>Partners</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className="w-[400px] gap-3 p-4">
+                {PARTNER_NAVIGATION_LINKS.map((component) => (
                   <NavigationListItem
                     key={component.title}
                     title={component.title}
@@ -230,4 +271,11 @@ const NavigationListItem = React.forwardRef<React.ElementRef<'a'>, NavigationLis
 
 NavigationListItem.displayName = 'NavListItem'
 
-export { EXPLORE_NAVIGATION_LINKS, Navigation, NavigationContainer, NavigationListItem, TOOLS_NAVIGATION_LINKS }
+export {
+  EXPLORE_NAVIGATION_LINKS,
+  Navigation,
+  NavigationContainer,
+  NavigationListItem,
+  PARTNER_NAVIGATION_LINKS,
+  TOOLS_NAVIGATION_LINKS,
+}

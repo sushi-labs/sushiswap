@@ -1,7 +1,5 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { TransactionRequest } from '@ethersproject/providers'
 import { DownloadIcon } from '@heroicons/react/outline'
-import { FuroVestingChainId } from '@sushiswap/furo'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import { ZERO } from '@sushiswap/math'
 import {
   DialogConfirm,
@@ -17,17 +15,24 @@ import {
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createToast } from '@sushiswap/ui/components/toast'
-import { useAccount, useFuroVestingContract, useWaitForTransaction } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import {
+  useAccount,
+  useFuroVestingContract,
+  usePrepareSendTransaction,
+  useSendTransaction,
+  useWaitForTransaction,
+} from '@sushiswap/wagmi'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import React, { Dispatch, FC, SetStateAction, useCallback } from 'react'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import React, { FC, useCallback, useMemo } from 'react'
+import { encodeFunctionData } from 'viem'
 
 import { useVestingBalance, Vesting } from '../../lib'
 
 interface WithdrawModalProps {
   vesting?: Vesting
-  chainId: FuroVestingChainId
+  chainId: FuroChainId
 }
 
 export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
@@ -47,7 +52,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
         chainId,
         timestamp: ts,
         groupTimestamp: ts,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Withdrawing ${balance.toSignificant(6)} ${balance.currency.symbol}`,
           completed: `Successfully withdrawn ${balance.toSignificant(6)} ${balance.currency.symbol}`,
@@ -58,29 +63,34 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
     [balance, chainId, address]
   )
 
-  const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!vesting || !balance || !contract || !address) return
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    if (!vesting || !balance || !contract || !address) return {}
 
-      setRequest({
-        from: address,
-        to: contract.address,
-        data: contract.interface.encodeFunctionData('withdraw', [BigNumber.from(vesting.id), '0x', false]),
-      })
-    },
-    [vesting, balance, contract, address]
-  )
+    return {
+      account: address,
+      to: contract.address,
+      data: encodeFunctionData({
+        abi: contract.abi,
+        functionName: 'withdraw',
+        args: [BigInt(vesting.id), '0x', false],
+      }),
+    }
+  }, [vesting, balance, contract, address])
+
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
+    enabled: Boolean(vesting && balance && contract),
+  })
 
   const {
     sendTransactionAsync,
     data,
     isLoading: isWritePending,
   } = useSendTransaction({
-    chainId,
-    prepare,
+    ...config,
     onSettled,
-    enabled: Boolean(vesting && balance && contract),
-    gasMargin: true,
+    gas: config?.gas ? (config.gas * 120n) / 100n : undefined,
   })
 
   const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
@@ -146,7 +156,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
         chainId={chainId}
         status={status}
         testId="withdraw-vest-confirmation-modal"
-        successMessage={`Successfully withdrawn from vest`}
+        successMessage={'Successfully withdrawn from vest'}
         txHash={data?.hash}
       />
     </DialogProvider>

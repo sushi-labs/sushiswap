@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
-import { JSBI, minimum, Percent } from '@sushiswap/math'
+import { minimum, Percent } from '@sushiswap/math'
 
 import { Rebase, vestingQuery } from '../.graphclient'
 import { VestingType } from './enums'
@@ -28,13 +28,13 @@ export class Vesting extends Furo {
   }) {
     super({ chainId, furo: vesting, rebase })
     this.steps = parseInt(vesting.steps)
-    this.cliffShares = Amount.fromRawAmount(this.token, JSBI.BigInt(vesting.cliffShares))
-    this.cliffAmount = Amount.fromShare(this.token, JSBI.BigInt(vesting.cliffShares), this.rebase)
-    this.stepShares = Amount.fromRawAmount(this.token, JSBI.BigInt(vesting.stepShares))
-    this.stepAmount = Amount.fromShare(this.token, JSBI.BigInt(vesting.stepShares), this.rebase)
+    this.cliffShares = Amount.fromRawAmount(this.token, vesting.cliffShares)
+    this.cliffAmount = Amount.fromShare(this.token, vesting.cliffShares, this.rebase)
+    this.stepShares = Amount.fromRawAmount(this.token, vesting.stepShares)
+    this.stepAmount = Amount.fromShare(this.token, vesting.stepShares, this.rebase)
     this.totalAmount = Amount.fromRawAmount(
       this.token,
-      JSBI.add(JSBI.BigInt(this._remainingAmount.quotient), JSBI.BigInt(vesting.withdrawnAmount))
+      this._remainingAmount.quotient + BigInt(vesting.withdrawnAmount)
     )
     this.cliffDuration = parseInt(vesting.cliffDuration)
     this.stepDuration = parseInt(vesting.stepDuration)
@@ -50,24 +50,21 @@ export class Vesting extends Furo {
   }
 
   public get balance(): Amount<Token> {
-    const timeAfterCliff = JSBI.add(JSBI.BigInt(this.startTime.getTime()), JSBI.BigInt(this.cliffDuration))
+    const timeAfterCliff = this.startTime.getTime() + this.cliffDuration
 
-    const now = JSBI.BigInt(Date.now())
+    const now = Date.now()
 
-    if (JSBI.lessThan(now, timeAfterCliff)) {
+    if (now < timeAfterCliff) {
       return Amount.fromRawAmount(this.token, 0)
     }
 
-    const passedSinceCliff = JSBI.subtract(now, timeAfterCliff)
+    const passedSinceCliff = now - timeAfterCliff
 
-    const stepPassed = minimum(JSBI.BigInt(this.steps), JSBI.divide(passedSinceCliff, JSBI.BigInt(this.stepDuration)))
+    const stepPassed = minimum(BigInt(this.steps), BigInt(Math.floor(passedSinceCliff / this.stepDuration)))
 
     return Amount.fromRawAmount(
       this.token,
-      JSBI.subtract(
-        JSBI.add(this.cliffAmount.quotient, JSBI.multiply(this.stepAmount.quotient, stepPassed)),
-        this.remainingAmount.quotient
-      )
+      this.cliffAmount.quotient + this.stepAmount.quotient * stepPassed - this.remainingAmount.quotient
     )
   }
 

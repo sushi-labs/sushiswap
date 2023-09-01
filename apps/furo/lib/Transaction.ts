@@ -1,6 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
 
 import { Maybe, streamTransactionsQuery, TransactionType, vestingTransactionsQuery } from '../.graphclient'
 import { toToken } from './mapper'
@@ -21,7 +20,7 @@ export class Transaction {
     this.id = transaction.id
     this.status = transaction.type
     this.token = toToken(transaction.token, chainId)
-    this.amount = Amount.fromRawAmount(this.token, JSBI.BigInt(transaction.amount))
+    this.amount = Amount.fromRawAmount(this.token, BigInt(transaction.amount))
     this.timestamp = new Date(parseInt(transaction.createdAtTimestamp) * 1000)
     this.toBentoBox = transaction.toBentoBox
     this.txHash = transaction.txHash

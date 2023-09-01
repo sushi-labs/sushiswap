@@ -1,24 +1,30 @@
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { routeProcessor3Abi } from '@sushiswap/abi'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { LiquidityProviders, Router, UniV3PoolCode } from '@sushiswap/router'
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
-import { getBigNumber } from '@sushiswap/tines'
 import { createRandomUniV3Pool, createUniV3EnvZero } from '@sushiswap/tines-sandbox'
-import { BigNumber, Contract } from 'ethers'
-import { ethers, network } from 'hardhat'
+import { Contract } from '@sushiswap/types'
+import { config, network } from 'hardhat'
+import { Address, Client, createPublicClient, custom, Hex, testActions, walletActions } from 'viem'
+import { HDAccount, mnemonicToAccount } from 'viem/accounts'
+import { hardhat } from 'viem/chains'
 
-function closeValues(_a: number | BigNumber, _b: number | BigNumber, accuracy: number): boolean {
-  const a: number = typeof _a == 'number' ? _a : parseInt(_a.toString())
-  const b: number = typeof _b == 'number' ? _b : parseInt(_b.toString())
+import RouteProcessor3 from '../artifacts/contracts/RouteProcessor3.sol/RouteProcessor3.json'
+
+const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
+
+function closeValues(_a: number | bigint, _b: number | bigint, accuracy: number): boolean {
+  const a: number = typeof _a === 'number' ? _a : Number(_a)
+  const b: number = typeof _b === 'number' ? _b : Number(_b)
   if (accuracy === 0) return a === b
   if (Math.abs(a) < 1 / accuracy) return Math.abs(a - b) <= 10
   if (Math.abs(b) < 1 / accuracy) return Math.abs(a - b) <= 10
   return Math.abs(a / b - 1) < accuracy
 }
 
-function expectCloseValues(_a: number | BigNumber, _b: number | BigNumber, accuracy: number, logInfoIfFalse = '') {
+function expectCloseValues(_a: number | bigint, _b: number | bigint, accuracy: number, logInfoIfFalse = '') {
   const res = closeValues(_a, _b, accuracy)
   if (!res) {
     console.log(`Expected close: ${_a}, ${_b}, ${accuracy} ${logInfoIfFalse}`)
@@ -28,32 +34,66 @@ function expectCloseValues(_a: number | BigNumber, _b: number | BigNumber, accur
   return res
 }
 
-interface TestEnvironment {
-  chainId: ChainId
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  provider: any
-  rp: Contract
-  user: SignerWithAddress
-}
-
-async function getTestEnvironment(): Promise<TestEnvironment> {
+async function getTestEnvironment() {
   const chainId = network.config.chainId as ChainId
-  const RouteProcessor = await ethers.getContractFactory('RouteProcessor3')
-  const routeProcessor = await RouteProcessor.deploy(bentoBoxV1Address[chainId as BentoBoxV1ChainId], [])
-  await routeProcessor.deployed()
-  const [user] = await ethers.getSigners()
+
+  const accounts = config.networks.hardhat.accounts as { mnemonic: string }
+  const user = mnemonicToAccount(accounts.mnemonic, { accountIndex: 0 })
+
+  const client = createPublicClient({
+    batch: {
+      multicall: {
+        batchSize: 2048,
+        wait: 1,
+      },
+    },
+    chain: {
+      ...hardhat,
+      contracts: {
+        multicall3: {
+          address: '0xca11bde05977b3631167028862be2a173976ca11',
+          blockCreated: 25770160,
+        },
+      },
+      pollingInterval: POLLING_INTERVAL,
+    },
+    transport: custom(network.provider),
+  })
+    .extend(testActions({ mode: 'hardhat' }))
+    .extend(walletActions)
+
+  const RouteProcessorTx = await client.deployContract({
+    chain: null,
+    abi: routeProcessor3Abi,
+    bytecode: RouteProcessor3.bytecode as Hex,
+    account: user.address,
+    args: [BENTOBOX_ADDRESS[chainId as BentoBoxChainId], []],
+  })
+  const RouteProcessorAddress = (await client.waitForTransactionReceipt({ hash: RouteProcessorTx })).contractAddress
+  if (!RouteProcessorAddress) throw new Error('RouteProcessorAddress is undefined')
+  const RouteProcessor = {
+    address: RouteProcessorAddress,
+    abi: routeProcessor3Abi,
+  }
 
   return {
     chainId,
-    provider: ethers.provider,
-    rp: routeProcessor,
+    client,
+    rp: RouteProcessor,
     user,
+  } satisfies {
+    chainId: ChainId
+    client: Client
+    rp: Contract<typeof routeProcessor3Abi>
+    user: HDAccount
   }
 }
 
+// type TestEnvironment = Awaited<ReturnType<typeof getTestEnvironment>>
+
 it('UniV3 Solo', async () => {
   const testEnv = await getTestEnvironment()
-  const env = await createUniV3EnvZero(ethers)
+  const env = await createUniV3EnvZero(testEnv.client)
   const pool = await createRandomUniV3Pool(env, 'test', 100)
 
   const fromToken = new Token({
@@ -73,7 +113,7 @@ it('UniV3 Solo', async () => {
   )
 
   //   const pcMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
-  const route = Router.findBestRoute(pcMap, testEnv.chainId, fromToken, getBigNumber(1e18), toToken, 50e9)
+  const route = Router.findBestRoute(pcMap, testEnv.chainId, fromToken, BigInt(1e18), toToken, 50e9)
   const rpParams = Router.routeProcessor2Params(
     pcMap,
     route,
@@ -83,31 +123,41 @@ it('UniV3 Solo', async () => {
     testEnv.rp.address
   )
 
-  await pool.token0Contract.connect(testEnv.user).approve(testEnv.rp.address, getBigNumber(1e19))
+  await testEnv.client.writeContract({
+    ...pool.token0Contract,
+    chain: null,
+    account: testEnv.user.address,
+    functionName: 'approve',
+    args: [testEnv.rp.address, BigInt(1e19)],
+  })
 
-  const balanceOutBNBefore = await pool.token1Contract.balanceOf(testEnv.user.address)
-  let tx
-  if (rpParams.value)
-    tx = await testEnv.rp.processRoute(
-      rpParams.tokenIn,
+  const balanceOutBIBefore = await testEnv.client.readContract({
+    ...pool.token1Contract,
+    functionName: 'balanceOf',
+    args: [testEnv.user.address],
+  })
+  const tx = await env.walletClient.writeContract({
+    chain: null,
+    ...testEnv.rp,
+    functionName: 'processRoute',
+    args: [
+      rpParams.tokenIn as Address,
       rpParams.amountIn,
-      rpParams.tokenOut,
+      rpParams.tokenOut as Address,
       rpParams.amountOutMin,
       rpParams.to,
       rpParams.routeCode,
-      { value: rpParams.value }
-    )
-  else
-    tx = await testEnv.rp.processRoute(
-      rpParams.tokenIn,
-      rpParams.amountIn,
-      rpParams.tokenOut,
-      rpParams.amountOutMin,
-      rpParams.to,
-      rpParams.routeCode
-    )
-  await tx.wait()
-  const balanceOutBNAfter = await pool.token1Contract.balanceOf(testEnv.user.address)
-  const output = balanceOutBNAfter.sub(balanceOutBNBefore)
+    ],
+    account: env.user,
+    value: rpParams.value || 0n,
+  })
+
+  await testEnv.client.waitForTransactionReceipt({ hash: tx })
+  const balanceOutBIAfter = await testEnv.client.readContract({
+    ...pool.token1Contract,
+    functionName: 'balanceOf',
+    args: [testEnv.user.address],
+  })
+  const output = balanceOutBIAfter - balanceOutBIBefore
   expectCloseValues(output, route.amountOut, 1e-6)
 })

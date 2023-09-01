@@ -21,7 +21,7 @@ const rnd: () => number = seedrandom(testSeed) // random [0, 1)
 const GAS_PRICE = 1 * 200 * 1e-9
 
 function simulateRouting(network: Network, route: MultiRoute) {
-  if (route.status == RouteStatus.NoWay) {
+  if (route.status === RouteStatus.NoWay) {
     return { out: 0, gasSpent: 0 }
   }
   let gasSpentTotal = 0
@@ -31,11 +31,11 @@ function simulateRouting(network: Network, route: MultiRoute) {
   diff.set(route.fromToken.tokenId as string, 0)
   route.legs.forEach((l) => {
     // Take swap parms
-    const pool0 = network.pools.find((p) => p.address == l.poolAddress)
+    const pool0 = network.pools.find((p) => p.address === l.poolAddress)
     expect(pool0).toBeDefined()
     const pool = pool0 as RPool
 
-    const direction = pool.token0.tokenId == l.tokenFrom.tokenId
+    const direction = pool.token0.tokenId === l.tokenFrom.tokenId
     const granularityOut = direction ? pool?.granularity1() : pool?.granularity0()
 
     // Check assumedAmountIn <-> assumedAmountOut correspondance
@@ -70,11 +70,11 @@ function simulateRouting(network: Network, route: MultiRoute) {
   })
 
   amounts.forEach((amount, tokenId) => {
-    if (tokenId == route.toToken.tokenId) {
+    if (tokenId === route.toToken.tokenId) {
       const finalDiff = diff.get(tokenId) as number
       expect(finalDiff).toBeGreaterThanOrEqual(0)
       expect(Math.abs(amount - route.amountOut) <= finalDiff)
-      if (route.amountOut == 0) expect(finalDiff).toEqual(0)
+      if (route.amountOut === 0) expect(finalDiff).toEqual(0)
       else expect(finalDiff / route.amountOut).toBeLessThan(1e-4)
     } else {
       expect(amount).toBeLessThan(1) // rounding dust
@@ -89,7 +89,7 @@ function simulateRouting(network: Network, route: MultiRoute) {
 }
 
 function numberPrecision(n: number, precision = 2) {
-  if (n == 0) return 0
+  if (n === 0) return 0
   const sign = n < 0 ? -1 : 1
   n = Math.abs(n)
   const digits = Math.ceil(Math.log10(n))
@@ -101,24 +101,24 @@ function numberPrecision(n: number, precision = 2) {
 // eslint-disable-next-line unused-imports/no-unused-vars, no-unused-vars
 export function printRoute(route: MultiRoute, network: Network) {
   const liquidity = new Map<number, number>()
-  function addLiquidity(token: any, amount: number) {
-    if (token.name !== undefined) token = token.name
-    if (typeof token == 'string') token = parseInt(token)
+  function addLiquidity(token: { name: string } | number | string, amount: number) {
+    if (typeof token === 'object') token = token.name
+    if (typeof token === 'string') token = parseInt(token)
     const prev = liquidity.get(token) || 0
     liquidity.set(token, prev + amount)
   }
   addLiquidity(route.fromToken, route.amountIn)
-  let info = ``
+  let info = ''
   route.legs.forEach((l, i) => {
-    const pool = network.pools.find((p) => p.address == l.poolAddress) as RPool
+    const pool = network.pools.find((p) => p.address === l.poolAddress) as RPool
     const inp = (liquidity.get(parseInt(l.tokenFrom.name)) as number) * l.absolutePortion
-    const { out } = pool.calcOutByIn(inp, pool.token0.tokenId == l.tokenFrom.tokenId)
+    const { out } = pool.calcOutByIn(inp, pool.token0.tokenId === l.tokenFrom.tokenId)
     const price_in = atomPrice(l.tokenFrom) / atomPrice(route.fromToken)
     const price_out = atomPrice(l.tokenTo) / atomPrice(route.fromToken)
     const diff = numberPrecision(100 * ((out * price_out) / inp / price_in - 1))
-    info +=
-      `${i} ${numberPrecision(l.absolutePortion)} ${l.tokenFrom.name}->${l.tokenTo.name}` +
-      ` ${inp * price_in} -> ${out * price_out} (${diff}%) ${inp} -> ${out}\n`
+    info += `${i} ${numberPrecision(l.absolutePortion)} ${l.tokenFrom.name}->${l.tokenTo.name} ${inp * price_in} -> ${
+      out * price_out
+    } (${diff}%) ${inp} -> ${out}\n`
     addLiquidity(l.tokenTo, out)
   })
   console.log(info)
@@ -167,7 +167,7 @@ it(`Multirouter for ${network.tokens.length} tokens and ${network.pools.length} 
     const route = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, gasPrice)
     checkRoute(route, network, t0, t1, amountIn, tBase, gasPrice)
     simulateRouting(network, route)
-    checkRouteResult('top20-' + i, route.totalAmountOut)
+    checkRouteResult(`top20-${i}`, route.totalAmountOut)
 
     // if (route.priceImpact !== undefined && route.priceImpact < 0.1) {
     //   // otherwise exactOut could return too bad value
@@ -187,7 +187,7 @@ it(`Multirouter-100 for ${network.tokens.length} tokens and ${network.pools.leng
     const route = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, gasPrice, 100)
     checkRoute(route, network, t0, t1, amountIn, tBase, gasPrice)
     simulateRouting(network, route)
-    checkRouteResult('m100-' + i, route.totalAmountOut)
+    checkRouteResult(`m100-${i}`, route.totalAmountOut)
 
     // if (route.priceImpact !== undefined && route.priceImpact < 0.1) {
     //   // otherwise exactOut could return too bad value
@@ -198,7 +198,7 @@ it(`Multirouter-100 for ${network.tokens.length} tokens and ${network.pools.leng
   }
 })
 
-it(`Multirouter path quantity check`, () => {
+it('Multirouter path quantity check', () => {
   const rndInternal: () => number = seedrandom('00')
   const steps = [1, 2, 4, 10, 20, 40, 100]
   for (let i = 0; i < 5; ++i) {
@@ -243,14 +243,14 @@ it(`Singlerouter for ${network.tokens.length} tokens and ${network.pools.length}
     const gasPrice = getBasePrice(network, tBase)
 
     // Very special case, failes at checkRoute. Reason: not 100% optimal routing because of edges with negative values
-    if (testSeed == '1') if (i == 11 || i == 60 || i == 80) continue
+    if (testSeed === '1') if (i === 11 || i === 60 || i === 80) continue
 
     const route = findSingleRouteExactIn(t0, t1, amountIn, network.pools, tBase, gasPrice)
     checkRoute(route, network, t0, t1, amountIn, tBase, gasPrice)
     simulateRouting(network, route)
     const route2 = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, gasPrice)
     expect(route.amountOut).toBeLessThanOrEqual(route2.amountOut * 1.001)
-    checkRouteResult('single20-' + i, route.totalAmountOut)
+    checkRouteResult(`single20-${i}`, route.totalAmountOut)
 
     // if (route.status !== RouteStatus.NoWay) {
     //   const routeOut = findSingleRouteExactOut(

@@ -1,0 +1,14 @@
+{
+  "extends": "@sushiswap/typescript-config/node18.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "baseUrl": ".",
+    "skipLibCheck": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
+  }
+}

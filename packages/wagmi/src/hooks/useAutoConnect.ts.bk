@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useAccount, useClient, useConnect } from 'wagmi'
+import { useAccount, useConfig, useConnect } from 'wagmi'
 
 const AUTOCONNECTED_CONNECTOR_IDS = ['safe']
 
 export const useAutoConnect = () => {
-  const client = useClient()
+  const client = useConfig()
   const { isConnected } = useAccount()
   const { connect, connectAsync, connectors } = useConnect({ onSuccess: () => setIsAutoConnecting(false) })
   const [isAutoConnecting, setIsAutoConnecting] = useState(false)

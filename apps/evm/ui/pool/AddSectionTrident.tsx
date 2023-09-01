@@ -1,6 +1,6 @@
 'use client'
 
-import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId, isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { Pool, Protocol } from '@sushiswap/client'
 import { tryParseAmount } from '@sushiswap/currency'
@@ -8,11 +8,11 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button } from '@sushiswap/ui/components/button'
 import {
-  ConstantProductPoolState,
   getTridentRouterContractConfig,
-  StablePoolState,
-  useConstantProductPool,
-  useStablePool,
+  TridentConstantPoolState,
+  TridentStablePoolState,
+  useTridentConstantPool,
+  useTridentStablePool,
 } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { CheckerProvider } from '@sushiswap/wagmi/future/systems/Checker/Provider'
@@ -23,8 +23,12 @@ import { FC, useCallback, useMemo, useState } from 'react'
 import { AddSectionReviewModalTrident } from './AddSectionReviewModalTrident'
 import { AddSectionWidget } from './AddSectionWidget'
 
-export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
-  const chainId = _pool.chainId as BentoBoxV1ChainId
+interface AddSectionTrident {
+  pool: Pool
+}
+
+export const AddSectionTrident: FC<AddSectionTrident> = ({ pool: _pool }) => {
+  const chainId = _pool.chainId as BentoBoxChainId
   const isMounted = useIsMounted()
   const { token0, token1 } = useTokensFromPool(_pool)
   const [{ input0, input1 }, setTypedAmounts] = useState<{
@@ -33,14 +37,14 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   }>({ input0: '', input1: '' })
 
   // TODO: Standardize fee format
-  const [constantProductPoolState, constantProductPool] = useConstantProductPool(
+  const [constantProductPoolState, constantProductPool] = useTridentConstantPool(
     _pool.chainId,
     token0,
     token1,
     _pool.swapFee * 10000,
     _pool.twapEnabled
   )
-  const [stablePoolState, stablePool] = useStablePool(
+  const [stablePoolState, stablePool] = useTridentStablePool(
     _pool.chainId,
     token0,
     token1,
@@ -61,8 +65,8 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const onChangeToken0TypedAmount = useCallback(
     (value: string) => {
       if (
-        poolState === ConstantProductPoolState.NOT_EXISTS ||
-        poolState === StablePoolState.NOT_EXISTS ||
+        poolState === TridentConstantPoolState.NOT_EXISTS ||
+        poolState === TridentStablePoolState.NOT_EXISTS ||
         (pool?.reserve0.equalTo(ZERO) && pool?.reserve1.equalTo(ZERO))
       ) {
         setTypedAmounts((prev) => ({
@@ -83,8 +87,8 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const onChangeToken1TypedAmount = useCallback(
     (value: string) => {
       if (
-        poolState === ConstantProductPoolState.NOT_EXISTS ||
-        poolState === StablePoolState.NOT_EXISTS ||
+        poolState === TridentConstantPoolState.NOT_EXISTS ||
+        poolState === TridentStablePoolState.NOT_EXISTS ||
         (pool?.reserve0.equalTo(ZERO) && pool?.reserve1.equalTo(ZERO))
       ) {
         setTypedAmounts((prev) => ({
@@ -122,10 +126,10 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
               isMounted &&
               !!poolState &&
               [
-                ConstantProductPoolState.NOT_EXISTS,
-                ConstantProductPoolState.INVALID,
-                StablePoolState.NOT_EXISTS,
-                StablePoolState.INVALID,
+                TridentConstantPoolState.NOT_EXISTS,
+                TridentConstantPoolState.INVALID,
+                TridentStablePoolState.NOT_EXISTS,
+                TridentStablePoolState.INVALID,
               ].includes(poolState)
             }
             guardText="Pool not found"
@@ -156,8 +160,8 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                     className="whitespace-nowrap"
                     fullWidth
                     amount={parsedInput0}
-                    contract={bentoBoxV1Address[chainId]}
-                    enabled={isBentoBoxV1ChainId(chainId)}
+                    contract={BENTOBOX_ADDRESS[chainId]}
+                    enabled={isBentoBoxChainId(chainId)}
                   >
                     <Checker.ApproveERC20
                       size="default"
@@ -166,15 +170,15 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                       className="whitespace-nowrap"
                       fullWidth
                       amount={parsedInput1}
-                      contract={bentoBoxV1Address[chainId]}
-                      enabled={isBentoBoxV1ChainId(chainId)}
+                      contract={BENTOBOX_ADDRESS[chainId]}
+                      enabled={isBentoBoxChainId(chainId)}
                     >
                       <Checker.Success tag={APPROVE_TAG_ADD_TRIDENT}>
                         <AddSectionReviewModalTrident
                           poolAddress={_pool.id}
                           poolState={poolState}
                           pool={pool}
-                          chainId={_pool.chainId as BentoBoxV1ChainId}
+                          chainId={_pool.chainId as BentoBoxChainId}
                           token0={token0}
                           token1={token1}
                           input0={parsedInput0}

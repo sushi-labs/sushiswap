@@ -1,11 +1,9 @@
 'use client'
 
-import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
 import { useQuery } from '@tanstack/react-query'
-import { BigNumber } from 'ethers'
 
 import { getBentoboxTotals } from '../actions'
 
@@ -16,10 +14,9 @@ interface UseBentoboxTotalsParams {
 }
 
 const queryFn = async ({ chainId, currencies }: UseBentoboxTotalsParams) => {
-  if (isBentoBoxV1ChainId(chainId)) {
-    return await getBentoboxTotals(chainId, currencies)
+  if (isBentoBoxChainId(chainId)) {
+    return getBentoboxTotals(chainId, currencies)
   }
-
   return undefined
 }
 
@@ -33,8 +30,8 @@ export const useBentoboxTotals = ({ enabled = true, ...variables }: UseBentoboxT
       if (!data) return null
 
       return data.map(({ base, elastic }) => ({
-        base: JSBI.BigInt(BigNumber.from(base)),
-        elastic: JSBI.BigInt(BigNumber.from(elastic)),
+        base,
+        elastic,
       }))
     },
     refetchInterval: 10000,

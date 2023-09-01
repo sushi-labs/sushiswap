@@ -1,11 +1,8 @@
-import { defaultAbiCoder } from '@ethersproject/abi'
-import { AddressZero } from '@ethersproject/constants'
-import { TransactionRequest } from '@ethersproject/providers'
-import { calculateSlippageAmount, ConstantProductPool, StablePool } from '@sushiswap/amm'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { calculateSlippageAmount, TridentConstantPool, TridentStablePool } from '@sushiswap/amm'
+import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token, Type } from '@sushiswap/currency'
-import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import { Percent, ZERO } from '@sushiswap/math'
 import {
   DialogConfirm,
   DialogContent,
@@ -15,36 +12,46 @@ import {
   DialogProvider,
   DialogReview,
   DialogTitle,
+  DialogTrigger,
 } from '@sushiswap/ui'
-import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
-import { createToast } from '@sushiswap/ui/components/toast'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
-  _useSendTransaction as useSendTransaction,
-  ConstantProductPoolState,
-  StablePoolState,
+  TridentConstantPoolState,
+  TridentStablePoolState,
   useAccount,
   useBentoBoxTotals,
   useNetwork,
+  usePrepareSendTransaction,
+  useSendTransaction,
   useTotalSupply,
   useTridentRouterContract,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { approveMasterContractAction, batchAction, getAsEncodedAction, LiquidityInput } from 'lib/actions'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import { approveMasterContractAction, batchAction, LiquidityInput } from 'lib/actions'
 import { APPROVE_TAG_ADD_TRIDENT } from 'lib/constants'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
-import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo } from 'react'
+import { FC, ReactNode, useCallback, useMemo } from 'react'
+import {
+  Address,
+  encodeAbiParameters,
+  encodeFunctionData,
+  parseAbiParameters,
+  UserRejectedRequestError,
+  zeroAddress,
+} from 'viem'
 
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface AddSectionReviewModalTridentProps {
   poolAddress: string
-  poolState: ConstantProductPoolState | StablePoolState | undefined
-  pool: ConstantProductPool | StablePool | null | undefined
-  chainId: BentoBoxV1ChainId
+  poolState: TridentConstantPoolState | TridentStablePoolState | undefined
+  pool: TridentConstantPool | TridentStablePool | null | undefined
+  chainId: BentoBoxChainId
   token0: Type | undefined
   token1: Type | undefined
   input0: Amount<Type> | undefined
@@ -65,7 +72,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   input0,
   input1,
   children,
-    onSuccess,
+  onSuccess,
 }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
@@ -93,12 +100,12 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
       input0
-        ? poolState === ConstantProductPoolState.NOT_EXISTS || poolState === StablePoolState.NOT_EXISTS
+        ? poolState === TridentConstantPoolState.NOT_EXISTS || poolState === TridentStablePoolState.NOT_EXISTS
           ? input0
           : Amount.fromRawAmount(input0.currency, calculateSlippageAmount(input0, slippagePercent)[0])
         : undefined,
       input1
-        ? poolState === ConstantProductPoolState.NOT_EXISTS || poolState === StablePoolState.NOT_EXISTS
+        ? poolState === TridentConstantPoolState.NOT_EXISTS || poolState === TridentStablePoolState.NOT_EXISTS
           ? input1
           : Amount.fromRawAmount(input1.currency, calculateSlippageAmount(input1, slippagePercent)[0])
         : undefined,
@@ -107,10 +114,10 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
 
   const noLiquidity = useMemo(() => {
     return (
-      poolState === ConstantProductPoolState.NOT_EXISTS ||
-      poolState === StablePoolState.NOT_EXISTS ||
-      Boolean(totalSupply && JSBI.equal(totalSupply.quotient, ZERO)) ||
-      Boolean(pool && JSBI.equal(pool.reserve0.quotient, ZERO) && JSBI.equal(pool.reserve1.quotient, ZERO))
+      poolState === TridentConstantPoolState.NOT_EXISTS ||
+      poolState === TridentStablePoolState.NOT_EXISTS ||
+      Boolean(totalSupply && totalSupply.quotient === ZERO) ||
+      Boolean(pool && pool.reserve0.quotient === ZERO && pool.reserve1.quotient === ZERO)
     )
   }, [pool, poolState, totalSupply])
 
@@ -144,15 +151,19 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   }, [noLiquidity, input0, input1, pool, rebases, slippagePercent, token0, token1, totalSupply])
 
   const onSettled = useCallback(
-    (data: SendTransactionResult | undefined) => {
+    (data: SendTransactionResult | undefined, error: Error | null) => {
+      if (error instanceof UserRejectedRequestError) {
+        createErrorToast(error?.message, true)
+      }
       if (!data || !chain?.id || !token0 || !token1) return
+
       const ts = new Date().getTime()
       createToast({
         account: address,
         type: 'mint',
         chainId: chain.id,
         txHash: data.hash,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Adding liquidity to the ${token0.symbol}/${token1.symbol} pair`,
           completed: `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`,
@@ -165,107 +176,110 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
     [address, chain?.id, token0, token1]
   )
 
-  const prepare = useCallback(
-    async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      try {
-        if (
-          !chain?.id ||
-          !pool ||
-          !token0 ||
-          !token1 ||
-          !chainId ||
-          !contract ||
-          !input0 ||
-          !input1 ||
-          !address ||
-          !minAmount0 ||
-          !minAmount1 ||
-          !liquidityMinted
-        )
-          return
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    try {
+      if (
+        !chain?.id ||
+        !pool ||
+        !token0 ||
+        !token1 ||
+        !chainId ||
+        !contract ||
+        !input0 ||
+        !input1 ||
+        !address ||
+        !minAmount0 ||
+        !minAmount1 ||
+        !liquidityMinted
+      )
+        return
 
-        let value
-        const liquidityInput: LiquidityInput[] = []
-        const encoded = defaultAbiCoder.encode(['address'], [address])
-        if (input0) {
-          if (input0.currency.isNative) {
-            value = input0.quotient.toString()
-          }
-
-          liquidityInput.push({
-            token: input0.currency.isNative ? AddressZero : input0.currency.wrapped.address,
-            native: true,
-            amount: input0.quotient.toString(),
-          })
+      let value = 0n
+      const liquidityInput: LiquidityInput[] = []
+      const encoded = encodeAbiParameters(parseAbiParameters('address'), [address])
+      if (input0) {
+        if (input0.currency.isNative) {
+          value = BigInt(input0.quotient.toString())
         }
 
-        if (input1) {
-          if (input1.currency.isNative) {
-            value = input1.quotient.toString()
-          }
-
-          liquidityInput.push({
-            token: input1.currency.isNative ? AddressZero : input1.currency.wrapped.address,
-            native: true,
-            amount: input1.quotient.toString(),
-          })
-        }
-
-        if (liquidityInput.length === 0) return
-
-        setRequest({
-          from: address,
-          to: contract.address,
-          data: batchAction({
-            contract,
-            actions: [
-              approveMasterContractAction({
-                router: contract,
-                signature: signature,
-              }),
-              getAsEncodedAction({
-                contract,
-                fn: 'addLiquidity',
-                args: [liquidityInput, pool.liquidityToken.address, liquidityMinted.quotient.toString(), encoded],
-              }),
-            ],
-          }),
-          ...(value && { value }),
+        liquidityInput.push({
+          token: input0.currency.isNative ? zeroAddress : (input0.currency.wrapped.address as Address),
+          native: true,
+          amount: BigInt(input0.quotient.toString()),
         })
-      } catch (e: unknown) {
-        //
       }
-    },
-    [
-      chain?.id,
-      pool,
-      token0,
-      token1,
-      chainId,
-      contract,
-      input0,
-      input1,
-      address,
-      minAmount0,
-      minAmount1,
-      liquidityMinted,
-      signature,
-    ]
-  )
+
+      if (input1) {
+        if (input1.currency.isNative) {
+          value = BigInt(input1.quotient.toString())
+        }
+
+        liquidityInput.push({
+          token: input1.currency.isNative ? zeroAddress : (input1.currency.wrapped.address as Address),
+          native: true,
+          amount: BigInt(input1.quotient.toString()),
+        })
+      }
+
+      if (liquidityInput.length === 0) return
+      return {
+        account: address,
+        to: contract.address,
+        data: batchAction({
+          actions: [
+            approveMasterContractAction({
+              signature: signature,
+            }),
+            encodeFunctionData({
+              ...contract,
+              functionName: 'addLiquidity',
+              args: [
+                liquidityInput,
+                pool.liquidityToken.address as Address,
+                BigInt(liquidityMinted.quotient.toString()),
+                encoded,
+              ],
+            }),
+          ],
+        }),
+        value,
+      }
+    } catch (e: unknown) {
+      //
+    }
+  }, [
+    chain?.id,
+    pool,
+    token0,
+    token1,
+    chainId,
+    contract,
+    input0,
+    input1,
+    address,
+    minAmount0,
+    minAmount1,
+    liquidityMinted,
+    signature,
+  ])
+
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
+    enabled: Boolean(approved && minAmount0?.greaterThan(ZERO) && minAmount1?.greaterThan(ZERO)),
+  })
 
   const {
     sendTransactionAsync,
-    data,
     isLoading: isWritePending,
+    data,
   } = useSendTransaction({
-    chainId,
-    prepare,
+    ...config,
     onSettled,
     onSuccess: () => {
       setSignature(undefined)
       onSuccess()
     },
-    enabled: approved,
   })
 
   const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
@@ -281,7 +295,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
                 <DialogTitle>Add liquidity</DialogTitle>
                 <DialogDescription>Please review your entered details.</DialogDescription>
               </DialogHeader>
-              <AddSectionReviewModal chainId={chainId as BentoBoxV1ChainId} input0={input0} input1={input1} />
+              <AddSectionReviewModal chainId={chainId as BentoBoxChainId} input0={input0} input1={input1} />
               <DialogFooter>
                 <Button
                   size="xl"

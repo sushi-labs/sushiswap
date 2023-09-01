@@ -22,8 +22,8 @@ const hydrate = (data: Record<string, number>) => {
 
 export const useAllPrices = () => {
   return useQuery({
-    queryKey: [`https://token-price.sushi.com/v1`],
-    queryFn: async () => fetch(`https://token-price.sushi.com/v1`).then((response) => response.json()),
+    queryKey: ['https://token-price.sushi.com/v1'],
+    queryFn: async () => fetch('https://token-price.sushi.com/v1').then((response) => response.json()),
     staleTime: 900000, // 15 mins
     cacheTime: 3600000, // 1hr
     refetchOnWindowFocus: false,

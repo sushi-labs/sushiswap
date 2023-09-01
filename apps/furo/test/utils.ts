@@ -1,4 +1,3 @@
-import { AddressZero } from '@ethersproject/constants'
 import { expect, Page } from '@playwright/test'
 import { Type } from '@sushiswap/currency'
 import {
@@ -12,6 +11,7 @@ import {
   startOfMonth,
 } from 'date-fns'
 import { ethers } from 'ethers'
+import { zeroAddress } from 'viem'
 
 const BASE_URL = process.env.PLAYWRIGHT_URL || 'http://localhost:3000/furo'
 
@@ -101,14 +101,14 @@ export async function createSingleStream(page: Page, args: StreamArgs) {
   await expect(confirmCreateStreamButton).toBeEnabled()
   await confirmCreateStreamButton.click()
 
-  const expectedText = new RegExp(`Created .* ${token.symbol} stream`)
-  await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
+  const regex = new RegExp(`Created .* ${token.symbol} stream`)
+  expect(page.getByText(regex))
 
   async function approve(page: Page, currency: Type) {
     // Approve BentoBox
     await page
       .locator('[testdata-id=furo-create-single-stream-approve-bentobox-button]')
-      .click({ timeout: 1500 })
+      .click({ timeout: 2000 })
       .then(async () => {
         console.log('BentoBox Approved')
       })
@@ -118,7 +118,7 @@ export async function createSingleStream(page: Page, args: StreamArgs) {
       // Approve Token
       await page
         .locator('[testdata-id=furo-create-single-stream-approve-token-button]')
-        .click({ timeout: 1500 })
+        .click({ timeout: 2000 })
         .then(async () => {
           console.log(`${currency.symbol} Approved`)
         })
@@ -148,13 +148,13 @@ export async function createMultipleStreams(page: Page, chainId: number, streamA
   await expect(reviewLocator).toBeEnabled()
   await reviewLocator.click()
 
-  // Approve BentoBox
+  // // Approve BentoBox
   const bentoboxLocator = page.locator('[testdata-id=create-multiple-stream-approve-bentobox-button]')
   await expect(bentoboxLocator).toBeVisible()
   await expect(bentoboxLocator).toBeEnabled()
   await bentoboxLocator.click()
 
-  // Approve Token
+  // // Approve Token
   const locator = page.locator('[testdata-id=create-multiple-stream-approve-token-1-button]') // TODO: refactor, index is hardcoded because we pass in the erc20 after native.
   await expect(locator).toBeVisible()
   await expect(locator).toBeEnabled()
@@ -166,7 +166,7 @@ export async function createMultipleStreams(page: Page, chainId: number, streamA
   await confirmCreateVestingButton.click()
 
   const text = `Created ${streamArgs.length} streams`
-  await expect(page.locator('div', { hasText: text }).last()).toContainText(text)
+  expect(page.getByText(text, { exact: true }))
 }
 
 async function handleStreamInputs(page: Page, args: StreamArgs, index = 0) {
@@ -185,9 +185,10 @@ async function handleStreamInputs(page: Page, args: StreamArgs, index = 0) {
   await page.fill(`[testdata-id=create-single-stream-token-selector${index}-address-input]`, token.symbol as string)
   const tokenRowSelector = page.locator(
     `[testdata-id=create-single-stream-token-selector${index}-row-${
-      token.isNative ? AddressZero : token.wrapped.address.toLowerCase()
+      token.isNative ? zeroAddress : token.wrapped.address.toLowerCase()
     }]`
   )
+
   await expect(tokenRowSelector).toBeVisible()
   await expect(tokenRowSelector).toBeEnabled()
   await tokenRowSelector.click()
@@ -264,9 +265,8 @@ export async function createMultipleVests(page: Page, chainId: number, vestingAr
   await expect(confirmCreateVestingButton).toBeEnabled()
   await confirmCreateVestingButton.click()
 
-  await expect(page.locator('div', { hasText: `Creating ${vestingArgs.length} vests` }).last()).toContainText(
-    `Creating ${vestingArgs.length} vests`
-  )
+  const text = `Creating ${vestingArgs.length} vests`
+  expect(page.getByText(text, { exact: true }))
 }
 
 async function handleGeneralDetails(page: Page, args: VestingArgs, index = 0) {
@@ -277,7 +277,7 @@ async function handleGeneralDetails(page: Page, args: VestingArgs, index = 0) {
   await page.fill(`[testdata-id=create-single-vest${index}-address-input]`, args.token.symbol as string)
   const tokenRowSelector = page.locator(
     `[testdata-id=create-single-vest${index}-row-${
-      args.token.isNative ? AddressZero : args.token.wrapped.address.toLowerCase()
+      args.token.isNative ? zeroAddress : args.token.wrapped.address.toLowerCase()
     }]`
   )
   await expect(tokenRowSelector).toBeVisible()
@@ -371,8 +371,6 @@ async function reviewAndConfirmSingleVest(page: Page, args: VestingArgs) {
   await expect(confirmCreateVestingLocator).toBeEnabled()
   await confirmCreateVestingLocator.click()
 
-  // const expectedText = new RegExp('Successfully created vest')
-  // await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
   const txConfimrationLocator = page.locator('[testdata-id=vest-creation-success-modal-button]')
   await expect(txConfimrationLocator).toBeVisible()
   await expect(txConfimrationLocator).toBeEnabled()

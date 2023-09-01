@@ -1,6 +1,5 @@
 'use client'
 
-import { getAddress } from '@ethersproject/address'
 import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
 import { Native } from '@sushiswap/currency'
@@ -20,6 +19,7 @@ import {
 } from '@sushiswap/ui'
 import { useAccount } from '@sushiswap/wagmi'
 import { FC } from 'react'
+import { getAddress } from 'viem'
 
 import { isAngleEnabledChainId } from '../../config'
 import { DistributionDataTable } from './DistributionDataTable'

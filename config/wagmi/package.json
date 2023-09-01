@@ -59,7 +59,7 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@wagmi/core": "legacy-v0",
+    "@wagmi/core": "1.3.9",
     "typescript": "5.1.6"
   },
   "peerDependencies": {

@@ -11,20 +11,24 @@ import React, { FC, useCallback, useState, useTransition } from 'react'
 
 import { usePoolFilters, useSetPoolFilters } from './PoolsFiltersProvider'
 
+const isAllThenNone = (chainIds: number[]) => (SUPPORTED_CHAIN_IDS.length === chainIds.length ? [] : chainIds)
+
 export const TableFiltersNetwork: FC = () => {
-  const [, startTransition] = useTransition()
+  const [pending, startTransition] = useTransition()
   const [open, setOpen] = useState(false)
   const { chainIds } = usePoolFilters()
   const setFilters = useSetPoolFilters()
-  const [values, setValues] = useState<number[]>(SUPPORTED_CHAIN_IDS.length === chainIds.length ? [] : chainIds)
+  const [localValue, setValues] = useState<number[]>(isAllThenNone(chainIds))
+
+  const values = pending ? localValue : isAllThenNone(chainIds)
 
   const onClick = useCallback(
     (chainId: ChainId) => {
       let _newValues: number[]
-      if (values.includes(chainId)) {
-        _newValues = values.filter((el) => el !== chainId)
+      if (localValue.includes(chainId)) {
+        _newValues = localValue.filter((el) => el !== chainId)
       } else {
-        _newValues = [...(values ?? []), chainId]
+        _newValues = [...(localValue ?? []), chainId]
       }
       setValues(_newValues)
 
@@ -39,7 +43,7 @@ export const TableFiltersNetwork: FC = () => {
         })
       })
     },
-    [setFilters, values]
+    [setFilters, localValue]
   )
 
   return (

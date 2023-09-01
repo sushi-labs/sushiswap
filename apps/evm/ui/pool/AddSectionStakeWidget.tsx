@@ -73,7 +73,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
           This pool does not have any ongoing incentives being distributed to staked LP tokens.
         </Message>
       ) : null}
-      <div className={!isIncentivized ? 'opacity-40 pointer-events-none' : ''}>
+      <div>
         <div className="flex flex-col gap-4">
           <div className="flex flex-col items-center gap-2">
             <div className={textFieldVariants({ className: 'flex flex-col gap-2 !h-[unset]' })}>

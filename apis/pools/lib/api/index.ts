@@ -80,6 +80,12 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
     })
   }
 
+  if ('hasEnabledSteerVault' in args && args.hasEnabledSteerVault !== undefined) {
+    addFilter({
+      hasEnabledSteerVault: args.hasEnabledSteerVault,
+    })
+  }
+
   if ('tokenSymbols' in args && Array.isArray(args.tokenSymbols)) {
     if (args.tokenSymbols.length === 1) {
       addFilter({

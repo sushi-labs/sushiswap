@@ -2,8 +2,7 @@
 
 import { ChevronRightIcon, GiftIcon } from '@heroicons/react-v1/outline'
 import { ChainId } from '@sushiswap/chain'
-import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
-import { isTridentChainId } from '@sushiswap/trident-sdk'
+import { isTridentChainId, TridentChainId } from '@sushiswap/trident-sdk'
 import { LinkExternal, LinkInternal, typographyVariants } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Chip } from '@sushiswap/ui/components/chip'
@@ -17,6 +16,7 @@ import {
 import { DiscordIcon } from '@sushiswap/ui/components/icons'
 import { SelectIcon } from '@sushiswap/ui/components/select'
 import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
+import { isSushiSwapV3ChainId, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useNetwork } from '@sushiswap/wagmi'
 import { FC } from 'react'
 
@@ -39,7 +39,15 @@ export const Hero: FC = () => {
           <div className="flex items-center w-full">
             <Button asChild size="lg" className="flex-1 w-full sm:flex-0 sm:w-[unset] rounded-r-none">
               <LinkInternal
-                href={isRouteProcessor3ChainId(chainId) ? `/pool/add?chainId=${chainId}` : `/pool/add/v2/${chainId}`}
+                href={
+                  isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
+                    ? `/pool/add?chainId=${chainId}`
+                    : isSushiSwapV2ChainId(chainId as SushiSwapV3ChainId)
+                    ? `/pool/add/v2/${chainId}`
+                    : isTridentChainId(chainId as TridentChainId)
+                    ? `/pool/add/trident/${chainId}`
+                    : ''
+                }
               >
                 I want to create a position
               </LinkInternal>
@@ -52,14 +60,16 @@ export const Hero: FC = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-80">
                 <DropdownMenuGroup>
-                  <DropdownMenuItem disabled={!isRouteProcessor3ChainId(chainId)} asChild>
+                  <DropdownMenuItem disabled={!isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)} asChild>
                     <LinkInternal
                       href={`/pool/add?chainId=${chainId}`}
                       className="flex flex-col !items-start gap-1 cursor-pointer"
                     >
                       <div className="flex items-center gap-1 font-medium leading-none">
                         V3 Position
-                        <Chip variant="secondary">{isRouteProcessor3ChainId(chainId) ? 'New 🔥' : 'Unavailable'}</Chip>
+                        <Chip variant="secondary">
+                          {isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId) ? 'New 🔥' : 'Unavailable'}
+                        </Chip>
                       </div>
                       <p className="text-sm leading-snug text-muted-foreground">
                         Provide liquidity to a V3 liquidity pool.

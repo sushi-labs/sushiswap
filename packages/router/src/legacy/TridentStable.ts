@@ -1,7 +1,7 @@
 // import { getStableReservesAbi } from '@sushiswap/abi'
 // import { ChainId } from '@sushiswap/chain'
 // import { Token } from '@sushiswap/currency'
-// import { StableSwapRPool, toShareBN } from '@sushiswap/tines'
+// import { StableSwapRPool, toShareBI } from '@sushiswap/tines'
 // import { Address, readContracts, watchBlockNumber } from '@wagmi/core'
 // import { Client } from 'viem'
 
@@ -105,8 +105,8 @@
 //         convertTokenToBento(pr.token0),
 //         convertTokenToBento(pr.token1),
 //         pr.swapFee,
-//         toShareBN(res[0], totals0),
-//         toShareBN(res[1], totals1),
+//         toShareBI(res[0], totals0),
+//         toShareBI(res[1], totals1),
 //         pr.token0.decimals,
 //         pr.token1.decimals,
 //         totals0,
@@ -191,7 +191,7 @@
 //       //  because reserve0 and 1 is being converted to amount and adjusted to wei using realReservesToAdjusted()
 //       // but the res[0] and res[1] are not adjusted.
 //       if (res !== undefined && res !== null && (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1]))) {
-//         pool.updateReserves(toShareBN(res[0], pool.getTotal0()), toShareBN(res[1], pool.getTotal1()))
+//         pool.updateReserves(toShareBI(res[0], pool.getTotal0()), toShareBI(res[1], pool.getTotal1()))
 //         this.pools.set(pool.address, {
 //           poolCode: pi.poolCode,
 //           fetchType: pi.fetchType,

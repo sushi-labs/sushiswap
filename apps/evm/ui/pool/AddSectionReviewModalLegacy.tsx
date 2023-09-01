@@ -1,9 +1,10 @@
-import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Type } from '@sushiswap/currency'
-import { Percent } from '@sushiswap/math'
+import { calculateGasMargin } from '@sushiswap/gas'
+import { Percent, ZERO } from '@sushiswap/math'
 import {
+  DialogConfirm,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -11,35 +12,36 @@ import {
   DialogProvider,
   DialogReview,
   DialogTitle,
+  DialogTrigger,
 } from '@sushiswap/ui'
-import { DialogConfirm } from '@sushiswap/ui'
-import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
-import { createToast } from '@sushiswap/ui/components/toast'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
-  _useSendTransaction as useSendTransaction,
   Address,
-  PairState,
+  SushiSwapV2PoolState,
   useAccount,
   useNetwork,
+  usePrepareSendTransaction,
+  useSendTransaction,
   useSushiSwapRouterContract,
+  useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import { useWaitForTransaction } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { BigNumber } from 'ethers'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
 import { useTransactionDeadline } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
-import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo } from 'react'
+import { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import { encodeFunctionData, UserRejectedRequestError } from 'viem'
 
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface AddSectionReviewModalLegacyProps {
+  poolState: SushiSwapV2PoolState
   poolAddress: string | undefined
-  poolState: PairState
   chainId: SushiSwapV2ChainId
   token0: Type | undefined
   token1: Type | undefined
@@ -58,7 +60,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
   input0,
   input1,
   children,
-    onSuccess
+  onSuccess,
 }) => {
   const deadline = useTransactionDeadline(chainId)
   const contract = useSushiSwapRouterContract(chainId)
@@ -71,7 +73,10 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
   }, [slippageTolerance])
 
   const onSettled = useCallback(
-    (data: SendTransactionResult | undefined) => {
+    (data: SendTransactionResult | undefined, error: Error | null) => {
+      if (error instanceof UserRejectedRequestError) {
+        createErrorToast(error?.message, true)
+      }
       if (!data || !token0 || !token1) return
 
       const ts = new Date().getTime()
@@ -80,7 +85,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
         type: 'mint',
         chainId,
         txHash: data.hash,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Adding liquidity to the ${token0.symbol}/${token1.symbol} pair`,
           completed: `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`,
@@ -96,20 +101,22 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
       input0
-        ? poolState === PairState.NOT_EXISTS
+        ? poolState === SushiSwapV2PoolState.NOT_EXISTS
           ? input0
           : Amount.fromRawAmount(input0.currency, calculateSlippageAmount(input0, slippagePercent)[0])
         : undefined,
       input1
-        ? poolState === PairState.NOT_EXISTS
+        ? poolState === SushiSwapV2PoolState.NOT_EXISTS
           ? input1
           : Amount.fromRawAmount(input1.currency, calculateSlippageAmount(input1, slippagePercent)[0])
         : undefined,
     ]
   }, [poolState, input0, input1, slippagePercent])
 
-  const prepare = useCallback(
-    async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
+  const [prepare, setPrepare] = useState<UsePrepareSendTransactionConfig>({})
+
+  useEffect(() => {
+    async function prep(): Promise<UsePrepareSendTransactionConfig> {
       try {
         if (
           !token0 ||
@@ -123,61 +130,76 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
           !minAmount1 ||
           !deadline
         )
-          return
+          return {}
         const withNative = token0.isNative || token1.isNative
 
         if (withNative) {
-          const value = BigNumber.from((token1.isNative ? input1 : input0).quotient.toString())
+          const value = BigInt((token1.isNative ? input1 : input0).quotient.toString())
           const args = [
             (token1.isNative ? token0 : token1).wrapped.address as Address,
-            BigNumber.from((token1.isNative ? input0 : input1).quotient.toString()),
-            BigNumber.from((token1.isNative ? minAmount0 : minAmount1).quotient.toString()),
-            BigNumber.from((token1.isNative ? minAmount1 : minAmount0).quotient.toString()),
+            (token1.isNative ? input0 : input1).quotient,
+            (token1.isNative ? minAmount0 : minAmount1).quotient,
+            (token1.isNative ? minAmount1 : minAmount0).quotient,
             address,
-            BigNumber.from(deadline.toHexString()),
+            deadline,
           ] as const
 
-          setRequest({
-            from: address,
-            to: contract.address,
-            data: contract.interface.encodeFunctionData('addLiquidityETH', args),
+          const gasLimit = await contract.estimateGas.addLiquidityETH(args, {
+            account: address,
             value,
           })
+
+          return {
+            account: address,
+            to: contract.address,
+            data: encodeFunctionData({ ...contract, functionName: 'addLiquidityETH', args }),
+            value,
+            gas: calculateGasMargin(gasLimit),
+          }
         } else {
           const args = [
             token0.wrapped.address as Address,
             token1.wrapped.address as Address,
-            BigNumber.from(input0.quotient.toString()),
-            BigNumber.from(input1.quotient.toString()),
-            BigNumber.from(minAmount0.quotient.toString()),
-            BigNumber.from(minAmount1.quotient.toString()),
+            input0.quotient,
+            input1.quotient,
+            minAmount0.quotient,
+            minAmount1.quotient,
             address,
-            BigNumber.from(deadline.toHexString()),
+            deadline,
           ] as const
-          setRequest({
-            from: address,
-            to: contract.address,
-            data: contract.interface.encodeFunctionData('addLiquidity', args),
+
+          const gasLimit = await contract.estimateGas.addLiquidity(args, {
+            account: address,
           })
+          return {
+            account: address,
+            to: contract.address,
+            data: encodeFunctionData({ ...contract, functionName: 'addLiquidity', args }),
+            gas: calculateGasMargin(gasLimit),
+          }
         }
       } catch (e: unknown) {
-        console.error(e)
+        //
       }
-    },
-    [token0, token1, chain?.id, contract, input0, input1, address, minAmount0, minAmount1, deadline]
-  )
+    }
+
+    prep().then((data) => setPrepare(data))
+  }, [token0, token1, chain?.id, contract, input0, input1, address, minAmount0, minAmount1, deadline])
+
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
+    enabled: Boolean(approved && minAmount0?.greaterThan(ZERO) && minAmount1?.greaterThan(ZERO)),
+  })
 
   const {
     sendTransactionAsync,
     isLoading: isWritePending,
     data,
   } = useSendTransaction({
-    chainId,
-    prepare,
+    ...config,
     onSettled,
     onSuccess,
-    enabled: approved,
-    gasMargin: true,
   })
 
   const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
@@ -193,7 +215,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
                 <DialogTitle>Add liquidity</DialogTitle>
                 <DialogDescription>Please review your entered details.</DialogDescription>
               </DialogHeader>
-              <AddSectionReviewModal chainId={chainId as BentoBoxV1ChainId} input0={input0} input1={input1} />
+              <AddSectionReviewModal chainId={chainId as BentoBoxChainId} input0={input0} input1={input1} />
               <DialogFooter>
                 <Button
                   size="xl"

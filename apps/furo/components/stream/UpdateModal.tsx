@@ -1,11 +1,8 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { TransactionRequest } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
 import { PencilIcon } from '@heroicons/react/outline'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Token } from '@sushiswap/currency'
-import { FuroStreamChainId } from '@sushiswap/furo'
-import { JSBI, ZERO } from '@sushiswap/math'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import {
   DateField,
   DialogConfirm,
@@ -25,27 +22,30 @@ import { Dots } from '@sushiswap/ui/components/dots'
 import { Switch } from '@sushiswap/ui/components/switch'
 import { createToast } from '@sushiswap/ui/components/toast'
 import {
-  _useSendTransaction as useSendTransaction,
   Address,
+  getContract,
   useAccount,
-  useContract,
+  usePrepareSendTransaction,
+  useSendTransaction,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import React, { FC, useCallback, useMemo, useState } from 'react'
+import { Hex } from 'viem'
 
-import { approveBentoBoxAction, batchAction, Stream } from '../../lib'
+import { approveBentoBoxAction, batchAction, Stream, updateStreamAction } from '../../lib'
 
 const APPROVE_TAG = 'updateStreamSingle'
 
 interface UpdateModalProps {
   stream: Stream
-  abi: NonNullable<Parameters<typeof useContract>['0']>['abi']
-  address: string
-  chainId: FuroStreamChainId
+  abi: NonNullable<Parameters<typeof getContract>['0']>['abi']
+  address: Address
+  chainId: FuroChainId
 }
 
 export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
@@ -56,8 +56,8 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
     const [changeEndDate, setChangeEndDate] = useState(false)
     const [amount, setAmount] = useState<string>('')
     const [endDate, setEndDate] = useState<Date | null>(null)
-    const { signature, setSignature } = useSignature(APPROVE_TAG)
-    const contract = useContract({
+    const { signature } = useSignature(APPROVE_TAG)
+    const contract = getContract({
       address: contractAddress,
       abi: abi,
     })
@@ -67,7 +67,7 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
 
       let value: Amount<Token> | undefined = undefined
       try {
-        value = Amount.fromRawAmount(stream.token, JSBI.BigInt(parseUnits(amount, stream.token.decimals).toString()))
+        value = Amount.fromRawAmount(stream.token, BigInt(parseUnits(amount, stream.token.decimals).toString()))
       } catch (e) {
         console.debug(e)
       }
@@ -87,7 +87,7 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
           chainId,
           timestamp: ts,
           groupTimestamp: ts,
-          promise: data.wait(),
+          promise: waitForTransaction({ hash: data.hash }),
           summary: {
             pending: 'Updating stream',
             completed: 'Successfully updated stream',
@@ -105,73 +105,69 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
       return !changeEndDate || Boolean(changeEndDate && endDate)
     }, [changeEndDate, endDate])
 
-    const prepare = useCallback(
-      (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-        if (!stream?.canUpdate(address) || !stream || !chainId || !contractAddress || !contract) return
-        if (topUp && !amount) return
-        if (changeEndDate && !endDate) return
+    const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+      if (!stream?.canUpdate(address) || !stream || !chainId || !contractAddress || !contract) return {}
+      if (topUp && !amount) return {}
+      if (changeEndDate && !endDate) return {}
 
-        const actions: string[] = []
-        if (signature) {
-          actions.push(approveBentoBoxAction({ contract, user: address as Address, signature }))
-        }
+      const actions: Hex[] = []
+      if (signature) {
+        actions.push(approveBentoBoxAction({ user: address as Address, signature }))
+      }
 
-        const difference =
-          changeEndDate && endDate ? Math.floor((endDate?.getTime() - stream?.endTime.getTime()) / 1000) : 0
-        const topUpAmount = amountAsEntity?.greaterThan(0) ? amountAsEntity.quotient.toString() : '0'
+      const difference =
+        changeEndDate && endDate ? Math.floor((endDate?.getTime() - stream?.endTime.getTime()) / 1000) : 0
+      const topUpAmount = amountAsEntity?.greaterThan(0) ? amountAsEntity.quotient.toString() : '0'
 
-        actions.push(
-          contract.interface.encodeFunctionData('updateStream', [
-            BigNumber.from(stream.id),
-            BigNumber.from(topUp ? topUpAmount : '0'),
-            difference,
-            false,
-          ])
-        )
-
-        setRequest({
-          from: address,
-          to: contractAddress,
-          data: batchAction({ contract, actions }),
+      actions.push(
+        updateStreamAction({
+          streamId: BigInt(stream.id),
+          topUpAmount: topUpAmount ? BigInt(topUp) : 0n,
+          difference: BigInt(difference),
+          fromBentoBox: false,
         })
-      },
-      [
-        stream,
-        address,
-        chainId,
-        contractAddress,
-        contract,
-        topUp,
-        amount,
-        changeEndDate,
-        endDate,
-        signature,
-        amountAsEntity,
-      ]
-    )
+      )
+
+      return {
+        account: address,
+        to: contractAddress,
+        data: batchAction({ actions }),
+      }
+    }, [
+      stream,
+      address,
+      chainId,
+      contractAddress,
+      contract,
+      topUp,
+      amount,
+      changeEndDate,
+      endDate,
+      signature,
+      amountAsEntity,
+    ])
+
+    const { config } = usePrepareSendTransaction({
+      ...prepare,
+      chainId,
+      enabled: Boolean(
+        stream?.canUpdate(address) &&
+          contractAddress &&
+          stream &&
+          chainId &&
+          isTopUpValid &&
+          isChangeEndDateValid &&
+          approved
+      ),
+    })
 
     const {
       sendTransactionAsync,
-      isLoading: isWritePending,
       data,
+      isLoading: isWritePending,
     } = useSendTransaction({
-      chainId,
-      prepare,
+      ...config,
       onSettled,
-      onSuccess() {
-        setSignature(undefined)
-      },
-      enabled: Boolean(
-        !(
-          !stream?.canUpdate(address) ||
-          !contractAddress ||
-          !stream ||
-          !chainId ||
-          !isTopUpValid ||
-          !isChangeEndDateValid ||
-          !approved
-        )
-      ),
     })
 
     const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
@@ -243,13 +239,13 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                 <DialogFooter>
                   <Checker.Connect type="button">
                     <Checker.Network type="button" chainId={chainId}>
-                      <Checker.Guard guardWhen={topUp && !amountAsEntity?.greaterThan(ZERO)} guardText="Enter amount">
+                      <Checker.Guard guardWhen={topUp && !amountAsEntity?.greaterThan(0)} guardText="Enter amount">
                         <Checker.Guard guardWhen={changeEndDate && !endDate} guardText="Enter date">
                           <Checker.ApproveBentobox
                             tag={APPROVE_TAG}
                             type="button"
                             id="furo-update-stream-approve-bentobox"
-                            chainId={chainId satisfies BentoBoxV1ChainId}
+                            chainId={chainId as BentoBoxChainId}
                             masterContract={contractAddress as Address}
                             className="col-span-3 md:col-span-2"
                           >
@@ -257,7 +253,7 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                               id="approve-erc20-update-stream"
                               type="button"
                               amount={amountAsEntity}
-                              contract={bentoBoxV1Address[chainId] as Address}
+                              contract={BENTOBOX_ADDRESS[chainId as BentoBoxChainId] as Address}
                               enabled={topUp}
                             >
                               <Checker.Success tag={APPROVE_TAG}>
@@ -287,7 +283,7 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
           chainId={chainId}
           status={status}
           testId="update-stream-confirmation-modal"
-          successMessage={`Successfully updated stream`}
+          successMessage={'Successfully updated stream'}
           txHash={data?.hash}
         />
       </DialogProvider>

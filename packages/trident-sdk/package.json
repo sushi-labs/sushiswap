@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/trident-sdk",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "description": "Trident SDK",
   "keywords": [
@@ -38,10 +38,10 @@
     "@ethersproject/address": "5.7.0",
     "@ethersproject/bignumber": "5.7.0",
     "@ethersproject/solidity": "5.7.0",
+    "@sushiswap/base-sdk": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/math": "workspace:*",
-    "@sushiswap/trident-core": "workspace:*",
     "tiny-invariant": "1.3.1",
     "tiny-warning": "1.0.3",
     "zod": "3.21.4"

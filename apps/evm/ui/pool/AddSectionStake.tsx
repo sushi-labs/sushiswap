@@ -5,6 +5,7 @@ import { ChefType, Pool } from '@sushiswap/client'
 import { usePool } from '@sushiswap/client/hooks'
 import { tryParseAmount } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
+import { ZERO } from '@sushiswap/math'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { getMasterChefContractConfig, useMasterChefDeposit } from '@sushiswap/wagmi'
@@ -58,7 +59,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = withCheckerRoot(({ pool, chef
     chainId: liquidityToken.chainId,
     chef: chefType,
     pid: farmId,
-    enabled: approved,
+    enabled: Boolean(approved && amounts[0]?.greaterThan(ZERO) && liquidityToken),
   })
 
   return (

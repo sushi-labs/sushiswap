@@ -46,17 +46,20 @@ export const Custody: FC = () => {
               linkText={DATA.linkText}
             >
               {({ setOpen, containerId, titleId }) => (
-                <motion.div layoutId={containerId} className="flex flex-col items-center lg:items-start">
+                <motion.div
+                  layoutId={containerId}
+                  className="prose dark:prose-invert flex flex-col items-center lg:items-start"
+                >
                   <motion.h1
                     layoutId={titleId}
-                    className="text-4xl font-semibold flex flex-col items-center lg:items-start text-center lg:text-left"
+                    className="flex flex-col items-center lg:items-start text-center lg:text-left"
                   >
                     {DATA.title}
                   </motion.h1>
-                  <span className="text-lg text-center lg:text-left mt-2 mb-3">
+                  <h5 className="text-lg text-center lg:text-left mb-8">
                     Own your own crypto, just like cash in your wallet. Fully decentralized & self custody of your funds
                     means your money in your wallet, as it should be.
-                  </span>
+                  </h5>
                   <Button onClick={() => setOpen(true)} variant="secondary">
                     Learn More
                   </Button>

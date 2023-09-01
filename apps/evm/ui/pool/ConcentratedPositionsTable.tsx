@@ -36,7 +36,6 @@ const tableState = { sorting: [{ id: 'positionSize', desc: true }] }
 interface ConcentratedPositionsTableProps {
   chainId?: ChainId
   poolId?: string
-  hideClosed?: boolean
   onRowClick?(row: ConcentratedLiquidityPositionWithV3Pool): void
   hideNewPositionButton?: boolean
 }
@@ -45,11 +44,11 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> = (
   chainId,
   onRowClick,
   poolId,
-  hideClosed,
   hideNewPositionButton = false,
 }) => {
   const { address } = useAccount()
   const { chainIds, tokenSymbols } = usePoolFilters()
+  const [hide, setHide] = useState(true)
 
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
@@ -74,11 +73,10 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> = (
       )
       .filter((el) => {
         return (
-          (hideClosed ? !el.liquidity?.eq('0') : true) &&
-          (poolId ? el.address.toLowerCase() === poolId.toLowerCase() : true)
+          (hide ? el.liquidity !== 0n : true) && (poolId ? el.address.toLowerCase() === poolId.toLowerCase() : true)
         )
       })
-  }, [hideClosed, poolId, positions, chainIds, tokenSymbols])
+  }, [tokenSymbols, positions, chainIds, hide, poolId])
 
   const rowRenderer = useCallback(
     (row: Row<ConcentratedLiquidityPositionWithV3Pool>, rowNode: ReactNode) => {

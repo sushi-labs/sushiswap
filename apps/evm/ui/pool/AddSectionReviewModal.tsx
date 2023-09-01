@@ -1,4 +1,4 @@
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Price, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { Button, List } from '@sushiswap/ui'
@@ -9,7 +9,7 @@ import { FC, useMemo } from 'react'
 import { Rate } from './Rate'
 
 interface AddSectionReviewModal {
-  chainId: BentoBoxV1ChainId
+  chainId: BentoBoxChainId
   input0: Amount<Type> | undefined
   input1: Amount<Type> | undefined
 }
@@ -54,7 +54,14 @@ export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({ chainId, inpu
           <List.KeyValue flex title="Rate">
             <Rate price={price}>
               {({ toggleInvert, content, usdPrice }) => (
-                <Button size="sm" asChild variant="link" role="button" onClick={() => toggleInvert()}>
+                <Button
+                  size="sm"
+                  asChild
+                  variant="link"
+                  role="button"
+                  className="!no-underline"
+                  onClick={() => toggleInvert()}
+                >
                   {content} {usdPrice && <span className="font-normal text-slate-300">(${usdPrice})</span>}
                 </Button>
               )}

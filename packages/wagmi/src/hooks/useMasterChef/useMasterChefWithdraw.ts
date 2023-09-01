@@ -1,15 +1,17 @@
 'use client'
 
-import { TransactionRequest } from '@ethersproject/providers'
+import { masterChefV1Abi } from '@sushiswap/abi'
 import { ChefType } from '@sushiswap/client'
 import { Amount, Token } from '@sushiswap/currency'
-import { createToast } from '@sushiswap/ui/components/toast'
-import { Dispatch, SetStateAction, useCallback } from 'react'
-import { useAccount } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
+import { useCallback, useMemo } from 'react'
+import { encodeFunctionData, UserRejectedRequestError } from 'viem'
+import { useAccount, usePrepareSendTransaction, useSendTransaction } from 'wagmi'
+import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
-import { useMasterChefContract } from '../useMasterChefContract'
-import { useSendTransaction } from '../useSendTransaction'
+import { masterchefV2Abi, minichefV2Abi } from '../../abis'
+import { getMasterChefContractConfig } from '../useMasterChefContract'
+import { UsePrepareSendTransactionConfig } from '../useSendTransaction'
 
 interface UseMasterChefWithdrawParams {
   chainId: number
@@ -23,10 +25,12 @@ type UseMasterChefWithdraw = (params: UseMasterChefWithdrawParams) => ReturnType
 
 export const useMasterChefWithdraw: UseMasterChefWithdraw = ({ chainId, amount, chef, pid, enabled = true }) => {
   const { address } = useAccount()
-  const contract = useMasterChefContract(chainId, chef)
 
   const onSettled = useCallback(
-    (data: SendTransactionResult | undefined) => {
+    (data: SendTransactionResult | undefined, error: Error | null) => {
+      if (error instanceof UserRejectedRequestError) {
+        createErrorToast(error?.message, true)
+      }
       if (data && amount) {
         const ts = new Date().getTime()
         void createToast({
@@ -34,7 +38,7 @@ export const useMasterChefWithdraw: UseMasterChefWithdraw = ({ chainId, amount, 
           type: 'burn',
           chainId,
           txHash: data.hash,
-          promise: data.wait(),
+          promise: waitForTransaction({ hash: data.hash }),
           summary: {
             pending: `Unstaking ${amount.toSignificant(6)} ${amount.currency.symbol} tokens`,
             completed: `Successfully unstaked ${amount.toSignificant(6)} ${amount.currency.symbol} tokens`,
@@ -48,28 +52,50 @@ export const useMasterChefWithdraw: UseMasterChefWithdraw = ({ chainId, amount, 
     [amount, chainId, address]
   )
 
-  const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!address || !chainId || !amount || !contract) return
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    if (!address || !chainId || !amount || !chef) return
 
-      setRequest({
+    if (getMasterChefContractConfig(chainId, chef)?.address) {
+      let data
+      switch (chef) {
+        case ChefType.MasterChefV1:
+          data = encodeFunctionData({
+            abi: masterChefV1Abi,
+            functionName: 'withdraw',
+            args: [BigInt(pid), BigInt(amount.quotient.toString())],
+          })
+          break
+        case ChefType.MasterChefV2:
+          data = encodeFunctionData({
+            abi: masterchefV2Abi,
+            functionName: 'withdraw',
+            args: [BigInt(pid), BigInt(amount.quotient.toString()), address],
+          })
+          break
+        case ChefType.MiniChef:
+          data = encodeFunctionData({
+            abi: minichefV2Abi,
+            functionName: 'withdrawAndHarvest',
+            args: [BigInt(pid), BigInt(amount.quotient.toString()), address],
+          })
+      }
+
+      return {
         from: address,
-        to: contract.address,
-        data: contract.interface.encodeFunctionData(
-          chef === ChefType.MiniChef ? 'withdrawAndHarvest' : 'withdraw',
-          chef === ChefType.MasterChefV1
-            ? [pid, amount.quotient.toString()]
-            : [pid, amount.quotient.toString(), address]
-        ),
-      })
-    },
-    [address, amount, chainId, chef, contract, pid]
-  )
+        to: getMasterChefContractConfig(chainId, chef)?.address,
+        data,
+      }
+    }
+  }, [address, amount, chainId, chef, pid])
+
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
+    enabled,
+  })
 
   return useSendTransaction({
-    chainId,
+    ...config,
     onSettled,
-    prepare,
-    enabled,
   })
 }

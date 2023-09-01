@@ -1,7 +1,6 @@
 'use client'
 
 import { Type } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
 import { FeeAmount, SushiSwapV3ChainId, TICK_SPACINGS, tickToPrice } from '@sushiswap/v3-sdk'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { useMemo } from 'react'
@@ -13,8 +12,8 @@ const PRICE_FIXED_DIGITS = 8
 
 export interface TickProcessed {
   tick: number
-  liquidityActive: JSBI
-  liquidityNet: JSBI
+  liquidityActive: bigint
+  liquidityNet: bigint
   price0: string
 }
 
@@ -93,10 +92,9 @@ export const useConcentratedActiveLiquidity = ({
     }
 
     const activeTickProcessed: TickProcessed = {
-      liquidityActive: JSBI.BigInt(pool?.liquidity ?? 0),
+      liquidityActive: BigInt(pool?.liquidity.toString()) ?? 0n,
       tick: activeTick,
-      liquidityNet:
-        Number(ticks[pivot].tickIdx) === activeTick ? JSBI.BigInt(ticks[pivot].liquidityNet) : JSBI.BigInt(0),
+      liquidityNet: Number(ticks[pivot].tickIdx) === activeTick ? ticks[pivot].liquidityNet : 0n,
       price0: tickToPrice(_token0, _token1, activeTick).toFixed(PRICE_FIXED_DIGITS),
     }
 

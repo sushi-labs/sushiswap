@@ -1,11 +1,10 @@
 'use client'
 
 import { Amount, Token } from '@sushiswap/currency'
-import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { Address, erc20ABI, useContractReads } from 'wagmi'
 
-function bigNumToCurrencyAmount(totalSupply?: BigNumber, token?: Token) {
+function bigIntToCurrencyAmount(totalSupply?: bigint, token?: Token) {
   return token?.isToken && totalSupply ? Amount.fromRawAmount(token, totalSupply.toString()) : undefined
 }
 
@@ -32,7 +31,7 @@ export const useMultipleTotalSupply = (tokens?: Token[]): Record<string, Amount<
 
   return useMemo(() => {
     return data
-      ?.map((cs, i) => bigNumToCurrencyAmount(cs, tokens?.[i]))
+      ?.map((cs, i) => bigIntToCurrencyAmount(cs.result, tokens?.[i]))
       .reduce<Record<string, Amount<Token> | undefined>>((acc, curr, i) => {
         if (curr && tokens?.[i]) {
           acc[tokens[i]?.wrapped.address] = curr

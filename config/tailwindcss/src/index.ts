@@ -92,7 +92,9 @@ const config = {
           to: { height: '0' },
         },
         shimmer: {
-          '100%': { transform: 'translateX(100%)' },
+          '100%': {
+            transform: 'translateX(100%)',
+          },
         },
         ellipsis: {
           '0%': { content: '"."' },

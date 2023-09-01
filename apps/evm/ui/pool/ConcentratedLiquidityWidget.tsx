@@ -2,6 +2,7 @@
 
 import { Transition } from '@headlessui/react'
 import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
+import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { classNames, DialogTrigger, FormSection, Message } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
@@ -243,7 +244,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                   enabled={!depositBDisabled}
                 >
                   <AddSectionReviewModalConcentrated
-                    chainId={chainId}
+                    chainId={Number(chainId) as ChainId}
                     feeAmount={feeAmount}
                     token0={token0}
                     token1={token1}

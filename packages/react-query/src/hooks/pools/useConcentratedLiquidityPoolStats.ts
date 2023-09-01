@@ -1,9 +1,10 @@
-import { parseUnits } from '@ethersproject/units'
+import '@sushiswap/database'
+
 import { ChainId } from '@sushiswap/chain'
 import { getPool } from '@sushiswap/client'
 import { Amount, Token } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
 import { useQuery } from '@tanstack/react-query'
+import { parseUnits } from 'viem'
 
 interface UseConcentratedLiquidityPoolStats {
   chainId: ChainId | undefined
@@ -53,7 +54,7 @@ export const useConcentratedLiquidityPoolStats = ({
               ...incentive,
               reward: Amount.fromRawAmount(
                 rewardToken,
-                JSBI.BigInt(parseUnits(incentive.rewardPerDay.toString(), incentive.rewardToken.decimals).toString())
+                parseUnits(incentive.rewardPerDay.toString(), incentive.rewardToken.decimals)
               ),
             }
           }),

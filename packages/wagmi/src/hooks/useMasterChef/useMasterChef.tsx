@@ -1,23 +1,30 @@
 'use client'
 
-import { Zero } from '@ethersproject/constants'
-import { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
 import { ChefType } from '@sushiswap/client'
 import { Amount, SUSHI, SUSHI_ADDRESS, Token } from '@sushiswap/currency'
-import { createToast } from '@sushiswap/ui/components/toast'
-import { BigNumber } from 'ethers'
-import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
-import { Address, erc20ABI, useAccount, useContractReads, useNetwork } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
+import { useCallback, useMemo } from 'react'
+import { encodeFunctionData, UserRejectedRequestError } from 'viem'
+import {
+  Address,
+  erc20ABI,
+  useAccount,
+  useContractReads,
+  useNetwork,
+  usePrepareSendTransaction,
+  useSendTransaction,
+} from 'wagmi'
+import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
+import { masterchefV2Abi, minichefV2Abi } from '../../abis'
 import {
   MASTERCHEF_ADDRESS,
   MASTERCHEF_V2_ADDRESS,
   MINICHEF_ADDRESS,
   useMasterChefContract,
 } from '../useMasterChefContract'
-import { useSendTransaction } from '../useSendTransaction'
+import { UsePrepareSendTransactionConfig } from '../useSendTransaction'
 
 interface UseMasterChefReturn extends Pick<ReturnType<typeof useContractReads>, 'isLoading' | 'isError'> {
   balance: Amount<Token> | undefined
@@ -108,7 +115,7 @@ export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid,
                 } as const),
           ] as const,
           functionName: 'userInfo',
-          args: [BigNumber.from(pid), address as Address],
+          args: [pid, address as Address],
         } as const,
         {
           chainId: ChainId.ETHEREUM,
@@ -126,7 +133,7 @@ export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid,
             },
           ] as const,
           functionName: 'pendingSushi',
-          args: [BigNumber.from(pid), address as Address],
+          args: [pid, address as Address],
         } as const,
       ]
     }
@@ -159,7 +166,7 @@ export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid,
             } as const,
           ] as const,
           functionName: 'userInfo',
-          args: [BigNumber.from(pid), address as Address],
+          args: [pid, address as Address],
         } as const,
       ] as const
     }
@@ -173,18 +180,13 @@ export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid,
     watch,
     keepPreviousData: true,
     enabled: contracts.length > 0 && enabled,
+    select: (results) => results.map((r) => r.result),
   })
 
   const [sushiBalance, balance, pendingSushi] = useMemo(() => {
     const _sushiBalance = data?.[0] ? data?.[0] : undefined
-    const _balance = data?.[1]
-      ? (
-          data?.[1] as {
-            amount: BigNumber
-            rewardDebt: BigNumber
-          }
-        ).amount
-      : undefined
+    const _balance = data?.[1] ? (data?.[1] as [bigint, bigint])[0] : undefined
+
     const _pendingSushi = data?.[2] ? data?.[2] : undefined
     const balance = Amount.fromRawAmount(token, _balance ? _balance.toString() : 0)
     const pendingSushi = SUSHI[chainId as keyof typeof SUSHI]
@@ -197,7 +199,10 @@ export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid,
   }, [chainId, data, token])
 
   const onSettled = useCallback(
-    (data: SendTransactionResult | undefined) => {
+    (data: SendTransactionResult | undefined, error: Error | null) => {
+      if (error instanceof UserRejectedRequestError) {
+        createErrorToast(error?.message, true)
+      }
       if (data) {
         const ts = new Date().getTime()
         void createToast({
@@ -205,11 +210,11 @@ export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid,
           type: 'claimRewards',
           chainId,
           txHash: data.hash,
-          promise: data.wait(),
+          promise: waitForTransaction({ hash: data.hash }),
           summary: {
-            pending: `Claiming rewards`,
-            completed: `Successfully claimed rewards`,
-            failed: `Something went wrong when claiming rewards`,
+            pending: 'Claiming rewards',
+            completed: 'Successfully claimed rewards',
+            failed: 'Something went wrong when claiming rewards',
           },
           groupTimestamp: ts,
           timestamp: ts,
@@ -219,52 +224,77 @@ export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid,
     [chainId, address]
   )
 
-  const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!address || !chainId || !data || !contract) return
-      if (chef === ChefType.MasterChefV1) {
-        setRequest({
-          from: address,
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    if (!address || !chainId || !data || !contract) return
+    switch (chef) {
+      case ChefType.MasterChefV1:
+        return {
+          account: address,
           to: contract.address,
-          data: contract.interface.encodeFunctionData('deposit', [pid, Zero]),
-        })
-      } else if (chef === ChefType.MasterChefV2) {
-        if (pendingSushi && sushiBalance && pendingSushi.greaterThan(sushiBalance)) {
-          setRequest({
-            from: address,
-            to: contract.address,
-            data: contract.interface.encodeFunctionData('batch', [
-              contract.interface.encodeFunctionData('harvestFromMasterChef'),
-              contract.interface.encodeFunctionData('harvest', [pid, address]),
-            ]),
-          })
-        } else {
-          setRequest({
-            from: address,
-            to: contract.address,
-            data: contract.interface.encodeFunctionData('harvest', [pid, address]),
-          })
+          data: encodeFunctionData({ abi: contract.abi, functionName: 'deposit', args: [BigInt(pid), 0n] }),
         }
-      } else if (chef === ChefType.MiniChef) {
-        setRequest({
-          from: address,
-          to: contract.address,
-          data: contract.interface.encodeFunctionData('harvest', [pid, address]),
-        })
+      case ChefType.MasterChefV2: {
+        if (pendingSushi && sushiBalance && pendingSushi.greaterThan(sushiBalance)) {
+          return {
+            account: address,
+            to: contract.address,
+            data: encodeFunctionData({
+              abi: masterchefV2Abi,
+              functionName: 'batch',
+              args: [
+                [
+                  encodeFunctionData({
+                    abi: masterchefV2Abi,
+                    functionName: 'harvestFromMasterChef',
+                  }),
+                  encodeFunctionData({
+                    abi: masterchefV2Abi,
+                    functionName: 'harvest',
+                    args: [BigInt(pid), address],
+                  }),
+                ],
+                false,
+              ],
+            }),
+          }
+        } else {
+          return {
+            account: address,
+            to: contract.address,
+            data: encodeFunctionData({
+              abi: masterchefV2Abi,
+              functionName: 'harvest',
+              args: [BigInt(pid), address],
+            }),
+          }
+        }
       }
-    },
-    [address, chainId, chef, contract, data, pendingSushi, pid, sushiBalance]
-  )
+      default:
+        return {
+          account: address,
+          to: contract.address,
+          data: encodeFunctionData({
+            abi: minichefV2Abi,
+            functionName: 'harvest',
+            args: [BigInt(pid), address],
+          }),
+        }
+    }
+  }, [address, chainId, chef, contract, data, pendingSushi, pid, sushiBalance])
+
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
+    enabled: chainId === chain?.id,
+  })
 
   const {
     sendTransaction: harvest,
     isLoading: isWritePending,
     isError: isWriteError,
   } = useSendTransaction({
-    chainId,
+    ...config,
     onSettled,
-    prepare,
-    enabled: chainId === chain?.id,
   })
 
   return useMemo(() => {

@@ -1,22 +1,21 @@
-import { Token } from '@sushiswap/currency'
-import { Address, readContracts } from 'wagmi'
-import { BigNumber } from 'ethers'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { balanceOfAbi } from '@sushiswap/abi'
-import { BridgeBento, RToken } from '@sushiswap/tines'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
+import { Token } from '@sushiswap/currency'
 import { convertTokenToBento } from '@sushiswap/router/dist/liquidity-providers/Trident'
+import { BridgeBento, Rebase, RToken } from '@sushiswap/tines'
+import { Address, readContracts } from 'wagmi'
 
 export enum BridgeBentoState {
-  LOADING,
-  NOT_EXISTS,
-  EXISTS,
-  INVALID,
+  LOADING = 'Loading',
+  NOT_EXISTS = 'Not exists',
+  EXISTS = 'Exists',
+  INVALID = 'Invalid',
 }
 
 export const getBridgeBentoPools = async (
-  chainId: BentoBoxV1ChainId,
+  chainId: BentoBoxChainId,
   currencies: Token[],
-  totals: Map<string,{ base: BigNumber; elastic: BigNumber }>
+  totals: Map<string, Rebase>
 ) => {
   const balances = await readContracts({
     contracts: currencies.map(
@@ -26,14 +25,15 @@ export const getBridgeBentoPools = async (
           chainId,
           abi: balanceOfAbi,
           functionName: 'balanceOf',
-          args: [bentoBoxV1Address[chainId] as Address],
+          args: [BENTOBOX_ADDRESS[chainId] as Address],
         } as const)
     ),
   })
 
   return currencies.map((el, i) => {
     const total = totals.get(el.address)
-    if (!total || !balances?.[i]) {
+    const balance = balances?.[i].result
+    if (!total || !balance) {
       return [BridgeBentoState.LOADING, null]
     }
 
@@ -41,14 +41,7 @@ export const getBridgeBentoPools = async (
 
     return [
       BridgeBentoState.EXISTS,
-      new BridgeBento(
-        `Bento bridge for ${el.symbol}`,
-        el as RToken,
-        convertTokenToBento(el),
-        elastic,
-        base,
-        balances?.[i]
-      ),
+      new BridgeBento(`Bento bridge for ${el.symbol}`, el as RToken, convertTokenToBento(el), elastic, base, balance),
     ]
   })
 }

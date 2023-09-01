@@ -1,4 +1,3 @@
-import { TransactionRequest } from '@ethersproject/providers'
 import { TrashIcon } from '@heroicons/react/outline'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
@@ -16,19 +15,21 @@ import {
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createToast } from '@sushiswap/ui/components/toast'
-import { useAccount, useContract, useWaitForTransaction } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { useAccount, usePrepareSendTransaction, useWaitForTransaction } from '@sushiswap/wagmi'
+import { useSendTransaction } from '@sushiswap/wagmi'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
-import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import React, { Dispatch, FC, SetStateAction, useCallback } from 'react'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import React, { FC, useCallback, useMemo } from 'react'
+import { Abi, Address, encodeFunctionData } from 'viem'
 
 import { Stream, Vesting } from '../lib'
 
 interface CancelModalProps {
   title: string
   stream?: Stream | Vesting
-  abi: NonNullable<Parameters<typeof useContract>['0']>['abi']
-  address: string
+  abi: Abi
+  address: Address
   fn: string
   chainId: ChainId
 }
@@ -36,25 +37,17 @@ interface CancelModalProps {
 export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contractAddress, fn, title, chainId }) => {
   const { address } = useAccount()
 
-  const contract = useContract({
-    address: contractAddress,
-    abi: abi,
-  })
-
   const type = stream instanceof Vesting ? 'Vest' : 'Stream'
 
-  const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!stream || !address) return
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    if (!stream || !address) return
 
-      setRequest({
-        from: address,
-        to: contractAddress,
-        data: contract?.interface.encodeFunctionData(fn, [stream.id, false]),
-      })
-    },
-    [stream, address, contractAddress, contract?.interface, fn]
-  )
+    return {
+      account: address,
+      to: contractAddress,
+      data: encodeFunctionData({ abi, functionName: fn, args: [stream.id, false] }),
+    }
+  }, [stream, address, contractAddress, abi, fn])
 
   const onSettled = useCallback(
     async (data: SendTransactionResult | undefined) => {
@@ -68,7 +61,7 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
         chainId,
         timestamp: ts,
         groupTimestamp: ts,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Cancelling ${type.toLowerCase()}`,
           completed: `Successfully cancelled ${type.toLowerCase()}`,
@@ -79,15 +72,19 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
     [type, chainId, address]
   )
 
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
+    enabled: Boolean(stream && address),
+  })
+
   const {
     sendTransactionAsync,
     data,
     isLoading: isWritePending,
   } = useSendTransaction({
-    chainId,
-    prepare,
+    ...config,
     onSettled,
-    enabled: Boolean(stream && address),
   })
 
   const { status } = useWaitForTransaction({ chainId, hash: data?.hash })

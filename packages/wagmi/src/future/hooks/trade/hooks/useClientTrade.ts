@@ -1,18 +1,19 @@
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Price, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import { Percent } from '@sushiswap/math'
 import { usePrice, UseTradeParams, UseTradeReturnWriteArgs } from '@sushiswap/react-query'
 import {
+  isRouteProcessor3_1ChainId,
   isRouteProcessor3ChainId,
   isRouteProcessorChainId,
-  routeProcessor3Address,
-  routeProcessorAddress,
-} from '@sushiswap/route-processor'
+  ROUTE_PROCESSOR_3_1_ADDRESS,
+  ROUTE_PROCESSOR_3_ADDRESS,
+  ROUTE_PROCESSOR_ADDRESS,
+} from '@sushiswap/route-processor-sdk'
 import { Router } from '@sushiswap/router'
 import { HexString } from '@sushiswap/types'
 import { useQuery } from '@tanstack/react-query'
-import { BigNumber } from 'ethers'
 import { useFeeData } from 'wagmi'
 
 import { usePoolsCodeMap } from '../../pools'
@@ -46,11 +47,11 @@ export const useClientTrade = (variables: UseTradeParams) => {
       },
     ],
     queryFn: async () => {
-      console.log('useClientTrade')
-
       if (
         !poolsCodeMap ||
-        (!isRouteProcessorChainId(chainId) && !isRouteProcessor3ChainId(chainId)) ||
+        (!isRouteProcessorChainId(chainId) &&
+          !isRouteProcessor3ChainId(chainId) &&
+          !isRouteProcessor3_1ChainId(chainId)) ||
         !fromToken ||
         !amount ||
         !toToken ||
@@ -68,18 +69,16 @@ export const useClientTrade = (variables: UseTradeParams) => {
           writeArgs: undefined,
           route: undefined,
           functionName: 'processRoute',
-          overrides: undefined,
+          value: undefined,
         }
-
-      console.log('useClientTrade 2')
 
       const route = Router.findSpecialRoute(
         poolsCodeMap,
         chainId,
         fromToken,
-        BigNumber.from(amount.quotient.toString()),
+        amount.quotient,
         toToken,
-        feeData.gasPrice.toNumber(),
+        Number(feeData.gasPrice),
         1 // 5% impact before dex aggregation
       )
 
@@ -102,17 +101,26 @@ ${logPools}
 
       let args = undefined
 
-      console.log({ recipient })
-
       if (recipient) {
-        if (isRouteProcessor3ChainId(chainId)) {
-          args = Router.routeProcessor2Params(
+        if (isRouteProcessor3_1ChainId(chainId)) {
+          args = Router.routeProcessor3_1Params(
             poolsCodeMap,
             route,
             fromToken,
             toToken,
             recipient,
-            routeProcessor3Address[chainId],
+            ROUTE_PROCESSOR_3_1_ADDRESS[chainId],
+            [],
+            +slippagePercentage / 100
+          )
+        } else if (isRouteProcessor3ChainId(chainId)) {
+          args = Router.routeProcessor3Params(
+            poolsCodeMap,
+            route,
+            fromToken,
+            toToken,
+            recipient,
+            ROUTE_PROCESSOR_3_ADDRESS[chainId],
             [],
             +slippagePercentage / 100
           )
@@ -123,73 +131,81 @@ ${logPools}
             fromToken,
             toToken,
             recipient,
-            routeProcessorAddress[chainId],
+            ROUTE_PROCESSOR_ADDRESS[chainId],
             +slippagePercentage / 100
           )
         }
       }
 
       if (route) {
-        const amountIn = Amount.fromRawAmount(fromToken, route.amountInBN.toString())
-        const amountOut = Amount.fromRawAmount(toToken, route.amountOutBN.toString())
+        const amountIn = Amount.fromRawAmount(fromToken, route.amountInBI.toString())
+        const amountOut = Amount.fromRawAmount(toToken, route.amountOutBI.toString())
         const isOffset = chainId === ChainId.POLYGON && carbonOffset
 
         // let writeArgs: UseTradeReturnWriteArgs = args
         let writeArgs: UseTradeReturnWriteArgs = args
           ? [
               args.tokenIn as HexString,
-              BigNumber.from(args.amountIn),
+              args.amountIn,
               args.tokenOut as HexString,
-              BigNumber.from(args.amountOutMin),
+              args.amountOutMin,
               args.to as HexString,
               args.routeCode as HexString,
             ]
           : undefined
 
         // const overrides = fromToken.isNative && writeArgs?.[1] ? { value: BigNumber.from(writeArgs?.[1]) } : undefined
-        let overrides = fromToken.isNative && writeArgs?.[1] ? { value: BigNumber.from(writeArgs?.[1]) } : undefined
+        let value = fromToken.isNative && writeArgs?.[1] ? writeArgs[1] : undefined
 
         if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
-          writeArgs = ['0xbc4a6be1285893630d45c881c6c343a65fdbe278', BigNumber.from('20000000000000000'), ...writeArgs]
-          overrides = {
-            value: BigNumber.from(fromToken.isNative ? writeArgs[3] : '0').add(BigNumber.from('20000000000000000')),
-          }
+          writeArgs = ['0xbc4a6be1285893630d45c881c6c343a65fdbe278', 20000000000000000n, ...writeArgs]
+          value = (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n
         }
+
+        console.log({ writeArgs })
 
         return new Promise((res) =>
           setTimeout(
             () =>
               res({
-                swapPrice: amountOut.greaterThan(ZERO)
+                swapPrice: amountOut.greaterThan(0n)
                   ? new Price({
                       baseAmount: amount,
                       quoteAmount: amountOut,
                     })
                   : undefined,
                 priceImpact: route.priceImpact
-                  ? new Percent(JSBI.BigInt(Math.round(route.priceImpact * 10000)), JSBI.BigInt(10000))
+                  ? new Percent(BigInt(Math.round(route.priceImpact * 10000)), 10000n)
                   : new Percent(0),
                 amountIn,
                 amountOut,
-                minAmountOut: writeArgs?.[3]
-                  ? Amount.fromRawAmount(toToken, writeArgs[3].toString())
-                  : Amount.fromRawAmount(
-                      toToken,
-                      calculateSlippageAmount(amountOut, new Percent(Math.floor(0.5 * 100), 10_000))[0]
-                    ),
+                minAmountOut:
+                  typeof writeArgs?.[3] === 'bigint'
+                    ? Amount.fromRawAmount(toToken, writeArgs[3])
+                    : Amount.fromRawAmount(
+                        toToken,
+                        calculateSlippageAmount(amountOut, new Percent(Math.floor(0.5 * 100), 10_000))[0]
+                      ),
                 gasSpent:
                   price && feeData.gasPrice
                     ? Amount.fromRawAmount(
                         Native.onChain(chainId),
-                        JSBI.multiply(JSBI.BigInt(feeData.gasPrice), JSBI.BigInt(route.gasSpent * 1.2))
-                      )
-                        .multiply(price.asFraction)
-                        .toSignificant(4)
+                        feeData.gasPrice * BigInt(route.gasSpent * 1.2)
+                      ).toSignificant(4)
                     : undefined,
+                // gasSpentUsd:
+                //   price && feeData.gasPrice
+                //     ? Amount.fromRawAmount(
+                //         Native.onChain(chainId),
+                //         JSBI.multiply(JSBI.BigInt(feeData.gasPrice), JSBI.BigInt(route.gasSpent * 1.2))
+                //       )
+                //         .multiply(price.asFraction)
+                //         .toSignificant(4)
+                //     : undefined,
                 route,
                 functionName: isOffset ? 'transferValueAndprocessRoute' : 'processRoute',
                 writeArgs,
-                overrides,
+                value,
               }),
             250
           )

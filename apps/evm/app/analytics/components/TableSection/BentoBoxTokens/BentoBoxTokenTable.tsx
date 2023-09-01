@@ -38,8 +38,6 @@ export const BentoBoxTokenTable: FC = () => {
 
   const { data: bentoBoxTokens, isLoading } = useBentoBoxTokens(args)
 
-  console.log({ bentoBoxTokens })
-
   const data = useMemo(() => bentoBoxTokens || [], [bentoBoxTokens])
 
   const table = useReactTable<BentoBoxToken>({

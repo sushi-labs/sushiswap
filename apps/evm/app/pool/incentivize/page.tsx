@@ -29,7 +29,7 @@ import {
   TextField,
   typographyVariants,
 } from '@sushiswap/ui'
-import { ADDRESS_ZERO, Pool as V3Pool, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { ADDRESS_ZERO, SushiSwapV3ChainId, SushiSwapV3Pool } from '@sushiswap/v3-sdk'
 import { Address, readContract, useAccount, useSignMessage } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
@@ -38,7 +38,6 @@ import { useIncentivizePoolWithRewards } from '@sushiswap/wagmi/future/hooks/rew
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { format } from 'date-fns'
-import { BigNumber } from 'ethers'
 import { useCallback, useMemo, useState } from 'react'
 import { useWaitForTransaction } from 'wagmi'
 
@@ -92,7 +91,7 @@ const Incentivize = withCheckerRoot(() => {
   const fiatAmountsAsNumber = useTokenAmountDollarValues({ chainId, amounts: fiatAmounts })
 
   const v3Address =
-    token0 && token1 && feeAmount ? V3Pool.getAddress(token0.wrapped, token1.wrapped, feeAmount) : undefined
+    token0 && token1 && feeAmount ? SushiSwapV3Pool.getAddress(token0.wrapped, token1.wrapped, feeAmount) : undefined
 
   const epochs = useMemo(() => {
     return startDate && endDate ? Math.floor((endDate.getTime() - startDate.getTime()) / 3600000) : undefined
@@ -121,7 +120,7 @@ const Incentivize = withCheckerRoot(() => {
             {
               uniV3Pool: v3Address as Address,
               rewardToken: rewardToken.wrapped.address as Address,
-              amount: BigNumber.from(amount[0].quotient.toString()),
+              amount: amount[0].quotient,
               positionWrappers: blacklist.length > 0 ? (blacklist as Address[]) : [],
               wrapperTypes: blacklist.length > 0 ? [3] : [],
               propToken0: customize ? distro1[0] * 100 : 2000,

@@ -1,6 +1,7 @@
 export const UNI_LIST = 'https://gateway.ipfs.io/ipns/tokens.uniswap.org'
 export const UNI_EXTENDED_LIST = 'https://gateway.ipfs.io/ipns/extendedtokens.uniswap.org'
 const COINGECKO_LIST = 'https://tokens.coingecko.com/uniswap/all.json'
+const COINGECK_BASE_LIST = 'https://tokens.coingecko.com/base/all.json'
 const COINGECKO_BNB_LIST = 'https://tokens.coingecko.com/binance-smart-chain/all.json'
 const COINGECKO_ARBITRUM_LIST = 'https://tokens.coingecko.com/arbitrum-one/all.json'
 const COINGECKO_OPTIMISM_LIST = 'https://tokens.coingecko.com/optimistic-ethereum/all.json'
@@ -22,6 +23,7 @@ export const DEFAULT_LIST_OF_LISTS: string[] = [
   UNI_EXTENDED_LIST,
   COMPOUND_LIST,
   COINGECKO_LIST,
+  COINGECK_BASE_LIST,
   COINGECKO_BNB_LIST,
   COINGECKO_ARBITRUM_LIST,
   COINGECKO_OPTIMISM_LIST,

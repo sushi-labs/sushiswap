@@ -37,7 +37,6 @@
     "@sushiswap/format": "workspace:*",
     "big.js": "^6.1.1",
     "decimal.js-light": "^2.5.1",
-    "jsbi": "^4.1.0",
     "tiny-invariant": "1.3.1",
     "toformat": "^2.0.0"
   },

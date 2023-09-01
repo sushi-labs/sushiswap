@@ -15,6 +15,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
   OnramperButton,
+  PARTNER_NAVIGATION_LINKS,
   TOOLS_NAVIGATION_LINKS,
 } from '@sushiswap/ui'
 import React, { FC } from 'react'
@@ -56,10 +57,22 @@ export const Header: FC = () => {
               </LinkInternal>
             </NavigationMenuItem>
             <NavigationMenuItem className="hidden md:block">
-              <NavigationMenuTrigger>Tools</NavigationMenuTrigger>
+              <NavigationMenuTrigger>More</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="w-[400px] gap-3 p-4">
                   {TOOLS_NAVIGATION_LINKS.map((component) => (
+                    <NavigationListItem key={component.title} title={component.title} href={component.href}>
+                      {component.description}
+                    </NavigationListItem>
+                  ))}
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            <NavigationMenuItem className="hidden md:block">
+              <NavigationMenuTrigger>Partners</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="w-[400px] gap-3 p-4">
+                  {PARTNER_NAVIGATION_LINKS.map((component) => (
                     <NavigationListItem key={component.title} title={component.title} href={component.href}>
                       {component.description}
                     </NavigationListItem>

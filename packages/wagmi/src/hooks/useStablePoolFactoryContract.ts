@@ -1,16 +1,18 @@
 'use client'
 
-import { stablePoolFactoryAbi, stablePoolFactoryAddress, StablePoolFactoryChainId } from '@sushiswap/trident-core'
-import { Address, useContract, useProvider } from 'wagmi'
+import { tridentStablePoolFactoryAbi } from '@sushiswap/abi'
+import { TRIDENT_STABLE_POOL_FACTORY_ADDRESS, TridentChainId } from '@sushiswap/trident-sdk'
+import { Address, usePublicClient } from 'wagmi'
+import { getContract } from 'wagmi/actions'
 
 export const getStablePoolFactoryContract = (chainId: number | undefined) => ({
-  address: (stablePoolFactoryAddress?.[chainId as StablePoolFactoryChainId] ?? '') as Address,
-  abi: stablePoolFactoryAbi?.[chainId as StablePoolFactoryChainId] ?? [],
+  address: (TRIDENT_STABLE_POOL_FACTORY_ADDRESS?.[chainId as TridentChainId] ?? '') as Address,
+  abi: tridentStablePoolFactoryAbi,
 })
 
-export function useStablePoolFactoryContract(chainId: number | undefined): ReturnType<typeof useContract> {
-  return useContract({
+export function useStablePoolFactoryContract(chainId: number | undefined) {
+  return getContract({
     ...getStablePoolFactoryContract(chainId),
-    signerOrProvider: useProvider({ chainId }),
+    walletClient: usePublicClient({ chainId }),
   })
 }

@@ -1,16 +1,16 @@
 import { Type as Currency } from '@sushiswap/currency'
 import { MultiRoute } from '@sushiswap/tines'
 
-import { Pair } from '../Pair'
+import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
 import { RouteV1 } from '../Route'
 
 export function convertTinesSingleRouteToRouteV1<TInput extends Currency, TOutput extends Currency>(
   route: MultiRoute,
-  pairs: Pair[],
+  pairs: SushiSwapV2Pool[],
   input: TInput,
   output: TOutput
 ): RouteV1<TInput, TOutput> {
-  const pairHash = new Map<string, Pair>()
+  const pairHash = new Map<string, SushiSwapV2Pool>()
   pairs.forEach((pair) => pairHash.set(pair.liquidityToken.address, pair))
   return new RouteV1(
     route.legs.map((leg) => {

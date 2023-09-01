@@ -1,4 +1,4 @@
-import { BigNumber } from '@ethersproject/bignumber'
+import { Address } from 'viem'
 
 import { RPool, RToken } from './PrimaryPools'
 
@@ -15,11 +15,20 @@ export class BridgeBento extends RPool {
     address: string,
     tokenEthereum: RToken,
     tokenBento: RToken,
-    elastic: BigNumber,
-    base: BigNumber,
-    freeLiquidity?: BigNumber
+    elastic: bigint,
+    base: bigint,
+    freeLiquidity?: bigint
   ) {
-    super(address, tokenEthereum, tokenBento, 0, elastic, base, BENTO_MINIMUM_SHARE_BALANCE, BRIDGING_GAS_COST)
+    super(
+      address as Address,
+      tokenEthereum,
+      tokenBento,
+      0,
+      elastic,
+      base,
+      BENTO_MINIMUM_SHARE_BALANCE,
+      BRIDGING_GAS_COST
+    )
     if (address !== undefined) {
       this.elastic = parseInt(elastic.toString())
       this.base = parseInt(base.toString())
@@ -31,7 +40,7 @@ export class BridgeBento extends RPool {
     }
   }
 
-  updateReserves(elastic: BigNumber, base: BigNumber) {
+  updateReserves(elastic: bigint, base: bigint) {
     this.reserve0 = elastic
     this.elastic = parseInt(elastic.toString())
     this.reserve1 = base
@@ -42,14 +51,14 @@ export class BridgeBento extends RPool {
   // direction == false -> withdraw: calcs output amounts by input shares
   calcOutByIn(amountIn: number, direction: boolean, throwIfOutOfLiquidity = true): { out: number; gasSpent: number } {
     let out
-    if (direction == true) {
-      if (this.elastic == 0) {
+    if (direction === true) {
+      if (this.elastic === 0) {
         out = amountIn
       } else {
         out = (amountIn * this.base) / this.elastic
       }
     } else {
-      if (this.base == 0) {
+      if (this.base === 0) {
         out = amountIn
       } else {
         out = (amountIn * this.elastic) / this.base
@@ -66,11 +75,11 @@ export class BridgeBento extends RPool {
 
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
     let inp
-    if (direction == true) {
-      if (this.elastic == 0) {
+    if (direction === true) {
+      if (this.elastic === 0) {
         inp = amountOut
       } else {
-        if (this.base == 0) {
+        if (this.base === 0) {
           inp = Number.POSITIVE_INFINITY
         } else {
           inp = (amountOut * this.elastic) / this.base
@@ -79,10 +88,10 @@ export class BridgeBento extends RPool {
     } else {
       if (this.freeLiquidity !== undefined && amountOut > this.freeLiquidity) inp = Number.POSITIVE_INFINITY
       else {
-        if (this.base == 0) {
+        if (this.base === 0) {
           inp = amountOut
         } else {
-          if (this.elastic == 0) {
+          if (this.elastic === 0) {
             inp = Number.POSITIVE_INFINITY
           } else {
             inp = (amountOut * this.base) / this.elastic
@@ -94,14 +103,14 @@ export class BridgeBento extends RPool {
   }
 
   calcCurrentPriceWithoutFee(direction: boolean): number {
-    if (direction == true) {
-      if (this.elastic == 0) {
+    if (direction === true) {
+      if (this.elastic === 0) {
         return 1
       } else {
         return this.base / this.elastic
       }
     } else {
-      if (this.base == 0) {
+      if (this.base === 0) {
         return 1
       } else {
         return this.elastic / this.base

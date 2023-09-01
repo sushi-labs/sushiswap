@@ -62,7 +62,7 @@ export const useFarmRewards = ({
     data: farmsMap,
     isError,
     isLoading,
-  } = useQuery(queryKey, () => fetch(`https://farm.sushi.com/v0`).then((response) => response.json()), {
+  } = useQuery(queryKey, () => fetch('https://farm.sushi.com/v0').then((response) => response.json()), {
     staleTime: 2000,
     ...options,
   })

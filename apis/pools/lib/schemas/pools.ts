@@ -35,6 +35,18 @@ export const PoolsApiSchema = z.object({
       }
     })
     .optional(),
+  hasEnabledSteerVault: z.coerce
+    .string()
+    .transform((val) => {
+      if (val === 'true') {
+        return true
+      } else if (val === 'false') {
+        return false
+      } else {
+        throw new Error('hasEnabledSteerVault must true or false')
+      }
+    })
+    .optional(),
   tokenSymbols: z
     .string()
     .transform((tokenSymbols) => tokenSymbols?.split(','))

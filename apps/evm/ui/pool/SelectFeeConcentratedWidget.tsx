@@ -144,7 +144,7 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> = memo
                 asChild
                 key={i}
                 testdata-id={`fee-option-${option.value}`}
-                className="!h-[unset] !w-[unset] !p-0 !text-left !justify-start cursor-pointer"
+                className="!h-[unset] !w-[unset] !p-0 !text-left !justify-start cursor-pointer dark:data-[state=on]:bg-secondary"
               >
                 <Card>
                   <CardHeader>

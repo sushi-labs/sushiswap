@@ -15,8 +15,8 @@ import {
 } from '../constants'
 
 export enum FuroTableType {
-  INCOMING,
-  OUTGOING,
+  INCOMING = 'Incoming',
+  OUTGOING = 'Outgoing',
 }
 
 interface FuroTableProps {

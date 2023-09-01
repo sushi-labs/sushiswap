@@ -185,9 +185,9 @@ async function getRandomSwapParams(rnd: () => number, pool: PoolInfo): Promise<[
   else if (price > maxPrice / 10) direction = true
   else direction = rnd() > 0.5
 
-  const res0BN = await pool.token0Contract.balanceOf(pool.contract.address)
+  const res0BI = await pool.token0Contract.balanceOf(pool.contract.address)
   const res0 = parseInt(res0BN.toString())
-  const res1BN = await pool.token1Contract.balanceOf(pool.contract.address)
+  const res1BI = await pool.token1Contract.balanceOf(pool.contract.address)
   const res1 = parseInt(res1BN.toString())
 
   const maxRes = direction ? res1 / price : res0 * price

@@ -25,6 +25,10 @@ export class Native extends Currency {
     return wnative
   }
 
+  // public get tokenURI(): string {
+  //   return `native-currency/${this.symbol.toLowerCase()}.svg`
+  // }
+
   private static cache: Record<number, Native> = {}
 
   public static onChain(chainId: number): Native {
@@ -40,12 +44,14 @@ export class Native extends Currency {
 
     const { decimals, name, symbol } = nativeCurrency
 
-    return (this.cache[chainId] = new Native({
+    this.cache[chainId] = new Native({
       chainId,
       decimals,
       name,
       symbol,
-    }))
+    })
+
+    return this.cache[chainId]
   }
 
   public equals(other: Type): boolean {

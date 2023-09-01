@@ -1,17 +1,4 @@
-import { BigintIsh, JSBI } from '@sushiswap/math'
-/**
- * Generated method parameters for executing a call.
- */
-export interface MethodParameters {
-  /**
-   * The hex encoded calldata to perform the given operation
-   */
-  calldata: string
-  /**
-   * The amount of ether (wei) to send in hex.
-   */
-  value: string
-}
+import { BigintIsh } from '@sushiswap/math'
 
 /**
  * Converts a big int to a hex string
@@ -19,7 +6,7 @@ export interface MethodParameters {
  * @returns The hex encoded calldata
  */
 export function toHex(bigintIsh: BigintIsh) {
-  const bigInt = JSBI.BigInt(bigintIsh.toString())
+  const bigInt = BigInt(bigintIsh.toString())
   let hex = bigInt.toString(16)
   if (hex.length % 2 !== 0) {
     hex = `0${hex}`

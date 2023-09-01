@@ -1,6 +1,0 @@
-{
-  "extends": "@sushiswap/typescript-config/hardhat.json",
-  "include": ["scripts", "test", "deploy"],
-  "exclude": ["soljson-v0.8.11+commit.d7f03943.js"],
-  "files": ["hardhat.config.ts"]
-}

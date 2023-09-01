@@ -1,4 +1,4 @@
-import { Tick } from '../entities/tick'
+import { Tick } from '../entities/Tick'
 import { TickList } from './tickList'
 import { TickMath } from './tickMath'
 

@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/dexie",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "private": true,
   "description": "Sushi Dexie",
   "keywords": [
@@ -65,7 +65,7 @@
     "typescript": "5.1.6"
   },
   "peerDependencies": {
-    "next": "13.4.17",
+    "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   }

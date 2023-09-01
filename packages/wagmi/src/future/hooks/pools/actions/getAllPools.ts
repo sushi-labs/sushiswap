@@ -1,19 +1,20 @@
-import { ConstantProductPool, StablePool, TradeType, Pair } from '@sushiswap/amm'
-import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { getCurrencyCombinations } from '@sushiswap/router'
-import { ConstantProductPoolState, getConstantProductPools } from './getConstantProductPools'
-import { getStablePools, StablePoolState } from './getStablePools'
-import { UsePoolsParams, UsePoolsReturn } from '../types'
-import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
-import { getPairs, PairState } from './getPairs'
-import { getBentoboxTotalsMap } from '../../bentobox'
-import { pairsUnique, tokensUnique } from './utils'
-import { BridgeBento, UniV3Pool } from '@sushiswap/tines'
-import { BridgeBentoState, getBridgeBentoPools } from './getBridgeBentoPools'
+import { SushiSwapV2Pool, TradeType, TridentConstantPool, TridentStablePool } from '@sushiswap/amm'
+import { isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Type } from '@sushiswap/currency'
-import { getV3Pools, V3PoolState } from './getV3Pools'
+import { getCurrencyCombinations } from '@sushiswap/router'
+import { BridgeBento, UniV3Pool } from '@sushiswap/tines'
+import { isTridentChainId } from '@sushiswap/trident-sdk'
+import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+
+import { getBentoboxTotalsMap } from '../../bentobox'
+import { UsePoolsParams, UsePoolsReturn } from '../types'
+import { BridgeBentoState, getBridgeBentoPools } from './getBridgeBentoPools'
+import { getSushiSwapV2Pools, PairState } from './getSushiSwapV2Pools'
+import { getTridentConstantPools, TridentConstantPoolState } from './getTridentConstantPools'
+import { getTridentStablePools, TridentStablePoolState } from './getTridentStablePools'
+import { getV3Pools, V3PoolState } from './getV3Pools'
+import { pairsUnique, tokensUnique } from './utils'
 
 const queryFn = async ({
   chainId,
@@ -37,17 +38,17 @@ const queryFn = async ({
   // }
 
   const _tokensUnique = tokensUnique(pairsUnique(currencyCombinations))
-  const totalsMap = isBentoBoxV1ChainId(chainId) ? await getBentoboxTotalsMap(chainId, _tokensUnique) : null
+  const totalsMap = isBentoBoxChainId(chainId) ? await getBentoboxTotalsMap(chainId, _tokensUnique) : null
 
   const [pairs, constantProductPools, stablePools, bridgeBentoPools, v3Pools] = await Promise.all([
-    isSushiSwapV2ChainId(chainId) ? getPairs(chainId, currencyCombinations) : Promise.resolve([]),
-    isConstantProductPoolFactoryChainId(chainId) && isBentoBoxV1ChainId(chainId)
-      ? getConstantProductPools(chainId, currencyCombinations)
+    isSushiSwapV2ChainId(chainId) ? getSushiSwapV2Pools(chainId, currencyCombinations) : Promise.resolve([]),
+    isTridentChainId(chainId) && isBentoBoxChainId(chainId)
+      ? getTridentConstantPools(chainId, currencyCombinations)
       : Promise.resolve([]),
-    isStablePoolFactoryChainId(chainId) && isBentoBoxV1ChainId(chainId) && totalsMap
-      ? getStablePools(chainId, currencyCombinations, totalsMap)
+    isTridentChainId(chainId) && isBentoBoxChainId(chainId) && totalsMap
+      ? getTridentStablePools(chainId, currencyCombinations, totalsMap)
       : Promise.resolve([]),
-    isBentoBoxV1ChainId(chainId) && withBentoPools && totalsMap
+    isBentoBoxChainId(chainId) && withBentoPools && totalsMap
       ? getBridgeBentoPools(chainId, _tokensUnique, totalsMap)
       : Promise.resolve([]),
     isSushiSwapV3ChainId(chainId) ? getV3Pools(chainId, currencyCombinations) : Promise.resolve([]),
@@ -69,33 +70,35 @@ export const getAllPools = async (
 ): Promise<UsePoolsReturn> => {
   if (!variables.currencyA || !variables.currencyB) {
     return {
-      pairs: [],
-      constantProductPools: [],
-      stablePools: [],
+      sushiSwapV2Pools: [],
+      tridentConstantPools: [],
+      tridentStablePools: [],
       bridgeBentoPools: [],
-      v3Pools: [],
+      sushiSwapV3Pools: [],
     }
   }
   const data = await queryFn(variables)
   return {
-    pairs: Object.values(
+    sushiSwapV2Pools: Object.values(
       data.pairs
-        .filter((result): result is [PairState.EXISTS, Pair] => Boolean(result[0] === PairState.EXISTS && result[1]))
-        .map(([, pair]) => pair as Pair)
+        .filter((result): result is [PairState.EXISTS, SushiSwapV2Pool] =>
+          Boolean(result[0] === PairState.EXISTS && result[1])
+        )
+        .map(([, pair]) => pair as SushiSwapV2Pool)
     ),
-    constantProductPools: Object.values(
+    tridentConstantPools: Object.values(
       data.constantProductPools
-        .filter((result): result is [ConstantProductPoolState.EXISTS, ConstantProductPool] =>
-          Boolean(result[0] === ConstantProductPoolState.EXISTS && result[1])
+        .filter((result): result is [TridentConstantPoolState.EXISTS, TridentConstantPool] =>
+          Boolean(result[0] === TridentConstantPoolState.EXISTS && result[1])
         )
-        .map(([, pair]) => pair as ConstantProductPool)
+        .map(([, pair]) => pair as TridentConstantPool)
     ),
-    stablePools: Object.values(
+    tridentStablePools: Object.values(
       data.stablePools
-        .filter((result): result is [StablePoolState.EXISTS, StablePool] =>
-          Boolean(result[0] === StablePoolState.EXISTS && result[1])
+        .filter((result): result is [TridentStablePoolState.EXISTS, TridentStablePool] =>
+          Boolean(result[0] === TridentStablePoolState.EXISTS && result[1])
         )
-        .map(([, pair]) => pair as StablePool)
+        .map(([, pair]) => pair as TridentStablePool)
     ),
     bridgeBentoPools: Object.values(
       data.bridgeBentoPools
@@ -104,7 +107,7 @@ export const getAllPools = async (
         )
         .map(([, pair]) => pair as BridgeBento)
     ),
-    v3Pools: Object.values(
+    sushiSwapV3Pools: Object.values(
       data.v3Pools
         .filter((result): result is [V3PoolState.EXISTS, UniV3Pool] =>
           Boolean(result[0] === V3PoolState.EXISTS && result[1])

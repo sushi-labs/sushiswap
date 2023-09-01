@@ -27,7 +27,7 @@ export const STARGATE_CHAIN_ID = {
   [ChainId.POLYGON]: 109,
   [ChainId.ARBITRUM]: 110,
   [ChainId.OPTIMISM]: 111,
-  [ChainId.FANTOM]: 112,
+  // [ChainId.FANTOM]: 112,
   // TESTNETS
   // TODO: Depreciated, replace with goerli
   // [ChainId.RINKEBY]: 10001,

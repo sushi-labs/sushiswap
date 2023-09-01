@@ -1,23 +1,20 @@
 'use client'
 
-import { furoVestingRouterAbi, furoVestingRouterAddress, FuroVestingRouterChainId } from '@sushiswap/furo'
-import { getContract } from '@wagmi/core'
-import { useMemo } from 'react'
-import { useProvider } from 'wagmi'
+import { furoVestingRouterAbi } from '@sushiswap/abi'
+import { FURO_VESTING_ROUTER_ADDRESS, FuroChainId } from '@sushiswap/furo-sdk'
+import { getContract } from 'viem'
+import { usePublicClient } from 'wagmi'
 
-export const getFuroVestingRouterContractConfig = (chainId: FuroVestingRouterChainId) => ({
-  address: furoVestingRouterAddress[chainId],
-  abi: furoVestingRouterAbi[chainId],
+export const getFuroVestingRouterContractConfig = (chainId: FuroChainId) => ({
+  address: FURO_VESTING_ROUTER_ADDRESS[chainId],
+  abi: furoVestingRouterAbi,
 })
 
-export function useFuroVestingRouterContract(chainId: FuroVestingRouterChainId | undefined) {
-  const signerOrProvider = useProvider({ chainId })
+export function useFuroVestingRouterContract(chainId: FuroChainId | undefined) {
+  const publicClient = usePublicClient({ chainId })
 
-  return useMemo(() => {
-    if (!chainId) return null
-
-    return getContract({ ...getFuroVestingRouterContractConfig(chainId), signerOrProvider })
-  }, [chainId, signerOrProvider])
+  if (!chainId) return null
+  return getContract({ ...getFuroVestingRouterContractConfig(chainId), publicClient })
 }
 
 export type FuroVestingRouter = NonNullable<ReturnType<typeof useFuroVestingRouterContract>>

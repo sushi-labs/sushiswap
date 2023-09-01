@@ -1,4 +1,4 @@
-import { keccak256, pack } from '@ethersproject/solidity'
+import { getCreate2Address } from '@ethersproject/address'
 import { getReservesAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
@@ -6,9 +6,7 @@ import { PrismaClient } from '@sushiswap/database'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { add, getUnixTime } from 'date-fns'
-import { BigNumber } from 'ethers'
-import { getCreate2Address } from 'ethers/lib/utils'
-import { Address, PublicClient } from 'viem'
+import { Address, encodePacked, Hex, keccak256, PublicClient } from 'viem'
 
 import { getCurrencyCombinations } from '../getCurrencyCombinations'
 import { discoverNewPools, filterOnDemandPools, filterTopPools, getAllPools, mapToken, PoolResponse2 } from '../lib/api'
@@ -21,7 +19,7 @@ interface PoolInfo {
 }
 
 interface StaticPool {
-  address: string
+  address: Address
   token0: Token
   token1: Token
   fee: number
@@ -33,19 +31,19 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   readonly ON_DEMAND_POOL_SIZE = 20
   readonly REFRESH_INITIAL_POOLS_INTERVAL = 60 // SECONDS
 
-  topPools: Map<string, PoolCode> = new Map()
-  poolsByTrade: Map<string, string[]> = new Map()
-  onDemandPools: Map<string, PoolInfo> = new Map()
-  availablePools: Map<string, PoolResponse2> = new Map()
-  staticPools: Map<string, PoolResponse2> = new Map()
+  topPools: Map<Address, PoolCode> = new Map()
+  poolsByTrade: Map<string, Address[]> = new Map()
+  onDemandPools: Map<Address, PoolInfo> = new Map()
+  availablePools: Map<Address, PoolResponse2> = new Map()
+  staticPools: Map<Address, PoolResponse2> = new Map()
 
   blockListener?: () => void
   unwatchBlockNumber?: () => void
 
   fee = 0.003
   isInitialized = false
-  factory: { [chainId: number]: Address } = {}
-  initCodeHash: { [chainId: number]: string } = {}
+  factory: Record<number, Address> = {}
+  initCodeHash: Record<number, Hex> = {}
   latestPoolCreatedAtTimestamp = new Date()
   discoverNewPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }))
   refreshAvailablePoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.FETCH_AVAILABLE_POOLS_AFTER_SECONDS }))
@@ -54,8 +52,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   constructor(
     chainId: ChainId,
     web3Client: PublicClient,
-    factory: { [chainId: number]: Address },
-    initCodeHash: { [chainId: number]: string },
+    factory: Record<number, Address>,
+    initCodeHash: Record<number, Hex>,
     databaseClient?: PrismaClient
   ) {
     super(chainId, web3Client)
@@ -110,14 +108,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       if (res0 && res1) {
         const token0 = mapToken(this.chainId, pool.token0) as RToken
         const token1 = mapToken(this.chainId, pool.token1) as RToken
-        const rPool = new ConstantProductRPool(
-          pool.address,
-          token0,
-          token1,
-          this.fee,
-          BigNumber.from(res0),
-          BigNumber.from(res1)
-        )
+        const rPool = new ConstantProductRPool(pool.address, token0, token1, this.fee, res0, res1)
         const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
         this.topPools.set(pool.address, pc)
       } else {
@@ -128,7 +119,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     //console.debug(`${this.getLogPrefix()} - INIT, WATCHING ${this.topPools.size} POOLS`)
   }
 
-  private async getInitialPools(): Promise<Map<string, PoolResponse2>> {
+  private async getInitialPools(): Promise<Map<Address, PoolResponse2>> {
     if (this.databaseClient) {
       const pools = await getAllPools(
         this.databaseClient,
@@ -166,8 +157,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     )
     const validUntilTimestamp = getUnixTime(add(Date.now(), { seconds: this.ON_DEMAND_POOLS_LIFETIME_IN_SECONDS }))
 
-    let created = 0
-    let updated = 0
+    // let created = 0
+    // let updated = 0
     const poolCodesToCreate: PoolCode[] = []
     pools.forEach((pool) => {
       const existingPool = this.onDemandPools.get(pool.address)
@@ -175,19 +166,12 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         const token0 = pool.token0 as RToken
         const token1 = pool.token1 as RToken
 
-        const rPool = new ConstantProductRPool(
-          pool.address,
-          token0,
-          token1,
-          this.fee,
-          BigNumber.from(0),
-          BigNumber.from(0)
-        )
+        const rPool = new ConstantProductRPool(pool.address, token0, token1, this.fee, 0n, 0n)
         const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
         poolCodesToCreate.push(pc)
       } else {
         existingPool.validUntilTimestamp = validUntilTimestamp
-        ++updated
+        // ++updated
       }
     })
 
@@ -216,12 +200,12 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       const res1 = reserves?.[i]?.result?.[1]
 
       if (res0 !== undefined && res1 !== undefined) {
-        pool.updateReserves(BigNumber.from(res0), BigNumber.from(res1))
+        pool.updateReserves(res0, res1)
         this.onDemandPools.set(pool.address, { poolCode, validUntilTimestamp })
         // console.debug(
         //   `${this.getLogPrefix()} - ON DEMAND CREATION: ${pool.address} (${pool.token0.symbol}/${pool.token1.symbol})`
         // )
-        ++created
+        // ++created
       } else {
         // Pool doesn't exist?
         // console.error(`${this.getLogPrefix()} - ERROR FETCHING RESERVES, initialize on demand pool: ${pool.address}`)
@@ -364,14 +348,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       if (poolsToCreate) {
         const token0 = mapToken(this.chainId, poolsToCreate.token0) as RToken
         const token1 = mapToken(this.chainId, poolsToCreate.token1) as RToken
-        const rPool = new ConstantProductRPool(
-          poolsToCreate.address,
-          token0,
-          token1,
-          this.fee,
-          BigNumber.from(0),
-          BigNumber.from(0)
-        )
+        const rPool = new ConstantProductRPool(poolsToCreate.address, token0, token1, this.fee, 0n, 0n)
         const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
         this.topPools.set(poolsToCreate.address, pc)
 
@@ -407,10 +384,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       const res1 = reserves?.[i]?.result?.[1]
 
       if (res0 && res1) {
-        const res0BN = BigNumber.from(res0)
-        const res1BN = BigNumber.from(res1)
-        if (!pool.reserve0.eq(res0BN) || !pool.reserve1.eq(res1BN)) {
-          pool.updateReserves(res0BN, res1BN)
+        if (pool.reserve0 !== res0 || pool.reserve1 !== res1) {
+          pool.updateReserves(res0, res1)
           // console.info(
           //   `${this.getLogPrefix()} - SYNC, ${type}: ${pool.address} ${pool.token0.symbol}/${
           //     pool.token1.symbol
@@ -427,12 +402,12 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     })
   }
 
-  _getPoolAddress(t1: Token, t2: Token): string {
+  _getPoolAddress(t1: Token, t2: Token): Address {
     return getCreate2Address(
       this.factory[this.chainId as keyof typeof this.factory],
-      keccak256(['bytes'], [pack(['address', 'address'], [t1.address, t2.address])]),
+      keccak256(encodePacked(['address', 'address'], [t1.address as Address, t2.address as Address])),
       this.initCodeHash[this.chainId as keyof typeof this.initCodeHash]
-    )
+    ) as Address
   }
 
   // TODO: Decide if this is worth keeping as fallback in case fetching top pools fails? only used on initial load.

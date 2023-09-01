@@ -2,13 +2,12 @@
 
 import { Amount, Type } from '@sushiswap/currency'
 import { ButtonProps } from '@sushiswap/ui/components/button'
-import dynamic from 'next/dynamic'
 import React, { FC } from 'react'
 import { Address } from 'wagmi'
 
 import { ApproveERC20 } from './ApproveERC20'
 
-export interface ApproveERC20MultipleProps extends ButtonProps {
+interface ApproveERC20MultipleProps extends ButtonProps {
   id: string
   amounts: { amount: Amount<Type>; contract: Address }[]
   enabled?: boolean
@@ -18,7 +17,7 @@ export interface ApproveERC20MultipleProps extends ButtonProps {
 /*
  * Recursive component for multiple ApproveERC20s
  */
-export const Component: FC<ApproveERC20MultipleProps> = ({
+const ApproveERC20Multiple: FC<ApproveERC20MultipleProps> = ({
   fullWidth = true,
   size = 'xl',
   index,
@@ -40,13 +39,11 @@ export const Component: FC<ApproveERC20MultipleProps> = ({
       amount={amounts[_index].amount}
       contract={amounts[_index].contract}
     >
-      <Component {...props} index={_index - 1} id={id} amounts={amounts}>
+      <ApproveERC20Multiple {...props} index={_index - 1} id={id} amounts={amounts}>
         {children}
-      </Component>
+      </ApproveERC20Multiple>
     </ApproveERC20>
   )
 }
 
-export const ApproveERC20Multiple = dynamic(() => Promise.resolve(Component), {
-  ssr: false,
-})
+export { ApproveERC20Multiple, type ApproveERC20MultipleProps }

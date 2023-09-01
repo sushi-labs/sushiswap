@@ -1,8 +1,8 @@
-import { isAddress } from '@ethersproject/address'
 import { ChainId } from '@sushiswap/chain'
 import { Separator } from '@sushiswap/ui'
 import { ManageV2LiquidityCard } from 'ui/pool/ManageV2LiquidityCard'
 import { PoolTransactionsV2 } from 'ui/pool/PoolTransactionsV2'
+import { isAddress } from 'viem'
 
 import {
   PoolPositionProvider,
@@ -30,7 +30,8 @@ export async function getPool({ chainId, address }: { chainId: ChainId; address:
 }
 
 export default async function PoolPage({ params }: { params: { id: string } }) {
-  const [chainId, address] = params.id.split('%3A') as [ChainId, string]
+  const [_chainId, address] = params.id.split(params.id.includes('%3A') ? '%3A' : ':') as [string, string]
+  const chainId = Number(_chainId) as ChainId
   const pool = await getPool({ chainId, address })
 
   if (pool.protocol === 'SUSHISWAP_V3') {

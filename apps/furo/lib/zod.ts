@@ -1,8 +1,9 @@
 import { isAddress } from '@ethersproject/address'
 import { Native, Token } from '@sushiswap/currency'
-import { FuroStreamChainId } from '@sushiswap/furo/exports/exports'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import { FundSource } from '@sushiswap/hooks'
 import { useMemo } from 'react'
+import { Address } from 'viem'
 import { z } from 'zod'
 
 import { isSupportedChainId } from '../config'
@@ -16,7 +17,11 @@ export const ZToken = z.object({
   isNative: z.boolean(),
 })
 
-export const ZAddress = z.string().refine((val) => (val ? isAddress(val) : false), 'Invalid address')
+export const ZAddress = z
+  .string()
+  .refine((val) => (val ? isAddress(val) : false), 'Invalid address')
+  .transform((val) => val as Address)
+
 export const ZFundSource = z.string()
 
 export const ZTokenToToken = ZToken.transform(({ address, decimals, chainId, symbol, name, isNative }) => {
@@ -75,7 +80,7 @@ export const queryParamsSchema = z.object({
     })
     .transform((val) => {
       const [chainId, poolId] = val.split(':')
-      return [+chainId, poolId] as [FuroStreamChainId, string]
+      return [+chainId, poolId] as [FuroChainId, string]
     })
     .refine(([chainId]) => isSupportedChainId(chainId), {
       message: 'ChainId not supported.',

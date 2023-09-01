@@ -2,7 +2,7 @@ import { GetPoolsArgs, Protocol } from '@sushiswap/client'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
 
-export const L2_DEADLINE_FROM_NOW = 60 * 5
+export const L2_DEADLINE_FROM_NOW = 60n * 5n
 
 // export const POOL_VERSION_MAP: Record<PoolVersion, string> = {
 //   LEGACY: 'Legacy',
@@ -70,3 +70,5 @@ export const APPROVE_TAG_CREATE_TRIDENT = 'APPROVE_TAG_CREATE_TRIDENT'
 export const APPROVE_TAG_STAKE = 'APPROVE_TAG_STAKE'
 export const APPROVE_TAG_UNSTAKE = 'APPROVE_TAG_UNSTAKE'
 export const APPROVE_TAG_MIGRATE = 'APPROVE_TAG_MIGRATE'
+export const APPROVE_TAG_XSWAP = 'APPROVE_TAG_XSWAP'
+export const APPROVE_TAG_SWAP = 'APPROVE_TAG_SWAP'

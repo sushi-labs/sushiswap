@@ -1,8 +1,7 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { Signature } from '@ethersproject/bytes'
 import { Amount, Price, Type } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
-import { SushiXSwapChainId } from '@sushiswap/sushixswap'
+import { SushiXSwapChainId } from '@sushiswap/sushixswap-sdk'
+import { Address, Signature } from 'viem'
 
 import { Action } from '../SushiXSwap'
 
@@ -14,7 +13,7 @@ export interface UseCrossChainTradeParams {
   token1: Type | undefined
   amount: Amount<Type> | undefined
   slippagePercentage: string
-  recipient: string | undefined
+  recipient: Address | undefined
   enabled: boolean
   bentoboxSignature?: Signature
 }
@@ -36,10 +35,11 @@ export interface UseCrossChainTradeReturn {
   amountOut: Amount<Type> | undefined
   minAmountOut: Amount<Type> | undefined
   gasSpent: string | undefined
+  gasSpentUsd: string | undefined
   functionName: 'cook'
-  writeArgs: [Action[], BigNumber[], `0x${string}`[]] | undefined
+  writeArgs: [Action[], bigint[], `0x${string}`[]] | undefined
   route: { status: string }
-  overrides: { value: BigNumber } | undefined
+  value?: bigint | undefined
 }
 
 export type UseCrossChainTradeQuerySelect = (data: UseCrossChainSelect) => UseCrossChainTradeReturn

@@ -1,10 +1,8 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { TransactionRequest } from '@ethersproject/providers'
 import { DownloadIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
-import { FuroStreamChainId } from '@sushiswap/furo'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import { TextField } from '@sushiswap/ui'
 import { DialogDescription, DialogHeader, DialogTitle } from '@sushiswap/ui'
 import { DialogContent, DialogFooter, DialogTrigger } from '@sushiswap/ui'
@@ -13,20 +11,23 @@ import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createToast } from '@sushiswap/ui/components/toast'
 import {
-  _useSendTransaction as useSendTransaction,
   useAccount,
   useFuroStreamContract,
+  usePrepareSendTransaction,
+  useSendTransaction,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
-import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import React, { FC, useCallback, useMemo, useState } from 'react'
+import { Address, encodeFunctionData } from 'viem'
 
 import { Stream, useStreamBalance } from '../../lib'
 
 interface WithdrawModalProps {
   stream: Stream
-  chainId: FuroStreamChainId
+  chainId: FuroChainId
 }
 
 export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
@@ -53,7 +54,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
         chainId: chainId,
         timestamp: ts,
         groupTimestamp: ts,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Withdrawing ${amount.toSignificant(6)} ${amount.currency.symbol}`,
           completed: `Successfully withdrawn ${amount.toSignificant(6)} ${amount.currency.symbol}`,
@@ -64,34 +65,33 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
     [amount, chainId, address]
   )
 
-  const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!stream || !amount || !chainId || !contract) return
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    if (!stream || !amount || !chainId || !contract) return
 
-      setRequest({
-        from: address,
-        to: contract.address,
-        data: contract.interface.encodeFunctionData('withdrawFromStream', [
-          BigNumber.from(stream.id),
-          BigNumber.from(amount.toShare(stream.rebase).quotient.toString()),
-          stream.recipient.id,
-          false,
-          '0x',
-        ]),
-      })
-    },
-    [stream, amount, chainId, contract, address]
-  )
+    return {
+      account: address,
+      to: contract.address,
+      data: encodeFunctionData({
+        abi: contract.abi,
+        functionName: 'withdrawFromStream',
+        args: [BigInt(stream.id), amount.toShare(stream.rebase).quotient, stream.recipient.id as Address, false, '0x'],
+      }),
+    }
+  }, [stream, amount, chainId, contract, address])
+
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
+    enabled: Boolean(!!stream && !!amount && !!chainId && !!contract),
+  })
 
   const {
     sendTransactionAsync,
-    isLoading: isWritePending,
     data,
+    isLoading: isWritePending,
   } = useSendTransaction({
-    chainId,
-    prepare,
+    ...config,
     onSettled,
-    enabled: Boolean(!!stream && !!amount && !!chainId && !!contract),
   })
 
   const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
@@ -120,6 +120,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
                   You have{' '}
                   <span
                     onClick={() => setInput(balance?.toExact() ?? '')}
+                    onKeyDown={() => setInput(balance?.toExact() ?? '')}
                     role="button"
                     className="font-semibold text-blue"
                   >
@@ -183,7 +184,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
         chainId={chainId}
         status={status}
         testId="withdraw-stream-confirmation-modal"
-        successMessage={`Successfully withdrawn from stream`}
+        successMessage={'Successfully withdrawn from stream'}
         txHash={data?.hash}
       />
     </DialogProvider>

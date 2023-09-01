@@ -1,7 +1,6 @@
-import { BigNumber, utils } from 'ethers'
+import { formatUnits } from 'viem'
 
-export const divBigNumberToNumber = (value: BigNumber, decimals: number): number =>
-  Number(utils.formatUnits(value, decimals))
+export const divBigIntToNumber = (value: bigint, decimals: number): number => Number(formatUnits(value, decimals))
 
 /**
  * Formula source: http://www.linked8.com/blog/158-apy-to-apr-and-apr-to-apy-calculation-methodologies

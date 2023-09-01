@@ -1,7 +1,7 @@
 import { Type } from '@sushiswap/currency'
 import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { TickProcessed, useConcentratedActiveLiquidity } from 'lib/hooks/useConcentratedActiveLiquidity'
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { ChartEntry } from './types'
 
@@ -14,7 +14,7 @@ interface UseDensityChartData {
 }
 
 export function useDensityChartData({ chainId, token0, token1, feeAmount, enabled = true }: UseDensityChartData) {
-  const { isLoading, error, data } = useConcentratedActiveLiquidity({
+  const activeLiquidity = useConcentratedActiveLiquidity({
     chainId,
     token0,
     token1,
@@ -22,13 +22,11 @@ export function useDensityChartData({ chainId, token0, token1, feeAmount, enable
     enabled,
   })
 
-  const formatData = useCallback(() => {
-    if (!data?.length) {
-      return undefined
-    }
+  return useMemo(() => {
+    const data = activeLiquidity.data
+    if (!data) return activeLiquidity
 
     const newData: ChartEntry[] = []
-
     for (let i = 0; i < data.length; i++) {
       const t: TickProcessed = data[i]
 
@@ -42,14 +40,9 @@ export function useDensityChartData({ chainId, token0, token1, feeAmount, enable
       }
     }
 
-    return newData
-  }, [data])
-
-  return useMemo(() => {
     return {
-      isLoading,
-      error,
-      formattedData: !isLoading ? formatData() : undefined,
+      ...activeLiquidity,
+      data: newData,
     }
-  }, [isLoading, error, formatData])
+  }, [activeLiquidity])
 }

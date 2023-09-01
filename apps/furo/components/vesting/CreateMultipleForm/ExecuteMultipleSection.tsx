@@ -1,8 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
-import { TransactionRequest } from '@ethersproject/providers'
-import { bentoBoxV1Address } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Native, Type } from '@sushiswap/currency'
-import { FuroVestingRouterChainId } from '@sushiswap/furo'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import { FundSource } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
@@ -13,14 +12,17 @@ import {
   useAccount,
   useBentoBoxTotals,
   useFuroVestingRouterContract,
+  usePrepareSendTransaction,
+  useSendTransaction,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import React, { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import React, { FC, useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { Hex } from 'viem'
 
 import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreationAction } from '../../../lib'
 import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
@@ -30,7 +32,7 @@ import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount }
 const APPROVE_TAG = 'approve-multiple-vestings'
 
 export const ExecuteMultipleSection: FC<{
-  chainId: FuroVestingRouterChainId
+  chainId: FuroChainId
   isReview: boolean
   onBack(): void
 }> = withCheckerRoot(({ chainId, isReview, onBack }) => {
@@ -55,7 +57,7 @@ export const ExecuteMultipleSection: FC<{
 
   const currencies = useMemo(() => _vestings?.map((el) => el.currency) || [], [_vestings])
   const _tokens = useTokensFromZTokens(currencies)
-  const rebases = useBentoBoxTotals(chainId, _tokens)
+  const rebases = useBentoBoxTotals(chainId as BentoBoxChainId, _tokens)
 
   const summedAmounts = useMemo(
     () =>
@@ -82,7 +84,7 @@ export const ExecuteMultipleSection: FC<{
         type: 'createVesting',
         chainId: chainId,
         txHash: data.hash,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Creating ${vestings.length} vests`,
           completed: `Created ${vestings.length} vests`,
@@ -95,113 +97,127 @@ export const ExecuteMultipleSection: FC<{
     [chainId, address, vestings]
   )
 
-  const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!isReview || !isValid || isValidating || !contract || !address || !chainId || !vestings || !rebases) return
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    if (!isReview || !isValid || isValidating || !contract || !address || !chainId || !vestings || !rebases) return
 
-      const summedValue = summedAmounts[AddressZero] || Amount.fromRawAmount(Native.onChain(chainId), '0')
+    const summedValue = summedAmounts[AddressZero] || Amount.fromRawAmount(Native.onChain(chainId), '0')
 
-      const actions: string[] = []
-      if (signature) {
-        actions.push(approveBentoBoxAction({ contract, user: address, signature }))
-      }
+    const actions: Hex[] = []
+    if (signature) {
+      actions.push(approveBentoBoxAction({ user: address, signature }))
+    }
 
-      vestings
-        .reduce<string[]>(
-          (
-            acc,
-            {
-              fundSource,
-              recipient,
-              currency,
-              startDate,
-              cliffEnabled,
-              cliffEndDate,
-              cliffAmount,
-              stepConfig,
-              stepPayouts,
-              stepAmount,
-            },
-            idx
-          ) => {
-            const _currency = _tokens[idx]
-            const _fundSource = ZFundSourceToFundSource.parse(fundSource)
-            const stepPercentage = calculateStepPercentage({
-              currency,
-              cliffEnabled,
-              cliffAmount,
-              stepAmount,
-              stepPayouts,
-            })
-            const totalAmount = calculateTotalAmount({
-              currency,
-              cliffEnabled,
-              cliffAmount,
-              stepAmount,
-              stepPayouts,
-            })
-            const cliffDuration = calculateCliffDuration({ cliffEnabled, cliffEndDate, startDate })
-
-            if (
-              recipient &&
-              startDate &&
-              stepPayouts &&
-              stepConfig &&
-              stepPercentage &&
-              totalAmount &&
-              cliffDuration &&
-              _currency &&
-              rebases?.[_currency.wrapped.address]
-            ) {
-              acc.push(
-                vestingCreationAction({
-                  contract,
-                  recipient,
-                  currency: _currency,
-                  startDate,
-                  cliffDuration: cliffDuration.toString(),
-                  stepDuration: STEP_CONFIGURATIONS_MAP[stepConfig].toString(),
-                  steps: stepPayouts.toString(),
-                  stepPercentage: stepPercentage.toString(),
-                  amount: totalAmount.quotient.toString(),
-                  fromBentobox: _fundSource === FundSource.BENTOBOX,
-                  minShare: totalAmount.toShare(rebases[_currency.wrapped.address]),
-                })
-              )
-            }
-            return acc
+    vestings
+      .reduce<Hex[]>(
+        (
+          acc,
+          {
+            fundSource,
+            recipient,
+            currency,
+            startDate,
+            cliffEnabled,
+            cliffEndDate,
+            cliffAmount,
+            stepConfig,
+            stepPayouts,
+            stepAmount,
           },
-          []
-        )
-        .forEach((vesting) => actions.push(vesting))
+          idx
+        ) => {
+          const _currency = _tokens[idx]
+          const _fundSource = ZFundSourceToFundSource.parse(fundSource)
+          const stepPercentage = calculateStepPercentage({
+            currency,
+            cliffEnabled,
+            cliffAmount,
+            stepAmount,
+            stepPayouts,
+          })
+          const totalAmount = calculateTotalAmount({
+            currency,
+            cliffEnabled,
+            cliffAmount,
+            stepAmount,
+            stepPayouts,
+          })
+          const cliffDuration = calculateCliffDuration({ cliffEnabled, cliffEndDate, startDate })
 
-      if (actions.length > 0) {
-        setRequest({
-          from: address,
-          to: contract.address,
-          data: batchAction({ contract, actions }),
-          value: summedValue.quotient.toString(),
-        })
+          if (
+            recipient &&
+            startDate &&
+            stepPayouts &&
+            stepConfig &&
+            stepPercentage &&
+            totalAmount &&
+            cliffDuration &&
+            _currency &&
+            rebases?.[_currency.wrapped.address]
+          ) {
+            acc.push(
+              vestingCreationAction({
+                recipient,
+                currency: _currency,
+                startDate,
+                cliffDuration: Number(cliffDuration),
+                stepDuration: STEP_CONFIGURATIONS_MAP[stepConfig],
+                steps: stepPayouts,
+                stepPercentage: stepPercentage,
+                amount: totalAmount.quotient,
+                fromBentoBox: _fundSource === FundSource.BENTOBOX,
+                minShare: totalAmount.toShare(rebases[_currency.wrapped.address]),
+              })
+            )
+          }
+          return acc
+        },
+        []
+      )
+      .forEach((vesting) => actions.push(vesting))
+
+    if (actions.length > 0) {
+      return {
+        account: address,
+        to: contract.address,
+        data: batchAction({ actions }),
+        value: summedValue.quotient,
       }
-    },
-    [_tokens, address, chainId, contract, isReview, isValid, isValidating, rebases, signature, summedAmounts, vestings]
-  )
+    }
 
-  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+    return {}
+  }, [
+    _tokens,
+    address,
     chainId,
-    prepare,
-    onSettled,
-    onSuccess: () => setSignature(undefined),
+    contract,
+    isReview,
+    isValid,
+    isValidating,
+    rebases,
+    signature,
+    summedAmounts,
+    vestings,
+  ])
+
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
     enabled: Boolean(
       isReview && isValid && !isValidating && contract && address && chainId && vestings && rebases && approved
     ),
+  })
+
+  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+    ...config,
+    onSettled,
+    onSuccess: () => setSignature(undefined),
   })
 
   const approveAmounts = useMemo(
     () =>
       Object.values(summedAmounts).map((amount) => ({
         amount,
-        contract: bentoBoxV1Address[chainId] as Address,
+        contract: BENTOBOX_ADDRESS[chainId as BentoBoxChainId] as Address,
       })),
     [chainId, summedAmounts]
   )
@@ -218,7 +234,7 @@ export const ExecuteMultipleSection: FC<{
             fullWidth={false}
             tag={APPROVE_TAG}
             id="create-multiple-vest-approve-bentobox"
-            chainId={chainId}
+            chainId={chainId as BentoBoxChainId}
             masterContract={getFuroVestingRouterContractConfig(chainId).address}
           >
             <Checker.ApproveERC20Multiple

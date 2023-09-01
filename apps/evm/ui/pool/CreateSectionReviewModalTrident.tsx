@@ -1,14 +1,11 @@
-import { defaultAbiCoder } from '@ethersproject/abi'
-import { AddressZero } from '@ethersproject/constants'
-import { TransactionRequest } from '@ethersproject/providers'
 import {
-  computeConstantProductPoolAddress,
-  computeStablePoolAddress,
-  ConstantProductPool,
+  computeTridentConstantPoolAddress,
+  computeTridentStablePoolAddress,
   Fee,
-  StablePool,
+  TridentConstantPool,
+  TridentStablePool,
 } from '@sushiswap/amm'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
 import {
@@ -24,34 +21,38 @@ import {
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
-import { createToast } from '@sushiswap/ui/components/toast'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
-  _useSendTransaction as useSendTransaction,
   PoolFinderType,
   useAccount,
   useBentoBoxTotals,
-  useConstantProductPoolFactoryContract,
   useNetwork,
+  usePrepareSendTransaction,
+  useSendTransaction,
   useStablePoolFactoryContract,
+  useTridentConstantPoolFactoryContract,
   useTridentRouterContract,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import {
-  approveMasterContractAction,
-  batchAction,
-  deployNewPoolAction,
-  getAsEncodedAction,
-  LiquidityInput,
-} from 'lib/actions'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import { approveMasterContractAction, batchAction, deployNewPoolAction, LiquidityInput } from 'lib/actions'
 import { APPROVE_TAG_CREATE_TRIDENT } from 'lib/constants'
-import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo } from 'react'
+import { FC, ReactNode, useCallback, useMemo } from 'react'
+import {
+  Address,
+  encodeAbiParameters,
+  encodeFunctionData,
+  parseAbiParameters,
+  UserRejectedRequestError,
+  zeroAddress,
+} from 'viem'
 
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface CreateSectionReviewModalTridentProps {
-  chainId: BentoBoxV1ChainId
+  chainId: BentoBoxChainId
   token0: Type | undefined
   token1: Type | undefined
   input0: Amount<Type> | undefined
@@ -76,7 +77,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const { signature, setSignature } = useSignature(APPROVE_TAG_CREATE_TRIDENT)
   const { approved } = useApproved(APPROVE_TAG_CREATE_TRIDENT)
   const contract = useTridentRouterContract(chainId)
-  const constantProductPoolFactory = useConstantProductPoolFactoryContract(chainId)
+  const constantProductPoolFactory = useTridentConstantPoolFactoryContract(chainId)
   const stablePoolFactory = useStablePoolFactoryContract(chainId)
 
   const totals = useBentoBoxTotals(
@@ -87,7 +88,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const pool = useMemo(() => {
     if (!token0 || !token1 || !fee) return
     if (poolType === PoolFinderType.Classic) {
-      return new ConstantProductPool(
+      return new TridentConstantPool(
         Amount.fromRawAmount(token0.wrapped, 0),
         Amount.fromRawAmount(token1.wrapped, 0),
         fee,
@@ -99,7 +100,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
       token0.wrapped.address in totals &&
       token1.wrapped.address in totals
     ) {
-      return new StablePool(
+      return new TridentStablePool(
         Amount.fromRawAmount(token0.wrapped, 0),
         Amount.fromRawAmount(token1.wrapped, 0),
         fee,
@@ -112,31 +113,33 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const totalSupply = useMemo(() => (pool ? Amount.fromRawAmount(pool?.liquidityToken, 0) : undefined), [pool])
 
   const factory = useMemo(() => {
-    if (poolType === PoolFinderType.Classic) {
-      return constantProductPoolFactory
-    } else if (poolType === PoolFinderType.Stable) {
-      return stablePoolFactory
+    switch (poolType) {
+      case PoolFinderType.Classic:
+        return constantProductPoolFactory
+      case PoolFinderType.Stable:
+        return stablePoolFactory
     }
   }, [constantProductPoolFactory, poolType, stablePoolFactory])
 
   const poolAddress = useMemo(() => {
     // !poolType === 0, don't guared against it
     if (!factory || !token0 || !token1 || !fee) return
-    if (poolType === PoolFinderType.Classic) {
-      return computeConstantProductPoolAddress({
-        factoryAddress: factory.address,
-        tokenA: token0.wrapped,
-        tokenB: token1.wrapped,
-        fee: fee,
-        twap: false,
-      })
-    } else if (poolType === PoolFinderType.Stable) {
-      return computeStablePoolAddress({
-        factoryAddress: factory.address,
-        tokenA: token0.wrapped,
-        tokenB: token1.wrapped,
-        fee: fee,
-      })
+    switch (poolType) {
+      case PoolFinderType.Classic:
+        return computeTridentConstantPoolAddress({
+          factoryAddress: factory.address,
+          tokenA: token0.wrapped,
+          tokenB: token1.wrapped,
+          fee: fee,
+          twap: false,
+        }) as Address
+      case PoolFinderType.Stable:
+        return computeTridentStablePoolAddress({
+          factoryAddress: factory.address,
+          tokenA: token0.wrapped,
+          tokenB: token1.wrapped,
+          fee: fee,
+        }) as Address
     }
   }, [factory, fee, token0, token1, poolType])
 
@@ -158,7 +161,11 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   }, [chain?.id, contract, factory, input0, input1, pool, poolAddress, token0, token1, totalSupply, totals])
 
   const onSettled = useCallback(
-    (data: SendTransactionResult | undefined) => {
+    (data: SendTransactionResult | undefined, error: Error | null) => {
+      if (error instanceof UserRejectedRequestError) {
+        createErrorToast(error?.message, true)
+      }
+
       if (!data || !chain?.id || !token0 || !token1) return
       const ts = new Date().getTime()
       createToast({
@@ -166,7 +173,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
         type: 'mint',
         chainId: chain.id,
         txHash: data.hash,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Adding liquidity to the ${token0.symbol}/${token1.symbol} pair`,
           completed: `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`,
@@ -179,125 +186,122 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
     [chain?.id, token0, token1, address]
   )
 
-  const prepare = useCallback(
-    async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      try {
-        if (
-          !chain?.id ||
-          !factory ||
-          !token0 ||
-          !token1 ||
-          !poolAddress ||
-          !input0 ||
-          !input1 ||
-          !totalSupply ||
-          !pool ||
-          !contract ||
-          !totals?.[token0.wrapped.address] ||
-          !totals?.[token1.wrapped.address]
-        ) {
-          return
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    try {
+      if (
+        !chain?.id ||
+        !factory ||
+        !token0 ||
+        !token1 ||
+        !poolAddress ||
+        !input0 ||
+        !input1 ||
+        !totalSupply ||
+        !pool ||
+        !contract ||
+        !totals?.[token0.wrapped.address] ||
+        !totals?.[token1.wrapped.address] ||
+        !address
+      ) {
+        return
+      }
+
+      let value
+      const liquidityInput: LiquidityInput[] = []
+      const encoded = encodeAbiParameters(parseAbiParameters('address'), [address])
+
+      if (input0) {
+        if (input0.currency.isNative) {
+          value = input0.quotient
         }
 
-        let value
-        const liquidityInput: LiquidityInput[] = []
-        const encoded = defaultAbiCoder.encode(['address'], [address])
+        liquidityInput.push({
+          token: input0.currency.isNative ? zeroAddress : (input0.currency.wrapped.address as Address),
+          native: true,
+          amount: BigInt(input0.quotient.toString()),
+        })
+      }
 
-        if (input0) {
-          if (input0.currency.isNative) {
-            value = input0.quotient.toString()
-          }
-
-          liquidityInput.push({
-            token: input0.currency.isNative ? AddressZero : input0.currency.wrapped.address,
-            native: true,
-            amount: input0.quotient.toString(),
-          })
+      if (input1) {
+        if (input1.currency.isNative) {
+          value = input1.quotient
         }
 
-        if (input1) {
-          if (input1.currency.isNative) {
-            value = input1.quotient.toString()
-          }
+        liquidityInput.push({
+          token: input1.currency.isNative ? zeroAddress : (input1.currency.wrapped.address as Address),
+          native: true,
+          amount: BigInt(input1.quotient.toString()),
+        })
+      }
 
-          liquidityInput.push({
-            token: input1.currency.isNative ? AddressZero : input1.currency.wrapped.address,
-            native: true,
-            amount: input1.quotient.toString(),
-          })
-        }
-
-        setRequest({
-          from: address,
-          to: contract.address,
-          data: batchAction({
-            contract,
-            actions: [
-              approveMasterContractAction({
-                router: contract,
-                signature: signature,
-              }),
-              deployNewPoolAction({
-                assets: [input0.currency, input1.currency],
-                factory: factory.address,
-                router: contract,
-                feeTier: fee,
-                twap: false,
-              }),
-              getAsEncodedAction({
-                contract,
-                fn: 'addLiquidity',
-                args: [
-                  liquidityInput,
-                  poolAddress,
+      return {
+        from: address,
+        to: contract.address,
+        data: batchAction({
+          actions: [
+            approveMasterContractAction({
+              signature: signature,
+            }),
+            deployNewPoolAction({
+              assets: [input0.currency, input1.currency],
+              factory: factory.address,
+              feeTier: fee,
+              twap: false,
+            }),
+            encodeFunctionData({
+              ...contract,
+              functionName: 'addLiquidity',
+              args: [
+                liquidityInput,
+                poolAddress,
+                BigInt(
                   pool
                     .getLiquidityMinted(
                       totalSupply,
                       input0.wrapped.toShare(totals?.[token0.wrapped.address]),
                       input1.wrapped.toShare(totals?.[token1.wrapped.address])
                     )
-                    .quotient.toString(),
-                  encoded,
-                ],
-              }),
-            ],
-          }),
-          ...(value && { value }),
-        })
-      } catch (e: unknown) {
-        //
+                    .quotient.toString()
+                ),
+                encoded,
+              ],
+            }),
+          ],
+        }),
+        value: value ?? 0n,
       }
-    },
-    [
-      address,
-      chain?.id,
-      contract,
-      factory,
-      fee,
-      input0,
-      input1,
-      pool,
-      poolAddress,
-      signature,
-      token0,
-      token1,
-      totalSupply,
-      totals,
-    ]
-  )
+    } catch (e: unknown) {
+      console.log(e)
+    }
+  }, [
+    address,
+    chain?.id,
+    contract,
+    factory,
+    fee,
+    input0,
+    input1,
+    pool,
+    poolAddress,
+    signature,
+    token0,
+    token1,
+    totalSupply,
+    totals,
+  ])
+
+  const { config, error } = usePrepareSendTransaction({ ...prepare, chainId, enabled: Boolean(approved && totals) })
 
   const {
     sendTransactionAsync,
-    data,
     isLoading: isWritePending,
+    data,
   } = useSendTransaction({
-    chainId,
-    prepare,
+    ...config,
     onSettled,
     onSuccess: () => {
       setSignature(undefined)
     },
-    enabled: approved,
   })
 
   const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
@@ -313,7 +317,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
                 <DialogTitle>Create pool</DialogTitle>
                 <DialogDescription>Please review your entered details.</DialogDescription>
               </DialogHeader>
-              <AddSectionReviewModal chainId={chainId as BentoBoxV1ChainId} input0={input0} input1={input1} />
+              <AddSectionReviewModal chainId={chainId as BentoBoxChainId} input0={input0} input1={input1} />
               <DialogFooter>
                 <Button
                   id="confirm-add-liquidity"

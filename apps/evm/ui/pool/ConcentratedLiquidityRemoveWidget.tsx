@@ -1,9 +1,9 @@
 'use client'
 
-import { TransactionRequest } from '@ethersproject/providers'
 import { CogIcon } from '@heroicons/react/24/outline'
 import { Amount, Type } from '@sushiswap/currency'
-import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import { useDebounce } from '@sushiswap/hooks'
+import { Percent, ZERO } from '@sushiswap/math'
 import {
   Card,
   CardContent,
@@ -16,16 +16,18 @@ import {
   SettingsOverlay,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { createToast } from '@sushiswap/ui/components/toast'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { isSushiSwapV3ChainId, NonfungiblePositionManager, Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { _useSendTransaction as useSendTransaction, useNetwork } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { useNetwork, usePrepareSendTransaction, useSendTransaction } from '@sushiswap/wagmi'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { ConcentratedLiquidityPosition, useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
 import { Checker } from '@sushiswap/wagmi/future/systems'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { unwrapToken } from 'lib/functions'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
-import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
+import React, { FC, useCallback, useMemo, useState } from 'react'
+import { Hex, UserRejectedRequestError } from 'viem'
 
 interface ConcentratedLiquidityRemoveWidget {
   token0: Type | undefined
@@ -50,6 +52,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
   const [value, setValue] = useState<string>('0')
   const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
   const { data: deadline } = useTransactionDeadline({ chainId })
+  const debouncedValue = useDebounce(value, 300)
 
   const slippagePercent = useMemo(() => {
     return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
@@ -66,7 +69,10 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
   )
 
   const onSettled = useCallback(
-    (data: SendTransactionResult | undefined) => {
+    (data: SendTransactionResult | undefined, error: Error | null) => {
+      if (error instanceof UserRejectedRequestError) {
+        createErrorToast(error?.message, true)
+      }
       if (!data || !position) return
 
       const ts = new Date().getTime()
@@ -75,7 +81,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
         type: 'burn',
         chainId,
         txHash: data.hash,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Removing liquidity from the ${position.amount0.currency.symbol}/${position.amount1.currency.symbol} pair`,
           completed: `Successfully removed liquidity from the ${position.amount0.currency.symbol}/${position.amount1.currency.symbol} pair`,
@@ -90,12 +96,8 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
 
   const [feeValue0, feeValue1] = useMemo(() => {
     if (positionDetails && token0 && token1) {
-      const feeValue0 = positionDetails.fees
-        ? Amount.fromRawAmount(token0, JSBI.BigInt(positionDetails.fees[0]))
-        : undefined
-      const feeValue1 = positionDetails.fees
-        ? Amount.fromRawAmount(token1, JSBI.BigInt(positionDetails.fees[1]))
-        : undefined
+      const feeValue0 = positionDetails.fees ? Amount.fromRawAmount(token0, positionDetails.fees[0]) : undefined
+      const feeValue1 = positionDetails.fees ? Amount.fromRawAmount(token1, positionDetails.fees[1]) : undefined
 
       return [feeValue0, feeValue1]
     }
@@ -103,83 +105,88 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
     return [undefined, undefined]
   }, [positionDetails, token0, token1])
 
-  const prepare = useCallback(
-    async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      const liquidityPercentage = new Percent(value, 100)
-      const discountedAmount0 = position ? liquidityPercentage.multiply(position.amount0.quotient).quotient : undefined
-      const discountedAmount1 = position ? liquidityPercentage.multiply(position.amount1.quotient).quotient : undefined
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    const liquidityPercentage = new Percent(debouncedValue, 100)
+    const discountedAmount0 = position ? liquidityPercentage.multiply(position.amount0.quotient).quotient : undefined
+    const discountedAmount1 = position ? liquidityPercentage.multiply(position.amount1.quotient).quotient : undefined
 
-      const liquidityValue0 =
-        token0 && discountedAmount0 ? Amount.fromRawAmount(unwrapToken(token0), discountedAmount0) : undefined
-      const liquidityValue1 =
-        token1 && discountedAmount1 ? Amount.fromRawAmount(unwrapToken(token1), discountedAmount1) : undefined
+    const liquidityValue0 =
+      token0 && typeof discountedAmount0 === 'bigint'
+        ? Amount.fromRawAmount(unwrapToken(token0), discountedAmount0)
+        : undefined
+    const liquidityValue1 =
+      token1 && typeof discountedAmount1 === 'bigint'
+        ? Amount.fromRawAmount(unwrapToken(token1), discountedAmount1)
+        : undefined
 
-      if (
-        token0 &&
-        token1 &&
-        position &&
-        account &&
-        positionDetails &&
-        deadline &&
-        liquidityValue0 &&
-        liquidityValue1 &&
-        liquidityPercentage.greaterThan(ZERO) &&
-        isSushiSwapV3ChainId(chainId)
-      ) {
-        const { calldata, value: _value } = NonfungiblePositionManager.removeCallParameters(position, {
-          tokenId: positionDetails.tokenId.toString(),
-          liquidityPercentage,
-          slippageTolerance: slippagePercent,
-          deadline: deadline.toString(),
-          collectOptions: {
-            expectedCurrencyOwed0: feeValue0 ?? Amount.fromRawAmount(liquidityValue0.currency, 0),
-            expectedCurrencyOwed1: feeValue1 ?? Amount.fromRawAmount(liquidityValue1.currency, 0),
-            recipient: account,
-          },
-        })
+    if (
+      token0 &&
+      token1 &&
+      position &&
+      account &&
+      positionDetails &&
+      deadline &&
+      liquidityValue0 &&
+      liquidityValue1 &&
+      liquidityPercentage.greaterThan(ZERO) &&
+      isSushiSwapV3ChainId(chainId)
+    ) {
+      const { calldata, value: _value } = NonfungiblePositionManager.removeCallParameters(position, {
+        tokenId: positionDetails.tokenId.toString(),
+        liquidityPercentage,
+        slippageTolerance: slippagePercent,
+        deadline: deadline.toString(),
+        collectOptions: {
+          expectedCurrencyOwed0: feeValue0 ?? Amount.fromRawAmount(liquidityValue0.currency, 0),
+          expectedCurrencyOwed1: feeValue1 ?? Amount.fromRawAmount(liquidityValue1.currency, 0),
+          recipient: account,
+        },
+      })
 
-        console.debug({
-          tokenId: positionDetails.tokenId.toString(),
-          liquidityPercentage,
-          slippageTolerance: slippagePercent,
-          deadline: deadline.toString(),
-          collectOptions: {
-            expectedCurrencyOwed0: feeValue0 ?? Amount.fromRawAmount(liquidityValue0.currency, 0),
-            expectedCurrencyOwed1: feeValue1 ?? Amount.fromRawAmount(liquidityValue1.currency, 0),
-            recipient: account,
-          },
-        })
+      console.debug({
+        tokenId: positionDetails.tokenId.toString(),
+        liquidityPercentage,
+        slippageTolerance: slippagePercent,
+        deadline: deadline.toString(),
+        collectOptions: {
+          expectedCurrencyOwed0: feeValue0 ?? Amount.fromRawAmount(liquidityValue0.currency, 0),
+          expectedCurrencyOwed1: feeValue1 ?? Amount.fromRawAmount(liquidityValue1.currency, 0),
+          recipient: account,
+        },
+      })
 
-        setRequest({
-          to: getV3NonFungiblePositionManagerConractConfig(chainId).address,
-          data: calldata,
-          value: _value,
-        })
+      return {
+        to: getV3NonFungiblePositionManagerConractConfig(chainId).address,
+        data: calldata as Hex,
+        value: BigInt(_value),
       }
-    },
-    [
-      account,
-      chainId,
-      deadline,
-      feeValue0,
-      feeValue1,
-      position,
-      positionDetails,
-      slippagePercent,
-      token0,
-      token1,
-      value,
-    ]
-  )
+    }
+  }, [
+    account,
+    chainId,
+    deadline,
+    feeValue0,
+    feeValue1,
+    position,
+    positionDetails,
+    slippagePercent,
+    token0,
+    token1,
+    debouncedValue,
+  ])
+
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
+    enabled: +value > 0 && chainId === chain?.id,
+  })
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
-    chainId,
-    prepare,
+    ...config,
     onSettled,
     onSuccess: () => {
       setValue('0')
     },
-    enabled: +value > 0 && chainId === chain?.id,
   })
 
   return (

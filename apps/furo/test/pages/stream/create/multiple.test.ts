@@ -1,5 +1,6 @@
 import { test } from '@playwright/test'
 import { Native, Token, USDC_ADDRESS } from '@sushiswap/currency'
+
 import { createMultipleStreams, createSnapshot, loadSnapshot } from '../../../utils'
 
 let SNAPSHOT_ID = '0x0'

@@ -1,9 +1,6 @@
-// @ts-nocheck
-
 import { ChainId } from '@sushiswap/chain'
 import { Type, USDC, USDT } from '@sushiswap/currency'
-import { getBigNumber, MultiRoute } from '@sushiswap/tines'
-import { BigNumber } from 'ethers'
+import { getBigInt, MultiRoute } from '@sushiswap/tines'
 import https from 'https'
 
 import { DataFetcher } from '../DataFetcher'
@@ -17,7 +14,7 @@ async function getAPIObject(url: string, data: Record<string, string | number | 
     .map((k) => (data[k] !== undefined ? `${k}=${data[k]}` : undefined))
     .filter((k) => k !== undefined)
     .join('&')
-  const urlWithParams = url + '?' + params
+  const urlWithParams = `${url}?${params}`
 
   return new Promise((result, reject) => {
     https
@@ -116,7 +113,7 @@ async function route(
     env.dataFetcher.getCurrentPoolCodeMap(from, to),
     env.chainId,
     from,
-    BigNumber.from(amount),
+    BigInt(amount),
     to,
     gasPrice,
     providers
@@ -133,17 +130,17 @@ function getProtocol(lp: LiquidityProviders, chainId: ChainId) {
       prefix = 'POLYGON_'
       break
     default:
-      throw new Error('Unsupported network: ' + chainId)
+      throw new Error(`Unsupported network: ${chainId}`)
   }
   switch (lp) {
-    case LiquidityProviders.SushiSwap:
-      return prefix + 'SUSHISWAP'
+    case LiquidityProviders.SushiSwapV2:
+      return `${prefix}SUSHISWAP`
     case LiquidityProviders.QuickSwap:
-      return prefix + 'QUICKSWAP'
+      return `${prefix}QUICKSWAP`
     case LiquidityProviders.Trident:
-      return prefix + 'TRIDENT'
+      return `${prefix}TRIDENT`
     case LiquidityProviders.UniswapV2:
-      return prefix + 'UNISWAP_V2'
+      return `${prefix}UNISWAP_V2`
   }
 }
 
@@ -186,7 +183,7 @@ async function testTrident() {
     env.dataFetcher.fetchPoolsForToken(from, to)
     await delay(5000)
     for (let i = 6; i < 15; ++i) {
-      const amount = getBigNumber(Math.pow(10, i)).toString()
+      const amount = getBigInt(Math.pow(10, i)).toString()
       const res = await test(env, from, to, amount, gasPrice, providers)
       // console.log(
       //   Math.pow(10, i) / divisor,

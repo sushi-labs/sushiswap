@@ -1,36 +1,37 @@
 'use client'
 
-import { BigNumber } from '@ethersproject/bignumber'
-import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
 import { Amount, Native } from '@sushiswap/currency'
 import { calculateGasMargin } from '@sushiswap/gas'
-import { FundSource, useIsMounted } from '@sushiswap/hooks'
+import { FundSource, useDebounce, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
 import { Dots } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { createToast } from '@sushiswap/ui/components/toast'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
-  _useSendTransaction as useSendTransaction,
   Address,
   getSushiSwapRouterContractConfig,
-  PairState,
+  SushiSwapV2PoolState,
   useAccount,
   useNetwork,
-  usePair,
+  usePrepareSendTransaction,
+  useSendTransaction,
   useSushiSwapRouterContract,
+  useSushiSwapV2Pool,
   useTotalSupply,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { APPROVE_TAG_REMOVE_LEGACY } from 'lib/constants'
 import { useTokensFromPool, useTransactionDeadline, useUnderlyingTokenBalanceFromPool } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
-import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { encodeFunctionData } from 'viem'
 
 import { usePoolPosition } from './PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
@@ -54,10 +55,11 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
 
   const [percentage, setPercentage] = useState<string>('0')
   const percentToRemove = useMemo(() => new Percent(percentage, 100), [percentage])
+  const percentToRemoveDebounced = useDebounce(percentToRemove, 300)
 
   const {
     data: [poolState, pool],
-  } = usePair(_pool.chainId as SushiSwapV2ChainId, token0, token1)
+  } = useSushiSwapV2Pool(_pool.chainId as SushiSwapV2ChainId, token0, token1)
   const { balance } = usePoolPosition()
   const totalSupply = useTotalSupply(liquidityToken)
 
@@ -111,6 +113,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
     ]
   }, [slippagePercent, currencyAToRemove, currencyBToRemove])
 
+  const debouncedMinAmount0 = useDebounce(minAmount0, 500)
+  const debouncedMinAmount1 = useDebounce(minAmount1, 500)
+
   const amountToRemove = useMemo(
     () => balance?.[FundSource.WALLET].multiply(percentToRemove),
     [balance, percentToRemove]
@@ -125,7 +130,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
         type: 'burn',
         chainId: chain.id,
         txHash: data.hash,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Removing liquidity from the ${token0.symbol}/${token1.symbol} pair`,
           completed: `Successfully removed liquidity from the ${token0.symbol}/${token1.symbol} pair`,
@@ -138,111 +143,126 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
     [chain?.id, token0.symbol, token1.symbol, address]
   )
 
-  const prepare = useCallback(
-    async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      try {
-        if (
-          !token0 ||
-          !token1 ||
-          !chain?.id ||
-          !contract ||
-          !underlying0 ||
-          !underlying1 ||
-          !address ||
-          !pool ||
-          !balance?.[FundSource.WALLET] ||
-          !minAmount0 ||
-          !minAmount1 ||
-          !deadline
-        ) {
-          return
-        }
+  const [prepare, setPrepare] = useState<UsePrepareSendTransactionConfig | undefined>(undefined)
 
-        const withNative =
-          Native.onChain(_pool.chainId).wrapped.address === pool.token0.address ||
-          Native.onChain(_pool.chainId).wrapped.address === pool.token1.address
+  useEffect(() => {
+    const prep = async (): Promise<UsePrepareSendTransactionConfig> => {
+      if (
+        !token0 ||
+        !token1 ||
+        !chain?.id ||
+        !contract ||
+        !underlying0 ||
+        !underlying1 ||
+        !address ||
+        !pool ||
+        !balance?.[FundSource.WALLET] ||
+        !debouncedMinAmount0 ||
+        !debouncedMinAmount1 ||
+        !deadline
+      ) {
+        return
+      }
 
-        let methodNames
-        let args: any
+      const withNative =
+        Native.onChain(_pool.chainId).wrapped.address === pool.token0.address ||
+        Native.onChain(_pool.chainId).wrapped.address === pool.token1.address
 
+      const config = (function () {
         if (withNative) {
           const token1IsNative = Native.onChain(_pool.chainId).wrapped.address === pool.token1.wrapped.address
-          methodNames = ['removeLiquidityETH', 'removeLiquidityETHSupportingFeeOnTransferTokens']
-          args = [
-            token1IsNative ? pool.token0.wrapped.address : pool.token1.wrapped.address,
-            balance[FundSource.WALLET].multiply(percentToRemove).quotient.toString(),
-            token1IsNative ? minAmount0.quotient.toString() : minAmount1.quotient.toString(),
-            token1IsNative ? minAmount1.quotient.toString() : minAmount0.quotient.toString(),
-            address,
-            deadline.toHexString(),
-          ]
-        } else {
-          methodNames = ['removeLiquidity']
-          args = [
-            pool.token0.wrapped.address,
-            pool.token1.wrapped.address,
-            balance[FundSource.WALLET].multiply(percentToRemove).quotient.toString(),
-            minAmount0.quotient.toString(),
-            minAmount1.quotient.toString(),
-            address,
-            deadline.toHexString(),
-          ]
+
+          return {
+            functionNames: ['removeLiquidityETH', 'removeLiquidityETHSupportingFeeOnTransferTokens'],
+            args: [
+              token1IsNative ? (pool.token0.wrapped.address as Address) : (pool.token1.wrapped.address as Address),
+              balance[FundSource.WALLET].multiply(percentToRemoveDebounced).quotient,
+              token1IsNative ? debouncedMinAmount0.quotient : debouncedMinAmount1.quotient,
+              token1IsNative ? debouncedMinAmount1.quotient : debouncedMinAmount0.quotient,
+              address,
+              deadline,
+            ],
+          } as const
         }
 
-        const safeGasEstimates = await Promise.all(
-          methodNames.map((methodName) =>
-            contract.estimateGas[methodName](...args)
-              .then(calculateGasMargin)
-              .catch(() => undefined)
-          )
+        return {
+          functionNames: ['removeLiquidity'],
+          args: [
+            pool.token0.wrapped.address as Address,
+            pool.token1.wrapped.address as Address,
+            balance[FundSource.WALLET].multiply(percentToRemoveDebounced).quotient,
+            debouncedMinAmount0.quotient,
+            debouncedMinAmount1.quotient,
+            address,
+            deadline,
+          ],
+        } as const
+      })()
+
+      const safeGasEstimates = await Promise.all(
+        config.functionNames.map((methodName) =>
+          contract.estimateGas[methodName](config.args as any)
+            .then(calculateGasMargin)
+            .catch((e) => {
+              console.error(e)
+              return undefined
+            })
         )
+      )
 
-        const indexOfSuccessfulEstimation = safeGasEstimates.findIndex((safeGasEstimate) =>
-          BigNumber.isBigNumber(safeGasEstimate)
-        )
+      const indexOfSuccessfulEstimation = safeGasEstimates.findIndex(
+        (safeGasEstimate) => typeof safeGasEstimate === 'bigint'
+      )
 
-        if (indexOfSuccessfulEstimation !== -1) {
-          const methodName = methodNames[indexOfSuccessfulEstimation]
-          const safeGasEstimate = safeGasEstimates[indexOfSuccessfulEstimation]
+      if (indexOfSuccessfulEstimation !== -1) {
+        const methodName = config.functionNames[indexOfSuccessfulEstimation]
+        const safeGasEstimate = safeGasEstimates[indexOfSuccessfulEstimation]
 
-          setRequest({
-            from: address,
-            to: contract.address,
-            data: contract.interface.encodeFunctionData(methodName, args),
-            gasLimit: safeGasEstimate,
-          })
+        return {
+          account: address,
+          to: contract.address,
+          data: encodeFunctionData({ abi: contract.abi, functionName: methodName, args: config.args as any }),
+          gas: safeGasEstimate,
         }
-      } catch (e: unknown) {
-        //
-        console.log({ e })
       }
-    },
-    [
-      token0,
-      token1,
-      chain?.id,
-      contract,
-      underlying0,
-      underlying1,
-      address,
-      pool,
-      balance,
-      minAmount0,
-      minAmount1,
-      deadline,
-      _pool.chainId,
-      percentToRemove,
-    ]
-  )
+    }
+
+    prep()
+      .then((config) => {
+        setPrepare(config)
+      })
+      .catch((e) => {
+        console.error('remove prepare error', e)
+      })
+  }, [
+    token0,
+    token1,
+    chain?.id,
+    contract,
+    underlying0,
+    underlying1,
+    address,
+    pool,
+    balance,
+    debouncedMinAmount0,
+    debouncedMinAmount1,
+    deadline,
+    _pool.chainId,
+    percentToRemoveDebounced,
+  ])
+
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId: _pool.chainId,
+    enabled: Boolean(approved && Number(percentage) > 0),
+  })
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
-    chainId: _pool.chainId,
-    prepare,
+    ...config,
     onSettled,
     onSuccess: () => {
       setPercentage('')
     },
-    enabled: approved,
   })
 
   return (
@@ -261,7 +281,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
           <Checker.Guard
             size="default"
             variant="outline"
-            guardWhen={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
+            guardWhen={isMounted && [SushiSwapV2PoolState.NOT_EXISTS, SushiSwapV2PoolState.INVALID].includes(poolState)}
             guardText="Pool not found"
           >
             <Checker.Network size="default" variant="outline" fullWidth chainId={_pool.chainId}>

@@ -1,9 +1,8 @@
 import { isAddress } from '@ethersproject/address'
-import { TransactionRequest } from '@ethersproject/providers'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
-import { FuroVestingRouterChainId } from '@sushiswap/furo'
+import { FuroChainId } from '@sushiswap/furo-sdk'
 import { FundSource } from '@sushiswap/hooks'
 import {
   DialogConfirm,
@@ -26,15 +25,18 @@ import {
   useAccount,
   useBentoBoxTotal,
   useFuroVestingRouterContract,
+  usePrepareSendTransaction,
+  useSendTransaction,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useApproved, useSignature, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { format } from 'date-fns'
-import React, { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
+import React, { FC, useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { Hex } from 'viem'
 
 import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreationAction } from '../../../lib'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
@@ -44,7 +46,7 @@ import { calculateCliffDuration, calculateEndDate, calculateStepPercentage, calc
 const APPROVE_TAG = 'createVestingSingle'
 
 interface CreateFormReviewModal {
-  chainId: FuroVestingRouterChainId
+  chainId: FuroChainId
 }
 
 export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(({ chainId }) => {
@@ -87,7 +89,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
     () => calculateStepPercentage({ currency, cliffEnabled, cliffAmount, stepAmount, stepPayouts }),
     [cliffAmount, cliffEnabled, currency, stepAmount, stepPayouts]
   )
-  const rebase = useBentoBoxTotal(chainId, _currency)
+  const rebase = useBentoBoxTotal(chainId as BentoBoxChainId, _currency)
   const endDate = useMemo(
     () => calculateEndDate({ cliffEndDate, cliffEnabled, startDate, stepPayouts, stepConfig }),
     [cliffEnabled, cliffEndDate, startDate, stepConfig, stepPayouts]
@@ -111,7 +113,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
         type: 'createVesting',
         chainId: chainId,
         txHash: data.hash,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Creating ${_totalAmount.toSignificant(6)} ${_totalAmount.currency.symbol} vesting`,
           completed: `Created ${_totalAmount.toSignificant(6)} ${_totalAmount.currency.symbol} vesting`,
@@ -124,86 +126,79 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
     [_totalAmount, chainId, address]
   )
 
-  const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (
-        !isValid ||
-        isValidating ||
-        !contract ||
-        !address ||
-        !chainId ||
-        !recipient ||
-        !isAddress(recipient) ||
-        !_currency ||
-        !startDate ||
-        !_cliffDuration ||
-        !stepConfig ||
-        !STEP_CONFIGURATIONS_MAP[stepConfig] ||
-        !_stepPercentage ||
-        !_totalAmount ||
-        !stepPayouts ||
-        !rebase ||
-        approved
-      ) {
-        return
-      }
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    if (
+      !isValid ||
+      isValidating ||
+      !contract ||
+      !address ||
+      !chainId ||
+      !recipient ||
+      !isAddress(recipient) ||
+      !_currency ||
+      !startDate ||
+      !(cliffEnabled || !_cliffDuration) ||
+      !stepConfig ||
+      !STEP_CONFIGURATIONS_MAP[stepConfig] ||
+      !_stepPercentage ||
+      !_totalAmount ||
+      !stepPayouts ||
+      !rebase ||
+      !approved
+    ) {
+      return {}
+    }
 
-      const actions: string[] = []
-      if (signature) {
-        actions.push(approveBentoBoxAction({ contract, user: address, signature }))
-      }
+    const actions: Hex[] = []
+    if (signature) {
+      actions.push(approveBentoBoxAction({ user: address, signature }))
+    }
 
-      actions.push(
-        vestingCreationAction({
-          contract,
-          recipient,
-          currency: _currency,
-          startDate,
-          cliffDuration: _cliffDuration.toString(),
-          stepDuration: STEP_CONFIGURATIONS_MAP[stepConfig].toString(),
-          steps: stepPayouts.toString(),
-          stepPercentage: _stepPercentage.toString(),
-          amount: _totalAmount.quotient.toString(),
-          fromBentobox: _fundSource === FundSource.BENTOBOX,
-          minShare: _totalAmount.toShare(rebase),
-        })
-      )
-
-      setRequest({
-        from: address,
-        to: contract.address,
-        data: batchAction({ contract, actions }),
-        value: _currency.isNative ? _totalAmount.quotient.toString() : '0',
+    actions.push(
+      vestingCreationAction({
+        recipient,
+        currency: _currency,
+        startDate,
+        cliffDuration: Number(_cliffDuration),
+        stepDuration: STEP_CONFIGURATIONS_MAP[stepConfig],
+        steps: Number(stepPayouts),
+        stepPercentage: _stepPercentage,
+        amount: _totalAmount.quotient,
+        fromBentoBox: _fundSource === FundSource.BENTOBOX,
+        minShare: _totalAmount.toShare(rebase),
       })
-    },
-    [
-      isValid,
-      isValidating,
-      contract,
-      address,
-      chainId,
-      recipient,
-      _currency,
-      startDate,
-      _cliffDuration,
-      stepConfig,
-      _stepPercentage,
-      _totalAmount,
-      stepPayouts,
-      rebase,
-      signature,
-      _fundSource,
-      approved,
-    ]
-  )
+    )
 
-  const { sendTransactionAsync, isLoading, isError, data } = useSendTransaction({
+    return {
+      account: address,
+      to: contract.address,
+      data: batchAction({ actions }),
+      value: _currency.isNative ? _totalAmount.quotient : 0n,
+    }
+  }, [
+    isValid,
+    isValidating,
+    contract,
+    address,
     chainId,
-    prepare,
-    onSettled,
-    onSuccess: () => {
-      setSignature(undefined)
-    },
+    recipient,
+    _currency,
+    startDate,
+    cliffEnabled,
+    _cliffDuration,
+    stepConfig,
+    _stepPercentage,
+    _totalAmount,
+    stepPayouts,
+    rebase,
+    approved,
+    signature,
+    _fundSource,
+  ])
+
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
     enabled: Boolean(
       isValid &&
         !isValidating &&
@@ -214,7 +209,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
         isAddress(recipient) &&
         _currency &&
         startDate &&
-        _cliffDuration &&
+        (!cliffEnabled || _cliffDuration) &&
         stepConfig &&
         STEP_CONFIGURATIONS_MAP[stepConfig] &&
         _stepPercentage &&
@@ -225,9 +220,17 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
     ),
   })
 
+  const { sendTransactionAsync, isLoading, isError, data } = useSendTransaction({
+    ...config,
+    onSettled,
+    onSuccess: () => {
+      setSignature(undefined)
+    },
+  })
   const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
 
   const formValid = isValid && !isValidating && Object.keys(errors).length === 0
+
   if (stepConfig) console.log(STEP_CONFIGURATIONS_MAP[stepConfig])
 
   return (
@@ -248,14 +251,14 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                 type="button"
                 fullWidth
                 id="create-single-vest-approve-bentobox"
-                chainId={chainId as BentoBoxV1ChainId}
+                chainId={chainId as BentoBoxChainId}
                 masterContract={getFuroVestingRouterContractConfig(chainId).address}
                 className="col-span-3 md:col-span-2"
               >
                 <Checker.ApproveERC20
                   type="button"
                   fullWidth
-                  contract={bentoBoxV1Address[chainId]}
+                  contract={BENTOBOX_ADDRESS[chainId as BentoBoxChainId]}
                   id="create-single-vest-approve-token"
                   amount={_totalAmount}
                   className="col-span-3 md:col-span-2"

@@ -1,10 +1,11 @@
-import { Address, useContractWrite, useNetwork, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
-import { useCallback } from 'react'
-import { SendTransactionResult } from 'wagmi/actions'
-import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { ChainId } from '@sushiswap/chain'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
+import { useCallback } from 'react'
+import { UserRejectedRequestError } from 'viem'
+import { Address, useContractWrite, useNetwork, usePrepareContractWrite } from 'wagmi'
+import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
+
 import { ERC1967Proxy } from '../abis'
-import { BigNumber } from 'ethers'
 
 interface UseHarvestAngleRewards {
   account: Address | undefined
@@ -14,7 +15,7 @@ interface UseHarvestAngleRewards {
     | {
         users: Address[]
         tokens: Address[]
-        claims: BigNumber[]
+        claims: bigint[]
         proofs: `0x${string}`[][]
       }
     | undefined
@@ -46,11 +47,11 @@ export const useHarvestAngleRewards = ({ account, chainId, args, enabled = true 
           type: 'approval',
           chainId,
           txHash: data.hash,
-          promise: data.wait(),
+          promise: waitForTransaction({ hash: data.hash }),
           summary: {
-            pending: `Harvesting rewards`,
-            completed: `Successfully harvested rewards`,
-            failed: `Something went wrong harvesting rewards`,
+            pending: 'Harvesting rewards',
+            completed: 'Successfully harvested rewards',
+            failed: 'Something went wrong harvesting rewards',
           },
           groupTimestamp: ts,
           timestamp: ts,

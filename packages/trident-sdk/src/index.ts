@@ -1,4 +1,4 @@
-export * from './constant-product-pool'
 export * from './constants'
-export * from './fee'
-export * from './stable-pool'
+export * from './TridentConstantPool'
+export * from './TridentStablePool'
+export * from './types'

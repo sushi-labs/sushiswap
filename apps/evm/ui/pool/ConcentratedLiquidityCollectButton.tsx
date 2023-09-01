@@ -1,17 +1,17 @@
 'use client'
 
-import { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
-import { createToast } from '@sushiswap/ui/components/toast'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { isSushiSwapV3ChainId, NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
-import { _useSendTransaction as useSendTransaction, useNetwork } from '@sushiswap/wagmi'
-import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { useNetwork, usePrepareSendTransaction, useSendTransaction } from '@sushiswap/wagmi'
+import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { ConcentratedLiquidityPosition } from '@sushiswap/wagmi/future/hooks'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { unwrapToken } from 'lib/functions'
-import { Dispatch, FC, ReactElement, SetStateAction, useCallback } from 'react'
+import { FC, ReactElement, useCallback, useMemo } from 'react'
+import { Hex, UserRejectedRequestError } from 'viem'
 
 interface ConcentratedLiquidityCollectButton {
   positionDetails: ConcentratedLiquidityPosition | undefined
@@ -33,8 +33,35 @@ export const ConcentratedLiquidityCollectButton: FC<ConcentratedLiquidityCollect
   token1,
 }) => {
   const { chain } = useNetwork()
+
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    if (token0 && token1 && position && account && positionDetails && isSushiSwapV3ChainId(chainId)) {
+      const feeValue0 = positionDetails.fees ? Amount.fromRawAmount(token0, positionDetails.fees[0]) : undefined
+      const feeValue1 = positionDetails.fees ? Amount.fromRawAmount(token0, positionDetails.fees[1]) : undefined
+
+      const { calldata, value } = NonfungiblePositionManager.collectCallParameters({
+        tokenId: positionDetails.tokenId.toString(),
+        expectedCurrencyOwed0: feeValue0 ?? Amount.fromRawAmount(unwrapToken(token0), 0),
+        expectedCurrencyOwed1: feeValue1 ?? Amount.fromRawAmount(unwrapToken(token1), 0),
+        recipient: account,
+      })
+
+      return {
+        to: getV3NonFungiblePositionManagerConractConfig(chainId).address,
+        data: calldata as Hex,
+        value: BigInt(value),
+      }
+    }
+
+    return {}
+  }, [account, chainId, position, positionDetails, token0, token1])
+
   const onSettled = useCallback(
-    (data: SendTransactionResult | undefined) => {
+    (data: SendTransactionResult | undefined, error: Error | null) => {
+      if (error instanceof UserRejectedRequestError) {
+        createErrorToast(error?.message, true)
+      }
+
       if (!data || !position) return
 
       const ts = new Date().getTime()
@@ -43,7 +70,7 @@ export const ConcentratedLiquidityCollectButton: FC<ConcentratedLiquidityCollect
         type: 'claimRewards',
         chainId,
         txHash: data.hash,
-        promise: data.wait(),
+        promise: waitForTransaction({ hash: data.hash }),
         summary: {
           pending: `Collecting fees from your ${position.amount0.currency.symbol}/${position.amount1.currency.symbol} position`,
           completed: `Collected fees from your ${position.amount0.currency.symbol}/${position.amount1.currency.symbol} position`,
@@ -53,41 +80,18 @@ export const ConcentratedLiquidityCollectButton: FC<ConcentratedLiquidityCollect
         groupTimestamp: ts,
       })
     },
-    [position, account, chainId]
+    [account, chainId, position]
   )
 
-  const prepare = useCallback(
-    async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (token0 && token1 && position && account && positionDetails && isSushiSwapV3ChainId(chainId)) {
-        const feeValue0 = positionDetails.fees
-          ? Amount.fromRawAmount(token0, JSBI.BigInt(positionDetails.fees[0]))
-          : undefined
-        const feeValue1 = positionDetails.fees
-          ? Amount.fromRawAmount(token0, JSBI.BigInt(positionDetails.fees[1]))
-          : undefined
-
-        const { calldata, value } = NonfungiblePositionManager.collectCallParameters({
-          tokenId: positionDetails.tokenId.toString(),
-          expectedCurrencyOwed0: feeValue0 ?? Amount.fromRawAmount(unwrapToken(token0), 0),
-          expectedCurrencyOwed1: feeValue1 ?? Amount.fromRawAmount(unwrapToken(token1), 0),
-          recipient: account,
-        })
-
-        setRequest({
-          to: getV3NonFungiblePositionManagerConractConfig(chainId).address,
-          data: calldata,
-          value,
-        })
-      }
-    },
-    [account, chainId, position, positionDetails, token0, token1]
-  )
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
+    enabled: Boolean(token0 && token1 && account && position && positionDetails && chainId === chain?.id),
+  })
 
   const data = useSendTransaction({
-    chainId,
-    prepare,
+    ...config,
     onSettled,
-    enabled: Boolean(token0 && token1 && account && position && positionDetails && chainId === chain?.id),
   })
 
   return children(data)

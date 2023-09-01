@@ -1,4 +1,3 @@
-import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
 
 import { MAX_SAFE_INTEGER, ONE, TWO, ZERO } from '..'
@@ -7,21 +6,21 @@ import { MAX_SAFE_INTEGER, ONE, TWO, ZERO } from '..'
  * Computes floor(sqrt(value))
  * @param value the value for which to compute the square root, rounded down
  */
-export function sqrt(value: JSBI): JSBI {
-  invariant(JSBI.greaterThanOrEqual(value, ZERO), 'NEGATIVE')
+export function sqrt(value: bigint): bigint {
+  invariant(value >= ZERO, 'NEGATIVE')
 
   // rely on built in sqrt if possible
-  if (JSBI.lessThan(value, MAX_SAFE_INTEGER)) {
-    return JSBI.BigInt(Math.floor(Math.sqrt(JSBI.toNumber(value))))
+  if (value < MAX_SAFE_INTEGER) {
+    return BigInt(Math.floor(Math.sqrt(Number(value))))
   }
 
-  let z: JSBI
-  let x: JSBI
+  let z: bigint
+  let x: bigint
   z = value
-  x = JSBI.add(JSBI.divide(value, TWO), ONE)
-  while (JSBI.lessThan(x, z)) {
+  x = value / TWO + ONE
+  while (x < z) {
     z = x
-    x = JSBI.divide(JSBI.add(JSBI.divide(value, x), x), TWO)
+    x = (value / x + x) / TWO
   }
   return z
 }

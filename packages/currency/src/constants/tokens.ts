@@ -5,9 +5,11 @@ import { Token } from '../Token'
 import {
   AAVE_ADDRESS,
   AGEUR_ADDRESS,
+  AMPL_ADDRESS,
   ANKR_ADDRESS,
   APE_ADDRESS,
   ARB_ADDRESS,
+  axlUSDC_ADDRESS,
   BCT_ADDRESS,
   BUSD_ADDRESS,
   COMP_ADDRESS,
@@ -52,6 +54,8 @@ import {
   XSUSHI_ADDRESS,
   YFI_ADDRESS,
 } from './token-addresses'
+
+export const AMPL = addressMapToTokenMap({ decimals: 9, symbol: 'AMPL', name: 'Ampleforth' }, AMPL_ADDRESS)
 
 export const MANA = addressMapToTokenMap(
   {
@@ -600,6 +604,15 @@ export const XSUSHI = addressMapToTokenMap(
   },
   XSUSHI_ADDRESS
 ) as Record<keyof typeof XSUSHI_ADDRESS, Token>
+
+export const axlUSDC: Record<keyof typeof axlUSDC_ADDRESS, Token> = addressMapToTokenMap(
+  {
+    decimals: 6,
+    symbol: 'axlUSDC',
+    name: 'Axelar Wrapped USDC',
+  },
+  axlUSDC_ADDRESS
+) as Record<keyof typeof axlUSDC_ADDRESS, Token>
 
 export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
   ...(addressMapToTokenMap(

@@ -1,5 +1,17 @@
 # @sushiswap/amm
 
+## 0.1.14
+
+### Patch Changes
+
+- Updated dependencies [[`2d8510984`](https://github.com/sushiswap/sushiswap/commit/2d85109847583b2cda7ce45c9ffb377043ea46cd)]:
+  - @sushiswap/currency@0.1.3
+  - @sushiswap/base-sdk@0.0.2
+  - @sushiswap/tines@1.0.10
+  - @sushiswap/trident-sdk@0.0.2
+  - @sushiswap/v2-sdk@0.0.10
+  - @sushiswap/trident-core@1.0.9
+
 ## 0.1.13
 
 ### Patch Changes

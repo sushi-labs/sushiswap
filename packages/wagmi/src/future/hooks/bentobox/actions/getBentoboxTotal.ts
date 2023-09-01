@@ -1,8 +1,9 @@
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Type } from '@sushiswap/currency'
+
 import { getBentoboxTotals } from './getBentoboxTotals'
 
-export const getBentoboxTotal = async ({ chainId, currency }: { chainId: BentoBoxV1ChainId; currency: Type }) => {
+export const getBentoboxTotal = async ({ chainId, currency }: { chainId: BentoBoxChainId; currency: Type }) => {
   if (!chainId) return undefined
 
   const totals = await getBentoboxTotals(chainId, [currency])

@@ -25,7 +25,7 @@ const defaultNextConfig = {
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
-    domains: ['https://cdn.sushi.com/'],
+    domains: ['cdn.sushi.com'],
   },
   eslint: {
     dirs: [

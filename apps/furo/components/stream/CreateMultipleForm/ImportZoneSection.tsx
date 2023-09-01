@@ -80,7 +80,7 @@ const Component: FC<ImportZoneSection> = ({ chainId }) => {
                 const [tokenAddress, fundSource, amount, recipient, startDate, endDate] = cur.split(',')
                 let _startDate: Date | null = new Date(Number(startDate) * 1000)
                 let _endDate: Date | null = new Date(Number(endDate) * 1000)
-                let _recipient: string | undefined = recipient
+                let _recipient: Address | undefined = recipient as Address
                 const _currency: Type | undefined =
                   tokenAddress.toLowerCase() === AddressZero.toLowerCase()
                     ? Native.onChain(chainId)

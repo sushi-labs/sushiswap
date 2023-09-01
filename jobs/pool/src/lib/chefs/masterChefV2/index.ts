@@ -5,12 +5,7 @@ import type { Address } from '@wagmi/core'
 import { daysInYear, secondsInDay } from 'date-fns'
 
 import { MASTERCHEF_V2_ADDRESS } from '../../../config.js'
-import {
-  divBigNumberToNumber,
-  getPairs,
-  getTokenBalancesOf,
-  getTokens,
-} from '../../common/index.js'
+import { divBigIntToNumber, getPairs, getTokenBalancesOf, getTokens } from '../../common/index.js'
 import type { ChefReturn, Farm } from '../../types.js'
 import {
   getLpTokens,
@@ -36,9 +31,9 @@ export async function getMasterChefV2(): Promise<ChefReturn> {
   )
 
   const [poolInfos, lpTokens, rewarders, tokens] = await Promise.all([
-    getPoolInfos(poolLength.toNumber()),
-    getLpTokens(poolLength.toNumber()),
-    getRewarders(poolLength.toNumber()),
+    getPoolInfos(Number(poolLength)),
+    getLpTokens(Number(poolLength)),
+    getRewarders(Number(poolLength)),
     getTokens(
       [...rewarderInfos.map((rewarder) => rewarder.rewardToken), SUSHI[ChainId.ETHEREUM].address],
       ChainId.ETHEREUM
@@ -50,7 +45,7 @@ export async function getMasterChefV2(): Promise<ChefReturn> {
     getTokenBalancesOf(lpTokens, MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM] as Address, ChainId.ETHEREUM),
   ])
 
-  const pools = [...Array(poolLength?.toNumber()).keys()].map((_, i) => ({
+  const pools = [...Array(Number(poolLength)).keys()].map((_, i) => ({
     id: i,
     poolInfo: poolInfos[i],
     lpBalance: lpBalances.find(({ token }) => token === lpTokens[i])?.balance,
@@ -59,7 +54,7 @@ export async function getMasterChefV2(): Promise<ChefReturn> {
   }))
 
   const blocksPerDay = averageBlockTime ? secondsInDay / averageBlockTime : 0
-  const sushiPerDay = divBigNumberToNumber(sushiPerBlock, SUSHI[ChainId.ETHEREUM].decimals) * blocksPerDay
+  const sushiPerDay = divBigIntToNumber(sushiPerBlock, SUSHI[ChainId.ETHEREUM].decimals) * blocksPerDay
   const sushiPriceUSD =
     tokens.find((tokenPrice) => tokenPrice.id === SUSHI[ChainId.ETHEREUM].address.toLowerCase())?.derivedUSD ?? 0
 
@@ -68,7 +63,7 @@ export async function getMasterChefV2(): Promise<ChefReturn> {
     farms: pools.reduce<Record<string, Farm>>((acc, pool) => {
       if (!pool.pair || !pool.lpBalance || !pool.poolInfo) return acc
 
-      const sushiRewardPerDay = sushiPerDay * (pool.poolInfo.allocPoint.toNumber() / totalAllocPoint.toNumber())
+      const sushiRewardPerDay = sushiPerDay * (Number(pool.poolInfo.allocPoint) / Number(totalAllocPoint))
       const sushiRewardPerYearUSD = daysInYear * sushiRewardPerDay * sushiPriceUSD
 
       const stakedLiquidityUSD = (pool.pair.liquidityUSD * pool.lpBalance) / pool.pair.totalSupply
@@ -106,7 +101,7 @@ export async function getMasterChefV2(): Promise<ChefReturn> {
             // ALCX rewarder (second on subgraph = block irl)
             case '0xd101479ce045b903ae14ec6afa7a11171afb5dfa':
             case '0x7519c93fc5073e15d89131fd38118d73a72370f8': {
-              rewardPerSecond = divBigNumberToNumber(pool.rewarder.rewardPerSecond.div(12), token.decimals)
+              rewardPerSecond = divBigIntToNumber(pool.rewarder.rewardPerSecond / 12n, token.decimals)
               break
             }
             // Convex rewarder (rewards have ended)
@@ -115,7 +110,7 @@ export async function getMasterChefV2(): Promise<ChefReturn> {
               break
             }
             default: {
-              rewardPerSecond = divBigNumberToNumber(pool.rewarder.rewardPerSecond, token.decimals)
+              rewardPerSecond = divBigIntToNumber(pool.rewarder.rewardPerSecond, token.decimals)
             }
           }
 

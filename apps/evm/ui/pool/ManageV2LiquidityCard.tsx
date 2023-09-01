@@ -1,4 +1,6 @@
-import { Pool } from '@sushiswap/client'
+'use client'
+
+import { Pool, Protocol } from '@sushiswap/client'
 import {
   Card,
   CardContent,
@@ -29,7 +31,6 @@ interface ManageV2LiquidityCardProps {
 
 export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool }) => {
   const isFarm = pool.wasIncentivized || pool.isIncentivized
-
   return (
     <Card>
       <CardHeader>
@@ -39,16 +40,16 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool }) 
       <Tabs className="w-full" defaultValue="add">
         <CardContent>
           <TabsList className="!flex">
-            <TabsTrigger value="add" className="flex flex-1">
+            <TabsTrigger testdata-id="add-tab" value="add" className="flex flex-1">
               Add
             </TabsTrigger>
-            <TabsTrigger value="remove" className="flex flex-1">
+            <TabsTrigger testdata-id="remove-tab" value="remove" className="flex flex-1">
               Remove
             </TabsTrigger>
-            <TabsTrigger disabled={!isFarm} value="stake" className="flex flex-1">
+            <TabsTrigger testdata-id="stake-tab" disabled={!isFarm} value="stake" className="flex flex-1">
               Stake
             </TabsTrigger>
-            <TabsTrigger disabled={!isFarm} value="unstake" className="flex flex-1">
+            <TabsTrigger testdata-id="unstake-tab" disabled={!isFarm} value="unstake" className="flex flex-1">
               Unstake
             </TabsTrigger>
           </TabsList>
@@ -61,20 +62,18 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool }) 
             <PoolPositionRewardsProvider pool={pool}>
               <TabsContent value="add">
                 <CardContent>
-                  {['BentoBox Classic', 'BentoBox Stable'].includes(pool.protocol) ? (
+                  {pool.protocol === Protocol.BENTOBOX_CLASSIC || pool.protocol === Protocol.BENTOBOX_STABLE ? (
                     <AddSectionTrident pool={pool} />
-                  ) : (
-                    <AddSectionLegacy pool={pool} />
-                  )}
+                  ) : null}
+                  {pool.protocol === Protocol.SUSHISWAP_V2 ? <AddSectionLegacy pool={pool} /> : null}
                 </CardContent>
               </TabsContent>
               <TabsContent value="remove">
                 <CardContent>
-                  {['BentoBox Classic', 'BentoBox Stable'].includes(pool.protocol) ? (
+                  {pool.protocol === Protocol.BENTOBOX_CLASSIC || pool.protocol === Protocol.BENTOBOX_STABLE ? (
                     <RemoveSectionTrident pool={pool} />
-                  ) : (
-                    <RemoveSectionLegacy pool={pool} />
-                  )}
+                  ) : null}
+                  {pool.protocol === Protocol.SUSHISWAP_V2 ? <RemoveSectionLegacy pool={pool} /> : null}
                 </CardContent>
               </TabsContent>
               <TabsContent value="stake">

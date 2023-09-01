@@ -1,12 +1,39 @@
 import { ChainId } from '@sushiswap/chain'
-import { readContracts } from 'wagmi'
-import { getConcentratedLiquidityPositionsFromTokenIds } from './getConcentratedLiquidityPositionsFromTokenIds'
-import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
-import { ConcentratedLiquidityPosition } from '../types'
-import { BigNumber } from 'ethers'
 import { computePoolAddress, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
+import { erc20ABI, readContracts } from 'wagmi'
+
 import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
+import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
+import { ConcentratedLiquidityPosition } from '../types'
+import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
+import { getConcentratedLiquidityPositionsFromTokenIds } from './getConcentratedLiquidityPositionsFromTokenIds'
+
+const abiShard = [
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'owner',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'index',
+        type: 'uint256',
+      },
+    ],
+    name: 'tokenOfOwnerByIndex',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const
 
 export const getConcentratedLiquidityPositions = async ({
   account,
@@ -22,38 +49,18 @@ export const getConcentratedLiquidityPositions = async ({
       (el) =>
         ({
           address: getV3NonFungiblePositionManagerConractConfig(el).address,
-          abi: [
-            {
-              inputs: [
-                {
-                  internalType: 'address',
-                  name: 'owner',
-                  type: 'address',
-                },
-              ],
-              name: 'balanceOf',
-              outputs: [
-                {
-                  internalType: 'uint256',
-                  name: '',
-                  type: 'uint256',
-                },
-              ],
-              stateMutability: 'view',
-              type: 'function',
-            },
-          ],
+          abi: erc20ABI,
           chainId: el,
-          functionName: 'balanceOf',
-          args: [account ?? undefined],
+          functionName: 'balanceOf' as const,
+          args: [account],
         } as const)
     ),
   })
 
   // we don't expect any account balance to ever exceed the bounds of max safe int
   const accountBalances = result.reduce<Record<ChainId, number>>((acc, el, i) => {
-    if (el?.toNumber() > 0) {
-      acc[chainIds[i]] = el?.toNumber()
+    if (el.result && el.result > 0n) {
+      acc[chainIds[i]] = Number(el.result)
     }
     return acc
   }, {} as Record<ChainId, number>)
@@ -71,42 +78,23 @@ export const getConcentratedLiquidityPositions = async ({
         ({
           chainId: _chainId,
           address: getV3NonFungiblePositionManagerConractConfig(_chainId).address,
-          abi: [
-            {
-              inputs: [
-                {
-                  internalType: 'address',
-                  name: 'owner',
-                  type: 'address',
-                },
-                {
-                  internalType: 'uint256',
-                  name: 'index',
-                  type: 'uint256',
-                },
-              ],
-              name: 'tokenOfOwnerByIndex',
-              outputs: [
-                {
-                  internalType: 'uint256',
-                  name: '',
-                  type: 'uint256',
-                },
-              ],
-              stateMutability: 'view',
-              type: 'function',
-            },
-          ],
-          functionName: 'tokenOfOwnerByIndex',
-          args: [account, BigNumber.from(index)],
+          abi: abiShard,
+          functionName: 'tokenOfOwnerByIndex' as const,
+          args: [account, BigInt(index)],
         } as const)
     ),
   })
 
-  const tokenIds = tokenIdResults.map((el, i) => ({
-    chainId: tokenIdsArgs[i][0],
-    tokenId: el,
-  }))
+  const tokenIds = tokenIdResults
+    .map((el, i) => {
+      if (!el.result) return undefined
+
+      return {
+        chainId: tokenIdsArgs[i][0],
+        tokenId: el.result,
+      }
+    })
+    .filter((el): el is NonNullable<typeof el> => el !== undefined)
 
   const positions = await getConcentratedLiquidityPositionsFromTokenIds({ tokenIds })
   const fees = await getConcentratedLiquidityPositionFees({ tokenIds })
