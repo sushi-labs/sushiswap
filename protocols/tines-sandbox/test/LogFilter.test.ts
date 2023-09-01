@@ -8,7 +8,7 @@ const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 function expect(condition: boolean, comment: string) {
   if (condition) return
   const err = new Error()
-  console.error('Wrong expectation: ' + comment, err.stack)
+  console.error(`Wrong expectation: ${comment}`, err.stack)
   process.exit()
 }
 
@@ -46,8 +46,8 @@ it.skip('LogFilter correctness test', async () => {
           const li = Number(l.logIndex)
           if (l.removed) {
             const prev = allLogs[i - 1]
-            expect(prev.blockHash == l.blockHash, `Removed logs hash are equal ${prev.blockHash} == ${l.blockHash}`)
-            expect(Number(prev.logIndex) == li, `Removed logIndexes are equal ${Number(prev.logIndex)} == ${li}`)
+            expect(prev.blockHash === l.blockHash, `Removed logs hash are equal ${prev.blockHash} == ${l.blockHash}`)
+            expect(Number(prev.logIndex) === li, `Removed logIndexes are equal ${Number(prev.logIndex)} == ${li}`)
             allLogs.splice(i - 1, 2)
             prevBlockNum = bn
             prevLogIndex = -1
@@ -116,7 +116,7 @@ it.skip('LogFilter completeness test', async () => {
         ++ethalonRemoved
       } else logsEthalon.add(logHash(l))
     })
-    if (i == 0) {
+    if (i === 0) {
       // remove initial difference
       const logs0: string[] = []
       logsMy.forEach((l) => {

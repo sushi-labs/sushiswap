@@ -5,7 +5,7 @@ import { DAI, Native, USDC, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
 import { FactoryV3, PoolInfo, UniV3Extractor } from '@sushiswap/extractor'
 import { LiquidityProviders, NativeWrapProvider, PoolCode, Router, UniswapV3Provider } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { getBigNumber, RouteStatus, UniV3Pool } from '@sushiswap/tines'
+import { RouteStatus, UniV3Pool } from '@sushiswap/tines'
 import { POOL_INIT_CODE_HASH } from '@sushiswap/v3-sdk'
 import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import ISwapRouter from '@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
@@ -124,7 +124,7 @@ async function prepareEnvironment(): Promise<TestEnvironment> {
   await Promise.all(
     tokens.map(async (t) => {
       const addr = t.address as Address
-      await setTokenBalance(addr, user, amount)
+      await setTokenBalance(client, addr, user, amount)
       await client.writeContract({
         address: addr as Address,
         abi: erc20Abi,
@@ -308,9 +308,9 @@ async function makeTest(
     false
   )
   await extractor.start()
-  pools.forEach((p) => extractor.addPoolWatching(p))
+  pools.forEach((p) => extractor.addPoolWatching(p, 'request'))
   for (;;) {
-    if (extractor.getStablePoolCodes().length == pools.length) break
+    if (extractor.getStablePoolCodes().length === pools.length) break
     await delay(500)
   }
 
@@ -327,7 +327,7 @@ async function makeTest(
   if (transactions.length > 0) {
     const blockNumber = Math.max(...transactions.map((tr) => Number(tr.blockNumber || 0)))
     for (;;) {
-      if (Number(extractor.lastProcessdBlock) == blockNumber && extractor.getStablePoolCodes().length == pools.length)
+      if (Number(extractor.lastProcessdBlock) === blockNumber && extractor.getStablePoolCodes().length === pools.length)
         break
       await delay(500)
     }
@@ -341,7 +341,7 @@ async function makeTest(
 
   extractorPools = extractor.getStablePoolCodes()
   providerPools.forEach((pp) => {
-    const ep = extractorPools.find((p) => p.pool.address == pp.pool.address)
+    const ep = extractorPools.find((p) => p.pool.address === pp.pool.address)
     expect(ep).not.undefined
     if (ep) comparePoolCodes(pp, ep)
   })
@@ -376,15 +376,15 @@ async function checkHistoricalLogs(env: TestEnvironment, pool: PoolInfo, fromBlo
     false
   )
   await extractor.start()
-  extractor.addPoolWatching(pool)
+  extractor.addPoolWatching(pool, 'request')
   for (;;) {
-    if (extractor.getStablePoolCodes().length == 1) break
+    if (extractor.getStablePoolCodes().length === 1) break
     await delay(500)
   }
 
   logs.forEach((l) => extractor.processLog(l))
   for (;;) {
-    if (extractor.getStablePoolCodes().length == 1) break
+    if (extractor.getStablePoolCodes().length === 1) break
     await delay(500)
   }
 
@@ -524,15 +524,15 @@ async function startInfinitTest(args: {
   for (;;) {
     for (let i = 1; i < tokens.length; ++i) {
       await delay(1000)
-      const { prefetchedPools: watchers } = extractor.getWatchersForTokens(tokens)
+      const { prefetched: watchers } = extractor.getWatchersForTokens(tokens)
       const pools = watchers.map((w) => w.getPoolCode()).filter((pc) => pc !== undefined) as PoolCode[]
       const poolMap = new Map<string, PoolCode>()
       pools.forEach((p) => poolMap.set(p.pool.address, p))
       nativeProvider.getCurrentPoolList().forEach((p) => poolMap.set(p.pool.address, p))
       const fromToken = Native.onChain(chainId),
         toToken = tokens[i]
-      const route = Router.findBestRoute(poolMap, chainId, fromToken, getBigNumber(1e18), toToken, 30e9)
-      if (route.status == RouteStatus.NoWay) {
+      const route = Router.findBestRoute(poolMap, chainId, fromToken, BigInt(1e18), toToken, 30e9)
+      if (route.status === RouteStatus.NoWay) {
         console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status}`)
         continue
       }
@@ -549,24 +549,26 @@ async function startInfinitTest(args: {
         continue
       }
       try {
-        const amountOutReal = await client.readContract({
-          address: args.RP3Address,
-          abi: routeProcessor2Abi,
-          functionName: 'processRoute',
-          args: [
-            rpParams.tokenIn as Address,
-            BigInt(rpParams.amountIn.toString()),
-            rpParams.tokenOut as Address,
-            0n,
-            rpParams.to as Address,
-            rpParams.routeCode as Address, // !!!!
-          ],
-          value: BigInt(rpParams.value?.toString() as string),
-          account: args.account,
-        })
+        const amountOutReal = await client
+          .simulateContract({
+            address: args.RP3Address,
+            abi: routeProcessor2Abi,
+            functionName: 'processRoute',
+            args: [
+              rpParams.tokenIn as Address,
+              BigInt(rpParams.amountIn.toString()),
+              rpParams.tokenOut as Address,
+              0n,
+              rpParams.to as Address,
+              rpParams.routeCode as Address, // !!!!
+            ],
+            value: BigInt(rpParams.value?.toString() as string),
+            account: args.account,
+          })
+          .then((r) => r.result)
         const amountOutExp = BigInt(route.amountOutBI.toString())
         const diff =
-          amountOutExp == 0n ? amountOutReal - amountOutExp : Number(amountOutReal - amountOutExp) / route.amountOut
+          amountOutExp === 0n ? amountOutReal - amountOutExp : Number(amountOutReal - amountOutExp) / route.amountOut
         console.log(
           `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.legs.length - 1} pools` +
             ` diff = ${diff > 0 ? '+' : ''}${diff}`
@@ -626,7 +628,7 @@ it.skip('UniV3 Extractor Optimism infinit work test', async () => {
 
 it.skip('UniV3 Extractor Celo infinit work test', async () => {
   await startInfinitTest({
-    providerURL: `https://forno.celo.org`,
+    providerURL: 'https://forno.celo.org',
     chain: celo,
     factories: [uniswapFactory(ChainId.CELO)],
     tickLensContract: '0x5f115D9113F88e0a0Db1b5033D90D4a9690AcD3D',
