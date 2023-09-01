@@ -49,11 +49,15 @@ async function getPayload(ipfsHash: string): Promise<Payload> {
   return response.json()
 }
 
-async function getApr(chainId: SteerChainId, vaultId: string): Promise<{ apr: number }> {
+async function getApr(chainId: SteerChainId, vaultId: string): Promise<number> {
   const response = await fetch(
     `https://ro81h8hq6b.execute-api.us-east-1.amazonaws.com/pool/weekly-apr?address=${vaultId}&chain=${chainId}`
   )
-  return response.json()
+
+  const json = await response.json()
+
+  if (!json.apr) return null
+  return typeof json.apr === 'number' ? json.apr : null
 }
 
 async function extractChain(chainId: SteerChainId) {
@@ -86,7 +90,7 @@ async function extractChain(chainId: SteerChainId) {
       const [payloadP, aprP] = await Promise.allSettled([getPayload(vault.payloadIpfs), getApr(chainId, vault.id)])
 
       const payload = isPromiseFulfilled(payloadP) ? payloadP.value : null
-      const apr = isPromiseFulfilled(aprP) ? aprP.value.apr / 100 : '0'
+      const apr = isPromiseFulfilled(aprP) ? aprP.value / 100 : 0
 
       return {
         ...vault,
