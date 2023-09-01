@@ -263,7 +263,11 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
     signature,
   ])
 
-  const { config } = usePrepareSendTransaction({ ...prepare, chainId, enabled: approved })
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
+    enabled: Boolean(approved && minAmount0?.greaterThan(ZERO) && minAmount1?.greaterThan(ZERO)),
+  })
 
   const {
     sendTransactionAsync,

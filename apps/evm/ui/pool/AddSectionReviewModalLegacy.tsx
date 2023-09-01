@@ -2,7 +2,7 @@ import { calculateSlippageAmount } from '@sushiswap/amm'
 import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Type } from '@sushiswap/currency'
 import { calculateGasMargin } from '@sushiswap/gas'
-import { Percent } from '@sushiswap/math'
+import { Percent, ZERO } from '@sushiswap/math'
 import {
   DialogConfirm,
   DialogContent,
@@ -186,7 +186,11 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
     prep().then((data) => setPrepare(data))
   }, [token0, token1, chain?.id, contract, input0, input1, address, minAmount0, minAmount1, deadline])
 
-  const { config } = usePrepareSendTransaction({ ...prepare, chainId, enabled: approved })
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
+    enabled: Boolean(approved && minAmount0?.greaterThan(ZERO) && minAmount1?.greaterThan(ZERO)),
+  })
 
   const {
     sendTransactionAsync,
