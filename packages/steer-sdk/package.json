@@ -67,7 +67,7 @@
     "@whatwg-node/fetch": "0.8.4",
     "tslib": "latest",
     "wagmi": "legacy-v0",
-    "viem": "1.6.2"
+    "viem": "1.9.5"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

@@ -88,7 +88,7 @@
     "@uniswap/v2-core": "1.0.1",
     "@uniswap/v3-periphery": "1.4.1",
     "next-themes": "^0.2.1",
-    "viem": "1.6.2",
+    "viem": "1.9.5",
     "zod": "3.21.4"
   },
   "devDependencies": {
