@@ -52,18 +52,19 @@ export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): P
       getTokenBalancesOf(lpTokens, MINICHEF_ADDRESS[chainId] as Address, chainId),
     ])
 
-    const pools = [...Array(poolLength)].map((_, i) => ({
+    const pools = [...Array(Number(poolLength))].map((_, i) => {
+      return {
       id: i,
       poolInfo: poolInfos[i],
       lpBalance: lpBalances.find(({ token }) => token === lpTokens[i])?.balance,
       pair: pairs.find((pair) => pair.id === lpTokens?.[i]?.toLowerCase()),
       rewarder: rewarderInfos.find((rewarderInfo) => rewarderInfo.id === rewarders?.[i]?.toLowerCase()),
-    }))
+    }})
+
 
     return {
       chainId,
       farms: pools.reduce<Record<string, Farm>>((acc, pool) => {
-        // console.log('this', pool.pair, pool.lpBalance)
 
         if (!pool.pair || typeof pool.lpBalance !== 'number' || !pool.poolInfo) return acc
 
