@@ -11,13 +11,18 @@ async function getSteerVaultsAprs({ vaultIds }: GetSteerVaultsAprs) {
     vaultIds.map(async (vaultId) => {
       const { address, chainId } = getChainIdAddressFromId(vaultId)
 
-      return fetch(
+      const res = await fetch(
         `https://ro81h8hq6b.execute-api.us-east-1.amazonaws.com/pool/weekly-apr?address=${address}&chain=${chainId}`
       ).then((res) => res.json() as Promise<{ apr: number }>)
+
+      if (typeof res?.apr === 'undefined' || typeof res?.apr !== 'number') {
+        throw new Error("Couldn't fetch APR")
+      }
+      return res.apr
     })
   )
 
-  return results.map((r) => (isPromiseFulfilled(r) ? r.value.apr / 100 : null))
+  return results.map((r) => (isPromiseFulfilled(r) ? r.value / 100 : null))
 }
 
 interface GetSteerVaultsApr {

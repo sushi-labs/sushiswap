@@ -228,6 +228,8 @@ enum VaultState {
 
 model SteerVault {
   id                      String      @id // chainId:address
+  address                 String      @default("")
+  chainId                 Int         @default(69)
   
   pool                    SushiPool   @relation(fields: [poolId], references: [id])
   poolId                  String

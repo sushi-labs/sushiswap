@@ -1,7 +1,10 @@
 import { getPools, getTokenPricesChain } from '@sushiswap/client'
 import { Prisma, SteerStrategy, VaultState } from '@sushiswap/database'
+import { getIdFromChainIdAddress } from '@sushiswap/format'
 import { STEER_ENABLED_NETWORKS, STEER_SUBGRAPGH_NAME, SteerChainId, SUBGRAPH_HOST } from '@sushiswap/graph-config'
+import { getSteerPayload, getSteerVaultApr } from '@sushiswap/steer-sdk'
 import { isPromiseFulfilled } from '@sushiswap/validate'
+import { Address } from 'viem'
 
 import { getBuiltGraphSDK } from '../.graphclient/index.js'
 import { updatePoolsWithSteerVaults } from './etl/pool/load.js'
@@ -22,42 +25,6 @@ export async function steer() {
   } catch (e) {
     console.error(e)
   }
-}
-
-interface Payload {
-  strategyConfigData: {
-    period: number
-    standardDeviations: number
-    poolFee: number
-    epochStart: number
-    epochLength: string
-    name: string
-    description: string
-    appImgUrl: string
-  }
-  vaultPayload: {
-    fee: number
-    slippage: number
-    ratioErrorTolerance: number
-    maxTicksChange: number
-    twapInterval: number
-  }
-}
-
-async function getPayload(ipfsHash: string): Promise<Payload> {
-  const response = await fetch(`https://ipfs.io/ipfs/${ipfsHash}`)
-  return response.json()
-}
-
-async function getApr(chainId: SteerChainId, vaultId: string): Promise<number> {
-  const response = await fetch(
-    `https://ro81h8hq6b.execute-api.us-east-1.amazonaws.com/pool/weekly-apr?address=${vaultId}&chain=${chainId}`
-  )
-
-  const json = await response.json()
-
-  if (!json.apr) return null
-  return typeof json.apr === 'number' ? json.apr : null
 }
 
 async function extractChain(chainId: SteerChainId) {
@@ -87,7 +54,10 @@ async function extractChain(chainId: SteerChainId) {
       const reserveUSD = reserve0USD + reserve1USD
       const feesUSD = Number(fees0USD) + Number(fees1USD)
 
-      const [payloadP, aprP] = await Promise.allSettled([getPayload(vault.payloadIpfs), getApr(chainId, vault.id)])
+      const [payloadP, aprP] = await Promise.allSettled([
+        getSteerPayload({ payloadHash: vault.payloadIpfs }),
+        getSteerVaultApr({ vaultId: getIdFromChainIdAddress(chainId, vault.id as Address) }),
+      ])
 
       const payload = isPromiseFulfilled(payloadP) ? payloadP.value : null
       const apr = isPromiseFulfilled(aprP) ? aprP.value / 100 : 0
@@ -142,6 +112,9 @@ function transform(chainsWithVaults: Awaited<ReturnType<typeof extract>>): Prism
 
       return {
         id: `${chainId}:${vault.id}`.toLowerCase(),
+        address: vault.id.toLowerCase(),
+        chainId: chainId,
+
         poolId: vault.poolId,
         feeTier: Number(vault.feeTier) / 1000000,
 

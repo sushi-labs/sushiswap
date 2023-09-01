@@ -19,11 +19,11 @@ function parseWhere(args: typeof SteerVaultsApiSchema._output | typeof SteerVaul
     })
   }
 
-  // if ('chainIds' in args && args.chainIds !== undefined) {
-  //   addFilter({
-  //     chainId: { in: args.chainIds },
-  //   })
-  // }
+  if ('chainIds' in args && args.chainIds !== undefined) {
+    addFilter({
+      chainId: { in: args.chainIds },
+    })
+  }
 
   if ('isEnabled' in args && args.isEnabled !== undefined) {
     addFilter({
@@ -72,6 +72,8 @@ export async function getSteerVaults(args: typeof SteerVaultsApiSchema._output) 
     orderBy,
     select: {
       id: true,
+      address: true,
+      chainId: true,
 
       pool: {
         select: SushiPoolSelect,

@@ -1247,9 +1247,11 @@ importers:
       '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
       '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/format': workspace:*
       '@sushiswap/graph-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/steer-sdk': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/v3-sdk': workspace:*
@@ -1301,7 +1303,9 @@ importers:
       '@sushiswap/client': link:../../packages/client
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/database': link:../../packages/database
+      '@sushiswap/format': link:../../packages/format
       '@sushiswap/graph-config': link:../../config/graph
+      '@sushiswap/steer-sdk': link:../../packages/steer-sdk
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/validate': link:../../packages/validate
       '@sushiswap/wagmi-config': link:../../config/wagmi
