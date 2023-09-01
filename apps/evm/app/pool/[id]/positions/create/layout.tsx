@@ -1,5 +1,5 @@
-import React from '@sushiswap/prettier-config/dist/react'
 import { Container, LinkInternal } from '@sushiswap/ui'
+import React from 'react'
 
 export default async function Layout({ children, params }: { children: React.ReactNode; params: { id: string } }) {
   return (

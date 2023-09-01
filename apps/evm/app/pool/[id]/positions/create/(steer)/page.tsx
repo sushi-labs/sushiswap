@@ -16,6 +16,8 @@ export default async function PositionsCreatePage({ params }: { params: { id: st
     return pool?.steerVaults?.filter((vault) => vault.isEnabled)
   }, [pool, isLoading])
 
+  console.log(enabledVaults)
+
   return (
     <div className="flex justify-center gap-4">
       {(pool && enabledVaults)?.map((vault) => (

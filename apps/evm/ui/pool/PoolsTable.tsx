@@ -35,7 +35,7 @@ interface PositionsTableProps {
 }
 
 export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
-  const { chainIds, tokenSymbols, protocols, farmsOnly } = usePoolFilters()
+  const { chainIds, tokenSymbols, protocols, farmsOnly, smartPoolsOnly } = usePoolFilters()
   const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
 
   const args = useMemo<GetPoolsArgs>(() => {
@@ -43,12 +43,13 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
       chainIds: chainIds,
       tokenSymbols,
       isIncentivized: farmsOnly || undefined, // will filter farms out if set to false, undefined will be filtered out by the parser
+      hasEnabledSteerVault: smartPoolsOnly || undefined, // will filter smart pools out if set to false, undefined will be filtered out by the parser
       isWhitelisted: true, // can be added to filters later, need to put it here so fallback works
       orderBy: sorting[0]?.id,
       orderDir: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
       protocols,
     }
-  }, [chainIds, tokenSymbols, protocols, farmsOnly, sorting])
+  }, [chainIds, tokenSymbols, farmsOnly, smartPoolsOnly, sorting, protocols])
 
   const {
     data: pools,

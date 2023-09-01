@@ -1,5 +1,6 @@
 import { Container } from '@sushiswap/ui'
 import React from 'react'
+import { TableFiltersSmartPoolsOnly } from 'ui/pool/TableFilterSmartPoolsOnly'
 
 import { PoolsFiltersProvider } from '../../../ui/pool'
 import { PoolsTable } from '../../../ui/pool/PoolsTable'
@@ -19,6 +20,7 @@ export default async function PoolPage() {
             <TableFiltersPoolType />
             <TableFiltersNetwork />
             <TableFiltersFarmsOnly />
+            <TableFiltersSmartPoolsOnly />
             <TableFiltersResetButton />
           </div>
           <PoolsTable />

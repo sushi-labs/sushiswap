@@ -36,11 +36,12 @@ export const poolFiltersSchema = z.object({
     .string()
     .transform((protocols) => (protocols !== null && protocols !== ',' ? (protocols.split(',') as Protocol[]) : [])),
   farmsOnly: z.string().transform((bool) => (bool ? bool === 'true' : undefined)),
+  smartPoolsOnly: z.string().transform((bool) => (bool ? bool === 'true' : undefined)),
 })
 
 export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => {
   const urlFilters = useTypedSearchParams(poolFiltersSchema.partial())
-  const { tokenSymbols, chainIds, protocols, farmsOnly } = urlFilters
+  const { tokenSymbols, chainIds, protocols, farmsOnly, smartPoolsOnly } = urlFilters
 
   return (
     <FilterContext.Provider
@@ -50,8 +51,9 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => 
           chainIds: chainIds ? chainIds : SUPPORTED_CHAIN_IDS,
           protocols: protocols ? protocols : POOL_TYPES,
           farmsOnly: farmsOnly ? farmsOnly : false,
+          smartPoolsOnly: smartPoolsOnly ? smartPoolsOnly : false,
         }),
-        [chainIds, farmsOnly, protocols, tokenSymbols]
+        [chainIds, farmsOnly, protocols, tokenSymbols, smartPoolsOnly]
       )}
     >
       {children}

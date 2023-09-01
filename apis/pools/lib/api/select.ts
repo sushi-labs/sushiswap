@@ -87,24 +87,39 @@ export const SushiPoolSelect = {
   steerVaults: {
     select: {
       id: true,
-      adjustmentFrequency: true,
-      apr: true,
-      apr1d: true,
-      apr1m: true,
-      apr1y: true,
-      description: true,
-      feeTier: true,
-      lastAdjustmentTimestamp: true,
-      generatedAt: true,
-      lowerTick: true,
-      upperTick: true,
-      performanceFee: true,
+      address: true,
+      chainId: true,
 
+      feeTier: true,
+
+      apr: true,
+      // apr1d: true, currently unusable
+      // apr1m: true,
+      // apr1y: true,
+
+      token0: {
+        select: {
+          id: true,
+          address: true,
+          name: true,
+          symbol: true,
+          decimals: true,
+        },
+      },
       reserve0: true,
       reserve0USD: true,
       fees0: true,
       fees0USD: true,
 
+      token1: {
+        select: {
+          id: true,
+          address: true,
+          name: true,
+          symbol: true,
+          decimals: true,
+        },
+      },
       reserve1: true,
       reserve1USD: true,
       fees1: true,
@@ -113,14 +128,25 @@ export const SushiPoolSelect = {
       reserveUSD: true,
       feesUSD: true,
 
-      state: true,
       strategy: true,
+      payloadHash: true,
+      // description: true,
+      // state: true
+
+      performanceFee: true,
+
+      lowerTick: true,
+      upperTick: true,
+
+      adjustmentFrequency: true,
+      lastAdjustmentTimestamp: true,
+
       isEnabled: true,
       wasEnabled: true,
-      admin: true,
+
       creator: true,
+      admin: true,
       manager: true,
-      updatedAt: true,
     },
   },
 } as const satisfies Prisma.SushiPoolSelect
