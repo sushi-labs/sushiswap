@@ -231,7 +231,7 @@ export const useCrossChainTradeQuery = (
           writeArgs: undefined,
           route: { status: '' },
           functionName: 'sendMessage',
-          overrides: undefined,
+          value: undefined,
         } as UseCrossChainSelect
       }
 
@@ -271,8 +271,6 @@ export const useCrossChainTradeQuery = (
           '0x', // payloadData
         ]
       } else if (isSrcSwap && !isDstSwap && srcTrade?.minAmountOut) {
-        console.log('TYPE swapTransfer')
-
         const srcSwapData = encodeSwapData(srcTrade.writeArgs as ProcessRouteInput)
 
         transactionType = TransactionType.SwapAndBridge
@@ -427,7 +425,7 @@ export const useCrossChainTradeQuery = (
           status: '',
         },
         functionName,
-        overrides: { value },
+        value,
       } as UseCrossChainSelect
     },
     refetchOnWindowFocus: true,
@@ -492,7 +490,7 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
             status: amountIn?.greaterThan(ZERO) && !amountOut ? 'NoWay' : '',
           },
           functionName: 'sendMessage',
-          overrides: undefined,
+          value: undefined,
         }
       }
 

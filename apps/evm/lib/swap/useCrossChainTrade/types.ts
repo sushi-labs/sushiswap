@@ -35,7 +35,7 @@ export interface UseCrossChainTradeReturn {
   functionName: string
   writeArgs: [] | undefined
   route: { status: string }
-  overrides: { value: bigint } | undefined
+  value: bigint | undefined
   transactionType: TransactionType | undefined
   srcBridgeToken: Type | undefined
   dstBridgeToken: Type | undefined
