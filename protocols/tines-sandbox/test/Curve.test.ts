@@ -360,10 +360,9 @@ async function checkSwap(
     })
 
     let balanceAfter = 0n
-    const tokenContractFrom = poolInfo.tokenContracts[from]
-    if (tokenContractFrom !== undefined) {
+    if (tokenContractTo !== undefined) {
       balanceAfter = await readContract(config.client, {
-        ...tokenContractFrom,
+        ...tokenContractTo,
         functionName: 'balanceOf',
         args: [poolInfo.user],
       })
