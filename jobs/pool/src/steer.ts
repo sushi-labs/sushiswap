@@ -164,6 +164,7 @@ function transform(chainsWithVaults: Awaited<ReturnType<typeof extract>>): Prism
         feesUSD: vault.feesUSD,
 
         strategy: strategyType,
+        payloadHash: vault.payloadIpfs,
         description: vault.payload.strategyConfigData.description,
         state: Object.values(VaultState)[vault.state],
 

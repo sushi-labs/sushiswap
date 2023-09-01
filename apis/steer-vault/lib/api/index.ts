@@ -115,6 +115,7 @@ export async function getSteerVaults(args: typeof SteerVaultsApiSchema._output) 
       feesUSD: true,
 
       strategy: true,
+      payloadHash: true,
       // description: true,
       // state: true
 

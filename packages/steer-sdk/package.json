@@ -60,6 +60,7 @@
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/client": "workspace:*",
     "@sushiswap/database": "workspace:*",
+    "@sushiswap/validate": "workspace:*",
     "@sushiswap/format": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
     "@tanstack/react-query": "4.28.0",

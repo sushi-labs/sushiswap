@@ -256,6 +256,7 @@ model SteerVault {
   feesUSD                 Decimal     @default(0)
 
   strategy                SteerStrategy
+  payloadHash             String
   description             String @db.Text
   state                   VaultState
 
