@@ -22,7 +22,7 @@ export const ArticleFooter: FC<ArticleFooter> = ({ articles }) => {
               </time>
             )}
             <Button asChild size="sm" variant="secondary" className="order-1 mt-6">
-              <LinkInternal href={`/blog/${article?.attributes?.slug}`}>Read more</LinkInternal>
+              <LinkInternal href={`/${article?.attributes?.slug}`}>Read more</LinkInternal>
             </Button>
           </article>
         ))}
