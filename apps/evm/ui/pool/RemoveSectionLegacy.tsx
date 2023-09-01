@@ -147,20 +147,6 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
 
   useEffect(() => {
     const prep = async (): Promise<UsePrepareSendTransactionConfig> => {
-      // console.log('prepare', [
-      //   !token0,
-      //   !token1,
-      //   !chain?.id,
-      //   !contract,
-      //   !underlying0,
-      //   !underlying1,
-      //   !address,
-      //   !pool,
-      //   !balance?.[FundSource.WALLET],
-      //   !minAmount0,
-      //   !minAmount1,
-      //   !deadline,
-      // ])
       if (
         !token0 ||
         !token1 ||
@@ -268,7 +254,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
   const { config } = usePrepareSendTransaction({
     ...prepare,
     chainId: _pool.chainId,
-    enabled: approved,
+    enabled: Boolean(approved && Number(percentage) > 0),
   })
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
