@@ -23,7 +23,6 @@ import {
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { useTokenWithCache } from '@sushiswap/wagmi/future'
-import Image from 'next/image'
 import React, { useCallback, useEffect } from 'react'
 import { DropzoneOptions, useDropzone } from 'react-dropzone'
 import { useForm } from 'react-hook-form'
@@ -66,8 +65,10 @@ export default function Partner() {
       acceptedFiles.forEach((file) => {
         const reader = new FileReader()
         reader.readAsDataURL(file)
+        console.log('efaf')
         reader.addEventListener('load', () => {
           if (reader.result) {
+            console.log('here')
             const imageAsBase64 = reader.result.toString()
             const image = document.createElement('img')
             image.src = imageAsBase64
@@ -79,6 +80,7 @@ export default function Partner() {
               if (context) {
                 context.drawImage(image, 0, 0, canvas.width, canvas.height)
                 const resizedImageAsBase64 = canvas.toDataURL('image/jpeg')
+                console.log('here')
                 methods.setValue('logoFile', resizedImageAsBase64)
               }
             }
@@ -89,7 +91,7 @@ export default function Partner() {
     [methods]
   )
 
-  const { getRootProps } = useDropzone({
+  const { getRootProps, inputRef, getInputProps } = useDropzone({
     onDrop,
     accept: { 'image/jpeg': ['.jpeg', '.jpg'] },
     maxFiles: 1,
@@ -125,41 +127,34 @@ export default function Partner() {
         <h4>Create your request</h4>
         <p>
           Kindly complete the provided form; this action will initiate the creation of a pull request on our GitHub
-          repository. For your convenience, you can track the progress and updates there. Thank you for your
+          repository. For your convenience, you can track the progress and updates{' '}
+          <LinkExternal href="https://github.com/sushiswap/list/pulls">there</LinkExternal>. Thank you for your
           participation.
         </p>
         <Form {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-8 mt-4">
-              <FormField
-                control={methods.control}
-                name="logoFile"
-                render={({ field: { onChange, value, onBlur, name } }) => {
-                  return (
-                    <FormItem>
-                      <Label>
-                        Icon
-                        <sup>*</sup>
-                      </Label>
-                      <FormControl>
-                        <div>
-                          <div
-                            {...getRootProps()}
-                            className="relative cursor-pointer h-20 w-20 rounded-full overflow-hidden bg-secondary hover:bg-accent transition-background"
-                          >
-                            <input name={name} onChange={onChange} value={value} onBlur={onBlur} className="hidden" />
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <CameraIcon className="h-6 w-6 text-muted-foreground" />
-                            </div>
-                            {logoFile ? <Image alt="icon" src={logoFile} width={80} height={80} /> : null}
-                          </div>
-                        </div>
-                      </FormControl>
-                      <FormMessage>Minimum dimensions are 128x128.</FormMessage>
-                    </FormItem>
-                  )
-                }}
-              />
+              <FormItem>
+                <Label>
+                  Icon
+                  <sup>*</sup>
+                </Label>
+                <FormControl>
+                  <div>
+                    <div
+                      {...getRootProps()}
+                      className="relative cursor-pointer h-20 w-20 rounded-full overflow-hidden bg-secondary hover:bg-accent transition-background"
+                    >
+                      <input {...getInputProps()} />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <CameraIcon className="h-6 w-6 text-muted-foreground" />
+                      </div>
+                      {logoFile ? <img alt="icon" src={logoFile} width={80} height={80} /> : null}
+                    </div>
+                  </div>
+                </FormControl>
+                <FormMessage>Minimum dimensions are 128x128.</FormMessage>
+              </FormItem>
               <FormField
                 control={methods.control}
                 name="chainId"

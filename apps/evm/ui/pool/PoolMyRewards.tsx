@@ -52,7 +52,7 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pool }) => {
       <CardFooter>
         <Checker.Connect variant="outline" size="default" fullWidth>
           <Checker.Network variant="outline" size="default" fullWidth chainId={pool.chainId}>
-            <Button fullWidth onClick={harvest} size="default">
+            <Button disabled={!harvest} fullWidth onClick={() => harvest?.()} size="default">
               Claim
             </Button>
           </Checker.Network>

@@ -190,11 +190,15 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
 
   // Make sure the searchParams are updated whenever a user switches networks
   useEffect(() => {
+    let i = 0
     const unwatch = watchNetwork(({ chain }) => {
-      if (chain && chain.id !== chainId) {
+      // Avoid first call
+      if (chain && i > 0) {
         setChainId(chain.id)
       }
-    })
+
+      i++
+    }, {})
 
     return () => unwatch()
     //eslint-disable-next-line react-hooks/exhaustive-deps
