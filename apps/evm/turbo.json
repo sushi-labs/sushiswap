@@ -15,6 +15,7 @@
         "SWAP_API_V0_BASE_URL",
         "POOLS_API_V0_BASE_URL",
         "TOKENS_API_V0_BASE_URL",
+        "NEXT_PUBLIC_SWAP_API_V0_BASE_URL",
         "NEXT_TELEMETRY_DISABLED"
       ]
     },

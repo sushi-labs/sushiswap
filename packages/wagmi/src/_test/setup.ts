@@ -19,7 +19,7 @@ const { publicClient } = configureChains(
     }),
   ],
   {
-    pollingInterval: 1_000,
+    pollingInterval: 4_000,
   }
 )
 
@@ -47,7 +47,7 @@ export const createTestConfig = (chainId: TestChainId, accountIndex: number) => 
     account: getAccounts()[accountIndex],
     transport: getTransport(chainId),
     chain: testChains.find((x) => x.id === chainId),
-    pollingInterval: 1000,
+    pollingInterval: 4000,
   })
 
   const mockConnector = new MockConnector({

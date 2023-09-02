@@ -13,7 +13,7 @@ import { expect, NextFixture, test } from 'next/experimental/testmode/playwright
 // import { expect, test } from 'next/experimental/testmode/playwright/msw'
 import { zeroAddress } from 'viem'
 
-import { createERC20 } from '../createERC20'
+import { createERC20 } from '../create-erc20'
 
 interface TridentPoolArgs {
   token0: Type

@@ -35,13 +35,13 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     env:
-      ANVIL_BLOCK_NUMBER: 47031354
+      ANVIL_BLOCK_NUMBER: 47028000
     strategy:
       matrix:
         chain-id: [137]
         node-version: [18]
         pnpm-version: [7.9.5]
-        block-number: [47031354]
+        block-number: [47028000]
     steps:
       - name: Check out
         uses: actions/checkout@v3

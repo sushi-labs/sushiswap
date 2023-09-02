@@ -10,13 +10,12 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
 import { TestChainId } from './_test/constants'
 import { createTestConfig } from './_test/setup'
+import { foundry } from './chains'
 
 const isTest = process.env.APP_ENV === 'test' || process.env.TEST === 'true' || process.env.NEXT_PUBLIC_TEST === 'true'
 const chainId = Number(process.env.CHAIN_ID || process.env.NEXT_PUBLIC_CHAIN_ID || 137)
-const anvilPort = Number(process.env.ANVIL_PORT || process.env.NEXT_PUBLIC_ANVIL_PORT || 8545)
+const anvilPort = String(process.env.ANVIL_PORT || process.env.NEXT_PUBLIC_ANVIL_PORT || 8545)
 const testWalletIndex = Number(process.env.TEST_WALLET_INDEX || process.env.NEXT_PUBLIC_TEST_WALLET_INDEX || 0)
-const anvilRpcUrl =
-  process.env.ANVIL_RPC_URL || process.env.NEXT_PUBLIC_ANVIL_RPC_URL || `http://127.0.0.1:${anvilPort}`
 
 export const createWagmiConfig = () => {
   const { chains, publicClient } = isTest
@@ -25,12 +24,12 @@ export const createWagmiConfig = () => {
         [
           jsonRpcProvider({
             rpc: () => ({
-              http: anvilRpcUrl,
+              http: foundry.rpcUrls.default.http[0].replace('8545', anvilPort),
             }),
           }),
         ],
         {
-          pollingInterval: 1_000,
+          pollingInterval: 4_000,
         }
       )
     : configureChains(allChains, allProviders, {
