@@ -89,7 +89,7 @@ test.describe('V3', () => {
     await switchNetwork(page, CHAIN_ID)
   })
 
-  test.only('Create pool', async ({ page, next }) => {
+  test('Create pool', async ({ page, next }) => {
     test.slow()
     await createOrAddLiquidityV3(page, next, {
       token0: NATIVE_TOKEN,
