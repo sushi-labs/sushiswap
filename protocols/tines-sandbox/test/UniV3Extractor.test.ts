@@ -2,7 +2,7 @@ import { reset } from '@nomicfoundation/hardhat-network-helpers'
 import { erc20Abi, routeProcessor2Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { DAI, Native, USDC, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
-import { FactoryV3, PoolInfo, UniV3Extractor } from '@sushiswap/extractor'
+import { FactoryV3, LogFilter2, LogFilterType, PoolInfo, UniV3Extractor } from '@sushiswap/extractor'
 import { LiquidityProviders, NativeWrapProvider, PoolCode, Router, UniswapV3Provider } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { RouteStatus, UniV3Pool } from '@sushiswap/tines'
@@ -299,12 +299,13 @@ async function makeTest(
     transport: env.transport,
   })
 
+  const logFilter = new LogFilter2(this.client, 50, LogFilterType.OneCall)
   const extractor = new UniV3Extractor(
     client,
     '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
     [uniswapFactory(ChainId.ETHEREUM)],
     '',
-    50,
+    logFilter,
     false
   )
   await extractor.start()
@@ -367,12 +368,13 @@ async function checkHistoricalLogs(env: TestEnvironment, pool: PoolInfo, fromBlo
     transport: env.transport,
   })
 
+  const logFilter = new LogFilter2(this.client, 200, LogFilterType.OneCall)
   const extractor = new UniV3Extractor(
     clientPrimary,
     '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
     [uniswapFactory(ChainId.ETHEREUM)],
     '',
-    50,
+    logFilter,
     false
   )
   await extractor.start()
@@ -515,7 +517,8 @@ async function startInfinitTest(args: {
   })
   const chainId = client.chain?.id as ChainId
 
-  const extractor = new UniV3Extractor(client, args.tickLensContract, args.factories, './cache', args.logDepth)
+  const logFilter = new LogFilter2(this.client, args.logDepth, LogFilterType.OneCall)
+  const extractor = new UniV3Extractor(client, args.tickLensContract, args.factories, './cache', logFilter)
   await extractor.start()
   extractor.getWatchersForTokens(BASES_TO_CHECK_TRADES_AGAINST[chainId])
 

@@ -1,7 +1,7 @@
 import { routeProcessor2Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
-import { FactoryV2, UniV2Extractor } from '@sushiswap/extractor'
+import { FactoryV2, LogFilter2, LogFilterType, UniV2Extractor } from '@sushiswap/extractor'
 import { TokenManager } from '@sushiswap/extractor/dist/TokenManager'
 import { LiquidityProviders, NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
@@ -26,7 +26,8 @@ async function startInfinitTest(args: {
   })
   const chainId = client.chain?.id as ChainId
 
-  const extractor = new UniV2Extractor(client, args.factories, './cache', 200)
+  const logFilter = new LogFilter2(this.client, 200, LogFilterType.OneCall)
+  const extractor = new UniV2Extractor(client, args.factories, './cache', logFilter)
   await extractor.start()
 
   const nativeProvider = new NativeWrapProvider(chainId, client)
@@ -110,7 +111,8 @@ async function allPoolsPrefetchingTest(args: { providerURL: string; chain: Chain
     chain: args.chain,
     transport: transport,
   })
-  const extractor = new UniV2Extractor(client, args.factories, './cache', 200)
+  const logFilter = new LogFilter2(this.client, 200, LogFilterType.OneCall)
+  const extractor = new UniV2Extractor(client, args.factories, './cache', logFilter)
   await extractor.start()
   const start = performance.now()
   await extractor.addPoolsFromFactory(args.factories[0].address)

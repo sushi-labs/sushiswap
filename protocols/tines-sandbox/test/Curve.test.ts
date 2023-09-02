@@ -402,7 +402,7 @@ async function forEachFactoryPool(config: TestConfig, func: (address: Address, f
   }
 }
 
-async function process2CoinsPool(
+export async function process2CoinsPool(
   config: TestConfig,
   poolAddress: Address,
   name: string,
@@ -467,7 +467,7 @@ describe('Real Curve pools consistency check', () => {
     config = await getTestConfig()
   })
 
-  describe('Not-Factory pools by whitelist', () => {
+  describe.only('Not-Factory pools by whitelist', () => {
     for (let i = 0; i < NON_FACTORY_POOLS.length; ++i) {
       const [poolAddress, name, poolType, precision = 1e-9] = NON_FACTORY_POOLS[i]
       it(`${name} (${poolAddress}, ${poolType})`, async () => {

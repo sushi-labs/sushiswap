@@ -41,7 +41,7 @@ export const TickLensContract = {
 export const UniswapV2FactoryAddress: Record<number, string> = {
   [ChainId.ETHEREUM]: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
 }
-function uniswapV2Factory(chain: ChainId): FactoryV2 {
+export function uniswapV2Factory(chain: ChainId): FactoryV2 {
   return {
     address: UniswapV2FactoryAddress[chain] as Address,
     provider: LiquidityProviders.UniswapV2,
