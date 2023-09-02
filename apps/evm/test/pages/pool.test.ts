@@ -6,6 +6,8 @@ import {
   computeTridentStablePoolAddress,
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
+  TRIDENT_SUPPORTED_CHAIN_IDS,
+  TridentChainId,
 } from '@sushiswap/trident-sdk'
 import { computeSushiSwapV2PoolAddress, SUSHISWAP_V2_FACTORY_ADDRESS } from '@sushiswap/v2-sdk'
 import { computePoolAddress, SUSHISWAP_V3_FACTORY_ADDRESS } from '@sushiswap/v3-sdk'
@@ -154,6 +156,8 @@ test.describe('V3', () => {
 })
 
 test.describe('Trident', () => {
+  console.log("trident", !TRIDENT_SUPPORTED_CHAIN_IDS.includes(CHAIN_ID as TridentChainId))
+  test.skip(!TRIDENT_SUPPORTED_CHAIN_IDS.includes(CHAIN_ID as TridentChainId));
   test.beforeEach(async ({ page }) => {
     const url = BASE_URL.concat(`/add/trident/${CHAIN_ID}`)
     await page.goto(url)
@@ -202,7 +206,6 @@ test.describe('Trident', () => {
 
   test.skip('Add, stake, unstake and remove', async ({ page, next }) => {
     test.slow()
-
     await createOrAddTridentPool(page, next, {
       token0: NATIVE_TOKEN,
       token1: FAKE_TOKEN,
@@ -728,7 +731,6 @@ async function mockPoolApi(
   fee: number,
   protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3' | 'BENTOBOX_STABLE' | 'BENTOBOX_CLASSIC'
 ) {
-  // MOCK NOT WORKING.. WHY?
 
   next.onFetch((request) => {
     const [tokenA, tokenB] = token0.sortsBefore(token1) ? [token0, token1] : [token1, token0] // does safety checks

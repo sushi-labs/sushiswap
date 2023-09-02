@@ -1,8 +1,9 @@
 import { erc20Abi } from '@sushiswap/abi'
+import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { createTestClient, http, publicActions, walletActions } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
-import { Chain, polygon } from 'viem/chains'
+import { Chain, arbitrum, mainnet, polygon } from 'viem/chains'
 
 export async function createERC20({
   chainId,
@@ -17,8 +18,12 @@ export async function createERC20({
 }): Promise<Token> {
   let chain: Chain
 
-  if (chainId === 137) {
+  if (chainId === ChainId.POLYGON) {
     chain = polygon
+  } else if (chainId === ChainId.ETHEREUM) {
+    chain = mainnet
+  } else if (chainId === ChainId.ARBITRUM) {
+    chain = arbitrum
   } else {
     throw new Error('Unsupported chain')
   }

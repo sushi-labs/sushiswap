@@ -1,6 +1,6 @@
-import { mainnet, polygon } from '../chains'
+import { arbitrum, mainnet, polygon } from '../chains'
 
-export const testChains = [polygon, mainnet]
+export const testChains = [polygon, mainnet, arbitrum]
 export type TestChainId = (typeof testChains)[number]['id']
 
 // Default accounts from Anvil

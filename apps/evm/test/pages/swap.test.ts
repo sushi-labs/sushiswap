@@ -2,6 +2,7 @@ import { expect, Page, test } from '@playwright/test'
 import { DAI, Native, SUSHI, Type, USDC, USDT, WBTC } from '@sushiswap/currency'
 import { zeroAddress } from 'viem'
 
+import { ChainId } from '@sushiswap/chain'
 import { SupportedChainId } from '../../config'
 
 type InputType = 'INPUT' | 'OUTPUT'
@@ -48,8 +49,8 @@ test('Wrap and unwrap', async ({ page }) => {
 
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   test.slow()
-
-  await swap(page, native, sushi, '100')
+  const amount = chainId === ChainId.ARBITRUM ? '10' : '100'
+  await swap(page, native, sushi, amount)
   await maxSwap(page, sushi, native)
 })
 
@@ -83,7 +84,8 @@ test('Swap Native to USDC, USDC to USDT then USDT to NATIVE', async ({ page }) =
 // })
 
 test('Swap Native to WBTC', async ({ page }) => {
-  await swap(page, native, wbtc, '100')
+  const amount = chainId === ChainId.ARBITRUM ? '10' : '100'
+  await swap(page, native, wbtc, amount)
 })
 
 async function wrap(page: Page, inputCurrency: Type, outputCurrency: Type, amount: string) {
@@ -167,11 +169,11 @@ async function swap(page: Page, inputCurrency: Type, outputCurrency: Type, amoun
   await confirmSwap.click()
 
   // If this text is duplicated elsewhere it could false positive
-  const expectedSwappingText = new RegExp(`(Swapping .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol}.)`)
+  const expectedSwappingText = new RegExp(`(Swapping .* ${inputCurrency.symbol}.* for .* ${outputCurrency.symbol}.*.)`)
   expect(page.getByText(expectedSwappingText)).toBeVisible()
 
   // If this text is duplicated elsewhere it could false positive
-  const expectedSwapText = new RegExp(`(Swap .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol}.)`)
+  const expectedSwapText = new RegExp(`(Swap .* ${inputCurrency.symbol}.* for .* ${outputCurrency.symbol}.*.)`)
   expect(page.getByText(expectedSwapText)).toBeVisible()
 
   // Make another swap
@@ -226,10 +228,10 @@ async function maxSwap(page: Page, inputCurrency: Type, outputCurrency: Type) {
   await expect(confirmSwap).toBeEnabled()
   await confirmSwap.click()
 
-  const expectedSwappingText = new RegExp(`(Swapping .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol}.)`)
+  const expectedSwappingText = new RegExp(`(Swapping .* ${inputCurrency.symbol}.* for .* ${outputCurrency.symbol}.*.)`)
   expect(page.getByText(expectedSwappingText)).toBeVisible()
 
-  const expectedSwapText = new RegExp(`(Swap .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol}.)`)
+  const expectedSwapText = new RegExp(`(Swap .* ${inputCurrency.symbol}.* for .* ${outputCurrency.symbol}.*.)`)
   expect(page.getByText(expectedSwapText)).toBeVisible()
 
   // Make another swap
@@ -285,7 +287,7 @@ async function handleToken(page: Page, currency: Type, type: InputType) {
   // await expect(tokenSearch).toBeEnabled()
 
   await tokenToSelect.click()
-  await expect(tokenSelector).toHaveText(currency.symbol as string)
+  await expect(tokenSelector).toContainText(currency.symbol as string)
 }
 
 async function maxInput(page: Page) {
