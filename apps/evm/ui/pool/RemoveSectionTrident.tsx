@@ -257,7 +257,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
   const { config } = usePrepareSendTransaction({
     ...prepare,
     chainId: _pool.chainId,
-    enabled: approved,
+    enabled: Boolean(approved && Number(percentage) > 0),
   })
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({

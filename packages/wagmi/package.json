@@ -88,7 +88,7 @@
     "@uniswap/v2-core": "1.0.1",
     "@uniswap/v3-periphery": "1.4.1",
     "next-themes": "^0.2.1",
-    "viem": "1.6.3",
+    "viem": "0.0.0-jxom-refactor-multicall.20230830T113622",
     "zod": "3.21.4"
   },
   "devDependencies": {
