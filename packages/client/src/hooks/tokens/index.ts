@@ -1,7 +1,7 @@
-import { SWRHookConfig } from 'src/types.js'
 import useSWR from 'swr'
 
 import { GetTokensArgs, getTokensUrl, Token } from '../../pure/tokens/index.js'
+import { SWRHookConfig } from '../../types.js'
 
 export const useTokens = ({ /*args,*/ shouldFetch }: SWRHookConfig<GetTokensArgs>) => {
   return useSWR<Token>(shouldFetch !== false ? getTokensUrl(/*args*/) : null, async (url) =>
