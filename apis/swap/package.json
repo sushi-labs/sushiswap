@@ -48,7 +48,7 @@
     "@sushiswap/viem-config": "workspace:*",
     "@whatwg-node/fetch": "0.8.4",
     "fastify": "4.11.0",
-    "viem": "0.0.0-jxom-refactor-multicall.20230830T113622",
+    "viem": "1.9.5",
     "zod": "3.21.4"
   },
   "devDependencies": {

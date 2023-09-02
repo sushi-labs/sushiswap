@@ -8,10 +8,12 @@ import { SafeConnector } from 'wagmi/connectors/safe'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
+import { TestChainId } from './_test/constants'
 import { createTestConfig } from './_test/setup'
 
 const isTest = process.env.APP_ENV === 'test' || process.env.TEST === 'true' || process.env.NEXT_PUBLIC_TEST === 'true'
-const anvilPort = process.env.ANVIL_PORT || process.env.NEXT_PUBLIC_ANVIL_PORT || 8545
+const chainId = Number(process.env.CHAIN_ID || process.env.NEXT_PUBLIC_CHAIN_ID || 137)
+const anvilPort = Number(process.env.ANVIL_PORT || process.env.NEXT_PUBLIC_ANVIL_PORT || 8545)
 const testWalletIndex = Number(process.env.TEST_WALLET_INDEX || process.env.NEXT_PUBLIC_TEST_WALLET_INDEX || 0)
 const anvilRpcUrl =
   process.env.ANVIL_RPC_URL || process.env.NEXT_PUBLIC_ANVIL_RPC_URL || `http://127.0.0.1:${anvilPort}`
@@ -36,7 +38,7 @@ export const createWagmiConfig = () => {
       })
 
   if (isTest) {
-    return createTestConfig(137, testWalletIndex)
+    return createTestConfig(chainId as TestChainId, testWalletIndex)
   }
 
   return createConfig({

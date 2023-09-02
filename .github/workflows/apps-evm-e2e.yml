@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [opened, synchronize]
     paths:
-      - ".github/workflows/apps-swap-e2e.yml"
+      - ".github/workflows/apps-evm-e2e.yml"
       - "apps/evm/**"
       - "config/nextjs/**"
       - "config/react-query/**"
@@ -35,13 +35,13 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     env:
-      ANVIL_BLOCK_NUMBER: 42259027
+      ANVIL_BLOCK_NUMBER: 47031354
     strategy:
       matrix:
         chain-id: [137]
         node-version: [18]
         pnpm-version: [7.9.5]
-        block-number: [42259027]
+        block-number: [47031354]
     steps:
       - name: Check out
         uses: actions/checkout@v3
