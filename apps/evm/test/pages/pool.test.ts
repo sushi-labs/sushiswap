@@ -53,7 +53,11 @@ interface IncenvitivePoolArgs {
   token1: Type
 }
 
-const CHAIN_ID = parseInt(process.env.CHAIN_ID as string)
+if (!process.env.NEXT_PUBLIC_CHAIN_ID) {
+  throw new Error('NEXT_PUBLIC_CHAIN_ID not set')
+}
+
+const CHAIN_ID = parseInt(process.env.NEXT_PUBLIC_CHAIN_ID)
 const NATIVE_TOKEN = Native.onChain(CHAIN_ID)
 
 let FAKE_TOKEN: Token

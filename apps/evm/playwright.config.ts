@@ -3,6 +3,10 @@ import { devices } from '@playwright/test'
 import { defineConfig } from 'next/experimental/testmode/playwright'
 import path from 'path'
 
+const ANVIL_PORT = process.env.ANVIL_PORT || 8545
+const ANVIL_BLOCK_NUMBER = process.env.ANVIL_BLOCK_NUMBER || 47028000
+const ANVIL_FORK_URL = process.env.ANVIL_FORK_URL
+
 // Use process.env.PORT by default and fallback to port 3000
 const PORT = process.env.PORT || 3000
 
@@ -102,15 +106,15 @@ const config: PlaywrightTestConfig = {
         'anvil',
         `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
         `--fork-url=${process.env.ANVIL_FORK_URL}`,
-        `--port=${Number(process.env.ANVIL_PORT) || 8545}`,
+        `--port=${Number(ANVIL_PORT)}`,
         // '--block-time 15',
       ].join(' '),
       env: {
         ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
         ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
-        ANVIL_PORT: String(process.env.ANVIL_PORT),
+        ANVIL_PORT: String(ANVIL_PORT),
       },
-      port: Number(process.env.ANVIL_PORT) || 8545,
+      port: Number(ANVIL_PORT),
     },
     {
       command: 'npm run start -- --experimental-test-proxy',

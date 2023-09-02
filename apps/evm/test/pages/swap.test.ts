@@ -6,7 +6,11 @@ import { SupportedChainId } from '../../config'
 
 type InputType = 'INPUT' | 'OUTPUT'
 
-const chainId = Number(process.env.CHAIN_ID as string) as SupportedChainId
+if (!process.env.NEXT_PUBLIC_CHAIN_ID) {
+  throw new Error('NEXT_PUBLIC_CHAIN_ID not set')
+}
+
+const chainId = parseInt(process.env.NEXT_PUBLIC_CHAIN_ID) as SupportedChainId
 
 const url = 'http://localhost:3000/swap'
 
