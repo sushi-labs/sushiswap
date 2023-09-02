@@ -1,5 +1,5 @@
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
-import { configureChains, createConfig as _createConfig } from 'wagmi'
+import { configureChains, createConfig } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { LedgerConnector } from 'wagmi/connectors/ledger'
@@ -8,31 +8,15 @@ import { SafeConnector } from 'wagmi/connectors/safe'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
-import { _createTestConfig } from './_test/setup'
+import { createTestConfig } from './_test/setup'
 
 const isTest = process.env.APP_ENV === 'test' || process.env.TEST === 'true' || process.env.NEXT_PUBLIC_TEST === 'true'
+const anvilPort = process.env.ANVIL_PORT || process.env.NEXT_PUBLIC_ANVIL_PORT || 8545
+const testWalletIndex = Number(process.env.TEST_WALLET_INDEX || process.env.NEXT_PUBLIC_TEST_WALLET_INDEX || 0)
+const anvilRpcUrl =
+  process.env.ANVIL_RPC_URL || process.env.NEXT_PUBLIC_ANVIL_RPC_URL || `http://127.0.0.1:${anvilPort}`
 
 export const createWagmiConfig = () => {
-  const anvilRpcUrl =
-    process.env.ANVIL_RPC_URL ||
-    process.env.NEXT_PUBLIC_ANVIL_RPC_URL ||
-    `http://127.0.0.1:${process.env.ANVIL_PORT || process.env.NEXT_PUBLIC_ANVIL_PORT || 8545}`
-
-  const testWalletIndex =
-    Number(process.env.TEST_WALLET_INDEX) || Number(process.env.NEXT_PUBLIC_TEST_WALLET_INDEX) || 0
-
-  // console.log({
-  //   isTest,
-  //   testWalletIndex,
-  //   anvilRpcUrl,
-  //   env: {
-  //     TEST_WALLET_INDEX: process.env['TEST_WALLET_INDEX'],
-  //     NEXT_PUBLIC_TEST_WALLET_INDEX: process.env['NEXT_PUBLIC_TEST_WALLET_INDEX'],
-  //     ANVIL_RPC_URL: process.env['ANVIL_RPC_URL'],
-  //     NEXT_PUBLIC_ANVIL_RPC_URL: process.env['NEXT_PUBLIC_ANVIL_RPC_URL'],
-  //   },
-  // })
-
   const { chains, publicClient } = isTest
     ? configureChains(
         allChains,
@@ -52,10 +36,10 @@ export const createWagmiConfig = () => {
       })
 
   if (isTest) {
-    return _createTestConfig(137, testWalletIndex)
+    return createTestConfig(137, testWalletIndex)
   }
 
-  return _createConfig({
+  return createConfig({
     publicClient,
     // logger: {
     //   warn: process.env.NODE_ENV !== 'production' ? console.warn : null,

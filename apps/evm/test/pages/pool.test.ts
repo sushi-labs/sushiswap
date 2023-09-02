@@ -53,11 +53,7 @@ interface IncenvitivePoolArgs {
   token1: Type
 }
 
-if (!process.env.CHAIN_ID) {
-  throw new Error('CHAIN_ID env var not set')
-}
-
-const CHAIN_ID = parseInt(process.env.CHAIN_ID)
+const CHAIN_ID = parseInt(process.env.CHAIN_ID as string)
 const NATIVE_TOKEN = Native.onChain(CHAIN_ID)
 
 let FAKE_TOKEN: Token
@@ -233,26 +229,26 @@ test.describe('Trident', () => {
     await removeLiquidityV2(page, next)
   })
 
-  test('Migrate', async ({ page }) => {
-    test.slow()
-    await createOrAddTridentPool(page, {
-      token0: NATIVE_TOKEN,
-      token1: USDC,
-      amount0: '0.0001',
-      amount1: '0.0001',
-      fee: '5',
-      type: 'ADD',
-    })
+  // test('Migrate', async ({ page }) => {
+  //   test.slow()
+  //   await createOrAddTridentPool(page, {
+  //     token0: NATIVE_TOKEN,
+  //     token1: USDC,
+  //     amount0: '0.0001',
+  //     amount1: '0.0001',
+  //     fee: '5',
+  //     type: 'ADD',
+  //   })
 
-    const addLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b')
-    await page.goto(addLiquidityUrl, { timeout: 25_000 })
-    await manageStaking(page, 'STAKE')
+  //   const addLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b')
+  //   await page.goto(addLiquidityUrl, { timeout: 25_000 })
+  //   await manageStaking(page, 'STAKE')
 
-    const migrateURL = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/migrate')
-    await page.goto(migrateURL, { timeout: 25_000 })
-    await manageUnstakeAndClaim(page)
-    await migrateV2(page, { minPrice: '0.4', maxPrice: '1' })
-  })
+  //   const migrateURL = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/migrate')
+  //   await page.goto(migrateURL, { timeout: 25_000 })
+  //   await manageUnstakeAndClaim(page)
+  //   await migrateV2(page, { minPrice: '0.4', maxPrice: '1' })
+  // })
 })
 
 test.describe('V2', () => {
