@@ -119,9 +119,8 @@ const config: PlaywrightTestConfig = {
       timeout: 120 * 1000,
       reuseExistingServer: !process.env.CI,
       env: {
-        NEXT_PUBLIC_ANVIL_PORT: String(process.env.ANVIL_PORT),
-        NEXT_PUBLIC_CHAIN_ID: String(process.env.CHAIN_ID),
-        NEXT_PUBLIC_TEST: 'true',
+        NEXT_PUBLIC_CHAIN_ID: String(process.env.NEXT_PUBLIC_CHAIN_ID),
+        NEXT_PUBLIC_TEST: String(process.env.NEXT_PUBLIC_TEST),
       },
     },
   ],

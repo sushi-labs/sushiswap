@@ -87,16 +87,13 @@ jobs:
       - name: Test EVM app
         run: pnpm test-evm-app
         env:
-          ACADEMY_URL: 'https://academy.sushi.com'
-          ANALYTICS_URL: 'https://analytics.sushi.com'
-          BLOG_URL: 'https://blog.sushi.com'
-          FURO_URL: 'https://furo.sushi.com'
-          ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
-          CHAIN_ID: ${{ matrix.chain-id }}
           ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
+          ANVIL_BLOCK_NUMBER: ${{ matrix.block-number }}
           ANVIL_PORT: 8545
           NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+          # NEXT_PUBLIC_DRPC_ID: ${{ secrets.NEXT_PUBLIC_DRPC_ID }}
           NEXT_PUBLIC_TEST: true
+          NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}
         working-directory: .
 
       - name: Upload test results
