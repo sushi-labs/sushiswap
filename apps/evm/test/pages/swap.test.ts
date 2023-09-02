@@ -6,7 +6,7 @@ import { SupportedChainId } from '../../config'
 
 type InputType = 'INPUT' | 'OUTPUT'
 
-if (!process.env.NEXT_PUBLIC_CHAIN_ID) {
+if (typeof process.env.NEXT_PUBLIC_CHAIN_ID !== 'string') {
   throw new Error('NEXT_PUBLIC_CHAIN_ID not set')
 }
 

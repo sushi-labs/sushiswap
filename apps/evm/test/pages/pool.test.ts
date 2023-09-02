@@ -53,7 +53,7 @@ interface IncenvitivePoolArgs {
   token1: Type
 }
 
-if (!process.env.NEXT_PUBLIC_CHAIN_ID) {
+if (typeof process.env.NEXT_PUBLIC_CHAIN_ID !== 'string') {
   throw new Error('NEXT_PUBLIC_CHAIN_ID not set')
 }
 

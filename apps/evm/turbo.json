@@ -28,9 +28,7 @@
         "ANVIL_PORT",
         "ALCHEMY_ID",
         "DRPC_ID",
-        "TEST",
-        "NEXT_PUBLIC_CHAIN_ID",
-        "NEXT_PUBLIC_TEST"
+        "TEST"
       ]
     },
     "check": {
