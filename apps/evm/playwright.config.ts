@@ -1,5 +1,6 @@
 import type { PlaywrightTestConfig } from '@playwright/test'
 import { devices } from '@playwright/test'
+import { defineConfig } from 'next/experimental/testmode/playwright'
 import path from 'path'
 
 // Use process.env.PORT by default and fallback to port 3000
@@ -20,7 +21,7 @@ const baseURL = `http://localhost:${PORT}`
 const config: PlaywrightTestConfig = {
   // Test directory
   testDir: path.join(__dirname, 'test'),
-  testMatch: 'pool.test.ts',
+  // testMatch: 'pool.test.ts',
   /* Maximum time one test can run for. */
   timeout: 60_000,
   expect: {
@@ -112,7 +113,9 @@ const config: PlaywrightTestConfig = {
       port: Number(process.env.ANVIL_PORT) || 8545,
     },
     {
-      command: 'npm run start',
+      command: 'npm run start -- --experimental-test-proxy',
+      // url: 'http://localhost:3000',
+      // command: 'npm run start',
       port: 3000,
       timeout: 120 * 1000,
       reuseExistingServer: !process.env.CI,
@@ -124,4 +127,4 @@ const config: PlaywrightTestConfig = {
   ],
 }
 
-export default config
+export default defineConfig(config)
