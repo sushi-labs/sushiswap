@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/node'
 import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
-import { ROUTE_PROCESSOR_3_1_ADDRESS } from '@sushiswap/route-processor-sdk'
+import { isRouteProcessor3_1ChainId, ROUTE_PROCESSOR_3_1_ADDRESS } from '@sushiswap/route-processor-sdk'
 import { NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import cors from 'cors'
@@ -182,6 +182,9 @@ async function main() {
     // console.log('HTTP: GET /', JSON.stringify(req.query))
     const parsed = querySchema.safeParse(req.query)
     if (!parsed.success) {
+      return res.status(422).send()
+    }
+    if (!isRouteProcessor3_1ChainId(parsed.data.chainId)) {
       return res.status(422).send()
     }
     const {

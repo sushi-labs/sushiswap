@@ -103,6 +103,7 @@ ${logPools}
 
       if (recipient) {
         if (isRouteProcessor3_1ChainId(chainId)) {
+          console.debug('routeProcessor3_1Params')
           args = Router.routeProcessor3_1Params(
             poolsCodeMap,
             route,
@@ -114,6 +115,7 @@ ${logPools}
             +slippagePercentage / 100
           )
         } else if (isRouteProcessor3ChainId(chainId)) {
+          console.debug('routeProcessor3Params')
           args = Router.routeProcessor3Params(
             poolsCodeMap,
             route,
@@ -125,6 +127,7 @@ ${logPools}
             +slippagePercentage / 100
           )
         } else if (isRouteProcessorChainId(chainId)) {
+          console.debug('routeProcessorParams')
           args = Router.routeProcessorParams(
             poolsCodeMap,
             route,

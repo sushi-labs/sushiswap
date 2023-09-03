@@ -1,8 +1,8 @@
 import { expect, Page, test } from '@playwright/test'
+import { ChainId } from '@sushiswap/chain'
 import { DAI, Native, SUSHI, Type, USDC, USDT, WBTC } from '@sushiswap/currency'
 import { zeroAddress } from 'viem'
 
-import { ChainId } from '@sushiswap/chain'
 import { SupportedChainId } from '../../config'
 
 type InputType = 'INPUT' | 'OUTPUT'
@@ -84,8 +84,7 @@ test('Swap Native to USDC, USDC to USDT then USDT to NATIVE', async ({ page }) =
 // })
 
 test('Swap Native to WBTC', async ({ page }) => {
-  const amount = chainId === ChainId.ARBITRUM ? '10' : '100'
-  await swap(page, native, wbtc, amount)
+  await swap(page, native, wbtc, '1')
 })
 
 async function wrap(page: Page, inputCurrency: Type, outputCurrency: Type, amount: string) {
