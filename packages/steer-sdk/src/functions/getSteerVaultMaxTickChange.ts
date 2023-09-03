@@ -1,6 +1,7 @@
-import { steerMultiPositionManager } from '@sushiswap/abi'
 import { getChainIdAddressFromId } from '@sushiswap/format'
 import { PublicClient } from 'viem'
+
+import { steerMultiPositionManager } from '../abi/steerMultiPositionManager.js'
 
 interface GetSteerVaultsMaxTickChanges {
   client: PublicClient

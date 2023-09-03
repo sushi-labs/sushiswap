@@ -5,9 +5,9 @@ export const getIdFromChainIdAddress = (chainId: string | number, address: Addre
   `${chainId}:${address.toLowerCase()}`
 
 export const getChainIdAddressFromId = (id: string) => {
-  const [chainId, address] = id.split(':') as [ChainId, Address]
+  const [chainId, address] = id.split(':') as [string, Address]
 
   if (!chainId || !address) throw new Error(`Invalid id: ${id}`)
 
-  return { chainId, address }
+  return { chainId: Number(chainId) as ChainId, address }
 }

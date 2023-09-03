@@ -21,11 +21,11 @@ interface Payload {
   }
 }
 
-interface GetSteerPayloads {
+interface GetSteerStrategiesPayloads {
   payloadHashes: string[]
 }
 
-async function getSteerPayloads({ payloadHashes }: GetSteerPayloads) {
+async function getSteerStrategiesPayloads({ payloadHashes }: GetSteerStrategiesPayloads) {
   const results = await Promise.allSettled(
     payloadHashes.map(async (payloadHash) => {
       return fetch(`https://ipfs.io/ipfs/${payloadHash}`).then((res) => res.json() as Promise<Payload>)
@@ -39,8 +39,8 @@ interface GetSteerPayload {
   payloadHash: string
 }
 
-async function getSteerPayload({ payloadHash }: GetSteerPayload) {
-  return (await getSteerPayloads({ payloadHashes: [payloadHash] }))[0]
+async function getSteerStrategyPayload({ payloadHash }: GetSteerPayload) {
+  return (await getSteerStrategiesPayloads({ payloadHashes: [payloadHash] }))[0]
 }
 
-export { getSteerPayload, getSteerPayloads }
+export { getSteerStrategiesPayloads, getSteerStrategyPayload }

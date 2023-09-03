@@ -30,6 +30,11 @@
       "import": "./dist/hooks/index.js",
       "default": "./dist/hooks/index.js"
     },
+    "./abi": {
+      "types": "./dist/abi/index.d.ts",
+      "import": "./dist/abi/index.js",
+      "default": "./dist/abi/index.js"
+    },
     "./package.json": "./package.json"
   },
   "typesVersions": {
@@ -39,6 +44,9 @@
       ],
       "hooks": [
         "src/hooks/index"
+      ],
+      "abi": [
+        "src/abi/index"
       ]
     }
   },
@@ -56,18 +64,17 @@
   },
   "dependencies": {
     "@steerprotocol/contracts": "2.1.0-beta.14",
-    "@sushiswap/abi": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/client": "workspace:*",
     "@sushiswap/database": "workspace:*",
     "@sushiswap/validate": "workspace:*",
     "@sushiswap/format": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
+    "@sushiswap/wagmi": "workspace:*",
     "@tanstack/react-query": "4.28.0",
     "@tanstack/react-query-persist-client": "4.29.7",
     "@whatwg-node/fetch": "0.8.4",
     "tslib": "latest",
-    "wagmi": "legacy-v0",
     "viem": "1.9.5"
   },
   "devDependencies": {
@@ -77,18 +84,36 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@tanstack/react-query-devtools": "4.28.0",
     "@types/node": "18",
+    "@wagmi/core": "1.3.9",
+    "next": "13.4.19",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
     "eslint": "8.43.0",
     "tsup": "7.1.0",
-    "typescript": "5.1.6"
+    "typescript": "5.1.6",
+    "wagmi": "1.3.10"
   },
   "peerDependencies": {
     "react": "18.2.0",
-    "wagmi": "legacy-v0",
-    "@wagmi/core": "legacy-v0"
+    "react-dom": "18.2.0",
+    "wagmi": "1.3.10",
+    "@wagmi/core": "1.3.9"
   },
   "peerDependenciesMeta": {
+    "@wagmi/core": {
+      "optional": false
+    },
     "react": {
       "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "wagmi": {
+      "optional": true
     }
+  },
+  "optionalDependencies": {
+    "next": "13.4.19"
   }
 }

@@ -1,22 +1,15 @@
-'use client'
-
-import { usePool } from '@sushiswap/client/hooks'
+import { getPool } from '@sushiswap/client'
 import { unsanitize } from '@sushiswap/format'
-import { useMemo } from 'react'
 import { SteerPoolCard } from 'ui/pool/Steer/SteerPoolCard'
 
 export default async function PositionsCreatePage({ params }: { params: { id: string } }) {
   const poolId = unsanitize(params.id)
 
-  const { data: pool, isLoading } = usePool({ args: poolId })
+  const pool = await getPool(poolId)
 
-  const enabledVaults = useMemo(() => {
-    if (isLoading) return []
-
-    return pool?.steerVaults?.filter((vault) => vault.isEnabled)
-  }, [pool, isLoading])
-
-  console.log(enabledVaults)
+  const enabledVaults = pool?.steerVaults?.filter((vault) => vault.isEnabled)
+  // const vaultsTags = await getSteerVaultsTags({ payloadHashes: enabledVaults.map((vault) => vault.payloadHash) })
+  // console.log(enabledVaults, vaultsTags)
 
   return (
     <div className="flex justify-center gap-4">

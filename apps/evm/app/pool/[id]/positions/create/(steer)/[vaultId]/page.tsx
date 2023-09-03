@@ -2,7 +2,7 @@ import { getSteerVault } from '@sushiswap/client'
 import { SteerVault } from '@sushiswap/client/src/pure/steer-vault/vault'
 import { Token } from '@sushiswap/currency'
 import { formatNumber, unsanitize } from '@sushiswap/format'
-import { getSteerVaultPositions } from '@sushiswap/steer-sdk'
+import { getSteerVaultPositions, getTokenRatios } from '@sushiswap/steer-sdk'
 import { tickToPrice } from '@sushiswap/v3-sdk'
 import { config } from '@sushiswap/viem-config'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
@@ -20,26 +20,7 @@ function getPriceExtremes(vault: SteerVault): SteerStrategyGeneric['priceExtreme
   lowerPrice = !lowerPrice.includes('.') && lowerPrice.length > 9 ? formatNumber(lowerPrice) : lowerPrice
   upperPrice = !upperPrice.includes('.') && upperPrice.length > 9 ? formatNumber(upperPrice) : upperPrice
 
-  console.log(lowerPrice, upperPrice)
-
   return { min: lowerPrice, max: upperPrice }
-}
-
-function getTokenRatios(vault: SteerVault): SteerStrategyGeneric['tokenRatios'] {
-  const [reserve0, reserve1] = [Number(vault.reserve0), Number(vault.reserve1)]
-  const totalReserve = reserve0 + reserve1
-
-  if (totalReserve === 0) return { token0: 0, token1: 0 }
-
-  let [token0, token1] = [reserve0 / totalReserve, reserve1 / totalReserve]
-
-  token0 = token0 < 0.00001 ? 0 : token0
-  token1 = token1 < 0.00001 ? 0 : token1
-
-  return {
-    token0,
-    token1,
-  }
 }
 
 function getAdjustment(vault: SteerVault): SteerStrategyGeneric['adjustment'] {
@@ -53,9 +34,9 @@ function getAdjustment(vault: SteerVault): SteerStrategyGeneric['adjustment'] {
 
 async function getGenerics(vault: SteerVault): Promise<SteerStrategyGeneric> {
   const priceExtremes = getPriceExtremes(vault)
-  const tokenRatios = getTokenRatios(vault)
+  const tokenRatios = await getTokenRatios(vault)
   const adjustment = getAdjustment(vault)
-  const positions = (await getSteerVaultPositions(getClient(vault), vault.id)) || []
+  const positions = (await getSteerVaultPositions({ client: getClient(vault), vaultId: vault.id })) || []
 
   return { priceExtremes, tokenRatios, adjustment, positions }
 }

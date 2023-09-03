@@ -31,7 +31,7 @@
     "lint:fix": "TIMING=1 eslint src --fix",
     "pools": "ts-node --swc src/pools.ts",
     "server": "ts-node src/server.ts",
-    "start": "ts-node src/server.ts",
+    "start": "ts-node src/ahoj.ts",
     "test": "jest --passWithNoTests",
     "validate": "graphclient validate",
     "volume": "ts-node --swc src/volume.ts"

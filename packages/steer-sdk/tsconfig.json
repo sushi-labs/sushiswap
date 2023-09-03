@@ -1,5 +1,5 @@
 {
-  "extends": ["@sushiswap/typescript-config/node18.json"],
+  "extends": ["@sushiswap/typescript-config/node18.json", "@sushiswap/typescript-config/esm.json"],
   "exclude": ["node_modules", "dist"],
   "include": ["src"],
   "compilerOptions": {

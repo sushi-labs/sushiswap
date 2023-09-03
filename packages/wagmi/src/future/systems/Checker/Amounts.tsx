@@ -12,13 +12,13 @@ import { useBalancesWeb3 } from '../../hooks'
 
 interface AmountsProps extends ButtonProps {
   chainId: ChainId | undefined
-  amounts: (Amount<Type> | undefined)[]
+  amounts: (Amount<Type> | undefined)[] | undefined
 }
 
 const Amounts: FC<AmountsProps> = ({ type, amounts, chainId, children, fullWidth = true, size = 'xl', ...props }) => {
   const { address } = useAccount()
-  const amountsAreDefined = useMemo(() => amounts.every((el) => el?.greaterThan(ZERO)), [amounts])
-  const currencies = useMemo(() => amounts.map((amount) => amount?.currency), [amounts])
+  const amountsAreDefined = useMemo(() => amounts?.every((el) => el?.greaterThan(ZERO)), [amounts])
+  const currencies = useMemo(() => (amounts ? amounts.map((amount) => amount?.currency) : []), [amounts])
 
   const { data: balances } = useBalancesWeb3({
     currencies,

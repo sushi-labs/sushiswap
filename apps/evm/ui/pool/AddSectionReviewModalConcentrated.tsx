@@ -211,7 +211,7 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                   <List.Control>
                     <List.KeyValue
                       flex
-                      title={`Minimum Price`}
+                      title={'Minimum Price'}
                       subtitle={`Your position will be 100% composed of ${input0?.currency.symbol} at this price`}
                     >
                       <div className="flex flex-col gap-1">
@@ -231,8 +231,8 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                       title={noLiquidity ? 'Starting Price' : 'Market Price'}
                       subtitle={
                         noLiquidity
-                          ? `Starting price as determined by you`
-                          : `Current price as determined by the ratio of the pool`
+                          ? 'Starting price as determined by you'
+                          : 'Current price as determined by the ratio of the pool'
                       }
                     >
                       <div className="flex flex-col gap-1">
@@ -244,7 +244,7 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                     </List.KeyValue>
                     <List.KeyValue
                       flex
-                      title={`Maximum Price`}
+                      title={'Maximum Price'}
                       subtitle={`Your position will be 100% composed of ${token1?.symbol} at this price`}
                     >
                       <div className="flex flex-col gap-1">

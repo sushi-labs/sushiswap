@@ -247,7 +247,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                       <CardLabel>Tokens (accrued over all positions)</CardLabel>
                       {rewardsData && positionDetails && rewardsData.pools[positionDetails.address]?.rewardsPerToken ? (
                         Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).map((el, i) => (
-                          <CardCurrencyAmountItem key={i} amount={el.unclaimed} />
+                          <CardCurrencyAmountItem key={el.symbol} amount={el.unclaimed} />
                         ))
                       ) : (
                         <CardItem skeleton />

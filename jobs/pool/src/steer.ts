@@ -2,7 +2,7 @@ import { getPools, getTokenPricesChain } from '@sushiswap/client'
 import { Prisma, SteerStrategy, VaultState } from '@sushiswap/database'
 import { getIdFromChainIdAddress } from '@sushiswap/format'
 import { STEER_ENABLED_NETWORKS, STEER_SUBGRAPGH_NAME, SteerChainId, SUBGRAPH_HOST } from '@sushiswap/graph-config'
-import { getSteerPayload, getSteerVaultApr } from '@sushiswap/steer-sdk'
+import { getSteerStrategyPayload, getSteerVaultApr } from '@sushiswap/steer-sdk'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { Address } from 'viem'
 
@@ -55,7 +55,7 @@ async function extractChain(chainId: SteerChainId) {
       const feesUSD = Number(fees0USD) + Number(fees1USD)
 
       const [payloadP, aprP] = await Promise.allSettled([
-        getSteerPayload({ payloadHash: vault.payloadIpfs }),
+        getSteerStrategyPayload({ payloadHash: vault.payloadIpfs }),
         getSteerVaultApr({ vaultId: getIdFromChainIdAddress(chainId, vault.id as Address) }),
       ])
 

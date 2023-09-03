@@ -12,11 +12,21 @@ import {
   Stat,
   StatLabel,
   StatValue,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
 } from '@sushiswap/ui'
 import { useEffect, useRef } from 'react'
 
 import { SteerStrategyConfig } from '../constants'
 import { SteerStrategyLiquidityDistribution } from '../LiquidityChart/SteerStrategyLiquidityDistribution'
+import {
+  SteerPositionAdd,
+  SteerPositionAddProvider,
+  SteerPositionDetails,
+  SteerPositionRemove,
+} from '../LiquidityManagement'
 import { SteerStrategyComponent } from '.'
 
 export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
@@ -38,9 +48,53 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
               Depending on your range, the supplied tokens for this position will not always be a 50:50 ratio.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="flex flex-col gap-4" />
-          </CardContent>
+          <Tabs className="w-full" defaultValue="add">
+            <CardContent>
+              <TabsList className="!flex">
+                <TabsTrigger testdata-id="add-tab" value="add" className="flex flex-1">
+                  Add
+                </TabsTrigger>
+                <TabsTrigger testdata-id="remove-tab" value="remove" className="flex flex-1">
+                  Remove
+                </TabsTrigger>
+                <TabsTrigger testdata-id="position-tab" value="position" className="flex flex-1">
+                  Position
+                </TabsTrigger>
+              </TabsList>
+            </CardContent>
+            <div className="px-6">
+              <Separator />
+            </div>
+            <TabsContent value="add">
+              <CardHeader>
+                <CardTitle>Add liquidity</CardTitle>
+                <CardDescription>Provide liquidity to earn fees & rewards.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <SteerPositionAddProvider>
+                  <SteerPositionAdd vault={vault} />
+                </SteerPositionAddProvider>
+              </CardContent>
+            </TabsContent>
+            <TabsContent value="remove">
+              <CardHeader>
+                <CardTitle>Remove liquidity</CardTitle>
+                <CardDescription>Please enter how much of the position you want to remove.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <SteerPositionRemove vault={vault} />
+              </CardContent>
+            </TabsContent>
+            <TabsContent value="position">
+              <CardHeader>
+                <CardTitle>Position details</CardTitle>
+                <CardDescription>-</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <SteerPositionDetails vault={vault} />
+              </CardContent>
+            </TabsContent>
+          </Tabs>
         </Card>
         <Card>
           <CardHeader>
@@ -97,7 +151,6 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
           </CardHeader>
           <div className="px-6">
             <div className="h-[200px] w-full bg-secondary rounded-xl flex items-center justify-center">
-              {/* <span className="text-xs text-muted-foreground">Liquidity distribution here</span> */}
               <SteerStrategyLiquidityDistribution pool={vault.pool} positions={positions} />
             </div>
           </div>

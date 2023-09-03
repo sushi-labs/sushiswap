@@ -30,7 +30,7 @@ export const SteerStrategyLiquidityDistribution: FC<SteerStrategyLiquidityDistri
     existingPosition: undefined,
   })
 
-  const { isLoading, formattedData } = useDensityChartData({
+  const { isLoading, data } = useDensityChartData({
     chainId: pool.chainId as SushiSwapV3ChainId,
     token0: poolStats?.token0,
     token1: poolStats?.token1,
@@ -59,8 +59,8 @@ export const SteerStrategyLiquidityDistribution: FC<SteerStrategyLiquidityDistri
     <>
       {isLoading && <SkeletonBox className="w-full h-full" />}
 
-      {!noLiquidity && steerRange && !isLoading && formattedData && current && poolStats && (
-        <SteerStrategyLiquidityDistributionChart series={formattedData} current={current} steerRange={steerRange} />
+      {!noLiquidity && steerRange && !isLoading && data && current && poolStats && (
+        <SteerStrategyLiquidityDistributionChart series={data} current={current} steerRange={steerRange} />
       )}
     </>
   )

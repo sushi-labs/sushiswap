@@ -1,8 +1,3 @@
-'use client'
-
-import { ExclamationCircleIcon } from '@heroicons/react/24/outline'
-import FaceSmileIcon from '@heroicons/react/24/outline/FaceSmileIcon'
-import { ShieldCheckIcon } from '@heroicons/react/24/solid'
 import { Pool } from '@sushiswap/client'
 import { formatPercent, formatUSD } from '@sushiswap/format'
 import {
@@ -19,29 +14,30 @@ import {
   StatLabel,
   StatValue,
 } from '@sushiswap/ui'
-import { usePathname } from 'next/navigation'
 import { FC } from 'react'
 
 import { SteerStrategyConfig } from './constants'
+import { SteerTokenDistributionBar } from './SteerTokenDistributionBar'
 
-export const SteerPoolCard: FC<{ pool: Pool; vault: Pool['steerVaults'][0] }> = ({ pool, vault }) => {
-  const pathname = usePathname()
+interface SteerPoolCardProps {
+  pool: Pool
+  vault: Pool['steerVaults'][0]
+}
+
+export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
+  // Gotta use the current pool tick, don't have a nice fetcher for that though, maybe Flair?
+  const inRange = vault.lowerTick < 10 && vault.upperTick > 10
 
   return (
     <LinkInternal href={`/pool/${pool.id}/positions/create/${vault.id}`}>
-      <Card
-        className={classNames(
-          pathname.includes('stable-pool') ? 'border-blue' : '',
-          'max-w-[400px] hover:border-blue-300 hover:shadow-md'
-        )}
-      >
+      <Card className={classNames('max-w-[400px] hover:border-blue-300 hover:shadow-md')}>
         <CardHeader>
-          <div className="flex gap-2 pb-3">
+          {/* <div className="flex gap-2 pb-3">
             <Chip className="bg-blue/20 text-blue">
               <ShieldCheckIcon className="h-3 w-3" />
               Lowest risk
             </Chip>
-          </div>
+          </div> */}
           <CardTitle>{SteerStrategyConfig[vault.strategy].name}</CardTitle>
           <CardDescription>{SteerStrategyConfig[vault.strategy].description}</CardDescription>
         </CardHeader>
@@ -70,7 +66,24 @@ export const SteerPoolCard: FC<{ pool: Pool; vault: Pool['steerVaults'][0] }> = 
           </Stat>
         </div>
         <Separator />
-        <div className="flex flex-col divide-y divide-accent">
+        <CardContent className="pt-6">
+          <div className="flex justify-between">
+            <CardTitle>Liquidity Distribution</CardTitle>
+
+            <Chip
+              variant={'outline'}
+              className={classNames(
+                inRange ? 'bg-green/20 text-green hover:bg-green/40' : 'bg-red/20 text-red hover:bg-red/[0.35]',
+                'space-x-1'
+              )}
+            >
+              <div className={classNames(inRange ? 'bg-green' : 'bg-red', 'w-2 h-2 rounded-full')} />
+              {inRange ? 'In' : 'Out of'} Range
+            </Chip>
+          </div>
+          <SteerTokenDistributionBar vault={vault} />
+        </CardContent>
+        {/* <div className="flex flex-col divide-y divide-accent">
           <div className="flex items-center p-6 gap-6">
             <FaceSmileIcon className="w-10 h-10 text-blue" />
             <div className="flex flex-col">
@@ -87,7 +100,7 @@ export const SteerPoolCard: FC<{ pool: Pool; vault: Pool['steerVaults'][0] }> = 
               </span>
             </div>
           </div>
-        </div>
+        </div> */}
       </Card>
     </LinkInternal>
   )

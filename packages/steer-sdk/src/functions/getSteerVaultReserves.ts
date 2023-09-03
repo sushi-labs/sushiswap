@@ -1,6 +1,8 @@
-import { steerMultiPositionManager } from '@sushiswap/abi'
 import { getChainIdAddressFromId } from '@sushiswap/format'
 import { PublicClient } from 'viem'
+
+import { steerPeripheryAbi } from '../abi/steerPeripheryAbi.js'
+import { isSteerChainId, STEER_PERIPHERY_ADDRESS } from '../constants.js'
 
 interface GetSteerVaultsReserves {
   client: PublicClient
@@ -13,17 +15,21 @@ async function getSteerVaultsReserves({ client, vaultIds }: GetSteerVaultsReserv
     contracts: vaultIds.map((id) => {
       const { chainId, address } = getChainIdAddressFromId(id)
 
+      if (!isSteerChainId(chainId)) throw new Error(`Invalid chainId: ${chainId}`)
+      const steerPeriphery = STEER_PERIPHERY_ADDRESS[chainId]
+
       return {
-        abi: steerMultiPositionManager,
+        abi: steerPeripheryAbi,
         chainId,
-        address,
-        functionName: 'getTotalAmounts' as const,
+        address: steerPeriphery,
+        args: [address],
+        functionName: 'vaultBalancesByAddressWithFees' as const,
       }
     }),
   })
 
   return result.map(({ result }) =>
-    result ? ({ reserve0: BigInt(result[0].toString()), reserve1: BigInt(result[1].toString()) } as const) : null
+    result ? ({ reserve0: result.amountToken0, reserve1: result.amountToken1 } as const) : null
   )
 }
 
