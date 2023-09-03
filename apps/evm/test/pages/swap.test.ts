@@ -40,14 +40,14 @@ test.beforeEach(async ({ page }) => {
 // test.afterAll(async () => {})
 // test.afterEach(async ({ page }) => {})
 
-test.only('Wrap and unwrap', async ({ page }) => {
+test('Wrap and unwrap', async ({ page }) => {
   test.slow()
 
   await wrap(page, native, wnative, '10')
   await wrap(page, wnative, native, '10')
 })
 
-test.only('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
+test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   test.slow()
   const amount = chainId === ChainId.ARBITRUM ? '10' : '100'
   await swap(page, native, sushi, amount)
