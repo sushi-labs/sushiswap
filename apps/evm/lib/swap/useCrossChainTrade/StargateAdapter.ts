@@ -55,26 +55,6 @@ export const encodeStargateTeleportParams = ({
 
 // estiamte gas in sgReceive()
 export const estimateStargateDstGas = (gasUsed: number) => {
-  // sgReceive psuedoCode
-  //  1. decode payload
-  //  2. if ( gasLeft < 100K || !swapData )
-  //    a. transfer ERC20
-  //    b. transfer ETH
-  //    c. return
-  //  3. if ( swapData )
-  //    a. try
-  //       - SushiXSwap.swap() {gas: gasLeft() - 100k}
-  //       catch
-  //       - transfer ERC20
-  //  4. transfer remaining ETH
-  // ---------------------------
-  //  minimumGas: 125K (reserved for ERC20/ETH transfer)
-  //  +
-  //  if ( swapData )
-  //    swapGasSpent (from tines)
-  //      NOTE: * 100k gas is reserved when called
-  //  40% buffer
-  // ---------------------------
   // estGas = (125K + gasSpentTines * 1.40)
   return BigInt(Math.floor(gasUsed * 1.4) + 125000)
 }

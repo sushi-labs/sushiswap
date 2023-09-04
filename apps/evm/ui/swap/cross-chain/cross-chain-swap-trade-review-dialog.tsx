@@ -282,7 +282,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         chainId: chainId0,
         txHash: '0x',
         href: lzData.link,
-        summary: `Bridging ${trade?.srcBridgeToken?.symbol} from ${Chain.from(chainId0).name} to ${
+        summary: `Bridging ${tradeRef?.current?.srcBridgeToken?.symbol} from ${Chain.from(chainId0).name} to ${
           Chain.from(chainId1).name
         }`,
         timestamp: new Date().getTime(),
@@ -301,14 +301,14 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         txHash: receipt.hash as `0x${string}`,
         promise: waitForTransaction({ hash: receipt?.hash as Address, chainId: chainId1 }),
         summary: {
-          pending: `Swapping ${trade?.dstBridgeToken?.symbol} to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${
-            tradeRef?.current?.amountOut?.currency.symbol
-          }`,
+          pending: `Swapping ${
+            tradeRef?.current?.dstBridgeToken?.symbol
+          } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${tradeRef?.current?.amountOut?.currency.symbol}`,
           completed: `Swap ${trade?.dstBridgeToken?.symbol} to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${
             tradeRef?.current?.amountOut?.currency.symbol
           }`,
           failed: `Something went wrong when trying to swap ${
-            trade?.dstBridgeToken?.symbol
+            tradeRef?.current?.dstBridgeToken?.symbol
           } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${tradeRef?.current?.amountOut?.currency.symbol}`,
         },
         timestamp: new Date().getTime(),

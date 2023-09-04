@@ -9,13 +9,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
 import { log } from 'next-axiom'
 import { UseCrossChainSelect, UseCrossChainTradeParams, UseCrossChainTradeQuerySelect } from './types'
-import { stargateAdapterAbi, sushiXSwapV2Abi } from '@sushiswap/abi'
+import { stargateAdapterAbi } from '@sushiswap/abi'
 import { encodeSwapData, getBridgeParams, ProcessRouteInput, TransactionType } from './SushiXSwapV2'
 import { RouterLiquiditySource } from '@sushiswap/router'
 import { useBridgeFees } from './useBridgeFees'
 import { isSwapApiEnabledChainId } from 'config'
 import { encodeStargateTeleportParams, estimateStargateDstGas, stargateAdapterAddress } from './StargateAdapter'
-import { Address, encodeAbiParameters, encodeFunctionData, parseAbi, parseAbiParameters, stringify } from 'viem'
+import { Address, encodeAbiParameters, parseAbiParameters, stringify } from 'viem'
 import { useStargatePath } from './useStargatePath'
 
 const SWAP_API_BASE_URL = process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL
@@ -199,8 +199,7 @@ export const useCrossChainTradeQuery = (
     ],
     queryFn: async () => {
       if (!(network0 && network1 && token0 && token1 && amount && slippagePercentage && stargatePath && bridgeFees)) {
-        console.error('useCrossChainTrade should not be enabled')
-        throw new Error()
+        throw new Error('useCrossChainTrade should not be enabled')
       }
 
       const { srcBridgeToken, dstBridgeToken } = stargatePath
@@ -406,10 +405,6 @@ export const useCrossChainTradeQuery = (
 
       const gasSpent = Amount.fromRawAmount(Native.onChain(network0), fee + gasEst * BigInt(feeData0?.gasPrice ?? 0))
 
-      console.log('MASA fee', fee?.toString())
-      console.log('MASA gas', (gasEst * BigInt(feeData0?.gasPrice ?? 0))?.toString())
-      console.log('MASA totalFees', gasSpent?.toExact())
-
       // Needs to be parsed to string because react-query entities are serialized to cache
       return {
         transactionType,
@@ -457,10 +452,8 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
       const swapPrice = amountIn && amountOut ? new Price({ baseAmount: amountIn, quoteAmount: amountOut }) : undefined
       const priceImpact = data.priceImpact ? new Percent(data.priceImpact[0], data.priceImpact[1]) : undefined
 
-      let resp
-
       if (data && amountIn && amountOut && data.priceImpact && data.minAmountOut) {
-        resp = {
+        return {
           ...data,
           route: {
             status: amountIn?.greaterThan(ZERO) && !amountOut ? 'NoWay' : '',
@@ -478,7 +471,7 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
           minAmountOut,
         }
       } else {
-        resp = {
+        return {
           swapPrice,
           priceImpact,
           amountIn,
@@ -493,10 +486,6 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
           value: undefined,
         }
       }
-
-      console.log({ resp })
-
-      return resp
     },
     [price, token0, token1, variables.network0, variables.network1]
   ) as UseCrossChainTradeQuerySelect

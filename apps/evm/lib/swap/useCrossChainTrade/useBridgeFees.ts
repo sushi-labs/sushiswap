@@ -61,6 +61,7 @@ export const useBridgeFees = ({
       [srcChainId, srcBridgeToken, dstBridgeToken]
     ),
     enabled: Boolean(enabled && srcBridgeToken && dstBridgeToken),
+    watch: Boolean(enabled && srcBridgeToken && dstBridgeToken),
   })
 
   const adjusted = useMemo(() => {
@@ -94,6 +95,14 @@ export const useBridgeFees = ({
     abi: stargateFeeLibraryV03Abi,
     chainId: srcChainId,
     enabled: Boolean(
+      enabled &&
+        adjusted &&
+        srcBridgeToken &&
+        dstBridgeToken &&
+        stargatePoolResults?.[1]?.result &&
+        stargatePoolResults?.[2]?.result
+    ),
+    watch: Boolean(
       enabled &&
         adjusted &&
         srcBridgeToken &&
