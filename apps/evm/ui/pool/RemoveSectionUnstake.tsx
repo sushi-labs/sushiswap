@@ -1,7 +1,8 @@
 'use client'
 
 import { ChainId } from '@sushiswap/chain'
-import { ChefType, Pool, usePool } from '@sushiswap/client'
+import { ChefType, Pool } from '@sushiswap/client'
+import { usePool } from '@sushiswap/client/hooks'
 import { useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import {
@@ -151,7 +152,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot(
                 <Checker.Guard
                   size="default"
                   variant="outline"
-                  guardWhen={Boolean(balance && balance.equalTo(ZERO))}
+                  guardWhen={Boolean(balance?.equalTo(ZERO))}
                   guardText="No staked tokens"
                 >
                   <Checker.Guard

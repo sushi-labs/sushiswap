@@ -1,7 +1,8 @@
 import type { getTokensByAddress } from '@sushiswap/tokens-api/lib/api.js'
 import { SearchTokenApiSchema } from '@sushiswap/tokens-api/lib/schemas/search/address'
-import { TOKENS_API } from 'src/constants.js'
-import { GetApiInputFromOutput } from 'src/types.js'
+
+import { TOKENS_API } from '../../../constants.js'
+import { GetApiInputFromOutput } from '../../../types.js'
 
 export { SearchTokenApiSchema }
 export type TokenSearch = Awaited<ReturnType<typeof getTokensByAddress>>

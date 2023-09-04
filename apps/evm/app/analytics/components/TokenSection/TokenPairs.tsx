@@ -1,5 +1,5 @@
 import chains from '@sushiswap/chain'
-import { usePools } from '@sushiswap/client'
+import { usePools } from '@sushiswap/client/hooks'
 import { Native, Token } from '@sushiswap/currency'
 import { formatPercent, formatUSD } from '@sushiswap/format'
 import { Token as GraphToken } from '@sushiswap/graph-client'

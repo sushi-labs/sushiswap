@@ -1,4 +1,5 @@
-import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/client'
+import { GetPoolsArgs, Pool } from '@sushiswap/client'
+import { usePoolCount, usePoolsInfinite } from '@sushiswap/client/hooks'
 import { useBreakpoint } from '@sushiswap/hooks'
 import { Loader } from '@sushiswap/ui/components/loader'
 import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'

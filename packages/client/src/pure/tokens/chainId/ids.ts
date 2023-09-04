@@ -1,7 +1,8 @@
 import type { getTokenIdsByChainId } from '@sushiswap/tokens-api/lib/api.js'
 import { TokenIdsApiSchema } from '@sushiswap/tokens-api/lib/schemas/chainId/ids'
-import { TOKENS_API } from 'src/constants.js'
-import { GetApiInputFromOutput } from 'src/types.js'
+
+import { TOKENS_API } from '../../../constants.js'
+import { GetApiInputFromOutput } from '../../../types.js'
 
 export { TokenIdsApiSchema }
 export type TokenId = Awaited<ReturnType<typeof getTokenIdsByChainId>>

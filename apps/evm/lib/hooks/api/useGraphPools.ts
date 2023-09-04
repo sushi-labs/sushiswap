@@ -1,6 +1,7 @@
 'use client'
 
-import { parseArgs, Pool, Pools, Protocol, usePools } from '@sushiswap/client'
+import { parseArgs, Pool, Pools, Protocol } from '@sushiswap/client'
+import { usePools } from '@sushiswap/client/hooks'
 import { useMemo } from 'react'
 import useSWR from 'swr'
 
