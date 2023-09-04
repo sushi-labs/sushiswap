@@ -14,6 +14,8 @@ export const SWAP_API_ENABLED_NETWORKS = [
   ChainId.OPTIMISM,
   ChainId.POLYGON,
   ChainId.BASE,
+  ChainId.AVALANCHE,
+  ChainId.BSC,
 ]
 export type SwapApiEnabledChainId = (typeof SWAP_API_ENABLED_NETWORKS)[number]
 export const isSwapApiEnabledChainId = (chainId: number): chainId is SwapApiEnabledChainId =>
