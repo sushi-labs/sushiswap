@@ -23,7 +23,11 @@ interface SteerPositionDetails {
 
 export const SteerPositionDetails: FC<SteerPositionDetails> = ({ vault }) => {
   const { address } = useAccount()
-  const { data: position, isLoading: isPositionLoading } = useSteerAccountPosition({
+  const {
+    data: position,
+    isLoading: isPositionLoading,
+    ...rest
+  } = useSteerAccountPosition({
     account: address,
     vaultId: vault.id,
   })
@@ -49,6 +53,8 @@ export const SteerPositionDetails: FC<SteerPositionDetails> = ({ vault }) => {
     () => fiatValuesAmounts.reduce((acc, cur) => acc + cur, 0),
     [fiatValuesAmounts]
   )
+
+  console.log(position, rest)
 
   return (
     <>
