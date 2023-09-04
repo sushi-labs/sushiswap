@@ -9,6 +9,7 @@ import { Address, useAccount, useFeeData, useNetwork, watchNetwork } from '@sush
 import { useTokenWithCache } from '@sushiswap/wagmi/future'
 import { useClientTrade } from '@sushiswap/wagmi/future/hooks'
 import { useCarbonOffset } from 'lib/swap/useCarbonOffset'
+import { useSwapApi } from 'lib/swap/useSwapApi'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useLogger } from 'next-axiom'
 import { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from 'react'
@@ -279,15 +280,42 @@ const useDerivedStateSimpleSwap = () => {
 
 const SWAP_API_BASE_URL = process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL
 
+interface UseFallbackProps {
+  chainId: ChainId
+  forceFallback: boolean
+}
+
+const useFallback = ({ chainId, forceFallback }: UseFallbackProps) => {
+  const initialFallbackState = useMemo(
+    () =>
+      !isSwapApiEnabledChainId(chainId) ||
+      (isSwapApiEnabledChainId(chainId) && typeof SWAP_API_BASE_URL === 'undefined'),
+
+    [chainId]
+  )
+
+  const [isFallback, setIsFallback] = useState(initialFallbackState)
+
+  const resetFallback = useCallback(() => {
+    setIsFallback(initialFallbackState)
+  }, [setIsFallback, initialFallbackState])
+
+  return {
+    isFallback: forceFallback || isFallback,
+    setIsFallback,
+    resetFallback,
+  }
+}
+
 const useSimpleSwapTrade = () => {
   const log = useLogger()
   const {
     state: { token0, chainId, swapAmount, token1, recipient },
   } = useDerivedStateSimpleSwap()
 
-  const [isFallback, setIsFallback] = useState(
-    !isSwapApiEnabledChainId(chainId) || (isSwapApiEnabledChainId(chainId) && typeof SWAP_API_BASE_URL === 'undefined')
-  )
+  const [swapApi] = useSwapApi()
+  const { isFallback, setIsFallback, resetFallback } = useFallback({ chainId, forceFallback: !swapApi })
+
   const [slippageTolerance] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
   const { data: feeData } = useFeeData({ chainId })
@@ -327,11 +355,7 @@ const useSimpleSwapTrade = () => {
   useEffect(() => {
     const unwatch = watchNetwork(({ chain }) => {
       if (chain) {
-        const shouldFallback =
-          !isSwapApiEnabledChainId(chain.id) ||
-          (isSwapApiEnabledChainId(chain.id) && typeof SWAP_API_BASE_URL === 'undefined')
-
-        setIsFallback(shouldFallback)
+        resetFallback()
       }
     })
 
