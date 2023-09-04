@@ -236,6 +236,7 @@ model SteerVault {
   feeTier                 Float
   
   apr                     Float
+  apr1w                   Float
   apr1d                   Float
   apr1m                   Float
   apr1y                   Float

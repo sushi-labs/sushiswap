@@ -86,13 +86,7 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
               </CardContent>
             </TabsContent>
             <TabsContent value="position">
-              <CardHeader>
-                <CardTitle>Position details</CardTitle>
-                <CardDescription>-</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <SteerPositionDetails vault={vault} />
-              </CardContent>
+              <SteerPositionDetails vault={vault} />
             </TabsContent>
           </Tabs>
         </Card>

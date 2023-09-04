@@ -93,6 +93,7 @@ export const SushiPoolSelect = {
       feeTier: true,
 
       apr: true,
+      apr1w: true,
       // apr1d: true, currently unusable
       // apr1m: true,
       // apr1y: true,

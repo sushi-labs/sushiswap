@@ -2,7 +2,7 @@ import { getPools, getTokenPricesChain } from '@sushiswap/client'
 import { Prisma, SteerStrategy, VaultState } from '@sushiswap/database'
 import { getIdFromChainIdAddress } from '@sushiswap/format'
 import { STEER_ENABLED_NETWORKS, STEER_SUBGRAPGH_NAME, SteerChainId, SUBGRAPH_HOST } from '@sushiswap/graph-config'
-import { getSteerStrategyPayload, getSteerVaultApr } from '@sushiswap/steer-sdk'
+import { getSteerStrategyPayload, getSteerVaultAprs } from '@sushiswap/steer-sdk'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { Address } from 'viem'
 
@@ -56,17 +56,20 @@ async function extractChain(chainId: SteerChainId) {
 
       const [payloadP, aprP] = await Promise.allSettled([
         getSteerStrategyPayload({ payloadHash: vault.payloadIpfs }),
-        getSteerVaultApr({ vaultId: getIdFromChainIdAddress(chainId, vault.id as Address) }),
+        getSteerVaultAprs({ vaultId: getIdFromChainIdAddress(chainId, vault.id as Address) }),
       ])
 
       const payload = isPromiseFulfilled(payloadP) ? payloadP.value : null
-      const apr = isPromiseFulfilled(aprP) ? aprP.value / 100 : 0
+      const { apr: annualFeeAPR, apr1w: annualPercentageWeeklyYield } = isPromiseFulfilled(aprP)
+        ? aprP.value
+        : { apr: null, apr1w: null }
 
       return {
         ...vault,
         poolId,
         payload,
-        annualFeeAPR: apr,
+        annualFeeAPR,
+        annualPercentageWeeklyYield,
         reserve0USD,
         fees0USD,
         reserve1USD,
@@ -121,6 +124,7 @@ function transform(chainsWithVaults: Awaited<ReturnType<typeof extract>>): Prism
         // APR is the weekly APR, temporary solution, waiting for Steer to fix the subgraph
         // apr1d, apr1m, apr1y are inaccurate
         apr: Number(vault.annualFeeAPR),
+        apr1w: Number(vault.annualPercentageWeeklyYield),
         apr1d: Number(vault.annualPercentageDailyYield),
         apr1m: Number(vault.annualPercentageMonthlyYield),
         apr1y: Number(vault.annualPercentageYearlyYield),

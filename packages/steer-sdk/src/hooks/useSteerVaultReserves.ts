@@ -1,7 +1,7 @@
 import { usePublicClient } from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
 
-import { getSteerVaultReserves, getSteerVaultsReserves } from '../functions/index.js'
+import { getSteerVaultReserves, getSteerVaultsReserves } from '../functions/getSteerVaultReserves.js'
 
 interface UseSteerVaultsReserves {
   vaultIds: string[] | undefined
@@ -13,7 +13,7 @@ export const useSteerVaultsReserves = ({ vaultIds, enabled = true }: UseSteerVau
 
   return useQuery({
     queryKey: ['useSteerVaultsReserves'],
-    queryFn: () => getSteerVaultsReserves({ client, vaultIds: vaultIds || [] }),
+    queryFn: () => (vaultIds ? getSteerVaultsReserves({ client, vaultIds: vaultIds }) : null),
     refetchInterval: 10000,
     enabled: Boolean(enabled && vaultIds),
   })
@@ -29,7 +29,7 @@ export const useSteerVaultReserves = ({ vaultId, enabled = true }: UseSteerVault
 
   return useQuery({
     queryKey: ['useSteerVaultsReserves'],
-    queryFn: () => (vaultId ? getSteerVaultReserves({ client, vaultId: vaultId }) : undefined),
+    queryFn: () => (vaultId ? getSteerVaultReserves({ client, vaultId: vaultId }) : null),
     refetchInterval: 10000,
     enabled: Boolean(enabled && vaultId),
   })

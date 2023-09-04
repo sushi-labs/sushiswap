@@ -6,7 +6,6 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  Chip,
   classNames,
   LinkInternal,
   Separator,
@@ -17,7 +16,7 @@ import {
 import { FC } from 'react'
 
 import { SteerStrategyConfig } from './constants'
-import { SteerTokenDistributionBar } from './SteerTokenDistributionBar'
+import { SteerLiquidityDistributionWidget } from './SteerLiquidityDistributionWidget/SteerLiquidityDistributionWidget'
 
 interface SteerPoolCardProps {
   pool: Pool
@@ -25,9 +24,6 @@ interface SteerPoolCardProps {
 }
 
 export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
-  // Gotta use the current pool tick, don't have a nice fetcher for that though, maybe Flair?
-  const inRange = vault.lowerTick < 10 && vault.upperTick > 10
-
   return (
     <LinkInternal href={`/pool/${pool.id}/positions/create/${vault.id}`}>
       <Card className={classNames('max-w-[400px] hover:border-blue-300 hover:shadow-md')}>
@@ -67,21 +63,7 @@ export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
         </div>
         <Separator />
         <CardContent className="pt-6">
-          <div className="flex justify-between">
-            <CardTitle>Liquidity Distribution</CardTitle>
-
-            <Chip
-              variant={'outline'}
-              className={classNames(
-                inRange ? 'bg-green/20 text-green hover:bg-green/40' : 'bg-red/20 text-red hover:bg-red/[0.35]',
-                'space-x-1'
-              )}
-            >
-              <div className={classNames(inRange ? 'bg-green' : 'bg-red', 'w-2 h-2 rounded-full')} />
-              {inRange ? 'In' : 'Out of'} Range
-            </Chip>
-          </div>
-          <SteerTokenDistributionBar vault={vault} />
+          <SteerLiquidityDistributionWidget vault={vault} />
         </CardContent>
         {/* <div className="flex flex-col divide-y divide-accent">
           <div className="flex items-center p-6 gap-6">

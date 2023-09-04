@@ -114,7 +114,7 @@ export function useSteerPositionAddDerivedInfo({ vault: vaultPassed, vaultId }: 
   }, [vault])
 
   // currencies
-  const currencies: { [field in Field]?: Currency } | undefined = useMemo(() => {
+  const currencies: { [field in Field]: Currency } | undefined = useMemo(() => {
     if (!currencyA || !currencyB) return undefined
 
     return {
@@ -147,7 +147,7 @@ export function useSteerPositionAddDerivedInfo({ vault: vaultPassed, vaultId }: 
       if (independentReserve !== 0n && dependentReserve !== 0n) {
         return Amount.fromRawAmount(
           dependentCurrency,
-          wrappedIndependentAmount.multiply(dependentReserve).divide(independentReserve).quotient
+          wrappedIndependentAmount.multiply(dependentReserve).divide(independentReserve).quotient - 1n
         )
       }
     }
