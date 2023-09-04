@@ -12,6 +12,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  Message,
   NetworkIcon,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
@@ -86,7 +87,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
       open={Boolean(!tokenFromLoading && !tokenToLoading && (token0NotInList || token1NotInList))}
       onOpenChange={(open) => !open && reset()}
     >
-      <DialogContent>
+      <DialogContent className="!max-h-screen overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             <div className="flex gap-4 pb-2">
@@ -210,9 +211,14 @@ export const SimpleSwapTokenNotFoundDialog = () => {
               I understand
             </Button>
           ) : (
-            <Button fullWidth size="xl" onClick={reset}>
-              Close
-            </Button>
+            <div className="flex flex-col gap-3">
+              <Button fullWidth size="xl" onClick={reset}>
+                Close
+              </Button>
+              <Message variant="destructive" size="sm">
+                Sushi does not support honetpot tokens. This token contract cannot be imported!
+              </Message>
+            </div>
           )}
         </DialogFooter>
       </DialogContent>

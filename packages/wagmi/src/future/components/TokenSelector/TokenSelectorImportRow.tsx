@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Message,
   NetworkIcon,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
@@ -121,11 +122,16 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currency, o
                   I understand
                 </Button>
               ) : (
-                <DialogTrigger asChild>
-                  <Button fullWidth size="xl" onClick={() => setOpen(false)}>
-                    Close
-                  </Button>
-                </DialogTrigger>
+                <div className="flex flex-col gap-3">
+                  <DialogTrigger asChild>
+                    <Button fullWidth size="xl" onClick={() => setOpen(false)}>
+                      Close
+                    </Button>
+                  </DialogTrigger>
+                  <Message variant="destructive" size="sm">
+                    Sushi does not support honetpot tokens. This token contract cannot be imported!
+                  </Message>
+                </div>
               )}
             </div>
           </DialogFooter>
