@@ -16,6 +16,7 @@
     "@heroicons/react": "2.0.13",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
+    "@tanstack/react-table": "8.9.1",
     "class-variance-authority": "^0.6.0",
     "react": "18.2.0",
     "react-dom": "18.2.0"

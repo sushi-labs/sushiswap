@@ -3,7 +3,13 @@
 import { CreditCardIcon } from '@heroicons/react/24/outline'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import type { Meta, StoryObj } from '@storybook/react'
-import { TextField, TextFieldDescription } from '@sushiswap/ui'
+import { TextField, TextFieldBaseProps, TextFieldDescription } from '@sushiswap/ui'
+import * as React from 'react'
+
+import { ViewGroup } from '../components/View'
+
+const variants: TextFieldBaseProps['variant'][] = ['default', 'outline']
+const sizes: TextFieldBaseProps['size'][] = ['sm', 'default']
 
 const meta = {
   title: 'Primitives/TextField',
@@ -39,6 +45,7 @@ export const Percent = {
     id: 'input',
     type: 'percent',
     maxDecimals: 2,
+    unit: '%',
   },
 } satisfies Story
 
@@ -73,13 +80,33 @@ export const Description = {
     unit: 'CVV',
     icon: CreditCardIcon,
     placeholder: '',
-    render: (args) => {
-      return (
-        <div className="flex flex-col gap-2">
-          <TextField {...args} />
-          <TextFieldDescription>This is a description</TextFieldDescription>
-        </div>
-      )
-    },
+  },
+  render: (args) => {
+    return (
+      <div className="flex flex-col gap-2">
+        <TextField {...args} />
+        <TextFieldDescription>This is a description</TextFieldDescription>
+      </div>
+    )
   },
 } satisfies Story
+
+export const Variants = (args) => {
+  const items = variants.map((variant) => (
+    <React.Fragment key={variant}>
+      <TextField {...args} key={variant} variant={variant} placeholder={`Variant ${variant}`} />
+    </React.Fragment>
+  ))
+
+  return <ViewGroup direction="row">{items}</ViewGroup>
+}
+
+export const Sizes = (args) => {
+  const items = sizes.map((size) => (
+    <React.Fragment key={size}>
+      <TextField {...args} key={size} size={size} placeholder={`Size ${size}`} />
+    </React.Fragment>
+  ))
+
+  return <ViewGroup direction="row">{items}</ViewGroup>
+}

@@ -543,6 +543,7 @@ importers:
       '@sushiswap/tailwindcss-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
+      '@tanstack/react-table': 8.9.1
       '@vitejs/plugin-react': 4.0.1
       autoprefixer: 10.4.14
       chromatic: ^6.19.9
@@ -562,6 +563,7 @@ importers:
       '@sushiswap/router-config': link:../../config/router
       '@sushiswap/tailwindcss-config': link:../../config/tailwindcss
       '@sushiswap/ui': link:../../packages/ui
+      '@tanstack/react-table': 8.9.1_biqbaboplfbrettd7655fr4n2y
       class-variance-authority: 0.6.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
