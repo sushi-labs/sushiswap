@@ -1,7 +1,7 @@
 import { Amount, Currency, Native, Price, tryParseAmount, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { Percent, ZERO } from '@sushiswap/math'
 import { usePrice } from '@sushiswap/react-query'
-import { STARGATE_CHAIN_ID } from '@sushiswap/stargate'
+import { STARGATE_CHAIN_ID, STARGATE_ETH_ADDRESS } from '@sushiswap/stargate'
 import { useFeeData, watchNetwork, readContract } from '@sushiswap/wagmi'
 import { useClientTrade } from '@sushiswap/wagmi/future/hooks'
 import { useQuery } from '@tanstack/react-query'
@@ -249,14 +249,8 @@ export const useCrossChainTradeQuery = (
             amountIn: amount,
             to: recipient,
             adapterData: encodeStargateTeleportParams({
-              srcChainId: network0,
-              dstChainId: network1,
-              srcBridgeToken: srcBridgeToken.isNative
-                ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-                : (srcBridgeToken.address as Address),
-              dstBridgeToken: dstBridgeToken.isNative
-                ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-                : (dstBridgeToken.address as Address),
+              srcBridgeToken,
+              dstBridgeToken,
               amount: amount.quotient.toString(),
               amountMin: srcAmountOut.quotient.toString(),
               dustAmount: 0,
@@ -280,14 +274,8 @@ export const useCrossChainTradeQuery = (
             amountIn: amount,
             to: recipient,
             adapterData: encodeStargateTeleportParams({
-              srcChainId: network0,
-              dstChainId: network1,
-              srcBridgeToken: srcBridgeToken.isNative
-                ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-                : (srcBridgeToken.address as Address),
-              dstBridgeToken: dstBridgeToken.isNative
-                ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-                : (dstBridgeToken.address as Address),
+              srcBridgeToken,
+              dstBridgeToken,
               amount: 0, // set to 0, so RP will transfer all
               amountMin: srcTrade.minAmountOut.quotient.toString(),
               dustAmount: 0,
@@ -319,14 +307,8 @@ export const useCrossChainTradeQuery = (
             amountIn: amount,
             to: recipient,
             adapterData: encodeStargateTeleportParams({
-              srcChainId: network0,
-              dstChainId: network1,
-              srcBridgeToken: srcBridgeToken.isNative
-                ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-                : (srcBridgeToken.address as Address),
-              dstBridgeToken: dstBridgeToken.isNative
-                ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-                : (dstBridgeToken.address as Address),
+              srcBridgeToken: srcBridgeToken,
+              dstBridgeToken: dstBridgeToken,
               amount: amount.quotient.toString(),
               amountMin: srcAmountOut.quotient.toString(),
               dustAmount: 0, // TODO: calculate
@@ -358,14 +340,8 @@ export const useCrossChainTradeQuery = (
             amountIn: amount,
             to: recipient,
             adapterData: encodeStargateTeleportParams({
-              srcChainId: network0,
-              dstChainId: network1,
-              srcBridgeToken: srcBridgeToken.isNative
-                ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-                : (srcBridgeToken.address as Address),
-              dstBridgeToken: dstBridgeToken.isNative
-                ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-                : (dstBridgeToken.address as Address),
+              srcBridgeToken,
+              dstBridgeToken,
               amount: 0, // set to 0 so RP will transfer all
               amountMin: srcTrade.minAmountOut.quotient.toString(),
               dustAmount: 0, // TODO: calculate

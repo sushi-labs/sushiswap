@@ -89,7 +89,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         chain?.id === chainId0 &&
         trade?.route?.status !== 'NoWay'
     ),
-    value: trade?.value || 0n,
+    value: trade?.value ?? 0n,
     onError: (error) => {
       if (error.message.startsWith('user rejected transaction')) return
       log.error('cross chain swap prepare error', {

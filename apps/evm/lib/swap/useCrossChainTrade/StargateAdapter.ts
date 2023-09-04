@@ -1,6 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
+import { Type } from '@sushiswap/currency'
 import { BigintIsh } from '@sushiswap/math'
-import { STARGATE_CHAIN_ID, STARGATE_POOL_ID } from '@sushiswap/stargate'
+import { NativeAddress } from '@sushiswap/react-query'
+import { STARGATE_CHAIN_ID, STARGATE_ETH_ADDRESS, STARGATE_POOL_ID } from '@sushiswap/stargate'
 import { SushiXSwapV2ChainId } from '@sushiswap/wagmi'
 import { Address, encodeAbiParameters, parseAbiParameters } from 'viem'
 
@@ -14,8 +16,6 @@ export const stargateAdapterAddress = {
 } as const
 
 export const encodeStargateTeleportParams = ({
-  srcChainId,
-  dstChainId,
   srcBridgeToken,
   dstBridgeToken,
   amount,
@@ -25,10 +25,8 @@ export const encodeStargateTeleportParams = ({
   to,
   gas,
 }: {
-  srcChainId: SushiXSwapV2ChainId
-  dstChainId: SushiXSwapV2ChainId
-  srcBridgeToken: Address
-  dstBridgeToken: Address
+  srcBridgeToken: Type
+  dstBridgeToken: Type
   amount: BigintIsh
   amountMin: BigintIsh
   dustAmount: BigintIsh
@@ -39,10 +37,22 @@ export const encodeStargateTeleportParams = ({
   return encodeAbiParameters(
     parseAbiParameters('uint16, address, uint256, uint256, uint256, uint256, uint256, address, address, uint256'),
     [
-      STARGATE_CHAIN_ID[dstChainId],
-      srcBridgeToken,
-      BigInt(STARGATE_POOL_ID[srcChainId][srcBridgeToken]),
-      BigInt(STARGATE_POOL_ID[dstChainId][dstBridgeToken]),
+      STARGATE_CHAIN_ID[dstBridgeToken.chainId as SushiXSwapV2ChainId],
+      srcBridgeToken.isNative ? NativeAddress : (srcBridgeToken.address as Address),
+      BigInt(
+        STARGATE_POOL_ID[srcBridgeToken.chainId as SushiXSwapV2ChainId][
+          srcBridgeToken.isNative
+            ? STARGATE_ETH_ADDRESS[srcBridgeToken.chainId as keyof typeof STARGATE_ETH_ADDRESS]
+            : srcBridgeToken.address
+        ]
+      ),
+      BigInt(
+        STARGATE_POOL_ID[dstBridgeToken.chainId as SushiXSwapV2ChainId][
+          dstBridgeToken.isNative
+            ? STARGATE_ETH_ADDRESS[dstBridgeToken.chainId as keyof typeof STARGATE_ETH_ADDRESS]
+            : dstBridgeToken.address
+        ]
+      ),
       BigInt(amount),
       BigInt(amountMin),
       BigInt(dustAmount),
