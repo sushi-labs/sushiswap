@@ -2,7 +2,9 @@ const { withSentryConfig } = require('@sentry/nextjs')
 const defaultNextConfig = require('@sushiswap/nextjs-config')
 const { withAxiom } = require('next-axiom')
 
-const { ANALYTICS_URL, BLOG_URL, EARN_URL, FURO_URL, SWAP_URL, ACADEMY_URL } = process.env
+const ACADEMY_URL = process.env.ACADEMY_URL || 'https://academy.sushi.com'
+const BLOG_URL = process.env.BLOG_URL || 'https://blog.sushi.com'
+const FURO_URL = process.env.FURO_URL || 'https://furo.sushi.com'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -61,14 +63,6 @@ const nextConfig = {
       {
         source: '/academy/:path*',
         destination: `${ACADEMY_URL}/academy/:path*`,
-      },
-      {
-        source: '/analytics',
-        destination: `${ANALYTICS_URL}/analytics`,
-      },
-      {
-        source: '/analytics/:path*',
-        destination: `${ANALYTICS_URL}/analytics/:path*`,
       },
       {
         source: '/blog',
