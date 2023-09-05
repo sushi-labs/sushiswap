@@ -75,7 +75,7 @@ export const useTradeQuery = (
 }
 
 export const useTrade = (variables: UseTradeParams) => {
-  const { chainId, fromToken, toToken, amount, slippagePercentage, carbonOffset } = variables
+  const { chainId, fromToken, toToken, amount, slippagePercentage, carbonOffset, gasPrice } = variables
   const { data: price } = usePrice({ chainId, address: WNATIVE_ADDRESS[chainId] })
 
   const select: UseTradeQuerySelect = useCallback(
@@ -105,7 +105,9 @@ export const useTrade = (variables: UseTradeParams) => {
           value = (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n
         }
 
-        const gasSpent = Amount.fromRawAmount(Native.onChain(chainId), data.route.gasSpent * 1e9)
+        const gasSpent = gasPrice
+          ? Amount.fromRawAmount(Native.onChain(chainId), gasPrice * BigInt(data.route.gasSpent * 1.2))
+          : undefined
 
         return {
           swapPrice: amountOut.greaterThan(ZERO)
@@ -123,8 +125,8 @@ export const useTrade = (variables: UseTradeParams) => {
             toToken,
             calculateSlippageAmount(amountOut, new Percent(Math.floor(+slippagePercentage * 100), 10_000))[0]
           ),
-          gasSpent: gasSpent.toSignificant(6),
-          gasSpentUsd: price ? gasSpent.multiply(price.asFraction).toSignificant(4) : undefined,
+          gasSpent: gasSpent?.toSignificant(4),
+          gasSpentUsd: price && gasSpent ? gasSpent.multiply(price.asFraction).toSignificant(4) : undefined,
           route: data.route,
           functionName: isOffset ? 'transferValueAndprocessRoute' : 'processRoute',
           writeArgs,
@@ -146,7 +148,7 @@ export const useTrade = (variables: UseTradeParams) => {
         value: undefined,
       }
     },
-    [carbonOffset, amount, chainId, fromToken, price, slippagePercentage, toToken]
+    [carbonOffset, amount, chainId, fromToken, price, slippagePercentage, toToken, gasPrice]
   )
 
   return useTradeQuery(variables, select)
