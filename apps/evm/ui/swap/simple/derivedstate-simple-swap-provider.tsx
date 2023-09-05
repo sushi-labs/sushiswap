@@ -280,12 +280,9 @@ const useDerivedStateSimpleSwap = () => {
 
 const SWAP_API_BASE_URL = process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL
 
-interface UseFallbackProps {
-  chainId: ChainId
-  forceFallback: boolean
-}
+const useFallback = (chainId: ChainId) => {
+  const [swapApi] = useSwapApi()
 
-const useFallback = ({ chainId, forceFallback }: UseFallbackProps) => {
   const initialFallbackState = useMemo(
     () =>
       !isSwapApiEnabledChainId(chainId) ||
@@ -301,7 +298,7 @@ const useFallback = ({ chainId, forceFallback }: UseFallbackProps) => {
   }, [setIsFallback, initialFallbackState])
 
   return {
-    isFallback: forceFallback || isFallback,
+    isFallback: !swapApi || isFallback,
     setIsFallback,
     resetFallback,
   }
@@ -313,8 +310,7 @@ const useSimpleSwapTrade = () => {
     state: { token0, chainId, swapAmount, token1, recipient },
   } = useDerivedStateSimpleSwap()
 
-  const [swapApi] = useSwapApi()
-  const { isFallback, setIsFallback, resetFallback } = useFallback({ chainId, forceFallback: !swapApi })
+  const { isFallback, setIsFallback, resetFallback } = useFallback(chainId)
 
   const [slippageTolerance] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
