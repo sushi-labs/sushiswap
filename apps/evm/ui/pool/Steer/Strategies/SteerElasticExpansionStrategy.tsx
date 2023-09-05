@@ -20,13 +20,13 @@ import {
 import { useEffect, useRef } from 'react'
 
 import { SteerStrategyConfig } from '../constants'
-import { SteerStrategyLiquidityDistribution } from '../LiquidityChart/SteerStrategyLiquidityDistribution'
 import {
   SteerPositionAdd,
   SteerPositionAddProvider,
   SteerPositionDetails,
   SteerPositionRemove,
 } from '../LiquidityManagement'
+import { SteerStrategyLiquidityDistribution } from '../SteerStrategyLiquidityChart'
 import { SteerStrategyComponent } from '.'
 
 export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({

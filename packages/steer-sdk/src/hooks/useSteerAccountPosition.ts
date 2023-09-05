@@ -1,5 +1,6 @@
-import { Address, usePublicClient } from '@sushiswap/wagmi'
+import { Address } from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
+import { usePublicClient } from 'wagmi'
 
 import { getSteerAccountPosition, getSteerAccountPositions } from '../functions/getSteerAccountPosition.js'
 

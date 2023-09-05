@@ -1,6 +1,6 @@
 import { getChainIdAddressFromId } from '@sushiswap/format'
-import { erc20ABI } from '@wagmi/core'
-import { Address, PublicClient } from 'viem'
+import { erc20ABI, PublicClient } from '@wagmi/core'
+import { Address } from 'viem'
 
 import { getSteerVaultsReserves } from './getSteerVaultReserves.js'
 

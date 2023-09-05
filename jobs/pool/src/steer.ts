@@ -99,18 +99,21 @@ const StrategyTypes: Record<string, SteerStrategy> = {
 function transform(chainsWithVaults: Awaited<ReturnType<typeof extract>>): Prisma.SteerVaultCreateManyInput[] {
   return chainsWithVaults.flatMap(({ chainId, vaults }) =>
     vaults.flatMap((vault) => {
-      const lowestTick = vault.positions.reduce(
-        (lowest, position) => (Number(position.lowerTick) < lowest ? Number(position.lowerTick) : lowest),
-        Infinity
-      )
-      const highestTick = vault.positions.reduce(
-        (highest, position) => (Number(position.upperTick) > highest ? Number(position.upperTick) : highest),
-        -Infinity
-      )
-
       // ! Missing strategies will be ignored
       const strategyType = StrategyTypes[vault?.payload?.strategyConfigData.name]
       if (!strategyType) return []
+
+      const lowTicks = vault.positions.flatMap((position) => position.lowerTick)
+      const lowestTick = lowTicks.reduce(
+        (lowest, tick) => (Number(tick) < lowest ? Number(tick) : lowest),
+        Number(lowTicks[0] || 0)
+      )
+
+      const highTicks = vault.positions.flatMap((position) => position.upperTick)
+      const highestTick = highTicks.reduce(
+        (highest, tick) => (Number(tick) > highest ? Number(tick) : highest),
+        Number(highTicks[0] || 0)
+      )
 
       return {
         id: `${chainId}:${vault.id}`.toLowerCase(),

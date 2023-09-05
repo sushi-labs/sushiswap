@@ -1,3 +1,5 @@
+'use client'
+
 import { Pool } from '@sushiswap/client'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { SkeletonBox } from '@sushiswap/ui'
@@ -42,6 +44,8 @@ export const SteerStrategyLiquidityDistribution: FC<SteerStrategyLiquidityDistri
 
     const min = Math.min(...positions.map((position) => Number(position.lowerTick)))
     const max = Math.max(...positions.map((position) => Number(position.upperTick)))
+
+    console.log(min, max)
 
     return {
       minPrice: Number(tickToPrice(poolStats?.token0, poolStats?.token1, min).toSignificant(12)),
