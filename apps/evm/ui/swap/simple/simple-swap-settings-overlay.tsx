@@ -3,5 +3,9 @@
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui'
 
 export const SimpleSwapSettingsOverlay = () => {
-  return <SettingsOverlay modules={[SettingsModule.SlippageTolerance, SettingsModule.CarbonOffset]} />
+  return (
+    <SettingsOverlay
+      modules={[SettingsModule.SlippageTolerance, SettingsModule.CarbonOffset, SettingsModule.SwapApi]}
+    />
+  )
 }
