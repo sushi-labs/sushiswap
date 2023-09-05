@@ -53,9 +53,8 @@ async function getSteerAccountPositions({ client, account, vaultIds }: GetSteerA
     const totalSupply = totalSupplies[i].result
     const vaultReserve = vaultReserves[i]
 
-    console.log(accountBalance, totalSupply, vaultReserve)
-
-    if (!accountBalance || !totalSupply || !vaultReserve) return null
+    if (typeof accountBalance === 'undefined' || typeof totalSupply === 'undefined' || vaultReserve === null)
+      return null
 
     const token0Balance = (vaultReserve.reserve0 * accountBalance) / totalSupply
     const token1Balance = (vaultReserve.reserve1 * accountBalance) / totalSupply

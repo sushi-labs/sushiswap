@@ -1,20 +1,22 @@
 'use client'
 
 import { CogIcon } from '@heroicons/react-v1/solid'
+import { calculateSlippageAmount } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { SteerVault } from '@sushiswap/client/src/pure/steer-vault/vault'
 import { Amount, Token } from '@sushiswap/currency'
 import { useDebounce } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
+import { isSteerChainId } from '@sushiswap/steer-sdk'
+import { steerMultiPositionManager } from '@sushiswap/steer-sdk/abi'
 import { useSteerAccountPosition } from '@sushiswap/steer-sdk/hooks'
 import {
   Button,
   Card,
-  CardContent,
   CardCurrencyAmountItem,
-  CardFooter,
   CardGroup,
   CardLabel,
+  classNames,
   createErrorToast,
   createToast,
   IconButton,
@@ -24,9 +26,10 @@ import {
 import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi'
 import { useAccount, useNetwork, usePrepareSendTransaction, useSendTransaction } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/future'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import React, { FC, useCallback, useMemo, useState } from 'react'
-import { UserRejectedRequestError } from 'viem'
+import { Address, encodeFunctionData, UserRejectedRequestError } from 'viem'
 
 interface SteerPositionRemoveProps {
   vault: SteerVault
@@ -45,7 +48,10 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({ vault }) => 
     return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
   }, [slippageTolerance])
 
-  const { data: position } = useSteerAccountPosition({ account: account, vaultId: vault.id })
+  const { data: position, isLoading: isPositionLoading } = useSteerAccountPosition({
+    account: account,
+    vaultId: vault.id,
+  })
 
   const [token0, token1] = useMemo(() => {
     const token0 = new Token({ chainId: chainId, ...vault.pool.token0 })
@@ -54,14 +60,27 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({ vault }) => 
     return [token0, token1]
   }, [chainId, vault])
 
-  const [token0Amount, token1Amount] = useMemo(() => {
-    if (!position) return [null, null]
-
-    const token0Amount = Amount.fromRawAmount(token0, position.token0Balance)
-    const token1Amount = Amount.fromRawAmount(token1, position.token1Balance)
+  const tokenAmountsTotal = useMemo(() => {
+    const token0Amount = Amount.fromRawAmount(token0, position?.token0Balance || 0n)
+    const token1Amount = Amount.fromRawAmount(token1, position?.token1Balance || 0n)
 
     return [token0Amount, token1Amount]
   }, [position, token0, token1])
+
+  const tokenAmountsDiscounted = useMemo(() => {
+    const liquidityPercentage = new Percent(debouncedValue, 100)
+    const token0Amount = Amount.fromRawAmount(
+      token0,
+      liquidityPercentage.multiply(tokenAmountsTotal[0].quotient).quotient
+    )
+    const token1Amount = Amount.fromRawAmount(
+      token1,
+      liquidityPercentage.multiply(tokenAmountsTotal[1].quotient).quotient
+    )
+    const steerTokenAmount = liquidityPercentage.multiply(position?.steerTokenBalance || 0n).quotient
+
+    return { token0Amount, token1Amount, steerTokenAmount }
+  }, [position, tokenAmountsTotal, debouncedValue, token0, token1])
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined, error: Error | null) => {
@@ -89,8 +108,26 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({ vault }) => 
     [account, chainId, token0.symbol, token1.symbol]
   )
 
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    if (!account || position?.steerTokenBalance === 0n || !tokenAmountsDiscounted || !isSteerChainId(chainId)) return {}
+
+    return {
+      to: vault.address as Address,
+      data: encodeFunctionData({
+        abi: steerMultiPositionManager,
+        functionName: 'withdraw',
+        args: [
+          tokenAmountsDiscounted.steerTokenAmount,
+          calculateSlippageAmount(tokenAmountsDiscounted.token0Amount, slippagePercent)[0],
+          calculateSlippageAmount(tokenAmountsDiscounted.token1Amount, slippagePercent)[0],
+          account,
+        ],
+      }),
+    }
+  }, [account, chainId, position?.steerTokenBalance, slippagePercent, tokenAmountsDiscounted, vault.address])
+
   const { config } = usePrepareSendTransaction({
-    ...{},
+    ...prepare,
     chainId: chainId,
     enabled: +value > 0 && chainId === chain?.id,
   })
@@ -104,97 +141,96 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({ vault }) => 
   })
 
   return (
-    <>
-      <CardContent>
-        <CardGroup>
-          <div className="p-3 pb-2 space-y-2 overflow-hidden bg-white rounded-xl dark:bg-secondary border border-accent">
-            <div className="flex justify-between gap-4">
-              <div>
-                <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">{value}%</h1>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant={value === '25' ? 'default' : 'secondary'}
-                  size="sm"
-                  onClick={() => setValue('25')}
-                  testId="liquidity-25"
-                >
-                  25%
-                </Button>
-                <Button
-                  variant={value === '50' ? 'default' : 'secondary'}
-                  size="sm"
-                  onClick={() => setValue('50')}
-                  testId="liquidity-50"
-                >
-                  50%
-                </Button>
-                <Button
-                  variant={value === '75' ? 'default' : 'secondary'}
-                  size="sm"
-                  onClick={() => setValue('75')}
-                  testId="liquidity-75"
-                >
-                  75%
-                </Button>
-                <Button
-                  variant={value === '100' ? 'default' : 'secondary'}
-                  size="sm"
-                  onClick={() => setValue('100')}
-                  testId="liquidity-max"
-                >
-                  Max
-                </Button>
-                <SettingsOverlay
-                  options={{
-                    slippageTolerance: {
-                      storageKey: 'removeSteerLiquidity',
-                      defaultValue: '0.5',
-                      title: 'Remove Liquidity Slippage',
-                    },
-                  }}
-                  modules={[SettingsModule.SlippageTolerance]}
-                >
-                  <IconButton size="sm" name="Settings" icon={CogIcon} variant="secondary" className="!rounded-xl" />
-                </SettingsOverlay>
-              </div>
-            </div>
-            <div className="px-1 pt-2 pb-3">
-              <input
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                type="range"
-                min="1"
-                max="100"
-                className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg dark:bg-gray-700"
-              />
-            </div>
+    <div
+      className={classNames(
+        isPositionLoading || position?.steerTokenBalance === 0n ? 'opacity-40 pointer-events-none' : '',
+        'flex flex-col gap-4'
+      )}
+    >
+      <div className="p-3 pb-2 space-y-2 overflow-hidden bg-white rounded-xl dark:bg-secondary border border-accent">
+        <div className="flex justify-between gap-4">
+          <div>
+            <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">{value}%</h1>
           </div>
-        </CardGroup>
-        <Card variant="outline" className="space-y-6 p-6">
-          <CardGroup>
-            <CardLabel>{"You'll"} receive</CardLabel>
-            <CardCurrencyAmountItem amount={token0Amount?.multiply(value).divide(100)} />
-            <CardCurrencyAmountItem amount={token1Amount?.multiply(value).divide(100)} />
-          </CardGroup>
-        </Card>
-      </CardContent>
-      <CardFooter>
-        <Checker.Connect fullWidth variant="outline" size="xl">
-          <Checker.Network fullWidth variant="outline" size="xl" chainId={chainId}>
+          <div className="flex items-center gap-2">
             <Button
-              size="xl"
-              loading={isWritePending}
-              disabled={+value === 0}
-              fullWidth
-              onClick={() => sendTransaction?.()}
-              testId="remove-or-add-liquidity"
+              variant={value === '25' ? 'default' : 'secondary'}
+              size="sm"
+              onClick={() => setValue('25')}
+              testId="liquidity-25"
             >
-              {+value === 0 ? 'Enter Amount' : 'Remove'}
+              25%
             </Button>
-          </Checker.Network>
-        </Checker.Connect>
-      </CardFooter>
-    </>
+            <Button
+              variant={value === '50' ? 'default' : 'secondary'}
+              size="sm"
+              onClick={() => setValue('50')}
+              testId="liquidity-50"
+            >
+              50%
+            </Button>
+            <Button
+              variant={value === '75' ? 'default' : 'secondary'}
+              size="sm"
+              onClick={() => setValue('75')}
+              testId="liquidity-75"
+            >
+              75%
+            </Button>
+            <Button
+              variant={value === '100' ? 'default' : 'secondary'}
+              size="sm"
+              onClick={() => setValue('100')}
+              testId="liquidity-max"
+            >
+              Max
+            </Button>
+            <SettingsOverlay
+              options={{
+                slippageTolerance: {
+                  storageKey: 'removeSteerLiquidity',
+                  defaultValue: '0.5',
+                  title: 'Remove Liquidity Slippage',
+                },
+              }}
+              modules={[SettingsModule.SlippageTolerance]}
+            >
+              <IconButton size="sm" name="Settings" icon={CogIcon} variant="secondary" className="!rounded-xl" />
+            </SettingsOverlay>
+          </div>
+        </div>
+        <div className="px-1 pt-2 pb-3">
+          <input
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            type="range"
+            min="1"
+            max="100"
+            className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg dark:bg-gray-700"
+          />
+        </div>
+      </div>
+      <Card variant="outline" className="space-y-6 p-6">
+        <CardGroup>
+          <CardLabel>{"You'll"} receive</CardLabel>
+          <CardCurrencyAmountItem amount={tokenAmountsTotal?.[0].multiply(value).divide(100)} />
+          <CardCurrencyAmountItem amount={tokenAmountsTotal?.[1].multiply(value).divide(100)} />
+        </CardGroup>
+      </Card>
+      <Checker.Connect fullWidth variant="outline" size="xl">
+        <Checker.Network fullWidth variant="outline" size="xl" chainId={chainId}>
+          <Button
+            size="xl"
+            loading={isWritePending}
+            disabled={+value === 0}
+            fullWidth
+            onClick={() => sendTransaction?.()}
+            testId="remove-or-add-steer-liquidity"
+          >
+            {+value === 0 ? 'Enter Amount' : 'Remove'}
+          </Button>
+        </Checker.Network>
+      </Checker.Connect>
+    </div>
   )
 }
