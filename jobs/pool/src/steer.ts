@@ -60,15 +60,14 @@ async function extractChain(chainId: SteerChainId) {
       ])
 
       const payload = isPromiseFulfilled(payloadP) ? payloadP.value : null
-      const { apr: annualFeeAPR, apr1w: annualPercentageWeeklyYield } = isPromiseFulfilled(aprP)
-        ? aprP.value
-        : { apr: null, apr1w: null }
+      const { apr: annualPercentageYield, apr1w: annualPercentageWeeklyYield } =
+        isPromiseFulfilled(aprP) && aprP.value ? aprP.value : { apr: null, apr1w: null }
 
       return {
         ...vault,
         poolId,
         payload,
-        annualFeeAPR,
+        annualPercentageYield,
         annualPercentageWeeklyYield,
         reserve0USD,
         fees0USD,
@@ -121,9 +120,8 @@ function transform(chainsWithVaults: Awaited<ReturnType<typeof extract>>): Prism
         poolId: vault.poolId,
         feeTier: Number(vault.feeTier) / 1000000,
 
-        // APR is the weekly APR, temporary solution, waiting for Steer to fix the subgraph
-        // apr1d, apr1m, apr1y are inaccurate
-        apr: Number(vault.annualFeeAPR),
+        // apr1d, apr1m, apr1y are from the subgraph and inaccurate
+        apr: Number(vault.annualPercentageYield),
         apr1w: Number(vault.annualPercentageWeeklyYield),
         apr1d: Number(vault.annualPercentageDailyYield),
         apr1m: Number(vault.annualPercentageMonthlyYield),

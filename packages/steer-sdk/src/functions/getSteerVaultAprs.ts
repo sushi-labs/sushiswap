@@ -6,15 +6,15 @@ interface GetSteerVaultsAprs {
   vaultIds: string[]
 }
 
-function getApr(chainId: number, address: string, interval?: number): Promise<number> {
-  let url = `https://ro81h8hq6b.execute-api.us-east-1.amazonaws.com/pool/weekly-apr?address=${address}&chain=${chainId}`
+function getApr(chainId: number, address: string, interval?: number): Promise<number | string> {
+  let url = `https://ro81h8hq6b.execute-api.us-east-1.amazonaws.com/pool/fee-apr?address=${address}&chain=${chainId}`
   if (interval) {
     url += `&interval=${interval}`
   }
 
   return fetch(url)
     .then((res) => res.json())
-    .then((res) => res.apr)
+    .then((res) => res?.apr)
 }
 
 async function getSteerVaultsAprs({ vaultIds }: GetSteerVaultsAprs) {
@@ -24,11 +24,11 @@ async function getSteerVaultsAprs({ vaultIds }: GetSteerVaultsAprs) {
 
       const aprs = await Promise.all([getApr(chainId, address), getApr(chainId, address, 604800)])
 
-      if (aprs.some((apr) => typeof apr === 'undefined' || typeof apr !== 'number')) {
+      if (aprs.some((apr) => typeof apr === 'undefined')) {
         throw new Error("Couldn't fetch APR")
       }
 
-      const [apr, apr1w] = aprs.map((apr) => apr / 100)
+      const [apr, apr1w] = aprs.map((apr) => Number(apr) / 100)
 
       return {
         apr,
