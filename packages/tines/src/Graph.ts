@@ -517,8 +517,8 @@ export class Graph {
     from.gasPrice = gasPrice
     const edges = from.edges
       .map((e): [Edge, number] => [e, parseInt(e.reserve(from).toString())])
-      .sort(([_1, r1], [_2, r2]) => r2 - r1)
-    edges.forEach(([e, _]) => {
+      .sort(([, r1], [, r2]) => r2 - r1)
+    edges.forEach(([e]) => {
       const v = e.vert0 === from ? e.vert1 : e.vert0
       if (v.price !== 0) return
       const p = e.pool.calcCurrentPriceWithoutFee(from === e.vert1)
@@ -883,7 +883,7 @@ export class Graph {
     let amountInBI: bigint
     if (typeof amountIn === 'bigint') {
       amountInBI = amountIn
-      amountIn = parseInt(amountIn.toString())
+      amountIn = Number(amountIn)
     } else {
       amountInBI = getBigInt(amountIn)
     }
@@ -1242,7 +1242,8 @@ export class Graph {
   }
 
   removeWeakestEdge(verts: Vertice[]) {
-    let minVert: Vertice, minVertNext: Vertice
+    let minVert: Vertice | undefined = undefined,
+      minVertNext: Vertice
     let minOutput = Number.MAX_VALUE
     verts.forEach((v1, i) => {
       const v2 = i === 0 ? verts[verts.length - 1] : verts[i - 1]
@@ -1257,11 +1258,12 @@ export class Graph {
         minOutput = out
       }
     })
-    // @ts-ignore
-    minVert.getOutputEdges().forEach((e) => {
-      if (minVert.getNeibour(e) !== minVertNext) return
-      e.canBeUsed = false
-    })
+
+    if (minVert !== undefined)
+      (minVert as Vertice).getOutputEdges().forEach((e) => {
+        if ((minVert as Vertice).getNeibour(e) !== minVertNext) return
+        e.canBeUsed = false
+      })
   }
 
   // topological sort

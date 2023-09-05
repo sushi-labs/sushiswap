@@ -21,7 +21,7 @@ export const ProductArticles: FC<ProductArticles> = ({ title, productName, artic
       <div className="flex items-center justify-between w-full">
         <ProductSectionTitle title={title} subtitle={subtitle} />
 
-        <LinkInternal href={`/articles?product=${productName}`}>
+        <LinkInternal href={`?product=${productName}`}>
           <Button variant="secondary">View All</Button>
         </LinkInternal>
       </div>

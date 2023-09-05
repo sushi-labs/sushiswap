@@ -49,7 +49,7 @@
     "@uniswap/v3-core": "1.0.1",
     "abitype": "0.8.2",
     "ethers": "5.7.2",
-    "viem": "0.0.0-jxom-refactor-multicall.20230830T113622"
+    "viem": "1.9.5"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

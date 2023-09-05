@@ -122,7 +122,6 @@ export const EXTRACTOR_CONFIG = {
     logDepth: 300,
     logType: LogFilterType.Native,
     logging: true,
-    RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.ARBITRUM],
   },
   [ChainId.ARBITRUM_NOVA]: {
     client: createPublicClient(config[ChainId.ARBITRUM_NOVA]),
@@ -132,7 +131,6 @@ export const EXTRACTOR_CONFIG = {
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
-    RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.ARBITRUM_NOVA],
   },
   [ChainId.AVALANCHE]: {
     client: createPublicClient(config[ChainId.AVALANCHE]),
@@ -150,7 +148,6 @@ export const EXTRACTOR_CONFIG = {
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
-    RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.AVALANCHE],
   },
   [ChainId.BOBA]: {
     client: createPublicClient(config[ChainId.BOBA]),
@@ -160,7 +157,6 @@ export const EXTRACTOR_CONFIG = {
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
-    RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.BOBA],
   },
   [ChainId.BOBA_AVAX]: {
     client: createPublicClient(config[ChainId.BOBA_AVAX]),
@@ -170,7 +166,6 @@ export const EXTRACTOR_CONFIG = {
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
-    RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.BOBA_AVAX],
   },
   [ChainId.BOBA_BNB]: {
     client: createPublicClient(config[ChainId.BOBA_BNB]),
@@ -180,7 +175,6 @@ export const EXTRACTOR_CONFIG = {
     cacheDir: './cache',
     logDepth: 500,
     logging: true,
-    RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.BOBA_BNB],
   },
   [ChainId.BSC]: {
     client: createPublicClient(config[ChainId.BSC]),
@@ -216,7 +210,6 @@ export const EXTRACTOR_CONFIG = {
     cacheDir: './cache',
     logDepth: 1000,
     logging: true,
-    RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.BSC],
   },
   [ChainId.CELO]: {
     client: createPublicClient(config[ChainId.CELO]),
@@ -226,7 +219,6 @@ export const EXTRACTOR_CONFIG = {
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
-    RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.CELO],
   },
   [ChainId.ETHEREUM]: {
     client: createPublicClient(config[ChainId.ETHEREUM]),
@@ -262,7 +254,6 @@ export const EXTRACTOR_CONFIG = {
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
-    routeProcessor3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.ETHEREUM],
   },
   [ChainId.FANTOM]: {
     client: createPublicClient(config[ChainId.FANTOM]),
@@ -299,7 +290,6 @@ export const EXTRACTOR_CONFIG = {
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
-    RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.FANTOM],
   },
   [ChainId.OPTIMISM]: {
     client: createPublicClient(config[ChainId.OPTIMISM]),
@@ -316,7 +306,6 @@ export const EXTRACTOR_CONFIG = {
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
-    RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.OPTIMISM],
     account: '0x4200000000000000000000000000000000000006', // just a whale because optimism eth_call needs gas (
   },
   [ChainId.POLYGON]: {
@@ -359,7 +348,6 @@ export const EXTRACTOR_CONFIG = {
     cacheDir: './cache',
     logDepth: 100,
     logging: true,
-    RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.POLYGON],
   },
   [ChainId.POLYGON_ZKEVM]: {
     client: createPublicClient(config[ChainId.POLYGON_ZKEVM]),
@@ -377,7 +365,6 @@ export const EXTRACTOR_CONFIG = {
     logDepth: 300,
     logging: true,
     maxCallsInOneBatch: 5,
-    RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.POLYGON_ZKEVM],
   },
   [ChainId.BASE]: {
     client: createPublicClient(config[ChainId.BASE]),
@@ -395,6 +382,5 @@ export const EXTRACTOR_CONFIG = {
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
-    RP3Address: ROUTE_PROCESSOR_3_ADDRESS[ChainId.BASE],
   },
 }

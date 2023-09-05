@@ -4,7 +4,13 @@
 name: 'Storybook Publish'
 
 # Event for the workflow
-on: push
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - ".github/workflows/chromatic.yml"
+      - "config/tailwindcss/**"
+      - "packages/ui/**"
 
 # List of jobs
 jobs:

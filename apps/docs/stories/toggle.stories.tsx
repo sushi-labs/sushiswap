@@ -6,12 +6,17 @@ import * as React from 'react'
 
 import { ViewGroup } from '../components/View'
 
+const variants: ToggleProps['variant'][] = ['default', 'outline']
 const sizes: ToggleProps['size'][] = ['xs', 'sm', 'default', 'lg']
 
 const meta = {
   title: 'Primitives/Toggle',
   component: Toggle,
   argTypes: {
+    variant: {
+      options: variants,
+      control: { type: 'select' },
+    },
     size: {
       options: sizes,
       control: { type: 'select' },
@@ -43,6 +48,18 @@ export const Sizes = (args) => {
     <React.Fragment key={size}>
       <Toggle {...args} key={size} size={size}>
         Size {size}
+      </Toggle>
+    </React.Fragment>
+  ))
+
+  return <ViewGroup direction="row">{items}</ViewGroup>
+}
+
+export const Variants = (args) => {
+  const items = variants.map((variant) => (
+    <React.Fragment key={variant}>
+      <Toggle {...args} key={variant} variant={variant}>
+        Variant {variant}
       </Toggle>
     </React.Fragment>
   ))
