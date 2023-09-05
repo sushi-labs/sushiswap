@@ -101,11 +101,11 @@ function transform(chainsWithVaults: Awaited<ReturnType<typeof extract>>): Prism
     vaults.flatMap((vault) => {
       const lowestTick = vault.positions.reduce(
         (lowest, position) => (Number(position.lowerTick) < lowest ? Number(position.lowerTick) : lowest),
-        0
+        Infinity
       )
       const highestTick = vault.positions.reduce(
         (highest, position) => (Number(position.upperTick) > highest ? Number(position.upperTick) : highest),
-        0
+        -Infinity
       )
 
       // ! Missing strategies will be ignored
