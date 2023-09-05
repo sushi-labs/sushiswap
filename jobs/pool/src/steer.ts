@@ -131,7 +131,7 @@ function transform(chainsWithVaults: Awaited<ReturnType<typeof extract>>): Prism
 
         token0Id: `${chainId}:${vault.token0}`.toLowerCase(),
         reserve0: vault.reserve0 as string,
-        reserve0USD: vault.reserve1USD,
+        reserve0USD: vault.reserve0USD,
         fees0: vault.fees0 as string,
         fees0USD: vault.fees0USD,
 
