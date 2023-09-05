@@ -138,9 +138,10 @@ export class Extractor {
     let poolsV2: PoolCode[] = []
     let watchersV3: UniV3PoolWatcher[] = []
     let promises: Promise<void>[] = []
+    const tokensUnique = Array.from(new Set(tokens).values())
 
     if (this.extractorV2) {
-      const { prefetched, fetching } = this.extractorV2.getPoolsForTokens(tokens)
+      const { prefetched, fetching } = this.extractorV2.getPoolsForTokens(tokensUnique)
       poolsV2 = prefetched
       promises = fetching.map(async (p) => {
         const pc = await p
@@ -149,7 +150,7 @@ export class Extractor {
     }
 
     if (this.extractorV3) {
-      const { prefetched, fetching } = this.extractorV3.getWatchersForTokens(tokens)
+      const { prefetched, fetching } = this.extractorV3.getWatchersForTokens(tokensUnique)
       watchersV3 = prefetched
       prefetched.forEach((w) => {
         if (w.getStatus() !== UniV3PoolWatcherStatus.All) promises.push(w.statusAll())

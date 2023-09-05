@@ -218,19 +218,19 @@ export class UniV3Extractor {
     return watcher
   }
 
-  getWatchersForTokens(tokens: Token[]): {
+  getWatchersForTokens(tokensUnique: Token[]): {
     prefetched: UniV3PoolWatcher[]
     fetching: Promise<UniV3PoolWatcher | undefined>[]
   } {
+    const startTime = performance.now()
     const prefetched: UniV3PoolWatcher[] = []
     const fetching: Promise<UniV3PoolWatcher | undefined>[] = []
     const fees = Object.values(FeeAmount).filter((fee) => typeof fee === 'number') as FeeAmount[]
-    const startTime = performance.now()
-    for (let i = 0; i < tokens.length; ++i) {
-      this.tokenManager.findToken(tokens[i].address as Address) // to let save it in the cache
-      for (let j = i + 1; j < tokens.length; ++j) {
-        if (tokens[i].address === tokens[j].address) continue
-        const [t0, t1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i], tokens[j]] : [tokens[j], tokens[i]]
+    for (let i = 0; i < tokensUnique.length; ++i) {
+      const t0 = tokensUnique[i]
+      this.tokenManager.findToken(t0.address as Address) // to let save it in the cache
+      for (let j = i + 1; j < tokensUnique.length; ++j) {
+        const t1 = tokensUnique[j]
         this.factories.forEach((factory) => {
           fees.forEach((fee) => {
             const addr = this.computeV3Address(factory, t0, t1, fee)

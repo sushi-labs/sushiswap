@@ -228,17 +228,17 @@ export class UniV2Extractor {
     this.taskCounter.dec()
   }
 
-  getPoolsForTokens(tokens: Token[]): {
+  getPoolsForTokens(tokensUnique: Token[]): {
     prefetched: ConstantProductPoolCode[]
     fetching: Promise<ConstantProductPoolCode | undefined>[]
   } {
     const prefetched: ConstantProductPoolCode[] = []
     const fetching: Promise<ConstantProductPoolCode | undefined>[] = []
-    for (let i = 0; i < tokens.length; ++i) {
-      this.tokenManager.findToken(tokens[i].address as Address) // to let save it in the cache
-      for (let j = i + 1; j < tokens.length; ++j) {
-        if (tokens[i].address === tokens[j].address) continue
-        const [t0, t1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i], tokens[j]] : [tokens[j], tokens[i]]
+    for (let i = 0; i < tokensUnique.length; ++i) {
+      const t0 = tokensUnique[i]
+      this.tokenManager.findToken(t0.address as Address) // to let save it in the cache
+      for (let j = i + 1; j < tokensUnique.length; ++j) {
+        const t1 = tokensUnique[j]
         this.factories.forEach((factory) => {
           const addr = this.computeV2Address(factory, t0, t1)
           const addrL = addr.toLowerCase()
