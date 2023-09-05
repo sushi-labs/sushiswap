@@ -390,6 +390,7 @@ export class UniV2Extractor {
         this.consoleLog(`fake pool ${addr}`)
         return
       }
+      addr = expectedPoolAddress // in case if addr is lower case
     }
 
     return this.addPoolWatching({

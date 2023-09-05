@@ -190,7 +190,7 @@ export class UniV3Extractor {
     }
     const watcher = new UniV3PoolWatcher(
       p.factory.provider,
-      p.address,
+      expectedPoolAddress,
       this.tickHelperContract,
       p.token0,
       p.token1,
@@ -202,7 +202,7 @@ export class UniV3Extractor {
     this.poolMap.set(p.address.toLowerCase() as Address, watcher) // lowercase because incoming events have lowcase addresses ((
     if (addToCache)
       this.poolPermanentCache.add({
-        address: p.address,
+        address: expectedPoolAddress,
         token0: p.token0.address as Address,
         token1: p.token1.address as Address,
         fee: p.fee,
@@ -212,7 +212,9 @@ export class UniV3Extractor {
       ++this.watchedPools
       if (source !== 'cache') {
         const delay = Math.round(performance.now() - startTime)
-        this.consoleLog(`add pool ${p.address} (${delay}ms, ${source}), watched pools total: ${this.watchedPools}`)
+        this.consoleLog(
+          `add pool ${expectedPoolAddress} (${delay}ms, ${source}), watched pools total: ${this.watchedPools}`
+        )
       }
     })
     return watcher
