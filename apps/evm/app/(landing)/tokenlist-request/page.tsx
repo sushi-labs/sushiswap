@@ -153,7 +153,10 @@ export default function Partner() {
                     </div>
                   </div>
                 </FormControl>
-                <FormMessage>Minimum dimensions are 128x128.</FormMessage>
+                <FormMessage>
+                  Allowed formats: .jpeg, .jpg <br />
+                  Minimum dimensions are 128x128.
+                </FormMessage>
               </FormItem>
               <FormField
                 control={methods.control}
