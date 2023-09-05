@@ -109,9 +109,6 @@ async function CompareTest(args: {
   const extractor = new Extractor({ ...args, client, logging: false })
   await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(args.checkTokens ?? []))
 
-  const dataFetcher = new DataFetcher(chainId, client)
-  dataFetcher.startDataFetching(args.liquidityProviders)
-
   const nativeProvider = new NativeWrapProvider(chainId, client)
   const poolsNativeSet = new Set(nativeProvider.getCurrentPoolList().map((pc) => pc.pool.address))
 
@@ -133,6 +130,9 @@ async function CompareTest(args: {
       const add0 = ADDITIONAL_BASES[chainId]?.[tokens[i].address] ?? []
       const add1 = ADDITIONAL_BASES[chainId]?.[tokens[j].address] ?? []
 
+      const dataFetcher = new DataFetcher(chainId, client)
+      dataFetcher.startDataFetching(args.liquidityProviders)
+
       const [poolCodesExtractor, poolCodesDataFetcher] = await Promise.all([
         extractor.getPoolCodesForTokensAsync(
           BASES_TO_CHECK_TRADES_AGAINST[chainId].concat([tokens[i], tokens[j]]).concat(add0).concat(add1),
@@ -146,8 +146,6 @@ async function CompareTest(args: {
       const poolsExtractor = poolCodesExtractor.map((pc) => pc.pool.address)
       const poolsExtractorSet = new Set(poolsExtractor)
 
-      // await dataFetcher.fetchPoolsForToken(tokens[i], tokens[j])
-      // const poolCodesDataFetcher = await dataFetcher.getCurrentPoolCodeList(tokens[i], tokens[j])
       const poolsDataFetcher = poolCodesDataFetcher.map((pc) => pc.pool.address)
       const poolsDataFetcherSet = new Set(poolsDataFetcher)
 
@@ -163,18 +161,24 @@ async function CompareTest(args: {
   }
 }
 
-it.skip('Extractor DataFetcher compare test', async () => {
+it('Extractor DataFetcher compare test', async () => {
   await CompareTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
-    factoriesV2: [sushiswapV2Factory(ChainId.ETHEREUM), uniswapV2Factory(ChainId.ETHEREUM)],
+    factoriesV2: [
+      //
+      sushiswapV2Factory(ChainId.ETHEREUM),
+      uniswapV2Factory(ChainId.ETHEREUM),
+    ],
     factoriesV3: [
-      //uniswapV3Factory(ChainId.ETHEREUM)]
+      //
+      uniswapV3Factory(ChainId.ETHEREUM),
     ],
     liquidityProviders: [
+      //
       LiquidityProviders.SushiSwapV2,
       LiquidityProviders.UniswapV2,
-      //LiquidityProviders.UniswapV3
+      LiquidityProviders.UniswapV3,
     ],
     tickHelperContract: TickLensContract[ChainId.ETHEREUM],
     cacheDir: './cache',

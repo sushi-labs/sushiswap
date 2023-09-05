@@ -138,7 +138,10 @@ export class Extractor {
     let poolsV2: PoolCode[] = []
     let watchersV3: UniV3PoolWatcher[] = []
     let promises: Promise<void>[] = []
-    const tokensUnique = Array.from(new Set(tokens).values())
+
+    const tokenMap = new Map<string, Token>()
+    tokens.forEach((t) => tokenMap.set(t.address, t))
+    const tokensUnique = Array.from(tokenMap.values())
 
     if (this.extractorV2) {
       const { prefetched, fetching } = this.extractorV2.getPoolsForTokens(tokensUnique)
@@ -166,7 +169,9 @@ export class Extractor {
     }
 
     await Promise.any([Promise.allSettled(promises), delay(timeout)])
-    const poolsV3 = watchersV3.map((w) => w.getPoolCode()).filter((pc) => pc !== undefined) as PoolCode[]
+    const poolsV3 = watchersV3
+      .map((w) => w.getPoolCode())
+      .filter((pc) => pc !== undefined && pc.pool.reserve0 > 0n && pc.pool.reserve1 > 0n) as PoolCode[]
     return poolsV3.concat(poolsV2)
   }
 
