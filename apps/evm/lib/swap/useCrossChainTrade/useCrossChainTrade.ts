@@ -1,7 +1,6 @@
-import { Amount, Currency, Native, Price, tryParseAmount, WNATIVE_ADDRESS } from '@sushiswap/currency'
+import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
 import { Percent, ZERO } from '@sushiswap/math'
-import { usePrice } from '@sushiswap/react-query'
-import { STARGATE_CHAIN_ID, STARGATE_ETH_ADDRESS } from '@sushiswap/stargate'
+import { STARGATE_CHAIN_ID } from '@sushiswap/stargate'
 import { useFeeData, watchNetwork, readContract } from '@sushiswap/wagmi'
 import { useClientTrade } from '@sushiswap/wagmi/future/hooks'
 import { useQuery } from '@tanstack/react-query'
@@ -15,7 +14,7 @@ import { RouterLiquiditySource } from '@sushiswap/router'
 import { useBridgeFees } from './useBridgeFees'
 import { isSwapApiEnabledChainId } from 'config'
 import { encodeStargateTeleportParams, estimateStargateDstGas, stargateAdapterAddress } from './StargateAdapter'
-import { Address, encodeAbiParameters, parseAbiParameters, stringify } from 'viem'
+import { encodeAbiParameters, parseAbiParameters, stringify } from 'viem'
 import { useStargatePath } from './useStargatePath'
 
 const SWAP_API_BASE_URL = process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL
@@ -311,7 +310,7 @@ export const useCrossChainTradeQuery = (
               dstBridgeToken: dstBridgeToken,
               amount: amount.quotient.toString(),
               amountMin: srcAmountOut.quotient.toString(),
-              dustAmount: 0, // TODO: calculate
+              dustAmount: 0,
               receiver: stargateAdapterAddress[network1],
               to: recipient,
               gas: dstGasEstimate,
@@ -344,7 +343,7 @@ export const useCrossChainTradeQuery = (
               dstBridgeToken,
               amount: 0, // set to 0 so RP will transfer all
               amountMin: srcTrade.minAmountOut.quotient.toString(),
-              dustAmount: 0, // TODO: calculate
+              dustAmount: 0,
               receiver: stargateAdapterAddress[network1],
               to: recipient,
               gas: dstGasEstimate,
@@ -377,6 +376,7 @@ export const useCrossChainTradeQuery = (
 
       const value = amount.currency.isNative ? BigInt(amount.quotient.toString()) + fee : fee
 
+      // est 500K gas for XSwapV2 call
       const gasEst = 500000n + BigInt(srcTrade?.route?.gasSpent ?? 0)
 
       const gasSpent = Amount.fromRawAmount(Native.onChain(network0), fee + gasEst * BigInt(feeData0?.gasPrice ?? 0))
@@ -390,7 +390,7 @@ export const useCrossChainTradeQuery = (
         amountIn: amount.quotient.toString(),
         amountOut: dstAmountOut?.quotient.toString(),
         minAmountOut: dstMinimumAmountOut?.quotient.toString(),
-        gasSpent: gasSpent?.quotient?.toString(),
+        gasSpent: gasSpent.toSignificant(4),
         writeArgs,
         route: {
           status: '',
@@ -415,10 +415,6 @@ export const useCrossChainTradeQuery = (
 
 export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
   const { token0, token1 } = variables
-  const { data: price } = usePrice({
-    chainId: variables.network0,
-    address: WNATIVE_ADDRESS[variables.network0],
-  })
 
   const select = useCallback(
     (data) => {
@@ -434,12 +430,7 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
           route: {
             status: amountIn?.greaterThan(ZERO) && !amountOut ? 'NoWay' : '',
           },
-          gasSpent:
-            data.gasSpent && price
-              ? Amount.fromRawAmount(Native.onChain(variables.network0), data.gasSpent)
-                  .multiply(price.asFraction)
-                  .toSignificant(4)
-              : '0',
+          gasSpent: data.gasSpent,
           swapPrice,
           priceImpact,
           amountIn,
@@ -463,7 +454,7 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
         }
       }
     },
-    [price, token0, token1, variables.network0, variables.network1]
+    [token0, token1, variables.network0, variables.network1]
   ) as UseCrossChainTradeQuerySelect
 
   return useCrossChainTradeQuery(variables, select)
