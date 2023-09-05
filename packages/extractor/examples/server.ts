@@ -33,7 +33,7 @@ const querySchema = z.object({
   tokenOut: z.string(),
   amount: z.string().transform((amount) => BigInt(amount)),
   gasPrice: z.optional(z.coerce.number().int().gt(0)),
-  source: z.optional(z.coerce.string().refine((source) => source in RouterLiquiditySource)),
+  source: z.optional(z.nativeEnum(RouterLiquiditySource)),
   to: z.optional(z.string()).transform((to) => (to ? (to as Address) : undefined)),
   preferSushi: z.optional(z.coerce.boolean()),
   maxPriceImpact: z.optional(z.coerce.number()),
@@ -173,7 +173,8 @@ async function main() {
               to,
               ROUTE_PROCESSOR_3_ADDRESS[chainId],
               [],
-              maxPriceImpact
+              maxPriceImpact,
+              source
             )
           : undefined,
       })
@@ -195,6 +196,7 @@ async function main() {
       tokenOut: _tokenOut,
       amount,
       gasPrice,
+      source,
       to,
       preferSushi,
       maxPriceImpact,
@@ -262,7 +264,7 @@ async function main() {
               ROUTE_PROCESSOR_3_1_ADDRESS[chainId],
               [],
               maxPriceImpact,
-              source as RouterLiquiditySource
+              source
             )
           : undefined,
       })

@@ -78,7 +78,7 @@ export const useCrossChainTradeQuery = (
     recipient: stargateAdapterAddress[network0],
     enabled: Boolean(isSrcSwap && enabled && !isFallback && amount),
     carbonOffset: false,
-    source: RouterLiquiditySource.Sender,
+    source: RouterLiquiditySource.Self,
     onError: () => {
       log.error('xswap src swap api error')
       setIsFallback(true)
@@ -95,7 +95,7 @@ export const useCrossChainTradeQuery = (
     recipient: stargateAdapterAddress[network0],
     enabled: Boolean(isSrcSwap && enabled && isFallback && amount),
     carbonOffset: false,
-    source: RouterLiquiditySource.Sender,
+    source: RouterLiquiditySource.Self,
   }) as ReturnType<typeof useApiTrade>
 
   const { data: srcTrade } = isFallback ? srcClientTrade : srcApiTrade
@@ -374,7 +374,8 @@ export const useCrossChainTradeQuery = (
         chainId: network0,
       })) as [bigint]
 
-      const value = amount.currency.isNative ? BigInt(amount.quotient.toString()) + fee : fee
+      // Add 20% buffer to STG fee
+      const value = amount.currency.isNative ? BigInt(amount.quotient.toString()) + (fee * 5n) / 4n : (fee * 5n) / 4n
 
       // est 500K gas for XSwapV2 call
       const gasEst = 500000n + BigInt(srcTrade?.route?.gasSpent ?? 0)
