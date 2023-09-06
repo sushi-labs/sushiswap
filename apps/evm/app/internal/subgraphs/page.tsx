@@ -71,8 +71,7 @@ const SubgraphsPage = () => {
           <div className="flex flex-col items-center w-full space-y-6">
             {blocks.map((block) => (
               <div key={block.title} className="space-y-2">
-                <div>{block.title}</div>
-                <SubgraphTable subgraphs={block.subgraphs} groupBy={groupBy} />
+                <SubgraphTable subgraphs={block.subgraphs} groupBy={groupBy} title={block.title} />
               </div>
             ))}
             {!data && !isValidating && (

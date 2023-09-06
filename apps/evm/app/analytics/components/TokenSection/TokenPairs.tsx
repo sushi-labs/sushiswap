@@ -5,7 +5,7 @@ import { formatPercent, formatUSD } from '@sushiswap/format'
 import { Token as GraphToken } from '@sushiswap/graph-client'
 import { LinkExternal, LinkInternal, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
-import { Table } from '@sushiswap/ui/components/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@sushiswap/ui/components/table'
 import React, { FC } from 'react'
 import { useSWRConfig } from 'swr'
 
@@ -22,108 +22,104 @@ export const TokenPairs: FC<TokenPairs> = ({ token }) => {
   return (
     <div className="flex flex-col w-full gap-4">
       <p className="font-semibold  text-slate-50">Trending Pairs</p>
-      <Table.container className="w-full">
-        <Table.table>
-          <Table.thead>
-            <Table.thr>
-              <Table.th>
-                <div className="text-left">Name</div>
-              </Table.th>
-              <Table.th>
-                <div className="text-left">TVL</div>
-              </Table.th>
-              <Table.th>
-                <div className="text-left">Volume (7d)</div>
-              </Table.th>
-              <Table.th>
-                <div className="text-left">APY</div>
-              </Table.th>
-            </Table.thr>
-          </Table.thead>
-          <Table.tbody>
-            {pools &&
-              token.pairs.map(({ pair }, i) => {
-                const pool = pools.find((pool) => pool.id === pair.id)
+      <Table>
+        <TableHeader>
+          <TableHead>
+            <div className="text-left">Name</div>
+          </TableHead>
+          <TableHead>
+            <div className="text-left">TVL</div>
+          </TableHead>
+          <TableHead>
+            <div className="text-left">Volume (7d)</div>
+          </TableHead>
+          <TableHead>
+            <div className="text-left">APY</div>
+          </TableHead>
+        </TableHeader>
+        <TableBody>
+          {pools &&
+            token.pairs.map(({ pair }, i) => {
+              const pool = pools.find((pool) => pool.id === pair.id)
 
-                const [token0, token1] = [
-                  pair.token0.id === Native.onChain(token.chainId).wrapped.address
-                    ? Native.onChain(token.chainId)
-                    : new Token({
-                        address: pair.token0.id,
-                        chainId: pair.chainId,
-                        decimals: Number(pair.token0.decimals),
-                        symbol: pair.token0.symbol,
-                      }),
-                  pair.token1.id === Native.onChain(token.chainId).wrapped.address
-                    ? Native.onChain(token.chainId)
-                    : new Token({
-                        address: pair.token1.id,
-                        chainId: pair.chainId,
-                        decimals: Number(pair.token1.decimals),
-                        symbol: pair.token1.symbol,
-                      }),
-                ]
+              const [token0, token1] = [
+                pair.token0.id === Native.onChain(token.chainId).wrapped.address
+                  ? Native.onChain(token.chainId)
+                  : new Token({
+                      address: pair.token0.id,
+                      chainId: pair.chainId,
+                      decimals: Number(pair.token0.decimals),
+                      symbol: pair.token0.symbol,
+                    }),
+                pair.token1.id === Native.onChain(token.chainId).wrapped.address
+                  ? Native.onChain(token.chainId)
+                  : new Token({
+                      address: pair.token1.id,
+                      chainId: pair.chainId,
+                      decimals: Number(pair.token1.decimals),
+                      symbol: pair.token1.symbol,
+                    }),
+              ]
 
-                const liquidityUSD = formatUSD(pair.liquidityUSD)
-                const volume1w = formatUSD(pair.volume1w)
+              const liquidityUSD = formatUSD(pair.liquidityUSD)
+              const volume1w = formatUSD(pair.volume1w)
 
-                return (
-                  <TooltipProvider key={i}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Table.tr>
-                          <Table.td>
-                            <LinkInternal href={`/pool/${pair.id}`}>
-                              <div className="flex items-center">
-                                <Currency.IconList iconWidth={24} iconHeight={24}>
-                                  <Currency.Icon currency={token0} />
-                                  <Currency.Icon currency={token1} />
-                                </Currency.IconList>
-                                <LinkExternal
-                                  className="flex flex-col !no-underline group"
-                                  href={chains[token.chainId].getTokenUrl(pair.id.split(':')[1])}
-                                >
-                                  <p className="text-sm font-semibold">
-                                    {token0.symbol} <span className="text-slate-400">/</span> {token1.symbol}
-                                  </p>
-                                </LinkExternal>
-                              </div>
-                            </LinkInternal>
-                          </Table.td>
-                          <Table.td>
-                            <LinkInternal href={`/pool/${pair.id}`} className="!no-underline">
-                              <p className="font-semibold text-sm text-slate-100">
-                                {liquidityUSD.includes('NaN') ? '$0.00' : liquidityUSD}
-                              </p>
-                            </LinkInternal>
-                          </Table.td>
-                          <Table.td>
-                            <LinkInternal href={`/pool/${pair.id}`} className="!no-underline">
-                              <p className="font-semibold text-sm text-slate-100">
-                                {volume1w.includes('NaN') ? '$0.00' : volume1w}
-                              </p>
-                            </LinkInternal>
-                          </Table.td>
-                          <Table.td>
-                            <LinkInternal href={`/pool/${pair.id}`} className="!no-underline">
-                              <p className="font-semibold text-sm text-slate-100">
-                                {formatPercent(pair.feeApr)}{' '}
-                                {pool && pool.incentives.length > 0 && pool.incentiveApr > 0 && (
-                                  <FarmRewardsAvailableTooltip />
-                                )}
-                              </p>
-                            </LinkInternal>
-                          </Table.td>
-                        </Table.tr>
-                      </TooltipTrigger>
-                    </Tooltip>
-                    <TooltipContent>{pool ? <PoolQuickHoverTooltip row={pool} /> : <></>}</TooltipContent>
-                  </TooltipProvider>
-                )
-              })}
-          </Table.tbody>
-        </Table.table>
-      </Table.container>
+              return (
+                <TooltipProvider key={i}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <TableRow>
+                        <TableCell>
+                          <LinkInternal href={`/pool/${pair.id}`}>
+                            <div className="flex items-center">
+                              <Currency.IconList iconWidth={24} iconHeight={24}>
+                                <Currency.Icon currency={token0} />
+                                <Currency.Icon currency={token1} />
+                              </Currency.IconList>
+                              <LinkExternal
+                                className="flex flex-col !no-underline group"
+                                href={chains[token.chainId].getTokenUrl(pair.id.split(':')[1])}
+                              >
+                                <p className="text-sm font-semibold">
+                                  {token0.symbol} <span className="text-slate-400">/</span> {token1.symbol}
+                                </p>
+                              </LinkExternal>
+                            </div>
+                          </LinkInternal>
+                        </TableCell>
+                        <TableCell>
+                          <LinkInternal href={`/pool/${pair.id}`} className="!no-underline">
+                            <p className="font-semibold text-sm text-slate-100">
+                              {liquidityUSD.includes('NaN') ? '$0.00' : liquidityUSD}
+                            </p>
+                          </LinkInternal>
+                        </TableCell>
+                        <TableCell>
+                          <LinkInternal href={`/pool/${pair.id}`} className="!no-underline">
+                            <p className="font-semibold text-sm text-slate-100">
+                              {volume1w.includes('NaN') ? '$0.00' : volume1w}
+                            </p>
+                          </LinkInternal>
+                        </TableCell>
+                        <TableCell>
+                          <LinkInternal href={`/pool/${pair.id}`} className="!no-underline">
+                            <p className="font-semibold text-sm text-slate-100">
+                              {formatPercent(pair.feeApr)}{' '}
+                              {pool && pool.incentives.length > 0 && pool.incentiveApr > 0 && (
+                                <FarmRewardsAvailableTooltip />
+                              )}
+                            </p>
+                          </LinkInternal>
+                        </TableCell>
+                      </TableRow>
+                    </TooltipTrigger>
+                  </Tooltip>
+                  <TooltipContent>{pool ? <PoolQuickHoverTooltip row={pool} /> : <></>}</TooltipContent>
+                </TooltipProvider>
+              )
+            })}
+        </TableBody>
+      </Table>
     </div>
   )
 }

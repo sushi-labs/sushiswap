@@ -1,16 +1,13 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/graph-client'
-import { useBreakpoint } from '@sushiswap/hooks'
-import { Table } from '@sushiswap/ui/components/table'
-import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
-import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
+import { Card, CardContent, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
+import { PaginationState, SortingState, TableState } from '@tanstack/react-table'
 import stringify from 'fast-json-stable-stringify'
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { useFilters } from '../../Filters'
 import { LIQUIDITY_COLUMN, NAME_COLUMN, NETWORK_COLUMN, PRICE_COLUMN, VOLUME_COLUMN } from './columns'
-import { PAGE_SIZE } from './constants'
 import { TokenFilters } from './TokenFilters'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -61,16 +58,12 @@ const fetcher = ({
 export const TokenTable: FC = () => {
   const { chainIds, search: tokenSymbols } = useFilters()
 
-  const { isSm } = useBreakpoint('sm')
-  const { isMd } = useBreakpoint('md')
-  const { isLg } = useBreakpoint('lg')
-
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
-  const [columnVisibility, setColumnVisibility] = useState({})
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: PAGE_SIZE,
+    pageSize: 10,
   })
+
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
 
   const args = useMemo(
     () => ({ sorting, pagination, chainIds, tokenSymbols }),
@@ -87,51 +80,38 @@ export const TokenTable: FC = () => {
 
   const data = useMemo(() => tokens || [], [tokens])
 
-  const table = useReactTable<Token>({
-    data: data,
-    columns: COLUMNS,
-    state: {
+  const state: Partial<TableState> = useMemo(() => {
+    return {
       sorting,
-      columnVisibility,
-    },
-    pageCount: Math.ceil((tokenCount || 0) / PAGE_SIZE),
-    onSortingChange: setSorting,
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    manualSorting: true,
-    manualPagination: true,
-  })
-
-  useEffect(() => {
-    if (isSm && !isMd && !isLg) {
-      setColumnVisibility({ price: false })
-    } else if (isSm) {
-      setColumnVisibility({})
-    } else {
-      setColumnVisibility({ price: false, volume: false })
+      pagination: {
+        pageIndex: 0,
+        pageSize: data?.length,
+      },
     }
-  }, [isLg, isMd, isSm])
+  }, [data?.length, sorting])
 
   return (
     <div className="space-y-4">
       <TokenFilters />
-      <GenericTable<Token>
-        table={table}
-        loading={!tokens && isValidating}
-        placeholder="No tokens found"
-        pageSize={PAGE_SIZE}
-        linkFormatter={(row) => `/analytics/token/${row.id}`}
-      />
-      <Table.Paginator
-        hasPrev={pagination.pageIndex > 0}
-        hasNext={pagination.pageIndex < table.getPageCount()}
-        onPrev={table.previousPage}
-        onNext={table.nextPage}
-        page={pagination.pageIndex}
-        pages={table.getPageCount()}
-        pageSize={PAGE_SIZE}
-      />
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            Tokens {tokenCount ? <span className="text-gray-400 dark:text-slate-500">({tokenCount})</span> : null}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <DataTable
+            loading={isValidating}
+            columns={COLUMNS}
+            data={data}
+            pagination={true}
+            onPaginationChange={setPagination}
+            onSortingChange={setSorting}
+            state={state}
+            linkFormatter={(row) => `/analytics/token/${row.id}`}
+          />
+        </CardContent>
+      </Card>
     </div>
   )
 }
