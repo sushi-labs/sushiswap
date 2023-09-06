@@ -1,9 +1,9 @@
 import { getChainIdAddressFromId } from '@sushiswap/format'
 import { usePublicClient } from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
-import { clientsFromIds } from 'src/helpers/clientsFromIds.js'
 
 import { getSteerVaultReserves, getSteerVaultsReserves } from '../functions/getSteerVaultReserves.js'
+import { clientsFromIds } from '../helpers/clientsFromIds.js'
 
 interface UseSteerVaultsReserves {
   vaultIds: string[] | undefined

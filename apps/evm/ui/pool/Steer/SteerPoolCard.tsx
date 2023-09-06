@@ -25,7 +25,7 @@ interface SteerPoolCardProps {
 
 export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
   return (
-    <LinkInternal href={`/pool/${pool.id}/positions/create/${vault.id}`}>
+    <LinkInternal href={`/pool/${pool.id}/smart/${vault.id}`}>
       <Card className={classNames('max-w-[400px] hover:border-blue-300 hover:shadow-md')}>
         <CardHeader>
           {/* <div className="flex gap-2 pb-3">

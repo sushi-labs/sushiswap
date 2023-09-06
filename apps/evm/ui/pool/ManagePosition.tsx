@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { PoolsFiltersProvider } from 'ui/pool/PoolsFiltersProvider'
 
-import { ConcentratedPositionsTable } from './ConcentratedPositionsTable'
+import { ConcentratedPositionsTable } from './ConcentratedPositionsTable/ConcentratedPositionsTable'
 
 interface ManagePositionProps {
   address: string

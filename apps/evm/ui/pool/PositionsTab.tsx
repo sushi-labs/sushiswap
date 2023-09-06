@@ -12,7 +12,7 @@ import {
 } from '@sushiswap/ui'
 import React, { useState } from 'react'
 
-import { ConcentratedPositionsTable } from './ConcentratedPositionsTable'
+import { ConcentratedPositionsTable } from './ConcentratedPositionsTable/ConcentratedPositionsTable'
 import { PositionsTable } from './PositionsTable'
 
 const ITEMS: { value: string; children: React.ReactNode }[] = [

@@ -1,3 +1,5 @@
+'use client'
+
 import { SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
@@ -591,7 +593,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                           {positionAmount0 && (
                                             <List.KeyValue
                                               flex
-                                              title={`Migration`}
+                                              title={'Migration'}
                                               subtitle="The value of your position after migration"
                                               className="!items-start"
                                             >
@@ -612,7 +614,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                             </List.KeyValue>
                                           )}
                                           {positionAmount1 && (
-                                            <List.KeyValue flex title={``} className="!items-start">
+                                            <List.KeyValue flex title={''} className="!items-start">
                                               <div className="flex flex-col gap-0.5">
                                                 <div className="flex items-center gap-2">
                                                   <Currency.Icon
@@ -635,7 +637,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                           {token0Value && (
                                             <List.KeyValue
                                               flex
-                                              title={`Refund`}
+                                              title={'Refund'}
                                               subtitle="The refund you receive after migration"
                                               className="!items-start"
                                             >
@@ -656,7 +658,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                             </List.KeyValue>
                                           )}
                                           {token1Value && (
-                                            <List.KeyValue flex title={``} className="!items-start">
+                                            <List.KeyValue flex title={''} className="!items-start">
                                               <div className="flex flex-col gap-0.5">
                                                 <div className="flex items-center gap-2">
                                                   <Currency.Icon
@@ -691,7 +693,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                         ) : isMigrateLoading ? (
                                           <Dots>Confirm Migrate</Dots>
                                         ) : (
-                                          `Confirm Migrate`
+                                          'Confirm Migrate'
                                         )}
                                       </Button>
                                     </DialogFooter>

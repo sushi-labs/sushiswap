@@ -1,8 +1,8 @@
 import { getChainIdAddressFromId } from '@sushiswap/format'
 import { erc20ABI } from '@wagmi/core'
-import { multichainMulticall } from 'src/helpers/multichainMulticall.js'
 import { Address, PublicClient } from 'viem'
 
+import { multichainMulticall } from '../helpers/multichainMulticall.js'
 import { getSteerVaultsReserves } from './getSteerVaultReserves.js'
 
 interface GetSteerAccountPositions {
@@ -63,8 +63,13 @@ async function getSteerAccountPositions({ clients, account, vaultIds }: GetSteer
     if (typeof accountBalance === 'undefined' || typeof totalSupply === 'undefined' || vaultReserve === null)
       return null
 
-    const token0Balance = (vaultReserve.reserve0 * accountBalance) / totalSupply
-    const token1Balance = (vaultReserve.reserve1 * accountBalance) / totalSupply
+    let token0Balance = 0n
+    let token1Balance = 0n
+
+    if (totalSupply !== 0n) {
+      token0Balance = (vaultReserve.reserve0 * accountBalance) / totalSupply
+      token1Balance = (vaultReserve.reserve1 * accountBalance) / totalSupply
+    }
 
     return {
       steerTokenBalance: accountBalance,

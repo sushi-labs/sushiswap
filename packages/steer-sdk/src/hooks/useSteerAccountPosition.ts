@@ -1,9 +1,9 @@
 import { getChainIdAddressFromId } from '@sushiswap/format'
 import { Address, usePublicClient } from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
-import { clientsFromIds } from 'src/helpers/clientsFromIds.js'
 
 import { getSteerAccountPosition, getSteerAccountPositions } from '../functions/getSteerAccountPosition.js'
+import { clientsFromIds } from '../helpers/clientsFromIds.js'
 
 interface UseSteerAccountPositions {
   account: Address | undefined

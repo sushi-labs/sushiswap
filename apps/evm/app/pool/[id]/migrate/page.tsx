@@ -1,5 +1,3 @@
-'use client'
-
 import { ChainId } from '@sushiswap/chain'
 import { LinkInternal } from '@sushiswap/ui'
 import React from 'react'
@@ -16,7 +14,7 @@ export default async function MigratePage({ params }: { params: { id: string } }
 
   return (
     <div className="flex flex-col gap-4">
-      <LinkInternal href={`/pool/migrate`} className="text-blue hover:underline text-sm">
+      <LinkInternal href={'/pool/migrate'} className="text-blue hover:underline text-sm">
         ← Back
       </LinkInternal>
       <div className="flex flex-col gap-6">
