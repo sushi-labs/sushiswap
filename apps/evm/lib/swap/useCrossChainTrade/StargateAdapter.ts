@@ -65,6 +65,6 @@ export const encodeStargateTeleportParams = ({
 
 // estiamte gas in sgReceive()
 export const estimateStargateDstGas = (gasUsed: number) => {
-  // estGas = (125K + gasSpentTines * 1.40)
-  return BigInt(Math.floor(gasUsed * 1.4) + 125000)
+  // estGas = (150K + gasSpentTines * 1.5)
+  return BigInt(Math.floor(gasUsed * 1.5) + 150000)
 }
