@@ -75,7 +75,9 @@
     "@tanstack/react-query-persist-client": "4.29.7",
     "@whatwg-node/fetch": "0.8.4",
     "tslib": "latest",
-    "viem": "1.9.5"
+    "viem": "1.9.5",
+    "@wagmi/core": "1.3.9",
+    "wagmi": "1.3.10"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
@@ -90,8 +92,7 @@
     "react-dom": "18.2.0",
     "eslint": "8.43.0",
     "tsup": "7.1.0",
-    "typescript": "5.1.6",
-    "wagmi": "1.3.10"
+    "typescript": "5.1.6"
   },
   "peerDependencies": {
     "react": "18.2.0",

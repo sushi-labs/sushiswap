@@ -12,6 +12,9 @@ export * from './hooks'
 // Export systems
 export * from './systems'
 
+// Re-expert getPublicClient
+export { getPublicClient } from '@wagmi/core'
+
 // Re-export wagmi
 export * from 'wagmi'
 

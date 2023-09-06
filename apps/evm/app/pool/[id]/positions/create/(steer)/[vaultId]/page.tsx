@@ -8,7 +8,7 @@ import { config } from '@sushiswap/viem-config'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { SteerStrategyComponents, SteerStrategyGeneric } from 'ui/pool/Steer/Strategies'
-import { createPublicClient, PublicClient } from 'viem'
+import { createPublicClient } from 'viem'
 
 function getPriceExtremes(vault: SteerVault): SteerStrategyGeneric['priceExtremes'] {
   const token0 = new Token({ chainId: vault.pool.chainId, ...vault.pool.token0 })
@@ -36,14 +36,10 @@ async function getGenerics(vault: SteerVault): Promise<SteerStrategyGeneric> {
   const priceExtremes = getPriceExtremes(vault)
   const tokenRatios = await getTokenRatios(vault)
   const adjustment = getAdjustment(vault)
-  const positions = (await getSteerVaultPositions({ client: getClient(vault), vaultId: vault.id })) || []
+  const positions =
+    (await getSteerVaultPositions({ client: createPublicClient(config[vault.pool.chainId]), vaultId: vault.id })) || []
 
   return { priceExtremes, tokenRatios, adjustment, positions }
-}
-
-// Temporary
-function getClient(vault: SteerVault): PublicClient {
-  return createPublicClient(config[vault.pool.chainId])
 }
 
 export default async function SteerVaultPage({ params }: { params: { vaultId: string } }) {

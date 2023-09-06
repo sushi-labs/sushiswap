@@ -2275,9 +2275,11 @@ importers:
       '@sushiswap/wagmi-config': link:../../config/wagmi
       '@tanstack/react-query': 4.28.0_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-persist-client': 4.29.7_qfusmmwykmcbgdy37sd3cqxiry
+      '@wagmi/core': 1.3.9_lsmw2u2xgocja5lypy6lbj4vkm
       '@whatwg-node/fetch': 0.8.4
       tslib: 2.6.2
       viem: 1.9.5_typescript@5.1.6
+      wagmi: 1.3.10_ny6mlxxvdorjvxridf7pxhafl4
     optionalDependencies:
       next: 13.4.19_biqbaboplfbrettd7655fr4n2y
     devDependencies:
@@ -2287,13 +2289,11 @@ importers:
       '@sushiswap/typescript-config': link:../../config/typescript
       '@tanstack/react-query-devtools': 4.28.0_q4teel2yjbizrm4naiaqcdpjum
       '@types/node': 18.17.5
-      '@wagmi/core': 1.3.9_lsmw2u2xgocja5lypy6lbj4vkm
       eslint: 8.43.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       tsup: 7.1.0_typescript@5.1.6
       typescript: 5.1.6
-      wagmi: 1.3.10_ny6mlxxvdorjvxridf7pxhafl4
 
   packages/sushixswap-sdk:
     specifiers:
@@ -14474,7 +14474,6 @@ packages:
       - typescript
       - utf-8-validate
       - zod
-    dev: true
 
   /@safe-global/safe-apps-provider/0.17.1_zno6rcmvi3mruj4xg7lanqhjom:
     resolution: {integrity: sha512-lYfRqrbbK1aKU1/UGkYWc/X7PgySYcumXKc5FB2uuwAs2Ghj8uETuW5BrwPqyjBknRxutFbTv+gth/JzjxAhdQ==}
@@ -14499,7 +14498,6 @@ packages:
       - typescript
       - utf-8-validate
       - zod
-    dev: true
 
   /@safe-global/safe-apps-sdk/8.0.0_zno6rcmvi3mruj4xg7lanqhjom:
     resolution: {integrity: sha512-gYw0ki/EAuV1oSyMxpqandHjnthZjYYy+YWpTAzf8BqfXM3ItcZLpjxfg+3+mXW8HIO+3jw6T9iiqEXsqHaMMw==}
@@ -14524,7 +14522,6 @@ packages:
       - typescript
       - utf-8-validate
       - zod
-    dev: true
 
   /@safe-global/safe-apps-sdk/8.1.0_zno6rcmvi3mruj4xg7lanqhjom:
     resolution: {integrity: sha512-XJbEPuaVc7b9n23MqlF6c+ToYIS3f7P2Sel8f3cSBQ9WORE4xrSuvhMpK9fDSFqJ7by/brc+rmJR/5HViRr0/w==}
@@ -19425,7 +19422,7 @@ packages:
       - supports-color
       - utf-8-validate
       - zod
-    dev: true
+    dev: false
 
   /@wagmi/core/1.3.9-cjs_hfjhvpi6wto6uxohbz6d6b5ete:
     resolution: {integrity: sha512-IZk+ZZ0bShsl47zw8/ZykzQMd2l7bpiLe0bzlfDZ2JARJIvgF1q67e8PcjooEKQKcUEXPj8ZCIKSRtEMer1GxQ==}
@@ -19597,7 +19594,7 @@ packages:
       - supports-color
       - utf-8-validate
       - zod
-    dev: true
+    dev: false
 
   /@wagmi/core/1.3.9_mlybe73e3cdwgkotmfsdmnpbki:
     resolution: {integrity: sha512-SrnABCrsDvhiMCLLLyzyHnZbEumsFT/XWlJJQZeyEDcixL95R7XQwOaaoRI4MpNilCtMtu3jzN57tA5Z2iA+kw==}
@@ -20274,7 +20271,6 @@ packages:
         optional: true
     dependencies:
       typescript: 5.1.6
-    dev: true
 
   /abitype/0.8.7_zno6rcmvi3mruj4xg7lanqhjom:
     resolution: {integrity: sha512-wQ7hV8Yg/yKmGyFpqrNZufCxbszDe5es4AZGYPBitocfSqXtjrTG9JMWFcc4N30ukl2ve48aBTwt7NJxVQdU3w==}
@@ -41143,7 +41139,7 @@ packages:
       - supports-color
       - utf-8-validate
       - zod
-    dev: true
+    dev: false
 
   /wagmi/1.3.10_xvwrz76gf3y2fkkjcobhgmjciy:
     resolution: {integrity: sha512-MMGJcnxOmeUZWDmzUxgRGcB1cqxbJoSFSa+pNY4vBCWMz0n4ptpE5F8FKISLCx+BGoDwsaz2ldcMALcdJZ+29w==}
@@ -42637,7 +42633,7 @@ packages:
     dependencies:
       react: 18.2.0
       use-sync-external-store: 1.2.0_react@18.2.0
-    dev: true
+    dev: false
 
   /zwitch/2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}

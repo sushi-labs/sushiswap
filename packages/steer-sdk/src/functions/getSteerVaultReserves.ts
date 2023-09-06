@@ -3,29 +3,32 @@ import { PublicClient } from 'viem'
 
 import { steerPeripheryAbi } from '../abi/steerPeripheryAbi.js'
 import { isSteerChainId, STEER_PERIPHERY_ADDRESS } from '../constants.js'
+import { multichainMulticall } from '../helpers/multichainMulticall.js'
 
 interface GetSteerVaultsReserves {
-  client: PublicClient
+  clients: PublicClient[]
   vaultIds: string[]
 }
 
-async function getSteerVaultsReserves({ client, vaultIds }: GetSteerVaultsReserves) {
-  const result = await client.multicall({
-    allowFailure: true,
-    contracts: vaultIds.map((id) => {
-      const { chainId, address } = getChainIdAddressFromId(id)
+async function getSteerVaultsReserves({ clients, vaultIds }: GetSteerVaultsReserves) {
+  const result = await multichainMulticall({
+    clients,
+    params: {
+      contracts: vaultIds.map((id) => {
+        const { chainId, address } = getChainIdAddressFromId(id)
 
-      if (!isSteerChainId(chainId)) throw new Error(`Invalid chainId: ${chainId}`)
-      const steerPeriphery = STEER_PERIPHERY_ADDRESS[chainId]
+        if (!isSteerChainId(chainId)) throw new Error(`Invalid chainId: ${chainId}`)
+        const steerPeriphery = STEER_PERIPHERY_ADDRESS[chainId]
 
-      return {
-        abi: steerPeripheryAbi,
-        chainId,
-        address: steerPeriphery,
-        args: [address],
-        functionName: 'vaultBalancesByAddressWithFees' as const,
-      }
-    }),
+        return {
+          abi: steerPeripheryAbi,
+          address: steerPeriphery,
+          chainId,
+          args: [address] as const,
+          functionName: 'vaultBalancesByAddressWithFees' as const,
+        }
+      }),
+    },
   })
 
   return result.map(({ result }) =>
@@ -39,7 +42,7 @@ interface GetSteerVaultReserves {
 }
 
 async function getSteerVaultReserves({ client, vaultId }: GetSteerVaultReserves) {
-  return (await getSteerVaultsReserves({ client, vaultIds: [vaultId] }))[0]
+  return (await getSteerVaultsReserves({ clients: [client], vaultIds: [vaultId] }))[0]
 }
 
 export { getSteerVaultReserves, getSteerVaultsReserves }

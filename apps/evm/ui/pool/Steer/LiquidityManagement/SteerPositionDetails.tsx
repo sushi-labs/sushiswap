@@ -23,11 +23,7 @@ interface SteerPositionDetails {
 
 export const SteerPositionDetails: FC<SteerPositionDetails> = ({ vault }) => {
   const { address } = useAccount()
-  const {
-    data: position,
-    isLoading: isPositionLoading,
-    ...rest
-  } = useSteerAccountPosition({
+  const { data: position, isLoading: isPositionLoading } = useSteerAccountPosition({
     account: address,
     vaultId: vault.id,
   })
@@ -54,8 +50,6 @@ export const SteerPositionDetails: FC<SteerPositionDetails> = ({ vault }) => {
     [fiatValuesAmounts]
   )
 
-  console.log(position, rest)
-
   return (
     <>
       <CardHeader>
@@ -65,16 +59,20 @@ export const SteerPositionDetails: FC<SteerPositionDetails> = ({ vault }) => {
       <CardContent>
         <CardGroup>
           <CardLabel>Tokens</CardLabel>
-          <CardCurrencyAmountItem
-            amount={amounts?.[0]}
-            isLoading={isPositionLoading}
-            fiatValue={formatUSD(fiatValuesAmounts[0])}
-          />
-          <CardCurrencyAmountItem
-            amount={amounts?.[1]}
-            isLoading={isPositionLoading}
-            fiatValue={formatUSD(fiatValuesAmounts[1])}
-          />
+          {address && (
+            <>
+              <CardCurrencyAmountItem
+                amount={amounts?.[0]}
+                isLoading={isPositionLoading}
+                fiatValue={formatUSD(fiatValuesAmounts[0])}
+              />
+              <CardCurrencyAmountItem
+                amount={amounts?.[1]}
+                isLoading={isPositionLoading}
+                fiatValue={formatUSD(fiatValuesAmounts[1])}
+              />
+            </>
+          )}
         </CardGroup>
       </CardContent>
     </>

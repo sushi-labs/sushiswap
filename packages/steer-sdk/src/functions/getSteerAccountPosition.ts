@@ -1,46 +1,53 @@
 import { getChainIdAddressFromId } from '@sushiswap/format'
-import { erc20ABI, PublicClient } from '@wagmi/core'
-import { Address } from 'viem'
+import { erc20ABI } from '@wagmi/core'
+import { multichainMulticall } from 'src/helpers/multichainMulticall.js'
+import { Address, PublicClient } from 'viem'
 
 import { getSteerVaultsReserves } from './getSteerVaultReserves.js'
 
 interface GetSteerAccountPositions {
-  client: PublicClient
+  clients: PublicClient[]
   account: Address
   vaultIds: string[]
 }
 
-async function getSteerAccountPositions({ client, account, vaultIds }: GetSteerAccountPositions) {
-  const accountBalancesP = client.multicall({
-    allowFailure: true,
-    contracts: vaultIds.map((id) => {
-      const { chainId, address } = getChainIdAddressFromId(id)
+async function getSteerAccountPositions({ clients, account, vaultIds }: GetSteerAccountPositions) {
+  const accountBalancesP = multichainMulticall({
+    clients,
+    params: {
+      allowFailure: true,
+      contracts: vaultIds.map((id) => {
+        const { chainId, address } = getChainIdAddressFromId(id)
 
-      return {
-        abi: erc20ABI,
-        chainId,
-        address,
-        args: [account],
-        functionName: 'balanceOf' as const,
-      }
-    }),
+        return {
+          abi: erc20ABI,
+          chainId,
+          address,
+          args: [account] as const,
+          functionName: 'balanceOf' as const,
+        }
+      }),
+    },
   })
 
-  const totalSuppliesP = client.multicall({
-    allowFailure: true,
-    contracts: vaultIds.map((id) => {
-      const { chainId, address } = getChainIdAddressFromId(id)
+  const totalSuppliesP = multichainMulticall({
+    clients,
+    params: {
+      allowFailure: true,
+      contracts: vaultIds.map((id) => {
+        const { chainId, address } = getChainIdAddressFromId(id)
 
-      return {
-        abi: erc20ABI,
-        chainId,
-        address,
-        functionName: 'totalSupply' as const,
-      }
-    }),
+        return {
+          abi: erc20ABI,
+          chainId,
+          address,
+          functionName: 'totalSupply' as const,
+        }
+      }),
+    },
   })
 
-  const vaultReservesP = getSteerVaultsReserves({ client, vaultIds })
+  const vaultReservesP = getSteerVaultsReserves({ clients, vaultIds })
 
   const [accountBalances, totalSupplies, vaultReserves] = await Promise.all([
     accountBalancesP,
@@ -75,7 +82,7 @@ interface GetSteerAccountPosition {
 }
 
 async function getSteerAccountPosition({ client, account, vaultId }: GetSteerAccountPosition) {
-  return (await getSteerAccountPositions({ client, account, vaultIds: [vaultId] }))[0]
+  return (await getSteerAccountPositions({ clients: [client], account, vaultIds: [vaultId] }))[0]
 }
 
 export { getSteerAccountPosition, getSteerAccountPositions }
