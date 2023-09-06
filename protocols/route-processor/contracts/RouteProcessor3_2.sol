@@ -320,15 +320,14 @@ contract RouteProcessor3_2 is Ownable {
     uint8 direction = stream.readUint8();
     address to = stream.readAddress();
 
-    (uint256 r0, uint256 r1, ) = IUniswapV2Pair(pool).getReserves();
-    require(r0 > 0 && r1 > 0, 'Wrong pool reserves');
-    (uint256 reserveIn, uint256 reserveOut) = direction == 1 ? (r0, r1) : (r1, r0);
-
     if (amountIn != 0) {
       if (from == address(this)) IERC20(tokenIn).safeTransfer(pool, amountIn);
       else IERC20(tokenIn).safeTransferFrom(from, pool, amountIn);
     }
-    // without 'else' in order to support tax tokens
+
+    (uint256 r0, uint256 r1, ) = IUniswapV2Pair(pool).getReserves();
+    require(r0 > 0 && r1 > 0, 'Wrong pool reserves');
+    (uint256 reserveIn, uint256 reserveOut) = direction == 1 ? (r0, r1) : (r1, r0);
     amountIn = IERC20(tokenIn).balanceOf(pool) - reserveIn;  // tokens already were transferred
 
     uint256 amountInWithFee = amountIn * 997;

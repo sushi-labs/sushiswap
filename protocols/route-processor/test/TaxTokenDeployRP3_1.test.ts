@@ -280,6 +280,7 @@ describe('RouteProcessor3_1 tax token test for BASE', async function () {
     )
   })
 
+  // Sell failes because LCRV token makes swap inside transfer. Buy is ok. Is fixed in RP3.2
   it.skip('BASE <=> LCRV', async function () {
     const LCRV = new Token({
       chainId: ChainId.BASE,
