@@ -13,16 +13,14 @@ import {
   DialogHeader,
   DialogTitle,
   Message,
-  NetworkIcon,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { List } from '@sushiswap/ui/components/list/List'
+import { TokenSecurityView } from '@sushiswap/wagmi/future'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo } from 'react'
 
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
-import { TokenSecurityView } from '@sushiswap/wagmi/future'
-import { Icon } from '@sushiswap/ui/components/currency/Icon'
 
 export const SimpleSwapTokenNotFoundDialog = () => {
   const {
@@ -90,23 +88,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
       <DialogContent className="!max-h-screen overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            <div className="flex gap-4 pb-2">
-              {token0 && token0NotInList ? (
-                <div className="relative pr-3">
-                  <Icon currency={token0} width={44} height={44} />
-                  <NetworkIcon chainId={chainId} className="absolute bottom-0 right-0" width={24} height={24} />
-                </div>
-              ) : null}
-              {token1 && token1NotInList ? (
-                <div className="relative pr-3">
-                  <Icon currency={token1} width={44} height={44} />
-                  <NetworkIcon chainId={chainId} className="absolute bottom-0 right-0" width={24} height={24} />
-                </div>
-              ) : null}
-            </div>
-            <span>
-              Unknown token{(token0NotInList || !tokenFrom?.token) && (token1NotInList || !tokenTo?.token) ? 's' : ''}
-            </span>
+            Unknown token{(token0NotInList || !tokenFrom?.token) && (token1NotInList || !tokenTo?.token) ? 's' : ''}
           </DialogTitle>
           <DialogDescription className="!mr-0 !text-xs">
             Anyone can create a token, including creating fake versions of existing tokens that claim to represent

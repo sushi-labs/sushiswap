@@ -1,3 +1,4 @@
+import { Chain } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { isTokenSecurityChainId, useTokenSecurity } from '@sushiswap/react-query'
@@ -10,14 +11,13 @@ import {
   DialogTitle,
   DialogTrigger,
   Message,
-  NetworkIcon,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Icon } from '@sushiswap/ui/components/currency/Icon'
 import { List } from '@sushiswap/ui/components/list/List'
 import { FC, useCallback, useState } from 'react'
+
 import { TokenSecurityView } from '../TokenSecurityView'
-import { Chain } from '@sushiswap/chain'
 
 interface TokenSelectorImportRow {
   currency: Token
@@ -71,21 +71,8 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currency, o
       {!isTokenSecurityChainId(currency.chainId) || !tokenSecurityLoading ? (
         <DialogContent className="!max-h-screen overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              <div className="flex gap-4 pb-1">
-                <div className="relative pr-3">
-                  <Icon currency={currency} width={44} height={44} />
-                  <NetworkIcon
-                    chainId={currency.chainId}
-                    className="absolute bottom-0 right-0"
-                    width={24}
-                    height={24}
-                  />
-                </div>
-              </div>
-              <span>Import token</span>
-            </DialogTitle>
-            <DialogDescription className="!text-xs !mr-0">
+            <DialogTitle>Import token</DialogTitle>
+            <DialogDescription>
               Anyone can create a token, including creating fake versions of existing tokens that claim to represent
               projects. If you purchase this token, you may not be able to sell it back.
             </DialogDescription>

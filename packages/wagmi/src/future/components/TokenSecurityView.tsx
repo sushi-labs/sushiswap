@@ -1,8 +1,7 @@
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline'
 import { ExclamationTriangleIcon, HandThumbUpIcon } from '@heroicons/react/24/solid'
 import { Token } from '@sushiswap/currency'
 import { TokenSecurity, TokenSecurityLabel, TokenSecurityMessage, TokenSecurityResponse } from '@sushiswap/react-query'
-import { Button, Explainer, GoPlusLabsIcon, List, classNames } from '@sushiswap/ui'
+import { Button, classNames, Explainer, GoPlusLabsIcon, List, SelectIcon } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 
 const isTokenSecurityIssue = {
@@ -74,9 +73,9 @@ export const TokenSecurityView = ({
               )}
             >
               {Number(issues?.length) > 0 ? (
-                <ExclamationTriangleIcon width={20} height={20} />
+                <ExclamationTriangleIcon width={16} height={16} />
               ) : (
-                <HandThumbUpIcon width={20} height={20} />
+                <HandThumbUpIcon width={16} height={16} />
               )}
               <span className="text-sm">{`${Number(issues?.length)} issue${
                 Number(issues?.length) !== 1 ? 's' : ''
@@ -86,10 +85,10 @@ export const TokenSecurityView = ({
         />
         {issues.map((key) => (
           <List.KeyValue
-            className="hover:bg-muted py-1.5"
+            className="hover:bg-secondary"
             key={key}
             title={
-              <div className="flex gap-1 text-gray-900 dark:text-slate-50">
+              <div className="flex gap-1">
                 {TokenSecurityLabel[key]}
                 <Explainer>{TokenSecurityMessage[key]}</Explainer>
               </div>
@@ -120,21 +119,17 @@ export const TokenSecurityView = ({
               </List.KeyValue>
             ))
           : null}
-        <div className="px-4 py-3">
-          <Button onClick={() => setShowMore(!showMore)} className="px-4 w-full" variant="secondary">
-            <div className="flex items-center justify-center gap-2">
-              {showMore ? (
-                <>
-                  <ChevronUpIcon width={16} height={16} />
-                  Hide
-                </>
-              ) : (
-                <>
-                  <ChevronDownIcon width={16} height={16} />
-                  Show More
-                </>
-              )}
-            </div>
+        <div className="p-3">
+          <Button size="xs" fullWidth onClick={() => setShowMore(!showMore)} variant="ghost">
+            {showMore ? (
+              <>
+                <SelectIcon className="rotate-180" />
+              </>
+            ) : (
+              <>
+                <SelectIcon />
+              </>
+            )}
           </Button>
         </div>
       </List.Control>
