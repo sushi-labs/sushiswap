@@ -61,6 +61,8 @@ const config: PlaywrightTestConfig = {
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on',
   },
+  globalSetup: './global.setup.ts',
+  globalTeardown: './global.teardown.ts',
 
   /* Configure projects for major browsers */
   projects: [
