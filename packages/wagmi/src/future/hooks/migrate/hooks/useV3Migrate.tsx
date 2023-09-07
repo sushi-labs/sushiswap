@@ -39,7 +39,7 @@ export const V3MigrateContractConfig = (chainId: V3MigrateChainId) => ({
 })
 
 export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Migrate) => {
-  const { config } = usePrepareContractWrite(
+  const prepare = usePrepareContractWrite(
     args.noLiquidity
       ? {
           ...V3MigrateContractConfig(chainId),
@@ -177,8 +177,11 @@ export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Mi
     [account, chainId]
   )
 
-  return useContractWrite({
-    ...config,
-    onSettled,
-  })
+  return {
+    prepare,
+    write: useContractWrite({
+      ...prepare.config,
+      onSettled,
+    }),
+  }
 }
