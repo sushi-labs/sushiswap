@@ -1,7 +1,15 @@
 import { Currency } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { useTokenSecurity } from '@sushiswap/react-query'
-import { Button, DialogContent, DialogFooter, DialogHeader, Dialog, DialogTitle } from '@sushiswap/ui'
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 
@@ -42,20 +50,16 @@ export const TaxTokenDialog = ({ token0, token1 }: { token0: Currency | undefine
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Tax token detected</DialogTitle>
-        </DialogHeader>
-        <div className="gap-3">
-          <div>
+          <DialogDescription>
             {token0HasTax && token1HasTax
-              ? `${tokenName(token0)} and ${tokenName(token1)} are tax tokens.`
+              ? `${tokenName(token0)} and ${tokenName(token1)} are tax tokens. `
               : token0HasTax || token1HasTax
-              ? `${token0HasTax ? tokenName(token0) : token1HasTax ? tokenName(token1) : null} is a tax token.`
+              ? `${token0HasTax ? tokenName(token0) : token1HasTax ? tokenName(token1) : null} is a tax token. `
               : null}
-          </div>
-          <div>
             Tax tokens are not supported in V3. You might not be able to trade, transfer, or withdraw liquidity of this
             token.
-          </div>
-        </div>
+          </DialogDescription>
+        </DialogHeader>
         <DialogFooter>
           <div className="flex gap-3 justify-center">
             <Button onClick={() => setOpen(false)} variant="destructive">
