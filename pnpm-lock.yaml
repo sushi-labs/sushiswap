@@ -546,7 +546,7 @@ importers:
       '@tanstack/react-table': 8.9.1
       '@vitejs/plugin-react': 4.0.1
       autoprefixer: 10.4.14
-      chromatic: ^6.19.9
+      chromatic: ^7.0.0
       class-variance-authority: ^0.6.0
       postcss: 8.4.23
       react: 18.2.0
@@ -583,7 +583,7 @@ importers:
       '@sushiswap/typescript-config': link:../../config/typescript
       '@vitejs/plugin-react': 4.0.1_vite@4.3.9
       autoprefixer: 10.4.14_postcss@8.4.23
-      chromatic: 6.22.0
+      chromatic: 7.0.0
       postcss: 8.4.23
       serve: 14.2.0
       storybook: 7.1.0-alpha.42
@@ -22726,7 +22726,7 @@ packages:
       normalize-path: 3.0.0
       readdirp: 3.6.0
     optionalDependencies:
-      fsevents: 2.3.2
+      fsevents: 2.3.3
 
   /chownr/1.1.4:
     resolution: {integrity: sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg==}
@@ -22736,8 +22736,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /chromatic/6.22.0:
-    resolution: {integrity: sha512-PBZAhTzjQvx+B4nXmEgvySmR9+a8hgt7zuTT3NhC0BT1Wf08T6gjnl4bZR5Dg5V4PfCeQvP5uROPS7QFdzZeyA==}
+  /chromatic/7.0.0:
+    resolution: {integrity: sha512-ZPHRO/6v0jAKk0G1oW+HAngQmbq+opAVkgjy3Yx5Cvxvpfv+Y7zyfBuQ8KHewoNuIqLTfvRTbKzekqbGYT+7UQ==}
     hasBin: true
     dev: true
 
@@ -27718,6 +27718,13 @@ packages:
     requiresBuild: true
     optional: true
 
+  /fsevents/2.3.3:
+    resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
+    requiresBuild: true
+    optional: true
+
   /ftp/0.3.10:
     resolution: {integrity: sha512-faFVML1aBx2UoDStmLwv2Wptt4vw5x03xxX172nhA5Y5HBshW5JweqQ2W4xL4dezQTG8inJsuYcpPHHU3X5OTQ==}
     engines: {node: '>=0.8.0'}
@@ -30527,7 +30534,7 @@ packages:
       micromatch: 4.0.5
       walker: 1.0.8
     optionalDependencies:
-      fsevents: 2.3.2
+      fsevents: 2.3.3
     dev: true
 
   /jest-leak-detector/29.6.2:
@@ -36853,7 +36860,7 @@ packages:
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
     optionalDependencies:
-      fsevents: 2.3.2
+      fsevents: 2.3.3
     dev: true
 
   /rome/12.1.3:
@@ -40736,7 +40743,7 @@ packages:
       postcss: 8.4.23
       rollup: 3.28.0
     optionalDependencies:
-      fsevents: 2.3.2
+      fsevents: 2.3.3
     dev: true
 
   /vite/4.4.9:
