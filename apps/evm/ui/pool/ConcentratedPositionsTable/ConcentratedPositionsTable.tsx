@@ -18,15 +18,16 @@ import {
   TabsTrigger,
 } from '@sushiswap/ui'
 import { Address } from '@sushiswap/wagmi'
-import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future'
+import type { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future'
 import React, { FC } from 'react'
 
 import { Manual, Smart } from './Tables'
+import type { SteerPosition } from './Tables/Smart/useSteerPositions'
 
 interface ConcentratedPositionsTableProps {
   chainId?: ChainId
   poolAddress?: Address
-  onRowClick?(row: ConcentratedLiquidityPositionWithV3Pool): void
+  onRowClick?(row: ConcentratedLiquidityPositionWithV3Pool | SteerPosition): void
   hideNewPositionButton?: boolean
 }
 

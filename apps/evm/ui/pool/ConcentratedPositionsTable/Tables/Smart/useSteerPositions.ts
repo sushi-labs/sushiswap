@@ -30,8 +30,7 @@ export const useSteerPositions = ({ poolAddress, chainId }: UseSteerPositions) =
   const isVaultsLoading = isPerChainLoading || isPerPoolLoading
   const vaults = useMemo(() => {
     if (vaultsPerChain) {
-      // shuffle array
-      return vaultsPerChain.sort(() => Math.random() - 0.5)
+      return vaultsPerChain
     }
 
     if (vaultsPerPool) {
@@ -40,7 +39,10 @@ export const useSteerPositions = ({ poolAddress, chainId }: UseSteerPositions) =
   }, [vaultsPerChain, vaultsPerPool])
 
   const vaultIds = useMemo(() => vaults?.map((el) => el.id), [vaults])
-  const { data: positions, isLoading: isPositionsLoading } = useSteerAccountPositions({ vaultIds, account: address })
+  const { data: positions, isLoading: isPositionsLoading } = useSteerAccountPositions({
+    vaultIds,
+    account: address,
+  })
 
   return {
     data: useMemo(() => {
