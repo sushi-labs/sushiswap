@@ -4,10 +4,9 @@ import { XIcon } from '@heroicons/react-v1/outline'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { formatUSD } from '@sushiswap/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
+import { DataTable } from '@sushiswap/ui'
 import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
-import { Loader } from '@sushiswap/ui/components/loader'
-import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
-import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { createColumnHelper } from '@tanstack/react-table'
 import { FC } from 'react'
 
 import { Token } from '../lib'
@@ -90,20 +89,7 @@ function useColumns() {
 export const TokenTable: FC<TokenTable> = ({ tokens }) => {
   const columns = useColumns()
 
-  const table = useReactTable<Token>({
-    data: tokens,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  })
-
-  return (
-    <GenericTable<Token>
-      table={table}
-      // @ts-ignore
-      columns={columns}
-      pageSize={20}
-      placeholder={<Loader />}
-      // getLink={(row) => chains[row.chainId].getTokenUrl(row.id.split(':')[1])}
-    />
-  )
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  return <DataTable pagination={true} data={tokens} columns={columns} />
 }
