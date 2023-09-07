@@ -12,7 +12,7 @@ import { createProvider } from 'hardhat/internal/core/providers/construction'
 import { Address, Client, createPublicClient, custom, Hex, walletActions } from 'viem'
 import { hardhat } from 'viem/chains'
 
-import RouteProcessor4 from '../artifacts/contracts/RouteProcessor4.sol/RouteProcessor4.json'
+import RouteProcessor3_2 from '../artifacts/contracts/RouteProcessor3_2.sol/RouteProcessor3_2.json'
 
 async function createHardhatProvider(chainId: ChainId, url: string, blockNumber: number) {
   return await createProvider(
@@ -59,7 +59,7 @@ async function getTestEnvironment(chainId: ChainId, url: string, blockNumber: nu
 
   const RouteProcessorTx = await client.deployContract({
     abi: routeProcessor3Abi,
-    bytecode: RouteProcessor4.bytecode as Hex,
+    bytecode: RouteProcessor3_2.bytecode as Hex,
     account: userAddress,
     args: ['0x0000000000000000000000000000000000000000', []],
   })
@@ -198,7 +198,7 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
   //   )
   // )
 
-  const rpParamsBuy = Router.routeProcessor4Params(
+  const rpParamsBuy = Router.routeProcessor3_2Params(
     pcMap,
     routeBuy,
     fromToken,
@@ -240,7 +240,7 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
   //   )
   // )
 
-  const rpParamsSell = Router.routeProcessor4Params(
+  const rpParamsSell = Router.routeProcessor3_2Params(
     pcMap,
     routeSell,
     toToken,
@@ -269,7 +269,7 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
   }
 }
 
-describe('RouteProcessor4 tax token test for BASE', async function () {
+describe('RouteProcessor3_2 tax token test for BASE', async function () {
   let env: TestEnvironment
 
   before(async () => {
@@ -311,7 +311,7 @@ describe('RouteProcessor4 tax token test for BASE', async function () {
   })
 })
 
-describe('RouteProcessor4 tax token test for ETHEREUM', async function () {
+describe('RouteProcessor3_2 tax token test for ETHEREUM', async function () {
   let env: TestEnvironment
 
   before(async () => {

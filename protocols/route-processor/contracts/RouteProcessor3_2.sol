@@ -8,7 +8,6 @@ import '../interfaces/ITridentCLPool.sol';
 import '../interfaces/IBentoBoxMinimal.sol';
 import '../interfaces/IPool.sol';
 import '../interfaces/IWETH.sol';
-import '../interfaces/ICurve.sol';
 import './InputStream.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -23,8 +22,8 @@ uint160 constant MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970
 
 /// @title A route processor for the Sushi Aggregator
 /// @author Ilya Lyalin
-/// version 2.1
-contract RouteProcessor4 is Ownable {
+/// version 3.2
+contract RouteProcessor3_2 is Ownable {
   using SafeERC20 for IERC20;
   using SafeERC20 for IERC20Permit;
   using InputStream for uint256;
@@ -38,8 +37,6 @@ contract RouteProcessor4 is Ownable {
     uint amountOutMin,
     uint amountOut
   );
-
-  error MinimalOutputBalanceViolation(uint amountOut);
 
   IBentoBoxMinimal public immutable bentoBox;
   mapping (address => bool) priviledgedUsers;
@@ -154,11 +151,10 @@ contract RouteProcessor4 is Ownable {
     }
 
     uint256 balanceInFinal = tokenIn == NATIVE_ADDRESS ? address(this).balance : IERC20(tokenIn).balanceOf(msg.sender);
-    require(balanceInFinal + amountIn >= balanceInInitial, 'RouteProcessor: Minimal input balance violation');
-    
+    require(balanceInFinal + amountIn >= balanceInInitial, 'RouteProcessor: Minimal imput balance violation');
+
     uint256 balanceOutFinal = tokenOut == NATIVE_ADDRESS ? address(to).balance : IERC20(tokenOut).balanceOf(to);
-    if (balanceOutFinal < balanceOutInitial + amountOutMin)
-      revert MinimalOutputBalanceViolation(balanceOutFinal - balanceOutInitial);
+    require(balanceOutFinal >= balanceOutInitial + amountOutMin, 'RouteProcessor: Minimal ouput balance violation');
 
     amountOut = balanceOutFinal - balanceOutInitial;
 
@@ -260,7 +256,6 @@ contract RouteProcessor4 is Ownable {
     else if (poolType == 2) wrapNative(stream, from, tokenIn, amountIn);
     else if (poolType == 3) bentoBridge(stream, from, tokenIn, amountIn);
     else if (poolType == 4) swapTrident(stream, from, tokenIn, amountIn);
-    else if (poolType == 5) swapCurve(stream, from, tokenIn, amountIn);
     else revert('RouteProcessor: Unknown pool type');
   }
 
@@ -279,7 +274,7 @@ contract RouteProcessor4 is Ownable {
       if (to != address(this)) IERC20(wrapToken).safeTransfer(to, amountIn);
     } else { // unwrap native
       if (directionAndFake & 2 == 0) {
-        if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
+        if (from != address(this)) IERC20(tokenIn).safeTransferFrom(from, address(this), amountIn);
         IWETH(tokenIn).withdraw(amountIn);
       }
       //payable(to).transfer(address(this).balance);
@@ -301,7 +296,7 @@ contract RouteProcessor4 is Ownable {
       // deposit to arbitrary recipient is possible only from address(bentoBox)
       if (amountIn != 0) {
         if (from == address(this)) IERC20(tokenIn).safeTransfer(address(bentoBox), amountIn);
-        else IERC20(tokenIn).safeTransferFrom(msg.sender, address(bentoBox), amountIn);
+        else IERC20(tokenIn).safeTransferFrom(from, address(bentoBox), amountIn);
       } else {
         // tokens already are at address(bentoBox)
         amountIn = IERC20(tokenIn).balanceOf(address(bentoBox)) +
@@ -326,11 +321,10 @@ contract RouteProcessor4 is Ownable {
     address pool = stream.readAddress();
     uint8 direction = stream.readUint8();
     address to = stream.readAddress();
-    uint24 fee = stream.readUint24();   // pool fee in 1/1_000_000
 
     if (amountIn != 0) {
       if (from == address(this)) IERC20(tokenIn).safeTransfer(pool, amountIn);
-      else IERC20(tokenIn).safeTransferFrom(msg.sender, pool, amountIn);
+      else IERC20(tokenIn).safeTransferFrom(from, pool, amountIn);
     }
 
     (uint256 r0, uint256 r1, ) = IUniswapV2Pair(pool).getReserves();
@@ -338,8 +332,8 @@ contract RouteProcessor4 is Ownable {
     (uint256 reserveIn, uint256 reserveOut) = direction == 1 ? (r0, r1) : (r1, r0);
     amountIn = IERC20(tokenIn).balanceOf(pool) - reserveIn;  // tokens already were transferred
 
-    uint256 amountInWithFee = amountIn * (1_000_000 - fee);
-    uint256 amountOut = (amountInWithFee * reserveOut) / (reserveIn * 1_000_000 + amountInWithFee);
+    uint256 amountInWithFee = amountIn * 997;
+    uint256 amountOut = (amountInWithFee * reserveOut) / (reserveIn * 1000 + amountInWithFee);
     (uint256 amount0Out, uint256 amount1Out) = direction == 1 ? (uint256(0), amountOut) : (amountOut, uint256(0));
     IUniswapV2Pair(pool).swap(amount0Out, amount1Out, to, new bytes(0));
   }
@@ -370,7 +364,10 @@ contract RouteProcessor4 is Ownable {
     bool zeroForOne = stream.readUint8() > 0;
     address recipient = stream.readAddress();
 
-    if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), uint256(amountIn));
+    if (from != address(this)) {
+      require(from == msg.sender, 'swapUniV3: unexpected from address');
+      IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), uint256(amountIn));
+    }
 
     lastCalledPool = pool;
     IUniswapV3Pool(pool).swap(
@@ -408,40 +405,4 @@ contract RouteProcessor4 is Ownable {
     IERC20(tokenIn).safeTransfer(msg.sender, uint256(amount));
   }
 
-  /// @notice Curve pool swap
-  /// @param stream [pool, swapData]
-  /// @param from Where to take liquidity for swap
-  /// @param tokenIn Input token
-  /// @param amountIn Amount of tokenIn to take for swap
-  function swapCurve(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
-    address pool = stream.readAddress();
-    uint8 poolType = stream.readUint8();
-    int128 fromIndex = int8(stream.readUint8());
-    int128 toIndex = int8(stream.readUint8());
-    address to = stream.readAddress();
-    address tokenOut = stream.readAddress();
-
-    uint256 amountOut;
-    if (tokenIn == NATIVE_ADDRESS) {
-      amountOut = ICurve(pool).exchange{value: amountIn}(fromIndex, toIndex, amountIn, 0);
-    } else {
-      if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
-      IERC20(tokenIn).approve(pool, amountIn);
-      if (poolType == 0) amountOut = ICurve(pool).exchange(fromIndex, toIndex, amountIn, 0);
-      else {
-        uint256 balanceBefore = IERC20(tokenOut).balanceOf(address(this));
-        ICurveLegacy(pool).exchange(fromIndex, toIndex, amountIn, 0);
-        uint256 balanceAfter = IERC20(tokenOut).balanceOf(address(this));
-        amountOut = balanceAfter - balanceBefore;
-      }
-    }
-
-    if (to != address(this)) {      
-      if(tokenOut == NATIVE_ADDRESS) {
-        payable(to).transfer(amountOut);
-      } else {
-        IERC20(tokenOut).safeTransfer(to, amountOut);
-      }
-    }
-  }
 }
