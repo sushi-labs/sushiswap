@@ -12,7 +12,7 @@ async function globalTeardown(config: FullConfig) {
       return
     }
     console.log(`stdout: ${stdout}`)
-  } catch (error: unknown) {
+  } catch (error) {
     if (error instanceof Error) {
       console.log(`error: ${error.message}`)
     }
