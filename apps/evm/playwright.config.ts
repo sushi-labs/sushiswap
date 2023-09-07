@@ -61,14 +61,26 @@ const config: PlaywrightTestConfig = {
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on',
   },
+  globalSetup: './global.setup.ts',
+  globalTeardown: './global.teardown.ts',
 
   /* Configure projects for major browsers */
   projects: [
+    // {
+    //   name: 'setup',
+    //   testMatch: /global\.setup\.ts/,
+    //   teardown: 'teardown',
+    // },
+    // {
+    //   name: 'teardown',
+    //   testMatch: /global\.teardown\.ts/,
+    // },
     {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
       },
+      // dependencies: ['setup'],
     },
 
     // {
@@ -94,6 +106,7 @@ const config: PlaywrightTestConfig = {
     //   },
     // },
   ],
+  // globalTeardown: './global.teardown.ts',
   // Run your local dev server before starting the tests:
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
   webServer: [

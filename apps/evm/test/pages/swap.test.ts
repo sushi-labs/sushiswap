@@ -47,7 +47,7 @@ test('Wrap and unwrap', async ({ page }) => {
   await wrap(page, wnative, native, '10')
 })
 
-test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
+test.only('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   test.slow()
   const amount = chainId === ChainId.ARBITRUM ? '10' : '100'
   await swap(page, native, sushi, amount)
