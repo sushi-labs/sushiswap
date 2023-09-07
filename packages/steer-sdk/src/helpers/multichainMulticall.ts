@@ -32,7 +32,7 @@ async function multichainMulticall<
   for (const chainId of paramsChainIds) {
     const oneChainIdContracts = params.contracts.flatMap((contract, index) => {
       if (contract.chainId === chainId) {
-        inputResultIndexMap.set(index, inputResultIndexMap.size)
+        inputResultIndexMap.set(inputResultIndexMap.size, index)
         return contract
       }
 

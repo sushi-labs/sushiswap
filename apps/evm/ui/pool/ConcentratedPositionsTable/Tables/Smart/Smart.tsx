@@ -1,3 +1,5 @@
+'use client'
+
 import { Slot } from '@radix-ui/react-slot'
 import { ChainId } from '@sushiswap/chain'
 import { DataTable } from '@sushiswap/ui'
@@ -6,10 +8,13 @@ import { Row } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useState } from 'react'
 import { Address } from 'wagmi'
 
-import { STEER_NAME_COLUMN } from './columns'
+import { STEER_NAME_COLUMN, STEER_POSITION_SIZE_COLUMN, STEER_STRATEGY_COLUMN } from './columns'
 import { SteerPosition, useSteerPositions } from './useSteerPositions'
 
-const COLUMNS = [STEER_NAME_COLUMN] satisfies ColumnDef<SteerPosition, unknown>[]
+const COLUMNS = [STEER_NAME_COLUMN, STEER_STRATEGY_COLUMN, STEER_POSITION_SIZE_COLUMN] satisfies ColumnDef<
+  SteerPosition,
+  unknown
+>[]
 
 const tableState = { sorting: [{ id: 'positionSize', desc: true }] }
 

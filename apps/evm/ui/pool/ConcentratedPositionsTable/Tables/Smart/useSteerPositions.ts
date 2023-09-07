@@ -30,7 +30,8 @@ export const useSteerPositions = ({ poolAddress, chainId }: UseSteerPositions) =
   const isVaultsLoading = isPerChainLoading || isPerPoolLoading
   const vaults = useMemo(() => {
     if (vaultsPerChain) {
-      return vaultsPerChain
+      // shuffle array
+      return vaultsPerChain.sort(() => Math.random() - 0.5)
     }
 
     if (vaultsPerPool) {
@@ -45,31 +46,33 @@ export const useSteerPositions = ({ poolAddress, chainId }: UseSteerPositions) =
     data: useMemo(() => {
       if (!vaults || !positions) return []
 
-      return positions
-        ?.filter((position) => position?.steerTokenBalance !== 0n)
-        .flatMap((el, i) => {
-          if (!el) return []
+      return positions.flatMap((el, i) => {
+        if (!el || el.steerTokenBalance === 0n) return []
 
-          const vault = vaults[i]
+        const vault = vaults[i]
 
-          const token0 = new Token({ chainId: vault.chainId, ...vault.token0 })
-          const token1 = new Token({ chainId: vault.chainId, ...vault.token1 })
+        const token0 = new Token({ chainId: vault.chainId, ...vault.token0 })
+        const token1 = new Token({ chainId: vault.chainId, ...vault.token1 })
 
-          const token0Price = prices?.[String(vault.chainId)]?.[vault.token0.address] || 0
-          const token1Price = prices?.[String(vault.chainId)]?.[vault.token1.address] || 0
+        const token0Price = prices?.[String(vault.chainId)]?.[token0.address] || 0
+        const token1Price = prices?.[String(vault.chainId)]?.[token1.address] || 0
 
-          const token0Amount = Amount.fromRawAmount(token0, el?.token0Balance)
-          const token1Amount = Amount.fromRawAmount(token1, el?.token1Balance)
+        const token0Amount = Amount.fromRawAmount(token0, el?.token0Balance)
+        const token1Amount = Amount.fromRawAmount(token1, el?.token1Balance)
 
-          return {
-            ...el,
-            vault,
-            token0Amount,
-            token1Amount,
-            token0AmountUSD: Number(token0Amount?.multiply(token0Price).toSignificant(8)),
-            token1AmountUSD: Number(token1Amount?.multiply(token1Price).toSignificant(8)),
-          }
-        })
+        const token0AmountUSD = Number(token0Amount?.multiply(token0Price).toSignificant(8))
+        const token1AmountUSD = Number(token1Amount?.multiply(token1Price).toSignificant(8))
+
+        return {
+          ...el,
+          vault,
+          token0Amount,
+          token1Amount,
+          token0AmountUSD,
+          token1AmountUSD,
+          totalAmountUSD: token0AmountUSD + token1AmountUSD,
+        }
+      })
     }, [positions, prices, vaults]),
     isLoading: isVaultsLoading || isPricesLoading || isPositionsLoading,
   }

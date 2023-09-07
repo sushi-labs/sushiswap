@@ -1,8 +1,10 @@
+import { formatNumber } from '@sushiswap/format'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { ColumnDef } from '@tanstack/react-table'
 import { PoolNameCellPool } from 'ui/pool/PoolNameCell'
 
 import { SteerPosition } from '../useSteerPositions'
+import { SteerStrategyCell } from './SteerStrategyCell'
 
 export const STEER_NAME_COLUMN: ColumnDef<SteerPosition, unknown> = {
   id: 'name',
@@ -22,4 +24,28 @@ export const STEER_NAME_COLUMN: ColumnDef<SteerPosition, unknown> = {
     ),
   },
   size: 300,
+}
+
+export const STEER_STRATEGY_COLUMN: ColumnDef<SteerPosition, unknown> = {
+  id: 'strategy',
+  header: 'Strategy',
+  cell: (props) => <SteerStrategyCell vault={props.row.original.vault} />,
+  meta: {
+    skeleton: (
+      <div className="flex items-center w-full gap-2">
+        <SkeletonText fontSize="lg" />
+      </div>
+    ),
+  },
+  size: 300,
+}
+
+export const STEER_POSITION_SIZE_COLUMN: ColumnDef<SteerPosition, unknown> = {
+  id: 'positionSize',
+  header: 'Position Size',
+  accessorFn: (row) => row.totalAmountUSD ?? 0,
+  cell: (props) => `$${formatNumber(props.row.original.totalAmountUSD)}`,
+  meta: {
+    skeleton: <SkeletonText fontSize="lg" />,
+  },
 }
