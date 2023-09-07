@@ -1,6 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
-import { Native, Type } from '@sushiswap/currency'
-import { NativeAddress, useBalances, usePrices } from '@sushiswap/react-query'
+import { Amount, Native, Type } from '@sushiswap/currency'
+import { Fraction } from '@sushiswap/math'
+import { NativeAddress } from '@sushiswap/react-query'
 import { Currency } from '@sushiswap/ui/components/currency'
 import React, { FC, memo, useMemo } from 'react'
 import { useAccount } from 'wagmi'
@@ -18,21 +19,23 @@ interface TokenSelectorCurrencyListProps {
     onPin: (currencyId: string) => void
   }
   selected: Type | undefined
+  balancesMap: Record<string, Amount<Type>> | undefined
+  pricesMap: Record<string, Fraction> | undefined
+  isBalanceLoading: boolean
 }
 
 export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> = memo(function TokenSelectorCurrencyList({
   id,
   onSelect,
   currencies,
-  chainId,
   selected,
   pin,
   officialTokenIds,
+  pricesMap,
+  balancesMap,
+  isBalanceLoading,
 }) {
   const { address } = useAccount()
-  const { data: pricesMap } = usePrices({ chainId })
-  const { data: balancesMap } = useBalances({ chainId, account: address })
-
   const rowData = useMemo<TokenSelectorRow[]>(() => {
     if (!currencies) return []
 
@@ -54,8 +57,9 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> = mem
         ? (currency.isNative === true && selected.isNative === true) ||
           (selected.isToken && currency.isToken && currency.wrapped.address === selected.wrapped.address)
         : false,
+      isBalanceLoading,
     }))
-  }, [address, balancesMap, currencies, id, onSelect, pricesMap, selected, pin])
+  }, [isBalanceLoading, address, balancesMap, currencies, id, onSelect, pricesMap, selected, pin])
 
   return <Currency.List className="scroll" rowHeight={64} rowRenderer={TokenSelectorRow} rowData={rowData} />
 })
