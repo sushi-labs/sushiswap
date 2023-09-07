@@ -1,13 +1,13 @@
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { ColumnDef } from '@tanstack/react-table'
+import { PoolNameCellPool } from 'ui/pool/PoolNameCell'
 
 import { SteerPosition } from '../useSteerPositions'
-import { SteerNameCell } from './SteerNameCell'
 
 export const STEER_NAME_COLUMN: ColumnDef<SteerPosition, unknown> = {
   id: 'name',
   header: 'Name',
-  cell: (props) => <SteerNameCell {...props.row} />,
+  cell: (props) => <PoolNameCellPool pool={props.row.original.vault.pool} />,
   meta: {
     skeleton: (
       <div className="flex items-center w-full gap-2">

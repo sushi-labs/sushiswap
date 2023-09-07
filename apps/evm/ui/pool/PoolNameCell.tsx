@@ -92,10 +92,10 @@ export const PoolNameCell: FC<Row<PositionWithPool>> = ({ original }) => {
   )
 }
 
-export const PoolNameCellPool: FC<Row<Pool>> = ({ original }) => {
-  const { token0, token1 } = useTokensFromPool(original)
+export const PoolNameCellPool: FC<{ pool: Pool }> = ({ pool }) => {
+  const { token0, token1 } = useTokensFromPool(pool)
 
-  const incentives = original.incentives.filter((i) => i.rewardPerDay > 0)
+  const incentives = pool.incentives.filter((i) => i.rewardPerDay > 0)
 
   return (
     <div className="flex items-center gap-5">
@@ -104,7 +104,7 @@ export const PoolNameCellPool: FC<Row<Pool>> = ({ original }) => {
           <Badge
             className="border-2 border-slate-900 rounded-full z-[11]"
             position="bottom-right"
-            badgeContent={<NetworkIcon chainId={original.chainId as ChainId} width={14} height={14} />}
+            badgeContent={<NetworkIcon chainId={pool.chainId as ChainId} width={14} height={14} />}
           >
             <Currency.IconList iconWidth={26} iconHeight={26}>
               <Currency.Icon disableLink currency={token0} />
@@ -119,9 +119,9 @@ export const PoolNameCellPool: FC<Row<Pool>> = ({ original }) => {
           <div className={classNames('text-[10px] bg-gray-200 dark:bg-slate-700 rounded-lg px-1 ml-1')} />
         </span>
         <div className="flex gap-1">
-          {ProtocolBadge[original.protocol]}
+          {ProtocolBadge[pool.protocol]}
           <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
-            {formatNumber(original.swapFee * 100)}%
+            {formatNumber(pool.swapFee * 100)}%
           </div>
           {incentives && incentives.length > 0 && (
             <TooltipProvider>
@@ -137,7 +137,7 @@ export const PoolNameCellPool: FC<Row<Pool>> = ({ original }) => {
               </Tooltip>
             </TooltipProvider>
           )}
-          {original.hasEnabledSteerVault && (
+          {pool.hasEnabledSteerVault && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>

@@ -101,7 +101,7 @@ export const NETWORK_COLUMN_POOL: ColumnDef<Pool, unknown> = {
 export const NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
   id: 'name',
   header: 'Name',
-  cell: (props) => <PoolNameCellPool {...props.row} />,
+  cell: (props) => <PoolNameCellPool pool={props.row.original} />,
   meta: {
     skeleton: (
       <div className="flex items-center w-full gap-2">
