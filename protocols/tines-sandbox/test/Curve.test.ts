@@ -337,7 +337,7 @@ async function checkSwap(
         args: [BigInt(from), BigInt(to), getBigInt(amountIn), 0n],
         value: poolInfo.tokenContracts[from] === undefined ? getBigInt(amountIn) : 0n,
       })
-    ).result[0] as bigint
+    ).result as unknown as bigint
   } else {
     poolInfo.snapshot.restore()
 
