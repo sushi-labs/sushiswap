@@ -6,6 +6,7 @@ import { shortenAddress } from '@sushiswap/format'
 import { FuroChainId } from '@sushiswap/furo-sdk'
 import { FundSource } from '@sushiswap/hooks'
 import {
+  DialogConfirm,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -15,7 +16,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@sushiswap/ui'
-import { DialogConfirm } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Dots } from '@sushiswap/ui/components/dots'
@@ -27,9 +27,9 @@ import {
   useBentoBoxTotal,
   useFuroStreamRouterContract,
   usePrepareSendTransaction,
+  useSendTransaction,
+  useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import { useSendTransaction } from '@sushiswap/wagmi'
-import { useWaitForTransaction } from '@sushiswap/wagmi'
 import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { useApproved, useSignature, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
@@ -134,7 +134,7 @@ export const ExecuteSection: FC<{ chainId: FuroChainId; index: number }> = withC
     }
   }, [_amount, _fundSource, address, chainId, contract, dates?.endDate, dates?.startDate, rebase, recipient, signature])
 
-  const { config } = usePrepareSendTransaction({
+  const { config, isError } = usePrepareSendTransaction({
     ...prepare,
     chainId,
     enabled: Boolean(
@@ -152,7 +152,7 @@ export const ExecuteSection: FC<{ chainId: FuroChainId; index: number }> = withC
     ),
   })
 
-  const { sendTransactionAsync, isLoading, data, isError } = useSendTransaction({
+  const { sendTransactionAsync, isLoading, data } = useSendTransaction({
     ...config,
     onSettled,
     onSuccess: () => {

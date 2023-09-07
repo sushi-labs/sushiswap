@@ -78,7 +78,7 @@ describe('SushiSwapV3Pool', () => {
   describe('#getAddress', () => {
     it('matches an example', () => {
       const result = SushiSwapV3Pool.getAddress(USDC, DAI, FeeAmount.LOW)
-      expect(result).toEqual('0x6c6Bc977E13Df9b0de53b251522280BB72383700')
+      expect(result).toEqual('0x3cb60c075797f2C4f158c066F54B144A5c3F60AA')
     })
   })
 

@@ -19,7 +19,7 @@ export const Hero: FC<Hero> = ({ article }) => {
           <ArticleAuthors article={article} />
           <div className="mt-8">
             <Button asChild>
-              <LinkInternal href={`/blog/${article?.attributes?.slug}`}>Read Article</LinkInternal>
+              <LinkInternal href={`/${article?.attributes?.slug}`}>Read Article</LinkInternal>
             </Button>
           </div>
         </div>

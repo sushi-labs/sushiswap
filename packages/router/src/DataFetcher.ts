@@ -31,7 +31,7 @@ import { UniswapV3Provider } from './liquidity-providers/UniswapV3'
 import type { PoolCode } from './pools/PoolCode'
 
 // import { create } from 'viem'
-const isTest = process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_TEST === 'true'
+const isTest = process.env.APP_ENV === 'test' || process.env.TEST === 'true' || process.env.NEXT_PUBLIC_TEST === 'true'
 
 // Gathers pools info, creates routing in 'incremental' mode
 // This means that new routing recalculates each time new pool fetching data comes
@@ -59,14 +59,14 @@ export class DataFetcher {
     return this.cache[chainId]
   }
 
-  constructor(chainId: ChainId, web3Client?: PublicClient, databaseClient?: PrismaClient) {
+  constructor(chainId: ChainId, publicClient?: PublicClient, databaseClient?: PrismaClient) {
     this.chainId = chainId
-    if (!web3Client && !config[chainId]) {
-      throw new Error(`No viem client or config for chainId ${chainId}`)
+    if (!publicClient && !config[chainId]) {
+      throw new Error(`No public client given and no viem config found for chainId ${chainId}`)
     }
 
-    if (web3Client) {
-      this.web3Client = web3Client
+    if (publicClient) {
+      this.web3Client = publicClient
     } else {
       this.web3Client = createPublicClient({
         ...config[chainId],

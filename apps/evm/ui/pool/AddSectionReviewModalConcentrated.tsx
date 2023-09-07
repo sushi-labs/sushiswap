@@ -165,7 +165,7 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
     return {}
   }, [address, chainId, deadline, hasExistingPosition, noLiquidity, position, slippagePercent, token0, token1, tokenId])
 
-  const { config } = usePrepareSendTransaction({
+  const { config, isError } = usePrepareSendTransaction({
     ...prepare,
     chainId,
     enabled: chainId === chain?.id,
@@ -175,7 +175,6 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
     sendTransactionAsync,
     isLoading: isWritePending,
     data,
-    isError,
   } = useSendTransaction({
     ...config,
     chainId,
