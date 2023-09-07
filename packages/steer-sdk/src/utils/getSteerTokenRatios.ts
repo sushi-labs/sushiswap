@@ -33,8 +33,8 @@ async function getTokenRatios(vault: GetTokenRatiosProps) {
 
   let [token0, token1] = [reserve0USD / totalReserveUSD, reserve1USD / totalReserveUSD]
 
-  token0 = token0 < 0.00001 ? 0 : token0
-  token1 = token1 < 0.00001 ? 0 : token1
+  token0 = token0 < 0.00001 ? 0 : Math.min(token0, 1)
+  token1 = token1 < 0.00001 ? 0 : Math.min(token1, 1)
 
   return {
     token0,
