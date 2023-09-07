@@ -149,7 +149,7 @@ export default function Partner() {
                       <div className="absolute inset-0 flex items-center justify-center">
                         <CameraIcon className="h-6 w-6 text-muted-foreground" />
                       </div>
-                      {logoFile ? <img alt="icon" src={logoFile} width={80} height={80} /> : null}
+                      {logoFile ? <img className="!m-0" alt="icon" src={logoFile} width={80} height={80} /> : null}
                     </div>
                   </div>
                 </FormControl>
