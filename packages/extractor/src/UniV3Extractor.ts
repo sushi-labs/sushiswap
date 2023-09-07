@@ -85,7 +85,7 @@ export class UniV3Extractor {
     })
     this.qualityChecker = new QualityChecker(200, (arg: QualityCheckerCallBackArg) => {
       const addr = arg.ethalonPool.address.toLowerCase() as Address
-      if (arg.ethalonPool != this.poolMap.get(addr)) return false // checked pool was replaced during checking
+      if (arg.ethalonPool !== this.poolMap.get(addr)) return false // checked pool was replaced during checking
       if (arg.correctPool) this.poolMap.set(addr, arg.correctPool)
       this.consoleLog(
         `Pool ${arg.ethalonPool.address} quality check: ${arg.status} ` +
@@ -172,7 +172,7 @@ export class UniV3Extractor {
     }
   }
 
-  addPoolWatching(p: PoolInfo, source: string, addToCache = true, startTime = 0) {
+  addPoolWatching(p: PoolInfo, source: 'cache' | 'request' | 'logs', addToCache = true, startTime = 0) {
     if (this.logProcessingStatus !== LogsProcessing.Started) {
       throw new Error('Pools can be added only after Log processing have been started')
     }

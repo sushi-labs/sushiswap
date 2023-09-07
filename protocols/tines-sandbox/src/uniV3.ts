@@ -108,8 +108,7 @@ export async function createUniV3EnvZero(walletClient: WalletClient, userDeployC
     address: TestRouterAddress,
   }
 
-  return {
-    walletClient: walletClient as any,
+  const ret = {
     user,
     tokenFactory,
     SushiV3Factory,
@@ -128,7 +127,6 @@ export async function createUniV3EnvZero(walletClient: WalletClient, userDeployC
       return liquidity
     },
   } satisfies {
-    walletClient: WalletClient
     user: Address
     tokenFactory: Omit<DeployContractParameters<typeof erc20Abi>, 'args' | 'type'>
     SushiV3Factory: Contract<typeof sushiV3FactoryAbi>
@@ -137,6 +135,12 @@ export async function createUniV3EnvZero(walletClient: WalletClient, userDeployC
     minter: Contract<typeof testRouterAbi>
     mint: (pool: UniV3PoolInfo, from: number, to: number, liquidity: bigint) => Promise<bigint>
   }
+
+  // Weird hack to make typescript happy
+  return {
+    ...ret,
+    walletClient: walletClient,
+  } as typeof ret & { walletClient: WalletClient }
 }
 
 export type UniV3Environment = Awaited<ReturnType<typeof createUniV3EnvZero>>

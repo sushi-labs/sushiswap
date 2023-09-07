@@ -41,7 +41,7 @@ export const TickLensContract = {
 export const UniswapV2FactoryAddress: Record<number, string> = {
   [ChainId.ETHEREUM]: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
 }
-function uniswapV2Factory(chain: ChainId): FactoryV2 {
+export function uniswapV2Factory(chain: ChainId): FactoryV2 {
   return {
     address: UniswapV2FactoryAddress[chain] as Address,
     provider: LiquidityProviders.UniswapV2,
@@ -148,7 +148,7 @@ async function startInfinitTest(args: {
       const fromToken = Native.onChain(chainId),
         toToken = tokens[i]
       const route = Router.findBestRoute(poolMap, chainId, fromToken, getBigInt(1e18), toToken, 30e9)
-      if (route.status == RouteStatus.NoWay) {
+      if (route.status === RouteStatus.NoWay) {
         console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ` + timingLine)
         continue
       }
@@ -183,7 +183,7 @@ async function startInfinitTest(args: {
         })
         const amountOutExp = BigInt(route.amountOutBI.toString())
         const diff =
-          amountOutExp == 0n ? amountOutReal - amountOutExp : Number(amountOutReal - amountOutExp) / route.amountOut
+          amountOutExp === 0n ? amountOutReal - amountOutExp : Number(amountOutReal - amountOutExp) / route.amountOut
         console.log(
           `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.legs.length - 1} pools ` +
             timingLine +
@@ -192,7 +192,7 @@ async function startInfinitTest(args: {
         if (Math.abs(Number(diff)) > 0.001) console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
         console.log(rpParams)
       } catch (e) {
-        console.log('Routing failed. No connection ? ' + e)
+        console.log(`Routing failed. No connection ? ${e}`)
       }
     }
   }
@@ -267,7 +267,7 @@ it.skip('Extractor Optimism infinit work test', async () => {
 
 it.skip('Extractor Celo infinit work test', async () => {
   await startInfinitTest({
-    providerURL: `https://forno.celo.org`,
+    providerURL: 'https://forno.celo.org',
     chain: celo,
     factoriesV2: [sushiswapV2Factory(ChainId.CELO)],
     factoriesV3: [uniswapV3Factory(ChainId.CELO)],
@@ -374,7 +374,7 @@ it.skip('Extractor Base infinit work test', async () => {
 it.skip('viem issue #1', async () => {
   const client = createPublicClient({
     chain: polygonZkEvm,
-    transport: http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/demo`),
+    transport: http('https://polygonzkevm-mainnet.g.alchemy.com/v2/demo'),
   })
   const res = await client.multicall({
     allowFailure: true,
@@ -422,7 +422,7 @@ it.skip('Alchemy issue #1', async () => {
   // })
   // console.log(res.map((e) => e.eventName))
 
-  const r = await fetch(`https://polygonzkevm-mainnet.g.alchemy.com/v2/demo`, {
+  const r = await fetch('https://polygonzkevm-mainnet.g.alchemy.com/v2/demo', {
     method: 'POST',
     body: JSON.stringify({
       jsonrpc: '2.0',
