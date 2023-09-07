@@ -83,7 +83,10 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> = (
                       <HoverCardContent className="!p-0">
                         <CardHeader>
                           <CardTitle>Smart pool</CardTitle>
-                          <CardDescription>Have the position managed automatically for you.</CardDescription>
+                          <CardDescription>
+                            Allow the position to be autonomously managed on your behalf, encompassing the tasks of
+                            automatically recalibrating the range and aggregating associated fees for your convenience.
+                          </CardDescription>
                         </CardHeader>
                       </HoverCardContent>
                     </HoverCard>

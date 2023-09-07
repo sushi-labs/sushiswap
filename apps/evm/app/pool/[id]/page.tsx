@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { Separator } from '@sushiswap/ui'
+import { Container, Separator } from '@sushiswap/ui'
 import { ManageV2LiquidityCard } from 'ui/pool/ManageV2LiquidityCard'
 import { PoolTransactionsV2 } from 'ui/pool/PoolTransactionsV2'
 import { isAddress } from 'viem'
@@ -39,7 +39,7 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <>
+    <Container maxWidth="5xl" className="px-2 sm:px-4">
       <UnknownTokenAlert pool={pool} />
       <div className="flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
@@ -71,6 +71,6 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
         </div>
         <PoolTransactionsV2 pool={pool} poolId={pool.address} />
       </div>
-    </>
+    </Container>
   )
 }

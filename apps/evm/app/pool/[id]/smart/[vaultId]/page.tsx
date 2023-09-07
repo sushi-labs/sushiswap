@@ -7,6 +7,7 @@ import { tickToPrice } from '@sushiswap/v3-sdk'
 import { config } from '@sushiswap/viem-config'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+import { unstable_cache } from 'next/cache'
 import { SteerStrategyComponents, SteerStrategyGeneric } from 'ui/pool/Steer/Strategies'
 import { createPublicClient } from 'viem'
 
@@ -45,9 +46,12 @@ async function getGenerics(vault: SteerVault): Promise<SteerStrategyGeneric> {
 export default async function SteerVaultPage({ params }: { params: { vaultId: string } }) {
   const vaultId = unsanitize(params.vaultId)
 
-  const vault = await getSteerVault(vaultId)
+  const vault = await unstable_cache(() => getSteerVault(vaultId), ['steer-vault', vaultId], { revalidate: 60 * 15 })()
+  const generics = await unstable_cache(() => getGenerics(vault), ['steer-vault-generics', vaultId], {
+    revalidate: 60 * 5,
+  })()
 
   const Component = SteerStrategyComponents[vault.strategy]
 
-  return <Component vault={vault} generic={await getGenerics(vault)} />
+  return <Component vault={vault} generic={generics} />
 }
