@@ -245,10 +245,16 @@ const Component: FC<{ id: string }> = ({ id }) => {
                   <CardContent>
                     <CardGroup>
                       <CardLabel>Tokens (accrued over all positions)</CardLabel>
-                      {rewardsData && positionDetails && rewardsData.pools[positionDetails.address]?.rewardsPerToken ? (
+                      {rewardsData &&
+                        positionDetails &&
+                        rewardsData.pools[positionDetails.address]?.rewardsPerToken &&
                         Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).map((el, i) => (
-                          <CardCurrencyAmountItem key={el.symbol} amount={el.unclaimed} />
-                        ))
+                          <CardCurrencyAmountItem key={el.unclaimed.currency.address} amount={el.unclaimed} />
+                        ))}
+                      {rewardsData &&
+                      positionDetails &&
+                      !rewardsData.pools[positionDetails.address]?.rewardsPerToken ? (
+                        <></>
                       ) : (
                         <CardItem skeleton />
                       )}
@@ -474,24 +480,24 @@ const Component: FC<{ id: string }> = ({ id }) => {
                   ) : null}
                 </CardDescription>
               </CardHeader>
-              <Tabs className="w-full" defaultValue="add">
+              <Tabs className="w-full" defaultValue="active">
                 <CardContent>
                   <TabsList className="!flex">
-                    <TabsTrigger value="add" className="flex flex-1">
+                    <TabsTrigger value="active" className="flex flex-1">
                       Active
                     </TabsTrigger>
-                    <TabsTrigger value="remove" className="flex flex-1">
-                      Expired
+                    <TabsTrigger value="inactive" className="flex flex-1">
+                      Upcoming & Expired
                     </TabsTrigger>
                   </TabsList>
                 </CardContent>
-                <TabsContent value="add">
+                <TabsContent value="active">
                   <DistributionDataTable
                     isLoading={rewardsLoading}
                     data={currentAngleRewardsPool?.distributionData.filter((el) => el.isLive)}
                   />
                 </TabsContent>
-                <TabsContent value="remove">
+                <TabsContent value="inactive">
                   <DistributionDataTable
                     isLoading={rewardsLoading}
                     data={currentAngleRewardsPool?.distributionData.filter((el) => !el.isLive)}

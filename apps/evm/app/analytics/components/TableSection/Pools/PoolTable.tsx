@@ -1,10 +1,9 @@
 import { GetPoolsArgs, Pool } from '@sushiswap/client'
 import { usePoolCount, usePoolsInfinite } from '@sushiswap/client/hooks'
-import { useBreakpoint } from '@sushiswap/hooks'
+import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import { Loader } from '@sushiswap/ui/components/loader'
-import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
-import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { ColumnDef, PaginationState, SortingState, TableState } from '@tanstack/react-table'
+import React, { FC, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useSWRConfig } from 'swr'
 
@@ -20,10 +19,7 @@ import {
   VOLUME_1M_COLUMN,
   VOLUME_7D_COLUMN,
 } from './columns'
-import { PAGE_SIZE } from './constants'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 const COLUMNS = [
   NAME_COLUMN,
   TVL_COLUMN,
@@ -34,21 +30,14 @@ const COLUMNS = [
   FEES_7D_COLUMN,
   FEES_1M_COLUMN,
   APR_COLUMN,
-  // rome-ignore lint:
-] as any // eslint-disable-line @typescript-eslint/no-explicit-any
+] as ColumnDef<Pool, unknown>[]
 
 export const PoolTable: FC = () => {
   const { chainIds, search: tokenSymbols, isWhitelisted, poolProtocols: protocols } = useFilters()
-
-  const { isSm } = useBreakpoint('sm')
-  const { isMd } = useBreakpoint('md')
-  const { isLg } = useBreakpoint('lg')
-
   const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
-  const [columnVisibility, setColumnVisibility] = useState({})
-  const [, setPagination] = useState<PaginationState>({
+  const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: PAGE_SIZE,
+    pageSize: 10,
   })
 
   const args = useMemo<GetPoolsArgs>(
@@ -63,55 +52,22 @@ export const PoolTable: FC = () => {
     [chainIds, tokenSymbols, sorting, protocols, isWhitelisted]
   )
 
-  const { data: pools, isValidating, setSize } = usePoolsInfinite({ args, swrConfig: useSWRConfig() })
-  const { data: poolCount } = usePoolCount({ args, swrConfig: useSWRConfig() })
+  const {
+    data: pools,
+    isValidating,
+    setSize,
+  } = usePoolsInfinite({ args, shouldFetch: true, swrConfig: useSWRConfig() })
+
+  const { data: poolCount } = usePoolCount({ args, shouldFetch: true, swrConfig: useSWRConfig() })
 
   const data = useMemo(() => pools?.flat() || [], [pools])
 
-  const table = useReactTable<Pool>({
-    data,
-    columns: COLUMNS,
-    state: {
+  const state: Partial<TableState> = useMemo(() => {
+    return {
       sorting,
-      columnVisibility,
-    },
-    pageCount: Math.ceil((poolCount?.count || 0) / PAGE_SIZE),
-    onSortingChange: setSorting,
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    manualSorting: true,
-    manualPagination: true,
-  })
-
-  // TODO: Fix
-  useEffect(() => {
-    if (isSm && !isMd && !isLg) {
-      setColumnVisibility({
-        fees1d: false,
-        volume24h: false,
-        fees7d: false,
-        network: false,
-      })
-    } else if (isSm && isMd && !isLg) {
-      setColumnVisibility({ fees24h: false, volume24h: false, network: false })
-    } else if (isSm) {
-      setColumnVisibility({})
-    } else {
-      setColumnVisibility({
-        fees1d: false,
-        volume1d: false,
-        network: false,
-        fees1w: false,
-        tvl: false,
-        totalApr: false,
-      })
+      pagination,
     }
-  }, [isLg, isMd, isSm])
-
-  const rowLink = useCallback((row: Pool) => {
-    return `https://www.sushi.com/pools/${row.id}`
-  }, [])
+  }, [pagination, sorting])
 
   return (
     <InfiniteScroll
@@ -120,17 +76,27 @@ export const PoolTable: FC = () => {
       hasMore={data.length < (poolCount?.count || 0)}
       loader={
         <div className="flex justify-center w-full py-4">
-          <Loader size={24} />
+          <Loader size={16} />
         </div>
       }
     >
-      <GenericTable<Pool>
-        table={table}
-        loading={!pools && isValidating}
-        placeholder="No pools found"
-        pageSize={PAGE_SIZE}
-        linkFormatter={rowLink}
-      />
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            Pools{' '}
+            {poolCount?.count ? <span className="text-gray-400 dark:text-slate-500">({poolCount.count})</span> : null}
+          </CardTitle>
+        </CardHeader>
+        <DataTable
+          state={state}
+          onSortingChange={setSorting}
+          onPaginationChange={setPagination}
+          loading={!pools && isValidating}
+          linkFormatter={(row) => `/pool/${row.chainId}%3A${row.address}`}
+          columns={COLUMNS}
+          data={data}
+        />
+      </Card>
     </InfiniteScroll>
   )
 }

@@ -395,10 +395,10 @@ export const SimpleSwapTradeReviewDialog: FC<{ children(error: Error | null): Re
                       </List.KeyValue>
                     )}
                     <List.KeyValue title="Network fee">
-                      {isFetching ? (
+                      {isFetching || !trade?.gasSpent || trade.gasSpent === '0' ? (
                         <SkeletonText align="right" fontSize="sm" className="w-1/3" />
                       ) : (
-                        `~$${trade?.gasSpent ?? '0.00'}`
+                        `${trade.gasSpent} ${Native.onChain(chainId).symbol}`
                       )}
                     </List.KeyValue>
                     {isSwap && (
