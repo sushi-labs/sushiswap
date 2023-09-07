@@ -46,7 +46,7 @@ export const useSteerPositions = ({ poolAddress, chainId }: UseSteerPositions) =
 
   return {
     data: useMemo(() => {
-      if (!vaults || !positions) return []
+      if (!vaults || !positions || !address) return []
 
       return positions.flatMap((el, i) => {
         if (!el || el.steerTokenBalance === 0n) return []

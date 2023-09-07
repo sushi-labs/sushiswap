@@ -3,8 +3,10 @@ import { SteerVault } from '@sushiswap/client/src/pure/steer-vault/vault'
 import { Token } from '@sushiswap/currency'
 import { formatNumber, unsanitize } from '@sushiswap/format'
 import { getSteerVaultPositions, getTokenRatios } from '@sushiswap/steer-sdk'
+import { Container } from '@sushiswap/ui'
 import { tickToPrice } from '@sushiswap/v3-sdk'
 import { config } from '@sushiswap/viem-config'
+import { deserialize, serialize } from '@wagmi/core'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { unstable_cache } from 'next/cache'
@@ -47,11 +49,17 @@ export default async function SteerVaultPage({ params }: { params: { vaultId: st
   const vaultId = unsanitize(params.vaultId)
 
   const vault = await unstable_cache(() => getSteerVault(vaultId), ['steer-vault', vaultId], { revalidate: 60 * 15 })()
-  const generics = await unstable_cache(() => getGenerics(vault), ['steer-vault-generics', vaultId], {
-    revalidate: 60 * 5,
-  })()
+  const generics = deserialize(
+    await unstable_cache(async () => serialize(await getGenerics(vault)), ['steer-vault-generics', vaultId], {
+      revalidate: 60 * 5,
+    })()
+  ) as Awaited<ReturnType<typeof getGenerics>>
 
   const Component = SteerStrategyComponents[vault.strategy]
 
-  return <Component vault={vault} generic={generics} />
+  return (
+    <Container maxWidth="5xl" className="px-2 sm:px-4">
+      <Component vault={vault} generic={generics} />
+    </Container>
+  )
 }
