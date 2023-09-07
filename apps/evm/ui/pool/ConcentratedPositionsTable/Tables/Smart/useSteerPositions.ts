@@ -14,15 +14,15 @@ interface UseSteerPositions {
 }
 
 export const useSteerPositions = ({ poolAddress, chainId }: UseSteerPositions) => {
-  const { address } = useAccount()
+  const { address: account } = useAccount()
 
   const { data: vaultsPerChain, isLoading: isPerChainLoading } = useSteerVaults({
     args: { chainIds: chainId ? [chainId] : undefined },
-    shouldFetch: !poolAddress || !chainId,
+    shouldFetch: account && (!poolAddress || !chainId),
   })
   const { data: vaultsPerPool, isLoading: isPerPoolLoading } = usePool({
     args: chainId && poolAddress ? { chainId, address: poolAddress } : '',
-    shouldFetch: !!poolAddress && !!chainId,
+    shouldFetch: !!account && !!poolAddress && !!chainId,
   })
 
   const { data: prices, isLoading: isPricesLoading } = useAllPrices()
@@ -41,12 +41,12 @@ export const useSteerPositions = ({ poolAddress, chainId }: UseSteerPositions) =
   const vaultIds = useMemo(() => vaults?.map((el) => el.id), [vaults])
   const { data: positions, isLoading: isPositionsLoading } = useSteerAccountPositions({
     vaultIds,
-    account: address,
+    account,
   })
 
   return {
     data: useMemo(() => {
-      if (!vaults || !positions || !address) return []
+      if (!vaults || !positions || !account) return []
 
       return positions.flatMap((el, i) => {
         if (!el || el.steerTokenBalance === 0n) return []
@@ -75,7 +75,7 @@ export const useSteerPositions = ({ poolAddress, chainId }: UseSteerPositions) =
           totalAmountUSD: token0AmountUSD + token1AmountUSD,
         }
       })
-    }, [positions, prices, vaults]),
+    }, [account, positions, prices, vaults]),
     isLoading: isVaultsLoading || isPricesLoading || isPositionsLoading,
   }
 }

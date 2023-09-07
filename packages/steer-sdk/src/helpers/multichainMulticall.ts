@@ -41,7 +41,6 @@ async function multichainMulticall<
 
     const client = clients.find((client) => client.chain?.id === chainId)
 
-    // Shoudn't happen
     if (!client) {
       throw new Error('Missing client for a chain')
     }
