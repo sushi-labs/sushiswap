@@ -106,8 +106,8 @@ export function getRandomExp(rnd: () => number, min: number, max: number) {
 }
 
 function closeValues(_a: number | bigint, _b: number | bigint, accuracy: number): boolean {
-  const a: number = typeof _a === 'number' ? _a : parseInt(_a.toString())
-  const b: number = typeof _b === 'number' ? _b : parseInt(_b.toString())
+  const a = Number(_a)
+  const b = Number(_b)
   if (accuracy === 0) return a === b
   if (Math.abs(a) < 1 / accuracy) return Math.abs(a - b) <= 10
   if (Math.abs(b) < 1 / accuracy) return Math.abs(a - b) <= 10
@@ -467,7 +467,7 @@ describe('Real Curve pools consistency check', () => {
     config = await getTestConfig()
   })
 
-  describe.only('Not-Factory pools by whitelist', () => {
+  describe('Not-Factory pools by whitelist', () => {
     for (let i = 0; i < NON_FACTORY_POOLS.length; ++i) {
       const [poolAddress, name, poolType, precision = 1e-9] = NON_FACTORY_POOLS[i]
       it(`${name} (${poolAddress}, ${poolType})`, async () => {
@@ -490,7 +490,7 @@ describe('Real Curve pools consistency check', () => {
         console.log('skipped (exception list: function "exchange" failes)')
         return
       }
-      const precision = FACTORY_POOL_PRECISION_SPECIAL[poolAddress.toLowerCase()] || BigInt(1e9)
+      const precision = FACTORY_POOL_PRECISION_SPECIAL[poolAddress.toLowerCase()] || 1e9
       const result = await processMultiTokenPool(config, poolAddress, CurvePoolType.Factory, precision)
       console.log(result)
       if (result === 'passed') ++passed
