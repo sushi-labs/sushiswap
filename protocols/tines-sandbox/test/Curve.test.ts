@@ -241,7 +241,7 @@ async function createCurvePoolInfo(
       tokenContracts.push(undefined)
       tokenTines.push({ address: token, name: token, symbol: token, chainId: 1, decimals: 18 })
     } else {
-      const res = await setTokenBalance(config.client, token, config.user.address, initialBalance)
+      const res = await setTokenBalance(token, config.user.address, initialBalance)
       expect(res).equal(true, `Wrong setTokenBalance for ${token}`)
 
       const tokenContract = {
