@@ -64,7 +64,7 @@
     "idb-keyval": "6.2.0",
     "nanoid": "4.0.0",
     "viem": "1.10.7",
-    "wagmi": "1.3.11",
+    "wagmi": "1.4.1",
     "zod": "3.21.4"
   },
   "devDependencies": {
