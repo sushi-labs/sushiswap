@@ -76,7 +76,7 @@ export const useSteerPositions = ({ poolAddress, chainId }: UseSteerPositions) =
         }
       })
     }, [account, positions, prices, vaults]),
-    isLoading: isVaultsLoading || isPricesLoading || isPositionsLoading,
+    isLoading: account && (isVaultsLoading || isPricesLoading || isPositionsLoading),
   }
 }
 
