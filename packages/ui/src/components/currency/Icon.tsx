@@ -2,7 +2,7 @@
 
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/currency'
-import { ImageProps } from 'next/image'
+import Image, { ImageProps } from 'next/image'
 import { FC } from 'react'
 
 import { cloudinaryImageLoader } from '../../cloudinary'
@@ -99,19 +99,46 @@ export interface IconProps extends Omit<ImageProps, 'src' | 'alt'> {
 }
 
 export const Icon: FC<IconProps> = ({ currency, disableLink = true, ...rest }) => {
-  const src = currency.isNative
-    ? cloudinaryImageLoader({
-        width: Number(rest.width) ?? 20,
-        src: `native-currency/${LOGO[currency.chainId]}`,
-      })
-    : cloudinaryImageLoader({
-        width: Number(rest.width) ?? 20,
-        src: `tokens/${currency.chainId}/${currency.wrapped.address}.jpg`,
-      })
+  // const src = currency.isNative
+  //   ? cloudinaryImageLoader({
+  //       width: Number(rest.width) ?? 20,
+  //       src: `native-currency/${LOGO[currency.chainId]}`,
+  //     })
+  //   : cloudinaryImageLoader({
+  //       width: Number(rest.width) ?? 20,
+  //       src: `tokens/${currency.chainId}/${currency.wrapped.address}.jpg`,
+  //     })
 
   const avatar = (
     <Avatar style={{ width: rest.width, height: rest.height }}>
-      <AvatarImage src={src} />
+      <AvatarImage
+        src={
+          currency.isNative
+            ? cloudinaryImageLoader({
+                width: Number(rest.width) ?? 20,
+                src: `native-currency/${LOGO[currency.chainId]}`,
+              })
+            : cloudinaryImageLoader({
+                width: Number(rest.width) ?? 20,
+                src: `tokens/${currency.chainId}/${currency.wrapped.address}.jpg`,
+              })
+        }
+        asChild
+      >
+        <Image
+          alt={currency.wrapped.symbol as string}
+          src={
+            currency.isNative
+              ? `native-currency/${LOGO[currency.chainId]}`
+              : `tokens/${currency.chainId}/${currency.wrapped.address}.jpg`
+          }
+          width={rest.width}
+          height={rest.height}
+          priority
+          loader={cloudinaryImageLoader}
+        />
+      </AvatarImage>
+
       <AvatarFallback
         style={{ background: hashStringToColor(`${currency.symbol} ${currency.name}` ?? '??') }}
         className="text-white"
