@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronRightIcon, GiftIcon } from '@heroicons/react-v1/outline'
+import { GiftIcon } from '@heroicons/react-v1/outline'
 import { ChainId } from '@sushiswap/chain'
 import { isTridentChainId, TridentChainId } from '@sushiswap/trident-sdk'
 import { LinkExternal, LinkInternal, typographyVariants } from '@sushiswap/ui'
@@ -116,14 +116,8 @@ export const Hero: FC = () => {
       <div className="flex flex-col items-center gap-4 lg:items-end">
         <div className="flex flex-col items-center gap-1 lg:items-end">
           <span className="font-semibold lg:text-sm">Looking for a partnership with Sushi?</span>
-          <Button
-            className="flex-1 w-full sm:flex-0 sm:w-[unset]"
-            icon={ChevronRightIcon}
-            variant="link"
-            size="sm"
-            asChild
-          >
-            <LinkExternal href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe">Join Onsen</LinkExternal>
+          <Button className="flex-1 w-full sm:flex-0 sm:w-[unset]" variant="link" size="sm" asChild>
+            <LinkInternal href="/partner">Apply here</LinkInternal>
           </Button>
         </div>
         <div className="flex flex-col items-center gap-1 lg:items-end">
