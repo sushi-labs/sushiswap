@@ -30,7 +30,7 @@ const STEPS = [
     label: 'Step 3',
     title: 'Establish Farm',
     description:
-      'If your project successfully passes the due diligence process, Sushi will offer incentives to the LP farm associated with your project by providing $SUSHI tokens as dual incentives on top of single incentives provided by your project. The size of the $Sushi reward will be determined based on the trading volume of the pool.',
+      'If your project successfully passes the due diligence process, Sushi will offer incentives to the LP farm associated with your project by providing $SUSHI tokens as dual incentives on top of single incentives provided by your project. The size of the $SUSHI reward will be determined based on the trading volume of the pool.',
   },
   {
     label: 'Step 4',
@@ -100,7 +100,7 @@ export default async function PartnerPage() {
                   <h3 className="text-base font-semibold tracking-tight text-slate-900 dark:text-slate-200 pt-8 lg:pt-0">
                     {step.title}
                   </h3>
-                  <div className="mt-2 mb-4 prose prose-slate prose-a:relative prose-a:z-10 dark:prose-invert line-clamp-2">
+                  <div className="mt-2 mb-4 prose prose-slate prose-a:relative prose-a:z-10 dark:prose-invert">
                     <p>{step.description}</p>
                   </div>
                   <span className="absolute left-0 top-0 lg:left-auto lg:right-full lg:mr-[calc(6.5rem+1px)]">

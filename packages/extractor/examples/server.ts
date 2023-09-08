@@ -355,23 +355,23 @@ async function main() {
     return res.status(200).send()
   })
 
-  // app.get('/get-pool-codes-for-tokens', (req: Request, res: Response) => {
-  //   console.log('HTTP: GET /get-pool-codes-for-tokens', JSON.stringify(req.query))
-  //   const { chainId } = querySchema.parse(req.query)
-  //   const extractor = extractors.get(chainId) as Extractor
-  //   const tokenManager = tokenManagers.get(chainId) as TokenManager
-  //   const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values()).slice(0, 100))
-  //   const poolCodes = extractor.getPoolCodesForTokens(tokens)
-  //   return res.json(poolCodes)
-  // })
+  app.get('/pool-codes-for-tokens', (req: Request, res: Response) => {
+    // console.log('HTTP: GET /get-pool-codes-for-tokens', JSON.stringify(req.query))
+    const { chainId } = querySchema.parse(req.query)
+    const extractor = extractors.get(chainId) as Extractor
+    const tokenManager = tokenManagers.get(chainId) as TokenManager
+    const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values()).slice(0, 100))
+    const poolCodes = extractor.getPoolCodesForTokens(tokens)
+    return res.json(poolCodes)
+  })
 
-  // app.get('/pool-codes', (req: Request, res: Response) => {
-  //   console.log('HTTP: GET /pool-codes', JSON.stringify(req.query))
-  //   const { chainId } = querySchema.parse(req.query)
-  //   const extractor = extractors.get(chainId) as Extractor
-  //   const poolCodes = extractor.getCurrentPoolCodes()
-  //   res.json(poolCodes)
-  // })
+  app.get('/pool-codes', (req: Request, res: Response) => {
+    // console.log('HTTP: GET /pool-codes', JSON.stringify(req.query))
+    const { chainId } = querySchema.parse(req.query)
+    const extractor = extractors.get(chainId) as Extractor
+    const poolCodes = extractor.getCurrentPoolCodes()
+    res.json(poolCodes)
+  })
 
   // app.get('/debug-sentry', function mainHandler(req, res) {
   //   throw new Error('My first Sentry error!')
