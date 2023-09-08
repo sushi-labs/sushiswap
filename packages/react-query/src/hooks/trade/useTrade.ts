@@ -2,7 +2,7 @@ import { calculateSlippageAmount } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, nativeCurrencyIds, Price, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { Percent, ZERO } from '@sushiswap/math'
-import { isRouteProcessor3_1ChainId } from '@sushiswap/route-processor-sdk'
+import { isRouteProcessor3_1ChainId, isRouteProcessor3_2ChainId } from '@sushiswap/route-processor-sdk'
 import { HexString } from '@sushiswap/types'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
@@ -15,6 +15,16 @@ import { tradeValidator } from './validator'
 
 const SWAP_BASE_URL =
   process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com'
+
+function getApiVersion(chainId: ChainId) {
+  if (isRouteProcessor3_2ChainId(chainId)) {
+    return '/v3.2'
+  }
+  if (isRouteProcessor3_1ChainId(chainId)) {
+    return '/v3.1'
+  }
+  return ''
+}
 
 export const useTradeQuery = (
   {
@@ -33,7 +43,7 @@ export const useTradeQuery = (
   return useQuery({
     queryKey: ['getTrade', { chainId, fromToken, toToken, amount, slippagePercentage, gasPrice, recipient }],
     queryFn: async () => {
-      const params = new URL(isRouteProcessor3_1ChainId(chainId) ? SWAP_BASE_URL + '/v3.1' : SWAP_BASE_URL)
+      const params = new URL(SWAP_BASE_URL + getApiVersion(chainId))
 
       params.searchParams.set('chainId', `${chainId}`)
       params.searchParams.set(

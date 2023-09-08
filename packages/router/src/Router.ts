@@ -37,6 +37,7 @@ export type PoolFilter = (list: RPool) => boolean
 
 export class Router {
   static findRouteType(poolCodesMap: Map<string, PoolCode>, addresses: string[]) {
+    // const poolCodes = addresses.map(address => poolCodesMap.get(address))
     if (
       addresses?.every((address) => {
         const poolName = poolCodesMap.get(address)?.poolName

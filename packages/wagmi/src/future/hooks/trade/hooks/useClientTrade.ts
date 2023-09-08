@@ -5,9 +5,11 @@ import { Percent } from '@sushiswap/math'
 import { usePrice, UseTradeParams, UseTradeReturnWriteArgs } from '@sushiswap/react-query'
 import {
   isRouteProcessor3_1ChainId,
+  isRouteProcessor3_2ChainId,
   isRouteProcessor3ChainId,
   isRouteProcessorChainId,
   ROUTE_PROCESSOR_3_1_ADDRESS,
+  ROUTE_PROCESSOR_3_2_ADDRESS,
   ROUTE_PROCESSOR_3_ADDRESS,
   ROUTE_PROCESSOR_ADDRESS,
 } from '@sushiswap/route-processor-sdk'
@@ -51,7 +53,8 @@ export const useClientTrade = (variables: UseTradeParams) => {
         !poolsCodeMap ||
         (!isRouteProcessorChainId(chainId) &&
           !isRouteProcessor3ChainId(chainId) &&
-          !isRouteProcessor3_1ChainId(chainId)) ||
+          !isRouteProcessor3_1ChainId(chainId) &&
+          !isRouteProcessor3_2ChainId(chainId)) ||
         !fromToken ||
         !amount ||
         !toToken ||
@@ -102,7 +105,19 @@ ${logPools}
       let args = undefined
 
       if (recipient) {
-        if (isRouteProcessor3_1ChainId(chainId)) {
+        if (isRouteProcessor3_2ChainId(chainId)) {
+          console.debug('routeProcessor3_2Params')
+          args = Router.routeProcessor3_2Params(
+            poolsCodeMap,
+            route,
+            fromToken,
+            toToken,
+            recipient,
+            ROUTE_PROCESSOR_3_2_ADDRESS[chainId],
+            [],
+            +slippagePercentage / 100
+          )
+        } else if (isRouteProcessor3_1ChainId(chainId)) {
           console.debug('routeProcessor3_1Params')
           args = Router.routeProcessor3_1Params(
             poolsCodeMap,

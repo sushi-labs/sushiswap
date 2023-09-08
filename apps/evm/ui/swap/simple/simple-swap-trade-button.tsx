@@ -4,9 +4,11 @@ import { Native } from '@sushiswap/currency'
 import { ZERO } from '@sushiswap/math'
 import {
   isRouteProcessor3_1ChainId,
+  isRouteProcessor3_2ChainId,
   isRouteProcessor3ChainId,
   isRouteProcessorChainId,
   ROUTE_PROCESSOR_3_1_ADDRESS,
+  ROUTE_PROCESSOR_3_2_ADDRESS,
   ROUTE_PROCESSOR_3_ADDRESS,
   ROUTE_PROCESSOR_ADDRESS,
 } from '@sushiswap/route-processor-sdk'
@@ -49,7 +51,9 @@ export const SimpleSwapTradeButton: FC = () => {
                     id="approve-erc20"
                     amount={swapAmount}
                     contract={
-                      isRouteProcessor3_1ChainId(chainId)
+                      isRouteProcessor3_2ChainId(chainId)
+                        ? ROUTE_PROCESSOR_3_2_ADDRESS[chainId]
+                        : isRouteProcessor3_1ChainId(chainId)
                         ? ROUTE_PROCESSOR_3_1_ADDRESS[chainId]
                         : isRouteProcessor3ChainId(chainId)
                         ? ROUTE_PROCESSOR_3_ADDRESS[chainId]
