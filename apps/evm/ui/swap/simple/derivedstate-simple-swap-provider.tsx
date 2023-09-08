@@ -40,6 +40,8 @@ interface State {
     recipient: string | undefined
   }
   isLoading: boolean
+  isToken0Loading: boolean
+  isToken1Loading: boolean
 }
 
 const DerivedStateSimpleSwapContext = createContext<State>({} as State)
@@ -249,6 +251,8 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
             token1: _token1,
           },
           isLoading: token0Loading || token1Loading,
+          isToken0Loading: token0Loading,
+          isToken1Loading: token1Loading,
         }
       }, [
         address,

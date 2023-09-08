@@ -12,7 +12,7 @@ export const CrossChainSwapToken0Input = () => {
   const {
     state: { swapAmountString, chainId0, token0 },
     mutate: { setSwapAmount, setToken0, setChainId0 },
-    isLoading,
+    isToken0Loading: isLoading,
   } = useDerivedStateCrossChainSwap()
 
   return (
