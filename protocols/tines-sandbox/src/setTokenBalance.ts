@@ -1,12 +1,13 @@
 import { getStorageAt, setStorageAt } from '@nomicfoundation/hardhat-network-helpers'
 import { NumberLike } from '@nomicfoundation/hardhat-network-helpers/dist/src/types'
 import { erc20Abi } from '@sushiswap/abi'
-import { Address, Client, keccak256 } from 'viem'
-import { readContract } from 'viem/actions'
+import { BigNumber, Contract } from 'ethers'
+import { keccak256 } from 'ethers/lib/utils'
+import { ethers } from 'hardhat'
 
 // Sometimes token contract is a proxy without delegate call
 // So, its storage is in other contract and we need to work with it
-const TokenProxyMap: Record<Address, Address> = {
+const TokenProxyMap: Record<string, string> = {
   '0xfe18be6b3bd88a2d2a7f928d00292e7a9963cfc6': '0x4F6296455F8d754c19821cF1EC8FeBF2cD456E67', // Ethereum sBTC
   '0x5e74c9036fb86bd7ecdcb084a0673efc32ea31cb': '0x34A5ef81d18F3a305aE9C2d7DF42beef4c79031c', // Ethereum sETH
   '0xd71ecff9342a5ced620049e616c5035f1db98620': '0x6568D9e750fC44AF00f857885Dfb8281c00529c4', // Ethereum sEUR
@@ -16,61 +17,47 @@ const TokenProxyMap: Record<Address, Address> = {
 
 const cache: Record<string, number> = {}
 
-export async function setTokenBalance(
-  client: Client,
-  token: Address,
-  user: Address,
-  balance: bigint
-): Promise<boolean> {
+export async function setTokenBalance(token: string, user: string, balance: bigint): Promise<boolean> {
   const setStorage = async (slotNumber: number, value0: NumberLike, value1: NumberLike) => {
     // Solidity mapping
-    const slotData = `0x${user.padStart(64, '0')}${Number(slotNumber).toString(16).padStart(64, '0')}` as const
+    const slotData = '0x' + user.padStart(64, '0') + Number(slotNumber).toString(16).padStart(64, '0')
     const slot = keccak256(slotData)
     const previousValue0 = await getStorageAt(token, slot)
     await setStorageAt(token, slot, value0)
     // Vyper mapping
-    const slotData2 = `0x${Number(slotNumber).toString(16).padStart(64, '0')}${user.padStart(64, '0')}` as const
+    const slotData2 = '0x' + Number(slotNumber).toString(16).padStart(64, '0') + user.padStart(64, '0')
     const slot2 = keccak256(slotData2)
     const previousValue1 = await getStorageAt(token, slot)
     await setStorageAt(token, slot2, value1)
     return [previousValue0, previousValue1]
   }
 
-  const realContract = TokenProxyMap[token.toLowerCase() as Address]
+  if (user.startsWith('0x')) user = user.substring(2)
+  const realContract = TokenProxyMap[token.toLowerCase()]
   token = realContract || token
 
-  const cachedSlot = cache[token.toLowerCase()]
-  if (cachedSlot !== undefined) {
-    await setStorage(cachedSlot, balance, balance)
+  const cashedSlot = cache[token.toLowerCase()]
+  if (cashedSlot !== undefined) {
+    await setStorage(cashedSlot, balance, balance)
     return true
   }
 
-  const balancePrimary = await readContract(client, {
-    abi: erc20Abi,
-    functionName: 'balanceOf',
-    args: [user],
-    address: token as Address,
-  })
+  const tokenContract = new Contract(token, erc20Abi, ethers.provider)
 
-  await Promise.all(
-    Array(200).map(async (_, i) => {
-      const [previousValue0, previousValue1] = await setStorage(i, balance, balance)
-      const resBalance = await readContract(client, {
-        abi: erc20Abi,
-        functionName: 'balanceOf',
-        args: [user],
-        address: token as Address,
-      })
-      //console.log(i, '0x' + user.padStart(64, '0') + Number(i).toString(16).padStart(64, '0'), resBalance.toString())
+  const balancePrimary = (await tokenContract.balanceOf(user)) as BigNumber
 
-      if (resBalance !== 0n) {
-        if (resBalance.toString() === balance.toString() || resBalance !== balancePrimary) {
-          cache[token.toLowerCase()] = i
-          return true
-        }
+  for (let i = 0; i < 200; ++i) {
+    const [previousValue0, previousValue1] = await setStorage(i, balance, balance)
+    const resBalance = (await tokenContract.balanceOf(user)) as BigNumber
+    //console.log(i, '0x' + user.padStart(64, '0') + Number(i).toString(16).padStart(64, '0'), resBalance.toString())
+
+    if (!resBalance.isZero()) {
+      if (resBalance.toString() === balance.toString() || !resBalance.eq(balancePrimary)) {
+        cache[token.toLowerCase()] = i
+        return true
       }
-      await setStorage(i, previousValue0, previousValue1) // revert previous values back
-    })
-  )
+    }
+    await setStorage(i, previousValue0, previousValue1) // revert previous values back
+  }
   return false
 }

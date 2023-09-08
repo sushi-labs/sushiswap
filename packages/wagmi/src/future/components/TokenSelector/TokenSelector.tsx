@@ -22,7 +22,7 @@ import { Button, buttonIconVariants } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { List } from '@sushiswap/ui/components/list/List'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
-import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
+import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useTokenWithCache } from '../../hooks'
@@ -63,7 +63,11 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   const { data: defaultTokenMap, isLoading: isTokensLoading } = useTokens({ chainId })
   const { data: otherTokenMap, isLoading: isOtherTokensLoading } = useOtherTokenListsQuery({ chainId, query })
   const { data: pricesMap } = usePrices({ chainId })
-  const { data: balancesMap } = useBalances({ chainId, account: address })
+  const {
+    data: balancesMap,
+    isLoading: isBalanceLoading,
+    refetch,
+  } = useBalances({ chainId, account: address, enabled: open })
 
   const tokenMap = useMemo(() => {
     return {
@@ -90,7 +94,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
     customTokenMap: currencies ? {} : customTokenMap,
     tokenMap: currencies ? currencies : tokenMap,
     pricesMap,
-    balancesMap,
+    balancesMap: balancesMap ?? {},
     chainId,
     includeNative,
   })
@@ -132,6 +136,11 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
     },
     [_onSelect, customTokenMutate]
   )
+
+  // Refetch whenever TokenSelector opens
+  useEffect(() => {
+    if (open) refetch()
+  }, [open])
 
   const isLoading = isTokensLoading || isOtherTokensLoading || isQueryTokenLoading
 
@@ -232,6 +241,9 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
               officialTokenIds={officialTokenIds}
               currencies={sortedTokenList}
               chainId={chainId}
+              balancesMap={balancesMap ?? {}}
+              pricesMap={pricesMap}
+              isBalanceLoading={isBalanceLoading}
             />
             {sortedTokenList?.length === 0 && !queryToken && chainId && (
               <span className="h-10 flex items-center justify-center text-center text-sm text-gray-500 dark:text-slate-500">

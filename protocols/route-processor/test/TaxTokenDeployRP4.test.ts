@@ -1,5 +1,5 @@
 import { SnapshotRestorer, takeSnapshot } from '@nomicfoundation/hardhat-network-helpers'
-import { routeProcessor4Abi } from '@sushiswap/abi'
+import { routeProcessor3Abi } from '@sushiswap/abi'
 import { erc20Abi } from '@sushiswap/abi'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Native, Token } from '@sushiswap/currency'
@@ -7,21 +7,38 @@ import { DataFetcher, LiquidityProviders, Router, RPParams } from '@sushiswap/ro
 import { MultiRoute, RouteStatus } from '@sushiswap/tines'
 import { Contract } from '@sushiswap/types'
 import { expect } from 'chai'
-import { config, network } from 'hardhat'
-import { Address, Client, createPublicClient, custom, HDAccount, Hex, testActions, walletActions } from 'viem'
-import { mnemonicToAccount } from 'viem/accounts'
+import { config } from 'hardhat'
+import { createProvider } from 'hardhat/internal/core/providers/construction'
+import { Address, Client, createPublicClient, custom, Hex, walletActions } from 'viem'
 import { hardhat } from 'viem/chains'
 
 import RouteProcessor4 from '../artifacts/contracts/RouteProcessor4.sol/RouteProcessor4.json'
 
-async function getTestEnvironment() {
-  const client = createPublicClient({
-    batch: {
-      multicall: {
-        batchSize: 2048,
-        wait: 1,
+async function createHardhatProvider(chainId: ChainId, url: string, blockNumber: number) {
+  return await createProvider(
+    {
+      ...config,
+      defaultNetwork: 'hardhat',
+      networks: {
+        ...config.networks,
+        hardhat: {
+          ...config.networks.hardhat,
+          chainId,
+          forking: {
+            enabled: true,
+            url,
+            blockNumber,
+          },
+        },
       },
     },
+    'hardhat'
+  )
+}
+
+async function getTestEnvironment(chainId: ChainId, url: string, blockNumber: number) {
+  const provider = await createHardhatProvider(chainId, url, blockNumber)
+  const client = createPublicClient({
     chain: {
       ...hardhat,
       contracts: {
@@ -30,53 +47,43 @@ async function getTestEnvironment() {
           blockCreated: 25770160,
         },
       },
-      id: network.config.chainId ?? 1, // !! remove when switch to local network setting
+      id: chainId,
     },
-    transport: custom(network.provider),
-  })
-    .extend(testActions({ mode: 'hardhat' }))
-    .extend(walletActions)
+    transport: custom(provider),
+  }).extend(walletActions)
 
-  const accounts = config.networks.hardhat.accounts as { mnemonic: string }
+  const [userAddress] = await client.getAddresses()
 
-  const user = mnemonicToAccount(accounts.mnemonic, { accountIndex: 0 })
-  const user2 = mnemonicToAccount(accounts.mnemonic, { accountIndex: 1 })
-
-  const chainId = network.config.chainId as ChainId
   const dataFetcher = new DataFetcher(chainId, client)
   dataFetcher.startDataFetching([LiquidityProviders.SushiSwapV2, LiquidityProviders.UniswapV2])
 
   const RouteProcessorTx = await client.deployContract({
-    chain: null,
-    abi: routeProcessor4Abi,
+    abi: routeProcessor3Abi,
     bytecode: RouteProcessor4.bytecode as Hex,
-    account: user.address,
+    account: userAddress,
     args: ['0x0000000000000000000000000000000000000000', []],
   })
   const RouteProcessorAddress = (await client.waitForTransactionReceipt({ hash: RouteProcessorTx })).contractAddress
   if (!RouteProcessorAddress) throw new Error('RouteProcessorAddress is undefined')
   const RouteProcessor = {
     address: RouteProcessorAddress,
-    abi: routeProcessor4Abi,
+    abi: routeProcessor3Abi,
   }
 
   console.log(`  Network: ${chainName[chainId]}, Forked Block: ${await client.getBlockNumber()}`)
-  //console.log('    User creation ...')
 
   return {
     chainId,
     client,
     rp: RouteProcessor,
-    user,
-    user2,
+    userAddress,
     dataFetcher,
     snapshot: await takeSnapshot(),
   } satisfies {
     chainId: ChainId
     client: Client
-    rp: Contract<typeof routeProcessor4Abi>
-    user: HDAccount
-    user2: HDAccount
+    rp: Contract<typeof routeProcessor3Abi>
+    userAddress: Address
     dataFetcher: DataFetcher
     snapshot: SnapshotRestorer
   }
@@ -87,12 +94,12 @@ type TestEnvironment = Awaited<ReturnType<typeof getTestEnvironment>>
 export async function checkTaxTokenTransfer(env: TestEnvironment, route: MultiRoute): Promise<boolean | undefined> {
   if (route.legs.length >= 2) {
     return await env.client.readContract({
-      address: route.toToken.address as Address, //'0x8b2060CC6E55Fa68204B3Bc8B226FC61B3512C1f', //bpsTest
+      address: route.toToken.address as Address,
       abi: erc20Abi,
       // @ts-ignore
       functionName: 'transfer',
       args: [env.rp.address, route.amountOutBI],
-      account: route.legs[1].poolAddress, // '0x9bd731319718d417f47083c9653de5f35fce5698', // sushiswap pair
+      account: route.legs[1].poolAddress,
     })
   }
 }
@@ -105,7 +112,7 @@ async function testTaxTokenBuy(
 ): Promise<bigint> {
   const amountOutReal = await env.client.readContract({
     address: env.rp.address,
-    abi: routeProcessor4Abi,
+    abi: routeProcessor3Abi,
     // @ts-ignore
     functionName: 'processRoute',
     args: [
@@ -121,7 +128,7 @@ async function testTaxTokenBuy(
   })
   await env.client.writeContract({
     address: env.rp.address,
-    abi: routeProcessor4Abi,
+    abi: routeProcessor3Abi,
     // @ts-ignore
     functionName: 'processRoute',
     args: [
@@ -154,7 +161,7 @@ async function testTaxTokenSell(
   })
   const amountOutReal = await env.client.readContract({
     address: env.rp.address,
-    abi: routeProcessor4Abi,
+    abi: routeProcessor3Abi,
     // @ts-ignore
     functionName: 'processRoute',
     args: [
@@ -196,7 +203,7 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
     routeBuy,
     fromToken,
     toToken,
-    args.env.user.address,
+    args.env.userAddress,
     args.env.rp.address
   )
   expect(rpParamsBuy).not.undefined
@@ -210,10 +217,10 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
 
   let amountOutReal
   try {
-    amountOutReal = await testTaxTokenBuy(args.env, routeBuy, rpParamsBuy, args.env.user.address)
+    amountOutReal = await testTaxTokenBuy(args.env, routeBuy, rpParamsBuy, args.env.userAddress)
     const diff = routeBuy.amountOutBI == 0n ? -1 : Number(amountOutReal - routeBuy.amountOutBI) / routeBuy.amountOut
     console.log(
-      `Routing: ${fromToken.symbol} => ${toToken.symbol} ${routeBuy.legs.length - 1} pools` +
+      `     Routing: ${fromToken.symbol} => ${toToken.symbol} ${routeBuy.legs.length - 1} pools` +
         ` diff = ${diff > 0 ? '+' : ''}${diff} `
     )
   } catch (e) {
@@ -238,7 +245,7 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
     routeSell,
     toToken,
     fromToken,
-    args.env.user.address,
+    args.env.userAddress,
     args.env.rp.address
   )
   expect(rpParamsSell).not.undefined
@@ -250,10 +257,10 @@ async function testTaxToken(args: { env: TestEnvironment; taxToken: Token; amoun
   //   return
   // }
   try {
-    const amountOutReal = await testTaxTokenSell(args.env, routeSell, rpParamsSell, args.env.user.address)
+    const amountOutReal = await testTaxTokenSell(args.env, routeSell, rpParamsSell, args.env.userAddress)
     const diff = routeSell.amountOutBI == 0n ? -1 : Number(amountOutReal - routeSell.amountOutBI) / routeSell.amountOut
     console.log(
-      `Routing: ${toToken.symbol} => ${fromToken.symbol} ${routeSell.legs.length - 1} pools` +
+      `     Routing: ${toToken.symbol} => ${fromToken.symbol} ${routeSell.legs.length - 1} pools` +
         ` diff = ${diff > 0 ? '+' : ''}${diff} `
     )
   } catch (e) {
@@ -266,11 +273,14 @@ describe('RouteProcessor4 tax token test for BASE', async function () {
   let env: TestEnvironment
 
   before(async () => {
-    //await reset(`https://lb.drpc.org/ogrpc?network=base&dkey=${process.env.DRPC_ID}`, 3033333)
-    env = await getTestEnvironment()
+    env = await getTestEnvironment(
+      ChainId.BASE,
+      `https://lb.drpc.org/ogrpc?network=base&dkey=${process.env.DRPC_ID}`,
+      3033333
+    )
   })
 
-  it.skip('BASE <=> LCRV', async function () {
+  it('BASE <=> LCRV', async function () {
     const LCRV = new Token({
       chainId: ChainId.BASE,
       address: '0x8b2060CC6E55Fa68204B3Bc8B226FC61B3512C1f',
@@ -285,7 +295,7 @@ describe('RouteProcessor4 tax token test for BASE', async function () {
     })
   })
 
-  it.skip('BASE <=> bpsTEST', async function () {
+  it('BASE <=> bpsTEST', async function () {
     const bpsTEST = new Token({
       chainId: ChainId.BASE,
       address: '0x93980959778166ccbB95Db7EcF52607240bc541e',
@@ -299,6 +309,18 @@ describe('RouteProcessor4 tax token test for BASE', async function () {
       amountIn: BigInt(1e12),
     })
   })
+})
+
+describe('RouteProcessor4 tax token test for ETHEREUM', async function () {
+  let env: TestEnvironment
+
+  before(async () => {
+    env = await getTestEnvironment(
+      ChainId.ETHEREUM,
+      `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
+      17980000
+    )
+  })
 
   it('ETH => UniBot', async function () {
     const uniBOT = new Token({
@@ -311,7 +333,7 @@ describe('RouteProcessor4 tax token test for BASE', async function () {
     await testTaxToken({
       env,
       taxToken: uniBOT,
-      amountIn: BigInt(1e12),
+      amountIn: BigInt(1e18),
     })
   })
 })

@@ -242,53 +242,9 @@ export class Router {
     }
   }
 
-  static routeProcessor3Params(
-    poolCodesMap: Map<string, PoolCode>,
-    route: MultiRoute,
-    fromToken: Type,
-    toToken: Type,
-    to: Address,
-    RPAddr: Address,
-    permits: PermitData[] = [],
-    maxPriceImpact = 0.005,
-    source = RouterLiquiditySource.Sender
-  ): RPParams {
-    return Router.routeProcessor2Params(
-      poolCodesMap,
-      route,
-      fromToken,
-      toToken,
-      to,
-      RPAddr,
-      permits,
-      maxPriceImpact,
-      source
-    )
-  }
-
-  static routeProcessor3_1Params(
-    poolCodesMap: Map<string, PoolCode>,
-    route: MultiRoute,
-    fromToken: Type,
-    toToken: Type,
-    to: Address,
-    RPAddr: Address,
-    permits: PermitData[] = [],
-    maxPriceImpact = 0.005,
-    source = RouterLiquiditySource.Sender
-  ): RPParams {
-    return Router.routeProcessor2Params(
-      poolCodesMap,
-      route,
-      fromToken,
-      toToken,
-      to,
-      RPAddr,
-      permits,
-      maxPriceImpact,
-      source
-    )
-  }
+  static routeProcessor3Params = this.routeProcessor2Params
+  static routeProcessor3_1Params = this.routeProcessor2Params
+  static routeProcessor3_2Params = this.routeProcessor2Params
 
   static routeProcessor4Params(
     poolCodesMap: Map<string, PoolCode>,

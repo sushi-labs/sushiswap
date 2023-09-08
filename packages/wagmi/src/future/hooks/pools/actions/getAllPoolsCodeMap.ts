@@ -3,7 +3,7 @@ import { DataFetcher, LiquidityProviders, PoolCode } from '@sushiswap/router'
 
 import { UsePoolsParams } from '../types'
 
-const isTest = process.env.NEXT_PUBLIC_TEST === 'true' || process.env.TEST === 'true'
+const isTest = process.env.APP_ENV === 'test' || process.env.TEST === 'true' || process.env.NEXT_PUBLIC_TEST === 'true'
 
 export const getAllPoolsCodeMap = async ({ currencyA, currencyB, chainId }: Omit<UsePoolsParams, 'enabled'>) => {
   if (!currencyA || !currencyB || !chainId) {
@@ -11,7 +11,7 @@ export const getAllPoolsCodeMap = async ({ currencyA, currencyB, chainId }: Omit
   }
 
   const sushiLiquidityProviders = [LiquidityProviders.SushiSwapV2, LiquidityProviders.Trident]
-  if (isRouteProcessor3ChainId(chainId) || isRouteProcessor3_1ChainId(chainId)) {
+  if (isRouteProcessor3_1ChainId(chainId) || isRouteProcessor3ChainId(chainId)) {
     sushiLiquidityProviders.push(LiquidityProviders.SushiSwapV3)
   }
 

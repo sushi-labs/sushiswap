@@ -44,7 +44,7 @@
     "seedrandom": "^3.0.5",
     "tsup": "7.1.0",
     "typescript": "5.1.6",
-    "viem": "0.0.0-jxom-refactor-multicall.20230830T113622"
+    "viem": "1.10.7"
   },
   "publishConfig": {
     "access": "public"

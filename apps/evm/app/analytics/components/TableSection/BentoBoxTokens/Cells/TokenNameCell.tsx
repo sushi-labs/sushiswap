@@ -11,8 +11,8 @@ export const TokenNameCell: FC<{ token: Token }> = ({ token }) => {
         <Currency.Icon disableLink currency={token} width={ICON_SIZE} height={ICON_SIZE} />
       </div>
       <div className="flex flex-col">
-        <p className="text-sm font-medium flex items-center gap-1 text-slate-50">{token.symbol}</p>
-        <p className="text-[10px] text-slate-400">{token.name}</p>
+        <p>{token.symbol}</p>
+        <p className="text-xs text-muted-foreground">{token.name}</p>
       </div>
     </div>
   )

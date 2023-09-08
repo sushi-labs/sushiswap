@@ -1,4 +1,4 @@
-import { LogFilter } from '@sushiswap/extractor'
+import { LogFilter2, LogFilterType } from '@sushiswap/extractor'
 import { createPublicClient, http, Log, parseAbiItem } from 'viem'
 import { mainnet } from 'viem/chains'
 
@@ -8,7 +8,7 @@ const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 function expect(condition: boolean, comment: string) {
   if (condition) return
   const err = new Error()
-  console.error('Wrong expectation: ' + comment, err.stack)
+  console.error(`Wrong expectation: ${comment}`, err.stack)
   process.exit()
 }
 
@@ -23,9 +23,9 @@ it.skip('LogFilter correctness test', async () => {
   let prevLogIndex = -1
   const allLogs: Log[] = []
 
-  const filter = new LogFilter(
-    client,
-    10,
+  const filter = new LogFilter2(client, 10, LogFilterType.OneCall)
+
+  filter.addFilter(
     [
       parseAbiItem('event Transfer(address from, address to, uint256 value)'),
       parseAbiItem('event Approval(address owner, address spender, uint256 value)'),
@@ -46,8 +46,8 @@ it.skip('LogFilter correctness test', async () => {
           const li = Number(l.logIndex)
           if (l.removed) {
             const prev = allLogs[i - 1]
-            expect(prev.blockHash == l.blockHash, `Removed logs hash are equal ${prev.blockHash} == ${l.blockHash}`)
-            expect(Number(prev.logIndex) == li, `Removed logIndexes are equal ${Number(prev.logIndex)} == ${li}`)
+            expect(prev.blockHash === l.blockHash, `Removed logs hash are equal ${prev.blockHash} == ${l.blockHash}`)
+            expect(Number(prev.logIndex) === li, `Removed logIndexes are equal ${Number(prev.logIndex)} == ${li}`)
             allLogs.splice(i - 1, 2)
             prevBlockNum = bn
             prevLogIndex = -1
@@ -82,26 +82,22 @@ it.skip('LogFilter completeness test', async () => {
   const logsEthalon: Set<string> = new Set()
 
   let myRemoved = 0
-  const filterMy = new LogFilter(
-    client,
-    10,
-    [parseAbiItem('event Transfer(address from, address to, uint256 value)')],
-    (logs?: Log[]) => {
-      // console.log(
-      //   logs?.map((l) => [l.blockNumber, l.logIndex, l.removed]),
-      //   'blocks in memory:',
-      //   filterMy.blockHashMap.size
-      // )
-      if (logs === undefined) filterMy.start()
-      else
-        logs.forEach((l) => {
-          if (l.removed) {
-            logsMy.delete(logHash(l))
-            ++myRemoved
-          } else logsMy.add(logHash(l))
-        })
-    }
-  )
+  const filterMy = new LogFilter2(client, 10, LogFilterType.OneCall)
+  filterMy.addFilter([parseAbiItem('event Transfer(address from, address to, uint256 value)')], (logs?: Log[]) => {
+    // console.log(
+    //   logs?.map((l) => [l.blockNumber, l.logIndex, l.removed]),
+    //   'blocks in memory:',
+    //   filterMy.blockHashMap.size
+    // )
+    if (logs === undefined) filterMy.start()
+    else
+      logs.forEach((l) => {
+        if (l.removed) {
+          logsMy.delete(logHash(l))
+          ++myRemoved
+        } else logsMy.add(logHash(l))
+      })
+  })
 
   let ethalonRemoved = 0
   const filterEthalon = await client.createEventFilter({
@@ -116,7 +112,7 @@ it.skip('LogFilter completeness test', async () => {
         ++ethalonRemoved
       } else logsEthalon.add(logHash(l))
     })
-    if (i == 0) {
+    if (i === 0) {
       // remove initial difference
       const logs0: string[] = []
       logsMy.forEach((l) => {

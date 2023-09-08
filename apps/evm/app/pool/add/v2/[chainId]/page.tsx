@@ -8,8 +8,13 @@ import { ZERO } from '@sushiswap/math'
 import { FormSection } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Loader } from '@sushiswap/ui/components/loader'
-import { isSushiSwapV2ChainId, SUSHISWAP_V2_SUPPORTED_CHAIN_IDS, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { Address, getSushiSwapRouterContractConfig, PoolFinder, SushiSwapV2PoolState } from '@sushiswap/wagmi'
+import {
+  isSushiSwapV2ChainId,
+  SUSHISWAP_V2_ROUTER_ADDRESS,
+  SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
+  SushiSwapV2ChainId,
+} from '@sushiswap/v2-sdk'
+import { PoolFinder, SushiSwapV2PoolState } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { CheckerProvider } from '@sushiswap/wagmi/future/systems/Checker/Provider'
@@ -23,35 +28,6 @@ import { SWRConfig } from 'swr'
 import { AddSectionReviewModalLegacy } from '../../../../../ui/pool/AddSectionReviewModalLegacy'
 import { SelectNetworkWidget } from '../../../../../ui/pool/SelectNetworkWidget'
 import { SelectTokensWidget } from '../../../../../ui/pool/SelectTokensWidget'
-
-// // This function gets called at build time on server-side.
-// // It may be called again, on a serverless function, if
-// // revalidation is enabled and a new request comes in
-// export const getStaticProps: GetStaticProps = async ({ params }) => {
-//   const chainId = params?.chainId ? (parseInt(params.chainId as string) as ChainId) : ChainId.ETHEREUM
-//   return {
-//     props: {
-//       chainId,
-//     },
-//   }
-// }
-
-// // This function gets called at build time on server-side.
-// // It may be called again, on a serverless function, if
-// // the path has not been generated.
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   // Get the paths we want to pre-render based on supported chain ids
-//   const paths = SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.map((chainId) => ({
-//     params: {
-//       chainId: chainId.toString(),
-//     },
-//   }))
-
-//   // We'll pre-render only these paths at build time.
-//   // { fallback: 'blocking' } will server-render pages
-//   // on-demand if the path doesn't exist.
-//   return { paths, fallback: false }
-// }
 
 export default function Page({ params }: { params: { chainId: string } }) {
   const router = useRouter()
@@ -218,7 +194,10 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
             onChange={onChangeToken0TypedAmount}
             onSelect={setToken0}
             currency={token0}
-            disabled={!token0}
+            disabled={
+              !token0 || poolState === SushiSwapV2PoolState.LOADING || poolState === SushiSwapV2PoolState.INVALID
+            }
+            loading={poolState === SushiSwapV2PoolState.LOADING}
           />
           <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
             <button type="button" className="z-10 p-2 bg-gray-100 rounded-full dark:bg-slate-900">
@@ -234,7 +213,9 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
             onChange={onChangeToken1TypedAmount}
             onSelect={setToken1}
             currency={token1}
-            disabled={!token1}
+            disabled={
+              !token1 || poolState === SushiSwapV2PoolState.LOADING || poolState === SushiSwapV2PoolState.INVALID
+            }
             loading={poolState === SushiSwapV2PoolState.LOADING}
           />
           <CheckerProvider>
@@ -248,14 +229,14 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
                         className="whitespace-nowrap"
                         fullWidth
                         amount={parsedInput0}
-                        contract={getSushiSwapRouterContractConfig(chainId).address as Address}
+                        contract={SUSHISWAP_V2_ROUTER_ADDRESS[chainId]}
                       >
                         <Checker.ApproveERC20
                           id="approve-token-1"
                           className="whitespace-nowrap"
                           fullWidth
                           amount={parsedInput1}
-                          contract={getSushiSwapRouterContractConfig(chainId).address as Address}
+                          contract={SUSHISWAP_V2_ROUTER_ADDRESS[chainId]}
                         >
                           <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
                             <AddSectionReviewModalLegacy

@@ -4,30 +4,50 @@ import { RefreshIcon } from '@heroicons/react-v1/solid'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { formatNumber, formatPercent } from '@sushiswap/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
-import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
-import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
-import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CheckIcon,
+  DataTable,
+  NetworkIcon,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@sushiswap/ui'
+import { ColumnDef, createColumnHelper, PaginationState } from '@tanstack/react-table'
+import { useState } from 'react'
 
 import { Subgraph } from '../lib'
 
 interface SubgraphTable {
   subgraphs: Subgraph[]
   groupBy: keyof Subgraph
+  title: string
 }
 
 const columnHelper = createColumnHelper<Subgraph>()
-const columns = [
-  columnHelper.accessor('category', {
+const columns: ColumnDef<Subgraph, unknown>[] = [
+  columnHelper.display({
+    id: 'category',
     header: 'Category',
-    cell: (info) => info.getValue(),
+    cell: ({
+      row: {
+        original: { category },
+      },
+    }) => category,
     enableHiding: true,
   }),
-  columnHelper.accessor('chainId', {
+  columnHelper.display({
+    id: 'chainId',
     header: 'Chain',
-    cell: (info) => {
-      const chainId = info.getValue()
-
+    cell: ({
+      row: {
+        original: { chainId },
+      },
+    }) => {
       return (
         <div className="flex space-x-2">
           <NetworkIcon type="circle" chainId={chainId as ChainId} width={20} height={20} />
@@ -37,39 +57,51 @@ const columns = [
     },
     enableHiding: true,
   }),
-  columnHelper.accessor('type', {
+  columnHelper.display({
+    id: 'type',
     header: 'Type',
-    cell: (info) => (
-      <div className="flex justify-center">
-        {info.getValue() === 'Current' ? (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <CheckIcon width={24} height={24} />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Synced</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        ) : (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <RefreshIcon width={24} height={24} />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Syncing</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
-      </div>
-    ),
+    cell: ({
+      row: {
+        original: { type },
+      },
+    }) => {
+      return (
+        <div className="flex justify-center">
+          {type === 'Current' ? (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <CheckIcon width={24} height={24} />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Synced</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <RefreshIcon width={24} height={24} />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Syncing</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
+      )
+    },
   }),
-  columnHelper.accessor('subgraphName', {
+  columnHelper.display({
+    id: 'subgraphName',
     header: 'Name',
-    cell: (info) => info.getValue(),
+    cell: ({
+      row: {
+        original: { subgraphName },
+      },
+    }) => subgraphName,
   }),
   columnHelper.accessor('startBlock', {
     header: 'Start Block',
@@ -122,24 +154,32 @@ const columns = [
   }),
 ]
 
-export function SubgraphTable({ subgraphs, groupBy }: SubgraphTable) {
-  const table = useReactTable<Subgraph>({
-    data: subgraphs,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    initialState: {
-      columnVisibility: { [groupBy]: false },
-    },
+export function SubgraphTable({ title, subgraphs, groupBy }: SubgraphTable) {
+  const [paginationState, setPaginationState] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
   })
 
   return (
-    // @ts-ignore
-    <GenericTable<Subgraph>
-      table={table}
-      // @ts-ignore
-      columns={columns}
-      pageSize={20}
-      getLink={(row) => `https://thegraph.com/hosted-service/subgraph/${row.subgraphName}`}
-    />
+    <Card>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+      </CardHeader>
+      <CardContent className="!px-0">
+        <DataTable
+          loading={false}
+          columns={columns}
+          data={subgraphs}
+          pagination={true}
+          onPaginationChange={setPaginationState}
+          state={{
+            columnVisibility: { [groupBy]: false },
+            pagination: paginationState,
+          }}
+          externalLink={true}
+          linkFormatter={(row) => `https://thegraph.com/hosted-service/subgraph/${row.subgraphName}`}
+        />
+      </CardContent>
+    </Card>
   )
 }
