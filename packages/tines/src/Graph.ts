@@ -1103,7 +1103,10 @@ export class Graph {
           swapPortion: quantity,
           absolutePortion: p / total,
         })
-        gasSpent += (e[0] as Edge).pool.swapGasCost
+        gasSpent += edge.pool.calcOutByIn(
+          edge.direction ? edge.amountInPrevious : edge.amountOutPrevious,
+          edge.direction
+        ).gasSpent
         // console.debug('before amountOut mutation', { total, outAmount })
         outAmount -= p
         // console.debug('after amountOut mutation', { total, outAmount })
