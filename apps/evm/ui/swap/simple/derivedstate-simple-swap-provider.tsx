@@ -213,6 +213,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
     chainId,
     address: defaultedParams.get('token0') as string,
     enabled: isAddress(defaultedParams.get('token0') as string),
+    keepPreviousData: false,
   })
 
   // Derive token1
@@ -220,6 +221,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
     chainId,
     address: defaultedParams.get('token1') as string,
     enabled: isAddress(defaultedParams.get('token1') as string),
+    keepPreviousData: false,
   })
 
   return (

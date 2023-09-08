@@ -232,6 +232,7 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
     chainId: chainId0,
     address: defaultedParams.get('token0') as string,
     enabled: isAddress(defaultedParams.get('token0') as string),
+    keepPreviousData: false,
   })
 
   // Derive token1
@@ -239,6 +240,7 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
     chainId: chainId1,
     address: defaultedParams.get('token1') as string,
     enabled: isAddress(defaultedParams.get('token1') as string),
+    keepPreviousData: false,
   })
 
   // Make sure the searchParams are updated whenever a user switches networks
