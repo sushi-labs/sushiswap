@@ -46,7 +46,7 @@
     "@sushiswap/v3-sdk": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
     "@uniswap/v3-core": "1.0.1",
-    "@sentry/node": "7.63.0",
+    "@sentry/node": "7.68.0",
     "abitype": "0.9.3",
     "ethers": "5.7.2",
     "viem": "1.10.7"
