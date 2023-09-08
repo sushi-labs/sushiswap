@@ -6,6 +6,7 @@ import {
   isRouteProcessor3_2ChainId,
   ROUTE_PROCESSOR_3_1_ADDRESS,
   ROUTE_PROCESSOR_3_2_ADDRESS,
+  ROUTE_PROCESSOR_3_ADDRESS,
 } from '@sushiswap/route-processor-sdk'
 import { NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
@@ -17,13 +18,7 @@ import { serialize } from 'wagmi'
 import z from 'zod'
 
 import { Extractor, TokenManager, WarningLevel } from '../src'
-import {
-  EXTRACTOR_CONFIG,
-  isSupportedChainId,
-  ROUTE_PROCESSOR_3_ADDRESS,
-  SUPPORTED_CHAIN_IDS,
-  SupportedChainId,
-} from './config'
+import { EXTRACTOR_CONFIG, isSupportedChainId, SUPPORTED_CHAIN_IDS, SupportedChainId } from './config'
 
 const querySchema = z.object({
   chainId: z.coerce
