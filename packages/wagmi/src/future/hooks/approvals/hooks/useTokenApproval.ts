@@ -1,5 +1,6 @@
 'use client'
 
+// import * as Sentry from '@sentry/nextjs'
 import { Amount, Type } from '@sushiswap/currency'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { useCallback, useMemo, useState } from 'react'
@@ -64,6 +65,7 @@ export const useTokenApproval = ({
     functionName: 'approve',
     args: [spender as Address, approveMax ? maxUint256 : amount ? amount.quotient : 0n],
     enabled: Boolean(amount && spender && address && allowance && enabled && !isAllowanceLoading),
+    // onError: (error) => Sentry.captureException(`approve prepare error: ${error.message}`),
   })
 
   const onSettled = useCallback(

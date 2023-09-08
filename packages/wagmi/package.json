@@ -99,6 +99,7 @@
     "@types/jest": "^29.5.1",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
+    "@sentry/nextjs": "7.68.0",
     "@wagmi/core": "1.4.1",
     "eslint": "8.43.0",
     "ethers": "5.7.2",
@@ -113,6 +114,7 @@
   },
   "peerDependencies": {
     "@wagmi/core": "1.4.1",
+    "@sentry/nextjs": "7.68.0",
     "ethers": "5.7.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -121,6 +123,9 @@
   "peerDependenciesMeta": {
     "@wagmi/core": {
       "optional": false
+    },
+    "@sentry/nextjs": {
+      "optional": true
     },
     "ethers": {
       "optional": false

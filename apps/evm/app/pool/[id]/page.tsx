@@ -1,5 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Separator } from '@sushiswap/ui'
+import { notFound } from 'next/navigation'
 import { ManageV2LiquidityCard } from 'ui/pool/ManageV2LiquidityCard'
 import { PoolTransactionsV2 } from 'ui/pool/PoolTransactionsV2'
 import { isAddress } from 'viem'
@@ -20,19 +21,21 @@ import { PoolStats } from '../../../ui/pool/PoolStats'
 
 export async function getPool({ chainId, address }: { chainId: ChainId; address: string }) {
   if (typeof +chainId !== 'number' || !isAddress(address)) {
-    throw new Error(`The page you're looking for can't be found.`)
+    return
   }
 
-  const data = await fetch(`https://pools.sushi.com/api/v0/${chainId}/${address}`).then((data) => data.json())
-  if (!data) throw new Error(`The page you're looking for can't be found.`)
+  const res = await fetch(`https://pools.sushi.com/api/v0/${chainId}/${address}`)
 
-  return data
+  return res.json()
 }
 
 export default async function PoolPage({ params }: { params: { id: string } }) {
   const [_chainId, address] = params.id.split(params.id.includes('%3A') ? '%3A' : ':') as [string, string]
   const chainId = Number(_chainId) as ChainId
   const pool = await getPool({ chainId, address })
+  if (!pool) {
+    notFound()
+  }
 
   if (pool.protocol === 'SUSHISWAP_V3') {
     return <PoolPageV3 pool={pool} />
