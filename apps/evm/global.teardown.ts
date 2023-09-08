@@ -4,7 +4,7 @@ import { promisify } from 'util'
 const exec = promisify(childProcess.exec)
 
 async function globalTeardown(config: FullConfig) {
-  console.log('globalTeardown')
+  // console.log('globalTeardown')
   try {
     const { stderr, stdout } = await exec('pkill -2 anvil')
     if (stderr) {
