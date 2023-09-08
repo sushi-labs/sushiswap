@@ -18,10 +18,10 @@ const SWAP_BASE_URL =
 
 function getApiVersion(chainId: ChainId) {
   if (isRouteProcessor3_2ChainId(chainId)) {
-    return 'v3.2'
+    return '/v3.2'
   }
   if (isRouteProcessor3_1ChainId(chainId)) {
-    return 'v3.1'
+    return '/v3.1'
   }
   return ''
 }

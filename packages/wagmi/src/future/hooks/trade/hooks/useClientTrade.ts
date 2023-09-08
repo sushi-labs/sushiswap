@@ -53,7 +53,8 @@ export const useClientTrade = (variables: UseTradeParams) => {
         !poolsCodeMap ||
         (!isRouteProcessorChainId(chainId) &&
           !isRouteProcessor3ChainId(chainId) &&
-          !isRouteProcessor3_1ChainId(chainId)) ||
+          !isRouteProcessor3_1ChainId(chainId) &&
+          !isRouteProcessor3_2ChainId(chainId)) ||
         !fromToken ||
         !amount ||
         !toToken ||
