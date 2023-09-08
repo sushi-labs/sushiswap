@@ -3,7 +3,7 @@ export const metadata = {
 }
 
 import rockset from '@rockset/client'
-import { Container } from '@sushiswap/ui'
+import { Container, typographyVariants } from '@sushiswap/ui'
 
 import { TokenTable } from './table'
 
@@ -82,7 +82,7 @@ export default async function TokenPage() {
   return (
     <>
       <Container maxWidth="7xl" className="px-4 pt-20 pb-10">
-        <h1>Top tokens on SushiSwap</h1>
+        <h1 className={typographyVariants({ variant: 'h1' })}>Top tokens on SushiSwap</h1>
       </Container>
       <section className="flex flex-col flex-1">
         <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-20 h-full">

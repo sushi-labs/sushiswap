@@ -53,3 +53,11 @@ export const SUPPORTED_CHAIN_IDS = Array.from(
 )
 
 export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number]
+
+// export type Config = {}
+
+// export const config: Record<SupportedChainId, Config> = {
+//   [ChainId.ETHEREUM]: {},
+//   [ChainId.ARBITRUM]: {},
+//   [ChainId.OPTIMISM]: {},
+// }
