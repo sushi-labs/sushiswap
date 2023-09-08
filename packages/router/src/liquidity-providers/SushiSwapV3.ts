@@ -63,7 +63,7 @@ export class SushiSwapV3Provider extends UniswapV3BaseProvider {
       [ChainId.THUNDERCORE]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904',
       [ChainId.CORE]: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
       [ChainId.BASE]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3',
-      [ChainId.LINEA]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3'
+      [ChainId.LINEA]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3',
     } as const
     super(chainId, web3Client, factory, initCodeHash, tickLens, databaseClient)
   }

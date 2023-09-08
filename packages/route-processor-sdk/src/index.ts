@@ -117,6 +117,7 @@ export const ROUTE_PROCESSOR_3_SUPPORTED_CHAIN_IDS = [
   ChainId.POLYGON_ZKEVM,
   ChainId.TELOS,
   ChainId.THUNDERCORE,
+  ChainId.LINEA,
 ] as const
 export type RouteProcessor3ChainId = (typeof ROUTE_PROCESSOR_3_SUPPORTED_CHAIN_IDS)[number]
 export const ROUTE_PROCESSOR_3_ADDRESS: Record<RouteProcessor3ChainId, `0x${string}`> = {
@@ -149,6 +150,7 @@ export const ROUTE_PROCESSOR_3_ADDRESS: Record<RouteProcessor3ChainId, `0x${stri
   [ChainId.POLYGON_ZKEVM]: '0x2f686751b19a9d91cc3d57d90150Bc767f050066',
   [ChainId.TELOS]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
   [ChainId.THUNDERCORE]: '0x1b9d177CcdeA3c79B6c8F40761fc8Dc9d0500EAa',
+  [ChainId.LINEA]: '0x0b17dF2CDEf8f0fCb7847e287726C6a8c1415A1f',
 } as const
 export const isRouteProcessor3ChainId = (chainId: ChainId): chainId is RouteProcessor3ChainId =>
   ROUTE_PROCESSOR_3_SUPPORTED_CHAIN_IDS.includes(chainId as RouteProcessor3ChainId)
