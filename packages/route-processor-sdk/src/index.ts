@@ -174,6 +174,15 @@ export const ROUTE_PROCESSOR_3_1_ADDRESS: Record<RouteProcessor3_1ChainId, `0x${
 export const isRouteProcessor3_1ChainId = (chainId: ChainId): chainId is RouteProcessor3_1ChainId =>
   ROUTE_PROCESSOR_3_1_SUPPORTED_CHAIN_IDS.includes(chainId as RouteProcessor3_1ChainId)
 
+// v3.2
+export const ROUTE_PROCESSOR_3_2_SUPPORTED_CHAIN_IDS = [ChainId.BASE] as const
+export type RouteProcessor3_2ChainId = (typeof ROUTE_PROCESSOR_3_2_SUPPORTED_CHAIN_IDS)[number]
+export const ROUTE_PROCESSOR_3_2_ADDRESS: Record<RouteProcessor3_2ChainId, `0x${string}`> = {
+  [ChainId.BASE]: '0xb405397ed593f90C82188B32645118Ca56f2Ccd6',
+} as const
+export const isRouteProcessor3_2ChainId = (chainId: ChainId): chainId is RouteProcessor3_2ChainId =>
+  ROUTE_PROCESSOR_3_2_SUPPORTED_CHAIN_IDS.includes(chainId as RouteProcessor3_2ChainId)
+
 // v4
 export const ROUTE_PROCESSOR_4_SUPPORTED_CHAIN_IDS = [] as const
 export type RouteProcessor4ChainId = (typeof ROUTE_PROCESSOR_4_SUPPORTED_CHAIN_IDS)[number]
