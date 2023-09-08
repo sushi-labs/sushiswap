@@ -601,6 +601,7 @@ importers:
       '@octokit/auth-app': 4.0.7
       '@playwright/test': 1.37.0
       '@radix-ui/react-slot': ^1.0.2
+      '@rockset/client': 0.9.1
       '@sentry/nextjs': 7.68.0
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
@@ -701,6 +702,7 @@ importers:
       '@layerzerolabs/scan-client': 0.0.0-beta.6
       '@octokit/auth-app': 4.0.7
       '@radix-ui/react-slot': 1.0.2_i73ekzlbntu7jol6ph2fvy4mga
+      '@rockset/client': 0.9.1
       '@sentry/nextjs': 7.68.0_next@13.4.19+react@18.2.0
       '@sushiswap/abi': link:../../packages/abi
       '@sushiswap/amm': link:../../packages/amm
@@ -14285,6 +14287,17 @@ packages:
       - supports-color
     dev: false
 
+  /@rockset/client/0.9.1:
+    resolution: {integrity: sha512-o0WhcBTALIz78stnbs8JKt4iNwopxU20Y7wI2wgQGqYnuZ0JMDpffiMBv8jTmjPdrjBychlbavU3Ay1j/gm+zw==}
+    dependencies:
+      '@types/node-fetch': 2.6.4
+      fetch-ponyfill: 7.1.0
+      node-fetch: 2.6.12
+      url: 0.11.1
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
   /@rollup/plugin-commonjs/24.0.0_rollup@2.78.0:
     resolution: {integrity: sha512-0w0wyykzdyRRPHOb0cQt14mIBLujfAv6GgP6g8nvg/iBxEm112t3YPPq+Buqe2+imvElTka+bjNlJ/gB56TD8g==}
     engines: {node: '>=14.0.0'}
@@ -27047,6 +27060,14 @@ packages:
     resolution: {integrity: sha512-knK9sGskIg2T7OnYLdZ2hZXn0CtDrAIBxYQLpmEf0BqfdWnwmM1weccUl5+4EdA44tzNSFAuxITPbXtPehUB3g==}
     dependencies:
       node-fetch: 1.7.3
+    dev: false
+
+  /fetch-ponyfill/7.1.0:
+    resolution: {integrity: sha512-FhbbL55dj/qdVO3YNK7ZEkshvj3eQ7EuIGV2I6ic/2YiocvyWv+7jg2s4AyS0wdRU75s3tA8ZxI/xPigb0v5Aw==}
+    dependencies:
+      node-fetch: 2.6.12
+    transitivePeerDependencies:
+      - encoding
     dev: false
 
   /fetch-retry/5.0.6:
