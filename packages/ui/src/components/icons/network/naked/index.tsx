@@ -20,6 +20,7 @@ import { HaqqNakked } from './HaqqNaked'
 import { HarmonyNaked } from './HarmonyNaked'
 import { HecoNaked } from './HecoNaked'
 import { KavaNaked } from './KavaNaked'
+import { LineaNaked } from './LineaNaked'
 import { MetisNaked } from './MetisNaked'
 import { MoonbeamNaked } from './MoonbeamNaked'
 import { MoonriverNaked } from './MoonriverNaked'
@@ -50,6 +51,7 @@ export * from './HaqqNaked'
 export * from './HarmonyNaked'
 export * from './HecoNaked'
 export * from './KavaNaked'
+export * from './LineaNaked'
 export * from './MetisNaked'
 export * from './MoonbeamNaked'
 export * from './MoonriverNaked'
@@ -90,6 +92,6 @@ export const NETWORK_NAKED_ICON: Record<number, IconComponent> = {
   [ChainId.HAQQ]: HaqqNakked,
   [ChainId.CORE]: CoreNaked,
   [ChainId.ZKSYNC_ERA]: EthereumNaked,
-  [ChainId.LINEA]: EthereumNaked,
+  [ChainId.LINEA]: LineaNaked,
   [ChainId.BASE]: BaseNaked,
 }

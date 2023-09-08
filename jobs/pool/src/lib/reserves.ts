@@ -78,8 +78,8 @@ export async function getStablePoolReserves(poolIds: string[], blockNumber: bigi
   let failures = 0
 
   poolIds.forEach((id, i) => {
-    const res = reserves[i]
-    if (res) {
+    const res = reserves[i].result
+    if (res && !reserves[i].error) {
       const reserve0 = res[0]
       const reserve1 = res[1]
       updatedPools.set(id, {

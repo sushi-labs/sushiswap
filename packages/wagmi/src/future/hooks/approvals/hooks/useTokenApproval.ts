@@ -1,10 +1,11 @@
 'use client'
 
+// import * as Sentry from '@sentry/nextjs'
 import { Amount, Type } from '@sushiswap/currency'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { useCallback, useMemo, useState } from 'react'
 import { maxUint256, UserRejectedRequestError } from 'viem'
-import { Address, erc20ABI, useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi'
+import { Address, useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
 import { useTokenAllowance } from './useTokenAllowance'
@@ -46,11 +47,25 @@ export const useTokenApproval = ({
 
   const { config } = usePrepareContractWrite({
     chainId: amount?.currency.chainId,
-    abi: erc20ABI,
+    abi: [
+      {
+        constant: false,
+        inputs: [
+          { name: 'spender', type: 'address' },
+          { name: 'amount', type: 'uint256' },
+        ],
+        name: 'approve',
+        outputs: [],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+    ] as const,
     address: amount?.currency?.wrapped?.address as Address,
     functionName: 'approve',
     args: [spender as Address, approveMax ? maxUint256 : amount ? amount.quotient : 0n],
     enabled: Boolean(amount && spender && address && allowance && enabled && !isAllowanceLoading),
+    // onError: (error) => Sentry.captureException(`approve prepare error: ${error.message}`),
   })
 
   const onSettled = useCallback(

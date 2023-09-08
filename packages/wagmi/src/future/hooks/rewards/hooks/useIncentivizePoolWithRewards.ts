@@ -16,7 +16,7 @@ interface UseHarvestAngleRewards {
 
 export const useIncentivizePoolWithRewards = ({ account, chainId, args, enabled = true }: UseHarvestAngleRewards) => {
   const { chain } = useNetwork()
-  const { config } = usePrepareContractWrite({
+  const prepare = usePrepareContractWrite({
     chainId,
     abi: DistributionCreator,
     address: '0x8BB4C975Ff3c250e0ceEA271728547f3802B36Fd',
@@ -54,8 +54,11 @@ export const useIncentivizePoolWithRewards = ({ account, chainId, args, enabled 
     [account, chainId]
   )
 
-  return useContractWrite({
-    ...config,
-    onSettled,
-  })
+  return {
+    prepare,
+    write: useContractWrite({
+      ...prepare.config,
+      onSettled,
+    }),
+  }
 }

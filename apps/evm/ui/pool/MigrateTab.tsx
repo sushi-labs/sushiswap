@@ -269,10 +269,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   const { data: deadline } = useTransactionDeadline({ chainId: pool.chainId as ChainId })
 
   const {
-    writeAsync,
-    isLoading: isMigrateLoading,
-    isError,
-    data,
+    write: { writeAsync, isLoading: isMigrateLoading, data },
+    prepare: { isError },
   } = useV3Migrate({
     account: address,
     args: {

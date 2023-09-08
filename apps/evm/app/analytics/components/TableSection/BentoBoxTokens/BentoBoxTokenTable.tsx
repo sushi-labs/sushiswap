@@ -1,21 +1,13 @@
+import { Card, CardContent, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import { Container } from '@sushiswap/ui/components/container'
-import { Table } from '@sushiswap/ui/components/table'
-import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
-import {
-  getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  PaginationState,
-  SortingState,
-  useReactTable,
-} from '@tanstack/react-table'
+import { PaginationState, SortingState, TableState } from '@tanstack/react-table'
 import React, { FC, useMemo, useState } from 'react'
 
 import { useFilters } from '../../Filters'
 import { BentoBoxTokenFilters } from './BentoBoxTokenFilters'
 import { LIQUIDITY_COLUMN, LIQUIDITY_USD_COLUMN, NAME_COLUMN, NETWORK_COLUMN } from './columns'
 import { PAGE_SIZE } from './constants'
-import { BentoBoxToken, GetBentoBoxTokenArgs, useBentoBoxTokens } from './useBentoBoxTokens'
+import { GetBentoBoxTokenArgs, useBentoBoxTokens } from './useBentoBoxTokens'
 
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, LIQUIDITY_USD_COLUMN, LIQUIDITY_COLUMN] as any
 
@@ -40,41 +32,38 @@ export const BentoBoxTokenTable: FC = () => {
 
   const data = useMemo(() => bentoBoxTokens || [], [bentoBoxTokens])
 
-  const table = useReactTable<BentoBoxToken>({
-    data: data,
-    columns: COLUMNS,
-    state: {
+  const state: Partial<TableState> = useMemo(() => {
+    return {
       sorting,
       pagination,
-    },
-    onSortingChange: setSorting,
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    pageCount: Math.ceil((bentoBoxTokens?.length || 0) / PAGE_SIZE),
-  })
+    }
+  }, [pagination, sorting])
 
   return (
     <Container maxWidth="7xl" className="px-4 mx-auto">
       <div className="space-y-4">
         <BentoBoxTokenFilters />
-        <GenericTable<BentoBoxToken>
-          table={table}
-          loading={!bentoBoxTokens && isLoading}
-          placeholder="No tokens found"
-          pageSize={PAGE_SIZE}
-          linkFormatter={(row) => `/token/${row.id}`}
-        />
-        <Table.Paginator
-          hasPrev={pagination.pageIndex > 0}
-          hasNext={pagination.pageIndex < table.getPageCount()}
-          onPrev={table.previousPage}
-          onNext={table.nextPage}
-          page={pagination.pageIndex}
-          pages={table.getPageCount()}
-          pageSize={PAGE_SIZE}
-        />
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              Tokens{' '}
+              {bentoBoxTokens?.length ? (
+                <span className="text-gray-400 dark:text-slate-500">({bentoBoxTokens?.length})</span>
+              ) : null}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="!px-0">
+            <DataTable
+              loading={isLoading}
+              columns={COLUMNS}
+              data={data}
+              pagination={true}
+              onPaginationChange={setPagination}
+              onSortingChange={setSorting}
+              state={state}
+            />
+          </CardContent>
+        </Card>
       </div>
     </Container>
   )

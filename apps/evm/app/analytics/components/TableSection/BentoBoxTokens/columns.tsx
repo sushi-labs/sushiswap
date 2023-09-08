@@ -3,7 +3,7 @@ import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
-import { ChainCell, StringCell } from '../Common'
+import { ChainCell } from '../Common'
 import { TokenNameCell } from './Cells'
 import { ICON_SIZE } from './constants'
 import { BentoBoxToken } from './useBentoBoxTokens'
@@ -32,8 +32,7 @@ export const LIQUIDITY_COLUMN: ColumnDef<BentoBoxToken, unknown> = {
   id: 'liquidity',
   header: 'Liquidity',
   cell: (props) => {
-    const liquidity = formatNumber(props.row.original.liquidity)
-    return <StringCell string={liquidity === 'NaN' ? '0' : liquidity} />
+    return formatNumber(props.row.original.liquidity)
   },
   size: 160,
   meta: {
@@ -47,8 +46,7 @@ export const LIQUIDITY_USD_COLUMN: ColumnDef<BentoBoxToken, unknown> = {
   header: 'Liquidity (USD)',
   accessorFn: (row) => row.liquidityUSD,
   cell: (props) => {
-    const liquidityUSD = formatUSD(props.row.original.liquidityUSD)
-    return <StringCell string={liquidityUSD} />
+    return formatUSD(props.row.original.liquidityUSD)
   },
   size: 160,
   meta: {
