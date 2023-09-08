@@ -40,6 +40,8 @@ interface State {
     recipient: string | undefined
   }
   isLoading: boolean
+  isToken0Loading: boolean
+  isToken1Loading: boolean
 }
 
 const DerivedStateSimpleSwapContext = createContext<State>({} as State)
@@ -213,6 +215,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
     chainId,
     address: defaultedParams.get('token0') as string,
     enabled: isAddress(defaultedParams.get('token0') as string),
+    keepPreviousData: false,
   })
 
   // Derive token1
@@ -220,6 +223,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
     chainId,
     address: defaultedParams.get('token1') as string,
     enabled: isAddress(defaultedParams.get('token1') as string),
+    keepPreviousData: false,
   })
 
   return (
@@ -247,6 +251,8 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
             token1: _token1,
           },
           isLoading: token0Loading || token1Loading,
+          isToken0Loading: token0Loading,
+          isToken1Loading: token1Loading,
         }
       }, [
         address,
