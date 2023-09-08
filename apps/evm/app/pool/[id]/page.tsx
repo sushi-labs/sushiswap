@@ -20,13 +20,17 @@ import { PoolRewards } from '../../../ui/pool/PoolRewards'
 import { PoolStats } from '../../../ui/pool/PoolStats'
 
 export async function getPool({ chainId, address }: { chainId: ChainId; address: string }) {
-  if (typeof +chainId !== 'number' || !isAddress(address)) {
+  try {
+    if (typeof +chainId !== 'number' || !isAddress(address)) {
+      return
+    }
+
+    const res = await fetch(`https://pools.sushi.com/api/v0/${chainId}/${address}`)
+    const data = await res.json()
+    return data
+  } catch (e) {
     return
   }
-
-  const res = await fetch(`https://pools.sushi.com/api/v0/${chainId}/${address}`)
-
-  return res.json()
 }
 
 export default async function PoolPage({ params }: { params: { id: string } }) {
@@ -36,11 +40,9 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
   if (!pool) {
     notFound()
   }
-
   if (pool.protocol === 'SUSHISWAP_V3') {
     return <PoolPageV3 pool={pool} />
   }
-
   return (
     <>
       <UnknownTokenAlert pool={pool} />

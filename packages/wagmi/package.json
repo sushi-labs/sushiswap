@@ -116,6 +116,7 @@
     "@wagmi/core": "1.4.1",
     "@sentry/nextjs": "7.68.0",
     "ethers": "5.7.2",
+    "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "wagmi": "1.4.1"
@@ -125,6 +126,9 @@
       "optional": false
     },
     "@sentry/nextjs": {
+      "optional": true
+    },
+    "next": {
       "optional": true
     },
     "ethers": {
