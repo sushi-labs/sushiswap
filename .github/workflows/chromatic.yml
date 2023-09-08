@@ -9,12 +9,13 @@ on:
       - "packages/ui/**"
 
 jobs:
-  chromatic:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: true
+          fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/actions/install
       - name: Build storybook
