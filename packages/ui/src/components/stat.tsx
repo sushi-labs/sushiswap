@@ -1,4 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority'
+import classNames from 'classnames'
 import { forwardRef } from 'react'
 
 const statVariants = cva('', {
@@ -93,7 +94,7 @@ interface StatValueProps
 
 const StatValue = forwardRef<HTMLSpanElement, StatValueProps>(({ align, children, size, className }, ref) => {
   return (
-    <span ref={ref} className={statValueVariants({ size, align })}>
+    <span ref={ref} className={classNames(statValueVariants({ size, align }), className)}>
       {children}
     </span>
   )

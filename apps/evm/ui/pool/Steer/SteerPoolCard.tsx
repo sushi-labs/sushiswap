@@ -16,6 +16,7 @@ import {
 import { FC } from 'react'
 
 import { SteerStrategyConfig } from './constants'
+import { SteerAPRHoverCard } from './SteerAPRHoverCard'
 import { SteerLiquidityDistributionWidget } from './SteerLiquidityDistributionWidget/SteerLiquidityDistributionWidget'
 
 interface SteerPoolCardProps {
@@ -42,7 +43,14 @@ export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
           <Stat className="!p-0">
             {/* Gotta use the weekly APR for now, as that's what's provided by Steer, can look into getting custom APRs later */}
             <StatLabel>Weekly APR</StatLabel>
-            <StatValue size="3xl">{formatPercent(vault.apr)}</StatValue>
+            <SteerAPRHoverCard pool={pool} vault={vault}>
+              <StatValue
+                size="3xl"
+                className={classNames(pool.incentiveApr && 'underline decoration-dotted underline-offset-3')}
+              >
+                {formatPercent(vault.apr1w)}
+              </StatValue>
+            </SteerAPRHoverCard>
           </Stat>
           <div className="h-[200px] bg-secondary rounded-xl flex items-center justify-center">
             <span className="text-xs text-muted-foreground">Chart here</span>
