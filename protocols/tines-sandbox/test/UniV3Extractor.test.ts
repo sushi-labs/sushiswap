@@ -124,7 +124,7 @@ async function prepareEnvironment(): Promise<TestEnvironment> {
   await Promise.all(
     tokens.map(async (t) => {
       const addr = t.address as Address
-      await setTokenBalance(client, addr, user, amount)
+      await setTokenBalance(addr, user, amount)
       await client.writeContract({
         address: addr as Address,
         abi: erc20Abi,
@@ -244,7 +244,7 @@ async function MintAndBurn(
     amount0Max: BigInt(1e30),
     amount1Max: BigInt(1e30),
   }
-  await env.client.writeContract({
+  const collectHash = await env.client.writeContract({
     account: env.user,
     chain: env.chain,
     address: PositionManagerAddress[ChainId.ETHEREUM],
@@ -252,16 +252,7 @@ async function MintAndBurn(
     functionName: 'collect',
     args: [CollectParams],
   })
-
-  const hashBurn = await env.client.writeContract({
-    account: env.user,
-    chain: env.chain,
-    address: PositionManagerAddress[ChainId.ETHEREUM],
-    abi: INonfungiblePositionManager.abi,
-    functionName: 'burn',
-    args: [tokenId],
-  })
-  return client.getTransaction({ hash: hashBurn })
+  return client.getTransaction({ hash: collectHash })
 }
 
 async function Swap(env: TestEnvironment, pool: UniV3Pool, direction: boolean, amountIn: bigint): Promise<Transaction> {
@@ -299,7 +290,7 @@ async function makeTest(
     transport: env.transport,
   })
 
-  const logFilter = new LogFilter2(this.client, 50, LogFilterType.OneCall)
+  const logFilter = new LogFilter2(client, 50, LogFilterType.Native)
   const extractor = new UniV3Extractor(
     client,
     '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
@@ -328,7 +319,7 @@ async function makeTest(
   if (transactions.length > 0) {
     const blockNumber = Math.max(...transactions.map((tr) => Number(tr.blockNumber || 0)))
     for (;;) {
-      if (Number(extractor.lastProcessdBlock) === blockNumber && extractor.getStablePoolCodes().length === pools.length)
+      if (Number(extractor.lastProcessdBlock) >= blockNumber && extractor.getStablePoolCodes().length === pools.length)
         break
       await delay(500)
     }
@@ -346,6 +337,8 @@ async function makeTest(
     expect(ep).not.undefined
     if (ep) comparePoolCodes(pp, ep)
   })
+
+  logFilter.stop(false)
 }
 
 async function checkHistoricalLogs(env: TestEnvironment, pool: PoolInfo, fromBlock: bigint, toBlock: bigint) {
@@ -368,7 +361,7 @@ async function checkHistoricalLogs(env: TestEnvironment, pool: PoolInfo, fromBlo
     transport: env.transport,
   })
 
-  const logFilter = new LogFilter2(this.client, 200, LogFilterType.OneCall)
+  const logFilter = new LogFilter2(clientPrimary, 200, LogFilterType.OneCall)
   const extractor = new UniV3Extractor(
     clientPrimary,
     '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
