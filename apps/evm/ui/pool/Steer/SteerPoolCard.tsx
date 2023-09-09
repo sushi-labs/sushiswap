@@ -41,12 +41,11 @@ export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
         <Separator />
         <CardContent className="pt-6">
           <Stat className="!p-0">
-            {/* Gotta use the weekly APR for now, as that's what's provided by Steer, can look into getting custom APRs later */}
             <StatLabel>Weekly APR</StatLabel>
             <SteerAPRHoverCard pool={pool} vault={vault}>
               <StatValue
-                size="3xl"
-                className={classNames(pool.incentiveApr && 'underline decoration-dotted underline-offset-3')}
+                size="sm"
+                className={classNames(pool.isIncentivized && 'underline decoration-dotted underline-offset-3')}
               >
                 {formatPercent(vault.apr1w)}
               </StatValue>

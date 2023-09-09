@@ -7,6 +7,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  classNames,
   Separator,
   Stat,
   StatLabel,
@@ -25,6 +26,7 @@ import {
   SteerPositionDetails,
   SteerPositionRemove,
 } from '../LiquidityManagement'
+import { SteerAPRHoverCard } from '../SteerAPRHoverCard'
 import { SteerStrategyLiquidityDistribution } from '../SteerStrategyLiquidityChart'
 import { SteerStrategyComponent } from '.'
 
@@ -97,7 +99,14 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
         <div className="grid grid-cols-2">
           <Stat className="px-6 py-3">
             <StatLabel size="sm">Weekly APR</StatLabel>
-            <StatValue size="sm">{formatPercent(vault.apr)}</StatValue>
+            <SteerAPRHoverCard pool={vault.pool} vault={vault}>
+              <StatValue
+                size="sm"
+                className={classNames(vault.pool.isIncentivized && 'underline decoration-dotted underline-offset-1')}
+              >
+                {formatPercent(vault.apr1w)}
+              </StatValue>
+            </SteerAPRHoverCard>
           </Stat>
           <Stat className="px-6 py-3">
             <StatLabel size="sm">TVL</StatLabel>
