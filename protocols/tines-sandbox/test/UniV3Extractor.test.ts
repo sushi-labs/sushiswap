@@ -361,13 +361,19 @@ async function checkHistoricalLogs(env: TestEnvironment, pool: PoolInfo, fromBlo
     transport: env.transport,
   })
 
-  const logFilter = new LogFilter2(clientPrimary, 200, LogFilterType.OneCall)
   const extractor = new UniV3Extractor(
     clientPrimary,
     '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
     [uniswapFactory(ChainId.ETHEREUM)],
     '',
-    logFilter,
+    {
+      addFilter: () => {
+        //
+      },
+      start: () => {
+        //
+      },
+    } as unknown as LogFilter2,
     false
   )
   await extractor.start()
@@ -393,7 +399,7 @@ async function checkHistoricalLogs(env: TestEnvironment, pool: PoolInfo, fromBlo
 
   isSubpool(providerPools[0], extractor.getStablePoolCodes()[0])
 
-  await reset(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`, fromBlock)
+  //await reset(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`, fromBlock)
 }
 
 describe('UniV3Extractor', () => {
