@@ -365,9 +365,20 @@ async function main() {
     return res.json(poolCodes)
   })
 
+  const chainIdSchema = z.object({
+    chainId: z.coerce
+      .number()
+      .int()
+      .gte(0)
+      .lte(2 ** 256)
+      .default(ChainId.ETHEREUM)
+      .refine((chainId) => isSupportedChainId(chainId), { message: 'ChainId not supported.' })
+      .transform((chainId) => chainId as SupportedChainId),
+  })
+
   app.get('/pool-codes', (req: Request, res: Response) => {
     // console.log('HTTP: GET /pool-codes', JSON.stringify(req.query))
-    const { chainId } = querySchema.parse(req.query)
+    const { chainId } = chainIdSchema.parse(req.query)
     const extractor = extractors.get(chainId) as Extractor
     const poolCodes = extractor.getCurrentPoolCodes()
     res.json(poolCodes)
