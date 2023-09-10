@@ -12,7 +12,7 @@ import {
 } from '@sushiswap/v3-sdk'
 import { expect } from 'chai'
 import { Address, createPublicClient, http, Transport } from 'viem'
-import { Chain, mainnet } from 'viem/chains'
+import { Chain, mainnet, polygon } from 'viem/chains'
 
 export const RP3Address = {
   [ChainId.ETHEREUM]: '0x827179dD56d07A7eeA32e3873493835da2866976' as Address,
@@ -119,49 +119,48 @@ async function CompareTest(args: {
   )
   await tokenManager.addCachedTokens()
   const tokens =
-    args.checkTokens ??
-    BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values())).slice(0, 20)
+    args.checkTokens ?? BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values())) //.slice(0, 60)
 
   let count = 0
-  for (let i = 5; i < tokens.length; ++i) {
-    for (let j = i + 1; j < tokens.length; ++j) {
-      if (tokens[i].address == tokens[j].address) continue
+  for (let i = 1; i < tokens.length; i += 2) {
+    const j = i - 1
+    if (tokens[i].address == tokens[j].address) continue
 
-      const add0 = ADDITIONAL_BASES[chainId]?.[tokens[i].address] ?? []
-      const add1 = ADDITIONAL_BASES[chainId]?.[tokens[j].address] ?? []
+    const add0 = ADDITIONAL_BASES[chainId]?.[tokens[i].address] ?? []
+    const add1 = ADDITIONAL_BASES[chainId]?.[tokens[j].address] ?? []
 
-      const dataFetcher = new DataFetcher(chainId, client)
-      dataFetcher.startDataFetching(args.liquidityProviders)
+    const dataFetcher = new DataFetcher(chainId, client)
+    dataFetcher.startDataFetching(args.liquidityProviders)
 
-      const [poolCodesExtractor, poolCodesDataFetcher] = await Promise.all([
-        extractor.getPoolCodesForTokensAsync(
-          BASES_TO_CHECK_TRADES_AGAINST[chainId].concat([tokens[i], tokens[j]]).concat(add0).concat(add1),
-          10_000 // 10 sec timeout
-        ),
-        (async () => {
-          await dataFetcher.fetchPoolsForToken(tokens[i], tokens[j])
-          return await dataFetcher.getCurrentPoolCodeList(tokens[i], tokens[j])
-        })(),
-      ])
-      const poolsExtractor = poolCodesExtractor.map((pc) => pc.pool.address)
-      const poolsExtractorSet = new Set(poolsExtractor)
+    const [poolCodesExtractor, poolCodesDataFetcher] = await Promise.all([
+      extractor.getPoolCodesForTokensAsync(
+        BASES_TO_CHECK_TRADES_AGAINST[chainId].concat([tokens[i], tokens[j]]).concat(add0).concat(add1),
+        10_000 // 10 sec timeout
+      ),
+      (async () => {
+        await dataFetcher.fetchPoolsForToken(tokens[i], tokens[j])
+        return await dataFetcher.getCurrentPoolCodeList(tokens[i], tokens[j])
+      })(),
+    ])
 
-      const poolsDataFetcher = poolCodesDataFetcher.map((pc) => pc.pool.address)
-      const poolsDataFetcherSet = new Set(poolsDataFetcher)
+    const poolsExtractor = poolCodesExtractor.map((pc) => pc.pool.address)
+    const poolsExtractorSet = new Set(poolsExtractor)
 
-      const poolsExtractorOnly = poolsExtractor.filter((p) => !poolsDataFetcherSet.has(p) && !poolsNativeSet.has(p))
-      const poolsDataFetcherOnly = poolsDataFetcher.filter((p) => !poolsExtractorSet.has(p) && !poolsNativeSet.has(p))
+    const poolsDataFetcher = poolCodesDataFetcher.map((pc) => pc.pool.address)
+    const poolsDataFetcherSet = new Set(poolsDataFetcher)
 
-      console.log(
-        `${++count} ${tokens[i].symbol} -> ${tokens[j].symbol} [${poolsExtractorOnly}] [${poolsDataFetcherOnly}]`
-      )
-      expect(poolsExtractorOnly.length).equal(0)
-      expect(poolsDataFetcherOnly.length).equal(0)
-    }
+    const poolsExtractorOnly = poolsExtractor.filter((p) => !poolsDataFetcherSet.has(p) && !poolsNativeSet.has(p))
+    const poolsDataFetcherOnly = poolsDataFetcher.filter((p) => !poolsExtractorSet.has(p) && !poolsNativeSet.has(p))
+
+    console.log(
+      `${++count} ${tokens[i].symbol} -> ${tokens[j].symbol} [${poolsExtractorOnly}] [${poolsDataFetcherOnly}]`
+    )
+    expect(poolsExtractorOnly.length).equal(0)
+    expect(poolsDataFetcherOnly.length).equal(0)
   }
 }
 
-it('Extractor DataFetcher compare test', async () => {
+it('Ethereum Extractor DataFetcher compare test', async () => {
   await CompareTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
@@ -173,12 +172,42 @@ it('Extractor DataFetcher compare test', async () => {
     factoriesV3: [
       //
       uniswapV3Factory(ChainId.ETHEREUM),
+      sushiswapV3Factory(ChainId.ETHEREUM),
     ],
     liquidityProviders: [
       //
       LiquidityProviders.SushiSwapV2,
       LiquidityProviders.UniswapV2,
       LiquidityProviders.UniswapV3,
+      LiquidityProviders.SushiSwapV3,
+    ],
+    tickHelperContract: TickLensContract[ChainId.ETHEREUM],
+    cacheDir: './cache',
+    logDepth: 50,
+    RP3Address: RP3Address[ChainId.ETHEREUM],
+  })
+})
+
+it.skip('Polygon Extractor DataFetcher compare test', async () => {
+  await CompareTest({
+    providerURL: `https://polygonzkevm-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
+    chain: polygon,
+    factoriesV2: [
+      //
+      sushiswapV2Factory(ChainId.POLYGON),
+      //uniswapV2Factory(ChainId.POLYGON),
+    ],
+    factoriesV3: [
+      //
+      //uniswapV3Factory(ChainId.POLYGON),
+      sushiswapV3Factory(ChainId.POLYGON),
+    ],
+    liquidityProviders: [
+      //
+      LiquidityProviders.SushiSwapV2,
+      //LiquidityProviders.UniswapV2,
+      //LiquidityProviders.UniswapV3,
+      LiquidityProviders.SushiSwapV3,
     ],
     tickHelperContract: TickLensContract[ChainId.ETHEREUM],
     cacheDir: './cache',

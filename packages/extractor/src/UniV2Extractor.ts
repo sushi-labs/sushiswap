@@ -417,11 +417,13 @@ export class UniV2Extractor {
     addToCache: boolean
     startTime?: number
   }) {
+    const [t0, t1] = args.token0.sortsBefore(args.token1) ? [args.token0, args.token1] : [args.token1, args.token0]
+
     const startTime = args.startTime === undefined ? performance.now() : args.startTime
     const pool = new ConstantProductRPool(
       args.address,
-      args.token0 as RToken,
-      args.token1 as RToken,
+      t0 as RToken,
+      t1 as RToken,
       args.factory.fee,
       args.reserve0,
       args.reserve1
@@ -434,8 +436,8 @@ export class UniV2Extractor {
     if (args.addToCache)
       this.poolPermanentCache.add({
         address: args.address,
-        token0: args.token0.address as Address,
-        token1: args.token1.address as Address,
+        token0: t0.address as Address,
+        token1: t1.address as Address,
         factory: args.factory.address,
       })
     const delay = Math.round(performance.now() - startTime)

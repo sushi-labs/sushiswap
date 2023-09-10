@@ -181,8 +181,10 @@ export class UniV3Extractor {
     if (watcherExisted) return watcherExisted
     if (this.otherFactoryPoolSet.has(addrL)) return
 
+    const [t0, t1] = p.token0.sortsBefore(p.token1) ? [p.token0, p.token1] : [p.token1, p.token0]
+
     startTime = startTime || performance.now()
-    const expectedPoolAddress = this.computeV3Address(p.factory, p.token0, p.token1, p.fee)
+    const expectedPoolAddress = this.computeV3Address(p.factory, t0, t1, p.fee)
     if (addrL !== expectedPoolAddress.toLowerCase()) {
       this.consoleLog(`FakePool: ${p.address}`)
       this.otherFactoryPoolSet.add(addrL)
@@ -192,8 +194,8 @@ export class UniV3Extractor {
       p.factory.provider,
       expectedPoolAddress,
       this.tickHelperContract,
-      p.token0,
-      p.token1,
+      t0,
+      t1,
       p.fee,
       this.multiCallAggregator,
       this.taskCounter
@@ -203,8 +205,8 @@ export class UniV3Extractor {
     if (addToCache)
       this.poolPermanentCache.add({
         address: expectedPoolAddress,
-        token0: p.token0.address as Address,
-        token1: p.token1.address as Address,
+        token0: t0.address as Address,
+        token1: t1.address as Address,
         fee: p.fee,
         factory: p.factory.address,
       })
