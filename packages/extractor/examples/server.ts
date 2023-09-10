@@ -381,7 +381,7 @@ async function main() {
     const { chainId } = chainIdSchema.parse(req.query)
     const extractor = extractors.get(chainId) as Extractor
     const poolCodes = extractor.getCurrentPoolCodes()
-    res.json(poolCodes)
+    res.json(serialize(poolCodes))
   })
 
   // app.get('/debug-sentry', function mainHandler(req, res) {
