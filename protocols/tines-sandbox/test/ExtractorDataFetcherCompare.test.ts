@@ -12,7 +12,7 @@ import {
 } from '@sushiswap/v3-sdk'
 import { expect } from 'chai'
 import { Address, createPublicClient, http, Transport } from 'viem'
-import { Chain, mainnet, polygon } from 'viem/chains'
+import { arbitrum, Chain, mainnet, polygon } from 'viem/chains'
 
 export const RP3Address = {
   [ChainId.ETHEREUM]: '0x827179dD56d07A7eeA32e3873493835da2866976' as Address,
@@ -161,7 +161,7 @@ async function CompareTest(args: {
   }
 }
 
-it('Ethereum Extractor DataFetcher compare test', async () => {
+it('Ethereum Extractor - DataFetcher compare test', async () => {
   await CompareTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
@@ -189,7 +189,7 @@ it('Ethereum Extractor DataFetcher compare test', async () => {
   })
 })
 
-it('Polygon Extractor DataFetcher compare test', async () => {
+it('Polygon Extractor - DataFetcher compare test', async () => {
   await CompareTest({
     providerURL: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: polygon,
@@ -208,7 +208,29 @@ it('Polygon Extractor DataFetcher compare test', async () => {
     ],
     tickHelperContract: TickLensContract[ChainId.ETHEREUM],
     cacheDir: './cache',
-    logDepth: 50,
+    logDepth: 100,
+    RP3Address: RP3Address[ChainId.ETHEREUM],
+  })
+})
+
+it('Arbitrum Extractor - DataFetcher compare test', async () => {
+  await CompareTest({
+    providerURL: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
+    chain: arbitrum,
+    factoriesV2: [
+      //
+    ],
+    factoriesV3: [
+      //
+      uniswapV3Factory(ChainId.ARBITRUM),
+    ],
+    liquidityProviders: [
+      //
+      LiquidityProviders.UniswapV3,
+    ],
+    tickHelperContract: TickLensContract[ChainId.ETHEREUM],
+    cacheDir: './cache',
+    logDepth: 300,
     RP3Address: RP3Address[ChainId.ETHEREUM],
   })
 })
