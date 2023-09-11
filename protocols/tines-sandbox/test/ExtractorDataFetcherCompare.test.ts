@@ -119,7 +119,8 @@ async function CompareTest(args: {
   )
   await tokenManager.addCachedTokens()
   const tokens =
-    args.checkTokens ?? BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values())) //.slice(0, 60)
+    args.checkTokens ??
+    BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values())).slice(0, 60)
 
   let count = 0
   for (let i = 1; i < tokens.length; i += 2) {
@@ -188,26 +189,22 @@ it('Ethereum Extractor DataFetcher compare test', async () => {
   })
 })
 
-it.skip('Polygon Extractor DataFetcher compare test', async () => {
+it('Polygon Extractor DataFetcher compare test', async () => {
   await CompareTest({
-    providerURL: `https://polygonzkevm-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
+    providerURL: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: polygon,
     factoriesV2: [
       //
       sushiswapV2Factory(ChainId.POLYGON),
-      //uniswapV2Factory(ChainId.POLYGON),
     ],
     factoriesV3: [
       //
-      //uniswapV3Factory(ChainId.POLYGON),
-      sushiswapV3Factory(ChainId.POLYGON),
+      uniswapV3Factory(ChainId.POLYGON),
     ],
     liquidityProviders: [
       //
       LiquidityProviders.SushiSwapV2,
-      //LiquidityProviders.UniswapV2,
-      //LiquidityProviders.UniswapV3,
-      LiquidityProviders.SushiSwapV3,
+      LiquidityProviders.UniswapV3,
     ],
     tickHelperContract: TickLensContract[ChainId.ETHEREUM],
     cacheDir: './cache',
