@@ -10,7 +10,7 @@ import { Loader } from '@sushiswap/ui/components/loader'
 import { FC, ReactNode } from 'react'
 
 import { useCrossChainSwapTrade, useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
-import { TransactionType } from 'lib/swap/useCrossChainTrade/SushiXSwapV2'
+import { TransactionType } from '@sushiswap/sushixswap-sdk'
 
 interface ConfirmationDialogContent {
   txHash?: string

@@ -9,11 +9,17 @@ import { useTrade as useApiTrade } from '@sushiswap/react-query'
 import { log } from 'next-axiom'
 import { UseCrossChainSelect, UseCrossChainTradeParams, UseCrossChainTradeQuerySelect } from './types'
 import { stargateAdapterAbi } from '@sushiswap/abi'
-import { encodeSwapData, getBridgeParams, ProcessRouteInput, TransactionType } from './SushiXSwapV2'
+import {
+  encodeSwapData,
+  getBridgeParams,
+  TransactionType,
+  encodeStargateTeleportParams,
+  estimateStargateDstGas,
+  STARGATE_ADAPTER_ADDRESS,
+} from '@sushiswap/sushixswap-sdk'
 import { RouterLiquiditySource } from '@sushiswap/router'
 import { useBridgeFees } from './useBridgeFees'
 import { isSwapApiEnabledChainId } from 'config'
-import { encodeStargateTeleportParams, estimateStargateDstGas, stargateAdapterAddress } from './StargateAdapter'
 import { encodeAbiParameters, parseAbiParameters, stringify } from 'viem'
 import { useStargatePath } from './useStargatePath'
 
@@ -75,7 +81,7 @@ export const useCrossChainTradeQuery = (
     amount,
     slippagePercentage,
     gasPrice: feeData0?.gasPrice,
-    recipient: stargateAdapterAddress[network0],
+    recipient: STARGATE_ADAPTER_ADDRESS[network0],
     enabled: Boolean(isSrcSwap && enabled && !isFallback && amount),
     carbonOffset: false,
     source: RouterLiquiditySource.Self,
@@ -92,7 +98,7 @@ export const useCrossChainTradeQuery = (
     amount,
     slippagePercentage,
     gasPrice: feeData0?.gasPrice,
-    recipient: stargateAdapterAddress[network0],
+    recipient: STARGATE_ADAPTER_ADDRESS[network0],
     enabled: Boolean(isSrcSwap && enabled && isFallback && amount),
     carbonOffset: false,
     source: RouterLiquiditySource.Self,
@@ -244,7 +250,7 @@ export const useCrossChainTradeQuery = (
         functionName = 'bridge'
         writeArgs = [
           getBridgeParams({
-            adapter: stargateAdapterAddress[network0],
+            adapter: STARGATE_ADAPTER_ADDRESS[network0],
             amountIn: amount,
             to: recipient,
             adapterData: encodeStargateTeleportParams({
@@ -263,19 +269,19 @@ export const useCrossChainTradeQuery = (
           '0x', // payloadData
         ]
       } else if (isSrcSwap && !isDstSwap && srcTrade?.minAmountOut) {
-        const srcSwapData = encodeSwapData(srcTrade.writeArgs as ProcessRouteInput)
+        const srcSwapData = encodeSwapData(srcTrade.writeArgs as Parameters<typeof encodeSwapData>[0])
 
         transactionType = TransactionType.SwapAndBridge
         functionName = 'swapAndBridge'
         writeArgs = [
           getBridgeParams({
-            adapter: stargateAdapterAddress[network0],
+            adapter: STARGATE_ADAPTER_ADDRESS[network0],
             amountIn: amount,
             to: recipient,
             adapterData: encodeStargateTeleportParams({
               srcBridgeToken,
               dstBridgeToken,
-              amount: 0, // set to 0, so RP will transfer all
+              amount: 0,
               amountMin: srcTrade.minAmountOut.quotient.toString(),
               dustAmount: 0,
               receiver: recipient, // receivier is recipient because no dstPayload
@@ -289,7 +295,7 @@ export const useCrossChainTradeQuery = (
           '0x',
         ]
       } else if (!isSrcSwap && isDstSwap && dstTrade?.writeArgs) {
-        const dstSwapData = encodeSwapData(dstTrade.writeArgs as ProcessRouteInput)
+        const dstSwapData = encodeSwapData(dstTrade.writeArgs as Parameters<typeof encodeSwapData>[0])
         dstGasEstimate = estimateStargateDstGas(dstTrade.route?.gasSpent ?? 0)
 
         dstPayload = encodeAbiParameters(parseAbiParameters('address, bytes, bytes'), [
@@ -302,7 +308,7 @@ export const useCrossChainTradeQuery = (
         functionName = 'bridge'
         writeArgs = [
           getBridgeParams({
-            adapter: stargateAdapterAddress[network0],
+            adapter: STARGATE_ADAPTER_ADDRESS[network0],
             amountIn: amount,
             to: recipient,
             adapterData: encodeStargateTeleportParams({
@@ -311,7 +317,7 @@ export const useCrossChainTradeQuery = (
               amount: amount.quotient.toString(),
               amountMin: srcAmountOut.quotient.toString(),
               dustAmount: 0,
-              receiver: stargateAdapterAddress[network1],
+              receiver: STARGATE_ADAPTER_ADDRESS[network1],
               to: recipient,
               gas: dstGasEstimate,
             }),
@@ -321,8 +327,8 @@ export const useCrossChainTradeQuery = (
           '0x', // dstPayload
         ]
       } else if (isSrcSwap && isDstSwap && srcTrade?.minAmountOut && dstTrade) {
-        const srcSwapData = encodeSwapData(srcTrade.writeArgs as ProcessRouteInput)
-        const dstSwapData = encodeSwapData(dstTrade.writeArgs as ProcessRouteInput)
+        const srcSwapData = encodeSwapData(srcTrade.writeArgs as Parameters<typeof encodeSwapData>[0])
+        const dstSwapData = encodeSwapData(dstTrade.writeArgs as Parameters<typeof encodeSwapData>[0])
 
         dstPayload = encodeAbiParameters(parseAbiParameters('address, bytes, bytes'), [
           recipient, // to
@@ -335,16 +341,16 @@ export const useCrossChainTradeQuery = (
         functionName = 'swapAndBridge'
         writeArgs = [
           getBridgeParams({
-            adapter: stargateAdapterAddress[network0],
+            adapter: STARGATE_ADAPTER_ADDRESS[network0],
             amountIn: amount,
             to: recipient,
             adapterData: encodeStargateTeleportParams({
               srcBridgeToken,
               dstBridgeToken,
-              amount: 0, // set to 0 so RP will transfer all
+              amount: 0,
               amountMin: srcTrade.minAmountOut.quotient.toString(),
               dustAmount: 0,
-              receiver: stargateAdapterAddress[network1],
+              receiver: STARGATE_ADAPTER_ADDRESS[network1],
               to: recipient,
               gas: dstGasEstimate,
             }),
@@ -360,13 +366,13 @@ export const useCrossChainTradeQuery = (
 
       // need async to get fee for final value... this should be moved to exec?
       const [fee] = (await readContract({
-        address: stargateAdapterAddress[network0],
+        address: STARGATE_ADAPTER_ADDRESS[network0],
         abi: stargateAdapterAbi,
         functionName: 'getFee',
         args: [
           STARGATE_CHAIN_ID[network1], // dstChain
           1, // functionType
-          isDstSwap ? stargateAdapterAddress[network1] : recipient, // receiver
+          isDstSwap ? STARGATE_ADAPTER_ADDRESS[network1] : recipient, // receiver
           dstGasEstimate, // gasAmount
           0, // dustAmount
           isDstSwap ? dstPayload : '0x', // payload

@@ -26,9 +26,7 @@ import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { createErrorToast, createInfoToast, createToast } from '@sushiswap/ui/components/toast'
 import {
   Address,
-  getSushiXSwapV2ContractConfig,
-  isSushiXSwapV2ChainId,
-  SushiXSwapV2ChainId,
+  getSushiXSwap2ContractConfig,
   useAccount,
   useContractWrite,
   useNetwork,
@@ -55,6 +53,7 @@ import {
   StepState,
 } from './cross-chain-swap-confirmation-dialog'
 import { useCrossChainSwapTrade, useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
+import { isSushiXSwap2ChainId, SushiXSwap2ChainId } from '@sushiswap/sushixswap-sdk'
 
 export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ children }) => {
   const [review, setReview] = useState(false)
@@ -78,12 +77,12 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
   const tradeRef = useRef<UseCrossChainTradeReturn | null>(null)
 
   const { config, isError, error } = usePrepareContractWrite({
-    ...getSushiXSwapV2ContractConfig(chainId0 as SushiXSwapV2ChainId),
+    ...getSushiXSwap2ContractConfig(chainId0 as SushiXSwap2ChainId),
     functionName: trade?.functionName,
     args: trade?.writeArgs,
     enabled: Boolean(
-      isSushiXSwapV2ChainId(chainId0) &&
-        isSushiXSwapV2ChainId(chainId1) &&
+      isSushiXSwap2ChainId(chainId0) &&
+        isSushiXSwap2ChainId(chainId1) &&
         trade?.writeArgs &&
         trade?.writeArgs.length > 0 &&
         chain?.id === chainId0 &&

@@ -10,7 +10,7 @@ import {
 import { useMemo } from 'react'
 import { Address, useContractRead, useContractReads } from '@sushiswap/wagmi'
 import { ADDRESS_ZERO } from '@sushiswap/v3-sdk'
-import { stargateAdapterAddress } from './StargateAdapter'
+import { STARGATE_ADAPTER_ADDRESS } from '@sushiswap/sushixswap-sdk'
 
 export const useBridgeFees = ({
   amount,
@@ -113,7 +113,7 @@ export const useBridgeFees = ({
                 ] ?? 0
               ),
               STARGATE_CHAIN_ID[dstChainId],
-              stargateAdapterAddress[srcChainId] as Address,
+              STARGATE_ADAPTER_ADDRESS[srcChainId],
               BigInt(adjusted?.quotient?.toString() ?? 0),
             ],
       [srcBridgeToken, dstBridgeToken, adjusted]

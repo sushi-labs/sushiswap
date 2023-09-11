@@ -9,7 +9,7 @@ import React, { FC, useEffect, useState } from 'react'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import { CrossChainSwapTradeReviewDialog } from './cross-chain-swap-trade-review-dialog'
 import { useCrossChainSwapTrade, useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
-import { sushiXSwapV2Address, SushiXSwapV2ChainId } from '@sushiswap/wagmi'
+import { SUSHIXSWAP_2_ADDRESS, SushiXSwap2ChainId } from '@sushiswap/sushixswap-sdk'
 
 export const CrossChainSwapTradeButton: FC = () => {
   const {
@@ -35,7 +35,7 @@ export const CrossChainSwapTradeButton: FC = () => {
                 id="approve-erc20"
                 fullWidth
                 amount={swapAmount}
-                contract={sushiXSwapV2Address[chainId0 as SushiXSwapV2ChainId]}
+                contract={SUSHIXSWAP_2_ADDRESS[chainId0 as SushiXSwap2ChainId]}
               >
                 <DialogTrigger asChild>
                   <Button

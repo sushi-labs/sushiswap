@@ -24,3 +24,5 @@ export const SUSHIXSWAP_ADDRESS: Record<SushiXSwapChainId, `0x${string}`> = {
 
 export const isSushiXSwapChainId = (chainId: ChainId): chainId is SushiXSwapChainId =>
   SUSHIXSWAP_SUPPORTED_CHAIN_IDS.includes(chainId as SushiXSwapChainId)
+
+export * from './sushixswap2'

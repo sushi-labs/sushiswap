@@ -1,4 +1,4 @@
-export const sushiXSwapV2Abi = [
+export const sushiXSwap2Abi = [
   {
     inputs: [
       { internalType: 'contract IRouteProcessor', name: '_rp', type: 'address' },

@@ -5,14 +5,8 @@ import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sus
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { STARGATE_SUPPORTED_CHAIN_IDS, StargateChainId } from '@sushiswap/stargate'
-import {
-  Address,
-  isSushiXSwapV2ChainId,
-  SushiXSwapV2ChainId,
-  useAccount,
-  useNetwork,
-  watchNetwork,
-} from '@sushiswap/wagmi'
+import { isSushiXSwap2ChainId, SushiXSwap2ChainId } from '@sushiswap/sushixswap-sdk'
+import { Address, useAccount, useNetwork, watchNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future'
 import { UseQueryResult } from '@tanstack/react-query'
 import { UseCrossChainTradeReturn } from 'lib/swap/useCrossChainTrade/types'
@@ -340,16 +334,14 @@ const useCrossChainSwapTrade = () => {
 
   return useCrossChainTrade({
     tradeId,
-    network0: chainId0 as SushiXSwapV2ChainId,
-    network1: chainId1 as SushiXSwapV2ChainId,
+    network0: chainId0 as SushiXSwap2ChainId,
+    network1: chainId1 as SushiXSwap2ChainId,
     token0,
     token1,
     amount: swapAmount,
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
     recipient: recipient as Address,
-    enabled: Boolean(
-      isSushiXSwapV2ChainId(chainId0) && isSushiXSwapV2ChainId(chainId1) && swapAmount?.greaterThan(ZERO)
-    ),
+    enabled: Boolean(isSushiXSwap2ChainId(chainId0) && isSushiXSwap2ChainId(chainId1) && swapAmount?.greaterThan(ZERO)),
   }) as UseQueryResult<UseCrossChainTradeReturn>
 }
 
