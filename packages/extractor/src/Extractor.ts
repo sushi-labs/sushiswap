@@ -101,10 +101,14 @@ export class Extractor {
   }
 
   getPoolCodesForTokens(tokens: Token[]): PoolCode[] {
-    const pools2 = this.extractorV2 ? this.extractorV2.getPoolsForTokens(tokens).prefetched : []
+    const tokenMap = new Map<string, Token>()
+    tokens.forEach((t) => tokenMap.set(t.address, t))
+    const tokensUnique = Array.from(tokenMap.values())
+
+    const pools2 = this.extractorV2 ? this.extractorV2.getPoolsForTokens(tokensUnique).prefetched : []
     const pools3 = this.extractorV3
       ? (this.extractorV3
-          .getWatchersForTokens(tokens)
+          .getWatchersForTokens(tokensUnique)
           .prefetched.map((w) => w.getPoolCode())
           .filter((pc) => pc !== undefined) as PoolCode[])
       : []
@@ -115,15 +119,19 @@ export class Extractor {
     prefetched: PoolCode[]
     fetchingNumber: number
   } {
+    const tokenMap = new Map<string, Token>()
+    tokens.forEach((t) => tokenMap.set(t.address, t))
+    const tokensUnique = Array.from(tokenMap.values())
+
     let prefetched: PoolCode[] = []
     let fetchingNumber = 0
     if (this.extractorV2) {
-      const pools2 = this.extractorV2.getPoolsForTokens(tokens)
+      const pools2 = this.extractorV2.getPoolsForTokens(tokensUnique)
       prefetched = pools2.prefetched
       fetchingNumber = pools2.fetching.length
     }
     if (this.extractorV3) {
-      const pools3 = this.extractorV3.getWatchersForTokens(tokens)
+      const pools3 = this.extractorV3.getWatchersForTokens(tokensUnique)
       const pools3Prefetched = pools3.prefetched
         .map((w) => w.getPoolCode())
         .filter((pc) => pc !== undefined) as PoolCode[]
