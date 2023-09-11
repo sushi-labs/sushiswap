@@ -173,7 +173,7 @@ async function main() {
               ROUTE_PROCESSOR_3_ADDRESS[chainId],
               [],
               maxPriceImpact,
-              source
+              source ?? RouterLiquiditySource.Sender
             )
           : undefined,
       })
@@ -262,7 +262,7 @@ async function main() {
               ROUTE_PROCESSOR_3_1_ADDRESS[chainId],
               [],
               maxPriceImpact,
-              source
+              source ?? RouterLiquiditySource.Sender
             )
           : undefined,
       })
@@ -351,7 +351,7 @@ async function main() {
               ROUTE_PROCESSOR_3_2_ADDRESS[chainId],
               [],
               maxPriceImpact,
-              source
+              source ?? RouterLiquiditySource.Sender
             )
           : undefined,
       })
