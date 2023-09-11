@@ -8,7 +8,7 @@ export const SimpleSwapToken0Input = () => {
   const {
     state: { swapAmountString, chainId, token0 },
     mutate: { setSwapAmount, setToken0 },
-    isLoading,
+    isToken0Loading: isLoading,
   } = useDerivedStateSimpleSwap()
 
   return (

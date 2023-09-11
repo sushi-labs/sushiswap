@@ -68,25 +68,26 @@ class Diargam {
   }
 }
 
-const coinGeckoPlatform: Record<ChainId, string> = {
+const coinGeckoPlatform = {
   [ChainId.ETHEREUM]: 'ethereum',
   [ChainId.POLYGON]: 'polygon-pos',
   [ChainId.ARBITRUM]: 'arbitrum-one',
   [ChainId.OPTIMISM]: 'optimistic-ethereum',
-}
+} as const
+
 const tokenCache: Map<Address, number | null> = new Map()
 async function getPrice(token: Address, chainId: ChainId): Promise<number | null> {
   const cached = tokenCache.get(token)
   if (cached !== undefined) return cached
 
   const platform = coinGeckoPlatform[chainId]
-  const erc20 = token == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' ? WNATIVE_ADDRESS[chainId] : token
+  const erc20 = token === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' ? WNATIVE_ADDRESS[chainId] : token
   const response = await fetch(`https://api.coingecko.com/api/v3/coins/${platform}/contract/${erc20}`)
   const data = await response.json()
   const price = data?.market_data?.current_price?.usd
   const decimals = data?.detail_platforms?.[platform].decimal_place
   if (price && decimals) {
-    const priceWei = price / Math.pow(10, decimals)
+    const priceWei = price / 10 ** decimals
     tokenCache.set(token, priceWei)
     return priceWei
   } else {
@@ -121,7 +122,7 @@ async function getSlippageStatistics(args: {
     address: args.RP3Address,
     fromBlock: blockNumCurrent - BigInt(args.blockQuantity),
     event: parseAbiItem(
-      `event Route(address indexed from, address to, address indexed tokenIn, address indexed tokenOut, uint amountIn, uint amountOutMin, uint amountOut)`
+      'event Route(address indexed from, address to, address indexed tokenIn, address indexed tokenOut, uint amountIn, uint amountOutMin, uint amountOut)'
     ),
   })
   const diagram = new Diargam(diapasons)

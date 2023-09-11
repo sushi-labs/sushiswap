@@ -9,6 +9,7 @@ import { Address, useAccount, useFeeData, useNetwork, watchNetwork } from '@sush
 import { useTokenWithCache } from '@sushiswap/wagmi/future'
 import { useClientTrade } from '@sushiswap/wagmi/future/hooks'
 import { useCarbonOffset } from 'lib/swap/useCarbonOffset'
+import { useSwapApi } from 'lib/swap/useSwapApi'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useLogger } from 'next-axiom'
 import { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from 'react'
@@ -39,6 +40,8 @@ interface State {
     recipient: string | undefined
   }
   isLoading: boolean
+  isToken0Loading: boolean
+  isToken1Loading: boolean
 }
 
 const DerivedStateSimpleSwapContext = createContext<State>({} as State)
@@ -212,6 +215,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
     chainId,
     address: defaultedParams.get('token0') as string,
     enabled: isAddress(defaultedParams.get('token0') as string),
+    keepPreviousData: false,
   })
 
   // Derive token1
@@ -219,6 +223,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
     chainId,
     address: defaultedParams.get('token1') as string,
     enabled: isAddress(defaultedParams.get('token1') as string),
+    keepPreviousData: false,
   })
 
   return (
@@ -246,6 +251,8 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
             token1: _token1,
           },
           isLoading: token0Loading || token1Loading,
+          isToken0Loading: token0Loading,
+          isToken1Loading: token1Loading,
         }
       }, [
         address,
@@ -279,15 +286,38 @@ const useDerivedStateSimpleSwap = () => {
 
 const SWAP_API_BASE_URL = process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL
 
+const useFallback = (chainId: ChainId) => {
+  const [swapApi] = useSwapApi()
+
+  const initialFallbackState = useMemo(
+    () =>
+      !isSwapApiEnabledChainId(chainId) ||
+      (isSwapApiEnabledChainId(chainId) && typeof SWAP_API_BASE_URL === 'undefined'),
+
+    [chainId]
+  )
+
+  const [isFallback, setIsFallback] = useState(initialFallbackState)
+
+  const resetFallback = useCallback(() => {
+    setIsFallback(initialFallbackState)
+  }, [setIsFallback, initialFallbackState])
+
+  return {
+    isFallback: !swapApi || isFallback,
+    setIsFallback,
+    resetFallback,
+  }
+}
+
 const useSimpleSwapTrade = () => {
   const log = useLogger()
   const {
     state: { token0, chainId, swapAmount, token1, recipient },
   } = useDerivedStateSimpleSwap()
 
-  const [isFallback, setIsFallback] = useState(
-    !isSwapApiEnabledChainId(chainId) || (isSwapApiEnabledChainId(chainId) && typeof SWAP_API_BASE_URL === 'undefined')
-  )
+  const { isFallback, setIsFallback, resetFallback } = useFallback(chainId)
+
   const [slippageTolerance] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
   const { data: feeData } = useFeeData({ chainId })
@@ -327,11 +357,7 @@ const useSimpleSwapTrade = () => {
   useEffect(() => {
     const unwatch = watchNetwork(({ chain }) => {
       if (chain) {
-        const shouldFallback =
-          !isSwapApiEnabledChainId(chain.id) ||
-          (isSwapApiEnabledChainId(chain.id) && typeof SWAP_API_BASE_URL === 'undefined')
-
-        setIsFallback(shouldFallback)
+        resetFallback()
       }
     })
 

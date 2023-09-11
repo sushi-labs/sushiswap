@@ -27,7 +27,7 @@ export async function getTotalAllocPoint() {
 }
 
 export async function getPoolInfos(poolLength: bigint) {
-  const poolInfoCalls = [...Array(poolLength)].map(
+  const poolInfoCalls = [...Array(Number(poolLength))].map(
     (_, i) =>
       ({
         address: MASTERCHEF_ADDRESS[ChainId.ETHEREUM] as Address,

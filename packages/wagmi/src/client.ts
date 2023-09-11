@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import { configureChains, createConfig } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
@@ -48,6 +49,11 @@ export const createWagmiConfig = () => {
     // logger: {
     //   warn: null,
     // },
+    logger: {
+      warn: (message) => {
+        Sentry.captureMessage(message, 'warning')
+      },
+    },
     autoConnect: true,
     connectors: [
       new InjectedConnector({

@@ -36,17 +36,19 @@ type TransformedPools = Record<string, AngleRewardsPool>
 
 interface UseAngleRewardsParams {
   chainId: ChainId
-  account: string | undefined
+  account?: string | undefined
   enabled?: boolean
 }
 
 export const angleRewardsQueryFn = async ({ chainId, account }: UseAngleRewardsParams) => {
+  let url = `https://api.angle.money/v1/merkl?chainId=${chainId}`
+
   if (account) {
-    const res = await (await fetch(`https://api.angle.money/v1/merkl?chainId=${chainId}&user=${account}`)).json()
-    return angleRewardsBaseValidator.parse(res)
+    url += `&user=${account}`
   }
 
-  return null
+  const res = await (await fetch(url)).json()
+  return angleRewardsBaseValidator.parse(res)
 }
 
 interface AngleRewardsSelect {
@@ -157,6 +159,6 @@ export const useAngleRewards = ({ chainId, account, enabled = true }: UseAngleRe
     select: (data) => angleRewardsSelect({ chainId, data, prices }),
     staleTime: 15000, // 15 seconds
     cacheTime: 60000, // 1min
-    enabled: Boolean(enabled && prices && chainId && account),
+    enabled: Boolean(enabled && prices && chainId),
   })
 }
