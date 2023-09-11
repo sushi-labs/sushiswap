@@ -42,7 +42,6 @@ import { useCallback, useMemo, useState } from 'react'
 import { useWaitForTransaction } from 'wagmi'
 
 import { ANGLE_ENABLED_NETWORKS } from '../../../config'
-import { useTokenAmountDollarValues } from '../../../lib/hooks'
 import { ConcentratedLiquidityProvider } from '../../../ui/pool/ConcentratedLiquidityProvider'
 import {
   ConcentratedLiquidityURLStateProvider,
@@ -71,7 +70,6 @@ const Incentivize = withCheckerRoot(() => {
 
   const { approved } = useApproved(APPROVE_TAG)
   const [value, setValue] = useState('')
-  const [invert, setInvert] = useState(false)
   const [customize, setCustomize] = useState(false)
   const [customizeOOR, setCustomizeOOR] = useState(false)
   const [includeBlacklist, setIncludeBlacklist] = useState(false)
@@ -85,10 +83,7 @@ const Incentivize = withCheckerRoot(() => {
   const totalDistro = distro1[0] + distro2[0] + distro3[0]
 
   const amount = useMemo(() => [tryParseAmount(value, rewardToken)], [value, rewardToken])
-  const { data: pool, isInitialLoading } = useConcentratedLiquidityPool({ chainId, token0, token1, feeAmount })
-
-  const fiatAmounts = useMemo(() => [tryParseAmount('1', token0), tryParseAmount('1', token1)], [token0, token1])
-  const fiatAmountsAsNumber = useTokenAmountDollarValues({ chainId, amounts: fiatAmounts })
+  const { data: pool } = useConcentratedLiquidityPool({ chainId, token0, token1, feeAmount })
 
   const v3Address =
     token0 && token1 && feeAmount ? SushiSwapV3Pool.getAddress(token0.wrapped, token1.wrapped, feeAmount) : undefined

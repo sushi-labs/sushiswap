@@ -1,14 +1,40 @@
 'use client'
 
+import { EllipsisHorizontalIcon, GiftIcon, LightBulbIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
+import { UploadIcon } from '@heroicons/react-v1/outline'
+import { DownloadIcon } from '@heroicons/react-v1/solid'
 import { Slot } from '@radix-ui/react-slot'
-import { GetPoolsArgs, Pool } from '@sushiswap/client'
+import { GetPoolsArgs, Pool, Protocol } from '@sushiswap/client'
 import { usePoolCount, usePoolsInfinite } from '@sushiswap/client/hooks'
-import { Card, CardHeader, CardTitle, DataTable, Loader } from '@sushiswap/ui'
+import { Native } from '@sushiswap/currency'
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardTitle,
+  Chip,
+  DataTable,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuGroupLabel,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  Loader,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@sushiswap/ui'
 import { ColumnDef, Row, SortingState, TableState } from '@tanstack/react-table'
+import Link from 'next/link'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useSWRConfig } from 'swr'
 
+import { isAngleEnabledChainId } from '../../config'
 import {
   APR_COLUMN_POOL,
   FEES_COLUMN,
@@ -28,6 +54,191 @@ const COLUMNS = [
   VOLUME_1M_COLUMN,
   FEES_COLUMN,
   APR_COLUMN_POOL,
+  {
+    id: 'actions',
+    cell: ({ row }) =>
+      row.original.protocol === 'SUSHISWAP_V3' ? (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button icon={EllipsisHorizontalIcon} variant="ghost" size="sm">
+              <span className="sr-only">Open menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-[240px]">
+            <DropdownMenuLabel>
+              <Chip variant="blue">SushiSwap V3</Chip>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem asChild>
+                <Link
+                  onClick={(e) => e.stopPropagation()}
+                  shallow={true}
+                  className="flex items-center"
+                  href={`/pool/${row.original.id}/positions/create/manual`}
+                >
+                  <PlusIcon width={16} height={16} className="mr-2" />
+                  Create position
+                </Link>
+              </DropdownMenuItem>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild={row.original.hasEnabledSteerVault}>
+                    <DropdownMenuItem asChild disabled={!row.original.hasEnabledSteerVault}>
+                      <Link
+                        onClick={(e) => e.stopPropagation()}
+                        shallow={true}
+                        className="flex items-center"
+                        href={`/pool/${row.original.id}/smart`}
+                      >
+                        <span className="relative">
+                          <LightBulbIcon width={16} height={16} className="mr-2" />
+                          <sup className="rounded-full bg-background absolute right-[3px]">
+                            <PlusIcon width={12} height={12} />
+                          </sup>
+                        </span>
+                        Create smart position
+                      </Link>
+                    </DropdownMenuItem>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" className="max-w-[240px]">
+                    <p>
+                      {!row.original.hasEnabledSteerVault
+                        ? 'No Steer vaults available for this pool'
+                        : `Smart pools optimize liquidity allocation within custom price ranges, enhancing trading efficiency
+                      by providing deeper liquidity around the current price, increasing LPs' fee earnings while
+                      allowing the market to determine the distribution of rational LPs' positions.`}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild={isAngleEnabledChainId(row.original.chainId)}>
+                    <DropdownMenuItem asChild disabled={!isAngleEnabledChainId(row.original.chainId)}>
+                      <Link
+                        onClick={(e) => e.stopPropagation()}
+                        shallow={true}
+                        className="flex items-center"
+                        href={`/pool/incentivize?chainId=${row.original.chainId}&fromCurrency=${
+                          row.original.token0.address === Native.onChain(row.original.chainId).wrapped.address
+                            ? 'NATIVE'
+                            : row.original.token0.address
+                        }&toCurrency=${
+                          row.original.token1.address === Native.onChain(row.original.chainId).wrapped.address
+                            ? 'NATIVE'
+                            : row.original.token1.address
+                        }&feeAmount=${row.original.swapFee * 10_000 * 100}`}
+                      >
+                        <GiftIcon width={16} height={16} className="mr-2" />
+                        Add incentive
+                      </Link>
+                    </DropdownMenuItem>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" className="max-w-[240px]">
+                    <p>
+                      {!isAngleEnabledChainId(row.original.chainId)
+                        ? 'Not available on this network'
+                        : 'Add rewards to a pool to incentivize liquidity providers joining in.'}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ) : (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button icon={EllipsisHorizontalIcon} variant="ghost" size="sm">
+              <span className="sr-only">Open menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-[240px]">
+            <DropdownMenuLabel>
+              <div>
+                {row.original.protocol === Protocol.BENTOBOX_STABLE && <Chip variant="green">Trident Stable</Chip>}
+                {row.original.protocol === Protocol.BENTOBOX_CLASSIC && <Chip variant="green">Trident Classic</Chip>}
+                {row.original.protocol === 'SUSHISWAP_V2' && <Chip variant="pink">Sushiswap V2</Chip>}
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem asChild>
+                <Link
+                  onClick={(e) => e.stopPropagation()}
+                  shallow={true}
+                  className="flex items-center"
+                  href={`/pool/${row.original.id}/add`}
+                >
+                  <PlusIcon width={16} height={16} className="mr-2" />
+                  Add liquidity
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link
+                  onClick={(e) => e.stopPropagation()}
+                  shallow={true}
+                  className="flex items-center"
+                  href={`/pool/${row.original.id}/remove`}
+                >
+                  <MinusIcon width={16} height={16} className="mr-2" />
+                  Remove liquidity
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuGroupLabel>Farm rewards</DropdownMenuGroupLabel>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild={row.original.incentives && row.original.incentives.length > 0}>
+                    <DropdownMenuItem
+                      asChild
+                      disabled={!(row.original.incentives && row.original.incentives.length > 0)}
+                    >
+                      <Link
+                        onClick={(e) => e.stopPropagation()}
+                        shallow={true}
+                        className="flex items-center"
+                        href={`/pool/${row.original.id}/stake`}
+                      >
+                        <DownloadIcon width={16} height={16} className="mr-2" />
+                        Stake
+                      </Link>
+                    </DropdownMenuItem>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" className="max-w-[240px]">
+                    <p>
+                      {!(row.original.incentives && row.original.incentives.length > 0)
+                        ? 'No rewards available on this pool'
+                        : `After adding liquidity, stake your liquidity tokens to benefit from extra rewards`}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <DropdownMenuItem asChild disabled={!(row.original.incentives && row.original.incentives.length > 0)}>
+                <Link
+                  onClick={(e) => e.stopPropagation()}
+                  shallow={true}
+                  className="flex items-center"
+                  href={`/pool/${row.original.id}/unstake`}
+                >
+                  <UploadIcon width={16} height={16} className="mr-2" />
+                  Unstake
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+    meta: {
+      disableLink: true,
+    },
+  },
 ] satisfies ColumnDef<Pool, unknown>[]
 
 interface PositionsTableProps {

@@ -29,7 +29,13 @@ export async function getPool({ chainId, address }: { chainId: ChainId; address:
   return data
 }
 
-export default async function PoolPage({ params }: { params: { id: string } }) {
+export default async function PoolPage({
+  params,
+  tab = 'add',
+}: {
+  params: { id: string }
+  tab: 'add' | 'remove' | 'unstake' | 'stake'
+}) {
   const [_chainId, address] = params.id.split(params.id.includes('%3A') ? '%3A' : ':') as [string, string]
   const chainId = Number(_chainId) as ChainId
   const pool = await getPool({ chainId, address })
@@ -43,7 +49,7 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
       <UnknownTokenAlert pool={pool} />
       <div className="flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
-          <ManageV2LiquidityCard pool={pool} />
+          <ManageV2LiquidityCard pool={pool} tab={tab} />
           <div className="flex flex-col gap-6">
             <PoolPositionProvider pool={pool}>
               <PoolPositionStakedProvider pool={pool}>

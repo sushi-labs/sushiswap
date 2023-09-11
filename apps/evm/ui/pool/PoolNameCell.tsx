@@ -119,10 +119,26 @@ export const PoolNameCellPool: FC<{ pool: Pool }> = ({ pool }) => {
           <div className={classNames('text-[10px] bg-gray-200 dark:bg-slate-700 rounded-lg px-1 ml-1')} />
         </span>
         <div className="flex gap-1">
-          {ProtocolBadge[pool.protocol]}
-          <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
-            {formatNumber(pool.swapFee * 100)}%
-          </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>{ProtocolBadge[pool.protocol]}</TooltipTrigger>
+              <TooltipContent>
+                <p>Protocol version</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
+                  {formatNumber(pool.swapFee * 100)}%
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Swap fee</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           {incentives && incentives.length > 0 && (
             <TooltipProvider>
               <Tooltip>

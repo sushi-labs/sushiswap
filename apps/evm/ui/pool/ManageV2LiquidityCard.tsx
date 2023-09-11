@@ -13,6 +13,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
+import Link from 'next/link'
 import { FC } from 'react'
 
 import { AddSectionLegacy } from './AddSectionLegacy'
@@ -27,9 +28,10 @@ import { RemoveSectionUnstake } from './RemoveSectionUnstake'
 
 interface ManageV2LiquidityCardProps {
   pool: Pool
+  tab?: 'stake' | 'unstake' | 'add' | 'remove'
 }
 
-export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool }) => {
+export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool, tab = 'add' }) => {
   const isFarm = pool.wasIncentivized || pool.isIncentivized
   return (
     <Card>
@@ -37,20 +39,20 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool }) 
         <CardTitle>Manage</CardTitle>
         <CardDescription>Manage your position</CardDescription>
       </CardHeader>
-      <Tabs className="w-full" defaultValue="add">
+      <Tabs className="w-full" defaultValue={tab}>
         <CardContent>
           <TabsList className="!flex">
-            <TabsTrigger testdata-id="add-tab" value="add" className="flex flex-1">
-              Add
+            <TabsTrigger asChild testdata-id="add-tab" value="add" className="flex flex-1">
+              <Link href={`/pool/${pool.id}/add`}>Add</Link>
             </TabsTrigger>
-            <TabsTrigger testdata-id="remove-tab" value="remove" className="flex flex-1">
-              Remove
+            <TabsTrigger asChild testdata-id="remove-tab" value="remove" className="flex flex-1">
+              <Link href={`/pool/${pool.id}/remove`}>Remove</Link>
             </TabsTrigger>
-            <TabsTrigger testdata-id="stake-tab" disabled={!isFarm} value="stake" className="flex flex-1">
-              Stake
+            <TabsTrigger asChild testdata-id="stake-tab" disabled={!isFarm} value="stake" className="flex flex-1">
+              <Link href={`/pool/${pool.id}/stake`}>Stake</Link>
             </TabsTrigger>
-            <TabsTrigger testdata-id="unstake-tab" disabled={!isFarm} value="unstake" className="flex flex-1">
-              Unstake
+            <TabsTrigger asChild testdata-id="unstake-tab" disabled={!isFarm} value="unstake" className="flex flex-1">
+              <Link href={`/pool/${pool.id}/unstake`}>Unstake</Link>
             </TabsTrigger>
           </TabsList>
         </CardContent>

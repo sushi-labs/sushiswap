@@ -32,6 +32,7 @@ declare module '@tanstack/react-table' {
     className?: string
     skeleton?: React.ReactNode
     headerDescription?: string
+    disableLink?: boolean
   }
 }
 
@@ -141,7 +142,7 @@ export function DataTable<TData, TValue>({
               const _row = (
                 <TableRow key={r} data-state={row.getIsSelected() && 'selected'} testdata-id={`${testId}-${r}-tr`}>
                   {row.getVisibleCells().map((cell, i) =>
-                    linkFormatter ? (
+                    linkFormatter && !cell.column.columnDef.meta?.disableLink ? (
                       <TableCellAsLink
                         style={{ width: cell.column.getSize() }}
                         href={linkFormatter(row.original)}

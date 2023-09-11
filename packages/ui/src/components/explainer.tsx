@@ -24,9 +24,7 @@ export const Explainer: FC<{
             />
           )}
         </TooltipTrigger>
-        <TooltipContent className="paper !bg-white/50 dark:!bg-slate-800/50 dark:!text-slate-200 !text-gray-700 !p-4 shadow-xl w-80">
-          {children}
-        </TooltipContent>
+        <TooltipContent className="bg-background !p-4 shadow-xl w-80">{children}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
   )
