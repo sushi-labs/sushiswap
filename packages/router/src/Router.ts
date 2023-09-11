@@ -234,7 +234,7 @@ export class Router {
 
     return {
       tokenIn,
-      amountIn: source === RouterLiquiditySource.Sender ? route.amountInBI : 0n,
+      amountIn: route.amountInBI,
       tokenOut,
       amountOutMin,
       to,
