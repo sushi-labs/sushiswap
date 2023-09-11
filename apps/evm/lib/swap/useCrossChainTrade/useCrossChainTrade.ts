@@ -1,10 +1,9 @@
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
 import { Percent, ZERO } from '@sushiswap/math'
 import { STARGATE_CHAIN_ID } from '@sushiswap/stargate'
-import { useFeeData, watchNetwork, readContract } from '@sushiswap/wagmi'
-import { useClientTrade } from '@sushiswap/wagmi/future/hooks'
+import { useFeeData, readContract } from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
 import { log } from 'next-axiom'
 import { UseCrossChainSelect, UseCrossChainTradeParams, UseCrossChainTradeQuerySelect } from './types'
@@ -19,11 +18,8 @@ import {
 } from '@sushiswap/sushixswap-sdk'
 import { RouterLiquiditySource } from '@sushiswap/router'
 import { useBridgeFees } from './useBridgeFees'
-import { isSwapApiEnabledChainId } from 'config'
 import { encodeAbiParameters, parseAbiParameters, stringify } from 'viem'
 import { useStargatePath } from './useStargatePath'
-
-const SWAP_API_BASE_URL = process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL
 
 export const useCrossChainTradeQuery = (
   {
@@ -39,33 +35,6 @@ export const useCrossChainTradeQuery = (
   }: UseCrossChainTradeParams,
   select: UseCrossChainTradeQuerySelect
 ) => {
-  const [isFallback, setIsFallback] = useState(
-    !isSwapApiEnabledChainId(network0) ||
-      !isSwapApiEnabledChainId(network1) ||
-      (isSwapApiEnabledChainId(network0) &&
-        isSwapApiEnabledChainId(network1) &&
-        typeof SWAP_API_BASE_URL === 'undefined')
-  )
-
-  // Reset the fallback on network switch
-  useEffect(() => {
-    const unwatch = watchNetwork(({ chain }) => {
-      if (chain) {
-        const shouldFallback =
-          !isSwapApiEnabledChainId(chain.id) ||
-          !isSwapApiEnabledChainId(network1) ||
-          (isSwapApiEnabledChainId(chain.id) &&
-            isSwapApiEnabledChainId(network1) &&
-            typeof SWAP_API_BASE_URL === 'undefined')
-
-        setIsFallback(shouldFallback)
-      }
-    })
-
-    return () => unwatch()
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   const { data: feeData0 } = useFeeData({ chainId: network0 })
   const { data: feeData1 } = useFeeData({ chainId: network1 })
 
@@ -74,7 +43,7 @@ export const useCrossChainTradeQuery = (
   const isSrcSwap = Boolean(token0 && stargatePath?.srcBridgeToken && !token0.equals(stargatePath.srcBridgeToken))
   const isDstSwap = Boolean(token1 && stargatePath?.dstBridgeToken && !token1.equals(stargatePath.dstBridgeToken))
 
-  const srcApiTrade = useApiTrade({
+  const { data: srcTrade } = useApiTrade({
     chainId: network0,
     fromToken: token0,
     toToken: stargatePath?.srcBridgeToken,
@@ -82,29 +51,13 @@ export const useCrossChainTradeQuery = (
     slippagePercentage,
     gasPrice: feeData0?.gasPrice,
     recipient: STARGATE_ADAPTER_ADDRESS[network0],
-    enabled: Boolean(isSrcSwap && enabled && !isFallback && amount),
+    enabled: Boolean(isSrcSwap && enabled && amount),
     carbonOffset: false,
     source: RouterLiquiditySource.Self,
     onError: () => {
       log.error('xswap src swap api error')
-      setIsFallback(true)
     },
   })
-
-  const srcClientTrade = useClientTrade({
-    chainId: network0,
-    fromToken: token0,
-    toToken: stargatePath?.srcBridgeToken,
-    amount,
-    slippagePercentage,
-    gasPrice: feeData0?.gasPrice,
-    recipient: STARGATE_ADAPTER_ADDRESS[network0],
-    enabled: Boolean(isSrcSwap && enabled && isFallback && amount),
-    carbonOffset: false,
-    source: RouterLiquiditySource.Self,
-  }) as ReturnType<typeof useApiTrade>
-
-  const { data: srcTrade } = isFallback ? srcClientTrade : srcApiTrade
 
   const { data: bridgeFees } = useBridgeFees({
     amount: isSrcSwap ? srcTrade?.amountOut : amount,
@@ -152,7 +105,7 @@ export const useCrossChainTradeQuery = (
     return { srcAmountOut, srcMinimumAmountOut, dstAmountIn, bridgeFee }
   }, [bridgeFees, stargatePath, isSrcSwap, srcTrade?.minAmountOut, amount])
 
-  const dstApiTrade = useApiTrade({
+  const { data: dstTrade } = useApiTrade({
     chainId: network1,
     amount: dstAmountIn,
     fromToken: stargatePath?.dstBridgeToken,
@@ -160,29 +113,13 @@ export const useCrossChainTradeQuery = (
     slippagePercentage,
     gasPrice: feeData1?.gasPrice,
     recipient,
-    enabled: Boolean(isDstSwap && enabled && !isFallback && dstAmountIn),
+    enabled: Boolean(isDstSwap && enabled && dstAmountIn),
     carbonOffset: false,
     source: RouterLiquiditySource.Self,
     onError: () => {
       log.error('xswap dst swap api error')
-      setIsFallback(true)
     },
   })
-
-  const dstClientTrade = useClientTrade({
-    chainId: network1,
-    amount: dstAmountIn,
-    fromToken: stargatePath?.dstBridgeToken,
-    toToken: token1,
-    slippagePercentage,
-    gasPrice: feeData1?.gasPrice,
-    recipient,
-    enabled: Boolean(isDstSwap && enabled && isFallback && dstAmountIn),
-    carbonOffset: false,
-    source: RouterLiquiditySource.Self,
-  }) as ReturnType<typeof useApiTrade>
-
-  const { data: dstTrade } = isFallback ? dstClientTrade : dstApiTrade
 
   return useQuery({
     queryKey: [
