@@ -12,7 +12,7 @@ export const CrossChainSwapToken1Input = () => {
   const {
     state: { chainId1, token1 },
     mutate: { setToken1, setChainId1 },
-    isLoading: tokensLoading,
+    isToken1Loading: tokenLoading,
   } = useDerivedStateCrossChainSwap()
 
   const { isInitialLoading: isLoading, isFetching, data: trade, error } = useCrossChainSwapTrade()
@@ -52,7 +52,7 @@ export const CrossChainSwapToken1Input = () => {
         loading={isLoading}
         disableMaxButton
         fetching={isFetching}
-        currencyLoading={tokensLoading}
+        currencyLoading={tokenLoading}
       />
     </div>
   )

@@ -129,11 +129,15 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         hideSearch={hideSearch}
       >
         <Button
+          data-state={isLoading ? 'inactive' : 'active'}
           size="lg"
           variant={currency ? 'secondary' : 'default'}
           id={id}
           type="button"
-          className={classNames(currency ? 'pl-2 pr-3 text-xl' : '', '!rounded-full')}
+          className={classNames(
+            currency ? 'pl-2 pr-3 text-xl' : '',
+            '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex'
+          )}
         >
           {currency ? (
             <>
@@ -149,7 +153,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         </Button>
       </TokenSelector>
     )
-  }, [id, onSelect, currencies, currency, chainId, allowNative, hidePinnedTokens, hideSearch])
+  }, [isLoading, id, onSelect, currencies, currency, chainId, allowNative, hidePinnedTokens, hideSearch])
 
   return (
     <div
@@ -169,10 +173,11 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           data-state={isLoading ? 'active' : 'inactive'}
           className={classNames(
             'data-[state=inactive]:hidden data-[state=active]:flex',
-            'gap-1 items-center justify-between flex-grow h-[44px]'
+            'gap-4 items-center justify-between flex-grow h-[44px]'
           )}
         >
-          <SkeletonBox className="w-1/2 h-[32px] rounded-lg" />
+          <SkeletonBox className="w-2/3 h-[32px] rounded-lg" />
+          <SkeletonBox className="w-1/3 h-[32px] rounded-lg" />
         </div>
         <div
           data-state={isLoading ? 'inactive' : 'active'}

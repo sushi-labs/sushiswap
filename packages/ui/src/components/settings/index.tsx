@@ -10,15 +10,15 @@ import { List } from '../list'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../tooltip'
 import { CarbonOffset } from './CarbonOffset'
 import { ExpertMode } from './ExpertMode'
-import { RoutingApi } from './RoutingApi'
 import { SlippageTolerance } from './SlippageTolerance'
+import { SwapApi } from './SwapApi'
 
 export enum SettingsModule {
   CarbonOffset = 'CarbonOffset',
   CustomTokens = 'CustomTokens',
   SlippageTolerance = 'SlippageTolerance',
   ExpertMode = 'ExpertMode',
-  RoutingApi = 'RoutingApi',
+  SwapApi = 'SwapApi',
 }
 
 interface SettingsOverlayProps {
@@ -97,10 +97,10 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules, children, o
               </List.Control>
             </List>
           )}
-          {modules.includes(SettingsModule.RoutingApi) && (
+          {modules.includes(SettingsModule.SwapApi) && (
             <List className="!pt-0">
               <List.Control>
-                <RoutingApi />
+                <SwapApi />
               </List.Control>
             </List>
           )}

@@ -282,7 +282,9 @@ contract RouteProcessor4 is Ownable {
         if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
         IWETH(tokenIn).withdraw(amountIn);
       }
-      payable(to).transfer(address(this).balance);
+      //payable(to).transfer(address(this).balance);
+      (bool success,)= payable(to).call{value: address(this).balance}("");
+      require(success, "RouteProcessor: Native token transfer failed");
     }
   }
 
@@ -326,15 +328,14 @@ contract RouteProcessor4 is Ownable {
     address to = stream.readAddress();
     uint24 fee = stream.readUint24();   // pool fee in 1/1_000_000
 
-    (uint256 r0, uint256 r1, ) = IUniswapV2Pair(pool).getReserves();
-    require(r0 > 0 && r1 > 0, 'Wrong pool reserves');
-    (uint256 reserveIn, uint256 reserveOut) = direction == 1 ? (r0, r1) : (r1, r0);
-
     if (amountIn != 0) {
       if (from == address(this)) IERC20(tokenIn).safeTransfer(pool, amountIn);
       else IERC20(tokenIn).safeTransferFrom(msg.sender, pool, amountIn);
     }
-    // without 'else' in order to support tax tokens
+
+    (uint256 r0, uint256 r1, ) = IUniswapV2Pair(pool).getReserves();
+    require(r0 > 0 && r1 > 0, 'Wrong pool reserves');
+    (uint256 reserveIn, uint256 reserveOut) = direction == 1 ? (r0, r1) : (r1, r0);
     amountIn = IERC20(tokenIn).balanceOf(pool) - reserveIn;  // tokens already were transferred
 
     uint256 amountInWithFee = amountIn * (1_000_000 - fee);

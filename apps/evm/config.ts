@@ -21,7 +21,7 @@ export type SwapApiEnabledChainId = (typeof SWAP_API_ENABLED_NETWORKS)[number]
 export const isSwapApiEnabledChainId = (chainId: number): chainId is SwapApiEnabledChainId =>
   SWAP_API_ENABLED_NETWORKS.includes(chainId as SwapApiEnabledChainId)
 
-export const DISABLED_CHAIN_IDS = [ChainId.HAQQ, ChainId.LINEA]
+export const DISABLED_CHAIN_IDS = [ChainId.HAQQ]
 
 const PREFERRED_CHAINID_ORDER: ChainId[] = [
   ChainId.ETHEREUM,

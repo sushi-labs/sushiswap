@@ -60,6 +60,8 @@ interface State {
     recipient: string | undefined
   }
   isLoading: boolean
+  isToken0Loading: boolean
+  isToken1Loading: boolean
 }
 
 const DerivedStateCrossChainSwapContext = createContext<State>({} as State)
@@ -238,6 +240,7 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
     chainId: chainId0,
     address: defaultedParams.get('token0') as string,
     enabled: isAddress(defaultedParams.get('token0') as string),
+    keepPreviousData: false,
   })
 
   // Derive token1
@@ -245,6 +248,7 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
     chainId: chainId1,
     address: defaultedParams.get('token1') as string,
     enabled: isAddress(defaultedParams.get('token1') as string),
+    keepPreviousData: false,
   })
 
   // Make sure the searchParams are updated whenever a user switches networks
@@ -291,6 +295,8 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
             token1: _token1,
           },
           isLoading: token0Loading || token1Loading,
+          isToken0Loading: token0Loading,
+          isToken1Loading: token1Loading,
         }
       }, [
         address,
