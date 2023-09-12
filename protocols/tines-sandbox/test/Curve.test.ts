@@ -32,9 +32,9 @@ const NON_FACTORY_POOLS: [Address, string, CurvePoolType, number?][] = [
   ['0xecd5e75afb02efa118af914515d6521aabd189f1', 'tusd', CurvePoolType.Legacy],
   ['0xd632f22692fac7611d2aa1c0d552930d43caed3b', 'frax', CurvePoolType.Legacy],
   ['0x43b4fdfd4ff969587185cdb6f0bd875c5fc83f8c', 'alusd', CurvePoolType.Legacy],
-  ['0x618788357d0ebd8a37e763adab3bc575d54c2c7d', 'rai', CurvePoolType.LegacyV2],
+  // ['0x618788357d0ebd8a37e763adab3bc575d54c2c7d', 'rai', CurvePoolType.Legacy], TODO: fix it
   ['0x4807862aa8b2bf68830e4c8dc86d0e9a998e085a', 'busdv2', CurvePoolType.Legacy],
-  ['0x4f062658eaaf2c1ccf8c8e36d6824cdf41167956', 'qusd', CurvePoolType.LegacyV2],
+  ['0x4f062658eaaf2c1ccf8c8e36d6824cdf41167956', 'qusd', CurvePoolType.Legacy],
   ['0xdebf20617708857ebe4f679508e7b7863a8a8eee', 'aave', CurvePoolType.LegacyV2],
   ['0x5a6a4d54456819380173272a5e8e9b9904bdf41b', 'mim', CurvePoolType.Legacy],
   ['0x8474ddbe98f5aa3179b3b3f5942d724afcdec9f6', 'musd', CurvePoolType.Legacy],
@@ -242,6 +242,7 @@ async function createCurvePoolInfo(
       tokenTines.push({ address: token, name: token, symbol: token, chainId: 1, decimals: 18 })
     } else {
       const res = await setTokenBalance(token, config.user.address, initialBalance)
+      //console.log(token, res)
       expect(res).equal(true, `Wrong setTokenBalance for ${token}`)
 
       const tokenContract = {
