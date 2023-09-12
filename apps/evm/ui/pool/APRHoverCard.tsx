@@ -76,7 +76,7 @@ export const APRHoverCard: FC<APRHoverCardProps> = ({ children, pool, showEmissi
   return (
     <>
       <div className="hidden sm:block">
-        <HoverCard openDelay={0} closeDelay={0}>
+        <HoverCard openDelay={300} closeDelay={0}>
           <HoverCardTrigger asChild>{children}</HoverCardTrigger>
           <HoverCardContent side="right" className="!p-0 max-w-[320px]">
             {card}
