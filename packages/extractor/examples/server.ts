@@ -48,10 +48,10 @@ const querySchema3_1 = querySchema.extend({
     .gte(0)
     .lte(2 ** 256)
     .default(ChainId.ETHEREUM)
-    .refine((chainId) => isRouteProcessor3_1ChainId(chainId as RouteProcessor3_1ChainId), {
+    .refine((chainId) => isSupportedChainId(chainId) && isRouteProcessor3_1ChainId(chainId), {
       message: 'ChainId not supported.',
     })
-    .transform((chainId) => chainId as SupportedChainId),
+    .transform((chainId) => chainId as RouteProcessor3_1ChainId),
 })
 
 const querySchema3_2 = querySchema.extend({
@@ -61,10 +61,10 @@ const querySchema3_2 = querySchema.extend({
     .gte(0)
     .lte(2 ** 256)
     .default(ChainId.ETHEREUM)
-    .refine((chainId) => isRouteProcessor3_2ChainId(chainId as RouteProcessor3_2ChainId), {
+    .refine((chainId) => isSupportedChainId(chainId) && isRouteProcessor3_2ChainId(chainId), {
       message: 'ChainId not supported.',
     })
-    .transform((chainId) => chainId as SupportedChainId),
+    .transform((chainId) => chainId as RouteProcessor3_2ChainId),
 })
 
 const PORT = process.env.PORT || 80
@@ -72,50 +72,6 @@ const PORT = process.env.PORT || 80
 const extractors = new Map<SupportedChainId, Extractor>()
 const tokenManagers = new Map<SupportedChainId, TokenManager>()
 const nativeProviders = new Map<SupportedChainId, NativeWrapProvider>()
-
-// async function getRoute(
-//   chainId: SupportedChainId,
-//   tokenIn: string,
-//   tokenOut: string,
-//   amount: bigint,
-//   gasPrice: number | undefined,
-//   preferSushi: boolean | undefined
-// ) {
-//   const tokenManager = tokenManagers.get(chainId) as TokenManager
-//   const [_tokenIn, _tokenOut] = await Promise.all([
-//     tokenIn === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-//       ? Native.onChain(chainId)
-//       : tokenManager.findToken(tokenIn as Address),
-//     tokenOut === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-//       ? Native.onChain(chainId)
-//       : tokenManager.findToken(tokenOut as Address),
-//   ])
-//   if (!_tokenIn || !_tokenOut) {
-//     throw new Error('tokenIn or tokenOut is not supported')
-//   }
-//   const poolCodesMap = new Map<string, PoolCode>()
-//   const nativeProvider = nativeProviders.get(chainId) as NativeWrapProvider
-//   nativeProvider.getCurrentPoolList().forEach((p) => poolCodesMap.set(p.pool.address, p))
-
-//   const extractor = extractors.get(chainId) as Extractor
-//   const common = chainId in BASES_TO_CHECK_TRADES_AGAINST ? BASES_TO_CHECK_TRADES_AGAINST[chainId] : []
-//   const additionalA = tokenIn ? ADDITIONAL_BASES[chainId]?.[_tokenIn.wrapped.address] ?? [] : []
-//   const additionalB = tokenOut ? ADDITIONAL_BASES[chainId]?.[_tokenOut.wrapped.address] ?? [] : []
-
-//   const tokens = Array.from(new Set([_tokenIn.wrapped, _tokenOut.wrapped, ...common, ...additionalA, ...additionalB]))
-
-//   const { prefetched: cachedPoolCodes, fetchingNumber } = extractor.getPoolCodesForTokensFull(tokens)
-//   cachedPoolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
-
-//   if (fetchingNumber > 0) {
-//     const poolCodes = await extractor.getPoolCodesForTokensAsync(tokens, 2_000)
-//     poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
-//   }
-
-//   return preferSushi
-//     ? Router.findSpecialRoute(poolCodesMap, chainId, _tokenIn, amount, _tokenOut, gasPrice ?? 30e9)
-//     : Router.findBestRoute(poolCodesMap, chainId, _tokenIn, amount, _tokenOut, gasPrice ?? 30e9)
-// }
 
 async function main() {
   const app: Express = express()
