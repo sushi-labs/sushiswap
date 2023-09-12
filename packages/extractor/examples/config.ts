@@ -23,8 +23,8 @@ import { LogFilterType } from '../src/LogFilter2'
 
 export const SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,
-  // ChainId.ARBITRUM_NOVA,
-  // ChainId.AVALANCHE,
+  ChainId.ARBITRUM_NOVA,
+  ChainId.AVALANCHE,
   ChainId.BASE,
   // ChainId.BOBA,
   // ChainId.BOBA_AVAX,
