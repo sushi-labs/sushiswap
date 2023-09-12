@@ -178,7 +178,7 @@ export const isRouteProcessor3_1ChainId = (chainId: ChainId): chainId is RoutePr
 export const ROUTE_PROCESSOR_3_2_SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,
   // ChainId.ARBITRUM_NOVA,
-  ChainId.AVALANCHE,
+  // ChainId.AVALANCHE,
   ChainId.BASE,
   ChainId.BSC,
   ChainId.ETHEREUM,
