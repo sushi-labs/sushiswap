@@ -191,22 +191,6 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
     [createQueryString, pathname, push]
   )
 
-  // // Make sure the searchParams are updated whenever a user switches networks
-  // useEffect(() => {
-  //   let i = 0
-  //   const unwatch = watchNetwork(({ chain }) => {
-  //     // Avoid first call
-  //     if (chain && i > 0) {
-  //       setChainId(chain.id)
-  //     }
-
-  //     i++
-  //   }, {})
-
-  //   return () => unwatch()
-  //   //eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [])
-
   // Derive chainId from defaultedParams
   const chainId = Number(defaultedParams.get('chainId')) as ChainId
 
