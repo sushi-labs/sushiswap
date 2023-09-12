@@ -65,9 +65,12 @@ const COLUMNS = [
               <span className="sr-only">Open menu</span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-[240px]">
+          <DropdownMenuContent align="end" className="w-fit">
             <DropdownMenuLabel>
-              <Chip variant="blue">SushiSwap V3</Chip>
+              {row.original.token0.symbol} / {row.original.token1.symbol}
+              <Chip variant="blue" className="ml-2">
+                SushiSwap V3
+              </Chip>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
@@ -158,13 +161,24 @@ const COLUMNS = [
               <span className="sr-only">Open menu</span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-[240px]">
+          <DropdownMenuContent align="end" className="w-fit">
             <DropdownMenuLabel>
-              <div>
-                {row.original.protocol === Protocol.BENTOBOX_STABLE && <Chip variant="green">Trident Stable</Chip>}
-                {row.original.protocol === Protocol.BENTOBOX_CLASSIC && <Chip variant="green">Trident Classic</Chip>}
-                {row.original.protocol === 'SUSHISWAP_V2' && <Chip variant="pink">Sushiswap V2</Chip>}
-              </div>
+              {row.original.token0.symbol} / {row.original.token1.symbol}
+              {row.original.protocol === Protocol.BENTOBOX_STABLE && (
+                <Chip variant="green" className="ml-2">
+                  Trident Stable
+                </Chip>
+              )}
+              {row.original.protocol === Protocol.BENTOBOX_CLASSIC && (
+                <Chip variant="green" className="ml-2">
+                  Trident Classic
+                </Chip>
+              )}
+              {row.original.protocol === 'SUSHISWAP_V2' && (
+                <Chip variant="pink" className="ml-2">
+                  SushiSwap V2
+                </Chip>
+              )}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
