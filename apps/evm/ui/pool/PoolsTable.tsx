@@ -23,6 +23,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Loader,
+  SkeletonText,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -237,6 +238,7 @@ const COLUMNS = [
       ),
     meta: {
       disableLink: true,
+      skeleton: <SkeletonText fontSize="lg" />,
     },
   },
 ] satisfies ColumnDef<Pool, unknown>[]
