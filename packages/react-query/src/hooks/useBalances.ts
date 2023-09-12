@@ -15,6 +15,10 @@ interface UseBalances {
   enabled?: boolean
 }
 
+// const queryKey = ({ chainId, account }): { account: string; chainId: number } => [
+//   `https://balances.sushi.com/v0/${chainId}/${account}`,
+// ]
+
 export const useBalancesQuery = ({ chainId, account, enabled = true }: UseBalances, select: UseBalancesQuerySelect) => {
   return useQuery({
     queryKey: [`https://balances.sushi.com/v0/${chainId}/${account}`],

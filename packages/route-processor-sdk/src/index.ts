@@ -175,10 +175,40 @@ export const isRouteProcessor3_1ChainId = (chainId: ChainId): chainId is RoutePr
   ROUTE_PROCESSOR_3_1_SUPPORTED_CHAIN_IDS.includes(chainId as RouteProcessor3_1ChainId)
 
 // v3.2
-export const ROUTE_PROCESSOR_3_2_SUPPORTED_CHAIN_IDS = [ChainId.BASE] as const
+export const ROUTE_PROCESSOR_3_2_SUPPORTED_CHAIN_IDS = [
+  ChainId.ARBITRUM,
+  // ChainId.ARBITRUM_NOVA,
+  // ChainId.AVALANCHE,
+  ChainId.BASE,
+  ChainId.BSC,
+  ChainId.ETHEREUM,
+  // ChainId.FANTOM,
+  // ChainId.GNOSIS,
+  // ChainId.HAQQ,
+  // ChainId.HARMONY,
+  // ChainId.LINEA,
+  // ChainId.MOONRIVER,
+  ChainId.OPTIMISM,
+  ChainId.POLYGON,
+  // ChainId.POLYGON_ZKEVM,
+] as const
 export type RouteProcessor3_2ChainId = (typeof ROUTE_PROCESSOR_3_2_SUPPORTED_CHAIN_IDS)[number]
 export const ROUTE_PROCESSOR_3_2_ADDRESS: Record<RouteProcessor3_2ChainId, `0x${string}`> = {
-  [ChainId.BASE]: '0xb405397ed593f90C82188B32645118Ca56f2Ccd6',
+  [ChainId.ARBITRUM]: '0x09bD2A33c47746fF03b86BCe4E885D03C74a8E8C',
+  // [ChainId.ARBITRUM_NOVA]: '0x3DB923FBaB372ab8c796Fef9bb8341CdB37cB9eC',
+  // [ChainId.AVALANCHE]: '0x8f54301F315C56c112D492D9443047D4745dbe9e',
+  [ChainId.BASE]: '0x83eC81Ae54dD8dca17C3Dd4703141599090751D1',
+  [ChainId.BSC]: '0xd36990D74b947eC4Ad9f52Fe3D49d14AdDB51E44',
+  [ChainId.ETHEREUM]: '0x5550D13389bB70F45fCeF58f19f6b6e87F6e747d',
+  // [ChainId.FANTOM]: '0xFB70AD5a200d784E7901230E6875d91d5Fa6B68c',
+  // [ChainId.GNOSIS]: '0x7A4af156379f512DE147ed3b96393047226d923F',
+  // [ChainId.HAQQ]: '0x1be211D8DA40BC0ae8719c6663307Bfc987b1d6c',
+  // [ChainId.HARMONY]: '0x7A4af156379f512DE147ed3b96393047226d923F',
+  // [ChainId.LINEA]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904',
+  // [ChainId.MOONRIVER]: '0xF70c086618dcf2b1A461311275e00D6B722ef914',
+  [ChainId.OPTIMISM]: '0xEb94EcA012eC0bbB254722FdDa2CE7475875A52B',
+  [ChainId.POLYGON]: '0xE7eb31f23A5BefEEFf76dbD2ED6AdC822568a5d2',
+  // [ChainId.POLYGON_ZKEVM]: '0xbE811A0D44E2553d25d11CB8DC0d3F0D0E6430E6',
 } as const
 export const isRouteProcessor3_2ChainId = (chainId: ChainId): chainId is RouteProcessor3_2ChainId =>
   ROUTE_PROCESSOR_3_2_SUPPORTED_CHAIN_IDS.includes(chainId as RouteProcessor3_2ChainId)
