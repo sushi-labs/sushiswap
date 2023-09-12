@@ -7,6 +7,8 @@ import {
   ROUTE_PROCESSOR_3_1_ADDRESS,
   ROUTE_PROCESSOR_3_2_ADDRESS,
   ROUTE_PROCESSOR_3_ADDRESS,
+  RouteProcessor3_1ChainId,
+  RouteProcessor3_2ChainId,
 } from '@sushiswap/route-processor-sdk'
 import { NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
@@ -36,6 +38,32 @@ const querySchema = z.object({
   to: z.optional(z.string()).transform((to) => (to ? (to as Address) : undefined)),
   preferSushi: z.optional(z.coerce.boolean()),
   maxPriceImpact: z.optional(z.coerce.number()),
+})
+
+const querySchema3_1 = querySchema.extend({
+  chainId: z.coerce
+    .number()
+    .int()
+    .gte(0)
+    .lte(2 ** 256)
+    .default(ChainId.ETHEREUM)
+    .refine((chainId) => isRouteProcessor3_1ChainId(chainId as RouteProcessor3_1ChainId), {
+      message: 'ChainId not supported.',
+    })
+    .transform((chainId) => chainId as SupportedChainId),
+})
+
+const querySchema3_2 = querySchema.extend({
+  chainId: z.coerce
+    .number()
+    .int()
+    .gte(0)
+    .lte(2 ** 256)
+    .default(ChainId.ETHEREUM)
+    .refine((chainId) => isRouteProcessor3_2ChainId(chainId as RouteProcessor3_2ChainId), {
+      message: 'ChainId not supported.',
+    })
+    .transform((chainId) => chainId as SupportedChainId),
 })
 
 const PORT = process.env.PORT || 80
@@ -222,11 +250,8 @@ async function main() {
   })
 
   app.get('/v3.1', async (req: Request, res: Response) => {
-    const parsed = querySchema.safeParse(req.query)
+    const parsed = querySchema3_1.safeParse(req.query)
     if (!parsed.success) {
-      return res.status(422).send()
-    }
-    if (!isRouteProcessor3_1ChainId(parsed.data.chainId)) {
       return res.status(422).send()
     }
     const {
@@ -309,11 +334,8 @@ async function main() {
   })
 
   app.get('/v3.2', async (req: Request, res: Response) => {
-    const parsed = querySchema.safeParse(req.query)
+    const parsed = querySchema3_2.safeParse(req.query)
     if (!parsed.success) {
-      return res.status(422).send()
-    }
-    if (!isRouteProcessor3_2ChainId(parsed.data.chainId)) {
       return res.status(422).send()
     }
     const {
