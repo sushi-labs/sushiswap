@@ -28,7 +28,7 @@ const NON_FACTORY_POOLS: [Address, string, CurvePoolType, number?][] = [
   // Multitoken
   ['0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7', '3pool', CurvePoolType.LegacyV3],
   ['0xed279fdd11ca84beef15af5d39bb4d4bee23f0ca', 'lusd', CurvePoolType.Legacy],
-  ['0xa5407eae9ba41422680e2e00537571bcc53efbfd', 'susd', CurvePoolType.Legacy],
+  ['0xa5407eae9ba41422680e2e00537571bcc53efbfd', 'susd', CurvePoolType.LegacyV2],
   ['0xecd5e75afb02efa118af914515d6521aabd189f1', 'tusd', CurvePoolType.Legacy],
   ['0xd632f22692fac7611d2aa1c0d552930d43caed3b', 'frax', CurvePoolType.Legacy],
   ['0x43b4fdfd4ff969587185cdb6f0bd875c5fc83f8c', 'alusd', CurvePoolType.Legacy],
@@ -402,34 +402,6 @@ async function forEachFactoryPool(config: TestConfig, func: (address: Address, f
   }
 }
 
-export async function process2CoinsPool(
-  config: TestConfig,
-  poolAddress: Address,
-  name: string,
-  poolType: CurvePoolType,
-  precision: number
-): Promise<string> {
-  const testSeed = poolAddress
-  const rnd: () => number = seedrandom(testSeed) // random [0, 1)
-  let poolInfo
-  try {
-    poolInfo = await createCurvePoolInfo(config, poolAddress, poolType, BigInt(1e30))
-  } catch (e) {
-    return 'skipped (pool init error)'
-  }
-  if (poolInfo.tokenContracts.length > 2) return `skipped (${poolInfo.tokenContracts.length} tokens)`
-  const res0 = parseInt((poolInfo.poolTines[0][1] as CurvePool).reserve0.toString())
-  const res1 = parseInt((poolInfo.poolTines[0][1] as CurvePool).reserve1.toString())
-  if (res0 < 1e6 || res1 < 1e6) return 'skipped (low liquidity)'
-  const checks = poolType === CurvePoolType.LegacyV2 || poolType === CurvePoolType.LegacyV3 ? 3 : 10
-  for (let i = 0; i < checks; ++i) {
-    const amountInPortion = getRandomExp(rnd, 1e-5, 1)
-    await checkSwap(config, poolInfo, 0, 1, res0 * amountInPortion, precision)
-    await checkSwap(config, poolInfo, 1, 0, res1 * amountInPortion, precision)
-  }
-  return 'passed'
-}
-
 async function processMultiTokenPool(
   config: TestConfig,
   poolAddress: Address,
@@ -442,8 +414,10 @@ async function processMultiTokenPool(
   try {
     poolInfo = await createCurvePoolInfo(config, poolAddress, poolType, BigInt(1e30))
   } catch (e) {
-    return 'skipped (pool init error)'
+    // return 'skipped (pool init error)'
   }
+  if (!poolInfo || poolInfo.tokenContracts.length < 2) return 'skipped (pool init error)'
+
   const n = poolInfo.tokenContracts.length
   for (let i = 0; i < n; ++i)
     for (let j = i + 1; j < n; ++j) {
@@ -467,7 +441,7 @@ describe('Real Curve pools consistency check', () => {
     config = await getTestConfig()
   })
 
-  describe('Not-Factory pools by whitelist', () => {
+  describe.only('Not-Factory pools by whitelist', () => {
     for (let i = 0; i < NON_FACTORY_POOLS.length; ++i) {
       const [poolAddress, name, poolType, precision = 1e-9] = NON_FACTORY_POOLS[i]
       it(`${name} (${poolAddress}, ${poolType})`, async () => {

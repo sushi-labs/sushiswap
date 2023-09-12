@@ -13,6 +13,7 @@ const TokenProxyMap: Record<string, string> = {
   '0xd71ecff9342a5ced620049e616c5035f1db98620': '0x6568D9e750fC44AF00f857885Dfb8281c00529c4', // Ethereum sEUR
   '0xbbc455cb4f1b9e4bfc4b73970d360c8f032efee6': '0x577D4a7395c6A5f46d9981a5F83fa7294926aBB0', // Ethereum sLink
   '0x0316eb71485b0ab14103307bf65a021042c6d380': '0xc728693dcf6b257bf88577d6c92e52028426eefd', // Ethereum HBTC
+  '0x57ab1ec28d129707052df4df418d58a2d46d5f51': '0x05a9CBe762B36632b3594DA4F082340E0e5343e8', // Ethereum sUSD
 }
 
 const cache: Record<string, number> = {}
