@@ -23,7 +23,7 @@ export const TableFiltersSmartPoolsOnly: FC = () => {
 
   return (
     <Toggle variant="outline" onPressedChange={toggle} pressed={isPending ? checked : smartPoolsOnly} size="sm">
-      <span>💡</span>Smart pools only
+      <span>💡</span>Smart pool
     </Toggle>
   )
 }

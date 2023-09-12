@@ -23,7 +23,7 @@ export const TableFiltersFarmsOnly: FC = () => {
 
   return (
     <Toggle variant="outline" onPressedChange={toggle} pressed={isPending ? checked : farmsOnly} size="sm">
-      <span>🧑‍🌾</span> Farms only
+      <span>🧑‍🌾</span> Farm
     </Toggle>
   )
 }
