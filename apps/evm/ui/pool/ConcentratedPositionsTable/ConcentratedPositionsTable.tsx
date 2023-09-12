@@ -80,12 +80,12 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> = (
                           </Button>
                         </LinkInternal>
                       </HoverCardTrigger>
-                      <HoverCardContent className="!p-0">
+                      <HoverCardContent className="!p-0 max-w-[320px]">
                         <CardHeader>
                           <CardTitle>Smart pool</CardTitle>
                           <CardDescription>
-                            Allow the position to be autonomously managed on your behalf, encompassing the tasks of
-                            automatically recalibrating the range and aggregating associated fees for your convenience.
+                            The Auto-Pool automates the rebalancing of positions, and auto-compounds all associated fees
+                            and rewards.
                           </CardDescription>
                         </CardHeader>
                       </HoverCardContent>
