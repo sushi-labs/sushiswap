@@ -116,7 +116,7 @@ export const EXTRACTOR_CONFIG = {
     factoriesV3: [sushiswapV3Factory(ChainId.AVALANCHE)],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.AVALANCHE],
     cacheDir: './cache',
-    logDepth: 50,
+    logDepth: 100,
     logging: true,
   },
   [ChainId.BOBA]: {
