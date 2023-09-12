@@ -3,13 +3,7 @@ import { TridentChainIds } from '@sushiswap/trident-sdk'
 import { SushiSwapV2ChainIds } from '@sushiswap/v2-sdk'
 import { SushiSwapV3ChainIds } from '@sushiswap/v3-sdk'
 
-export const ANGLE_ENABLED_NETWORKS = [
-  ChainId.ETHEREUM,
-  ChainId.POLYGON,
-  ChainId.ARBITRUM,
-  ChainId.OPTIMISM,
-  ChainId.BASE,
-]
+export const ANGLE_ENABLED_NETWORKS = [ChainId.ETHEREUM, ChainId.POLYGON, ChainId.ARBITRUM, ChainId.OPTIMISM]
 export type AngleEnabledChainId = (typeof ANGLE_ENABLED_NETWORKS)[number]
 export const isAngleEnabledChainId = (chainId: number): chainId is AngleEnabledChainId =>
   ANGLE_ENABLED_NETWORKS.includes(chainId as AngleEnabledChainId)
