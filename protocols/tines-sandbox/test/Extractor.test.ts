@@ -190,7 +190,6 @@ async function startInfinitTest(args: {
             ` diff = ${diff > 0 ? '+' : ''}${diff} `
         )
         if (Math.abs(Number(diff)) > 0.001) console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
-        console.log(rpParams)
       } catch (e) {
         console.log(`Routing failed. No connection ? ${e}`)
       }
