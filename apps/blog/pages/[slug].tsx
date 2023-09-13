@@ -1,8 +1,9 @@
 import { Container } from '@sushiswap/ui/components/container'
+import { addBodyToArticle, GhostArticle } from 'lib/ghost'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
-import { Article, MediaBlock as MediaBlockType, RichTextBlock as RichTextBlockType } from 'types'
+import { Article } from 'types'
 
 import {
   ArticleAuthors,
@@ -11,9 +12,7 @@ import {
   ArticleLinks,
   ArticleSeo,
   Breadcrumb,
-  MediaBlock,
   PreviewBanner,
-  RichTextBlock,
 } from '../components'
 import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../lib/api'
 
@@ -38,8 +37,9 @@ export async function getStaticProps({
   preview: Record<string, unknown> | null
 }) {
   const data = await getArticleAndMoreArticles(params.slug, !!preview)
+  const article = data?.articles?.data?.[0]
 
-  if (!data?.articles?.data?.[0]) {
+  if (!article) {
     return {
       props: {},
       notFound: true,
@@ -48,7 +48,7 @@ export async function getStaticProps({
 
   return {
     props: {
-      article: data.articles.data[0],
+      article: await addBodyToArticle(article),
       latestArticles: data?.moreArticles?.data,
       preview: !!preview,
     },
@@ -57,14 +57,14 @@ export async function getStaticProps({
 }
 
 interface ArticlePage {
-  article?: Article
+  article?: GhostArticle
   latestArticles?: Article[]
   preview: boolean
 }
 
 const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
   const router = useRouter()
-  if (!router.isFallback && !article?.attributes?.slug) {
+  if (!router.isFallback && !article) {
     return <ErrorPage statusCode={404} />
   }
 
@@ -78,24 +78,10 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
           <article className="relative pt-10">
             <ArticleHeader article={article} />
             <ArticleAuthors article={article} />
-            <div className="mt-12 prose !prose-invert prose-slate">
-              {article?.attributes?.blocks?.map((block, i) => {
-                // @ts-ignore
-                if (block?.__typename === 'ComponentSharedRichText') {
-                  return <RichTextBlock block={block as RichTextBlockType} key={i} />
-                }
-
-                // @ts-ignore
-                if (block?.__typename === 'ComponentSharedMedia') {
-                  return <MediaBlock block={block as MediaBlockType} key={i} />
-                }
-
-                // @ts-ignore
-                if (block?.__typename === 'ComponentSharedDivider') {
-                  return <hr key={i} className="my-12 border border-slate-200/5" />
-                }
-              })}
-            </div>
+            <div
+              className="mt-12 prose !prose-invert prose-slate"
+              dangerouslySetInnerHTML={{ __html: article?.attributes.body || '' }}
+            />
             <ArticleLinks article={article} />
             <ArticleFooter articles={latestArticles} />
           </article>

@@ -1,16 +1,17 @@
 export type Article = {
-  id: number
+  id: string
   attributes: {
     authors: Data<Author[]>
     title: string
     description: string
+    ghostSlug: string | null
     slug: string
-    cover: Data<Image>
-    categories: Data<Category[]>
+    // cover: Data<Image>
+    // categories: Data<Category[]>
     createdAt: string
     updatedAt: string
     publishedAt: string
-    blocks: Block[]
+    // blocks: Block[]
   }
 }
 
@@ -48,23 +49,23 @@ export type Category = {
 }
 
 export type Image = {
-  id: number
+  // id: number
   attributes: {
     name: string
     alternativeText: string
     caption: string
     width: number
     height: number
-    hash: string
-    ext: string
-    mime: string
-    size: number
+    // hash: string
+    // ext: string
+    // mime: string
+    // size: number
     url: string
-    previewUrl: string | null
-    provider: string
+    // previewUrl: string | null
+    // provider: string
     provider_metadata: { public_id: string; resource_type: string }
-    createdAt: string
-    updatedAt: string
+    // createdAt: string
+    // updatedAt: string
   }
 }
 
@@ -90,19 +91,20 @@ export type Seo = {
 }
 
 export type Author = {
-  id: number
+  // id: number
   attributes: {
     avatar: Data<Image>
     name: string
     handle: string
-    createdAt: string
-    updatedAt: string
+    email: string
+    // createdAt: string
+    // updatedAt: string
   }
 }
 
 export type Data<T> = {
   data: T
-  meta: Meta
+  // meta: Meta
 }
 
 export type Collection<T> = {
