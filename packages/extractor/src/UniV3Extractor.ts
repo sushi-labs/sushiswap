@@ -181,8 +181,10 @@ export class UniV3Extractor {
     if (watcherExisted) return watcherExisted
     if (this.otherFactoryPoolSet.has(addrL)) return
 
+    const [t0, t1] = p.token0.sortsBefore(p.token1) ? [p.token0, p.token1] : [p.token1, p.token0]
+
     startTime = startTime || performance.now()
-    const expectedPoolAddress = this.computeV3Address(p.factory, p.token0, p.token1, p.fee)
+    const expectedPoolAddress = this.computeV3Address(p.factory, t0, t1, p.fee)
     if (addrL !== expectedPoolAddress.toLowerCase()) {
       this.consoleLog(`FakePool: ${p.address}`)
       this.otherFactoryPoolSet.add(addrL)
@@ -190,10 +192,10 @@ export class UniV3Extractor {
     }
     const watcher = new UniV3PoolWatcher(
       p.factory.provider,
-      p.address,
+      expectedPoolAddress,
       this.tickHelperContract,
-      p.token0,
-      p.token1,
+      t0,
+      t1,
       p.fee,
       this.multiCallAggregator,
       this.taskCounter
@@ -202,9 +204,9 @@ export class UniV3Extractor {
     this.poolMap.set(p.address.toLowerCase() as Address, watcher) // lowercase because incoming events have lowcase addresses ((
     if (addToCache)
       this.poolPermanentCache.add({
-        address: p.address,
-        token0: p.token0.address as Address,
-        token1: p.token1.address as Address,
+        address: expectedPoolAddress,
+        token0: t0.address as Address,
+        token1: t1.address as Address,
         fee: p.fee,
         factory: p.factory.address,
       })
@@ -212,25 +214,27 @@ export class UniV3Extractor {
       ++this.watchedPools
       if (source !== 'cache') {
         const delay = Math.round(performance.now() - startTime)
-        this.consoleLog(`add pool ${p.address} (${delay}ms, ${source}), watched pools total: ${this.watchedPools}`)
+        this.consoleLog(
+          `add pool ${expectedPoolAddress} (${delay}ms, ${source}), watched pools total: ${this.watchedPools}`
+        )
       }
     })
     return watcher
   }
 
-  getWatchersForTokens(tokens: Token[]): {
+  getWatchersForTokens(tokensUnique: Token[]): {
     prefetched: UniV3PoolWatcher[]
     fetching: Promise<UniV3PoolWatcher | undefined>[]
   } {
+    const startTime = performance.now()
     const prefetched: UniV3PoolWatcher[] = []
     const fetching: Promise<UniV3PoolWatcher | undefined>[] = []
     const fees = Object.values(FeeAmount).filter((fee) => typeof fee === 'number') as FeeAmount[]
-    const startTime = performance.now()
-    for (let i = 0; i < tokens.length; ++i) {
-      this.tokenManager.findToken(tokens[i].address as Address) // to let save it in the cache
-      for (let j = i + 1; j < tokens.length; ++j) {
-        if (tokens[i].address === tokens[j].address) continue
-        const [t0, t1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i], tokens[j]] : [tokens[j], tokens[i]]
+    for (let i = 0; i < tokensUnique.length; ++i) {
+      const t0 = tokensUnique[i]
+      this.tokenManager.findToken(t0.address as Address) // to let save it in the cache
+      for (let j = i + 1; j < tokensUnique.length; ++j) {
+        const t1 = tokensUnique[j]
         this.factories.forEach((factory) => {
           fees.forEach((fee) => {
             const addr = this.computeV3Address(factory, t0, t1, fee)
