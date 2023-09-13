@@ -142,7 +142,7 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
               <StatValue size="sm">2</StatValue>
             </Stat> */}
           <Stat className="px-6 py-3">
-            <StatLabel size="sm">Management fee</StatLabel>
+            <StatLabel size="sm">Performance fee</StatLabel>
             <StatValue size="sm">{formatPercent(vault.performanceFee)}</StatValue>
           </Stat>
         </div>
