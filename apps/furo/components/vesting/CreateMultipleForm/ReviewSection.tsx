@@ -6,7 +6,7 @@ import { shortenAddress } from '@sushiswap/format'
 import { usePrices } from '@sushiswap/react-query'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { List } from '@sushiswap/ui/components/list/List'
-import { Table } from '@sushiswap/ui/components/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@sushiswap/ui/components/table'
 import { format } from 'date-fns'
 import React, { FC, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -59,96 +59,88 @@ export const ReviewSection: FC<ReviewSection> = ({ chainId }) => {
       <List>
         <List.Label>Funds</List.Label>
         <List.Control>
-          <Table.container>
-            <Table.table>
-              <Table.thead>
-                <Table.thr>
-                  <Table.th className="text-left">Token</Table.th>
-                  <Table.th className="text-left">Amount</Table.th>
-                  <Table.th className="text-left">Value</Table.th>
-                </Table.thr>
-              </Table.thead>
-              <Table.tbody>
-                {summedAmounts.map((el, idx) => (
-                  <Table.tr key={idx}>
-                    <Table.td className="flex items-center gap-2">
-                      <Currency.Icon currency={el.currency} width={20} height={20} />
-                      {el.currency.symbol}
-                    </Table.td>
-                    <Table.td>
-                      {el.toSignificant(6)} {el.currency.symbol}
-                    </Table.td>
-                    <Table.td>
-                      {prices && prices?.[el.currency.wrapped.address]
-                        ? `$${el.multiply(prices[el.currency.wrapped.address].asFraction).toFixed(2)}`
-                        : '-'}
-                    </Table.td>
-                  </Table.tr>
-                ))}
-              </Table.tbody>
-            </Table.table>
-          </Table.container>
+          <Table>
+            <TableHeader>
+              <TableHead className="text-left">Token</TableHead>
+              <TableHead className="text-left">Amount</TableHead>
+              <TableHead className="text-left">Value</TableHead>
+            </TableHeader>
+            <TableBody>
+              {summedAmounts.map((el, idx) => (
+                <TableRow key={idx}>
+                  <TableCell className="flex items-center gap-2">
+                    <Currency.Icon currency={el.currency} width={20} height={20} />
+                    {el.currency.symbol}
+                  </TableCell>
+                  <TableCell>
+                    {el.toSignificant(6)} {el.currency.symbol}
+                  </TableCell>
+                  <TableCell>
+                    {prices && prices?.[el.currency.wrapped.address]
+                      ? `$${el.multiply(prices[el.currency.wrapped.address].asFraction).toFixed(2)}`
+                      : '-'}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </List.Control>
       </List>
       <List>
         <List.Label>Recipients</List.Label>
         <List.Control>
-          <Table.container>
-            <Table.table>
-              <Table.thead>
-                <Table.thr>
-                  <Table.th className="text-left">Recipient</Table.th>
-                  <Table.th className="text-left">Token</Table.th>
-                  <Table.th className="text-left">Total Amount</Table.th>
-                  <Table.th className="text-left">End Date</Table.th>
-                  <Table.th className="text-left">Vesting Schedule</Table.th>
-                </Table.thr>
-              </Table.thead>
-              <Table.tbody>
-                {vestings?.map(
-                  (
-                    {
-                      id,
-                      cliffEndDate,
-                      cliffAmount,
-                      cliffEnabled,
-                      currency,
-                      recipient,
-                      startDate,
-                      stepPayouts,
-                      stepConfig,
-                      stepAmount,
-                      fundSource,
-                    },
-                    idx
-                  ) => (
-                    <TableRow
-                      id={id}
-                      key={idx}
-                      currency={currency}
-                      chainId={chainId}
-                      cliffEnabled={cliffEnabled}
-                      cliffAmount={cliffAmount}
-                      cliffEndDate={cliffEndDate}
-                      recipient={recipient}
-                      stepPayouts={stepPayouts}
-                      stepConfig={stepConfig}
-                      startDate={startDate}
-                      stepAmount={stepAmount}
-                      fundSource={fundSource}
-                    />
-                  )
-                )}
-              </Table.tbody>
-            </Table.table>
-          </Table.container>
+          <Table>
+            <TableHeader>
+              <TableHead className="text-left">Recipient</TableHead>
+              <TableHead className="text-left">Token</TableHead>
+              <TableHead className="text-left">Total Amount</TableHead>
+              <TableHead className="text-left">End Date</TableHead>
+              <TableHead className="text-left">Vesting Schedule</TableHead>
+            </TableHeader>
+            <TableBody>
+              {vestings?.map(
+                (
+                  {
+                    id,
+                    cliffEndDate,
+                    cliffAmount,
+                    cliffEnabled,
+                    currency,
+                    recipient,
+                    startDate,
+                    stepPayouts,
+                    stepConfig,
+                    stepAmount,
+                    fundSource,
+                  },
+                  idx
+                ) => (
+                  <_TableRow
+                    id={id}
+                    key={idx}
+                    currency={currency}
+                    chainId={chainId}
+                    cliffEnabled={cliffEnabled}
+                    cliffAmount={cliffAmount}
+                    cliffEndDate={cliffEndDate}
+                    recipient={recipient}
+                    stepPayouts={stepPayouts}
+                    stepConfig={stepConfig}
+                    startDate={startDate}
+                    stepAmount={stepAmount}
+                    fundSource={fundSource}
+                  />
+                )
+              )}
+            </TableBody>
+          </Table>
         </List.Control>
       </List>
     </div>
   )
 }
 
-const TableRow: FC<CreateVestingFormSchemaType & { chainId: ChainId }> = ({
+const _TableRow: FC<CreateVestingFormSchemaType & { chainId: ChainId }> = ({
   currency,
   chainId,
   recipient,
@@ -176,8 +168,8 @@ const TableRow: FC<CreateVestingFormSchemaType & { chainId: ChainId }> = ({
   })
 
   return (
-    <Table.tr>
-      <Table.td>
+    <TableRow>
+      <TableCell>
         {recipient && (
           <a
             rel="noreferrer"
@@ -188,13 +180,13 @@ const TableRow: FC<CreateVestingFormSchemaType & { chainId: ChainId }> = ({
             {shortenAddress(recipient)} <ExternalLinkIcon width={16} height={16} />
           </a>
         )}
-      </Table.td>
-      <Table.td>{currency?.symbol}</Table.td>
-      <Table.td>
+      </TableCell>
+      <TableCell>{currency?.symbol}</TableCell>
+      <TableCell>
         {totalAmount?.toSignificant(6)} {totalAmount?.currency.symbol}
-      </Table.td>
-      <Table.td>{endDate && !isNaN(+endDate) ? format(endDate, 'dd MMM yyyy hh:mmaaa') : 'Not available'}</Table.td>
-      <Table.td className="flex items-center gap-2">{cliffEnabled ? `Cliff, ${stepConfig}` : stepConfig}</Table.td>
-    </Table.tr>
+      </TableCell>
+      <TableCell>{endDate && !isNaN(+endDate) ? format(endDate, 'dd MMM yyyy hh:mmaaa') : 'Not available'}</TableCell>
+      <TableCell className="flex items-center gap-2">{cliffEnabled ? `Cliff, ${stepConfig}` : stepConfig}</TableCell>
+    </TableRow>
   )
 }

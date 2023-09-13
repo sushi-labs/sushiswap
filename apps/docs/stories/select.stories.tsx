@@ -96,7 +96,7 @@ export const Caption = {
           <SelectItem value="Item 3">Item 3</SelectItem>
           <SelectItem value="Item 4">Item 4</SelectItem>
         </SelectContent>
-        <SelectCaption caption="This is a caption">This is a caption</SelectCaption>
+        <SelectCaption>This is a caption</SelectCaption>
       </Select>
     </>
   ),
@@ -121,9 +121,7 @@ export const Error = {
           <SelectItem value="Item 3">Item 3</SelectItem>
           <SelectItem value="Item 4">Item 4</SelectItem>
         </SelectContent>
-        <SelectCaption caption="This is a caption" isError={true}>
-          This is a caption as an error
-        </SelectCaption>
+        <SelectCaption isError={true}>This is a caption as an error</SelectCaption>
       </Select>
     </>
   ),

@@ -31,15 +31,15 @@ export const L2_DEADLINE_FROM_NOW = 60n * 5n
 export const PROTOCOL_MAP: Record<Protocol, string> = {
   SUSHISWAP_V3: 'SushiSwap V3',
   SUSHISWAP_V2: 'SushiSwap V2',
-  BENTOBOX_STABLE: 'BentoBox Stable',
-  BENTOBOX_CLASSIC: 'BentoBox Classic',
+  BENTOBOX_STABLE: 'Trident Stable',
+  BENTOBOX_CLASSIC: 'Trident Classic',
 } as const
 
 export const AVAILABLE_PROTOCOL_MAP: Partial<typeof PROTOCOL_MAP> = {
   SUSHISWAP_V3: 'SushiSwap V3',
   SUSHISWAP_V2: 'SushiSwap V2',
-  BENTOBOX_STABLE: 'BentoBox Stable',
-  BENTOBOX_CLASSIC: 'BentoBox Classic',
+  BENTOBOX_STABLE: 'Trident Stable',
+  BENTOBOX_CLASSIC: 'Trident Classic',
 } as const
 
 // ! Has to be kept up to date with default filters

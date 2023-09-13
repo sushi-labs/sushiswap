@@ -8,7 +8,7 @@ export const SimpleSwapToken1Input = () => {
   const {
     state: { chainId, token1 },
     mutate: { setToken1 },
-    isLoading: tokensLoading,
+    isToken1Loading: tokenLoading,
   } = useDerivedStateSimpleSwap()
 
   const { isInitialLoading: isLoading, isFetching, data: trade } = useSimpleSwapTrade()
@@ -26,7 +26,7 @@ export const SimpleSwapToken1Input = () => {
       loading={isLoading}
       fetching={isFetching}
       disableMaxButton
-      currencyLoading={tokensLoading}
+      currencyLoading={tokenLoading}
     />
   )
 }

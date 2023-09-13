@@ -17,7 +17,6 @@ import {
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
-import { useAccount } from '@sushiswap/wagmi'
 import { FC } from 'react'
 import { getAddress } from 'viem'
 
@@ -29,10 +28,8 @@ interface PoolRewardDistributionsCardParams {
 }
 
 export const PoolRewardDistributionsCard: FC<PoolRewardDistributionsCardParams> = ({ pool }) => {
-  const { address } = useAccount()
   const { data: rewardsData, isLoading: rewardsLoading } = useAngleRewards({
     chainId: pool.chainId as ChainId,
-    account: address,
   })
 
   if (!pool) return null
@@ -61,24 +58,24 @@ export const PoolRewardDistributionsCard: FC<PoolRewardDistributionsCardParams> 
           ) : null}
         </CardDescription>
       </CardHeader>
-      <Tabs className="w-full" defaultValue="add">
+      <Tabs className="w-full" defaultValue="active">
         <CardContent>
           <TabsList className="!flex">
-            <TabsTrigger value="add" className="flex flex-1">
+            <TabsTrigger value="active" className="flex flex-1">
               Active
             </TabsTrigger>
-            <TabsTrigger value="remove" className="flex flex-1">
-              Expired
+            <TabsTrigger value="inactive" className="flex flex-1">
+              Upcoming & Expired
             </TabsTrigger>
           </TabsList>
         </CardContent>
-        <TabsContent value="add">
+        <TabsContent value="active">
           <DistributionDataTable
             isLoading={rewardsLoading}
             data={currentAngleRewardsPool?.distributionData.filter((el) => el.isLive)}
           />
         </TabsContent>
-        <TabsContent value="remove">
+        <TabsContent value="inactive">
           <DistributionDataTable
             isLoading={rewardsLoading}
             data={currentAngleRewardsPool?.distributionData.filter((el) => !el.isLive)}

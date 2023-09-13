@@ -1,5 +1,15 @@
 import { formatUSD } from '@sushiswap/format'
-import { classNames } from '@sushiswap/ui'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  classNames,
+  SkeletonBox,
+  SkeletonText,
+  Toggle,
+} from '@sushiswap/ui'
 import { format } from 'date-fns'
 import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
@@ -135,70 +145,81 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
   )
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex justify-between">
-        <div className={classNames('font-semibold text-sm')}>Volume</div>
-        <div className="flex gap-4">
-          {/* <button
-            onClick={() => setChartPeriod(TvlChartPeriod.Day)}
-            className={classNames(
-              'font-semibold text-sm',
-              chartPeriod === TvlChartPeriod.Day ? 'text-blue' : 'text-slate-500'
-            )}
-          >
-            1D
-          </button> */}
-          <button
-            onClick={() => setChartPeriod(TvlChartPeriod.Week)}
-            className={classNames(
-              'font-semibold text-sm',
-              chartPeriod === TvlChartPeriod.Week ? 'text-blue' : 'text-slate-500'
-            )}
-          >
-            1W
-          </button>
-          <button
-            onClick={() => setChartPeriod(TvlChartPeriod.Month)}
-            className={classNames(
-              'font-semibold text-sm',
-              chartPeriod === TvlChartPeriod.Month ? 'text-blue' : 'text-slate-500'
-            )}
-          >
-            1M
-          </button>
-          <button
-            onClick={() => setChartPeriod(TvlChartPeriod.Year)}
-            className={classNames(
-              'font-semibold text-sm',
-              chartPeriod === TvlChartPeriod.Year ? 'text-blue' : 'text-slate-500'
-            )}
-          >
-            1Y
-          </button>
-          <button
-            onClick={() => setChartPeriod(TvlChartPeriod.All)}
-            className={classNames(
-              'font-semibold text-sm',
-              chartPeriod === TvlChartPeriod.All ? 'text-blue' : 'text-slate-500'
-            )}
-          >
-            ALL
-          </button>
-        </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Volume</CardTitle>
+      </CardHeader>
+      <div className="px-6 py-3 flex gap-4 border-t border-b border-accent">
+        <Toggle
+          size="xs"
+          pressed={chartPeriod === TvlChartPeriod.Week}
+          onClick={() => setChartPeriod(TvlChartPeriod.Week)}
+          className={classNames(
+            'font-semibold text-sm',
+            chartPeriod === TvlChartPeriod.Week ? 'text-blue' : 'text-slate-500'
+          )}
+        >
+          1W
+        </Toggle>
+        <Toggle
+          size="xs"
+          pressed={chartPeriod === TvlChartPeriod.Month}
+          onClick={() => setChartPeriod(TvlChartPeriod.Month)}
+          className={classNames(
+            'font-semibold text-sm',
+            chartPeriod === TvlChartPeriod.Month ? 'text-blue' : 'text-slate-500'
+          )}
+        >
+          1M
+        </Toggle>
+        <Toggle
+          size="xs"
+          pressed={chartPeriod === TvlChartPeriod.Year}
+          onClick={() => setChartPeriod(TvlChartPeriod.Year)}
+          className={classNames(
+            'font-semibold text-sm',
+            chartPeriod === TvlChartPeriod.Year ? 'text-blue' : 'text-slate-500'
+          )}
+        >
+          1Y
+        </Toggle>
+        <Toggle
+          size="xs"
+          pressed={chartPeriod === TvlChartPeriod.All}
+          onClick={() => setChartPeriod(TvlChartPeriod.All)}
+          className={classNames(
+            'font-semibold text-sm',
+            chartPeriod === TvlChartPeriod.All ? 'text-blue' : 'text-slate-500'
+          )}
+        >
+          ALL
+        </Toggle>
       </div>
-      <div className="flex flex-col h-[48px]">
-        {yData && yData.length && (
-          <p className="text-xl font-medium text-slate-50">
-            <span className="hoveredItemValueVolume">{formatUSD(yData[yData.length - 1])}</span>{' '}
-          </p>
+      <CardHeader>
+        <CardTitle>
+          {yData && yData.length ? (
+            <span className="hoveredItemValueVolume">{formatUSD(yData[yData.length - 1])}</span>
+          ) : (
+            <SkeletonText fontSize="sm" />
+          )}
+        </CardTitle>
+        <CardDescription>
+          {xData && xData.length ? (
+            <div className="text-sm text-gray-500 dark:text-slate-500 hoveredItemNameVolume">
+              {format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}
+            </div>
+          ) : (
+            <SkeletonText fontSize="sm" />
+          )}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {xData ? (
+          <ReactECharts option={DEFAULT_OPTION} style={{ height: 400 }} />
+        ) : (
+          <SkeletonBox className={classNames('h-[400px] w-full dark:via-slate-800 dark:to-slate-900')} />
         )}
-        {xData && xData.length && (
-          <p className="text-sm text-slate-500 hoveredItemNameVolume">
-            {format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}
-          </p>
-        )}
-      </div>
-      <ReactECharts option={DEFAULT_OPTION} style={{ height: 320 }} />
-    </div>
+      </CardContent>
+    </Card>
   )
 }
