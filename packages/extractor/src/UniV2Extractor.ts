@@ -228,17 +228,17 @@ export class UniV2Extractor {
     this.taskCounter.dec()
   }
 
-  getPoolsForTokens(tokens: Token[]): {
+  getPoolsForTokens(tokensUnique: Token[]): {
     prefetched: ConstantProductPoolCode[]
     fetching: Promise<ConstantProductPoolCode | undefined>[]
   } {
     const prefetched: ConstantProductPoolCode[] = []
     const fetching: Promise<ConstantProductPoolCode | undefined>[] = []
-    for (let i = 0; i < tokens.length; ++i) {
-      this.tokenManager.findToken(tokens[i].address as Address) // to let save it in the cache
-      for (let j = i + 1; j < tokens.length; ++j) {
-        if (tokens[i].address === tokens[j].address) continue
-        const [t0, t1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i], tokens[j]] : [tokens[j], tokens[i]]
+    for (let i = 0; i < tokensUnique.length; ++i) {
+      const t0 = tokensUnique[i]
+      this.tokenManager.findToken(t0.address as Address) // to let save it in the cache
+      for (let j = i + 1; j < tokensUnique.length; ++j) {
+        const t1 = tokensUnique[j]
         this.factories.forEach((factory) => {
           const addr = this.computeV2Address(factory, t0, t1)
           const addrL = addr.toLowerCase()
@@ -390,6 +390,7 @@ export class UniV2Extractor {
         this.consoleLog(`fake pool ${addr}`)
         return
       }
+      addr = expectedPoolAddress // in case if addr is lower case
     }
 
     return this.addPoolWatching({
@@ -416,11 +417,13 @@ export class UniV2Extractor {
     addToCache: boolean
     startTime?: number
   }) {
+    const [t0, t1] = args.token0.sortsBefore(args.token1) ? [args.token0, args.token1] : [args.token1, args.token0]
+
     const startTime = args.startTime === undefined ? performance.now() : args.startTime
     const pool = new ConstantProductRPool(
       args.address,
-      args.token0 as RToken,
-      args.token1 as RToken,
+      t0 as RToken,
+      t1 as RToken,
       args.factory.fee,
       args.reserve0,
       args.reserve1
@@ -433,8 +436,8 @@ export class UniV2Extractor {
     if (args.addToCache)
       this.poolPermanentCache.add({
         address: args.address,
-        token0: args.token0.address as Address,
-        token1: args.token1.address as Address,
+        token0: t0.address as Address,
+        token1: t1.address as Address,
         factory: args.factory.address,
       })
     const delay = Math.round(performance.now() - startTime)
