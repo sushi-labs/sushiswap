@@ -40,7 +40,7 @@ export async function getSushiPerSecond(chainId: ChainId) {
 }
 
 export async function getPoolInfos(poolLength: bigint, chainId: ChainId) {
-  const poolInfoCalls = [...Array(poolLength)].map(
+  const poolInfoCalls = [...Array(Number(poolLength))].map(
     (_, i) =>
       ({
         address: MINICHEF_ADDRESS[chainId] as Address,
@@ -64,7 +64,7 @@ export async function getPoolInfos(poolLength: bigint, chainId: ChainId) {
 }
 
 export async function getLpTokens(poolLength: bigint, chainId: ChainId) {
-  const lpTokenCalls = [...Array(poolLength)].map(
+  const lpTokenCalls = [...Array(Number(poolLength))].map(
     (_, i) =>
       ({
         address: MINICHEF_ADDRESS[chainId] as Address,
@@ -82,7 +82,7 @@ export async function getLpTokens(poolLength: bigint, chainId: ChainId) {
 }
 
 export async function getRewarders(poolLength: bigint, chainId: ChainId) {
-  const rewarderCalls = [...Array(poolLength)].map(
+  const rewarderCalls = [...Array(Number(poolLength))].map(
     (_, i) =>
       ({
         address: MINICHEF_ADDRESS[chainId] as Address,

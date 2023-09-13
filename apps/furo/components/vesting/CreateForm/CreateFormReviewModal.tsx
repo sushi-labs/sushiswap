@@ -196,7 +196,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
     _fundSource,
   ])
 
-  const { config } = usePrepareSendTransaction({
+  const { config, isError } = usePrepareSendTransaction({
     ...prepare,
     chainId,
     enabled: Boolean(
@@ -220,7 +220,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
     ),
   })
 
-  const { sendTransactionAsync, isLoading, isError, data } = useSendTransaction({
+  const { sendTransactionAsync, isLoading, data } = useSendTransaction({
     ...config,
     onSettled,
     onSuccess: () => {

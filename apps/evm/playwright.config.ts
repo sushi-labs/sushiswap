@@ -61,6 +61,8 @@ const config: PlaywrightTestConfig = {
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on',
   },
+  globalSetup: './global.setup.ts',
+  globalTeardown: './global.teardown.ts',
 
   /* Configure projects for major browsers */
   projects: [
@@ -103,6 +105,7 @@ const config: PlaywrightTestConfig = {
         `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
         `--fork-url=${process.env.ANVIL_FORK_URL}`,
         `--port=${Number(process.env.ANVIL_PORT || 8545)}`,
+        '--silent',
         // '--block-time 15',
       ].join(' '),
       env: {

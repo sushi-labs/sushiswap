@@ -2,7 +2,7 @@ import { calculateSlippageAmount } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, nativeCurrencyIds, Price, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { Percent, ZERO } from '@sushiswap/math'
-import { isRouteProcessor3_1ChainId } from '@sushiswap/route-processor-sdk'
+import { isRouteProcessor3_1ChainId, isRouteProcessor3_2ChainId } from '@sushiswap/route-processor-sdk'
 import { HexString } from '@sushiswap/types'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
@@ -15,6 +15,16 @@ import { tradeValidator } from './validator'
 
 const SWAP_BASE_URL =
   process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com'
+
+function getApiVersion(chainId: ChainId) {
+  if (isRouteProcessor3_2ChainId(chainId)) {
+    return '/v3.2'
+  }
+  if (isRouteProcessor3_1ChainId(chainId)) {
+    return '/v3.1'
+  }
+  return ''
+}
 
 export const useTradeQuery = (
   {
@@ -33,7 +43,7 @@ export const useTradeQuery = (
   return useQuery({
     queryKey: ['getTrade', { chainId, fromToken, toToken, amount, slippagePercentage, gasPrice, recipient }],
     queryFn: async () => {
-      const params = new URL(isRouteProcessor3_1ChainId(chainId) ? SWAP_BASE_URL + '/v3.1' : SWAP_BASE_URL)
+      const params = new URL(SWAP_BASE_URL + getApiVersion(chainId))
 
       params.searchParams.set('chainId', `${chainId}`)
       params.searchParams.set(
@@ -75,7 +85,7 @@ export const useTradeQuery = (
 }
 
 export const useTrade = (variables: UseTradeParams) => {
-  const { chainId, fromToken, toToken, amount, slippagePercentage, carbonOffset } = variables
+  const { chainId, fromToken, toToken, amount, slippagePercentage, carbonOffset, gasPrice } = variables
   const { data: price } = usePrice({ chainId, address: WNATIVE_ADDRESS[chainId] })
 
   const select: UseTradeQuerySelect = useCallback(
@@ -105,7 +115,9 @@ export const useTrade = (variables: UseTradeParams) => {
           value = (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n
         }
 
-        const gasSpent = Amount.fromRawAmount(Native.onChain(chainId), data.route.gasSpent * 1e9)
+        const gasSpent = gasPrice
+          ? Amount.fromRawAmount(Native.onChain(chainId), gasPrice * BigInt(data.route.gasSpent * 1.2))
+          : undefined
 
         return {
           swapPrice: amountOut.greaterThan(ZERO)
@@ -123,8 +135,8 @@ export const useTrade = (variables: UseTradeParams) => {
             toToken,
             calculateSlippageAmount(amountOut, new Percent(Math.floor(+slippagePercentage * 100), 10_000))[0]
           ),
-          gasSpent: gasSpent.toSignificant(6),
-          gasSpentUsd: price ? gasSpent.multiply(price.asFraction).toSignificant(4) : undefined,
+          gasSpent: gasSpent?.toSignificant(4),
+          gasSpentUsd: price && gasSpent ? gasSpent.multiply(price.asFraction).toSignificant(4) : undefined,
           route: data.route,
           functionName: isOffset ? 'transferValueAndprocessRoute' : 'processRoute',
           writeArgs,
@@ -146,7 +158,7 @@ export const useTrade = (variables: UseTradeParams) => {
         value: undefined,
       }
     },
-    [carbonOffset, amount, chainId, fromToken, price, slippagePercentage, toToken]
+    [carbonOffset, amount, chainId, fromToken, price, slippagePercentage, toToken, gasPrice]
   )
 
   return useTradeQuery(variables, select)

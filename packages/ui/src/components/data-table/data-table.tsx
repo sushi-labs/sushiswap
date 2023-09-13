@@ -23,7 +23,7 @@ import {
 import { default as React, ReactNode } from 'react'
 
 import { classNames } from '../../index'
-import { Table, TableBody, TableCell, TableCellAsLink, TableHead, TableHeader, TableRow } from '../tablenew'
+import { Table, TableBody, TableCell, TableCellAsLink, TableHead, TableHeader, TableRow } from '../table'
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTablePagination } from './data-table-pagination'
 
@@ -73,9 +73,9 @@ export function DataTable<TData, TValue>({
     data,
     columns,
     state: {
-      columnVisibility,
       rowSelection,
       columnFilters,
+      columnVisibility: state?.columnVisibility ? state.columnVisibility : columnVisibility,
       sorting: state?.sorting ? state.sorting : sorting,
       ...(state?.pagination && { pagination: state?.pagination }),
     },
@@ -139,7 +139,7 @@ export function DataTable<TData, TValue>({
           ) : table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row, r) => {
               const _row = (
-                <TableRow data-state={row.getIsSelected() && 'selected'} testdata-id={`${testId}-${r}-tr`}>
+                <TableRow key={r} data-state={row.getIsSelected() && 'selected'} testdata-id={`${testId}-${r}-tr`}>
                   {row.getVisibleCells().map((cell, i) =>
                     linkFormatter ? (
                       <TableCellAsLink

@@ -54,6 +54,8 @@ interface State {
     recipient: string | undefined
   }
   isLoading: boolean
+  isToken0Loading: boolean
+  isToken1Loading: boolean
 }
 
 const DerivedStateCrossChainSwapContext = createContext<State>({} as State)
@@ -232,6 +234,7 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
     chainId: chainId0,
     address: defaultedParams.get('token0') as string,
     enabled: isAddress(defaultedParams.get('token0') as string),
+    keepPreviousData: false,
   })
 
   // Derive token1
@@ -239,22 +242,16 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
     chainId: chainId1,
     address: defaultedParams.get('token1') as string,
     enabled: isAddress(defaultedParams.get('token1') as string),
+    keepPreviousData: false,
   })
 
-  // Make sure the searchParams are updated whenever a user switches networks
   useEffect(() => {
-    let i = 0
-
     const unwatch = watchNetwork(({ chain }) => {
-      if (chain && STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId) && i > 0) {
-        setChainId0(chain.id)
-      }
-      i++
+      if (!chain || chain.id === chainId0 || !STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId)) return
+      push(pathname, { scroll: false })
     })
-
     return () => unwatch()
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [chainId0, pathname, push])
 
   return (
     <DerivedStateCrossChainSwapContext.Provider
@@ -285,6 +282,8 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
             token1: _token1,
           },
           isLoading: token0Loading || token1Loading,
+          isToken0Loading: token0Loading,
+          isToken1Loading: token1Loading,
         }
       }, [
         address,

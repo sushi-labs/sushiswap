@@ -62,6 +62,7 @@ type TokenError = {
 const MERKL_SUPPORTED_NETWORKS = [
   ChainId.ETHEREUM,
   ChainId.OPTIMISM,
+  ChainId.BASE,
   ChainId.BSC,
   ChainId.GNOSIS,
   ChainId.POLYGON,

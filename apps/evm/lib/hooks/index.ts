@@ -1,5 +1,6 @@
 export * from './api'
 export * from './useIsTickAtLimit'
+export * from './usePersistedSlippageError'
 export * from './usePriceInverter'
 export * from './useTicks'
 export * from './useTokenAmountDollarValues'
