@@ -1,3 +1,5 @@
+'use client'
+
 import { formatUSD } from '@sushiswap/format'
 import {
   Card,

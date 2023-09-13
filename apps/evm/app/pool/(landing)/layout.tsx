@@ -1,6 +1,6 @@
 import { Container, LinkInternal } from '@sushiswap/ui'
 
-import { PathnameButton, PoolsFiltersProvider } from '../../../ui/pool'
+import { PathnameButton } from '../../../ui/pool'
 import { Hero } from '../hero'
 
 export default function TabsLayout({ children }: { children: React.ReactNode }) {
@@ -34,9 +34,7 @@ export default function TabsLayout({ children }: { children: React.ReactNode }) 
         </div>
       </Container>
       <section className="flex flex-col flex-1">
-        <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-20 h-full">
-          <PoolsFiltersProvider>{children}</PoolsFiltersProvider>
-        </div>
+        <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-20 h-full">{children}</div>
       </section>
     </>
   )
