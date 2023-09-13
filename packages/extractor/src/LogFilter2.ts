@@ -127,7 +127,7 @@ export class LogFilter2 {
     }
   }
 
-  stop() {
+  stop(signalStopping = true) {
     if (!this.unWatchBlocks) return // is stopped
     this.unWatchBlocks()
     this.unWatchBlocks = undefined
@@ -137,7 +137,7 @@ export class LogFilter2 {
     this.blockHashMap = new Map()
     this.logHashMap = new Map()
     this.blockFrame.deleteFrame()
-    this.filters.forEach((f) => f.onNewLogs()) // Signal about stopping
+    if (signalStopping) this.filters.forEach((f) => f.onNewLogs()) // Signal about stopping
   }
 
   setNewGoal(blockNumber: number, block: Block): boolean {
