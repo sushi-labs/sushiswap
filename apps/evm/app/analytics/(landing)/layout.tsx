@@ -1,7 +1,7 @@
 import { Container, LinkInternal, typographyVariants } from '@sushiswap/ui'
+import { GlobalStatsCharts } from 'ui/analytics/global-stats-charts'
 
 import { PathnameButton } from '../../../ui/pool'
-import { ChartSection } from '../components'
 
 export default function TabsLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,7 +15,7 @@ export default function TabsLayout({ children }: { children: React.ReactNode }) 
           </p>
         </div>
         <div className="mt-10">
-          <ChartSection />
+          <GlobalStatsCharts />
         </div>
       </Container>
       <Container maxWidth="7xl" className="px-4">

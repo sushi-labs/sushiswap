@@ -1,11 +1,11 @@
 import { Container } from '@sushiswap/ui'
 import React from 'react'
 
+import { BentoBoxTokenTable } from '../../../../ui/analytics/bentobox-token-table'
 import { PoolsFiltersProvider } from '../../../../ui/pool'
 import { TableFiltersNetwork } from '../../../../ui/pool/TableFiltersNetwork'
 import { TableFiltersResetButton } from '../../../../ui/pool/TableFiltersResetButton'
 import { TableFiltersSearchToken } from '../../../../ui/pool/TableFiltersSearchToken'
-import { BentoBoxTokenTable } from '../../components/TableSection/BentoBoxTokens'
 
 export default function VaultPage() {
   return (

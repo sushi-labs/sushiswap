@@ -1,7 +1,6 @@
 import { Container } from '@sushiswap/ui'
 import React from 'react'
 
-import { PoolsFiltersProvider } from '../../../ui/pool'
 import { PoolsTable } from '../../../ui/pool/PoolsTable'
 import { TableFiltersFarmsOnly } from '../../../ui/pool/TableFiltersFarmsOnly'
 import { TableFiltersNetwork } from '../../../ui/pool/TableFiltersNetwork'
@@ -11,19 +10,15 @@ import { TableFiltersSearchToken } from '../../../ui/pool/TableFiltersSearchToke
 
 export default async function PoolPage() {
   return (
-    <>
-      <PoolsFiltersProvider>
-        <Container maxWidth="7xl" className="px-4">
-          <div className="flex flex-wrap gap-3 mb-4">
-            <TableFiltersSearchToken />
-            <TableFiltersPoolType />
-            <TableFiltersNetwork />
-            <TableFiltersFarmsOnly />
-            <TableFiltersResetButton />
-          </div>
-          <PoolsTable />
-        </Container>
-      </PoolsFiltersProvider>
-    </>
+    <Container maxWidth="7xl" className="px-4">
+      <div className="flex flex-wrap gap-3 mb-4">
+        <TableFiltersSearchToken />
+        <TableFiltersPoolType />
+        <TableFiltersNetwork />
+        <TableFiltersFarmsOnly />
+        <TableFiltersResetButton />
+      </div>
+      <PoolsTable />
+    </Container>
   )
 }

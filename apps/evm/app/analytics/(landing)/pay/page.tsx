@@ -1,11 +1,11 @@
 import { Container } from '@sushiswap/ui'
 import React from 'react'
 
+import { FuroTokenTable } from '../../../../ui/analytics/furo-token-table'
 import { PoolsFiltersProvider } from '../../../../ui/pool'
 import { TableFiltersNetwork } from '../../../../ui/pool/TableFiltersNetwork'
 import { TableFiltersResetButton } from '../../../../ui/pool/TableFiltersResetButton'
 import { TableFiltersSearchToken } from '../../../../ui/pool/TableFiltersSearchToken'
-import { FuroTokenTable } from '../../components/TableSection/FuroTokens'
 
 export default function PayPage() {
   return (

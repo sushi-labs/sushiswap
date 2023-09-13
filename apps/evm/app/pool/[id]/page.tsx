@@ -26,8 +26,7 @@ export async function getPool({ chainId, address }: { chainId: ChainId; address:
     }
 
     const res = await fetch(`https://pools.sushi.com/api/v0/${chainId}/${address}`)
-    const data = await res.json()
-    return data
+    return await res.json()
   } catch (e) {
     return
   }
