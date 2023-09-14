@@ -53,7 +53,7 @@ export const useCrossChainTradeQuery = (
     recipient: STARGATE_ADAPTER_ADDRESS[network0],
     enabled: Boolean(isSrcSwap && enabled && amount),
     carbonOffset: false,
-    source: RouterLiquiditySource.Self,
+    source: RouterLiquiditySource.XSwap,
     onError: () => {
       log.error('xswap src swap api error')
     },
@@ -115,7 +115,7 @@ export const useCrossChainTradeQuery = (
     recipient,
     enabled: Boolean(isDstSwap && enabled && dstAmountIn),
     carbonOffset: false,
-    source: RouterLiquiditySource.Self,
+    source: RouterLiquiditySource.XSwap,
     onError: () => {
       log.error('xswap dst swap api error')
     },
