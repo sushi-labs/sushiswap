@@ -14,6 +14,7 @@ const PREFERRED_CHAINID_ORDER: ChainId[] = [
   ChainId.ARBITRUM,
   ChainId.BASE,
   ChainId.POLYGON,
+  ChainId.LINEA,
   ChainId.OPTIMISM,
   ChainId.BSC,
   ChainId.THUNDERCORE,
@@ -60,7 +61,16 @@ const NetworkSelector = <T extends number>({
               >
                 <div className="flex items-center gap-2">
                   <NetworkIcon chainId={el} width={22} height={22} />
-                  {Chain.from(el).name}
+                  {el !== ChainId.LINEA ? (
+                    Chain.from(el).name
+                  ) : (
+                    <>
+                      {Chain.from(el).name}
+                      <div className="text-[10px] italic rounded-full px-[6px] bg-gradient-to-r from-blue to-pink text-white font-bold">
+                        NEW
+                      </div>
+                    </>
+                  )}
                 </div>
               </CommandItem>
             ))}
