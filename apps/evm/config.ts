@@ -3,19 +3,26 @@ import { TridentChainIds } from '@sushiswap/trident-sdk'
 import { SushiSwapV2ChainIds } from '@sushiswap/v2-sdk'
 import { SushiSwapV3ChainIds } from '@sushiswap/v3-sdk'
 
-export const ANGLE_ENABLED_NETWORKS = [ChainId.ETHEREUM, ChainId.POLYGON, ChainId.ARBITRUM, ChainId.OPTIMISM]
+export const ANGLE_ENABLED_NETWORKS = [
+  ChainId.ETHEREUM,
+  ChainId.POLYGON,
+  ChainId.ARBITRUM,
+  ChainId.OPTIMISM,
+  ChainId.BASE,
+]
 export type AngleEnabledChainId = (typeof ANGLE_ENABLED_NETWORKS)[number]
 export const isAngleEnabledChainId = (chainId: number): chainId is AngleEnabledChainId =>
   ANGLE_ENABLED_NETWORKS.includes(chainId as AngleEnabledChainId)
 
 export const SWAP_API_ENABLED_NETWORKS = [
-  ChainId.ETHEREUM,
   ChainId.ARBITRUM,
+  ChainId.ARBITRUM_NOVA,
+  ChainId.AVALANCHE,
+  ChainId.BASE,
+  ChainId.BSC,
+  ChainId.ETHEREUM,
   ChainId.OPTIMISM,
   ChainId.POLYGON,
-  ChainId.BASE,
-  ChainId.AVALANCHE,
-  ChainId.BSC,
 ]
 export type SwapApiEnabledChainId = (typeof SWAP_API_ENABLED_NETWORKS)[number]
 export const isSwapApiEnabledChainId = (chainId: number): chainId is SwapApiEnabledChainId =>

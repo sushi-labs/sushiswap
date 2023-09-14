@@ -54,7 +54,9 @@ import { TradeRoutePathView } from '../trade-route-path-view'
 import { useDerivedStateSimpleSwap, useSimpleSwapTrade } from './derivedstate-simple-swap-provider'
 import { SimpleSwapErrorMessage } from './simple-swap-error-message'
 
-export const SimpleSwapTradeReviewDialog: FC<{ children(error: Error | null): ReactNode }> = ({ children }) => {
+export const SimpleSwapTradeReviewDialog: FC<{
+  children({ error, isSuccess }: { error: Error | null; isSuccess: boolean }): ReactNode
+}> = ({ children }) => {
   const {
     state: { token0, token1, chainId, swapAmount, recipient },
     mutate: { setSwapAmount },
@@ -337,7 +339,7 @@ export const SimpleSwapTradeReviewDialog: FC<{ children(error: Error | null): Re
           <>
             <div className="flex flex-col">
               <SimpleSwapErrorMessage error={error} isSuccess={isPrepareSuccess} isLoading={isPrepareFetching} />
-              <div className="mt-4">{children(error)}</div>
+              <div className="mt-4">{children({ error, isSuccess: isPrepareSuccess })}</div>
             </div>
             <DialogContent>
               <DialogHeader>

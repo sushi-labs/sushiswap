@@ -23,8 +23,9 @@ import { LogFilterType } from '../src/LogFilter2'
 
 export const SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,
-  // ChainId.ARBITRUM_NOVA,
+  ChainId.ARBITRUM_NOVA,
   ChainId.AVALANCHE,
+  ChainId.BASE,
   // ChainId.BOBA,
   // ChainId.BOBA_AVAX,
   // ChainId.BOBA_BNB,
@@ -35,7 +36,6 @@ export const SUPPORTED_CHAIN_IDS = [
   ChainId.OPTIMISM,
   ChainId.POLYGON,
   // ChainId.POLYGON_ZKEVM,
-  ChainId.BASE,
 ] as const
 
 export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number]
@@ -132,7 +132,7 @@ export const EXTRACTOR_CONFIG = {
     client: createPublicClient(config[ChainId.BOBA_AVAX]),
     factoriesV2: [sushiswapV2Factory(ChainId.BOBA_AVAX)],
     factoriesV3: [],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BOBA_AVAX],
+    // tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BOBA_AVAX],
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -141,7 +141,7 @@ export const EXTRACTOR_CONFIG = {
     client: createPublicClient(config[ChainId.BOBA_BNB]),
     factoriesV2: [sushiswapV2Factory(ChainId.BOBA_BNB)],
     factoriesV3: [],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BOBA_BNB],
+    // tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BOBA_BNB],
     cacheDir: './cache',
     logDepth: 500,
     logging: true,

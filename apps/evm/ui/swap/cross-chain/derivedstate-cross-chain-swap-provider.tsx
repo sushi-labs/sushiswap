@@ -245,20 +245,13 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
     keepPreviousData: false,
   })
 
-  // Make sure the searchParams are updated whenever a user switches networks
   useEffect(() => {
-    let i = 0
-
     const unwatch = watchNetwork(({ chain }) => {
-      if (chain && STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId) && i > 0) {
-        setChainId0(chain.id)
-      }
-      i++
+      if (!chain || chain.id === chainId0 || !STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId)) return
+      push(pathname, { scroll: false })
     })
-
     return () => unwatch()
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [chainId0, pathname, push])
 
   return (
     <DerivedStateCrossChainSwapContext.Provider
