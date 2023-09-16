@@ -251,6 +251,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                           <CardItem skeleton />
                         ) : rewardsData &&
                           positionDetails &&
+                          rewardsData.pools[positionDetails.address] &&
                           Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).length > 0 ? (
                           Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).map((el) => (
                             <CardCurrencyAmountItem key={el.unclaimed.currency.address} amount={el.unclaimed} />
