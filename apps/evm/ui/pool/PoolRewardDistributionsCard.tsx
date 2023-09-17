@@ -17,7 +17,6 @@ import {
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
-import { useAccount } from '@sushiswap/wagmi'
 import { FC } from 'react'
 import { getAddress } from 'viem'
 
@@ -29,10 +28,8 @@ interface PoolRewardDistributionsCardParams {
 }
 
 export const PoolRewardDistributionsCard: FC<PoolRewardDistributionsCardParams> = ({ pool }) => {
-  const { address } = useAccount()
   const { data: rewardsData, isLoading: rewardsLoading } = useAngleRewards({
     chainId: pool.chainId as ChainId,
-    account: address,
   })
 
   if (!pool) return null
