@@ -37,7 +37,7 @@ const PRODUCTS_ORDER = ['trident', 'furo', 'sushixswap', 'onsen', 'kashi', 'bent
 export const Header: FC = () => {
   const { data: productsData } = useSWR(
     '/products',
-    async () => (await getProducts({ filters: { show: { contains: true } } }))?.products
+    async () => (await getProducts({ filters: { show: { eq: true } } }))?.products
   )
   const { data: difficultiesData } = useSWR('/difficulties', async () => (await getDifficulties())?.difficulties)
 

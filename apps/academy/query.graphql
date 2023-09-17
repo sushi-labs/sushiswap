@@ -359,6 +359,9 @@ query GetLatestAndRelevantArticles($filters: ArticleFiltersInput, $filters_ne: A
         title
         description
         slug
+        ghostSlug
+        createdAt
+        updatedAt
         publishedAt
         articleType
         products {
@@ -400,6 +403,28 @@ query GetLatestAndRelevantArticles($filters: ArticleFiltersInput, $filters_ne: A
               name
               url
               provider_metadata
+            }
+          }
+        }
+        authors {
+          data {
+            attributes {
+              avatar {
+                data {
+                  attributes {
+                    alternativeText
+                    height
+                    width
+                    caption
+                    name
+                    url
+                    provider_metadata
+                  }
+                }
+              }
+              name
+              email
+              handle
             }
           }
         }
@@ -414,6 +439,9 @@ query GetLatestAndRelevantArticles($filters: ArticleFiltersInput, $filters_ne: A
         title
         description
         slug
+        ghostSlug
+        createdAt
+        updatedAt
         publishedAt
         articleType
         products {
@@ -456,6 +484,28 @@ query GetLatestAndRelevantArticles($filters: ArticleFiltersInput, $filters_ne: A
               name
               url
               provider_metadata
+            }
+          }
+        }
+                authors {
+          data {
+            attributes {
+              avatar {
+                data {
+                  attributes {
+                    alternativeText
+                    height
+                    width
+                    caption
+                    name
+                    url
+                    provider_metadata
+                  }
+                }
+              }
+              name
+              email
+              handle
             }
           }
         }
