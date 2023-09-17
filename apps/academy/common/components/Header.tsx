@@ -35,7 +35,10 @@ export interface HeaderSection {
 const PRODUCTS_ORDER = ['trident', 'furo', 'sushixswap', 'onsen', 'kashi', 'bentobox']
 
 export const Header: FC = () => {
-  const { data: productsData } = useSWR('/products', async () => (await getProducts())?.products)
+  const { data: productsData } = useSWR(
+    '/products',
+    async () => (await getProducts({ filters: { show: { contains: true } } }))?.products
+  )
   const { data: difficultiesData } = useSWR('/difficulties', async () => (await getDifficulties())?.difficulties)
 
   const products = useMemo(() => productsData?.data ?? [], [productsData?.data])

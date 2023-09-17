@@ -1,12 +1,12 @@
 import { useBreakpoint } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@sushiswap/ui/components/select'
 import { LooperBg } from 'common/assets/LooperBg'
-import { FC, useLayoutEffect, useState } from 'react'
+import { FC, useEffect, useLayoutEffect, useState } from 'react'
 
 import { DEFAULT_SIDE_PADDING } from '../helpers'
 import { DifficultyEntity, Maybe } from '.mesh'
-import { Select, SelectContent, SelectItem, SelectTrigger } from '@sushiswap/ui/components/select'
-import { Container } from '@sushiswap/ui/components/container'
 
 interface ArticlesPagesHeader {
   title: Maybe<string> | undefined
@@ -18,10 +18,13 @@ interface ArticlesPagesHeader {
 const baseBg = [113, 285]
 const smBg = [226, 570]
 
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
+
 export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({ title, difficulties, selectedDifficulty, onSelect }) => {
   const { isSm } = useBreakpoint('sm')
   const [[bgHeight, bgWidth], setBgDimensions] = useState(baseBg)
-  useLayoutEffect(() => {
+
+  useIsomorphicLayoutEffect(() => {
     setBgDimensions(isSm ? smBg : baseBg)
   }, [isSm])
 
