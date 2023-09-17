@@ -12,7 +12,7 @@ export const ArticleFooter: FC<ArticleFooter> = ({ articles }) => {
   return (
     <AdditionalArticles title="Similar Articles" className="mt-12 sm:mt-36">
       {articles?.map((a) => (
-        <Card key={a.id} article={a} />
+        <Card key={a.attributes.slug} article={a} />
       ))}
     </AdditionalArticles>
   )
