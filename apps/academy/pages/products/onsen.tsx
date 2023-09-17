@@ -15,7 +15,7 @@ import { PeopleIcon, TradingIcon } from 'common/icons'
 import { PRODUCTS_DATA } from 'common/productsData'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
-import Image from 'next/image'
+import Image from "next/legacy/image"
 import { FC } from 'react'
 import useSWR from 'swr'
 
