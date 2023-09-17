@@ -9,6 +9,9 @@ query articleAndMoreArticles(
         title
         description
         slug
+        ghostSlug
+        createdAt
+        updatedAt
         publishedAt
         products {
           data {
@@ -74,47 +77,6 @@ query articleAndMoreArticles(
           entries {
             text
             key
-          }
-        }
-        blocks {
-          __typename
-          ... on ComponentSharedDivider {
-            id
-          }
-          ... on ComponentSharedMedia {
-            caption
-            file {
-              data {
-                attributes {
-                  alternativeText
-                  height
-                  width
-                  caption
-                  name
-                  url
-                  provider_metadata
-                }
-              }
-            }
-          }
-          ... on ComponentSharedRichText {
-            key
-            body
-          }
-          ... on ComponentSharedSlider {
-            files {
-              data {
-                attributes {
-                  alternativeText
-                  height
-                  width
-                  caption
-                  name
-                  url
-                  provider_metadata
-                }
-              }
-            }
           }
         }
       }
@@ -254,8 +216,30 @@ query getArticles($filters: ArticleFiltersInput, $pagination: PaginationArg, $so
         title
         description
         slug
-        publishedAt
+        ghostSlug
         articleType
+        authors {
+          data {
+            attributes {
+              avatar {
+                data {
+                  attributes {
+                    alternativeText
+                    height
+                    width
+                    caption
+                    name
+                    url
+                    provider_metadata
+                  }
+                }
+              }
+              name
+              email
+              handle
+            }
+          }
+        }
         products {
           data {
             id
@@ -299,6 +283,9 @@ query getArticles($filters: ArticleFiltersInput, $pagination: PaginationArg, $so
             }
           }
         }
+        createdAt
+        publishedAt
+        updatedAt
       }
     }
   }

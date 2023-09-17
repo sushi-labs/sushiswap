@@ -32,7 +32,7 @@ export interface HeaderSection {
   isExternal?: boolean
 }
 
-const PRODUCTS_ORDER = ['trident', 'furo', 'sushixswap', 'onsen', 'kashi', 'miso', 'bentobox']
+const PRODUCTS_ORDER = ['trident', 'furo', 'sushixswap', 'onsen', 'kashi', 'bentobox']
 
 export const Header: FC = () => {
   const { data: productsData } = useSWR('/products', async () => (await getProducts())?.products)
@@ -69,7 +69,7 @@ export const Header: FC = () => {
         }),
       },
       { title: 'Blog', href: 'https://www.sushi.com/blog', isExternal: true },
-      { title: 'About', href: `/about` },
+      { title: 'About', href: '/about' },
     ],
     [difficulties, sortedProducts]
   )

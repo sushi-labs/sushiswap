@@ -44,8 +44,8 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (product
     }
   )
 
-  const latestArticles = data?.articles?.data ?? []
-  const relevantArticles = data?.relevantArticles?.data ?? []
+  const latestArticles = data?.articles ?? []
+  const relevantArticles = data?.relevantArticles ?? []
 
   return (
     <>

@@ -1,5 +1,6 @@
 import { Container } from '@sushiswap/ui/components/container'
 import { addBodyToArticle, GhostArticle } from 'lib/ghost'
+import { ArticleSchema } from 'lib/validate'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -44,9 +45,18 @@ export async function getStaticProps({
     }
   }
 
+  const parsedArticle = ArticleSchema.safeParse(article)
+
+  if (!parsedArticle.success) {
+    return {
+      props: {},
+      notFound: false,
+    }
+  }
+
   return {
     props: {
-      article: await addBodyToArticle(article),
+      article: await addBodyToArticle(parsedArticle.data),
       latestArticles: data?.moreArticles?.data,
       preview: !!preview,
     },

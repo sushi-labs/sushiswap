@@ -19,8 +19,6 @@ import Image from 'next/image'
 import { FC } from 'react'
 import useSWR from 'swr'
 
-import { ArticleEntity } from '.mesh'
-
 const PRODUCT_SLUG = 'sushixswap'
 const { color, cards, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
 
@@ -48,8 +46,8 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
     }
   )
 
-  const latestArticles: ArticleEntity[] = data?.articles?.data ?? []
-  const relevantArticles: ArticleEntity[] = data?.relevantArticles?.data ?? []
+  const latestArticles = data?.articles ?? []
+  const relevantArticles = data?.relevantArticles ?? []
 
   return (
     <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', DEFAULT_SIDE_PADDING)}>

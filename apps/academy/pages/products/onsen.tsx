@@ -19,8 +19,6 @@ import Image from 'next/image'
 import { FC } from 'react'
 import useSWR from 'swr'
 
-import { ArticleEntity } from '.mesh'
-
 const PRODUCT_SLUG = 'onsen'
 const { color, productStats, buttonText, cards, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
 
@@ -49,8 +47,8 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
     }
   )
 
-  const latestArticles: ArticleEntity[] = data?.articles?.data ?? []
-  const relevantArticles: ArticleEntity[] = data?.relevantArticles?.data ?? []
+  const latestArticles = data?.articles ?? []
+  const relevantArticles = data?.relevantArticles ?? []
   const traderCards = cards.slice(0, 3)
   const projectCards = cards.slice(3)
 
