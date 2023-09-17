@@ -21,7 +21,7 @@ export const ArticleHeader: FC<ArticleHeader> = ({ article }) => {
       className={classNames(DEFAULT_SIDE_PADDING, 'flex flex-col items-center mt-10 sm:mt-0 mx-auto')}
     >
       <div className="flex flex-wrap items-center justify-center gap-3">
-        <div className="flex items-center gap-2.5 px-3 rounded-full bg-slate-800 h-6 sm:h-7">
+        <div className="flex items-center px-3 rounded-full bg-slate-800 h-6 sm:h-7">
           {article.attributes?.publishedAt && (
             <time
               dateTime={article.attributes.publishedAt}
