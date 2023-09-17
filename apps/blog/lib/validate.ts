@@ -1,5 +1,4 @@
-import { Image } from 'types'
-import { Article } from 'types'
+import { Article, Image } from 'types'
 import { z } from 'zod'
 
 const image: z.ZodSchema<Image> = z.object({
@@ -8,8 +7,8 @@ const image: z.ZodSchema<Image> = z.object({
     name: z.string(),
     alternativeText: z.string(),
     caption: z.string(),
-    width: z.number(),
-    height: z.number(),
+    width: z.number().nullable(),
+    height: z.number().nullable(),
     // hash: z.string(),
     // ext: z.string(),
     // mime: z.string(),
@@ -61,21 +60,21 @@ export const ArticleSchema: z.ZodSchema<Article> = z.object({
     description: z.string(),
     ghostSlug: z.string().nullable(),
     slug: z.string(),
-    // cover: data(image),
-    // categories: data(
-    //   z.array(
-    //     z.object({
-    //       id: z.string(),
-    //       attributes: z.object({
-    //         description: z.string(),
-    //         name: z.string(),
-    //         slug: z.string(),
-    //         createdAt: z.string(),
-    //         updatedAt: z.string(),
-    //       }),
-    //     })
-    //   )
-    // ),
+    cover: data(image),
+    categories: data(
+      z.array(
+        z.object({
+          id: z.string(),
+          attributes: z.object({
+            description: z.string(),
+            name: z.string(),
+            slug: z.string(),
+            // createdAt: z.string(),
+            // updatedAt: z.string(),
+          }),
+        })
+      )
+    ),
     createdAt: z.string(),
     updatedAt: z.string(),
     publishedAt: z.string(),

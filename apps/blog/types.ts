@@ -6,8 +6,8 @@ export type Article = {
     description: string
     ghostSlug: string | null
     slug: string
-    // cover: Data<Image>
-    // categories: Data<Category[]>
+    cover: Data<Image>
+    categories: Data<Category[]>
     createdAt: string
     updatedAt: string
     publishedAt: string
@@ -43,8 +43,8 @@ export type Category = {
     description: string
     name: string
     slug: string
-    createdAt: string
-    updatedAt: string
+    // createdAt: string
+    // updatedAt: string
   }
 }
 
@@ -54,8 +54,8 @@ export type Image = {
     name: string
     alternativeText: string
     caption: string
-    width: number
-    height: number
+    width: number | null
+    height: number | null
     // hash: string
     // ext: string
     // mime: string
