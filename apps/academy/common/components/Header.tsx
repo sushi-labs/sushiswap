@@ -54,7 +54,7 @@ export const Header: FC = () => {
         title: 'Products',
         links: sortedProducts.map(({ attributes }) => ({
           name: attributes?.longName as string,
-          href: `/products/${attributes?.slug}`,
+          href: `/academy/products/${attributes?.slug}`,
         })),
       },
       {

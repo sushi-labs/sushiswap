@@ -38,7 +38,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   relevantArticleIds,
 }) => {
   const { data, isValidating } = useSWR(
-    ['/bentobox-articles'],
+    ['/onsen-articles'],
     async () => await getLatestAndRelevantArticles(slug, relevantArticleIds),
     {
       revalidateOnFocus: false,
