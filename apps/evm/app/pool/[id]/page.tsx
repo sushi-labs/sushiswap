@@ -43,7 +43,6 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
   if (pool.protocol === 'SUSHISWAP_V3') {
     return <PoolPageV3 pool={pool} />
   }
-
   return (
     <>
       <UnknownTokenAlert pool={pool} />

@@ -27,8 +27,6 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const {
     data: [poolState, pool],
   } = useSushiSwapV2Pool(_pool.chainId as SushiSwapV2ChainId, token0, token1)
-  
-  console.debug('AddSectionLegacy', [poolState, pool])
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
     return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]

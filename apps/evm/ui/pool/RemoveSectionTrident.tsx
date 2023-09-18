@@ -97,8 +97,6 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
     return [undefined, undefined]
   }, [_pool.protocol, tridentConstantPool, tridentConstantPoolState, tridentStablePool, tridentStablePoolState])
 
-  // console.debug('RemoveSectionTrident', [poolState, pool])
-
   const totalSupply = useTotalSupply(liquidityToken)
 
   const underlying = useUnderlyingTokenBalanceFromPool({

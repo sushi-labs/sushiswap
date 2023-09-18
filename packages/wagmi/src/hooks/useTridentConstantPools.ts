@@ -246,13 +246,6 @@ export function useTridentConstantPools(
           twap,
         }) as Address
         acc.push(address)
-        console.debug('computeTridentConstantPoolAddress', address, {
-          factoryAddress: tridentConstantPoolFactory.address,
-          tokenA,
-          tokenB,
-          fee,
-          twap,
-        })
         return acc
       }, []),
     [tridentConstantPoolFactory, input]
