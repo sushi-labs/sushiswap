@@ -60,7 +60,7 @@ async function getTridentPool({ chainId, address, protocol }: GetPoolArgs): Prom
     ],
   })
 
-  const twapEnabled = reserves[2] !== 0
+  const twapEnabled = reserves?.[2] ? reserves[2] !== 0 : false
 
   return {
     tokens: [token0, token1],
