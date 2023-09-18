@@ -31,6 +31,7 @@ interface ManageV2LiquidityCardProps {
 
 export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool }) => {
   const isFarm = pool.wasIncentivized || pool.isIncentivized
+  console.debug('ManageV2LiquidityCard', pool)
   return (
     <Card>
       <CardHeader>

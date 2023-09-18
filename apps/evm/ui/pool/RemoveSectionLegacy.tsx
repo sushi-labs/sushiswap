@@ -60,6 +60,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
   const {
     data: [poolState, pool],
   } = useSushiSwapV2Pool(_pool.chainId as SushiSwapV2ChainId, token0, token1)
+
+  console.debug('RemoveSectionLegacy', [poolState, pool])
+
   const { balance } = usePoolPosition()
   const totalSupply = useTotalSupply(liquidityToken)
 

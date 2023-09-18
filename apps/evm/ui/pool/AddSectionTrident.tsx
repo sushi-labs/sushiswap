@@ -58,7 +58,7 @@ export const AddSectionTrident: FC<AddSectionTrident> = ({ pool: _pool }) => {
     return [undefined, undefined]
   }, [_pool.protocol, stablePoolState, stablePool, constantProductPoolState, constantProductPool])
 
-  console.debug('AddSectionTrident', [poolState, pool])
+  // console.debug('AddSectionTrident', [poolState, pool])
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
     return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]

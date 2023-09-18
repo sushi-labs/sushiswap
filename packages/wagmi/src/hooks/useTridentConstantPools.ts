@@ -304,6 +304,7 @@ export function useTridentConstantPool(
   fee: Fee,
   twap: boolean
 ): [TridentConstantPoolState, TridentConstantPool | null] {
+  console.log('useTridentConstantPool', twap, typeof twap)
   const inputs: [PoolInput] = useMemo(() => [[tokenA, tokenB, Number(fee), Boolean(twap)]], [tokenA, tokenB, fee, twap])
   return useTridentConstantPools(chainId, inputs)[0]
 }
