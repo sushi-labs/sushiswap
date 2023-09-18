@@ -113,6 +113,7 @@ async function getV3Pool({ chainId, address }: GetPoolArgs): Promise<Pool> {
 
 // Thought ReturnType would be enough, needed to wrap it to make TS happy
 export async function getUnindexedPool(poolId: string): Promise<Awaited<ReturnType<typeof getEarnPool>>> {
+  console.log('getUnindexedPool poolId', poolId)
   const [chainId, address] = [Number(poolId.split(':')[0]), poolId.split(':')[1]]
   if (!chainId || !address) throw new Error('Invalid pool id.')
 
