@@ -1,6 +1,7 @@
 export * from './getSteerAccountPosition.js'
 export * from './getSteerStrategyPayload.js'
 export * from './getSteerVaultAprs.js'
+export * from './getSteerVaultAprTimeseries.js'
 export * from './getSteerVaultMaxTickChange.js'
 export * from './getSteerVaultPosition.js'
 export * from './getSteerVaultReserves.js'
