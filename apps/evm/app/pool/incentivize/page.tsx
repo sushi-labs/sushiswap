@@ -103,10 +103,8 @@ const Incentivize = withCheckerRoot(() => {
   }, [angleRewardTokens, epochs, rewardToken])
 
   const {
-    writeAsync,
-    isLoading: isIncentivizeLoading,
-    isError,
-    data,
+    prepare: { isError },
+    write: { writeAsync, isLoading: isIncentivizeLoading, data },
   } = useIncentivizePoolWithRewards({
     account: address,
     args:

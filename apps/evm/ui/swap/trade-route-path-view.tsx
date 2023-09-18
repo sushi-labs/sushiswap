@@ -43,8 +43,7 @@ export const TradeRoutePathView: FC<{
         <DialogHeader>
           <DialogTitle>Route</DialogTitle>
           <DialogDescription>
-            Our routing system is designed to find the best possible price for your trade. This is done by splitting
-            your trade across multiple pools.
+            Our routing system automatically splits your trade across various pools to get you the best price.
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="bg-secondary border border-accent rounded-xl">

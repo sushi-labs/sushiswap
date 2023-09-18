@@ -1,6 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Breadcrumb, Container } from '@sushiswap/ui'
 import { headers } from 'next/headers'
+import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { PoolHeader } from '../../../ui/pool/PoolHeader'
@@ -14,6 +15,9 @@ export default async function Layout({ children, params }: { children: React.Rea
   const [_chainId, address] = params.id.split(params.id.includes('%3A') ? '%3A' : ':') as [string, string]
   const chainId = Number(_chainId) as ChainId
   const pool = await getPool({ chainId, address })
+  if (!pool) {
+    notFound()
+  }
   const headersList = headers()
   const referer = headersList.get('referer')
 

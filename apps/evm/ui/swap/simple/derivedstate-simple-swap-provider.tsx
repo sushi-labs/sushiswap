@@ -40,6 +40,8 @@ interface State {
     recipient: string | undefined
   }
   isLoading: boolean
+  isToken0Loading: boolean
+  isToken1Loading: boolean
 }
 
 const DerivedStateSimpleSwapContext = createContext<State>({} as State)
@@ -189,30 +191,23 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
     [createQueryString, pathname, push]
   )
 
-  // Make sure the searchParams are updated whenever a user switches networks
-  useEffect(() => {
-    let i = 0
-    const unwatch = watchNetwork(({ chain }) => {
-      // Avoid first call
-      if (chain && i > 0) {
-        setChainId(chain.id)
-      }
-
-      i++
-    }, {})
-
-    return () => unwatch()
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   // Derive chainId from defaultedParams
   const chainId = Number(defaultedParams.get('chainId')) as ChainId
+
+  useEffect(() => {
+    const unwatch = watchNetwork(({ chain }) => {
+      if (!chain || chain.id === chainId) return
+      push(pathname, { scroll: false })
+    })
+    return () => unwatch()
+  }, [chainId, pathname, push])
 
   // Derive token0
   const { data: token0, isInitialLoading: token0Loading } = useTokenWithCache({
     chainId,
     address: defaultedParams.get('token0') as string,
     enabled: isAddress(defaultedParams.get('token0') as string),
+    keepPreviousData: false,
   })
 
   // Derive token1
@@ -220,6 +215,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
     chainId,
     address: defaultedParams.get('token1') as string,
     enabled: isAddress(defaultedParams.get('token1') as string),
+    keepPreviousData: false,
   })
 
   return (
@@ -247,6 +243,8 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> = 
             token1: _token1,
           },
           isLoading: token0Loading || token1Loading,
+          isToken0Loading: token0Loading,
+          isToken1Loading: token1Loading,
         }
       }, [
         address,

@@ -16,7 +16,9 @@ import {
   TextField,
 } from '@sushiswap/ui'
 import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
+
+import { usePersistedSlippageError } from '../../../lib/hooks'
 
 export const SimpleSwapErrorMessage: FC<{ isSuccess: boolean; error: Error | null; isLoading: boolean }> = ({
   isSuccess,
@@ -24,20 +26,7 @@ export const SimpleSwapErrorMessage: FC<{ isSuccess: boolean; error: Error | nul
   isLoading,
 }) => {
   const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance()
-  const [show, setShow] = useState(false)
-  const [persistedError, setPersistedError] = useState<Error | null>(error)
-
-  // Need to perform some funky business because wagmi isn't keeping the previous error while its refetching
-  useEffect(() => {
-    if (error && error.message.includes('Minimal ouput balance violation')) {
-      setShow(true)
-      setPersistedError(error)
-    }
-
-    if (isSuccess) setPersistedError(null)
-  }, [error, isSuccess])
-
-  const isSlippageError = Boolean(persistedError)
+  const { isSlippageError, setShow, show } = usePersistedSlippageError({ isSuccess, error })
 
   return (
     <HoverCard openDelay={0} closeDelay={0}>
