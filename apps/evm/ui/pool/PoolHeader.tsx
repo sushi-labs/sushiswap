@@ -2,20 +2,10 @@
 
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
 import { Chain } from '@sushiswap/chain'
-import { Pool } from '@sushiswap/client'
+import { Pool as PoolV2 } from '@sushiswap/client'
 import { Token } from '@sushiswap/currency'
 import { formatPercent, shortenAddress } from '@sushiswap/format'
-import {
-  Button,
-  classNames,
-  Currency,
-  LinkExternal,
-  LinkInternal,
-  Stat,
-  StatLabel,
-  StatValue,
-  typographyVariants,
-} from '@sushiswap/ui'
+import { Button, classNames, Currency, LinkExternal, LinkInternal, typographyVariants } from '@sushiswap/ui'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
 import { SushiSwapV3Pool } from '@sushiswap/v3-sdk'
 import { unwrapToken } from 'lib/functions'
@@ -26,7 +16,7 @@ import { APRHoverCard } from './APRHoverCard'
 type PoolHeader = {
   backUrl: string
   address: string
-  pool: SushiSwapV3Pool | null | undefined | Pool
+  pool: SushiSwapV3Pool | null | undefined | PoolV2
   apy?: {
     fees: number | undefined
     rewards: number | undefined
@@ -67,7 +57,7 @@ export const PoolHeader: FC<PoolHeader> = ({ backUrl, address, pool, apy, priceR
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
           <LinkInternal href={backUrl} className="text-blue hover:underline text-sm">
-            ← View all pools
+            ← Pools
           </LinkInternal>
           <div className="relative flex items-center gap-3">
             <Currency.IconList iconWidth={36} iconHeight={36}>
@@ -108,7 +98,7 @@ export const PoolHeader: FC<PoolHeader> = ({ backUrl, address, pool, apy, priceR
             )}
           </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-secondary-foreground mb-8 mt-1.5">
+        <div className="flex flex-wrap items-center gap-y-5 gap-x-[32px] text-secondary-foreground mb-8 mt-1.5">
           {apy ? (
             <div className="flex items-center gap-1.5">
               <span className="tracking-tighter font-semibold">APR</span>
@@ -133,10 +123,10 @@ export const PoolHeader: FC<PoolHeader> = ({ backUrl, address, pool, apy, priceR
             </div>
           ) : null}
           {priceRange ? (
-            <Stat>
-              <StatLabel size="sm">Price Range</StatLabel>
-              <StatValue size="sm">{priceRange}</StatValue>
-            </Stat>
+            <div className="flex items-center gap-1.5">
+              <span className="tracking-tighter font-semibold">Price Range</span>
+              {priceRange}
+            </div>
           ) : null}
           <div className="flex items-center gap-1.5">
             <span className="tracking-tighter font-semibold">Fee</span>
