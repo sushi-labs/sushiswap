@@ -265,6 +265,8 @@ export function useTridentConstantPools(
     select: (results) => results.map((r) => r.result),
   })
 
+  console.debug('useTridentConstantPools', poolsAddresses)
+
   return useMemo(() => {
     if (poolsAddresses.length === 0) return [[TridentConstantPoolState.INVALID, null]]
     if (!data || !data.length) return poolsAddresses.map(() => [TridentConstantPoolState.LOADING, null])

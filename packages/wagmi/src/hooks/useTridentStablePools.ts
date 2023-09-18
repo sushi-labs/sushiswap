@@ -268,6 +268,8 @@ export function useTridentStablePools(
     [stablePoolFactory, input]
   )
 
+  console.debug('useTridentStablePools', poolsAddresses)
+
   const { data } = useContractReads({
     contracts: poolsAddresses.map((address) => ({
       chainId,
