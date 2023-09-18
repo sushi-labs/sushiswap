@@ -1,4 +1,4 @@
-import { tridentConstantPoolAbi, uniswapV2PairAbi, v3baseAbi } from '@sushiswap/abi'
+import { tridentConstantPoolAbi, tridentStablePoolAbi, uniswapV2PairAbi, v3baseAbi } from '@sushiswap/abi'
 import { Protocol } from '@sushiswap/database'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import type { Address, FetchTokenResult } from '@wagmi/core'
@@ -46,9 +46,28 @@ async function getV2Pool({ chainId, address }: GetPoolArgs): Promise<Pool> {
   }
 }
 
-async function getTridentPool({ chainId, address, protocol }: GetPoolArgs): Promise<Pool> {
-  if (!protocol) throw new Error('Protocol is required for Trident pools.')
-  // These methods should be identical for all pool types
+async function getTridentStablePool({ chainId, address }: GetPoolArgs): Promise<Pool> {
+  const [token0, token1, totalSupply, swapFee] = await readContracts({
+    allowFailure: false,
+    contracts: [
+      { address: address as Address, abi: tridentStablePoolAbi, functionName: 'token0', chainId },
+      { address: address as Address, abi: tridentStablePoolAbi, functionName: 'token1', chainId },
+      { address: address as Address, abi: tridentStablePoolAbi, functionName: 'totalSupply', chainId },
+      { address: address as Address, abi: tridentStablePoolAbi, functionName: 'swapFee', chainId },
+    ],
+  })
+
+  return {
+    tokens: [token0, token1],
+    totalSupply: totalSupply.toString(),
+    // 30 => 0.003%
+    swapFee: Number(swapFee) / 10000,
+    twapEnabled: false,
+    protocol: Protocol.BENTOBOX_STABLE,
+  }
+}
+
+async function getTridentConstantPool({ chainId, address }: GetPoolArgs): Promise<Pool> {
   const [token0, token1, totalSupply, swapFee, reserves] = await readContracts({
     allowFailure: false,
     contracts: [
@@ -60,7 +79,7 @@ async function getTridentPool({ chainId, address, protocol }: GetPoolArgs): Prom
     ],
   })
 
-  const twapEnabled = reserves[2] > BigInt(0)
+  const twapEnabled = reserves[2] > 0
 
   return {
     tokens: [token0, token1],
@@ -68,7 +87,7 @@ async function getTridentPool({ chainId, address, protocol }: GetPoolArgs): Prom
     // 30 => 0.003%
     swapFee: Number(swapFee) / 10000,
     twapEnabled,
-    protocol,
+    protocol: Protocol.BENTOBOX_CLASSIC,
   }
 }
 
@@ -107,12 +126,10 @@ export async function getUnindexedPool(poolId: string): Promise<Awaited<ReturnTy
   let poolFetcher: (args: GetPoolArgs) => Promise<Pool>
   switch (lpTokenName) {
     case 'Sushi Stable LP Token':
-      poolFetcher = async ({ chainId, address }) =>
-        getTridentPool({ chainId, address, protocol: Protocol.BENTOBOX_STABLE })
+      poolFetcher = getTridentStablePool
       break
     case 'Sushi Constant Product LP Token':
-      poolFetcher = async ({ chainId, address }) =>
-        getTridentPool({ chainId, address, protocol: Protocol.BENTOBOX_CLASSIC })
+      poolFetcher = getTridentConstantPool
       break
     case 'SushiSwap LP Token':
       poolFetcher = getV2Pool
