@@ -16,6 +16,7 @@ import {
 import { FC } from 'react'
 
 import { SteerStrategyConfig } from './constants'
+import { SteerAPRChart } from './SteerAPRChart'
 import { SteerAPRHoverCard } from './SteerAPRHoverCard'
 import { SteerLiquidityDistributionWidget } from './SteerLiquidityDistributionWidget/SteerLiquidityDistributionWidget'
 
@@ -47,19 +48,18 @@ export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
                 size="sm"
                 className={classNames(pool.isIncentivized && 'underline decoration-dotted underline-offset-3')}
               >
-                {formatPercent(vault.apr1w)}
+                {formatPercent(vault.apr1w + pool.incentiveApr)}
               </StatValue>
             </SteerAPRHoverCard>
           </Stat>
-          <div className="h-[200px] bg-secondary rounded-xl flex items-center justify-center">
-            <span className="text-xs text-muted-foreground">Chart here</span>
+          <div className="h-[200px] rounded-xl flex items-center justify-center">
+            <SteerAPRChart vault={vault} />
           </div>
         </CardContent>
         <Separator />
         <div className="grid grid-cols-2 divide-x divide-accent">
           <Stat className="px-6 py-4">
             <StatLabel size="sm">TVL</StatLabel>
-            {/* vault.reserveUSD */}
             <StatValue size="sm">{formatUSD(vault.reserveUSD)}</StatValue>
           </Stat>
           <Stat className="px-6 py-4">

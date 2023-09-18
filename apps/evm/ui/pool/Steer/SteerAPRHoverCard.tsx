@@ -35,16 +35,15 @@ export const SteerAPRHoverCard: FC<SteerAPRHoverCardProps> = ({ children, pool, 
       <CardHeader>
         <CardTitle>{formatPercent(vault.apr1w + pool.incentiveApr)} </CardTitle>
         <span className="ml-1 text-sm font-normal text-muted-foreground">
-          {formatPercent(vault.apr1w)} fees{' '}
-          {pool.incentives.length > 0 ? `+ ${formatPercent(pool.incentiveApr)} rewards` : ''}
+          {formatPercent(vault.apr1w)} fees {pool.isIncentivized ? `+ ${formatPercent(pool.incentiveApr)} rewards` : ''}
         </span>
         <CardDescription className="text-xs font-normal">
           Vault APR is calculated based on the vault fees over the last 7 days
-          {pool.incentives.length > 0 ? ', reward APR is based on the last 24 hours' : ''}.{' '}
+          {pool.isIncentivized ? ', reward APR is based on the last 24 hours' : ''}.{' '}
           <b>The APR displayed is algorithmic and subject to change.</b>
         </CardDescription>
       </CardHeader>
-      {pool.incentives.length > 0 ? (
+      {pool.isIncentivized ? (
         <CardContent>
           <Reply>
             <ReplyContent>
