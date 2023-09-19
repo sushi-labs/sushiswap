@@ -1,5 +1,5 @@
 export type Article = {
-  id: string
+  // id: string
   attributes: {
     authors: Data<Author[]>
     title: string
@@ -7,46 +7,36 @@ export type Article = {
     ghostSlug: string | null
     slug: string
     cover: Data<Image>
-    categories: Data<Category[]>
+    products: Data<Product[]>
+    topics: Data<Topic[]>
+    difficulty: Data<Difficulty>
     createdAt: string
     updatedAt: string
     publishedAt: string
-    // blocks: Block[]
   }
 }
 
-export type RichTextBlock = {
-  id: number
-  body: string
-  __component: 'shared.rich-text'
-}
-
-export type MediaBlock = {
-  id: number
-  caption: string
-  __component: 'shared.media'
-  file: {
-    data: Image
-  }
-}
-
-export type DividerBlock = {
-  id: number
-  __component: 'shared.divider'
-}
-
-export type Block = RichTextBlock | MediaBlock | DividerBlock
-
-export type Category = {
+export type Product = {
   id: string
   attributes: {
-    description: string
     name: string
     slug: string
-    // createdAt: string
-    // updatedAt: string
   }
 }
+
+export type Topic = {
+  attributes: {
+    name: string
+  }
+}
+
+export type Difficulty = {
+  attributes: {
+    name: string
+    label: string
+    slug: string
+  }
+} | null
 
 export type Image = {
   // id: number

@@ -20,7 +20,6 @@ import {
   GasPumpIcon,
   HalfScreenIcon,
   LeftRightArrowIcon,
-  LightBulbIcon,
   LinkIcon,
   MobileUiIcon,
   MoneyBagIcon,
@@ -36,7 +35,6 @@ import {
   SmellyMoneyHandIcon,
   SmileyIcon,
   SushiIcon,
-  ThreeLinkIcon,
   TilesIcon,
   TwoCoinsIcon,
   WavesIcon,
@@ -331,38 +329,31 @@ export const PRODUCTS_DATA = {
         subtitle: 'Modular bridge API.',
       },
     ],
-    // TODO: links to be reviewed by team
     chains: [
       {
         Icon: EthereumCircle,
         name: 'Ethereum',
-        url: 'https://app.sushi.com/miso',
       },
       { Icon: OptimismCircle, name: 'Optimism', url: '' },
       {
         Icon: ArbitrumCircle,
         name: 'Arbitrum',
-        url: 'https://arbitrum.sushi.com/miso',
       },
       {
         Icon: FantomCircle,
         name: 'Fantom',
-        url: 'https://fantom.sushi.com/miso',
       },
       {
         Icon: BinanceCircle,
         name: 'Binance',
-        url: 'https://bsc.sushi.com/miso',
       },
       {
         Icon: AvalancheCircle,
         name: 'Avalanche',
-        url: 'https://avalanche.sushi.com/miso',
       },
       {
         Icon: PolygonCircle,
         name: 'Polygon',
-        url: 'https://polygon.sushi.com/miso',
       },
     ],
     faq: [
@@ -572,75 +563,6 @@ export const PRODUCTS_DATA = {
               <li>Moonriver</li>
             </ul>
           </div>
-        ),
-      },
-    ],
-  },
-  miso: {
-    color: '#87BC06',
-    accentColor: '#7F9F30',
-    buttonText: 'Launch Miso',
-    productStats: [
-      { value: '100+', name: 'Projects Launched' },
-      { value: '$400+ mln', name: 'Funds Raised' },
-    ],
-    usps: [
-      'From token generation to launch on Sushi, MISO is optimized for every aspect of a trustless UX.',
-      'MISO aims to capture the spirit of crypto, a platform where any project can launch and anyone can buy, no strings attached.',
-    ],
-    cards: [
-      {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.miso.accentColor} Icon={ThreeLinkIcon} />,
-        title: 'Wide Exposure',
-        subtitle: 'Introduce your tokens to the largest possible crypto native audiences.',
-      },
-      {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.miso.accentColor} Icon={LightBulbIcon} />,
-        title: 'Simple and Intuitive',
-        subtitle: 'Anyone can launch a token on MISO, no technical knowledge required.',
-      },
-      {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.miso.accentColor} Icon={BarsIcon} />,
-        title: 'Rich in Data',
-        subtitle: 'The highest level of transparency and data availability to help you make informed decisions.',
-      },
-      {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.miso.accentColor} Icon={DashboardIcon} />,
-        title: 'Fast to Launch',
-        subtitle: 'Quick launches with no interruption.',
-      },
-    ],
-    faq: [
-      {
-        question: 'What is a Dutch auction?',
-        answer: (
-          <div className="space-y-4">
-            <p>
-              Dutch auctions are “inverted” auctions. The price point per token is set high and descends as the auction
-              goes on in the event that no one is buying in. This rate of price adjustment is set by the auctioneer. The
-              final price per token is set when all tokens have been allocated. Participants are committing to receive a
-              minimum total value rather than bidding for the tokens themselves - because of this it is common to end up
-              with more tokens than what was initially bid for.
-            </p>
-            <p>
-              <i>Example:</i> An auction starts at $100 per token. It is set to depreciate in value every hour if a
-              token is not bought. If no one buys the token after the first hour, it automatically lowers itself to the
-              price point of $90 per token. Every purchase resets the hour long timer until the token price starts to
-              depreciates again. If no tokens are bought in the second hour - again the price of the token drops, this
-              time to $80. Another hour passes, now it is valued at $70. This cycle would continue until all the tokens
-              are purchased or they become valued at $0.
-            </p>
-          </div>
-        ),
-      },
-      {
-        question: 'What is a Batch auction?',
-        answer: (
-          <p>
-            Batch auctions are based around a single pool of tokens that is split amongst all auction participants. At
-            the end of the auction the token price is determined by the total amount raised from all participants.
-            Everybody participating gets a share of the tokens equal to their share of the contribution pool.
-          </p>
         ),
       },
     ],

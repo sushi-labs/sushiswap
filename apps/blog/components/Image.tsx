@@ -12,7 +12,9 @@ interface ImageProps {
   layout?: 'fill' | 'responsive'
   objectFit?: 'cover' | 'contain'
   className?: string
-  image: ImageType
+  image: {
+    attributes: Pick<ImageType['attributes'], 'provider_metadata' | 'url' | 'width' | 'height' | 'alternativeText'>
+  }
 }
 
 export const Image: FC<ImageProps> = ({
