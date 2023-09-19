@@ -10,7 +10,7 @@ import { deserialize, serialize } from '@wagmi/core'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { unstable_cache } from 'next/cache'
-import { SteerStrategyComponents, SteerStrategyGeneric } from 'ui/pool/Steer/Strategies'
+import { SteerStrategyComponents, SteerStrategyGeneric } from 'ui/pool/Steer/SteerStrategies'
 import { createPublicClient } from 'viem'
 
 function getPriceExtremes(vault: SteerVault): SteerStrategyGeneric['priceExtremes'] {

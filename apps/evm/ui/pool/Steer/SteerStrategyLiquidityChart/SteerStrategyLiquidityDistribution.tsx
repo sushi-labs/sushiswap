@@ -8,7 +8,7 @@ import React, { FC, useMemo } from 'react'
 
 import { useConcentratedDerivedMintInfo } from '../../ConcentratedLiquidityProvider'
 import { useDensityChartData } from '../../LiquidityChartRangeInput/hooks'
-import { SteerStrategyGeneric } from '../Strategies'
+import { SteerStrategyGeneric } from '../SteerStrategies'
 import { SteerStrategyLiquidityDistributionChart } from './SteerStrategyLiquidityDistributionChart'
 
 interface SteerStrategyLiquidityDistribution {

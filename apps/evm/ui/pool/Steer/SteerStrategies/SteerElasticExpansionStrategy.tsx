@@ -20,13 +20,13 @@ import {
 import { useEffect, useRef } from 'react'
 
 import { SteerStrategyConfig } from '../constants'
+import { SteerAPRHoverCard } from '../SteerAPRHoverCard'
 import {
   SteerPositionAdd,
   SteerPositionAddProvider,
   SteerPositionDetails,
   SteerPositionRemove,
-} from '../LiquidityManagement'
-import { SteerAPRHoverCard } from '../SteerAPRHoverCard'
+} from '../SteerLiquidityManagement'
 import { SteerStrategyLiquidityDistribution } from '../SteerStrategyLiquidityChart'
 import { SteerStrategyComponent } from '.'
 
