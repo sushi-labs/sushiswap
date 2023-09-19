@@ -3,7 +3,7 @@
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 import React, { FC, ReactNode, useState } from 'react'
 
-import { TimeAgo } from '../time-ago'
+import { TimeAgo } from '../time-ago.js'
 
 interface ToastContent {
   icon?: ReactNode

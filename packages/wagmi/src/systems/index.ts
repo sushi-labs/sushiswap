@@ -1,1 +1,1 @@
-export * from './PoolFinder'
+export * from './PoolFinder/index.js'

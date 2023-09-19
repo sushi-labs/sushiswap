@@ -1,5 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
-import { V3MigrateChainId } from './types'
+
+import { V3MigrateChainId } from './types.js'
 
 export const V3MigrateAddress = {
   [ChainId.ARBITRUM_NOVA]: '0xFB7eF66a7e61224DD6FcD0D7d9C3be5C8B049b9f',

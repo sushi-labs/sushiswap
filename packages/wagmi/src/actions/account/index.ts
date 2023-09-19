@@ -1,1 +1,1 @@
-export { fetchBalances } from './fetchBalances'
+export { fetchBalances } from './fetchBalances.js'

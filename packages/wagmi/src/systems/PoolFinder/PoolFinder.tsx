@@ -1,17 +1,17 @@
 import { Children, cloneElement, FC, isValidElement, ReactElement, ReactNode, useMemo, useReducer } from 'react'
 
-import { SushiSwapV2PoolState } from '../../hooks'
-import { ComponentsWrapper } from './ComponentsWrapper'
-import { SushiSwapV2Pool } from './SushiSwapV2Pool'
-import { TridentConstantPool } from './TridentConstantPool'
-import { TridentStablePool } from './TridentStablePool'
+import { SushiSwapV2PoolState } from '../../hooks/index.js'
+import { ComponentsWrapper } from './ComponentsWrapper.js'
+import { SushiSwapV2Pool } from './SushiSwapV2Pool.js'
+import { TridentConstantPool } from './TridentConstantPool.js'
+import { TridentStablePool } from './TridentStablePool.js'
 import {
   ComponentsWrapperProps,
   PoolExistenceStateAction,
   PoolStateUnion,
   SushiSwapV2PoolFinderProps,
   TridentPoolFinderProps,
-} from './types'
+} from './types.js'
 
 interface Props {
   components: ReactElement<ComponentsWrapperProps<SushiSwapV2PoolFinderProps | TridentPoolFinderProps>>

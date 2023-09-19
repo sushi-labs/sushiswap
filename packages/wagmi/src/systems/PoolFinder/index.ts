@@ -1,2 +1,2 @@
-export * from './PoolFinder'
-export * from './types'
+export * from './PoolFinder.js'
+export * from './types.js'

@@ -1,3 +1,2 @@
-export * from './account'
-
+export * from './account/index.js'
 export * from 'wagmi/actions'

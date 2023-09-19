@@ -11,7 +11,7 @@ import {
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
 
-import { uniswapV2PairAbi } from '../abis'
+import { uniswapV2PairAbi } from '../abis/uniswapV2PairAbi.js'
 
 type UseContractReadsConfig = Parameters<typeof useContractReads>['0']
 

@@ -1,1 +1,1 @@
-export * from './useBalance'
+export * from './useBalance.js'

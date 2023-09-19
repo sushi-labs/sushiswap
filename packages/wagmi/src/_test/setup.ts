@@ -3,9 +3,9 @@ import { createWalletClient, http } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { Chain, configureChains, createConfig } from 'wagmi'
 
-import { foundry } from '../chains'
-import { MockConnector } from '../connectors/mock'
-import { accounts, TestChainId, testChains } from './constants'
+import { foundry } from '../chains/index.js'
+import { MockConnector } from '../connectors/mock.js'
+import { accounts, TestChainId, testChains } from './constants.js'
 
 const foundryPort = String(process.env.ANVIL_PORT || process.env.NEXT_PUBLIC_ANVIL_PORT || 8545)
 
