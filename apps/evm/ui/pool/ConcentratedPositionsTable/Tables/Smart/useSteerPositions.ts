@@ -4,8 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { usePool, useSteerVaults } from '@sushiswap/client/hooks'
 import { Amount, Token } from '@sushiswap/currency'
 import { useAllPrices } from '@sushiswap/react-query'
-import { useSteerAccountPositions } from '@sushiswap/steer-sdk/hooks'
-import { Address, useAccount } from '@sushiswap/wagmi'
+import { Address, useAccount, useSteerAccountPositions } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
 
 interface UseSteerPositions {

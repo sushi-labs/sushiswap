@@ -3,7 +3,6 @@
 import { SteerVault } from '@sushiswap/client/src/pure/steer-vault/vault'
 import { Amount, Token } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
-import { useSteerAccountPosition } from '@sushiswap/steer-sdk/hooks'
 import {
   CardContent,
   CardCurrencyAmountItem,
@@ -13,7 +12,7 @@ import {
   CardLabel,
   CardTitle,
 } from '@sushiswap/ui'
-import { useAccount } from '@sushiswap/wagmi'
+import { useAccount, useSteerAccountPosition } from '@sushiswap/wagmi'
 import { useTokenAmountDollarValues } from 'lib/hooks'
 import React, { FC, useMemo } from 'react'
 

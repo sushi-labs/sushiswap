@@ -12,7 +12,7 @@ export * from './hooks/index.js'
 // Export systems
 export * from './systems/index.js'
 
-// Re-expert getPublicClient
+// Re-export getPublicClient
 export { getPublicClient } from '@wagmi/core'
 
 // Re-export wagmi

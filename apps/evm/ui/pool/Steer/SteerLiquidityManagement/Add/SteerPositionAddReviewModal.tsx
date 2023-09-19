@@ -8,7 +8,6 @@ import { formatUSD } from '@sushiswap/format'
 import { Percent } from '@sushiswap/math'
 import { isSteerChainId, STEER_PERIPHERY_ADDRESS } from '@sushiswap/steer-sdk'
 import { steerPeripheryAbi } from '@sushiswap/steer-sdk/abi'
-import { useSteerAccountPosition } from '@sushiswap/steer-sdk/hooks'
 import {
   createErrorToast,
   createToast,
@@ -25,8 +24,16 @@ import {
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { List } from '@sushiswap/ui/components/list/List'
-import { SendTransactionResult, useSendTransaction, waitForTransaction } from '@sushiswap/wagmi'
-import { useAccount, useNetwork, usePrepareSendTransaction, useWaitForTransaction } from '@sushiswap/wagmi'
+import {
+  SendTransactionResult,
+  useAccount,
+  useNetwork,
+  usePrepareSendTransaction,
+  useSendTransaction,
+  useSteerAccountPosition,
+  useWaitForTransaction,
+  waitForTransaction,
+} from '@sushiswap/wagmi'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { useTokenAmountDollarValues } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'

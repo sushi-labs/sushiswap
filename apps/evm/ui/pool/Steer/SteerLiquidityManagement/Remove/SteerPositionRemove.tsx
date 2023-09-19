@@ -9,7 +9,6 @@ import { useDebounce } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
 import { isSteerChainId } from '@sushiswap/steer-sdk'
 import { steerMultiPositionManager } from '@sushiswap/steer-sdk/abi'
-import { useSteerAccountPosition } from '@sushiswap/steer-sdk/hooks'
 import {
   Button,
   Card,
@@ -23,8 +22,15 @@ import {
   SettingsModule,
   SettingsOverlay,
 } from '@sushiswap/ui'
-import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi'
-import { useAccount, useNetwork, usePrepareSendTransaction, useSendTransaction } from '@sushiswap/wagmi'
+import {
+  SendTransactionResult,
+  useAccount,
+  useNetwork,
+  usePrepareSendTransaction,
+  useSendTransaction,
+  useSteerAccountPosition,
+  waitForTransaction,
+} from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/future'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'

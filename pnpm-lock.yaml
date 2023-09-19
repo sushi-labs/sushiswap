@@ -2202,11 +2202,6 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/validate': workspace:*
-      '@sushiswap/wagmi': workspace:*
-      '@sushiswap/wagmi-config': workspace:*
-      '@tanstack/react-query': 4.28.0
-      '@tanstack/react-query-devtools': 4.28.0
-      '@tanstack/react-query-persist-client': 4.29.7
       '@types/node': '18'
       '@wagmi/core': 1.4.1
       '@whatwg-node/fetch': 0.8.4
@@ -2218,7 +2213,6 @@ importers:
       tsup: 7.1.0
       typescript: 5.1.6
       viem: 1.10.7
-      wagmi: 1.4.1
     dependencies:
       '@steerprotocol/contracts': 2.1.0-beta.14_typescript@5.1.6
       '@sushiswap/chain': link:../chain
@@ -2226,15 +2220,9 @@ importers:
       '@sushiswap/database': link:../database
       '@sushiswap/format': link:../format
       '@sushiswap/validate': link:../validate
-      '@sushiswap/wagmi': link:../wagmi
-      '@sushiswap/wagmi-config': link:../../config/wagmi
-      '@tanstack/react-query': 4.28.0_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-persist-client': 4.29.7_qfusmmwykmcbgdy37sd3cqxiry
-      '@wagmi/core': 1.4.1_4qm2iyb5gskoinbhlpsplbspqi
       '@whatwg-node/fetch': 0.8.4
       tslib: 2.6.2
       viem: 1.10.7_typescript@5.1.6
-      wagmi: 1.4.1_rglsli7chdqclebqn6it27zbkq
     optionalDependencies:
       next: 13.4.19_biqbaboplfbrettd7655fr4n2y
     devDependencies:
@@ -2242,8 +2230,8 @@ importers:
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/typescript-config': link:../../config/typescript
-      '@tanstack/react-query-devtools': 4.28.0_q4teel2yjbizrm4naiaqcdpjum
       '@types/node': 18.17.5
+      '@wagmi/core': 1.4.1_4qm2iyb5gskoinbhlpsplbspqi
       eslint: 8.43.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -2713,6 +2701,7 @@ importers:
       '@sushiswap/route-processor-sdk': workspace:*
       '@sushiswap/router': workspace:*
       '@sushiswap/router-config': workspace:*
+      '@sushiswap/steer-sdk': workspace:*
       '@sushiswap/sushixswap-sdk': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/trident-sdk': workspace:*
@@ -2773,6 +2762,7 @@ importers:
       '@sushiswap/route-processor-sdk': link:../route-processor-sdk
       '@sushiswap/router': link:../router
       '@sushiswap/router-config': link:../../config/router
+      '@sushiswap/steer-sdk': link:../steer-sdk
       '@sushiswap/sushixswap-sdk': link:../sushixswap-sdk
       '@sushiswap/tines': link:../tines
       '@sushiswap/trident-sdk': link:../trident-sdk
@@ -14708,6 +14698,7 @@ packages:
       - typescript
       - utf-8-validate
       - zod
+    dev: true
 
   /@safe-global/safe-apps-provider/0.17.1_zno6rcmvi3mruj4xg7lanqhjom:
     resolution: {integrity: sha512-lYfRqrbbK1aKU1/UGkYWc/X7PgySYcumXKc5FB2uuwAs2Ghj8uETuW5BrwPqyjBknRxutFbTv+gth/JzjxAhdQ==}
@@ -14732,6 +14723,7 @@ packages:
       - typescript
       - utf-8-validate
       - zod
+    dev: true
 
   /@safe-global/safe-apps-sdk/8.0.0_zno6rcmvi3mruj4xg7lanqhjom:
     resolution: {integrity: sha512-gYw0ki/EAuV1oSyMxpqandHjnthZjYYy+YWpTAzf8BqfXM3ItcZLpjxfg+3+mXW8HIO+3jw6T9iiqEXsqHaMMw==}
@@ -14756,6 +14748,7 @@ packages:
       - typescript
       - utf-8-validate
       - zod
+    dev: true
 
   /@safe-global/safe-apps-sdk/8.1.0_zno6rcmvi3mruj4xg7lanqhjom:
     resolution: {integrity: sha512-XJbEPuaVc7b9n23MqlF6c+ToYIS3f7P2Sel8f3cSBQ9WORE4xrSuvhMpK9fDSFqJ7by/brc+rmJR/5HViRr0/w==}
@@ -17250,6 +17243,7 @@ packages:
       react-dom: 18.2.0_react@18.2.0
       superjson: 1.13.1
       use-sync-external-store: 1.2.0_react@18.2.0
+    dev: false
 
   /@tanstack/react-query-devtools/4.28.0_qfusmmwykmcbgdy37sd3cqxiry:
     resolution: {integrity: sha512-1SnoMw1CWn8FdPEIHvlAzmMBX3heXJo11fyBtt+FzYAHj5yFC8P67Kpgi0HpLkY7SLnd6QK/7qFkpeH4AQbgZg==}
@@ -17322,6 +17316,7 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       use-sync-external-store: 1.2.0_react@18.2.0
+    dev: false
 
   /@tanstack/react-query/4.32.6:
     resolution: {integrity: sha512-AITu/IKJJJXsHHeXNBy5bclu12t08usMCY0vFC2dh9SP/w6JAk5U9GwfjOIPj3p+ATADZvxQPe8UiCtMLNeQbg==}
@@ -19428,7 +19423,7 @@ packages:
       - supports-color
       - utf-8-validate
       - zod
-    dev: false
+    dev: true
 
   /@wagmi/connectors/3.1.1_i5n5dea2j27pemvkl7j4yxbax4:
     resolution: {integrity: sha512-ewOV40AlrXcX018qckU0V9OCsDgHhs+KZjQJZhlplqRtc2ijjS62B5kcypXkcTtfU5qXUBA9KEwPsSTxGdT4ag==}
@@ -19701,7 +19696,7 @@ packages:
       - supports-color
       - utf-8-validate
       - zod
-    dev: false
+    dev: true
 
   /@wagmi/core/1.4.1_mlybe73e3cdwgkotmfsdmnpbki:
     resolution: {integrity: sha512-b6LDFL0vZSCNcIHjnJzv++hakavTTt1/2WEQg2S5eEnaHTp7UoQlwfCyjKeiBhRih4yF34N06ea8cyEVjyjXrw==}
@@ -20444,6 +20439,7 @@ packages:
         optional: true
     dependencies:
       typescript: 5.1.6
+    dev: true
 
   /abitype/0.8.7_zno6rcmvi3mruj4xg7lanqhjom:
     resolution: {integrity: sha512-wQ7hV8Yg/yKmGyFpqrNZufCxbszDe5es4AZGYPBitocfSqXtjrTG9JMWFcc4N30ukl2ve48aBTwt7NJxVQdU3w==}
@@ -41368,39 +41364,6 @@ packages:
       - utf-8-validate
       - zod
 
-  /wagmi/1.4.1_rglsli7chdqclebqn6it27zbkq:
-    resolution: {integrity: sha512-v3xd+uYZfLCAs1I4fLU7U9hg/gCw+Ud005J7kNR0mi20BcFAEU1EDN1LxHxpjUV0qKhOzSlMlrLjJyBCmSYhFA==}
-    peerDependencies:
-      react: '>=17.0.0'
-      typescript: '>=5.0.4'
-      viem: '>=0.3.35'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-    dependencies:
-      '@tanstack/query-sync-storage-persister': 4.32.6
-      '@tanstack/react-query': 4.32.6_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-persist-client': 4.32.6_izs5bbiiyrkgk6gcbzwtdp5vim
-      '@wagmi/core': 1.4.1_4qm2iyb5gskoinbhlpsplbspqi
-      abitype: 0.8.7_typescript@5.1.6
-      react: 18.2.0
-      typescript: 5.1.6
-      use-sync-external-store: 1.2.0_react@18.2.0
-      viem: 1.10.7_typescript@5.1.6
-    transitivePeerDependencies:
-      - '@react-native-async-storage/async-storage'
-      - '@types/react'
-      - bufferutil
-      - encoding
-      - immer
-      - lokijs
-      - react-dom
-      - react-native
-      - supports-color
-      - utf-8-validate
-      - zod
-    dev: false
-
   /wagmi/1.4.1_xvwrz76gf3y2fkkjcobhgmjciy:
     resolution: {integrity: sha512-v3xd+uYZfLCAs1I4fLU7U9hg/gCw+Ud005J7kNR0mi20BcFAEU1EDN1LxHxpjUV0qKhOzSlMlrLjJyBCmSYhFA==}
     peerDependencies:
@@ -42889,7 +42852,7 @@ packages:
     dependencies:
       react: 18.2.0
       use-sync-external-store: 1.2.0_react@18.2.0
-    dev: false
+    dev: true
 
   /zwitch/2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}

@@ -3,7 +3,7 @@
 import { useSteerVault } from '@sushiswap/client/hooks'
 import type { SteerVault } from '@sushiswap/client/src/pure/steer-vault/vault'
 import { Amount, Currency, Token, tryParseAmount } from '@sushiswap/currency'
-import { useSteerVaultReserves } from '@sushiswap/steer-sdk/hooks'
+import { useSteerVaultReserves } from '@sushiswap/wagmi'
 import { Field } from 'lib/constants'
 import { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
 interface State {

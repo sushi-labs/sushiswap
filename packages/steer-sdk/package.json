@@ -25,11 +25,6 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
-    "./hooks": {
-      "types": "./dist/hooks/index.d.ts",
-      "import": "./dist/hooks/index.js",
-      "default": "./dist/hooks/index.js"
-    },
     "./abi": {
       "types": "./dist/abi/index.d.ts",
       "import": "./dist/abi/index.js",
@@ -42,16 +37,13 @@
       ".": [
         "src/index"
       ],
-      "hooks": [
-        "src/hooks/index"
-      ],
       "abi": [
         "src/abi/index"
       ]
     }
   },
   "scripts": {
-    "build": "tsup src/index.ts src/hooks/index.ts src/abi/index.ts",
+    "build": "tsup src/index.ts src/abi/index.ts",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc --watch",
@@ -69,22 +61,15 @@
     "@sushiswap/database": "workspace:*",
     "@sushiswap/validate": "workspace:*",
     "@sushiswap/format": "workspace:*",
-    "@sushiswap/wagmi-config": "workspace:*",
-    "@sushiswap/wagmi": "workspace:*",
-    "@tanstack/react-query": "4.28.0",
-    "@tanstack/react-query-persist-client": "4.29.7",
     "@whatwg-node/fetch": "0.8.4",
     "tslib": "latest",
-    "viem": "1.10.7",
-    "@wagmi/core": "1.4.1",
-    "wagmi": "1.4.1"
+    "viem": "1.10.7"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@tanstack/react-query-devtools": "4.28.0",
     "@types/node": "18",
     "@wagmi/core": "1.4.1",
     "next": "13.4.19",

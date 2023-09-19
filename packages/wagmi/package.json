@@ -80,6 +80,7 @@
     "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",
     "@sushiswap/validate": "workspace:*",
+    "@sushiswap/steer-sdk": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
     "@tanstack/query-sync-storage-persister": "4.27.1",

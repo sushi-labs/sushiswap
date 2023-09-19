@@ -1,5 +1,5 @@
 import { getChainIdAddressFromId } from '@sushiswap/format'
-import { getPublicClient, PublicClient } from '@sushiswap/wagmi'
+import { getPublicClient, PublicClient } from '@wagmi/core'
 
 function clientsFromIds(ids: string[]): PublicClient[] {
   const chainIds = Array.from(new Set(ids.map((id) => getChainIdAddressFromId(id).chainId)))
