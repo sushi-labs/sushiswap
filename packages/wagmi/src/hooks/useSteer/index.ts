@@ -1,2 +1,2 @@
-export * from './useSteerAccountPosition.js'
-export * from './useSteerVaultReserves.js'
+export * from './useSteerAccountPosition'
+export * from './useSteerVaultReserves'

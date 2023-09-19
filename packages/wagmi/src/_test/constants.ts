@@ -1,4 +1,4 @@
-import { arbitrum, mainnet, polygon } from '../chains/index.js'
+import { arbitrum, mainnet, polygon } from '../chains'
 
 export const testChains = [polygon, mainnet, arbitrum]
 export type TestChainId = (typeof testChains)[number]['id']

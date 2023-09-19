@@ -4,7 +4,7 @@ import { Type } from '@sushiswap/currency'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { ReactElement } from 'react'
 
-import { SushiSwapV2PoolState, TridentConstantPoolState, TridentStablePoolState } from '../../hooks/index.js'
+import { SushiSwapV2PoolState, TridentConstantPoolState, TridentStablePoolState } from '../../hooks'
 
 export type ComponentsWrapperProps<T> = {
   children:

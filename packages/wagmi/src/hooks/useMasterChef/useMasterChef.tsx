@@ -17,14 +17,14 @@ import {
 } from 'wagmi'
 import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
-import { masterchefV2Abi, minichefV2Abi } from '../../abis/index.js'
+import { masterchefV2Abi, minichefV2Abi } from '../../abis'
 import {
   MASTERCHEF_ADDRESS,
   MASTERCHEF_V2_ADDRESS,
   MINICHEF_ADDRESS,
   useMasterChefContract,
-} from '../useMasterChefContract.js'
-import { UsePrepareSendTransactionConfig } from '../useSendTransaction.js'
+} from '../useMasterChefContract'
+import { UsePrepareSendTransactionConfig } from '../useSendTransaction'
 
 interface UseMasterChefReturn extends Pick<ReturnType<typeof useContractReads>, 'isLoading' | 'isError'> {
   balance: Amount<Token> | undefined

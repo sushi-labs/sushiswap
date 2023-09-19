@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 import { FC } from 'react'
 
-import { Button } from '../button.js'
-import { LinkExternal } from '../link.js'
+import { Button } from '../button'
+import { LinkExternal } from '../link'
 
 interface ToastButtons {
   href?: string

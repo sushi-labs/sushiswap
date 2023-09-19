@@ -4,7 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { getContract } from 'viem'
 import { Address, usePublicClient } from 'wagmi'
 
-import { multicallAbi } from '../abis/multicallAbi.js'
+import { multicallAbi } from '../abis'
 
 export const MULTICALL_ADDRESS: Record<number, string> = {
   [ChainId.ETHEREUM]: '0x1F98415757620B543A52E61c46B32eB19261F984',

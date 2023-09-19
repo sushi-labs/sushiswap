@@ -6,7 +6,7 @@ import { Amount, Currency, Token } from '@sushiswap/currency'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
 
-import { useTridentConstantPoolFactoryContract } from './useTridentConstantPoolFactoryContract.js'
+import { useTridentConstantPoolFactoryContract } from './useTridentConstantPoolFactoryContract'
 
 export enum TridentConstantPoolState {
   LOADING = 'Loading',

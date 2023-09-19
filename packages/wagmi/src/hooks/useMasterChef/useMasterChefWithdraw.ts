@@ -9,9 +9,9 @@ import { encodeFunctionData, UserRejectedRequestError } from 'viem'
 import { useAccount, usePrepareSendTransaction, useSendTransaction } from 'wagmi'
 import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
-import { masterchefV2Abi, minichefV2Abi } from '../../abis/index.js'
-import { getMasterChefContractConfig } from '../useMasterChefContract.js'
-import { UsePrepareSendTransactionConfig } from '../useSendTransaction.js'
+import { masterchefV2Abi, minichefV2Abi } from '../../abis'
+import { getMasterChefContractConfig } from '../useMasterChefContract'
+import { UsePrepareSendTransactionConfig } from '../useSendTransaction'
 
 interface UseMasterChefWithdrawParams {
   chainId: number

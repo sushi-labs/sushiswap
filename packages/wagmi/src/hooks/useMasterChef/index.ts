@@ -1,3 +1,3 @@
-export * from './useMasterChef.js'
-export * from './useMasterChefDeposit.js'
-export * from './useMasterChefWithdraw.js'
+export * from './useMasterChef'
+export * from './useMasterChefDeposit'
+export * from './useMasterChefWithdraw'

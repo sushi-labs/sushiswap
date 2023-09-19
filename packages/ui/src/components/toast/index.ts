@@ -1,2 +1,2 @@
-export * from './Toast.js'
-export * from './ToastContainer.js'
+export * from './Toast'
+export * from './ToastContainer'

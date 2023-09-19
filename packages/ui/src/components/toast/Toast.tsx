@@ -3,12 +3,12 @@ import { nanoid } from 'nanoid'
 import React from 'react'
 import { toast, ToastOptions } from 'react-toastify'
 
-import { ToastButtons } from './ToastButtons.js'
-import { ToastCompleted } from './ToastCompleted.js'
-import { ToastContent } from './ToastContent.js'
-import { ToastFailed } from './ToastFailed.js'
-import { ToastInfo } from './ToastInfo.js'
-import { ToastPending } from './ToastPending.js'
+import { ToastButtons } from './ToastButtons'
+import { ToastCompleted } from './ToastCompleted'
+import { ToastContent } from './ToastContent'
+import { ToastFailed } from './ToastFailed'
+import { ToastInfo } from './ToastInfo'
+import { ToastPending } from './ToastPending'
 
 export const TOAST_OPTIONS: ToastOptions = {
   position: 'top-right',

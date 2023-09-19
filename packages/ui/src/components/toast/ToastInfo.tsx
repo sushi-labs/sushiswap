@@ -2,8 +2,8 @@ import { Chain } from '@sushiswap/chain'
 import { ResolvedNotification } from '@sushiswap/dexie'
 import { FC } from 'react'
 
-import { HalfCircleIcon } from '../icons/index.js'
-import { ToastContent } from './ToastContent.js'
+import { HalfCircleIcon } from '../icons'
+import { ToastContent } from './ToastContent'
 
 interface ToastInfo extends ResolvedNotification {
   onDismiss(): void

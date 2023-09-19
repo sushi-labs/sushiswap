@@ -8,8 +8,8 @@ import { isTridentChainId, TridentChainId } from '@sushiswap/trident-sdk'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
 
-import { useBentoBoxTotals } from './useBentoBoxTotals.js'
-import { useStablePoolFactoryContract } from './useStablePoolFactoryContract.js'
+import { useBentoBoxTotals } from './useBentoBoxTotals'
+import { useStablePoolFactoryContract } from './useStablePoolFactoryContract'
 
 export enum TridentStablePoolState {
   LOADING = 'Loading',

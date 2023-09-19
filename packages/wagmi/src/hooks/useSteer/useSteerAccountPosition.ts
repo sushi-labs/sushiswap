@@ -3,7 +3,7 @@ import { getSteerAccountPosition, getSteerAccountPositions } from '@sushiswap/st
 import { useQuery } from '@tanstack/react-query'
 import { Address, usePublicClient } from 'wagmi'
 
-import { clientsFromIds } from './getClientsFromIds.js'
+import { clientsFromIds } from './getClientsFromIds'
 
 interface UseSteerAccountPositions {
   account: Address | undefined

@@ -10,8 +10,8 @@ import { FundSource } from '@sushiswap/hooks'
 import { useMemo } from 'react'
 import { Address, erc20ABI, useBalance as useWagmiBalance, useContractReads } from 'wagmi'
 
-import { getBentoBoxContractConfig } from '../useBentoBoxContract.js'
-import { BalanceMap } from './types.js'
+import { getBentoBoxContractConfig } from '../useBentoBoxContract'
+import { BalanceMap } from './types'
 
 type UseBalancesParams = {
   account: Address | undefined

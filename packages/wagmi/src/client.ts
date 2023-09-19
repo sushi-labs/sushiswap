@@ -9,9 +9,9 @@ import { SafeConnector } from 'wagmi/connectors/safe'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
-import { TestChainId } from './_test/constants.js'
-import { createTestConfig } from './_test/setup.js'
-import { foundry } from './chains/index.js'
+import { TestChainId } from './_test/constants'
+import { createTestConfig } from './_test/setup'
+import { foundry } from './chains'
 
 const isTest = process.env.APP_ENV === 'test' || process.env.TEST === 'true' || process.env.NEXT_PUBLIC_TEST === 'true'
 const chainId = Number(process.env.CHAIN_ID || process.env.NEXT_PUBLIC_CHAIN_ID || 137)

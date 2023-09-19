@@ -17,11 +17,11 @@ import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS, SushiSwapV2ChainId 
 import { useMemo } from 'react'
 import { useFeeData } from 'wagmi'
 
-import { useBentoBoxTotals } from './useBentoBoxTotals.js'
-import { useCurrencyCombinations } from './useCurrencyCombinations.js'
-import { SushiSwapV2PoolState, useSushiSwapV2Pools } from './useSushiSwapV2Pools.js'
-import { getTridentConstantPoolFactoryContract } from './useTridentConstantPoolFactoryContract.js'
-import { TridentConstantPoolState, useGetTridentConstantPools } from './useTridentConstantPools.js'
+import { useBentoBoxTotals } from './useBentoBoxTotals'
+import { useCurrencyCombinations } from './useCurrencyCombinations'
+import { SushiSwapV2PoolState, useSushiSwapV2Pools } from './useSushiSwapV2Pools'
+import { getTridentConstantPoolFactoryContract } from './useTridentConstantPoolFactoryContract'
+import { TridentConstantPoolState, useGetTridentConstantPools } from './useTridentConstantPools'
 
 type UseTradePayload = {
   chainId: ChainId

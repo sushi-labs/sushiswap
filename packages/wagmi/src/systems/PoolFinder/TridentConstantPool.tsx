@@ -1,8 +1,8 @@
 import { Fee } from '@sushiswap/amm'
 import { FC, useEffect } from 'react'
 
-import { useTridentConstantPool } from '../../hooks/index.js'
-import { PoolFinderType, TridentPoolFinderProps } from './types.js'
+import { useTridentConstantPool } from '../../hooks'
+import { PoolFinderType, TridentPoolFinderProps } from './types'
 
 export const TridentConstantPool: FC<TridentPoolFinderProps> = ({
   chainId,

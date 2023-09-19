@@ -9,8 +9,8 @@ import { encodeFunctionData, UserRejectedRequestError } from 'viem'
 import { useAccount, usePrepareSendTransaction, useSendTransaction } from 'wagmi'
 import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
-import { useMasterChefContract } from '../useMasterChefContract.js'
-import { UsePrepareSendTransactionConfig } from '../useSendTransaction.js'
+import { useMasterChefContract } from '../useMasterChefContract'
+import { UsePrepareSendTransactionConfig } from '../useSendTransaction'
 
 interface UseMasterChefDepositParams {
   chainId: number

@@ -3,7 +3,7 @@ import { getSteerVaultReserves, getSteerVaultsReserves } from '@sushiswap/steer-
 import { useQuery } from '@tanstack/react-query'
 import { usePublicClient } from 'wagmi'
 
-import { clientsFromIds } from './getClientsFromIds.js'
+import { clientsFromIds } from './getClientsFromIds'
 
 interface UseSteerVaultsReserves {
   vaultIds: string[] | undefined
