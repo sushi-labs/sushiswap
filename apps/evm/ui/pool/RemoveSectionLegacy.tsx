@@ -160,7 +160,8 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
         !balance?.[FundSource.WALLET] ||
         !debouncedMinAmount0 ||
         !debouncedMinAmount1 ||
-        !deadline
+        !deadline ||
+        Number(percentage) === 0
       ) {
         return
       }
@@ -250,6 +251,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
     deadline,
     _pool.chainId,
     percentToRemoveDebounced,
+    percentage,
   ])
 
   const { config } = usePrepareSendTransaction({
@@ -257,6 +259,8 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
     chainId: _pool.chainId,
     enabled: Boolean(approved && Number(percentage) > 0),
   })
+
+  console.log(prepare, config, Number(percentage) > 0)
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
     ...config,
