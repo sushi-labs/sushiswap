@@ -1,9 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
+import { getPool } from '@sushiswap/client'
+import { unsanitize } from '@sushiswap/format'
 import { Container, Separator } from '@sushiswap/ui'
+import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import { ManageV2LiquidityCard } from 'ui/pool/ManageV2LiquidityCard'
 import { PoolTransactionsV2 } from 'ui/pool/PoolTransactionsV2'
-import { isAddress } from 'viem'
 
 import {
   PoolPositionProvider,
@@ -19,19 +21,6 @@ import { PoolPosition } from '../../../ui/pool/PoolPosition'
 import { PoolRewards } from '../../../ui/pool/PoolRewards'
 import { PoolStats } from '../../../ui/pool/PoolStats'
 
-export async function getPool({ chainId, address }: { chainId: ChainId; address: string }) {
-  try {
-    if (typeof +chainId !== 'number' || !isAddress(address)) {
-      return
-    }
-    const res = await fetch(`https://pools.sushi.com/api/v0/${chainId}/${address}`, { next: { revalidate: 60 } })
-    const data = await res.json()
-    return data
-  } catch (e) {
-    return
-  }
-}
-
 export default async function PoolPage({
   params,
   tab = 'add',
@@ -39,13 +28,15 @@ export default async function PoolPage({
   params: { id: string }
   tab: 'add' | 'remove' | 'unstake' | 'stake'
 }) {
-  const [_chainId, address] = params.id.split(params.id.includes('%3A') ? '%3A' : ':') as [string, string]
-  const chainId = Number(_chainId) as ChainId
-  const pool = await getPool({ chainId, address })
-  console.log('PoolPage (server)', pool)
+  const poolId = unsanitize(params.id)
+  const pool = await unstable_cache(async () => getPool(poolId), ['pool', poolId], {
+    revalidate: 60 * 15,
+  })()
+
   if (!pool) {
     notFound()
   }
+
   if (pool.protocol === 'SUSHISWAP_V3') {
     return <PoolPageV3 pool={pool} />
   }
