@@ -11,6 +11,7 @@ import {
   CardFooter,
   CardGroup,
   CardLabel,
+  classNames,
   IconButton,
   SettingsModule,
   SettingsOverlay,
@@ -190,7 +191,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
   })
 
   return (
-    <>
+    <div className={classNames((!position || position.liquidity === 0n) && 'opacity-40 pointer-events-none')}>
       <CardContent>
         <CardGroup>
           <div className="p-3 pb-2 space-y-2 overflow-hidden bg-white rounded-xl dark:bg-secondary border border-accent">
@@ -286,6 +287,6 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
           </Checker.Network>
         </Checker.Connect>
       </CardFooter>
-    </>
+    </div>
   )
 }
