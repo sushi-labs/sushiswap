@@ -1,17 +1,20 @@
-import { ChainId } from '@sushiswap/chain'
+import { getPool } from '@sushiswap/client'
+import { unsanitize } from '@sushiswap/format'
 import { LinkInternal } from '@sushiswap/ui'
+import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import React from 'react'
 import { PoolPositionProvider, PoolPositionRewardsProvider, PoolPositionStakedProvider } from 'ui/pool'
 import { ConcentratedLiquidityProvider } from 'ui/pool/ConcentratedLiquidityProvider'
 
 import { MigrateTab } from '../../../../ui/pool/MigrateTab'
-import { getPool } from '../page'
 
 export default async function MigratePage({ params }: { params: { id: string } }) {
-  const [_chainId, address] = params.id.split(params.id.includes('%3A') ? '%3A' : ':') as [string, string]
-  const chainId = Number(_chainId) as ChainId
-  const pool = await getPool({ chainId, address })
+  const poolId = unsanitize(params.id)
+  const pool = await unstable_cache(async () => getPool(poolId), ['pool', poolId], {
+    revalidate: 60 * 15,
+  })()
+
   if (!pool) {
     notFound()
   }
