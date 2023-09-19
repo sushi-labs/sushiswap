@@ -24,9 +24,8 @@ export async function getPool({ chainId, address }: { chainId: ChainId; address:
     if (typeof +chainId !== 'number' || !isAddress(address)) {
       return
     }
-    const res = await fetch(`https://pools.sushi.com/api/v0/${chainId}/${address}`)
+    const res = await fetch(`https://pools.sushi.com/api/v0/${chainId}/${address}`, { next: { revalidate: 60 } })
     const data = await res.json()
-    console.log('getPool (server)', `https://pools.sushi.com/api/v0/${chainId}/${address}`, data)
     return data
   } catch (e) {
     return
