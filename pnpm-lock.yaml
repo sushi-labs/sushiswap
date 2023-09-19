@@ -2853,6 +2853,8 @@ importers:
 
   protocols/tines-sandbox:
     specifiers:
+      '@cryptoalgebra/integral-core': 0.1.0
+      '@cryptoalgebra/integral-periphery': 0.1.0
       '@ethersproject/abi': 5.7.0
       '@ethersproject/bytes': ^5.0.0
       '@ethersproject/providers': 5.7.2
@@ -2914,6 +2916,8 @@ importers:
       typescript: 5.1.6
       viem: 1.10.7
     devDependencies:
+      '@cryptoalgebra/integral-core': 0.1.0
+      '@cryptoalgebra/integral-periphery': 0.1.0
       '@ethersproject/abi': 5.7.0
       '@ethersproject/bytes': 5.7.0
       '@ethersproject/providers': 5.7.2
@@ -6249,6 +6253,22 @@ packages:
   /@corex/deepmerge/4.0.43:
     resolution: {integrity: sha512-N8uEMrMPL0cu/bdboEWpQYb/0i2K5Qn8eCsxzOmxSggJbbQte7ljMRoXm917AbntqTGOzdTu+vP3KOOzoC70HQ==}
     dev: false
+
+  /@cryptoalgebra/integral-core/0.1.0:
+    resolution: {integrity: sha512-x5mjzbWOty/nfMzAidSTdEygqRcPtMEb0bbEpzXpagjmXhbgcOEQTkmpv/pi3IfV3EZyOJ+BDuQG7nUx9yL1+g==}
+    engines: {node: '>=14.0.0', npm: '>=8.0.0'}
+    dependencies:
+      '@openzeppelin/contracts': 4.9.3
+    dev: true
+
+  /@cryptoalgebra/integral-periphery/0.1.0:
+    resolution: {integrity: sha512-wyZE9fW6LDVl10N5Mm4MDug3LozF9ROeFI56wpd3YbMlQsBCBSmGoO2WbXyvOuukioYLcnvunihrpvBNzVRNjA==}
+    engines: {node: '>=14.0.0', npm: '>=8.0.0'}
+    dependencies:
+      '@cryptoalgebra/integral-core': 0.1.0
+      '@openzeppelin/contracts': 4.9.3
+      '@uniswap/v2-core': 1.0.1
+    dev: true
 
   /@cspotcode/source-map-support/0.8.1:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -12421,6 +12441,10 @@ packages:
 
   /@openzeppelin/contracts/4.8.0:
     resolution: {integrity: sha512-AGuwhRRL+NaKx73WKRNzeCxOCOCxpaqF+kp8TJ89QzAipSwZy/NoflkWaL9bywXFRhIzXt8j38sfF7KBKCPWLw==}
+    dev: true
+
+  /@openzeppelin/contracts/4.9.3:
+    resolution: {integrity: sha512-He3LieZ1pP2TNt5JbkPA4PNT9WC3gOTOlDcFGJW4Le4QKqwmiNJCRt44APfxMxvq7OugU/cqYuPcSBzOw38DAg==}
     dev: true
 
   /@peculiar/asn1-schema/2.3.6:

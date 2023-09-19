@@ -31,6 +31,8 @@
     "test_render": "cross-env TS_NODE_TRANSPILE_ONLY=1 mocha ./test/Rendering.test.ts"
   },
   "devDependencies": {
+    "@cryptoalgebra/integral-core": "0.1.0",
+    "@cryptoalgebra/integral-periphery": "0.1.0",
     "@ethersproject/abi": "5.7.0",
     "@ethersproject/bytes": "^5.0.0",
     "@ethersproject/providers": "5.7.2",
