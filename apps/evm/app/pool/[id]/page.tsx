@@ -24,9 +24,9 @@ export async function getPool({ chainId, address }: { chainId: ChainId; address:
     if (typeof +chainId !== 'number' || !isAddress(address)) {
       return
     }
-    const res = await fetch(`https://pools.sushi.com/api/v0/${chainId}/${address}`)
+    const res = await fetch(`https://proxy.lufy.cz/${chainId}/${address}`)
     const data = await res.json()
-    console.log('getPool (server)', `https://pools.sushi.com/api/v0/${chainId}/${address}`, data)
+    console.log('getPool (server)', `https://proxy.lufy.cz/${chainId}/${address}`, data)
     return data
   } catch (e) {
     return
