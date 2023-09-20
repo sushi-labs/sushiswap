@@ -9,4 +9,9 @@ export const STABLES = {
     DAI[ChainId.ETHEREUM],
     LUSD[ChainId.ETHEREUM],
   ],
+  [ChainId.ARBITRUM]: [
+    USDC[ChainId.ARBITRUM],
+    USDT[ChainId.ARBITRUM],
+    DAI[ChainId.ARBITRUM],
+  ],
 } as const

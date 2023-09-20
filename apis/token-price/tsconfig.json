@@ -1,5 +1,5 @@
 {
-  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/esm/tsconfig"],
+  "extends": "@tsconfig/strictest/tsconfig",
   "include": ["."],
   "exclude": ["node_modules", ".vercel"],
   "compilerOptions": {

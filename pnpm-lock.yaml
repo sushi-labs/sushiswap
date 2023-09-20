@@ -238,15 +238,18 @@ importers:
   apis/token-price:
     specifiers:
       '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/tines': workspace:*
       '@tsconfig/esm': 1.0.3
       '@tsconfig/node18': 2.0.0
       '@tsconfig/strictest': 2.0.1
       '@types/node': '18'
       '@vercel/node': 2.14.3
+      '@whatwg-node/fetch': 0.8.4
       date-fns: 2.29.3
       eslint: 8.43.0
       ioredis: 5.3.1
@@ -257,13 +260,16 @@ importers:
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/database': link:../../packages/database
       '@vercel/node': 2.14.3
+      '@whatwg-node/fetch': 0.8.4
       date-fns: 2.29.3
       ioredis: 5.3.1
       zod: 3.21.4
     devDependencies:
+      '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/tines': link:../../packages/tines
       '@tsconfig/esm': 1.0.3
       '@tsconfig/node18': 2.0.0
       '@tsconfig/strictest': 2.0.1
@@ -12440,13 +12446,13 @@ packages:
     dependencies:
       asn1js: 3.0.5
       pvtsutils: 1.3.4
-      tslib: 2.6.1
+      tslib: 2.6.2
 
   /@peculiar/json-schema/1.1.12:
     resolution: {integrity: sha512-coUfuoMeIB7B8/NMekxaDzLhaYmp0HZNPEjYRm9goRou8UZIC3z21s0sL9AWoCw4EG876QyO3kYrc61WNF9B/w==}
     engines: {node: '>=8.0.0'}
     dependencies:
-      tslib: 2.6.1
+      tslib: 2.6.2
 
   /@peculiar/webcrypto/1.4.3:
     resolution: {integrity: sha512-VtaY4spKTdN5LjJ04im/d/joXuvLbQdgy5Z4DXF4MFZhQ+MTrejbNMkfZBp1Bs3O5+bFqnJgyGdPuZQflvIa5A==}
@@ -12455,7 +12461,7 @@ packages:
       '@peculiar/asn1-schema': 2.3.6
       '@peculiar/json-schema': 1.1.12
       pvtsutils: 1.3.4
-      tslib: 2.6.1
+      tslib: 2.6.2
       webcrypto-core: 1.7.7
 
   /@pkgjs/parseargs/0.11.0:
@@ -20057,7 +20063,7 @@ packages:
       busboy: 1.6.0
       fast-querystring: 1.1.2
       fast-url-parser: 1.1.3
-      tslib: 2.6.1
+      tslib: 2.6.2
 
   /@whatwg-node/node-fetch/0.4.13:
     resolution: {integrity: sha512-Wijn8jtXq6VBX6EttABXHJIQBcoOP6RRQllXbiaHGORACTDr1xg6g2UnkoggY3dbDkm1VsMjdSe7NVBPc4ukYg==}
@@ -21002,7 +21008,7 @@ packages:
     dependencies:
       pvtsutils: 1.3.4
       pvutils: 1.1.3
-      tslib: 2.6.1
+      tslib: 2.6.2
 
   /assert-plus/1.0.0:
     resolution: {integrity: sha512-NfJ4UzBCcQGLDlQq7nHxH+tv3kyZ0hHQqF5BO6J7tNJeP5do1llPr8dZ8zHonfhAu0PHAdMkSo+8o0wxg9lZWw==}
@@ -35657,7 +35663,7 @@ packages:
   /pvtsutils/1.3.4:
     resolution: {integrity: sha512-Y2lmrVPui6d2U0n8lWRSTQ2Ri/0VDcA/BHAPS8/+5ElWp5drG4oPryLaqnehJT71Q2GgmGeB4mau+lSR1gCCmA==}
     dependencies:
-      tslib: 2.6.1
+      tslib: 2.6.2
 
   /pvutils/1.1.3:
     resolution: {integrity: sha512-pMpnA0qRdFp32b1sJl1wOJNxZLQ2cbQx+k6tjNtZ8CpvVhNqEPRgivZ2WOUev2YMajecdH7ctUPDvEe87nariQ==}
@@ -41516,7 +41522,7 @@ packages:
       '@peculiar/json-schema': 1.1.12
       asn1js: 3.0.5
       pvtsutils: 1.3.4
-      tslib: 2.6.1
+      tslib: 2.6.2
 
   /webidl-conversions/3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
