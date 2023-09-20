@@ -1,16 +1,16 @@
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { FC } from 'react'
+import { Article } from 'types'
 
 import { ArticleList } from '../ArticleList'
 import { Card } from '../Card'
 import { ProductSectionTitle } from './ProductSectionTitle'
-import { ArticleEntity } from '.mesh'
 
 interface ProductArticles {
   title: string
   productName: string
-  articles: ArticleEntity[]
+  articles: Article[]
   subtitle: string
   isLoading: boolean
 }

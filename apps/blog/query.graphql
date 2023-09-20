@@ -6,10 +6,14 @@ query articleAndMoreArticles(
 ) {
   articles(locale: $locale, filters: $filters, publicationState: $publicationState) {
     data {
+      id
       attributes {
         title
         description
+        ghostSlug
         slug
+        createdAt
+        updatedAt
         publishedAt
         categories {
           data {
@@ -53,46 +57,6 @@ query articleAndMoreArticles(
               name
               email
               handle
-            }
-          }
-        }
-        blocks {
-          __typename
-          ... on ComponentSharedDivider {
-            id
-          }
-          ... on ComponentSharedMedia {
-            caption
-            file {
-              data {
-                attributes {
-                  alternativeText
-                  height
-                  width
-                  caption
-                  name
-                  url
-                  provider_metadata
-                }
-              }
-            }
-          }
-          ... on ComponentSharedRichText {
-            body
-          }
-          ... on ComponentSharedSlider {
-            files {
-              data {
-                attributes {
-                  alternativeText
-                  height
-                  width
-                  caption
-                  name
-                  url
-                  provider_metadata
-                }
-              }
             }
           }
         }
@@ -247,6 +211,7 @@ query getArticles($filters: ArticleFiltersInput, $pagination: PaginationArg) {
       attributes {
         title
         description
+        ghostSlug
         slug
         publishedAt
         categories {
@@ -294,48 +259,6 @@ query getArticles($filters: ArticleFiltersInput, $pagination: PaginationArg) {
               name
               email
               handle
-            }
-          }
-        }
-        blocks {
-          __typename
-          ... on ComponentSharedDivider {
-            id
-          }
-          ... on ComponentSharedMedia {
-            caption
-            file {
-              data {
-                id
-                attributes {
-                  alternativeText
-                  height
-                  width
-                  caption
-                  name
-                  url
-                  provider_metadata
-                }
-              }
-            }
-          }
-          ... on ComponentSharedRichText {
-            body
-          }
-          ... on ComponentSharedSlider {
-            files {
-              data {
-                id
-                attributes {
-                  alternativeText
-                  height
-                  width
-                  caption
-                  name
-                  url
-                  provider_metadata
-                }
-              }
             }
           }
         }

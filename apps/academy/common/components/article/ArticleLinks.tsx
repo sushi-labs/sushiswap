@@ -2,12 +2,11 @@ import { EnvelopeIcon, LinkIcon } from '@heroicons/react/24/outline'
 import { ClipboardController } from '@sushiswap/ui'
 import { TwitterIcon } from '@sushiswap/ui/components/icons'
 import { getShareText } from 'common/helpers'
+import { GhostArticle } from 'lib/ghost'
 import { FC } from 'react'
 
-import { ArticleEntity } from '../../../.mesh'
-
 interface ArticleLinks {
-  article?: ArticleEntity
+  article?: GhostArticle
 }
 
 export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {

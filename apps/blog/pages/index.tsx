@@ -4,6 +4,7 @@ import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Container } from '@sushiswap/ui/components/container'
 import BlogSeo from 'components/Seo/BlogSeo'
+import { GhostArticle } from 'lib/ghost'
 import { InferGetServerSidePropsType } from 'next'
 import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
@@ -17,8 +18,8 @@ export async function getStaticProps() {
   return {
     props: {
       fallback: {
-        ['/articles']: articles?.articles || [],
-        ['/categories']: categories?.categories || [],
+        '/articles': articles?.articles || [],
+        '/categories': categories?.categories || [],
       },
     },
     revalidate: 60,
@@ -38,7 +39,7 @@ const _Home: FC = () => {
   const debouncedQuery = useDebounce(query, 200)
 
   const [selected, setSelected] = useState<string[]>([])
-  const { data: articlesData } = useSWR<Collection<Article>>('/articles')
+  const { data: articlesData } = useSWR<Collection<GhostArticle>>('/articles')
   const { data: categoriesData } = useSWR<Collection<Category>>('/categories')
 
   const { data: filterData, isValidating } = useSWR(

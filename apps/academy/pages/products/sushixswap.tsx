@@ -15,11 +15,9 @@ import { WideTriangle } from 'common/icons'
 import { PRODUCTS_DATA } from 'common/productsData'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
-import Image from 'next/image'
+import Image from "next/legacy/image"
 import { FC } from 'react'
 import useSWR from 'swr'
-
-import { ArticleEntity } from '.mesh'
 
 const PRODUCT_SLUG = 'sushixswap'
 const { color, cards, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
@@ -39,7 +37,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   relevantArticleIds,
 }) => {
   const { data, isValidating } = useSWR(
-    ['/bentobox-articles'],
+    ['/sushiswapx-articles'],
     async () => await getLatestAndRelevantArticles(slug, relevantArticleIds),
     {
       revalidateOnFocus: false,
@@ -48,8 +46,8 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
     }
   )
 
-  const latestArticles: ArticleEntity[] = data?.articles?.data ?? []
-  const relevantArticles: ArticleEntity[] = data?.relevantArticles?.data ?? []
+  const latestArticles = data?.articles ?? []
+  const relevantArticles = data?.relevantArticles ?? []
 
   return (
     <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', DEFAULT_SIDE_PADDING)}>

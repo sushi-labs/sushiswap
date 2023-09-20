@@ -467,8 +467,15 @@ export class Graph {
     })
     processedVert.forEach((v) => {
       const gasPriceChainId = gasPrice.get(v.token.chainId) as number
-      console.assert(gasPriceChainId !== undefined, 'Error 427')
-      console.assert(v.price !== 0, 'Error 428')
+      console.assert(
+        gasPriceChainId !== undefined,
+        `Error 427: token {${v.token.address} ${v.token.symbol}} has unknown chainId ${v.token.chainId}.` +
+          `Known chainIds: ${Array.from(gasPrice.keys())}`
+      )
+      console.assert(
+        v.price !== 0,
+        `Error 428: token {${v.token.address} ${v.token.symbol} ${v.token.chainId}} was not priced`
+      )
       v.gasPrice = gasPriceChainId / v.price
     })
   }

@@ -32,10 +32,13 @@ export interface HeaderSection {
   isExternal?: boolean
 }
 
-const PRODUCTS_ORDER = ['trident', 'furo', 'sushixswap', 'onsen', 'kashi', 'miso', 'bentobox']
+const PRODUCTS_ORDER = ['trident', 'furo', 'sushixswap', 'onsen', 'kashi', 'bentobox']
 
 export const Header: FC = () => {
-  const { data: productsData } = useSWR('/products', async () => (await getProducts())?.products)
+  const { data: productsData } = useSWR(
+    '/products',
+    async () => (await getProducts({ filters: { show: { eq: true } } }))?.products
+  )
   const { data: difficultiesData } = useSWR('/difficulties', async () => (await getDifficulties())?.difficulties)
 
   const products = useMemo(() => productsData?.data ?? [], [productsData?.data])
@@ -54,7 +57,7 @@ export const Header: FC = () => {
         title: 'Products',
         links: sortedProducts.map(({ attributes }) => ({
           name: attributes?.longName as string,
-          href: `/products/${attributes?.slug}`,
+          href: `/academy/products/${attributes?.slug}`,
         })),
       },
       {
@@ -69,7 +72,7 @@ export const Header: FC = () => {
         }),
       },
       { title: 'Blog', href: 'https://www.sushi.com/blog', isExternal: true },
-      { title: 'About', href: `/about` },
+      { title: 'About', href: '/about' },
     ],
     [difficulties, sortedProducts]
   )
