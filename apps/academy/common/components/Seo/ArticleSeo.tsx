@@ -1,11 +1,12 @@
+import { GhostArticle } from 'lib/ghost'
 import { ArticleJsonLd, NextSeo } from 'next-seo'
 import { FC } from 'react'
 
-import { Article, Maybe } from '../../../.mesh'
+import { Maybe } from '../../../.mesh'
 import { getOptimizedMedia, isMediaVideo } from '../../../lib/media'
 
 interface ArticleSeo {
-  article?: Maybe<Article> | undefined
+  article?: Maybe<GhostArticle['attributes']> | undefined
 }
 
 export const ArticleSeo: FC<ArticleSeo> = ({ article }) => {
