@@ -5,7 +5,6 @@ import { Address, Hex } from 'viem'
 
 import { convertTokenToBento, getBentoChainId } from './lib/convert'
 import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
-import { Bridge } from './pools/Bridge'
 import { PoolCode } from './pools/PoolCode'
 import { getRouteProcessorCode } from './TinesToRouteProcessor'
 import { getRouteProcessor2Code, PermitData, RouterLiquiditySource } from './TinesToRouteProcessor2'
@@ -36,62 +35,6 @@ export interface RPParams {
 export type PoolFilter = (list: RPool) => boolean
 
 export class Router {
-  static findRouteType(poolCodesMap: Map<string, PoolCode>, addresses: string[]) {
-    // const poolCodes = addresses.map(address => poolCodesMap.get(address))
-    if (
-      addresses?.every((address) => {
-        const poolName = poolCodesMap.get(address)?.poolName
-        return (
-          poolName?.startsWith('Wrap') ||
-          poolName?.startsWith(LiquidityProviders.SushiSwapV2) ||
-          poolName?.startsWith(LiquidityProviders.SushiSwapV3) ||
-          poolName?.startsWith(LiquidityProviders.Trident) ||
-          poolName?.startsWith(Bridge.BentoBox)
-        )
-      })
-    ) {
-      return 'Internal'
-    } else if (
-      addresses?.some((address) => {
-        const poolName = poolCodesMap.get(address)?.poolName
-        return (
-          !poolName?.startsWith('Wrap') &&
-          (poolName?.startsWith(LiquidityProviders.SushiSwapV2) ||
-            poolName?.startsWith(LiquidityProviders.SushiSwapV3) ||
-            poolName?.startsWith(LiquidityProviders.Trident) ||
-            poolName?.startsWith(Bridge.BentoBox))
-        )
-      }) &&
-      addresses?.some((address) => {
-        const poolName = poolCodesMap.get(address)?.poolName
-        return (
-          !poolName?.startsWith('Wrap') &&
-          (!poolName?.startsWith(LiquidityProviders.SushiSwapV2) ||
-            !poolName?.startsWith(LiquidityProviders.SushiSwapV3) ||
-            !poolName?.startsWith(LiquidityProviders.Trident) ||
-            !poolName?.startsWith(Bridge.BentoBox))
-        )
-      })
-    ) {
-      return 'Mix'
-    } else if (
-      addresses?.some((address) => {
-        const poolName = poolCodesMap.get(address)?.poolName
-        return (
-          poolName?.startsWith('Wrap') ||
-          (!poolName?.startsWith(LiquidityProviders.SushiSwapV2) &&
-            !poolName?.startsWith(LiquidityProviders.SushiSwapV3) &&
-            !poolName?.startsWith(LiquidityProviders.Trident) &&
-            !poolName?.startsWith(Bridge.BentoBox))
-        )
-      })
-    ) {
-      return 'External'
-    }
-
-    return 'Unknown'
-  }
-
   static findSushiRoute(
     poolCodesMap: Map<string, PoolCode>,
     chainId: ChainId,

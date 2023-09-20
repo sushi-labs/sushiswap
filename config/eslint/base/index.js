@@ -38,7 +38,12 @@ module.exports = {
     'no-unused-vars': 'warn',
     'simple-import-sort/exports': 'warn',
     'simple-import-sort/imports': 'warn',
-    'turbo/no-undeclared-env-vars': 'warn',
+    'turbo/no-undeclared-env-vars': [
+      'warn',
+      {
+        allowList: [],
+      },
+    ],
     'unused-imports/no-unused-imports': 'warn',
     'unused-imports/no-unused-vars': 'warn',
   },
