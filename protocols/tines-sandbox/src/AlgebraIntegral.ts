@@ -1,5 +1,6 @@
 import AlgebraFactory from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraFactory.sol/AlgebraFactory.json'
 import AlgebraPoolDeployer from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraPoolDeployer.sol/AlgebraPoolDeployer.json'
+import NFTDescriptor from '@cryptoalgebra/integral-periphery/artifacts/contracts/libraries/NFTDescriptor.sol/NFTDescriptor.json'
 import NonfungiblePositionManager from '@cryptoalgebra/integral-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import NonfungibleTokenPositionDescriptor from '@cryptoalgebra/integral-periphery/artifacts/contracts/NonfungibleTokenPositionDescriptor.sol/NonfungibleTokenPositionDescriptor.json'
 import { ChainId } from '@sushiswap/chain'
@@ -9,6 +10,33 @@ import { waitForTransactionReceipt } from 'viem/actions'
 
 const getDeploymentAddress = async (client: WalletClient, promise: Promise<Hex>) =>
   waitForTransactionReceipt(client, { hash: await promise }).then((receipt) => receipt.contractAddress as Address)
+
+function linkContractLibraries(
+  contract: {
+    bytecode: string
+    linkReferences: Record<string, Record<string, { length: number; start: number }[]>>
+  },
+  libs: Record<string, Address>
+): Hex {
+  let bytecode = contract.bytecode
+  const pimaryLength = bytecode.length
+  Object.values(contract.linkReferences).forEach((links) => {
+    Object.entries(links).forEach(([link, places]) => {
+      const addr = libs[link]
+      if (addr) {
+        const address = addr.substring(2).padStart(40, '0')
+        console.assert(address.length === 40, 'Unexpected address length')
+        places.forEach(({ start }) => {
+          bytecode = bytecode.substring(0, start * 2 + 2) + address + bytecode.substring((start + 20) * 2 + 2)
+        })
+      }
+    })
+  })
+  console.assert(bytecode.search(/[_$]/) === -1, `Unexpected bytecode linking`)
+  console.assert(bytecode.length === pimaryLength, 'Unexpected bytecode length')
+
+  return bytecode as Hex
+}
 
 export interface AlgebraIntegralPeriphery {
   deployer: Address
@@ -32,13 +60,17 @@ export async function createAlgebraIntegralPeriphery(
   const nextTransactionNonce = await client.getTransactionCount({ address: deployer })
   const poolDeployerAddress = getContractAddress({ from: deployer, nonce: BigInt(nextTransactionNonce) + 1n })
 
-  async function deploy(contract: { abi: unknown; bytecode: string }, args?: unknown[]): Promise<Address> {
+  async function deploy(
+    contract: { abi: unknown; bytecode: string },
+    args?: unknown[],
+    bytecode?: Hex
+  ): Promise<Address> {
     return getDeploymentAddress(
       client,
       client.deployContract({
         chain: null,
         abi: contract.abi as Abi,
-        bytecode: contract.bytecode as Hex,
+        bytecode: bytecode ?? (contract.bytecode as Hex),
         account: deployer as Address,
         args,
       })
@@ -47,16 +79,6 @@ export async function createAlgebraIntegralPeriphery(
 
   // Algebra Factory
   const factoryAddress = await deploy(AlgebraFactory, [poolDeployerAddress])
-  // const factoryAddress = await getDeploymentAddress(
-  //   client,
-  //   client.deployContract({
-  //     chain: null,
-  //     abi: AlgebraFactory.abi,
-  //     bytecode: AlgebraFactory.bytecode as Hex,
-  //     account: deployer,
-  //     args: [poolDeployerAddress],
-  //   })
-  // )
 
   // Algebra Vault
   const vaultAddress = (await client.readContract({
@@ -67,49 +89,23 @@ export async function createAlgebraIntegralPeriphery(
 
   // Algebra PoolDeployer
   const poolDeployerAddressReal = await deploy(AlgebraPoolDeployer, [factoryAddress, vaultAddress])
-  // const poolDeployerAddressReal = await getDeploymentAddress(
-  //   client,
-  //   client.deployContract({
-  //     chain: null,
-  //     abi: AlgebraPoolDeployer.abi,
-  //     bytecode: AlgebraPoolDeployer.bytecode as Hex,
-  //     account: deployer,
-  //     args: [factoryAddress, vaultAddress],
-  //   })
-  // )
-  console.assert(poolDeployerAddress == poolDeployerAddressReal, 'Unexpected deploy behaviour!')
+  console.assert(
+    poolDeployerAddress.toLowerCase() == poolDeployerAddressReal.toLowerCase(),
+    `Unexpected deploy behaviour! ${poolDeployerAddress} ${poolDeployerAddressReal}`
+  )
 
   // Algebra NFTDescriptor
-  //const NFTDescriptorAddress = await deploy(NFTDescriptor)
-  // const NFTDescriptorAddress = await getDeploymentAddress(
-  //   client,
-  //   client.deployContract({
-  //     chain: null,
-  //     abi: NFTDescriptor.abi,
-  //     bytecode: NFTDescriptor.bytecode as Hex,
-  //     account: deployer,
-  //   })
-  // )
+  const NFTDescriptorAddress = await deploy(NFTDescriptor)
 
   // Algebra NonfungibleTokenPositionDescriptor
-  // How deploy with library ?
   const WNativeAddress = WNATIVE_ADDRESS[client.chain?.id as ChainId]
-  const NonfungibleTokenPositionDescriptorAddress = await deploy(NonfungibleTokenPositionDescriptor, [
-    WNativeAddress,
-    'AA',
-    [],
-  ])
-  // const NonfungibleTokenPositionDescriptorAddress = await getDeploymentAddress(
-  //   client,
-  //   client.deployContract({
-  //     chain: null,
-  //     abi: NonfungibleTokenPositionDescriptor.abi,
-  //     bytecode: NonfungibleTokenPositionDescriptor.bytecode as Hex,
-  //     account: deployer,
-  //     args: [WNATIVE_ADDRESS[client.chain?.id as ChainId], 'AA', []],
-  //   })
-  // )
+  const NonfungibleTokenPositionDescriptorAddress = await deploy(
+    NonfungibleTokenPositionDescriptor,
+    [WNativeAddress, 'AA', []],
+    linkContractLibraries(NonfungibleTokenPositionDescriptor, { NFTDescriptor: NFTDescriptorAddress })
+  )
 
+  // Algebra NonfungiblePositionManager
   const NonfungiblePositionManagerAddress = await deploy(NonfungiblePositionManager, [
     factoryAddress,
     WNativeAddress,
