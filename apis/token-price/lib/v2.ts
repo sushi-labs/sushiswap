@@ -67,7 +67,13 @@ async function fetchPoolCodes(chainId: number) {
 }
 
 function mapPool(poolCode: PoolCode) {
-  if (['SushiSwapV2'.toLowerCase(), 'UniswapV2'.toLowerCase()].includes(poolCode.liquidityProvider.toLowerCase())) {
+    // Assumption, if all v3 fields are undefined, it's a v2 pool, otherwise v3. then we don't have to check the liquidity provider
+  if (
+    poolCode.pool.sqrtPriceX96 === undefined &&
+    poolCode.pool.liquidity === undefined &&
+    poolCode.pool.nearestTick === undefined &&
+    poolCode.pool.ticks === undefined
+    ) {
     return new ConstantProductRPool(
       poolCode.pool.address as `0x${string}`,
       poolCode.pool.token0 as RToken,
@@ -77,7 +83,6 @@ function mapPool(poolCode: PoolCode) {
       BigInt(poolCode.pool.reserve1)
     )
   } else if (
-    ['SushiSwapV3'.toLowerCase(), 'UniswapV3'.toLowerCase()].includes(poolCode.liquidityProvider.toLowerCase()) &&
     poolCode.pool.nearestTick &&
     poolCode.pool.liquidity &&
     poolCode.pool.sqrtPriceX96 &&
