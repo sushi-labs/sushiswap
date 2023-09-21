@@ -18,6 +18,7 @@ describe('AlgebraIntegral test', () => {
   let client
   let env: AlgebraIntegralPeriphery
   let testTokens: TestTokens
+  let user
 
   before(async () => {
     const provider = await createHardhatProviderEmptyBlockchain()
@@ -37,12 +38,13 @@ describe('AlgebraIntegral test', () => {
     env = await createAlgebraIntegralPeriphery(client)
     testTokens = await createTestTokens(client)
     await approveTestTokensToPerifery(client, env, testTokens)
+    user = testTokens.owner
   })
 
   it('Create a pool', async () => {
     const tokens = testTokens.tokens
     const [t0, t1] = tokens[0].sortsBefore(tokens[1]) ? [tokens[0], tokens[1]] : [tokens[1], tokens[0]]
-    const poolAddress = await deployPoolAndMint(client, env, t0, t1)
+    const poolAddress = await deployPoolAndMint(client, env, t0, t1, [{ from: -540, to: 540, val: 10n ** 18n }], user)
     expect(poolAddress).not.equal('0x0000000000000000000000000000000000000000')
   })
 })

@@ -62,7 +62,7 @@ export async function approveToken(
   spender: Address,
   amount: bigint
 ) {
-  await client.writeContract({
+  return await client.writeContract({
     chain: null,
     abi: erc20Abi,
     address: token.address as Address,

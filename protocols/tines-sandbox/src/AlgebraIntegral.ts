@@ -133,7 +133,7 @@ export async function approveTestTokensToPerifery(
   env: AlgebraIntegralPeriphery,
   tokens: TestTokens
 ) {
-  Promise.all(
+  await Promise.all(
     tokens.tokens.map((t) =>
       approveToken(client, t, tokens.owner, env.NonfungiblePositionManagerAddress, tokens.supply)
     )
@@ -155,9 +155,9 @@ export async function deployPoolAndMint(
   client: PublicClient & WalletClient,
   env: AlgebraIntegralPeriphery,
   token0: Token,
-  token1: Token
-  // mintRanges?: Range[],
-  // user?: Address
+  token1: Token,
+  mintRanges?: Range[],
+  user?: Address
 ): Promise<Address> {
   await client.writeContract({
     chain: null,
@@ -167,6 +167,12 @@ export async function deployPoolAndMint(
     functionName: 'createAndInitializePoolIfNecessary',
     args: [token0.address, token1.address, encodePriceSqrt(1, 1)],
   })
+
+  if (mintRanges) {
+    user = user ?? env.deployer
+    await Promise.all(mintRanges.map((range) => mint(client, env, token0, token1, user as Address, range)))
+  }
+
   const poolAddress = (await client.readContract({
     abi: env.factoryABI,
     address: env.factoryAddress,
@@ -174,36 +180,31 @@ export async function deployPoolAndMint(
     args: [token0.address, token1.address],
   })) as Address
 
-  // if (mintRanges) {
-  //   user = user ?? env.deployer
-  //   const totalAmount = new
-  // }
-
   return poolAddress
 }
 
 export async function mint(
   client: WalletClient,
   env: AlgebraIntegralPeriphery,
-  pool: Address,
   token0: Token,
   token1: Token,
-  recipient: Address
+  recipient: Address,
+  range: Range
 ) {
   const mintParams = {
-    token0,
-    token1,
-    tickLower: -887220,
-    tickUpper: 887220,
-    amount0Desired: 10n * 10n ** 18n,
-    amount1Desired: 10n * 10n ** 18n,
+    token0: token0.address,
+    token1: token1.address,
+    tickLower: range.from,
+    tickUpper: range.to,
+    amount0Desired: range.val,
+    amount1Desired: range.val,
     amount0Min: 0,
     amount1Min: 0,
     recipient,
     deadline: 2n ** 32n - 1n,
   }
 
-  await client.writeContract({
+  return await client.writeContract({
     chain: null,
     abi: env.NonfungiblePositionManagerABI,
     address: env.NonfungiblePositionManagerAddress,
