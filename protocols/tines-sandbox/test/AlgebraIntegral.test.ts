@@ -5,10 +5,11 @@ import { hardhat } from 'viem/chains'
 
 import {
   AlgebraIntegralPeriphery,
+  approveTestTokensToPerifery,
   createAlgebraIntegralPeriphery,
   createHardhatProviderEmptyBlockchain,
   createTestTokens,
-  deployPool,
+  deployPoolAndMint,
   TestTokens,
 } from '../src'
 
@@ -35,12 +36,13 @@ describe('AlgebraIntegral test', () => {
     }).extend(walletActions)
     env = await createAlgebraIntegralPeriphery(client)
     testTokens = await createTestTokens(client)
+    await approveTestTokensToPerifery(client, env, testTokens)
   })
 
   it('Create a pool', async () => {
     const tokens = testTokens.tokens
     const [t0, t1] = tokens[0].sortsBefore(tokens[1]) ? [tokens[0], tokens[1]] : [tokens[1], tokens[0]]
-    const poolAddress = await deployPool(client, env, t0, t1)
+    const poolAddress = await deployPoolAndMint(client, env, t0, t1)
     expect(poolAddress).not.equal('0x0000000000000000000000000000000000000000')
   })
 })

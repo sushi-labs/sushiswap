@@ -54,3 +54,26 @@ export async function createTestTokens(
     tokenABI: erc20Abi,
   }
 }
+
+export async function approveToken(
+  client: WalletClient,
+  token: Token,
+  user: Address,
+  spender: Address,
+  amount: bigint
+) {
+  await client.writeContract({
+    chain: null,
+    abi: erc20Abi,
+    address: token.address as Address,
+    account: user,
+    functionName: 'approve',
+    args: [spender, amount],
+  })
+}
+
+// export interface UserWithTokens {
+//   user: Address
+//   token: [Token, number]
+
+// }
