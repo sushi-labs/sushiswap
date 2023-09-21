@@ -33,14 +33,17 @@ export const SteerAPRHoverCard: FC<SteerAPRHoverCardProps> = ({ children, pool, 
   const card = (
     <>
       <CardHeader>
-        <CardTitle>{formatPercent(vault.apr1w + pool.incentiveApr)} </CardTitle>
-        <span className="ml-1 text-sm font-normal text-muted-foreground">
-          {formatPercent(vault.apr1w)} fees {pool.isIncentivized ? `+ ${formatPercent(pool.incentiveApr)} rewards` : ''}
-        </span>
+        <CardTitle>
+          {formatPercent(vault.apr1w + pool.incentiveApr)}{' '}
+          <span className="ml-1 text-sm font-normal text-muted-foreground">
+            {formatPercent(vault.apr1w)} fees{' '}
+            {pool.isIncentivized ? `+ ${formatPercent(pool.incentiveApr)} rewards` : ''}
+          </span>
+        </CardTitle>
         <CardDescription className="text-xs font-normal">
-          Vault APR is calculated based on the vault fees over the last 7 days
-          {pool.isIncentivized ? ', reward APR is based on the last 24 hours' : ''}.{' '}
-          <b>The APR displayed is algorithmic and subject to change.</b>
+          Vault APR is calculated based on the vault fees over the last 7 days.
+          <br />
+          {pool.isIncentivized ? 'Reward APR is based on the last 24 hours' : ''}.<br />
         </CardDescription>
       </CardHeader>
       {pool.isIncentivized ? (
@@ -66,6 +69,7 @@ export const SteerAPRHoverCard: FC<SteerAPRHoverCardProps> = ({ children, pool, 
               </ul>
             </ReplyContent>
           </Reply>
+          <span className="text-xs text-muted-foreground">The APR displayed is algorithmic and subject to change.</span>
         </CardContent>
       ) : null}
     </>
@@ -75,8 +79,8 @@ export const SteerAPRHoverCard: FC<SteerAPRHoverCardProps> = ({ children, pool, 
     <>
       <div className="hidden sm:block">
         <HoverCard openDelay={0} closeDelay={0}>
-          <HoverCardTrigger asChild>{children}</HoverCardTrigger>
-          <HoverCardContent side="right" className="!p-0 max-w-[320px]">
+          <HoverCardTrigger>{children}</HoverCardTrigger>
+          <HoverCardContent side="left" className="!p-0 max-w-fit">
             {card}
           </HoverCardContent>
         </HoverCard>

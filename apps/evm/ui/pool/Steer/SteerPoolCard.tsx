@@ -1,3 +1,5 @@
+'use client'
+
 import { Pool } from '@sushiswap/client'
 import { formatPercent, formatUSD } from '@sushiswap/format'
 import {
@@ -42,11 +44,10 @@ export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
         <Separator />
         <CardContent className="pt-6">
           <Stat className="!p-0">
-            <StatLabel>Weekly APR</StatLabel>
+            <StatLabel size="sm">Weekly APR</StatLabel>
             <SteerAPRHoverCard pool={pool} vault={vault}>
               <StatValue
-                size="sm"
-                className={classNames(pool.isIncentivized && 'underline decoration-dotted underline-offset-3')}
+                className={classNames(pool.isIncentivized && 'underline decoration-dotted underline-offset-4 z-10')}
               >
                 {formatPercent(vault.apr1w + pool.incentiveApr)}
               </StatValue>
@@ -72,24 +73,6 @@ export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
         <CardContent className="pt-6">
           <SteerLiquidityDistributionWidget vault={vault} />
         </CardContent>
-        {/* <div className="flex flex-col divide-y divide-accent">
-          <div className="flex items-center p-6 gap-6">
-            <FaceSmileIcon className="w-10 h-10 text-blue" />
-            <div className="flex flex-col">
-              <span className="text-sm font-medium">Good for like-kind assets and stable pairs</span>
-              <span className="text-sm text-muted-foreground">Flexible adjustment to price movements.</span>
-            </div>
-          </div>
-          <div className="flex items-center p-6 gap-6">
-            <ExclamationCircleIcon className="w-10 h-10 text-gren" />
-            <div className="flex flex-col">
-              <span className="text-sm font-medium">Low impermanent loss risk</span>
-              <span className="text-sm text-muted-foreground">
-                Real return is less likely to suffer from impermanent loss.
-              </span>
-            </div>
-          </div>
-        </div> */}
       </Card>
     </LinkInternal>
   )

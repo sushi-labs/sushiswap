@@ -57,7 +57,7 @@ export const PoolHeader: FC<PoolHeader> = ({ backUrl, address, pool, apy, priceR
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
           <LinkInternal href={backUrl} className="text-blue hover:underline text-sm">
-            ← Pools
+            ← View all pools
           </LinkInternal>
           <div className="relative flex items-center gap-3">
             <Currency.IconList iconWidth={36} iconHeight={36}>

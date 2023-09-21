@@ -1,15 +1,17 @@
 'use client'
 
 import { getSteerVaultAprTimeseries } from '@sushiswap/steer-sdk'
+import { SkeletonBox } from '@sushiswap/ui'
 import ReactECharts, { EChartsOption } from 'echarts-for-react'
 import React, { useMemo } from 'react'
 import ReactVirtualizedAutoSizer from 'react-virtualized-auto-sizer'
 
 interface _SteerAPRChartProps {
-  timeseries: Awaited<ReturnType<typeof getSteerVaultAprTimeseries>>
+  loading: boolean
+  timeseries: Awaited<ReturnType<typeof getSteerVaultAprTimeseries>> | null | undefined
 }
 
-export function _SteerAPRChart({ timeseries }: _SteerAPRChartProps) {
+export function _SteerAPRChart({ timeseries, loading }: _SteerAPRChartProps) {
   const chartConfig = useMemo<EChartsOption>(
     () => ({
       toolbox: {
@@ -80,7 +82,9 @@ export function _SteerAPRChart({ timeseries }: _SteerAPRChartProps) {
     ]
   }, [timeseries])
 
-  if (!timeseries)
+  if (loading) return <SkeletonBox className="w-full h-full" />
+
+  if (!timeseries && !loading)
     return <div className="w-full h-full items-center flex justify-center">Failed to fetch chart data.</div>
 
   return (

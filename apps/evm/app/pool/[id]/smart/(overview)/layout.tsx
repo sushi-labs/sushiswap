@@ -6,20 +6,18 @@ export default async function Layout({ children, params }: { children: React.Rea
     <div className="flex flex-col gap-4">
       <Container maxWidth="5xl" className="px-2 sm:px-4">
         <LinkInternal href={`/pool/${params.id}`} className="text-blue hover:underline text-sm">
-          ← Back
+          ← Pool details
         </LinkInternal>
-        <CardHeader className="!px-0 text-center">
+        <CardHeader className="!px-0 !pb-0">
           <CardTitle>Smart Pools.</CardTitle>
-          <CardDescription>
+          <CardDescription className="max-w-lg">
             Smart pools optimize liquidity allocation within custom price ranges, enhancing trading efficiency by
             providing deeper liquidity around the current price, increasing LPs{"'"} fee earnings while allowing the
             market to determine the distribution of rational LPs{"'"} positions.
           </CardDescription>
         </CardHeader>
       </Container>
-      <Container maxWidth="screen-3xl" className="px-2 sm:px-4">
-        {children}
-      </Container>
+      {children}
     </div>
   )
 }
