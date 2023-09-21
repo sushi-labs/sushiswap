@@ -2,7 +2,6 @@ import { balanceOfAbi, getReservesAbi, getStableReservesAbi, totalsAbi } from '@
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import type { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { PrismaClient } from '@sushiswap/database'
 import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBI } from '@sushiswap/tines'
 import {
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
@@ -12,7 +11,7 @@ import {
 import { add, getUnixTime } from 'date-fns'
 import { Address, PublicClient } from 'viem'
 
-import { discoverNewPools, filterOnDemandPools, filterTopPools, getAllPools, mapToken, PoolResponse2 } from '../lib/api'
+import { filterOnDemandPools, filterTopPools, mapToken, PoolResponse2 } from '../lib/api'
 import { BentoBridgePoolCode } from '../pools/BentoBridge'
 import { BentoPoolCode } from '../pools/BentoPool'
 import type { PoolCode } from '../pools/PoolCode'
@@ -73,17 +72,13 @@ export class TridentProvider extends LiquidityProvider {
   blockListener?: () => void
   unwatchBlockNumber?: () => void
 
-  databaseClient: PrismaClient | undefined
+  // databaseClient: PrismaClient | undefined
 
-  constructor(
-    chainId: Extract<ChainId, BentoBoxChainId & TridentChainId>,
-    web3Client: PublicClient,
-    databaseClient?: PrismaClient
-  ) {
+  constructor(chainId: Extract<ChainId, BentoBoxChainId & TridentChainId>, web3Client: PublicClient) {
     super(chainId, web3Client)
     this.chainId = chainId
 
-    this.databaseClient = databaseClient
+    // this.databaseClient = databaseClient
     if (
       !(chainId in this.bentoBox) ||
       !(chainId in this.constantProductPoolFactory) ||
@@ -130,13 +125,13 @@ export class TridentProvider extends LiquidityProvider {
   }
 
   private async getInitialPools(): Promise<Map<string, PoolResponse2>> {
-    if (this.databaseClient) {
-      const pools = await getAllPools(this.databaseClient, this.chainId, 'SushiSwap', 'TRIDENT', [
-        'CONSTANT_PRODUCT_POOL',
-        'STABLE_POOL',
-      ])
-      return pools
-    }
+    // if (this.databaseClient) {
+    //   const pools = await getAllPools(this.databaseClient, this.chainId, 'SushiSwap', 'TRIDENT', [
+    //     'CONSTANT_PRODUCT_POOL',
+    //     'STABLE_POOL',
+    //   ])
+    //   return pools
+    // }
     return new Map()
   }
 
@@ -763,34 +758,34 @@ export class TridentProvider extends LiquidityProvider {
       return
     }
 
-    if (!this.databaseClient) {
-      return
-    }
+    // if (!this.databaseClient) {
+    //   return
+    // }
 
-    this.discoverNewPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }))
-    const newDate = new Date()
-    const discoveredPools = await discoverNewPools(
-      this.databaseClient,
-      this.chainId,
-      'SushiSwap',
-      'TRIDENT',
-      ['CONSTANT_PRODUCT_POOL', 'STABLE_POOL'],
-      this.latestPoolCreatedAtTimestamp
-    )
+    // this.discoverNewPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }))
+    // const newDate = new Date()
+    // const discoveredPools = await discoverNewPools(
+    //   this.databaseClient,
+    //   this.chainId,
+    //   'SushiSwap',
+    //   'TRIDENT',
+    //   ['CONSTANT_PRODUCT_POOL', 'STABLE_POOL'],
+    //   this.latestPoolCreatedAtTimestamp
+    // )
 
-    if (discoveredPools.size > 0) {
-      let addedPools = 0
-      this.latestPoolCreatedAtTimestamp = newDate
-      discoveredPools.forEach((pool) => {
-        if (!this.availablePools.has(pool.address)) {
-          this.availablePools.set(pool.address, pool)
-          addedPools++
-        }
-      })
-      if (addedPools > 0) {
-        this.prioritizeTopPools()
-      }
-    }
+    // if (discoveredPools.size > 0) {
+    //   let addedPools = 0
+    //   this.latestPoolCreatedAtTimestamp = newDate
+    //   discoveredPools.forEach((pool) => {
+    //     if (!this.availablePools.has(pool.address)) {
+    //       this.availablePools.set(pool.address, pool)
+    //       addedPools++
+    //     }
+    //   })
+    //   if (addedPools > 0) {
+    //     this.prioritizeTopPools()
+    //   }
+    // }
 
     // console.debug(
     //   `****** MEM - ${this.getLogPrefix()}

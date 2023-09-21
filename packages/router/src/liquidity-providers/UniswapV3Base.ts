@@ -1,7 +1,7 @@
 import { erc20Abi, tickLensAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Currency, Token, Type } from '@sushiswap/currency'
-import { PrismaClient } from '@sushiswap/database'
+// import { PrismaClient } from '@sushiswap/database'
 import { RToken, UniV3Pool } from '@sushiswap/tines'
 import { computePoolAddress, FeeAmount, TICK_SPACINGS } from '@sushiswap/v3-sdk'
 import { Address, PublicClient } from 'viem'
@@ -51,15 +51,15 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   factory: Record<number, Address> = {}
   initCodeHash: Record<number, string> = {}
   tickLens: Record<number, string> = {}
-  databaseClient: PrismaClient | undefined
+  // databaseClient: PrismaClient | undefined
 
   constructor(
     chainId: ChainId,
     web3Client: PublicClient,
     factory: Record<number, Address>,
     initCodeHash: Record<number, string>,
-    tickLens: Record<number, string>,
-    databaseClient?: PrismaClient
+    tickLens: Record<number, string>
+    // databaseClient?: PrismaClient
   ) {
     super(chainId, web3Client)
     this.factory = factory
@@ -68,7 +68,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     if (!(chainId in this.factory) || !(chainId in this.initCodeHash) || !(chainId in tickLens)) {
       throw new Error(`${this.getType()} cannot be instantiated for chainid ${chainId}, no factory or initCodeHash`)
     }
-    this.databaseClient = databaseClient
+    // this.databaseClient = databaseClient
   }
 
   async fetchPoolsForToken(t0: Token, t1: Token, excludePools?: Set<string> | PoolFilter): Promise<void> {

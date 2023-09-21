@@ -75,7 +75,7 @@
     "express": "4.18.2",
     "graphql": "16.6.0",
     "lodash.zip": "4.2.0",
-    "viem": "1.10.7",
+    "viem": "1.11.0",
     "zod": "3.21.4"
   },
   "devDependencies": {

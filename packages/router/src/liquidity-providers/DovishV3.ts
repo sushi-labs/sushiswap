@@ -1,12 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
-import { PrismaClient } from '@sushiswap/database'
 import { PublicClient } from 'viem'
 
 import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV3BaseProvider } from './UniswapV3Base'
 
 export class DovishV3Provider extends UniswapV3BaseProvider {
-  constructor(chainId: ChainId, web3Client: PublicClient, databaseClient?: PrismaClient) {
+  constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.POLYGON_ZKEVM]: '0xdE474Db1Fa59898BC91314328D29507AcD0D593c',
     } as const
@@ -16,7 +15,7 @@ export class DovishV3Provider extends UniswapV3BaseProvider {
     const tickLens = {
       [ChainId.POLYGON_ZKEVM]: '0x0e88C06437891D2a56352eaa2bf0d107472eC0f4',
     } as const
-    super(chainId, web3Client, factory, initCodeHash, tickLens, databaseClient)
+    super(chainId, web3Client, factory, initCodeHash, tickLens)
   }
   getType(): LiquidityProviders {
     return LiquidityProviders.DovishV3

@@ -19,7 +19,7 @@ import { Address } from 'viem'
 import { serialize } from 'wagmi'
 import z from 'zod'
 
-import { Extractor, TokenManager, WarningLevel } from '../src'
+import { Extractor, TokenManager, WarningLevel } from '.'
 import { EXTRACTOR_CONFIG, isSupportedChainId, SUPPORTED_CHAIN_IDS, SupportedChainId } from './config'
 
 const querySchema = z.object({
@@ -324,7 +324,7 @@ async function main() {
               tokenIn,
               tokenOut,
               to,
-              ROUTE_PROCESSOR_3_1_ADDRESS[chainId],
+              ROUTE_PROCESSOR_3_1_ADDRESS[chainId as RouteProcessor3_1ChainId],
               [],
               maxPriceImpact
             )

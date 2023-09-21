@@ -55,11 +55,10 @@
     "node-fetch": "2.6.6",
     "tiny-invariant": "1.3.1",
     "tiny-warning": "1.0.3",
-    "viem": "1.10.7",
+    "viem": "1.11.0",
     "zod": "3.21.4"
   },
   "devDependencies": {
-    "@sushiswap/database": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
@@ -70,12 +69,6 @@
     "eslint": "8.43.0",
     "typescript": "5.1.6"
   },
-  "peerDependencies": {
-    "@sushiswap/database": "*"
-  },
-  "peerDependenciesMeta": {
-    "@sushiswap/database": {
-      "optional": false
-    }
-  }
+  "peerDependencies": {},
+  "peerDependenciesMeta": {}
 }

@@ -1,12 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
-import { PrismaClient } from '@sushiswap/database'
 import { PublicClient } from 'viem'
 
 import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 
 export class ApeSwapProvider extends UniswapV2BaseProvider {
-  constructor(chainId: ChainId, web3Client: PublicClient, databaseClient?: PrismaClient) {
+  constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.ETHEREUM]: '0xBAe5dc9B19004883d0377419FeF3c2C8832d7d7B',
       [ChainId.POLYGON]: '0xCf083Be4164828f00cAE704EC15a36D711491284',
@@ -19,7 +18,7 @@ export class ApeSwapProvider extends UniswapV2BaseProvider {
       [ChainId.BSC]: '0xf4ccce374816856d11f00e4069e7cada164065686fbef53c6167a63ec2fd8c5b',
       [ChainId.TELOS]: '0x7d4b9bb0d5808344c0184aada7d10aae8f6b0cc8ceb5eba8dd084f63b8c32099',
     } as const
-    super(chainId, web3Client, factory, initCodeHash, databaseClient)
+    super(chainId, web3Client, factory, initCodeHash)
   }
   getType(): LiquidityProviders {
     return LiquidityProviders.ApeSwap

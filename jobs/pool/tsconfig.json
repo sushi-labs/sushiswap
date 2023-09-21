@@ -15,8 +15,4 @@
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true
   },
-  "ts-node": {
-    "swc": true,
-    "esm": true
-  }
 }

@@ -88,8 +88,8 @@
     "react-slider": "2.0.4",
     "react-virtualized-auto-sizer": "1.0.7",
     "swr": "2.1.5",
-    "viem": "1.10.7",
-    "wagmi": "1.4.1",
+    "viem": "1.11.0",
+    "wagmi": "1.4.2",
     "zod": "3.21.4"
   },
   "devDependencies": {

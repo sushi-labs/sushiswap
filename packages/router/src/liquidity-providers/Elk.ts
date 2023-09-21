@@ -1,13 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
-import { PrismaClient } from '@sushiswap/database'
 import { PublicClient } from 'viem'
 
 import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 
 export class ElkProvider extends UniswapV2BaseProvider {
-
-  constructor(chainId: ChainId, web3Client: PublicClient, databaseClient?: PrismaClient) {
+  constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.AVALANCHE]: '0x091d35d7F63487909C863001ddCA481c6De47091',
       [ChainId.POLYGON]: '0xE3BD06c7ac7E1CeB17BdD2E5BA83E40D1515AF2a',
@@ -44,7 +42,7 @@ export class ElkProvider extends UniswapV2BaseProvider {
       // [ChainId.HECO]: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
       // [ChainId.OKEX]: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
     } as const
-    super(chainId, web3Client, factory, initCodeHash, databaseClient)
+    super(chainId, web3Client, factory, initCodeHash)
   }
   getType(): LiquidityProviders {
     return LiquidityProviders.Elk
