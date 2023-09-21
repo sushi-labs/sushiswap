@@ -46,7 +46,7 @@ export default async function PoolPage({
       <div className="flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
           <div>
-            <ManageV2LiquidityCard pool={pool} />
+            <ManageV2LiquidityCard pool={pool} tab={tab} />
           </div>
           <div className="flex flex-col gap-6">
             <PoolPositionProvider pool={pool}>
