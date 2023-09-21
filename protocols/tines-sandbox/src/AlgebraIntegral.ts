@@ -3,6 +3,7 @@ import AlgebraPoolDeployer from '@cryptoalgebra/integral-core/artifacts/contract
 import NFTDescriptor from '@cryptoalgebra/integral-periphery/artifacts/contracts/libraries/NFTDescriptor.sol/NFTDescriptor.json'
 import NonfungiblePositionManager from '@cryptoalgebra/integral-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import NonfungibleTokenPositionDescriptor from '@cryptoalgebra/integral-periphery/artifacts/contracts/NonfungibleTokenPositionDescriptor.sol/NonfungibleTokenPositionDescriptor.json'
+import SwapRouter from '@cryptoalgebra/integral-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
 import { ChainId } from '@sushiswap/chain'
 import { Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { Abi, Address, getContractAddress, Hex, PublicClient, WalletClient } from 'viem'
@@ -50,6 +51,8 @@ export interface AlgebraIntegralPeriphery {
   NonfungibleTokenPositionDescriptorABI: typeof NonfungibleTokenPositionDescriptor.abi
   NonfungiblePositionManagerAddress: Address
   NonfungiblePositionManagerABI: typeof NonfungiblePositionManager.abi
+  SwapRouterAddress: Address
+  SwapRouterABI: typeof SwapRouter.abi
 }
 
 export async function createAlgebraIntegralPeriphery(
@@ -115,6 +118,9 @@ export async function createAlgebraIntegralPeriphery(
     poolDeployerAddress,
   ])
 
+  // Algebra SwapRouter
+  const SwapRouterAddress = await deploy(SwapRouter, [factoryAddress, WNativeAddress, poolDeployerAddress])
+
   return {
     deployer,
     factoryAddress,
@@ -125,6 +131,8 @@ export async function createAlgebraIntegralPeriphery(
     NonfungibleTokenPositionDescriptorABI: NonfungibleTokenPositionDescriptor.abi,
     NonfungiblePositionManagerAddress,
     NonfungiblePositionManagerABI: NonfungiblePositionManager.abi,
+    SwapRouterAddress,
+    SwapRouterABI: SwapRouter.abi,
   }
 }
 
@@ -137,6 +145,9 @@ export async function approveTestTokensToPerifery(
     tokens.tokens.map((t) =>
       approveToken(client, t, tokens.owner, env.NonfungiblePositionManagerAddress, tokens.supply)
     )
+  )
+  await Promise.all(
+    tokens.tokens.map((t) => approveToken(client, t, tokens.owner, env.SwapRouterAddress, tokens.supply))
   )
 }
 
@@ -212,4 +223,35 @@ export async function mint(
     functionName: 'mint',
     args: [mintParams],
   })
+}
+
+export async function swap(
+  client: PublicClient & WalletClient,
+  env: AlgebraIntegralPeriphery,
+  token0: Token,
+  token1: Token,
+  user: Address,
+  amountIn: bigint
+): Promise<bigint> {
+  const swapParams = {
+    chain: null,
+    abi: env.SwapRouterABI,
+    address: env.SwapRouterAddress,
+    account: user,
+    functionName: 'exactInputSingle',
+    args: [
+      {
+        tokenIn: token0.address,
+        tokenOut: token1.address,
+        recipient: user,
+        deadline: 2n ** 32n - 1n,
+        amountIn,
+        amountOutMinimum: 0,
+        limitSqrtPrice: 0n,
+      },
+    ],
+  }
+  const amountOut = (await client.readContract(swapParams)) as bigint
+  await client.writeContract(swapParams)
+  return amountOut
 }

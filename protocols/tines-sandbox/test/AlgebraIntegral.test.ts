@@ -10,6 +10,7 @@ import {
   createHardhatProviderEmptyBlockchain,
   createTestTokens,
   deployPoolAndMint,
+  swap,
   TestTokens,
 } from '../src'
 
@@ -41,10 +42,21 @@ describe('AlgebraIntegral test', () => {
     user = testTokens.owner
   })
 
-  it('Create a pool', async () => {
+  it('A pool: create, mint, swap', async () => {
     const tokens = testTokens.tokens
     const [t0, t1] = tokens[0].sortsBefore(tokens[1]) ? [tokens[0], tokens[1]] : [tokens[1], tokens[0]]
-    const poolAddress = await deployPoolAndMint(client, env, t0, t1, [{ from: -540, to: 540, val: 10n ** 18n }], user)
+
+    const poolAddress = await deployPoolAndMint(
+      client,
+      env,
+      t0,
+      t1,
+      [{ from: -540, to: 540, val: 10n * 10n ** 18n }],
+      user
+    )
     expect(poolAddress).not.equal('0x0000000000000000000000000000000000000000')
+
+    const amountOut = await swap(client, env, t0, t1, user, 10n ** 18n)
+    expect(Number(amountOut)).greaterThan(0)
   })
 })
