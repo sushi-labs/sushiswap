@@ -45,15 +45,10 @@ function linkContractLibraries(
 export interface AlgebraIntegralPeriphery {
   deployer: Address
   factoryAddress: Address
-  factoryABI: typeof AlgebraFactory.abi
   poolDeployerAddress: Address
-  poolDeployerABI: typeof AlgebraPoolDeployer.abi
   NonfungibleTokenPositionDescriptorAddress: Address
-  NonfungibleTokenPositionDescriptorABI: typeof NonfungibleTokenPositionDescriptor.abi
   NonfungiblePositionManagerAddress: Address
-  NonfungiblePositionManagerABI: typeof NonfungiblePositionManager.abi
   SwapRouterAddress: Address
-  SwapRouterABI: typeof SwapRouter.abi
 }
 
 export async function createAlgebraIntegralPeriphery(
@@ -125,15 +120,10 @@ export async function createAlgebraIntegralPeriphery(
   return {
     deployer,
     factoryAddress,
-    factoryABI: AlgebraFactory.abi,
     poolDeployerAddress,
-    poolDeployerABI: AlgebraPoolDeployer.abi,
     NonfungibleTokenPositionDescriptorAddress,
-    NonfungibleTokenPositionDescriptorABI: NonfungibleTokenPositionDescriptor.abi,
     NonfungiblePositionManagerAddress,
-    NonfungiblePositionManagerABI: NonfungiblePositionManager.abi,
     SwapRouterAddress,
-    SwapRouterABI: SwapRouter.abi,
   }
 }
 
@@ -153,7 +143,7 @@ export async function approveTestTokensToPerifery(
 }
 
 const Two96 = Math.pow(2, 96)
-function encodePriceSqrt(reserve1: number, reserve0: number) {
+export function encodePriceSqrt(reserve1: number, reserve0: number) {
   return BigInt(Math.round(Math.sqrt(reserve1 / reserve0) * Two96))
 }
 
@@ -175,7 +165,7 @@ export async function deployPoolAndMint(
 ): Promise<Address> {
   await client.writeContract({
     chain: null,
-    abi: env.NonfungiblePositionManagerABI,
+    abi: NonfungiblePositionManager.abi,
     address: env.NonfungiblePositionManagerAddress,
     account: env.deployer,
     functionName: 'createAndInitializePoolIfNecessary',
@@ -183,7 +173,7 @@ export async function deployPoolAndMint(
   })
 
   const poolAddress = (await client.readContract({
-    abi: env.factoryABI,
+    abi: AlgebraFactory.abi,
     address: env.factoryAddress,
     functionName: 'poolByPair',
     args: [token0.address, token1.address],
@@ -229,7 +219,7 @@ export async function mint(
 
   return await client.writeContract({
     chain: null,
-    abi: env.NonfungiblePositionManagerABI,
+    abi: NonfungiblePositionManager.abi,
     address: env.NonfungiblePositionManagerAddress,
     account: env.deployer,
     functionName: 'mint',
@@ -247,7 +237,7 @@ export async function swap(
 ): Promise<bigint> {
   const swapParams = {
     chain: null,
-    abi: env.SwapRouterABI,
+    abi: SwapRouter.abi,
     address: env.SwapRouterAddress,
     account: user,
     functionName: 'exactInputSingle',

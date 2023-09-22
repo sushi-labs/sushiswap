@@ -13,7 +13,6 @@ export interface TestTokens {
   owner: Address
   tokens: Token[]
   supply: bigint
-  tokenABI: typeof erc20Abi
 }
 
 export async function createTestTokens(
@@ -51,7 +50,6 @@ export async function createTestTokens(
     owner,
     tokens,
     supply,
-    tokenABI: erc20Abi,
   }
 }
 
