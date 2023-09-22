@@ -17,8 +17,8 @@ export interface TestTokens {
 
 export async function createTestTokens(
   client: PublicClient & WalletClient,
-  owner?: Address,
   testTokensNumber = 2,
+  owner?: Address,
   supply = BigInt(1e30)
 ): Promise<TestTokens> {
   const [deployer] = await client.getAddresses()
