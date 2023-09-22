@@ -43,7 +43,7 @@ describe('AlgebraIntegral test', () => {
   let cntx: TestContext
 
   before(async () => {
-    const provider = await createHardhatProviderEmptyBlockchain()
+    const { provider, chainId } = await createHardhatProviderEmptyBlockchain()
     const client = createPublicClient({
       chain: {
         ...hardhat,
@@ -53,7 +53,7 @@ describe('AlgebraIntegral test', () => {
             blockCreated: 25770160,
           },
         },
-        id: ChainId.ETHEREUM,
+        id: chainId,
       },
       transport: custom(provider),
     }).extend(walletActions)
@@ -61,7 +61,7 @@ describe('AlgebraIntegral test', () => {
     const testTokens = await createTestTokens(client, 10)
     await approveTestTokensToPerifery(client, env, testTokens)
     cntx = {
-      chainId: ChainId.ETHEREUM,
+      chainId,
       client,
       env,
       testTokens,

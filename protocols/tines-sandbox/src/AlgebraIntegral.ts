@@ -99,7 +99,7 @@ export async function createAlgebraIntegralPeriphery(
   const NFTDescriptorAddress = await deploy(NFTDescriptor)
 
   // Algebra NonfungibleTokenPositionDescriptor
-  const WNativeAddress = WNATIVE_ADDRESS[client.chain?.id as ChainId]
+  const WNativeAddress = WNATIVE_ADDRESS[client.chain?.id as ChainId] ?? '0x0000000000000000000000000000000000000000'
   const NonfungibleTokenPositionDescriptorAddress = await deploy(
     NonfungibleTokenPositionDescriptor,
     [WNativeAddress, 'AA', []],
