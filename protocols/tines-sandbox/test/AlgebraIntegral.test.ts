@@ -51,6 +51,8 @@ describe('AlgebraIntegral test', () => {
       env,
       t0,
       t1,
+      3000,
+      1,
       [{ from: -540, to: 540, val: 10n * 10n ** 18n }],
       user
     )

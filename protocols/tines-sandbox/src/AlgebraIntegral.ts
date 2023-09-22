@@ -1,4 +1,5 @@
 import AlgebraFactory from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraFactory.sol/AlgebraFactory.json'
+import AlgebraPool from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraPool.sol/AlgebraPool.json'
 import AlgebraPoolDeployer from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraPoolDeployer.sol/AlgebraPoolDeployer.json'
 import NFTDescriptor from '@cryptoalgebra/integral-periphery/artifacts/contracts/libraries/NFTDescriptor.sol/NFTDescriptor.json'
 import NonfungiblePositionManager from '@cryptoalgebra/integral-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
@@ -167,6 +168,8 @@ export async function deployPoolAndMint(
   env: AlgebraIntegralPeriphery,
   token0: Token,
   token1: Token,
+  fee: number, // 1e-6
+  price: number,
   mintRanges?: Range[],
   user?: Address
 ): Promise<Address> {
@@ -176,13 +179,8 @@ export async function deployPoolAndMint(
     address: env.NonfungiblePositionManagerAddress,
     account: env.deployer,
     functionName: 'createAndInitializePoolIfNecessary',
-    args: [token0.address, token1.address, encodePriceSqrt(1, 1)],
+    args: [token0.address, token1.address, BigInt(Math.sqrt(price) * 2 ** 96)],
   })
-
-  if (mintRanges) {
-    user = user ?? env.deployer
-    await Promise.all(mintRanges.map((range) => mint(client, env, token0, token1, user as Address, range)))
-  }
 
   const poolAddress = (await client.readContract({
     abi: env.factoryABI,
@@ -190,6 +188,20 @@ export async function deployPoolAndMint(
     functionName: 'poolByPair',
     args: [token0.address, token1.address],
   })) as Address
+
+  await client.writeContract({
+    chain: null,
+    abi: AlgebraPool.abi,
+    address: poolAddress,
+    account: env.deployer,
+    functionName: 'setFee',
+    args: [fee],
+  })
+
+  if (mintRanges) {
+    user = user ?? env.deployer
+    await Promise.all(mintRanges.map((range) => mint(client, env, token0, token1, user as Address, range)))
+  }
 
   return poolAddress
 }
