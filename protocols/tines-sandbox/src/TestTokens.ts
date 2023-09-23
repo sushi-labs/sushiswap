@@ -53,13 +53,7 @@ export async function createTestTokens(
   }
 }
 
-export async function approveToken(
-  client: WalletClient,
-  token: Token,
-  user: Address,
-  spender: Address,
-  amount: bigint
-) {
+export async function approve(client: WalletClient, token: Token, user: Address, spender: Address, amount: bigint) {
   return await client.writeContract({
     chain: null,
     abi: erc20Abi,
@@ -70,8 +64,12 @@ export async function approveToken(
   })
 }
 
-// export interface UserWithTokens {
-//   user: Address
-//   token: [Token, number]
-
-// }
+export async function balanceOf(client: PublicClient, token: Token, owner: Address) {
+  return await client.readContract({
+    abi: erc20Abi,
+    address: token.address as Address,
+    account: owner,
+    functionName: 'balanceOf',
+    args: [owner],
+  })
+}

@@ -10,7 +10,7 @@ import { Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { Abi, Address, getContractAddress, Hex, PublicClient, WalletClient } from 'viem'
 import { waitForTransactionReceipt } from 'viem/actions'
 
-import { approveToken, TestTokens } from './TestTokens'
+import { approve, TestTokens } from './TestTokens'
 
 const getDeploymentAddress = async (client: WalletClient, promise: Promise<Hex>) =>
   waitForTransactionReceipt(client, { hash: await promise }).then((receipt) => receipt.contractAddress as Address)
@@ -133,13 +133,9 @@ export async function approveTestTokensToPerifery(
   tokens: TestTokens
 ) {
   await Promise.all(
-    tokens.tokens.map((t) =>
-      approveToken(client, t, tokens.owner, env.NonfungiblePositionManagerAddress, tokens.supply)
-    )
+    tokens.tokens.map((t) => approve(client, t, tokens.owner, env.NonfungiblePositionManagerAddress, tokens.supply))
   )
-  await Promise.all(
-    tokens.tokens.map((t) => approveToken(client, t, tokens.owner, env.SwapRouterAddress, tokens.supply))
-  )
+  await Promise.all(tokens.tokens.map((t) => approve(client, t, tokens.owner, env.SwapRouterAddress, tokens.supply)))
 }
 
 const Two96 = Math.pow(2, 96)
@@ -197,7 +193,7 @@ export async function deployPoolAndMint(
 }
 
 export async function mint(
-  client: WalletClient,
+  client: PublicClient & WalletClient,
   env: AlgebraIntegralPeriphery,
   token0: Token,
   token1: Token,
@@ -205,26 +201,31 @@ export async function mint(
   range: Range
 ) {
   const mintParams = {
-    token0: token0.address,
-    token1: token1.address,
-    tickLower: range.from,
-    tickUpper: range.to,
-    amount0Desired: range.val,
-    amount1Desired: range.val,
-    amount0Min: 0,
-    amount1Min: 0,
-    recipient,
-    deadline: 2n ** 32n - 1n,
-  }
-
-  return await client.writeContract({
     chain: null,
     abi: NonfungiblePositionManager.abi,
     address: env.NonfungiblePositionManagerAddress,
     account: env.deployer,
     functionName: 'mint',
-    args: [mintParams],
-  })
+    args: [
+      {
+        token0: token0.address,
+        token1: token1.address,
+        tickLower: range.from,
+        tickUpper: range.to,
+        amount0Desired: range.val,
+        amount1Desired: range.val,
+        amount0Min: 0,
+        amount1Min: 0,
+        recipient,
+        deadline: 2n ** 32n - 1n,
+      },
+    ],
+  }
+
+  const qq = await client.readContract(mintParams)
+  const [, , , liquidityActual] = (await client.readContract(mintParams)) as bigint[]
+  await client.writeContract(mintParams)
+  return liquidityActual
 }
 
 export async function swap(
@@ -256,4 +257,18 @@ export async function swap(
   const amountOut = (await client.readContract(swapParams)) as bigint
   await client.writeContract(swapParams)
   return amountOut
+}
+
+export async function tickAndLiquidity(client: PublicClient, poolAddress: Address) {
+  const { tick } = (await client.readContract({
+    abi: AlgebraPool.abi,
+    address: poolAddress,
+    functionName: 'globalState',
+  })) as { tick: bigint }
+  const liquidity = (await client.readContract({
+    abi: AlgebraPool.abi,
+    address: poolAddress,
+    functionName: 'liquidity',
+  })) as bigint
+  return { tick, liquidity }
 }

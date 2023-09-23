@@ -1,4 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
+import { Token } from '@sushiswap/currency'
+import { CLTick, RPool, RToken, UniV3Pool } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { Address, createPublicClient, custom, PublicClient, walletActions, WalletClient } from 'viem'
 import { hardhat } from 'viem/chains'
@@ -6,12 +8,16 @@ import { hardhat } from 'viem/chains'
 import {
   AlgebraIntegralPeriphery,
   approveTestTokensToPerifery,
+  balanceOf,
   createAlgebraIntegralPeriphery,
   createHardhatProviderEmptyBlockchain,
   createTestTokens,
   deployPoolAndMint,
+  mint,
+  Range,
   swap,
   TestTokens,
+  tickAndLiquidity,
 } from '../src'
 
 interface TestContext {
@@ -22,22 +28,66 @@ interface TestContext {
   user: Address
 }
 
-// interface PoolInfo {
-//   addr: Address
-//   pool: RPool
-//   token0: Token
-//   token1: Token
-// }
+interface PoolInfo {
+  poolAddress: Address
+  pool: RPool
+  token0: Token
+  token1: Token
+}
 
-// async function createPool(
-//   client: PublicClient & WalletClient,
-//   env: AlgebraIntegralPeriphery,
-//   fee: number,
-//   price: number,
-//   ranges: Range[]
-// ): Promise<PoolInfo> {}
+let token0Index = 0,
+  token1Index = 1 // each new pool needs a new pair of tokens
+async function createPool(cntx: TestContext, fee: number, price: number, positions: Range[]): Promise<PoolInfo> {
+  if (token1Index >= cntx.testTokens.tokens.length) throw new Error('Unsufficient tokens number')
+  const t0 = cntx.testTokens.tokens[token0Index]
+  const t1 = cntx.testTokens.tokens[token1Index]
+  if (++token1Index >= cntx.testTokens.tokens.length) token1Index = ++token0Index + 1
+
+  const [token0, token1] = t0.sortsBefore(t1) ? [t0, t1] : [t1, t0]
+  const poolAddress = await deployPoolAndMint(cntx.client, cntx.env, token0, token1, fee, price)
+  expect(poolAddress).not.equal('0x0000000000000000000000000000000000000000')
+
+  const token0Balance = await balanceOf(cntx.client, token0, poolAddress)
+  const token1Balance = await balanceOf(cntx.client, token1, poolAddress)
+  const { tick, liquidity } = await tickAndLiquidity(cntx.client, poolAddress)
+
+  const tickMap = new Map<number, bigint>()
+  for (let i = 0; i < positions.length; ++i) {
+    const position = positions[i]
+    const liquidity = await mint(cntx.client, cntx.env, token0, token1, cntx.user, position)
+
+    let tickLiquidity = tickMap.get(position.from) ?? 0n
+    tickLiquidity = tickLiquidity === undefined ? liquidity : tickLiquidity + liquidity
+    tickMap.set(position.from, tickLiquidity)
+
+    tickLiquidity = tickMap.get(position.to) ?? 0n
+    tickLiquidity = tickLiquidity - liquidity
+    tickMap.set(position.to, tickLiquidity)
+  }
+
+  const ticks: CLTick[] = Array.from(tickMap.entries())
+    .sort((a, b) => a[0] - b[0])
+    .map(([index, DLiquidity]) => ({ index, DLiquidity }))
+
+  const pool = new UniV3Pool(
+    poolAddress,
+    token0 as RToken,
+    token1 as RToken,
+    fee / 1e6,
+    token0Balance,
+    token1Balance,
+    Number(tick),
+    liquidity,
+    BigInt(Math.sqrt(price) * 2 ** 96),
+    ticks
+  )
+
+  return { poolAddress, pool, token0, token1 }
+}
 
 // async function checkSwap(env: AlgebraIntegralPeriphery, pool: Address, amount: number | bigint, direction: boolean) {}
+
+const E18 = 10n ** 18n
 
 describe('AlgebraIntegral test', () => {
   let cntx: TestContext
@@ -80,12 +130,16 @@ describe('AlgebraIntegral test', () => {
       t1,
       3000,
       1,
-      [{ from: -540, to: 540, val: 10n * 10n ** 18n }],
+      [{ from: -540, to: 540, val: 10n * E18 }],
       cntx.user
     )
     expect(poolAddress).not.equal('0x0000000000000000000000000000000000000000')
 
     const amountOut = await swap(cntx.client, cntx.env, t0, t1, cntx.user, 10n ** 18n)
     expect(Number(amountOut)).greaterThan(0)
+  })
+
+  it('create', async () => {
+    await createPool(cntx, 3000, 1, [{ from: -540, to: 540, val: 10n * E18 }])
   })
 })
