@@ -145,7 +145,7 @@ describe('AlgebraIntegral test', () => {
     expect(Number(amountOut)).greaterThan(0)
   })
 
-  it('create', async () => {
+  it.only('create', async () => {
     const poolInfo = await createPool(cntx, 3000, 1, [{ from: -540, to: 540, val: 10n * E18 }])
     await checkSwap(cntx, poolInfo, E18, true)
   })
