@@ -18,3 +18,11 @@ export function expectCloseValues(_a: number | bigint, _b: number | bigint, accu
   }
   return res
 }
+
+export function tryCall<A>(f: () => A): A | undefined {
+  try {
+    return f()
+  } catch (e) {
+    //
+  }
+}

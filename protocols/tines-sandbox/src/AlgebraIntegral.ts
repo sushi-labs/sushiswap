@@ -258,16 +258,21 @@ export async function swap(
   return amountOut
 }
 
-export async function tickAndLiquidity(client: PublicClient, poolAddress: Address) {
-  const { tick } = (await client.readContract({
+export async function tickLiquidityPrice(client: PublicClient, poolAddress: Address) {
+  const e = await client.readContract({
     abi: AlgebraPool.abi,
     address: poolAddress,
     functionName: 'globalState',
-  })) as { tick: bigint }
+  })
+  const [price, tick] = (await client.readContract({
+    abi: AlgebraPool.abi,
+    address: poolAddress,
+    functionName: 'globalState',
+  })) as bigint[]
   const liquidity = (await client.readContract({
     abi: AlgebraPool.abi,
     address: poolAddress,
     functionName: 'liquidity',
   })) as bigint
-  return { tick, liquidity }
+  return { tick, liquidity, price }
 }

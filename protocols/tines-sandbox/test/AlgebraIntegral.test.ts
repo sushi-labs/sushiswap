@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { CLTick, RPool, RToken, UniV3Pool } from '@sushiswap/tines'
+import { CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { Address, createPublicClient, custom, PublicClient, walletActions, WalletClient } from 'viem'
 import { hardhat } from 'viem/chains'
@@ -18,7 +18,8 @@ import {
   Range,
   swap,
   TestTokens,
-  tickAndLiquidity,
+  tickLiquidityPrice,
+  tryCall,
 } from '../src'
 
 interface TestContext {
@@ -31,7 +32,7 @@ interface TestContext {
 
 interface PoolInfo {
   poolAddress: Address
-  pool: RPool
+  pool: UniV3Pool
   token0: Token
   token1: Token
 }
@@ -65,7 +66,7 @@ async function createPool(cntx: TestContext, fee: number, price: number, positio
     tickMap.set(position.to, tickLiquidity)
   }
 
-  const { tick, liquidity } = await tickAndLiquidity(cntx.client, poolAddress)
+  const { tick, liquidity } = await tickLiquidityPrice(cntx.client, poolAddress)
   const ticks: CLTick[] = Array.from(tickMap.entries())
     .sort((a, b) => a[0] - b[0])
     .map(([index, DLiquidity]) => ({ index, DLiquidity }))
@@ -87,10 +88,29 @@ async function createPool(cntx: TestContext, fee: number, price: number, positio
 }
 
 async function checkSwap(cntx: TestContext, pool: PoolInfo, amountIn: number | bigint, direction: boolean) {
+  const { tick, liquidity, price } = await tickLiquidityPrice(cntx.client, pool.poolAddress)
+  pool.pool.updateState(
+    await balanceOf(cntx.client, pool.token0, pool.poolAddress),
+    await balanceOf(cntx.client, pool.token1, pool.poolAddress),
+    Number(tick),
+    liquidity,
+    price
+  )
+
   const [t0, t1] = direction ? [pool.token0, pool.token1] : [pool.token1, pool.token0]
+  const inputBalanceBefore = await balanceOf(cntx.client, t0, pool.poolAddress)
   const actialAmountOut = await swap(cntx.client, cntx.env, t0, t1, cntx.user, BigInt(amountIn))
-  const expectedAmountOut = pool.pool.calcOutByIn(Number(amountIn), direction).out
-  expectCloseValues(actialAmountOut, expectedAmountOut, 1e-10)
+  const actualAmountIn = (await balanceOf(cntx.client, t0, pool.poolAddress)) - inputBalanceBefore
+
+  let expectedAmountOut = tryCall(() => pool.pool.calcOutByIn(Number(amountIn), direction).out)
+
+  if (actualAmountIn < amountIn) {
+    // Not Full input was swapped
+    expect(expectedAmountOut).equal(undefined)
+    expectedAmountOut = tryCall(() => pool.pool.calcOutByIn(Number(actualAmountIn), direction).out)
+  }
+  expect(expectedAmountOut).not.equal(undefined)
+  expectCloseValues(actialAmountOut, expectedAmountOut as number, 1e-10)
 }
 
 const E18 = 10n ** 18n
@@ -128,5 +148,6 @@ describe('AlgebraIntegral test', () => {
   it('create', async () => {
     const poolInfo = await createPool(cntx, 3000, 1, [{ from: -540, to: 540, val: 10n * E18 }])
     await checkSwap(cntx, poolInfo, E18, true)
+    await checkSwap(cntx, poolInfo, E18, false)
   })
 })
