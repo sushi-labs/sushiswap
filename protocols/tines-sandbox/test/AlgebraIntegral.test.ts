@@ -50,7 +50,6 @@ async function createPool(cntx: TestContext, fee: number, price: number, positio
 
   const token0Balance = await balanceOf(cntx.client, token0, poolAddress)
   const token1Balance = await balanceOf(cntx.client, token1, poolAddress)
-  const { tick, liquidity } = await tickAndLiquidity(cntx.client, poolAddress)
 
   const tickMap = new Map<number, bigint>()
   for (let i = 0; i < positions.length; ++i) {
@@ -66,6 +65,7 @@ async function createPool(cntx: TestContext, fee: number, price: number, positio
     tickMap.set(position.to, tickLiquidity)
   }
 
+  const { tick, liquidity } = await tickAndLiquidity(cntx.client, poolAddress)
   const ticks: CLTick[] = Array.from(tickMap.entries())
     .sort((a, b) => a[0] - b[0])
     .map(([index, DLiquidity]) => ({ index, DLiquidity }))
@@ -125,28 +125,8 @@ describe('AlgebraIntegral test', () => {
     }
   })
 
-  it('A pool: create, mint, swap', async () => {
-    const tokens = cntx.testTokens.tokens
-    const [t0, t1] = tokens[0].sortsBefore(tokens[1]) ? [tokens[0], tokens[1]] : [tokens[1], tokens[0]]
-
-    const poolAddress = await deployPoolAndMint(
-      cntx.client,
-      cntx.env,
-      t0,
-      t1,
-      3000,
-      1,
-      [{ from: -540, to: 540, val: 10n * E18 }],
-      cntx.user
-    )
-    expect(poolAddress).not.equal('0x0000000000000000000000000000000000000000')
-
-    const amountOut = await swap(cntx.client, cntx.env, t0, t1, cntx.user, E18)
-    expect(Number(amountOut)).greaterThan(0)
-  })
-
-  it.only('create', async () => {
-    const poolInfo = await createPool(cntx, 5000, 1, [{ from: -540, to: 540, val: 10n * E18 }])
+  it('create', async () => {
+    const poolInfo = await createPool(cntx, 3000, 1, [{ from: -540, to: 540, val: 10n * E18 }])
     await checkSwap(cntx, poolInfo, E18, true)
   })
 })
