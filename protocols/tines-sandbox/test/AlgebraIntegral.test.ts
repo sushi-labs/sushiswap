@@ -13,6 +13,7 @@ import {
   createHardhatProviderEmptyBlockchain,
   createTestTokens,
   deployPoolAndMint,
+  expectCloseValues,
   mint,
   Range,
   swap,
@@ -85,7 +86,12 @@ async function createPool(cntx: TestContext, fee: number, price: number, positio
   return { poolAddress, pool, token0, token1 }
 }
 
-// async function checkSwap(env: AlgebraIntegralPeriphery, pool: Address, amount: number | bigint, direction: boolean) {}
+async function checkSwap(cntx: TestContext, pool: PoolInfo, amountIn: number | bigint, direction: boolean) {
+  const [t0, t1] = direction ? [pool.token0, pool.token1] : [pool.token1, pool.token0]
+  const actialAmountOut = await swap(cntx.client, cntx.env, t0, t1, cntx.user, BigInt(amountIn))
+  const expectedAmountOut = pool.pool.calcOutByIn(Number(amountIn), direction).out
+  expectCloseValues(actialAmountOut, expectedAmountOut, 1e-10)
+}
 
 const E18 = 10n ** 18n
 
@@ -135,11 +141,12 @@ describe('AlgebraIntegral test', () => {
     )
     expect(poolAddress).not.equal('0x0000000000000000000000000000000000000000')
 
-    const amountOut = await swap(cntx.client, cntx.env, t0, t1, cntx.user, 10n ** 18n)
+    const amountOut = await swap(cntx.client, cntx.env, t0, t1, cntx.user, E18)
     expect(Number(amountOut)).greaterThan(0)
   })
 
   it('create', async () => {
-    await createPool(cntx, 3000, 1, [{ from: -540, to: 540, val: 10n * E18 }])
+    const poolInfo = await createPool(cntx, 3000, 1, [{ from: -540, to: 540, val: 10n * E18 }])
+    await checkSwap(cntx, poolInfo, E18, true)
   })
 })
