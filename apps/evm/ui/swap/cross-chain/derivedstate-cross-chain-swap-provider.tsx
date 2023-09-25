@@ -9,6 +9,7 @@ import { isSushiXSwap2ChainId, SushiXSwap2ChainId } from '@sushiswap/sushixswap-
 import { Address, useAccount, useNetwork, watchNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future'
 import { UseQueryResult } from '@tanstack/react-query'
+import { IS_XSWAP_MAINTENANCE } from 'lib/constants'
 import { UseCrossChainTradeReturn } from 'lib/swap/useCrossChainTrade/types'
 import { useCrossChainTrade } from 'lib/swap/useCrossChainTrade/useCrossChainTrade'
 import { nanoid } from 'nanoid'
@@ -52,6 +53,7 @@ interface State {
     swapAmountString: string
     swapAmount: Amount<Type> | undefined
     recipient: string | undefined
+    maintenance: boolean
   }
   isLoading: boolean
   isToken0Loading: boolean
@@ -280,6 +282,7 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
             swapAmount: tryParseAmount(swapAmountString, _token0),
             token0: _token0,
             token1: _token1,
+            maintenance: IS_XSWAP_MAINTENANCE,
           },
           isLoading: token0Loading || token1Loading,
           isToken0Loading: token0Loading,
@@ -318,6 +321,15 @@ const useDerivedStateCrossChainSwap = () => {
   return context
 }
 
+const useIsXswapMaintenance = () => {
+  const context = useContext(DerivedStateCrossChainSwapContext)
+  if (!context) {
+    throw new Error('Hook can only be used inside CrossChain Swap Derived State Context')
+  }
+
+  return context.state.maintenance
+}
+
 const useCrossChainSwapTrade = () => {
   const {
     state: { tradeId, token0, chainId0, chainId1, swapAmount, token1, recipient },
@@ -338,4 +350,9 @@ const useCrossChainSwapTrade = () => {
   }) as UseQueryResult<UseCrossChainTradeReturn>
 }
 
-export { DerivedstateCrossChainSwapProvider, useCrossChainSwapTrade, useDerivedStateCrossChainSwap }
+export {
+  DerivedstateCrossChainSwapProvider,
+  useCrossChainSwapTrade,
+  useDerivedStateCrossChainSwap,
+  useIsXswapMaintenance,
+}

@@ -13,7 +13,7 @@ import { SUSHIXSWAP_2_ADDRESS, SushiXSwap2ChainId } from '@sushiswap/sushixswap-
 
 export const CrossChainSwapTradeButton: FC = () => {
   const {
-    state: { swapAmount, swapAmountString, chainId0 },
+    state: { swapAmount, swapAmountString, chainId0, maintenance },
   } = useDerivedStateCrossChainSwap()
   const { data: trade } = useCrossChainSwapTrade()
   const [checked, setChecked] = useState(false)
@@ -28,38 +28,40 @@ export const CrossChainSwapTradeButton: FC = () => {
   return (
     <CrossChainSwapTradeReviewDialog>
       <div>
-        <Checker.Connect fullWidth>
-          <Checker.Network fullWidth chainId={chainId0}>
-            <Checker.Amounts fullWidth chainId={chainId0} amounts={[swapAmount]}>
-              <Checker.ApproveERC20
-                id="approve-erc20"
-                fullWidth
-                amount={swapAmount}
-                contract={SUSHIXSWAP_2_ADDRESS[chainId0 as SushiXSwap2ChainId]}
-              >
-                <DialogTrigger asChild>
-                  <Button
-                    disabled={Boolean(
-                      !trade?.amountOut?.greaterThan(ZERO) ||
-                        trade?.route?.status === 'NoWay' ||
-                        +swapAmountString === 0 ||
-                        (!checked && warningSeverity(trade?.priceImpact) > 3)
-                    )}
-                    color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
-                    fullWidth
-                    size="xl"
-                  >
-                    {!checked && warningSeverity(trade?.priceImpact) >= 3
-                      ? 'Price impact too high'
-                      : trade?.route?.status === 'NoWay'
-                      ? 'No trade found'
-                      : 'Swap'}
-                  </Button>
-                </DialogTrigger>
-              </Checker.ApproveERC20>
-            </Checker.Amounts>
-          </Checker.Network>
-        </Checker.Connect>
+        <Checker.Guard guardWhen={maintenance} guardText="Maintenance in progress">
+          <Checker.Connect fullWidth>
+            <Checker.Network fullWidth chainId={chainId0}>
+              <Checker.Amounts fullWidth chainId={chainId0} amounts={[swapAmount]}>
+                <Checker.ApproveERC20
+                  id="approve-erc20"
+                  fullWidth
+                  amount={swapAmount}
+                  contract={SUSHIXSWAP_2_ADDRESS[chainId0 as SushiXSwap2ChainId]}
+                >
+                  <DialogTrigger asChild>
+                    <Button
+                      disabled={Boolean(
+                        !trade?.amountOut?.greaterThan(ZERO) ||
+                          trade?.route?.status === 'NoWay' ||
+                          +swapAmountString === 0 ||
+                          (!checked && warningSeverity(trade?.priceImpact) > 3)
+                      )}
+                      color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
+                      fullWidth
+                      size="xl"
+                    >
+                      {!checked && warningSeverity(trade?.priceImpact) >= 3
+                        ? 'Price impact too high'
+                        : trade?.route?.status === 'NoWay'
+                        ? 'No trade found'
+                        : 'Swap'}
+                    </Button>
+                  </DialogTrigger>
+                </Checker.ApproveERC20>
+              </Checker.Amounts>
+            </Checker.Network>
+          </Checker.Connect>
+        </Checker.Guard>
       </div>
       {warningSeverity(trade?.priceImpact) > 3 && (
         <div className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20">
