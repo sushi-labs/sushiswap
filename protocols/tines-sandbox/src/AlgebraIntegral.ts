@@ -222,7 +222,7 @@ export async function mint(
     ],
   }
 
-  const [, , , liquidityActual] = (await client.readContract(mintParams)) as bigint[]
+  const [, , liquidityActual] = (await client.readContract(mintParams)) as bigint[]
   await client.writeContract(mintParams)
   return liquidityActual
 }
@@ -259,11 +259,6 @@ export async function swap(
 }
 
 export async function tickLiquidityPrice(client: PublicClient, poolAddress: Address) {
-  const e = await client.readContract({
-    abi: AlgebraPool.abi,
-    address: poolAddress,
-    functionName: 'globalState',
-  })
   const [price, tick] = (await client.readContract({
     abi: AlgebraPool.abi,
     address: poolAddress,

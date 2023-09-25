@@ -26,3 +26,11 @@ export function tryCall<A>(f: () => A): A | undefined {
     //
   }
 }
+
+export async function tryCallAsync<A>(f: () => Promise<A>): Promise<A | undefined> {
+  try {
+    return await f()
+  } catch (e) {
+    //
+  }
+}
