@@ -74,4 +74,4 @@ export const APPROVE_TAG_XSWAP = 'APPROVE_TAG_XSWAP'
 export const APPROVE_TAG_SWAP = 'APPROVE_TAG_SWAP'
 
 // MAINTENANCe
-export const IS_XSWAP_MAINTENANCE = true
+export const IS_XSWAP_MAINTENANCE = false
