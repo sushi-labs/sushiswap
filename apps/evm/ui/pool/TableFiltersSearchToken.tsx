@@ -32,6 +32,7 @@ export const TableFiltersSearchToken: FC = () => {
         values={isPending ? values : tokenSymbols ?? []}
         onValueChange={onValueChange}
         placeholder="Search"
+        maxValues={3}
       />
     </div>
   )
