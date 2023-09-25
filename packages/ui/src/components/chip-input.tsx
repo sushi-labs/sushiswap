@@ -3,7 +3,7 @@
 import { VariantProps } from 'class-variance-authority'
 import classNames from 'classnames'
 import * as React from 'react'
-import { FC, useRef, useState, useTransition } from 'react'
+import { FC, useEffect, useRef, useState, useTransition } from 'react'
 
 import { IconComponent } from '../types'
 import { buttonIconVariants } from './button'
@@ -28,6 +28,7 @@ interface ChipInputProps
   values: string[]
   mutateValue?(string: string): string
   delimiters?: string[]
+  maxValues?: number
 }
 
 const ChipInput: FC<ChipInputProps> = ({
@@ -40,11 +41,20 @@ const ChipInput: FC<ChipInputProps> = ({
   onValueChange,
   delimiters = [',', ';', ':', ' ', 'Enter', 'Tab'],
   mutateValue,
+  maxValues,
   ...props
 }) => {
   const ref = useRef<HTMLInputElement>(null)
   const [state, setState] = useState(`${values.join(',')},`)
-  const [, startTransition] = useTransition()
+  const [pending, startTransition] = useTransition()
+  const inputHasText = ref.current && ref.current.value !== ''
+
+  // Empty when reset
+  useEffect(() => {
+    if (values.length === 0) {
+      setState('')
+    }
+  }, [values])
 
   const split = (str: string) => {
     const regExp = new RegExp(`(?:${delimiters.map((el) => el).join('|')})+`)
@@ -108,13 +118,15 @@ const ChipInput: FC<ChipInputProps> = ({
             </TooltipProvider>
           ))
         : null}
-      <input
-        onKeyDown={onKeyDown}
-        onKeyUp={onKeyUp}
-        className={classNames(className, 'flex flex-grow bg-transparent truncate !outline-none !ring-0')}
-        ref={ref}
-        {...props}
-      />
+      {(maxValues ? tags.length < maxValues : true) ? (
+        <input
+          onKeyDown={onKeyDown}
+          onKeyUp={onKeyUp}
+          className={classNames(className, 'flex flex-grow bg-transparent truncate !outline-none !ring-0')}
+          ref={ref}
+          {...props}
+        />
+      ) : null}
     </ChipInputRoot>
   )
 }
