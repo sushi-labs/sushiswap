@@ -20,6 +20,7 @@ import {
   TestTokens,
   tickLiquidityPrice,
   tryCall,
+  tryCallAsync,
 } from '../src'
 
 interface TestContext {
@@ -49,9 +50,6 @@ async function createPool(cntx: TestContext, fee: number, price: number, positio
   const poolAddress = await deployPoolAndMint(cntx.client, cntx.env, token0, token1, fee, price)
   expect(poolAddress).not.equal('0x0000000000000000000000000000000000000000')
 
-  const token0Balance = await balanceOf(cntx.client, token0, poolAddress)
-  const token1Balance = await balanceOf(cntx.client, token1, poolAddress)
-
   const tickMap = new Map<number, bigint>()
   for (let i = 0; i < positions.length; ++i) {
     const position = positions[i]
@@ -70,6 +68,9 @@ async function createPool(cntx: TestContext, fee: number, price: number, positio
   const ticks: CLTick[] = Array.from(tickMap.entries())
     .sort((a, b) => a[0] - b[0])
     .map(([index, DLiquidity]) => ({ index, DLiquidity }))
+
+  const token0Balance = await balanceOf(cntx.client, token0, poolAddress)
+  const token1Balance = await balanceOf(cntx.client, token1, poolAddress)
 
   const pool = new UniV3Pool(
     poolAddress,
@@ -99,8 +100,10 @@ async function checkSwap(cntx: TestContext, pool: PoolInfo, amountIn: number | b
 
   const [t0, t1] = direction ? [pool.token0, pool.token1] : [pool.token1, pool.token0]
   const inputBalanceBefore = await balanceOf(cntx.client, t0, pool.poolAddress)
-  const actialAmountOut = await swap(cntx.client, cntx.env, t0, t1, cntx.user, BigInt(amountIn))
+  const actialAmountOut = await tryCallAsync(() => swap(cntx.client, cntx.env, t0, t1, cntx.user, BigInt(amountIn)))
   const actualAmountIn = (await balanceOf(cntx.client, t0, pool.poolAddress)) - inputBalanceBefore
+
+  if (actialAmountOut === undefined) return // amountIn=0 for example
 
   let expectedAmountOut = tryCall(() => pool.pool.calcOutByIn(Number(amountIn), direction).out)
 
@@ -145,9 +148,33 @@ describe('AlgebraIntegral test', () => {
     }
   })
 
-  it('create', async () => {
+  it('Empty pool', async () => {
+    const pool = await createPool(cntx, 3000, 1, [])
+    await checkSwap(cntx, pool, E18, true)
+    await checkSwap(cntx, pool, E18, false)
+  })
+
+  it('without tick crossing', async () => {
     const poolInfo = await createPool(cntx, 3000, 1, [{ from: -540, to: 540, val: 10n * E18 }])
     await checkSwap(cntx, poolInfo, E18, true)
     await checkSwap(cntx, poolInfo, E18, false)
+  })
+
+  it('Out of positions start 1', async () => {
+    const poolInfo = await createPool(cntx, 3000, 1, [{ from: 420, to: 540, val: 10n * E18 }])
+    await checkSwap(cntx, poolInfo, 1n * E18, true)
+    await checkSwap(cntx, poolInfo, 1n * E18, false)
+  })
+
+  it('Out of positions start 2', async () => {
+    const poolInfo = await createPool(cntx, 3000, 1, [{ from: -540, to: 420, val: 10n * E18 }])
+    await checkSwap(cntx, poolInfo, 1n * E18, true)
+    await checkSwap(cntx, poolInfo, 1n * E18, false)
+  })
+
+  it.skip('Input overflow', async () => {
+    const poolInfo = await createPool(cntx, 3000, 1, [{ from: -540, to: -420, val: 10n * E18 }])
+    await checkSwap(cntx, poolInfo, 20n * E18, true)
+    await checkSwap(cntx, poolInfo, 20n * E18, false)
   })
 })

@@ -222,7 +222,7 @@ export async function mint(
     ],
   }
 
-  const [, , liquidityActual] = (await client.readContract(mintParams)) as bigint[]
+  const [, liquidityActual] = (await client.readContract(mintParams)) as bigint[]
   await client.writeContract(mintParams)
   return liquidityActual
 }
