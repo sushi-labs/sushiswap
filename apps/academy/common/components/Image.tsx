@@ -1,8 +1,8 @@
 import { classNames } from '@sushiswap/ui'
 import NextImage from 'next/legacy/image'
 import { FC } from 'react'
+import { type Image as ImageType } from 'types'
 
-import { UploadFileEntity } from '../../.mesh'
 import { getOptimizedMedia, isMediaVideo } from '../../lib/media'
 
 interface ImageProps {
@@ -12,7 +12,7 @@ interface ImageProps {
   layout?: 'fill' | 'responsive'
   objectFit?: 'cover' | 'contain'
   className?: string
-  image: UploadFileEntity
+  image: ImageType
 }
 
 export const Image: FC<ImageProps> = ({

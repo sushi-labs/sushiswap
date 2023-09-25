@@ -1,13 +1,14 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { FC, ReactNode } from 'react'
+import { Article } from 'types'
 
-import { ArticleEntity, Maybe } from '../../.mesh'
+import { Maybe } from '../../.mesh'
 import { CardSkeleton } from './Card'
 
 interface ArticleList {
   loading: boolean
-  articles: Maybe<ArticleEntity[]> | undefined
-  render(article: ArticleEntity, index: number): ReactNode
+  articles: Maybe<Article[]> | undefined
+  render(article: Article, index: number): ReactNode
   skeletonAmount?: number
 }
 

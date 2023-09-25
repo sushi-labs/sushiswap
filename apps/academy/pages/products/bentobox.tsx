@@ -16,8 +16,6 @@ import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import { FC } from 'react'
 import useSWR from 'swr'
 
-import { ArticleEntity, GetLatestAndRelevantArticlesQuery } from '.mesh'
-
 const PRODUCT_SLUG = 'bentobox'
 const { color, cards, buttonText, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
 
@@ -36,7 +34,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   slug,
   relevantArticleIds,
 }) => {
-  const { data, isValidating } = useSWR<GetLatestAndRelevantArticlesQuery>(
+  const { data, isValidating } = useSWR(
     ['/bentobox-articles'],
     async () => await getLatestAndRelevantArticles(slug, relevantArticleIds),
     {
@@ -46,8 +44,8 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
     }
   )
 
-  const latestArticles: ArticleEntity[] = data?.articles?.data ?? []
-  const relevantArticles: ArticleEntity[] = data?.relevantArticles?.data ?? []
+  const latestArticles = data?.articles ?? []
+  const relevantArticles = data?.relevantArticles ?? []
 
   return (
     <Container maxWidth="6xl" className={classNames('mx-auto pb-24', DEFAULT_SIDE_PADDING)}>

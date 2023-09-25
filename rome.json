@@ -18,6 +18,9 @@
         "noParameterAssign": "off",
         "useSingleVarDeclarator": "off",
         "useTemplate": "warn"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml" : "off"
       }
     }
   },

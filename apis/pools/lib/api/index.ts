@@ -116,6 +116,9 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
 }
 
 export async function getEarnPool(args: typeof PoolApiSchema._output) {
+
+  console.log("getEarnPool args", args)
+
   const id = `${args.chainId}:${args.address.toLowerCase()}`
 
   // Need to specify take, orderBy and orderDir to make TS happy
@@ -125,6 +128,8 @@ export async function getEarnPool(args: typeof PoolApiSchema._output) {
     orderBy: 'liquidityUSD',
     orderDir: 'desc',
   })
+
+  console.log("getEarnPool pool", pool)
 
   if (!pool) {
     // rome-ignore lint/suspicious/noExplicitAny: recursive

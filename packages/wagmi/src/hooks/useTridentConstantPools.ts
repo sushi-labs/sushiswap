@@ -238,15 +238,14 @@ export function useTridentConstantPools(
     () =>
       input.reduce<Address[]>((acc, [tokenA, tokenB, fee, twap]) => {
         if (!tridentConstantPoolFactory) return acc
-        acc.push(
-          computeTridentConstantPoolAddress({
-            factoryAddress: tridentConstantPoolFactory.address,
-            tokenA,
-            tokenB,
-            fee,
-            twap,
-          }) as Address
-        )
+        const address = computeTridentConstantPoolAddress({
+          factoryAddress: tridentConstantPoolFactory.address,
+          tokenA,
+          tokenB,
+          fee,
+          twap,
+        }) as Address
+        acc.push(address)
         return acc
       }, []),
     [tridentConstantPoolFactory, input]
@@ -298,6 +297,7 @@ export function useTridentConstantPool(
   fee: Fee,
   twap: boolean
 ): [TridentConstantPoolState, TridentConstantPool | null] {
+  console.log('useTridentConstantPool', twap, typeof twap)
   const inputs: [PoolInput] = useMemo(() => [[tokenA, tokenB, Number(fee), Boolean(twap)]], [tokenA, tokenB, fee, twap])
   return useTridentConstantPools(chainId, inputs)[0]
 }

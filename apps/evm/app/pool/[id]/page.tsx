@@ -24,8 +24,7 @@ export async function getPool({ chainId, address }: { chainId: ChainId; address:
     if (typeof +chainId !== 'number' || !isAddress(address)) {
       return
     }
-
-    const res = await fetch(`https://pools.sushi.com/api/v0/${chainId}/${address}`)
+    const res = await fetch(`https://pools.sushi.com/api/v0/${chainId}/${address}`, { next: { revalidate: 60 } })
     return await res.json()
   } catch (e) {
     return
@@ -36,6 +35,7 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
   const [_chainId, address] = params.id.split(params.id.includes('%3A') ? '%3A' : ':') as [string, string]
   const chainId = Number(_chainId) as ChainId
   const pool = await getPool({ chainId, address })
+  console.log('PoolPage (server)', pool)
   if (!pool) {
     notFound()
   }
@@ -47,7 +47,9 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
       <UnknownTokenAlert pool={pool} />
       <div className="flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
-          <ManageV2LiquidityCard pool={pool} />
+          <div>
+            <ManageV2LiquidityCard pool={pool} />
+          </div>
           <div className="flex flex-col gap-6">
             <PoolPositionProvider pool={pool}>
               <PoolPositionStakedProvider pool={pool}>
@@ -63,7 +65,9 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
           <Separator />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
-          <PoolChartV2 address={pool.address} chainId={pool.chainId as ChainId} />
+          <div>
+            <PoolChartV2 address={pool.address} chainId={pool.chainId as ChainId} />
+          </div>
           <div className="flex flex-col gap-6">
             <PoolComposition pool={pool} />
             <PoolStats pool={pool} />
