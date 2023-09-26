@@ -148,7 +148,7 @@ export class Router {
   ): MultiRoute {
     const networks: NetworkInfo[] = [
       {
-        chainId: chainId,
+        chainId: Number(chainId),
         baseToken: WNATIVE[chainId] as RToken,
         gasPrice: gasPrice as number,
       },
