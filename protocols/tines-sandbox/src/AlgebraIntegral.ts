@@ -7,10 +7,11 @@ import NonfungibleTokenPositionDescriptor from '@cryptoalgebra/integral-peripher
 import SwapRouter from '@cryptoalgebra/integral-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
 import { ChainId } from '@sushiswap/chain'
 import { Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
+import { UniV3Pool } from '@sushiswap/tines'
 import { Abi, Address, getContractAddress, Hex, PublicClient, WalletClient } from 'viem'
 import { waitForTransactionReceipt } from 'viem/actions'
 
-import { approve, TestTokens } from './TestTokens'
+import { approve, balanceOf, TestTokens } from './TestTokens'
 
 const getDeploymentAddress = async (client: WalletClient, promise: Promise<Hex>) =>
   waitForTransactionReceipt(client, { hash: await promise }).then((receipt) => receipt.contractAddress as Address)
@@ -270,4 +271,15 @@ export async function tickLiquidityPrice(client: PublicClient, poolAddress: Addr
     functionName: 'liquidity',
   })) as bigint
   return { tick, liquidity, price }
+}
+
+export async function updateTinesPool(client: PublicClient, pool: UniV3Pool) {
+  const { tick, liquidity, price } = await tickLiquidityPrice(client, pool.address)
+  pool.updateState(
+    await balanceOf(client, pool.token0 as Token, pool.address),
+    await balanceOf(client, pool.token1 as Token, pool.address),
+    Number(tick),
+    liquidity,
+    price
+  )
 }
