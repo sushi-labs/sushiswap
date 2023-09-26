@@ -17,6 +17,7 @@ export const ArticleListItem: FC<ArticleListItem> = ({ article }) => {
     >
       {article?.attributes?.cover.data && (
         <div className="relative rounded-2xl overflow-hidden h-[120px] md:h-[160px]">
+          {/* eslint-disable-next-line */}
           <Image
             quality={5}
             image={article?.attributes.cover.data}
