@@ -17,16 +17,21 @@ import {
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { Bound, Field } from 'lib/constants'
 import { getTickToPrice, tryParseTick } from 'lib/functions'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { createContext, FC, ReactNode, useCallback, useContext, useMemo, useReducer } from 'react'
 
 type FullRange = true
+type RangeValue = string | FullRange
 
-interface State {
+interface LocalState {
   independentField: Field
   typedValue: string
   startPriceTypedValue: string // for the case when there's no liquidity
-  leftRangeTypedValue: string | FullRange
-  rightRangeTypedValue: string | FullRange
+}
+
+interface State extends LocalState {
+  leftRangeTypedValue: RangeValue
+  rightRangeTypedValue: RangeValue
 }
 
 type Api = {
@@ -39,37 +44,26 @@ type Api = {
   setFullRange(): void
 }
 
-const initialState: State = {
+const initialState: LocalState = {
   independentField: Field.CURRENCY_A,
   typedValue: '',
   startPriceTypedValue: '',
-  leftRangeTypedValue: '',
-  rightRangeTypedValue: '',
 }
 
 type Actions =
   | { type: 'resetMintState' }
-  | { type: 'typeLeftRangeInput'; typedValue: string }
   | { type: 'typeInput'; field: Field; typedValue: string; noLiquidity: boolean }
-  | { type: 'typeRightRangeInput'; typedValue: string }
-  | { type: 'setFullRange' }
   | { type: 'typeStartPriceInput'; typedValue: string }
 
-const ConcentratedLiquidityStateContext = createContext<State>(initialState)
+const ConcentratedLiquidityStateContext = createContext<State | undefined>(undefined)
 const ConcentratedLiquidityActionsContext = createContext<Api>({} as Api)
 
-const reducer = (state: State, action: Actions): State => {
+const reducer = (state: LocalState, action: Actions): LocalState => {
   switch (action.type) {
     case 'resetMintState':
       return initialState
-    case 'setFullRange':
-      return { ...state, leftRangeTypedValue: true, rightRangeTypedValue: true }
     case 'typeStartPriceInput':
       return { ...state, startPriceTypedValue: action.typedValue }
-    case 'typeLeftRangeInput':
-      return { ...state, leftRangeTypedValue: action.typedValue }
-    case 'typeRightRangeInput':
-      return { ...state, rightRangeTypedValue: action.typedValue }
     case 'typeInput': {
       return {
         ...state,
@@ -84,7 +78,22 @@ const reducer = (state: State, action: Actions): State => {
   Provider only used whenever a user selects Concentrated Liquidity
  */
 export const ConcentratedLiquidityProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, initialState)
+  const { push } = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const [{ independentField, startPriceTypedValue, typedValue }, dispatch] = useReducer(reducer, initialState)
+
+  const state = useMemo(() => {
+    const minPrice = searchParams.get('minPrice') ?? ''
+    const maxPrice = searchParams.get('maxPrice') ?? ''
+    return {
+      independentField,
+      startPriceTypedValue,
+      typedValue,
+      leftRangeTypedValue: (minPrice === 'true' ? true : minPrice) as RangeValue,
+      rightRangeTypedValue: (maxPrice === 'true' ? true : maxPrice) as RangeValue,
+    }
+  }, [independentField, searchParams, startPriceTypedValue, typedValue])
 
   const api = useMemo(() => {
     const onFieldAInput = (typedValue: string, noLiquidity: boolean | undefined) =>
@@ -94,28 +103,25 @@ export const ConcentratedLiquidityProvider: FC<{ children: ReactNode }> = ({ chi
       dispatch({ type: 'typeInput', field: Field.CURRENCY_B, typedValue, noLiquidity: noLiquidity === true })
 
     const onLeftRangeInput = (typedValue: string) => {
-      dispatch({ type: 'typeLeftRangeInput', typedValue })
-      // TODO searchParams
-      // const paramMinPrice = searchParams.get('minPrice')
-      // if (!paramMinPrice || (paramMinPrice && paramMinPrice !== typedValue)) {
-      //   searchParams.set('minPrice', typedValue)
-      //   setSearchParams(searchParams)
-      // }
+      const _searchParams = new URLSearchParams(Array.from(searchParams.entries()))
+      _searchParams.set('minPrice', typedValue)
+      void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
     }
 
     const onRightRangeInput = (typedValue: string) => {
-      dispatch({ type: 'typeRightRangeInput', typedValue })
-      // TODO searchParams
-      // const paramMaxPrice = searchParams.get('maxPrice')
-      // if (!paramMaxPrice || (paramMaxPrice && paramMaxPrice !== typedValue)) {
-      //   searchParams.set('maxPrice', typedValue)
-      //   setSearchParams(searchParams)
-      // }
+      const _searchParams = new URLSearchParams(Array.from(searchParams.entries()))
+      _searchParams.set('maxPrice', typedValue)
+      void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
     }
 
     const onStartPriceInput = (typedValue: string) => dispatch({ type: 'typeStartPriceInput', typedValue })
     const resetMintState = () => dispatch({ type: 'resetMintState' })
-    const setFullRange = () => dispatch({ type: 'setFullRange' })
+    const setFullRange = () => {
+      const _searchParams = new URLSearchParams(Array.from(searchParams.entries()))
+      _searchParams.set('minPrice', 'true')
+      _searchParams.set('maxPrice', 'true')
+      void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
+    }
 
     return {
       resetMintState,
@@ -126,7 +132,7 @@ export const ConcentratedLiquidityProvider: FC<{ children: ReactNode }> = ({ chi
       onRightRangeInput,
       onStartPriceInput,
     }
-  }, [])
+  }, [pathname, push, searchParams])
 
   return (
     <ConcentratedLiquidityActionsContext.Provider value={api}>

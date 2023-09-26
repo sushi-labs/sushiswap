@@ -3,7 +3,7 @@
 import { VariantProps } from 'class-variance-authority'
 import classNames from 'classnames'
 import * as React from 'react'
-import { FC, useEffect, useRef, useState, useTransition } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 
 import { IconComponent } from '../types'
 import { buttonIconVariants } from './button'
@@ -46,8 +46,6 @@ const ChipInput: FC<ChipInputProps> = ({
 }) => {
   const ref = useRef<HTMLInputElement>(null)
   const [state, setState] = useState(`${values.join(',')},`)
-  const [pending, startTransition] = useTransition()
-  const inputHasText = ref.current && ref.current.value !== ''
 
   // Empty when reset
   useEffect(() => {
@@ -61,7 +59,7 @@ const ChipInput: FC<ChipInputProps> = ({
     return str.split(regExp).filter((el) => el !== '')
   }
 
-  const sync = (values: string[]) => startTransition(() => onValueChange(values))
+  const sync = (values: string[]) => onValueChange(values)
 
   const onKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!ref.current) return
