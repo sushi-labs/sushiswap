@@ -121,27 +121,46 @@ describe('AlgebraIntegral test', () => {
     await checkSwap(cntx, pool, E18, false)
   })
 
-  it('without tick crossing', async () => {
-    const poolInfo = await createPool(cntx, 3000, 1, [{ from: -540, to: 540, val: 10n * E18 }])
-    await checkSwap(cntx, poolInfo, E18, true)
-    await checkSwap(cntx, poolInfo, E18, false)
-  })
+  describe('One position', () => {
+    it('No tick crossing', async () => {
+      const pool = await createPool(cntx, 3000, 5, [{ from: -1200, to: 18000, val: E18 }])
+      await checkSwap(cntx, pool, 1e16, true)
+      await checkSwap(cntx, pool, 1e16, false)
+    })
 
-  it('Out of positions start 1', async () => {
-    const poolInfo = await createPool(cntx, 3000, 1, [{ from: 420, to: 540, val: 10n * E18 }])
-    await checkSwap(cntx, poolInfo, 1n * E18, true)
-    await checkSwap(cntx, poolInfo, 1n * E18, false)
-  })
+    it('Tick crossing', async () => {
+      const pool = await createPool(cntx, 3000, 5, [{ from: -1200, to: 18000, val: E18 }])
+      await checkSwap(cntx, pool, 1e18, true)
+      const pool2 = await createPool(cntx, 3000, 4, [{ from: -1200, to: 18000, val: E18 }])
+      await checkSwap(cntx, pool2, 1e20, false)
+    })
 
-  it('Out of positions start 2', async () => {
-    const poolInfo = await createPool(cntx, 3000, 1, [{ from: -540, to: 420, val: 10n * E18 }])
-    await checkSwap(cntx, poolInfo, 1n * E18, true)
-    await checkSwap(cntx, poolInfo, 1n * E18, false)
-  })
+    it('Swap exact to tick', async () => {
+      const pool = await createPool(cntx, 3000, 5, [{ from: -1200, to: 18000, val: E18 }])
+      await checkSwap(cntx, pool, 616469173272709204n, true) // before tick
+      const pool2 = await createPool(cntx, 3000, 5, [{ from: -1200, to: 18000, val: E18 }])
+      await checkSwap(cntx, pool2, 616469173272709205n, true) // after tick
+      const pool3 = await createPool(cntx, 3000, 4, [{ from: -1200, to: 18000, val: E18 }])
+      await checkSwap(cntx, pool3, 460875064077414607n, false) // before tick
+      const pool4 = await createPool(cntx, 3000, 4, [{ from: -1200, to: 18000, val: E18 }])
+      await checkSwap(cntx, pool4, 460875064077414607n, false) // after tick
+    })
 
-  it('Input overflow', async () => {
-    const poolInfo = await createPool(cntx, 3000, 1, [{ from: -540, to: -420, val: 10n * E18 }])
-    await checkSwap(cntx, poolInfo, 20n * E18, true)
-    await checkSwap(cntx, poolInfo, 20n * E18, false)
+    it('From 0 zone to not 0 zone', async () => {
+      const pool = await createPool(cntx, 3000, 50, [{ from: -1200, to: 18000, val: E18 }])
+      await checkSwap(cntx, pool, 1e17, true)
+    })
+
+    it('From 0 zone through ticks to 0 zone', async () => {
+      const pool = await createPool(cntx, 3000, 50, [{ from: -1200, to: 18000, val: E18 }])
+      await checkSwap(cntx, pool, 1e18, true)
+      const pool2 = await createPool(cntx, 3000, 0.1, [{ from: -1200, to: 18000, val: E18 }])
+      await checkSwap(cntx, pool2, 1e19, false)
+    })
+
+    // it.skip('Monkey test', async () => {
+    //   const pool = await createPool(cntx, 3000, 5, [{ from: -1200, to: 18000, val: E18 }])
+    //   await monkeyTest(env, pool, 'test1', 1000, true)
+    // })
   })
 })
