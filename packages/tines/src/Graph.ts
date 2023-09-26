@@ -469,8 +469,9 @@ export class Graph {
       const gasPriceChainId = gasPrice.get(v.token.chainId) as number
       console.assert(
         gasPriceChainId !== undefined,
-        `Error 427: token {${v.token.address} ${v.token.symbol}} has unknown chainId ${v.token.chainId}.` +
-          `Known chainIds: ${Array.from(gasPrice.keys())}`
+        `Error 427: token {${v.token.address} ${v.token.symbol}}` +
+          ` has unknown chainId ${v.token.chainId} (${typeof v.token.chainId}).` +
+          `Known chainIds: ${Array.from(gasPrice.keys()).map((k) => `"${k}"(${typeof k})`)}`
       )
       console.assert(
         v.price !== 0,
