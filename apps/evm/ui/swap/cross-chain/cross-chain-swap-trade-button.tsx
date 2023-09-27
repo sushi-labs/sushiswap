@@ -10,6 +10,7 @@ import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import { CrossChainSwapTradeReviewDialog } from './cross-chain-swap-trade-review-dialog'
 import { useCrossChainSwapTrade, useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 import { SUSHIXSWAP_2_ADDRESS, SushiXSwap2ChainId } from '@sushiswap/sushixswap-sdk'
+import { APPROVE_TAG_XSWAP } from 'lib/constants'
 
 export const CrossChainSwapTradeButton: FC = () => {
   const {
@@ -38,25 +39,27 @@ export const CrossChainSwapTradeButton: FC = () => {
                   amount={swapAmount}
                   contract={SUSHIXSWAP_2_ADDRESS[chainId0 as SushiXSwap2ChainId]}
                 >
-                  <DialogTrigger asChild>
-                    <Button
-                      disabled={Boolean(
-                        !trade?.amountOut?.greaterThan(ZERO) ||
-                          trade?.route?.status === 'NoWay' ||
-                          +swapAmountString === 0 ||
-                          (!checked && warningSeverity(trade?.priceImpact) > 3)
-                      )}
-                      color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
-                      fullWidth
-                      size="xl"
-                    >
-                      {!checked && warningSeverity(trade?.priceImpact) >= 3
-                        ? 'Price impact too high'
-                        : trade?.route?.status === 'NoWay'
-                        ? 'No trade found'
-                        : 'Swap'}
-                    </Button>
-                  </DialogTrigger>
+                  <Checker.Success tag={APPROVE_TAG_XSWAP}>
+                    <DialogTrigger asChild>
+                      <Button
+                        disabled={Boolean(
+                          !trade?.amountOut?.greaterThan(ZERO) ||
+                            trade?.route?.status === 'NoWay' ||
+                            +swapAmountString === 0 ||
+                            (!checked && warningSeverity(trade?.priceImpact) > 3)
+                        )}
+                        color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
+                        fullWidth
+                        size="xl"
+                      >
+                        {!checked && warningSeverity(trade?.priceImpact) >= 3
+                          ? 'Price impact too high'
+                          : trade?.route?.status === 'NoWay'
+                          ? 'No trade found'
+                          : 'Swap'}
+                      </Button>
+                    </DialogTrigger>
+                  </Checker.Success>
                 </Checker.ApproveERC20>
               </Checker.Amounts>
             </Checker.Network>

@@ -54,6 +54,8 @@ import {
 } from './cross-chain-swap-confirmation-dialog'
 import { useCrossChainSwapTrade, useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 import { isSushiXSwap2ChainId, SushiXSwap2ChainId } from '@sushiswap/sushixswap-sdk'
+import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { APPROVE_TAG_XSWAP } from 'lib/constants'
 
 export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ children }) => {
   const [review, setReview] = useState(false)
@@ -65,6 +67,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
     state: { recipient, swapAmount, swapAmountString, chainId0, token0, token1, chainId1, tradeId },
   } = useDerivedStateCrossChainSwap()
   const { data: trade, isFetching } = useCrossChainSwapTrade()
+  const { approved } = useApproved(APPROVE_TAG_XSWAP)
   const groupTs = useRef<number>()
   const refetchBalances = useBalanceWeb3Refetch()
 
@@ -86,6 +89,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         trade?.writeArgs &&
         trade?.writeArgs.length > 0 &&
         chain?.id === chainId0 &&
+        approved &&
         trade?.route?.status !== 'NoWay'
     ),
     value: trade?.value ?? 0n,
