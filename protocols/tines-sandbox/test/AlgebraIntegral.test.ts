@@ -15,6 +15,9 @@ import {
   createTestTokens,
   deployPoolAndMint,
   expectCloseValues,
+  getRandomVariant,
+  getRndLin,
+  getRndLinInt,
   mint,
   Range,
   swap,
@@ -91,6 +94,11 @@ async function checkSwap(
 
   if (actialAmountOut === undefined) expect(expectedAmountOut).equal(0)
   else expectCloseValues(actialAmountOut, expectedAmountOut, 1e-10)
+  // console.log(
+  //   actialAmountOut,
+  //   expectedAmountOut,
+  //   expectedAmountOut !== 0 ? Math.abs(expectedAmountOut - Number(actialAmountOut)) / expectedAmountOut : ''
+  // )
 }
 
 const E18 = 10n ** 18n
@@ -120,6 +128,36 @@ async function getRandomSwapParams(
   //console.log('current price:', price, 'amount:', amount, 'direction:', direction)
 
   return [amount, direction]
+}
+
+export async function createRandomPool(
+  cntx: TestContext,
+  seed: string,
+  positionNumber: number,
+  fee?: number,
+  price?: number,
+  minTick = CL_MIN_TICK,
+  maxTick = CL_MAX_TICK
+): Promise<PoolInfo> {
+  const rnd: () => number = seedrandom(seed) // random [0, 1)
+
+  const tickSpacing = 120
+  const RANGE = Math.floor((maxTick - minTick) / tickSpacing)
+  const SHIFT = -Math.floor(-minTick / tickSpacing) * tickSpacing
+
+  const positions: Range[] = []
+  for (let i = 0; i < positionNumber; ++i) {
+    const pos1 = getRndLinInt(rnd, 0, RANGE)
+    const pos2 = (pos1 + getRndLinInt(rnd, 1, RANGE - 1)) % RANGE
+    const from = Math.min(pos1, pos2) * tickSpacing + SHIFT
+    const to = Math.max(pos1, pos2) * tickSpacing + SHIFT
+    console.assert(minTick <= from && from < to && to <= maxTick, `Wrong from-to range ${from} - ${to}`)
+    positions.push({ from, to, val: BigInt(getRndLin(rnd, 0.01, 30) * 1e18) })
+  }
+  price = price ?? getRndLin(rnd, 0.01, 100)
+  fee = fee ?? getRandomVariant(rnd, [500, 1000, 3000, 10000])
+  //console.log(positions, price, fee)
+  return await createPool(cntx, fee, price, positions)
 }
 
 async function monkeyTest(cntx: TestContext, pool: PoolInfo, seed: string, iterations: number, printTick = false) {
@@ -207,5 +245,91 @@ describe('AlgebraIntegral test', () => {
       const pool = await createPool(cntx, 3000, 5, [{ from: -1200, to: 18000, val: E18 }])
       await monkeyTest(cntx, pool, 'test1', 1000, true)
     })
+  })
+
+  describe('Two positions', () => {
+    it('Special 1', async () => {
+      const pool = await createPool(cntx, 3000, 12.310868067131443, [
+        { from: -1200, to: 18000, val: E18 },
+        { from: 24000, to: 48000, val: 5n * E18 },
+      ])
+      await checkSwap(cntx, pool, 85433172055732540, true)
+    })
+    it('Special 2', async () => {
+      const pool = await createPool(cntx, 3000, 121.48126046130433, [
+        { from: -1200, to: 18000, val: E18 },
+        { from: 24000, to: 48000, val: 5n * E18 },
+      ])
+      await checkSwap(cntx, pool, BigInt('154350003013680480'), true)
+    })
+    it('Special 3', async () => {
+      const pool = await createPool(cntx, 3000, 6.857889404362659, [
+        { from: -1200, to: 18000, val: 2n * E18 },
+        { from: 12000, to: 24000, val: 6n * E18 },
+      ])
+      await checkSwap(cntx, pool, BigInt('994664157591385500'), true)
+    })
+    it('No overlapping small monkey test', async () => {
+      const pool = await createPool(cntx, 3000, 3, [
+        { from: -1200, to: 18000, val: E18 },
+        { from: 24000, to: 48000, val: 5n * E18 },
+      ])
+      await monkeyTest(cntx, pool, 'small', 10)
+    })
+    it.skip('No overlapping big monkey test', async () => {
+      const pool = await createPool(cntx, 3000, 3, [
+        { from: -1200, to: 18000, val: E18 },
+        { from: 24000, to: 48000, val: 5n * E18 },
+      ])
+      await monkeyTest(cntx, pool, 'big', 1000, true)
+    })
+    it('Touching positions small monkey test', async () => {
+      const pool = await createPool(cntx, 3000, 4, [
+        { from: -1200, to: 18000, val: E18 },
+        { from: 18000, to: 42000, val: 5n * E18 },
+      ])
+      await monkeyTest(cntx, pool, '_small', 10)
+    })
+    it.skip('Touching positions big monkey test', async () => {
+      const pool = await createPool(cntx, 3000, 4, [
+        { from: -1200, to: 18000, val: E18 },
+        { from: 18000, to: 42000, val: 5n * E18 },
+      ])
+      await monkeyTest(cntx, pool, '_big', 1000, true)
+    })
+    it('Overlapped positions small monkey test', async () => {
+      const pool = await createPool(cntx, 3000, 8, [
+        { from: -1200, to: 18000, val: 2n * E18 },
+        { from: 12000, to: 24000, val: 6n * E18 },
+      ])
+      await monkeyTest(cntx, pool, 'Small', 10)
+    })
+    it.skip('Overlapped positions small monkey test', async () => {
+      const pool = await createPool(cntx, 3000, 8, [
+        { from: -1200, to: 18000, val: 2n * E18 },
+        { from: 12000, to: 24000, val: 6n * E18 },
+      ])
+      await monkeyTest(cntx, pool, 'Big', 1000, true)
+    })
+    it('Nested positions small monkey test', async () => {
+      const pool = await createPool(cntx, 3000, 8, [
+        { from: -1200, to: 24000, val: 2n * E18 },
+        { from: 6000, to: 12000, val: 6n * E18 },
+      ])
+      await monkeyTest(cntx, pool, '_small_', 10)
+    })
+    it.skip('Nested positions big monkey test', async () => {
+      const pool = await createPool(cntx, 3000, 8, [
+        { from: -1200, to: 24000, val: 2n * E18 },
+        { from: 6000, to: 12000, val: 6n * E18 },
+      ])
+      await monkeyTest(cntx, pool, '_big_', 1000, true)
+    })
+  })
+  it.skip('Random pool monkey test', async () => {
+    for (let i = 0; i < 10; ++i) {
+      const pool = await createRandomPool(cntx, `pool${i}`, 10)
+      await monkeyTest(cntx, pool, `monkey${i}`, 100, true)
+    }
   })
 })

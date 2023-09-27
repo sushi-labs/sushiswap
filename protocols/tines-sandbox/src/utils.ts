@@ -34,3 +34,14 @@ export async function tryCallAsync<A>(f: () => Promise<A>): Promise<A | undefine
     //
   }
 }
+
+export function getRndLin(rnd: () => number, min: number, max: number) {
+  return rnd() * (max - min) + min
+}
+export function getRndLinInt(rnd: () => number, min: number, max: number) {
+  return Math.floor(getRndLin(rnd, min, max))
+}
+
+export function getRandomVariant<A>(rnd: () => number, variants: A[]) {
+  return variants[Math.floor(rnd() * variants.length)]
+}
