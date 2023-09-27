@@ -282,4 +282,5 @@ export async function updateTinesPool(client: PublicClient, pool: UniV3Pool) {
     liquidity,
     price
   )
+  return { tick, liquidity, price }
 }

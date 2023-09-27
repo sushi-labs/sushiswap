@@ -1,13 +1,15 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
+import { CL_MAX_TICK, CL_MIN_TICK, CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
 import { expect } from 'chai'
+import seedrandom from 'seedrandom'
 import { Address, createPublicClient, custom, PublicClient, walletActions, WalletClient } from 'viem'
 import { hardhat } from 'viem/chains'
 
 import {
   AlgebraIntegralPeriphery,
   approveTestTokensToPerifery,
+  balanceOf,
   createAlgebraIntegralPeriphery,
   createHardhatProviderEmptyBlockchain,
   createTestTokens,
@@ -17,6 +19,7 @@ import {
   Range,
   swap,
   TestTokens,
+  tickLiquidityPrice,
   tryCallAsync,
   updateTinesPool,
 } from '../src'
@@ -72,9 +75,16 @@ async function createPool(cntx: TestContext, fee: number, price: number, positio
   return { poolAddress, pool, token0, token1 }
 }
 
-async function checkSwap(cntx: TestContext, pool: PoolInfo, amountIn: number | bigint, direction: boolean) {
-  await updateTinesPool(cntx.client, pool.pool)
+async function checkSwap(
+  cntx: TestContext,
+  pool: PoolInfo,
+  amountIn: number | bigint,
+  direction: boolean,
+  printTick = false
+) {
+  const { tick } = await updateTinesPool(cntx.client, pool.pool)
   const expectedAmountOut = pool.pool.calcOutByIn(Number(amountIn), direction, false).out
+  if (printTick) console.log('Tick:', tick)
 
   const [t0, t1] = direction ? [pool.token0, pool.token1] : [pool.token1, pool.token0]
   const actialAmountOut = await tryCallAsync(() => swap(cntx.client, cntx.env, t0, t1, cntx.user, BigInt(amountIn)))
@@ -84,6 +94,41 @@ async function checkSwap(cntx: TestContext, pool: PoolInfo, amountIn: number | b
 }
 
 const E18 = 10n ** 18n
+
+const minPrice = 1.0001 ** CL_MIN_TICK
+const maxPrice = 1.0001 ** CL_MAX_TICK
+async function getRandomSwapParams(
+  rnd: () => number,
+  client: PublicClient,
+  pool: PoolInfo
+): Promise<[number, boolean]> {
+  const { price: sqrtPriceX96 } = await tickLiquidityPrice(client, pool.poolAddress)
+  const sqrtPrice = Number(sqrtPriceX96) / 2 ** 96
+  const price = sqrtPrice * sqrtPrice // res1/res0
+
+  let direction = true
+  if (price < minPrice * 10) direction = false
+  else if (price > maxPrice / 10) direction = true
+  else direction = rnd() > 0.5
+
+  const res0 = Number(await balanceOf(client, pool.token0, pool.poolAddress))
+  const res1 = Number(await balanceOf(client, pool.token1, pool.poolAddress))
+
+  const maxRes = direction ? res1 / price : res0 * price
+  const amount = Math.round(rnd() * maxRes) + 1000
+
+  //console.log('current price:', price, 'amount:', amount, 'direction:', direction)
+
+  return [amount, direction]
+}
+
+async function monkeyTest(cntx: TestContext, pool: PoolInfo, seed: string, iterations: number, printTick = false) {
+  const rnd: () => number = seedrandom(seed) // random [0, 1)
+  for (let i = 0; i < iterations; ++i) {
+    const [amount, direction] = await getRandomSwapParams(rnd, cntx.client, pool)
+    await checkSwap(cntx, pool, amount, direction, printTick)
+  }
+}
 
 describe('AlgebraIntegral test', () => {
   let cntx: TestContext
@@ -158,9 +203,9 @@ describe('AlgebraIntegral test', () => {
       await checkSwap(cntx, pool2, 1e19, false)
     })
 
-    // it.skip('Monkey test', async () => {
-    //   const pool = await createPool(cntx, 3000, 5, [{ from: -1200, to: 18000, val: E18 }])
-    //   await monkeyTest(env, pool, 'test1', 1000, true)
-    // })
+    it.skip('Monkey test', async () => {
+      const pool = await createPool(cntx, 3000, 5, [{ from: -1200, to: 18000, val: E18 }])
+      await monkeyTest(cntx, pool, 'test1', 1000, true)
+    })
   })
 })
