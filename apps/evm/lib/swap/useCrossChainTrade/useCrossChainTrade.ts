@@ -1,5 +1,5 @@
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
-import { Percent, ZERO } from '@sushiswap/math'
+import { Fraction, ONE, Percent, ZERO } from '@sushiswap/math'
 import { STARGATE_CHAIN_ID } from '@sushiswap/stargate'
 import { useFeeData, readContract } from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
@@ -15,6 +15,7 @@ import {
   encodeStargateTeleportParams,
   estimateStargateDstGas,
   STARGATE_ADAPTER_ADDRESS,
+  STARGATE_DEFAULT_SLIPPAGE,
 } from '@sushiswap/sushixswap-sdk'
 import { RouterLiquiditySource } from '@sushiswap/router'
 import { useBridgeFees } from './useBridgeFees'
@@ -183,6 +184,11 @@ export const useCrossChainTradeQuery = (
       let transactionType
 
       if (!isSrcSwap && !isDstSwap) {
+        const amountMin = new Fraction(ONE)
+          .add(STARGATE_DEFAULT_SLIPPAGE)
+          .invert()
+          .multiply(srcAmountOut.quotient).quotient
+
         transactionType = TransactionType.Bridge
         functionName = 'bridge'
         writeArgs = [
@@ -193,8 +199,8 @@ export const useCrossChainTradeQuery = (
             adapterData: encodeStargateTeleportParams({
               srcBridgeToken,
               dstBridgeToken,
-              amount: amount.quotient.toString(),
-              amountMin: srcAmountOut.quotient.toString(),
+              amount: amount.quotient,
+              amountMin,
               dustAmount: 0,
               receiver: recipient, // receivier is recipient because no dstPayload
               to: recipient,
@@ -207,6 +213,10 @@ export const useCrossChainTradeQuery = (
         ]
       } else if (isSrcSwap && !isDstSwap && srcTrade?.minAmountOut) {
         const srcSwapData = encodeSwapData(srcTrade.writeArgs as Parameters<typeof encodeSwapData>[0])
+        const amountMin = new Fraction(ONE)
+          .add(STARGATE_DEFAULT_SLIPPAGE)
+          .invert()
+          .multiply(srcTrade.minAmountOut.quotient).quotient
 
         transactionType = TransactionType.SwapAndBridge
         functionName = 'swapAndBridge'
@@ -219,7 +229,7 @@ export const useCrossChainTradeQuery = (
               srcBridgeToken,
               dstBridgeToken,
               amount: 0,
-              amountMin: srcTrade.minAmountOut.quotient.toString(),
+              amountMin,
               dustAmount: 0,
               receiver: recipient, // receivier is recipient because no dstPayload
               to: recipient,
@@ -233,6 +243,11 @@ export const useCrossChainTradeQuery = (
         ]
       } else if (!isSrcSwap && isDstSwap && dstTrade?.writeArgs) {
         const dstSwapData = encodeSwapData(dstTrade.writeArgs as Parameters<typeof encodeSwapData>[0])
+        const amountMin = new Fraction(ONE)
+          .add(STARGATE_DEFAULT_SLIPPAGE)
+          .invert()
+          .multiply(srcAmountOut.quotient).quotient
+
         dstGasEstimate = estimateStargateDstGas(dstTrade.route?.gasSpent ?? 0)
 
         dstPayload = encodeAbiParameters(parseAbiParameters('address, bytes, bytes'), [
@@ -251,8 +266,8 @@ export const useCrossChainTradeQuery = (
             adapterData: encodeStargateTeleportParams({
               srcBridgeToken: srcBridgeToken,
               dstBridgeToken: dstBridgeToken,
-              amount: amount.quotient.toString(),
-              amountMin: srcAmountOut.quotient.toString(),
+              amount: amount.quotient,
+              amountMin,
               dustAmount: 0,
               receiver: STARGATE_ADAPTER_ADDRESS[network1],
               to: recipient,
@@ -266,6 +281,10 @@ export const useCrossChainTradeQuery = (
       } else if (isSrcSwap && isDstSwap && srcTrade?.minAmountOut && dstTrade) {
         const srcSwapData = encodeSwapData(srcTrade.writeArgs as Parameters<typeof encodeSwapData>[0])
         const dstSwapData = encodeSwapData(dstTrade.writeArgs as Parameters<typeof encodeSwapData>[0])
+        const amountMin = new Fraction(ONE)
+          .add(STARGATE_DEFAULT_SLIPPAGE)
+          .invert()
+          .multiply(srcTrade.minAmountOut.quotient).quotient
 
         dstPayload = encodeAbiParameters(parseAbiParameters('address, bytes, bytes'), [
           recipient, // to
@@ -285,7 +304,7 @@ export const useCrossChainTradeQuery = (
               srcBridgeToken,
               dstBridgeToken,
               amount: 0,
-              amountMin: srcTrade.minAmountOut.quotient.toString(),
+              amountMin,
               dustAmount: 0,
               receiver: STARGATE_ADAPTER_ADDRESS[network1],
               to: recipient,

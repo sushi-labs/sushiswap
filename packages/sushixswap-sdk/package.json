@@ -40,6 +40,7 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/math": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/stargate": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",

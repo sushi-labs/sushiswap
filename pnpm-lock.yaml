@@ -2194,6 +2194,7 @@ importers:
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/stargate': workspace:*
       '@sushiswap/typescript-config': workspace:*
@@ -2207,6 +2208,7 @@ importers:
       '@sushiswap/currency': link:../currency
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/math': link:../math
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/stargate': link:../stargate
       '@sushiswap/typescript-config': link:../../config/typescript

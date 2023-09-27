@@ -1,8 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { STARGATE_CHAIN_ID, STARGATE_ETH_ADDRESS, STARGATE_POOL_ID } from '@sushiswap/stargate'
+import { Percent } from '@sushiswap/math'
 import { Address, encodeAbiParameters, parseAbiParameters } from 'viem'
 import { SushiXSwap2ChainId } from '../..'
+
+export const STARGATE_DEFAULT_SLIPPAGE = new Percent(100, 10_000) // 1%
 
 export const STARGATE_ADAPTER_ADDRESS = {
   [ChainId.ARBITRUM]: '0x3541e8529d17396048a5068efc361b9fdad21eea',
