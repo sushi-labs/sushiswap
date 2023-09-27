@@ -4,8 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
-import { STARGATE_SUPPORTED_CHAIN_IDS, StargateChainId } from '@sushiswap/stargate'
-import { isSushiXSwap2ChainId, SushiXSwap2ChainId } from '@sushiswap/sushixswap-sdk'
+import { isSushiXSwap2ChainId, SushiXSwap2ChainId, SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS } from '@sushiswap/sushixswap-sdk'
 import { Address, useAccount, useNetwork, watchNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future'
 import { UseQueryResult } from '@tanstack/react-query'
@@ -88,7 +87,7 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
     if (!params.has('chainId0'))
       params.set(
         'chainId0',
-        (chain?.id && STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId)
+        (chain?.id && SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS.includes(chain.id as SushiXSwap2ChainId)
           ? chain.id
           : ChainId.ETHEREUM
         ).toString()
@@ -249,7 +248,8 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
 
   useEffect(() => {
     const unwatch = watchNetwork(({ chain }) => {
-      if (!chain || chain.id === chainId0 || !STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId)) return
+      if (!chain || chain.id === chainId0 || !SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS.includes(chain.id as SushiXSwap2ChainId))
+        return
       push(pathname, { scroll: false })
     })
     return () => unwatch()
