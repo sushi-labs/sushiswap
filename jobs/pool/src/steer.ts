@@ -3,6 +3,7 @@ import { Prisma, SteerStrategy, VaultState } from '@sushiswap/database'
 import { getIdFromChainIdAddress } from '@sushiswap/format'
 import { STEER_ENABLED_NETWORKS, STEER_SUBGRAPGH_NAME, SteerChainId, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 import { getSteerStrategyPayload, getSteerVaultAprs } from '@sushiswap/steer-sdk'
+import { TickMath } from '@sushiswap/v3-sdk'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { Address } from 'viem'
 
@@ -104,15 +105,18 @@ function transform(chainsWithVaults: Awaited<ReturnType<typeof extract>>): Prism
       if (!strategyType) return []
 
       const lowTicks = vault.positions.flatMap((position) => position.lowerTick)
-      const lowestTick = lowTicks.reduce(
-        (lowest, tick) => (Number(tick) < lowest ? Number(tick) : lowest),
-        Number(lowTicks[0] || 0)
+      const lowestTick = Math.max(
+        lowTicks.reduce((lowest, tick) => (Number(tick) < lowest ? Number(tick) : lowest), Number(lowTicks[0] || 0)),
+        TickMath.MIN_TICK
       )
 
       const highTicks = vault.positions.flatMap((position) => position.upperTick)
-      const highestTick = highTicks.reduce(
-        (highest, tick) => (Number(tick) > highest ? Number(tick) : highest),
-        Number(highTicks[0] || 0)
+      const highestTick = Math.min(
+        highTicks.reduce(
+          (highest, tick) => (Number(tick) > highest ? Number(tick) : highest),
+          Number(highTicks[0] || 0)
+        ),
+        TickMath.MAX_TICK
       )
 
       return {
