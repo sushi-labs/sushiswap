@@ -21,6 +21,7 @@ import { useEffect, useRef } from 'react'
 
 import { SteerStrategyConfig } from '../constants'
 import { SteerAPRHoverCard } from '../SteerAPRHoverCard'
+import { SteerLiquidityInRangeChip } from '../SteerLiquidityDistributionWidget/SteerLiquidityInRangeChip'
 import {
   SteerPositionAdd,
   SteerPositionAddProvider,
@@ -148,7 +149,10 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
         </div>
         <Separator />
         <CardHeader>
-          <CardTitle>Liquidity Distribution</CardTitle>
+          <div className="flex justify-between">
+            <CardTitle>Liquidity Distribution</CardTitle>
+            <SteerLiquidityInRangeChip vault={vault} />
+          </div>
         </CardHeader>
         <div className="px-6">
           <div className="h-[200px] w-full bg-secondary rounded-xl flex items-center justify-center">
