@@ -41,7 +41,7 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
   }, [])
 
   return (
-    <div ref={rootDiv} className="flex gap-4">
+    <div ref={rootDiv} className="grid md:grid-cols-2 gap-4">
       <Card>
         <CardHeader>
           <CardTitle>Liquidity</CardTitle>
