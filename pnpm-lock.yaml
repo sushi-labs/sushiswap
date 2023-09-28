@@ -2865,8 +2865,8 @@ importers:
 
   protocols/tines-sandbox:
     specifiers:
-      '@cryptoalgebra/integral-core': 0.1.0
-      '@cryptoalgebra/integral-periphery': 0.1.0
+      '@cryptoalgebra/integral-core': 0.2.0
+      '@cryptoalgebra/integral-periphery': 0.2.0
       '@ethersproject/abi': 5.7.0
       '@ethersproject/bytes': ^5.0.0
       '@ethersproject/providers': 5.7.2
@@ -2928,8 +2928,8 @@ importers:
       typescript: 5.1.6
       viem: 1.10.7
     devDependencies:
-      '@cryptoalgebra/integral-core': 0.1.0
-      '@cryptoalgebra/integral-periphery': 0.1.0
+      '@cryptoalgebra/integral-core': 0.2.0
+      '@cryptoalgebra/integral-periphery': 0.2.0
       '@ethersproject/abi': 5.7.0
       '@ethersproject/bytes': 5.7.0
       '@ethersproject/providers': 5.7.2
@@ -6266,18 +6266,18 @@ packages:
     resolution: {integrity: sha512-N8uEMrMPL0cu/bdboEWpQYb/0i2K5Qn8eCsxzOmxSggJbbQte7ljMRoXm917AbntqTGOzdTu+vP3KOOzoC70HQ==}
     dev: false
 
-  /@cryptoalgebra/integral-core/0.1.0:
-    resolution: {integrity: sha512-x5mjzbWOty/nfMzAidSTdEygqRcPtMEb0bbEpzXpagjmXhbgcOEQTkmpv/pi3IfV3EZyOJ+BDuQG7nUx9yL1+g==}
+  /@cryptoalgebra/integral-core/0.2.0:
+    resolution: {integrity: sha512-gj3pvt7x70fa2Y2LgnJgAuMxggmBfIVyI8dBEG7uEJGwmwkDwY9dqA/SqM5Dp6HChPDfwUNMOKOKmyramexIkA==}
     engines: {node: '>=14.0.0', npm: '>=8.0.0'}
     dependencies:
       '@openzeppelin/contracts': 4.9.3
     dev: true
 
-  /@cryptoalgebra/integral-periphery/0.1.0:
-    resolution: {integrity: sha512-wyZE9fW6LDVl10N5Mm4MDug3LozF9ROeFI56wpd3YbMlQsBCBSmGoO2WbXyvOuukioYLcnvunihrpvBNzVRNjA==}
+  /@cryptoalgebra/integral-periphery/0.2.0:
+    resolution: {integrity: sha512-X/mDPsNohx/briYWunts65dR24TvoKfWIvQcwvUn1wgmUK/0KWrstYAVJH5nhsZDYjhqorGYnpJNz+J0l0ci+Q==}
     engines: {node: '>=14.0.0', npm: '>=8.0.0'}
     dependencies:
-      '@cryptoalgebra/integral-core': 0.1.0
+      '@cryptoalgebra/integral-core': 0.2.0
       '@openzeppelin/contracts': 4.9.3
       '@uniswap/v2-core': 1.0.1
     dev: true

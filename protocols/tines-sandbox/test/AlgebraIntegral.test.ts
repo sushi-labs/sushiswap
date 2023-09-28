@@ -129,7 +129,8 @@ async function getRandomSwapParams(
     direction = !direction
     maxRes = direction ? pool.res0Max - res0 : pool.res1Max - res1
   }
-  const amount = getRndExpInt(rnd, Math.pow(maxRes, 1 / 2), maxRes) + 1000
+  maxRes = Math.min(maxRes, 1e35)
+  const amount = getRndExpInt(rnd, Math.pow(maxRes, 1 / 4), maxRes) + 1000
   //console.log('current price:', price, 'amount:', amount, 'direction:', direction)
 
   return [amount, direction]
@@ -176,7 +177,7 @@ export async function createRandomPool(
   }
   price = price ?? getRndExp(rnd, 0.01, 100)
   fee = fee ?? getRndVariant(rnd, [500, 1000, 3000, 10000])
-  console.log(positions, price, fee)
+  //console.log(positions, price, fee)
   return await createPool(cntx, fee, price, positions)
 }
 
@@ -348,6 +349,7 @@ describe('AlgebraIntegral test', () => {
   })
   it.skip('Random pool monkey test', async () => {
     for (let i = 0; i < 10; ++i) {
+      console.log(`Pool #${i} generation ...`)
       const pool = await createRandomPool(cntx, `pool${i}`, 100)
       await monkeyTest(cntx, pool, `monkey${i}`, 100, true)
     }
