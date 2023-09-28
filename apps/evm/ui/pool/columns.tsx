@@ -122,6 +122,7 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'liquidityUSD',
   header: 'TVL',
   accessorFn: (row) => row.liquidityUSD,
+  sortingFn: ({ original: rowA }, { original: rowB }) => Number(rowA.liquidityUSD) - Number(rowB.liquidityUSD),
   cell: (props) =>
     formatUSD(props.row.original.liquidityUSD).includes('NaN') ? '$0.00' : formatUSD(props.row.original.liquidityUSD),
   meta: {
@@ -147,6 +148,7 @@ export const VOLUME_1H_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'volume1h',
   header: 'Volume (1h)',
   accessorFn: (row) => row.volume1h,
+  sortingFn: ({ original: rowA }, { original: rowB }) => Number(rowA.volume1h) - Number(rowB.volume1h),
   cell: (props) =>
     formatUSD(props.row.original.volume1h).includes('NaN') ? '$0.00' : formatUSD(props.row.original.volume1h),
   meta: {
@@ -158,6 +160,7 @@ export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'volume1d',
   header: 'Volume (24h)',
   accessorFn: (row) => row.volume1d,
+  sortingFn: ({ original: rowA }, { original: rowB }) => Number(rowA.volume1d) - Number(rowB.volume1d),
   cell: (props) =>
     formatUSD(props.row.original.volume1d).includes('NaN') ? '$0.00' : formatUSD(props.row.original.volume1d),
   meta: {
@@ -169,6 +172,7 @@ export const VOLUME_7D_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'volume1w',
   header: 'Volume (1w)',
   accessorFn: (row) => row.volume1w,
+  sortingFn: ({ original: rowA }, { original: rowB }) => Number(rowA.volume1w) - Number(rowB.volume1w),
   cell: (props) =>
     formatUSD(props.row.original.volume1w).includes('NaN') ? '$0.00' : formatUSD(props.row.original.volume1w),
   meta: {
@@ -180,6 +184,7 @@ export const VOLUME_1M_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'volume1m',
   header: 'Volume (1m)',
   accessorFn: (row) => row.volume1m,
+  sortingFn: ({ original: rowA }, { original: rowB }) => Number(rowA.volume1m) - Number(rowB.volume1m),
   cell: (props) =>
     formatUSD(props.row.original.volume1m).includes('NaN') ? '$0.00' : formatUSD(props.row.original.volume1m),
   meta: {
