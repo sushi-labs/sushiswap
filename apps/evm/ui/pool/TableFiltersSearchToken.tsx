@@ -27,7 +27,7 @@ export const TableFiltersSearchToken: FC = () => {
       <ChipInput
         size="sm"
         icon={MagnifyingGlassIcon}
-        delimiters={[',', ' ', ';', ':']}
+        delimiters={[',', ' ', ';', ':', 'Enter']}
         variant="outline"
         values={isPending ? values : tokenSymbols ?? []}
         onValueChange={onValueChange}
