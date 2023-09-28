@@ -15,15 +15,14 @@ import {
   createTestTokens,
   deployPoolAndMint,
   expectCloseValues,
+  getRndExp,
   getRndExpInt,
-  getRndLin,
   getRndLinInt,
   getRndVariant,
   mint,
   Range,
   swap,
   TestTokens,
-  tickLiquidityPrice,
   tryCallAsync,
   updateTinesPool,
 } from '../src'
@@ -41,6 +40,8 @@ interface PoolInfo {
   pool: UniV3Pool
   token0: Token
   token1: Token
+  res0Max: number
+  res1Max: number
 }
 
 let token0Index = 0,
@@ -76,7 +77,16 @@ async function createPool(cntx: TestContext, fee: number, price: number, positio
   const pool = new UniV3Pool(poolAddress, token0 as RToken, token1 as RToken, fee / 1e6, 0n, 0n, 0, 0n, 1n, ticks)
   await updateTinesPool(cntx.client, pool)
 
-  return { poolAddress, pool, token0, token1 }
+  const res0 = Number(pool.getReserve0())
+  const res1 = Number(pool.getReserve1())
+  return {
+    poolAddress,
+    pool,
+    token0,
+    token1,
+    res0Max: pool.calcInByOut(res1, true).inp + res0,
+    res1Max: pool.calcInByOut(res0, false).inp + res1,
+  }
 }
 
 async function checkSwap(
@@ -94,8 +104,8 @@ async function checkSwap(
   const actialAmountOut = await tryCallAsync(() => swap(cntx.client, cntx.env, t0, t1, cntx.user, BigInt(amountIn)))
 
   if (actialAmountOut === undefined) expect(expectedAmountOut).equal(0)
-  //else expectCloseValues(actialAmountOut, expectedAmountOut, 1e-10)
-  else expectCloseValues(actialAmountOut / 100n, expectedAmountOut / 100, 1e-8)
+  else expectCloseValues(actialAmountOut, expectedAmountOut, 1e-8)
+  // else expectCloseValues(actialAmountOut / 100n, expectedAmountOut / 100, 1e-8)
   // console.log(
   //   actialAmountOut,
   //   expectedAmountOut,
@@ -105,29 +115,21 @@ async function checkSwap(
 
 const E18 = 10n ** 18n
 
-const minPrice = 1.0001 ** CL_MIN_TICK
-const maxPrice = 1.0001 ** CL_MAX_TICK
 async function getRandomSwapParams(
   rnd: () => number,
   client: PublicClient,
   pool: PoolInfo
 ): Promise<[number, boolean]> {
-  const { price: sqrtPriceX96 } = await tickLiquidityPrice(client, pool.poolAddress)
-  const sqrtPrice = Number(sqrtPriceX96) / 2 ** 96
-  const price = sqrtPrice * sqrtPrice // res1/res0
-
-  let direction = true
-  if (price < minPrice * 10) direction = false
-  else if (price > maxPrice / 10) direction = true
-  else direction = rnd() > 0.5
-
   const res0 = Number(await balanceOf(client, pool.token0, pool.poolAddress))
   const res1 = Number(await balanceOf(client, pool.token1, pool.poolAddress))
 
-  const maxRes = direction ? res0 : res1
+  let direction = rnd() > 0.5
+  let maxRes = direction ? pool.res0Max - res0 : pool.res1Max - res1
+  if (maxRes < 0) {
+    direction = !direction
+    maxRes = direction ? pool.res0Max - res0 : pool.res1Max - res1
+  }
   const amount = getRndExpInt(rnd, Math.pow(maxRes, 1 / 2), maxRes) + 1000
-  // Math.round(rnd() * maxRes) + 1000
-
   //console.log('current price:', price, 'amount:', amount, 'direction:', direction)
 
   return [amount, direction]
@@ -166,10 +168,13 @@ export async function createRandomPool(
     const from = Math.min(pos1, pos2) * tickSpacing + SHIFT
     const to = Math.max(pos1, pos2) * tickSpacing + SHIFT
     console.assert(minTick <= from && from < to && to <= maxTick, `Wrong from-to range ${from} - ${to}`)
-    const maxLiquidity = Math.min(getMaxPositionLiquidity(from, to), 30e18) / 1e18
-    positions.push({ from, to, val: BigInt(Math.round(getRndLin(rnd, 1e-12, maxLiquidity) * 1e18)) })
+    const maxLiquidity = Math.min(getMaxPositionLiquidity(from, to), 30e18)
+    const minLiquidity = 1e9
+    if (maxLiquidity > minLiquidity)
+      positions.push({ from, to, val: BigInt(getRndExpInt(rnd, minLiquidity, maxLiquidity)) })
+    else --i // try again
   }
-  price = price ?? getRndLin(rnd, 0.01, 100)
+  price = price ?? getRndExp(rnd, 0.01, 100)
   fee = fee ?? getRndVariant(rnd, [500, 1000, 3000, 10000])
   console.log(positions, price, fee)
   return await createPool(cntx, fee, price, positions)
@@ -319,7 +324,7 @@ describe('AlgebraIntegral test', () => {
       ])
       await monkeyTest(cntx, pool, 'Small', 10)
     })
-    it.skip('Overlapped positions small monkey test', async () => {
+    it.skip('Overlapped positions big monkey test', async () => {
       const pool = await createPool(cntx, 3000, 8, [
         { from: -1200, to: 18000, val: 2n * E18 },
         { from: 12000, to: 24000, val: 6n * E18 },
