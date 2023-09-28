@@ -149,7 +149,11 @@ export const useCrossChainTradeQuery = (
 
       const dstAmountOut = isDstSwap ? dstTrade?.amountOut : dstAmountIn
 
-      const dstMinimumAmountOut = isDstSwap ? dstTrade?.minAmountOut : dstAmountIn
+      const dstMinimumAmountOut = isDstSwap
+        ? dstTrade?.minAmountOut
+        : dstAmountIn
+        ? new Fraction(ONE).add(STARGATE_DEFAULT_SLIPPAGE).invert().multiply(dstAmountIn.quotient)
+        : undefined
 
       const bridgeImpact =
         !bridgeFee || !amount || !srcMinimumAmountOut
