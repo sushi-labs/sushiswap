@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 
 function closeValues(_a: number | bigint, _b: number | bigint, accuracy: number): boolean {
-  const a: number = typeof _a === 'number' ? _a : parseInt(_a.toString())
-  const b: number = typeof _b === 'number' ? _b : parseInt(_b.toString())
+  const a = Number(_a)
+  const b = Number(_b)
   if (accuracy === 0) return a === b
   if (Math.abs(a) < 1 / accuracy) return Math.abs(a - b) <= 10
   if (Math.abs(b) < 1 / accuracy) return Math.abs(a - b) <= 10
@@ -42,6 +42,18 @@ export function getRndLinInt(rnd: () => number, min: number, max: number) {
   return Math.floor(getRndLin(rnd, min, max))
 }
 
-export function getRandomVariant<A>(rnd: () => number, variants: A[]) {
+export function getRndVariant<A>(rnd: () => number, variants: A[]) {
   return variants[Math.floor(rnd() * variants.length)]
+}
+
+export function getRndExp(rnd: () => number, min: number, max: number) {
+  const minL = Math.log(min)
+  const maxL = Math.log(max)
+  const v = rnd() * (maxL - minL) + minL
+  const res = Math.exp(v)
+  return res
+}
+
+export function getRndExpInt(rnd: () => number, min: number, max: number) {
+  return Math.floor(getRndExp(rnd, min, max))
 }

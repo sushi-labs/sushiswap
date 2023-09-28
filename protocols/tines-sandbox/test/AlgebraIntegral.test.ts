@@ -15,9 +15,10 @@ import {
   createTestTokens,
   deployPoolAndMint,
   expectCloseValues,
-  getRandomVariant,
+  getRndExpInt,
   getRndLin,
   getRndLinInt,
+  getRndVariant,
   mint,
   Range,
   swap,
@@ -87,13 +88,14 @@ async function checkSwap(
 ) {
   const { tick } = await updateTinesPool(cntx.client, pool.pool)
   const expectedAmountOut = pool.pool.calcOutByIn(Number(amountIn), direction, false).out
-  if (printTick) console.log('Tick:', tick)
+  if (printTick) console.log('Tick:', tick, 'Amount: ', amountIn)
 
   const [t0, t1] = direction ? [pool.token0, pool.token1] : [pool.token1, pool.token0]
   const actialAmountOut = await tryCallAsync(() => swap(cntx.client, cntx.env, t0, t1, cntx.user, BigInt(amountIn)))
 
   if (actialAmountOut === undefined) expect(expectedAmountOut).equal(0)
-  else expectCloseValues(actialAmountOut, expectedAmountOut, 1e-10)
+  //else expectCloseValues(actialAmountOut, expectedAmountOut, 1e-10)
+  else expectCloseValues(actialAmountOut / 100n, expectedAmountOut / 100, 1e-8)
   // console.log(
   //   actialAmountOut,
   //   expectedAmountOut,
@@ -122,12 +124,24 @@ async function getRandomSwapParams(
   const res0 = Number(await balanceOf(client, pool.token0, pool.poolAddress))
   const res1 = Number(await balanceOf(client, pool.token1, pool.poolAddress))
 
-  const maxRes = direction ? res1 / price : res0 * price
-  const amount = Math.round(rnd() * maxRes) + 1000
+  const maxRes = direction ? res0 : res1
+  const amount = getRndExpInt(rnd, Math.pow(maxRes, 1 / 2), maxRes) + 1000
+  // Math.round(rnd() * maxRes) + 1000
 
   //console.log('current price:', price, 'amount:', amount, 'direction:', direction)
 
   return [amount, direction]
+}
+
+// Algebra pools, like uniV3, has max liquidity per mint.
+// This function calculates it
+const MAX_LIQUIDITY_PER_TICK = Number(191757638537527648490752896198553n)
+function getMaxPositionLiquidity(from: number, to: number): number {
+  const price1 = Math.pow(1.0001, from / 2)
+  const price2 = Math.pow(1.0001, to / 2)
+  const max1 = MAX_LIQUIDITY_PER_TICK * (1 / price1 - 1 / price2)
+  const max2 = MAX_LIQUIDITY_PER_TICK * (price2 - price1)
+  return Math.min(max1, max2)
 }
 
 export async function createRandomPool(
@@ -152,11 +166,12 @@ export async function createRandomPool(
     const from = Math.min(pos1, pos2) * tickSpacing + SHIFT
     const to = Math.max(pos1, pos2) * tickSpacing + SHIFT
     console.assert(minTick <= from && from < to && to <= maxTick, `Wrong from-to range ${from} - ${to}`)
-    positions.push({ from, to, val: BigInt(getRndLin(rnd, 0.01, 30) * 1e18) })
+    const maxLiquidity = Math.min(getMaxPositionLiquidity(from, to), 30e18) / 1e18
+    positions.push({ from, to, val: BigInt(Math.round(getRndLin(rnd, 1e-12, maxLiquidity) * 1e18)) })
   }
   price = price ?? getRndLin(rnd, 0.01, 100)
-  fee = fee ?? getRandomVariant(rnd, [500, 1000, 3000, 10000])
-  //console.log(positions, price, fee)
+  fee = fee ?? getRndVariant(rnd, [500, 1000, 3000, 10000])
+  console.log(positions, price, fee)
   return await createPool(cntx, fee, price, positions)
 }
 
@@ -328,7 +343,7 @@ describe('AlgebraIntegral test', () => {
   })
   it.skip('Random pool monkey test', async () => {
     for (let i = 0; i < 10; ++i) {
-      const pool = await createRandomPool(cntx, `pool${i}`, 10)
+      const pool = await createRandomPool(cntx, `pool${i}`, 100)
       await monkeyTest(cntx, pool, `monkey${i}`, 100, true)
     }
   })

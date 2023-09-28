@@ -19,7 +19,7 @@ export async function createTestTokens(
   client: PublicClient & WalletClient,
   testTokensNumber = 2,
   owner?: Address,
-  supply = BigInt(1e30)
+  supply = 2n ** 255n
 ): Promise<TestTokens> {
   const [deployer] = await client.getAddresses()
   owner = owner ?? deployer
