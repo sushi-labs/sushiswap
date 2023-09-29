@@ -14,6 +14,7 @@ import ERC20Mock from '../artifacts/contracts/ERC20Mock.sol/ERC20Mock.json'
 import TestRouter from '../artifacts/contracts/TestRouter.sol/TestRouter.json'
 import UniswapV3Factory from '../artifacts/contracts/UniswapV3FactoryFlat.sol/UniswapV3Factory.json'
 import { testRouterAbi } from './abis'
+import { getRndLin, getRndLinInt } from './utils'
 
 const ZERO = 0n
 
@@ -433,13 +434,6 @@ export async function createUniV3Pool(
   )
 
   return poolInfo
-}
-
-function getRndLin(rnd: () => number, min: number, max: number) {
-  return rnd() * (max - min) + min
-}
-export function getRndLinInt(rnd: () => number, min: number, max: number) {
-  return Math.floor(getRndLin(rnd, min, max))
 }
 
 export async function createRandomUniV3Pool(

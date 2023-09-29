@@ -128,7 +128,7 @@ export async function createAlgebraIntegralPeriphery(
   }
 }
 
-export async function approveTestTokensToPerifery(
+export async function approveTestTokensToAlgebraPerifery(
   client: WalletClient,
   env: AlgebraIntegralPeriphery,
   tokens: TestTokens
@@ -150,7 +150,7 @@ export interface Range {
   val: bigint
 }
 
-export async function deployPoolAndMint(
+export async function deployAlgebraPoolAndMint(
   client: PublicClient & WalletClient,
   env: AlgebraIntegralPeriphery,
   token0: Token,
@@ -187,13 +187,13 @@ export async function deployPoolAndMint(
 
   if (mintRanges) {
     user = user ?? env.deployer
-    await Promise.all(mintRanges.map((range) => mint(client, env, token0, token1, user as Address, range)))
+    await Promise.all(mintRanges.map((range) => algebraPoolMint(client, env, token0, token1, user as Address, range)))
   }
 
   return poolAddress
 }
 
-export async function mint(
+export async function algebraPoolMint(
   client: PublicClient & WalletClient,
   env: AlgebraIntegralPeriphery,
   token0: Token,
@@ -228,7 +228,7 @@ export async function mint(
   return liquidityActual
 }
 
-export async function swap(
+export async function algebraPoolSwap(
   client: PublicClient & WalletClient,
   env: AlgebraIntegralPeriphery,
   token0: Token,
@@ -259,7 +259,7 @@ export async function swap(
   return amountOut
 }
 
-export async function tickLiquidityPrice(client: PublicClient, poolAddress: Address) {
+export async function algebraPoolTickLiquidityPrice(client: PublicClient, poolAddress: Address) {
   const [price, tick] = (await client.readContract({
     abi: AlgebraPool.abi,
     address: poolAddress,
@@ -273,8 +273,8 @@ export async function tickLiquidityPrice(client: PublicClient, poolAddress: Addr
   return { tick, liquidity, price }
 }
 
-export async function updateTinesPool(client: PublicClient, pool: UniV3Pool) {
-  const { tick, liquidity, price } = await tickLiquidityPrice(client, pool.address)
+export async function updateTinesAlgebraPool(client: PublicClient, pool: UniV3Pool) {
+  const { tick, liquidity, price } = await algebraPoolTickLiquidityPrice(client, pool.address)
   pool.updateState(
     await balanceOf(client, pool.token0 as Token, pool.address),
     await balanceOf(client, pool.token1 as Token, pool.address),
