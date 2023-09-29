@@ -1,13 +1,7 @@
 import { Trade, TradeType, Version as TradeVersion } from '@sushiswap/amm'
 import { Amount, Currency, Native, Share, Token } from '@sushiswap/currency'
 import { BigintIsh } from '@sushiswap/math'
-import {
-  isStargateBridgeToken,
-  STARGATE_BRIDGE_TOKENS,
-  STARGATE_CHAIN_ID,
-  STARGATE_POOL_ID,
-  StargateChainId,
-} from '@sushiswap/stargate'
+import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CHAIN_ID, STARGATE_POOL_ID } from '@sushiswap/stargate'
 import { SushiXSwapChainId } from '@sushiswap/sushixswap-sdk'
 import { getBigInt } from '@sushiswap/tines'
 import { Address, getSushiXSwapContractConfig, SushiXSwap as SushiXSwapContract } from '@sushiswap/wagmi'
@@ -75,7 +69,7 @@ export abstract class Cooker implements Cooker {
   readonly actions: Action[] = []
   readonly values: bigint[] = []
   readonly datas: Address[] = []
-  readonly chainId: StargateChainId
+  readonly chainId: SushiXSwapChainId
   readonly debug: boolean
   readonly masterContract: Address
   readonly user: Address
@@ -85,7 +79,7 @@ export abstract class Cooker implements Cooker {
     masterContract,
     user,
   }: {
-    chainId: StargateChainId
+    chainId: SushiXSwapChainId
     debug?: boolean
     masterContract: Address
     user: Address
@@ -399,8 +393,8 @@ export class SushiXSwap {
 
   readonly crossChain: boolean
 
-  readonly srcChainId: StargateChainId
-  readonly dstChainId: StargateChainId
+  readonly srcChainId: SushiXSwapChainId
+  readonly dstChainId: SushiXSwapChainId
 
   readonly srcToken: Currency
   readonly dstToken: Currency
@@ -450,8 +444,8 @@ export class SushiXSwap {
     this.srcUseBentoBox = srcUseBentoBox
     this.dstUseBentoBox = dstUseBentoBox
 
-    this.srcChainId = this.srcToken.chainId as StargateChainId
-    this.dstChainId = this.dstToken.chainId as StargateChainId
+    this.srcChainId = this.srcToken.chainId as SushiXSwapChainId
+    this.dstChainId = this.dstToken.chainId as SushiXSwapChainId
 
     this.srcTrade = srcTrade
     this.dstTrade = dstTrade
