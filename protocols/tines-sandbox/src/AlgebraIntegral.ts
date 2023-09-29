@@ -7,11 +7,13 @@ import NonfungibleTokenPositionDescriptor from '@cryptoalgebra/integral-peripher
 import SwapRouter from '@cryptoalgebra/integral-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
 import { ChainId } from '@sushiswap/chain'
 import { Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { UniV3Pool } from '@sushiswap/tines'
+import { CL_MAX_TICK, CL_MIN_TICK, CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
+import seedrandom from 'seedrandom'
 import { Abi, Address, getContractAddress, Hex, PublicClient, WalletClient } from 'viem'
 import { waitForTransactionReceipt } from 'viem/actions'
 
 import { approve, balanceOf, TestTokens } from './TestTokens'
+import { getRndExp, getRndExpInt, getRndLinInt, getRndVariant } from './utils'
 
 const getDeploymentAddress = async (client: WalletClient, promise: Promise<Hex>) =>
   waitForTransactionReceipt(client, { hash: await promise }).then((receipt) => receipt.contractAddress as Address)
@@ -283,4 +285,113 @@ export async function updateTinesAlgebraPool(client: PublicClient, pool: UniV3Po
     price
   )
   return { tick, liquidity, price }
+}
+
+export interface AlgebraPoolInfo {
+  poolAddress: Address
+  pool: UniV3Pool
+  token0: Token
+  token1: Token
+  res0Max: number
+  res1Max: number
+}
+
+let token0Index = 0,
+  token1Index = 1 // each new pool needs a new pair of tokens
+export async function createAlgebraPool(
+  client: PublicClient & WalletClient,
+  env: AlgebraIntegralPeriphery,
+  testTokens: TestTokens,
+  user: Address,
+  fee: number,
+  price: number,
+  positions: Range[]
+): Promise<AlgebraPoolInfo> {
+  if (token1Index >= testTokens.tokens.length) throw new Error('Unsufficient tokens number')
+  const t0 = testTokens.tokens[token0Index]
+  const t1 = testTokens.tokens[token1Index]
+  if (++token1Index >= testTokens.tokens.length) token1Index = ++token0Index + 1
+
+  const [token0, token1] = t0.sortsBefore(t1) ? [t0, t1] : [t1, t0]
+  const poolAddress = await deployAlgebraPoolAndMint(client, env, token0, token1, fee, price)
+
+  const tickMap = new Map<number, bigint>()
+  for (let i = 0; i < positions.length; ++i) {
+    const position = positions[i]
+    const liquidity = await algebraPoolMint(client, env, token0, token1, user, position)
+
+    let tickLiquidity = tickMap.get(position.from) ?? 0n
+    tickLiquidity = tickLiquidity === undefined ? liquidity : tickLiquidity + liquidity
+    tickMap.set(position.from, tickLiquidity)
+
+    tickLiquidity = tickMap.get(position.to) ?? 0n
+    tickLiquidity = tickLiquidity - liquidity
+    tickMap.set(position.to, tickLiquidity)
+  }
+
+  const ticks: CLTick[] = Array.from(tickMap.entries())
+    .sort((a, b) => a[0] - b[0])
+    .map(([index, DLiquidity]) => ({ index, DLiquidity }))
+
+  const pool = new UniV3Pool(poolAddress, token0 as RToken, token1 as RToken, fee / 1e6, 0n, 0n, 0, 0n, 1n, ticks)
+  await updateTinesAlgebraPool(client, pool)
+
+  const res0 = Number(pool.getReserve0())
+  const res1 = Number(pool.getReserve1())
+  return {
+    poolAddress,
+    pool,
+    token0,
+    token1,
+    res0Max: pool.calcInByOut(res1, true).inp + res0,
+    res1Max: pool.calcInByOut(res0, false).inp + res1,
+  }
+}
+
+// Algebra pools, like uniV3, has max liquidity per mint.
+// This function calculates it
+const MAX_LIQUIDITY_PER_TICK = Number(191757638537527648490752896198553n)
+function getMaxPositionLiquidity(from: number, to: number): number {
+  const price1 = Math.pow(1.0001, from / 2)
+  const price2 = Math.pow(1.0001, to / 2)
+  const max1 = MAX_LIQUIDITY_PER_TICK * (1 / price1 - 1 / price2)
+  const max2 = MAX_LIQUIDITY_PER_TICK * (price2 - price1)
+  return Math.min(max1, max2)
+}
+
+export async function createRandomAlgebraPool(
+  client: PublicClient & WalletClient,
+  env: AlgebraIntegralPeriphery,
+  testTokens: TestTokens,
+  user: Address,
+  seed: string,
+  positionNumber: number,
+  fee?: number,
+  price?: number,
+  minTick = CL_MIN_TICK,
+  maxTick = CL_MAX_TICK
+): Promise<AlgebraPoolInfo> {
+  const rnd: () => number = seedrandom(seed) // random [0, 1)
+
+  const tickSpacing = 120
+  const RANGE = Math.floor((maxTick - minTick) / tickSpacing)
+  const SHIFT = -Math.floor(-minTick / tickSpacing) * tickSpacing
+
+  const positions: Range[] = []
+  for (let i = 0; i < positionNumber; ++i) {
+    const pos1 = getRndLinInt(rnd, 0, RANGE)
+    const pos2 = (pos1 + getRndLinInt(rnd, 1, RANGE - 1)) % RANGE
+    const from = Math.min(pos1, pos2) * tickSpacing + SHIFT
+    const to = Math.max(pos1, pos2) * tickSpacing + SHIFT
+    console.assert(minTick <= from && from < to && to <= maxTick, `Wrong from-to range ${from} - ${to}`)
+    const maxLiquidity = Math.min(getMaxPositionLiquidity(from, to), 30e18)
+    const minLiquidity = 1e9
+    if (maxLiquidity > minLiquidity)
+      positions.push({ from, to, val: BigInt(getRndExpInt(rnd, minLiquidity, maxLiquidity)) })
+    else --i // try again
+  }
+  price = price ?? getRndExp(rnd, 0.01, 100)
+  fee = fee ?? getRndVariant(rnd, [500, 1000, 3000, 10000])
+  //console.log(positions, price, fee)
+  return await createAlgebraPool(client, env, testTokens, user, fee, price, positions)
 }

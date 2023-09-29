@@ -1,6 +1,4 @@
 import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
-import { CL_MAX_TICK, CL_MIN_TICK, CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
 import { Address, createPublicClient, custom, PublicClient, walletActions, WalletClient } from 'viem'
@@ -8,19 +6,17 @@ import { hardhat } from 'viem/chains'
 
 import {
   AlgebraIntegralPeriphery,
-  algebraPoolMint,
+  AlgebraPoolInfo,
   algebraPoolSwap,
   approveTestTokensToAlgebraPerifery,
   balanceOf,
   createAlgebraIntegralPeriphery,
+  createAlgebraPool as createAlgebraPoolBase,
   createHardhatProviderEmptyBlockchain,
+  createRandomAlgebraPool as createRandomAlgebraPoolBase,
   createTestTokens,
-  deployAlgebraPoolAndMint,
   expectCloseValues,
-  getRndExp,
   getRndExpInt,
-  getRndLinInt,
-  getRndVariant,
   Range,
   TestTokens,
   tryCallAsync,
@@ -34,59 +30,15 @@ interface TestContext {
   testTokens: TestTokens
   user: Address
 }
+//
 
-interface PoolInfo {
-  poolAddress: Address
-  pool: UniV3Pool
-  token0: Token
-  token1: Token
-  res0Max: number
-  res1Max: number
-}
-
-let token0Index = 0,
-  token1Index = 1 // each new pool needs a new pair of tokens
-async function createAlgebraPool(cntx: TestContext, fee: number, price: number, positions: Range[]): Promise<PoolInfo> {
-  if (token1Index >= cntx.testTokens.tokens.length) throw new Error('Unsufficient tokens number')
-  const t0 = cntx.testTokens.tokens[token0Index]
-  const t1 = cntx.testTokens.tokens[token1Index]
-  if (++token1Index >= cntx.testTokens.tokens.length) token1Index = ++token0Index + 1
-
-  const [token0, token1] = t0.sortsBefore(t1) ? [t0, t1] : [t1, t0]
-  const poolAddress = await deployAlgebraPoolAndMint(cntx.client, cntx.env, token0, token1, fee, price)
-  expect(poolAddress).not.equal('0x0000000000000000000000000000000000000000')
-
-  const tickMap = new Map<number, bigint>()
-  for (let i = 0; i < positions.length; ++i) {
-    const position = positions[i]
-    const liquidity = await algebraPoolMint(cntx.client, cntx.env, token0, token1, cntx.user, position)
-
-    let tickLiquidity = tickMap.get(position.from) ?? 0n
-    tickLiquidity = tickLiquidity === undefined ? liquidity : tickLiquidity + liquidity
-    tickMap.set(position.from, tickLiquidity)
-
-    tickLiquidity = tickMap.get(position.to) ?? 0n
-    tickLiquidity = tickLiquidity - liquidity
-    tickMap.set(position.to, tickLiquidity)
-  }
-
-  const ticks: CLTick[] = Array.from(tickMap.entries())
-    .sort((a, b) => a[0] - b[0])
-    .map(([index, DLiquidity]) => ({ index, DLiquidity }))
-
-  const pool = new UniV3Pool(poolAddress, token0 as RToken, token1 as RToken, fee / 1e6, 0n, 0n, 0, 0n, 1n, ticks)
-  await updateTinesAlgebraPool(cntx.client, pool)
-
-  const res0 = Number(pool.getReserve0())
-  const res1 = Number(pool.getReserve1())
-  return {
-    poolAddress,
-    pool,
-    token0,
-    token1,
-    res0Max: pool.calcInByOut(res1, true).inp + res0,
-    res1Max: pool.calcInByOut(res0, false).inp + res1,
-  }
+async function createAlgebraPool(
+  cntx: TestContext,
+  fee: number,
+  price: number,
+  positions: Range[]
+): Promise<AlgebraPoolInfo> {
+  return createAlgebraPoolBase(cntx.client, cntx.env, cntx.testTokens, cntx.user, fee, price, positions)
 }
 
 function getPrecisionExpectation(amount: number): number {
@@ -96,7 +48,7 @@ function getPrecisionExpectation(amount: number): number {
 
 async function checkAlgebraPoolSwap(
   cntx: TestContext,
-  pool: PoolInfo,
+  pool: AlgebraPoolInfo,
   amountIn: number | bigint,
   direction: boolean,
   printTick = false
@@ -119,7 +71,7 @@ const E18 = 10n ** 18n
 async function getAlgebraRandomSwapParams(
   rnd: () => number,
   client: PublicClient,
-  pool: PoolInfo
+  pool: AlgebraPoolInfo
 ): Promise<[number, boolean]> {
   const res0 = Number(await balanceOf(client, pool.token0, pool.poolAddress))
   const res1 = Number(await balanceOf(client, pool.token1, pool.poolAddress))
@@ -137,54 +89,28 @@ async function getAlgebraRandomSwapParams(
   return [amount, direction]
 }
 
-// Algebra pools, like uniV3, has max liquidity per mint.
-// This function calculates it
-const MAX_LIQUIDITY_PER_TICK = Number(191757638537527648490752896198553n)
-function getMaxPositionLiquidity(from: number, to: number): number {
-  const price1 = Math.pow(1.0001, from / 2)
-  const price2 = Math.pow(1.0001, to / 2)
-  const max1 = MAX_LIQUIDITY_PER_TICK * (1 / price1 - 1 / price2)
-  const max2 = MAX_LIQUIDITY_PER_TICK * (price2 - price1)
-  return Math.min(max1, max2)
-}
-
 export async function createRandomAlgebraPool(
   cntx: TestContext,
   seed: string,
   positionNumber: number,
   fee?: number,
-  price?: number,
-  minTick = CL_MIN_TICK,
-  maxTick = CL_MAX_TICK
-): Promise<PoolInfo> {
-  const rnd: () => number = seedrandom(seed) // random [0, 1)
-
-  const tickSpacing = 120
-  const RANGE = Math.floor((maxTick - minTick) / tickSpacing)
-  const SHIFT = -Math.floor(-minTick / tickSpacing) * tickSpacing
-
-  const positions: Range[] = []
-  for (let i = 0; i < positionNumber; ++i) {
-    const pos1 = getRndLinInt(rnd, 0, RANGE)
-    const pos2 = (pos1 + getRndLinInt(rnd, 1, RANGE - 1)) % RANGE
-    const from = Math.min(pos1, pos2) * tickSpacing + SHIFT
-    const to = Math.max(pos1, pos2) * tickSpacing + SHIFT
-    console.assert(minTick <= from && from < to && to <= maxTick, `Wrong from-to range ${from} - ${to}`)
-    const maxLiquidity = Math.min(getMaxPositionLiquidity(from, to), 30e18)
-    const minLiquidity = 1e9
-    if (maxLiquidity > minLiquidity)
-      positions.push({ from, to, val: BigInt(getRndExpInt(rnd, minLiquidity, maxLiquidity)) })
-    else --i // try again
-  }
-  price = price ?? getRndExp(rnd, 0.01, 100)
-  fee = fee ?? getRndVariant(rnd, [500, 1000, 3000, 10000])
-  //console.log(positions, price, fee)
-  return await createAlgebraPool(cntx, fee, price, positions)
+  price?: number
+): Promise<AlgebraPoolInfo> {
+  return createRandomAlgebraPoolBase(
+    cntx.client,
+    cntx.env,
+    cntx.testTokens,
+    cntx.user,
+    seed,
+    positionNumber,
+    fee,
+    price
+  )
 }
 
 async function algebraPoolMonkeyTest(
   cntx: TestContext,
-  pool: PoolInfo,
+  pool: AlgebraPoolInfo,
   seed: string,
   iterations: number,
   printTick = false
