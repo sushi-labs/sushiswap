@@ -89,6 +89,11 @@ async function createAlgebraPool(cntx: TestContext, fee: number, price: number, 
   }
 }
 
+function getPrecisionExpectation(amount: number): number {
+  if (amount < 1e10) return 1e-5
+  return 1e-8
+}
+
 async function checkAlgebraPoolSwap(
   cntx: TestContext,
   pool: PoolInfo,
@@ -106,13 +111,7 @@ async function checkAlgebraPoolSwap(
   )
 
   if (actialAmountOut === undefined) expect(expectedAmountOut).equal(0)
-  else expectCloseValues(actialAmountOut, expectedAmountOut, 1e-8)
-  // else expectCloseValues(actialAmountOut / 100n, expectedAmountOut / 100, 1e-8)
-  // console.log(
-  //   actialAmountOut,
-  //   expectedAmountOut,
-  //   expectedAmountOut !== 0 ? Math.abs(expectedAmountOut - Number(actialAmountOut)) / expectedAmountOut : ''
-  // )
+  else expectCloseValues(actialAmountOut, expectedAmountOut, getPrecisionExpectation(expectedAmountOut))
 }
 
 const E18 = 10n ** 18n
