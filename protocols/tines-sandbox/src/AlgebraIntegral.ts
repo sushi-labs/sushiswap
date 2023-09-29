@@ -10,13 +10,9 @@ import { Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { CL_MAX_TICK, CL_MIN_TICK, CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
 import seedrandom from 'seedrandom'
 import { Abi, Address, getContractAddress, Hex, PublicClient, WalletClient } from 'viem'
-import { waitForTransactionReceipt } from 'viem/actions'
 
 import { approve, balanceOf, TestTokens } from './TestTokens'
-import { getRndExp, getRndExpInt, getRndLinInt, getRndVariant } from './utils'
-
-const getDeploymentAddress = async (client: WalletClient, promise: Promise<Hex>) =>
-  waitForTransactionReceipt(client, { hash: await promise }).then((receipt) => receipt.contractAddress as Address)
+import { getDeploymentAddress, getRndExp, getRndExpInt, getRndLinInt, getRndVariant } from './utils'
 
 function linkContractLibraries(
   contract: {

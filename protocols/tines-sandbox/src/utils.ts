@@ -1,4 +1,6 @@
 import { expect } from 'chai'
+import { Abi, Address, Hex, PublicClient, WalletClient } from 'viem'
+import { waitForTransactionReceipt } from 'viem/actions'
 
 function closeValues(_a: number | bigint, _b: number | bigint, accuracy: number): boolean {
   const a = Number(_a)
@@ -56,4 +58,25 @@ export function getRndExp(rnd: () => number, min: number, max: number) {
 
 export function getRndExpInt(rnd: () => number, min: number, max: number) {
   return Math.floor(getRndExp(rnd, min, max))
+}
+
+export const getDeploymentAddress = async (client: WalletClient, promise: Promise<Hex>) =>
+  waitForTransactionReceipt(client, { hash: await promise }).then((receipt) => receipt.contractAddress as Address)
+
+export async function deployContract(
+  client: PublicClient & WalletClient,
+  contract: { abi: unknown; bytecode: string },
+  args?: unknown[],
+  deployer?: Address
+): Promise<Address> {
+  return getDeploymentAddress(
+    client,
+    client.deployContract({
+      chain: null,
+      abi: contract.abi as Abi,
+      bytecode: contract.bytecode as Hex,
+      account: deployer as Address,
+      args,
+    })
+  )
 }

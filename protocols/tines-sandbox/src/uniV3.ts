@@ -14,7 +14,7 @@ import ERC20Mock from '../artifacts/contracts/ERC20Mock.sol/ERC20Mock.json'
 import TestRouter from '../artifacts/contracts/TestRouter.sol/TestRouter.json'
 import UniswapV3Factory from '../artifacts/contracts/UniswapV3FactoryFlat.sol/UniswapV3Factory.json'
 import { testRouterAbi } from './abis'
-import { getRndLin, getRndLinInt } from './utils'
+import { getDeploymentAddress, getRndLin, getRndLinInt } from './utils'
 
 const ZERO = 0n
 
@@ -40,9 +40,6 @@ feeAmountTickSpacing[100] = 1 // 0.01%
 feeAmountTickSpacing[500] = 10 // 0.05%
 feeAmountTickSpacing[3000] = 60 // 0.3%
 feeAmountTickSpacing[10000] = 200 // 1%
-
-export const getDeploymentAddress = async (client: WalletClient, promise: Promise<Hex>) =>
-  waitForTransactionReceipt(client, { hash: await promise }).then((receipt) => receipt.contractAddress as Address)
 
 // Makes artificial environment, deploys factory, smallpositionmanager for mint and swap
 export async function createUniV3EnvZero(walletClient: WalletClient, userDeployContracts?: Address) {
