@@ -40,6 +40,7 @@ export default async function PoolPage({
   if (pool.protocol === 'SUSHISWAP_V3') {
     return <PoolPageV3 pool={pool} />
   }
+
   return (
     <Container maxWidth="5xl" className="px-2 sm:px-4">
       <UnknownTokenAlert pool={pool} />

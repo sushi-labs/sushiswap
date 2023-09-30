@@ -1,3 +1,4 @@
+import { XMarkIcon } from '@heroicons/react/20/solid'
 import { cva, type VariantProps } from 'class-variance-authority'
 import * as React from 'react'
 
@@ -18,6 +19,10 @@ const chipVariants = cva(
         blue: 'bg-blue/10 text-blue',
         green: 'bg-green/10 text-green',
       },
+      hasRemove: {
+        yes: 'pr-0.5',
+        no: '',
+      },
     },
     defaultVariants: {
       variant: 'default',
@@ -25,21 +30,39 @@ const chipVariants = cva(
   }
 )
 
-export interface ChipProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof chipVariants> {
+export interface ChipProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    Omit<VariantProps<typeof chipVariants>, 'hasRemove'> {
   icon?: IconComponent
   iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
+  onClose?: () => void
 }
 
 const Chip = React.forwardRef<HTMLDivElement, ChipProps>(
-  ({ className, variant, icon: Icon, iconProps, children, ...props }, ref) => {
+  ({ className, variant, icon: Icon, onClose, iconProps, children, ...props }, ref) => {
     return (
       <div
-        className={classNames(chipVariants({ variant, className: classNames(className, 'flex items-center gap-1') }))}
+        className={classNames(
+          chipVariants({
+            variant,
+            className: classNames(className, 'flex items-center gap-1 flex-nowrap'),
+            hasRemove: onClose ? 'yes' : 'no',
+          })
+        )}
         ref={ref}
         {...props}
       >
         {Icon ? <Icon {...iconProps} width={12} height={12} /> : null}
-        {children}
+        <span>{children}</span>
+        {onClose ? (
+          <div
+            role="button"
+            onClick={onClose}
+            className="p-0.5 bg-secondary hover:bg-accent rounded-full cursor-pointer"
+          >
+            <XMarkIcon width={12} height={12} />
+          </div>
+        ) : null}
       </div>
     )
   }
