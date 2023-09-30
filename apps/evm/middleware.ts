@@ -1,4 +1,5 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
+import { get } from 'lib/feature-flags'
 import { type NextRequest, NextResponse } from 'next/server'
 
 export const config = {
@@ -8,6 +9,16 @@ export const config = {
 const shortNameIdRegexp = new RegExp(/(\w+):0x.*?(?=(?:\/|$))/)
 
 export async function middleware(req: NextRequest) {
+  // Maintenance mode (in case of emergency)
+  try {
+    const maintenance = await get('maintenance')
+    if (maintenance) {
+      return NextResponse.rewrite(new URL('/maintenance', req.url))
+    }
+  } catch (error) {
+    console.error(error)
+  }
+
   const { pathname, searchParams, search } = req.nextUrl
   if (pathname === '/swap' && search !== '') {
     const url = req.nextUrl.clone()

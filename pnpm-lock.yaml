@@ -611,7 +611,7 @@ importers:
       '@types/react-virtualized-auto-sizer': 1.0.1
       '@uniswap/token-lists': 1.0.0-beta.30
       '@vercel/analytics': 1.0.1
-      '@vercel/edge-config': 0.2.1
+      '@vercel/edge-config': 0.4.1
       '@viem/anvil': 0.0.6
       '@wagmi/core': 1.4.1
       autoprefixer: 10.4.14
@@ -698,7 +698,7 @@ importers:
       '@tanstack/react-table': 8.9.1_biqbaboplfbrettd7655fr4n2y
       '@uniswap/token-lists': 1.0.0-beta.30
       '@vercel/analytics': 1.0.1
-      '@vercel/edge-config': 0.2.1
+      '@vercel/edge-config': 0.4.1
       '@wagmi/core': 1.4.1_xnay3odvsvdslgollfestqxu6i
       cors: 2.8.5
       d3: 7.8.4
@@ -18686,8 +18686,8 @@ packages:
     resolution: {integrity: sha512-NRIBwfcS0bUoUbRWlNGetqjvLSwgYH/BqKqDN7vK1g32p7dN96k0712COgaz6VFizAm9b0g6IG6hR6+hc0KCPg==}
     dev: false
 
-  /@vercel/edge-config/0.2.1:
-    resolution: {integrity: sha512-847kYqJEbga4PGgNrctQ9XsD+2Kw/S+UjzZnIFpebQ9VbdtB0MX4anq33WetcYZYPfhZd2L0uXVnY/BcjI5dOw==}
+  /@vercel/edge-config/0.4.1:
+    resolution: {integrity: sha512-4Mc3H7lE+x4RrL17nY8CWeEorvJHbkNbQTy9p8H1tO7y11WeKj5xeZSr07wNgfWInKXDUwj5FZ3qd/jIzjPxug==}
     engines: {node: '>=14.6'}
     dependencies:
       '@vercel/edge-config-fs': 0.1.0

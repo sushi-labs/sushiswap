@@ -62,7 +62,7 @@
     "@tanstack/react-table": "8.9.1",
     "@uniswap/token-lists": "1.0.0-beta.30",
     "@vercel/analytics": "1.0.1",
-    "@vercel/edge-config": "0.2.1",
+    "@vercel/edge-config": "0.4.1",
     "@wagmi/core": "1.4.1",
     "cors": "2.8.5",
     "d3": "7.8.4",
