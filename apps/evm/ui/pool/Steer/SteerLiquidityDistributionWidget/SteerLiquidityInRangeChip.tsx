@@ -39,12 +39,13 @@ export const SteerLiquidityInRangeChip: FC<SteerLiquidityInRangeChipProps> = ({ 
         <Chip
           variant={'outline'}
           className={classNames(
-            inRange ? 'bg-green/20 text-green hover:bg-green/40' : 'bg-red/20 text-red hover:bg-red/[0.35]',
-            'space-x-1'
+            inRange ? 'bg-green/20 text-green hover:bg-green/40' : 'bg-red/20 text-red hover:bg-red/[0.35]'
           )}
         >
-          <div className={classNames(inRange ? 'bg-green' : 'bg-red', 'w-2 h-2 rounded-full')} />
-          {inRange ? 'In' : 'Out of'} Range
+          <div className="inline-flex space-x-1.5 items-center">
+            <div className={classNames(inRange ? 'bg-green' : 'bg-red', 'w-2 h-2 rounded-full')} />
+            <span>{inRange ? 'In' : 'Out of'} Range</span>
+          </div>
         </Chip>
       )}
     </>

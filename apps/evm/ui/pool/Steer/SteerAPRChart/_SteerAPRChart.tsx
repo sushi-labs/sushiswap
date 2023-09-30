@@ -1,9 +1,12 @@
 'use client'
 
+import { formatPercent } from '@sushiswap/format'
 import { getSteerVaultAprTimeseries } from '@sushiswap/steer-sdk'
 import { SkeletonBox } from '@sushiswap/ui'
+import format from 'date-fns/format'
 import ReactECharts, { EChartsOption } from 'echarts-for-react'
 import React, { useMemo } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 import ReactVirtualizedAutoSizer from 'react-virtualized-auto-sizer'
 
 interface _SteerAPRChartProps {
@@ -17,11 +20,26 @@ export function _SteerAPRChart({ timeseries, loading }: _SteerAPRChartProps) {
       toolbox: {
         show: false,
       },
+      tooltip: {
+        trigger: 'axis',
+        borderColor: '#141c2e',
+        backgroundColor: '#0f172a',
+        formatter: (params: any) => {
+          const date = format(new Date(params[0].axisValue), 'dd MMM yyyy')
+          const apr = formatPercent(params[0].data[1])
+
+          return renderToStaticMarkup(
+            <div className="text-white">
+              {date} - {apr}
+            </div>
+          )
+        },
+      },
       grid: {
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
+        top: 2,
+        bottom: 2,
+        left: 2,
+        right: 2,
       },
       xAxis: [
         {
