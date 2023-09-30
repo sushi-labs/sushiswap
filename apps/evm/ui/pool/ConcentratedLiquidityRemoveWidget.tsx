@@ -190,8 +190,10 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
     },
   })
 
+  const positionClosed = !position || position.liquidity === 0n
+
   return (
-    <div className={classNames((!position || position.liquidity === 0n) && 'opacity-40 pointer-events-none')}>
+    <div className={classNames(positionClosed && 'opacity-40 pointer-events-none')}>
       <CardContent>
         <CardGroup>
           <div className="p-3 pb-2 space-y-2 overflow-hidden bg-white rounded-xl dark:bg-secondary border border-accent">
@@ -272,20 +274,22 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
         </Card>
       </CardContent>
       <CardFooter>
-        <Checker.Connect fullWidth variant="outline" size="xl">
-          <Checker.Network fullWidth variant="outline" size="xl" chainId={chainId}>
-            <Button
-              size="xl"
-              loading={isWritePending}
-              disabled={+value === 0}
-              fullWidth
-              onClick={() => sendTransaction?.()}
-              testId="remove-or-add-liquidity"
-            >
-              {+value === 0 ? 'Enter Amount' : 'Remove'}
-            </Button>
-          </Checker.Network>
-        </Checker.Connect>
+        <Checker.Guard guardWhen={positionClosed} guardText="Position already closed">
+          <Checker.Connect fullWidth variant="outline" size="xl">
+            <Checker.Network fullWidth variant="outline" size="xl" chainId={chainId}>
+              <Button
+                size="xl"
+                loading={isWritePending}
+                disabled={+value === 0}
+                fullWidth
+                onClick={() => sendTransaction?.()}
+                testId="remove-or-add-liquidity"
+              >
+                {+value === 0 ? 'Enter Amount' : 'Remove'}
+              </Button>
+            </Checker.Network>
+          </Checker.Connect>
+        </Checker.Guard>
       </CardFooter>
     </div>
   )
