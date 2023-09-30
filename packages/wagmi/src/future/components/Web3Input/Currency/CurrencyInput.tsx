@@ -71,6 +71,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     chainId,
     account: address,
     currency,
+    enabled: !disabled,
   })
 
   const { data: price, isInitialLoading: isPriceLoading } = usePrice({
@@ -89,8 +90,6 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         onChange((+value).toFixed(currency.decimals))
       }
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currency])
 
   const isLoading = loading || currencyLoading || isBalanceLoading
