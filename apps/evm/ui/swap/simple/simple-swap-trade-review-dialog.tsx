@@ -109,7 +109,8 @@ export const SimpleSwapTradeReviewDialog: FC<{
           isRouteProcessor3_2ChainId(chainId)) &&
         approved &&
         trade?.route?.status !== 'NoWay' &&
-        chain?.id === chainId
+        chain?.id === chainId &&
+        token1?.chainId === chainId
     ),
     value: trade?.value || 0n,
     onError: (error) => {

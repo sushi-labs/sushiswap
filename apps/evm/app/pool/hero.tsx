@@ -28,11 +28,12 @@ export const Hero: FC = () => {
       <div className="flex flex-col items-center flex-grow gap-6 lg:items-start">
         <div className="flex flex-col">
           <h1 className={typographyVariants({ variant: 'h1' })}>
-            Put your funds <br /> to work by <br /> providing liquidity.
+            Put your funds to work <br />
+            by providing liquidity.
           </h1>
           <p className={typographyVariants({ variant: 'lead', className: 'max-w-[500px]' })}>
-            Providing liquidity to a pool allows you to earn a percentage of the pools traded volume as well as any
-            extra rewards if the pool is incentivized.
+            When you add liquidity to a pool, you can receive a share of its trading volume and potentially snag extra
+            rewards when there are incentives involved!
           </p>
         </div>
         <div className="flex flex-col sm:flex-row w-full sm:w-[unset] gap-4">
