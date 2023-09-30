@@ -1,13 +1,13 @@
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Container } from '@sushiswap/ui/components/container'
+import { GhostArticle } from 'lib/ghost'
 import { FC } from 'react'
-import { Article } from 'types'
 
 import { ArticleAuthors, ArticleHeader } from './article'
 
 interface Hero {
-  article: Article
+  article: GhostArticle
 }
 
 export const Hero: FC<Hero> = ({ article }) => {
@@ -19,7 +19,7 @@ export const Hero: FC<Hero> = ({ article }) => {
           <ArticleAuthors article={article} />
           <div className="mt-8">
             <Button asChild>
-              <LinkInternal href={`/blog/${article?.attributes?.slug}`}>Read Article</LinkInternal>
+              <LinkInternal href={`/${article?.attributes?.slug}`}>Read Article</LinkInternal>
             </Button>
           </div>
         </div>

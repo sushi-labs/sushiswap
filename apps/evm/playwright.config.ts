@@ -1,5 +1,6 @@
 import type { PlaywrightTestConfig } from '@playwright/test'
 import { devices } from '@playwright/test'
+import { defineConfig } from 'next/experimental/testmode/playwright'
 import path from 'path'
 
 // Use process.env.PORT by default and fallback to port 3000
@@ -20,7 +21,7 @@ const baseURL = `http://localhost:${PORT}`
 const config: PlaywrightTestConfig = {
   // Test directory
   testDir: path.join(__dirname, 'test'),
-  testMatch: '*.test.ts',
+  // testMatch: 'swap.test.ts',
   /* Maximum time one test can run for. */
   timeout: 60_000,
   expect: {
@@ -60,6 +61,8 @@ const config: PlaywrightTestConfig = {
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on',
   },
+  globalSetup: './global.setup.ts',
+  globalTeardown: './global.teardown.ts',
 
   /* Configure projects for major browsers */
   projects: [
@@ -101,27 +104,29 @@ const config: PlaywrightTestConfig = {
         'anvil',
         `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
         `--fork-url=${process.env.ANVIL_FORK_URL}`,
-        `--port=${Number(process.env.ANVIL_PORT) || 8545}`,
+        `--port=${Number(process.env.ANVIL_PORT || 8545)}`,
+        '--silent',
+        // '--block-time 15',
       ].join(' '),
       env: {
         ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
         ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
-        ANVIL_PORT: String(process.env.ANVIL_PORT),
-        CHAIN_ID: String(process.env.CHAIN_ID),
+        ANVIL_PORT: String(process.env.ANVIL_PORT || 8545),
       },
-      port: Number(process.env.ANVIL_PORT) || 8545,
+      port: Number(process.env.ANVIL_PORT || 8545),
     },
     {
-      command: 'npm run start',
+      command: 'npm run start -- --experimental-test-proxy',
+      // command: 'npm run start',
       port: 3000,
       timeout: 120 * 1000,
       reuseExistingServer: !process.env.CI,
       env: {
-        NEXT_PUBLIC_TEST: 'true',
-        NEXT_PUBLIC_ANVIL_PORT: String(process.env.ANVIL_PORT),
+        NEXT_PUBLIC_CHAIN_ID: String(process.env.NEXT_PUBLIC_CHAIN_ID),
+        NEXT_PUBLIC_TEST: String(process.env.NEXT_PUBLIC_TEST),
       },
     },
   ],
 }
 
-export default config
+export default defineConfig(config)

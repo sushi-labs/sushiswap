@@ -9,7 +9,7 @@ import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap-sd
 import { Address, useAccount, useNetwork, watchNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future'
 import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { APPROVE_TAG_XSWAP } from 'lib/constants'
+import { APPROVE_TAG_XSWAP, IS_XSWAP_MAINTENANCE } from 'lib/constants'
 import { useCrossChainTrade } from 'lib/swap/useCrossChainTrade/useCrossChainTrade'
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -52,8 +52,11 @@ interface State {
     swapAmountString: string
     swapAmount: Amount<Type> | undefined
     recipient: string | undefined
+    maintenance: boolean
   }
   isLoading: boolean
+  isToken0Loading: boolean
+  isToken1Loading: boolean
 }
 
 const DerivedStateCrossChainSwapContext = createContext<State>({} as State)
@@ -232,6 +235,7 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
     chainId: chainId0,
     address: defaultedParams.get('token0') as string,
     enabled: isAddress(defaultedParams.get('token0') as string),
+    keepPreviousData: false,
   })
 
   // Derive token1
@@ -239,22 +243,16 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
     chainId: chainId1,
     address: defaultedParams.get('token1') as string,
     enabled: isAddress(defaultedParams.get('token1') as string),
+    keepPreviousData: false,
   })
 
-  // Make sure the searchParams are updated whenever a user switches networks
   useEffect(() => {
-    let i = 0
-
     const unwatch = watchNetwork(({ chain }) => {
-      if (chain && STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId) && i > 0) {
-        setChainId0(chain.id)
-      }
-      i++
+      if (!chain || chain.id === chainId0 || !STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId)) return
+      push(pathname, { scroll: false })
     })
-
     return () => unwatch()
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [chainId0, pathname, push])
 
   return (
     <DerivedStateCrossChainSwapContext.Provider
@@ -283,8 +281,11 @@ const DerivedstateCrossChainSwapProvider: FC<DerivedStateCrossChainSwapProviderP
             swapAmount: tryParseAmount(swapAmountString, _token0),
             token0: _token0,
             token1: _token1,
+            maintenance: IS_XSWAP_MAINTENANCE,
           },
           isLoading: token0Loading || token1Loading,
+          isToken0Loading: token0Loading,
+          isToken1Loading: token1Loading,
         }
       }, [
         address,
@@ -319,6 +320,15 @@ const useDerivedStateCrossChainSwap = () => {
   return context
 }
 
+const useIsXswapMaintenance = () => {
+  const context = useContext(DerivedStateCrossChainSwapContext)
+  if (!context) {
+    throw new Error('Hook can only be used inside CrossChain Swap Derived State Context')
+  }
+
+  return context.state.maintenance
+}
+
 const useCrossChainSwapTrade = () => {
   const {
     state: { tradeId, token0, chainId0, chainId1, swapAmount, token1, recipient },
@@ -341,4 +351,9 @@ const useCrossChainSwapTrade = () => {
   })
 }
 
-export { DerivedstateCrossChainSwapProvider, useCrossChainSwapTrade, useDerivedStateCrossChainSwap }
+export {
+  DerivedstateCrossChainSwapProvider,
+  useCrossChainSwapTrade,
+  useDerivedStateCrossChainSwap,
+  useIsXswapMaintenance,
+}

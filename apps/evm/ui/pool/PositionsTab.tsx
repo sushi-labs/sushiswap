@@ -5,7 +5,6 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Switch,
   Tabs,
   TabsContent,
   TabsList,
@@ -61,7 +60,6 @@ const ITEMS: { value: string; children: React.ReactNode }[] = [
 
 export const PositionsTab = () => {
   const [tab, setTab] = useState('v3')
-  const [hide, setHide] = useState(true)
 
   return (
     <div className="flex flex-col gap-4">
@@ -88,15 +86,9 @@ export const PositionsTab = () => {
               </TabsTrigger>
             ))}
           </TabsList>
-          {tab === 'v3' ? (
-            <div className="flex gap-3 items-center px-2.5">
-              <span className="text-sm font-medium text-gray-600 dark:text-slate-400">Include closed</span>
-              <Switch checked={hide} onCheckedChange={() => setHide((prev) => !prev)} />
-            </div>
-          ) : null}
         </div>
         <TabsContent value="v3">
-          <ConcentratedPositionsTable hideClosed={hide} hideNewPositionButton={true} />
+          <ConcentratedPositionsTable hideNewPositionButton={true} />
         </TabsContent>
         <TabsContent value="v2">
           <PositionsTable protocol={Protocol.SUSHISWAP_V2} rowLink={(row) => `/pool/${row.pool.id}`} />

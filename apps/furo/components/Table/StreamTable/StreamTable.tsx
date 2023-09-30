@@ -1,8 +1,7 @@
-import { useBreakpoint } from '@sushiswap/hooks'
-import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
+import { Card, CardContent, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import { useAccount } from '@sushiswap/wagmi'
-import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import { FC, ReactNode, useEffect, useMemo, useState } from 'react'
+import { PaginationState } from '@tanstack/react-table'
+import { FC, ReactNode, useMemo, useState } from 'react'
 
 import { FuroStatus, Stream, Vesting } from '../../../lib'
 import {
@@ -30,9 +29,11 @@ interface FuroTableProps {
 
 export const StreamTable: FC<FuroTableProps> = ({ streams, vestings, placeholder, activeOnly, loading, type }) => {
   const { address } = useAccount()
-  const { isSm } = useBreakpoint('sm')
-  const { isMd } = useBreakpoint('md')
-  const [columnVisibility, setColumnVisibility] = useState({})
+
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  })
 
   const COLUMNS = useMemo(
     () => [NETWORK_COLUMN, AMOUNT_COLUMN, STREAMED_COLUMN, TYPE_COLUMN, START_DATE_COLUMN, END_DATE_COLUMN],
@@ -66,41 +67,26 @@ export const StreamTable: FC<FuroTableProps> = ({ streams, vestings, placeholder
     ]
   }, [activeOnly, address, streams, type, vestings])
 
-  const table = useReactTable<Stream | Vesting>({
-    data: data,
-    columns: COLUMNS,
-    state: {
-      columnVisibility,
-    },
-    getCoreRowModel: getCoreRowModel(),
-    debugTable: true,
-    debugHeaders: true,
-    manualFiltering: true,
-  })
-
-  useEffect(() => {
-    if (isSm && !isMd) {
-      setColumnVisibility({ status: false, from: false, type: false })
-    } else if (isSm) {
-      setColumnVisibility({})
-    } else {
-      setColumnVisibility({
-        status: false,
-        from: false,
-        type: false,
-        startDate: false,
-        endDate: false,
-      })
-    }
-  }, [isMd, isSm])
-
   return (
-    <GenericTable<Stream | Vesting>
-      loading={loading}
-      table={table}
-      placeholder={placeholder}
-      pageSize={Math.max(data.length, 1)}
-      linkFormatter={(row) => `/${row instanceof Stream ? 'stream' : 'vesting'}/${row.chainId}:${row.id}`}
-    />
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          Dashboard {data?.length ? <span className="text-gray-400 dark:text-slate-500">({data?.length})</span> : null}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="!px-0 !pb-0">
+        <DataTable
+          loading={loading}
+          columns={COLUMNS}
+          data={data}
+          pagination={true}
+          onPaginationChange={setPagination}
+          state={{
+            pagination,
+          }}
+          linkFormatter={(row) => `/${row instanceof Stream ? 'stream' : 'vesting'}/${row.chainId}:${row.id}`}
+        />
+      </CardContent>
+    </Card>
   )
 }

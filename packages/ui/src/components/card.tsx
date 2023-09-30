@@ -84,7 +84,7 @@ type CardItemProps =
   | (Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> & {
       title: ReactNode
       subtitle?: string
-      children: ReactNode
+      children?: ReactNode
       skeleton?: never
       flex?: boolean
       className?: string

@@ -1,12 +1,12 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { useBreakpoint } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { getTrendingSearch } from 'lib/api'
-import { ChangeEvent, FC, FormEvent, RefObject, useLayoutEffect, useState } from 'react'
+import { ChangeEvent, FC, FormEvent, RefObject, useEffect, useLayoutEffect, useState } from 'react'
 import useSWR from 'swr'
 
 import { APP_HEADER_HEIGHT } from '../helpers'
-import { IconButton } from '@sushiswap/ui/components/iconbutton'
 
 interface SearchInput {
   handleSearch: (value: string) => void
@@ -15,6 +15,8 @@ interface SearchInput {
   className?: string
   ref?: RefObject<HTMLDivElement>
 }
+
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 export const SearchInput: FC<SearchInput> = ({ ref, handleSearch, isTopOfPage, showTopics, className }) => {
   const [isSticky, setIsSticky] = useState(isTopOfPage)
@@ -25,7 +27,7 @@ export const SearchInput: FC<SearchInput> = ({ ref, handleSearch, isTopOfPage, s
 
   const [input, setInput] = useState('')
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const cachedRef = ref?.current
     if (cachedRef) {
       const observer = new IntersectionObserver(([e]) => setIsSticky(!e.isIntersecting), {

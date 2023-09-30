@@ -1,16 +1,16 @@
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { FC } from 'react'
+import { Article } from 'types'
 
 import { ArticleList } from '../ArticleList'
 import { Card } from '../Card'
 import { ProductSectionTitle } from './ProductSectionTitle'
-import { ArticleEntity } from '.mesh'
 
 interface ProductArticles {
   title: string
   productName: string
-  articles: ArticleEntity[]
+  articles: Article[]
   subtitle: string
   isLoading: boolean
 }
@@ -21,7 +21,7 @@ export const ProductArticles: FC<ProductArticles> = ({ title, productName, artic
       <div className="flex items-center justify-between w-full">
         <ProductSectionTitle title={title} subtitle={subtitle} />
 
-        <LinkInternal href={`/articles?product=${productName}`}>
+        <LinkInternal href={`?product=${productName}`}>
           <Button variant="secondary">View All</Button>
         </LinkInternal>
       </div>

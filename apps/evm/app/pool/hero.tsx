@@ -1,8 +1,8 @@
 'use client'
 
-import { ChevronRightIcon, GiftIcon } from '@heroicons/react-v1/outline'
+import { GiftIcon } from '@heroicons/react-v1/outline'
 import { ChainId } from '@sushiswap/chain'
-import { isTridentChainId } from '@sushiswap/trident-sdk'
+import { isTridentChainId, TridentChainId } from '@sushiswap/trident-sdk'
 import { LinkExternal, LinkInternal, typographyVariants } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Chip } from '@sushiswap/ui/components/chip'
@@ -28,11 +28,12 @@ export const Hero: FC = () => {
       <div className="flex flex-col items-center flex-grow gap-6 lg:items-start">
         <div className="flex flex-col">
           <h1 className={typographyVariants({ variant: 'h1' })}>
-            Put your funds <br /> to work by <br /> providing liquidity.
+            Put your funds to work <br />
+            by providing liquidity.
           </h1>
           <p className={typographyVariants({ variant: 'lead', className: 'max-w-[500px]' })}>
-            Providing liquidity to a pool allows you to earn a percentage of the pools traded volume as well as any
-            extra rewards if the pool is incentivized.
+            When you add liquidity to a pool, you can receive a share of its trading volume and potentially snag extra
+            rewards when there are incentives involved!
           </p>
         </div>
         <div className="flex flex-col sm:flex-row w-full sm:w-[unset] gap-4">
@@ -42,7 +43,11 @@ export const Hero: FC = () => {
                 href={
                   isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
                     ? `/pool/add?chainId=${chainId}`
-                    : `/pool/add/v2/${chainId}`
+                    : isSushiSwapV2ChainId(chainId as SushiSwapV3ChainId)
+                    ? `/pool/add/v2/${chainId}`
+                    : isTridentChainId(chainId as TridentChainId)
+                    ? `/pool/add/trident/${chainId}`
+                    : ''
                 }
               >
                 I want to create a position
@@ -112,14 +117,8 @@ export const Hero: FC = () => {
       <div className="flex flex-col items-center gap-4 lg:items-end">
         <div className="flex flex-col items-center gap-1 lg:items-end">
           <span className="font-semibold lg:text-sm">Looking for a partnership with Sushi?</span>
-          <Button
-            className="flex-1 w-full sm:flex-0 sm:w-[unset]"
-            icon={ChevronRightIcon}
-            variant="link"
-            size="sm"
-            asChild
-          >
-            <LinkExternal href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe">Join Onsen</LinkExternal>
+          <Button className="flex-1 w-full sm:flex-0 sm:w-[unset]" variant="link" size="sm" asChild>
+            <LinkInternal href="/partner">Apply here</LinkInternal>
           </Button>
         </div>
         <div className="flex flex-col items-center gap-1 lg:items-end">

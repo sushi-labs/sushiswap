@@ -8,10 +8,9 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo, useRef, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
+import { Article } from 'types'
 
 import {
-  ArticleEntity,
-  ArticleEntityResponseCollection,
   DifficultyEntity,
   DifficultyEntityResponseCollection,
   Global,
@@ -45,10 +44,10 @@ export async function getStaticProps() {
   return {
     props: {
       fallback: {
-        ['/articles']: articles?.articles,
-        ['/difficulties']: difficulties?.difficulties,
-        ['/topics']: topics?.topics,
-        ['/products']: products?.products,
+        '/articles': articles,
+        '/difficulties': difficulties?.difficulties,
+        '/topics': topics?.topics,
+        '/products': products?.products,
       },
     },
     revalidate: 1,
@@ -70,7 +69,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const heroRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
-  const { data: articlesData } = useSWR<ArticleEntityResponseCollection>('/articles')
+  const { data: articlesData } = useSWR<Awaited<ReturnType<typeof getArticles>>>('/articles')
   const { data: difficultiesData } = useSWR<DifficultyEntityResponseCollection>('/difficulties')
   const { data: productsData } = useSWR<ProductEntityResponseCollection>('/products')
   const { data: topicsData } = useSWR<TopicEntityResponseCollection>('/topics')
@@ -87,12 +86,10 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
         ...(searchTopic?.id && { topics: { id: { eq: searchTopic?.id } } }),
       }
 
-      return (
-        await getArticles({
-          filters,
-          pagination: { limit: 6 },
-        })
-      )?.articles
+      return await getArticles({
+        filters,
+        pagination: { limit: 6 },
+      })
     },
     {
       revalidateOnFocus: false,
@@ -108,7 +105,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const topics = topicsData?.data || []
   const products = productsData?.data || []
 
-  const articleList: ArticleEntity[] | undefined = useMemo(() => {
+  const articleList: Article[] | undefined = useMemo(() => {
     if (filterData?.data && (selectedTopic || selectedDifficulty || selectedProduct)) return filterData.data
     return articles
   }, [articles, filterData?.data, selectedDifficulty, selectedTopic, selectedProduct])

@@ -2,21 +2,22 @@ import { classNames, LinkInternal } from '@sushiswap/ui'
 import { Chip } from '@sushiswap/ui/components/chip'
 import { format } from 'date-fns'
 import { FC } from 'react'
+import { Article } from 'types'
 
-import { ArticleEntity } from '../../../.mesh'
 import { DifficultyLabel, Image } from '../'
 
 interface Card {
-  article: ArticleEntity
+  article: Article
 }
 
 export const Card: FC<Card> = ({ article }) => {
   const product = article.attributes?.products?.data?.[0]?.attributes
 
   return (
-    <LinkInternal href={`/academy/articles/${article.attributes?.slug}`}>
+    <LinkInternal href={`/articles/${article.attributes?.slug}`}>
       <div className="relative h-[436px] sm:h-[446px] rounded-lg bg-slate-800/50 sm:bg-[#182030] overflow-hidden sm:ease-in-out sm:duration-300 sm:hover:scale-105 sm:hover:shadow-[4px_4px_27px_rgba(0,0,0,0.25)_0px_24px_24px_-16px_rgba(15,15,15,0.2)] sm:z-10 sm:hover:z-20">
         <div className="relative h-[192px] sm:h-[202px]">
+          {/* eslint-disable-next-line */}
           {article.attributes?.cover?.data && <Image quality={100} image={article.attributes.cover.data} />}
         </div>
 

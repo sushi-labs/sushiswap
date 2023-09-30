@@ -186,4 +186,4 @@ const TextFieldDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAt
 )
 TextFieldDescription.displayName = 'TextFieldDescription'
 
-export { TextField, TextFieldDescription, textFieldVariants }
+export { TextField, type TextFieldBaseProps, TextFieldDescription, textFieldVariants }

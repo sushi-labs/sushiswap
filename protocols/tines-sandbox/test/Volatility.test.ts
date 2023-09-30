@@ -36,30 +36,31 @@ async function volatilityCheck(args: {
       startBlockNumber = startBlockNumber ?? n
       startTime = startTime ?? Date.now()
       console.log(`block: +${n - startBlockNumber}`)
-      if (inProgress == false) {
+      if (inProgress === false) {
         inProgress = true
         try {
           for (let i = 0; i < args.rpParams.length; ++i) {
             const params = args.rpParams[i]
-            const amountOut = await client.readContract({
-              address: args.RP3Address,
-              abi: routeProcessor2Abi,
-              // @ts-ignore
-              functionName: 'processRoute',
-              args: [
-                '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-                BigInt(1e18),
-                params.tokenOut,
-                0n,
-                args.RP3Address, // use RP3 at to
-                params.routeCode as Address, // !!!!
-              ],
-              value: BigInt(1e18),
-              account: args.account,
-            })
+            const amountOut = await client
+              .simulateContract({
+                address: args.RP3Address,
+                abi: routeProcessor2Abi,
+                functionName: 'processRoute',
+                args: [
+                  '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+                  BigInt(1e18),
+                  params.tokenOut,
+                  0n,
+                  args.RP3Address, // use RP3 at to
+                  params.routeCode as Address, // !!!!
+                ],
+                value: BigInt(1e18),
+                account: args.account,
+              })
+              .then((r) => r.result)
             startOutput[i] = startOutput[i] ?? Number(amountOut)
             const diff = Number(amountOut) / startOutput[i] - 1
-            const sdiff = diff > 0 ? '+' + diff : diff
+            const sdiff = diff > 0 ? `+${diff}` : diff
             console.log(`    ${params.name} time: +${Math.round((Date.now() - startTime) / 1000)}s diff: ${sdiff}`)
           }
         } catch (e) {
