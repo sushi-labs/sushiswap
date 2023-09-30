@@ -3,7 +3,6 @@
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { InformationCircleIcon } from '@heroicons/react/24/solid'
 import { Amount, Type } from '@sushiswap/currency'
-import { useIsMounted } from '@sushiswap/hooks'
 import {
   CardDescription,
   CardHeader,
@@ -16,6 +15,7 @@ import {
 } from '@sushiswap/ui'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import { Select, SelectContent, SelectItem, SelectPrimitive } from '@sushiswap/ui/components/select'
+import dynamic from 'next/dynamic'
 import React, { FC, useState } from 'react'
 import { Address } from 'wagmi'
 
@@ -28,7 +28,7 @@ interface ApproveERC20Props extends ButtonProps {
   enabled?: boolean
 }
 
-const ApproveERC20: FC<ApproveERC20Props> = ({
+const Component: FC<ApproveERC20Props> = ({
   id,
   amount,
   contract,
@@ -39,7 +39,6 @@ const ApproveERC20: FC<ApproveERC20Props> = ({
   enabled = true,
   ...props
 }) => {
-  const isMounted = useIsMounted()
   const [max, setMax] = useState(false)
   const [state, { write }] = useTokenApproval({
     amount,
@@ -48,7 +47,7 @@ const ApproveERC20: FC<ApproveERC20Props> = ({
     approveMax: max,
   })
 
-  if (state === ApprovalState.APPROVED || !enabled || !isMounted) {
+  if (state === ApprovalState.APPROVED || !enabled) {
     return <>{children}</>
   }
 
@@ -117,5 +116,7 @@ const ApproveERC20: FC<ApproveERC20Props> = ({
     </Select>
   )
 }
+
+const ApproveERC20 = dynamic(() => Promise.resolve(Component), { ssr: false })
 
 export { ApproveERC20, type ApproveERC20Props }

@@ -3,9 +3,9 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
-import { useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
+import dynamic from 'next/dynamic'
 import React, { FC, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -16,8 +16,7 @@ interface AmountsProps extends ButtonProps {
   amounts: (Amount<Type> | undefined)[]
 }
 
-const Amounts: FC<AmountsProps> = ({ type, amounts, chainId, children, fullWidth = true, size = 'xl', ...props }) => {
-  const isMounted = useIsMounted()
+const Component: FC<AmountsProps> = ({ type, amounts, chainId, children, fullWidth = true, size = 'xl', ...props }) => {
   const { address } = useAccount()
   const amountsAreDefined = useMemo(() => amounts.every((el) => el?.greaterThan(ZERO)), [amounts])
   const currencies = useMemo(() => amounts.map((amount) => amount?.currency), [amounts])
@@ -36,8 +35,6 @@ const Amounts: FC<AmountsProps> = ({ type, amounts, chainId, children, fullWidth
     })
   }, [amounts, balances])
 
-  if (!isMounted) return <>{children}</>
-
   if (!amountsAreDefined)
     return (
       <Button id="amount-checker" disabled={true} fullWidth={fullWidth} size={size} {...props}>
@@ -54,5 +51,7 @@ const Amounts: FC<AmountsProps> = ({ type, amounts, chainId, children, fullWidth
 
   return <>{children}</>
 }
+
+const Amounts = dynamic(() => Promise.resolve(Component), { ssr: false })
 
 export { Amounts, type AmountsProps }

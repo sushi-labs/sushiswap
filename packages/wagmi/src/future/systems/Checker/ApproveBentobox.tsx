@@ -2,7 +2,6 @@
 
 import { InformationCircleIcon } from '@heroicons/react/24/solid'
 import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { useIsMounted } from '@sushiswap/hooks'
 import {
   CardDescription,
   CardHeader,
@@ -13,6 +12,7 @@ import {
   LinkExternal,
 } from '@sushiswap/ui'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
+import dynamic from 'next/dynamic'
 import React, { FC } from 'react'
 import { Address } from 'wagmi'
 
@@ -26,7 +26,7 @@ interface ApproveBentoboxProps extends ButtonProps {
   tag: string
 }
 
-const ApproveBentobox: FC<ApproveBentoboxProps> = ({
+const Component: FC<ApproveBentoboxProps> = ({
   id,
   chainId,
   masterContract,
@@ -37,10 +37,9 @@ const ApproveBentobox: FC<ApproveBentoboxProps> = ({
   size = 'xl',
   ...props
 }) => {
-  const isMounted = useIsMounted()
   const [state, execute] = useBentoboxApproval({ enabled, chainId, masterContract, tag })
 
-  if (state === ApprovalState.APPROVED || !enabled || !isMounted) {
+  if (state === ApprovalState.APPROVED || !enabled) {
     return <>{children}</>
   }
 
@@ -79,5 +78,7 @@ const ApproveBentobox: FC<ApproveBentoboxProps> = ({
     </HoverCard>
   )
 }
+
+const ApproveBentobox = dynamic(() => Promise.resolve(Component), { ssr: false })
 
 export { ApproveBentobox, type ApproveBentoboxProps }
