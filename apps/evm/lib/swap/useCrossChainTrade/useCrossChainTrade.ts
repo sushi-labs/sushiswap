@@ -18,7 +18,7 @@ import {
   STARGATE_DEFAULT_SLIPPAGE,
 } from '@sushiswap/sushixswap-sdk'
 import { RouterLiquiditySource } from '@sushiswap/router'
-import { useBridgeFees } from './useBridgeFees'
+import { useStargateBridgeFees } from './useStargateBridgeFees'
 import { encodeAbiParameters, parseAbiParameters, stringify } from 'viem'
 import { useStargatePath } from './useStargatePath'
 
@@ -60,7 +60,7 @@ export const useCrossChainTradeQuery = (
     },
   })
 
-  const { data: bridgeFees } = useBridgeFees({
+  const { data: bridgeFees } = useStargateBridgeFees({
     amount: isSrcSwap ? srcTrade?.amountOut : amount,
     srcChainId: network0,
     dstChainId: network1,

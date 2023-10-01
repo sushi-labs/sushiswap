@@ -1,18 +1,12 @@
 import { stargateFeeLibraryV03Abi, stargatePoolAbi } from '@sushiswap/abi'
 import { Amount, Currency } from '@sushiswap/currency'
-import {
-  STARGATE_CHAIN_ID,
-  STARGATE_ETH_ADDRESS,
-  STARGATE_POOL_ADDRESS,
-  STARGATE_POOL_ID,
-  StargateChainId,
-} from '@sushiswap/stargate'
+import { STARGATE_CHAIN_ID, STARGATE_ETH_ADDRESS, STARGATE_POOL_ADDRESS, STARGATE_POOL_ID } from '@sushiswap/stargate'
 import { useMemo } from 'react'
 import { Address, useContractRead, useContractReads } from '@sushiswap/wagmi'
 import { ADDRESS_ZERO } from '@sushiswap/v3-sdk'
-import { STARGATE_ADAPTER_ADDRESS } from '@sushiswap/sushixswap-sdk'
+import { STARGATE_ADAPTER_ADDRESS, StargateAdapterChainId } from '@sushiswap/sushixswap-sdk'
 
-export const useBridgeFees = ({
+export const useStargateBridgeFees = ({
   amount,
   srcChainId,
   srcBridgeToken,
@@ -21,9 +15,9 @@ export const useBridgeFees = ({
   enabled = false,
 }: {
   amount?: Amount<Currency>
-  srcChainId: StargateChainId
+  srcChainId: StargateAdapterChainId
   srcBridgeToken?: Currency
-  dstChainId: StargateChainId
+  dstChainId: StargateAdapterChainId
   dstBridgeToken?: Currency
   enabled: boolean
 }) => {
@@ -113,7 +107,7 @@ export const useBridgeFees = ({
                 ] ?? 0
               ),
               STARGATE_CHAIN_ID[dstChainId],
-              STARGATE_ADAPTER_ADDRESS[srcChainId],
+              STARGATE_ADAPTER_ADDRESS[srcChainId] as Address,
               BigInt(adjusted?.quotient?.toString() ?? 0),
             ],
       [srcBridgeToken, dstBridgeToken, adjusted]

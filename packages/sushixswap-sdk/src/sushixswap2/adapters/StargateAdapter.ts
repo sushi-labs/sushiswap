@@ -16,6 +16,8 @@ export const STARGATE_ADAPTER_ADDRESS = {
   [ChainId.AVALANCHE]: '0xac8d8775dfb6de938d50aeb76972f77a1682dc85',
 } as const
 
+export type StargateAdapterChainId = keyof typeof STARGATE_ADAPTER_ADDRESS
+
 export const encodeStargateTeleportParams = ({
   srcBridgeToken,
   dstBridgeToken,
