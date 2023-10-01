@@ -24,7 +24,7 @@ export async function createHardhatProvider(chainId: ChainId, url: string, block
   )
 }
 
-export async function createHardhatProviderEmptyBlockchain() {
+export async function createHardhatProviderEmptyBlockchain(chainId = 31337) {
   const provider = await createProvider(
     {
       ...config,
@@ -34,7 +34,7 @@ export async function createHardhatProviderEmptyBlockchain() {
         hardhat: {
           ...config.networks.hardhat,
           allowUnlimitedContractSize: true,
-          chainId: 31337,
+          chainId,
           forking: undefined,
         },
       },
@@ -42,5 +42,5 @@ export async function createHardhatProviderEmptyBlockchain() {
     'hardhat'
   )
 
-  return { provider, chainId: 31337 as ChainId }
+  return { provider, chainId: chainId as ChainId }
 }
