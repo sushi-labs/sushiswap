@@ -6,7 +6,6 @@ import { SkeletonBox } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import ReactECharts, { EChartsOption } from 'echarts-for-react'
 import React, { useMemo } from 'react'
-import { renderToStaticMarkup } from 'react-dom/server'
 import ReactVirtualizedAutoSizer from 'react-virtualized-auto-sizer'
 
 interface _SteerAPRChartProps {
@@ -22,18 +21,26 @@ export function _SteerAPRChart({ timeseries, loading }: _SteerAPRChartProps) {
       },
       tooltip: {
         trigger: 'axis',
-        borderColor: '#141c2e',
-        backgroundColor: '#0f172a',
+        extraCssText: 'z-index: 1000',
+        responsive: true,
+        // @ts-ignore
+        backgroundColor: tailwind.theme.colors.slate['700'],
+        textStyle: {
+          // @ts-ignore
+          color: tailwind.theme.colors.slate['50'],
+          fontSize: 12,
+          fontWeight: 600,
+        },
         formatter: (params: any) => {
           const date = format(new Date(params[0].axisValue), 'dd MMM yyyy')
           const apr = formatPercent(params[0].data[1])
 
-          return renderToStaticMarkup(
-            <div className="text-white">
-              {date} - {apr}
-            </div>
-          )
+          return `<div class="flex flex-col gap-0.5">
+            <span class="text-sm text-slate-50 font-bold">${apr}</span>
+            <span class="text-xs text-slate-400 font-medium">${date}</span>
+          </div>`
         },
+        borderWidth: 0,
       },
       grid: {
         top: 2,
