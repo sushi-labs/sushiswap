@@ -2,8 +2,10 @@ import { createAppAuth } from '@octokit/auth-app'
 import { ChainId, ChainKey } from '@sushiswap/chain'
 import { formatUSD } from '@sushiswap/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
+import { Ratelimit } from '@upstash/ratelimit'
+import { kv } from '@vercel/kv'
 import stringify from 'fast-json-stable-stringify'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { Octokit } from 'octokit'
 
 import { ApplyForTokenListTokenSchemaType } from '../../../../../lib/tokenlist-request/ApplyForTokenListSchema'
@@ -25,7 +27,30 @@ interface MutationParams extends ApplyForTokenListTokenSchemaType {
   tokenDecimals: number
 }
 
-export async function POST(request: Request) {
+// To allow for development without rate limiting
+let ratelimit: Ratelimit | undefined
+try {
+  ratelimit = new Ratelimit({
+    redis: kv,
+    limiter: Ratelimit.slidingWindow(5, '1 h'),
+  })
+} catch {
+  console.log('Warning: Rate limit not enabled')
+}
+
+export const config = {
+  runtime: 'edge',
+  maxDuration: 15, // in seconds
+}
+
+export async function POST(request: NextRequest) {
+  if (ratelimit) {
+    const { remaining } = await ratelimit.limit(request.ip || '127.0.0.1')
+    if (!remaining) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+    }
+  }
+
   if (!process.env.TOKEN_LIST_PR_WEBHOOK_URL) throw new Error('TOKEN_LIST_PR_WEBHOOK_URL undefined')
   if (!process.env.OCTOKIT_KEY) throw new Error('OCTOKIT_KEY undefined')
 
