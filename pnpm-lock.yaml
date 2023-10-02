@@ -611,9 +611,9 @@ importers:
       '@types/react-virtualized-auto-sizer': 1.0.1
       '@uniswap/token-lists': 1.0.0-beta.30
       '@upstash/ratelimit': ^0.4.4
+      '@upstash/redis': ^1.22.1
       '@vercel/analytics': 1.0.1
       '@vercel/edge-config': 0.2.1
-      '@vercel/kv': ^0.2.3
       '@viem/anvil': 0.0.6
       '@wagmi/core': 1.4.1
       autoprefixer: 10.4.14
@@ -700,9 +700,9 @@ importers:
       '@tanstack/react-table': 8.9.1_biqbaboplfbrettd7655fr4n2y
       '@uniswap/token-lists': 1.0.0-beta.30
       '@upstash/ratelimit': 0.4.4
+      '@upstash/redis': 1.22.1
       '@vercel/analytics': 1.0.1
       '@vercel/edge-config': 0.2.1
-      '@vercel/kv': 0.2.3
       '@wagmi/core': 1.4.1_xnay3odvsvdslgollfestqxu6i
       cors: 2.8.5
       d3: 7.8.4
@@ -18614,14 +18614,6 @@ packages:
       - encoding
     dev: false
 
-  /@upstash/redis/1.22.0:
-    resolution: {integrity: sha512-sXoJDoEqqik0HbrNE7yRWckOySEFsoBxfRdCgOqkc0w6py19ZZG50SpGkDDEUXSnBqP8VgGYXhWAiBpqxrt5oA==}
-    dependencies:
-      isomorphic-fetch: 3.0.0
-    transitivePeerDependencies:
-      - encoding
-    dev: false
-
   /@upstash/redis/1.22.1:
     resolution: {integrity: sha512-7ec2eCMkVxZzuHNb+hPKonX4b/Pu0BdDeSBsEy+jKIqiweXzCs5Dpu9642vJgf57YnEsfwgXnQMVEataarvyeQ==}
     dependencies:
@@ -18765,15 +18757,6 @@ packages:
   /@vercel/hydrogen/0.0.64:
     resolution: {integrity: sha512-1rzFB664G6Yzp7j4ezW9hvVjqnaU2BhyUdhchbsxtRuxkMpGgPBZKhjzRQHFvlmkz37XLC658T5Nb1P91b4sBw==}
     dev: true
-
-  /@vercel/kv/0.2.3:
-    resolution: {integrity: sha512-Wq1+EsRBQmvLlcqCZeYVg1MAARWrnETgLe3Sy3UCqG+zg7LThpkt0YHZe1NN3Aj4IRmCKQamotWrLDdEx+ZB3w==}
-    engines: {node: '>=14.6'}
-    dependencies:
-      '@upstash/redis': 1.22.0
-    transitivePeerDependencies:
-      - encoding
-    dev: false
 
   /@vercel/next/3.8.5:
     resolution: {integrity: sha512-ywD5cDytlCgcTdVTajamU1vpWJZbpDteC0sCxfCGFdlIdaMi3Nh8cv3G1SNWuXd7GbHsSFeQ6S4iVJxWVy84Yg==}
@@ -19715,7 +19698,7 @@ packages:
       '@walletconnect/jsonrpc-provider': 1.0.13
       '@walletconnect/jsonrpc-types': 1.0.3
       '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/modal': 2.6.1_react@18.2.0
+      '@walletconnect/modal': 2.6.1
       '@walletconnect/sign-client': 2.10.0
       '@walletconnect/types': 2.10.0
       '@walletconnect/universal-provider': 2.10.0
