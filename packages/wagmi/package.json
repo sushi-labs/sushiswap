@@ -89,7 +89,7 @@
     "@uniswap/v3-periphery": "1.4.1",
     "next-themes": "^0.2.1",
     "viem": "1.10.7",
-    "zod": "3.21.4"
+    "zod": "3.22.2"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@sushiswap/chain": "workspace:*",
-    "zod": "3.21.4"
+    "zod": "3.22.2"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

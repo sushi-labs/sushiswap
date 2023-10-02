@@ -65,7 +65,7 @@
     "nanoid": "4.0.0",
     "viem": "1.10.7",
     "wagmi": "1.4.1",
-    "zod": "3.21.4"
+    "zod": "3.22.2"
   },
   "devDependencies": {
     "@sentry/nextjs": "7.68.0",

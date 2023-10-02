@@ -57,7 +57,7 @@
     "react-hook-form": "7.41.2",
     "wagmi": "1.4.1",
     "viem": "1.10.7",
-    "zod": "3.21.4"
+    "zod": "3.22.2"
   },
   "devDependencies": {
     "@graphprotocol/client-add-source-name": "2.0.0",

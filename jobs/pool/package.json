@@ -76,7 +76,7 @@
     "graphql": "16.6.0",
     "lodash.zip": "4.2.0",
     "viem": "1.10.7",
-    "zod": "3.21.4"
+    "zod": "3.22.2"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

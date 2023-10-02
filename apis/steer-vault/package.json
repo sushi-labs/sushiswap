@@ -29,9 +29,9 @@
     "@sushiswap/pools-api": "workspace:*",
     "@sushiswap/types": "workspace:*",
     "@sushiswap/validate": "workspace:*",
-    "@vercel/node": "2.14.3",
+    "@vercel/node": "3.0.6",
     "deepmerge-ts": "^4.3.0",
-    "zod": "3.21.4"
+    "zod": "3.22.2"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

@@ -36,7 +36,7 @@
     "react-dom": "18.2.0",
     "react-markdown": "^8.0.3",
     "swr": "2.1.5",
-    "zod": "3.21.4"
+    "zod": "3.22.2"
   },
   "devDependencies": {
     "@graphql-mesh/cli": "0.82.3",

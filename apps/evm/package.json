@@ -90,7 +90,7 @@
     "swr": "2.1.5",
     "viem": "1.10.7",
     "wagmi": "1.4.1",
-    "zod": "3.21.4"
+    "zod": "3.22.2"
   },
   "devDependencies": {
     "@playwright/test": "1.37.0",
