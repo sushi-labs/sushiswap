@@ -3,23 +3,25 @@ import { Amount, Type } from '@sushiswap/currency'
 import { Address, encodeAbiParameters, parseAbiParameters } from 'viem'
 
 export const SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS = [
+  ChainId.ETHEREUM,
+  ChainId.BSC,
+  ChainId.AVALANCHE,
+  ChainId.POLYGON,
   ChainId.ARBITRUM,
   ChainId.OPTIMISM,
-  ChainId.POLYGON,
-  ChainId.BSC,
-  ChainId.ETHEREUM,
-  ChainId.AVALANCHE,
+  ChainId.BASE,
 ] as const
 
 export type SushiXSwap2ChainId = (typeof SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS)[number]
 
 export const SUSHIXSWAP_2_ADDRESS: Record<SushiXSwap2ChainId, `0x${string}`> = {
-  [ChainId.ARBITRUM]: '0xec4a1bf5738841456054bd720bedf18be2e3f8f0',
-  [ChainId.OPTIMISM]: '0xd9d93d4daa6656b13dbc1997a0c543ac86ff2690',
-  [ChainId.POLYGON]: '0xc45a496bcc9ba69ffb45303f7515739c3f6ff921',
-  [ChainId.BSC]: '0xdd9c6c40171ea2dfc31ed00b0a58be2c8a3c7971',
-  [ChainId.ETHEREUM]: '0xd294d0d26ef0ff2087a35616b7aada083c53640f',
-  [ChainId.AVALANCHE]: '0xfec47ce995b4f3c0e42ef4d477150313a4d22211',
+  [ChainId.ETHEREUM]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  [ChainId.BSC]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  [ChainId.AVALANCHE]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  [ChainId.POLYGON]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  [ChainId.ARBITRUM]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  [ChainId.OPTIMISM]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  [ChainId.BASE]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
 } as const
 
 export const isSushiXSwap2ChainId = (chainId: number) => chainId in SUSHIXSWAP_2_ADDRESS
