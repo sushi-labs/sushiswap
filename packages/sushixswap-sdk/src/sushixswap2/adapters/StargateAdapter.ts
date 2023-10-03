@@ -39,7 +39,8 @@ export const STARGATE_ADAPTER_ADDRESS: Record<StargateAdapterChainId, `0x${strin
   [ChainId.BASE]: '0x09938716c4a086a4ebfe10377fdad96f32541303',
 } as const
 
-export const isStargateAdapterChainId = (chainId: number) => chainId in STARGATE_ADAPTER_SUPPORTED_CHAIN_IDS
+export const isStargateAdapterChainId = (chainId: ChainId): chainId is StargateAdapterChainId =>
+  STARGATE_ADAPTER_SUPPORTED_CHAIN_IDS.includes(chainId as StargateAdapterChainId)
 
 /*
     struct StargateTeleportParams {

@@ -24,7 +24,8 @@ export const SUSHIXSWAP_2_ADDRESS: Record<SushiXSwap2ChainId, `0x${string}`> = {
   [ChainId.BASE]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
 } as const
 
-export const isSushiXSwap2ChainId = (chainId: number) => chainId in SUSHIXSWAP_2_ADDRESS
+export const isSushiXSwap2ChainId = (chainId: ChainId): chainId is SushiXSwap2ChainId =>
+  SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS.includes(chainId as SushiXSwap2ChainId)
 
 interface BridgeParams {
   refId: string
