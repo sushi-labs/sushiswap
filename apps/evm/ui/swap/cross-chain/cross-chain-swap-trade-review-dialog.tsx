@@ -104,7 +104,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {
-      if (!trade || !chainId0 || !data) return
+      if (!tradeRef?.current || !chainId0 || !data) return
 
       groupTs.current = new Date().getTime()
       void createToast({
@@ -114,19 +114,19 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         txHash: data.hash,
         promise: waitForTransaction({ hash: data.hash }),
         summary: {
-          pending: `Swapping ${trade.amountIn?.toSignificant(6)} ${trade.amountIn?.currency.symbol} to bridge token ${
-            trade?.srcBridgeToken?.symbol
-          }`,
-          completed: `Swap ${trade.amountIn?.toSignificant(6)} ${trade.amountIn?.currency.symbol} to bridge token ${
-            trade?.srcBridgeToken?.symbol
-          }`,
-          failed: `Something went wrong when trying to swap ${trade.amountIn?.currency.symbol} to bridge token`,
+          pending: `Swapping ${tradeRef?.current?.amountIn?.toSignificant(6)} ${
+            tradeRef?.current?.amountIn?.currency.symbol
+          } to bridge token ${tradeRef?.current?.srcBridgeToken?.symbol}`,
+          completed: `Swap ${tradeRef?.current?.amountIn?.toSignificant(6)} ${
+            tradeRef?.current?.amountIn?.currency.symbol
+          } to bridge token ${tradeRef?.current?.srcBridgeToken?.symbol}`,
+          failed: `Something went wrong when trying to swap ${tradeRef?.current?.amountIn?.currency.symbol} to bridge token`,
         },
         timestamp: groupTs.current,
         groupTimestamp: groupTs.current,
       })
     },
-    [trade, chainId0, trade?.srcBridgeToken?.symbol, address]
+    [tradeRef?.current, chainId0, tradeRef?.current?.amountIn?.currency.symbol, address]
   )
 
   const {
@@ -307,9 +307,9 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
           pending: `Swapping ${
             tradeRef?.current?.dstBridgeToken?.symbol
           } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${tradeRef?.current?.amountOut?.currency.symbol}`,
-          completed: `Swap ${trade?.dstBridgeToken?.symbol} to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${
-            tradeRef?.current?.amountOut?.currency.symbol
-          }`,
+          completed: `Swap ${
+            tradeRef?.current?.dstBridgeToken?.symbol
+          } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${tradeRef?.current?.amountOut?.currency.symbol}`,
           failed: `Something went wrong when trying to swap ${
             tradeRef?.current?.dstBridgeToken?.symbol
           } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${tradeRef?.current?.amountOut?.currency.symbol}`,
