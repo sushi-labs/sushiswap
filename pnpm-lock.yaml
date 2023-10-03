@@ -538,7 +538,7 @@ importers:
       '@sushiswap/typescript-config': link:../../config/typescript
       '@vitejs/plugin-react': 4.0.1_vite@4.3.9
       autoprefixer: 10.4.14_postcss@8.4.23
-      chromatic: 7.1.0
+      chromatic: 7.0.0
       postcss: 8.4.23
       serve: 14.2.0
       storybook: 7.1.0-alpha.42
@@ -2007,7 +2007,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/react-query-config': workspace:*
       '@sushiswap/route-processor-sdk': workspace:*
-      '@sushiswap/router': workspace:^0.0.14
+      '@sushiswap/router': workspace:*
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@tanstack/react-query': 4.28.0
@@ -14751,7 +14751,7 @@ packages:
     resolution: {integrity: sha512-Z3/Fsz1yr904dduJD0NpiyRHhRYHdcnyh73FZWiV+/qhWi83wNJ3NWolYqCEN+ZWsUz2TWwajJggcRE9r1zUYg==}
     dependencies:
       '@noble/hashes': 1.3.2
-      '@scure/base': 1.1.3
+      '@scure/base': 1.1.1
 
   /@sentry-internal/tracing/7.68.0:
     resolution: {integrity: sha512-nNKS/q21+Iqzxs2K7T/l3dZi8Z9s/uxsAazpk2AYhFzx9mFnPj1Xfe3dgbFoygNifE+IrpUuldr6D5HQamTDPQ==}
@@ -17178,7 +17178,7 @@ packages:
       '@tanstack/react-query': ^4.32.6
     dependencies:
       '@tanstack/query-persist-client-core': 4.32.6
-      '@tanstack/react-query': 4.32.6
+      '@tanstack/react-query': 4.32.6_biqbaboplfbrettd7655fr4n2y
 
   /@tanstack/react-query/4.28.0:
     resolution: {integrity: sha512-8cGBV5300RHlvYdS4ea+G1JcZIt5CIuprXYFnsWggkmGoC0b5JaqG0fIX3qwDL9PTNkKvG76NGThIWbpXivMrQ==}
@@ -17228,6 +17228,7 @@ packages:
     dependencies:
       '@tanstack/query-core': 4.32.6
       use-sync-external-store: 1.2.0
+    dev: true
 
   /@tanstack/react-query/4.32.6_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-AITu/IKJJJXsHHeXNBy5bclu12t08usMCY0vFC2dh9SP/w6JAk5U9GwfjOIPj3p+ATADZvxQPe8UiCtMLNeQbg==}
@@ -22920,7 +22921,7 @@ packages:
       normalize-path: 3.0.0
       readdirp: 3.6.0
     optionalDependencies:
-      fsevents: 2.3.2
+      fsevents: 2.3.3
 
   /chownr/1.1.4:
     resolution: {integrity: sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg==}
@@ -22930,8 +22931,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /chromatic/7.1.0:
-    resolution: {integrity: sha512-4hvWVxj2TxsgmzQK7zsAIVapxF+mzAXFuYIoAKKACdKtI+kjz0GfKJYpnzD4xciY3SGaySsis6gWxJ9q8GIxiQ==}
+  /chromatic/7.0.0:
+    resolution: {integrity: sha512-ZPHRO/6v0jAKk0G1oW+HAngQmbq+opAVkgjy3Yx5Cvxvpfv+Y7zyfBuQ8KHewoNuIqLTfvRTbKzekqbGYT+7UQ==}
     hasBin: true
     dev: true
 
@@ -27874,6 +27875,14 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
     requiresBuild: true
+    dev: true
+    optional: true
+
+  /fsevents/2.3.3:
+    resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
+    requiresBuild: true
     optional: true
 
   /ftp/0.3.10:
@@ -30709,7 +30718,7 @@ packages:
       micromatch: 4.0.5
       walker: 1.0.8
     optionalDependencies:
-      fsevents: 2.3.2
+      fsevents: 2.3.3
     dev: true
 
   /jest-leak-detector/29.6.2:
@@ -36997,14 +37006,14 @@ packages:
     engines: {node: '>=10.0.0'}
     hasBin: true
     optionalDependencies:
-      fsevents: 2.3.2
+      fsevents: 2.3.3
 
   /rollup/3.28.0:
     resolution: {integrity: sha512-d7zhvo1OUY2SXSM6pfNjgD5+d0Nz87CUp4mt8l/GgVP3oBsPwzNvSzyu1me6BSG9JIgWNTVcafIXBIyM8yQ3yw==}
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
     optionalDependencies:
-      fsevents: 2.3.2
+      fsevents: 2.3.3
     dev: true
 
   /rome/12.1.3:
@@ -40859,7 +40868,7 @@ packages:
       postcss: 8.4.23
       rollup: 3.28.0
     optionalDependencies:
-      fsevents: 2.3.2
+      fsevents: 2.3.3
     dev: true
 
   /vite/4.4.9:
@@ -40894,7 +40903,7 @@ packages:
       postcss: 8.4.28
       rollup: 3.28.0
     optionalDependencies:
-      fsevents: 2.3.2
+      fsevents: 2.3.3
     dev: true
 
   /vite/4.4.9_@types+node@18.17.5:
@@ -40930,7 +40939,7 @@ packages:
       postcss: 8.4.28
       rollup: 3.28.0
     optionalDependencies:
-      fsevents: 2.3.2
+      fsevents: 2.3.3
     dev: true
 
   /vite/4.4.9_@types+node@20.5.0:
@@ -40966,7 +40975,7 @@ packages:
       postcss: 8.4.28
       rollup: 3.28.0
     optionalDependencies:
-      fsevents: 2.3.2
+      fsevents: 2.3.3
     dev: true
 
   /vitest/0.33.0:

@@ -55,7 +55,7 @@
     "@sushiswap/database": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/math": "workspace:*",
-    "@sushiswap/router": "workspace:^0.0.14",
+    "@sushiswap/router": "workspace:*",
     "@sushiswap/types": "workspace:*",
     "@sushiswap/route-processor-sdk": "workspace:*",
     "@tanstack/react-query": "4.28.0",
