@@ -1,6 +1,8 @@
-import { STABLES } from '@sushiswap/currency'
-import { calcTokenPrices,ConstantProductRPool, RPool, type RToken, UniV3Pool } from '@sushiswap/tines'
+import { STABLES, WNATIVE } from '@sushiswap/currency'
+import { calcTokenPrices, ConstantProductRPool, RPool, type RToken, UniV3Pool } from '@sushiswap/tines'
 import { fetch } from '@whatwg-node/fetch'
+
+import { Currency } from './enums.js'
 
 interface TokenResponse {
   address: string
@@ -67,13 +69,13 @@ async function fetchPoolCodes(chainId: number) {
 }
 
 function mapPool(poolCode: PoolCode) {
-    // Assumption, if all v3 fields are undefined, it's a v2 pool, otherwise v3. then we don't have to check the liquidity provider
+  // Assumption, if all v3 fields are undefined, it's a v2 pool, otherwise v3. then we don't have to check the liquidity provider
   if (
     poolCode.pool.sqrtPriceX96 === undefined &&
     poolCode.pool.liquidity === undefined &&
     poolCode.pool.nearestTick === undefined &&
     poolCode.pool.ticks === undefined
-    ) {
+  ) {
     return new ConstantProductRPool(
       poolCode.pool.address as `0x${string}`,
       poolCode.pool.token0 as RToken,
@@ -154,8 +156,8 @@ function calculateTokenPrices(tokens: RToken[], bases: RToken[], pools: RPool[],
   return bestPrices
 }
 
-export async function getPrices(chainId: number) {
-  if (STABLES[chainId as keyof typeof STABLES] === undefined) {
+export async function getPrices(chainId: number, currency: Currency) {
+  if (currency === Currency.USD && STABLES[chainId as keyof typeof STABLES] === undefined) {
     throw new Error(`ChainId ${chainId} has no stables configured`)
   }
   const [tokens, poolCodes] = await Promise.all([fetchTokens(), fetchPoolCodes(chainId)])
@@ -175,7 +177,11 @@ export async function getPrices(chainId: number) {
   )
   console.log(`Found ${poolCodes.length} pools, filtered it down to ${filteredPoolCodes.length}`)
   const mappedPools = filteredPoolCodes.map(mapPool).filter((p) => p !== undefined) as RPool[]
-  const bases = STABLES[chainId as keyof typeof STABLES] as unknown as RToken[]
+
+  const bases =
+    currency === Currency.USD
+      ? (STABLES[chainId as keyof typeof STABLES] as unknown as RToken[])
+      : ([WNATIVE[chainId as keyof typeof WNATIVE]] as unknown as RToken[])
   return calculateTokenPrices(tokens, bases, mappedPools, 1000)
 }
 
