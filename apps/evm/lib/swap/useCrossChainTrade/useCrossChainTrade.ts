@@ -39,8 +39,10 @@ export const useCrossChainTradeQuery = (
   const { data: feeData0 } = useFeeData({ chainId: network0, enabled })
   const { data: feeData1 } = useFeeData({ chainId: network1, enabled })
 
-  const bridgePath =
-    !enabled || !token0 || !token1 ? undefined : useMemo(() => getStargateBridgePath(token0, token1), [token0, token1])
+  const bridgePath = useMemo(
+    () => (!enabled || !token0 || !token1 ? undefined : getStargateBridgePath(token0, token1)),
+    [enabled, token0, token1]
+  )
 
   const isSrcSwap = Boolean(token0 && bridgePath?.srcBridgeToken && !token0.equals(bridgePath.srcBridgeToken))
   const isDstSwap = Boolean(token1 && bridgePath?.dstBridgeToken && !token1.equals(bridgePath.dstBridgeToken))
