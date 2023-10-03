@@ -35,6 +35,8 @@
     "test:load": "artillery run test/load.yml"
   },
   "dependencies": {
+    "@cryptoalgebra/integral-core": "0.2.0",
+    "@cryptoalgebra/integral-periphery": "0.2.0",
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/chain": "workspace:*",
