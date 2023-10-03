@@ -31,7 +31,7 @@ export const useConcentratedLiquidityPositions = ({
   enabled = true,
 }: UseConcentratedLiquidityPositionsParams) => {
   const { data: customTokens, hasToken } = useCustomTokens()
-  const { data: prices } = useAllPrices()
+  const { data: prices, isError: isPriceError } = useAllPrices()
 
   return useQuery({
     queryKey: ['useConcentratedLiquidityPositions', { chainIds, account, prices }],
@@ -41,7 +41,7 @@ export const useConcentratedLiquidityPositions = ({
         chainIds,
       })
 
-      if (data && prices) {
+      if (data && (prices || isPriceError)) {
         const pools = await Promise.allSettled(
           data.map(async (el) => {
             const [token0Data, token1Data] = await Promise.all([

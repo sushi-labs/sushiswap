@@ -36,13 +36,15 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
   const [_chainId, address] = params.id.split(params.id.includes('%3A') ? '%3A' : ':') as [string, string]
   const chainId = Number(_chainId) as ChainId
   const pool = await getPool({ chainId, address })
-  console.log('PoolPage (server)', pool)
+
   if (!pool) {
     notFound()
   }
+
   if (pool.protocol === 'SUSHISWAP_V3') {
     return <PoolPageV3 pool={pool} />
   }
+
   return (
     <>
       <UnknownTokenAlert pool={pool} />
