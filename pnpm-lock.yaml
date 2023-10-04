@@ -486,7 +486,7 @@ importers:
       '@tanstack/react-query-devtools': 4.28.0
       '@tanstack/react-query-persist-client': 4.29.7
       '@tanstack/react-table': 8.9.1
-      '@tsconfig/next': 1.0.5
+      '@tsconfig/next': 2.0.0
       '@types/cors': 2.8.13
       '@types/d3': 7.4.0
       '@types/node': '18'
@@ -614,7 +614,7 @@ importers:
       '@playwright/test': 1.37.0
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/typescript-config': link:../../config/typescript
-      '@tsconfig/next': 1.0.5
+      '@tsconfig/next': 2.0.0
       '@types/cors': 2.8.13
       '@types/d3': 7.4.0
       '@types/node': 18.17.5
@@ -1157,7 +1157,6 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/pools-api': workspace:*
       '@sushiswap/steer-vault-api': workspace:*
-      '@sushiswap/typescript-config': workspace:*
       '@tsconfig/esm': 1.0.4
       '@tsconfig/strictest': 2.0.2
       '@whatwg-node/fetch': 0.8.4
@@ -1174,7 +1173,6 @@ importers:
       tslib: 2.6.2
     devDependencies:
       '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/typescript-config': link:../../config/typescript
       '@tsconfig/esm': 1.0.4
       '@tsconfig/strictest': 2.0.2
       swr: 2.1.5
@@ -16494,8 +16492,8 @@ packages:
     deprecated: Use the tsconfig base for your runtime instead of general 'esm', e.g. 'node18'
     dev: true
 
-  /@tsconfig/next/1.0.5:
-    resolution: {integrity: sha512-ZpAlWqSGE3ZWFqKmI3FiQEu8WcBF3uii1z1ovedMcALflsRoJnExp3YzWQ/fU7lzGmYtfX1CWFpf1Gl8aEC6GQ==}
+  /@tsconfig/next/2.0.0:
+    resolution: {integrity: sha512-ip/XpFLWuUrhDkbI8ixpWxPlmWvUhQCLS5rB7nibcZUavA1Ru34Q7a5CniBM7BdHw1YlAXu40HXUn66h/A4EBQ==}
     dev: true
 
   /@tsconfig/node10/1.0.9:

@@ -93,7 +93,7 @@
     "@playwright/test": "1.37.0",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@tsconfig/next": "1.0.5",
+    "@tsconfig/next": "2.0.0",
     "@types/cors": "2.8.13",
     "@types/d3": "7.4.0",
     "@types/node": "18",
