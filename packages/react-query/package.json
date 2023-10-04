@@ -72,7 +72,6 @@
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
-    "@sushiswap/react-query-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
