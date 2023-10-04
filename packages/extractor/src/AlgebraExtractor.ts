@@ -36,7 +36,12 @@ export function getCreate2Address(
   return getAddress(`0x${keccak256(sanitizedInputs).slice(-40)}`)
 }
 
-export interface FactoryV3 {
+export interface FactoryAlgebra {
+  address: Address
+  provider: LiquidityProviders
+}
+
+interface FactoryAlgebraFull {
   address: Address
   deployer: Address
   provider: LiquidityProviders
@@ -48,7 +53,7 @@ export interface PoolInfo {
   token0: Token
   token1: Token
   fee: FeeAmount
-  factory: FactoryV3
+  factory: FactoryAlgebraFull
 }
 
 enum LogsProcessing {
@@ -66,8 +71,9 @@ interface PoolCacheRecord {
 }
 
 export class AlgebraExtractor {
-  factories: FactoryV3[]
-  factoryMap: Map<string, FactoryV3> = new Map()
+  factories: FactoryAlgebra[]
+  factoriesFull: FactoryAlgebraFull[] = []
+  factoryMap: Map<string, FactoryAlgebraFull> = new Map()
   tickHelperContract: Address
   multiCallAggregator: MultiCallAggregator
   tokenManager: TokenManager
@@ -86,7 +92,7 @@ export class AlgebraExtractor {
   constructor(
     client: PublicClient,
     tickHelperContract: Address,
-    factories: FactoryV3[],
+    factories: FactoryAlgebra[],
     cacheDir: string,
     logFilter: LogFilter2,
     logging = true,
@@ -99,7 +105,6 @@ export class AlgebraExtractor {
       new TokenManager(this.multiCallAggregator, cacheDir, `AlgebraTokens-${this.multiCallAggregator.chainId}`)
     this.tickHelperContract = tickHelperContract
     this.factories = factories
-    factories.forEach((f) => this.factoryMap.set(f.address.toLowerCase(), f))
     this.poolPermanentCache = new PermanentCache(cacheDir, `AlgebraPools-${this.multiCallAggregator.chainId}`)
     this.logging = logging
     this.taskCounter = new Counter(() => {
@@ -153,6 +158,21 @@ export class AlgebraExtractor {
       this.logFilter.start()
 
       if (this.tokenManager.tokens.size === 0) await this.tokenManager.addCachedTokens()
+
+      this.factoriesFull = await Promise.all(
+        this.factories.map(async (f): Promise<FactoryAlgebraFull> => {
+          const [deployer, initCodeHash] = await Promise.all([
+            this.multiCallAggregator.callValue(f.address, AlgebraFactory.abi as Abi, 'poolDeployer'),
+            this.multiCallAggregator.callValue(f.address, AlgebraFactory.abi as Abi, 'POOL_INIT_CODE_HASH'),
+          ])
+          return {
+            ...f,
+            deployer: deployer as Address,
+            initCodeHash: initCodeHash as string,
+          }
+        })
+      )
+      this.factoriesFull.forEach((f) => this.factoryMap.set(f.address.toLowerCase(), f))
 
       // Add cached pools to watching
       const cachedPools: Map<string, PoolInfo> = new Map() // map instead of array to avoid duplicates
@@ -257,7 +277,7 @@ export class AlgebraExtractor {
       this.tokenManager.findToken(t0.address as Address) // to let save it in the cache
       for (let j = i + 1; j < tokensUnique.length; ++j) {
         const t1 = tokensUnique[j]
-        this.factories.forEach((factory) => {
+        this.factoriesFull.forEach((factory) => {
           fees.forEach((fee) => {
             const addr = this.computeV3Address(factory, t0, t1, fee)
             const addrL = addr.toLowerCase() as Address
@@ -352,7 +372,7 @@ export class AlgebraExtractor {
   }
 
   readonly addressCache: Map<string, Address> = new Map()
-  computeV3Address(factory: FactoryV3, tokenA: Token, tokenB: Token, fee: FeeAmount): Address {
+  computeV3Address(factory: FactoryAlgebraFull, tokenA: Token, tokenB: Token, fee: FeeAmount): Address {
     const key = `${tokenA.address}${tokenB.address}${fee}${factory.address}`
     const cached = this.addressCache.get(key)
     if (cached) return cached
