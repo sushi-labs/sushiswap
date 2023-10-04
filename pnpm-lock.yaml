@@ -1014,29 +1014,6 @@ importers:
       prettier: 2.8.1
       typescript: 5.1.6
 
-  config/react-query:
-    specifiers:
-      '@sushiswap/chain': workspace:*
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@tanstack/react-query': 4.28.0
-      '@tanstack/react-query-devtools': 4.28.0
-      tsup: 7.1.0
-      typescript: 5.1.6
-    dependencies:
-      '@sushiswap/chain': link:../../packages/chain
-    devDependencies:
-      '@sushiswap/eslint-config': link:../eslint
-      '@sushiswap/jest-config': link:../jest
-      '@sushiswap/prettier-config': link:../prettier
-      '@sushiswap/typescript-config': link:../typescript
-      '@tanstack/react-query': 4.28.0
-      '@tanstack/react-query-devtools': 4.28.0_qfusmmwykmcbgdy37sd3cqxiry
-      tsup: 7.1.0_typescript@5.1.6
-      typescript: 5.1.6
-
   config/router:
     specifiers:
       '@sushiswap/chain': workspace:*
@@ -2003,7 +1980,6 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/react-query-config': workspace:*
       '@sushiswap/route-processor-sdk': workspace:*
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
@@ -2052,7 +2028,6 @@ importers:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/react-query-config': link:../../config/react-query
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/react': 18.2.14
       '@types/react-dom': 18.2.6
@@ -17075,9 +17050,11 @@ packages:
     engines: {node: '>=12'}
     dependencies:
       remove-accents: 0.4.2
+    dev: false
 
   /@tanstack/query-core/4.27.0:
     resolution: {integrity: sha512-sm+QncWaPmM73IPwFlmWSKPqjdTXZeFf/7aEmWh00z7yl2FjqophPt0dE1EHW9P1giMC5rMviv7OUbSDmWzXXA==}
+    dev: false
 
   /@tanstack/query-core/4.29.7:
     resolution: {integrity: sha512-GXG4b5hV2Loir+h2G+RXhJdoZhJLnrBWsuLB2r0qBRyhWuXq9w/dWxzvpP89H0UARlH6Mr9DiVj4SMtpkF/aUA==}
@@ -17129,19 +17106,6 @@ packages:
       use-sync-external-store: 1.2.0_react@18.2.0
     dev: false
 
-  /@tanstack/react-query-devtools/4.28.0_qfusmmwykmcbgdy37sd3cqxiry:
-    resolution: {integrity: sha512-1SnoMw1CWn8FdPEIHvlAzmMBX3heXJo11fyBtt+FzYAHj5yFC8P67Kpgi0HpLkY7SLnd6QK/7qFkpeH4AQbgZg==}
-    peerDependencies:
-      '@tanstack/react-query': 4.28.0
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      '@tanstack/match-sorter-utils': 8.8.4
-      '@tanstack/react-query': 4.28.0
-      superjson: 1.13.1
-      use-sync-external-store: 1.2.0
-    dev: true
-
   /@tanstack/react-query-persist-client/4.28.0_qfusmmwykmcbgdy37sd3cqxiry:
     resolution: {integrity: sha512-xNpi3YdPOQIyYkKhByYDqTlyCeqICWFhV5PWkoVxYfzlRK6HYX4s+9Int407jEvhBz9cGC4OaL7rd6bynCFrYg==}
     peerDependencies:
@@ -17167,22 +17131,6 @@ packages:
     dependencies:
       '@tanstack/query-persist-client-core': 4.32.6
       '@tanstack/react-query': 4.32.6_biqbaboplfbrettd7655fr4n2y
-
-  /@tanstack/react-query/4.28.0:
-    resolution: {integrity: sha512-8cGBV5300RHlvYdS4ea+G1JcZIt5CIuprXYFnsWggkmGoC0b5JaqG0fIX3qwDL9PTNkKvG76NGThIWbpXivMrQ==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-    dependencies:
-      '@tanstack/query-core': 4.27.0
-      use-sync-external-store: 1.2.0
-    dev: true
 
   /@tanstack/react-query/4.28.0_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-8cGBV5300RHlvYdS4ea+G1JcZIt5CIuprXYFnsWggkmGoC0b5JaqG0fIX3qwDL9PTNkKvG76NGThIWbpXivMrQ==}
@@ -23466,6 +23414,7 @@ packages:
     engines: {node: '>=12.13'}
     dependencies:
       is-what: 4.1.15
+    dev: false
 
   /copy-descriptor/0.1.1:
     resolution: {integrity: sha512-XgZ0pFcakEUlbwQEVNg3+QAis1FyTL3Qel9FYy8pSkQqoG3PNoT0bOCQtOXcOkur21r2Eq2kI+IE+gsmAEVlYw==}
@@ -30036,6 +29985,7 @@ packages:
   /is-what/4.1.15:
     resolution: {integrity: sha512-uKua1wfy3Yt+YqsD6mTUEa2zSi3G1oPlqTflgaPJ7z63vUGN5pxFpnQfeSLMFnJDEsdvOtkp1rUWkYjB4YfhgA==}
     engines: {node: '>=12.13'}
+    dev: false
 
   /is-windows/1.0.2:
     resolution: {integrity: sha512-eXK1UInq2bPmjyX6e3VHIzMLobc4J94i4AWn+Hpq3OU5KkrRC96OAcR3PRJ/pGu6m8TRnBHP9dkXQVsT/COVIA==}
@@ -36695,6 +36645,7 @@ packages:
 
   /remove-accents/0.4.2:
     resolution: {integrity: sha512-7pXIJqJOq5tFgG1A2Zxti3Ht8jJF337m4sowbuHsW30ZnkQFnDzy9qBNhgzX8ZLW4+UBcXiiR7SwR6pokHsxiA==}
+    dev: false
 
   /remove-trailing-separator/1.1.0:
     resolution: {integrity: sha512-/hS+Y0u3aOfIETiaiirUFwDBDzmXPvO+jAfKTitUngIPzdKc6Z0LoFjM/CK5PL4C+eKwHohlHAb6H0VFfmmUsw==}
@@ -38458,6 +38409,7 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       copy-anything: 3.0.5
+    dev: false
 
   /superstruct/0.14.2:
     resolution: {integrity: sha512-nPewA6m9mR3d6k7WkZ8N8zpTWfenFH3q9pA2PkuiZxINr9DKB2+40wEQf0ixn8VaGuJ78AB6iWOtStI+/4FKZQ==}
