@@ -35,6 +35,8 @@
   },
   "devDependencies": {
     "@sushiswap/typescript-config": "workspace:*",
+    "@tsconfig/esm": "1.0.4",
+    "@tsconfig/strictest": "2.0.2",
     "@types/numeral": "2.0.3",
     "@types/jest": "29.5.5",
     "ethers": "5.7.2",

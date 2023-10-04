@@ -1158,7 +1158,8 @@ importers:
       '@sushiswap/pools-api': workspace:*
       '@sushiswap/steer-vault-api': workspace:*
       '@sushiswap/typescript-config': workspace:*
-      '@types/node': '18'
+      '@tsconfig/esm': 1.0.4
+      '@tsconfig/strictest': 2.0.2
       '@whatwg-node/fetch': 0.8.4
       swr: 2.1.5
       tslib: latest
@@ -1174,7 +1175,8 @@ importers:
     devDependencies:
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/typescript-config': link:../../config/typescript
-      '@types/node': 18.17.5
+      '@tsconfig/esm': 1.0.4
+      '@tsconfig/strictest': 2.0.2
       swr: 2.1.5
       tsup: 7.2.0_typescript@5.2.2
       typescript: 5.2.2
@@ -1684,6 +1686,8 @@ importers:
   packages/sushi:
     specifiers:
       '@sushiswap/typescript-config': workspace:*
+      '@tsconfig/esm': 1.0.4
+      '@tsconfig/strictest': 2.0.2
       '@types/jest': 29.5.5
       '@types/numeral': 2.0.3
       decimal.js-light: 2.5.1
@@ -1698,6 +1702,8 @@ importers:
       tiny-invariant: 1.3.1
     devDependencies:
       '@sushiswap/typescript-config': link:../../config/typescript
+      '@tsconfig/esm': 1.0.4
+      '@tsconfig/strictest': 2.0.2
       '@types/jest': 29.5.5
       '@types/numeral': 2.0.3
       ethers: 5.7.2
