@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-import { getTokenCount } from '../../../lib/api'
+import { getTokenCount } from '../../../../../lib/analytics/api'
 
 export const revalidate = 3600
 

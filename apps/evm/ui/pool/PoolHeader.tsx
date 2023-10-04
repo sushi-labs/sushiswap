@@ -59,7 +59,7 @@ export const PoolHeader: FC<PoolHeader> = ({ backUrl, address, pool, apy, priceR
           <LinkInternal href={backUrl} className="text-blue hover:underline text-sm">
             ← View all pools
           </LinkInternal>
-          <div className="relative flex items-center gap-3">
+          <div className="relative flex items-center gap-3 max-w-[100vh]">
             <Currency.IconList iconWidth={36} iconHeight={36}>
               <Currency.Icon currency={token0} />
               <Currency.Icon currency={token1} />
@@ -69,7 +69,8 @@ export const PoolHeader: FC<PoolHeader> = ({ backUrl, address, pool, apy, priceR
               variant="link"
               className={typographyVariants({
                 variant: 'h1',
-                className: '!text-4xl !font-bold text-gray-900 dark:text-slate-50',
+                className:
+                  'sm:!text2-xl sm:!text-4xl !font-bold text-gray-900 dark:text-slate-50 truncate overflow-x-auto',
               })}
             >
               <LinkExternal href={Chain.from(pool.chainId).getTokenUrl(address)}>

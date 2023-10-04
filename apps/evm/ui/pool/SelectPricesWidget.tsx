@@ -184,16 +184,15 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                 )}
               </div>
               <div className="flex flex-1 justify-between">
-                {!noLiquidity && (
-                  <Toggle
-                    variant="outline"
-                    size="sm"
-                    pressed={isFullRange}
-                    onClick={() => (isFullRange ? resetMintState() : getSetFullRange())}
-                  >
-                    Full Range
-                  </Toggle>
-                )}
+                <Toggle
+                  variant="outline"
+                  size="sm"
+                  disabled={!feeAmount}
+                  pressed={isFullRange}
+                  onClick={() => (isFullRange ? resetMintState() : getSetFullRange())}
+                >
+                  Full Range
+                </Toggle>
                 {switchTokens ? (
                   <div className="flex justify-end gap-1">
                     <Toggle variant="outline" onPressedChange={switchTokens} pressed={isSorted} size="sm">

@@ -21,13 +21,7 @@ import { PoolPosition } from '../../../ui/pool/PoolPosition'
 import { PoolRewards } from '../../../ui/pool/PoolRewards'
 import { PoolStats } from '../../../ui/pool/PoolStats'
 
-export default async function PoolPage({
-  params,
-  tab = 'add',
-}: {
-  params: { id: string }
-  tab: 'add' | 'remove' | 'unstake' | 'stake'
-}) {
+export default async function PoolPage({ params, tab }: { params: { id: string }, tab: 'add' | 'remove' | 'unstake' | 'stake' }) {
   const poolId = unsanitize(params.id)
   const pool = await unstable_cache(async () => getPool(poolId), ['pool', poolId], {
     revalidate: 60 * 15,
