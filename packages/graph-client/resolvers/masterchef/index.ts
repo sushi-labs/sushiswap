@@ -7,7 +7,7 @@ import {
   MINICHEF_SUBGRAPH_NAME,
   SUBGRAPH_HOST,
 } from '@sushiswap/graph-config'
-import { isPromiseFulfilled } from '@sushiswap/validate'
+import { isPromiseFulfilled } from 'sushi'
 
 import { Query, QueryResolvers, Resolvers } from '../../.graphclient/index.js'
 

@@ -2,7 +2,7 @@
 import type * as _ from '@prisma/client/runtime'
 
 import { createClient, Prisma, type DecimalToString } from '@sushiswap/database'
-import { isPromiseFulfilled } from '@sushiswap/validate'
+import { isPromiseFulfilled } from 'sushi'
 import { deepmergeInto } from 'deepmerge-ts'
 import type { PoolApiSchema, PoolCountApiSchema, PoolsApiSchema } from './../schemas/index.js'
 import { getUnindexedPool } from '../getUnindexedPool.js'
@@ -116,8 +116,7 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
 }
 
 export async function getEarnPool(args: typeof PoolApiSchema._output) {
-
-  console.log("getEarnPool args", args)
+  console.log('getEarnPool args', args)
 
   const id = `${args.chainId}:${args.address.toLowerCase()}`
 
@@ -129,7 +128,7 @@ export async function getEarnPool(args: typeof PoolApiSchema._output) {
     orderDir: 'desc',
   })
 
-  console.log("getEarnPool pool", pool)
+  console.log('getEarnPool pool', pool)
 
   if (!pool) {
     // rome-ignore lint/suspicious/noExplicitAny: recursive

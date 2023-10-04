@@ -2,7 +2,6 @@
 
 import { Chain, chainName } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
-import { calculateGasMargin } from '@sushiswap/gas'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
@@ -41,6 +40,7 @@ import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Check
 import { nanoid } from 'nanoid'
 import { log } from 'next-axiom'
 import React, { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+import { calculateGasMargin } from 'sushi'
 import { stringify, UserRejectedRequestError } from 'viem'
 
 import { APPROVE_TAG_XSWAP } from '../../../lib/constants'

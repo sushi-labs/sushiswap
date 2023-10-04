@@ -1,7 +1,7 @@
 import { parseUnits } from '@ethersproject/units'
 
-import { Amount } from './Amount'
-import { Type } from './Type'
+import { Amount } from './Amount.js'
+import { type Type } from './Type.js'
 
 // try to parse a user entered amount for a given token
 export function tryParseAmount<T extends Type>(value?: string, currency?: T): Amount<T> | undefined {

@@ -1,9 +1,9 @@
 import invariant from 'tiny-invariant'
 
-import Big from './Big'
-import BigintIsh from './BigintIsh'
-import Decimal from './Decimal'
-import Rounding from './Rounding'
+import Big from './Big.js'
+import {type BigintIsh} from './BigintIsh.js'
+import Decimal from './Decimal.js'
+import Rounding from './Rounding.js'
 
 const toSignificantRounding = {
   [Rounding.ROUND_DOWN]: Decimal.ROUND_DOWN,

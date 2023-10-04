@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 
-import { AddressMapper } from '../AddressMapper'
+import { AddressMapper } from '../AddressMapper.js'
 import {
   AAVE_ADDRESS,
   AGEUR_ADDRESS,
@@ -48,10 +48,10 @@ import {
   USDT_ADDRESS,
   WBTC_ADDRESS,
   WETH9_ADDRESS,
-  WNATIVE_ADDRESS,
+  // WNATIVE_ADDRESS,
   XSUSHI_ADDRESS,
   YFI_ADDRESS,
-} from './token-addresses'
+} from './token-addresses.js'
 
 const THUNDERCORE_USDT_ADDRESS = { [ChainId.THUNDERCORE]: '0x0dcb0cb0120d355cde1ce56040be57add0185baa' }
 const THUNDERCORE_USDC_ADDRESS = { [ChainId.THUNDERCORE]: '0xdc42728b0ea910349ed3c6e1c9dc06b5fb591f98' }

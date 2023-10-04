@@ -1,8 +1,8 @@
-import { BigintIsh, Fraction, Rounding } from '@sushiswap/math'
+import { type BigintIsh, Fraction, Rounding } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
-import { Amount } from './Amount'
-import { Type } from './Type'
+import { Amount } from './Amount.js'
+import { type Type } from './Type.js'
 
 export class Price<TBase extends Type, TQuote extends Type> extends Fraction {
   public readonly baseCurrency: TBase // input i.e. denominator
@@ -46,7 +46,7 @@ export class Price<TBase extends Type, TQuote extends Type> extends Fraction {
   /**
    * Flip the price, switching the base and quote currency
    */
-  public invert(): Price<TQuote, TBase> {
+  public override invert(): Price<TQuote, TBase> {
     return new Price(this.quoteCurrency, this.baseCurrency, this.numerator, this.denominator)
   }
 
@@ -54,7 +54,7 @@ export class Price<TBase extends Type, TQuote extends Type> extends Fraction {
    * Multiply the price by another price, returning a new price. The other price must have the same base currency as this price's quote currency
    * @param other the other price
    */
-  public multiply<TOtherQuote extends Type>(other: Price<TQuote, TOtherQuote>): Price<TBase, TOtherQuote> {
+  public override multiply<TOtherQuote extends Type>(other: Price<TQuote, TOtherQuote>): Price<TBase, TOtherQuote> {
     invariant(this.quoteCurrency.equals(other.baseCurrency), 'TOKEN')
     const fraction = super.multiply(other)
     return new Price(this.baseCurrency, other.quoteCurrency, fraction.denominator, fraction.numerator)
@@ -78,11 +78,11 @@ export class Price<TBase extends Type, TQuote extends Type> extends Fraction {
     return super.multiply(this.scalar)
   }
 
-  public toSignificant(significantDigits = 6, format?: object, rounding?: Rounding): string {
+  public override toSignificant(significantDigits = 6, format?: object, rounding?: Rounding): string {
     return this.adjustedForDecimals.toSignificant(significantDigits, format, rounding)
   }
 
-  public toFixed(decimalPlaces = 4, format?: object, rounding?: Rounding): string {
+  public override toFixed(decimalPlaces = 4, format?: object, rounding?: Rounding): string {
     return this.adjustedForDecimals.toFixed(decimalPlaces, format, rounding)
   }
 }

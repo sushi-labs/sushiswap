@@ -1,4 +1,4 @@
-import { Percent } from '..'
+import Percent from '../Percent.js'
 
 describe('Percent', () => {
   describe('constructor', () => {

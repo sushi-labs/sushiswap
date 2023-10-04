@@ -394,3 +394,12 @@ export const STEER_SUBGRAPGH_NAME: Record<SteerChainId, string> = {
 
 export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM
 export const DEFAULT_CHAIN_NAME = CHAIN_NAME[DEFAULT_CHAIN_ID]
+
+export const isTridentChain = (chainId: ChainId): chainId is TridentChainId =>
+  Object.keys(TRIDENT_SUBGRAPH_NAME).map(Number).includes(chainId)
+
+export const isSushiSwapChain = (chainId: ChainId): chainId is SushiSwapChainId =>
+  Object.keys(SUSHISWAP_SUBGRAPH_NAME).map(Number).includes(chainId)
+
+export const isSushiSwapV3Chain = (chainId: ChainId): chainId is SushiSwapV3ChainId =>
+  Object.keys(SUSHISWAP_V3_SUBGRAPH_NAME).map(Number).includes(chainId)

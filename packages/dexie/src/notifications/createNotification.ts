@@ -1,5 +1,5 @@
-import {db} from "../db";
-import {isPromise, PromiseNotification, ResolvedNotification} from "./types";
+import {db} from "../db.js";
+import {isPromise, type PromiseNotification, type ResolvedNotification} from "./types.js";
 
 export const createNotification = async (payload: PromiseNotification | ResolvedNotification) => {
     if (!payload.account) {

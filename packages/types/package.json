@@ -28,19 +28,14 @@
   },
   "typings": "./index.d.ts",
   "scripts": {
-    "lint": "TIMING=1 eslint .",
-    "lint:fix": "TIMING=1 eslint . --fix",
     "test": "jest --passWithNoTests"
   },
   "devDependencies": {
-    "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@types/jest": "^29.2.0",
+    "@types/jest": "29.5.5",
     "@wagmi/core": "1.4.1",
-    "eslint": "8.43.0",
-    "jest": "29.3.1",
+    "jest": "29.7.0",
     "tsup": "7.1.0",
     "typescript": "5.1.6",
     "viem": "1.10.7"

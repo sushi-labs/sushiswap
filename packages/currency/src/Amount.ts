@@ -1,11 +1,11 @@
-import { Big, BigintIsh, Fraction, MAX_UINT256, Rounding, ZERO } from '@sushiswap/math'
+import { Big, type BigintIsh, Fraction, MAX_UINT256, Rounding, ZERO } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
-import { Native } from './Native'
-import { Share } from './Share'
-import { Token } from './Token'
-import { Type } from './Type'
-import { amountSchema, SerializedAmount } from './zod'
+import { Native } from './Native.js'
+import { Share } from './Share.js'
+import { Token } from './Token.js'
+import { type Type } from './Type.js'
+import { amountSchema, type SerializedAmount } from './zod.js'
 
 export class Amount<T extends Type> extends Fraction {
   public readonly currency: T
@@ -71,33 +71,33 @@ export class Amount<T extends Type> extends Fraction {
     this.scale = 10n ** BigInt(currency.decimals)
   }
 
-  public add(other: Amount<T>): Amount<T> {
+  public override add(other: Amount<T>): Amount<T> {
     invariant(this.currency.equals(other.currency), 'CURRENCY')
     const added = super.add(other)
     return Amount.fromFractionalAmount(this.currency, added.numerator, added.denominator)
   }
 
-  public subtract(other: Amount<T>): Amount<T> {
+  public override subtract(other: Amount<T>): Amount<T> {
     invariant(this.currency.equals(other.currency), 'CURRENCY')
     const subtracted = super.subtract(other)
     return Amount.fromFractionalAmount(this.currency, subtracted.numerator, subtracted.denominator)
   }
 
-  public multiply(other: Fraction | BigintIsh): Amount<T> {
+  public override multiply(other: Fraction | BigintIsh): Amount<T> {
     const multiplied = super.multiply(other)
     return Amount.fromFractionalAmount(this.currency, multiplied.numerator, multiplied.denominator)
   }
 
-  public divide(other: Fraction | BigintIsh): Amount<T> {
+  public override divide(other: Fraction | BigintIsh): Amount<T> {
     const divided = super.divide(other)
     return Amount.fromFractionalAmount(this.currency, divided.numerator, divided.denominator)
   }
 
-  public toSignificant(significantDigits = 6, format?: object, rounding: Rounding = Rounding.ROUND_DOWN): string {
+  public override toSignificant(significantDigits = 6, format?: object, rounding: Rounding = Rounding.ROUND_DOWN): string {
     return super.divide(this.scale).toSignificant(significantDigits, format, rounding)
   }
 
-  public toFixed(
+  public override toFixed(
     decimalPlaces: number = this.currency.decimals,
     format?: object,
     rounding: Rounding = Rounding.ROUND_DOWN

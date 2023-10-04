@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 
-import { db } from '../db'
-import { SavedToken } from './types'
+import { db } from '../db.js'
+import { type SavedToken } from './types.js'
 
 export const getToken = async ({
   chainId,

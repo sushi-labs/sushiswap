@@ -1,18 +1,18 @@
 import { chains } from '@sushiswap/chain'
 import invariant from 'tiny-invariant'
 
-import { WNATIVE } from './constants/tokens'
-import { Currency } from './Currency'
-import { Token } from './Token'
-import { Type } from './Type'
-import { nativeSchema, SerializedNative } from './zod'
+import { WNATIVE } from './constants/tokens.js'
+import { Currency } from './Currency.js'
+import { Token } from './Token.js'
+import { type Type } from './Type.js'
+import { nativeSchema, type SerializedNative } from './zod.js'
 
 export class Native extends Currency {
   public readonly id: string
   public readonly isNative = true as const
   public readonly isToken = false as const
-  public readonly symbol: string
-  public readonly name: string
+  public override readonly symbol: string
+  public override readonly name: string
   protected constructor(native: { chainId: number; decimals: number; symbol: string; name: string }) {
     super(native)
     this.id = `${native.chainId}:NATIVE`
@@ -32,26 +32,31 @@ export class Native extends Currency {
   private static cache: Record<number, Native> = {}
 
   public static onChain(chainId: number): Native {
-    if (chainId in this.cache) {
-      return this.cache[chainId]
+
+    const cached = this.cache[chainId]
+
+    if (typeof cached !== 'undefined') {
+      return cached
     }
 
     invariant(!!(chainId in chains), 'CHAINS')
 
-    const { nativeCurrency } = chains[chainId]
+    const nativeCurrency = chains?.[chainId]?.nativeCurrency
 
     invariant(!!nativeCurrency, 'NATIVE_CURRENCY')
 
     const { decimals, name, symbol } = nativeCurrency
 
-    this.cache[chainId] = new Native({
+    const native = new Native({
       chainId,
       decimals,
       name,
       symbol,
     })
 
-    return this.cache[chainId]
+    this.cache[chainId] = native
+
+    return native
   }
 
   public equals(other: Type): boolean {

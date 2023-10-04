@@ -7,9 +7,9 @@ function minimum(...values: bigint[]): bigint
  * @returns the smallest memmber of the array
  */
 function minimum(...values: number[] | bigint[]) {
-  let lowest = values[0]
+  let lowest = values[0] as number | bigint
   for (let i = 1; i < values.length; i++) {
-    const value = values[i]
+    const value = values[i] as number | bigint
     if (value < lowest) {
       lowest = value
     }

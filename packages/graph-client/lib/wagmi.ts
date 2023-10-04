@@ -1,4 +1,4 @@
-import { isPromiseFulfilled } from '@sushiswap/validate'
+import { isPromiseFulfilled } from 'sushi'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import { Address, configureChains, createConfig, erc20ABI, readContract } from '@wagmi/core'
 

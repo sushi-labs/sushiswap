@@ -1,11 +1,12 @@
 import {
+  isSushiSwapChain,
+  isTridentChain,
   SUBGRAPH_HOST,
   SUSHISWAP_SUBGRAPH_NAME,
   SushiSwapChainId,
   TRIDENT_SUBGRAPH_NAME,
   TridentChainId,
 } from '@sushiswap/graph-config'
-import { isSushiSwapChain, isTridentChain } from '@sushiswap/validate'
 
 import type { Farm } from '../types.js'
 import { divBigIntToNumber } from './utils.js'

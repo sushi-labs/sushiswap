@@ -1,12 +1,14 @@
 import { ChainId, chainName, chainShortName } from '@sushiswap/chain'
 import {
+  isSushiSwapChain,
+  isSushiSwapV3Chain,
+  isTridentChain,
   SUBGRAPH_HOST,
   SUSHISWAP_SUBGRAPH_NAME,
   SUSHISWAP_V3_SUBGRAPH_NAME,
   SushiSwapV3ChainId,
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
-import { isSushiSwapChain, isSushiSwapV3Chain, isTridentChain } from '@sushiswap/validate'
 
 import {
   FactoryDaySnapshot,

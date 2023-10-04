@@ -1,9 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
 
-import { AGEUR, DAI, FRAX, LUSD, MAI, MIM, OP, SUSHI, UNI, USDC, USDT, WBTC, WETH9, WNATIVE } from './constants'
-import { Native } from './Native'
-import { Token } from './Token'
-import { Type } from './Type'
+import { AGEUR, DAI, FRAX, LUSD, MAI, MIM, OP, SUSHI, UNI, USDC, USDT, WBTC, WETH9, WNATIVE } from './constants/index.js'
+import { Native } from './Native.js'
+import { Token } from './Token.js'
+import { type Type } from './Type.js'
 
 const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
   [ChainId.ARBITRUM]: {

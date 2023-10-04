@@ -1,8 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
 import invariant from 'tiny-invariant'
 
-import { Native } from './Native'
-import { Token } from './Token'
+import { Native } from './Native.js'
+import { Token } from './Token.js'
 
 /**
  * A currency is any fungible financial instrument, including Ether, all ERC20 tokens, and other chain-native currencies
@@ -27,11 +27,11 @@ export abstract class Currency {
   /**
    * The symbol of the currency, i.e. a short textual non-unique identifier
    */
-  public readonly symbol?: string
+  public readonly symbol?: string  | undefined
   /**
    * The name of the currency, i.e. a descriptive textual non-unique identifier
    */
-  public readonly name?: string
+  public readonly name?: string  | undefined
 
   /**
    * Constructs an instance of the abstract class `Currency`.
@@ -49,8 +49,8 @@ export abstract class Currency {
   }: {
     chainId: number | string
     decimals: number | string
-    symbol?: string
-    name?: string
+    symbol?: string | undefined
+    name?: string | undefined
   }) {
     const chainId = Number(_chainId) as ChainId
     const decimals = Number(_decimals)

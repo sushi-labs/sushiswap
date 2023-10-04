@@ -1,12 +1,13 @@
 import { ChainId } from '@sushiswap/chain'
 import {
+  isSushiSwapChain,
+  isTridentChain,
   SUBGRAPH_HOST,
   SUSHISWAP_SUBGRAPH_NAME,
   SushiSwapChainId,
   TRIDENT_SUBGRAPH_NAME,
   TridentChainId,
 } from '@sushiswap/graph-config'
-import { isSushiSwapChain, isTridentChain } from '@sushiswap/validate'
 import { Address, erc20ABI, readContracts } from '@wagmi/core'
 
 import { divBigIntToNumber } from './utils.js'

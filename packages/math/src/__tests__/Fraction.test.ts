@@ -1,4 +1,4 @@
-import { Fraction } from '..'
+import Fraction from '../Fraction.js'
 
 describe('Fraction', () => {
   describe('#quotient', () => {

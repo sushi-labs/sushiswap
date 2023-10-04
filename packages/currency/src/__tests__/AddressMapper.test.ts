@@ -1,7 +1,7 @@
-import { AddressMapper } from '../AddressMapper'
+import { AddressMapper } from '../AddressMapper.js'
 import { ChainId } from '@sushiswap/chain'
-import { SUSHI_ADDRESS, USDC_ADDRESS, WNATIVE_ADDRESS } from '../constants'
-import { TOKEN_MAP } from '../constants/token-map'
+import { SUSHI_ADDRESS, USDC_ADDRESS, WNATIVE_ADDRESS } from '../constants/index.js'
+import { TOKEN_MAP } from '../constants/token-map.js'
 
 const USDC_ETHEREUM_BRIDGE_LIST = {
   1: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
@@ -87,7 +87,7 @@ describe('AddressMapper', () => {
     const usdc_merged = AddressMapper.merge(USDC_ETHEREUM_BRIDGE_LIST, USDC_BSC_BRIDGE_LIST)
 
     const mappings = AddressMapper.generate([usdc_merged])
-    const actual = mappings[`${chainId}:${address}`].filter((t) => t.chainId === filter)
+    const actual = mappings[`${chainId}:${address}`]?.filter((t) => t.chainId === filter)
     expect(actual).toEqual(expected)
   })
 
@@ -119,6 +119,7 @@ describe('AddressMapper', () => {
     test('Get all weth addresses', async () => {
       const expected = Object.keys(WNATIVE_ADDRESS).length - 1 // minus one, exclude itself
       const actual = Object.values(
+        // @ts-ignore
         MAPPING[`${ChainId.ETHEREUM}:${WNATIVE_ADDRESS[ChainId.ETHEREUM].toLowerCase()}`]
       ).length
       expect(actual).toEqual(expected)
@@ -127,21 +128,21 @@ describe('AddressMapper', () => {
     test('Get all sushi addresses for the top networks given thundercores sushi address', async () => {
       const actual = MAPPING[`${ChainId.THUNDERCORE}:${SUSHI_ADDRESS[ChainId.THUNDERCORE].toLowerCase()}`]
 
-      const ethereumAddresses = actual.filter((t) => t.chainId === ChainId.ETHEREUM)
+      const ethereumAddresses = actual?.filter((t) => t.chainId === ChainId.ETHEREUM)
       expect(ethereumAddresses).toHaveLength(1)
-      expect(ethereumAddresses[0].tokenAddress).toEqual(SUSHI_ADDRESS[ChainId.ETHEREUM].toLowerCase())
+      expect(ethereumAddresses?.[0]?.tokenAddress).toEqual(SUSHI_ADDRESS[ChainId.ETHEREUM].toLowerCase())
 
-      const arbitrumAddresses = actual.filter((t) => t.chainId === ChainId.ARBITRUM)
+      const arbitrumAddresses = actual?.filter((t) => t.chainId === ChainId.ARBITRUM)
         expect(arbitrumAddresses).toHaveLength(1)
-      expect(arbitrumAddresses[0].tokenAddress).toEqual(SUSHI_ADDRESS[ChainId.ARBITRUM].toLowerCase())
+      expect(arbitrumAddresses?.[0]?.tokenAddress).toEqual(SUSHI_ADDRESS[ChainId.ARBITRUM].toLowerCase())
 
-      const polygonAddresses = actual.filter((t) => t.chainId === ChainId.POLYGON)
+      const polygonAddresses = actual?.filter((t) => t.chainId === ChainId.POLYGON)
       expect(polygonAddresses).toHaveLength(1)
-      expect(polygonAddresses[0].tokenAddress).toEqual(SUSHI_ADDRESS[ChainId.POLYGON].toLowerCase())
+      expect(polygonAddresses?.[0]?.tokenAddress).toEqual(SUSHI_ADDRESS[ChainId.POLYGON].toLowerCase())
 
-      const optimismAddresses = actual.filter((t) => t.chainId === ChainId.OPTIMISM)
+      const optimismAddresses = actual?.filter((t) => t.chainId === ChainId.OPTIMISM)
       expect(optimismAddresses).toHaveLength(1)
-      expect(optimismAddresses[0].tokenAddress).toEqual(SUSHI_ADDRESS[ChainId.OPTIMISM].toLowerCase())
+      expect(optimismAddresses?.[0]?.tokenAddress).toEqual(SUSHI_ADDRESS[ChainId.OPTIMISM].toLowerCase())
     })
   })
 
@@ -152,6 +153,7 @@ describe('AddressMapper', () => {
     test('Get all weth addresses', async () => {
       const expected = Object.keys(WNATIVE_ADDRESS).length - 1 // minus one, exclude itself
       const actual = Object.values(
+        // @ts-ignore
         MAPPING[`${ChainId.ETHEREUM}:${WNATIVE_ADDRESS[ChainId.ETHEREUM].toLowerCase()}`]
       ).length
       expect(actual).toEqual(expected)
@@ -160,27 +162,27 @@ describe('AddressMapper', () => {
     test('Get all sushi addresses for the top networks given thundercores sushi address', async () => {
       const actual = MAPPING[`${ChainId.THUNDERCORE}:${SUSHI_ADDRESS[ChainId.THUNDERCORE].toLowerCase()}`]
 
-      const ethereumAddresses = actual.filter((t) => t.chainId === ChainId.ETHEREUM)
+      const ethereumAddresses = actual?.filter((t) => t.chainId === ChainId.ETHEREUM)
       expect(ethereumAddresses).toHaveLength(1)
-      expect(ethereumAddresses[0].tokenAddress).toEqual(SUSHI_ADDRESS[ChainId.ETHEREUM].toLowerCase())
+      expect(ethereumAddresses?.[0]?.tokenAddress).toEqual(SUSHI_ADDRESS[ChainId.ETHEREUM].toLowerCase())
 
-      const arbitrumAddresses = actual.filter((t) => t.chainId === ChainId.ARBITRUM)
+      const arbitrumAddresses = actual?.filter((t) => t.chainId === ChainId.ARBITRUM)
       expect(arbitrumAddresses).toHaveLength(1)
-      expect(arbitrumAddresses[0].tokenAddress).toEqual(SUSHI_ADDRESS[ChainId.ARBITRUM].toLowerCase())
+      expect(arbitrumAddresses?.[0]?.tokenAddress).toEqual(SUSHI_ADDRESS[ChainId.ARBITRUM].toLowerCase())
 
-      const polygonAddresses = actual.filter((t) => t.chainId === ChainId.POLYGON)
+      const polygonAddresses = actual?.filter((t) => t.chainId === ChainId.POLYGON)
       expect(polygonAddresses).toHaveLength(1)
-      expect(polygonAddresses[0].tokenAddress).toEqual(SUSHI_ADDRESS[ChainId.POLYGON].toLowerCase())
+      expect(polygonAddresses?.[0]?.tokenAddress).toEqual(SUSHI_ADDRESS[ChainId.POLYGON].toLowerCase())
 
-      const optimismAddresses = actual.filter((t) => t.chainId === ChainId.OPTIMISM)
+      const optimismAddresses = actual?.filter((t) => t.chainId === ChainId.OPTIMISM)
       expect(optimismAddresses).toHaveLength(1)
-      expect(optimismAddresses[0].tokenAddress).toEqual(SUSHI_ADDRESS[ChainId.OPTIMISM].toLowerCase())
+      expect(optimismAddresses?.[0]?.tokenAddress).toEqual(SUSHI_ADDRESS[ChainId.OPTIMISM].toLowerCase())
     })
   })
 
   test('BTTC has 3 usdc addresses', async () => {
     const mappings = TOKEN_MAP[`${ChainId.BTTC}:${USDC_ADDRESS[ChainId.BTTC].toLowerCase()}`]
-    const actual = mappings.filter((mapping) => mapping.chainId === ChainId.BTTC).length
+    const actual = mappings?.filter((mapping) => mapping.chainId === ChainId.BTTC).length
     const expected = 2 // 3 in total, including itself
     expect(actual).toEqual(expected)
   })

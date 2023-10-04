@@ -20,8 +20,8 @@ export class AddressMapper {
                     result[currentId] = [];
                   }
   
-                  if (!result[currentId].some(item => item.chainId === Number(chainId) && item.tokenAddress === address.toLowerCase())) {
-                    result[currentId].push({ chainId: Number(chainId), tokenAddress: address.toLowerCase() });
+                  if (!result[currentId]?.some(item => item.chainId === Number(chainId) && item.tokenAddress === address.toLowerCase())) {
+                    result[currentId]?.push({ chainId: Number(chainId), tokenAddress: address.toLowerCase() });
                   }
                 }
               });
@@ -41,7 +41,7 @@ export class AddressMapper {
           if (!merged[Number(chainId)]) {
             merged[Number(chainId)] = [address.toLowerCase()];
           } else {
-            merged[Number(chainId)].push(address.toLowerCase());
+            merged[Number(chainId)]?.push(address.toLowerCase());
           }
         });
       }

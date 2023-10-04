@@ -6,7 +6,7 @@ import {
   TRIDENT_ENABLED_NETWORKS,
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
-import { isPromiseFulfilled } from '@sushiswap/validate'
+import { isPromiseFulfilled } from 'sushi'
 import { GraphQLResolveInfo } from 'graphql'
 
 import {

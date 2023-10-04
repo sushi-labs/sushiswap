@@ -1,6 +1,6 @@
-import { Native } from '../Native'
-import { Token } from '../Token'
-import { Amount } from '../Amount'
+import { Native } from '../Native.js'
+import { Token } from '../Token.js'
+import { Amount } from '../Amount.js'
 
 import { MAX_UINT256, Percent } from '@sushiswap/math'
 

@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 
-import { addressMapToTokenMap } from '../addressMapToTokenMap'
-import { Token } from '../Token'
+import { addressMapToTokenMap } from '../addressMapToTokenMap.js'
+import { Token } from '../Token.js'
 import {
   AAVE_ADDRESS,
   AGEUR_ADDRESS,
@@ -53,7 +53,7 @@ import {
   WNATIVE_ADDRESS,
   XSUSHI_ADDRESS,
   YFI_ADDRESS,
-} from './token-addresses'
+} from './token-addresses.js'
 
 export const AMPL = addressMapToTokenMap({ decimals: 9, symbol: 'AMPL', name: 'Ampleforth' }, AMPL_ADDRESS)
 

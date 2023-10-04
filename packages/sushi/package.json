@@ -1,17 +1,16 @@
 {
-  "name": "@sushiswap/core-sdk",
+  "name": "sushi",
   "version": "0.0.0",
   "private": true,
   "description": "Sushi ABI",
   "keywords": [
-    "sushi",
-    "abi"
+    "sushi"
   ],
   "homepage": "https://www.sushi.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
-    "directory": "packages/core-sdk"
+    "directory": "packages/sushi"
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
@@ -27,18 +26,13 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
-    "lint": "TIMING=1 eslint src",
-    "lint:fix": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build"
   },
   "dependencies": {
     "@sushiswap/math": "workspace:*"
   },
   "devDependencies": {
-    "@sushiswap/eslint-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "eslint": "8.43.0",
     "ethers": "5.7.2",
     "typescript": "5.1.6"
   },

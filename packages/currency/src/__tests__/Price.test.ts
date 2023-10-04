@@ -1,4 +1,6 @@
-import { Amount, Price, Token } from '..'
+import { Amount } from '../Amount.js'
+import { Price } from '../Price.js'
+import { Token } from '../Token.js'
 
 describe('Price', () => {
   const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'

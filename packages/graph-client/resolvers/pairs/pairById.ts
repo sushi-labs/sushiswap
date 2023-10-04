@@ -10,7 +10,7 @@ import {
   TRIDENT_ENABLED_NETWORKS,
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
-import { isPromiseFulfilled } from '@sushiswap/validate'
+import { isPromiseFulfilled } from 'sushi'
 
 import { getBuiltGraphSDK, Pair, QueryResolvers } from '../../.graphclient/index.js'
 import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'

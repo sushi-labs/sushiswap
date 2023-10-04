@@ -27,8 +27,6 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
-    "lint": "TIMING=1 eslint src",
-    "lint:fix": "TIMING=1 eslint src --fix",
     "test": "jest --passWithNoTests"
   },
   "jest": {
@@ -36,9 +34,7 @@
   },
   "devDependencies": {
     "@sushiswap/chain": "workspace:*",
-    "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "typescript": "5.1.6"
   },

@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 
-import { DAI, LUSD, USDC, USDT } from './tokens'
+import { DAI, LUSD, USDC, USDT } from './tokens.js'
 
 export const STABLES = {
   [ChainId.ETHEREUM]: [

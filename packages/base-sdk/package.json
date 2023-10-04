@@ -24,8 +24,6 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
-    "lint": "TIMING=1 eslint src",
-    "lint:fix": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build"
   },
   "jest": {
@@ -35,11 +33,8 @@
     "@sushiswap/currency": "workspace:*"
   },
   "devDependencies": {
-    "@sushiswap/eslint-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "18",
-    "eslint": "8.43.0",
     "typescript": "5.1.6"
   }
 }

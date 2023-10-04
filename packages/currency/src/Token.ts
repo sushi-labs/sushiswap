@@ -1,9 +1,9 @@
 import { getAddress } from '@ethersproject/address'
 import invariant from 'tiny-invariant'
 
-import { Currency } from './Currency'
-import { Type } from './Type'
-import { SerializedToken, tokenSchema } from './zod'
+import { Currency } from './Currency.js'
+import { type Type } from './Type.js'
+import { type SerializedToken, tokenSchema } from './zod.js'
 
 /**
  * Represents an ERC20 token with a unique address and some metadata.
@@ -28,9 +28,9 @@ export class Token extends Currency {
   }: {
     chainId: number | string
     address: string
-    decimals: number
-    symbol?: string
-    name?: string
+    decimals: number | string
+    symbol?: string | undefined
+    name?: string | undefined
   }) {
     super({
       chainId,

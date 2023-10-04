@@ -54,9 +54,7 @@
     "build2": "tsup",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev2": "tsup --watch",
-    "lint": "TIMING=1 eslint src",
-    "lint:fix": "TIMING=1 eslint src --fix",
+    "dev": "tsup --watch",
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
@@ -114,13 +112,11 @@
     "react-virtualized-auto-sizer": "1.0.7",
     "react-window": "1.8.7",
     "tailwind-merge": "1.13.2",
-    "tailwindcss-animate": "1.0.6",
+    "tailwindcss-animate": "1.0.7",
     "use-resize-observer": "9.1.0"
   },
   "devDependencies": {
-    "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/react": "18.2.14",
     "@types/react-datepicker": "4.8.0",
@@ -128,7 +124,6 @@
     "@types/react-virtualized-auto-sizer": "1.0.1",
     "@types/react-window": "1.8.5",
     "autoprefixer": "10.4.14",
-    "eslint": "8.43.0",
     "next": "13.4.19",
     "postcss": "8.4.23",
     "react": "18.2.0",

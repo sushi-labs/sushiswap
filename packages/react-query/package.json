@@ -39,8 +39,6 @@
   "scripts": {
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "lint": "TIMING=1 eslint src",
-    "lint:fix": "TIMING=1 eslint src --fix",
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
@@ -69,13 +67,10 @@
   },
   "devDependencies": {
     "@sentry/nextjs": "7.68.0",
-    "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
-    "eslint": "8.43.0",
     "next": "13.4.8",
     "react": "18.2.0",
     "react-dom": "18.2.0",

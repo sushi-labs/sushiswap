@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import { BENTOBOX_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
-import { isPromiseFulfilled } from '@sushiswap/validate'
+import { isPromiseFulfilled } from 'sushi'
 
 import { Query } from '../../.graphclient/index.js'
 import { BentoBoxTypes } from '../../.graphclient/sources/BentoBox/types.js'

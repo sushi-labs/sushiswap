@@ -20,8 +20,6 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
-    "lint": "TIMING=1 eslint src",
-    "lint:fix": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build",
     "test": "jest --passWithNoTests",
     "test_debug": "node --inspect-brk ../../node_modules/jest/bin/jest.js --runInBand"
@@ -33,14 +31,11 @@
     "@sushiswap/currency": "workspace:*"
   },
   "devDependencies": {
-    "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@types/node": "18",
     "@types/seedrandom": "^3.0.1",
-    "eslint": "8.43.0",
     "seedrandom": "^3.0.5",
     "tsup": "7.1.0",
     "typescript": "5.1.6",

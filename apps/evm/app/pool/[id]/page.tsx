@@ -18,23 +18,14 @@ import { PoolPageV3 } from '../../../ui/pool/PoolPageV3'
 import { PoolPosition } from '../../../ui/pool/PoolPosition'
 import { PoolRewards } from '../../../ui/pool/PoolRewards'
 import { PoolStats } from '../../../ui/pool/PoolStats'
+import { Pool } from '@sushiswap/client'
 
-export async function getPool({ chainId, address }: { chainId: ChainId; address: string }) {
-  try {
-    if (typeof +chainId !== 'number' || !isAddress(address)) {
-      return
-    }
-    const res = await fetch(`https://pools.sushi.com/api/v0/${chainId}/${address}`, { next: { revalidate: 60 } })
-    return await res.json()
-  } catch (e) {
-    return
-  }
-}
 
 export default async function PoolPage({ params }: { params: { id: string } }) {
-  const [_chainId, address] = params.id.split(params.id.includes('%3A') ? '%3A' : ':') as [string, string]
-  const chainId = Number(_chainId) as ChainId
-  const pool = await getPool({ chainId, address })
+  const [chainId, address] = params.id.split(params.id.includes('%3A') ? '%3A' : ':') as [string, string]
+
+  const res = await fetch(`https://pools.sushi.com/api/v0/${chainId}/${address}`, { next: { revalidate: 60 } })
+  const pool = await res.json() as Pool
 
   if (!pool) {
     notFound()

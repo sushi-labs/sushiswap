@@ -25,8 +25,6 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
-    "lint": "TIMING=1 eslint src",
-    "lint:fix": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build",
     "test": "jest --passWithNoTests"
   },
@@ -60,14 +58,13 @@
   },
   "devDependencies": {
     "@sushiswap/database": "workspace:*",
-    "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@types/lodash.flatmap": "^4.5.7",
+    "@types/lodash.flatmap": "4.5.7",
+    "@types/jest": "29.5.5",
     "@types/node": "18",
     "@types/node-fetch": "2.6.2",
-    "eslint": "8.43.0",
+    "jest": "29.7.0",
     "typescript": "5.1.6"
   },
   "peerDependencies": {

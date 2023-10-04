@@ -4,9 +4,9 @@
  * @returns the biggest memmber of the array
  */
 export function maximum(...values: bigint[]): bigint {
-  let highest = values[0]
+  let highest = values[0] as bigint
   for (let i = 1; i < values.length; i++) {
-    const value = values[i]
+    const value = values[i] as bigint
     if (value > highest) {
       highest = value
     }

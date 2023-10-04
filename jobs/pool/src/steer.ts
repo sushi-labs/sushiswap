@@ -1,6 +1,6 @@
 import { Prisma, SteerStrategy, VaultState } from '@sushiswap/database'
 import { STEER_ENABLED_NETWORKS, STEER_SUBGRAPGH_NAME, SteerChainId, SUBGRAPH_HOST } from '@sushiswap/graph-config'
-import { isPromiseFulfilled } from '@sushiswap/validate'
+import { isPromiseFulfilled } from 'sushi'
 
 import { getBuiltGraphSDK } from '../.graphclient/index.js'
 import { updatePoolsWithSteerVaults } from './etl/pool/load.js'

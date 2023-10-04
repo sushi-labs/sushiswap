@@ -1,7 +1,7 @@
-import { Token } from './Token'
+import { Token } from './Token.js'
 
 export function addressMapToTokenMap(
-  { decimals, symbol, name }: { decimals: number; symbol?: string; name?: string },
+  { decimals, symbol, name }: { decimals: number | string; symbol?: string | undefined; name?: string | undefined },
   map: Record<number | string, string>
 ) {
   return Object.fromEntries(
