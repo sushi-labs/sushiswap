@@ -1,6 +1,6 @@
 import { Chain } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { shortenAddress } from '@sushiswap/format'
+import { shortenAddress } from 'sushi'
 import { useTokenSecurity } from '@sushiswap/react-query'
 import {
   Dialog,

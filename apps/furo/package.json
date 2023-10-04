@@ -28,12 +28,10 @@
     "@sushiswap/bentobox-sdk": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
-    "@sushiswap/format": "workspace:*",
     "@sushiswap/furo-sdk": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
-    "@sushiswap/math": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
@@ -52,6 +50,7 @@
     "next": "13.4.19",
     "next-seo": "5.15.0",
     "next-sitemap": "3.1.43",
+    "sushi": "workspace:*",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "7.41.2",
@@ -78,6 +77,6 @@
     "postcss": "8.4.23",
     "tailwindcss": "3.3.2",
     "ts-jest": "^29.0.0",
-    "typescript": "5.1.6"
+    "typescript": "5.2.2"
   }
 }

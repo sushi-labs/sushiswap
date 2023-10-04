@@ -1,7 +1,7 @@
 import { ArrowRightIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
-import { shortenAddress } from '@sushiswap/format'
-import { ZERO } from '@sushiswap/math'
+import { shortenAddress } from 'sushi'
+import { ZERO } from 'sushi'
 import {
   DialogConfirm,
   DialogFooter,

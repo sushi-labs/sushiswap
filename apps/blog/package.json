@@ -53,6 +53,6 @@
     "postcss": "8.4.23",
     "sharp": "0.31.3",
     "tailwindcss": "3.3.2",
-    "typescript": "5.1.6"
+    "typescript": "5.2.2"
   }
 }

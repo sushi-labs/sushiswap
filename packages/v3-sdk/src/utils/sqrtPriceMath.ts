@@ -1,4 +1,4 @@
-import { MAX_UINT256 } from '@sushiswap/math'
+import { MAX_UINT256 } from 'sushi'
 import invariant from 'tiny-invariant'
 
 import { Q96 } from '../internalConstants'

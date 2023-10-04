@@ -1,4 +1,4 @@
-import { formatUSD } from '@sushiswap/format'
+import { formatUSD } from 'sushi'
 import { Token as GraphToken } from '@sushiswap/graph-client'
 import { FC } from 'react'
 

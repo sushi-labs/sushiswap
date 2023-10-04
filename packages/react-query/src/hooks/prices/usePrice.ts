@@ -1,5 +1,5 @@
 import { parseUnits } from '@ethersproject/units'
-import { Fraction } from '@sushiswap/math'
+import { Fraction } from 'sushi'
 import { useQuery } from '@tanstack/react-query'
 
 interface UsePrice {

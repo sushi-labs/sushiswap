@@ -21,7 +21,7 @@ import {
   WBTC_ADDRESS,
   WNATIVE,
 } from '@sushiswap/currency'
-import { abs } from '@sushiswap/math'
+import { abs } from 'sushi'
 import {
   CURVE_NON_FACTORY_POOLS,
   DataFetcher,

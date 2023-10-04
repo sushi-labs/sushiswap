@@ -3,7 +3,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
-import { ZERO } from '@sushiswap/math'
+import { ZERO } from 'sushi'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import React, { FC, useMemo } from 'react'
 import { useAccount } from 'wagmi'

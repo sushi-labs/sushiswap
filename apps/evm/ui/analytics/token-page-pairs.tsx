@@ -3,7 +3,7 @@
 import chains from '@sushiswap/chain'
 import { usePools } from '@sushiswap/client'
 import { Native, Token } from '@sushiswap/currency'
-import { formatPercent, formatUSD } from '@sushiswap/format'
+import { formatPercent, formatUSD } from 'sushi'
 import { Token as GraphToken } from '@sushiswap/graph-client'
 import { LinkExternal, LinkInternal } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'

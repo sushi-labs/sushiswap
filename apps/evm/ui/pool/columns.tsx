@@ -1,5 +1,5 @@
 import { Pool } from '@sushiswap/client'
-import { formatNumber, formatPercent, formatUSD, shortenAddress } from '@sushiswap/format'
+import { formatNumber, formatPercent, formatUSD, shortenAddress } from 'sushi'
 import { AngleRewardsPool } from '@sushiswap/react-query'
 import { classNames, NetworkIcon, Tooltip, TooltipPrimitive, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'

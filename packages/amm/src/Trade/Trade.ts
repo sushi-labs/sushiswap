@@ -1,5 +1,5 @@
 import { Amount, Price, Type as Currency } from '@sushiswap/currency'
-import { Fraction, ONE, Percent, ZERO } from '@sushiswap/math'
+import { Fraction, ONE, Percent, ZERO } from 'sushi'
 import { MultiRoute, RToken } from '@sushiswap/tines'
 import invariant from 'tiny-invariant'
 

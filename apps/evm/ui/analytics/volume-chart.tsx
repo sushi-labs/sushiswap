@@ -1,6 +1,6 @@
 'use client'
 
-import { formatUSD } from '@sushiswap/format'
+import { formatUSD } from 'sushi'
 import {
   Card,
   CardContent,

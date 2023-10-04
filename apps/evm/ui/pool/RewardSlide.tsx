@@ -2,7 +2,7 @@
 
 import { InformationCircleIcon } from '@heroicons/react/20/solid'
 import { Chain } from '@sushiswap/chain'
-import { formatNumber } from '@sushiswap/format'
+import { formatNumber } from 'sushi'
 import { useAngleRewardsMultipleChains } from '@sushiswap/react-query'
 import {
   Card,

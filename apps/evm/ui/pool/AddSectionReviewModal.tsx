@@ -1,6 +1,6 @@
 import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Price, Type } from '@sushiswap/currency'
-import { formatUSD } from '@sushiswap/format'
+import { formatUSD } from 'sushi'
 import { Button, List } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { useTokenAmountDollarValues } from 'lib/hooks'

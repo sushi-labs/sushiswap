@@ -1,7 +1,7 @@
 import { Interface } from '@ethersproject/abi'
 import { TradeType, validateAndParseAddress } from '@sushiswap/amm'
 import { Amount as CurrencyAmount, Currency } from '@sushiswap/currency'
-import { BigintIsh, Percent } from '@sushiswap/math'
+import { BigintIsh, Percent } from 'sushi'
 import ISwapRouter from '@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
 import invariant from 'tiny-invariant'
 

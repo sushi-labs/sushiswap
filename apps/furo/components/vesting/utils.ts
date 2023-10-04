@@ -1,5 +1,5 @@
 import { tryParseAmount } from '@sushiswap/currency'
-import { Fraction, ZERO } from '@sushiswap/math'
+import { Fraction, ZERO } from 'sushi'
 
 import { ZTokenToToken } from '../../lib/zod'
 import { CreateVestingFormSchemaType, STEP_CONFIGURATIONS_MAP } from './schema'

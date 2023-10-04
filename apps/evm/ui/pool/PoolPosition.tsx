@@ -1,7 +1,7 @@
 'use client'
 
 import { Pool } from '@sushiswap/client'
-import { formatUSD } from '@sushiswap/format'
+import { formatUSD } from 'sushi'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@sushiswap/ui/components/card'
 import { FC } from 'react'
 

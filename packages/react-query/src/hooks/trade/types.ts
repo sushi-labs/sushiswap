@@ -1,7 +1,7 @@
 import { routeProcessor2Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Type } from '@sushiswap/currency'
-import { Percent } from '@sushiswap/math'
+import { Percent } from 'sushi'
 import { Address, GetFunctionArgs } from 'viem'
 import z from 'zod'
 

@@ -3,7 +3,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { ChefType, Pool, usePool } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
-import { ZERO } from '@sushiswap/math'
+import { ZERO } from 'sushi'
 import {
   Card,
   CardCurrencyAmountItem,

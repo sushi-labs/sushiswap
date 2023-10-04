@@ -2,8 +2,8 @@
 
 import { Chain } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
-import { shortenAddress } from '@sushiswap/format'
-import { ZERO } from '@sushiswap/math'
+import { shortenAddress } from 'sushi'
+import { ZERO } from 'sushi'
 import { classNames } from '@sushiswap/ui'
 import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
 import { Explainer } from '@sushiswap/ui/components/explainer'

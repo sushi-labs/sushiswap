@@ -28,20 +28,17 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@sushiswap/currency": "workspace:*"
+    "@sushiswap/currency": "workspace:*",
+    "sushi": "workspace:*"
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@sushiswap/math": "workspace:*",
     "@types/node": "18",
     "@types/seedrandom": "^3.0.1",
     "seedrandom": "^3.0.5",
-    "tsup": "7.1.0",
-    "typescript": "5.1.6",
+    "tsup": "7.2.0",
+    "typescript": "5.2.2",
     "viem": "1.10.7"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

@@ -16,12 +16,13 @@
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
+  "source": "src/index.ts",
   "typings": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist/**"
   ],
   "scripts": {
-    "build": "tsup src/index.ts",
+    "build": "tsup src/index.ts --format esm,cjs --dts",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsup src/index.ts --watch",
@@ -43,8 +44,8 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "18",
     "swr": "2.1.5",
-    "tsup": "7.1.0",
-    "typescript": "5.1.6"
+    "tsup": "7.2.0",
+    "typescript": "5.2.2"
   },
   "peerDependencies": {
     "react": "18.2.0",

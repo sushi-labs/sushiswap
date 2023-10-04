@@ -1,4 +1,4 @@
-import { BigintIsh } from '@sushiswap/math'
+import { BigintIsh } from 'sushi'
 
 import { Q96 } from '../internalConstants'
 

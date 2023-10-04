@@ -3,10 +3,8 @@
   "include": ["."],
   "exclude": ["node_modules", ".vercel"],
   "compilerOptions": {
+    "target": "ESNext",
     "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "nodenext",
+    "resolveJsonModule": true
   }
 }

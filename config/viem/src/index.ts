@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { Address, fallback, http, PublicClientConfig } from 'viem'
+import { type Address, fallback, http, type PublicClientConfig } from 'viem'
 import {
   arbitrum,
   // arbitrumGoerli,

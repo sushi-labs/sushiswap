@@ -1,7 +1,7 @@
 import { DownloadIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
-import { shortenAddress } from '@sushiswap/format'
+import { shortenAddress } from 'sushi'
 import { FuroChainId } from '@sushiswap/furo-sdk'
 import { TextField } from '@sushiswap/ui'
 import { DialogDescription, DialogHeader, DialogTitle } from '@sushiswap/ui'

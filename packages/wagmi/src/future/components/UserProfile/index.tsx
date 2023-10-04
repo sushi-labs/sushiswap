@@ -1,7 +1,7 @@
 'use client'
 
 import { ChainId } from '@sushiswap/chain'
-import { shortenAddress } from '@sushiswap/format'
+import { shortenAddress } from 'sushi'
 import { Button } from '@sushiswap/ui/components/button'
 import { JazzIcon } from '@sushiswap/ui/components/icons/JazzIcon'
 import { Popover, PopoverContent, PopoverTrigger } from '@sushiswap/ui/components/popover'

@@ -1,5 +1,5 @@
 import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
-import { formatUSD } from '@sushiswap/format'
+import { formatUSD } from 'sushi'
 import { FundSource } from '@sushiswap/hooks'
 import {
   Message,

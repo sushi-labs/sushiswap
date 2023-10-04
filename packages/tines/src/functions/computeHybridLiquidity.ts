@@ -1,4 +1,4 @@
-import { abs } from '@sushiswap/math'
+import { abs } from 'sushi'
 
 import { A_PRECISION } from '../constants'
 

@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { useDebounce } from '@sushiswap/hooks'
-import { Fraction } from '@sushiswap/math'
+import { Fraction } from 'sushi'
 import { useQuery } from '@tanstack/react-query'
 
 import { filterTokens, getSortedTokensByQuery, tokenComparator } from '../../../../hooks/useSortedTokensByQuery'

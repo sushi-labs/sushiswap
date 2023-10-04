@@ -1,7 +1,7 @@
 'use client'
 
 import { Native } from '@sushiswap/currency'
-import { ZERO } from '@sushiswap/math'
+import { ZERO } from 'sushi'
 import {
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,

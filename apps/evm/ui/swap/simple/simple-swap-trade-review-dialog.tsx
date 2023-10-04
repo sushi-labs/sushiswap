@@ -3,9 +3,9 @@
 import { routeProcessor3Abi, routeProcessorAbi } from '@sushiswap/abi'
 import { Chain } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
-import { shortenAddress } from '@sushiswap/format'
+import { shortenAddress } from 'sushi'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { ZERO } from '@sushiswap/math'
+import { ZERO } from 'sushi'
 import { UseTradeReturn } from '@sushiswap/react-query'
 import {
   isRouteProcessor3_1ChainId,

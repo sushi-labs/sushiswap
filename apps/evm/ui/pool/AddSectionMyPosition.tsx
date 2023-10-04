@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
-import { formatPercent } from '@sushiswap/format'
+import { formatPercent } from 'sushi'
 import { classNames } from '@sushiswap/ui'
 import { Currency as UICurrency } from '@sushiswap/ui/components/currency'
 import { incentiveRewardToToken } from 'lib/functions'

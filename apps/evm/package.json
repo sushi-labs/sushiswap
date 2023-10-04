@@ -30,12 +30,10 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/database": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
-    "@sushiswap/format": "workspace:*",
     "sushi": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
-    "@sushiswap/math": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
     "@sushiswap/route-processor-sdk": "workspace:*",
@@ -109,7 +107,7 @@
     "msw": "1.2.5",
     "postcss": "8.4.23",
     "tailwindcss": "3.3.2",
-    "typescript": "5.1.6",
+    "typescript": "5.2.2",
     "unimported": "1.28.0"
   }
 }

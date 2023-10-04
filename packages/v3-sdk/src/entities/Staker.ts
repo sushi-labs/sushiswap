@@ -1,7 +1,7 @@
 import { defaultAbiCoder, Interface } from '@ethersproject/abi'
 import { validateAndParseAddress } from '@sushiswap/amm'
 import { Token } from '@sushiswap/currency'
-import { BigintIsh } from '@sushiswap/math'
+import { BigintIsh } from 'sushi'
 import IUniswapV3Staker from '@uniswap/v3-staker/artifacts/contracts/UniswapV3Staker.sol/UniswapV3Staker.json'
 
 import { MethodParameters, toHex } from '../utils/calldata'

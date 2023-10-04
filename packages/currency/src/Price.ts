@@ -1,4 +1,4 @@
-import { type BigintIsh, Fraction, Rounding } from '@sushiswap/math'
+import { type BigintIsh, Fraction, Rounding } from 'sushi'
 import invariant from 'tiny-invariant'
 
 import { Amount } from './Amount.js'

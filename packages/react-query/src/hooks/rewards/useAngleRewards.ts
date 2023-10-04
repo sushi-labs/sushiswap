@@ -1,7 +1,7 @@
 import { parseUnits } from '@ethersproject/units'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
-import { ZERO } from '@sushiswap/math'
+import { ZERO } from 'sushi'
 import { useQuery } from '@tanstack/react-query'
 import z from 'zod'
 

@@ -17,11 +17,10 @@
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
-    "@tsconfig/esm": "1.0.3",
-    "@tsconfig/node18": "2.0.0",
-    "@tsconfig/strictest": "2.0.1",
+    "@tsconfig/esm": "1.0.4",
+    "@tsconfig/strictest": "2.0.2",
     "@types/node": "18",
-    "typescript": "5.1.6",
+    "typescript": "5.2.2",
     "vercel": "29.4.0"
   }
 }

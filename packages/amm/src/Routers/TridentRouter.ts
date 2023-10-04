@@ -1,5 +1,5 @@
 import { Currency } from '@sushiswap/currency'
-import { Percent } from '@sushiswap/math'
+import { Percent } from 'sushi'
 import invariant from 'tiny-invariant'
 
 import { Trade, TradeType, Version } from '../Trade'

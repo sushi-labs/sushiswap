@@ -1,6 +1,6 @@
 import { TrashIcon } from '@heroicons/react/outline'
 import { Chain, ChainId } from '@sushiswap/chain'
-import { shortenAddress } from '@sushiswap/format'
+import { shortenAddress } from 'sushi'
 import {
   DialogConfirm,
   DialogContent,

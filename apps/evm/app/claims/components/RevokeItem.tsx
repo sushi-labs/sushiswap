@@ -1,6 +1,6 @@
 import { CheckIcon } from '@heroicons/react-v1/solid'
 import { Token } from '@sushiswap/currency'
-import { ZERO } from '@sushiswap/math'
+import { ZERO } from 'sushi'
 import { ROUTE_PROCESSOR_2_ADDRESS, RouteProcessor2ChainId } from '@sushiswap/route-processor-sdk'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Button } from '@sushiswap/ui/components/button'

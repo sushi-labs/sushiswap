@@ -2,7 +2,7 @@
 
 import { Chain } from '@sushiswap/chain'
 import { Amount } from '@sushiswap/currency'
-import { formatUSD } from '@sushiswap/format'
+import { formatUSD } from 'sushi'
 import { useAngleRewards } from '@sushiswap/react-query'
 import {
   Card,

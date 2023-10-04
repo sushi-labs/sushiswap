@@ -1,4 +1,4 @@
-import { MAX_UINT256 } from '@sushiswap/math'
+import { MAX_UINT256 } from 'sushi'
 
 import { encodeSqrtRatioX96 } from './encodeSqrtRatioX96'
 import { maxLiquidityForAmounts } from './maxLiquidityForAmounts'

@@ -1,4 +1,4 @@
-import { abs } from '@sushiswap/math'
+import { abs } from 'sushi'
 import { Address } from 'viem'
 
 import { RPool, RToken } from './PrimaryPools'

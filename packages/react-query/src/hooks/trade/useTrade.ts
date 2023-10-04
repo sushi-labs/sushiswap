@@ -1,7 +1,7 @@
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, nativeCurrencyIds, Price, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { Percent, ZERO } from '@sushiswap/math'
+import { Percent, ZERO } from 'sushi'
 import { isRouteProcessor3_1ChainId, isRouteProcessor3_2ChainId } from '@sushiswap/route-processor-sdk'
 import { HexString } from '@sushiswap/types'
 import { useQuery } from '@tanstack/react-query'

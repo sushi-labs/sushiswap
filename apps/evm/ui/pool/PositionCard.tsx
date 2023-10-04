@@ -1,5 +1,5 @@
 import { Chain } from '@sushiswap/chain'
-import { formatNumber, formatUSD } from '@sushiswap/format'
+import { formatNumber, formatUSD } from 'sushi'
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'

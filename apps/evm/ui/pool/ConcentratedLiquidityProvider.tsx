@@ -1,7 +1,7 @@
 'use client'
 
 import { Amount, Currency, Price, Token, tryParseAmount, Type } from '@sushiswap/currency'
-import { Rounding } from '@sushiswap/math'
+import { Rounding } from 'sushi'
 import {
   encodeSqrtRatioX96,
   FeeAmount,

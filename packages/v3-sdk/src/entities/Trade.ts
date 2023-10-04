@@ -1,6 +1,6 @@
 import { sortedInsert, TradeType } from '@sushiswap/amm'
 import { Amount as CurrencyAmount, Currency, Price, Token } from '@sushiswap/currency'
-import { Fraction, Percent } from '@sushiswap/math'
+import { Fraction, Percent } from 'sushi'
 import invariant from 'tiny-invariant'
 
 import { Route } from './Route'

@@ -2,7 +2,7 @@ import { calculateSlippageAmount } from '@sushiswap/amm'
 import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Type } from '@sushiswap/currency'
 import { calculateGasMargin } from 'sushi'
-import { Percent, ZERO } from '@sushiswap/math'
+import { Percent, ZERO } from 'sushi'
 import {
   DialogConfirm,
   DialogContent,

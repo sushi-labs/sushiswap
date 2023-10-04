@@ -1,4 +1,4 @@
-import { formatPercent } from '@sushiswap/format'
+import { formatPercent } from '../format'
 
 import { type BigintIsh } from './BigintIsh.js'
 import Fraction from './Fraction.js'

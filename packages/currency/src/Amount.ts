@@ -1,4 +1,4 @@
-import { Big, type BigintIsh, Fraction, MAX_UINT256, Rounding, ZERO } from '@sushiswap/math'
+import { Big, type BigintIsh, Fraction, MAX_UINT256, Rounding, ZERO } from 'sushi'
 import invariant from 'tiny-invariant'
 
 import { Native } from './Native.js'

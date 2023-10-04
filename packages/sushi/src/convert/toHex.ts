@@ -1,4 +1,4 @@
-import { BigintIsh } from '@sushiswap/math'
+import { BigintIsh } from '../math'
 
 /**
  * Converts a big int to a hex string

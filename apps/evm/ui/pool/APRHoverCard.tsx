@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
 import { tryParseAmount } from '@sushiswap/currency'
-import { formatPercent } from '@sushiswap/format'
+import { formatPercent } from 'sushi'
 import {
   CardContent,
   CardDescription,

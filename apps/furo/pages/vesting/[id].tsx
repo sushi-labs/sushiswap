@@ -1,6 +1,6 @@
 import { ArrowLeftIcon, CheckCircleIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
-import { formatNumber, shortenAddress } from '@sushiswap/format'
+import { formatNumber, shortenAddress } from 'sushi'
 import { SplashController } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Carousel } from '@sushiswap/ui/components/Carousel'

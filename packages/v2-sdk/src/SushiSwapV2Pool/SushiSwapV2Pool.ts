@@ -1,7 +1,7 @@
 import { InsufficientInputAmountError, InsufficientReservesError } from '@sushiswap/base-sdk'
 import { chainName } from '@sushiswap/chain'
 import { Amount, Price, Token } from '@sushiswap/currency'
-import { _997, _1000, BigintIsh, FIVE, ONE, sqrt, ZERO } from '@sushiswap/math'
+import { _997, _1000, BigintIsh, FIVE, ONE, sqrt, ZERO } from 'sushi'
 import invariant from 'tiny-invariant'
 
 import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS } from '../constants'

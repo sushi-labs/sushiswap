@@ -1,5 +1,5 @@
 import { Token } from '@sushiswap/currency'
-import { Percent } from '@sushiswap/math'
+import { Percent } from 'sushi'
 
 import { Payments } from './Payments'
 

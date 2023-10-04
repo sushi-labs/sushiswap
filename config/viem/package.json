@@ -16,10 +16,13 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewlilley.com>",
   "sideEffects": false,
+  "type": "module",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "module": "dist/index.mjs",
+  "source": "src/index.ts",
+  "typings": "dist/index.d.ts",
   "files": [
-    "/dist"
+    "dist/**"
   ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs --dts --external viem",
@@ -34,8 +37,10 @@
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "tsup": "7.1.0",
-    "typescript": "5.1.6",
+    "@tsconfig/esm": "1.0.4",
+    "@tsconfig/strictest": "2.0.2",
+    "tsup": "7.2.0",
+    "typescript": "5.2.2",
     "viem": "1.10.7"
   },
   "peerDependencies": {

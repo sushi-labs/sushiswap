@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
-import { minimum, Percent } from '@sushiswap/math'
+import { minimum, Percent } from 'sushi'
 
 import { Rebase, vestingQuery } from '../.graphclient'
 import { VestingType } from './enums'

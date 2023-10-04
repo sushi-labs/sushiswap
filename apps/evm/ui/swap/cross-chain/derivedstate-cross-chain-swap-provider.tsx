@@ -3,7 +3,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { ZERO } from '@sushiswap/math'
+import { ZERO } from 'sushi'
 import { STARGATE_SUPPORTED_CHAIN_IDS, StargateChainId } from '@sushiswap/stargate'
 import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap-sdk'
 import { Address, useAccount, useNetwork, watchNetwork } from '@sushiswap/wagmi'

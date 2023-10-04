@@ -1,6 +1,6 @@
 import { TradeType } from '@sushiswap/amm'
 import { Amount, Native, Price, Token, tryParseAmount, Type, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { Fraction, ONE, Percent, ZERO } from '@sushiswap/math'
+import { Fraction, ONE, Percent, ZERO } from 'sushi'
 import { usePrice } from '@sushiswap/react-query'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, StargateChainId } from '@sushiswap/stargate'
 import { useFeeData, useSushiXSwapContract } from '@sushiswap/wagmi'

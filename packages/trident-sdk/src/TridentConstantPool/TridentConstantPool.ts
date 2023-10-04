@@ -1,7 +1,7 @@
 import { InsufficientInputAmountError, InsufficientReservesError } from '@sushiswap/base-sdk'
 import { Fee, Pool } from '@sushiswap/base-sdk'
 import { Amount, Price, Share, Token } from '@sushiswap/currency'
-import { ONE, sqrt, ZERO } from '@sushiswap/math'
+import { ONE, sqrt, ZERO } from 'sushi'
 import invariant from 'tiny-invariant'
 
 import { TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS, TridentChainId } from '../constants'

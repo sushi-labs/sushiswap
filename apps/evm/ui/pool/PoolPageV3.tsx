@@ -2,7 +2,7 @@
 
 import { ChainId } from '@sushiswap/chain'
 import { getPool } from '@sushiswap/client'
-import { formatUSD } from '@sushiswap/format'
+import { formatUSD } from 'sushi'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { CardLabel, classNames, Separator, SkeletonText } from '@sushiswap/ui'
 import {

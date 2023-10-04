@@ -1,7 +1,7 @@
 import { Interface } from '@ethersproject/abi'
 import { TradeType } from '@sushiswap/amm'
 import { Amount as CurrencyAmount, Currency } from '@sushiswap/currency'
-import { BigintIsh } from '@sushiswap/math'
+import { BigintIsh } from 'sushi'
 import IQuoterV2 from '@uniswap/swap-router-contracts/artifacts/contracts/lens/QuoterV2.sol/QuoterV2.json'
 import IQuoter from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json'
 import invariant from 'tiny-invariant'

@@ -2,7 +2,7 @@ import { calculateSlippageAmount, TridentConstantPool, TridentStablePool } from 
 import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token, Type } from '@sushiswap/currency'
-import { Percent, ZERO } from '@sushiswap/math'
+import { Percent, ZERO } from 'sushi'
 import {
   DialogConfirm,
   DialogContent,

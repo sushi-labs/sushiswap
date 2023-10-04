@@ -2,7 +2,7 @@
 
 import { Chain } from '@sushiswap/chain'
 import { defaultQuoteCurrency, Native, Token } from '@sushiswap/currency'
-import { shortenAddress } from '@sushiswap/format'
+import { shortenAddress } from 'sushi'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useTokenSecurity } from '@sushiswap/react-query'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@sushiswap/ui'

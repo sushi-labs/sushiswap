@@ -1,6 +1,6 @@
 import { DownloadIcon } from '@heroicons/react/outline'
 import { FuroChainId } from '@sushiswap/furo-sdk'
-import { ZERO } from '@sushiswap/math'
+import { ZERO } from 'sushi'
 import {
   DialogConfirm,
   DialogContent,

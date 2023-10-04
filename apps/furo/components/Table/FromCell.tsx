@@ -1,4 +1,4 @@
-import { shortenAddress } from '@sushiswap/format'
+import { shortenAddress } from 'sushi'
 import React, { FC } from 'react'
 
 import { FuroTableType } from './StreamTable'

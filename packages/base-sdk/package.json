@@ -35,6 +35,6 @@
   "devDependencies": {
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "18",
-    "typescript": "5.1.6"
+    "typescript": "5.2.2"
   }
 }

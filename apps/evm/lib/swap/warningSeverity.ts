@@ -1,4 +1,4 @@
-import { Percent } from '@sushiswap/math'
+import { Percent } from 'sushi'
 
 const BIPS_BASE = 10000n
 

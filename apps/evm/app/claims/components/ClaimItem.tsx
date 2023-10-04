@@ -2,7 +2,7 @@
 
 import { CheckIcon } from '@heroicons/react-v1/solid'
 import { Amount } from '@sushiswap/currency'
-import { ZERO } from '@sushiswap/math'
+import { ZERO } from 'sushi'
 import { ROUTE_PROCESSOR_2_ADDRESS } from '@sushiswap/route-processor-sdk'
 import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'

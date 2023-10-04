@@ -1,6 +1,6 @@
 import { Pool } from '@sushiswap/client'
 import { FundSource } from '@sushiswap/hooks'
-import { ZERO } from '@sushiswap/math'
+import { ZERO } from 'sushi'
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import Link from 'next/link'

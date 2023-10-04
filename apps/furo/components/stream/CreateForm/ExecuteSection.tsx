@@ -2,7 +2,7 @@ import { isAddress } from '@ethersproject/address'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
-import { shortenAddress } from '@sushiswap/format'
+import { shortenAddress } from 'sushi'
 import { FuroChainId } from '@sushiswap/furo-sdk'
 import { FundSource } from '@sushiswap/hooks'
 import {

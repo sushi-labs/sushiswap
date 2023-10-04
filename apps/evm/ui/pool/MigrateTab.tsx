@@ -2,9 +2,9 @@ import { SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
 import { Amount, Price, tryParseAmount } from '@sushiswap/currency'
-import { formatUSD } from '@sushiswap/format'
+import { formatUSD } from 'sushi'
 import { FundSource } from '@sushiswap/hooks'
-import { Fraction, Percent, ZERO } from '@sushiswap/math'
+import { Fraction, Percent, ZERO } from 'sushi'
 import {
   Card,
   CardContent,

@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
-import { formatNumber } from '@sushiswap/format'
+import { formatNumber } from 'sushi'
 import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { Currency } from '@sushiswap/ui/components/currency'

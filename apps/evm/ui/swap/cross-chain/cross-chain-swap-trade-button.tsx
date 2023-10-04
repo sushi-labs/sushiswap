@@ -1,7 +1,7 @@
 'use client'
 
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { ZERO } from '@sushiswap/math'
+import { ZERO } from 'sushi'
 import { SUSHIXSWAP_ADDRESS, SushiXSwapChainId } from '@sushiswap/sushixswap-sdk'
 import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'

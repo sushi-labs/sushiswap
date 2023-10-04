@@ -2,7 +2,7 @@
 
 import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
-import { formatNumber, formatPercent, formatUSD } from '@sushiswap/format'
+import { formatNumber, formatPercent, formatUSD } from 'sushi'
 import { Card, CardContent, CardHeader, CardLabel, CardTitle, classNames } from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { usePoolGraphData } from 'lib/hooks'

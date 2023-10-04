@@ -40,7 +40,7 @@
     "@sushiswap/bentobox-sdk": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
-    "@sushiswap/math": "workspace:*",
+    "sushi": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/trident-sdk": "workspace:*",
@@ -65,7 +65,7 @@
     "@types/node": "18",
     "@types/node-fetch": "2.6.2",
     "jest": "29.7.0",
-    "typescript": "5.1.6"
+    "typescript": "5.2.2"
   },
   "peerDependencies": {
     "@sushiswap/database": "*"

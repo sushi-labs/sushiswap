@@ -1,7 +1,7 @@
 'use client'
 
 import { Amount, Type } from '@sushiswap/currency'
-import { ZERO } from '@sushiswap/math'
+import { ZERO } from 'sushi'
 import { usePrices } from '@sushiswap/react-query'
 import { useMemo } from 'react'
 

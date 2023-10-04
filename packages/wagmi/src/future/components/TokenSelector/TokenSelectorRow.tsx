@@ -2,7 +2,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { ArrowTopRightOnSquareIcon, CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/20/solid'
 import { Chain } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
-import { Fraction, ZERO } from '@sushiswap/math'
+import { Fraction, ZERO } from 'sushi'
 import {
   classNames,
   IconButton,

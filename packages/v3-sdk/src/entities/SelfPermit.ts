@@ -1,6 +1,6 @@
 import { Interface } from '@ethersproject/abi'
 import { Token } from '@sushiswap/currency'
-import { BigintIsh } from '@sushiswap/math'
+import { BigintIsh } from 'sushi'
 import ISelfPermit from '@uniswap/v3-periphery/artifacts/contracts/interfaces/ISelfPermit.sol/ISelfPermit.json'
 
 import { toHex } from '../utils'

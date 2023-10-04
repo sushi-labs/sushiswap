@@ -1,6 +1,6 @@
 'use client'
 
-import {formatNumber} from '@sushiswap/format'
+import {formatNumber} from 'sushi'
 import useSWR from 'swr'
 
 import {getBentoBoxKpis} from '../lib'

@@ -1,15 +1,5 @@
 {
-  "extends": "@sushiswap/typescript-config/esm.json",
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/esm/tsconfig"],
   "include": ["src"],
-  "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "module": "esnext",
-    "target": "esnext",
-    "skipLibCheck": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "moduleResolution": "nodenext"
-  }
+  "exclude": ["node_modules"]
 }

@@ -1,5 +1,5 @@
 import { Chain } from '@sushiswap/chain'
-import { shortenAddress } from '@sushiswap/format'
+import { shortenAddress } from 'sushi'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_TOKEN } from '@sushiswap/stargate'
 import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'

@@ -33,7 +33,7 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/math": "workspace:*",
+    "sushi": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
     "@types/jest": "29.5.5",
@@ -43,11 +43,11 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwindcss": "3.3.2",
-    "typescript": "5.1.6"
+    "typescript": "5.2.2"
   },
   "peerDependencies": {
     "@sushiswap/currency": "*",
-    "@sushiswap/math": "*",
+    "sushi": "*",
     "react": "*",
     "react-dom": "*",
     "tailwindcss": "*"
@@ -56,7 +56,7 @@
     "@sushiswap/currency": {
       "optional": true
     },
-    "@sushiswap/math": {
+    "sushi": {
       "optional": true
     },
     "react": {

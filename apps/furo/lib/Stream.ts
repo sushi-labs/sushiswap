@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
-import { Percent } from '@sushiswap/math'
+import { Percent } from 'sushi'
 
 import { Rebase, streamQuery } from '../.graphclient'
 import { Furo } from './Furo'

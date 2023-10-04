@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI_ADDRESS } from '@sushiswap/currency'
-import { formatNumber, formatUSD } from '@sushiswap/format'
+import { formatNumber, formatUSD } from 'sushi'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { BENTOBOX_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 import { SUSHISWAP_V2_SUPPORTED_CHAIN_IDS } from '@sushiswap/v2-sdk'

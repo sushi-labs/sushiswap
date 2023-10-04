@@ -55,8 +55,10 @@
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
+    "@tsconfig/esm": "1.0.4",
+    "@tsconfig/strictest": "2.0.2",
     "@wagmi/core": "1.4.1",
-    "typescript": "5.1.6"
+    "typescript": "5.2.2"
   },
   "peerDependencies": {
     "@sushiswap/chain": "*",

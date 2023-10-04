@@ -1,9 +1,9 @@
 'use client'
 
 import { Chain, chainName } from '@sushiswap/chain'
-import { shortenAddress } from '@sushiswap/format'
+import { shortenAddress } from 'sushi'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { ZERO } from '@sushiswap/math'
+import { ZERO } from 'sushi'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
 import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap-sdk'
 import {

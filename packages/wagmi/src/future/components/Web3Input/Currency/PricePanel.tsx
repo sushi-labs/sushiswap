@@ -5,7 +5,7 @@ import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { FC, useMemo } from 'react'
 
 import { CurrencyInputProps } from './CurrencyInput'
-import { Fraction, ZERO } from '@sushiswap/math'
+import { Fraction, ZERO } from 'sushi'
 
 type PricePanel = Pick<CurrencyInputProps, 'loading' | 'currency' | 'value' | 'usdPctChange'> & {
   error?: string

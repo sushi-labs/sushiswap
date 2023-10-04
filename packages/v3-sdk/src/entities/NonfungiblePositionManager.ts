@@ -1,7 +1,7 @@
 import { Interface } from '@ethersproject/abi'
 import { validateAndParseAddress } from '@sushiswap/amm'
 import { Amount as CurrencyAmount, Currency, Native, Token } from '@sushiswap/currency'
-import { BigintIsh, Percent } from '@sushiswap/math'
+import { BigintIsh, Percent } from 'sushi'
 import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import invariant from 'tiny-invariant'
 

@@ -1,4 +1,4 @@
-import { formatUSD } from '@sushiswap/format'
+import { formatUSD } from 'sushi'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { CardContent, CardDescription, CardHeader, CardTitle, Toggle } from '@sushiswap/ui'
 import ReactECharts, { EChartsOption } from 'echarts-for-react'

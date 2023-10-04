@@ -1,6 +1,6 @@
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, tryParseAmount, Type } from '@sushiswap/currency'
-import { Percent } from '@sushiswap/math'
+import { Percent } from 'sushi'
 import {
   DialogConfirm,
   DialogContent,

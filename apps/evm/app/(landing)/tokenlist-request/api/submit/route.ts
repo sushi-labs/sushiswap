@@ -1,6 +1,6 @@
 import { createAppAuth } from '@octokit/auth-app'
 import { ChainId, ChainKey } from '@sushiswap/chain'
-import { formatUSD } from '@sushiswap/format'
+import { formatUSD } from 'sushi'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import stringify from 'fast-json-stable-stringify'
 import { NextResponse } from 'next/server'

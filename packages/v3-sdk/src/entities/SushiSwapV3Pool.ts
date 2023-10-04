@@ -1,5 +1,5 @@
 import { Amount as CurrencyAmount, Price, Token } from '@sushiswap/currency'
-import { BigintIsh } from '@sushiswap/math'
+import { BigintIsh } from 'sushi'
 import invariant from 'tiny-invariant'
 
 import { FeeAmount, SUSHISWAP_V3_FACTORY_ADDRESS,SushiSwapV3ChainId, TICK_SPACINGS } from '../constants'
