@@ -100,7 +100,6 @@ export class AlgebraQualityChecker {
           pool.tickHelperContract,
           pool.token0,
           pool.token1,
-          pool.fee,
           pool.client,
           pool.busyCounter
         )
