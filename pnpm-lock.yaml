@@ -563,7 +563,7 @@ importers:
         version: 7.0.25(react-dom@18.2.0)(react@18.2.0)
       '@storybook/addon-designs':
         specifier: ^7.0.0
-        version: 7.0.5(@storybook/addon-docs@7.0.25)(@storybook/addons@7.4.6)(@storybook/components@7.3.1)(@storybook/manager-api@7.3.1)(@storybook/preview-api@7.3.1)(@storybook/theming@7.3.1)(react-dom@18.2.0)(react@18.2.0)
+        version: 7.0.5(@storybook/addon-docs@7.0.25)(@storybook/addons@7.4.6)(@storybook/components@7.3.1)(@storybook/manager-api@7.4.6)(@storybook/preview-api@7.4.6)(@storybook/theming@7.4.6)(react-dom@18.2.0)(react@18.2.0)
       '@storybook/addon-docs':
         specifier: 7.0.25
         version: 7.0.25(react-dom@18.2.0)(react@18.2.0)
@@ -1173,55 +1173,28 @@ importers:
       '@nomiclabs/hardhat-waffle':
         specifier: 2.0.3
         version: 2.0.3(ethereum-waffle@3.4.4)(ethers@5.7.2)(hardhat-deploy-ethers@0.3.0-beta.13)(hardhat@2.17.0)
-      '@sushiswap/types':
-        specifier: workspace:*
-        version: link:../../packages/types
       '@tenderly/hardhat-tenderly':
         specifier: 1.3.2
         version: 1.3.2(hardhat@2.17.0)(tenderly@0.0.3)
-      '@typechain/ethers-v5':
-        specifier: 10.1.1
-        version: 10.1.1(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2)(ethers@5.7.2)(typechain@8.1.1)(typescript@5.2.2)
       '@typechain/hardhat':
         specifier: 6.1.4
         version: 6.1.4(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(@typechain/ethers-v5@10.1.1)(ethers@5.7.2)(hardhat@2.17.0)(typechain@8.1.1)
       dotenv:
         specifier: 16.0.3
         version: 16.0.3
-      ethereum-waffle:
-        specifier: 3.4.4
-        version: 3.4.4(typescript@5.2.2)
       hardhat-deploy:
         specifier: 0.11.22
         version: 0.11.22
       hardhat-deploy-ethers:
         specifier: 0.3.0-beta.13
         version: 0.3.0-beta.13(ethers@5.7.2)(hardhat@2.17.0)
-      typechain:
-        specifier: 8.1.1
-        version: 8.1.1(typescript@5.2.2)
     devDependencies:
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../jest
-      '@sushiswap/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript
-      '@types/node':
-        specifier: '18'
-        version: 18.17.5
       ethers:
         specifier: 5.7.2
         version: 5.7.2
       hardhat:
         specifier: 2.17.0
         version: 2.17.0(ts-node@10.9.1)(typescript@5.2.2)
-      tsup:
-        specifier: 7.2.0
-        version: 7.2.0(ts-node@10.9.1)(typescript@5.2.2)
-      typescript:
-        specifier: 5.2.2
-        version: 5.2.2
 
   config/jest:
     dependencies:
@@ -1287,12 +1260,6 @@ importers:
       tailwindcss:
         specifier: 3.3.2
         version: 3.3.2
-      tsup:
-        specifier: 7.2.0
-        version: 7.2.0(postcss@8.4.28)(typescript@5.2.2)
-      typescript:
-        specifier: 5.2.2
-        version: 5.2.2
 
   config/typescript: {}
 
@@ -7792,13 +7759,12 @@ packages:
       '@types/node-fetch': 2.6.4
       ethers: 5.7.2
       mkdirp: 0.5.6
-      node-fetch: 2.6.12
+      node-fetch: 2.6.6
       solc: 0.6.12
       ts-generator: 0.1.1
       typechain: 3.0.0(typescript@5.2.2)
     transitivePeerDependencies:
       - bufferutil
-      - encoding
       - supports-color
       - typescript
       - utf-8-validate
@@ -15980,7 +15946,7 @@ packages:
       - supports-color
     dev: true
 
-  /@storybook/addon-designs@7.0.5(@storybook/addon-docs@7.0.25)(@storybook/addons@7.4.6)(@storybook/components@7.3.1)(@storybook/manager-api@7.3.1)(@storybook/preview-api@7.3.1)(@storybook/theming@7.3.1)(react-dom@18.2.0)(react@18.2.0):
+  /@storybook/addon-designs@7.0.5(@storybook/addon-docs@7.0.25)(@storybook/addons@7.4.6)(@storybook/components@7.3.1)(@storybook/manager-api@7.4.6)(@storybook/preview-api@7.4.6)(@storybook/theming@7.4.6)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-yB1YwkVhnTI28mS+00avAf7vPAppZi2pdXQF91725g+RoiM7llY87q+c1z2/YiQNQYNm2QXpYcrcYiLQzyr0NQ==}
     peerDependencies:
       '@storybook/addon-docs': ^7.0.0
@@ -16001,9 +15967,9 @@ packages:
       '@storybook/addon-docs': 7.0.25(react-dom@18.2.0)(react@18.2.0)
       '@storybook/addons': 7.4.6(react-dom@18.2.0)(react@18.2.0)
       '@storybook/components': 7.3.1(react-dom@18.2.0)(react@18.2.0)
-      '@storybook/manager-api': 7.3.1(react-dom@18.2.0)(react@18.2.0)
-      '@storybook/preview-api': 7.3.1
-      '@storybook/theming': 7.3.1(react-dom@18.2.0)(react@18.2.0)
+      '@storybook/manager-api': 7.4.6(react-dom@18.2.0)(react@18.2.0)
+      '@storybook/preview-api': 7.4.6
+      '@storybook/theming': 7.4.6(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: true
@@ -19150,7 +19116,7 @@ packages:
       '@babel/preset-env': 7.22.10(@babel/core@7.22.10)
       '@babel/preset-typescript': 7.22.5(@babel/core@7.22.10)
       '@babel/traverse': 7.22.10
-      '@babel/types': 7.22.10
+      '@babel/types': 7.23.0
       '@npmcli/package-json': 2.0.0
       '@remix-run/server-runtime': 1.16.1
       '@vanilla-extract/integration': 6.2.1(@types/node@14.18.33)
@@ -19227,7 +19193,7 @@ packages:
       '@babel/preset-env': 7.22.10(@babel/core@7.22.10)
       '@babel/preset-typescript': 7.22.5(@babel/core@7.22.10)
       '@babel/traverse': 7.22.10
-      '@babel/types': 7.22.10
+      '@babel/types': 7.23.0
       '@npmcli/package-json': 2.0.0
       '@remix-run/server-runtime': 1.16.1
       '@vanilla-extract/integration': 6.2.1(@types/node@18.17.5)
@@ -30936,7 +30902,7 @@ packages:
     dependencies:
       inherits: 2.0.4
       level-errors: 1.0.5
-      readable-stream: 1.0.34
+      readable-stream: 1.1.14
       xtend: 4.0.2
 
   /level-iterator-stream@2.0.3:
@@ -32094,7 +32060,7 @@ packages:
     engines: {node: '>=16'}
     dependencies:
       '@babel/traverse': 7.22.10
-      '@babel/types': 7.22.10
+      '@babel/types': 7.23.0
       invariant: 2.2.4
       metro-symbolicate: 0.76.8
       nullthrows: 1.1.1
@@ -32137,7 +32103,7 @@ packages:
       '@babel/core': 7.22.10
       '@babel/generator': 7.22.10
       '@babel/parser': 7.22.10
-      '@babel/types': 7.22.10
+      '@babel/types': 7.23.0
       babel-preset-fbjs: 3.4.0(@babel/core@7.22.10)
       metro: 0.76.8
       metro-babel-transformer: 0.76.8
@@ -32162,7 +32128,7 @@ packages:
       '@babel/parser': 7.22.10
       '@babel/template': 7.22.5
       '@babel/traverse': 7.22.10
-      '@babel/types': 7.22.10
+      '@babel/types': 7.23.0
       accepts: 1.3.8
       async: 3.2.4
       chalk: 4.1.2
@@ -35942,7 +35908,6 @@ packages:
       inherits: 2.0.4
       isarray: 0.0.1
       string_decoder: 0.10.31
-    dev: true
 
   /readable-stream@2.3.8:
     resolution: {integrity: sha512-8p0AUk4XODgIewSi0l8Epjs+EVnWiK7NoDIEGU0HhE7+ZyY8D1IMY7odu5lRrFXGg71L15KG8QrPmum45RTtdA==}
@@ -39013,43 +38978,6 @@ packages:
       joycon: 3.1.1
       postcss: 8.4.23
       postcss-load-config: 4.0.1(postcss@8.4.23)
-      resolve-from: 5.0.0
-      rollup: 3.28.0
-      source-map: 0.8.0-beta.0
-      sucrase: 3.34.0
-      tree-kill: 1.2.2
-      typescript: 5.2.2
-    transitivePeerDependencies:
-      - supports-color
-      - ts-node
-    dev: true
-
-  /tsup@7.2.0(postcss@8.4.28)(typescript@5.2.2):
-    resolution: {integrity: sha512-vDHlczXbgUvY3rWvqFEbSqmC1L7woozbzngMqTtL2PGBODTtWlRwGDDawhvWzr5c1QjKe4OAKqJGfE1xeXUvtQ==}
-    engines: {node: '>=16.14'}
-    hasBin: true
-    peerDependencies:
-      '@swc/core': ^1
-      postcss: ^8.4.12
-      typescript: 5.2.2
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      postcss:
-        optional: true
-      typescript:
-        optional: true
-    dependencies:
-      bundle-require: 4.0.1(esbuild@0.18.20)
-      cac: 6.7.14
-      chokidar: 3.5.3
-      debug: 4.3.4(supports-color@8.1.1)
-      esbuild: 0.18.20
-      execa: 5.1.1
-      globby: 11.1.0
-      joycon: 3.1.1
-      postcss: 8.4.28
-      postcss-load-config: 4.0.1(postcss@8.4.28)
       resolve-from: 5.0.0
       rollup: 3.28.0
       source-map: 0.8.0-beta.0
