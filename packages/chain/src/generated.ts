@@ -830,4 +830,5 @@ export default [
     "name": "Palm",
     "shortName": "palm"
   }
-] as const
+] as const;
+

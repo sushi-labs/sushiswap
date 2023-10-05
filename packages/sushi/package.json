@@ -47,6 +47,7 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
+    "generate": "npx tsx ./scripts/generate.ts",
     "prepublishOnly": "pnpm build"
   },
   "dependencies": {
