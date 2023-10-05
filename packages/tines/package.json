@@ -38,7 +38,7 @@
     "@types/seedrandom": "^3.0.1",
     "seedrandom": "^3.0.5",
     "tsup": "7.2.0",
-    "typescript": "5.0.4",
+    "typescript": "5.2.2",
     "viem": "1.10.7"
   }
 }

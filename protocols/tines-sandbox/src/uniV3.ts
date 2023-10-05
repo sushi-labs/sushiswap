@@ -218,7 +218,7 @@ export async function createUniV3EnvReal(
           chain: null,
           value: 0n,
         })
-      } catch (e) {
+      } catch {
         return ZERO
       }
       const receipt = await waitForTransactionReceipt(walletClient, { hash: res })

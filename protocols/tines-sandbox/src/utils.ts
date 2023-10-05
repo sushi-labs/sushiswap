@@ -24,7 +24,7 @@ export function expectCloseValues(_a: number | bigint, _b: number | bigint, accu
 export function tryCall<A>(f: () => A): A | undefined {
   try {
     return f()
-  } catch (e) {
+  } catch {
     //
   }
 }
@@ -32,7 +32,7 @@ export function tryCall<A>(f: () => A): A | undefined {
 export async function tryCallAsync<A>(f: () => Promise<A>): Promise<A | undefined> {
   try {
     return await f()
-  } catch (e) {
+  } catch {
     //
   }
 }

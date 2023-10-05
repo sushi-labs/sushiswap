@@ -1,4 +1,3 @@
-/* eslint-disable turbo/no-undeclared-env-vars */
 import '@nomiclabs/hardhat-ethers'
 
 import { defaultConfig } from '@sushiswap/hardhat-config'

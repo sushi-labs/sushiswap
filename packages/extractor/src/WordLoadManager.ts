@@ -160,6 +160,7 @@ export class WordLoadManager extends EventEmitter {
     const state = this.words.get(tickWord)
     if (state !== undefined) {
       const { blockNumber, ticks } = state
+
       if (eventBlockNumber <= blockNumber) return
       if (ticks.length === 0 || tick < ticks[0].index) {
         ticks.unshift({ index: tick, DLiquidity: amount })

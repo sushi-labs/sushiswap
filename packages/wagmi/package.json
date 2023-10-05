@@ -101,7 +101,7 @@
     "react-dom": "18.2.0",
     "tsup": "7.2.0",
     "typechain": "^8.0.0",
-    "typescript": "5.0.4",
+    "typescript": "5.2.2",
     "vitest": "0.33.0",
     "wagmi": "1.4.1"
   },

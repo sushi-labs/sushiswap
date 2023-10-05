@@ -15,16 +15,19 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "sideEffects": false,
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
   "source": "src/index.ts",
-  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --external hardhat,ethers",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+    "build": "tsc",
+    "check": "tsc --pretty --noEmit",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "tsc -w",
+    "prepublishOnly": "pnpm build"
   },
   "jest": {
     "preset": "@sushiswap/jest-config/node"
@@ -48,12 +51,12 @@
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/typescript-config": "workspace:*",
+    "@tsconfig/node18": "18.2.2",
+    "@tsconfig/strictest": "2.0.2",
     "@types/node": "18",
     "ethers": "5.7.2",
     "hardhat": "2.17.0",
-    "tsup": "7.2.0",
-    "typescript": "5.0.4"
+    "typescript": "5.2.2"
   },
   "peerDependencies": {
     "ethers": "5.7.2",

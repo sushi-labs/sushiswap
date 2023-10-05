@@ -35,7 +35,7 @@ function linkContractLibraries(
       }
     })
   })
-  console.assert(bytecode.search(/[_$]/) === -1, `Unexpected bytecode linking`)
+  console.assert(bytecode.search(/[_$]/) === -1, 'Unexpected bytecode linking')
   console.assert(bytecode.length === pimaryLength, 'Unexpected bytecode length')
 
   return bytecode as Hex
@@ -90,7 +90,7 @@ export async function createAlgebraIntegralPeriphery(
   // Algebra PoolDeployer
   const poolDeployerAddressReal = await deploy(AlgebraPoolDeployer, [factoryAddress, vaultAddress])
   console.assert(
-    poolDeployerAddress.toLowerCase() == poolDeployerAddressReal.toLowerCase(),
+    poolDeployerAddress.toLowerCase() === poolDeployerAddressReal.toLowerCase(),
     `Unexpected deploy behaviour! ${poolDeployerAddress} ${poolDeployerAddressReal}`
   )
 
@@ -137,7 +137,7 @@ export async function approveTestTokensToAlgebraPerifery(
   await Promise.all(tokens.tokens.map((t) => approve(client, t, tokens.owner, env.SwapRouterAddress, tokens.supply)))
 }
 
-const Two96 = Math.pow(2, 96)
+const Two96 = 2 ** 96
 export function encodePriceSqrt(reserve1: number, reserve0: number) {
   return BigInt(Math.round(Math.sqrt(reserve1 / reserve0) * Two96))
 }
@@ -292,8 +292,8 @@ export interface AlgebraPoolInfo {
   res1Max: number
 }
 
-let token0Index = 0,
-  token1Index = 1 // each new pool needs a new pair of tokens
+let token0Index = 0
+let token1Index = 1 // each new pool needs a new pair of tokens
 export async function createAlgebraPool(
   client: PublicClient & WalletClient,
   env: AlgebraIntegralPeriphery,
@@ -348,8 +348,8 @@ export async function createAlgebraPool(
 // This function calculates it
 const MAX_LIQUIDITY_PER_TICK = Number(191757638537527648490752896198553n)
 function getMaxPositionLiquidity(from: number, to: number): number {
-  const price1 = Math.pow(1.0001, from / 2)
-  const price2 = Math.pow(1.0001, to / 2)
+  const price1 = 1.0001 ** (from / 2)
+  const price2 = 1.0001 ** (to / 2)
   const max1 = MAX_LIQUIDITY_PER_TICK * (1 / price1 - 1 / price2)
   const max2 = MAX_LIQUIDITY_PER_TICK * (price2 - price1)
   return Math.min(max1, max2)

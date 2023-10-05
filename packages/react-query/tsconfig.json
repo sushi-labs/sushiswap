@@ -3,8 +3,12 @@
   "include": ["src"],
   "exclude": ["node_modules", "dist", ".turbo"],
   "compilerOptions": {
-    "outDir": "./dist",
     "rootDir": "./src",
+    "outDir": "./dist",
+    "jsx": "react-jsx",
+    "lib": ["ESNext", "DOM"],
+    "module": "ES2020",
+    "moduleResolution": "Bundler",
     "target": "ESNext",
     "sourceMap": true,
     "declaration": true,

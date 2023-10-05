@@ -23,6 +23,7 @@
       },
       "style": {
         "noNonNullAssertion": "off",
+        "noParameterAssign": "off",
         "useShorthandArrayType": "error"
       },
       "suspicious": {

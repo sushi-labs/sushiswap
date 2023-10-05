@@ -50,13 +50,16 @@ export class DataFetcher {
   private static cache: Record<number, DataFetcher> = {}
 
   static onChain(chainId: ChainId): DataFetcher {
-    if (chainId in this.cache) {
-      return this.cache[chainId]
+    const cache = this.cache[chainId]
+    if (cache) {
+      return cache
     }
 
-    this.cache[chainId] = new DataFetcher(chainId)
+    const dataFetcher = new DataFetcher(chainId)
 
-    return this.cache[chainId]
+    this.cache[chainId] = dataFetcher
+
+    return dataFetcher
   }
 
   constructor(chainId: ChainId, publicClient?: PublicClient, databaseClient?: PrismaClient) {

@@ -46,7 +46,7 @@
     "react": "18.2.0",
     "swr": "2.1.5",
     "tsup": "7.2.0",
-    "typescript": "5.0.4"
+    "typescript": "5.2.2"
   },
   "peerDependencies": {
     "react": "*",

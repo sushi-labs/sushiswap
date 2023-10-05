@@ -7,8 +7,8 @@ import '@tenderly/hardhat-tenderly'
 import '@typechain/hardhat'
 import 'hardhat-deploy'
 import 'hardhat-deploy-ethers'
-import '@matterlabs/hardhat-zksync-deploy'
-import '@matterlabs/hardhat-zksync-solc'
+// import '@matterlabs/hardhat-zksync-deploy'
+// import '@matterlabs/hardhat-zksync-solc'
 
 import { HardhatUserConfig } from 'hardhat/config'
 
@@ -96,11 +96,11 @@ export const defaultConfig: HardhatUserConfig = {
     // tsNocheck: boolean;
     // externalArtifacts?: string[];
   },
-  zksolc: {
-    version: '1.3.1',
-    compilerSource: 'binary',
-    settings: {},
-  },
+  // zksolc: {
+  //   version: '1.3.1',
+  //   compilerSource: 'binary',
+  //   settings: {},
+  // },
   networks: {
     localhost: {
       live: false,
@@ -120,11 +120,11 @@ export const defaultConfig: HardhatUserConfig = {
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
       },
     },
-    'zksync-testnet': {
-      url: 'https://zksync2-testnet.zksync.dev', // URL of the zkSync network RPC
-      ethNetwork: 'goerli', // Can also be the RPC URL of the Ethereum network (e.g. `https://goerli.infura.io/v3/<API_KEY>`)
-      zksync: true,
-    },
+    // 'zksync-testnet': {
+    //   url: 'https://zksync2-testnet.zksync.dev', // URL of the zkSync network RPC
+    //   ethNetwork: 'goerli', // Can also be the RPC URL of the Ethereum network (e.g. `https://goerli.infura.io/v3/<API_KEY>`)
+    //   zksync: true,
+    // },
     'scroll-alpha-testnet': {
       url: 'https://alpha-rpc.scroll.io/l2',
       accounts,

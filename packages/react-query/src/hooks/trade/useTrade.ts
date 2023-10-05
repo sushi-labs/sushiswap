@@ -1,12 +1,11 @@
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, nativeCurrencyIds, Price, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { Percent, ZERO } from 'sushi'
+import { Percent, ZERO } from 'sushi/math'
 import { isRouteProcessor3_1ChainId, isRouteProcessor3_2ChainId } from '@sushiswap/route-processor-sdk'
-import { type HexString } from '@sushiswap/types'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
-import { stringify } from 'viem'
+import { stringify, type Hex, type Address } from 'viem'
 import { deserialize } from 'wagmi'
 
 import { usePrice } from '../prices'
@@ -70,7 +69,8 @@ export const useTradeQuery = (
 
       const res = await fetch(params.toString())
       const json = await res.json()
-      return tradeValidator.parse(deserialize(json))
+      const deserialised = deserialize(json)
+      return tradeValidator.parse(deserialised)
     },
     refetchOnWindowFocus: true,
     refetchInterval: 2500,
@@ -79,7 +79,7 @@ export const useTradeQuery = (
     retry: false, // dont retry on failure, immediately fallback
     select,
     enabled: enabled && Boolean(chainId && fromToken && toToken && amount && gasPrice),
-    onError,
+    onError: (error) => onError ? onError(error as Error) : undefined,
     queryKeyHashFn: stringify,
   })
 }
@@ -98,12 +98,12 @@ export const useTrade = (variables: UseTradeParams) => {
 
         let writeArgs: UseTradeReturnWriteArgs = data?.args
           ? ([
-              data.args.tokenIn as HexString,
+              data.args.tokenIn as Address,
               BigInt(data.args.amountIn),
-              data.args.tokenOut as HexString,
+              data.args.tokenOut as Address,
               data.args.amountOutMin,
-              data.args.to as HexString,
-              data.args.routeCode as HexString,
+              data.args.to as Address,
+              data.args.routeCode as Hex,
             ] as const)
           : undefined
         let value = fromToken.isNative ? writeArgs?.[1] ?? undefined : undefined

@@ -16,7 +16,12 @@
   "license": "MIT",
   "author": "LufyCZ <me@lufy.cz>",
   "sideEffects": false,
-  "type": "module",
+  "main": "dist/index.js",
+  "source": "src/index.ts",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -32,15 +37,14 @@
     },
     "./package.json": "./package.json"
   },
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "source": "src/index.ts",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "typesVersions": {
+    "*": {
+      "chains": ["./dist/chains.d.ts"],
+      "providers": ["./dist/providers.d.ts"]
+    }
+  },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --external @wagmi/core,@sushiswap/chain --minify",
+    "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
@@ -59,7 +63,7 @@
     "@tsconfig/strictest": "2.0.2",
     "@wagmi/core": "1.4.1",
     "tsup": "7.2.0",
-    "typescript": "5.0.4"
+    "typescript": "5.2.2"
   },
   "peerDependencies": {
     "@sushiswap/chain": "*",

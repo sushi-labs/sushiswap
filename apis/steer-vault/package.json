@@ -37,7 +37,7 @@
     "@tsconfig/strictest": "2.0.2",
     "@types/node": "18",
     "dotenv": "16.0.3",
-    "typescript": "5.0.4",
+    "typescript": "5.2.2",
     "vercel": "29.4.0"
   }
 }

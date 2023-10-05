@@ -43,7 +43,7 @@
     "serve": "14.2.0",
     "storybook": "7.1.0-alpha.42",
     "tailwindcss": "3.3.2",
-    "typescript": "5.0.4",
+    "typescript": "5.2.2",
     "vite": "4.3.9"
   }
 }
