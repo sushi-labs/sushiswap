@@ -19,7 +19,7 @@ import { useCrossChainSwapTrade, useDerivedStateCrossChainSwap } from './derived
 export const CrossChainSwapTradeStats: FC = () => {
   const { address } = useAccount()
   const {
-    state: { chainId0, swapAmountString, recipient },
+    state: { chainId0, chainId1, swapAmountString, recipient },
   } = useDerivedStateCrossChainSwap()
   const { isInitialLoading: isLoading, data: trade } = useCrossChainSwapTrade()
   const loading = Boolean(isLoading && !trade?.writeArgs)
@@ -84,7 +84,7 @@ export const CrossChainSwapTradeStats: FC = () => {
             <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
               <a
                 target="_blank"
-                href={Chain.from(chainId0).getAccountUrl(recipient)}
+                href={Chain.from(chainId1).getAccountUrl(recipient)}
                 className={classNames(
                   address !== recipient ? 'text-yellow-600' : 'text-gray-700 dark:text-slate-300',
                   'transition-all flex gap-1 items-center'
