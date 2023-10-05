@@ -283,7 +283,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         account: address,
         type: 'stargate',
         chainId: chainId0,
-        txHash: '0x',
         href: lzData.link,
         summary: `Bridging ${tradeRef?.current?.srcBridgeToken?.symbol} from ${Chain.from(chainId0).name} to ${
           Chain.from(chainId1).name
