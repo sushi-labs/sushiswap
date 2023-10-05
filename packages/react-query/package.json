@@ -18,11 +18,10 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
+    ".": "./dist/index.js",
     "./*": [
-      "./src/*.ts",
-      "./src/*.tsx",
-      "./src/*/index.ts"
+      "./dist/*.js",
+      "./dist/*/index.js"
     ]
   },
   "typesVersions": {
@@ -34,7 +33,7 @@
     }
   },
   "files": [
-    "src"
+    "dist"
   ],
   "scripts": {
     "build": "tsc",
