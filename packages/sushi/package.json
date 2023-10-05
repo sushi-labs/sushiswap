@@ -29,15 +29,19 @@
     "prepublishOnly": "pnpm build"
   },
   "dependencies": {
+    "big.js": "6.1.1",
+    "decimal.js-light": "2.5.1",
     "numeral": "2.0.6",
     "tiny-invariant": "1.3.1",
-    "decimal.js-light": "2.5.1",
-    "toformat": "2.0.0"
+    "toformat": "^2.0.0"
+
   },
   "devDependencies": {
     "@sushiswap/typescript-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
+    "@tsconfig/node18": "18.2.2",
     "@tsconfig/strictest": "2.0.2",
+    "@types/big.js": "6.2.0",
     "@types/numeral": "2.0.3",
     "@types/jest": "29.5.5",
     "ethers": "5.7.2",

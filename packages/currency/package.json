@@ -16,7 +16,6 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "sideEffects": false,
-  "type": "module",
   "main": "dist/index.js",
   "source": "src/index.ts",
   "types": "dist/index.d.ts",
@@ -46,6 +45,7 @@
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
+    "@tsconfig/node18": "18.2.2",
     "@tsconfig/strictest": "2.0.2",
     "@types/jest": "29.5.5",
     "@types/lodash.flatmap": "4.5.7",

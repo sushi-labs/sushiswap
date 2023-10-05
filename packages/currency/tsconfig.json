@@ -1,11 +1,8 @@
 {
-  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/esm/tsconfig"],
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node18/tsconfig"],
   "include": ["src"],
   "exclude": ["node_modules"],
   "compilerOptions": {
-    "moduleResolution": "NodeNext",
-    "module": "NodeNext",
-    "target": "ESNext",
     "lib": ["ESNext", "DOM"],
     "outDir": "./dist",
     "rootDir": "./src",
