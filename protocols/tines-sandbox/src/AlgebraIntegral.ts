@@ -1,6 +1,7 @@
 import AlgebraFactory from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraFactory.sol/AlgebraFactory.json'
 import AlgebraPool from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraPool.sol/AlgebraPool.json'
 import AlgebraPoolDeployer from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraPoolDeployer.sol/AlgebraPoolDeployer.json'
+import TickLens from '@cryptoalgebra/integral-periphery/artifacts/contracts/lens/TickLens.sol/TickLens.json'
 import NFTDescriptor from '@cryptoalgebra/integral-periphery/artifacts/contracts/libraries/NFTDescriptor.sol/NFTDescriptor.json'
 import NonfungiblePositionManager from '@cryptoalgebra/integral-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import NonfungibleTokenPositionDescriptor from '@cryptoalgebra/integral-periphery/artifacts/contracts/NonfungibleTokenPositionDescriptor.sol/NonfungibleTokenPositionDescriptor.json'
@@ -48,6 +49,7 @@ export interface AlgebraIntegralPeriphery {
   NonfungibleTokenPositionDescriptorAddress: Address
   NonfungiblePositionManagerAddress: Address
   SwapRouterAddress: Address
+  TickLensAddress: Address
 }
 
 export async function createAlgebraIntegralPeriphery(
@@ -116,6 +118,9 @@ export async function createAlgebraIntegralPeriphery(
   // Algebra SwapRouter
   const SwapRouterAddress = await deploy(SwapRouter, [factoryAddress, WNativeAddress, poolDeployerAddress])
 
+  // Algebra TickLens
+  const TickLensAddress = await deploy(TickLens)
+
   return {
     deployer,
     factoryAddress,
@@ -123,6 +128,7 @@ export async function createAlgebraIntegralPeriphery(
     NonfungibleTokenPositionDescriptorAddress,
     NonfungiblePositionManagerAddress,
     SwapRouterAddress,
+    TickLensAddress,
   }
 }
 

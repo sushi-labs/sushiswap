@@ -47,7 +47,7 @@ interface FactoryAlgebraFull {
   initCodeHash: Hex
 }
 
-export interface PoolInfo {
+interface PoolInfo {
   address: Address
   token0: Token
   token1: Token

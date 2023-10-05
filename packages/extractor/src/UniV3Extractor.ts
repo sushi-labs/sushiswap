@@ -21,7 +21,7 @@ export interface FactoryV3 {
   initCodeHash: string
 }
 
-export interface PoolInfo {
+interface PoolInfo {
   address: Address
   token0: Token
   token1: Token
