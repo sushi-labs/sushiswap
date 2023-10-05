@@ -10,8 +10,6 @@ require("hardhat-deploy-ethers");
 require("@matterlabs/hardhat-zksync-deploy");
 require("@matterlabs/hardhat-zksync-solc");
 
-const { HardhatUserConfig } = require("hardhat/config");
-
 const accounts = {
   mnemonic:
     process.env.MNEMONIC ||
@@ -20,7 +18,7 @@ const accounts = {
 };
 
 /**
- * @type {HardhatUserConfig}
+ * @type {import('hardhat/config').HardhatUserConfig}
  */
 module.exports.defaultConfig = {
   etherscan: {

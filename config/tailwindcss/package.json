@@ -18,11 +18,12 @@
   "author": "Matthew Lilley <hello@matthewlilley.com>",
   "sideEffects": false,
   "main": "index.js",
+  "types": "index.d.ts",
+  "source": "index.js",
   "files": [
     "index.js"
   ],
   "dependencies": {
-    "@sushiswap/typescript-config": "workspace:*",
     "@tailwindcss/aspect-ratio": "0.4.2",
     "@tailwindcss/forms": "0.5.3",
     "@tailwindcss/typography": "0.5.9",
