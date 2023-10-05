@@ -15,46 +15,42 @@
     "**/*.css"
   ],
   "exports": {
-    "./index.css": "./src/index.css",
-    "./variables.css": "./src/variables.css",
+    "./index.css": "./index.css",
+    "./DatePicker.css": "./DatePicker.css",
     "./tailwind.js": "./tailwind.js",
     ".": [
-      "./src/index.ts",
-      "./src/index.tsx"
+      "./dist/index.js"
     ],
     "./*": [
-      "./src/*.ts",
-      "./src/*.tsx",
-      "./src/*/index.ts",
-      "./src/*/index.tsx"
+      "./dist/*.js",
+      "./dist/*/index.js"
     ],
     "./future/*": [
-      "./src/future/*.ts",
-      "./src/future/*.tsx",
-      "./src/future/*/index.ts",
-      "./src/future/*/index.tsx"
+      "./dist/future/*.js",
+      "./dist/future/*/index.js"
     ]
   },
   "typesVersions": {
     "*": {
       "*": [
-        "src/*",
-        "src/*/index",
-        "src/future/*",
-        "src/future/*/index"
+        "dist/*",
+        "dist/*/index",
+        "dist/future/*",
+        "dist/future/*/index"
       ]
     }
   },
   "files": [
-    "src",
+    "dist",
+    "index.css",
+    "DatePicker.css",
     "tailwind.js"
   ],
   "scripts": {
-    "build": "true",
-    "build2": "tsup",
+    "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsup --watch",
+    "dev": "tsc --watch",
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
