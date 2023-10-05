@@ -1,5 +1,5 @@
 {
-  "$schema": "node_modules/rome/configuration_schema.json",
+  "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
@@ -11,13 +11,23 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "correctness": {
+        "noUnusedVariables": "error"
+      },
+      "nursery": {
+        "useExhaustiveDependencies": "error",
+        "useGroupedTypeImport": "off"
+      },
       "performance": {
         "noDelete": "off"
       },
       "style": {
-        "noParameterAssign": "off",
-        "useSingleVarDeclarator": "off",
-        "useTemplate": "warn"
+        "noNonNullAssertion": "off",
+        "useShorthandArrayType": "error"
+      },
+      "suspicious": {
+        "noArrayIndexKey": "off",
+        "noExplicitAny": "off"
       },
       "security": {
         "noDangerouslySetInnerHtml" : "off"
@@ -33,5 +43,10 @@
   },
   "organizeImports": {
     "enabled": true
+  },
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
   }
 }
