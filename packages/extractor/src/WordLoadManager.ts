@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events'
 
-import { tickLensAbi } from '@sushiswap/abi'
+import { tickLensAbi } from 'sushi/abi'
 import { NUMBER_OF_SURROUNDING_TICKS } from '@sushiswap/router'
 import { CLTick } from '@sushiswap/tines'
 import { Address } from 'abitype'

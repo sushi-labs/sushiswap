@@ -1,4 +1,4 @@
-import { masterChefV1Abi } from '@sushiswap/abi'
+import { masterChefV1Abi } from 'sushi/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Address, readContract, readContracts } from '@wagmi/core'
 

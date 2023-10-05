@@ -1,4 +1,4 @@
-import { routeProcessor2Abi } from '@sushiswap/abi'
+import { routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Address, createPublicClient, http } from 'viem'
 import { Chain, mainnet } from 'viem/chains'

@@ -1,4 +1,4 @@
-import { erc20Abi } from '@sushiswap/abi'
+import { erc20Abi } from 'sushi/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Currency, Token, Type } from '@sushiswap/currency'
 import { RToken, UniV3Pool } from '@sushiswap/tines'

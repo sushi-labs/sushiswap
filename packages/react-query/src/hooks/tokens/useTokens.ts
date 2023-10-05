@@ -18,19 +18,25 @@ type Data = {
 export const fetchTokensQueryFn = async () => {
     const resp = await fetch("https://tokens.sushi.com/v0")
     if (resp.status === 200) {
-        const data: Array<Data> = await resp.json()
+        const data: Data[] = await resp.json()
         await saveTokens({
             tokens: data.map(({id, address, symbol, decimals, name}) => {
                 const [chainId] = id.split(':')
-                return ({id, address, symbol, decimals, name, status: 'APPROVED', chainId: +chainId})
+                return ({id, address, symbol, decimals, name, status: 'APPROVED', chainId: Number(chainId)})
             })
         })
 
         return data.reduce<Record<number, Record<string, Token>>>((acc, {id, name, symbol, decimals}) => {
-            const [chainId, address] = id.split(':')
+            const [_chainId, _address] = id.split(':')
 
-            acc[+chainId] = acc[+chainId] ?? {}
-            acc[+chainId][getAddress(address)] = new Token({
+            const chainId = Number(_chainId)
+            const address = String(_address)
+
+            if (!acc?.[chainId]) acc[chainId] = {} 
+
+            const map = acc[chainId] as Record<string, Token>
+            
+            map[getAddress(address)] = new Token({
                 chainId,
                 name,
                 decimals,

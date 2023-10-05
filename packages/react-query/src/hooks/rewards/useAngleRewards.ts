@@ -106,10 +106,11 @@ export const angleRewardsSelect = ({ chainId, data, prices }: AngleRewardsSelect
   const unclaimedAmounts = Object.values(
     Object.values(pools ?? []).reduce<Record<string, Amount<Token>>>((acc, cur) => {
       Object.values(cur.rewardsPerToken).forEach((val) => {
-        if (!acc[val.unclaimed.currency.address]) {
+        const amount = acc[val.unclaimed.currency.address]
+        if (!amount) {
           acc[val.unclaimed.currency.address] = val.unclaimed
         } else {
-          acc[val.unclaimed.currency.address] = acc[val.unclaimed.currency.address].add(val.unclaimed)
+          acc[val.unclaimed.currency.address] = amount.add(val.unclaimed)
         }
       })
 
@@ -120,8 +121,10 @@ export const angleRewardsSelect = ({ chainId, data, prices }: AngleRewardsSelect
   const unclaimed = unclaimedAmounts.map((amount) => {
     let amountUSD = 0
 
-    if (amount?.greaterThan(ZERO) && prices?.[amount.currency.wrapped.address]) {
-      amountUSD = Number(Number(amount.toExact()) * Number(prices[amount.currency.wrapped.address].toFixed(10)))
+    const price = prices[amount.currency.wrapped.address]
+
+    if (amount?.greaterThan(ZERO) && price) {
+      amountUSD = Number(Number(amount.toExact()) * Number(price.toFixed(10)))
     }
     if (isNaN(amountUSD) || amountUSD < 0.000001) {
       amountUSD = 0

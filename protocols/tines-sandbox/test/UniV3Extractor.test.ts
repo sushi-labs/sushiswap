@@ -1,5 +1,5 @@
 import { reset } from '@nomicfoundation/hardhat-network-helpers'
-import { erc20Abi, routeProcessor2Abi } from '@sushiswap/abi'
+import { erc20Abi, routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from '@sushiswap/chain'
 import { DAI, Native, USDC, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
 import { FactoryV3, LogFilter2, LogFilterType, PoolInfo, UniV3Extractor } from '@sushiswap/extractor'

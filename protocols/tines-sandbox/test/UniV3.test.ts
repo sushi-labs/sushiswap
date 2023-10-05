@@ -1,4 +1,4 @@
-import { sushiV3PoolAbi } from '@sushiswap/abi'
+import { sushiV3PoolAbi } from 'sushi/abi'
 import { CL_MAX_TICK, CL_MIN_TICK, UniV3Pool } from '@sushiswap/tines'
 import { Contract } from '@sushiswap/types'
 import { expect } from 'chai'

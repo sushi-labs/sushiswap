@@ -1,4 +1,4 @@
-import { bentoBoxV1TotalsAbi } from '@sushiswap/abi'
+import { bentoBoxV1TotalsAbi } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Type as Currency } from '@sushiswap/currency'
 import { Rebase } from '@sushiswap/tines'

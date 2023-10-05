@@ -1,4 +1,4 @@
-import { tridentGetPoolsAbi, tridentPoolsCountAbi, tridentSwapFeeAbi } from '@sushiswap/abi'
+import { tridentGetPoolsAbi, tridentPoolsCountAbi, tridentSwapFeeAbi } from 'sushi/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Currency, Token } from '@sushiswap/currency'
 import {

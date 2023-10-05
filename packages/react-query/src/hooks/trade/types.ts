@@ -1,8 +1,8 @@
-import { routeProcessor2Abi } from '@sushiswap/abi'
+import { routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from '@sushiswap/chain'
-import { Amount, Price, Type } from '@sushiswap/currency'
-import { Percent } from 'sushi'
-import { Address, GetFunctionArgs } from 'viem'
+import { Amount, Price, type Type } from '@sushiswap/currency'
+import { Percent } from 'sushi/math'
+import type { Address, GetFunctionArgs } from 'viem'
 import z from 'zod'
 
 import { legValidator, tradeValidator } from './validator'

@@ -1,6 +1,6 @@
 'use client'
 
-import { routeProcessor3Abi, routeProcessorAbi } from '@sushiswap/abi'
+import { routeProcessor3Abi, routeProcessorAbi } from 'sushi/abi'
 import { Chain } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { shortenAddress } from 'sushi'

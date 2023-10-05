@@ -1,6 +1,6 @@
 'use client'
 
-import { furoStreamRouterAbi } from '@sushiswap/abi'
+import { furoStreamRouterAbi } from 'sushi/abi'
 import { FURO_STREAM_ROUTER_ADDRESS, FuroChainId } from '@sushiswap/furo-sdk'
 import { getContract } from 'viem'
 import { usePublicClient } from 'wagmi'

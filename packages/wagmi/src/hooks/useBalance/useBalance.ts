@@ -2,7 +2,7 @@
 
 import { isAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
-import { bentoBoxV1Abi } from '@sushiswap/abi'
+import { bentoBoxV1Abi } from 'sushi/abi'
 import { isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'

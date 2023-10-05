@@ -1,4 +1,4 @@
-import { uniswapV2PairAbi } from '@sushiswap/abi'
+import { uniswapV2PairAbi } from 'sushi/abi'
 import { computeSushiSwapV2PoolAddress, SushiSwapV2Pool } from '@sushiswap/amm'
 import { Amount, Token, Type as Currency, Type } from '@sushiswap/currency'
 import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'

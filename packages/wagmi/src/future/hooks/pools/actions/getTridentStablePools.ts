@@ -1,4 +1,4 @@
-import { tridentStablePoolAbi, tridentStablePoolFactoryAbi } from '@sushiswap/abi'
+import { tridentStablePoolAbi, tridentStablePoolFactoryAbi } from 'sushi/abi'
 import { TridentStablePool } from '@sushiswap/amm'
 import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Currency, Token } from '@sushiswap/currency'

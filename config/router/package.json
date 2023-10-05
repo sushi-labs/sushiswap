@@ -48,7 +48,7 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "typescript": "5.2.2",
+    "typescript": "5.0.4",
     "tsup": "7.2.0"
   },
   "peerDependencies": {

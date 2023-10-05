@@ -1,4 +1,4 @@
-import { routeProcessor2Abi } from '@sushiswap/abi'
+import { routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { FactoryV2, LogFilter2, LogFilterType, UniV2Extractor } from '@sushiswap/extractor'

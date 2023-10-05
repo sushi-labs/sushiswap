@@ -1,4 +1,4 @@
-import { erc20Abi, routeProcessor2Abi } from '@sushiswap/abi'
+import { erc20Abi, routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token } from '@sushiswap/currency'
 import { DataFetcher, Router, RPParams } from '@sushiswap/router'

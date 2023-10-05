@@ -1,4 +1,4 @@
-import { complexRewarderTimeAbi, miniChefAbi } from '@sushiswap/abi'
+import { complexRewarderTimeAbi, miniChefAbi } from 'sushi/abi'
 import { ChainId } from '@sushiswap/chain'
 import { MINICHEF_SUBGRAPH_NAME, SUBGRAPH_HOST, SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
 import { Address, readContract, readContracts } from '@wagmi/core'

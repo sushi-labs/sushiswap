@@ -1,4 +1,4 @@
-import { erc20Abi, nonfungiblePositionManagerAbi, sushiV3FactoryAbi, sushiV3PoolAbi } from '@sushiswap/abi'
+import { erc20Abi, nonfungiblePositionManagerAbi, sushiV3FactoryAbi, sushiV3PoolAbi } from 'sushi/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { CL_MAX_TICK, CL_MIN_TICK, CLTick, RToken, UniV3Pool } from '@sushiswap/tines'

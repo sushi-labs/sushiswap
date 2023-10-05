@@ -1,4 +1,4 @@
-import { erc20Abi, tickLensAbi } from '@sushiswap/abi'
+import { erc20Abi, tickLensAbi } from 'sushi/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Currency, Token, Type } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'

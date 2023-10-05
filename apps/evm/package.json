@@ -21,7 +21,6 @@
     "@octokit/auth-app": "4.0.7",
     "@radix-ui/react-slot": "^1.0.2",
     "@sentry/nextjs": "7.68.0",
-    "@sushiswap/abi": "workspace:*",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/base-sdk": "workspace:*",
     "@sushiswap/bentobox-sdk": "workspace:*",
@@ -108,7 +107,7 @@
     "msw": "1.2.5",
     "postcss": "8.4.23",
     "tailwindcss": "3.3.2",
-    "typescript": "5.2.2",
+    "typescript": "5.0.4",
     "unimported": "1.28.0"
   }
 }

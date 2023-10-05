@@ -22,7 +22,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .vercel"
   },
   "dependencies": {
-    "@sushiswap/abi": "workspace:*",
+
     "@sushiswap/database": "workspace:*",
     "@sushiswap/pools-api": "workspace:*",
     "@sushiswap/types": "workspace:*",
@@ -37,7 +37,7 @@
     "@tsconfig/strictest": "2.0.2",
     "@types/node": "18",
     "dotenv": "16.0.3",
-    "typescript": "5.2.2",
+    "typescript": "5.0.4",
     "vercel": "29.4.0"
   }
 }

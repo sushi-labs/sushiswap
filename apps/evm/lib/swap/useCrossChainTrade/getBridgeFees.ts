@@ -1,4 +1,4 @@
-import { stargateFeeLibraryV03Abi, stargatePoolAbi } from '@sushiswap/abi'
+import { stargateFeeLibraryV03Abi, stargatePoolAbi } from 'sushi/abi'
 import { Amount, Currency, Token } from '@sushiswap/currency'
 import { STARGATE_CHAIN_ID, STARGATE_POOL_ADDRESS, STARGATE_POOL_ID, StargateChainId } from '@sushiswap/stargate'
 import { Address, getSushiXSwapContractConfig, readContracts } from '@sushiswap/wagmi'

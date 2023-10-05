@@ -35,7 +35,6 @@
     "@ethersproject/abi": "5.7.0",
     "@ethersproject/address": "5.7.0",
     "@ethersproject/solidity": "5.7.0",
-    "@sushiswap/abi": "workspace:*",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/bentobox-sdk": "workspace:*",
     "@sushiswap/chain": "workspace:*",
@@ -65,7 +64,7 @@
     "@types/node": "18",
     "@types/node-fetch": "2.6.2",
     "jest": "29.7.0",
-    "typescript": "5.2.2"
+    "typescript": "5.0.4"
   },
   "peerDependencies": {
     "@sushiswap/database": "*"

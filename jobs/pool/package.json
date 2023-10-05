@@ -56,7 +56,6 @@
     "@graphql-mesh/transform-type-merging": "0.94.1",
     "@graphql-mesh/utils": "0.94.1",
     "@graphql-tools/merge": "9.0.0",
-    "@sushiswap/abi": "workspace:*",
     "@sushiswap/bentobox-sdk": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
@@ -88,6 +87,6 @@
     "dotenv": "16.0.3",
     "jest": "29.7.0",
     "ts-node": "10.9.1",
-    "typescript": "5.2.2"
+    "typescript": "5.0.4"
   }
 }

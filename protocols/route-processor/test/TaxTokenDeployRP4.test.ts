@@ -1,6 +1,6 @@
 import { SnapshotRestorer, takeSnapshot } from '@nomicfoundation/hardhat-network-helpers'
-import { routeProcessor3Abi } from '@sushiswap/abi'
-import { erc20Abi } from '@sushiswap/abi'
+import { routeProcessor3Abi } from 'sushi/abi'
+import { erc20Abi } from 'sushi/abi'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Native, Token } from '@sushiswap/currency'
 import { DataFetcher, LiquidityProviders, Router, RPParams } from '@sushiswap/router'

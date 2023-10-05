@@ -1,4 +1,4 @@
-import { tridentConstantPoolAbi, tridentConstantPoolFactoryAbi } from '@sushiswap/abi'
+import { tridentConstantPoolAbi, tridentConstantPoolFactoryAbi } from 'sushi/abi'
 import { TridentConstantPool } from '@sushiswap/amm'
 import { Amount, Currency, Token } from '@sushiswap/currency'
 import { Address, readContracts } from 'wagmi'

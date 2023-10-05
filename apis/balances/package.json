@@ -37,7 +37,7 @@
     "@types/lodash.zip": "4.2.7",
     "@types/node": "18",
     "@types/node-fetch": "2.6.2",
-    "typescript": "5.2.2",
+    "typescript": "5.0.4",
     "vercel": "29.4.0"
   }
 }

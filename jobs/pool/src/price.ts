@@ -1,7 +1,7 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
 import './lib/wagmi.js'
 
-import { totalsAbi } from '@sushiswap/abi'
+import { totalsAbi } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId, isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { USDC_ADDRESS } from '@sushiswap/currency'

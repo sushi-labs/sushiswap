@@ -1,6 +1,6 @@
 'use client'
 
-import { furoVestingAbi } from '@sushiswap/abi'
+import { furoVestingAbi } from 'sushi/abi'
 import { FURO_VESTING_ADDRESS, FuroChainId } from '@sushiswap/furo-sdk'
 import { getContract } from 'viem'
 import { usePublicClient } from 'wagmi'

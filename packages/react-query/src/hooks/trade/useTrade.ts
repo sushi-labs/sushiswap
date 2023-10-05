@@ -3,18 +3,18 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, nativeCurrencyIds, Price, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { Percent, ZERO } from 'sushi'
 import { isRouteProcessor3_1ChainId, isRouteProcessor3_2ChainId } from '@sushiswap/route-processor-sdk'
-import { HexString } from '@sushiswap/types'
+import { type HexString } from '@sushiswap/types'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { stringify } from 'viem'
 import { deserialize } from 'wagmi'
 
 import { usePrice } from '../prices'
-import { UseTradeParams, UseTradeQuerySelect, UseTradeReturnWriteArgs } from './types'
+import type { UseTradeParams, UseTradeQuerySelect, UseTradeReturnWriteArgs } from './types'
 import { tradeValidator } from './validator'
 
 const SWAP_BASE_URL =
-  process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com'
+  process.env['SWAP_API_V0_BASE_URL'] || process.env['NEXT_PUBLIC_SWAP_API_V0_BASE_URL'] || 'https://swap.sushi.com'
 
 function getApiVersion(chainId: ChainId) {
   if (isRouteProcessor3_2ChainId(chainId)) {

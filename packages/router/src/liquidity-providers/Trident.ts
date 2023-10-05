@@ -1,4 +1,4 @@
-import { balanceOfAbi, getReservesAbi, getStableReservesAbi, totalsAbi } from '@sushiswap/abi'
+import { balanceOfAbi, getReservesAbi, getStableReservesAbi, totalsAbi } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import type { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'

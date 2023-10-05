@@ -1,6 +1,6 @@
 'use client'
 
-import { tridentStablePoolAbi, tridentStablePoolFactoryAbi } from '@sushiswap/abi'
+import { tridentStablePoolAbi, tridentStablePoolFactoryAbi } from 'sushi/abi'
 import { computeTridentStablePoolAddress, Fee, TridentStablePool } from '@sushiswap/amm'
 import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Amount, Currency, Token, Type } from '@sushiswap/currency'

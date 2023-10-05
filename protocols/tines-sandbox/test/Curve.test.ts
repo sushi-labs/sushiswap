@@ -1,5 +1,5 @@
 import { SnapshotRestorer, takeSnapshot } from '@nomicfoundation/hardhat-network-helpers'
-import { erc20Abi } from '@sushiswap/abi'
+import { erc20Abi } from 'sushi/abi'
 import {
   createCurvePoolsForMultipool,
   CurveMultitokenPool,

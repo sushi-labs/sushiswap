@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events'
 
-import { erc20Abi } from '@sushiswap/abi'
+import { erc20Abi } from 'sushi/abi'
 import { Token } from '@sushiswap/currency'
 import { LiquidityProviders, PoolCode, UniV3PoolCode } from '@sushiswap/router'
 import { CLTick, RToken, UniV3Pool } from '@sushiswap/tines'

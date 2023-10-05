@@ -1,6 +1,6 @@
 import './wagmi.js'
 
-import { balanceOfAbi, getReservesAbi, getStableReservesAbi } from '@sushiswap/abi'
+import { balanceOfAbi, getReservesAbi, getStableReservesAbi } from 'sushi/abi'
 import { Token } from '@sushiswap/database'
 import { Address, readContracts } from '@wagmi/core'
 

@@ -1,6 +1,6 @@
 import { getStorageAt, setStorageAt } from '@nomicfoundation/hardhat-network-helpers'
 import { NumberLike } from '@nomicfoundation/hardhat-network-helpers/dist/src/types'
-import { erc20Abi } from '@sushiswap/abi'
+import { erc20Abi } from 'sushi/abi'
 import { BigNumber, Contract } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
 import { ethers } from 'hardhat'

@@ -1,5 +1,5 @@
 import { getCreate2Address } from '@ethersproject/address'
-import { getReservesAbi } from '@sushiswap/abi'
+import { getReservesAbi } from 'sushi/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'

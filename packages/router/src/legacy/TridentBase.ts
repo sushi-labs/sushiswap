@@ -1,4 +1,4 @@
-// import { balanceOfAbi, totalsAbi } from '@sushiswap/abi'
+// import { balanceOfAbi, totalsAbi } from 'sushi/abi'
 // import { ChainId } from '@sushiswap/chain'
 // import { Token } from '@sushiswap/currency'
 // import { BridgeBento, Rebase, RToken } from '@sushiswap/tines'

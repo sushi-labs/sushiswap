@@ -1,5 +1,5 @@
 import { getAddress } from '@ethersproject/address'
-import { Amount, Native, Type } from '@sushiswap/currency'
+import { Amount, Native, type Type } from '@sushiswap/currency'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 
@@ -45,8 +45,9 @@ export const useBalances = (variables: UseBalances) => {
           acc[address] = Amount.fromRawAmount(Native.onChain(chainId), amount)
         } else {
           const _address = getAddress(address)
-          if (tokens[_address]) {
-            acc[_address] = Amount.fromRawAmount(tokens[_address], amount)
+          const _token = tokens[_address]
+          if (typeof _token !== 'undefined') {
+            acc[_address] = Amount.fromRawAmount(_token, amount)
           }
         }
         return acc

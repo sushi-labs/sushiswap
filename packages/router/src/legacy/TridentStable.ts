@@ -1,4 +1,4 @@
-// import { getStableReservesAbi } from '@sushiswap/abi'
+// import { getStableReservesAbi } from 'sushi/abi'
 // import { ChainId } from '@sushiswap/chain'
 // import { Token } from '@sushiswap/currency'
 // import { StableSwapRPool, toShareBI } from '@sushiswap/tines'

@@ -1,4 +1,4 @@
-import { routeProcessor3Abi } from '@sushiswap/abi'
+import { routeProcessor3Abi } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'

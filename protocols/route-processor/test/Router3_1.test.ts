@@ -1,5 +1,5 @@
 import { SnapshotRestorer, takeSnapshot } from '@nomicfoundation/hardhat-network-helpers'
-import { erc20Abi, routeProcessor3Abi, weth9Abi } from '@sushiswap/abi'
+import { erc20Abi, routeProcessor3Abi, weth9Abi } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId, isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { ChainId, chainName } from '@sushiswap/chain'
 import {

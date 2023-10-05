@@ -76,7 +76,7 @@ export const useToken = <T extends boolean = false>({ chainId, address, withStat
                 const [chainId] = id.split(':')
 
                 // Save to cache
-                await saveTokens({tokens: [{ address: address.toLowerCase(), chainId: +chainId, name, symbol, decimals, status, id }]})
+                await saveTokens({tokens: [{ address: address.toLowerCase(), chainId: Number(chainId), name, symbol, decimals, status, id }]})
                 return { address, name, symbol, decimals, status, id }
             } else {
                 throw Error(`https://tokens.sushi.com/v0/${chainId}/${address}: Token not found`)

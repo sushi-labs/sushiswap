@@ -3,14 +3,14 @@ import {Token} from "@sushiswap/currency";
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 
-import { UseTokenListQuerySelect } from './types'
+import type { UseTokenListQuerySelect } from './types'
 import { tokenListValidator } from './validator'
 
 export const useTokenListQuery = (select: UseTokenListQuerySelect) =>
   useQuery({
     queryKey: ['https://tokens.sushi.com/v0'],
     queryFn: async () => {
-      const res = await (await fetch(`https://tokens.sushi.com/v0`)).json()
+      const res = await (await fetch('https://tokens.sushi.com/v0')).json()
       return tokenListValidator.parse(res)
     },
     select,

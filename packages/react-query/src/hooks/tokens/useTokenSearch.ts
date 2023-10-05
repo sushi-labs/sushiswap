@@ -23,13 +23,13 @@ export const useTokenSearch = ({address, enabled = true}: UseTokensParams) => {
             const data: Data = await fetch(`https://tokens.sushi.com/v0/search/${address}`).then((response) => response.json())
             return data.reduce<Record<string, { token: Token; official: boolean }>>((acc, {id, name, symbol, decimals, status}) => {
                 const [chainId, address] = id.split(':')
-                acc[getAddress(address)] = {
+                acc[getAddress(String(address))] = {
                     token: new Token({
-                        chainId,
+                        chainId: Number(chainId),
                         name,
                         decimals,
                         symbol,
-                        address,
+                        address: String(address),
                     }),
                     official: status === "APPROVED"
                 }

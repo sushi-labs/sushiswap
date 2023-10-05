@@ -1,6 +1,6 @@
 'use client'
 
-import { tridentConstantPoolAbi, tridentConstantPoolFactoryAbi } from '@sushiswap/abi'
+import { tridentConstantPoolAbi, tridentConstantPoolFactoryAbi } from 'sushi/abi'
 import { computeTridentConstantPoolAddress, Fee, TridentConstantPool } from '@sushiswap/amm'
 import { Amount, Currency, Token } from '@sushiswap/currency'
 import { useMemo } from 'react'

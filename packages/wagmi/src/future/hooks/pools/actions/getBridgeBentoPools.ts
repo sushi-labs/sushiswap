@@ -1,4 +1,4 @@
-import { balanceOfAbi } from '@sushiswap/abi'
+import { balanceOfAbi } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Token } from '@sushiswap/currency'
 import { convertTokenToBento } from '@sushiswap/router/dist/liquidity-providers/Trident'

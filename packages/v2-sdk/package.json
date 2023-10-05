@@ -48,6 +48,6 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "18",
-    "typescript": "5.2.2"
+    "typescript": "5.0.4"
   }
 }

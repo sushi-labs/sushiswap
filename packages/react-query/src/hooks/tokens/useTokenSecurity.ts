@@ -41,7 +41,14 @@ const fetchTokenSecurityQueryFn = async (currencies: (Token | undefined)[]) => {
   )
 
   const honeypots = tokenSecurity.reduce(
-    (acc, cur, i) => (cur?.is_honeypot === '1' ? [...acc, supportedCurrencies[i].address] : acc),
+    (acc, cur, i) => {
+      const isHoneypot = cur?.is_honeypot === '1'
+      const supportedCurrencyAddress = supportedCurrencies?.[i]?.address
+      if (isHoneypot && typeof supportedCurrencyAddress === 'string') {
+        return [...acc, supportedCurrencyAddress]
+      }
+      return acc
+    },
     [] as string[]
   )
 
