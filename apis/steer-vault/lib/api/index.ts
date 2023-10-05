@@ -1,10 +1,10 @@
 // eslint-disable-next-line
 import type * as _ from '@prisma/client/runtime'
-import { SushiPoolSelect } from '@sushiswap/pools-api/lib/api/select.js'
+import { SushiPoolSelect } from '@sushiswap/pools-api/lib/api/select'
 
 import { createClient, Prisma, type DecimalToString } from '@sushiswap/database'
 import { deepmergeInto } from 'deepmerge-ts'
-import type { SteerVaultApiSchema, SteerVaultCountApiSchema, SteerVaultsApiSchema } from './../schemas/index.js'
+import type { SteerVaultApiSchema, SteerVaultCountApiSchema, SteerVaultsApiSchema } from './../schemas'
 
 function parseWhere(args: typeof SteerVaultsApiSchema._output | typeof SteerVaultCountApiSchema._output) {
   const where: NonNullable<Prisma.SteerVaultWhereInput> = {}

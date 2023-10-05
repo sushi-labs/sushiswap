@@ -2,7 +2,7 @@
 
 import { AngleRewardsPool, useAngleRewardsMultipleChains } from '@sushiswap/react-query'
 import { Card, CardHeader, CardTitle, Container, DataTable } from '@sushiswap/ui'
-import { Carousel } from '@sushiswap/ui/components/Carousel'
+import { Carousel } from '@sushiswap/ui/components/carousel'
 import { useAccount } from '@sushiswap/wagmi'
 import { ColumnDef, PaginationState } from '@tanstack/react-table'
 import { ANGLE_ENABLED_NETWORKS } from 'config'

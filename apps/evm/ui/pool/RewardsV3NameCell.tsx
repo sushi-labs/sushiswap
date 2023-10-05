@@ -3,7 +3,7 @@
 import { InformationCircleIcon } from '@heroicons/react/24/outline'
 import { AngleRewardsPool } from '@sushiswap/react-query'
 import { Chip, HoverCard, HoverCardContent, HoverCardPrimitive, HoverCardTrigger } from '@sushiswap/ui'
-import { Badge } from '@sushiswap/ui/components/Badge'
+import { Badge } from '@sushiswap/ui/components/badge'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { Row } from '@tanstack/react-table'

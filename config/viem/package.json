@@ -17,15 +17,15 @@
   "author": "Matthew Lilley <hello@matthewlilley.com>",
   "sideEffects": false,
   "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
   "files": [
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs --dts --external viem",
+    "build": "tsup src/index.ts --format cjs,esm --dts --external viem",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "jest": {

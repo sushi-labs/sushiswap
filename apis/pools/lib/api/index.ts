@@ -4,9 +4,9 @@ import type * as _ from '@prisma/client/runtime'
 import { createClient, Prisma, type DecimalToString } from '@sushiswap/database'
 import { isPromiseFulfilled } from 'sushi'
 import { deepmergeInto } from 'deepmerge-ts'
-import type { PoolApiSchema, PoolCountApiSchema, PoolsApiSchema } from './../schemas/index.js'
-import { getUnindexedPool } from '../getUnindexedPool.js'
-import { SushiPoolSelect } from './select.js'
+import type { PoolApiSchema, PoolCountApiSchema, PoolsApiSchema } from './../schemas'
+import { getUnindexedPool } from '../getUnindexedPool'
+import { SushiPoolSelect } from './select'
 
 function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSchema._output) {
   const where: NonNullable<Prisma.SushiPoolWhereInput> = {}
@@ -169,7 +169,7 @@ export async function getEarnPools(args: typeof PoolsApiSchema._output) {
     const fetchedPoolIds = poolsRetyped.map((pool) => pool.id)
     const unfetchedPoolIds = args.ids.filter((id) => !fetchedPoolIds.includes(id))
 
-    const { getUnindexedPool } = await import('../getUnindexedPool.js')
+    const { getUnindexedPool } = await import('../getUnindexedPool')
 
     const unindexedPoolsResults = await Promise.allSettled(unfetchedPoolIds.map((id) => getUnindexedPool(id)))
     const unindexedPools = unindexedPoolsResults.flatMap((res) => (isPromiseFulfilled(res) ? [res.value] : []))

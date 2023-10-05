@@ -2,8 +2,7 @@ import { Button, Container, LinkExternal, LinkInternal, Separator, typographyVar
 import { Metadata } from 'next'
 import React from 'react'
 import { CollabHubImage } from 'ui/(landing)/partner/CollabHubImage'
-
-import { FarmerImage } from '../../../ui/(landing)/partner/FarmerImage'
+import { FarmerImage } from 'ui/(landing)/partner/FarmerImage'
 
 export const metadata: Metadata = {
   title: 'Partner Portal',
@@ -94,6 +93,7 @@ export default async function PartnerPage() {
                   viewBox="0 0 9 9"
                   className="hidden absolute right-full mr-6 top-2 text-blue md:mr-12 w-[calc(0.5rem+1px)] h-[calc(0.5rem+1px)] overflow-visible sm:block"
                 >
+                  <title>{step.title}</title>
                   <circle cx="4.5" cy="4.5" r="4.5" stroke="currentColor" className="fill-blue" strokeWidth="2" />
                 </svg>
                 <div className="relative">

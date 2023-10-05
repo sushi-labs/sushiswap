@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Page } from '@playwright/test'
 import { Fee } from '@sushiswap/base-sdk'
 import { Native, SUSHI, Token, Type } from '@sushiswap/currency'

@@ -1,11 +1,11 @@
-import { getEarnPoolCount as getEarnPoolCountOriginal } from '@sushiswap/pools-api/lib/api/index.js'
-import { PoolCountApiSchema } from '@sushiswap/pools-api/lib/schemas/count.js'
+import { getEarnPoolCount as getEarnPoolCountOriginal } from '@sushiswap/pools-api/lib/api'
+import { PoolCountApiSchema } from '@sushiswap/pools-api/lib/schemas/count'
 import { fetch } from '@whatwg-node/fetch'
 import useSWR from 'swr'
 
-import { POOL_API } from '../../constants.js'
-import { parseArgs } from '../../functions.js'
-import type { GetApiInputFromOutput, SWRHookConfig } from '../../types.js'
+import { POOL_API } from '../../constants'
+import { parseArgs } from '../../functions'
+import type { GetApiInputFromOutput, SWRHookConfig } from '../../types'
 
 export { PoolCountApiSchema }
 export type PoolCount = Awaited<ReturnType<typeof getEarnPoolCountOriginal>>

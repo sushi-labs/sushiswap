@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-import { getTokens } from '../../lib/api.js'
+import { getTokens } from '../../lib/api'
 
 const handler = async (_request: VercelRequest, response: VercelResponse) => {
   response.setHeader('Cache-Control', 's-maxage=900, stale-while-revalidate=86400')

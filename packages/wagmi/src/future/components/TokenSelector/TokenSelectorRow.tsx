@@ -12,7 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import { Badge } from '@sushiswap/ui/components/Badge'
+import { Badge } from '@sushiswap/ui/components/badge'
 import { Icon } from '@sushiswap/ui/components/currency/Icon'
 import React, { CSSProperties, FC, memo, useCallback } from 'react'
 
@@ -61,6 +61,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
       <div
         testdata-id={`${id}-row-${currency.isNative ? AddressZero : currency.wrapped.address.toLowerCase()}`}
         onClick={onClick}
+        onKeyDown={onClick}
         className={classNames(
           className,
           selected ? 'bg-primary' : '',

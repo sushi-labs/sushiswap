@@ -31,7 +31,8 @@
   "dependencies": {
     "numeral": "2.0.6",
     "tiny-invariant": "1.3.1",
-    "decimal.js-light": "2.5.1"
+    "decimal.js-light": "2.5.1",
+    "toformat": "2.0.0"
   },
   "devDependencies": {
     "@sushiswap/typescript-config": "workspace:*",

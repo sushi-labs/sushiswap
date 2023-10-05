@@ -1,4 +1,4 @@
-import { Badge } from '@sushiswap/ui/components/Badge'
+import { Badge } from '@sushiswap/ui/components/badge'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import React, { FC } from 'react'

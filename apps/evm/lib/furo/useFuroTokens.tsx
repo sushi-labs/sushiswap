@@ -38,9 +38,9 @@ function useFuroTokens(args: GetFuroTokenArgs) {
             name: furoToken.name,
           })
 
-          let liquidityElastic = BigInt(0)
+          let liquidityElastic = 0n
 
-          if (BigInt(furoToken.rebase.base) !== BigInt(0)) {
+          if (BigInt(furoToken.rebase.base) !== 0n) {
             liquidityElastic =
               (BigInt(furoToken.liquidityShares) * BigInt(furoToken.rebase.elastic)) / BigInt(furoToken.rebase.base)
           }

@@ -1,11 +1,11 @@
-import { getSteerVaultCount as _getSteerVaultCount } from '@sushiswap/steer-vault-api/lib/api/index.js'
-import { SteerVaultCountApiSchema } from '@sushiswap/steer-vault-api/lib/schemas/count.js'
+import { getSteerVaultCount as _getSteerVaultCount } from '@sushiswap/steer-vault-api/lib/api'
+import { SteerVaultCountApiSchema } from '@sushiswap/steer-vault-api/lib/schemas/count'
 import { fetch } from '@whatwg-node/fetch'
 import useSWR from 'swr'
 
-import { STEER_VAULT_API } from '../../constants.js'
-import { parseArgs } from '../../functions.js'
-import type { GetApiInputFromOutput, SWRHookConfig } from '../../types.js'
+import { STEER_VAULT_API } from '../../constants'
+import { parseArgs } from '../../functions'
+import type { GetApiInputFromOutput, SWRHookConfig } from '../../types'
 
 export { SteerVaultCountApiSchema }
 export type SteerVaultCount = Awaited<ReturnType<typeof _getSteerVaultCount>>

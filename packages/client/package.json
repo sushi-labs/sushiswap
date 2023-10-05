@@ -43,13 +43,14 @@
     "@sushiswap/jest-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
+    "react": "18.2.0",
     "swr": "2.1.5",
     "tsup": "7.2.0",
     "typescript": "5.2.2"
   },
   "peerDependencies": {
-    "react": "18.2.0",
-    "swr": "2.1.5"
+    "react": "*",
+    "swr": "*"
   },
   "peerDependenciesMeta": {
     "react": {

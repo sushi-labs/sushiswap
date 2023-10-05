@@ -1,12 +1,12 @@
 import type { ChainId } from '@sushiswap/chain'
 import type {} from '@sushiswap/database'
-import type { getEarnPool as getEarnPoolOriginal } from '@sushiswap/pools-api/lib/api/index.js'
-import { PoolApiSchema } from '@sushiswap/pools-api/lib/schemas/pool.js'
+import type { getEarnPool as getEarnPoolOriginal } from '@sushiswap/pools-api/lib/api'
+import { PoolApiSchema } from '@sushiswap/pools-api/lib/schemas/pool'
 import { fetch } from '@whatwg-node/fetch'
 import useSWR from 'swr'
 
-import { POOL_API } from '../../constants.js'
-import type { GetApiInputFromOutput, SWRHookConfig } from '../../types.js'
+import { POOL_API } from '../../constants'
+import type { GetApiInputFromOutput, SWRHookConfig } from '../../types'
 
 export { PoolApiSchema }
 export type Pool = Awaited<ReturnType<typeof getEarnPoolOriginal>>

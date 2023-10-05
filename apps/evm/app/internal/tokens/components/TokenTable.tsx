@@ -78,6 +78,9 @@ function useColumns() {
           onClick={(e) => {
             e.preventDefault()
           }}
+          onKeyDown={(e) => {
+            e.preventDefault()
+          }}
         >
           <TokenAdder token={row.original} hasIcon={Boolean(row.original.listEntry?.logoURI)} />
         </div>
@@ -88,8 +91,6 @@ function useColumns() {
 
 export const TokenTable: FC<TokenTable> = ({ tokens }) => {
   const columns = useColumns()
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   return <DataTable pagination={true} data={tokens} columns={columns} />
 }

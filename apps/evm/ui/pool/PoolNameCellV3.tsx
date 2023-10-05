@@ -2,7 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { formatNumber } from 'sushi'
 import { classNames } from '@sushiswap/ui'
-import { Badge } from '@sushiswap/ui/components/Badge'
+import { Badge } from '@sushiswap/ui/components/badge'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future/hooks'
@@ -31,11 +31,11 @@ export const PoolNameCellV3: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> = 
           </Badge>
         )}
       </div>
-      <div className="flex sm:hidden"></div>
+      <div className="flex sm:hidden" />
       <div className="flex flex-col gap-0.5">
         <span className="font-medium text-sm flex items-center gap-1 text-gray-900 dark:text-slate-50">
           {_token0?.symbol} <span className="font-normal text-gray-900 dark:text-slate-500">/</span> {_token1?.symbol}{' '}
-          <div className={classNames('text-[10px] bg-gray-200 dark:bg-slate-700 rounded-lg px-1 ml-1')}></div>
+          <div className={classNames('text-[10px] bg-gray-200 dark:bg-slate-700 rounded-lg px-1 ml-1')} />
         </span>
         <div className="flex gap-1">
           <div className="bg-blue/20 text-blue text-[10px] px-2 rounded-full">V3</div>

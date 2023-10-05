@@ -98,7 +98,7 @@ export default function Partner() {
   })
 
   const onSubmit = (values: ApplyForTokenListTokenSchemaType) => {
-    if (token && token.symbol) {
+    if (token?.symbol) {
       mutate({
         ...values,
         tokenName: token.name,
@@ -199,7 +199,7 @@ export default function Partner() {
                           value={value}
                           name={name}
                           onBlur={onBlur}
-                          testdata-id={`tokenAddress`}
+                          testdata-id='tokenAddress'
                           unit={token?.symbol}
                         />
                       </FormControl>

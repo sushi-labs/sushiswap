@@ -32,7 +32,7 @@
     },
     "./package.json": "./package.json"
   },
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
   "module": "dist/index.js",
   "source": "src/index.ts",
   "types": "dist/index.d.ts",
@@ -40,7 +40,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsup src/index.ts --format cjs,esm --dts --external @wagmi/core,@sushiswap/chain --minify",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
@@ -58,6 +58,7 @@
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
     "@wagmi/core": "1.4.1",
+    "tsup": "7.2.0",
     "typescript": "5.2.2"
   },
   "peerDependencies": {

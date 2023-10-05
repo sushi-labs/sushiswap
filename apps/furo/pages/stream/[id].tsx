@@ -3,7 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { formatNumber, shortenAddress } from 'sushi'
 import { Percent } from 'sushi'
 import { SplashController } from '@sushiswap/ui'
-import { Badge } from '@sushiswap/ui/components/Badge'
+import { Badge } from '@sushiswap/ui/components/badge'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { NetworkIcon, SushiIcon } from '@sushiswap/ui/components/icons'
@@ -337,7 +337,7 @@ const _Streams: FC = () => {
                   <List.Control className="max-h-[320px] scroll">
                     {transactions?.map((tx, i) => (
                       <List.KeyValue
-                        key={i}
+                        key={tx.id}
                         flex
                         className="!items-end"
                         title={

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { expect, Page, test } from '@playwright/test'
 import { ChainId } from '@sushiswap/chain'
 import { DAI, Native, SUSHI, Type, USDC, USDT, WBTC } from '@sushiswap/currency'

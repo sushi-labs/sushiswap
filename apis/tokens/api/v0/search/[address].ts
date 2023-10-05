@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
 
-import { getTokensByAddress } from '../../../lib/api.js'
+import { getTokensByAddress } from '../../../lib/api'
 
 const schema = z.object({
   address: z.coerce.string(),

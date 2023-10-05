@@ -54,7 +54,7 @@ export const getBridgeFees = async ({
       const sharedDecimals = stargatePoolResults[2]
       if (localDecimals === sharedDecimals) return amount
       return localDecimals > sharedDecimals
-        ? amount.asFraction.divide(10n ** localDecimals - sharedDecimals)
+        ? amount.asFraction.divide(10n ** (localDecimals - sharedDecimals))
         : amount.asFraction.multiply(10n ** (sharedDecimals - localDecimals))
     })()
 

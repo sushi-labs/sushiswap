@@ -1,6 +1,6 @@
 {
   "extends": "@sushiswap/typescript-config/react-library.json",
-  "include": ["."],
+  "include": ["src"],
   "exclude": ["dist", ".turbo", "node_modules"],
   "compilerOptions": {
     "rootDir": "./src"
