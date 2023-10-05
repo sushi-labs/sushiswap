@@ -5,6 +5,8 @@ import { Token } from '@sushiswap/currency'
 import { PoolCode } from '@sushiswap/router'
 import { Address, PublicClient } from 'viem'
 
+import { AlgebraExtractor, FactoryAlgebra } from './AlgebraExtractor'
+import { AlgebraPoolWatcher, AlgebraPoolWatcherStatus } from './AlgebraPoolWatcher'
 import { LogFilter2, LogFilterType } from './LogFilter2'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { TokenManager } from './TokenManager'
@@ -14,13 +16,6 @@ import { UniV3PoolWatcher, UniV3PoolWatcherStatus } from './UniV3PoolWatcher'
 import { setWarningMessageHandler, WarningMessageHandler } from './WarnLog'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
-
-// TODO: UniV3 price diapason +-10% test
-// TODO: fullness test
-// TODO: correctness test - how ofter fails? (needs good token list)
-
-// TODO: Back to LogFilter ? Faster events applying
-// TODO: Ignore uncaught exception? Not kill the process
 
 // TODO: cache for not-existed pools?
 // TODO: to fill address cache from pool cache
@@ -36,6 +31,7 @@ export class Extractor {
   client: PublicClient
   extractorV2?: UniV2Extractor
   extractorV3?: UniV3Extractor
+  extractorAlg?: AlgebraExtractor
   multiCallAggregator: MultiCallAggregator
   cacheDir: string
 
@@ -50,8 +46,9 @@ export class Extractor {
   /// @param logging to write logs in console or not
   constructor(args: {
     client: PublicClient
-    factoriesV2: FactoryV2[]
-    factoriesV3: FactoryV3[]
+    factoriesV2?: FactoryV2[]
+    factoriesV3?: FactoryV3[]
+    factoriesAlgebra?: FactoryAlgebra[]
     tickHelperContract: Address
     cacheDir: string
     logType?: LogFilterType
@@ -69,7 +66,7 @@ export class Extractor {
       `tokens-${this.multiCallAggregator.chainId}`
     )
     const logFilter = new LogFilter2(this.client, args.logDepth, args.logType ?? LogFilterType.OneCall)
-    if (args.factoriesV2.length > 0)
+    if (args.factoriesV2 && args.factoriesV2.length > 0)
       this.extractorV2 = new UniV2Extractor(
         this.client,
         args.factoriesV2,
@@ -79,11 +76,22 @@ export class Extractor {
         this.multiCallAggregator,
         tokenManager
       )
-    if (args.factoriesV3.length > 0)
+    if (args.factoriesV3 && args.factoriesV3.length > 0)
       this.extractorV3 = new UniV3Extractor(
         this.client,
         args.tickHelperContract,
         args.factoriesV3,
+        args.cacheDir,
+        logFilter,
+        args.logging !== undefined ? args.logging : false,
+        this.multiCallAggregator,
+        tokenManager
+      )
+    if (args.factoriesAlgebra && args.factoriesAlgebra.length > 0)
+      this.extractorAlg = new AlgebraExtractor(
+        this.client,
+        args.tickHelperContract,
+        args.factoriesAlgebra,
         args.cacheDir,
         logFilter,
         args.logging !== undefined ? args.logging : false,
@@ -95,7 +103,9 @@ export class Extractor {
 
   /// @param tokensPrefetch Prefetch all pools between these tokens
   async start(tokensPrefetch: Token[] = []) {
-    await Promise.all([this.extractorV2?.start(), this.extractorV3?.start()].filter((e) => e !== undefined))
+    await Promise.all(
+      [this.extractorV2?.start(), this.extractorV3?.start(), this.extractorAlg?.start()].filter((e) => e !== undefined)
+    )
     this.getPoolCodesForTokens(tokensPrefetch)
     this.printTokensPoolsQuantity(this.cacheDir, `TokensStatus-${this.multiCallAggregator?.chainId}`)
   }
@@ -112,7 +122,13 @@ export class Extractor {
           .prefetched.map((w) => w.getPoolCode())
           .filter((pc) => pc !== undefined) as PoolCode[])
       : []
-    return pools2.concat(pools3)
+    const poolsAlg = this.extractorAlg
+      ? (this.extractorAlg
+          .getWatchersForTokens(tokensUnique)
+          .prefetched.map((w) => w.getPoolCode())
+          .filter((pc) => pc !== undefined) as PoolCode[])
+      : []
+    return pools2.concat(pools3).concat(poolsAlg)
   }
 
   getPoolCodesForTokensFull(tokens: Token[]): {
@@ -139,12 +155,22 @@ export class Extractor {
       prefetched = prefetched.concat(pools3Prefetched)
       fetchingNumber += pools3.fetching.length
     }
+    if (this.extractorAlg) {
+      const poolsAlg = this.extractorAlg.getWatchersForTokens(tokensUnique)
+      const poolsAlgPrefetched = poolsAlg.prefetched
+        .map((w) => w.getPoolCode())
+        .filter((pc) => pc !== undefined) as PoolCode[]
+
+      prefetched = prefetched.concat(poolsAlgPrefetched)
+      fetchingNumber += poolsAlg.fetching.length
+    }
     return { prefetched, fetchingNumber }
   }
 
   async getPoolCodesForTokensAsync(tokens: Token[], timeout: number): Promise<PoolCode[]> {
     let poolsV2: PoolCode[] = []
     let watchersV3: UniV3PoolWatcher[] = []
+    let watchersAlg: AlgebraPoolWatcher[] = []
     let promises: Promise<void>[] = []
 
     const tokenMap = new Map<string, Token>()
@@ -176,17 +202,37 @@ export class Extractor {
       )
     }
 
+    if (this.extractorAlg) {
+      const { prefetched, fetching } = this.extractorAlg.getWatchersForTokens(tokensUnique)
+      watchersAlg = prefetched
+      prefetched.forEach((w) => {
+        if (w.getStatus() !== AlgebraPoolWatcherStatus.All) promises.push(w.statusAll())
+      })
+      promises = promises.concat(
+        fetching.map(async (p) => {
+          const w = await p
+          if (w === undefined) return
+          watchersAlg.push(w)
+          if (w.getStatus() !== AlgebraPoolWatcherStatus.All) await w.statusAll()
+        })
+      )
+    }
+
     await Promise.any([Promise.allSettled(promises), delay(timeout)])
     const poolsV3 = watchersV3
       .map((w) => w.getPoolCode())
       .filter((pc) => pc !== undefined && pc.pool.reserve0 > 0n && pc.pool.reserve1 > 0n) as PoolCode[]
-    return poolsV3.concat(poolsV2)
+    const poolsAlg = watchersAlg
+      .map((w) => w.getPoolCode())
+      .filter((pc) => pc !== undefined && pc.pool.reserve0 > 0n && pc.pool.reserve1 > 0n) as PoolCode[]
+    return poolsV3.concat(poolsAlg).concat(poolsV2)
   }
 
   getTokensPoolsQuantity(): [Token, number][] {
     const tokenMap: Map<Token, number> = new Map()
     if (this.extractorV2) this.extractorV2.getTokensPoolsQuantity(tokenMap)
     if (this.extractorV3) this.extractorV3.getTokensPoolsQuantity(tokenMap)
+    if (this.extractorAlg) this.extractorAlg.getTokensPoolsQuantity(tokenMap)
     return Array.from(tokenMap.entries()).sort(([, a], [, b]) => b - a)
   }
 
@@ -213,6 +259,7 @@ export class Extractor {
   getCurrentPoolCodes() {
     const pools2 = this.extractorV2 ? this.extractorV2.getCurrentPoolCodes() : []
     const pools3 = this.extractorV3 ? this.extractorV3.getCurrentPoolCodes() : []
-    return pools2.concat(pools3)
+    const poolsAlg = this.extractorAlg ? this.extractorAlg.getCurrentPoolCodes() : []
+    return pools2.concat(pools3).concat(poolsAlg)
   }
 }
