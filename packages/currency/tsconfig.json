@@ -6,6 +6,10 @@
     "moduleResolution": "NodeNext",
     "module": "NodeNext",
     "target": "ESNext",
-    "lib": ["ESNext", "DOM"]
+    "lib": ["ESNext", "DOM"],
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
+    "sourceMap": true
   }
 }
