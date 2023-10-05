@@ -28,9 +28,9 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
     "prepublishOnly": "pnpm build",
-    "start": "npx ts-node --transpile-only --files examples/server.ts",
+    "start": "npx tsx examples/server.ts",
     "test": "jest --passWithNoTests",
-    "test:server": "npx ts-node --transpile-only --prefer-ts-exts --files examples/extractor.ts",
+    "test:server": "npx tsx examples/extractor.ts",
     "test:load": "artillery run test/load.yml"
   },
   "dependencies": {
