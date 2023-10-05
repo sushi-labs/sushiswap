@@ -7,7 +7,7 @@ runs:
     - name: Set up pnpm
       uses: pnpm/action-setup@v2
       with:
-        version: 7.9.5
+        version: 8.8.0
 
     - name: Set up node
       uses: actions/setup-node@v3
