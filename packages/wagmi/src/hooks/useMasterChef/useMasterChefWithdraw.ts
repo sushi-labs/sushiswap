@@ -10,7 +10,7 @@ import { useAccount, usePrepareSendTransaction, useSendTransaction } from 'wagmi
 import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
 import { masterchefV2Abi, minichefV2Abi } from '../../abis'
-import { useMasterChefContract } from '../useMasterChefContract'
+import { getMasterChefContractConfig } from '../useMasterChefContract'
 import { UsePrepareSendTransactionConfig } from '../useSendTransaction'
 
 interface UseMasterChefWithdrawParams {
@@ -25,7 +25,6 @@ type UseMasterChefWithdraw = (params: UseMasterChefWithdrawParams) => ReturnType
 
 export const useMasterChefWithdraw: UseMasterChefWithdraw = ({ chainId, amount, chef, pid, enabled = true }) => {
   const { address } = useAccount()
-  const contract = useMasterChefContract(chainId, chef)
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined, error: Error | null) => {
@@ -54,38 +53,40 @@ export const useMasterChefWithdraw: UseMasterChefWithdraw = ({ chainId, amount, 
   )
 
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
-    if (!address || !chainId || !amount || !contract) return
+    if (!address || !chainId || !amount || !chef) return
 
-    let data
-    switch (chef) {
-      case ChefType.MasterChefV1:
-        data = encodeFunctionData({
-          abi: masterChefV1Abi,
-          functionName: 'withdraw',
-          args: [BigInt(pid), BigInt(amount.quotient.toString())],
-        })
-        break
-      case ChefType.MasterChefV2:
-        data = encodeFunctionData({
-          abi: masterchefV2Abi,
-          functionName: 'withdraw',
-          args: [BigInt(pid), BigInt(amount.quotient.toString()), address],
-        })
-        break
-      case ChefType.MiniChef:
-        data = encodeFunctionData({
-          abi: minichefV2Abi,
-          functionName: 'withdrawAndHarvest',
-          args: [BigInt(pid), BigInt(amount.quotient.toString()), address],
-        })
-    }
+    if (getMasterChefContractConfig(chainId, chef)?.address) {
+      let data
+      switch (chef) {
+        case ChefType.MasterChefV1:
+          data = encodeFunctionData({
+            abi: masterChefV1Abi,
+            functionName: 'withdraw',
+            args: [BigInt(pid), BigInt(amount.quotient.toString())],
+          })
+          break
+        case ChefType.MasterChefV2:
+          data = encodeFunctionData({
+            abi: masterchefV2Abi,
+            functionName: 'withdraw',
+            args: [BigInt(pid), BigInt(amount.quotient.toString()), address],
+          })
+          break
+        case ChefType.MiniChef:
+          data = encodeFunctionData({
+            abi: minichefV2Abi,
+            functionName: 'withdrawAndHarvest',
+            args: [BigInt(pid), BigInt(amount.quotient.toString()), address],
+          })
+      }
 
-    return {
-      from: address,
-      to: contract.address,
-      data,
+      return {
+        from: address,
+        to: getMasterChefContractConfig(chainId, chef)?.address,
+        data,
+      }
     }
-  }, [address, amount, chainId, chef, contract, pid])
+  }, [address, amount, chainId, chef, pid])
 
   const { config } = usePrepareSendTransaction({
     ...prepare,

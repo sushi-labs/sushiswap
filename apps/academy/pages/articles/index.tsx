@@ -26,9 +26,9 @@ export async function getStaticProps() {
   return {
     props: {
       fallback: {
-        ['/difficulties']: difficulties?.difficulties,
-        ['/topics']: topics?.topics,
-        ['/products']: products?.products,
+        '/difficulties': difficulties?.difficulties,
+        '/topics': topics?.topics,
+        '/products': products?.products,
       },
     },
     revalidate: 1,
@@ -117,13 +117,11 @@ const _Articles: FC = () => {
         ...(topicSlug && { topics: { slug: { eq: topicSlug } } }),
       }
 
-      return (
-        await getArticles({
-          filters,
-          pagination: { page: searchPage, pageSize: 10 },
-          sort: [sortKey],
-        })
-      )?.articles
+      return await getArticles({
+        filters,
+        pagination: { page: searchPage, pageSize: 10 },
+        sort: [sortKey],
+      })
     },
     {
       revalidateOnFocus: false,
@@ -218,6 +216,7 @@ const _Articles: FC = () => {
                     selectedProduct?.id === product.id && 'bg-blue-500'
                   )}
                   onClick={() => handleSelectProduct(product)}
+                  onKeyUp={() => handleSelectProduct(product)}
                 >
                   {product.attributes?.longName}
                 </span>
@@ -230,6 +229,7 @@ const _Articles: FC = () => {
                     selectedTopic?.id === topic.id && 'bg-blue-500'
                   )}
                   onClick={() => handleSelectTopic(topic)}
+                  onKeyUp={() => handleSelectTopic(topic)}
                 >
                   {topic.attributes?.name}
                 </span>

@@ -113,6 +113,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
     underlying1: stakedUnderlying1,
     isLoading: isStakedLoading,
   } = usePoolPositionStaked()
+
   const { sendTransaction, isLoading: isWritePending } = useMasterChefWithdraw({
     chainId: pool.chainId,
     amount: stakedBalance,
@@ -268,10 +269,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   const { data: deadline } = useTransactionDeadline({ chainId: pool.chainId as ChainId })
 
   const {
-    writeAsync,
-    isLoading: isMigrateLoading,
-    isError,
-    data,
+    write: { writeAsync, isLoading: isMigrateLoading, data },
+    prepare: { isError },
   } = useV3Migrate({
     account: address,
     args: {
@@ -327,17 +326,19 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
             guardText="No staked balance found"
             guardWhen={Boolean(stakedBalance?.equalTo(ZERO))}
           >
-            <Checker.Connect size="default">
-              <Checker.Network size="default" chainId={pool.chainId}>
+            <Checker.Connect fullWidth={false} size="default">
+              <Checker.Network fullWidth={false} size="default" chainId={pool.chainId}>
                 <Checker.ApproveERC20
+                  fullWidth={false}
                   size="default"
                   id="approve-token0"
                   amount={stakedBalance}
-                  contract={getMasterChefContractConfig(pool.chainId, pool.incentives[0].chefType)?.address}
-                  enabled={Boolean(getMasterChefContractConfig(pool.chainId, pool.incentives[0].chefType)?.address)}
+                  contract={getMasterChefContractConfig(pool.chainId, pool.incentives[0]?.chefType)?.address}
+                  enabled={Boolean(getMasterChefContractConfig(pool.chainId, pool.incentives[0]?.chefType)?.address)}
                 >
                   <Checker.Success tag={APPROVE_TAG_UNSTAKE}>
                     <Button
+                      fullWidth={false}
                       size="default"
                       onClick={() => sendTransaction?.()}
                       disabled={!approved || isWritePending}
@@ -513,7 +514,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                         <Checker.ApproveERC20
                           fullWidth
                           size="default"
-                          id="approve-token0"
+                          id="approve-migrate"
                           amount={balance?.[FundSource.WALLET] ?? undefined}
                           contract={V3MigrateContractConfig(pool.chainId as V3MigrateChainId).address}
                           enabled={Boolean(V3MigrateContractConfig(pool.chainId as V3MigrateChainId).address)}
@@ -523,8 +524,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                               {({ confirm }) => (
                                 <>
                                   <DialogTrigger asChild>
-                                    <Button fullWidth size="default" testId="swap">
-                                      Incentivize pool
+                                    <Button fullWidth size="default" testId="migrate">
+                                      Migrate Liquidity
                                     </Button>
                                   </DialogTrigger>
                                   <DialogContent>
@@ -681,7 +682,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                         onClick={() => writeAsync?.().then(() => confirm())}
                                         disabled={isMigrateLoading || isError}
                                         color={isError ? 'red' : 'blue'}
-                                        testId="unstake-liquidity"
+                                        testId="migrate-confirm"
                                       >
                                         {isError ? (
                                           'Shoot! Something went wrong :('

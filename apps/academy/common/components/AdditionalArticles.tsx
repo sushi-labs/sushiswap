@@ -17,7 +17,7 @@ export const AdditionalArticles: FC<AdditionalArticles> = ({ title, children, cl
       <div className={classNames('flex justify-between', DEFAULT_SIDE_PADDING)}>
         <span className="text-xl font-bold sm:text-2xl">{title}</span>
         <Button icon={PlusCircleIcon} iconProps={{ fill: '#3B7EF6' }} variant="secondary" className="sm:hidden">
-          <LinkInternal href="/academy/articles">View All</LinkInternal>
+          <LinkInternal href="/articles">View All</LinkInternal>
         </Button>
       </div>
 
@@ -31,7 +31,7 @@ export const AdditionalArticles: FC<AdditionalArticles> = ({ title, children, cl
       </div>
       <div className={classNames('hidden sm:flex justify-center', DEFAULT_SIDE_PADDING)}>
         <Button icon={PlusCircleIcon} iconProps={{ fill: '#3B7EF6' }} variant="secondary" className="hidden sm:flex">
-          <LinkInternal href="/academy/articles">View All</LinkInternal>
+          <LinkInternal href="/articles">View All</LinkInternal>
         </Button>
       </div>
     </div>

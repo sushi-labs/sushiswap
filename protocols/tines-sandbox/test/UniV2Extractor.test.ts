@@ -1,11 +1,11 @@
 import { routeProcessor2Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
-import { FactoryV2, UniV2Extractor } from '@sushiswap/extractor'
+import { FactoryV2, LogFilter2, LogFilterType, UniV2Extractor } from '@sushiswap/extractor'
 import { TokenManager } from '@sushiswap/extractor/dist/TokenManager'
 import { LiquidityProviders, NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { getBigNumber, RouteStatus } from '@sushiswap/tines'
+import { RouteStatus } from '@sushiswap/tines'
 import { Address, createPublicClient, http } from 'viem'
 import { Chain, mainnet } from 'viem/chains'
 
@@ -26,7 +26,8 @@ async function startInfinitTest(args: {
   })
   const chainId = client.chain?.id as ChainId
 
-  const extractor = new UniV2Extractor(client, args.factories, './cache', 200)
+  const logFilter = new LogFilter2(this.client, 200, LogFilterType.OneCall)
+  const extractor = new UniV2Extractor(client, args.factories, './cache', logFilter)
   await extractor.start()
 
   const nativeProvider = new NativeWrapProvider(chainId, client)
@@ -37,11 +38,11 @@ async function startInfinitTest(args: {
     for (let i = 1; i < tokens.length; ++i) {
       await delay(1000)
       const time0 = performance.now()
-      const { prefetchedPools: pools0, fetchingPools: poolsPromise } = extractor.getPoolsForTokens(
+      const { prefetched: pools0, fetching: poolsPromise } = extractor.getPoolsForTokens(
         BASES_TO_CHECK_TRADES_AGAINST[chainId].concat([tokens[i]])
       )
       const time1 = performance.now()
-      const pools1 = poolsPromise === undefined ? [] : await poolsPromise
+      const pools1 = (await Promise.all(poolsPromise)).filter((p): p is NonNullable<typeof p> => p !== undefined)
       const time2 = performance.now()
       console.log(
         `Timing: ${pools0.length} pools ${Math.round(time1 - time0)}ms, ${pools1.length} pools ${Math.round(
@@ -54,8 +55,8 @@ async function startInfinitTest(args: {
       nativeProvider.getCurrentPoolList().forEach((p) => poolMap.set(p.pool.address, p))
       const fromToken = Native.onChain(chainId),
         toToken = tokens[i]
-      const route = Router.findBestRoute(poolMap, chainId, fromToken, getBigNumber(1e18), toToken, 30e9)
-      if (route.status == RouteStatus.NoWay) {
+      const route = Router.findBestRoute(poolMap, chainId, fromToken, BigInt(1e18), toToken, 30e9)
+      if (route.status === RouteStatus.NoWay) {
         console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status}`)
         continue
       }
@@ -72,23 +73,26 @@ async function startInfinitTest(args: {
         continue
       }
       try {
-        const amountOutReal = await client.readContract({
-          address: args.RP3Address,
-          abi: routeProcessor2Abi,
-          functionName: 'processRoute',
-          args: [
-            rpParams.tokenIn as Address,
-            BigInt(rpParams.amountIn.toString()),
-            rpParams.tokenOut as Address,
-            0n,
-            rpParams.to as Address,
-            rpParams.routeCode as Address, // !!!!
-          ],
-          value: BigInt(rpParams.value?.toString() as string),
-        })
+        const amountOutReal = await client
+          .simulateContract({
+            address: args.RP3Address,
+            abi: routeProcessor2Abi,
+            functionName: 'processRoute',
+            args: [
+              rpParams.tokenIn as Address,
+              BigInt(rpParams.amountIn.toString()),
+              rpParams.tokenOut as Address,
+              0n,
+              rpParams.to as Address,
+              rpParams.routeCode as Address, // !!!!
+            ],
+            value: BigInt(rpParams.value?.toString() as string),
+          })
+          .then((r) => r.result)
+
         const amountOutExp = BigInt(route.amountOutBI.toString())
         const diff =
-          amountOutExp == 0n ? amountOutReal - amountOutExp : Number(amountOutReal - amountOutExp) / route.amountOut
+          amountOutExp === 0n ? amountOutReal - amountOutExp : Number(amountOutReal - amountOutExp) / route.amountOut
         console.log(
           `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.legs.length - 1} pools` +
             ` diff = ${diff > 0 ? '+' : ''}${diff}`
@@ -107,7 +111,8 @@ async function allPoolsPrefetchingTest(args: { providerURL: string; chain: Chain
     chain: args.chain,
     transport: transport,
   })
-  const extractor = new UniV2Extractor(client, args.factories, './cache', 200)
+  const logFilter = new LogFilter2(this.client, 200, LogFilterType.OneCall)
+  const extractor = new UniV2Extractor(client, args.factories, './cache', logFilter)
   await extractor.start()
   const start = performance.now()
   await extractor.addPoolsFromFactory(args.factories[0].address)

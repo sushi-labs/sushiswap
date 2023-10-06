@@ -236,7 +236,7 @@ export function formatTickPrice({ price, atLimit, direction, placeholder }: Form
     return placeholder
   }
 
-  return price?.toSignificant(4)
+  return price?.toSignificant(6)
 }
 
 export const rewardPerDay = ({

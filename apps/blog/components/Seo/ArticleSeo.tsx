@@ -1,11 +1,11 @@
+import { GhostArticle } from 'lib/ghost'
 import { ArticleJsonLd, NextSeo } from 'next-seo'
 import { FC } from 'react'
 
 import { getOptimizedMedia, isMediaVideo } from '../../lib/media'
-import { Article } from '../../types'
 
 interface ArticleSeo {
-  article?: Article['attributes']
+  article?: GhostArticle['attributes']
 }
 
 export const ArticleSeo: FC<ArticleSeo> = ({ article }) => {

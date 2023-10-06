@@ -65,6 +65,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot(
       amount,
       pid: farmId,
       chef: chefType,
+      enabled: Boolean(chainId && amount?.greaterThan(ZERO)),
     })
 
     return (

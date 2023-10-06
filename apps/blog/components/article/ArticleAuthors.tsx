@@ -1,21 +1,22 @@
+import { GhostArticle } from 'lib/ghost'
 import { FC } from 'react'
-import { Article } from 'types'
 
 import { Image } from '../Image'
 
 interface ArticleAuthors {
-  article?: Article
+  article?: GhostArticle
 }
 
 export const ArticleAuthors: FC<ArticleAuthors> = ({ article }) => {
   return (
     <div className="mt-6">
       <ul className="flex flex-wrap -mx-5 -mt-6 text-sm leading-6">
-        {article?.attributes?.authors?.data.map((author, index) => (
-          <li key={index} className="flex items-center px-5 mt-6 font-medium whitespace-nowrap">
+        {article?.attributes?.authors?.data.map((author) => (
+          <li key={author.attributes?.email} className="flex items-center px-5 mt-6 font-medium whitespace-nowrap">
             <div className="relative mr-3 overflow-hidden rounded-full w-9 h-9 bg-slate-800">
-              {author?.attributes?.avatar.data && (
-                <Image image={author?.attributes.avatar.data} width={64} height={64} />
+              {author.attributes.avatar.data && (
+                // eslint-disable-next-line
+                <Image image={author.attributes.avatar.data} width={64} height={64} />
               )}
             </div>
             <div className="text-sm leading-4">

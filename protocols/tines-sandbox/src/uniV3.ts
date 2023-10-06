@@ -14,6 +14,7 @@ import ERC20Mock from '../artifacts/contracts/ERC20Mock.sol/ERC20Mock.json'
 import TestRouter from '../artifacts/contracts/TestRouter.sol/TestRouter.json'
 import UniswapV3Factory from '../artifacts/contracts/UniswapV3FactoryFlat.sol/UniswapV3Factory.json'
 import { testRouterAbi } from './abis'
+import { getDeploymentAddress, getRndLin, getRndLinInt } from './utils'
 
 const ZERO = 0n
 
@@ -39,9 +40,6 @@ feeAmountTickSpacing[100] = 1 // 0.01%
 feeAmountTickSpacing[500] = 10 // 0.05%
 feeAmountTickSpacing[3000] = 60 // 0.3%
 feeAmountTickSpacing[10000] = 200 // 1%
-
-export const getDeploymentAddress = async (client: WalletClient, promise: Promise<Hex>) =>
-  waitForTransactionReceipt(client, { hash: await promise }).then((receipt) => receipt.contractAddress as Address)
 
 // Makes artificial environment, deploys factory, smallpositionmanager for mint and swap
 export async function createUniV3EnvZero(walletClient: WalletClient, userDeployContracts?: Address) {
@@ -108,8 +106,7 @@ export async function createUniV3EnvZero(walletClient: WalletClient, userDeployC
     address: TestRouterAddress,
   }
 
-  return {
-    walletClient: walletClient as any,
+  const ret = {
     user,
     tokenFactory,
     SushiV3Factory,
@@ -128,7 +125,6 @@ export async function createUniV3EnvZero(walletClient: WalletClient, userDeployC
       return liquidity
     },
   } satisfies {
-    walletClient: WalletClient
     user: Address
     tokenFactory: Omit<DeployContractParameters<typeof erc20Abi>, 'args' | 'type'>
     SushiV3Factory: Contract<typeof sushiV3FactoryAbi>
@@ -137,6 +133,12 @@ export async function createUniV3EnvZero(walletClient: WalletClient, userDeployC
     minter: Contract<typeof testRouterAbi>
     mint: (pool: UniV3PoolInfo, from: number, to: number, liquidity: bigint) => Promise<bigint>
   }
+
+  // Weird hack to make typescript happy
+  return {
+    ...ret,
+    walletClient: walletClient,
+  } as typeof ret & { walletClient: WalletClient }
 }
 
 export type UniV3Environment = Awaited<ReturnType<typeof createUniV3EnvZero>>
@@ -429,13 +431,6 @@ export async function createUniV3Pool(
   )
 
   return poolInfo
-}
-
-function getRndLin(rnd: () => number, min: number, max: number) {
-  return rnd() * (max - min) + min
-}
-export function getRndLinInt(rnd: () => number, min: number, max: number) {
-  return Math.floor(getRndLin(rnd, min, max))
 }
 
 export async function createRandomUniV3Pool(

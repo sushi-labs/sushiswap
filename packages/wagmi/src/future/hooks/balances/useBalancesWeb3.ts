@@ -3,6 +3,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { useQuery } from '@tanstack/react-query'
+import { useEffect } from 'react'
 
 import { Address, erc20ABI, fetchBalance, readContracts } from '../../..'
 
@@ -14,7 +15,7 @@ interface UseBalanceParams {
 }
 
 export const queryFnUseBalances = async ({ chainId, currencies, account }: Omit<UseBalanceParams, 'enabled'>) => {
-  if (!account || !chainId) return null
+  if (!account || !chainId || !currencies) return null
   const native = await fetchBalance({ address: account, chainId, formatUnits: 'wei' })
   const [validatedTokens, validatedTokenAddresses] = currencies.reduce<[Token[], Address[]]>(
     (acc, currencies) => {
@@ -55,10 +56,16 @@ export const queryFnUseBalances = async ({ chainId, currencies, account }: Omit<
 }
 
 export const useBalancesWeb3 = ({ chainId, currencies, account, enabled = true }: UseBalanceParams) => {
+  useEffect(() => {
+    if (currencies && currencies.length > 100) {
+      throw new Error('useBalancesWeb3: currencies length > 100, this will hurt performance and cause rate limits')
+    }
+  }, [currencies])
+
   return useQuery({
-    queryKey: ['useBalances', { chainId, currencies, account }],
+    queryKey: ['useBalancesWeb3', { chainId, currencies, account }],
     queryFn: () => queryFnUseBalances({ chainId, currencies, account }),
     refetchInterval: 10000,
-    enabled: Boolean(chainId && account && enabled),
+    enabled: Boolean(chainId && account && enabled && currencies),
   })
 }

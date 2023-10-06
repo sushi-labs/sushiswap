@@ -14,7 +14,7 @@ interface Card {
 
 export const Card: FC<Card> = ({ article }) => {
   return (
-    <LinkInternal href={`/blog/${article?.attributes?.slug}`} className="group">
+    <LinkInternal href={`/${article?.attributes?.slug}`} className="group">
       <div className="transition duration-[400ms] relative h-[400px] cursor-pointer w-full rounded-xl shadow-md bg-slate-800 overflow-hidden hover:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
         <div className="relative h-[240px]">
           {article?.attributes?.cover?.data && (

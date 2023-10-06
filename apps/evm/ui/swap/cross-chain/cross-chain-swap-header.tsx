@@ -23,7 +23,7 @@ export const CrossChainSwapHeader = () => {
   }, [token0, token1])
 
   const [token0FiatPrice] = useTokenAmountDollarValues({ chainId: chainId0, amounts: amounts[0] })
-  const [token1FiatPrice] = useTokenAmountDollarValues({ chainId: chainId1, amounts: amounts[0] })
+  const [token1FiatPrice] = useTokenAmountDollarValues({ chainId: chainId1, amounts: amounts[1] })
 
   const { data: prices0 } = usePrices({ chainId: chainId0 })
   const { data: prices1 } = usePrices({ chainId: chainId1 })

@@ -1,4 +1,5 @@
 import { ArticleFiltersInput, getMeshSDK, GetProductsQueryVariables, PaginationArg } from '../.mesh'
+import { ArticleSchema } from './validate'
 
 const sdk = getMeshSDK()
 
@@ -30,11 +31,16 @@ export const getArticles = async (variables?: {
   pagination?: PaginationArg
   sort?: string[]
 }) => {
-  return sdk.getArticles({
+  const result = await sdk.getArticles({
     ...variables,
     filters: { ...variables?.filters, articleTypes: { type: { eq: 'academy' } } },
     sort: variables?.sort ?? ['publishedAt:desc'],
   })
+
+  return {
+    ...result.articles,
+    data: (result.articles?.data || []).map((article) => ArticleSchema.parse(article)),
+  }
 }
 
 export const getTopics = async () => {
@@ -50,7 +56,7 @@ export const getProducts = async (variables?: GetProductsQueryVariables) => {
 }
 
 export const getLatestAndRelevantArticles = async (productSlug: string, relevantArticleIds: string[]) => {
-  return sdk.GetLatestAndRelevantArticles({
+  const result = await sdk.GetLatestAndRelevantArticles({
     filters: {
       products: {
         slug: { eq: productSlug },
@@ -62,6 +68,11 @@ export const getLatestAndRelevantArticles = async (productSlug: string, relevant
       articleTypes: { type: { eq: 'academy' } },
     },
   })
+
+  return {
+    articles: result.articles?.data.map((article) => ArticleSchema.parse(article)),
+    relevantArticles: result.relevantArticles?.data.map((article) => ArticleSchema.parse(article)),
+  }
 }
 
 export const getTrendingSearch = async () => {

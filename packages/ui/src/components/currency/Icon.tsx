@@ -100,18 +100,11 @@ export interface IconProps extends Omit<ImageProps, 'src' | 'alt'> {
 
 export const Icon: FC<IconProps> = ({ currency, disableLink = true, ...rest }) => {
   const src = currency.isNative
-    ? cloudinaryImageLoader({
-        width: Number(rest.width) ?? 20,
-        src: `native-currency/${LOGO[currency.chainId]}`,
-      })
-    : cloudinaryImageLoader({
-        width: Number(rest.width) ?? 20,
-        src: `tokens/${currency.chainId}/${currency.wrapped.address}.jpg`,
-      })
-
+    ? `native-currency/${LOGO[currency.chainId]}`
+    : `tokens/${currency.chainId}/${currency.wrapped.address}.jpg`
   const avatar = (
     <Avatar style={{ width: rest.width, height: rest.height }}>
-      <AvatarImage src={src} />
+      <AvatarImage loader={cloudinaryImageLoader} width={Number(rest.width) ?? 20} src={src} />
       <AvatarFallback
         style={{ background: hashStringToColor(`${currency.symbol} ${currency.name}` ?? '??') }}
         className="text-white"

@@ -1,6 +1,6 @@
 'use client'
 
-import { routeProcessor3_1Abi, routeProcessor3Abi, routeProcessorAbi } from '@sushiswap/abi'
+import { routeProcessor3Abi, routeProcessorAbi } from '@sushiswap/abi'
 import { Chain } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
@@ -10,9 +10,11 @@ import { ZERO } from '@sushiswap/math'
 import { UseTradeReturn } from '@sushiswap/react-query'
 import {
   isRouteProcessor3_1ChainId,
+  isRouteProcessor3_2ChainId,
   isRouteProcessor3ChainId,
   isRouteProcessorChainId,
   ROUTE_PROCESSOR_3_1_ADDRESS,
+  ROUTE_PROCESSOR_3_2_ADDRESS,
   ROUTE_PROCESSOR_3_ADDRESS,
   ROUTE_PROCESSOR_ADDRESS,
 } from '@sushiswap/route-processor-sdk'
@@ -52,7 +54,9 @@ import { TradeRoutePathView } from '../trade-route-path-view'
 import { useDerivedStateSimpleSwap, useSimpleSwapTrade } from './derivedstate-simple-swap-provider'
 import { SimpleSwapErrorMessage } from './simple-swap-error-message'
 
-export const SimpleSwapTradeReviewDialog: FC<{ children(error: Error | null): ReactNode }> = ({ children }) => {
+export const SimpleSwapTradeReviewDialog: FC<{
+  children({ error, isSuccess }: { error: Error | null; isSuccess: boolean }): ReactNode
+}> = ({ children }) => {
   const {
     state: { token0, token1, chainId, swapAmount, recipient },
     mutate: { setSwapAmount },
@@ -79,16 +83,18 @@ export const SimpleSwapTradeReviewDialog: FC<{ children(error: Error | null): Re
     isSuccess: isPrepareSuccess,
   } = usePrepareContractWrite({
     chainId: chainId,
-    address: isRouteProcessor3_1ChainId(chainId)
+    address: isRouteProcessor3_2ChainId(chainId)
+      ? ROUTE_PROCESSOR_3_2_ADDRESS[chainId]
+      : isRouteProcessor3_1ChainId(chainId)
       ? ROUTE_PROCESSOR_3_1_ADDRESS[chainId]
       : isRouteProcessor3ChainId(chainId)
       ? ROUTE_PROCESSOR_3_ADDRESS[chainId]
       : isRouteProcessorChainId(chainId)
       ? ROUTE_PROCESSOR_ADDRESS[chainId]
       : undefined,
-    abi: (isRouteProcessor3_1ChainId(chainId)
-      ? routeProcessor3_1Abi
-      : isRouteProcessor3ChainId(chainId)
+    abi: (isRouteProcessor3_2ChainId(chainId) ||
+    isRouteProcessor3_1ChainId(chainId) ||
+    isRouteProcessor3ChainId(chainId)
       ? routeProcessor3Abi
       : isRouteProcessorChainId(chainId)
       ? routeProcessorAbi
@@ -99,10 +105,12 @@ export const SimpleSwapTradeReviewDialog: FC<{ children(error: Error | null): Re
       trade?.writeArgs &&
         (isRouteProcessorChainId(chainId) ||
           isRouteProcessor3ChainId(chainId) ||
-          isRouteProcessor3_1ChainId(chainId)) &&
+          isRouteProcessor3_1ChainId(chainId) ||
+          isRouteProcessor3_2ChainId(chainId)) &&
         approved &&
         trade?.route?.status !== 'NoWay' &&
-        chain?.id === chainId
+        chain?.id === chainId &&
+        token1?.chainId === chainId
     ),
     value: trade?.value || 0n,
     onError: (error) => {
@@ -332,7 +340,7 @@ export const SimpleSwapTradeReviewDialog: FC<{ children(error: Error | null): Re
           <>
             <div className="flex flex-col">
               <SimpleSwapErrorMessage error={error} isSuccess={isPrepareSuccess} isLoading={isPrepareFetching} />
-              <div className="mt-4">{children(error)}</div>
+              <div className="mt-4">{children({ error, isSuccess: isPrepareSuccess })}</div>
             </div>
             <DialogContent>
               <DialogHeader>
@@ -395,10 +403,10 @@ export const SimpleSwapTradeReviewDialog: FC<{ children(error: Error | null): Re
                       </List.KeyValue>
                     )}
                     <List.KeyValue title="Network fee">
-                      {isFetching ? (
+                      {isFetching || !trade?.gasSpent || trade.gasSpent === '0' ? (
                         <SkeletonText align="right" fontSize="sm" className="w-1/3" />
                       ) : (
-                        `~$${trade?.gasSpent ?? '0.00'}`
+                        `${trade.gasSpent} ${Native.onChain(chainId).symbol}`
                       )}
                     </List.KeyValue>
                     {isSwap && (

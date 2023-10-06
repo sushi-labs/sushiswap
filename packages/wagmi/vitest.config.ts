@@ -17,6 +17,6 @@ export default defineConfig({
     // },
     environment: 'node',
     setupFiles: ['./src/_test/setup.ts'],
-    globalSetup: ['./src/_test/globalSetup.ts'],
+    // globalSetup: ['./src/_test/globalSetup.ts'],
   },
 })
