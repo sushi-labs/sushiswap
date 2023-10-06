@@ -1,6 +1,5 @@
 import { ChainId } from 'sushi/chain'
 import {
-  addressMapToTokenMap,
   DAI_ADDRESS,
   FRAX_ADDRESS,
   Token,
@@ -9,6 +8,7 @@ import {
   USDC_ADDRESS,
   USDT,
   USDT_ADDRESS,
+  addressMapToTokenMap,
 } from 'sushi/currency'
 
 // Ethereum: 101
@@ -206,7 +206,7 @@ export const STARGATE_DAI = addressMapToTokenMap(
     name: 'Dai Stablecoin',
   },
   STARGATE_DAI_ADDRESS,
-)
+) as Record<keyof typeof STARGATE_DAI_ADDRESS, Token>
 
 export const STARGATE_FRAX_ADDRESS = {
   [ChainId.ETHEREUM]: FRAX_ADDRESS[ChainId.ETHEREUM],
@@ -221,8 +221,8 @@ export const STARGATE_FRAX = addressMapToTokenMap(
     symbol: 'FRAX',
     name: 'Frax',
   },
-  FRAX_ADDRESS,
-)
+  STARGATE_FRAX_ADDRESS,
+) as Record<keyof typeof STARGATE_FRAX_ADDRESS, Token>
 
 export const STARGATE_BUSD_ADDRESS = {
   [ChainId.BSC]: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
@@ -255,7 +255,7 @@ export const STARGATE_MAI = addressMapToTokenMap(
     name: 'Mai Stablecoin',
   },
   STARGATE_MAI_ADDRESS,
-)
+) as Record<keyof typeof STARGATE_MAI_ADDRESS, Token>
 
 export const STARGATE_BRIDGE_TOKENS: Record<number, Token[]> = {
   // MAINNETS
@@ -503,7 +503,7 @@ export const STARGATE_CONFIRMATION_SECONDS = {
 export function isStargateBridgeToken(currency: Type | undefined) {
   if (!currency) return false
   if (!STARGATE_BRIDGE_TOKEN_ADDRESSES[currency.chainId]) return false
-  return STARGATE_BRIDGE_TOKEN_ADDRESSES[currency.chainId].includes(
+  return STARGATE_BRIDGE_TOKEN_ADDRESSES?.[currency.chainId]?.includes(
     currency.wrapped.address,
   )
 }
