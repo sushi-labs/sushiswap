@@ -65,7 +65,7 @@
     "framer-motion": "7.10.3",
     "graphql-request": "5.1.0",
     "nanoid": "4.0.0",
-    "next": "13.4.19",
+    "next": "13.4.12",
     "next-axiom": "1.0.0-rc.1",
     "next-themes": "0.2.1",
     "octokit": "2.1.0",

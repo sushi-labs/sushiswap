@@ -69,7 +69,7 @@
     "@tsconfig/strictest": "2.0.2",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
-    "next": "13.4.8",
+    "next": "13.4.12",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tsup": "7.2.0",
