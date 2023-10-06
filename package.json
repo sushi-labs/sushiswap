@@ -15,7 +15,7 @@
     "enable-remote-caching": "turbo link",
     "format": "biome format . --write",
     "lint": "biome check .",
-    "lint:fix": "bun run lint --apply",
+    "lint:fix": "pnpm lint --apply",
     "generate": "dotenv -- turbo run generate --no-cache --parallel --continue",
     "sort": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'config/*/package.json' 'examples/*/package.json' 'jobs/{,!(node_modules)/}**/package.json' 'packages/{,!(node_modules)/}**/package.json' 'protocols/{,!(node_modules)/}**/package.json' 'scripts/*/package.json'",
     "sort-check": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'examples/*/package.json' 'packages/{,!(node_modules)/}**/package.json' 'protocols/{,!(node_modules)/}**/package.json' --check",
