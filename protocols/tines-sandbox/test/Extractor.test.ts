@@ -32,6 +32,7 @@ import {
   createTestTokens,
   getDeploymentAddress,
 } from '../src'
+import MultiCall3 from './Multicall3.sol/Multicall3.json'
 import RouteProcessor3 from './RouteProcessor3.sol/RouteProcessor3.json'
 
 export const RP3Address = {
@@ -110,7 +111,7 @@ async function startInfinitTest(args: {
   chain: Chain
   factoriesV2?: FactoryV2[]
   factoriesV3?: FactoryV3[]
-  factoriesAlg?: FactoryAlgebra[]
+  factoriesAlgebra?: FactoryAlgebra[]
   tickHelperContract: Address
   cacheDir: string
   logDepth: number
@@ -231,6 +232,7 @@ async function createEmptyAlgebraEnvorinment(
   factory: Address
   tickLens: Address
   RP3: Address
+  MultiCall3: Address
   tokenOwner: Address
   tokens: Token[]
 }> {
@@ -268,23 +270,45 @@ async function createEmptyAlgebraEnvorinment(
     })
   )
 
+  const MultiCall3Address = await getDeploymentAddress(
+    client,
+    client.deployContract({
+      chain: null,
+      abi: MultiCall3.abi as Abi,
+      bytecode: MultiCall3.bytecode as Hex,
+      account: env.deployer as Address,
+    })
+  )
+
   return {
     transport,
     //chain,
     factory: env.factoryAddress,
     tickLens: env.TickLensAddress,
     RP3,
+    MultiCall3: MultiCall3Address,
     tokens: testTokens.tokens,
     tokenOwner: testTokens.owner,
   }
 }
 
 it('Extractor Hardhat Algebra test', async () => {
-  const { transport, factory, tickLens, RP3, tokens, tokenOwner } = await createEmptyAlgebraEnvorinment(3, 10)
+  const { transport, factory, tickLens, RP3, tokens, tokenOwner, MultiCall3 } = await createEmptyAlgebraEnvorinment(
+    3,
+    10
+  )
   await startInfinitTest({
     transport,
-    chain: hardhat,
-    factoriesAlg: [{ address: factory, provider: LiquidityProviders.AlgebraIntegral }],
+    chain: {
+      ...hardhat,
+      contracts: {
+        multicall3: {
+          address: MultiCall3,
+          blockCreated: 1,
+        },
+      },
+    },
+    factoriesAlgebra: [{ address: factory, provider: LiquidityProviders.AlgebraIntegral }],
     tickHelperContract: tickLens,
     cacheDir: './cache',
     logDepth: 50,
