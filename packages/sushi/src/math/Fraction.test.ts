@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest'
+
 import Fraction from './Fraction.js'
 
 describe('Fraction', () => {
@@ -23,19 +25,27 @@ describe('Fraction', () => {
   })
   describe('#add', () => {
     it('multiples denoms and adds nums', () => {
-      expect(new Fraction(1n, 10n).add(new Fraction(4n, 12n))).toEqual(new Fraction(52n, 120n))
+      expect(new Fraction(1n, 10n).add(new Fraction(4n, 12n))).toEqual(
+        new Fraction(52n, 120n),
+      )
     })
 
     it('same denom', () => {
-      expect(new Fraction(1n, 5n).add(new Fraction(2n, 5n))).toEqual(new Fraction(3n, 5n))
+      expect(new Fraction(1n, 5n).add(new Fraction(2n, 5n))).toEqual(
+        new Fraction(3n, 5n),
+      )
     })
   })
   describe('#subtract', () => {
     it('multiples denoms and subtracts nums', () => {
-      expect(new Fraction(1n, 10n).subtract(new Fraction(4n, 12n))).toEqual(new Fraction(-28n, 120n))
+      expect(new Fraction(1n, 10n).subtract(new Fraction(4n, 12n))).toEqual(
+        new Fraction(-28n, 120n),
+      )
     })
     it('same denom', () => {
-      expect(new Fraction(3n, 5n).subtract(new Fraction(2n, 5n))).toEqual(new Fraction(1n, 5n))
+      expect(new Fraction(3n, 5n).subtract(new Fraction(2n, 5n))).toEqual(
+        new Fraction(1n, 5n),
+      )
     })
   })
   describe('#lessThan', () => {
@@ -54,23 +64,41 @@ describe('Fraction', () => {
   })
   describe('#greaterThan', () => {
     it('correct', () => {
-      expect(new Fraction(1n, 10n).greaterThan(new Fraction(4n, 12n))).toBe(false)
-      expect(new Fraction(1n, 3n).greaterThan(new Fraction(4n, 12n))).toBe(false)
-      expect(new Fraction(5n, 12n).greaterThan(new Fraction(4n, 12n))).toBe(true)
+      expect(new Fraction(1n, 10n).greaterThan(new Fraction(4n, 12n))).toBe(
+        false,
+      )
+      expect(new Fraction(1n, 3n).greaterThan(new Fraction(4n, 12n))).toBe(
+        false,
+      )
+      expect(new Fraction(5n, 12n).greaterThan(new Fraction(4n, 12n))).toBe(
+        true,
+      )
     })
   })
   describe('#multiplty', () => {
     it('correct', () => {
-      expect(new Fraction(1n, 10n).multiply(new Fraction(4n, 12n))).toEqual(new Fraction(4n, 120n))
-      expect(new Fraction(1n, 3n).multiply(new Fraction(4n, 12n))).toEqual(new Fraction(4n, 36n))
-      expect(new Fraction(5n, 12n).multiply(new Fraction(4n, 12n))).toEqual(new Fraction(20n, 144n))
+      expect(new Fraction(1n, 10n).multiply(new Fraction(4n, 12n))).toEqual(
+        new Fraction(4n, 120n),
+      )
+      expect(new Fraction(1n, 3n).multiply(new Fraction(4n, 12n))).toEqual(
+        new Fraction(4n, 36n),
+      )
+      expect(new Fraction(5n, 12n).multiply(new Fraction(4n, 12n))).toEqual(
+        new Fraction(20n, 144n),
+      )
     })
   })
   describe('#divide', () => {
     it('correct', () => {
-      expect(new Fraction(1n, 10n).divide(new Fraction(4n, 12n))).toEqual(new Fraction(12n, 40n))
-      expect(new Fraction(1n, 3n).divide(new Fraction(4n, 12n))).toEqual(new Fraction(12n, 12n))
-      expect(new Fraction(5n, 12n).divide(new Fraction(4n, 12n))).toEqual(new Fraction(60n, 48n))
+      expect(new Fraction(1n, 10n).divide(new Fraction(4n, 12n))).toEqual(
+        new Fraction(12n, 40n),
+      )
+      expect(new Fraction(1n, 3n).divide(new Fraction(4n, 12n))).toEqual(
+        new Fraction(12n, 12n),
+      )
+      expect(new Fraction(5n, 12n).divide(new Fraction(4n, 12n))).toEqual(
+        new Fraction(60n, 48n),
+      )
     })
   })
   describe('#asFraction', () => {

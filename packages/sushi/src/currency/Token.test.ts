@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest'
+
 import { Token } from './Token.js'
 
 describe('Token', () => {

@@ -62,7 +62,8 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
-    "prepublishOnly": "pnpm build"
+    "prepublishOnly": "pnpm build",
+    "test": "vitest -c ./test/vitest.config.ts dev"
   },
   "dependencies": {
     "big.js": "6.1.1",
@@ -79,8 +80,9 @@
     "@types/numeral": "2.0.3",
     "@types/jest": "29.5.5",
     "jest": "29.7.0",
-    "viem": "1.15.4",
     "typescript": "5.2.2",
+    "viem": "1.15.4",
+    "vitest": "0.34.6",
     "zod": "3.21.4"
   },
   "peerDependencies": {

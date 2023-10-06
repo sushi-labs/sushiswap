@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest'
+
 import Percent from './Percent.js'
 
 describe('Percent', () => {
@@ -8,34 +10,50 @@ describe('Percent', () => {
   })
   describe('#add', () => {
     it('returns a percent', () => {
-      expect(new Percent(1, 100).add(new Percent(2, 100))).toEqual(new Percent(3, 100))
+      expect(new Percent(1, 100).add(new Percent(2, 100))).toEqual(
+        new Percent(3, 100),
+      )
     })
     it('different denominators', () => {
-      expect(new Percent(1, 25).add(new Percent(2, 100))).toEqual(new Percent(150, 2500))
+      expect(new Percent(1, 25).add(new Percent(2, 100))).toEqual(
+        new Percent(150, 2500),
+      )
     })
   })
   describe('#subtract', () => {
     it('returns a percent', () => {
-      expect(new Percent(1, 100).subtract(new Percent(2, 100))).toEqual(new Percent(-1, 100))
+      expect(new Percent(1, 100).subtract(new Percent(2, 100))).toEqual(
+        new Percent(-1, 100),
+      )
     })
     it('different denominators', () => {
-      expect(new Percent(1, 25).subtract(new Percent(2, 100))).toEqual(new Percent(50, 2500))
+      expect(new Percent(1, 25).subtract(new Percent(2, 100))).toEqual(
+        new Percent(50, 2500),
+      )
     })
   })
   describe('#multiply', () => {
     it('returns a percent', () => {
-      expect(new Percent(1, 100).multiply(new Percent(2, 100))).toEqual(new Percent(2, 10000))
+      expect(new Percent(1, 100).multiply(new Percent(2, 100))).toEqual(
+        new Percent(2, 10000),
+      )
     })
     it('different denominators', () => {
-      expect(new Percent(1, 25).multiply(new Percent(2, 100))).toEqual(new Percent(2, 2500))
+      expect(new Percent(1, 25).multiply(new Percent(2, 100))).toEqual(
+        new Percent(2, 2500),
+      )
     })
   })
   describe('#divide', () => {
     it('returns a percent', () => {
-      expect(new Percent(1, 100).divide(new Percent(2, 100))).toEqual(new Percent(100, 200))
+      expect(new Percent(1, 100).divide(new Percent(2, 100))).toEqual(
+        new Percent(100, 200),
+      )
     })
     it('different denominators', () => {
-      expect(new Percent(1, 25).divide(new Percent(2, 100))).toEqual(new Percent(100, 50))
+      expect(new Percent(1, 25).divide(new Percent(2, 100))).toEqual(
+        new Percent(100, 50),
+      )
     })
   })
 

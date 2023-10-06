@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest'
+
 import { Native } from './Native.js'
 import { Token } from './Token.js'
 
@@ -35,7 +37,9 @@ describe('Currency', () => {
       ).toStrictEqual(true)
     })
     it('throws if chain id is not known', () => {
-      expect(() => Native.onChain(Number.MAX_SAFE_INTEGER)).toThrow('CHAINS')
+      expect(() => Native.onChain(Number.MAX_SAFE_INTEGER)).toThrow(
+        'NATIVE_CURRENCY',
+      )
     })
   })
 })

@@ -1,11 +1,13 @@
-import { log } from ".";
+import { describe, expect, it, vi } from 'vitest'
 
-jest.spyOn(global.console, "log");
+import { log } from '.'
 
-describe("logger", () => {
-  it("prints a message", () => {
-    log("hello");
+vi.spyOn(global.console, 'log')
+
+describe('logger', () => {
+  it('prints a message', () => {
+    log('hello')
     // eslint-disable-next-line no-console -- testing console
-    expect(console.log).toBeCalledWith("LOGGER: ", "hello");
-  });
-});
+    expect(console.log).toBeCalledWith('LOGGER: ', 'hello')
+  })
+})
