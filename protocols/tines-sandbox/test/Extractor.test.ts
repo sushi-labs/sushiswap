@@ -12,7 +12,7 @@ import {
 } from '@sushiswap/extractor'
 import { ConstantProductPoolCode, LiquidityProviders, NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { getBigInt, RouteStatus } from '@sushiswap/tines'
+import { findMultiRouteExactIn, getBigInt, RouteStatus, RToken } from '@sushiswap/tines'
 import { SUSHISWAP_V2_FACTORY_ADDRESS, SUSHISWAP_V2_INIT_CODE_HASH } from '@sushiswap/v2-sdk'
 import {
   POOL_INIT_CODE_HASH,
@@ -120,6 +120,7 @@ async function startInfinitTest(args: {
   RP3Address: Address
   account?: Address
   checkTokens?: Token[]
+  testEnvironment?: boolean
 }) {
   const transport = args.transport ?? http(args.providerURL)
   const client = createPublicClient({
@@ -128,29 +129,25 @@ async function startInfinitTest(args: {
   })
   const chainId = client.chain?.id as ChainId
 
+  const intermediateTokens = args.testEnvironment ? args.checkTokens ?? [] : BASES_TO_CHECK_TRADES_AGAINST[chainId]
   const extractor = new Extractor({ ...args, client })
-  await extractor.start((BASES_TO_CHECK_TRADES_AGAINST[chainId] ?? []).concat(args.checkTokens ?? []))
+  await extractor.start(intermediateTokens.concat(args.checkTokens ?? []))
 
-  const nativeProvider = new NativeWrapProvider(chainId, client)
+  const nativeProvider = args.testEnvironment ? undefined : new NativeWrapProvider(chainId, client)
   const tokenManager = new TokenManager(
     extractor.extractorV2?.multiCallAggregator || (extractor.extractorV3?.multiCallAggregator as MultiCallAggregator),
     __dirname,
     `tokens-${client.chain?.id}`
   )
   await tokenManager.addCachedTokens()
-  const tokens =
-    args.checkTokens ??
-    BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values()).slice(0, 100))
+  const tokens = args.checkTokens ?? intermediateTokens.concat(Array.from(tokenManager.tokens.values()).slice(0, 100))
   for (;;) {
     for (let i = 0; i < tokens.length; ++i) {
       await delay(1000)
       const time0 = performance.now()
-      const pools0 = extractor.getPoolCodesForTokens(BASES_TO_CHECK_TRADES_AGAINST[chainId].concat([tokens[i]]))
+      const pools0 = extractor.getPoolCodesForTokens(intermediateTokens.concat([tokens[i]]))
       const time1 = performance.now()
-      const pools1 = await extractor.getPoolCodesForTokensAsync(
-        BASES_TO_CHECK_TRADES_AGAINST[chainId].concat([tokens[i]]),
-        2000
-      )
+      const pools1 = await extractor.getPoolCodesForTokensAsync(intermediateTokens.concat([tokens[i]]), 2000)
       const time2 = performance.now()
       const pools0_2 = pools0.filter((p) => p instanceof ConstantProductPoolCode).length
       const pools0_3 = pools0.length - pools0_2
@@ -163,10 +160,19 @@ async function startInfinitTest(args: {
       const pools = pools1
       const poolMap = new Map<string, PoolCode>()
       pools.forEach((p) => poolMap.set(p.pool.address, p))
-      nativeProvider.getCurrentPoolList().forEach((p) => poolMap.set(p.pool.address, p))
-      const fromToken = Native.onChain(chainId),
+      if (nativeProvider) nativeProvider.getCurrentPoolList().forEach((p) => poolMap.set(p.pool.address, p))
+      const fromToken = args.testEnvironment ? tokens[(i + 1) % tokens.length] : Native.onChain(chainId),
         toToken = tokens[i]
-      const route = Router.findBestRoute(poolMap, chainId, fromToken, getBigInt(1e18), toToken, 30e9)
+      const route = args.testEnvironment
+        ? findMultiRouteExactIn(
+            fromToken as RToken,
+            toToken as RToken,
+            1e18,
+            pools.map((p) => p.pool),
+            (args.checkTokens as Token[])[0] as RToken,
+            30e9
+          )
+        : Router.findBestRoute(poolMap, chainId, fromToken, getBigInt(1e18), toToken, 30e9)
       if (route.status === RouteStatus.NoWay) {
         console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ` + timingLine)
         continue
@@ -225,6 +231,7 @@ async function createEmptyAlgebraEnvorinment(
   factory: Address
   tickLens: Address
   RP3: Address
+  tokenOwner: Address
   tokens: Token[]
 }> {
   const tokenNumber = Math.ceil(0.5 + Math.sqrt(1 + 8 * poolNumber) / 2)
@@ -268,11 +275,12 @@ async function createEmptyAlgebraEnvorinment(
     tickLens: env.TickLensAddress,
     RP3,
     tokens: testTokens.tokens,
+    tokenOwner: testTokens.owner,
   }
 }
 
 it('Extractor Hardhat Algebra test', async () => {
-  const { transport, factory, tickLens, RP3, tokens } = await createEmptyAlgebraEnvorinment(3, 10)
+  const { transport, factory, tickLens, RP3, tokens, tokenOwner } = await createEmptyAlgebraEnvorinment(3, 10)
   await startInfinitTest({
     transport,
     chain: hardhat,
@@ -283,6 +291,8 @@ it('Extractor Hardhat Algebra test', async () => {
     logging: true,
     RP3Address: RP3,
     checkTokens: tokens,
+    testEnvironment: true,
+    account: tokenOwner,
   })
 })
 
