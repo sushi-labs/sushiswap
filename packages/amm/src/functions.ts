@@ -40,8 +40,8 @@ export function sortedInsert<T>(items: T[], add: T, maxSize: number, comparator:
       return add
     }
 
-    let lo = 0,
-      hi = items.length
+    let lo = 0
+    let hi = items.length
 
     while (lo < hi) {
       const mid = (lo + hi) >>> 1
