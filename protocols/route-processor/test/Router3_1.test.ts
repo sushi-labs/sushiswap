@@ -34,7 +34,7 @@ import {
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
 import { BridgeBento, getBigInt, RouteStatus, RPool, StableSwapRPool } from '@sushiswap/tines'
 import { setTokenBalance } from '@sushiswap/tines-sandbox'
-import { Contract } from '@sushiswap/types'
+import { type Contract } from 'sushi/types'
 import { expect } from 'chai'
 import { signERC2612Permit } from 'eth-permit'
 import { config, network } from 'hardhat'

@@ -22,13 +22,11 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .vercel"
   },
   "dependencies": {
-
     "@sushiswap/database": "workspace:*",
     "@sushiswap/pools-api": "workspace:*",
-    "@sushiswap/types": "workspace:*",
-    "sushi": "workspace:*",
     "@vercel/node": "2.14.3",
     "deepmerge-ts": "^4.3.0",
+    "sushi": "workspace:*",
     "zod": "3.21.4"
   },
   "devDependencies": {

@@ -43,7 +43,6 @@
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/token-lists": "workspace:*",
     "@sushiswap/trident-sdk": "workspace:*",
-    "@sushiswap/types": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",

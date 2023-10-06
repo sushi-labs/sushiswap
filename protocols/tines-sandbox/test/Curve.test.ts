@@ -8,7 +8,7 @@ import {
   RPool,
   RToken,
 } from '@sushiswap/tines'
-import { Contract } from '@sushiswap/types'
+import { type Contract } from 'sushi/types'
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
 import { Address, parseAbi, WalletClient } from 'viem'

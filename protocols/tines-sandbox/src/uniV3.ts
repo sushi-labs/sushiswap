@@ -2,7 +2,7 @@ import { erc20Abi, nonfungiblePositionManagerAbi, sushiV3FactoryAbi, sushiV3Pool
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { CL_MAX_TICK, CL_MIN_TICK, CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
-import { Contract } from '@sushiswap/types'
+import { type Contract } from 'sushi/types'
 import NonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import WETH9 from 'canonical-weth/build/contracts/WETH9.json'
 import { expect } from 'chai'

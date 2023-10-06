@@ -23,12 +23,11 @@
   },
   "dependencies": {
     "@sushiswap/database": "workspace:*",
-    "@sushiswap/types": "workspace:*",
-    "sushi": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
     "@vercel/node": "2.14.3",
     "@wagmi/core": "1.4.1",
     "deepmerge-ts": "^4.3.0",
+    "sushi": "workspace:*",
     "zod": "3.21.4"
   },
   "devDependencies": {

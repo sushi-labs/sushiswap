@@ -14,9 +14,10 @@ import {
   ROUTE_PROCESSOR_ADDRESS,
 } from '@sushiswap/route-processor-sdk'
 import { Router } from '@sushiswap/router'
-import { HexString } from '@sushiswap/types'
+
 import { useQuery } from '@tanstack/react-query'
 import { useFeeData } from 'wagmi'
+import { Address, Hex } from 'viem'
 
 import { usePoolsCodeMap } from '../../pools'
 
@@ -163,12 +164,12 @@ ${logPools}
         // let writeArgs: UseTradeReturnWriteArgs = args
         let writeArgs: UseTradeReturnWriteArgs = args
           ? [
-              args.tokenIn as HexString,
+              args.tokenIn as Address,
               args.amountIn,
-              args.tokenOut as HexString,
+              args.tokenOut as Address,
               args.amountOutMin,
-              args.to as HexString,
-              args.routeCode as HexString,
+              args.to as Address,
+              args.routeCode as Hex,
             ]
           : undefined
 
