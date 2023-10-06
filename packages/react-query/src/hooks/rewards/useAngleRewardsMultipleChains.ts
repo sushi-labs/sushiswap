@@ -22,11 +22,11 @@ export const useAngleRewardsMultipleChains = ({ chainIds, account }: UseAngleRew
 
         return parsed
           .map((el, i) => {
-            const data = angleRewardsSelect({ chainId: chainIds[i] as ChainId, data: el, prices: prices[chainIds[i] as ChainId] })
+            const data = angleRewardsSelect({ chainId: chainIds[i]!, data: el, prices: prices[chainIds[i]!] })
 
             return data
               ? {
-                  chainId: chainIds[i],
+                  chainId: chainIds[i]!,
                   ...data,
                 }
               : null
