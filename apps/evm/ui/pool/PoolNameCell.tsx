@@ -14,7 +14,7 @@ import { FC } from 'react'
 
 import { PositionWithPool } from '../../types'
 
-const ProtocolBadge: Record<Protocol, JSX.Element> = {
+export const ProtocolBadge: Record<Protocol, JSX.Element> = {
   [Protocol.BENTOBOX_STABLE]: (
     <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">Trident Stable</div>
   ),
