@@ -28,9 +28,9 @@ export const isSushiXSwapChainId = (
   SUSHIXSWAP_SUPPORTED_CHAIN_IDS.includes(chainId as SushiXSwapChainId)
 
 export const SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS = [
-  ChainId.ETHEREUM,
-  ChainId.BSC,
-  ChainId.AVALANCHE,
+  // ChainId.ETHEREUM,
+  // ChainId.BSC,
+  // ChainId.AVALANCHE,
   ChainId.POLYGON,
   ChainId.ARBITRUM,
   ChainId.OPTIMISM,
@@ -40,13 +40,17 @@ export const SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS = [
 export type SushiXSwap2ChainId = typeof SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS[number]
 
 export const SUSHIXSWAP_2_ADDRESS: Record<SushiXSwap2ChainId, `0x${string}`> = {
-  [ChainId.ETHEREUM]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
-  [ChainId.BSC]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
-  [ChainId.AVALANCHE]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
-  [ChainId.POLYGON]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
-  [ChainId.ARBITRUM]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
-  [ChainId.OPTIMISM]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
-  [ChainId.BASE]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  // [ChainId.ETHEREUM]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  // [ChainId.BSC]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  // [ChainId.AVALANCHE]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  // [ChainId.POLYGON]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  [ChainId.POLYGON]: '0xBf34c7bc377fFaB955f7b761472147dE4a2774fc',
+  // [ChainId.ARBITRUM]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  [ChainId.ARBITRUM]: '0xFbcACe20688510C3533db7BA0418a352E969AE5A',
+  // [ChainId.OPTIMISM]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  [ChainId.OPTIMISM]: '0x9A4cad00D73d4c1466180b3AbDEFeCEc77Fc9B12',
+  // [ChainId.BASE]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  [ChainId.BASE]: '0x3ea093C8C2c70D83BBC60ECC695A1E7e1664e015',
 } as const
 
 export const isSushiXSwap2ChainId = (
@@ -86,3 +90,26 @@ export const isStargateAdapterChainId = (
   STARGATE_ADAPTER_SUPPORTED_CHAIN_IDS.includes(
     chainId as StargateAdapterChainId,
   )
+
+export const SQUID_ADAPTER_SUPPORTED_CHAIN_IDS = [
+  ChainId.ARBITRUM,
+  ChainId.OPTIMISM,
+  ChainId.BASE,
+  ChainId.POLYGON,
+] as const
+
+export type SquidAdapterChainId =
+  typeof SQUID_ADAPTER_SUPPORTED_CHAIN_IDS[number]
+
+export const SQUID_ADAPTER_ADDRESS: Record<SquidAdapterChainId, `0x${string}`> =
+  {
+    [ChainId.ARBITRUM]: '0xc58fF59C077235e0944D4652Edf1a267c3EA276e',
+    [ChainId.OPTIMISM]: '0x8e91fbE4025453d52C6C429B06C9fD9051186D0C',
+    [ChainId.BASE]: '0x636fdcc0DB40307Be5592B73dB3322c8Fd8C2CF7',
+    [ChainId.POLYGON]: '0x7FF9B884153d7C9B4bFB2Eb9f1582774c3E6EE17',
+  } as const
+
+export const isSquidAdapterChainId = (
+  chainId: ChainId,
+): chainId is SquidAdapterChainId =>
+  SQUID_ADAPTER_SUPPORTED_CHAIN_IDS.includes(chainId as SquidAdapterChainId)

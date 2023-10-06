@@ -57,9 +57,10 @@ import { UserRejectedRequestError, stringify } from 'viem'
 
 import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
-import { UseCrossChainTradeReturn } from '../../../lib/swap/useCrossChainTrade/types'
-import { useLayerZeroScanLink } from '../../../lib/swap/useLayerZeroScanLink'
-import { warningSeverity } from '../../../lib/swap/warningSeverity'
+import { UseCrossChainTradeReturn } from 'src/lib/swap/useCrossChainTrade/types'
+import { useAxelarScanLink } from 'src/lib/swap/useCrossChainTrade/useAxelarScanLink'
+// import { useLayerZeroScanLink } from 'src/lib/swap/useCrossChainTrade/useLayerZeroScanLink'
+import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import {
   ConfirmationDialogContent,
   Divider,
@@ -281,37 +282,63 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     [onComplete, writeAsync],
   )
 
-  const { data: lzData } = useLayerZeroScanLink({
+  // const { data: lzData } = useLayerZeroScanLink({
+  //   tradeId,
+  //   network1: chainId1,
+  //   network0: chainId0,
+  //   txHash: data?.hash,
+  // })
+
+  const { data: axelarScanData } = useAxelarScanLink({
     tradeId,
     network1: chainId1,
     network0: chainId0,
     txHash: data?.hash,
   })
+
   const { data: receipt } = useTransaction({
     chainId: chainId1,
-    hash: lzData?.dstTxHash as `0x${string}` | undefined,
+    // hash: lzData?.dstTxHash as `0x${string}` | undefined,
+    hash: axelarScanData?.dstTxHash as `0x${string}` | undefined,
   })
 
+  // useEffect(() => {
+  //   if (lzData?.status === 'DELIVERED') {
+  //     setStepStates({
+  //       source: StepState.Success,
+  //       bridge: StepState.Success,
+  //       dest: StepState.Success,
+  //     })
+  //   }
+  //   if (lzData?.status === 'FAILED') {
+  //     setStepStates((prev) => ({
+  //       ...prev,
+  //       dest: StepState.PartialSuccess,
+  //     }))
+  //   }
+  // }, [lzData?.status])
+
   useEffect(() => {
-    if (lzData?.status === 'DELIVERED') {
+    if (axelarScanData?.status === 'success') {
       setStepStates({
         source: StepState.Success,
         bridge: StepState.Success,
         dest: StepState.Success,
       })
     }
-    if (lzData?.status === 'FAILED') {
+    if (axelarScanData?.status === 'executed') {
       setStepStates((prev) => ({
         ...prev,
         dest: StepState.PartialSuccess,
       }))
     }
-  }, [lzData?.status])
+  }, [axelarScanData?.status])
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (
-      lzData?.link &&
+      // lzData?.link &&
+      axelarScanData?.link &&
       groupTs.current &&
       stepStates.source === StepState.Success
     ) {
@@ -319,7 +346,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         account: address,
         type: 'stargate',
         chainId: chainId0,
-        href: lzData.link,
+        // href: lzData.link,
+        href: axelarScanData.link,
         summary: `Bridging ${tradeRef?.current?.srcBridgeToken?.symbol} from ${
           Chain.from(chainId0)?.name
         } to ${Chain.from(chainId1)?.name}`,
@@ -327,7 +355,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         groupTimestamp: groupTs.current,
       })
     }
-  }, [lzData?.link])
+  }, [axelarScanData?.link])
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -517,9 +545,11 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
               <div>
                 <ConfirmationDialogContent
                   dialogState={stepStates}
-                  lzUrl={lzData?.link}
+                  // lzUrl={lzData?.link}
+                  lzUrl={axelarScanData?.link}
                   txHash={data?.hash}
-                  dstTxHash={lzData?.dstTxHash}
+                  // dstTxHash={lzData?.dstTxHash}
+                  dstTxHash={axelarScanData?.dstTxHash}
                 />
               </div>
             </DialogDescription>

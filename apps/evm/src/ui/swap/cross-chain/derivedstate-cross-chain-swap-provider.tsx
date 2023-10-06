@@ -20,7 +20,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { useCrossChainTrade } from 'src/lib/swap/useCrossChainTrade/useCrossChainTrade'
+import { useSquidCrossChainTrade } from 'src/lib/swap/useCrossChainTrade/useSquidCrossChainTrade'
 import { ChainId } from 'sushi/chain'
 import { SushiXSwap2ChainId, isSushiXSwap2ChainId } from 'sushi/config'
 import {
@@ -371,10 +371,9 @@ const useCrossChainSwapTrade = () => {
       recipient,
     },
   } = useDerivedStateCrossChainSwap()
-
   const [slippageTolerance] = useSlippageTolerance()
-
-  return useCrossChainTrade({
+  return useSquidCrossChainTrade({
+    // return useCrossChainTrade({
     tradeId,
     network0: chainId0 as SushiXSwap2ChainId,
     network1: chainId1 as SushiXSwap2ChainId,
