@@ -21,6 +21,14 @@ export default function TabsLayout({ children }: { children: React.ReactNode }) 
               All Pools
             </PathnameButton>
           </LinkInternal>
+          <LinkInternal shallow={true} scroll={false} href={`/smart-pool?${searchParams.toString()}`}>
+            <PathnameButton id="all-pools" pathname={`/pool/smart-pool`} asChild size="sm">
+              Smart Pools{' '}
+              <div className="text-[10px] italic rounded-full px-[6px] bg-gradient-to-r from-blue to-pink text-white font-bold">
+                NEW
+              </div>
+            </PathnameButton>
+          </LinkInternal>
           <LinkInternal shallow={true} scroll={false} href={`/pool/my-positions?${searchParams.toString()}`}>
             <PathnameButton id="my-positions" pathname={`/pool/my-positions`} asChild size="sm">
               My Positions
