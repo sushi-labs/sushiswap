@@ -2184,9 +2184,6 @@ importers:
       '@types/numeral':
         specifier: 2.0.3
         version: 2.0.3
-      ethers:
-        specifier: 5.7.2
-        version: 5.7.2
       jest:
         specifier: 29.7.0
         version: 29.7.0(@types/node@18.11.18)(ts-node@10.9.1)

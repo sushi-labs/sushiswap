@@ -39,8 +39,8 @@
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/node18": "18.2.2",
     "@tsconfig/strictest": "2.0.2",
-    "typescript": "5.2.2",
     "sushi": "workspace:*",
+    "typescript": "5.2.2",
     "viem": "1.10.7"
   },
   "peerDependencies": {
