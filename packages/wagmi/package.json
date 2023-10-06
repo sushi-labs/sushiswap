@@ -81,7 +81,7 @@
     "@uniswap/v3-periphery": "1.4.1",
     "next-themes": "0.2.1",
     "sushi": "workspace:*",
-    "viem": "1.10.7",
+    "viem": "1.15.4",
     "zod": "3.21.4"
   },
   "devDependencies": {
@@ -93,7 +93,7 @@
     "@sentry/nextjs": "7.68.0",
     "@wagmi/core": "1.4.1",
     "ethers": "5.7.2",
-    "next": "13.4.12",
+    "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tsup": "7.2.0",
@@ -106,7 +106,7 @@
     "@wagmi/core": "1.4.1",
     "@sentry/nextjs": "7.68.0",
     "ethers": "5.7.2",
-    "next": "13.4.12",
+    "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "wagmi": "1.4.1"
@@ -135,6 +135,6 @@
     }
   },
   "optionalDependencies": {
-    "next": "13.4.12"
+    "next": "13.4.19"
   }
 }

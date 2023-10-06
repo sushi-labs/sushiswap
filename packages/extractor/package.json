@@ -47,7 +47,7 @@
     "abitype": "0.9.3",
     "ethers": "5.7.2",
     "sushi": "workspace:*",
-    "viem": "1.10.7",
+    "viem": "1.15.4",
     "wagmi": "1.3.11-cjs"
   },
   "devDependencies": {
