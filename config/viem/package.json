@@ -24,7 +24,11 @@
   ],
   "scripts": {
     "build": "tsc",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+    "check": "tsc --pretty --noEmit",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "tsc -w",
+    "prepublishOnly": "pnpm build",
+    "test": "jest --passWithNoTests"
   },
   "jest": {
     "preset": "@sushiswap/jest-config/node"
@@ -32,8 +36,8 @@
   "dependencies": {},
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/typescript-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
+    "@tsconfig/node18": "18.2.2",
     "@tsconfig/strictest": "2.0.2",
     "typescript": "5.2.2",
     "sushi": "workspace:*",

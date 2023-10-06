@@ -1,7 +1,7 @@
 {
-  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/esm/tsconfig"],
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node18/tsconfig"],
   "include": ["src"],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "dist", ".turbo"],
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
