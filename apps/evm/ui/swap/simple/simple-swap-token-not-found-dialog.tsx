@@ -1,16 +1,23 @@
 'use client'
 
-import { Chain } from '@sushiswap/chain'
-import { defaultQuoteCurrency, Native, Token } from '@sushiswap/currency'
-import { shortenAddress } from 'sushi'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useTokenSecurity } from '@sushiswap/react-query'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@sushiswap/ui'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { GoPlusLabsIcon } from '@sushiswap/ui/components/icons'
 import { List } from '@sushiswap/ui/components/list/List'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import React, { useCallback, useMemo } from 'react'
+import { shortenAddress } from 'sushi'
+import { Chain } from 'sushi/chain'
+import { Native, Token, defaultQuoteCurrency } from 'sushi/currency'
 
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
@@ -21,20 +28,31 @@ export const SimpleSwapTokenNotFoundDialog = () => {
   } = useDerivedStateSimpleSwap()
 
   const { mutate: customTokensMutate, hasToken } = useCustomTokens()
-  const { data: tokenFrom, isInitialLoading: tokenFromLoading } = useTokenWithCache({
-    chainId,
-    address: token0?.wrapped.address,
-    withStatus: true,
-  })
+  const { data: tokenFrom, isInitialLoading: tokenFromLoading } =
+    useTokenWithCache({
+      chainId,
+      address: token0?.wrapped.address,
+      withStatus: true,
+    })
 
-  const { data: tokenTo, isInitialLoading: tokenToLoading } = useTokenWithCache({
-    chainId,
-    address: token1?.wrapped.address,
-    withStatus: true,
-  })
+  const { data: tokenTo, isInitialLoading: tokenToLoading } = useTokenWithCache(
+    {
+      chainId,
+      address: token1?.wrapped.address,
+      withStatus: true,
+    },
+  )
 
-  const token0NotInList = Boolean(tokenFrom?.status !== 'APPROVED' && tokenFrom?.token && !hasToken(tokenFrom?.token))
-  const token1NotInList = Boolean(tokenTo?.status !== 'APPROVED' && tokenTo?.token && !hasToken(tokenTo?.token))
+  const token0NotInList = Boolean(
+    tokenFrom?.status !== 'APPROVED' &&
+      tokenFrom?.token &&
+      !hasToken(tokenFrom?.token),
+  )
+  const token1NotInList = Boolean(
+    tokenTo?.status !== 'APPROVED' &&
+      tokenTo?.token &&
+      !hasToken(tokenTo?.token),
+  )
 
   const onImport = useCallback(
     ([token0, token1]: (Token | undefined)[]) => {
@@ -47,11 +65,20 @@ export const SimpleSwapTokenNotFoundDialog = () => {
       if (token0) setToken0(token0)
       if (token1) setToken1(token1)
     },
-    [customTokensMutate, setToken0, setToken1, tokenFrom?.status, tokenTo?.status]
+    [
+      customTokensMutate,
+      setToken0,
+      setToken1,
+      tokenFrom?.status,
+      tokenTo?.status,
+    ],
   )
 
   const reset = useCallback(() => {
-    setTokens(Native.onChain(chainId), defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency])
+    setTokens(
+      Native.onChain(chainId),
+      defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency],
+    )
   }, [chainId, setTokens])
 
   const { data: tokenSecurity } = useTokenSecurity({
@@ -60,31 +87,49 @@ export const SimpleSwapTokenNotFoundDialog = () => {
         ...(token0NotInList && tokenFrom?.token ? [tokenFrom.token] : []),
         ...(token1NotInList && tokenTo?.token ? [tokenTo.token] : []),
       ],
-      [token0NotInList, token1NotInList, tokenFrom?.token, tokenTo?.token]
+      [token0NotInList, token1NotInList, tokenFrom?.token, tokenTo?.token],
     ),
-    enabled: Boolean(!tokenFromLoading && !tokenToLoading && (token0NotInList || token1NotInList)),
+    enabled: Boolean(
+      !tokenFromLoading &&
+        !tokenToLoading &&
+        (token0NotInList || token1NotInList),
+    ),
   })
 
-  const isNotHoneyPot = Boolean(!tokenFromLoading && !tokenToLoading && (token0NotInList || token1NotInList))
+  const isNotHoneyPot = Boolean(
+    !tokenFromLoading &&
+      !tokenToLoading &&
+      (token0NotInList || token1NotInList),
+  )
 
   if (!tokenSecurity) return null
 
   return (
-    <Dialog open={Boolean(!tokenFromLoading && !tokenToLoading && (token0NotInList || token1NotInList))}>
+    <Dialog
+      open={Boolean(
+        !tokenFromLoading &&
+          !tokenToLoading &&
+          (token0NotInList || token1NotInList),
+      )}
+    >
       <DialogContent>
         <DialogHeader>
           {isNotHoneyPot ? (
             <>
-              <DialogTitle>Unknown token{tokenFrom?.token && tokenTo?.token ? 's' : ''}</DialogTitle>
+              <DialogTitle>
+                Unknown token{tokenFrom?.token && tokenTo?.token ? 's' : ''}
+              </DialogTitle>
               <DialogDescription>
-                Anyone can create a token, including creating fake versions of existing tokens that claim to represent
-                projects. If you purchase this token, you may not be able to sell it back.
+                Anyone can create a token, including creating fake versions of
+                existing tokens that claim to represent projects. If you
+                purchase this token, you may not be able to sell it back.
               </DialogDescription>
             </>
           ) : (
             <>
               <DialogTitle className="text-red">
-                Honeypot token{tokenSecurity.honeypots.length > 1 ? 's' : ''} detected
+                Honeypot token{tokenSecurity.honeypots.length > 1 ? 's' : ''}{' '}
+                detected
               </DialogTitle>
               <DialogDescription>
                 {tokenSecurity.honeypots.length > 1
@@ -108,52 +153,68 @@ export const SimpleSwapTokenNotFoundDialog = () => {
             <>
               {token0 && token0NotInList && !tokenFrom?.token && (
                 <List>
-                  <List.Label>Token {tokenFrom?.token && tokenTo?.token ? '1' : ''}</List.Label>
+                  <List.Label>
+                    Token {tokenFrom?.token && tokenTo?.token ? '1' : ''}
+                  </List.Label>
                   <List.Control>
                     <p className="p-3 text-sm text-gray-900 dark:text-slate-50">
                       Could not retrieve token info for{' '}
                       <a
                         target="_blank"
-                        href={Chain.from(chainId).getTokenUrl(token0.wrapped.address)}
+                        href={Chain.from(chainId)?.getTokenUrl(
+                          token0.wrapped.address,
+                        )}
                         className="text-blue font-medium"
                         rel="noreferrer"
                       >
                         {shortenAddress(token0.wrapped.address)}
                       </a>{' '}
-                      are you sure this token is on {Chain.from(chainId).name}?
+                      are you sure this token is on {Chain.from(chainId)?.name}?
                     </p>
                   </List.Control>
                 </List>
               )}
               {token1 && token1NotInList && !tokenTo?.token && (
                 <List>
-                  <List.Label>Token {tokenFrom?.token && tokenTo?.token ? '2' : ''}</List.Label>
+                  <List.Label>
+                    Token {tokenFrom?.token && tokenTo?.token ? '2' : ''}
+                  </List.Label>
                   <List.Control>
                     <p className="p-3 text-sm text-gray-900 dark:text-slate-50">
                       Could not retrieve token info for{' '}
                       <a
                         target="_blank"
-                        href={Chain.from(chainId).getTokenUrl(token1.wrapped.address)}
+                        href={Chain.from(chainId)?.getTokenUrl(
+                          token1.wrapped.address,
+                        )}
                         className="text-blue font-medium"
                         rel="noreferrer"
                       >
                         {shortenAddress(token1.wrapped.address)}
                       </a>{' '}
-                      are you sure this token is on {Chain.from(chainId).name}?
+                      are you sure this token is on {Chain.from(chainId)?.name}?
                     </p>
                   </List.Control>
                 </List>
               )}
               {token0NotInList && tokenFrom?.token && (
                 <List>
-                  <List.Label>Token {tokenFrom.token && tokenTo?.token ? '1' : ''}</List.Label>
+                  <List.Label>
+                    Token {tokenFrom.token && tokenTo?.token ? '1' : ''}
+                  </List.Label>
                   <List.Control>
-                    <List.KeyValue title="Name">{tokenFrom.token.name}</List.KeyValue>
-                    <List.KeyValue title="Symbol">{tokenFrom.token.symbol}</List.KeyValue>
+                    <List.KeyValue title="Name">
+                      {tokenFrom.token.name}
+                    </List.KeyValue>
+                    <List.KeyValue title="Symbol">
+                      {tokenFrom.token.symbol}
+                    </List.KeyValue>
                     <List.KeyValue title="Address">
                       <a
                         target="_blank"
-                        href={Chain.from(chainId).getTokenUrl(tokenFrom.token.address)}
+                        href={Chain.from(chainId)?.getTokenUrl(
+                          tokenFrom.token.address,
+                        )}
                         className="text-blue"
                         rel="noreferrer"
                       >
@@ -165,14 +226,22 @@ export const SimpleSwapTokenNotFoundDialog = () => {
               )}
               {token1NotInList && tokenTo?.token && (
                 <List>
-                  <List.Label>Token {tokenFrom?.token && tokenTo?.token ? '2' : ''}</List.Label>
+                  <List.Label>
+                    Token {tokenFrom?.token && tokenTo?.token ? '2' : ''}
+                  </List.Label>
                   <List.Control>
-                    <List.KeyValue title="Name">{tokenTo.token.name}</List.KeyValue>
-                    <List.KeyValue title="Symbol">{tokenTo.token.symbol}</List.KeyValue>
+                    <List.KeyValue title="Name">
+                      {tokenTo.token.name}
+                    </List.KeyValue>
+                    <List.KeyValue title="Symbol">
+                      {tokenTo.token.symbol}
+                    </List.KeyValue>
                     <List.KeyValue title="Address">
                       <a
                         target="_blank"
-                        href={Chain.from(chainId).getTokenUrl(tokenTo.token.address)}
+                        href={Chain.from(chainId)?.getTokenUrl(
+                          tokenTo.token.address,
+                        )}
                         className="text-blue"
                         rel="noreferrer"
                       >
@@ -195,52 +264,74 @@ export const SimpleSwapTokenNotFoundDialog = () => {
           ) : (
             <>
               <Button asChild variant="link"></Button>
-              {tokenFrom?.token && tokenSecurity.honeypots.includes(tokenFrom.token.address) && (
-                <List>
-                  <List.Label>
-                    Token {tokenTo?.token && tokenSecurity.honeypots.includes(tokenTo.token.address) ? '1' : ''}
-                  </List.Label>
-                  <List.Control>
-                    <List.KeyValue title="Name">{tokenFrom.token.name}</List.KeyValue>
-                    <List.KeyValue title="Symbol">{tokenFrom.token.symbol}</List.KeyValue>
-                    <List.KeyValue title="Address">
-                      <a
-                        target="_blank"
-                        href={Chain.from(chainId).getTokenUrl(tokenFrom.token.address)}
-                        className="text-blue"
-                        rel="noreferrer"
-                      >
-                        {shortenAddress(tokenFrom.token.address)}
-                      </a>
-                    </List.KeyValue>
-                  </List.Control>
-                </List>
-              )}
-              {tokenTo?.token && tokenSecurity.honeypots.includes(tokenTo.token.address) && (
-                <List>
-                  <List.Label>
-                    Token {tokenFrom?.token && tokenSecurity.honeypots.includes(tokenFrom.token.address) ? '2' : ''}
-                  </List.Label>
-                  <List.Control>
-                    <List.KeyValue title="Name">
-                      {tokenTo.token.name ? `${tokenTo.token.name} (SCAM)` : null}
-                    </List.KeyValue>
-                    <List.KeyValue title="Symbol">
-                      {tokenTo.token.symbol ? `${tokenTo.token.symbol} (SCAM)` : null}
-                    </List.KeyValue>
-                    <List.KeyValue title="Address">
-                      <a
-                        target="_blank"
-                        href={Chain.from(chainId).getTokenUrl(tokenTo.token.address)}
-                        className="text-blue"
-                        rel="noreferrer"
-                      >
-                        {shortenAddress(tokenTo.token.address)}
-                      </a>
-                    </List.KeyValue>
-                  </List.Control>
-                </List>
-              )}
+              {tokenFrom?.token &&
+                tokenSecurity.honeypots.includes(tokenFrom.token.address) && (
+                  <List>
+                    <List.Label>
+                      Token{' '}
+                      {tokenTo?.token &&
+                      tokenSecurity.honeypots.includes(tokenTo.token.address)
+                        ? '1'
+                        : ''}
+                    </List.Label>
+                    <List.Control>
+                      <List.KeyValue title="Name">
+                        {tokenFrom.token.name}
+                      </List.KeyValue>
+                      <List.KeyValue title="Symbol">
+                        {tokenFrom.token.symbol}
+                      </List.KeyValue>
+                      <List.KeyValue title="Address">
+                        <a
+                          target="_blank"
+                          href={Chain.from(chainId)?.getTokenUrl(
+                            tokenFrom.token.address,
+                          )}
+                          className="text-blue"
+                          rel="noreferrer"
+                        >
+                          {shortenAddress(tokenFrom.token.address)}
+                        </a>
+                      </List.KeyValue>
+                    </List.Control>
+                  </List>
+                )}
+              {tokenTo?.token &&
+                tokenSecurity.honeypots.includes(tokenTo.token.address) && (
+                  <List>
+                    <List.Label>
+                      Token{' '}
+                      {tokenFrom?.token &&
+                      tokenSecurity.honeypots.includes(tokenFrom.token.address)
+                        ? '2'
+                        : ''}
+                    </List.Label>
+                    <List.Control>
+                      <List.KeyValue title="Name">
+                        {tokenTo.token.name
+                          ? `${tokenTo.token.name} (SCAM)`
+                          : null}
+                      </List.KeyValue>
+                      <List.KeyValue title="Symbol">
+                        {tokenTo.token.symbol
+                          ? `${tokenTo.token.symbol} (SCAM)`
+                          : null}
+                      </List.KeyValue>
+                      <List.KeyValue title="Address">
+                        <a
+                          target="_blank"
+                          href={Chain.from(chainId)?.getTokenUrl(
+                            tokenTo.token.address,
+                          )}
+                          className="text-blue"
+                          rel="noreferrer"
+                        >
+                          {shortenAddress(tokenTo.token.address)}
+                        </a>
+                      </List.KeyValue>
+                    </List.Control>
+                  </List>
+                )}
               {tokenSecurity.isSupported && (
                 <div className="flex items-center gap-0.5 justify-center">
                   <span className="text-xs text-gray-700 dark:text-slate-400">
@@ -254,8 +345,13 @@ export const SimpleSwapTokenNotFoundDialog = () => {
         </div>
         <DialogFooter>
           {isNotHoneyPot ? (
-            (token0NotInList && tokenFrom?.token) || (token1NotInList && tokenTo?.token) ? (
-              <Button fullWidth size="xl" onClick={() => onImport([tokenFrom?.token, tokenTo?.token])}>
+            (token0NotInList && tokenFrom?.token) ||
+            (token1NotInList && tokenTo?.token) ? (
+              <Button
+                fullWidth
+                size="xl"
+                onClick={() => onImport([tokenFrom?.token, tokenTo?.token])}
+              >
                 I understand
               </Button>
             ) : (

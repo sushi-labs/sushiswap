@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import type { CurvePool, MultiRoute, RouteLeg } from '@sushiswap/tines'
 
 import { HEXer } from '../HEXer'

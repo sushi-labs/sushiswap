@@ -1,23 +1,27 @@
 'use client'
 
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { Type as Currency } from '@sushiswap/currency'
+import { Type as Currency } from 'sushi/currency'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
 
 type UseBentoBoxTotals = (
   chainId: BentoBoxChainId | undefined,
   currencies: (Currency | undefined)[],
-  config?: Parameters<typeof useContractReads>[0]
+  config?: Parameters<typeof useContractReads>[0],
 ) => Record<string, { base: bigint; elastic: bigint }> | undefined
 
-export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies, config) => {
+export const useBentoBoxTotals: UseBentoBoxTotals = (
+  chainId,
+  currencies,
+  config,
+) => {
   const addresses = useMemo(
     () =>
       currencies
         .filter((currency): currency is Currency => Boolean(currency?.wrapped))
         .map((token) => token.wrapped.address),
-    [currencies]
+    [currencies],
   )
 
   const contracts = useMemo(
@@ -56,10 +60,10 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies, config
                 ] as const,
                 functionName: 'totals',
                 args: [address as Address],
-              } as const)
+              }) as const,
           )
         : undefined,
-    [addresses, chainId]
+    [addresses, chainId],
   )
 
   const { data: totals } = useContractReads({
@@ -71,24 +75,27 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies, config
   })
 
   return useMemo(() => {
-    return totals?.reduce<Record<string, { base: bigint; elastic: bigint }>>((previousValue, currentValue, i) => {
-      if (!currentValue) return previousValue
-      const [elastic, base] = currentValue
-      previousValue[addresses[i]] = { elastic, base }
-      return previousValue
-    }, {})
+    return totals?.reduce<Record<string, { base: bigint; elastic: bigint }>>(
+      (previousValue, currentValue, i) => {
+        if (!currentValue) return previousValue
+        const [elastic, base] = currentValue
+        previousValue[addresses[i]] = { elastic, base }
+        return previousValue
+      },
+      {},
+    )
   }, [totals, addresses])
 }
 
 export const useBentoBoxTotal = (
   chainId: BentoBoxChainId | undefined,
   currency: Currency | undefined,
-  config?: Parameters<typeof useContractReads>[0]
+  config?: Parameters<typeof useContractReads>[0],
 ): { base: bigint; elastic: bigint } | undefined => {
   const totals = useBentoBoxTotals(
     chainId,
     useMemo(() => [currency], [currency]),
-    config
+    config,
   )
   return useMemo(() => {
     if (!totals || !currency) {

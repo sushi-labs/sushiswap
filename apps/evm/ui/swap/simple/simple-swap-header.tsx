@@ -1,7 +1,7 @@
 'use client'
 
 import { ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
-import { Price, tryParseAmount } from '@sushiswap/currency'
+import { Price, tryParseAmount } from 'sushi/currency'
 import { formatUSD } from 'sushi'
 import { usePrices } from '@sushiswap/react-query'
 import { Button, typographyVariants } from '@sushiswap/ui'
@@ -22,7 +22,10 @@ export const SimpleSwapHeader = () => {
     return [tryParseAmount('1', token0), tryParseAmount('1', token1)]
   }, [token0, token1])
 
-  const [token0FiatPrice, token1FiatPrice] = useTokenAmountDollarValues({ chainId, amounts })
+  const [token0FiatPrice, token1FiatPrice] = useTokenAmountDollarValues({
+    chainId,
+    amounts,
+  })
 
   const { data: prices } = usePrices({ chainId })
 
@@ -44,7 +47,11 @@ export const SimpleSwapHeader = () => {
       })
     }
 
-    return price ? (invert ? price.invert().toSignificant(4) : price.toSignificant(4)) : '0.00'
+    return price
+      ? invert
+        ? price.invert().toSignificant(4)
+        : price.toSignificant(4)
+      : '0.00'
   }, [invert, prices, token0, token1])
 
   return (
@@ -53,13 +60,21 @@ export const SimpleSwapHeader = () => {
       {isLoading || !token0 || !token1 ? (
         <SkeletonText fontSize="sm" className="w-2/4" />
       ) : (
-        <Button variant="link" size="sm" onClick={() => setInvert((invert) => !invert)}>
+        <Button
+          variant="link"
+          size="sm"
+          onClick={() => setInvert((invert) => !invert)}
+        >
           <ArrowTrendingUpIcon width={16} height={16} />
           <span className="flex items-baseline gap-1 whitespace-nowrap scroll hide-scrollbar">
             1 {invert ? token0.symbol : token1.symbol}{' '}
-            <span className="font-normal">({formatUSD(invert ? token0FiatPrice : token1FiatPrice)})</span> = {price}{' '}
-            {invert ? token1.symbol : token0.symbol}{' '}
-            <span className="font-normal">({formatUSD(invert ? token1FiatPrice : token0FiatPrice)})</span>
+            <span className="font-normal">
+              ({formatUSD(invert ? token0FiatPrice : token1FiatPrice)})
+            </span>{' '}
+            = {price} {invert ? token1.symbol : token0.symbol}{' '}
+            <span className="font-normal">
+              ({formatUSD(invert ? token1FiatPrice : token0FiatPrice)})
+            </span>
           </span>
         </Button>
       )}

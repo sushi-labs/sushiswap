@@ -1,8 +1,13 @@
-import { Amount as CurrencyAmount, Price, Token } from '@sushiswap/currency'
+import { Amount as CurrencyAmount, Price, Token } from 'sushi/currency'
 import { BigintIsh } from 'sushi'
 import invariant from 'tiny-invariant'
 
-import { FeeAmount, SUSHISWAP_V3_FACTORY_ADDRESS,SushiSwapV3ChainId, TICK_SPACINGS } from '../constants'
+import {
+  FeeAmount,
+  SUSHISWAP_V3_FACTORY_ADDRESS,
+  SushiSwapV3ChainId,
+  TICK_SPACINGS,
+} from '../constants'
 import { Q192 } from '../internalConstants'
 import { computePoolAddress } from '../utils/computePoolAddress'
 import { LiquidityMath } from '../utils/liquidityMath'
@@ -47,12 +52,14 @@ export class SushiSwapV3Pool {
     tokenB: Token,
     fee: FeeAmount,
     initCodeHashManualOverride?: string,
-    factoryAddressOverride?: string
+    factoryAddressOverride?: string,
   ): string {
     return computePoolAddress({
       factoryAddress:
         factoryAddressOverride ??
-        SUSHISWAP_V3_FACTORY_ADDRESS[tokenA.chainId as keyof typeof SUSHISWAP_V3_FACTORY_ADDRESS],
+        SUSHISWAP_V3_FACTORY_ADDRESS[
+          tokenA.chainId as keyof typeof SUSHISWAP_V3_FACTORY_ADDRESS
+        ],
       fee,
       tokenA,
       tokenB,
@@ -77,7 +84,9 @@ export class SushiSwapV3Pool {
     sqrtRatioX96: BigintIsh,
     liquidity: BigintIsh,
     tickCurrent: number,
-    ticks: TickDataProvider | (Tick | TickConstructorArgs)[] = NO_TICK_DATA_PROVIDER_DEFAULT
+    ticks:
+      | TickDataProvider
+      | (Tick | TickConstructorArgs)[] = NO_TICK_DATA_PROVIDER_DEFAULT,
   ) {
     invariant(Number.isInteger(fee) && fee < 1_000_000, 'FEE')
 
@@ -86,15 +95,19 @@ export class SushiSwapV3Pool {
     invariant(
       BigInt(sqrtRatioX96.toString()) >= tickCurrentSqrtRatioX96 &&
         BigInt(sqrtRatioX96.toString()) <= nextTickSqrtRatioX96,
-      'PRICE_BOUNDS'
+      'PRICE_BOUNDS',
     )
     // always create a copy of the list since we want the pool's tick list to be immutable
-    ;[this.token0, this.token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
+    ;[this.token0, this.token1] = tokenA.sortsBefore(tokenB)
+      ? [tokenA, tokenB]
+      : [tokenB, tokenA]
     this.fee = fee
     this.sqrtRatioX96 = BigInt(sqrtRatioX96.toString())
     this.liquidity = BigInt(liquidity.toString())
     this.tickCurrent = tickCurrent
-    this.tickDataProvider = Array.isArray(ticks) ? new TickListDataProvider(ticks, TICK_SPACINGS[fee]) : ticks
+    this.tickDataProvider = Array.isArray(ticks)
+      ? new TickListDataProvider(ticks, TICK_SPACINGS[fee])
+      : ticks
   }
 
   /**
@@ -112,7 +125,12 @@ export class SushiSwapV3Pool {
   public get token0Price(): Price<Token, Token> {
     return (
       this._token0Price ??
-      (this._token0Price = new Price(this.token0, this.token1, Q192, this.sqrtRatioX96 * this.sqrtRatioX96))
+      (this._token0Price = new Price(
+        this.token0,
+        this.token1,
+        Q192,
+        this.sqrtRatioX96 * this.sqrtRatioX96,
+      ))
     )
   }
 
@@ -122,7 +140,12 @@ export class SushiSwapV3Pool {
   public get token1Price(): Price<Token, Token> {
     return (
       this._token1Price ??
-      (this._token1Price = new Price(this.token1, this.token0, this.sqrtRatioX96 * this.sqrtRatioX96, Q192))
+      (this._token1Price = new Price(
+        this.token1,
+        this.token0,
+        this.sqrtRatioX96 * this.sqrtRatioX96,
+        Q192,
+      ))
     )
   }
 
@@ -151,7 +174,7 @@ export class SushiSwapV3Pool {
    */
   public async getOutputAmount(
     inputAmount: CurrencyAmount<Token>,
-    sqrtPriceLimitX96?: bigint
+    sqrtPriceLimitX96?: bigint,
   ): Promise<[CurrencyAmount<Token>, SushiSwapV3Pool]> {
     invariant(this.involvesToken(inputAmount.currency), 'TOKEN')
 
@@ -173,7 +196,7 @@ export class SushiSwapV3Pool {
         sqrtRatioX96,
         liquidity,
         tickCurrent,
-        this.tickDataProvider
+        this.tickDataProvider,
       ),
     ]
   }
@@ -186,9 +209,13 @@ export class SushiSwapV3Pool {
    */
   public async getInputAmount(
     outputAmount: CurrencyAmount<Token>,
-    sqrtPriceLimitX96?: bigint
+    sqrtPriceLimitX96?: bigint,
   ): Promise<[CurrencyAmount<Token>, SushiSwapV3Pool]> {
-    invariant(outputAmount.currency.isToken && this.involvesToken(outputAmount.currency), 'TOKEN')
+    invariant(
+      outputAmount.currency.isToken &&
+        this.involvesToken(outputAmount.currency),
+      'TOKEN',
+    )
 
     const zeroForOne = outputAmount.currency.equals(this.token1)
 
@@ -197,7 +224,11 @@ export class SushiSwapV3Pool {
       sqrtRatioX96,
       liquidity,
       tickCurrent,
-    } = await this.swap(zeroForOne, outputAmount.quotient * -1n, sqrtPriceLimitX96)
+    } = await this.swap(
+      zeroForOne,
+      outputAmount.quotient * -1n,
+      sqrtPriceLimitX96,
+    )
     const inputToken = zeroForOne ? this.token0 : this.token1
     return [
       CurrencyAmount.fromRawAmount(inputToken, inputAmount),
@@ -208,7 +239,7 @@ export class SushiSwapV3Pool {
         sqrtRatioX96,
         liquidity,
         tickCurrent,
-        this.tickDataProvider
+        this.tickDataProvider,
       ),
     ]
   }
@@ -226,9 +257,17 @@ export class SushiSwapV3Pool {
   private async swap(
     zeroForOne: boolean,
     amountSpecified: bigint,
-    sqrtPriceLimitX96?: bigint
-  ): Promise<{ amountCalculated: bigint; sqrtRatioX96: bigint; liquidity: bigint; tickCurrent: number }> {
-    if (!sqrtPriceLimitX96) sqrtPriceLimitX96 = zeroForOne ? TickMath.MIN_SQRT_RATIO + 1n : TickMath.MAX_SQRT_RATIO - 1n
+    sqrtPriceLimitX96?: bigint,
+  ): Promise<{
+    amountCalculated: bigint
+    sqrtRatioX96: bigint
+    liquidity: bigint
+    tickCurrent: number
+  }> {
+    if (!sqrtPriceLimitX96)
+      sqrtPriceLimitX96 = zeroForOne
+        ? TickMath.MIN_SQRT_RATIO + 1n
+        : TickMath.MAX_SQRT_RATIO - 1n
 
     if (zeroForOne) {
       invariant(sqrtPriceLimitX96 > TickMath.MIN_SQRT_RATIO, 'RATIO_MIN')
@@ -251,18 +290,22 @@ export class SushiSwapV3Pool {
     }
 
     // start swap while loop
-    while (state.amountSpecifiedRemaining !== 0n && state.sqrtPriceX96 !== sqrtPriceLimitX96) {
+    while (
+      state.amountSpecifiedRemaining !== 0n &&
+      state.sqrtPriceX96 !== sqrtPriceLimitX96
+    ) {
       const step: Partial<StepComputations> = {}
       step.sqrtPriceStartX96 = state.sqrtPriceX96
 
       // because each iteration of the while loop rounds, we can't optimize this code (relative to the smart contract)
       // by simply traversing to the next available tick, we instead need to exactly replicate
       // tickBitmap.nextInitializedTickWithinOneWord
-      ;[step.tickNext, step.initialized] = await this.tickDataProvider.nextInitializedTickWithinOneWord(
-        state.tick,
-        zeroForOne,
-        this.tickSpacing
-      )
+      ;[step.tickNext, step.initialized] =
+        await this.tickDataProvider.nextInitializedTickWithinOneWord(
+          state.tick,
+          zeroForOne,
+          this.tickSpacing,
+        )
 
       if (step.tickNext < TickMath.MIN_TICK) {
         step.tickNext = TickMath.MIN_TICK
@@ -271,34 +314,49 @@ export class SushiSwapV3Pool {
       }
 
       step.sqrtPriceNextX96 = TickMath.getSqrtRatioAtTick(step.tickNext)
-      ;[state.sqrtPriceX96, step.amountIn, step.amountOut, step.feeAmount] = SwapMath.computeSwapStep(
-        state.sqrtPriceX96,
-        (zeroForOne ? step.sqrtPriceNextX96 < sqrtPriceLimitX96 : step.sqrtPriceNextX96 > sqrtPriceLimitX96)
-          ? sqrtPriceLimitX96
-          : step.sqrtPriceNextX96,
-        state.liquidity,
-        state.amountSpecifiedRemaining,
-        this.fee
-      )
+      ;[state.sqrtPriceX96, step.amountIn, step.amountOut, step.feeAmount] =
+        SwapMath.computeSwapStep(
+          state.sqrtPriceX96,
+          (
+            zeroForOne
+              ? step.sqrtPriceNextX96 < sqrtPriceLimitX96
+              : step.sqrtPriceNextX96 > sqrtPriceLimitX96
+          )
+            ? sqrtPriceLimitX96
+            : step.sqrtPriceNextX96,
+          state.liquidity,
+          state.amountSpecifiedRemaining,
+          this.fee,
+        )
 
       if (exactInput) {
-        state.amountSpecifiedRemaining = state.amountSpecifiedRemaining - (step.amountIn + step.feeAmount)
+        state.amountSpecifiedRemaining =
+          state.amountSpecifiedRemaining - (step.amountIn + step.feeAmount)
         state.amountCalculated = state.amountCalculated - step.amountOut
       } else {
-        state.amountSpecifiedRemaining = state.amountSpecifiedRemaining + step.amountOut
-        state.amountCalculated = state.amountCalculated + (step.amountIn + step.feeAmount)
+        state.amountSpecifiedRemaining =
+          state.amountSpecifiedRemaining + step.amountOut
+        state.amountCalculated =
+          state.amountCalculated + (step.amountIn + step.feeAmount)
       }
 
       // TODO
       if (state.sqrtPriceX96 === step.sqrtPriceNextX96) {
         // if the tick is initialized, run the tick transition
         if (step.initialized) {
-          let liquidityNet = BigInt((await this.tickDataProvider.getTick(step.tickNext)).liquidityNet.toString())
+          let liquidityNet = BigInt(
+            (
+              await this.tickDataProvider.getTick(step.tickNext)
+            ).liquidityNet.toString(),
+          )
           // if we're moving leftward, we interpret liquidityNet as the opposite sign
           // safe because liquidityNet cannot be type(int128).min
           if (zeroForOne) liquidityNet = liquidityNet * -1n
 
-          state.liquidity = LiquidityMath.addDelta(state.liquidity, liquidityNet)
+          state.liquidity = LiquidityMath.addDelta(
+            state.liquidity,
+            liquidityNet,
+          )
         }
 
         state.tick = zeroForOne ? step.tickNext - 1 : step.tickNext

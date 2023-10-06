@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
 

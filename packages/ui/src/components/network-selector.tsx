@@ -1,13 +1,22 @@
 'use client'
 
-import { Chain, ChainId } from '@sushiswap/chain'
 import React, { ReactNode, useMemo, useState } from 'react'
+import { Chain, ChainId } from 'sushi/chain'
 
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from './command'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from './command'
 import { NetworkIcon } from './icons'
 import { Popover, PopoverContent, PopoverPrimitive } from './popover'
 
-export type NetworkSelectorOnSelectCallback<T extends number = ChainId> = (chainId: T, close: () => void) => void
+export type NetworkSelectorOnSelectCallback<T extends number = ChainId> = (
+  chainId: T,
+  close: () => void,
+) => void
 
 const PREFERRED_CHAINID_ORDER: ChainId[] = [
   ChainId.ETHEREUM,
@@ -40,7 +49,9 @@ const NetworkSelector = <T extends number>({
   const [open, setOpen] = useState(false)
 
   const _networks = useMemo(() => {
-    const INCLUDED_PREFERRED_CHAIN_IDS = PREFERRED_CHAINID_ORDER.filter((el) => networks.includes(el as T))
+    const INCLUDED_PREFERRED_CHAIN_IDS = PREFERRED_CHAINID_ORDER.filter((el) =>
+      networks.includes(el as T),
+    )
     return Array.from(new Set([...INCLUDED_PREFERRED_CHAIN_IDS, ...networks]))
   }, [networks])
 
@@ -55,17 +66,19 @@ const NetworkSelector = <T extends number>({
             {_networks.map((el) => (
               <CommandItem
                 testdata-id={`network-selector-${el}`}
-                value={`${Chain.from(el).name}__${el}`}
+                value={`${Chain.from(el)?.name}__${el}`}
                 key={el}
-                onSelect={(value) => onSelect(+value.split('__')[1] as T, () => setOpen(false))}
+                onSelect={(value) =>
+                  onSelect(+value.split('__')[1] as T, () => setOpen(false))
+                }
               >
                 <div className="flex items-center gap-2">
                   <NetworkIcon chainId={el} width={22} height={22} />
                   {el !== ChainId.LINEA ? (
-                    Chain.from(el).name
+                    Chain.from(el)?.name
                   ) : (
                     <>
-                      {Chain.from(el).name}
+                      {Chain.from(el)?.name}
                       <div className="text-[10px] italic rounded-full px-[6px] bg-gradient-to-r from-blue to-pink text-white font-bold">
                         NEW
                       </div>

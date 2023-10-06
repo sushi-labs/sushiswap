@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 
 export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging'
 export const MASTERCHEF_V2_SUBGRAPH_NAME = 'sushiswap/master-chefv2'

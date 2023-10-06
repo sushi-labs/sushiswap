@@ -1,4 +1,4 @@
-import { Currency } from '@sushiswap/currency'
+import { Currency } from 'sushi/currency'
 import { Percent } from 'sushi'
 import invariant from 'tiny-invariant'
 
@@ -52,7 +52,7 @@ export abstract class TridentRouter {
    */
   public static swapCallParameters(
     trade: Trade<Currency, Currency, TradeType, Version.V2>,
-    options: TradeOptions
+    options: TradeOptions,
   ): SwapParameters {
     const etherIn = trade.inputAmount.currency.isNative
     const etherOut = trade.outputAmount.currency.isNative

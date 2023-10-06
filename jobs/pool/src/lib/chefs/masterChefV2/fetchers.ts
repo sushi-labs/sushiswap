@@ -1,5 +1,5 @@
 import { masterChefV2Abi } from 'sushi/abi'
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { Address, readContract, readContracts } from '@wagmi/core'
 
 import { MASTERCHEF_V2_ADDRESS } from '../../../config.js'

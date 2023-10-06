@@ -1,6 +1,6 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { useNetwork } from '@sushiswap/wagmi'
 import { useParams, useSearchParams } from 'next/navigation'
 import { useMemo } from 'react'

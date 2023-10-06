@@ -1,7 +1,7 @@
 'use client'
 
 import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
-import { Chain } from '@sushiswap/chain'
+import { Chain } from 'sushi/chain'
 import { shortenAddress } from 'sushi'
 import { Token as GraphToken } from '@sushiswap/graph-client'
 import { ClipboardController, LinkExternal } from '@sushiswap/ui'

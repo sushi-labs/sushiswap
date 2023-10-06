@@ -1,5 +1,5 @@
 import { createAppAuth } from '@octokit/auth-app'
-import { ChainId, ChainKey } from '@sushiswap/chain'
+import { ChainId, ChainKey } from 'sushi/chain'
 import { formatUSD } from 'sushi'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import stringify from 'fast-json-stable-stringify'

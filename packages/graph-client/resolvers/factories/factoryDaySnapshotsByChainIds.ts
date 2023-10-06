@@ -1,4 +1,4 @@
-import { ChainId, chainName, chainShortName } from '@sushiswap/chain'
+import { ChainId, chainName, chainShortName } from 'sushi/chain'
 import {
   isSushiSwapChain,
   isSushiSwapV3Chain,

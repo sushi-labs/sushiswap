@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { Pool } from '@sushiswap/client'
 import { formatPercent } from 'sushi'
 import { classNames } from '@sushiswap/ui'

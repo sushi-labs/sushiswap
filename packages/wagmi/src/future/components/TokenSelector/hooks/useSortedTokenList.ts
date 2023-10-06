@@ -1,10 +1,14 @@
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Native, Token, Type } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Amount, Native, Token, Type } from 'sushi/currency'
 import { useDebounce } from '@sushiswap/hooks'
 import { Fraction } from 'sushi'
 import { useQuery } from '@tanstack/react-query'
 
-import { filterTokens, getSortedTokensByQuery, tokenComparator } from '../../../../hooks/useSortedTokensByQuery'
+import {
+  filterTokens,
+  getSortedTokensByQuery,
+  tokenComparator,
+} from '../../../../hooks/useSortedTokensByQuery'
 
 interface Params {
   query: string
@@ -38,7 +42,17 @@ export const useSortedTokenList = ({
   const debouncedQuery = useDebounce(query, 250)
 
   return useQuery({
-    queryKey: ['sortedTokenList', { debouncedQuery, tokenMap, customTokenMap, balancesMap, pricesMap, includeNative }],
+    queryKey: [
+      'sortedTokenList',
+      {
+        debouncedQuery,
+        tokenMap,
+        customTokenMap,
+        balancesMap,
+        pricesMap,
+        includeNative,
+      },
+    ],
     queryFn: async () => {
       const tokenMapValues = tokenMap ? Object.values(tokenMap) : []
       const uniqTokenMapIds: string[] = []
@@ -49,22 +63,43 @@ export const useSortedTokenList = ({
       })
 
       const customTokenMapValues = customTokenMap
-        ? Object.values(customTokenMap).filter((el) => el.chainId === chainId && !uniqTokenMapIds.includes(el.address))
+        ? Object.values(customTokenMap).filter(
+            (el) =>
+              el.chainId === chainId && !uniqTokenMapIds.includes(el.address),
+          )
         : []
 
       const _includeNative =
         includeNative &&
         chainId &&
-        (!debouncedQuery || debouncedQuery.toLowerCase().includes(Native.onChain(chainId).symbol.toLowerCase()))
+        (!debouncedQuery ||
+          debouncedQuery
+            .toLowerCase()
+            .includes(Native.onChain(chainId).symbol.toLowerCase()))
 
-      const filteredTokens: Token[] = filterTokens(tokenMapValuesUniq, debouncedQuery)
-      const filteredCustomTokens: Token[] = filterTokens(customTokenMapValues, debouncedQuery)
-      const sortedTokens: Token[] = [...filteredTokens, ...filteredCustomTokens].sort(
-        tokenComparator(balancesMap, pricesMap)
+      const filteredTokens: Token[] = filterTokens(
+        tokenMapValuesUniq,
+        debouncedQuery,
       )
+      const filteredCustomTokens: Token[] = filterTokens(
+        customTokenMapValues,
+        debouncedQuery,
+      )
+      const sortedTokens: Token[] = [
+        ...filteredTokens,
+        ...filteredCustomTokens,
+      ].sort(tokenComparator(balancesMap, pricesMap))
 
-      const filteredSortedTokens = getSortedTokensByQuery(sortedTokens, debouncedQuery)
-      if (_includeNative) return [Native.onChain(chainId), ...customTokenMapValues, ...filteredSortedTokens]
+      const filteredSortedTokens = getSortedTokensByQuery(
+        sortedTokens,
+        debouncedQuery,
+      )
+      if (_includeNative)
+        return [
+          Native.onChain(chainId),
+          ...customTokenMapValues,
+          ...filteredSortedTokens,
+        ]
       return filteredSortedTokens
     },
     keepPreviousData: true,

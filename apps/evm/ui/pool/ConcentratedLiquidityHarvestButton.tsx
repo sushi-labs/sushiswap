@@ -1,6 +1,6 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { useAngleRewards } from '@sushiswap/react-query'
 import { Address } from '@sushiswap/wagmi'
 import { useHarvestAngleRewards } from '@sushiswap/wagmi/future/hooks'

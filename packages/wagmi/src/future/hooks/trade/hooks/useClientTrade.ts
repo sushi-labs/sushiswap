@@ -1,6 +1,6 @@
 import { calculateSlippageAmount } from '@sushiswap/amm'
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Native, Price, WNATIVE_ADDRESS } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Amount, Native, Price, WNATIVE_ADDRESS } from 'sushi/currency'
 import { Percent } from 'sushi'
 import { usePrice, UseTradeParams, UseTradeReturnWriteArgs } from '@sushiswap/react-query'
 import {

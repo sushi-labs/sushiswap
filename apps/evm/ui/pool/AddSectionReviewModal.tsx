@@ -1,5 +1,5 @@
 import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { Amount, Price, Type } from '@sushiswap/currency'
+import { Amount, Price, Type } from 'sushi/currency'
 import { formatUSD } from 'sushi'
 import { Button, List } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
@@ -14,7 +14,11 @@ interface AddSectionReviewModal {
   input1: Amount<Type> | undefined
 }
 
-export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({ chainId, input0, input1 }) => {
+export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({
+  chainId,
+  input0,
+  input1,
+}) => {
   const [value0, value1] = useTokenAmountDollarValues({
     chainId,
     amounts: [input0, input1],
@@ -30,24 +34,44 @@ export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({ chainId, inpu
       <List>
         <List.Control>
           {input0 ? (
-            <List.KeyValue flex title={`${input0.currency.symbol}`} className="!items-start">
+            <List.KeyValue
+              flex
+              title={`${input0.currency.symbol}`}
+              className="!items-start"
+            >
               <div className="flex flex-col gap-0.5">
                 <div className="flex items-center gap-2">
-                  <Currency.Icon currency={input0.currency} width={18} height={18} />
+                  <Currency.Icon
+                    currency={input0.currency}
+                    width={18}
+                    height={18}
+                  />
                   {input0?.toSignificant(6)} {input0.currency.symbol}
                 </div>
-                <span className="text-xs font-normal text-gray-600 dark:text-slate-400">{formatUSD(value0)}</span>
+                <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
+                  {formatUSD(value0)}
+                </span>
               </div>
             </List.KeyValue>
           ) : null}
           {input1 ? (
-            <List.KeyValue flex title={`${input1.currency.symbol}`} className="!items-start">
+            <List.KeyValue
+              flex
+              title={`${input1.currency.symbol}`}
+              className="!items-start"
+            >
               <div className="flex flex-col gap-0.5">
                 <div className="flex items-center gap-2">
-                  <Currency.Icon currency={input1.currency} width={18} height={18} />
+                  <Currency.Icon
+                    currency={input1.currency}
+                    width={18}
+                    height={18}
+                  />
                   {input1?.toSignificant(6)} {input1.currency.symbol}
                 </div>
-                <span className="text-xs font-normal text-gray-600 dark:text-slate-400">{formatUSD(value1)}</span>
+                <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
+                  {formatUSD(value1)}
+                </span>
               </div>
             </List.KeyValue>
           ) : null}
@@ -62,7 +86,12 @@ export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({ chainId, inpu
                   className="!no-underline"
                   onClick={() => toggleInvert()}
                 >
-                  {content} {usdPrice && <span className="font-normal text-slate-300">(${usdPrice})</span>}
+                  {content}{' '}
+                  {usdPrice && (
+                    <span className="font-normal text-slate-300">
+                      (${usdPrice})
+                    </span>
+                  )}
                 </Button>
               )}
             </Rate>

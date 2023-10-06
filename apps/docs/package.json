@@ -12,8 +12,7 @@
   },
   "dependencies": {
     "@heroicons/react": "2.0.13",
-    "@sushiswap/chain": "workspace:*",
-    "@sushiswap/currency": "workspace:*",
+    "sushi": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/ui": "workspace:*",

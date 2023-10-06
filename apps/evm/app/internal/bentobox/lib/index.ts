@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 
 const reduceObjectArray = (arr: Record<string, unknown>[]) => {
   const keys = Object.keys(arr[0])

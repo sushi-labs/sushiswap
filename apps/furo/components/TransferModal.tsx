@@ -1,5 +1,5 @@
 import { ArrowRightIcon } from '@heroicons/react/solid'
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { shortenAddress } from 'sushi'
 import { ZERO } from 'sushi'
 import {

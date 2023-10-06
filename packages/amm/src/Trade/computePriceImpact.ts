@@ -1,4 +1,4 @@
-import { Amount, Price, Type as Currency } from '@sushiswap/currency'
+import { Amount, Price, Type as Currency } from 'sushi/currency'
 import { Percent } from 'sushi'
 
 /**
@@ -7,13 +7,18 @@ import { Percent } from 'sushi'
  * @param inputAmount the input amount of the trade
  * @param outputAmount the output amount of the trade
  */
-export function computePriceImpact<TBase extends Currency, TQuote extends Currency>(
+export function computePriceImpact<
+  TBase extends Currency,
+  TQuote extends Currency,
+>(
   midPrice: Price<TBase, TQuote>,
   inputAmount: Amount<TBase>,
-  outputAmount: Amount<TQuote>
+  outputAmount: Amount<TQuote>,
 ): Percent {
   const quotedOutputAmount = midPrice.quote(inputAmount)
   // calculate price impact := (exactQuote - outputAmount) / exactQuote
-  const priceImpact = quotedOutputAmount.subtract(outputAmount).divide(quotedOutputAmount)
+  const priceImpact = quotedOutputAmount
+    .subtract(outputAmount)
+    .divide(quotedOutputAmount)
   return new Percent(priceImpact.numerator, priceImpact.denominator)
 }

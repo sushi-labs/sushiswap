@@ -26,8 +26,6 @@
     "@heroicons/react": "1.0.6",
     "@hookform/resolvers": "2.9.10",
     "@sushiswap/bentobox-sdk": "workspace:*",
-    "@sushiswap/chain": "workspace:*",
-    "@sushiswap/currency": "workspace:*",
     "@sushiswap/furo-sdk": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",

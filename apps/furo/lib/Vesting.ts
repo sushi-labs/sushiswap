@@ -1,5 +1,5 @@
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Token } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Amount, Token } from 'sushi/currency'
 import { minimum, Percent } from 'sushi'
 
 import { Rebase, vestingQuery } from '../.graphclient'
@@ -29,12 +29,20 @@ export class Vesting extends Furo {
     super({ chainId, furo: vesting, rebase })
     this.steps = parseInt(vesting.steps)
     this.cliffShares = Amount.fromRawAmount(this.token, vesting.cliffShares)
-    this.cliffAmount = Amount.fromShare(this.token, vesting.cliffShares, this.rebase)
+    this.cliffAmount = Amount.fromShare(
+      this.token,
+      vesting.cliffShares,
+      this.rebase,
+    )
     this.stepShares = Amount.fromRawAmount(this.token, vesting.stepShares)
-    this.stepAmount = Amount.fromShare(this.token, vesting.stepShares, this.rebase)
+    this.stepAmount = Amount.fromShare(
+      this.token,
+      vesting.stepShares,
+      this.rebase,
+    )
     this.totalAmount = Amount.fromRawAmount(
       this.token,
-      this._remainingAmount.quotient + BigInt(vesting.withdrawnAmount)
+      this._remainingAmount.quotient + BigInt(vesting.withdrawnAmount),
     )
     this.cliffDuration = parseInt(vesting.cliffDuration)
     this.stepDuration = parseInt(vesting.stepDuration)
@@ -60,11 +68,16 @@ export class Vesting extends Furo {
 
     const passedSinceCliff = now - timeAfterCliff
 
-    const stepPassed = minimum(BigInt(this.steps), BigInt(Math.floor(passedSinceCliff / this.stepDuration)))
+    const stepPassed = minimum(
+      BigInt(this.steps),
+      BigInt(Math.floor(passedSinceCliff / this.stepDuration)),
+    )
 
     return Amount.fromRawAmount(
       this.token,
-      this.cliffAmount.quotient + this.stepAmount.quotient * stepPassed - this.remainingAmount.quotient
+      this.cliffAmount.quotient +
+        this.stepAmount.quotient * stepPassed -
+        this.remainingAmount.quotient,
     )
   }
 
@@ -77,13 +90,20 @@ export class Vesting extends Furo {
         sum = sum.add(this.cliffAmount)
 
         const payouts = Math.min(
-          Math.floor((Date.now() - this.startTime.getTime() - this.cliffDuration * 1000) / (this.stepDuration * 1000)),
-          this.steps
+          Math.floor(
+            (Date.now() -
+              this.startTime.getTime() -
+              this.cliffDuration * 1000) /
+              (this.stepDuration * 1000),
+          ),
+          this.steps,
         )
         sum = sum.add(this.stepAmount.multiply(payouts))
       }
     } else {
-      const payouts = Math.floor((Date.now() - this.startTime.getTime()) / (this.stepDuration * 1000))
+      const payouts = Math.floor(
+        (Date.now() - this.startTime.getTime()) / (this.stepDuration * 1000),
+      )
       sum = sum.add(this.stepAmount.multiply(payouts))
     }
 
@@ -99,13 +119,20 @@ export class Vesting extends Furo {
         sum = sum.add(this.cliffShares)
 
         const payouts = Math.min(
-          Math.floor((Date.now() - this.startTime.getTime() - this.cliffDuration * 1000) / (this.stepDuration * 1000)),
-          this.steps
+          Math.floor(
+            (Date.now() -
+              this.startTime.getTime() -
+              this.cliffDuration * 1000) /
+              (this.stepDuration * 1000),
+          ),
+          this.steps,
         )
         sum = sum.add(this.stepShares.multiply(payouts))
       }
     } else {
-      const payouts = Math.floor((Date.now() - this.startTime.getTime()) / (this.stepDuration * 1000))
+      const payouts = Math.floor(
+        (Date.now() - this.startTime.getTime()) / (this.stepDuration * 1000),
+      )
       sum = sum.add(this.stepAmount.multiply(payouts))
     }
 
@@ -115,7 +142,12 @@ export class Vesting extends Furo {
   public get streamedPercentage(): Percent {
     if (!this.isStarted) return new Percent(0, 100)
 
-    const percent = new Percent(this.streamedShares.quotient, this.initialShares.quotient)
-    return percent.greaterThan(new Percent(100, 100).asFraction) ? new Percent(100, 100) : percent
+    const percent = new Percent(
+      this.streamedShares.quotient,
+      this.initialShares.quotient,
+    )
+    return percent.greaterThan(new Percent(100, 100).asFraction)
+      ? new Percent(100, 100)
+      : percent
   }
 }

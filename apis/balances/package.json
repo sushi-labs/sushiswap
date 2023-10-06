@@ -22,7 +22,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .vercel"
   },
   "dependencies": {
-    "@sushiswap/chain": "workspace:*",
+    "sushi": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
     "@vercel/node": "2.14.3",
     "@wagmi/core": "1.4.1",

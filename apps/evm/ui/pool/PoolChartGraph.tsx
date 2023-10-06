@@ -1,6 +1,6 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { formatPercent, formatUSD } from 'sushi'
 import { CardContent, CardHeader, classNames, SkeletonText } from '@sushiswap/ui'
 import { CardDescription, CardTitle } from '@sushiswap/ui/components/card'

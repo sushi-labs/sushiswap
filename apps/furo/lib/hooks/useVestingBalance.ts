@@ -1,7 +1,12 @@
 import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { Amount, Token } from '@sushiswap/currency'
+import { Amount, Token } from 'sushi/currency'
 import { FuroChainId } from '@sushiswap/furo-sdk'
-import { Address, getBentoBoxContractConfig, getFuroVestingContractConfig, readContract } from '@sushiswap/wagmi'
+import {
+  Address,
+  getBentoBoxContractConfig,
+  getFuroVestingContractConfig,
+  readContract,
+} from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
 
 interface UseVestingBalance {
@@ -11,7 +16,12 @@ interface UseVestingBalance {
   enabled?: boolean
 }
 
-export function useVestingBalance({ chainId, vestingId, token, enabled = true }: UseVestingBalance) {
+export function useVestingBalance({
+  chainId,
+  vestingId,
+  token,
+  enabled = true,
+}: UseVestingBalance) {
   return useQuery({
     queryKey: ['useVestingBalance', { chainId, vestingId }],
     queryFn: async () => {

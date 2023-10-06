@@ -1,4 +1,4 @@
-import type { ChainId } from '@sushiswap/chain'
+import type { ChainId } from 'sushi/chain'
 import type {} from '@sushiswap/database'
 import type { getSteerVault as _getSteerVault } from '@sushiswap/steer-vault-api/lib/api'
 import { SteerVaultApiSchema } from '@sushiswap/steer-vault-api/lib/schemas/vault'

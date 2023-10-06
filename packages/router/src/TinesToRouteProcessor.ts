@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { getBigInt, MultiRoute, RouteLeg, RouteStatus, RToken } from '@sushiswap/tines'
 import { Hex } from 'viem'
 

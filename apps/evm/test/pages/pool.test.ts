@@ -2,7 +2,7 @@
 
 import { Page } from '@playwright/test'
 import { Fee } from '@sushiswap/base-sdk'
-import { Native, SUSHI, Token, Type } from '@sushiswap/currency'
+import { Native, SUSHI, Token, Type } from 'sushi/currency'
 import {
   computeTridentConstantPoolAddress,
   computeTridentStablePoolAddress,
@@ -11,9 +11,19 @@ import {
   TRIDENT_SUPPORTED_CHAIN_IDS,
   TridentChainId,
 } from '@sushiswap/trident-sdk'
-import { computeSushiSwapV2PoolAddress, SUSHISWAP_V2_FACTORY_ADDRESS } from '@sushiswap/v2-sdk'
-import { computePoolAddress, SUSHISWAP_V3_FACTORY_ADDRESS } from '@sushiswap/v3-sdk'
-import { expect, NextFixture, test } from 'next/experimental/testmode/playwright'
+import {
+  computeSushiSwapV2PoolAddress,
+  SUSHISWAP_V2_FACTORY_ADDRESS,
+} from '@sushiswap/v2-sdk'
+import {
+  computePoolAddress,
+  SUSHISWAP_V3_FACTORY_ADDRESS,
+} from '@sushiswap/v3-sdk'
+import {
+  expect,
+  NextFixture,
+  test,
+} from 'next/experimental/testmode/playwright'
 // import { expect, test } from 'next/experimental/testmode/playwright/msw'
 import { zeroAddress } from 'viem'
 
@@ -152,14 +162,24 @@ test.describe('V3', () => {
 
   test('Remove liquidity', async ({ page, next }) => {
     test.slow()
-    await mockPoolApi(page, next, NATIVE_TOKEN.wrapped, FAKE_TOKEN, 10000, 'SUSHISWAP_V3')
+    await mockPoolApi(
+      page,
+      next,
+      NATIVE_TOKEN.wrapped,
+      FAKE_TOKEN,
+      10000,
+      'SUSHISWAP_V3',
+    )
     await removeLiquidityV3(page, next)
   })
 })
 
 test.describe('Trident', () => {
-  console.log("trident", !TRIDENT_SUPPORTED_CHAIN_IDS.includes(CHAIN_ID as TridentChainId))
-  test.skip(!TRIDENT_SUPPORTED_CHAIN_IDS.includes(CHAIN_ID as TridentChainId));
+  console.log(
+    'trident',
+    !TRIDENT_SUPPORTED_CHAIN_IDS.includes(CHAIN_ID as TridentChainId),
+  )
+  test.skip(!TRIDENT_SUPPORTED_CHAIN_IDS.includes(CHAIN_ID as TridentChainId))
   test.beforeEach(async ({ page }) => {
     const url = BASE_URL.concat(`/add/trident/${CHAIN_ID}`)
     await page.goto(url)
@@ -193,7 +213,14 @@ test.describe('Trident', () => {
 
   test('Remove liquidity', async ({ page, next }) => {
     test.slow()
-    await mockPoolApi(page, next, NATIVE_TOKEN.wrapped, FAKE_TOKEN, Fee.DEFAULT, 'BENTOBOX_CLASSIC')
+    await mockPoolApi(
+      page,
+      next,
+      NATIVE_TOKEN.wrapped,
+      FAKE_TOKEN,
+      Fee.DEFAULT,
+      'BENTOBOX_CLASSIC',
+    )
     const poolAddress = computeTridentConstantPoolAddress({
       factoryAddress: TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[CHAIN_ID],
       tokenA: NATIVE_TOKEN.wrapped,
@@ -225,7 +252,14 @@ test.describe('Trident', () => {
       twap: false,
     })
 
-    await mockPoolApi(page, next, NATIVE_TOKEN.wrapped, FAKE_TOKEN, Fee.DEFAULT, 'BENTOBOX_CLASSIC')
+    await mockPoolApi(
+      page,
+      next,
+      NATIVE_TOKEN.wrapped,
+      FAKE_TOKEN,
+      Fee.DEFAULT,
+      'BENTOBOX_CLASSIC',
+    )
 
     const addLiquidityUrl = BASE_URL.concat(`/${CHAIN_ID}:${poolAddress}`)
     await page.goto(addLiquidityUrl, { timeout: 25_000 })
@@ -296,7 +330,14 @@ test.describe('V2', () => {
       tokenB: FAKE_TOKEN,
     })
 
-    await mockPoolApi(page, next, NATIVE_TOKEN.wrapped, FAKE_TOKEN, Fee.DEFAULT, 'SUSHISWAP_V2')
+    await mockPoolApi(
+      page,
+      next,
+      NATIVE_TOKEN.wrapped,
+      FAKE_TOKEN,
+      Fee.DEFAULT,
+      'SUSHISWAP_V2',
+    )
 
     const removeLiquidityUrl = BASE_URL.concat(`/${CHAIN_ID}:${poolAddress}`)
     await page.goto(removeLiquidityUrl)
@@ -305,7 +346,11 @@ test.describe('V2', () => {
   })
 })
 
-async function createOrAddLiquidityV3(page: Page, next: NextFixture, args: V3PoolArgs) {
+async function createOrAddLiquidityV3(
+  page: Page,
+  next: NextFixture,
+  args: V3PoolArgs,
+) {
   await handleToken(page, args.token0, 'FIRST')
   await handleToken(page, args.token1, 'SECOND')
   const feeOptionSelector = page.locator('[testdata-id=fee-option-10000]')
@@ -323,19 +368,30 @@ async function createOrAddLiquidityV3(page: Page, next: NextFixture, args: V3Poo
   await page.locator('[testdata-id=max-price-input]').fill(args.maxPrice)
 
   const tokenOrderNumber = args.amountBelongsToToken0 ? 0 : 1
-  await page.locator(`[testdata-id=add-liquidity-token${tokenOrderNumber}-input]`).fill(args.amount)
+  await page
+    .locator(`[testdata-id=add-liquidity-token${tokenOrderNumber}-input]`)
+    .fill(args.amount)
 
-  if ((args.amountBelongsToToken0 && !args.token0.isNative) || (!args.amountBelongsToToken0 && !args.token1.isNative)) {
-    const approveTokenLocator = page.locator(`[testdata-id=${`approve-erc20-${tokenOrderNumber}-button`}]`)
+  if (
+    (args.amountBelongsToToken0 && !args.token0.isNative) ||
+    (!args.amountBelongsToToken0 && !args.token1.isNative)
+  ) {
+    const approveTokenLocator = page.locator(
+      `[testdata-id=${`approve-erc20-${tokenOrderNumber}-button`}]`,
+    )
     await expect(approveTokenLocator).toBeVisible()
     await expect(approveTokenLocator).toBeEnabled()
     await approveTokenLocator.click()
   }
-  const previewLocator = page.locator('[testdata-id=add-liquidity-preview-button]')
+  const previewLocator = page.locator(
+    '[testdata-id=add-liquidity-preview-button]',
+  )
   await expect(previewLocator).toBeVisible({ timeout: 10_000 })
   await expect(previewLocator).toBeEnabled()
   await previewLocator.click()
-  await page.locator('[testdata-id=confirm-add-liquidity-button]').click({ timeout: 5_000 })
+  await page
+    .locator('[testdata-id=confirm-add-liquidity-button]')
+    .click({ timeout: 5_000 })
 
   const expectedText =
     args.type === 'ADD'
@@ -345,7 +401,11 @@ async function createOrAddLiquidityV3(page: Page, next: NextFixture, args: V3Poo
   expect(page.getByText(regex))
 }
 
-async function createOrAddTridentPool(page: Page, next: NextFixture, args: TridentPoolArgs) {
+async function createOrAddTridentPool(
+  page: Page,
+  next: NextFixture,
+  args: TridentPoolArgs,
+) {
   await handleToken(page, args.token0, 'FIRST')
   await handleToken(page, args.token1, 'SECOND')
 
@@ -358,11 +418,17 @@ async function createOrAddTridentPool(page: Page, next: NextFixture, args: Tride
   await expect(feeOptionSelector).toBeVisible()
   await feeOptionSelector.click()
 
-  await page.locator('[testdata-id=add-liquidity-token0-input]').fill(args.amount0)
-  await page.locator('[testdata-id=add-liquidity-token1-input]').fill(args.amount1)
+  await page
+    .locator('[testdata-id=add-liquidity-token0-input]')
+    .fill(args.amount0)
+  await page
+    .locator('[testdata-id=add-liquidity-token1-input]')
+    .fill(args.amount1)
 
   if (args.type === 'CREATE') {
-    const approveBentoLocator = page.locator(`[testdata-id=create-trident-approve-bentobox-button]`)
+    const approveBentoLocator = page.locator(
+      `[testdata-id=create-trident-approve-bentobox-button]`,
+    )
     await expect(approveBentoLocator).toBeVisible()
     await expect(approveBentoLocator).toBeEnabled()
     await approveBentoLocator.click()
@@ -370,7 +436,9 @@ async function createOrAddTridentPool(page: Page, next: NextFixture, args: Tride
   const approveTokenId =
     args.type === 'CREATE'
       ? `create-trident-approve-token${args.token0.isNative ? 1 : 0}-button`
-      : `add-liquidity-trident-approve-token${args.token0.isNative ? 1 : 0}-button`
+      : `add-liquidity-trident-approve-token${
+          args.token0.isNative ? 1 : 0
+        }-button`
 
   // create-trident-approve-token1-button
   // add-liquidity-trident-approve-token1-button
@@ -381,13 +449,17 @@ async function createOrAddTridentPool(page: Page, next: NextFixture, args: Tride
   await approveTokenLocator.click()
 
   const reviewSelector =
-    args.type === 'CREATE' ? '[testdata-id=create-pool-button]' : '[testdata-id=add-liquidity-button]'
+    args.type === 'CREATE'
+      ? '[testdata-id=create-pool-button]'
+      : '[testdata-id=add-liquidity-button]'
   const reviewButton = page.locator(reviewSelector)
   await expect(reviewButton).toBeVisible()
   await expect(reviewButton).toBeEnabled()
   await reviewButton.click()
 
-  const confirmButton = page.locator('[testdata-id=confirm-add-liquidity-button]')
+  const confirmButton = page.locator(
+    '[testdata-id=confirm-add-liquidity-button]',
+  )
   await expect(confirmButton).toBeVisible()
   await expect(confirmButton).toBeEnabled()
   await confirmButton.click()
@@ -397,7 +469,11 @@ async function createOrAddTridentPool(page: Page, next: NextFixture, args: Tride
   expect(page.getByText(regex))
 }
 
-async function createOrAddV2Pool(page: Page, next: NextFixture, args: V2PoolArgs) {
+async function createOrAddV2Pool(
+  page: Page,
+  next: NextFixture,
+  args: V2PoolArgs,
+) {
   await handleToken(page, args.token0, 'FIRST')
   await handleToken(page, args.token1, 'SECOND')
   if (args.type === 'CREATE') {
@@ -412,11 +488,15 @@ async function createOrAddV2Pool(page: Page, next: NextFixture, args: V2PoolArgs
     expect(input1).toHaveValue(args.amount1)
   } else {
     // Only fill in the token that is not native if we are adding liquidity to an existing pool.
-    const input = page.locator(`[testdata-id=add-liquidity-token${args.token0.isNative ? 1 : 0}-input]`)
+    const input = page.locator(
+      `[testdata-id=add-liquidity-token${args.token0.isNative ? 1 : 0}-input]`,
+    )
     await expect(input).toHaveAttribute('data-state', 'active')
     await expect(input).toBeEnabled()
     await input.fill(args.token0.isNative ? args.amount1 : args.amount0)
-    expect(input).toHaveValue(args.token0.isNative ? args.amount1 : args.amount0)
+    expect(input).toHaveValue(
+      args.token0.isNative ? args.amount1 : args.amount0,
+    )
   }
 
   // No diff in approvals between add/create
@@ -443,7 +523,9 @@ async function createOrAddV2Pool(page: Page, next: NextFixture, args: V2PoolArgs
   await expect(reviewButton).toBeEnabled()
   await reviewButton.click({ timeout: 2_000 })
 
-  const confirmButton = page.locator('[testdata-id=confirm-add-v2-liquidity-button]')
+  const confirmButton = page.locator(
+    '[testdata-id=confirm-add-v2-liquidity-button]',
+  )
   await expect(confirmButton).toBeVisible()
   await expect(confirmButton).toBeEnabled()
   await confirmButton.click()
@@ -457,10 +539,14 @@ async function removeLiquidityV3(page: Page, next: NextFixture) {
   await page.goto(BASE_URL)
   await page.locator('[testdata-id=my-positions-button]').click()
 
-  const concentratedPositionTableSelector = page.locator('[testdata-id=concentrated-positions-loading-0]')
+  const concentratedPositionTableSelector = page.locator(
+    '[testdata-id=concentrated-positions-loading-0]',
+  )
   await expect(concentratedPositionTableSelector).not.toBeVisible()
 
-  const firstPositionSelector = page.locator('[testdata-id=concentrated-positions-0-0-td]')
+  const firstPositionSelector = page.locator(
+    '[testdata-id=concentrated-positions-0-0-td]',
+  )
   await expect(firstPositionSelector).toBeVisible()
   await firstPositionSelector.click()
 
@@ -471,7 +557,9 @@ async function removeLiquidityV3(page: Page, next: NextFixture) {
   await switchNetwork(page, CHAIN_ID)
 
   await page.locator('[testdata-id=liquidity-max-button]').click()
-  const handleLiquidityLocator = page.locator('[testdata-id=remove-or-add-liquidity-button]')
+  const handleLiquidityLocator = page.locator(
+    '[testdata-id=remove-or-add-liquidity-button]',
+  )
   await expect(handleLiquidityLocator).toBeVisible()
   await expect(handleLiquidityLocator).toBeEnabled() // needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
   await handleLiquidityLocator.click()
@@ -512,7 +600,9 @@ async function migrateV2(page: Page, args: MigrateArgs) {
   await page.locator('[testdata-id=max-price-input]').blur()
 
   const approveMigrateButton = `approve-migrate-button`
-  const approveMigrateButtonLocator = page.locator(`[testdata-id=${approveMigrateButton}]`)
+  const approveMigrateButtonLocator = page.locator(
+    `[testdata-id=${approveMigrateButton}]`,
+  )
   await approveMigrateButtonLocator.scrollIntoViewIfNeeded()
 
   await expect(approveMigrateButtonLocator).toBeVisible()
@@ -528,7 +618,9 @@ async function migrateV2(page: Page, args: MigrateArgs) {
   await migrateButtonLocator.click()
 
   const migrateConfirmButton = `migrate-confirm-button`
-  const migrateConfirmButtonLocator = page.locator(`[testdata-id=${migrateConfirmButton}]`)
+  const migrateConfirmButtonLocator = page.locator(
+    `[testdata-id=${migrateConfirmButton}]`,
+  )
   await migrateConfirmButtonLocator.scrollIntoViewIfNeeded()
 
   await expect(migrateConfirmButtonLocator).toBeVisible()
@@ -542,11 +634,15 @@ async function migrateV2(page: Page, args: MigrateArgs) {
 async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
   await switchNetwork(page, CHAIN_ID)
 
-  const removeLiquidityTabSelector = page.locator(`[testdata-id=${type.toLowerCase()}-tab]`)
+  const removeLiquidityTabSelector = page.locator(
+    `[testdata-id=${type.toLowerCase()}-tab]`,
+  )
   await expect(removeLiquidityTabSelector).toBeVisible()
   await removeLiquidityTabSelector.click()
 
-  const maxButtonSelector = page.locator(`[testdata-id=${type.toLowerCase()}-max-button]`)
+  const maxButtonSelector = page.locator(
+    `[testdata-id=${type.toLowerCase()}-max-button]`,
+  )
 
   await expect(maxButtonSelector).toBeVisible()
   await expect(maxButtonSelector).toBeEnabled()
@@ -559,12 +655,16 @@ async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
     await approveSlpLocator.click()
   }
 
-  const actionSelector = page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-button]`)
+  const actionSelector = page.locator(
+    `[testdata-id=${type.toLowerCase()}-liquidity-button]`,
+  )
   await expect(actionSelector).toBeVisible()
   await expect(actionSelector).toBeEnabled()
   await actionSelector.click({ timeout: 2_000 })
 
-  const regex = new RegExp(`(Successfully ${type.toLowerCase()}d .* SLP tokens)`)
+  const regex = new RegExp(
+    `(Successfully ${type.toLowerCase()}d .* SLP tokens)`,
+  )
   expect(page.getByText(regex))
 }
 
@@ -583,7 +683,9 @@ async function removeLiquidityV2(page: Page, next: NextFixture) {
   await expect(approveSlpLocator).toBeEnabled()
   await approveSlpLocator.click()
 
-  const removeLiquidityLocator = page.locator('[testdata-id=remove-liquidity-button]')
+  const removeLiquidityLocator = page.locator(
+    '[testdata-id=remove-liquidity-button]',
+  )
 
   await expect(removeLiquidityLocator).toBeVisible()
   await expect(removeLiquidityLocator).toBeEnabled()
@@ -627,9 +729,14 @@ async function incentivizePool(page: Page, args: IncenvitivePoolArgs) {
   await expect(button0).toBeEnabled()
   await button0.click()
 
-  await page.fill('[testdata-id=swap-from-token-selector-address-input]', 'SUSHI')
+  await page.fill(
+    '[testdata-id=swap-from-token-selector-address-input]',
+    'SUSHI',
+  )
   const rowSelector = page.locator(
-    `[testdata-id=swap-from-token-selector-row-${SUSHI[CHAIN_ID].address.toLowerCase()}]`
+    `[testdata-id=swap-from-token-selector-row-${SUSHI[
+      CHAIN_ID
+    ].address.toLowerCase()}]`,
   )
   await expect(rowSelector).toBeVisible()
   await rowSelector.click()
@@ -644,19 +751,30 @@ async function incentivizePool(page: Page, args: IncenvitivePoolArgs) {
   await expect(previewLocator).toBeVisible({ timeout: 10_000 })
   await expect(previewLocator).toBeEnabled()
   await previewLocator.click()
-  await page.locator('[testdata-id=incentivize-pool-confirm]').click({ timeout: 5_000 })
+  await page
+    .locator('[testdata-id=incentivize-pool-confirm]')
+    .click({ timeout: 5_000 })
 }
 
-async function handleToken(page: Page, currency: Type, order: 'FIRST' | 'SECOND') {
+async function handleToken(
+  page: Page,
+  currency: Type,
+  order: 'FIRST' | 'SECOND',
+) {
   const selectorInfix = `token${order === 'FIRST' ? 0 : 1}`
-  const tokenSelector = page.locator(`[testdata-id=${selectorInfix}-select-button]`)
+  const tokenSelector = page.locator(
+    `[testdata-id=${selectorInfix}-select-button]`,
+  )
   await expect(tokenSelector).toBeVisible()
   await tokenSelector.click()
-  await page.fill(`[testdata-id=${selectorInfix}-token-selector-address-input]`, currency.symbol as string)
+  await page.fill(
+    `[testdata-id=${selectorInfix}-token-selector-address-input]`,
+    currency.symbol as string,
+  )
   const rowSelector = page.locator(
     `[testdata-id=${selectorInfix}-token-selector-row-${
       currency.isNative ? zeroAddress : currency.wrapped.address.toLowerCase()
-    }]`
+    }]`,
   )
   await expect(rowSelector).toBeVisible()
   await rowSelector.click()
@@ -668,13 +786,20 @@ async function switchNetwork(page: Page, chainId: number) {
   await expect(networkSelector).toBeEnabled()
   await networkSelector.click()
 
-  const networkToSelect = page.locator(`[testdata-id=network-selector-${chainId}]`)
+  const networkToSelect = page.locator(
+    `[testdata-id=network-selector-${chainId}]`,
+  )
   await expect(networkToSelect).toBeVisible()
   await expect(networkToSelect).toBeEnabled()
   await networkToSelect.click()
 }
 
-export async function selectDate(selector: string, months: number, day: string, page: Page) {
+export async function selectDate(
+  selector: string,
+  months: number,
+  day: string,
+  page: Page,
+) {
   await page.locator(selector).click()
   for (let i = 0; i < months; i++) {
     await page.locator(`[aria-label="Next Month"]`).click()
@@ -682,7 +807,7 @@ export async function selectDate(selector: string, months: number, day: string, 
 
   await page
     .locator(
-      `div.react-datepicker__day.react-datepicker__day--${day}, div.react-datepicker__day.react-datepicker__day--${day}.react-datepicker__day--weekend`
+      `div.react-datepicker__day.react-datepicker__day--${day}, div.react-datepicker__day.react-datepicker__day--${day}.react-datepicker__day--weekend`,
     )
     .last()
     .click()
@@ -731,11 +856,16 @@ async function mockPoolApi(
   token0: Token,
   token1: Token,
   fee: number,
-  protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3' | 'BENTOBOX_STABLE' | 'BENTOBOX_CLASSIC'
+  protocol:
+    | 'SUSHISWAP_V2'
+    | 'SUSHISWAP_V3'
+    | 'BENTOBOX_STABLE'
+    | 'BENTOBOX_CLASSIC',
 ) {
-
   next.onFetch((request) => {
-    const [tokenA, tokenB] = token0.sortsBefore(token1) ? [token0, token1] : [token1, token0] // does safety checks
+    const [tokenA, tokenB] = token0.sortsBefore(token1)
+      ? [token0, token1]
+      : [token1, token0] // does safety checks
 
     let address
 
@@ -840,7 +970,9 @@ async function mockPoolApi(
           'Content-Type': 'application/json',
         },
       })
-    } else if (request.url === `https://pools.sushi.com/api/v0/${CHAIN_ID}/${address}`) {
+    } else if (
+      request.url === `https://pools.sushi.com/api/v0/${CHAIN_ID}/${address}`
+    ) {
       return new Response(JSON.stringify(mockPool), {
         headers: {
           'Content-Type': 'application/json',

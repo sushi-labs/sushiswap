@@ -57,8 +57,6 @@
     "@graphql-mesh/utils": "0.94.1",
     "@graphql-tools/merge": "9.0.0",
     "@sushiswap/bentobox-sdk": "workspace:*",
-    "@sushiswap/chain": "workspace:*",
-    "@sushiswap/currency": "workspace:*",
     "@sushiswap/database": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/tines": "workspace:*",

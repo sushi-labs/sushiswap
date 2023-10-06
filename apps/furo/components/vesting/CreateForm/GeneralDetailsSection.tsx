@@ -1,8 +1,20 @@
-import { ChainId } from '@sushiswap/chain'
-import { Type } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Type } from 'sushi/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { DateField, Label, SelectIcon, TextField, textFieldVariants } from '@sushiswap/ui'
-import { FormControl, FormField, FormItem, FormMessage, FormSection } from '@sushiswap/ui/components/form'
+import {
+  DateField,
+  Label,
+  SelectIcon,
+  TextField,
+  textFieldVariants,
+} from '@sushiswap/ui'
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+  FormSection,
+} from '@sushiswap/ui/components/form'
 import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import React, { FC, useCallback } from 'react'
@@ -12,8 +24,12 @@ import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { FundSourceOption } from '../../stream/CreateForm/FundSourceOption'
 import { CreateMultipleVestingFormSchemaType } from '../schema'
 
-export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({ chainId, index }) => {
-  const { control, watch, setValue } = useFormContext<CreateMultipleVestingFormSchemaType>()
+export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
+  chainId,
+  index,
+}) => {
+  const { control, watch, setValue } =
+    useFormContext<CreateMultipleVestingFormSchemaType>()
   const [currency] = watch([`vestings.${index}.currency`])
   const _currency = useTokenFromZToken(currency)
 
@@ -42,7 +58,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
         })
       }
     },
-    [index, setValue]
+    [index, setValue],
   )
 
   return (
@@ -66,7 +82,12 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
                 onSelect={(currency) => onSelect(onChange, currency)}
                 selected={_currency}
               >
-                <button onBlur={onBlur} className={textFieldVariants({ className: 'flex flex-1 justify-between' })}>
+                <button
+                  onBlur={onBlur}
+                  className={textFieldVariants({
+                    className: 'flex flex-1 justify-between',
+                  })}
+                >
                   <TextField
                     name={name}
                     readOnly

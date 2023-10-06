@@ -1,8 +1,8 @@
 import { getAddress, isAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { DownloadIcon } from '@heroicons/react/outline'
-import { ChainId } from '@sushiswap/chain'
-import { Native, Token, Type } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Native, Token, Type } from 'sushi/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dropzone } from '@sushiswap/ui/components/dropzone'
@@ -14,14 +14,18 @@ import dynamic from 'next/dynamic'
 import { FC, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 
-import { CreateMultipleStreamFormSchemaType, CreateStreamFormSchemaType } from '../schema'
+import {
+  CreateMultipleStreamFormSchemaType,
+  CreateStreamFormSchemaType,
+} from '../schema'
 
 interface ImportZoneSection {
   chainId: ChainId
 }
 
 const Component: FC<ImportZoneSection> = ({ chainId }) => {
-  const { control, trigger } = useFormContext<CreateMultipleStreamFormSchemaType>()
+  const { control, trigger } =
+    useFormContext<CreateMultipleStreamFormSchemaType>()
   const { replace } = useFieldArray({
     control,
     name: 'streams',
@@ -54,30 +58,42 @@ const Component: FC<ImportZoneSection> = ({ chainId }) => {
                 if (cur !== '') {
                   const [tokenAddress] = cur.split(',') as [Address]
                   if (tokenAddress !== AddressZero) {
-                    acc.push(fetchToken({ address: tokenAddress, chainId }).catch())
+                    acc.push(
+                      fetchToken({ address: tokenAddress, chainId }).catch(),
+                    )
                   }
                 }
 
                 return acc
-              }, [])
+              }, []),
             )
 
-            const tokenMap = tokens?.reduce<Record<string, Token>>((acc, result) => {
-              if (result) {
-                const { address, symbol, decimals } = result
-                acc[address.toLowerCase()] = new Token({
-                  address,
-                  symbol,
-                  decimals,
-                  chainId,
-                })
-              }
-              return acc
-            }, {})
+            const tokenMap = tokens?.reduce<Record<string, Token>>(
+              (acc, result) => {
+                if (result) {
+                  const { address, symbol, decimals } = result
+                  acc[address.toLowerCase()] = new Token({
+                    address,
+                    symbol,
+                    decimals,
+                    chainId,
+                  })
+                }
+                return acc
+              },
+              {},
+            )
 
             arr?.forEach((cur) => {
               if (cur !== '') {
-                const [tokenAddress, fundSource, amount, recipient, startDate, endDate] = cur.split(',')
+                const [
+                  tokenAddress,
+                  fundSource,
+                  amount,
+                  recipient,
+                  startDate,
+                  endDate,
+                ] = cur.split(',')
                 let _startDate: Date | null = new Date(Number(startDate) * 1000)
                 let _endDate: Date | null = new Date(Number(endDate) * 1000)
                 let _recipient: Address | undefined = recipient as Address
@@ -100,7 +116,10 @@ const Component: FC<ImportZoneSection> = ({ chainId }) => {
 
                 rows.push({
                   id: nanoid(),
-                  fundSource: Number(fundSource) === 0 ? FundSource.WALLET : FundSource.BENTOBOX,
+                  fundSource:
+                    Number(fundSource) === 0
+                      ? FundSource.WALLET
+                      : FundSource.BENTOBOX,
                   recipient: _recipient,
                   currency: _currency,
                   amount,
@@ -120,12 +139,12 @@ const Component: FC<ImportZoneSection> = ({ chainId }) => {
         reader.readAsText(file)
       })
     },
-    [replace, chainId, trigger]
+    [replace, chainId, trigger],
   )
 
   const downloadExample = useCallback(() => {
     const encodedUri = encodeURI(
-      'data:text/csv;charset=utf-8,Currency Address,Funding Source (0 = WALLET 1 = BentoBox),Amount,Recipient,Start Date (Unix Epoch Timestamp),End Date (Unix Epoch Timestamp)\n0x0000000000000000000000000000000000000000,0,0.0001,0x19B3Eb3Af5D93b77a5619b047De0EED7115A19e7,1661440124,1661872124'
+      'data:text/csv;charset=utf-8,Currency Address,Funding Source (0 = WALLET 1 = BentoBox),Amount,Recipient,Start Date (Unix Epoch Timestamp),End Date (Unix Epoch Timestamp)\n0x0000000000000000000000000000000000000000,0,0.0001,0x19B3Eb3Af5D93b77a5619b047De0EED7115A19e7,1661440124,1661872124',
     )
     const link = document.createElement('a')
     link.setAttribute('href', encodedUri)
@@ -140,11 +159,17 @@ const Component: FC<ImportZoneSection> = ({ chainId }) => {
       description={
         <div className="flex flex-col gap-6">
           <span>
-            Autofill your list by uploading a .csv file to save time and effort! Please use the demo file to check if
-            your data is formatted correctly.
+            Autofill your list by uploading a .csv file to save time and effort!
+            Please use the demo file to check if your data is formatted
+            correctly.
           </span>
           <div>
-            <Button size="lg" type="button" onClick={downloadExample} icon={DownloadIcon}>
+            <Button
+              size="lg"
+              type="button"
+              onClick={downloadExample}
+              icon={DownloadIcon}
+            >
               Example
             </Button>
           </div>
@@ -166,4 +191,6 @@ const Component: FC<ImportZoneSection> = ({ chainId }) => {
   )
 }
 
-export const ImportZoneSection = dynamic(() => Promise.resolve(Component), { ssr: false })
+export const ImportZoneSection = dynamic(() => Promise.resolve(Component), {
+  ssr: false,
+})

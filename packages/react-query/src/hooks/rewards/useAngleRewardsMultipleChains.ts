@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { useQuery } from '@tanstack/react-query'
 
 import { useAllPrices } from '../prices'

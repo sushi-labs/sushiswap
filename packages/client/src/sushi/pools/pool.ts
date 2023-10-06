@@ -1,4 +1,4 @@
-import type { ChainId } from '@sushiswap/chain'
+import type { ChainId } from 'sushi/chain'
 import type {} from '@sushiswap/database'
 import type { getEarnPool as getEarnPoolOriginal } from '@sushiswap/pools-api/lib/api'
 import { PoolApiSchema } from '@sushiswap/pools-api/lib/schemas/pool'

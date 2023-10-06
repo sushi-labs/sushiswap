@@ -1,23 +1,40 @@
-import { ChainId } from '@sushiswap/chain'
-import { tryParseAmount, Type } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { tryParseAmount, Type } from 'sushi/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { SelectIcon, TextField, textFieldVariants } from '@sushiswap/ui'
 import { Label } from '@sushiswap/ui'
-import { FormControl, FormField, FormItem, FormMessage, FormSection } from '@sushiswap/ui/components/form'
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+  FormSection,
+} from '@sushiswap/ui/components/form'
 import { _useBalance as useBalance, useAccount } from '@sushiswap/wagmi'
 import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
 import React, { FC, useCallback, useEffect } from 'react'
 import { ControllerRenderProps, useFormContext } from 'react-hook-form'
 
-import { useFundSourceFromZFundSource, useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
-import { CreateMultipleStreamBaseSchemaFormErrorsType, CreateMultipleStreamFormSchemaType } from '../schema'
+import {
+  useFundSourceFromZFundSource,
+  useTokenFromZToken,
+  ZFundSourceToFundSource,
+} from '../../../lib/zod'
+import {
+  CreateMultipleStreamBaseSchemaFormErrorsType,
+  CreateMultipleStreamFormSchemaType,
+} from '../schema'
 import { FundSourceOption } from './FundSourceOption'
 
-export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ chainId, index }) => {
+export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({
+  chainId,
+  index,
+}) => {
   const { address } = useAccount()
 
   const { control, watch, setValue, setError, clearErrors } = useFormContext<
-    CreateMultipleStreamFormSchemaType & CreateMultipleStreamBaseSchemaFormErrorsType
+    CreateMultipleStreamFormSchemaType &
+      CreateMultipleStreamBaseSchemaFormErrorsType
   >()
 
   const [amount, currency, fundSource] = watch([
@@ -60,7 +77,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
         })
       }
     },
-    [index, setValue]
+    [index, setValue],
   )
 
   useEffect(() => {
@@ -70,7 +87,10 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
     console.log(balance.WALLET.quotient, cAmount)
 
     if (balance[_fundSource].lessThan(cAmount)) {
-      setError(`FORM_ERRORS.${index}.amount`, { type: 'min', message: 'Insufficient Balance' })
+      setError(`FORM_ERRORS.${index}.amount`, {
+        type: 'min',
+        message: 'Insufficient Balance',
+      })
     } else {
       clearErrors(`FORM_ERRORS.${index}.amount`)
     }
@@ -98,7 +118,9 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
               >
                 <button
                   onBlur={onBlur}
-                  className={textFieldVariants({ className: 'flex flex-1 justify-between' })}
+                  className={textFieldVariants({
+                    className: 'flex flex-1 justify-between',
+                  })}
                   type="button"
                 >
                   <TextField

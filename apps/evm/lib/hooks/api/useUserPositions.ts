@@ -1,6 +1,6 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { parseArgs, Pools } from '@sushiswap/client'
 import { UserPosition } from '@sushiswap/graph-client'
 import { useMemo } from 'react'

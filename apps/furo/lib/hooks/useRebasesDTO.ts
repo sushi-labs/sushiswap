@@ -1,4 +1,4 @@
-import { Token } from '@sushiswap/currency'
+import { Token } from 'sushi/currency'
 import { FuroChainId } from '@sushiswap/furo-sdk'
 import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { useQuery } from '@tanstack/react-query'
@@ -13,22 +13,27 @@ interface UseRebaseDTO {
   enabled?: boolean
 }
 
-export const queryRebasesDTO = async ({ tokens }: Omit<UseRebaseDTO, 'enabled'>) => {
+export const queryRebasesDTO = async ({
+  tokens,
+}: Omit<UseRebaseDTO, 'enabled'>) => {
   const sdks = tokens.map((token) =>
     getBuiltGraphSDK({
       chainId: token.chainId,
       host: GRAPH_HOST,
       name: FURO_SUBGRAPH_NAME[token.chainId],
-    })
+    }),
   )
 
-  const data: { chainId: FuroChainId; data: NonNullable<bentoBoxRebaseQuery> }[] = []
+  const data: {
+    chainId: FuroChainId
+    data: NonNullable<bentoBoxRebaseQuery>
+  }[] = []
   await Promise.allSettled(
     sdks.map((sdk, i) =>
       sdk.bentoBoxRebase({
         id: tokens[i].wrapped.address.toLowerCase(),
-      })
-    )
+      }),
+    ),
   ).then((results) => {
     results.forEach((result, i) => {
       if (result.status === 'fulfilled') {

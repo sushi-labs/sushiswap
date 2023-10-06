@@ -36,8 +36,6 @@
     "@ethersproject/bignumber": "5.7.0",
     "@ethersproject/solidity": "5.7.0",
     "@sushiswap/base-sdk": "workspace:*",
-    "@sushiswap/chain": "workspace:*",
-    "@sushiswap/currency": "workspace:*",
     "sushi": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/trident-sdk": "workspace:*",

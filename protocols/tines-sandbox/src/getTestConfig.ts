@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { config, network } from 'hardhat'
 import { Client, createPublicClient, custom, Hex, testActions, walletActions } from 'viem'
 import { HDAccount, mnemonicToAccount, PrivateKeyAccount, privateKeyToAccount } from 'viem/accounts'

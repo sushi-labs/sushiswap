@@ -1,6 +1,6 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { getPool } from '@sushiswap/client'
 import { formatUSD } from 'sushi'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'

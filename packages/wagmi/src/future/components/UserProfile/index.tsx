@@ -1,6 +1,6 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { shortenAddress } from 'sushi'
 import { Button } from '@sushiswap/ui/components/button'
 import { JazzIcon } from '@sushiswap/ui/components/icons/JazzIcon'

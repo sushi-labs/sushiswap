@@ -32,7 +32,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@sushiswap/chain": "workspace:*"
+    "sushi": "workspace:*"
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",

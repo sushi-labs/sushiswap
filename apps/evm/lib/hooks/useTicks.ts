@@ -1,7 +1,13 @@
 'use client'
 
-import { Type } from '@sushiswap/currency'
-import { computePoolAddress, FeeAmount, nearestUsableTick, SushiSwapV3ChainId, TICK_SPACINGS } from '@sushiswap/v3-sdk'
+import { Type } from 'sushi/currency'
+import {
+  computePoolAddress,
+  FeeAmount,
+  nearestUsableTick,
+  SushiSwapV3ChainId,
+  TICK_SPACINGS,
+} from '@sushiswap/v3-sdk'
 import { Address, useContractReads } from '@sushiswap/wagmi'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { getV3FactoryContractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3FactoryContract'
@@ -32,11 +38,19 @@ export function useTicks({
 }: useTicksProps) {
   const numSurroundingTicks = _numSurroundingTicks ?? 1250
 
-  const { data: pool } = useConcentratedLiquidityPool({ token0, token1, chainId, feeAmount, enabled })
+  const { data: pool } = useConcentratedLiquidityPool({
+    token0,
+    token1,
+    chainId,
+    feeAmount,
+    enabled,
+  })
 
   const tickSpacing = feeAmount && TICK_SPACINGS[feeAmount]
   const activeTick =
-    typeof pool?.tickCurrent === 'number' && tickSpacing ? nearestUsableTick(pool?.tickCurrent, tickSpacing) : undefined
+    typeof pool?.tickCurrent === 'number' && tickSpacing
+      ? nearestUsableTick(pool?.tickCurrent, tickSpacing)
+      : undefined
   const poolAddress = useMemo(
     () =>
       token0 && token1 && feeAmount && chainId
@@ -47,22 +61,28 @@ export function useTicks({
             fee: feeAmount,
           })
         : undefined,
-    [chainId, feeAmount, token0, token1]
+    [chainId, feeAmount, token0, token1],
   )
 
   const minIndex = useMemo(
     () =>
       tickSpacing !== undefined && activeTick !== undefined
-        ? bitmapIndex(activeTick - numSurroundingTicks * tickSpacing, tickSpacing)
+        ? bitmapIndex(
+            activeTick - numSurroundingTicks * tickSpacing,
+            tickSpacing,
+          )
         : undefined,
-    [tickSpacing, activeTick, numSurroundingTicks]
+    [tickSpacing, activeTick, numSurroundingTicks],
   )
   const maxIndex = useMemo(
     () =>
       tickSpacing !== undefined && activeTick !== undefined
-        ? bitmapIndex(activeTick + numSurroundingTicks * tickSpacing, tickSpacing)
+        ? bitmapIndex(
+            activeTick + numSurroundingTicks * tickSpacing,
+            tickSpacing,
+          )
         : undefined,
-    [tickSpacing, activeTick, numSurroundingTicks]
+    [tickSpacing, activeTick, numSurroundingTicks],
   )
 
   const contractReads = useMemo(() => {

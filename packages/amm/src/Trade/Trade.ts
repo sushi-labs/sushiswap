@@ -1,4 +1,4 @@
-import { Amount, Price, Type as Currency } from '@sushiswap/currency'
+import { Amount, Price, Type as Currency } from 'sushi/currency'
 import { Fraction, ONE, Percent, ZERO } from 'sushi'
 import { MultiRoute, RToken } from '@sushiswap/tines'
 import invariant from 'tiny-invariant'
@@ -14,7 +14,7 @@ export class Trade<
   TInput extends Currency,
   TOutput extends Currency,
   TradeType extends Type,
-  TradeVersion extends Version
+  TradeVersion extends Version,
 > {
   /**
    * The route of the trade, i.e. which pools the trade goes through and the input/output currencies.
@@ -74,13 +74,17 @@ export class Trade<
    * @param amountIn the amount being passed in
    * @param currencyOut the output currency
    */
-  public static exactIn<TInput extends Currency, TOutput extends Currency, TVersion extends Version>(
+  public static exactIn<
+    TInput extends Currency,
+    TOutput extends Currency,
+    TVersion extends Version,
+  >(
     route: MultiRoute,
     amountIn: Amount<TInput>,
     currencyOut: TOutput,
     version: TVersion,
     currencyInRebase = { base: 0n, elastic: 0n },
-    currencyOutRebase = { base: 0n, elastic: 0n }
+    currencyOutRebase = { base: 0n, elastic: 0n },
   ): Trade<TInput, TOutput, Type.EXACT_INPUT, TVersion> {
     return new Trade(
       {
@@ -91,7 +95,7 @@ export class Trade<
       Type.EXACT_INPUT,
       version,
       currencyInRebase,
-      currencyOutRebase
+      currencyOutRebase,
     )
   }
 
@@ -101,13 +105,17 @@ export class Trade<
    * @param amountOut the amount returned by the trade
    * @param currencyIn the output currency
    */
-  public static exactOut<TInput extends Currency, TOutput extends Currency, TVersion extends Version>(
+  public static exactOut<
+    TInput extends Currency,
+    TOutput extends Currency,
+    TVersion extends Version,
+  >(
     route: MultiRoute,
     currencyIn: TInput,
     amountOut: Amount<TOutput>,
     version: TVersion,
     currencyInRebase = { base: 0n, elastic: 0n },
-    currencyOutRebase = { base: 0n, elastic: 0n }
+    currencyOutRebase = { base: 0n, elastic: 0n },
   ): Trade<TInput, TOutput, Type.EXACT_OUTPUT, TVersion> {
     return new Trade(
       {
@@ -118,7 +126,7 @@ export class Trade<
       Type.EXACT_OUTPUT,
       version,
       currencyInRebase,
-      currencyOutRebase
+      currencyOutRebase,
     )
   }
 
@@ -127,7 +135,7 @@ export class Trade<
     tradeType: TradeType,
     tradeVersion: TradeVersion,
     currencyInRebase = { base: 0n, elastic: 0n },
-    currencyOutRebase = { base: 0n, elastic: 0n }
+    currencyOutRebase = { base: 0n, elastic: 0n },
   ) {
     this.route = route
     this.tradeType = tradeType
@@ -139,34 +147,53 @@ export class Trade<
       route.fromToken as TInput,
       route.amountInBI.toString(),
       currencyInRebase,
-      tradeVersion === Version.V2
+      tradeVersion === Version.V2,
     )
 
     const amountOut = Amount.fromShare(
       route.toToken as TOutput,
       route.amountOutBI.toString(),
       currencyOutRebase,
-      tradeVersion === Version.V2
+      tradeVersion === Version.V2,
     )
 
     if (tradeType === Type.EXACT_INPUT) {
-      this.inputAmount = Amount.fromFractionalAmount(amountIn.currency, amountIn.numerator, amountIn.denominator)
-      this.outputAmount = Amount.fromFractionalAmount(amountOut.currency, amountOut.numerator, amountOut.denominator)
+      this.inputAmount = Amount.fromFractionalAmount(
+        amountIn.currency,
+        amountIn.numerator,
+        amountIn.denominator,
+      )
+      this.outputAmount = Amount.fromFractionalAmount(
+        amountOut.currency,
+        amountOut.numerator,
+        amountOut.denominator,
+      )
     } else {
-      this.inputAmount = Amount.fromFractionalAmount(amountIn.currency, amountOut.numerator, amountOut.denominator)
-      this.outputAmount = Amount.fromFractionalAmount(amountOut.currency, amountIn.numerator, amountIn.denominator)
+      this.inputAmount = Amount.fromFractionalAmount(
+        amountIn.currency,
+        amountOut.numerator,
+        amountOut.denominator,
+      )
+      this.outputAmount = Amount.fromFractionalAmount(
+        amountOut.currency,
+        amountIn.numerator,
+        amountIn.denominator,
+      )
     }
 
     this.executionPrice = new Price(
       this.inputAmount.currency,
       this.outputAmount.currency,
       this.inputAmount.quotient,
-      this.outputAmount.quotient
+      this.outputAmount.quotient,
     )
 
     // Shouldn't really have to check this, but tines makes us
     if (this.route.priceImpact) {
-      this.priceImpact = new Percent(BigInt(Math.round(this.route.priceImpact * 10000)), 10000n)
+      this.priceImpact = new Percent(
+        BigInt(Math.round(this.route.priceImpact * 10000)),
+        10000n,
+      )
     }
   }
 
@@ -184,7 +211,10 @@ export class Trade<
         .add(slippageTolerance)
         .invert()
         .multiply(this.outputAmount.quotient).quotient
-      return Amount.fromRawAmount(this.outputAmount.currency, slippageAdjustedAmountOut)
+      return Amount.fromRawAmount(
+        this.outputAmount.currency,
+        slippageAdjustedAmountOut,
+      )
     }
   }
 
@@ -200,7 +230,10 @@ export class Trade<
       const slippageAdjustedAmountIn = new Fraction(ONE)
         .add(slippageTolerance)
         .multiply(this.inputAmount.quotient).quotient
-      return Amount.fromRawAmount(this.inputAmount.currency, slippageAdjustedAmountIn)
+      return Amount.fromRawAmount(
+        this.inputAmount.currency,
+        slippageAdjustedAmountIn,
+      )
     }
   }
 
@@ -208,12 +241,14 @@ export class Trade<
    * Return the execution price after accounting for slippage tolerance
    * @param slippageTolerance the allowed tolerated slippage
    */
-  public worstExecutionPrice(slippageTolerance: Percent): Price<TInput, TOutput> {
+  public worstExecutionPrice(
+    slippageTolerance: Percent,
+  ): Price<TInput, TOutput> {
     return new Price(
       this.inputAmount.currency,
       this.outputAmount.currency,
       this.maximumAmountIn(slippageTolerance).quotient,
-      this.minimumAmountOut(slippageTolerance).quotient
+      this.minimumAmountOut(slippageTolerance).quotient,
     )
   }
 
@@ -225,7 +260,11 @@ export class Trade<
     return this.tradeVersion === Version.V2
   }
 
-  public routeType(): 'Single Pool' | 'Single Path' | 'Complex Path' | 'Not Found' {
+  public routeType():
+    | 'Single Pool'
+    | 'Single Path'
+    | 'Complex Path'
+    | 'Not Found' {
     if (this.isComplex()) return 'Complex Path'
     if (this.isSingle()) return 'Single Path'
     if (this.isSinglePool()) return 'Single Pool'
@@ -237,7 +276,10 @@ export class Trade<
   }
 
   public isComplex(): boolean {
-    return new Set(this.route.legs.map((leg) => leg.tokenFrom.address)).size !== this.route.legs.length
+    return (
+      new Set(this.route.legs.map((leg) => leg.tokenFrom.address)).size !==
+      this.route.legs.length
+    )
   }
 
   public isSinglePool(): boolean {
@@ -245,6 +287,9 @@ export class Trade<
   }
 
   public isSingle(): boolean {
-    return new Set(this.route.legs.map((leg) => leg.tokenFrom.address)).size === this.route.legs.length
+    return (
+      new Set(this.route.legs.map((leg) => leg.tokenFrom.address)).size ===
+      this.route.legs.length
+    )
   }
 }

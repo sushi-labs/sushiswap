@@ -1,7 +1,7 @@
 'use client'
 
 import { CheckIcon } from '@heroicons/react-v1/solid'
-import { Amount } from '@sushiswap/currency'
+import { Amount } from 'sushi/currency'
 import { ZERO } from 'sushi'
 import { ROUTE_PROCESSOR_2_ADDRESS } from '@sushiswap/route-processor-sdk'
 import { classNames } from '@sushiswap/ui'
@@ -31,9 +31,18 @@ interface ClaimItem {
 }
 
 export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
-  const { data: token, isLoading: tokenLoading } = useTokenWithCache({ chainId, address: claim.token })
-  const { data: isClaimed, isLoading: checkIsClaimedLoading } = useRP2ExploitIsClaimed({ index: claim.index, chainId })
-  const { write, isPending: isClaimPending } = useRP2ExploitClaim({ claim, chainId, account, token })
+  const { data: token, isLoading: tokenLoading } = useTokenWithCache({
+    chainId,
+    address: claim.token,
+  })
+  const { data: isClaimed, isLoading: checkIsClaimedLoading } =
+    useRP2ExploitIsClaimed({ index: claim.index, chainId })
+  const { write, isPending: isClaimPending } = useRP2ExploitClaim({
+    claim,
+    chainId,
+    account,
+    token,
+  })
   const { data: allowance, isLoading: isAllowanceLoading } = useTokenAllowance({
     token,
     chainId,
@@ -48,14 +57,20 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
   })
 
   const amount = useMemo(
-    () => (token ? Amount.fromRawAmount(token, claim.amount.toString()) : undefined),
-    [claim.amount, token]
+    () =>
+      token ? Amount.fromRawAmount(token, claim.amount.toString()) : undefined,
+    [claim.amount, token],
   )
 
   const isLoading = isAllowanceLoading || checkIsClaimedLoading || tokenLoading
 
   return (
-    <div className={classNames('grid grid-cols-3 items-center', 'gap-2 py-3 px-4 h-[52px]')}>
+    <div
+      className={classNames(
+        'grid grid-cols-3 items-center',
+        'gap-2 py-3 px-4 h-[52px]',
+      )}
+    >
       <div className="flex flex-col gap-0.5">
         <span className="text-sm font-medium text-gray-600 dark:text-white">
           {isLoading ? (
@@ -67,7 +82,9 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
             <div className="flex gap-3 items-center">
               <Badge
                 position="bottom-right"
-                badgeContent={<NetworkIcon chainId={token.chainId} width={16} height={16} />}
+                badgeContent={
+                  <NetworkIcon chainId={token.chainId} width={16} height={16} />
+                }
               >
                 <Currency.Icon currency={token} width={24} height={24} />
               </Badge>
@@ -99,18 +116,33 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
             <Checker.Connect size="sm">
               <Checker.Network size="sm" chainId={chainId}>
                 {allowance.greaterThan(ZERO) ? (
-                  <Button size="sm" loading={isRevokePending} disabled={isRevokePending} onClick={() => revoke?.()}>
+                  <Button
+                    size="sm"
+                    loading={isRevokePending}
+                    disabled={isRevokePending}
+                    onClick={() => revoke?.()}
+                  >
                     Revoke Approval
                   </Button>
                 ) : (
-                  <Button onClick={() => write?.()} size="sm" disabled={isClaimPending} loading={isClaimPending}>
+                  <Button
+                    onClick={() => write?.()}
+                    size="sm"
+                    disabled={isClaimPending}
+                    loading={isClaimPending}
+                  >
                     <div className="flex gap-1 items-center">Claim</div>
                   </Button>
                 )}
               </Checker.Network>
             </Checker.Connect>
           ) : (
-            <Button icon={CheckIcon} size="sm" variant="secondary" className="pointer-events-none">
+            <Button
+              icon={CheckIcon}
+              size="sm"
+              variant="secondary"
+              className="pointer-events-none"
+            >
               Claimed
             </Button>
           )}

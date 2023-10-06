@@ -1,6 +1,10 @@
-import { tridentGetPoolsAbi, tridentPoolsCountAbi, tridentSwapFeeAbi } from 'sushi/abi'
-import { ChainId } from '@sushiswap/chain'
-import { Currency, Token } from '@sushiswap/currency'
+import {
+  tridentGetPoolsAbi,
+  tridentPoolsCountAbi,
+  tridentSwapFeeAbi,
+} from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
+import { Currency, Token } from 'sushi/currency'
 import {
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
@@ -23,7 +27,7 @@ export class TridentStaticPoolFetcher {
     client: PublicClient,
     chainId: ChainId,
     t1: Token,
-    t2: Token
+    t2: Token,
   ): Promise<[TridentStaticPool[], TridentStaticPool[]]> {
     const pools = await Promise.all([
       this.getPools(client, chainId, t1, t2, 'CONSTANT_PRODUCT_POOL'),
@@ -38,16 +42,23 @@ export class TridentStaticPoolFetcher {
     chainId: ChainId,
     t1: Token,
     t2: Token,
-    type: 'STABLE_POOL' | 'CONSTANT_PRODUCT_POOL'
+    type: 'STABLE_POOL' | 'CONSTANT_PRODUCT_POOL',
   ) {
     const currencies = getCurrencyCombinations(chainId, t1, t2)
 
     const _pairsUnique = pairsUnique(currencies)
-    const _pairsUniqueAddr = _pairsUnique.map(([t0, t1]) => [t0.address, t1.address])
+    const _pairsUniqueAddr = _pairsUnique.map(([t0, t1]) => [
+      t0.address,
+      t1.address,
+    ])
     const factoryAddress =
       type === 'STABLE_POOL'
-        ? (TRIDENT_STABLE_POOL_FACTORY_ADDRESS[chainId as TridentChainId] as Address)
-        : (TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[chainId as TridentChainId] as Address)
+        ? (TRIDENT_STABLE_POOL_FACTORY_ADDRESS[
+            chainId as TridentChainId
+          ] as Address)
+        : (TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[
+            chainId as TridentChainId
+          ] as Address)
 
     const callStatePoolsCount = await client.multicall({
       multicallAddress: client.chain?.contracts?.multicall3?.address as Address,
@@ -60,20 +71,37 @@ export class TridentStaticPoolFetcher {
             abi: tridentPoolsCountAbi,
             functionName: 'poolsCount',
             args: el as [Address, Address],
-          } as const)
+          }) as const,
       ),
     })
 
     const callStatePoolsCountProcessed = callStatePoolsCount
-      ?.map((s, i) => [i, s?.result ? parseInt(s.result.toString()) : 0] as [number, number])
+      ?.map(
+        (s, i) =>
+          [i, s?.result ? parseInt(s.result.toString()) : 0] as [
+            number,
+            number,
+          ],
+      )
       .filter(([, length]) => length)
       .map(
         ([i, length]) =>
-          [_pairsUniqueAddr[i][0] as Address, _pairsUniqueAddr[i][1] as Address, BigInt(0), BigInt(length)] as const
+          [
+            _pairsUniqueAddr[i][0] as Address,
+            _pairsUniqueAddr[i][1] as Address,
+            BigInt(0),
+            BigInt(length),
+          ] as const,
       )
 
     const pairsUniqueProcessed = callStatePoolsCount
-      ?.map((s, i) => [i, s?.result ? parseInt(s.result.toString()) : 0] as [number, number])
+      ?.map(
+        (s, i) =>
+          [i, s?.result ? parseInt(s.result.toString()) : 0] as [
+            number,
+            number,
+          ],
+      )
       .filter(([, length]) => length)
       .map(([i]) => [_pairsUnique[i][0], _pairsUnique[i][1]])
 
@@ -88,7 +116,7 @@ export class TridentStaticPoolFetcher {
             abi: tridentGetPoolsAbi,
             functionName: 'getPools',
             args,
-          } as const)
+          }) as const,
       ),
     })
 
@@ -101,7 +129,7 @@ export class TridentStaticPoolFetcher {
             token0: pairsUniqueProcessed?.[i][0] as Token,
             token1: pairsUniqueProcessed?.[i][1] as Token,
             type,
-          })
+          }),
         )
     })
 
@@ -117,7 +145,7 @@ export class TridentStaticPoolFetcher {
             address: address as Address,
             abi: tridentSwapFeeAbi,
             functionName: 'swapFee',
-          } as const)
+          }) as const,
       ),
     })
     const results: TridentStaticPool[] = []
@@ -135,14 +163,17 @@ export class TridentStaticPoolFetcher {
   }
 }
 
-const pairsUnique = (currencies: [Currency | undefined, Currency | undefined][]) => {
+const pairsUnique = (
+  currencies: [Currency | undefined, Currency | undefined][],
+) => {
   const pairsMap = new Map<string, [Token, Token]>()
   currencies.map(([c1, c2]) => {
     if (c1 && c2) {
       const addr1 = c1.wrapped.address as string | undefined
       const addr2 = c2.wrapped.address as string | undefined
       if (addr1 !== undefined && addr2 !== undefined) {
-        if (addr1.toLowerCase() < addr2.toLowerCase()) pairsMap.set(addr1 + addr2, [c1, c2] as [Token, Token])
+        if (addr1.toLowerCase() < addr2.toLowerCase())
+          pairsMap.set(addr1 + addr2, [c1, c2] as [Token, Token])
         else pairsMap.set(addr2 + addr1, [c2, c1] as [Token, Token])
       }
     }
@@ -152,5 +183,10 @@ const pairsUnique = (currencies: [Currency | undefined, Currency | undefined][])
 
 const tokensUnique = (_pairsUnique: [Token, Token][]) =>
   Array.from(
-    new Set(_pairsUnique.reduce<Token[]>((previousValue, currentValue) => previousValue.concat(currentValue), []))
+    new Set(
+      _pairsUnique.reduce<Token[]>(
+        (previousValue, currentValue) => previousValue.concat(currentValue),
+        [],
+      ),
+    ),
   )

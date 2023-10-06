@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { useCallback } from 'react'
 import { UserRejectedRequestError } from 'viem'

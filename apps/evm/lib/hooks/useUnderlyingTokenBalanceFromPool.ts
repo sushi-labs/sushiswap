@@ -1,6 +1,6 @@
 'use client'
 
-import { Amount, Token, Type } from '@sushiswap/currency'
+import { Amount, Token, Type } from 'sushi/currency'
 import { ZERO } from 'sushi'
 import { useMemo } from 'react'
 
@@ -11,29 +11,27 @@ interface Params {
   balance: Amount<Type> | undefined | null
 }
 
-type UseUnderlyingTokenBalanceFromPairParams = (params: Params) => [Amount<Type> | undefined, Amount<Type> | undefined]
+type UseUnderlyingTokenBalanceFromPairParams = (
+  params: Params,
+) => [Amount<Type> | undefined, Amount<Type> | undefined]
 
-export const useUnderlyingTokenBalanceFromPool: UseUnderlyingTokenBalanceFromPairParams = ({
-  balance,
-  totalSupply,
-  reserve1,
-  reserve0,
-}) => {
-  return useMemo(() => {
-    if (!balance || !totalSupply || !reserve0 || !reserve1) {
-      return [undefined, undefined]
-    }
+export const useUnderlyingTokenBalanceFromPool: UseUnderlyingTokenBalanceFromPairParams =
+  ({ balance, totalSupply, reserve1, reserve0 }) => {
+    return useMemo(() => {
+      if (!balance || !totalSupply || !reserve0 || !reserve1) {
+        return [undefined, undefined]
+      }
 
-    if (totalSupply.equalTo(ZERO)) {
+      if (totalSupply.equalTo(ZERO)) {
+        return [
+          Amount.fromRawAmount(reserve0.wrapped.currency, '0'),
+          Amount.fromRawAmount(reserve1.wrapped.currency, '0'),
+        ]
+      }
+
       return [
-        Amount.fromRawAmount(reserve0.wrapped.currency, '0'),
-        Amount.fromRawAmount(reserve1.wrapped.currency, '0'),
+        reserve0.wrapped.multiply(balance.wrapped.divide(totalSupply)),
+        reserve1.wrapped.multiply(balance.wrapped.divide(totalSupply)),
       ]
-    }
-
-    return [
-      reserve0.wrapped.multiply(balance.wrapped.divide(totalSupply)),
-      reserve1.wrapped.multiply(balance.wrapped.divide(totalSupply)),
-    ]
-  }, [balance, reserve0, reserve1, totalSupply])
-}
+    }, [balance, reserve0, reserve1, totalSupply])
+  }

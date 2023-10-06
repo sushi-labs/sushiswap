@@ -1,9 +1,13 @@
 'use client'
 
 import { tridentStablePoolAbi, tridentStablePoolFactoryAbi } from 'sushi/abi'
-import { computeTridentStablePoolAddress, Fee, TridentStablePool } from '@sushiswap/amm'
+import {
+  computeTridentStablePoolAddress,
+  Fee,
+  TridentStablePool,
+} from '@sushiswap/amm'
 import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { Amount, Currency, Token, Type } from '@sushiswap/currency'
+import { Amount, Currency, Token, Type } from 'sushi/currency'
 import { isTridentChainId, TridentChainId } from '@sushiswap/trident-sdk'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
@@ -23,7 +27,14 @@ interface Rebase {
   elastic: bigint
 }
 
-type PoolInput = [Type | undefined, Type | undefined, Fee, boolean, Rebase, Rebase]
+type PoolInput = [
+  Type | undefined,
+  Type | undefined,
+  Fee,
+  boolean,
+  Rebase,
+  Rebase,
+]
 
 interface PoolData {
   address: string
@@ -31,12 +42,15 @@ interface PoolData {
   token1: Token
 }
 
-type Config = Omit<NonNullable<Parameters<typeof useContractReads>['0']>, 'contracts'>
+type Config = Omit<
+  NonNullable<Parameters<typeof useContractReads>['0']>,
+  'contracts'
+>
 
 export function useGetTridentStablePools(
   chainId: BentoBoxChainId | undefined,
   currencies: [Currency | undefined, Currency | undefined][],
-  config: Config = { enabled: true }
+  config: Config = { enabled: true },
 ): {
   isLoading: boolean
   isError: boolean
@@ -50,21 +64,30 @@ export function useGetTridentStablePools(
         const addr1 = c1.wrapped.address as string | undefined
         const addr2 = c2.wrapped.address as string | undefined
         if (addr1 !== undefined && addr2 !== undefined) {
-          if (addr1.toLowerCase() < addr2.toLowerCase()) pairsMap.set(addr1 + addr2, [c1, c2] as [Token, Token])
+          if (addr1.toLowerCase() < addr2.toLowerCase())
+            pairsMap.set(addr1 + addr2, [c1, c2] as [Token, Token])
           else pairsMap.set(addr2 + addr1, [c2, c1] as [Token, Token])
         }
       }
     })
     return Array.from(pairsMap.values())
   }, [currencies])
-  const pairsUniqueAddr = useMemo(() => pairsUnique.map(([t0, t1]) => [t0.address, t1.address]), [pairsUnique])
+  const pairsUniqueAddr = useMemo(
+    () => pairsUnique.map(([t0, t1]) => [t0.address, t1.address]),
+    [pairsUnique],
+  )
 
   const tokensUnique = useMemo(
     () =>
       Array.from(
-        new Set(pairsUnique.reduce<Token[]>((previousValue, currentValue) => previousValue.concat(currentValue), []))
+        new Set(
+          pairsUnique.reduce<Token[]>(
+            (previousValue, currentValue) => previousValue.concat(currentValue),
+            [],
+          ),
+        ),
       ),
-    [pairsUnique]
+    [pairsUnique],
   )
 
   const {
@@ -90,7 +113,12 @@ export function useGetTridentStablePools(
       .filter(([, length]) => length)
       .map(
         ([i, length]) =>
-          [pairsUniqueAddr[i][0] as Address, pairsUniqueAddr[i][1] as Address, 0n, BigInt(length)] as const
+          [
+            pairsUniqueAddr[i][0] as Address,
+            pairsUniqueAddr[i][1] as Address,
+            0n,
+            BigInt(length),
+          ] as const,
       )
   }, [callStatePoolsCount, pairsUniqueAddr])
 
@@ -116,7 +144,11 @@ export function useGetTridentStablePools(
         args,
       }))
     }, [callStatePoolsCountProcessed, chainId, contract?.address]),
-    enabled: Boolean(callStatePoolsCountProcessed && callStatePoolsCountProcessed?.length > 0 && config?.enabled),
+    enabled: Boolean(
+      callStatePoolsCountProcessed &&
+        callStatePoolsCountProcessed?.length > 0 &&
+        config?.enabled,
+    ),
     watch: !config?.enabled,
     select: (data) => data?.map((r) => r.result),
   })
@@ -130,7 +162,7 @@ export function useGetTridentStablePools(
             address,
             token0: pairsUniqueProcessed?.[i][0] as Token,
             token1: pairsUniqueProcessed?.[i][1] as Token,
-          })
+          }),
         )
     })
     return pools
@@ -151,7 +183,10 @@ export function useGetTridentStablePools(
     })),
     enabled: poolsAddresses.length > 0 && config?.enabled,
     watch: !config?.enabled,
-    select: (data) => data?.map((r) => (r.result ? { reserve0: r.result[0], reserve1: r.result[1] } : undefined)),
+    select: (data) =>
+      data?.map((r) =>
+        r.result ? { reserve0: r.result[0], reserve1: r.result[1] } : undefined,
+      ),
   })
 
   const {
@@ -174,8 +209,16 @@ export function useGetTridentStablePools(
 
   return useMemo(() => {
     return {
-      isLoading: callStatePoolsCountLoading || callStatePoolsLoading || reservesLoading || feesLoading,
-      isError: callStatePoolsCountError || callStatePoolsError || reservesError || feesError,
+      isLoading:
+        callStatePoolsCountLoading ||
+        callStatePoolsLoading ||
+        reservesLoading ||
+        feesLoading,
+      isError:
+        callStatePoolsCountError ||
+        callStatePoolsError ||
+        reservesError ||
+        feesError,
       data: pools.map((p, i) => {
         const _reserves = reserves?.[i]
 
@@ -195,7 +238,7 @@ export function useGetTridentStablePools(
             Amount.fromRawAmount(p.token1, _reserves.reserve1),
             Number(fees[i]),
             totals[p.token0.wrapped.address],
-            totals[p.token1.wrapped.address]
+            totals[p.token1.wrapped.address],
           ),
         ]
       }),
@@ -218,36 +261,40 @@ export function useGetTridentStablePools(
 
 export function useTridentStablePools(
   chainId: number,
-  pools: PoolInput[]
+  pools: PoolInput[],
 ): [TridentStablePoolState, TridentStablePool | null][] {
   const stablePoolFactory = useStablePoolFactoryContract(chainId)
 
   const input = useMemo(
     () =>
       pools
-        .filter((input): input is [Type, Type, Fee, boolean, Rebase, Rebase] => {
-          const [currencyA, currencyB, fee, twap, total0, total1] = input
-          return Boolean(
-            currencyA &&
-              currencyB &&
-              fee &&
-              twap !== undefined &&
-              currencyA.chainId === currencyB.chainId &&
-              !currencyA.wrapped.equals(currencyB.wrapped) &&
-              stablePoolFactory?.address &&
-              total0 &&
-              total1
-          )
-        })
-        .map<[Token, Token, Fee, boolean, Rebase, Rebase]>(([currencyA, currencyB, fee, twap, total0, total1]) => [
-          currencyA.wrapped,
-          currencyB.wrapped,
-          fee,
-          twap,
-          total0,
-          total1,
-        ]),
-    [stablePoolFactory?.address, pools]
+        .filter(
+          (input): input is [Type, Type, Fee, boolean, Rebase, Rebase] => {
+            const [currencyA, currencyB, fee, twap, total0, total1] = input
+            return Boolean(
+              currencyA &&
+                currencyB &&
+                fee &&
+                twap !== undefined &&
+                currencyA.chainId === currencyB.chainId &&
+                !currencyA.wrapped.equals(currencyB.wrapped) &&
+                stablePoolFactory?.address &&
+                total0 &&
+                total1,
+            )
+          },
+        )
+        .map<[Token, Token, Fee, boolean, Rebase, Rebase]>(
+          ([currencyA, currencyB, fee, twap, total0, total1]) => [
+            currencyA.wrapped,
+            currencyB.wrapped,
+            fee,
+            twap,
+            total0,
+            total1,
+          ],
+        ),
+    [stablePoolFactory?.address, pools],
   )
 
   const poolsAddresses = useMemo(
@@ -260,12 +307,12 @@ export function useTridentStablePools(
                 tokenA,
                 tokenB,
                 fee,
-              })
+              }),
             )
             return acc
           }, [])
         : [],
-    [stablePoolFactory, input]
+    [stablePoolFactory, input],
   )
 
   const { data } = useContractReads({
@@ -275,15 +322,18 @@ export function useTridentStablePools(
       abi: tridentStablePoolAbi,
       functionName: 'getReserves' as const,
     })),
-    enabled: poolsAddresses.length > 0 && isTridentChainId(chainId as TridentChainId),
+    enabled:
+      poolsAddresses.length > 0 && isTridentChainId(chainId as TridentChainId),
     watch: true,
     keepPreviousData: true,
     select: (data) => data?.map((r) => r.result),
   })
 
   return useMemo(() => {
-    if (poolsAddresses.length === 0) return [[TridentStablePoolState.INVALID, null]]
-    if (!data || !data.length) return poolsAddresses.map(() => [TridentStablePoolState.LOADING, null])
+    if (poolsAddresses.length === 0)
+      return [[TridentStablePoolState.INVALID, null]]
+    if (!data || !data.length)
+      return poolsAddresses.map(() => [TridentStablePoolState.LOADING, null])
     return data.map((result, i) => {
       const tokenA = pools[i][0]?.wrapped
       const tokenB = pools[i][1]?.wrapped
@@ -292,10 +342,13 @@ export function useTridentStablePools(
       const total0 = pools[i]?.[4]
       const total1 = pools[i]?.[5]
 
-      if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [TridentStablePoolState.INVALID, null]
+      if (!tokenA || !tokenB || tokenA.equals(tokenB))
+        return [TridentStablePoolState.INVALID, null]
       if (!result) return [TridentStablePoolState.NOT_EXISTS, null]
       const [reserve0, reserve1] = result
-      const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
+      const [token0, token1] = tokenA.sortsBefore(tokenB)
+        ? [tokenA, tokenB]
+        : [tokenB, tokenA]
 
       return [
         TridentStablePoolState.EXISTS,
@@ -304,7 +357,7 @@ export function useTridentStablePools(
           Amount.fromRawAmount(token1, reserve1.toString()),
           fee,
           total0,
-          total1
+          total1,
         ),
       ]
     })
@@ -319,11 +372,11 @@ export function useTridentStablePool(
   twap: boolean,
   // TODO: Change this, just to satify TS for now
   total0: Rebase = { base: 0n, elastic: 0n },
-  total1: Rebase = { base: 0n, elastic: 0n }
+  total1: Rebase = { base: 0n, elastic: 0n },
 ): [TridentStablePoolState, TridentStablePool | null] {
   const inputs: [PoolInput] = useMemo(
     () => [[tokenA, tokenB, Number(fee), Boolean(twap), total0, total1]],
-    [tokenA, tokenB, fee, twap, total0, total1]
+    [tokenA, tokenB, fee, twap, total0, total1],
   )
   return useTridentStablePools(chainId, inputs)[0]
 }

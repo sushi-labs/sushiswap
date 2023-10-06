@@ -1,7 +1,7 @@
 'use client'
 
 import { GiftIcon } from '@heroicons/react-v1/outline'
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { isTridentChainId, TridentChainId } from '@sushiswap/trident-sdk'
 import { LinkExternal, LinkInternal, typographyVariants } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'

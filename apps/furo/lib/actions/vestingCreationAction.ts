@@ -1,4 +1,4 @@
-import { Share, Type } from '@sushiswap/currency'
+import { Share, Type } from 'sushi/currency'
 import { Address, encodeFunctionData, Hex, zeroAddress } from 'viem'
 
 const abiShard = [
@@ -120,7 +120,9 @@ export const vestingCreationAction = ({
     functionName: 'createVesting',
     args: [
       {
-        token: currency.isNative ? zeroAddress : (currency.wrapped.address as Address),
+        token: currency.isNative
+          ? zeroAddress
+          : (currency.wrapped.address as Address),
         recipient,
         start: Math.floor(startDate.getTime() / 1000),
         cliffDuration,

@@ -28,7 +28,6 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@sushiswap/currency": "workspace:*",
     "sushi": "workspace:*"
   },
   "devDependencies": {

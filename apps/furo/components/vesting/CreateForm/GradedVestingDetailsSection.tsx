@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { Label } from '@sushiswap/ui'
 import { TextField } from '@sushiswap/ui'
 import {

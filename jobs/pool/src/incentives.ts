@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import './lib/wagmi.js'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { createClient, Prisma } from '@sushiswap/database'
 import { MINICHEF_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'

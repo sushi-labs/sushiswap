@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { Abi, Narrow } from 'abitype'
 import { Address, MulticallContract, MulticallContracts, PublicClient } from 'viem'
 

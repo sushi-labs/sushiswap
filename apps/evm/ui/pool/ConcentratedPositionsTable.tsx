@@ -2,7 +2,7 @@
 
 import { PlusIcon } from '@heroicons/react/20/solid'
 import { Slot } from '@radix-ui/react-slot'
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { Button, Card, CardHeader, CardTitle, DataTable, LinkInternal, Switch } from '@sushiswap/ui'
 import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'

@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { V3MigrateChainId } from './types'
 
 export const V3MigrateAddress = {

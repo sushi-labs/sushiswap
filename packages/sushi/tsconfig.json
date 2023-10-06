@@ -4,6 +4,7 @@
   "exclude": ["node_modules"],
   "compilerOptions": {
     "lib": ["ESNext", "DOM"],
+    "target": "ES2022",
     "outDir": "./dist",
     "rootDir": "./src",
     "declaration": true,

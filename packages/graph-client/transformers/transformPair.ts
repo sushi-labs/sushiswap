@@ -1,4 +1,4 @@
-import { chainShortName } from '@sushiswap/chain'
+import { chainShortName } from 'sushi/chain'
 
 import type { Pair } from '../.graphclient/index.js'
 import type { Incentive } from '../lib/incentives.js'

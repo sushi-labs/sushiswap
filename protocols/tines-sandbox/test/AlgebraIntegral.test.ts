@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
 import { Address, createPublicClient, custom, PublicClient, walletActions, WalletClient } from 'viem'

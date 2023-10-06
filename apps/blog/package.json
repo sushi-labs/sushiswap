@@ -17,7 +17,7 @@
   "dependencies": {
     "@cloudinary/url-gen": "^1.8.0",
     "@heroicons/react": "1.0.6",
-    "@sushiswap/chain": "workspace:*",
+    "sushi": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",

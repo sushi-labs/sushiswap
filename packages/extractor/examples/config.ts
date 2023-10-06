@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { LiquidityProviders } from '@sushiswap/router'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,

@@ -35,8 +35,6 @@
   },
   "dependencies": {
     "@sushiswap/amm": "workspace:*",
-    "@sushiswap/chain": "workspace:*",
-    "@sushiswap/currency": "workspace:*",
     "@sushiswap/router": "workspace:*",
     "@sushiswap/route-processor-sdk": "workspace:*",
     "@sushiswap/tines": "workspace:*",

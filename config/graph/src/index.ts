@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 
 export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.OPTIMISM,

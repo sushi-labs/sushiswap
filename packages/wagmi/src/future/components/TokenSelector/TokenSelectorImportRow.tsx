@@ -1,6 +1,3 @@
-import { Chain } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
-import { shortenAddress } from 'sushi'
 import { useTokenSecurity } from '@sushiswap/react-query'
 import {
   Dialog,
@@ -17,15 +14,24 @@ import { Button } from '@sushiswap/ui/components/button'
 import { Icon } from '@sushiswap/ui/components/currency/Icon'
 import { List } from '@sushiswap/ui/components/list/List'
 import React, { FC, ReactNode, useCallback, useState } from 'react'
+import { shortenAddress } from 'sushi'
+import { Chain } from 'sushi/chain'
+import { Token } from 'sushi/currency'
 
 interface TokenSelectorImportRow {
   currencies: (Token | undefined)[]
   onImport(): void
 }
 
-export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies, onImport }) => {
+export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
+  currencies,
+  onImport,
+}) => {
   const [open, setOpen] = useState(false)
-  const { data: tokenSecurity } = useTokenSecurity({ currencies, enabled: open })
+  const { data: tokenSecurity } = useTokenSecurity({
+    currencies,
+    enabled: open,
+  })
 
   const onClick = useCallback(() => {
     if (!tokenSecurity?.honeypots || tokenSecurity.honeypots.length === 0) {
@@ -46,7 +52,12 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
           {currencies[0] ? (
             <div className="flex flex-row items-center flex-grow gap-4">
               <div className="w-10 h-10">
-                <Icon disableLink currency={currencies[0]} width={40} height={40} />
+                <Icon
+                  disableLink
+                  currency={currencies[0]}
+                  width={40}
+                  height={40}
+                />
               </div>
               <div className="flex flex-col items-start">
                 <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 dark:group-hover:text-white">
@@ -72,9 +83,13 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
             <>
               <DialogTitle>Import token</DialogTitle>
               <DialogDescription>
-                Trade at your own risk! {currencies.length > 1 ? "These tokens don't" : "This token doesn't"} appear on
-                the active token list(s). Anyone can create a token, including creating fake versions of existing tokens
-                that claim to represent projects.
+                Trade at your own risk!{' '}
+                {currencies.length > 1
+                  ? "These tokens don't"
+                  : "This token doesn't"}{' '}
+                appear on the active token list(s). Anyone can create a token,
+                including creating fake versions of existing tokens that claim
+                to represent projects.
               </DialogDescription>
             </>
           ) : (
@@ -108,14 +123,16 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
                           </span>
                           <a
                             target="_blank"
-                            href={Chain.from(cur.chainId).getTokenUrl(cur.address)}
+                            href={Chain.from(cur.chainId)?.getTokenUrl(
+                              cur.address,
+                            )}
                             className="flex gap-1 text-sm text-blue font-medium"
                             rel="noreferrer"
                           >
                             {shortenAddress(cur.address)}
                           </a>
                         </div>
-                      </div>
+                      </div>,
                     )
                   }
 
@@ -127,7 +144,9 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
             <List className="!pt-0">
               <List.Control>
                 {tokenSecurity.honeypots.reduce<ReactNode[]>((acc, cur) => {
-                  const currency = currencies.find((currency) => currency?.address === cur)
+                  const currency = currencies.find(
+                    (currency) => currency?.address === cur,
+                  )
                   if (currency) {
                     acc.push(
                       <div className="flex items-center gap-4 py-2 px-4">
@@ -138,14 +157,16 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
                           </span>
                           <a
                             target="_blank"
-                            href={Chain.from(currency.chainId).getTokenUrl(currency.address)}
+                            href={Chain.from(currency.chainId)?.getTokenUrl(
+                              currency.address,
+                            )}
                             className="flex gap-1 text-sm text-blue font-medium"
                             rel="noreferrer"
                           >
                             {shortenAddress(currency.address)}
                           </a>
                         </div>
-                      </div>
+                      </div>,
                     )
                   }
 
@@ -158,11 +179,15 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
         <DialogFooter>
           <div className="flex flex-col gap-3 w-full">
             <Button fullWidth size="xl" onClick={onClick}>
-              {!tokenSecurity?.honeypots || tokenSecurity.honeypots.length === 0 ? 'I understand' : 'Close'}
+              {!tokenSecurity?.honeypots || tokenSecurity.honeypots.length === 0
+                ? 'I understand'
+                : 'Close'}
             </Button>
             {tokenSecurity?.isSupported ? (
               <div className="flex items-center gap-0.5 justify-center">
-                <span className="text-xs text-gray-700 dark:text-slate-400">Honeypot detection powered by GoPlus</span>
+                <span className="text-xs text-gray-700 dark:text-slate-400">
+                  Honeypot detection powered by GoPlus
+                </span>
                 <GoPlusLabsIcon width={22} height={22} />
               </div>
             ) : null}

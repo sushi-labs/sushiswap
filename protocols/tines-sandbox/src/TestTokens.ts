@@ -1,13 +1,18 @@
 import { erc20Abi } from 'sushi/abi'
-import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
 import { Address, Hex, PublicClient, WalletClient } from 'viem'
 import { waitForTransactionReceipt } from 'viem/actions'
 
 import ERC20Mock from '../artifacts/contracts/ERC20Mock.sol/ERC20Mock.json'
 
-const getDeploymentAddress = async (client: WalletClient, promise: Promise<Hex>) =>
-  waitForTransactionReceipt(client, { hash: await promise }).then((receipt) => receipt.contractAddress as Address)
+const getDeploymentAddress = async (
+  client: WalletClient,
+  promise: Promise<Hex>,
+) =>
+  waitForTransactionReceipt(client, { hash: await promise }).then(
+    (receipt) => receipt.contractAddress as Address,
+  )
 
 export interface TestTokens {
   owner: Address
@@ -19,7 +24,7 @@ export async function createTestTokens(
   client: PublicClient & WalletClient,
   testTokensNumber = 2,
   owner?: Address,
-  supply = 2n ** 255n
+  supply = 2n ** 255n,
 ): Promise<TestTokens> {
   const [deployer] = await client.getAddresses()
   owner = owner ?? deployer
@@ -35,7 +40,7 @@ export async function createTestTokens(
         bytecode: ERC20Mock.bytecode as Hex,
         account: owner,
         args: [tokenName, tokenName, supply],
-      })
+      }),
     )
     tokens[i] = new Token({
       chainId: client.chain?.id as ChainId,
@@ -53,7 +58,13 @@ export async function createTestTokens(
   }
 }
 
-export async function approve(client: WalletClient, token: Token, user: Address, spender: Address, amount: bigint) {
+export async function approve(
+  client: WalletClient,
+  token: Token,
+  user: Address,
+  spender: Address,
+  amount: bigint,
+) {
   return await client.writeContract({
     chain: null,
     abi: erc20Abi,
@@ -64,7 +75,11 @@ export async function approve(client: WalletClient, token: Token, user: Address,
   })
 }
 
-export async function balanceOf(client: PublicClient, token: Token, owner: Address) {
+export async function balanceOf(
+  client: PublicClient,
+  token: Token,
+  owner: Address,
+) {
   return await client.readContract({
     abi: erc20Abi,
     address: token.address as Address,

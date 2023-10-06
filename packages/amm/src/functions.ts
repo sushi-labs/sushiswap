@@ -1,5 +1,5 @@
 import { getAddress } from '@ethersproject/address'
-import { Amount, Currency } from '@sushiswap/currency'
+import { Amount, Currency } from 'sushi/currency'
 import { Fraction, Percent } from 'sushi'
 import invariant from 'tiny-invariant'
 import warning from 'tiny-warning'

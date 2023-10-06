@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { DataFetcher, LiquidityProviders, NUMBER_OF_SURROUNDING_TICKS, UniV3PoolCode } from '@sushiswap/router'
 import { CL_MAX_TICK } from '@sushiswap/tines'
 import { CL_MIN_TICK } from '@sushiswap/tines'

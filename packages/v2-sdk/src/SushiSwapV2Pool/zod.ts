@@ -1,4 +1,4 @@
-import { amountSchema } from '@sushiswap/currency'
+import { amountSchema } from 'sushi/currency'
 import z from 'zod'
 
 export const sushiSwapV2PoolSchema = z.object({

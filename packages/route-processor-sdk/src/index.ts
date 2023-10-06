@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 
 // v1
 export const ROUTE_PROCESSOR_SUPPORTED_CHAIN_IDS = [

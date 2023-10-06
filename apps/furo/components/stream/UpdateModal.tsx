@@ -1,7 +1,7 @@
 import { parseUnits } from '@ethersproject/units'
 import { PencilIcon } from '@heroicons/react/outline'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { Amount, Token } from '@sushiswap/currency'
+import { Amount, Token } from 'sushi/currency'
 import { FuroChainId } from '@sushiswap/furo-sdk'
 import {
   DateField,
@@ -29,15 +29,26 @@ import {
   useSendTransaction,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
+import {
+  SendTransactionResult,
+  waitForTransaction,
+} from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
-import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import {
+  useApproved,
+  withCheckerRoot,
+} from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import { Hex } from 'viem'
 
-import { approveBentoBoxAction, batchAction, Stream, updateStreamAction } from '../../lib'
+import {
+  approveBentoBoxAction,
+  batchAction,
+  Stream,
+  updateStreamAction,
+} from '../../lib'
 
 const APPROVE_TAG = 'updateStreamSingle'
 
@@ -67,7 +78,10 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
 
       let value: Amount<Token> | undefined = undefined
       try {
-        value = Amount.fromRawAmount(stream.token, BigInt(parseUnits(amount, stream.token.decimals).toString()))
+        value = Amount.fromRawAmount(
+          stream.token,
+          BigInt(parseUnits(amount, stream.token.decimals).toString()),
+        )
       } catch (e) {
         console.debug(e)
       }
@@ -95,7 +109,7 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
           },
         })
       },
-      [amount, chainId, address]
+      [amount, chainId, address],
     )
 
     const isTopUpValid = useMemo(() => {
@@ -106,18 +120,31 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
     }, [changeEndDate, endDate])
 
     const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
-      if (!stream?.canUpdate(address) || !stream || !chainId || !contractAddress || !contract) return {}
+      if (
+        !stream?.canUpdate(address) ||
+        !stream ||
+        !chainId ||
+        !contractAddress ||
+        !contract
+      )
+        return {}
       if (topUp && !amount) return {}
       if (changeEndDate && !endDate) return {}
 
       const actions: Hex[] = []
       if (signature) {
-        actions.push(approveBentoBoxAction({ user: address as Address, signature }))
+        actions.push(
+          approveBentoBoxAction({ user: address as Address, signature }),
+        )
       }
 
       const difference =
-        changeEndDate && endDate ? Math.floor((endDate?.getTime() - stream?.endTime.getTime()) / 1000) : 0
-      const topUpAmount = amountAsEntity?.greaterThan(0) ? amountAsEntity.quotient.toString() : '0'
+        changeEndDate && endDate
+          ? Math.floor((endDate?.getTime() - stream?.endTime.getTime()) / 1000)
+          : 0
+      const topUpAmount = amountAsEntity?.greaterThan(0)
+        ? amountAsEntity.quotient.toString()
+        : '0'
 
       actions.push(
         updateStreamAction({
@@ -125,7 +152,7 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
           topUpAmount: topUpAmount ? BigInt(topUp) : 0n,
           difference: BigInt(difference),
           fromBentoBox: false,
-        })
+        }),
       )
 
       return {
@@ -157,7 +184,7 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
           chainId &&
           isTopUpValid &&
           isChangeEndDateValid &&
-          approved
+          approved,
       ),
     })
 
@@ -178,14 +205,21 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
           {({ confirm }) => (
             <>
               <DialogTrigger asChild>
-                <Button id="stream-update" icon={PencilIcon} variant="secondary" disabled={!stream?.canUpdate(address)}>
+                <Button
+                  id="stream-update"
+                  icon={PencilIcon}
+                  variant="secondary"
+                  disabled={!stream?.canUpdate(address)}
+                >
                   Update
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Update stream</DialogTitle>
-                  <DialogDescription>Update the stream to change the amount or end date.</DialogDescription>
+                  <DialogDescription>
+                    Update the stream to change the amount or end date.
+                  </DialogDescription>
                 </DialogHeader>
                 <div className="flex flex-col gap-4">
                   <div className="flex flex-col gap-2">
@@ -194,7 +228,9 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                       <Switch
                         testdata-id="update-amount-switch"
                         checked={topUp}
-                        onCheckedChange={() => setTopUp((prevState) => !prevState)}
+                        onCheckedChange={() =>
+                          setTopUp((prevState) => !prevState)
+                        }
                       />
                     </div>
                     {topUp ? (
@@ -213,7 +249,9 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                       <Switch
                         testdata-id="update-end-date-switch"
                         checked={changeEndDate}
-                        onCheckedChange={() => setChangeEndDate((prevState) => !prevState)}
+                        onCheckedChange={() =>
+                          setChangeEndDate((prevState) => !prevState)
+                        }
                       />
                     </div>
                     {changeEndDate ? (
@@ -239,8 +277,14 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                 <DialogFooter>
                   <Checker.Connect type="button">
                     <Checker.Network type="button" chainId={chainId}>
-                      <Checker.Guard guardWhen={topUp && !amountAsEntity?.greaterThan(0)} guardText="Enter amount">
-                        <Checker.Guard guardWhen={changeEndDate && !endDate} guardText="Enter date">
+                      <Checker.Guard
+                        guardWhen={topUp && !amountAsEntity?.greaterThan(0)}
+                        guardText="Enter amount"
+                      >
+                        <Checker.Guard
+                          guardWhen={changeEndDate && !endDate}
+                          guardText="Enter date"
+                        >
                           <Checker.ApproveBentobox
                             tag={APPROVE_TAG}
                             type="button"
@@ -253,7 +297,11 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                               id="approve-erc20-update-stream"
                               type="button"
                               amount={amountAsEntity}
-                              contract={BENTOBOX_ADDRESS[chainId as BentoBoxChainId] as Address}
+                              contract={
+                                BENTOBOX_ADDRESS[
+                                  chainId as BentoBoxChainId
+                                ] as Address
+                              }
                               enabled={topUp}
                             >
                               <Checker.Success tag={APPROVE_TAG}>
@@ -261,11 +309,23 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                                   type="button"
                                   fullWidth
                                   size="xl"
-                                  disabled={isWritePending || (!topUp && !changeEndDate) || !sendTransactionAsync}
-                                  onClick={() => sendTransactionAsync?.().then(() => confirm())}
+                                  disabled={
+                                    isWritePending ||
+                                    (!topUp && !changeEndDate) ||
+                                    !sendTransactionAsync
+                                  }
+                                  onClick={() =>
+                                    sendTransactionAsync?.().then(() =>
+                                      confirm(),
+                                    )
+                                  }
                                   testId="stream-update-confirmation"
                                 >
-                                  {isWritePending ? <Dots>Confirm Update</Dots> : 'Update'}
+                                  {isWritePending ? (
+                                    <Dots>Confirm Update</Dots>
+                                  ) : (
+                                    'Update'
+                                  )}
                                 </Button>
                               </Checker.Success>
                             </Checker.ApproveERC20>
@@ -288,5 +348,5 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
         />
       </DialogProvider>
     )
-  }
+  },
 )

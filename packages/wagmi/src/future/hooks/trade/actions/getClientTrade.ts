@@ -5,8 +5,8 @@ import {
   TradeType,
   Version as TradeVersion,
 } from '@sushiswap/amm'
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Type as Currency, Type, WNATIVE } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Amount, Type as Currency, Type, WNATIVE } from 'sushi/currency'
 import { RouteStatus } from '@sushiswap/tines'
 import { isTridentChainId } from '@sushiswap/trident-sdk'
 import { SUSHISWAP_V2_FACTORY_ADDRESS } from '@sushiswap/v2-sdk'
@@ -36,9 +36,14 @@ export const getClientTrade = async ({
   feeData,
   rebases: totals,
 }: GetTradeParams) => {
-  const [currencyIn, currencyOut] = tradeType === TradeType.EXACT_INPUT ? [fromToken, toToken] : [toToken, fromToken]
+  const [currencyIn, currencyOut] =
+    tradeType === TradeType.EXACT_INPUT
+      ? [fromToken, toToken]
+      : [toToken, fromToken]
 
-  const [currencyInRebase, currencyOutRebase] = totals ? totals : [undefined, undefined]
+  const [currencyInRebase, currencyOutRebase] = totals
+    ? totals
+    : [undefined, undefined]
 
   if (
     feeData?.gasPrice &&
@@ -53,38 +58,57 @@ export const getClientTrade = async ({
     pools
   ) {
     if (tradeType === TradeType.EXACT_INPUT) {
-      if (chainId in SUSHISWAP_V2_FACTORY_ADDRESS && isTridentChainId(chainId)) {
+      if (
+        chainId in SUSHISWAP_V2_FACTORY_ADDRESS &&
+        isTridentChainId(chainId)
+      ) {
         const legacyRoute = findSingleRouteExactIn(
           currencyIn.wrapped,
           currencyOut.wrapped,
           amount.quotient,
           pools.sushiSwapV2Pools || [],
           WNATIVE[amount.currency.chainId],
-          Number(feeData.gasPrice)
+          Number(feeData.gasPrice),
         )
 
         const tridentRoute = findMultiRouteExactIn(
           currencyIn.wrapped,
           currencyOut.wrapped,
           amount.toShare(currencyInRebase).quotient,
-          [...(pools.tridentConstantPools || []), ...(pools.tridentStablePools || [])],
+          [
+            ...(pools.tridentConstantPools || []),
+            ...(pools.tridentStablePools || []),
+          ],
           WNATIVE[amount.currency.chainId],
-          Number(feeData.gasPrice)
+          Number(feeData.gasPrice),
         )
 
-        const useLegacy = Amount.fromRawAmount(currencyOut.wrapped, legacyRoute.amountOutBI.toString()).greaterThan(
-          Amount.fromShare(currencyOut.wrapped, tridentRoute.amountOutBI.toString(), currencyOutRebase)
+        const useLegacy = Amount.fromRawAmount(
+          currencyOut.wrapped,
+          legacyRoute.amountOutBI.toString(),
+        ).greaterThan(
+          Amount.fromShare(
+            currencyOut.wrapped,
+            tridentRoute.amountOutBI.toString(),
+            currencyOutRebase,
+          ),
         )
 
-        if (legacyRoute.status === RouteStatus.Success || tridentRoute.status === RouteStatus.Success) {
-          console.debug(`Found ${useLegacy ? 'Legacy' : 'Trident'} route`, useLegacy ? legacyRoute : tridentRoute)
+        if (
+          legacyRoute.status === RouteStatus.Success ||
+          tridentRoute.status === RouteStatus.Success
+        ) {
+          console.debug(
+            `Found ${useLegacy ? 'Legacy' : 'Trident'} route`,
+            useLegacy ? legacyRoute : tridentRoute,
+          )
           return Trade.exactIn(
             useLegacy ? legacyRoute : tridentRoute,
             amount,
             currencyOut,
             useLegacy ? TradeVersion.V1 : TradeVersion.V2,
             !useLegacy ? currencyInRebase : undefined,
-            !useLegacy ? currencyOutRebase : undefined
+            !useLegacy ? currencyOutRebase : undefined,
           )
         } else {
           console.debug('No legacy or trident route', legacyRoute, tridentRoute)
@@ -97,7 +121,7 @@ export const getClientTrade = async ({
         amount.quotient,
         pools.sushiSwapV2Pools || [],
         WNATIVE[amount.currency.chainId],
-        Number(feeData.gasPrice)
+        Number(feeData.gasPrice),
       )
 
       if (legacyRoute.status === RouteStatus.Success) {
@@ -112,13 +136,23 @@ export const getClientTrade = async ({
         currencyIn.wrapped,
         currencyOut.wrapped,
         amount.toShare(currencyInRebase).quotient,
-        [...(pools.tridentConstantPools || []), ...(pools.tridentStablePools || [])],
+        [
+          ...(pools.tridentConstantPools || []),
+          ...(pools.tridentStablePools || []),
+        ],
         WNATIVE[amount.currency.chainId],
-        Number(feeData.gasPrice)
+        Number(feeData.gasPrice),
       )
       if (tridentRoute.status === RouteStatus.Success) {
         console.debug('Found trident route', tridentRoute)
-        return Trade.exactIn(tridentRoute, amount, currencyOut, TradeVersion.V2, currencyInRebase, currencyOutRebase)
+        return Trade.exactIn(
+          tridentRoute,
+          amount,
+          currencyOut,
+          TradeVersion.V2,
+          currencyInRebase,
+          currencyOutRebase,
+        )
       } else {
         console.debug('No trident route', tridentRoute)
       }

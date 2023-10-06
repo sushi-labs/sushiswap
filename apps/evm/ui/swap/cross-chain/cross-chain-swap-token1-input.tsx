@@ -1,12 +1,24 @@
 'use client'
 
-import { Chain } from '@sushiswap/chain'
-import { STARGATE_SUPPORTED_CHAIN_IDS, StargateChainId } from '@sushiswap/stargate'
-import { Button, Label, NetworkIcon, NetworkSelector, SelectIcon } from '@sushiswap/ui'
+import {
+  STARGATE_SUPPORTED_CHAIN_IDS,
+  StargateChainId,
+} from '@sushiswap/stargate'
+import {
+  Button,
+  Label,
+  NetworkIcon,
+  NetworkSelector,
+  SelectIcon,
+} from '@sushiswap/ui'
 import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
+import { Chain } from 'sushi/chain'
 
-import { useCrossChainSwapTrade, useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
+import {
+  useCrossChainSwapTrade,
+  useDerivedStateCrossChainSwap,
+} from './derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapToken1Input = () => {
   const {
@@ -15,13 +27,19 @@ export const CrossChainSwapToken1Input = () => {
     isToken1Loading: tokenLoading,
   } = useDerivedStateCrossChainSwap()
 
-  const { isInitialLoading: isLoading, isFetching, data: trade } = useCrossChainSwapTrade()
+  const {
+    isInitialLoading: isLoading,
+    isFetching,
+    data: trade,
+  } = useCrossChainSwapTrade()
 
   return (
     <div className="border border-accent flex flex-col bg-white dark:bg-slate-800 rounded-xl overflow-hidden">
       <Collapsible open={true}>
         <div className="flex p-3 border-b border-accent gap-2 items-center">
-          <Label className="text-xs tracking-tighter text-muted-foreground">To</Label>
+          <Label className="text-xs tracking-tighter text-muted-foreground">
+            To
+          </Label>
           <div>
             <NetworkSelector
               networks={STARGATE_SUPPORTED_CHAIN_IDS}
@@ -33,7 +51,7 @@ export const CrossChainSwapToken1Input = () => {
             >
               <Button variant="secondary" size="xs">
                 <NetworkIcon chainId={chainId1} width={16} height={16} />
-                {Chain.from(chainId1).name}
+                {Chain.from(chainId1)?.name}
                 <SelectIcon />
               </Button>
             </NetworkSelector>

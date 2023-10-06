@@ -2,11 +2,15 @@
 
 import { masterChefV1Abi } from 'sushi/abi'
 import { ChefType } from '@sushiswap/client'
-import { Amount, Token } from '@sushiswap/currency'
+import { Amount, Token } from 'sushi/currency'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { useCallback, useMemo } from 'react'
 import { encodeFunctionData, UserRejectedRequestError } from 'viem'
-import { useAccount, usePrepareSendTransaction, useSendTransaction } from 'wagmi'
+import {
+  useAccount,
+  usePrepareSendTransaction,
+  useSendTransaction,
+} from 'wagmi'
 import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
 import { masterchefV2Abi, minichefV2Abi } from '../../abis'
@@ -21,9 +25,17 @@ interface UseMasterChefWithdrawParams {
   enabled?: boolean
 }
 
-type UseMasterChefWithdraw = (params: UseMasterChefWithdrawParams) => ReturnType<typeof useSendTransaction>
+type UseMasterChefWithdraw = (
+  params: UseMasterChefWithdrawParams,
+) => ReturnType<typeof useSendTransaction>
 
-export const useMasterChefWithdraw: UseMasterChefWithdraw = ({ chainId, amount, chef, pid, enabled = true }) => {
+export const useMasterChefWithdraw: UseMasterChefWithdraw = ({
+  chainId,
+  amount,
+  chef,
+  pid,
+  enabled = true,
+}) => {
   const { address } = useAccount()
 
   const onSettled = useCallback(
@@ -40,8 +52,12 @@ export const useMasterChefWithdraw: UseMasterChefWithdraw = ({ chainId, amount, 
           txHash: data.hash,
           promise: waitForTransaction({ hash: data.hash }),
           summary: {
-            pending: `Unstaking ${amount.toSignificant(6)} ${amount.currency.symbol} tokens`,
-            completed: `Successfully unstaked ${amount.toSignificant(6)} ${amount.currency.symbol} tokens`,
+            pending: `Unstaking ${amount.toSignificant(6)} ${
+              amount.currency.symbol
+            } tokens`,
+            completed: `Successfully unstaked ${amount.toSignificant(6)} ${
+              amount.currency.symbol
+            } tokens`,
             failed: `Something went wrong when unstaking ${amount.currency.symbol} tokens`,
           },
           groupTimestamp: ts,
@@ -49,7 +65,7 @@ export const useMasterChefWithdraw: UseMasterChefWithdraw = ({ chainId, amount, 
         })
       }
     },
-    [amount, chainId, address]
+    [amount, chainId, address],
   )
 
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {

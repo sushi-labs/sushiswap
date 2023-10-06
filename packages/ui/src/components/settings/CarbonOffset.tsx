@@ -1,6 +1,6 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { useLocalStorage } from '@sushiswap/hooks'
 import React, { FC } from 'react'
 

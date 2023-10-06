@@ -1,5 +1,5 @@
 import { isAddress } from '@ethersproject/address'
-import { Native, Token } from '@sushiswap/currency'
+import { Native, Token } from 'sushi/currency'
 import { FuroChainId } from '@sushiswap/furo-sdk'
 import { FundSource } from '@sushiswap/hooks'
 import { useMemo } from 'react'
@@ -24,29 +24,35 @@ export const ZAddress = z
 
 export const ZFundSource = z.string()
 
-export const ZTokenToToken = ZToken.transform(({ address, decimals, chainId, symbol, name, isNative }) => {
-  if (isNative && address === undefined) {
-    return Native.onChain(chainId)
-  }
+export const ZTokenToToken = ZToken.transform(
+  ({ address, decimals, chainId, symbol, name, isNative }) => {
+    if (isNative && address === undefined) {
+      return Native.onChain(chainId)
+    }
 
-  return new Token({
-    address: address as string,
-    decimals,
-    chainId,
-    symbol,
-    name,
-  })
-})
+    return new Token({
+      address: address as string,
+      decimals,
+      chainId,
+      symbol,
+      name,
+    })
+  },
+)
 
-export const ZFundSourceToFundSource = ZFundSource.optional().transform((fundSource) => {
-  if (fundSource) {
-    return FundSource[fundSource as FundSource]
-  }
+export const ZFundSourceToFundSource = ZFundSource.optional().transform(
+  (fundSource) => {
+    if (fundSource) {
+      return FundSource[fundSource as FundSource]
+    }
 
-  return undefined
-})
+    return undefined
+  },
+)
 
-export const useFundSourceFromZFundSource = (fundSource?: z.infer<typeof ZFundSource>) => {
+export const useFundSourceFromZFundSource = (
+  fundSource?: z.infer<typeof ZFundSource>,
+) => {
   return useMemo(() => {
     return ZFundSourceToFundSource.parse(fundSource)
   }, [fundSource])
@@ -60,7 +66,9 @@ export const useTokenFromZToken = (token?: z.infer<typeof ZToken>) => {
   }, [token])
 }
 
-export const useTokensFromZTokens = (tokens: (z.infer<typeof ZToken> | undefined)[]) => {
+export const useTokensFromZTokens = (
+  tokens: (z.infer<typeof ZToken> | undefined)[],
+) => {
   return useMemo(() => {
     return tokens.map((token) => {
       if (token) {

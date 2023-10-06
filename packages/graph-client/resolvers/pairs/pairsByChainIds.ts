@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import {
   SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,

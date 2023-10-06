@@ -1,6 +1,6 @@
 import { isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { ChainId } from '@sushiswap/chain'
-import { Type } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Type } from 'sushi/currency'
 import { PrismaClient } from '@sushiswap/database'
 import { isTridentChainId } from '@sushiswap/trident-sdk'
 import { config } from '@sushiswap/viem-config'

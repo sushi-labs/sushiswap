@@ -1,5 +1,5 @@
 import { ArrowLeftIcon, CheckCircleIcon } from '@heroicons/react/solid'
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { formatNumber, shortenAddress } from 'sushi'
 import { SplashController } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/badge'

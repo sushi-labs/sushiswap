@@ -1,7 +1,11 @@
 import { test } from '@playwright/test'
-import { Native, Token, USDC_ADDRESS } from '@sushiswap/currency'
+import { Native, Token, USDC_ADDRESS } from 'sushi/currency'
 
-import { createMultipleStreams, createSnapshot, loadSnapshot } from '../../../utils'
+import {
+  createMultipleStreams,
+  createSnapshot,
+  loadSnapshot,
+} from '../../../utils'
 
 let SNAPSHOT_ID = '0x0'
 const CHAIN_ID = parseInt(process.env.CHAIN_ID as string)
@@ -24,7 +28,12 @@ test.afterEach(async () => {
 
 test('Create multiple streams', async ({ page }) => {
   await createMultipleStreams(page, CHAIN_ID, [
-    { chainId: CHAIN_ID, token: NATIVE_TOKEN, amount: '10', recipient: RECIPIENT }, // Add native stream
+    {
+      chainId: CHAIN_ID,
+      token: NATIVE_TOKEN,
+      amount: '10',
+      recipient: RECIPIENT,
+    }, // Add native stream
     { chainId: CHAIN_ID, token: USDC, amount: '0.00001', recipient: RECIPIENT }, // Add usdc stream
   ])
 })

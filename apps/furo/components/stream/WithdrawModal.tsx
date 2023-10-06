@@ -1,7 +1,4 @@
 import { DownloadIcon } from '@heroicons/react/solid'
-import { Chain } from '@sushiswap/chain'
-import { tryParseAmount } from '@sushiswap/currency'
-import { shortenAddress } from 'sushi'
 import { FuroChainId } from '@sushiswap/furo-sdk'
 import { TextField } from '@sushiswap/ui'
 import { DialogDescription, DialogHeader, DialogTitle } from '@sushiswap/ui'
@@ -17,10 +14,16 @@ import {
   useSendTransaction,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
+import {
+  SendTransactionResult,
+  waitForTransaction,
+} from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import React, { FC, useCallback, useMemo, useState } from 'react'
+import { shortenAddress } from 'sushi'
+import { Chain } from 'sushi/chain'
+import { tryParseAmount } from 'sushi/currency'
 import { Address, encodeFunctionData } from 'viem'
 
 import { Stream, useStreamBalance } from '../../lib'
@@ -32,7 +35,11 @@ interface WithdrawModalProps {
 
 export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
   const { address } = useAccount()
-  const { data: balance } = useStreamBalance({ chainId, streamId: stream.id, token: stream.token })
+  const { data: balance } = useStreamBalance({
+    chainId,
+    streamId: stream.id,
+    token: stream.token,
+  })
   const contract = useFuroStreamContract(chainId)
 
   const [input, setInput] = useState<string>('')
@@ -56,13 +63,17 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
         groupTimestamp: ts,
         promise: waitForTransaction({ hash: data.hash }),
         summary: {
-          pending: `Withdrawing ${amount.toSignificant(6)} ${amount.currency.symbol}`,
-          completed: `Successfully withdrawn ${amount.toSignificant(6)} ${amount.currency.symbol}`,
+          pending: `Withdrawing ${amount.toSignificant(6)} ${
+            amount.currency.symbol
+          }`,
+          completed: `Successfully withdrawn ${amount.toSignificant(6)} ${
+            amount.currency.symbol
+          }`,
           failed: 'Something went wrong withdrawing from stream',
         },
       })
     },
-    [amount, chainId, address]
+    [amount, chainId, address],
   )
 
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
@@ -74,7 +85,13 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
       data: encodeFunctionData({
         abi: contract.abi,
         functionName: 'withdrawFromStream',
-        args: [BigInt(stream.id), amount.toShare(stream.rebase).quotient, stream.recipient.id as Address, false, '0x'],
+        args: [
+          BigInt(stream.id),
+          amount.toShare(stream.rebase).quotient,
+          stream.recipient.id as Address,
+          false,
+          '0x',
+        ],
       }),
     }
   }, [stream, amount, chainId, contract, address])
@@ -131,7 +148,9 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
                   <a
                     target="_blank"
                     className="font-semibold text-blue"
-                    href={Chain.from(stream.chainId).getAccountUrl(stream.recipient.id)}
+                    href={Chain.from(stream.chainId)?.getAccountUrl(
+                      stream.recipient.id,
+                    )}
                     rel="noreferrer"
                   >
                     {shortenAddress(stream.recipient.id)}
@@ -151,16 +170,23 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
               <DialogFooter>
                 <Checker.Connect fullWidth>
                   <Checker.Network fullWidth chainId={chainId}>
-                    <Checker.Guard guardWhen={!amount?.greaterThan(0)} guardText="Enter amount">
+                    <Checker.Guard
+                      guardWhen={!amount?.greaterThan(0)}
+                      guardText="Enter amount"
+                    >
                       <Checker.Guard
-                        guardWhen={Boolean(stream.balance && amount?.greaterThan(stream.balance))}
+                        guardWhen={Boolean(
+                          stream.balance && amount?.greaterThan(stream.balance),
+                        )}
                         guardText="No available tokens for withdrawal"
                       >
                         <Button
                           size="xl"
                           fullWidth
                           disabled={isWritePending || !stream.balance}
-                          onClick={() => sendTransactionAsync?.().then(() => confirm())}
+                          onClick={() =>
+                            sendTransactionAsync?.().then(() => confirm())
+                          }
                           testId="withdraw-modal-confirmation"
                         >
                           {!stream.token ? (

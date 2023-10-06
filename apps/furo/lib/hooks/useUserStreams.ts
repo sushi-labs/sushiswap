@@ -1,9 +1,14 @@
-import { Token } from '@sushiswap/currency'
+import { Token } from 'sushi/currency'
 import { FuroChainId } from '@sushiswap/furo-sdk'
 import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { useQuery } from '@tanstack/react-query'
 
-import { getBuiltGraphSDK, Rebase, streamQuery, userStreamsQuery } from '../../.graphclient'
+import {
+  getBuiltGraphSDK,
+  Rebase,
+  streamQuery,
+  userStreamsQuery,
+} from '../../.graphclient'
 import { SUPPORTED_CHAINS } from '../../config'
 import { toToken } from '../mapper'
 import { Stream } from '../Stream'
@@ -26,11 +31,13 @@ export const useUserStreams = ({ account }: UseUserStreams) => {
           chainId,
           host: GRAPH_HOST,
           name: FURO_SUBGRAPH_NAME[chainId],
-        })
+        }),
       )
 
       const data: { chainId: FuroChainId; data: userStreamsQuery }[] = []
-      const results = await Promise.allSettled(sdks.map((sdk) => sdk.userStreams({ id: account.toLowerCase() })))
+      const results = await Promise.allSettled(
+        sdks.map((sdk) => sdk.userStreams({ id: account.toLowerCase() })),
+      )
       results.forEach((result, i) => {
         if (result.status === 'fulfilled') {
           data.push({
@@ -41,7 +48,9 @@ export const useUserStreams = ({ account }: UseUserStreams) => {
       })
 
       const streams: {
-        stream: userStreamsQuery['incomingStreams'][0] | userStreamsQuery['outgoingStreams'][0]
+        stream:
+          | userStreamsQuery['incomingStreams'][0]
+          | userStreamsQuery['outgoingStreams'][0]
         chainId: FuroChainId
         streamId: string
         token: Token
@@ -49,10 +58,18 @@ export const useUserStreams = ({ account }: UseUserStreams) => {
 
       data.forEach((el) => {
         ;[...el.data.incomingStreams, ...el.data.outgoingStreams]
-          .filter((el, i, streams) => i === streams.findIndex((stream) => stream.id === el.id))
+          .filter(
+            (el, i, streams) =>
+              i === streams.findIndex((stream) => stream.id === el.id),
+          )
           .forEach((stream) => {
             const token = toToken(stream.token, el.chainId)
-            streams.push({ stream, chainId: el.chainId, streamId: stream.id, token })
+            streams.push({
+              stream,
+              chainId: el.chainId,
+              streamId: stream.id,
+              token,
+            })
           })
       })
 
@@ -65,7 +82,10 @@ export const useUserStreams = ({ account }: UseUserStreams) => {
           return new Stream({
             chainId: el.chainId,
             furo: el.stream as NonNullable<streamQuery['stream']>,
-            rebase: rebases[i].data.rebase as Pick<Rebase, 'id' | 'base' | 'elastic'>,
+            rebase: rebases[i].data.rebase as Pick<
+              Rebase,
+              'id' | 'base' | 'elastic'
+            >,
           })
 
         return undefined

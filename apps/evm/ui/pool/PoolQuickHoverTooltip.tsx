@@ -1,5 +1,5 @@
 import { PlusIcon, UserCircleIcon } from '@heroicons/react-v1/solid'
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { Pool, Protocol } from '@sushiswap/client'
 import { formatNumber, formatPercent } from 'sushi'
 import { LinkInternal } from '@sushiswap/ui'

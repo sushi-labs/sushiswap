@@ -1,4 +1,4 @@
-import { ChainId, TESTNET_CHAIN_IDS } from '@sushiswap/chain'
+import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
 import { TridentChainIds } from '@sushiswap/trident-sdk'
 import { SushiSwapV2ChainIds } from '@sushiswap/v2-sdk'
 import { SushiSwapV3ChainIds } from '@sushiswap/v3-sdk'

@@ -1,4 +1,4 @@
-import { Amount, Currency } from '@sushiswap/currency'
+import { Amount, Currency } from 'sushi/currency'
 
 import { PeriodType } from '../../lib'
 

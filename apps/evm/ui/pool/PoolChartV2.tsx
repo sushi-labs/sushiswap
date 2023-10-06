@@ -1,6 +1,6 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { Card } from '@sushiswap/ui'
 import React, { FC, useState } from 'react'
 

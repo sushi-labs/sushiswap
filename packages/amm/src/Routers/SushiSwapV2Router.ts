@@ -1,5 +1,5 @@
 import { getAddress } from '@ethersproject/address'
-import { Currency } from '@sushiswap/currency'
+import { Currency } from 'sushi/currency'
 import { Percent } from 'sushi'
 import invariant from 'tiny-invariant'
 import warning from 'tiny-warning'
@@ -86,7 +86,7 @@ export abstract class SushiSwapV2Router {
    */
   public static swapCallParameters(
     trade: Trade<Currency, Currency, TradeType, Version.V1>,
-    options: TradeOptions | TradeOptionsDeadline
+    options: TradeOptions | TradeOptionsDeadline,
   ): SwapParameters {
     const etherIn = trade.inputAmount.currency.isNative
     const etherOut = trade.outputAmount.currency.isNative
@@ -95,15 +95,24 @@ export abstract class SushiSwapV2Router {
     invariant(!('ttl' in options) || options.ttl > 0, 'TTL')
 
     const to: string = validateAndParseAddress(options.recipient)
-    const amountIn: string = trade.maximumAmountIn(options.allowedSlippage).toHex()
-    const amountOut: string = trade.minimumAmountOut(options.allowedSlippage).toHex()
+    const amountIn: string = trade
+      .maximumAmountIn(options.allowedSlippage)
+      .toHex()
+    const amountOut: string = trade
+      .minimumAmountOut(options.allowedSlippage)
+      .toHex()
     const path: string[] = trade.route.legs.reduce<string[]>(
-      (previousValue, currentValue) => [...previousValue, currentValue.tokenTo.address],
-      [trade.route.legs[0].tokenFrom.address]
+      (previousValue, currentValue) => [
+        ...previousValue,
+        currentValue.tokenTo.address,
+      ],
+      [trade.route.legs[0].tokenFrom.address],
     )
     const deadline =
       'ttl' in options
-        ? `0x${(Math.floor(new Date().getTime() / 1000) + options.ttl).toString(16)}`
+        ? `0x${(Math.floor(new Date().getTime() / 1000) + options.ttl).toString(
+            16,
+          )}`
         : `0x${options.deadline.toString(16)}`
 
     const useFeeOnTransfer = Boolean(options.feeOnTransfer)
@@ -114,12 +123,16 @@ export abstract class SushiSwapV2Router {
     switch (trade.tradeType) {
       case TradeType.EXACT_INPUT:
         if (etherIn) {
-          methodName = useFeeOnTransfer ? 'swapExactETHForTokensSupportingFeeOnTransferTokens' : 'swapExactETHForTokens'
+          methodName = useFeeOnTransfer
+            ? 'swapExactETHForTokensSupportingFeeOnTransferTokens'
+            : 'swapExactETHForTokens'
           // (uint amountOutMin, address[] calldata path, address to, uint deadline)
           args = [amountOut, path, to, deadline]
           value = amountIn
         } else if (etherOut) {
-          methodName = useFeeOnTransfer ? 'swapExactTokensForETHSupportingFeeOnTransferTokens' : 'swapExactTokensForETH'
+          methodName = useFeeOnTransfer
+            ? 'swapExactTokensForETHSupportingFeeOnTransferTokens'
+            : 'swapExactTokensForETH'
           // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
           args = [amountIn, amountOut, path, to, deadline]
           value = ZERO_HEX

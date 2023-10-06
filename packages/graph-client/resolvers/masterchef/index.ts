@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import { ChainId, chainName } from '@sushiswap/chain'
+import { ChainId, chainName } from 'sushi/chain'
 import {
   MASTERCHEF_V1_SUBGRAPH_NAME,
   MASTERCHEF_V2_SUBGRAPH_NAME,

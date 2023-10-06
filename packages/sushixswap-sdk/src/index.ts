@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 
 export const SUSHIXSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,

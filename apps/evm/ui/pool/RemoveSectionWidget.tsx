@@ -1,8 +1,8 @@
 'use client'
 
 import { CogIcon } from '@heroicons/react-v1/outline'
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Type } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Amount, Type } from 'sushi/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from 'sushi'
 import {
@@ -17,8 +17,15 @@ import {
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
-import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/components/settings'
-import { Widget, WidgetHeader, WidgetTitle } from '@sushiswap/ui/components/widget'
+import {
+  SettingsModule,
+  SettingsOverlay,
+} from '@sushiswap/ui/components/settings'
+import {
+  Widget,
+  WidgetHeader,
+  WidgetTitle,
+} from '@sushiswap/ui/components/widget'
 import React, { FC, ReactNode } from 'react'
 
 import { usePoolPosition } from './PoolPositionProvider'
@@ -48,7 +55,9 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
     <Widget id="removeLiquidity" variant="empty">
       <WidgetHeader>
         <WidgetTitle>Remove Liquidity</WidgetTitle>
-        <WidgetDescription>Trade in your LP tokens to receive your underlying tokens</WidgetDescription>
+        <WidgetDescription>
+          Trade in your LP tokens to receive your underlying tokens
+        </WidgetDescription>
         <WidgetAction variant="empty">
           <SettingsOverlay
             options={{
@@ -60,7 +69,12 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
             }}
             modules={[SettingsModule.SlippageTolerance]}
           >
-            <IconButton size="sm" name="Settings" icon={CogIcon} variant="secondary" />
+            <IconButton
+              size="sm"
+              name="Settings"
+              icon={CogIcon}
+              variant="secondary"
+            />
           </SettingsOverlay>
         </WidgetAction>
       </WidgetHeader>
@@ -69,12 +83,20 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
           No LP tokens found. Are you sure you unstaked your LP tokens?
         </Message>
       ) : null}
-      <div className={balance?.[FundSource.WALLET]?.equalTo(ZERO) ? 'opacity-40 pointer-events-none' : ''}>
+      <div
+        className={
+          balance?.[FundSource.WALLET]?.equalTo(ZERO)
+            ? 'opacity-40 pointer-events-none'
+            : ''
+        }
+      >
         <div className="flex flex-col gap-6">
           <Card variant="outline" className="p-6">
             <div className="flex justify-between gap-4">
               <div>
-                <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">{percentage}%</h1>
+                <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">
+                  {percentage}%
+                </h1>
               </div>
               <div className="flex items-center gap-2">
                 <Button

@@ -1,6 +1,6 @@
 import { routeProcessor2Abi } from 'sushi/abi'
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Price, type Type } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Amount, Price, type Type } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import type { Address, GetFunctionArgs } from 'viem'
 import z from 'zod'
@@ -21,7 +21,10 @@ export interface UseTradeParams {
 }
 
 export type UseTradeReturnWriteArgs =
-  | GetFunctionArgs<typeof routeProcessor2Abi, 'transferValueAndprocessRoute'>['args']
+  | GetFunctionArgs<
+      typeof routeProcessor2Abi,
+      'transferValueAndprocessRoute'
+    >['args']
   | GetFunctionArgs<typeof routeProcessor2Abi, 'processRoute'>['args']
   | undefined
 

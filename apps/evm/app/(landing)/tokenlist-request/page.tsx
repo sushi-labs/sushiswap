@@ -2,7 +2,6 @@
 
 import { CameraIcon } from '@heroicons/react/24/outline'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Chain, ChainId } from '@sushiswap/chain'
 import { useApplyForTokenList } from '@sushiswap/react-query'
 import {
   Container,
@@ -26,6 +25,7 @@ import { useTokenWithCache } from '@sushiswap/wagmi/future'
 import React, { useCallback, useEffect } from 'react'
 import { DropzoneOptions, useDropzone } from 'react-dropzone'
 import { useForm } from 'react-hook-form'
+import { Chain, ChainId } from 'sushi/chain'
 
 import { SUPPORTED_CHAIN_IDS } from '../../../config'
 import {
@@ -46,7 +46,11 @@ export default function Partner() {
     },
   })
 
-  const [chainId, tokenAddress, logoFile] = methods.watch(['chainId', 'tokenAddress', 'logoFile'])
+  const [chainId, tokenAddress, logoFile] = methods.watch([
+    'chainId',
+    'tokenAddress',
+    'logoFile',
+  ])
 
   const {
     data: token,
@@ -56,7 +60,11 @@ export default function Partner() {
   const { mutate, isLoading, data, status } = useApplyForTokenList()
 
   useEffect(() => {
-    if (isTokenError) methods.setError('tokenAddress', { type: 'custom', message: 'Token not found' })
+    if (isTokenError)
+      methods.setError('tokenAddress', {
+        type: 'custom',
+        message: 'Token not found',
+      })
     else methods.clearErrors('tokenAddress')
   }, [isTokenDataLoading, methods, tokenAddress, token, isTokenError])
 
@@ -88,7 +96,7 @@ export default function Partner() {
         })
       })
     },
-    [methods]
+    [methods],
   )
 
   const { getRootProps, inputRef, getInputProps } = useDropzone({
@@ -115,8 +123,14 @@ export default function Partner() {
           <h1 className={typographyVariants({ variant: 'h1' })}>
             Get on our <br /> default token list
           </h1>
-          <p className={typographyVariants({ variant: 'lead', className: 'max-w-[400px]' })}>
-            Join us in our mission to revolutionize decentralized finance while building trust and credibility.
+          <p
+            className={typographyVariants({
+              variant: 'lead',
+              className: 'max-w-[400px]',
+            })}
+          >
+            Join us in our mission to revolutionize decentralized finance while
+            building trust and credibility.
           </p>
         </div>
       </div>
@@ -126,10 +140,13 @@ export default function Partner() {
       <div className="prose dark:prose-invert">
         <h4>Create your request</h4>
         <p>
-          Kindly complete the provided form; this action will initiate the creation of a pull request on our GitHub
-          repository. For your convenience, you can track the progress and updates{' '}
-          <LinkExternal href="https://github.com/sushiswap/list/pulls">there</LinkExternal>. Thank you for your
-          participation.
+          Kindly complete the provided form; this action will initiate the
+          creation of a pull request on our GitHub repository. For your
+          convenience, you can track the progress and updates{' '}
+          <LinkExternal href="https://github.com/sushiswap/list/pulls">
+            there
+          </LinkExternal>
+          . Thank you for your participation.
         </p>
         <Form {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
@@ -149,7 +166,15 @@ export default function Partner() {
                       <div className="absolute inset-0 flex items-center justify-center">
                         <CameraIcon className="h-6 w-6 text-muted-foreground" />
                       </div>
-                      {logoFile ? <img className="!m-0" alt="icon" src={logoFile} width={80} height={80} /> : null}
+                      {logoFile ? (
+                        <img
+                          className="!m-0"
+                          alt="icon"
+                          src={logoFile}
+                          width={80}
+                          height={80}
+                        />
+                      ) : null}
                     </div>
                   </div>
                 </FormControl>
@@ -168,16 +193,30 @@ export default function Partner() {
                     </Label>
                     <FormControl>
                       <div>
-                        <NetworkSelector networks={SUPPORTED_CHAIN_IDS} selected={value} onSelect={onChange}>
-                          <Button type="button" variant="secondary" className="!font-medium">
-                            <NetworkIcon chainId={value} width={16} height={16} />
-                            {Chain.from(value).name}
+                        <NetworkSelector
+                          networks={SUPPORTED_CHAIN_IDS}
+                          selected={value}
+                          onSelect={onChange}
+                        >
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            className="!font-medium"
+                          >
+                            <NetworkIcon
+                              chainId={value}
+                              width={16}
+                              height={16}
+                            />
+                            {Chain.from(value)?.name}
                             <SelectIcon />
                           </Button>
                         </NetworkSelector>
                       </div>
                     </FormControl>
-                    <FormMessage>The network your token is deployed on.</FormMessage>
+                    <FormMessage>
+                      The network your token is deployed on.
+                    </FormMessage>
                   </FormItem>
                 )}
               />
@@ -199,18 +238,21 @@ export default function Partner() {
                           value={value}
                           name={name}
                           onBlur={onBlur}
-                          testdata-id='tokenAddress'
+                          testdata-id="tokenAddress"
                           unit={token?.symbol}
                         />
                       </FormControl>
-                      <FormMessage>The contract address of your token.</FormMessage>
+                      <FormMessage>
+                        The contract address of your token.
+                      </FormMessage>
                     </FormItem>
                   )
                 }}
               />
               {status === 'error' ? (
                 <Message size="sm" variant="destructive">
-                  Oops! Something went wrong when trying to execute your request.
+                  Oops! Something went wrong when trying to execute your
+                  request.
                 </Message>
               ) : null}
               {status === 'success' ? (
@@ -222,7 +264,11 @@ export default function Partner() {
                 </Message>
               ) : null}
               <div>
-                <Button disabled={!methods.formState.isValid} loading={isLoading} type="submit">
+                <Button
+                  disabled={!methods.formState.isValid}
+                  loading={isLoading}
+                  type="submit"
+                >
                   Send whitelist request
                 </Button>
               </div>

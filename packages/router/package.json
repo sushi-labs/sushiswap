@@ -37,8 +37,6 @@
     "@ethersproject/solidity": "5.7.0",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/bentobox-sdk": "workspace:*",
-    "@sushiswap/chain": "workspace:*",
-    "@sushiswap/currency": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/trident-sdk": "workspace:*",

@@ -1,7 +1,7 @@
 import { BENTOBOX_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 
 import { BentoBoxKpi, Resolvers } from '../../.graphclient/index.js'
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 
 export const crossChainBentoBoxKpis: Resolvers['Query']['crossChainBentoBoxKpis'] = async (
   root,

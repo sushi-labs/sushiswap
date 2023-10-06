@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import './lib/wagmi.js'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { ChefType, createClient, Prisma, RewarderType } from '@sushiswap/database'
 import { Address, fetchToken } from '@wagmi/core'
 import { fetch } from '@whatwg-node/fetch'

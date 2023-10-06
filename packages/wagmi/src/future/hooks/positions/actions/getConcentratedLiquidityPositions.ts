@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { computePoolAddress, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { erc20ABI, readContracts } from 'wagmi'
 

@@ -1,4 +1,4 @@
-import { Chain } from '@sushiswap/chain'
+import { Chain } from 'sushi/chain'
 import { ResolvedNotification } from '@sushiswap/dexie'
 import { FC } from 'react'
 

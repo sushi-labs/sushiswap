@@ -1,4 +1,4 @@
-import { Chain, ChainId } from '@sushiswap/chain'
+import { Chain, ChainId } from 'sushi/chain'
 import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'

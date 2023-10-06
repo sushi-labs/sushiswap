@@ -1,6 +1,6 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { Card, CardDescription, CardHeader, CardTitle, Carousel, Container } from '@sushiswap/ui'
 import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'

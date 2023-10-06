@@ -1,7 +1,16 @@
 import { stargateFeeLibraryV03Abi, stargatePoolAbi } from 'sushi/abi'
-import { Amount, Currency, Token } from '@sushiswap/currency'
-import { STARGATE_CHAIN_ID, STARGATE_POOL_ADDRESS, STARGATE_POOL_ID, StargateChainId } from '@sushiswap/stargate'
-import { Address, getSushiXSwapContractConfig, readContracts } from '@sushiswap/wagmi'
+import { Amount, Currency, Token } from 'sushi/currency'
+import {
+  STARGATE_CHAIN_ID,
+  STARGATE_POOL_ADDRESS,
+  STARGATE_POOL_ID,
+  StargateChainId,
+} from '@sushiswap/stargate'
+import {
+  Address,
+  getSushiXSwapContractConfig,
+  readContracts,
+} from '@sushiswap/wagmi'
 import { getContract, readContract } from '@sushiswap/wagmi/actions'
 
 export const getBridgeFees = async ({
@@ -27,20 +36,29 @@ export const getBridgeFees = async ({
     const stargatePoolResults = await readContracts({
       contracts: [
         {
-          address: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address] as Address,
+          address: STARGATE_POOL_ADDRESS[srcChainId][
+            srcBridgeToken.address
+          ] as Address,
           functionName: 'getChainPath',
-          args: [STARGATE_CHAIN_ID[dstChainId], BigInt(STARGATE_POOL_ID[dstChainId][dstBridgeToken.address])],
+          args: [
+            STARGATE_CHAIN_ID[dstChainId],
+            BigInt(STARGATE_POOL_ID[dstChainId][dstBridgeToken.address]),
+          ],
           abi: stargatePoolAbi,
           chainId: srcChainId,
         },
         {
-          address: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address] as Address,
+          address: STARGATE_POOL_ADDRESS[srcChainId][
+            srcBridgeToken.address
+          ] as Address,
           functionName: 'feeLibrary',
           abi: stargatePoolAbi,
           chainId: srcChainId,
         },
         {
-          address: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address] as Address,
+          address: STARGATE_POOL_ADDRESS[srcChainId][
+            srcBridgeToken.address
+          ] as Address,
           functionName: 'sharedDecimals',
           abi: stargatePoolAbi,
           chainId: srcChainId,

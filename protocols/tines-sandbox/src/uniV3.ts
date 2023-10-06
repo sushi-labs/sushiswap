@@ -1,6 +1,6 @@
 import { erc20Abi, nonfungiblePositionManagerAbi, sushiV3FactoryAbi, sushiV3PoolAbi } from 'sushi/abi'
-import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
 import { CL_MAX_TICK, CL_MIN_TICK, CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
 import { type Contract } from 'sushi/types'
 import NonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'

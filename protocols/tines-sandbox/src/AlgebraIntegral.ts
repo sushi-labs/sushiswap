@@ -5,21 +5,43 @@ import NFTDescriptor from '@cryptoalgebra/integral-periphery/artifacts/contracts
 import NonfungiblePositionManager from '@cryptoalgebra/integral-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import NonfungibleTokenPositionDescriptor from '@cryptoalgebra/integral-periphery/artifacts/contracts/NonfungibleTokenPositionDescriptor.sol/NonfungibleTokenPositionDescriptor.json'
 import SwapRouter from '@cryptoalgebra/integral-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
-import { ChainId } from '@sushiswap/chain'
-import { Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { CL_MAX_TICK, CL_MIN_TICK, CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
+import { ChainId } from 'sushi/chain'
+import { Token, WNATIVE_ADDRESS } from 'sushi/currency'
+import {
+  CL_MAX_TICK,
+  CL_MIN_TICK,
+  CLTick,
+  RToken,
+  UniV3Pool,
+} from '@sushiswap/tines'
 import seedrandom from 'seedrandom'
-import { Abi, Address, getContractAddress, Hex, PublicClient, WalletClient } from 'viem'
+import {
+  Abi,
+  Address,
+  getContractAddress,
+  Hex,
+  PublicClient,
+  WalletClient,
+} from 'viem'
 
 import { approve, balanceOf, TestTokens } from './TestTokens'
-import { getDeploymentAddress, getRndExp, getRndExpInt, getRndLinInt, getRndVariant } from './utils'
+import {
+  getDeploymentAddress,
+  getRndExp,
+  getRndExpInt,
+  getRndLinInt,
+  getRndVariant,
+} from './utils'
 
 function linkContractLibraries(
   contract: {
     bytecode: string
-    linkReferences: Record<string, Record<string, { length: number; start: number }[]>>
+    linkReferences: Record<
+      string,
+      Record<string, { length: number; start: number }[]>
+    >
   },
-  libs: Record<string, Address>
+  libs: Record<string, Address>,
 ): Hex {
   let bytecode = contract.bytecode
   const pimaryLength = bytecode.length
@@ -30,7 +52,10 @@ function linkContractLibraries(
         const address = addr.substring(2).padStart(40, '0')
         console.assert(address.length === 40, 'Unexpected address length')
         places.forEach(({ start }) => {
-          bytecode = bytecode.substring(0, start * 2 + 2) + address + bytecode.substring((start + 20) * 2 + 2)
+          bytecode =
+            bytecode.substring(0, start * 2 + 2) +
+            address +
+            bytecode.substring((start + 20) * 2 + 2)
         })
       }
     })
@@ -52,18 +77,23 @@ export interface AlgebraIntegralPeriphery {
 
 export async function createAlgebraIntegralPeriphery(
   client: PublicClient & WalletClient,
-  deployer?: Address
+  deployer?: Address,
 ): Promise<AlgebraIntegralPeriphery> {
   const [addr] = await client.getAddresses()
   deployer = deployer ?? addr
 
-  const nextTransactionNonce = await client.getTransactionCount({ address: deployer })
-  const poolDeployerAddress = getContractAddress({ from: deployer, nonce: BigInt(nextTransactionNonce) + 1n })
+  const nextTransactionNonce = await client.getTransactionCount({
+    address: deployer,
+  })
+  const poolDeployerAddress = getContractAddress({
+    from: deployer,
+    nonce: BigInt(nextTransactionNonce) + 1n,
+  })
 
   async function deploy(
     contract: { abi: unknown; bytecode: string },
     args?: unknown[],
-    bytecode?: Hex
+    bytecode?: Hex,
   ): Promise<Address> {
     return getDeploymentAddress(
       client,
@@ -73,7 +103,7 @@ export async function createAlgebraIntegralPeriphery(
         bytecode: bytecode ?? (contract.bytecode as Hex),
         account: deployer as Address,
         args,
-      })
+      }),
     )
   }
 
@@ -88,33 +118,47 @@ export async function createAlgebraIntegralPeriphery(
   })) as Address
 
   // Algebra PoolDeployer
-  const poolDeployerAddressReal = await deploy(AlgebraPoolDeployer, [factoryAddress, vaultAddress])
+  const poolDeployerAddressReal = await deploy(AlgebraPoolDeployer, [
+    factoryAddress,
+    vaultAddress,
+  ])
   console.assert(
     poolDeployerAddress.toLowerCase() === poolDeployerAddressReal.toLowerCase(),
-    `Unexpected deploy behaviour! ${poolDeployerAddress} ${poolDeployerAddressReal}`
+    `Unexpected deploy behaviour! ${poolDeployerAddress} ${poolDeployerAddressReal}`,
   )
 
   // Algebra NFTDescriptor
   const NFTDescriptorAddress = await deploy(NFTDescriptor)
 
   // Algebra NonfungibleTokenPositionDescriptor
-  const WNativeAddress = WNATIVE_ADDRESS[client.chain?.id as ChainId] ?? '0x0000000000000000000000000000000000000000'
+  const WNativeAddress =
+    WNATIVE_ADDRESS[client.chain?.id as ChainId] ??
+    '0x0000000000000000000000000000000000000000'
   const NonfungibleTokenPositionDescriptorAddress = await deploy(
     NonfungibleTokenPositionDescriptor,
     [WNativeAddress, 'AA', []],
-    linkContractLibraries(NonfungibleTokenPositionDescriptor, { NFTDescriptor: NFTDescriptorAddress })
+    linkContractLibraries(NonfungibleTokenPositionDescriptor, {
+      NFTDescriptor: NFTDescriptorAddress,
+    }),
   )
 
   // Algebra NonfungiblePositionManager
-  const NonfungiblePositionManagerAddress = await deploy(NonfungiblePositionManager, [
-    factoryAddress,
-    WNativeAddress,
-    NonfungibleTokenPositionDescriptorAddress,
-    poolDeployerAddress,
-  ])
+  const NonfungiblePositionManagerAddress = await deploy(
+    NonfungiblePositionManager,
+    [
+      factoryAddress,
+      WNativeAddress,
+      NonfungibleTokenPositionDescriptorAddress,
+      poolDeployerAddress,
+    ],
+  )
 
   // Algebra SwapRouter
-  const SwapRouterAddress = await deploy(SwapRouter, [factoryAddress, WNativeAddress, poolDeployerAddress])
+  const SwapRouterAddress = await deploy(SwapRouter, [
+    factoryAddress,
+    WNativeAddress,
+    poolDeployerAddress,
+  ])
 
   return {
     deployer,
@@ -129,12 +173,24 @@ export async function createAlgebraIntegralPeriphery(
 export async function approveTestTokensToAlgebraPerifery(
   client: WalletClient,
   env: AlgebraIntegralPeriphery,
-  tokens: TestTokens
+  tokens: TestTokens,
 ) {
   await Promise.all(
-    tokens.tokens.map((t) => approve(client, t, tokens.owner, env.NonfungiblePositionManagerAddress, tokens.supply))
+    tokens.tokens.map((t) =>
+      approve(
+        client,
+        t,
+        tokens.owner,
+        env.NonfungiblePositionManagerAddress,
+        tokens.supply,
+      ),
+    ),
   )
-  await Promise.all(tokens.tokens.map((t) => approve(client, t, tokens.owner, env.SwapRouterAddress, tokens.supply)))
+  await Promise.all(
+    tokens.tokens.map((t) =>
+      approve(client, t, tokens.owner, env.SwapRouterAddress, tokens.supply),
+    ),
+  )
 }
 
 const Two96 = 2 ** 96
@@ -156,7 +212,7 @@ export async function deployAlgebraPoolAndMint(
   fee: number, // 1e-6
   price: number,
   mintRanges?: Range[],
-  user?: Address
+  user?: Address,
 ): Promise<Address> {
   await client.writeContract({
     chain: null,
@@ -185,7 +241,11 @@ export async function deployAlgebraPoolAndMint(
 
   if (mintRanges) {
     user = user ?? env.deployer
-    await Promise.all(mintRanges.map((range) => algebraPoolMint(client, env, token0, token1, user as Address, range)))
+    await Promise.all(
+      mintRanges.map((range) =>
+        algebraPoolMint(client, env, token0, token1, user as Address, range),
+      ),
+    )
   }
 
   return poolAddress
@@ -197,7 +257,7 @@ export async function algebraPoolMint(
   token0: Token,
   token1: Token,
   recipient: Address,
-  range: Range
+  range: Range,
 ) {
   const mintParams = {
     chain: null,
@@ -221,7 +281,9 @@ export async function algebraPoolMint(
     ],
   }
 
-  const [, liquidityActual] = (await client.readContract(mintParams)) as bigint[]
+  const [, liquidityActual] = (await client.readContract(
+    mintParams,
+  )) as bigint[]
   await client.writeContract(mintParams)
   return liquidityActual
 }
@@ -232,7 +294,7 @@ export async function algebraPoolSwap(
   token0: Token,
   token1: Token,
   user: Address,
-  amountIn: bigint
+  amountIn: bigint,
 ): Promise<bigint> {
   const swapParams = {
     chain: null,
@@ -257,7 +319,10 @@ export async function algebraPoolSwap(
   return amountOut
 }
 
-export async function algebraPoolTickLiquidityPrice(client: PublicClient, poolAddress: Address) {
+export async function algebraPoolTickLiquidityPrice(
+  client: PublicClient,
+  poolAddress: Address,
+) {
   const [price, tick] = (await client.readContract({
     abi: AlgebraPool.abi,
     address: poolAddress,
@@ -271,14 +336,20 @@ export async function algebraPoolTickLiquidityPrice(client: PublicClient, poolAd
   return { tick, liquidity, price }
 }
 
-export async function updateTinesAlgebraPool(client: PublicClient, pool: UniV3Pool) {
-  const { tick, liquidity, price } = await algebraPoolTickLiquidityPrice(client, pool.address)
+export async function updateTinesAlgebraPool(
+  client: PublicClient,
+  pool: UniV3Pool,
+) {
+  const { tick, liquidity, price } = await algebraPoolTickLiquidityPrice(
+    client,
+    pool.address,
+  )
   pool.updateState(
     await balanceOf(client, pool.token0 as Token, pool.address),
     await balanceOf(client, pool.token1 as Token, pool.address),
     Number(tick),
     liquidity,
-    price
+    price,
   )
   return { tick, liquidity, price }
 }
@@ -301,23 +372,39 @@ export async function createAlgebraPool(
   user: Address,
   fee: number,
   price: number,
-  positions: Range[]
+  positions: Range[],
 ): Promise<AlgebraPoolInfo> {
-  if (token1Index >= testTokens.tokens.length) throw new Error('Unsufficient tokens number')
+  if (token1Index >= testTokens.tokens.length)
+    throw new Error('Unsufficient tokens number')
   const t0 = testTokens.tokens[token0Index]
   const t1 = testTokens.tokens[token1Index]
   if (++token1Index >= testTokens.tokens.length) token1Index = ++token0Index + 1
 
   const [token0, token1] = t0.sortsBefore(t1) ? [t0, t1] : [t1, t0]
-  const poolAddress = await deployAlgebraPoolAndMint(client, env, token0, token1, fee, price)
+  const poolAddress = await deployAlgebraPoolAndMint(
+    client,
+    env,
+    token0,
+    token1,
+    fee,
+    price,
+  )
 
   const tickMap = new Map<number, bigint>()
   for (let i = 0; i < positions.length; ++i) {
     const position = positions[i]
-    const liquidity = await algebraPoolMint(client, env, token0, token1, user, position)
+    const liquidity = await algebraPoolMint(
+      client,
+      env,
+      token0,
+      token1,
+      user,
+      position,
+    )
 
     let tickLiquidity = tickMap.get(position.from) ?? 0n
-    tickLiquidity = tickLiquidity === undefined ? liquidity : tickLiquidity + liquidity
+    tickLiquidity =
+      tickLiquidity === undefined ? liquidity : tickLiquidity + liquidity
     tickMap.set(position.from, tickLiquidity)
 
     tickLiquidity = tickMap.get(position.to) ?? 0n
@@ -329,7 +416,18 @@ export async function createAlgebraPool(
     .sort((a, b) => a[0] - b[0])
     .map(([index, DLiquidity]) => ({ index, DLiquidity }))
 
-  const pool = new UniV3Pool(poolAddress, token0 as RToken, token1 as RToken, fee / 1e6, 0n, 0n, 0, 0n, 1n, ticks)
+  const pool = new UniV3Pool(
+    poolAddress,
+    token0 as RToken,
+    token1 as RToken,
+    fee / 1e6,
+    0n,
+    0n,
+    0,
+    0n,
+    1n,
+    ticks,
+  )
   await updateTinesAlgebraPool(client, pool)
 
   const res0 = Number(pool.getReserve0())
@@ -365,7 +463,7 @@ export async function createRandomAlgebraPool(
   fee?: number,
   price?: number,
   minTick = CL_MIN_TICK,
-  maxTick = CL_MAX_TICK
+  maxTick = CL_MAX_TICK,
 ): Promise<AlgebraPoolInfo> {
   const rnd: () => number = seedrandom(seed) // random [0, 1)
 
@@ -379,15 +477,30 @@ export async function createRandomAlgebraPool(
     const pos2 = (pos1 + getRndLinInt(rnd, 1, RANGE - 1)) % RANGE
     const from = Math.min(pos1, pos2) * tickSpacing + SHIFT
     const to = Math.max(pos1, pos2) * tickSpacing + SHIFT
-    console.assert(minTick <= from && from < to && to <= maxTick, `Wrong from-to range ${from} - ${to}`)
+    console.assert(
+      minTick <= from && from < to && to <= maxTick,
+      `Wrong from-to range ${from} - ${to}`,
+    )
     const maxLiquidity = Math.min(getMaxPositionLiquidity(from, to), 30e18)
     const minLiquidity = 1e9
     if (maxLiquidity > minLiquidity)
-      positions.push({ from, to, val: BigInt(getRndExpInt(rnd, minLiquidity, maxLiquidity)) })
+      positions.push({
+        from,
+        to,
+        val: BigInt(getRndExpInt(rnd, minLiquidity, maxLiquidity)),
+      })
     else --i // try again
   }
   price = price ?? getRndExp(rnd, 0.01, 100)
   fee = fee ?? getRndVariant(rnd, [500, 1000, 3000, 10000])
   //console.log(positions, price, fee)
-  return await createAlgebraPool(client, env, testTokens, user, fee, price, positions)
+  return await createAlgebraPool(
+    client,
+    env,
+    testTokens,
+    user,
+    fee,
+    price,
+    positions,
+  )
 }

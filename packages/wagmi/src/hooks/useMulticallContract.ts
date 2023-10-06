@@ -1,6 +1,6 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { getContract } from 'viem'
 import { Address, usePublicClient } from 'wagmi'
 

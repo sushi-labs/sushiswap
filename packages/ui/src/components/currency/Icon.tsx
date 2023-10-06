@@ -1,7 +1,7 @@
 'use client'
 
-import { Chain, ChainId } from '@sushiswap/chain'
-import { Currency } from '@sushiswap/currency'
+import { Chain, ChainId } from 'sushi/chain'
+import { Currency } from 'sushi/currency'
 import { ImageProps } from 'next/image'
 import { FC } from 'react'
 
@@ -90,7 +90,12 @@ function hashStringToColor(str: string) {
   const r = (hash & 0xff0000) >> 16
   const g = (hash & 0x00ff00) >> 8
   const b = hash & 0x0000ff
-  return '#' + ('0' + r.toString(16)).substr(-2) + ('0' + g.toString(16)).substr(-2) + ('0' + b.toString(16)).substr(-2)
+  return (
+    '#' +
+    ('0' + r.toString(16)).substr(-2) +
+    ('0' + g.toString(16)).substr(-2) +
+    ('0' + b.toString(16)).substr(-2)
+  )
 }
 
 export interface IconProps extends Omit<ImageProps, 'src' | 'alt'> {
@@ -98,15 +103,27 @@ export interface IconProps extends Omit<ImageProps, 'src' | 'alt'> {
   disableLink?: boolean
 }
 
-export const Icon: FC<IconProps> = ({ currency, disableLink = true, ...rest }) => {
+export const Icon: FC<IconProps> = ({
+  currency,
+  disableLink = true,
+  ...rest
+}) => {
   const src = currency.isNative
     ? `native-currency/${LOGO[currency.chainId]}`
     : `tokens/${currency.chainId}/${currency.wrapped.address}.jpg`
   const avatar = (
     <Avatar style={{ width: rest.width, height: rest.height }}>
-      <AvatarImage loader={cloudinaryImageLoader} width={Number(rest.width) ?? 20} src={src} />
+      <AvatarImage
+        loader={cloudinaryImageLoader}
+        width={Number(rest.width) ?? 20}
+        src={src}
+      />
       <AvatarFallback
-        style={{ background: hashStringToColor(`${currency.symbol} ${currency.name}` ?? '??') }}
+        style={{
+          background: hashStringToColor(
+            `${currency.symbol} ${currency.name}` ?? '??',
+          ),
+        }}
         className="text-white"
       >
         {currency.symbol?.substring(0, 2)}
@@ -118,5 +135,11 @@ export const Icon: FC<IconProps> = ({ currency, disableLink = true, ...rest }) =
     return avatar
   }
 
-  return <LinkExternal href={Chain.tokenUrl(currency.chainId, currency.wrapped.address)}>{avatar}</LinkExternal>
+  return (
+    <LinkExternal
+      href={Chain.tokenUrl(currency.chainId, currency.wrapped.address)}
+    >
+      {avatar}
+    </LinkExternal>
+  )
 }

@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import type { Chain } from '@wagmi/core'
 import {
   arbitrum,

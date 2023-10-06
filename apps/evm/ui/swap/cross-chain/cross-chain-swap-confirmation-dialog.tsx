@@ -1,6 +1,8 @@
-import { Chain } from '@sushiswap/chain'
-import { shortenAddress } from 'sushi'
-import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_TOKEN } from '@sushiswap/stargate'
+import {
+  STARGATE_BRIDGE_TOKENS,
+  STARGATE_TOKEN,
+  isStargateBridgeToken,
+} from '@sushiswap/stargate'
 import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Dots } from '@sushiswap/ui/components/dots'
@@ -8,8 +10,13 @@ import { CheckMarkIcon } from '@sushiswap/ui/components/icons/CheckmarkIcon'
 import { FailedMarkIcon } from '@sushiswap/ui/components/icons/FailedMarkIcon'
 import { Loader } from '@sushiswap/ui/components/loader'
 import { FC, ReactNode } from 'react'
+import { shortenAddress } from 'sushi'
+import { Chain } from 'sushi/chain'
 
-import { useCrossChainSwapTrade, useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
+import {
+  useCrossChainSwapTrade,
+  useDerivedStateCrossChainSwap,
+} from './derivedstate-cross-chain-swap-provider'
 
 interface ConfirmationDialogContent {
   txHash?: string
@@ -18,14 +25,22 @@ interface ConfirmationDialogContent {
   dialogState: { source: StepState; bridge: StepState; dest: StepState }
 }
 
-export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHash, lzUrl, dstTxHash, dialogState }) => {
+export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
+  txHash,
+  lzUrl,
+  dstTxHash,
+  dialogState,
+}) => {
   const {
     state: { chainId0, chainId1, token0, token1, recipient },
   } = useDerivedStateCrossChainSwap()
   const { data: trade } = useCrossChainSwapTrade()
 
   const swapOnDest = !isStargateBridgeToken(token1)
-  const dstBridgeToken = token1?.isToken && isStargateBridgeToken(token1) ? token1 : STARGATE_BRIDGE_TOKENS[chainId1][0]
+  const dstBridgeToken =
+    token1?.isToken && isStargateBridgeToken(token1)
+      ? token1
+      : STARGATE_BRIDGE_TOKENS[chainId1][0]
 
   if (dialogState.source === StepState.Sign) {
     return <>Please sign order with your wallet.</>
@@ -36,11 +51,15 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHas
       <>
         Waiting for your{' '}
         <Button asChild size="sm" variant="link">
-          <a target="_blank" rel="noopener noreferer" href={txHash ? Chain.from(chainId0).getTxUrl(txHash) : ''}>
+          <a
+            target="_blank"
+            rel="noreferrer noopener noreferer"
+            href={txHash ? Chain.from(chainId0)?.getTxUrl(txHash) : ''}
+          >
             transaction
           </a>
         </Button>{' '}
-        to be confirmed on {Chain.from(chainId0).name}
+        to be confirmed on {Chain.from(chainId0)?.name}
       </>
     )
   }
@@ -49,7 +68,10 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHas
     return (
       <>
         <span className="text-red">Oops!</span> Your{' '}
-        <span className="text-blue hover:underline cursor-pointer">transaction</span> failed
+        <span className="text-blue hover:underline cursor-pointer">
+          transaction
+        </span>{' '}
+        failed
       </>
     )
   }
@@ -59,7 +81,11 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHas
       <>
         Bridging{' '}
         <Button asChild size="sm" variant="link">
-          <a target="_blank" rel="noopener noreferer" href={lzUrl || ''}>
+          <a
+            target="_blank"
+            rel="noreferrer noopener noreferer"
+            href={lzUrl || ''}
+          >
             <Dots>to destination chain</Dots>
           </a>
         </Button>{' '}
@@ -77,10 +103,15 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHas
   if (dialogState.dest === StepState.PartialSuccess) {
     return (
       <>
-        We {`couldn't`} swap {dstBridgeToken.symbol} into {token1?.symbol}, {dstBridgeToken.symbol} has been send to{' '}
+        We {`couldn't`} swap {dstBridgeToken.symbol} into {token1?.symbol},{' '}
+        {dstBridgeToken.symbol} has been send to{' '}
         {recipient ? (
           <Button asChild size="sm" variant="link">
-            <a target="_blank" rel="noopener noreferer" href={Chain.from(chainId1).getAccountUrl(recipient)}>
+            <a
+              target="_blank"
+              rel="noreferrer noopener noreferer"
+              href={Chain.from(chainId1)?.getAccountUrl(recipient)}
+            >
               <Dots>{shortenAddress(recipient)}</Dots>
             </a>
           </Button>
@@ -97,7 +128,11 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHas
         <>
           You sold{' '}
           <Button asChild size="sm" variant="link">
-            <a target="_blank" rel="noopener noreferer" href={txHash ? Chain.from(chainId0).getTxUrl(txHash) : ''}>
+            <a
+              target="_blank"
+              rel="noreferrer noopener noreferer"
+              href={txHash ? Chain.from(chainId0)?.getTxUrl(txHash) : ''}
+            >
               {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
             </a>
           </Button>{' '}
@@ -105,8 +140,8 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHas
           <Button asChild size="sm" variant="link">
             <a
               target="_blank"
-              rel="noopener noreferer"
-              href={dstTxHash ? Chain.from(chainId1).getTxUrl(dstTxHash) : ''}
+              rel="noreferrer noopener noreferer"
+              href={dstTxHash ? Chain.from(chainId1)?.getTxUrl(dstTxHash) : ''}
             >
               {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
             </a>
@@ -120,8 +155,8 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHas
           <Button asChild size="sm" variant="link">
             <a
               target="_blank"
-              rel="noopener noreferer"
-              href={dstTxHash ? Chain.from(chainId1).getTxUrl(dstTxHash) : ''}
+              rel="noreferrer noopener noreferer"
+              href={dstTxHash ? Chain.from(chainId1)?.getTxUrl(dstTxHash) : ''}
             >
               {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
             </a>
@@ -144,7 +179,11 @@ export enum StepState {
   Failed,
 }
 
-export const initState = (state: { source: StepState; bridge: StepState; dest: StepState }) => {
+export const initState = (state: {
+  source: StepState
+  bridge: StepState
+  dest: StepState
+}) => {
   return (
     state.source === StepState.NotStarted &&
     state.bridge === StepState.NotStarted &&
@@ -152,23 +191,43 @@ export const initState = (state: { source: StepState; bridge: StepState; dest: S
   )
 }
 
-export const pendingState = (state: { source: StepState; bridge: StepState; dest: StepState }) => {
+export const pendingState = (state: {
+  source: StepState
+  bridge: StepState
+  dest: StepState
+}) => {
   return !finishedState(state) && !failedState(state) && !initState(state)
 }
 
-export const finishedState = (state: { source: StepState; bridge: StepState; dest: StepState }) => {
+export const finishedState = (state: {
+  source: StepState
+  bridge: StepState
+  dest: StepState
+}) => {
   if (state.source === StepState.Failed) return true
-  return [StepState.Success, StepState.Failed, StepState.PartialSuccess].includes(state.dest)
+  return [
+    StepState.Success,
+    StepState.Failed,
+    StepState.PartialSuccess,
+  ].includes(state.dest)
 }
 
-export const failedState = (state: { source: StepState; bridge: StepState; dest: StepState }) => {
+export const failedState = (state: {
+  source: StepState
+  bridge: StepState
+  dest: StepState
+}) => {
   return state.source === StepState.Failed
 }
 
 const Completed = ({ partial }: { partial: boolean }) => {
   return (
     <div className="flex w-10 h-10 justify-center items-center">
-      <CheckMarkIcon width={40} height={40} className={partial ? '!text-yellow' : ''} />
+      <CheckMarkIcon
+        width={40}
+        height={40}
+        className={partial ? '!text-yellow' : ''}
+      />
     </div>
   )
 }
@@ -181,7 +240,13 @@ const Failed = () => {
   )
 }
 
-const Loading = () => <Loader circleClassName="!text-blue/[0.15]" className="!text-blue" size={40} />
+const Loading = () => (
+  <Loader
+    circleClassName="!text-blue/[0.15]"
+    className="!text-blue"
+    size={40}
+  />
+)
 
 const Pending: FC<{ children: ReactNode }> = ({ children }) => {
   return (
@@ -199,7 +264,10 @@ export const Divider = () => {
   )
 }
 
-export const GetStateComponent = ({ state, index }: { state: StepState; index: number }) => {
+export const GetStateComponent = ({
+  state,
+  index,
+}: { state: StepState; index: number }) => {
   if (state === StepState.NotStarted) return <Pending>{index}</Pending>
   if (state === StepState.Sign) return <Loading />
   if (state === StepState.Pending) return <Loading />

@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { Address, erc20ABI, readContracts } from '@wagmi/core'
 
 export async function fetchBalances(

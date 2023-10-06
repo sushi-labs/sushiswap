@@ -1,7 +1,7 @@
 import { SnapshotRestorer, takeSnapshot } from '@nomicfoundation/hardhat-network-helpers'
 import { erc20Abi, routeProcessor3Abi, weth9Abi } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId, isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { ChainId, chainName } from '@sushiswap/chain'
+import { ChainId, chainName } from 'sushi/chain'
 import {
   DAI,
   DAI_ADDRESS,
@@ -20,7 +20,7 @@ import {
   USDT_ADDRESS,
   WBTC_ADDRESS,
   WNATIVE,
-} from '@sushiswap/currency'
+} from 'sushi/currency'
 import { abs } from 'sushi'
 import {
   CurvePoolCode,

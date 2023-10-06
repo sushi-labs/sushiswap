@@ -1,6 +1,3 @@
-import { Chain, ChainId } from '@sushiswap/chain'
-import { Amount, tryParseAmount, Type } from '@sushiswap/currency'
-import { Percent } from 'sushi'
 import {
   DialogConfirm,
   DialogContent,
@@ -16,7 +13,12 @@ import { Currency } from '@sushiswap/ui/components/currency'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { List } from '@sushiswap/ui/components/list/List'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import { FeeAmount, isSushiSwapV3ChainId, NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
+import {
+  FeeAmount,
+  NonfungiblePositionManager,
+  Position,
+  isSushiSwapV3ChainId,
+} from '@sushiswap/v3-sdk'
 import {
   useAccount,
   useNetwork,
@@ -24,7 +26,10 @@ import {
   useSendTransaction,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
+import {
+  SendTransactionResult,
+  waitForTransaction,
+} from '@sushiswap/wagmi/actions'
 import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
@@ -32,6 +37,9 @@ import { Bound } from 'lib/constants'
 import { useTokenAmountDollarValues } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
+import { Percent } from 'sushi'
+import { Chain, ChainId } from 'sushi/chain'
+import { Amount, Type, tryParseAmount } from 'sushi/currency'
 import { Hex, UserRejectedRequestError } from 'viem'
 
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
@@ -54,7 +62,9 @@ interface AddSectionReviewModalConcentratedProps
   successLink?: string
 }
 
-export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentratedProps> = ({
+export const AddSectionReviewModalConcentrated: FC<
+  AddSectionReviewModalConcentratedProps
+> = ({
   chainId,
   feeAmount,
   token0,
@@ -78,14 +88,27 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
   const [slippageTolerance] = useSlippageTolerance('addLiquidity')
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
 
-  const isSorted = token0 && token1 && token0.wrapped.sortsBefore(token1.wrapped)
-  const leftPrice = useMemo(() => (isSorted ? priceLower : priceUpper?.invert()), [isSorted, priceLower, priceUpper])
-  const rightPrice = useMemo(() => (isSorted ? priceUpper : priceLower?.invert()), [isSorted, priceLower, priceUpper])
-  const midPrice = useMemo(() => (isSorted ? price : price?.invert()), [isSorted, price])
-  const isFullRange = Boolean(ticksAtLimit[Bound.LOWER] && ticksAtLimit[Bound.UPPER])
+  const isSorted =
+    token0 && token1 && token0.wrapped.sortsBefore(token1.wrapped)
+  const leftPrice = useMemo(
+    () => (isSorted ? priceLower : priceUpper?.invert()),
+    [isSorted, priceLower, priceUpper],
+  )
+  const rightPrice = useMemo(
+    () => (isSorted ? priceUpper : priceLower?.invert()),
+    [isSorted, priceLower, priceUpper],
+  )
+  const midPrice = useMemo(
+    () => (isSorted ? price : price?.invert()),
+    [isSorted, price],
+  )
+  const isFullRange = Boolean(
+    ticksAtLimit[Bound.LOWER] && ticksAtLimit[Bound.UPPER],
+  )
 
   const [minPriceDiff, maxPriceDiff] = useMemo(() => {
-    if (!midPrice || !token0 || !token1 || !leftPrice || !rightPrice) return [0, 0]
+    if (!midPrice || !token0 || !token1 || !leftPrice || !rightPrice)
+      return [0, 0]
     const min = +leftPrice?.toFixed(4)
     const cur = +midPrice?.toFixed(4)
     const max = +rightPrice?.toFixed(4)
@@ -93,13 +116,24 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
     return [((min - cur) / cur) * 100, ((max - cur) / cur) * 100]
   }, [leftPrice, midPrice, rightPrice, token0, token1])
 
-  const fiatAmounts = useMemo(() => [tryParseAmount('1', token0), tryParseAmount('1', token1)], [token0, token1])
-  const fiatAmountsAsNumber = useTokenAmountDollarValues({ chainId, amounts: fiatAmounts })
+  const fiatAmounts = useMemo(
+    () => [tryParseAmount('1', token0), tryParseAmount('1', token1)],
+    [token0, token1],
+  )
+  const fiatAmountsAsNumber = useTokenAmountDollarValues({
+    chainId,
+    amounts: fiatAmounts,
+  })
 
   const hasExistingPosition = !!existingPosition
 
   const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
+    return new Percent(
+      Math.floor(
+        +(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100,
+      ),
+      10_000,
+    )
   }, [slippageTolerance])
 
   const onSettled = useCallback(
@@ -131,14 +165,25 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
         groupTimestamp: ts,
       })
     },
-    [token0, token1, address, chainId, noLiquidity]
+    [token0, token1, address, chainId, noLiquidity],
   )
 
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
-    if (!chainId || !address || !token0 || !token1 || !isSushiSwapV3ChainId(chainId)) return {}
+    if (
+      !chainId ||
+      !address ||
+      !token0 ||
+      !token1 ||
+      !isSushiSwapV3ChainId(chainId)
+    )
+      return {}
 
     if (position && deadline) {
-      const useNative = token0.isNative ? token0 : token1.isNative ? token1 : undefined
+      const useNative = token0.isNative
+        ? token0
+        : token1.isNative
+        ? token1
+        : undefined
       const { calldata, value } =
         hasExistingPosition && tokenId
           ? NonfungiblePositionManager.addCallParameters(position, {
@@ -163,7 +208,18 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
     }
 
     return {}
-  }, [address, chainId, deadline, hasExistingPosition, noLiquidity, position, slippagePercent, token0, token1, tokenId])
+  }, [
+    address,
+    chainId,
+    deadline,
+    hasExistingPosition,
+    noLiquidity,
+    position,
+    slippagePercent,
+    token0,
+    token1,
+    tokenId,
+  ])
 
   const { config, isError } = usePrepareSendTransaction({
     ...prepare,
@@ -195,15 +251,22 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                 <DialogTitle>
                   {token0?.symbol}/{token1?.symbol}
                 </DialogTitle>
-                <DialogDescription> {noLiquidity ? 'Create liquidity pool' : 'Add liquidity'}</DialogDescription>
+                <DialogDescription>
+                  {' '}
+                  {noLiquidity ? 'Create liquidity pool' : 'Add liquidity'}
+                </DialogDescription>
               </DialogHeader>
               <div className="flex flex-col gap-4">
                 <List className="!pt-0">
                   <List.Control>
                     <List.KeyValue flex title="Network">
-                      {Chain.from(chainId).name}
+                      {Chain.from(chainId)?.name}
                     </List.KeyValue>
-                    {feeAmount && <List.KeyValue title="Fee Tier">{`${+feeAmount / 10000}%`}</List.KeyValue>}
+                    {feeAmount && (
+                      <List.KeyValue title="Fee Tier">{`${
+                        +feeAmount / 10000
+                      }%`}</List.KeyValue>
+                    )}
                   </List.Control>
                 </List>
                 <List className="!pt-0">
@@ -214,13 +277,18 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                       subtitle={`Your position will be 100% composed of ${input0?.currency.symbol} at this price`}
                     >
                       <div className="flex flex-col gap-1">
-                        {isFullRange ? '0' : leftPrice?.toSignificant(6)} {token1?.symbol}
+                        {isFullRange ? '0' : leftPrice?.toSignificant(6)}{' '}
+                        {token1?.symbol}
                         {isFullRange ? (
                           ''
                         ) : (
                           <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
-                            ${(fiatAmountsAsNumber[0] * (1 + +(minPriceDiff || 0) / 100)).toFixed(2)} (
-                            {minPriceDiff.toFixed(2)}%)
+                            $
+                            {(
+                              fiatAmountsAsNumber[0] *
+                              (1 + +(minPriceDiff || 0) / 100)
+                            ).toFixed(2)}{' '}
+                            ({minPriceDiff.toFixed(2)}%)
                           </span>
                         )}
                       </div>
@@ -247,13 +315,18 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                       subtitle={`Your position will be 100% composed of ${token1?.symbol} at this price`}
                     >
                       <div className="flex flex-col gap-1">
-                        {isFullRange ? '∞' : rightPrice?.toSignificant(6)} {token1?.symbol}
+                        {isFullRange ? '∞' : rightPrice?.toSignificant(6)}{' '}
+                        {token1?.symbol}
                         {isFullRange ? (
                           ''
                         ) : (
                           <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
-                            ${(fiatAmountsAsNumber[0] * (1 + +(maxPriceDiff || 0) / 100)).toFixed(2)} (
-                            {maxPriceDiff.toFixed(2)}%)
+                            $
+                            {(
+                              fiatAmountsAsNumber[0] *
+                              (1 + +(maxPriceDiff || 0) / 100)
+                            ).toFixed(2)}{' '}
+                            ({maxPriceDiff.toFixed(2)}%)
                           </span>
                         )}{' '}
                       </div>
@@ -265,7 +338,11 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                     {input0 && (
                       <List.KeyValue flex title={`${input0?.currency.symbol}`}>
                         <div className="flex items-center gap-2">
-                          <Currency.Icon currency={input0.currency} width={18} height={18} />
+                          <Currency.Icon
+                            currency={input0.currency}
+                            width={18}
+                            height={18}
+                          />
                           {input0?.toSignificant(6)} {input0?.currency.symbol}
                         </div>
                       </List.KeyValue>
@@ -273,7 +350,11 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                     {input1 && (
                       <List.KeyValue flex title={`${input1?.currency.symbol}`}>
                         <div className="flex items-center gap-2">
-                          <Currency.Icon currency={input1.currency} width={18} height={18} />
+                          <Currency.Icon
+                            currency={input1.currency}
+                            width={18}
+                            height={18}
+                          />
                           {input1?.toSignificant(6)} {input1?.currency.symbol}
                         </div>
                       </List.KeyValue>

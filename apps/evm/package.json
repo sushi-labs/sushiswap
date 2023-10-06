@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "next build",
+    "build": "next build --debug",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient",
     "dev": "next dev",
@@ -24,9 +24,7 @@
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/base-sdk": "workspace:*",
     "@sushiswap/bentobox-sdk": "workspace:*",
-    "@sushiswap/chain": "workspace:*",
     "@sushiswap/client": "workspace:*",
-    "@sushiswap/currency": "workspace:*",
     "@sushiswap/database": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",

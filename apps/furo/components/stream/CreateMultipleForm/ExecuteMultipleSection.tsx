@@ -1,6 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { Amount, Native, tryParseAmount, Type } from '@sushiswap/currency'
+import { Amount, Native, tryParseAmount, Type } from 'sushi/currency'
 import { FuroChainId } from '@sushiswap/furo-sdk'
 import { FundSource } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'
@@ -15,16 +15,27 @@ import {
   usePrepareSendTransaction,
 } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi'
-import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
+import {
+  SendTransactionResult,
+  waitForTransaction,
+} from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import {
+  useApproved,
+  withCheckerRoot,
+} from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import React, { FC, useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Hex } from 'viem'
 
-import { approveBentoBoxAction, batchAction, streamCreationAction, useDeepCompareMemoize } from '../../../lib'
+import {
+  approveBentoBoxAction,
+  batchAction,
+  streamCreationAction,
+  useDeepCompareMemoize,
+} from '../../../lib'
 import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
 import { CreateMultipleStreamFormSchemaType } from '../schema'
 
@@ -49,8 +60,14 @@ export const ExecuteMultipleSection: FC<{
   const streams = watch('streams')
   const _streams = useDeepCompareMemoize(streams)
 
-  const amounts = useMemo(() => (_streams || []).map((el) => el.amount), [_streams])
-  const tokens = useMemo(() => (_streams || []).map((el) => el.currency), [_streams])
+  const amounts = useMemo(
+    () => (_streams || []).map((el) => el.amount),
+    [_streams],
+  )
+  const tokens = useMemo(
+    () => (_streams || []).map((el) => el.currency),
+    [_streams],
+  )
 
   const _tokens = useTokensFromZTokens(tokens)
   const _amounts = useMemo(() => {
@@ -62,7 +79,9 @@ export const ExecuteMultipleSection: FC<{
     () =>
       _amounts.reduce<Record<string, Amount<Type>>>((acc, cur) => {
         if (!cur) return acc
-        const address = cur.currency.isNative ? AddressZero : cur.currency.address
+        const address = cur.currency.isNative
+          ? AddressZero
+          : cur.currency.address
         if (acc[address]) {
           acc[address] = acc[address].add(cur)
         } else {
@@ -70,7 +89,7 @@ export const ExecuteMultipleSection: FC<{
         }
         return acc
       }, {}),
-    [_amounts]
+    [_amounts],
   )
 
   const onSettled = useCallback(
@@ -93,13 +112,24 @@ export const ExecuteMultipleSection: FC<{
         groupTimestamp: ts,
       })
     },
-    [address, chainId, streams]
+    [address, chainId, streams],
   )
 
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
-    if (!isReview || !contract || !address || !chainId || !streams || streams?.length === 0 || !rebases) return
+    if (
+      !isReview ||
+      !contract ||
+      !address ||
+      !chainId ||
+      !streams ||
+      streams?.length === 0 ||
+      !rebases
+    )
+      return
 
-    const summedValue = summedAmounts[AddressZero] || Amount.fromRawAmount(Native.onChain(chainId), '0')
+    const summedValue =
+      summedAmounts[AddressZero] ||
+      Amount.fromRawAmount(Native.onChain(chainId), '0')
 
     const actions: Hex[] = []
 
@@ -112,7 +142,13 @@ export const ExecuteMultipleSection: FC<{
         const _amount = _amounts[idx]
         const _fundSource = ZFundSourceToFundSource.parse(fundSource)
 
-        if (recipient && _amount && dates?.startDate && dates?.endDate && rebases?.[_amount.currency.wrapped.address]) {
+        if (
+          recipient &&
+          _amount &&
+          dates?.startDate &&
+          dates?.endDate &&
+          rebases?.[_amount.currency.wrapped.address]
+        ) {
           acc.push(
             streamCreationAction({
               recipient,
@@ -121,8 +157,10 @@ export const ExecuteMultipleSection: FC<{
               endDate: dates.endDate,
               amount: _amount,
               fromBentobox: _fundSource === FundSource.BENTOBOX,
-              minShare: _amount.toShare(rebases[_amount.currency.wrapped.address]),
-            })
+              minShare: _amount.toShare(
+                rebases[_amount.currency.wrapped.address],
+              ),
+            }),
           )
         }
 
@@ -140,7 +178,17 @@ export const ExecuteMultipleSection: FC<{
     }
 
     return {}
-  }, [_amounts, address, chainId, contract, isReview, rebases, signature, streams, summedAmounts])
+  }, [
+    _amounts,
+    address,
+    chainId,
+    contract,
+    isReview,
+    rebases,
+    signature,
+    streams,
+    summedAmounts,
+  ])
 
   const { config } = usePrepareSendTransaction({
     ...prepare,
@@ -160,7 +208,7 @@ export const ExecuteMultipleSection: FC<{
         amount,
         contract: BENTOBOX_ADDRESS[chainId as BentoBoxChainId] as Address,
       })),
-    [chainId, summedAmounts]
+    [chainId, summedAmounts],
   )
 
   return (
@@ -192,7 +240,11 @@ export const ExecuteMultipleSection: FC<{
                   disabled={!isValid || isValidating || !sendTransaction}
                   testId="create-multiple-streams-confirm"
                 >
-                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Streams'}
+                  {isWritePending ? (
+                    <Dots>Confirm transaction</Dots>
+                  ) : (
+                    'Create Streams'
+                  )}
                 </Button>
               </Checker.Success>
             </Checker.ApproveERC20Multiple>

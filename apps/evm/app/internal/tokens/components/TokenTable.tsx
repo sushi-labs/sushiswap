@@ -1,7 +1,7 @@
 'use client'
 
 import { XIcon } from '@heroicons/react-v1/outline'
-import { ChainId, chainName } from '@sushiswap/chain'
+import { ChainId, chainName } from 'sushi/chain'
 import { formatUSD } from 'sushi'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { DataTable } from '@sushiswap/ui'

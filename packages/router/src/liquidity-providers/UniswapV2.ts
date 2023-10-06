@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { PrismaClient } from '@sushiswap/database'
 import { PublicClient } from 'viem'
 

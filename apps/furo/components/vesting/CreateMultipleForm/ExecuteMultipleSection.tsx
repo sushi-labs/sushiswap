@@ -1,6 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { Amount, Native, Type } from '@sushiswap/currency'
+import { Amount, Native, Type } from 'sushi/currency'
 import { FuroChainId } from '@sushiswap/furo-sdk'
 import { FundSource } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'
@@ -15,19 +15,37 @@ import {
   usePrepareSendTransaction,
   useSendTransaction,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
+import {
+  SendTransactionResult,
+  waitForTransaction,
+} from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import {
+  useApproved,
+  withCheckerRoot,
+} from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import React, { FC, useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Hex } from 'viem'
 
-import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreationAction } from '../../../lib'
+import {
+  approveBentoBoxAction,
+  batchAction,
+  useDeepCompareMemoize,
+  vestingCreationAction,
+} from '../../../lib'
 import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
-import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS_MAP } from '../schema'
-import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount } from '../utils'
+import {
+  CreateMultipleVestingFormSchemaType,
+  STEP_CONFIGURATIONS_MAP,
+} from '../schema'
+import {
+  calculateCliffDuration,
+  calculateStepPercentage,
+  calculateTotalAmount,
+} from '../utils'
 
 const APPROVE_TAG = 'approve-multiple-vestings'
 
@@ -55,7 +73,10 @@ export const ExecuteMultipleSection: FC<{
     return _vestings.map(calculateTotalAmount)
   }, [_vestings])
 
-  const currencies = useMemo(() => _vestings?.map((el) => el.currency) || [], [_vestings])
+  const currencies = useMemo(
+    () => _vestings?.map((el) => el.currency) || [],
+    [_vestings],
+  )
   const _tokens = useTokensFromZTokens(currencies)
   const rebases = useBentoBoxTotals(chainId as BentoBoxChainId, _tokens)
 
@@ -63,7 +84,9 @@ export const ExecuteMultipleSection: FC<{
     () =>
       amounts.reduce<Record<string, Amount<Type>>>((acc, cur) => {
         if (!cur) return acc
-        const address = cur.currency.isNative ? AddressZero : cur.currency.address
+        const address = cur.currency.isNative
+          ? AddressZero
+          : cur.currency.address
         if (acc[address]) {
           acc[address] = acc[address].add(cur)
         } else {
@@ -71,7 +94,7 @@ export const ExecuteMultipleSection: FC<{
         }
         return acc
       }, {}),
-    [amounts]
+    [amounts],
   )
 
   const onSettled = useCallback(
@@ -94,13 +117,25 @@ export const ExecuteMultipleSection: FC<{
         groupTimestamp: ts,
       })
     },
-    [chainId, address, vestings]
+    [chainId, address, vestings],
   )
 
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
-    if (!isReview || !isValid || isValidating || !contract || !address || !chainId || !vestings || !rebases) return
+    if (
+      !isReview ||
+      !isValid ||
+      isValidating ||
+      !contract ||
+      !address ||
+      !chainId ||
+      !vestings ||
+      !rebases
+    )
+      return
 
-    const summedValue = summedAmounts[AddressZero] || Amount.fromRawAmount(Native.onChain(chainId), '0')
+    const summedValue =
+      summedAmounts[AddressZero] ||
+      Amount.fromRawAmount(Native.onChain(chainId), '0')
 
     const actions: Hex[] = []
     if (signature) {
@@ -123,7 +158,7 @@ export const ExecuteMultipleSection: FC<{
             stepPayouts,
             stepAmount,
           },
-          idx
+          idx,
         ) => {
           const _currency = _tokens[idx]
           const _fundSource = ZFundSourceToFundSource.parse(fundSource)
@@ -141,7 +176,11 @@ export const ExecuteMultipleSection: FC<{
             stepAmount,
             stepPayouts,
           })
-          const cliffDuration = calculateCliffDuration({ cliffEnabled, cliffEndDate, startDate })
+          const cliffDuration = calculateCliffDuration({
+            cliffEnabled,
+            cliffEndDate,
+            startDate,
+          })
 
           if (
             recipient &&
@@ -165,13 +204,15 @@ export const ExecuteMultipleSection: FC<{
                 stepPercentage: stepPercentage,
                 amount: totalAmount.quotient,
                 fromBentoBox: _fundSource === FundSource.BENTOBOX,
-                minShare: totalAmount.toShare(rebases[_currency.wrapped.address]),
-              })
+                minShare: totalAmount.toShare(
+                  rebases[_currency.wrapped.address],
+                ),
+              }),
             )
           }
           return acc
         },
-        []
+        [],
       )
       .forEach((vesting) => actions.push(vesting))
 
@@ -203,7 +244,15 @@ export const ExecuteMultipleSection: FC<{
     ...prepare,
     chainId,
     enabled: Boolean(
-      isReview && isValid && !isValidating && contract && address && chainId && vestings && rebases && approved
+      isReview &&
+        isValid &&
+        !isValidating &&
+        contract &&
+        address &&
+        chainId &&
+        vestings &&
+        rebases &&
+        approved,
     ),
   })
 
@@ -219,7 +268,7 @@ export const ExecuteMultipleSection: FC<{
         amount,
         contract: BENTOBOX_ADDRESS[chainId as BentoBoxChainId] as Address,
       })),
-    [chainId, summedAmounts]
+    [chainId, summedAmounts],
   )
 
   return (
@@ -252,7 +301,11 @@ export const ExecuteMultipleSection: FC<{
                   disabled={!isValid || isValidating || !sendTransaction}
                   testId="create-multiple-vest-confirm"
                 >
-                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Vests'}
+                  {isWritePending ? (
+                    <Dots>Confirm transaction</Dots>
+                  ) : (
+                    'Create Vests'
+                  )}
                 </Button>
               </Checker.Success>
             </Checker.ApproveERC20Multiple>

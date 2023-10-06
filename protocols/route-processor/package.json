@@ -38,8 +38,6 @@
     "@openzeppelin/contracts": "4.8.0",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/bentobox-sdk": "workspace:*",
-    "@sushiswap/chain": "workspace:*",
-    "@sushiswap/currency": "workspace:*",
     "@sushiswap/hardhat-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/router": "workspace:*",

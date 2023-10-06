@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { SUSHI_DEFAULT_TOKEN_LIST } from '@sushiswap/token-lists'
 

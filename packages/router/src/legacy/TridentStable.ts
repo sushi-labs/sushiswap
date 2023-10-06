@@ -1,6 +1,6 @@
 // import { getStableReservesAbi } from 'sushi/abi'
-// import { ChainId } from '@sushiswap/chain'
-// import { Token } from '@sushiswap/currency'
+// import { ChainId } from 'sushi/chain'
+// import { Token } from 'sushi/currency'
 // import { StableSwapRPool, toShareBI } from '@sushiswap/tines'
 // import { Address, readContracts, watchBlockNumber } from '@wagmi/core'
 // import { Client } from 'viem'

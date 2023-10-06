@@ -1,6 +1,6 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { Pool } from '@sushiswap/client'
 import { shortenAddress } from 'sushi'
 import { useCustomTokens } from '@sushiswap/hooks'

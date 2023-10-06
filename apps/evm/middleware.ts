@@ -1,4 +1,4 @@
-import { chainShortNameToChainId } from '@sushiswap/chain'
+import { chainShortNameToChainId } from 'sushi/chain'
 import { type NextRequest, NextResponse } from 'next/server'
 
 export const config = {

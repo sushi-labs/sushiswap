@@ -1,11 +1,15 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { Pool } from '@sushiswap/client'
-import { Amount, Type } from '@sushiswap/currency'
+import { Amount, Type } from 'sushi/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { _useBalance as useBalance, useAccount } from '@sushiswap/wagmi'
-import { useGraphPool, useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPool } from 'lib/hooks'
+import {
+  useGraphPool,
+  useTokenAmountDollarValues,
+  useUnderlyingTokenBalanceFromPool,
+} from 'lib/hooks'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
 interface PoolPositionContext {
@@ -67,7 +71,7 @@ export const PoolPositionProvider: FC<{
           isLoading,
           isError,
         }),
-        [balance, isError, isLoading, underlying0, underlying1, value0, value1]
+        [balance, isError, isLoading, underlying0, underlying1, value0, value1],
       )}
     >
       {children}

@@ -1,25 +1,19 @@
 'use client'
 
-import { routeProcessor3Abi, routeProcessorAbi } from 'sushi/abi'
-import { Chain } from '@sushiswap/chain'
-import { Native } from '@sushiswap/currency'
-import { shortenAddress } from 'sushi'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { ZERO } from 'sushi'
 import { UseTradeReturn } from '@sushiswap/react-query'
 import {
-  isRouteProcessor3_1ChainId,
-  isRouteProcessor3_2ChainId,
-  isRouteProcessor3ChainId,
-  isRouteProcessorChainId,
   ROUTE_PROCESSOR_3_1_ADDRESS,
   ROUTE_PROCESSOR_3_2_ADDRESS,
   ROUTE_PROCESSOR_3_ADDRESS,
   ROUTE_PROCESSOR_ADDRESS,
+  isRouteProcessor3ChainId,
+  isRouteProcessor3_1ChainId,
+  isRouteProcessor3_2ChainId,
+  isRouteProcessorChainId,
 } from '@sushiswap/route-processor-sdk'
 import { Bridge, LiquidityProviders } from '@sushiswap/router'
 import {
-  classNames,
   DialogConfirm,
   DialogContent,
   DialogDescription,
@@ -28,6 +22,7 @@ import {
   DialogProvider,
   DialogReview,
   DialogTitle,
+  classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { List } from '@sushiswap/ui/components/list/List'
@@ -40,22 +35,39 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
+import {
+  SendTransactionResult,
+  waitForTransaction,
+} from '@sushiswap/wagmi/actions'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_SWAP } from 'lib/constants'
-import { warningSeverity, warningSeverityClassName } from 'lib/swap/warningSeverity'
+import {
+  warningSeverity,
+  warningSeverityClassName,
+} from 'lib/swap/warningSeverity'
 import { log } from 'next-axiom'
 import React, { FC, ReactNode, useCallback, useRef } from 'react'
+import { shortenAddress } from 'sushi'
+import { ZERO } from 'sushi'
 import { calculateGasMargin } from 'sushi'
+import { routeProcessor3Abi, routeProcessorAbi } from 'sushi/abi'
+import { Chain } from 'sushi/chain'
+import { Native } from 'sushi/currency'
 import { stringify } from 'viem'
 
 import { TradeRoutePathView } from '../trade-route-path-view'
-import { useDerivedStateSimpleSwap, useSimpleSwapTrade } from './derivedstate-simple-swap-provider'
+import {
+  useDerivedStateSimpleSwap,
+  useSimpleSwapTrade,
+} from './derivedstate-simple-swap-provider'
 import { SimpleSwapErrorMessage } from './simple-swap-error-message'
 
 export const SimpleSwapTradeReviewDialog: FC<{
-  children({ error, isSuccess }: { error: Error | null; isSuccess: boolean }): ReactNode
+  children({
+    error,
+    isSuccess,
+  }: { error: Error | null; isSuccess: boolean }): ReactNode
 }> = ({ children }) => {
   const {
     state: { token0, token1, chainId, swapAmount, recipient },
@@ -71,8 +83,12 @@ export const SimpleSwapTradeReviewDialog: FC<{
 
   const refetchBalances = useBalanceWeb3Refetch()
 
-  const isWrap = token0?.isNative && token1?.wrapped.address === Native.onChain(chainId).wrapped.address
-  const isUnwrap = token1?.isNative && token0?.wrapped.address === Native.onChain(chainId).wrapped.address
+  const isWrap =
+    token0?.isNative &&
+    token1?.wrapped.address === Native.onChain(chainId).wrapped.address
+  const isUnwrap =
+    token1?.isNative &&
+    token0?.wrapped.address === Native.onChain(chainId).wrapped.address
   const isSwap = !isWrap && !isUnwrap
 
   const {
@@ -110,13 +126,16 @@ export const SimpleSwapTradeReviewDialog: FC<{
         approved &&
         trade?.route?.status !== 'NoWay' &&
         chain?.id === chainId &&
-        token1?.chainId === chainId
+        token1?.chainId === chainId,
     ),
     value: trade?.value || 0n,
     onError: (error) => {
       console.error('swap prepare error', error)
       const message = error.message.toLowerCase()
-      if (message.includes('user rejected') || message.includes('user cancelled')) {
+      if (
+        message.includes('user rejected') ||
+        message.includes('user cancelled')
+      ) {
         return
       }
 
@@ -140,25 +159,35 @@ export const SimpleSwapTradeReviewDialog: FC<{
         txHash: data.hash,
         promise: waitForTransaction({ hash: data.hash }),
         summary: {
-          pending: `${isWrap ? 'Wrapping' : isUnwrap ? 'Unwrapping' : 'Swapping'} ${trade.amountIn?.toSignificant(6)} ${
+          pending: `${
+            isWrap ? 'Wrapping' : isUnwrap ? 'Unwrapping' : 'Swapping'
+          } ${trade.amountIn?.toSignificant(6)} ${
             trade.amountIn?.currency.symbol
-          } ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'} ${trade.amountOut?.toSignificant(6)} ${
+          } ${
+            isWrap ? 'to' : isUnwrap ? 'to' : 'for'
+          } ${trade.amountOut?.toSignificant(6)} ${
             trade.amountOut?.currency.symbol
           }`,
-          completed: `${isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'} ${trade.amountIn?.toSignificant(6)} ${
+          completed: `${
+            isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'
+          } ${trade.amountIn?.toSignificant(6)} ${
             trade.amountIn?.currency.symbol
-          } ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'} ${trade.amountOut?.toSignificant(6)} ${
+          } ${
+            isWrap ? 'to' : isUnwrap ? 'to' : 'for'
+          } ${trade.amountOut?.toSignificant(6)} ${
             trade.amountOut?.currency.symbol
           }`,
-          failed: `Something went wrong when trying to ${isWrap ? 'wrap' : isUnwrap ? 'unwrap' : 'swap'} ${
-            trade.amountIn?.currency.symbol
-          } ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'} ${trade.amountOut?.currency.symbol}`,
+          failed: `Something went wrong when trying to ${
+            isWrap ? 'wrap' : isUnwrap ? 'unwrap' : 'swap'
+          } ${trade.amountIn?.currency.symbol} ${
+            isWrap ? 'to' : isUnwrap ? 'to' : 'for'
+          } ${trade.amountOut?.currency.symbol}`,
         },
         timestamp: ts,
         groupTimestamp: ts,
       })
     },
-    [trade, chainId, address, isWrap, isUnwrap]
+    [trade, chainId, address, isWrap, isUnwrap],
   )
 
   const {
@@ -170,7 +199,10 @@ export const SimpleSwapTradeReviewDialog: FC<{
     request: config?.request
       ? {
           ...config.request,
-          gas: typeof config.request.gas === 'bigint' ? calculateGasMargin(config.request.gas) : undefined,
+          gas:
+            typeof config.request.gas === 'bigint'
+              ? calculateGasMargin(config.request.gas)
+              : undefined,
         }
       : undefined,
     onMutate: () => {
@@ -193,7 +225,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
                   leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
                   leg.poolName.startsWith(LiquidityProviders.Trident) ||
-                  leg.poolName.startsWith(Bridge.BentoBox)
+                  leg.poolName.startsWith(Bridge.BentoBox),
               )
             ) {
               log.info('internal route', {
@@ -209,7 +241,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   (leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
                     leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
                     leg.poolName.startsWith(LiquidityProviders.Trident) ||
-                    leg.poolName.startsWith(Bridge.BentoBox))
+                    leg.poolName.startsWith(Bridge.BentoBox)),
               ) &&
               trade?.route?.legs?.some(
                 (leg) =>
@@ -217,7 +249,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
                     !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
                     !leg.poolName.startsWith(LiquidityProviders.Trident) ||
-                    !leg.poolName.startsWith(Bridge.BentoBox))
+                    !leg.poolName.startsWith(Bridge.BentoBox)),
               )
             ) {
               log.info('mix route', {
@@ -233,7 +265,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
                     !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) &&
                     !leg.poolName.startsWith(LiquidityProviders.Trident) &&
-                    !leg.poolName.startsWith(Bridge.BentoBox))
+                    !leg.poolName.startsWith(Bridge.BentoBox)),
               )
             ) {
               log.info('external route', {
@@ -259,7 +291,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
                   leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
                   leg.poolName.startsWith(LiquidityProviders.Trident) ||
-                  leg.poolName.startsWith(Bridge.BentoBox)
+                  leg.poolName.startsWith(Bridge.BentoBox),
               )
             ) {
               log.error('internal route', {
@@ -274,7 +306,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   (leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
                     leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
                     leg.poolName.startsWith(LiquidityProviders.Trident) ||
-                    leg.poolName.startsWith(Bridge.BentoBox))
+                    leg.poolName.startsWith(Bridge.BentoBox)),
               ) &&
               trade?.route?.legs?.some(
                 (leg) =>
@@ -282,7 +314,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
                     !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
                     !leg.poolName.startsWith(LiquidityProviders.Trident) ||
-                    !leg.poolName.startsWith(Bridge.BentoBox))
+                    !leg.poolName.startsWith(Bridge.BentoBox)),
               )
             ) {
               log.error('mix route', {
@@ -297,7 +329,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
                     !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) &&
                     !leg.poolName.startsWith(LiquidityProviders.Trident) &&
-                    !leg.poolName.startsWith(Bridge.BentoBox))
+                    !leg.poolName.startsWith(Bridge.BentoBox)),
               )
             ) {
               log.error('external route', {
@@ -331,7 +363,10 @@ export const SimpleSwapTradeReviewDialog: FC<{
     },
   })
 
-  const { status } = useWaitForTransaction({ chainId: chainId, hash: data?.hash })
+  const { status } = useWaitForTransaction({
+    chainId: chainId,
+    hash: data?.hash,
+  })
 
   return (
     <DialogProvider>
@@ -339,8 +374,14 @@ export const SimpleSwapTradeReviewDialog: FC<{
         {({ confirm }) => (
           <>
             <div className="flex flex-col">
-              <SimpleSwapErrorMessage error={error} isSuccess={isPrepareSuccess} isLoading={isPrepareFetching} />
-              <div className="mt-4">{children({ error, isSuccess: isPrepareSuccess })}</div>
+              <SimpleSwapErrorMessage
+                error={error}
+                isSuccess={isPrepareSuccess}
+                isLoading={isPrepareFetching}
+              />
+              <div className="mt-4">
+                {children({ error, isSuccess: isPrepareSuccess })}
+              </div>
             </div>
             <DialogContent>
               <DialogHeader>
@@ -348,21 +389,24 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   Buy {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
                 </DialogTitle>
                 <DialogDescription>
-                  {isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Sell'} {swapAmount?.toSignificant(6)} {token0?.symbol}
+                  {isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Sell'}{' '}
+                  {swapAmount?.toSignificant(6)} {token0?.symbol}
                 </DialogDescription>
               </DialogHeader>
               <div className="flex flex-col gap-4">
                 {warningSeverity(trade?.priceImpact) >= 3 && (
                   <div className="px-4 py-3 mt-4 rounded-xl bg-red/20">
                     <span className="text-sm font-medium text-red-600">
-                      High price impact. You will lose a significant portion of your funds in this trade due to price
-                      impact.
+                      High price impact. You will lose a significant portion of
+                      your funds in this trade due to price impact.
                     </span>
                   </div>
                 )}
                 <List className="!pt-0">
                   <List.Control>
-                    <List.KeyValue title="Network">{Chain.from(chainId).name}</List.KeyValue>
+                    <List.KeyValue title="Network">
+                      {Chain.from(chainId)?.name}
+                    </List.KeyValue>
                     {isSwap && (
                       <List.KeyValue
                         title="Price impact"
@@ -370,8 +414,10 @@ export const SimpleSwapTradeReviewDialog: FC<{
                       >
                         <span
                           className={classNames(
-                            warningSeverityClassName(warningSeverity(trade?.priceImpact)),
-                            'text-right'
+                            warningSeverityClassName(
+                              warningSeverity(trade?.priceImpact),
+                            ),
+                            'text-right',
                           )}
                         >
                           {isFetching ? (
@@ -383,7 +429,9 @@ export const SimpleSwapTradeReviewDialog: FC<{
                                 : trade?.priceImpact?.greaterThan(ZERO)
                                 ? '-'
                                 : ''
-                            }${Math.abs(Number(trade?.priceImpact?.toFixed(2)))}%` ?? '-'
+                            }${Math.abs(
+                              Number(trade?.priceImpact?.toFixed(2)),
+                            )}%` ?? '-'
                           )}
                         </span>
                       </List.KeyValue>
@@ -391,20 +439,34 @@ export const SimpleSwapTradeReviewDialog: FC<{
                     {isSwap && (
                       <List.KeyValue
                         title={`Min. received after slippage (${
-                          slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance
+                          slippageTolerance === 'AUTO'
+                            ? '0.5'
+                            : slippageTolerance
                         }%)`}
                         subtitle="The minimum amount you are guaranteed to receive."
                       >
                         {isFetching ? (
-                          <SkeletonText align="right" fontSize="sm" className="w-1/2" />
+                          <SkeletonText
+                            align="right"
+                            fontSize="sm"
+                            className="w-1/2"
+                          />
                         ) : (
-                          `${trade?.minAmountOut?.toSignificant(6)} ${token1?.symbol}`
+                          `${trade?.minAmountOut?.toSignificant(6)} ${
+                            token1?.symbol
+                          }`
                         )}
                       </List.KeyValue>
                     )}
                     <List.KeyValue title="Network fee">
-                      {isFetching || !trade?.gasSpent || trade.gasSpent === '0' ? (
-                        <SkeletonText align="right" fontSize="sm" className="w-1/3" />
+                      {isFetching ||
+                      !trade?.gasSpent ||
+                      trade.gasSpent === '0' ? (
+                        <SkeletonText
+                          align="right"
+                          fontSize="sm"
+                          className="w-1/3"
+                        />
                       ) : (
                         `${trade.gasSpent} ${Native.onChain(chainId).symbol}`
                       )}
@@ -412,7 +474,11 @@ export const SimpleSwapTradeReviewDialog: FC<{
                     {isSwap && (
                       <List.KeyValue title="Route">
                         {isFetching ? (
-                          <SkeletonText align="right" fontSize="sm" className="w-1/3" />
+                          <SkeletonText
+                            align="right"
+                            fontSize="sm"
+                            className="w-1/3"
+                          />
                         ) : (
                           <TradeRoutePathView trade={trade}>
                             <Button size="sm" variant="link">
@@ -431,7 +497,11 @@ export const SimpleSwapTradeReviewDialog: FC<{
                         <Button variant="link" size="sm" asChild>
                           <a
                             target="_blank"
-                            href={Chain.fromChainId(chainId)?.getAccountUrl(recipient) ?? '#'}
+                            href={
+                              Chain.fromChainId(chainId)?.getAccountUrl(
+                                recipient,
+                              ) ?? '#'
+                            }
                             rel="noreferrer"
                           >
                             {shortenAddress(recipient)}
@@ -450,9 +520,18 @@ export const SimpleSwapTradeReviewDialog: FC<{
                     loading={!writeAsync && !isError}
                     onClick={() => writeAsync?.().then(() => confirm())}
                     disabled={Boolean(
-                      !!error || isWritePending || Boolean(!writeAsync && swapAmount?.greaterThan(ZERO)) || isError
+                      !!error ||
+                        isWritePending ||
+                        Boolean(!writeAsync && swapAmount?.greaterThan(ZERO)) ||
+                        isError,
                     )}
-                    color={isError ? 'red' : warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
+                    color={
+                      isError
+                        ? 'red'
+                        : warningSeverity(trade?.priceImpact) >= 3
+                        ? 'red'
+                        : 'blue'
+                    }
                     testId="confirm-swap"
                   >
                     {isError

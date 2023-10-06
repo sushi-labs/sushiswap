@@ -1,9 +1,14 @@
-import { Token } from '@sushiswap/currency'
+import { Token } from 'sushi/currency'
 import { FuroChainId } from '@sushiswap/furo-sdk'
 import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { useQuery } from '@tanstack/react-query'
 
-import { getBuiltGraphSDK, Rebase, userVestingsQuery, vestingQuery } from '../../.graphclient'
+import {
+  getBuiltGraphSDK,
+  Rebase,
+  userVestingsQuery,
+  vestingQuery,
+} from '../../.graphclient'
 import { SUPPORTED_CHAINS } from '../../config'
 import { toToken } from '../mapper'
 import { Vesting } from '../Vesting'
@@ -26,11 +31,13 @@ export const useUserVestings = ({ account }: UseUserVestings) => {
           chainId,
           host: GRAPH_HOST,
           name: FURO_SUBGRAPH_NAME[chainId],
-        })
+        }),
       )
 
       const data: { chainId: FuroChainId; data: userVestingsQuery }[] = []
-      const results = await Promise.allSettled(sdks.map((sdk) => sdk.userVestings({ id: account.toLowerCase() })))
+      const results = await Promise.allSettled(
+        sdks.map((sdk) => sdk.userVestings({ id: account.toLowerCase() })),
+      )
       results.forEach((result, i) => {
         if (result.status === 'fulfilled') {
           data.push({
@@ -41,7 +48,9 @@ export const useUserVestings = ({ account }: UseUserVestings) => {
       })
 
       const vestings: {
-        vesting: userVestingsQuery['incomingVestings'][0] | userVestingsQuery['outgoingVestings'][0]
+        vesting:
+          | userVestingsQuery['incomingVestings'][0]
+          | userVestingsQuery['outgoingVestings'][0]
         chainId: FuroChainId
         vestingId: string
         token: Token
@@ -49,10 +58,18 @@ export const useUserVestings = ({ account }: UseUserVestings) => {
 
       data.forEach((el) => {
         ;[...el.data.incomingVestings, ...el.data.outgoingVestings]
-          .filter((el, i, vestings) => i === vestings.findIndex((vesting) => vesting.id === el.id))
+          .filter(
+            (el, i, vestings) =>
+              i === vestings.findIndex((vesting) => vesting.id === el.id),
+          )
           .forEach((vesting) => {
             const token = toToken(vesting.token, el.chainId)
-            vestings.push({ vesting, chainId: el.chainId, vestingId: vesting.id, token })
+            vestings.push({
+              vesting,
+              chainId: el.chainId,
+              vestingId: vesting.id,
+              token,
+            })
           })
       })
 
@@ -65,7 +82,10 @@ export const useUserVestings = ({ account }: UseUserVestings) => {
           return new Vesting({
             chainId: el.chainId,
             furo: el.vesting as NonNullable<vestingQuery['vesting']>,
-            rebase: rebases[i].data.rebase as Pick<Rebase, 'id' | 'base' | 'elastic'>,
+            rebase: rebases[i].data.rebase as Pick<
+              Rebase,
+              'id' | 'base' | 'elastic'
+            >,
           })
 
         return undefined

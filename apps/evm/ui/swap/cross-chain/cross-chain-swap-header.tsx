@@ -1,7 +1,7 @@
 'use client'
 
 import { ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
-import { Amount, Price, Token, tryParseAmount } from '@sushiswap/currency'
+import { Amount, Price, Token, tryParseAmount } from 'sushi/currency'
 import { formatUSD } from 'sushi'
 import { usePrices } from '@sushiswap/react-query'
 import { Button, typographyVariants } from '@sushiswap/ui'
@@ -22,8 +22,14 @@ export const CrossChainSwapHeader = () => {
     return [[tryParseAmount('1', token0)], [tryParseAmount('1', token1)]]
   }, [token0, token1])
 
-  const [token0FiatPrice] = useTokenAmountDollarValues({ chainId: chainId0, amounts: amounts[0] })
-  const [token1FiatPrice] = useTokenAmountDollarValues({ chainId: chainId1, amounts: amounts[1] })
+  const [token0FiatPrice] = useTokenAmountDollarValues({
+    chainId: chainId0,
+    amounts: amounts[0],
+  })
+  const [token1FiatPrice] = useTokenAmountDollarValues({
+    chainId: chainId1,
+    amounts: amounts[1],
+  })
 
   const { data: prices0 } = usePrices({ chainId: chainId0 })
   const { data: prices1 } = usePrices({ chainId: chainId1 })
@@ -32,8 +38,16 @@ export const CrossChainSwapHeader = () => {
     if (!token0 || !token1) return '0.00'
 
     // To make sure both tokens have same chainId when creating the price entity
-    const dummy0 = new Token({ address: token0.wrapped.address, chainId: 1, decimals: token0.decimals })
-    const dummy1 = new Token({ address: token1.wrapped.address, chainId: 1, decimals: token1.decimals })
+    const dummy0 = new Token({
+      address: token0.wrapped.address,
+      chainId: 1,
+      decimals: token0.decimals,
+    })
+    const dummy1 = new Token({
+      address: token1.wrapped.address,
+      chainId: 1,
+      decimals: token1.decimals,
+    })
 
     const token0Price = prices0?.[token0.wrapped.address]
       ? tryParseAmount('1', token0)?.multiply(prices0[token0.wrapped.address])
@@ -45,12 +59,22 @@ export const CrossChainSwapHeader = () => {
     let price
     if (token0Price && token1Price) {
       price = new Price({
-        baseAmount: Amount.fromRawAmount(dummy0, token0Price.quotient.toString()),
-        quoteAmount: Amount.fromRawAmount(dummy1, token1Price.quotient.toString()),
+        baseAmount: Amount.fromRawAmount(
+          dummy0,
+          token0Price.quotient.toString(),
+        ),
+        quoteAmount: Amount.fromRawAmount(
+          dummy1,
+          token1Price.quotient.toString(),
+        ),
       })
     }
 
-    return price ? (invert ? price.invert().toSignificant(4) : price.toSignificant(4)) : '0.00'
+    return price
+      ? invert
+        ? price.invert().toSignificant(4)
+        : price.toSignificant(4)
+      : '0.00'
   }, [invert, prices0, prices1, token0, token1])
 
   return (
@@ -59,13 +83,21 @@ export const CrossChainSwapHeader = () => {
       {isLoading || !token0 || !token1 ? (
         <SkeletonText fontSize="sm" className="w-2/4" />
       ) : (
-        <Button variant="link" size="sm" onClick={() => setInvert((invert) => !invert)}>
+        <Button
+          variant="link"
+          size="sm"
+          onClick={() => setInvert((invert) => !invert)}
+        >
           <ArrowTrendingUpIcon width={16} height={16} />
           <span className="flex items-baseline gap-1 whitespace-nowrap scroll hide-scrollbar">
             1 {invert ? token0.symbol : token1.symbol}{' '}
-            <span className="font-normal">({formatUSD(invert ? token0FiatPrice : token1FiatPrice)})</span> = {price}{' '}
-            {invert ? token1.symbol : token0.symbol}{' '}
-            <span className="font-normal">({formatUSD(invert ? token1FiatPrice : token0FiatPrice)})</span>
+            <span className="font-normal">
+              ({formatUSD(invert ? token0FiatPrice : token1FiatPrice)})
+            </span>{' '}
+            = {price} {invert ? token1.symbol : token0.symbol}{' '}
+            <span className="font-normal">
+              ({formatUSD(invert ? token1FiatPrice : token0FiatPrice)})
+            </span>
           </span>
         </Button>
       )}

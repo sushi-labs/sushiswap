@@ -1,7 +1,7 @@
 'use client'
 
 import { isAddress } from '@ethersproject/address'
-import { Amount, Token, Type } from '@sushiswap/currency'
+import { Amount, Token, Type } from 'sushi/currency'
 import { Fraction } from 'sushi'
 import { useMemo } from 'react'
 
@@ -11,7 +11,9 @@ const alwaysTrue = () => true
  * Create a filter function to apply to a token for whether it matches a particular search query
  * @param search the search query to apply to the token
  */
-export function createTokenFilterFunction<T extends Token>(search: string): (tokens: T) => boolean {
+export function createTokenFilterFunction<T extends Token>(
+  search: string,
+): (tokens: T) => boolean {
   const isValidAddress = isAddress(search)
 
   if (isValidAddress) {
@@ -31,17 +33,28 @@ export function createTokenFilterFunction<T extends Token>(search: string): (tok
       .split(/\s+/)
       .filter((s) => s.length > 0)
 
-    return lowerSearchParts.every((p) => p.length === 0 || sParts.some((sp) => sp.startsWith(p) || sp.endsWith(p)))
+    return lowerSearchParts.every(
+      (p) =>
+        p.length === 0 ||
+        sParts.some((sp) => sp.startsWith(p) || sp.endsWith(p)),
+    )
   }
 
-  return ({ name, symbol }: T): boolean => Boolean((symbol && matchesSearch(symbol)) || (name && matchesSearch(name)))
+  return ({ name, symbol }: T): boolean =>
+    Boolean((symbol && matchesSearch(symbol)) || (name && matchesSearch(name)))
 }
 
-export function filterTokens<T extends Token>(tokens: T[], search: string): T[] {
+export function filterTokens<T extends Token>(
+  tokens: T[],
+  search: string,
+): T[] {
   return tokens.filter(createTokenFilterFunction(search))
 }
 
-export const balanceComparator = (balanceA?: Amount<Type>, balanceB?: Amount<Type>) => {
+export const balanceComparator = (
+  balanceA?: Amount<Type>,
+  balanceB?: Amount<Type>,
+) => {
   if (balanceA && balanceB) {
     if (balanceA.asFraction.equalTo(balanceB.asFraction)) return 0
     return balanceA.asFraction.greaterThan(balanceB.asFraction) ? -1 : 1
@@ -55,7 +68,7 @@ export const balanceComparator = (balanceA?: Amount<Type>, balanceB?: Amount<Typ
 
 export const tokenComparator = (
   balancesMap: Record<string, Amount<Type>> | undefined,
-  pricesMap: Record<string, Fraction> | undefined
+  pricesMap: Record<string, Fraction> | undefined,
 ) => {
   return (tokenA: Token, tokenB: Token): number => {
     const priceA = pricesMap?.[tokenA.address]
@@ -70,7 +83,10 @@ export const tokenComparator = (
       return priceComp
     }
 
-    const balanceComp = balanceComparator(balancesMap?.[tokenA.address], balancesMap?.[tokenB.address])
+    const balanceComp = balanceComparator(
+      balancesMap?.[tokenA.address],
+      balancesMap?.[tokenB.address],
+    )
     if (balanceComp !== 0) {
       return balanceComp
     }
@@ -84,7 +100,10 @@ export const tokenComparator = (
   }
 }
 
-export function getSortedTokensByQuery(tokens: Token[] | undefined, searchQuery: string): Token[] {
+export function getSortedTokensByQuery(
+  tokens: Token[] | undefined,
+  searchQuery: string,
+): Token[] {
   if (!tokens) {
     return []
   }
@@ -110,7 +129,9 @@ export function getSortedTokensByQuery(tokens: Token[] | undefined, searchQuery:
   tokens.map((token) => {
     if (token.symbol?.toLowerCase() === symbolMatch[0]) {
       return exactMatches.push(token)
-    } else if (token.symbol?.toLowerCase().startsWith(searchQuery.toLowerCase().trim())) {
+    } else if (
+      token.symbol?.toLowerCase().startsWith(searchQuery.toLowerCase().trim())
+    ) {
       return symbolSubstrings.push(token)
     } else {
       return rest.push(token)
@@ -120,6 +141,12 @@ export function getSortedTokensByQuery(tokens: Token[] | undefined, searchQuery:
   return [...exactMatches, ...symbolSubstrings, ...rest]
 }
 
-export function useSortedTokensByQuery(tokens: Token[] | undefined, searchQuery: string): Token[] {
-  return useMemo(() => getSortedTokensByQuery(tokens, searchQuery), [tokens, searchQuery])
+export function useSortedTokensByQuery(
+  tokens: Token[] | undefined,
+  searchQuery: string,
+): Token[] {
+  return useMemo(
+    () => getSortedTokensByQuery(tokens, searchQuery),
+    [tokens, searchQuery],
+  )
 }

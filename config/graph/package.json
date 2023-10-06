@@ -33,16 +33,16 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "devDependencies": {
-    "@sushiswap/chain": "workspace:*",
+    "sushi": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "typescript": "5.2.2"
   },
   "peerDependencies": {
-    "@sushiswap/chain": "workspace:*"
+    "sushi": "workspace:*"
   },
   "peerDependenciesMeta": {
-    "@sushiswap/chain": {
+    "sushi": {
       "optional": false
     }
   }

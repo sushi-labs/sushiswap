@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import {
   addressMapToTokenMap,
   DAI_ADDRESS,
@@ -9,7 +9,7 @@ import {
   USDC_ADDRESS,
   USDT,
   USDT_ADDRESS,
-} from '@sushiswap/currency'
+} from 'sushi/currency'
 
 // Ethereum: 101
 // BNB: 102
@@ -115,61 +115,62 @@ export const STARGATE_USDC_ADDRESS = {
   [ChainId.FANTOM_TESTNET]: '0x076488D244A73DA4Fa843f5A8Cd91F655CA81a1e',
 } as const
 
-export const STARGATE_USDC: Record<keyof typeof STARGATE_USDC_ADDRESS, Token> = {
-  [ChainId.ETHEREUM]: USDC[ChainId.ETHEREUM],
-  [ChainId.POLYGON]: USDC[ChainId.POLYGON],
-  // [ChainId.AVALANCHE]: USDC[ChainId.AVALANCHE],
-  [ChainId.AVALANCHE]: new Token({
-    chainId: ChainId.AVALANCHE,
-    address: STARGATE_USDC_ADDRESS[ChainId.AVALANCHE],
-    decimals: 6,
-    symbol: 'USDC',
-    name: 'USD Coin',
-  }),
-  [ChainId.FANTOM]: USDC[ChainId.FANTOM],
-  [ChainId.BSC]: USDC[ChainId.BSC],
-  [ChainId.OPTIMISM]: USDC[ChainId.OPTIMISM],
-  [ChainId.ARBITRUM]: USDC[ChainId.ARBITRUM],
-  // Testnets
+export const STARGATE_USDC: Record<keyof typeof STARGATE_USDC_ADDRESS, Token> =
+  {
+    [ChainId.ETHEREUM]: USDC[ChainId.ETHEREUM],
+    [ChainId.POLYGON]: USDC[ChainId.POLYGON],
+    // [ChainId.AVALANCHE]: USDC[ChainId.AVALANCHE],
+    [ChainId.AVALANCHE]: new Token({
+      chainId: ChainId.AVALANCHE,
+      address: STARGATE_USDC_ADDRESS[ChainId.AVALANCHE],
+      decimals: 6,
+      symbol: 'USDC',
+      name: 'USD Coin',
+    }),
+    [ChainId.FANTOM]: USDC[ChainId.FANTOM],
+    [ChainId.BSC]: USDC[ChainId.BSC],
+    [ChainId.OPTIMISM]: USDC[ChainId.OPTIMISM],
+    [ChainId.ARBITRUM]: USDC[ChainId.ARBITRUM],
+    // Testnets
 
-  [ChainId.AVALANCHE_TESTNET]: new Token({
-    chainId: ChainId.AVALANCHE_TESTNET,
-    address: STARGATE_USDC_ADDRESS[ChainId.AVALANCHE_TESTNET],
-    decimals: 6,
-    symbol: 'USDC',
-    name: 'USD Coin',
-  }),
-  // TODO: Depreciated, replace with goerli
-  // [ChainId.ARBITRUM_RINKEBY_TESTNET]: new Token({
-  //   chainId: ChainId.ARBITRUM_RINKEBY_TESTNET,
-  //   address: STARGATE_USDC_ADDRESS[ChainId.ARBITRUM_RINKEBY_TESTNET],
-  //   decimals: 6,
-  //   symbol: 'USDC',
-  //   name: 'USD Coin',
-  // }),
-  [ChainId.POLYGON_TESTNET]: new Token({
-    chainId: ChainId.POLYGON_TESTNET,
-    address: STARGATE_USDC_ADDRESS[ChainId.POLYGON_TESTNET],
-    decimals: 6,
-    symbol: 'USDC',
-    name: 'USD Coin',
-  }),
-  // TODO: Depreciated, replace with goerli
-  // [ChainId.OPTIMISM_KOVAN_TESTNET]: new Token({
-  //   chainId: ChainId.OPTIMISM_KOVAN_TESTNET,
-  //   address: STARGATE_USDC_ADDRESS[ChainId.OPTIMISM_KOVAN_TESTNET],
-  //   decimals: 6,
-  //   symbol: 'USDC',
-  //   name: 'USD Coin',
-  // }),
-  [ChainId.FANTOM_TESTNET]: new Token({
-    chainId: ChainId.FANTOM_TESTNET,
-    address: STARGATE_USDC_ADDRESS[ChainId.FANTOM_TESTNET],
-    decimals: 6,
-    symbol: 'USDC',
-    name: 'USD Coin',
-  }),
-} as const
+    [ChainId.AVALANCHE_TESTNET]: new Token({
+      chainId: ChainId.AVALANCHE_TESTNET,
+      address: STARGATE_USDC_ADDRESS[ChainId.AVALANCHE_TESTNET],
+      decimals: 6,
+      symbol: 'USDC',
+      name: 'USD Coin',
+    }),
+    // TODO: Depreciated, replace with goerli
+    // [ChainId.ARBITRUM_RINKEBY_TESTNET]: new Token({
+    //   chainId: ChainId.ARBITRUM_RINKEBY_TESTNET,
+    //   address: STARGATE_USDC_ADDRESS[ChainId.ARBITRUM_RINKEBY_TESTNET],
+    //   decimals: 6,
+    //   symbol: 'USDC',
+    //   name: 'USD Coin',
+    // }),
+    [ChainId.POLYGON_TESTNET]: new Token({
+      chainId: ChainId.POLYGON_TESTNET,
+      address: STARGATE_USDC_ADDRESS[ChainId.POLYGON_TESTNET],
+      decimals: 6,
+      symbol: 'USDC',
+      name: 'USD Coin',
+    }),
+    // TODO: Depreciated, replace with goerli
+    // [ChainId.OPTIMISM_KOVAN_TESTNET]: new Token({
+    //   chainId: ChainId.OPTIMISM_KOVAN_TESTNET,
+    //   address: STARGATE_USDC_ADDRESS[ChainId.OPTIMISM_KOVAN_TESTNET],
+    //   decimals: 6,
+    //   symbol: 'USDC',
+    //   name: 'USD Coin',
+    // }),
+    [ChainId.FANTOM_TESTNET]: new Token({
+      chainId: ChainId.FANTOM_TESTNET,
+      address: STARGATE_USDC_ADDRESS[ChainId.FANTOM_TESTNET],
+      decimals: 6,
+      symbol: 'USDC',
+      name: 'USD Coin',
+    }),
+  } as const
 
 export const STARGATE_USDT_ADDRESS = {
   [ChainId.ETHEREUM]: USDT_ADDRESS[ChainId.ETHEREUM],
@@ -181,15 +182,16 @@ export const STARGATE_USDT_ADDRESS = {
   [ChainId.FANTOM]: USDT_ADDRESS[ChainId.FANTOM],
 } as const
 
-export const STARGATE_USDT: Record<keyof typeof STARGATE_USDT_ADDRESS, Token> = {
-  [ChainId.ETHEREUM]: USDT[ChainId.ETHEREUM],
-  [ChainId.POLYGON]: USDT[ChainId.POLYGON],
-  [ChainId.AVALANCHE]: USDT[ChainId.AVALANCHE],
-  [ChainId.BSC]: USDT[ChainId.BSC],
-  [ChainId.BSC_TESTNET]: USDT[ChainId.BSC_TESTNET],
-  [ChainId.ARBITRUM]: USDT[ChainId.ARBITRUM],
-  [ChainId.FANTOM]: USDT[ChainId.FANTOM],
-} as const
+export const STARGATE_USDT: Record<keyof typeof STARGATE_USDT_ADDRESS, Token> =
+  {
+    [ChainId.ETHEREUM]: USDT[ChainId.ETHEREUM],
+    [ChainId.POLYGON]: USDT[ChainId.POLYGON],
+    [ChainId.AVALANCHE]: USDT[ChainId.AVALANCHE],
+    [ChainId.BSC]: USDT[ChainId.BSC],
+    [ChainId.BSC_TESTNET]: USDT[ChainId.BSC_TESTNET],
+    [ChainId.ARBITRUM]: USDT[ChainId.ARBITRUM],
+    [ChainId.FANTOM]: USDT[ChainId.FANTOM],
+  } as const
 
 export const STARGATE_DAI_ADDRESS = {
   [ChainId.ETHEREUM]: DAI_ADDRESS[ChainId.ETHEREUM],
@@ -203,7 +205,7 @@ export const STARGATE_DAI = addressMapToTokenMap(
     symbol: 'DAI',
     name: 'Dai Stablecoin',
   },
-  STARGATE_DAI_ADDRESS
+  STARGATE_DAI_ADDRESS,
 )
 
 export const STARGATE_FRAX_ADDRESS = {
@@ -219,22 +221,23 @@ export const STARGATE_FRAX = addressMapToTokenMap(
     symbol: 'FRAX',
     name: 'Frax',
   },
-  FRAX_ADDRESS
+  FRAX_ADDRESS,
 )
 
 export const STARGATE_BUSD_ADDRESS = {
   [ChainId.BSC]: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
 } as const
 
-export const STARGATE_BUSD: Record<keyof typeof STARGATE_BUSD_ADDRESS, Token> = {
-  [ChainId.BSC]: new Token({
-    chainId: ChainId.BSC,
-    address: STARGATE_BUSD_ADDRESS[ChainId.BSC],
-    decimals: 18,
-    symbol: 'BUSD',
-    name: 'BUSD Token',
-  }),
-}
+export const STARGATE_BUSD: Record<keyof typeof STARGATE_BUSD_ADDRESS, Token> =
+  {
+    [ChainId.BSC]: new Token({
+      chainId: ChainId.BSC,
+      address: STARGATE_BUSD_ADDRESS[ChainId.BSC],
+      decimals: 18,
+      symbol: 'BUSD',
+      name: 'BUSD Token',
+    }),
+  }
 
 export const STARGATE_MAI_ADDRESS = {
   [ChainId.ETHEREUM]: '0x8D6CeBD76f18E1558D4DB88138e2DeFB3909fAD6',
@@ -251,7 +254,7 @@ export const STARGATE_MAI = addressMapToTokenMap(
     symbol: 'MAI',
     name: 'Mai Stablecoin',
   },
-  STARGATE_MAI_ADDRESS
+  STARGATE_MAI_ADDRESS,
 )
 
 export const STARGATE_BRIDGE_TOKENS: Record<number, Token[]> = {
@@ -277,7 +280,11 @@ export const STARGATE_BRIDGE_TOKENS: Record<number, Token[]> = {
     STARGATE_FRAX[ChainId.AVALANCHE],
   ],
   [ChainId.FANTOM]: [STARGATE_USDC[ChainId.FANTOM]],
-  [ChainId.BSC]: [STARGATE_USDT[ChainId.BSC], STARGATE_BUSD[ChainId.BSC], STARGATE_MAI[ChainId.BSC]],
+  [ChainId.BSC]: [
+    STARGATE_USDT[ChainId.BSC],
+    STARGATE_BUSD[ChainId.BSC],
+    STARGATE_MAI[ChainId.BSC],
+  ],
   [ChainId.OPTIMISM]: [
     // STARGATE_ETH[ChainId.OPTIMISM],
     STARGATE_USDC[ChainId.OPTIMISM],
@@ -400,51 +407,76 @@ export const STARGATE_POOL_ID: Record<number, Record<string, number>> = {
 
 export const STARGATE_POOL_ADDRESS: Record<number, Record<string, string>> = {
   [ChainId.ETHEREUM]: {
-    [STARGATE_USDC_ADDRESS[ChainId.ETHEREUM]]: '0xdf0770dF86a8034b3EFEf0A1Bb3c889B8332FF56',
-    [STARGATE_USDT_ADDRESS[ChainId.ETHEREUM]]: '0x38EA452219524Bb87e18dE1C24D3bB59510BD783',
-    [STARGATE_DAI_ADDRESS[ChainId.ETHEREUM]]: '0x0Faf1d2d3CED330824de3B8200fc8dc6E397850d',
-    [STARGATE_FRAX_ADDRESS[ChainId.ETHEREUM]]: '0xfA0F307783AC21C39E939ACFF795e27b650F6e68',
+    [STARGATE_USDC_ADDRESS[ChainId.ETHEREUM]]:
+      '0xdf0770dF86a8034b3EFEf0A1Bb3c889B8332FF56',
+    [STARGATE_USDT_ADDRESS[ChainId.ETHEREUM]]:
+      '0x38EA452219524Bb87e18dE1C24D3bB59510BD783',
+    [STARGATE_DAI_ADDRESS[ChainId.ETHEREUM]]:
+      '0x0Faf1d2d3CED330824de3B8200fc8dc6E397850d',
+    [STARGATE_FRAX_ADDRESS[ChainId.ETHEREUM]]:
+      '0xfA0F307783AC21C39E939ACFF795e27b650F6e68',
     // [STARGATE_USDD_ADDRESS[ChainId.ETHEREUM]]: '0x692953e758c3669290cb1677180c64183cEe374e',
     // [STARGATE_ETH_ADDRESS[ChainId.ETHEREUM]]: '0x101816545F6bd2b1076434B54383a1E633390A2E',
     // [STARGATE_sUSD_ADDRESS[ChainId.ETHEREUM]]: '0x590d4f8A68583639f215f675F3a259Ed84790580',
     // [STARGATE_LUSD_ADDRESS[ChainId.ETHEREUM]]: '0xE8F55368C82D38bbbbDb5533e7F56AfC2E978CC2',
-    [STARGATE_MAI_ADDRESS[ChainId.ETHEREUM]]: '0x9cef9a0b1bE0D289ac9f4a98ff317c33EAA84eb8',
+    [STARGATE_MAI_ADDRESS[ChainId.ETHEREUM]]:
+      '0x9cef9a0b1bE0D289ac9f4a98ff317c33EAA84eb8',
   },
 
   [ChainId.OPTIMISM]: {
     // [STARGATE_ETH_ADDRESS[ChainId.OPTIMISM]]: '0xd22363e3762cA7339569F3d33EADe20127D5F98C',
-    [STARGATE_USDC_ADDRESS[ChainId.OPTIMISM]]: '0xDecC0c09c3B5f6e92EF4184125D5648a66E35298',
-    [STARGATE_DAI_ADDRESS[ChainId.OPTIMISM]]: '0x165137624F1f692e69659f944BF69DE02874ee27',
-    [STARGATE_FRAX_ADDRESS[ChainId.OPTIMISM]]: '0x368605D9C6243A80903b9e326f1Cddde088B8924',
-    [STARGATE_MAI_ADDRESS[ChainId.OPTIMISM]]: '0x5421FA1A48f9FF81e4580557E86C7C0D24C18036',
+    [STARGATE_USDC_ADDRESS[ChainId.OPTIMISM]]:
+      '0xDecC0c09c3B5f6e92EF4184125D5648a66E35298',
+    [STARGATE_DAI_ADDRESS[ChainId.OPTIMISM]]:
+      '0x165137624F1f692e69659f944BF69DE02874ee27',
+    [STARGATE_FRAX_ADDRESS[ChainId.OPTIMISM]]:
+      '0x368605D9C6243A80903b9e326f1Cddde088B8924',
+    [STARGATE_MAI_ADDRESS[ChainId.OPTIMISM]]:
+      '0x5421FA1A48f9FF81e4580557E86C7C0D24C18036',
   },
   [ChainId.BSC]: {
-    [STARGATE_USDT_ADDRESS[ChainId.BSC]]: '0x9aA83081AA06AF7208Dcc7A4cB72C94d057D2cda',
-    [STARGATE_BUSD_ADDRESS[ChainId.BSC]]: '0x98a5737749490856b401DB5Dc27F522fC314A4e1',
+    [STARGATE_USDT_ADDRESS[ChainId.BSC]]:
+      '0x9aA83081AA06AF7208Dcc7A4cB72C94d057D2cda',
+    [STARGATE_BUSD_ADDRESS[ChainId.BSC]]:
+      '0x98a5737749490856b401DB5Dc27F522fC314A4e1',
     // [STARGATE_USDD_ADDRESS[ChainId.BSC]]: '0x4e145a589e4c03cBe3d28520e4BF3089834289Df',
-    [STARGATE_MAI_ADDRESS[ChainId.BSC]]: '0x7BfD7f2498C4796f10b6C611D9db393D3052510C',
+    [STARGATE_MAI_ADDRESS[ChainId.BSC]]:
+      '0x7BfD7f2498C4796f10b6C611D9db393D3052510C',
   },
   [ChainId.POLYGON]: {
-    [STARGATE_USDC_ADDRESS[ChainId.POLYGON]]: '0x1205f31718499dBf1fCa446663B532Ef87481fe1',
-    [STARGATE_USDT_ADDRESS[ChainId.POLYGON]]: '0x29e38769f23701A2e4A8Ef0492e19dA4604Be62c',
-    [STARGATE_DAI_ADDRESS[ChainId.POLYGON]]: '0x1c272232Df0bb6225dA87f4dEcD9d37c32f63Eea',
-    [STARGATE_MAI_ADDRESS[ChainId.POLYGON]]: '0x8736f92646B2542B3e5F3c63590cA7Fe313e283B',
+    [STARGATE_USDC_ADDRESS[ChainId.POLYGON]]:
+      '0x1205f31718499dBf1fCa446663B532Ef87481fe1',
+    [STARGATE_USDT_ADDRESS[ChainId.POLYGON]]:
+      '0x29e38769f23701A2e4A8Ef0492e19dA4604Be62c',
+    [STARGATE_DAI_ADDRESS[ChainId.POLYGON]]:
+      '0x1c272232Df0bb6225dA87f4dEcD9d37c32f63Eea',
+    [STARGATE_MAI_ADDRESS[ChainId.POLYGON]]:
+      '0x8736f92646B2542B3e5F3c63590cA7Fe313e283B',
   },
   [ChainId.AVALANCHE]: {
-    [STARGATE_USDC_ADDRESS[ChainId.AVALANCHE]]: '0x1205f31718499dBf1fCa446663B532Ef87481fe1',
-    [STARGATE_USDT_ADDRESS[ChainId.AVALANCHE]]: '0x29e38769f23701A2e4A8Ef0492e19dA4604Be62c',
-    [STARGATE_FRAX_ADDRESS[ChainId.AVALANCHE]]: '0x1c272232Df0bb6225dA87f4dEcD9d37c32f63Eea',
-    [STARGATE_MAI_ADDRESS[ChainId.AVALANCHE]]: '0x8736f92646B2542B3e5F3c63590cA7Fe313e283B',
+    [STARGATE_USDC_ADDRESS[ChainId.AVALANCHE]]:
+      '0x1205f31718499dBf1fCa446663B532Ef87481fe1',
+    [STARGATE_USDT_ADDRESS[ChainId.AVALANCHE]]:
+      '0x29e38769f23701A2e4A8Ef0492e19dA4604Be62c',
+    [STARGATE_FRAX_ADDRESS[ChainId.AVALANCHE]]:
+      '0x1c272232Df0bb6225dA87f4dEcD9d37c32f63Eea',
+    [STARGATE_MAI_ADDRESS[ChainId.AVALANCHE]]:
+      '0x8736f92646B2542B3e5F3c63590cA7Fe313e283B',
   },
   [ChainId.ARBITRUM]: {
     // [STARGATE_ETH_ADDRESS[ChainId.ARBITRUM]]: '0x915A55e36A01285A14f05dE6e81ED9cE89772f8e',
-    [USDC_ADDRESS[ChainId.ARBITRUM]]: '0x892785f33CdeE22A30AEF750F285E18c18040c3e',
-    [USDT_ADDRESS[ChainId.ARBITRUM]]: '0xB6CfcF89a7B22988bfC96632aC2A9D6daB60d641',
-    [STARGATE_FRAX_ADDRESS[ChainId.ARBITRUM]]: '0xaa4BF442F024820B2C28Cd0FD72b82c63e66F56C',
-    [STARGATE_MAI_ADDRESS[ChainId.ARBITRUM]]: '0xF39B7Be294cB36dE8c510e267B82bb588705d977',
+    [USDC_ADDRESS[ChainId.ARBITRUM]]:
+      '0x892785f33CdeE22A30AEF750F285E18c18040c3e',
+    [USDT_ADDRESS[ChainId.ARBITRUM]]:
+      '0xB6CfcF89a7B22988bfC96632aC2A9D6daB60d641',
+    [STARGATE_FRAX_ADDRESS[ChainId.ARBITRUM]]:
+      '0xaa4BF442F024820B2C28Cd0FD72b82c63e66F56C',
+    [STARGATE_MAI_ADDRESS[ChainId.ARBITRUM]]:
+      '0xF39B7Be294cB36dE8c510e267B82bb588705d977',
   },
   [ChainId.FANTOM]: {
-    [STARGATE_USDC_ADDRESS[ChainId.FANTOM]]: '0x12edeA9cd262006cC3C4E77c90d2CD2DD4b1eb97',
+    [STARGATE_USDC_ADDRESS[ChainId.FANTOM]]:
+      '0x12edeA9cd262006cC3C4E77c90d2CD2DD4b1eb97',
   },
 }
 
@@ -471,7 +503,9 @@ export const STARGATE_CONFIRMATION_SECONDS = {
 export function isStargateBridgeToken(currency: Type | undefined) {
   if (!currency) return false
   if (!STARGATE_BRIDGE_TOKEN_ADDRESSES[currency.chainId]) return false
-  return STARGATE_BRIDGE_TOKEN_ADDRESSES[currency.chainId].includes(currency.wrapped.address)
+  return STARGATE_BRIDGE_TOKEN_ADDRESSES[currency.chainId].includes(
+    currency.wrapped.address,
+  )
 }
 
 export const STARGATE_TOKEN = new Token({
@@ -482,7 +516,8 @@ export const STARGATE_TOKEN = new Token({
   name: 'StargateToken',
 })
 
-export type StargateBridgeTokens = (typeof STARGATE_BRIDGE_TOKENS)[StargateChainId]
+export type StargateBridgeTokens =
+  typeof STARGATE_BRIDGE_TOKENS[StargateChainId]
 
 export type StargateBridgeToken = StargateBridgeTokens[number]
 
@@ -496,4 +531,4 @@ export const STARGATE_SUPPORTED_CHAIN_IDS = [
   ChainId.OPTIMISM,
 ] as const
 
-export type StargateChainId = (typeof STARGATE_SUPPORTED_CHAIN_IDS)[number]
+export type StargateChainId = typeof STARGATE_SUPPORTED_CHAIN_IDS[number]

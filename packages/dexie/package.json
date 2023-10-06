@@ -31,11 +31,10 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
-    "@sushiswap/chain": "workspace:*",
-    "@sushiswap/currency": "workspace:*",
     "dexie": "3.2.4",
     "dexie-react-hooks": "1.1.6",
-    "lodash.groupby": "4.6.0"
+    "lodash.groupby": "4.6.0",
+    "sushi": "workspace:*"
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",

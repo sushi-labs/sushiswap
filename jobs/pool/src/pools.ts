@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { createClient, Prisma, Protocol } from '@sushiswap/database'
 import {
   SECONDS_BETWEEN_BLOCKS,

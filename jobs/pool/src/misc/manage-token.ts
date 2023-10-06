@@ -1,7 +1,7 @@
 import '../lib/wagmi.js'
 
 import { isAddress } from '@ethersproject/address'
-import { chainIds, chains } from '@sushiswap/chain'
+import { chainIds, chains } from 'sushi/chain'
 import { createClient } from '@sushiswap/database'
 import { Address, fetchToken } from '@wagmi/core'
 

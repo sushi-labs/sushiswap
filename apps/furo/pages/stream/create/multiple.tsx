@@ -1,5 +1,5 @@
 import { ArrowLeftIcon } from '@heroicons/react/solid'
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { FuroChainId } from '@sushiswap/furo-sdk'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { useNetwork } from '@sushiswap/wagmi'

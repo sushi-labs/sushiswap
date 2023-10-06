@@ -1,5 +1,5 @@
 import { isAddress } from '@ethersproject/address'
-import { Amount, Token, Type } from '@sushiswap/currency'
+import { Amount, Token, Type } from 'sushi/currency'
 import { Fraction } from 'sushi'
 import { useMemo } from 'react'
 
@@ -11,7 +11,9 @@ const alwaysTrue = () => true
  * Create a filter function to apply to a token for whether it matches a particular search query
  * @param search the search query to apply to the token
  */
-export function createTokenFilterFunction<T extends Token>(search: string): (tokens: T) => boolean {
+export function createTokenFilterFunction<T extends Token>(
+  search: string,
+): (tokens: T) => boolean {
   const isValidAddress = isAddress(search)
 
   if (isValidAddress) {
@@ -31,17 +33,28 @@ export function createTokenFilterFunction<T extends Token>(search: string): (tok
       .split(/\s+/)
       .filter((s) => s.length > 0)
 
-    return lowerSearchParts.every((p) => p.length === 0 || sParts.some((sp) => sp.startsWith(p) || sp.endsWith(p)))
+    return lowerSearchParts.every(
+      (p) =>
+        p.length === 0 ||
+        sParts.some((sp) => sp.startsWith(p) || sp.endsWith(p)),
+    )
   }
 
-  return ({ name, symbol }: T): boolean => Boolean((symbol && matchesSearch(symbol)) || (name && matchesSearch(name)))
+  return ({ name, symbol }: T): boolean =>
+    Boolean((symbol && matchesSearch(symbol)) || (name && matchesSearch(name)))
 }
 
-export function filterTokens<T extends Token>(tokens: T[], search: string): T[] {
+export function filterTokens<T extends Token>(
+  tokens: T[],
+  search: string,
+): T[] {
   return tokens.filter(createTokenFilterFunction(search))
 }
 
-export const balanceComparator = (balanceA?: Amount<Type>, balanceB?: Amount<Type>) => {
+export const balanceComparator = (
+  balanceA?: Amount<Type>,
+  balanceB?: Amount<Type>,
+) => {
   if (balanceA && balanceB) {
     if (balanceA.asFraction.equalTo(balanceB.asFraction)) return 0
     return balanceA.asFraction.greaterThan(balanceB.asFraction) ? -1 : 1
@@ -54,16 +67,22 @@ export const balanceComparator = (balanceA?: Amount<Type>, balanceB?: Amount<Typ
 }
 
 export const tokenComparator = (
-  balancesMap: Record<string, Record<FundSource, Amount<Type> | undefined>> | undefined,
+  balancesMap:
+    | Record<string, Record<FundSource, Amount<Type> | undefined>>
+    | undefined,
   pricesMap: Record<string, Fraction> | undefined,
-  fundSource: FundSource
+  fundSource: FundSource,
 ) => {
   return (tokenA: Token, tokenB: Token): number => {
     const balanceA = pricesMap?.[tokenA.address]
-      ? balancesMap?.[tokenA.address]?.[fundSource]?.multiply(pricesMap[tokenA.address])
+      ? balancesMap?.[tokenA.address]?.[fundSource]?.multiply(
+          pricesMap[tokenA.address],
+        )
       : undefined
     const balanceB = pricesMap?.[tokenB.address]
-      ? balancesMap?.[tokenB.address]?.[fundSource]?.multiply(pricesMap[tokenB.address])
+      ? balancesMap?.[tokenB.address]?.[fundSource]?.multiply(
+          pricesMap[tokenB.address],
+        )
       : undefined
 
     const balanceComp = balanceComparator(balanceA, balanceB)
@@ -80,7 +99,10 @@ export const tokenComparator = (
   }
 }
 
-export function useSortedTokensByQuery(tokens: Token[] | undefined, searchQuery: string): Token[] {
+export function useSortedTokensByQuery(
+  tokens: Token[] | undefined,
+  searchQuery: string,
+): Token[] {
   return useMemo(() => {
     if (!tokens) {
       return []
@@ -107,7 +129,9 @@ export function useSortedTokensByQuery(tokens: Token[] | undefined, searchQuery:
     tokens.map((token) => {
       if (token.symbol?.toLowerCase() === symbolMatch[0]) {
         return exactMatches.push(token)
-      } else if (token.symbol?.toLowerCase().startsWith(searchQuery.toLowerCase().trim())) {
+      } else if (
+        token.symbol?.toLowerCase().startsWith(searchQuery.toLowerCase().trim())
+      ) {
         return symbolSubstrings.push(token)
       } else {
         return rest.push(token)

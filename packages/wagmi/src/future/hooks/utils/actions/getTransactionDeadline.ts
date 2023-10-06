@@ -1,4 +1,4 @@
-import { chainsL2 } from '@sushiswap/chain'
+import { chainsL2 } from 'sushi/chain'
 import { readContract } from '@wagmi/core'
 
 import { getMulticall3ContractConfig } from '../../../../hooks/useMulticall3Contract'

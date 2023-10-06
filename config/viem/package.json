@@ -29,21 +29,24 @@
   "jest": {
     "preset": "@sushiswap/jest-config/node"
   },
-  "dependencies": {
-    "@sushiswap/chain": "workspace:*"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
     "typescript": "5.2.2",
+    "sushi": "workspace:*",
     "viem": "1.10.7"
   },
   "peerDependencies": {
+    "sushi": "*",
     "viem": "*"
   },
   "peerDependenciesMeta": {
+    "sushi": {
+      "optional": false
+    },
     "viem": {
       "optional": false
     }

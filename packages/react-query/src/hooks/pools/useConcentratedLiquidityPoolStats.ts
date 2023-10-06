@@ -1,8 +1,8 @@
 import '@sushiswap/database'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { getPool } from '@sushiswap/client'
-import { Amount, Token } from '@sushiswap/currency'
+import { Amount, Token } from 'sushi/currency'
 import { useQuery } from '@tanstack/react-query'
 import { parseUnits } from 'viem'
 
@@ -54,7 +54,10 @@ export const useConcentratedLiquidityPoolStats = ({
               ...incentive,
               reward: Amount.fromRawAmount(
                 rewardToken,
-                parseUnits(incentive.rewardPerDay.toString(), incentive.rewardToken.decimals)
+                parseUnits(
+                  incentive.rewardPerDay.toString(),
+                  incentive.rewardToken.decimals,
+                ),
               ),
             }
           }),

@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { type Address, fallback, http, type PublicClientConfig } from 'viem'
 import {
   arbitrum,

@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { getUser } from 'lib/api'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'

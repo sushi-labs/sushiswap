@@ -1,4 +1,4 @@
-import { ChainId, chainsL2 } from '@sushiswap/chain'
+import { ChainId, chainsL2 } from 'sushi/chain'
 import { useMemo } from 'react'
 
 import { useCurrentBlockTimestamp } from '../../../../hooks'

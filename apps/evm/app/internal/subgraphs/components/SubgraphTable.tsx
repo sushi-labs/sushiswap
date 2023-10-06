@@ -1,7 +1,7 @@
 'use client'
 
 import { RefreshIcon } from '@heroicons/react-v1/solid'
-import { ChainId, chainName } from '@sushiswap/chain'
+import { ChainId, chainName } from 'sushi/chain'
 import { formatNumber, formatPercent } from 'sushi'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import {

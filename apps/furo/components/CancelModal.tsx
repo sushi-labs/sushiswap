@@ -1,6 +1,4 @@
 import { TrashIcon } from '@heroicons/react/outline'
-import { Chain, ChainId } from '@sushiswap/chain'
-import { shortenAddress } from 'sushi'
 import {
   DialogConfirm,
   DialogContent,
@@ -15,12 +13,21 @@ import {
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createToast } from '@sushiswap/ui/components/toast'
-import { useAccount, usePrepareSendTransaction, useWaitForTransaction } from '@sushiswap/wagmi'
+import {
+  useAccount,
+  usePrepareSendTransaction,
+  useWaitForTransaction,
+} from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi'
-import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
+import {
+  SendTransactionResult,
+  waitForTransaction,
+} from '@sushiswap/wagmi/actions'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import React, { FC, useCallback, useMemo } from 'react'
+import { shortenAddress } from 'sushi'
+import { Chain, ChainId } from 'sushi/chain'
 import { Abi, Address, encodeFunctionData } from 'viem'
 
 import { Stream, Vesting } from '../lib'
@@ -34,7 +41,14 @@ interface CancelModalProps {
   chainId: ChainId
 }
 
-export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contractAddress, fn, title, chainId }) => {
+export const CancelModal: FC<CancelModalProps> = ({
+  stream,
+  abi,
+  address: contractAddress,
+  fn,
+  title,
+  chainId,
+}) => {
   const { address } = useAccount()
 
   const type = stream instanceof Vesting ? 'Vest' : 'Stream'
@@ -45,7 +59,11 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
     return {
       account: address,
       to: contractAddress,
-      data: encodeFunctionData({ abi, functionName: fn, args: [stream.id, false] }),
+      data: encodeFunctionData({
+        abi,
+        functionName: fn,
+        args: [stream.id, false],
+      }),
     }
   }, [stream, address, contractAddress, abi, fn])
 
@@ -69,7 +87,7 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
         },
       })
     },
-    [type, chainId, address]
+    [type, chainId, address],
   )
 
   const { config } = usePrepareSendTransaction({
@@ -97,7 +115,11 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
         {({ confirm }) => (
           <>
             <DialogTrigger asChild>
-              <Button testId={`${type.toLowerCase()}-cancel`} variant="secondary" icon={TrashIcon}>
+              <Button
+                testId={`${type.toLowerCase()}-cancel`}
+                variant="secondary"
+                icon={TrashIcon}
+              >
                 Cancel
               </Button>
             </DialogTrigger>
@@ -107,13 +129,16 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
                 <DialogDescription>
                   This will send the remaining amount of{' '}
                   <span className="font-medium text-gray-900 dark:text-slate-200">
-                    {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount?.currency.symbol}
+                    {stream?.remainingAmount?.toSignificant(6)}{' '}
+                    {stream?.remainingAmount?.currency.symbol}
                   </span>{' '}
                   to{' '}
                   <a
                     target="_blank"
                     className="font-semibold text-blue"
-                    href={Chain.from(stream.chainId).getAccountUrl(stream.createdBy.id)}
+                    href={Chain.from(stream.chainId)?.getAccountUrl(
+                      stream.createdBy.id,
+                    )}
                     rel="noreferrer"
                   >
                     {shortenAddress(stream?.createdBy.id)}
@@ -129,7 +154,9 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
                       size="xl"
                       fullWidth
                       disabled={isWritePending || stream?.isEnded}
-                      onClick={() => sendTransactionAsync?.().then(() => confirm())}
+                      onClick={() =>
+                        sendTransactionAsync?.().then(() => confirm())
+                      }
                       testId="cancel-confirmation"
                     >
                       {isWritePending ? <Dots>Confirm Cancel</Dots> : title}

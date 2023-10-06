@@ -1,7 +1,12 @@
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Token } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Amount, Token } from 'sushi/currency'
 
-import { Maybe, streamTransactionsQuery, TransactionType, vestingTransactionsQuery } from '../.graphclient'
+import {
+  Maybe,
+  streamTransactionsQuery,
+  TransactionType,
+  vestingTransactionsQuery,
+} from '../.graphclient'
 import { toToken } from './mapper'
 
 export class Transaction {
@@ -14,8 +19,10 @@ export class Transaction {
   public readonly txHash: string
 
   public constructor(
-    transaction: streamTransactionsQuery['transactions'][0] | vestingTransactionsQuery['transactions'][0],
-    chainId: ChainId
+    transaction:
+      | streamTransactionsQuery['transactions'][0]
+      | vestingTransactionsQuery['transactions'][0],
+    chainId: ChainId,
   ) {
     this.id = transaction.id
     this.status = transaction.type

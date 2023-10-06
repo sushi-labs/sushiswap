@@ -1,6 +1,6 @@
 import { RadioGroup, Transition } from '@headlessui/react'
 import { ArrowLeftIcon } from '@heroicons/react/solid'
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { shortenAddress } from 'sushi'
 import { classNames, LinkInternal, SplashController, typographyVariants } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'

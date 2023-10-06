@@ -1,4 +1,4 @@
-import { tryParseAmount } from '@sushiswap/currency'
+import { tryParseAmount } from 'sushi/currency'
 import { Fraction, ZERO } from 'sushi'
 
 import { ZTokenToToken } from '../../lib/zod'
@@ -10,12 +10,21 @@ export const calculateEndDate = ({
   startDate,
   stepPayouts,
   stepConfig,
-}: Pick<CreateVestingFormSchemaType, 'cliffEnabled' | 'cliffEndDate' | 'startDate' | 'stepPayouts' | 'stepConfig'>) => {
+}: Pick<
+  CreateVestingFormSchemaType,
+  'cliffEnabled' | 'cliffEndDate' | 'startDate' | 'stepPayouts' | 'stepConfig'
+>) => {
   if (!stepPayouts || !stepConfig) return undefined
   if (startDate && !cliffEnabled)
-    return new Date(startDate.getTime() + STEP_CONFIGURATIONS_MAP[stepConfig] * stepPayouts * 1000)
+    return new Date(
+      startDate.getTime() +
+        STEP_CONFIGURATIONS_MAP[stepConfig] * stepPayouts * 1000,
+    )
   if (cliffEnabled && cliffEndDate)
-    return new Date(cliffEndDate.getTime() + STEP_CONFIGURATIONS_MAP[stepConfig] * stepPayouts * 1000)
+    return new Date(
+      cliffEndDate.getTime() +
+        STEP_CONFIGURATIONS_MAP[stepConfig] * stepPayouts * 1000,
+    )
   return undefined
 }
 
@@ -25,11 +34,19 @@ export const calculateTotalAmount = ({
   cliffAmount,
   stepAmount,
   stepPayouts,
-}: Pick<CreateVestingFormSchemaType, 'currency' | 'cliffEnabled' | 'cliffAmount' | 'stepAmount' | 'stepPayouts'>) => {
+}: Pick<
+  CreateVestingFormSchemaType,
+  'currency' | 'cliffEnabled' | 'cliffAmount' | 'stepAmount' | 'stepPayouts'
+>) => {
   if (!currency || !stepPayouts) return undefined
   const _currency = ZTokenToToken.parse(currency)
-  const _cliffAmount = cliffEnabled ? tryParseAmount(cliffAmount?.toString(), _currency) : undefined
-  const _totalStep = tryParseAmount(stepAmount?.toString(), _currency)?.multiply(BigInt(stepPayouts))
+  const _cliffAmount = cliffEnabled
+    ? tryParseAmount(cliffAmount?.toString(), _currency)
+    : undefined
+  const _totalStep = tryParseAmount(
+    stepAmount?.toString(),
+    _currency,
+  )?.multiply(BigInt(stepPayouts))
 
   if (_cliffAmount && !_totalStep) return _cliffAmount
   if (!_cliffAmount && _totalStep) return _totalStep
@@ -42,10 +59,15 @@ export const calculateCliffDuration = ({
   cliffEnabled,
   cliffEndDate,
   startDate,
-}: Pick<CreateVestingFormSchemaType, 'cliffEndDate' | 'cliffEnabled' | 'startDate'>) => {
+}: Pick<
+  CreateVestingFormSchemaType,
+  'cliffEndDate' | 'cliffEnabled' | 'startDate'
+>) => {
   let cliffDuration = 0n
   if (cliffEnabled && cliffEndDate && startDate && cliffEndDate > startDate) {
-    cliffDuration = BigInt(Math.floor((cliffEndDate.getTime() - startDate.getTime()) / 1000))
+    cliffDuration = BigInt(
+      Math.floor((cliffEndDate.getTime() - startDate.getTime()) / 1000),
+    )
   }
 
   return cliffDuration
@@ -57,7 +79,10 @@ export const calculateStepPercentage = ({
   cliffAmount,
   stepAmount,
   stepPayouts,
-}: Pick<CreateVestingFormSchemaType, 'currency' | 'cliffEnabled' | 'cliffAmount' | 'stepAmount' | 'stepPayouts'>) => {
+}: Pick<
+  CreateVestingFormSchemaType,
+  'currency' | 'cliffEnabled' | 'cliffAmount' | 'stepAmount' | 'stepPayouts'
+>) => {
   if (!currency || !stepAmount) return undefined
   const _currency = ZTokenToToken.parse(currency)
   const totalAmount = calculateTotalAmount({
@@ -70,6 +95,9 @@ export const calculateStepPercentage = ({
   const _stepAmount = tryParseAmount(stepAmount.toString(), _currency)
 
   return totalAmount?.greaterThan(ZERO) && _stepAmount
-    ? new Fraction(_stepAmount.multiply(BigInt(1e18)).quotient, totalAmount.quotient).quotient
+    ? new Fraction(
+        _stepAmount.multiply(BigInt(1e18)).quotient,
+        totalAmount.quotient,
+      ).quotient
     : 0n
 }

@@ -1,4 +1,4 @@
-import { Amount, Share, Type } from '@sushiswap/currency'
+import { Amount, Share, Type } from 'sushi/currency'
 import { Address, encodeFunctionData, Hex, zeroAddress } from 'viem'
 
 const abiShard = [

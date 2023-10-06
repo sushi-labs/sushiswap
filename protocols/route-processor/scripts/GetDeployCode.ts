@@ -1,5 +1,5 @@
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { chainName } from '@sushiswap/chain'
+import { chainName } from 'sushi/chain'
 import { ethers } from 'hardhat'
 
 const chainId = parseInt(process.argv[2]) as BentoBoxChainId

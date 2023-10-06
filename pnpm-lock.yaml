@@ -36,9 +36,6 @@ importers:
 
   apis/balances:
     dependencies:
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../../packages/chain
       '@sushiswap/wagmi-config':
         specifier: workspace:*
         version: link:../../config/wagmi
@@ -54,6 +51,9 @@ importers:
       lodash.zip:
         specifier: 4.2.0
         version: 4.2.0
+      sushi:
+        specifier: workspace:*
+        version: link:../../packages/sushi
       zod:
         specifier: 3.21.4
         version: 3.21.4
@@ -202,9 +202,6 @@ importers:
 
   apis/token-price:
     dependencies:
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../../packages/chain
       '@sushiswap/database':
         specifier: workspace:*
         version: link:../../packages/database
@@ -217,6 +214,9 @@ importers:
       ioredis:
         specifier: 5.3.1
         version: 5.3.1
+      sushi:
+        specifier: workspace:*
+        version: link:../../packages/sushi
       zod:
         specifier: 3.21.4
         version: 3.21.4
@@ -403,9 +403,6 @@ importers:
       '@heroicons/react':
         specifier: 1.0.6
         version: 1.0.6(react@18.2.0)
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../../packages/chain
       '@sushiswap/hooks':
         specifier: workspace:*
         version: link:../../packages/hooks
@@ -457,6 +454,9 @@ importers:
       react-markdown:
         specifier: ^8.0.3
         version: 8.0.7(@types/react@18.2.14)(react@18.2.0)
+      sushi:
+        specifier: workspace:*
+        version: link:../../packages/sushi
       swr:
         specifier: 2.1.5
         version: 2.1.5(react@18.2.0)
@@ -515,12 +515,6 @@ importers:
       '@heroicons/react':
         specifier: 2.0.13
         version: 2.0.13(react@18.2.0)
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../../packages/chain
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../../packages/currency
       '@sushiswap/router-config':
         specifier: workspace:*
         version: link:../../config/router
@@ -542,6 +536,9 @@ importers:
       react-dom:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
+      sushi:
+        specifier: workspace:*
+        version: link:../../packages/sushi
     devDependencies:
       '@storybook/addon-a11y':
         specifier: 7.0.25
@@ -645,15 +642,9 @@ importers:
       '@sushiswap/bentobox-sdk':
         specifier: workspace:*
         version: link:../../packages/bentobox-sdk
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../../packages/chain
       '@sushiswap/client':
         specifier: workspace:*
         version: link:../../packages/client
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../../packages/currency
       '@sushiswap/database':
         specifier: workspace:*
         version: link:../../packages/database
@@ -928,12 +919,6 @@ importers:
       '@sushiswap/bentobox-sdk':
         specifier: workspace:*
         version: link:../../packages/bentobox-sdk
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../../packages/chain
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../../packages/currency
       '@sushiswap/furo-sdk':
         specifier: workspace:*
         version: link:../../packages/furo-sdk
@@ -1122,15 +1107,15 @@ importers:
 
   config/graph:
     devDependencies:
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../../packages/chain
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../jest
       '@sushiswap/typescript-config':
         specifier: workspace:*
         version: link:../typescript
+      sushi:
+        specifier: workspace:*
+        version: link:../../packages/sushi
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -1199,18 +1184,15 @@ importers:
 
   config/router:
     devDependencies:
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../../packages/chain
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../../packages/currency
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../jest
       '@sushiswap/typescript-config':
         specifier: workspace:*
         version: link:../typescript
+      sushi:
+        specifier: workspace:*
+        version: link:../../packages/sushi
       tsup:
         specifier: 7.2.0
         version: 7.2.0(ts-node@10.9.1)(typescript@5.2.2)
@@ -1243,10 +1225,6 @@ importers:
   config/typescript: {}
 
   config/viem:
-    dependencies:
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../../packages/chain
     devDependencies:
       '@sushiswap/jest-config':
         specifier: workspace:*
@@ -1260,6 +1238,9 @@ importers:
       '@tsconfig/strictest':
         specifier: 2.0.2
         version: 2.0.2
+      sushi:
+        specifier: workspace:*
+        version: link:../../packages/sushi
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -1269,9 +1250,6 @@ importers:
 
   config/wagmi:
     devDependencies:
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../../packages/chain
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../jest
@@ -1287,6 +1265,9 @@ importers:
       '@wagmi/core':
         specifier: 1.4.1
         version: 1.4.1(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.10.7)
+      sushi:
+        specifier: workspace:*
+        version: link:../../packages/sushi
       tsup:
         specifier: 7.2.0
         version: 7.2.0(ts-node@10.9.1)(typescript@5.2.2)
@@ -1353,12 +1334,6 @@ importers:
       '@sushiswap/bentobox-sdk':
         specifier: workspace:*
         version: link:../../packages/bentobox-sdk
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../../packages/chain
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../../packages/currency
       '@sushiswap/database':
         specifier: workspace:*
         version: link:../../packages/database
@@ -1459,12 +1434,6 @@ importers:
       '@sushiswap/base-sdk':
         specifier: workspace:*
         version: link:../base-sdk
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../chain
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../currency
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../tines
@@ -1505,9 +1474,9 @@ importers:
 
   packages/base-sdk:
     dependencies:
-      '@sushiswap/currency':
+      sushi:
         specifier: workspace:*
-        version: link:../currency
+        version: link:../sushi
     devDependencies:
       '@sushiswap/typescript-config':
         specifier: workspace:*
@@ -1521,9 +1490,9 @@ importers:
 
   packages/bentobox-sdk:
     dependencies:
-      '@sushiswap/chain':
+      sushi:
         specifier: workspace:*
-        version: link:../chain
+        version: link:../sushi
       zod:
         specifier: 3.21.4
         version: 3.21.4
@@ -1541,38 +1510,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
 
-  packages/chain:
-    devDependencies:
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../../config/jest
-      '@sushiswap/typescript-config':
-        specifier: workspace:*
-        version: link:../../config/typescript
-      '@types/jest':
-        specifier: 29.5.5
-        version: 29.5.5
-      '@types/node-fetch':
-        specifier: ^2.6.2
-        version: 2.6.4
-      jest:
-        specifier: 29.7.0
-        version: 29.7.0(@types/node@18.11.18)(ts-node@10.9.1)
-      node-fetch:
-        specifier: ^2.6.2
-        version: 2.6.12
-      tsup:
-        specifier: 7.2.0
-        version: 7.2.0(ts-node@10.9.1)(typescript@5.2.2)
-      typescript:
-        specifier: 5.2.2
-        version: 5.2.2
-
   packages/client:
     dependencies:
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../chain
       '@sushiswap/database':
         specifier: workspace:*
         version: link:../database
@@ -1585,6 +1524,9 @@ importers:
       '@whatwg-node/fetch':
         specifier: 0.8.4
         version: 0.8.4
+      sushi:
+        specifier: workspace:*
+        version: link:../sushi
       tslib:
         specifier: latest
         version: 2.6.2
@@ -1604,64 +1546,6 @@ importers:
       swr:
         specifier: 2.1.5
         version: 2.1.5(react@18.2.0)
-      tsup:
-        specifier: 7.2.0
-        version: 7.2.0(ts-node@10.9.1)(typescript@5.2.2)
-      typescript:
-        specifier: 5.2.2
-        version: 5.2.2
-
-  packages/currency:
-    dependencies:
-      '@ethersproject/address':
-        specifier: 5.7.0
-        version: 5.7.0
-      '@ethersproject/units':
-        specifier: 5.7.0
-        version: 5.7.0
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../chain
-      lodash.flatmap:
-        specifier: 4.5.0
-        version: 4.5.0
-      sushi:
-        specifier: workspace:*
-        version: link:../sushi
-      tiny-invariant:
-        specifier: 1.3.1
-        version: 1.3.1
-      zod:
-        specifier: 3.21.4
-        version: 3.21.4
-    devDependencies:
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../../config/jest
-      '@tsconfig/esm':
-        specifier: 1.0.4
-        version: 1.0.4
-      '@tsconfig/node18':
-        specifier: 18.2.2
-        version: 18.2.2
-      '@tsconfig/strictest':
-        specifier: 2.0.2
-        version: 2.0.2
-      '@types/jest':
-        specifier: 29.5.5
-        version: 29.5.5
-      '@types/lodash.flatmap':
-        specifier: 4.5.7
-        version: 4.5.7
-      '@types/react':
-        specifier: 18.2.14
-        version: 18.2.14
-      '@types/react-dom':
-        specifier: 18.2.6
-        version: 18.2.6
-      jest:
-        specifier: 29.7.0
-        version: 29.7.0(@types/node@18.11.18)(ts-node@10.9.1)
       tsup:
         specifier: 7.2.0
         version: 7.2.0(ts-node@10.9.1)(typescript@5.2.2)
@@ -1711,12 +1595,6 @@ importers:
 
   packages/dexie:
     dependencies:
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../chain
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../currency
       dexie:
         specifier: 3.2.4
         version: 3.2.4
@@ -1729,6 +1607,9 @@ importers:
       next:
         specifier: 13.4.12
         version: 13.4.12(@babel/core@7.22.10)(react-dom@18.2.0)(react@18.2.0)
+      sushi:
+        specifier: workspace:*
+        version: link:../sushi
     devDependencies:
       '@sushiswap/jest-config':
         specifier: workspace:*
@@ -1772,12 +1653,6 @@ importers:
       '@sushiswap/amm':
         specifier: workspace:*
         version: link:../amm
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../chain
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../currency
       '@sushiswap/route-processor-sdk':
         specifier: workspace:*
         version: link:../route-processor-sdk
@@ -1860,9 +1735,9 @@ importers:
 
   packages/furo-sdk:
     dependencies:
-      '@sushiswap/chain':
+      sushi:
         specifier: workspace:*
-        version: link:../chain
+        version: link:../sushi
     devDependencies:
       '@sushiswap/jest-config':
         specifier: workspace:*
@@ -1942,9 +1817,6 @@ importers:
       node-fetch:
         specifier: 3.3.0
         version: 3.3.0
-      sushi:
-        specifier: workspace:*
-        version: link:../sushi
       tslib:
         specifier: 2.5.0
         version: 2.5.0
@@ -1952,9 +1824,6 @@ importers:
       '@graphprotocol/client-cli':
         specifier: 3.0.0
         version: 3.0.0(@babel/core@7.22.10)(@envelop/core@4.0.0)(@graphql-mesh/cross-helpers@0.4.0)(@graphql-mesh/store@0.94.1)(@graphql-mesh/types@0.94.1)(@graphql-mesh/utils@0.94.1)(@graphql-tools/delegate@10.0.2)(@graphql-tools/merge@9.0.0)(@graphql-tools/utils@9.2.1)(@graphql-tools/wrap@10.0.0)(@types/node@18.17.5)(graphql-tag@2.12.6)(graphql@16.6.0)(react-native@0.72.5)
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../chain
       '@sushiswap/graph-config':
         specifier: workspace:*
         version: link:../../config/graph
@@ -1985,6 +1854,9 @@ importers:
       jest:
         specifier: 29.7.0
         version: 29.7.0(@types/node@18.17.5)
+      sushi:
+        specifier: workspace:*
+        version: link:../sushi
       ts-jest:
         specifier: 29.0.3
         version: 29.0.3(@babel/core@7.22.10)(jest@29.7.0)(typescript@5.2.2)
@@ -2007,12 +1879,6 @@ importers:
         specifier: 9.0.0-beta.10
         version: 9.0.0-beta.10(react@18.2.0)
     devDependencies:
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../chain
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../currency
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
@@ -2064,15 +1930,9 @@ importers:
       '@sushiswap/amm':
         specifier: workspace:*
         version: link:../amm
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../chain
       '@sushiswap/client':
         specifier: workspace:*
         version: link:../client
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../currency
       '@sushiswap/database':
         specifier: workspace:*
         version: link:../database
@@ -2149,9 +2009,9 @@ importers:
 
   packages/route-processor-sdk:
     dependencies:
-      '@sushiswap/chain':
+      sushi:
         specifier: workspace:*
-        version: link:../chain
+        version: link:../sushi
     devDependencies:
       '@sushiswap/jest-config':
         specifier: workspace:*
@@ -2183,12 +2043,6 @@ importers:
       '@sushiswap/bentobox-sdk':
         specifier: workspace:*
         version: link:../bentobox-sdk
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../chain
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../currency
       '@sushiswap/router-config':
         specifier: workspace:*
         version: link:../../config/router
@@ -2271,19 +2125,10 @@ importers:
 
   packages/stargate:
     dependencies:
-      sushi:
-        specifier: '*'
-        version: 2.1.0
       tiny-invariant:
         specifier: 1.3.1
         version: 1.3.1
     devDependencies:
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../chain
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../currency
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
@@ -2296,6 +2141,9 @@ importers:
       jest:
         specifier: 29.7.0
         version: 29.7.0(@types/node@18.11.18)(ts-node@10.9.1)
+      sushi:
+        specifier: workspace:*
+        version: link:../sushi
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -2348,12 +2196,15 @@ importers:
       viem:
         specifier: 1.10.7
         version: 1.10.7(typescript@5.2.2)(zod@3.21.4)
+      zod:
+        specifier: 3.21.4
+        version: 3.21.4
 
   packages/sushixswap-sdk:
     dependencies:
-      '@sushiswap/chain':
+      sushi:
         specifier: workspace:*
-        version: link:../chain
+        version: link:../sushi
     devDependencies:
       '@sushiswap/jest-config':
         specifier: workspace:*
@@ -2370,9 +2221,6 @@ importers:
 
   packages/tines:
     dependencies:
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../currency
       sushi:
         specifier: workspace:*
         version: link:../sushi
@@ -2407,12 +2255,6 @@ importers:
       '@ethersproject/address':
         specifier: 5.7.0
         version: 5.7.0
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../chain
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../currency
       '@uniswap/token-lists':
         specifier: ^1.0.0-beta.31
         version: 1.0.0-beta.33
@@ -2465,12 +2307,6 @@ importers:
       '@sushiswap/base-sdk':
         specifier: workspace:*
         version: link:../base-sdk
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../chain
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../currency
       sushi:
         specifier: workspace:*
         version: link:../sushi
@@ -2502,33 +2338,6 @@ importers:
       typescript:
         specifier: 5.2.2
         version: 5.2.2
-
-  packages/types:
-    devDependencies:
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../../config/jest
-      '@sushiswap/typescript-config':
-        specifier: workspace:*
-        version: link:../../config/typescript
-      '@types/jest':
-        specifier: 29.5.5
-        version: 29.5.5
-      '@wagmi/core':
-        specifier: 1.4.1
-        version: 1.4.1(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.10.7)
-      jest:
-        specifier: 29.7.0
-        version: 29.7.0(@types/node@18.11.18)(ts-node@10.9.1)
-      tsup:
-        specifier: 7.2.0
-        version: 7.2.0(ts-node@10.9.1)(typescript@5.2.2)
-      typescript:
-        specifier: 5.2.2
-        version: 5.2.2
-      viem:
-        specifier: 1.10.7
-        version: 1.10.7(typescript@5.2.2)(zod@3.21.4)
 
   packages/ui:
     dependencies:
@@ -2607,12 +2416,6 @@ importers:
       '@react-hook/window-scroll':
         specifier: 1.3.0
         version: 1.3.0(react@18.2.0)
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../chain
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../currency
       '@sushiswap/dexie':
         specifier: workspace:*
         version: link:../dexie
@@ -2691,6 +2494,9 @@ importers:
       react-window:
         specifier: 1.8.7
         version: 1.8.7(react-dom@18.2.0)(react@18.2.0)
+      sushi:
+        specifier: workspace:*
+        version: link:../sushi
       tailwind-merge:
         specifier: 1.13.2
         version: 1.13.2
@@ -2767,12 +2573,6 @@ importers:
       '@sushiswap/base-sdk':
         specifier: workspace:*
         version: link:../base-sdk
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../chain
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../currency
       sushi:
         specifier: workspace:*
         version: link:../sushi
@@ -2816,12 +2616,6 @@ importers:
       '@sushiswap/amm':
         specifier: workspace:*
         version: link:../amm
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../chain
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../currency
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../tines
@@ -2910,15 +2704,9 @@ importers:
       '@sushiswap/bentobox-sdk':
         specifier: workspace:*
         version: link:../bentobox-sdk
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../chain
       '@sushiswap/client':
         specifier: workspace:*
         version: link:../client
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../currency
       '@sushiswap/dexie':
         specifier: workspace:*
         version: link:../dexie
@@ -2980,7 +2768,7 @@ importers:
         specifier: 1.4.1
         version: 1.4.1(hardhat@2.17.0)
       next-themes:
-        specifier: ^0.2.1
+        specifier: 0.2.1
         version: 0.2.1(next@13.4.12)(react-dom@18.2.0)(react@18.2.0)
       sushi:
         specifier: workspace:*
@@ -3077,12 +2865,6 @@ importers:
       '@sushiswap/bentobox-sdk':
         specifier: workspace:*
         version: link:../../packages/bentobox-sdk
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../../packages/chain
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../../packages/currency
       '@sushiswap/hardhat-config':
         specifier: workspace:*
         version: link:../../config/hardhat
@@ -3233,12 +3015,6 @@ importers:
       '@sushiswap/amm':
         specifier: workspace:*
         version: link:../../packages/amm
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../../packages/chain
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../../packages/currency
       '@sushiswap/extractor':
         specifier: workspace:*
         version: link:../../packages/extractor
@@ -24733,10 +24509,6 @@ packages:
       readable-stream: 3.6.2
       stream-shift: 1.0.1
 
-  /each-series@1.0.0:
-    resolution: {integrity: sha512-4MQloCGGCmT5GJZK5ibgJSvTK1c1QSrNlDvLk6fEyRxjZnXjl+NNFfzhfXpmnWh33Owc9D9klrdzCUi7yc9r4Q==}
-    dev: false
-
   /eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
 
@@ -37913,14 +37685,6 @@ packages:
   /supports-preserve-symlinks-flag@1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
-
-  /sushi@2.1.0:
-    resolution: {integrity: sha512-17O+cIpCnx2gnnkW2BbA2ZKzAiM9WWG1SDTA3owIKG9qv9qMTxSo3F2ryQ0+tr5qkrjRdCM8zFzMzi9ZxTsIDg==}
-    dependencies:
-      each-series: 1.0.0
-      minimist: 1.2.8
-      set-immediate-shim: 1.0.1
-    dev: false
 
   /suspend-react@0.1.3(react@18.2.0):
     resolution: {integrity: sha512-aqldKgX9aZqpoDp3e8/BZ8Dm7x1pJl+qI3ZKxDN0i/IQTWUwBx/ManmlVJ3wowqbno6c2bmiIfs+Um6LbsjJyQ==}

@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { ReactNode, useEffect } from 'react'
 import { useEnsName } from 'wagmi'
 

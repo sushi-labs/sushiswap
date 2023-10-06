@@ -1,5 +1,5 @@
-import { ChainId } from '@sushiswap/chain'
-import { Type, USDC, USDT } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Type, USDC, USDT } from 'sushi/currency'
 import { getBigInt, MultiRoute } from '@sushiswap/tines'
 import https from 'https'
 
@@ -9,7 +9,10 @@ import { Router } from '../Router'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
-async function getAPIObject(url: string, data: Record<string, string | number | undefined>): Promise<object> {
+async function getAPIObject(
+  url: string,
+  data: Record<string, string | number | undefined>,
+): Promise<object> {
   const params = Object.keys(data)
     .map((k) => (data[k] !== undefined ? `${k}=${data[k]}` : undefined))
     .filter((k) => k !== undefined)
@@ -41,16 +44,21 @@ async function quote1InchV5(
   toTokenAddress: string,
   amount: string,
   gasPrice: number,
-  providers?: LiquidityProviders[]
+  providers?: LiquidityProviders[],
 ): Promise<string> {
-  const protocolWhiteList = providers ? getProtocols(providers, chainId) : undefined
-  const resp = (await getAPIObject(`https://api.1inch.io/v5.0/${chainId}/quote`, {
-    fromTokenAddress,
-    toTokenAddress,
-    amount,
-    gasPrice,
-    protocolWhiteList,
-  })) as { toTokenAmount: string }
+  const protocolWhiteList = providers
+    ? getProtocols(providers, chainId)
+    : undefined
+  const resp = (await getAPIObject(
+    `https://api.1inch.io/v5.0/${chainId}/quote`,
+    {
+      fromTokenAddress,
+      toTokenAddress,
+      amount,
+      gasPrice,
+      protocolWhiteList,
+    },
+  )) as { toTokenAmount: string }
   return resp.toTokenAmount
 }
 
@@ -60,17 +68,22 @@ async function quote1InchV1_4(
   toTokenAddress: string,
   amount: string,
   gasPrice: number,
-  providers?: LiquidityProviders[]
+  providers?: LiquidityProviders[],
 ): Promise<string> {
-  const protocolWhiteList = providers ? getProtocols(providers, chainId) : undefined
-  const resp = (await getAPIObject(`https://pathfinder.1inch.io/v1.4/chain/${chainId}/router/v5/quotes`, {
-    fromTokenAddress,
-    toTokenAddress,
-    amount,
-    gasPrice,
-    protocolWhiteList,
-    preset: 'maxReturnResult',
-  })) as { bestResult: { toTokenAmount: string } }
+  const protocolWhiteList = providers
+    ? getProtocols(providers, chainId)
+    : undefined
+  const resp = (await getAPIObject(
+    `https://pathfinder.1inch.io/v1.4/chain/${chainId}/router/v5/quotes`,
+    {
+      fromTokenAddress,
+      toTokenAddress,
+      amount,
+      gasPrice,
+      protocolWhiteList,
+      preset: 'maxReturnResult',
+    },
+  )) as { bestResult: { toTokenAmount: string } }
   return resp.bestResult.toTokenAmount
 }
 
@@ -81,7 +94,10 @@ interface Environment {
   dataFetcher: DataFetcher
 }
 
-function getEnvironment(chainId: ChainId, lps: LiquidityProviders[]): Environment {
+function getEnvironment(
+  chainId: ChainId,
+  lps: LiquidityProviders[],
+): Environment {
   let network
   switch (chainId) {
     case ChainId.ETHEREUM:
@@ -107,7 +123,7 @@ async function route(
   to: Type,
   amount: string,
   gasPrice: number,
-  providers?: LiquidityProviders[]
+  providers?: LiquidityProviders[],
 ): Promise<MultiRoute> {
   return Router.findBestRoute(
     env.dataFetcher.getCurrentPoolCodeMap(from, to),
@@ -116,7 +132,7 @@ async function route(
     BigInt(amount),
     to,
     gasPrice,
-    providers
+    providers,
   )
 }
 
@@ -154,17 +170,28 @@ async function test(
   to: Type,
   amount: string,
   gasPrice: number,
-  providers?: LiquidityProviders[]
+  providers?: LiquidityProviders[],
 ) {
-  const fromAddress = from.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : from.address
-  const toAddress = to.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : to.address
+  const fromAddress = from.isNative
+    ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    : from.address
+  const toAddress = to.isNative
+    ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    : to.address
   const [
     // res1,
     res2,
     res3,
   ] = await Promise.all([
     // quote1InchV5(env.chainId, fromAddress, toAddress, amount, gasPrice, providers), // NOTE: trident not supported in v5
-    quote1InchV1_4(env.chainId, fromAddress, toAddress, amount, gasPrice, providers),
+    quote1InchV1_4(
+      env.chainId,
+      fromAddress,
+      toAddress,
+      amount,
+      gasPrice,
+      providers,
+    ),
     route(env, from, to, amount, gasPrice, providers),
   ])
   return [parseInt(res2), res3.amountOut]

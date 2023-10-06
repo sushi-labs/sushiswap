@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { Separator } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import { ManageV2LiquidityCard } from 'ui/pool/ManageV2LiquidityCard'

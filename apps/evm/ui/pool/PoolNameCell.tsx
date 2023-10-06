@@ -1,6 +1,6 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { Pool, Protocol } from '@sushiswap/client'
 import { formatNumber } from 'sushi'
 import { classNames } from '@sushiswap/ui'

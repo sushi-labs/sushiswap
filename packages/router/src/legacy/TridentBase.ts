@@ -1,6 +1,6 @@
 // import { balanceOfAbi, totalsAbi } from 'sushi/abi'
-// import { ChainId } from '@sushiswap/chain'
-// import { Token } from '@sushiswap/currency'
+// import { ChainId } from 'sushi/chain'
+// import { Token } from 'sushi/currency'
 // import { BridgeBento, Rebase, RToken } from '@sushiswap/tines'
 // import { Address, readContracts } from '@wagmi/core'
 // import { BigNumber } from 'ethers'

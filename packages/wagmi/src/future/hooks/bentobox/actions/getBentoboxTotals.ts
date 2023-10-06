@@ -1,12 +1,15 @@
 import { bentoBoxV1TotalsAbi } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { Type as Currency } from '@sushiswap/currency'
+import { Type as Currency } from 'sushi/currency'
 import { Rebase } from '@sushiswap/tines'
 import { Address, readContracts } from 'wagmi'
 
 const totalsMap = new Map<string, Rebase>()
 
-export const getBentoboxTotalsMap = async (chainId: BentoBoxChainId, currencies: (Currency | undefined)[]) => {
+export const getBentoboxTotalsMap = async (
+  chainId: BentoBoxChainId,
+  currencies: (Currency | undefined)[],
+) => {
   const addresses = currencies
     .filter((currency): currency is Currency => Boolean(currency?.wrapped))
     .map((token) => token.wrapped.address)
@@ -19,7 +22,7 @@ export const getBentoboxTotalsMap = async (chainId: BentoBoxChainId, currencies:
         abi: bentoBoxV1TotalsAbi,
         functionName: 'totals',
         args: [address as Address],
-      } as const)
+      }) as const,
   )
 
   try {
@@ -28,7 +31,9 @@ export const getBentoboxTotalsMap = async (chainId: BentoBoxChainId, currencies:
       contracts,
     })
 
-    totals.forEach((total, i) => totalsMap.set(addresses[i], { base: total[0], elastic: total[1] }))
+    totals.forEach((total, i) =>
+      totalsMap.set(addresses[i], { base: total[0], elastic: total[1] }),
+    )
 
     return totalsMap
   } catch {
@@ -36,7 +41,10 @@ export const getBentoboxTotalsMap = async (chainId: BentoBoxChainId, currencies:
   }
 }
 
-export const getBentoboxTotals = async (chainId: BentoBoxChainId, currencies: (Currency | undefined)[]) => {
+export const getBentoboxTotals = async (
+  chainId: BentoBoxChainId,
+  currencies: (Currency | undefined)[],
+) => {
   const addresses = currencies
     .filter((currency): currency is Currency => Boolean(currency?.wrapped))
     .map((token) => token.wrapped.address)
@@ -49,14 +57,16 @@ export const getBentoboxTotals = async (chainId: BentoBoxChainId, currencies: (C
         abi: bentoBoxV1TotalsAbi,
         functionName: 'totals',
         args: [address as Address],
-      } as const)
+      }) as const,
   )
 
   try {
     return readContracts({
       allowFailure: false,
       contracts,
-    }).then((results) => results.map((result) => ({ elastic: result[0], base: result[1] })))
+    }).then((results) =>
+      results.map((result) => ({ elastic: result[0], base: result[1] })),
+    )
   } catch {
     return null
   }

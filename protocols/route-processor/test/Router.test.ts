@@ -1,7 +1,7 @@
 // import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 // import { erc20Abi, weth9Abi } from 'sushi/abi'
 // import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox/exports/exports'
-// import { ChainId, chainName } from '@sushiswap/chain'
+// import { ChainId, chainName } from 'sushi/chain'
 // import {
 //   DAI,
 //   DAI_ADDRESS,
@@ -19,7 +19,7 @@
 //   USDT,
 //   USDT_ADDRESS,
 //   WNATIVE,
-// } from '@sushiswap/currency'
+// } from 'sushi/currency'
 // import { DataFetcher, LiquidityProviders, PoolFilter, Router } from '@sushiswap/router'
 // import { BridgeBento, BridgeUnlimited, getBigNumber, RPool, StableSwapRPool } from '@sushiswap/tines'
 // import { expect } from 'chai'

@@ -1,7 +1,7 @@
 'use client'
 
 import { CogIcon } from '@heroicons/react/24/outline'
-import { Amount, Type } from '@sushiswap/currency'
+import { Amount, Type } from 'sushi/currency'
 import { useDebounce } from '@sushiswap/hooks'
 import { Percent, ZERO } from 'sushi'
 import {
@@ -18,10 +18,25 @@ import {
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import { isSushiSwapV3ChainId, NonfungiblePositionManager, Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { useNetwork, usePrepareSendTransaction, useSendTransaction } from '@sushiswap/wagmi'
-import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
-import { ConcentratedLiquidityPosition, useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
+import {
+  isSushiSwapV3ChainId,
+  NonfungiblePositionManager,
+  Position,
+  SushiSwapV3ChainId,
+} from '@sushiswap/v3-sdk'
+import {
+  useNetwork,
+  usePrepareSendTransaction,
+  useSendTransaction,
+} from '@sushiswap/wagmi'
+import {
+  SendTransactionResult,
+  waitForTransaction,
+} from '@sushiswap/wagmi/actions'
+import {
+  ConcentratedLiquidityPosition,
+  useTransactionDeadline,
+} from '@sushiswap/wagmi/future/hooks'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
@@ -40,7 +55,9 @@ interface ConcentratedLiquidityRemoveWidget {
   onChange?(val: string): void
 }
 
-export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWidget> = ({
+export const ConcentratedLiquidityRemoveWidget: FC<
+  ConcentratedLiquidityRemoveWidget
+> = ({
   token0,
   token1,
   account,
@@ -56,7 +73,12 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
   const debouncedValue = useDebounce(value, 300)
 
   const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
+    return new Percent(
+      Math.floor(
+        +(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100,
+      ),
+      10_000,
+    )
   }, [slippageTolerance])
 
   const _onChange = useCallback(
@@ -66,7 +88,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
         onChange(val)
       }
     },
-    [onChange]
+    [onChange],
   )
 
   const onSettled = useCallback(
@@ -92,13 +114,17 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
         groupTimestamp: ts,
       })
     },
-    [position, account, chainId]
+    [position, account, chainId],
   )
 
   const [feeValue0, feeValue1] = useMemo(() => {
     if (positionDetails && token0 && token1) {
-      const feeValue0 = positionDetails.fees ? Amount.fromRawAmount(token0, positionDetails.fees[0]) : undefined
-      const feeValue1 = positionDetails.fees ? Amount.fromRawAmount(token1, positionDetails.fees[1]) : undefined
+      const feeValue0 = positionDetails.fees
+        ? Amount.fromRawAmount(token0, positionDetails.fees[0])
+        : undefined
+      const feeValue1 = positionDetails.fees
+        ? Amount.fromRawAmount(token1, positionDetails.fees[1])
+        : undefined
 
       return [feeValue0, feeValue1]
     }
@@ -108,8 +134,12 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
 
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
     const liquidityPercentage = new Percent(debouncedValue, 100)
-    const discountedAmount0 = position ? liquidityPercentage.multiply(position.amount0.quotient).quotient : undefined
-    const discountedAmount1 = position ? liquidityPercentage.multiply(position.amount1.quotient).quotient : undefined
+    const discountedAmount0 = position
+      ? liquidityPercentage.multiply(position.amount0.quotient).quotient
+      : undefined
+    const discountedAmount1 = position
+      ? liquidityPercentage.multiply(position.amount1.quotient).quotient
+      : undefined
 
     const liquidityValue0 =
       token0 && typeof discountedAmount0 === 'bigint'
@@ -132,17 +162,20 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
       liquidityPercentage.greaterThan(ZERO) &&
       isSushiSwapV3ChainId(chainId)
     ) {
-      const { calldata, value: _value } = NonfungiblePositionManager.removeCallParameters(position, {
-        tokenId: positionDetails.tokenId.toString(),
-        liquidityPercentage,
-        slippageTolerance: slippagePercent,
-        deadline: deadline.toString(),
-        collectOptions: {
-          expectedCurrencyOwed0: feeValue0 ?? Amount.fromRawAmount(liquidityValue0.currency, 0),
-          expectedCurrencyOwed1: feeValue1 ?? Amount.fromRawAmount(liquidityValue1.currency, 0),
-          recipient: account,
-        },
-      })
+      const { calldata, value: _value } =
+        NonfungiblePositionManager.removeCallParameters(position, {
+          tokenId: positionDetails.tokenId.toString(),
+          liquidityPercentage,
+          slippageTolerance: slippagePercent,
+          deadline: deadline.toString(),
+          collectOptions: {
+            expectedCurrencyOwed0:
+              feeValue0 ?? Amount.fromRawAmount(liquidityValue0.currency, 0),
+            expectedCurrencyOwed1:
+              feeValue1 ?? Amount.fromRawAmount(liquidityValue1.currency, 0),
+            recipient: account,
+          },
+        })
 
       console.debug({
         tokenId: positionDetails.tokenId.toString(),
@@ -150,8 +183,10 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
         slippageTolerance: slippagePercent,
         deadline: deadline.toString(),
         collectOptions: {
-          expectedCurrencyOwed0: feeValue0 ?? Amount.fromRawAmount(liquidityValue0.currency, 0),
-          expectedCurrencyOwed1: feeValue1 ?? Amount.fromRawAmount(liquidityValue1.currency, 0),
+          expectedCurrencyOwed0:
+            feeValue0 ?? Amount.fromRawAmount(liquidityValue0.currency, 0),
+          expectedCurrencyOwed1:
+            feeValue1 ?? Amount.fromRawAmount(liquidityValue1.currency, 0),
           recipient: account,
         },
       })
@@ -193,13 +228,17 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
   const positionClosed = !position || position.liquidity === 0n
 
   return (
-    <div className={classNames(positionClosed && 'opacity-40 pointer-events-none')}>
+    <div
+      className={classNames(positionClosed && 'opacity-40 pointer-events-none')}
+    >
       <CardContent>
         <CardGroup>
           <div className="p-3 pb-2 space-y-2 overflow-hidden bg-white rounded-xl dark:bg-secondary border border-accent">
             <div className="flex justify-between gap-4">
               <div>
-                <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">{value}%</h1>
+                <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">
+                  {value}%
+                </h1>
               </div>
               <div className="flex items-center gap-2">
                 <Button
@@ -244,7 +283,13 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
                   }}
                   modules={[SettingsModule.SlippageTolerance]}
                 >
-                  <IconButton size="sm" name="Settings" icon={CogIcon} variant="secondary" className="!rounded-xl" />
+                  <IconButton
+                    size="sm"
+                    name="Settings"
+                    icon={CogIcon}
+                    variant="secondary"
+                    className="!rounded-xl"
+                  />
                 </SettingsOverlay>
               </div>
             </div>
@@ -263,20 +308,36 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
         <Card variant="outline" className="space-y-6 p-6">
           <CardGroup>
             <CardLabel>{"You'll"} receive</CardLabel>
-            <CardCurrencyAmountItem amount={position?.amount0.multiply(value).divide(100)} />
-            <CardCurrencyAmountItem amount={position?.amount1.multiply(value).divide(100)} />
+            <CardCurrencyAmountItem
+              amount={position?.amount0.multiply(value).divide(100)}
+            />
+            <CardCurrencyAmountItem
+              amount={position?.amount1.multiply(value).divide(100)}
+            />
           </CardGroup>
           <CardGroup>
             <CardLabel>{"You'll"} receive collected fees</CardLabel>
-            <CardCurrencyAmountItem amount={feeValue0?.multiply(value).divide(100)} />
-            <CardCurrencyAmountItem amount={feeValue1?.multiply(value).divide(100)} />
+            <CardCurrencyAmountItem
+              amount={feeValue0?.multiply(value).divide(100)}
+            />
+            <CardCurrencyAmountItem
+              amount={feeValue1?.multiply(value).divide(100)}
+            />
           </CardGroup>
         </Card>
       </CardContent>
       <CardFooter>
-        <Checker.Guard guardWhen={positionClosed} guardText="Position already closed">
+        <Checker.Guard
+          guardWhen={positionClosed}
+          guardText="Position already closed"
+        >
           <Checker.Connect fullWidth variant="outline" size="xl">
-            <Checker.Network fullWidth variant="outline" size="xl" chainId={chainId}>
+            <Checker.Network
+              fullWidth
+              variant="outline"
+              size="xl"
+              chainId={chainId}
+            >
               <Button
                 size="xl"
                 loading={isWritePending}
