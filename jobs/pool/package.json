@@ -62,7 +62,7 @@
     "@sushiswap/tines": "workspace:*",
     "sushi": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
-    "@wagmi/core": "1.4.1",
+    "@wagmi/core": "1.4.3",
     "@whatwg-node/fetch": "0.8.4",
     "connect-timeout": "1.9.0",
     "date-fns": "2.29.3",

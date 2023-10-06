@@ -26,7 +26,7 @@
     "@sushiswap/default-token-list": "41.4.0",
     "@sushiswap/wagmi-config": "workspace:*",
     "@vercel/node": "3.0.7",
-    "@wagmi/core": "1.4.1",
+    "@wagmi/core": "1.4.3",
     "zod": "3.21.4"
   },
   "devDependencies": {

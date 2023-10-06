@@ -60,7 +60,7 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
-    "@wagmi/core": "1.4.1",
+    "@wagmi/core": "1.4.3",
     "sushi": "workspace:*",
     "tsup": "7.2.0",
     "typescript": "5.2.2"

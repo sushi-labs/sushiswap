@@ -58,7 +58,7 @@
     "nanoid": "4.0.0",
     "sushi": "workspace:*",
     "viem": "1.15.4",
-    "wagmi": "1.4.1",
+    "wagmi": "1.4.3",
     "zod": "3.21.4"
   },
   "devDependencies": {

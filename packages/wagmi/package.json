@@ -91,7 +91,7 @@
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
     "@sentry/nextjs": "7.68.0",
-    "@wagmi/core": "1.4.1",
+    "@wagmi/core": "1.4.3",
     "ethers": "5.7.2",
     "next": "13.4.19",
     "react": "18.2.0",
@@ -100,16 +100,16 @@
     "typechain": "^8.0.0",
     "typescript": "5.2.2",
     "vitest": "0.33.0",
-    "wagmi": "1.4.1"
+    "wagmi": "1.4.3"
   },
   "peerDependencies": {
-    "@wagmi/core": "1.4.1",
+    "@wagmi/core": "1.4.3",
     "@sentry/nextjs": "7.68.0",
     "ethers": "5.7.2",
     "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "wagmi": "1.4.1"
+    "wagmi": "1.4.3"
   },
   "peerDependenciesMeta": {
     "@wagmi/core": {

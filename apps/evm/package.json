@@ -55,7 +55,7 @@
     "@uniswap/token-lists": "1.0.0-beta.30",
     "@vercel/analytics": "1.0.1",
     "@vercel/edge-config": "0.2.1",
-    "@wagmi/core": "1.4.1",
+    "@wagmi/core": "1.4.3",
     "cors": "2.8.5",
     "d3": "7.8.4",
     "date-fns": "2.29.3",
@@ -82,7 +82,7 @@
     "sushi": "workspace:*",
     "swr": "2.1.5",
     "viem": "1.15.4",
-    "wagmi": "1.4.1",
+    "wagmi": "1.4.3",
     "zod": "3.21.4"
   },
   "devDependencies": {
