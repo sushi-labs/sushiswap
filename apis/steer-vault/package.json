@@ -24,7 +24,7 @@
   "dependencies": {
     "@sushiswap/database": "workspace:*",
     "@sushiswap/pools-api": "workspace:*",
-    "@vercel/node": "2.14.3",
+    "@vercel/node": "3.0.7",
     "deepmerge-ts": "^4.3.0",
     "sushi": "workspace:*",
     "zod": "3.21.4"
@@ -36,6 +36,6 @@
     "@types/node": "18",
     "dotenv": "16.0.3",
     "typescript": "5.2.2",
-    "vercel": "29.4.0"
+    "vercel": "32.4.1"
   }
 }

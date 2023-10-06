@@ -4,6 +4,7 @@
   "exclude": ["node_modules", ".vercel"],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "noEmit": true
   }
 }

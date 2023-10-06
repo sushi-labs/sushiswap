@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
 
-import { getToken } from '../../../lib/api'
+import { getToken } from '../../../lib/api.js'
 
 const schema = z.object({
   chainId: z.coerce
@@ -13,12 +13,15 @@ const schema = z.object({
 })
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
-  response.setHeader('Cache-Control', 's-maxage=900, stale-while-revalidate=86400')
+  response.setHeader(
+    'Cache-Control',
+    's-maxage=900, stale-while-revalidate=86400',
+  )
   const { chainId, address } = schema.parse(request.query)
   try {
     const token = await getToken(chainId, address)
     return response.status(200).json(token)
-  } catch (error) {
+  } catch {
     return response.status(404).send('Not found')
   }
 }

@@ -24,7 +24,7 @@
   "dependencies": {
     "sushi": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
-    "@vercel/node": "2.14.3",
+    "@vercel/node": "3.0.7",
     "@wagmi/core": "1.4.1",
     "@whatwg-node/fetch": "0.8.4",
     "lodash.zip": "4.2.0",
@@ -38,6 +38,6 @@
     "@types/node": "18",
     "@types/node-fetch": "2.6.2",
     "typescript": "5.2.2",
-    "vercel": "29.4.0"
+    "vercel": "32.4.1"
   }
 }

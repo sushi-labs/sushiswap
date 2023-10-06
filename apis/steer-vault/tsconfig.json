@@ -3,6 +3,8 @@
   "include": ["api", "lib"],
   "exclude": ["node_modules", ".vercel"],
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
     "noEmit": true
   }
 }

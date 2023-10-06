@@ -10,7 +10,7 @@
   "dependencies": {
     "sushi": "workspace:*",
     "@sushiswap/database": "workspace:*",
-    "@vercel/node": "2.14.3",
+    "@vercel/node": "3.0.7",
     "date-fns": "2.29.3",
     "ioredis": "5.3.1",
     "zod": "3.21.4"
@@ -21,6 +21,6 @@
     "@tsconfig/strictest": "2.0.2",
     "@types/node": "18",
     "typescript": "5.2.2",
-    "vercel": "29.4.0"
+    "vercel": "32.4.1"
   }
 }
