@@ -26,7 +26,7 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
-    "generate": "ls ./src/generated.ts && npx tsx ./scripts/generate.ts",
+    "generate": "npx tsx ./scripts/generate.ts",
     "test": "jest --passWithNoTests"
   },
   "jest": {
