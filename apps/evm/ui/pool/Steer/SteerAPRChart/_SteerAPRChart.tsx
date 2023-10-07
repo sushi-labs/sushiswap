@@ -7,9 +7,8 @@ import format from 'date-fns/format'
 import ReactECharts, { EChartsOption } from 'echarts-for-react'
 import React, { useMemo } from 'react'
 import ReactVirtualizedAutoSizer from 'react-virtualized-auto-sizer'
+import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
-
-import tailwindConfig from '../../../../tailwind.config.js'
 
 const tailwind = resolveConfig(tailwindConfig)
 
