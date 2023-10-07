@@ -2,6 +2,7 @@
   "name": "@sushiswap/docs",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "storybook dev -p 6007",
     "build": "storybook build --docs",
@@ -12,14 +13,14 @@
   },
   "dependencies": {
     "@heroicons/react": "2.0.13",
-    "sushi": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@tanstack/react-table": "8.9.1",
     "class-variance-authority": "^0.6.0",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "sushi": "workspace:*"
   },
   "devDependencies": {
     "@storybook/addon-a11y": "7.0.25",
@@ -35,6 +36,7 @@
     "@storybook/react": "7.0.25",
     "@storybook/react-vite": "7.0.25",
     "@sushiswap/typescript-config": "workspace:*",
+    "@types/react": "18.2.14",
     "@vitejs/plugin-react": "4.0.1",
     "autoprefixer": "10.4.14",
     "chromatic": "^7.0.0",

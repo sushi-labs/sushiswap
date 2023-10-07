@@ -1,9 +1,11 @@
-import { Amount, Type, unwrapToken } from 'sushi/currency'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { type VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
 import { ReactNode } from 'react'
+import { Amount, Type, unwrapToken } from 'sushi/currency'
 
-import { classNames, Currency, SkeletonText } from '..'
+import classNames from 'classnames'
+import { Currency } from './currency'
+import { SkeletonText } from './skeleton'
 
 const cardVariants = cva(
   'relative rounded-xl border border-accent bg-white dark:bg-background shadow-sm',

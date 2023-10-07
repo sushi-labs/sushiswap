@@ -1,9 +1,9 @@
 'use client'
 
-import { Chain, ChainId } from 'sushi/chain'
-import { Currency } from 'sushi/currency'
 import { ImageProps } from 'next/image'
 import { FC } from 'react'
+import { Chain, ChainId } from 'sushi/chain'
+import { Currency } from 'sushi/currency'
 
 import { cloudinaryImageLoader } from '../../cloudinary'
 import { Avatar, AvatarFallback, AvatarImage } from '../avatar'

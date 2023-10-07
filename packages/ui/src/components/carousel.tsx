@@ -1,9 +1,15 @@
 'use client'
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
-import React, { ReactNode, useCallback, useLayoutEffect, useRef, useState } from 'react'
+import React, {
+  ReactNode,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 
-import { classNames } from '..'
+import classNames from 'classnames'
 
 interface CarouselProps<T> {
   defaultSlide?: number
@@ -56,7 +62,9 @@ export const Carousel = <T,>({
 
     if (ref.current && container.current) {
       setButtons({
-        hasNext: ref.current?.scrollWidth - ref.current?.scrollLeft - slideWidth > container.current?.clientWidth,
+        hasNext:
+          ref.current?.scrollWidth - ref.current?.scrollLeft - slideWidth >
+          container.current?.clientWidth,
         hasPrev: true,
       })
     }
@@ -74,7 +82,9 @@ export const Carousel = <T,>({
       if (ref.current && container.current) {
         setButtons({
           hasNext:
-            ref.current?.scrollWidth - ref.current?.scrollLeft - slideWidth * (defaultSlide - 1) >
+            ref.current?.scrollWidth -
+              ref.current?.scrollLeft -
+              slideWidth * (defaultSlide - 1) >
             container.current?.clientWidth,
           hasPrev: true,
         })
@@ -89,12 +99,21 @@ export const Carousel = <T,>({
           ref={ref}
           className="relative overflow-x-scroll overflow-x-contain whitespace-nowrap snap-x hide-scrollbar scroll-smooth pt-4 pb-10"
         >
-          <div className={classNames(className, 'w-full align-top inline-flex')}>
+          <div
+            className={classNames(className, 'w-full align-top inline-flex')}
+          >
             {slides.map((el, i) => (
               <div key={i} className="inline-block snap-start">
                 <div
-                  className={classNames(i === 0 ? 'ml-0' : i === slides.length - 1 ? 'pr-4' : '', 'flex mr-5 h-full')}
-                  style={{ transform: `translateX(calc(max(${containerWidth}px, 100vw)/2 - ${containerWidth / 2}px))` }}
+                  className={classNames(
+                    i === 0 ? 'ml-0' : i === slides.length - 1 ? 'pr-4' : '',
+                    'flex mr-5 h-full',
+                  )}
+                  style={{
+                    transform: `translateX(calc(max(${containerWidth}px, 100vw)/2 - ${
+                      containerWidth / 2
+                    }px))`,
+                  }}
                 >
                   {render(el, i)}
                 </div>

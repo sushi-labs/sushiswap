@@ -1,4 +1,5 @@
-import '@sushiswap/ui/src/index.css'
+import React from 'react'
+import '@sushiswap/ui/index.css'
 import './style.css'
 import { Preview } from '@storybook/react'
 import { ThemeProvider } from '@sushiswap/ui'
