@@ -18,7 +18,7 @@ export const SteerCarousel: FC<{ pool: Pool }> = ({ pool }) => {
   return (
     <div className="pl-4">
       {enabledVaults?.length > 0 ? (
-        <Carousel containerWidth={1058} slides={enabledVaults} render={render} className="px-2 mt-0 pt-0" />
+        <Carousel containerWidth={1090} slides={enabledVaults} render={render} className="px-2 mt-0 pt-0" />
       ) : (
         <>No smart pools found.</>
       )}
