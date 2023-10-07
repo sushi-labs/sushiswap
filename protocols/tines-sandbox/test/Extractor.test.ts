@@ -26,6 +26,7 @@ import { arbitrum, celo, Chain, hardhat, mainnet, optimism, polygon, polygonZkEv
 
 import {
   approveTestTokensToAlgebraPerifery,
+  approveTestTokensToContract,
   createAlgebraIntegralPeriphery,
   createHardhatProviderEmptyBlockchain,
   createRandomAlgebraPool,
@@ -168,7 +169,7 @@ async function startInfinitTest(args: {
         ? findMultiRouteExactIn(
             fromToken as RToken,
             toToken as RToken,
-            1e18,
+            1e12,
             pools.map((p) => p.pool),
             (args.checkTokens as Token[])[0] as RToken,
             30e9
@@ -204,7 +205,7 @@ async function startInfinitTest(args: {
             rpParams.to as Address,
             rpParams.routeCode as Address, // !!!!
           ],
-          value: BigInt(rpParams.value?.toString() as string),
+          value: rpParams.value,
           account: args.account,
         })
         const amountOutExp = BigInt(route.amountOutBI.toString())
@@ -269,6 +270,7 @@ async function createEmptyAlgebraEnvorinment(
       args: ['0x0000000000000000000000000000000000000000', []],
     })
   )
+  await approveTestTokensToContract(client, RP3, testTokens)
 
   const MultiCall3Address = await getDeploymentAddress(
     client,

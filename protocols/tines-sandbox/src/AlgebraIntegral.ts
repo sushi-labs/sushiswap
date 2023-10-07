@@ -143,6 +143,10 @@ export async function approveTestTokensToAlgebraPerifery(
   await Promise.all(tokens.tokens.map((t) => approve(client, t, tokens.owner, env.SwapRouterAddress, tokens.supply)))
 }
 
+export async function approveTestTokensToContract(client: WalletClient, addr: Address, tokens: TestTokens) {
+  await Promise.all(tokens.tokens.map((t) => approve(client, t, tokens.owner, addr, tokens.supply)))
+}
+
 const Two96 = Math.pow(2, 96)
 export function encodePriceSqrt(reserve1: number, reserve0: number) {
   return BigInt(Math.round(Math.sqrt(reserve1 / reserve0) * Two96))
