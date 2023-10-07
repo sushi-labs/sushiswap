@@ -22,17 +22,16 @@ interface PoolSelfState {
   sqrtPriceX96: bigint
 }
 
-const slot0Abi: Abi = [
+const globalStateAbi: Abi = [
   {
     inputs: [],
-    name: 'slot0',
+    name: 'globalState',
     outputs: [
-      { internalType: 'uint160', name: 'sqrtPriceX96', type: 'uint160' },
+      { internalType: 'uint160', name: 'price', type: 'uint160' },
       { internalType: 'int24', name: 'tick', type: 'int24' },
-      { internalType: 'uint16', name: 'observationIndex', type: 'uint16' },
-      { internalType: 'uint16', name: 'observationCardinality', type: 'uint16' },
-      { internalType: 'uint16', name: 'observationCardinalityNext', type: 'uint16' },
-      { internalType: 'uint8', name: 'feeProtocol', type: 'uint8' },
+      { internalType: 'uint16', name: 'lastFee', type: 'uint16' },
+      { internalType: 'uint8', name: 'pluginConfig', type: 'uint8' },
+      { internalType: 'uint16', name: 'communityFee', type: 'uint16' },
       { internalType: 'bool', name: 'unlocked', type: 'bool' },
     ],
     stateMutability: 'view',
@@ -143,7 +142,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
             blockNumber,
             returnValues: [globalState, liquidity, fee, balance0, balance1],
           } = await this.client.callSameBlock([
-            { address: this.address, abi: slot0Abi, functionName: 'globalState' },
+            { address: this.address, abi: globalStateAbi, functionName: 'globalState' },
             { address: this.address, abi: liquidityAbi, functionName: 'liquidity' },
             { address: this.address, abi: feeAbi, functionName: 'fee' },
             { address: this.token0.address as Address, abi: erc20Abi, functionName: 'balanceOf', args: [this.address] },
@@ -151,7 +150,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
           ])
           if (blockNumber < this.latestEventBlockNumber) continue // later events already have came
 
-          const [sqrtPriceX96, tick] = globalState as [bigint, number]
+          const [price, tick] = globalState as [bigint, number]
           this.state = {
             blockNumber,
             fee: Number(fee as bigint),
@@ -159,7 +158,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
             reserve1: balance1 as bigint,
             tick: Math.floor(tick / this.spacing) * this.spacing,
             liquidity: liquidity as bigint,
-            sqrtPriceX96: sqrtPriceX96 as bigint,
+            sqrtPriceX96: price,
           }
           this.lastPoolCode = undefined
 
