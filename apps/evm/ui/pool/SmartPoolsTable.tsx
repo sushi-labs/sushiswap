@@ -463,11 +463,10 @@ export const SmartPoolsTable = () => {
           {_vaults?.length ? <span className="text-gray-400 dark:text-slate-500">({_vaults.length})</span> : null}
         </CardTitle>
         <CardDescription>
-          Steer Finance employs an automated approach to optimize your position, strategically moving it within a
-          defined range to capitalize on increased APR yields, albeit with the inclusion of a management fee. Various
-          strategies are available, each with subtle variations in position management. To learn more about how a
-          specific strategy operates, simply hover over its name for detailed information. To learn more about Smart
-          Pools, click{' '}
+          {`Smart pools optimize liquidity allocation within custom price ranges, enhancing trading efficiency
+          by providing deeper liquidity around the current price, increasing LPs' fee earnings while
+          allowing the market to determine the distribution of rational LPs' positions.`}{' '}
+          To learn more about Smart Pools, click{' '}
           <LinkExternal href="https://steer.finance/steer-protocol-and-sushi-collaborate-to-optimize-concentrated-liquidity/">
             here
           </LinkExternal>
