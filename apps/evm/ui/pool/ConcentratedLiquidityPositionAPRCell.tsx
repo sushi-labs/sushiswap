@@ -7,7 +7,9 @@ export const ConcentratedLiquidityPositionAPRCell: FC<Row<ConcentratedLiquidityP
   return (
     <HoverCard openDelay={0} closeDelay={0}>
       <HoverCardTrigger asChild>
-        <span className="underline decoration-dotted">{/*{formatPercent(props.row.original.totalApr1d)}*/}</span>
+        <span className="underline decoration-dotted underline-offset-2">
+          {/*{formatPercent(props.row.original.totalApr1d)}*/}
+        </span>
       </HoverCardTrigger>
       <HoverCardContent side="right" className="!p-0 max-w-[320px]">
         <CardHeader>

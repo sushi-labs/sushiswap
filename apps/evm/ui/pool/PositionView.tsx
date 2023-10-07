@@ -361,7 +361,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                               {unwrapToken(currencyQuote)?.symbol}{' '}
                               <HoverCard closeDelay={0} openDelay={0}>
                                 <HoverCardTrigger asChild>
-                                  <span className="text-sm underline decoration-dotted underline-offset-2 text-muted-foreground font-normal">
+                                  <span className="text-sm underline decoration-dotted underline-offset-2 underline-offset-2 text-muted-foreground font-normal">
                                     (
                                     {priceLower
                                       ?.subtract(invert ? pool.token1Price : pool.token0Price)
@@ -417,7 +417,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                               {unwrapToken(currencyQuote)?.symbol}{' '}
                               <HoverCard closeDelay={0} openDelay={0}>
                                 <HoverCardTrigger asChild>
-                                  <span className="text-sm underline decoration-dotted underline-offset-2 text-muted-foreground font-normal">
+                                  <span className="text-sm underline decoration-dotted underline-offset-2 underline-offset-2 text-muted-foreground font-normal">
                                     ( +
                                     {priceUpper
                                       ?.subtract(invert ? pool.token1Price : pool.token0Price)

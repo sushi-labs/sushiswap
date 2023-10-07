@@ -107,7 +107,7 @@ export const PoolHeader: FC<PoolHeader> = ({ backUrl, address, pool, apy, priceR
                 <TooltipProvider>
                   <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
-                      <span className="underline decoration-dotted">
+                      <span className="underline decoration-dotted underline-offset-2">
                         {formatPercent((apy.fees || 0) + (apy.rewards || 0))}
                       </span>
                     </TooltipTrigger>
@@ -116,7 +116,7 @@ export const PoolHeader: FC<PoolHeader> = ({ backUrl, address, pool, apy, priceR
                 </TooltipProvider>
               ) : (
                 <APRHoverCard pool={pool}>
-                  <span className="underline decoration-dotted">
+                  <span className="underline decoration-dotted underline-offset-2">
                     {formatPercent((apy.fees || 0) + (apy.rewards || 0))}
                   </span>
                 </APRHoverCard>

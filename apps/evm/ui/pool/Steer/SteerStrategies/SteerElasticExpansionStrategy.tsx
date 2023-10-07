@@ -103,7 +103,9 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
             <SteerAPRHoverCard pool={vault.pool} vault={vault}>
               <StatValue
                 size="sm"
-                className={classNames(vault.pool.isIncentivized && 'underline decoration-dotted underline-offset-1')}
+                className={classNames(
+                  vault.pool.isIncentivized && 'underline decoration-dotted underline-offset-2 underline-offset-1'
+                )}
               >
                 {formatPercent(vault.apr1w + vault.pool.incentiveApr)}
               </StatValue>

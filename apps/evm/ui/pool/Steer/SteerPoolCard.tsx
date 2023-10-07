@@ -47,7 +47,9 @@ export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
             <StatLabel size="sm">Weekly APR</StatLabel>
             <SteerAPRHoverCard pool={pool} vault={vault}>
               <StatValue
-                className={classNames(pool.isIncentivized && 'underline decoration-dotted underline-offset-4 z-10')}
+                className={classNames(
+                  pool.isIncentivized && 'underline decoration-dotted underline-offset-2 underline-offset-4 z-10'
+                )}
               >
                 {formatPercent(vault.apr1w + pool.incentiveApr)}
               </StatValue>

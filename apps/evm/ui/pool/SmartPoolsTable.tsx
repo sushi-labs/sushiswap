@@ -1,18 +1,31 @@
 'use client'
 
-import { SteerVaults } from '@sushiswap/client'
+import { EllipsisHorizontalIcon, GiftIcon, LightBulbIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
+import { UploadIcon } from '@heroicons/react-v1/outline'
+import { DownloadIcon } from '@heroicons/react-v1/solid'
+import { Protocol, SteerVaults } from '@sushiswap/client'
 import { useSteerVaults } from '@sushiswap/client/hooks'
-import { Token } from '@sushiswap/currency'
+import { Native, Token } from '@sushiswap/currency'
 import { formatNumber, formatPercent, formatUSD } from '@sushiswap/format'
 import {
   Badge,
+  Button,
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
+  Chip,
   classNames,
   Currency,
   DataTable,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuGroupLabel,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   LinkExternal,
   NetworkIcon,
   SkeletonCircle,
@@ -23,11 +36,14 @@ import {
   TooltipTrigger,
 } from '@sushiswap/ui'
 import { ColumnDef, PaginationState, SortingState, TableState } from '@tanstack/react-table'
+import Link from 'next/link'
 import React, { useMemo, useState } from 'react'
 
+import { isAngleEnabledChainId } from '../../config'
 import { APRHoverCard } from './APRHoverCard'
 import { ProtocolBadge } from './PoolNameCell'
 import { usePoolFilters } from './PoolsFiltersProvider'
+import { SteerStrategyConfig } from './Steer/constants'
 
 const COLUMNS = [
   {
@@ -135,7 +151,20 @@ const COLUMNS = [
   {
     id: 'name',
     header: 'Strategy',
-    cell: ({ row: { original } }) => original.strategy.replace(/([a-z0-9])([A-Z])/g, '$1 $2'),
+    cell: ({ row: { original } }) => (
+      <TooltipProvider>
+        <Tooltip delayDuration={0}>
+          <TooltipTrigger asChild>
+            <span className="underline decoration-dotted underline-offset-2">
+              {original.strategy.replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{SteerStrategyConfig[original.strategy].description}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
     meta: {
       skeleton: <SkeletonText fontSize="lg" />,
     },
@@ -146,10 +175,23 @@ const COLUMNS = [
     accessorFn: (row) => row.pool.liquidityUSD,
     sortingFn: ({ original: rowA }, { original: rowB }) =>
       Number(rowA.pool.liquidityUSD) - Number(rowB.pool.liquidityUSD),
-    cell: (props) =>
-      formatUSD(props.row.original.pool.liquidityUSD).includes('NaN')
-        ? '$0.00'
-        : formatUSD(props.row.original.pool.liquidityUSD),
+    cell: ({ row: { original } }) => (
+      <span className="flex gap-2">
+        {formatUSD(original.pool.liquidityUSD).includes('NaN') ? '$0.00' : formatUSD(original.pool.liquidityUSD)}
+        <TooltipProvider>
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger asChild>
+              <span className="underline decoration-dotted underline-offset-2 text-muted-foreground">
+                {formatUSD(original.reserveUSD).includes('NaN') ? '$0.00' : formatUSD(original.reserveUSD)}
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Amount of liquidity staked in the vault.</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </span>
+    ),
     meta: {
       skeleton: <SkeletonText fontSize="lg" />,
     },
@@ -170,10 +212,213 @@ const COLUMNS = [
     accessorFn: (row) => row.pool.totalApr1d,
     cell: (props) => (
       <APRHoverCard pool={props.row.original.pool}>
-        <span className="underline decoration-dotted">{formatPercent(props.row.original.pool.totalApr1d)}</span>
+        <span className="underline decoration-dotted underline-offset-2">
+          {formatPercent(props.row.original.pool.totalApr1d)}
+        </span>
       </APRHoverCard>
     ),
     meta: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
+  },
+  {
+    id: 'actions',
+    cell: ({ row }) =>
+      row.original.pool.protocol === 'SUSHISWAP_V3' ? (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button icon={EllipsisHorizontalIcon} variant="ghost" size="sm">
+              <span className="sr-only">Open menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-fit">
+            <DropdownMenuLabel>
+              {row.original.token0.symbol} / {row.original.token1.symbol}
+              <Chip variant="blue" className="ml-2">
+                SushiSwap V3
+              </Chip>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem asChild>
+                <Link
+                  onClick={(e) => e.stopPropagation()}
+                  shallow={true}
+                  className="flex items-center"
+                  href={`/pool/${row.original.id}/positions/create/manual`}
+                >
+                  <PlusIcon width={16} height={16} className="mr-2" />
+                  Create position
+                </Link>
+              </DropdownMenuItem>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        onClick={(e) => e.stopPropagation()}
+                        shallow={true}
+                        className="flex items-center"
+                        href={`/pool/${row.original.id}/smart`}
+                      >
+                        <span className="relative">
+                          <LightBulbIcon width={16} height={16} className="mr-2" />
+                          <sup className="rounded-full bg-background absolute right-[3px]">
+                            <PlusIcon width={12} height={12} />
+                          </sup>
+                        </span>
+                        Create smart position
+                      </Link>
+                    </DropdownMenuItem>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" className="max-w-[240px]">
+                    <p>
+                      {`Smart pools optimize liquidity allocation within custom price ranges, enhancing trading efficiency
+                      by providing deeper liquidity around the current price, increasing LPs' fee earnings while
+                      allowing the market to determine the distribution of rational LPs' positions.`}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild={isAngleEnabledChainId(row.original.chainId)}>
+                    <DropdownMenuItem asChild disabled={!isAngleEnabledChainId(row.original.chainId)}>
+                      <Link
+                        onClick={(e) => e.stopPropagation()}
+                        shallow={true}
+                        className="flex items-center"
+                        href={`/pool/incentivize?chainId=${row.original.chainId}&fromCurrency=${
+                          row.original.token0.address === Native.onChain(row.original.chainId).wrapped.address
+                            ? 'NATIVE'
+                            : row.original.token0.address
+                        }&toCurrency=${
+                          row.original.token1.address === Native.onChain(row.original.chainId).wrapped.address
+                            ? 'NATIVE'
+                            : row.original.token1.address
+                        }&feeAmount=${row.original.pool.swapFee * 10_000 * 100}`}
+                      >
+                        <GiftIcon width={16} height={16} className="mr-2" />
+                        Add incentive
+                      </Link>
+                    </DropdownMenuItem>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" className="max-w-[240px]">
+                    <p>
+                      {!isAngleEnabledChainId(row.original.chainId)
+                        ? 'Not available on this network'
+                        : 'Add rewards to a pool to incentivize liquidity providers joining in.'}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ) : (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button icon={EllipsisHorizontalIcon} variant="ghost" size="sm">
+              <span className="sr-only">Open menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-fit">
+            <DropdownMenuLabel>
+              {row.original.token0.symbol} / {row.original.token1.symbol}
+              {row.original.pool.protocol === Protocol.BENTOBOX_STABLE && (
+                <Chip variant="green" className="ml-2">
+                  Trident Stable
+                </Chip>
+              )}
+              {row.original.pool.protocol === Protocol.BENTOBOX_CLASSIC && (
+                <Chip variant="green" className="ml-2">
+                  Trident Classic
+                </Chip>
+              )}
+              {row.original.pool.protocol === 'SUSHISWAP_V2' && (
+                <Chip variant="pink" className="ml-2">
+                  SushiSwap V2
+                </Chip>
+              )}
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem asChild>
+                <Link
+                  onClick={(e) => e.stopPropagation()}
+                  shallow={true}
+                  className="flex items-center"
+                  href={`/pool/${row.original.id}/add`}
+                >
+                  <PlusIcon width={16} height={16} className="mr-2" />
+                  Add liquidity
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link
+                  onClick={(e) => e.stopPropagation()}
+                  shallow={true}
+                  className="flex items-center"
+                  href={`/pool/${row.original.id}/remove`}
+                >
+                  <MinusIcon width={16} height={16} className="mr-2" />
+                  Remove liquidity
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuGroupLabel>Farm rewards</DropdownMenuGroupLabel>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild={row.original.pool.incentives && row.original.pool.incentives.length > 0}>
+                    <DropdownMenuItem
+                      asChild
+                      disabled={!(row.original.pool.incentives && row.original.pool.incentives.length > 0)}
+                    >
+                      <Link
+                        onClick={(e) => e.stopPropagation()}
+                        shallow={true}
+                        className="flex items-center"
+                        href={`/pool/${row.original.id}/stake`}
+                      >
+                        <DownloadIcon width={16} height={16} className="mr-2" />
+                        Stake
+                      </Link>
+                    </DropdownMenuItem>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" className="max-w-[240px]">
+                    <p>
+                      {!(row.original.pool.incentives && row.original.pool.incentives.length > 0)
+                        ? 'No rewards available on this pool'
+                        : `After adding liquidity, stake your liquidity tokens to benefit from extra rewards`}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <DropdownMenuItem
+                asChild
+                disabled={!(row.original.pool.incentives && row.original.pool.incentives.length > 0)}
+              >
+                <Link
+                  onClick={(e) => e.stopPropagation()}
+                  shallow={true}
+                  className="flex items-center"
+                  href={`/pool/${row.original.id}/unstake`}
+                >
+                  <UploadIcon width={16} height={16} className="mr-2" />
+                  Unstake
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+    meta: {
+      disableLink: true,
       skeleton: <SkeletonText fontSize="lg" />,
     },
   },
@@ -208,6 +453,8 @@ export const SmartPoolsTable = () => {
     [protocols, farmsOnly, vaults]
   )
 
+  console.log(_vaults)
+
   return (
     <Card>
       <CardHeader>
@@ -219,8 +466,8 @@ export const SmartPoolsTable = () => {
           Steer Finance employs an automated approach to optimize your position, strategically moving it within a
           defined range to capitalize on increased APR yields, albeit with the inclusion of a management fee. Various
           strategies are available, each with subtle variations in position management. To learn more about how a
-          specific strategy operates, simply hover over its name for detailed information. To learn more about Smart
-          Pools, click{' '}
+          specific strategy operates, simply hover over its name for detailed information. <br />
+          To learn more about Smart Pools, click{' '}
           <LinkExternal href="https://steer.finance/steer-protocol-and-sushi-collaborate-to-optimize-concentrated-liquidity/">
             here
           </LinkExternal>
@@ -231,6 +478,7 @@ export const SmartPoolsTable = () => {
         onPaginationChange={setPagination}
         pagination={true}
         state={state}
+        linkFormatter={(row) => `/pool/${row.pool.id}/smart/${row.id}`}
         onSortingChange={setSorting}
         loading={!vaults && isValidatingVaults}
         columns={COLUMNS}

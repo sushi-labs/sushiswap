@@ -56,7 +56,7 @@ export const REWARDS_V3_APR_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
     <TooltipProvider>
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
-          <span className="underline decoration-dotted flex items-center justify-end gap-1 text-sm text-gray-900 dark:text-slate-50">
+          <span className="underline decoration-dotted underline-offset-2 flex items-center justify-end gap-1 text-sm text-gray-900 dark:text-slate-50">
             {formatNumber(props.row.original.meanAPR)}%
           </span>
         </TooltipTrigger>
@@ -136,7 +136,9 @@ export const APR_COLUMN_POOL: ColumnDef<Pool, unknown> = {
   accessorFn: (row) => row.totalApr1d,
   cell: (props) => (
     <APRHoverCard pool={props.row.original}>
-      <span className="underline decoration-dotted">{formatPercent(props.row.original.totalApr1d)}</span>
+      <span className="underline decoration-dotted underline-offset-2">
+        {formatPercent(props.row.original.totalApr1d)}
+      </span>
     </APRHoverCard>
   ),
   meta: {
@@ -237,7 +239,9 @@ export const APR_COLUMN: ColumnDef<PositionWithPool, unknown> = {
   accessorFn: (row) => row.pool.totalApr1d,
   cell: (props) => (
     <APRHoverCard pool={props.row.original.pool}>
-      <span className="underline decoration-dotted">{formatPercent(props.row.original.pool.totalApr1d)}</span>
+      <span className="underline decoration-dotted underline-offset-2">
+        {formatPercent(props.row.original.pool.totalApr1d)}
+      </span>
     </APRHoverCard>
   ),
   meta: {
