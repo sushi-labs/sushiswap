@@ -1,18 +1,10 @@
 import { routeProcessor2Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token } from '@sushiswap/currency'
-import {
-  Extractor,
-  FactoryAlgebra,
-  FactoryV2,
-  FactoryV3,
-  LogFilterType,
-  MultiCallAggregator,
-  TokenManager,
-} from '@sushiswap/extractor'
+import { Extractor, FactoryV2, FactoryV3, LogFilterType, MultiCallAggregator, TokenManager } from '@sushiswap/extractor'
 import { ConstantProductPoolCode, LiquidityProviders, NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { findMultiRouteExactIn, getBigInt, RouteStatus, RToken } from '@sushiswap/tines'
+import { getBigInt, RouteStatus } from '@sushiswap/tines'
 import { SUSHISWAP_V2_FACTORY_ADDRESS, SUSHISWAP_V2_INIT_CODE_HASH } from '@sushiswap/v2-sdk'
 import {
   POOL_INIT_CODE_HASH,
@@ -21,20 +13,8 @@ import {
   SushiSwapV3ChainId,
 } from '@sushiswap/v3-sdk'
 import { config } from '@sushiswap/viem-config'
-import { Abi, Address, createPublicClient, custom, Hex, http, Transport, walletActions } from 'viem'
-import { arbitrum, celo, Chain, hardhat, mainnet, optimism, polygon, polygonZkEvm } from 'viem/chains'
-
-import {
-  approveTestTokensToAlgebraPerifery,
-  approveTestTokensToContract,
-  createAlgebraIntegralPeriphery,
-  createHardhatProviderEmptyBlockchain,
-  createRandomAlgebraPool,
-  createTestTokens,
-  getDeploymentAddress,
-} from '../src'
-import MultiCall3 from './Multicall3.sol/Multicall3.json'
-import RouteProcessor3 from './RouteProcessor3.sol/RouteProcessor3.json'
+import { Address, createPublicClient, http, Transport } from 'viem'
+import { arbitrum, celo, Chain, mainnet, optimism, polygon, polygonZkEvm } from 'viem/chains'
 
 export const RP3Address = {
   [ChainId.ETHEREUM]: '0x827179dD56d07A7eeA32e3873493835da2866976' as Address,
@@ -110,9 +90,8 @@ async function startInfinitTest(args: {
   transport?: Transport
   providerURL?: string
   chain: Chain
-  factoriesV2?: FactoryV2[]
-  factoriesV3?: FactoryV3[]
-  factoriesAlgebra?: FactoryAlgebra[]
+  factoriesV2: FactoryV2[]
+  factoriesV3: FactoryV3[]
   tickHelperContract: Address
   cacheDir: string
   logDepth: number
@@ -122,7 +101,6 @@ async function startInfinitTest(args: {
   RP3Address: Address
   account?: Address
   checkTokens?: Token[]
-  testEnvironment?: boolean
 }) {
   const transport = args.transport ?? http(args.providerURL)
   const client = createPublicClient({
@@ -131,25 +109,29 @@ async function startInfinitTest(args: {
   })
   const chainId = client.chain?.id as ChainId
 
-  const intermediateTokens = args.testEnvironment ? args.checkTokens ?? [] : BASES_TO_CHECK_TRADES_AGAINST[chainId]
   const extractor = new Extractor({ ...args, client })
-  await extractor.start(intermediateTokens.concat(args.checkTokens ?? []))
+  await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(args.checkTokens ?? []))
 
-  const nativeProvider = args.testEnvironment ? undefined : new NativeWrapProvider(chainId, client)
+  const nativeProvider = new NativeWrapProvider(chainId, client)
   const tokenManager = new TokenManager(
     extractor.extractorV2?.multiCallAggregator || (extractor.extractorV3?.multiCallAggregator as MultiCallAggregator),
     __dirname,
     `tokens-${client.chain?.id}`
   )
   await tokenManager.addCachedTokens()
-  const tokens = args.checkTokens ?? intermediateTokens.concat(Array.from(tokenManager.tokens.values()).slice(0, 100))
+  const tokens =
+    args.checkTokens ??
+    BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values()).slice(0, 100))
   for (;;) {
     for (let i = 0; i < tokens.length; ++i) {
       await delay(1000)
       const time0 = performance.now()
-      const pools0 = extractor.getPoolCodesForTokens(intermediateTokens.concat([tokens[i]]))
+      const pools0 = extractor.getPoolCodesForTokens(BASES_TO_CHECK_TRADES_AGAINST[chainId].concat([tokens[i]]))
       const time1 = performance.now()
-      const pools1 = await extractor.getPoolCodesForTokensAsync(intermediateTokens.concat([tokens[i]]), 2000)
+      const pools1 = await extractor.getPoolCodesForTokensAsync(
+        BASES_TO_CHECK_TRADES_AGAINST[chainId].concat([tokens[i]]),
+        2000
+      )
       const time2 = performance.now()
       const pools0_2 = pools0.filter((p) => p instanceof ConstantProductPoolCode).length
       const pools0_3 = pools0.length - pools0_2
@@ -162,19 +144,10 @@ async function startInfinitTest(args: {
       const pools = pools1
       const poolMap = new Map<string, PoolCode>()
       pools.forEach((p) => poolMap.set(p.pool.address, p))
-      if (nativeProvider) nativeProvider.getCurrentPoolList().forEach((p) => poolMap.set(p.pool.address, p))
-      const fromToken = args.testEnvironment ? tokens[(i + 1) % tokens.length] : Native.onChain(chainId),
+      nativeProvider.getCurrentPoolList().forEach((p) => poolMap.set(p.pool.address, p))
+      const fromToken = Native.onChain(chainId),
         toToken = tokens[i]
-      const route = args.testEnvironment
-        ? findMultiRouteExactIn(
-            fromToken as RToken,
-            toToken as RToken,
-            1e12,
-            pools.map((p) => p.pool),
-            (args.checkTokens as Token[])[0] as RToken,
-            30e9
-          )
-        : Router.findBestRoute(poolMap, chainId, fromToken, getBigInt(1e18), toToken, 30e9)
+      const route = Router.findBestRoute(poolMap, chainId, fromToken, getBigInt(1e18), toToken, 30e9)
       if (route.status === RouteStatus.NoWay) {
         console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ` + timingLine)
         continue
@@ -205,7 +178,7 @@ async function startInfinitTest(args: {
             rpParams.to as Address,
             rpParams.routeCode as Address, // !!!!
           ],
-          value: rpParams.value,
+          value: BigInt(rpParams.value?.toString() as string),
           account: args.account,
         })
         const amountOutExp = BigInt(route.amountOutBI.toString())
@@ -223,104 +196,6 @@ async function startInfinitTest(args: {
     }
   }
 }
-
-async function createEmptyAlgebraEnvorinment(
-  poolNumber: number,
-  positionNumber: number
-): Promise<{
-  transport: Transport
-  //chain: Chain
-  factory: Address
-  tickLens: Address
-  RP3: Address
-  MultiCall3: Address
-  tokenOwner: Address
-  tokens: Token[]
-}> {
-  const tokenNumber = Math.ceil(0.5 + Math.sqrt(1 + 8 * poolNumber) / 2)
-  const { provider, chainId } = await createHardhatProviderEmptyBlockchain()
-  const transport = custom(provider)
-  const client = createPublicClient({
-    chain: {
-      ...hardhat,
-      contracts: {
-        multicall3: {
-          address: '0xca11bde05977b3631167028862be2a173976ca11',
-          blockCreated: 25770160,
-        },
-      },
-      id: chainId,
-    },
-    transport,
-  }).extend(walletActions)
-  const env = await createAlgebraIntegralPeriphery(client)
-  const testTokens = await createTestTokens(client, tokenNumber)
-  await approveTestTokensToAlgebraPerifery(client, env, testTokens)
-  for (let i = 0; i < poolNumber; ++i) {
-    await createRandomAlgebraPool(client, env, testTokens, testTokens.owner, 'full extractor test', positionNumber)
-  }
-
-  const RP3 = await getDeploymentAddress(
-    client,
-    client.deployContract({
-      chain: null,
-      abi: RouteProcessor3.abi as Abi,
-      bytecode: RouteProcessor3.bytecode as Hex,
-      account: env.deployer as Address,
-      args: ['0x0000000000000000000000000000000000000000', []],
-    })
-  )
-  await approveTestTokensToContract(client, RP3, testTokens)
-
-  const MultiCall3Address = await getDeploymentAddress(
-    client,
-    client.deployContract({
-      chain: null,
-      abi: MultiCall3.abi as Abi,
-      bytecode: MultiCall3.bytecode as Hex,
-      account: env.deployer as Address,
-    })
-  )
-
-  return {
-    transport,
-    //chain,
-    factory: env.factoryAddress,
-    tickLens: env.TickLensAddress,
-    RP3,
-    MultiCall3: MultiCall3Address,
-    tokens: testTokens.tokens,
-    tokenOwner: testTokens.owner,
-  }
-}
-
-it('Extractor Hardhat Algebra test', async () => {
-  const { transport, factory, tickLens, RP3, tokens, tokenOwner, MultiCall3 } = await createEmptyAlgebraEnvorinment(
-    3,
-    10
-  )
-  await startInfinitTest({
-    transport,
-    chain: {
-      ...hardhat,
-      contracts: {
-        multicall3: {
-          address: MultiCall3,
-          blockCreated: 1,
-        },
-      },
-    },
-    factoriesAlgebra: [{ address: factory, provider: LiquidityProviders.AlgebraIntegral }],
-    tickHelperContract: tickLens,
-    cacheDir: './cache',
-    logDepth: 50,
-    logging: true,
-    RP3Address: RP3,
-    checkTokens: tokens,
-    testEnvironment: true,
-    account: tokenOwner,
-  })
-})
 
 it.skip('Extractor Ethereum infinit work test', async () => {
   await startInfinitTest({
