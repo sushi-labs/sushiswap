@@ -165,10 +165,9 @@ async function startInfinitTest(args: {
         continue
       }
       try {
-        const amountOutReal = await client.readContract({
+        const { result: amountOutReal } = await client.simulateContract({
           address: args.RP3Address,
           abi: routeProcessor2Abi,
-          // @ts-ignore
           functionName: 'processRoute',
           args: [
             rpParams.tokenIn as Address,
