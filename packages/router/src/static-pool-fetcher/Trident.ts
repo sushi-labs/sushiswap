@@ -1,15 +1,15 @@
 import {
+  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
+  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
+  TridentChainId,
+} from '@sushiswap/trident-sdk'
+import {
   tridentGetPoolsAbi,
   tridentPoolsCountAbi,
   tridentSwapFeeAbi,
 } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Currency, Token } from 'sushi/currency'
-import {
-  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
-  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
-  TridentChainId,
-} from '@sushiswap/trident-sdk'
 import { Address, PublicClient } from 'viem'
 
 import { getCurrencyCombinations } from '../getCurrencyCombinations'

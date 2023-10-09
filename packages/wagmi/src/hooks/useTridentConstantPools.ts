@@ -1,16 +1,16 @@
 'use client'
 
 import {
+  Fee,
+  TridentConstantPool,
+  computeTridentConstantPoolAddress,
+} from '@sushiswap/amm'
+import { useMemo } from 'react'
+import {
   tridentConstantPoolAbi,
   tridentConstantPoolFactoryAbi,
 } from 'sushi/abi'
-import {
-  computeTridentConstantPoolAddress,
-  Fee,
-  TridentConstantPool,
-} from '@sushiswap/amm'
 import { Amount, Currency, Token } from 'sushi/currency'
-import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
 
 import { useTridentConstantPoolFactoryContract } from './useTridentConstantPoolFactoryContract'
@@ -332,7 +332,6 @@ export function useTridentConstantPool(
   fee: Fee,
   twap: boolean,
 ): [TridentConstantPoolState, TridentConstantPool | null] {
-  console.log('useTridentConstantPool', twap, typeof twap)
   const inputs: [PoolInput] = useMemo(
     () => [[tokenA, tokenB, Number(fee), Boolean(twap)]],
     [tokenA, tokenB, fee, twap],

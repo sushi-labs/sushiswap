@@ -6,10 +6,12 @@ interface WagmiStoreVersionCheckProps {
   children: React.ReactNode
 }
 
-export const WagmiStoreVersionCheck: FC<WagmiStoreVersionCheckProps> = ({ children }) => {
+export const WagmiStoreVersionCheck: FC<WagmiStoreVersionCheckProps> = ({
+  children,
+}) => {
   useEffect(() => {
     const store = localStorage.getItem('wagmi.cache')
-    if (store && store.includes('BigNumber')) {
+    if (store?.includes('BigNumber')) {
       localStorage.removeItem('wagmi.cache')
       localStorage.removeItem('wagmi.store')
     }

@@ -53,7 +53,7 @@
     "react-dom": "18.2.0",
     "react-hook-form": "7.41.2",
     "wagmi": "1.4.3",
-    "viem": "1.15.4",
+    "viem": "1.10.7",
     "zod": "3.21.4"
   },
   "devDependencies": {

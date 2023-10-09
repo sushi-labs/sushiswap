@@ -1,13 +1,11 @@
 import {
-  computeTridentConstantPoolAddress,
-  computeTridentStablePoolAddress,
   Fee,
   TridentConstantPool,
   TridentStablePool,
+  computeTridentConstantPoolAddress,
+  computeTridentStablePoolAddress,
 } from '@sushiswap/amm'
 import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { ChainId } from 'sushi/chain'
-import { Amount, Type } from 'sushi/currency'
 import {
   DialogConfirm,
   DialogContent,
@@ -44,19 +42,21 @@ import {
 } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import {
+  LiquidityInput,
   approveMasterContractAction,
   batchAction,
   deployNewPoolAction,
-  LiquidityInput,
 } from 'lib/actions'
 import { APPROVE_TAG_CREATE_TRIDENT } from 'lib/constants'
 import { FC, ReactNode, useCallback, useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Amount, Type } from 'sushi/currency'
 import {
   Address,
+  UserRejectedRequestError,
   encodeAbiParameters,
   encodeFunctionData,
   parseAbiParameters,
-  UserRejectedRequestError,
   zeroAddress,
 } from 'viem'
 
@@ -297,7 +297,7 @@ export const CreateSectionReviewModalTrident: FC<
         value: value ?? 0n,
       }
     } catch (e: unknown) {
-      console.log(e)
+      console.error(e)
     }
   }, [
     address,

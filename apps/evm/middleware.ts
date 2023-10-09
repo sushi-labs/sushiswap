@@ -1,5 +1,5 @@
-import { chainShortNameToChainId } from 'sushi/chain'
 import { type NextRequest, NextResponse } from 'next/server'
+import { chainShortNameToChainId } from 'sushi/chain'
 
 export const config = {
   matcher: ['/swap/:path*', '/pool/:path*', '/pools/:path*'],

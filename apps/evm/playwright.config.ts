@@ -1,7 +1,7 @@
+import path from 'path'
 import type { PlaywrightTestConfig } from '@playwright/test'
 import { devices } from '@playwright/test'
 import { defineConfig } from 'next/experimental/testmode/playwright'
-import path from 'path'
 
 // Use process.env.PORT by default and fallback to port 3000
 const PORT = process.env.PORT || 3000

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "next build --debug",
+    "build": "next build",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient",
     "dev": "next dev",
@@ -81,7 +81,7 @@
     "react-virtualized-auto-sizer": "1.0.7",
     "sushi": "workspace:*",
     "swr": "2.1.5",
-    "viem": "1.15.4",
+    "viem": "1.10.7",
     "wagmi": "1.4.3",
     "zod": "3.21.4"
   },

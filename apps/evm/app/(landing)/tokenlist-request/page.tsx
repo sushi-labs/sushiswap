@@ -73,10 +73,8 @@ export default function Partner() {
       acceptedFiles.forEach((file) => {
         const reader = new FileReader()
         reader.readAsDataURL(file)
-        console.log('efaf')
         reader.addEventListener('load', () => {
           if (reader.result) {
-            console.log('here')
             const imageAsBase64 = reader.result.toString()
             const image = document.createElement('img')
             image.src = imageAsBase64
@@ -88,7 +86,6 @@ export default function Partner() {
               if (context) {
                 context.drawImage(image, 0, 0, canvas.width, canvas.height)
                 const resizedImageAsBase64 = canvas.toDataURL('image/jpeg')
-                console.log('here')
                 methods.setValue('logoFile', resizedImageAsBase64)
               }
             }

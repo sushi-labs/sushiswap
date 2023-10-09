@@ -1,13 +1,15 @@
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
-import { createWalletClient, http } from 'viem'
+import { http, createWalletClient } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { Chain, configureChains, createConfig } from 'wagmi'
 
 import { foundry } from '../chains'
 import { MockConnector } from '../connectors/mock'
-import { accounts, TestChainId, testChains } from './constants'
+import { TestChainId, accounts, testChains } from './constants'
 
-const foundryPort = String(process.env.ANVIL_PORT || process.env.NEXT_PUBLIC_ANVIL_PORT || 8545)
+const foundryPort = String(
+  process.env.ANVIL_PORT || process.env.NEXT_PUBLIC_ANVIL_PORT || 8545,
+)
 
 const { publicClient } = configureChains(
   testChains,
@@ -20,7 +22,7 @@ const { publicClient } = configureChains(
   ],
   {
     pollingInterval: 4_000,
-  }
+  },
 )
 
 export function getNetwork(chain: Chain) {
@@ -39,10 +41,17 @@ export function getTransport(chainId: TestChainId) {
   const chain = testChains.find((x) => x.id === chainId)
   if (!chain) throw Error(`No chain found for ${chainId}`)
   const url = foundry.rpcUrls.default.http[0].replace('8545', foundryPort)
+  console.log({ url })
   return http(url)
 }
 
-export const createTestConfig = (chainId: TestChainId, accountIndex: number) => {
+export const createTestConfig = (
+  chainId: TestChainId,
+  accountIndex: number,
+) => {
+  console.log({
+    chain: JSON.stringify(testChains.find((x) => x.id === chainId)),
+  })
   const walletClient = createWalletClient({
     account: getAccounts()[accountIndex],
     transport: getTransport(chainId),
