@@ -51,7 +51,7 @@ export const CrossChainSwapTradeStats: FC = () => {
             {loading || !trade?.amountOut ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
             ) : (
-              `${trade?.amountOut?.toSignificant(6) ?? '0.00'} ${trade?.amountOut?.currency?.symbol ?? ''}`
+              `${trade?.amountOut?.toFixed(6) ?? '0.00'} ${trade?.amountOut?.currency?.symbol ?? ''}`
             )}
           </span>
         </div>
@@ -62,7 +62,7 @@ export const CrossChainSwapTradeStats: FC = () => {
             {loading || !trade?.minAmountOut ? (
               <SkeletonBox className="h-4 py-0.5 w-[100px]" />
             ) : (
-              `${trade?.minAmountOut?.toSignificant(6) ?? '0.00'} ${trade?.amountOut?.currency?.symbol ?? ''}`
+              `${trade?.minAmountOut?.toFixed(6) ?? '0.00'} ${trade?.amountOut?.currency?.symbol ?? ''}`
             )}
           </span>
         </div>
