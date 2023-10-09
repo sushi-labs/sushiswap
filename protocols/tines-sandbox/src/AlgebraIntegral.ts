@@ -401,3 +401,11 @@ export async function createRandomAlgebraPool(
   //console.log(positions, price, fee)
   return await createAlgebraPool(client, env, testTokens, user, fee, price, positions)
 }
+
+export async function getInitCodeHash(client: PublicClient, env: AlgebraIntegralPeriphery): Promise<Hex> {
+  return client.readContract({
+    abi: AlgebraFactory.abi,
+    address: env.factoryAddress,
+    functionName: 'POOL_INIT_CODE_HASH',
+  }) as Promise<Hex>
+}

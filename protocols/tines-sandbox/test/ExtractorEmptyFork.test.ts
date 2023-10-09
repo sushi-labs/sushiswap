@@ -1,6 +1,13 @@
 import { routeProcessor2Abi } from '@sushiswap/abi'
 import { Token } from '@sushiswap/currency'
-import { Extractor, FactoryAlgebra, FactoryV2, FactoryV3, LogFilterType } from '@sushiswap/extractor'
+import {
+  Extractor,
+  FactoryAlgebra,
+  FactoryV2,
+  FactoryV3,
+  getAlgebraPoolAddress,
+  LogFilterType,
+} from '@sushiswap/extractor'
 import { ConstantProductPoolCode, LiquidityProviders, PoolCode, Router } from '@sushiswap/router'
 import { findMultiRouteExactIn, RouteStatus, RToken } from '@sushiswap/tines'
 import {
@@ -18,7 +25,9 @@ import { Chain, hardhat } from 'viem/chains'
 
 import {
   AlgebraIntegralPeriphery,
+  algebraPoolMint,
   algebraPoolSwap,
+  algebraPoolTickLiquidityPrice,
   approveTestTokensToAlgebraPerifery,
   approveTestTokensToContract,
   createAlgebraIntegralPeriphery,
@@ -26,6 +35,7 @@ import {
   createRandomAlgebraPool,
   createTestTokens,
   getDeploymentAddress,
+  getInitCodeHash,
   TestTokens,
 } from '../src'
 import MultiCall3 from './Multicall3.sol/Multicall3.json'
@@ -146,6 +156,7 @@ async function simulateUserActivity(
   delayValue: number
 ) {
   const tokens = testTokens.tokens
+  const codeInitHash = (await getInitCodeHash(client, env)) as Hex
   for (;;) {
     for (let i = 0; i < tokens.length; ++i)
       for (let j = 0; j < tokens.length; ++j) {
@@ -157,6 +168,31 @@ async function simulateUserActivity(
           console.log(`Swap simulation: ${amountIn} ${tokens[i].symbol} => ${amountOut} ${tokens[j].symbol} `)
         } catch (e) {
           //
+        }
+      }
+    for (let i = 0; i < tokens.length; ++i)
+      for (let j = 0; j < tokens.length; ++j) {
+        if (i == j) continue
+        await delay(delayValue)
+        try {
+          const poolAddress = getAlgebraPoolAddress(
+            env.poolDeployerAddress,
+            tokens[i].address as Address,
+            tokens[j].address as Address,
+            codeInitHash
+          )
+          const amountIn = BigInt(1e12)
+          const { tick } = await algebraPoolTickLiquidityPrice(client, poolAddress)
+          //console.log(`${i}, ${j} pool ${poolAddress} tick ${tick}`)
+          const range = {
+            from: Number(tick) - 120,
+            to: Number(tick) + 120,
+            val: amountIn,
+          }
+          await algebraPoolMint(client, env, tokens[i], tokens[j], testTokens.owner, range)
+          console.log(`Mint simulation: ${tokens[i].symbol} => ${tokens[j].symbol} ${range}`)
+        } catch (e) {
+          console.log(e)
         }
       }
   }
@@ -195,7 +231,7 @@ async function createEmptyAlgebraEnvorinment(
   const testTokens = await createTestTokens(client, tokenNumber)
   await approveTestTokensToAlgebraPerifery(client, env, testTokens)
   for (let i = 0; i < poolNumber; ++i) {
-    await createRandomAlgebraPool(client, env, testTokens, testTokens.owner, 'full extractor test', positionNumber)
+    await createRandomAlgebraPool(client, env, testTokens, testTokens.owner, `full extractor test ${i}`, positionNumber)
   }
 
   const RP4 = await getDeploymentAddress(
