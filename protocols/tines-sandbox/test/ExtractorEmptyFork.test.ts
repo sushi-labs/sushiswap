@@ -1,21 +1,24 @@
 import { routeProcessor2Abi } from '@sushiswap/abi'
-import { ChainId } from '@sushiswap/chain'
-import { Native, Token } from '@sushiswap/currency'
+import { Token } from '@sushiswap/currency'
+import { Extractor, FactoryAlgebra, FactoryV2, FactoryV3, LogFilterType } from '@sushiswap/extractor'
+import { ConstantProductPoolCode, LiquidityProviders, PoolCode, Router } from '@sushiswap/router'
+import { findMultiRouteExactIn, RouteStatus, RToken } from '@sushiswap/tines'
 import {
-  Extractor,
-  FactoryAlgebra,
-  FactoryV2,
-  FactoryV3,
-  LogFilterType,
-  MultiCallAggregator,
-  TokenManager,
-} from '@sushiswap/extractor'
-import { ConstantProductPoolCode, LiquidityProviders, NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
-import { findMultiRouteExactIn, getBigInt, RouteStatus, RToken } from '@sushiswap/tines'
-import { Abi, Address, createPublicClient, custom, Hex, http, Transport, walletActions } from 'viem'
+  Abi,
+  Address,
+  createPublicClient,
+  custom,
+  Hex,
+  PublicClient,
+  Transport,
+  walletActions,
+  WalletClient,
+} from 'viem'
 import { Chain, hardhat } from 'viem/chains'
 
 import {
+  AlgebraIntegralPeriphery,
+  algebraPoolSwap,
   approveTestTokensToAlgebraPerifery,
   approveTestTokensToContract,
   createAlgebraIntegralPeriphery,
@@ -23,6 +26,7 @@ import {
   createRandomAlgebraPool,
   createTestTokens,
   getDeploymentAddress,
+  TestTokens,
 } from '../src'
 import MultiCall3 from './Multicall3.sol/Multicall3.json'
 import RouteProcessor4 from './RouteProcessor4.sol/RouteProcessor4.json'
@@ -30,8 +34,7 @@ import RouteProcessor4 from './RouteProcessor4.sol/RouteProcessor4.json'
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
 async function startInfinitTest(args: {
-  transport?: Transport
-  providerURL?: string
+  transport: Transport
   chain: Chain
   factoriesV2?: FactoryV2[]
   factoriesV3?: FactoryV3[]
@@ -45,104 +48,117 @@ async function startInfinitTest(args: {
   RP4Address: Address
   account?: Address
   tokens: Token[]
-  testEnvironment?: boolean
 }) {
-  const transport = args.transport ?? http(args.providerURL)
   const client = createPublicClient({
     chain: args.chain,
-    transport: transport,
+    transport: args.transport,
   })
-  const chainId = client.chain?.id as ChainId
 
   const extractor = new Extractor({ ...args, client })
   await extractor.start(args.tokens)
 
-  const nativeProvider = args.testEnvironment ? undefined : new NativeWrapProvider(chainId, client)
-  const tokenManager = new TokenManager(
-    extractor.extractorV2?.multiCallAggregator || (extractor.extractorV3?.multiCallAggregator as MultiCallAggregator),
-    __dirname,
-    `tokens-${client.chain?.id}`
-  )
-  await tokenManager.addCachedTokens()
   const tokens = args.tokens
   for (;;) {
     for (let i = 0; i < tokens.length; ++i) {
-      await delay(1000)
-      const time0 = performance.now()
-      const pools0 = extractor.getPoolCodesForTokens(tokens)
-      const time1 = performance.now()
-      const pools1 = await extractor.getPoolCodesForTokensAsync(tokens, 2000)
-      const time2 = performance.now()
-      const pools0_2 = pools0.filter((p) => p instanceof ConstantProductPoolCode).length
-      const pools0_3 = pools0.length - pools0_2
-      const pools1_2 = pools1.filter((p) => p instanceof ConstantProductPoolCode).length
-      const pools1_3 = pools1.length - pools1_2
-      const timingLine =
-        `sync: (${pools0_2}, ${pools0_3}) pools ${Math.round(time1 - time0)}ms` +
-        `, async: (${pools1_2}, ${pools1_3}) pools ${Math.round(time2 - time1)}ms`
+      for (let j = 0; j < tokens.length; ++j) {
+        if (i == j) continue
+        await delay(1000)
+        const time0 = performance.now()
+        const pools0 = extractor.getPoolCodesForTokens(tokens)
+        const time1 = performance.now()
+        const pools1 = await extractor.getPoolCodesForTokensAsync(tokens, 2000)
+        const time2 = performance.now()
+        const pools0_2 = pools0.filter((p) => p instanceof ConstantProductPoolCode).length
+        const pools0_3 = pools0.length - pools0_2
+        const pools1_2 = pools1.filter((p) => p instanceof ConstantProductPoolCode).length
+        const pools1_3 = pools1.length - pools1_2
+        const timingLine =
+          `sync: (${pools0_2}, ${pools0_3}) pools ${Math.round(time1 - time0)}ms` +
+          `, async: (${pools1_2}, ${pools1_3}) pools ${Math.round(time2 - time1)}ms`
 
-      const pools = pools1
-      const poolMap = new Map<string, PoolCode>()
-      pools.forEach((p) => poolMap.set(p.pool.address, p))
-      if (nativeProvider) nativeProvider.getCurrentPoolList().forEach((p) => poolMap.set(p.pool.address, p))
-      const fromToken = args.testEnvironment ? tokens[(i + 1) % tokens.length] : Native.onChain(chainId),
-        toToken = tokens[i]
-      const route = args.testEnvironment
-        ? findMultiRouteExactIn(
-            fromToken as RToken,
-            toToken as RToken,
-            1e12,
-            pools.map((p) => p.pool),
-            args.tokens[0] as RToken,
-            30e9
-          )
-        : Router.findBestRoute(poolMap, chainId, fromToken, getBigInt(1e18), toToken, 30e9)
-      if (route.status === RouteStatus.NoWay) {
-        console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ` + timingLine)
-        continue
-      }
-      const rpParams = Router.routeProcessor2Params(
-        poolMap,
-        route,
-        fromToken,
-        toToken,
-        args.RP4Address,
-        args.RP4Address
-      )
-      if (rpParams === undefined) {
-        console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ROUTE CREATION FAILED !!!`)
-        continue
-      }
-      try {
-        const { result: amountOutReal } = await client.simulateContract({
-          address: args.RP4Address,
-          abi: routeProcessor2Abi,
-          // @ ts-ignore
-          functionName: 'processRoute',
-          args: [
-            rpParams.tokenIn as Address,
-            BigInt(rpParams.amountIn.toString()),
-            rpParams.tokenOut as Address,
-            0n,
-            rpParams.to as Address,
-            rpParams.routeCode as Address, // !!!!
-          ],
-          value: rpParams.value,
-          account: args.account,
-        })
-        const amountOutExp = BigInt(route.amountOutBI.toString())
-        const diff =
-          amountOutExp === 0n ? amountOutReal - amountOutExp : Number(amountOutReal - amountOutExp) / route.amountOut
-        console.log(
-          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.legs.length - 1} pools ` +
-            timingLine +
-            ` diff = ${diff > 0 ? '+' : ''}${diff} `
+        const pools = pools1
+        const poolMap = new Map<string, PoolCode>()
+        pools.forEach((p) => poolMap.set(p.pool.address, p))
+        const fromToken = tokens[i]
+        const toToken = tokens[j]
+        const route = findMultiRouteExactIn(
+          fromToken as RToken,
+          toToken as RToken,
+          1e12,
+          pools.map((p) => p.pool),
+          tokens[0] as RToken,
+          30e9
         )
-        if (Math.abs(Number(diff)) > 0.001) console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
-      } catch (e) {
-        console.log(`Routing failed. No connection ? ${e}`)
+        if (route.status === RouteStatus.NoWay) {
+          console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ` + timingLine)
+          continue
+        }
+        const rpParams = Router.routeProcessor2Params(
+          poolMap,
+          route,
+          fromToken,
+          toToken,
+          args.RP4Address,
+          args.RP4Address
+        )
+        if (rpParams === undefined) {
+          console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ROUTE CREATION FAILED !!!`)
+          continue
+        }
+        try {
+          const { result: amountOutReal } = await client.simulateContract({
+            address: args.RP4Address,
+            abi: routeProcessor2Abi,
+            // @ ts-ignore
+            functionName: 'processRoute',
+            args: [
+              rpParams.tokenIn as Address,
+              BigInt(rpParams.amountIn.toString()),
+              rpParams.tokenOut as Address,
+              0n,
+              rpParams.to as Address,
+              rpParams.routeCode as Address, // !!!!
+            ],
+            value: rpParams.value,
+            account: args.account,
+          })
+          const amountOutExp = BigInt(route.amountOutBI.toString())
+          const diff =
+            amountOutExp === 0n ? amountOutReal - amountOutExp : Number(amountOutReal - amountOutExp) / route.amountOut
+          console.log(
+            `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.legs.length - 1} pools ` +
+              timingLine +
+              ` diff = ${diff > 0 ? '+' : ''}${diff} `
+          )
+          if (Math.abs(Number(diff)) > 0.001) console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
+        } catch (e) {
+          console.log(`Routing failed. No connection ? ${e}`)
+        }
       }
     }
+  }
+}
+
+async function simulateUserActivity(
+  client: PublicClient & WalletClient,
+  env: AlgebraIntegralPeriphery,
+  testTokens: TestTokens,
+  delayValue: number
+) {
+  const tokens = testTokens.tokens
+  for (;;) {
+    for (let i = 0; i < tokens.length; ++i)
+      for (let j = 0; j < tokens.length; ++j) {
+        if (i == j) continue
+        await delay(delayValue)
+        try {
+          const amountIn = BigInt(1e12)
+          const amountOut = await algebraPoolSwap(client, env, tokens[i], tokens[j], testTokens.owner, amountIn)
+          console.log(`Swap simulation: ${amountIn} ${tokens[i].symbol} => ${amountOut} ${tokens[j].symbol} `)
+        } catch (e) {
+          //
+        }
+      }
   }
 }
 
@@ -204,6 +220,9 @@ async function createEmptyAlgebraEnvorinment(
     })
   )
 
+  // no awaiting - let's work in parallel
+  simulateUserActivity(client, env, testTokens, 5000)
+
   return {
     transport,
     //chain,
@@ -239,7 +258,6 @@ it('Extractor Hardhat Algebra test', async () => {
     logging: true,
     RP4Address: RP4,
     tokens,
-    testEnvironment: true,
     account: tokenOwner,
   })
 })
