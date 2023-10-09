@@ -60,7 +60,7 @@ export const PoolNameCell: FC<Row<PositionWithPool>> = ({ original }) => {
           <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
             {formatNumber(original.pool.swapFee * 100)}%
           </div>
-          {incentives && incentives.length > 0 && (
+          {original.pool.isIncentivized && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -139,7 +139,7 @@ export const PoolNameCellPool: FC<{ pool: Pool }> = ({ pool }) => {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          {incentives && incentives.length > 0 && (
+          {pool.isIncentivized && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>

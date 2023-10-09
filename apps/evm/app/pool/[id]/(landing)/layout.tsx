@@ -5,8 +5,7 @@ import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import React from 'react'
-
-import { PoolHeader } from '../../../ui/pool/PoolHeader'
+import { PoolHeader } from 'ui/pool/PoolHeader'
 
 export const metadata = {
   title: 'Pool 💦',

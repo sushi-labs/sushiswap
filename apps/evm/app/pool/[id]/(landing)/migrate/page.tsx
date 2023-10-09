@@ -6,8 +6,7 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 import { PoolPositionProvider, PoolPositionRewardsProvider, PoolPositionStakedProvider } from 'ui/pool'
 import { ConcentratedLiquidityProvider } from 'ui/pool/ConcentratedLiquidityProvider'
-
-import { MigrateTab } from '../../../../ui/pool/MigrateTab'
+import { MigrateTab } from 'ui/pool/MigrateTab'
 
 export default async function MigratePage({ params }: { params: { id: string } }) {
   const poolId = unsanitize(params.id)

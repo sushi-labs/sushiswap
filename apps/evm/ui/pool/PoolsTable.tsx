@@ -1,5 +1,6 @@
 'use client'
 
+import { ArrowDownRightIcon } from '@heroicons/react/20/solid'
 import { EllipsisHorizontalIcon, GiftIcon, LightBulbIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { UploadIcon } from '@heroicons/react-v1/outline'
 import { DownloadIcon } from '@heroicons/react-v1/solid'
@@ -79,6 +80,17 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
+                  href={`/pool/${row.original.id}`}
+                >
+                  <ArrowDownRightIcon width={16} height={16} className="mr-2" />
+                  Pool details
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link
+                  onClick={(e) => e.stopPropagation()}
+                  shallow={true}
+                  className="flex items-center"
                   href={`/pool/${row.original.id}/positions/create/manual`}
                 >
                   <PlusIcon width={16} height={16} className="mr-2" />
@@ -109,9 +121,8 @@ const COLUMNS = [
                     <p>
                       {!row.original.hasEnabledSteerVault
                         ? 'No Steer vaults available for this pool'
-                        : `Smart pools optimize liquidity allocation within custom price ranges, enhancing trading efficiency
-                      by providing deeper liquidity around the current price, increasing LPs' fee earnings while
-                      allowing the market to determine the distribution of rational LPs' positions.`}
+                        : `Smart pools optimize liquidity allocation within custom price ranges, enhancing trading efficiency by
+          providing deeper liquidity around the current price, increasing Liquidity Providers (LP) fee earnings.`}
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -210,11 +221,8 @@ const COLUMNS = [
               <DropdownMenuGroupLabel>Farm rewards</DropdownMenuGroupLabel>
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild={row.original.incentives && row.original.incentives.length > 0}>
-                    <DropdownMenuItem
-                      asChild
-                      disabled={!(row.original.incentives && row.original.incentives.length > 0)}
-                    >
+                  <TooltipTrigger asChild={row.original.isIncentivized}>
+                    <DropdownMenuItem asChild disabled={!row.original.isIncentivized}>
                       <Link
                         onClick={(e) => e.stopPropagation()}
                         shallow={true}
@@ -228,14 +236,14 @@ const COLUMNS = [
                   </TooltipTrigger>
                   <TooltipContent side="left" className="max-w-[240px]">
                     <p>
-                      {!(row.original.incentives && row.original.incentives.length > 0)
+                      {!row.original.isIncentivized
                         ? 'No rewards available on this pool'
                         : `After adding liquidity, stake your liquidity tokens to benefit from extra rewards`}
                     </p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-              <DropdownMenuItem asChild disabled={!(row.original.incentives && row.original.incentives.length > 0)}>
+              <DropdownMenuItem asChild disabled={!row.original.isIncentivized}>
                 <Link
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}

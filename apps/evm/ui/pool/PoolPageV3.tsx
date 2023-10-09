@@ -21,7 +21,7 @@ import React, { FC, useMemo, useState } from 'react'
 import { Address } from 'wagmi'
 
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
-import { ConcentratedPositionsTable } from './ConcentratedPositionsTable/ConcentratedPositionsTable'
+import { ConcentratedPositionsTable } from './ConcentratedPositionsTable'
 import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'
 import { PoolsFiltersProvider } from './PoolsFiltersProvider'
 import { PoolTransactionsV3 } from './PoolTransactionsV3'

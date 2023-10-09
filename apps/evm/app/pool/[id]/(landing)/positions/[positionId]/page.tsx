@@ -1,6 +1,5 @@
 import { Container, LinkInternal } from '@sushiswap/ui'
-
-import { PositionView } from '../../../../../ui/pool/PositionView'
+import { PositionView } from 'ui/pool/PositionView'
 
 export default async function PositionsPage({ params }: { params: { id: string; positionId: string } }) {
   return (

@@ -57,7 +57,7 @@ interface StatLabelProps
 
 const StatLabel = forwardRef<HTMLSpanElement, StatLabelProps>(({ align, children, size, className }, ref) => {
   return (
-    <span ref={ref} className={statLabelVariants({ size, align })}>
+    <span ref={ref} className={statLabelVariants({ size, align, className })}>
       {children}
     </span>
   )

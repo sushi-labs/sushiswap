@@ -4,24 +4,30 @@ import { unsanitize } from '@sushiswap/format'
 import { Container, Separator } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
-import { ManageV2LiquidityCard } from 'ui/pool/ManageV2LiquidityCard'
-import { PoolTransactionsV2 } from 'ui/pool/PoolTransactionsV2'
-
 import {
   PoolPositionProvider,
   PoolPositionRewardsProvider,
   PoolPositionStakedProvider,
   UnknownTokenAlert,
-} from '../../../ui/pool'
-import { PoolChartV2 } from '../../../ui/pool/PoolChartV2'
-import { PoolComposition } from '../../../ui/pool/PoolComposition'
-import { PoolMyRewards } from '../../../ui/pool/PoolMyRewards'
-import { PoolPageV3 } from '../../../ui/pool/PoolPageV3'
-import { PoolPosition } from '../../../ui/pool/PoolPosition'
-import { PoolRewards } from '../../../ui/pool/PoolRewards'
-import { PoolStats } from '../../../ui/pool/PoolStats'
+} from 'ui/pool'
+import { ManageV2LiquidityCard } from 'ui/pool/ManageV2LiquidityCard'
+import { PoolTransactionsV2 } from 'ui/pool/PoolTransactionsV2'
 
-export default async function PoolPage({ params, tab }: { params: { id: string }, tab: 'add' | 'remove' | 'unstake' | 'stake' }) {
+import { PoolChartV2 } from '../../../../ui/pool/PoolChartV2'
+import { PoolComposition } from '../../../../ui/pool/PoolComposition'
+import { PoolMyRewards } from '../../../../ui/pool/PoolMyRewards'
+import { PoolPageV3 } from '../../../../ui/pool/PoolPageV3'
+import { PoolPosition } from '../../../../ui/pool/PoolPosition'
+import { PoolRewards } from '../../../../ui/pool/PoolRewards'
+import { PoolStats } from '../../../../ui/pool/PoolStats'
+
+export default async function PoolPage({
+  params,
+  tab,
+}: {
+  params: { id: string }
+  tab: 'add' | 'remove' | 'unstake' | 'stake'
+}) {
   const poolId = unsanitize(params.id)
   const pool = await unstable_cache(async () => getPool(poolId), ['pool', poolId], {
     revalidate: 60 * 15,

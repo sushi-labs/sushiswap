@@ -17,9 +17,9 @@ import {
 } from '@sushiswap/ui'
 import { FC } from 'react'
 
+import { APRHoverCard } from '../APRHoverCard'
 import { SteerStrategyConfig } from './constants'
 import { SteerAPRChart } from './SteerAPRChart'
-import { SteerAPRHoverCard } from './SteerAPRHoverCard'
 import { SteerLiquidityDistributionWidget } from './SteerLiquidityDistributionWidget/SteerLiquidityDistributionWidget'
 
 interface SteerPoolCardProps {
@@ -45,15 +45,13 @@ export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
         <CardContent className="pt-6">
           <Stat className="!p-0">
             <StatLabel size="sm">Weekly APR</StatLabel>
-            <SteerAPRHoverCard pool={pool} vault={vault}>
-              <StatValue
-                className={classNames(
-                  pool.isIncentivized && 'underline decoration-dotted underline-offset-2 underline-offset-4 z-10'
-                )}
-              >
-                {formatPercent(vault.apr1w + pool.incentiveApr)}
-              </StatValue>
-            </SteerAPRHoverCard>
+            <StatValue size="sm">
+              <APRHoverCard pool={pool} smartPoolAPR={vault.apr}>
+                <span className="underline decoration-dotted underline-offset-2">
+                  {formatPercent(vault.apr + pool.incentiveApr)}
+                </span>
+              </APRHoverCard>
+            </StatValue>
           </Stat>
           <div className="h-[200px] rounded-xl flex items-center justify-center">
             <SteerAPRChart vault={vault} />

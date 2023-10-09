@@ -1,8 +1,7 @@
 import { Container } from '@sushiswap/ui'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { ConcentratedLiquidityProvider } from 'ui/pool/ConcentratedLiquidityProvider'
 import { CreatePositionManual } from 'ui/pool/CreatePositionManual'
-
-import { ConcentratedLiquidityProvider } from '../../../../../../ui/pool/ConcentratedLiquidityProvider'
 
 export default async function PositionsCreatePage({ params }: { params: { id: string } }) {
   const [chainId, address] = params.id.split('%3A') as [SushiSwapV3ChainId, string]

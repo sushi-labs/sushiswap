@@ -1,11 +1,12 @@
 'use client'
 
+import { ArrowDownRightIcon } from '@heroicons/react/20/solid'
 import { EllipsisHorizontalIcon, GiftIcon, LightBulbIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { UploadIcon } from '@heroicons/react-v1/outline'
 import { DownloadIcon } from '@heroicons/react-v1/solid'
 import { Protocol, SteerVaults } from '@sushiswap/client'
 import { useSteerVaults } from '@sushiswap/client/hooks'
-import { Native, Token } from '@sushiswap/currency'
+import { Native, Token, unwrapToken } from '@sushiswap/currency'
 import { formatNumber, formatPercent, formatUSD } from '@sushiswap/format'
 import {
   Badge,
@@ -63,6 +64,8 @@ const COLUMNS = [
         symbol: original.token1.symbol,
       })
 
+      const incentives = original.pool.incentives.filter((i) => i.rewardPerDay > 0)
+
       return (
         <div className="flex items-center gap-5">
           <div className="flex min-w-[54px]">
@@ -79,8 +82,8 @@ const COLUMNS = [
           </div>
           <div className="flex flex-col gap-0.5">
             <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50">
-              {original.token0.symbol} <span className="font-normal text-gray-900 dark:text-slate-500">/</span>{' '}
-              {original.token1.symbol}{' '}
+              {unwrapToken(token0).symbol} <span className="font-normal text-gray-900 dark:text-slate-500">/</span>{' '}
+              {unwrapToken(token1).symbol}{' '}
               <div className={classNames('text-[10px] bg-gray-200 dark:bg-slate-700 rounded-lg px-1 ml-1')} />
             </span>
             <div className="flex gap-1">
@@ -104,12 +107,12 @@ const COLUMNS = [
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-              {original.pool.incentives && original.pool.incentives.length > 0 && (
+              {original.pool.isIncentivized && (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
-                        🧑‍🌾 {original.pool.incentives.length > 1 ? `x ${original.pool.incentives.length}` : ''}{' '}
+                        🧑‍🌾 {incentives.length > 1 ? `x ${incentives.length}` : ''}{' '}
                       </div>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -172,16 +175,18 @@ const COLUMNS = [
   {
     id: 'liquidityUSD',
     header: 'TVL',
-    accessorFn: (row) => row.pool.liquidityUSD,
+    accessorFn: (row) => row.reserveUSD,
     sortingFn: ({ original: rowA }, { original: rowB }) =>
       Number(rowA.pool.liquidityUSD) - Number(rowB.pool.liquidityUSD),
     cell: ({ row: { original } }) => (
       <span className="flex gap-2">
-        {formatUSD(original.pool.liquidityUSD).includes('NaN') ? '$0.00' : formatUSD(original.pool.liquidityUSD)}
+        <span className="text-muted-foreground">
+          {formatUSD(original.pool.liquidityUSD).includes('NaN') ? '$0.00' : formatUSD(original.pool.liquidityUSD)}
+        </span>
         <TooltipProvider>
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
-              <span className="underline decoration-dotted underline-offset-2 text-muted-foreground">
+              <span className="underline decoration-dotted underline-offset-2">
                 {formatUSD(original.reserveUSD).includes('NaN') ? '$0.00' : formatUSD(original.reserveUSD)}
               </span>
             </TooltipTrigger>
@@ -209,14 +214,36 @@ const COLUMNS = [
   {
     id: 'totalApr1d',
     header: 'APR',
-    accessorFn: (row) => row.pool.totalApr1d,
-    cell: (props) => (
-      <APRHoverCard pool={props.row.original.pool}>
-        <span className="underline decoration-dotted underline-offset-2">
-          {formatPercent(props.row.original.pool.totalApr1d)}
-        </span>
-      </APRHoverCard>
-    ),
+    accessorFn: (row) =>
+      row.apr * 100 +
+      row.pool.incentives.filter((el) => +el.rewardPerDay > 0).reduce((acc, cur) => acc + cur.apr * 100, 0),
+    cell: (props) => {
+      const totalAPR =
+        props.row.original.apr * 100 +
+        props.row.original.pool.incentives
+          .filter((el) => +el.rewardPerDay > 0)
+          .reduce((acc, cur) => acc + cur.apr * 100, 0)
+
+      return (
+        <div className="flex gap-1">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="line-through text-muted-foreground">
+                  {formatPercent(props.row.original.pool.totalApr1d)}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>APR when not staked within the vault.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <APRHoverCard pool={props.row.original.pool} smartPoolAPR={props.row.original.apr}>
+            <span className="underline decoration-dotted underline-offset-2">{formatPercent(totalAPR / 100)}</span>
+          </APRHoverCard>
+        </div>
+      )
+    },
     meta: {
       skeleton: <SkeletonText fontSize="lg" />,
     },
@@ -245,6 +272,17 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
+                  href={`/pool/${row.original.id}`}
+                >
+                  <ArrowDownRightIcon width={16} height={16} className="mr-2" />
+                  Pool details
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link
+                  onClick={(e) => e.stopPropagation()}
+                  shallow={true}
+                  className="flex items-center"
                   href={`/pool/${row.original.id}/positions/create/manual`}
                 >
                   <PlusIcon width={16} height={16} className="mr-2" />
@@ -259,7 +297,7 @@ const COLUMNS = [
                         onClick={(e) => e.stopPropagation()}
                         shallow={true}
                         className="flex items-center"
-                        href={`/pool/${row.original.id}/smart`}
+                        href={`/pool/${row.original.pool.id}/smart/${row.original.id}`}
                       >
                         <span className="relative">
                           <LightBulbIcon width={16} height={16} className="mr-2" />
@@ -273,9 +311,8 @@ const COLUMNS = [
                   </TooltipTrigger>
                   <TooltipContent side="left" className="max-w-[240px]">
                     <p>
-                      {`Smart pools optimize liquidity allocation within custom price ranges, enhancing trading efficiency
-                      by providing deeper liquidity around the current price, increasing LPs' fee earnings while
-                      allowing the market to determine the distribution of rational LPs' positions.`}
+                      {`Smart pools optimize liquidity allocation within custom price ranges, enhancing trading efficiency by
+          providing deeper liquidity around the current price, increasing Liquidity Providers (LP) fee earnings.`}
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -374,11 +411,8 @@ const COLUMNS = [
               <DropdownMenuGroupLabel>Farm rewards</DropdownMenuGroupLabel>
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild={row.original.pool.incentives && row.original.pool.incentives.length > 0}>
-                    <DropdownMenuItem
-                      asChild
-                      disabled={!(row.original.pool.incentives && row.original.pool.incentives.length > 0)}
-                    >
+                  <TooltipTrigger asChild={row.original.pool.isIncentivized}>
+                    <DropdownMenuItem asChild disabled={!row.original.pool.isIncentivized}>
                       <Link
                         onClick={(e) => e.stopPropagation()}
                         shallow={true}
@@ -392,17 +426,14 @@ const COLUMNS = [
                   </TooltipTrigger>
                   <TooltipContent side="left" className="max-w-[240px]">
                     <p>
-                      {!(row.original.pool.incentives && row.original.pool.incentives.length > 0)
+                      {!row.original.pool.isIncentivized
                         ? 'No rewards available on this pool'
                         : `After adding liquidity, stake your liquidity tokens to benefit from extra rewards`}
                     </p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-              <DropdownMenuItem
-                asChild
-                disabled={!(row.original.pool.incentives && row.original.pool.incentives.length > 0)}
-              >
+              <DropdownMenuItem asChild disabled={!row.original.pool.isIncentivized}>
                 <Link
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
@@ -463,10 +494,9 @@ export const SmartPoolsTable = () => {
           {_vaults?.length ? <span className="text-gray-400 dark:text-slate-500">({_vaults.length})</span> : null}
         </CardTitle>
         <CardDescription>
-          {`Smart pools optimize liquidity allocation within custom price ranges, enhancing trading efficiency
-          by providing deeper liquidity around the current price, increasing LPs' fee earnings while
-          allowing the market to determine the distribution of rational LPs' positions.`}{' '}
-          To learn more about Smart Pools, click{' '}
+          Smart pools optimize liquidity allocation within custom price ranges, enhancing trading efficiency by
+          providing deeper liquidity around the current price, increasing Liquidity Providers (LP) fee earnings. To
+          learn more about Smart Pools, click{' '}
           <LinkExternal href="https://steer.finance/steer-protocol-and-sushi-collaborate-to-optimize-concentrated-liquidity/">
             here
           </LinkExternal>
