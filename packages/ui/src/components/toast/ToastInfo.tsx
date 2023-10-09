@@ -1,16 +1,25 @@
-import { Chain } from 'sushi/chain'
 import { ResolvedNotification } from '@sushiswap/dexie'
 import { FC } from 'react'
+import { Chain } from 'sushi/chain'
 
-import { HalfCircleIcon } from '../icons'
+import { HalfCircleIcon } from '../icons/HalfCircleIcon'
 import { ToastContent } from './ToastContent'
 
 interface ToastInfo extends ResolvedNotification {
   onDismiss(): void
 }
 
-export const ToastInfo: FC<ToastInfo> = ({ href, chainId, txHash, summary }) => {
-  const txUrl = href ? href : txHash ? Chain.from(chainId)?.getTxUrl(txHash) : ''
+export const ToastInfo: FC<ToastInfo> = ({
+  href,
+  chainId,
+  txHash,
+  summary,
+}) => {
+  const txUrl = href
+    ? href
+    : txHash
+    ? Chain.from(chainId)?.getTxUrl(txHash)
+    : ''
   return (
     <>
       <ToastContent

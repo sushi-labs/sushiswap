@@ -4,7 +4,10 @@ import React, { CSSProperties, FC, ReactElement, useCallback } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 
-type RowCallback<TData> = (row: { index: number; style: CSSProperties }) => ReactElement
+type RowCallback<TData> = (row: {
+  index: number
+  style: CSSProperties
+}) => ReactElement
 
 export interface ListProps<TData> {
   className?: string
@@ -13,14 +16,21 @@ export interface ListProps<TData> {
   rowData: TData[]
 }
 
-export type ListComponent = <TData>(props: ListProps<TData>) => React.ReactElement | null
+export type ListComponent = <TData>(
+  props: ListProps<TData>,
+) => React.ReactElement | null
 
-export function List<TData>({ className, rowHeight, rowData, rowRenderer: RowComponent }: ListProps<TData>) {
+export function List<TData>({
+  className,
+  rowHeight,
+  rowData,
+  rowRenderer: RowComponent,
+}: ListProps<TData>) {
   const Row = useCallback<RowCallback<TData>>(
     ({ index, style }) => {
       return <RowComponent style={style} {...rowData[index]} />
     },
-    [RowComponent, rowData]
+    [RowComponent, rowData],
   )
 
   return (

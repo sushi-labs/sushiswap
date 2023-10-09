@@ -15,11 +15,20 @@ export const SwapApi: FC = () => {
       <div className="flex justify-between items-center gap-4">
         <div className="flex flex-col gap-2">
           <Label>Swap API</Label>
-          <span className={typographyVariants({ variant: 'muted', className: 'text-sm' })}>
-            Switch to the client for trade discovery by deactivating the Swap API.
+          <span
+            className={typographyVariants({
+              variant: 'muted',
+              className: 'text-sm',
+            })}
+          >
+            Switch to the client for trade discovery by deactivating the Swap
+            API.
           </span>
         </div>
-        <Switch checked={swapApi} onCheckedChange={(checked) => setSwapApi(checked)} />
+        <Switch
+          checked={swapApi}
+          onCheckedChange={(checked) => setSwapApi(checked)}
+        />
       </div>
     </div>
   )

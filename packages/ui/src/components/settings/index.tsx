@@ -5,9 +5,21 @@ import { useSlippageTolerance } from '@sushiswap/hooks'
 import React, { FC, ReactNode, useState } from 'react'
 
 import { Button } from '../button'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '../dialog'
 import { List } from '../list'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../tooltip'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../tooltip'
 import { CarbonOffset } from './CarbonOffset'
 import { ExpertMode } from './ExpertMode'
 import { SlippageTolerance } from './SlippageTolerance'
@@ -33,9 +45,15 @@ interface SettingsOverlayProps {
   }
 }
 
-export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules, children, options }) => {
+export const SettingsOverlay: FC<SettingsOverlayProps> = ({
+  modules,
+  children,
+  options,
+}) => {
   const [open, setOpen] = useState(false)
-  const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(options?.slippageTolerance?.storageKey)
+  const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(
+    options?.slippageTolerance?.storageKey,
+  )
 
   return (
     <Dialog>
@@ -50,7 +68,8 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules, children, o
             icon={Cog6ToothIcon}
             onClick={() => setOpen(true)}
           >
-            {Number(slippageTolerance) > 0.5 && modules.includes(SettingsModule.SlippageTolerance) ? (
+            {Number(slippageTolerance) > 0.5 &&
+            modules.includes(SettingsModule.SlippageTolerance) ? (
               <TooltipProvider>
                 <Tooltip delayDuration={150}>
                   <TooltipTrigger asChild>
@@ -61,7 +80,9 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules, children, o
                       }}
                       className="!rounded-full -mr-1.5 !bg-opacity-50"
                       iconPosition="end"
-                      variant={Number(slippageTolerance) > 2 ? 'warning' : 'secondary'}
+                      variant={
+                        Number(slippageTolerance) > 2 ? 'warning' : 'secondary'
+                      }
                       size="xs"
                       asChild
                       icon={XMarkIcon}
@@ -79,7 +100,9 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules, children, o
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
-          <DialogDescription>Adjust to your personal preferences.</DialogDescription>
+          <DialogDescription>
+            Adjust to your personal preferences.
+          </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4">
           {modules.includes(SettingsModule.SlippageTolerance) && (
@@ -93,7 +116,9 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules, children, o
             <List className="!pt-0">
               <List.Control>
                 {modules.includes(SettingsModule.ExpertMode) && <ExpertMode />}
-                {modules.includes(SettingsModule.CarbonOffset) && <CarbonOffset />}
+                {modules.includes(SettingsModule.CarbonOffset) && (
+                  <CarbonOffset />
+                )}
               </List.Control>
             </List>
           )}
