@@ -464,7 +464,7 @@ export const SmartPoolsTable = () => {
   })
 
   const { data: vaults, isValidating: isValidatingVaults } = useSteerVaults({
-    args: { chainIds: chainIds, orderBy: 'reserveUSD', orderDir: 'desc' },
+    args: { chainIds: chainIds, orderBy: 'reserveUSD', orderDir: 'desc', isEnabled: true },
   })
 
   const state: Partial<TableState> = useMemo(() => {
