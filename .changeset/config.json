@@ -19,7 +19,6 @@
     "@sushiswap/react-query",
     "@sushiswap/route-processor",
     "@sushiswap/steer-vault-api",
-    "@sushiswap/swap-api",
     "@sushiswap/token-list-api",
     "@sushiswap/token-price-api",
     "@sushiswap/tokens-api",
@@ -27,7 +26,6 @@
     "@sushiswap/wagmi",
     "academy",
     "blog",
-    "evm",
-    "furo"
+    "evm"
   ]
 }
