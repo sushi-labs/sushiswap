@@ -103,7 +103,7 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
           <Separator />
           <div className="h-[200px] rounded-xl flex flex-col p-6">
             <Stat className="mb-2">
-              <StatLabel size="sm">Weekly Smart Pool APR (without incentives)</StatLabel>
+              <StatLabel size="sm">7 day weekly APR (without incentives)</StatLabel>
             </Stat>
             <SteerAPRChart vault={vault} />
           </div>
