@@ -9,7 +9,9 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
 
   if (!(chainId in SUPPORTED_CHAINS)) {
     response.status(422).json({
-      message: 'Unsupported network. Supported chain ids: '.concat(SUPPORTED_CHAINS.join(', ')),
+      message: 'Unsupported network. Supported chain ids: '.concat(
+        SUPPORTED_CHAINS.join(', '),
+      ),
     })
   }
 

@@ -53,17 +53,20 @@ export const getConcentratedLiquidityPositions = async ({
           chainId: el,
           functionName: 'balanceOf' as const,
           args: [account],
-        } as const)
+        }) as const,
     ),
   })
 
   // we don't expect any account balance to ever exceed the bounds of max safe int
-  const accountBalances = result.reduce<Record<ChainId, number>>((acc, el, i) => {
-    if (el.result && el.result > 0n) {
-      acc[chainIds[i]] = Number(el.result)
-    }
-    return acc
-  }, {} as Record<ChainId, number>)
+  const accountBalances = result.reduce<Record<ChainId, number>>(
+    (acc, el, i) => {
+      if (el.result && el.result > 0n) {
+        acc[chainIds[i]] = Number(el.result)
+      }
+      return acc
+    },
+    {} as Record<ChainId, number>,
+  )
 
   const tokenIdsArgs: [SushiSwapV3ChainId, `0x${string}`, number][] = []
   Object.entries(accountBalances).forEach(([k, v]) => {
@@ -77,11 +80,12 @@ export const getConcentratedLiquidityPositions = async ({
       ([_chainId, account, index]) =>
         ({
           chainId: _chainId,
-          address: getV3NonFungiblePositionManagerConractConfig(_chainId).address,
+          address:
+            getV3NonFungiblePositionManagerConractConfig(_chainId).address,
           abi: abiShard,
           functionName: 'tokenOfOwnerByIndex' as const,
           args: [account, BigInt(index)],
-        } as const)
+        }) as const,
     ),
   })
 
@@ -96,7 +100,9 @@ export const getConcentratedLiquidityPositions = async ({
     })
     .filter((el): el is NonNullable<typeof el> => el !== undefined)
 
-  const positions = await getConcentratedLiquidityPositionsFromTokenIds({ tokenIds })
+  const positions = await getConcentratedLiquidityPositionsFromTokenIds({
+    tokenIds,
+  })
   const fees = await getConcentratedLiquidityPositionFees({ tokenIds })
 
   return positions.filter(Boolean).map((el, i) => ({

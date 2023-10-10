@@ -39,7 +39,8 @@ export const RemoveSectionUnstake: FC<{ poolId: string }> = ({ poolId }) => {
 
   if (!pool) return <></>
 
-  if (!pool?.incentives || pool.incentives.length === 0 || !isMounted) return <></>
+  if (!pool?.incentives || pool.incentives.length === 0 || !isMounted)
+    return <></>
 
   return (
     <_RemoveSectionUnstake
@@ -60,20 +61,22 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot(
       return balance?.multiply(value).divide(100)
     }, [balance, value])
 
-    const { sendTransaction, isLoading: isWritePending } = useMasterChefWithdraw({
-      chainId,
-      amount,
-      pid: farmId,
-      chef: chefType,
-      enabled: Boolean(chainId && amount?.greaterThan(ZERO)),
-    })
+    const { sendTransaction, isLoading: isWritePending } =
+      useMasterChefWithdraw({
+        chainId,
+        amount,
+        pid: farmId,
+        chef: chefType,
+        enabled: Boolean(chainId && amount?.greaterThan(ZERO)),
+      })
 
     return (
       <Widget id="stakeLiquidity" variant="empty">
         <WidgetHeader>
           <WidgetTitle>Unstake Liquidity</WidgetTitle>
           <WidgetDescription>
-            Unstake your liquidity tokens first if you mean to remove your liquidity position
+            Unstake your liquidity tokens first if you mean to remove your
+            liquidity position
           </WidgetDescription>
         </WidgetHeader>
         {balance?.equalTo(ZERO) ? (
@@ -81,12 +84,18 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot(
             We could not find any staked LP tokens for unstaking.
           </Message>
         ) : null}
-        <div className={balance?.equalTo(ZERO) ? 'opacity-40 pointer-events-none' : ''}>
+        <div
+          className={
+            balance?.equalTo(ZERO) ? 'opacity-40 pointer-events-none' : ''
+          }
+        >
           <div className="flex flex-col gap-6">
             <Card variant="outline" className="p-6">
               <div className="flex justify-between gap-4">
                 <div>
-                  <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">{value}%</h1>
+                  <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">
+                    {value}%
+                  </h1>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
@@ -147,7 +156,12 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot(
           </div>
           <WidgetFooter>
             <Checker.Connect size="default" variant="outline" fullWidth>
-              <Checker.Network size="default" variant="outline" fullWidth chainId={pool.chainId}>
+              <Checker.Network
+                size="default"
+                variant="outline"
+                fullWidth
+                chainId={pool.chainId}
+              >
                 <Checker.Guard
                   size="default"
                   variant="outline"
@@ -157,7 +171,9 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot(
                   <Checker.Guard
                     size="default"
                     variant="outline"
-                    guardWhen={Boolean(amount && balance && amount.greaterThan(balance))}
+                    guardWhen={Boolean(
+                      amount && balance && amount.greaterThan(balance),
+                    )}
                     guardText="Insufficient balance"
                   >
                     <Button
@@ -167,7 +183,11 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot(
                       disabled={isWritePending || !sendTransaction}
                       testId="unstake-liquidity"
                     >
-                      {isWritePending ? <Dots>Confirm transaction</Dots> : 'Unstake Liquidity'}
+                      {isWritePending ? (
+                        <Dots>Confirm transaction</Dots>
+                      ) : (
+                        'Unstake Liquidity'
+                      )}
                     </Button>
                   </Checker.Guard>
                 </Checker.Guard>
@@ -177,5 +197,5 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot(
         </div>
       </Widget>
     )
-  }
+  },
 )

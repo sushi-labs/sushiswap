@@ -13,10 +13,19 @@ export const TableFiltersResetButton: FC = () => {
   const { protocols, chainIds, tokenSymbols, farmsOnly } = usePoolFilters()
   const setFilters = useSetPoolFilters()
 
-  const networks = useMemo(() => (SUPPORTED_CHAIN_IDS.length === chainIds.length ? [] : chainIds), [chainIds])
-  const types = useMemo(() => (protocols.length === POOL_TYPES.length ? [] : protocols), [protocols])
+  const networks = useMemo(
+    () => (SUPPORTED_CHAIN_IDS.length === chainIds.length ? [] : chainIds),
+    [chainIds],
+  )
+  const types = useMemo(
+    () => (protocols.length === POOL_TYPES.length ? [] : protocols),
+    [protocols],
+  )
   const [show, setShow] = useState(
-    (types?.length ?? 0) + (networks?.length ?? 0) + (tokenSymbols?.length ?? 0) > 0 || farmsOnly
+    (types?.length ?? 0) +
+      (networks?.length ?? 0) +
+      (tokenSymbols?.length ?? 0) >
+      0 || farmsOnly,
   )
 
   const reset = useCallback(() => {
@@ -32,10 +41,21 @@ export const TableFiltersResetButton: FC = () => {
   }, [setFilters])
 
   if (
-    isPending ? show : (types?.length ?? 0) + (networks?.length ?? 0) + (tokenSymbols?.length ?? 0) > 0 || farmsOnly
+    isPending
+      ? show
+      : (types?.length ?? 0) +
+          (networks?.length ?? 0) +
+          (tokenSymbols?.length ?? 0) >
+          0 || farmsOnly
   ) {
     return (
-      <Button onClick={reset} icon={XMarkIcon} iconPosition="end" variant="outline" size="sm">
+      <Button
+        onClick={reset}
+        icon={XMarkIcon}
+        iconPosition="end"
+        variant="outline"
+        size="sm"
+      >
         Reset
       </Button>
     )

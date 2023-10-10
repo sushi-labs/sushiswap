@@ -11,7 +11,8 @@ export default function useChainId() {
   const searchParams = useSearchParams()
   return useMemo(() => {
     if (params?.chainId) return parseInt(params.chainId as string) as ChainId
-    if (searchParams?.has('chainId')) return parseInt(searchParams.get('chainId') as string) as ChainId
+    if (searchParams?.has('chainId'))
+      return parseInt(searchParams.get('chainId') as string) as ChainId
     if (chain) return chain.id as ChainId
     return ChainId.ETHEREUM
   }, [chain, params, searchParams])

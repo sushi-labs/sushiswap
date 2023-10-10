@@ -1,7 +1,7 @@
 import invariant from 'tiny-invariant'
 
 import Big from './Big.js'
-import {type BigintIsh} from './BigintIsh.js'
+import { type BigintIsh } from './BigintIsh.js'
 import Decimal from './Decimal.js'
 import Rounding from './Rounding.js'
 
@@ -22,15 +22,22 @@ class Fraction {
   public readonly denominator: bigint
 
   public constructor(numerator: BigintIsh, denominator: BigintIsh = 1n) {
-    this.numerator = typeof numerator !== 'bigint' ? BigInt(numerator) : numerator
-    this.denominator = typeof denominator !== 'bigint' ? BigInt(denominator) : denominator
+    this.numerator =
+      typeof numerator !== 'bigint' ? BigInt(numerator) : numerator
+    this.denominator =
+      typeof denominator !== 'bigint' ? BigInt(denominator) : denominator
   }
 
   private static tryParseFraction(fractionish: BigintIsh | Fraction): Fraction {
-    if (typeof fractionish === 'number' || typeof fractionish === 'string' || typeof fractionish === 'bigint')
+    if (
+      typeof fractionish === 'number' ||
+      typeof fractionish === 'string' ||
+      typeof fractionish === 'bigint'
+    )
       return new Fraction(fractionish)
 
-    if ('numerator' in fractionish && 'denominator' in fractionish) return fractionish
+    if ('numerator' in fractionish && 'denominator' in fractionish)
+      return fractionish
     throw new Error('Could not parse fraction')
   }
 
@@ -51,56 +58,82 @@ class Fraction {
   public add(other: Fraction | BigintIsh): Fraction {
     const otherParsed = Fraction.tryParseFraction(other)
     if (this.denominator === otherParsed.denominator) {
-      return new Fraction(this.numerator + otherParsed.numerator, this.denominator)
+      return new Fraction(
+        this.numerator + otherParsed.numerator,
+        this.denominator,
+      )
     }
     return new Fraction(
-      this.numerator * otherParsed.denominator + otherParsed.numerator * this.denominator,
-      this.denominator * otherParsed.denominator
+      this.numerator * otherParsed.denominator +
+        otherParsed.numerator * this.denominator,
+      this.denominator * otherParsed.denominator,
     )
   }
 
   public subtract(other: Fraction | BigintIsh): Fraction {
     const otherParsed = Fraction.tryParseFraction(other)
     if (this.denominator === otherParsed.denominator) {
-      return new Fraction(this.numerator - otherParsed.numerator, this.denominator)
+      return new Fraction(
+        this.numerator - otherParsed.numerator,
+        this.denominator,
+      )
     }
     return new Fraction(
-      this.numerator * otherParsed.denominator - otherParsed.numerator * this.denominator,
-      this.denominator * otherParsed.denominator
+      this.numerator * otherParsed.denominator -
+        otherParsed.numerator * this.denominator,
+      this.denominator * otherParsed.denominator,
     )
   }
 
   public lessThan(other: Fraction | BigintIsh): boolean {
     const otherParsed = Fraction.tryParseFraction(other)
-    return this.numerator * otherParsed.denominator < otherParsed.numerator * this.denominator
+    return (
+      this.numerator * otherParsed.denominator <
+      otherParsed.numerator * this.denominator
+    )
   }
 
   public equalTo(other: Fraction | BigintIsh): boolean {
     const otherParsed = Fraction.tryParseFraction(other)
-    return this.numerator * otherParsed.denominator === otherParsed.numerator * this.denominator
+    return (
+      this.numerator * otherParsed.denominator ===
+      otherParsed.numerator * this.denominator
+    )
   }
 
   public greaterThan(other: Fraction | BigintIsh): boolean {
     const otherParsed = Fraction.tryParseFraction(other)
-    return this.numerator * otherParsed.denominator > otherParsed.numerator * this.denominator
+    return (
+      this.numerator * otherParsed.denominator >
+      otherParsed.numerator * this.denominator
+    )
   }
 
   public multiply(other: Fraction | BigintIsh): Fraction {
     const otherParsed = Fraction.tryParseFraction(other)
-    return new Fraction(this.numerator * otherParsed.numerator, this.denominator * otherParsed.denominator)
+    return new Fraction(
+      this.numerator * otherParsed.numerator,
+      this.denominator * otherParsed.denominator,
+    )
   }
 
   public divide(other: Fraction | BigintIsh): Fraction {
     const otherParsed = Fraction.tryParseFraction(other)
-    return new Fraction(this.numerator * otherParsed.denominator, this.denominator * otherParsed.numerator)
+    return new Fraction(
+      this.numerator * otherParsed.denominator,
+      this.denominator * otherParsed.numerator,
+    )
   }
 
   public toSignificant(
     significantDigits: number,
     format: object = { groupSeparator: '' },
-    rounding: Rounding = Rounding.ROUND_HALF_UP
+    rounding: Rounding = Rounding.ROUND_HALF_UP,
   ): string {
-    invariant(Number.isInteger(significantDigits), `${significantDigits} is not an integer.`)
+    invariant(
+      Number.isInteger(significantDigits),
+      `${significantDigits} is not an integer.`,
+    )
     invariant(significantDigits > 0, `${significantDigits} is not positive.`)
 
     Decimal.set({
@@ -116,14 +149,19 @@ class Fraction {
   public toFixed(
     decimalPlaces: number,
     format: object = { groupSeparator: '' },
-    rounding: Rounding = Rounding.ROUND_HALF_UP
+    rounding: Rounding = Rounding.ROUND_HALF_UP,
   ): string {
-    invariant(Number.isInteger(decimalPlaces), `${decimalPlaces} is not an integer.`)
+    invariant(
+      Number.isInteger(decimalPlaces),
+      `${decimalPlaces} is not an integer.`,
+    )
     invariant(decimalPlaces >= 0, `${decimalPlaces} is negative.`)
 
     Big.DP = decimalPlaces
     Big.RM = toFixedRounding[rounding]
-    return new Big(this.numerator.toString()).div(this.denominator.toString()).toFormat(decimalPlaces, format)
+    return new Big(this.numerator.toString())
+      .div(this.denominator.toString())
+      .toFormat(decimalPlaces, format)
   }
 
   public toJSON() {

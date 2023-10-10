@@ -3,7 +3,10 @@
 import { useLogger } from 'next-axiom'
 import { useEffect } from 'react'
 
-export default function SwapError({ error, reset }: { error: Error; reset: () => void }) {
+export default function SwapError({
+  error,
+  reset,
+}: { error: Error; reset: () => void }) {
   const log = useLogger()
   useEffect(() => {
     // Log the error to an error reporting service

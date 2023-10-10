@@ -5,7 +5,15 @@ import { Separator } from '@sushiswap/ui'
 import { MotionConfig } from 'framer-motion'
 import React from 'react'
 
-import { BuildFuture, BuildWealth, Hero, NeedHelp, Partners, Stats, Story } from './components'
+import {
+  BuildFuture,
+  BuildWealth,
+  Hero,
+  NeedHelp,
+  Partners,
+  Stats,
+  Story,
+} from './components'
 
 export default async function LandingPage() {
   const isSmallScreen = useIsSmScreen()

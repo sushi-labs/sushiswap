@@ -19,15 +19,21 @@ describe('TickMath', () => {
     })
 
     it('throws for tick too small', () => {
-      expect(() => TickMath.getSqrtRatioAtTick(TickMath.MIN_TICK - 1)).toThrow('TICK')
+      expect(() => TickMath.getSqrtRatioAtTick(TickMath.MIN_TICK - 1)).toThrow(
+        'TICK',
+      )
     })
 
     it('throws for tick too large', () => {
-      expect(() => TickMath.getSqrtRatioAtTick(TickMath.MAX_TICK + 1)).toThrow('TICK')
+      expect(() => TickMath.getSqrtRatioAtTick(TickMath.MAX_TICK + 1)).toThrow(
+        'TICK',
+      )
     })
 
     it('returns the correct value for min tick', () => {
-      expect(TickMath.getSqrtRatioAtTick(TickMath.MIN_TICK)).toEqual(TickMath.MIN_SQRT_RATIO)
+      expect(TickMath.getSqrtRatioAtTick(TickMath.MIN_TICK)).toEqual(
+        TickMath.MIN_SQRT_RATIO,
+      )
     })
 
     it('returns the correct value for tick 0', () => {
@@ -35,16 +41,22 @@ describe('TickMath', () => {
     })
 
     it('returns the correct value for max tick', () => {
-      expect(TickMath.getSqrtRatioAtTick(TickMath.MAX_TICK)).toEqual(TickMath.MAX_SQRT_RATIO)
+      expect(TickMath.getSqrtRatioAtTick(TickMath.MAX_TICK)).toEqual(
+        TickMath.MAX_SQRT_RATIO,
+      )
     })
   })
 
   describe('#getTickAtSqrtRatio', () => {
     it('returns the correct value for sqrt ratio at min tick', () => {
-      expect(TickMath.getTickAtSqrtRatio(TickMath.MIN_SQRT_RATIO)).toEqual(TickMath.MIN_TICK)
+      expect(TickMath.getTickAtSqrtRatio(TickMath.MIN_SQRT_RATIO)).toEqual(
+        TickMath.MIN_TICK,
+      )
     })
     it('returns the correct value for sqrt ratio at max tick', () => {
-      expect(TickMath.getTickAtSqrtRatio(TickMath.MAX_SQRT_RATIO - 1n)).toEqual(TickMath.MAX_TICK - 1)
+      expect(TickMath.getTickAtSqrtRatio(TickMath.MAX_SQRT_RATIO - 1n)).toEqual(
+        TickMath.MAX_TICK - 1,
+      )
     })
   })
 })

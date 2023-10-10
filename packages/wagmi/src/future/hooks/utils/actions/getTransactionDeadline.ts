@@ -12,7 +12,11 @@ export const getTransactionDeadline = async (chainId: number) => {
     functionName: 'getCurrentBlockTimestamp',
   })
 
-  if (currentBlockTimestamp && chainId && Object.keys(chainsL2).includes(chainId.toString())) {
+  if (
+    currentBlockTimestamp &&
+    chainId &&
+    Object.keys(chainsL2).includes(chainId.toString())
+  ) {
     return currentBlockTimestamp + L2_DEADLINE_FROM_NOW
   }
 

@@ -1,16 +1,38 @@
 export const cloneRewarderTimeAbi = [
   {
-    inputs: [{ internalType: 'address', name: '_MASTERCHEF_V2', type: 'address' }],
+    inputs: [
+      { internalType: 'address', name: '_MASTERCHEF_V2', type: 'address' },
+    ],
     stateMutability: 'nonpayable',
     type: 'constructor',
   },
   {
     anonymous: false,
     inputs: [
-      { indexed: true, internalType: 'contract IERC20', name: 'rewardToken', type: 'address' },
-      { indexed: false, internalType: 'address', name: 'owner', type: 'address' },
-      { indexed: false, internalType: 'uint256', name: 'rewardPerSecond', type: 'uint256' },
-      { indexed: true, internalType: 'contract IERC20', name: 'masterLpToken', type: 'address' },
+      {
+        indexed: true,
+        internalType: 'contract IERC20',
+        name: 'rewardToken',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'owner',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'rewardPerSecond',
+        type: 'uint256',
+      },
+      {
+        indexed: true,
+        internalType: 'contract IERC20',
+        name: 'masterLpToken',
+        type: 'address',
+      },
     ],
     name: 'LogInit',
     type: 'event',
@@ -20,7 +42,12 @@ export const cloneRewarderTimeAbi = [
     inputs: [
       { indexed: true, internalType: 'address', name: 'user', type: 'address' },
       { indexed: true, internalType: 'uint256', name: 'pid', type: 'uint256' },
-      { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
       { indexed: true, internalType: 'address', name: 'to', type: 'address' },
     ],
     name: 'LogOnReward',
@@ -28,7 +55,14 @@ export const cloneRewarderTimeAbi = [
   },
   {
     anonymous: false,
-    inputs: [{ indexed: false, internalType: 'uint256', name: 'rewardPerSecond', type: 'uint256' }],
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'rewardPerSecond',
+        type: 'uint256',
+      },
+    ],
     name: 'LogRewardPerSecond',
     type: 'event',
   },
@@ -36,9 +70,24 @@ export const cloneRewarderTimeAbi = [
     anonymous: false,
     inputs: [
       { indexed: true, internalType: 'uint256', name: 'pid', type: 'uint256' },
-      { indexed: false, internalType: 'uint64', name: 'lastRewardTime', type: 'uint64' },
-      { indexed: false, internalType: 'uint256', name: 'lpSupply', type: 'uint256' },
-      { indexed: false, internalType: 'uint256', name: 'accToken1PerShare', type: 'uint256' },
+      {
+        indexed: false,
+        internalType: 'uint64',
+        name: 'lastRewardTime',
+        type: 'uint64',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'lpSupply',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'accToken1PerShare',
+        type: 'uint256',
+      },
     ],
     name: 'LogUpdatePool',
     type: 'event',
@@ -46,8 +95,18 @@ export const cloneRewarderTimeAbi = [
   {
     anonymous: false,
     inputs: [
-      { indexed: true, internalType: 'address', name: 'previousOwner', type: 'address' },
-      { indexed: true, internalType: 'address', name: 'newOwner', type: 'address' },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'previousOwner',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'newOwner',
+        type: 'address',
+      },
     ],
     name: 'OwnershipTransferred',
     type: 'event',
@@ -59,7 +118,13 @@ export const cloneRewarderTimeAbi = [
     stateMutability: 'view',
     type: 'function',
   },
-  { inputs: [], name: 'claimOwnership', outputs: [], stateMutability: 'nonpayable', type: 'function' },
+  {
+    inputs: [],
+    name: 'claimOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
   {
     inputs: [{ internalType: 'bytes', name: 'data', type: 'bytes' }],
     name: 'init',
@@ -119,7 +184,11 @@ export const cloneRewarderTimeAbi = [
     ],
     name: 'pendingTokens',
     outputs: [
-      { internalType: 'contract IERC20[]', name: 'rewardTokens', type: 'address[]' },
+      {
+        internalType: 'contract IERC20[]',
+        name: 'rewardTokens',
+        type: 'address[]',
+      },
       { internalType: 'uint256[]', name: 'rewardAmounts', type: 'uint256[]' },
     ],
     stateMutability: 'view',
@@ -168,7 +237,9 @@ export const cloneRewarderTimeAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'uint256', name: '_rewardPerSecond', type: 'uint256' }],
+    inputs: [
+      { internalType: 'uint256', name: '_rewardPerSecond', type: 'uint256' },
+    ],
     name: 'setRewardPerSecond',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -191,7 +262,11 @@ export const cloneRewarderTimeAbi = [
     outputs: [
       {
         components: [
-          { internalType: 'uint128', name: 'accToken1PerShare', type: 'uint128' },
+          {
+            internalType: 'uint128',
+            name: 'accToken1PerShare',
+            type: 'uint128',
+          },
           { internalType: 'uint64', name: 'lastRewardTime', type: 'uint64' },
         ],
         internalType: 'struct CloneRewarderTime.PoolInfo',

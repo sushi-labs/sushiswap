@@ -1,8 +1,22 @@
 export const NftLinkIcon = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg width="102" height="103" viewBox="0 0 102 103" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <svg
+      width="102"
+      height="103"
+      viewBox="0 0 102 103"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
       <g filter="url(#filter0_b_1810_2634)">
-        <rect y="0.341797" width="102" height="102" rx="12.5446" fill="white" fillOpacity="0.1" />
+        <rect
+          y="0.341797"
+          width="102"
+          height="102"
+          rx="12.5446"
+          fill="white"
+          fillOpacity="0.1"
+        />
         <path
           d="M34.5938 60.257V42.4135L51 33.4316L67.4062 42.4135V60.257L51 69.2388L34.5938 60.257Z"
           fill="white"
@@ -175,8 +189,17 @@ export const NftLinkIcon = (props: React.ComponentProps<'svg'>) => {
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feGaussianBlur in="BackgroundImageFix" stdDeviation="10.872" />
-          <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_1810_2634" />
-          <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_1810_2634" result="shape" />
+          <feComposite
+            in2="SourceAlpha"
+            operator="in"
+            result="effect1_backgroundBlur_1810_2634"
+          />
+          <feBlend
+            mode="normal"
+            in="SourceGraphic"
+            in2="effect1_backgroundBlur_1810_2634"
+            result="shape"
+          />
         </filter>
         <linearGradient
           id="paint0_linear_1810_2634"

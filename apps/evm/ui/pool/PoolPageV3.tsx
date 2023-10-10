@@ -15,7 +15,10 @@ import {
 } from '@sushiswap/ui/components/card'
 import { Toggle } from '@sushiswap/ui/components/toggle'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { useConcentratedLiquidityPool, useConcentratedLiquidityPoolReserves } from '@sushiswap/wagmi/future/hooks'
+import {
+  useConcentratedLiquidityPool,
+  useConcentratedLiquidityPoolReserves,
+} from '@sushiswap/wagmi/future/hooks'
 import { useTokenAmountDollarValues } from 'lib/hooks'
 import React, { FC, useMemo, useState } from 'react'
 
@@ -31,7 +34,9 @@ enum Granularity {
   Week,
 }
 
-const PoolPageV3: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
+const PoolPageV3: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({
+  pool,
+}) => {
   return (
     <ConcentratedLiquidityProvider>
       <Pool pool={pool} />
@@ -45,7 +50,10 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
   const chainId = +_chainId as SushiSwapV3ChainId
   const [granularity, setGranularity] = useState<Granularity>(Granularity.Day)
 
-  const { data: poolStats } = useConcentratedLiquidityPoolStats({ chainId, address })
+  const { data: poolStats } = useConcentratedLiquidityPoolStats({
+    chainId,
+    address,
+  })
   const { data: cPool } = useConcentratedLiquidityPool({
     chainId,
     token0: poolStats?.token0,
@@ -53,18 +61,28 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
     feeAmount: poolStats?.feeAmount,
   })
 
-  const { data: reserves, isLoading: isReservesLoading } = useConcentratedLiquidityPoolReserves({
-    pool: cPool,
-    chainId,
-  })
+  const { data: reserves, isLoading: isReservesLoading } =
+    useConcentratedLiquidityPoolReserves({
+      pool: cPool,
+      chainId,
+    })
   const fiatValues = useTokenAmountDollarValues({ chainId, amounts: reserves })
-  const incentiveAmounts = useMemo(() => poolStats?.incentives.map((el) => el.reward), [poolStats?.incentives])
-  const fiatValuesIncentives = useTokenAmountDollarValues({ chainId, amounts: incentiveAmounts })
+  const incentiveAmounts = useMemo(
+    () => poolStats?.incentives.map((el) => el.reward),
+    [poolStats?.incentives],
+  )
+  const fiatValuesIncentives = useTokenAmountDollarValues({
+    chainId,
+    amounts: incentiveAmounts,
+  })
 
   return (
     <div className="flex flex-col gap-6">
       <PoolsFiltersProvider>
-        <ConcentratedPositionsTable chainId={pool.chainId as ChainId} poolId={pool.address} />
+        <ConcentratedPositionsTable
+          chainId={pool.chainId as ChainId}
+          poolId={pool.address}
+        />
       </PoolsFiltersProvider>
       <div className="py-4">
         <Separator />
@@ -75,7 +93,9 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
           <Card>
             <CardHeader>
               <CardTitle>Pool Liquidity</CardTitle>
-              <CardDescription>{formatUSD(fiatValues[0] + fiatValues[1])}</CardDescription>
+              <CardDescription>
+                {formatUSD(fiatValues[0] + fiatValues[1])}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <CardCurrencyAmountItem
@@ -122,16 +142,29 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
                   <CardLabel>Volume</CardLabel>
                   {poolStats ? (
                     <div className="text-xl font-semibold">
-                      {formatUSD(granularity === Granularity.Week ? poolStats.volume1w : poolStats.volume1d ?? 0)}{' '}
+                      {formatUSD(
+                        granularity === Granularity.Week
+                          ? poolStats.volume1w
+                          : poolStats.volume1d ?? 0,
+                      )}{' '}
                       <span
                         className={classNames(
                           'text-xs',
-                          poolStats[granularity === Granularity.Week ? 'volumeChange1w' : 'volumeChange1d'] > 0
+                          poolStats[
+                            granularity === Granularity.Week
+                              ? 'volumeChange1w'
+                              : 'volumeChange1d'
+                          ] > 0
                             ? 'text-green'
-                            : 'text-red'
+                            : 'text-red',
                         )}
                       >
-                        ({poolStats[granularity === Granularity.Week ? 'volumeChange1w' : 'volumeChange1d'].toFixed(2)}
+                        (
+                        {poolStats[
+                          granularity === Granularity.Week
+                            ? 'volumeChange1w'
+                            : 'volumeChange1d'
+                        ].toFixed(2)}
                         %)
                       </span>
                     </div>
@@ -143,16 +176,29 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
                   <CardLabel>Fees</CardLabel>
                   {poolStats ? (
                     <div className="text-xl font-semibold">
-                      {formatUSD(granularity === Granularity.Week ? poolStats.fees1w : poolStats.fees1d ?? 0)}{' '}
+                      {formatUSD(
+                        granularity === Granularity.Week
+                          ? poolStats.fees1w
+                          : poolStats.fees1d ?? 0,
+                      )}{' '}
                       <span
                         className={classNames(
                           'text-xs',
-                          poolStats[granularity === Granularity.Week ? 'feesChange1w' : 'feesChange1d'] > 0
+                          poolStats[
+                            granularity === Granularity.Week
+                              ? 'feesChange1w'
+                              : 'feesChange1d'
+                          ] > 0
                             ? 'text-green'
-                            : 'text-red'
+                            : 'text-red',
                         )}
                       >
-                        ({poolStats[granularity === Granularity.Week ? 'feesChange1w' : 'feesChange1d'].toFixed(2)}
+                        (
+                        {poolStats[
+                          granularity === Granularity.Week
+                            ? 'feesChange1w'
+                            : 'feesChange1d'
+                        ].toFixed(2)}
                         %)
                       </span>
                     </div>

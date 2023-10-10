@@ -13,15 +13,25 @@ function nowDate(): string {
 
 export type WarningLevel = 'info' | 'warning' | 'error'
 
-export type WarningMessageHandler = (chain: ChainId | number | undefined, message: string, level: WarningLevel) => void
+export type WarningMessageHandler = (
+  chain: ChainId | number | undefined,
+  message: string,
+  level: WarningLevel,
+) => void
 
 let warningMessageHandler: WarningMessageHandler | undefined
 
-export function setWarningMessageHandler(_warningMessageHandler: WarningMessageHandler | undefined) {
+export function setWarningMessageHandler(
+  _warningMessageHandler: WarningMessageHandler | undefined,
+) {
   warningMessageHandler = _warningMessageHandler
 }
 
-export function warnLog(chain: ChainId | number | undefined, msg: string, level: WarningLevel = 'warning') {
+export function warnLog(
+  chain: ChainId | number | undefined,
+  msg: string,
+  level: WarningLevel = 'warning',
+) {
   console.warn(`${nowDate()}-${chain}: ${msg}`)
   if (warningMessageHandler) warningMessageHandler(chain, msg, level)
 }

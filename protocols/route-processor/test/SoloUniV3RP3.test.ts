@@ -4,10 +4,21 @@ import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { LiquidityProviders, Router, UniV3PoolCode } from '@sushiswap/router'
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
-import { createRandomUniV3Pool, createUniV3EnvZero } from '@sushiswap/tines-sandbox'
+import {
+  createRandomUniV3Pool,
+  createUniV3EnvZero,
+} from '@sushiswap/tines-sandbox'
 import { type Contract } from 'sushi/types'
 import { config, network } from 'hardhat'
-import { Address, Client, createPublicClient, custom, Hex, testActions, walletActions } from 'viem'
+import {
+  Address,
+  Client,
+  createPublicClient,
+  custom,
+  Hex,
+  testActions,
+  walletActions,
+} from 'viem'
 import { HDAccount, mnemonicToAccount } from 'viem/accounts'
 import { hardhat } from 'viem/chains'
 
@@ -15,7 +26,11 @@ import RouteProcessor3 from '../artifacts/contracts/RouteProcessor3.sol/RoutePro
 
 const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
 
-function closeValues(_a: number | bigint, _b: number | bigint, accuracy: number): boolean {
+function closeValues(
+  _a: number | bigint,
+  _b: number | bigint,
+  accuracy: number,
+): boolean {
   const a: number = typeof _a === 'number' ? _a : Number(_a)
   const b: number = typeof _b === 'number' ? _b : Number(_b)
   if (accuracy === 0) return a === b
@@ -24,7 +39,12 @@ function closeValues(_a: number | bigint, _b: number | bigint, accuracy: number)
   return Math.abs(a / b - 1) < accuracy
 }
 
-function expectCloseValues(_a: number | bigint, _b: number | bigint, accuracy: number, logInfoIfFalse = '') {
+function expectCloseValues(
+  _a: number | bigint,
+  _b: number | bigint,
+  accuracy: number,
+  logInfoIfFalse = '',
+) {
   const res = closeValues(_a, _b, accuracy)
   if (!res) {
     console.log(`Expected close: ${_a}, ${_b}, ${accuracy} ${logInfoIfFalse}`)
@@ -69,8 +89,11 @@ async function getTestEnvironment() {
     account: user.address,
     args: [BENTOBOX_ADDRESS[chainId as BentoBoxChainId], []],
   })
-  const RouteProcessorAddress = (await client.waitForTransactionReceipt({ hash: RouteProcessorTx })).contractAddress
-  if (!RouteProcessorAddress) throw new Error('RouteProcessorAddress is undefined')
+  const RouteProcessorAddress = (
+    await client.waitForTransactionReceipt({ hash: RouteProcessorTx })
+  ).contractAddress
+  if (!RouteProcessorAddress)
+    throw new Error('RouteProcessorAddress is undefined')
   const RouteProcessor = {
     address: RouteProcessorAddress,
     abi: routeProcessor3Abi,
@@ -109,18 +132,29 @@ it('UniV3 Solo', async () => {
   const pcMap: Map<string, PoolCode> = new Map()
   pcMap.set(
     pool.tinesPool.address,
-    new UniV3PoolCode(pool.tinesPool, LiquidityProviders.UniswapV2, LiquidityProviders.UniswapV2)
+    new UniV3PoolCode(
+      pool.tinesPool,
+      LiquidityProviders.UniswapV2,
+      LiquidityProviders.UniswapV2,
+    ),
   )
 
   //   const pcMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
-  const route = Router.findBestRoute(pcMap, testEnv.chainId, fromToken, BigInt(1e18), toToken, 50e9)
+  const route = Router.findBestRoute(
+    pcMap,
+    testEnv.chainId,
+    fromToken,
+    BigInt(1e18),
+    toToken,
+    50e9,
+  )
   const rpParams = Router.routeProcessor2Params(
     pcMap,
     route,
     fromToken,
     toToken,
     testEnv.user.address,
-    testEnv.rp.address
+    testEnv.rp.address,
   )
 
   await testEnv.client.writeContract({

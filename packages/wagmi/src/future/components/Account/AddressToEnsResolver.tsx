@@ -3,7 +3,10 @@ import { ReactNode, useEffect } from 'react'
 import { useEnsName } from 'wagmi'
 
 export type Props = Parameters<typeof useEnsName>[0] & {
-  children: ReactNode | Array<ReactNode> | ((payload: ReturnType<typeof useEnsName>) => JSX.Element)
+  children:
+    | ReactNode
+    | Array<ReactNode>
+    | ((payload: ReturnType<typeof useEnsName>) => JSX.Element)
 }
 
 export const AddressToEnsResolver = ({

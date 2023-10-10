@@ -33,7 +33,9 @@ function getMemory(data: CodeTraceInfo, addr: number, len: number): string {
   const word = Math.floor(addr / 32)
   const shift = addr - word * 32
   const mem =
-    word < data.memory.length ? data.memory[word] : '0000000000000000000000000000000000000000000000000000000000000000'
+    word < data.memory.length
+      ? data.memory[word]
+      : '0000000000000000000000000000000000000000000000000000000000000000'
   return mem.substring(shift * 2, (shift + len) * 2)
 }
 
@@ -82,16 +84,26 @@ function getCallFuncSelector(data: CodeTraceInfo): string {
 }
 
 // Returns the last processed code index
-function printGasUsageRecursive(trace: CodeTraceInfo[], start: number, prefix: string, gasBefore = -1): number {
+function printGasUsageRecursive(
+  trace: CodeTraceInfo[],
+  start: number,
+  prefix: string,
+  gasBefore = -1,
+): number {
   const depth = trace[start].depth
   const gasStart = trace[start].gas
   let lastPrintedGas = gasStart
-  if (gasBefore > 0) console.log(`${prefix}gas before function execution ${gasBefore - gasStart}`)
+  if (gasBefore > 0)
+    console.log(
+      `${prefix}gas before function execution ${gasBefore - gasStart}`,
+    )
 
   for (let i = start; i < trace.length; ) {
     const info = trace[i]
     if (info.depth !== depth) {
-      console.log(`${prefix}ERROR: UNEXPECTED DEPTH ${info.pc}: ${depth} -> ${info.depth}`)
+      console.log(
+        `${prefix}ERROR: UNEXPECTED DEPTH ${info.pc}: ${depth} -> ${info.depth}`,
+      )
       return i - 1
     }
     if (info.op.endsWith('CALL')) {
@@ -99,17 +111,26 @@ function printGasUsageRecursive(trace: CodeTraceInfo[], start: number, prefix: s
         // Function call
         console.log(`${prefix}${lastPrintedGas - info.gas} gas`)
         console.log(
-          `${prefix}${info.op}(pc=${info.pc}, index=${i}) ${getStackAddr(info, 1)} ${getCallFuncSelector(info)}`
+          `${prefix}${info.op}(pc=${info.pc}, index=${i}) ${getStackAddr(
+            info,
+            1,
+          )} ${getCallFuncSelector(info)}`,
         )
-        i = printGasUsageRecursive(trace, i + 1, prefix + '  ', info.gasCost) + 1
+        i =
+          printGasUsageRecursive(trace, i + 1, prefix + '  ', info.gasCost) + 1
         console.log(`${prefix + '  '}call total ${info.gas - trace[i].gas} gas`)
         lastPrintedGas = trace[i].gas
         continue
       }
     }
     if (info.op == 'RETURN' || info.op == 'REVERT' || info.op == 'STOP') {
-      if (lastPrintedGas !== gasStart) console.log(`${prefix}${lastPrintedGas - info.gas} gas`)
-      console.log(`${prefix}${info.op}(pc=${info.pc}, index=${i}) function execution ${gasStart - info.gas} gas`)
+      if (lastPrintedGas !== gasStart)
+        console.log(`${prefix}${lastPrintedGas - info.gas} gas`)
+      console.log(
+        `${prefix}${info.op}(pc=${info.pc}, index=${i}) function execution ${
+          gasStart - info.gas
+        } gas`,
+      )
       return i
     }
     if (i < trace.length - 1) {

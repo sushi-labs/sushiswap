@@ -13,12 +13,19 @@ import { Q96 } from '../internalConstants'
  * @param amount0 The token0 amount
  * @returns liquidity for amount0, imprecise
  */
-function maxLiquidityForAmount0Imprecise(sqrtRatioAX96: bigint, sqrtRatioBX96: bigint, amount0: BigintIsh): bigint {
+function maxLiquidityForAmount0Imprecise(
+  sqrtRatioAX96: bigint,
+  sqrtRatioBX96: bigint,
+  amount0: BigintIsh,
+): bigint {
   if (sqrtRatioAX96 > sqrtRatioBX96) {
     ;[sqrtRatioAX96, sqrtRatioBX96] = [sqrtRatioBX96, sqrtRatioAX96]
   }
   const intermediate = (sqrtRatioAX96 * sqrtRatioBX96) / Q96
-  return (BigInt(amount0.toString()) * intermediate) / (sqrtRatioBX96 - sqrtRatioAX96)
+  return (
+    (BigInt(amount0.toString()) * intermediate) /
+    (sqrtRatioBX96 - sqrtRatioAX96)
+  )
 }
 
 /**
@@ -29,7 +36,11 @@ function maxLiquidityForAmount0Imprecise(sqrtRatioAX96: bigint, sqrtRatioBX96: b
  * @param amount0 The token0 amount
  * @returns liquidity for amount0, precise
  */
-function maxLiquidityForAmount0Precise(sqrtRatioAX96: bigint, sqrtRatioBX96: bigint, amount0: BigintIsh): bigint {
+function maxLiquidityForAmount0Precise(
+  sqrtRatioAX96: bigint,
+  sqrtRatioBX96: bigint,
+  amount0: BigintIsh,
+): bigint {
   if (sqrtRatioAX96 > sqrtRatioBX96) {
     ;[sqrtRatioAX96, sqrtRatioBX96] = [sqrtRatioBX96, sqrtRatioAX96]
   }
@@ -47,7 +58,11 @@ function maxLiquidityForAmount0Precise(sqrtRatioAX96: bigint, sqrtRatioBX96: big
  * @param amount1 The token1 amount
  * @returns liquidity for amount1
  */
-function maxLiquidityForAmount1(sqrtRatioAX96: bigint, sqrtRatioBX96: bigint, amount1: BigintIsh): bigint {
+function maxLiquidityForAmount1(
+  sqrtRatioAX96: bigint,
+  sqrtRatioBX96: bigint,
+  amount1: BigintIsh,
+): bigint {
   if (sqrtRatioAX96 > sqrtRatioBX96) {
     ;[sqrtRatioAX96, sqrtRatioBX96] = [sqrtRatioBX96, sqrtRatioAX96]
   }
@@ -71,19 +86,29 @@ export function maxLiquidityForAmounts(
   sqrtRatioBX96: bigint,
   amount0: BigintIsh,
   amount1: BigintIsh,
-  useFullPrecision: boolean
+  useFullPrecision: boolean,
 ): bigint {
   if (sqrtRatioAX96 > sqrtRatioBX96) {
     ;[sqrtRatioAX96, sqrtRatioBX96] = [sqrtRatioBX96, sqrtRatioAX96]
   }
 
-  const maxLiquidityForAmount0 = useFullPrecision ? maxLiquidityForAmount0Precise : maxLiquidityForAmount0Imprecise
+  const maxLiquidityForAmount0 = useFullPrecision
+    ? maxLiquidityForAmount0Precise
+    : maxLiquidityForAmount0Imprecise
 
   if (sqrtRatioCurrentX96 <= sqrtRatioAX96) {
     return maxLiquidityForAmount0(sqrtRatioAX96, sqrtRatioBX96, amount0)
   } else if (sqrtRatioCurrentX96 < sqrtRatioBX96) {
-    const liquidity0 = maxLiquidityForAmount0(sqrtRatioCurrentX96, sqrtRatioBX96, amount0)
-    const liquidity1 = maxLiquidityForAmount1(sqrtRatioAX96, sqrtRatioCurrentX96, amount1)
+    const liquidity0 = maxLiquidityForAmount0(
+      sqrtRatioCurrentX96,
+      sqrtRatioBX96,
+      amount0,
+    )
+    const liquidity1 = maxLiquidityForAmount1(
+      sqrtRatioAX96,
+      sqrtRatioCurrentX96,
+      amount1,
+    )
     return liquidity0 < liquidity1 ? liquidity0 : liquidity1
   } else {
     return maxLiquidityForAmount1(sqrtRatioAX96, sqrtRatioBX96, amount1)

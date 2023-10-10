@@ -2,7 +2,12 @@ import { ChainId } from 'sushi/chain'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { useCallback } from 'react'
 import { UserRejectedRequestError } from 'viem'
-import { Address, useContractWrite, useNetwork, usePrepareContractWrite } from 'wagmi'
+import {
+  Address,
+  useContractWrite,
+  useNetwork,
+  usePrepareContractWrite,
+} from 'wagmi'
 import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
 import { ERC1967Proxy } from '../abis'
@@ -21,14 +26,21 @@ interface UseHarvestAngleRewards {
     | undefined
 }
 
-export const useHarvestAngleRewards = ({ account, chainId, args, enabled = true }: UseHarvestAngleRewards) => {
+export const useHarvestAngleRewards = ({
+  account,
+  chainId,
+  args,
+  enabled = true,
+}: UseHarvestAngleRewards) => {
   const { chain } = useNetwork()
   const { config } = usePrepareContractWrite({
     chainId,
     abi: ERC1967Proxy,
     address: '0x3Ef3D8bA38EBe18DB133cEc108f4D14CE00Dd9Ae',
     functionName: 'claim',
-    args: args ? [args.users, args.tokens, args.claims, args.proofs] : undefined,
+    args: args
+      ? [args.users, args.tokens, args.claims, args.proofs]
+      : undefined,
     enabled: Boolean(enabled && args && chainId === chain?.id),
   })
 
@@ -58,7 +70,7 @@ export const useHarvestAngleRewards = ({ account, chainId, args, enabled = true 
         })
       }
     },
-    [account, chainId]
+    [account, chainId],
   )
 
   return useContractWrite({

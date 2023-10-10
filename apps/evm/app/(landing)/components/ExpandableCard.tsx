@@ -23,7 +23,14 @@ interface ExpandableCardProps extends ExpendableCardData {
   children?(payload: ExpandableCardRenderProps): ReactNode
 }
 
-export const ExpandableCard: FC<ExpandableCardProps> = ({ children, title, caption, content, linkText, link }) => {
+export const ExpandableCard: FC<ExpandableCardProps> = ({
+  children,
+  title,
+  caption,
+  content,
+  linkText,
+  link,
+}) => {
   const [id] = useState(nanoid())
   const [open, setOpen] = useState(false)
   const containerId = `container-${id}`
@@ -40,7 +47,11 @@ export const ExpandableCard: FC<ExpandableCardProps> = ({ children, title, capti
       ) : (
         <motion.div layoutId={`container-${id}`}>
           <motion.div layoutId={`container-title-${id}`}>
-            <Button onClick={() => setOpen(true)} className="mt-3 whitespace-nowrap" variant="secondary">
+            <Button
+              onClick={() => setOpen(true)}
+              className="mt-3 whitespace-nowrap"
+              variant="secondary"
+            >
               {title}
             </Button>
           </motion.div>
@@ -59,8 +70,13 @@ export const ExpandableCard: FC<ExpandableCardProps> = ({ children, title, capti
                 layoutId={`container-${id}`}
                 className="border border-secondary shadow-lg prose dark:prose-invert bg-white dark:bg-slate-800 p-4 md:p-[36px] max-h-[80vh] overflow-y-scroll scroll overflow-x-hidden rounded-xl flex flex-col items-start"
               >
-                <span className="text-xs font-medium mb-1 uppercase text-muted-foreground">{caption}</span>
-                <motion.h1 layoutId={`container-title-${id}`} className="text-3xl text-left">
+                <span className="text-xs font-medium mb-1 uppercase text-muted-foreground">
+                  {caption}
+                </span>
+                <motion.h1
+                  layoutId={`container-title-${id}`}
+                  className="text-3xl text-left"
+                >
                   {title}
                 </motion.h1>
                 <motion.p>{content}</motion.p>

@@ -16,7 +16,13 @@ const token1 = {
 }
 const v = BigInt('0x76329851304572304587') // random number  ~ 2^80
 
-function expectCloseValues(v1: number, v2: number, precision: number, description = '', additionalInfo = '') {
+function expectCloseValues(
+  v1: number,
+  v2: number,
+  precision: number,
+  description = '',
+  additionalInfo = '',
+) {
   const a = v1
   const b = v2
   const res = closeValues(a, b, precision)
@@ -40,7 +46,7 @@ function createPool(
   decimals0 = 18,
   decimals1 = 18,
   total0 = { elastic: 1n, base: 1n },
-  total1 = { elastic: 1n, base: 1n }
+  total1 = { elastic: 1n, base: 1n },
 ) {
   return new StableSwapRPool(
     '0x253029F0D3593Afd4187500F1CB243F1EceaABAB',
@@ -52,21 +58,37 @@ function createPool(
     decimals0,
     decimals1,
     total0,
-    total1
+    total1,
   )
 }
 
-function checkCurveInvariant(pool: StableSwapRPool, amountIn: number, amountOut: number, direction: boolean) {
-  amountIn = direction ? pool.total0.toAmount(amountIn) : pool.total1.toAmount(amountIn)
-  amountIn *= direction ? pool.decimalsCompensation0 : pool.decimalsCompensation1
-  amountOut = direction ? pool.total1.toAmount(amountOut) : pool.total0.toAmount(amountOut)
-  amountOut *= direction ? pool.decimalsCompensation1 : pool.decimalsCompensation0
-  const prev_y = parseFloat((direction ? pool.reserve1 : pool.reserve0).toString())
+function checkCurveInvariant(
+  pool: StableSwapRPool,
+  amountIn: number,
+  amountOut: number,
+  direction: boolean,
+) {
+  amountIn = direction
+    ? pool.total0.toAmount(amountIn)
+    : pool.total1.toAmount(amountIn)
+  amountIn *= direction
+    ? pool.decimalsCompensation0
+    : pool.decimalsCompensation1
+  amountOut = direction
+    ? pool.total1.toAmount(amountOut)
+    : pool.total0.toAmount(amountOut)
+  amountOut *= direction
+    ? pool.decimalsCompensation1
+    : pool.decimalsCompensation0
+  const prev_y = parseFloat(
+    (direction ? pool.reserve1 : pool.reserve0).toString(),
+  )
   if (prev_y < amountOut * (1 + 1e-12)) return true // precision doens't allow to make the check -- too big swap
 
   const k = pool.computeK()
   const amountInWithoutFee = amountIn * (1 - pool.fee)
-  const x = (direction ? pool.reserve0 : pool.reserve1) + getBigInt(amountInWithoutFee)
+  const x =
+    (direction ? pool.reserve0 : pool.reserve1) + getBigInt(amountInWithoutFee)
   const y = (direction ? pool.reserve1 : pool.reserve0) - getBigInt(amountOut)
 
   const new_k = x * y * (x * x + y * y)
@@ -78,7 +100,11 @@ function checkCurveInvariant(pool: StableSwapRPool, amountIn: number, amountOut:
   return relative_diff > getBigInt(1e10)
 }
 
-function checkSwap(pool: StableSwapRPool, amountIn: number, direction: boolean): number {
+function checkSwap(
+  pool: StableSwapRPool,
+  amountIn: number,
+  direction: boolean,
+): number {
   const { out, gasSpent } = pool.calcOutByIn(amountIn, direction)
 
   expect(gasSpent).toBeDefined()
@@ -100,7 +126,9 @@ function checkSwap(pool: StableSwapRPool, amountIn: number, direction: boolean):
   expect(inp).not.toBeNaN()
   expect(inp).toBeGreaterThanOrEqual(0)
 
-  const prev_y = parseFloat((direction ? pool.reserve1 : pool.reserve0).toString())
+  const prev_y = parseFloat(
+    (direction ? pool.reserve1 : pool.reserve0).toString(),
+  )
   if (prev_y > out * (1 + 1e-12))
     // else precision doens't allow to make the check -- too big swap
     expectCloseValues(inp, amountIn, 1e-6)
@@ -125,7 +153,8 @@ function checkPoolPriceCalculation(pool: StableSwapRPool) {
 
   let poolScaled = pool
   if (pool.reserve0 < E33) {
-    poolScaled = new StableSwapRPool( // Scale E21 times
+    poolScaled = new StableSwapRPool(
+      // Scale E21 times
       pool.address,
       pool.token0,
       pool.token1,
@@ -135,7 +164,7 @@ function checkPoolPriceCalculation(pool: StableSwapRPool) {
       pool.decimals0,
       pool.decimals1,
       pool.total0.rebaseBI,
-      pool.total1.rebaseBI
+      pool.total1.rebaseBI,
     )
   }
   const inp = parseFloat(poolScaled.reserve0.toString()) / 1e15
@@ -171,7 +200,7 @@ describe('StableSwap test', () => {
         12,
         18,
         { elastic: getBigInt(1.03 * 1e18), base: getBigInt(2e18) },
-        { elastic: getBigInt(1.03 * 1e18), base: getBigInt(2e18) }
+        { elastic: getBigInt(1.03 * 1e18), base: getBigInt(2e18) },
       )
       for (let i = 0; i < 100; ++i) {
         const amountIn = 1e18 * i
@@ -192,7 +221,15 @@ describe('StableSwap test', () => {
         return { elastic: v01[(n >> 1) % 2], base: v01[n % 2] }
       }
       for (let j = 0; j < 16; ++j) {
-        const pool = createPool(v, v, 0.003, 6, 6, totalZero(j), totalZero(j >> 2))
+        const pool = createPool(
+          v,
+          v,
+          0.003,
+          6,
+          6,
+          totalZero(j),
+          totalZero(j >> 2),
+        )
         for (let i = 50; i < 53; ++i) {
           try {
             const amountIn = 1e18 * i
@@ -215,7 +252,7 @@ describe('StableSwap test', () => {
         6,
         18,
         { elastic: getBigInt(0.8 * 1e18), base: getBigInt(0.95 * 1e18) },
-        { elastic: getBigInt(0.95 * 1e18), base: getBigInt(0.8 * 1e18) }
+        { elastic: getBigInt(0.95 * 1e18), base: getBigInt(0.8 * 1e18) },
       )
       for (let i = 0; i < 100; ++i) {
         try {
@@ -265,7 +302,13 @@ describe('StableSwap test', () => {
   describe('Price calculation', () => {
     it('Regular values', () => {
       for (let i = 1n; i < 100n; ++i) {
-        const pool = createPool(v * i, v * (100n - i) * getBigInt(1e12), 0.003, 6, 18)
+        const pool = createPool(
+          v * i,
+          v * (100n - i) * getBigInt(1e12),
+          0.003,
+          6,
+          18,
+        )
         checkPoolPriceCalculation(pool)
       }
     })
@@ -274,14 +317,26 @@ describe('StableSwap test', () => {
     it('Extreme low balance', () => {
       const low_v = getBigInt(1e8)
       for (let i = 1n; i < 100n; ++i) {
-        const pool = createPool(low_v * i * getBigInt(1e4), low_v * (100n - i), 0.001, 10, 6)
+        const pool = createPool(
+          low_v * i * getBigInt(1e4),
+          low_v * (100n - i),
+          0.001,
+          10,
+          6,
+        )
         checkPoolPriceCalculation(pool)
       }
     })
 
     it('Extreme disproportion', () => {
       for (let i = 1n; i < 100n; ++i) {
-        const pool = createPool(v * i * getBigInt(1e12), v * (getBigInt(1e9) - i), 0.002, 18, 6)
+        const pool = createPool(
+          v * i * getBigInt(1e12),
+          v * (getBigInt(1e9) - i),
+          0.002,
+          18,
+          6,
+        )
         checkPoolPriceCalculation(pool)
       }
     })
@@ -295,7 +350,7 @@ describe('StableSwap test', () => {
           6,
           18,
           { elastic: getBigInt(1.03 * 1e18), base: getBigInt(2e18) },
-          { elastic: getBigInt(1.1 * 1e18), base: getBigInt(0.9 * 1e18) }
+          { elastic: getBigInt(1.1 * 1e18), base: getBigInt(0.9 * 1e18) },
         )
         checkPoolPriceCalculation(pool)
       }
@@ -311,7 +366,7 @@ describe('StableSwap test', () => {
           {
             elastic: getBigInt(1.15 * 1e18),
             base: getBigInt((100 - i) * 1e17),
-          }
+          },
         )
         checkPoolPriceCalculation(pool)
       }

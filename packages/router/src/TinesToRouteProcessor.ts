@@ -1,5 +1,11 @@
 import { ChainId } from 'sushi/chain'
-import { getBigInt, MultiRoute, RouteLeg, RouteStatus, RToken } from '@sushiswap/tines'
+import {
+  getBigInt,
+  MultiRoute,
+  RouteLeg,
+  RouteStatus,
+  RToken,
+} from '@sushiswap/tines'
 import { Hex } from 'viem'
 
 import { HEXer } from './HEXer'
@@ -11,11 +17,13 @@ function last<T>(arr: T[]): T {
 
 enum TokenType {
   ERC20 = 'ERC20',
-  'BENTO' = 'BENTO',
+  BENTO = 'BENTO',
 }
 
 function getTokenType(token: RToken): TokenType {
-  return typeof token.chainId === 'string' && token.chainId.startsWith('Bento') ? TokenType.BENTO : TokenType.ERC20
+  return typeof token.chainId === 'string' && token.chainId.startsWith('Bento')
+    ? TokenType.BENTO
+    : TokenType.ERC20
 }
 
 export class TinesToRouteProcessor {
@@ -24,7 +32,11 @@ export class TinesToRouteProcessor {
   pools: Map<string, PoolCode>
   tokenOutputLegs: Map<string, RouteLeg[]>
 
-  constructor(routeProcessorAddress: string, chainId: ChainId, pools: Map<string, PoolCode>) {
+  constructor(
+    routeProcessorAddress: string,
+    chainId: ChainId,
+    pools: Map<string, PoolCode>,
+  ) {
     this.routeProcessorAddress = routeProcessorAddress
     this.chainId = chainId
     this.pools = pools
@@ -81,14 +93,23 @@ export class TinesToRouteProcessor {
     return hex.toString0x()
   }
 
-  getPoolOutputAddress(l: RouteLeg, route: MultiRoute, toAddress: string): string {
+  getPoolOutputAddress(
+    l: RouteLeg,
+    route: MultiRoute,
+    toAddress: string,
+  ): string {
     let outAddress
-    const outputDistribution = this.tokenOutputLegs.get(l.tokenTo.tokenId as string) || []
+    const outputDistribution =
+      this.tokenOutputLegs.get(l.tokenTo.tokenId as string) || []
     if (outputDistribution.length === 0) {
       outAddress = toAddress
     } else if (outputDistribution.length === 1) {
-      outAddress = this.getPoolCode(outputDistribution[0]).getStartPoint(l, route)
-      if (outAddress === PoolCode.RouteProcessorAddress) outAddress = this.routeProcessorAddress
+      outAddress = this.getPoolCode(outputDistribution[0]).getStartPoint(
+        l,
+        route,
+      )
+      if (outAddress === PoolCode.RouteProcessorAddress)
+        outAddress = this.routeProcessorAddress
     } else {
       outAddress = this.routeProcessorAddress
     }
@@ -103,7 +124,12 @@ export class TinesToRouteProcessor {
     return pc
   }
 
-  codeSwap(leg: RouteLeg, route: MultiRoute, to: string, exactAmount?: bigint): string {
+  codeSwap(
+    leg: RouteLeg,
+    route: MultiRoute,
+    to: string,
+    exactAmount?: bigint,
+  ): string {
     const pc = this.getPoolCode(leg)
     return pc.getSwapCodeForRouteProcessor(leg, route, to, exactAmount)
   }
@@ -116,15 +142,23 @@ export class TinesToRouteProcessor {
       fromToken = route.legs[0].tokenTo // Change to wrapped Native
     }
 
-    const legs = this.tokenOutputLegs.get(fromToken.tokenId as string) as RouteLeg[]
+    const legs = this.tokenOutputLegs.get(
+      fromToken.tokenId as string,
+    ) as RouteLeg[]
     const legsAddr: [RouteLeg, string][] = legs.map((l) => {
       const pc = this.getPoolCode(l)
       const startPoint = pc.getStartPoint(l, route)
-      return [l, startPoint === PoolCode.RouteProcessorAddress ? this.routeProcessorAddress : startPoint]
+      return [
+        l,
+        startPoint === PoolCode.RouteProcessorAddress
+          ? this.routeProcessorAddress
+          : startPoint,
+      ]
     })
 
     const hex = new HEXer()
-    if (getTokenType(fromToken) === TokenType.BENTO) hex.uint8(24) // distributeBentoShares
+    if (getTokenType(fromToken) === TokenType.BENTO)
+      hex.uint8(24) // distributeBentoShares
     else if (route.fromToken.address === '') {
       if (this.chainId === ChainId.CELO) {
         // Celo is very special - native coin has it's own ERC20 token
@@ -165,7 +199,9 @@ export class TinesToRouteProcessor {
       return startPoint === PoolCode.RouteProcessorAddress
     }).length
     if (RPStartPointsNum > 1) {
-      throw new Error('More than one input token is not supported by RouteProcessor')
+      throw new Error(
+        'More than one input token is not supported by RouteProcessor',
+      )
     }
 
     const command =
@@ -194,7 +230,7 @@ export class TinesToRouteProcessor {
     const code = hex.toString()
     console.assert(
       code.length === (22 + (legs.length - unmovedCounter) * 22) * 2,
-      'codeDistributeTokenShares unexpected code length'
+      'codeDistributeTokenShares unexpected code length',
     )
     return code
   }
@@ -221,8 +257,12 @@ export function getRouteProcessorCode(
   route: MultiRoute,
   routeProcessorAddress: string,
   toAddress: string,
-  pools: Map<string, PoolCode>
+  pools: Map<string, PoolCode>,
 ): string {
-  const rpc = new TinesToRouteProcessor(routeProcessorAddress, route.fromToken.chainId as ChainId, pools)
+  const rpc = new TinesToRouteProcessor(
+    routeProcessorAddress,
+    route.fromToken.chainId as ChainId,
+    pools,
+  )
   return rpc.getRouteProcessorCode(route, toAddress)
 }

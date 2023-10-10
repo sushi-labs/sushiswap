@@ -12,5 +12,5 @@ createConfig(
   configureChains(allChains, [
     publicProvider(),
     // alchemyProvider({ apiKey: alchemyId })
-  ])
+  ]),
 )

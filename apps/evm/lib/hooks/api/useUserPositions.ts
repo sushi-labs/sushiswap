@@ -32,22 +32,28 @@ const transformPositions = (positions?: UserPosition[], pools?: Pools) =>
 export function useUserPositions(args: GetUserArgs, shouldFetch = true) {
   const { data: positions } = useSWR<UserPosition[]>(
     shouldFetch && args.id ? getUserPositionsUrl(args) : null,
-    async (url) => fetch(url).then((data) => data.json())
+    async (url) => fetch(url).then((data) => data.json()),
   )
 
-  const _positions = useMemo(() => positions?.map((position) => position.pool) || [], [positions])
+  const _positions = useMemo(
+    () => positions?.map((position) => position.pool) || [],
+    [positions],
+  )
   const pools = useGraphPools(_positions)
-  const isValidating = !positions || !pools || (positions.length > 0 && pools.length === 0)
+  const isValidating =
+    !positions || !pools || (positions.length > 0 && pools.length === 0)
 
   return useMemo(
     () => ({
       data: !isValidating
         ? transformPositions(positions, pools)?.filter((position) =>
-            Array.isArray(args.chainIds) ? args.chainIds?.includes(position.chainId as ChainId) : true
+            Array.isArray(args.chainIds)
+              ? args.chainIds?.includes(position.chainId as ChainId)
+              : true,
           )
         : undefined,
       isValidating,
     }),
-    [args.chainIds, isValidating, pools, positions]
+    [args.chainIds, isValidating, pools, positions],
   )
 }

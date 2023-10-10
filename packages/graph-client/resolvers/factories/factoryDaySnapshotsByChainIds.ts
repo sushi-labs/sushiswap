@@ -20,7 +20,7 @@ import {
 
 const transformV3DayToSnapshot = (
   days: SushiSwapV3DayDatasQuery['uniswapDayDatas'],
-  chainId: number
+  chainId: number,
 ): Query['factoryDaySnapshotsByChainIds'] =>
   days.map((day) => ({
     chainId: chainId,
@@ -37,95 +37,98 @@ const transformV3DayToSnapshot = (
     factory: null,
   }))
 
-export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsByChainIds'] = async (
-  root,
-  args,
-  context,
-  info
-): Promise<Query['factoryDaySnapshotsByChainIds']> => {
-  const fetchTridentSnapshots = async (chainId: number) => {
-    const snapshots: FactoryDaySnapshot[] = await context.Trident.Query.factoryDaySnapshots({
-      root,
-      args,
-      context: {
-        ...context,
-        chainId,
-        chainName: chainName[chainId],
-        chainShortName: chainShortName[chainId],
-        subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
+export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsByChainIds'] =
+  async (
+    root,
+    args,
+    context,
+    info,
+  ): Promise<Query['factoryDaySnapshotsByChainIds']> => {
+    const fetchTridentSnapshots = async (chainId: number) => {
+      const snapshots: FactoryDaySnapshot[] =
+        await context.Trident.Query.factoryDaySnapshots({
+          root,
+          args,
+          context: {
+            ...context,
+            chainId,
+            chainName: chainName[chainId],
+            chainShortName: chainShortName[chainId],
+            subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
+            subgraphHost: SUBGRAPH_HOST[chainId],
+          },
+          info,
+        })
+
+      return (
+        snapshots?.map((snapshot) => ({
+          ...snapshot,
+          chainId,
+          chainName: chainName[chainId],
+          chainShortName: chainShortName[chainId],
+        })) || []
+      )
+    }
+
+    const fetchSushiSwapV2Snapshots = async (chainId: number) => {
+      const snapshots: FactoryDaySnapshot[] =
+        await context.SushiSwap.Query.factoryDaySnapshots({
+          root,
+          args,
+          context: {
+            ...context,
+            chainId,
+            chainName: chainName[chainId],
+            chainShortName: chainShortName[chainId],
+            subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+            subgraphHost: SUBGRAPH_HOST[chainId],
+          },
+          info,
+        })
+
+      return (
+        snapshots?.map((snapshot) => ({
+          ...snapshot,
+          chainId,
+          chainName: chainName[chainId],
+          chainShortName: chainShortName[chainId],
+        })) || []
+      )
+    }
+
+    const fetchSushiSwapV3Snapshots = async (chainId: SushiSwapV3ChainId) => {
+      const sdk = getBuiltGraphSDK({
+        subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
         subgraphHost: SUBGRAPH_HOST[chainId],
-      },
-      info,
-    })
+      })
 
-    return (
-      snapshots?.map((snapshot) => ({
-        ...snapshot,
-        chainId,
-        chainName: chainName[chainId],
-        chainShortName: chainShortName[chainId],
-      })) || []
-    )
-  }
+      const { uniswapDayDatas } = await sdk.SushiSwapV3DayDatas({
+        first: args.first,
+        skip: args.skip,
+        orderBy: args.orderBy === 'liquidityUSD' ? 'tvlUSD' : 'date',
+        orderDirection: args.orderDirection,
+      })
 
-  const fetchSushiSwapV2Snapshots = async (chainId: number) => {
-    const snapshots: FactoryDaySnapshot[] = await context.SushiSwap.Query.factoryDaySnapshots({
-      root,
-      args,
-      context: {
-        ...context,
-        chainId,
-        chainName: chainName[chainId],
-        chainShortName: chainShortName[chainId],
-        subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
-        subgraphHost: SUBGRAPH_HOST[chainId],
-      },
-      info,
-    })
-
-    return (
-      snapshots?.map((snapshot) => ({
-        ...snapshot,
-        chainId,
-        chainName: chainName[chainId],
-        chainShortName: chainShortName[chainId],
-      })) || []
-    )
-  }
-
-  const fetchSushiSwapV3Snapshots = async (chainId: SushiSwapV3ChainId) => {
-    const sdk = getBuiltGraphSDK({
-      subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
-      subgraphHost: SUBGRAPH_HOST[chainId],
-    })
-
-    const { uniswapDayDatas } = await sdk.SushiSwapV3DayDatas({
-      first: args.first,
-      skip: args.skip,
-      orderBy: args.orderBy === 'liquidityUSD' ? 'tvlUSD' : 'date',
-      orderDirection: args.orderDirection,
-    })
-
-    return transformV3DayToSnapshot(uniswapDayDatas, chainId)
-  }
-
-  const queries = args.chainIds.flatMap((chainId: ChainId) => {
-    const queries: Promise<Query['factoryDaySnapshotsByChainIds']>[] = []
-
-    if (isTridentChain(chainId)) {
-      queries.push(fetchTridentSnapshots(chainId))
+      return transformV3DayToSnapshot(uniswapDayDatas, chainId)
     }
 
-    if (isSushiSwapChain(chainId)) {
-      queries.push(fetchSushiSwapV2Snapshots(chainId))
-    }
+    const queries = args.chainIds.flatMap((chainId: ChainId) => {
+      const queries: Promise<Query['factoryDaySnapshotsByChainIds']>[] = []
 
-    if (isSushiSwapV3Chain(chainId)) {
-      queries.push(fetchSushiSwapV3Snapshots(chainId))
-    }
+      if (isTridentChain(chainId)) {
+        queries.push(fetchTridentSnapshots(chainId))
+      }
 
-    return queries
-  })
+      if (isSushiSwapChain(chainId)) {
+        queries.push(fetchSushiSwapV2Snapshots(chainId))
+      }
 
-  return Promise.all(queries).then((snapshots) => snapshots.flat())
-}
+      if (isSushiSwapV3Chain(chainId)) {
+        queries.push(fetchSushiSwapV3Snapshots(chainId))
+      }
+
+      return queries
+    })
+
+    return Promise.all(queries).then((snapshots) => snapshots.flat())
+  }

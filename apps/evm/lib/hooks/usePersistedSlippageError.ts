@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 
-export const usePersistedSlippageError = ({ isSuccess, error }: { isSuccess: boolean; error: Error | null }) => {
+export const usePersistedSlippageError = ({
+  isSuccess,
+  error,
+}: { isSuccess: boolean; error: Error | null }) => {
   const [show, setShow] = useState(false)
   const [persistedError, setPersistedError] = useState<Error | null>(error)
 

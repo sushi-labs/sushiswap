@@ -1,6 +1,13 @@
 import { SteerStrategy } from '@sushiswap/database'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Separator } from '@sushiswap/ui'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Separator,
+} from '@sushiswap/ui'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import { unwrapToken } from 'lib/functions'
@@ -28,7 +35,10 @@ export const SteerManual: FC<ManualProps> = ({ address, chainId }) => {
 
   const [invertTokens, setInvertTokens] = useState(false)
 
-  const { data: poolStats } = useConcentratedLiquidityPoolStats({ chainId, address })
+  const { data: poolStats } = useConcentratedLiquidityPoolStats({
+    chainId,
+    address,
+  })
   const [_token0, _token1] = useMemo(() => {
     const tokens = [
       poolStats?.token0 ? unwrapToken(poolStats.token0) : undefined,
@@ -42,7 +52,9 @@ export const SteerManual: FC<ManualProps> = ({ address, chainId }) => {
     <Card>
       <CardHeader>
         <CardTitle>New position</CardTitle>
-        <CardDescription>Create a new concentrated liquidity position</CardDescription>
+        <CardDescription>
+          Create a new concentrated liquidity position
+        </CardDescription>
       </CardHeader>
       <div className="px-6">
         <Separator />

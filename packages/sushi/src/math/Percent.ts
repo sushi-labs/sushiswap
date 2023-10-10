@@ -36,11 +36,21 @@ class Percent extends Fraction {
     return toPercent(super.divide(other))
   }
 
-  public override toSignificant(significantDigits = 5, format?: object, rounding?: Rounding): string {
-    return super.multiply(ONE_HUNDRED).toSignificant(significantDigits, format, rounding)
+  public override toSignificant(
+    significantDigits = 5,
+    format?: object,
+    rounding?: Rounding,
+  ): string {
+    return super
+      .multiply(ONE_HUNDRED)
+      .toSignificant(significantDigits, format, rounding)
   }
 
-  public override toFixed(decimalPlaces = 2, format?: object, rounding?: Rounding): string {
+  public override toFixed(
+    decimalPlaces = 2,
+    format?: object,
+    rounding?: Rounding,
+  ): string {
     return super.multiply(ONE_HUNDRED).toFixed(decimalPlaces, format, rounding)
   }
 

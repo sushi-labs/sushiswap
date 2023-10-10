@@ -18,7 +18,11 @@ export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
 }) => {
   return (
     <>
-      <HeaderNetworkSelector networks={chainIds} selectedNetwork={selectedNetwork} onChange={onChange} />
+      <HeaderNetworkSelector
+        networks={chainIds}
+        selectedNetwork={selectedNetwork}
+        onChange={onChange}
+      />
       <UserProfile networks={chainIds} />
     </>
   )

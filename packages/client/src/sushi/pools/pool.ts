@@ -12,7 +12,10 @@ export { PoolApiSchema }
 export type Pool = Awaited<ReturnType<typeof getEarnPoolOriginal>>
 // Slightly opinionated, adding string to support the chainId:address format
 export type GetPoolArgs =
-  | GetApiInputFromOutput<(typeof PoolApiSchema)['_input'], (typeof PoolApiSchema)['_output']>
+  | GetApiInputFromOutput<
+      typeof PoolApiSchema['_input'],
+      typeof PoolApiSchema['_output']
+    >
   | string
 
 export const getPoolUrl = (args: GetPoolArgs) => {
@@ -32,7 +35,8 @@ export const getPool = async (args: GetPoolArgs): Promise<Pool> => {
 }
 
 export const usePool = ({ args, shouldFetch }: SWRHookConfig<GetPoolArgs>) => {
-  return useSWR<Pool>(shouldFetch !== false ? getPoolUrl(args) : null, async (url) =>
-    fetch(url).then((data) => data.json())
+  return useSWR<Pool>(
+    shouldFetch !== false ? getPoolUrl(args) : null,
+    async (url) => fetch(url).then((data) => data.json()),
   )
 }

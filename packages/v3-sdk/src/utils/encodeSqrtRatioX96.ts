@@ -7,7 +7,10 @@ import { BigintIsh, sqrt } from 'sushi'
  * @returns The sqrt ratio
  */
 
-export function encodeSqrtRatioX96(amount1: BigintIsh, amount0: BigintIsh): bigint {
+export function encodeSqrtRatioX96(
+  amount1: BigintIsh,
+  amount0: BigintIsh,
+): bigint {
   const numerator = BigInt(amount1.toString()) << 192n
   const denominator = BigInt(amount0.toString())
   const ratioX192 = numerator / denominator

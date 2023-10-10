@@ -13,12 +13,9 @@ interface ConcentratedLiquidityHarvestButton {
   children(params: ReturnType<typeof useHarvestAngleRewards>): ReactElement
 }
 
-export const ConcentratedLiquidityHarvestButton: FC<ConcentratedLiquidityHarvestButton> = ({
-  account,
-  chainId,
-  enabled,
-  children,
-}) => {
+export const ConcentratedLiquidityHarvestButton: FC<
+  ConcentratedLiquidityHarvestButton
+> = ({ account, chainId, enabled, children }) => {
   const { data: rewards } = useAngleRewards({
     chainId,
     account,
@@ -26,7 +23,9 @@ export const ConcentratedLiquidityHarvestButton: FC<ConcentratedLiquidityHarvest
 
   const args = useMemo(() => {
     if (!rewards || !account || !rewards.transactionData) return undefined
-    const [tokens, claims, proofs] = Object.entries(rewards.transactionData).reduce<[Address[], bigint[], Address[][]]>(
+    const [tokens, claims, proofs] = Object.entries(
+      rewards.transactionData,
+    ).reduce<[Address[], bigint[], Address[][]]>(
       (acc, [k, v]) => {
         if (v.proof !== undefined) {
           acc[0].push(k as Address)
@@ -35,7 +34,7 @@ export const ConcentratedLiquidityHarvestButton: FC<ConcentratedLiquidityHarvest
         }
         return acc
       },
-      [[], [], []]
+      [[], [], []],
     )
 
     return {

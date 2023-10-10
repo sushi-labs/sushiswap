@@ -15,7 +15,13 @@ interface ProductArticles {
   isLoading: boolean
 }
 
-export const ProductArticles: FC<ProductArticles> = ({ title, productName, articles, subtitle, isLoading }) => {
+export const ProductArticles: FC<ProductArticles> = ({
+  title,
+  productName,
+  articles,
+  subtitle,
+  isLoading,
+}) => {
   return (
     <section className="py-10 sm:py-[75px]">
       <div className="flex items-center justify-between w-full">
@@ -32,7 +38,12 @@ export const ProductArticles: FC<ProductArticles> = ({ title, productName, artic
               skeletonAmount={3}
               articles={articles}
               loading={isLoading}
-              render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
+              render={(article) => (
+                <Card
+                  article={article}
+                  key={`article__left__${article?.attributes?.slug}`}
+                />
+              )}
             />
           </div>
         )}

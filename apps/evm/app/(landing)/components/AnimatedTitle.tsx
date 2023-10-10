@@ -2,7 +2,10 @@ import { classNames } from '@sushiswap/ui'
 import { useInView } from 'framer-motion'
 import { FC, ReactNode, useRef } from 'react'
 
-export const AnimatedTitle: FC<{ children: ReactNode; className?: string }> = ({ children, className }) => {
+export const AnimatedTitle: FC<{ children: ReactNode; className?: string }> = ({
+  children,
+  className,
+}) => {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true })
 

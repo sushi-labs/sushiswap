@@ -12,13 +12,20 @@ export const PreviewBanner: FC<PreviewBanner> = ({ show }) => {
 
   return (
     <div className="bg-slate-700 py-3 flex items-center border-t border-slate-600 border-b">
-      <Container maxWidth="2xl" className="mx-auto px-4 flex items-center justify-between">
+      <Container
+        maxWidth="2xl"
+        className="mx-auto px-4 flex items-center justify-between"
+      >
         <div className="flex flex-col gap-1">
           <span className="font-medium text-white">Preview Mode</span>
-          <span className="text-xs text-slate-300">You are viewing an unpublished article</span>
+          <span className="text-xs text-slate-300">
+            You are viewing an unpublished article
+          </span>
         </div>
         <Button asChild>
-          <LinkInternal href="/api/exit-preview">Exit Preview Mode</LinkInternal>
+          <LinkInternal href="/api/exit-preview">
+            Exit Preview Mode
+          </LinkInternal>
         </Button>
       </Container>
     </div>

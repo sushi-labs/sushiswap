@@ -35,13 +35,17 @@ export const HeaderNetworkSelector: FC<{
         }
       }
     },
-    [chain?.id, onChange, selectedNetwork, switchNetworkAsync]
+    [chain?.id, onChange, selectedNetwork, switchNetworkAsync],
   )
 
   const selected = selectedNetwork || (chain?.id as ChainId) || ChainId.ETHEREUM
 
   return (
-    <NetworkSelector selected={selected} onSelect={onSwitchNetwork} networks={networks}>
+    <NetworkSelector
+      selected={selected}
+      onSelect={onSwitchNetwork}
+      networks={networks}
+    >
       <Button variant="secondary" testId="network-selector">
         <NetworkIcon chainId={selected} width={20} height={20} />
         <div className="hidden xl:block">{Chain.from(selected)?.name}</div>

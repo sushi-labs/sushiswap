@@ -4,7 +4,14 @@ import { IconComponent } from '../../../../types'
 
 export const HaqqNakked: IconComponent = (props) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" fill="none" viewBox="0 0 128 128" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="128"
+      height="128"
+      fill="none"
+      viewBox="0 0 128 128"
+      {...props}
+    >
       <g clipPath="url(#clip0_1006_159)">
         <mask
           id="mask0_1006_159"
@@ -33,7 +40,10 @@ export const HaqqNakked: IconComponent = (props) => {
             ></path>
           </mask>
           <g mask="url(#mask1_1006_159)">
-            <path fill="#0D0D0E" d="M108.381 13.037H20.709v103.014h87.672V13.037z"></path>
+            <path
+              fill="#0D0D0E"
+              d="M108.381 13.037H20.709v103.014h87.672V13.037z"
+            ></path>
             <g filter="url(#filter0_f_1006_159)">
               <path
                 fill="#002E48"
@@ -84,8 +94,15 @@ export const HaqqNakked: IconComponent = (props) => {
           filterUnits="userSpaceOnUse"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
-          <feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"></feBlend>
-          <feGaussianBlur result="effect1_foregroundBlur_1006_159" stdDeviation="10.545"></feGaussianBlur>
+          <feBlend
+            in="SourceGraphic"
+            in2="BackgroundImageFix"
+            result="shape"
+          ></feBlend>
+          <feGaussianBlur
+            result="effect1_foregroundBlur_1006_159"
+            stdDeviation="10.545"
+          ></feGaussianBlur>
         </filter>
         <filter
           id="filter1_f_1006_159"
@@ -97,8 +114,15 @@ export const HaqqNakked: IconComponent = (props) => {
           filterUnits="userSpaceOnUse"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
-          <feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"></feBlend>
-          <feGaussianBlur result="effect1_foregroundBlur_1006_159" stdDeviation="10.545"></feGaussianBlur>
+          <feBlend
+            in="SourceGraphic"
+            in2="BackgroundImageFix"
+            result="shape"
+          ></feBlend>
+          <feGaussianBlur
+            result="effect1_foregroundBlur_1006_159"
+            stdDeviation="10.545"
+          ></feGaussianBlur>
         </filter>
         <filter
           id="filter2_f_1006_159"
@@ -110,8 +134,15 @@ export const HaqqNakked: IconComponent = (props) => {
           filterUnits="userSpaceOnUse"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
-          <feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"></feBlend>
-          <feGaussianBlur result="effect1_foregroundBlur_1006_159" stdDeviation="10.545"></feGaussianBlur>
+          <feBlend
+            in="SourceGraphic"
+            in2="BackgroundImageFix"
+            result="shape"
+          ></feBlend>
+          <feGaussianBlur
+            result="effect1_foregroundBlur_1006_159"
+            stdDeviation="10.545"
+          ></feGaussianBlur>
         </filter>
         <filter
           id="filter3_f_1006_159"
@@ -123,8 +154,15 @@ export const HaqqNakked: IconComponent = (props) => {
           filterUnits="userSpaceOnUse"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
-          <feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"></feBlend>
-          <feGaussianBlur result="effect1_foregroundBlur_1006_159" stdDeviation="22.262"></feGaussianBlur>
+          <feBlend
+            in="SourceGraphic"
+            in2="BackgroundImageFix"
+            result="shape"
+          ></feBlend>
+          <feGaussianBlur
+            result="effect1_foregroundBlur_1006_159"
+            stdDeviation="22.262"
+          ></feGaussianBlur>
         </filter>
         <filter
           id="filter4_f_1006_159"
@@ -136,8 +174,15 @@ export const HaqqNakked: IconComponent = (props) => {
           filterUnits="userSpaceOnUse"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
-          <feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"></feBlend>
-          <feGaussianBlur result="effect1_foregroundBlur_1006_159" stdDeviation="10.545"></feGaussianBlur>
+          <feBlend
+            in="SourceGraphic"
+            in2="BackgroundImageFix"
+            result="shape"
+          ></feBlend>
+          <feGaussianBlur
+            result="effect1_foregroundBlur_1006_159"
+            stdDeviation="10.545"
+          ></feGaussianBlur>
         </filter>
         <filter
           id="filter5_f_1006_159"
@@ -149,11 +194,22 @@ export const HaqqNakked: IconComponent = (props) => {
           filterUnits="userSpaceOnUse"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
-          <feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"></feBlend>
-          <feGaussianBlur result="effect1_foregroundBlur_1006_159" stdDeviation="10.545"></feGaussianBlur>
+          <feBlend
+            in="SourceGraphic"
+            in2="BackgroundImageFix"
+            result="shape"
+          ></feBlend>
+          <feGaussianBlur
+            result="effect1_foregroundBlur_1006_159"
+            stdDeviation="10.545"
+          ></feGaussianBlur>
         </filter>
         <clipPath id="clip0_1006_159">
-          <path fill="#fff" d="M0 0H80V80H0z" transform="translate(24 24)"></path>
+          <path
+            fill="#fff"
+            d="M0 0H80V80H0z"
+            transform="translate(24 24)"
+          ></path>
         </clipPath>
       </defs>
     </svg>

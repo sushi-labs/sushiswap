@@ -15,7 +15,7 @@ export abstract class SwapMath {
     sqrtRatioTargetX96: bigint,
     liquidity: bigint,
     amountRemaining: bigint,
-    feePips: FeeAmount
+    feePips: FeeAmount,
   ): [bigint, bigint, bigint, bigint] {
     // We know that all will be assigned, typescript just doesn't see it for amountIn/Out
     let sqrtRatioNextX96
@@ -27,10 +27,21 @@ export abstract class SwapMath {
     const exactIn = amountRemaining >= 0n
 
     if (exactIn) {
-      const amountRemainingLessFee = (amountRemaining * (MAX_FEE - BigInt(feePips))) / MAX_FEE
+      const amountRemainingLessFee =
+        (amountRemaining * (MAX_FEE - BigInt(feePips))) / MAX_FEE
       amountIn = zeroForOne
-        ? SqrtPriceMath.getAmount0Delta(sqrtRatioTargetX96, sqrtRatioCurrentX96, liquidity, true)
-        : SqrtPriceMath.getAmount1Delta(sqrtRatioCurrentX96, sqrtRatioTargetX96, liquidity, true)
+        ? SqrtPriceMath.getAmount0Delta(
+            sqrtRatioTargetX96,
+            sqrtRatioCurrentX96,
+            liquidity,
+            true,
+          )
+        : SqrtPriceMath.getAmount1Delta(
+            sqrtRatioCurrentX96,
+            sqrtRatioTargetX96,
+            liquidity,
+            true,
+          )
       if (amountRemainingLessFee >= amountIn) {
         sqrtRatioNextX96 = sqrtRatioTargetX96
       } else {
@@ -38,13 +49,23 @@ export abstract class SwapMath {
           sqrtRatioCurrentX96,
           liquidity,
           amountRemainingLessFee,
-          zeroForOne
+          zeroForOne,
         )
       }
     } else {
       amountOut = zeroForOne
-        ? SqrtPriceMath.getAmount1Delta(sqrtRatioTargetX96, sqrtRatioCurrentX96, liquidity, false)
-        : SqrtPriceMath.getAmount0Delta(sqrtRatioCurrentX96, sqrtRatioTargetX96, liquidity, false)
+        ? SqrtPriceMath.getAmount1Delta(
+            sqrtRatioTargetX96,
+            sqrtRatioCurrentX96,
+            liquidity,
+            false,
+          )
+        : SqrtPriceMath.getAmount0Delta(
+            sqrtRatioCurrentX96,
+            sqrtRatioTargetX96,
+            liquidity,
+            false,
+          )
       if (amountRemaining * -1n >= amountOut) {
         sqrtRatioNextX96 = sqrtRatioTargetX96
       } else {
@@ -52,7 +73,7 @@ export abstract class SwapMath {
           sqrtRatioCurrentX96,
           liquidity,
           amountRemaining * -1n,
-          zeroForOne
+          zeroForOne,
         )
       }
     }
@@ -63,20 +84,40 @@ export abstract class SwapMath {
       amountIn =
         max && exactIn
           ? amountIn
-          : SqrtPriceMath.getAmount0Delta(sqrtRatioNextX96, sqrtRatioCurrentX96, liquidity, true)
+          : SqrtPriceMath.getAmount0Delta(
+              sqrtRatioNextX96,
+              sqrtRatioCurrentX96,
+              liquidity,
+              true,
+            )
       amountOut =
         max && !exactIn
           ? amountOut
-          : SqrtPriceMath.getAmount1Delta(sqrtRatioNextX96, sqrtRatioCurrentX96, liquidity, false)
+          : SqrtPriceMath.getAmount1Delta(
+              sqrtRatioNextX96,
+              sqrtRatioCurrentX96,
+              liquidity,
+              false,
+            )
     } else {
       amountIn =
         max && exactIn
           ? amountIn
-          : SqrtPriceMath.getAmount1Delta(sqrtRatioCurrentX96, sqrtRatioNextX96, liquidity, true)
+          : SqrtPriceMath.getAmount1Delta(
+              sqrtRatioCurrentX96,
+              sqrtRatioNextX96,
+              liquidity,
+              true,
+            )
       amountOut =
         max && !exactIn
           ? amountOut
-          : SqrtPriceMath.getAmount0Delta(sqrtRatioCurrentX96, sqrtRatioNextX96, liquidity, false)
+          : SqrtPriceMath.getAmount0Delta(
+              sqrtRatioCurrentX96,
+              sqrtRatioNextX96,
+              liquidity,
+              false,
+            )
     }
 
     if (!exactIn && amountOut > amountRemaining * -1n) {
@@ -87,7 +128,11 @@ export abstract class SwapMath {
       // we didn't reach the target, so take the remainder of the maximum input as fee
       feeAmount = amountRemaining - amountIn
     } else {
-      feeAmount = FullMath.mulDivRoundingUp(amountIn, BigInt(feePips), MAX_FEE - BigInt(feePips))
+      feeAmount = FullMath.mulDivRoundingUp(
+        amountIn,
+        BigInt(feePips),
+        MAX_FEE - BigInt(feePips),
+      )
     }
 
     return [sqrtRatioNextX96, amountIn, amountOut, feeAmount]

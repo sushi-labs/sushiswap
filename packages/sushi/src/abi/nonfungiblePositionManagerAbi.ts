@@ -400,7 +400,8 @@ export const nonfungiblePositionManagerAbi = [
             type: 'uint256',
           },
         ],
-        internalType: 'struct INonfungiblePositionManager.DecreaseLiquidityParams',
+        internalType:
+          'struct INonfungiblePositionManager.DecreaseLiquidityParams',
         name: 'params',
         type: 'tuple',
       },
@@ -488,7 +489,8 @@ export const nonfungiblePositionManagerAbi = [
             type: 'uint256',
           },
         ],
-        internalType: 'struct INonfungiblePositionManager.IncreaseLiquidityParams',
+        internalType:
+          'struct INonfungiblePositionManager.IncreaseLiquidityParams',
         name: 'params',
         type: 'tuple',
       },

@@ -1,3 +1,5 @@
-export default function SushiPayVestingLayout({ children }: { children: React.ReactNode }) {
+export default function SushiPayVestingLayout({
+  children,
+}: { children: React.ReactNode }) {
   return <>{children}</>
 }

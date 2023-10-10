@@ -10,7 +10,8 @@ export class SushiswapDexie extends Dexie {
   constructor() {
     super('sushi')
     this.version(1).stores({
-      notifications: '++id, account, chainId, href, txHash, summary, type, timestamp, groupTimestamp',
+      notifications:
+        '++id, account, chainId, href, txHash, summary, type, timestamp, groupTimestamp',
       tokens: 'id, address, chainId, decimals, name, symbol, status',
     })
   }

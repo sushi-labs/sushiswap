@@ -30,7 +30,9 @@ export interface ApproveMasterContractAction {
   signature?: Signature
 }
 
-export const approveMasterContractAction = ({ signature }: ApproveMasterContractAction) => {
+export const approveMasterContractAction = ({
+  signature,
+}: ApproveMasterContractAction) => {
   if (!signature) return undefined
 
   const { v, r, s } = signature

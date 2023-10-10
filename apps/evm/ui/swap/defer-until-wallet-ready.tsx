@@ -5,7 +5,9 @@ import { useAccount } from '@sushiswap/wagmi'
 import Loading from 'app/swap/loading'
 import { FC, ReactNode, useState } from 'react'
 
-export const DeferUntilWalletReady: FC<{ children: ReactNode }> = ({ children }) => {
+export const DeferUntilWalletReady: FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const { status } = useAccount()
   const [show, setShow] = useState(false)
 
@@ -14,7 +16,7 @@ export const DeferUntilWalletReady: FC<{ children: ReactNode }> = ({ children })
     () => {
       setShow(true)
     },
-    show ? null : 2000
+    show ? null : 2000,
   )
 
   if (show) return <>{children}</>

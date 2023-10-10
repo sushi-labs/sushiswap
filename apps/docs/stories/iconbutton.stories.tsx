@@ -6,7 +6,14 @@ import * as React from 'react'
 
 import { ViewGroup } from '../components/View'
 
-const variants: IconButtonProps['variant'][] = ['default', 'secondary', 'destructive', 'ghost', 'outline', 'link']
+const variants: IconButtonProps['variant'][] = [
+  'default',
+  'secondary',
+  'destructive',
+  'ghost',
+  'outline',
+  'link',
+]
 const sizes: IconButtonProps['size'][] = ['xs', 'sm', 'default', 'lg', 'xl']
 
 const meta = {
@@ -42,7 +49,12 @@ export const Default = {
 export const Variants = (args) => {
   const items = variants.map((variant) => (
     <React.Fragment key={variant}>
-      <IconButton icon={DiscordIcon} {...args} key={variant} variant={variant} />
+      <IconButton
+        icon={DiscordIcon}
+        {...args}
+        key={variant}
+        variant={variant}
+      />
     </React.Fragment>
   ))
 
