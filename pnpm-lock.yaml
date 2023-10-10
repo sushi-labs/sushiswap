@@ -86,6 +86,88 @@ importers:
         specifier: 32.4.1
         version: 32.4.1
 
+  apis/extractor:
+    dependencies:
+      '@sentry/node':
+        specifier: 7.68.0
+        version: 7.68.0
+      '@sushiswap/extractor':
+        specifier: workspace:*
+        version: link:../../packages/extractor
+      '@sushiswap/route-processor-sdk':
+        specifier: workspace:*
+        version: link:../../packages/route-processor-sdk
+      '@sushiswap/router':
+        specifier: workspace:*
+        version: link:../../packages/router
+      '@sushiswap/router-config':
+        specifier: workspace:*
+        version: link:../../config/router
+      '@sushiswap/v2-sdk':
+        specifier: workspace:*
+        version: link:../../packages/v2-sdk
+      '@sushiswap/v3-sdk':
+        specifier: workspace:*
+        version: link:../../packages/v3-sdk
+      '@sushiswap/viem-config':
+        specifier: workspace:*
+        version: link:../../config/viem
+      '@vercel/node':
+        specifier: 3.0.7
+        version: 3.0.7
+      '@wagmi/core':
+        specifier: 1.4.3
+        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
+      cors:
+        specifier: 2.8.5
+        version: 2.8.5
+      dotenv:
+        specifier: 16.3.1
+        version: 16.3.1
+      express:
+        specifier: 4.18.2
+        version: 4.18.2
+      express-rate-limit:
+        specifier: 6.9.0
+        version: 6.9.0(express@4.18.2)
+      sushi:
+        specifier: workspace:*
+        version: link:../../packages/sushi
+      viem:
+        specifier: 1.16.2
+        version: 1.16.2(typescript@5.2.2)(zod@3.21.4)
+      wagmi:
+        specifier: 1.4.3
+        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
+      zod:
+        specifier: 3.21.4
+        version: 3.21.4
+    devDependencies:
+      '@tsconfig/esm':
+        specifier: 1.0.4
+        version: 1.0.4
+      '@tsconfig/node18':
+        specifier: 18.2.2
+        version: 18.2.2
+      '@tsconfig/strictest':
+        specifier: 2.0.2
+        version: 2.0.2
+      '@types/cors':
+        specifier: 2.8.13
+        version: 2.8.13
+      '@types/express':
+        specifier: 4.17.17
+        version: 4.17.17
+      '@types/node':
+        specifier: '18'
+        version: 18.17.5
+      artillery:
+        specifier: 2.0.0-35
+        version: 2.0.0-35(@types/node@18.17.5)(typescript@5.2.2)
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+
   apis/pools:
     dependencies:
       '@sushiswap/database':
@@ -123,8 +205,8 @@ importers:
         specifier: '18'
         version: 18.17.5
       dotenv:
-        specifier: 16.0.3
-        version: 16.0.3
+        specifier: 16.3.1
+        version: 16.3.1
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -166,8 +248,8 @@ importers:
         specifier: '18'
         version: 18.17.5
       dotenv:
-        specifier: 16.0.3
-        version: 16.0.3
+        specifier: 16.3.1
+        version: 16.3.1
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -966,8 +1048,8 @@ importers:
         specifier: 6.1.4
         version: 6.1.4(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(@typechain/ethers-v5@10.2.1)(ethers@5.7.2)(hardhat@2.17.0)(typechain@8.1.1)
       dotenv:
-        specifier: 16.0.3
-        version: 16.0.3
+        specifier: 16.3.1
+        version: 16.3.1
       hardhat-deploy:
         specifier: 0.11.22
         version: 0.11.22
@@ -1224,8 +1306,8 @@ importers:
         specifier: 4.2.7
         version: 4.2.7
       dotenv:
-        specifier: 16.0.3
-        version: 16.0.3
+        specifier: 16.3.1
+        version: 16.3.1
       jest:
         specifier: 29.7.0
         version: 29.7.0(@types/node@18.17.5)(ts-node@10.9.1)
@@ -1397,8 +1479,8 @@ importers:
         specifier: '18'
         version: 18.17.5
       dotenv:
-        specifier: 16.0.3
-        version: 16.0.3
+        specifier: 16.3.1
+        version: 16.3.1
       jest:
         specifier: 29.7.0
         version: 29.7.0(@types/node@18.17.5)(ts-node@10.9.1)
@@ -1469,18 +1551,9 @@ importers:
       '@sentry/node':
         specifier: 7.68.0
         version: 7.68.0
-      '@sushiswap/amm':
-        specifier: workspace:*
-        version: link:../amm
-      '@sushiswap/route-processor-sdk':
-        specifier: workspace:*
-        version: link:../route-processor-sdk
       '@sushiswap/router':
         specifier: workspace:*
         version: link:../router
-      '@sushiswap/router-config':
-        specifier: workspace:*
-        version: link:../../config/router
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../tines
@@ -1490,27 +1563,18 @@ importers:
       '@sushiswap/v3-sdk':
         specifier: workspace:*
         version: link:../v3-sdk
-      '@sushiswap/viem-config':
-        specifier: workspace:*
-        version: link:../../config/viem
       '@uniswap/v3-core':
         specifier: 1.0.1
         version: 1.0.1
       abitype:
         specifier: 0.9.3
-        version: 0.9.3(typescript@5.2.2)(zod@3.21.4)
-      ethers:
-        specifier: 5.7.2
-        version: 5.7.2
+        version: 0.9.3(typescript@5.2.2)
       sushi:
         specifier: workspace:*
         version: link:../sushi
       viem:
         specifier: 1.16.2
         version: 1.16.2(typescript@5.2.2)(zod@3.21.4)
-      wagmi:
-        specifier: 1.4.3-cjs
-        version: 1.4.3-cjs(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
     devDependencies:
       '@sushiswap/jest-config':
         specifier: workspace:*
@@ -1524,33 +1588,12 @@ importers:
       '@tsconfig/strictest':
         specifier: 2.0.2
         version: 2.0.2
-      '@types/cors':
-        specifier: 2.8.13
-        version: 2.8.13
-      '@types/express':
-        specifier: 4.17.17
-        version: 4.17.17
       '@types/node':
         specifier: '18'
         version: 18.17.5
-      artillery:
-        specifier: 2.0.0-35
-        version: 2.0.0-35(@types/node@18.17.5)(typescript@5.2.2)
-      cors:
-        specifier: 2.8.5
-        version: 2.8.5
-      express:
-        specifier: 4.18.2
-        version: 4.18.2
-      express-rate-limit:
-        specifier: 6.9.0
-        version: 6.9.0(express@4.18.2)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
-      zod:
-        specifier: 3.21.4
-        version: 3.21.4
 
   packages/graph-client:
     dependencies:
@@ -2702,8 +2745,8 @@ importers:
         specifier: ^7.0.0
         version: 7.0.3
       dotenv:
-        specifier: 16.0.3
-        version: 16.0.3
+        specifier: 16.3.1
+        version: 16.3.1
       eth-permit:
         specifier: ^0.2.3
         version: 0.2.3
@@ -2876,8 +2919,8 @@ importers:
         specifier: ^7.0.0
         version: 7.0.3
       dotenv:
-        specifier: 16.0.3
-        version: 16.0.3
+        specifier: 16.3.1
+        version: 16.3.1
       ethers:
         specifier: 5.7.2
         version: 5.7.2
@@ -8164,7 +8207,7 @@ packages:
       graphql: 16.6.0
       param-case: 3.0.4
       pascal-case: 3.1.2
-      tslib: 2.6.1
+      tslib: 2.6.2
     transitivePeerDependencies:
       - '@babel/core'
       - encoding
@@ -8402,7 +8445,7 @@ packages:
       graphql-yoga: 3.1.1(@types/node@18.17.5)(graphql@16.6.0)
       itty-router: 2.6.6
       itty-router-extras: 0.4.2
-      tslib: 2.6.1
+      tslib: 2.6.2
     transitivePeerDependencies:
       - '@types/node'
       - encoding
@@ -8612,7 +8655,7 @@ packages:
       '@graphql-tools/wrap': 9.2.21(graphql@16.6.0)
       '@whatwg-node/fetch': 0.5.4
       graphql: 16.6.0
-      tslib: 2.6.1
+      tslib: 2.6.2
     transitivePeerDependencies:
       - encoding
       - react-native
@@ -8709,7 +8752,7 @@ packages:
       '@graphql-mesh/utils': 0.43.3(graphql@16.6.0)(react-native@0.72.5)
       '@graphql-tools/utils': 9.1.3(graphql@16.6.0)
       graphql: 16.6.0
-      tslib: 2.6.1
+      tslib: 2.6.2
     transitivePeerDependencies:
       - react-native
       - react-native-windows
@@ -9031,7 +9074,7 @@ packages:
       '@graphql-tools/utils': 9.1.3(graphql@16.6.0)
       '@graphql-typed-document-node/core': 3.1.1(graphql@16.6.0)
       graphql: 16.6.0
-      tslib: 2.6.1
+      tslib: 2.6.2
     transitivePeerDependencies:
       - react-native
       - react-native-windows
@@ -9121,7 +9164,7 @@ packages:
       lodash.set: 4.3.2
       lodash.topath: 4.5.2
       tiny-lru: 8.0.2
-      tslib: 2.6.1
+      tslib: 2.6.2
     transitivePeerDependencies:
       - react-native
       - react-native-windows
@@ -9882,7 +9925,7 @@ packages:
       graphql: 16.6.0
     dependencies:
       graphql: 16.6.0
-      tslib: 2.6.1
+      tslib: 2.6.2
 
   /@graphql-tools/utils@9.2.1(graphql@16.6.0):
     resolution: {integrity: sha512-WUw506Ql6xzmOORlriNrD6Ugx+HjVgYxt9KCXD9mHAak+eaXSwuGGPyE60hy9xaDEoXKBsG7SkG69ybitaVl6A==}
@@ -11792,7 +11835,7 @@ packages:
     engines: {node: '>=16'}
     hasBin: true
     dependencies:
-      '@types/node': 20.5.0
+      '@types/node': 18.17.5
       playwright-core: 1.37.0
     optionalDependencies:
       fsevents: 2.3.2
@@ -15027,7 +15070,6 @@ packages:
       process: 0.11.10
       util: 0.12.5
     transitivePeerDependencies:
-      - encoding
       - supports-color
     dev: true
 
@@ -15231,7 +15273,6 @@ packages:
       util-deprecate: 1.0.2
     transitivePeerDependencies:
       - bufferutil
-      - encoding
       - supports-color
       - utf-8-validate
     dev: true
@@ -15398,14 +15439,13 @@ packages:
       glob: 10.3.3
       handlebars: 4.7.8
       lazy-universal-dotenv: 4.0.0
-      node-fetch: 2.6.12
+      node-fetch: 2.6.6
       picomatch: 2.3.1
       pkg-dir: 5.0.0
       pretty-hrtime: 1.0.3
       resolve-from: 5.0.0
       ts-dedent: 2.2.0
     transitivePeerDependencies:
-      - encoding
       - supports-color
     dev: true
 
@@ -15555,7 +15595,6 @@ packages:
       ws: 8.13.0(bufferutil@4.0.7)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
-      - encoding
       - supports-color
       - utf-8-validate
     dev: true
@@ -15975,7 +16014,6 @@ packages:
       fs-extra: 11.1.1
       read-pkg-up: 7.0.1
     transitivePeerDependencies:
-      - encoding
       - supports-color
     dev: true
 
@@ -16531,7 +16569,7 @@ packages:
   /@types/connect-timeout@0.0.36:
     resolution: {integrity: sha512-rfw+RJU9gd0JeOJSkfRVixCETnw1ezx6Uo3exetKBeIKY4GaL/MVb4XCjmB4dgeZQ5vkcLlpYLVSbYIeqDu25g==}
     dependencies:
-      '@types/express': 4.17.15
+      '@types/express': 4.17.17
     dev: true
 
   /@types/connect@3.4.35:
@@ -16546,7 +16584,7 @@ packages:
   /@types/cors@2.8.13:
     resolution: {integrity: sha512-RG8AStHlUiV5ysZQKq97copd2UmVYw3/pRMLefISZ3S1hK104Cwm7iLQ3fTKx+lsUH2CE8FlLaYeEA2LSeqYUA==}
     dependencies:
-      '@types/node': 18.11.18
+      '@types/node': 18.17.5
     dev: true
 
   /@types/cross-spawn@6.0.2:
@@ -17750,6 +17788,7 @@ packages:
       - supports-color
       - utf-8-validate
       - zod
+    dev: true
 
   /@walletconnect/core@2.10.1:
     resolution: {integrity: sha512-WAoXfmj+Zy5q48TnrKUjmHXJCBahzKwbul+noepRZf7JDtUAZ9IOWpUjg+UPRbfK5EiWZ0TF42S6SXidf7EHoQ==}
@@ -18417,7 +18456,7 @@ packages:
       typescript: 5.2.2
       zod: 3.21.4
 
-  /abitype@0.9.3(typescript@5.2.2)(zod@3.21.4):
+  /abitype@0.9.3(typescript@5.2.2):
     resolution: {integrity: sha512-dz4qCQLurx97FQhnb/EIYTk/ldQ+oafEDUqC0VVIeQS1Q48/YWt/9YNfMmp9SLFqN41ktxny3c8aYxHjmFIB/w==}
     peerDependencies:
       typescript: 5.2.2
@@ -18429,7 +18468,6 @@ packages:
         optional: true
     dependencies:
       typescript: 5.2.2
-      zod: 3.21.4
     dev: false
 
   /abitype@0.9.8(typescript@5.2.2)(zod@3.21.4):
@@ -20901,7 +20939,7 @@ packages:
       path-case: 3.0.4
       sentence-case: 3.0.4
       snake-case: 3.0.4
-      tslib: 2.6.1
+      tslib: 2.6.2
 
   /char-regex@1.0.2:
     resolution: {integrity: sha512-kWWXztvZ5SBQV+eRgKFeh8q5sLuZY2+8WUIzlxWVTg+oGwY14qylx1KbKzHd8P6ZYkAg0xyIDU9JMHhyJMZ1jw==}
@@ -24713,7 +24751,7 @@ packages:
       express: ^4 || ^5
     dependencies:
       express: 4.18.2
-    dev: true
+    dev: false
 
   /express@4.18.2:
     resolution: {integrity: sha512-5/PsL6iGPdfQ/lKM1UuielYgv3BUoJfz1aUwU9vHZ+J7gyvwdQXFEBIEIaxeGf0GIcreATNyBExtalisDbuMqQ==}
@@ -27499,10 +27537,8 @@ packages:
   /isomorphic-unfetch@3.1.0:
     resolution: {integrity: sha512-geDJjpoZ8N0kWexiwkX8F9NkTsXhetLPVbZFQ+JTW239QNOwvB0gniuR1Wc6f0AMTn7/mFGyXvHTifrCp/GH8Q==}
     dependencies:
-      node-fetch: 2.6.12
+      node-fetch: 2.6.6
       unfetch: 4.2.0
-    transitivePeerDependencies:
-      - encoding
     dev: true
 
   /isomorphic-ws@4.0.1(ws@5.2.3):
@@ -27879,7 +27915,7 @@ packages:
       '@jest/fake-timers': 29.6.2
       '@jest/types': 29.6.1
       '@types/jsdom': 20.0.1
-      '@types/node': 20.5.0
+      '@types/node': 18.17.5
       jest-mock: 29.6.2
       jest-util: 29.6.2
       jsdom: 20.0.3
@@ -31650,7 +31686,7 @@ packages:
     resolution: {integrity: sha512-uWlGT3YSnK9x3BQJaOdcZwrnV6hPpd8jFH1/ucpiLRPh/2zCVJKS19E4GvYHvaCcACn3foXZ0cLB9Wrx1KGe5g==}
     dependencies:
       no-case: 3.0.4
-      tslib: 2.6.1
+      tslib: 2.6.2
 
   /pascalcase@0.1.1:
     resolution: {integrity: sha512-XHXfu/yOQRy9vYOtUDVMN60OEJjW013GoObG1o+xwQTpB9eYJX/BjXMsdW13ZDPruFhYYn0AG22w0xgQMwl3Nw==}
@@ -35038,7 +35074,6 @@ packages:
       '@storybook/cli': 7.1.0-alpha.42
     transitivePeerDependencies:
       - bufferutil
-      - encoding
       - supports-color
       - utf-8-validate
     dev: true
@@ -37554,39 +37589,6 @@ packages:
       - supports-color
       - utf-8-validate
       - zod
-
-  /wagmi@1.4.3-cjs(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4):
-    resolution: {integrity: sha512-SjOyQ3WwdXmubLD8vvg6Z5UPHOC6zeLv1MeJRg9aQodOvRu/OxOq6NHKaw3ujXIniCqy/1hfX6VfYAQ2OYTMfA==}
-    peerDependencies:
-      react: '>=17.0.0'
-      typescript: 5.2.2
-      viem: '>=0.3.35'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-    dependencies:
-      '@tanstack/query-sync-storage-persister': 4.27.1
-      '@tanstack/react-query': 4.28.0(react-dom@18.2.0)(react-native@0.72.5)(react@18.2.0)
-      '@tanstack/react-query-persist-client': 4.28.0(@tanstack/react-query@4.28.0)
-      '@wagmi/core': 1.4.3-cjs(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.21.4)
-      abitype: 0.8.7(typescript@5.2.2)(zod@3.21.4)
-      react: 18.2.0
-      typescript: 5.2.2
-      use-sync-external-store: 1.2.0(react@18.2.0)
-      viem: 1.16.2(typescript@5.2.2)(zod@3.21.4)
-    transitivePeerDependencies:
-      - '@react-native-async-storage/async-storage'
-      - '@types/react'
-      - bufferutil
-      - encoding
-      - immer
-      - lokijs
-      - react-dom
-      - react-native
-      - supports-color
-      - utf-8-validate
-      - zod
-    dev: false
 
   /walk-sync@0.3.4:
     resolution: {integrity: sha512-ttGcuHA/OBnN2pcM6johpYlEms7XpO5/fyKIr48541xXedan4roO8cS1Q2S/zbbjGH/BarYDAMeS2Mi9HE5Tig==}

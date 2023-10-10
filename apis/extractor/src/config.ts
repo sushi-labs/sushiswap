@@ -1,9 +1,9 @@
-import { ChainId } from 'sushi/chain'
+import { LogFilterType } from '@sushiswap/extractor/dist/LogFilter2'
 import { LiquidityProviders } from '@sushiswap/router'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SUSHISWAP_V2_INIT_CODE_HASH,
-  SushiSwapV2ChainId,
+  type SushiSwapV2ChainId,
   UNISWAP_V2_FACTORY_ADDRESS,
   UNISWAP_V2_INIT_CODE_HASH,
 } from '@sushiswap/v2-sdk'
@@ -11,15 +11,14 @@ import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_INIT_CODE_HASH,
   SUSHISWAP_V3_TICK_LENS,
-  SushiSwapV3ChainId,
+  type SushiSwapV3ChainId,
   UNISWAP_V3_FACTORY_ADDRESS,
   UNISWAP_V3_INIT_CODE_HASH,
-  UniswapV3ChainId,
+  type UniswapV3ChainId,
 } from '@sushiswap/v3-sdk'
 import { config } from '@sushiswap/viem-config'
-import { Address, createPublicClient } from 'viem'
-
-import { LogFilterType } from '../src/LogFilter2'
+import { ChainId } from 'sushi/chain'
+import { type Address, createPublicClient } from 'viem'
 
 export const SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,

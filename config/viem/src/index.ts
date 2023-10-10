@@ -1,5 +1,5 @@
-import { ChainId } from 'sushi/chain'
-import { type Address, fallback, http, type PublicClientConfig } from 'viem'
+import { ChainId, TestnetChainId } from 'sushi/chain'
+import { http, type Address, type PublicClientConfig, fallback } from 'viem'
 import {
   arbitrum,
   // arbitrumGoerli,
@@ -372,7 +372,10 @@ const alchemyId =
   process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
 const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
 
-export const config: Record<number, PublicClientConfig> = {
+export const config: Record<
+  Exclude<ChainId, TestnetChainId>,
+  PublicClientConfig
+> = {
   [ChainId.ARBITRUM_NOVA]: {
     chain: arbitrumNova,
     transport: fallback(
