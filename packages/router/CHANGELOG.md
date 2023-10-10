@@ -1,5 +1,12 @@
 # @sushiswap/router
 
+## 0.0.16
+
+### Patch Changes
+
+- Updated dependencies [[`7d20b6229`](https://github.com/sushiswap/sushiswap/commit/7d20b6229a6393a292a35ff8116df4180314241a)]:
+  - @sushiswap/bentobox-sdk@1.0.0
+
 ## 0.0.15
 
 ### Patch Changes
