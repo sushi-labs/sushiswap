@@ -10,9 +10,7 @@ import { UniswapV2BaseProvider } from './UniswapV2Base'
 
 export class SushiSwapV2Provider extends UniswapV2BaseProvider {
   constructor(chainId: ChainId, web3Client: PublicClient) {
-    const factory = SUSHISWAP_V2_FACTORY_ADDRESS as {
-      [chainId: number]: `0x${string}`
-    }
+    const factory = SUSHISWAP_V2_FACTORY_ADDRESS
     super(chainId, web3Client, factory, SUSHISWAP_V2_INIT_CODE_HASH)
   }
   getType(): LiquidityProviders {

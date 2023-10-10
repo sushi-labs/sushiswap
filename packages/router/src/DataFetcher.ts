@@ -115,7 +115,7 @@ export class DataFetcher {
         const provider = new SushiSwapV2Provider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
-        // console.warn(e.message)
+        console.warn(e.message)
       }
     }
 
@@ -128,7 +128,7 @@ export class DataFetcher {
         const provider = new TridentProvider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
-        // console.warn(e.message)
+        console.warn(e.message)
       }
     }
 
@@ -137,7 +137,7 @@ export class DataFetcher {
         const provider = new SushiSwapV3Provider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
-        // console.warn(e.message)
+        console.warn(e.message)
       }
     }
 
@@ -146,7 +146,7 @@ export class DataFetcher {
         const provider = new UniswapV3Provider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
-        // console.warn(e.message)
+        console.warn(e)
       }
     }
 
@@ -155,7 +155,7 @@ export class DataFetcher {
         const provider = new ApeSwapProvider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
-        // console.warn(e.message)
+        console.warn(e)
       }
     }
 
@@ -164,7 +164,7 @@ export class DataFetcher {
         const provider = new BiswapProvider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
-        // console.warn(e.message)
+        console.warn(e)
       }
     }
 
@@ -173,7 +173,7 @@ export class DataFetcher {
         const provider = new DfynProvider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
-        // console.warn(e.message)
+        console.warn(e.message)
       }
     }
 
@@ -182,7 +182,7 @@ export class DataFetcher {
         const provider = new ElkProvider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
-        // console.warn(e.message)
+        console.warn(e)
       }
     }
 
@@ -191,7 +191,7 @@ export class DataFetcher {
         const provider = new HoneySwapProvider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
-        // console.warn(e.message)
+        console.warn(e.message)
       }
     }
 
@@ -200,7 +200,7 @@ export class DataFetcher {
         const provider = new JetSwapProvider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
-        // console.warn(e.message)
+        console.warn(e)
       }
     }
 
@@ -209,7 +209,7 @@ export class DataFetcher {
         const provider = new NetSwapProvider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
-        // console.warn(e.message)
+        console.warn(e.message)
       }
     }
 
@@ -218,7 +218,7 @@ export class DataFetcher {
         const provider = new PancakeSwapProvider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
-        // console.warn(e.message)
+        console.warn(e)
       }
     }
 
@@ -227,7 +227,7 @@ export class DataFetcher {
         const provider = new QuickSwapProvider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
-        // console.warn(e.message)
+        console.warn(e.message)
       }
     }
 
@@ -236,7 +236,7 @@ export class DataFetcher {
         const provider = new SpookySwapProvider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
-        // console.warn(e.message)
+        console.warn(e)
       }
     }
 
@@ -245,7 +245,7 @@ export class DataFetcher {
         const provider = new TraderJoeProvider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
-        // console.warn(e.message)
+        console.warn(e.message)
       }
     }
 
@@ -254,7 +254,7 @@ export class DataFetcher {
         const provider = new UbeSwapProvider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
-        // console.warn(e.message)
+        console.warn(e)
       }
     }
 
@@ -263,7 +263,7 @@ export class DataFetcher {
         const provider = new UniswapV2Provider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
-        // console.warn(e.message)
+        console.warn(e)
       }
     }
 
@@ -272,7 +272,7 @@ export class DataFetcher {
         const provider = new CurveProvider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
-        // console.warn(e.message)
+        console.warn(e)
       }
     }
 
@@ -281,7 +281,7 @@ export class DataFetcher {
         const provider = new DovishV3Provider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
-        // console.warn(e.message)
+        console.warn(e)
       }
     }
 
@@ -290,7 +290,7 @@ export class DataFetcher {
         const provider = new LaserSwapV2Provider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
-        // console.warn(e.message)
+        console.warn(e)
       }
     }
 
