@@ -4,7 +4,7 @@ import defaultNextConfig from '@sushiswap/nextjs-config'
 const nextConfig = {
   ...defaultNextConfig,
   basePath: '/furo',
-  transpilePackages: ['@sushiswap/wagmi', '@sushiswap/ui'],
+  transpilePackages: ['@sushiswap/wagmi'],
   async redirects() {
     return [
       {

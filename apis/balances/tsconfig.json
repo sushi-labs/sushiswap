@@ -5,6 +5,7 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
+    "target": "ES2022",
     "noEmit": true
   }
 }

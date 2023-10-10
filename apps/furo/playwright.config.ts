@@ -1,6 +1,6 @@
+import path from 'path'
 import type { PlaywrightTestConfig } from '@playwright/test'
 import { devices } from '@playwright/test'
-import path from 'path'
 
 // Use process.env.PORT by default and fallback to port 3000
 const PORT = process.env.PORT || 3000
@@ -20,7 +20,7 @@ const baseURL = `http://localhost:${PORT}`
 const config: PlaywrightTestConfig = {
   // Test directory
   testDir: path.join(__dirname, 'test'),
-  testMatch: '*.test.ts',
+  // testMatch: '*.test.ts',
   /* Maximum time one test can run for. */
   timeout: 60 * 1_000,
   expect: {
@@ -106,9 +106,9 @@ const config: PlaywrightTestConfig = {
       env: {
         ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
         ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
-        ANVIL_PORT: String(process.env.ANVIL_PORT),
+        ANVIL_PORT: String(process.env.ANVIL_PORT || 8545),
       },
-      port: Number(process.env.ANVIL_PORT) || 8545,
+      port: Number(process.env.ANVIL_PORT || 8545),
     },
     {
       command: 'npm run start',
@@ -116,8 +116,8 @@ const config: PlaywrightTestConfig = {
       timeout: 120 * 1000,
       reuseExistingServer: !process.env.CI,
       env: {
-        NEXT_PUBLIC_TEST: 'true',
-        NEXT_PUBLIC_ANVIL_PORT: String(process.env.ANVIL_PORT),
+        NEXT_PUBLIC_CHAIN_ID: String(process.env.NEXT_PUBLIC_CHAIN_ID),
+        NEXT_PUBLIC_TEST: String(process.env.NEXT_PUBLIC_TEST),
       },
     },
   ],

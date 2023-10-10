@@ -1,5 +1,21 @@
 {
   "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
+  "files": {
+    "ignore": [
+      "_cjs",
+      "_esm",
+      "_types",
+      "**/node_modules",
+      "CHANGELOG.md",
+      "cache",
+      "artifacts",
+      "deployments",
+      "test/contracts",
+      "coverage",
+      "tsconfig.json",
+      "tsconfig.*.json"
+    ]
+  },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
@@ -29,6 +45,9 @@
       "suspicious": {
         "noArrayIndexKey": "off",
         "noExplicitAny": "off"
+      },
+      "complexity": {
+        "useLiteralKeys": "off"
       },
       "security": {
         "noDangerouslySetInnerHtml" : "off"

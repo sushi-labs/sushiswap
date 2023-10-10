@@ -1,5 +1,4 @@
-import { expect, Page } from '@playwright/test'
-import { Type } from 'sushi/currency'
+import { Page, expect } from '@playwright/test'
 import {
   addMonths,
   getUnixTime,
@@ -11,6 +10,7 @@ import {
   startOfMonth,
 } from 'date-fns'
 import { ethers } from 'ethers'
+import { Type } from 'sushi/currency'
 import { zeroAddress } from 'viem'
 
 const BASE_URL = process.env.PLAYWRIGHT_URL || 'http://localhost:3000/furo'

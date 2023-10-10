@@ -13,6 +13,19 @@
       ],
       "cache": true
     },
+    "test": {
+      "outputs": [],
+      "dependsOn": ["build"],
+      "env": [
+        "CHAIN_ID",
+        "ANVIL_FORK_URL",
+        "ANVIL_BLOCK_NUMBER",
+        "ANVIL_PORT",
+        "ALCHEMY_ID",
+        "DRPC_ID",
+        "TEST"
+      ]
+    },
     "check": {
       "dependsOn": ["^build", "generate"],
       "cache": false

@@ -44,13 +44,9 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@ethersproject/abi": "5.7.0",
     "@ethersproject/address": "5.7.0",
-    "@ethersproject/bytes": "5.7.0",
     "@ethersproject/constants": "5.7.0",
-    "@ethersproject/logger": "5.7.0",
     "@ethersproject/providers": "5.7.2",
-    "@ethersproject/solidity": "5.7.0",
     "@headlessui/react": "1.7.7",
     "@heroicons/react": "2.0.13",
     "@radix-ui/react-slot": "^1.0.2",
@@ -79,7 +75,7 @@
     "@uniswap/v3-periphery": "1.4.1",
     "next-themes": "0.2.1",
     "sushi": "workspace:*",
-    "viem": "1.10.7",
+    "viem": "1.16.2",
     "zod": "3.21.4"
   },
   "devDependencies": {

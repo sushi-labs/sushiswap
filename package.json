@@ -26,19 +26,15 @@
     "@biomejs/biome": "1.1.2",
     "@changesets/changelog-github": "0.4.8",
     "@changesets/cli": "2.26.1",
+    "@types/node": "18",
     "dotenv-cli": "6.0.0",
     "sort-package-json": "2.1.0",
     "turbo": "1.10.6"
   },
-  "packageManager": "pnpm@8.8.0",
+  "packageManager": "pnpm@8.9.0",
   "engines": {
     "node": ">=18.x",
-    "pnpm": "8.8.0"
-  },
-  "nextBundleAnalysis": {
-    "budget": null,
-    "budgetPercentIncreaseRed": 20,
-    "showDetails": true
+    "pnpm": "8.9.0"
   },
   "pnpm": {
     "overrides": {
