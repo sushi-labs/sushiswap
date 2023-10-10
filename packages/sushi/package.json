@@ -1,7 +1,6 @@
 {
   "name": "sushi",
-  "version": "2.0.0",
-  "private": true,
+  "version": "3.0.0",
   "description": "Sushi",
   "keywords": [
     "sushi"

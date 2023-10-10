@@ -1,7 +1,6 @@
 {
   "name": "@sushiswap/token-lists",
-  "version": "0.0.7",
-  "private": true,
+  "version": "1.0.0",
   "description": "Sushi Token Lists",
   "keywords": [
     "sushi",

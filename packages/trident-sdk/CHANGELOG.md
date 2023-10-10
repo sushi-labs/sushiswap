@@ -1,5 +1,17 @@
 # @sushiswap/trident-sdk
 
+## 1.0.0
+
+### Major Changes
+
+- [#1190](https://github.com/sushiswap/sushiswap/pull/1190) [`83d813fb3`](https://github.com/sushiswap/sushiswap/commit/83d813fb338eb5488cbd47513fd525342fbcf81b) Thanks [@matthewlilley](https://github.com/matthewlilley)! - extractor v1 release
+
+### Patch Changes
+
+- Updated dependencies [[`83d813fb3`](https://github.com/sushiswap/sushiswap/commit/83d813fb338eb5488cbd47513fd525342fbcf81b)]:
+  - sushi@3.0.0
+  - @sushiswap/base-sdk@0.0.3
+
 ## 0.0.2
 
 ### Patch Changes
