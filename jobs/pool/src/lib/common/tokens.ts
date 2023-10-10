@@ -21,7 +21,10 @@ interface Token {
   derivedUSD: number
 }
 
-const getExchangeTokens = async (ids: string[], chainId: SushiSwapChainId): Promise<Token[]> => {
+const getExchangeTokens = async (
+  ids: string[],
+  chainId: SushiSwapChainId,
+): Promise<Token[]> => {
   const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
   const subgraphName = SUSHISWAP_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
@@ -44,7 +47,10 @@ const getExchangeTokens = async (ids: string[], chainId: SushiSwapChainId): Prom
   }))
 }
 
-const getTridentTokens = async (ids: string[], chainId: TridentChainId): Promise<Token[]> => {
+const getTridentTokens = async (
+  ids: string[],
+  chainId: TridentChainId,
+): Promise<Token[]> => {
   const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
   const subgraphName = TRIDENT_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
@@ -67,7 +73,10 @@ const getTridentTokens = async (ids: string[], chainId: TridentChainId): Promise
   }))
 }
 
-export const getTokens = async (ids: string[], chainId: SushiSwapChainId | TridentChainId) => {
+export const getTokens = async (
+  ids: string[],
+  chainId: SushiSwapChainId | TridentChainId,
+) => {
   const [exchangeTokens, tridentTokens] = await Promise.all([
     isSushiSwapChain(chainId) ? getExchangeTokens(ids, chainId) : [],
     isTridentChain(chainId) ? getTridentTokens(ids, chainId) : [],
@@ -75,10 +84,16 @@ export const getTokens = async (ids: string[], chainId: SushiSwapChainId | Tride
 
   const betterTokens = ids
     .map((id) => {
-      const exchangeToken = exchangeTokens.find((token) => token.id === id.toLowerCase())
-      const tridentToken = tridentTokens.find((token) => token.id === id.toLowerCase())
+      const exchangeToken = exchangeTokens.find(
+        (token) => token.id === id.toLowerCase(),
+      )
+      const tridentToken = tridentTokens.find(
+        (token) => token.id === id.toLowerCase(),
+      )
       if (exchangeToken && tridentToken)
-        return exchangeToken.liquidity > tridentToken.liquidity ? exchangeToken : tridentToken
+        return exchangeToken.liquidity > tridentToken.liquidity
+          ? exchangeToken
+          : tridentToken
       return exchangeToken ?? tridentToken ?? undefined
     })
     .filter((token) => token !== undefined) as Token[]
@@ -86,9 +101,15 @@ export const getTokens = async (ids: string[], chainId: SushiSwapChainId | Tride
   return betterTokens
 }
 
-export async function getTokenBalancesOf(_tokens: string[], address: string, chainId: ChainId) {
+export async function getTokenBalancesOf(
+  _tokens: string[],
+  address: string,
+  chainId: ChainId,
+) {
   // not fully erc20, farm not active
-  const tokens = _tokens.filter((token) => token !== '0x0c810E08fF76E2D0beB51B10b4614b8f2b4438F9')
+  const tokens = _tokens.filter(
+    (token) => token !== '0x0c810E08fF76E2D0beB51B10b4614b8f2b4438F9',
+  )
 
   const balanceOfCalls = tokens.map(
     (token) =>
@@ -98,7 +119,7 @@ export async function getTokenBalancesOf(_tokens: string[], address: string, cha
         chainId: chainId,
         abi: erc20ABI,
         functionName: 'balanceOf',
-      } as const)
+      }) as const,
   )
 
   const decimalCalls = tokens.map(
@@ -108,7 +129,7 @@ export async function getTokenBalancesOf(_tokens: string[], address: string, cha
         chainId: chainId,
         abi: erc20ABI,
         functionName: 'decimals',
-      } as const)
+      }) as const,
   )
 
   const [balancesOf, decimals] = await Promise.all([
@@ -128,7 +149,9 @@ export async function getTokenBalancesOf(_tokens: string[], address: string, cha
       const decimal = decimals[i].result
 
       if (balance === null || decimal === null) {
-        console.log(`Balance / decimal fetch failed for ${token} on ${ChainId[chainId]}`)
+        console.log(
+          `Balance / decimal fetch failed for ${token} on ${ChainId[chainId]}`,
+        )
         return null
       }
 

@@ -77,7 +77,9 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "_devaddr", "type": "address" }],
+    "inputs": [
+      { "internalType": "address", "name": "_devaddr", "type": "address" }
+    ],
     "name": "dev",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -91,7 +93,9 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "_pid", "type": "uint256" }],
+    "inputs": [
+      { "internalType": "uint256", "name": "_pid", "type": "uint256" }
+    ],
     "name": "emergencyWithdraw",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -204,7 +208,9 @@
   {
     "inputs": [],
     "name": "sushi",
-    "outputs": [{ "internalType": "contract SushiToken", "name": "", "type": "address" }],
+    "outputs": [
+      { "internalType": "contract SushiToken", "name": "", "type": "address" }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -223,14 +229,18 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }],
+    "inputs": [
+      { "internalType": "address", "name": "newOwner", "type": "address" }
+    ],
     "name": "transferOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "_pid", "type": "uint256" }],
+    "inputs": [
+      { "internalType": "uint256", "name": "_pid", "type": "uint256" }
+    ],
     "name": "updatePool",
     "outputs": [],
     "stateMutability": "nonpayable",

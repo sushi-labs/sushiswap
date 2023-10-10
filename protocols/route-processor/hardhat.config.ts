@@ -4,7 +4,9 @@ import { defaultConfig } from '@sushiswap/hardhat-config'
 import { HardhatUserConfig } from 'hardhat/config'
 
 const accounts = {
-  mnemonic: process.env.MNEMONIC || 'test test test test test test test test test test test junk',
+  mnemonic:
+    process.env.MNEMONIC ||
+    'test test test test test test test test test test test junk',
   accountsBalance: '10000000000000000000000000',
 }
 

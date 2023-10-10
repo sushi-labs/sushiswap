@@ -31,29 +31,41 @@ export const Header: FC = () => {
               <NavigationMenuContent>
                 <ul className="w-[400px] gap-3 p-4">
                   {EXPLORE_NAVIGATION_LINKS.map((component) => (
-                    <NavigationListItem key={component.title} title={component.title} href={component.href}>
+                    <NavigationListItem
+                      key={component.title}
+                      title={component.title}
+                      href={component.href}
+                    >
                       {component.description}
                     </NavigationListItem>
                   ))}
                   <OnramperButton>
-                    <NavigationListItem title="Buy Crypto">Need to buy some more crypto?</NavigationListItem>
+                    <NavigationListItem title="Buy Crypto">
+                      Need to buy some more crypto?
+                    </NavigationListItem>
                   </OnramperButton>
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
             <NavigationMenuItem className="hidden md:block">
               <LinkInternal href="/swap">
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Swap</NavigationMenuLink>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  Swap
+                </NavigationMenuLink>
               </LinkInternal>
             </NavigationMenuItem>
             <NavigationMenuItem className="hidden md:block">
               <LinkInternal href="/pools">
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pools</NavigationMenuLink>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  Pools
+                </NavigationMenuLink>
               </LinkInternal>
             </NavigationMenuItem>
             <NavigationMenuItem className="hidden md:block">
               <LinkInternal href="/furo">
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Pay</NavigationMenuLink>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  Pay
+                </NavigationMenuLink>
               </LinkInternal>
             </NavigationMenuItem>
             <NavigationMenuItem className="hidden md:block">
@@ -61,7 +73,11 @@ export const Header: FC = () => {
               <NavigationMenuContent>
                 <ul className="w-[400px] gap-3 p-4">
                   {TOOLS_NAVIGATION_LINKS.map((component) => (
-                    <NavigationListItem key={component.title} title={component.title} href={component.href}>
+                    <NavigationListItem
+                      key={component.title}
+                      title={component.title}
+                      href={component.href}
+                    >
                       {component.description}
                     </NavigationListItem>
                   ))}
@@ -73,7 +89,11 @@ export const Header: FC = () => {
               <NavigationMenuContent>
                 <ul className="w-[400px] gap-3 p-4">
                   {PARTNER_NAVIGATION_LINKS.map((component) => (
-                    <NavigationListItem key={component.title} title={component.title} href={component.href}>
+                    <NavigationListItem
+                      key={component.title}
+                      title={component.title}
+                      href={component.href}
+                    >
                       {component.description}
                     </NavigationListItem>
                   ))}

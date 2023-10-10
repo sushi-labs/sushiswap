@@ -38,22 +38,37 @@ const chartTimespans: Record<TvlChartPeriod, number> = {
 }
 
 export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
-  const [chartPeriod, setChartPeriod] = useState<TvlChartPeriod>(TvlChartPeriod.Month)
+  const [chartPeriod, setChartPeriod] = useState<TvlChartPeriod>(
+    TvlChartPeriod.Month,
+  )
 
   const [xData, yData] = useMemo(() => {
     const currentDate = Math.round(Date.now())
-    const predicates = x?.map((x) => x * 1000 >= currentDate - chartTimespans[chartPeriod])
-    return [x?.filter((x, i) => predicates[i]).reverse(), y?.filter((y, i) => predicates[i]).reverse()]
+    const predicates = x?.map(
+      (x) => x * 1000 >= currentDate - chartTimespans[chartPeriod],
+    )
+    return [
+      x?.filter((x, i) => predicates[i]).reverse(),
+      y?.filter((y, i) => predicates[i]).reverse(),
+    ]
   }, [chartPeriod, x, y])
 
   // Transient update for performance
-  const onMouseOver = useCallback(({ name, value }: { name: number; value: number }) => {
-    const valueNodes = document.getElementsByClassName('hoveredItemValueVolume')
-    const nameNodes = document.getElementsByClassName('hoveredItemNameVolume')
+  const onMouseOver = useCallback(
+    ({ name, value }: { name: number; value: number }) => {
+      const valueNodes = document.getElementsByClassName(
+        'hoveredItemValueVolume',
+      )
+      const nameNodes = document.getElementsByClassName('hoveredItemNameVolume')
 
-    valueNodes[0].innerHTML = formatUSD(value)
-    nameNodes[0].innerHTML = format(new Date(name * 1000), 'dd MMM yyyy HH:mm')
-  }, [])
+      valueNodes[0].innerHTML = formatUSD(value)
+      nameNodes[0].innerHTML = format(
+        new Date(name * 1000),
+        'dd MMM yyyy HH:mm',
+      )
+    },
+    [],
+  )
 
   const DEFAULT_OPTION: EChartsOption = useMemo(
     () => ({
@@ -74,9 +89,13 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
 
           const date = new Date(Number(params[0].name * 1000))
           return `<div class="flex flex-col gap-0.5">
-            <span class="text-sm text-slate-50 font-bold">${formatUSD(params[0].value)}</span>
+            <span class="text-sm text-slate-50 font-bold">${formatUSD(
+              params[0].value,
+            )}</span>
             <span class="text-xs text-slate-400 font-medium">${
-              date instanceof Date && !isNaN(date?.getTime()) ? format(date, 'dd MMM yyyy HH:mm') : ''
+              date instanceof Date && !isNaN(date?.getTime())
+                ? format(date, 'dd MMM yyyy HH:mm')
+                : ''
             }</span>
           </div>`
         },
@@ -143,7 +162,7 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
         },
       ],
     }),
-    [onMouseOver, xData, yData]
+    [onMouseOver, xData, yData],
   )
 
   return (
@@ -158,7 +177,9 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
           onClick={() => setChartPeriod(TvlChartPeriod.Week)}
           className={classNames(
             'font-semibold text-sm',
-            chartPeriod === TvlChartPeriod.Week ? 'text-blue' : 'text-slate-500'
+            chartPeriod === TvlChartPeriod.Week
+              ? 'text-blue'
+              : 'text-slate-500',
           )}
         >
           1W
@@ -169,7 +190,9 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
           onClick={() => setChartPeriod(TvlChartPeriod.Month)}
           className={classNames(
             'font-semibold text-sm',
-            chartPeriod === TvlChartPeriod.Month ? 'text-blue' : 'text-slate-500'
+            chartPeriod === TvlChartPeriod.Month
+              ? 'text-blue'
+              : 'text-slate-500',
           )}
         >
           1M
@@ -180,7 +203,9 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
           onClick={() => setChartPeriod(TvlChartPeriod.Year)}
           className={classNames(
             'font-semibold text-sm',
-            chartPeriod === TvlChartPeriod.Year ? 'text-blue' : 'text-slate-500'
+            chartPeriod === TvlChartPeriod.Year
+              ? 'text-blue'
+              : 'text-slate-500',
           )}
         >
           1Y
@@ -191,7 +216,7 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
           onClick={() => setChartPeriod(TvlChartPeriod.All)}
           className={classNames(
             'font-semibold text-sm',
-            chartPeriod === TvlChartPeriod.All ? 'text-blue' : 'text-slate-500'
+            chartPeriod === TvlChartPeriod.All ? 'text-blue' : 'text-slate-500',
           )}
         >
           ALL
@@ -200,7 +225,9 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
       <CardHeader>
         <CardTitle>
           {yData && yData.length ? (
-            <span className="hoveredItemValueVolume">{formatUSD(yData[yData.length - 1])}</span>
+            <span className="hoveredItemValueVolume">
+              {formatUSD(yData[yData.length - 1])}
+            </span>
           ) : (
             <SkeletonText fontSize="sm" />
           )}
@@ -208,7 +235,10 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
         <CardDescription>
           {xData && xData.length ? (
             <div className="text-sm text-gray-500 dark:text-slate-500 hoveredItemNameVolume">
-              {format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}
+              {format(
+                new Date(xData[xData.length - 1] * 1000),
+                'dd MMM yyyy HH:mm',
+              )}
             </div>
           ) : (
             <SkeletonText fontSize="sm" />
@@ -219,7 +249,11 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
         {xData ? (
           <ReactECharts option={DEFAULT_OPTION} style={{ height: 400 }} />
         ) : (
-          <SkeletonBox className={classNames('h-[400px] w-full dark:via-slate-800 dark:to-slate-900')} />
+          <SkeletonBox
+            className={classNames(
+              'h-[400px] w-full dark:via-slate-800 dark:to-slate-900',
+            )}
+          />
         )}
       </CardContent>
     </Card>

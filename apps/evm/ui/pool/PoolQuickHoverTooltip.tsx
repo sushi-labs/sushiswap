@@ -13,12 +13,17 @@ interface PoolQuickHoverTooltipProps {
   row: Pool
 }
 
-export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) => {
+export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({
+  row,
+}) => {
   return (
     <div className="flex flex-col gap-3 p-2">
       <div className="flex flex-col gap-1">
         <span className="text-[10px] text-gray-500 dark:text-slate-500">
-          <span className="font-semibold text-gray-900 dark:text-slate-50">Total APR</span> • Rewards + Fees
+          <span className="font-semibold text-gray-900 dark:text-slate-50">
+            Total APR
+          </span>{' '}
+          • Rewards + Fees
         </span>
         <span className="text-3xl font-medium text-gray-900 dark:text-slate-50">
           {formatPercent(row.totalApr1d)}{' '}
@@ -29,7 +34,13 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
       </div>
       <div className="flex gap-2">
         <Button icon={PlusIcon} asChild size="sm" variant="secondary">
-          <LinkInternal href={row.protocol === Protocol.SUSHISWAP_V3 ? `/${row.id}` : `/${row.id}/add`}>
+          <LinkInternal
+            href={
+              row.protocol === Protocol.SUSHISWAP_V3
+                ? `/${row.id}`
+                : `/${row.id}/add`
+            }
+          >
             Deposit
           </LinkInternal>
         </Button>
@@ -55,9 +66,14 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
                     key={incentive.id}
                     icon={Currency.Icon}
                     iconProps={{
-                      currency: incentiveRewardToToken(row.chainId as ChainId, incentive),
+                      currency: incentiveRewardToToken(
+                        row.chainId as ChainId,
+                        incentive,
+                      ),
                     }}
-                    title={`${formatNumber(incentive.rewardPerDay)} ${incentive.rewardToken.symbol}`}
+                    title={`${formatNumber(incentive.rewardPerDay)} ${
+                      incentive.rewardToken.symbol
+                    }`}
                   />
                 ))}
             </List.Control>

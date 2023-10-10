@@ -1,9 +1,9 @@
 'use client'
 
-import {formatNumber} from 'sushi'
+import { formatNumber } from 'sushi'
 import useSWR from 'swr'
 
-import {getBentoBoxKpis} from '../lib'
+import { getBentoBoxKpis } from '../lib'
 
 // const stats = [
 //   { name: 'Total Subscribers', value: '71,897' },
@@ -17,9 +17,16 @@ interface KpiProps {
 
 function Kpi({ kpi }: KpiProps) {
   return (
-    <div key={kpi.name} className="px-4 py-5 overflow-hidden rounded-lg shadow bg-slate-700 sm:p-6">
-      <dt className="text-sm font-medium truncate text-slate-200">{kpi.name}</dt>
-      <dd className="mt-1 text-3xl font-semibold text-white">{formatNumber(kpi.value)}</dd>
+    <div
+      key={kpi.name}
+      className="px-4 py-5 overflow-hidden rounded-lg shadow bg-slate-700 sm:p-6"
+    >
+      <dt className="text-sm font-medium truncate text-slate-200">
+        {kpi.name}
+      </dt>
+      <dd className="mt-1 text-3xl font-semibold text-white">
+        {formatNumber(kpi.value)}
+      </dd>
     </div>
   )
 }

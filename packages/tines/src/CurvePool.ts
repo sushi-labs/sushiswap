@@ -23,7 +23,7 @@ export class CurvePool extends RPool {
     A: number,
     reserve0: bigint,
     reserve1: bigint,
-    ratio = 1 // is used for some pools with liquid stake tokens - like ankrETH
+    ratio = 1, // is used for some pools with liquid stake tokens - like ankrETH
   ) {
     super(address, token0, token1, fee, reserve0, reserve1, undefined, 90_000)
     this.A = A
@@ -105,18 +105,27 @@ export class CurvePool extends RPool {
     return y
   }
 
-  calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
+  calcOutByIn(
+    amountIn: number,
+    direction: boolean,
+  ): { out: number; gasSpent: number } {
     amountIn *= direction ? this.rate0 : this.rate1
     const xBI = direction ? this.reserve0Rated : this.reserve1Rated
     const yBI = direction ? this.reserve1Rated : this.reserve0Rated
     const xNewBI = xBI + getBigInt(amountIn /* * (1 - this.fee)*/)
     const yNewBI = this.computeY(xNewBI)
-    const dy = parseInt((yBI - yNewBI).toString()) / (direction ? this.rate1 : this.rate0)
-    if (parseInt(yNewBI.toString()) < this.minLiquidity) throw 'Curve pool OutOfLiquidity'
+    const dy =
+      parseInt((yBI - yNewBI).toString()) /
+      (direction ? this.rate1 : this.rate0)
+    if (parseInt(yNewBI.toString()) < this.minLiquidity)
+      throw 'Curve pool OutOfLiquidity'
     return { out: dy * (1 - this.fee), gasSpent: this.swapGasCost }
   }
 
-  calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
+  calcInByOut(
+    amountOut: number,
+    direction: boolean,
+  ): { inp: number; gasSpent: number } {
     amountOut *= direction ? this.rate1 : this.rate0
     const xBI = direction ? this.reserve0Rated : this.reserve1Rated
     const yBI = direction ? this.reserve1Rated : this.reserve0Rated
@@ -127,7 +136,8 @@ export class CurvePool extends RPool {
 
     const xNewBI = this.computeY(yNewBI)
     const input = Math.round(
-      parseInt((xNewBI - xBI).toString()) /* / (1 - this.fee)*/ / (direction ? this.rate0 : this.rate1)
+      parseInt((xNewBI - xBI).toString()) /* / (1 - this.fee)*/ /
+        (direction ? this.rate0 : this.rate1),
     )
 
     //if (input < 1) input = 1
@@ -138,7 +148,11 @@ export class CurvePool extends RPool {
     return this.calcPrice(0, direction, false)
   }
 
-  calcPrice(amountIn: number, direction: boolean, takeFeeIntoAccount: boolean): number {
+  calcPrice(
+    amountIn: number,
+    direction: boolean,
+    takeFeeIntoAccount: boolean,
+  ): number {
     const xBI = direction ? this.reserve0Rated : this.reserve1Rated
     const x = parseInt(xBI.toString())
     const oneMinusFee = takeFeeIntoAccount ? 1 - this.fee : 1

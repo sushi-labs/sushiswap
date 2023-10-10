@@ -3,7 +3,13 @@ import { FC, useEffect } from 'react'
 import { useSushiSwapV2Pool } from '../../hooks'
 import { PoolFinderType, SushiSwapV2PoolFinderProps } from './types'
 
-export const SushiSwapV2Pool: FC<SushiSwapV2PoolFinderProps> = ({ chainId, dispatch, token0, token1, index }) => {
+export const SushiSwapV2Pool: FC<SushiSwapV2PoolFinderProps> = ({
+  chainId,
+  dispatch,
+  token0,
+  token1,
+  index,
+}) => {
   const { data: state } = useSushiSwapV2Pool(chainId, token0, token1)
 
   useEffect(() => {

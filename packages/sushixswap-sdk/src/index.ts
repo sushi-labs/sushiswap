@@ -10,7 +10,7 @@ export const SUSHIXSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.POLYGON,
 ] as const
 
-export type SushiXSwapChainId = (typeof SUSHIXSWAP_SUPPORTED_CHAIN_IDS)[number]
+export type SushiXSwapChainId = typeof SUSHIXSWAP_SUPPORTED_CHAIN_IDS[number]
 
 export const SUSHIXSWAP_ADDRESS: Record<SushiXSwapChainId, `0x${string}`> = {
   [ChainId.ARBITRUM]: '0x53b08DbD70327b7Ba3B7886Fc9987BC985d27262',
@@ -22,5 +22,7 @@ export const SUSHIXSWAP_ADDRESS: Record<SushiXSwapChainId, `0x${string}`> = {
   [ChainId.POLYGON]: '0xd08b5f3e89F1e2d6b067e0A0cbdb094e6e41E77c',
 } as const
 
-export const isSushiXSwapChainId = (chainId: ChainId): chainId is SushiXSwapChainId =>
+export const isSushiXSwapChainId = (
+  chainId: ChainId,
+): chainId is SushiXSwapChainId =>
   SUSHIXSWAP_SUPPORTED_CHAIN_IDS.includes(chainId as SushiXSwapChainId)

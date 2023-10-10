@@ -33,13 +33,23 @@ export const UnknownTokenAlert: FC<UnknownTokenAlert> = ({ pool }) => {
   })
 
   const token0NotInList = useMemo(
-    () => Boolean(tokenFrom?.status !== 'APPROVED' && tokenFrom?.token && !hasToken(tokenFrom?.token)),
-    [hasToken, tokenFrom?.status, tokenFrom?.token]
+    () =>
+      Boolean(
+        tokenFrom?.status !== 'APPROVED' &&
+          tokenFrom?.token &&
+          !hasToken(tokenFrom?.token),
+      ),
+    [hasToken, tokenFrom?.status, tokenFrom?.token],
   )
 
   const token1NotInList = useMemo(
-    () => Boolean(tokenTo?.status !== 'APPROVED' && tokenTo?.token && !hasToken(tokenTo?.token)),
-    [hasToken, tokenTo?.status, tokenTo?.token]
+    () =>
+      Boolean(
+        tokenTo?.status !== 'APPROVED' &&
+          tokenTo?.token &&
+          !hasToken(tokenTo?.token),
+      ),
+    [hasToken, tokenTo?.status, tokenTo?.token],
   )
 
   if (!(token0NotInList || token1NotInList)) return <></>

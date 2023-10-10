@@ -17,7 +17,10 @@ import { usePathname, useRouter } from 'next/navigation'
 import React, { FC, useCallback, useState, useTransition } from 'react'
 
 export const CrossChainBanner: FC = () => {
-  const [minimized, setBannerMinimize] = useLocalStorage('xswap-banner-minimized', false)
+  const [minimized, setBannerMinimize] = useLocalStorage(
+    'xswap-banner-minimized',
+    false,
+  )
   const pathname = usePathname()
   const [, startTransition] = useTransition()
   const [checked, setChecked] = useState(pathname === '/swap/cross-chain')
@@ -33,7 +36,7 @@ export const CrossChainBanner: FC = () => {
         })
       }, 100)
     },
-    [push]
+    [push],
   )
 
   return (
@@ -51,7 +54,8 @@ export const CrossChainBanner: FC = () => {
                 </motion.div>
               </CardTitle>
               <CardDescription>
-                Swap your funds on one network and swap them into a token on a different network.{' '}
+                Swap your funds on one network and swap them into a token on a
+                different network.{' '}
                 <a
                   target="_blank"
                   className="text-blue hover:underline"
@@ -66,7 +70,12 @@ export const CrossChainBanner: FC = () => {
               <Switch checked={checked} onCheckedChange={handleChange} />
             </CardContent>
             <div className="absolute right-2 top-2">
-              <IconButton icon={XMarkIcon} name="minimize" onClick={() => setBannerMinimize(true)} size="xs" />
+              <IconButton
+                icon={XMarkIcon}
+                name="minimize"
+                onClick={() => setBannerMinimize(true)}
+                size="xs"
+              />
             </div>
           </Card>
         </motion.div>

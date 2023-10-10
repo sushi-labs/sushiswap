@@ -18,7 +18,10 @@ interface Pair {
   type: Farm['poolType']
 }
 
-async function getExchangePairs(ids: string[], chainId: SushiSwapChainId): Promise<Pair[]> {
+async function getExchangePairs(
+  ids: string[],
+  chainId: SushiSwapChainId,
+): Promise<Pair[]> {
   const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
   const subgraphName = SUSHISWAP_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
@@ -46,7 +49,7 @@ async function getExchangePairs(ids: string[], chainId: SushiSwapChainId): Promi
 
 async function getTridentPairs(
   ids: string[],
-  chainId: keyof typeof SUBGRAPH_HOST & keyof typeof TRIDENT_SUBGRAPH_NAME
+  chainId: keyof typeof SUBGRAPH_HOST & keyof typeof TRIDENT_SUBGRAPH_NAME,
 ): Promise<Pair[]> {
   const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
   const subgraphName = TRIDENT_SUBGRAPH_NAME[chainId]
@@ -74,7 +77,10 @@ async function getTridentPairs(
 //   const { getBuiltGraphSDK } = await import('../../.graphclient')
 // }
 
-export async function getPairs(ids: string[], chainId: SushiSwapChainId | TridentChainId) {
+export async function getPairs(
+  ids: string[],
+  chainId: SushiSwapChainId | TridentChainId,
+) {
   return (
     await Promise.all([
       isSushiSwapChain(chainId) ? getExchangePairs(ids, chainId) : [],

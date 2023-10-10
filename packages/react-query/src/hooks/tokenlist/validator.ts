@@ -19,6 +19,6 @@ export const otherTokenListValidator = z.object({
       decimals: z.number(),
       name: z.string(),
       symbol: z.string(),
-    })
+    }),
   ),
 })

@@ -15,26 +15,33 @@ import {
 import { ColumnDef, PaginationState, SortingState } from '@tanstack/react-table'
 import React, { FC, useMemo, useState } from 'react'
 
-import { FuroToken, GetFuroTokenArgs, useFuroTokens } from '../../lib/furo/useFuroTokens'
+import {
+  FuroToken,
+  GetFuroTokenArgs,
+  useFuroTokens,
+} from '../../lib/furo/useFuroTokens'
 import { usePoolFilters } from '../pool'
 
 const COLUMNS: ColumnDef<FuroToken, unknown>[] = [
   {
     id: 'tokenName',
     header: 'Name',
-    cell: ({
-      row: {
-        original: { token },
-      },
-    }) => (
+    cell: ({ row: { original: { token } } }) => (
       <div className="flex items-center gap-5">
         <div className="flex">
           <Badge
             className="border-2 border-slate-900 rounded-full z-[11]"
             position="bottom-right"
-            badgeContent={<NetworkIcon chainId={token.chainId} width={14} height={14} />}
+            badgeContent={
+              <NetworkIcon chainId={token.chainId} width={14} height={14} />
+            }
           >
-            <Currency.Icon disableLink currency={token} width={26} height={26} />
+            <Currency.Icon
+              disableLink
+              currency={token}
+              width={26}
+              height={26}
+            />
           </Badge>
         </div>
         <div className="flex flex-col">
@@ -73,7 +80,9 @@ const COLUMNS: ColumnDef<FuroToken, unknown>[] = [
 export const FuroTokenTable: FC = () => {
   const { chainIds, tokenSymbols } = usePoolFilters()
 
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: 'liquidityUSD', desc: true },
+  ])
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -84,7 +93,7 @@ export const FuroTokenTable: FC = () => {
       chainIds,
       tokenSymbols,
     }),
-    [chainIds, tokenSymbols]
+    [chainIds, tokenSymbols],
   )
 
   const { data: furoTokens, isLoading } = useFuroTokens(args)
@@ -97,7 +106,9 @@ export const FuroTokenTable: FC = () => {
         <CardTitle>
           Tokens{' '}
           {furoTokens?.length ? (
-            <span className="text-gray-400 dark:text-slate-500">({furoTokens?.length})</span>
+            <span className="text-gray-400 dark:text-slate-500">
+              ({furoTokens?.length})
+            </span>
           ) : null}
         </CardTitle>
       </CardHeader>

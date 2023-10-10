@@ -24,7 +24,12 @@ const Network: FC<NetworkProps> = ({
   const _chainId = Number(chainId)
   if (chain?.id !== _chainId)
     return (
-      <Button fullWidth={fullWidth} size={size} onClick={() => switchNetwork?.(_chainId)} {...rest}>
+      <Button
+        fullWidth={fullWidth}
+        size={size}
+        onClick={() => switchNetwork?.(_chainId)}
+        {...rest}
+      >
         Switch to {chainName[_chainId]}
       </Button>
     )

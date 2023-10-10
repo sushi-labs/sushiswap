@@ -48,10 +48,18 @@ function makeSerializable(poolCodes: PoolCode[]) {
     pool.token1 = { ...pool.token1 } as RToken
     if (pool instanceof StableSwapRPool) {
       pool.k = String(pool.k) as unknown as bigint
-      pool.total0.rebaseBI.base = String(pool.total0.rebaseBI.base) as unknown as bigint
-      pool.total0.rebaseBI.elastic = String(pool.total0.rebaseBI.elastic) as unknown as bigint
-      pool.total1.rebaseBI.base = String(pool.total1.rebaseBI.base) as unknown as bigint
-      pool.total1.rebaseBI.elastic = String(pool.total1.rebaseBI.elastic) as unknown as bigint
+      pool.total0.rebaseBI.base = String(
+        pool.total0.rebaseBI.base,
+      ) as unknown as bigint
+      pool.total0.rebaseBI.elastic = String(
+        pool.total0.rebaseBI.elastic,
+      ) as unknown as bigint
+      pool.total1.rebaseBI.base = String(
+        pool.total1.rebaseBI.base,
+      ) as unknown as bigint
+      pool.total1.rebaseBI.elastic = String(
+        pool.total1.rebaseBI.elastic,
+      ) as unknown as bigint
     } else if (pool instanceof UniV3Pool) {
       pool.liquidity = String(pool.liquidity) as unknown as bigint
       pool.sqrtPriceX96 = String(pool.sqrtPriceX96) as unknown as bigint
@@ -98,7 +106,7 @@ export function savePoolSnapshot(
   poolCodes: PoolCode[],
   chainId: ChainId,
   blockNumber: number | undefined,
-  directory?: string
+  directory?: string,
 ) {
   // pools preparation for serialization
   makeSerializable(poolCodes)
@@ -109,13 +117,16 @@ export function savePoolSnapshot(
 
   directory = directory || snapshotDirDefault
   if (!fs.existsSync(directory)) fs.mkdirSync(directory)
-  fs.writeFileSync(path.resolve(directory, `${chainId}-${blockNumber}`), humanReadableStr)
+  fs.writeFileSync(
+    path.resolve(directory, `${chainId}-${blockNumber}`),
+    humanReadableStr,
+  )
 }
 
 export function loadPoolSnapshot(
   chainId: ChainId,
   blockNumber: number | undefined,
-  directory?: string
+  directory?: string,
 ): PoolCode[] | undefined {
   directory = directory || snapshotDirDefault
   const fileName = path.resolve(directory, `${chainId}-${blockNumber}`)

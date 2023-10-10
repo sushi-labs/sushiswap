@@ -23,7 +23,10 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ pool }) => {
       <div className="flex gap-2">
         <Button
           asChild
-          disabled={Boolean(balance?.[FundSource.WALLET]?.equalTo(ZERO) && stakedBalance?.equalTo(ZERO))}
+          disabled={Boolean(
+            balance?.[FundSource.WALLET]?.equalTo(ZERO) &&
+              stakedBalance?.equalTo(ZERO),
+          )}
           size="lg"
           variant="secondary"
           fullWidth
@@ -36,9 +39,9 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ pool }) => {
       </div>
       <Button asChild className="col-span-2" size="lg" variant="secondary">
         <Link
-          href={`/swap?token0=${getAddress(pool.token0.address)}&token1=${getAddress(pool.token1.address)}&chainId=${
-            pool.chainId
-          }`}
+          href={`/swap?token0=${getAddress(
+            pool.token0.address,
+          )}&token1=${getAddress(pool.token1.address)}&chainId=${pool.chainId}`}
         >
           Trade
         </Link>

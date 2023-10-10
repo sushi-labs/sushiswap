@@ -7,7 +7,9 @@ const schema = z.object({
   id: z.string(),
   chainIds: z
     .nullable(z.string())
-    .transform((chainIds) => chainIds?.split(',').map((chainId) => Number(chainId) as ChainId)),
+    .transform((chainIds) =>
+      chainIds?.split(',').map((chainId) => Number(chainId) as ChainId),
+    ),
 })
 
 // export const dynamic = 'auto'

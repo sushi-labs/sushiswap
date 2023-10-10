@@ -37,7 +37,10 @@ export { tridentConstantPoolFactoryAbi } from './tridentConstantPoolFactoryAbi'
 export { tridentGetPoolsAbi } from './tridentGetPoolsAbi'
 export { tridentPoolsCountAbi } from './tridentPoolsCountAbi'
 export { tridentRouterAbi } from './tridentRouterAbi'
-export { getStableReservesAbi, tridentStablePoolAbi } from './tridentStablePoolAbi'
+export {
+  getStableReservesAbi,
+  tridentStablePoolAbi,
+} from './tridentStablePoolAbi'
 export { tridentStablePoolFactoryAbi } from './tridentStablePoolFactoryAbi'
 export { tridentSwapFeeAbi } from './tridentSwapFeeAbi'
 export { uniswapV2PairAbi } from './uniswapV2PairAbi'

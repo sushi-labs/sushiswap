@@ -2,7 +2,13 @@ import React from 'react'
 
 export const LayerzeroSVG = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" className="css-13udsys" viewBox="0 0 125 34">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+      fill="none"
+      className="css-13udsys"
+      viewBox="0 0 125 34"
+    >
       <title>LayerZero</title>
       <path
         fill="currentColor"

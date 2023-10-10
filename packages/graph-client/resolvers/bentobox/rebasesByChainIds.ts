@@ -6,10 +6,18 @@ import { isPromiseFulfilled } from 'sushi'
 import { Query } from '../../.graphclient/index.js'
 import { BentoBoxTypes } from '../../.graphclient/sources/BentoBox/types.js'
 
-export const rebasesByChainIds = async (root, args, context, info): Promise<Query['rebasesByChainIds']> => {
+export const rebasesByChainIds = async (
+  root,
+  args,
+  context,
+  info,
+): Promise<Query['rebasesByChainIds']> => {
   return Promise.allSettled<Query['rebasesByChainIds'][]>(
     args.chainIds
-      .filter((chainId): chainId is keyof typeof BENTOBOX_SUBGRAPH_NAME => chainId in BENTOBOX_SUBGRAPH_NAME)
+      .filter(
+        (chainId): chainId is keyof typeof BENTOBOX_SUBGRAPH_NAME =>
+          chainId in BENTOBOX_SUBGRAPH_NAME,
+      )
       .map((chainId) => {
         return context.BentoBox.Query.rebases({
           root,
@@ -28,11 +36,11 @@ export const rebasesByChainIds = async (root, args, context, info): Promise<Quer
           }
           return rebases.map((rebase) => ({ ...rebase, chainId }))
         })
-      })
+      }),
   ).then((promiseSettledResults) =>
     promiseSettledResults
       .flat()
       .filter(isPromiseFulfilled)
-      .flatMap((promiseFulfilled) => promiseFulfilled.value)
+      .flatMap((promiseFulfilled) => promiseFulfilled.value),
   )
 }

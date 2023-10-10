@@ -1,6 +1,11 @@
 import { ChainId } from 'sushi/chain'
 import { Abi, Narrow } from 'abitype'
-import { Address, MulticallContract, MulticallContracts, PublicClient } from 'viem'
+import {
+  Address,
+  MulticallContract,
+  MulticallContracts,
+  PublicClient,
+} from 'viem'
 
 import { warnLog } from './WarnLog'
 
@@ -36,7 +41,7 @@ export class MultiCallAggregator {
     abi: Abi,
     functionName: string,
     args?: unknown[],
-    makeMulticallIfExceeds = true
+    makeMulticallIfExceeds = true,
   ): Promise<{ blockNumber: number; returnValue: FunctionRetType }> {
     this.sheduleMulticall()
     this.pendingCalls.push({
@@ -45,7 +50,10 @@ export class MultiCallAggregator {
       functionName,
       args,
     })
-    const promise = new Promise<{ blockNumber: number; returnValue: FunctionRetType }>((resolve, reject) => {
+    const promise = new Promise<{
+      blockNumber: number
+      returnValue: FunctionRetType
+    }>((resolve, reject) => {
       this.pendingResolves.push(resolve)
       this.pendingRejects.push(reject)
     })
@@ -58,7 +66,7 @@ export class MultiCallAggregator {
     address: Address,
     abi: Abi,
     functionName: string,
-    args?: unknown[]
+    args?: unknown[],
   ): Promise<FunctionRetType> {
     this.sheduleMulticall()
     this.pendingCalls.push({
@@ -67,7 +75,10 @@ export class MultiCallAggregator {
       functionName,
       args,
     })
-    const promise = new Promise<{ blockNumber: number; returnValue: FunctionRetType }>((resolve, reject) => {
+    const promise = new Promise<{
+      blockNumber: number
+      returnValue: FunctionRetType
+    }>((resolve, reject) => {
       this.pendingResolves.push(resolve)
       this.pendingRejects.push(reject)
     })
@@ -79,29 +90,39 @@ export class MultiCallAggregator {
   async callContractSameBlock(
     address: Address,
     abi: Abi,
-    functions: [string, unknown[] | undefined][]
+    functions: [string, unknown[] | undefined][],
   ): Promise<{ blockNumber: number; returnValues: unknown[] }> {
     if (functions.length === 0) return { blockNumber: -1, returnValues: [] }
     this.sheduleMulticall()
-    const promise = Promise.all(functions.map(([name, args]) => this.call(address, abi, name, args, false)))
+    const promise = Promise.all(
+      functions.map(([name, args]) =>
+        this.call(address, abi, name, args, false),
+      ),
+    )
     this.makeMulticallIfMaxBatchSizeExceeds()
     const res = await promise
-    return { blockNumber: res[0].blockNumber, returnValues: res.map(({ returnValue }) => returnValue) }
+    return {
+      blockNumber: res[0].blockNumber,
+      returnValues: res.map(({ returnValue }) => returnValue),
+    }
   }
 
   async callSameBlock(
-    calls: MulticallContracts<MulticallContract[]>
+    calls: MulticallContracts<MulticallContract[]>,
   ): Promise<{ blockNumber: number; returnValues: unknown[] }> {
     if (calls.length === 0) return { blockNumber: -1, returnValues: [] }
     this.sheduleMulticall()
     const promise = Promise.all(
       calls.map(({ address, abi, functionName, args }) =>
-        this.call(address, abi, functionName, args as unknown[], false)
-      )
+        this.call(address, abi, functionName, args as unknown[], false),
+      ),
     )
     this.makeMulticallIfMaxBatchSizeExceeds()
     const res = await promise
-    return { blockNumber: res[0].blockNumber, returnValues: res.map(({ returnValue }) => returnValue) }
+    return {
+      blockNumber: res[0].blockNumber,
+      returnValues: res.map(({ returnValue }) => returnValue),
+    }
   }
 
   async sheduleMulticall() {
@@ -114,7 +135,11 @@ export class MultiCallAggregator {
   }
 
   async makeMulticallIfMaxBatchSizeExceeds(): Promise<void> {
-    if (this.maxCallsInOneBatch === 0 || this.pendingCalls.length < this.maxCallsInOneBatch) return
+    if (
+      this.maxCallsInOneBatch === 0 ||
+      this.pendingCalls.length < this.maxCallsInOneBatch
+    )
+      return
     await this.makeMulticallNow()
   }
 
@@ -159,7 +184,8 @@ export class MultiCallAggregator {
     } else {
       const blockNumber = res[0].result as number
       for (let i = 1; i < res.length; ++i) {
-        if (res[i].status === 'success') pendingResolves[i - 1]({ blockNumber, returnValue: res[i].result })
+        if (res[i].status === 'success')
+          pendingResolves[i - 1]({ blockNumber, returnValue: res[i].result })
         else pendingRejects[i - 1](res[i].error)
       }
     }

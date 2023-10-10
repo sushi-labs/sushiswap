@@ -357,7 +357,9 @@ export const stargatePoolAbi = [
   },
   {
     anonymous: false,
-    inputs: [{ indexed: false, internalType: 'bool', name: 'swapStop', type: 'bool' }],
+    inputs: [
+      { indexed: false, internalType: 'bool', name: 'swapStop', type: 'bool' },
+    ],
     name: 'StopSwapUpdated',
     type: 'event',
   },
@@ -945,7 +947,9 @@ export const stargatePoolAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'address', name: '_feeLibraryAddr', type: 'address' }],
+    inputs: [
+      { internalType: 'address', name: '_feeLibraryAddr', type: 'address' },
+    ],
     name: 'setFeeLibrary',
     outputs: [],
     stateMutability: 'nonpayable',

@@ -50,7 +50,7 @@
         "useLiteralKeys": "off"
       },
       "security": {
-        "noDangerouslySetInnerHtml" : "off"
+        "noDangerouslySetInnerHtml": "off"
       }
     }
   },

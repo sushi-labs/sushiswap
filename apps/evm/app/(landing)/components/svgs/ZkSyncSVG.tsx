@@ -2,7 +2,12 @@ import React from 'react'
 
 export const ZkSyncSVG = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 240 48">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+      fill="none"
+      viewBox="0 0 240 48"
+    >
       <title>zkSync Era</title>
       <g clipPath="url(#clip0_180_26899)">
         <path

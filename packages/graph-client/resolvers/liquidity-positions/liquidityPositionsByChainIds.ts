@@ -20,13 +20,20 @@ import { TridentTypes } from '../../.graphclient/sources/Trident/types.js'
 
 export const _liquidityPositionsByChainIds = async (
   root = {},
-  args: RequireFields<QueryliquidityPositionsByChainIdsArgs, 'skip' | 'first' | 'chainIds'>,
+  args: RequireFields<
+    QueryliquidityPositionsByChainIdsArgs,
+    'skip' | 'first' | 'chainIds'
+  >,
   context: SushiSwapTypes.Context & TridentTypes.Context,
-  info: GraphQLResolveInfo
+  info: GraphQLResolveInfo,
 ) => {
-  const liquidityPositions = await Promise.allSettled<Query['liquidityPositionsByChainIds'][]>([
+  const liquidityPositions = await Promise.allSettled<
+    Query['liquidityPositionsByChainIds'][]
+  >([
     ...args.chainIds
-      .filter((el): el is (typeof SUSHISWAP_ENABLED_NETWORKS)[number] => SUSHISWAP_ENABLED_NETWORKS.includes(el))
+      .filter((el): el is typeof SUSHISWAP_ENABLED_NETWORKS[number] =>
+        SUSHISWAP_ENABLED_NETWORKS.includes(el),
+      )
       .map((chainId) =>
         context.SushiSwap.Query.liquidityPositions({
           root,
@@ -40,17 +47,22 @@ export const _liquidityPositionsByChainIds = async (
           info,
         }).then((liquidityPositions: SushiSwapTypes.LiquidityPosition[]) => {
           if (!Array.isArray(liquidityPositions)) {
-            console.error(`SushiSwap liquidityPositions query failed on ${chainId}`, liquidityPositions)
+            console.error(
+              `SushiSwap liquidityPositions query failed on ${chainId}`,
+              liquidityPositions,
+            )
             return []
           }
           return liquidityPositions.map((liquidityPosition) => ({
             ...liquidityPosition,
             chainId,
           }))
-        })
+        }),
       ),
     ...args.chainIds
-      .filter((el): el is (typeof TRIDENT_ENABLED_NETWORKS)[number] => TRIDENT_ENABLED_NETWORKS.includes(el))
+      .filter((el): el is typeof TRIDENT_ENABLED_NETWORKS[number] =>
+        TRIDENT_ENABLED_NETWORKS.includes(el),
+      )
       .map((chainId) =>
         context.Trident.Query.liquidityPositions({
           root,
@@ -64,14 +76,17 @@ export const _liquidityPositionsByChainIds = async (
           info,
         }).then((liquidityPositions: TridentTypes.LiquidityPosition[]) => {
           if (!Array.isArray(liquidityPositions)) {
-            console.error(`Trident liquidityPositions query failed on ${chainId}`, liquidityPositions)
+            console.error(
+              `Trident liquidityPositions query failed on ${chainId}`,
+              liquidityPositions,
+            )
             return []
           }
           return liquidityPositions.map((liquidityPosition) => ({
             ...liquidityPosition,
             chainId,
           }))
-        })
+        }),
       ),
   ]).then((promiseSettledResults) => {
     if (!Array.isArray(promiseSettledResults)) {
@@ -87,11 +102,7 @@ export const _liquidityPositionsByChainIds = async (
   return liquidityPositions
 }
 
-export const liquidityPositionsByChainIds: QueryResolvers['liquidityPositionsByChainIds'] = async (
-  root,
-  args,
-  context,
-  info
-) => {
-  return _liquidityPositionsByChainIds(root, args, context, info)
-}
+export const liquidityPositionsByChainIds: QueryResolvers['liquidityPositionsByChainIds'] =
+  async (root, args, context, info) => {
+    return _liquidityPositionsByChainIds(root, args, context, info)
+  }

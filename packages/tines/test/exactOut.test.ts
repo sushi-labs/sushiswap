@@ -20,7 +20,7 @@ function getPool(
   price: number[],
   reserve: number,
   fee = 0.003,
-  imbalance = 0
+  imbalance = 0,
 ) {
   return new ConstantProductRPool(
     `pool-${t0}-${t1}-${reserve}-${fee}` as Address,
@@ -28,7 +28,7 @@ function getPool(
     { ...tokens[t1] },
     fee,
     getBigInt(reserve),
-    getBigInt(Math.round(reserve / (price[t1] / price[t0]) - imbalance))
+    getBigInt(Math.round(reserve / (price[t1] / price[t0]) - imbalance)),
   )
 }
 
@@ -55,23 +55,55 @@ function checkExactOut(
   amountIn: number,
   poolList: RPool[],
   tokenBase: RToken,
-  gasPrice: number
+  gasPrice: number,
 ) {
-  const resOut = findMultiRouteExactIn(tokensFrom, tokensTo, amountIn, poolList, tokenBase, gasPrice)
+  const resOut = findMultiRouteExactIn(
+    tokensFrom,
+    tokensTo,
+    amountIn,
+    poolList,
+    tokenBase,
+    gasPrice,
+  )
 
   expect(resOut).toBeDefined()
   expect(resOut?.status).toEqual(RouteStatus.Success)
 
-  const resIn = findMultiRouteExactOut(tokensFrom, tokensTo, resOut.amountOut, poolList, tokenBase, gasPrice)
+  const resIn = findMultiRouteExactOut(
+    tokensFrom,
+    tokensTo,
+    resOut.amountOut,
+    poolList,
+    tokenBase,
+    gasPrice,
+  )
 
   expect(resIn).toBeDefined()
   expect(resIn?.status).toEqual(RouteStatus.Success)
   expect(resIn?.legs.length).toEqual(1)
-  expect(closeValues(resIn.amountIn as number, resOut.amountIn as number, 1e-12)).toBeTruthy()
-  expect(closeValues(resIn.amountOut as number, resOut.amountOut as number, 1e-12)).toBeTruthy()
-  expect(closeValues(resIn.priceImpact as number, resOut.priceImpact as number, 1e-12)).toBeTruthy()
-  expect(closeValues(resIn.primaryPrice as number, resOut.primaryPrice as number, 1e-12)).toBeTruthy()
-  expect(closeValues(resIn.swapPrice as number, resOut.swapPrice as number, 1e-12)).toBeTruthy()
+  expect(
+    closeValues(resIn.amountIn as number, resOut.amountIn as number, 1e-12),
+  ).toBeTruthy()
+  expect(
+    closeValues(resIn.amountOut as number, resOut.amountOut as number, 1e-12),
+  ).toBeTruthy()
+  expect(
+    closeValues(
+      resIn.priceImpact as number,
+      resOut.priceImpact as number,
+      1e-12,
+    ),
+  ).toBeTruthy()
+  expect(
+    closeValues(
+      resIn.primaryPrice as number,
+      resOut.primaryPrice as number,
+      1e-12,
+    ),
+  ).toBeTruthy()
+  expect(
+    closeValues(resIn.swapPrice as number, resOut.swapPrice as number, 1e-12),
+  ).toBeTruthy()
 }
 
 describe('ExactOut', () => {

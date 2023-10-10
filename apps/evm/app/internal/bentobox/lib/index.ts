@@ -3,7 +3,12 @@ import { ChainId } from 'sushi/chain'
 const reduceObjectArray = (arr: Record<string, unknown>[]) => {
   const keys = Object.keys(arr[0])
 
-  return Object.fromEntries(keys.map((key) => [key, arr.reduce((acc, cur) => Number(cur[key]) + acc, 0)]))
+  return Object.fromEntries(
+    keys.map((key) => [
+      key,
+      arr.reduce((acc, cur) => Number(cur[key]) + acc, 0),
+    ]),
+  )
 }
 
 const keyTitleMap: Record<string, string> = {
@@ -46,7 +51,10 @@ export async function getBentoBoxKpis() {
 
   const reducedKpis = reduceObjectArray(crossChainBentoBoxKpis)
 
-  const kpis = Object.entries(keyTitleMap).map(([key, title]) => ({ name: title, value: reducedKpis[key] }))
+  const kpis = Object.entries(keyTitleMap).map(([key, title]) => ({
+    name: title,
+    value: reducedKpis[key],
+  }))
 
   return kpis
 }

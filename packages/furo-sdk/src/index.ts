@@ -15,7 +15,7 @@ export const FURO_SUPPORTED_CHAIN_IDS = [
   ChainId.POLYGON,
 ] as const
 
-export type FuroChainId = (typeof FURO_SUPPORTED_CHAIN_IDS)[number]
+export type FuroChainId = typeof FURO_SUPPORTED_CHAIN_IDS[number]
 
 export const FURO_STREAM_ADDRESS: Record<FuroChainId, `0x${string}`> = {
   [ChainId.ARBITRUM]: '0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE',

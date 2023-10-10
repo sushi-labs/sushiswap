@@ -6,7 +6,14 @@ interface GuardProps extends ButtonProps {
   guardText: string
 }
 
-const Guard: FC<GuardProps> = ({ guardWhen, guardText, children, fullWidth = true, size = 'xl', ...props }) => {
+const Guard: FC<GuardProps> = ({
+  guardWhen,
+  guardText,
+  children,
+  fullWidth = true,
+  size = 'xl',
+  ...props
+}) => {
   if (guardWhen) {
     return (
       <Button size={size} fullWidth={fullWidth} disabled {...props}>

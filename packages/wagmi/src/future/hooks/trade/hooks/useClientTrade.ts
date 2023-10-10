@@ -2,7 +2,11 @@ import { calculateSlippageAmount } from '@sushiswap/amm'
 import { ChainId } from 'sushi/chain'
 import { Amount, Native, Price, WNATIVE_ADDRESS } from 'sushi/currency'
 import { Percent } from 'sushi'
-import { usePrice, UseTradeParams, UseTradeReturnWriteArgs } from '@sushiswap/react-query'
+import {
+  usePrice,
+  UseTradeParams,
+  UseTradeReturnWriteArgs,
+} from '@sushiswap/react-query'
 import {
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,
@@ -22,10 +26,22 @@ import { Address, Hex } from 'viem'
 import { usePoolsCodeMap } from '../../pools'
 
 export const useClientTrade = (variables: UseTradeParams) => {
-  const { chainId, fromToken, toToken, slippagePercentage, carbonOffset, amount, enabled, recipient } = variables
+  const {
+    chainId,
+    fromToken,
+    toToken,
+    slippagePercentage,
+    carbonOffset,
+    amount,
+    enabled,
+    recipient,
+  } = variables
 
   const { data: feeData } = useFeeData({ chainId, enabled })
-  const { data: price } = usePrice({ chainId, address: WNATIVE_ADDRESS[chainId] })
+  const { data: price } = usePrice({
+    chainId,
+    address: WNATIVE_ADDRESS[chainId],
+  })
   const { data: poolsCodeMap } = usePoolsCodeMap({
     chainId,
     currencyA: fromToken,
@@ -83,11 +99,14 @@ export const useClientTrade = (variables: UseTradeParams) => {
         amount.quotient,
         toToken,
         Number(feeData.gasPrice),
-        1 // 5% impact before dex aggregation
+        1, // 5% impact before dex aggregation
       )
 
       const logPools = Array.from(poolsCodeMap.values())
-        .map((pc) => `* ${pc.liquidityProvider}/${pc.pool.token0.symbol}/${pc.pool.token1.symbol}-${pc.pool.fee}\n`)
+        .map(
+          (pc) =>
+            `* ${pc.liquidityProvider}/${pc.pool.token0.symbol}/${pc.pool.token1.symbol}-${pc.pool.fee}\n`,
+        )
         .join('')
       console.debug(`
 Pools found ${poolsCodeMap.size}: 
@@ -116,7 +135,7 @@ ${logPools}
             recipient,
             ROUTE_PROCESSOR_3_2_ADDRESS[chainId],
             [],
-            +slippagePercentage / 100
+            +slippagePercentage / 100,
           )
         } else if (isRouteProcessor3_1ChainId(chainId)) {
           console.debug('routeProcessor3_1Params')
@@ -128,7 +147,7 @@ ${logPools}
             recipient,
             ROUTE_PROCESSOR_3_1_ADDRESS[chainId],
             [],
-            +slippagePercentage / 100
+            +slippagePercentage / 100,
           )
         } else if (isRouteProcessor3ChainId(chainId)) {
           console.debug('routeProcessor3Params')
@@ -140,7 +159,7 @@ ${logPools}
             recipient,
             ROUTE_PROCESSOR_3_ADDRESS[chainId],
             [],
-            +slippagePercentage / 100
+            +slippagePercentage / 100,
           )
         } else if (isRouteProcessorChainId(chainId)) {
           console.debug('routeProcessorParams')
@@ -151,14 +170,20 @@ ${logPools}
             toToken,
             recipient,
             ROUTE_PROCESSOR_ADDRESS[chainId],
-            +slippagePercentage / 100
+            +slippagePercentage / 100,
           )
         }
       }
 
       if (route) {
-        const amountIn = Amount.fromRawAmount(fromToken, route.amountInBI.toString())
-        const amountOut = Amount.fromRawAmount(toToken, route.amountOutBI.toString())
+        const amountIn = Amount.fromRawAmount(
+          fromToken,
+          route.amountInBI.toString(),
+        )
+        const amountOut = Amount.fromRawAmount(
+          toToken,
+          route.amountOutBI.toString(),
+        )
         const isOffset = chainId === ChainId.POLYGON && carbonOffset
 
         // let writeArgs: UseTradeReturnWriteArgs = args
@@ -174,10 +199,15 @@ ${logPools}
           : undefined
 
         // const overrides = fromToken.isNative && writeArgs?.[1] ? { value: BigNumber.from(writeArgs?.[1]) } : undefined
-        let value = fromToken.isNative && writeArgs?.[1] ? writeArgs[1] : undefined
+        let value =
+          fromToken.isNative && writeArgs?.[1] ? writeArgs[1] : undefined
 
         if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
-          writeArgs = ['0xbc4a6be1285893630d45c881c6c343a65fdbe278', 20000000000000000n, ...writeArgs]
+          writeArgs = [
+            '0xbc4a6be1285893630d45c881c6c343a65fdbe278',
+            20000000000000000n,
+            ...writeArgs,
+          ]
           value = (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n
         }
 
@@ -194,7 +224,10 @@ ${logPools}
                     })
                   : undefined,
                 priceImpact: route.priceImpact
-                  ? new Percent(BigInt(Math.round(route.priceImpact * 10000)), 10000n)
+                  ? new Percent(
+                      BigInt(Math.round(route.priceImpact * 10000)),
+                      10000n,
+                    )
                   : new Percent(0),
                 amountIn,
                 amountOut,
@@ -203,13 +236,16 @@ ${logPools}
                     ? Amount.fromRawAmount(toToken, writeArgs[3])
                     : Amount.fromRawAmount(
                         toToken,
-                        calculateSlippageAmount(amountOut, new Percent(Math.floor(0.5 * 100), 10_000))[0]
+                        calculateSlippageAmount(
+                          amountOut,
+                          new Percent(Math.floor(0.5 * 100), 10_000),
+                        )[0],
                       ),
                 gasSpent:
                   price && feeData.gasPrice
                     ? Amount.fromRawAmount(
                         Native.onChain(chainId),
-                        feeData.gasPrice * BigInt(route.gasSpent * 1.2)
+                        feeData.gasPrice * BigInt(route.gasSpent * 1.2),
                       ).toSignificant(4)
                     : undefined,
                 // gasSpentUsd:
@@ -222,16 +258,20 @@ ${logPools}
                 //         .toSignificant(4)
                 //     : undefined,
                 route,
-                functionName: isOffset ? 'transferValueAndprocessRoute' : 'processRoute',
+                functionName: isOffset
+                  ? 'transferValueAndprocessRoute'
+                  : 'processRoute',
                 writeArgs,
                 value,
               }),
-            250
-          )
+            250,
+          ),
         )
       }
     },
     refetchInterval: 10000,
-    enabled: Boolean(enabled && poolsCodeMap && feeData && fromToken && toToken && chainId),
+    enabled: Boolean(
+      enabled && poolsCodeMap && feeData && fromToken && toToken && chainId,
+    ),
   })
 }

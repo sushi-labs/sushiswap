@@ -10,7 +10,10 @@ export interface PoolWithReserves {
   reserve1: bigint
 }
 
-export async function getConstantProductPoolReserves(poolIds: string[], blockNumber: bigint) {
+export async function getConstantProductPoolReserves(
+  poolIds: string[],
+  blockNumber: bigint,
+) {
   const startTime = performance.now()
   const updatedPools: Map<string, PoolWithReserves> = new Map()
 
@@ -22,7 +25,7 @@ export async function getConstantProductPoolReserves(poolIds: string[], blockNum
         chainId: Number(id.split(':')[0]),
         abi: getReservesAbi,
         functionName: 'getReserves',
-      } as const)
+      }) as const,
   )
 
   let failures = 0
@@ -56,13 +59,19 @@ export async function getConstantProductPoolReserves(poolIds: string[], blockNum
   const success = poolIds.length - failures
   const endTime = performance.now()
   console.log(
-    `Fetched ${success}/${poolIds.length} constant product reserves (${((endTime - startTime) / 1000).toFixed(1)}s). `
+    `Fetched ${success}/${poolIds.length} constant product reserves (${(
+      (endTime - startTime) /
+      1000
+    ).toFixed(1)}s). `,
   )
 
   return updatedPools
 }
 
-export async function getStablePoolReserves(poolIds: string[], blockNumber: bigint) {
+export async function getStablePoolReserves(
+  poolIds: string[],
+  blockNumber: bigint,
+) {
   const startTime = performance.now()
   const updatedPools: Map<string, PoolWithReserves> = new Map()
   const reserves = await readContracts({
@@ -94,7 +103,12 @@ export async function getStablePoolReserves(poolIds: string[], blockNumber: bigi
   const success = poolIds.length - failures
 
   const endTime = performance.now()
-  console.log(`Fetched ${success}/${poolIds.length} stable reserves (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+  console.log(
+    `Fetched ${success}/${poolIds.length} stable reserves (${(
+      (endTime - startTime) /
+      1000
+    ).toFixed(1)}s). `,
+  )
 
   return updatedPools
 }
@@ -107,7 +121,7 @@ export async function getConcentratedLiquidityPoolReserves(
     token0: Token
     token1: Token
   }[],
-  blockNumber: bigint
+  blockNumber: bigint,
 ) {
   const startTime = performance.now()
   const updatedPools: Map<string, PoolWithReserves> = new Map()
@@ -128,7 +142,7 @@ export async function getConcentratedLiquidityPoolReserves(
         abi: balanceOfAbi,
         functionName: 'balanceOf',
       } as const,
-    ].flat()
+    ].flat(),
   )
   let failures = 0
 
@@ -156,7 +170,12 @@ export async function getConcentratedLiquidityPoolReserves(
 
   const success = pools.length - failures
   const endTime = performance.now()
-  console.log(`Fetched ${success}/${pools.length} cl balances (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+  console.log(
+    `Fetched ${success}/${pools.length} cl balances (${(
+      (endTime - startTime) /
+      1000
+    ).toFixed(1)}s). `,
+  )
 
   return updatedPools
 }

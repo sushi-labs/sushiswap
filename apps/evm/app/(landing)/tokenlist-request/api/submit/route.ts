@@ -26,11 +26,19 @@ interface MutationParams extends ApplyForTokenListTokenSchemaType {
 }
 
 export async function POST(request: Request) {
-  if (!process.env.TOKEN_LIST_PR_WEBHOOK_URL) throw new Error('TOKEN_LIST_PR_WEBHOOK_URL undefined')
+  if (!process.env.TOKEN_LIST_PR_WEBHOOK_URL)
+    throw new Error('TOKEN_LIST_PR_WEBHOOK_URL undefined')
   if (!process.env.OCTOKIT_KEY) throw new Error('OCTOKIT_KEY undefined')
 
-  const { tokenAddress, tokenName, tokenDecimals, tokenSymbol, logoFile, chainId, listType } =
-    (await request.json()) as MutationParams
+  const {
+    tokenAddress,
+    tokenName,
+    tokenDecimals,
+    tokenSymbol,
+    logoFile,
+    chainId,
+    listType,
+  } = (await request.json()) as MutationParams
 
   const octoKit = new Octokit({
     authStrategy: createAppAuth,
@@ -43,9 +51,7 @@ export async function POST(request: Request) {
 
   // Get latest commit for the new branch
   const {
-    data: {
-      commit: { sha: latestIconsSha },
-    },
+    data: { commit: { sha: latestIconsSha } },
   } = await octoKit.request('GET /repos/{owner}/{repo}/branches/{branch}', {
     owner,
     repo: 'list',
@@ -60,14 +66,20 @@ export async function POST(request: Request) {
     const branches: string[] = []
 
     for (let i = 1; ; i++) {
-      const { data }: { data: { name: string }[] } = await octoKit.request('GET /repos/{owner}/{repo}/branches', {
-        owner,
-        repo: 'list',
-        per_page: 100,
-        page: i,
-      })
+      const { data }: { data: { name: string }[] } = await octoKit.request(
+        'GET /repos/{owner}/{repo}/branches',
+        {
+          owner,
+          repo: 'list',
+          per_page: 100,
+          page: i,
+        },
+      )
 
-      const newBranches = data.reduce((acc: string[], e: { name: string }) => [...acc, e.name], [] as string[])
+      const newBranches = data.reduce(
+        (acc: string[], e: { name: string }) => [...acc, e.name],
+        [] as string[],
+      )
 
       branches.push(...newBranches)
 
@@ -91,19 +103,24 @@ export async function POST(request: Request) {
     sha: latestIconsSha,
   })
 
-  const imagePath = `logos/token-logos/network/${ChainKey[chainId].toLowerCase()}/${tokenAddress}.jpg`
+  const imagePath = `logos/token-logos/network/${ChainKey[
+    chainId
+  ].toLowerCase()}/${tokenAddress}.jpg`
 
   try {
     // Figure out if image already exists, overwrite if it does
     let previousImageFileSha: string | undefined
 
     try {
-      const res = await octoKit.request('GET /repos/{owner}/{repo}/contents/{path}', {
-        owner,
-        repo: 'list',
-        branch: 'master',
-        path: imagePath,
-      })
+      const res = await octoKit.request(
+        'GET /repos/{owner}/{repo}/contents/{path}',
+        {
+          owner,
+          repo: 'list',
+          branch: 'master',
+          path: imagePath,
+        },
+      )
 
       if (!Array.isArray(res.data)) {
         previousImageFileSha = res.data.sha
@@ -123,21 +140,29 @@ export async function POST(request: Request) {
       sha: previousImageFileSha,
     })
   } catch (e) {
-    return NextResponse.json({ error: 'Failed to add token image' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to add token image' },
+      { status: 500 },
+    )
   }
 
-  const listPath = `lists/token-lists/${listType}/tokens/${ChainKey[chainId].toLowerCase()}.json`
+  const listPath = `lists/token-lists/${listType}/tokens/${ChainKey[
+    chainId
+  ].toLowerCase()}.json`
 
   // Get current token list to append to
   let currentListData
 
   try {
-    const res = await octoKit.request('GET /repos/{owner}/{repo}/contents/{path}', {
-      owner,
-      repo: 'list',
-      branch: 'master',
-      path: listPath,
-    })
+    const res = await octoKit.request(
+      'GET /repos/{owner}/{repo}/contents/{path}',
+      {
+        owner,
+        repo: 'list',
+        branch: 'master',
+        path: listPath,
+      },
+    )
 
     if (!Array.isArray(res.data) && res.data.type === 'file') {
       currentListData = { sha: res.data.sha, content: res.data.content }
@@ -147,7 +172,9 @@ export async function POST(request: Request) {
   }
 
   let currentList: ListEntry[] = currentListData
-    ? JSON.parse(Buffer.from(currentListData?.content, 'base64').toString('ascii'))
+    ? JSON.parse(
+        Buffer.from(currentListData?.content, 'base64').toString('ascii'),
+      )
     : []
 
   // Remove from current list if exists to overwrite later
@@ -231,12 +258,18 @@ export async function POST(request: Request) {
         'Access-Control-Allow-Methods': 'POST',
         'Access-Control-Allow-Headers': 'Content-Type',
       },
-    }
+    },
   )
 }
 
 async function getCoinGecko(chainId: ChainId, address: string) {
-  return await fetch(`https://api.coingecko.com/api/v3/coins/${CHAIN_NAME[chainId].toLowerCase()}/contract/${address}`)
+  return await fetch(
+    `https://api.coingecko.com/api/v3/coins/${CHAIN_NAME[
+      chainId
+    ].toLowerCase()}/contract/${address}`,
+  )
     .then((data) => data.json())
-    .then((data) => (data.id ? `https://www.coingecko.com/en/coins/${data.id}` : 'Not Found'))
+    .then((data) =>
+      data.id ? `https://www.coingecko.com/en/coins/${data.id}` : 'Not Found',
+    )
 }

@@ -31,7 +31,11 @@ export const queryParamsSchema = z.object({
   //   .string()
   //   .nullable()
   //   .transform((arg) => (arg ? arg : 'NATIVE')),
-  fromCurrency: z.nullable(z.string()).transform((currency) => (typeof currency === 'string' ? currency : 'NATIVE')),
+  fromCurrency: z
+    .nullable(z.string())
+    .transform((currency) =>
+      typeof currency === 'string' ? currency : 'NATIVE',
+    ),
   toChainId: z.coerce
     .number()
     .int()
@@ -39,14 +43,20 @@ export const queryParamsSchema = z.object({
     .lte(2 ** 256)
     .optional()
     .transform((chainId) => chainId as SwapChainId | undefined),
-  toCurrency: z.nullable(z.string()).transform((currency) => (typeof currency === 'string' ? currency : '')),
+  toCurrency: z
+    .nullable(z.string())
+    .transform((currency) => (typeof currency === 'string' ? currency : '')),
   // .transform((currency) => (typeof currency === 'string' ? currency : 'NATIVE')),
   // toCurrency: z
   //   .string()
   //   .nullable()
   //   .transform((arg) => (arg ? arg : 'SUSHI')),
   amount: z.optional(z.nullable(z.string())).transform((val) => val ?? ''),
-  recipient: z.optional(z.nullable(z.string()).transform((val) => (val && isAddress(val) ? (val as Address) : null))),
+  recipient: z.optional(
+    z
+      .nullable(z.string())
+      .transform((val) => (val && isAddress(val) ? (val as Address) : null)),
+  ),
   review: z.optional(z.nullable(z.boolean())),
 })
 // .transform((val) => ({

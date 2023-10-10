@@ -6,7 +6,8 @@ import SEO from '../../next-seo.config'
 import { ArticleEntityResponseCollection } from '.mesh'
 
 export const BlogSeo: FC = () => {
-  const { data: articlesData } = useSWR<ArticleEntityResponseCollection>('/articles')
+  const { data: articlesData } =
+    useSWR<ArticleEntityResponseCollection>('/articles')
 
   return (
     <ArticleJsonLd

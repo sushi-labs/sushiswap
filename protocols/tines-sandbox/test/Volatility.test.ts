@@ -61,7 +61,11 @@ async function volatilityCheck(args: {
             startOutput[i] = startOutput[i] ?? Number(amountOut)
             const diff = Number(amountOut) / startOutput[i] - 1
             const sdiff = diff > 0 ? `+${diff}` : diff
-            console.log(`    ${params.name} time: +${Math.round((Date.now() - startTime) / 1000)}s diff: ${sdiff}`)
+            console.log(
+              `    ${params.name} time: +${Math.round(
+                (Date.now() - startTime) / 1000,
+              )}s diff: ${sdiff}`,
+            )
           }
         } catch (e) {
           console.log('Routing failed. No connection ?')

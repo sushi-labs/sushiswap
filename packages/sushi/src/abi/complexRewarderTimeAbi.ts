@@ -1,7 +1,11 @@
 export const complexRewarderTimeAbi = [
   {
     inputs: [
-      { internalType: 'contract IERC20', name: '_rewardToken', type: 'address' },
+      {
+        internalType: 'contract IERC20',
+        name: '_rewardToken',
+        type: 'address',
+      },
       { internalType: 'uint256', name: '_rewardPerSecond', type: 'uint256' },
       { internalType: 'address', name: '_MASTERCHEF_V2', type: 'address' },
     ],
@@ -14,7 +18,12 @@ export const complexRewarderTimeAbi = [
     inputs: [
       { indexed: true, internalType: 'address', name: 'user', type: 'address' },
       { indexed: true, internalType: 'uint256', name: 'pid', type: 'uint256' },
-      { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
       { indexed: true, internalType: 'address', name: 'to', type: 'address' },
     ],
     name: 'LogOnReward',
@@ -24,14 +33,26 @@ export const complexRewarderTimeAbi = [
     anonymous: false,
     inputs: [
       { indexed: true, internalType: 'uint256', name: 'pid', type: 'uint256' },
-      { indexed: false, internalType: 'uint256', name: 'allocPoint', type: 'uint256' },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'allocPoint',
+        type: 'uint256',
+      },
     ],
     name: 'LogPoolAddition',
     type: 'event',
   },
   {
     anonymous: false,
-    inputs: [{ indexed: false, internalType: 'uint256', name: 'rewardPerSecond', type: 'uint256' }],
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'rewardPerSecond',
+        type: 'uint256',
+      },
+    ],
     name: 'LogRewardPerSecond',
     type: 'event',
   },
@@ -39,7 +60,12 @@ export const complexRewarderTimeAbi = [
     anonymous: false,
     inputs: [
       { indexed: true, internalType: 'uint256', name: 'pid', type: 'uint256' },
-      { indexed: false, internalType: 'uint256', name: 'allocPoint', type: 'uint256' },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'allocPoint',
+        type: 'uint256',
+      },
     ],
     name: 'LogSetPool',
     type: 'event',
@@ -48,9 +74,24 @@ export const complexRewarderTimeAbi = [
     anonymous: false,
     inputs: [
       { indexed: true, internalType: 'uint256', name: 'pid', type: 'uint256' },
-      { indexed: false, internalType: 'uint64', name: 'lastRewardTime', type: 'uint64' },
-      { indexed: false, internalType: 'uint256', name: 'lpSupply', type: 'uint256' },
-      { indexed: false, internalType: 'uint256', name: 'accSushiPerShare', type: 'uint256' },
+      {
+        indexed: false,
+        internalType: 'uint64',
+        name: 'lastRewardTime',
+        type: 'uint64',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'lpSupply',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'accSushiPerShare',
+        type: 'uint256',
+      },
     ],
     name: 'LogUpdatePool',
     type: 'event',
@@ -58,8 +99,18 @@ export const complexRewarderTimeAbi = [
   {
     anonymous: false,
     inputs: [
-      { indexed: true, internalType: 'address', name: 'previousOwner', type: 'address' },
-      { indexed: true, internalType: 'address', name: 'newOwner', type: 'address' },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'previousOwner',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'newOwner',
+        type: 'address',
+      },
     ],
     name: 'OwnershipTransferred',
     type: 'event',
@@ -74,7 +125,13 @@ export const complexRewarderTimeAbi = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
-  { inputs: [], name: 'claimOwnership', outputs: [], stateMutability: 'nonpayable', type: 'function' },
+  {
+    inputs: [],
+    name: 'claimOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
   {
     inputs: [{ internalType: 'uint256[]', name: 'pids', type: 'uint256[]' }],
     name: 'massUpdatePools',
@@ -127,7 +184,11 @@ export const complexRewarderTimeAbi = [
     ],
     name: 'pendingTokens',
     outputs: [
-      { internalType: 'contract IERC20[]', name: 'rewardTokens', type: 'address[]' },
+      {
+        internalType: 'contract IERC20[]',
+        name: 'rewardTokens',
+        type: 'address[]',
+      },
       { internalType: 'uint256[]', name: 'rewardAmounts', type: 'uint256[]' },
     ],
     stateMutability: 'view',
@@ -187,7 +248,9 @@ export const complexRewarderTimeAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'uint256', name: '_rewardPerSecond', type: 'uint256' }],
+    inputs: [
+      { internalType: 'uint256', name: '_rewardPerSecond', type: 'uint256' },
+    ],
     name: 'setRewardPerSecond',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -210,7 +273,11 @@ export const complexRewarderTimeAbi = [
     outputs: [
       {
         components: [
-          { internalType: 'uint128', name: 'accSushiPerShare', type: 'uint128' },
+          {
+            internalType: 'uint128',
+            name: 'accSushiPerShare',
+            type: 'uint128',
+          },
           { internalType: 'uint64', name: 'lastRewardTime', type: 'uint64' },
           { internalType: 'uint64', name: 'allocPoint', type: 'uint64' },
         ],

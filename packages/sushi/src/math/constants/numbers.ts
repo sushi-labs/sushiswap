@@ -20,7 +20,9 @@ export const _1e9 = 10n ** 9n
 export const _1e6 = 10n ** 6n
 
 export const MAX_SAFE_INTEGER = BigInt(Number.MAX_SAFE_INTEGER)
-export const MAX_UINT256 = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
+export const MAX_UINT256 = BigInt(
+  '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+)
 
 // 2^128 - 1
 export const MAX_UINT128 = 2n ** 128n - 1n

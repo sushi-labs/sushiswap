@@ -14,7 +14,12 @@ export function useFuroVestingRouterContract(chainId: FuroChainId | undefined) {
   const publicClient = usePublicClient({ chainId })
 
   if (!chainId) return null
-  return getContract({ ...getFuroVestingRouterContractConfig(chainId), publicClient })
+  return getContract({
+    ...getFuroVestingRouterContractConfig(chainId),
+    publicClient,
+  })
 }
 
-export type FuroVestingRouter = NonNullable<ReturnType<typeof useFuroVestingRouterContract>>
+export type FuroVestingRouter = NonNullable<
+  ReturnType<typeof useFuroVestingRouterContract>
+>

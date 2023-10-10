@@ -2,7 +2,12 @@ import React from 'react'
 
 export const BentoBoxSVG = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 40 40">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+      fill="none"
+      viewBox="0 0 40 40"
+    >
       <title>BentoBox</title>
       <g clipPath="url(#clip0_1438_1415)">
         <path

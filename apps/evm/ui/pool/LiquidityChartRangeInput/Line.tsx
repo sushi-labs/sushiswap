@@ -22,5 +22,5 @@ export const Line: FC<LineProps> = ({ value, xScale, innerHeight }) =>
         y2={innerHeight}
       />
     ),
-    [value, xScale, innerHeight]
+    [value, xScale, innerHeight],
   )

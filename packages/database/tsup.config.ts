@@ -6,5 +6,5 @@ export default defineConfig({
   external: [],
   sourcemap: true,
   dts: true,
-  format: ['esm']
+  format: ['esm'],
 })

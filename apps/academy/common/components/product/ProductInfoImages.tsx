@@ -15,12 +15,17 @@ interface ProductInfoImages {
   infoSections: [ProductInfoSection, ProductInfoSection, ProductInfoSection]
 }
 
-const ProductInfoSection: FC<ProductInfoSection> = ({ title, description, startIcon, endIcon }) => {
+const ProductInfoSection: FC<ProductInfoSection> = ({
+  title,
+  description,
+  startIcon,
+  endIcon,
+}) => {
   return (
     <div
       className={classNames(
         'md:grid items-center gap-20 bg-slate-800 rounded-xl p-6 md:p-0 md:bg-transparent',
-        startIcon ? 'grid-cols-[360px,1fr]' : 'grid-cols-[1fr,360px]'
+        startIcon ? 'grid-cols-[360px,1fr]' : 'grid-cols-[1fr,360px]',
       )}
     >
       {startIcon}
@@ -33,24 +38,46 @@ const ProductInfoSection: FC<ProductInfoSection> = ({ title, description, startI
   )
 }
 
-export const ProductInfoImages: FC<ProductInfoImages> = ({ color, secondaryColor, infoSections }) => {
+export const ProductInfoImages: FC<ProductInfoImages> = ({
+  color,
+  secondaryColor,
+  infoSections,
+}) => {
   const [firstSection, secondSection, thirdSection] = infoSections
   return (
     <section className="py-10 md:py-[75px] grid grid-rows-[repeat(3,minmax(auto,1fr)] gap-4 md:gap-[70px]">
       <ProductInfoSection
         title={firstSection.title}
         description={firstSection.description}
-        endIcon={<TokensPanelImg color={color} secondaryColor={secondaryColor} className="hidden md:block" />}
+        endIcon={
+          <TokensPanelImg
+            color={color}
+            secondaryColor={secondaryColor}
+            className="hidden md:block"
+          />
+        }
       />
       <ProductInfoSection
         title={secondSection.title}
         description={secondSection.description}
-        startIcon={<RouterImg color={color} secondaryColor={secondaryColor} className="hidden md:block" />}
+        startIcon={
+          <RouterImg
+            color={color}
+            secondaryColor={secondaryColor}
+            className="hidden md:block"
+          />
+        }
       />
       <ProductInfoSection
         title={thirdSection.title}
         description={thirdSection.description}
-        endIcon={<TokensBoardImg color={color} secondaryColor={secondaryColor} className="hidden md:block" />}
+        endIcon={
+          <TokensBoardImg
+            color={color}
+            secondaryColor={secondaryColor}
+            className="hidden md:block"
+          />
+        }
       />
     </section>
   )

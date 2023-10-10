@@ -35,7 +35,7 @@ export async function getPoolInfos(poolLength: bigint) {
         chainId: ChainId.ETHEREUM,
         abi: masterChefV1Abi,
         functionName: 'poolInfo',
-      } as const)
+      }) as const,
   )
 
   return readContracts({
@@ -49,6 +49,6 @@ export async function getPoolInfos(poolLength: bigint) {
         allocPoint: result[1],
         lastRewardBlock: result[2],
         accSushiPerShare: result[3],
-      }))
+      })),
   )
 }

@@ -20,5 +20,5 @@ export const V3MigrateAddress = {
 }
 
 export const V3MigrateChainIds = Object.keys(V3MigrateAddress).map(
-  (el) => +el as V3MigrateChainId
+  (el) => +el as V3MigrateChainId,
 ) as V3MigrateChainId[]

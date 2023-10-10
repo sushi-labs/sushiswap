@@ -35,7 +35,9 @@ export const MULTICALL_ADDRESS: Record<number, string> = {
 }
 
 export const getMulticallContractConfig = (chainId: number | undefined) => ({
-  address: (chainId && chainId in MULTICALL_ADDRESS ? MULTICALL_ADDRESS[chainId] : '') as Address,
+  address: (chainId && chainId in MULTICALL_ADDRESS
+    ? MULTICALL_ADDRESS[chainId]
+    : '') as Address,
   abi: multicallAbi,
 })
 

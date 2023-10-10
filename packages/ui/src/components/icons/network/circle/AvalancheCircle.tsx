@@ -3,7 +3,12 @@ import * as React from 'react'
 import { IconComponent } from '../../../../types'
 
 export const AvalancheCircle: IconComponent = (props) => (
-  <svg viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <svg
+    viewBox="0 0 128 128"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
     <rect width={128} height={128} rx={64} fill="#E84142" />
     <path d="M103.473 21.957H24.442v71.83h79.031v-71.83Z" fill="#fff" />
     <path

@@ -62,7 +62,10 @@ const SELECT = {
   },
 }
 
-export async function getAllPools(client: PrismaClient, args: typeof AllPools._output) {
+export async function getAllPools(
+  client: PrismaClient,
+  args: typeof AllPools._output,
+) {
   try {
     const where: Prisma.PoolWhereInput = {
       chainId: args.chainId,
@@ -78,9 +81,12 @@ export async function getAllPools(client: PrismaClient, args: typeof AllPools._o
       if (!cursor) {
         result = await getPoolsPagination(client, where, batchSize)
       } else {
-        result = await getPoolsPagination(client, where, batchSize, 1, { id: cursor })
+        result = await getPoolsPagination(client, where, batchSize, 1, {
+          id: cursor,
+        })
       }
-      cursor = result.length === batchSize ? result[result.length - 1]?.id : null
+      cursor =
+        result.length === batchSize ? result[result.length - 1]?.id : null
       totalCount += result.length
 
       results.push(result)
@@ -106,7 +112,7 @@ async function getPoolsPagination(
   where: Prisma.PoolWhereInput,
   take: number,
   skip?: number,
-  cursor?: Prisma.PoolWhereUniqueInput
+  cursor?: Prisma.PoolWhereUniqueInput,
 ) {
   const pools = await client.pool.findMany({
     where,
@@ -126,7 +132,10 @@ async function getPoolsPagination(
   return pools as unknown as DecimalToString<typeof pools>
 }
 
-export async function getNewPools(client: PrismaClient, args: typeof DiscoverNewPools._output) {
+export async function getNewPools(
+  client: PrismaClient,
+  args: typeof DiscoverNewPools._output,
+) {
   const where: Prisma.PoolWhereInput = {
     chainId: args.chainId,
     protocol: args.protocol,

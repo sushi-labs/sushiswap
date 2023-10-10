@@ -25,7 +25,12 @@ function useColumns() {
         const chainId = info.getValue() as ChainId
         return (
           <div className="flex space-x-2">
-            <NetworkIcon type="circle" chainId={chainId} width={20} height={20} />
+            <NetworkIcon
+              type="circle"
+              chainId={chainId}
+              width={20}
+              height={20}
+            />
             <div>{CHAIN_NAME[chainId] ?? chainName[chainId]}</div>
           </div>
         )
@@ -42,7 +47,9 @@ function useColumns() {
       // cell: (info) => info.getValue(),
       cell: (info) => {
         const name = info.getValue()
-        return <div className="flex w-full max-w-[150px] justify-start">{name}</div>
+        return (
+          <div className="flex w-full max-w-[150px] justify-start">{name}</div>
+        )
       },
       enableHiding: true,
     }),
@@ -82,7 +89,10 @@ function useColumns() {
             e.preventDefault()
           }}
         >
-          <TokenAdder token={row.original} hasIcon={Boolean(row.original.listEntry?.logoURI)} />
+          <TokenAdder
+            token={row.original}
+            hasIcon={Boolean(row.original.listEntry?.logoURI)}
+          />
         </div>
       ),
     }),

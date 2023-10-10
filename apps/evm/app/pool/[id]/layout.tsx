@@ -9,10 +9,18 @@ export const metadata = {
   title: 'Pool 💦',
 }
 
-export default async function Layout({ children, params }: { children: React.ReactNode; params: { id: string } }) {
-  const [chainId, address] = params.id.split(params.id.includes('%3A') ? '%3A' : ':') as [string, string]
-  const res = await fetch(`https://pools.sushi.com/api/v0/${chainId}/${address}`, { next: { revalidate: 60 } })
-  const pool = await res.json() as Pool
+export default async function Layout({
+  children,
+  params,
+}: { children: React.ReactNode; params: { id: string } }) {
+  const [chainId, address] = params.id.split(
+    params.id.includes('%3A') ? '%3A' : ':',
+  ) as [string, string]
+  const res = await fetch(
+    `https://pools.sushi.com/api/v0/${chainId}/${address}`,
+    { next: { revalidate: 60 } },
+  )
+  const pool = (await res.json()) as Pool
   if (!pool) {
     notFound()
   }
