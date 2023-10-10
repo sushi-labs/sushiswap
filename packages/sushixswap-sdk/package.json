@@ -1,7 +1,6 @@
 {
   "name": "@sushiswap/sushixswap-sdk",
   "version": "0.0.1",
-  "private": true,
   "description": "SushiXSwap SDK",
   "keywords": [
     "sushixswap",
