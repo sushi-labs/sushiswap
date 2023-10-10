@@ -1,5 +1,5 @@
 import { Slot } from '@radix-ui/react-slot'
-import { type Protocol } from '@sushiswap/client'
+import { Protocol } from '@sushiswap/client'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import { useAccount } from '@sushiswap/wagmi'
 import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
