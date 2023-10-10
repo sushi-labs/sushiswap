@@ -3,7 +3,12 @@ import * as React from 'react'
 import { IconComponent } from '../../../../types'
 
 export const HecoCircle: IconComponent = (props) => (
-  <svg viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <svg
+    viewBox="0 0 128 128"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
     <rect width={128} height={128} rx={64} fill="white" />
     <path
       d="M72.0251 48.6063C72.0251 37.1273 66.4916 27.2376 62.2532 24C62.2532 24 61.9589 23.8234 61.9589 24.2943C61.6057 46.4871 50.3621 52.5504 44.1222 60.6151C29.8176 79.3348 43.1215 99.8204 56.6608 103.588C64.2547 105.707 54.8948 99.8204 53.7175 87.4584C52.3047 72.4474 72.0251 61.0272 72.0251 48.6063Z"

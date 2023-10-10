@@ -17,7 +17,12 @@ export const useConcentratedLiquidityPoolReserves = ({
   return useQuery({
     queryKey: [
       'useConcentratedLiquidityPoolReserves',
-      { token0: pool?.token0, token1: pool?.token1, feeAmount: pool?.fee, chainId },
+      {
+        token0: pool?.token0,
+        token1: pool?.token1,
+        feeAmount: pool?.fee,
+        chainId,
+      },
     ],
     queryFn: async () => {
       if (pool) {

@@ -36,10 +36,13 @@ export const ArticleListItem: FC<ArticleListItem> = ({ article }) => {
           </div>
         )}
         <div className="flex flex-col gap-2 lg:gap-3">
-          <div className="text-base font-medium md:text-2xl text-slate-200">{article?.attributes?.title}</div>
+          <div className="text-base font-medium md:text-2xl text-slate-200">
+            {article?.attributes?.title}
+          </div>
           {/*<p className="text-slate-400 line-clamp-2">{article?.attributes.description}</p>*/}
           <p className="text-sm font-medium text-slate-400">
-            {article?.attributes?.publishedAt && format(new Date(article?.attributes.publishedAt), 'dd MMM, yyyy')}
+            {article?.attributes?.publishedAt &&
+              format(new Date(article?.attributes.publishedAt), 'dd MMM, yyyy')}
           </p>
         </div>
       </div>

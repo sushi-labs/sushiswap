@@ -1,12 +1,15 @@
-import { Amount, Native, Type } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui'
 import { WalletIcon } from '@sushiswap/ui/components/icons'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { FC, memo, useCallback } from 'react'
+import { Amount, Native, Type } from 'sushi/currency'
 
 import { CurrencyInputProps } from './CurrencyInput'
 
-type BalancePanel = Pick<CurrencyInputProps, 'chainId' | 'onChange' | 'currency' | 'disableMaxButton' | 'loading'> & {
+type BalancePanel = Pick<
+  CurrencyInputProps,
+  'chainId' | 'onChange' | 'currency' | 'disableMaxButton' | 'loading'
+> & {
   id?: string
   account: string | undefined
   balance: Amount<Type> | null | undefined
@@ -23,12 +26,20 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
   loading,
   type,
 }) {
-  const [big, portion] = (balance ? `${balance?.toSignificant(6)}` : '0.00').split('.')
+  const [big, portion] = (
+    balance ? `${balance?.toSignificant(6)}` : '0.00'
+  ).split('.')
 
   const onClick = useCallback(() => {
     if (onChange && balance?.greaterThan(0)) {
-      if (balance.currency.isNative && balance.greaterThan(MIN_NATIVE_CURRENCY_FOR_GAS)) {
-        const hundred = Amount.fromRawAmount(Native.onChain(balance.currency.chainId), MIN_NATIVE_CURRENCY_FOR_GAS)
+      if (
+        balance.currency.isNative &&
+        balance.greaterThan(MIN_NATIVE_CURRENCY_FOR_GAS)
+      ) {
+        const hundred = Amount.fromRawAmount(
+          Native.onChain(balance.currency.chainId),
+          MIN_NATIVE_CURRENCY_FOR_GAS,
+        )
         onChange(balance.subtract(hundred).toFixed())
       } else {
         onChange(balance?.greaterThan(0) ? balance.toFixed() : '')
@@ -55,7 +66,7 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
         type === 'INPUT'
           ? 'text-blue hover:text-blue-600 active:text-blue-700 hover:dark:text-slate-300'
           : 'text-gray-500 dark:text-slate-500',
-        'font-medium flex gap-1.5 items-center py-1 dark:text-slate-400 px-2 rounded-md'
+        'font-medium flex gap-1.5 items-center py-1 dark:text-slate-400 px-2 rounded-md',
       )}
       disabled={disableMaxButton}
     >

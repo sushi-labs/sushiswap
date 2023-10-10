@@ -1,4 +1,9 @@
-import { Address, encodeAbiParameters, encodeFunctionData, parseAbiParameters } from 'viem'
+import {
+  Address,
+  encodeAbiParameters,
+  encodeFunctionData,
+  parseAbiParameters,
+} from 'viem'
 
 const abiShard = [
   {
@@ -54,7 +59,11 @@ export const burnLiquiditySingleAction = ({
     args: [
       address,
       amount,
-      encodeAbiParameters(parseAbiParameters('address, address, bool'), [token, recipient, receiveToWallet]),
+      encodeAbiParameters(parseAbiParameters('address, address, bool'), [
+        token,
+        recipient,
+        receiveToWallet,
+      ]),
       minWithdrawal,
     ],
   })

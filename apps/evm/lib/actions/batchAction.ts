@@ -43,6 +43,10 @@ export const batchAction = ({ actions = [] }: BatchAction): Hex | undefined => {
 
   // Call batch function with valid actions
   if (validated.length > 1) {
-    return encodeFunctionData({ abi: abiShard, functionName: 'multicall', args: [validated] })
+    return encodeFunctionData({
+      abi: abiShard,
+      functionName: 'multicall',
+      args: [validated],
+    })
   }
 }

@@ -14,7 +14,9 @@ const func: DeployFunction = async function ({
   const chainId = await getChainId()
 
   const args = [
-    isBentoBoxChainId(chainId) ? BENTOBOX_ADDRESS[chainId] : '0x0000000000000000000000000000000000000000',
+    isBentoBoxChainId(chainId)
+      ? BENTOBOX_ADDRESS[chainId]
+      : '0x0000000000000000000000000000000000000000',
     [],
   ]
 

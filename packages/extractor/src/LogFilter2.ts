@@ -1,5 +1,11 @@
 import { AbiEvent } from 'abitype'
-import { Block, encodeEventTopics, Log, PublicClient, WatchBlocksReturnType } from 'viem'
+import {
+  Block,
+  encodeEventTopics,
+  Log,
+  PublicClient,
+  WatchBlocksReturnType,
+} from 'viem'
 
 import { repeatAsync } from './Utils'
 import { warnLog } from './WarnLog'
@@ -41,7 +47,8 @@ class BlockFrame {
   }
 
   add(blockNumber: number, blockHash: string): boolean {
-    if (this.firstNumber === undefined || this.lastNumber === undefined) return false
+    if (this.firstNumber === undefined || this.lastNumber === undefined)
+      return false
     if (blockNumber < this.firstNumber) return false
     if (blockNumber >= this.lastNumber) return false
     const hashes = this.hashNumerMap.get(blockNumber)
@@ -99,25 +106,29 @@ export class LogFilter2 {
   start() {
     if (this.unWatchBlocks) return // have been started
     if (this.logType == LogFilterType.Native) {
-      this.client.createEventFilter({ events: this.eventsAll }).then((filter) => {
-        this.unWatchBlocks = this.client.watchBlocks({
-          onBlock: async () => {
-            if (this.blockProcessing) return
-            this.blockProcessing = true
-            try {
-              const logs = await this.client.getFilterChanges({ filter })
-              this.filters.forEach((f) => {
-                const logsFiltered = logs.filter((l) => f.topics.includes(l.topics[0] ?? ''))
-                if (logsFiltered.length > 0) f.onNewLogs(logsFiltered)
-              })
-            } catch (e) {
-              warnLog(this.client.chain?.id, `getFilterChanges failed ${e}`)
-              this.stop()
-            }
-            this.blockProcessing = false
-          },
+      this.client
+        .createEventFilter({ events: this.eventsAll })
+        .then((filter) => {
+          this.unWatchBlocks = this.client.watchBlocks({
+            onBlock: async () => {
+              if (this.blockProcessing) return
+              this.blockProcessing = true
+              try {
+                const logs = await this.client.getFilterChanges({ filter })
+                this.filters.forEach((f) => {
+                  const logsFiltered = logs.filter((l) =>
+                    f.topics.includes(l.topics[0] ?? ''),
+                  )
+                  if (logsFiltered.length > 0) f.onNewLogs(logsFiltered)
+                })
+              } catch (e) {
+                warnLog(this.client.chain?.id, `getFilterChanges failed ${e}`)
+                this.stop()
+              }
+              this.blockProcessing = false
+            },
+          })
         })
-      })
     } else {
       this.unWatchBlocks = this.client.watchBlocks({
         onBlock: async (block) => {
@@ -141,7 +152,10 @@ export class LogFilter2 {
   }
 
   setNewGoal(blockNumber: number, block: Block): boolean {
-    const deletedHashes = this.blockFrame.setFrame(blockNumber - this.depth, blockNumber + this.depth)
+    const deletedHashes = this.blockFrame.setFrame(
+      blockNumber - this.depth,
+      blockNumber + this.depth,
+    )
     const initProcessedBlocksNumber = this.processedBlockHash.size
     deletedHashes.forEach((hash) => {
       this.blockHashMap.delete(hash)
@@ -157,7 +171,9 @@ export class LogFilter2 {
   }
 
   sortAndProcessLogs(blockHash: string | null, logs: Log[]) {
-    const logsSorted = logs.sort((a, b) => Number(a.logIndex || 0) - Number(b.logIndex || 0))
+    const logsSorted = logs.sort(
+      (a, b) => Number(a.logIndex || 0) - Number(b.logIndex || 0),
+    )
     this.logHashMap.set(blockHash || '', logsSorted)
     this.processNewLogs()
   }
@@ -165,7 +181,10 @@ export class LogFilter2 {
   addBlock(block: Block, isGoal: boolean) {
     const blockNumber = block.number === null ? null : Number(block.number)
     if (blockNumber === null || block.hash === null) {
-      warnLog(this.client.chain?.id, `Incorrect block: number=${blockNumber} hash=${block.hash}`)
+      warnLog(
+        this.client.chain?.id,
+        `Incorrect block: number=${blockNumber} hash=${block.hash}`,
+      )
       return
     }
     if (isGoal) if (!this.setNewGoal(blockNumber, block)) return
@@ -190,7 +209,7 @@ export class LogFilter2 {
             })
             this.sortAndProcessLogs(block.hash, logs as Log[])
           },
-          backupPlan
+          backupPlan,
         )
         break
       case LogFilterType.MultiCall:
@@ -199,29 +218,42 @@ export class LogFilter2 {
             this.client.getLogs({
               blockHash: block.hash as `0x${string}`,
               event,
-            })
-          )
-        ).then((logss) => this.sortAndProcessLogs(block.hash, logss.flat()), backupPlan)
+            }),
+          ),
+        ).then(
+          (logss) => this.sortAndProcessLogs(block.hash, logss.flat()),
+          backupPlan,
+        )
         break
       case LogFilterType.SelfFilter:
         this.client.getLogs({ blockHash: block.hash as `0x${string}` }).then(
           (logs) =>
             this.sortAndProcessLogs(
               block.hash,
-              logs.filter((l) => this.topicsAll.includes(l.topics[0] ?? ''))
+              logs.filter((l) => this.topicsAll.includes(l.topics[0] ?? '')),
             ),
-          backupPlan
+          backupPlan,
         )
         break
       default:
-        warnLog(this.client.chain?.id, `Internal errror: Unknown Log Type: ${this.logType}`)
+        warnLog(
+          this.client.chain?.id,
+          `Internal errror: Unknown Log Type: ${this.logType}`,
+        )
     }
     if (this.lastProcessedBlock && !this.blockHashMap.has(block.parentHash))
       repeatAsync(
         10,
         1000,
-        () => this.client.getBlock({ blockHash: block.parentHash }).then((b) => this.addBlock(b, false)),
-        () => warnLog(this.client.chain?.id, 'getBlock failed !!!!!!!!!!!!!!!!!!!!!!1')
+        () =>
+          this.client
+            .getBlock({ blockHash: block.parentHash })
+            .then((b) => this.addBlock(b, false)),
+        () =>
+          warnLog(
+            this.client.chain?.id,
+            'getBlock failed !!!!!!!!!!!!!!!!!!!!!!1',
+          ),
       )
   }
 
@@ -261,7 +293,7 @@ export class LogFilter2 {
         l.reverse().map((l) => {
           l.removed = true
           return l
-        })
+        }),
       )
       this.processedBlockHash.delete(downLine[i].hash || '')
     }
@@ -273,14 +305,16 @@ export class LogFilter2 {
         l.map((l) => {
           l.removed = false
           return l
-        })
+        }),
       )
       this.processedBlockHash.add(upLine[i].hash || '')
       this.lastProcessedBlock = upLine[i]
     }
 
     this.filters.forEach((f) => {
-      const logsFiltered = logs.filter((l) => f.topics.includes(l.topics[0] ?? ''))
+      const logsFiltered = logs.filter((l) =>
+        f.topics.includes(l.topics[0] ?? ''),
+      )
       if (logsFiltered.length > 0) f.onNewLogs(logsFiltered)
     })
   }

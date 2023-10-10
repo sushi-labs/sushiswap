@@ -26,5 +26,9 @@ interface UnwrapETHAction {
  * @param liquidityOutput array with minimum output amounts for underlying tokens
  */
 export const unwrapWETHAction = ({ recipient }: UnwrapETHAction) => {
-  return encodeFunctionData({ abi: abiShard, functionName: 'unwrapWETH', args: [recipient] })
+  return encodeFunctionData({
+    abi: abiShard,
+    functionName: 'unwrapWETH',
+    args: [recipient],
+  })
 }

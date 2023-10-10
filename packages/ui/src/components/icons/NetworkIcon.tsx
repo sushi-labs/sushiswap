@@ -8,7 +8,11 @@ interface Props extends IconProps {
   chainId: number
 }
 
-export const NetworkIcon: FC<Props> = ({ type = 'circle', chainId, ...props }) => {
+export const NetworkIcon: FC<Props> = ({
+  type = 'circle',
+  chainId,
+  ...props
+}) => {
   const Icon = useMemo(() => {
     if (type === 'naked') {
       return NETWORK_NAKED_ICON[chainId]

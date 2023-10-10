@@ -8,22 +8,24 @@ export interface DotsProps extends React.ButtonHTMLAttributes<HTMLSpanElement> {
   className?: string
 }
 
-const Dots = React.forwardRef<HTMLButtonElement, DotsProps>(({ className, asChild, children, ...props }, ref) => {
-  const Comp = asChild ? Slot : 'span'
+const Dots = React.forwardRef<HTMLButtonElement, DotsProps>(
+  ({ className, asChild, children, ...props }, ref) => {
+    const Comp = asChild ? Slot : 'span'
 
-  return (
-    <Comp
-      ref={ref}
-      className={classNames(
-        "after:inline-block after:content-['.'] after:animate-ellipsis after:w-4 after:text-left",
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </Comp>
-  )
-})
+    return (
+      <Comp
+        ref={ref}
+        className={classNames(
+          "after:inline-block after:content-['.'] after:animate-ellipsis after:w-4 after:text-left",
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </Comp>
+    )
+  },
+)
 
 Dots.displayName = 'Dots'
 

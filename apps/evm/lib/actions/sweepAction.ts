@@ -37,6 +37,14 @@ interface SweepAction {
  * @param token address of token
  * @param recipient address to sent funds to
  */
-export const sweepAction = ({ token, recipient, fromBento = false }: SweepAction) => {
-  return encodeFunctionData({ abi: abiShard, functionName: 'sweep', args: [token, recipient, fromBento] })
+export const sweepAction = ({
+  token,
+  recipient,
+  fromBento = false,
+}: SweepAction) => {
+  return encodeFunctionData({
+    abi: abiShard,
+    functionName: 'sweep',
+    args: [token, recipient, fromBento],
+  })
 }

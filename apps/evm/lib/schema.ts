@@ -1,4 +1,7 @@
-import { BENTOBOX_ENABLED_NETWORKS, FURO_ENABLED_NETWORKS } from '@sushiswap/graph-config'
+import {
+  BENTOBOX_ENABLED_NETWORKS,
+  FURO_ENABLED_NETWORKS,
+} from '@sushiswap/graph-config'
 import { z } from 'zod'
 
 export const bentoBoxTokensSchema = z.object({

@@ -22,16 +22,32 @@ export const Default = {
     return (
       <Tabs defaultValue="add">
         <TabsList className="!flex">
-          <TabsTrigger testdata-id="add-tab" value="add" className="flex flex-1">
+          <TabsTrigger
+            testdata-id="add-tab"
+            value="add"
+            className="flex flex-1"
+          >
             Add
           </TabsTrigger>
-          <TabsTrigger testdata-id="remove-tab" value="remove" className="flex flex-1">
+          <TabsTrigger
+            testdata-id="remove-tab"
+            value="remove"
+            className="flex flex-1"
+          >
             Remove
           </TabsTrigger>
-          <TabsTrigger testdata-id="stake-tab" value="stake" className="flex flex-1">
+          <TabsTrigger
+            testdata-id="stake-tab"
+            value="stake"
+            className="flex flex-1"
+          >
             Stake
           </TabsTrigger>
-          <TabsTrigger testdata-id="unstake-tab" value="unstake" className="flex flex-1">
+          <TabsTrigger
+            testdata-id="unstake-tab"
+            value="unstake"
+            className="flex flex-1"
+          >
             Unstake
           </TabsTrigger>
         </TabsList>

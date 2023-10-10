@@ -1,4 +1,4 @@
-import { Percent } from '@sushiswap/math'
+import { Percent } from 'sushi'
 
 const BIPS_BASE = 10000n
 
@@ -6,7 +6,10 @@ const BIPS_BASE = 10000n
 export const ALLOWED_PRICE_IMPACT_LOW: Percent = new Percent(100, BIPS_BASE) // 1%
 export const ALLOWED_PRICE_IMPACT_MEDIUM: Percent = new Percent(300, BIPS_BASE) // 3%
 export const ALLOWED_PRICE_IMPACT_HIGH: Percent = new Percent(500, BIPS_BASE) // 5%
-export const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent(1500, BIPS_BASE) // 15%
+export const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent(
+  1500,
+  BIPS_BASE,
+) // 15%
 
 const IMPACT_TIERS = [
   BLOCKED_PRICE_IMPACT_NON_EXPERT,
@@ -16,7 +19,9 @@ const IMPACT_TIERS = [
 ]
 
 type WarningSeverity = 0 | 1 | 2 | 3 | 4
-export function warningSeverity(priceImpact: Percent | undefined): WarningSeverity {
+export function warningSeverity(
+  priceImpact: Percent | undefined,
+): WarningSeverity {
   if (!priceImpact) return 0
   let impact: WarningSeverity = IMPACT_TIERS.length as WarningSeverity
   for (const impactLevel of IMPACT_TIERS) {

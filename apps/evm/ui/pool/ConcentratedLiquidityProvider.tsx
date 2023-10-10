@@ -1,7 +1,14 @@
 'use client'
 
-import { Amount, Currency, Price, Token, tryParseAmount, Type } from '@sushiswap/currency'
-import { Rounding } from '@sushiswap/math'
+import {
+  Amount,
+  Currency,
+  Price,
+  Token,
+  tryParseAmount,
+  Type,
+} from 'sushi/currency'
+import { Rounding } from 'sushi'
 import {
   encodeSqrtRatioX96,
   FeeAmount,
@@ -17,7 +24,15 @@ import {
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { Bound, Field } from 'lib/constants'
 import { getTickToPrice, tryParseTick } from 'lib/functions'
-import { createContext, FC, ReactNode, useCallback, useContext, useMemo, useReducer } from 'react'
+import {
+  createContext,
+  FC,
+  ReactNode,
+  useCallback,
+  useContext,
+  useMemo,
+  useReducer,
+} from 'react'
 
 type FullRange = true
 
@@ -50,7 +65,12 @@ const initialState: State = {
 type Actions =
   | { type: 'resetMintState' }
   | { type: 'typeLeftRangeInput'; typedValue: string }
-  | { type: 'typeInput'; field: Field; typedValue: string; noLiquidity: boolean }
+  | {
+      type: 'typeInput'
+      field: Field
+      typedValue: string
+      noLiquidity: boolean
+    }
   | { type: 'typeRightRangeInput'; typedValue: string }
   | { type: 'setFullRange' }
   | { type: 'typeStartPriceInput'; typedValue: string }
@@ -83,15 +103,33 @@ const reducer = (state: State, action: Actions): State => {
 /*
   Provider only used whenever a user selects Concentrated Liquidity
  */
-export const ConcentratedLiquidityProvider: FC<{ children: ReactNode }> = ({ children }) => {
+export const ConcentratedLiquidityProvider: FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   const api = useMemo(() => {
-    const onFieldAInput = (typedValue: string, noLiquidity: boolean | undefined) =>
-      dispatch({ type: 'typeInput', field: Field.CURRENCY_A, typedValue, noLiquidity: noLiquidity === true })
+    const onFieldAInput = (
+      typedValue: string,
+      noLiquidity: boolean | undefined,
+    ) =>
+      dispatch({
+        type: 'typeInput',
+        field: Field.CURRENCY_A,
+        typedValue,
+        noLiquidity: noLiquidity === true,
+      })
 
-    const onFieldBInput = (typedValue: string, noLiquidity: boolean | undefined) =>
-      dispatch({ type: 'typeInput', field: Field.CURRENCY_B, typedValue, noLiquidity: noLiquidity === true })
+    const onFieldBInput = (
+      typedValue: string,
+      noLiquidity: boolean | undefined,
+    ) =>
+      dispatch({
+        type: 'typeInput',
+        field: Field.CURRENCY_B,
+        typedValue,
+        noLiquidity: noLiquidity === true,
+      })
 
     const onLeftRangeInput = (typedValue: string) => {
       dispatch({ type: 'typeLeftRangeInput', typedValue })
@@ -113,7 +151,8 @@ export const ConcentratedLiquidityProvider: FC<{ children: ReactNode }> = ({ chi
       // }
     }
 
-    const onStartPriceInput = (typedValue: string) => dispatch({ type: 'typeStartPriceInput', typedValue })
+    const onStartPriceInput = (typedValue: string) =>
+      dispatch({ type: 'typeStartPriceInput', typedValue })
     const resetMintState = () => dispatch({ type: 'resetMintState' })
     const setFullRange = () => dispatch({ type: 'setFullRange' })
 
@@ -130,7 +169,9 @@ export const ConcentratedLiquidityProvider: FC<{ children: ReactNode }> = ({ chi
 
   return (
     <ConcentratedLiquidityActionsContext.Provider value={api}>
-      <ConcentratedLiquidityStateContext.Provider value={state}>{children}</ConcentratedLiquidityStateContext.Provider>
+      <ConcentratedLiquidityStateContext.Provider value={state}>
+        {children}
+      </ConcentratedLiquidityStateContext.Provider>
     </ConcentratedLiquidityActionsContext.Provider>
   )
 }
@@ -138,7 +179,9 @@ export const ConcentratedLiquidityProvider: FC<{ children: ReactNode }> = ({ chi
 export const useConcentratedMintState = () => {
   const context = useContext(ConcentratedLiquidityStateContext)
   if (!context) {
-    throw new Error('Hook can only be used Concentrated Liquidity Provider State Context')
+    throw new Error(
+      'Hook can only be used Concentrated Liquidity Provider State Context',
+    )
   }
 
   return context
@@ -148,7 +191,9 @@ export const useConcentratedMintActionHandlers = () => {
   const context = useContext(ConcentratedLiquidityActionsContext)
 
   if (!context) {
-    throw new Error('Hook can only be used Concentrated Liquidity Provider Actions Context')
+    throw new Error(
+      'Hook can only be used Concentrated Liquidity Provider Actions Context',
+    )
   }
 
   return context
@@ -196,10 +241,16 @@ export function useConcentratedDerivedMintInfo({
   isLoading: boolean
   isInitialLoading: boolean
 } {
-  const { independentField, typedValue, leftRangeTypedValue, rightRangeTypedValue, startPriceTypedValue } =
-    useConcentratedMintState()
+  const {
+    independentField,
+    typedValue,
+    leftRangeTypedValue,
+    rightRangeTypedValue,
+    startPriceTypedValue,
+  } = useConcentratedMintState()
 
-  const dependentField = independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A
+  const dependentField =
+    independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A
 
   // currencies
   const currencies: { [field in Field]?: Currency } = useMemo(
@@ -207,19 +258,23 @@ export function useConcentratedDerivedMintInfo({
       [Field.CURRENCY_A]: currencyA,
       [Field.CURRENCY_B]: currencyB,
     }),
-    [currencyA, currencyB]
+    [currencyA, currencyB],
   )
 
   // formatted with tokens
   const [tokenA, tokenB, baseToken] = useMemo(
     () => [currencyA?.wrapped, currencyB?.wrapped, baseCurrency?.wrapped],
-    [currencyA, currencyB, baseCurrency]
+    [currencyA, currencyB, baseCurrency],
   )
 
   const [token0, token1] = useMemo(
     () =>
-      tokenA && tokenB ? (tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]) : [undefined, undefined],
-    [tokenA, tokenB]
+      tokenA && tokenB
+        ? tokenA.sortsBefore(tokenB)
+          ? [tokenA, tokenB]
+          : [tokenB, tokenA]
+        : [undefined, undefined],
+    [tokenA, tokenB],
   )
 
   // pool
@@ -240,7 +295,10 @@ export function useConcentratedDerivedMintInfo({
   const price: Price<Token, Token> | undefined = useMemo(() => {
     // if no liquidity use typed value
     if (noLiquidity) {
-      const parsedQuoteAmount = tryParseAmount(startPriceTypedValue, invertPrice ? token0 : token1)
+      const parsedQuoteAmount = tryParseAmount(
+        startPriceTypedValue,
+        invertPrice ? token0 : token1,
+      )
       if (parsedQuoteAmount && token0 && token1) {
         const baseAmount = tryParseAmount('1', invertPrice ? token1 : token0)
         const price =
@@ -249,7 +307,7 @@ export function useConcentratedDerivedMintInfo({
                 baseAmount.currency,
                 parsedQuoteAmount.currency,
                 baseAmount.quotient,
-                parsedQuoteAmount.quotient
+                parsedQuoteAmount.quotient,
               )
             : undefined
         return (invertPrice ? price?.invert() : price) ?? undefined
@@ -263,8 +321,17 @@ export function useConcentratedDerivedMintInfo({
 
   // check for invalid price input (converts to invalid ratio)
   const invalidPrice = useMemo(() => {
-    const sqrtRatioX96 = price ? encodeSqrtRatioX96(price.numerator, price.denominator) : undefined
-    return price && sqrtRatioX96 && !(sqrtRatioX96 >= TickMath.MIN_SQRT_RATIO && sqrtRatioX96 < TickMath.MAX_SQRT_RATIO)
+    const sqrtRatioX96 = price
+      ? encodeSqrtRatioX96(price.numerator, price.denominator)
+      : undefined
+    return (
+      price &&
+      sqrtRatioX96 &&
+      !(
+        sqrtRatioX96 >= TickMath.MIN_SQRT_RATIO &&
+        sqrtRatioX96 < TickMath.MAX_SQRT_RATIO
+      )
+    )
   }, [price])
 
   // used for ratio calculation when pool not initialized
@@ -272,7 +339,15 @@ export function useConcentratedDerivedMintInfo({
     if (tokenA && tokenB && feeAmount && price && !invalidPrice) {
       const currentTick = priceToClosestTick(price)
       const currentSqrt = TickMath.getSqrtRatioAtTick(currentTick)
-      return new SushiSwapV3Pool(tokenA, tokenB, feeAmount, currentSqrt, 0n, currentTick, [])
+      return new SushiSwapV3Pool(
+        tokenA,
+        tokenB,
+        feeAmount,
+        currentSqrt,
+        0n,
+        currentTick,
+        [],
+      )
     } else {
       return undefined
     }
@@ -284,10 +359,14 @@ export function useConcentratedDerivedMintInfo({
   // lower and upper limits in the tick space for `feeAmoun<Trans>
   const tickSpaceLimits = useMemo(
     () => ({
-      [Bound.LOWER]: feeAmount ? nearestUsableTick(TickMath.MIN_TICK, TICK_SPACINGS[feeAmount]) : undefined,
-      [Bound.UPPER]: feeAmount ? nearestUsableTick(TickMath.MAX_TICK, TICK_SPACINGS[feeAmount]) : undefined,
+      [Bound.LOWER]: feeAmount
+        ? nearestUsableTick(TickMath.MIN_TICK, TICK_SPACINGS[feeAmount])
+        : undefined,
+      [Bound.UPPER]: feeAmount
+        ? nearestUsableTick(TickMath.MAX_TICK, TICK_SPACINGS[feeAmount])
+        : undefined,
     }),
-    [feeAmount]
+    [feeAmount],
   )
 
   // parse typed range values and determine closest ticks
@@ -301,8 +380,18 @@ export function useConcentratedDerivedMintInfo({
             (!invertPrice && typeof leftRangeTypedValue === 'boolean')
           ? tickSpaceLimits[Bound.LOWER]
           : invertPrice
-          ? tryParseTick(token1, token0, feeAmount, rightRangeTypedValue.toString())
-          : tryParseTick(token0, token1, feeAmount, leftRangeTypedValue.toString()),
+          ? tryParseTick(
+              token1,
+              token0,
+              feeAmount,
+              rightRangeTypedValue.toString(),
+            )
+          : tryParseTick(
+              token0,
+              token1,
+              feeAmount,
+              leftRangeTypedValue.toString(),
+            ),
       [Bound.UPPER]:
         typeof existingPosition?.tickUpper === 'number'
           ? existingPosition.tickUpper
@@ -310,8 +399,18 @@ export function useConcentratedDerivedMintInfo({
             (invertPrice && typeof leftRangeTypedValue === 'boolean')
           ? tickSpaceLimits[Bound.UPPER]
           : invertPrice
-          ? tryParseTick(token1, token0, feeAmount, leftRangeTypedValue.toString())
-          : tryParseTick(token0, token1, feeAmount, rightRangeTypedValue.toString()),
+          ? tryParseTick(
+              token1,
+              token0,
+              feeAmount,
+              leftRangeTypedValue.toString(),
+            )
+          : tryParseTick(
+              token0,
+              token1,
+              feeAmount,
+              rightRangeTypedValue.toString(),
+            ),
     }
   }, [
     existingPosition,
@@ -332,11 +431,15 @@ export function useConcentratedDerivedMintInfo({
       [Bound.LOWER]: feeAmount && tickLower === tickSpaceLimits.LOWER,
       [Bound.UPPER]: feeAmount && tickUpper === tickSpaceLimits.UPPER,
     }),
-    [tickSpaceLimits, tickLower, tickUpper, feeAmount]
+    [tickSpaceLimits, tickLower, tickUpper, feeAmount],
   )
 
   // mark invalid range
-  const invalidRange = Boolean(typeof tickLower === 'number' && typeof tickUpper === 'number' && tickLower >= tickUpper)
+  const invalidRange = Boolean(
+    typeof tickLower === 'number' &&
+      typeof tickUpper === 'number' &&
+      tickLower >= tickUpper,
+  )
 
   const pricesAtLimit = useMemo(() => {
     return {
@@ -356,16 +459,24 @@ export function useConcentratedDerivedMintInfo({
 
   // liquidity range warning
   const outOfRange = Boolean(
-    !invalidRange && price && lowerPrice && upperPrice && (price.lessThan(lowerPrice) || price.greaterThan(upperPrice))
+    !invalidRange &&
+      price &&
+      lowerPrice &&
+      upperPrice &&
+      (price.lessThan(lowerPrice) || price.greaterThan(upperPrice)),
   )
 
   // amounts
-  const independentAmount: Amount<Currency> | undefined = tryParseAmount(typedValue, currencies[independentField])
+  const independentAmount: Amount<Currency> | undefined = tryParseAmount(
+    typedValue,
+    currencies[independentField],
+  )
 
   const dependentAmount: Amount<Currency> | undefined = useMemo(() => {
     // we wrap the currencies just to get the price in terms of the other token
     const wrappedIndependentAmount = independentAmount?.wrapped
-    const dependentCurrency = dependentField === Field.CURRENCY_B ? currencyB : currencyA
+    const dependentCurrency =
+      dependentField === Field.CURRENCY_B ? currencyB : currencyA
     if (
       independentAmount &&
       wrappedIndependentAmount &&
@@ -378,25 +489,31 @@ export function useConcentratedDerivedMintInfo({
         return undefined
       }
 
-      const position: Position | undefined = wrappedIndependentAmount.currency.equals(poolForPosition.token0)
-        ? Position.fromAmount0({
-            pool: poolForPosition,
-            tickLower,
-            tickUpper,
-            amount0: independentAmount.quotient,
-            useFullPrecision: true, // we want full precision for the theoretical position
-          })
-        : Position.fromAmount1({
-            pool: poolForPosition,
-            tickLower,
-            tickUpper,
-            amount1: independentAmount.quotient,
-          })
+      const position: Position | undefined =
+        wrappedIndependentAmount.currency.equals(poolForPosition.token0)
+          ? Position.fromAmount0({
+              pool: poolForPosition,
+              tickLower,
+              tickUpper,
+              amount0: independentAmount.quotient,
+              useFullPrecision: true, // we want full precision for the theoretical position
+            })
+          : Position.fromAmount1({
+              pool: poolForPosition,
+              tickLower,
+              tickUpper,
+              amount1: independentAmount.quotient,
+            })
 
-      const dependentTokenAmount = wrappedIndependentAmount.currency.equals(poolForPosition.token0)
+      const dependentTokenAmount = wrappedIndependentAmount.currency.equals(
+        poolForPosition.token0,
+      )
         ? position.amount1
         : position.amount0
-      return dependentCurrency && Amount.fromRawAmount(dependentCurrency, dependentTokenAmount.quotient)
+      return (
+        dependentCurrency &&
+        Amount.fromRawAmount(dependentCurrency, dependentTokenAmount.quotient)
+      )
     }
 
     return undefined
@@ -412,33 +529,56 @@ export function useConcentratedDerivedMintInfo({
     invalidRange,
   ])
 
-  const parsedAmounts: { [field in Field]: Amount<Currency> | undefined } = useMemo(() => {
-    return {
-      [Field.CURRENCY_A]: independentField === Field.CURRENCY_A ? independentAmount : dependentAmount,
-      [Field.CURRENCY_B]: independentField === Field.CURRENCY_A ? dependentAmount : independentAmount,
-    }
-  }, [dependentAmount, independentAmount, independentField])
+  const parsedAmounts: { [field in Field]: Amount<Currency> | undefined } =
+    useMemo(() => {
+      return {
+        [Field.CURRENCY_A]:
+          independentField === Field.CURRENCY_A
+            ? independentAmount
+            : dependentAmount,
+        [Field.CURRENCY_B]:
+          independentField === Field.CURRENCY_A
+            ? dependentAmount
+            : independentAmount,
+      }
+    }, [dependentAmount, independentAmount, independentField])
 
   // single deposit only if price is out of range
   const deposit0Disabled = Boolean(
-    typeof tickUpper === 'number' && poolForPosition && poolForPosition.tickCurrent >= tickUpper
+    typeof tickUpper === 'number' &&
+      poolForPosition &&
+      poolForPosition.tickCurrent >= tickUpper,
   )
   const deposit1Disabled = Boolean(
-    typeof tickLower === 'number' && poolForPosition && poolForPosition.tickCurrent <= tickLower
+    typeof tickLower === 'number' &&
+      poolForPosition &&
+      poolForPosition.tickCurrent <= tickLower,
   )
 
   // sorted for token order
   const depositADisabled =
     invalidRange ||
     Boolean(
-      (deposit0Disabled && poolForPosition && tokenA && poolForPosition.token0.equals(tokenA)) ||
-        (deposit1Disabled && poolForPosition && tokenA && poolForPosition.token1.equals(tokenA))
+      (deposit0Disabled &&
+        poolForPosition &&
+        tokenA &&
+        poolForPosition.token0.equals(tokenA)) ||
+        (deposit1Disabled &&
+          poolForPosition &&
+          tokenA &&
+          poolForPosition.token1.equals(tokenA)),
     )
   const depositBDisabled =
     invalidRange ||
     Boolean(
-      (deposit0Disabled && poolForPosition && tokenB && poolForPosition.token0.equals(tokenB)) ||
-        (deposit1Disabled && poolForPosition && tokenB && poolForPosition.token1.equals(tokenB))
+      (deposit0Disabled &&
+        poolForPosition &&
+        tokenB &&
+        poolForPosition.token0.equals(tokenB)) ||
+        (deposit1Disabled &&
+          poolForPosition &&
+          tokenB &&
+          poolForPosition.token1.equals(tokenB)),
     )
 
   // create position entity based on users selection
@@ -456,10 +596,18 @@ export function useConcentratedDerivedMintInfo({
 
     // mark as 0 if disabled because out of range
     const amount0 = !deposit0Disabled
-      ? parsedAmounts?.[tokenA.equals(poolForPosition.token0) ? Field.CURRENCY_A : Field.CURRENCY_B]?.quotient
+      ? parsedAmounts?.[
+          tokenA.equals(poolForPosition.token0)
+            ? Field.CURRENCY_A
+            : Field.CURRENCY_B
+        ]?.quotient
       : 0n
     const amount1 = !deposit1Disabled
-      ? parsedAmounts?.[tokenA.equals(poolForPosition.token0) ? Field.CURRENCY_B : Field.CURRENCY_A]?.quotient
+      ? parsedAmounts?.[
+          tokenA.equals(poolForPosition.token0)
+            ? Field.CURRENCY_B
+            : Field.CURRENCY_A
+        ]?.quotient
       : 0n
 
     if (amount0 !== undefined && amount1 !== undefined) {
@@ -550,7 +698,7 @@ export function useConcentratedDerivedMintInfo({
       ticks,
       ticksAtLimit,
       usePool,
-    ]
+    ],
   )
 }
 
@@ -560,7 +708,7 @@ export function useRangeHopCallbacks(
   feeAmount: FeeAmount | undefined,
   tickLower: number | undefined,
   tickUpper: number | undefined,
-  pool?: SushiSwapV3Pool | undefined | null
+  pool?: SushiSwapV3Pool | undefined | null,
 ) {
   const { setFullRange, resetMintState } = useConcentratedMintActionHandlers()
   const baseToken = useMemo(() => baseCurrency?.wrapped, [baseCurrency])
@@ -568,12 +716,26 @@ export function useRangeHopCallbacks(
 
   const getDecrementLower = useCallback(() => {
     if (baseToken && quoteToken && typeof tickLower === 'number' && feeAmount) {
-      const newPrice = tickToPrice(baseToken, quoteToken, tickLower - TICK_SPACINGS[feeAmount])
+      const newPrice = tickToPrice(
+        baseToken,
+        quoteToken,
+        tickLower - TICK_SPACINGS[feeAmount],
+      )
       return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP)
     }
     // use pool current tick as starting tick if we have pool but no tick input
-    if (!(typeof tickLower === 'number') && baseToken && quoteToken && feeAmount && pool) {
-      const newPrice = tickToPrice(baseToken, quoteToken, pool.tickCurrent - TICK_SPACINGS[feeAmount])
+    if (
+      !(typeof tickLower === 'number') &&
+      baseToken &&
+      quoteToken &&
+      feeAmount &&
+      pool
+    ) {
+      const newPrice = tickToPrice(
+        baseToken,
+        quoteToken,
+        pool.tickCurrent - TICK_SPACINGS[feeAmount],
+      )
       return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP)
     }
     return ''
@@ -581,12 +743,26 @@ export function useRangeHopCallbacks(
 
   const getIncrementLower = useCallback(() => {
     if (baseToken && quoteToken && typeof tickLower === 'number' && feeAmount) {
-      const newPrice = tickToPrice(baseToken, quoteToken, tickLower + TICK_SPACINGS[feeAmount])
+      const newPrice = tickToPrice(
+        baseToken,
+        quoteToken,
+        tickLower + TICK_SPACINGS[feeAmount],
+      )
       return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP)
     }
     // use pool current tick as starting tick if we have pool but no tick input
-    if (!(typeof tickLower === 'number') && baseToken && quoteToken && feeAmount && pool) {
-      const newPrice = tickToPrice(baseToken, quoteToken, pool.tickCurrent + TICK_SPACINGS[feeAmount])
+    if (
+      !(typeof tickLower === 'number') &&
+      baseToken &&
+      quoteToken &&
+      feeAmount &&
+      pool
+    ) {
+      const newPrice = tickToPrice(
+        baseToken,
+        quoteToken,
+        pool.tickCurrent + TICK_SPACINGS[feeAmount],
+      )
       return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP)
     }
     return ''
@@ -594,12 +770,26 @@ export function useRangeHopCallbacks(
 
   const getDecrementUpper = useCallback(() => {
     if (baseToken && quoteToken && typeof tickUpper === 'number' && feeAmount) {
-      const newPrice = tickToPrice(baseToken, quoteToken, tickUpper - TICK_SPACINGS[feeAmount])
+      const newPrice = tickToPrice(
+        baseToken,
+        quoteToken,
+        tickUpper - TICK_SPACINGS[feeAmount],
+      )
       return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP)
     }
     // use pool current tick as starting tick if we have pool but no tick input
-    if (!(typeof tickUpper === 'number') && baseToken && quoteToken && feeAmount && pool) {
-      const newPrice = tickToPrice(baseToken, quoteToken, pool.tickCurrent - TICK_SPACINGS[feeAmount])
+    if (
+      !(typeof tickUpper === 'number') &&
+      baseToken &&
+      quoteToken &&
+      feeAmount &&
+      pool
+    ) {
+      const newPrice = tickToPrice(
+        baseToken,
+        quoteToken,
+        pool.tickCurrent - TICK_SPACINGS[feeAmount],
+      )
       return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP)
     }
     return ''
@@ -607,12 +797,26 @@ export function useRangeHopCallbacks(
 
   const getIncrementUpper = useCallback(() => {
     if (baseToken && quoteToken && typeof tickUpper === 'number' && feeAmount) {
-      const newPrice = tickToPrice(baseToken, quoteToken, tickUpper + TICK_SPACINGS[feeAmount])
+      const newPrice = tickToPrice(
+        baseToken,
+        quoteToken,
+        tickUpper + TICK_SPACINGS[feeAmount],
+      )
       return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP)
     }
     // use pool current tick as starting tick if we have pool but no tick input
-    if (!(typeof tickUpper === 'number') && baseToken && quoteToken && feeAmount && pool) {
-      const newPrice = tickToPrice(baseToken, quoteToken, pool.tickCurrent + TICK_SPACINGS[feeAmount])
+    if (
+      !(typeof tickUpper === 'number') &&
+      baseToken &&
+      quoteToken &&
+      feeAmount &&
+      pool
+    ) {
+      const newPrice = tickToPrice(
+        baseToken,
+        quoteToken,
+        pool.tickCurrent + TICK_SPACINGS[feeAmount],
+      )
       return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP)
     }
     return ''

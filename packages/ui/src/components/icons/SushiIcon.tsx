@@ -4,7 +4,12 @@ import { IconComponent } from '../../types'
 
 export const SushiIcon: IconComponent = (props) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 990 916">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+      fill="none"
+      viewBox="0 0 990 916"
+    >
       <path
         fill="url(#paint0_linear_12919_18033)"
         fillRule="evenodd"

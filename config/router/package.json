@@ -37,8 +37,6 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
-    "lint": "TIMING=1 eslint src",
-    "lint:fix": "TIMING=1 eslint src --fix",
     "test": "jest --passWithNoTests"
   },
   "jest": {
@@ -46,24 +44,17 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@sushiswap/chain": "workspace:*",
-    "@sushiswap/currency": "workspace:*",
-    "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "typescript": "5.1.6",
-    "tsup": "7.1.0"
+    "sushi": "workspace:*",
+    "typescript": "5.2.2",
+    "tsup": "7.2.0"
   },
   "peerDependencies": {
-    "@sushiswap/chain": "*",
-    "@sushiswap/currency": "*"
+    "sushi": "*"
   },
   "peerDependenciesMeta": {
-    "@sushiswap/chain": {
-      "optional": false
-    },
-    "@sushiswap/currency": {
+    "sushi": {
       "optional": false
     }
   }

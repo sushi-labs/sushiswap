@@ -6,5 +6,9 @@ import { SUPPORTED_CHAIN_IDS } from 'config'
 import React, { FC } from 'react'
 
 export const Header: FC = () => {
-  return <Navigation rightElement={<WagmiHeaderComponents chainIds={SUPPORTED_CHAIN_IDS} />} />
+  return (
+    <Navigation
+      rightElement={<WagmiHeaderComponents chainIds={SUPPORTED_CHAIN_IDS} />}
+    />
+  )
 }

@@ -1,6 +1,6 @@
-import { ChainId } from '@sushiswap/chain'
-import { SUSHI_ADDRESS } from '@sushiswap/currency'
-import { formatNumber, formatUSD } from '@sushiswap/format'
+import { ChainId } from 'sushi/chain'
+import { SUSHI_ADDRESS } from 'sushi/currency'
+import { formatNumber, formatUSD } from 'sushi'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { BENTOBOX_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 import { SUSHISWAP_V2_SUPPORTED_CHAIN_IDS } from '@sushiswap/v2-sdk'
@@ -9,7 +9,9 @@ import { NextResponse } from 'next/server'
 import { getAddress } from 'viem'
 
 const getSushiPriceUSD = async () => {
-  const prices = await fetch('https://token-price.sushi.com/v1/1').then((data) => data.json())
+  const prices = await fetch('https://token-price.sushi.com/v1/1').then(
+    (data) => data.json(),
+  )
   return prices[SUSHI_ADDRESS[ChainId.ETHEREUM].toLowerCase()]
 }
 
@@ -21,7 +23,9 @@ interface ExchangeData {
 
 const getV2Data = async () => {
   const sdk = getBuiltGraphSDK()
-  const { factories } = await sdk.Factories({ chainIds: SUSHISWAP_V2_SUPPORTED_CHAIN_IDS })
+  const { factories } = await sdk.Factories({
+    chainIds: SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
+  })
 
   return {
     v2: factories
@@ -38,7 +42,7 @@ const getV2Data = async () => {
           tvlUSD: 0,
           volumeUSD: 0,
           pairCount: 0,
-        }
+        },
       ),
     trident: factories
       .filter(({ id }) => id === 'ALL')
@@ -54,28 +58,39 @@ const getV2Data = async () => {
           tvlUSD: 0,
           volumeUSD: 0,
           pairCount: 0,
-        }
+        },
       ),
   }
 }
 
 const getBentoTvl = async () => {
   const sdk = getBuiltGraphSDK()
-  const { rebases } = await sdk.RebasesByChainIds({ first: 1000, chainIds: BENTOBOX_ENABLED_NETWORKS })
+  const { rebases } = await sdk.RebasesByChainIds({
+    first: 1000,
+    chainIds: BENTOBOX_ENABLED_NETWORKS,
+  })
 
-  const prices = await fetch('https://token-price.sushi.com/v1').then((data) => data.json())
+  const prices = await fetch('https://token-price.sushi.com/v1').then((data) =>
+    data.json(),
+  )
 
   return rebases.reduce((acc, cur) => {
-    const price = prices[cur.chainId][cur.id] || prices[cur.chainId][getAddress(cur.id)]
+    const price =
+      prices[cur.chainId][cur.id] || prices[cur.chainId][getAddress(cur.id)]
     if (!price) return acc
 
-    return acc + (Number(cur.elastic) / 10 ** Number(cur.token.decimals)) * Number(price)
+    return (
+      acc +
+      (Number(cur.elastic) / 10 ** Number(cur.token.decimals)) * Number(price)
+    )
   }, 0)
 }
 
 const getV3Data = async () => {
   const sdk = getBuiltGraphSDK()
-  const { factories } = await sdk.V3Factories({ chainIds: SUSHISWAP_V3_SUPPORTED_CHAIN_IDS })
+  const { factories } = await sdk.V3Factories({
+    chainIds: SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
+  })
 
   return factories.reduce<ExchangeData>(
     (acc, cur) => {
@@ -89,7 +104,7 @@ const getV3Data = async () => {
       tvlUSD: 0,
       volumeUSD: 0,
       pairCount: 0,
-    }
+    },
   )
 }
 
@@ -103,9 +118,16 @@ export async function GET() {
     getV3Data(),
   ])
 
-  let totalTVL = Number(bentoTVL) + Number(v2Data.v2.tvlUSD) + Number(v3Data.tvlUSD)
-  let totalVolume = Number(v2Data.v2.volumeUSD) + Number(v2Data.trident.volumeUSD) + Number(v3Data.volumeUSD)
-  const totalPoolCount = Number(v2Data.v2.pairCount) + Number(v2Data.trident.pairCount) + Number(v3Data.pairCount)
+  let totalTVL =
+    Number(bentoTVL) + Number(v2Data.v2.tvlUSD) + Number(v3Data.tvlUSD)
+  let totalVolume =
+    Number(v2Data.v2.volumeUSD) +
+    Number(v2Data.trident.volumeUSD) +
+    Number(v3Data.volumeUSD)
+  const totalPoolCount =
+    Number(v2Data.v2.pairCount) +
+    Number(v2Data.trident.pairCount) +
+    Number(v3Data.pairCount)
 
   totalTVL = totalTVL > 10_000_000_000 ? 0 : totalTVL
   totalVolume = totalVolume > 5_000_000_000_000 ? 0 : totalVolume

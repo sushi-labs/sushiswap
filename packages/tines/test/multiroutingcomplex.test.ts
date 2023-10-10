@@ -1,6 +1,12 @@
 import seedrandom from 'seedrandom'
 
-import { findMultiRouteExactIn, findSingleRouteExactIn, Graph, MultiRoute, RouteStatus } from '../src'
+import {
+  findMultiRouteExactIn,
+  findSingleRouteExactIn,
+  Graph,
+  MultiRoute,
+  RouteStatus,
+} from '../src'
 import { RPool } from '../src/PrimaryPools'
 import { checkRouteResult } from './snapshots/snapshot'
 import {
@@ -36,14 +42,22 @@ function simulateRouting(network: Network, route: MultiRoute) {
     const pool = pool0 as RPool
 
     const direction = pool.token0.tokenId === l.tokenFrom.tokenId
-    const granularityOut = direction ? pool?.granularity1() : pool?.granularity0()
+    const granularityOut = direction
+      ? pool?.granularity1()
+      : pool?.granularity0()
 
     // Check assumedAmountIn <-> assumedAmountOut correspondance
     const expectedOut = pool?.calcOutByInReal(l.assumedAmountIn, direction)
-    expectCloseValues(expectedOut / granularityOut, l.assumedAmountOut / granularityOut, 1e-11)
+    expectCloseValues(
+      expectedOut / granularityOut,
+      l.assumedAmountOut / granularityOut,
+      1e-11,
+    )
 
     // Calc legInput
-    const inputTokenAmount = amounts.get(l.tokenFrom.tokenId as string) as number
+    const inputTokenAmount = amounts.get(
+      l.tokenFrom.tokenId as string,
+    ) as number
     expect(inputTokenAmount).toBeGreaterThan(0) // Very important check !!!! That we don't have idle legs
     const routerPortion = Math.round(l.swapPortion * 65535) / 65535
     const legInput = Math.floor(inputTokenAmount * routerPortion)
@@ -59,7 +73,11 @@ function simulateRouting(network: Network, route: MultiRoute) {
     const { gasSpent } = pool.calcOutByIn(legInput, direction)
     const legOutput = pool.calcOutByInReal(legInput, direction)
     const precision = legInputDiff / l.assumedAmountIn
-    expectCloseValues(legOutput / granularityOut, l.assumedAmountOut / granularityOut, precision + 1e-11)
+    expectCloseValues(
+      legOutput / granularityOut,
+      l.assumedAmountOut / granularityOut,
+      precision + 1e-11,
+    )
     gasSpentTotal += gasSpent
     const outputTokenAmount = amounts.get(l.tokenTo.tokenId as string) || 0
     amounts.set(l.tokenTo.tokenId as string, outputTokenAmount + legOutput)
@@ -101,7 +119,10 @@ function numberPrecision(n: number, precision = 2) {
 // eslint-disable-next-line unused-imports/no-unused-vars, no-unused-vars
 export function printRoute(route: MultiRoute, network: Network) {
   const liquidity = new Map<number, number>()
-  function addLiquidity(token: { name: string } | number | string, amount: number) {
+  function addLiquidity(
+    token: { name: string } | number | string,
+    amount: number,
+  ) {
     if (typeof token === 'object') token = token.name
     if (typeof token === 'string') token = parseInt(token)
     const prev = liquidity.get(token) || 0
@@ -111,14 +132,18 @@ export function printRoute(route: MultiRoute, network: Network) {
   let info = ''
   route.legs.forEach((l, i) => {
     const pool = network.pools.find((p) => p.address === l.poolAddress) as RPool
-    const inp = (liquidity.get(parseInt(l.tokenFrom.name)) as number) * l.absolutePortion
-    const { out } = pool.calcOutByIn(inp, pool.token0.tokenId === l.tokenFrom.tokenId)
+    const inp =
+      (liquidity.get(parseInt(l.tokenFrom.name)) as number) * l.absolutePortion
+    const { out } = pool.calcOutByIn(
+      inp,
+      pool.token0.tokenId === l.tokenFrom.tokenId,
+    )
     const price_in = atomPrice(l.tokenFrom) / atomPrice(route.fromToken)
     const price_out = atomPrice(l.tokenTo) / atomPrice(route.fromToken)
     const diff = numberPrecision(100 * ((out * price_out) / inp / price_in - 1))
-    info += `${i} ${numberPrecision(l.absolutePortion)} ${l.tokenFrom.name}->${l.tokenTo.name} ${inp * price_in} -> ${
-      out * price_out
-    } (${diff}%) ${inp} -> ${out}\n`
+    info += `${i} ${numberPrecision(l.absolutePortion)} ${l.tokenFrom.name}->${
+      l.tokenTo.name
+    } ${inp * price_in} -> ${out * price_out} (${diff}%) ${inp} -> ${out}\n`
     addLiquidity(l.tokenTo, out)
   })
   console.log(info)
@@ -153,7 +178,11 @@ it('Token price calculation is correct', () => {
       expectCloseValues(v.price, 1, 1e-10)
     }
     if (v.price !== 0) {
-      expectCloseValues(v.price, atomPrice(v.token as TToken) / atomPrice(baseToken), 5 * (MAX_POOL_IMBALANCE - 1))
+      expectCloseValues(
+        v.price,
+        atomPrice(v.token as TToken) / atomPrice(baseToken),
+        5 * (MAX_POOL_IMBALANCE - 1),
+      )
     }
   })
 })
@@ -164,7 +193,14 @@ it(`Multirouter for ${network.tokens.length} tokens and ${network.pools.length} 
     const amountIn = getRandom(rnd, 1e6, 1e24)
     const gasPrice = getBasePrice(network, tBase)
 
-    const route = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, gasPrice)
+    const route = findMultiRouteExactIn(
+      t0,
+      t1,
+      amountIn,
+      network.pools,
+      tBase,
+      gasPrice,
+    )
     checkRoute(route, network, t0, t1, amountIn, tBase, gasPrice)
     simulateRouting(network, route)
     checkRouteResult(`top20-${i}`, route.totalAmountOut)
@@ -184,7 +220,15 @@ it(`Multirouter-100 for ${network.tokens.length} tokens and ${network.pools.leng
     const amountIn = getRandom(rnd, 1e6, 1e24)
     const gasPrice = getBasePrice(network, tBase)
 
-    const route = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, gasPrice, 100)
+    const route = findMultiRouteExactIn(
+      t0,
+      t1,
+      amountIn,
+      network.pools,
+      tBase,
+      gasPrice,
+      100,
+    )
     checkRoute(route, network, t0, t1, amountIn, tBase, gasPrice)
     simulateRouting(network, route)
     checkRouteResult(`m100-${i}`, route.totalAmountOut)
@@ -208,7 +252,15 @@ it('Multirouter path quantity check', () => {
 
     let prevAmountOut = -1
     steps.forEach((s) => {
-      const route = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, gasPrice, s)
+      const route = findMultiRouteExactIn(
+        t0,
+        t1,
+        amountIn,
+        network.pools,
+        tBase,
+        gasPrice,
+        s,
+      )
       if (route.status !== RouteStatus.NoWay) {
         checkRoute(route, network, t0, t1, amountIn, tBase, gasPrice)
         simulateRouting(network, route)
@@ -245,10 +297,24 @@ it(`Singlerouter for ${network.tokens.length} tokens and ${network.pools.length}
     // Very special case, failes at checkRoute. Reason: not 100% optimal routing because of edges with negative values
     if (testSeed === '1') if (i === 11 || i === 60 || i === 80) continue
 
-    const route = findSingleRouteExactIn(t0, t1, amountIn, network.pools, tBase, gasPrice)
+    const route = findSingleRouteExactIn(
+      t0,
+      t1,
+      amountIn,
+      network.pools,
+      tBase,
+      gasPrice,
+    )
     checkRoute(route, network, t0, t1, amountIn, tBase, gasPrice)
     simulateRouting(network, route)
-    const route2 = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, gasPrice)
+    const route2 = findMultiRouteExactIn(
+      t0,
+      t1,
+      amountIn,
+      network.pools,
+      tBase,
+      gasPrice,
+    )
     expect(route.amountOut).toBeLessThanOrEqual(route2.amountOut * 1.001)
     checkRouteResult(`single20-${i}`, route.totalAmountOut)
 

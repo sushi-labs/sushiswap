@@ -1,8 +1,8 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { ChefType, Pool } from '@sushiswap/client'
-import { Amount, Token } from '@sushiswap/currency'
+import { Amount, Token } from 'sushi/currency'
 import { RewarderType, useAccount, useMasterChef } from '@sushiswap/wagmi'
 import { useRewarder } from '@sushiswap/wagmi/hooks/useRewarder'
 import { incentiveRewardToToken } from 'lib/functions'
@@ -33,43 +33,40 @@ interface PoolPositionStakedProviderProps {
   children: ReactNode
 }
 
-export const PoolPositionRewardsProvider: FC<PoolPositionStakedProviderProps> = ({ pool, children }) => {
-  // console.log('PoolPositionRewardsProvider', pool, !pool?.wasIncentivized)
-  if (!pool?.wasIncentivized)
+export const PoolPositionRewardsProvider: FC<PoolPositionStakedProviderProps> =
+  ({ pool, children }) => {
+    // console.log('PoolPositionRewardsProvider', pool, !pool?.wasIncentivized)
+    if (!pool?.wasIncentivized)
+      return (
+        <Context.Provider
+          value={{
+            pendingRewards: [],
+            rewardTokens: [],
+            values: [],
+            isLoading: true,
+            isError: false,
+            harvest: undefined,
+          }}
+        >
+          {children}
+        </Context.Provider>
+      )
+
     return (
-      <Context.Provider
-        value={{
-          pendingRewards: [],
-          rewardTokens: [],
-          values: [],
-          isLoading: true,
-          isError: false,
-          harvest: undefined,
-        }}
+      <_PoolPositionRewardsProvider
+        pool={pool}
+        farmId={Number(pool?.incentives?.[0]?.pid)}
+        chefType={pool?.incentives?.[0]?.chefType}
+        incentives={pool?.incentives}
       >
         {children}
-      </Context.Provider>
+      </_PoolPositionRewardsProvider>
     )
+  }
 
-  return (
-    <_PoolPositionRewardsProvider
-      pool={pool}
-      farmId={Number(pool?.incentives?.[0]?.pid)}
-      chefType={pool?.incentives?.[0]?.chefType}
-      incentives={pool?.incentives}
-    >
-      {children}
-    </_PoolPositionRewardsProvider>
-  )
-}
-
-export const _PoolPositionRewardsProvider: FC<PoolPositionRewardsProviderProps> = ({
-  farmId,
-  chefType,
-  incentives,
-  pool,
-  children,
-}) => {
+export const _PoolPositionRewardsProvider: FC<
+  PoolPositionRewardsProviderProps
+> = ({ farmId, chefType, incentives, pool, children }) => {
   const { address: account } = useAccount()
   const { liquidityToken } = useTokensFromPool(pool)
 
@@ -78,10 +75,14 @@ export const _PoolPositionRewardsProvider: FC<PoolPositionRewardsProviderProps> 
       (acc, incentive) => {
         acc[0].push(incentiveRewardToToken(pool.chainId as ChainId, incentive))
         acc[1].push(incentive.id.split(':')[1])
-        acc[2].push(incentive.rewarderType === 'Primary' ? RewarderType.Primary : RewarderType.Secondary)
+        acc[2].push(
+          incentive.rewarderType === 'Primary'
+            ? RewarderType.Primary
+            : RewarderType.Secondary,
+        )
         return acc
       },
-      [[], [], []]
+      [[], [], []],
     )
   }, [incentives, pool.chainId])
 
@@ -122,7 +123,7 @@ export const _PoolPositionRewardsProvider: FC<PoolPositionRewardsProviderProps> 
           isError,
           harvest,
         }),
-        [harvest, isError, isLoading, pendingRewards, rewardTokens, values]
+        [harvest, isError, isLoading, pendingRewards, rewardTokens, values],
       )}
     >
       {children}

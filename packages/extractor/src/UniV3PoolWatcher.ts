@@ -1,7 +1,7 @@
 import { EventEmitter } from 'node:events'
 
-import { erc20Abi } from '@sushiswap/abi'
-import { Token } from '@sushiswap/currency'
+import { erc20Abi } from 'sushi/abi'
+import { Token } from 'sushi/currency'
 import { LiquidityProviders, PoolCode, UniV3PoolCode } from '@sushiswap/router'
 import { CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
 import { FeeAmount, TICK_SPACINGS } from '@sushiswap/v3-sdk'
@@ -30,8 +30,16 @@ const slot0Abi: Abi = [
       { internalType: 'uint160', name: 'sqrtPriceX96', type: 'uint160' },
       { internalType: 'int24', name: 'tick', type: 'int24' },
       { internalType: 'uint16', name: 'observationIndex', type: 'uint16' },
-      { internalType: 'uint16', name: 'observationCardinality', type: 'uint16' },
-      { internalType: 'uint16', name: 'observationCardinalityNext', type: 'uint16' },
+      {
+        internalType: 'uint16',
+        name: 'observationCardinality',
+        type: 'uint16',
+      },
+      {
+        internalType: 'uint16',
+        name: 'observationCardinalityNext',
+        type: 'uint16',
+      },
       { internalType: 'uint8', name: 'feeProtocol', type: 'uint8' },
       { internalType: 'bool', name: 'unlocked', type: 'bool' },
     ],
@@ -52,22 +60,22 @@ const liquidityAbi: Abi = [
 
 export const UniV3EventsAbi = [
   parseAbiItem(
-    'event Mint(address sender, address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)'
+    'event Mint(address sender, address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)',
   ),
   parseAbiItem(
-    'event Collect(address indexed owner, address recipient, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount0, uint128 amount1)'
+    'event Collect(address indexed owner, address recipient, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount0, uint128 amount1)',
   ),
   parseAbiItem(
-    'event Burn(address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)'
+    'event Burn(address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)',
   ),
   parseAbiItem(
-    'event Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick)'
+    'event Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick)',
   ),
   parseAbiItem(
-    'event Flash(address indexed sender, address indexed recipient, uint256 amount0, uint256 amount1, uint256 paid0, uint256 paid1)'
+    'event Flash(address indexed sender, address indexed recipient, uint256 amount0, uint256 amount1, uint256 paid0, uint256 paid1)',
   ),
   parseAbiItem(
-    'event CollectProtocol(address indexed sender, address indexed recipient, uint128 amount0, uint128 amount1)'
+    'event CollectProtocol(address indexed sender, address indexed recipient, uint128 amount0, uint128 amount1)',
   ),
 ]
 
@@ -104,7 +112,7 @@ export class UniV3PoolWatcher extends EventEmitter {
     token1: Token,
     fee: FeeAmount,
     client: MultiCallAggregator,
-    busyCounter?: Counter
+    busyCounter?: Counter,
   ) {
     super()
     this.provider = provider
@@ -116,7 +124,13 @@ export class UniV3PoolWatcher extends EventEmitter {
     this.spacing = TICK_SPACINGS[fee]
 
     this.client = client
-    this.wordLoadManager = new WordLoadManager(address, this.spacing, tickHelperContract, client, busyCounter)
+    this.wordLoadManager = new WordLoadManager(
+      address,
+      this.spacing,
+      tickHelperContract,
+      client,
+      busyCounter,
+    )
     this.wordLoadManager.on('ticksChanged', () => {
       this.lastPoolCode = undefined
     })
@@ -134,9 +148,23 @@ export class UniV3PoolWatcher extends EventEmitter {
             returnValues: [slot0, liquidity, balance0, balance1],
           } = await this.client.callSameBlock([
             { address: this.address, abi: slot0Abi, functionName: 'slot0' },
-            { address: this.address, abi: liquidityAbi, functionName: 'liquidity' },
-            { address: this.token0.address as Address, abi: erc20Abi, functionName: 'balanceOf', args: [this.address] },
-            { address: this.token1.address as Address, abi: erc20Abi, functionName: 'balanceOf', args: [this.address] },
+            {
+              address: this.address,
+              abi: liquidityAbi,
+              functionName: 'liquidity',
+            },
+            {
+              address: this.token0.address as Address,
+              abi: erc20Abi,
+              functionName: 'balanceOf',
+              args: [this.address],
+            },
+            {
+              address: this.token1.address as Address,
+              abi: erc20Abi,
+              functionName: 'balanceOf',
+              args: [this.address],
+            },
           ])
           if (blockNumber < this.latestEventBlockNumber) continue // later events already have came
 
@@ -164,22 +192,33 @@ export class UniV3PoolWatcher extends EventEmitter {
   }
 
   processLog(l: Log): string {
-    this.latestEventBlockNumber = Math.max(this.latestEventBlockNumber, Number(l.blockNumber || 0))
+    this.latestEventBlockNumber = Math.max(
+      this.latestEventBlockNumber,
+      Number(l.blockNumber || 0),
+    )
     if (l.removed) {
       this.updatePoolState()
       return 'Removed'
     }
 
     if (l.blockNumber == null) return 'Error!'
-    const data = decodeEventLog({ abi: UniV3EventsAbi, data: l.data, topics: l.topics })
+    const data = decodeEventLog({
+      abi: UniV3EventsAbi,
+      data: l.data,
+      topics: l.topics,
+    })
     switch (data.eventName) {
       case 'Mint': {
         const { amount, amount0, amount1 } = data.args
         const { tickLower, tickUpper } = data.args
-        if (this.state !== undefined && l.blockNumber > this.state.blockNumber) {
+        if (
+          this.state !== undefined &&
+          l.blockNumber > this.state.blockNumber
+        ) {
           if (tickLower !== undefined && tickUpper !== undefined && amount) {
             const tick = this.state.tick
-            if (tickLower <= tick && tick < tickUpper) this.state.liquidity += amount
+            if (tickLower <= tick && tick < tickUpper)
+              this.state.liquidity += amount
           }
           if (amount1 !== undefined && amount0 !== undefined) {
             this.state.reserve0 += amount0
@@ -196,10 +235,14 @@ export class UniV3PoolWatcher extends EventEmitter {
       case 'Burn': {
         const { amount } = data.args
         const { tickLower, tickUpper } = data.args
-        if (this.state !== undefined && l.blockNumber > this.state.blockNumber) {
+        if (
+          this.state !== undefined &&
+          l.blockNumber > this.state.blockNumber
+        ) {
           if (tickLower !== undefined && tickUpper !== undefined && amount) {
             const tick = this.state.tick
-            if (tickLower <= tick && tick < tickUpper) this.state.liquidity -= amount
+            if (tickLower <= tick && tick < tickUpper)
+              this.state.liquidity -= amount
           }
         }
         if (tickLower !== undefined && tickUpper !== undefined && amount) {
@@ -211,7 +254,10 @@ export class UniV3PoolWatcher extends EventEmitter {
       }
       case 'Collect':
       case 'CollectProtocol': {
-        if (this.state !== undefined && l.blockNumber > this.state.blockNumber) {
+        if (
+          this.state !== undefined &&
+          l.blockNumber > this.state.blockNumber
+        ) {
           const { amount0, amount1 } = data.args
           if (amount0 !== undefined && amount1 !== undefined) {
             this.state.reserve0 -= amount0
@@ -222,7 +268,10 @@ export class UniV3PoolWatcher extends EventEmitter {
         break
       }
       case 'Flash': {
-        if (this.state !== undefined && l.blockNumber > this.state.blockNumber) {
+        if (
+          this.state !== undefined &&
+          l.blockNumber > this.state.blockNumber
+        ) {
           const { paid0, paid1 } = data.args
           if (paid0 !== undefined && paid1 !== undefined) {
             this.state.reserve0 += paid0
@@ -233,7 +282,10 @@ export class UniV3PoolWatcher extends EventEmitter {
         break
       }
       case 'Swap': {
-        if (this.state !== undefined && l.blockNumber > this.state.blockNumber) {
+        if (
+          this.state !== undefined &&
+          l.blockNumber > this.state.blockNumber
+        ) {
           const { amount0, amount1, sqrtPriceX96, liquidity, tick } = data.args
           if (amount0 !== undefined && amount1 !== undefined) {
             this.state.reserve0 += amount0
@@ -271,7 +323,7 @@ export class UniV3PoolWatcher extends EventEmitter {
       this.state.tick,
       this.state.liquidity,
       this.state.sqrtPriceX96,
-      ticks
+      ticks,
     )
     const pc = new UniV3PoolCode(v3Pool, this.provider, this.provider)
     this.lastPoolCode = pc
@@ -284,19 +336,24 @@ export class UniV3PoolWatcher extends EventEmitter {
   }
 
   isStable(): boolean {
-    return this.state !== undefined && !this.wordLoadManager.downloadCycleIsStared
+    return (
+      this.state !== undefined && !this.wordLoadManager.downloadCycleIsStared
+    )
   }
 
   getStatus(): UniV3PoolWatcherStatus {
     if (this.state === undefined) return UniV3PoolWatcherStatus.Nothing
-    if (!this.wordLoadManager.downloadCycleIsStared) return UniV3PoolWatcherStatus.All
-    if (this.wordLoadManager.hasSomeTicksAround(this.state.tick)) return UniV3PoolWatcherStatus.Something
+    if (!this.wordLoadManager.downloadCycleIsStared)
+      return UniV3PoolWatcherStatus.All
+    if (this.wordLoadManager.hasSomeTicksAround(this.state.tick))
+      return UniV3PoolWatcherStatus.Something
     return UniV3PoolWatcherStatus.Nothing
   }
 
   statusPromise?: Promise<void>
   async statusAll(): Promise<void> {
-    if (this.state !== undefined && !this.wordLoadManager.downloadCycleIsStared) return Promise.resolve()
+    if (this.state !== undefined && !this.wordLoadManager.downloadCycleIsStared)
+      return Promise.resolve()
     if (this.statusPromise !== undefined) return this.statusPromise
     this.statusPromise = new Promise((resolve) => {
       this.wordLoadManager.once('isUpdated', () => resolve())

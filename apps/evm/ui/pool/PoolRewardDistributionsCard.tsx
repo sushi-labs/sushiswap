@@ -1,8 +1,8 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { Pool } from '@sushiswap/client'
-import { Native } from '@sushiswap/currency'
+import { Native } from 'sushi/currency'
 import { useAngleRewards } from '@sushiswap/react-query'
 import {
   Button,
@@ -27,7 +27,9 @@ interface PoolRewardDistributionsCardParams {
   pool: Pool
 }
 
-export const PoolRewardDistributionsCard: FC<PoolRewardDistributionsCardParams> = ({ pool }) => {
+export const PoolRewardDistributionsCard: FC<
+  PoolRewardDistributionsCardParams
+> = ({ pool }) => {
   const { data: rewardsData, isLoading: rewardsLoading } = useAngleRewards({
     chainId: pool.chainId as ChainId,
   })
@@ -46,9 +48,15 @@ export const PoolRewardDistributionsCard: FC<PoolRewardDistributionsCardParams> 
           {pool.token0 && pool.token1 ? (
             <LinkInternal
               href={`/pool/incentivize?chainId=${pool.chainId}&fromCurrency=${
-                pool.token0.address === Native.onChain(pool.chainId).wrapped.address ? 'NATIVE' : pool.token0.address
+                pool.token0.address ===
+                Native.onChain(pool.chainId).wrapped.address
+                  ? 'NATIVE'
+                  : pool.token0.address
               }&toCurrency=${
-                pool.token1.address === Native.onChain(pool.chainId).wrapped.address ? 'NATIVE' : pool.token1.address
+                pool.token1.address ===
+                Native.onChain(pool.chainId).wrapped.address
+                  ? 'NATIVE'
+                  : pool.token1.address
               }&feeAmount=${pool.swapFee * 10_000 * 100}`}
             >
               <Button asChild variant="link">
@@ -72,13 +80,17 @@ export const PoolRewardDistributionsCard: FC<PoolRewardDistributionsCardParams> 
         <TabsContent value="active">
           <DistributionDataTable
             isLoading={rewardsLoading}
-            data={currentAngleRewardsPool?.distributionData.filter((el) => el.isLive)}
+            data={currentAngleRewardsPool?.distributionData.filter(
+              (el) => el.isLive,
+            )}
           />
         </TabsContent>
         <TabsContent value="inactive">
           <DistributionDataTable
             isLoading={rewardsLoading}
-            data={currentAngleRewardsPool?.distributionData.filter((el) => !el.isLive)}
+            data={currentAngleRewardsPool?.distributionData.filter(
+              (el) => !el.isLive,
+            )}
           />
         </TabsContent>
       </Tabs>

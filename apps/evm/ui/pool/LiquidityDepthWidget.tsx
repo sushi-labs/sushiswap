@@ -16,8 +16,14 @@ interface LiquidityDepthWidget {
 }
 
 // ID has to be set (and unique) if there are multiple charts on the same page
-export const LiquidityDepthWidget: FC<LiquidityDepthWidget> = ({ address, chainId }) => {
-  const { data: poolStats } = useConcentratedLiquidityPoolStats({ chainId, address })
+export const LiquidityDepthWidget: FC<LiquidityDepthWidget> = ({
+  address,
+  chainId,
+}) => {
+  const { data: poolStats } = useConcentratedLiquidityPoolStats({
+    chainId,
+    address,
+  })
 
   const { price, invertPrice, noLiquidity } = useConcentratedDerivedMintInfo({
     account: undefined,
@@ -52,7 +58,13 @@ export const LiquidityDepthWidget: FC<LiquidityDepthWidget> = ({ address, chainI
           currencyB={poolStats.token1}
           feeAmount={poolStats.feeAmount}
           ticksAtLimit={{ [Bound.LOWER]: false, [Bound.UPPER]: false }}
-          price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}
+          price={
+            price
+              ? parseFloat(
+                  (invertPrice ? price.invert() : price).toSignificant(8),
+                )
+              : undefined
+          }
           priceLower={undefined}
           priceUpper={undefined}
           interactive={false}

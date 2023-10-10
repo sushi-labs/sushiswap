@@ -1,4 +1,9 @@
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@sushiswap/ui/components/tooltip'
 import { FC } from 'react'
 
 export const FarmRewardsAvailableTooltip: FC = () => {

@@ -1,8 +1,17 @@
 'use client'
 
-import { AngleRewardsPool, useAngleRewardsMultipleChains } from '@sushiswap/react-query'
-import { Card, CardHeader, CardTitle, Container, DataTable } from '@sushiswap/ui'
-import { Carousel } from '@sushiswap/ui/components/Carousel'
+import {
+  AngleRewardsPool,
+  useAngleRewardsMultipleChains,
+} from '@sushiswap/react-query'
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  Container,
+  DataTable,
+} from '@sushiswap/ui'
+import { Carousel } from '@sushiswap/ui/components/carousel'
 import { useAccount } from '@sushiswap/wagmi'
 import { ColumnDef, PaginationState } from '@tanstack/react-table'
 import { ANGLE_ENABLED_NETWORKS } from 'config'
@@ -56,14 +65,16 @@ export const RewardsSection: FC = () => {
           .filter(
             (el) =>
               (el?.userTotalBalance0 ?? 0) + (el?.userTotalBalance1 ?? 0) > 0 ||
-              Object.keys(el.rewardsPerToken).length > 0
+              Object.keys(el.rewardsPerToken).length > 0,
           )
           .filter((el) =>
             _tokenSymbols.length > 0
               ? _tokenSymbols.some((symbol) => {
-                  return [el.token0.symbol, el.token1.symbol].includes(symbol.toUpperCase())
+                  return [el.token0.symbol, el.token1.symbol].includes(
+                    symbol.toUpperCase(),
+                  )
                 })
-              : true
+              : true,
           )
       })
   }, [chainIds, tokenSymbols, data])
@@ -78,7 +89,11 @@ export const RewardsSection: FC = () => {
         containerWidth={1280}
         slides={chainsSorted || ANGLE_ENABLED_NETWORKS}
         render={(row) =>
-          typeof row === 'number' ? <RewardSlideSkeleton /> : <RewardSlide data={row} address={address} />
+          typeof row === 'number' ? (
+            <RewardSlideSkeleton />
+          ) : (
+            <RewardSlide data={row} address={address} />
+          )
         }
         className="!pt-0 px-2"
       />
@@ -86,7 +101,10 @@ export const RewardsSection: FC = () => {
         <Card>
           <CardHeader>
             <CardTitle>
-              My Rewards <span className="text-gray-400 dark:text-slate-500">({positions.length})</span>
+              My Rewards{' '}
+              <span className="text-gray-400 dark:text-slate-500">
+                ({positions.length})
+              </span>
             </CardTitle>
           </CardHeader>
           <DataTable

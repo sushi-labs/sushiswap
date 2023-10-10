@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import type { ChainId } from '@sushiswap/chain'
-import { Native, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
+import type { ChainId } from 'sushi/chain'
+import { Native, WNATIVE, WNATIVE_ADDRESS } from 'sushi/currency'
 import { BridgeUnlimited, RToken } from '@sushiswap/tines'
 import { PublicClient } from 'viem'
 
@@ -21,8 +21,16 @@ export class NativeWrapProvider extends LiquidityProvider {
       chainId: chainId,
       decimals: 18,
     }
-    const bridge = new BridgeUnlimited(WNATIVE_ADDRESS[chainId], nativeRToken, WNATIVE[chainId] as RToken, 0, 50_000)
-    this.poolCodes = [new NativeWrapBridgePoolCode(bridge, LiquidityProviders.NativeWrap)]
+    const bridge = new BridgeUnlimited(
+      WNATIVE_ADDRESS[chainId],
+      nativeRToken,
+      WNATIVE[chainId] as RToken,
+      0,
+      50_000,
+    )
+    this.poolCodes = [
+      new NativeWrapBridgePoolCode(bridge, LiquidityProviders.NativeWrap),
+    ]
     this.lastUpdateBlock = -1
   }
 

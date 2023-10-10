@@ -1,12 +1,19 @@
 'use client'
 
 import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
-import { Chain } from '@sushiswap/chain'
-import { shortenAddress } from '@sushiswap/format'
+import { Chain } from 'sushi/chain'
+import { shortenAddress } from 'sushi'
 import { Token as GraphToken } from '@sushiswap/graph-client'
 import { ClipboardController, LinkExternal } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@sushiswap/ui/components/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@sushiswap/ui/components/table'
 import { FC } from 'react'
 
 import { useTokenFromToken } from '../../lib/hooks/useTokenFromToken'
@@ -40,18 +47,25 @@ export const TokenInformation: FC<TokenInformation> = ({ token }) => {
         <TableBody>
           <TableRow>
             <TableCell>
-              <p className="font-semibold text-sm text-slate-100">{_token.symbol}</p>
+              <p className="font-semibold text-sm text-slate-100">
+                {_token.symbol}
+              </p>
             </TableCell>
             <TableCell>
               <div className="flex items-center gap-2">
                 <Currency.Icon currency={_token} width={24} height={24} />
-                <p className="font-medium text-sm text-slate-100">{_token.name}</p>
+                <p className="font-medium text-sm text-slate-100">
+                  {_token.name}
+                </p>
               </div>
             </TableCell>
             <TableCell>
               <ClipboardController>
                 {({ setCopied }) => (
-                  <span onClick={() => setCopied(_token.wrapped.address)} className="text-sm font-medium">
+                  <span
+                    onClick={() => setCopied(_token.wrapped.address)}
+                    className="text-sm font-medium"
+                  >
                     {shortenAddress(_token.wrapped.address)}
                   </span>
                 )}

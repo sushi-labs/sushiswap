@@ -11,4 +11,7 @@ export {
   tridentConstantPoolSchema,
   TridentStablePool,
 } from '@sushiswap/trident-sdk'
-export { computeSushiSwapV2PoolAddress, SushiSwapV2Pool } from '@sushiswap/v2-sdk'
+export {
+  computeSushiSwapV2PoolAddress,
+  SushiSwapV2Pool,
+} from '@sushiswap/v2-sdk'

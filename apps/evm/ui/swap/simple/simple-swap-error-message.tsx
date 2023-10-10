@@ -20,13 +20,16 @@ import { FC } from 'react'
 
 import { usePersistedSlippageError } from '../../../lib/hooks'
 
-export const SimpleSwapErrorMessage: FC<{ isSuccess: boolean; error: Error | null; isLoading: boolean }> = ({
-  isSuccess,
-  error,
-  isLoading,
-}) => {
+export const SimpleSwapErrorMessage: FC<{
+  isSuccess: boolean
+  error: Error | null
+  isLoading: boolean
+}> = ({ isSuccess, error, isLoading }) => {
   const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance()
-  const { isSlippageError, setShow, show } = usePersistedSlippageError({ isSuccess, error })
+  const { isSlippageError, setShow, show } = usePersistedSlippageError({
+    isSuccess,
+    error,
+  })
 
   return (
     <HoverCard openDelay={0} closeDelay={0}>
@@ -40,17 +43,26 @@ export const SimpleSwapErrorMessage: FC<{ isSuccess: boolean; error: Error | nul
             <Card>
               <CardHeader>
                 <CardTitle
-                  className={classNames(isSlippageError ? 'text-red' : 'text-green', 'flex gap-2 items-center')}
+                  className={classNames(
+                    isSlippageError ? 'text-red' : 'text-green',
+                    'flex gap-2 items-center',
+                  )}
                 >
                   {isSlippageError ? 'Low slippage' : 'That works!'}
                 </CardTitle>
-                <CardDescription className={classNames(isSlippageError ? 'text-red' : 'text-green')}>
+                <CardDescription
+                  className={classNames(
+                    isSlippageError ? 'text-red' : 'text-green',
+                  )}
+                >
                   {isSlippageError ? (
                     'This transaction will not succeed either due to price movement or fee on transfer. Try increasing your slippage tolerance.'
                   ) : (
                     <>
-                      Please be aware that with regards to tax tokens, the preferred slippage incorporates the standard
-                      slippage value along with the additional tax amount. E.g.: 0.5% slippage + 5% tax = 5.5%
+                      Please be aware that with regards to tax tokens, the
+                      preferred slippage incorporates the standard slippage
+                      value along with the additional tax amount. E.g.: 0.5%
+                      slippage + 5% tax = 5.5%
                     </>
                   )}
                 </CardDescription>
@@ -68,9 +80,12 @@ export const SimpleSwapErrorMessage: FC<{ isSuccess: boolean; error: Error | nul
                           <CardTitle>Slippage</CardTitle>
                           <CardDescription className="prose">
                             <p>
-                              Slippage is the difference between the expected value of output from a trade and the
-                              actual value due to asset volatility and liquidity depth. If the actual slippage falls
-                              outside of the user-designated range, the transaction will revert.
+                              Slippage is the difference between the expected
+                              value of output from a trade and the actual value
+                              due to asset volatility and liquidity depth. If
+                              the actual slippage falls outside of the
+                              user-designated range, the transaction will
+                              revert.
                             </p>
                             <a
                               className="text-blue hover:underline"
@@ -96,7 +111,12 @@ export const SimpleSwapErrorMessage: FC<{ isSuccess: boolean; error: Error | nul
                 </div>
               </CardContent>
               <div className="absolute right-2 top-2">
-                <IconButton icon={XMarkIcon} name="minimize" onClick={() => setShow(false)} size="xs" />
+                <IconButton
+                  icon={XMarkIcon}
+                  name="minimize"
+                  onClick={() => setShow(false)}
+                  size="xs"
+                />
               </div>
             </Card>
           </div>

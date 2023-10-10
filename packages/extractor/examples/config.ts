@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { LiquidityProviders } from '@sushiswap/router'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
@@ -38,9 +38,11 @@ export const SUPPORTED_CHAIN_IDS = [
   // ChainId.POLYGON_ZKEVM,
 ] as const
 
-export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number]
+export type SupportedChainId = typeof SUPPORTED_CHAIN_IDS[number]
 
-export const isSupportedChainId = (chainId: number): chainId is SupportedChainId =>
+export const isSupportedChainId = (
+  chainId: number,
+): chainId is SupportedChainId =>
   SUPPORTED_CHAIN_IDS.includes(chainId as SupportedChainId)
 
 function sushiswapV2Factory(chainId: SushiSwapV2ChainId) {
@@ -77,16 +79,21 @@ export const EXTRACTOR_CONFIG = {
         address: '0xA102072A4C07F06EC3B4900FDC4C7B80b6c57429' as Address,
         provider: LiquidityProviders.Dfyn,
         fee: 0.003,
-        initCodeHash: '0xd49917af2b31d70ba7bea89230a93b55d3b6a99aacd03a72c288dfe524ec2f36',
+        initCodeHash:
+          '0xd49917af2b31d70ba7bea89230a93b55d3b6a99aacd03a72c288dfe524ec2f36',
       },
       {
         address: '0xA59B2044EAFD15ee4deF138D410d764c9023E1F0' as Address,
         provider: LiquidityProviders.Elk,
         fee: 0.003,
-        initCodeHash: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
+        initCodeHash:
+          '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
       },
     ],
-    factoriesV3: [uniswapV3Factory(ChainId.ARBITRUM), sushiswapV3Factory(ChainId.ARBITRUM)],
+    factoriesV3: [
+      uniswapV3Factory(ChainId.ARBITRUM),
+      sushiswapV3Factory(ChainId.ARBITRUM),
+    ],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.ARBITRUM],
     cacheDir: './cache',
     logDepth: 300,
@@ -110,7 +117,8 @@ export const EXTRACTOR_CONFIG = {
         address: '0x9Ad6C38BE94206cA50bb0d90783181662f0Cfa10' as Address,
         provider: LiquidityProviders.TraderJoe,
         fee: 0.003,
-        initCodeHash: '0x0bbca9af0511ad1a1da383135cf3a8d2ac620e549ef9f6ae3a4c33c2fed0af91',
+        initCodeHash:
+          '0x0bbca9af0511ad1a1da383135cf3a8d2ac620e549ef9f6ae3a4c33c2fed0af91',
       },
     ],
     factoriesV3: [sushiswapV3Factory(ChainId.AVALANCHE)],
@@ -154,28 +162,35 @@ export const EXTRACTOR_CONFIG = {
         address: '0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73' as Address,
         provider: LiquidityProviders.PancakeSwap,
         fee: 0.0025,
-        initCodeHash: '0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5',
+        initCodeHash:
+          '0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5',
       },
       {
         address: '0x858E3312ed3A876947EA49d572A7C42DE08af7EE' as Address,
         provider: LiquidityProviders.Biswap,
         fee: 0.002,
-        initCodeHash: '0xfea293c909d87cd4153593f077b76bb7e94340200f4ee84211ae8e4f9bd7ffdf',
+        initCodeHash:
+          '0xfea293c909d87cd4153593f077b76bb7e94340200f4ee84211ae8e4f9bd7ffdf',
       },
       {
         address: '0x0841BD0B734E4F5853f0dD8d7Ea041c241fb0Da6' as Address,
         provider: LiquidityProviders.ApeSwap,
         fee: 0.003,
-        initCodeHash: '0xf4ccce374816856d11f00e4069e7cada164065686fbef53c6167a63ec2fd8c5b',
+        initCodeHash:
+          '0xf4ccce374816856d11f00e4069e7cada164065686fbef53c6167a63ec2fd8c5b',
       },
       {
         address: '0x0eb58E5c8aA63314ff5547289185cC4583DfCBD5' as Address,
         provider: LiquidityProviders.JetSwap,
         fee: 0.003,
-        initCodeHash: '0x3125d0a15fa7af49ce234ba1cf5f931bad0504242e0e1ee9fcd7d1d7aa88c651',
+        initCodeHash:
+          '0x3125d0a15fa7af49ce234ba1cf5f931bad0504242e0e1ee9fcd7d1d7aa88c651',
       },
     ],
-    factoriesV3: [uniswapV3Factory(ChainId.BSC), sushiswapV3Factory(ChainId.BSC)],
+    factoriesV3: [
+      uniswapV3Factory(ChainId.BSC),
+      sushiswapV3Factory(ChainId.BSC),
+    ],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BSC],
     cacheDir: './cache',
     logDepth: 1000,
@@ -204,22 +219,28 @@ export const EXTRACTOR_CONFIG = {
         address: '0xBAe5dc9B19004883d0377419FeF3c2C8832d7d7B' as Address,
         provider: LiquidityProviders.ApeSwap,
         fee: 0.003,
-        initCodeHash: '0xe2200989b6f9506f3beca7e9c844741b3ad1a88ad978b6b0973e96d3ca4707aa',
+        initCodeHash:
+          '0xe2200989b6f9506f3beca7e9c844741b3ad1a88ad978b6b0973e96d3ca4707aa',
       },
       {
         address: '0x6511eBA915fC1b94b2364289CCa2b27AE5898d80' as Address,
         provider: LiquidityProviders.Elk,
         fee: 0.003,
-        initCodeHash: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
+        initCodeHash:
+          '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
       },
       {
         address: '0x1097053Fd2ea711dad45caCcc45EfF7548fCB362' as Address,
         provider: LiquidityProviders.PancakeSwap,
         fee: 0.0025,
-        initCodeHash: '0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5',
+        initCodeHash:
+          '0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5',
       },
     ],
-    factoriesV3: [uniswapV3Factory(ChainId.ETHEREUM), sushiswapV3Factory(ChainId.ETHEREUM)],
+    factoriesV3: [
+      uniswapV3Factory(ChainId.ETHEREUM),
+      sushiswapV3Factory(ChainId.ETHEREUM),
+    ],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.ETHEREUM],
     cacheDir: './cache',
     logDepth: 50,
@@ -233,19 +254,22 @@ export const EXTRACTOR_CONFIG = {
         address: '0xd9820a17053d6314B20642E465a84Bf01a3D64f5' as Address,
         provider: LiquidityProviders.Dfyn,
         fee: 0.003,
-        initCodeHash: '0xd3ab2c392f54feb4b3b2a677f449b133c188ad2f1015eff3e94ea9315282c5f5',
+        initCodeHash:
+          '0xd3ab2c392f54feb4b3b2a677f449b133c188ad2f1015eff3e94ea9315282c5f5',
       },
       {
         address: '0x7Ba73c99e6f01a37f3e33854c8F544BbbadD3420' as Address,
         provider: LiquidityProviders.Elk,
         fee: 0.003,
-        initCodeHash: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
+        initCodeHash:
+          '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
       },
       {
         address: '0x152eE697f2E276fA89E96742e9bB9aB1F2E61bE3' as Address,
         provider: LiquidityProviders.SpookySwap,
         fee: 0.003,
-        initCodeHash: '0xcdf2deca40a0bd56de8e3ce5c7df6727e5b1bf2ac96f283fa9c4b3e6b42ea9d2',
+        initCodeHash:
+          '0xcdf2deca40a0bd56de8e3ce5c7df6727e5b1bf2ac96f283fa9c4b3e6b42ea9d2',
       },
     ],
     factoriesV3: [
@@ -253,7 +277,8 @@ export const EXTRACTOR_CONFIG = {
       {
         address: '0xaf20f5f19698f1D19351028cd7103B63D30DE7d7' as Address,
         provider: LiquidityProviders.Wagmi,
-        initCodeHash: '0x30146866f3a846fe3c636beb2756dbd24cf321bc52c9113c837c21f47470dfeb',
+        initCodeHash:
+          '0x30146866f3a846fe3c636beb2756dbd24cf321bc52c9113c837c21f47470dfeb',
       },
     ],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.FANTOM],
@@ -271,7 +296,10 @@ export const EXTRACTOR_CONFIG = {
       //   initCodeHash: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
       // },
     ],
-    factoriesV3: [uniswapV3Factory(ChainId.OPTIMISM), sushiswapV3Factory(ChainId.OPTIMISM)],
+    factoriesV3: [
+      uniswapV3Factory(ChainId.OPTIMISM),
+      sushiswapV3Factory(ChainId.OPTIMISM),
+    ],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.OPTIMISM],
     cacheDir: './cache',
     logDepth: 50,
@@ -286,34 +314,42 @@ export const EXTRACTOR_CONFIG = {
         address: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32' as Address,
         provider: LiquidityProviders.QuickSwap,
         fee: 0.003,
-        initCodeHash: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
+        initCodeHash:
+          '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
       },
       {
         address: '0xCf083Be4164828f00cAE704EC15a36D711491284' as Address,
         provider: LiquidityProviders.ApeSwap,
         fee: 0.003,
-        initCodeHash: '0x511f0f358fe530cda0859ec20becf391718fdf5a329be02f4c95361f3d6a42d8',
+        initCodeHash:
+          '0x511f0f358fe530cda0859ec20becf391718fdf5a329be02f4c95361f3d6a42d8',
       },
       {
         address: '0xE7Fb3e833eFE5F9c441105EB65Ef8b261266423B' as Address,
         provider: LiquidityProviders.Dfyn,
         fee: 0.003,
-        initCodeHash: '0xf187ed688403aa4f7acfada758d8d53698753b998a3071b06f1b777f4330eaf3',
+        initCodeHash:
+          '0xf187ed688403aa4f7acfada758d8d53698753b998a3071b06f1b777f4330eaf3',
       },
       {
         address: '0xE3BD06c7ac7E1CeB17BdD2E5BA83E40D1515AF2a' as Address,
         provider: LiquidityProviders.Elk,
         fee: 0.003,
-        initCodeHash: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
+        initCodeHash:
+          '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
       },
       {
         address: '0x668ad0ed2622C62E24f0d5ab6B6Ac1b9D2cD4AC7' as Address,
         provider: LiquidityProviders.JetSwap,
         fee: 0.003,
-        initCodeHash: '0x505c843b83f01afef714149e8b174427d552e1aca4834b4f9b4b525f426ff3c6',
+        initCodeHash:
+          '0x505c843b83f01afef714149e8b174427d552e1aca4834b4f9b4b525f426ff3c6',
       },
     ],
-    factoriesV3: [uniswapV3Factory(ChainId.POLYGON), sushiswapV3Factory(ChainId.POLYGON)],
+    factoriesV3: [
+      uniswapV3Factory(ChainId.POLYGON),
+      sushiswapV3Factory(ChainId.POLYGON),
+    ],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.POLYGON],
     cacheDir: './cache',
     logDepth: 100,
@@ -327,7 +363,8 @@ export const EXTRACTOR_CONFIG = {
       {
         address: '0xdE474Db1Fa59898BC91314328D29507AcD0D593c' as Address,
         provider: LiquidityProviders.DovishV3,
-        initCodeHash: '0xd3e7f58b9af034cfa7a0597e539bae7c6b393817a47a6fc1e1503cd6eaffe22a',
+        initCodeHash:
+          '0xd3e7f58b9af034cfa7a0597e539bae7c6b393817a47a6fc1e1503cd6eaffe22a',
       },
     ],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.POLYGON_ZKEVM],
@@ -344,10 +381,14 @@ export const EXTRACTOR_CONFIG = {
         address: '0xFDa619b6d20975be80A10332cD39b9a4b0FAa8BB' as Address,
         provider: LiquidityProviders.BaseSwap,
         fee: 0.0025,
-        initCodeHash: '0xb618a2730fae167f5f8ac7bd659dd8436d571872655bcb6fd11f2158c8a64a3b',
+        initCodeHash:
+          '0xb618a2730fae167f5f8ac7bd659dd8436d571872655bcb6fd11f2158c8a64a3b',
       },
     ],
-    factoriesV3: [sushiswapV3Factory(ChainId.BASE), uniswapV3Factory(ChainId.BASE)],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.BASE),
+      uniswapV3Factory(ChainId.BASE),
+    ],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BASE],
     cacheDir: './cache',
     logDepth: 50,

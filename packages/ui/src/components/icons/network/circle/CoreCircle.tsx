@@ -4,7 +4,14 @@ import { IconComponent } from '../../../../types'
 
 export const CoreCircle: IconComponent = (props) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" fill="none" viewBox="0 0 128 128" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="128"
+      height="128"
+      fill="none"
+      viewBox="0 0 128 128"
+      {...props}
+    >
       <rect width="128" height="128" x="0.265" fill="#000" rx="64"></rect>
       <path
         fill="#FF9500"

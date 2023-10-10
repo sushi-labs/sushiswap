@@ -7,7 +7,12 @@ import { useAccount } from 'wagmi'
 
 import { ConnectButton } from '../../components'
 
-const Connect: FC<ButtonProps> = ({ children, fullWidth = true, size = 'xl', ...props }) => {
+const Connect: FC<ButtonProps> = ({
+  children,
+  fullWidth = true,
+  size = 'xl',
+  ...props
+}) => {
   const isMounted = useIsMounted()
   const { address } = useAccount()
 

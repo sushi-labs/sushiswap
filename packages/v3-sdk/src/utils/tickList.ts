@@ -21,11 +21,17 @@ export abstract class TickList {
     // ensure ticks are spaced appropriately
     invariant(
       ticks.every(({ index }) => index % tickSpacing === 0),
-      'TICK_SPACING'
+      'TICK_SPACING',
     )
 
     // ensure tick liquidity deltas sum to 0
-    invariant(ticks.reduce((accumulator, { liquidityNet }) => accumulator + liquidityNet, 0n) === 0n, 'ZERO_NET')
+    invariant(
+      ticks.reduce(
+        (accumulator, { liquidityNet }) => accumulator + liquidityNet,
+        0n,
+      ) === 0n,
+      'ZERO_NET',
+    )
 
     invariant(isSorted(ticks, tickComparator), 'SORTED')
   }
@@ -35,7 +41,10 @@ export abstract class TickList {
     return tick < ticks[0].index
   }
 
-  public static isAtOrAboveLargest(ticks: readonly Tick[], tick: number): boolean {
+  public static isAtOrAboveLargest(
+    ticks: readonly Tick[],
+    tick: number,
+  ): boolean {
     invariant(ticks.length > 0, 'LENGTH')
     return tick >= ticks[ticks.length - 1].index
   }
@@ -62,7 +71,10 @@ export abstract class TickList {
     while (true) {
       i = Math.floor((l + r) / 2)
 
-      if (ticks[i].index <= tick && (i === ticks.length - 1 || ticks[i + 1].index > tick)) {
+      if (
+        ticks[i].index <= tick &&
+        (i === ticks.length - 1 || ticks[i + 1].index > tick)
+      ) {
         return i
       }
 
@@ -74,7 +86,11 @@ export abstract class TickList {
     }
   }
 
-  public static nextInitializedTick(ticks: readonly Tick[], tick: number, lte: boolean): Tick {
+  public static nextInitializedTick(
+    ticks: readonly Tick[],
+    tick: number,
+    lte: boolean,
+  ): Tick {
     if (lte) {
       invariant(!TickList.isBelowSmallest(ticks, tick), 'BELOW_SMALLEST')
       if (TickList.isAtOrAboveLargest(ticks, tick)) {
@@ -96,7 +112,7 @@ export abstract class TickList {
     ticks: readonly Tick[],
     tick: number,
     lte: boolean,
-    tickSpacing: number
+    tickSpacing: number,
   ): [number, boolean] {
     const compressed = Math.floor(tick / tickSpacing) // matches rounding in the code
 

@@ -1,10 +1,19 @@
-import { Fee, SushiSwapV2Pool, TridentConstantPool, TridentStablePool } from '@sushiswap/amm'
+import {
+  Fee,
+  SushiSwapV2Pool,
+  TridentConstantPool,
+  TridentStablePool,
+} from '@sushiswap/amm'
 import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { Type } from '@sushiswap/currency'
+import { Type } from 'sushi/currency'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { ReactElement } from 'react'
 
-import { SushiSwapV2PoolState, TridentConstantPoolState, TridentStablePoolState } from '../../hooks'
+import {
+  SushiSwapV2PoolState,
+  TridentConstantPoolState,
+  TridentStablePoolState,
+} from '../../hooks'
 
 export type ComponentsWrapperProps<T> = {
   children:
@@ -39,7 +48,7 @@ export interface TridentPoolFinderProps extends PoolFinderProps {
 
 export type PoolStateUnion = [
   SushiSwapV2PoolState | TridentConstantPoolState | TridentStablePoolState,
-  SushiSwapV2Pool | TridentConstantPool | TridentStablePool | null
+  SushiSwapV2Pool | TridentConstantPool | TridentStablePool | null,
 ]
 
 export enum PoolFinderType {

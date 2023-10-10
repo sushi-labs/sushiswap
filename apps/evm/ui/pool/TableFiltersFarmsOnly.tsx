@@ -18,11 +18,16 @@ export const TableFiltersFarmsOnly: FC = () => {
         setFilters((prev) => ({ ...prev, farmsOnly: !prev.farmsOnly }))
       })
     },
-    [setFilters]
+    [setFilters],
   )
 
   return (
-    <Toggle variant="outline" onPressedChange={toggle} pressed={isPending ? checked : farmsOnly} size="sm">
+    <Toggle
+      variant="outline"
+      onPressedChange={toggle}
+      pressed={isPending ? checked : farmsOnly}
+      size="sm"
+    >
       <span>🧑‍🌾</span> Farms only
     </Toggle>
   )
