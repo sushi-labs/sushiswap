@@ -39,9 +39,8 @@ export function getAccounts() {
 
 export function getTransport(chainId: TestChainId) {
   const chain = testChains.find((x) => x.id === chainId)
-  if (!chain) throw Error(`No chain found for ${chainId}`)
+  if (!chain) throw Error(`No test chain found for ${chainId}`)
   const url = foundry.rpcUrls.default.http[0].replace('8545', foundryPort)
-  console.log({ url })
   return http(url)
 }
 
@@ -49,22 +48,16 @@ export const createTestConfig = (
   chainId: TestChainId,
   accountIndex: number,
 ) => {
-  console.log({
-    chain: JSON.stringify(testChains.find((x) => x.id === chainId)),
-  })
-  const walletClient = createWalletClient({
-    account: getAccounts()[accountIndex],
-    transport: getTransport(chainId),
-    chain: testChains.find((x) => x.id === chainId),
-    pollingInterval: 4000,
-  })
-
   const mockConnector = new MockConnector({
     options: {
-      walletClient,
+      walletClient: createWalletClient({
+        account: getAccounts()[accountIndex],
+        transport: getTransport(chainId),
+        chain: testChains.find((x) => x.id === chainId),
+        pollingInterval: 4000,
+      }),
     },
   })
-
   return createConfig({
     publicClient,
     autoConnect: true,

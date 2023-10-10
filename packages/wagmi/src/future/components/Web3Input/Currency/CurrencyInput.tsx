@@ -1,9 +1,7 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
-import { Token, tryParseAmount, Type } from 'sushi/currency'
 import { usePrice } from '@sushiswap/react-query'
-import { Button, classNames, SelectIcon, TextField } from '@sushiswap/ui'
+import { Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 import {
@@ -15,9 +13,11 @@ import {
   useState,
   useTransition,
 } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Token, Type, tryParseAmount } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 
-import { useBalanceWeb3 } from '../../../hooks'
+import { useBalanceWeb3 } from '../../../hooks/balances'
 import { TokenSelector } from '../../TokenSelector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'

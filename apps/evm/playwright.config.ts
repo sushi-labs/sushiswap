@@ -117,7 +117,6 @@ const config: PlaywrightTestConfig = {
     },
     {
       command: 'npm run start -- --experimental-test-proxy',
-      // command: 'npm run start',
       port: 3000,
       timeout: 120 * 1000,
       reuseExistingServer: !process.env.CI,

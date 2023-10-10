@@ -4,6 +4,8 @@
   "exclude": ["dist", "node_modules", ".turbo"],
   "compilerOptions": {
     "rootDir": "./src",
+    "outDir": "./dist",
+    "sourceMap": true,
     "declaration": false,
     "declarationMap": false,
     "target": "ES2020"
