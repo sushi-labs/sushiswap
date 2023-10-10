@@ -651,9 +651,6 @@ importers:
       '@sushiswap/client':
         specifier: workspace:*
         version: link:../../packages/client
-      '@sushiswap/database':
-        specifier: workspace:*
-        version: link:../../packages/database
       '@sushiswap/dexie':
         specifier: workspace:*
         version: link:../../packages/dexie
@@ -2508,7 +2505,7 @@ importers:
         specifier: 2.0.13
         version: 2.0.13(react@18.2.0)
       '@radix-ui/react-slot':
-        specifier: ^1.0.2
+        specifier: 1.0.2
         version: 1.0.2(@types/react@18.2.14)(react@18.2.0)
       '@sushiswap/amm':
         specifier: workspace:*

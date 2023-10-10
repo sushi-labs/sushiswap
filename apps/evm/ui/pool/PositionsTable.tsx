@@ -1,5 +1,5 @@
 import { Slot } from '@radix-ui/react-slot'
-import { Protocol } from '@sushiswap/database'
+import { type Protocol } from '@sushiswap/client'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import { useAccount } from '@sushiswap/wagmi'
 import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
@@ -8,12 +8,12 @@ import { useUserPositions } from 'lib/hooks'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { PositionWithPool } from 'types'
 
+import { usePoolFilters } from './PoolsFiltersProvider'
 import {
   APR_COLUMN,
   NAME_COLUMN_POSITION_WITH_POOL,
   VALUE_COLUMN,
 } from './columns'
-import { usePoolFilters } from './PoolsFiltersProvider'
 
 const COLUMNS = [
   NAME_COLUMN_POSITION_WITH_POOL,
