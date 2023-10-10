@@ -12,12 +12,12 @@
     "dev": "dotenv -- turbo run dev --no-cache --parallel --continue",
     "disable-remote-caching": "turbo unlink && rm -rf ./node_modules/.cache/turbo",
     "enable-remote-caching": "turbo link",
-    "format": "biome format . --write",
+    "format": "biome format . --write && pnpm sort",
     "lint": "biome check .",
     "lint:fix": "pnpm lint --apply",
     "generate": "dotenv -- turbo run generate --no-cache --parallel --continue",
-    "sort": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'config/*/package.json' 'examples/*/package.json' 'jobs/{,!(node_modules)/}**/package.json' 'packages/{,!(node_modules)/}**/package.json' 'protocols/{,!(node_modules)/}**/package.json' 'scripts/*/package.json'",
-    "sort-check": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'examples/*/package.json' 'packages/{,!(node_modules)/}**/package.json' 'protocols/{,!(node_modules)/}**/package.json' --check",
+    "sort": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'config/*/package.json' 'jobs/*/package.json' 'packages/*/package.json' 'protocols/*/package.json'",
+    "sort-check": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'config/*/package.json' 'jobs/*/package.json' 'packages/*/package.json' 'protocols/*/package.json' --check",
     "test": "dotenv -- turbo run test --parallel",
     "test-evm-app": "dotenv -- turbo run test --filter=evm",
     "test-furo-app": "dotenv -- turbo run test --filter=furo"
@@ -29,7 +29,7 @@
     "@types/node": "18",
     "dotenv-cli": "6.0.0",
     "sort-package-json": "2.6.0",
-    "turbo": "1.10.6"
+    "turbo": "1.10.15"
   },
   "packageManager": "pnpm@8.9.0",
   "engines": {
