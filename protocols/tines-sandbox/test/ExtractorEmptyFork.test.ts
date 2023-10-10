@@ -171,8 +171,7 @@ async function simulateUserActivity(
         }
       }
     for (let i = 0; i < tokens.length; ++i)
-      for (let j = 0; j < tokens.length; ++j) {
-        if (i == j) continue
+      for (let j = i + 1; j < tokens.length; ++j) {
         await delay(delayValue)
         try {
           const poolAddress = getAlgebraPoolAddress(
@@ -183,10 +182,10 @@ async function simulateUserActivity(
           )
           const amountIn = BigInt(1e12)
           const { tick } = await algebraPoolTickLiquidityPrice(client, poolAddress)
-          //console.log(`${i}, ${j} pool ${poolAddress} tick ${tick}`)
+          const closestSpacingTick = Math.round(Number(tick) / 120) * 120
           const range = {
-            from: Number(tick) - 120,
-            to: Number(tick) + 120,
+            from: closestSpacingTick - 120,
+            to: closestSpacingTick + 120,
             val: amountIn,
           }
           await algebraPoolMint(client, env, tokens[i], tokens[j], testTokens.owner, range)
