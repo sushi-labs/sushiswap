@@ -23,12 +23,12 @@
     "test-furo-app": "dotenv -- turbo run test --filter=furo"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.1.2",
+    "@biomejs/biome": "1.2.2",
     "@changesets/changelog-github": "0.4.8",
-    "@changesets/cli": "2.26.1",
+    "@changesets/cli": "2.26.2",
     "@types/node": "18",
     "dotenv-cli": "6.0.0",
-    "sort-package-json": "2.1.0",
+    "sort-package-json": "2.6.0",
     "turbo": "1.10.6"
   },
   "packageManager": "pnpm@8.9.0",
