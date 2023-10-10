@@ -15,12 +15,6 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "sideEffects": false,
-  "main": "dist/index.js",
-  "source": "src/index.ts",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -48,15 +42,31 @@
     },
     "./package.json": "./package.json"
   },
+  "main": "dist/index.js",
+  "source": "src/index.ts",
+  "types": "dist/index.d.ts",
   "typesVersions": {
     "*": {
-      "abi": ["./dist/abi/index.d.ts"],
-      "chain": ["./dist/chain/index.d.ts"],
-      "currency": ["./dist/currency/index.d.ts"],
-      "math": ["./dist/math/index.d.ts"],
-      "types": ["./dist/types/index.d.ts"]
+      "abi": [
+        "./dist/abi/index.d.ts"
+      ],
+      "chain": [
+        "./dist/chain/index.d.ts"
+      ],
+      "currency": [
+        "./dist/currency/index.d.ts"
+      ],
+      "math": [
+        "./dist/math/index.d.ts"
+      ],
+      "types": [
+        "./dist/types/index.d.ts"
+      ]
     }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
@@ -77,8 +87,8 @@
     "@tsconfig/node18": "18.2.2",
     "@tsconfig/strictest": "2.0.2",
     "@types/big.js": "6.2.0",
-    "@types/numeral": "2.0.3",
     "@types/jest": "29.5.5",
+    "@types/numeral": "2.0.3",
     "jest": "29.7.0",
     "typescript": "5.2.2",
     "viem": "1.16.2",

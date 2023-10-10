@@ -8,11 +8,11 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .vercel"
   },
   "dependencies": {
-    "sushi": "workspace:*",
     "@sushiswap/database": "workspace:*",
     "@vercel/node": "3.0.7",
     "date-fns": "2.29.3",
     "ioredis": "5.3.1",
+    "sushi": "workspace:*",
     "zod": "3.21.4"
   },
   "devDependencies": {

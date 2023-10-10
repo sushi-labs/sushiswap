@@ -22,12 +22,12 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .vercel"
   },
   "dependencies": {
-    "sushi": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
     "@vercel/node": "3.0.7",
     "@wagmi/core": "1.4.3",
     "@whatwg-node/fetch": "0.8.4",
     "lodash.zip": "4.2.0",
+    "sushi": "workspace:*",
     "zod": "3.21.4"
   },
   "devDependencies": {

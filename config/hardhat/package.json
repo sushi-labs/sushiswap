@@ -16,8 +16,8 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "main": "index.js",
-  "types": "index.d.ts",
   "source": "index.js",
+  "types": "index.d.ts",
   "files": [
     "index.js"
   ],

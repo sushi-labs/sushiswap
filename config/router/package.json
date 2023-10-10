@@ -16,10 +16,7 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewlilley.com>",
   "sideEffects": false,
-  "main": "./dist/index.cjs",
-  "module": "dist/index.js",
-  "source": "src/index.ts",
-  "typings": "dist/index.d.ts",
+  "type": "module",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -28,7 +25,10 @@
     },
     "./package.json": "./package.json"
   },
-  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "dist/index.js",
+  "source": "src/index.ts",
+  "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
@@ -47,8 +47,8 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "sushi": "workspace:*",
-    "typescript": "5.2.2",
-    "tsup": "7.2.0"
+    "tsup": "7.2.0",
+    "typescript": "5.2.2"
   },
   "peerDependencies": {
     "sushi": "*"

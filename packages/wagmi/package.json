@@ -77,12 +77,12 @@
     "zod": "3.21.4"
   },
   "devDependencies": {
+    "@sentry/nextjs": "7.68.0",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "29.5.5",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
-    "@sentry/nextjs": "7.68.0",
     "@wagmi/core": "1.4.3",
     "next": "13.4.19",
     "react": "18.2.0",
@@ -91,19 +91,19 @@
     "wagmi": "1.4.3"
   },
   "peerDependencies": {
-    "@wagmi/core": "1.4.3",
     "@sentry/nextjs": "7.68.0",
+    "@wagmi/core": "1.4.3",
     "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "wagmi": "1.4.3"
   },
   "peerDependenciesMeta": {
-    "@wagmi/core": {
-      "optional": false
-    },
     "@sentry/nextjs": {
       "optional": true
+    },
+    "@wagmi/core": {
+      "optional": false
     },
     "next": {
       "optional": true
