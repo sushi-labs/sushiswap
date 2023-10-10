@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/wagmi-config",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Sushi Wagmi Config",
   "keywords": [
     "sushi",
@@ -39,8 +39,12 @@
   },
   "typesVersions": {
     "*": {
-      "chains": ["./dist/chains.d.ts"],
-      "providers": ["./dist/providers.d.ts"]
+      "chains": [
+        "./dist/chains.d.ts"
+      ],
+      "providers": [
+        "./dist/providers.d.ts"
+      ]
     }
   },
   "scripts": {
