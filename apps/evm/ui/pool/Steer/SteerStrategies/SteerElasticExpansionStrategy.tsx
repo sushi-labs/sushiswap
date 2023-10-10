@@ -21,6 +21,7 @@ import { useEffect, useRef } from 'react'
 import { APRHoverCard } from 'ui/pool/APRHoverCard'
 
 import { SteerStrategyConfig } from '../constants'
+import { SteerAPRChart } from '../SteerAPRChart'
 import { SteerLiquidityInRangeChip } from '../SteerLiquidityDistributionWidget/SteerLiquidityInRangeChip'
 import {
   SteerPositionAdd,
@@ -100,9 +101,16 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
             <CardDescription>{SteerStrategyConfig[vault.strategy].description}</CardDescription>
           </CardHeader>
           <Separator />
+          <div className="h-[200px] rounded-xl flex flex-col p-6">
+            <Stat className="mb-2">
+              <StatLabel size="sm">Weekly Smart Pool APR (without incentives)</StatLabel>
+            </Stat>
+            <SteerAPRChart vault={vault} />
+          </div>
+          <Separator />
           <div className="grid grid-cols-2">
             <Stat className="px-6 py-3">
-              <StatLabel size="sm">APR (24h)</StatLabel>
+              <StatLabel size="sm">Total APR (24h)</StatLabel>
               <StatValue size="sm">
                 <APRHoverCard pool={vault.pool} smartPoolAPR={vault.apr}>
                   <span className="underline decoration-dotted underline-offset-2">
@@ -131,7 +139,7 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
                   adjusted, its a minimum threshold.
                 </Explainer>
               </StatLabel>
-              <StatValue size="sm">Every {adjustment.frequency}</StatValue>
+              <StatValue size="sm">At most every {adjustment.frequency}</StatValue>
             </Stat>
             <Stat className="px-6 py-3">
               <StatLabel size="sm">{adjustment.next.includes('ago') ? 'Last' : 'Next'} Adjustment</StatLabel>

@@ -162,7 +162,7 @@ const COLUMNS = [
               {original.strategy.replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
             </span>
           </TooltipTrigger>
-          <TooltipContent>
+          <TooltipContent className="max-w-[320px]">
             <p>{SteerStrategyConfig[original.strategy].description}</p>
           </TooltipContent>
         </Tooltip>

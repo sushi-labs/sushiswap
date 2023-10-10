@@ -41,34 +41,39 @@ export const APRHoverCard: FC<APRHoverCardProps> = ({ children, pool, showEmissi
         <div className="flex flex-col gap-3">
           {typeof smartPoolAPR === 'number' ? (
             <div className="flex justify-between gap-1 items-center">
-              <span className="flex flex-grow text-xs text-muted-foreground">Smart pool APR</span>
-              <span className="text-right text-xs">{formatPercent(smartPoolAPR)}</span>
+              <span className="flex flex-grow text-sm text-muted-foreground">Smart pool APR</span>
+              <span className="text-right text-sm">{formatPercent(smartPoolAPR)}</span>
             </div>
           ) : (
             <div className="flex justify-between gap-1 items-center">
-              <span className="flex flex-grow text-xs text-muted-foreground">Fees</span>
-              <span className="text-right text-xs">{formatPercent(pool.feeApr1d)}</span>
+              <span className="flex flex-grow text-sm text-muted-foreground">Fees</span>
+              <span className="text-right text-sm">{formatPercent(pool.feeApr1d)}</span>
             </div>
           )}
-          {pool.isIncentivized && showEmissions
-            ? pool.incentives.map((el, i) => {
-                const amount = tryParseAmount(
-                  el.rewardPerDay.toString(),
-                  incentiveRewardToToken(el.chainId as ChainId, el)
-                )
-                if (!amount) return null
+          <div className="flex flex-col gap-1">
+            <div className="flex justify-between gap-1 items-center">
+              <span className="flex flex-grow text-sm text-muted-foreground">Rewards</span>
+              <span className="text-right text-sm">{formatPercent(pool.incentiveApr)}</span>
+            </div>
+            <div className="flex flex-col items-end">
+              {pool.isIncentivized && showEmissions
+                ? pool.incentives.map((el, i) => {
+                    const amount = tryParseAmount(
+                      el.rewardPerDay.toString(),
+                      incentiveRewardToToken(el.chainId as ChainId, el)
+                    )
+                    if (!amount) return null
 
-                return (
-                  <div key={i} className="flex flex-grow justify-between gap-2 items-center">
-                    <span className="flex flex-grow items-center gap-1 truncate text-xs text-muted-foreground">
-                      <Currency.Icon currency={amount?.currency} width={12} height={12} />
-                      {amount?.toSignificant(6)} {amount?.currency.symbol}
-                    </span>
-                    <span className="text-right text-xs">{formatPercent(el.apr)}</span>
-                  </div>
-                )
-              })
-            : null}
+                    return (
+                      <span key={i} className="flex gap-1 items-center text-[10px]">
+                        + <Currency.Icon currency={amount?.currency} width={10} height={10} />
+                        {amount?.toSignificant(6)} {amount?.currency.symbol} per day
+                      </span>
+                    )
+                  })
+                : null}
+            </div>
+          </div>
           <div className="flex items-center gap-2">
             <Separator className="text-muted-foreground" />
           </div>
