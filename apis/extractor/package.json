@@ -27,8 +27,8 @@
   "dependencies": {
     "@sentry/node": "7.68.0",
     "@sushiswap/extractor": "workspace:*",
-    "@sushiswap/router": "workspace:*",
     "@sushiswap/route-processor-sdk": "workspace:*",
+    "@sushiswap/router": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
     "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",
