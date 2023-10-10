@@ -54,7 +54,6 @@
     "zod": "3.21.4"
   },
   "devDependencies": {
-    "@sushiswap/database": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/node18": "18.2.2",
@@ -66,12 +65,6 @@
     "jest": "29.7.0",
     "typescript": "5.2.2"
   },
-  "peerDependencies": {
-    "@sushiswap/database": "*"
-  },
-  "peerDependenciesMeta": {
-    "@sushiswap/database": {
-      "optional": false
-    }
-  }
+  "peerDependencies": {},
+  "peerDependenciesMeta": {}
 }

@@ -1,8 +1,5 @@
 import { Token } from 'sushi/currency'
-import { PrismaClient } from '@sushiswap/database'
 import { Address } from 'viem'
-
-import { getAllPools as getAllPoolsFromDb, getNewPools } from './database'
 
 export interface PoolResponse2 {
   type: string
@@ -31,54 +28,6 @@ export interface PoolResponse2 {
     isFeeOnTransfer: boolean
     isCommon: boolean
   }
-}
-
-export async function getAllPools(
-  client: PrismaClient,
-  chainId: number,
-  protocol: string,
-  version: string,
-  poolTypes: (
-    | 'CONSTANT_PRODUCT_POOL'
-    | 'CONCENTRATED_LIQUIDITY_POOL'
-    | 'STABLE_POOL'
-  )[],
-) {
-  const pools = await getAllPoolsFromDb(client, {
-    chainId,
-    protocol,
-    version,
-    poolTypes,
-  })
-  const poolMap = new Map(
-    pools.map((pool) => [pool.address as Address, pool as PoolResponse2]),
-  )
-  return poolMap
-}
-
-export async function discoverNewPools(
-  client: PrismaClient,
-  chainId: number,
-  protocol: string,
-  version: string,
-  poolTypes: (
-    | 'CONSTANT_PRODUCT_POOL'
-    | 'CONCENTRATED_LIQUIDITY_POOL'
-    | 'STABLE_POOL'
-  )[],
-  date: Date,
-) {
-  const pools = await getNewPools(client, {
-    chainId,
-    protocol,
-    version,
-    poolTypes,
-    date,
-  })
-  const poolMap = new Map(
-    pools.map((pool) => [pool.address, pool as PoolResponse2]),
-  )
-  return poolMap
 }
 
 export function filterOnDemandPools(

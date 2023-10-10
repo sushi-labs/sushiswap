@@ -1,9 +1,8 @@
+import { RToken, UniV3Pool } from '@sushiswap/tines'
+import { FeeAmount, TICK_SPACINGS, computePoolAddress } from '@sushiswap/v3-sdk'
 import { erc20Abi, tickLensAbi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Currency, Token, Type } from 'sushi/currency'
-import { PrismaClient } from '@sushiswap/database'
-import { RToken, UniV3Pool } from '@sushiswap/tines'
-import { computePoolAddress, FeeAmount, TICK_SPACINGS } from '@sushiswap/v3-sdk'
 import { Address, PublicClient } from 'viem'
 
 import { getCurrencyCombinations } from '../getCurrencyCombinations'
@@ -52,7 +51,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   factory: Record<number, Address> = {}
   initCodeHash: Record<number, string> = {}
   tickLens: Record<number, string> = {}
-  databaseClient: PrismaClient | undefined
 
   constructor(
     chainId: ChainId,
@@ -60,7 +58,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     factory: Record<number, Address>,
     initCodeHash: Record<number, string>,
     tickLens: Record<number, string>,
-    databaseClient?: PrismaClient,
   ) {
     super(chainId, web3Client)
     this.factory = factory
@@ -75,7 +72,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
         `${this.getType()} cannot be instantiated for chainid ${chainId}, no factory or initCodeHash`,
       )
     }
-    this.databaseClient = databaseClient
   }
 
   async fetchPoolsForToken(

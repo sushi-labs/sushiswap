@@ -1,16 +1,11 @@
 import { ChainId } from 'sushi/chain'
-import { PrismaClient } from '@sushiswap/database'
 import { PublicClient } from 'viem'
 
 import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV3BaseProvider } from './UniswapV3Base'
 
 export class UniswapV3Provider extends UniswapV3BaseProvider {
-  constructor(
-    chainId: ChainId,
-    web3Client: PublicClient,
-    databaseClient?: PrismaClient,
-  ) {
+  constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.ETHEREUM]: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
       [ChainId.POLYGON]: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
@@ -41,7 +36,7 @@ export class UniswapV3Provider extends UniswapV3BaseProvider {
       [ChainId.BSC]: '0xD9270014D396281579760619CCf4c3af0501A47C',
       [ChainId.BASE]: '0x0CdeE061c75D43c82520eD998C23ac2991c9ac6d',
     } as const
-    super(chainId, web3Client, factory, initCodeHash, tickLens, databaseClient)
+    super(chainId, web3Client, factory, initCodeHash, tickLens)
   }
   getType(): LiquidityProviders {
     return LiquidityProviders.UniswapV3
