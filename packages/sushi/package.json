@@ -1,6 +1,6 @@
 {
   "name": "sushi",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Sushi",
   "keywords": [
     "sushi"
@@ -49,11 +49,21 @@
   },
   "typesVersions": {
     "*": {
-      "abi": ["./dist/abi/index.d.ts"],
-      "chain": ["./dist/chain/index.d.ts"],
-      "currency": ["./dist/currency/index.d.ts"],
-      "math": ["./dist/math/index.d.ts"],
-      "types": ["./dist/types/index.d.ts"]
+      "abi": [
+        "./dist/abi/index.d.ts"
+      ],
+      "chain": [
+        "./dist/chain/index.d.ts"
+      ],
+      "currency": [
+        "./dist/currency/index.d.ts"
+      ],
+      "math": [
+        "./dist/math/index.d.ts"
+      ],
+      "types": [
+        "./dist/types/index.d.ts"
+      ]
     }
   },
   "scripts": {

@@ -1,5 +1,20 @@
 # @sushiswap/router
 
+## 0.0.15
+
+### Patch Changes
+
+- Updated dependencies [[`83d813fb3`](https://github.com/sushiswap/sushiswap/commit/83d813fb338eb5488cbd47513fd525342fbcf81b)]:
+  - @sushiswap/trident-sdk@1.0.0
+  - sushi@3.0.0
+  - @sushiswap/router-config@3.0.0
+  - @sushiswap/amm@0.1.15
+  - @sushiswap/viem-config@2.0.0
+  - @sushiswap/bentobox-sdk@0.0.1
+  - @sushiswap/tines@1.0.11
+  - @sushiswap/v2-sdk@0.0.11
+  - @sushiswap/v3-sdk@1.0.12
+
 ## 0.0.14
 
 ### Patch Changes
