@@ -1548,6 +1548,12 @@ importers:
 
   packages/extractor:
     dependencies:
+      '@cryptoalgebra/integral-core':
+        specifier: 0.2.0
+        version: 0.2.0
+      '@cryptoalgebra/integral-periphery':
+        specifier: 0.2.0
+        version: 0.2.0
       '@sentry/node':
         specifier: 7.68.0
         version: 7.68.0
@@ -6337,7 +6343,6 @@ packages:
     engines: {node: '>=14.0.0', npm: '>=8.0.0'}
     dependencies:
       '@openzeppelin/contracts': 4.9.3
-    dev: true
 
   /@cryptoalgebra/integral-periphery@0.2.0:
     resolution: {integrity: sha512-X/mDPsNohx/briYWunts65dR24TvoKfWIvQcwvUn1wgmUK/0KWrstYAVJH5nhsZDYjhqorGYnpJNz+J0l0ci+Q==}
@@ -6346,7 +6351,6 @@ packages:
       '@cryptoalgebra/integral-core': 0.2.0
       '@openzeppelin/contracts': 4.9.3
       '@uniswap/v2-core': 1.0.1
-    dev: true
 
   /@cspotcode/source-map-support@0.8.1:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -11799,7 +11803,6 @@ packages:
 
   /@openzeppelin/contracts@4.9.3:
     resolution: {integrity: sha512-He3LieZ1pP2TNt5JbkPA4PNT9WC3gOTOlDcFGJW4Le4QKqwmiNJCRt44APfxMxvq7OugU/cqYuPcSBzOw38DAg==}
-    dev: true
 
   /@peculiar/asn1-schema@2.3.6:
     resolution: {integrity: sha512-izNRxPoaeJeg/AyH8hER6s+H7p4itk+03QCa4sbxI3lNdseQYCuxzgsuNK8bTXChtLTjpJz6NmXKA73qLa3rCA==}

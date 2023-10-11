@@ -1,36 +1,79 @@
+import AlgebraFactory from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraFactory.sol/AlgebraFactory.json'
+import AlgebraPool from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraPool.sol/AlgebraPool.json'
 import { Token } from 'sushi/currency'
 import { LiquidityProviders, PoolCode } from '@sushiswap/router'
-import { computePoolAddress, FeeAmount } from '@sushiswap/v3-sdk'
-import IUniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.json'
-import IUniswapV3Pool from '@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json'
 import { Abi } from 'abitype'
-import { Address, Log, PublicClient } from 'viem'
+import {
+  Address,
+  getAddress,
+  Hex,
+  keccak256,
+  Log,
+  PublicClient,
+  encodeAbiParameters,
+} from 'viem'
 
+import { AlgebraEventsAbi, AlgebraPoolWatcher } from './AlgebraPoolWatcher'
+import {
+  AlgebraQualityChecker,
+  PoolSyncState,
+  QualityCheckerCallBackArg,
+} from './AlgebraQualityChecker'
 import { Counter } from './Counter'
 import { LogFilter2 } from './LogFilter2'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { PermanentCache } from './PermanentCache'
-import {
-  PoolSyncState,
-  QualityChecker,
-  QualityCheckerCallBackArg,
-} from './QualityChecker'
 import { TokenManager } from './TokenManager'
-import { UniV3EventsAbi, UniV3PoolWatcher } from './UniV3PoolWatcher'
 import { warnLog } from './WarnLog'
 
-export interface FactoryV3 {
+export function getAlgebraPoolAddress(
+  PoolDeployerAddress: string,
+  tokenA: Address,
+  tokenB: Address,
+  POOL_INIT_CODE_HASH: Hex,
+): Address {
+  const [token0, token1] =
+    tokenA.toLowerCase() < tokenB.toLowerCase()
+      ? [tokenA, tokenB]
+      : [tokenB, tokenA]
+  const constructorArgumentsEncoded = encodeAbiParameters(
+    [
+      { name: 'TokenA', type: 'address' },
+      { name: 'TokenB', type: 'address' },
+    ],
+    [token0, token1],
+  )
+  const create2Inputs = [
+    '0xff',
+    PoolDeployerAddress,
+    // salt
+    keccak256(constructorArgumentsEncoded as Hex),
+    // init code. bytecode + constructor arguments
+    POOL_INIT_CODE_HASH, //keccak256(bytecode),
+  ]
+  const sanitizedInputs = `0x${create2Inputs
+    .map((i) => i.slice(2))
+    .join('')}` as Hex
+  return getAddress(`0x${keccak256(sanitizedInputs).slice(-40)}`)
+}
+
+export interface FactoryAlgebra {
   address: Address
   provider: LiquidityProviders
-  initCodeHash: string
+}
+
+interface FactoryAlgebraFull {
+  address: Address
+  deployer: Address
+  provider: LiquidityProviders
+  initCodeHash: Hex
 }
 
 interface PoolInfo {
   address: Address
   token0: Token
   token1: Token
-  fee: FeeAmount
-  factory: FactoryV3
+  factory: FactoryAlgebraFull
 }
 
 enum LogsProcessing {
@@ -43,17 +86,17 @@ interface PoolCacheRecord {
   address: Address
   token0: Address
   token1: Address
-  fee: number
   factory: Address
 }
 
-export class UniV3Extractor {
-  factories: FactoryV3[]
-  factoryMap: Map<string, FactoryV3> = new Map()
+export class AlgebraExtractor {
+  factories: FactoryAlgebra[]
+  factoriesFull: FactoryAlgebraFull[] = []
+  factoryMap: Map<string, FactoryAlgebraFull> = new Map()
   tickHelperContract: Address
   multiCallAggregator: MultiCallAggregator
   tokenManager: TokenManager
-  poolMap: Map<Address, UniV3PoolWatcher> = new Map()
+  poolMap: Map<Address, AlgebraPoolWatcher> = new Map()
   emptyAddressSet: Set<Address> = new Set()
   poolPermanentCache: PermanentCache<PoolCacheRecord>
   otherFactoryPoolSet: Set<Address> = new Set()
@@ -61,14 +104,14 @@ export class UniV3Extractor {
   logProcessingStatus = LogsProcessing.NotStarted
   logging: boolean
   taskCounter: Counter
-  qualityChecker: QualityChecker
+  qualityChecker: AlgebraQualityChecker
   lastProcessdBlock = -1
   watchedPools = 0
 
   constructor(
     client: PublicClient,
     tickHelperContract: Address,
-    factories: FactoryV3[],
+    factories: FactoryAlgebra[],
     cacheDir: string,
     logFilter: LogFilter2,
     logging = true,
@@ -82,20 +125,19 @@ export class UniV3Extractor {
       new TokenManager(
         this.multiCallAggregator,
         cacheDir,
-        `uniV3Tokens-${this.multiCallAggregator.chainId}`,
+        `AlgebraTokens-${this.multiCallAggregator.chainId}`,
       )
     this.tickHelperContract = tickHelperContract
     this.factories = factories
-    factories.forEach((f) => this.factoryMap.set(f.address.toLowerCase(), f))
     this.poolPermanentCache = new PermanentCache(
       cacheDir,
-      `uniV3Pools-${this.multiCallAggregator.chainId}`,
+      `AlgebraPools-${this.multiCallAggregator.chainId}`,
     )
     this.logging = logging
     this.taskCounter = new Counter(() => {
       //if (count == 0) this.consoleLog(`All pools were updated`)
     })
-    this.qualityChecker = new QualityChecker(
+    this.qualityChecker = new AlgebraQualityChecker(
       200,
       (arg: QualityCheckerCallBackArg) => {
         const addr = arg.ethalonPool.address.toLowerCase() as Address
@@ -121,7 +163,7 @@ export class UniV3Extractor {
     )
 
     this.logFilter = logFilter
-    logFilter.addFilter(UniV3EventsAbi, (logs?: Log[]) => {
+    logFilter.addFilter(AlgebraEventsAbi, (logs?: Log[]) => {
       if (logs) {
         const blockNumber =
           logs.length > 0
@@ -163,6 +205,31 @@ export class UniV3Extractor {
       if (this.tokenManager.tokens.size === 0)
         await this.tokenManager.addCachedTokens()
 
+      this.factoriesFull = await Promise.all(
+        this.factories.map(async (f): Promise<FactoryAlgebraFull> => {
+          const [deployer, initCodeHash] = await Promise.all([
+            this.multiCallAggregator.callValue(
+              f.address,
+              AlgebraFactory.abi as Abi,
+              'poolDeployer',
+            ),
+            this.multiCallAggregator.callValue(
+              f.address,
+              AlgebraFactory.abi as Abi,
+              'POOL_INIT_CODE_HASH',
+            ),
+          ])
+          return {
+            ...f,
+            deployer: deployer as Address,
+            initCodeHash: initCodeHash as Hex,
+          }
+        }),
+      )
+      this.factoriesFull.forEach((f) =>
+        this.factoryMap.set(f.address.toLowerCase(), f),
+      )
+
       // Add cached pools to watching
       const cachedPools: Map<string, PoolInfo> = new Map() // map instead of array to avoid duplicates
       const cachedRecords = await this.poolPermanentCache.getAllRecords()
@@ -170,12 +237,11 @@ export class UniV3Extractor {
         const token0 = this.tokenManager.getKnownToken(r.token0)
         const token1 = this.tokenManager.getKnownToken(r.token1)
         const factory = this.factoryMap.get(r.factory.toLowerCase())
-        if (token0 && token1 && factory && r.address && r.fee)
+        if (token0 && token1 && factory && r.address)
           cachedPools.set(r.address.toLowerCase(), {
             address: r.address,
             token0,
             token1,
-            fee: r.fee,
             factory,
           })
       })
@@ -183,7 +249,7 @@ export class UniV3Extractor {
       this.consoleLog(`${cachedPools.size} pools were taken from cache`)
       warnLog(
         this.multiCallAggregator.chainId,
-        `ExtractorV3 was started (${Math.round(
+        `ExtractorAlg was started (${Math.round(
           performance.now() - startTime,
         )}ms)`,
         'info',
@@ -229,19 +295,18 @@ export class UniV3Extractor {
       : [p.token1, p.token0]
 
     startTime = startTime || performance.now()
-    const expectedPoolAddress = this.computeV3Address(p.factory, t0, t1, p.fee)
+    const expectedPoolAddress = this.computeAlgebraAddress(p.factory, t0, t1)
     if (addrL !== expectedPoolAddress.toLowerCase()) {
       this.consoleLog(`FakePool: ${p.address}`)
       this.otherFactoryPoolSet.add(addrL)
       return
     }
-    const watcher = new UniV3PoolWatcher(
+    const watcher = new AlgebraPoolWatcher(
       p.factory.provider,
       expectedPoolAddress,
       this.tickHelperContract,
       t0,
       t1,
-      p.fee,
       this.multiCallAggregator,
       this.taskCounter,
     )
@@ -252,7 +317,6 @@ export class UniV3Extractor {
         address: expectedPoolAddress,
         token0: t0.address as Address,
         token1: t1.address as Address,
-        fee: p.fee,
         factory: p.factory.address,
       })
     watcher.once('isUpdated', () => {
@@ -268,58 +332,53 @@ export class UniV3Extractor {
   }
 
   getWatchersForTokens(tokensUnique: Token[]): {
-    prefetched: UniV3PoolWatcher[]
-    fetching: Promise<UniV3PoolWatcher | undefined>[]
+    prefetched: AlgebraPoolWatcher[]
+    fetching: Promise<AlgebraPoolWatcher | undefined>[]
   } {
     const startTime = performance.now()
-    const prefetched: UniV3PoolWatcher[] = []
-    const fetching: Promise<UniV3PoolWatcher | undefined>[] = []
-    const fees = Object.values(FeeAmount).filter(
-      (fee) => typeof fee === 'number',
-    ) as FeeAmount[]
+    const prefetched: AlgebraPoolWatcher[] = []
+    const fetching: Promise<AlgebraPoolWatcher | undefined>[] = []
     for (let i = 0; i < tokensUnique.length; ++i) {
       const t0 = tokensUnique[i]
       this.tokenManager.findToken(t0.address as Address) // to let save it in the cache
       for (let j = i + 1; j < tokensUnique.length; ++j) {
         const t1 = tokensUnique[j]
-        this.factories.forEach((factory) => {
-          fees.forEach((fee) => {
-            const addr = this.computeV3Address(factory, t0, t1, fee)
-            const addrL = addr.toLowerCase() as Address
-            const pool = this.poolMap.get(addrL)
-            if (pool) {
-              prefetched.push(pool)
-              return
-            }
-            if (this.emptyAddressSet.has(addr)) return
-            const promise = this.multiCallAggregator
-              .callValue(
-                factory.address,
-                IUniswapV3Factory.abi as Abi,
-                'getPool',
-                [t0.address, t1.address, fee],
-              )
-              .then(
-                (checkedAddress) => {
-                  if (
-                    checkedAddress ===
-                    '0x0000000000000000000000000000000000000000'
-                  ) {
-                    this.emptyAddressSet.add(addr)
-                    return
-                  }
-                  const watcher = this.addPoolWatching(
-                    { address: addr, token0: t0, token1: t1, fee, factory },
-                    'request',
-                    true,
-                    startTime,
-                  )
-                  return watcher
-                },
-                () => undefined,
-              )
-            fetching.push(promise)
-          })
+        this.factoriesFull.forEach((factory) => {
+          const addr = this.computeAlgebraAddress(factory, t0, t1)
+          const addrL = addr.toLowerCase() as Address
+          const pool = this.poolMap.get(addrL)
+          if (pool) {
+            prefetched.push(pool)
+            return
+          }
+          if (this.emptyAddressSet.has(addr)) return
+          const promise = this.multiCallAggregator
+            .callValue(
+              factory.address,
+              AlgebraFactory.abi as Abi,
+              'poolByPair',
+              [t0.address, t1.address],
+            )
+            .then(
+              (checkedAddress) => {
+                if (
+                  checkedAddress ===
+                  '0x0000000000000000000000000000000000000000'
+                ) {
+                  this.emptyAddressSet.add(addr)
+                  return
+                }
+                const watcher = this.addPoolWatching(
+                  { address: addr, token0: t0, token1: t1, factory },
+                  'request',
+                  true,
+                  startTime,
+                )
+                return watcher
+              },
+              () => undefined,
+            )
+          fetching.push(promise)
         })
       }
     }
@@ -337,28 +396,23 @@ export class UniV3Extractor {
       const startTime = performance.now()
       const factoryAddress = await this.multiCallAggregator.callValue(
         address,
-        IUniswapV3Pool.abi as Abi,
+        AlgebraPool.abi as Abi,
         'factory',
       )
       const factory = this.factoryMap.get(
         (factoryAddress as Address).toLowerCase(),
       )
       if (factory !== undefined) {
-        const [token0Address, token1Address, fee] = await Promise.all([
+        const [token0Address, token1Address] = await Promise.all([
           this.multiCallAggregator.callValue(
             address,
-            IUniswapV3Pool.abi as Abi,
+            AlgebraPool.abi as Abi,
             'token0',
           ),
           this.multiCallAggregator.callValue(
             address,
-            IUniswapV3Pool.abi as Abi,
+            AlgebraPool.abi as Abi,
             'token1',
-          ),
-          this.multiCallAggregator.callValue(
-            address,
-            IUniswapV3Pool.abi as Abi,
-            'fee',
           ),
         ])
         const [token0, token1] = await Promise.all([
@@ -367,7 +421,7 @@ export class UniV3Extractor {
         ])
         if (token0 && token1) {
           this.addPoolWatching(
-            { address, token0, token1, fee: fee as FeeAmount, factory },
+            { address, token0, token1, factory },
             'logs',
             true,
             startTime,
@@ -410,28 +464,26 @@ export class UniV3Extractor {
   }
 
   readonly addressCache: Map<string, Address> = new Map()
-  computeV3Address(
-    factory: FactoryV3,
+  computeAlgebraAddress(
+    factory: FactoryAlgebraFull,
     tokenA: Token,
     tokenB: Token,
-    fee: FeeAmount,
   ): Address {
-    const key = `${tokenA.address}${tokenB.address}${fee}${factory.address}`
+    const key = `${tokenA.address}${tokenB.address}${factory.address}`
     const cached = this.addressCache.get(key)
     if (cached) return cached
-    const addr = computePoolAddress({
-      factoryAddress: factory.address,
-      tokenA,
-      tokenB,
-      fee,
-      initCodeHashManualOverride: factory.initCodeHash,
-    }) as Address
+    const addr = getAlgebraPoolAddress(
+      factory.deployer,
+      tokenA.address as Address,
+      tokenB.address as Address,
+      factory.initCodeHash,
+    )
     this.addressCache.set(key, addr)
     return addr
   }
 
   consoleLog(log: string) {
     if (this.logging)
-      console.log(`V3-${this.multiCallAggregator.chainId}: ${log}`)
+      console.log(`Alg-${this.multiCallAggregator.chainId}: ${log}`)
   }
 }
