@@ -1,13 +1,13 @@
 'use client'
 
-import { useLocalStorage } from '@sushiswap/hooks'
-import { FC } from 'react'
+import {useLocalStorage} from '@sushiswap/hooks'
+import {FC} from 'react'
 
-import { Message, type MessageProps } from './message'
+import {Message, type MessageProps} from './message'
 
 interface DismissableMessageProps extends MessageProps {
   storageKey: string
-  showUntil: Date
+  showUntil: string // should be iso string
 }
 
 export const DismissableMessage: FC<DismissableMessageProps> = ({
@@ -17,7 +17,7 @@ export const DismissableMessage: FC<DismissableMessageProps> = ({
 }) => {
   const [show, setShow] = useLocalStorage(storageKey, true)
 
-  if (show && new Date() <= showUntil) {
+  if (show && new Date() <= new Date(showUntil)) {
     return <Message {...props} onClose={() => setShow(false)} />
   }
 

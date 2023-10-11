@@ -1,7 +1,7 @@
 'use client'
 
-import { InformationCircleIcon } from '@heroicons/react/24/solid'
-import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
+import {InformationCircleIcon} from '@heroicons/react/24/solid'
+import {BentoBoxChainId} from '@sushiswap/bentobox-sdk'
 import {
   CardDescription,
   CardHeader,
@@ -11,12 +11,11 @@ import {
   HoverCardTrigger,
   LinkExternal,
 } from '@sushiswap/ui'
-import { Button, ButtonProps } from '@sushiswap/ui/components/button'
-import dynamic from 'next/dynamic'
-import React, { FC } from 'react'
-import { Address } from 'wagmi'
+import {Button, ButtonProps} from '@sushiswap/ui/components/button'
+import React, {FC} from 'react'
+import {Address} from 'wagmi'
 
-import { ApprovalState, useBentoboxApproval } from '../../hooks'
+import {ApprovalState, useBentoboxApproval} from '../../hooks'
 
 interface ApproveBentoboxProps extends ButtonProps {
   chainId: BentoBoxChainId
@@ -26,7 +25,7 @@ interface ApproveBentoboxProps extends ButtonProps {
   tag: string
 }
 
-const Component: FC<ApproveBentoboxProps> = ({
+const ApproveBentobox: FC<ApproveBentoboxProps> = ({
   id,
   chainId,
   masterContract,
@@ -88,8 +87,5 @@ const Component: FC<ApproveBentoboxProps> = ({
   )
 }
 
-const ApproveBentobox = dynamic(() => Promise.resolve(Component), {
-  ssr: false,
-})
 
 export { ApproveBentobox, type ApproveBentoboxProps }

@@ -1,11 +1,11 @@
 'use client'
 
-import { Amount, Type } from 'sushi/currency'
-import { ButtonProps } from '@sushiswap/ui/components/button'
-import React, { FC } from 'react'
-import { Address } from 'wagmi'
+import {Amount, Type} from 'sushi/currency'
+import {ButtonProps} from '@sushiswap/ui/components/button'
+import React, {FC} from 'react'
+import {Address} from 'wagmi'
 
-import { ApproveERC20 } from './ApproveERC20'
+import {ApproveERC20} from './ApproveERC20'
 
 interface ApproveERC20MultipleProps extends ButtonProps {
   id: string

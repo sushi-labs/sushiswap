@@ -1,13 +1,12 @@
 'use client'
 
-import { ButtonProps } from '@sushiswap/ui/components/button'
-import dynamic from 'next/dynamic'
-import { FC } from 'react'
-import { useAccount } from 'wagmi'
+import {ButtonProps} from '@sushiswap/ui/components/button'
+import {FC} from 'react'
+import {useAccount} from 'wagmi'
 
-import { ConnectButton } from '../../components'
+import {ConnectButton} from '../../components'
 
-const Component: FC<ButtonProps> = ({
+const Connect: FC<ButtonProps> = ({
   children,
   fullWidth = true,
   size = 'xl',
@@ -24,7 +23,5 @@ const Component: FC<ButtonProps> = ({
 
   return <>{children}</>
 }
-
-const Connect = dynamic(() => Promise.resolve(Component), { ssr: false })
 
 export { Connect }
