@@ -3,8 +3,18 @@ import * as React from 'react'
 import { IconComponent } from '../../../../types'
 
 export const FuseCircle: IconComponent = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 128 128" {...props}>
-    <rect width="128" height="128" fill="url(#paint0_linear_101_1987)" rx="64"></rect>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 128 128"
+    {...props}
+  >
+    <rect
+      width="128"
+      height="128"
+      fill="url(#paint0_linear_101_1987)"
+      rx="64"
+    ></rect>
     <mask
       id="mask0_101_1987"
       style={{ maskType: 'alpha' }}
@@ -37,7 +47,14 @@ export const FuseCircle: IconComponent = (props) => (
       clipRule="evenodd"
     ></path>
     <defs>
-      <linearGradient id="paint0_linear_101_1987" x1="64" x2="64" y1="0" y2="128" gradientUnits="userSpaceOnUse">
+      <linearGradient
+        id="paint0_linear_101_1987"
+        x1="64"
+        x2="64"
+        y1="0"
+        y2="128"
+        gradientUnits="userSpaceOnUse"
+      >
         <stop stopColor="#5F5F5F"></stop>
         <stop offset="1" stopColor="#858585"></stop>
       </linearGradient>

@@ -22,13 +22,23 @@ export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
           href={`http://twitter.com/share?text=${shareText}&url=https://www.sushi.com/academy/articles/${article?.attributes?.slug}`}
           rel="noreferrer"
         >
-          <TwitterIcon width={20} height={20} className="cursor-pointer text-blue hover:text-blue-400" />
+          <TwitterIcon
+            width={20}
+            height={20}
+            className="cursor-pointer text-blue hover:text-blue-400"
+          />
         </a>
         <a
           title="Share by Email"
-          href={`mailto:?subject=${encodeURI(article?.attributes?.title || '')}&body=${shareText} ${encodeURI(url)}`}
+          href={`mailto:?subject=${encodeURI(
+            article?.attributes?.title || '',
+          )}&body=${shareText} ${encodeURI(url)}`}
         >
-          <EnvelopeIcon width={20} height={20} className="cursor-pointer text-blue hover:text-blue-400" />
+          <EnvelopeIcon
+            width={20}
+            height={20}
+            className="cursor-pointer text-blue hover:text-blue-400"
+          />
         </a>
         <ClipboardController>
           {({ setCopied }) => (

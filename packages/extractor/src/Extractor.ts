@@ -1,7 +1,7 @@
 import { mkdir, open } from 'node:fs/promises'
 import path from 'node:path'
 
-import { Token } from '@sushiswap/currency'
+import { Token } from 'sushi/currency'
 import { PoolCode } from '@sushiswap/router'
 import { Address, PublicClient } from 'viem'
 
@@ -59,11 +59,14 @@ export class Extractor {
   }) {
     this.cacheDir = args.cacheDir
     this.client = args.client
-    this.multiCallAggregator = new MultiCallAggregator(args.client, args.maxCallsInOneBatch ?? 0)
+    this.multiCallAggregator = new MultiCallAggregator(
+      args.client,
+      args.maxCallsInOneBatch ?? 0,
+    )
     const tokenManager = new TokenManager(
       this.multiCallAggregator,
       args.cacheDir,
-      `tokens-${this.multiCallAggregator.chainId}`
+      `tokens-${this.multiCallAggregator.chainId}`,
     )
     const logFilter = new LogFilter2(this.client, args.logDepth, args.logType ?? LogFilterType.OneCall)
     if (args.factoriesV2 && args.factoriesV2.length > 0)
@@ -74,7 +77,7 @@ export class Extractor {
         logFilter,
         args.logging !== undefined ? args.logging : false,
         this.multiCallAggregator,
-        tokenManager
+        tokenManager,
       )
     if (args.factoriesV3 && args.factoriesV3.length > 0)
       this.extractorV3 = new UniV3Extractor(
@@ -85,7 +88,7 @@ export class Extractor {
         logFilter,
         args.logging !== undefined ? args.logging : false,
         this.multiCallAggregator,
-        tokenManager
+        tokenManager,
       )
     if (args.factoriesAlgebra && args.factoriesAlgebra.length > 0)
       this.extractorAlg = new AlgebraExtractor(
@@ -107,7 +110,10 @@ export class Extractor {
       [this.extractorV2?.start(), this.extractorV3?.start(), this.extractorAlg?.start()].filter((e) => e !== undefined)
     )
     this.getPoolCodesForTokens(tokensPrefetch)
-    this.printTokensPoolsQuantity(this.cacheDir, `TokensStatus-${this.multiCallAggregator?.chainId}`)
+    this.printTokensPoolsQuantity(
+      this.cacheDir,
+      `TokensStatus-${this.multiCallAggregator?.chainId}`,
+    )
   }
 
   getPoolCodesForTokens(tokens: Token[]): PoolCode[] {
@@ -115,7 +121,9 @@ export class Extractor {
     tokens.forEach((t) => tokenMap.set(t.address, t))
     const tokensUnique = Array.from(tokenMap.values())
 
-    const pools2 = this.extractorV2 ? this.extractorV2.getPoolsForTokens(tokensUnique).prefetched : []
+    const pools2 = this.extractorV2
+      ? this.extractorV2.getPoolsForTokens(tokensUnique).prefetched
+      : []
     const pools3 = this.extractorV3
       ? (this.extractorV3
           .getWatchersForTokens(tokensUnique)
@@ -167,7 +175,10 @@ export class Extractor {
     return { prefetched, fetchingNumber }
   }
 
-  async getPoolCodesForTokensAsync(tokens: Token[], timeout: number): Promise<PoolCode[]> {
+  async getPoolCodesForTokensAsync(
+    tokens: Token[],
+    timeout: number,
+  ): Promise<PoolCode[]> {
     let poolsV2: PoolCode[] = []
     let watchersV3: UniV3PoolWatcher[] = []
     let watchersAlg: AlgebraPoolWatcher[] = []
@@ -178,7 +189,8 @@ export class Extractor {
     const tokensUnique = Array.from(tokenMap.values())
 
     if (this.extractorV2) {
-      const { prefetched, fetching } = this.extractorV2.getPoolsForTokens(tokensUnique)
+      const { prefetched, fetching } =
+        this.extractorV2.getPoolsForTokens(tokensUnique)
       poolsV2 = prefetched
       promises = fetching.map(async (p) => {
         const pc = await p
@@ -187,10 +199,12 @@ export class Extractor {
     }
 
     if (this.extractorV3) {
-      const { prefetched, fetching } = this.extractorV3.getWatchersForTokens(tokensUnique)
+      const { prefetched, fetching } =
+        this.extractorV3.getWatchersForTokens(tokensUnique)
       watchersV3 = prefetched
       prefetched.forEach((w) => {
-        if (w.getStatus() !== UniV3PoolWatcherStatus.All) promises.push(w.statusAll())
+        if (w.getStatus() !== UniV3PoolWatcherStatus.All)
+          promises.push(w.statusAll())
       })
       promises = promises.concat(
         fetching.map(async (p) => {
@@ -198,7 +212,7 @@ export class Extractor {
           if (w === undefined) return
           watchersV3.push(w)
           if (w.getStatus() !== UniV3PoolWatcherStatus.All) await w.statusAll()
-        })
+        }),
       )
     }
 

@@ -13,7 +13,8 @@ export const getConcentratedPositionOwners = async ({
       ({ tokenId, chainId }) =>
         ({
           chainId,
-          address: getV3NonFungiblePositionManagerConractConfig(chainId).address as Address,
+          address: getV3NonFungiblePositionManagerConractConfig(chainId)
+            .address as Address,
           abi: [
             {
               inputs: [
@@ -37,7 +38,7 @@ export const getConcentratedPositionOwners = async ({
           ] as const,
           functionName: 'ownerOf',
           args: [tokenId ?? 0n],
-        } as const)
+        }) as const,
     ),
   })
 }

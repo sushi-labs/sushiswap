@@ -7,7 +7,14 @@ interface CustomProps extends ButtonProps {
   buttonText: string
 }
 
-const Custom: FC<CustomProps> = ({ showChildren, buttonText, children, fullWidth = true, size = 'xl', ...props }) => {
+const Custom: FC<CustomProps> = ({
+  showChildren,
+  buttonText,
+  children,
+  fullWidth = true,
+  size = 'xl',
+  ...props
+}) => {
   if (!showChildren) {
     return (
       <Button size={size} fullWidth={fullWidth} {...props}>

@@ -28,7 +28,7 @@ export abstract class TickLibrary {
     tickUpper: number,
     tickCurrent: number,
     feeGrowthGlobal0X128: bigint,
-    feeGrowthGlobal1X128: bigint
+    feeGrowthGlobal1X128: bigint,
   ) {
     let feeGrowthBelow0X128: bigint
     let feeGrowthBelow1X128: bigint
@@ -36,8 +36,14 @@ export abstract class TickLibrary {
       feeGrowthBelow0X128 = feeGrowthOutsideLower.feeGrowthOutside0X128
       feeGrowthBelow1X128 = feeGrowthOutsideLower.feeGrowthOutside1X128
     } else {
-      feeGrowthBelow0X128 = subIn256(feeGrowthGlobal0X128, feeGrowthOutsideLower.feeGrowthOutside0X128)
-      feeGrowthBelow1X128 = subIn256(feeGrowthGlobal1X128, feeGrowthOutsideLower.feeGrowthOutside1X128)
+      feeGrowthBelow0X128 = subIn256(
+        feeGrowthGlobal0X128,
+        feeGrowthOutsideLower.feeGrowthOutside0X128,
+      )
+      feeGrowthBelow1X128 = subIn256(
+        feeGrowthGlobal1X128,
+        feeGrowthOutsideLower.feeGrowthOutside1X128,
+      )
     }
 
     let feeGrowthAbove0X128: bigint
@@ -46,13 +52,25 @@ export abstract class TickLibrary {
       feeGrowthAbove0X128 = feeGrowthOutsideUpper.feeGrowthOutside0X128
       feeGrowthAbove1X128 = feeGrowthOutsideUpper.feeGrowthOutside1X128
     } else {
-      feeGrowthAbove0X128 = subIn256(feeGrowthGlobal0X128, feeGrowthOutsideUpper.feeGrowthOutside0X128)
-      feeGrowthAbove1X128 = subIn256(feeGrowthGlobal1X128, feeGrowthOutsideUpper.feeGrowthOutside1X128)
+      feeGrowthAbove0X128 = subIn256(
+        feeGrowthGlobal0X128,
+        feeGrowthOutsideUpper.feeGrowthOutside0X128,
+      )
+      feeGrowthAbove1X128 = subIn256(
+        feeGrowthGlobal1X128,
+        feeGrowthOutsideUpper.feeGrowthOutside1X128,
+      )
     }
 
     return [
-      subIn256(subIn256(feeGrowthGlobal0X128, feeGrowthBelow0X128), feeGrowthAbove0X128),
-      subIn256(subIn256(feeGrowthGlobal1X128, feeGrowthBelow1X128), feeGrowthAbove1X128),
+      subIn256(
+        subIn256(feeGrowthGlobal0X128, feeGrowthBelow0X128),
+        feeGrowthAbove0X128,
+      ),
+      subIn256(
+        subIn256(feeGrowthGlobal1X128, feeGrowthBelow1X128),
+        feeGrowthAbove1X128,
+      ),
     ]
   }
 }

@@ -1,6 +1,6 @@
-import { getReservesAbi, tridentConstantPoolAbi } from '@sushiswap/abi'
+import { getReservesAbi, tridentConstantPoolAbi } from 'sushi/abi'
 import { computeSushiSwapV2PoolAddress } from '@sushiswap/amm'
-import { Token } from '@sushiswap/currency'
+import { Token } from 'sushi/currency'
 import { ConstantProductPoolCode, LiquidityProviders } from '@sushiswap/router'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { Address, decodeEventLog, Log, parseAbiItem, PublicClient } from 'viem'
@@ -51,9 +51,15 @@ interface PoolCacheRecord {
   factory: Address
 }
 
-type PoolState = PoolStateNotExist | PoolStateIgnorePool | PoolStateAddingPool | PoolStateValidPool
+type PoolState =
+  | PoolStateNotExist
+  | PoolStateIgnorePool
+  | PoolStateAddingPool
+  | PoolStateValidPool
 
-const UniV2EventsListenAbi = [parseAbiItem('event Sync(uint112 reserve0, uint112 reserve1)')]
+const UniV2EventsListenAbi = [
+  parseAbiItem('event Sync(uint112 reserve0, uint112 reserve1)'),
+]
 const UniV2FactoryAbi = [
   parseAbiItem('function allPairsLength() external view returns (uint)'),
   parseAbiItem('function allPairs(uint256) external view returns (address)'),
@@ -84,19 +90,27 @@ export class UniV2Extractor {
     logFilter: LogFilter2,
     logging = true,
     multiCallAggregator?: MultiCallAggregator,
-    tokenManager?: TokenManager
+    tokenManager?: TokenManager,
   ) {
-    this.multiCallAggregator = multiCallAggregator || new MultiCallAggregator(client)
+    this.multiCallAggregator =
+      multiCallAggregator || new MultiCallAggregator(client)
     this.factories = factories
     factories.forEach((f) => this.factoryMap.set(f.address.toLowerCase(), f))
     this.tokenManager =
       tokenManager ||
-      new TokenManager(this.multiCallAggregator, cacheDir, `uniV2Tokens-${this.multiCallAggregator.chainId}`)
+      new TokenManager(
+        this.multiCallAggregator,
+        cacheDir,
+        `uniV2Tokens-${this.multiCallAggregator.chainId}`,
+      )
     this.logging = logging
     this.taskCounter = new Counter(() => {
       // do nothing
     })
-    this.poolPermanentCache = new PermanentCache(cacheDir, `uniV2Pools-${this.multiCallAggregator.chainId}`)
+    this.poolPermanentCache = new PermanentCache(
+      cacheDir,
+      `uniV2Pools-${this.multiCallAggregator.chainId}`,
+    )
 
     this.logFilter = logFilter
     logFilter.addFilter(UniV2EventsListenAbi, (logs?: Log[]) => {
@@ -108,11 +122,16 @@ export class UniV2Extractor {
         logs.forEach((l) => {
           const {
             args: { reserve0, reserve1 },
-          } = decodeEventLog({ abi: UniV2EventsListenAbi, data: l.data, topics: l.topics })
+          } = decodeEventLog({
+            abi: UniV2EventsListenAbi,
+            data: l.data,
+            topics: l.topics,
+          })
           const poolState = this.poolMap.get(l.address.toLowerCase())
           if (!poolState || poolState.status === PoolStatus.NoPool) {
             ++eventUnknown
-            if (reserve0 !== undefined && reserve1 !== undefined) this.addPoolByLog(l.address, reserve0, reserve1)
+            if (reserve0 !== undefined && reserve1 !== undefined)
+              this.addPoolByLog(l.address, reserve0, reserve1)
             return
           }
           if (poolState.status === PoolStatus.IgnorePool) {
@@ -135,7 +154,10 @@ export class UniV2Extractor {
           }
           ++eventKnown
         })
-        const blockNumber = logs.length > 0 ? Number(logs[logs.length - 1].blockNumber || 0) : '<undefined>'
+        const blockNumber =
+          logs.length > 0
+            ? Number(logs[logs.length - 1].blockNumber || 0)
+            : '<undefined>'
         const eventInfo = [
           eventKnown > 0 ? `${eventKnown} known` : '',
           eventIgnore > 0 ? `${eventIgnore} ignore` : '',
@@ -145,11 +167,18 @@ export class UniV2Extractor {
           .filter((e) => e !== '')
           .join(', ')
 
-        this.consoleLog(`Block ${blockNumber} ${logs.length} logs (${eventInfo}), jobs: ${this.taskCounter.counter}`)
+        this.consoleLog(
+          `Block ${blockNumber} ${logs.length} logs (${eventInfo}), jobs: ${this.taskCounter.counter}`,
+        )
       } else {
         this.logFilter.start()
-        warnLog(this.multiCallAggregator.chainId, 'Log collecting failed. Pools refetching')
-        Array.from(this.poolMap.values()).forEach((pc) => this.updatePoolState(pc))
+        warnLog(
+          this.multiCallAggregator.chainId,
+          'Log collecting failed. Pools refetching',
+        )
+        Array.from(this.poolMap.values()).forEach((pc) =>
+          this.updatePoolState(pc),
+        )
       }
     })
   }
@@ -157,7 +186,8 @@ export class UniV2Extractor {
   async start() {
     const startTime = performance.now()
     this.logFilter.start()
-    if (this.tokenManager.tokens.size === 0) await this.tokenManager.addCachedTokens()
+    if (this.tokenManager.tokens.size === 0)
+      await this.tokenManager.addCachedTokens()
 
     // Add cached pools to watching
     const cachedPools: Set<string> = new Set()
@@ -172,7 +202,11 @@ export class UniV2Extractor {
         const startTime = performance.now()
         this.taskCounter.inc()
         try {
-          const reserves = await this.multiCallAggregator.callValue(r.address, getReservesAbi, 'getReserves')
+          const reserves = await this.multiCallAggregator.callValue(
+            r.address,
+            getReservesAbi,
+            'getReserves',
+          )
           const [reserve0, reserve1] = reserves as [bigint, bigint]
           this.addPoolWatching({
             address: r.address,
@@ -187,7 +221,10 @@ export class UniV2Extractor {
           })
         } catch (e) {
           this.taskCounter.dec()
-          warnLog(this.multiCallAggregator.chainId, `Ext2 pool ${r.address} reading from cache failed`)
+          warnLog(
+            this.multiCallAggregator.chainId,
+            `Ext2 pool ${r.address} reading from cache failed`,
+          )
           return
         }
         this.taskCounter.dec()
@@ -198,8 +235,10 @@ export class UniV2Extractor {
 
     warnLog(
       this.multiCallAggregator.chainId,
-      `ExtractorV2 was started (${Math.round(performance.now() - startTime)}ms)`,
-      'info'
+      `ExtractorV2 was started (${Math.round(
+        performance.now() - startTime,
+      )}ms)`,
+      'info',
     )
   }
 
@@ -212,7 +251,7 @@ export class UniV2Extractor {
       const reserves = await this.multiCallAggregator.callValue(
         pool.address as Address,
         tridentConstantPoolAbi,
-        'getReserves'
+        'getReserves',
       )
       if (poolState.status !== PoolStatus.UpdatingPool) {
         // during await pool state was updated - don't touch it
@@ -223,7 +262,10 @@ export class UniV2Extractor {
       pool.updateReserves(reserve0, reserve1)
       poolState.status = PoolStatus.ValidPool
     } catch (e) {
-      warnLog(this.multiCallAggregator.chainId, `Ext2 pool ${poolState.poolCode.pool.address} update fail`)
+      warnLog(
+        this.multiCallAggregator.chainId,
+        `Ext2 pool ${poolState.poolCode.pool.address} update fail`,
+      )
     }
     this.taskCounter.dec()
   }
@@ -244,37 +286,45 @@ export class UniV2Extractor {
           const addrL = addr.toLowerCase()
           const poolState = this.poolMap.get(addrL)
           if (poolState) {
-            if (poolState.status === PoolStatus.ValidPool || poolState.status === PoolStatus.UpdatingPool)
+            if (
+              poolState.status === PoolStatus.ValidPool ||
+              poolState.status === PoolStatus.UpdatingPool
+            )
               prefetched.push(poolState.poolCode)
             return
           }
           const startTime = performance.now()
-          const promise = this.multiCallAggregator.callValue(addr, getReservesAbi, 'getReserves').then(
-            (reserves) => {
-              const poolState2 = this.poolMap.get(addrL)
-              if (poolState2) {
-                // pool was created
-                if (poolState2.status === PoolStatus.ValidPool || poolState2.status === PoolStatus.UpdatingPool)
-                  return poolState2.poolCode
-              }
-              const [reserve0, reserve1] = reserves as [bigint, bigint]
-              return this.addPoolWatching({
-                address: addr,
-                token0: t0,
-                token1: t1,
-                reserve0,
-                reserve1,
-                factory,
-                source: 'request',
-                addToCache: true,
-                startTime,
-              })
-            },
-            () => {
-              this.poolMap.set(addrL, { status: PoolStatus.NoPool })
-              return undefined
-            }
-          )
+          const promise = this.multiCallAggregator
+            .callValue(addr, getReservesAbi, 'getReserves')
+            .then(
+              (reserves) => {
+                const poolState2 = this.poolMap.get(addrL)
+                if (poolState2) {
+                  // pool was created
+                  if (
+                    poolState2.status === PoolStatus.ValidPool ||
+                    poolState2.status === PoolStatus.UpdatingPool
+                  )
+                    return poolState2.poolCode
+                }
+                const [reserve0, reserve1] = reserves as [bigint, bigint]
+                return this.addPoolWatching({
+                  address: addr,
+                  token0: t0,
+                  token1: t1,
+                  reserve0,
+                  reserve1,
+                  factory,
+                  source: 'request',
+                  addToCache: true,
+                  startTime,
+                })
+              },
+              () => {
+                this.poolMap.set(addrL, { status: PoolStatus.NoPool })
+                return undefined
+              },
+            )
           fetching.push(promise)
         })
       }
@@ -285,29 +335,49 @@ export class UniV2Extractor {
     }
   }
 
-  async addPoolsFromFactory(factoryAddr: Address, step = 1000, from = 0, quantity = -1) {
+  async addPoolsFromFactory(
+    factoryAddr: Address,
+    step = 1000,
+    from = 0,
+    quantity = -1,
+  ) {
     const factory = this.factoryMap.get(factoryAddr.toLowerCase() as Address)
     if (!factory) return
     let to
     if (quantity < 0) {
       to = Number(
-        (await this.multiCallAggregator.callValue(factory.address, UniV2FactoryAbi, 'allPairsLength')) as bigint
+        (await this.multiCallAggregator.callValue(
+          factory.address,
+          UniV2FactoryAbi,
+          'allPairsLength',
+        )) as bigint,
       )
     } else to = from + quantity
     for (let i = from; i < to; ) {
       const poolNum = Math.min(step, to - i)
-      const promises = new Array<Promise<ConstantProductPoolCode | undefined>>(poolNum)
+      const promises = new Array<Promise<ConstantProductPoolCode | undefined>>(
+        poolNum,
+      )
       for (let j = 0; j < poolNum; ++j)
         promises[j] = (async () => {
           try {
-            const addr = await this.multiCallAggregator.callValue(factory.address, UniV2FactoryAbi, 'allPairs', [i++])
+            const addr = await this.multiCallAggregator.callValue(
+              factory.address,
+              UniV2FactoryAbi,
+              'allPairs',
+              [i++],
+            )
             const poolState = this.poolMap.get((addr as Address).toLowerCase())
             if (poolState)
-              if (poolState.status !== PoolStatus.NoPool && poolState.status === PoolStatus.IgnorePool) return
+              if (
+                poolState.status !== PoolStatus.NoPool &&
+                poolState.status === PoolStatus.IgnorePool
+              )
+                return
             const reserves = await this.multiCallAggregator.callValue(
               addr as Address,
               tridentConstantPoolAbi,
-              'getReserves'
+              'getReserves',
             )
             const [res0, res1] = reserves as [bigint, bigint]
             return await this.addPoolByLog(addr as Address, res0, res1, factory)
@@ -316,7 +386,9 @@ export class UniV2Extractor {
           }
         })()
       await Promise.all(promises)
-      this.consoleLog(`Factory ${factoryAddr} pools ${i - poolNum}-${i} were downloaded`)
+      this.consoleLog(
+        `Factory ${factoryAddr} pools ${i - poolNum}-${i} were downloaded`,
+      )
     }
   }
 
@@ -324,7 +396,7 @@ export class UniV2Extractor {
     addr: Address,
     reserve0: bigint,
     reserve1: bigint,
-    trustedFactory?: FactoryV2
+    trustedFactory?: FactoryV2,
   ): Promise<ConstantProductPoolCode | undefined> {
     const addrL = addr.toLowerCase()
     const poolState = this.poolMap.get(addrL)
@@ -335,7 +407,11 @@ export class UniV2Extractor {
       }
       return
     }
-    this.poolMap.set(addrL, { status: PoolStatus.AddingPool, reserve0, reserve1 })
+    this.poolMap.set(addrL, {
+      status: PoolStatus.AddingPool,
+      reserve0,
+      reserve1,
+    })
     let factory
     let token0
     let token1
@@ -345,11 +421,21 @@ export class UniV2Extractor {
       if (trustedFactory) factory = trustedFactory
       else {
         const factoryAddr = await repeat(2, () =>
-          this.multiCallAggregator.callValue(addr, tridentConstantPoolAbi, 'factory')
+          this.multiCallAggregator.callValue(
+            addr,
+            tridentConstantPoolAbi,
+            'factory',
+          ),
         )
 
-        this.multiCallAggregator.callValue(addr, tridentConstantPoolAbi, 'factory')
-        factory = this.factoryMap.get((factoryAddr as string).toLowerCase() as Address)
+        this.multiCallAggregator.callValue(
+          addr,
+          tridentConstantPoolAbi,
+          'factory',
+        )
+        factory = this.factoryMap.get(
+          (factoryAddr as string).toLowerCase() as Address,
+        )
         if (!factory) {
           this.poolMap.set(addrL, { status: PoolStatus.IgnorePool })
           this.consoleLog(`other factory pool ${addr}`)
@@ -359,8 +445,16 @@ export class UniV2Extractor {
       }
       const [token0Addr, token1Addr] = await repeat(2, () => {
         return Promise.all([
-          this.multiCallAggregator.callValue(addr, tridentConstantPoolAbi, 'token0'),
-          this.multiCallAggregator.callValue(addr, tridentConstantPoolAbi, 'token1'),
+          this.multiCallAggregator.callValue(
+            addr,
+            tridentConstantPoolAbi,
+            'token0',
+          ),
+          this.multiCallAggregator.callValue(
+            addr,
+            tridentConstantPoolAbi,
+            'token1',
+          ),
         ])
       })
       const tokens = await Promise.all([
@@ -371,7 +465,10 @@ export class UniV2Extractor {
       token1 = tokens[1]
     } catch (e) {
       this.taskCounter.dec()
-      warnLog(this.multiCallAggregator.chainId, `Ext2 add pool ${addr} by log failed: ${e}`)
+      warnLog(
+        this.multiCallAggregator.chainId,
+        `Ext2 add pool ${addr} by log failed: ${e}`,
+      )
       return
     }
     this.taskCounter.dec()
@@ -384,7 +481,11 @@ export class UniV2Extractor {
       return
     }
     if (!trustedFactory) {
-      const expectedPoolAddress = this.computeV2Address(factory as FactoryV2, token0, token1)
+      const expectedPoolAddress = this.computeV2Address(
+        factory as FactoryV2,
+        token0,
+        token1,
+      )
       if (expectedPoolAddress.toLowerCase() !== addrL) {
         this.poolMap.set(addrL, { status: PoolStatus.IgnorePool })
         this.consoleLog(`fake pool ${addr}`)
@@ -417,20 +518,27 @@ export class UniV2Extractor {
     addToCache: boolean
     startTime?: number
   }) {
-    const [t0, t1] = args.token0.sortsBefore(args.token1) ? [args.token0, args.token1] : [args.token1, args.token0]
+    const [t0, t1] = args.token0.sortsBefore(args.token1)
+      ? [args.token0, args.token1]
+      : [args.token1, args.token0]
 
-    const startTime = args.startTime === undefined ? performance.now() : args.startTime
+    const startTime =
+      args.startTime === undefined ? performance.now() : args.startTime
     const pool = new ConstantProductRPool(
       args.address,
       t0 as RToken,
       t1 as RToken,
       args.factory.fee,
       args.reserve0,
-      args.reserve1
+      args.reserve1,
     )
     const poolState: PoolState = {
       status: PoolStatus.ValidPool,
-      poolCode: new ConstantProductPoolCode(pool, args.factory.provider, args.factory.provider),
+      poolCode: new ConstantProductPoolCode(
+        pool,
+        args.factory.provider,
+        args.factory.provider,
+      ),
     }
     this.poolMap.set(args.address.toLowerCase(), poolState)
     if (args.addToCache)
@@ -444,14 +552,16 @@ export class UniV2Extractor {
     ++this.watchedPools
     if (args.source !== 'cache')
       this.consoleLog(
-        `add pool ${args.address} (${delay}ms, ${args.source}), watched pools total: ${this.watchedPools}`
+        `add pool ${args.address} (${delay}ms, ${args.source}), watched pools total: ${this.watchedPools}`,
       )
     return poolState.poolCode
   }
 
   getCurrentPoolCodes(): ConstantProductPoolCode[] {
     const pools = Array.from(this.poolMap.values()).filter(
-      (p) => p.status === PoolStatus.ValidPool || p.status === PoolStatus.UpdatingPool
+      (p) =>
+        p.status === PoolStatus.ValidPool ||
+        p.status === PoolStatus.UpdatingPool,
     ) as PoolStateValidPool[]
     return pools.map((p) => p.poolCode)
   }
@@ -462,7 +572,10 @@ export class UniV2Extractor {
       tokenMap.set(token as Token, num + 1)
     }
     Array.from(this.poolMap.values()).forEach((p) => {
-      if (p.status === PoolStatus.ValidPool || p.status === PoolStatus.UpdatingPool) {
+      if (
+        p.status === PoolStatus.ValidPool ||
+        p.status === PoolStatus.UpdatingPool
+      ) {
         add(p.poolCode.pool.token0)
         add(p.poolCode.pool.token1)
       }
@@ -485,6 +598,7 @@ export class UniV2Extractor {
   }
 
   consoleLog(log: string) {
-    if (this.logging) console.log(`V2-${this.multiCallAggregator.chainId}: ${log}`)
+    if (this.logging)
+      console.log(`V2-${this.multiCallAggregator.chainId}: ${log}`)
   }
 }

@@ -90,7 +90,8 @@ export const getConcentratedLiquidityPositionsFromTokenIds = async ({
 }): Promise<ConcentratedLiquidityPosition[]> => {
   const results = await readContracts({
     contracts: tokenIds.map((el) => ({
-      address: getV3NonFungiblePositionManagerConractConfig(el.chainId).address as Address,
+      address: getV3NonFungiblePositionManagerConractConfig(el.chainId)
+        .address as Address,
       abi: abiShard,
       chainId: el.chainId,
       functionName: 'positions',

@@ -1,4 +1,4 @@
-import { abs } from '@sushiswap/math'
+import { abs } from 'sushi'
 import { Address } from 'viem'
 
 import { computeHybridLiquidity } from './functions'
@@ -40,7 +40,7 @@ export abstract class RPool {
     reserve0: bigint,
     reserve1: bigint,
     minLiquidity = TYPICAL_MINIMAL_LIQUIDITY,
-    swapGasCost = TYPICAL_SWAP_GAS_COST
+    swapGasCost = TYPICAL_SWAP_GAS_COST,
   ) {
     this.address = address || ''
     this.token0 = token0
@@ -69,8 +69,14 @@ export abstract class RPool {
 
   // Returns [<output amount>, <gas consumption estimation>]
   // Should throw if the rest of liquidity is lesser than minLiquidity
-  abstract calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number }
-  abstract calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number }
+  abstract calcOutByIn(
+    amountIn: number,
+    direction: boolean,
+  ): { out: number; gasSpent: number }
+  abstract calcInByOut(
+    amountOut: number,
+    direction: boolean,
+  ): { inp: number; gasSpent: number }
   abstract calcCurrentPriceWithoutFee(direction: boolean): number
 
   // Should return real output, as close to the pool as possible. With rounding. No exceptions
@@ -95,7 +101,14 @@ export class ConstantProductRPool extends RPool {
   reserve0Number: number
   reserve1Number: number
 
-  constructor(address: Address, token0: RToken, token1: RToken, fee: number, reserve0: bigint, reserve1: bigint) {
+  constructor(
+    address: Address,
+    token0: RToken,
+    token1: RToken,
+    fee: number,
+    reserve0: bigint,
+    reserve1: bigint,
+  ) {
     super(address, token0, token1, fee, reserve0, reserve1)
     this.reserve0Number = Number(reserve0 || '0')
     this.reserve1Number = Number(reserve1 || '0')
@@ -108,7 +121,10 @@ export class ConstantProductRPool extends RPool {
     this.reserve1Number = Number(res1)
   }
 
-  calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
+  calcOutByIn(
+    amountIn: number,
+    direction: boolean,
+  ): { out: number; gasSpent: number } {
     const x = direction ? this.reserve0Number : this.reserve1Number
     const y = direction ? this.reserve1Number : this.reserve0Number
     const out = (y * amountIn) / (x / (1 - this.fee) + amountIn)
@@ -124,7 +140,10 @@ export class ConstantProductRPool extends RPool {
     return Math.floor(out) // rounding of output
   }
 
-  calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
+  calcInByOut(
+    amountOut: number,
+    direction: boolean,
+  ): { inp: number; gasSpent: number } {
     const x = direction ? this.reserve0Number : this.reserve1Number
     const y = direction ? this.reserve1Number : this.reserve0Number
     if (y - amountOut < this.minLiquidity)
@@ -139,7 +158,11 @@ export class ConstantProductRPool extends RPool {
     return this.calcPrice(0, direction, false)
   }
 
-  calcPrice(amountIn: number, direction: boolean, takeFeeIntoAccount: boolean): number {
+  calcPrice(
+    amountIn: number,
+    direction: boolean,
+    takeFeeIntoAccount: boolean,
+  ): number {
     const x = direction ? this.reserve0Number : this.reserve1Number
     const y = direction ? this.reserve1Number : this.reserve0Number
     const oneMinusFee = takeFeeIntoAccount ? 1 - this.fee : 1
@@ -147,7 +170,11 @@ export class ConstantProductRPool extends RPool {
     return (y * xf) / (xf + amountIn) / (xf + amountIn)
   }
 
-  calcInputByPrice(price: number, direction: boolean, takeFeeIntoAccount: boolean): number {
+  calcInputByPrice(
+    price: number,
+    direction: boolean,
+    takeFeeIntoAccount: boolean,
+  ): number {
     const x = direction ? this.reserve0Number : this.reserve1Number
     const y = direction ? this.reserve1Number : this.reserve0Number
     const oneMinusFee = takeFeeIntoAccount ? 1 - this.fee : 1
@@ -172,7 +199,7 @@ export class HybridRPool extends RPool {
     fee: number,
     A: number,
     reserve0: bigint,
-    reserve1: bigint
+    reserve1: bigint,
   ) {
     super(address, token0, token1, fee, reserve0, reserve1)
     this.A = A
@@ -221,7 +248,8 @@ export class HybridRPool extends RPool {
 
     const nA = BigInt(this.A * 2)
 
-    const c = (((D * D) / (x * 2n)) * D) / ((nA * 2n) / BigInt(this.A_PRECISION))
+    const c =
+      (((D * D) / (x * 2n)) * D) / ((nA * 2n) / BigInt(this.A_PRECISION))
     const b = (D * BigInt(this.A_PRECISION)) / nA + x
 
     let yPrev
@@ -237,17 +265,24 @@ export class HybridRPool extends RPool {
     return y
   }
 
-  calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
+  calcOutByIn(
+    amountIn: number,
+    direction: boolean,
+  ): { out: number; gasSpent: number } {
     const xBI = direction ? this.reserve0 : this.reserve1
     const yBI = direction ? this.reserve1 : this.reserve0
     const xNewBI = xBI + getBigInt(amountIn * (1 - this.fee))
     const yNewBI = this.computeY(xNewBI)
     const dy = parseInt((yBI - yNewBI).toString())
-    if (parseInt(yNewBI.toString()) < this.minLiquidity) throw 'Hybrid OutOfLiquidity'
+    if (parseInt(yNewBI.toString()) < this.minLiquidity)
+      throw 'Hybrid OutOfLiquidity'
     return { out: dy, gasSpent: this.swapGasCost }
   }
 
-  calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
+  calcInByOut(
+    amountOut: number,
+    direction: boolean,
+  ): { inp: number; gasSpent: number } {
     const xBI = direction ? this.reserve0 : this.reserve1
     const yBI = direction ? this.reserve1 : this.reserve0
     let yNewBI = yBI - getBigInt(amountOut)
@@ -256,7 +291,9 @@ export class HybridRPool extends RPool {
       yNewBI = 1n
 
     const xNewBI = this.computeY(yNewBI)
-    const input = Math.round(parseInt((xNewBI - xBI).toString()) / (1 - this.fee))
+    const input = Math.round(
+      parseInt((xNewBI - xBI).toString()) / (1 - this.fee),
+    )
 
     //if (input < 1) input = 1
     return { inp: input, gasSpent: this.swapGasCost }
@@ -266,7 +303,11 @@ export class HybridRPool extends RPool {
     return this.calcPrice(0, direction, false)
   }
 
-  calcPrice(amountIn: number, direction: boolean, takeFeeIntoAccount: boolean): number {
+  calcPrice(
+    amountIn: number,
+    direction: boolean,
+    takeFeeIntoAccount: boolean,
+  ): number {
     const xBI = direction ? this.reserve0 : this.reserve1
     const x = parseInt(xBI.toString())
     const oneMinusFee = takeFeeIntoAccount ? 1 - this.fee : 1
@@ -280,8 +321,17 @@ export class HybridRPool extends RPool {
     return res
   }
 
-  calcInputByPrice(price: number, direction: boolean, takeFeeIntoAccount: boolean, hint = 1): number {
+  calcInputByPrice(
+    price: number,
+    direction: boolean,
+    takeFeeIntoAccount: boolean,
+    hint = 1,
+  ): number {
     // TODO:  (x:number) => this.calcPrice(x, !direction, takeFeeIntoAccount)  ???
-    return revertPositive((x: number) => 1 / this.calcPrice(x, direction, takeFeeIntoAccount), price, hint)
+    return revertPositive(
+      (x: number) => 1 / this.calcPrice(x, direction, takeFeeIntoAccount),
+      price,
+      hint,
+    )
   }
 }

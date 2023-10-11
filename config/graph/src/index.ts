@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 
 export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.OPTIMISM,
@@ -11,7 +11,7 @@ export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.BSC,
 ] as const
 
-export type TridentChainId = (typeof TRIDENT_ENABLED_NETWORKS)[number]
+export type TridentChainId = typeof TRIDENT_ENABLED_NETWORKS[number]
 
 export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.ARBITRUM,
@@ -36,7 +36,7 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
   // ChainId.OKEX
 ] as const
 
-export type SushiSwapChainId = (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
+export type SushiSwapChainId = typeof SUSHISWAP_ENABLED_NETWORKS[number]
 
 export const SUSHISWAP_V3_ENABLED_NETWORKS = [
   ChainId.ETHEREUM,
@@ -57,10 +57,14 @@ export const SUSHISWAP_V3_ENABLED_NETWORKS = [
   ChainId.BASE,
   ChainId.LINEA,
 ]
-export type SushiSwapV3ChainId = (typeof SUSHISWAP_V3_ENABLED_NETWORKS)[number]
+export type SushiSwapV3ChainId = typeof SUSHISWAP_V3_ENABLED_NETWORKS[number]
 
 export const SWAP_ENABLED_NETWORKS = Array.from(
-  new Set([...SUSHISWAP_ENABLED_NETWORKS, ...SUSHISWAP_V3_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS])
+  new Set([
+    ...SUSHISWAP_ENABLED_NETWORKS,
+    ...SUSHISWAP_V3_ENABLED_NETWORKS,
+    ...TRIDENT_ENABLED_NETWORKS,
+  ]),
 )
 
 export type SwapSupportedChainIds = typeof SWAP_ENABLED_NETWORKS
@@ -164,7 +168,9 @@ export const BENTOBOX_SUBGRAPH_NAME = {
   [ChainId.BTTC]: 'sushiswap/bentobox-bttc',
 } as const
 
-export const BENTOBOX_ENABLED_NETWORKS = Object.keys(BENTOBOX_SUBGRAPH_NAME).map(Number) as BentoBoxChainId[]
+export const BENTOBOX_ENABLED_NETWORKS = Object.keys(
+  BENTOBOX_SUBGRAPH_NAME,
+).map(Number) as BentoBoxChainId[]
 
 export type BentoBoxChainId = keyof typeof BENTOBOX_SUBGRAPH_NAME
 
@@ -298,7 +304,10 @@ export const TRIDENT_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.AVALANCHE]: 'sushi-v2/trident-avalanche',
 } as const
 
-export const TRIDENT_SUBGRAPH_START_BLOCK: Record<keyof typeof TRIDENT_SUBGRAPH_NAME, number> = {
+export const TRIDENT_SUBGRAPH_START_BLOCK: Record<
+  keyof typeof TRIDENT_SUBGRAPH_NAME,
+  number
+> = {
   [ChainId.POLYGON]: 34188953,
   [ChainId.OPTIMISM]: 7464195,
   [ChainId.KAVA]: 162097,
@@ -329,7 +338,8 @@ export const MINICHEF_SUBGRAPH_NAME = {
   [ChainId.BSC]: 'sushiswap/minichef-bsc',
 } as const
 
-export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging' as const
+export const MASTERCHEF_V1_SUBGRAPH_NAME =
+  'jiro-ono/masterchef-staging' as const
 export const MASTERCHEF_V2_SUBGRAPH_NAME = 'sushiswap/master-chefv2' as const
 
 export const FURO_ENABLED_NETWORKS = [
@@ -379,7 +389,7 @@ export const STEER_ENABLED_NETWORKS = [
   ChainId.CELO,
 ] as const
 
-export type SteerChainId = (typeof STEER_ENABLED_NETWORKS)[number]
+export type SteerChainId = typeof STEER_ENABLED_NETWORKS[number]
 
 export const STEER_SUBGRAPGH_NAME: Record<SteerChainId, string> = {
   [ChainId.POLYGON]: 'steerprotocol/steer-protocol-polygon',
@@ -394,3 +404,16 @@ export const STEER_SUBGRAPGH_NAME: Record<SteerChainId, string> = {
 
 export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM
 export const DEFAULT_CHAIN_NAME = CHAIN_NAME[DEFAULT_CHAIN_ID]
+
+export const isTridentChain = (chainId: ChainId): chainId is TridentChainId =>
+  Object.keys(TRIDENT_SUBGRAPH_NAME).map(Number).includes(chainId)
+
+export const isSushiSwapChain = (
+  chainId: ChainId,
+): chainId is SushiSwapChainId =>
+  Object.keys(SUSHISWAP_SUBGRAPH_NAME).map(Number).includes(chainId)
+
+export const isSushiSwapV3Chain = (
+  chainId: ChainId,
+): chainId is SushiSwapV3ChainId =>
+  Object.keys(SUSHISWAP_V3_SUBGRAPH_NAME).map(Number).includes(chainId)

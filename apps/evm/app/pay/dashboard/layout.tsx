@@ -1,3 +1,5 @@
-export default function SushiPayDashboardLayout({ children }: { children: React.ReactNode }) {
+export default function SushiPayDashboardLayout({
+  children,
+}: { children: React.ReactNode }) {
   return <>{children}</>
 }

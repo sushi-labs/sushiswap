@@ -1,10 +1,15 @@
 'use client'
 
-import { Token } from '@sushiswap/currency'
+import { Token } from 'sushi/currency'
 import { createToast } from '@sushiswap/ui/components/toast'
 import { SendTransactionResult, waitForTransaction } from '@wagmi/core'
 import { useCallback, useMemo, useState } from 'react'
-import { Address, erc20ABI, useContractWrite, usePrepareContractWrite } from 'wagmi'
+import {
+  Address,
+  erc20ABI,
+  useContractWrite,
+  usePrepareContractWrite,
+} from 'wagmi'
 
 interface UseTokenRevokeApproval {
   account: Address | undefined
@@ -12,7 +17,11 @@ interface UseTokenRevokeApproval {
   token: Token | undefined
 }
 
-export const useTokenRevokeApproval = ({ account, spender, token }: UseTokenRevokeApproval) => {
+export const useTokenRevokeApproval = ({
+  account,
+  spender,
+  token,
+}: UseTokenRevokeApproval) => {
   const [isPending, setIsPending] = useState(false)
   const { config } = usePrepareContractWrite({
     address: token?.wrapped.address as Address,
@@ -47,7 +56,7 @@ export const useTokenRevokeApproval = ({ account, spender, token }: UseTokenRevo
         })
       }
     },
-    [account, token]
+    [account, token],
   )
 
   const write = useContractWrite({

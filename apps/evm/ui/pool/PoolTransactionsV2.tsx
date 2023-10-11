@@ -1,15 +1,21 @@
 'use client'
 
-import { Chain, ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { SUBGRAPH_HOST, SUSHISWAP_SUBGRAPH_NAME } from '@sushiswap/graph-config'
-import { Card, CardContent, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  DataTable,
+} from '@sushiswap/ui'
 import { Toggle } from '@sushiswap/ui/components/toggle'
-import { isSushiSwapV2ChainId, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
+import { SushiSwapV2ChainId, isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { useQuery } from '@tanstack/react-query'
 import { PaginationState } from '@tanstack/react-table'
 import React, { FC, useMemo, useState } from 'react'
+import { Chain, ChainId } from 'sushi/chain'
 
 import {
   TX_AMOUNT_IN_V2_COLUMN,
@@ -32,7 +38,11 @@ interface UseTransactionsV2Opts {
   skip?: number
 }
 
-const fetchAll = async (poolId: string, chainId: SushiSwapV2ChainId, opts: UseTransactionsV2Opts) => {
+const fetchAll = async (
+  poolId: string,
+  chainId: SushiSwapV2ChainId,
+  opts: UseTransactionsV2Opts,
+) => {
   const sdk = getBuiltGraphSDK({
     subgraphHost: SUBGRAPH_HOST[chainId],
     subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
@@ -68,7 +78,11 @@ const fetchAll = async (poolId: string, chainId: SushiSwapV2ChainId, opts: UseTr
   return transactions
 }
 
-const fetchMints = async (poolId: string, chainId: SushiSwapV2ChainId, opts: UseTransactionsV2Opts) => {
+const fetchMints = async (
+  poolId: string,
+  chainId: SushiSwapV2ChainId,
+  opts: UseTransactionsV2Opts,
+) => {
   const sdk = getBuiltGraphSDK({
     subgraphHost: SUBGRAPH_HOST[chainId],
     subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
@@ -88,7 +102,11 @@ const fetchMints = async (poolId: string, chainId: SushiSwapV2ChainId, opts: Use
   }))
 }
 
-const fetchBurns = async (poolId: string, chainId: SushiSwapV2ChainId, opts: UseTransactionsV2Opts) => {
+const fetchBurns = async (
+  poolId: string,
+  chainId: SushiSwapV2ChainId,
+  opts: UseTransactionsV2Opts,
+) => {
   const sdk = getBuiltGraphSDK({
     subgraphHost: SUBGRAPH_HOST[chainId],
     subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
@@ -113,7 +131,11 @@ const fetchBurns = async (poolId: string, chainId: SushiSwapV2ChainId, opts: Use
   }))
 }
 
-const fetchSwaps = async (poolId: string, chainId: SushiSwapV2ChainId, opts: UseTransactionsV2Opts) => {
+const fetchSwaps = async (
+  poolId: string,
+  chainId: SushiSwapV2ChainId,
+  opts: UseTransactionsV2Opts,
+) => {
   const sdk = getBuiltGraphSDK({
     subgraphHost: SUBGRAPH_HOST[chainId],
     subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
@@ -135,7 +157,11 @@ const fetchSwaps = async (poolId: string, chainId: SushiSwapV2ChainId, opts: Use
 
 // Will only support the last 1k txs
 // The fact that there are different subtransactions aggregated under one transaction makes paging a bit difficult
-function useTransactionsV2(pool: Pool | undefined | null, poolId: string, opts: UseTransactionsV2Opts) {
+function useTransactionsV2(
+  pool: Pool | undefined | null,
+  poolId: string,
+  opts: UseTransactionsV2Opts,
+) {
   return useQuery({
     queryKey: ['poolTransactionsV2', poolId, pool?.chainId, opts],
     queryFn: async () => {
@@ -165,7 +191,9 @@ function useTransactionsV2(pool: Pool | undefined | null, poolId: string, opts: 
       if (!transactions.length) return []
 
       return transactions.flatMap((transaction) => {
-        const mints = (transaction.mints as NonNullable<(typeof transaction.mints)[0]>[]).map((mint) => ({
+        const mints = (
+          transaction.mints as NonNullable<typeof transaction.mints[0]>[]
+        ).map((mint) => ({
           ...mint,
           sender: String(mint.sender),
           amount0: Number(mint.amount0),
@@ -173,7 +201,9 @@ function useTransactionsV2(pool: Pool | undefined | null, poolId: string, opts: 
           type: TransactionType.Mint as const,
         }))
 
-        const burns = (transaction.burns as NonNullable<(typeof transaction.burns)[0]>[]).map((burn) => ({
+        const burns = (
+          transaction.burns as NonNullable<typeof transaction.burns[0]>[]
+        ).map((burn) => ({
           ...burn,
           sender: String(burn.sender),
           amount0: Number(burn.amount0),
@@ -181,7 +211,9 @@ function useTransactionsV2(pool: Pool | undefined | null, poolId: string, opts: 
           type: TransactionType.Burn as const,
         }))
 
-        const swaps = (transaction.swaps as NonNullable<(typeof transaction.swaps)[0]>[]).map((swap) => ({
+        const swaps = (
+          transaction.swaps as NonNullable<typeof transaction.swaps[0]>[]
+        ).map((swap) => ({
           ...swap,
           sender: String(swap.sender),
           to: String(swap.to),
@@ -216,7 +248,9 @@ interface PoolTransactionsV2Props {
 }
 
 const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool, poolId }) => {
-  const [type, setType] = useState<Parameters<typeof useTransactionsV2>['2']['type']>(TransactionType.Swap)
+  const [type, setType] = useState<
+    Parameters<typeof useTransactionsV2>['2']['type']
+  >(TransactionType.Swap)
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -236,10 +270,11 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool, poolId }) => {
     () =>
       ({
         refetchInterval: 60_000,
-        first: paginationState.pageSize === 0 ? paginationState.pageIndex + 1 : 100,
+        first:
+          paginationState.pageSize === 0 ? paginationState.pageIndex + 1 : 100,
         type,
-      } as const),
-    [paginationState.pageIndex, paginationState.pageSize, type]
+      }) as const,
+    [paginationState.pageIndex, paginationState.pageSize, type],
   )
 
   const { data, isLoading } = useTransactionsV2(pool, poolId, opts)
@@ -285,7 +320,9 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool, poolId }) => {
       </CardHeader>
       <CardContent className="!px-0">
         <DataTable
-          linkFormatter={(row) => Chain.from(row.pool.chainId).getTxUrl(row.txHash)}
+          linkFormatter={(row) =>
+            Chain.from(row.pool.chainId)?.getTxUrl(row.txHash) ?? ''
+          }
           loading={isLoading}
           columns={COLUMNS}
           data={_data}

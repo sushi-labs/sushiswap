@@ -1,5 +1,9 @@
-import { Amount } from '@sushiswap/currency'
-import { computePoolAddress, SushiSwapV3ChainId, SushiSwapV3Pool } from '@sushiswap/v3-sdk'
+import { Amount } from 'sushi/currency'
+import {
+  computePoolAddress,
+  SushiSwapV3ChainId,
+  SushiSwapV3Pool,
+} from '@sushiswap/v3-sdk'
 import { Address } from 'wagmi'
 
 import { fetchBalance } from '../../../..'
@@ -34,5 +38,8 @@ export const getConcentratedLiquidityPoolReserves = async ({
     }),
   ])
 
-  return [Amount.fromRawAmount(pool.token0, balance1.value), Amount.fromRawAmount(pool.token1, balance2.value)]
+  return [
+    Amount.fromRawAmount(pool.token0, balance1.value),
+    Amount.fromRawAmount(pool.token1, balance2.value),
+  ]
 }

@@ -1,4 +1,4 @@
-import { Token } from '@sushiswap/currency'
+import { Token } from 'sushi/currency'
 import { PrismaClient } from '@sushiswap/database'
 import { Address } from 'viem'
 
@@ -38,10 +38,21 @@ export async function getAllPools(
   chainId: number,
   protocol: string,
   version: string,
-  poolTypes: ('CONSTANT_PRODUCT_POOL' | 'CONCENTRATED_LIQUIDITY_POOL' | 'STABLE_POOL')[]
+  poolTypes: (
+    | 'CONSTANT_PRODUCT_POOL'
+    | 'CONCENTRATED_LIQUIDITY_POOL'
+    | 'STABLE_POOL'
+  )[],
 ) {
-  const pools = await getAllPoolsFromDb(client, { chainId, protocol, version, poolTypes })
-  const poolMap = new Map(pools.map((pool) => [pool.address as Address, pool as PoolResponse2]))
+  const pools = await getAllPoolsFromDb(client, {
+    chainId,
+    protocol,
+    version,
+    poolTypes,
+  })
+  const poolMap = new Map(
+    pools.map((pool) => [pool.address as Address, pool as PoolResponse2]),
+  )
   return poolMap
 }
 
@@ -50,11 +61,23 @@ export async function discoverNewPools(
   chainId: number,
   protocol: string,
   version: string,
-  poolTypes: ('CONSTANT_PRODUCT_POOL' | 'CONCENTRATED_LIQUIDITY_POOL' | 'STABLE_POOL')[],
-  date: Date
+  poolTypes: (
+    | 'CONSTANT_PRODUCT_POOL'
+    | 'CONCENTRATED_LIQUIDITY_POOL'
+    | 'STABLE_POOL'
+  )[],
+  date: Date,
 ) {
-  const pools = await getNewPools(client, { chainId, protocol, version, poolTypes, date })
-  const poolMap = new Map(pools.map((pool) => [pool.address, pool as PoolResponse2]))
+  const pools = await getNewPools(client, {
+    chainId,
+    protocol,
+    version,
+    poolTypes,
+    date,
+  })
+  const poolMap = new Map(
+    pools.map((pool) => [pool.address, pool as PoolResponse2]),
+  )
   return poolMap
 }
 
@@ -63,7 +86,7 @@ export function filterOnDemandPools(
   token0Address: string,
   token1Address: string,
   topPoolAddresses: string[],
-  size: number
+  size: number,
 ) {
   let token0PoolSize = 0
   let token1PoolSize = 0
@@ -72,29 +95,46 @@ export function filterOnDemandPools(
       (p.token0.address === token0Address.toLowerCase() &&
         !p.token1.isFeeOnTransfer &&
         p.token1.status === 'APPROVED') ||
-      (p.token1.address === token0Address.toLowerCase() && !p.token0.isFeeOnTransfer && p.token0.status === 'APPROVED')
+      (p.token1.address === token0Address.toLowerCase() &&
+        !p.token0.isFeeOnTransfer &&
+        p.token0.status === 'APPROVED'),
   )
   const token1Pools = pools.filter(
     (p) =>
       (p.token0.address === token1Address.toLowerCase() &&
         !p.token1.isFeeOnTransfer &&
         p.token1.status === 'APPROVED') ||
-      (p.token1.address === token1Address.toLowerCase() && !p.token0.isFeeOnTransfer && p.token0.status === 'APPROVED')
+      (p.token1.address === token1Address.toLowerCase() &&
+        !p.token0.isFeeOnTransfer &&
+        p.token0.status === 'APPROVED'),
   )
   // console.log(`Flattened pools, recieved: t0: ${token0Pools.length}, t1: ${token1Pools.length}`)
 
   // const topPoolIds = result[2].map((p) => p.id)
-  const filteredToken0Pools = token0Pools.filter((p) => !topPoolAddresses.includes(p.address))
-  const filteredToken1Pools = token1Pools.filter((p) => !topPoolAddresses.includes(p.address))
+  const filteredToken0Pools = token0Pools.filter(
+    (p) => !topPoolAddresses.includes(p.address),
+  )
+  const filteredToken1Pools = token1Pools.filter(
+    (p) => !topPoolAddresses.includes(p.address),
+  )
   // console.log(`After excluding top pools: t0: ${filteredToken0Pools.length}, t1: ${filteredToken1Pools.length}`)
 
-  if (filteredToken0Pools.length >= size / 2 && filteredToken1Pools.length >= size / 2) {
+  if (
+    filteredToken0Pools.length >= size / 2 &&
+    filteredToken1Pools.length >= size / 2
+  ) {
     token0PoolSize = size / 2
     token1PoolSize = size / 2
-  } else if (filteredToken0Pools.length >= size / 2 && filteredToken1Pools.length < size / 2) {
+  } else if (
+    filteredToken0Pools.length >= size / 2 &&
+    filteredToken1Pools.length < size / 2
+  ) {
     token1PoolSize = filteredToken1Pools.length
     token0PoolSize = size - filteredToken1Pools.length
-  } else if (filteredToken1Pools.length >= size / 2 && filteredToken0Pools.length < size / 2) {
+  } else if (
+    filteredToken1Pools.length >= size / 2 &&
+    filteredToken0Pools.length < size / 2
+  ) {
     token0PoolSize = filteredToken0Pools.length
     token1PoolSize = size - filteredToken0Pools.length
   } else {
@@ -118,10 +158,12 @@ export function filterTopPools(pools: PoolResponse2[], size: number) {
       p.token0.status === 'APPROVED' &&
       !p.token0.isFeeOnTransfer &&
       p.token1.status === 'APPROVED' &&
-      !p.token1.isFeeOnTransfer
+      !p.token1.isFeeOnTransfer,
   )
 
-  const commonPools = safePools.filter((p) => p.token0.isCommon && p.token1.isCommon)
+  const commonPools = safePools.filter(
+    (p) => p.token0.isCommon && p.token1.isCommon,
+  )
 
   const topPools = safePools
     .sort((a, b) => Number(b.liquidityUSD) - Number(a.liquidityUSD))
@@ -142,7 +184,7 @@ export function mapToken(
     decimals: number
     symbol: string
     name: string
-  }
+  },
 ): Token {
   return new Token({
     chainId,

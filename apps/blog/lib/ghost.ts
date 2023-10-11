@@ -10,9 +10,13 @@ export function getGhostClient() {
   })
 }
 
-export async function addBodyToArticle(article: (typeof ArticleSchema)['_output']) {
+export async function addBodyToArticle(
+  article: typeof ArticleSchema['_output'],
+) {
   const ghostClient = getGhostClient()
-  const { html } = await ghostClient.posts.read({ slug: article.attributes.ghostSlug })
+  const { html } = await ghostClient.posts.read({
+    slug: article.attributes.ghostSlug,
+  })
 
   return {
     ...article,

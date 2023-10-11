@@ -1,5 +1,16 @@
 # @sushiswap/amm
 
+## 0.1.15
+
+### Patch Changes
+
+- Updated dependencies [[`83d813fb3`](https://github.com/sushiswap/sushiswap/commit/83d813fb338eb5488cbd47513fd525342fbcf81b)]:
+  - @sushiswap/trident-sdk@1.0.0
+  - sushi@3.0.0
+  - @sushiswap/base-sdk@0.0.3
+  - @sushiswap/tines@1.0.11
+  - @sushiswap/v2-sdk@0.0.11
+
 ## 0.1.14
 
 ### Patch Changes

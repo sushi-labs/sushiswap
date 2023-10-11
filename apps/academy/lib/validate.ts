@@ -53,8 +53,8 @@ export const ArticleSchema: z.ZodSchema<Article> = z.object({
             // createdAt: z.string(),
             // updatedAt: z.string(),
           }),
-        })
-      )
+        }),
+      ),
     ),
     title: z.string(),
     description: z.string(),
@@ -71,8 +71,8 @@ export const ArticleSchema: z.ZodSchema<Article> = z.object({
             // createdAt: z.string(),
             // updatedAt: z.string(),
           }),
-        })
-      )
+        }),
+      ),
     ),
     topics: data(
       z.array(
@@ -81,8 +81,8 @@ export const ArticleSchema: z.ZodSchema<Article> = z.object({
           attributes: z.object({
             name: z.string(),
           }),
-        })
-      )
+        }),
+      ),
     ),
     difficulty: data(
       z
@@ -94,7 +94,7 @@ export const ArticleSchema: z.ZodSchema<Article> = z.object({
             slug: z.string(),
           }),
         })
-        .nullable()
+        .nullable(),
     ),
     createdAt: z.string(),
     updatedAt: z.string(),

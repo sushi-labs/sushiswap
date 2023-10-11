@@ -17,7 +17,11 @@ import {
   Separator,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { Command, CommandGroup, CommandItem } from '@sushiswap/ui/components/command'
+import {
+  Command,
+  CommandGroup,
+  CommandItem,
+} from '@sushiswap/ui/components/command'
 import { CheckIcon } from '@sushiswap/ui/components/icons'
 import React, { FC, useCallback, useState, useTransition } from 'react'
 
@@ -42,14 +46,17 @@ const POOL_DESCRIPTIONS = {
     'A customizable pool type with a user-defined fee tier that utilizes a constant product formula to ensure a 50/50 composition of each asset in the pool.',
 }
 
-const isAllThenNone = (protocols: Protocol[]) => (protocols.length === POOL_TYPES.length ? [] : protocols)
+const isAllThenNone = (protocols: Protocol[]) =>
+  protocols.length === POOL_TYPES.length ? [] : protocols
 
 export const TableFiltersPoolType: FC = () => {
   const [pending, startTransition] = useTransition()
   const [open, setOpen] = useState(false)
   const { protocols } = usePoolFilters()
   const setFilters = useSetPoolFilters()
-  const [peekedProtocol, setPeekedProtocol] = React.useState<Protocol>(POOL_TYPES[0])
+  const [peekedProtocol, setPeekedProtocol] = React.useState<Protocol>(
+    POOL_TYPES[0],
+  )
   const [localValue, setValues] = useState<Protocol[]>(isAllThenNone(protocols))
 
   const values = pending ? localValue : isAllThenNone(protocols)
@@ -75,7 +82,7 @@ export const TableFiltersPoolType: FC = () => {
         })
       })
     },
-    [setFilters, values]
+    [setFilters, values],
   )
 
   return (
@@ -101,11 +108,13 @@ export const TableFiltersPoolType: FC = () => {
                 {values.length > 2 ? (
                   <Chip variant="secondary">{values.length} selected</Chip>
                 ) : (
-                  POOL_TYPES.filter((option) => values.includes(option)).map((option) => (
-                    <Chip variant="secondary" key={option}>
-                      {PROTOCOL_MAP[option]}
-                    </Chip>
-                  ))
+                  POOL_TYPES.filter((option) => values.includes(option)).map(
+                    (option) => (
+                      <Chip variant="secondary" key={option}>
+                        {PROTOCOL_MAP[option]}
+                      </Chip>
+                    ),
+                  )
                 )}
               </div>
             </>
@@ -115,10 +124,17 @@ export const TableFiltersPoolType: FC = () => {
       <PopoverContent align="start" className="!w-[unset] !p-0">
         <HoverCard>
           <PopoverPrimitive.Portal>
-            <HoverCardContent side="left" align="start" forceMount className="hidden md:block w-[240px]">
+            <HoverCardContent
+              side="left"
+              align="start"
+              forceMount
+              className="hidden md:block w-[240px]"
+            >
               <div className="flex flex-col gap-2">
                 <Label>{PROTOCOL_MAP[peekedProtocol]}</Label>
-                <div className="text-sm text-muted-foreground">{POOL_DESCRIPTIONS[peekedProtocol]}</div>
+                <div className="text-sm text-muted-foreground">
+                  {POOL_DESCRIPTIONS[peekedProtocol]}
+                </div>
               </div>
             </HoverCardContent>
           </PopoverPrimitive.Portal>
@@ -132,7 +148,9 @@ export const TableFiltersPoolType: FC = () => {
                     key={el}
                     protocol={el}
                     onPeek={(protocol) => setPeekedProtocol(protocol)}
-                    onSelect={() => protocolHandler(el.toUpperCase() as Protocol)}
+                    onSelect={() =>
+                      protocolHandler(el.toUpperCase() as Protocol)
+                    }
                   />
                 ))}
               </CommandGroup>
@@ -151,7 +169,12 @@ interface ProtocolItemProps {
   onPeek: (model: Protocol) => void
 }
 
-const ProtocolItem: FC<ProtocolItemProps> = ({ selected, protocol, onSelect, onPeek }) => {
+const ProtocolItem: FC<ProtocolItemProps> = ({
+  selected,
+  protocol,
+  onSelect,
+  onPeek,
+}) => {
   const ref = React.useRef<HTMLDivElement>(null)
 
   useMutationObserver(ref, (mutations) => {
@@ -174,7 +197,12 @@ const ProtocolItem: FC<ProtocolItemProps> = ({ selected, protocol, onSelect, onP
     >
       {selected.includes(protocol) ? (
         <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-          <CheckIcon strokeWidth={3} width={16} height={16} className="text-blue" />
+          <CheckIcon
+            strokeWidth={3}
+            width={16}
+            height={16}
+            className="text-blue"
+          />
         </span>
       ) : null}
       {PROTOCOL_MAP[protocol]}

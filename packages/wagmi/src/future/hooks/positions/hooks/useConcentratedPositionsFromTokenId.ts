@@ -15,7 +15,10 @@ export const useConcentratedLiquidityPositionsFromTokenId = ({
   enabled = true,
 }: UseConcentratedLiquidityPositionsFromTokenIdParams) => {
   return useQuery({
-    queryKey: ['useConcentratedLiquidityPositionsFromTokenId', { chainId, tokenIds: tokenId }],
+    queryKey: [
+      'useConcentratedLiquidityPositionsFromTokenId',
+      { chainId, tokenIds: tokenId },
+    ],
     queryFn: async () => {
       // Shouldn't happen
       if (!tokenId) throw new Error('TokenId is undefined')

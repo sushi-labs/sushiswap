@@ -8,13 +8,18 @@ import { useUserPositions } from 'lib/hooks'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { PositionWithPool } from 'types'
 
-import { APR_COLUMN, NAME_COLUMN_POSITION_WITH_POOL, VALUE_COLUMN } from './columns'
+import {
+  APR_COLUMN,
+  NAME_COLUMN_POSITION_WITH_POOL,
+  VALUE_COLUMN,
+} from './columns'
 import { usePoolFilters } from './PoolsFiltersProvider'
 
-const COLUMNS = [NAME_COLUMN_POSITION_WITH_POOL, VALUE_COLUMN, APR_COLUMN] satisfies ColumnDef<
-  PositionWithPool,
-  unknown
->[]
+const COLUMNS = [
+  NAME_COLUMN_POSITION_WITH_POOL,
+  VALUE_COLUMN,
+  APR_COLUMN,
+] satisfies ColumnDef<PositionWithPool, unknown>[]
 
 interface PositionsTableProps {
   protocol: Protocol
@@ -24,7 +29,11 @@ interface PositionsTableProps {
 
 const tableState = { sorting: [{ id: 'value', desc: true }] }
 
-export const PositionsTable: FC<PositionsTableProps> = ({ protocol, onRowClick, rowLink }) => {
+export const PositionsTable: FC<PositionsTableProps> = ({
+  protocol,
+  onRowClick,
+  rowLink,
+}) => {
   const { address } = useAccount()
   const { chainIds, tokenSymbols } = usePoolFilters()
   const [paginationState, setPaginationState] = useState<PaginationState>({
@@ -32,7 +41,10 @@ export const PositionsTable: FC<PositionsTableProps> = ({ protocol, onRowClick, 
     pageSize: 10,
   })
 
-  const { data: positions, isValidating } = useUserPositions({ id: address, chainIds: SUPPORTED_CHAIN_IDS })
+  const { data: positions, isValidating } = useUserPositions({
+    id: address,
+    chainIds: SUPPORTED_CHAIN_IDS,
+  })
 
   const _positions = useMemo(() => {
     if (!positions) return []
@@ -41,11 +53,15 @@ export const PositionsTable: FC<PositionsTableProps> = ({ protocol, onRowClick, 
     const searchFiltered = positions.filter((el) =>
       _tokenSymbols.length > 0
         ? _tokenSymbols.some((symbol) => {
-            return [el.pool?.token0.symbol, el.pool?.token1.symbol].includes(symbol.toUpperCase())
+            return [el.pool?.token0.symbol, el.pool?.token1.symbol].includes(
+              symbol.toUpperCase(),
+            )
           })
-        : true
+        : true,
     )
-    const chainFiltered = searchFiltered.filter((el) => chainIds.includes(el.chainId))
+    const chainFiltered = searchFiltered.filter((el) =>
+      chainIds.includes(el.chainId),
+    )
     return chainFiltered.filter((el) => el.pool?.protocol === protocol)
   }, [positions, tokenSymbols, chainIds, protocol])
 
@@ -53,20 +69,26 @@ export const PositionsTable: FC<PositionsTableProps> = ({ protocol, onRowClick, 
     (row: Row<PositionWithPool>, rowNode: ReactNode) => {
       if (onRowClick)
         return (
-          <Slot className="cursor-pointer" onClick={() => onRowClick?.(row.original)}>
+          <Slot
+            className="cursor-pointer"
+            onClick={() => onRowClick?.(row.original)}
+          >
             {rowNode}
           </Slot>
         )
       return rowNode
     },
-    [onRowClick]
+    [onRowClick],
   )
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>
-          My Positions <span className="text-gray-400 dark:text-slate-500">({_positions.length})</span>
+          My Positions{' '}
+          <span className="text-gray-400 dark:text-slate-500">
+            ({_positions.length})
+          </span>
         </CardTitle>
       </CardHeader>
       <DataTable

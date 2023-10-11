@@ -29,7 +29,12 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
     <>
       <div className="grid grid-cols-3 mb-3">
         <div className="flex justify-start">
-          <IconButton size="sm" onClick={() => setView(ProfileView.Default)} icon={ArrowLeftIcon} name="Back" />
+          <IconButton
+            size="sm"
+            onClick={() => setView(ProfileView.Default)}
+            icon={ArrowLeftIcon}
+            name="Back"
+          />
         </div>
         <span className="font-medium text-center">Settings</span>
         <div />
@@ -48,7 +53,7 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
                           checked
                             ? 'text-gray-900 dark:text-slate-50 bg-white dark:bg-white/[0.08]'
                             : 'text-gray-500 dark:text-slate-500 hover:bg-gray-100 hover:dark:bg-white/[0.04]',
-                          'min-w-[60px] z-[1] relative rounded-lg text-sm h-8 font-medium flex flex-grow items-center justify-center'
+                          'min-w-[60px] z-[1] relative rounded-lg text-sm h-8 font-medium flex flex-grow items-center justify-center',
                         )}
                       >
                         {v}

@@ -1,12 +1,16 @@
 'use client'
 
-import { masterChefV1Abi, masterChefV2Abi } from '@sushiswap/abi'
+import { masterChefV1Abi, masterChefV2Abi } from 'sushi/abi'
 import { ChefType } from '@sushiswap/client'
-import { Amount, Token } from '@sushiswap/currency'
+import { Amount, Token } from 'sushi/currency'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { useCallback, useMemo } from 'react'
 import { encodeFunctionData, UserRejectedRequestError } from 'viem'
-import { useAccount, usePrepareSendTransaction, useSendTransaction } from 'wagmi'
+import {
+  useAccount,
+  usePrepareSendTransaction,
+  useSendTransaction,
+} from 'wagmi'
 import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
 import { useMasterChefContract } from '../useMasterChefContract'
@@ -20,9 +24,17 @@ interface UseMasterChefDepositParams {
   enabled?: boolean
 }
 
-type UseMasterChefDeposit = (params: UseMasterChefDepositParams) => ReturnType<typeof useSendTransaction>
+type UseMasterChefDeposit = (
+  params: UseMasterChefDepositParams,
+) => ReturnType<typeof useSendTransaction>
 
-export const useMasterChefDeposit: UseMasterChefDeposit = ({ chainId, amount, chef, pid, enabled = true }) => {
+export const useMasterChefDeposit: UseMasterChefDeposit = ({
+  chainId,
+  amount,
+  chef,
+  pid,
+  enabled = true,
+}) => {
   const { address } = useAccount()
   const contract = useMasterChefContract(chainId, chef)
 
@@ -40,8 +52,12 @@ export const useMasterChefDeposit: UseMasterChefDeposit = ({ chainId, amount, ch
           txHash: data.hash,
           promise: waitForTransaction({ hash: data.hash }),
           summary: {
-            pending: `Staking ${amount.toSignificant(6)} ${amount.currency.symbol} tokens`,
-            completed: `Successfully staked ${amount.toSignificant(6)} ${amount.currency.symbol} tokens`,
+            pending: `Staking ${amount.toSignificant(6)} ${
+              amount.currency.symbol
+            } tokens`,
+            completed: `Successfully staked ${amount.toSignificant(6)} ${
+              amount.currency.symbol
+            } tokens`,
             failed: `Something went wrong when staking ${amount.currency.symbol} tokens`,
           },
           groupTimestamp: ts,
@@ -49,7 +65,7 @@ export const useMasterChefDeposit: UseMasterChefDeposit = ({ chainId, amount, ch
         })
       }
     },
-    [amount, chainId, address]
+    [amount, chainId, address],
   )
 
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {

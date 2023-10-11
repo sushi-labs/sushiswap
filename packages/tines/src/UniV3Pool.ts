@@ -1,7 +1,12 @@
 import { Address } from 'viem'
 
 import { CL_MAX_TICK, CL_MIN_TICK, CLTick } from './CLPool'
-import { RPool, RToken, TYPICAL_MINIMAL_LIQUIDITY, TYPICAL_SWAP_GAS_COST } from './PrimaryPools'
+import {
+  RPool,
+  RToken,
+  TYPICAL_MINIMAL_LIQUIDITY,
+  TYPICAL_SWAP_GAS_COST,
+} from './PrimaryPools'
 
 const BASE_GAS_CONSUMPTION = 70_000
 const STEP_GAS_CONSUMPTION = 40_000
@@ -90,16 +95,26 @@ export class UniV3Pool extends RPool {
     tick: number,
     liquidity: bigint,
     sqrtPriceX96: bigint,
-    ticks: CLTick[]
+    ticks: CLTick[],
   ) {
-    super(address, token0, token1, fee, reserve0, reserve1, TYPICAL_MINIMAL_LIQUIDITY, TYPICAL_SWAP_GAS_COST)
+    super(
+      address,
+      token0,
+      token1,
+      fee,
+      reserve0,
+      reserve1,
+      TYPICAL_MINIMAL_LIQUIDITY,
+      TYPICAL_SWAP_GAS_COST,
+    )
     this.ticks = ticks
     if (address !== undefined) {
       if (this.ticks.length === 0) {
         this.ticks.push({ index: CL_MIN_TICK, DLiquidity: ZERO })
         this.ticks.push({ index: CL_MAX_TICK, DLiquidity: ZERO })
       }
-      if (this.ticks[0].index > CL_MIN_TICK) this.ticks.unshift({ index: CL_MIN_TICK, DLiquidity: ZERO })
+      if (this.ticks[0].index > CL_MIN_TICK)
+        this.ticks.unshift({ index: CL_MIN_TICK, DLiquidity: ZERO })
       if (this.ticks[this.ticks.length - 1].index < CL_MAX_TICK)
         this.ticks.push({ index: CL_MAX_TICK, DLiquidity: ZERO })
 
@@ -114,7 +129,13 @@ export class UniV3Pool extends RPool {
     }
   }
 
-  updateState(reserve0: bigint, reserve1: bigint, tick: number, liquidity: bigint, sqrtPriceX96: bigint) {
+  updateState(
+    reserve0: bigint,
+    reserve1: bigint,
+    tick: number,
+    liquidity: bigint,
+    sqrtPriceX96: bigint,
+  ) {
     this.updateReserves(reserve0, reserve1)
     this.liquidity = liquidity
     this.sqrtPriceX96 = sqrtPriceX96
@@ -134,7 +155,11 @@ export class UniV3Pool extends RPool {
     return a
   }
 
-  calcOutByIn(amountIn: number, direction: boolean, throwIfOutOfLiquidity = true): { out: number; gasSpent: number } {
+  calcOutByIn(
+    amountIn: number,
+    direction: boolean,
+    throwIfOutOfLiquidity = true,
+  ): { out: number; gasSpent: number } {
     let nextTickToCross = direction ? this.nearestTick : this.nearestTick + 1
     const currentPriceBI = this.sqrtPriceX96
     let currentPrice = parseInt(currentPriceBI.toString()) / two96
@@ -146,16 +171,20 @@ export class UniV3Pool extends RPool {
     let startFlag = true
     while (input > 0) {
       if (nextTickToCross < 0 || nextTickToCross >= this.ticks.length) {
-        if (throwIfOutOfLiquidity) throw new Error(`UniV3 OutOfLiquidity ${this.address}`)
+        if (throwIfOutOfLiquidity)
+          throw new Error(`UniV3 OutOfLiquidity ${this.address}`)
         else return { out: outAmount, gasSpent: this.swapGasCost }
       }
 
       let nextTickPrice, priceDiff
       if (startFlag) {
         // Increasing precision at first step only - otherwise its too slow
-        const nextTickPriceBI = getSqrtRatioAtTick(this.ticks[nextTickToCross].index)
+        const nextTickPriceBI = getSqrtRatioAtTick(
+          this.ticks[nextTickToCross].index,
+        )
         nextTickPrice = parseInt(nextTickPriceBI.toString()) / two96
-        priceDiff = parseInt((currentPriceBI - nextTickPriceBI).toString()) / two96
+        priceDiff =
+          parseInt((currentPriceBI - nextTickPriceBI).toString()) / two96
         startFlag = false
       } else {
         nextTickPrice = Math.sqrt(1.0001 ** this.ticks[nextTickToCross].index)
@@ -166,7 +195,8 @@ export class UniV3Pool extends RPool {
       const currentLiquidity = parseInt(currentLiquidityBI.toString())
 
       if (direction) {
-        const maxDx = (currentLiquidity * priceDiff) / currentPrice / nextTickPrice
+        const maxDx =
+          (currentLiquidity * priceDiff) / currentPrice / nextTickPrice
         // console.log(
         //   't',
         //   maxDx,
@@ -179,14 +209,17 @@ export class UniV3Pool extends RPool {
         // )
 
         if (input <= maxDx) {
-          output = (currentLiquidity * currentPrice * input) / (input + currentLiquidity / currentPrice)
+          output =
+            (currentLiquidity * currentPrice * input) /
+            (input + currentLiquidity / currentPrice)
           input = 0
         } else {
           output = currentLiquidity * priceDiff
           //currentPriceBI = nextTickPriceBI
           currentPrice = nextTickPrice
           input -= maxDx
-          currentLiquidityBI = currentLiquidityBI - this.ticks[nextTickToCross].DLiquidity
+          currentLiquidityBI =
+            currentLiquidityBI - this.ticks[nextTickToCross].DLiquidity
           nextTickToCross--
           if (nextTickToCross === 0) currentLiquidityBI = ZERO // Protection if we know not all ticks
         }
@@ -194,16 +227,20 @@ export class UniV3Pool extends RPool {
         const maxDy = currentLiquidity * -priceDiff
         //console.log('input, maxDy', input, maxDy)
         if (input <= maxDy) {
-          output = input / currentPrice / (currentPrice + input / currentLiquidity)
+          output =
+            input / currentPrice / (currentPrice + input / currentLiquidity)
           input = 0
         } else {
-          output = (currentLiquidity * -priceDiff) / currentPrice / nextTickPrice
+          output =
+            (currentLiquidity * -priceDiff) / currentPrice / nextTickPrice
           //currentPriceBI = nextTickPriceBI
           currentPrice = nextTickPrice
           input -= maxDy
-          currentLiquidityBI = currentLiquidityBI + this.ticks[nextTickToCross].DLiquidity
+          currentLiquidityBI =
+            currentLiquidityBI + this.ticks[nextTickToCross].DLiquidity
           nextTickToCross++
-          if (nextTickToCross === this.ticks.length - 1) currentLiquidityBI = ZERO // Protection if we know not all ticks
+          if (nextTickToCross === this.ticks.length - 1)
+            currentLiquidityBI = ZERO // Protection if we know not all ticks
         }
       }
 
@@ -212,15 +249,22 @@ export class UniV3Pool extends RPool {
       //console.log('out', outAmount)
     }
 
-    return { out: outAmount, gasSpent: BASE_GAS_CONSUMPTION + STEP_GAS_CONSUMPTION * stepCounter } // TODO: more accurate gas prediction
+    return {
+      out: outAmount,
+      gasSpent: BASE_GAS_CONSUMPTION + STEP_GAS_CONSUMPTION * stepCounter,
+    } // TODO: more accurate gas prediction
   }
 
   calcOutByInReal(amountIn: number, direction: boolean): number {
-    const amountInRounded = Math.floor(amountIn * (1 - this.fee)) / (1 - this.fee)
+    const amountInRounded =
+      Math.floor(amountIn * (1 - this.fee)) / (1 - this.fee)
     return Math.floor(this.calcOutByIn(amountInRounded, direction, false).out)
   }
 
-  calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
+  calcInByOut(
+    amountOut: number,
+    direction: boolean,
+  ): { inp: number; gasSpent: number } {
     let nextTickToCross = direction ? this.nearestTick : this.nearestTick + 1
     const currentPriceBI = this.sqrtPriceX96
     let currentPrice = parseInt(currentPriceBI.toString()) / two96
@@ -238,9 +282,12 @@ export class UniV3Pool extends RPool {
       let nextTickPrice, priceDiff
       if (startFlag) {
         // Increasing precision at first step only - otherwise its too slow
-        const nextTickPriceBI = getSqrtRatioAtTick(this.ticks[nextTickToCross].index)
+        const nextTickPriceBI = getSqrtRatioAtTick(
+          this.ticks[nextTickToCross].index,
+        )
         nextTickPrice = parseInt(nextTickPriceBI.toString()) / two96
-        priceDiff = parseInt((currentPriceBI - nextTickPriceBI).toString()) / two96
+        priceDiff =
+          parseInt((currentPriceBI - nextTickPriceBI).toString()) / two96
         startFlag = false
       } else {
         nextTickPrice = Math.sqrt(1.0001 ** this.ticks[nextTickToCross].index)
@@ -255,37 +302,49 @@ export class UniV3Pool extends RPool {
         const maxDy = currentLiquidity * priceDiff
         //console.log('input, maxDy', input, maxDy);
         if (outBeforeFee <= maxDy) {
-          input += outBeforeFee / currentPrice / (currentPrice - outBeforeFee / currentLiquidity)
+          input +=
+            outBeforeFee /
+            currentPrice /
+            (currentPrice - outBeforeFee / currentLiquidity)
           outBeforeFee = 0
         } else {
           input += (currentLiquidity * priceDiff) / currentPrice / nextTickPrice
           //currentPriceBI = nextTickPriceBI
           currentPrice = nextTickPrice
           outBeforeFee -= maxDy
-          currentLiquidityBI = currentLiquidityBI - this.ticks[nextTickToCross].DLiquidity
+          currentLiquidityBI =
+            currentLiquidityBI - this.ticks[nextTickToCross].DLiquidity
           nextTickToCross--
           if (nextTickToCross === 0) currentLiquidityBI = ZERO // Protection if we know not all ticks
         }
       } else {
-        const maxDx = (currentLiquidity * -priceDiff) / currentPrice / nextTickPrice
+        const maxDx =
+          (currentLiquidity * -priceDiff) / currentPrice / nextTickPrice
         //console.log('outBeforeFee, maxDx', outBeforeFee, maxDx);
 
         if (outBeforeFee <= maxDx) {
-          input += (currentLiquidity * currentPrice * outBeforeFee) / (currentLiquidity / currentPrice - outBeforeFee)
+          input +=
+            (currentLiquidity * currentPrice * outBeforeFee) /
+            (currentLiquidity / currentPrice - outBeforeFee)
           outBeforeFee = 0
         } else {
           input += currentLiquidity * -priceDiff
           //currentPriceBI = nextTickPriceBI
           currentPrice = nextTickPrice
           outBeforeFee -= maxDx
-          currentLiquidityBI = currentLiquidityBI + this.ticks[nextTickToCross].DLiquidity
+          currentLiquidityBI =
+            currentLiquidityBI + this.ticks[nextTickToCross].DLiquidity
           nextTickToCross++
-          if (nextTickToCross === this.ticks.length - 1) currentLiquidityBI = ZERO // Protection if we know not all ticks
+          if (nextTickToCross === this.ticks.length - 1)
+            currentLiquidityBI = ZERO // Protection if we know not all ticks
         }
       }
     }
 
-    return { inp: input / (1 - this.fee), gasSpent: BASE_GAS_CONSUMPTION + STEP_GAS_CONSUMPTION * stepCounter }
+    return {
+      inp: input / (1 - this.fee),
+      gasSpent: BASE_GAS_CONSUMPTION + STEP_GAS_CONSUMPTION * stepCounter,
+    }
   }
 
   calcCurrentPriceWithoutFee(direction: boolean): number {

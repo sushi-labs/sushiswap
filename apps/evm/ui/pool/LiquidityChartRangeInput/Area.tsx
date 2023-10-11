@@ -13,7 +13,15 @@ interface AreaProps {
   opacity?: number | undefined
 }
 
-export const Area: FC<AreaProps> = ({ series, xScale, yScale, xValue, yValue, fill, opacity }) =>
+export const Area: FC<AreaProps> = ({
+  series,
+  xScale,
+  yScale,
+  xValue,
+  yValue,
+  fill,
+  opacity,
+}) =>
   useMemo(
     () => (
       <path
@@ -29,10 +37,10 @@ export const Area: FC<AreaProps> = ({ series, xScale, yScale, xValue, yValue, fi
             series.filter((d) => {
               const value = xScale(xValue(d))
               return value > 0 && value <= window.innerWidth
-            }) as Iterable<[number, number]>
+            }) as Iterable<[number, number]>,
           ) ?? undefined
         }
       />
     ),
-    [fill, opacity, series, xScale, xValue, yScale, yValue]
+    [fill, opacity, series, xScale, xValue, yScale, yValue],
   )

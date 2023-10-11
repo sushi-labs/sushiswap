@@ -7,40 +7,32 @@ import { LedgerConnector } from 'wagmi/connectors/ledger'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { SafeConnector } from 'wagmi/connectors/safe'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
 import { TestChainId } from './_test/constants'
 import { createTestConfig } from './_test/setup'
-import { foundry } from './chains'
 
-const isTest = process.env.APP_ENV === 'test' || process.env.TEST === 'true' || process.env.NEXT_PUBLIC_TEST === 'true'
-const chainId = Number(process.env.CHAIN_ID || process.env.NEXT_PUBLIC_CHAIN_ID || 137)
-const anvilPort = String(process.env.ANVIL_PORT || process.env.NEXT_PUBLIC_ANVIL_PORT || 8545)
-const testWalletIndex = Number(process.env.TEST_WALLET_INDEX || process.env.NEXT_PUBLIC_TEST_WALLET_INDEX || 0)
+const isTest =
+  process.env.APP_ENV === 'test' ||
+  process.env.TEST === 'true' ||
+  process.env.NEXT_PUBLIC_TEST === 'true'
+const chainId = Number(
+  process.env.CHAIN_ID || process.env.NEXT_PUBLIC_CHAIN_ID || 137,
+)
+const testWalletIndex = Number(
+  process.env.TEST_WALLET_INDEX ||
+    process.env.NEXT_PUBLIC_TEST_WALLET_INDEX ||
+    0,
+)
 
 export const createWagmiConfig = () => {
-  const { chains, publicClient } = isTest
-    ? configureChains(
-        allChains,
-        [
-          jsonRpcProvider({
-            rpc: () => ({
-              http: foundry.rpcUrls.default.http[0].replace('8545', anvilPort),
-            }),
-          }),
-        ],
-        {
-          pollingInterval: 4_000,
-        }
-      )
-    : configureChains(allChains, allProviders, {
-        pollingInterval: 4_000,
-      })
-
   if (isTest) {
+    console.log(`CREATE TEST WAGMI CONFIG FOR CHAIN ${chainId}`)
     return createTestConfig(chainId as TestChainId, testWalletIndex)
   }
 
+  const { chains, publicClient } = configureChains(allChains, allProviders, {
+    pollingInterval: 4_000,
+  })
   return createConfig({
     publicClient,
     // logger: {
@@ -93,7 +85,8 @@ export const createWagmiConfig = () => {
         chains,
         options: {
           appName: 'Sushi 2.0',
-          appLogoUrl: 'https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/token/sushi.jpg',
+          appLogoUrl:
+            'https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/token/sushi.jpg',
         },
       }),
       new SafeConnector({

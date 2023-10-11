@@ -1,7 +1,7 @@
 'use client'
 
 // import { SteerStrategy } from '@sushiswap/database'
-// import { formatPercent } from '@sushiswap/format'
+// import { formatPercent } from 'sushi'
 // import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 // import { Button } from '@sushiswap/ui'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'

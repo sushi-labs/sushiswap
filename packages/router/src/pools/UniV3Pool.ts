@@ -5,7 +5,11 @@ import { LiquidityProviders } from '../liquidity-providers'
 import { PoolCode } from './PoolCode'
 
 export class UniV3PoolCode extends PoolCode {
-  constructor(pool: UniV3Pool, liquidityProvider: LiquidityProviders, providerName: string) {
+  constructor(
+    pool: UniV3Pool,
+    liquidityProvider: LiquidityProviders,
+    providerName: string,
+  ) {
     super(pool, liquidityProvider, `${providerName} ${(pool?.fee || 0) * 100}%`)
   }
 
@@ -14,11 +18,19 @@ export class UniV3PoolCode extends PoolCode {
   }
 
   // eslint-disable-next-line unused-imports/no-unused-vars, no-unused-vars, @typescript-eslint/no-unused-vars
-  getSwapCodeForRouteProcessor(leg: RouteLeg, route: MultiRoute, to: string): string {
+  getSwapCodeForRouteProcessor(
+    leg: RouteLeg,
+    route: MultiRoute,
+    to: string,
+  ): string {
     return 'unsupported'
   }
 
-  getSwapCodeForRouteProcessor2(leg: RouteLeg, _route: MultiRoute, to: string): string {
+  getSwapCodeForRouteProcessor2(
+    leg: RouteLeg,
+    _route: MultiRoute,
+    to: string,
+  ): string {
     const code = new HEXer()
       .uint8(1) // uniV3 pool
       .address(this.pool.address)

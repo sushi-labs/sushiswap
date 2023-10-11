@@ -13,7 +13,9 @@ function expect(condition: boolean, comment: string) {
 }
 
 it.skip('LogFilter correctness test', async () => {
-  const transport = http(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`)
+  const transport = http(
+    `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
+  )
   const client = createPublicClient({
     chain: mainnet,
     transport: transport,
@@ -28,13 +30,15 @@ it.skip('LogFilter correctness test', async () => {
   filter.addFilter(
     [
       parseAbiItem('event Transfer(address from, address to, uint256 value)'),
-      parseAbiItem('event Approval(address owner, address spender, uint256 value)'),
+      parseAbiItem(
+        'event Approval(address owner, address spender, uint256 value)',
+      ),
     ],
     (logs?: Log[]) => {
       console.log(
         logs?.map((l) => [l.blockNumber, l.logIndex, l.removed]),
         'blocks in memory:',
-        filter.blockHashMap.size
+        filter.blockHashMap.size,
       )
       if (logs === undefined) filter.start()
       else {
@@ -46,8 +50,14 @@ it.skip('LogFilter correctness test', async () => {
           const li = Number(l.logIndex)
           if (l.removed) {
             const prev = allLogs[i - 1]
-            expect(prev.blockHash === l.blockHash, `Removed logs hash are equal ${prev.blockHash} == ${l.blockHash}`)
-            expect(Number(prev.logIndex) === li, `Removed logIndexes are equal ${Number(prev.logIndex)} == ${li}`)
+            expect(
+              prev.blockHash === l.blockHash,
+              `Removed logs hash are equal ${prev.blockHash} == ${l.blockHash}`,
+            )
+            expect(
+              Number(prev.logIndex) === li,
+              `Removed logIndexes are equal ${Number(prev.logIndex)} == ${li}`,
+            )
             allLogs.splice(i - 1, 2)
             prevBlockNum = bn
             prevLogIndex = -1
@@ -64,14 +74,16 @@ it.skip('LogFilter correctness test', async () => {
         }
         if (allLogs.length > 10_000) allLogs.splice(0, 5_000)
       }
-    }
+    },
   )
 
   await delay(1000 * 3600 * 24 * 7)
 })
 
 it.skip('LogFilter completeness test', async () => {
-  const transport = http(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`)
+  const transport = http(
+    `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
+  )
   const client = createPublicClient({
     chain: mainnet,
     transport: transport,
@@ -83,25 +95,30 @@ it.skip('LogFilter completeness test', async () => {
 
   let myRemoved = 0
   const filterMy = new LogFilter2(client, 10, LogFilterType.OneCall)
-  filterMy.addFilter([parseAbiItem('event Transfer(address from, address to, uint256 value)')], (logs?: Log[]) => {
-    // console.log(
-    //   logs?.map((l) => [l.blockNumber, l.logIndex, l.removed]),
-    //   'blocks in memory:',
-    //   filterMy.blockHashMap.size
-    // )
-    if (logs === undefined) filterMy.start()
-    else
-      logs.forEach((l) => {
-        if (l.removed) {
-          logsMy.delete(logHash(l))
-          ++myRemoved
-        } else logsMy.add(logHash(l))
-      })
-  })
+  filterMy.addFilter(
+    [parseAbiItem('event Transfer(address from, address to, uint256 value)')],
+    (logs?: Log[]) => {
+      // console.log(
+      //   logs?.map((l) => [l.blockNumber, l.logIndex, l.removed]),
+      //   'blocks in memory:',
+      //   filterMy.blockHashMap.size
+      // )
+      if (logs === undefined) filterMy.start()
+      else
+        logs.forEach((l) => {
+          if (l.removed) {
+            logsMy.delete(logHash(l))
+            ++myRemoved
+          } else logsMy.add(logHash(l))
+        })
+    },
+  )
 
   let ethalonRemoved = 0
   const filterEthalon = await client.createEventFilter({
-    event: parseAbiItem('event Transfer(address from, address to, uint256 value)'),
+    event: parseAbiItem(
+      'event Transfer(address from, address to, uint256 value)',
+    ),
   })
   for (let i = 0; ; ++i) {
     await delay(1000 * 10)
@@ -136,7 +153,7 @@ it.skip('LogFilter completeness test', async () => {
     })
     console.log(
       `My logs: ${logsMy.size}, eth logs: ${logsEthalon.size}, only my: ${uniqueMy}, only eth: ${uniqueEthalon}` +
-        ` my removed: ${myRemoved} eth removed: ${ethalonRemoved}`
+        ` my removed: ${myRemoved} eth removed: ${ethalonRemoved}`,
     )
   }
 })

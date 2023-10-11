@@ -1,6 +1,9 @@
-import { tridentConstantPoolAbi, tridentConstantPoolFactoryAbi } from '@sushiswap/abi'
+import {
+  tridentConstantPoolAbi,
+  tridentConstantPoolFactoryAbi,
+} from 'sushi/abi'
 import { TridentConstantPool } from '@sushiswap/amm'
-import { Amount, Currency, Token } from '@sushiswap/currency'
+import { Amount, Currency, Token } from 'sushi/currency'
 import { Address, readContracts } from 'wagmi'
 import { getContract } from 'wagmi/actions'
 
@@ -22,7 +25,7 @@ interface PoolData {
 
 export const getTridentConstantPools = async (
   chainId: number,
-  currencies: [Currency | undefined, Currency | undefined][]
+  currencies: [Currency | undefined, Currency | undefined][],
 ) => {
   // if (!isConstantProductPoolFactoryChainId(chainId)) {
   //   return []
@@ -31,7 +34,10 @@ export const getTridentConstantPools = async (
   const contract = getContract(getTridentConstantPoolFactoryContract(chainId))
 
   const _pairsUnique = pairsUnique(currencies)
-  const _pairsUniqueAddr = _pairsUnique.map(([t0, t1]) => [t0.address, t1.address])
+  const _pairsUniqueAddr = _pairsUnique.map(([t0, t1]) => [
+    t0.address,
+    t1.address,
+  ])
 
   const callStatePoolsCount = await readContracts({
     contracts: _pairsUniqueAddr.map((el) => ({
@@ -45,15 +51,25 @@ export const getTridentConstantPools = async (
 
   const callStatePoolsCountProcessed =
     callStatePoolsCount
-      ?.map((s, i) => [i, s.status === 'success' ? s.result : 0] as [number, bigint])
+      ?.map(
+        (s, i) =>
+          [i, s.status === 'success' ? s.result : 0] as [number, bigint],
+      )
       .filter(([, length]) => length)
       .map(
         ([i, length]) =>
-          [_pairsUniqueAddr[i][0] as Address, _pairsUniqueAddr[i][1] as Address, 0n, BigInt(length)] as const
+          [
+            _pairsUniqueAddr[i][0] as Address,
+            _pairsUniqueAddr[i][1] as Address,
+            0n,
+            BigInt(length),
+          ] as const,
       ) ?? []
 
   const pairsUniqueProcessed = callStatePoolsCount
-    ?.map((s, i) => [i, s.status === 'success' ? s.result : 0] as [number, bigint])
+    ?.map(
+      (s, i) => [i, s.status === 'success' ? s.result : 0] as [number, bigint],
+    )
     .filter(([, length]) => length)
     .map(([i]) => [_pairsUnique[i][0], _pairsUnique[i][1]])
 
@@ -101,11 +117,15 @@ export const getTridentConstantPools = async (
   })
 
   return pools.map((p, i) => {
-    if (!reservesAndFees?.[i].result || !reservesAndFees?.[i + poolsAddresses.length].result) {
+    if (
+      !reservesAndFees?.[i].result ||
+      !reservesAndFees?.[i + poolsAddresses.length].result
+    ) {
       return [TridentConstantPoolState.LOADING, null]
     }
 
-    const [reserve0, reserve1, blockTimestampLast] = reservesAndFees[i].result as [bigint, bigint, number]
+    const [reserve0, reserve1, blockTimestampLast] = reservesAndFees[i]
+      .result as [bigint, bigint, number]
     const swapFee = reservesAndFees[i + poolsAddresses.length].result as bigint
 
     return [
@@ -114,7 +134,7 @@ export const getTridentConstantPools = async (
         Amount.fromRawAmount(p.token0, reserve0),
         Amount.fromRawAmount(p.token1, reserve1),
         parseInt(swapFee.toString()),
-        blockTimestampLast !== 0
+        blockTimestampLast !== 0,
       ),
     ]
   })

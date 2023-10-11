@@ -3,7 +3,14 @@ import * as React from 'react'
 import { IconComponent } from '../../../../types'
 
 export const BaseCircle: IconComponent = (props) => (
-  <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <svg
+    width="128"
+    height="128"
+    viewBox="0 0 128 128"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
     <rect width="128" height="128" rx="64" fill="#2151F5" />
     <circle cx="64" cy="64" r="64" fill="#2151F5" />
     <path

@@ -8,7 +8,10 @@ export function getRoutingAnyChartSankeyData(route: MultiRoute) {
   tokenValue.set(route.fromToken.tokenId, 100)
   route.legs.forEach((leg) => {
     const fromValue = tokenValue.get(leg.tokenFrom.tokenId) || 0
-    console.assert(fromValue !== 0, 'Unexpected input token !!!' + leg.tokenFrom.tokenId)
+    console.assert(
+      fromValue !== 0,
+      'Unexpected input token !!!' + leg.tokenFrom.tokenId,
+    )
     const legValue = fromValue * leg.absolutePortion
     const toValue = tokenValue.get(leg.tokenTo.tokenId) || 0
     tokenValue.set(leg.tokenTo.tokenId, toValue + legValue)
@@ -16,7 +19,10 @@ export function getRoutingAnyChartSankeyData(route: MultiRoute) {
 
   return route.legs.map((leg) => {
     const fromValue = tokenValue.get(leg.tokenFrom.tokenId) || 0
-    console.assert(fromValue !== 0, 'Unexpected token value !!! ' + leg.tokenFrom.tokenId)
+    console.assert(
+      fromValue !== 0,
+      'Unexpected token value !!! ' + leg.tokenFrom.tokenId,
+    )
     const value = Math.round(fromValue * leg.absolutePortion)
     return {
       from: leg.tokenFrom.symbol,

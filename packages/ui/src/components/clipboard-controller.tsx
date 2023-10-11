@@ -11,7 +11,10 @@ interface ClipboardControllerProps {
   children: (payload: ClipboardControllerPayload) => React.ReactNode
 }
 
-export const ClipboardController: FC<ClipboardControllerProps> = ({ children, hideTooltip = false }) => {
+export const ClipboardController: FC<ClipboardControllerProps> = ({
+  children,
+  hideTooltip = false,
+}) => {
   const [isCopied, setCopied] = useCopyClipboard()
 
   if (!hideTooltip) {

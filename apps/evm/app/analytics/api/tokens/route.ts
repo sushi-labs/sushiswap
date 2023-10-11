@@ -9,6 +9,10 @@ export async function GET(request: Request) {
   const networks = searchParams.get('networks')
   const where = searchParams.get('where')
   const pagination = searchParams.get('pagination')
-  const pairs = await getTokens({ networks, where, pagination } as GetTokensQuery)
+  const pairs = await getTokens({
+    networks,
+    where,
+    pagination,
+  } as GetTokensQuery)
   return NextResponse.json(pairs)
 }

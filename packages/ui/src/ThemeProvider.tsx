@@ -13,7 +13,11 @@ interface ThemeProvider {
 
 export const ThemeProvider: FC<ThemeProvider> = ({ children, forcedTheme }) => {
   return (
-    <NextThemeProvider attribute="class" disableTransitionOnChange forcedTheme={forcedTheme}>
+    <NextThemeProvider
+      attribute="class"
+      disableTransitionOnChange
+      forcedTheme={forcedTheme}
+    >
       <OnramperProvider>
         <ToastContainer />
         <div id="network-check-portal" />

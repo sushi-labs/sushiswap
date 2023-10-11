@@ -1,7 +1,7 @@
 import '../lib/wagmi.js'
 
 import { isAddress } from '@ethersproject/address'
-import { chainIds, chains } from '@sushiswap/chain'
+import { chainIds, chains } from 'sushi/chain'
 import { createClient } from '@sushiswap/database'
 import { Address, fetchToken } from '@wagmi/core'
 
@@ -17,13 +17,15 @@ class Token {
     address: string,
     status: 'APPROVED' | 'DISAPPROVED' | 'UNKNOWN' = undefined,
     isFeeOnTransfer: boolean = undefined,
-    isCommon: boolean = undefined
+    isCommon: boolean = undefined,
   ) {
     if (!isAddress(address)) {
       throw new Error(`Invalid address: ${address}`)
     }
     if (!chains[chainId]) {
-      throw new Error(`Invalid chainId, ${chainId}, valid chains are ${chainIds.join(', ')}`)
+      throw new Error(
+        `Invalid chainId, ${chainId}, valid chains are ${chainIds.join(', ')}`,
+      )
     }
     this.id = `${chainId}:${address.toLowerCase()}`
     this.chainId = chainId
@@ -56,7 +58,9 @@ export async function main() {
         data = { ...data, isCommon: token.isCommon }
       }
       if (Object.keys(data).length === 0) {
-        console.log(`Token ${token.id} exist and no data was provided to update.`)
+        console.log(
+          `Token ${token.id} exist and no data was provided to update.`,
+        )
       }
       const updatedToken = await client.token.update({
         where: {

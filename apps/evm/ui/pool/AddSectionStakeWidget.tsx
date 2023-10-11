@@ -1,5 +1,5 @@
-import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
-import { formatUSD } from '@sushiswap/format'
+import { Amount, Token, tryParseAmount, Type } from 'sushi/currency'
+import { formatUSD } from 'sushi'
 import { FundSource } from '@sushiswap/hooks'
 import {
   Message,
@@ -13,7 +13,10 @@ import {
 import { Button } from '@sushiswap/ui/components/button'
 import { Widget, WidgetHeader } from '@sushiswap/ui/components/widget'
 import { useTotalSupply } from '@sushiswap/wagmi'
-import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPool } from 'lib/hooks'
+import {
+  useTokenAmountDollarValues,
+  useUnderlyingTokenBalanceFromPool,
+} from 'lib/hooks'
 import { FC, ReactNode, useMemo } from 'react'
 
 import { usePoolPosition } from './PoolPositionProvider'
@@ -65,18 +68,24 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
       <WidgetHeader>
         <WidgetTitle>Stake Liquidity</WidgetTitle>
         <WidgetDescription>
-          Stake your liquidity tokens to receive incentive rewards on top of your pool fee rewards
+          Stake your liquidity tokens to receive incentive rewards on top of
+          your pool fee rewards
         </WidgetDescription>
       </WidgetHeader>
       {!isIncentivized ? (
         <Message variant="warning" size="sm" className="mb-4">
-          This pool does not have any ongoing incentives being distributed to staked LP tokens.
+          This pool does not have any ongoing incentives being distributed to
+          staked LP tokens.
         </Message>
       ) : null}
       <div>
         <div className="flex flex-col gap-4">
           <div className="flex flex-col items-center gap-2">
-            <div className={textFieldVariants({ className: 'flex flex-col gap-2 !h-[unset]' })}>
+            <div
+              className={textFieldVariants({
+                className: 'flex flex-col gap-2 !h-[unset]',
+              })}
+            >
               <TextField
                 id="stake-input"
                 variant="naked"
@@ -88,14 +97,21 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                 unit="SLP"
               />
               <div className="flex w-full justify-between gap-2">
-                <span className={typographyVariants({ variant: 'muted', className: 'text-sm' })}>
+                <span
+                  className={typographyVariants({
+                    variant: 'muted',
+                    className: 'text-sm',
+                  })}
+                >
                   {formatUSD(value0 + value1)}
                 </span>
                 <Button
                   size="sm"
                   variant="link"
                   testId="stake-balance"
-                  onClick={() => setValue(balance?.[FundSource.WALLET]?.toExact() || '')}
+                  onClick={() =>
+                    setValue(balance?.[FundSource.WALLET]?.toExact() || '')
+                  }
                 >
                   Balance: {balance?.[FundSource.WALLET].toSignificant(6)}
                 </Button>
@@ -107,7 +123,11 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                 size="xs"
                 fullWidth
                 variant={value === '25' ? 'default' : 'secondary'}
-                onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(4)?.toExact() || '')}
+                onClick={() =>
+                  setValue(
+                    balance?.[FundSource.WALLET]?.divide(4)?.toExact() || '',
+                  )
+                }
                 testId="stake-25"
               >
                 25%
@@ -116,7 +136,11 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                 size="xs"
                 fullWidth
                 variant={value === '50' ? 'default' : 'secondary'}
-                onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(2)?.toExact() || '')}
+                onClick={() =>
+                  setValue(
+                    balance?.[FundSource.WALLET]?.divide(2)?.toExact() || '',
+                  )
+                }
                 testId="stake-50"
               >
                 50%
@@ -125,7 +149,14 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                 size="xs"
                 fullWidth
                 variant={value === '75' ? 'default' : 'secondary'}
-                onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(4).multiply(3)?.toExact() || '')}
+                onClick={() =>
+                  setValue(
+                    balance?.[FundSource.WALLET]
+                      ?.divide(4)
+                      .multiply(3)
+                      ?.toExact() || '',
+                  )
+                }
                 testId="stake-75"
               >
                 75%
@@ -134,7 +165,9 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                 size="xs"
                 fullWidth
                 variant={value === '100' ? 'default' : 'secondary'}
-                onClick={() => setValue(balance?.[FundSource.WALLET]?.toExact() || '')}
+                onClick={() =>
+                  setValue(balance?.[FundSource.WALLET]?.toExact() || '')
+                }
                 testId="stake-max"
               >
                 MAX

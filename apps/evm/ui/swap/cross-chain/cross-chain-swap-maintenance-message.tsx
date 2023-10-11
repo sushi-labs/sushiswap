@@ -9,7 +9,8 @@ export const CrossChainSwapMaintenanceMessage = () => {
   if (isMaintenance)
     return (
       <Message variant="warning" size="sm" className="text-center font-medium">
-        Cross-chain swaps are currently undergoing maintenance. Please check back later.
+        Cross-chain swaps are currently undergoing maintenance. Please check
+        back later.
       </Message>
     )
   return <></>

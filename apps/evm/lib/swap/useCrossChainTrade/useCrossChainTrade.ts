@@ -1,17 +1,37 @@
 import { TradeType } from '@sushiswap/amm'
-import { Amount, Native, Price, Token, tryParseAmount, Type, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { Fraction, ONE, Percent, ZERO } from '@sushiswap/math'
+import {
+  Amount,
+  Native,
+  Price,
+  Token,
+  tryParseAmount,
+  Type,
+  WNATIVE_ADDRESS,
+} from 'sushi/currency'
+import { Fraction, ONE, Percent, ZERO } from 'sushi'
 import { usePrice } from '@sushiswap/react-query'
-import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, StargateChainId } from '@sushiswap/stargate'
+import {
+  isStargateBridgeToken,
+  STARGATE_BRIDGE_TOKENS,
+  StargateChainId,
+} from '@sushiswap/stargate'
 import { useFeeData, useSushiXSwapContract } from '@sushiswap/wagmi'
-import { getClientTrade, useBentoboxTotals, usePools } from '@sushiswap/wagmi/future/hooks'
+import {
+  getClientTrade,
+  useBentoboxTotals,
+  usePools,
+} from '@sushiswap/wagmi/future/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { stringify } from 'viem'
 
 import { Action, SushiXSwap } from '../SushiXSwap'
 import { getBridgeFees } from './getBridgeFees'
-import { UseCrossChainSelect, UseCrossChainTradeParams, UseCrossChainTradeQuerySelect } from './types'
+import {
+  UseCrossChainSelect,
+  UseCrossChainTradeParams,
+  UseCrossChainTradeQuerySelect,
+} from './types'
 
 const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // 0.50%
 
@@ -30,37 +50,56 @@ export const useCrossChainTradeQuery = (
     bentoboxSignature,
     tradeId,
   }: UseCrossChainTradeParams,
-  select: UseCrossChainTradeQuerySelect
+  select: UseCrossChainTradeQuerySelect,
 ) => {
   // First we'll check if bridge tokens for srcChainId includes srcToken, if so use srcToken as srcBridgeToken,
   // else take first stargate bridge token as srcBridgeToken
   const srcBridgeToken =
-    token0?.isToken && isStargateBridgeToken(token0) ? token0 : STARGATE_BRIDGE_TOKENS[network0]?.[0]
+    token0?.isToken && isStargateBridgeToken(token0)
+      ? token0
+      : STARGATE_BRIDGE_TOKENS[network0]?.[0]
 
   // First we'll check if bridge tokens for dstChainId includes dstToken, if so use dstToken as dstBridgeToken,
   // else take first stargate bridge token as dstBridgeToken
   const dstBridgeToken =
-    token1?.isToken && isStargateBridgeToken(token1) ? token1 : STARGATE_BRIDGE_TOKENS[network1]?.[0]
+    token1?.isToken && isStargateBridgeToken(token1)
+      ? token1
+      : STARGATE_BRIDGE_TOKENS[network1]?.[0]
 
   // A cross chain swap, a swap on the source and a swap on the destination
-  const crossChainSwap = !isStargateBridgeToken(token0) && !isStargateBridgeToken(token1)
+  const crossChainSwap =
+    !isStargateBridgeToken(token0) && !isStargateBridgeToken(token1)
 
   // A regular bridge transfer, no swaps on either end
-  const transfer = isStargateBridgeToken(token0) && isStargateBridgeToken(token1)
+  const transfer =
+    isStargateBridgeToken(token0) && isStargateBridgeToken(token1)
 
   // A swap transfer, a swap on the source, but not swap on the destination
-  const swapTransfer = !isStargateBridgeToken(token0) && isStargateBridgeToken(token1)
+  const swapTransfer =
+    !isStargateBridgeToken(token0) && isStargateBridgeToken(token1)
 
   // A transfer swap, no swap on the source, but a swap on the destination
-  const transferSwap = isStargateBridgeToken(token0) && !isStargateBridgeToken(token1)
+  const transferSwap =
+    isStargateBridgeToken(token0) && !isStargateBridgeToken(token1)
 
   const srcCurrencyA = crossChainSwap || swapTransfer ? token0 : undefined
   const srcCurrencyB = crossChainSwap || swapTransfer ? srcBridgeToken : token1
-  const dstCurrencyA = crossChainSwap || transferSwap ? dstBridgeToken : undefined
+  const dstCurrencyA =
+    crossChainSwap || transferSwap ? dstBridgeToken : undefined
   const dstCurrencyB = crossChainSwap || transferSwap ? token1 : undefined
 
-  const { data: srcPools } = usePools({ chainId: network0, currencyA: srcCurrencyA, currencyB: srcCurrencyB, enabled })
-  const { data: dstPools } = usePools({ chainId: network1, currencyA: dstCurrencyA, currencyB: dstCurrencyB, enabled })
+  const { data: srcPools } = usePools({
+    chainId: network0,
+    currencyA: srcCurrencyA,
+    currencyB: srcCurrencyB,
+    enabled,
+  })
+  const { data: dstPools } = usePools({
+    chainId: network1,
+    currencyA: dstCurrencyA,
+    currencyB: dstCurrencyB,
+    enabled,
+  })
 
   const { data: srcFeeData } = useFeeData({ chainId: network0, enabled })
   const { data: dstFeeData } = useFeeData({ chainId: network1, enabled })
@@ -98,7 +137,11 @@ export const useCrossChainTradeQuery = (
     ],
     queryFn: async () => {
       const swapSlippage = slippagePercentage
-        ? new Percent(Number(slippagePercentage === 'AUTO' ? 0.5 : slippagePercentage) * 100, 10_000)
+        ? new Percent(
+            Number(slippagePercentage === 'AUTO' ? 0.5 : slippagePercentage) *
+              100,
+            10_000,
+          )
         : SWAP_DEFAULT_SLIPPAGE
 
       const srcTrade = await getClientTrade({
@@ -127,9 +170,13 @@ export const useCrossChainTradeQuery = (
       }
 
       const srcAmountMinusStargateFee =
-        (transfer || transferSwap) && bridgeFee ? amount?.subtract(bridgeFee) : undefined
+        (transfer || transferSwap) && bridgeFee
+          ? amount?.subtract(bridgeFee)
+          : undefined
       const srcMinimumAmountOutMinusStargateFee =
-        (crossChainSwap || swapTransfer) && bridgeFee ? srcMinimumAmountOut?.subtract(bridgeFee) : undefined
+        (crossChainSwap || swapTransfer) && bridgeFee
+          ? srcMinimumAmountOut?.subtract(bridgeFee)
+          : undefined
 
       let srcAmountOut: Amount<Type> | undefined
       if (transfer) {
@@ -145,9 +192,11 @@ export const useCrossChainTradeQuery = (
       const dstAmountIn = srcAmountOut
         ? tryParseAmount(
             srcAmountOut.toFixed(
-              srcAmountOut.currency.decimals > dstBridgeToken.decimals ? dstBridgeToken.decimals : undefined
+              srcAmountOut.currency.decimals > dstBridgeToken.decimals
+                ? dstBridgeToken.decimals
+                : undefined,
             ),
-            dstBridgeToken
+            dstBridgeToken,
           )
         : undefined
 
@@ -188,13 +237,20 @@ export const useCrossChainTradeQuery = (
       const bridgeImpact =
         !bridgeFee || !amount || !srcMinimumAmountOut
           ? new Percent(0n, 10000n)
-          : new Percent(bridgeFee.quotient, srcMinimumAmountOut ? srcMinimumAmountOut.quotient : amount.quotient)
+          : new Percent(
+              bridgeFee.quotient,
+              srcMinimumAmountOut
+                ? srcMinimumAmountOut.quotient
+                : amount.quotient,
+            )
 
       let priceImpact: Percent
       if (transfer) {
         priceImpact = bridgeImpact
       } else if (crossChainSwap && srcTrade && dstTrade) {
-        priceImpact = srcTrade.priceImpact.add(dstTrade.priceImpact).add(bridgeImpact)
+        priceImpact = srcTrade.priceImpact
+          .add(dstTrade.priceImpact)
+          .add(bridgeImpact)
       } else if (transferSwap && !srcTrade && dstTrade) {
         priceImpact = dstTrade.priceImpact.add(bridgeImpact)
       } else if (swapTransfer && srcTrade && !dstTrade) {
@@ -204,7 +260,10 @@ export const useCrossChainTradeQuery = (
       }
 
       // console.log({ recipient, amount, network0, network1, dstMinimumAmountOut, srcRebases, dstRebases, contract })
-      const [srcInputCurrencyRebase, srcOutputCurrencyRebase] = srcRebases || [undefined, undefined]
+      const [srcInputCurrencyRebase, srcOutputCurrencyRebase] = srcRebases || [
+        undefined,
+        undefined,
+      ]
       const [, dstOutputCurrencyRebase] = dstRebases || [undefined, undefined]
 
       if (
@@ -222,7 +281,10 @@ export const useCrossChainTradeQuery = (
         !feeData?.gasPrice
       ) {
         return {
-          priceImpact: [priceImpact.numerator.toString(), priceImpact.denominator.toString()],
+          priceImpact: [
+            priceImpact.numerator.toString(),
+            priceImpact.denominator.toString(),
+          ],
           amountIn: amount?.quotient.toString(),
           amountOut: dstAmountOut?.quotient.toString(),
           minAmountOut: dstMinimumAmountOut?.quotient.toString(),
@@ -261,9 +323,13 @@ export const useCrossChainTradeQuery = (
           srcAmount: amount,
           srcShare,
           srcMinimumAmountOut,
-          srcMinimumShareOut: srcMinimumAmountOut?.toShare(srcOutputCurrencyRebase),
+          srcMinimumShareOut: srcMinimumAmountOut?.toShare(
+            srcOutputCurrencyRebase,
+          ),
           dstMinimumAmountOut,
-          dstMinimumShareOut: dstMinimumAmountOut?.toShare(dstOutputCurrencyRebase),
+          dstMinimumShareOut: dstMinimumAmountOut?.toShare(
+            dstOutputCurrencyRebase,
+          ),
         })
       }
 
@@ -273,14 +339,17 @@ export const useCrossChainTradeQuery = (
           .invert()
           .multiply(srcAmountOut.quotient).quotient
 
-        const amountMin = Amount.fromRawAmount(srcAmountOut.currency, slippageAdjustedAmountOut)
+        const amountMin = Amount.fromRawAmount(
+          srcAmountOut.currency,
+          slippageAdjustedAmountOut,
+        )
 
         sushiXSwap.teleport(
           srcBridgeToken,
           dstBridgeToken,
           dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined,
           tradeId,
-          amountMin
+          amountMin,
         )
       }
 
@@ -289,7 +358,9 @@ export const useCrossChainTradeQuery = (
 
       const gasBuffer = 1_000_000
 
-      const [fee] = await sushiXSwap.getFee(dstTrade ? dstTrade.route.gasSpent + gasBuffer : undefined)
+      const [fee] = await sushiXSwap.getFee(
+        dstTrade ? dstTrade.route.gasSpent + gasBuffer : undefined,
+      )
 
       const value = sushiXSwap.srcCooker.values.reduce((a, b) => a + b, fee)
 
@@ -298,16 +369,23 @@ export const useCrossChainTradeQuery = (
 
       // Needs to be parsed to string because react-query entities are serialized to cache
       return {
-        priceImpact: [priceImpact.numerator.toString(), priceImpact.denominator.toString()],
+        priceImpact: [
+          priceImpact.numerator.toString(),
+          priceImpact.denominator.toString(),
+        ],
         amountIn: amount.quotient.toString(),
         amountOut: dstAmountOut?.quotient.toString(),
         minAmountOut: dstMinimumAmountOut?.quotient.toString(),
         // gasSpent: gasSpent.toString(),
         gasSpent: Amount.fromRawAmount(
           Native.onChain(network0),
-          feeData.gasPrice * BigInt(srcTypicalGasCost + srcTradeGasSpent) + fee
+          feeData.gasPrice * BigInt(srcTypicalGasCost + srcTradeGasSpent) + fee,
         ).toSignificant(4),
-        writeArgs: [sushiXSwap.srcCooker.actions, sushiXSwap.srcCooker.values, sushiXSwap.srcCooker.datas],
+        writeArgs: [
+          sushiXSwap.srcCooker.actions,
+          sushiXSwap.srcCooker.values,
+          sushiXSwap.srcCooker.datas,
+        ],
         route: {
           status: '',
         },
@@ -333,7 +411,7 @@ export const useCrossChainTradeQuery = (
           srcPools &&
           dstPools &&
           srcRebases &&
-          dstRebases
+          dstRebases,
       ),
     queryKeyHashFn: stringify,
   })
@@ -341,19 +419,44 @@ export const useCrossChainTradeQuery = (
 
 export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
   const { token0, token1 } = variables
-  const { data: price } = usePrice({ chainId: variables.network0, address: WNATIVE_ADDRESS[variables.network0] })
-  const { data: feeData } = useFeeData({ chainId: variables.network0, enabled: variables.enabled })
+  const { data: price } = usePrice({
+    chainId: variables.network0,
+    address: WNATIVE_ADDRESS[variables.network0],
+  })
+  const { data: feeData } = useFeeData({
+    chainId: variables.network0,
+    enabled: variables.enabled,
+  })
   const select: UseCrossChainTradeQuerySelect = useCallback(
     (data) => {
-      const amountIn = data.amountIn && token0 ? Amount.fromRawAmount(token0, data.amountIn) : undefined
-      const amountOut = data.amountOut && token1 ? Amount.fromRawAmount(token1, data.amountOut) : undefined
-      const minAmountOut = data.minAmountOut && token1 ? Amount.fromRawAmount(token1, data.minAmountOut) : undefined
-      const swapPrice = amountIn && amountOut ? new Price({ baseAmount: amountIn, quoteAmount: amountOut }) : undefined
+      const amountIn =
+        data.amountIn && token0
+          ? Amount.fromRawAmount(token0, data.amountIn)
+          : undefined
+      const amountOut =
+        data.amountOut && token1
+          ? Amount.fromRawAmount(token1, data.amountOut)
+          : undefined
+      const minAmountOut =
+        data.minAmountOut && token1
+          ? Amount.fromRawAmount(token1, data.minAmountOut)
+          : undefined
+      const swapPrice =
+        amountIn && amountOut
+          ? new Price({ baseAmount: amountIn, quoteAmount: amountOut })
+          : undefined
       const priceImpact = data.priceImpact
         ? new Percent(BigInt(data.priceImpact[0]), BigInt(data.priceImpact[1]))
         : undefined
 
-      if (data?.gasSpent && feeData?.gasPrice && amountIn && amountOut && data.priceImpact && data.minAmountOut) {
+      if (
+        data?.gasSpent &&
+        feeData?.gasPrice &&
+        amountIn &&
+        amountOut &&
+        data.priceImpact &&
+        data.minAmountOut
+      ) {
         return {
           ...data,
           route: {
@@ -394,7 +497,7 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
         overrides: undefined,
       }
     },
-    [feeData?.gasPrice, token0, token1]
+    [feeData?.gasPrice, token0, token1],
   )
 
   return useCrossChainTradeQuery(variables, select)
