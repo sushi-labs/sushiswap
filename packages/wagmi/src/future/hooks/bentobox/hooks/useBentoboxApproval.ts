@@ -2,12 +2,22 @@
 
 import { HashZero } from '@ethersproject/constants'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { createErrorToast, createFailedToast, createToast } from '@sushiswap/ui/components/toast'
+import {
+  createErrorToast,
+  createFailedToast,
+  createToast,
+} from '@sushiswap/ui/components/toast'
 import { useQuery } from '@tanstack/react-query'
 import { readContract } from '@wagmi/core'
 import { useCallback, useMemo, useState } from 'react'
 import { hexToSignature, UserRejectedRequestError } from 'viem'
-import { Address, useAccount, useContractWrite, usePrepareContractWrite, useSignTypedData } from 'wagmi'
+import {
+  Address,
+  useAccount,
+  useContractWrite,
+  usePrepareContractWrite,
+  useSignTypedData,
+} from 'wagmi'
 import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
 import { getBentoBoxContractConfig } from '../../../../hooks'
@@ -71,11 +81,16 @@ export const useBentoboxApproval = ({
     ...getBentoBoxContractConfig(chainId),
     chainId,
     functionName: 'setMasterContractApproval',
-    args: masterContract && address ? [address, masterContract, true, 0, HashZero, HashZero] : undefined,
+    args:
+      masterContract && address
+        ? [address, masterContract, true, 0, HashZero, HashZero]
+        : undefined,
     onError: (error) => {
       console.error('error preparing master contract approval', error)
     },
-    enabled: Boolean(enabled && masterContract && address && chainId && fallback),
+    enabled: Boolean(
+      enabled && masterContract && address && chainId && fallback,
+    ),
   })
 
   const onSettled = useCallback(
@@ -106,7 +121,7 @@ export const useBentoboxApproval = ({
         })
       }
     },
-    [address, chainId]
+    [address, chainId],
   )
 
   const execute = useContractWrite({
@@ -165,7 +180,8 @@ export const useBentoboxApproval = ({
             account: address,
             type: 'approval',
             chainId,
-            summary: 'Failed to approve using a permit, please try again using a regular approval.',
+            summary:
+              'Failed to approve using a permit, please try again using a regular approval.',
             groupTimestamp: ts,
             timestamp: ts,
           })
@@ -173,7 +189,14 @@ export const useBentoboxApproval = ({
           setFallback(true)
         })
     }
-  }, [address, chainId, data?.nonces, masterContract, setSignature, signTypedDataAsync])
+  }, [
+    address,
+    chainId,
+    data?.nonces,
+    masterContract,
+    setSignature,
+    signTypedDataAsync,
+  ])
 
   return useMemo(() => {
     let state = ApprovalState.UNKNOWN

@@ -1,13 +1,23 @@
 'use client'
 
-import { ArrowDownRightIcon } from '@heroicons/react/20/solid'
-import { EllipsisHorizontalIcon, GiftIcon, LightBulbIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { UploadIcon } from '@heroicons/react-v1/outline'
 import { DownloadIcon } from '@heroicons/react-v1/solid'
+import { ArrowDownRightIcon } from '@heroicons/react/20/solid'
+import {
+  EllipsisHorizontalIcon,
+  GiftIcon,
+  LightBulbIcon,
+  MinusIcon,
+  PlusIcon,
+} from '@heroicons/react/24/outline'
 import { Slot } from '@radix-ui/react-slot'
-import { GetPoolsArgs, Pool, Protocol } from '@sushiswap/client'
-import { usePoolCount, usePoolsInfinite } from '@sushiswap/client/hooks'
-import { Native } from '@sushiswap/currency'
+import {
+  GetPoolsArgs,
+  Pool,
+  Protocol,
+  usePoolCount,
+  usePoolsInfinite,
+} from '@sushiswap/client'
 import {
   Button,
   Card,
@@ -34,9 +44,11 @@ import { ColumnDef, Row, SortingState, TableState } from '@tanstack/react-table'
 import Link from 'next/link'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { Native } from 'sushi/currency'
 import { useSWRConfig } from 'swr'
 
 import { isAngleEnabledChainId } from '../../config'
+import { usePoolFilters } from './PoolsFiltersProvider'
 import {
   APR_COLUMN_POOL,
   FEES_COLUMN,
@@ -46,7 +58,6 @@ import {
   VOLUME_1M_COLUMN,
   VOLUME_7D_COLUMN,
 } from './columns'
-import { usePoolFilters } from './PoolsFiltersProvider'
 
 const COLUMNS = [
   NAME_COLUMN_POOL,
@@ -100,7 +111,10 @@ const COLUMNS = [
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild={row.original.hasEnabledSteerVault}>
-                    <DropdownMenuItem asChild disabled={!row.original.hasEnabledSteerVault}>
+                    <DropdownMenuItem
+                      asChild
+                      disabled={!row.original.hasEnabledSteerVault}
+                    >
                       <Link
                         onClick={(e) => e.stopPropagation()}
                         shallow={true}
@@ -108,7 +122,11 @@ const COLUMNS = [
                         href={`/pool/${row.original.id}/smart`}
                       >
                         <span className="relative">
-                          <LightBulbIcon width={16} height={16} className="mr-2" />
+                          <LightBulbIcon
+                            width={16}
+                            height={16}
+                            className="mr-2"
+                          />
                           <sup className="rounded-full bg-background absolute right-[3px]">
                             <PlusIcon width={12} height={12} />
                           </sup>
@@ -132,18 +150,27 @@ const COLUMNS = [
             <DropdownMenuGroup>
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild={isAngleEnabledChainId(row.original.chainId)}>
-                    <DropdownMenuItem asChild disabled={!isAngleEnabledChainId(row.original.chainId)}>
+                  <TooltipTrigger
+                    asChild={isAngleEnabledChainId(row.original.chainId)}
+                  >
+                    <DropdownMenuItem
+                      asChild
+                      disabled={!isAngleEnabledChainId(row.original.chainId)}
+                    >
                       <Link
                         onClick={(e) => e.stopPropagation()}
                         shallow={true}
                         className="flex items-center"
-                        href={`/pool/incentivize?chainId=${row.original.chainId}&fromCurrency=${
-                          row.original.token0.address === Native.onChain(row.original.chainId).wrapped.address
+                        href={`/pool/incentivize?chainId=${
+                          row.original.chainId
+                        }&fromCurrency=${
+                          row.original.token0.address ===
+                          Native.onChain(row.original.chainId).wrapped.address
                             ? 'NATIVE'
                             : row.original.token0.address
                         }&toCurrency=${
-                          row.original.token1.address === Native.onChain(row.original.chainId).wrapped.address
+                          row.original.token1.address ===
+                          Native.onChain(row.original.chainId).wrapped.address
                             ? 'NATIVE'
                             : row.original.token1.address
                         }&feeAmount=${row.original.swapFee * 10_000 * 100}`}
@@ -222,7 +249,10 @@ const COLUMNS = [
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild={row.original.isIncentivized}>
-                    <DropdownMenuItem asChild disabled={!row.original.isIncentivized}>
+                    <DropdownMenuItem
+                      asChild
+                      disabled={!row.original.isIncentivized}
+                    >
                       <Link
                         onClick={(e) => e.stopPropagation()}
                         shallow={true}
@@ -238,7 +268,7 @@ const COLUMNS = [
                     <p>
                       {!row.original.isIncentivized
                         ? 'No rewards available on this pool'
-                        : `After adding liquidity, stake your liquidity tokens to benefit from extra rewards`}
+                        : 'After adding liquidity, stake your liquidity tokens to benefit from extra rewards'}
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -270,8 +300,11 @@ interface PositionsTableProps {
 }
 
 export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
-  const { chainIds, tokenSymbols, protocols, farmsOnly, smartPoolsOnly } = usePoolFilters()
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
+  const { chainIds, tokenSymbols, protocols, farmsOnly, smartPoolsOnly } =
+    usePoolFilters()
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: 'liquidityUSD', desc: true },
+  ])
 
   const args = useMemo<GetPoolsArgs>(() => {
     return {
@@ -291,7 +324,11 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
     isValidating,
     setSize,
   } = usePoolsInfinite({ args, shouldFetch: true, swrConfig: useSWRConfig() })
-  const { data: poolCount } = usePoolCount({ args, shouldFetch: true, swrConfig: useSWRConfig() })
+  const { data: poolCount } = usePoolCount({
+    args,
+    shouldFetch: true,
+    swrConfig: useSWRConfig(),
+  })
   const data = useMemo(() => pools?.flat() || [], [pools])
 
   const state: Partial<TableState> = useMemo(() => {
@@ -308,13 +345,16 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
     (row: Row<Pool>, rowNode: ReactNode) => {
       if (onRowClick)
         return (
-          <Slot className="cursor-pointer" onClick={() => onRowClick?.(row.original)}>
+          <Slot
+            className="cursor-pointer"
+            onClick={() => onRowClick?.(row.original)}
+          >
             {rowNode}
           </Slot>
         )
       return rowNode
     },
-    [onRowClick]
+    [onRowClick],
   )
 
   return (
@@ -332,7 +372,11 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
         <CardHeader>
           <CardTitle>
             Pools{' '}
-            {poolCount?.count ? <span className="text-gray-400 dark:text-slate-500">({poolCount.count})</span> : null}
+            {poolCount?.count ? (
+              <span className="text-gray-400 dark:text-slate-500">
+                ({poolCount.count})
+              </span>
+            ) : null}
           </CardTitle>
         </CardHeader>
         <DataTable

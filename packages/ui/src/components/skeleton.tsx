@@ -1,7 +1,7 @@
-import { cva, type VariantProps } from 'class-variance-authority'
+import { type VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
 
-import { classNames } from '../index'
+import classNames from 'classnames'
 
 function SkeletonBox(props: React.HTMLAttributes<HTMLDivElement>) {
   return (
@@ -9,7 +9,7 @@ function SkeletonBox(props: React.HTMLAttributes<HTMLDivElement>) {
       {...props}
       className={classNames(
         props.className,
-        'rounded-lg overflow-hidden animate-pulse bg-black/[0.10] dark:bg-white/[0.10]'
+        'rounded-lg overflow-hidden animate-pulse bg-black/[0.10] dark:bg-white/[0.10]',
       )}
     />
   )
@@ -32,7 +32,7 @@ function SkeletonCircle(props: CircleProps) {
       }}
       className={classNames(
         props.className,
-        'rounded-full overflow-hidden animate-pulse bg-black/[0.10] dark:bg-white/[0.10]'
+        'rounded-full overflow-hidden animate-pulse bg-black/[0.10] dark:bg-white/[0.10]',
       )}
     />
   )
@@ -65,13 +65,21 @@ export interface SkeletonTextProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'size'>,
     VariantProps<typeof skeletonTextVariants> {}
 
-function SkeletonText({ className, align, fontSize, ...props }: SkeletonTextProps) {
+function SkeletonText({
+  className,
+  align,
+  fontSize,
+  ...props
+}: SkeletonTextProps) {
   return (
-    <div {...props} className={classNames(skeletonTextVariants({ align, fontSize }))}>
+    <div
+      {...props}
+      className={classNames(skeletonTextVariants({ align, fontSize }))}
+    >
       <div
         className={classNames(
           className,
-          'flex w-full h-full rounded-md overflow-hidden animate-pulse bg-black/[0.10] dark:bg-white/[0.10]'
+          'flex w-full h-full rounded-md overflow-hidden animate-pulse bg-black/[0.10] dark:bg-white/[0.10]',
         )}
       />
     </div>

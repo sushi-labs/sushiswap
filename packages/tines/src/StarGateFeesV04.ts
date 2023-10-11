@@ -29,7 +29,11 @@ const PROTOCOL_SUBSIDY = 3n * E13
 const FIFTY_PERCENT = 5n * E17
 const SIXTY_PERCENT = 6n * E17
 
-export function getStarGateFeesV04(state: BridgeState, whitelisted: boolean, amountSD: bigint): Fees {
+export function getStarGateFeesV04(
+  state: BridgeState,
+  whitelisted: boolean,
+  amountSD: bigint,
+): Fees {
   const eqReward = getEqReward(state, amountSD)
 
   // calculate the equilibrium fee
@@ -55,7 +59,10 @@ function getEqReward(state: BridgeState, amountSD: bigint): bigint {
 
   const poolDeficit = state.lpAsset - state.currentAssetSD
   // assets in pool are < 75% of liquidity provided & amount transferred > 2% of pool deficit
-  if ((state.currentAssetSD * 100n) / state.lpAsset < 75n && amountSD * 100n > poolDeficit * 2n) {
+  if (
+    (state.currentAssetSD * 100n) / state.lpAsset < 75n &&
+    amountSD * 100n > poolDeficit * 2n
+  ) {
     // reward capped at rewardPoolSize
     const eqReward = (state.eqFeePool * amountSD) / poolDeficit
     if (eqReward > state.eqFeePool) {
@@ -67,7 +74,10 @@ function getEqReward(state: BridgeState, amountSD: bigint): bigint {
   }
 }
 
-function getEquilibriumFee(state: BridgeState, amountSD: bigint): { eqFee: bigint; protocolSubsidy: bigint } {
+function getEquilibriumFee(
+  state: BridgeState,
+  amountSD: bigint,
+): { eqFee: bigint; protocolSubsidy: bigint } {
   const beforeBalance = state.currentBalance
   const idealBalance = state.idealBalance
   const afterBalance = beforeBalance - amountSD
@@ -82,21 +92,57 @@ function getEquilibriumFee(state: BridgeState, amountSD: bigint): { eqFee: bigin
     protocolSubsidy = eqFee
   } else if (afterBalance >= safeZoneMin) {
     // safe zone
-    const proxyBeforeBalance = beforeBalance < safeZoneMax ? beforeBalance : safeZoneMax
-    eqFee = getTrapezoidArea(LAMBDA_1, ZERO, safeZoneMax, safeZoneMin, proxyBeforeBalance, afterBalance)
+    const proxyBeforeBalance =
+      beforeBalance < safeZoneMax ? beforeBalance : safeZoneMax
+    eqFee = getTrapezoidArea(
+      LAMBDA_1,
+      ZERO,
+      safeZoneMax,
+      safeZoneMin,
+      proxyBeforeBalance,
+      afterBalance,
+    )
   } else {
     // danger zone
     if (beforeBalance >= safeZoneMin) {
       // across 2 or 3 zones
       // part 1
-      const proxyBeforeBalance = beforeBalance < safeZoneMax ? beforeBalance : safeZoneMax
-      eqFee = eqFee + getTrapezoidArea(LAMBDA_1, ZERO, safeZoneMax, safeZoneMin, proxyBeforeBalance, safeZoneMin)
+      const proxyBeforeBalance =
+        beforeBalance < safeZoneMax ? beforeBalance : safeZoneMax
+      eqFee =
+        eqFee +
+        getTrapezoidArea(
+          LAMBDA_1,
+          ZERO,
+          safeZoneMax,
+          safeZoneMin,
+          proxyBeforeBalance,
+          safeZoneMin,
+        )
       // part 2
-      eqFee = eqFee + getTrapezoidArea(LAMBDA_2, LAMBDA_1, safeZoneMin, ZERO, safeZoneMin, afterBalance)
+      eqFee =
+        eqFee +
+        getTrapezoidArea(
+          LAMBDA_2,
+          LAMBDA_1,
+          safeZoneMin,
+          ZERO,
+          safeZoneMin,
+          afterBalance,
+        )
     } else {
       // only in danger zone
       // part 2 only
-      eqFee = eqFee + getTrapezoidArea(LAMBDA_2, LAMBDA_1, safeZoneMin, ZERO, beforeBalance, afterBalance)
+      eqFee =
+        eqFee +
+        getTrapezoidArea(
+          LAMBDA_2,
+          LAMBDA_1,
+          safeZoneMin,
+          ZERO,
+          beforeBalance,
+          afterBalance,
+        )
     }
   }
   return { eqFee, protocolSubsidy }
@@ -105,7 +151,7 @@ function getEquilibriumFee(state: BridgeState, amountSD: bigint): { eqFee: bigin
 function getProtocolAndLpFee(
   state: BridgeState,
   amountSD: bigint,
-  protocolSubsidy: bigint
+  protocolSubsidy: bigint,
 ): { protocolFee: bigint; lpFee: bigint } {
   let protocolFee = (amountSD * PROTOCOL_FEE) / DENOMINATOR - protocolSubsidy
   let lpFee = (amountSD * LP_FEE) / DENOMINATOR
@@ -120,8 +166,11 @@ function getProtocolAndLpFee(
     return { protocolFee, lpFee }
   }
 
-  const isAboveIdeal = state.currentBalance - amountSD > (state.idealBalance * SIXTY_PERCENT) / DENOMINATOR
-  const currentAssetNumerated = (state.currentAssetSD * DENOMINATOR) / state.lpAsset
+  const isAboveIdeal =
+    state.currentBalance - amountSD >
+    (state.idealBalance * SIXTY_PERCENT) / DENOMINATOR
+  const currentAssetNumerated =
+    (state.currentAssetSD * DENOMINATOR) / state.lpAsset
   if (currentAssetNumerated <= FIFTY_PERCENT && isAboveIdeal) {
     // x <= 50% => no fees
     protocolFee = ZERO
@@ -150,7 +199,7 @@ function getTrapezoidArea(
   xUpperBound: bigint,
   xLowerBound: bigint,
   xStart: bigint,
-  xEnd: bigint
+  xEnd: bigint,
 ): bigint {
   const xBoundWidth = xUpperBound - xLowerBound
 

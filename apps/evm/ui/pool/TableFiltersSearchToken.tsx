@@ -19,7 +19,7 @@ export const TableFiltersSearchToken: FC = () => {
         setFilters((prev) => ({ ...prev, tokenSymbols: values }))
       })
     },
-    [setFilters]
+    [setFilters],
   )
 
   return (

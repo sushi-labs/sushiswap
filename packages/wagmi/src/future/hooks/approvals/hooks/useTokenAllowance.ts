@@ -1,7 +1,7 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Token } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Amount, Token } from 'sushi/currency'
 import { Address, erc20ABI, useContractRead } from 'wagmi'
 
 interface UseTokenAllowance {
@@ -12,7 +12,13 @@ interface UseTokenAllowance {
   enabled?: boolean
 }
 
-export const useTokenAllowance = ({ chainId, token, owner, spender, enabled = true }: UseTokenAllowance) => {
+export const useTokenAllowance = ({
+  chainId,
+  token,
+  owner,
+  spender,
+  enabled = true,
+}: UseTokenAllowance) => {
   return useContractRead({
     chainId,
     address: token ? (token.address as Address) : undefined,

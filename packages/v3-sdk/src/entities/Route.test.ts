@@ -1,4 +1,4 @@
-import { Native, Token, WETH9 } from '@sushiswap/currency'
+import { Native, Token, WETH9 } from 'sushi/currency'
 
 import { FeeAmount } from '../constants'
 import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96'
@@ -28,9 +28,33 @@ describe('Route', () => {
   })
   const weth = WETH9[1]
 
-  const pool_0_1 = new SushiSwapV3Pool(token0, token1, FeeAmount.MEDIUM, encodeSqrtRatioX96(1, 1), 0, 0, [])
-  const pool_0_weth = new SushiSwapV3Pool(token0, weth, FeeAmount.MEDIUM, encodeSqrtRatioX96(1, 1), 0, 0, [])
-  const pool_1_weth = new SushiSwapV3Pool(token1, weth, FeeAmount.MEDIUM, encodeSqrtRatioX96(1, 1), 0, 0, [])
+  const pool_0_1 = new SushiSwapV3Pool(
+    token0,
+    token1,
+    FeeAmount.MEDIUM,
+    encodeSqrtRatioX96(1, 1),
+    0,
+    0,
+    [],
+  )
+  const pool_0_weth = new SushiSwapV3Pool(
+    token0,
+    weth,
+    FeeAmount.MEDIUM,
+    encodeSqrtRatioX96(1, 1),
+    0,
+    0,
+    [],
+  )
+  const pool_1_weth = new SushiSwapV3Pool(
+    token1,
+    weth,
+    FeeAmount.MEDIUM,
+    encodeSqrtRatioX96(1, 1),
+    0,
+    0,
+    [],
+  )
 
   describe('path', () => {
     it('constructs a path from the tokens', () => {
@@ -78,7 +102,7 @@ describe('Route', () => {
       encodeSqrtRatioX96(1, 5),
       0,
       TickMath.getTickAtSqrtRatio(encodeSqrtRatioX96(1, 5)),
-      []
+      [],
     )
     const pool_1_2 = new SushiSwapV3Pool(
       token1,
@@ -87,7 +111,7 @@ describe('Route', () => {
       encodeSqrtRatioX96(15, 30),
       0,
       TickMath.getTickAtSqrtRatio(encodeSqrtRatioX96(15, 30)),
-      []
+      [],
     )
     const pool_0_weth = new SushiSwapV3Pool(
       token0,
@@ -96,7 +120,7 @@ describe('Route', () => {
       encodeSqrtRatioX96(3, 1),
       0,
       TickMath.getTickAtSqrtRatio(encodeSqrtRatioX96(3, 1)),
-      []
+      [],
     )
     const pool_1_weth = new SushiSwapV3Pool(
       token1,
@@ -105,7 +129,7 @@ describe('Route', () => {
       encodeSqrtRatioX96(1, 7),
       0,
       TickMath.getTickAtSqrtRatio(encodeSqrtRatioX96(1, 7)),
-      []
+      [],
     )
 
     it('correct for 0 -> 1', () => {
@@ -156,14 +180,16 @@ describe('Route', () => {
     })
 
     it('correct for ether -> 0 -> 1 -> weth', () => {
-      const price = new Route([pool_0_weth, pool_0_1, pool_1_weth], ETHER, weth).midPrice
+      const price = new Route([pool_0_weth, pool_0_1, pool_1_weth], ETHER, weth)
+        .midPrice
       expect(price.toSignificant(4)).toEqual('0.009524')
       expect(price.baseCurrency.equals(ETHER)).toEqual(true)
       expect(price.quoteCurrency.equals(weth)).toEqual(true)
     })
 
     it('correct for weth -> 0 -> 1 -> ether', () => {
-      const price = new Route([pool_0_weth, pool_0_1, pool_1_weth], weth, ETHER).midPrice
+      const price = new Route([pool_0_weth, pool_0_1, pool_1_weth], weth, ETHER)
+        .midPrice
       expect(price.toSignificant(4)).toEqual('0.009524')
       expect(price.baseCurrency.equals(weth)).toEqual(true)
       expect(price.quoteCurrency.equals(ETHER)).toEqual(true)

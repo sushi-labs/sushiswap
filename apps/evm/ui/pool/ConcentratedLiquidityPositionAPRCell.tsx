@@ -1,9 +1,18 @@
-import { CardDescription, CardHeader, CardTitle, HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
+import {
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@sushiswap/ui'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future'
 import { Row } from '@tanstack/react-table'
 import { FC } from 'react'
 
-export const ConcentratedLiquidityPositionAPRCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> = () => {
+export const ConcentratedLiquidityPositionAPRCell: FC<
+  Row<ConcentratedLiquidityPositionWithV3Pool>
+> = () => {
   return (
     <HoverCard openDelay={0} closeDelay={0}>
       <HoverCardTrigger asChild>

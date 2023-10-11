@@ -1,12 +1,17 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
-import { shortenAddress } from '@sushiswap/format'
+import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'
 import { JazzIcon } from '@sushiswap/ui/components/icons/JazzIcon'
-import { Popover, PopoverContent, PopoverTrigger } from '@sushiswap/ui/components/popover'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@sushiswap/ui/components/popover'
 import { useBreakpoint } from '@sushiswap/ui/lib/useBreakpoint'
 import React, { FC, useState } from 'react'
+import { shortenAddress } from 'sushi'
+import { ChainId } from 'sushi/chain'
 import { useAccount, useEnsAvatar, useEnsName, useNetwork } from 'wagmi'
 
 import { ConnectButton } from '../ConnectButton'
@@ -27,6 +32,7 @@ interface ProfileProps {
 }
 
 export const UserProfile: FC<ProfileProps> = () => {
+  const isMounted = useIsMounted()
   const { isSm } = useBreakpoint('sm')
   const [view, setView] = useState<ProfileView>(ProfileView.Default)
   const { chain } = useNetwork()
@@ -44,27 +50,40 @@ export const UserProfile: FC<ProfileProps> = () => {
 
   const chainId = (chain?.id as ChainId) || ChainId.ETHEREUM
 
-  if (!address) return <ConnectButton variant="secondary" />
+  if (!address || !isMounted) return <ConnectButton variant="secondary" />
 
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="secondary">
           {avatar ? (
-            <img alt="ens-avatar" src={avatar} width={20} height={20} className="rounded-full" />
+            <img
+              alt="ens-avatar"
+              src={avatar}
+              width={20}
+              height={20}
+              className="rounded-full"
+            />
           ) : (
             <JazzIcon diameter={20} address={address} />
           )}
-          <span className="hidden sm:block">{shortenAddress(address, isSm ? 3 : 2)}</span>
+          <span className="hidden sm:block">
+            {shortenAddress(address, isSm ? 3 : 2)}
+          </span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80" onOpenAutoFocus={(e) => e.preventDefault()}>
+      <PopoverContent
+        className="w-80"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         {!address && <ConnectView onSelect={close} />}
         {view === ProfileView.Default && address && (
           <DefaultView chainId={chainId} address={address} setView={setView} />
         )}
         {view === ProfileView.Settings && <SettingsView setView={setView} />}
-        {view === ProfileView.Transactions && address && <TransactionsView setView={setView} address={address} />}
+        {view === ProfileView.Transactions && address && (
+          <TransactionsView setView={setView} address={address} />
+        )}
       </PopoverContent>
     </Popover>
   )

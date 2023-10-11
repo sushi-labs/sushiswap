@@ -1,8 +1,8 @@
 import { XMarkIcon } from '@heroicons/react/20/solid'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { type VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
 
-import { classNames } from '../index'
+import classNames from 'classnames'
 import { IconComponent } from '../types'
 
 const chipVariants = cva(
@@ -10,9 +10,12 @@ const chipVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-blue hover:bg-blue-600 focus:bg-blue-700 border-transparent text-primary-foreground',
-        secondary: 'bg-secondary hover:bg-muted focus:bg-accent border-transparent text-secondary-foreground',
-        destructive: 'bg-red hover:bg-red-600 focus:bg-red-700 border-transparent text-destructive-foreground',
+        default:
+          'bg-blue hover:bg-blue-600 focus:bg-blue-700 border-transparent text-primary-foreground',
+        secondary:
+          'bg-secondary hover:bg-muted focus:bg-accent border-transparent text-secondary-foreground',
+        destructive:
+          'bg-red hover:bg-red-600 focus:bg-red-700 border-transparent text-destructive-foreground',
         ghost: 'hover:bg-muted focus:bg-accent',
         outline: 'text-foreground',
         pink: 'bg-pink/10 text-pink',
@@ -27,7 +30,7 @@ const chipVariants = cva(
     defaultVariants: {
       variant: 'default',
     },
-  }
+  },
 )
 
 export interface ChipProps
@@ -39,15 +42,21 @@ export interface ChipProps
 }
 
 const Chip = React.forwardRef<HTMLDivElement, ChipProps>(
-  ({ className, variant, icon: Icon, onClose, iconProps, children, ...props }, ref) => {
+  (
+    { className, variant, icon: Icon, onClose, iconProps, children, ...props },
+    ref,
+  ) => {
     return (
       <div
         className={classNames(
           chipVariants({
             variant,
-            className: classNames(className, 'flex items-center gap-1 flex-nowrap'),
+            className: classNames(
+              className,
+              'flex items-center gap-1 flex-nowrap',
+            ),
             hasRemove: onClose ? 'yes' : 'no',
-          })
+          }),
         )}
         ref={ref}
         {...props}
@@ -65,7 +74,7 @@ const Chip = React.forwardRef<HTMLDivElement, ChipProps>(
         ) : null}
       </div>
     )
-  }
+  },
 )
 Chip.displayName = 'Chip'
 

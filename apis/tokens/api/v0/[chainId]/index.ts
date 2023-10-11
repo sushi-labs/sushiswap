@@ -4,7 +4,10 @@ import { getTokensByChainId } from '../../../lib/api.js'
 import { TokensByChainIdApiSchema } from '../../../lib/schemas/chainId/index.js'
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
-  response.setHeader('Cache-Control', 's-maxage=900, stale-while-revalidate=86400')
+  response.setHeader(
+    'Cache-Control',
+    's-maxage=900, stale-while-revalidate=86400',
+  )
 
   const result = TokensByChainIdApiSchema.safeParse(request.query)
   if (!result.success) {

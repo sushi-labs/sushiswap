@@ -8,7 +8,12 @@ module.exports = {
     es6: true,
   },
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'simple-import-sort', 'unused-imports', 'prettier'],
+  plugins: [
+    '@typescript-eslint',
+    'simple-import-sort',
+    'unused-imports',
+    'prettier',
+  ],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
@@ -33,7 +38,10 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 'warn',
     '@typescript-eslint/no-non-null-assertion': 'warn',
     '@typescript-eslint/ban-ts-comment': 'warn',
-    '@typescript-eslint/no-empty-function': ['warn', { allow: ['private-constructors'] }],
+    '@typescript-eslint/no-empty-function': [
+      'warn',
+      { allow: ['private-constructors'] },
+    ],
     '@typescript-eslint/no-namespace': 'off',
     'no-unused-vars': 'warn',
     'simple-import-sort/exports': 'warn',

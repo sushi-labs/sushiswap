@@ -6,7 +6,8 @@ import { pairsByIds } from './pairsByIds.js'
 
 export const resolvers: Resolvers = {
   Pair: {
-    chainId: (root, args, context, info) => Number(root.chainId || context.chainId || 1),
+    chainId: (root, args, context, info) =>
+      Number(root.chainId || context.chainId || 1),
     // address: (root, args, context, info) => String(root.address || context.address),
   },
   Query: {

@@ -4,7 +4,12 @@ import { IconComponent } from '../../types'
 
 export const ClassicPoolIcon: IconComponent = (props) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 32 32">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+      fill="none"
+      viewBox="0 0 32 32"
+    >
       <path
         stroke="url(#paint0_linear_3959_23219)"
         strokeWidth="1.5"

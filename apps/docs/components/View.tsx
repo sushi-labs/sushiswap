@@ -1,8 +1,14 @@
 import { cva } from 'class-variance-authority'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import * as React from 'react'
 
-export const View = ({ prop, value = '', direction = 'row', justify = 'start', children }) => {
+export const View = ({
+  prop,
+  value = '',
+  direction = 'row',
+  justify = 'start',
+  children,
+}) => {
   const flexDirection = direction === 'column' ? 'column' : 'row'
   const justifyContent = justify === 'start' ? 'flex-start' : 'space-evenly'
   return (
@@ -44,9 +50,13 @@ export const EnhancedView = ({ prop, value = '', ...props }) => {
               )}
             </div>
           ))}
-          {!Object.keys(rest).length && <span className="text-gray-700 p-1.5">No properties selected</span>}
+          {!Object.keys(rest).length && (
+            <span className="text-gray-700 p-1.5">No properties selected</span>
+          )}
         </div>
-        <div className="bg-grid bg-gray-50/50 flex-1 p-2.5">{props.children}</div>
+        <div className="bg-grid bg-gray-50/50 flex-1 p-2.5">
+          {props.children}
+        </div>
       </div>
     </div>
   )

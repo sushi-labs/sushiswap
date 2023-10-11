@@ -1,10 +1,18 @@
 import { getPools, getTokenPricesChain } from '@sushiswap/client'
 import { Prisma, SteerStrategy, VaultState } from '@sushiswap/database'
-import { getIdFromChainIdAddress } from '@sushiswap/format'
-import { STEER_ENABLED_NETWORKS, STEER_SUBGRAPGH_NAME, SteerChainId, SUBGRAPH_HOST } from '@sushiswap/graph-config'
-import { getSteerStrategyPayload, getSteerVaultAprs } from '@sushiswap/steer-sdk'
+import {
+  STEER_ENABLED_NETWORKS,
+  STEER_SUBGRAPGH_NAME,
+  SUBGRAPH_HOST,
+  SteerChainId,
+} from '@sushiswap/graph-config'
+import {
+  getSteerStrategyPayload,
+  getSteerVaultAprs,
+} from '@sushiswap/steer-sdk'
 import { TickMath } from '@sushiswap/v3-sdk'
-import { isPromiseFulfilled } from '@sushiswap/validate'
+import { isPromiseFulfilled } from 'sushi'
+import { getIdFromChainIdAddress } from 'sushi/format'
 import { Address } from 'viem'
 
 import { getBuiltGraphSDK } from '../.graphclient/index.js'
@@ -22,14 +30,21 @@ export async function steer() {
     await updatePoolsWithSteerVaults()
 
     const endTime = performance.now()
-    console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
+    console.log(
+      `COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(
+        1,
+      )} seconds. `,
+    )
   } catch (e) {
     console.error(e)
   }
 }
 
 async function extractChain(chainId: SteerChainId) {
-  const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: STEER_SUBGRAPGH_NAME[chainId] })
+  const sdk = getBuiltGraphSDK({
+    host: SUBGRAPH_HOST[chainId],
+    name: STEER_SUBGRAPGH_NAME[chainId],
+  })
 
   const prices = await getTokenPricesChain({ chainId })
   const { vaults } = await sdk.SteerVaults()
@@ -46,23 +61,35 @@ async function extractChain(chainId: SteerChainId) {
       const token0Price = prices[vault.token0] || 0
       const token1Price = prices[vault.token1] || 0
 
-      const reserve0USD = pool ? (Number(vault.reserve0) / 10 ** pool.token0.decimals) * token0Price : 0
-      const fees0USD = pool ? (Number(vault.fees0) / 10 ** pool.token0.decimals) * token0Price : 0
+      const reserve0USD = pool
+        ? (Number(vault.reserve0) / 10 ** pool.token0.decimals) * token0Price
+        : 0
+      const fees0USD = pool
+        ? (Number(vault.fees0) / 10 ** pool.token0.decimals) * token0Price
+        : 0
 
-      const reserve1USD = pool ? (Number(vault.reserve1) / 10 ** pool.token1.decimals) * token1Price : 0
-      const fees1USD = pool ? (Number(vault.fees1) / 10 ** pool.token1.decimals) * token1Price : 0
+      const reserve1USD = pool
+        ? (Number(vault.reserve1) / 10 ** pool.token1.decimals) * token1Price
+        : 0
+      const fees1USD = pool
+        ? (Number(vault.fees1) / 10 ** pool.token1.decimals) * token1Price
+        : 0
 
       const reserveUSD = reserve0USD + reserve1USD
       const feesUSD = Number(fees0USD) + Number(fees1USD)
 
       const [payloadP, aprP] = await Promise.allSettled([
         getSteerStrategyPayload({ payloadHash: vault.payloadIpfs }),
-        getSteerVaultAprs({ vaultId: getIdFromChainIdAddress(chainId, vault.id as Address) }),
+        getSteerVaultAprs({
+          vaultId: getIdFromChainIdAddress(chainId, vault.id as Address),
+        }),
       ])
 
       const payload = isPromiseFulfilled(payloadP) ? payloadP.value : null
       const { apr: annualPercentageYield, apr1w: annualPercentageWeeklyYield } =
-        isPromiseFulfilled(aprP) && aprP.value ? aprP.value : { apr: null, apr1w: null }
+        isPromiseFulfilled(aprP) && aprP.value
+          ? aprP.value
+          : { apr: null, apr1w: null }
 
       return {
         ...vault,
@@ -77,14 +104,19 @@ async function extractChain(chainId: SteerChainId) {
         reserveUSD,
         feesUSD,
       }
-    })
+    }),
   )
 
-  return { chainId, vaults: vaultsWithPayloads.filter(isPromiseFulfilled).map((r) => r.value) }
+  return {
+    chainId,
+    vaults: vaultsWithPayloads.filter(isPromiseFulfilled).map((r) => r.value),
+  }
 }
 
 async function extract() {
-  const result = await Promise.allSettled(STEER_ENABLED_NETWORKS.map(extractChain))
+  const result = await Promise.allSettled(
+    STEER_ENABLED_NETWORKS.map(extractChain),
+  )
   return result.filter(isPromiseFulfilled).map((r) => r.value)
 }
 
@@ -93,30 +125,39 @@ const StrategyTypes: Record<string, SteerStrategy> = {
   'Delta Neutral - Stables': SteerStrategy.DeltaNeutralStables,
   'Elastic Expansion Strategy': SteerStrategy.ElasticExpansion,
   'High Low Channel Strategy': SteerStrategy.HighLowChannel,
-  'Moving Volatility Channel Strategy - Medium': SteerStrategy.MovingVolatilityChannelMedium,
+  'Moving Volatility Channel Strategy - Medium':
+    SteerStrategy.MovingVolatilityChannelMedium,
   'Static Stable Strategy': SteerStrategy.StaticStable,
 }
 
-function transform(chainsWithVaults: Awaited<ReturnType<typeof extract>>): Prisma.SteerVaultCreateManyInput[] {
+function transform(
+  chainsWithVaults: Awaited<ReturnType<typeof extract>>,
+): Prisma.SteerVaultCreateManyInput[] {
   return chainsWithVaults.flatMap(({ chainId, vaults }) =>
     vaults.flatMap((vault) => {
       // ! Missing strategies will be ignored
-      const strategyType = StrategyTypes[vault?.payload?.strategyConfigData.name]
+      const strategyType =
+        StrategyTypes[vault?.payload?.strategyConfigData.name]
       if (!strategyType) return []
 
       const lowTicks = vault.positions.flatMap((position) => position.lowerTick)
       const lowestTick = Math.max(
-        lowTicks.reduce((lowest, tick) => (Number(tick) < lowest ? Number(tick) : lowest), Number(lowTicks[0] || 0)),
-        TickMath.MIN_TICK
+        lowTicks.reduce(
+          (lowest, tick) => (Number(tick) < lowest ? Number(tick) : lowest),
+          Number(lowTicks[0] || 0),
+        ),
+        TickMath.MIN_TICK,
       )
 
-      const highTicks = vault.positions.flatMap((position) => position.upperTick)
+      const highTicks = vault.positions.flatMap(
+        (position) => position.upperTick,
+      )
       const highestTick = Math.min(
         highTicks.reduce(
           (highest, tick) => (Number(tick) > highest ? Number(tick) : highest),
-          Number(highTicks[0] || 0)
+          Number(highTicks[0] || 0),
         ),
-        TickMath.MAX_TICK
+        TickMath.MAX_TICK,
       )
 
       return {
@@ -159,13 +200,17 @@ function transform(chainsWithVaults: Awaited<ReturnType<typeof extract>>): Prism
         lowerTick: lowestTick,
         upperTick: highestTick,
 
-        adjustmentFrequency: Number(vault.payload.strategyConfigData.epochLength),
-        lastAdjustmentTimestamp: Math.floor(vault.payload.strategyConfigData.epochStart),
+        adjustmentFrequency: Number(
+          vault.payload.strategyConfigData.epochLength,
+        ),
+        lastAdjustmentTimestamp: Math.floor(
+          vault.payload.strategyConfigData.epochStart,
+        ),
 
         admin: vault.strategyToken.admin,
         creator: vault.strategyToken.creator.id,
         manager: vault.manager,
       } satisfies Prisma.SteerVaultCreateManyInput
-    })
+    }),
   )
 }

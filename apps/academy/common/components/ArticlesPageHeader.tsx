@@ -1,7 +1,12 @@
 import { useBreakpoint } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import { Container } from '@sushiswap/ui/components/container'
-import { Select, SelectContent, SelectItem, SelectTrigger } from '@sushiswap/ui/components/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from '@sushiswap/ui/components/select'
 import { LooperBg } from 'common/assets/LooperBg'
 import { FC, useEffect, useLayoutEffect, useState } from 'react'
 
@@ -18,9 +23,15 @@ interface ArticlesPagesHeader {
 const baseBg = [113, 285]
 const smBg = [226, 570]
 
-const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
+const useIsomorphicLayoutEffect =
+  typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
-export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({ title, difficulties, selectedDifficulty, onSelect }) => {
+export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({
+  title,
+  difficulties,
+  selectedDifficulty,
+  onSelect,
+}) => {
   const { isSm } = useBreakpoint('sm')
   const [[bgHeight, bgWidth], setBgDimensions] = useState(baseBg)
 
@@ -32,7 +43,10 @@ export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({ title, difficultie
     <section className="bg-slate-800 h-[113px] sm:h-[226px] relative">
       <Container
         maxWidth="6xl"
-        className={classNames(DEFAULT_SIDE_PADDING, 'flex items-center justify-between h-full gap-4 mx-auto')}
+        className={classNames(
+          DEFAULT_SIDE_PADDING,
+          'flex items-center justify-between h-full gap-4 mx-auto',
+        )}
       >
         <div className="absolute bottom-0 right-0 opacity-20">
           <LooperBg height={bgHeight} width={bgWidth} />
@@ -44,7 +58,9 @@ export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({ title, difficultie
 
         <Select value={selectedDifficulty} onValueChange={onSelect}>
           <SelectTrigger placeholder="Select Difficulty">
-            {selectedDifficulty ? difficulties[+selectedDifficulty]?.attributes?.label : ''}
+            {selectedDifficulty
+              ? difficulties[+selectedDifficulty]?.attributes?.label
+              : ''}
           </SelectTrigger>
           <SelectContent>
             {difficulties?.map((difficulty, i) => (

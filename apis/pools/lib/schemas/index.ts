@@ -1,3 +1,3 @@
-export * from './count.js'
-export * from './pool.js'
-export * from './pools.js'
+export * from './count'
+export * from './pool'
+export * from './pools'

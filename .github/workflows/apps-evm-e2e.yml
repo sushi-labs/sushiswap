@@ -38,7 +38,7 @@ jobs:
       matrix:
         chain-id: [137]
         node-version: [18]
-        pnpm-version: [7.9.5]
+        pnpm-version: [8.9.0]
         block-number: [47479278]
     steps:
       - name: Check out

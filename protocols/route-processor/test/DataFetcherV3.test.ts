@@ -1,5 +1,10 @@
-import { ChainId } from '@sushiswap/chain'
-import { DataFetcher, LiquidityProviders, NUMBER_OF_SURROUNDING_TICKS, UniV3PoolCode } from '@sushiswap/router'
+import { ChainId } from 'sushi/chain'
+import {
+  DataFetcher,
+  LiquidityProviders,
+  NUMBER_OF_SURROUNDING_TICKS,
+  UniV3PoolCode,
+} from '@sushiswap/router'
 import { CL_MAX_TICK } from '@sushiswap/tines'
 import { CL_MIN_TICK } from '@sushiswap/tines'
 import { UniV3Pool } from '@sushiswap/tines'
@@ -20,7 +25,10 @@ import { hardhat } from 'viem/chains'
 import { loadPoolSnapshot } from './utils/poolSerializer'
 
 const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
-async function getDataFetcherData(pool: UniV3PoolInfo, existedPools: Set<string>): Promise<UniV3Pool> {
+async function getDataFetcherData(
+  pool: UniV3PoolInfo,
+  existedPools: Set<string>,
+): Promise<UniV3Pool> {
   const client = createPublicClient({
     chain: {
       ...hardhat,
@@ -41,7 +49,9 @@ async function getDataFetcherData(pool: UniV3PoolInfo, existedPools: Set<string>
   dataFetcher.startDataFetching([LiquidityProviders.UniswapV3])
   await dataFetcher.fetchPoolsForToken(pool.token0, pool.token1, existedPools)
   const pcMap = dataFetcher.getCurrentPoolCodeMap(pool.token0, pool.token1)
-  const uniPoolCodes = Array.from(pcMap.values()).filter((p) => p instanceof UniV3PoolCode)
+  const uniPoolCodes = Array.from(pcMap.values()).filter(
+    (p) => p instanceof UniV3PoolCode,
+  )
   expect(uniPoolCodes.length).equal(1)
   const tinesPool = uniPoolCodes[0].pool as UniV3Pool
   return tinesPool
@@ -50,7 +60,11 @@ async function getDataFetcherData(pool: UniV3PoolInfo, existedPools: Set<string>
 // maxTickDiff - how much is min and max ticks from current price index
 // pool1 - reference pool
 // pool2 - should be the same, maybe lesser quantity of ticks
-function checkPoolsHaveTheSameState(pool1: UniV3Pool, pool2: UniV3Pool, maxTickDiff = 0) {
+function checkPoolsHaveTheSameState(
+  pool1: UniV3Pool,
+  pool2: UniV3Pool,
+  maxTickDiff = 0,
+) {
   expect(pool1.address).equal(pool2.address)
   expect(pool1.token0.address).equal(pool2.token0.address)
   expect(pool1.token1.address).equal(pool2.token1.address)
@@ -59,11 +73,16 @@ function checkPoolsHaveTheSameState(pool1: UniV3Pool, pool2: UniV3Pool, maxTickD
   expect(pool1.reserve1.eq(pool2.reserve1)).equal(true)
   expect(pool1.liquidity.eq(pool2.liquidity)).equal(true)
   expect(pool1.sqrtPriceX96.eq(pool2.sqrtPriceX96)).equal(true)
-  if (pool2.nearestTick > 1) expect(pool1.ticks[pool1.nearestTick].index).equal(pool2.ticks[pool2.nearestTick].index)
+  if (pool2.nearestTick > 1)
+    expect(pool1.ticks[pool1.nearestTick].index).equal(
+      pool2.ticks[pool2.nearestTick].index,
+    )
 
   if (maxTickDiff !== 0) {
     // Check ticks, taking into account that pool2 ticks can be a subset of pool1 ticks
-    const priceTickIndex = Math.round(Math.log(pool1.calcCurrentPriceWithoutFee(true)) / Math.log(1.0001))
+    const priceTickIndex = Math.round(
+      Math.log(pool1.calcCurrentPriceWithoutFee(true)) / Math.log(1.0001),
+    )
     expect(pool2.ticks.length).gte(4)
     expect(pool2.ticks[0].index).equal(CL_MIN_TICK)
     const minTick = pool2.ticks[1].index
@@ -71,13 +90,17 @@ function checkPoolsHaveTheSameState(pool1: UniV3Pool, pool2: UniV3Pool, maxTickD
     const maxTick = pool2.ticks[pool2.ticks.length - 2].index
     expect(maxTick).gt(priceTickIndex)
     expect(pool2.ticks[pool2.ticks.length - 1].index).equal(CL_MAX_TICK)
-    const mustBeTicks = pool1.ticks.filter(({ index }) => minTick < index && index < maxTick)
+    const mustBeTicks = pool1.ticks.filter(
+      ({ index }) => minTick < index && index < maxTick,
+    )
     mustBeTicks.forEach((t, i) => {
       const t2 = pool2.ticks[i + 2]
       expect(t.index).equal(t2.index)
       expect(t.DLiquidity.eq(t2.DLiquidity)).equal(
         true,
-        `${i}, ${t.index} ${t.DLiquidity.toString()} != ${t2.DLiquidity.toString()}`
+        `${i}, ${
+          t.index
+        } ${t.DLiquidity.toString()} != ${t2.DLiquidity.toString()}`,
       )
     })
   } else {
@@ -86,7 +109,9 @@ function checkPoolsHaveTheSameState(pool1: UniV3Pool, pool2: UniV3Pool, maxTickD
       expect(t1.index).equal(t2.index)
       expect(t1.DLiquidity.eq(t2.DLiquidity)).equal(
         true,
-        `${i}, ${t1.index} ${t1.DLiquidity.toString()} != ${t2.DLiquidity.toString()}`
+        `${i}, ${
+          t1.index
+        } ${t1.DLiquidity.toString()} != ${t2.DLiquidity.toString()}`,
       )
     })
   }
@@ -104,9 +129,11 @@ describe('DataFetcher Uni V3', () => {
     env = await createUniV3EnvReal(ethers)
     const poolCodes = loadPoolSnapshot(
       network.config.chainId as ChainId,
-      (network.config as { forking: { blockNumber?: number } }).forking?.blockNumber
+      (network.config as { forking: { blockNumber?: number } }).forking
+        ?.blockNumber,
     )
-    if (poolCodes !== undefined) existedPools = new Set(Array.from(poolCodes.map((pc) => pc.pool.address)))
+    if (poolCodes !== undefined)
+      existedPools = new Set(Array.from(poolCodes.map((pc) => pc.pool.address)))
   })
 
   it('test simple', async () => {
@@ -116,7 +143,11 @@ describe('DataFetcher Uni V3', () => {
       { from: 15500, to: +16500, val: 1e18 },
     ])
     const poolTines2 = await getDataFetcherData(poolInfo, existedPools)
-    checkPoolsHaveTheSameState(poolInfo.tinesPool, poolTines2, getPoolInfoTicksForCurrentDataFetcher())
+    checkPoolsHaveTheSameState(
+      poolInfo.tinesPool,
+      poolTines2,
+      getPoolInfoTicksForCurrentDataFetcher(),
+    )
   })
 
   const randomPools = 4
@@ -129,10 +160,22 @@ describe('DataFetcher Uni V3', () => {
         [-24000, 3000], // 3000x60
         [-80000, 20000], // 10000x200
       ][i % possibleFee.length]
-      const poolInfo = await createRandomUniV3Pool(env, 'pool' + i, 10, 0.8, fee, fromTo[0], fromTo[1])
+      const poolInfo = await createRandomUniV3Pool(
+        env,
+        'pool' + i,
+        10,
+        0.8,
+        fee,
+        fromTo[0],
+        fromTo[1],
+      )
       const poolTines2 = await getDataFetcherData(poolInfo, existedPools)
       //console.log(poolInfo.tinesPool.ticks.length, poolTines2.ticks.length)
-      checkPoolsHaveTheSameState(poolInfo.tinesPool, poolTines2, getPoolInfoTicksForCurrentDataFetcher())
+      checkPoolsHaveTheSameState(
+        poolInfo.tinesPool,
+        poolTines2,
+        getPoolInfoTicksForCurrentDataFetcher(),
+      )
     })
   }
 })

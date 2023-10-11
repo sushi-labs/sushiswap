@@ -43,7 +43,9 @@ export const Default = {
             <FormControl>
               <TextField type="text" />
             </FormControl>
-            <FormDescription>The amount that gets unlocked after the cliff end date.</FormDescription>
+            <FormDescription>
+              The amount that gets unlocked after the cliff end date.
+            </FormDescription>
             <FormMessage />
           </FormItem>
         </FormSection>

@@ -3,7 +3,15 @@
 import { parseArgs, Protocol } from '@sushiswap/client'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import { useRouter } from 'next/navigation'
-import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useMemo } from 'react'
+import {
+  createContext,
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useContext,
+  useMemo,
+} from 'react'
 import { z } from 'zod'
 
 import { useTypedSearchParams } from '../../lib/hooks'
@@ -30,16 +38,29 @@ export const poolFiltersSchema = z.object({
     .transform((chainIds) =>
       chainIds !== null && chainIds !== ','
         ? chainIds.split(',').map((chainId) => Number(chainId))
-        : SUPPORTED_CHAIN_IDS
+        : SUPPORTED_CHAIN_IDS,
     ),
   protocols: z
     .string()
+<<<<<<< HEAD
     .transform((protocols) => (protocols !== null && protocols !== ',' ? (protocols.split(',') as Protocol[]) : [])),
   farmsOnly: z.string().transform((bool) => (bool ? bool === 'true' : undefined)),
   smartPoolsOnly: z.string().transform((bool) => (bool ? bool === 'true' : undefined)),
+=======
+    .transform((protocols) =>
+      protocols !== null && protocols !== ','
+        ? (protocols.split(',') as Protocol[])
+        : [],
+    ),
+  farmsOnly: z
+    .string()
+    .transform((bool) => (bool ? bool === 'true' : undefined)),
+>>>>>>> 89e31983ea7d5004c04ab74616f393c546f65c4d
 })
 
-export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => {
+export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({
+  children,
+}) => {
   const urlFilters = useTypedSearchParams(poolFiltersSchema.partial())
   const { tokenSymbols, chainIds, protocols, farmsOnly, smartPoolsOnly } = urlFilters
 
@@ -53,7 +74,11 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => 
           farmsOnly: farmsOnly ? farmsOnly : false,
           smartPoolsOnly: smartPoolsOnly ? smartPoolsOnly : false,
         }),
+<<<<<<< HEAD
         [chainIds, farmsOnly, protocols, tokenSymbols, smartPoolsOnly]
+=======
+        [chainIds, farmsOnly, protocols, tokenSymbols],
+>>>>>>> 89e31983ea7d5004c04ab74616f393c546f65c4d
       )}
     >
       {children}

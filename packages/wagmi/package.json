@@ -9,7 +9,7 @@
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "sideEffects": false,
+  "sideEffects": true,
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
@@ -40,34 +40,21 @@
     "src"
   ],
   "scripts": {
-    "build": "true",
     "check": "tsc --pretty --noEmit",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "test": "vitest"
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@ethersproject/abi": "5.7.0",
     "@ethersproject/address": "5.7.0",
-    "@ethersproject/bytes": "5.7.0",
     "@ethersproject/constants": "5.7.0",
-    "@ethersproject/logger": "5.7.0",
     "@ethersproject/providers": "5.7.2",
-    "@ethersproject/solidity": "5.7.0",
     "@headlessui/react": "1.7.7",
     "@heroicons/react": "2.0.13",
-    "@radix-ui/react-slot": "^1.0.2",
-    "@sushiswap/abi": "workspace:*",
+    "@radix-ui/react-slot": "1.0.2",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/bentobox-sdk": "workspace:*",
-    "@sushiswap/chain": "workspace:*",
     "@sushiswap/client": "workspace:*",
-    "@sushiswap/currency": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
-    "@sushiswap/format": "workspace:*",
-    "@sushiswap/furo-sdk": "workspace:*",
-    "@sushiswap/gas": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
-    "@sushiswap/math": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
     "@sushiswap/route-processor-sdk": "workspace:*",
     "@sushiswap/router": "workspace:*",
@@ -75,65 +62,52 @@
     "@sushiswap/sushixswap-sdk": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/trident-sdk": "workspace:*",
-    "@sushiswap/types": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",
-    "@sushiswap/validate": "workspace:*",
     "@sushiswap/steer-sdk": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
-    "@tanstack/query-sync-storage-persister": "4.27.1",
     "@tanstack/react-query": "4.28.0",
     "@tanstack/react-query-persist-client": "4.28.0",
     "@uniswap/v2-core": "1.0.1",
     "@uniswap/v3-periphery": "1.4.1",
-    "next-themes": "^0.2.1",
-    "viem": "1.10.7",
+    "next-themes": "0.2.1",
+    "sushi": "workspace:*",
+    "viem": "1.16.2",
     "zod": "3.21.4"
   },
   "devDependencies": {
-    "@sushiswap/eslint-config": "workspace:*",
+    "@sentry/nextjs": "7.68.0",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@types/jest": "^29.5.1",
+    "@types/jest": "29.5.5",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
-    "@sentry/nextjs": "7.68.0",
-    "@wagmi/core": "1.4.1",
-    "eslint": "8.43.0",
-    "ethers": "5.7.2",
+    "@wagmi/core": "1.4.3",
     "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "tsup": "7.1.0",
-    "typechain": "^8.0.0",
-    "typescript": "5.1.6",
-    "vitest": "0.33.0",
-    "wagmi": "1.4.1"
+    "typescript": "5.2.2",
+    "wagmi": "1.4.3"
   },
   "peerDependencies": {
-    "@wagmi/core": "1.4.1",
     "@sentry/nextjs": "7.68.0",
-    "ethers": "5.7.2",
+    "@wagmi/core": "1.4.3",
     "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "wagmi": "1.4.1"
+    "wagmi": "1.4.3"
   },
   "peerDependenciesMeta": {
-    "@wagmi/core": {
-      "optional": false
-    },
     "@sentry/nextjs": {
       "optional": true
     },
+    "@wagmi/core": {
+      "optional": false
+    },
     "next": {
       "optional": true
-    },
-    "ethers": {
-      "optional": false
     },
     "react": {
       "optional": true

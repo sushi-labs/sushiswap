@@ -1,17 +1,24 @@
 'use client'
 
-import { MinusIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
-import { tryParseAmount, Type } from '@sushiswap/currency'
+import {
+  MinusIcon,
+  PlusIcon,
+  SwitchHorizontalIcon,
+} from '@heroicons/react-v1/solid'
+import { tryParseAmount, Type } from 'sushi/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import {
+  Button,
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
   classNames,
   FormSection,
   Label,
+  LinkExternal,
   Message,
   TextField,
   TextFieldDescription,
@@ -23,7 +30,14 @@ import { useAccount } from '@sushiswap/wagmi'
 import { useConcentratedLiquidityPositionsFromTokenId } from '@sushiswap/wagmi/future/hooks'
 import { Bound } from 'lib/constants'
 import { useTokenAmountDollarValues } from 'lib/hooks'
-import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import React, {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 import {
   useConcentratedDerivedMintInfo,
@@ -57,23 +71,33 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
   const isMounted = useIsMounted()
   const { address } = useAccount()
   const [invert, setInvert] = useState(false)
-  const { price, invertPrice, pricesAtTicks, ticks, ticksAtLimit, pool, noLiquidity, isLoading } =
-    useConcentratedDerivedMintInfo({
-      chainId,
-      account: address,
-      token0,
-      token1,
-      baseToken: token0,
-      feeAmount,
-      existingPosition: undefined,
-    })
-
-  const { onLeftRangeInput, onRightRangeInput, onStartPriceInput } = useConcentratedMintActionHandlers()
-  const { startPriceTypedValue } = useConcentratedMintState()
-  const { data: existingPosition, isLoading: positionLoading } = useConcentratedLiquidityPositionsFromTokenId({
+  const {
+    price,
+    invertPrice,
+    pricesAtTicks,
+    ticks,
+    ticksAtLimit,
+    pool,
+    noLiquidity,
+    isLoading,
+  } = useConcentratedDerivedMintInfo({
     chainId,
-    tokenId,
+    account: address,
+    token0,
+    token1,
+    baseToken: token0,
+    feeAmount,
+    existingPosition: undefined,
   })
+
+  const { onLeftRangeInput, onRightRangeInput, onStartPriceInput } =
+    useConcentratedMintActionHandlers()
+  const { startPriceTypedValue } = useConcentratedMintState()
+  const { data: existingPosition, isLoading: positionLoading } =
+    useConcentratedLiquidityPositionsFromTokenId({
+      chainId,
+      tokenId,
+    })
   const hasExistingPosition = !!existingPosition && !positionLoading
 
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
@@ -86,22 +110,51 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
     getIncrementUpper,
     getSetFullRange,
     resetMintState,
-  } = useRangeHopCallbacks(token0, token1, feeAmount, tickLower, tickUpper, pool)
+  } = useRangeHopCallbacks(
+    token0,
+    token1,
+    feeAmount,
+    tickLower,
+    tickUpper,
+    pool,
+  )
 
-  const isSorted = token0 && token1 && token0.wrapped.sortsBefore(token1.wrapped)
-  const leftPrice = useMemo(() => (isSorted ? priceLower : priceUpper?.invert()), [isSorted, priceLower, priceUpper])
-  const rightPrice = useMemo(() => (isSorted ? priceUpper : priceLower?.invert()), [isSorted, priceLower, priceUpper])
+  const isSorted =
+    token0 && token1 && token0.wrapped.sortsBefore(token1.wrapped)
+  const leftPrice = useMemo(
+    () => (isSorted ? priceLower : priceUpper?.invert()),
+    [isSorted, priceLower, priceUpper],
+  )
+  const rightPrice = useMemo(
+    () => (isSorted ? priceUpper : priceLower?.invert()),
+    [isSorted, priceLower, priceUpper],
+  )
 
-  const fiatAmounts = useMemo(() => [tryParseAmount('1', token0), tryParseAmount('1', token1)], [token0, token1])
-  const fiatAmountsAsNumber = useTokenAmountDollarValues({ chainId, amounts: fiatAmounts })
-  const isFullRange = Boolean(ticksAtLimit[Bound.LOWER] && ticksAtLimit[Bound.UPPER])
+  const fiatAmounts = useMemo(
+    () => [tryParseAmount('1', token0), tryParseAmount('1', token1)],
+    [token0, token1],
+  )
+  const fiatAmountsAsNumber = useTokenAmountDollarValues({
+    chainId,
+    amounts: fiatAmounts,
+  })
+  const isFullRange = Boolean(
+    ticksAtLimit[Bound.LOWER] && ticksAtLimit[Bound.UPPER],
+  )
+
+  const poolFish = new URL('https://poolfish.xyz/calculators/sushi')
+  poolFish.searchParams.append('network', `${chainId}`)
+  if (token0) poolFish.searchParams.append('token0', token0.wrapped.address)
+  if (token1) poolFish.searchParams.append('token1', token1.wrapped.address)
+  if (feeAmount) poolFish.searchParams.append('feeTier', `${feeAmount}`)
 
   return (
     <FormSection
       title="Range"
       description={
         <>
-          Select a price range to provide liquidity. You will not earn any fees when prices move outside of this range.{' '}
+          Select a price range to provide liquidity. You will not earn any fees
+          when prices move outside of this range.{' '}
           <a
             target="_blank"
             className="text-blue"
@@ -113,14 +166,20 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
         </>
       }
     >
-      <div className={classNames('flex flex-col gap-6', !token0 || !token1 ? 'opacity-40' : '')}>
+      <div
+        className={classNames(
+          'flex flex-col gap-6',
+          !token0 || !token1 ? 'opacity-40' : '',
+        )}
+      >
         {noLiquidity ? (
-          <Message size="sm">
+          <Message size="sm" variant="muted" className="text-center">
             This pool must be initialized before you can add liquidity.{' '}
             {showStartPrice
               ? 'To initialize, select a starting price for the pool. Then, enter your liquidity price range and deposit amount. '
               : ''}
-            Gas fees will be higher than usual due to the initialization transaction.
+            Gas fees will be higher than usual due to the initialization
+            transaction.
           </Message>
         ) : null}
         {children ? children : null}
@@ -139,7 +198,8 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                     unit={`${token1?.symbol} per ${token0?.symbol}`}
                   />
                   <TextFieldDescription>
-                    Your pool needs a starting price somewhere between the min. and max. price
+                    Your pool needs a starting price somewhere between the min.
+                    and max. price
                   </TextFieldDescription>
                 </div>
               )}
@@ -151,7 +211,16 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                     currencyB={token1}
                     feeAmount={feeAmount}
                     ticksAtLimit={ticksAtLimit}
-                    price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}
+                    price={
+                      price
+                        ? parseFloat(
+                            (invertPrice
+                              ? price.invert()
+                              : price
+                            ).toSignificant(8),
+                          )
+                        : undefined
+                    }
                     priceLower={priceLower}
                     priceUpper={priceUpper}
                     onLeftRangeInput={onLeftRangeInput}
@@ -176,9 +245,13 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                     <SwitchHorizontalIcon width={16} height={16} />
                     <div className="flex items-baseline gap-1.5">
                       {invert ? token1.symbol : token0.symbol} ={' '}
-                      {pool.priceOf(invert ? token1.wrapped : token0.wrapped)?.toSignificant(4)}{' '}
+                      {pool
+                        .priceOf(invert ? token1.wrapped : token0.wrapped)
+                        ?.toSignificant(4)}{' '}
                       {invert ? token0.symbol : token1.symbol}
-                      <span className="text-xs font-normal">${fiatAmountsAsNumber[invert ? 1 : 0].toFixed(2)}</span>
+                      <span className="text-xs font-normal">
+                        ${fiatAmountsAsNumber[invert ? 1 : 0].toFixed(2)}
+                      </span>
                     </div>
                   </div>
                 )}
@@ -189,16 +262,28 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                   size="sm"
                   disabled={!feeAmount}
                   pressed={isFullRange}
-                  onClick={() => (isFullRange ? resetMintState() : getSetFullRange())}
+                  onClick={() =>
+                    isFullRange ? resetMintState() : getSetFullRange()
+                  }
                 >
                   Full Range
                 </Toggle>
                 {switchTokens ? (
                   <div className="flex justify-end gap-1">
-                    <Toggle variant="outline" onPressedChange={switchTokens} pressed={isSorted} size="sm">
+                    <Toggle
+                      variant="outline"
+                      onPressedChange={switchTokens}
+                      pressed={isSorted}
+                      size="sm"
+                    >
                       {isSorted ? token0?.symbol : token1?.symbol}
                     </Toggle>
-                    <Toggle variant="outline" onPressedChange={switchTokens} pressed={!isSorted} size="sm">
+                    <Toggle
+                      variant="outline"
+                      onPressedChange={switchTokens}
+                      pressed={!isSorted}
+                      size="sm"
+                    >
                       {isSorted ? token1?.symbol : token0?.symbol}
                     </Toggle>
                   </div>
@@ -213,12 +298,20 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                 token0={token0}
                 token1={token1}
                 label="Min Price"
-                value={ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER] ? '0' : leftPrice?.toSignificant(5) ?? ''}
+                value={
+                  ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]
+                    ? '0'
+                    : leftPrice?.toSignificant(5) ?? ''
+                }
                 onUserInput={onLeftRangeInput}
                 decrement={isSorted ? getDecrementLower : getIncrementUpper}
                 increment={isSorted ? getIncrementLower : getDecrementUpper}
-                decrementDisabled={ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]}
-                incrementDisabled={ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]}
+                decrementDisabled={
+                  ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]
+                }
+                incrementDisabled={
+                  ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]
+                }
                 focus={true}
               />
               <PriceBlock
@@ -226,14 +319,39 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                 token0={token0}
                 token1={token1}
                 label="Max Price"
-                value={ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER] ? '∞' : rightPrice?.toSignificant(5) ?? ''}
+                value={
+                  ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER]
+                    ? '∞'
+                    : rightPrice?.toSignificant(5) ?? ''
+                }
                 onUserInput={onRightRangeInput}
                 decrement={isSorted ? getDecrementUpper : getIncrementLower}
                 increment={isSorted ? getIncrementUpper : getDecrementLower}
-                incrementDisabled={ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER]}
-                decrementDisabled={ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER]}
+                incrementDisabled={
+                  ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER]
+                }
+                decrementDisabled={
+                  ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER]
+                }
               />
             </div>
+            <Card>
+              <CardHeader>
+                <CardDescription>
+                  We{`'`}re excited to share that Sushi integration is now live on{' '}
+                  <LinkExternal href="https://poolfish.xyz/calculators/sushi">Poolfish.xyz</LinkExternal>! To get an
+                  estimate of the fees you could earn based on your chosen parameters, please visit our platform by
+                  clicking here. We look forward to assisting you with your earnings calculations.
+                </CardDescription>
+              </CardHeader>
+              <CardFooter>
+                <LinkExternal href={poolFish.toString()}>
+                  <Button variant="link" size="sm">
+                    View position on Poolfish.xyz
+                  </Button>
+                </LinkExternal>
+              </CardFooter>
+            </Card>
           </div>
         </div>
       </div>
@@ -303,7 +421,11 @@ export const PriceBlock: FC<PriceBlockProps> = ({
   }, [localValue, useLocalValue, value])
 
   return (
-    <Card className="bg-transparent shadow-none" onBlur={handleOnBlur} onFocus={handleOnFocus}>
+    <Card
+      className="bg-transparent shadow-none"
+      onBlur={handleOnBlur}
+      onFocus={handleOnFocus}
+    >
       <CardHeader>
         <CardTitle>{label}</CardTitle>
         <CardDescription>
@@ -328,8 +450,10 @@ export const PriceBlock: FC<PriceBlockProps> = ({
               disabled={decrementDisabled}
               onClick={handleDecrement}
               className={classNames(
-                decrementDisabled ? 'opacity-40' : 'hover:bg-gray-300 dark:hover:bg-slate-600',
-                'flex items-center justify-center w-5 h-5 bg-gray-200 dark:bg-slate-700 rounded-full'
+                decrementDisabled
+                  ? 'opacity-40'
+                  : 'hover:bg-gray-300 dark:hover:bg-slate-600',
+                'flex items-center justify-center w-5 h-5 bg-gray-200 dark:bg-slate-700 rounded-full',
               )}
               tabIndex={-1}
             >
@@ -339,8 +463,10 @@ export const PriceBlock: FC<PriceBlockProps> = ({
               disabled={incrementDisabled}
               onClick={handleIncrement}
               className={classNames(
-                incrementDisabled ? 'opacity-40' : 'hover:bg-gray-300 dark:hover:bg-slate-600',
-                'flex items-center justify-center w-5 h-5 bg-gray-200 dark:bg-slate-700 rounded-full'
+                incrementDisabled
+                  ? 'opacity-40'
+                  : 'hover:bg-gray-300 dark:hover:bg-slate-600',
+                'flex items-center justify-center w-5 h-5 bg-gray-200 dark:bg-slate-700 rounded-full',
               )}
               tabIndex={-1}
             >

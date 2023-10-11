@@ -16,8 +16,10 @@
   "type": "module",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "source": "src/index.ts",
+  "typings": "dist/index.d.ts",
   "files": [
-    "./dist"
+    "dist/**"
   ],
   "exports": {
     ".": {
@@ -55,13 +57,14 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@sushiswap/chain": "workspace:*",
     "@sushiswap/database": "workspace:*",
+    "@sushiswap/pools-api": "workspace:*",
+    "@sushiswap/steer-vault-api": "workspace:*",
     "@whatwg-node/fetch": "0.8.4",
+    "sushi": "workspace:*",
     "tslib": "latest"
   },
   "devDependencies": {
-    "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/pools-api": "workspace:*",
     "@sushiswap/token-price-api": "workspace:*",
@@ -71,13 +74,16 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "18",
     "eslint": "8.43.0",
+    "@tsconfig/esm": "1.0.4",
+    "@tsconfig/strictest": "2.0.2",
+    "react": "18.2.0",
     "swr": "2.1.5",
-    "tsup": "7.1.0",
-    "typescript": "5.1.6"
+    "tsup": "7.2.0",
+    "typescript": "5.2.2"
   },
   "peerDependencies": {
-    "react": "18.2.0",
-    "swr": "2.1.5"
+    "react": "*",
+    "swr": "*"
   },
   "peerDependenciesMeta": {
     "react": {

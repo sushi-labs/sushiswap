@@ -1,17 +1,19 @@
-import { Chain, ChainId } from '@sushiswap/chain'
+import { Chain, ChainId } from 'sushi/chain'
 import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { createErrorToast } from '@sushiswap/ui/components/toast'
-import React, { FC, useCallback } from 'react'
+import React, { FC, Suspense, useCallback } from 'react'
 import { ProviderRpcError, UserRejectedRequestError } from 'viem'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
+import { useIsMounted } from '@sushiswap/hooks'
 
 export const HeaderNetworkSelector: FC<{
   networks: ChainId[]
   selectedNetwork?: ChainId
   onChange?(chainId: ChainId): void
 }> = ({ networks, selectedNetwork, onChange }) => {
+  const isMounted = useIsMounted()
   const { switchNetworkAsync } = useSwitchNetwork()
   const { chain } = useNetwork()
 
@@ -35,16 +37,24 @@ export const HeaderNetworkSelector: FC<{
         }
       }
     },
-    [chain?.id, onChange, selectedNetwork, switchNetworkAsync]
+    [chain?.id, onChange, selectedNetwork, switchNetworkAsync],
   )
 
-  const selected = selectedNetwork || (chain?.id as ChainId) || ChainId.ETHEREUM
+  const selected = isMounted
+    ? selectedNetwork || (chain?.id as ChainId) || ChainId.ETHEREUM
+    : ChainId.ETHEREUM
 
   return (
-    <NetworkSelector selected={selected} onSelect={onSwitchNetwork} networks={networks}>
+    <NetworkSelector
+      selected={selected}
+      onSelect={onSwitchNetwork}
+      networks={networks}
+    >
       <Button variant="secondary" testId="network-selector">
-        <NetworkIcon chainId={selected} width={20} height={20} />
-        <div className="hidden xl:block">{Chain.from(selected)?.name}</div>
+        <Suspense fallback={null}>
+          <NetworkIcon chainId={selected} width={20} height={20} />
+          <div className="hidden xl:block">{Chain.from(selected)?.name}</div>
+        </Suspense>
       </Button>
     </NetworkSelector>
   )

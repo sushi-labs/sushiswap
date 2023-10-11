@@ -15,10 +15,19 @@ interface ProductCards {
   gradientBorderColor?: string
 }
 
-export const ProductCards: FC<ProductCards> = ({ name, description, cards, gradientBorderColor }) => {
+export const ProductCards: FC<ProductCards> = ({
+  name,
+  description,
+  cards,
+  gradientBorderColor,
+}) => {
   return (
     <section className="py-10 sm:py-[75px]">
-      <ProductSectionTitle title={`What is ${name}?`} subtitle={description} className="text-center" />
+      <ProductSectionTitle
+        title={`What is ${name}?`}
+        subtitle={description}
+        className="text-center"
+      />
       <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] mt-10 sm:mt-[70px] gap-x-6 gap-y-4 sm:gap-y-8">
         {cards.map((card, i) => (
           <div
@@ -36,7 +45,9 @@ export const ProductCards: FC<ProductCards> = ({ name, description, cards, gradi
                 <h3 className="text-xl sm:text-2xl font-bold">{card.title}</h3>
               </div>
               <div className="mt-2 sm:mt-4">
-                <p className="text-slate-400 text-xs sm:text-sm">{card.subtitle}</p>
+                <p className="text-slate-400 text-xs sm:text-sm">
+                  {card.subtitle}
+                </p>
               </div>
             </div>
           </div>

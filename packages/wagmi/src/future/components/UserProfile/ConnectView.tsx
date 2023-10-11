@@ -1,4 +1,7 @@
-import { ChevronDoubleDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import {
+  ChevronDoubleDownIcon,
+  ChevronRightIcon,
+} from '@heroicons/react/24/outline'
 import {
   CoinbaseWalletIcon,
   FrameIcon,
@@ -14,7 +17,10 @@ import React, { FC, ReactNode, SVGProps, useCallback, useMemo } from 'react'
 
 import { useConnect } from '../../../hooks'
 
-const Icons: Record<string, (props: SVGProps<SVGSVGElement>) => ReactNode | null> = {
+const Icons: Record<
+  string,
+  (props: SVGProps<SVGSVGElement>) => ReactNode | null
+> = {
   Injected: ChevronDoubleDownIcon,
   MetaMask: MetamaskIcon,
   'Trust Wallet': TrustWalletIcon,
@@ -35,7 +41,12 @@ export const ConnectView: FC<{ onSelect(): void }> = ({ onSelect }) => {
     const injected = conns.find((el) => el.id === 'injected')
 
     if (injected) {
-      return [injected, ...conns.filter((el) => el.id !== 'injected' && el.name !== injected.name)]
+      return [
+        injected,
+        ...conns.filter(
+          (el) => el.id !== 'injected' && el.name !== injected.name,
+        ),
+      ]
     }
 
     return conns
@@ -49,10 +60,10 @@ export const ConnectView: FC<{ onSelect(): void }> = ({ onSelect }) => {
           connect({
             connector: _connectors.find((el) => el.id === connectorId),
           }),
-        250
+        250,
       )
     },
-    [connect, _connectors, onSelect]
+    [connect, _connectors, onSelect],
   )
 
   return (
@@ -64,9 +75,9 @@ export const ConnectView: FC<{ onSelect(): void }> = ({ onSelect }) => {
             onClick={() => _onSelect(connector.id)}
             icon={Icons[connector.name]}
             title={
-              connector.name == 'Safe'
+              connector.name === 'Safe'
                 ? 'Gnosis Safe'
-                : connector.name == 'WalletConnectLegacy'
+                : connector.name === 'WalletConnectLegacy'
                 ? 'WalletConnect'
                 : connector.name
             }

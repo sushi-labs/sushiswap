@@ -1,15 +1,24 @@
 'use client'
 
-import { Chain, ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/client'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
-import { SUBGRAPH_HOST, SUSHISWAP_V3_SUBGRAPH_NAME } from '@sushiswap/graph-config'
-import { Card, CardContent, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
+import {
+  SUBGRAPH_HOST,
+  SUSHISWAP_V3_SUBGRAPH_NAME,
+} from '@sushiswap/graph-config'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  DataTable,
+} from '@sushiswap/ui'
 import { Toggle } from '@sushiswap/ui/components/toggle'
-import { isSushiSwapV3ChainId, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { SushiSwapV3ChainId, isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useQuery } from '@tanstack/react-query'
 import { PaginationState } from '@tanstack/react-table'
 import React, { FC, useMemo, useState } from 'react'
+import { Chain, ChainId } from 'sushi/chain'
 
 import {
   TX_AMOUNT_IN_V3_COLUMN,
@@ -33,7 +42,11 @@ interface UseTransactionsV3Opts {
   skip?: number
 }
 
-const fetchAll = async (poolId: string, chainId: SushiSwapV3ChainId, opts: UseTransactionsV3Opts) => {
+const fetchAll = async (
+  poolId: string,
+  chainId: SushiSwapV3ChainId,
+  opts: UseTransactionsV3Opts,
+) => {
   const sdk = getBuiltGraphSDK({
     subgraphHost: SUBGRAPH_HOST[chainId],
     subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
@@ -71,7 +84,11 @@ const fetchAll = async (poolId: string, chainId: SushiSwapV3ChainId, opts: UseTr
   return transactions
 }
 
-const fetchMints = async (poolId: string, chainId: SushiSwapV3ChainId, opts: UseTransactionsV3Opts) => {
+const fetchMints = async (
+  poolId: string,
+  chainId: SushiSwapV3ChainId,
+  opts: UseTransactionsV3Opts,
+) => {
   const sdk = getBuiltGraphSDK({
     subgraphHost: SUBGRAPH_HOST[chainId],
     subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
@@ -92,7 +109,11 @@ const fetchMints = async (poolId: string, chainId: SushiSwapV3ChainId, opts: Use
   }))
 }
 
-const fetchBurns = async (poolId: string, chainId: SushiSwapV3ChainId, opts: UseTransactionsV3Opts) => {
+const fetchBurns = async (
+  poolId: string,
+  chainId: SushiSwapV3ChainId,
+  opts: UseTransactionsV3Opts,
+) => {
   const sdk = getBuiltGraphSDK({
     subgraphHost: SUBGRAPH_HOST[chainId],
     subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
@@ -113,7 +134,11 @@ const fetchBurns = async (poolId: string, chainId: SushiSwapV3ChainId, opts: Use
   }))
 }
 
-const fetchSwaps = async (poolId: string, chainId: SushiSwapV3ChainId, opts: UseTransactionsV3Opts) => {
+const fetchSwaps = async (
+  poolId: string,
+  chainId: SushiSwapV3ChainId,
+  opts: UseTransactionsV3Opts,
+) => {
   const sdk = getBuiltGraphSDK({
     subgraphHost: SUBGRAPH_HOST[chainId],
     subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
@@ -134,7 +159,11 @@ const fetchSwaps = async (poolId: string, chainId: SushiSwapV3ChainId, opts: Use
   }))
 }
 
-const fetchCollects = async (poolId: string, chainId: SushiSwapV3ChainId, opts: UseTransactionsV3Opts) => {
+const fetchCollects = async (
+  poolId: string,
+  chainId: SushiSwapV3ChainId,
+  opts: UseTransactionsV3Opts,
+) => {
   const sdk = getBuiltGraphSDK({
     subgraphHost: SUBGRAPH_HOST[chainId],
     subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
@@ -157,7 +186,11 @@ const fetchCollects = async (poolId: string, chainId: SushiSwapV3ChainId, opts: 
 
 // Will only support the last 1k txs
 // The fact that there are different subtransactions aggregated under one transaction makes paging a bit difficult
-function useTransactionsV3(pool: Pool | undefined | null, poolId: string, opts: UseTransactionsV3Opts) {
+function useTransactionsV3(
+  pool: Pool | undefined | null,
+  poolId: string,
+  opts: UseTransactionsV3Opts,
+) {
   return useQuery({
     queryKey: ['poolTransactionsV3', poolId, opts],
     queryFn: async () => {
@@ -190,7 +223,9 @@ function useTransactionsV3(pool: Pool | undefined | null, poolId: string, opts: 
       if (!transactions.length) return []
 
       return transactions.flatMap((transaction) => {
-        const mints = (transaction.mints as NonNullable<(typeof transaction.mints)[0]>[]).map((mint) => ({
+        const mints = (
+          transaction.mints as NonNullable<typeof transaction.mints[0]>[]
+        ).map((mint) => ({
           ...mint,
           owner: String(mint.owner),
           sender: String(mint.sender),
@@ -198,14 +233,18 @@ function useTransactionsV3(pool: Pool | undefined | null, poolId: string, opts: 
           type: TransactionTypeV3.Mint as const,
         }))
 
-        const burns = (transaction.burns as NonNullable<(typeof transaction.burns)[0]>[]).map((burn) => ({
+        const burns = (
+          transaction.burns as NonNullable<typeof transaction.burns[0]>[]
+        ).map((burn) => ({
           ...burn,
           owner: String(burn.owner),
           origin: String(burn.origin),
           type: TransactionTypeV3.Burn as const,
         }))
 
-        const swaps = (transaction.swaps as NonNullable<(typeof transaction.swaps)[0]>[]).map((swap) => ({
+        const swaps = (
+          transaction.swaps as NonNullable<typeof transaction.swaps[0]>[]
+        ).map((swap) => ({
           ...swap,
           sender: String(swap.sender),
           recipient: String(swap.recipient),
@@ -213,7 +252,9 @@ function useTransactionsV3(pool: Pool | undefined | null, poolId: string, opts: 
           type: TransactionTypeV3.Swap as const,
         }))
 
-        const collects = (transaction.collects as NonNullable<(typeof transaction.collects)[0]>[]).map((collect) => ({
+        const collects = (
+          transaction.collects as NonNullable<typeof transaction.collects[0]>[]
+        ).map((collect) => ({
           ...collect,
           origin: String(collect.owner),
           type: TransactionTypeV3.Collect as const,
@@ -238,7 +279,9 @@ function useTransactionsV3(pool: Pool | undefined | null, poolId: string, opts: 
   })
 }
 
-type TransactionV3 = NonNullable<ReturnType<typeof useTransactionsV3>['data']>[0]
+type TransactionV3 = NonNullable<
+  ReturnType<typeof useTransactionsV3>['data']
+>[0]
 
 interface PoolTransactionsV3Props {
   pool: Pool | undefined | null
@@ -246,7 +289,9 @@ interface PoolTransactionsV3Props {
 }
 
 const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }) => {
-  const [type, setType] = useState<Parameters<typeof useTransactionsV3>['2']['type']>(TransactionTypeV3.Swap)
+  const [type, setType] = useState<
+    Parameters<typeof useTransactionsV3>['2']['type']
+  >(TransactionTypeV3.Swap)
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -266,10 +311,11 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }) => {
     () =>
       ({
         refetchInterval: 60_000,
-        first: paginationState.pageSize === 0 ? paginationState.pageIndex + 1 : 100,
+        first:
+          paginationState.pageSize === 0 ? paginationState.pageIndex + 1 : 100,
         type,
-      } as const),
-    [paginationState.pageIndex, paginationState.pageSize, type]
+      }) as const,
+    [paginationState.pageIndex, paginationState.pageSize, type],
   )
 
   const { data, isLoading } = useTransactionsV3(pool, poolId, opts)
@@ -315,7 +361,9 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }) => {
       </CardHeader>
       <CardContent className="!px-0">
         <DataTable
-          linkFormatter={(row) => Chain.from(row.pool.chainId).getTxUrl(row.id)}
+          linkFormatter={(row) =>
+            Chain.from(row.pool.chainId)?.getTxUrl(row.id) ?? ''
+          }
           loading={isLoading}
           columns={COLUMNS}
           data={_data}

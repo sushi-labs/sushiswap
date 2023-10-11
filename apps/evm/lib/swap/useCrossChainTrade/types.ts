@@ -1,5 +1,5 @@
-import { Amount, Price, Type } from '@sushiswap/currency'
-import { Percent } from '@sushiswap/math'
+import { Amount, Price, Type } from 'sushi/currency'
+import { Percent } from 'sushi'
 import { SushiXSwapChainId } from '@sushiswap/sushixswap-sdk'
 import { Address, Signature } from 'viem'
 
@@ -42,4 +42,6 @@ export interface UseCrossChainTradeReturn {
   value?: bigint | undefined
 }
 
-export type UseCrossChainTradeQuerySelect = (data: UseCrossChainSelect) => UseCrossChainTradeReturn
+export type UseCrossChainTradeQuerySelect = (
+  data: UseCrossChainSelect,
+) => UseCrossChainTradeReturn

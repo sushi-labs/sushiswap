@@ -14,7 +14,6 @@ import {
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
-import Link from 'next/link'
 import { FC } from 'react'
 
 import { AddSectionLegacy } from './AddSectionLegacy'
@@ -32,9 +31,11 @@ interface ManageV2LiquidityCardProps {
   tab?: 'stake' | 'unstake' | 'add' | 'remove'
 }
 
-export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool, tab = 'add' }) => {
+export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
+  pool,
+  tab = 'add',
+}) => {
   const isFarm = pool.wasIncentivized || pool.isIncentivized
-  console.debug('ManageV2LiquidityCard (client)', pool)
 
   return (
     <Card>
@@ -42,41 +43,44 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool, ta
         <CardTitle>Manage</CardTitle>
         <CardDescription>Manage your position</CardDescription>
       </CardHeader>
-      <Tabs value={tab} onValueChange={() => {}} className="w-full" defaultValue={tab}>
+      <Tabs
+        value={tab}
+        onValueChange={() => {}}
+        className="w-full"
+        defaultValue={tab}
+      >
         <CardContent>
           <TabsList className="!flex">
-            <Link href={`/pool/${pool.id}/add`} className="flex flex-1">
-              <TabsTrigger testdata-id="add-tab" value="add" className="flex flex-1">
-                Add
-              </TabsTrigger>
-            </Link>
-            <Link href={`/pool/${pool.id}/remove`} className="flex flex-1">
-              <TabsTrigger testdata-id="remove-tab" value="remove" className="flex flex-1">
-                Remove
-              </TabsTrigger>
-            </Link>
-            {isFarm ? (
-              <Link href={`/pool/${pool.id}/stake`} className="flex flex-1">
-                <TabsTrigger testdata-id="stake-tab" value="stake" className="flex flex-1">
-                  Stake
-                </TabsTrigger>
-              </Link>
-            ) : (
-              <TabsTrigger testdata-id="stake-tab" disabled value="stake" className="flex flex-1">
-                Stake
-              </TabsTrigger>
-            )}
-            {isFarm ? (
-              <Link href={`/pool/${pool.id}/unstake`} className="flex flex-1">
-                <TabsTrigger testdata-id="unstake-tab" value="unstake" className="flex flex-1">
-                  Unstake
-                </TabsTrigger>
-              </Link>
-            ) : (
-              <TabsTrigger testdata-id="unstake-tab" disabled value="unstake" className="flex flex-1">
-                Unstake
-              </TabsTrigger>
-            )}
+            <TabsTrigger
+              testdata-id="add-tab"
+              value="add"
+              className="flex flex-1"
+            >
+              Add
+            </TabsTrigger>
+            <TabsTrigger
+              testdata-id="remove-tab"
+              value="remove"
+              className="flex flex-1"
+            >
+              Remove
+            </TabsTrigger>
+            <TabsTrigger
+              testdata-id="stake-tab"
+              disabled={!isFarm}
+              value="stake"
+              className="flex flex-1"
+            >
+              Stake
+            </TabsTrigger>
+            <TabsTrigger
+              testdata-id="unstake-tab"
+              disabled={!isFarm}
+              value="unstake"
+              className="flex flex-1"
+            >
+              Unstake
+            </TabsTrigger>
           </TabsList>
         </CardContent>
         <div className="pb-4 px-6">
@@ -87,18 +91,24 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool, ta
             <PoolPositionRewardsProvider pool={pool}>
               <TabsContent value="add">
                 <CardContent>
-                  {pool.protocol === Protocol.BENTOBOX_CLASSIC || pool.protocol === Protocol.BENTOBOX_STABLE ? (
+                  {pool.protocol === Protocol.BENTOBOX_CLASSIC ||
+                  pool.protocol === Protocol.BENTOBOX_STABLE ? (
                     <AddSectionTrident pool={pool} />
                   ) : null}
-                  {pool.protocol === Protocol.SUSHISWAP_V2 ? <AddSectionLegacy pool={pool} /> : null}
+                  {pool.protocol === Protocol.SUSHISWAP_V2 ? (
+                    <AddSectionLegacy pool={pool} />
+                  ) : null}
                 </CardContent>
               </TabsContent>
               <TabsContent value="remove">
                 <CardContent>
-                  {pool.protocol === Protocol.BENTOBOX_CLASSIC || pool.protocol === Protocol.BENTOBOX_STABLE ? (
+                  {pool.protocol === Protocol.BENTOBOX_CLASSIC ||
+                  pool.protocol === Protocol.BENTOBOX_STABLE ? (
                     <RemoveSectionTrident pool={pool} />
                   ) : null}
-                  {pool.protocol === Protocol.SUSHISWAP_V2 ? <RemoveSectionLegacy pool={pool} /> : null}
+                  {pool.protocol === Protocol.SUSHISWAP_V2 ? (
+                    <RemoveSectionLegacy pool={pool} />
+                  ) : null}
                 </CardContent>
               </TabsContent>
               <TabsContent value="stake">
@@ -106,7 +116,11 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool, ta
                   {isFarm ? (
                     <AddSectionStake poolId={pool.id} />
                   ) : (
-                    <Message variant="warning" size="sm" className="text-center">
+                    <Message
+                      variant="warning"
+                      size="sm"
+                      className="text-center"
+                    >
                       No farms available for this pool
                     </Message>
                   )}
@@ -117,7 +131,11 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({ pool, ta
                   {isFarm ? (
                     <RemoveSectionUnstake poolId={pool.id} />
                   ) : (
-                    <Message variant="warning" size="sm" className="text-center">
+                    <Message
+                      variant="warning"
+                      size="sm"
+                      className="text-center"
+                    >
                       No farms available for this pool
                     </Message>
                   )}

@@ -1,13 +1,24 @@
 'use client'
 
-import { CaretDownIcon, CaretSortIcon, CaretUpIcon } from '@radix-ui/react-icons'
+import {
+  CaretDownIcon,
+  CaretSortIcon,
+  CaretUpIcon,
+} from '@radix-ui/react-icons'
 import { Column } from '@tanstack/react-table'
 import { useCallback } from 'react'
 
-import { classNames, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../index'
+import classNames from 'classnames'
 import { Button } from '../button'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../tooltip'
 
-interface DataTableColumnHeaderProps<TData, TValue> extends React.HTMLAttributes<HTMLDivElement> {
+interface DataTableColumnHeaderProps<TData, TValue>
+  extends React.HTMLAttributes<HTMLDivElement> {
   column: Column<TData, TValue>
   title: string
   description?: string

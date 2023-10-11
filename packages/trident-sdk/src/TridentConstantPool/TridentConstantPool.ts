@@ -1,10 +1,16 @@
-import { InsufficientInputAmountError, InsufficientReservesError } from '@sushiswap/base-sdk'
+import {
+  InsufficientInputAmountError,
+  InsufficientReservesError,
+} from '@sushiswap/base-sdk'
 import { Fee, Pool } from '@sushiswap/base-sdk'
-import { Amount, Price, Share, Token } from '@sushiswap/currency'
-import { ONE, sqrt, ZERO } from '@sushiswap/math'
+import { Amount, Price, Share, Token } from 'sushi/currency'
+import { ONE, sqrt, ZERO } from 'sushi'
 import invariant from 'tiny-invariant'
 
-import { TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS, TridentChainId } from '../constants'
+import {
+  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
+  TridentChainId,
+} from '../constants'
 import { computeTridentConstantPoolAddress } from './computeTridentConstantPoolAddress'
 import { SerializedConstantPool, tridentConstantPoolSchema } from './zod'
 
@@ -17,9 +23,15 @@ export class TridentConstantPool implements Pool {
   private readonly tokenAmounts: [Amount<Token>, Amount<Token>]
   private readonly MAX_FEE = 10000n
 
-  public static getAddress(tokenA: Token, tokenB: Token, fee: Fee, twap: boolean): string {
+  public static getAddress(
+    tokenA: Token,
+    tokenB: Token,
+    fee: Fee,
+    twap: boolean,
+  ): string {
     return computeTridentConstantPoolAddress({
-      factoryAddress: TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[tokenA.chainId as TridentChainId],
+      factoryAddress:
+        TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[tokenA.chainId as TridentChainId],
       tokenA,
       tokenB,
       fee,
@@ -27,13 +39,23 @@ export class TridentConstantPool implements Pool {
     })
   }
 
-  public constructor(AmountA: Amount<Token>, AmountB: Amount<Token>, fee: Fee, twap: boolean) {
+  public constructor(
+    AmountA: Amount<Token>,
+    AmountB: Amount<Token>,
+    fee: Fee,
+    twap: boolean,
+  ) {
     const Amounts = AmountA.currency.sortsBefore(AmountB.currency) // does safety checks
       ? [AmountA, AmountB]
       : [AmountB, AmountA]
     this.liquidityToken = new Token({
       chainId: Amounts[0].currency.chainId,
-      address: TridentConstantPool.getAddress(Amounts[0].currency, Amounts[1].currency, fee, twap),
+      address: TridentConstantPool.getAddress(
+        Amounts[0].currency,
+        Amounts[1].currency,
+        fee,
+        twap,
+      ),
       decimals: 18,
       symbol: 'SCPLP',
       name: 'Sushi Constant Product LP Token',
@@ -56,7 +78,12 @@ export class TridentConstantPool implements Pool {
    */
   public get token0Price(): Price<Token, Token> {
     const result = this.tokenAmounts[1].divide(this.tokenAmounts[0])
-    return new Price(this.token0, this.token1, result.denominator, result.numerator)
+    return new Price(
+      this.token0,
+      this.token1,
+      result.denominator,
+      result.numerator,
+    )
   }
 
   /**
@@ -64,7 +91,12 @@ export class TridentConstantPool implements Pool {
    */
   public get token1Price(): Price<Token, Token> {
     const result = this.tokenAmounts[0].divide(this.tokenAmounts[1])
-    return new Price(this.token1, this.token0, result.denominator, result.numerator)
+    return new Price(
+      this.token1,
+      this.token0,
+      result.denominator,
+      result.numerator,
+    )
   }
 
   /**
@@ -116,30 +148,43 @@ export class TridentConstantPool implements Pool {
     return token.equals(this.token0) ? this.reserve0 : this.reserve1
   }
 
-  public getOutputAmount(inputAmount: Amount<Token>): [Amount<Token>, TridentConstantPool] {
+  public getOutputAmount(
+    inputAmount: Amount<Token>,
+  ): [Amount<Token>, TridentConstantPool] {
     invariant(this.involvesToken(inputAmount.currency), 'TOKEN')
     if (this.reserve0.quotient === ZERO || this.reserve1.quotient === ZERO) {
       throw new InsufficientReservesError()
     }
     const inputReserve = this.reserveOf(inputAmount.currency)
-    const outputReserve = this.reserveOf(inputAmount.currency.equals(this.token0) ? this.token1 : this.token0)
-    const inputAmountWithFee = inputAmount.quotient * this.MAX_FEE - BigInt(this.fee)
+    const outputReserve = this.reserveOf(
+      inputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
+    )
+    const inputAmountWithFee =
+      inputAmount.quotient * this.MAX_FEE - BigInt(this.fee)
     const numerator = inputAmountWithFee * outputReserve.quotient
-    const denominator = inputReserve.quotient * this.MAX_FEE + inputAmountWithFee
+    const denominator =
+      inputReserve.quotient * this.MAX_FEE + inputAmountWithFee
     const outputAmount = Amount.fromRawAmount(
       inputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
-      numerator / denominator
+      numerator / denominator,
     )
     if (outputAmount.quotient === ZERO) {
       throw new InsufficientInputAmountError()
     }
     return [
       outputAmount,
-      new TridentConstantPool(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), this.fee, this.twap),
+      new TridentConstantPool(
+        inputReserve.add(inputAmount),
+        outputReserve.subtract(outputAmount),
+        this.fee,
+        this.twap,
+      ),
     ]
   }
 
-  public getInputAmount(outputAmount: Amount<Token>): [Amount<Token>, TridentConstantPool] {
+  public getInputAmount(
+    outputAmount: Amount<Token>,
+  ): [Amount<Token>, TridentConstantPool] {
     invariant(this.involvesToken(outputAmount.currency), 'TOKEN')
     if (
       this.reserve0.quotient === ZERO ||
@@ -150,38 +195,64 @@ export class TridentConstantPool implements Pool {
     }
 
     const outputReserve = this.reserveOf(outputAmount.currency)
-    const inputReserve = this.reserveOf(outputAmount.currency.equals(this.token0) ? this.token1 : this.token0)
-    const numerator = inputReserve.quotient * outputAmount.quotient * this.MAX_FEE
-    const denominator = (outputReserve.quotient - outputAmount.quotient) * (this.MAX_FEE - BigInt(this.fee))
+    const inputReserve = this.reserveOf(
+      outputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
+    )
+    const numerator =
+      inputReserve.quotient * outputAmount.quotient * this.MAX_FEE
+    const denominator =
+      (outputReserve.quotient - outputAmount.quotient) *
+      (this.MAX_FEE - BigInt(this.fee))
     const inputAmount = Amount.fromRawAmount(
       outputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
-      numerator / denominator + ONE
+      numerator / denominator + ONE,
     )
     return [
       inputAmount,
-      new TridentConstantPool(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), this.fee, this.twap),
+      new TridentConstantPool(
+        inputReserve.add(inputAmount),
+        outputReserve.subtract(outputAmount),
+        this.fee,
+        this.twap,
+      ),
     ]
   }
 
-  public getNonOptimalMintFee(amount0: bigint, amount1: bigint, reserve0: bigint, reserve1: bigint): [bigint, bigint] {
+  public getNonOptimalMintFee(
+    amount0: bigint,
+    amount1: bigint,
+    reserve0: bigint,
+    reserve1: bigint,
+  ): [bigint, bigint] {
     if (reserve0 === ZERO || reserve1 === ZERO) {
       return [ZERO, ZERO]
     }
     const amount1Optimal = (amount0 * reserve1) / reserve0
 
     if (amount1Optimal <= amount1) {
-      return [ZERO, (BigInt(this.fee) * (amount1 - amount1Optimal)) / (2n * 10000n)]
+      return [
+        ZERO,
+        (BigInt(this.fee) * (amount1 - amount1Optimal)) / (2n * 10000n),
+      ]
     } else {
       const amount0Optimal = (amount1 * reserve0) / reserve1
-      return [(BigInt(this.fee) * (amount0 - amount0Optimal)) / (2n * 10000n), ZERO]
+      return [
+        (BigInt(this.fee) * (amount0 - amount0Optimal)) / (2n * 10000n),
+        ZERO,
+      ]
     }
   }
 
-  public getMintFee(reserve0: bigint, reserve1: bigint, totalSupply: bigint): bigint {
+  public getMintFee(
+    reserve0: bigint,
+    reserve1: bigint,
+    totalSupply: bigint,
+  ): bigint {
     if (this.kLast !== ZERO) {
       const computed = sqrt(reserve0 * reserve1)
       if (computed > this.kLast) {
-        const liquidity = (totalSupply * (computed - this.kLast) * 5n) / computed / 10000n
+        const liquidity =
+          (totalSupply * (computed - this.kLast) * 5n) / computed / 10000n
         if (liquidity !== ZERO) {
           return liquidity
         }
@@ -194,13 +265,19 @@ export class TridentConstantPool implements Pool {
   public getLiquidityMinted(
     totalSupply: Amount<Token>,
     tokenAmountA: Amount<Token> | Share<Token>,
-    tokenAmountB: Amount<Token> | Share<Token>
+    tokenAmountB: Amount<Token> | Share<Token>,
   ): Amount<Token> {
     invariant(totalSupply.currency.equals(this.liquidityToken), 'LIQUIDITY')
-    const tokenAmounts = tokenAmountA.currency.sortsBefore(tokenAmountB.currency) // does safety checks
+    const tokenAmounts = tokenAmountA.currency.sortsBefore(
+      tokenAmountB.currency,
+    ) // does safety checks
       ? [tokenAmountA, tokenAmountB]
       : [tokenAmountB, tokenAmountA]
-    invariant(tokenAmounts[0].currency.equals(this.token0) && tokenAmounts[1].currency.equals(this.token1), 'TOKEN')
+    invariant(
+      tokenAmounts[0].currency.equals(this.token0) &&
+        tokenAmounts[1].currency.equals(this.token1),
+      'TOKEN',
+    )
 
     let liquidity: bigint
 
@@ -217,7 +294,7 @@ export class TridentConstantPool implements Pool {
         tokenAmounts[0].quotient,
         tokenAmounts[1].quotient,
         this.reserve0.quotient,
-        this.reserve1.quotient
+        this.reserve1.quotient,
       )
 
       const reserve0 = this.reserve0.quotient + fee0
@@ -237,24 +314,39 @@ export class TridentConstantPool implements Pool {
     return Amount.fromRawAmount(this.liquidityToken, liquidity)
   }
 
-  public getLiquidityValue(token: Token, totalSupply: Amount<Token>, liquidity: Amount<Token>): Amount<Token> {
+  public getLiquidityValue(
+    token: Token,
+    totalSupply: Amount<Token>,
+    liquidity: Amount<Token>,
+  ): Amount<Token> {
     invariant(this.involvesToken(token), 'TOKEN')
     invariant(totalSupply.currency.equals(this.liquidityToken), 'TOTAL_SUPPLY')
     invariant(liquidity.currency.equals(this.liquidityToken), 'LIQUIDITY')
     invariant(liquidity.quotient <= totalSupply.quotient, 'LIQUIDITY')
-    return Amount.fromRawAmount(token, (liquidity.quotient * this.reserveOf(token).quotient) / totalSupply.quotient)
+    return Amount.fromRawAmount(
+      token,
+      (liquidity.quotient * this.reserveOf(token).quotient) /
+        totalSupply.quotient,
+    )
   }
 
-  public getAmountOut(amountIn: bigint, reserveAmountIn: bigint, reserveAmountOut: bigint): bigint {
+  public getAmountOut(
+    amountIn: bigint,
+    reserveAmountIn: bigint,
+    reserveAmountOut: bigint,
+  ): bigint {
     const amountInWithFee = amountIn * (this.MAX_FEE - BigInt(this.fee))
 
-    return (amountInWithFee * reserveAmountOut) / (reserveAmountIn * this.MAX_FEE + amountInWithFee)
+    return (
+      (amountInWithFee * reserveAmountOut) /
+      (reserveAmountIn * this.MAX_FEE + amountInWithFee)
+    )
   }
 
   public getLiquidityValueSingleToken(
     token: Token,
     totalSupply: Amount<Token>,
-    liquidity: Amount<Token>
+    liquidity: Amount<Token>,
   ): Amount<Token> {
     invariant(this.involvesToken(token), 'TOKEN')
     invariant(totalSupply.currency.equals(this.liquidityToken), 'TOTAL_SUPPLY')
@@ -262,20 +354,35 @@ export class TridentConstantPool implements Pool {
     invariant(liquidity.quotient <= totalSupply.quotient, 'LIQUIDITY')
 
     const _totalSupply =
-      totalSupply.quotient + this.getMintFee(this.reserve0.quotient, this.reserve1.quotient, totalSupply.quotient)
+      totalSupply.quotient +
+      this.getMintFee(
+        this.reserve0.quotient,
+        this.reserve1.quotient,
+        totalSupply.quotient,
+      )
     const amount0 = (liquidity.quotient * this.reserve0.quotient) / _totalSupply
     const amount1 = (liquidity.quotient * this.reserve1.quotient) / _totalSupply
 
     if (token === this.token1) {
       return Amount.fromRawAmount(
         token,
-        amount1 + this.getAmountOut(amount0, this.reserve0.quotient - amount0, this.reserve1.quotient - amount1)
+        amount1 +
+          this.getAmountOut(
+            amount0,
+            this.reserve0.quotient - amount0,
+            this.reserve1.quotient - amount1,
+          ),
       )
     }
 
     return Amount.fromRawAmount(
       token,
-      amount0 + this.getAmountOut(amount1, this.reserve1.quotient - amount1, this.reserve0.quotient - amount0)
+      amount0 +
+        this.getAmountOut(
+          amount1,
+          this.reserve1.quotient - amount1,
+          this.reserve0.quotient - amount0,
+        ),
     )
   }
 
@@ -293,7 +400,7 @@ export class TridentConstantPool implements Pool {
       Amount.deserialize(pool.reserve0),
       Amount.deserialize(pool.reserve1),
       pool.fee,
-      pool.twap
+      pool.twap,
     )
   }
 }

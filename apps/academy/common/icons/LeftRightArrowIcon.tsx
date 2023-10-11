@@ -1,8 +1,22 @@
 export const LeftRightArrowIcon = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg width="102" height="103" viewBox="0 0 102 103" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <svg
+      width="102"
+      height="103"
+      viewBox="0 0 102 103"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
       <g filter="url(#filter0_b_1810_2622)">
-        <rect y="0.341797" width="102" height="102" rx="12.5446" fill="white" fillOpacity="0.1" />
+        <rect
+          y="0.341797"
+          width="102"
+          height="102"
+          rx="12.5446"
+          fill="white"
+          fillOpacity="0.1"
+        />
         <path
           d="M48.8125 66.709H46.625V68.9052C46.6264 69.318 46.511 69.7227 46.2921 70.0727C46.0732 70.4226 45.7598 70.7035 45.3881 70.8828C45.0163 71.0622 44.6014 71.1327 44.1913 71.0862C43.7811 71.0398 43.3925 70.8782 43.0703 70.6202L32.1328 61.8374C31.8763 61.6312 31.6694 61.3701 31.5272 61.0733C31.385 60.7765 31.3111 60.4515 31.3111 60.1224C31.3111 59.7933 31.385 59.4684 31.5272 59.1716C31.6694 58.8748 31.8763 58.6136 32.1328 58.4074L43.0703 49.6268C43.3923 49.3679 43.781 49.2056 44.1914 49.1587C44.6019 49.1117 45.0172 49.1821 45.3893 49.3616C45.7614 49.5411 46.075 49.8224 46.2937 50.1729C46.5124 50.5234 46.6273 50.9287 46.625 51.3418V53.538H48.8125V46.9515C48.8125 45.7374 49.7903 44.7552 51 44.7552H57.5625C58.7131 44.7552 59.6559 45.6477 59.7434 46.7787L64.9978 42.559L59.7434 38.3393C59.6559 39.4724 58.7153 40.3649 57.5625 40.3649H51C49.7903 40.3649 48.8125 39.3805 48.8125 38.1687V20.7168C32.9466 21.8499 20.375 35.1346 20.375 51.3418C20.375 67.549 32.9466 80.8337 48.8125 81.9668V66.709Z"
           fill="white"
@@ -33,8 +47,17 @@ export const LeftRightArrowIcon = (props: React.ComponentProps<'svg'>) => {
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feGaussianBlur in="BackgroundImageFix" stdDeviation="10.872" />
-          <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_1810_2622" />
-          <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_1810_2622" result="shape" />
+          <feComposite
+            in2="SourceAlpha"
+            operator="in"
+            result="effect1_backgroundBlur_1810_2622"
+          />
+          <feBlend
+            mode="normal"
+            in="SourceGraphic"
+            in2="effect1_backgroundBlur_1810_2622"
+            result="shape"
+          />
         </filter>
         <linearGradient
           id="paint0_linear_1810_2622"

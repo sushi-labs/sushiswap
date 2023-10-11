@@ -22,7 +22,9 @@ export const ProductSeo: FC<ProductSeo> = ({ product }) => {
         title={product.name ?? ''}
         description={product.description ?? ''}
         openGraph={{
-          ...(isMediaVideo(product.shareImage?.data?.attributes?.provider_metadata)
+          ...(isMediaVideo(
+            product.shareImage?.data?.attributes?.provider_metadata,
+          )
             ? {
                 videos: [{ url: cover }],
               }
@@ -36,7 +38,9 @@ export const ProductSeo: FC<ProductSeo> = ({ product }) => {
           },
         }}
         twitter={{
-          cardType: isMediaVideo(product.shareImage?.data?.attributes?.provider_metadata)
+          cardType: isMediaVideo(
+            product.shareImage?.data?.attributes?.provider_metadata,
+          )
             ? 'player'
             : 'summary_large_image',
         }}

@@ -8,7 +8,7 @@ export const useMutationObserver = (
     characterData: true,
     childList: true,
     subtree: true,
-  }
+  },
 ) => {
   React.useEffect(() => {
     if (ref.current) {

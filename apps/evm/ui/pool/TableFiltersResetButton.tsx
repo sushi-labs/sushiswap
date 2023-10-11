@@ -10,13 +10,25 @@ import { POOL_TYPES } from './TableFiltersPoolType'
 
 export const TableFiltersResetButton: FC = () => {
   const [isPending, startTransition] = useTransition()
-  const { protocols, chainIds, tokenSymbols, farmsOnly, smartPoolsOnly } = usePoolFilters()
+  const { protocols, chainIds, tokenSymbols, farmsOnly, smartPoolsOnly } =
+    usePoolFilters()
   const setFilters = useSetPoolFilters()
 
-  const networks = useMemo(() => (SUPPORTED_CHAIN_IDS.length === chainIds.length ? [] : chainIds), [chainIds])
-  const types = useMemo(() => (protocols.length === POOL_TYPES.length ? [] : protocols), [protocols])
+  const networks = useMemo(
+    () => (SUPPORTED_CHAIN_IDS.length === chainIds.length ? [] : chainIds),
+    [chainIds],
+  )
+  const types = useMemo(
+    () => (protocols.length === POOL_TYPES.length ? [] : protocols),
+    [protocols],
+  )
   const [show, setShow] = useState(
-    (types?.length ?? 0) + (networks?.length ?? 0) + (tokenSymbols?.length ?? 0) > 0 || farmsOnly || smartPoolsOnly
+    (types?.length ?? 0) +
+      (networks?.length ?? 0) +
+      (tokenSymbols?.length ?? 0) >
+      0 ||
+      farmsOnly ||
+      smartPoolsOnly,
   )
 
   const reset = useCallback(() => {
@@ -35,10 +47,21 @@ export const TableFiltersResetButton: FC = () => {
   if (
     isPending
       ? show
-      : (types?.length ?? 0) + (networks?.length ?? 0) + (tokenSymbols?.length ?? 0) > 0 || farmsOnly || smartPoolsOnly
+      : (types?.length ?? 0) +
+          (networks?.length ?? 0) +
+          (tokenSymbols?.length ?? 0) >
+          0 ||
+        farmsOnly ||
+        smartPoolsOnly
   ) {
     return (
-      <Button onClick={reset} icon={XMarkIcon} iconPosition="end" variant="outline" size="sm">
+      <Button
+        onClick={reset}
+        icon={XMarkIcon}
+        iconPosition="end"
+        variant="outline"
+        size="sm"
+      >
         Reset
       </Button>
     )

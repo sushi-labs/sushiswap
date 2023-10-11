@@ -4,7 +4,10 @@ import { getCommonTokens } from '../../../lib/api.js'
 import { CommonTokensApiSchema } from '../../../lib/schemas/chainId/common.js'
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
-  response.setHeader('Cache-Control', 's-maxage=900, stale-while-revalidate=86400')
+  response.setHeader(
+    'Cache-Control',
+    's-maxage=900, stale-while-revalidate=86400',
+  )
 
   const result = CommonTokensApiSchema.safeParse(request.query)
   if (!result.success) {

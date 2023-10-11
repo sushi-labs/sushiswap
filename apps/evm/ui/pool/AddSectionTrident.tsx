@@ -1,11 +1,15 @@
 'use client'
 
-import { BENTOBOX_ADDRESS, BentoBoxChainId, isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { ChainId } from '@sushiswap/chain'
+import {
+  BENTOBOX_ADDRESS,
+  BentoBoxChainId,
+  isBentoBoxChainId,
+} from '@sushiswap/bentobox-sdk'
+import { ChainId } from 'sushi/chain'
 import { Pool, Protocol } from '@sushiswap/client'
-import { tryParseAmount } from '@sushiswap/currency'
+import { tryParseAmount } from 'sushi/currency'
 import { useIsMounted } from '@sushiswap/hooks'
-import { ZERO } from '@sushiswap/math'
+import { ZERO } from 'sushi'
 import { Button } from '@sushiswap/ui/components/button'
 import {
   getTridentRouterContractConfig,
@@ -37,26 +41,35 @@ export const AddSectionTrident: FC<AddSectionTrident> = ({ pool: _pool }) => {
   }>({ input0: '', input1: '' })
 
   // TODO: Standardize fee format
-  const [constantProductPoolState, constantProductPool] = useTridentConstantPool(
-    _pool.chainId,
-    token0,
-    token1,
-    _pool.swapFee * 10000,
-    _pool.twapEnabled
-  )
+  const [constantProductPoolState, constantProductPool] =
+    useTridentConstantPool(
+      _pool.chainId,
+      token0,
+      token1,
+      _pool.swapFee * 10000,
+      _pool.twapEnabled,
+    )
   const [stablePoolState, stablePool] = useTridentStablePool(
     _pool.chainId,
     token0,
     token1,
     _pool.swapFee * 10000,
-    _pool.twapEnabled
+    _pool.twapEnabled,
   )
 
   const [poolState, pool] = useMemo(() => {
-    if (_pool.protocol === Protocol.BENTOBOX_STABLE) return [stablePoolState, stablePool]
-    if (_pool.protocol === Protocol.BENTOBOX_CLASSIC) return [constantProductPoolState, constantProductPool]
+    if (_pool.protocol === Protocol.BENTOBOX_STABLE)
+      return [stablePoolState, stablePool]
+    if (_pool.protocol === Protocol.BENTOBOX_CLASSIC)
+      return [constantProductPoolState, constantProductPool]
     return [undefined, undefined]
-  }, [_pool.protocol, stablePoolState, stablePool, constantProductPoolState, constantProductPool])
+  }, [
+    _pool.protocol,
+    stablePoolState,
+    stablePool,
+    constantProductPoolState,
+    constantProductPool,
+  ])
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
     return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
@@ -77,11 +90,13 @@ export const AddSectionTrident: FC<AddSectionTrident> = ({ pool: _pool }) => {
         const parsedAmount = tryParseAmount(value, token0)
         setTypedAmounts({
           input0: value,
-          input1: parsedAmount ? pool.priceOf(token0.wrapped).quote(parsedAmount.wrapped).toExact() : '',
+          input1: parsedAmount
+            ? pool.priceOf(token0.wrapped).quote(parsedAmount.wrapped).toExact()
+            : '',
         })
       }
     },
-    [pool, poolState, token0]
+    [pool, poolState, token0],
   )
 
   const onChangeToken1TypedAmount = useCallback(
@@ -98,15 +113,20 @@ export const AddSectionTrident: FC<AddSectionTrident> = ({ pool: _pool }) => {
       } else if (token1 && pool) {
         const parsedAmount = tryParseAmount(value, token1)
         setTypedAmounts({
-          input0: parsedAmount ? pool.priceOf(token1.wrapped).quote(parsedAmount.wrapped).toExact() : '',
+          input0: parsedAmount
+            ? pool.priceOf(token1.wrapped).quote(parsedAmount.wrapped).toExact()
+            : '',
           input1: value,
         })
       }
     },
-    [pool, poolState, token1]
+    [pool, poolState, token1],
   )
 
-  const amounts = useMemo(() => [parsedInput0, parsedInput1], [parsedInput0, parsedInput1])
+  const amounts = useMemo(
+    () => [parsedInput0, parsedInput1],
+    [parsedInput0, parsedInput1],
+  )
 
   return (
     <CheckerProvider>
@@ -134,7 +154,12 @@ export const AddSectionTrident: FC<AddSectionTrident> = ({ pool: _pool }) => {
             }
             guardText="Pool not found"
           >
-            <Checker.Network size="default" variant="outline" fullWidth chainId={_pool.chainId}>
+            <Checker.Network
+              size="default"
+              variant="outline"
+              fullWidth
+              chainId={_pool.chainId}
+            >
               <Checker.Amounts
                 size="default"
                 variant="outline"
@@ -150,8 +175,12 @@ export const AddSectionTrident: FC<AddSectionTrident> = ({ pool: _pool }) => {
                   id="add-liquidity-trident-approve-bentobox"
                   className="whitespace-nowrap"
                   fullWidth
-                  masterContract={getTridentRouterContractConfig(chainId).address}
-                  enabled={Boolean(getTridentRouterContractConfig(chainId).address)}
+                  masterContract={
+                    getTridentRouterContractConfig(chainId).address
+                  }
+                  enabled={Boolean(
+                    getTridentRouterContractConfig(chainId).address,
+                  )}
                 >
                   <Checker.ApproveERC20
                     size="default"

@@ -1,5 +1,5 @@
-import { masterChefV2Abi } from '@sushiswap/abi'
-import { ChainId } from '@sushiswap/chain'
+import { masterChefV2Abi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
 import { Address, readContract, readContracts } from '@wagmi/core'
 
 import { MASTERCHEF_V2_ADDRESS } from '../../../config.js'
@@ -42,7 +42,7 @@ export async function getPoolInfos(poolLength: number) {
         chainId: ChainId.ETHEREUM,
         abi: masterChefV2Abi,
         functionName: 'poolInfo',
-      } as const)
+      }) as const,
   )
 
   const poolInfos = await readContracts({
@@ -66,7 +66,7 @@ export async function getLpTokens(poolLength: number) {
         chainId: ChainId.ETHEREUM,
         abi: masterChefV2Abi,
         functionName: 'lpToken',
-      } as const)
+      }) as const,
   )
 
   return readContracts({
@@ -84,7 +84,7 @@ export async function getRewarders(poolLength: number) {
         chainId: ChainId.ETHEREUM,
         abi: masterChefV2Abi,
         functionName: 'rewarder',
-      } as const)
+      }) as const,
   )
 
   return readContracts({

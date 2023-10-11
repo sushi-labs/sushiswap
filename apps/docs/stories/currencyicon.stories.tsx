@@ -1,8 +1,8 @@
 // Checkbox.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { ChainId } from '@sushiswap/chain'
-import { SUSHI, USDT } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { SUSHI, USDT } from 'sushi/currency'
 import { Currency } from '@sushiswap/ui'
 
 const meta = {

@@ -1,18 +1,27 @@
 import { CheckIcon } from '@heroicons/react-v1/solid'
-import { Token } from '@sushiswap/currency'
-import { ZERO } from '@sushiswap/math'
-import { ROUTE_PROCESSOR_2_ADDRESS, RouteProcessor2ChainId } from '@sushiswap/route-processor-sdk'
-import { Badge } from '@sushiswap/ui/components/Badge'
+import { Token } from 'sushi/currency'
+import { ZERO } from 'sushi'
+import {
+  ROUTE_PROCESSOR_2_ADDRESS,
+  RouteProcessor2ChainId,
+} from '@sushiswap/route-processor-sdk'
+import { Badge } from '@sushiswap/ui/components/badge'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { List } from '@sushiswap/ui/components/list/List'
 import { Address } from '@sushiswap/wagmi'
-import { useTokenAllowance, useTokenRevokeApproval } from '@sushiswap/wagmi/future/hooks'
+import {
+  useTokenAllowance,
+  useTokenRevokeApproval,
+} from '@sushiswap/wagmi/future/hooks'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import React, { FC } from 'react'
 
-export const RevokeItem: FC<{ token: Token; account: Address }> = ({ account, token }) => {
+export const RevokeItem: FC<{ token: Token; account: Address }> = ({
+  account,
+  token,
+}) => {
   const { data: allowance, isLoading } = useTokenAllowance({
     chainId: token.chainId,
     token,
@@ -36,7 +45,9 @@ export const RevokeItem: FC<{ token: Token; account: Address }> = ({ account, to
           <div className="flex items-center gap-3">
             <Badge
               position="bottom-right"
-              badgeContent={<NetworkIcon chainId={token.chainId} width={16} height={16} />}
+              badgeContent={
+                <NetworkIcon chainId={token.chainId} width={16} height={16} />
+              }
             >
               <Currency.Icon currency={token} width={24} height={24} />
             </Badge>
@@ -46,7 +57,12 @@ export const RevokeItem: FC<{ token: Token; account: Address }> = ({ account, to
       >
         <Checker.Connect size="sm">
           <Checker.Network size="sm" chainId={token.chainId}>
-            <Button size="sm" disabled={isPending} loading={isPending} onClick={() => write?.()}>
+            <Button
+              size="sm"
+              disabled={isPending}
+              loading={isPending}
+              onClick={() => write?.()}
+            >
               Revoke
             </Button>
           </Checker.Network>
@@ -60,7 +76,12 @@ export const RevokeItem: FC<{ token: Token; account: Address }> = ({ account, to
       flex
       title={
         <div className="flex items-center gap-3">
-          <Badge position="bottom-right" badgeContent={<NetworkIcon chainId={token.chainId} width={16} height={16} />}>
+          <Badge
+            position="bottom-right"
+            badgeContent={
+              <NetworkIcon chainId={token.chainId} width={16} height={16} />
+            }
+          >
             <Currency.Icon currency={token} width={24} height={24} />
           </Badge>
           {token.name} ({token.symbol})
@@ -69,7 +90,12 @@ export const RevokeItem: FC<{ token: Token; account: Address }> = ({ account, to
     >
       <Button size="sm" variant="secondary" className="pointer-events-none">
         <div className="flex gap-1 items-center">
-          <CheckIcon strokeWidth={2} width={16} height={16} className="text-green" />
+          <CheckIcon
+            strokeWidth={2}
+            width={16}
+            height={16}
+            className="text-green"
+          />
           Already Revoked
         </div>
       </Button>

@@ -9,13 +9,20 @@ import { IconComponent } from '../types'
 import { buttonIconVariants } from './button'
 import { Chip, chipVariants } from './chip'
 import { textFieldVariants } from './text-field'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from './tooltip'
 
 export type ChipInputRootProps = React.InputHTMLAttributes<HTMLDivElement>
 
-const ChipInputRoot = React.forwardRef<HTMLDivElement, ChipInputRootProps>(({ ...props }, ref) => {
-  return <div ref={ref} className="flex gap-2 items-center" {...props} />
-})
+const ChipInputRoot = React.forwardRef<HTMLDivElement, ChipInputRootProps>(
+  ({ ...props }, ref) => {
+    return <div ref={ref} className="flex gap-2 items-center" {...props} />
+  },
+)
 ChipInputRoot.displayName = 'ChipInputRoot'
 
 interface ChipInputProps
@@ -61,7 +68,8 @@ const ChipInput: FC<ChipInputProps> = ({
     return str.split(regExp).filter((el) => el !== '')
   }
 
-  const sync = (values: string[]) => startTransition(() => onValueChange(values))
+  const sync = (values: string[]) =>
+    startTransition(() => onValueChange(values))
 
   const onKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!ref.current) return
@@ -100,7 +108,13 @@ const ChipInput: FC<ChipInputProps> = ({
   const tags = split(state)
 
   return (
-    <ChipInputRoot className={textFieldVariants({ variant, size, className: 'relative gap-2 flex-wrap !h-[unset]' })}>
+    <ChipInputRoot
+      className={textFieldVariants({
+        variant,
+        size,
+        className: 'relative gap-2 flex-wrap !h-[unset]',
+      })}
+    >
       {Icon ? <Icon {...iconProps} className={buttonIconVariants()} /> : null}
       {tags.length > 0
         ? tags.map((value, i) => (
@@ -122,7 +136,10 @@ const ChipInput: FC<ChipInputProps> = ({
         <input
           onKeyDown={onKeyDown}
           onKeyUp={onKeyUp}
-          className={classNames(className, 'flex flex-grow bg-transparent truncate !outline-none !ring-0')}
+          className={classNames(
+            className,
+            'flex flex-grow bg-transparent truncate !outline-none !ring-0',
+          )}
           ref={ref}
           {...props}
         />

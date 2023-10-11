@@ -1,4 +1,9 @@
-import { Address, encodeAbiParameters, encodeFunctionData, parseAbiParameters } from 'viem'
+import {
+  Address,
+  encodeAbiParameters,
+  encodeFunctionData,
+  parseAbiParameters,
+} from 'viem'
 
 export type LiquidityOutput = {
   token: Address
@@ -77,7 +82,10 @@ export const burnLiquidityAction = ({
     args: [
       address,
       amount,
-      encodeAbiParameters(parseAbiParameters('address, bool'), [recipient, receiveToWallet]),
+      encodeAbiParameters(parseAbiParameters('address, bool'), [
+        recipient,
+        receiveToWallet,
+      ]),
       liquidityOutput,
     ],
   })

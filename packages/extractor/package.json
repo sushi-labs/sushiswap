@@ -1,7 +1,6 @@
 {
   "name": "@sushiswap/extractor",
-  "version": "0.0.1",
-  "private": true,
+  "version": "1.0.1",
   "description": "Sushi Extractor",
   "keywords": [
     "sushi",
@@ -27,45 +26,28 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
-    "lint": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build",
-    "start": "npx ts-node --transpile-only --files examples/server.ts",
-    "test": "jest --passWithNoTests",
-    "test:server": "npx ts-node --transpile-only --prefer-ts-exts --files examples/extractor.ts",
-    "test:load": "artillery run test/load.yml"
+    "test": "jest --passWithNoTests"
   },
   "dependencies": {
-    "@sushiswap/abi": "workspace:*",
-    "@sushiswap/amm": "workspace:*",
-    "@sushiswap/chain": "workspace:*",
-    "@sushiswap/currency": "workspace:*",
+    "@cryptoalgebra/integral-core": "0.2.0",
+    "@cryptoalgebra/integral-periphery": "0.2.0",
+    "@sentry/node": "7.68.0",
     "@sushiswap/router": "workspace:*",
-    "@sushiswap/route-processor-sdk": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",
-    "@sushiswap/router-config": "workspace:*",
     "@uniswap/v3-core": "1.0.1",
-    "@sentry/node": "7.68.0",
     "abitype": "0.9.3",
-    "ethers": "5.7.2",
-    "viem": "1.10.7"
+    "sushi": "workspace:*",
+    "viem": "1.16.2"
   },
   "devDependencies": {
-    "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
-    "@sushiswap/typescript-config": "workspace:*",
-    "@sushiswap/viem-config": "workspace:*",
-    "@types/cors": "2.8.13",
-    "@types/express": "4.17.17",
-    "@types/node": "18.11.18",
-    "artillery": "2.0.0-35",
-    "cors": "2.8.5",
-    "express": "4.18.2",
-    "express-rate-limit": "6.9.0",
-    "wagmi": "1.3.11-cjs",
-    "typescript": "5.1.6",
-    "zod": "3.21.4"
+    "@tsconfig/esm": "1.0.4",
+    "@tsconfig/node18": "18.2.2",
+    "@tsconfig/strictest": "2.0.2",
+    "@types/node": "18",
+    "typescript": "5.2.2"
   }
 }

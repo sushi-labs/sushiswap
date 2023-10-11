@@ -1,8 +1,8 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { Address, erc20ABI, readContracts } from '@wagmi/core'
 
 export async function fetchBalances(
-  args: { token: string; user: string; chainId: ChainId }[]
+  args: { token: string; user: string; chainId: ChainId }[],
 ): Promise<Record<string, string>> {
   const balances = await readContracts({
     allowFailure: true,
@@ -14,13 +14,18 @@ export async function fetchBalances(
           args: [user as Address],
           chainId,
           abi: erc20ABI,
-        } as const)
+        }) as const,
     ),
-  }).then((values) => values.map((value, i) => ({ ...args[i], value: value.result })))
+  }).then((values) =>
+    values.map((value, i) => ({ ...args[i], value: value.result })),
+  )
 
   return Object.fromEntries(
     balances
       .filter(({ value }) => value !== undefined && value > 0n)
-      .map((balance) => [`${balance.chainId}:${balance.token}`, String(balance.value)])
+      .map((balance) => [
+        `${balance.chainId}:${balance.token}`,
+        String(balance.value),
+      ]),
   )
 }

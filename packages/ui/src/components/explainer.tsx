@@ -1,9 +1,14 @@
 import { InformationCircleIcon } from '@heroicons/react/20/solid'
 import React, { FC, ReactNode } from 'react'
 
-import { classNames } from '../index'
+import classNames from 'classnames'
 import { IconComponent, IconProps } from '../types'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from './tooltip'
 
 export const Explainer: FC<{
   children: ReactNode
@@ -15,12 +20,18 @@ export const Explainer: FC<{
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
           {Icon ? (
-            <Icon className={classNames(iconProps?.className, 'self-center')} {...iconProps} />
+            <Icon
+              className={classNames(iconProps?.className, 'self-center')}
+              {...iconProps}
+            />
           ) : (
             <InformationCircleIcon
               width={16}
               height={16}
-              className={classNames(iconProps?.className, 'self-center text-muted-foreground')}
+              className={classNames(
+                iconProps?.className,
+                'self-center text-muted-foreground',
+              )}
             />
           )}
         </TooltipTrigger>

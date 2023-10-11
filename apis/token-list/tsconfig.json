@@ -1,8 +1,10 @@
 {
-  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node18/tsconfig"],
-  "include": ["."],
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/esm/tsconfig"],
+  "include": ["api"],
   "exclude": ["node_modules", ".vercel"],
   "compilerOptions": {
-    "resolveJsonModule": true
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "noEmit": true
   }
 }

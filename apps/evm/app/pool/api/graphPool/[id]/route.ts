@@ -9,7 +9,10 @@ const schema = z.object({
 // export const revalidate = 60 // revalidate every minute
 
 // uses thegraph, not the pools api
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } },
+) {
   const result = schema.safeParse(params)
   if (!result.success) {
     return new Response(result.error.message, { status: 400 })

@@ -1,7 +1,7 @@
 'use client'
 
 import { GiftIcon } from '@heroicons/react-v1/outline'
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { isTridentChainId, TridentChainId } from '@sushiswap/trident-sdk'
 import { LinkExternal, LinkInternal, typographyVariants } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
@@ -31,14 +31,24 @@ export const Hero: FC = () => {
             Put your funds to work <br />
             by providing liquidity.
           </h1>
-          <p className={typographyVariants({ variant: 'lead', className: 'max-w-[500px]' })}>
-            When you add liquidity to a pool, you can receive a share of its trading volume and potentially snag extra
-            rewards when there are incentives involved!
+          <p
+            className={typographyVariants({
+              variant: 'lead',
+              className: 'max-w-[500px]',
+            })}
+          >
+            When you add liquidity to a pool, you can receive a share of its
+            trading volume and potentially snag extra rewards when there are
+            incentives involved!
           </p>
         </div>
         <div className="flex flex-col sm:flex-row w-full sm:w-[unset] gap-4">
           <div className="flex items-center w-full">
-            <Button asChild size="lg" className="flex-1 w-full sm:flex-0 sm:w-[unset] rounded-r-none">
+            <Button
+              asChild
+              size="lg"
+              className="flex-1 w-full sm:flex-0 sm:w-[unset] rounded-r-none"
+            >
               <LinkInternal
                 href={
                   isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
@@ -61,7 +71,12 @@ export const Hero: FC = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-80">
                 <DropdownMenuGroup>
-                  <DropdownMenuItem disabled={!isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)} asChild>
+                  <DropdownMenuItem
+                    disabled={
+                      !isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
+                    }
+                    asChild
+                  >
                     <LinkInternal
                       href={`/pool/add?chainId=${chainId}`}
                       className="flex flex-col !items-start gap-1 cursor-pointer"
@@ -69,7 +84,9 @@ export const Hero: FC = () => {
                       <div className="flex items-center gap-1 font-medium leading-none">
                         V3 Position
                         <Chip variant="secondary">
-                          {isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId) ? 'New 🔥' : 'Unavailable'}
+                          {isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
+                            ? 'New 🔥'
+                            : 'Unavailable'}
                         </Chip>
                       </div>
                       <p className="text-sm leading-snug text-muted-foreground">
@@ -83,7 +100,9 @@ export const Hero: FC = () => {
                         href={`/pools/add/v2/${chainId}`}
                         className="flex flex-col !items-start gap-1 cursor-pointer"
                       >
-                        <div className="flex items-center gap-1 font-medium leading-none">V2 Position</div>
+                        <div className="flex items-center gap-1 font-medium leading-none">
+                          V2 Position
+                        </div>
                         <p className="text-sm leading-snug text-muted-foreground">
                           Provide liquidity to a V2 liquidity pool.
                         </p>
@@ -97,7 +116,8 @@ export const Hero: FC = () => {
                         className="flex flex-col !items-start gap-1 cursor-pointer"
                       >
                         <div className="flex items-center gap-1 font-medium leading-none">
-                          Trident Position <Chip variant="secondary">Deprecated 💀</Chip>
+                          Trident Position{' '}
+                          <Chip variant="secondary">Deprecated 💀</Chip>
                         </div>
                         <p className="text-sm leading-snug text-muted-foreground">
                           Provide liquidity to a Trident liquidity pool.
@@ -109,22 +129,39 @@ export const Hero: FC = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <Button fullWidth asChild icon={GiftIcon} variant="secondary" size="lg">
-            <LinkInternal href="/pools/incentivize">I want to incentivize a pool</LinkInternal>
+          <Button
+            fullWidth
+            asChild
+            icon={GiftIcon}
+            variant="secondary"
+            size="lg"
+          >
+            <LinkInternal href="/pools/incentivize">
+              I want to incentivize a pool
+            </LinkInternal>
           </Button>
         </div>
       </div>
       <div className="flex flex-col items-center gap-4 lg:items-end">
         <div className="flex flex-col items-center gap-1 lg:items-end">
-          <span className="font-semibold lg:text-sm">Looking for a partnership with Sushi?</span>
-          <Button className="flex-1 w-full sm:flex-0 sm:w-[unset]" variant="link" size="sm" asChild>
+          <span className="font-semibold lg:text-sm">
+            Looking for a partnership with Sushi?
+          </span>
+          <Button
+            className="flex-1 w-full sm:flex-0 sm:w-[unset]"
+            variant="link"
+            size="sm"
+            asChild
+          >
             <LinkInternal href="/partner">Apply here</LinkInternal>
           </Button>
         </div>
         <div className="flex flex-col items-center gap-1 lg:items-end">
           <span className="font-semibold lg:text-sm">Need Help?</span>
           <Button icon={DiscordIcon} variant="link" size="sm" asChild>
-            <LinkExternal href="https://discord.gg/NVPXN4e">Join our discord</LinkExternal>
+            <LinkExternal href="https://discord.gg/NVPXN4e">
+              Join our discord
+            </LinkExternal>
           </Button>
         </div>
       </div>

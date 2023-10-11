@@ -7,11 +7,14 @@ import useSWR from 'swr'
 
 import { getGraphPools } from '../../api'
 
-function transformGraphPool(graphPool: Awaited<ReturnType<typeof getGraphPools>>[0]): Pool {
+function transformGraphPool(
+  graphPool: Awaited<ReturnType<typeof getGraphPools>>[0],
+): Pool {
   let protocol: Protocol = Protocol.SUSHISWAP_V2
   // if (graphPool.source === 'LEGACY') protocol = Protocol.SUSHISWAP_V2
   if (graphPool.source === 'TRIDENT') {
-    if (graphPool.type === 'CONSTANT_PRODUCT_POOL') protocol = Protocol.BENTOBOX_CLASSIC
+    if (graphPool.type === 'CONSTANT_PRODUCT_POOL')
+      protocol = Protocol.BENTOBOX_CLASSIC
     if (graphPool.type === 'STABLE_POOL') protocol = Protocol.BENTOBOX_STABLE
   }
 
@@ -92,13 +95,20 @@ export const useGraphPools = (poolIds: string[]): Pools => {
     error: graphPoolsError,
   } = useSWR<Awaited<ReturnType<typeof getGraphPools>>>(
     poolIds.length > 0 ? getGraphPoolsUrl(poolIds) : null,
-    async () => getGraphPools(poolIds)
+    async () => getGraphPools(poolIds),
   )
 
-  const { data: pools, isLoading: isPoolsLoading, error: poolsError } = usePools({ args: { ids: poolIds } })
+  const {
+    data: pools,
+    isLoading: isPoolsLoading,
+    error: poolsError,
+  } = usePools({ args: { ids: poolIds } })
 
   return useMemo(() => {
-    if ((isGraphPoolsLoading && !graphPoolsError) || (isPoolsLoading && !poolsError)) {
+    if (
+      (isGraphPoolsLoading && !graphPoolsError) ||
+      (isPoolsLoading && !poolsError)
+    ) {
       return []
     }
 
@@ -106,7 +116,9 @@ export const useGraphPools = (poolIds: string[]): Pools => {
       return poolIds
         .map((poolId) => {
           const pool = pools?.find((pool) => pool.id === poolId)
-          const graphPool = graphPools?.find((graphPool) => graphPool.id === poolId)
+          const graphPool = graphPools?.find(
+            (graphPool) => graphPool.id === poolId,
+          )
 
           if (!pool && !graphPool) return undefined
 
@@ -126,5 +138,13 @@ export const useGraphPools = (poolIds: string[]): Pools => {
     }
 
     return []
-  }, [graphPools, isGraphPoolsLoading, isPoolsLoading, poolIds, pools, graphPoolsError, poolsError])
+  }, [
+    graphPools,
+    isGraphPoolsLoading,
+    isPoolsLoading,
+    poolIds,
+    pools,
+    graphPoolsError,
+    poolsError,
+  ])
 }

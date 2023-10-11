@@ -1,4 +1,7 @@
-import { CONCENTRATED_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
+import {
+  CONCENTRATED_SUBGRAPH_NAME,
+  SUBGRAPH_HOST,
+} from '@sushiswap/graph-config'
 
 import { Query, QueryResolvers } from '../../.graphclient/index.js'
 
@@ -8,7 +11,7 @@ export const ticksById: QueryResolvers['ticksById'] = async (
   root,
   args,
   context,
-  info
+  info,
 ): Promise<Query['ticksById']> => {
   const [chainId, poolAddress] = args.id.split(':')
 

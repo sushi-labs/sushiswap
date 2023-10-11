@@ -1,4 +1,4 @@
-import { Native, Token } from '@sushiswap/currency'
+import { Native, Token } from 'sushi/currency'
 import { Token as GraphToken } from '@sushiswap/graph-client'
 import { useMemo } from 'react'
 

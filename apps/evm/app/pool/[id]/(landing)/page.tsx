@@ -1,9 +1,9 @@
-import { ChainId } from '@sushiswap/chain'
 import { getPool } from '@sushiswap/client'
-import { unsanitize } from '@sushiswap/format'
 import { Container, Separator } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
+import { ChainId } from 'sushi/chain'
+import { unsanitize } from 'sushi/format'
 import {
   PoolPositionProvider,
   PoolPositionRewardsProvider,
@@ -29,9 +29,13 @@ export default async function PoolPage({
   tab: 'add' | 'remove' | 'unstake' | 'stake'
 }) {
   const poolId = unsanitize(params.id)
-  const pool = await unstable_cache(async () => getPool(poolId), ['pool', poolId], {
-    revalidate: 60 * 15,
-  })()
+  const pool = await unstable_cache(
+    async () => getPool(poolId),
+    ['pool', poolId],
+    {
+      revalidate: 60 * 15,
+    },
+  )()
 
   if (!pool) {
     notFound()
@@ -65,7 +69,10 @@ export default async function PoolPage({
         </div>
         <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
           <div>
-            <PoolChartV2 address={pool.address} chainId={pool.chainId as ChainId} />
+            <PoolChartV2
+              address={pool.address}
+              chainId={pool.chainId as ChainId}
+            />
           </div>
           <div className="flex flex-col gap-6">
             <PoolComposition pool={pool} />
