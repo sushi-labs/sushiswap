@@ -1,5 +1,5 @@
-import { routeProcessor2Abi } from '@sushiswap/abi'
-import { Token } from '@sushiswap/currency'
+import { routeProcessor2Abi } from 'sushi/abi'
+import { Token } from 'sushi/currency'
 import {
   Extractor,
   FactoryAlgebra,
