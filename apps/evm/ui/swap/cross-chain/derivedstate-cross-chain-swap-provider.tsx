@@ -2,7 +2,6 @@
 
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import {
-  SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS,
   SushiXSwap2ChainId,
   isSushiXSwap2ChainId,
 } from '@sushiswap/sushixswap-sdk'
@@ -102,10 +101,7 @@ const DerivedstateCrossChainSwapProvider: FC<
     if (!params.has('chainId0'))
       params.set(
         'chainId0',
-        (chain?.id &&
-        SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS.includes(
-          chain.id as SushiXSwap2ChainId,
-        )
+        (chain?.id && isSushiXSwap2ChainId(chain.id as ChainId)
           ? chain.id
           : ChainId.ETHEREUM
         ).toString(),
@@ -283,9 +279,7 @@ const DerivedstateCrossChainSwapProvider: FC<
       if (
         !chain ||
         chain.id === chainId0 ||
-        !SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS.includes(
-          chain.id as SushiXSwap2ChainId,
-        )
+        !isSushiXSwap2ChainId(chain.id as ChainId)
       )
         return
       push(pathname, { scroll: false })
