@@ -78,20 +78,15 @@ export class TinesToRouteProcessor2 {
           res += this.processERC20Code(true, token, route, toAddress)
         else res += this.processBentoCode(token, route, toAddress)
       } else {
-<<<<<<< HEAD
-        if (token.address === '') res += this.processNativeCode(token, route, toAddress)
-        else res += this.processERC20Code(source === RouterLiquiditySource.XSwap, token, route, toAddress)
-=======
         if (token.address === '')
           res += this.processNativeCode(token, route, toAddress)
         else
           res += this.processERC20Code(
-            source === RouterLiquiditySource.Self,
+            source === RouterLiquiditySource.XSwap,
             token,
             route,
             toAddress,
           )
->>>>>>> master
       }
     })
 

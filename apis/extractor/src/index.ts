@@ -537,7 +537,7 @@ async function main() {
   //   return res.json(poolCodes)
   // })
 
-  app.get('/pool-codes', (req: Request, res: Response) => {
+  app.get('/pool-codes', async (req: Request, res: Response) => {
     // console.log('HTTP: GET /pool-codes', JSON.stringify(req.query))
     const { chainId } = z
       .object({
@@ -553,6 +553,7 @@ async function main() {
       .parse(req.query)
     const extractor = extractors.get(chainId) as Extractor
     const poolCodes = extractor.getCurrentPoolCodes()
+    const { serialize } = await import('wagmi')
     res.json(serialize(poolCodes))
   })
 
