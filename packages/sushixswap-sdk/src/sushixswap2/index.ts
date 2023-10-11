@@ -82,7 +82,7 @@ export const encodePayloadData = ({
   return encodeAbiParameters(parseAbiParameters('address, uint256, bytes'), [target, gasLimit, targetData])
 }
 
-type ProcessRouteInput = [Address, bigint, Address, bigint, Address, `0x${string}`]
+type ProcessRouteInput = readonly [Address, bigint, Address, bigint, Address, `0x${string}`]
 
 export function encodeSwapData([tokenIn, amountIn, tokenOut, amountOut, to, route]: ProcessRouteInput) {
   return encodeAbiParameters(

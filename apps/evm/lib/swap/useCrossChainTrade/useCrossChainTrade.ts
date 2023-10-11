@@ -1,12 +1,12 @@
-import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
+import { Amount, Currency, Native } from '@sushiswap/currency'
 import { Fraction, ONE, Percent, ZERO } from '@sushiswap/math'
 import { STARGATE_CHAIN_ID } from '@sushiswap/stargate'
 import { useFeeData, readContract } from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
 import { log } from 'next-axiom'
-import { UseCrossChainSelect, UseCrossChainTradeParams, UseCrossChainTradeQuerySelect } from './types'
+import { UseCrossChainTradeParams, UseCrossChainTradeReturn } from './types'
 import { stargateAdapterAbi } from '@sushiswap/abi'
 import {
   encodeSwapData,
@@ -20,22 +20,19 @@ import {
 } from '@sushiswap/sushixswap-sdk'
 import { RouterLiquiditySource } from '@sushiswap/router'
 import { useStargateBridgeFees } from './useStargateBridgeFees'
-import { encodeAbiParameters, parseAbiParameters, stringify } from 'viem'
+import { encodeAbiParameters, parseAbiParameters, parseUnits, stringify } from 'viem'
 
-export const useCrossChainTradeQuery = (
-  {
-    network0,
-    network1,
-    token0,
-    token1,
-    amount,
-    slippagePercentage,
-    recipient,
-    enabled,
-    tradeId,
-  }: UseCrossChainTradeParams,
-  select: UseCrossChainTradeQuerySelect
-) => {
+export const useCrossChainTrade = ({
+  network0,
+  network1,
+  token0,
+  token1,
+  amount,
+  slippagePercentage,
+  recipient,
+  enabled,
+  tradeId,
+}: UseCrossChainTradeParams) => {
   const { data: feeData0 } = useFeeData({ chainId: network0, enabled })
   const { data: feeData1 } = useFeeData({ chainId: network1, enabled })
 
@@ -72,37 +69,40 @@ export const useCrossChainTradeQuery = (
     enabled: Boolean(bridgePath && enabled),
   })
 
-  const { srcAmountOut, srcMinimumAmountOut, dstAmountIn, bridgeFee } = useMemo(() => {
-    if (!bridgeFees || !bridgePath)
+  const { srcAmountOut, srcAmountOutMin, dstAmountIn, dstAmountInMin, bridgeImpact } = useMemo(() => {
+    if (!amount || !bridgeFees || !bridgePath || (isSrcSwap && (!srcTrade?.amountOut || !srcTrade?.minAmountOut)))
       return {
         srcAmountOut: undefined,
-        srcMinimumAmountOut: undefined,
+        srcAmountOutMin: undefined,
         dstAmountIn: undefined,
-        bridgeFee: undefined,
+        dstAmountInMin: undefined,
+        bridgeImpact: undefined,
       }
 
     const [eqFee, eqReward, lpFee, protocolFee] = bridgeFees
-    const srcMinimumAmountOut = isSrcSwap ? srcTrade?.minAmountOut : amount
 
-    let bridgeFee: Amount<Currency> | undefined = undefined
-    if (eqFee && eqReward && lpFee && protocolFee) {
-      bridgeFee = eqFee.subtract(eqReward).add(lpFee).add(protocolFee)
-    }
+    const bridgeFee = eqFee.subtract(eqReward).add(lpFee).add(protocolFee)
 
-    const srcAmountOut = bridgeFee ? (isSrcSwap ? srcTrade?.amountOut : amount)?.subtract(bridgeFee) : undefined
+    const srcAmountOut = (isSrcSwap ? (srcTrade?.minAmountOut as Amount<Currency>) : amount).subtract(bridgeFee)
 
-    const dstAmountIn = srcAmountOut
-      ? tryParseAmount(
-          srcAmountOut.toFixed(
-            srcAmountOut.currency.decimals > bridgePath.dstBridgeToken.decimals
-              ? bridgePath.dstBridgeToken.decimals
-              : undefined
-          ),
-          bridgePath.dstBridgeToken
-        )
-      : undefined
+    const srcAmountOutMin = srcAmountOut.multiply(new Fraction(ONE).add(STARGATE_DEFAULT_SLIPPAGE).invert())
 
-    return { srcAmountOut, srcMinimumAmountOut, dstAmountIn, bridgeFee }
+    const dstAmountIn = Amount.fromRawAmount(
+      bridgePath.dstBridgeToken,
+      parseUnits(srcAmountOut.toExact(), bridgePath.dstBridgeToken.decimals)
+    )
+
+    const dstAmountInMin = Amount.fromRawAmount(
+      bridgePath.dstBridgeToken,
+      parseUnits(srcAmountOutMin.toExact(), bridgePath.dstBridgeToken.decimals)
+    )
+
+    const bridgeImpact = new Percent(
+      bridgeFee.quotient,
+      (isSrcSwap ? (srcTrade?.minAmountOut as Amount<Currency>) : amount).quotient
+    )
+
+    return { srcAmountOut, srcAmountOutMin, dstAmountIn, dstAmountInMin, bridgeImpact }
   }, [bridgeFees, bridgePath, isSrcSwap, srcTrade?.minAmountOut, srcTrade?.amountOut, amount])
 
   const { data: dstTrade } = useApiTrade({
@@ -123,7 +123,6 @@ export const useCrossChainTradeQuery = (
 
   return useQuery({
     queryKey: [
-      'NoPersist',
       'crossChainTrade',
       {
         tradeId,
@@ -134,13 +133,24 @@ export const useCrossChainTradeQuery = (
         amount,
         slippagePercentage,
         recipient,
-        bridgePath,
         srcTrade,
         dstTrade,
       },
     ],
-    queryFn: async () => {
-      if (!(network0 && network1 && token0 && token1 && amount && slippagePercentage && bridgePath && bridgeFees)) {
+    queryFn: async (): Promise<UseCrossChainTradeReturn> => {
+      if (
+        !(
+          token0 &&
+          token1 &&
+          amount &&
+          bridgePath &&
+          bridgeFees &&
+          bridgeImpact &&
+          dstAmountIn &&
+          feeData0?.gasPrice &&
+          feeData1?.gasPrice
+        )
+      ) {
         throw new Error('useCrossChainTrade should not be enabled')
       }
 
@@ -148,36 +158,19 @@ export const useCrossChainTradeQuery = (
 
       const dstAmountOut = isDstSwap ? dstTrade?.amountOut : dstAmountIn
 
-      const dstMinimumAmountOut = isDstSwap
-        ? dstTrade?.minAmountOut
-        : dstAmountIn
-        ? new Fraction(ONE).add(STARGATE_DEFAULT_SLIPPAGE).invert().multiply(dstAmountIn.quotient)
-        : undefined
-
-      const bridgeImpact =
-        !bridgeFee || !amount || !srcMinimumAmountOut
-          ? new Percent(0n, 10000n)
-          : new Percent(bridgeFee.quotient, srcMinimumAmountOut ? srcMinimumAmountOut.quotient : amount.quotient)
+      const dstAmountOutMin = isDstSwap ? dstTrade?.minAmountOut : dstAmountInMin
 
       let priceImpact = bridgeImpact
       if (isSrcSwap) priceImpact = priceImpact.add(srcTrade?.priceImpact ?? 0)
       if (isDstSwap) priceImpact = priceImpact.add(dstTrade?.priceImpact ?? 0)
 
-      if (!recipient || !amount || !network0 || !network1 || !token0 || !token1 || !srcAmountOut) {
+      if (!recipient) {
         return {
-          transactionType: undefined,
-          srcBridgeToken: undefined,
-          dstBridgeToken: undefined,
-          priceImpact: [priceImpact?.numerator.toString(), priceImpact?.denominator.toString()],
-          amountIn: amount?.quotient.toString(),
-          amountOut: dstAmountOut?.quotient.toString(),
-          minAmountOut: dstMinimumAmountOut?.quotient.toString(),
-          gasSpent: undefined,
-          writeArgs: undefined,
-          route: { status: '' },
-          functionName: 'sendMessage',
-          value: undefined,
-        } as UseCrossChainSelect
+          priceImpact,
+          amountIn: amount,
+          amountOut: dstAmountOut,
+          minAmountOut: dstAmountOutMin,
+        } as UseCrossChainTradeReturn
       }
 
       let writeArgs
@@ -187,11 +180,6 @@ export const useCrossChainTradeQuery = (
       let transactionType
 
       if (!isSrcSwap && !isDstSwap) {
-        const amountMin = new Fraction(ONE)
-          .add(STARGATE_DEFAULT_SLIPPAGE)
-          .invert()
-          .multiply(srcAmountOut.quotient).quotient
-
         transactionType = TransactionType.Bridge
         functionName = 'bridge'
         writeArgs = [
@@ -203,7 +191,7 @@ export const useCrossChainTradeQuery = (
               srcBridgeToken,
               dstBridgeToken,
               amount: amount.quotient,
-              amountMin,
+              amountMin: srcAmountOutMin.quotient,
               dustAmount: 0,
               receiver: recipient, // receivier is recipient because no dstPayload
               to: recipient,
@@ -214,12 +202,8 @@ export const useCrossChainTradeQuery = (
           '0x', // swapPayload
           '0x', // payloadData
         ]
-      } else if (isSrcSwap && !isDstSwap && srcTrade?.minAmountOut) {
+      } else if (isSrcSwap && !isDstSwap && srcTrade?.writeArgs) {
         const srcSwapData = encodeSwapData(srcTrade.writeArgs as Parameters<typeof encodeSwapData>[0])
-        const amountMin = new Fraction(ONE)
-          .add(STARGATE_DEFAULT_SLIPPAGE)
-          .invert()
-          .multiply(srcTrade.minAmountOut.quotient).quotient
 
         transactionType = TransactionType.SwapAndBridge
         functionName = 'swapAndBridge'
@@ -232,7 +216,7 @@ export const useCrossChainTradeQuery = (
               srcBridgeToken,
               dstBridgeToken,
               amount: 0,
-              amountMin,
+              amountMin: srcAmountOutMin.quotient,
               dustAmount: 0,
               receiver: recipient, // receivier is recipient because no dstPayload
               to: recipient,
@@ -246,10 +230,6 @@ export const useCrossChainTradeQuery = (
         ]
       } else if (!isSrcSwap && isDstSwap && dstTrade?.writeArgs) {
         const dstSwapData = encodeSwapData(dstTrade.writeArgs as Parameters<typeof encodeSwapData>[0])
-        const amountMin = new Fraction(ONE)
-          .add(STARGATE_DEFAULT_SLIPPAGE)
-          .invert()
-          .multiply(srcAmountOut.quotient).quotient
 
         dstGasEst = estimateStargateDstGas(dstTrade.route?.gasSpent ?? 0)
 
@@ -270,7 +250,7 @@ export const useCrossChainTradeQuery = (
               srcBridgeToken,
               dstBridgeToken,
               amount: amount.quotient,
-              amountMin,
+              amountMin: srcAmountOutMin.quotient,
               dustAmount: 0,
               receiver: STARGATE_ADAPTER_ADDRESS[network1],
               to: recipient,
@@ -281,13 +261,9 @@ export const useCrossChainTradeQuery = (
           dstSwapData,
           '0x', // dstPayload
         ]
-      } else if (isSrcSwap && isDstSwap && srcTrade?.minAmountOut && dstTrade) {
+      } else if (isSrcSwap && isDstSwap && srcTrade?.writeArgs && dstTrade?.writeArgs) {
         const srcSwapData = encodeSwapData(srcTrade.writeArgs as Parameters<typeof encodeSwapData>[0])
         const dstSwapData = encodeSwapData(dstTrade.writeArgs as Parameters<typeof encodeSwapData>[0])
-        const amountMin = new Fraction(ONE)
-          .add(STARGATE_DEFAULT_SLIPPAGE)
-          .invert()
-          .multiply(srcTrade.minAmountOut.quotient).quotient
 
         dstPayload = encodeAbiParameters(parseAbiParameters('address, bytes, bytes'), [
           recipient, // to
@@ -307,7 +283,7 @@ export const useCrossChainTradeQuery = (
               srcBridgeToken,
               dstBridgeToken,
               amount: 0,
-              amountMin,
+              amountMin: srcAmountOutMin.quotient,
               dustAmount: 0,
               receiver: STARGATE_ADAPTER_ADDRESS[network1],
               to: recipient,
@@ -356,10 +332,10 @@ export const useCrossChainTradeQuery = (
         transactionType,
         srcBridgeToken,
         dstBridgeToken,
-        priceImpact: [priceImpact?.numerator.toString(), priceImpact?.denominator.toString()],
-        amountIn: amount.quotient.toString(),
-        amountOut: dstAmountOut?.quotient.toString(),
-        minAmountOut: dstMinimumAmountOut?.quotient.toString(),
+        priceImpact,
+        amountIn: amount,
+        amountOut: dstAmountOut,
+        minAmountOut: dstAmountOutMin,
         gasSpent: gasSpent.toFixed(6),
         bridgeFee: bridgeFee.toFixed(6),
         srcGasFee: srcGasFee.toFixed(6),
@@ -369,65 +345,17 @@ export const useCrossChainTradeQuery = (
         },
         functionName,
         value,
-      } as UseCrossChainSelect
+      }
     },
     refetchOnWindowFocus: true,
     refetchInterval: 10000,
     keepPreviousData: false,
     cacheTime: 0,
-    select,
     enabled:
       enabled &&
-      Boolean(network0 && network1 && token0 && token1 && amount && bridgeFees && bridgePath) &&
-      (isSrcSwap ? Boolean(srcTrade) : true) &&
-      (isDstSwap ? Boolean(dstTrade) : true),
+      Boolean(network0 && network1 && token0 && token1 && amount && bridgeFees && bridgePath && feeData0 && feeData1) &&
+      (isSrcSwap ? Boolean(srcTrade) : Boolean(srcAmountOut)) &&
+      (isDstSwap ? Boolean(dstTrade) : Boolean(dstAmountIn)),
     queryKeyHashFn: stringify,
   })
-}
-
-export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
-  const { token0, token1 } = variables
-
-  const select = useCallback(
-    (data) => {
-      const amountIn = data.amountIn && token0 ? Amount.fromRawAmount(token0, data.amountIn) : undefined
-      const amountOut = data.amountOut && token1 ? Amount.fromRawAmount(token1, data.amountOut) : undefined
-      const minAmountOut = data.minAmountOut && token1 ? Amount.fromRawAmount(token1, data.minAmountOut) : undefined
-      const swapPrice = amountIn && amountOut ? new Price({ baseAmount: amountIn, quoteAmount: amountOut }) : undefined
-      const priceImpact = data.priceImpact ? new Percent(data.priceImpact[0], data.priceImpact[1]) : undefined
-
-      if (data && amountIn && amountOut && data.priceImpact && data.minAmountOut) {
-        return {
-          ...data,
-          route: {
-            status: amountIn?.greaterThan(ZERO) && !amountOut ? 'NoWay' : '',
-          },
-          gasSpent: data.gasSpent,
-          swapPrice,
-          priceImpact,
-          amountIn,
-          amountOut,
-          minAmountOut,
-        }
-      } else {
-        return {
-          swapPrice,
-          priceImpact,
-          amountIn,
-          amountOut,
-          minAmountOut,
-          gasSpent: undefined,
-          writeArgs: undefined,
-          route: {
-            status: amountIn?.greaterThan(ZERO) && !amountOut ? 'NoWay' : '',
-          },
-          functionName: 'sendMessage',
-          value: undefined,
-        }
-      }
-    },
-    [token0, token1, variables.network0, variables.network1]
-  ) as UseCrossChainTradeQuerySelect
-
-  return useCrossChainTradeQuery(variables, select)
 }

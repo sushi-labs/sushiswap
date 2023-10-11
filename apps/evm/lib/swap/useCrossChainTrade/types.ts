@@ -15,18 +15,7 @@ export interface UseCrossChainTradeParams {
   enabled: boolean
 }
 
-export type UseCrossChainSelect = Omit<
-  UseCrossChainTradeReturn,
-  'priceImpact' | 'amountIn' | 'amountOut' | 'minAmountOut' | 'swapPrice'
-> & {
-  priceImpact: [string, string] | undefined
-  amountIn: string | undefined
-  amountOut: string | undefined
-  minAmountOut: string | undefined
-}
-
 export interface UseCrossChainTradeReturn {
-  swapPrice: Price<Type, Type> | undefined
   priceImpact: Percent | undefined
   amountIn: Amount<Type> | undefined
   amountOut: Amount<Type> | undefined
@@ -35,12 +24,10 @@ export interface UseCrossChainTradeReturn {
   bridgeFee: string | undefined
   srcGasFee: string | undefined
   functionName: string
-  writeArgs: [] | undefined
+  writeArgs: (string | object)[] | undefined
   route: { status: string }
   value: bigint | undefined
   transactionType: TransactionType | undefined
   srcBridgeToken: Type | undefined
   dstBridgeToken: Type | undefined
 }
-
-export type UseCrossChainTradeQuerySelect = (data: UseCrossChainSelect) => UseCrossChainTradeReturn

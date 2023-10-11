@@ -80,7 +80,7 @@ export const useStargateBridgeFees = ({
     const sharedDecimals = stargatePoolResults[2].result
     if (localDecimals === sharedDecimals) return amount
     return localDecimals > sharedDecimals
-      ? amount.asFraction.divide(10n ** localDecimals - sharedDecimals)
+      ? amount.asFraction.divide(10n ** (localDecimals - sharedDecimals))
       : amount.asFraction.multiply(10n ** (sharedDecimals - localDecimals))
   }, [amount, stargatePoolResults?.[2]?.result])
 
@@ -108,7 +108,7 @@ export const useStargateBridgeFees = ({
               ),
               STARGATE_CHAIN_ID[dstChainId],
               STARGATE_ADAPTER_ADDRESS[srcChainId] as Address,
-              BigInt(adjusted?.quotient?.toString() ?? 0),
+              BigInt(adjusted?.quotient ?? 0),
             ],
       [srcBridgeToken, dstBridgeToken, adjusted]
     ) as [bigint, bigint, number, `0x${string}`, bigint] | undefined,
