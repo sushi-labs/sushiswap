@@ -40,7 +40,7 @@ export class AlgebraQualityChecker {
 
   async check(
     pool: AlgebraPoolWatcher,
-    newPool: AlgebraPoolWatcher
+    newPool: AlgebraPoolWatcher,
   ): Promise<[AlgebraPoolWatcher | undefined, PoolSyncState, number, number]> {
     try {
       await newPool.updatePoolState()
@@ -54,10 +54,12 @@ export class AlgebraQualityChecker {
           pool.latestEventBlockNumber === newPool.latestEventBlockNumber
         ) {
           //this.totalCheckCounter++
-          if (pool.state.liquidity !== newPool.state.liquidity) return [newPool, PoolSyncState.LiquidityMismatch, 1, 0]
+          if (pool.state.liquidity !== newPool.state.liquidity)
+            return [newPool, PoolSyncState.LiquidityMismatch, 1, 0]
           if (pool.state.sqrtPriceX96 !== newPool.state.sqrtPriceX96)
             return [newPool, PoolSyncState.PriceMismatch, 1, 0]
-          if (pool.state.tick !== newPool.state.tick) return [newPool, PoolSyncState.CurrentTickMicmatch, 1, 0]
+          if (pool.state.tick !== newPool.state.tick)
+            return [newPool, PoolSyncState.CurrentTickMicmatch, 1, 0]
           const ticks0 = pool.getTicks()
           ticks0.shift()
           ticks0.pop()
@@ -66,15 +68,23 @@ export class AlgebraQualityChecker {
           ticks1.pop()
           if (ticks1.length > 0) {
             const start = ticks0.findIndex((t) => t.index === ticks1[0].index)
-            if (start === -1) return [newPool, PoolSyncState.TicksStartMismatch, 1, 0]
-            if (ticks0.length < start + ticks1.length) [newPool, PoolSyncState.TicksFinishMismatch]
+            if (start === -1)
+              return [newPool, PoolSyncState.TicksStartMismatch, 1, 0]
+            if (ticks0.length < start + ticks1.length)
+              [newPool, PoolSyncState.TicksFinishMismatch]
             for (let i = 0; i < ticks1.length; ++i) {
-              if (ticks0[i + start].index !== ticks1[i].index || ticks0[i + start].DLiquidity !== ticks1[i].DLiquidity)
+              if (
+                ticks0[i + start].index !== ticks1[i].index ||
+                ticks0[i + start].DLiquidity !== ticks1[i].DLiquidity
+              )
                 return [newPool, PoolSyncState.TicksMismatch, 1, 0]
             }
           }
           //this.totalMatchCounter++
-          if (pool.state.reserve0 !== newPool.state.reserve0 || pool.state.reserve1 !== newPool.state.reserve1)
+          if (
+            pool.state.reserve0 !== newPool.state.reserve0 ||
+            pool.state.reserve1 !== newPool.state.reserve1
+          )
             return [newPool, PoolSyncState.ReservesMismatch, 1, 1]
           return [undefined, PoolSyncState.Match, 1, 1]
         }
@@ -92,7 +102,8 @@ export class AlgebraQualityChecker {
     if (checkingPool) checkingPool.processLog(l)
     else {
       const counter = this.poolsLogCounter.get(addr) || 0
-      if (counter < this.checkAfterLogsNumber) this.poolsLogCounter.set(addr, counter + 1)
+      if (counter < this.checkAfterLogsNumber)
+        this.poolsLogCounter.set(addr, counter + 1)
       else {
         const newPool = new AlgebraPoolWatcher(
           pool.provider,
@@ -101,13 +112,19 @@ export class AlgebraQualityChecker {
           pool.token0,
           pool.token1,
           pool.client,
-          pool.busyCounter
+          pool.busyCounter,
         )
         this.checkingPools.set(addr, newPool)
         this.check(pool, newPool).then((res) => {
           this.totalCheckCounter += res[2]
           this.totalMatchCounter += res[3]
-          if (!this.callBack({ ethalonPool: pool, correctPool: res[0], status: res[1] })) {
+          if (
+            !this.callBack({
+              ethalonPool: pool,
+              correctPool: res[0],
+              status: res[1],
+            })
+          ) {
             // return counters back
             this.totalCheckCounter -= res[2]
             this.totalMatchCounter -= res[3]

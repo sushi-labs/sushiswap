@@ -156,7 +156,11 @@ export async function createAlgebraIntegralPeriphery(
   )
 
   // Algebra SwapRouter
-  const SwapRouterAddress = await deploy(SwapRouter, [factoryAddress, WNativeAddress, poolDeployerAddress])
+  const SwapRouterAddress = await deploy(SwapRouter, [
+    factoryAddress,
+    WNativeAddress,
+    poolDeployerAddress,
+  ])
 
   // Algebra TickLens
   const TickLensAddress = await deploy(TickLens)
@@ -195,8 +199,16 @@ export async function approveTestTokensToAlgebraPerifery(
   )
 }
 
-export async function approveTestTokensToContract(client: WalletClient, addr: Address, tokens: TestTokens) {
-  await Promise.all(tokens.tokens.map((t) => approve(client, t, tokens.owner, addr, tokens.supply)))
+export async function approveTestTokensToContract(
+  client: WalletClient,
+  addr: Address,
+  tokens: TestTokens,
+) {
+  await Promise.all(
+    tokens.tokens.map((t) =>
+      approve(client, t, tokens.owner, addr, tokens.supply),
+    ),
+  )
 }
 
 const Two96 = Math.pow(2, 96)
@@ -287,7 +299,9 @@ export async function algebraPoolMint(
     ],
   }
 
-  const [tokenId, liquidityActual] = (await client.readContract(mintParams)) as bigint[]
+  const [tokenId, liquidityActual] = (await client.readContract(
+    mintParams,
+  )) as bigint[]
   await client.writeContract(mintParams)
   return { tokenId, liquidityActual }
 }
@@ -297,7 +311,7 @@ export async function algebraPoolBurn(
   env: AlgebraIntegralPeriphery,
   owner: Address,
   tokenId: bigint,
-  liquidity: bigint
+  liquidity: bigint,
 ) {
   const DecreaseParams = {
     tokenId,
@@ -388,8 +402,8 @@ export async function updateTinesAlgebraPool(
     pool.address,
   )
   pool.updateState(
-    await balanceOf(client, pool.token0 as Token, pool.address) as bigint,
-    await balanceOf(client, pool.token1 as Token, pool.address) as bigint,
+    (await balanceOf(client, pool.token0 as Token, pool.address)) as bigint,
+    (await balanceOf(client, pool.token1 as Token, pool.address)) as bigint,
     Number(tick),
     liquidity,
     price,
@@ -436,7 +450,14 @@ export async function createAlgebraPool(
   const tickMap = new Map<number, bigint>()
   for (let i = 0; i < positions.length; ++i) {
     const position = positions[i]
-    const { liquidityActual: liquidity } = await algebraPoolMint(client, env, token0, token1, user, position)
+    const { liquidityActual: liquidity } = await algebraPoolMint(
+      client,
+      env,
+      token0,
+      token1,
+      user,
+      position,
+    )
 
     let tickLiquidity = tickMap.get(position.from) ?? 0n
     tickLiquidity =
@@ -541,7 +562,10 @@ export async function createRandomAlgebraPool(
   )
 }
 
-export async function getInitCodeHash(client: PublicClient, env: AlgebraIntegralPeriphery): Promise<Hex> {
+export async function getInitCodeHash(
+  client: PublicClient,
+  env: AlgebraIntegralPeriphery,
+): Promise<Hex> {
   return client.readContract({
     abi: AlgebraFactory.abi,
     address: env.factoryAddress,

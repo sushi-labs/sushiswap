@@ -16,7 +16,12 @@ import {
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,
 } from '@sushiswap/route-processor-sdk'
-import { NativeWrapProvider, PoolCode, Router, RouterLiquiditySource } from '@sushiswap/router'
+import {
+  NativeWrapProvider,
+  PoolCode,
+  Router,
+  RouterLiquiditySource,
+} from '@sushiswap/router'
 import {
   ADDITIONAL_BASES,
   BASES_TO_CHECK_TRADES_AGAINST,
@@ -50,7 +55,9 @@ const querySchema = z.object({
   amount: z.string().transform((amount) => BigInt(amount)),
   gasPrice: z.optional(z.coerce.number().int().gt(0)),
   source: z.optional(z.nativeEnum(RouterLiquiditySource)),
-  to: z.optional(z.string()).transform((to) => (to ? (to as Address) : undefined)),
+  to: z
+    .optional(z.string())
+    .transform((to) => (to ? (to as Address) : undefined)),
   preferSushi: z.optional(z.coerce.boolean()),
   maxPriceImpact: z.optional(z.coerce.number()),
 })
@@ -79,9 +86,13 @@ const querySchema3_2 = querySchema.extend({
     .gte(0)
     .lte(2 ** 256)
     .default(ChainId.ETHEREUM)
-    .refine((chainId) => isRouteProcessor3_2ChainId(chainId as RouteProcessor3_2ChainId), {
-      message: 'ChainId not supported.',
-    })
+    .refine(
+      (chainId) =>
+        isRouteProcessor3_2ChainId(chainId as RouteProcessor3_2ChainId),
+      {
+        message: 'ChainId not supported.',
+      },
+    )
     .transform((chainId) => chainId as RouteProcessor3_2ChainId),
 })
 
@@ -263,7 +274,7 @@ async function main() {
               ROUTE_PROCESSOR_3_ADDRESS[chainId],
               [],
               maxPriceImpact,
-              source ?? RouterLiquiditySource.Sender
+              source ?? RouterLiquiditySource.Sender,
             )
           : undefined,
       }),
@@ -389,7 +400,7 @@ async function main() {
               ROUTE_PROCESSOR_3_1_ADDRESS[chainId],
               [],
               maxPriceImpact,
-              source ?? RouterLiquiditySource.Sender
+              source ?? RouterLiquiditySource.Sender,
             )
           : undefined,
       }),
@@ -514,7 +525,7 @@ async function main() {
               ROUTE_PROCESSOR_3_2_ADDRESS[chainId],
               [],
               maxPriceImpact,
-              source ?? RouterLiquiditySource.Sender
+              source ?? RouterLiquiditySource.Sender,
             )
           : undefined,
       }),
@@ -547,7 +558,9 @@ async function main() {
           .gte(0)
           .lte(2 ** 256)
           .default(ChainId.ETHEREUM)
-          .refine((chainId) => isSupportedChainId(chainId), { message: 'ChainId not supported.' })
+          .refine((chainId) => isSupportedChainId(chainId), {
+            message: 'ChainId not supported.',
+          })
           .transform((chainId) => chainId as SupportedChainId),
       })
       .parse(req.query)

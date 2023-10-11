@@ -8,7 +8,12 @@ import {
   getAlgebraPoolAddress,
   LogFilterType,
 } from '@sushiswap/extractor'
-import { ConstantProductPoolCode, LiquidityProviders, PoolCode, Router } from '@sushiswap/router'
+import {
+  ConstantProductPoolCode,
+  LiquidityProviders,
+  PoolCode,
+  Router,
+} from '@sushiswap/router'
 import { findMultiRouteExactIn, RouteStatus, RToken } from '@sushiswap/tines'
 import {
   Abi,
@@ -79,13 +84,21 @@ async function startInfinitTest(args: {
         const time1 = performance.now()
         const pools1 = await extractor.getPoolCodesForTokensAsync(tokens, 2000)
         const time2 = performance.now()
-        const pools0_2 = pools0.filter((p) => p instanceof ConstantProductPoolCode).length
+        const pools0_2 = pools0.filter(
+          (p) => p instanceof ConstantProductPoolCode,
+        ).length
         const pools0_3 = pools0.length - pools0_2
-        const pools1_2 = pools1.filter((p) => p instanceof ConstantProductPoolCode).length
+        const pools1_2 = pools1.filter(
+          (p) => p instanceof ConstantProductPoolCode,
+        ).length
         const pools1_3 = pools1.length - pools1_2
         const timingLine =
-          `sync: (${pools0_2}, ${pools0_3}) pools ${Math.round(time1 - time0)}ms` +
-          `, async: (${pools1_2}, ${pools1_3}) pools ${Math.round(time2 - time1)}ms`
+          `sync: (${pools0_2}, ${pools0_3}) pools ${Math.round(
+            time1 - time0,
+          )}ms` +
+          `, async: (${pools1_2}, ${pools1_3}) pools ${Math.round(
+            time2 - time1,
+          )}ms`
 
         const pools = pools1
         const poolMap = new Map<string, PoolCode>()
@@ -98,10 +111,13 @@ async function startInfinitTest(args: {
           1e12,
           pools.map((p) => p.pool),
           tokens[0] as RToken,
-          30e9
+          30e9,
         )
         if (route.status === RouteStatus.NoWay) {
-          console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ` + timingLine)
+          console.log(
+            `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ` +
+              timingLine,
+          )
           continue
         }
         const rpParams = Router.routeProcessor2Params(
@@ -110,10 +126,12 @@ async function startInfinitTest(args: {
           fromToken,
           toToken,
           args.RP4Address,
-          args.RP4Address
+          args.RP4Address,
         )
         if (rpParams === undefined) {
-          console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ROUTE CREATION FAILED !!!`)
+          console.log(
+            `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ROUTE CREATION FAILED !!!`,
+          )
           continue
         }
         try {
@@ -135,13 +153,18 @@ async function startInfinitTest(args: {
           })
           const amountOutExp = BigInt(route.amountOutBI.toString())
           const diff =
-            amountOutExp === 0n ? amountOutReal - amountOutExp : Number(amountOutReal - amountOutExp) / route.amountOut
+            amountOutExp === 0n
+              ? amountOutReal - amountOutExp
+              : Number(amountOutReal - amountOutExp) / route.amountOut
           console.log(
-            `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.legs.length - 1} pools ` +
+            `Routing: ${fromToken.symbol} => ${toToken.symbol} ${
+              route.legs.length - 1
+            } pools ` +
               timingLine +
-              ` diff = ${diff > 0 ? '+' : ''}${diff} `
+              ` diff = ${diff > 0 ? '+' : ''}${diff} `,
           )
-          if (Math.abs(Number(diff)) > 0.001) console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
+          if (Math.abs(Number(diff)) > 0.001)
+            console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
         } catch (e) {
           console.log(`Routing failed. No connection ? ${e}`)
         }
@@ -154,7 +177,7 @@ async function simulateUserActivity(
   client: PublicClient & WalletClient,
   env: AlgebraIntegralPeriphery,
   testTokens: TestTokens,
-  delayValue: number
+  delayValue: number,
 ) {
   const tokens = testTokens.tokens
   const codeInitHash = (await getInitCodeHash(client, env)) as Hex
@@ -165,8 +188,17 @@ async function simulateUserActivity(
         await delay(delayValue)
         try {
           const amountIn = BigInt(1e12)
-          const amountOut = await algebraPoolSwap(client, env, tokens[i], tokens[j], testTokens.owner, amountIn)
-          console.log(`Swap simulation: ${amountIn} ${tokens[i].symbol} => ${amountOut} ${tokens[j].symbol} `)
+          const amountOut = await algebraPoolSwap(
+            client,
+            env,
+            tokens[i],
+            tokens[j],
+            testTokens.owner,
+            amountIn,
+          )
+          console.log(
+            `Swap simulation: ${amountIn} ${tokens[i].symbol} => ${amountOut} ${tokens[j].symbol} `,
+          )
         } catch (e) {
           //
         }
@@ -180,10 +212,13 @@ async function simulateUserActivity(
             env.poolDeployerAddress,
             tokens[i].address as Address,
             tokens[j].address as Address,
-            codeInitHash
+            codeInitHash,
           )
           const amountIn = BigInt(1e12)
-          const { tick } = await algebraPoolTickLiquidityPrice(client, poolAddress)
+          const { tick } = await algebraPoolTickLiquidityPrice(
+            client,
+            poolAddress,
+          )
           const closestSpacingTick = Math.round(Number(tick) / 120) * 120
           const range = {
             from: closestSpacingTick - 120,
@@ -196,10 +231,12 @@ async function simulateUserActivity(
             tokens[i],
             tokens[j],
             testTokens.owner,
-            range
+            range,
           )
           positions.push({ tokenId, liquidity: liquidityActual })
-          console.log(`Mint simulation: ${tokens[i].symbol} => ${tokens[j].symbol} tokenId=${tokenId}`)
+          console.log(
+            `Mint simulation: ${tokens[i].symbol} => ${tokens[j].symbol} tokenId=${tokenId}`,
+          )
         } catch (e) {
           // console.log(e)
         }
@@ -207,7 +244,13 @@ async function simulateUserActivity(
     for (let i = 0; i < positions.length; ++i) {
       await delay(delayValue)
       try {
-        await algebraPoolBurn(client, env, testTokens.owner, positions[i].tokenId, positions[i].liquidity)
+        await algebraPoolBurn(
+          client,
+          env,
+          testTokens.owner,
+          positions[i].tokenId,
+          positions[i].liquidity,
+        )
         console.log(`Burn simulation: ${positions[i].tokenId}`)
       } catch (e) {
         // console.log(e)
@@ -218,7 +261,7 @@ async function simulateUserActivity(
 
 async function createEmptyAlgebraEnvorinment(
   poolNumber: number,
-  positionNumber: number
+  positionNumber: number,
 ): Promise<{
   transport: Transport
   //chain: Chain
@@ -249,7 +292,14 @@ async function createEmptyAlgebraEnvorinment(
   const testTokens = await createTestTokens(client, tokenNumber)
   await approveTestTokensToAlgebraPerifery(client, env, testTokens)
   for (let i = 0; i < poolNumber; ++i) {
-    await createRandomAlgebraPool(client, env, testTokens, testTokens.owner, `full extractor test ${i}`, positionNumber)
+    await createRandomAlgebraPool(
+      client,
+      env,
+      testTokens,
+      testTokens.owner,
+      `full extractor test ${i}`,
+      positionNumber,
+    )
   }
 
   const RP4 = await getDeploymentAddress(
@@ -260,7 +310,7 @@ async function createEmptyAlgebraEnvorinment(
       bytecode: RouteProcessor4.bytecode as Hex,
       account: env.deployer as Address,
       args: ['0x0000000000000000000000000000000000000000', []],
-    })
+    }),
   )
   await approveTestTokensToContract(client, RP4, testTokens)
 
@@ -271,7 +321,7 @@ async function createEmptyAlgebraEnvorinment(
       abi: MultiCall3.abi as Abi,
       bytecode: MultiCall3.bytecode as Hex,
       account: env.deployer as Address,
-    })
+    }),
   )
 
   // no awaiting - let's work in parallel
@@ -290,10 +340,8 @@ async function createEmptyAlgebraEnvorinment(
 }
 
 it('Extractor Hardhat Algebra test', async () => {
-  const { transport, factory, tickLens, RP4, tokens, tokenOwner, MultiCall3 } = await createEmptyAlgebraEnvorinment(
-    3,
-    10
-  )
+  const { transport, factory, tickLens, RP4, tokens, tokenOwner, MultiCall3 } =
+    await createEmptyAlgebraEnvorinment(3, 10)
   await startInfinitTest({
     transport,
     chain: {
@@ -305,7 +353,9 @@ it('Extractor Hardhat Algebra test', async () => {
         },
       },
     },
-    factoriesAlgebra: [{ address: factory, provider: LiquidityProviders.AlgebraIntegral }],
+    factoriesAlgebra: [
+      { address: factory, provider: LiquidityProviders.AlgebraIntegral },
+    ],
     tickHelperContract: tickLens,
     cacheDir: './cache',
     logDepth: 50,

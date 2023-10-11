@@ -221,7 +221,7 @@ async function startInfinitTest(args: {
         continue
       }
       try {
-        const { result: amountOutReal } = await client.simulateContract({
+        const { result: amountOutReal } = (await client.simulateContract({
           address: args.RP3Address,
           abi: routeProcessor2Abi,
           functionName: 'processRoute',
@@ -235,7 +235,7 @@ async function startInfinitTest(args: {
           ],
           value: BigInt(rpParams.value?.toString() as string),
           account: args.account,
-        }) as {result: bigint}
+        })) as { result: bigint }
         const amountOutExp = BigInt(route.amountOutBI.toString())
         const diff =
           amountOutExp === 0n

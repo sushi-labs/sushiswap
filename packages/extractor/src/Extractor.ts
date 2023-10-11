@@ -6,7 +6,10 @@ import { PoolCode } from '@sushiswap/router'
 import { Address, PublicClient } from 'viem'
 
 import { AlgebraExtractor, FactoryAlgebra } from './AlgebraExtractor'
-import { AlgebraPoolWatcher, AlgebraPoolWatcherStatus } from './AlgebraPoolWatcher'
+import {
+  AlgebraPoolWatcher,
+  AlgebraPoolWatcherStatus,
+} from './AlgebraPoolWatcher'
 import { LogFilter2, LogFilterType } from './LogFilter2'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { TokenManager } from './TokenManager'
@@ -68,7 +71,11 @@ export class Extractor {
       args.cacheDir,
       `tokens-${this.multiCallAggregator.chainId}`,
     )
-    const logFilter = new LogFilter2(this.client, args.logDepth, args.logType ?? LogFilterType.OneCall)
+    const logFilter = new LogFilter2(
+      this.client,
+      args.logDepth,
+      args.logType ?? LogFilterType.OneCall,
+    )
     if (args.factoriesV2 && args.factoriesV2.length > 0)
       this.extractorV2 = new UniV2Extractor(
         this.client,
@@ -99,7 +106,7 @@ export class Extractor {
         logFilter,
         args.logging !== undefined ? args.logging : false,
         this.multiCallAggregator,
-        tokenManager
+        tokenManager,
       )
     setWarningMessageHandler(args.warningMessageHandler)
   }
@@ -107,7 +114,11 @@ export class Extractor {
   /// @param tokensPrefetch Prefetch all pools between these tokens
   async start(tokensPrefetch: Token[] = []) {
     await Promise.all(
-      [this.extractorV2?.start(), this.extractorV3?.start(), this.extractorAlg?.start()].filter((e) => e !== undefined)
+      [
+        this.extractorV2?.start(),
+        this.extractorV3?.start(),
+        this.extractorAlg?.start(),
+      ].filter((e) => e !== undefined),
     )
     this.getPoolCodesForTokens(tokensPrefetch)
     this.printTokensPoolsQuantity(
@@ -217,28 +228,37 @@ export class Extractor {
     }
 
     if (this.extractorAlg) {
-      const { prefetched, fetching } = this.extractorAlg.getWatchersForTokens(tokensUnique)
+      const { prefetched, fetching } =
+        this.extractorAlg.getWatchersForTokens(tokensUnique)
       watchersAlg = prefetched
       prefetched.forEach((w) => {
-        if (w.getStatus() !== AlgebraPoolWatcherStatus.All) promises.push(w.statusAll())
+        if (w.getStatus() !== AlgebraPoolWatcherStatus.All)
+          promises.push(w.statusAll())
       })
       promises = promises.concat(
         fetching.map(async (p) => {
           const w = await p
           if (w === undefined) return
           watchersAlg.push(w)
-          if (w.getStatus() !== AlgebraPoolWatcherStatus.All) await w.statusAll()
-        })
+          if (w.getStatus() !== AlgebraPoolWatcherStatus.All)
+            await w.statusAll()
+        }),
       )
     }
 
     await Promise.any([Promise.allSettled(promises), delay(timeout)])
     const poolsV3 = watchersV3
       .map((w) => w.getPoolCode())
-      .filter((pc) => pc !== undefined && pc.pool.reserve0 > 0n && pc.pool.reserve1 > 0n) as PoolCode[]
+      .filter(
+        (pc) =>
+          pc !== undefined && pc.pool.reserve0 > 0n && pc.pool.reserve1 > 0n,
+      ) as PoolCode[]
     const poolsAlg = watchersAlg
       .map((w) => w.getPoolCode())
-      .filter((pc) => pc !== undefined && pc.pool.reserve0 > 0n && pc.pool.reserve1 > 0n) as PoolCode[]
+      .filter(
+        (pc) =>
+          pc !== undefined && pc.pool.reserve0 > 0n && pc.pool.reserve1 > 0n,
+      ) as PoolCode[]
     return poolsV3.concat(poolsAlg).concat(poolsV2)
   }
 
@@ -271,9 +291,15 @@ export class Extractor {
   }
 
   getCurrentPoolCodes() {
-    const pools2 = this.extractorV2 ? this.extractorV2.getCurrentPoolCodes() : []
-    const pools3 = this.extractorV3 ? this.extractorV3.getCurrentPoolCodes() : []
-    const poolsAlg = this.extractorAlg ? this.extractorAlg.getCurrentPoolCodes() : []
+    const pools2 = this.extractorV2
+      ? this.extractorV2.getCurrentPoolCodes()
+      : []
+    const pools3 = this.extractorV3
+      ? this.extractorV3.getCurrentPoolCodes()
+      : []
+    const poolsAlg = this.extractorAlg
+      ? this.extractorAlg.getCurrentPoolCodes()
+      : []
     return pools2.concat(pools3).concat(poolsAlg)
   }
 }
