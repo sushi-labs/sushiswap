@@ -1,7 +1,7 @@
 'use client'
 
-import {ChevronDownIcon} from '@heroicons/react/20/solid'
-import {InformationCircleIcon} from '@heroicons/react/24/solid'
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { InformationCircleIcon } from '@heroicons/react/24/solid'
 import {
   CardDescription,
   CardHeader,
@@ -12,13 +12,18 @@ import {
   HoverCardTrigger,
   LinkExternal,
 } from '@sushiswap/ui'
-import {Button, ButtonProps} from '@sushiswap/ui/components/button'
-import {Select, SelectContent, SelectItem, SelectPrimitive,} from '@sushiswap/ui/components/select'
-import React, {FC, useState} from 'react'
-import {Amount, Type} from 'sushi/currency'
-import {Address} from 'wagmi'
+import { Button, ButtonProps } from '@sushiswap/ui/components/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectPrimitive,
+} from '@sushiswap/ui/components/select'
+import React, { FC, useState } from 'react'
+import { Amount, Type } from 'sushi/currency'
+import { Address } from 'wagmi'
 
-import {ApprovalState, useTokenApproval} from '../../hooks'
+import { ApprovalState, useTokenApproval } from '../../hooks'
 
 interface ApproveERC20Props extends ButtonProps {
   id: string
@@ -132,6 +137,5 @@ const ApproveERC20: FC<ApproveERC20Props> = ({
     </Select>
   )
 }
-
 
 export { ApproveERC20, type ApproveERC20Props }

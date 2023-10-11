@@ -1,4 +1,4 @@
-import {DismissableMessage, LinkExternal} from '@sushiswap/ui'
+import { DismissableMessage, LinkExternal } from '@sushiswap/ui'
 
 export const BobaAvaxAlert = () => {
   return (

@@ -1,10 +1,10 @@
 'use client'
 
-import {ButtonProps} from '@sushiswap/ui/components/button'
-import {FC} from 'react'
-import {useAccount} from 'wagmi'
+import { ButtonProps } from '@sushiswap/ui/components/button'
+import { FC } from 'react'
+import { useAccount } from 'wagmi'
 
-import {ConnectButton} from '../../components'
+import { ConnectButton } from '../../components'
 
 const Connect: FC<ButtonProps> = ({
   children,

@@ -1,7 +1,7 @@
 'use client'
 
-import {InformationCircleIcon} from '@heroicons/react/24/solid'
-import {BentoBoxChainId} from '@sushiswap/bentobox-sdk'
+import { InformationCircleIcon } from '@heroicons/react/24/solid'
+import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import {
   CardDescription,
   CardHeader,
@@ -11,11 +11,11 @@ import {
   HoverCardTrigger,
   LinkExternal,
 } from '@sushiswap/ui'
-import {Button, ButtonProps} from '@sushiswap/ui/components/button'
-import React, {FC} from 'react'
-import {Address} from 'wagmi'
+import { Button, ButtonProps } from '@sushiswap/ui/components/button'
+import React, { FC } from 'react'
+import { Address } from 'wagmi'
 
-import {ApprovalState, useBentoboxApproval} from '../../hooks'
+import { ApprovalState, useBentoboxApproval } from '../../hooks'
 
 interface ApproveBentoboxProps extends ButtonProps {
   chainId: BentoBoxChainId
@@ -86,6 +86,5 @@ const ApproveBentobox: FC<ApproveBentoboxProps> = ({
     </HoverCard>
   )
 }
-
 
 export { ApproveBentobox, type ApproveBentoboxProps }

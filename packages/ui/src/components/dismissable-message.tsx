@@ -1,9 +1,9 @@
 'use client'
 
-import {useLocalStorage} from '@sushiswap/hooks'
-import {FC} from 'react'
+import { useLocalStorage } from '@sushiswap/hooks'
+import { FC } from 'react'
 
-import {Message, type MessageProps} from './message'
+import { Message, type MessageProps } from './message'
 
 interface DismissableMessageProps extends MessageProps {
   storageKey: string

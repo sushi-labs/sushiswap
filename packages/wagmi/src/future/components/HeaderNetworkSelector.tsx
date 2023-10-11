@@ -1,12 +1,12 @@
-import {Chain, ChainId} from 'sushi/chain'
-import {NetworkSelector, NetworkSelectorOnSelectCallback} from '@sushiswap/ui'
-import {Button} from '@sushiswap/ui/components/button'
-import {NetworkIcon} from '@sushiswap/ui/components/icons'
-import {createErrorToast} from '@sushiswap/ui/components/toast'
-import React, {FC, Suspense, useCallback} from 'react'
-import {ProviderRpcError, UserRejectedRequestError} from 'viem'
-import {useNetwork, useSwitchNetwork} from 'wagmi'
-import {useIsMounted} from "@sushiswap/hooks";
+import { Chain, ChainId } from 'sushi/chain'
+import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/components/button'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { createErrorToast } from '@sushiswap/ui/components/toast'
+import React, { FC, Suspense, useCallback } from 'react'
+import { ProviderRpcError, UserRejectedRequestError } from 'viem'
+import { useNetwork, useSwitchNetwork } from 'wagmi'
+import { useIsMounted } from '@sushiswap/hooks'
 
 export const HeaderNetworkSelector: FC<{
   networks: ChainId[]
@@ -40,7 +40,9 @@ export const HeaderNetworkSelector: FC<{
     [chain?.id, onChange, selectedNetwork, switchNetworkAsync],
   )
 
-  const selected = isMounted ? selectedNetwork || (chain?.id as ChainId) || ChainId.ETHEREUM : ChainId.ETHEREUM
+  const selected = isMounted
+    ? selectedNetwork || (chain?.id as ChainId) || ChainId.ETHEREUM
+    : ChainId.ETHEREUM
 
   return (
     <NetworkSelector
