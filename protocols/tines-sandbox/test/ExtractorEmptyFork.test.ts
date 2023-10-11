@@ -25,6 +25,7 @@ import { Chain, hardhat } from 'viem/chains'
 
 import {
   AlgebraIntegralPeriphery,
+  algebraPoolBurn,
   algebraPoolMint,
   algebraPoolSwap,
   algebraPoolTickLiquidityPrice,
@@ -170,6 +171,7 @@ async function simulateUserActivity(
           //
         }
       }
+    const positions: { tokenId: bigint; liquidity: bigint }[] = []
     for (let i = 0; i < tokens.length; ++i)
       for (let j = i + 1; j < tokens.length; ++j) {
         await delay(delayValue)
@@ -188,12 +190,29 @@ async function simulateUserActivity(
             to: closestSpacingTick + 120,
             val: amountIn,
           }
-          await algebraPoolMint(client, env, tokens[i], tokens[j], testTokens.owner, range)
-          console.log(`Mint simulation: ${tokens[i].symbol} => ${tokens[j].symbol} ${range}`)
+          const { tokenId, liquidityActual } = await algebraPoolMint(
+            client,
+            env,
+            tokens[i],
+            tokens[j],
+            testTokens.owner,
+            range
+          )
+          positions.push({ tokenId, liquidity: liquidityActual })
+          console.log(`Mint simulation: ${tokens[i].symbol} => ${tokens[j].symbol} tokenId=${tokenId}`)
         } catch (e) {
-          console.log(e)
+          // console.log(e)
         }
       }
+    for (let i = 0; i < positions.length; ++i) {
+      await delay(delayValue)
+      try {
+        await algebraPoolBurn(client, env, testTokens.owner, positions[i].tokenId, positions[i].liquidity)
+        console.log(`Burn simulation: ${positions[i].tokenId}`)
+      } catch (e) {
+        // console.log(e)
+      }
+    }
   }
 }
 

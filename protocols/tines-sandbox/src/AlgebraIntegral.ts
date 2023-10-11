@@ -231,9 +231,48 @@ export async function algebraPoolMint(
     ],
   }
 
-  const [, liquidityActual] = (await client.readContract(mintParams)) as bigint[]
+  const [tokenId, liquidityActual] = (await client.readContract(mintParams)) as bigint[]
   await client.writeContract(mintParams)
-  return liquidityActual
+  return { tokenId, liquidityActual }
+}
+
+export async function algebraPoolBurn(
+  client: PublicClient & WalletClient,
+  env: AlgebraIntegralPeriphery,
+  owner: Address,
+  tokenId: bigint,
+  liquidity: bigint
+) {
+  const DecreaseParams = {
+    tokenId,
+    liquidity,
+    amount0Min: 0,
+    amount1Min: 0,
+    deadline: 1e12,
+  }
+  await client.writeContract({
+    account: owner,
+    chain: null,
+    address: env.NonfungiblePositionManagerAddress,
+    abi: NonfungiblePositionManager.abi,
+    functionName: 'decreaseLiquidity',
+    args: [DecreaseParams],
+  })
+
+  const CollectParams = {
+    tokenId,
+    recipient: owner,
+    amount0Max: BigInt(1e30),
+    amount1Max: BigInt(1e30),
+  }
+  await client.writeContract({
+    account: owner,
+    chain: null,
+    address: env.NonfungiblePositionManagerAddress,
+    abi: NonfungiblePositionManager.abi,
+    functionName: 'collect',
+    args: [CollectParams],
+  })
 }
 
 export async function algebraPoolSwap(
@@ -324,7 +363,7 @@ export async function createAlgebraPool(
   const tickMap = new Map<number, bigint>()
   for (let i = 0; i < positions.length; ++i) {
     const position = positions[i]
-    const liquidity = await algebraPoolMint(client, env, token0, token1, user, position)
+    const { liquidityActual: liquidity } = await algebraPoolMint(client, env, token0, token1, user, position)
 
     let tickLiquidity = tickMap.get(position.from) ?? 0n
     tickLiquidity = tickLiquidity === undefined ? liquidity : tickLiquidity + liquidity
