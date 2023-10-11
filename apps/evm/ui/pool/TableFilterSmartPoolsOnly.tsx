@@ -15,14 +15,22 @@ export const TableFiltersSmartPoolsOnly: FC = () => {
     (checked: boolean) => {
       setChecked(checked)
       startTransition(() => {
-        setFilters((prev) => ({ ...prev, smartPoolsOnly: !prev.smartPoolsOnly }))
+        setFilters((prev) => ({
+          ...prev,
+          smartPoolsOnly: !prev.smartPoolsOnly,
+        }))
       })
     },
-    [setFilters]
+    [setFilters],
   )
 
   return (
-    <Toggle variant="outline" onPressedChange={toggle} pressed={isPending ? checked : smartPoolsOnly} size="sm">
+    <Toggle
+      variant="outline"
+      onPressedChange={toggle}
+      pressed={isPending ? checked : smartPoolsOnly}
+      size="sm"
+    >
       <span>💡</span>Smart pool
     </Toggle>
   )

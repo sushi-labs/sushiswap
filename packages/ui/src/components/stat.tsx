@@ -21,13 +21,15 @@ interface StatProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'label' | 'value'>,
     VariantProps<typeof statVariants> {}
 
-const Stat = forwardRef<HTMLDivElement, StatProps>(({ children, className, size }, ref) => {
-  return (
-    <div ref={ref} className={statVariants({ size, className })}>
-      {children}
-    </div>
-  )
-})
+const Stat = forwardRef<HTMLDivElement, StatProps>(
+  ({ children, className, size }, ref) => {
+    return (
+      <div ref={ref} className={statVariants({ size, className })}>
+        {children}
+      </div>
+    )
+  },
+)
 Stat.displayName = 'Stat'
 
 const statLabelVariants = cva('text-muted-foreground font-normal', {
@@ -55,13 +57,15 @@ interface StatLabelProps
   extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'label' | 'value'>,
     VariantProps<typeof statLabelVariants> {}
 
-const StatLabel = forwardRef<HTMLSpanElement, StatLabelProps>(({ align, children, size, className }, ref) => {
-  return (
-    <span ref={ref} className={statLabelVariants({ size, align, className })}>
-      {children}
-    </span>
-  )
-})
+const StatLabel = forwardRef<HTMLSpanElement, StatLabelProps>(
+  ({ align, children, size, className }, ref) => {
+    return (
+      <span ref={ref} className={statLabelVariants({ size, align, className })}>
+        {children}
+      </span>
+    )
+  },
+)
 StatLabel.displayName = 'StatLabel'
 
 const statValueVariants = cva('font-medium', {
@@ -92,13 +96,18 @@ interface StatValueProps
   extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'label' | 'value'>,
     VariantProps<typeof statValueVariants> {}
 
-const StatValue = forwardRef<HTMLSpanElement, StatValueProps>(({ align, children, size, className }, ref) => {
-  return (
-    <span ref={ref} className={classNames(statValueVariants({ size, align }), className)}>
-      {children}
-    </span>
-  )
-})
+const StatValue = forwardRef<HTMLSpanElement, StatValueProps>(
+  ({ align, children, size, className }, ref) => {
+    return (
+      <span
+        ref={ref}
+        className={classNames(statValueVariants({ size, align }), className)}
+      >
+        {children}
+      </span>
+    )
+  },
+)
 StatValue.displayName = 'StatValue'
 
 export { Stat, StatLabel, StatValue }

@@ -9,7 +9,10 @@ import type { GetApiInputFromOutput } from '../../types.js'
 export { PoolsApiSchema }
 export type Pools = Awaited<ReturnType<typeof getEarnPoolsOriginal>>
 export type GetPoolsArgs =
-  | GetApiInputFromOutput<(typeof PoolsApiSchema)['_input'], (typeof PoolsApiSchema)['_output']>
+  | GetApiInputFromOutput<
+      typeof PoolsApiSchema['_input'],
+      typeof PoolsApiSchema['_output']
+    >
   | undefined
 
 export const getPoolsUrl = (args: GetPoolsArgs) => {

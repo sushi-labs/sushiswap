@@ -14,11 +14,6 @@
   "license": "MIT",
   "author": "LufyCZ <me@lufy.cz>",
   "type": "module",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "./dist"
-  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -32,6 +27,8 @@
     },
     "./package.json": "./package.json"
   },
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "typesVersions": {
     "*": {
       ".": [
@@ -42,6 +39,9 @@
       ]
     }
   },
+  "files": [
+    "./dist"
+  ],
   "scripts": {
     "build": "tsup src/index.ts src/abi/index.ts",
     "check": "tsc --pretty --noEmit",
@@ -66,22 +66,22 @@
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@types/node": "18",
-    "@wagmi/core": "1.4.1",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
+    "@types/node": "18",
+    "@wagmi/core": "1.4.1",
+    "eslint": "8.43.0",
     "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "eslint": "8.43.0",
     "tsup": "7.1.0",
     "typescript": "5.1.6"
   },
   "peerDependencies": {
+    "@wagmi/core": "1.4.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "wagmi": "1.4.1",
-    "@wagmi/core": "1.4.1"
+    "wagmi": "1.4.1"
   },
   "peerDependenciesMeta": {
     "@wagmi/core": {

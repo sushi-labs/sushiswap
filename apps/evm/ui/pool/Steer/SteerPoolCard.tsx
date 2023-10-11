@@ -30,7 +30,11 @@ interface SteerPoolCardProps {
 export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
   return (
     <LinkInternal href={`/pool/${pool.id}/smart/${vault.id}`}>
-      <Card className={classNames('max-w-[400px] hover:border-blue-300 hover:shadow-md')}>
+      <Card
+        className={classNames(
+          'max-w-[400px] hover:border-blue-300 hover:shadow-md',
+        )}
+      >
         <CardHeader>
           {/* <div className="flex gap-2 pb-3">
             <Chip className="bg-blue/20 text-blue">
@@ -39,7 +43,9 @@ export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
             </Chip>
           </div> */}
           <CardTitle>{SteerStrategyConfig[vault.strategy].name}</CardTitle>
-          <CardDescription>{SteerStrategyConfig[vault.strategy].description}</CardDescription>
+          <CardDescription>
+            {SteerStrategyConfig[vault.strategy].description}
+          </CardDescription>
         </CardHeader>
         <Separator />
         <CardContent className="pt-6">

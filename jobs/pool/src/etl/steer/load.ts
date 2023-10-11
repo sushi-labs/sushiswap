@@ -77,8 +77,10 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
       END,
       apr1w = CASE
       ${Prisma.join(
-        vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.apr1w}`),
-        ' '
+        vaultsToUpdate.map(
+          (update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.apr1w}`,
+        ),
+        ' ',
       )}
         ELSE apr1w
       END,
@@ -131,8 +133,11 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
       END,
       reserve0USD = CASE
         ${Prisma.join(
-          vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.reserve0USD}`),
-          ' '
+          vaultsToUpdate.map(
+            (update) =>
+              Prisma.sql`WHEN id = ${update.id} THEN ${update.reserve0USD}`,
+          ),
+          ' ',
         )}
         ELSE reserve0USD
       END,
@@ -147,8 +152,11 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
       END,
       fees0USD = CASE
         ${Prisma.join(
-          vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.fees0USD}`),
-          ' '
+          vaultsToUpdate.map(
+            (update) =>
+              Prisma.sql`WHEN id = ${update.id} THEN ${update.fees0USD}`,
+          ),
+          ' ',
         )}
         ELSE fees0USD
       END,
@@ -174,8 +182,11 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
       END,
       reserve1USD = CASE
         ${Prisma.join(
-          vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.reserve1USD}`),
-          ' '
+          vaultsToUpdate.map(
+            (update) =>
+              Prisma.sql`WHEN id = ${update.id} THEN ${update.reserve1USD}`,
+          ),
+          ' ',
         )}
         ELSE reserve1USD
       END,
@@ -190,22 +201,31 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
       END,
       fees1USD = CASE
         ${Prisma.join(
-          vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.fees1USD}`),
-          ' '
+          vaultsToUpdate.map(
+            (update) =>
+              Prisma.sql`WHEN id = ${update.id} THEN ${update.fees1USD}`,
+          ),
+          ' ',
         )}
         ELSE fees1USD
       END,
       reserveUSD = CASE
         ${Prisma.join(
-          vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.reserveUSD}`),
-          ' '
+          vaultsToUpdate.map(
+            (update) =>
+              Prisma.sql`WHEN id = ${update.id} THEN ${update.reserveUSD}`,
+          ),
+          ' ',
         )}
         ELSE reserveUSD
       END,
       feesUSD = CASE
         ${Prisma.join(
-          vaultsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.feesUSD}`),
-          ' '
+          vaultsToUpdate.map(
+            (update) =>
+              Prisma.sql`WHEN id = ${update.id} THEN ${update.feesUSD}`,
+          ),
+          ' ',
         )}
         ELSE feesUSD
       END,

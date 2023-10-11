@@ -5,7 +5,14 @@ import type { SteerVault } from '@sushiswap/client/src/pure/steer-vault/vault'
 import { Amount, Currency, Token, tryParseAmount } from '@sushiswap/currency'
 import { useSteerVaultReserves } from '@sushiswap/wagmi'
 import { Field } from 'lib/constants'
-import { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
+import {
+  createContext,
+  FC,
+  ReactNode,
+  useContext,
+  useMemo,
+  useReducer,
+} from 'react'
 interface State {
   independentField: Field
   typedValue: string
@@ -22,10 +29,14 @@ const initialState: State = {
   typedValue: '',
 }
 
-type Actions = { type: 'resetMintState' } | { type: 'typeInput'; field: Field; typedValue: string }
+type Actions =
+  | { type: 'resetMintState' }
+  | { type: 'typeInput'; field: Field; typedValue: string }
 
 const SteerPositionAddStateContext = createContext<State>(initialState)
-const SteerPositionAddActionsContext = createContext<Api>(undefined as unknown as Api)
+const SteerPositionAddActionsContext = createContext<Api>(
+  undefined as unknown as Api,
+)
 
 const reducer = (state: State, action: Actions): State => {
   switch (action.type) {
@@ -41,13 +52,17 @@ const reducer = (state: State, action: Actions): State => {
   }
 }
 
-export const SteerPositionAddProvider: FC<{ children: ReactNode }> = ({ children }) => {
+export const SteerPositionAddProvider: FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   const api = useMemo(() => {
-    const onFieldAInput = (typedValue: string) => dispatch({ type: 'typeInput', field: Field.CURRENCY_A, typedValue })
+    const onFieldAInput = (typedValue: string) =>
+      dispatch({ type: 'typeInput', field: Field.CURRENCY_A, typedValue })
 
-    const onFieldBInput = (typedValue: string) => dispatch({ type: 'typeInput', field: Field.CURRENCY_B, typedValue })
+    const onFieldBInput = (typedValue: string) =>
+      dispatch({ type: 'typeInput', field: Field.CURRENCY_B, typedValue })
 
     const resetMintState = () => dispatch({ type: 'resetMintState' })
 
@@ -60,7 +75,9 @@ export const SteerPositionAddProvider: FC<{ children: ReactNode }> = ({ children
 
   return (
     <SteerPositionAddActionsContext.Provider value={api}>
-      <SteerPositionAddStateContext.Provider value={state}>{children}</SteerPositionAddStateContext.Provider>
+      <SteerPositionAddStateContext.Provider value={state}>
+        {children}
+      </SteerPositionAddStateContext.Provider>
     </SteerPositionAddActionsContext.Provider>
   )
 }
@@ -68,7 +85,9 @@ export const SteerPositionAddProvider: FC<{ children: ReactNode }> = ({ children
 export const useSteerPositionAddState = () => {
   const context = useContext(SteerPositionAddStateContext)
   if (!context) {
-    throw new Error('Hook can only be used inside the Steer Position Add State Context')
+    throw new Error(
+      'Hook can only be used inside the Steer Position Add State Context',
+    )
   }
 
   return context
@@ -97,8 +116,14 @@ type UseSteerPositionAddInfoProps = {
     }
 )
 
-export function useSteerPositionAddDerivedInfo({ vault: vaultPassed, vaultId }: UseSteerPositionAddInfoProps) {
-  const { data: vaultFetched } = useSteerVault({ args: vaultId || '', shouldFetch: !vaultPassed && !!vaultId })
+export function useSteerPositionAddDerivedInfo({
+  vault: vaultPassed,
+  vaultId,
+}: UseSteerPositionAddInfoProps) {
+  const { data: vaultFetched } = useSteerVault({
+    args: vaultId || '',
+    shouldFetch: !vaultPassed && !!vaultId,
+  })
 
   const vault = vaultPassed || vaultFetched
 
@@ -123,9 +148,13 @@ export function useSteerPositionAddDerivedInfo({ vault: vaultPassed, vaultId }: 
     }
   }, [currencyA, currencyB])
 
-  const dependentField = independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A
+  const dependentField =
+    independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A
 
-  const { data: reserves, isLoading } = useSteerVaultReserves({ vaultId: vault?.id, enabled: !!vault })
+  const { data: reserves, isLoading } = useSteerVaultReserves({
+    vaultId: vault?.id,
+    enabled: !!vault,
+  })
   const [independentReserve, dependentReserve] = useMemo(() => {
     if (!reserves) return [undefined, undefined]
 
@@ -137,32 +166,57 @@ export function useSteerPositionAddDerivedInfo({ vault: vaultPassed, vaultId }: 
   }, [independentField, reserves])
 
   // amounts
-  const independentAmount: Amount<Currency> | undefined = tryParseAmount(typedValue, currencies?.[independentField])
+  const independentAmount: Amount<Currency> | undefined = tryParseAmount(
+    typedValue,
+    currencies?.[independentField],
+  )
   const dependentAmount: Amount<Currency> | undefined = useMemo(() => {
     // we wrap the currencies just to get the price in terms of the other token
     const wrappedIndependentAmount = independentAmount?.wrapped
-    const dependentCurrency = dependentField === Field.CURRENCY_B ? currencyB : currencyA
+    const dependentCurrency =
+      dependentField === Field.CURRENCY_B ? currencyB : currencyA
 
-    if (independentReserve && dependentReserve && wrappedIndependentAmount && dependentCurrency) {
+    if (
+      independentReserve &&
+      dependentReserve &&
+      wrappedIndependentAmount &&
+      dependentCurrency
+    ) {
       if (independentReserve !== 0n && dependentReserve !== 0n) {
         return Amount.fromRawAmount(
           dependentCurrency,
-          wrappedIndependentAmount.multiply(dependentReserve).divide(independentReserve).quotient - 1n
+          wrappedIndependentAmount
+            .multiply(dependentReserve)
+            .divide(independentReserve).quotient - 1n,
         )
       }
     }
 
     return undefined
-  }, [independentAmount?.wrapped, dependentField, currencyB, currencyA, independentReserve, dependentReserve])
+  }, [
+    independentAmount?.wrapped,
+    dependentField,
+    currencyB,
+    currencyA,
+    independentReserve,
+    dependentReserve,
+  ])
 
-  const parsedAmounts: { [field in Field]: Amount<Currency> } | undefined = useMemo(() => {
-    if (!independentAmount || !dependentAmount) return undefined
+  const parsedAmounts: { [field in Field]: Amount<Currency> } | undefined =
+    useMemo(() => {
+      if (!independentAmount || !dependentAmount) return undefined
 
-    return {
-      [Field.CURRENCY_A]: independentField === Field.CURRENCY_A ? independentAmount : dependentAmount,
-      [Field.CURRENCY_B]: independentField === Field.CURRENCY_A ? dependentAmount : independentAmount,
-    }
-  }, [dependentAmount, independentAmount, independentField])
+      return {
+        [Field.CURRENCY_A]:
+          independentField === Field.CURRENCY_A
+            ? independentAmount
+            : dependentAmount,
+        [Field.CURRENCY_B]:
+          independentField === Field.CURRENCY_A
+            ? dependentAmount
+            : independentAmount,
+      }
+    }, [dependentAmount, independentAmount, independentField])
 
   return {
     vault,

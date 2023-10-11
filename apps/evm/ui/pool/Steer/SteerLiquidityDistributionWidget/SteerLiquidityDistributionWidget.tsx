@@ -9,7 +9,9 @@ interface SteerLiquidityDistributionWidgetProps {
   vault: Pool['steerVaults'][0]
 }
 
-export const SteerLiquidityDistributionWidget: FC<SteerLiquidityDistributionWidgetProps> = ({ vault }) => {
+export const SteerLiquidityDistributionWidget: FC<
+  SteerLiquidityDistributionWidgetProps
+> = ({ vault }) => {
   return (
     <>
       <div className="flex justify-between">

@@ -42,19 +42,32 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
           <CardHeader>
             <CardTitle>Liquidity</CardTitle>
             <CardDescription>
-              Depending on your range, the supplied tokens for this position will not always be a 50:50 ratio.
+              Depending on your range, the supplied tokens for this position
+              will not always be a 50:50 ratio.
             </CardDescription>
           </CardHeader>
           <Tabs className="w-full" defaultValue="add">
             <CardContent>
               <TabsList className="!flex">
-                <TabsTrigger testdata-id="add-tab" value="add" className="flex flex-1">
+                <TabsTrigger
+                  testdata-id="add-tab"
+                  value="add"
+                  className="flex flex-1"
+                >
                   Add
                 </TabsTrigger>
-                <TabsTrigger testdata-id="remove-tab" value="remove" className="flex flex-1">
+                <TabsTrigger
+                  testdata-id="remove-tab"
+                  value="remove"
+                  className="flex flex-1"
+                >
                   Remove
                 </TabsTrigger>
-                <TabsTrigger testdata-id="position-tab" value="position" className="flex flex-1">
+                <TabsTrigger
+                  testdata-id="position-tab"
+                  value="position"
+                  className="flex flex-1"
+                >
                   Position
                 </TabsTrigger>
               </TabsList>
@@ -65,7 +78,9 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
             <TabsContent value="add">
               <CardHeader>
                 <CardTitle>Add liquidity</CardTitle>
-                <CardDescription>Provide liquidity to earn fees & rewards.</CardDescription>
+                <CardDescription>
+                  Provide liquidity to earn fees & rewards.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <SteerPositionAddProvider>
@@ -76,7 +91,9 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
             <TabsContent value="remove">
               <CardHeader>
                 <CardTitle>Remove liquidity</CardTitle>
-                <CardDescription>Please enter how much of the position you want to remove.</CardDescription>
+                <CardDescription>
+                  Please enter how much of the position you want to remove.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <SteerPositionRemove vault={vault} />
@@ -92,7 +109,9 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
         <Card>
           <CardHeader>
             <CardTitle>{SteerStrategyConfig[vault.strategy].name}</CardTitle>
-            <CardDescription>{SteerStrategyConfig[vault.strategy].description}</CardDescription>
+            <CardDescription>
+              {SteerStrategyConfig[vault.strategy].description}
+            </CardDescription>
           </CardHeader>
           <Separator />
           <div className="h-[200px] rounded-xl flex flex-col p-6">
@@ -122,26 +141,34 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
                 {vault.token0.symbol}:{vault.token1.symbol} Ratio (%)
               </StatLabel>
               <StatValue size="sm">
-                {formatPercent(tokenRatios.token0)} : {formatPercent(tokenRatios.token1)}
+                {formatPercent(tokenRatios.token0)} :{' '}
+                {formatPercent(tokenRatios.token1)}
               </StatValue>
             </Stat>
             <Stat className="px-6 py-3">
               <StatLabel size="sm" className="flex gap-1">
                 Adjustment frequency
                 <Explainer>
-                  The frequency at which this strategy gets adjusted. This does not guarantee the strategy gets
-                  adjusted, its a minimum threshold.
+                  The frequency at which this strategy gets adjusted. This does
+                  not guarantee the strategy gets adjusted, its a minimum
+                  threshold.
                 </Explainer>
               </StatLabel>
-              <StatValue size="sm">At most every {adjustment.frequency}</StatValue>
+              <StatValue size="sm">
+                At most every {adjustment.frequency}
+              </StatValue>
             </Stat>
             <Stat className="px-6 py-3">
-              <StatLabel size="sm">{adjustment.next.includes('ago') ? 'Last' : 'Next'} Adjustment</StatLabel>
+              <StatLabel size="sm">
+                {adjustment.next.includes('ago') ? 'Last' : 'Next'} Adjustment
+              </StatLabel>
               <StatValue size="sm">{adjustment.next}</StatValue>
             </Stat>
             <Stat className="px-6 py-3">
               <StatLabel size="sm">Liquidity pool fee</StatLabel>
-              <StatValue size="sm">{formatPercent(vault.pool.swapFee)}</StatValue>
+              <StatValue size="sm">
+                {formatPercent(vault.pool.swapFee)}
+              </StatValue>
             </Stat>
             {/* <Stat className="px-6 py-3">
               <StatLabel size="sm">Time frame</StatLabel>
@@ -153,7 +180,9 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
             </Stat> */}
             <Stat className="px-6 py-3">
               <StatLabel size="sm">Performance fee</StatLabel>
-              <StatValue size="sm">{formatPercent(vault.performanceFee)}</StatValue>
+              <StatValue size="sm">
+                {formatPercent(vault.performanceFee)}
+              </StatValue>
             </Stat>
           </div>
           <Separator />
@@ -165,7 +194,10 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
           </CardHeader>
           <div className="px-6">
             <div className="h-[200px] w-full bg-secondary rounded-xl flex items-center justify-center">
-              <SteerStrategyLiquidityDistribution pool={vault.pool} positions={positions} />
+              <SteerStrategyLiquidityDistribution
+                pool={vault.pool}
+                positions={positions}
+              />
             </div>
           </div>
           <div className="grid grid-cols-2">

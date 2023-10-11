@@ -16,7 +16,13 @@ interface UseDensityChartData {
   enabled?: boolean
 }
 
-export function useDensityChartData({ chainId, token0, token1, feeAmount, enabled = true }: UseDensityChartData) {
+export function useDensityChartData({
+  chainId,
+  token0,
+  token1,
+  feeAmount,
+  enabled = true,
+}: UseDensityChartData) {
   const activeLiquidity = useConcentratedActiveLiquidity({
     chainId,
     token0,

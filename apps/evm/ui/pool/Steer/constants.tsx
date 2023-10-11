@@ -13,7 +13,8 @@ export const SteerStrategyConfig: Record<SteerStrategy, SteerStrategyConfig> = {
   },
   [SteerStrategy.DeltaNeutralStables]: {
     name: 'Delta Neutral Pool',
-    description: 'Uses Simple Moving Average and a predefined multiplier to construct a price range.',
+    description:
+      'Uses Simple Moving Average and a predefined multiplier to construct a price range.',
   },
   [SteerStrategy.ElasticExpansion]: {
     name: 'Elastic Expansion Pool',

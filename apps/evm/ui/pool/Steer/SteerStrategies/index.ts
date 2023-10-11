@@ -34,11 +34,15 @@ export type SteerStrategyComponent = FC<{
   generic: SteerStrategyGeneric
 }>
 
-export const SteerStrategyComponents: Record<SteerStrategy, SteerStrategyComponent> = {
+export const SteerStrategyComponents: Record<
+  SteerStrategy,
+  SteerStrategyComponent
+> = {
   [SteerStrategy.ClassicRebalance]: SteerClassicRebalanceStrategy,
   [SteerStrategy.DeltaNeutralStables]: SteerDeltaNeutralStablesStrategy,
   [SteerStrategy.ElasticExpansion]: SteerElasticExpansionStrategy,
   [SteerStrategy.HighLowChannel]: SteerHighLowChannelStrategy,
-  [SteerStrategy.MovingVolatilityChannelMedium]: SteerMovingVolatilityChannelMediumStrategy,
+  [SteerStrategy.MovingVolatilityChannelMedium]:
+    SteerMovingVolatilityChannelMediumStrategy,
   [SteerStrategy.StaticStable]: SteerStaticStableStrategy,
 }

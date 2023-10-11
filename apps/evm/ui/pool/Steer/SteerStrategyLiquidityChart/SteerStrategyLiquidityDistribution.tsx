@@ -16,7 +16,9 @@ interface SteerStrategyLiquidityDistribution {
   positions: SteerStrategyGeneric['positions']
 }
 
-export const SteerStrategyLiquidityDistribution: FC<SteerStrategyLiquidityDistribution> = ({ pool, positions }) => {
+export const SteerStrategyLiquidityDistribution: FC<
+  SteerStrategyLiquidityDistribution
+> = ({ pool, positions }) => {
   const { data: poolStats } = useConcentratedLiquidityPoolStats({
     chainId: pool.chainId as SushiSwapV3ChainId,
     address: pool.address,
@@ -42,14 +44,26 @@ export const SteerStrategyLiquidityDistribution: FC<SteerStrategyLiquidityDistri
   const steerRange = useMemo(() => {
     if (!poolStats) return null
 
-    const min = Math.min(...positions.map((position) => Number(position.lowerTick)))
-    const max = Math.max(...positions.map((position) => Number(position.upperTick)))
+    const min = Math.min(
+      ...positions.map((position) => Number(position.lowerTick)),
+    )
+    const max = Math.max(
+      ...positions.map((position) => Number(position.upperTick)),
+    )
 
     console.log(min, max)
 
     return {
-      minPrice: Number(tickToPrice(poolStats?.token0, poolStats?.token1, min).toSignificant(12)),
-      maxPrice: Number(tickToPrice(poolStats?.token0, poolStats?.token1, max).toSignificant(12)),
+      minPrice: Number(
+        tickToPrice(poolStats?.token0, poolStats?.token1, min).toSignificant(
+          12,
+        ),
+      ),
+      maxPrice: Number(
+        tickToPrice(poolStats?.token0, poolStats?.token1, max).toSignificant(
+          12,
+        ),
+      ),
     }
   }, [positions, poolStats])
 
@@ -63,9 +77,18 @@ export const SteerStrategyLiquidityDistribution: FC<SteerStrategyLiquidityDistri
     <>
       {isLoading && <SkeletonBox className="w-full h-full" />}
 
-      {!noLiquidity && steerRange && !isLoading && data && current && poolStats && (
-        <SteerStrategyLiquidityDistributionChart series={data} current={current} steerRange={steerRange} />
-      )}
+      {!noLiquidity &&
+        steerRange &&
+        !isLoading &&
+        data &&
+        current &&
+        poolStats && (
+          <SteerStrategyLiquidityDistributionChart
+            series={data}
+            current={current}
+            steerRange={steerRange}
+          />
+        )}
     </>
   )
 }

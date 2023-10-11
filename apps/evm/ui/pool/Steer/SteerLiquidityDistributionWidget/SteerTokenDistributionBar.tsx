@@ -7,8 +7,12 @@ interface SteerTokenDistributionBarProps {
   vault: Pool['steerVaults'][0]
 }
 
-export function SteerTokenDistributionBar({ vault }: SteerTokenDistributionBarProps) {
-  const { data } = useQuery(['steer-vault-distribution-bar', vault.id], () => getTokenRatios(vault))
+export function SteerTokenDistributionBar({
+  vault,
+}: SteerTokenDistributionBarProps) {
+  const { data } = useQuery(['steer-vault-distribution-bar', vault.id], () =>
+    getTokenRatios(vault),
+  )
 
   return (
     <div>

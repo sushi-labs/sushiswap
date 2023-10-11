@@ -166,7 +166,8 @@ export function DataTable<TData, TValue>({
                   testdata-id={`${testId}-${r}-tr`}
                 >
                   {row.getVisibleCells().map((cell, i) =>
-                    linkFormatter && !cell.column.columnDef.meta?.disableLink ? (
+                    linkFormatter &&
+                    !cell.column.columnDef.meta?.disableLink ? (
                       <TableCellAsLink
                         style={{ width: cell.column.getSize() }}
                         href={linkFormatter(row.original)}

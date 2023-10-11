@@ -10,8 +10,9 @@ interface SteerAPRChartProps {
 }
 
 export function SteerAPRChart({ vault }: SteerAPRChartProps) {
-  const { data, isInitialLoading } = useQuery(['steer-vault-apr-timeseries', vault.id], () =>
-    getSteerVaultAprTimeseries({ vaultId: vault.id })
+  const { data, isInitialLoading } = useQuery(
+    ['steer-vault-apr-timeseries', vault.id],
+    () => getSteerVaultAprTimeseries({ vaultId: vault.id }),
   )
 
   return <_SteerAPRChart loading={isInitialLoading} timeseries={data} />

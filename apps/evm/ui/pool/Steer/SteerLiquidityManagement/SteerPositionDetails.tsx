@@ -22,10 +22,11 @@ interface SteerPositionDetails {
 
 export const SteerPositionDetails: FC<SteerPositionDetails> = ({ vault }) => {
   const { address } = useAccount()
-  const { data: position, isLoading: isPositionLoading } = useSteerAccountPosition({
-    account: address,
-    vaultId: vault.id,
-  })
+  const { data: position, isLoading: isPositionLoading } =
+    useSteerAccountPosition({
+      account: address,
+      vaultId: vault.id,
+    })
 
   const currencies = useMemo(() => {
     const currency0 = new Token({ ...vault.token0, chainId: vault.chainId })
@@ -43,10 +44,13 @@ export const SteerPositionDetails: FC<SteerPositionDetails> = ({ vault }) => {
     return [amount0, amount1]
   }, [position, currencies])
 
-  const fiatValuesAmounts = useTokenAmountDollarValues({ chainId: vault.chainId, amounts })
+  const fiatValuesAmounts = useTokenAmountDollarValues({
+    chainId: vault.chainId,
+    amounts,
+  })
   const fiatValuesAmountsTotal = useMemo(
     () => fiatValuesAmounts.reduce((acc, cur) => acc + cur, 0),
-    [fiatValuesAmounts]
+    [fiatValuesAmounts],
   )
 
   return (

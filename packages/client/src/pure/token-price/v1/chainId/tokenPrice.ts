@@ -10,14 +10,16 @@ import type { GetApiInputFromOutput } from '../../../../types.js'
 export { TokenPriceV1ApiSchema }
 export type TokenPrice = Awaited<ReturnType<typeof getPrice>>
 export type GetTokenPriceArgs = GetApiInputFromOutput<
-  (typeof TokenPriceV1ApiSchema)['_input'],
-  (typeof TokenPriceV1ApiSchema)['_output']
+  typeof TokenPriceV1ApiSchema['_input'],
+  typeof TokenPriceV1ApiSchema['_output']
 >
 
 export function getTokenPriceUrl(args: GetTokenPriceArgs) {
   return `${TOKEN_PRICE_API}/api/v1?${parseArgs(args)}}`
 }
 
-export const getTokenPrice = async (args: GetTokenPriceArgs): Promise<TokenPrice> => {
+export const getTokenPrice = async (
+  args: GetTokenPriceArgs,
+): Promise<TokenPrice> => {
   return fetch(getTokenPriceUrl(args)).then((data) => data.json())
 }

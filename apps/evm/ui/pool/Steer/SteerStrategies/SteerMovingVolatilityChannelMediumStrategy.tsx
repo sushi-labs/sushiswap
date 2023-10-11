@@ -3,4 +3,5 @@
 import { SteerStrategyComponent } from '.'
 import { SteerElasticExpansionStrategy } from './SteerElasticExpansionStrategy'
 
-export const SteerMovingVolatilityChannelMediumStrategy: SteerStrategyComponent = SteerElasticExpansionStrategy
+export const SteerMovingVolatilityChannelMediumStrategy: SteerStrategyComponent =
+  SteerElasticExpansionStrategy

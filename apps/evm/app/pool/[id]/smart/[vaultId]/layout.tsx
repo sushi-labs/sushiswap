@@ -15,12 +15,20 @@ export default async function Layout({
   params: { id: string; vaultId: string }
 }) {
   const poolId = unsanitize(params.id)
-  const pool = await unstable_cache(async () => getPool(poolId), ['pool', poolId], {
-    revalidate: 60 * 15,
-  })()
+  const pool = await unstable_cache(
+    async () => getPool(poolId),
+    ['pool', poolId],
+    {
+      revalidate: 60 * 15,
+    },
+  )()
 
   const vaultId = unsanitize(params.vaultId)
-  const vault = await unstable_cache(() => getSteerVault(vaultId), ['steer-vault', vaultId], { revalidate: 60 * 15 })()
+  const vault = await unstable_cache(
+    () => getSteerVault(vaultId),
+    ['steer-vault', vaultId],
+    { revalidate: 60 * 15 },
+  )()
 
   if (!pool) {
     notFound()
@@ -39,7 +47,11 @@ export default async function Layout({
           backUrl={referer?.includes('/pool?') ? referer.toString() : '/pool'}
           address={pool.address}
           pool={pool}
-          apy={{ rewards: pool?.incentiveApr, fees: pool?.feeApr1d, vault: vault.apr }}
+          apy={{
+            rewards: pool?.incentiveApr,
+            fees: pool?.feeApr1d,
+            vault: vault.apr,
+          }}
         />
       </Container>
       <section className="flex flex-col flex-1 mt-4">
@@ -47,7 +59,10 @@ export default async function Layout({
           {' '}
           <div className="flex flex-col gap-4">
             <Container maxWidth="5xl" className="px-2 sm:px-4">
-              <LinkInternal href={`/pool/${params.id}/smart`} className="text-blue hover:underline text-sm">
+              <LinkInternal
+                href={`/pool/${params.id}/smart`}
+                className="text-blue hover:underline text-sm"
+              >
                 ← Strategies
               </LinkInternal>
             </Container>

@@ -14,7 +14,10 @@ const tailwind = resolveConfig(tailwindConfig)
 
 interface _SteerAPRChartProps {
   loading: boolean
-  timeseries: Awaited<ReturnType<typeof getSteerVaultAprTimeseries>> | null | undefined
+  timeseries:
+    | Awaited<ReturnType<typeof getSteerVaultAprTimeseries>>
+    | null
+    | undefined
 }
 
 export function _SteerAPRChart({ timeseries, loading }: _SteerAPRChartProps) {
@@ -88,39 +91,61 @@ export function _SteerAPRChart({ timeseries, loading }: _SteerAPRChartProps) {
         },
       ],
     }),
-    [timeseries]
+    [timeseries],
   )
 
   const [leftDate, rightDate] = useMemo(() => {
     if (!timeseries) return ['', '']
 
     const leftDate = new Date(timeseries[0].startTime * 1000)
-    const rightDate = new Date(timeseries[timeseries.length - 1].startTime * 1000)
+    const rightDate = new Date(
+      timeseries[timeseries.length - 1].startTime * 1000,
+    )
 
     // less than a year
     if (rightDate.getTime() - leftDate.getTime() < 86400 * 365 * 1000) {
       return [
-        leftDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        rightDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        leftDate.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+        }),
+        rightDate.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+        }),
       ]
     }
 
     return [
-      leftDate.toLocaleDateString('en-US', { year: '2-digit', month: 'short', day: 'numeric' }),
-      rightDate.toLocaleDateString('en-US', { year: '2-digit', month: 'short', day: 'numeric' }),
+      leftDate.toLocaleDateString('en-US', {
+        year: '2-digit',
+        month: 'short',
+        day: 'numeric',
+      }),
+      rightDate.toLocaleDateString('en-US', {
+        year: '2-digit',
+        month: 'short',
+        day: 'numeric',
+      }),
     ]
   }, [timeseries])
 
   if (loading) return <SkeletonBox className="w-full h-full" />
 
   if (!timeseries && !loading)
-    return <div className="w-full h-full items-center flex justify-center">Failed to fetch chart data.</div>
+    return (
+      <div className="w-full h-full items-center flex justify-center">
+        Failed to fetch chart data.
+      </div>
+    )
 
   return (
     <div className="flex flex-col h-full w-full space-y-6">
       <div className="w-full h-full">
         <ReactVirtualizedAutoSizer>
-          {({ height, width }) => <ReactECharts option={chartConfig} style={{ height, width }} />}
+          {({ height, width }) => (
+            <ReactECharts option={chartConfig} style={{ height, width }} />
+          )}
         </ReactVirtualizedAutoSizer>
       </div>
       <div className="flex justify-between w-full text-muted-foreground font-normal text-sm">

@@ -15,11 +15,9 @@ interface SteerStrategyLiquidityDistributionChart {
   }
 }
 
-export const SteerStrategyLiquidityDistributionChart: FC<SteerStrategyLiquidityDistributionChart> = ({
-  series: _series,
-  current: _current,
-  steerRange,
-}) => {
+export const SteerStrategyLiquidityDistributionChart: FC<
+  SteerStrategyLiquidityDistributionChart
+> = ({ series: _series, current: _current, steerRange }) => {
   const { resolvedTheme } = useTheme()
 
   const [invertTokens, setInvertTokens] = useState(false)
@@ -151,14 +149,16 @@ export const SteerStrategyLiquidityDistributionChart: FC<SteerStrategyLiquidityD
         },
       ],
     }),
-    [series, current, resolvedTheme]
+    [series, current, resolvedTheme],
   )
 
   return (
     <>
       <div className="w-full h-full">
         <ReactVirtualizedAutoSizer>
-          {({ height, width }) => <ReactECharts option={DEFAULT_OPTION} style={{ height, width }} />}
+          {({ height, width }) => (
+            <ReactECharts option={DEFAULT_OPTION} style={{ height, width }} />
+          )}
         </ReactVirtualizedAutoSizer>
       </div>
     </>
