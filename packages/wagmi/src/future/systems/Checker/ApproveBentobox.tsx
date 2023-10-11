@@ -88,6 +88,8 @@ const Component: FC<ApproveBentoboxProps> = ({
   )
 }
 
-const ApproveBentobox = dynamic(() => Promise.resolve(Component), { ssr: false })
+const ApproveBentobox = dynamic(() => Promise.resolve(Component), {
+  ssr: false,
+})
 
 export { ApproveBentobox, type ApproveBentoboxProps }
