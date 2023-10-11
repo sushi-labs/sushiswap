@@ -15,7 +15,7 @@ export enum PoolType {
 }
 
 export interface UsePoolsParams {
-  chainId: Exclude<ChainId, TestnetChainId>
+  chainId: ChainId
   currencyA: Type | undefined
   currencyB: Type | undefined
   tradeType?: TradeType

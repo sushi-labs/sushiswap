@@ -59,7 +59,7 @@ interface State {
   state: {
     token0: Type | undefined
     token1: Type | undefined
-    chainId: Exclude<ChainId, TestnetChainId>
+    chainId: ChainId
     swapAmountString: string
     swapAmount: Amount<Type> | undefined
     recipient: string | undefined

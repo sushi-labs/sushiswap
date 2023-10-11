@@ -41,7 +41,7 @@ const isTest =
 // Gathers pools info, creates routing in 'incremental' mode
 // This means that new routing recalculates each time new pool fetching data comes
 export class DataFetcher {
-  chainId: ChainId
+  chainId: Exclude<ChainId, TestnetChainId>
   providers: LiquidityProvider[] = []
   // Provider to poolAddress to PoolCode
   poolCodes: Map<LiquidityProviders, Map<string, PoolCode>> = new Map()
@@ -53,7 +53,7 @@ export class DataFetcher {
 
   private static cache: Record<number, DataFetcher> = {}
 
-  static onChain(chainId: Exclude<ChainId, TestnetChainId>): DataFetcher {
+  static onChain(chainId: ChainId): DataFetcher {
     const cache = this.cache[chainId]
     if (cache) {
       return cache
@@ -66,12 +66,9 @@ export class DataFetcher {
     return dataFetcher
   }
 
-  constructor(
-    chainId: Exclude<ChainId, TestnetChainId>,
-    publicClient?: PublicClient,
-  ) {
-    this.chainId = chainId
-    if (!publicClient && !config[chainId]) {
+  constructor(chainId: ChainId, publicClient?: PublicClient) {
+    this.chainId = chainId as Exclude<ChainId, TestnetChainId>
+    if (!publicClient && !config[this.chainId]) {
       throw new Error(
         `No public client given and no viem config found for chainId ${chainId}`,
       )
@@ -81,10 +78,10 @@ export class DataFetcher {
       this.web3Client = publicClient
     } else {
       this.web3Client = createPublicClient({
-        ...config[chainId],
+        ...config[this.chainId],
         transport: isTest
           ? http('http://127.0.0.1:8545')
-          : config[chainId].transport,
+          : config[this.chainId].transport,
         pollingInterval: 8_000,
         batch: {
           multicall: {

@@ -1,5 +1,5 @@
 import { routeProcessor2Abi } from 'sushi/abi'
-import { ChainId, type TestnetChainId } from 'sushi/chain'
+import { ChainId } from 'sushi/chain'
 import { Amount, Price, type Type } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import type { Address, GetFunctionArgs } from 'viem'
@@ -8,7 +8,7 @@ import z from 'zod'
 import { legValidator, tradeValidator } from './validator'
 
 export interface UseTradeParams {
-  chainId: Exclude<ChainId, TestnetChainId>
+  chainId: ChainId
   fromToken: Type | undefined
   toToken: Type | undefined
   amount: Amount<Type> | undefined

@@ -95,7 +95,7 @@ interface Environment {
 }
 
 function getEnvironment(
-  chainId: Exclude<ChainId, TestnetChainId>,
+  chainId: ChainId,
   lps: LiquidityProviders[],
 ): Environment {
   let network
