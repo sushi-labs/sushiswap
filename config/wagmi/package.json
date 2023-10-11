@@ -16,12 +16,6 @@
   "license": "MIT",
   "author": "LufyCZ <me@lufy.cz>",
   "sideEffects": false,
-  "main": "dist/index.js",
-  "source": "src/index.ts",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -37,6 +31,9 @@
     },
     "./package.json": "./package.json"
   },
+  "main": "dist/index.js",
+  "source": "src/index.ts",
+  "types": "dist/index.d.ts",
   "typesVersions": {
     "*": {
       "chains": [
@@ -47,6 +44,9 @@
       ]
     }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",

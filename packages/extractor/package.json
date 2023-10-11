@@ -27,44 +27,27 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
     "prepublishOnly": "pnpm build",
-    "start": "npx tsx examples/server.ts",
-    "test": "jest --passWithNoTests",
-    "test:server": "npx tsx examples/extractor.ts",
-    "test:load": "artillery run test/load.yml"
+    "test": "jest --passWithNoTests"
   },
   "dependencies": {
     "@cryptoalgebra/integral-core": "0.2.0",
     "@cryptoalgebra/integral-periphery": "0.2.0",
-    "@sushiswap/abi": "workspace:*",
-    "@sushiswap/amm": "workspace:*",
+    "@sentry/node": "7.68.0",
     "@sushiswap/router": "workspace:*",
-    "@sushiswap/route-processor-sdk": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",
-    "@sushiswap/router-config": "workspace:*",
-    "@sushiswap/viem-config": "workspace:*",
     "@uniswap/v3-core": "1.0.1",
-    "@sentry/node": "7.68.0",
     "abitype": "0.9.3",
-    "ethers": "5.7.2",
     "sushi": "workspace:*",
-    "viem": "1.16.2",
-    "wagmi": "1.4.3-cjs"
+    "viem": "1.16.2"
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/node18": "18.2.2",
     "@tsconfig/strictest": "2.0.2",
-    "@types/cors": "2.8.13",
-    "@types/express": "4.17.17",
     "@types/node": "18",
-    "artillery": "2.0.0-35",
-    "cors": "2.8.5",
-    "express": "4.18.2",
-    "express-rate-limit": "6.9.0",
-    "typescript": "5.2.2",
-    "zod": "3.21.4"
+    "typescript": "5.2.2"
   }
 }

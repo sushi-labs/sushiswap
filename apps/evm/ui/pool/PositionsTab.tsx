@@ -1,4 +1,4 @@
-import { Protocol } from '@sushiswap/database'
+import { Protocol } from '@sushiswap/client'
 import {
   Select,
   SelectContent,

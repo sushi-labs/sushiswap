@@ -31,8 +31,8 @@
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/typescript-config": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "29.5.5",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
@@ -44,20 +44,20 @@
     "typescript": "5.2.2"
   },
   "peerDependencies": {
-    "sushi": "*",
     "react": "*",
     "react-dom": "*",
+    "sushi": "*",
     "tailwindcss": "*"
   },
   "peerDependenciesMeta": {
-    "sushi": {
-      "optional": true
-    },
     "react": {
       "optional": false
     },
     "react-dom": {
       "optional": false
+    },
+    "sushi": {
+      "optional": true
     },
     "tailwindcss": {
       "optional": true

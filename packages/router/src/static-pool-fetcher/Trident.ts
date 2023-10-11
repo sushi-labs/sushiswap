@@ -180,13 +180,3 @@ const pairsUnique = (
   })
   return Array.from(pairsMap.values())
 }
-
-const tokensUnique = (_pairsUnique: [Token, Token][]) =>
-  Array.from(
-    new Set(
-      _pairsUnique.reduce<Token[]>(
-        (previousValue, currentValue) => previousValue.concat(currentValue),
-        [],
-      ),
-    ),
-  )

@@ -4,12 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "storybook dev -p 6007",
     "build": "storybook build --docs",
     "build-storybook": "storybook build --docs",
-    "start": "serve storybook-static",
     "chromatic": "chromatic --exit-zero-on-changes",
-    "clean": "rm -rf .turbo && rm -rf node_modules"
+    "clean": "rm -rf .turbo && rm -rf node_modules",
+    "dev": "storybook dev -p 6007",
+    "start": "serve storybook-static"
   },
   "dependencies": {
     "@heroicons/react": "2.0.13",

@@ -1,15 +1,6 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
-import {
-  Amount,
-  defaultQuoteCurrency,
-  Native,
-  tryParseAmount,
-  Type,
-} from 'sushi/currency'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { ZERO } from 'sushi'
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
 import {
   Address,
@@ -22,20 +13,29 @@ import { useTokenWithCache } from '@sushiswap/wagmi/future'
 import { useClientTrade } from '@sushiswap/wagmi/future/hooks'
 import { useCarbonOffset } from 'lib/swap/useCarbonOffset'
 import { useSwapApi } from 'lib/swap/useSwapApi'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useLogger } from 'next-axiom'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
-  createContext,
   FC,
+  createContext,
   useCallback,
   useContext,
   useEffect,
   useMemo,
   useState,
 } from 'react'
+import { ZERO } from 'sushi'
+import { ChainId, TestnetChainId } from 'sushi/chain'
+import {
+  Amount,
+  Native,
+  Type,
+  defaultQuoteCurrency,
+  tryParseAmount,
+} from 'sushi/currency'
 import { isAddress } from 'viem'
 
-import { isSwapApiEnabledChainId, SUPPORTED_CHAIN_IDS } from '../../../config'
+import { SUPPORTED_CHAIN_IDS, isSwapApiEnabledChainId } from '../../../config'
 
 const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'
@@ -243,7 +243,10 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
     )
 
     // Derive chainId from defaultedParams
-    const chainId = Number(defaultedParams.get('chainId')) as ChainId
+    const chainId = Number(defaultedParams.get('chainId')) as Exclude<
+      ChainId,
+      TestnetChainId
+    >
 
     useEffect(() => {
       const unwatch = watchNetwork(({ chain }) => {

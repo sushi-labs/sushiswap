@@ -1,5 +1,5 @@
 import { getReservesAbi, tridentConstantPoolAbi } from 'sushi/abi'
-import { computeSushiSwapV2PoolAddress } from '@sushiswap/amm'
+import { computeSushiSwapV2PoolAddress } from '@sushiswap/v2-sdk'
 import { Token } from 'sushi/currency'
 import { ConstantProductPoolCode, LiquidityProviders } from '@sushiswap/router'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
