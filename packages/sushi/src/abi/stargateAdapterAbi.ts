@@ -56,7 +56,9 @@ export const stargateAdapterAbi = [
   {
     inputs: [],
     name: 'rp',
-    outputs: [{ internalType: 'contract IRouteProcessor', name: '', type: 'address' }],
+    outputs: [
+      { internalType: 'contract IRouteProcessor', name: '', type: 'address' },
+    ],
     stateMutability: 'view',
     type: 'function',
   },
@@ -91,14 +93,18 @@ export const stargateAdapterAbi = [
   {
     inputs: [],
     name: 'stargateRouter',
-    outputs: [{ internalType: 'contract IStargateRouter', name: '', type: 'address' }],
+    outputs: [
+      { internalType: 'contract IStargateRouter', name: '', type: 'address' },
+    ],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [],
     name: 'stargateWidget',
-    outputs: [{ internalType: 'contract IStargateWidget', name: '', type: 'address' }],
+    outputs: [
+      { internalType: 'contract IStargateWidget', name: '', type: 'address' },
+    ],
     stateMutability: 'view',
     type: 'function',
   },

@@ -1,7 +1,11 @@
 export const sushiXSwap2Abi = [
   {
     inputs: [
-      { internalType: 'contract IRouteProcessor', name: '_rp', type: 'address' },
+      {
+        internalType: 'contract IRouteProcessor',
+        name: '_rp',
+        type: 'address',
+      },
       { internalType: 'address', name: '_weth', type: 'address' },
     ],
     stateMutability: 'nonpayable',
@@ -11,8 +15,18 @@ export const sushiXSwap2Abi = [
   {
     anonymous: false,
     inputs: [
-      { indexed: true, internalType: 'address', name: 'previousOwner', type: 'address' },
-      { indexed: true, internalType: 'address', name: 'newOwner', type: 'address' },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'previousOwner',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'newOwner',
+        type: 'address',
+      },
     ],
     name: 'OwnershipTransferred',
     type: 'event',
@@ -21,10 +35,30 @@ export const sushiXSwap2Abi = [
     anonymous: false,
     inputs: [
       { indexed: true, internalType: 'bytes2', name: 'refId', type: 'bytes2' },
-      { indexed: true, internalType: 'address', name: 'sender', type: 'address' },
-      { indexed: false, internalType: 'address', name: 'adapter', type: 'address' },
-      { indexed: false, internalType: 'address', name: 'tokenIn', type: 'address' },
-      { indexed: false, internalType: 'uint256', name: 'amountIn', type: 'uint256' },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'sender',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'adapter',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'tokenIn',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amountIn',
+        type: 'uint256',
+      },
       { indexed: false, internalType: 'address', name: 'to', type: 'address' },
     ],
     name: 'SushiXSwapOnSrc',
@@ -75,8 +109,20 @@ export const sushiXSwap2Abi = [
     stateMutability: 'view',
     type: 'function',
   },
-  { inputs: [], name: 'pause', outputs: [], stateMutability: 'nonpayable', type: 'function' },
-  { inputs: [], name: 'renounceOwnership', outputs: [], stateMutability: 'nonpayable', type: 'function' },
+  {
+    inputs: [],
+    name: 'pause',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'renounceOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
   {
     inputs: [
       { internalType: 'address', name: '_token', type: 'address' },
@@ -87,11 +133,19 @@ export const sushiXSwap2Abi = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
-  { inputs: [], name: 'resume', outputs: [], stateMutability: 'nonpayable', type: 'function' },
+  {
+    inputs: [],
+    name: 'resume',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
   {
     inputs: [],
     name: 'rp',
-    outputs: [{ internalType: 'contract IRouteProcessor', name: '', type: 'address' }],
+    outputs: [
+      { internalType: 'contract IRouteProcessor', name: '', type: 'address' },
+    ],
     stateMutability: 'view',
     type: 'function',
   },
@@ -165,7 +219,9 @@ export const sushiXSwap2Abi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'address', name: 'newRouteProcessor', type: 'address' }],
+    inputs: [
+      { internalType: 'address', name: 'newRouteProcessor', type: 'address' },
+    ],
     name: 'updateRouteProcessor',
     outputs: [],
     stateMutability: 'nonpayable',

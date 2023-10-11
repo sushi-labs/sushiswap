@@ -1,7 +1,11 @@
 'use client'
 
 import { sushiXSwap2Abi } from '@sushiswap/abi'
-import { SUSHIXSWAP_2_ADDRESS, SushiXSwap2ChainId, isSushiXSwap2ChainId } from '@sushiswap/sushixswap-sdk'
+import {
+  SUSHIXSWAP_2_ADDRESS,
+  SushiXSwap2ChainId,
+  isSushiXSwap2ChainId,
+} from '@sushiswap/sushixswap-sdk'
 import { useMemo } from 'react'
 import { WalletClient } from 'viem'
 import { usePublicClient, useWalletClient } from 'wagmi'
@@ -13,7 +17,9 @@ export const getSushiXSwap2ContractConfig = (chainId: SushiXSwap2ChainId) => ({
   abi: sushiXSwap2Abi,
 })
 
-export function useSushiXSwap2Contract(chainId: SushiXSwap2ChainId | undefined) {
+export function useSushiXSwap2Contract(
+  chainId: SushiXSwap2ChainId | undefined,
+) {
   const publicClient = usePublicClient({ chainId })
   const { data: walletClient } = useWalletClient({ chainId })
 
@@ -27,4 +33,6 @@ export function useSushiXSwap2Contract(chainId: SushiXSwap2ChainId | undefined) 
   }, [chainId, publicClient, walletClient])
 }
 
-export type SushiXSwapV2 = NonNullable<ReturnType<typeof useSushiXSwap2Contract>>
+export type SushiXSwapV2 = NonNullable<
+  ReturnType<typeof useSushiXSwap2Contract>
+>
