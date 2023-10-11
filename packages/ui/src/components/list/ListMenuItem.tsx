@@ -5,7 +5,11 @@ import { ArrowSmallRightIcon } from '@heroicons/react/20/solid'
 import classNames from 'classnames'
 import React, { Fragment, ReactNode, useState } from 'react'
 
-import { ExtractProps, IconComponent, PolymorphicComponentProps } from '../../types'
+import {
+  ExtractProps,
+  IconComponent,
+  PolymorphicComponentProps,
+} from '../../types'
 
 interface Props {
   disabled?: boolean
@@ -18,13 +22,23 @@ interface Props {
   }
 }
 
-export type ListMenuItemProps<P extends React.ElementType, C extends React.ElementType> = {
+export type ListMenuItemProps<
+  P extends React.ElementType,
+  C extends React.ElementType,
+> = {
   icon?: P
-  iconProps?: ExtractProps<P> & { width?: number; height?: number; className?: string }
+  iconProps?: ExtractProps<P> & {
+    width?: number
+    height?: number
+    className?: string
+  }
 } & PolymorphicComponentProps<C, Props>
 
-export type ListMenuItemComponent = <P extends React.ElementType = 'svg', C extends React.ElementType = 'button'>(
-  props: ListMenuItemProps<P, C>
+export type ListMenuItemComponent = <
+  P extends React.ElementType = 'svg',
+  C extends React.ElementType = 'button',
+>(
+  props: ListMenuItemProps<P, C>,
 ) => React.ReactElement | null
 
 export const ListMenuItem: ListMenuItemComponent = ({
@@ -54,12 +68,16 @@ export const ListMenuItem: ListMenuItemComponent = ({
         className,
         disabled ? 'opacity-40 !pointer-events-none cursor-default' : '',
         subtitle ? 'items-start' : 'items-center',
-        'hover:bg-muted relative flex gap-4 px-3 py-3 w-full cursor-pointer rounded-xl'
+        'hover:bg-muted relative flex gap-4 px-3 py-3 w-full cursor-pointer rounded-xl',
       )}
     >
       {Icon && (
         <div
-          style={{ minWidth: iconProps?.width ?? 18, minHeight: iconProps?.height ?? 18, paddingTop: subtitle ? 1 : 0 }}
+          style={{
+            minWidth: iconProps?.width ?? 18,
+            minHeight: iconProps?.height ?? 18,
+            paddingTop: subtitle ? 1 : 0,
+          }}
         >
           {React.createElement(Icon, {
             ...iconProps,
@@ -71,9 +89,13 @@ export const ListMenuItem: ListMenuItemComponent = ({
         </div>
       )}
       <div className="flex flex-col gap-0.5 items-start">
-        <span className="text-sm font-medium text-gray-900 dark:text-slate-200">{title}</span>
+        <span className="text-sm font-medium text-gray-900 dark:text-slate-200">
+          {title}
+        </span>
         {subtitle && (
-          <span className="text-sm font-normal text-gray-600 dark:text-slate-400 text-left">{subtitle}</span>
+          <span className="text-sm font-normal text-gray-600 dark:text-slate-400 text-left">
+            {subtitle}
+          </span>
         )}
       </div>
       <Transition
@@ -89,7 +111,11 @@ export const ListMenuItem: ListMenuItemComponent = ({
       >
         <div className="absolute right-0 top-0 bottom-0 flex justify-center items-center">
           {HoverIcon ? (
-            <HoverIcon {...hoverIconProps} width={hoverIconProps?.width ?? 20} height={hoverIconProps?.height ?? 20} />
+            <HoverIcon
+              {...hoverIconProps}
+              width={hoverIconProps?.width ?? 20}
+              height={hoverIconProps?.height ?? 20}
+            />
           ) : (
             <ArrowSmallRightIcon
               {...hoverIconProps}

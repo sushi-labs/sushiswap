@@ -1,10 +1,14 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
 import './lib/wagmi.js'
 
-import { totalsAbi } from '@sushiswap/abi'
-import { BENTOBOX_ADDRESS, BentoBoxChainId, isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { ChainId } from '@sushiswap/chain'
-import { USDC_ADDRESS } from '@sushiswap/currency'
+import { totalsAbi } from 'sushi/abi'
+import {
+  BENTOBOX_ADDRESS,
+  BentoBoxChainId,
+  isBentoBoxChainId,
+} from '@sushiswap/bentobox-sdk'
+import { ChainId } from 'sushi/chain'
+import { USDC_ADDRESS } from 'sushi/currency'
 import { Prisma, PrismaClient, Protocol, Token } from '@sushiswap/database'
 import { SWAP_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 import {
@@ -41,20 +45,31 @@ export async function prices() {
       const price = Price.USD
       const base = USDC_ADDRESS[chainId as keyof typeof USDC_ADDRESS]
       if (!isAddress(base) || !base) {
-        console.log(`Base token (${base}) is not a valid address, given the chainId: ${chainId}. SKIPPING`)
+        console.log(
+          `Base token (${base}) is not a valid address, given the chainId: ${chainId}. SKIPPING`,
+        )
         continue
       }
-      console.log(`Arguments: CHAIN_ID: ${chainId}, BASE: ${base}, PRICE: ${price}`)
+      console.log(
+        `Arguments: CHAIN_ID: ${chainId}, BASE: ${base}, PRICE: ${price}`,
+      )
 
       const baseToken = await getBaseToken(client, chainId, base)
       if (!baseToken) {
-        console.log(`Base token (${base}) does not exist in the database. chainId: ${chainId}. SKIPPING`)
+        console.log(
+          `Base token (${base}) does not exist in the database. chainId: ${chainId}. SKIPPING`,
+        )
         continue
       }
       const minimumLiquidity = 500 * 10 ** baseToken.decimals // 500 USDC
       const pools = await getPools(client, chainId)
       const { rPools, tokens } = await transform(chainId, pools)
-      const tokensToUpdate = calculatePrices(rPools, minimumLiquidity, baseToken, tokens)
+      const tokensToUpdate = calculatePrices(
+        rPools,
+        minimumLiquidity,
+        baseToken,
+        tokens,
+      )
       await updateTokenPrices(client, price, tokensToUpdate)
     }
     const endTime = performance.now()
@@ -67,7 +82,11 @@ export async function prices() {
   }
 }
 
-async function getBaseToken(client: PrismaClient, chainId: ChainId, address: string) {
+async function getBaseToken(
+  client: PrismaClient,
+  chainId: ChainId,
+  address: string,
+) {
   const baseToken = await client.token.findFirst({
     select: {
       address: true,
@@ -97,7 +116,9 @@ async function getPools(client: PrismaClient, chainId: ChainId) {
     if (!cursor) {
       result = await getPoolsByPagination(client, chainId, batchSize)
     } else {
-      result = await getPoolsByPagination(client, chainId, batchSize, 1, { id: cursor })
+      result = await getPoolsByPagination(client, chainId, batchSize, 1, {
+        id: cursor,
+      })
     }
 
     cursor = result.length === batchSize ? result[result.length - 1]?.id : null
@@ -105,14 +126,19 @@ async function getPools(client: PrismaClient, chainId: ChainId) {
     results.push(...result)
     const requestEndTime = performance.now()
     console.log(
-      `Fetched a batch of pools with ${result.length} (${((requestEndTime - requestStartTime) / 1000).toFixed(
-        1
-      )}s). cursor: ${cursor}, total: ${totalCount}`
+      `Fetched a batch of pools with ${result.length} (${(
+        (requestEndTime - requestStartTime) /
+        1000
+      ).toFixed(1)}s). cursor: ${cursor}, total: ${totalCount}`,
     )
   } while (cursor != null)
   const endTime = performance.now()
 
-  console.log(`Fetched ${results.length} pools (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+  console.log(
+    `Fetched ${results.length} pools (${((endTime - startTime) / 1000).toFixed(
+      1,
+    )}s). `,
+  )
   return results
 }
 
@@ -121,7 +147,7 @@ async function getPoolsByPagination(
   chainId: ChainId,
   take: number,
   skip?: number,
-  cursor?: Prisma.PoolWhereUniqueInput
+  cursor?: Prisma.PoolWhereUniqueInput,
 ): Promise<Pool[]> {
   return client.sushiPool.findMany({
     take,
@@ -139,7 +165,12 @@ async function getPoolsByPagination(
     where: {
       chainId,
       protocol: {
-        in: [Protocol.SUSHISWAP_V2, Protocol.SUSHISWAP_V3, Protocol.BENTOBOX_CLASSIC, Protocol.BENTOBOX_STABLE],
+        in: [
+          Protocol.SUSHISWAP_V2,
+          Protocol.SUSHISWAP_V3,
+          Protocol.BENTOBOX_CLASSIC,
+          Protocol.BENTOBOX_STABLE,
+        ],
       },
       token0: {
         status: 'APPROVED',
@@ -153,24 +184,46 @@ async function getPoolsByPagination(
 
 async function transform(chainId: ChainId, pools: Pool[]) {
   const tokens: Map<string, Token> = new Map()
-  const stablePools = pools.filter((pool) => pool.protocol === Protocol.BENTOBOX_STABLE)
+  const stablePools = pools.filter(
+    (pool) => pool.protocol === Protocol.BENTOBOX_STABLE,
+  )
   const blockNumber = await fetchBlockNumber({ chainId })
   console.log(`ChainId ${chainId} got block number: ${blockNumber}. `)
-  const rebases = isBentoBoxChainId(chainId) ? await fetchRebases(stablePools, chainId, blockNumber) : undefined
+  const rebases = isBentoBoxChainId(chainId)
+    ? await fetchRebases(stablePools, chainId, blockNumber)
+    : undefined
 
   const constantProductPoolIds = pools
-    .filter((p) => p.protocol === Protocol.BENTOBOX_CLASSIC || p.protocol === Protocol.SUSHISWAP_V2)
+    .filter(
+      (p) =>
+        p.protocol === Protocol.BENTOBOX_CLASSIC ||
+        p.protocol === Protocol.SUSHISWAP_V2,
+    )
     .map((p) => p.id)
   const stablePoolIds = stablePools.map((p) => p.id)
-  const concentratedLiquidityPools = pools.filter((p) => p.protocol === Protocol.SUSHISWAP_V3)
+  const concentratedLiquidityPools = pools.filter(
+    (p) => p.protocol === Protocol.SUSHISWAP_V3,
+  )
 
-  const [constantProductReserves, stableReserves, concentratedLiquidityReserves, v3Info] = await Promise.all([
+  const [
+    constantProductReserves,
+    stableReserves,
+    concentratedLiquidityReserves,
+    v3Info,
+  ] = await Promise.all([
     getConstantProductPoolReserves(constantProductPoolIds, blockNumber),
     getStablePoolReserves(stablePoolIds, blockNumber),
-    getConcentratedLiquidityPoolReserves(concentratedLiquidityPools, blockNumber),
+    getConcentratedLiquidityPoolReserves(
+      concentratedLiquidityPools,
+      blockNumber,
+    ),
     fetchV3Info(concentratedLiquidityPools, chainId, blockNumber),
   ])
-  const poolsWithReserves = new Map([...constantProductReserves, ...stableReserves, ...concentratedLiquidityReserves])
+  const poolsWithReserves = new Map([
+    ...constantProductReserves,
+    ...stableReserves,
+    ...concentratedLiquidityReserves,
+  ])
   let classicCount = 0
   let stableCount = 0
   let clCount = 0
@@ -192,7 +245,10 @@ async function transform(chainId: ChainId, pools: Pool[]) {
     }
     if (!tokens.has(token0.address)) tokens.set(token0.address, pool.token0)
     if (!tokens.has(token1.address)) tokens.set(token1.address, pool.token1)
-    if (pool.protocol === Protocol.BENTOBOX_CLASSIC || pool.protocol === Protocol.SUSHISWAP_V2) {
+    if (
+      pool.protocol === Protocol.BENTOBOX_CLASSIC ||
+      pool.protocol === Protocol.SUSHISWAP_V2
+    ) {
       rPools.push(
         new ConstantProductRPool(
           pool.address as Address,
@@ -200,8 +256,8 @@ async function transform(chainId: ChainId, pools: Pool[]) {
           token1 as RToken,
           pool.swapFee,
           reserves.reserve0,
-          reserves.reserve1
-        )
+          reserves.reserve1,
+        ),
       )
       classicCount++
     } else if (pool.protocol === Protocol.BENTOBOX_STABLE) {
@@ -219,8 +275,8 @@ async function transform(chainId: ChainId, pools: Pool[]) {
             pool.token0.decimals,
             pool.token1.decimals,
             total0,
-            total1
-          )
+            total1,
+          ),
         )
         stableCount++
       }
@@ -240,20 +296,24 @@ async function transform(chainId: ChainId, pools: Pool[]) {
             v3.liquidity,
             v3.sqrtPriceX96,
             v3.tick,
-            []
-          )
+            [],
+          ),
         )
         clCount++
       }
     }
   })
   console.log(
-    `Transformed ${rPools.length} pools and ${tokens.size} tokens. Classic: ${classicCount}, Stable: ${stableCount}, CL: ${clCount}`
+    `Transformed ${rPools.length} pools and ${tokens.size} tokens. Classic: ${classicCount}, Stable: ${stableCount}, CL: ${clCount}`,
   )
   return { rPools, tokens }
 }
 
-async function fetchRebases(pools: Pool[], chainId: BentoBoxChainId, blockNumber: bigint) {
+async function fetchRebases(
+  pools: Pool[],
+  chainId: BentoBoxChainId,
+  blockNumber: bigint,
+) {
   const sortedTokens = poolsToUniqueTokens(pools)
 
   const totals = await readContracts({
@@ -266,7 +326,7 @@ async function fetchRebases(pools: Pool[], chainId: BentoBoxChainId, blockNumber
           chainId: chainId,
           abi: totalsAbi,
           functionName: 'totals',
-        } as const)
+        }) as const,
     ),
     blockNumber,
   })
@@ -280,7 +340,11 @@ async function fetchRebases(pools: Pool[], chainId: BentoBoxChainId, blockNumber
   return rebases
 }
 
-async function fetchV3Info(pools: Pool[], chainId: ChainId, blockNumber: bigint) {
+async function fetchV3Info(
+  pools: Pool[],
+  chainId: ChainId,
+  blockNumber: bigint,
+) {
   const [slot0, liquidity] = await Promise.all([
     readContracts({
       allowFailure: true,
@@ -294,11 +358,27 @@ async function fetchV3Info(pools: Pool[], chainId: ChainId, blockNumber: bigint)
                 inputs: [],
                 name: 'slot0',
                 outputs: [
-                  { internalType: 'uint160', name: 'sqrtPriceX96', type: 'uint160' },
+                  {
+                    internalType: 'uint160',
+                    name: 'sqrtPriceX96',
+                    type: 'uint160',
+                  },
                   { internalType: 'int24', name: 'tick', type: 'int24' },
-                  { internalType: 'uint16', name: 'observationIndex', type: 'uint16' },
-                  { internalType: 'uint16', name: 'observationCardinality', type: 'uint16' },
-                  { internalType: 'uint16', name: 'observationCardinalityNext', type: 'uint16' },
+                  {
+                    internalType: 'uint16',
+                    name: 'observationIndex',
+                    type: 'uint16',
+                  },
+                  {
+                    internalType: 'uint16',
+                    name: 'observationCardinality',
+                    type: 'uint16',
+                  },
+                  {
+                    internalType: 'uint16',
+                    name: 'observationCardinalityNext',
+                    type: 'uint16',
+                  },
                   { internalType: 'uint8', name: 'feeProtocol', type: 'uint8' },
                   { internalType: 'bool', name: 'unlocked', type: 'bool' },
                 ],
@@ -308,7 +388,7 @@ async function fetchV3Info(pools: Pool[], chainId: ChainId, blockNumber: bigint)
             ],
             functionName: 'slot0',
             blockNumber,
-          } as const)
+          }) as const,
       ),
     }),
     readContracts({
@@ -322,14 +402,16 @@ async function fetchV3Info(pools: Pool[], chainId: ChainId, blockNumber: bigint)
               {
                 inputs: [],
                 name: 'liquidity',
-                outputs: [{ internalType: 'uint128', name: '', type: 'uint128' }],
+                outputs: [
+                  { internalType: 'uint128', name: '', type: 'uint128' },
+                ],
                 stateMutability: 'view',
                 type: 'function',
               },
             ],
             functionName: 'liquidity',
             blockNumber,
-          } as const)
+          }) as const,
       ),
     }),
   ])
@@ -382,27 +464,41 @@ function poolsToUniqueTokens(pools: Pool[]) {
 function calculatePrices(
   pools: RPool[],
   minimumLiquidity: number | undefined,
-  baseToken: { symbol: string; address: string; name: string; decimals: number },
-  tokens: Map<string, Token>
+  baseToken: {
+    symbol: string
+    address: string
+    name: string
+    decimals: number
+  },
+  tokens: Map<string, Token>,
 ) {
   const startTime = performance.now()
   const results = calcTokenPrices(pools, baseToken, minimumLiquidity)
   const endTime = performance.now()
-  console.log(`calcTokenPrices() found ${results.size} prices (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+  console.log(
+    `calcTokenPrices() found ${results.size} prices (${(
+      (endTime - startTime) /
+      1000
+    ).toFixed(1)}s). `,
+  )
 
   const tokensWithPrices = []
 
   for (const [rToken, value] of results.entries()) {
     const token = tokens.get(rToken.address)
     if (!token) {
-      console.log(`Token not found: ${rToken.symbol}~${rToken.address}~${value}`)
+      console.log(
+        `Token not found: ${rToken.symbol}~${rToken.address}~${value}`,
+      )
       continue
     }
     if (value === 0) {
       console.log(`Price null: ${rToken.symbol}~${rToken.address}~${value}`)
     }
 
-    const price = Number((value / 10 ** (baseToken.decimals - token.decimals)).toFixed(12))
+    const price = Number(
+      (value / 10 ** (baseToken.decimals - token.decimals)).toFixed(12),
+    )
     if (price > Number.MAX_SAFE_INTEGER) continue
     // console.log(`${token.symbol}~${token.address}~${price}`)
     tokensWithPrices.push({ id: token.id, price })
@@ -411,7 +507,11 @@ function calculatePrices(
   return tokensWithPrices
 }
 
-async function updateTokenPrices(client: PrismaClient, price: Price, tokens: { id: string; price: number }[]) {
+async function updateTokenPrices(
+  client: PrismaClient,
+  price: Price,
+  tokens: { id: string; price: number }[],
+) {
   const startTime = performance.now()
   const batchSize = 250
   let updatedCount = 0
@@ -419,7 +519,10 @@ async function updateTokenPrices(client: PrismaClient, price: Price, tokens: { i
   for (let i = 0; i < tokens.length; i += batchSize) {
     const batch = tokens.slice(i, i + batchSize)
     const requests = batch.map((token) => {
-      const data = price === Price.USD ? { derivedUSD: token.price } : { derivedETH: token.price }
+      const data =
+        price === Price.USD
+          ? { derivedUSD: token.price }
+          : { derivedETH: token.price }
       return client.token.update({
         select: { id: true }, // select only the `id` field, otherwise it returns everything and we don't use the data after updating.
         where: { id: token.id },
@@ -431,7 +534,11 @@ async function updateTokenPrices(client: PrismaClient, price: Price, tokens: { i
     updatedCount += responses.length
   }
   const endTime = performance.now()
-  console.log(`Updated ${updatedCount} prices (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+  console.log(
+    `Updated ${updatedCount} prices (${((endTime - startTime) / 1000).toFixed(
+      1,
+    )}s). `,
+  )
 }
 
 interface Pool {

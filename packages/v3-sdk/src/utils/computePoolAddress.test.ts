@@ -1,4 +1,4 @@
-import { Token } from '@sushiswap/currency'
+import { Token } from 'sushi/currency'
 
 import { FeeAmount } from '../constants'
 import { computePoolAddress } from './computePoolAddress'

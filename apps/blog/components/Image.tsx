@@ -13,7 +13,10 @@ interface ImageProps {
   objectFit?: 'cover' | 'contain'
   className?: string
   image: {
-    attributes: Pick<ImageType['attributes'], 'provider_metadata' | 'url' | 'width' | 'height' | 'alternativeText'>
+    attributes: Pick<
+      ImageType['attributes'],
+      'provider_metadata' | 'url' | 'width' | 'height' | 'alternativeText'
+    >
   }
 }
 

@@ -1,6 +1,4 @@
 import { ArrowDownIcon } from '@heroicons/react/24/outline'
-import { ChainId } from '@sushiswap/chain'
-import { Native, SUSHI } from '@sushiswap/currency'
 import { useInterval } from '@sushiswap/hooks'
 import { LinkInternal, typographyVariants } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
@@ -8,6 +6,8 @@ import { Container } from '@sushiswap/ui/components/container'
 import { CurrencyInput } from '@sushiswap/wagmi/future/components/Web3Input/Currency'
 import { motion } from 'framer-motion'
 import React, { FC, useEffect, useState } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Native, SUSHI } from 'sushi/currency'
 
 const TITLES = ['Whenever', 'Wherever', 'Whoever']
 const VALUES = [
@@ -42,11 +42,18 @@ export const Hero: FC = () => {
           <div className="flex flex-col">
             <div className="flex flex-col">
               <h1 className={typographyVariants({ variant: 'h1' })}>
-                Buy and Sell Instantly on Sushi. <span className="text-blue"> {TITLES[index]}.</span>
+                Buy and Sell Instantly on Sushi.{' '}
+                <span className="text-blue"> {TITLES[index]}.</span>
               </h1>
-              <p className={typographyVariants({ variant: 'lead', className: 'max-w-[500px]' })}>
-                Unlock the world of cryptocurrency trading. Experience the freedom to trade over 400 tokens instantly,
-                no registration needed.
+              <p
+                className={typographyVariants({
+                  variant: 'lead',
+                  className: 'max-w-[500px]',
+                })}
+              >
+                Unlock the world of cryptocurrency trading. Experience the
+                freedom to trade over 400 tokens instantly, no registration
+                needed.
               </p>
             </div>
           </div>
@@ -71,7 +78,11 @@ export const Hero: FC = () => {
                   <Button size="sm" variant="secondary">
                     Swap
                   </Button>
-                  <Button className="pointer-events-none opacity-40" size="sm" variant="secondary">
+                  <Button
+                    className="pointer-events-none opacity-40"
+                    size="sm"
+                    variant="secondary"
+                  >
                     Limit
                   </Button>
                 </div>
@@ -80,8 +91,6 @@ export const Hero: FC = () => {
                 type="INPUT"
                 className="p-3 bg-white dark:bg-slate-800 rounded-xl"
                 value={valueIndex >= 0 ? VALUES[valueIndex].value0 : ''}
-                onChange={() => {}}
-                onSelect={() => {}}
                 currency={Native.onChain(ChainId.ETHEREUM)}
                 chainId={ChainId.ETHEREUM}
                 disabled={true}
@@ -92,7 +101,10 @@ export const Hero: FC = () => {
                   className="z-10 p-2 transition-all bg-gray-100 border-white rounded-full cursor-pointer group hover:bg-gray-200 hover:dark:bg-slate-700 dark:bg-slate-900"
                 >
                   <div className="transition-transform rotate-0 group-hover:rotate-180">
-                    <ArrowDownIcon strokeWidth={3} className="w-4 h-4 text-blue" />
+                    <ArrowDownIcon
+                      strokeWidth={3}
+                      className="w-4 h-4 text-blue"
+                    />
                   </div>
                 </button>
               </div>
@@ -114,7 +126,9 @@ export const Hero: FC = () => {
                 className="mt-4"
               >
                 <Button size="xl" asChild fullWidth>
-                  <LinkInternal href="https://www.sushi.com/swap">Trade Now</LinkInternal>
+                  <LinkInternal href="https://www.sushi.com/swap">
+                    Trade Now
+                  </LinkInternal>
                 </Button>
               </motion.div>
             </motion.div>

@@ -1,7 +1,12 @@
 'use client'
 
 import { Slot } from '@radix-ui/react-slot'
-import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/client'
+import {
+  GetPoolsArgs,
+  Pool,
+  usePoolCount,
+  usePoolsInfinite,
+} from '@sushiswap/client'
 import { Card, CardHeader, CardTitle, DataTable, Loader } from '@sushiswap/ui'
 import { ColumnDef, Row, SortingState, TableState } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
@@ -35,7 +40,9 @@ interface PositionsTableProps {
 
 export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
   const { chainIds, tokenSymbols, protocols, farmsOnly } = usePoolFilters()
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: 'liquidityUSD', desc: true },
+  ])
 
   const args = useMemo<GetPoolsArgs>(() => {
     return {
@@ -54,7 +61,11 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
     isValidating,
     setSize,
   } = usePoolsInfinite({ args, shouldFetch: true, swrConfig: useSWRConfig() })
-  const { data: poolCount } = usePoolCount({ args, shouldFetch: true, swrConfig: useSWRConfig() })
+  const { data: poolCount } = usePoolCount({
+    args,
+    shouldFetch: true,
+    swrConfig: useSWRConfig(),
+  })
   const data = useMemo(() => pools?.flat() || [], [pools])
 
   const state: Partial<TableState> = useMemo(() => {
@@ -71,13 +82,16 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
     (row: Row<Pool>, rowNode: ReactNode) => {
       if (onRowClick)
         return (
-          <Slot className="cursor-pointer" onClick={() => onRowClick?.(row.original)}>
+          <Slot
+            className="cursor-pointer"
+            onClick={() => onRowClick?.(row.original)}
+          >
             {rowNode}
           </Slot>
         )
       return rowNode
     },
-    [onRowClick]
+    [onRowClick],
   )
 
   return (
@@ -95,7 +109,11 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
         <CardHeader>
           <CardTitle>
             Pools{' '}
-            {poolCount?.count ? <span className="text-gray-400 dark:text-slate-500">({poolCount.count})</span> : null}
+            {poolCount?.count ? (
+              <span className="text-gray-400 dark:text-slate-500">
+                ({poolCount.count})
+              </span>
+            ) : null}
           </CardTitle>
         </CardHeader>
         <DataTable

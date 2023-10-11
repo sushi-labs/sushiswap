@@ -1,9 +1,15 @@
-import { Button, Container, LinkExternal, LinkInternal, Separator, typographyVariants } from '@sushiswap/ui'
+import {
+  Button,
+  Container,
+  LinkExternal,
+  LinkInternal,
+  Separator,
+  typographyVariants,
+} from '@sushiswap/ui'
 import { Metadata } from 'next'
 import React from 'react'
 import { CollabHubImage } from 'ui/(landing)/partner/CollabHubImage'
-
-import { FarmerImage } from '../../../ui/(landing)/partner/FarmerImage'
+import { FarmerImage } from 'ui/(landing)/partner/FarmerImage'
 
 export const metadata: Metadata = {
   title: 'Partner Portal',
@@ -15,8 +21,9 @@ const STEPS = [
     title: 'Outreach',
     description: (
       <>
-        Apply now and provide as much information as you can. We take user safety seriously and would like to surface
-        the most promising pools to our community.
+        Apply now and provide as much information as you can. We take user
+        safety seriously and would like to surface the most promising pools to
+        our community.
       </>
     ),
   },
@@ -50,8 +57,10 @@ export default async function PartnerPage() {
               Partner <br /> with Sushi
             </h1>
             <p className={typographyVariants({ variant: 'lead' })}>
-              Unlock new possibilities by partnering with us! We are excited to present a transformative opportunity for
-              businesses and projects looking to elevate their presence in the decentralized finance landscape.
+              Unlock new possibilities by partnering with us! We are excited to
+              present a transformative opportunity for businesses and projects
+              looking to elevate their presence in the decentralized finance
+              landscape.
             </p>
           </div>
         </div>
@@ -64,11 +73,14 @@ export default async function PartnerPage() {
               <div className="w-full">
                 <h2>Boost your liquidity pool ✨</h2>
                 <p>
-                  Enhance your liquidity pool{'`'}s performance by tapping into Sushi{`'`}s rewards system. By joining
-                  forces, you gain access to an array of incentives that bolster liquidity provision, thereby fostering
-                  deeper market engagement and participation. As users provide liquidity to your pool, they receive
-                  additional SUSHI rewards, creating a mutually beneficial ecosystem where both your project and
-                  liquidity providers thrive.
+                  Enhance your liquidity pool{'`'}s performance by tapping into
+                  Sushi{`'`}s rewards system. By joining forces, you gain access
+                  to an array of incentives that bolster liquidity provision,
+                  thereby fostering deeper market engagement and participation.
+                  As users provide liquidity to your pool, they receive
+                  additional SUSHI rewards, creating a mutually beneficial
+                  ecosystem where both your project and liquidity providers
+                  thrive.
                 </p>
               </div>
               <FarmerImage />
@@ -94,7 +106,15 @@ export default async function PartnerPage() {
                   viewBox="0 0 9 9"
                   className="hidden absolute right-full mr-6 top-2 text-blue md:mr-12 w-[calc(0.5rem+1px)] h-[calc(0.5rem+1px)] overflow-visible sm:block"
                 >
-                  <circle cx="4.5" cy="4.5" r="4.5" stroke="currentColor" className="fill-blue" strokeWidth="2" />
+                  <title>{step.title}</title>
+                  <circle
+                    cx="4.5"
+                    cy="4.5"
+                    r="4.5"
+                    stroke="currentColor"
+                    className="fill-blue"
+                    strokeWidth="2"
+                  />
                 </svg>
                 <div className="relative">
                   <h3 className="text-base font-semibold tracking-tight text-slate-900 dark:text-slate-200 pt-8 lg:pt-0">
@@ -104,7 +124,9 @@ export default async function PartnerPage() {
                     <p>{step.description}</p>
                   </div>
                   <span className="absolute left-0 top-0 lg:left-auto lg:right-full lg:mr-[calc(6.5rem+1px)]">
-                    <span className="whitespace-nowrap text-sm leading-6 dark:text-slate-400">{step.label}</span>
+                    <span className="whitespace-nowrap text-sm leading-6 dark:text-slate-400">
+                      {step.label}
+                    </span>
                   </span>
                 </div>
               </article>
@@ -113,8 +135,9 @@ export default async function PartnerPage() {
         </div>
         <div className="flex justify-center pt-10">
           <p className="text-sm text-center text-muted-foreground max-w-xl">
-            After the launch of the farm rewards, Sushi will continue to remain connected with your project and look to
-            further collaborate on any opportunity that arises.
+            After the launch of the farm rewards, Sushi will continue to remain
+            connected with your project and look to further collaborate on any
+            opportunity that arises.
           </p>
         </div>
         <div className="py-12">
@@ -123,12 +146,15 @@ export default async function PartnerPage() {
         <div className="prose dark:prose-invert">
           <h2>Get on the token list.</h2>
           <p>
-            Though it isn’t required for users to swap and supply liquidity in the protocol, our default token list
-            makes it easier for users to find tokens.
+            Though it isn’t required for users to swap and supply liquidity in
+            the protocol, our default token list makes it easier for users to
+            find tokens.
           </p>
           <p>
-            Projects that wish to have their token show in the default swap list will need to submit their information
-            via our partner portal. Otherwise users can search for any supported token via the contract address.
+            Projects that wish to have their token show in the default swap list
+            will need to submit their information via our partner portal.
+            Otherwise users can search for any supported token via the contract
+            address.
           </p>
           <LinkInternal href="/tokenlist-request">
             <Button className="!px-10 mt-4">Apply Now</Button>{' '}
@@ -143,22 +169,32 @@ export default async function PartnerPage() {
               <div className="w-full">
                 <h2>Sushi collaboration hub.</h2>
                 <p>
-                  Experience the convenience of streamlined communication and collaboration through our dedicated Sushi
-                  Collaboration Hub. Whether you have inquiries, or wish to explore synergies with other partners in the
-                  Sushi network, this hub serves as a central platform to facilitate meaningful interactions. By joining
-                  this vibrant community, you harness the collective wisdom of decentralized finance pioneers, forging
-                  connections that can lead to innovative breakthroughs.
+                  Experience the convenience of streamlined communication and
+                  collaboration through our dedicated Sushi Collaboration Hub.
+                  Whether you have inquiries, or wish to explore synergies with
+                  other partners in the Sushi network, this hub serves as a
+                  central platform to facilitate meaningful interactions. By
+                  joining this vibrant community, you harness the collective
+                  wisdom of decentralized finance pioneers, forging connections
+                  that can lead to innovative breakthroughs.
                 </p>
                 <p>Does one of the following apply to your project?</p>
                 <ul>
-                  <li>Your project is in the process of launching a product that may utilize Sushi.</li>
-                  <li>Your project has already launched a product that leverages Sushi.</li>
                   <li>
-                    Your project is currently leveraging Furo to stream salary or vest tokens and is seeking marketing
-                    support.
+                    Your project is in the process of launching a product that
+                    may utilize Sushi.
                   </li>
                   <li>
-                    Your project is currently supplying liquidity on Sushi and is seeking additional farm rewards.
+                    Your project has already launched a product that leverages
+                    Sushi.
+                  </li>
+                  <li>
+                    Your project is currently leveraging Furo to stream salary
+                    or vest tokens and is seeking marketing support.
+                  </li>
+                  <li>
+                    Your project is currently supplying liquidity on Sushi and
+                    is seeking additional farm rewards.
                   </li>
                 </ul>
               </div>

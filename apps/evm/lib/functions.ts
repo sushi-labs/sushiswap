@@ -1,7 +1,21 @@
-import { SushiSwapV2Pool, TridentConstantPool, TridentStablePool } from '@sushiswap/amm'
-import { ChainId } from '@sushiswap/chain'
+import {
+  SushiSwapV2Pool,
+  TridentConstantPool,
+  TridentStablePool,
+} from '@sushiswap/amm'
+import { ChainId } from 'sushi/chain'
 import { Pool, Protocol } from '@sushiswap/client'
-import { DAI, Native, Price, Token, tryParseAmount, Type, USDC, USDT, WBTC } from '@sushiswap/currency'
+import {
+  DAI,
+  Native,
+  Price,
+  Token,
+  tryParseAmount,
+  Type,
+  USDC,
+  USDT,
+  WBTC,
+} from 'sushi/currency'
 import {
   encodeSqrtRatioX96,
   FeeAmount,
@@ -18,25 +32,32 @@ import { useTicks } from './hooks'
 import { TickProcessed } from './hooks/useConcentratedActiveLiquidity'
 
 export const isTridentConstantPool = (
-  pool: SushiSwapV2Pool | TridentConstantPool | TridentStablePool | null
+  pool: SushiSwapV2Pool | TridentConstantPool | TridentStablePool | null,
 ): pool is TridentConstantPool => {
   return pool instanceof TridentConstantPool
 }
 
-export const isTridentStablePool = (pool: SushiSwapV2Pool | TridentStablePool | null): pool is TridentStablePool => {
+export const isTridentStablePool = (
+  pool: SushiSwapV2Pool | TridentStablePool | null,
+): pool is TridentStablePool => {
   return pool instanceof TridentStablePool
 }
 
 export const isSushiSwapV2Pool = (
-  pool: SushiSwapV2Pool | TridentConstantPool | TridentStablePool | null
+  pool: SushiSwapV2Pool | TridentConstantPool | TridentStablePool | null,
 ): pool is SushiSwapV2Pool => {
   return pool instanceof SushiSwapV2Pool
 }
 
 export const isTridentPoolProtocol = (protocol: Protocol) =>
-  ([Protocol.BENTOBOX_CLASSIC, Protocol.BENTOBOX_STABLE] as Protocol[]).includes(protocol)
+  (
+    [Protocol.BENTOBOX_CLASSIC, Protocol.BENTOBOX_STABLE] as Protocol[]
+  ).includes(protocol)
 
-export const incentiveRewardToToken = (chainId: ChainId, incentive: Pool['incentives'][0]): Token => {
+export const incentiveRewardToToken = (
+  chainId: ChainId,
+  incentive: Pool['incentives'][0],
+): Token => {
   return new Token({
     chainId,
     address: incentive.rewardToken.address,
@@ -45,14 +66,22 @@ export const incentiveRewardToToken = (chainId: ChainId, incentive: Pool['incent
   })
 }
 
-export function getTickToPrice(baseToken?: Token, quoteToken?: Token, tick?: number): Price<Token, Token> | undefined {
+export function getTickToPrice(
+  baseToken?: Token,
+  quoteToken?: Token,
+  tick?: number,
+): Price<Token, Token> | undefined {
   if (!baseToken || !quoteToken || typeof tick !== 'number') {
     return undefined
   }
   return tickToPrice(baseToken, quoteToken, tick)
 }
 
-export function tryParsePrice(baseToken?: Token, quoteToken?: Token, value?: string) {
+export function tryParsePrice(
+  baseToken?: Token,
+  quoteToken?: Token,
+  value?: string,
+) {
   if (!baseToken || !quoteToken || !value) {
     return undefined
   }
@@ -70,7 +99,7 @@ export function tryParsePrice(baseToken?: Token, quoteToken?: Token, value?: str
     baseToken,
     quoteToken,
     BigInt(10 ** decimals) * BigInt(10 ** baseToken.decimals),
-    withoutDecimals * BigInt(10 ** quoteToken.decimals)
+    withoutDecimals * BigInt(10 ** quoteToken.decimals),
   )
 }
 
@@ -78,7 +107,7 @@ export function tryParseTick(
   baseToken?: Token,
   quoteToken?: Token,
   feeAmount?: FeeAmount,
-  value?: string
+  value?: string,
 ): number | undefined {
   if (!baseToken || !quoteToken || !feeAmount || !value) {
     return undefined
@@ -137,7 +166,10 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
   }
 
   // if token1 is an ETH-/BTC-stable asset, set it as the base token
-  const bases = [Native.onChain(chainId).wrapped, WBTC[chainId as keyof typeof WBTC]]
+  const bases = [
+    Native.onChain(chainId).wrapped,
+    WBTC[chainId as keyof typeof WBTC],
+  ]
   if (bases.some((base) => base?.equals(token1))) {
     return {
       priceLower: position.token0PriceUpper.invert(),
@@ -167,7 +199,8 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
 }
 
 export const unwrapToken = (currency: Type) => {
-  return currency.wrapped.address === Native.onChain(currency.chainId).wrapped.address
+  return currency.wrapped.address ===
+    Native.onChain(currency.chainId).wrapped.address
     ? Native.onChain(currency.chainId)
     : currency
 }
@@ -181,7 +214,7 @@ export default function computeSurroundingTicks(
   activeTickProcessed: TickProcessed,
   sortedTickData: NonNullable<ReturnType<typeof useTicks>['data']>,
   pivot: number,
-  ascending: boolean
+  ascending: boolean,
 ): TickProcessed[] {
   let previousTickProcessed: TickProcessed = {
     ...activeTickProcessed,
@@ -189,7 +222,11 @@ export default function computeSurroundingTicks(
   // Iterate outwards (either up or down depending on direction) from the active tick,
   // building active liquidity for every tick.
   let processedTicks: TickProcessed[] = []
-  for (let i = pivot + (ascending ? 1 : -1); ascending ? i < sortedTickData.length : i >= 0; ascending ? i++ : i--) {
+  for (
+    let i = pivot + (ascending ? 1 : -1);
+    ascending ? i < sortedTickData.length : i >= 0;
+    ascending ? i++ : i--
+  ) {
     const tick = Number(sortedTickData[i].tickIdx)
     const currentTickProcessed: TickProcessed = {
       liquidityActive: previousTickProcessed.liquidityActive,
@@ -203,10 +240,13 @@ export default function computeSurroundingTicks(
     // it to the current processed tick we are building.
     // If we are iterating descending, we don't want to apply the net liquidity until the following tick.
     if (ascending) {
-      currentTickProcessed.liquidityActive = previousTickProcessed.liquidityActive + sortedTickData[i].liquidityNet
+      currentTickProcessed.liquidityActive =
+        previousTickProcessed.liquidityActive + sortedTickData[i].liquidityNet
     } else if (!ascending && previousTickProcessed.liquidityNet !== 0n) {
       // We are iterating descending, so look at the previous tick and apply any net liquidity.
-      currentTickProcessed.liquidityActive = previousTickProcessed.liquidityActive - previousTickProcessed.liquidityNet
+      currentTickProcessed.liquidityActive =
+        previousTickProcessed.liquidityActive -
+        previousTickProcessed.liquidityNet
     }
 
     processedTicks.push(currentTickProcessed)
@@ -227,7 +267,12 @@ interface FormatTickPriceArgs {
   placeholder?: string
 }
 
-export function formatTickPrice({ price, atLimit, direction, placeholder }: FormatTickPriceArgs) {
+export function formatTickPrice({
+  price,
+  atLimit,
+  direction,
+  placeholder,
+}: FormatTickPriceArgs) {
   if (atLimit[direction]) {
     return direction === Bound.LOWER ? '0' : '∞'
   }

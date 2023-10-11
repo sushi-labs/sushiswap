@@ -1,13 +1,16 @@
 'use client'
 
-import { tryParseAmount } from '@sushiswap/currency'
 import { computePoolAddress } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
-import { useConcentratedLiquidityPool, useConcentratedPositionInfo } from '@sushiswap/wagmi/future/hooks'
+import {
+  useConcentratedLiquidityPool,
+  useConcentratedPositionInfo,
+} from '@sushiswap/wagmi/future/hooks'
 import { getV3FactoryContractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3FactoryContract'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import { useTokenAmountDollarValues } from 'lib/hooks'
 import React, { FC, useMemo, useState } from 'react'
+import { tryParseAmount } from 'sushi/currency'
 import { SWRConfig } from 'swr'
 
 import { ConcentratedLiquidityProvider } from '../../../ui/pool/ConcentratedLiquidityProvider'
@@ -70,13 +73,24 @@ const _Add: FC = () => {
             fee: feeAmount,
           })
         : undefined,
-    [chainId, feeAmount, token0, token1]
+    [chainId, feeAmount, token0, token1],
   )
 
-  const { data: pool, isInitialLoading } = useConcentratedLiquidityPool({ chainId, token0, token1, feeAmount })
+  const { data: pool, isInitialLoading } = useConcentratedLiquidityPool({
+    chainId,
+    token0,
+    token1,
+    feeAmount,
+  })
 
-  const fiatAmounts = useMemo(() => [tryParseAmount('1', token0), tryParseAmount('1', token1)], [token0, token1])
-  const fiatAmountsAsNumber = useTokenAmountDollarValues({ chainId, amounts: fiatAmounts })
+  const fiatAmounts = useMemo(
+    () => [tryParseAmount('1', token0), tryParseAmount('1', token1)],
+    [token0, token1],
+  )
+  const fiatAmountsAsNumber = useTokenAmountDollarValues({
+    chainId,
+    amounts: fiatAmounts,
+  })
 
   return (
     <>
@@ -133,7 +147,7 @@ const _Add: FC = () => {
       {/*    <div className="col-span-2 flex flex-col gap-2">*/}
       {/*      <List.Label className="!px-0">Network</List.Label>*/}
       {/*      <div className="flex font-medium items-center gap-2 rounded-xl ">*/}
-      {/*        <NetworkIcon chainId={chainId} width={24} height={24} /> {Chain.from(chainId).name}*/}
+      {/*        <NetworkIcon chainId={chainId} width={24} height={24} /> {Chain.from(chainId)?.name}*/}
       {/*      </div>*/}
       {/*    </div>*/}
       {/*    <div className="col-span-2 flex flex-col gap-2">*/}
@@ -165,7 +179,11 @@ const _Add: FC = () => {
       {/*    </div>*/}
       {/*  </div>*/}
       {/*</div>*/}
-      <SelectNetworkWidget selectedNetwork={chainId} onSelect={setNetwork} networks={SUPPORTED_CHAIN_IDS} />
+      <SelectNetworkWidget
+        selectedNetwork={chainId}
+        onSelect={setNetwork}
+        networks={SUPPORTED_CHAIN_IDS}
+      />
       <SelectTokensWidget
         chainId={chainId}
         token0={token0}
@@ -173,7 +191,12 @@ const _Add: FC = () => {
         setToken0={setToken0}
         setToken1={setToken1}
       />
-      <SelectFeeConcentratedWidget feeAmount={feeAmount} setFeeAmount={setFeeAmount} token1={token1} token0={token0} />
+      <SelectFeeConcentratedWidget
+        feeAmount={feeAmount}
+        setFeeAmount={setFeeAmount}
+        token1={token1}
+        token0={token0}
+      />
       <SelectPricesWidget
         chainId={chainId}
         token0={token0}

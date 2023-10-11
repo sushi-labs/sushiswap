@@ -1,7 +1,14 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
-import { Card, CardDescription, CardHeader, CardTitle, Carousel, Container } from '@sushiswap/ui'
+import { ChainId } from 'sushi/chain'
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Carousel,
+  Container,
+} from '@sushiswap/ui'
 import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import React from 'react'
@@ -18,7 +25,8 @@ export const MigrateTabContent = () => {
         <CardHeader className="!px-0">
           <CardTitle>Migrate.</CardTitle>
           <CardDescription>
-            By migrating your liquidity positions, <br /> you will benefit from increased capital efficiency.
+            By migrating your liquidity positions, <br /> you will benefit from
+            increased capital efficiency.
           </CardDescription>
         </CardHeader>
       </Container>
@@ -29,7 +37,9 @@ export const MigrateTabContent = () => {
               return (
                 <Container maxWidth="7xl" className="px-4">
                   <Card className="min-h-[276px] flex justify-center items-center p-6">
-                    <span className="text-sm text-muted-foreground">No positions found for migration.</span>
+                    <span className="text-sm text-muted-foreground">
+                      No positions found for migration.
+                    </span>
                   </Card>
                 </Container>
               )
@@ -38,7 +48,9 @@ export const MigrateTabContent = () => {
             return !isLoading ? (
               <Carousel
                 slideWidth={320}
-                slides={positions.filter((position) => isSushiSwapV3ChainId(position?.chainId as ChainId))}
+                slides={positions.filter((position) =>
+                  isSushiSwapV3ChainId(position?.chainId as ChainId),
+                )}
                 render={(position) => <PositionCard position={position} />}
                 className="px-2"
               />

@@ -1,4 +1,4 @@
-// import { ChainId, chainShortName } from '@sushiswap/chain'
+// import { ChainId, chainShortName } from 'sushi/chain'
 // import { createClient, PoolVersion } from '@sushiswap/database'
 // import {
 //   SUBGRAPH_HOST,

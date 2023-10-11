@@ -8,15 +8,20 @@ interface Categories {
   categories: Category[]
 }
 
-export const Categories: FC<Categories> = ({ categories, selected, onSelect }) => {
+export const Categories: FC<Categories> = ({
+  categories,
+  selected,
+  onSelect,
+}) => {
   const handleSelect = useCallback(
     (index: string) => {
       onSelect((prevState: string[]) => {
-        if (selected.includes(index)) return prevState.filter((el) => el !== index)
+        if (selected.includes(index))
+          return prevState.filter((el) => el !== index)
         else return [...prevState, index]
       })
     },
-    [selected, onSelect]
+    [selected, onSelect],
   )
 
   return (

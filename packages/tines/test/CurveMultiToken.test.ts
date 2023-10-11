@@ -1,7 +1,13 @@
 import seedrandom from 'seedrandom'
 
 import { RToken } from '../dist'
-import { closeValues, createCurvePoolsForMultipool, CurveMultitokenPool, CurvePool, getBigInt } from '../src'
+import {
+  closeValues,
+  createCurvePoolsForMultipool,
+  CurveMultitokenPool,
+  CurvePool,
+  getBigInt,
+} from '../src'
 
 const token0 = {
   name: 'Token0',
@@ -46,7 +52,7 @@ function expectCloseValues(
   v2: bigint | number,
   precision: number,
   description = '',
-  additionalInfo = ''
+  additionalInfo = '',
 ) {
   const a = typeof v1 == 'number' ? v1 : parseFloat(v1.toString())
   const b = typeof v2 == 'number' ? v2 : parseFloat(v2.toString())
@@ -65,9 +71,15 @@ function expectCloseValues(
 }
 
 function createPool(
-  params: { A: number; fee: number; reserve0: bigint; reserve1: bigint; ratio: number },
+  params: {
+    A: number
+    fee: number
+    reserve0: bigint
+    reserve1: bigint
+    ratio: number
+  },
   token0: RToken,
-  token1: RToken
+  token1: RToken,
 ): CurvePool {
   return new CurvePool(
     '0xcurve pool',
@@ -77,14 +89,20 @@ function createPool(
     params.A,
     params.reserve0,
     params.reserve1,
-    params.ratio
+    params.ratio,
   )
 }
 
 function createMultiPool(
-  params: { A: number; fee: number; reserve0: bigint; reserve1: bigint; ratio: number },
+  params: {
+    A: number
+    fee: number
+    reserve0: bigint
+    reserve1: bigint
+    ratio: number
+  },
   token0: RToken,
-  token1: RToken
+  token1: RToken,
 ): CurveMultitokenPool {
   return createCurvePoolsForMultipool(
     'curve multipool',
@@ -92,11 +110,16 @@ function createMultiPool(
     params.fee,
     params.A,
     [params.reserve0, params.reserve1],
-    [1, params.ratio]
+    [1, params.ratio],
   )[0]
 }
 
-function checkSwap(pool: CurvePool, multipool: CurveMultitokenPool, amountIn: number, direction: boolean): number {
+function checkSwap(
+  pool: CurvePool,
+  multipool: CurveMultitokenPool,
+  amountIn: number,
+  direction: boolean,
+): number {
   const { out, gasSpent } = pool.calcOutByIn(amountIn, direction)
   const res1 = multipool.calcOutByIn(amountIn, direction)
 
@@ -112,7 +135,10 @@ function checkSwap(pool: CurvePool, multipool: CurveMultitokenPool, amountIn: nu
   return out
 }
 
-function checkPoolPriceCalculation(pool: CurvePool, multipool: CurveMultitokenPool) {
+function checkPoolPriceCalculation(
+  pool: CurvePool,
+  multipool: CurveMultitokenPool,
+) {
   const price1 = pool.calcCurrentPriceWithoutFee(true)
   const price1M = multipool.calcCurrentPriceWithoutFee(true)
   expectCloseValues(price1M, price1, 1e-12)
@@ -128,7 +154,11 @@ function createRandomPool(rnd: () => number, token0: RToken, token1: RToken) {
     A: Math.round(getRandomExp(rnd, 1, 10_000)),
     fee: Math.round(getRandomLin(rnd, 1, 100)) / 10_000,
     reserve0: getBigInt(reserve0),
-    reserve1: getBigInt(reserve0 * Math.pow(10, token1.decimals - token0.decimals) * getRandomExp(rnd, 1 / 1000, 1000)),
+    reserve1: getBigInt(
+      reserve0 *
+        Math.pow(10, token1.decimals - token0.decimals) *
+        getRandomExp(rnd, 1 / 1000, 1000),
+    ),
     ratio: getRandomExp(rnd, 0.5, 2),
   }
   return {
@@ -146,8 +176,18 @@ describe('Curve pool-multipool tests', () => {
       checkPoolPriceCalculation(pool, multipool)
       for (let i = 0; i < 30; ++i) {
         const amountInPortion = getRandomExp(rnd, 1e-5, 1e-1)
-        checkSwap(pool, multipool, parseInt(pool.getReserve0().toString()) * amountInPortion, true)
-        checkSwap(pool, multipool, parseInt(pool.getReserve1().toString()) * amountInPortion, false)
+        checkSwap(
+          pool,
+          multipool,
+          parseInt(pool.getReserve0().toString()) * amountInPortion,
+          true,
+        )
+        checkSwap(
+          pool,
+          multipool,
+          parseInt(pool.getReserve1().toString()) * amountInPortion,
+          false,
+        )
       }
     }
   })
@@ -160,8 +200,18 @@ describe('Curve pool-multipool tests', () => {
       checkPoolPriceCalculation(pool, multipool)
       for (let i = 0; i < 30; ++i) {
         const amountInPortion = getRandomExp(rnd, 1e-5, 1e-1)
-        checkSwap(pool, multipool, parseInt(pool.getReserve0().toString()) * amountInPortion, true)
-        checkSwap(pool, multipool, parseInt(pool.getReserve1().toString()) * amountInPortion, false)
+        checkSwap(
+          pool,
+          multipool,
+          parseInt(pool.getReserve0().toString()) * amountInPortion,
+          true,
+        )
+        checkSwap(
+          pool,
+          multipool,
+          parseInt(pool.getReserve1().toString()) * amountInPortion,
+          false,
+        )
       }
     }
   })
@@ -174,8 +224,18 @@ describe('Curve pool-multipool tests', () => {
       checkPoolPriceCalculation(pool, multipool)
       for (let i = 0; i < 30; ++i) {
         const amountInPortion = getRandomExp(rnd, 1e-5, 1e-1)
-        checkSwap(pool, multipool, parseInt(pool.getReserve0().toString()) * amountInPortion, true)
-        checkSwap(pool, multipool, parseInt(pool.getReserve1().toString()) * amountInPortion, false)
+        checkSwap(
+          pool,
+          multipool,
+          parseInt(pool.getReserve0().toString()) * amountInPortion,
+          true,
+        )
+        checkSwap(
+          pool,
+          multipool,
+          parseInt(pool.getReserve1().toString()) * amountInPortion,
+          false,
+        )
       }
     }
   })

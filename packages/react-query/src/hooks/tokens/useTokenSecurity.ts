@@ -1,6 +1,6 @@
-import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
-import { useQuery, UseQueryOptions } from '@tanstack/react-query'
+import { type UseQueryOptions, useQuery } from '@tanstack/react-query'
+import { ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
 import { z } from 'zod'
 
 const SUPPORTED_CHAIN_IDS = [
@@ -21,9 +21,11 @@ const SUPPORTED_CHAIN_IDS = [
 
 export const TokenSecurityChainIds = SUPPORTED_CHAIN_IDS
 
-export type TokenSecurityChainId = (typeof SUPPORTED_CHAIN_IDS)[number]
+export type TokenSecurityChainId = typeof SUPPORTED_CHAIN_IDS[number]
 
-export const isTokenSecurityChainId = (chainId: ChainId): chainId is TokenSecurityChainId =>
+export const isTokenSecurityChainId = (
+  chainId: ChainId,
+): chainId is TokenSecurityChainId =>
   SUPPORTED_CHAIN_IDS.includes(chainId as TokenSecurityChainId)
 
 const bit = z.optional(z.enum(['0', '1']).transform((val) => val !== '0'))
@@ -38,8 +40,18 @@ const tokenSecuritySchema = z.object({
   selfdestruct: bit,
   external_call: bit,
   gas_abuse: bit,
-  buy_tax: z.optional(z.preprocess((val) => (val === '' ? undefined : val !== '0'), z.optional(z.boolean()))),
-  sell_tax: z.optional(z.preprocess((val) => (val === '' ? undefined : val !== '0'), z.optional(z.boolean()))),
+  buy_tax: z.optional(
+    z.preprocess(
+      (val) => (val === '' ? undefined : val !== '0'),
+      z.optional(z.boolean()),
+    ),
+  ),
+  sell_tax: z.optional(
+    z.preprocess(
+      (val) => (val === '' ? undefined : val !== '0'),
+      z.optional(z.boolean()),
+    ),
+  ),
   cannot_buy: bit,
   cannot_sell_all: bit,
   slippage_modifiable: bit,
@@ -104,7 +116,8 @@ export const TokenSecurityMessage: Record<keyof TokenSecurity, string> = {
     'If a self-destruct function exists and is triggered, the contract will be destroyed, all functions will be unavailable, and all related assets will be erased.',
   external_call:
     'External calls would cause this token contract to be highly dependent on other contracts, which may be a potential risk.',
-  gas_abuse: 'Indicates whether any gas abuse activity has been detected in this contract.',
+  gas_abuse:
+    'Indicates whether any gas abuse activity has been detected in this contract.',
   //Trading security
   buy_tax:
     'Whether or not this token contract includes a buy tax. A buy tax will cause the actual token value received to be less than the amount paid. An excessive buy tax may lead to heavy losses.',
@@ -112,7 +125,8 @@ export const TokenSecurityMessage: Record<keyof TokenSecurity, string> = {
     'Whether or not this token contract includes a sell tax. A sell tax will cause the actual value received when selling a token to be less than expected, and too much sell tax may lead to large losses.',
   cannot_buy:
     'Whether or not this token can be purchased directly by users. Generally, these unbuyable tokens would be found in Reward Tokens. Such tokens are issued as rewards for some on-chain applications.',
-  cannot_sell_all: 'Whether or not a user can sell all of their tokens in a single sale.',
+  cannot_sell_all:
+    'Whether or not a user can sell all of their tokens in a single sale.',
   slippage_modifiable:
     'Whether or not the contract owner can modify the buy tax or sell tax of the token. This may cause some losses, especially since some contracts have unlimited modifiable tax rates, which would make the token untradeable.',
   is_honeypot:
@@ -135,7 +149,7 @@ export const TokenSecurityMessage: Record<keyof TokenSecurity, string> = {
 
 const fetchTokenSecurityQueryFn = async (currencies: (Token | undefined)[]) => {
   const supportedCurrencies = currencies.filter(
-    (currency) => currency && isTokenSecurityChainId(currency.chainId)
+    (currency) => currency && isTokenSecurityChainId(currency.chainId),
   ) as Token[]
 
   if (supportedCurrencies.length === 0) return {} as TokenSecurityResponse
@@ -143,16 +157,21 @@ const fetchTokenSecurityQueryFn = async (currencies: (Token | undefined)[]) => {
   const tokenSecurity = await Promise.all(
     supportedCurrencies.map((currency) =>
       fetch(
-        `https://api.gopluslabs.io/api/v1/token_security/${currency.chainId}?contract_addresses=${currency.address}`
+        `https://api.gopluslabs.io/api/v1/token_security/${currency.chainId}?contract_addresses=${currency.address}`,
       )
-        .then((response) => response.json() as Promise<{ result?: GoPlusAPIResponse }>)
+        .then(
+          (response) =>
+            response.json() as Promise<{ result?: GoPlusAPIResponse }>,
+        )
         .then((data) => data?.result?.[currency.address.toLowerCase()])
-        .then((tokenSecurityResponse) => tokenSecuritySchema.parse(tokenSecurityResponse))
-    )
+        .then((tokenSecurityResponse) =>
+          tokenSecuritySchema.parse(tokenSecurityResponse),
+        ),
+    ),
   )
 
   return supportedCurrencies.reduce((prev, cur, i) => {
-    prev[cur.address] = tokenSecurity[i]
+    prev[cur.address] = tokenSecurity[i] as TokenSecurity
     return prev
   }, {} as TokenSecurityResponse)
 }

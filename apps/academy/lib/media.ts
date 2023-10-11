@@ -48,7 +48,12 @@ export function getOptimizedMedia({
     return cld
       .video(metadata.public_id)
       .format('webm')
-      .conditional(ifCondition('height > 1280', new Transformation().resize(fill().height('1280'))))
+      .conditional(
+        ifCondition(
+          'height > 1280',
+          new Transformation().resize(fill().height('1280')),
+        ),
+      )
       .delivery(quality(auto()))
       .toURL()
   } else {
@@ -71,13 +76,23 @@ export function getOptimizedMedia({
     }
 
     if (width) {
-      return cld.image(metadata.public_id).format('webp').resize(fill().width(width)).delivery(quality(auto())).toURL()
+      return cld
+        .image(metadata.public_id)
+        .format('webp')
+        .resize(fill().width(width))
+        .delivery(quality(auto()))
+        .toURL()
     }
 
     return cld
       .image(metadata.public_id)
       .format('webp')
-      .conditional(ifCondition('height > 1280', new Transformation().resize(fill().height('1280'))))
+      .conditional(
+        ifCondition(
+          'height > 1280',
+          new Transformation().resize(fill().height('1280')),
+        ),
+      )
       .delivery(quality(auto()))
       .toURL()
   }

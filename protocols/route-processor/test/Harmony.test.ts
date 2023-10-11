@@ -1,5 +1,5 @@
-import { ChainId } from '@sushiswap/chain'
-import { Native, Token, Type } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Native, Token, Type } from 'sushi/currency'
 import { DataFetcher, Router } from '@sushiswap/router'
 import { RouteStatus } from '@sushiswap/tines'
 import { expect } from 'chai'
@@ -28,15 +28,33 @@ async function makeSwap(
   toToken: Type,
   from: string,
   to: Address,
-  amountIn: bigint
+  amountIn: bigint,
 ): Promise<number | undefined> {
   await dataFetcher.fetchPoolsForToken(fromToken, toToken)
   const pcMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
-  const route = Router.findBestRoute(pcMap, ChainId.HARMONY, fromToken, amountIn, toToken, 50e9)
+  const route = Router.findBestRoute(
+    pcMap,
+    ChainId.HARMONY,
+    fromToken,
+    amountIn,
+    toToken,
+    50e9,
+  )
   expect(route?.status).equal(RouteStatus.Success)
   if (route && pcMap) {
-    const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, to, RouteProcessorAddr)
-    const RouteProcessorFactory = await ethers.getContractFactory<RouteProcessor3__factory>('RouteProcessor3', signer)
+    const rpParams = Router.routeProcessor2Params(
+      pcMap,
+      route,
+      fromToken,
+      toToken,
+      to,
+      RouteProcessorAddr,
+    )
+    const RouteProcessorFactory =
+      await ethers.getContractFactory<RouteProcessor3__factory>(
+        'RouteProcessor3',
+        signer,
+      )
     const RouteProcessor = RouteProcessorFactory.attach(RouteProcessorAddr)
     const res = await RouteProcessor.callStatic.processRoute(
       rpParams.tokenIn,
@@ -46,7 +64,7 @@ async function makeSwap(
       rpParams.to,
       rpParams.routeCode,
       //{ value: rpParams.value?.toString() }
-      { value: rpParams.value?.toString(), gasPrice: 1000e9 } // this fixes the issue...
+      { value: rpParams.value?.toString(), gasPrice: 1000e9 }, // this fixes the issue...
     )
     return parseInt(res.toString())
   }
@@ -54,7 +72,10 @@ async function makeSwap(
 
 describe.skip('Harmony', async () => {
   const chainId = ChainId.HARMONY
-  const provider = new ethers.providers.JsonRpcProvider('https://api.harmony.one', 1666600000)
+  const provider = new ethers.providers.JsonRpcProvider(
+    'https://api.harmony.one',
+    1666600000,
+  )
   const client = createPublicClient({
     chain: {
       ...hardhat,
@@ -77,7 +98,15 @@ describe.skip('Harmony', async () => {
     const toToken = DAI
     const user = '0x8f54C8c2df62c94772ac14CcFc85603742976312'
     const signer = await provider.getUncheckedSigner(user)
-    await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, BigInt(1e18))
+    await makeSwap(
+      dataFetcher,
+      signer,
+      fromToken,
+      toToken,
+      user,
+      user,
+      BigInt(1e18),
+    )
   })
 
   it('DAI => ONE', async () => {
@@ -85,6 +114,14 @@ describe.skip('Harmony', async () => {
     const toToken = Native.onChain(chainId)
     const user = '0x8f54C8c2df62c94772ac14CcFc85603742976312' // has DAI and approved 1e18 to the RP
     const signer = await provider.getUncheckedSigner(user)
-    await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, BigInt(1e18))
+    await makeSwap(
+      dataFetcher,
+      signer,
+      fromToken,
+      toToken,
+      user,
+      user,
+      BigInt(1e18),
+    )
   })
 })

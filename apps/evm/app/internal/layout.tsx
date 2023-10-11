@@ -25,17 +25,25 @@ export default function InternalLayout({
           <NavigationMenuList>
             <NavigationMenuItem>
               <LinkInternal href="/internal">
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Dashboard</NavigationMenuLink>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  Dashboard
+                </NavigationMenuLink>
               </LinkInternal>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuTrigger>Bentobox</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="w-[400px] gap-3 p-4">
-                  <NavigationListItem title="Overview" href="/internal/bentobox">
+                  <NavigationListItem
+                    title="Overview"
+                    href="/internal/bentobox"
+                  >
                     Overview
                   </NavigationListItem>
-                  <NavigationListItem title="Strategies" href="internal/strategies">
+                  <NavigationListItem
+                    title="Strategies"
+                    href="internal/strategies"
+                  >
                     Strategies
                   </NavigationListItem>
                 </ul>
@@ -43,12 +51,16 @@ export default function InternalLayout({
             </NavigationMenuItem>
             <NavigationMenuItem>
               <LinkInternal href="/internal/tokens">
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Tokens</NavigationMenuLink>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  Tokens
+                </NavigationMenuLink>
               </LinkInternal>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <LinkInternal href="/internal/subgraphs">
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Subgraphs</NavigationMenuLink>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  Subgraphs
+                </NavigationMenuLink>
               </LinkInternal>
             </NavigationMenuItem>
           </NavigationMenuList>

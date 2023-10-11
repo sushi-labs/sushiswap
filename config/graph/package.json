@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/graph-config",
-  "version": "0.1.3",
+  "version": "1.0.0",
   "description": "Sushi Graph Config",
   "keywords": [
     "sushi",
@@ -27,26 +27,22 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
-    "lint": "TIMING=1 eslint src",
-    "lint:fix": "TIMING=1 eslint src --fix",
     "test": "jest --passWithNoTests"
   },
   "jest": {
     "preset": "@sushiswap/jest-config/node"
   },
   "devDependencies": {
-    "@sushiswap/chain": "workspace:*",
-    "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "typescript": "5.1.6"
+    "sushi": "workspace:*",
+    "typescript": "5.2.2"
   },
   "peerDependencies": {
-    "@sushiswap/chain": "workspace:*"
+    "sushi": "workspace:*"
   },
   "peerDependenciesMeta": {
-    "@sushiswap/chain": {
+    "sushi": {
       "optional": false
     }
   }

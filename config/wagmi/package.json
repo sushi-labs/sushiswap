@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/wagmi-config",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Sushi Wagmi Config",
   "keywords": [
     "sushi",
@@ -16,7 +16,6 @@
   "license": "MIT",
   "author": "LufyCZ <me@lufy.cz>",
   "sideEffects": false,
-  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -33,9 +32,18 @@
     "./package.json": "./package.json"
   },
   "main": "dist/index.js",
-  "module": "dist/index.js",
   "source": "src/index.ts",
   "types": "dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "chains": [
+        "./dist/chains.d.ts"
+      ],
+      "providers": [
+        "./dist/providers.d.ts"
+      ]
+    }
+  },
   "files": [
     "dist"
   ],
@@ -44,8 +52,6 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
-    "lint": "TIMING=1 eslint src",
-    "lint:fix": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build",
     "test": "jest --passWithNoTests"
   },
@@ -54,23 +60,24 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@sushiswap/chain": "workspace:*",
-    "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@wagmi/core": "1.4.1",
-    "typescript": "5.1.6"
+    "@tsconfig/esm": "1.0.4",
+    "@tsconfig/strictest": "2.0.2",
+    "@wagmi/core": "1.4.3",
+    "sushi": "workspace:*",
+    "tsup": "7.2.0",
+    "typescript": "5.2.2"
   },
   "peerDependencies": {
-    "@sushiswap/chain": "*",
-    "@wagmi/core": "*"
+    "@wagmi/core": "*",
+    "sushi": "*"
   },
   "peerDependenciesMeta": {
-    "@sushiswap/chain": {
+    "@wagmi/core": {
       "optional": false
     },
-    "@wagmi/core": {
+    "sushi": {
       "optional": false
     }
   }

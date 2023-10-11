@@ -4,7 +4,12 @@ import { IconComponent } from '../../types'
 
 export const HistoryIcon: IconComponent = (props) => {
   return (
-    <svg {...props} viewBox="0 0 21 20" fill="transparent" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      {...props}
+      viewBox="0 0 21 20"
+      fill="transparent"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
         d="M10.7991 4.9095V9.60089"
         stroke="currentColor"

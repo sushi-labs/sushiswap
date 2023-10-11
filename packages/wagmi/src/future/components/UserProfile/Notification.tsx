@@ -2,8 +2,8 @@ import { Disclosure } from '@headlessui/react'
 import {
   ArrowDownTrayIcon,
   ArrowRightIcon,
-  ArrowsUpDownIcon,
   ArrowUpTrayIcon,
+  ArrowsUpDownIcon,
   BanknotesIcon,
   CheckIcon,
   ChevronDownIcon,
@@ -12,15 +12,15 @@ import {
   PlusIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline'
-import { Chain, ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
 import { ResolvedNotification } from '@sushiswap/dexie'
-import { classNames, LinkExternal } from '@sushiswap/ui'
+import { LinkExternal, classNames } from '@sushiswap/ui'
 import { Currency as UICurrency } from '@sushiswap/ui/components/currency'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { Loader } from '@sushiswap/ui/components/loader'
 import { TimeAgo } from '@sushiswap/ui/components/time-ago'
 import React, { FC } from 'react'
+import { Chain, ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
 import { useWaitForTransaction } from 'wagmi'
 
 export const STARGATE_TOKEN = new Token({
@@ -66,7 +66,10 @@ export const Notification: FC<{
               <ChevronDownIcon
                 width={20}
                 height={20}
-                className={classNames(open ? 'rotate-180' : 'rotate-0', 'rounded-full transition-all delay-200')}
+                className={classNames(
+                  open ? 'rotate-180' : 'rotate-0',
+                  'rounded-full transition-all delay-200',
+                )}
               />
             </div>
           )}
@@ -77,14 +80,14 @@ export const Notification: FC<{
           notification.href
             ? notification.href
             : notification.txHash
-            ? Chain.from(notification.chainId).getTxUrl(notification.txHash)
+            ? Chain.from(notification.chainId)?.getTxUrl(notification.txHash)
             : ''
         }
       >
         <div
           className={classNames(
             showExtra ? 'pr-14' : 'pr-4',
-            'relative cursor-pointer flex items-center gap-3 rounded-2xl px-4 py-3'
+            'relative cursor-pointer flex items-center gap-3 rounded-2xl px-4 py-3',
           )}
         >
           <div className="p-2 bg-gray-200 dark:bg-slate-600 text-gray-400 dark:text-slate-200 rounded-full min-h-[36px] min-w-[36px] flex justify-center items-center">
@@ -96,41 +99,71 @@ export const Notification: FC<{
               ) : (
                 <></>
               ))}
-            {status === 'success' && notification.type === 'send' && <ArrowRightIcon width={20} height={20} />}
-            {status === 'success' && notification.type === 'stargate' && (
-              <UICurrency.Icon currency={STARGATE_TOKEN} width={20} height={20} />
+            {status === 'success' && notification.type === 'send' && (
+              <ArrowRightIcon width={20} height={20} />
             )}
-            {status === 'success' && notification.type === 'swap' && <ArrowsUpDownIcon width={20} height={20} />}
-            {status === 'success' && notification.type === 'approval' && <LockOpenIcon width={20} height={20} />}
-            {status === 'success' && notification.type === 'mint' && <PlusIcon width={20} height={20} />}
-            {status === 'success' && notification.type === 'burn' && <FireIcon width={20} height={20} />}
-            {status === 'success' && notification.type === 'enterBar' && <ArrowDownTrayIcon width={20} height={20} />}
+            {status === 'success' && notification.type === 'stargate' && (
+              <UICurrency.Icon
+                currency={STARGATE_TOKEN}
+                width={20}
+                height={20}
+              />
+            )}
+            {status === 'success' && notification.type === 'swap' && (
+              <ArrowsUpDownIcon width={20} height={20} />
+            )}
+            {status === 'success' && notification.type === 'approval' && (
+              <LockOpenIcon width={20} height={20} />
+            )}
+            {status === 'success' && notification.type === 'mint' && (
+              <PlusIcon width={20} height={20} />
+            )}
+            {status === 'success' && notification.type === 'burn' && (
+              <FireIcon width={20} height={20} />
+            )}
+            {status === 'success' && notification.type === 'enterBar' && (
+              <ArrowDownTrayIcon width={20} height={20} />
+            )}
             {status === 'success' && notification.type === 'transferStream' && (
               <ArrowRightIcon width={20} height={20} />
             )}
-            {status === 'success' && notification.type === 'transferVesting' && (
-              <ArrowRightIcon width={20} height={20} />
-            )}
-            {status === 'success' && notification.type === 'createMultipleStream' && (
+            {status === 'success' &&
+              notification.type === 'transferVesting' && (
+                <ArrowRightIcon width={20} height={20} />
+              )}
+            {status === 'success' &&
+              notification.type === 'createMultipleStream' && (
+                <CheckIcon width={20} height={20} />
+              )}
+            {status === 'success' &&
+              notification.type === 'createMultipleVesting' && (
+                <CheckIcon width={20} height={20} />
+              )}
+            {status === 'success' && notification.type === 'cancelStream' && (
               <CheckIcon width={20} height={20} />
             )}
-            {status === 'success' && notification.type === 'createMultipleVesting' && (
+            {status === 'success' && notification.type === 'createVesting' && (
               <CheckIcon width={20} height={20} />
             )}
-            {status === 'success' && notification.type === 'cancelStream' && <CheckIcon width={20} height={20} />}
-            {status === 'success' && notification.type === 'createVesting' && <CheckIcon width={20} height={20} />}
-            {status === 'success' && notification.type === 'createStream' && <CheckIcon width={20} height={20} />}
+            {status === 'success' && notification.type === 'createStream' && (
+              <CheckIcon width={20} height={20} />
+            )}
             {status === 'success' && notification.type === 'updateStream' && (
               <ArrowDownTrayIcon width={20} height={20} />
             )}
             {status === 'success' && notification.type === 'withdrawStream' && (
               <ArrowUpTrayIcon width={20} height={20} />
             )}
-            {status === 'success' && notification.type === 'withdrawVesting' && (
+            {status === 'success' &&
+              notification.type === 'withdrawVesting' && (
+                <ArrowUpTrayIcon width={20} height={20} />
+              )}
+            {status === 'success' && notification.type === 'leaveBar' && (
               <ArrowUpTrayIcon width={20} height={20} />
             )}
-            {status === 'success' && notification.type === 'leaveBar' && <ArrowUpTrayIcon width={20} height={20} />}
-            {status === 'success' && notification.type === 'claimRewards' && <BanknotesIcon width={20} height={20} />}
+            {status === 'success' && notification.type === 'claimRewards' && (
+              <BanknotesIcon width={20} height={20} />
+            )}
           </div>
           <div className="flex flex-col gap-0.5">
             <div className="flex items-center gap-2">
@@ -139,8 +172,13 @@ export const Notification: FC<{
               </span>
             </div>
             <span className="flex gap-1 items-center text-xs text-gray-600 dark:text-slate-500">
-              <NetworkIcon type="naked" chainId={notification.chainId} width={14} height={14} />•{' '}
-              <TimeAgo value={new Date(notification.timestamp)} />
+              <NetworkIcon
+                type="naked"
+                chainId={notification.chainId}
+                width={14}
+                height={14}
+              />
+              • <TimeAgo value={new Date(notification.timestamp)} />
             </span>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import React, { FC, ReactNode } from 'react'
 
-import { SushiIcon } from './icons'
+import { SushiIcon } from './icons/SushiIcon'
 
 const Splash: FC = () => {
   return (
@@ -15,7 +15,10 @@ const Splash: FC = () => {
   )
 }
 
-const SplashController: FC<{ children: ReactNode; show?: boolean }> = ({ children, show = false }) => {
+const SplashController: FC<{ children: ReactNode; show?: boolean }> = ({
+  children,
+  show = false,
+}) => {
   return <>{show ? <Splash /> : children}</>
 }
 

@@ -1,11 +1,12 @@
-export const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
+export const delay = async (ms: number) =>
+  new Promise((res) => setTimeout(res, ms))
 
 export async function repeatAsync<RetType>(
   times: number,
   delayBetween: number,
   action: () => Promise<RetType>,
   failed: () => void,
-  print?: string
+  print?: string,
 ) {
   for (let i = 0; i < times; ++i) {
     try {
@@ -19,7 +20,10 @@ export async function repeatAsync<RetType>(
   failed()
 }
 
-export async function repeat<RetType>(times: number, action: () => Promise<RetType>): Promise<RetType> {
+export async function repeat<RetType>(
+  times: number,
+  action: () => Promise<RetType>,
+): Promise<RetType> {
   for (let i = 0; i < times - 1; ++i) {
     try {
       return await action()

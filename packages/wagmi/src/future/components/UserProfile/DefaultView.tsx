@@ -6,10 +6,14 @@ import {
   InboxArrowDownIcon,
   LinkIcon,
 } from '@heroicons/react/24/outline'
-import chains, { ChainId } from '@sushiswap/chain'
-import { Amount, Native } from '@sushiswap/currency'
+import chains, { ChainId } from 'sushi/chain'
+import { Amount, Native } from 'sushi/currency'
 import { usePrice } from '@sushiswap/react-query'
-import { ClipboardController, LinkExternal, OnramperButton } from '@sushiswap/ui'
+import {
+  ClipboardController,
+  LinkExternal,
+  OnramperButton,
+} from '@sushiswap/ui'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { List } from '@sushiswap/ui/components/list/List'
 import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
@@ -23,9 +27,16 @@ interface DefaultProps {
   setView: Dispatch<SetStateAction<ProfileView>>
 }
 
-export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => {
+export const DefaultView: FC<DefaultProps> = ({
+  chainId,
+  address,
+  setView,
+}) => {
   const { disconnect } = useDisconnect()
-  const { data: price } = usePrice({ chainId, address: Native.onChain(chainId).wrapped.address })
+  const { data: price } = usePrice({
+    chainId,
+    address: Native.onChain(chainId).wrapped.address,
+  })
 
   const { data: _balance } = useBalance({
     address: address,
@@ -33,8 +44,12 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
   })
 
   const balance = useMemo(
-    () => Amount.fromRawAmount(Native.onChain(chainId), _balance ? _balance?.value.toString() : '0'),
-    [_balance, chainId]
+    () =>
+      Amount.fromRawAmount(
+        Native.onChain(chainId),
+        _balance ? _balance?.value.toString() : '0',
+      ),
+    [_balance, chainId],
   )
 
   const balanceAsUsd = useMemo(() => {
@@ -65,7 +80,12 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
               )}
             </ClipboardController>
             <LinkExternal href={chains[chainId].getAccountUrl(address)}>
-              <IconButton size="sm" icon={LinkIcon} description="View on Explorer" name="View on Explorer" />
+              <IconButton
+                size="sm"
+                icon={LinkIcon}
+                description="View on Explorer"
+                name="View on Explorer"
+              />
             </LinkExternal>
 
             <IconButton
@@ -81,7 +101,9 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
           <p className="text-3xl font-medium whitespace-nowrap">
             {balance.toSignificant(3)} {Native.onChain(chainId).symbol}
           </p>
-          <p className="font-medium text-slate-400">${balanceAsUsd?.toFixed(2)}</p>
+          <p className="font-medium text-slate-400">
+            ${balanceAsUsd?.toFixed(2)}
+          </p>
         </div>
       </div>
       <List>
@@ -93,7 +115,11 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
             hoverIconProps={{ width: 20, height: 20 }}
           />
           <OnramperButton className="w-full">
-            <List.MenuItem icon={CreditCardIcon} title="Buy Crypto" hoverIconProps={{ width: 20, height: 20 }} />
+            <List.MenuItem
+              icon={CreditCardIcon}
+              title="Buy Crypto"
+              hoverIconProps={{ width: 20, height: 20 }}
+            />
           </OnramperButton>
         </List.Control>
       </List>

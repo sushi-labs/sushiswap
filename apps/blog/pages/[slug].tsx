@@ -88,7 +88,9 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
             <ArticleAuthors article={article} />
             <div
               className="mt-12 prose !prose-invert prose-slate"
-              dangerouslySetInnerHTML={{ __html: article?.attributes.body || '' }}
+              dangerouslySetInnerHTML={{
+                __html: article?.attributes.body || '',
+              }}
             />
             <ArticleLinks article={article} />
             <ArticleFooter articles={latestArticles} />

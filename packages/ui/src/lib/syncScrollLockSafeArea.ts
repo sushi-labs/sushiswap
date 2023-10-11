@@ -12,7 +12,10 @@ export function syncScrollLockSafeArea() {
   const observer = new MutationObserver(() => {
     const htmlStyle = document.documentElement.style
 
-    if (htmlStyle.getPropertyValue(SCROLL_LOCK_SAFE_AREA) !== htmlStyle.paddingRight)
+    if (
+      htmlStyle.getPropertyValue(SCROLL_LOCK_SAFE_AREA) !==
+      htmlStyle.paddingRight
+    )
       htmlStyle.setProperty(SCROLL_LOCK_SAFE_AREA, htmlStyle.paddingRight)
   })
 

@@ -51,7 +51,9 @@ export const Pending = {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Header</DialogTitle>
-                  <DialogDescription>This is a dialog description</DialogDescription>
+                  <DialogDescription>
+                    This is a dialog description
+                  </DialogDescription>
                 </DialogHeader>
                 <div className="flex flex-col gap-4">
                   <List className="!pt-0">
@@ -103,7 +105,9 @@ export const Success = {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Header</DialogTitle>
-                  <DialogDescription>This is a dialog description</DialogDescription>
+                  <DialogDescription>
+                    This is a dialog description
+                  </DialogDescription>
                 </DialogHeader>
                 <div className="flex flex-col gap-4">
                   <List className="!pt-0">
@@ -155,7 +159,9 @@ export const Error = {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Header</DialogTitle>
-                  <DialogDescription>This is a dialog description</DialogDescription>
+                  <DialogDescription>
+                    This is a dialog description
+                  </DialogDescription>
                 </DialogHeader>
                 <div className="flex flex-col gap-4">
                   <List className="!pt-0">

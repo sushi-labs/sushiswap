@@ -17,7 +17,11 @@ export const GnosisNaked: IconComponent = (props) => (
     </g>
     <defs>
       <clipPath id="a">
-        <path fill="currenColor" transform="translate(24 24)" d="M0 0h80v81H0z" />
+        <path
+          fill="currenColor"
+          transform="translate(24 24)"
+          d="M0 0h80v81H0z"
+        />
       </clipPath>
     </defs>
   </svg>

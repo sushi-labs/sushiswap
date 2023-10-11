@@ -1,7 +1,7 @@
-import { Chain } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
-import { shortenAddress } from '@sushiswap/format'
-import { isTokenSecurityChainId, useTokenSecurity } from '@sushiswap/react-query'
+import {
+  isTokenSecurityChainId,
+  useTokenSecurity,
+} from '@sushiswap/react-query'
 import {
   Dialog,
   DialogContent,
@@ -16,6 +16,9 @@ import { Button } from '@sushiswap/ui/components/button'
 import { Icon } from '@sushiswap/ui/components/currency/Icon'
 import { List } from '@sushiswap/ui/components/list/List'
 import { FC, useCallback, useState } from 'react'
+import { shortenAddress } from 'sushi'
+import { Chain } from 'sushi/chain'
+import { Token } from 'sushi/currency'
 
 import { TokenSecurityView } from '../TokenSecurityView'
 
@@ -24,10 +27,16 @@ interface TokenSelectorImportRow {
   onImport(): void
 }
 
-export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currency, onImport }) => {
+export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
+  currency,
+  onImport,
+}) => {
   const [open, setOpen] = useState(false)
 
-  const { data: tokenSecurityResponse, isInitialLoading: tokenSecurityLoading } = useTokenSecurity({
+  const {
+    data: tokenSecurityResponse,
+    isInitialLoading: tokenSecurityLoading,
+  } = useTokenSecurity({
     currencies: [currency],
     enabled: open,
   })
@@ -40,7 +49,9 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currency, o
     }, 250)
   }, [onImport])
 
-  const honeypot = Boolean(currency && tokenSecurityResponse?.[currency.address]?.is_honeypot)
+  const honeypot = Boolean(
+    currency && tokenSecurityResponse?.[currency.address]?.is_honeypot,
+  )
 
   return (
     <Dialog onOpenChange={(open) => !open && setOpen(false)}>
@@ -73,23 +84,44 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currency, o
           <DialogHeader>
             <DialogTitle>Import token</DialogTitle>
             <DialogDescription>
-              Anyone can create a token, including creating fake versions of existing tokens that claim to represent
-              projects. If you purchase this token, you may not be able to sell it back.
+              Anyone can create a token, including creating fake versions of
+              existing tokens that claim to represent projects. If you purchase
+              this token, you may not be able to sell it back.
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4">
             <List>
               <List.Control>
-                <List.KeyValue title={<span className="text-gray-900 dark:text-slate-50">Name</span>}>
+                <List.KeyValue
+                  title={
+                    <span className="text-gray-900 dark:text-slate-50">
+                      Name
+                    </span>
+                  }
+                >
                   {currency.name}
                 </List.KeyValue>
-                <List.KeyValue title={<span className="text-gray-900 dark:text-slate-50">Symbol</span>}>
+                <List.KeyValue
+                  title={
+                    <span className="text-gray-900 dark:text-slate-50">
+                      Symbol
+                    </span>
+                  }
+                >
                   {currency.symbol}
                 </List.KeyValue>
-                <List.KeyValue title={<span className="text-gray-900 dark:text-slate-50">Address</span>}>
+                <List.KeyValue
+                  title={
+                    <span className="text-gray-900 dark:text-slate-50">
+                      Address
+                    </span>
+                  }
+                >
                   <a
                     target="_blank"
-                    href={Chain.from(currency.chainId).getTokenUrl(currency.address)}
+                    href={Chain.from(currency.chainId)?.getTokenUrl(
+                      currency.address,
+                    )}
                     className="text-blue"
                     rel="noreferrer"
                   >
@@ -99,7 +131,10 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currency, o
               </List.Control>
             </List>
             {isTokenSecurityChainId(currency.chainId) ? (
-              <TokenSecurityView tokenSecurityResponse={tokenSecurityResponse} token={currency} />
+              <TokenSecurityView
+                tokenSecurityResponse={tokenSecurityResponse}
+                token={currency}
+              />
             ) : null}
           </div>
           <DialogFooter>
@@ -116,7 +151,8 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currency, o
                     </Button>
                   </DialogTrigger>
                   <Message variant="destructive" size="sm">
-                    Sushi does not support honetpot tokens. This token contract cannot be imported!
+                    Sushi does not support honetpot tokens. This token contract
+                    cannot be imported!
                   </Message>
                 </div>
               )}

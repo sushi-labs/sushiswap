@@ -4,7 +4,12 @@ import { IconComponent } from '../../types'
 
 export const OnsenIcon: IconComponent = (props) => {
   return (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16">
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 16 16"
+    >
       <path
         fill="currentColor"
         d="M12.85 8.325c.825.575 1.325 1.3 1.325 2.1C14.175 12.3 11.4 13.8 8 13.8s-6.175-1.5-6.175-3.375c0-.8.5-1.525 1.325-2.1C1.525 9.075.5 10.2.5 11.425.5 13.675 3.85 15.5 8 15.5s7.5-1.825 7.5-4.075c0-1.225-1.025-2.35-2.65-3.1z"

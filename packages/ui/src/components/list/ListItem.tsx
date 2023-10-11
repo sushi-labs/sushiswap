@@ -12,13 +12,23 @@ interface Props {
   loading?: boolean
 }
 
-export type ListItemProps<P extends React.ElementType, C extends React.ElementType> = {
+export type ListItemProps<
+  P extends React.ElementType,
+  C extends React.ElementType,
+> = {
   icon?: P
-  iconProps: React.ComponentProps<P> & { width?: number; height?: number; className?: string }
+  iconProps: React.ComponentProps<P> & {
+    width?: number
+    height?: number
+    className?: string
+  }
 } & PolymorphicComponentProps<C, Props>
 
-export type ListItemComponent = <P extends React.ElementType = 'svg', C extends React.ElementType = 'button'>(
-  props: ListItemProps<P, C>
+export type ListItemComponent = <
+  P extends React.ElementType = 'svg',
+  C extends React.ElementType = 'button',
+>(
+  props: ListItemProps<P, C>,
 ) => React.ReactElement | null
 
 export const ListItem: ListItemComponent = ({
@@ -43,7 +53,7 @@ export const ListItem: ListItemComponent = ({
       className={classNames(
         className,
         subtitle ? 'items-start' : 'items-center',
-        'relative flex gap-4 px-3 py-3 w-full cursor-pointer'
+        'relative flex gap-4 px-3 py-3 w-full cursor-pointer',
       )}
     >
       {loading ? (
@@ -69,16 +79,27 @@ export const ListItem: ListItemComponent = ({
                 height: 18,
                 strokeWidth: 2,
                 ...iconProps,
-                className: classNames(iconProps?.className, 'text-blue-500 rounded-full'),
+                className: classNames(
+                  iconProps?.className,
+                  'text-blue-500 rounded-full',
+                ),
               })}
             </div>
           )}
           <div className="flex flex-col gap-0.5 items-start">
-            <span className="text-sm font-medium dark:text-slate-200">{title}</span>
-            {subtitle && <span className="text-[10px] text-gray-700 dark:text-slate-400 text-left">{subtitle}</span>}
+            <span className="text-sm font-medium dark:text-slate-200">
+              {title}
+            </span>
+            {subtitle && (
+              <span className="text-[10px] text-gray-700 dark:text-slate-400 text-left">
+                {subtitle}
+              </span>
+            )}
           </div>
           {typeof value === 'string' ? (
-            <span className="text-xs text-gray-500 dark:text-slate-500">{value}</span>
+            <span className="text-xs text-gray-500 dark:text-slate-500">
+              {value}
+            </span>
           ) : (
             value
           )}

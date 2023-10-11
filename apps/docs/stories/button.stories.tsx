@@ -1,15 +1,22 @@
 // Button.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { ChainId } from '@sushiswap/chain'
-import { SUSHI } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { SUSHI } from 'sushi/currency'
 import { Button, ButtonProps, DiscordIcon } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import * as React from 'react'
 
 import { ViewGroup } from '../components/View'
 
-const variants: ButtonProps['variant'][] = ['default', 'secondary', 'destructive', 'ghost', 'outline', 'link']
+const variants: ButtonProps['variant'][] = [
+  'default',
+  'secondary',
+  'destructive',
+  'ghost',
+  'outline',
+  'link',
+]
 const sizes: ButtonProps['size'][] = ['xs', 'sm', 'default', 'lg', 'xl']
 
 const meta = {

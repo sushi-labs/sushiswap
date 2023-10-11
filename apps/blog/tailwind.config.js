@@ -4,7 +4,7 @@ import sharedConfig from '@sushiswap/tailwindcss-config'
 /** @type {import('tailwindcss').Config} */
 const tailwindConfig = {
   darkMode: 'class',
-  presets: [sharedConfig]
+  presets: [sharedConfig],
 }
 
 export default tailwindConfig

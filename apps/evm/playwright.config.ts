@@ -1,7 +1,7 @@
+import path from 'path'
 import type { PlaywrightTestConfig } from '@playwright/test'
 import { devices } from '@playwright/test'
 import { defineConfig } from 'next/experimental/testmode/playwright'
-import path from 'path'
 
 // Use process.env.PORT by default and fallback to port 3000
 const PORT = process.env.PORT || 3000
@@ -23,7 +23,7 @@ const config: PlaywrightTestConfig = {
   testDir: path.join(__dirname, 'test'),
   // testMatch: 'swap.test.ts',
   /* Maximum time one test can run for. */
-  timeout: 60_000,
+  timeout: 60 * 1_000,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
@@ -117,7 +117,6 @@ const config: PlaywrightTestConfig = {
     },
     {
       command: 'npm run start -- --experimental-test-proxy',
-      // command: 'npm run start',
       port: 3000,
       timeout: 120 * 1000,
       reuseExistingServer: !process.env.CI,

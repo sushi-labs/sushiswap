@@ -1,8 +1,22 @@
 export const SushiIcon = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg width="102" height="104" viewBox="0 0 102 104" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <svg
+      width="102"
+      height="104"
+      viewBox="0 0 102 104"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
       <g filter="url(#filter0_b_1810_2678)">
-        <rect y="0.969727" width="102" height="102.743" rx="12.5446" fill="white" fillOpacity="0.1" />
+        <rect
+          y="0.969727"
+          width="102"
+          height="102.743"
+          rx="12.5446"
+          fill="white"
+          fillOpacity="0.1"
+        />
         <path
           fillRule="evenodd"
           clipRule="evenodd"
@@ -37,8 +51,17 @@ export const SushiIcon = (props: React.ComponentProps<'svg'>) => {
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feGaussianBlur in="BackgroundImageFix" stdDeviation="10.872" />
-          <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_1810_2678" />
-          <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_1810_2678" result="shape" />
+          <feComposite
+            in2="SourceAlpha"
+            operator="in"
+            result="effect1_backgroundBlur_1810_2678"
+          />
+          <feBlend
+            mode="normal"
+            in="SourceGraphic"
+            in2="effect1_backgroundBlur_1810_2678"
+            result="shape"
+          />
         </filter>
         <linearGradient
           id="paint0_linear_1810_2678"

@@ -1,13 +1,20 @@
 'use client'
 
-import chains from '@sushiswap/chain'
+import chains from 'sushi/chain'
 import { usePools } from '@sushiswap/client'
-import { Native, Token } from '@sushiswap/currency'
-import { formatPercent, formatUSD } from '@sushiswap/format'
+import { Native, Token } from 'sushi/currency'
+import { formatPercent, formatUSD } from 'sushi'
 import { Token as GraphToken } from '@sushiswap/graph-client'
 import { LinkExternal, LinkInternal } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@sushiswap/ui/components/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@sushiswap/ui/components/table'
 import React, { FC } from 'react'
 import { useSWRConfig } from 'swr'
 
@@ -16,7 +23,10 @@ interface TokenPairs {
 }
 
 export const TokenPairs: FC<TokenPairs> = ({ token }) => {
-  const { data: pools } = usePools({ args: { ids: token.pairs.map(({ pair }) => pair.id) }, swrConfig: useSWRConfig() })
+  const { data: pools } = usePools({
+    args: { ids: token.pairs.map(({ pair }) => pair.id) },
+    swrConfig: useSWRConfig(),
+  })
 
   return (
     <div className="flex flex-col w-full gap-4">
@@ -74,31 +84,44 @@ export const TokenPairs: FC<TokenPairs> = ({ token }) => {
                         </Currency.IconList>
                         <LinkExternal
                           className="flex flex-col !no-underline group"
-                          href={chains[token.chainId].getTokenUrl(pair.id.split(':')[1])}
+                          href={chains[token.chainId].getTokenUrl(
+                            pair.id.split(':')[1],
+                          )}
                         >
                           <p className="text-sm font-semibold">
-                            {token0.symbol} <span className="text-slate-400">/</span> {token1.symbol}
+                            {token0.symbol}{' '}
+                            <span className="text-slate-400">/</span>{' '}
+                            {token1.symbol}
                           </p>
                         </LinkExternal>
                       </div>
                     </LinkInternal>
                   </TableCell>
                   <TableCell>
-                    <LinkInternal href={`/pool/${pair.id}`} className="!no-underline">
+                    <LinkInternal
+                      href={`/pool/${pair.id}`}
+                      className="!no-underline"
+                    >
                       <p className="font-semibold text-sm text-slate-100">
                         {liquidityUSD.includes('NaN') ? '$0.00' : liquidityUSD}
                       </p>
                     </LinkInternal>
                   </TableCell>
                   <TableCell>
-                    <LinkInternal href={`/pool/${pair.id}`} className="!no-underline">
+                    <LinkInternal
+                      href={`/pool/${pair.id}`}
+                      className="!no-underline"
+                    >
                       <p className="font-semibold text-sm text-slate-100">
                         {volume1w.includes('NaN') ? '$0.00' : volume1w}
                       </p>
                     </LinkInternal>
                   </TableCell>
                   <TableCell>
-                    <LinkInternal href={`/pool/${pair.id}`} className="!no-underline">
+                    <LinkInternal
+                      href={`/pool/${pair.id}`}
+                      className="!no-underline"
+                    >
                       <p className="font-semibold text-sm text-slate-100">
                         {formatPercent(pair.feeApr)}{' '}
                         {/*{pool && pool.incentives.length > 0 && pool.incentiveApr > 0 && (*/}

@@ -1,6 +1,12 @@
 import { Fee } from '@sushiswap/amm'
-import { Type } from '@sushiswap/currency'
-import { Address, encodeAbiParameters, encodeFunctionData, Hex, parseAbiParameters } from 'viem'
+import { Type } from 'sushi/currency'
+import {
+  Address,
+  encodeAbiParameters,
+  encodeFunctionData,
+  Hex,
+  parseAbiParameters,
+} from 'viem'
 
 const abiShard = [
   {
@@ -36,17 +42,25 @@ export interface DeployNewPoolAction {
   twap: boolean
 }
 
-export const deployNewPoolAction = ({ assets, factory, feeTier, twap }: DeployNewPoolAction): Hex => {
+export const deployNewPoolAction = ({
+  assets,
+  factory,
+  feeTier,
+  twap,
+}: DeployNewPoolAction): Hex => {
   const [tokenA, tokenB] = assets[0].wrapped.sortsBefore(assets[1].wrapped)
     ? [assets[0], assets[1]]
     : [assets[1], assets[0]]
 
-  const deployData = encodeAbiParameters(parseAbiParameters('address, address, uint8, bool'), [
-    tokenA.wrapped.address as Address,
-    tokenB.wrapped.address as Address,
-    feeTier,
-    twap,
-  ])
+  const deployData = encodeAbiParameters(
+    parseAbiParameters('address, address, uint8, bool'),
+    [
+      tokenA.wrapped.address as Address,
+      tokenB.wrapped.address as Address,
+      feeTier,
+      twap,
+    ],
+  )
 
   return encodeFunctionData({
     abi: abiShard,

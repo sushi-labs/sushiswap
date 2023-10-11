@@ -1,7 +1,7 @@
 import { Interface } from '@ethersproject/abi'
 import { TradeType } from '@sushiswap/amm'
-import { Amount as CurrencyAmount, Currency } from '@sushiswap/currency'
-import { BigintIsh } from '@sushiswap/math'
+import { Amount as CurrencyAmount, Currency } from 'sushi/currency'
+import { BigintIsh } from 'sushi'
 import IQuoterV2 from '@uniswap/swap-router-contracts/artifacts/contracts/lens/QuoterV2.sol/QuoterV2.json'
 import IQuoter from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json'
 import invariant from 'tiny-invariant'
@@ -51,16 +51,21 @@ export abstract class SwapQuoter {
    * @param options The optional params including price limit and Quoter contract switch
    * @returns The formatted calldata
    */
-  public static quoteCallParameters<TInput extends Currency, TOutput extends Currency>(
+  public static quoteCallParameters<
+    TInput extends Currency,
+    TOutput extends Currency,
+  >(
     route: Route<TInput, TOutput>,
     amount: CurrencyAmount<TInput | TOutput>,
     tradeType: TradeType,
-    options: QuoteOptions = {}
+    options: QuoteOptions = {},
   ): MethodParameters {
     const singleHop = route.pools.length === 1
     const quoteAmount: string = toHex(amount.quotient)
     let calldata: string
-    const swapInterface: Interface = options.useQuoterV2 ? this.V2INTERFACE : this.V1INTERFACE
+    const swapInterface: Interface = options.useQuoterV2
+      ? this.V2INTERFACE
+      : this.V1INTERFACE
 
     if (singleHop) {
       const baseQuoteParams: BaseQuoteParams = {
@@ -72,7 +77,9 @@ export abstract class SwapQuoter {
 
       const v2QuoteParams = {
         ...baseQuoteParams,
-        ...(tradeType == TradeType.EXACT_INPUT ? { amountIn: quoteAmount } : { amount: quoteAmount }),
+        ...(tradeType == TradeType.EXACT_INPUT
+          ? { amountIn: quoteAmount }
+          : { amount: quoteAmount }),
       }
 
       const v1QuoteParams = [
@@ -84,16 +91,30 @@ export abstract class SwapQuoter {
       ]
 
       const tradeTypeFunctionName =
-        tradeType === TradeType.EXACT_INPUT ? 'quoteExactInputSingle' : 'quoteExactOutputSingle'
+        tradeType === TradeType.EXACT_INPUT
+          ? 'quoteExactInputSingle'
+          : 'quoteExactOutputSingle'
       calldata = swapInterface.encodeFunctionData(
         tradeTypeFunctionName,
-        options.useQuoterV2 ? [v2QuoteParams] : v1QuoteParams
+        options.useQuoterV2 ? [v2QuoteParams] : v1QuoteParams,
       )
     } else {
-      invariant(options?.sqrtPriceLimitX96 === undefined, 'MULTIHOP_PRICE_LIMIT')
-      const path: string = encodeRouteToPath(route, tradeType === TradeType.EXACT_OUTPUT)
-      const tradeTypeFunctionName = tradeType === TradeType.EXACT_INPUT ? 'quoteExactInput' : 'quoteExactOutput'
-      calldata = swapInterface.encodeFunctionData(tradeTypeFunctionName, [path, quoteAmount])
+      invariant(
+        options?.sqrtPriceLimitX96 === undefined,
+        'MULTIHOP_PRICE_LIMIT',
+      )
+      const path: string = encodeRouteToPath(
+        route,
+        tradeType === TradeType.EXACT_OUTPUT,
+      )
+      const tradeTypeFunctionName =
+        tradeType === TradeType.EXACT_INPUT
+          ? 'quoteExactInput'
+          : 'quoteExactOutput'
+      calldata = swapInterface.encodeFunctionData(tradeTypeFunctionName, [
+        path,
+        quoteAmount,
+      ])
     }
     return {
       calldata,

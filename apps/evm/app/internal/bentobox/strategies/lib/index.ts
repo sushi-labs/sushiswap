@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 
 export async function getStrategies() {
   const { getBuiltGraphSDK } = await import('@sushiswap/graph-client')

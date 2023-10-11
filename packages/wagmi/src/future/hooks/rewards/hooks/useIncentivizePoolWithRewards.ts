@@ -1,9 +1,18 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { useCallback } from 'react'
 import { UserRejectedRequestError } from 'viem'
-import { Address, useContractWrite, useNetwork, usePrepareContractWrite } from 'wagmi'
-import { PrepareWriteContractConfig, SendTransactionResult, waitForTransaction } from 'wagmi/actions'
+import {
+  Address,
+  useContractWrite,
+  useNetwork,
+  usePrepareContractWrite,
+} from 'wagmi'
+import {
+  PrepareWriteContractConfig,
+  SendTransactionResult,
+  waitForTransaction,
+} from 'wagmi/actions'
 
 import { DistributionCreator } from '../abis/DistributionCreator'
 
@@ -11,10 +20,20 @@ interface UseHarvestAngleRewards {
   account: Address | undefined
   chainId: ChainId
   enabled?: boolean
-  args: PrepareWriteContractConfig<typeof DistributionCreator, 'signAndCreateDistribution'>['args'] | undefined
+  args:
+    | PrepareWriteContractConfig<
+        typeof DistributionCreator,
+        'signAndCreateDistribution'
+      >['args']
+    | undefined
 }
 
-export const useIncentivizePoolWithRewards = ({ account, chainId, args, enabled = true }: UseHarvestAngleRewards) => {
+export const useIncentivizePoolWithRewards = ({
+  account,
+  chainId,
+  args,
+  enabled = true,
+}: UseHarvestAngleRewards) => {
   const { chain } = useNetwork()
   const prepare = usePrepareContractWrite({
     chainId,
@@ -51,7 +70,7 @@ export const useIncentivizePoolWithRewards = ({ account, chainId, args, enabled 
         })
       }
     },
-    [account, chainId]
+    [account, chainId],
   )
 
   return {

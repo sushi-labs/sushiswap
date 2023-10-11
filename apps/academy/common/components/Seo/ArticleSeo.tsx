@@ -40,12 +40,19 @@ export const ArticleSeo: FC<ArticleSeo> = ({ article }) => {
             modifiedTime: article.updatedAt,
             authors: authors?.map((author) => author.name),
             tags: article.topics?.data
-              .reduce<(Maybe<string> | undefined)[]>((acc, el) => [...acc, el.attributes?.name], [])
+              .reduce<(Maybe<string> | undefined)[]>(
+                (acc, el) => [...acc, el.attributes?.name],
+                [],
+              )
               .filter(Boolean) as string[],
           },
         }}
         twitter={{
-          cardType: isMediaVideo(article.cover?.data?.attributes?.provider_metadata) ? 'player' : 'summary_large_image',
+          cardType: isMediaVideo(
+            article.cover?.data?.attributes?.provider_metadata,
+          )
+            ? 'player'
+            : 'summary_large_image',
         }}
       />
       <ArticleJsonLd

@@ -1,7 +1,12 @@
 import { LinkExternal, LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Container } from '@sushiswap/ui/components/container'
-import { DiscordIcon, GithubIcon, TwitterIcon, YoutubeIcon } from '@sushiswap/ui/components/icons'
+import {
+  DiscordIcon,
+  GithubIcon,
+  TwitterIcon,
+  YoutubeIcon,
+} from '@sushiswap/ui/components/icons'
 import React, { FC } from 'react'
 
 const SUPPORT_CHANNELS = [
@@ -30,23 +35,41 @@ const SUPPORT_CHANNELS = [
 export const NeedHelp: FC = () => {
   return (
     <section className="py-40 px-4">
-      <Container maxWidth="5xl" className="mx-auto border border-accent p-10 rounded-2xl">
+      <Container
+        maxWidth="5xl"
+        className="mx-auto border border-accent p-10 rounded-2xl"
+      >
         <div className="flex flex-col gap-20">
           <div className="flex flex-col items-center lg:items-start">
-            <span className="text-hero font-semibold text-center lg:text-left">Need Help?</span>
+            <span className="text-hero font-semibold text-center lg:text-left">
+              Need Help?
+            </span>
             <span className="text-lg text-center lg:text-left mt-2 max-w-[360px]">
-              If you need help or have any questions, contact us on one of our social channels
+              If you need help or have any questions, contact us on one of our
+              social channels
             </span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-[120px]">
             <div className="order-2 md:order-1 flex flex-col gap-2">
               <span className="text-xl font-semibold">Contact Support</span>
-              <span className="text-lg text-muted-foreground">Join the Sushi Discord community and ask away!</span>
+              <span className="text-lg text-muted-foreground">
+                Join the Sushi Discord community and ask away!
+              </span>
               <div className="mt-4">
                 {SUPPORT_CHANNELS.map(({ title, icon: Icon, link }, index) => (
-                  <LinkInternal href={link} className="flex items-center gap-4 cursor-pointer group py-2" key={index}>
-                    <Icon width={24} height={24} className="text-blue group-hover:text-blue-300" />
-                    <span className="text-sm font-medium text-blue group-hover:text-blue-300">{title}</span>
+                  <LinkInternal
+                    href={link}
+                    className="flex items-center gap-4 cursor-pointer group py-2"
+                    key={index}
+                  >
+                    <Icon
+                      width={24}
+                      height={24}
+                      className="text-blue group-hover:text-blue-300"
+                    />
+                    <span className="text-sm font-medium text-blue group-hover:text-blue-300">
+                      {title}
+                    </span>
                   </LinkInternal>
                 ))}
               </div>
@@ -56,8 +79,9 @@ export const NeedHelp: FC = () => {
                 <div className="flex flex-col gap-2">
                   <span className="text-xl font-semibold">Sushi Academy</span>
                   <span className="text-lg text-muted-foreground">
-                    Demystifying DeFi - everything you need to know in one place. For beginners to advanced users, and
-                    everyone in between.
+                    Demystifying DeFi - everything you need to know in one
+                    place. For beginners to advanced users, and everyone in
+                    between.
                   </span>
                 </div>
                 <div className="flex justify-start mt-4">

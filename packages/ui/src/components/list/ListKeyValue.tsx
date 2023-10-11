@@ -12,7 +12,14 @@ export type ListKeyValueProps =
       flex?: boolean
       className?: string
     }
-  | { title?: never; subtitle?: boolean; children?: never; skeleton?: boolean; flex?: boolean; className?: string }
+  | {
+      title?: never
+      subtitle?: boolean
+      children?: never
+      skeleton?: boolean
+      flex?: boolean
+      className?: string
+    }
 
 export const ListKeyValue: FC<ListKeyValueProps> = ({
   title,
@@ -41,14 +48,18 @@ export const ListKeyValue: FC<ListKeyValueProps> = ({
       className={classNames(
         className,
         flex ? 'flex justify-between items-center' : 'grid grid-cols-2',
-        'gap-2 py-3 px-3 rounded-lg'
+        'gap-2 py-3 px-3 rounded-lg',
       )}
     >
       <div className="flex flex-col gap-0.5">
         <span className="text-sm font-medium">{title}</span>
-        {subtitle && <span className="text-xs text-muted-foreground">{subtitle}</span>}
+        {subtitle && (
+          <span className="text-xs text-muted-foreground">{subtitle}</span>
+        )}
       </div>
-      <div className="flex justify-end w-full text-sm font-medium text-right truncate">{children}</div>
+      <div className="flex justify-end w-full text-sm font-medium text-right truncate">
+        {children}
+      </div>
     </div>
   )
 }

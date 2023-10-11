@@ -1,6 +1,6 @@
 import { Interface } from '@ethersproject/abi'
-import { Token } from '@sushiswap/currency'
-import { BigintIsh } from '@sushiswap/math'
+import { Token } from 'sushi/currency'
+import { BigintIsh } from 'sushi'
 import ISelfPermit from '@uniswap/v3-periphery/artifacts/contracts/interfaces/ISelfPermit.sol/ISelfPermit.json'
 
 import { toHex } from '../utils'
@@ -23,7 +23,9 @@ export interface AllowedPermitArguments {
 
 export type PermitOptions = StandardPermitArguments | AllowedPermitArguments
 
-function isAllowedPermit(permitOptions: PermitOptions): permitOptions is AllowedPermitArguments {
+function isAllowedPermit(
+  permitOptions: PermitOptions,
+): permitOptions is AllowedPermitArguments {
   return 'nonce' in permitOptions
 }
 

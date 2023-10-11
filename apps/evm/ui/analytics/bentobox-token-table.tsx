@@ -1,6 +1,6 @@
 'use client'
 
-import { formatNumber, formatUSD } from '@sushiswap/format'
+import { formatNumber, formatUSD } from 'sushi'
 import {
   Badge,
   Card,
@@ -12,29 +12,41 @@ import {
   NetworkIcon,
   SkeletonText,
 } from '@sushiswap/ui'
-import { ColumnDef, PaginationState, SortingState, TableState } from '@tanstack/react-table'
+import {
+  ColumnDef,
+  PaginationState,
+  SortingState,
+  TableState,
+} from '@tanstack/react-table'
 import React, { FC, useMemo, useState } from 'react'
 
-import { BentoBoxToken, GetBentoBoxTokenArgs, useBentoBoxTokens } from '../../lib/bentobox/useBentoBoxTokens'
+import {
+  BentoBoxToken,
+  GetBentoBoxTokenArgs,
+  useBentoBoxTokens,
+} from '../../lib/bentobox/useBentoBoxTokens'
 import { usePoolFilters } from '../pool'
 
 const COLUMNS: ColumnDef<BentoBoxToken, unknown>[] = [
   {
     id: 'tokenName',
     header: 'Name',
-    cell: ({
-      row: {
-        original: { token },
-      },
-    }) => (
+    cell: ({ row: { original: { token } } }) => (
       <div className="flex items-center gap-5">
         <div className="flex">
           <Badge
             className="border-2 border-slate-900 rounded-full z-[11]"
             position="bottom-right"
-            badgeContent={<NetworkIcon chainId={token.chainId} width={14} height={14} />}
+            badgeContent={
+              <NetworkIcon chainId={token.chainId} width={14} height={14} />
+            }
           >
-            <Currency.Icon disableLink currency={token} width={26} height={26} />
+            <Currency.Icon
+              disableLink
+              currency={token}
+              width={26}
+              height={26}
+            />
           </Badge>
         </div>
         <div className="flex flex-col">
@@ -73,7 +85,9 @@ const COLUMNS: ColumnDef<BentoBoxToken, unknown>[] = [
 export const BentoBoxTokenTable: FC = () => {
   const { chainIds, tokenSymbols } = usePoolFilters()
 
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: 'liquidityUSD', desc: true },
+  ])
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -84,7 +98,7 @@ export const BentoBoxTokenTable: FC = () => {
       chainIds,
       tokenSymbols,
     }),
-    [chainIds, tokenSymbols]
+    [chainIds, tokenSymbols],
   )
 
   const { data: bentoBoxTokens, isLoading } = useBentoBoxTokens(args)
@@ -104,7 +118,9 @@ export const BentoBoxTokenTable: FC = () => {
         <CardTitle>
           Tokens{' '}
           {bentoBoxTokens?.length ? (
-            <span className="text-gray-400 dark:text-slate-500">({bentoBoxTokens?.length})</span>
+            <span className="text-gray-400 dark:text-slate-500">
+              ({bentoBoxTokens?.length})
+            </span>
           ) : null}
         </CardTitle>
       </CardHeader>

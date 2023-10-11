@@ -42,7 +42,13 @@ export function getRandomExp(rnd: () => number, min: number, max: number) {
   return res
 }
 
-function expectCloseValues(v1: number, v2: number, precision: number, description = '', additionalInfo = '') {
+function expectCloseValues(
+  v1: number,
+  v2: number,
+  precision: number,
+  description = '',
+  additionalInfo = '',
+) {
   const a = v1
   const b = v2
   const res = closeValues(a, b, precision)
@@ -62,7 +68,7 @@ function expectCloseValues(v1: number, v2: number, precision: number, descriptio
 function createPool(
   params: { A: number; fee: number; reserve0: number; reserve1: number },
   token0: RToken,
-  token1: RToken
+  token1: RToken,
 ): CurvePool {
   return new CurvePool(
     'curve pool' as Address,
@@ -71,11 +77,15 @@ function createPool(
     params.fee,
     params.A,
     getBigInt(params.reserve0),
-    getBigInt(params.reserve1)
+    getBigInt(params.reserve1),
   )
 }
 
-function checkSwap(pool: CurvePool, amountIn: number, direction: boolean): number {
+function checkSwap(
+  pool: CurvePool,
+  amountIn: number,
+  direction: boolean,
+): number {
   const { out, gasSpent } = pool.calcOutByIn(amountIn, direction)
 
   expect(gasSpent).toBeDefined()
@@ -103,8 +113,8 @@ function checkSwap(pool: CurvePool, amountIn: number, direction: boolean): numbe
     amountIn,
     expectedPrecision,
     `price=${pool.calcCurrentPriceWithoutFee(
-      true
-    )} res0=${pool.reserve0.toString()} res1=${pool.reserve1.toString()} amountIn=${amountIn} out=${out} inp=${inp} dir=${direction}`
+      true,
+    )} res0=${pool.reserve0.toString()} res1=${pool.reserve1.toString()} amountIn=${amountIn} out=${out} inp=${inp} dir=${direction}`,
   )
 
   return out
@@ -126,20 +136,21 @@ function checkPoolPriceCalculation(pool: CurvePool) {
   const expectedPrecision = Math.max(
     1e-10,
     10 / parseInt(pool.reserve0.toString()),
-    10 / parseInt(pool.reserve1.toString())
+    10 / parseInt(pool.reserve1.toString()),
   )
   expect(Math.abs(price1 * price2 - 1)).toBeLessThan(expectedPrecision)
 
   let poolScaled = pool
   if (pool.reserve0 < E33 || pool.reserve1 < E33) {
-    poolScaled = new CurvePool( // Scale E21 times
+    poolScaled = new CurvePool(
+      // Scale E21 times
       pool.address,
       pool.token0,
       pool.token1,
       pool.fee,
       pool.A,
       pool.getReserve0() * E33,
-      pool.getReserve1() * E33
+      pool.getReserve1() * E33,
     )
   }
   const inp = parseFloat(poolScaled.reserve0.toString()) / 1e15
@@ -156,16 +167,23 @@ function createRandomPool(rnd: () => number, token0: RToken, token1: RToken) {
       A: Math.round(getRandomExp(rnd, 1, 10_000)),
       fee: Math.round(getRandomLin(rnd, 1, 100)) / 10_000,
       reserve0,
-      reserve1: reserve0 * 10 ** (token1.decimals - token0.decimals) * getRandomExp(rnd, 1 / 1000, 1000),
+      reserve1:
+        reserve0 *
+        10 ** (token1.decimals - token0.decimals) *
+        getRandomExp(rnd, 1 / 1000, 1000),
     },
     token0,
-    token1
+    token1,
   )
 }
 
 describe('Curve1 2 tokens pools check', () => {
   it('TypicalPool', () => {
-    const pool = createPool({ A: 2000, fee: 1e-4, reserve0: 1e13, reserve1: 1e13 }, token0, token1)
+    const pool = createPool(
+      { A: 2000, fee: 1e-4, reserve0: 1e13, reserve1: 1e13 },
+      token0,
+      token1,
+    )
     checkSwap(pool, 1e8, true)
     checkSwap(pool, 1e8, false)
     checkPoolPriceCalculation(pool)
@@ -179,8 +197,16 @@ describe('Curve1 2 tokens pools check', () => {
       checkPoolPriceCalculation(pool)
       for (let i = 0; i < 30; ++i) {
         const amountInPortion = getRandomExp(rnd, 1e-5, 1e-1)
-        checkSwap(pool, parseInt(pool.getReserve0().toString()) * amountInPortion, true)
-        checkSwap(pool, parseInt(pool.getReserve1().toString()) * amountInPortion, false)
+        checkSwap(
+          pool,
+          parseInt(pool.getReserve0().toString()) * amountInPortion,
+          true,
+        )
+        checkSwap(
+          pool,
+          parseInt(pool.getReserve1().toString()) * amountInPortion,
+          false,
+        )
       }
     }
   })
@@ -193,8 +219,16 @@ describe('Curve1 2 tokens pools check', () => {
       checkPoolPriceCalculation(pool)
       for (let i = 0; i < 30; ++i) {
         const amountInPortion = getRandomExp(rnd, 1e-5, 1e-1)
-        checkSwap(pool, parseInt(pool.getReserve0().toString()) * amountInPortion, true)
-        checkSwap(pool, parseInt(pool.getReserve1().toString()) * amountInPortion, false)
+        checkSwap(
+          pool,
+          parseInt(pool.getReserve0().toString()) * amountInPortion,
+          true,
+        )
+        checkSwap(
+          pool,
+          parseInt(pool.getReserve1().toString()) * amountInPortion,
+          false,
+        )
       }
     }
   })
@@ -207,8 +241,16 @@ describe('Curve1 2 tokens pools check', () => {
       checkPoolPriceCalculation(pool)
       for (let i = 0; i < 30; ++i) {
         const amountInPortion = getRandomExp(rnd, 1e-5, 1e-1)
-        checkSwap(pool, parseInt(pool.getReserve0().toString()) * amountInPortion, true)
-        checkSwap(pool, parseInt(pool.getReserve1().toString()) * amountInPortion, false)
+        checkSwap(
+          pool,
+          parseInt(pool.getReserve0().toString()) * amountInPortion,
+          true,
+        )
+        checkSwap(
+          pool,
+          parseInt(pool.getReserve1().toString()) * amountInPortion,
+          false,
+        )
       }
     }
   })

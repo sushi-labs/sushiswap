@@ -1,7 +1,19 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { config, network } from 'hardhat'
-import { Client, createPublicClient, custom, Hex, testActions, walletActions } from 'viem'
-import { HDAccount, mnemonicToAccount, PrivateKeyAccount, privateKeyToAccount } from 'viem/accounts'
+import {
+  Client,
+  createPublicClient,
+  custom,
+  Hex,
+  testActions,
+  walletActions,
+} from 'viem'
+import {
+  HDAccount,
+  mnemonicToAccount,
+  PrivateKeyAccount,
+  privateKeyToAccount,
+} from 'viem/accounts'
 import { hardhat } from 'viem/chains'
 
 const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
@@ -17,7 +29,9 @@ export async function getTestConfig(): Promise<TestConfig> {
 
   let user
 
-  const accounts = config.networks.hardhat.accounts as { mnemonic: string } | [{ privateKey: Hex }]
+  const accounts = config.networks.hardhat.accounts as
+    | { mnemonic: string }
+    | [{ privateKey: Hex }]
   if (Array.isArray(accounts)) {
     user = privateKeyToAccount(accounts[0].privateKey)
   } else {

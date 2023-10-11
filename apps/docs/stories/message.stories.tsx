@@ -6,7 +6,13 @@ import * as React from 'react'
 
 import { ViewGroup } from '../components/View'
 
-const variants: MessageProps['variant'][] = ['info', 'destructive', 'warning', 'muted', 'success']
+const variants: MessageProps['variant'][] = [
+  'info',
+  'destructive',
+  'warning',
+  'muted',
+  'success',
+]
 const sizes: MessageProps['size'][] = ['xs', 'sm', 'default']
 
 const meta = {
@@ -50,8 +56,9 @@ export const Variants = (args) => {
   const items = variants.map((variant) => (
     <React.Fragment key={variant}>
       <Message {...args} key={variant} variant={variant}>
-        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
-        galley of type and scrambled it to make a type specimen book
+        Lorem Ipsum has been the industry's standard dummy text ever since the
+        1500s, when an unknown printer took a galley of type and scrambled it to
+        make a type specimen book
       </Message>
     </React.Fragment>
   ))
@@ -63,8 +70,9 @@ export const Sizes = (args) => {
   const items = sizes.map((size) => (
     <React.Fragment key={size}>
       <Message {...args} key={size} size={size}>
-        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
-        galley of type and scrambled it to make a type specimen book
+        Lorem Ipsum has been the industry's standard dummy text ever since the
+        1500s, when an unknown printer took a galley of type and scrambled it to
+        make a type specimen book
       </Message>
     </React.Fragment>
   ))

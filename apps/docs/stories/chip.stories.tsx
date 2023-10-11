@@ -6,7 +6,13 @@ import * as React from 'react'
 
 import { ViewGroup } from '../components/View'
 
-const variants: ChipProps['variant'][] = ['default', 'secondary', 'destructive', 'ghost', 'outline']
+const variants: ChipProps['variant'][] = [
+  'default',
+  'secondary',
+  'destructive',
+  'ghost',
+  'outline',
+]
 
 const meta = {
   title: 'Primitives/Chip',

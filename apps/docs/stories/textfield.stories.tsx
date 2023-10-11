@@ -3,7 +3,11 @@
 import { CreditCardIcon } from '@heroicons/react/24/outline'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import type { Meta, StoryObj } from '@storybook/react'
-import { TextField, TextFieldBaseProps, TextFieldDescription } from '@sushiswap/ui'
+import {
+  TextField,
+  TextFieldBaseProps,
+  TextFieldDescription,
+} from '@sushiswap/ui'
 import * as React from 'react'
 
 import { ViewGroup } from '../components/View'
@@ -94,7 +98,12 @@ export const Description = {
 export const Variants = (args) => {
   const items = variants.map((variant) => (
     <React.Fragment key={variant}>
-      <TextField {...args} key={variant} variant={variant} placeholder={`Variant ${variant}`} />
+      <TextField
+        {...args}
+        key={variant}
+        variant={variant}
+        placeholder={`Variant ${variant}`}
+      />
     </React.Fragment>
   ))
 
@@ -104,7 +113,12 @@ export const Variants = (args) => {
 export const Sizes = (args) => {
   const items = sizes.map((size) => (
     <React.Fragment key={size}>
-      <TextField {...args} key={size} size={size} placeholder={`Size ${size}`} />
+      <TextField
+        {...args}
+        key={size}
+        size={size}
+        placeholder={`Size ${size}`}
+      />
     </React.Fragment>
   ))
 

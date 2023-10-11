@@ -1,7 +1,7 @@
 'use client'
 
 import { GetApiInputFromOutput, parseArgs } from '@sushiswap/client'
-import { Amount, Token } from '@sushiswap/currency'
+import { Amount, Token } from 'sushi/currency'
 import { Rebase } from '@sushiswap/graph-client'
 import { useAllPrices } from '@sushiswap/react-query'
 import { useMemo } from 'react'
@@ -10,17 +10,21 @@ import useSWR from 'swr'
 import { bentoBoxTokensSchema } from '../schema'
 
 export type GetBentoBoxTokenArgs = GetApiInputFromOutput<
-  (typeof bentoBoxTokensSchema)['_input'],
-  (typeof bentoBoxTokensSchema)['_output']
+  typeof bentoBoxTokensSchema['_input'],
+  typeof bentoBoxTokensSchema['_output']
 >
 
-export type BentoBoxToken = NonNullable<ReturnType<typeof useBentoBoxTokens>['data']>[number]
+export type BentoBoxToken = NonNullable<
+  ReturnType<typeof useBentoBoxTokens>['data']
+>[number]
 
-export const getBentoBoxTokensUrl = (args: GetBentoBoxTokenArgs) => `/analytics/api/bentobox${parseArgs(args)}`
+export const getBentoBoxTokensUrl = (args: GetBentoBoxTokenArgs) =>
+  `/analytics/api/bentobox${parseArgs(args)}`
 
 function useBentoBoxTokens(args: GetBentoBoxTokenArgs) {
-  const { data: rebases, isValidating } = useSWR<Rebase[]>(getBentoBoxTokensUrl(args), (url) =>
-    fetch(url).then((data) => data.json())
+  const { data: rebases, isValidating } = useSWR<Rebase[]>(
+    getBentoBoxTokensUrl(args),
+    (url) => fetch(url).then((data) => data.json()),
   )
 
   const { data: prices, isLoading } = useAllPrices()
@@ -47,11 +51,17 @@ function useBentoBoxTokens(args: GetBentoBoxTokenArgs) {
             token,
             liquidity: parseInt(liquidity.toSignificant(6)),
             liquidityUSD: price
-              ? parseInt(liquidity.multiply(prices?.[token.chainId]?.[token.address].asFraction).toSignificant(4))
+              ? parseInt(
+                  liquidity
+                    .multiply(
+                      prices?.[token.chainId]?.[token.address].asFraction,
+                    )
+                    .toSignificant(4),
+                )
               : 0,
           }
         }),
-      [rebases, prices]
+      [rebases, prices],
     ),
     isLoading: isLoading || isValidating,
   }
