@@ -4,7 +4,7 @@ import { Chain } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
-import { classNames } from '@sushiswap/ui'
+import { Tooltip, TooltipPrimitive, TooltipProvider, TooltipTrigger, classNames } from '@sushiswap/ui'
 import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
 import { Explainer } from '@sushiswap/ui/components/explainer'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
@@ -73,7 +73,40 @@ export const CrossChainSwapTradeStats: FC = () => {
             {loading || !trade?.gasSpent || trade.gasSpent === '0' ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
             ) : trade?.gasSpent ? (
-              `${trade.gasSpent} ${Native.onChain(chainId0).symbol}`
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <span className="underline decoration-dotted flex items-center justify-end gap-1 text-sm text-gray-900 dark:text-slate-50">
+                      {trade.gasSpent} {Native.onChain(chainId0).symbol}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipPrimitive.Portal>
+                    <TooltipPrimitive.Content
+                      sideOffset={4}
+                      className="border border-accent max-h-[var(--radix-popper-available-height)] z-50 w-80 bg-white/50 dark:bg-slate-800/50 paper rounded-xl p-4 shadow-md outline-none animate-in data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 text-sm gap-3"
+                    >
+                      <div className="flex justify-between space-x-3 font-bold">
+                        <div>Network Fee</div>
+                        <div>
+                          {trade.gasSpent} {Native.onChain(chainId0).symbol}
+                        </div>
+                      </div>
+                      <div className="flex justify-between space-x-3 pl-6">
+                        <div className="font-semibold">on Origin Chain</div>
+                        <div className="font-bold">
+                          {trade.srcGasFee} {Native.onChain(chainId0).symbol}
+                        </div>
+                      </div>
+                      <div className="flex justify-between space-x-3 pl-6">
+                        <div className="font-semibold">on Dest. Chain</div>
+                        <div className="font-bold">
+                          {trade.bridgeFee} {Native.onChain(chainId0).symbol}
+                        </div>
+                      </div>
+                    </TooltipPrimitive.Content>
+                  </TooltipPrimitive.Portal>
+                </Tooltip>
+              </TooltipProvider>
             ) : null}
           </span>
         </div>

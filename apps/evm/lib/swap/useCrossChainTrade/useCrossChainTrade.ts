@@ -182,8 +182,8 @@ export const useCrossChainTradeQuery = (
 
       let writeArgs
       let functionName
-      let dstPayload = encodeAbiParameters(parseAbiParameters('address, bytes, bytes'), [recipient, '0x', '0x'])
-      let dstGasEstimate = ZERO
+      let dstPayload
+      let dstGasEst = ZERO
       let transactionType
 
       if (!isSrcSwap && !isDstSwap) {
@@ -207,7 +207,7 @@ export const useCrossChainTradeQuery = (
               dustAmount: 0,
               receiver: recipient, // receivier is recipient because no dstPayload
               to: recipient,
-              dstGas: dstGasEstimate,
+              dstGas: dstGasEst,
             }),
           }),
           recipient, // refundAddress
@@ -236,7 +236,7 @@ export const useCrossChainTradeQuery = (
               dustAmount: 0,
               receiver: recipient, // receivier is recipient because no dstPayload
               to: recipient,
-              dstGas: dstGasEstimate,
+              dstGas: dstGasEst,
             }),
           }),
           recipient, // refundAddress
@@ -251,7 +251,7 @@ export const useCrossChainTradeQuery = (
           .invert()
           .multiply(srcAmountOut.quotient).quotient
 
-        dstGasEstimate = estimateStargateDstGas(dstTrade.route?.gasSpent ?? 0)
+        dstGasEst = estimateStargateDstGas(dstTrade.route?.gasSpent ?? 0)
 
         dstPayload = encodeAbiParameters(parseAbiParameters('address, bytes, bytes'), [
           recipient,
@@ -267,14 +267,14 @@ export const useCrossChainTradeQuery = (
             amountIn: amount,
             to: recipient,
             adapterData: encodeStargateTeleportParams({
-              srcBridgeToken: srcBridgeToken,
-              dstBridgeToken: dstBridgeToken,
+              srcBridgeToken,
+              dstBridgeToken,
               amount: amount.quotient,
               amountMin,
               dustAmount: 0,
               receiver: STARGATE_ADAPTER_ADDRESS[network1],
               to: recipient,
-              dstGas: dstGasEstimate,
+              dstGas: dstGasEst,
             }),
           }),
           recipient, // refundAddress
@@ -294,7 +294,7 @@ export const useCrossChainTradeQuery = (
           dstSwapData, // swapData
           '0x', // payloadData
         ])
-        dstGasEstimate = estimateStargateDstGas(dstTrade.route?.gasSpent ?? 0)
+        dstGasEst = estimateStargateDstGas(dstTrade.route?.gasSpent ?? 0)
 
         transactionType = TransactionType.CrossChainSwap
         functionName = 'swapAndBridge'
@@ -311,7 +311,7 @@ export const useCrossChainTradeQuery = (
               dustAmount: 0,
               receiver: STARGATE_ADAPTER_ADDRESS[network1],
               to: recipient,
-              dstGas: dstGasEstimate,
+              dstGas: dstGasEst,
             }),
           }),
           recipient, // refundAddress
@@ -323,8 +323,7 @@ export const useCrossChainTradeQuery = (
         throw new Error('Crosschain swap not found.')
       }
 
-      // need async to get fee for final value... this should be moved to exec?
-      const [fee] = (await readContract({
+      let [fee] = (await readContract({
         address: STARGATE_ADAPTER_ADDRESS[network0],
         abi: stargateAdapterAbi,
         functionName: 'getFee',
@@ -332,7 +331,7 @@ export const useCrossChainTradeQuery = (
           STARGATE_CHAIN_ID[network1], // dstChain
           1, // functionType
           isDstSwap ? STARGATE_ADAPTER_ADDRESS[network1] : recipient, // receiver
-          dstGasEstimate, // gasAmount
+          dstGasEst, // gasAmount
           0, // dustAmount
           isDstSwap ? dstPayload : '0x', // payload
         ],
@@ -340,14 +339,19 @@ export const useCrossChainTradeQuery = (
       })) as [bigint]
 
       // Add 20% buffer to STG fee
-      const value = amount.currency.isNative ? BigInt(amount.quotient.toString()) + (fee * 5n) / 4n : (fee * 5n) / 4n
+      fee = (fee * 5n) / 4n
+
+      const value = amount.currency.isNative ? BigInt(amount.quotient) + fee : fee
 
       // est 500K gas for XSwapV2 call
-      const gasEst = 500000n + BigInt(srcTrade?.route?.gasSpent ?? 0)
+      const srcGasEst = 500000n + BigInt(srcTrade?.route?.gasSpent ?? 0)
 
-      const gasSpent = Amount.fromRawAmount(Native.onChain(network0), fee + gasEst * BigInt(feeData0?.gasPrice ?? 0))
+      const srcGasFee = Amount.fromRawAmount(Native.onChain(network0), srcGasEst * feeData0.gasPrice)
 
-      // Needs to be parsed to string because react-query entities are serialized to cache
+      const bridgeFee = Amount.fromRawAmount(Native.onChain(network0), fee)
+
+      const gasSpent = srcGasFee.add(bridgeFee)
+
       return {
         transactionType,
         srcBridgeToken,
@@ -356,7 +360,9 @@ export const useCrossChainTradeQuery = (
         amountIn: amount.quotient.toString(),
         amountOut: dstAmountOut?.quotient.toString(),
         minAmountOut: dstMinimumAmountOut?.quotient.toString(),
-        gasSpent: gasSpent.toSignificant(4),
+        gasSpent: gasSpent.toFixed(6),
+        bridgeFee: bridgeFee.toFixed(6),
+        srcGasFee: srcGasFee.toFixed(6),
         writeArgs,
         route: {
           status: '',

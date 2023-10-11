@@ -32,6 +32,8 @@ export interface UseCrossChainTradeReturn {
   amountOut: Amount<Type> | undefined
   minAmountOut: Amount<Type> | undefined
   gasSpent: string | undefined
+  bridgeFee: string | undefined
+  srcGasFee: string | undefined
   functionName: string
   writeArgs: [] | undefined
   route: { status: string }
