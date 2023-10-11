@@ -37,7 +37,10 @@ export function getAlgebraPoolAddress(
       ? [tokenA, tokenB]
       : [tokenB, tokenA]
   const constructorArgumentsEncoded = encodeAbiParameters(
-    [{name: 'TokenA', type: 'address'}, {name: 'TokenB', type: 'address'}],
+    [
+      { name: 'TokenA', type: 'address' },
+      { name: 'TokenB', type: 'address' },
+    ],
     [token0, token1],
   )
   const create2Inputs = [
