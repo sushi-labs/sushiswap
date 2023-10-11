@@ -38,11 +38,18 @@ export const ArticleSeo: FC<ArticleSeo> = ({ article }) => {
             publishedTime: article.publishedAt,
             modifiedTime: article.updatedAt,
             authors: authors.map((author) => author.name),
-            tags: article.categories?.data.reduce<string[]>((acc, el) => [...acc, el.attributes.name], []),
+            tags: article.categories?.data.reduce<string[]>(
+              (acc, el) => [...acc, el.attributes.name],
+              [],
+            ),
           },
         }}
         twitter={{
-          cardType: isMediaVideo(article.cover?.data?.attributes?.provider_metadata) ? 'player' : 'summary_large_image',
+          cardType: isMediaVideo(
+            article.cover?.data?.attributes?.provider_metadata,
+          )
+            ? 'player'
+            : 'summary_large_image',
         }}
       />
       <ArticleJsonLd

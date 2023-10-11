@@ -1,10 +1,19 @@
-import { stargateFeeLibraryV03Abi, stargatePoolAbi } from '@sushiswap/abi'
-import { Amount, Currency } from '@sushiswap/currency'
-import { STARGATE_CHAIN_ID, STARGATE_ETH_ADDRESS, STARGATE_POOL_ADDRESS, STARGATE_POOL_ID } from '@sushiswap/stargate'
-import { useMemo } from 'react'
-import { Address, useContractRead, useContractReads } from '@sushiswap/wagmi'
+import {
+  STARGATE_CHAIN_ID,
+  STARGATE_ETH_ADDRESS,
+  STARGATE_POOL_ADDRESS,
+  STARGATE_POOL_ID,
+  StargateChainId,
+} from '@sushiswap/stargate'
+import {
+  STARGATE_ADAPTER_ADDRESS,
+  StargateAdapterChainId,
+} from '@sushiswap/sushixswap-sdk'
 import { ADDRESS_ZERO } from '@sushiswap/v3-sdk'
-import { STARGATE_ADAPTER_ADDRESS, StargateAdapterChainId } from '@sushiswap/sushixswap-sdk'
+import { Address, useContractRead, useContractReads } from '@sushiswap/wagmi'
+import { useMemo } from 'react'
+import { stargateFeeLibraryV03Abi, stargatePoolAbi } from 'sushi/abi'
+import { Amount, Currency } from 'sushi/currency'
 
 export const useStargateBridgeFees = ({
   amount,
@@ -30,18 +39,22 @@ export const useStargateBridgeFees = ({
               {
                 address: STARGATE_POOL_ADDRESS[srcChainId][
                   srcBridgeToken.isNative
-                    ? STARGATE_ETH_ADDRESS[srcChainId as keyof typeof STARGATE_ETH_ADDRESS]
+                    ? STARGATE_ETH_ADDRESS[
+                        srcChainId as keyof typeof STARGATE_ETH_ADDRESS
+                      ]
                     : srcBridgeToken.address
                 ] as Address,
                 functionName: 'getChainPath',
                 args: [
-                  STARGATE_CHAIN_ID[dstChainId],
+                  STARGATE_CHAIN_ID[dstChainId as StargateChainId],
                   BigInt(
                     STARGATE_POOL_ID[dstChainId][
                       dstBridgeToken.isNative
-                        ? STARGATE_ETH_ADDRESS[dstChainId as keyof typeof STARGATE_ETH_ADDRESS]
+                        ? STARGATE_ETH_ADDRESS[
+                            dstChainId as keyof typeof STARGATE_ETH_ADDRESS
+                          ]
                         : dstBridgeToken.address
-                    ] ?? 0
+                    ] ?? 0,
                   ),
                 ],
                 abi: stargatePoolAbi,
@@ -50,7 +63,9 @@ export const useStargateBridgeFees = ({
               {
                 address: STARGATE_POOL_ADDRESS[srcChainId][
                   srcBridgeToken.isNative
-                    ? STARGATE_ETH_ADDRESS[srcChainId as keyof typeof STARGATE_ETH_ADDRESS]
+                    ? STARGATE_ETH_ADDRESS[
+                        srcChainId as keyof typeof STARGATE_ETH_ADDRESS
+                      ]
                     : srcBridgeToken.address
                 ] as Address,
                 functionName: 'feeLibrary',
@@ -60,7 +75,9 @@ export const useStargateBridgeFees = ({
               {
                 address: STARGATE_POOL_ADDRESS[srcChainId][
                   srcBridgeToken.isNative
-                    ? STARGATE_ETH_ADDRESS[srcChainId as keyof typeof STARGATE_ETH_ADDRESS]
+                    ? STARGATE_ETH_ADDRESS[
+                        srcChainId as keyof typeof STARGATE_ETH_ADDRESS
+                      ]
                     : srcBridgeToken.address
                 ] as Address,
                 functionName: 'sharedDecimals',
@@ -68,7 +85,7 @@ export const useStargateBridgeFees = ({
                 chainId: srcChainId,
               },
             ] as const),
-      [srcChainId, srcBridgeToken, dstBridgeToken]
+      [srcChainId, srcBridgeToken, dstChainId, dstBridgeToken],
     ),
     enabled: Boolean(enabled && srcBridgeToken && dstBridgeToken),
     watch: Boolean(enabled && srcBridgeToken && dstBridgeToken),
@@ -82,7 +99,7 @@ export const useStargateBridgeFees = ({
     return localDecimals > sharedDecimals
       ? amount.asFraction.divide(10n ** (localDecimals - sharedDecimals))
       : amount.asFraction.multiply(10n ** (sharedDecimals - localDecimals))
-  }, [amount, stargatePoolResults?.[2]?.result])
+  }, [amount, stargatePoolResults])
 
   return useContractRead({
     address: stargatePoolResults?.[1]?.result ?? ADDRESS_ZERO,
@@ -95,22 +112,26 @@ export const useStargateBridgeFees = ({
               BigInt(
                 STARGATE_POOL_ID[srcChainId][
                   srcBridgeToken.isNative
-                    ? STARGATE_ETH_ADDRESS[srcChainId as keyof typeof STARGATE_ETH_ADDRESS]
+                    ? STARGATE_ETH_ADDRESS[
+                        srcChainId as keyof typeof STARGATE_ETH_ADDRESS
+                      ]
                     : srcBridgeToken.address
-                ] ?? 0
+                ] ?? 0,
               ),
               BigInt(
                 STARGATE_POOL_ID[dstChainId][
                   dstBridgeToken.isNative
-                    ? STARGATE_ETH_ADDRESS[dstChainId as keyof typeof STARGATE_ETH_ADDRESS]
+                    ? STARGATE_ETH_ADDRESS[
+                        dstChainId as keyof typeof STARGATE_ETH_ADDRESS
+                      ]
                     : dstBridgeToken.address
-                ] ?? 0
+                ] ?? 0,
               ),
-              STARGATE_CHAIN_ID[dstChainId],
+              STARGATE_CHAIN_ID[dstChainId as StargateChainId],
               STARGATE_ADAPTER_ADDRESS[srcChainId] as Address,
               BigInt(adjusted?.quotient ?? 0),
             ],
-      [srcBridgeToken, dstBridgeToken, adjusted]
+      [srcChainId, srcBridgeToken, dstChainId, dstBridgeToken, adjusted],
     ) as [bigint, bigint, number, `0x${string}`, bigint] | undefined,
     abi: stargateFeeLibraryV03Abi,
     chainId: srcChainId,
@@ -120,7 +141,7 @@ export const useStargateBridgeFees = ({
         srcBridgeToken &&
         dstBridgeToken &&
         stargatePoolResults?.[1]?.result &&
-        stargatePoolResults?.[2]?.result
+        stargatePoolResults?.[2]?.result,
     ),
     watch: Boolean(
       enabled &&
@@ -128,10 +149,16 @@ export const useStargateBridgeFees = ({
         srcBridgeToken &&
         dstBridgeToken &&
         stargatePoolResults?.[1]?.result &&
-        stargatePoolResults?.[2]?.result
+        stargatePoolResults?.[2]?.result,
     ),
     select(getFeesResults) {
-      if (!amount || !getFeesResults || !stargatePoolResults?.[2]?.result || !srcBridgeToken || !dstBridgeToken) {
+      if (
+        !amount ||
+        !getFeesResults ||
+        !stargatePoolResults?.[2]?.result ||
+        !srcBridgeToken ||
+        !dstBridgeToken
+      ) {
         return undefined
       }
 

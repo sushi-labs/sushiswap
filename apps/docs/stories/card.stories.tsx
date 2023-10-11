@@ -1,8 +1,8 @@
 // Checkbox.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { ChainId } from '@sushiswap/chain'
-import { Amount, SUSHI, USDT } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Amount, SUSHI, USDT } from 'sushi/currency'
 import {
   Button,
   Card,
@@ -52,8 +52,12 @@ export const Outline = {
         <CardContent>
           <CardGroup>
             <CardLabel>{"You'll"} receive collected fees</CardLabel>
-            <CardCurrencyAmountItem amount={Amount.fromRawAmount(SUSHI[ChainId.ETHEREUM], 100)} />
-            <CardCurrencyAmountItem amount={Amount.fromRawAmount(USDT[ChainId.ETHEREUM], 100)} />
+            <CardCurrencyAmountItem
+              amount={Amount.fromRawAmount(SUSHI[ChainId.ETHEREUM], 100)}
+            />
+            <CardCurrencyAmountItem
+              amount={Amount.fromRawAmount(USDT[ChainId.ETHEREUM], 100)}
+            />
           </CardGroup>
         </CardContent>
         <CardFooter>
@@ -76,8 +80,12 @@ export const Default = {
         <CardContent>
           <CardGroup>
             <CardLabel>{"You'll"} receive collected fees</CardLabel>
-            <CardCurrencyAmountItem amount={Amount.fromRawAmount(SUSHI[ChainId.ETHEREUM], 100)} />
-            <CardCurrencyAmountItem amount={Amount.fromRawAmount(USDT[ChainId.ETHEREUM], 100)} />
+            <CardCurrencyAmountItem
+              amount={Amount.fromRawAmount(SUSHI[ChainId.ETHEREUM], 100)}
+            />
+            <CardCurrencyAmountItem
+              amount={Amount.fromRawAmount(USDT[ChainId.ETHEREUM], 100)}
+            />
           </CardGroup>
         </CardContent>
         <CardFooter>

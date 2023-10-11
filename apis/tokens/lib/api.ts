@@ -45,7 +45,7 @@ export async function getToken(chainId: number, address: string) {
     })
     await client.$disconnect()
     return token
-  } catch (e) {
+  } catch {
     await client.$disconnect()
     const tokenFromContract = await fetchToken({
       chainId,

@@ -1,5 +1,5 @@
 import { ChartBarIcon, InboxIcon, StopIcon } from '@heroicons/react-v1/solid'
-import { Price, Token, Type } from '@sushiswap/currency'
+import { Price, Token, Type } from 'sushi/currency'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { format } from 'd3'
@@ -83,7 +83,8 @@ export default function LiquidityChartRangeInput({
   interactive: boolean
   hideBrushes?: boolean
 }) {
-  const isSorted = currencyA && currencyB && currencyA?.wrapped.sortsBefore(currencyB?.wrapped)
+  const isSorted =
+    currencyA && currencyB && currencyA?.wrapped.sortsBefore(currencyB?.wrapped)
 
   const { isLoading, error, data } = useDensityChartData({
     chainId,
@@ -103,13 +104,19 @@ export default function LiquidityChartRangeInput({
 
       // simulate user input for auto-formatting and other validations
       if (
-        (!ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER] || mode === 'handle' || mode === 'reset') &&
+        (!ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER] ||
+          mode === 'handle' ||
+          mode === 'reset') &&
         leftRangeValue > 0
       ) {
         onLeftRangeInput(leftRangeValue.toFixed(6))
       }
 
-      if ((!ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER] || mode === 'reset') && rightRangeValue > 0) {
+      if (
+        (!ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER] ||
+          mode === 'reset') &&
+        rightRangeValue > 0
+      ) {
         // todo: remove this check. Upper bound for large numbers
         // sometimes fails to parse to tick.
         if (rightRangeValue < 1e35) {
@@ -117,7 +124,7 @@ export default function LiquidityChartRangeInput({
         }
       }
     },
-    [isSorted, onLeftRangeInput, onRightRangeInput, ticksAtLimit]
+    [isSorted, onLeftRangeInput, onRightRangeInput, ticksAtLimit],
   )
 
   interactive = interactive && Boolean(data?.length)
@@ -127,7 +134,10 @@ export default function LiquidityChartRangeInput({
     const rightPrice = isSorted ? priceUpper : priceLower?.invert()
 
     return leftPrice && rightPrice
-      ? [parseFloat(leftPrice?.toSignificant(6)), parseFloat(rightPrice?.toSignificant(6))]
+      ? [
+          parseFloat(leftPrice?.toSignificant(6)),
+          parseFloat(rightPrice?.toSignificant(6)),
+        ]
       : undefined
   }, [isSorted, priceLower, priceUpper])
 
@@ -135,36 +145,62 @@ export default function LiquidityChartRangeInput({
     (d: 'w' | 'e', x: number) => {
       if (!price) return ''
 
-      if (d === 'w' && ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]) return '0'
-      if (d === 'e' && ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER]) return '∞'
+      if (d === 'w' && ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER])
+        return '0'
+      if (d === 'e' && ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER])
+        return '∞'
 
-      const percent = (x < price ? -1 : 1) * ((Math.max(x, price) - Math.min(x, price)) / price) * 100
+      const percent =
+        (x < price ? -1 : 1) *
+        ((Math.max(x, price) - Math.min(x, price)) / price) *
+        100
 
-      return price ? `${format(Math.abs(percent) > 1 ? '.2~s' : '.2~f')(percent)}%` : ''
+      return price
+        ? `${format(Math.abs(percent) > 1 ? '.2~s' : '.2~f')(percent)}%`
+        : ''
     },
-    [isSorted, price, ticksAtLimit]
+    [isSorted, price, ticksAtLimit],
   )
 
-  const isUninitialized = !currencyA || !currencyB || (data === undefined && !isLoading)
+  const isUninitialized =
+    !currencyA || !currencyB || (data === undefined && !isLoading)
 
   return (
     <div className="grid auto-rows-auto gap-3 min-h-[300px] overflow-hidden">
       {isUninitialized ? (
         <InfoBox
           message="Your position will appear here."
-          icon={<InboxIcon width={16} stroke="currentColor" className="text-slate-200" />}
+          icon={
+            <InboxIcon
+              width={16}
+              stroke="currentColor"
+              className="text-slate-200"
+            />
+          }
         />
       ) : isLoading ? (
         <InfoBox icon={<SkeletonBox className="w-full h-full" />} />
       ) : error ? (
         <InfoBox
           message="Liquidity data not available."
-          icon={<StopIcon width={16} stroke="currentColor" className="dark:text-slate-400 text-slate-600" />}
+          icon={
+            <StopIcon
+              width={16}
+              stroke="currentColor"
+              className="dark:text-slate-400 text-slate-600"
+            />
+          }
         />
       ) : !data || data.length === 0 || !price ? (
         <InfoBox
           message="There is no liquidity data."
-          icon={<ChartBarIcon width={16} stroke="currentColor" className="dark:text-slate-400 text-slate-600" />}
+          icon={
+            <ChartBarIcon
+              width={16}
+              stroke="currentColor"
+              className="dark:text-slate-400 text-slate-600"
+            />
+          }
         />
       ) : (
         <div className="relative items-center justify-center">

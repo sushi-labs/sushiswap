@@ -14,7 +14,10 @@ import { ArticleList, Card, Categories, Hero } from '../components'
 import { getArticles, getCategories } from '../lib/api'
 
 export async function getStaticProps() {
-  const [articles, categories] = await Promise.all([getArticles({ pagination: { limit: 10 } }), getCategories()])
+  const [articles, categories] = await Promise.all([
+    getArticles({ pagination: { limit: 10 } }),
+    getCategories(),
+  ])
   return {
     props: {
       fallback: {
@@ -26,7 +29,9 @@ export async function getStaticProps() {
   }
 }
 
-const Home: FC<InferGetServerSidePropsType<typeof getStaticProps>> = ({ fallback }) => {
+const Home: FC<InferGetServerSidePropsType<typeof getStaticProps>> = ({
+  fallback,
+}) => {
   return (
     <SWRConfig value={{ fallback }}>
       <_Home />
@@ -65,13 +70,18 @@ const _Home: FC = () => {
       revalidateIfStale: false,
       revalidateOnReconnect: false,
       revalidateOnMount: false,
-    }
+    },
   )
 
   const loading = useDebounce(isValidating, 400)
   const articles = articlesData?.data
   const categories = categoriesData?.data
-  const articleList = selected && filterData?.data ? filterData?.data : articles ? articles : undefined
+  const articleList =
+    selected && filterData?.data
+      ? filterData?.data
+      : articles
+      ? articles
+      : undefined
 
   return (
     <>
@@ -83,7 +93,11 @@ const _Home: FC = () => {
             <div className="flex flex-col items-center justify-between gap-y-8 md:flex-row">
               <div className="order-2 w-full p-1 -ml-1 overflow-hidden md:order-1">
                 <div className="flex flex-wrap gap-3">
-                  <Categories selected={selected} onSelect={setSelected} categories={categories || []} />
+                  <Categories
+                    selected={selected}
+                    onSelect={setSelected}
+                    categories={categories || []}
+                  />
                 </div>
               </div>
               <div className="flex items-center order-1 w-full gap-3 px-3 md:w-auto md:order-2 rounded-xl bg-slate-800 focus-within:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
@@ -101,7 +115,12 @@ const _Home: FC = () => {
                 <ArticleList
                   articles={articleList as Article[]}
                   loading={loading}
-                  render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
+                  render={(article) => (
+                    <Card
+                      article={article}
+                      key={`article__left__${article?.attributes?.slug}`}
+                    />
+                  )}
                 />
               </div>
             )}

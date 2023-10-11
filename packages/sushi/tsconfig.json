@@ -1,0 +1,14 @@
+{
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node18/tsconfig"],
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", ".turbo"],
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM"],
+    "target": "ES2022",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
+  }
+}

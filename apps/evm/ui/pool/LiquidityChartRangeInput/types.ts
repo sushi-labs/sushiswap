@@ -56,7 +56,10 @@ export interface LiquidityChartRangeInputProps {
 
   brushLabels: (d: 'w' | 'e', x: number) => string
   brushDomain?: [number, number]
-  onBrushDomainChange: (domain: [number, number], mode: string | undefined) => void
+  onBrushDomainChange: (
+    domain: [number, number],
+    mode: string | undefined,
+  ) => void
 
   zoomLevels: ZoomLevels
   hideBrushes?: boolean

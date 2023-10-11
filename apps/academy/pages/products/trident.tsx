@@ -41,14 +41,17 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       revalidateOnFocus: false,
       revalidateIfStale: false,
       revalidateOnReconnect: false,
-    }
+    },
   )
 
   const latestArticles = data?.articles ?? []
   const relevantArticles = data?.relevantArticles ?? []
 
   return (
-    <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', DEFAULT_SIDE_PADDING)}>
+    <Container
+      maxWidth="6xl"
+      className={classNames('mx-auto pt-10 pb-24', DEFAULT_SIDE_PADDING)}
+    >
       <ProductBackground color={color} />
       <ProductHero
         productName={

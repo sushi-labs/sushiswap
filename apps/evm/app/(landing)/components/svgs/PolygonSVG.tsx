@@ -2,7 +2,12 @@ import React from 'react'
 
 export const PolygonSVG = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 175 48">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+      fill="none"
+      viewBox="0 0 175 48"
+    >
       <title>Polygon</title>
       <path
         fill="currentColor"

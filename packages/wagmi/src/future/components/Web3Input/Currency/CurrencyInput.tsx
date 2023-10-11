@@ -1,15 +1,23 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
-import { Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { usePrice } from '@sushiswap/react-query'
-import { Button, classNames, SelectIcon, TextField } from '@sushiswap/ui'
+import { Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
-import { FC, useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
+import {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from 'react'
+import { ChainId } from 'sushi/chain'
+import { Token, Type, tryParseAmount } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 
-import { useBalanceWeb3 } from '../../../hooks'
+import { useBalanceWeb3 } from '../../../hooks/balances'
 import { TokenSelector } from '../../TokenSelector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
@@ -78,8 +86,12 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     address: currency?.wrapped?.address,
   })
 
-  const _value = useMemo(() => tryParseAmount(value, currency), [value, currency])
-  const insufficientBalance = address && type === 'INPUT' && balance && _value && balance.lessThan(_value)
+  const _value = useMemo(
+    () => tryParseAmount(value, currency),
+    [value, currency],
+  )
+  const insufficientBalance =
+    address && type === 'INPUT' && balance && _value && balance.lessThan(_value)
 
   // If currency changes, trim input to decimals
   useEffect(() => {
@@ -94,7 +106,11 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   }, [currency])
 
   const isLoading = loading || currencyLoading || isBalanceLoading
-  const _error = error ? error : insufficientBalance ? 'Exceeds Balance' : undefined
+  const _error = error
+    ? error
+    : insufficientBalance
+    ? 'Exceeds Balance'
+    : undefined
 
   const _onChange = useCallback(
     (value: string) => {
@@ -103,13 +119,13 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         onChange?.(value)
       })
     },
-    [onChange]
+    [onChange],
   )
 
   useEffect(() => {
     if (currency && chainId && currency?.chainId !== chainId) {
       console.error(
-        `Selected token chainId not equal to passed chainId, impossible state. Currency chainId: ${currency.chainId}, chainId: ${chainId}`
+        `Selected token chainId not equal to passed chainId, impossible state. Currency chainId: ${currency.chainId}, chainId: ${chainId}`,
       )
     }
   }, [currency?.chainId, chainId])
@@ -136,13 +152,18 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           type="button"
           className={classNames(
             currency ? 'pl-2 pr-3 text-xl' : '',
-            '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex'
+            '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex',
           )}
         >
           {currency ? (
             <>
               <div className="w-[28px] h-[28px] mr-0.5">
-                <Currency.Icon disableLink currency={currency} width={28} height={28} />
+                <Currency.Icon
+                  disableLink
+                  currency={currency}
+                  width={28}
+                  height={28}
+                />
               </div>
               {currency.symbol}
               <SelectIcon />
@@ -153,7 +174,17 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         </Button>
       </TokenSelector>
     )
-  }, [isLoading, id, onSelect, currencies, currency, chainId, allowNative, hidePinnedTokens, hideSearch])
+  }, [
+    isLoading,
+    id,
+    onSelect,
+    currencies,
+    currency,
+    chainId,
+    allowNative,
+    hidePinnedTokens,
+    hideSearch,
+  ])
 
   return (
     <div
@@ -161,7 +192,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
       className={classNames(
         _error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
         'relative space-y-2 overflow-hidden pb-2',
-        className
+        className,
       )}
     >
       <div
@@ -173,7 +204,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           data-state={isLoading ? 'active' : 'inactive'}
           className={classNames(
             'data-[state=inactive]:hidden data-[state=active]:flex',
-            'gap-4 items-center justify-between flex-grow h-[44px]'
+            'gap-4 items-center justify-between flex-grow h-[44px]',
           )}
         >
           <SkeletonBox className="w-2/3 h-[32px] rounded-lg" />
@@ -203,18 +234,25 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           <div
             id={`${id}-button`}
             className={classNames(
-              'flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium whitespace-nowrap'
+              'flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium whitespace-nowrap',
             )}
           >
             {currency ? (
               <>
                 <div className="w-[28px] h-[28px] mr-0.5">
-                  <Currency.Icon disableLink currency={currency} width={28} height={28} />
+                  <Currency.Icon
+                    disableLink
+                    currency={currency}
+                    width={28}
+                    height={28}
+                  />
                 </div>
                 {currency.symbol}
               </>
             ) : (
-              <span className="text-gray-400 dark:text-slate-500">No token selected</span>
+              <span className="text-gray-400 dark:text-slate-500">
+                No token selected
+              </span>
             )}
           </div>
         ) : null}

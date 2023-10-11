@@ -19,7 +19,13 @@ export const DifficultyLabel: FC<DifficultyLabel> = ({ article, isCard }) => {
   return (
     <div className="flex items-center gap-1.5">
       <CircleIcon width={8} height={8} stroke={color} fill={color} />
-      <span className={classNames(isCard ? 'text-xs font-medium' : 'text-xs font-medium sm:text-sm sm:font-normal')}>
+      <span
+        className={classNames(
+          isCard
+            ? 'text-xs font-medium'
+            : 'text-xs font-medium sm:text-sm sm:font-normal',
+        )}
+      >
         {difficulty?.label}
       </span>
     </div>

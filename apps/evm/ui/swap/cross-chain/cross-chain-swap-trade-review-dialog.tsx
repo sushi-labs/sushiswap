@@ -1,10 +1,6 @@
 'use client'
 
-import { Chain, chainName } from '@sushiswap/chain'
-import { shortenAddress } from '@sushiswap/format'
-import { calculateGasMargin } from '@sushiswap/gas'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { ZERO } from '@sushiswap/math'
 import {
   DialogClose,
   DialogContent,
@@ -23,7 +19,11 @@ import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { List } from '@sushiswap/ui/components/list/List'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { createErrorToast, createInfoToast, createToast } from '@sushiswap/ui/components/toast'
+import {
+  createErrorToast,
+  createInfoToast,
+  createToast,
+} from '@sushiswap/ui/components/toast'
 import {
   Address,
   getSushiXSwap2ContractConfig,
@@ -33,45 +33,80 @@ import {
   usePrepareContractWrite,
   useTransaction,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
+import {
+  SendTransactionResult,
+  waitForTransaction,
+} from '@sushiswap/wagmi/actions'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
 import { nanoid } from 'nanoid'
 import { log } from 'next-axiom'
-import React, { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
-import { stringify, UserRejectedRequestError } from 'viem'
+import React, {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
+import { shortenAddress } from 'sushi'
+import { ZERO } from 'sushi'
+import { calculateGasMargin } from 'sushi'
+import { Chain, chainName } from 'sushi/chain'
+import { UserRejectedRequestError, stringify } from 'viem'
 
+import {
+  SushiXSwap2ChainId,
+  isSushiXSwap2ChainId,
+} from '@sushiswap/sushixswap-sdk'
+import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { APPROVE_TAG_XSWAP } from 'lib/constants'
 import { UseCrossChainTradeReturn } from '../../../lib/swap/useCrossChainTrade/types'
 import { useLayerZeroScanLink } from '../../../lib/swap/useLayerZeroScanLink'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import {
   ConfirmationDialogContent,
   Divider,
+  GetStateComponent,
+  StepState,
   failedState,
   finishedState,
-  GetStateComponent,
   pendingState,
-  StepState,
 } from './cross-chain-swap-confirmation-dialog'
-import { useCrossChainSwapTrade, useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
-import { isSushiXSwap2ChainId, SushiXSwap2ChainId } from '@sushiswap/sushixswap-sdk'
-import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { APPROVE_TAG_XSWAP } from 'lib/constants'
+import {
+  useCrossChainSwapTrade,
+  useDerivedStateCrossChainSwap,
+} from './derivedstate-cross-chain-swap-provider'
 
-export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ children }) => {
+export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [review, setReview] = useState(false)
   const [slippageTolerance] = useSlippageTolerance()
   const { address } = useAccount()
   const { chain } = useNetwork()
   const {
     mutate: { setTradeId, setSwapAmount },
-    state: { recipient, swapAmount, swapAmountString, chainId0, token0, token1, chainId1, tradeId },
+    state: {
+      recipient,
+      swapAmount,
+      swapAmountString,
+      chainId0,
+      token0,
+      token1,
+      chainId1,
+      tradeId,
+    },
   } = useDerivedStateCrossChainSwap()
   const { data: trade, isFetching } = useCrossChainSwapTrade()
   const { approved } = useApproved(APPROVE_TAG_XSWAP)
   const groupTs = useRef<number>()
   const refetchBalances = useBalanceWeb3Refetch()
 
-  const [stepStates, setStepStates] = useState<{ source: StepState; bridge: StepState; dest: StepState }>({
+  const [stepStates, setStepStates] = useState<{
+    source: StepState
+    bridge: StepState
+    dest: StepState
+  }>({
     source: StepState.Success,
     bridge: StepState.Success,
     dest: StepState.Success,
@@ -90,10 +125,11 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         trade?.writeArgs.length > 0 &&
         chain?.id === chainId0 &&
         approved &&
-        trade?.route?.status !== 'NoWay'
+        trade?.route?.status !== 'NoWay',
     ),
     value: trade?.value ?? 0n,
     onError: (error) => {
+      console.error('cross chain swap prepare error', error)
       if (error.message.startsWith('user rejected transaction')) return
       log.error('cross chain swap prepare error', {
         trade: stringify(trade),
@@ -126,7 +162,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         groupTimestamp: groupTs.current,
       })
     },
-    [tradeRef?.current, chainId0, tradeRef?.current?.amountIn?.currency.symbol, address]
+    [chainId0, address],
   )
 
   const {
@@ -138,7 +174,10 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
     request: config?.request
       ? {
           ...config.request,
-          gas: typeof config.request.gas === 'bigint' ? calculateGasMargin(config.request.gas) : undefined,
+          gas:
+            typeof config.request.gas === 'bigint'
+              ? calculateGasMargin(config.request.gas)
+              : undefined,
         }
       : undefined,
     onMutate: () => {
@@ -213,7 +252,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         dest: StepState.NotStarted,
       })
     }, 500)
-  }, [setReview])
+  }, [])
 
   const onClick = useCallback(
     (confirm: () => void) => {
@@ -252,10 +291,15 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         setReview(true)
       }
     },
-    [onComplete, review, stepStates, writeAsync]
+    [onComplete, review, stepStates, writeAsync],
   )
 
-  const { data: lzData } = useLayerZeroScanLink({ tradeId, network1: chainId1, network0: chainId0, txHash: data?.hash })
+  const { data: lzData } = useLayerZeroScanLink({
+    tradeId,
+    network1: chainId1,
+    network0: chainId0,
+    txHash: data?.hash,
+  })
   const { data: receipt } = useTransaction({
     chainId: chainId1,
     hash: lzData?.dstTxHash as `0x${string}` | undefined,
@@ -277,23 +321,28 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
     }
   }, [lzData?.status])
 
+  // biome-ignore lint/nursery/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (lzData?.link && groupTs.current && stepStates.source === StepState.Success) {
+    if (
+      lzData?.link &&
+      groupTs.current &&
+      stepStates.source === StepState.Success
+    ) {
       void createInfoToast({
         account: address,
         type: 'stargate',
         chainId: chainId0,
         href: lzData.link,
-        summary: `Bridging ${tradeRef?.current?.srcBridgeToken?.symbol} from ${Chain.from(chainId0).name} to ${
-          Chain.from(chainId1).name
-        }`,
+        summary: `Bridging ${tradeRef?.current?.srcBridgeToken?.symbol} from ${
+          Chain.from(chainId0)?.name
+        } to ${Chain.from(chainId1)?.name}`,
         timestamp: new Date().getTime(),
         groupTimestamp: groupTs.current,
       })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lzData?.link])
 
+  // biome-ignore lint/nursery/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (receipt && groupTs.current) {
       void createToast({
@@ -301,17 +350,26 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         type: 'swap',
         chainId: chainId1,
         txHash: receipt.hash as `0x${string}`,
-        promise: waitForTransaction({ hash: receipt?.hash as Address, chainId: chainId1 }),
+        promise: waitForTransaction({
+          hash: receipt?.hash as Address,
+          chainId: chainId1,
+        }),
         summary: {
           pending: `Swapping ${
             tradeRef?.current?.dstBridgeToken?.symbol
-          } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${tradeRef?.current?.amountOut?.currency.symbol}`,
+          } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${
+            tradeRef?.current?.amountOut?.currency.symbol
+          }`,
           completed: `Swap ${
             tradeRef?.current?.dstBridgeToken?.symbol
-          } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${tradeRef?.current?.amountOut?.currency.symbol}`,
+          } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${
+            tradeRef?.current?.amountOut?.currency.symbol
+          }`,
           failed: `Something went wrong when trying to swap ${
             tradeRef?.current?.dstBridgeToken?.symbol
-          } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${tradeRef?.current?.amountOut?.currency.symbol}`,
+          } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${
+            tradeRef?.current?.amountOut?.currency.symbol
+          }`,
         },
         timestamp: new Date().getTime(),
         groupTimestamp: groupTs.current,
@@ -326,10 +384,16 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
         {({ confirm }) => (
           <>
             <div className="flex flex-col">
-              <Collapsible open={Boolean(+swapAmountString > 0 && stringify(error).includes('insufficient funds'))}>
+              <Collapsible
+                open={Boolean(
+                  +swapAmountString > 0 &&
+                    stringify(error).includes('insufficient funds'),
+                )}
+              >
                 <div className="pt-4">
                   <Message size="sm" variant="destructive">
-                    Insufficient funds to pay for gas on the destination chain. Please lower your input amount.
+                    Insufficient funds to pay for gas on the destination chain.
+                    Please lower your input amount.
                   </Message>
                 </div>
               </Collapsible>
@@ -341,7 +405,9 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
                   {isFetching ? (
                     <SkeletonText fontSize="xs" className="w-2/3" />
                   ) : (
-                    `Receive ${trade?.amountOut?.toSignificant(6)} ${token1?.symbol}`
+                    `Receive ${trade?.amountOut?.toSignificant(6)} ${
+                      token1?.symbol
+                    }`
                   )}
                 </DialogTitle>
                 <DialogDescription>
@@ -353,10 +419,18 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
                   <List.Control>
                     <List.KeyValue title="Network">
                       <div className="justify-end w-full gap-1 truncate whitespace-nowrap">
-                        {chainName?.[chainId0]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
+                        {chainName?.[chainId0]
+                          ?.replace('Mainnet Shard 0', '')
+                          ?.replace('Mainnet', '')
+                          ?.trim()}
                         <br />
-                        <span className="text-gray-400 dark:text-slate-500">to</span>{' '}
-                        {chainName?.[chainId1]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
+                        <span className="text-gray-400 dark:text-slate-500">
+                          to
+                        </span>{' '}
+                        {chainName?.[chainId1]
+                          ?.replace('Mainnet Shard 0', '')
+                          ?.replace('Mainnet', '')
+                          ?.trim()}
                       </div>
                     </List.KeyValue>
                     <List.KeyValue
@@ -364,10 +438,18 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
                       subtitle="The impact your trade has on the market price of this pool."
                     >
                       {isFetching ? (
-                        <SkeletonText align="right" fontSize="sm" className="w-1/5" />
+                        <SkeletonText
+                          align="right"
+                          fontSize="sm"
+                          className="w-1/5"
+                        />
                       ) : (
                         `${
-                          trade?.priceImpact?.lessThan(ZERO) ? '+' : trade?.priceImpact?.greaterThan(ZERO) ? '-' : ''
+                          trade?.priceImpact?.lessThan(ZERO)
+                            ? '+'
+                            : trade?.priceImpact?.greaterThan(ZERO)
+                            ? '-'
+                            : ''
                         }${Math.abs(Number(trade?.priceImpact?.toFixed(2)))}%`
                       )}
                     </List.KeyValue>
@@ -378,9 +460,15 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
                       subtitle="The minimum amount you are guaranteed to receive."
                     >
                       {isFetching ? (
-                        <SkeletonText align="right" fontSize="sm" className="w-1/2" />
+                        <SkeletonText
+                          align="right"
+                          fontSize="sm"
+                          className="w-1/2"
+                        />
                       ) : (
-                        `${trade?.minAmountOut?.toSignificant(6)} ${token1?.symbol}`
+                        `${trade?.minAmountOut?.toSignificant(6)} ${
+                          token1?.symbol
+                        }`
                       )}
                     </List.KeyValue>
                   </List.Control>
@@ -408,8 +496,18 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
                   size="xl"
                   loading={!writeAsync && !isError}
                   onClick={() => onClick(confirm)}
-                  disabled={isWritePending || Boolean(!writeAsync && +swapAmountString > 0) || isError}
-                  color={isError ? 'red' : warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
+                  disabled={
+                    isWritePending ||
+                    Boolean(!writeAsync && +swapAmountString > 0) ||
+                    isError
+                  }
+                  color={
+                    isError
+                      ? 'red'
+                      : warningSeverity(trade?.priceImpact) >= 3
+                      ? 'red'
+                      : 'blue'
+                  }
                 >
                   {isError ? (
                     'Shoot! Something went wrong :('
@@ -453,7 +551,11 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({ c
           <DialogFooter>
             <DialogClose asChild>
               <Button size="xl" fullWidth>
-                {failedState(stepStates) ? 'Try again' : finishedState(stepStates) ? 'Make another swap' : 'Close'}
+                {failedState(stepStates)
+                  ? 'Try again'
+                  : finishedState(stepStates)
+                  ? 'Make another swap'
+                  : 'Close'}
               </Button>
             </DialogClose>
           </DialogFooter>

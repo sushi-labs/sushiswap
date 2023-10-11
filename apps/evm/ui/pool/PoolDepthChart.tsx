@@ -1,6 +1,12 @@
-import { formatUSD } from '@sushiswap/format'
+import { formatUSD } from 'sushi'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
-import { CardContent, CardDescription, CardHeader, CardTitle, Toggle } from '@sushiswap/ui'
+import {
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Toggle,
+} from '@sushiswap/ui'
 import ReactECharts, { EChartsOption } from 'echarts-for-react'
 import { useTheme } from 'next-themes'
 import React, { FC, useCallback, useMemo, useState } from 'react'
@@ -9,15 +15,24 @@ import colors from 'tailwindcss/colors'
 import { ChartEntry } from './LiquidityChartRangeInput/types'
 
 interface PoolDepthChartProps {
-  poolStats: NonNullable<ReturnType<typeof useConcentratedLiquidityPoolStats>['data']>
+  poolStats: NonNullable<
+    ReturnType<typeof useConcentratedLiquidityPoolStats>['data']
+  >
   series: ChartEntry[]
   current: number
 }
 
-const getTvlUSD = (liquidity: number | string, totalSupply: number | string, liquidityUSD: number | string) =>
-  formatUSD((Number(liquidity) / Number(totalSupply)) * Number(liquidityUSD))
+const getTvlUSD = (
+  liquidity: number | string,
+  totalSupply: number | string,
+  liquidityUSD: number | string,
+) => formatUSD((Number(liquidity) / Number(totalSupply)) * Number(liquidityUSD))
 
-export const PoolDepthChart: FC<PoolDepthChartProps> = ({ poolStats, series: _series, current: _current }) => {
+export const PoolDepthChart: FC<PoolDepthChartProps> = ({
+  poolStats,
+  series: _series,
+  current: _current,
+}) => {
   const { resolvedTheme } = useTheme()
 
   const [invertTokens, setInvertTokens] = useState(false)
@@ -57,22 +72,30 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({ poolStats, series: _se
         valueNodes[0].innerHTML = `${getTvlUSD(
           value[1],
           Number(poolStats.totalSupply),
-          Number(poolStats.liquidityUSD)
+          Number(poolStats.liquidityUSD),
         )}`
       }
 
       if (valueNodes[1]) {
-        valueNodes[1].innerHTML = `At tick ${value[0].toFixed(3)} ${token1.symbol} per ${token0.symbol}`
+        valueNodes[1].innerHTML = `At tick ${value[0].toFixed(3)} ${
+          token1.symbol
+        } per ${token0.symbol}`
       }
     },
-    [poolStats.liquidityUSD, poolStats.totalSupply, token0.symbol, token1.symbol]
+    [
+      poolStats.liquidityUSD,
+      poolStats.totalSupply,
+      token0.symbol,
+      token1.symbol,
+    ],
   )
 
   const DEFAULT_OPTION = useMemo<EChartsOption>(
     () => ({
       tooltip: {
         trigger: 'axis',
-        extraCssText: 'z-index: 1000; padding: 0 !important; box-shadow: none !important',
+        extraCssText:
+          'z-index: 1000; padding: 0 !important; box-shadow: none !important',
         responsive: true,
         backgroundColor: 'transparent',
         textStyle: {
@@ -86,7 +109,11 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({ poolStats, series: _se
           const price0 = params[0].data[0].toFixed(5)
           const price1 = (1 / params[0].data[0]).toFixed(5)
 
-          const tvlUSD = getTvlUSD(params[0].data[1], poolStats.totalSupply, poolStats.liquidityUSD)
+          const tvlUSD = getTvlUSD(
+            params[0].data[1],
+            poolStats.totalSupply,
+            poolStats.liquidityUSD,
+          )
 
           return `<div class="flex flex-col gap-1.5 bg-white dark:bg-secondary p-4 rounded-lg overflow-hidden shadow-md">
                     <div className="font-normal text-xs text-gray-400 dark:text-slate-500">Tick stats</div>
@@ -183,15 +210,18 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({ poolStats, series: _se
       poolStats.liquidityUSD,
       token0.symbol,
       token1.symbol,
-    ]
+    ],
   )
 
   const currentLiquidity = useMemo(
     () =>
       // closest entry to current
-      series.reduce((prev, curr) => (Math.abs(curr.price0 - current) < Math.abs(prev.price0 - current) ? curr : prev))
-        .activeLiquidity,
-    [series, current]
+      series.reduce((prev, curr) =>
+        Math.abs(curr.price0 - current) < Math.abs(prev.price0 - current)
+          ? curr
+          : prev,
+      ).activeLiquidity,
+    [series, current],
   )
 
   return (
@@ -200,13 +230,27 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({ poolStats, series: _se
         <CardTitle className="max-h-[18px]">
           <div className="flex justify-between">
             <span className="hoveredItemValue">
-              {getTvlUSD(currentLiquidity, Number(poolStats.totalSupply), Number(poolStats.liquidityUSD))}
+              {getTvlUSD(
+                currentLiquidity,
+                Number(poolStats.totalSupply),
+                Number(poolStats.liquidityUSD),
+              )}
             </span>
             <div className="flex items-center gap-1">
-              <Toggle variant="outline" onClick={() => setInvertTokens(false)} pressed={!invertTokens} size="xs">
+              <Toggle
+                variant="outline"
+                onClick={() => setInvertTokens(false)}
+                pressed={!invertTokens}
+                size="xs"
+              >
                 {invertTokens ? token1?.symbol : token0?.symbol}
               </Toggle>
-              <Toggle variant="outline" onClick={() => setInvertTokens(true)} pressed={invertTokens} size="xs">
+              <Toggle
+                variant="outline"
+                onClick={() => setInvertTokens(true)}
+                pressed={invertTokens}
+                size="xs"
+              >
                 {invertTokens ? token0?.symbol : token1?.symbol}
               </Toggle>
             </div>

@@ -1,4 +1,5 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
 import {
   STARGATE_BUSD,
   STARGATE_BUSD_ADDRESS,
@@ -16,7 +17,6 @@ import {
   STARGATE_USDT_ADDRESS,
   StargateChainId,
 } from '.'
-import { Token } from '@sushiswap/currency'
 
 // https://stargateprotocol.gitbook.io/stargate/developers/stargate-chain-paths
 
@@ -47,7 +47,10 @@ const ETHEREUM_CHAIN_PATHS = {
     STARGATE_USDC[ChainId.FANTOM],
     STARGATE_USDC[ChainId.BASE],
   ],
-  [STARGATE_DAI_ADDRESS[ChainId.ETHEREUM]]: [STARGATE_DAI[ChainId.POLYGON], STARGATE_DAI[ChainId.OPTIMISM]],
+  [STARGATE_DAI_ADDRESS[ChainId.ETHEREUM]]: [
+    STARGATE_DAI[ChainId.POLYGON],
+    STARGATE_DAI[ChainId.OPTIMISM],
+  ],
   [STARGATE_FRAX_ADDRESS[ChainId.ETHEREUM]]: [
     STARGATE_FRAX[ChainId.AVALANCHE],
     STARGATE_FRAX[ChainId.ARBITRUM],
@@ -172,7 +175,10 @@ const POLYGON_CHAIN_PATHS = {
     STARGATE_USDC[ChainId.FANTOM],
     STARGATE_USDC[ChainId.BASE],
   ],
-  [STARGATE_DAI_ADDRESS[ChainId.POLYGON]]: [STARGATE_DAI[ChainId.ETHEREUM], STARGATE_DAI[ChainId.OPTIMISM]],
+  [STARGATE_DAI_ADDRESS[ChainId.POLYGON]]: [
+    STARGATE_DAI[ChainId.ETHEREUM],
+    STARGATE_DAI[ChainId.OPTIMISM],
+  ],
   [STARGATE_MAI_ADDRESS[ChainId.POLYGON]]: [
     STARGATE_MAI[ChainId.ETHEREUM],
     STARGATE_MAI[ChainId.BSC],
@@ -244,7 +250,10 @@ const OPTIMISM_CHAIN_PATHS = {
     STARGATE_USDC[ChainId.FANTOM],
     STARGATE_USDC[ChainId.BASE],
   ],
-  [STARGATE_DAI_ADDRESS[ChainId.OPTIMISM]]: [STARGATE_DAI[ChainId.ETHEREUM], STARGATE_DAI[ChainId.POLYGON]],
+  [STARGATE_DAI_ADDRESS[ChainId.OPTIMISM]]: [
+    STARGATE_DAI[ChainId.ETHEREUM],
+    STARGATE_DAI[ChainId.POLYGON],
+  ],
   [STARGATE_FRAX_ADDRESS[ChainId.OPTIMISM]]: [
     STARGATE_FRAX[ChainId.ETHEREUM],
     STARGATE_FRAX[ChainId.AVALANCHE],
@@ -265,21 +274,21 @@ const OPTIMISM_CHAIN_PATHS = {
   ],
 }
 
-const FANTOM_CHAIN_PATHS = {
-  [STARGATE_USDC_ADDRESS[ChainId.FANTOM]]: [
-    STARGATE_USDC[ChainId.ETHEREUM],
-    STARGATE_USDT[ChainId.ETHEREUM],
-    STARGATE_BUSD[ChainId.BSC],
-    STARGATE_USDT[ChainId.BSC],
-    STARGATE_USDC[ChainId.AVALANCHE],
-    STARGATE_USDT[ChainId.AVALANCHE],
-    STARGATE_USDC[ChainId.POLYGON],
-    STARGATE_USDT[ChainId.POLYGON],
-    STARGATE_USDC[ChainId.ARBITRUM],
-    STARGATE_USDT[ChainId.ARBITRUM],
-    STARGATE_USDC[ChainId.OPTIMISM],
-  ],
-}
+// const FANTOM_CHAIN_PATHS = {
+//   [STARGATE_USDC_ADDRESS[ChainId.FANTOM]]: [
+//     STARGATE_USDC[ChainId.ETHEREUM],
+//     STARGATE_USDT[ChainId.ETHEREUM],
+//     STARGATE_BUSD[ChainId.BSC],
+//     STARGATE_USDT[ChainId.BSC],
+//     STARGATE_USDC[ChainId.AVALANCHE],
+//     STARGATE_USDT[ChainId.AVALANCHE],
+//     STARGATE_USDC[ChainId.POLYGON],
+//     STARGATE_USDT[ChainId.POLYGON],
+//     STARGATE_USDC[ChainId.ARBITRUM],
+//     STARGATE_USDT[ChainId.ARBITRUM],
+//     STARGATE_USDC[ChainId.OPTIMISM],
+//   ],
+// }
 
 const BASE_CHAIN_PATHS = {
   [STARGATE_USDC_ADDRESS[ChainId.BASE]]: [
@@ -311,7 +320,10 @@ const LINEA_CHAIN_PATHS = {
   ],
 }
 
-export const STARGATE_CHAIN_PATHS: Record<StargateChainId, Record<`0x${string}`, Token[]>> = {
+export const STARGATE_CHAIN_PATHS: Record<
+  StargateChainId,
+  Record<`0x${string}`, Token[]>
+> = {
   [ChainId.ETHEREUM]: ETHEREUM_CHAIN_PATHS,
   [ChainId.BSC]: BSC_CHAIN_PATHS,
   [ChainId.AVALANCHE]: AVALANCE_CHAIN_PATHS,

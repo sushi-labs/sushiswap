@@ -1,6 +1,6 @@
-import { erc20Abi, routeProcessor2Abi } from '@sushiswap/abi'
-import { ChainId } from '@sushiswap/chain'
-import { Native, Token } from '@sushiswap/currency'
+import { erc20Abi, routeProcessor2Abi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
+import { Native, Token } from 'sushi/currency'
 import { DataFetcher, Router, RPParams } from '@sushiswap/router'
 import { MultiRoute, RouteStatus } from '@sushiswap/tines'
 import { Address, createPublicClient, http, PublicClient } from 'viem'
@@ -8,7 +8,8 @@ import { base, Chain } from 'viem/chains'
 
 const ROUTE_PROCESSOR_3_ADDRESS: Record<number, Address> = {
   [ChainId.ARBITRUM]: '0xfc506AaA1340b4dedFfd88bE278bEe058952D674' as Address,
-  [ChainId.ARBITRUM_NOVA]: '0x05689fCfeE31FCe4a67FbC7Cab13E74F80A4E288' as Address,
+  [ChainId.ARBITRUM_NOVA]:
+    '0x05689fCfeE31FCe4a67FbC7Cab13E74F80A4E288' as Address,
   [ChainId.AVALANCHE]: '0x717b7948AA264DeCf4D780aa6914482e5F46Da3e' as Address,
   [ChainId.BOBA]: '0xbe811a0d44e2553d25d11cb8dc0d3f0d0e6430e6' as Address,
   [ChainId.BOBA_AVAX]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3' as Address,
@@ -30,13 +31,18 @@ const ROUTE_PROCESSOR_3_ADDRESS: Record<number, Address> = {
   [ChainId.OPTIMISM]: '0x4C5D5234f232BD2D76B96aA33F5AE4FCF0E4BFAb' as Address,
   [ChainId.PALM]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3' as Address,
   [ChainId.POLYGON]: '0x0a6e511Fe663827b9cA7e2D2542b20B37fC217A6' as Address,
-  [ChainId.POLYGON_ZKEVM]: '0x2f686751b19a9d91cc3d57d90150Bc767f050066' as Address,
+  [ChainId.POLYGON_ZKEVM]:
+    '0x2f686751b19a9d91cc3d57d90150Bc767f050066' as Address,
   [ChainId.TELOS]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de' as Address,
-  [ChainId.THUNDERCORE]: '0x1b9d177CcdeA3c79B6c8F40761fc8Dc9d0500EAa' as Address,
+  [ChainId.THUNDERCORE]:
+    '0x1b9d177CcdeA3c79B6c8F40761fc8Dc9d0500EAa' as Address,
   [ChainId.BASE]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904' as Address,
 }
 
-async function checkTaxTokenTransfer(client: PublicClient, route: MultiRoute): Promise<boolean | undefined> {
+async function checkTaxTokenTransfer(
+  client: PublicClient,
+  route: MultiRoute,
+): Promise<boolean | undefined> {
   if (route.legs.length >= 2) {
     const chainId = client.chain?.id as ChainId
     return await client.readContract({
@@ -54,7 +60,7 @@ async function testTaxTokenBuy(
   client: PublicClient,
   route: MultiRoute,
   rpParams: RPParams,
-  account?: Address
+  account?: Address,
 ): Promise<number> {
   const chainId = client.chain?.id as ChainId
   const amountOutReal = await client.readContract({
@@ -73,7 +79,9 @@ async function testTaxTokenBuy(
     value: rpParams.value,
     account,
   })
-  return route.amountOutBI == 0n ? -1 : Number(amountOutReal - route.amountOutBI) / route.amountOut
+  return route.amountOutBI == 0n
+    ? -1
+    : Number(amountOutReal - route.amountOutBI) / route.amountOut
 }
 
 async function testTaxToken(args: {
@@ -99,7 +107,14 @@ async function testTaxToken(args: {
   await dataFetcher.fetchPoolsForToken(fromToken, toToken)
   const pcMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
 
-  const route = Router.findBestRoute(pcMap, chainId, fromToken, amountIn, toToken, 30e9)
+  const route = Router.findBestRoute(
+    pcMap,
+    chainId,
+    fromToken,
+    amountIn,
+    toToken,
+    30e9,
+  )
   if (route.status === RouteStatus.NoWay) {
     console.log('NoWay')
     return
@@ -119,7 +134,7 @@ async function testTaxToken(args: {
     fromToken,
     toToken,
     ROUTE_PROCESSOR_3_ADDRESS[chainId],
-    ROUTE_PROCESSOR_3_ADDRESS[chainId]
+    ROUTE_PROCESSOR_3_ADDRESS[chainId],
   )
   if (rpParams === undefined) {
     console.log("Can't create route")
@@ -129,14 +144,17 @@ async function testTaxToken(args: {
   try {
     await checkTaxTokenTransfer(client, route)
   } catch (e) {
-    console.log(`Transfer check failed ${toToken.symbol} (${toToken.address}) ${route.amountOutBI} ${e}`)
+    console.log(
+      `Transfer check failed ${toToken.symbol} (${toToken.address}) ${route.amountOutBI} ${e}`,
+    )
     return
   }
   try {
     const diff = await testTaxTokenBuy(client, route, rpParams, args.account)
     console.log(
-      `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.legs.length - 1} pools` +
-        ` diff = ${diff > 0 ? '+' : ''}${diff} `
+      `Routing: ${fromToken.symbol} => ${toToken.symbol} ${
+        route.legs.length - 1
+      } pools` + ` diff = ${diff > 0 ? '+' : ''}${diff} `,
     )
   } catch (e) {
     console.log('Routing failed. No connection ? ' + e)

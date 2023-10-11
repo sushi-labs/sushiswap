@@ -19,6 +19,8 @@ describe('#encodeSqrtRatioX96', () => {
   })
 
   it('333/111', () => {
-    expect(encodeSqrtRatioX96(333, 111)).toEqual(137227202865029797602485611888n)
+    expect(encodeSqrtRatioX96(333, 111)).toEqual(
+      137227202865029797602485611888n,
+    )
   })
 })

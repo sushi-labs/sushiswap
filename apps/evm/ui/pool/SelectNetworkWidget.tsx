@@ -1,4 +1,4 @@
-import { ChainId, chainName } from '@sushiswap/chain'
+import { ChainId, chainName } from 'sushi/chain'
 import { FormSection, NetworkSelector } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
@@ -12,23 +12,27 @@ interface SelectNetworkWidgetProps {
   title?: string
 }
 
-export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(function SelectNetworkWidget({
-  selectedNetwork,
-  onSelect,
-  networks,
-  title,
-}) {
-  return (
-    <FormSection title="Network" description="Select the network you would like to provide liquidity on.">
-      <div>
-        <NetworkSelector networks={networks} selected={selectedNetwork} onSelect={onSelect}>
-          <Button variant="secondary" className="!font-medium">
-            <NetworkIcon chainId={selectedNetwork} width={16} height={16} />
-            {chainName?.[selectedNetwork]}
-            <SelectIcon />
-          </Button>
-        </NetworkSelector>
-      </div>
-    </FormSection>
-  )
-})
+export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(
+  function SelectNetworkWidget({ selectedNetwork, onSelect, networks, title }) {
+    return (
+      <FormSection
+        title="Network"
+        description="Select the network you would like to provide liquidity on."
+      >
+        <div>
+          <NetworkSelector
+            networks={networks}
+            selected={selectedNetwork}
+            onSelect={onSelect}
+          >
+            <Button variant="secondary" className="!font-medium">
+              <NetworkIcon chainId={selectedNetwork} width={16} height={16} />
+              {chainName?.[selectedNetwork]}
+              <SelectIcon />
+            </Button>
+          </NetworkSelector>
+        </div>
+      </FormSection>
+    )
+  },
+)

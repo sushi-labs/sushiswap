@@ -1,16 +1,22 @@
 'use client'
 
-import { ZERO } from '@sushiswap/math'
 import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import React, { FC, useEffect, useState } from 'react'
+import { ZERO } from 'sushi/math'
 
+import {
+  SUSHIXSWAP_2_ADDRESS,
+  SushiXSwap2ChainId,
+} from '@sushiswap/sushixswap-sdk'
+import { APPROVE_TAG_XSWAP } from 'lib/constants'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import { CrossChainSwapTradeReviewDialog } from './cross-chain-swap-trade-review-dialog'
-import { useCrossChainSwapTrade, useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
-import { SUSHIXSWAP_2_ADDRESS, SushiXSwap2ChainId } from '@sushiswap/sushixswap-sdk'
-import { APPROVE_TAG_XSWAP } from 'lib/constants'
+import {
+  useCrossChainSwapTrade,
+  useDerivedStateCrossChainSwap,
+} from './derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapTradeButton: FC = () => {
   const {
@@ -29,15 +35,24 @@ export const CrossChainSwapTradeButton: FC = () => {
   return (
     <CrossChainSwapTradeReviewDialog>
       <div>
-        <Checker.Guard guardWhen={maintenance} guardText="Maintenance in progress">
+        <Checker.Guard
+          guardWhen={maintenance}
+          guardText="Maintenance in progress"
+        >
           <Checker.Connect fullWidth>
             <Checker.Network fullWidth chainId={chainId0}>
-              <Checker.Amounts fullWidth chainId={chainId0} amounts={[swapAmount]}>
+              <Checker.Amounts
+                fullWidth
+                chainId={chainId0}
+                amounts={[swapAmount]}
+              >
                 <Checker.ApproveERC20
                   id="approve-erc20"
                   fullWidth
                   amount={swapAmount}
-                  contract={SUSHIXSWAP_2_ADDRESS[chainId0 as SushiXSwap2ChainId]}
+                  contract={
+                    SUSHIXSWAP_2_ADDRESS[chainId0 as SushiXSwap2ChainId]
+                  }
                 >
                   <Checker.Success tag={APPROVE_TAG_XSWAP}>
                     <DialogTrigger asChild>
@@ -46,9 +61,14 @@ export const CrossChainSwapTradeButton: FC = () => {
                           !trade?.amountOut?.greaterThan(ZERO) ||
                             trade?.route?.status === 'NoWay' ||
                             +swapAmountString === 0 ||
-                            (!checked && warningSeverity(trade?.priceImpact) > 3)
+                            (!checked &&
+                              warningSeverity(trade?.priceImpact) > 3),
                         )}
-                        color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
+                        color={
+                          warningSeverity(trade?.priceImpact) >= 3
+                            ? 'red'
+                            : 'blue'
+                        }
                         fullWidth
                         size="xl"
                       >
@@ -75,9 +95,12 @@ export const CrossChainSwapTradeButton: FC = () => {
             onChange={(e) => setChecked(e.target.checked)}
             className="cursor-pointer mr-1 w-5 h-5 mt-0.5 text-red-600 !ring-red-600 bg-white border-red rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2"
           />
-          <label htmlFor="expert-checkbox" className="ml-2 font-medium text-red-600">
-            Price impact is too high. You will lose a big portion of your funds in this trade. Please tick the box if
-            you would like to continue.
+          <label
+            htmlFor="expert-checkbox"
+            className="ml-2 font-medium text-red-600"
+          >
+            Price impact is too high. You will lose a big portion of your funds
+            in this trade. Please tick the box if you would like to continue.
           </label>
         </div>
       )}

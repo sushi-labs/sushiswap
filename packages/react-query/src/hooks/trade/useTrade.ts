@@ -1,20 +1,34 @@
 import { calculateSlippageAmount } from '@sushiswap/amm'
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Native, nativeCurrencyIds, Price, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { Percent, ZERO } from '@sushiswap/math'
-import { isRouteProcessor3_1ChainId, isRouteProcessor3_2ChainId } from '@sushiswap/route-processor-sdk'
-import { HexString } from '@sushiswap/types'
+import { ChainId } from 'sushi/chain'
+import {
+  Amount,
+  Native,
+  nativeCurrencyIds,
+  Price,
+  WNATIVE_ADDRESS,
+} from 'sushi/currency'
+import { Percent, ZERO } from 'sushi/math'
+import {
+  isRouteProcessor3_1ChainId,
+  isRouteProcessor3_2ChainId,
+} from '@sushiswap/route-processor-sdk'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
-import { stringify } from 'viem'
+import { stringify, type Hex, type Address } from 'viem'
 import { deserialize } from 'wagmi'
 
 import { usePrice } from '../prices'
-import { UseTradeParams, UseTradeQuerySelect, UseTradeReturnWriteArgs } from './types'
+import type {
+  UseTradeParams,
+  UseTradeQuerySelect,
+  UseTradeReturnWriteArgs,
+} from './types'
 import { tradeValidator } from './validator'
 
 const SWAP_BASE_URL =
-  process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com'
+  process.env['SWAP_API_V0_BASE_URL'] ||
+  process.env['NEXT_PUBLIC_SWAP_API_V0_BASE_URL'] ||
+  'https://swap.sushi.com'
 
 function getApiVersion(chainId: ChainId) {
   if (isRouteProcessor3_2ChainId(chainId)) {
@@ -39,29 +53,56 @@ export const useTradeQuery = (
     enabled,
     onError,
   }: UseTradeParams,
-  select: UseTradeQuerySelect
+  select: UseTradeQuerySelect,
 ) => {
   return useQuery({
-    queryKey: ['getTrade', { chainId, fromToken, toToken, amount, slippagePercentage, gasPrice, recipient }],
+    queryKey: [
+      'getTrade',
+      {
+        chainId,
+        fromToken,
+        toToken,
+        amount,
+        slippagePercentage,
+        gasPrice,
+        recipient,
+      },
+    ],
     queryFn: async () => {
       const params = new URL(SWAP_BASE_URL + getApiVersion(chainId))
 
       params.searchParams.set('chainId', `${chainId}`)
       params.searchParams.set(
         'tokenIn',
-        `${fromToken?.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : fromToken?.wrapped.address}`
+        `${
+          fromToken?.isNative
+            ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+            : fromToken?.wrapped.address
+        }`,
       )
       params.searchParams.set(
         'tokenOut',
-        `${toToken?.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : toToken?.wrapped.address}`
+        `${
+          toToken?.isNative
+            ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+            : toToken?.wrapped.address
+        }`,
       )
       params.searchParams.set(
         'fromTokenId',
-        `${fromToken?.isNative ? nativeCurrencyIds[chainId] : fromToken?.wrapped.address}`
+        `${
+          fromToken?.isNative
+            ? nativeCurrencyIds[chainId]
+            : fromToken?.wrapped.address
+        }`,
       )
       params.searchParams.set(
         'toTokenId',
-        `${toToken?.isNative ? nativeCurrencyIds[chainId] : toToken?.wrapped.address}`
+        `${
+          toToken?.isNative
+            ? nativeCurrencyIds[chainId]
+            : toToken?.wrapped.address
+        }`,
       )
       params.searchParams.set('amount', `${amount?.quotient.toString()}`)
       params.searchParams.set('maxPriceImpact', `${+slippagePercentage / 100}`)
@@ -72,7 +113,8 @@ export const useTradeQuery = (
 
       const res = await fetch(params.toString())
       const json = await res.json()
-      return tradeValidator.parse(deserialize(json))
+      const deserialised = deserialize(json)
+      return tradeValidator.parse(deserialised)
     },
     refetchOnWindowFocus: true,
     refetchInterval: 2500,
@@ -80,15 +122,27 @@ export const useTradeQuery = (
     cacheTime: 0, // the length of time before inactive data gets removed from the cache
     retry: false, // dont retry on failure, immediately fallback
     select,
-    enabled: enabled && Boolean(chainId && fromToken && toToken && amount && gasPrice),
-    onError,
+    enabled:
+      enabled && Boolean(chainId && fromToken && toToken && amount && gasPrice),
+    onError: (error) => (onError ? onError(error as Error) : undefined),
     queryKeyHashFn: stringify,
   })
 }
 
 export const useTrade = (variables: UseTradeParams) => {
-  const { chainId, fromToken, toToken, amount, slippagePercentage, carbonOffset, gasPrice } = variables
-  const { data: price } = usePrice({ chainId, address: WNATIVE_ADDRESS[chainId] })
+  const {
+    chainId,
+    fromToken,
+    toToken,
+    amount,
+    slippagePercentage,
+    carbonOffset,
+    gasPrice,
+  } = variables
+  const { data: price } = usePrice({
+    chainId,
+    address: WNATIVE_ADDRESS[chainId],
+  })
 
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
@@ -100,12 +154,12 @@ export const useTrade = (variables: UseTradeParams) => {
 
         let writeArgs: UseTradeReturnWriteArgs = data?.args
           ? ([
-              data.args.tokenIn as HexString,
+              data.args.tokenIn as Address,
               BigInt(data.args.amountIn),
-              data.args.tokenOut as HexString,
+              data.args.tokenOut as Address,
               data.args.amountOutMin,
-              data.args.to as HexString,
-              data.args.routeCode as HexString,
+              data.args.to as Address,
+              data.args.routeCode as Hex,
             ] as const)
           : undefined
         let value = fromToken.isNative ? writeArgs?.[1] ?? undefined : undefined
@@ -113,12 +167,19 @@ export const useTrade = (variables: UseTradeParams) => {
         // console.debug(fromToken.isNative, writeArgs, value)
 
         if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
-          writeArgs = ['0xbc4a6be1285893630d45c881c6c343a65fdbe278', 20000000000000000n, ...writeArgs]
+          writeArgs = [
+            '0xbc4a6be1285893630d45c881c6c343a65fdbe278',
+            20000000000000000n,
+            ...writeArgs,
+          ]
           value = (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n
         }
 
         const gasSpent = gasPrice
-          ? Amount.fromRawAmount(Native.onChain(chainId), gasPrice * BigInt(data.route.gasSpent * 1.2))
+          ? Amount.fromRawAmount(
+              Native.onChain(chainId),
+              gasPrice * BigInt(data.route.gasSpent * 1.2),
+            )
           : undefined
 
         return {
@@ -135,12 +196,20 @@ export const useTrade = (variables: UseTradeParams) => {
           amountOut,
           minAmountOut: Amount.fromRawAmount(
             toToken,
-            calculateSlippageAmount(amountOut, new Percent(Math.floor(+slippagePercentage * 100), 10_000))[0]
+            calculateSlippageAmount(
+              amountOut,
+              new Percent(Math.floor(+slippagePercentage * 100), 10_000),
+            )[0],
           ),
           gasSpent: gasSpent?.toSignificant(4),
-          gasSpentUsd: price && gasSpent ? gasSpent.multiply(price.asFraction).toSignificant(4) : undefined,
+          gasSpentUsd:
+            price && gasSpent
+              ? gasSpent.multiply(price.asFraction).toSignificant(4)
+              : undefined,
           route: data.route,
-          functionName: isOffset ? 'transferValueAndprocessRoute' : 'processRoute',
+          functionName: isOffset
+            ? 'transferValueAndprocessRoute'
+            : 'processRoute',
           writeArgs,
           value,
         }
@@ -160,7 +229,16 @@ export const useTrade = (variables: UseTradeParams) => {
         value: undefined,
       }
     },
-    [carbonOffset, amount, chainId, fromToken, price, slippagePercentage, toToken, gasPrice]
+    [
+      carbonOffset,
+      amount,
+      chainId,
+      fromToken,
+      price,
+      slippagePercentage,
+      toToken,
+      gasPrice,
+    ],
   )
 
   return useTradeQuery(variables, select)

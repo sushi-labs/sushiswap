@@ -20,7 +20,11 @@ export const MediaBlock: FC<MediaBlock> = ({ block }) => {
           />
         </div>
       )}
-      {block.caption && <span className="text-xs font-medium text-slate-400">{block.caption}</span>}
+      {block.caption && (
+        <span className="text-xs font-medium text-slate-400">
+          {block.caption}
+        </span>
+      )}
     </div>
   )
 }

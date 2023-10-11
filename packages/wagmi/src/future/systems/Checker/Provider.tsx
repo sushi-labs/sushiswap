@@ -1,7 +1,16 @@
 'use client'
 
 import { watchAccount, watchNetwork } from '@wagmi/core'
-import React, { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, {
+  createContext,
+  FC,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { Signature } from 'viem'
 
 type CheckerContext = {
@@ -37,15 +46,18 @@ const CheckerProvider: FC<ProviderProps> = ({ children }) => {
     }))
   }, [])
 
-  const setSignature = useCallback((tag: string, signature: Signature | undefined) => {
-    setState((prevState) => ({
-      ...prevState,
-      signatureState: {
-        ...prevState.signatureState,
-        [tag]: signature,
-      },
-    }))
-  }, [])
+  const setSignature = useCallback(
+    (tag: string, signature: Signature | undefined) => {
+      setState((prevState) => ({
+        ...prevState,
+        signatureState: {
+          ...prevState.signatureState,
+          [tag]: signature,
+        },
+      }))
+    },
+    [],
+  )
 
   // Reset state when address/wallet changes
   useEffect(() => {
@@ -62,7 +74,7 @@ const CheckerProvider: FC<ProviderProps> = ({ children }) => {
     <CheckerContext.Provider
       value={useMemo(
         () => ({ setApproved, state, signatureState, setSignature }),
-        [setApproved, setSignature, signatureState, state]
+        [setApproved, setSignature, signatureState, state],
       )}
     >
       {children}
@@ -83,7 +95,7 @@ const useApproved = (tag: string) => {
       approved: context.state[tag] ? context.state[tag] : false,
       setApproved: (approved: boolean) => context.setApproved(tag, approved),
     }),
-    [context, tag]
+    [context, tag],
   )
 }
 
@@ -95,16 +107,21 @@ const useSignature = (tag: string) => {
 
   return useMemo(
     () => ({
-      signature: context.signatureState[tag] ? context.signatureState[tag] : undefined,
-      setSignature: (signature: Signature | undefined) => context.setSignature(tag, signature),
+      signature: context.signatureState[tag]
+        ? context.signatureState[tag]
+        : undefined,
+      setSignature: (signature: Signature | undefined) =>
+        context.setSignature(tag, signature),
     }),
-    [context, tag]
+    [context, tag],
   )
 }
 
 // HOC component
 // useful for when the useApproved hook and the Checker.Success component are in the same component
-const withCheckerRoot = <P extends object>(Component: React.FunctionComponent<P>): FC<P> =>
+const withCheckerRoot = <P extends object>(
+  Component: React.FunctionComponent<P>,
+): FC<P> =>
   function WithCheckerRootComponent(props: P) {
     return (
       <CheckerProvider>

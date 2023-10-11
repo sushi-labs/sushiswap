@@ -1,7 +1,7 @@
-import { Amount, Price, Type } from '@sushiswap/currency'
-import { Percent } from '@sushiswap/math'
-import { Address } from '@sushiswap/wagmi'
 import { SushiXSwap2ChainId, TransactionType } from '@sushiswap/sushixswap-sdk'
+import { Address } from '@sushiswap/wagmi'
+import { Percent } from 'sushi'
+import { Amount, Type } from 'sushi/currency'
 
 export interface UseCrossChainTradeParams {
   tradeId: string

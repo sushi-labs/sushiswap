@@ -1,5 +1,3 @@
-import { ChainId } from '@sushiswap/chain'
-import { Native, Type } from '@sushiswap/currency'
 import {
   STARGATE_CHAIN_ID,
   STARGATE_CHAIN_PATHS,
@@ -11,7 +9,9 @@ import {
   STARGATE_USDT_ADDRESS,
   StargateChainId,
 } from '@sushiswap/stargate'
-import { Percent } from '@sushiswap/math'
+import { ChainId } from 'sushi/chain'
+import { Native, Type } from 'sushi/currency'
+import { Percent } from 'sushi/math'
 import { Address, encodeAbiParameters, parseAbiParameters } from 'viem'
 import { SushiXSwap2ChainId } from '../..'
 
@@ -27,9 +27,13 @@ export const STARGATE_ADAPTER_SUPPORTED_CHAIN_IDS = [
   ChainId.BASE,
 ] as const
 
-export type StargateAdapterChainId = (typeof STARGATE_ADAPTER_SUPPORTED_CHAIN_IDS)[number]
+export type StargateAdapterChainId =
+  typeof STARGATE_ADAPTER_SUPPORTED_CHAIN_IDS[number]
 
-export const STARGATE_ADAPTER_ADDRESS: Record<StargateAdapterChainId, `0x${string}`> = {
+export const STARGATE_ADAPTER_ADDRESS: Record<
+  StargateAdapterChainId,
+  `0x${string}`
+> = {
   [ChainId.ETHEREUM]: '0x09938716c4a086a4ebfe10377fdad96f32541303',
   [ChainId.BSC]: '0x09938716c4a086a4ebfe10377fdad96f32541303',
   [ChainId.AVALANCHE]: '0x09938716c4a086a4ebfe10377fdad96f32541303',
@@ -39,8 +43,12 @@ export const STARGATE_ADAPTER_ADDRESS: Record<StargateAdapterChainId, `0x${strin
   [ChainId.BASE]: '0x09938716c4a086a4ebfe10377fdad96f32541303',
 } as const
 
-export const isStargateAdapterChainId = (chainId: ChainId): chainId is StargateAdapterChainId =>
-  STARGATE_ADAPTER_SUPPORTED_CHAIN_IDS.includes(chainId as StargateAdapterChainId)
+export const isStargateAdapterChainId = (
+  chainId: ChainId,
+): chainId is StargateAdapterChainId =>
+  STARGATE_ADAPTER_SUPPORTED_CHAIN_IDS.includes(
+    chainId as StargateAdapterChainId,
+  )
 
 /*
     struct StargateTeleportParams {
@@ -77,23 +85,31 @@ export const encodeStargateTeleportParams = ({
   dstGas: Parameters<typeof BigInt>[0]
 }): string => {
   return encodeAbiParameters(
-    parseAbiParameters('uint16, address, uint256, uint256, uint256, uint256, uint256, address, address, uint256'),
+    parseAbiParameters(
+      'uint16, address, uint256, uint256, uint256, uint256, uint256, address, address, uint256',
+    ),
     [
       STARGATE_CHAIN_ID[dstBridgeToken.chainId as SushiXSwap2ChainId],
-      srcBridgeToken.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : (srcBridgeToken.address as Address),
+      srcBridgeToken.isNative
+        ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+        : (srcBridgeToken.address as Address),
       BigInt(
         STARGATE_POOL_ID[srcBridgeToken.chainId as SushiXSwap2ChainId][
           srcBridgeToken.isNative
-            ? STARGATE_ETH_ADDRESS[srcBridgeToken.chainId as keyof typeof STARGATE_ETH_ADDRESS]
+            ? STARGATE_ETH_ADDRESS[
+                srcBridgeToken.chainId as keyof typeof STARGATE_ETH_ADDRESS
+              ]
             : srcBridgeToken.address
-        ]
+        ],
       ),
       BigInt(
         STARGATE_POOL_ID[dstBridgeToken.chainId as SushiXSwap2ChainId][
           dstBridgeToken.isNative
-            ? STARGATE_ETH_ADDRESS[dstBridgeToken.chainId as keyof typeof STARGATE_ETH_ADDRESS]
+            ? STARGATE_ETH_ADDRESS[
+                dstBridgeToken.chainId as keyof typeof STARGATE_ETH_ADDRESS
+              ]
             : dstBridgeToken.address
-        ]
+        ],
       ),
       BigInt(amount),
       BigInt(amountMin),
@@ -101,7 +117,7 @@ export const encodeStargateTeleportParams = ({
       receiver,
       to,
       BigInt(dstGas),
-    ]
+    ],
   )
 }
 
@@ -112,14 +128,28 @@ export const estimateStargateDstGas = (gasUsed: number) => {
 }
 
 export const getStargateBridgePath = (srcCurrency: Type, dstCurrency: Type) => {
-  if (!isStargateAdapterChainId(srcCurrency.chainId) || !isStargateAdapterChainId(dstCurrency.chainId)) return undefined
-  const srcChainPaths = STARGATE_CHAIN_PATHS[srcCurrency.chainId as StargateChainId]
+  if (
+    !isStargateAdapterChainId(srcCurrency.chainId) ||
+    !isStargateAdapterChainId(dstCurrency.chainId)
+  )
+    return undefined
+  const srcChainPaths =
+    STARGATE_CHAIN_PATHS[srcCurrency.chainId as StargateChainId]
 
   // If srcCurrency is ETH, check for ETH path
   if (srcCurrency.isNative && srcCurrency.chainId in STARGATE_ETH_ADDRESS) {
-    const ethPaths = srcChainPaths[STARGATE_ETH_ADDRESS[srcCurrency.chainId as keyof typeof STARGATE_ETH_ADDRESS]]
+    const ethPaths =
+      srcChainPaths[
+        STARGATE_ETH_ADDRESS[
+          srcCurrency.chainId as keyof typeof STARGATE_ETH_ADDRESS
+        ]
+      ]
 
-    if (ethPaths.find((dstBridgeToken) => dstBridgeToken.chainId === dstCurrency.chainId)) {
+    if (
+      ethPaths.find(
+        (dstBridgeToken) => dstBridgeToken.chainId === dstCurrency.chainId,
+      )
+    ) {
       return {
         srcBridgeToken: srcCurrency,
         dstBridgeToken: Native.onChain(dstCurrency.chainId),
@@ -128,7 +158,10 @@ export const getStargateBridgePath = (srcCurrency: Type, dstCurrency: Type) => {
   }
 
   // Else fallback to USDC/USDT
-  if (srcCurrency.chainId in STARGATE_USDC_ADDRESS || srcCurrency.chainId in STARGATE_USDT_ADDRESS) {
+  if (
+    srcCurrency.chainId in STARGATE_USDC_ADDRESS ||
+    srcCurrency.chainId in STARGATE_USDT_ADDRESS
+  ) {
     const srcBridgeToken =
       srcCurrency.chainId in STARGATE_USDC
         ? STARGATE_USDC[srcCurrency.chainId as keyof typeof STARGATE_USDC]
@@ -136,7 +169,9 @@ export const getStargateBridgePath = (srcCurrency: Type, dstCurrency: Type) => {
 
     const usdPaths = srcChainPaths[srcBridgeToken.address as Address]
 
-    const dstBridgeToken = usdPaths.find((dstBridgeToken) => dstBridgeToken.chainId === dstCurrency.chainId)
+    const dstBridgeToken = usdPaths.find(
+      (dstBridgeToken) => dstBridgeToken.chainId === dstCurrency.chainId,
+    )
 
     if (dstBridgeToken) {
       return {

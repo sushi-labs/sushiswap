@@ -1,6 +1,6 @@
 'use client'
 
-import { Price, Token } from '@sushiswap/currency'
+import { Price, Token } from 'sushi/currency'
 import { useMemo } from 'react'
 
 export const usePriceInverter = ({
@@ -28,6 +28,6 @@ export const usePriceInverter = ({
       quote: invert ? base : quote,
       base: invert ? quote : base,
     }),
-    [base, invert, priceLower, priceUpper, quote]
+    [base, invert, priceLower, priceUpper, quote],
   )
 }

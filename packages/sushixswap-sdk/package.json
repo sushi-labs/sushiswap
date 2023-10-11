@@ -1,7 +1,6 @@
 {
   "name": "@sushiswap/sushixswap-sdk",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
   "description": "SushiXSwap SDK",
   "keywords": [
     "sushixswap",
@@ -25,8 +24,6 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
-    "lint": "TIMING=1 eslint src",
-    "lint:fix": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build",
     "test": "jest --passWithNoTests"
   },
@@ -34,19 +31,14 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@sushiswap/chain": "workspace:*"
+    "sushi": "workspace:*"
   },
   "devDependencies": {
-    "@sushiswap/currency": "workspace:*",
-    "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/math": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/stargate": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "18",
-    "eslint": "8.43.0",
-    "typescript": "5.1.6",
+    "typescript": "5.2.2",
     "viem": "1.10.7"
   }
 }

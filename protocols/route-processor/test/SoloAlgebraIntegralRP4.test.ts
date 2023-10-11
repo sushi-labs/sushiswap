@@ -1,4 +1,9 @@
-import { LiquidityProviders, PoolCode, Router, UniV3PoolCode } from '@sushiswap/router'
+import {
+  LiquidityProviders,
+  PoolCode,
+  Router,
+  UniV3PoolCode,
+} from '@sushiswap/router'
 import {
   approve,
   approveTestTokensToAlgebraPerifery,
@@ -32,26 +37,51 @@ it('AlgebraIntegral RP4 Solo', async () => {
   const env = await createAlgebraIntegralPeriphery(client)
   const testTokens = await createTestTokens(client, 2)
   await approveTestTokensToAlgebraPerifery(client, env, testTokens)
-  const pool = await createRandomAlgebraPool(client, env, testTokens, env.deployer, 'algebra test', 100)
+  const pool = await createRandomAlgebraPool(
+    client,
+    env,
+    testTokens,
+    env.deployer,
+    'algebra test',
+    100,
+  )
   const rpAddress = await deployContract(
     client,
     RouteProcessor4,
     ['0x0000000000000000000000000000000000000000', []],
-    env.deployer
+    env.deployer,
   )
   const user = testTokens.owner
 
   const pcMap: Map<string, PoolCode> = new Map()
   pcMap.set(
     pool.pool.address,
-    new UniV3PoolCode(pool.pool, LiquidityProviders.AlgebraIntegral, LiquidityProviders.AlgebraIntegral)
+    new UniV3PoolCode(
+      pool.pool,
+      LiquidityProviders.AlgebraIntegral,
+      LiquidityProviders.AlgebraIntegral,
+    ),
   )
   const fromToken = testTokens.tokens[0]
   const toToken = testTokens.tokens[1]
   const amountIn = BigInt(10e18)
 
-  const route = Router.findBestRoute(pcMap, chainId, fromToken, amountIn, toToken, 50e9)
-  const rpParams = Router.routeProcessor4Params(pcMap, route, fromToken, toToken, user, rpAddress)
+  const route = Router.findBestRoute(
+    pcMap,
+    chainId,
+    fromToken,
+    amountIn,
+    toToken,
+    50e9,
+  )
+  const rpParams = Router.routeProcessor4Params(
+    pcMap,
+    route,
+    fromToken,
+    toToken,
+    user,
+    rpAddress,
+  )
 
   await approve(client, fromToken, user, rpAddress, amountIn)
   const amountOut = (await client.readContract({

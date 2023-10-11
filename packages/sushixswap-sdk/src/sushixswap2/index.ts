@@ -1,5 +1,5 @@
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Type } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Amount, Type } from 'sushi/currency'
 import { Address, encodeAbiParameters, parseAbiParameters } from 'viem'
 
 export const SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS = [
@@ -12,7 +12,7 @@ export const SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS = [
   ChainId.BASE,
 ] as const
 
-export type SushiXSwap2ChainId = (typeof SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS)[number]
+export type SushiXSwap2ChainId = typeof SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS[number]
 
 export const SUSHIXSWAP_2_ADDRESS: Record<SushiXSwap2ChainId, `0x${string}`> = {
   [ChainId.ETHEREUM]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
@@ -24,7 +24,9 @@ export const SUSHIXSWAP_2_ADDRESS: Record<SushiXSwap2ChainId, `0x${string}`> = {
   [ChainId.BASE]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
 } as const
 
-export const isSushiXSwap2ChainId = (chainId: ChainId): chainId is SushiXSwap2ChainId =>
+export const isSushiXSwap2ChainId = (
+  chainId: ChainId,
+): chainId is SushiXSwap2ChainId =>
   SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS.includes(chainId as SushiXSwap2ChainId)
 
 interface BridgeParams {
@@ -63,7 +65,9 @@ export const getBridgeParams = ({
   return {
     refId,
     adapter,
-    tokenIn: amountIn.currency.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : amountIn.currency.address,
+    tokenIn: amountIn.currency.isNative
+      ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+      : amountIn.currency.address,
     amountIn: amountIn.quotient.toString(),
     to,
     adapterData,
@@ -79,17 +83,35 @@ export const encodePayloadData = ({
   gasLimit: bigint
   targetData: `0x${string}`
 }) => {
-  return encodeAbiParameters(parseAbiParameters('address, uint256, bytes'), [target, gasLimit, targetData])
+  return encodeAbiParameters(parseAbiParameters('address, uint256, bytes'), [
+    target,
+    gasLimit,
+    targetData,
+  ])
 }
 
-type ProcessRouteInput = readonly [Address, bigint, Address, bigint, Address, `0x${string}`]
+type ProcessRouteInput = readonly [
+  Address,
+  bigint,
+  Address,
+  bigint,
+  Address,
+  `0x${string}`,
+]
 
-export function encodeSwapData([tokenIn, amountIn, tokenOut, amountOut, to, route]: ProcessRouteInput) {
+export function encodeSwapData([
+  tokenIn,
+  amountIn,
+  tokenOut,
+  amountOut,
+  to,
+  route,
+]: ProcessRouteInput) {
   return encodeAbiParameters(
     parseAbiParameters(
-      '(address tokenIn, uint256 amountIn, address tokenOut, uint256 amountOut, address to, bytes route)'
+      '(address tokenIn, uint256 amountIn, address tokenOut, uint256 amountOut, address to, bytes route)',
     ),
-    [{ tokenIn, amountIn, tokenOut, amountOut, to, route }]
+    [{ tokenIn, amountIn, tokenOut, amountOut, to, route }],
   )
 }
 

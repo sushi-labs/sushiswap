@@ -12,7 +12,9 @@ export const BobaSVG = (props: React.ComponentProps<'svg'>) => {
       {...props}
     >
       <title>Boba</title>
-      <style type="text/css">{'\n\t.st0{fill:#CCFF00;}\n\t.st1{fill:#1CD8D2;}\n'}</style>
+      <style type="text/css">
+        {'\n\t.st0{fill:#CCFF00;}\n\t.st1{fill:#1CD8D2;}\n'}
+      </style>
       <path
         className="st0"
         d="M256.14,205.36c-27.85,0-50.51-22.66-50.51-50.51s22.66-50.51,50.51-50.51s50.51,22.66,50.51,50.51 S283.99,205.36,256.14,205.36z M256.14,115.83c-21.51,0-39.01,17.5-39.01,39.01c0,21.51,17.5,39.01,39.01,39.01 c21.51,0,39.01-17.5,39.01-39.01C295.15,133.33,277.65,115.83,256.14,115.83z"

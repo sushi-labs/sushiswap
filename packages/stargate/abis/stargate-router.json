@@ -240,7 +240,9 @@
   {
     "inputs": [],
     "name": "bridge",
-    "outputs": [{ "internalType": "contract Bridge", "name": "", "type": "address" }],
+    "outputs": [
+      { "internalType": "contract Bridge", "name": "", "type": "address" }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -334,7 +336,9 @@
   {
     "inputs": [],
     "name": "factory",
-    "outputs": [{ "internalType": "contract Factory", "name": "", "type": "address" }],
+    "outputs": [
+      { "internalType": "contract Factory", "name": "", "type": "address" }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -345,7 +349,9 @@
       { "internalType": "address", "name": "_to", "type": "address" }
     ],
     "name": "instantRedeemLocal",
-    "outputs": [{ "internalType": "uint256", "name": "amountSD", "type": "uint256" }],
+    "outputs": [
+      { "internalType": "uint256", "name": "amountSD", "type": "uint256" }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -647,14 +653,18 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "_owner", "type": "address" }],
+    "inputs": [
+      { "internalType": "address", "name": "_owner", "type": "address" }
+    ],
     "name": "setMintFeeOwner",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "_owner", "type": "address" }],
+    "inputs": [
+      { "internalType": "address", "name": "_owner", "type": "address" }
+    ],
     "name": "setProtocolFeeOwner",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -758,7 +768,9 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }],
+    "inputs": [
+      { "internalType": "address", "name": "newOwner", "type": "address" }
+    ],
     "name": "transferOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",

@@ -1,9 +1,13 @@
 'use client'
 
 import { ChefType, Pool } from '@sushiswap/client'
-import { Amount, Currency, Token } from '@sushiswap/currency'
+import { Amount, Currency, Token } from 'sushi/currency'
 import { useMasterChef } from '@sushiswap/wagmi'
-import { useGraphPool, useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPool } from 'lib/hooks'
+import {
+  useGraphPool,
+  useTokenAmountDollarValues,
+  useUnderlyingTokenBalanceFromPool,
+} from 'lib/hooks'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
 interface PoolPositionStakedContext {
@@ -26,37 +30,38 @@ interface PoolPositionStakedProviderProps {
   watch?: boolean
 }
 
-export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> = ({ pool, children, watch = true }) => {
-  if (!pool?.incentives || pool.incentives.length === 0)
+export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> =
+  ({ pool, children, watch = true }) => {
+    if (!pool?.incentives || pool.incentives.length === 0)
+      return (
+        <Context.Provider
+          value={{
+            balance: undefined,
+            value0: 0,
+            value1: 0,
+            underlying0: undefined,
+            underlying1: undefined,
+            isLoading: false,
+            isError: false,
+            isWriteError: false,
+            isWritePending: false,
+          }}
+        >
+          {children}
+        </Context.Provider>
+      )
+
     return (
-      <Context.Provider
-        value={{
-          balance: undefined,
-          value0: 0,
-          value1: 0,
-          underlying0: undefined,
-          underlying1: undefined,
-          isLoading: false,
-          isError: false,
-          isWriteError: false,
-          isWritePending: false,
-        }}
+      <_PoolPositionStakedProvider
+        watch={watch}
+        pool={pool}
+        farmId={Number(pool.incentives[0].pid)}
+        chefType={pool.incentives[0].chefType}
       >
         {children}
-      </Context.Provider>
+      </_PoolPositionStakedProvider>
     )
-
-  return (
-    <_PoolPositionStakedProvider
-      watch={watch}
-      pool={pool}
-      farmId={Number(pool.incentives[0].pid)}
-      chefType={pool.incentives[0].chefType}
-    >
-      {children}
-    </_PoolPositionStakedProvider>
-  )
-}
+  }
 
 interface _PoolPositionStakedProviderProps {
   pool: Pool
@@ -76,13 +81,14 @@ const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({
   const {
     data: { reserve0, reserve1, totalSupply, liquidityToken },
   } = useGraphPool(pool)
-  const { balance, isLoading, isError, isWritePending, isWriteError } = useMasterChef({
-    chainId: pool.chainId,
-    chef: chefType,
-    pid: farmId,
-    token: liquidityToken,
-    watch,
-  })
+  const { balance, isLoading, isError, isWritePending, isWriteError } =
+    useMasterChef({
+      chainId: pool.chainId,
+      chef: chefType,
+      pid: farmId,
+      token: liquidityToken,
+      watch,
+    })
 
   const stakedUnderlying = useUnderlyingTokenBalanceFromPool({
     reserve0: reserve0,
@@ -111,7 +117,17 @@ const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({
           isWritePending,
           isWriteError,
         }),
-        [balance, isError, isLoading, isWriteError, isWritePending, underlying0, underlying1, value0, value1]
+        [
+          balance,
+          isError,
+          isLoading,
+          isWriteError,
+          isWritePending,
+          underlying0,
+          underlying1,
+          value0,
+          value1,
+        ],
       )}
     >
       {children}

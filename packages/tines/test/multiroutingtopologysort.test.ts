@@ -13,30 +13,57 @@ function createTopology(t: Topology): [Graph, Vertice, Vertice] {
   }
   const bn = getBigInt(1e6)
   const pools = t[1].map((e, i) => {
-    return new ConstantProductRPool(`${i}` as Address, tokens[e[0]], tokens[e[1]], 0.003, bn, bn)
+    return new ConstantProductRPool(
+      `${i}` as Address,
+      tokens[e[0]],
+      tokens[e[1]],
+      0.003,
+      bn,
+      bn,
+    )
   })
   const g = new Graph(pools, tokens[0], tokens[0], 0) // just a dummy
   g.edges.forEach((e) => {
     e.amountInPrevious = 1
     e.amountOutPrevious = 1
     const edge = t[1][parseInt(e.pool.address)]
-    console.assert(edge[0] === parseInt(e.vert0.token.name), 'internal Error 28')
-    console.assert(edge[1] === parseInt(e.vert1.token.name), 'internal Error 29')
+    console.assert(
+      edge[0] === parseInt(e.vert0.token.name),
+      'internal Error 28',
+    )
+    console.assert(
+      edge[1] === parseInt(e.vert1.token.name),
+      'internal Error 29',
+    )
     e.direction = edge[0] === parseInt(e.vert0.token.name)
   })
   g.getOrCreateVertice(tokens[0])
   g.getOrCreateVertice(tokens[tokens.length - 1])
-  return [g, g.getVert(tokens[0]) as Vertice, g.getVert(tokens[tokens.length - 1]) as Vertice]
+  return [
+    g,
+    g.getVert(tokens[0]) as Vertice,
+    g.getVert(tokens[tokens.length - 1]) as Vertice,
+  ]
 }
 
-function createCorrectTopology(t: Topology, paths: number): [Graph, Vertice, Vertice] {
+function createCorrectTopology(
+  t: Topology,
+  paths: number,
+): [Graph, Vertice, Vertice] {
   const tokens: RToken[] = []
   for (let i = 0; i < t[0]; ++i) {
     tokens.push({ name: `${i}`, address: `${i}`, symbol: `${i}`, decimals: 18 })
   }
   const bn = getBigInt(1e6)
   const pools = t[1].map((e, i) => {
-    return new ConstantProductRPool(`${i}` as Address, tokens[e[0]], tokens[e[1]], 0.003, bn, bn)
+    return new ConstantProductRPool(
+      `${i}` as Address,
+      tokens[e[0]],
+      tokens[e[1]],
+      0.003,
+      bn,
+      bn,
+    )
   })
   const g = new Graph(pools, tokens[0], tokens[0], 0) // just a dummy
   const from = g.getOrCreateVertice(tokens[0])
@@ -48,10 +75,17 @@ function createCorrectTopology(t: Topology, paths: number): [Graph, Vertice, Ver
   }
   return [g, from, to]
 }
-function generatePath(g: Graph, from: Vertice, to: Vertice, used: Set<Vertice>): Edge[] | undefined {
+function generatePath(
+  g: Graph,
+  from: Vertice,
+  to: Vertice,
+  used: Set<Vertice>,
+): Edge[] | undefined {
   if (from === to) return []
   used.add(from)
-  const edges = from.edges.filter((e) => !used.has(from.getNeibour(e) as Vertice))
+  const edges = from.edges.filter(
+    (e) => !used.has(from.getNeibour(e) as Vertice),
+  )
   while (edges.length) {
     const r = Math.floor(rnd() * from.edges.length)
     const edge = from.edges[r]
@@ -236,7 +270,10 @@ function getRandomTopology(tokens: number, density: number): Topology {
 function vertIndex(v: Vertice): number {
   return parseInt(v.token.name)
 }
-function getEdge(i: number, res: { status: number; vertices: Vertice[] }): [number, number] {
+function getEdge(
+  i: number,
+  res: { status: number; vertices: Vertice[] },
+): [number, number] {
   return [vertIndex(res.vertices[i]), vertIndex(res.vertices[i - 1])]
 }
 function findEdge(edge: [number, number], t: Topology): number {

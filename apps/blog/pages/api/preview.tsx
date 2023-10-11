@@ -1,10 +1,16 @@
 import { getPreviewPostBySlug } from 'lib/api'
 import { NextApiRequest, NextApiResponse } from 'next'
 
-export default async function preview(req: NextApiRequest, res: NextApiResponse) {
+export default async function preview(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
   // Check the secret and next parameters
   // This secret should only be known to this API route and the CMS
-  if (req.query.secret !== process.env.STRAPI_PREVIEW_SECRET || !req.query.slug) {
+  if (
+    req.query.secret !== process.env.STRAPI_PREVIEW_SECRET ||
+    !req.query.slug
+  ) {
     return res.status(401).json({ message: 'Invalid token' })
   }
 

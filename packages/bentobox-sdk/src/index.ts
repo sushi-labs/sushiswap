@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 
 export const BENTOBOX_SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,
@@ -24,7 +24,7 @@ export const BENTOBOX_SUPPORTED_CHAIN_IDS = [
   ChainId.POLYGON,
 ] as const
 
-export type BentoBoxChainId = (typeof BENTOBOX_SUPPORTED_CHAIN_IDS)[number]
+export type BentoBoxChainId = typeof BENTOBOX_SUPPORTED_CHAIN_IDS[number]
 
 export const BENTOBOX_ADDRESS: Record<BentoBoxChainId, `0x${string}`> = {
   [ChainId.ARBITRUM]: '0x74c764D41B77DBbb4fe771daB1939B00b146894A',
@@ -50,5 +50,7 @@ export const BENTOBOX_ADDRESS: Record<BentoBoxChainId, `0x${string}`> = {
   [ChainId.POLYGON]: '0x0319000133d3AdA02600f0875d2cf03D442C3367',
 } as const
 
-export const isBentoBoxChainId = (chainId: ChainId): chainId is BentoBoxChainId =>
+export const isBentoBoxChainId = (
+  chainId: ChainId,
+): chainId is BentoBoxChainId =>
   BENTOBOX_SUPPORTED_CHAIN_IDS.includes(chainId as BentoBoxChainId)

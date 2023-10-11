@@ -1,12 +1,18 @@
 'use client'
 
-import { Chain } from '@sushiswap/chain'
-import { Button, Label, NetworkIcon, NetworkSelector, SelectIcon } from '@sushiswap/ui'
+import {
+  Button,
+  Label,
+  NetworkIcon,
+  NetworkSelector,
+  SelectIcon,
+} from '@sushiswap/ui'
 import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
+import { Chain } from 'sushi/chain'
 
-import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 import { SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS } from '@sushiswap/sushixswap-sdk'
+import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapToken0Input = () => {
   const {
@@ -19,7 +25,9 @@ export const CrossChainSwapToken0Input = () => {
     <div className="border border-accent flex flex-col bg-white dark:bg-slate-800 rounded-xl overflow-hidden">
       <Collapsible open={true}>
         <div className="p-3 border-b border-accent flex gap-2 items-center">
-          <Label className="text-xs tracking-tighter text-muted-foreground">From</Label>
+          <Label className="text-xs tracking-tighter text-muted-foreground">
+            From
+          </Label>
           <NetworkSelector
             networks={SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS}
             selected={chainId0}
@@ -30,7 +38,7 @@ export const CrossChainSwapToken0Input = () => {
           >
             <Button variant="secondary" size="xs">
               <NetworkIcon chainId={chainId0} width={16} height={16} />
-              {Chain.from(chainId0).name}
+              {Chain.from(chainId0)?.name}
               <SelectIcon />
             </Button>
           </NetworkSelector>
