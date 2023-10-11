@@ -7,7 +7,7 @@ export const BobaAvaxAlert = () => {
       variant="warning"
       size="sm"
       className="text-center rounded-none"
-      showUntil={new Date('2023-10-31T00:00:00.000Z')}
+      showUntil="2023-10-31T00:00:00.000Z"
     >
       Attention BobaAvax Liquidity Providers on Sushi, kindly withdraw your
       liquidity and move your funds before October 31st, 2023, as BobaAvax will
