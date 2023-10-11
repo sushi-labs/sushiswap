@@ -1,8 +1,8 @@
 'use client'
 
 import { isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { ChainId } from '@sushiswap/chain'
-import { Type } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Type } from 'sushi/currency'
 import { useQuery } from '@tanstack/react-query'
 
 import { getBentoboxTotals } from '../actions'
@@ -20,7 +20,10 @@ const queryFn = async ({ chainId, currencies }: UseBentoboxTotalsParams) => {
   return undefined
 }
 
-export const useBentoboxTotals = ({ enabled = true, ...variables }: UseBentoboxTotalsParams) => {
+export const useBentoboxTotals = ({
+  enabled = true,
+  ...variables
+}: UseBentoboxTotalsParams) => {
   const { currencies, chainId } = variables
   return useQuery({
     queryKey: ['useBentoboxTotals', { chainId, currencies }],

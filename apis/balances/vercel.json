@@ -11,6 +11,9 @@
   "rewrites": [
     { "source": "/v0", "destination": "/api/v0" },
     { "source": "/v0/:chainId", "destination": "/api/v0/:chainId" },
-    { "source": "/v0/:chainId/:address", "destination": "/api/v0/:chainId/:address" }
+    {
+      "source": "/v0/:chainId/:address",
+      "destination": "/api/v0/:chainId/:address"
+    }
   ]
 }

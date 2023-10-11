@@ -1,5 +1,5 @@
-import { db } from '../db'
-import { SavedToken } from './types'
+import { db } from '../db.js'
+import { type SavedToken } from './types.js'
 
 export const saveTokens = async ({ tokens }: { tokens: SavedToken[] }) => {
   try {

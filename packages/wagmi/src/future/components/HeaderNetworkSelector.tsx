@@ -1,4 +1,4 @@
-import { Chain, ChainId } from '@sushiswap/chain'
+import { Chain, ChainId } from 'sushi/chain'
 import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
@@ -35,13 +35,17 @@ export const HeaderNetworkSelector: FC<{
         }
       }
     },
-    [chain?.id, onChange, selectedNetwork, switchNetworkAsync]
+    [chain?.id, onChange, selectedNetwork, switchNetworkAsync],
   )
 
   const selected = selectedNetwork || (chain?.id as ChainId) || ChainId.ETHEREUM
 
   return (
-    <NetworkSelector selected={selected} onSelect={onSwitchNetwork} networks={networks}>
+    <NetworkSelector
+      selected={selected}
+      onSelect={onSwitchNetwork}
+      networks={networks}
+    >
       <Button variant="secondary" testId="network-selector">
         <Suspense fallback={null}>
           <NetworkIcon chainId={selected} width={20} height={20} />

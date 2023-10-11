@@ -1,4 +1,11 @@
-import { addSeconds, getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays } from 'date-fns'
+import {
+  addSeconds,
+  getUnixTime,
+  startOfHour,
+  startOfMinute,
+  startOfSecond,
+  subDays,
+} from 'date-fns'
 
 import { getBuiltGraphSDK } from '../.graphclient/index.js'
 
@@ -17,7 +24,9 @@ export const getOneDayBlocks = async (chainIds: number[]) => {
       orderDirection: 'desc',
       chainIds,
     })
-    .then(({ blocks }) => blocks.map((block) => ({ number: Number(block?.number ?? 0) })))
+    .then(({ blocks }) =>
+      blocks.map((block) => ({ number: Number(block?.number ?? 0) })),
+    )
 }
 
 export const getTwoDayBlocks = async (chainIds: number[]) => {
@@ -33,7 +42,9 @@ export const getTwoDayBlocks = async (chainIds: number[]) => {
       orderDirection: 'desc',
       chainIds,
     })
-    .then(({ blocks }) => blocks.map((block) => ({ number: Number(block?.number ?? 0) })))
+    .then(({ blocks }) =>
+      blocks.map((block) => ({ number: Number(block?.number ?? 0) })),
+    )
 }
 
 export const getOneWeekBlocks = async (chainIds: number[]) => {
@@ -49,10 +60,15 @@ export const getOneWeekBlocks = async (chainIds: number[]) => {
       orderDirection: 'desc',
       chainIds,
     })
-    .then(({ blocks }) => blocks.map((block) => ({ number: Number(block?.number ?? 0) })))
+    .then(({ blocks }) =>
+      blocks.map((block) => ({ number: Number(block?.number ?? 0) })),
+    )
 }
 
-export const getCustomBlocks = async (chainIds: number[], timestamp: number) => {
+export const getCustomBlocks = async (
+  chainIds: number[],
+  timestamp: number,
+) => {
   const start = timestamp
   const end = timestamp + 600
 
@@ -65,5 +81,7 @@ export const getCustomBlocks = async (chainIds: number[], timestamp: number) => 
       orderDirection: 'desc',
       chainIds,
     })
-    .then(({ blocks }) => blocks.map((block) => ({ number: Number(block?.number ?? 0) })))
+    .then(({ blocks }) =>
+      blocks.map((block) => ({ number: Number(block?.number ?? 0) })),
+    )
 }

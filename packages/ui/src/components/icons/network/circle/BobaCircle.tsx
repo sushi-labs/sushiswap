@@ -3,7 +3,14 @@ import * as React from 'react'
 import { IconComponent } from '../../../../types'
 
 export const BobaCircle: IconComponent = (props) => (
-  <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <svg
+    width="128"
+    height="128"
+    viewBox="0 0 128 128"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
     <rect width="128" height="128" rx="64" fill="url(#paint0_linear_706_782)" />
     <g clipPath="url(#clip0_706_782)">
       <path
@@ -46,19 +53,46 @@ export const BobaCircle: IconComponent = (props) => (
         d="M89.7867 35.5256L89.6069 36.1349V53.9326L89.7867 54.1224L98.0464 49.2385L89.7867 35.5256Z"
         fill="black"
       />
-      <path d="M89.7868 35.5256L81.5171 49.2385L89.7868 54.1224V45.4732V35.5256Z" fill="black" />
-      <path d="M89.7869 55.6805L89.687 55.8104V62.1424L89.7869 62.4421L98.0466 50.7966L89.7869 55.6805Z" fill="black" />
-      <path d="M89.7868 62.4421V55.6805L81.5171 50.7966L89.7868 62.4421Z" fill="black" />
-      <path d="M89.7866 54.1223L98.0463 49.2384L89.7866 45.4731V54.1223Z" fill="black" />
-      <path d="M81.5171 49.2384L89.7868 54.1223V45.4731L81.5171 49.2384Z" fill="black" />
+      <path
+        d="M89.7868 35.5256L81.5171 49.2385L89.7868 54.1224V45.4732V35.5256Z"
+        fill="black"
+      />
+      <path
+        d="M89.7869 55.6805L89.687 55.8104V62.1424L89.7869 62.4421L98.0466 50.7966L89.7869 55.6805Z"
+        fill="black"
+      />
+      <path
+        d="M89.7868 62.4421V55.6805L81.5171 50.7966L89.7868 62.4421Z"
+        fill="black"
+      />
+      <path
+        d="M89.7866 54.1223L98.0463 49.2384L89.7866 45.4731V54.1223Z"
+        fill="black"
+      />
+      <path
+        d="M81.5171 49.2384L89.7868 54.1223V45.4731L81.5171 49.2384Z"
+        fill="black"
+      />
     </g>
     <defs>
-      <linearGradient id="paint0_linear_706_782" x1="0" y1="0" x2="128" y2="140.5" gradientUnits="userSpaceOnUse">
+      <linearGradient
+        id="paint0_linear_706_782"
+        x1="0"
+        y1="0"
+        x2="128"
+        y2="140.5"
+        gradientUnits="userSpaceOnUse"
+      >
         <stop stopColor="#1CD8D2" />
         <stop offset="1" stopColor="#CCFF00" />
       </linearGradient>
       <clipPath id="clip0_706_782">
-        <rect width="59.0262" height="80" fill="white" transform="translate(39 24)" />
+        <rect
+          width="59.0262"
+          height="80"
+          fill="white"
+          transform="translate(39 24)"
+        />
       </clipPath>
     </defs>
   </svg>

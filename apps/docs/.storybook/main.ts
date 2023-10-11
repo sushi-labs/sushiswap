@@ -22,7 +22,7 @@ const config: StorybookConfig = {
     autodocs: true,
     defaultName: 'Documentation',
   },
-  async viteFinal(config, { configType }) {
+  viteFinal(config, { configType }) {
     if (configType === 'DEVELOPMENT') {
       // Your development configuration goes here
     }
@@ -34,12 +34,22 @@ const config: StorybookConfig = {
       define: {
         'process.env': {},
       },
+      optimizeDeps: {
+        include: ['sushi'],
+      },
+      build: {
+        commonjsOptions: { include: [/sushi/] },
+        rollupOptions: {
+          onwarn(warning, warn) {
+            if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+              return
+            }
+            warn(warning)
+          },
+        },
+      },
       resolve: {
         alias: [
-          {
-            find: '@sushiswap/ui',
-            replacement: path.resolve(__dirname, '../../../packages/ui/'),
-          },
           {
             find: '@sushiswap/router-config',
             replacement: path.resolve(__dirname, '../../../config/router/'),

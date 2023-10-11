@@ -2,8 +2,8 @@
 //  * @jest-environment node
 //  */
 // // Needed for viem, otherwise throwing "TextEncoder is not defined"
-// import { ChainId } from '@sushiswap/chain'
-// import { Native, USDC } from '@sushiswap/currency'
+// import { ChainId } from 'sushi/chain'
+// import { Native, USDC } from 'sushi/currency'
 // import { createClient } from '@sushiswap/database'
 // import { createPublicClient, http } from 'viem'
 // import { arbitrum, mainnet, polygon } from 'viem/chains'

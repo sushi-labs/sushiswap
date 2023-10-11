@@ -13,8 +13,16 @@ export const BirthdayIcon: IconComponent = (props) => {
     >
       <path fill="url(#pattern0)" d="M243.512 0h-230.4v256h230.4V0z"></path>
       <defs>
-        <pattern id="pattern0" width="1" height="1" patternContentUnits="objectBoundingBox">
-          <use transform="matrix(.00271 0 0 .00244 -.309 -.368)" xlinkHref="#image0_974_362"></use>
+        <pattern
+          id="pattern0"
+          width="1"
+          height="1"
+          patternContentUnits="objectBoundingBox"
+        >
+          <use
+            transform="matrix(.00271 0 0 .00244 -.309 -.368)"
+            xlinkHref="#image0_974_362"
+          ></use>
         </pattern>
         <image
           id="image0_974_362"

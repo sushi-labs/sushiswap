@@ -43,8 +43,14 @@ export interface ContainerProps
 const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
   ({ className, maxWidth, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : 'div'
-    return <Comp className={classNames(containerVariants({ maxWidth, className }))} ref={ref} {...props} />
-  }
+    return (
+      <Comp
+        className={classNames(containerVariants({ maxWidth, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
+  },
 )
 
 Container.displayName = 'Container'

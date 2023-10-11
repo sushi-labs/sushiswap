@@ -2,7 +2,12 @@ import React from 'react'
 
 export const MagnaSVG = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 137 24">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+      fill="none"
+      viewBox="0 0 137 24"
+    >
       <title>Magna</title>
       <g clipPath="url(#clip0_742_4219)">
         <path

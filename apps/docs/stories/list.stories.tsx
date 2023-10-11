@@ -28,7 +28,11 @@ export const StandardList = {
       <List>
         <List.Label>Label</List.Label>
         <List.Control>
-          <List.Item icon={DiscordIcon} iconProps={{ width: 20, height: 20 }} title="List item 1">
+          <List.Item
+            icon={DiscordIcon}
+            iconProps={{ width: 20, height: 20 }}
+            title="List item 1"
+          >
             Value item 1
           </List.Item>
           <List.Item
@@ -71,7 +75,10 @@ export const MenuItemList = {
       <List>
         <List.Label>Label</List.Label>
         <List.Control>
-          <List.MenuItem title="Hover me to see a custom icon" hoverIcon={DiscordIcon} />
+          <List.MenuItem
+            title="Hover me to see a custom icon"
+            hoverIcon={DiscordIcon}
+          />
           <List.MenuItem title="Hover me" />
         </List.Control>
       </List>

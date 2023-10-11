@@ -1,4 +1,4 @@
-import { Token } from '@sushiswap/currency'
+import { Token } from 'sushi/currency'
 import { RToken } from '@sushiswap/tines'
 
 export function getBentoChainId(chainId: string | number | undefined): string {

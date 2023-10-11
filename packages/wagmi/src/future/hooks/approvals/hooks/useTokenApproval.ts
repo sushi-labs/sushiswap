@@ -1,11 +1,16 @@
 'use client'
 
 // import * as Sentry from '@sentry/nextjs'
-import { Amount, Type } from '@sushiswap/currency'
+import { Amount, Type } from 'sushi/currency'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { useCallback, useMemo, useState } from 'react'
 import { maxUint256, UserRejectedRequestError } from 'viem'
-import { Address, useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi'
+import {
+  Address,
+  useAccount,
+  useContractWrite,
+  usePrepareContractWrite,
+} from 'wagmi'
 import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
 import { useTokenAllowance } from './useTokenAllowance'
@@ -30,7 +35,10 @@ export const useTokenApproval = ({
   spender,
   enabled = true,
   approveMax,
-}: UseTokenApprovalParams): [ApprovalState, ReturnType<typeof useContractWrite>] => {
+}: UseTokenApprovalParams): [
+  ApprovalState,
+  ReturnType<typeof useContractWrite>,
+] => {
   const { address } = useAccount()
   const [pending, setPending] = useState(false)
   const {
@@ -63,8 +71,18 @@ export const useTokenApproval = ({
     ] as const,
     address: amount?.currency?.wrapped?.address as Address,
     functionName: 'approve',
-    args: [spender as Address, approveMax ? maxUint256 : amount ? amount.quotient : 0n],
-    enabled: Boolean(amount && spender && address && allowance && enabled && !isAllowanceLoading),
+    args: [
+      spender as Address,
+      approveMax ? maxUint256 : amount ? amount.quotient : 0n,
+    ],
+    enabled: Boolean(
+      amount &&
+        spender &&
+        address &&
+        allowance &&
+        enabled &&
+        !isAllowanceLoading,
+    ),
     // onError: (error) => Sentry.captureException(`approve prepare error: ${error.message}`),
   })
 
@@ -96,7 +114,7 @@ export const useTokenApproval = ({
         })
       }
     },
-    [address, amount]
+    [address, amount],
   )
 
   const execute = useContractWrite({
@@ -116,11 +134,14 @@ export const useTokenApproval = ({
   return useMemo(() => {
     let state = ApprovalState.UNKNOWN
     if (amount?.currency.isNative) state = ApprovalState.APPROVED
-    else if (allowance && amount && allowance.greaterThan(amount)) state = ApprovalState.APPROVED
-    else if (allowance && amount && allowance.equalTo(amount)) state = ApprovalState.APPROVED
+    else if (allowance && amount && allowance.greaterThan(amount))
+      state = ApprovalState.APPROVED
+    else if (allowance && amount && allowance.equalTo(amount))
+      state = ApprovalState.APPROVED
     else if (pending) state = ApprovalState.PENDING
     else if (isAllowanceLoading) state = ApprovalState.LOADING
-    else if (allowance && amount && allowance.lessThan(amount)) state = ApprovalState.NOT_APPROVED
+    else if (allowance && amount && allowance.lessThan(amount))
+      state = ApprovalState.NOT_APPROVED
 
     return [state, execute]
   }, [allowance, amount, execute, isAllowanceLoading, pending])

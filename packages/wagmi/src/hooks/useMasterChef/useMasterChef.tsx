@@ -1,8 +1,8 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { ChefType } from '@sushiswap/client'
-import { Amount, SUSHI, SUSHI_ADDRESS, Token } from '@sushiswap/currency'
+import { Amount, SUSHI, SUSHI_ADDRESS, Token } from 'sushi/currency'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { useCallback, useMemo } from 'react'
 import { encodeFunctionData, UserRejectedRequestError } from 'viem'
@@ -26,7 +26,8 @@ import {
 } from '../useMasterChefContract'
 import { UsePrepareSendTransactionConfig } from '../useSendTransaction'
 
-interface UseMasterChefReturn extends Pick<ReturnType<typeof useContractReads>, 'isLoading' | 'isError'> {
+interface UseMasterChefReturn
+  extends Pick<ReturnType<typeof useContractReads>, 'isLoading' | 'isError'> {
   balance: Amount<Token> | undefined
   harvest: undefined | (() => void)
   pendingSushi: Amount<Token> | undefined
@@ -45,7 +46,14 @@ interface UseMasterChefParams {
 
 type UseMasterChef = (params: UseMasterChefParams) => UseMasterChefReturn
 
-export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid, token, enabled = true }) => {
+export const useMasterChef: UseMasterChef = ({
+  chainId,
+  watch = true,
+  chef,
+  pid,
+  token,
+  enabled = true,
+}) => {
   const { chain } = useNetwork()
   const { address } = useAccount()
   const contract = useMasterChefContract(chainId, chef)
@@ -61,7 +69,9 @@ export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid,
           abi: erc20ABI,
           functionName: 'balanceOf',
           args: [
-            (chef === ChefType.MasterChefV1 ? MASTERCHEF_ADDRESS[chainId] : MASTERCHEF_V2_ADDRESS[chainId]) as Address,
+            (chef === ChefType.MasterChefV1
+              ? MASTERCHEF_ADDRESS[chainId]
+              : MASTERCHEF_V2_ADDRESS[chainId]) as Address,
           ],
         } as const,
         {
@@ -127,7 +137,9 @@ export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid,
                 { internalType: 'address', name: '_user', type: 'address' },
               ],
               name: 'pendingSushi',
-              outputs: [{ internalType: 'uint256', name: 'pending', type: 'uint256' }],
+              outputs: [
+                { internalType: 'uint256', name: 'pending', type: 'uint256' },
+              ],
               stateMutability: 'view',
               type: 'function',
             },
@@ -142,14 +154,22 @@ export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid,
       return [
         {
           chainId,
-          address: SUSHI_ADDRESS[chainId as keyof typeof SUSHI_ADDRESS] as Address,
+          address: SUSHI_ADDRESS[
+            chainId as keyof typeof SUSHI_ADDRESS
+          ] as Address,
           abi: erc20ABI,
           functionName: 'balanceOf',
-          args: [MINICHEF_ADDRESS[chainId as keyof typeof MINICHEF_ADDRESS] as Address],
+          args: [
+            MINICHEF_ADDRESS[
+              chainId as keyof typeof MINICHEF_ADDRESS
+            ] as Address,
+          ],
         } as const,
         {
           chainId,
-          address: MINICHEF_ADDRESS[chainId as keyof typeof MINICHEF_ADDRESS] as Address,
+          address: MINICHEF_ADDRESS[
+            chainId as keyof typeof MINICHEF_ADDRESS
+          ] as Address,
           abi: [
             {
               inputs: [
@@ -188,12 +208,21 @@ export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid,
     const _balance = data?.[1] ? (data?.[1] as [bigint, bigint])[0] : undefined
 
     const _pendingSushi = data?.[2] ? data?.[2] : undefined
-    const balance = Amount.fromRawAmount(token, _balance ? _balance.toString() : 0)
+    const balance = Amount.fromRawAmount(
+      token,
+      _balance ? _balance.toString() : 0,
+    )
     const pendingSushi = SUSHI[chainId as keyof typeof SUSHI]
-      ? Amount.fromRawAmount(SUSHI[chainId as keyof typeof SUSHI], _pendingSushi ? _pendingSushi.toString() : 0)
+      ? Amount.fromRawAmount(
+          SUSHI[chainId as keyof typeof SUSHI],
+          _pendingSushi ? _pendingSushi.toString() : 0,
+        )
       : undefined
     const sushiBalance = SUSHI[chainId as keyof typeof SUSHI]
-      ? Amount.fromRawAmount(SUSHI[chainId as keyof typeof SUSHI], _sushiBalance ? _sushiBalance.toString() : 0)
+      ? Amount.fromRawAmount(
+          SUSHI[chainId as keyof typeof SUSHI],
+          _sushiBalance ? _sushiBalance.toString() : 0,
+        )
       : undefined
     return [sushiBalance, balance, pendingSushi]
   }, [chainId, data, token])
@@ -221,7 +250,7 @@ export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid,
         })
       }
     },
-    [chainId, address]
+    [chainId, address],
   )
 
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
@@ -231,10 +260,18 @@ export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid,
         return {
           account: address,
           to: contract.address,
-          data: encodeFunctionData({ abi: contract.abi, functionName: 'deposit', args: [BigInt(pid), 0n] }),
+          data: encodeFunctionData({
+            abi: contract.abi,
+            functionName: 'deposit',
+            args: [BigInt(pid), 0n],
+          }),
         }
       case ChefType.MasterChefV2: {
-        if (pendingSushi && sushiBalance && pendingSushi.greaterThan(sushiBalance)) {
+        if (
+          pendingSushi &&
+          sushiBalance &&
+          pendingSushi.greaterThan(sushiBalance)
+        ) {
           return {
             account: address,
             to: contract.address,
@@ -307,5 +344,13 @@ export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid,
       isWritePending,
       isWriteError,
     }
-  }, [balance, harvest, isError, isLoading, isWriteError, isWritePending, pendingSushi])
+  }, [
+    balance,
+    harvest,
+    isError,
+    isLoading,
+    isWriteError,
+    isWritePending,
+    pendingSushi,
+  ])
 }

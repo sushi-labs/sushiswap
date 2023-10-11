@@ -2,20 +2,13 @@
   "extends": ["//"],
   "pipeline": {
     "start": {
-      "dependsOn": [        
-        "build"
-      ],
-      "env": [
-        "ALCHEMY_ID",
-        "DATABASE_URL"
-      ],
+      "dependsOn": ["build"],
+      "env": ["ALCHEMY_ID", "DATABASE_URL"],
       "cache": false,
       "persistent": true
     },
     "build": {
-      "outputs": [
-        ".graphclient/**"
-      ],
+      "outputs": [".graphclient/**"],
       "dependsOn": ["^build"]
     },
     "check": {

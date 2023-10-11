@@ -2,21 +2,26 @@
 
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { InformationCircleIcon } from '@heroicons/react/24/solid'
-import { Amount, Type } from '@sushiswap/currency'
 import {
   CardDescription,
   CardHeader,
   CardTitle,
-  classNames,
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
   LinkExternal,
+  classNames,
 } from '@sushiswap/ui'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
-import { Select, SelectContent, SelectItem, SelectPrimitive } from '@sushiswap/ui/components/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectPrimitive,
+} from '@sushiswap/ui/components/select'
 import dynamic from 'next/dynamic'
 import React, { FC, useState } from 'react'
+import { Amount, Type } from 'sushi/currency'
 import { Address } from 'wagmi'
 
 import { ApprovalState, useTokenApproval } from '../../hooks'
@@ -51,7 +56,11 @@ const Component: FC<ApproveERC20Props> = ({
     return <>{children}</>
   }
 
-  const loading = [ApprovalState.UNKNOWN, ApprovalState.LOADING, ApprovalState.PENDING].includes(state)
+  const loading = [
+    ApprovalState.UNKNOWN,
+    ApprovalState.LOADING,
+    ApprovalState.PENDING,
+  ].includes(state)
 
   return (
     <Select value={`${max}`} onValueChange={(val) => setMax(val === 'true')}>
@@ -70,9 +79,20 @@ const Component: FC<ApproveERC20Props> = ({
           <HoverCardTrigger>
             <InformationCircleIcon width={16} height={16} />
           </HoverCardTrigger>
-          <div className={classNames(fullWidth ? 'absolute' : '', 'right-1 top-1 bottom-1')}>
+          <div
+            className={classNames(
+              fullWidth ? 'absolute' : '',
+              'right-1 top-1 bottom-1',
+            )}
+          >
             <SelectPrimitive.Trigger asChild>
-              <Button asChild size="xs" variant="ghost" name="Select" className="!h-full !w-full">
+              <Button
+                asChild
+                size="xs"
+                variant="ghost"
+                name="Select"
+                className="!h-full !w-full"
+              >
                 <ChevronDownIcon className="h-4 w-4" />
               </Button>
             </SelectPrimitive.Trigger>
@@ -100,7 +120,8 @@ const Component: FC<ApproveERC20Props> = ({
           <div className="flex flex-col">
             <span className="font-semibold">Approve one-time only</span>
             <span className="text-sm">
-              You'll give your approval to spend {amount?.toSignificant(6)} {amount?.currency?.symbol} on your behalf
+              You'll give your approval to spend {amount?.toSignificant(6)}{' '}
+              {amount?.currency?.symbol} on your behalf
             </span>
           </div>
         </SelectItem>
@@ -108,7 +129,8 @@ const Component: FC<ApproveERC20Props> = ({
           <div className="flex flex-col">
             <span className="font-semibold">Approve unlimited amount</span>
             <span className="text-sm">
-              You won't need to approve again next time you want to spend {amount?.currency?.symbol}.
+              You won't need to approve again next time you want to spend{' '}
+              {amount?.currency?.symbol}.
             </span>
           </div>
         </SelectItem>

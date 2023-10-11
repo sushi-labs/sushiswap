@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { Children, cloneElement, FC, isValidElement, ReactNode } from 'react'
+import { Children, FC, ReactNode, cloneElement, isValidElement } from 'react'
 
 export interface IconListProps {
   children: ReactNode
@@ -7,7 +7,11 @@ export interface IconListProps {
   iconHeight: number
 }
 
-export const IconList: FC<IconListProps> = ({ children, iconWidth, iconHeight }) => {
+export const IconList: FC<IconListProps> = ({
+  children,
+  iconWidth,
+  iconHeight,
+}) => {
   return (
     <div className="flex items-center">
       <div className={classNames('inline-flex')}>

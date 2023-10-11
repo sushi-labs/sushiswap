@@ -1,6 +1,6 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { getContract } from 'viem'
 import { Address, usePublicClient } from 'wagmi'
 
@@ -35,7 +35,9 @@ export const MULTICALL_ADDRESS: Record<number, string> = {
 }
 
 export const getMulticallContractConfig = (chainId: number | undefined) => ({
-  address: (chainId && chainId in MULTICALL_ADDRESS ? MULTICALL_ADDRESS[chainId] : '') as Address,
+  address: (chainId && chainId in MULTICALL_ADDRESS
+    ? MULTICALL_ADDRESS[chainId]
+    : '') as Address,
   abi: multicallAbi,
 })
 

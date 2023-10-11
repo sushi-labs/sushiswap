@@ -13,15 +13,28 @@ interface TransactionsProps {
   setView: Dispatch<SetStateAction<ProfileView>>
 }
 
-export const TransactionsView: FC<TransactionsProps> = ({ setView, address }) => {
+export const TransactionsView: FC<TransactionsProps> = ({
+  setView,
+  address,
+}) => {
   const notifications = useNotifications({ account: address })
   const clearNotifications = useClearNotifications({ account: address })
 
   return (
     <>
       <div className="flex justify-between items-center mb-3">
-        <IconButton size="sm" onClick={() => setView(ProfileView.Default)} icon={ArrowLeftIcon} name="Back" />
-        <Button onClick={() => clearNotifications()} variant="ghost" size="sm" className="!px-2">
+        <IconButton
+          size="sm"
+          onClick={() => setView(ProfileView.Default)}
+          icon={ArrowLeftIcon}
+          name="Back"
+        />
+        <Button
+          onClick={() => clearNotifications()}
+          variant="ghost"
+          size="sm"
+          className="!px-2"
+        >
           Clear all
         </Button>
       </div>
@@ -33,10 +46,17 @@ export const TransactionsView: FC<TransactionsProps> = ({ setView, address }) =>
               Object.entries(notifications)
                 .reverse()
                 .map(([, notifications], index) => {
-                  return <NotificationGroup key={index} notifications={notifications} />
+                  return (
+                    <NotificationGroup
+                      key={index}
+                      notifications={notifications}
+                    />
+                  )
                 })
             ) : (
-              <p className="text-xs text-slate-500 text-center py-10">Your transactions will appear here</p>
+              <p className="text-xs text-slate-500 text-center py-10">
+                Your transactions will appear here
+              </p>
             )}
           </div>
         </List.Control>

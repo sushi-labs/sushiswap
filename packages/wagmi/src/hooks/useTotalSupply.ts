@@ -1,14 +1,18 @@
 'use client'
 
-import { Amount, Token } from '@sushiswap/currency'
+import { Amount, Token } from 'sushi/currency'
 import { useMemo } from 'react'
 import { Address, erc20ABI, useContractReads } from 'wagmi'
 
 function bigIntToCurrencyAmount(totalSupply?: bigint, token?: Token) {
-  return token?.isToken && totalSupply ? Amount.fromRawAmount(token, totalSupply.toString()) : undefined
+  return token?.isToken && totalSupply
+    ? Amount.fromRawAmount(token, totalSupply.toString())
+    : undefined
 }
 
-export const useMultipleTotalSupply = (tokens?: Token[]): Record<string, Amount<Token> | undefined> | undefined => {
+export const useMultipleTotalSupply = (
+  tokens?: Token[],
+): Record<string, Amount<Token> | undefined> | undefined => {
   const contracts = useMemo(() => {
     return (
       tokens?.map((token) => {
@@ -46,5 +50,8 @@ export const useMultipleTotalSupply = (tokens?: Token[]): Record<string, Amount<
 export const useTotalSupply = (token?: Token): Amount<Token> | undefined => {
   const tokens = useMemo(() => (token ? [token] : undefined), [token])
   const resultMap = useMultipleTotalSupply(tokens)
-  return useMemo(() => (token ? resultMap?.[token.wrapped.address] : undefined), [resultMap, token])
+  return useMemo(
+    () => (token ? resultMap?.[token.wrapped.address] : undefined),
+    [resultMap, token],
+  )
 }

@@ -52,9 +52,14 @@ const COLUMNS = [
         <TooltipProvider>
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
-              <TimeAgo className="whitespace-nowrap underline decoration-dotted" value={new Date(start * 1000)} />
+              <TimeAgo
+                className="whitespace-nowrap underline decoration-dotted"
+                value={new Date(start * 1000)}
+              />
             </TooltipTrigger>
-            <TooltipContent>{format(new Date(start * 1000), 'dd MMM yyyy HH:mm')}</TooltipContent>
+            <TooltipContent>
+              {format(new Date(start * 1000), 'dd MMM yyyy HH:mm')}
+            </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       )
@@ -72,9 +77,14 @@ const COLUMNS = [
         <TooltipProvider>
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
-              <TimeAgo className="whitespace-nowrap underline decoration-dotted" value={new Date(end * 1000)} />
+              <TimeAgo
+                className="whitespace-nowrap underline decoration-dotted"
+                value={new Date(end * 1000)}
+              />
             </TooltipTrigger>
-            <TooltipContent>{format(new Date(end * 1000), 'dd MMM yyyy HH:mm')}</TooltipContent>
+            <TooltipContent>
+              {format(new Date(end * 1000), 'dd MMM yyyy HH:mm')}
+            </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       )
@@ -98,7 +108,10 @@ const COLUMNS = [
   },
 ] satisfies ColumnDef<AngleRewardsPool['distributionData'][0], unknown>[]
 
-export const DistributionDataTable: FC<DistributionDataTableProps> = ({ isLoading, data }) => {
+export const DistributionDataTable: FC<DistributionDataTableProps> = ({
+  isLoading,
+  data,
+}) => {
   const _data = useMemo(() => {
     return data ?? []
   }, [data])

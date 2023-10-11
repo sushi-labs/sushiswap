@@ -4,10 +4,22 @@ import { IconComponent } from '../../types'
 
 export const FrameIcon: IconComponent = (props) => {
   return (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="155.675 61.509 131.262 131.262">
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="155.675 61.509 131.262 131.262"
+    >
       <g transform="matrix(1, 0, 0, 1, 155.675343, 61.509203)">
         <g>
-          <rect width="131.262" height="131.262" stroke="rgb(0, 0, 0)" fill="rgb(36, 33, 42)" rx="23.779" ry="23.779" />
+          <rect
+            width="131.262"
+            height="131.262"
+            stroke="rgb(0, 0, 0)"
+            fill="rgb(36, 33, 42)"
+            rx="23.779"
+            ry="23.779"
+          />
         </g>
         <g>
           <path

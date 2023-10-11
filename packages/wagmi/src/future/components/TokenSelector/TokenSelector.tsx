@@ -3,10 +3,15 @@
 import { isAddress } from '@ethersproject/address'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
-import { ChainId } from '@sushiswap/chain'
-import { Native, Token, Type } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Native, Token, Type } from 'sushi/currency'
 import { useCustomTokens, usePinnedTokens } from '@sushiswap/hooks'
-import { useBalances, useOtherTokenListsQuery, usePrices, useTokens } from '@sushiswap/react-query'
+import {
+  useBalances,
+  useOtherTokenListsQuery,
+  usePrices,
+  useTokens,
+} from '@sushiswap/react-query'
 import {
   classNames,
   Dialog,
@@ -22,7 +27,14 @@ import { Button, buttonIconVariants } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { List } from '@sushiswap/ui/components/list/List'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
-import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import React, {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useAccount } from 'wagmi'
 
 import { useTokenWithCache } from '../../hooks'
@@ -59,9 +71,16 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   const [open, setOpen] = useState(false)
 
   const { data: customTokenMap, mutate: customTokenMutate } = useCustomTokens()
-  const { data: pinnedTokenMap, mutate: pinnedTokenMutate, hasToken: isTokenPinned } = usePinnedTokens()
-  const { data: defaultTokenMap, isLoading: isTokensLoading } = useTokens({ chainId })
-  const { data: otherTokenMap, isLoading: isOtherTokensLoading } = useOtherTokenListsQuery({ chainId, query })
+  const {
+    data: pinnedTokenMap,
+    mutate: pinnedTokenMutate,
+    hasToken: isTokenPinned,
+  } = usePinnedTokens()
+  const { data: defaultTokenMap, isLoading: isTokensLoading } = useTokens({
+    chainId,
+  })
+  const { data: otherTokenMap, isLoading: isOtherTokensLoading } =
+    useOtherTokenListsQuery({ chainId, query })
   const { data: pricesMap } = usePrices({ chainId })
   const {
     data: balancesMap,
@@ -81,13 +100,14 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
     return Object.values(defaultTokenMap).map((el) => el.wrapped.address)
   }, [defaultTokenMap])
 
-  const { data: queryToken, isInitialLoading: isQueryTokenLoading } = useTokenWithCache({
-    chainId,
-    address: query,
-    withStatus: false,
-    enabled: isAddress(query),
-    keepPreviousData: false,
-  })
+  const { data: queryToken, isInitialLoading: isQueryTokenLoading } =
+    useTokenWithCache({
+      chainId,
+      address: query,
+      withStatus: false,
+      enabled: isAddress(query),
+      keepPreviousData: false,
+    })
 
   const { data: sortedTokenList } = useSortedTokenList({
     query,
@@ -117,7 +137,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
 
       setOpen(false)
     },
-    [onSelect]
+    [onSelect],
   )
 
   const _onPin = useCallback((currencyId: string) => {
@@ -134,7 +154,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
       customTokenMutate('add', [currency])
       _onSelect(currency)
     },
-    [_onSelect, customTokenMutate]
+    [_onSelect, customTokenMutate],
   )
 
   // Refetch whenever TokenSelector opens
@@ -142,7 +162,8 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
     if (open) refetch()
   }, [open])
 
-  const isLoading = isTokensLoading || isOtherTokensLoading || isQueryTokenLoading
+  const isLoading =
+    isTokensLoading || isOtherTokensLoading || isQueryTokenLoading
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -151,7 +172,8 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
         <DialogHeader>
           <DialogTitle>Select a token</DialogTitle>
           <DialogDescription>
-            Select a token from our default list or search for a token by symbol or address.
+            Select a token from our default list or search for a token by symbol
+            or address.
           </DialogDescription>
         </DialogHeader>
         {!hideSearch ? (
@@ -171,7 +193,13 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
           <div className="flex flex-wrap gap-2">
             {pinnedTokens.map((token) => (
               <div key={token.id} className="group">
-                <Button size="sm" variant="secondary" className="group" key={token.id} onClick={() => _onSelect(token)}>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="group"
+                  key={token.id}
+                  onClick={() => _onSelect(token)}
+                >
                   <Currency.Icon
                     width={20}
                     height={20}
@@ -201,7 +229,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
             data-state={isLoading ? 'active' : 'inactive'}
             className={classNames(
               'data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden',
-              'py-0.5 h-[64px] -mb-3'
+              'py-0.5 h-[64px] -mb-3',
             )}
           >
             <div className="flex items-center w-full h-full px-3 rounded-lg">
@@ -216,17 +244,25 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
 
                 <div className="flex flex-col w-full">
                   <SkeletonText className="w-[80px]" />
-                  <SkeletonText fontSize="sm" align="right" className="w-[40px]" />
+                  <SkeletonText
+                    fontSize="sm"
+                    align="right"
+                    className="w-[40px]"
+                  />
                 </div>
               </div>
             </div>
           </div>
           <div
             data-state={isLoading ? 'inactive' : 'active'}
-            className={classNames('data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden')}
+            className={classNames(
+              'data-[state=active]:block data-[state=active]:flex-1 data-[state=inactive]:hidden',
+            )}
           >
             {queryToken &&
-              !customTokenMap[`${queryToken.chainId}:${queryToken.wrapped.address}`] &&
+              !customTokenMap[
+                `${queryToken.chainId}:${queryToken.wrapped.address}`
+              ] &&
               !tokenMap?.[`${queryToken.wrapped.address}`] && (
                 <TokenSelectorImportRow
                   currencies={[queryToken]}

@@ -4,7 +4,10 @@ import { ComponentType, FC } from 'react'
 import { Amounts, AmountsProps } from './Amounts'
 import { ApproveBentobox, ApproveBentoboxProps } from './ApproveBentobox'
 import { ApproveERC20, ApproveERC20Props } from './ApproveERC20'
-import { ApproveERC20Multiple, ApproveERC20MultipleProps } from './ApproveERC20Multiple'
+import {
+  ApproveERC20Multiple,
+  ApproveERC20MultipleProps,
+} from './ApproveERC20Multiple'
 import { Connect } from './Connect'
 import { Custom, CustomProps } from './Custom'
 import { Guard, GuardProps } from './Guard'

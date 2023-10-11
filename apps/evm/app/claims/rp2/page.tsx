@@ -7,7 +7,10 @@ import { Container } from '@sushiswap/ui/components/container'
 import { List } from '@sushiswap/ui/components/list/List'
 import { useAccount } from '@sushiswap/wagmi'
 import { ConnectButton } from '@sushiswap/wagmi/future/components'
-import { useRP2ExploitCheck, useRP2ExploitClaimFinder } from '@sushiswap/wagmi/future/hooks'
+import {
+  useRP2ExploitCheck,
+  useRP2ExploitClaimFinder,
+} from '@sushiswap/wagmi/future/hooks'
 import React, { Fragment } from 'react'
 
 import { ClaimItem } from '../components/ClaimItem'
@@ -31,14 +34,21 @@ const RP2ClaimPage = () => {
         <div className="flex flex-col">
           <h1>RouteProcessor2 Exploit</h1>
           <span>
-            On April 8, 2023, Sushi core contributors soft launched V3 upgrades for the protocol that included a new
-            router called RouteProcessor2 to facilitate swaps from the frontend. The router was planned to be used
-            across each iteration of Sushi’s AMM pools (v2, Trident, v3), and to also be used for future aggregating
-            across other protocols (Uni, Pancake, etc.). The RouteProcessor2 contract was deployed to 14 networks
-            including: Arbitrum, Arbitrum Nova, Avalanche, Boba, BSC, Ethereum, Fantom, Fuse, Gnosis, Moonbeam,
-            Moonriver, Optimism, Polygon, and Polygon ZkEVM. Unfortunately the contract had a critical vulnerability. To
-            read more about what happened, please refer to our{' '}
-            <LinkExternal className="text-blue" href="https://www.sushi.com/blog/routeprocessor2-post-mortem">
+            On April 8, 2023, Sushi core contributors soft launched V3 upgrades
+            for the protocol that included a new router called RouteProcessor2
+            to facilitate swaps from the frontend. The router was planned to be
+            used across each iteration of Sushi’s AMM pools (v2, Trident, v3),
+            and to also be used for future aggregating across other protocols
+            (Uni, Pancake, etc.). The RouteProcessor2 contract was deployed to
+            14 networks including: Arbitrum, Arbitrum Nova, Avalanche, Boba,
+            BSC, Ethereum, Fantom, Fuse, Gnosis, Moonbeam, Moonriver, Optimism,
+            Polygon, and Polygon ZkEVM. Unfortunately the contract had a
+            critical vulnerability. To read more about what happened, please
+            refer to our{' '}
+            <LinkExternal
+              className="text-blue"
+              href="https://www.sushi.com/blog/routeprocessor2-post-mortem"
+            >
               post-mortem
             </LinkExternal>
             .
@@ -46,8 +56,9 @@ const RP2ClaimPage = () => {
           <hr />
           <h3>Revoke approval</h3>
           <p>
-            We highly recommend you revoke approval even if you have no hacked funds. Without revoking approval you
-            remain vulnerable and funds can get hacked later on.
+            We highly recommend you revoke approval even if you have no hacked
+            funds. Without revoking approval you remain vulnerable and funds can
+            get hacked later on.
           </p>
           <List className="!pt-0 pb-3 relative">
             <List.Control>
@@ -58,7 +69,9 @@ const RP2ClaimPage = () => {
               ) : isLoading ? (
                 <List.KeyValue skeleton />
               ) : tokens && tokens?.length > 0 ? (
-                tokens.map((token) => <RevokeItem key={token.id} account={address} token={token} />)
+                tokens.map((token) => (
+                  <RevokeItem key={token.id} account={address} token={token} />
+                ))
               ) : (
                 <List.KeyValue flex title="No approvals found, you're good ">
                   <span className="h-[28px]" />
@@ -69,8 +82,9 @@ const RP2ClaimPage = () => {
           <hr />
           <h3>Claim whitehacked funds</h3>
           <p className="font-semibold">
-            Please revoke any token approvals you have on RouteProcessor2. Once you have revoked approvals, you will be
-            able to claim any lost funds resulting from the exploit.
+            Please revoke any token approvals you have on RouteProcessor2. Once
+            you have revoked approvals, you will be able to claim any lost funds
+            resulting from the exploit.
           </p>
           <List className="py-6 relative">
             <List.Control>
@@ -80,7 +94,12 @@ const RP2ClaimPage = () => {
                 </List.KeyValue>
               ) : claims.length > 0 ? (
                 claims.map(([chainId, claim]) => (
-                  <ClaimItem account={address} key={claim.index} claim={claim} chainId={chainId} />
+                  <ClaimItem
+                    account={address}
+                    key={claim.index}
+                    claim={claim}
+                    chainId={chainId}
+                  />
                 ))
               ) : (
                 <List.KeyValue flex title="No claims found">
@@ -88,18 +107,23 @@ const RP2ClaimPage = () => {
                 </List.KeyValue>
               )}
             </List.Control>
-            <List.Label>If your funds rest in the whitehat contract, they are claimable here</List.Label>
+            <List.Label>
+              If your funds rest in the whitehat contract, they are claimable
+              here
+            </List.Label>
           </List>
           <p>
-            If you do not see any available claims but you did get your funds hacked, fill in the following{' '}
+            If you do not see any available claims but you did get your funds
+            hacked, fill in the following{' '}
             <a
               className="text-blue"
               href="https://docs.google.com/forms/d/e/1FAIpQLSd-3YitwkNyrfrgsvtNAidLry8CaMhqlfH0OKwS9rg5XNDrDQ/viewform"
             >
               form
             </a>
-            . Blackhat funds will take longer to process, as the team will verify the legitimacy against on-chain data
-            that validates them and will get paid accordingly.
+            . Blackhat funds will take longer to process, as the team will
+            verify the legitimacy against on-chain data that validates them and
+            will get paid accordingly.
           </p>
         </div>
         <hr />
@@ -110,20 +134,27 @@ const RP2ClaimPage = () => {
               <>
                 <Disclosure.Button as={Fragment}>
                   <h4 className="flex gap-2 items-center">
-                    <ChevronRightIcon width={20} height={20} className={open ? 'rotate-90' : ''} />
+                    <ChevronRightIcon
+                      width={20}
+                      height={20}
+                      className={open ? 'rotate-90' : ''}
+                    />
                     My funds were lost in this exploit. What can I do?
                   </h4>
                 </Disclosure.Button>
                 <Disclosure.Panel>
                   <p>
-                    Part of the lost funds got swept by whitehat security teams and part of them are lost to blackhat
-                    hackers.
+                    Part of the lost funds got swept by whitehat security teams
+                    and part of them are lost to blackhat hackers.
                   </p>
                   <ol>
-                    <li>If your funds rest in the whitehat contract, they will be claimable from this page.</li>
                     <li>
-                      If you do not see any available claims but you did get your funds hacked, fill in the following
-                      form{' '}
+                      If your funds rest in the whitehat contract, they will be
+                      claimable from this page.
+                    </li>
+                    <li>
+                      If you do not see any available claims but you did get
+                      your funds hacked, fill in the following form{' '}
                       <a
                         className="text-blue"
                         href="https://docs.google.com/forms/d/e/1FAIpQLSd-3YitwkNyrfrgsvtNAidLry8CaMhqlfH0OKwS9rg5XNDrDQ/viewform"
@@ -141,18 +172,27 @@ const RP2ClaimPage = () => {
               <>
                 <Disclosure.Button as={Fragment}>
                   <h4 className="flex gap-2 items-center">
-                    <ChevronRightIcon width={20} height={20} className={open ? 'rotate-90' : ''} />
+                    <ChevronRightIcon
+                      width={20}
+                      height={20}
+                      className={open ? 'rotate-90' : ''}
+                    />
                     What is RouteProcessor2 Vulnerability? What happened?
                   </h4>
                 </Disclosure.Button>
                 <Disclosure.Panel>
                   <p>
-                    There was an approval bug in a Sushi contract called RouteProcessor2 and it was exploited by
-                    hackers. Money was taken from users wallets. No other contract is affected. Sushi liquidity is safe.
+                    There was an approval bug in a Sushi contract called
+                    RouteProcessor2 and it was exploited by hackers. Money was
+                    taken from users wallets. No other contract is affected.
+                    Sushi liquidity is safe.
                   </p>
                   <p>
                     Please refer to our{' '}
-                    <LinkInternal className="text-blue" href="/blog/routeprocessor2-post-mortem">
+                    <LinkInternal
+                      className="text-blue"
+                      href="/blog/routeprocessor2-post-mortem"
+                    >
                       post-mortem
                     </LinkInternal>{' '}
                     for more information.
@@ -166,18 +206,24 @@ const RP2ClaimPage = () => {
               <>
                 <Disclosure.Button as={Fragment}>
                   <h4 className="flex gap-2 items-center">
-                    <ChevronRightIcon width={20} height={20} className={open ? 'rotate-90' : ''} />
+                    <ChevronRightIcon
+                      width={20}
+                      height={20}
+                      className={open ? 'rotate-90' : ''}
+                    />
                     Can we use Sushi safely now?
                   </h4>
                 </Disclosure.Button>
                 <Disclosure.Panel>
                   <p>
-                    The user interface has been updated to remove the affected contract. It is safe to trade and provide
-                    liquidity on sushi.
+                    The user interface has been updated to remove the affected
+                    contract. It is safe to trade and provide liquidity on
+                    sushi.
                   </p>
                   <p>
-                    If you have tokens approved for RouteProcessor2 on any network, you should revoke the approvals as
-                    soon as possible.
+                    If you have tokens approved for RouteProcessor2 on any
+                    network, you should revoke the approvals as soon as
+                    possible.
                   </p>
                 </Disclosure.Panel>
               </>
@@ -188,8 +234,13 @@ const RP2ClaimPage = () => {
               <>
                 <Disclosure.Button as={Fragment}>
                   <h4 className="flex gap-2 items-center">
-                    <ChevronRightIcon width={20} height={20} className={open ? 'rotate-90' : ''} />
-                    My funds have been hacked but I am not seeing any claims available
+                    <ChevronRightIcon
+                      width={20}
+                      height={20}
+                      className={open ? 'rotate-90' : ''}
+                    />
+                    My funds have been hacked but I am not seeing any claims
+                    available
                   </h4>
                 </Disclosure.Button>
                 <Disclosure.Panel>

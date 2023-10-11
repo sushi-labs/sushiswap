@@ -37,7 +37,12 @@ const Component: FC<ApproveBentoboxProps> = ({
   size = 'xl',
   ...props
 }) => {
-  const [state, execute] = useBentoboxApproval({ enabled, chainId, masterContract, tag })
+  const [state, execute] = useBentoboxApproval({
+    enabled,
+    chainId,
+    masterContract,
+    tag,
+  })
 
   if (state === ApprovalState.APPROVED || !enabled) {
     return <>{children}</>
@@ -46,7 +51,11 @@ const Component: FC<ApproveBentoboxProps> = ({
   return (
     <HoverCard openDelay={0} closeDelay={0}>
       <Button
-        loading={state === ApprovalState.LOADING || state === ApprovalState.PENDING || !execute}
+        loading={
+          state === ApprovalState.LOADING ||
+          state === ApprovalState.PENDING ||
+          !execute
+        }
         onClick={() => execute?.()}
         fullWidth={fullWidth}
         size={size}
@@ -62,8 +71,8 @@ const Component: FC<ApproveBentoboxProps> = ({
         <CardHeader>
           <CardTitle>Approve BentoBox</CardTitle>
           <CardDescription>
-            We need your approval first to access your wallet using BentoBox; you will only have to approve this master
-            contract once.{' '}
+            We need your approval first to access your wallet using BentoBox;
+            you will only have to approve this master contract once.{' '}
             <LinkExternal
               target="_blank"
               className="text-blue hover:underline"

@@ -1,8 +1,21 @@
 export const MoneyPaperIcon = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg width="102" height="102" viewBox="0 0 102 102" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <svg
+      width="102"
+      height="102"
+      viewBox="0 0 102 102"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
       <g filter="url(#filter0_b_1794_2453)">
-        <rect width="102" height="102" rx="12.5446" fill="white" fillOpacity="0.1" />
+        <rect
+          width="102"
+          height="102"
+          rx="12.5446"
+          fill="white"
+          fillOpacity="0.1"
+        />
         <path
           d="M27.865 79H58.3966C54.3016 76.375 51.5716 71.7783 51.5716 66.5517C51.5716 58.4083 58.1983 51.7817 66.3416 51.7817H66.3883V27.6667C66.3883 25.1 64.3 23 61.7216 23H27.865C25.2983 23 23.21 25.1 23.21 27.6667V74.3217C23.21 76.9 25.2983 79 27.865 79ZM30.9916 31.89C30.9916 31.2483 31.5166 30.7233 32.1583 30.7233H57.44C58.0816 30.7233 58.6066 31.2483 58.6066 31.89V40.885C58.6066 41.5267 58.0816 42.0517 57.44 42.0517H32.1583C31.5166 42.0517 30.9916 41.5267 30.9916 40.885V31.89ZM32.1583 47.0917H57.44C58.0816 47.0917 58.6066 47.605 58.6066 48.2583C58.6066 48.9 58.0816 49.425 57.44 49.425H32.1583C31.5166 49.425 30.9916 48.9 30.9916 48.2583C30.9916 47.605 31.5166 47.0917 32.1583 47.0917ZM32.1583 54.3717H51.2566C51.8983 54.3717 52.4233 54.8967 52.4233 55.5383C52.4233 56.18 51.8983 56.705 51.2566 56.705H32.1583C31.5166 56.705 30.9916 56.18 30.9916 55.5383C30.9916 54.8967 31.5166 54.3717 32.1583 54.3717ZM32.1583 61.6517H47.99C48.6316 61.6517 49.1566 62.1767 49.1566 62.8183C49.1566 63.46 48.6316 63.985 47.99 63.985H32.1583C31.5166 63.985 30.9916 63.46 30.9916 62.8183C30.9916 62.1767 31.5166 61.6517 32.1583 61.6517ZM32.1583 68.9317H47.99C48.6316 68.9317 49.1566 69.4567 49.1566 70.0983C49.1566 70.7517 48.6316 71.265 47.99 71.265H32.1583C31.5166 71.265 30.9916 70.7517 30.9916 70.0983C30.9916 69.4567 31.5166 68.9317 32.1583 68.9317Z"
           fill="white"
@@ -33,8 +46,17 @@ export const MoneyPaperIcon = (props: React.ComponentProps<'svg'>) => {
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feGaussianBlur in="BackgroundImageFix" stdDeviation="10.872" />
-          <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_1794_2453" />
-          <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_1794_2453" result="shape" />
+          <feComposite
+            in2="SourceAlpha"
+            operator="in"
+            result="effect1_backgroundBlur_1794_2453"
+          />
+          <feBlend
+            mode="normal"
+            in="SourceGraphic"
+            in2="effect1_backgroundBlur_1794_2453"
+            result="shape"
+          />
         </filter>
         <linearGradient
           id="paint0_linear_1794_2453"

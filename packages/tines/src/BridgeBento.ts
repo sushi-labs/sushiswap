@@ -17,7 +17,7 @@ export class BridgeBento extends RPool {
     tokenBento: RToken,
     elastic: bigint,
     base: bigint,
-    freeLiquidity?: bigint
+    freeLiquidity?: bigint,
   ) {
     super(
       address as Address,
@@ -27,12 +27,15 @@ export class BridgeBento extends RPool {
       elastic,
       base,
       BENTO_MINIMUM_SHARE_BALANCE,
-      BRIDGING_GAS_COST
+      BRIDGING_GAS_COST,
     )
     if (address !== undefined) {
       this.elastic = parseInt(elastic.toString())
       this.base = parseInt(base.toString())
-      this.freeLiquidity = freeLiquidity === undefined ? undefined : parseInt(freeLiquidity.toString())
+      this.freeLiquidity =
+        freeLiquidity === undefined
+          ? undefined
+          : parseInt(freeLiquidity.toString())
     } else {
       // for deserialization
       this.elastic = 0
@@ -49,7 +52,11 @@ export class BridgeBento extends RPool {
 
   // direction == true -> deposit: calcs output shares by input amounts
   // direction == false -> withdraw: calcs output amounts by input shares
-  calcOutByIn(amountIn: number, direction: boolean, throwIfOutOfLiquidity = true): { out: number; gasSpent: number } {
+  calcOutByIn(
+    amountIn: number,
+    direction: boolean,
+    throwIfOutOfLiquidity = true,
+  ): { out: number; gasSpent: number } {
     let out
     if (direction === true) {
       if (this.elastic === 0) {
@@ -63,7 +70,11 @@ export class BridgeBento extends RPool {
       } else {
         out = (amountIn * this.elastic) / this.base
       }
-      if (throwIfOutOfLiquidity && this.freeLiquidity !== undefined && out > this.freeLiquidity)
+      if (
+        throwIfOutOfLiquidity &&
+        this.freeLiquidity !== undefined &&
+        out > this.freeLiquidity
+      )
         throw new Error('OutOfLiquidity BridgeBento')
     }
     return { out, gasSpent: this.swapGasCost }
@@ -73,7 +84,10 @@ export class BridgeBento extends RPool {
     return Math.floor(this.calcOutByIn(amountIn, direction, false).out)
   }
 
-  calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
+  calcInByOut(
+    amountOut: number,
+    direction: boolean,
+  ): { inp: number; gasSpent: number } {
     let inp
     if (direction === true) {
       if (this.elastic === 0) {
@@ -86,7 +100,8 @@ export class BridgeBento extends RPool {
         }
       }
     } else {
-      if (this.freeLiquidity !== undefined && amountOut > this.freeLiquidity) inp = Number.POSITIVE_INFINITY
+      if (this.freeLiquidity !== undefined && amountOut > this.freeLiquidity)
+        inp = Number.POSITIVE_INFINITY
       else {
         if (this.base === 0) {
           inp = amountOut

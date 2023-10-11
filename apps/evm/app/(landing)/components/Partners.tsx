@@ -16,7 +16,9 @@ import {
 const INCEPTION_DATE = new Date('08/26/2020')
 
 export const Partners: FC = () => {
-  const diff = Math.floor((new Date().getTime() - INCEPTION_DATE.getTime()) / (60 * 60 * 24 * 1000))
+  const diff = Math.floor(
+    (new Date().getTime() - INCEPTION_DATE.getTime()) / (60 * 60 * 24 * 1000),
+  )
 
   return (
     <section className="py-20 sm:py-40 px-4 bg-gradient-to-b from-secondary to-transparent">
@@ -24,9 +26,11 @@ export const Partners: FC = () => {
         <div className="flex flex-col items-center text-center prose dark:prose-invert mx-auto">
           <h1>{diff} Days.</h1>
           <h5>
-            Ever since the inception of Sushi, our journey has been enriched by the invaluable connections we{`'`}ve
-            forged. As we pave the way towards the Future of Finance, we want to express our deep gratitude to the
-            incredible community of friends and supporters who have accompanied us on this remarkable path
+            Ever since the inception of Sushi, our journey has been enriched by
+            the invaluable connections we{`'`}ve forged. As we pave the way
+            towards the Future of Finance, we want to express our deep gratitude
+            to the incredible community of friends and supporters who have
+            accompanied us on this remarkable path
           </h5>
         </div>
         <div className="flex flex-col gap-y-10">

@@ -1,7 +1,12 @@
 'use client'
 
-import { Type } from '@sushiswap/currency'
-import { FeeAmount, SushiSwapV3ChainId, TICK_SPACINGS, tickToPrice } from '@sushiswap/v3-sdk'
+import { Type } from 'sushi/currency'
+import {
+  FeeAmount,
+  SushiSwapV3ChainId,
+  TICK_SPACINGS,
+  tickToPrice,
+} from '@sushiswap/v3-sdk'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { useMemo } from 'react'
 
@@ -17,9 +22,13 @@ export interface TickProcessed {
   price0: string
 }
 
-const getActiveTick = (tickCurrent: number | undefined, feeAmount: FeeAmount | undefined) =>
+const getActiveTick = (
+  tickCurrent: number | undefined,
+  feeAmount: FeeAmount | undefined,
+) =>
   tickCurrent !== undefined && feeAmount
-    ? Math.floor(tickCurrent / TICK_SPACINGS[feeAmount]) * TICK_SPACINGS[feeAmount]
+    ? Math.floor(tickCurrent / TICK_SPACINGS[feeAmount]) *
+      TICK_SPACINGS[feeAmount]
     : undefined
 
 const useAllV3Ticks = ({
@@ -50,20 +59,37 @@ export const useConcentratedActiveLiquidity = ({
   feeAmount: FeeAmount | undefined
   enabled?: boolean
 }) => {
-  const { data: pool, isLoading: isPoolLoading } = useConcentratedLiquidityPool({
-    chainId,
-    token0,
-    token1,
-    feeAmount,
-    enabled,
-  })
+  const { data: pool, isLoading: isPoolLoading } = useConcentratedLiquidityPool(
+    {
+      chainId,
+      token0,
+      token1,
+      feeAmount,
+      enabled,
+    },
+  )
 
   // Find nearest valid tick for pool in case tick is not initialized.
-  const activeTick = useMemo(() => getActiveTick(pool?.tickCurrent, feeAmount), [pool, feeAmount])
-  const { isLoading, error, data: ticks } = useAllV3Ticks({ token0, token1, feeAmount, chainId })
+  const activeTick = useMemo(
+    () => getActiveTick(pool?.tickCurrent, feeAmount),
+    [pool, feeAmount],
+  )
+  const {
+    isLoading,
+    error,
+    data: ticks,
+  } = useAllV3Ticks({ token0, token1, feeAmount, chainId })
 
   return useMemo(() => {
-    if (!token0 || !token1 || activeTick === undefined || !pool || !ticks || ticks.length === 0 || isLoading) {
+    if (
+      !token0 ||
+      !token1 ||
+      activeTick === undefined ||
+      !pool ||
+      !ticks ||
+      ticks.length === 0 ||
+      isLoading
+    ) {
       return {
         isLoading: isLoading || isPoolLoading,
         error,
@@ -94,13 +120,34 @@ export const useConcentratedActiveLiquidity = ({
     const activeTickProcessed: TickProcessed = {
       liquidityActive: BigInt(pool?.liquidity.toString()) ?? 0n,
       tick: activeTick,
-      liquidityNet: Number(ticks[pivot].tickIdx) === activeTick ? ticks[pivot].liquidityNet : 0n,
-      price0: tickToPrice(_token0, _token1, activeTick).toFixed(PRICE_FIXED_DIGITS),
+      liquidityNet:
+        Number(ticks[pivot].tickIdx) === activeTick
+          ? ticks[pivot].liquidityNet
+          : 0n,
+      price0: tickToPrice(_token0, _token1, activeTick).toFixed(
+        PRICE_FIXED_DIGITS,
+      ),
     }
 
-    const subsequentTicks = computeSurroundingTicks(_token0, _token1, activeTickProcessed, ticks, pivot, true)
-    const previousTicks = computeSurroundingTicks(_token0, _token1, activeTickProcessed, ticks, pivot, false)
-    const ticksProcessed = previousTicks.concat(activeTickProcessed).concat(subsequentTicks)
+    const subsequentTicks = computeSurroundingTicks(
+      _token0,
+      _token1,
+      activeTickProcessed,
+      ticks,
+      pivot,
+      true,
+    )
+    const previousTicks = computeSurroundingTicks(
+      _token0,
+      _token1,
+      activeTickProcessed,
+      ticks,
+      pivot,
+      false,
+    )
+    const ticksProcessed = previousTicks
+      .concat(activeTickProcessed)
+      .concat(subsequentTicks)
 
     return {
       isLoading,

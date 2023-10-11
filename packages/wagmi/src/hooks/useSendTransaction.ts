@@ -1,9 +1,16 @@
 'use client'
 
-import { usePrepareSendTransaction, useSendTransaction as useSendTransaction_ } from 'wagmi'
+import {
+  usePrepareSendTransaction,
+  useSendTransaction as useSendTransaction_,
+} from 'wagmi'
 
-export type UsePrepareSendTransactionConfig = Parameters<typeof usePrepareSendTransaction>['0']
-export type UseSendTransactionConfig = Parameters<typeof useSendTransaction_>['0']
+export type UsePrepareSendTransactionConfig = Parameters<
+  typeof usePrepareSendTransaction
+>['0']
+export type UseSendTransactionConfig = Parameters<
+  typeof useSendTransaction_
+>['0']
 
 interface UseSendTransaction {
   prepare?: UsePrepareSendTransactionConfig
@@ -11,7 +18,11 @@ interface UseSendTransaction {
   gasMargin?: boolean
 }
 
-export function useSendTransaction({ prepare, send, gasMargin = false }: UseSendTransaction) {
+export function useSendTransaction({
+  prepare,
+  send,
+  gasMargin = false,
+}: UseSendTransaction) {
   const { config } = usePrepareSendTransaction(prepare)
 
   const gas = gasMargin && config.gas ? (config.gas * 120n) / 100n : config.gas

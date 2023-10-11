@@ -176,7 +176,9 @@ export const masterchefAbi = [
   {
     inputs: [],
     name: 'sushi',
-    outputs: [{ internalType: 'contract SushiToken', name: '', type: 'address' }],
+    outputs: [
+      { internalType: 'contract SushiToken', name: '', type: 'address' },
+    ],
     stateMutability: 'view',
     type: 'function',
   },

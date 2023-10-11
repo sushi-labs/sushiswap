@@ -1,6 +1,13 @@
 export const SushiTransparentIcon = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg width="215" height="179" viewBox="0 0 215 179" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <svg
+      width="215"
+      height="179"
+      viewBox="0 0 215 179"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
       <path
         fillRule="evenodd"
         clipRule="evenodd"

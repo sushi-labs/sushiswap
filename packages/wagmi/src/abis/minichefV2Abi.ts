@@ -1,6 +1,8 @@
 export const minichefV2Abi = [
   {
-    inputs: [{ internalType: 'contract IERC20', name: '_sushi', type: 'address' }],
+    inputs: [
+      { internalType: 'contract IERC20', name: '_sushi', type: 'address' },
+    ],
     stateMutability: 'nonpayable',
     type: 'constructor',
   },
@@ -269,7 +271,9 @@ export const minichefV2Abi = [
   {
     inputs: [],
     name: 'migrator',
-    outputs: [{ internalType: 'contract IMigratorChef', name: '', type: 'address' }],
+    outputs: [
+      { internalType: 'contract IMigratorChef', name: '', type: 'address' },
+    ],
     stateMutability: 'view',
     type: 'function',
   },
@@ -334,7 +338,9 @@ export const minichefV2Abi = [
   {
     inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     name: 'rewarder',
-    outputs: [{ internalType: 'contract IRewarder', name: '', type: 'address' }],
+    outputs: [
+      { internalType: 'contract IRewarder', name: '', type: 'address' },
+    ],
     stateMutability: 'view',
     type: 'function',
   },
@@ -368,7 +374,9 @@ export const minichefV2Abi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'uint256', name: '_sushiPerSecond', type: 'uint256' }],
+    inputs: [
+      { internalType: 'uint256', name: '_sushiPerSecond', type: 'uint256' },
+    ],
     name: 'setSushiPerSecond',
     outputs: [],
     stateMutability: 'nonpayable',

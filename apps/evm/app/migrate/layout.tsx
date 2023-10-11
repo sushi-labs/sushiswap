@@ -2,6 +2,8 @@ export const metadata = {
   title: 'SushiMigrate 🍣',
 }
 
-export default function MigrateLayout({ children }: { children: React.ReactNode }) {
+export default function MigrateLayout({
+  children,
+}: { children: React.ReactNode }) {
   return <>{children}</>
 }

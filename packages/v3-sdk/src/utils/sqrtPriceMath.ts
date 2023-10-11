@@ -1,4 +1,4 @@
-import { MAX_UINT256 } from '@sushiswap/math'
+import { MAX_UINT256 } from 'sushi'
 import invariant from 'tiny-invariant'
 
 import { Q96 } from '../internalConstants'
@@ -26,7 +26,7 @@ export abstract class SqrtPriceMath {
     sqrtRatioAX96: bigint,
     sqrtRatioBX96: bigint,
     liquidity: bigint,
-    roundUp: boolean
+    roundUp: boolean,
   ): bigint {
     if (sqrtRatioAX96 > sqrtRatioBX96) {
       ;[sqrtRatioAX96, sqrtRatioBX96] = [sqrtRatioBX96, sqrtRatioAX96]
@@ -36,7 +36,11 @@ export abstract class SqrtPriceMath {
     const numerator2 = sqrtRatioBX96 - sqrtRatioAX96
 
     return roundUp
-      ? FullMath.mulDivRoundingUp(FullMath.mulDivRoundingUp(numerator1, numerator2, sqrtRatioBX96), 1n, sqrtRatioAX96)
+      ? FullMath.mulDivRoundingUp(
+          FullMath.mulDivRoundingUp(numerator1, numerator2, sqrtRatioBX96),
+          1n,
+          sqrtRatioAX96,
+        )
       : (numerator1 * numerator2) / sqrtRatioBX96 / sqrtRatioAX96
   }
 
@@ -44,7 +48,7 @@ export abstract class SqrtPriceMath {
     sqrtRatioAX96: bigint,
     sqrtRatioBX96: bigint,
     liquidity: bigint,
-    roundUp: boolean
+    roundUp: boolean,
   ): bigint {
     if (sqrtRatioAX96 > sqrtRatioBX96) {
       ;[sqrtRatioAX96, sqrtRatioBX96] = [sqrtRatioBX96, sqrtRatioAX96]
@@ -59,35 +63,55 @@ export abstract class SqrtPriceMath {
     sqrtPX96: bigint,
     liquidity: bigint,
     amountIn: bigint,
-    zeroForOne: boolean
+    zeroForOne: boolean,
   ): bigint {
     invariant(sqrtPX96 > 0n)
     invariant(liquidity > 0n)
 
     return zeroForOne
-      ? this.getNextSqrtPriceFromAmount0RoundingUp(sqrtPX96, liquidity, amountIn, true)
-      : this.getNextSqrtPriceFromAmount1RoundingDown(sqrtPX96, liquidity, amountIn, true)
+      ? this.getNextSqrtPriceFromAmount0RoundingUp(
+          sqrtPX96,
+          liquidity,
+          amountIn,
+          true,
+        )
+      : this.getNextSqrtPriceFromAmount1RoundingDown(
+          sqrtPX96,
+          liquidity,
+          amountIn,
+          true,
+        )
   }
 
   public static getNextSqrtPriceFromOutput(
     sqrtPX96: bigint,
     liquidity: bigint,
     amountOut: bigint,
-    zeroForOne: boolean
+    zeroForOne: boolean,
   ): bigint {
     invariant(sqrtPX96 > 0n)
     invariant(liquidity > 0n)
 
     return zeroForOne
-      ? this.getNextSqrtPriceFromAmount1RoundingDown(sqrtPX96, liquidity, amountOut, false)
-      : this.getNextSqrtPriceFromAmount0RoundingUp(sqrtPX96, liquidity, amountOut, false)
+      ? this.getNextSqrtPriceFromAmount1RoundingDown(
+          sqrtPX96,
+          liquidity,
+          amountOut,
+          false,
+        )
+      : this.getNextSqrtPriceFromAmount0RoundingUp(
+          sqrtPX96,
+          liquidity,
+          amountOut,
+          false,
+        )
   }
 
   private static getNextSqrtPriceFromAmount0RoundingUp(
     sqrtPX96: bigint,
     liquidity: bigint,
     amount: bigint,
-    add: boolean
+    add: boolean,
   ): bigint {
     if (amount === 0n) return sqrtPX96
     const numerator1 = liquidity << 96n
@@ -101,7 +125,11 @@ export abstract class SqrtPriceMath {
         }
       }
 
-      return FullMath.mulDivRoundingUp(numerator1, 1n, numerator1 / sqrtPX96 + amount)
+      return FullMath.mulDivRoundingUp(
+        numerator1,
+        1n,
+        numerator1 / sqrtPX96 + amount,
+      )
     } else {
       const product = multiplyIn256(amount, sqrtPX96)
 
@@ -116,10 +144,13 @@ export abstract class SqrtPriceMath {
     sqrtPX96: bigint,
     liquidity: bigint,
     amount: bigint,
-    add: boolean
+    add: boolean,
   ): bigint {
     if (add) {
-      const quotient = amount <= MaxUint160 ? (amount << 96n) / liquidity : (amount * Q96) / liquidity
+      const quotient =
+        amount <= MaxUint160
+          ? (amount << 96n) / liquidity
+          : (amount * Q96) / liquidity
 
       return sqrtPX96 + quotient
     } else {

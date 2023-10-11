@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import { chainName, chainShortNameToChainId } from '@sushiswap/chain'
+import { chainName, chainShortNameToChainId } from 'sushi/chain'
 import {
   SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
@@ -10,9 +10,13 @@ import {
   TRIDENT_ENABLED_NETWORKS,
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
-import { isPromiseFulfilled } from '@sushiswap/validate'
+import { isPromiseFulfilled } from 'sushi'
 
-import { getBuiltGraphSDK, Pair, QueryResolvers } from '../../.graphclient/index.js'
+import {
+  getBuiltGraphSDK,
+  Pair,
+  QueryResolvers,
+} from '../../.graphclient/index.js'
 import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'
 import { SushiSwapV3Types } from '../../.graphclient/sources/SushiSwapV3/types.js'
 import { TridentTypes } from '../../.graphclient/sources/Trident/types.js'
@@ -20,7 +24,10 @@ import { transformPair } from '../../transformers/index.js'
 
 const sdk = getBuiltGraphSDK()
 
-const transformV3PoolToPair = (pool: SushiSwapV3Types.Pool, chainId: number): Pair => ({
+const transformV3PoolToPair = (
+  pool: SushiSwapV3Types.Pool,
+  chainId: number,
+): Pair => ({
   id: `${chainId}:${pool.id}`,
   chainId,
   address: pool.id,
@@ -32,8 +39,12 @@ const transformV3PoolToPair = (pool: SushiSwapV3Types.Pool, chainId: number): Pa
   token0: pool.token0,
   token1: pool.token1,
   source: 'SUSHISWAP_V3',
-  reserve0: (Number(pool.totalValueLockedToken0) * 10 ** pool.token0.decimals).toString().split('.')[0],
-  reserve1: (Number(pool.totalValueLockedToken1) * 10 ** pool.token1.decimals).toString().split('.')[0],
+  reserve0: (Number(pool.totalValueLockedToken0) * 10 ** pool.token0.decimals)
+    .toString()
+    .split('.')[0],
+  reserve1: (Number(pool.totalValueLockedToken1) * 10 ** pool.token1.decimals)
+    .toString()
+    .split('.')[0],
   liquidity: pool.liquidity,
   liquidityUSD: pool.totalValueLockedUSD,
   liquidityNative: pool.totalValueLockedETH,
@@ -68,7 +79,12 @@ const transformV3PoolToPair = (pool: SushiSwapV3Types.Pool, chainId: number): Pa
   })),
 })
 
-export const pairById: QueryResolvers['pairById'] = async (root, args, context, info): Promise<Pair | null> => {
+export const pairById: QueryResolvers['pairById'] = async (
+  root,
+  args,
+  context,
+  info,
+): Promise<Pair | null> => {
   const now = Date.now()
 
   const [chainShortName, address] = args.id.split(':') as [string, string]
@@ -101,8 +117,12 @@ export const pairById: QueryResolvers['pairById'] = async (root, args, context, 
         chainId,
         chainName: chainName[chainId],
         chainShortName: chainShortName[chainId],
-        subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]],
-        subgraphHost: SUBGRAPH_HOST[chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]],
+        subgraphName:
+          SUSHISWAP_SUBGRAPH_NAME[
+            chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]
+          ],
+        subgraphHost:
+          SUBGRAPH_HOST[chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]],
       },
       info,
     }).then((pair: SushiSwapTypes.Pair | null) => {
@@ -120,8 +140,12 @@ export const pairById: QueryResolvers['pairById'] = async (root, args, context, 
         chainId,
         chainName: chainName[chainId],
         chainShortName: chainShortName[chainId],
-        subgraphName: TRIDENT_SUBGRAPH_NAME[chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]],
-        subgraphHost: SUBGRAPH_HOST[chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]],
+        subgraphName:
+          TRIDENT_SUBGRAPH_NAME[
+            chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
+          ],
+        subgraphHost:
+          SUBGRAPH_HOST[chainId as typeof TRIDENT_ENABLED_NETWORKS[number]],
       },
       info,
     }).then((pair: TridentTypes.Pair | null) => {
@@ -131,8 +155,12 @@ export const pairById: QueryResolvers['pairById'] = async (root, args, context, 
 
   const fetchSushiSwapV3Pair = async (block?: { number: number }) => {
     const sdk = getBuiltGraphSDK({
-      subgraphHost: SUBGRAPH_HOST[chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]],
-      subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]],
+      subgraphHost:
+        SUBGRAPH_HOST[chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]],
+      subgraphName:
+        SUSHISWAP_V3_SUBGRAPH_NAME[
+          chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]
+        ],
     })
 
     const { pool } = await sdk.SushiSwapV3Pool({
@@ -144,7 +172,9 @@ export const pairById: QueryResolvers['pairById'] = async (root, args, context, 
   }
 
   const fetcher = async (block?: { number: number }) => {
-    const fetches: ReturnType<typeof fetchSushiSwapPair | typeof fetchTridentPair>[] = []
+    const fetches: ReturnType<
+      typeof fetchSushiSwapPair | typeof fetchTridentPair
+    >[] = []
 
     if (SUSHISWAP_ENABLED_NETWORKS.includes(chainId)) {
       fetches.push(fetchSushiSwapPair(block))
