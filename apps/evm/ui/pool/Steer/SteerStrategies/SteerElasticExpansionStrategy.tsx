@@ -17,7 +17,6 @@ import {
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
-import { useEffect, useRef } from 'react'
 import { APRHoverCard } from 'ui/pool/APRHoverCard'
 
 import { SteerStrategyConfig } from '../constants'
@@ -36,13 +35,8 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
   vault,
   generic: { priceExtremes, tokenRatios, adjustment, positions },
 }) => {
-  const rootDiv = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    rootDiv.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [])
-
   return (
-    <div ref={rootDiv} className="grid md:grid-cols-2 gap-4">
+    <div className="grid md:grid-cols-2 gap-4">
       <div>
         <Card>
           <CardHeader>
@@ -103,7 +97,7 @@ export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
           <Separator />
           <div className="h-[200px] rounded-xl flex flex-col p-6">
             <Stat className="mb-2">
-              <StatLabel size="sm">7 day weekly APR (without incentives)</StatLabel>
+              <StatLabel size="sm">7 day average fee APR</StatLabel>
             </Stat>
             <SteerAPRChart vault={vault} />
           </div>
