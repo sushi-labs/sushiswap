@@ -3,7 +3,6 @@ import AlgebraPool from '@cryptoalgebra/integral-core/artifacts/contracts/Algebr
 import { Token } from 'sushi/currency'
 import { LiquidityProviders, PoolCode } from '@sushiswap/router'
 import { Abi } from 'abitype'
-import { utils } from 'ethers'
 import {
   Address,
   getAddress,
@@ -37,8 +36,8 @@ export function getAlgebraPoolAddress(
     tokenA.toLowerCase() < tokenB.toLowerCase()
       ? [tokenA, tokenB]
       : [tokenB, tokenA]
-  const constructorArgumentsEncoded = utils.defaultAbiCoder.encode(
-    ['address', 'address'],
+  const constructorArgumentsEncoded = encodeAbiParameters(
+    [{name: 'TokenA', type: 'address'}, {name: 'TokenB', type: 'address'}],
     [token0, token1],
   )
   const create2Inputs = [
