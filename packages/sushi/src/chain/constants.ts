@@ -64,6 +64,7 @@ export const TESTNET_CHAIN_IDS = [
   ChainId.GÖRLI,
   ChainId.KOVAN,
 ] as const
+export type TestnetChainId = typeof TESTNET_CHAIN_IDS[number]
 
 // export const isChainId = (chainId: number): chainId is ChainId => Object.values(ChainId).includes(chainId as ChainId)
 

@@ -1,11 +1,11 @@
-import { ChainId } from 'sushi/chain'
-import { Type, USDC, USDT } from 'sushi/currency'
-import { getBigInt, MultiRoute } from '@sushiswap/tines'
 import https from 'https'
+import { MultiRoute, getBigInt } from '@sushiswap/tines'
+import { ChainId, TestnetChainId } from 'sushi/chain'
+import { Type, USDC, USDT } from 'sushi/currency'
 
 import { DataFetcher } from '../DataFetcher'
-import { LiquidityProviders } from '../liquidity-providers/LiquidityProvider'
 import { Router } from '../Router'
+import { LiquidityProviders } from '../liquidity-providers/LiquidityProvider'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 

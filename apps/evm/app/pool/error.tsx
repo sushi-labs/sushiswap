@@ -1,11 +1,17 @@
 'use client'
 
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
+import * as Sentry from '@sentry/nextjs'
 import { Button, LinkInternal, typographyVariants } from '@sushiswap/ui'
+import { useEffect } from 'react'
 
-export default function Error({
+export default function ErrorPage({
   error,
 }: { error: Error & { digest?: string }; reset: () => void }) {
+  useEffect(() => {
+    // Log the error to sentry
+    Sentry.captureException(error)
+  }, [error])
   return (
     <div className="flex justify-center items-center pt-20 px-4">
       <div className="flex flex-col gap-8 text-center">
@@ -15,7 +21,7 @@ export default function Error({
             className: 'max-w-lg font-semibold',
           })}
         >
-          {error.message}
+          Something went wrong!
         </h2>
         <div className="flex justify-center gap-8">
           <Button

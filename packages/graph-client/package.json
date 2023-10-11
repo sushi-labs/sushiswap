@@ -80,18 +80,18 @@
     "typescript": "5.2.2"
   },
   "peerDependencies": {
-    "sushi": "*",
     "@wagmi/core": "*",
-    "graphql": "*"
+    "graphql": "*",
+    "sushi": "*"
   },
   "peerDependenciesMeta": {
-    "sushi": {
-      "optional": false
-    },
     "@wagmi/core": {
       "optional": false
     },
     "graphql": {
+      "optional": false
+    },
+    "sushi": {
       "optional": false
     }
   }

@@ -19,15 +19,15 @@
     "react/index.js"
   ],
   "dependencies": {
+    "@next/eslint-plugin-next": "^13.4.7",
     "eslint-config-next": "13.4.7",
     "eslint-config-prettier": "8.8.0",
     "eslint-config-turbo": "1.10.12",
     "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-simple-import-sort": "10.0.0",
     "eslint-plugin-testing-library": "5.11.0",
-    "eslint-plugin-unused-imports": "2.0.0",
-    "@next/eslint-plugin-next": "^13.4.7",
-    "eslint-plugin-react-hooks": "4.6.0"
+    "eslint-plugin-unused-imports": "2.0.0"
   },
   "devDependencies": {
     "@types/eslint": "8.40.2",

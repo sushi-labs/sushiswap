@@ -4,9 +4,9 @@ import {
   TridentConstantPool,
   TridentStablePool,
 } from '@sushiswap/amm'
-import { ChainId } from 'sushi/chain'
-import { Type } from 'sushi/currency'
 import { BridgeBento, UniV3Pool } from '@sushiswap/tines'
+import { ChainId, TestnetChainId } from 'sushi/chain'
+import { Type } from 'sushi/currency'
 
 export enum PoolType {
   SushiSwapV2Pool = 'SushiSwapV2',

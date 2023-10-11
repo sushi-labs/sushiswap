@@ -1,14 +1,20 @@
+import 'dotenv/config'
+
+import path from 'path'
 import * as Sentry from '@sentry/node'
-import { ChainId } from 'sushi/chain'
-import { Native } from 'sushi/currency'
 import {
-  isRouteProcessor3_1ChainId,
-  isRouteProcessor3_2ChainId,
+  Extractor,
+  TokenManager,
+  type WarningLevel,
+} from '@sushiswap/extractor'
+import {
   ROUTE_PROCESSOR_3_1_ADDRESS,
   ROUTE_PROCESSOR_3_2_ADDRESS,
   ROUTE_PROCESSOR_3_ADDRESS,
-  RouteProcessor3_1ChainId,
-  RouteProcessor3_2ChainId,
+  type RouteProcessor3_1ChainId,
+  type RouteProcessor3_2ChainId,
+  isRouteProcessor3_1ChainId,
+  isRouteProcessor3_2ChainId,
 } from '@sushiswap/route-processor-sdk'
 import { NativeWrapProvider, PoolCode, Router } from '@sushiswap/router'
 import {
@@ -16,18 +22,16 @@ import {
   BASES_TO_CHECK_TRADES_AGAINST,
 } from '@sushiswap/router-config'
 import cors from 'cors'
-import express, { Express, Request, Response } from 'express'
-import path from 'path'
-import { Address } from 'viem'
-import { serialize } from 'wagmi'
+import express, { type Express, type Request, type Response } from 'express'
+import { ChainId } from 'sushi/chain'
+import { Native } from 'sushi/currency'
+import { type Address } from 'viem'
 import z from 'zod'
-
-import { Extractor, TokenManager, WarningLevel } from '../src'
 import {
   EXTRACTOR_CONFIG,
-  isSupportedChainId,
   SUPPORTED_CHAIN_IDS,
-  SupportedChainId,
+  type SupportedChainId,
+  isSupportedChainId,
 } from './config'
 
 const querySchema = z.object({
@@ -66,7 +70,7 @@ const querySchema3_1 = querySchema.extend({
         message: 'ChainId not supported.',
       },
     )
-    .transform((chainId) => chainId as SupportedChainId),
+    .transform((chainId) => chainId as RouteProcessor3_1ChainId),
 })
 
 const querySchema3_2 = querySchema.extend({
@@ -86,7 +90,7 @@ const querySchema3_2 = querySchema.extend({
     .transform((chainId) => chainId as SupportedChainId),
 })
 
-const PORT = process.env.PORT || 80
+const PORT = process.env['PORT'] || 80
 
 const extractors = new Map<SupportedChainId, Extractor>()
 const tokenManagers = new Map<SupportedChainId, TokenManager>()
@@ -139,21 +143,21 @@ const nativeProviders = new Map<SupportedChainId, NativeWrapProvider>()
 async function main() {
   const app: Express = express()
 
-  Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    integrations: [
-      // enable HTTP calls tracing
-      new Sentry.Integrations.Http({
-        tracing: true,
-      }),
-      // enable Express.js middleware tracing
-      new Sentry.Integrations.Express({
-        app,
-      }),
-    ],
-    // Performance Monitoring
-    tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
-  })
+  // Sentry.init({
+  //   dsn: process.env.SENTRY_DSN,
+  //   integrations: [
+  //     // enable HTTP calls tracing
+  //     new Sentry.Integrations.Http({
+  //       tracing: true,
+  //     }),
+  //     // enable Express.js middleware tracing
+  //     new Sentry.Integrations.Express({
+  //       app,
+  //     }),
+  //   ],
+  //   // Performance Monitoring
+  //   tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
+  // })
 
   for (const chainId of SUPPORTED_CHAIN_IDS) {
     const extractor = new Extractor({
@@ -223,10 +227,7 @@ async function main() {
       .forEach((p) => poolCodesMap.set(p.pool.address, p))
 
     const extractor = extractors.get(chainId) as Extractor
-    const common =
-      chainId in BASES_TO_CHECK_TRADES_AGAINST
-        ? BASES_TO_CHECK_TRADES_AGAINST[chainId]
-        : []
+    const common = BASES_TO_CHECK_TRADES_AGAINST?.[chainId] ?? []
     const additionalA = tokenIn
       ? ADDITIONAL_BASES[chainId]?.[tokenIn.wrapped.address] ?? []
       : []
@@ -273,6 +274,8 @@ async function main() {
           tokenOut,
           gasPrice ?? 30e9,
         )
+
+    const { serialize } = await import('wagmi')
 
     return res.json(
       serialize({
@@ -348,10 +351,7 @@ async function main() {
       .forEach((p) => poolCodesMap.set(p.pool.address, p))
 
     const extractor = extractors.get(chainId) as Extractor
-    const common =
-      chainId in BASES_TO_CHECK_TRADES_AGAINST
-        ? BASES_TO_CHECK_TRADES_AGAINST[chainId]
-        : []
+    const common = BASES_TO_CHECK_TRADES_AGAINST?.[chainId] ?? []
     const additionalA = tokenIn
       ? ADDITIONAL_BASES[chainId]?.[tokenIn.wrapped.address] ?? []
       : []
@@ -398,6 +398,8 @@ async function main() {
           tokenOut,
           gasPrice ?? 30e9,
         )
+
+    const { serialize } = await import('wagmi')
 
     return res.json(
       serialize({
@@ -473,10 +475,7 @@ async function main() {
       .forEach((p) => poolCodesMap.set(p.pool.address, p))
 
     const extractor = extractors.get(chainId) as Extractor
-    const common =
-      chainId in BASES_TO_CHECK_TRADES_AGAINST
-        ? BASES_TO_CHECK_TRADES_AGAINST[chainId]
-        : []
+    const common = BASES_TO_CHECK_TRADES_AGAINST?.[chainId] ?? []
     const additionalA = tokenIn
       ? ADDITIONAL_BASES[chainId]?.[tokenIn.wrapped.address] ?? []
       : []
@@ -523,6 +522,8 @@ async function main() {
           gasPrice ?? 30e9,
         )
 
+    const { serialize } = await import('wagmi')
+
     return res.json(
       serialize({
         route: {
@@ -563,21 +564,21 @@ async function main() {
     )
   })
 
-  app.get('/health', (req: Request, res: Response) => {
+  app.get('/health', (_, res: Response) => {
     return res.status(200).send()
   })
 
-  app.get('/pool-codes-for-tokens', (req: Request, res: Response) => {
-    // console.log('HTTP: GET /get-pool-codes-for-tokens', JSON.stringify(req.query))
-    const { chainId } = querySchema.parse(req.query)
-    const extractor = extractors.get(chainId) as Extractor
-    const tokenManager = tokenManagers.get(chainId) as TokenManager
-    const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(
-      Array.from(tokenManager.tokens.values()).slice(0, 100),
-    )
-    const poolCodes = extractor.getPoolCodesForTokens(tokens)
-    return res.json(poolCodes)
-  })
+  // app.get('/pool-codes-for-tokens', (req: Request, res: Response) => {
+  //   // console.log('HTTP: GET /get-pool-codes-for-tokens', JSON.stringify(req.query))
+  //   const { chainId } = querySchema.parse(req.query)
+  //   const extractor = extractors.get(chainId) as Extractor
+  //   const tokenManager = tokenManagers.get(chainId) as TokenManager
+  //   const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(
+  //     Array.from(tokenManager.tokens.values()).slice(0, 100),
+  //   )
+  //   const poolCodes = extractor.getPoolCodesForTokens(tokens)
+  //   return res.json(poolCodes)
+  // })
 
   app.get('/pool-codes', (req: Request, res: Response) => {
     // console.log('HTTP: GET /pool-codes', JSON.stringify(req.query))

@@ -35,12 +35,6 @@ export const createWagmiConfig = () => {
   })
   return createConfig({
     publicClient,
-    // logger: {
-    //   warn: process.env.NODE_ENV !== 'production' ? console.warn : null,
-    // },
-    // logger: {
-    //   warn: null,
-    // },
     logger: {
       warn: (message) => {
         Sentry.captureMessage(message, 'warning')

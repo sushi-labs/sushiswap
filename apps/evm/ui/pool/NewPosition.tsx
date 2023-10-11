@@ -1,15 +1,9 @@
 'use client'
 
-// import { SteerStrategy } from '@sushiswap/database'
-// import { formatPercent } from 'sushi'
-// import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
-// import { Button } from '@sushiswap/ui'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import React, { FC } from 'react'
 
 import { SteerManual } from './SteerManual'
-
-// import { SteerStrategies } from './Steer'
 
 interface NewPositionProps {
   address: string

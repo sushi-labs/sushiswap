@@ -1,28 +1,25 @@
 import { getCreate2Address } from '@ethersproject/address'
-import { getReservesAbi } from 'sushi/abi'
-import { ChainId } from 'sushi/chain'
-import { Token } from 'sushi/currency'
-import { PrismaClient } from '@sushiswap/database'
 import {
   ADDITIONAL_BASES,
   BASES_TO_CHECK_TRADES_AGAINST,
 } from '@sushiswap/router-config'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { add, getUnixTime } from 'date-fns'
-import { Address, encodePacked, Hex, keccak256, PublicClient } from 'viem'
+import { getReservesAbi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
+import { Address, Hex, PublicClient, encodePacked, keccak256 } from 'viem'
 
 import { getCurrencyCombinations } from '../getCurrencyCombinations'
 import {
-  discoverNewPools,
+  PoolResponse2,
   filterOnDemandPools,
   filterTopPools,
-  getAllPools,
   mapToken,
-  PoolResponse2,
 } from '../lib/api'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'
-import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
+import { LiquidityProvider } from './LiquidityProvider'
 interface PoolInfo {
   poolCode: PoolCode
   validUntilTimestamp: number
@@ -61,14 +58,12 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   refreshAvailablePoolsTimestamp = getUnixTime(
     add(Date.now(), { seconds: this.FETCH_AVAILABLE_POOLS_AFTER_SECONDS }),
   )
-  databaseClient: PrismaClient | undefined
 
   constructor(
     chainId: ChainId,
     web3Client: PublicClient,
     factory: Record<number, Address>,
     initCodeHash: Record<number, Hex>,
-    databaseClient?: PrismaClient,
   ) {
     super(chainId, web3Client)
     this.factory = factory
@@ -78,7 +73,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         `${this.getType()} cannot be instantiated for chainid ${chainId}, no factory or initCodeHash`,
       )
     }
-    this.databaseClient = databaseClient
   }
 
   async initialize() {
@@ -159,18 +153,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   }
 
   private async getInitialPools(): Promise<Map<Address, PoolResponse2>> {
-    if (this.databaseClient) {
-      const pools = await getAllPools(
-        this.databaseClient,
-        this.chainId,
-        this.getType() === LiquidityProviders.UniswapV2
-          ? 'Uniswap'
-          : this.getType(),
-        this.getType() === LiquidityProviders.SushiSwapV2 ? 'LEGACY' : 'V2',
-        ['CONSTANT_PRODUCT_POOL'],
-      )
-      return pools
-    }
     return new Map()
   }
 
@@ -358,44 +340,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   }
 
   private async discoverNewPools() {
-    if (!this.databaseClient) return
-    if (this.discoverNewPoolsTimestamp > getUnixTime(Date.now())) {
-      return
-    }
-
-    this.discoverNewPoolsTimestamp = getUnixTime(
-      add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }),
-    )
-
-    const newDate = new Date()
-    const discoveredPools = await discoverNewPools(
-      this.databaseClient,
-      this.chainId,
-      this.getType() === LiquidityProviders.UniswapV2
-        ? 'Uniswap'
-        : this.getType(),
-      this.getType() === LiquidityProviders.SushiSwapV2 ? 'LEGACY' : 'V2',
-      ['CONSTANT_PRODUCT_POOL'],
-      this.latestPoolCreatedAtTimestamp,
-    )
-
-    if (discoveredPools.size > 0) {
-      let addedPools = 0
-      this.latestPoolCreatedAtTimestamp = newDate
-      discoveredPools.forEach((pool) => {
-        if (!this.availablePools.has(pool.address)) {
-          this.availablePools.set(pool.address, pool)
-          addedPools++
-        }
-      })
-      if (addedPools > 0) {
-        this.prioritizeTopPools()
-      }
-    }
-
-    // console.debug(
-    //   `* MEM ${this.getLogPrefix()} INIT COUNT: ${this.topPools.size} ON DEMAND COUNT: ${this.onDemandPools.size}`
-    // )
+    return
   }
 
   private async updateAvailablePools() {

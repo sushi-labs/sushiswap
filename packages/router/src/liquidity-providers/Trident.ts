@@ -1,18 +1,9 @@
-import {
-  balanceOfAbi,
-  getReservesAbi,
-  getStableReservesAbi,
-  totalsAbi,
-} from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import type { ChainId } from 'sushi/chain'
-import { Token } from 'sushi/currency'
-import { PrismaClient } from '@sushiswap/database'
 import {
   BridgeBento,
   ConstantProductRPool,
-  Rebase,
   RToken,
+  Rebase,
   StableSwapRPool,
   toShareBI,
 } from '@sushiswap/tines'
@@ -22,15 +13,21 @@ import {
   TridentChainId,
 } from '@sushiswap/trident-sdk'
 import { add, getUnixTime } from 'date-fns'
+import {
+  balanceOfAbi,
+  getReservesAbi,
+  getStableReservesAbi,
+  totalsAbi,
+} from 'sushi/abi'
+import type { ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
 import { Address, PublicClient } from 'viem'
 
 import {
-  discoverNewPools,
+  PoolResponse2,
   filterOnDemandPools,
   filterTopPools,
-  getAllPools,
   mapToken,
-  PoolResponse2,
 } from '../lib/api'
 import { BentoBridgePoolCode } from '../pools/BentoBridge'
 import { BentoPoolCode } from '../pools/BentoPool'
@@ -99,17 +96,12 @@ export class TridentProvider extends LiquidityProvider {
   blockListener?: () => void
   unwatchBlockNumber?: () => void
 
-  databaseClient: PrismaClient | undefined
-
   constructor(
     chainId: Extract<ChainId, BentoBoxChainId & TridentChainId>,
     web3Client: PublicClient,
-    databaseClient?: PrismaClient,
   ) {
     super(chainId, web3Client)
     this.chainId = chainId
-
-    this.databaseClient = databaseClient
     if (
       !(chainId in this.bentoBox) ||
       !(chainId in this.constantProductPoolFactory) ||
@@ -161,16 +153,6 @@ export class TridentProvider extends LiquidityProvider {
   }
 
   private async getInitialPools(): Promise<Map<string, PoolResponse2>> {
-    if (this.databaseClient) {
-      const pools = await getAllPools(
-        this.databaseClient,
-        this.chainId,
-        'SushiSwap',
-        'TRIDENT',
-        ['CONSTANT_PRODUCT_POOL', 'STABLE_POOL'],
-      )
-      return pools
-    }
     return new Map()
   }
 
@@ -958,49 +940,7 @@ export class TridentProvider extends LiquidityProvider {
   }
 
   private async discoverNewPools() {
-    if (this.discoverNewPoolsTimestamp > getUnixTime(Date.now())) {
-      return
-    }
-
-    if (!this.databaseClient) {
-      return
-    }
-
-    this.discoverNewPoolsTimestamp = getUnixTime(
-      add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }),
-    )
-    const newDate = new Date()
-    const discoveredPools = await discoverNewPools(
-      this.databaseClient,
-      this.chainId,
-      'SushiSwap',
-      'TRIDENT',
-      ['CONSTANT_PRODUCT_POOL', 'STABLE_POOL'],
-      this.latestPoolCreatedAtTimestamp,
-    )
-
-    if (discoveredPools.size > 0) {
-      let addedPools = 0
-      this.latestPoolCreatedAtTimestamp = newDate
-      discoveredPools.forEach((pool) => {
-        if (!this.availablePools.has(pool.address)) {
-          this.availablePools.set(pool.address, pool)
-          addedPools++
-        }
-      })
-      if (addedPools > 0) {
-        this.prioritizeTopPools()
-      }
-    }
-
-    // console.debug(
-    //   `****** MEM - ${this.getLogPrefix()}
-    //   init classic pools: ${this.topClassicPools.size}
-    //   on demand classic pools: ${this.onDemandClassicPools.size}
-    //   init stable pools: ${this.topStablePools.size}
-    //   on demand stable pools: ${this.onDemandStablePools.size}
-    //   bridges: ${this.bridges.size}`
-    // )
+    return
   }
 
   private async updateAvailablePools() {
