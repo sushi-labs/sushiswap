@@ -1,6 +1,16 @@
-import { MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon } from '@heroicons/react/20/solid'
+import {
+  MagnifyingGlassMinusIcon,
+  MagnifyingGlassPlusIcon,
+} from '@heroicons/react/20/solid'
 import { Button } from '@sushiswap/ui/components/button'
-import { ScaleLinear, select, zoom, ZoomBehavior, zoomIdentity, ZoomTransform } from 'd3'
+import {
+  ScaleLinear,
+  select,
+  zoom,
+  ZoomBehavior,
+  zoomIdentity,
+  ZoomTransform,
+} from 'd3'
 import React, { FC, useEffect, useMemo, useRef } from 'react'
 
 import { ZoomLevels } from './types'
@@ -52,11 +62,14 @@ export const Zoom: FC<ZoomProps> = ({
         svg &&
         zoomBehavior.current &&
         select(svg as Element)
-          .call(zoomBehavior.current.transform, zoomIdentity.translate(0, 0).scale(1))
+          .call(
+            zoomBehavior.current.transform,
+            zoomIdentity.translate(0, 0).scale(1),
+          )
           .transition()
           .call(zoomBehavior.current.scaleTo, 0.5),
     ],
-    [svg]
+    [svg],
   )
 
   useEffect(() => {
@@ -68,10 +81,22 @@ export const Zoom: FC<ZoomProps> = ({
         [0, 0],
         [width, height],
       ])
-      .on('zoom', ({ transform }: { transform: ZoomTransform }) => setZoom(transform))
+      .on('zoom', ({ transform }: { transform: ZoomTransform }) =>
+        setZoom(transform),
+      )
 
     select(svg as Element).call(zoomBehavior.current)
-  }, [height, width, setZoom, svg, xScale, zoomBehavior, zoomLevels, zoomLevels.max, zoomLevels.min])
+  }, [
+    height,
+    width,
+    setZoom,
+    svg,
+    xScale,
+    zoomBehavior,
+    zoomLevels,
+    zoomLevels.max,
+    zoomLevels.min,
+  ])
 
   useEffect(() => {
     // reset zoom to initial on zoomLevel change
@@ -99,7 +124,12 @@ export const Zoom: FC<ZoomProps> = ({
         <Button size="sm" variant="secondary" onClick={zoomIn} disabled={false}>
           <MagnifyingGlassPlusIcon width={20} height={20} />
         </Button>
-        <Button size="sm" variant="secondary" onClick={zoomOut} disabled={false}>
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={zoomOut}
+          disabled={false}
+        >
           <MagnifyingGlassMinusIcon width={20} height={20} />
         </Button>
       </div>

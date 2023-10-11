@@ -15,14 +15,15 @@ import { DEFAULT_SIDE_PADDING } from 'common/helpers'
 import { PRODUCTS_DATA } from 'common/productsData'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
-import Image from "next/legacy/image"
+import Image from 'next/legacy/image'
 import { FC } from 'react'
 import useSWR from 'swr'
 
 import { ProductSeo } from '../../common/components/Seo/ProductSeo'
 
 const PRODUCT_SLUG = 'furo'
-const { color, cards, buttonText, productStats, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
+const { color, cards, buttonText, productStats, faq } =
+  PRODUCTS_DATA[PRODUCT_SLUG]
 
 export const getStaticProps: GetStaticProps = async () => {
   const data = await getProducts({ filters: { slug: { eq: PRODUCT_SLUG } } })
@@ -31,7 +32,9 @@ export const getStaticProps: GetStaticProps = async () => {
   return { props: product, revalidate: 60 }
 }
 
-const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (product) => {
+const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (
+  product,
+) => {
   const { name, longName, url, description, slug, relevantArticleIds } = product
 
   const { data, isValidating } = useSWR(
@@ -41,7 +44,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (product
       revalidateOnFocus: false,
       revalidateIfStale: false,
       revalidateOnReconnect: false,
-    }
+    },
   )
 
   const latestArticles = data?.articles ?? []
@@ -50,7 +53,10 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (product
   return (
     <>
       <ProductSeo product={product} />
-      <Container maxWidth="6xl" className={classNames('mx-auto pt-10', DEFAULT_SIDE_PADDING)}>
+      <Container
+        maxWidth="6xl"
+        className={classNames('mx-auto pt-10', DEFAULT_SIDE_PADDING)}
+      >
         <ProductBackground color={color} />
         <ProductHero
           productName={longName}
@@ -63,7 +69,10 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (product
         />
       </Container>
 
-      <Container maxWidth="6xl" className={classNames('mx-auto pb-24', DEFAULT_SIDE_PADDING)}>
+      <Container
+        maxWidth="6xl"
+        className={classNames('mx-auto pb-24', DEFAULT_SIDE_PADDING)}
+      >
         <ProductInfoImages
           color="#64C7FE"
           secondaryColor="#B084E9"

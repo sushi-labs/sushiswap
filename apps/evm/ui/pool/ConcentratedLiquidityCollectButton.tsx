@@ -1,11 +1,22 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Type } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Amount, Type } from 'sushi/currency'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import { isSushiSwapV3ChainId, NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
-import { useNetwork, usePrepareSendTransaction, useSendTransaction } from '@sushiswap/wagmi'
-import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
+import {
+  isSushiSwapV3ChainId,
+  NonfungiblePositionManager,
+  Position,
+} from '@sushiswap/v3-sdk'
+import {
+  useNetwork,
+  usePrepareSendTransaction,
+  useSendTransaction,
+} from '@sushiswap/wagmi'
+import {
+  SendTransactionResult,
+  waitForTransaction,
+} from '@sushiswap/wagmi/actions'
 import { ConcentratedLiquidityPosition } from '@sushiswap/wagmi/future/hooks'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
@@ -23,7 +34,9 @@ interface ConcentratedLiquidityCollectButton {
   children(params: ReturnType<typeof useSendTransaction>): ReactElement
 }
 
-export const ConcentratedLiquidityCollectButton: FC<ConcentratedLiquidityCollectButton> = ({
+export const ConcentratedLiquidityCollectButton: FC<
+  ConcentratedLiquidityCollectButton
+> = ({
   account,
   chainId,
   position,
@@ -35,16 +48,30 @@ export const ConcentratedLiquidityCollectButton: FC<ConcentratedLiquidityCollect
   const { chain } = useNetwork()
 
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
-    if (token0 && token1 && position && account && positionDetails && isSushiSwapV3ChainId(chainId)) {
-      const feeValue0 = positionDetails.fees ? Amount.fromRawAmount(token0, positionDetails.fees[0]) : undefined
-      const feeValue1 = positionDetails.fees ? Amount.fromRawAmount(token0, positionDetails.fees[1]) : undefined
+    if (
+      token0 &&
+      token1 &&
+      position &&
+      account &&
+      positionDetails &&
+      isSushiSwapV3ChainId(chainId)
+    ) {
+      const feeValue0 = positionDetails.fees
+        ? Amount.fromRawAmount(token0, positionDetails.fees[0])
+        : undefined
+      const feeValue1 = positionDetails.fees
+        ? Amount.fromRawAmount(token0, positionDetails.fees[1])
+        : undefined
 
-      const { calldata, value } = NonfungiblePositionManager.collectCallParameters({
-        tokenId: positionDetails.tokenId.toString(),
-        expectedCurrencyOwed0: feeValue0 ?? Amount.fromRawAmount(unwrapToken(token0), 0),
-        expectedCurrencyOwed1: feeValue1 ?? Amount.fromRawAmount(unwrapToken(token1), 0),
-        recipient: account,
-      })
+      const { calldata, value } =
+        NonfungiblePositionManager.collectCallParameters({
+          tokenId: positionDetails.tokenId.toString(),
+          expectedCurrencyOwed0:
+            feeValue0 ?? Amount.fromRawAmount(unwrapToken(token0), 0),
+          expectedCurrencyOwed1:
+            feeValue1 ?? Amount.fromRawAmount(unwrapToken(token1), 0),
+          recipient: account,
+        })
 
       return {
         to: getV3NonFungiblePositionManagerConractConfig(chainId).address,
@@ -80,13 +107,20 @@ export const ConcentratedLiquidityCollectButton: FC<ConcentratedLiquidityCollect
         groupTimestamp: ts,
       })
     },
-    [account, chainId, position]
+    [account, chainId, position],
   )
 
   const { config } = usePrepareSendTransaction({
     ...prepare,
     chainId,
-    enabled: Boolean(token0 && token1 && account && position && positionDetails && chainId === chain?.id),
+    enabled: Boolean(
+      token0 &&
+        token1 &&
+        account &&
+        position &&
+        positionDetails &&
+        chainId === chain?.id,
+    ),
   })
 
   const data = useSendTransaction({

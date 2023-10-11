@@ -15,11 +15,20 @@ interface PoolChartTypesProps<C> {
   setChart: (chart: C) => void
 }
 
-function PoolChartTypes<C extends string>({ charts, selectedChart, setChart }: PoolChartTypesProps<C>) {
+function PoolChartTypes<C extends string>({
+  charts,
+  selectedChart,
+  setChart,
+}: PoolChartTypesProps<C>) {
   return (
     <div className="flex items-center gap-1">
       {charts.map((chart) => (
-        <Toggle size="xs" pressed={chart === selectedChart} onClick={() => setChart(chart)} key={chart}>
+        <Toggle
+          size="xs"
+          pressed={chart === selectedChart}
+          onClick={() => setChart(chart)}
+          key={chart}
+        >
           {chart}
         </Toggle>
       ))}

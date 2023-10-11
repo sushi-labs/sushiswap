@@ -171,7 +171,9 @@ export const masterchefV2Abi = [
   {
     inputs: [],
     name: 'MASTER_CHEF',
-    outputs: [{ internalType: 'contract IMasterChef', name: '', type: 'address' }],
+    outputs: [
+      { internalType: 'contract IMasterChef', name: '', type: 'address' },
+    ],
     stateMutability: 'view',
     type: 'function',
   },
@@ -263,7 +265,9 @@ export const masterchefV2Abi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'contract IERC20', name: 'dummyToken', type: 'address' }],
+    inputs: [
+      { internalType: 'contract IERC20', name: 'dummyToken', type: 'address' },
+    ],
     name: 'init',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -293,7 +297,9 @@ export const masterchefV2Abi = [
   {
     inputs: [],
     name: 'migrator',
-    outputs: [{ internalType: 'contract IMigratorChef', name: '', type: 'address' }],
+    outputs: [
+      { internalType: 'contract IMigratorChef', name: '', type: 'address' },
+    ],
     stateMutability: 'view',
     type: 'function',
   },
@@ -358,7 +364,9 @@ export const masterchefV2Abi = [
   {
     inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     name: 'rewarder',
-    outputs: [{ internalType: 'contract IRewarder', name: '', type: 'address' }],
+    outputs: [
+      { internalType: 'contract IRewarder', name: '', type: 'address' },
+    ],
     stateMutability: 'view',
     type: 'function',
   },

@@ -1,4 +1,7 @@
-import { SUBGRAPH_HOST, SUSHISWAP_V3_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import {
+  SUBGRAPH_HOST,
+  SUSHISWAP_V3_SUBGRAPH_NAME,
+} from '@sushiswap/graph-config'
 
 import { Query, QueryResolvers } from '../../.graphclient/index.js'
 
@@ -8,7 +11,7 @@ export const poolsByTokenPair: QueryResolvers['poolsByTokenPair'] = async (
   root,
   args,
   context,
-  info
+  info,
 ): Promise<Query['poolsByTokenPair']> => {
   const [chainId, tokenAddress0] = args.tokenId0.split(':')
   const [, tokenAddress1] = args.tokenId1.split(':')

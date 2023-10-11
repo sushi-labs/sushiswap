@@ -6,14 +6,20 @@
         { "key": "Access-Control-Allow-Credentials", "value": "true" },
         { "key": "Access-Control-Allow-Origin", "value": "*" },
         { "key": "Access-Control-Allow-Methods", "value": "GET" },
-        { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" }
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
+        }
       ]
     }
   ],
   "rewrites": [
     { "source": "/v0", "destination": "/api/v0" },
     { "source": "/v0/count", "destination": "/api/v0/count" },
-    { "source": "/v0/:chainId/:address", "destination": "/api/v0/:chainId/:address" }
+    {
+      "source": "/v0/:chainId/:address",
+      "destination": "/api/v0/:chainId/:address"
+    }
   ],
   "functions": {
     "api/v0/index.ts": {

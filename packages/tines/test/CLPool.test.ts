@@ -37,7 +37,10 @@ function addTick(ticks: CLTick[], index: number, L: bigint) {
 
 function addLiquidity(pool: CLRPool, from: number, to: number, L: bigint) {
   console.assert(from >= CL_MIN_TICK && from < to && to <= CL_MAX_TICK)
-  console.assert((from / pool.tickSpacing) % 2 === 0 && (to / pool.tickSpacing) % 2 !== 0, `${from} - ${to}`)
+  console.assert(
+    (from / pool.tickSpacing) % 2 === 0 && (to / pool.tickSpacing) % 2 !== 0,
+    `${from} - ${to}`,
+  )
   console.assert(L >= 0n)
   addTick(pool.ticks, from, L)
   addTick(pool.ticks, to, L)
@@ -72,7 +75,12 @@ function getRandomRange(rnd: () => number, tickSpacing: number) {
   }
 }
 
-function getRandomCLPool(rnd: () => number, rangeNumber: number, minLiquidity: number, maxLiquidity: number): CLRPool {
+function getRandomCLPool(
+  rnd: () => number,
+  rangeNumber: number,
+  minLiquidity: number,
+  maxLiquidity: number,
+): CLRPool {
   const tickSpacing = rnd() > 0.5 ? 5 : 60
   const pool = new CLRPool(
     'CLRPool' as Address,
@@ -85,7 +93,7 @@ function getRandomCLPool(rnd: () => number, rangeNumber: number, minLiquidity: n
     0n,
     two96BI,
     -1,
-    []
+    [],
   )
 
   for (let i = 0; i < rangeNumber; ++i) {
@@ -97,7 +105,9 @@ function getRandomCLPool(rnd: () => number, rangeNumber: number, minLiquidity: n
   pool.nearestTick = Math.floor(getRandomLin(rnd, 0, pool.ticks.length - 1))
   const tickPrice = getTickPrice(pool, pool.nearestTick)
   const nextTickPrice = getTickPrice(pool, pool.nearestTick + 1)
-  pool.sqrtPriceX96 = getBigInt(getRandomLin(rnd, tickPrice, nextTickPrice) * two96)
+  pool.sqrtPriceX96 = getBigInt(
+    getRandomLin(rnd, tickPrice, nextTickPrice) * two96,
+  )
   pool.liquidity = getTickLiquidity(pool, pool.nearestTick)
 
   return pool
@@ -143,7 +153,10 @@ describe('CL pool test', () => {
         const output2 = pool.calcOutByIn(input2, direction).out
         const precision1 = Math.abs(input / input2 - 1)
         const precision2 = Math.abs(output / output2 - 1)
-        expect(precision1 < expectedCalculationPrecision || precision2 < expectedCalculationPrecision)
+        expect(
+          precision1 < expectedCalculationPrecision ||
+            precision2 < expectedCalculationPrecision,
+        )
       }
     }
   })

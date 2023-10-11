@@ -15,8 +15,14 @@ export const computeInitCodeHash = ({
     [
       pack(
         ['bytes', 'bytes'],
-        [creationCode, defaultAbiCoder.encode(['bytes', 'address'], [deployData, masterDeployerAddress])]
+        [
+          creationCode,
+          defaultAbiCoder.encode(
+            ['bytes', 'address'],
+            [deployData, masterDeployerAddress],
+          ),
+        ],
       ),
-    ]
+    ],
   )
 }

@@ -3,7 +3,14 @@ import * as React from 'react'
 import { IconComponent } from '../../../../types'
 
 export const CeloCircle: IconComponent = (props) => (
-  <svg viewBox="0 0 128 128" width={128} height={128} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <svg
+    viewBox="0 0 128 128"
+    width={128}
+    height={128}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
     <rect width={128} height={128} rx={64} fill="#2E3338" />
     <path
       d="M55.579 95.684c12.792 0 23.158-10.236 23.158-22.868 0-12.632-10.366-22.869-23.158-22.869-12.792 0-23.158 10.237-23.158 22.869S42.787 95.684 55.58 95.684Zm0 8.316C38.139 104 24 90.038 24 72.816s14.139-31.184 31.579-31.184 31.579 13.962 31.579 31.184S73.018 104 55.578 104Z"

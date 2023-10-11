@@ -10,6 +10,6 @@
     "GraphQL.vscode-graphql",
     "mattpocock.ts-error-translator",
     "bierner.markdown-mermaid",
-    "rome.rome"
+    "biomejs.biome"
   ]
 }

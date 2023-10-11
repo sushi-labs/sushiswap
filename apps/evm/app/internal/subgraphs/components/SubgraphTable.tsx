@@ -1,8 +1,8 @@
 'use client'
 
 import { RefreshIcon } from '@heroicons/react-v1/solid'
-import { ChainId, chainName } from '@sushiswap/chain'
-import { formatNumber, formatPercent } from '@sushiswap/format'
+import { ChainId, chainName } from 'sushi/chain'
+import { formatNumber, formatPercent } from 'sushi'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import {
   Card,
@@ -17,7 +17,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import { ColumnDef, createColumnHelper, PaginationState } from '@tanstack/react-table'
+import {
+  ColumnDef,
+  createColumnHelper,
+  PaginationState,
+} from '@tanstack/react-table'
 import { useState } from 'react'
 
 import { Subgraph } from '../lib'
@@ -33,25 +37,24 @@ const columns: ColumnDef<Subgraph, unknown>[] = [
   columnHelper.display({
     id: 'category',
     header: 'Category',
-    cell: ({
-      row: {
-        original: { category },
-      },
-    }) => category,
+    cell: ({ row: { original: { category } } }) => category,
     enableHiding: true,
   }),
   columnHelper.display({
     id: 'chainId',
     header: 'Chain',
-    cell: ({
-      row: {
-        original: { chainId },
-      },
-    }) => {
+    cell: ({ row: { original: { chainId } } }) => {
       return (
         <div className="flex space-x-2">
-          <NetworkIcon type="circle" chainId={chainId as ChainId} width={20} height={20} />
-          <div>{CHAIN_NAME[chainId as ChainId] ?? chainName[chainId as ChainId]}</div>
+          <NetworkIcon
+            type="circle"
+            chainId={chainId as ChainId}
+            width={20}
+            height={20}
+          />
+          <div>
+            {CHAIN_NAME[chainId as ChainId] ?? chainName[chainId as ChainId]}
+          </div>
         </div>
       )
     },
@@ -60,11 +63,7 @@ const columns: ColumnDef<Subgraph, unknown>[] = [
   columnHelper.display({
     id: 'type',
     header: 'Type',
-    cell: ({
-      row: {
-        original: { type },
-      },
-    }) => {
+    cell: ({ row: { original: { type } } }) => {
       return (
         <div className="flex justify-center">
           {type === 'Current' ? (
@@ -97,11 +96,7 @@ const columns: ColumnDef<Subgraph, unknown>[] = [
   columnHelper.display({
     id: 'subgraphName',
     header: 'Name',
-    cell: ({
-      row: {
-        original: { subgraphName },
-      },
-    }) => subgraphName,
+    cell: ({ row: { original: { subgraphName } } }) => subgraphName,
   }),
   columnHelper.accessor('startBlock', {
     header: 'Start Block',
@@ -110,7 +105,8 @@ const columns: ColumnDef<Subgraph, unknown>[] = [
   columnHelper.display({
     id: 'Synced %',
     header: 'Synced %',
-    cell: ({ row }) => formatPercent(row.original.lastSyncedBlock / row.original.chainHeadBlock),
+    cell: ({ row }) =>
+      formatPercent(row.original.lastSyncedBlock / row.original.chainHeadBlock),
   }),
   columnHelper.accessor('lastSyncedBlock', {
     header: 'Synced Block',
@@ -128,9 +124,7 @@ const columns: ColumnDef<Subgraph, unknown>[] = [
     id: 'Status',
     header: 'Status',
     cell: ({
-      row: {
-        original: { status, chainHeadBlock, lastSyncedBlock },
-      },
+      row: { original: { status, chainHeadBlock, lastSyncedBlock } },
     }) => {
       const unsyncedBlockCount = chainHeadBlock - lastSyncedBlock
 
@@ -144,7 +138,8 @@ const columns: ColumnDef<Subgraph, unknown>[] = [
         case 'Syncing':
           return (
             <div className="text-yellow">
-              {status} ({formatNumber(unsyncedBlockCount).replace(/\.(00|0)/, '')})
+              {status} (
+              {formatNumber(unsyncedBlockCount).replace(/\.(00|0)/, '')})
             </div>
           )
         case 'Failed':
@@ -177,7 +172,9 @@ export function SubgraphTable({ title, subgraphs, groupBy }: SubgraphTable) {
             pagination: paginationState,
           }}
           externalLink={true}
-          linkFormatter={(row) => `https://thegraph.com/hosted-service/subgraph/${row.subgraphName}`}
+          linkFormatter={(row) =>
+            `https://thegraph.com/hosted-service/subgraph/${row.subgraphName}`
+          }
         />
       </CardContent>
     </Card>

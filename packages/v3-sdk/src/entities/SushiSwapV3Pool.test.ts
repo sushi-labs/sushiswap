@@ -1,4 +1,4 @@
-import { Amount as CurrencyAmount, Token, WETH9 } from '@sushiswap/currency'
+import { Amount as CurrencyAmount, Token, WETH9 } from 'sushi/currency'
 
 import { FeeAmount, TICK_SPACINGS } from '../constants'
 import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96'
@@ -27,51 +27,131 @@ describe('SushiSwapV3Pool', () => {
   describe('constructor', () => {
     it('cannot be used for tokens on different chains', () => {
       expect(() => {
-        new SushiSwapV3Pool(USDC, WETH9[3], FeeAmount.MEDIUM, encodeSqrtRatioX96(1, 1), 0, 0, [])
+        new SushiSwapV3Pool(
+          USDC,
+          WETH9[3],
+          FeeAmount.MEDIUM,
+          encodeSqrtRatioX96(1, 1),
+          0,
+          0,
+          [],
+        )
       }).toThrow('CHAIN_IDS')
     })
 
     it('fee must be integer', () => {
       expect(() => {
-        new SushiSwapV3Pool(USDC, WETH9[1], FeeAmount.MEDIUM + 0.5, encodeSqrtRatioX96(1, 1), 0, 0, [])
+        new SushiSwapV3Pool(
+          USDC,
+          WETH9[1],
+          FeeAmount.MEDIUM + 0.5,
+          encodeSqrtRatioX96(1, 1),
+          0,
+          0,
+          [],
+        )
       }).toThrow('FEE')
     })
 
     it('fee cannot be more than 1e6', () => {
       expect(() => {
-        new SushiSwapV3Pool(USDC, WETH9[1], 1e6 as FeeAmount, encodeSqrtRatioX96(1, 1), 0, 0, [])
+        new SushiSwapV3Pool(
+          USDC,
+          WETH9[1],
+          1e6 as FeeAmount,
+          encodeSqrtRatioX96(1, 1),
+          0,
+          0,
+          [],
+        )
       }).toThrow('FEE')
     })
 
     it('cannot be given two of the same token', () => {
       expect(() => {
-        new SushiSwapV3Pool(USDC, USDC, FeeAmount.MEDIUM, encodeSqrtRatioX96(1, 1), 0, 0, [])
+        new SushiSwapV3Pool(
+          USDC,
+          USDC,
+          FeeAmount.MEDIUM,
+          encodeSqrtRatioX96(1, 1),
+          0,
+          0,
+          [],
+        )
       }).toThrow('ADDRESSES')
     })
 
     it('price must be within tick price bounds', () => {
       expect(() => {
-        new SushiSwapV3Pool(USDC, WETH9[1], FeeAmount.MEDIUM, encodeSqrtRatioX96(1, 1), 0, 1, [])
+        new SushiSwapV3Pool(
+          USDC,
+          WETH9[1],
+          FeeAmount.MEDIUM,
+          encodeSqrtRatioX96(1, 1),
+          0,
+          1,
+          [],
+        )
       }).toThrow('PRICE_BOUNDS')
       expect(() => {
-        new SushiSwapV3Pool(USDC, WETH9[1], FeeAmount.MEDIUM, encodeSqrtRatioX96(1, 1) + 1n, 0, -1, [])
+        new SushiSwapV3Pool(
+          USDC,
+          WETH9[1],
+          FeeAmount.MEDIUM,
+          encodeSqrtRatioX96(1, 1) + 1n,
+          0,
+          -1,
+          [],
+        )
       }).toThrow('PRICE_BOUNDS')
     })
 
     it('works with valid arguments for empty pool medium fee', () => {
-      new SushiSwapV3Pool(USDC, WETH9[1], FeeAmount.MEDIUM, encodeSqrtRatioX96(1, 1), 0, 0, [])
+      new SushiSwapV3Pool(
+        USDC,
+        WETH9[1],
+        FeeAmount.MEDIUM,
+        encodeSqrtRatioX96(1, 1),
+        0,
+        0,
+        [],
+      )
     })
 
     it('works with valid arguments for empty pool low fee', () => {
-      new SushiSwapV3Pool(USDC, WETH9[1], FeeAmount.LOW, encodeSqrtRatioX96(1, 1), 0, 0, [])
+      new SushiSwapV3Pool(
+        USDC,
+        WETH9[1],
+        FeeAmount.LOW,
+        encodeSqrtRatioX96(1, 1),
+        0,
+        0,
+        [],
+      )
     })
 
     it('works with valid arguments for empty pool lowest fee', () => {
-      new SushiSwapV3Pool(USDC, WETH9[1], FeeAmount.LOWEST, encodeSqrtRatioX96(1, 1), 0, 0, [])
+      new SushiSwapV3Pool(
+        USDC,
+        WETH9[1],
+        FeeAmount.LOWEST,
+        encodeSqrtRatioX96(1, 1),
+        0,
+        0,
+        [],
+      )
     })
 
     it('works with valid arguments for empty pool high fee', () => {
-      new SushiSwapV3Pool(USDC, WETH9[1], FeeAmount.HIGH, encodeSqrtRatioX96(1, 1), 0, 0, [])
+      new SushiSwapV3Pool(
+        USDC,
+        WETH9[1],
+        FeeAmount.HIGH,
+        encodeSqrtRatioX96(1, 1),
+        0,
+        0,
+        [],
+      )
     })
   })
 
@@ -84,17 +164,49 @@ describe('SushiSwapV3Pool', () => {
 
   describe('#token0', () => {
     it('always is the token that sorts before', () => {
-      let pool = new SushiSwapV3Pool(USDC, DAI, FeeAmount.LOW, encodeSqrtRatioX96(1, 1), 0, 0, [])
+      let pool = new SushiSwapV3Pool(
+        USDC,
+        DAI,
+        FeeAmount.LOW,
+        encodeSqrtRatioX96(1, 1),
+        0,
+        0,
+        [],
+      )
       expect(pool.token0).toEqual(DAI)
-      pool = new SushiSwapV3Pool(DAI, USDC, FeeAmount.LOW, encodeSqrtRatioX96(1, 1), 0, 0, [])
+      pool = new SushiSwapV3Pool(
+        DAI,
+        USDC,
+        FeeAmount.LOW,
+        encodeSqrtRatioX96(1, 1),
+        0,
+        0,
+        [],
+      )
       expect(pool.token0).toEqual(DAI)
     })
   })
   describe('#token1', () => {
     it('always is the token that sorts after', () => {
-      let pool = new SushiSwapV3Pool(USDC, DAI, FeeAmount.LOW, encodeSqrtRatioX96(1, 1), 0, 0, [])
+      let pool = new SushiSwapV3Pool(
+        USDC,
+        DAI,
+        FeeAmount.LOW,
+        encodeSqrtRatioX96(1, 1),
+        0,
+        0,
+        [],
+      )
       expect(pool.token1).toEqual(USDC)
-      pool = new SushiSwapV3Pool(DAI, USDC, FeeAmount.LOW, encodeSqrtRatioX96(1, 1), 0, 0, [])
+      pool = new SushiSwapV3Pool(
+        DAI,
+        USDC,
+        FeeAmount.LOW,
+        encodeSqrtRatioX96(1, 1),
+        0,
+        0,
+        [],
+      )
       expect(pool.token1).toEqual(USDC)
     })
   })
@@ -109,8 +221,8 @@ describe('SushiSwapV3Pool', () => {
           encodeSqrtRatioX96(101e6, 100e18),
           0,
           TickMath.getTickAtSqrtRatio(encodeSqrtRatioX96(101e6, 100e18)),
-          []
-        ).token0Price.toSignificant(5)
+          [],
+        ).token0Price.toSignificant(5),
       ).toEqual('1.01')
       expect(
         new SushiSwapV3Pool(
@@ -120,8 +232,8 @@ describe('SushiSwapV3Pool', () => {
           encodeSqrtRatioX96(101e6, 100e18),
           0,
           TickMath.getTickAtSqrtRatio(encodeSqrtRatioX96(101e6, 100e18)),
-          []
-        ).token0Price.toSignificant(5)
+          [],
+        ).token0Price.toSignificant(5),
       ).toEqual('1.01')
     })
   })
@@ -136,8 +248,8 @@ describe('SushiSwapV3Pool', () => {
           encodeSqrtRatioX96(101e6, 100e18),
           0,
           TickMath.getTickAtSqrtRatio(encodeSqrtRatioX96(101e6, 100e18)),
-          []
-        ).token1Price.toSignificant(5)
+          [],
+        ).token1Price.toSignificant(5),
       ).toEqual('0.9901')
       expect(
         new SushiSwapV3Pool(
@@ -147,14 +259,22 @@ describe('SushiSwapV3Pool', () => {
           encodeSqrtRatioX96(101e6, 100e18),
           0,
           TickMath.getTickAtSqrtRatio(encodeSqrtRatioX96(101e6, 100e18)),
-          []
-        ).token1Price.toSignificant(5)
+          [],
+        ).token1Price.toSignificant(5),
       ).toEqual('0.9901')
     })
   })
 
   describe('#priceOf', () => {
-    const pool = new SushiSwapV3Pool(USDC, DAI, FeeAmount.LOW, encodeSqrtRatioX96(1, 1), 0, 0, [])
+    const pool = new SushiSwapV3Pool(
+      USDC,
+      DAI,
+      FeeAmount.LOW,
+      encodeSqrtRatioX96(1, 1),
+      0,
+      0,
+      [],
+    )
     it('returns price of token in terms of other token', () => {
       expect(pool.priceOf(DAI)).toEqual(pool.token0Price)
       expect(pool.priceOf(USDC)).toEqual(pool.token1Price)
@@ -167,15 +287,39 @@ describe('SushiSwapV3Pool', () => {
 
   describe('#chainId', () => {
     it('returns the token0 chainId', () => {
-      let pool = new SushiSwapV3Pool(USDC, DAI, FeeAmount.LOW, encodeSqrtRatioX96(1, 1), 0, 0, [])
+      let pool = new SushiSwapV3Pool(
+        USDC,
+        DAI,
+        FeeAmount.LOW,
+        encodeSqrtRatioX96(1, 1),
+        0,
+        0,
+        [],
+      )
       expect(pool.chainId).toEqual(1)
-      pool = new SushiSwapV3Pool(DAI, USDC, FeeAmount.LOW, encodeSqrtRatioX96(1, 1), 0, 0, [])
+      pool = new SushiSwapV3Pool(
+        DAI,
+        USDC,
+        FeeAmount.LOW,
+        encodeSqrtRatioX96(1, 1),
+        0,
+        0,
+        [],
+      )
       expect(pool.chainId).toEqual(1)
     })
   })
 
   describe('#involvesToken', () => {
-    const pool = new SushiSwapV3Pool(USDC, DAI, FeeAmount.LOW, encodeSqrtRatioX96(1, 1), 0, 0, [])
+    const pool = new SushiSwapV3Pool(
+      USDC,
+      DAI,
+      FeeAmount.LOW,
+      encodeSqrtRatioX96(1, 1),
+      0,
+      0,
+      [],
+    )
     expect(pool.involvesToken(USDC)).toEqual(true)
     expect(pool.involvesToken(DAI)).toEqual(true)
     expect(pool.involvesToken(WETH9[1])).toEqual(false)
@@ -185,18 +329,32 @@ describe('SushiSwapV3Pool', () => {
     let pool: SushiSwapV3Pool
 
     beforeEach(() => {
-      pool = new SushiSwapV3Pool(USDC, DAI, FeeAmount.LOW, encodeSqrtRatioX96(1, 1), ONE_ETHER, 0, [
-        {
-          index: nearestUsableTick(TickMath.MIN_TICK, TICK_SPACINGS[FeeAmount.LOW]),
-          liquidityNet: ONE_ETHER,
-          liquidityGross: ONE_ETHER,
-        },
-        {
-          index: nearestUsableTick(TickMath.MAX_TICK, TICK_SPACINGS[FeeAmount.LOW]),
-          liquidityNet: ONE_ETHER * -1n,
-          liquidityGross: ONE_ETHER,
-        },
-      ])
+      pool = new SushiSwapV3Pool(
+        USDC,
+        DAI,
+        FeeAmount.LOW,
+        encodeSqrtRatioX96(1, 1),
+        ONE_ETHER,
+        0,
+        [
+          {
+            index: nearestUsableTick(
+              TickMath.MIN_TICK,
+              TICK_SPACINGS[FeeAmount.LOW],
+            ),
+            liquidityNet: ONE_ETHER,
+            liquidityGross: ONE_ETHER,
+          },
+          {
+            index: nearestUsableTick(
+              TickMath.MAX_TICK,
+              TICK_SPACINGS[FeeAmount.LOW],
+            ),
+            liquidityNet: ONE_ETHER * -1n,
+            liquidityGross: ONE_ETHER,
+          },
+        ],
+      )
     })
 
     describe('#getOutputAmount', () => {
@@ -237,18 +395,32 @@ describe('SushiSwapV3Pool', () => {
     const bigNum1 = BigInt(Number.MAX_SAFE_INTEGER) + 1n
     const bigNum2 = BigInt(Number.MAX_SAFE_INTEGER) + 1n
     beforeEach(() => {
-      pool = new SushiSwapV3Pool(USDC, DAI, FeeAmount.LOW, encodeSqrtRatioX96(bigNum1, bigNum2), ONE_ETHER, 0, [
-        {
-          index: nearestUsableTick(TickMath.MIN_TICK, TICK_SPACINGS[FeeAmount.LOW]),
-          liquidityNet: ONE_ETHER,
-          liquidityGross: ONE_ETHER,
-        },
-        {
-          index: nearestUsableTick(TickMath.MAX_TICK, TICK_SPACINGS[FeeAmount.LOW]),
-          liquidityNet: ONE_ETHER * -1n,
-          liquidityGross: ONE_ETHER,
-        },
-      ])
+      pool = new SushiSwapV3Pool(
+        USDC,
+        DAI,
+        FeeAmount.LOW,
+        encodeSqrtRatioX96(bigNum1, bigNum2),
+        ONE_ETHER,
+        0,
+        [
+          {
+            index: nearestUsableTick(
+              TickMath.MIN_TICK,
+              TICK_SPACINGS[FeeAmount.LOW],
+            ),
+            liquidityNet: ONE_ETHER,
+            liquidityGross: ONE_ETHER,
+          },
+          {
+            index: nearestUsableTick(
+              TickMath.MAX_TICK,
+              TICK_SPACINGS[FeeAmount.LOW],
+            ),
+            liquidityNet: ONE_ETHER * -1n,
+            liquidityGross: ONE_ETHER,
+          },
+        ],
+      )
     })
 
     describe('#priceLimit', () => {

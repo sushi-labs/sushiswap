@@ -14,68 +14,137 @@ export const ERC1967Proxy = [
   {
     anonymous: false,
     inputs: [
-      { indexed: false, internalType: 'address', name: 'previousAdmin', type: 'address' },
-      { indexed: false, internalType: 'address', name: 'newAdmin', type: 'address' },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'previousAdmin',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'newAdmin',
+        type: 'address',
+      },
     ],
     name: 'AdminChanged',
     type: 'event',
   },
   {
     anonymous: false,
-    inputs: [{ indexed: true, internalType: 'address', name: 'beacon', type: 'address' }],
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'beacon',
+        type: 'address',
+      },
+    ],
     name: 'BeaconUpgraded',
     type: 'event',
   },
   {
     anonymous: false,
     inputs: [
-      { indexed: false, internalType: 'address', name: 'user', type: 'address' },
-      { indexed: false, internalType: 'address', name: 'token', type: 'address' },
-      { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'user',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'token',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
     ],
     name: 'Claimed',
     type: 'event',
   },
   {
     anonymous: false,
-    inputs: [{ indexed: false, internalType: 'uint256', name: '_disputeAmount', type: 'uint256' }],
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: '_disputeAmount',
+        type: 'uint256',
+      },
+    ],
     name: 'DisputeAmountUpdated',
     type: 'event',
   },
   {
     anonymous: false,
-    inputs: [{ indexed: false, internalType: 'uint48', name: '_disputePeriod', type: 'uint48' }],
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'uint48',
+        name: '_disputePeriod',
+        type: 'uint48',
+      },
+    ],
     name: 'DisputePeriodUpdated',
     type: 'event',
   },
   {
     anonymous: false,
-    inputs: [{ indexed: false, internalType: 'bool', name: 'valid', type: 'bool' }],
+    inputs: [
+      { indexed: false, internalType: 'bool', name: 'valid', type: 'bool' },
+    ],
     name: 'DisputeResolved',
     type: 'event',
   },
   {
     anonymous: false,
-    inputs: [{ indexed: true, internalType: 'address', name: '_disputeToken', type: 'address' }],
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: '_disputeToken',
+        type: 'address',
+      },
+    ],
     name: 'DisputeTokenUpdated',
     type: 'event',
   },
   {
     anonymous: false,
-    inputs: [{ indexed: false, internalType: 'string', name: 'reason', type: 'string' }],
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'string',
+        name: 'reason',
+        type: 'string',
+      },
+    ],
     name: 'Disputed',
     type: 'event',
   },
   {
     anonymous: false,
-    inputs: [{ indexed: false, internalType: 'uint8', name: 'version', type: 'uint8' }],
+    inputs: [
+      { indexed: false, internalType: 'uint8', name: 'version', type: 'uint8' },
+    ],
     name: 'Initialized',
     type: 'event',
   },
   {
     anonymous: false,
     inputs: [
-      { indexed: false, internalType: 'address', name: 'user', type: 'address' },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'user',
+        type: 'address',
+      },
       { indexed: false, internalType: 'bool', name: 'isEnabled', type: 'bool' },
     ],
     name: 'OperatorClaimingToggled',
@@ -84,9 +153,24 @@ export const ERC1967Proxy = [
   {
     anonymous: false,
     inputs: [
-      { indexed: false, internalType: 'address', name: 'user', type: 'address' },
-      { indexed: false, internalType: 'address', name: 'operator', type: 'address' },
-      { indexed: false, internalType: 'bool', name: 'isWhitelisted', type: 'bool' },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'user',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'operator',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'bool',
+        name: 'isWhitelisted',
+        type: 'bool',
+      },
     ],
     name: 'OperatorToggled',
     type: 'event',
@@ -94,9 +178,19 @@ export const ERC1967Proxy = [
   {
     anonymous: false,
     inputs: [
-      { indexed: true, internalType: 'address', name: 'token', type: 'address' },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'token',
+        type: 'address',
+      },
       { indexed: true, internalType: 'address', name: 'to', type: 'address' },
-      { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
     ],
     name: 'Recovered',
     type: 'event',
@@ -104,8 +198,18 @@ export const ERC1967Proxy = [
   {
     anonymous: false,
     inputs: [
-      { indexed: false, internalType: 'bytes32', name: 'merkleRoot', type: 'bytes32' },
-      { indexed: false, internalType: 'bytes32', name: 'ipfsHash', type: 'bytes32' },
+      {
+        indexed: false,
+        internalType: 'bytes32',
+        name: 'merkleRoot',
+        type: 'bytes32',
+      },
+      {
+        indexed: false,
+        internalType: 'bytes32',
+        name: 'ipfsHash',
+        type: 'bytes32',
+      },
     ],
     name: 'TreeUpdated',
     type: 'event',
@@ -121,7 +225,14 @@ export const ERC1967Proxy = [
   },
   {
     anonymous: false,
-    inputs: [{ indexed: true, internalType: 'address', name: 'implementation', type: 'address' }],
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'implementation',
+        type: 'address',
+      },
+    ],
     name: 'Upgraded',
     type: 'event',
   },
@@ -207,7 +318,9 @@ export const ERC1967Proxy = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'contract ICore', name: '_core', type: 'address' }],
+    inputs: [
+      { internalType: 'contract ICore', name: '_core', type: 'address' },
+    ],
     name: 'initialize',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -272,23 +385,39 @@ export const ERC1967Proxy = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
-  { inputs: [], name: 'revokeTree', outputs: [], stateMutability: 'nonpayable', type: 'function' },
   {
-    inputs: [{ internalType: 'uint256', name: '_disputeAmount', type: 'uint256' }],
+    inputs: [],
+    name: 'revokeTree',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'uint256', name: '_disputeAmount', type: 'uint256' },
+    ],
     name: 'setDisputeAmount',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'uint48', name: '_disputePeriod', type: 'uint48' }],
+    inputs: [
+      { internalType: 'uint48', name: '_disputePeriod', type: 'uint48' },
+    ],
     name: 'setDisputePeriod',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'contract IERC20', name: '_disputeToken', type: 'address' }],
+    inputs: [
+      {
+        internalType: 'contract IERC20',
+        name: '_disputeToken',
+        type: 'address',
+      },
+    ],
     name: 'setDisputeToken',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -346,7 +475,9 @@ export const ERC1967Proxy = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'address', name: 'newImplementation', type: 'address' }],
+    inputs: [
+      { internalType: 'address', name: 'newImplementation', type: 'address' },
+    ],
     name: 'upgradeTo',
     outputs: [],
     stateMutability: 'nonpayable',

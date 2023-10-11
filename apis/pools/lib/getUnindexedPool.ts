@@ -1,10 +1,20 @@
-import { tridentConstantPoolAbi, tridentStablePoolAbi, uniswapV2PairAbi, v3baseAbi } from '@sushiswap/abi'
+import {
+  tridentConstantPoolAbi,
+  tridentStablePoolAbi,
+  uniswapV2PairAbi,
+  v3baseAbi,
+} from 'sushi/abi'
 import { Protocol } from '@sushiswap/database'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import type { Address, FetchTokenResult } from '@wagmi/core'
-import { configureChains, createConfig, fetchToken, readContracts } from '@wagmi/core'
+import {
+  configureChains,
+  createConfig,
+  fetchToken,
+  readContracts,
+} from '@wagmi/core'
 
-import type { getEarnPool } from './api/index.js'
+import type { getEarnPool } from './api'
 
 const { publicClient } = configureChains(allChains, allProviders)
 
@@ -31,9 +41,24 @@ async function getV2Pool({ chainId, address }: GetPoolArgs): Promise<Pool> {
   const [token0, token1, totalSupply] = await readContracts({
     allowFailure: false,
     contracts: [
-      { address: address as Address, abi: uniswapV2PairAbi, functionName: 'token0', chainId },
-      { address: address as Address, abi: uniswapV2PairAbi, functionName: 'token1', chainId },
-      { address: address as Address, abi: uniswapV2PairAbi, functionName: 'totalSupply', chainId },
+      {
+        address: address as Address,
+        abi: uniswapV2PairAbi,
+        functionName: 'token0',
+        chainId,
+      },
+      {
+        address: address as Address,
+        abi: uniswapV2PairAbi,
+        functionName: 'token1',
+        chainId,
+      },
+      {
+        address: address as Address,
+        abi: uniswapV2PairAbi,
+        functionName: 'totalSupply',
+        chainId,
+      },
     ],
   })
 
@@ -46,14 +71,37 @@ async function getV2Pool({ chainId, address }: GetPoolArgs): Promise<Pool> {
   }
 }
 
-async function getTridentStablePool({ chainId, address }: GetPoolArgs): Promise<Pool> {
+async function getTridentStablePool({
+  chainId,
+  address,
+}: GetPoolArgs): Promise<Pool> {
   const [token0, token1, totalSupply, swapFee] = await readContracts({
     allowFailure: false,
     contracts: [
-      { address: address as Address, abi: tridentStablePoolAbi, functionName: 'token0', chainId },
-      { address: address as Address, abi: tridentStablePoolAbi, functionName: 'token1', chainId },
-      { address: address as Address, abi: tridentStablePoolAbi, functionName: 'totalSupply', chainId },
-      { address: address as Address, abi: tridentStablePoolAbi, functionName: 'swapFee', chainId },
+      {
+        address: address as Address,
+        abi: tridentStablePoolAbi,
+        functionName: 'token0',
+        chainId,
+      },
+      {
+        address: address as Address,
+        abi: tridentStablePoolAbi,
+        functionName: 'token1',
+        chainId,
+      },
+      {
+        address: address as Address,
+        abi: tridentStablePoolAbi,
+        functionName: 'totalSupply',
+        chainId,
+      },
+      {
+        address: address as Address,
+        abi: tridentStablePoolAbi,
+        functionName: 'swapFee',
+        chainId,
+      },
     ],
   })
 
@@ -67,15 +115,43 @@ async function getTridentStablePool({ chainId, address }: GetPoolArgs): Promise<
   }
 }
 
-async function getTridentConstantPool({ chainId, address }: GetPoolArgs): Promise<Pool> {
+async function getTridentConstantPool({
+  chainId,
+  address,
+}: GetPoolArgs): Promise<Pool> {
   const [token0, token1, totalSupply, swapFee, reserves] = await readContracts({
     allowFailure: false,
     contracts: [
-      { address: address as Address, abi: tridentConstantPoolAbi, functionName: 'token0', chainId },
-      { address: address as Address, abi: tridentConstantPoolAbi, functionName: 'token1', chainId },
-      { address: address as Address, abi: tridentConstantPoolAbi, functionName: 'totalSupply', chainId },
-      { address: address as Address, abi: tridentConstantPoolAbi, functionName: 'swapFee', chainId },
-      { address: address as Address, abi: tridentConstantPoolAbi, functionName: 'getReserves', chainId },
+      {
+        address: address as Address,
+        abi: tridentConstantPoolAbi,
+        functionName: 'token0',
+        chainId,
+      },
+      {
+        address: address as Address,
+        abi: tridentConstantPoolAbi,
+        functionName: 'token1',
+        chainId,
+      },
+      {
+        address: address as Address,
+        abi: tridentConstantPoolAbi,
+        functionName: 'totalSupply',
+        chainId,
+      },
+      {
+        address: address as Address,
+        abi: tridentConstantPoolAbi,
+        functionName: 'swapFee',
+        chainId,
+      },
+      {
+        address: address as Address,
+        abi: tridentConstantPoolAbi,
+        functionName: 'getReserves',
+        chainId,
+      },
     ],
   })
 
@@ -95,10 +171,30 @@ async function getV3Pool({ chainId, address }: GetPoolArgs): Promise<Pool> {
   const [token0, token1, liquidity, fee] = await readContracts({
     allowFailure: false,
     contracts: [
-      { address: address as Address, abi: v3baseAbi, functionName: 'token0', chainId },
-      { address: address as Address, abi: v3baseAbi, functionName: 'token1', chainId },
-      { address: address as Address, abi: v3baseAbi, functionName: 'liquidity', chainId },
-      { address: address as Address, abi: v3baseAbi, functionName: 'fee', chainId },
+      {
+        address: address as Address,
+        abi: v3baseAbi,
+        functionName: 'token0',
+        chainId,
+      },
+      {
+        address: address as Address,
+        abi: v3baseAbi,
+        functionName: 'token1',
+        chainId,
+      },
+      {
+        address: address as Address,
+        abi: v3baseAbi,
+        functionName: 'liquidity',
+        chainId,
+      },
+      {
+        address: address as Address,
+        abi: v3baseAbi,
+        functionName: 'fee',
+        chainId,
+      },
     ],
   })
   return {
@@ -112,14 +208,20 @@ async function getV3Pool({ chainId, address }: GetPoolArgs): Promise<Pool> {
 }
 
 // Thought ReturnType would be enough, needed to wrap it to make TS happy
-export async function getUnindexedPool(poolId: string): Promise<Awaited<ReturnType<typeof getEarnPool>>> {
+export async function getUnindexedPool(
+  poolId: string,
+): Promise<Awaited<ReturnType<typeof getEarnPool>>> {
   console.log('getUnindexedPool poolId', poolId)
-  const [chainId, address] = [Number(poolId.split(':')[0]), poolId.split(':')[1]]
+  const [chainId, address] = [
+    Number(poolId.split(':')[0]),
+    poolId.split(':')[1],
+  ]
   if (!chainId || !address) throw new Error('Invalid pool id.')
 
   let lpTokenName
   try {
-    lpTokenName = (await fetchToken({ address: address as Address, chainId })).name
+    lpTokenName = (await fetchToken({ address: address as Address, chainId }))
+      .name
   } catch (e) {
     lpTokenName = 'V3'
   }
@@ -141,7 +243,9 @@ export async function getUnindexedPool(poolId: string): Promise<Awaited<ReturnTy
 
   const pool = await poolFetcher({ chainId, address })
 
-  const tokens = await Promise.all(pool.tokens.map((token) => fetchToken({ address: token, chainId })))
+  const tokens = await Promise.all(
+    pool.tokens.map((token) => fetchToken({ address: token, chainId })),
+  )
 
   const poolName = tokens.map(({ symbol }) => symbol).join('-')
 

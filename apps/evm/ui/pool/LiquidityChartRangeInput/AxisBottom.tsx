@@ -1,4 +1,10 @@
-import { Axis as d3Axis, axisBottom, NumberValue, ScaleLinear, select } from 'd3'
+import {
+  Axis as d3Axis,
+  axisBottom,
+  NumberValue,
+  ScaleLinear,
+  select,
+} from 'd3'
 import React, { FC, useMemo } from 'react'
 
 interface AxisProps {
@@ -22,7 +28,11 @@ interface AxisBottomProps {
   offset?: number
 }
 
-export const AxisBottom: FC<AxisBottomProps> = ({ xScale, innerHeight, offset = 0 }) =>
+export const AxisBottom: FC<AxisBottomProps> = ({
+  xScale,
+  innerHeight,
+  offset = 0,
+}) =>
   useMemo(
     () => (
       <g
@@ -32,5 +42,5 @@ export const AxisBottom: FC<AxisBottomProps> = ({ xScale, innerHeight, offset = 
         <Axis axisGenerator={axisBottom(xScale).ticks(6)} />
       </g>
     ),
-    [innerHeight, offset, xScale]
+    [innerHeight, offset, xScale],
   )

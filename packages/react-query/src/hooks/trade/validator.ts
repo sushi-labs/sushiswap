@@ -51,6 +51,6 @@ export const tradeValidator = z.object({
       tokenIn: z.string(),
       tokenOut: z.string(),
       routeCode: z.string(),
-    })
+    }),
   ),
 })

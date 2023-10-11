@@ -1,7 +1,11 @@
-import { createNotification, PromiseNotification, ResolvedNotification } from '@sushiswap/dexie'
+import {
+  PromiseNotification,
+  ResolvedNotification,
+  createNotification,
+} from '@sushiswap/dexie'
 import { nanoid } from 'nanoid'
 import React from 'react'
-import { toast, ToastOptions } from 'react-toastify'
+import { ToastOptions, toast } from 'react-toastify'
 
 import { ToastButtons } from './ToastButtons'
 import { ToastCompleted } from './ToastCompleted'
@@ -32,32 +36,56 @@ export const createToast = (props: PromiseNotification) => {
 
       // Spawn success notification
       const toastId = `completed:${props.txHash}`
-      toast(<ToastCompleted {...props} summary={props.summary.completed} onDismiss={() => toast.dismiss(toastId)} />, {
-        ...TOAST_OPTIONS,
-        toastId,
-        autoClose: 5000,
-      })
+      toast(
+        <ToastCompleted
+          {...props}
+          summary={props.summary.completed}
+          onDismiss={() => toast.dismiss(toastId)}
+        />,
+        {
+          ...TOAST_OPTIONS,
+          toastId,
+          autoClose: 5000,
+        },
+      )
     })
     .catch(() => {
       setTimeout(onDismiss, 3000)
 
       // Spawn error notification
       const toastId = `failed:${props.txHash}`
-      toast(<ToastFailed {...props} summary={props.summary.failed} onDismiss={() => toast.dismiss(toastId)} />, {
-        ...TOAST_OPTIONS,
-        toastId,
-      })
+      toast(
+        <ToastFailed
+          {...props}
+          summary={props.summary.failed}
+          onDismiss={() => toast.dismiss(toastId)}
+        />,
+        {
+          ...TOAST_OPTIONS,
+          toastId,
+        },
+      )
     })
 
-  toast(<ToastPending {...props} summary={props.summary.pending} onDismiss={onDismiss} />, {
-    ...TOAST_OPTIONS,
-    toastId: props.txHash,
-  })
+  toast(
+    <ToastPending
+      {...props}
+      summary={props.summary.pending}
+      onDismiss={onDismiss}
+    />,
+    {
+      ...TOAST_OPTIONS,
+      toastId: props.txHash,
+    },
+  )
 
   return createNotification(props)
 }
 
-export const createErrorToast = (message: string | undefined, code: boolean) => {
+export const createErrorToast = (
+  message: string | undefined,
+  code: boolean,
+) => {
   if (!message) return
 
   const toastId = `failed:${nanoid()}`
@@ -69,17 +97,20 @@ export const createErrorToast = (message: string | undefined, code: boolean) => 
     {
       ...TOAST_OPTIONS,
       toastId,
-    }
+    },
   )
 }
 
 export const createSuccessToast = (props: ResolvedNotification) => {
   const toastId = `completed:${props.txHash}`
-  toast(<ToastCompleted {...props} onDismiss={() => toast.dismiss(toastId)} />, {
-    ...TOAST_OPTIONS,
-    toastId,
-    autoClose: 5000,
-  })
+  toast(
+    <ToastCompleted {...props} onDismiss={() => toast.dismiss(toastId)} />,
+    {
+      ...TOAST_OPTIONS,
+      toastId,
+      autoClose: 5000,
+    },
+  )
 
   return createNotification(props)
 }

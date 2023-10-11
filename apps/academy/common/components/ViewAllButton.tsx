@@ -7,17 +7,22 @@ interface ViewAllButton extends ButtonProps {
   isSmall?: boolean
 }
 
-export const ViewAllButton = forwardRef<HTMLButtonElement, ViewAllButton>(({ isSmall, className, ...rest }, ref) => (
-  <Button
-    icon={PlusCircleIcon}
-    iconProps={{ fill: '#3B7EF6' }}
-    ref={ref}
-    variant="secondary"
-    className={classNames(isSmall ? 'sm:hidden' : 'hidden sm:flex', className)}
-    {...rest}
-  >
-    View All
-  </Button>
-))
+export const ViewAllButton = forwardRef<HTMLButtonElement, ViewAllButton>(
+  ({ isSmall, className, ...rest }, ref) => (
+    <Button
+      icon={PlusCircleIcon}
+      iconProps={{ fill: '#3B7EF6' }}
+      ref={ref}
+      variant="secondary"
+      className={classNames(
+        isSmall ? 'sm:hidden' : 'hidden sm:flex',
+        className,
+      )}
+      {...rest}
+    >
+      View All
+    </Button>
+  ),
+)
 
 ViewAllButton.displayName = 'ViewAllButton'

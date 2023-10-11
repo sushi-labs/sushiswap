@@ -2,7 +2,7 @@ import { GetPoolsArgs, Protocol } from '@sushiswap/client'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
 
-export const L2_DEADLINE_FROM_NOW = 60n * 5n
+export const L2_DEADLINE_FROM_NOW = BigInt(60) * BigInt(5)
 
 // export const POOL_VERSION_MAP: Record<PoolVersion, string> = {
 //   LEGACY: 'Legacy',

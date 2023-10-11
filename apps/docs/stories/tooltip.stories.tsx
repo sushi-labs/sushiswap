@@ -1,7 +1,13 @@
 // Tooltip.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { Button, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
+import {
+  Button,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@sushiswap/ui'
 import * as React from 'react'
 
 const meta = {

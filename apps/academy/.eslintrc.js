@@ -1,1 +1,3 @@
-module.exports = require('@sushiswap/eslint-config/nextjs')
+module.exports = {
+  extends: 'next/core-web-vitals',
+}

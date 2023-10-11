@@ -57,7 +57,9 @@ export const DifficultyCard: FC<DifficultyCard> = ({ difficulty }) => {
             </div>
           </Transition>
         </div>
-        <p className="text-xl font-bold sm:text-2xl">{difficulty?.attributes?.longDescription}</p>
+        <p className="text-xl font-bold sm:text-2xl">
+          {difficulty?.attributes?.longDescription}
+        </p>
       </div>
     </a>
   )

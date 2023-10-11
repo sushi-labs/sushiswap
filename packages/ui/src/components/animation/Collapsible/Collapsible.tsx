@@ -9,7 +9,12 @@ interface Collapsible {
   afterChange?: () => void
 }
 
-export const Collapsible: FC<Collapsible> = ({ className, open, children, afterChange }) => {
+export const Collapsible: FC<Collapsible> = ({
+  className,
+  open,
+  children,
+  afterChange,
+}) => {
   const { ref, height } = useResizeObserver()
 
   const props = useSpring({

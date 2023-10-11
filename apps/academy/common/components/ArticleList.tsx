@@ -12,13 +12,20 @@ interface ArticleList {
   skeletonAmount?: number
 }
 
-export const ArticleList: FC<ArticleList> = ({ articles, loading, render, skeletonAmount }) => {
+export const ArticleList: FC<ArticleList> = ({
+  articles,
+  loading,
+  render,
+  skeletonAmount,
+}) => {
   if (loading)
     return (
       <>
-        {Array.from({ length: skeletonAmount ?? 6 }, (_, i) => i + 1).map((n) => (
-          <CardSkeleton key={n} />
-        ))}
+        {Array.from({ length: skeletonAmount ?? 6 }, (_, i) => i + 1).map(
+          (n) => (
+            <CardSkeleton key={n} />
+          ),
+        )}
       </>
     )
   if (!articles?.length)

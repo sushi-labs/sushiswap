@@ -1,6 +1,6 @@
 'use client'
 
-import { Amount, Type } from '@sushiswap/currency'
+import { Amount, Type } from 'sushi/currency'
 import { ButtonProps } from '@sushiswap/ui/components/button'
 import React, { FC } from 'react'
 import { Address } from 'wagmi'
@@ -39,7 +39,12 @@ const ApproveERC20Multiple: FC<ApproveERC20MultipleProps> = ({
       amount={amounts[_index].amount}
       contract={amounts[_index].contract}
     >
-      <ApproveERC20Multiple {...props} index={_index - 1} id={id} amounts={amounts}>
+      <ApproveERC20Multiple
+        {...props}
+        index={_index - 1}
+        id={id}
+        amounts={amounts}
+      >
         {children}
       </ApproveERC20Multiple>
     </ApproveERC20>

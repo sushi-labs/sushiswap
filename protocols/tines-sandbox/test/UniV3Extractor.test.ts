@@ -1,9 +1,21 @@
 import { reset } from '@nomicfoundation/hardhat-network-helpers'
-import { erc20Abi, routeProcessor2Abi } from '@sushiswap/abi'
-import { ChainId } from '@sushiswap/chain'
-import { DAI, Native, USDC, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
-import { FactoryV3, LogFilter2, LogFilterType, PoolInfo, UniV3Extractor } from '@sushiswap/extractor'
-import { LiquidityProviders, NativeWrapProvider, PoolCode, Router, UniswapV3Provider } from '@sushiswap/router'
+import { erc20Abi, routeProcessor2Abi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
+import { DAI, Native, USDC, WBTC, WETH9, WNATIVE } from 'sushi/currency'
+import {
+  FactoryV3,
+  LogFilter2,
+  LogFilterType,
+  PoolInfo,
+  UniV3Extractor,
+} from '@sushiswap/extractor'
+import {
+  LiquidityProviders,
+  NativeWrapProvider,
+  PoolCode,
+  Router,
+  UniswapV3Provider,
+} from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { RouteStatus, UniV3Pool } from '@sushiswap/tines'
 import { POOL_INIT_CODE_HASH } from '@sushiswap/v3-sdk'
@@ -23,7 +35,15 @@ import {
   WalletClient,
 } from 'viem'
 import { Account, privateKeyToAccount } from 'viem/accounts'
-import { arbitrum, celo, Chain, hardhat, mainnet, optimism, polygon } from 'viem/chains'
+import {
+  arbitrum,
+  celo,
+  Chain,
+  hardhat,
+  mainnet,
+  optimism,
+  polygon,
+} from 'viem/chains'
 
 import { setTokenBalance } from '../src'
 import { comparePoolCodes, isSubpool } from '../src/ComparePoolCodes'
@@ -99,7 +119,9 @@ interface TestEnvironment {
 }
 
 async function prepareEnvironment(): Promise<TestEnvironment> {
-  const privateKey = (network.config.accounts as HardhatNetworkAccountUserConfig[])[0].privateKey as '0x${string}'
+  const privateKey = (
+    network.config.accounts as HardhatNetworkAccountUserConfig[]
+  )[0].privateKey as '0x${string}'
   const account = privateKeyToAccount(privateKey)
   const chain: Chain = {
     ...hardhat,
@@ -120,7 +142,12 @@ async function prepareEnvironment(): Promise<TestEnvironment> {
   const [user] = await client.getAddresses()
 
   const amount = BigInt(1e28)
-  const tokens = [DAI[ChainId.ETHEREUM], USDC[ChainId.ETHEREUM], WNATIVE[ChainId.ETHEREUM], WBTC[ChainId.ETHEREUM]]
+  const tokens = [
+    DAI[ChainId.ETHEREUM],
+    USDC[ChainId.ETHEREUM],
+    WNATIVE[ChainId.ETHEREUM],
+    WBTC[ChainId.ETHEREUM],
+  ]
   await Promise.all(
     tokens.map(async (t) => {
       const addr = t.address as Address
@@ -137,7 +164,7 @@ async function prepareEnvironment(): Promise<TestEnvironment> {
         functionName: 'approve',
         args: [SwapRouterAddress, amount],
       })
-    })
+    }),
   )
 
   return {
@@ -154,7 +181,7 @@ async function Mint(
   pool: UniV3Pool,
   tickLower: number,
   tickUpper: number,
-  liquidity: bigint
+  liquidity: bigint,
 ): Promise<Transaction> {
   const MintParams = {
     token0: pool.token0.address,
@@ -189,7 +216,7 @@ async function MintAndBurn(
   pool: UniV3Pool,
   tickLower: number,
   tickUpper: number,
-  liquidity: bigint
+  liquidity: bigint,
 ): Promise<Transaction> {
   const MintParams = {
     token0: pool.token0.address,
@@ -255,7 +282,12 @@ async function MintAndBurn(
   return client.getTransaction({ hash: collectHash })
 }
 
-async function Swap(env: TestEnvironment, pool: UniV3Pool, direction: boolean, amountIn: bigint): Promise<Transaction> {
+async function Swap(
+  env: TestEnvironment,
+  pool: UniV3Pool,
+  direction: boolean,
+  amountIn: bigint,
+): Promise<Transaction> {
   const ExactInputSingleParams = {
     tokenIn: direction ? pool.token0.address : pool.token1.address,
     tokenOut: direction ? pool.token1.address : pool.token0.address,
@@ -283,7 +315,10 @@ async function Swap(env: TestEnvironment, pool: UniV3Pool, direction: boolean, a
 
 async function makeTest(
   env: TestEnvironment,
-  sendEvents: (env: TestEnvironment, pc: UniV3Pool) => Promise<Transaction> | undefined
+  sendEvents: (
+    env: TestEnvironment,
+    pc: UniV3Pool,
+  ) => Promise<Transaction> | undefined,
 ) {
   const client = createPublicClient({
     chain: env.chain,
@@ -297,7 +332,7 @@ async function makeTest(
     [uniswapFactory(ChainId.ETHEREUM)],
     '',
     logFilter,
-    false
+    false,
   )
   await extractor.start()
   pools.forEach((p) => extractor.addPoolWatching(p, 'request'))
@@ -312,23 +347,32 @@ async function makeTest(
       extractor.getStablePoolCodes().map(async (pc) => {
         const tinesPool = pc.pool as UniV3Pool
         return sendEvents(env, tinesPool)
-      })
+      }),
     )
   ).filter((tr) => tr !== undefined) as Transaction[]
 
   if (transactions.length > 0) {
-    const blockNumber = Math.max(...transactions.map((tr) => Number(tr.blockNumber || 0)))
+    const blockNumber = Math.max(
+      ...transactions.map((tr) => Number(tr.blockNumber || 0)),
+    )
     for (;;) {
-      if (Number(extractor.lastProcessdBlock) >= blockNumber && extractor.getStablePoolCodes().length === pools.length)
+      if (
+        Number(extractor.lastProcessdBlock) >= blockNumber &&
+        extractor.getStablePoolCodes().length === pools.length
+      )
         break
       await delay(500)
     }
   }
 
   const uniProvider = new UniswapV3Provider(ChainId.ETHEREUM, client)
-  await uniProvider.fetchPoolsForToken(USDC[ChainId.ETHEREUM], WETH9[ChainId.ETHEREUM], {
-    has: (poolAddress: string) => !poolSet.has(poolAddress.toLowerCase()),
-  })
+  await uniProvider.fetchPoolsForToken(
+    USDC[ChainId.ETHEREUM],
+    WETH9[ChainId.ETHEREUM],
+    {
+      has: (poolAddress: string) => !poolSet.has(poolAddress.toLowerCase()),
+    },
+  )
   const providerPools = uniProvider.getCurrentPoolList()
 
   extractorPools = extractor.getStablePoolCodes()
@@ -341,8 +385,15 @@ async function makeTest(
   logFilter.stop(false)
 }
 
-async function checkHistoricalLogs(env: TestEnvironment, pool: PoolInfo, fromBlock: bigint, toBlock: bigint) {
-  const transport = http(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`)
+async function checkHistoricalLogs(
+  env: TestEnvironment,
+  pool: PoolInfo,
+  fromBlock: bigint,
+  toBlock: bigint,
+) {
+  const transport = http(
+    `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
+  )
   const client = createPublicClient({
     chain: mainnet,
     transport,
@@ -355,7 +406,10 @@ async function checkHistoricalLogs(env: TestEnvironment, pool: PoolInfo, fromBlo
   })
   //console.log(logs.length)
 
-  await reset(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`, fromBlock)
+  await reset(
+    `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
+    fromBlock,
+  )
   const clientPrimary = createPublicClient({
     chain: env.chain,
     transport: env.transport,
@@ -374,7 +428,7 @@ async function checkHistoricalLogs(env: TestEnvironment, pool: PoolInfo, fromBlo
         //
       },
     } as unknown as LogFilter2,
-    false
+    false,
   )
   await extractor.start()
   extractor.addPoolWatching(pool, 'request')
@@ -389,12 +443,19 @@ async function checkHistoricalLogs(env: TestEnvironment, pool: PoolInfo, fromBlo
     await delay(500)
   }
 
-  await reset(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`, toBlock)
+  await reset(
+    `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
+    toBlock,
+  )
 
   const uniProvider = new UniswapV3Provider(ChainId.ETHEREUM, clientPrimary)
-  await uniProvider.fetchPoolsForToken(USDC[ChainId.ETHEREUM], WETH9[ChainId.ETHEREUM], {
-    has: (poolAddress: string) => poolAddress !== pool.address,
-  })
+  await uniProvider.fetchPoolsForToken(
+    USDC[ChainId.ETHEREUM],
+    WETH9[ChainId.ETHEREUM],
+    {
+      has: (poolAddress: string) => poolAddress !== pool.address,
+    },
+  )
   const providerPools = uniProvider.getCurrentPoolList()
 
   isSubpool(providerPools[0], extractor.getStablePoolCodes()[0])
@@ -430,7 +491,13 @@ describe('UniV3Extractor', () => {
   it('mint after event', async () => {
     await makeTest(env, (env, pool) => {
       const currentTick = pool.ticks[pool.nearestTick].index
-      return Mint(env, pool, currentTick + 120, currentTick + 6000, BigInt(1e10))
+      return Mint(
+        env,
+        pool,
+        currentTick + 120,
+        currentTick + 6000,
+        BigInt(1e10),
+      )
     })
   })
 
@@ -445,7 +512,13 @@ describe('UniV3Extractor', () => {
   it('mint and burn', async () => {
     await makeTest(env, (env, pool) => {
       const currentTick = pool.ticks[pool.nearestTick].index
-      return MintAndBurn(env, pool, currentTick - 540, currentTick + 540, BigInt(1e10))
+      return MintAndBurn(
+        env,
+        pool,
+        currentTick - 540,
+        currentTick + 540,
+        BigInt(1e10),
+      )
     })
   })
 
@@ -516,8 +589,18 @@ async function startInfinitTest(args: {
   })
   const chainId = client.chain?.id as ChainId
 
-  const logFilter = new LogFilter2(this.client, args.logDepth, LogFilterType.OneCall)
-  const extractor = new UniV3Extractor(client, args.tickLensContract, args.factories, './cache', logFilter)
+  const logFilter = new LogFilter2(
+    this.client,
+    args.logDepth,
+    LogFilterType.OneCall,
+  )
+  const extractor = new UniV3Extractor(
+    client,
+    args.tickLensContract,
+    args.factories,
+    './cache',
+    logFilter,
+  )
   await extractor.start()
   extractor.getWatchersForTokens(BASES_TO_CHECK_TRADES_AGAINST[chainId])
 
@@ -527,15 +610,28 @@ async function startInfinitTest(args: {
     for (let i = 1; i < tokens.length; ++i) {
       await delay(1000)
       const { prefetched: watchers } = extractor.getWatchersForTokens(tokens)
-      const pools = watchers.map((w) => w.getPoolCode()).filter((pc) => pc !== undefined) as PoolCode[]
+      const pools = watchers
+        .map((w) => w.getPoolCode())
+        .filter((pc) => pc !== undefined) as PoolCode[]
       const poolMap = new Map<string, PoolCode>()
       pools.forEach((p) => poolMap.set(p.pool.address, p))
-      nativeProvider.getCurrentPoolList().forEach((p) => poolMap.set(p.pool.address, p))
+      nativeProvider
+        .getCurrentPoolList()
+        .forEach((p) => poolMap.set(p.pool.address, p))
       const fromToken = Native.onChain(chainId),
         toToken = tokens[i]
-      const route = Router.findBestRoute(poolMap, chainId, fromToken, BigInt(1e18), toToken, 30e9)
+      const route = Router.findBestRoute(
+        poolMap,
+        chainId,
+        fromToken,
+        BigInt(1e18),
+        toToken,
+        30e9,
+      )
       if (route.status === RouteStatus.NoWay) {
-        console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status}`)
+        console.log(
+          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status}`,
+        )
         continue
       }
       const rpParams = Router.routeProcessor2Params(
@@ -544,10 +640,12 @@ async function startInfinitTest(args: {
         fromToken,
         toToken,
         args.RP3Address,
-        args.RP3Address
+        args.RP3Address,
       )
       if (rpParams === undefined) {
-        console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ROUTE CREATION FAILED !!!`)
+        console.log(
+          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ROUTE CREATION FAILED !!!`,
+        )
         continue
       }
       try {
@@ -570,12 +668,16 @@ async function startInfinitTest(args: {
           .then((r) => r.result)
         const amountOutExp = BigInt(route.amountOutBI.toString())
         const diff =
-          amountOutExp === 0n ? amountOutReal - amountOutExp : Number(amountOutReal - amountOutExp) / route.amountOut
+          amountOutExp === 0n
+            ? amountOutReal - amountOutExp
+            : Number(amountOutReal - amountOutExp) / route.amountOut
         console.log(
-          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.legs.length - 1} pools` +
-            ` diff = ${diff > 0 ? '+' : ''}${diff}`
+          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${
+            route.legs.length - 1
+          } pools` + ` diff = ${diff > 0 ? '+' : ''}${diff}`,
         )
-        if (Math.abs(Number(diff)) > 0.001) console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
+        if (Math.abs(Number(diff)) > 0.001)
+          console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
       } catch (e) {
         console.log('Routing failed. No connection ?')
       }

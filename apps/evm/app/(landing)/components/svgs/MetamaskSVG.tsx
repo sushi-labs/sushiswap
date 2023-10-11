@@ -2,7 +2,12 @@ import React from 'react'
 
 export const MetamaskSVG = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 172 33">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+      fill="none"
+      viewBox="0 0 172 33"
+    >
       <title>MetaMask</title>
       <path
         fill="currentColor"

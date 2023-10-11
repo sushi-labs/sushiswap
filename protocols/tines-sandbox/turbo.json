@@ -3,16 +3,14 @@
   "pipeline": {
     "build": {
       "outputs": [
-        "typechain/**", 
+        "typechain/**",
         "artifacts/**",
         "!artifacts/build-info/**",
         "cache/**",
         "!cache/solidity-files-cache.json"
       ],
       "dependsOn": ["^build", "export"],
-      "env": [
-        "TS_NODE_TRANSPILE_ONLY"
-      ],
+      "env": ["TS_NODE_TRANSPILE_ONLY"],
       "cache": true
     },
     "check": {

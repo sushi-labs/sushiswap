@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events'
 
-import { tickLensAbi } from '@sushiswap/abi'
+import { tickLensAbi } from 'sushi/abi'
 import { NUMBER_OF_SURROUNDING_TICKS } from '@sushiswap/router'
 import { CLTick } from '@sushiswap/tines'
 import { Address } from 'abitype'
@@ -40,7 +40,7 @@ export class WordLoadManager extends EventEmitter {
     poolSpacing: number,
     tickHelperContract: Address,
     client: MultiCallAggregator,
-    counter?: Counter
+    counter?: Counter,
   ) {
     super()
     this.poolAddress = poolAddress
@@ -62,12 +62,12 @@ export class WordLoadManager extends EventEmitter {
       try {
         while (this.downloadQueue.length > 0) {
           const wordIndex = this.downloadQueue[this.downloadQueue.length - 1]
-          const { blockNumber, returnValue: ticks } = await this.client.call<{ tick: bigint; liquidityNet: bigint }[]>(
-            this.tickHelperContract,
-            tickLensAbi,
-            'getPopulatedTicksInWord',
-            [this.poolAddress, wordIndex]
-          )
+          const { blockNumber, returnValue: ticks } = await this.client.call<
+            { tick: bigint; liquidityNet: bigint }[]
+          >(this.tickHelperContract, tickLensAbi, 'getPopulatedTicksInWord', [
+            this.poolAddress,
+            wordIndex,
+          ])
           const wordIndexNew = this.downloadQueue[this.downloadQueue.length - 1]
           if (wordIndexNew === wordIndex) {
             // Queue still has the same index at the end
@@ -81,11 +81,15 @@ export class WordLoadManager extends EventEmitter {
                 .sort((a: CLTick, b: CLTick) => a.index - b.index),
             })
             this.emit('ticksChanged')
-            if (blockNumber >= this.latestEventBlockNumber) this.downloadQueue.pop()
+            if (blockNumber >= this.latestEventBlockNumber)
+              this.downloadQueue.pop()
           }
         }
       } catch (e) {
-        warnLog(this.client.chainId, `Pool ${this.poolAddress} ticks downloading failed`)
+        warnLog(
+          this.client.chainId,
+          `Pool ${this.poolAddress} ticks downloading failed`,
+        )
       }
       if (initialQueueLength > 0 && this.busyCounter) this.busyCounter.dec()
       this.emit('isUpdated')
@@ -107,7 +111,8 @@ export class WordLoadManager extends EventEmitter {
 
     const direction = currentTickWord - minWord <= maxWord - currentTickWord
     const wordNumber = maxWord - minWord
-    const pendingWord: number | undefined = this.downloadQueue[this.downloadQueue.length - 1]
+    const pendingWord: number | undefined =
+      this.downloadQueue[this.downloadQueue.length - 1]
     const queue: number[] = []
     for (let i = wordNumber; i >= 0; --i) {
       const wordIndex = currentTickWord + getJump(i, direction)
@@ -131,16 +136,24 @@ export class WordLoadManager extends EventEmitter {
     if (maxIndex - minIndex <= 1) return []
 
     let ticks: CLTick[] = []
-    for (let i = minIndex + 1; i < maxIndex; ++i) ticks = ticks.concat((this.words.get(i) as WordState).ticks)
+    for (let i = minIndex + 1; i < maxIndex; ++i)
+      ticks = ticks.concat((this.words.get(i) as WordState).ticks)
 
-    const lowerUnknownTick = (minIndex + 1) * this.poolSpacing * 256 - this.poolSpacing
-    console.assert(ticks.length === 0 || lowerUnknownTick < ticks[0].index, 'Error 85: unexpected min tick index')
+    const lowerUnknownTick =
+      (minIndex + 1) * this.poolSpacing * 256 - this.poolSpacing
+    console.assert(
+      ticks.length === 0 || lowerUnknownTick < ticks[0].index,
+      'Error 85: unexpected min tick index',
+    )
     ticks.unshift({
       index: lowerUnknownTick,
       DLiquidity: 0n,
     })
     const upperUnknownTick = maxIndex * this.poolSpacing * 256
-    console.assert(ticks[ticks.length - 1].index < upperUnknownTick, 'Error 91: unexpected max tick index')
+    console.assert(
+      ticks[ticks.length - 1].index < upperUnknownTick,
+      'Error 91: unexpected max tick index',
+    )
     ticks.push({
       index: upperUnknownTick,
       DLiquidity: 0n,
@@ -154,12 +167,16 @@ export class WordLoadManager extends EventEmitter {
   }
 
   addTick(eventBlockNumber: bigint, tick: number, amount: bigint) {
-    this.latestEventBlockNumber = Math.max(this.latestEventBlockNumber, Number(eventBlockNumber))
+    this.latestEventBlockNumber = Math.max(
+      this.latestEventBlockNumber,
+      Number(eventBlockNumber),
+    )
 
     const tickWord = this.wordIndex(tick)
     const state = this.words.get(tickWord)
     if (state !== undefined) {
       const { blockNumber, ticks } = state
+
       if (eventBlockNumber <= blockNumber) return
       if (ticks.length === 0 || tick < ticks[0].index) {
         ticks.unshift({ index: tick, DLiquidity: amount })

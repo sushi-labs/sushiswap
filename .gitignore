@@ -99,3 +99,6 @@ next-env.d.ts
 
 # storybook
 storybook-static
+
+# tines snapshots
+test/snapshots/

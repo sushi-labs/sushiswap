@@ -11,7 +11,8 @@ export const resolvers: Resolvers = {
     chainId: (root, args, context) => root.chainId || context.chainId || 137,
   },
   Rebase: {
-    chainId: (root, args, context, info) => Number(root.chainId || context.chainId || 1),
+    chainId: (root, args, context, info) =>
+      Number(root.chainId || context.chainId || 1),
   },
   Query: {
     rebasesByChainIds,

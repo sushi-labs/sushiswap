@@ -1,7 +1,7 @@
 'use client'
 
 import { Pool } from '@sushiswap/client'
-import { formatUSD } from '@sushiswap/format'
+import { formatUSD } from 'sushi'
 import { Button } from '@sushiswap/ui/components/button'
 import {
   Card,
@@ -24,7 +24,8 @@ interface PoolMyRewardsProps {
 }
 
 export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pool }) => {
-  const { pendingRewards, harvest, values, isLoading } = usePoolPositionRewards()
+  const { pendingRewards, harvest, values, isLoading } =
+    usePoolPositionRewards()
 
   if (!pool?.incentives?.length && !pendingRewards?.length) return <span></span>
 
@@ -32,7 +33,9 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pool }) => {
     <Card>
       <CardHeader>
         <CardTitle>Unclaimed rewards</CardTitle>
-        <CardDescription>Total: {formatUSD(values.reduce((a, b) => a + b, 0))}</CardDescription>
+        <CardDescription>
+          Total: {formatUSD(values.reduce((a, b) => a + b, 0))}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <CardGroup>
@@ -51,8 +54,18 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pool }) => {
       </CardContent>
       <CardFooter>
         <Checker.Connect variant="outline" size="default" fullWidth>
-          <Checker.Network variant="outline" size="default" fullWidth chainId={pool.chainId}>
-            <Button disabled={!harvest} fullWidth onClick={() => harvest?.()} size="default">
+          <Checker.Network
+            variant="outline"
+            size="default"
+            fullWidth
+            chainId={pool.chainId}
+          >
+            <Button
+              disabled={!harvest}
+              fullWidth
+              onClick={() => harvest?.()}
+              size="default"
+            >
               Claim
             </Button>
           </Checker.Network>

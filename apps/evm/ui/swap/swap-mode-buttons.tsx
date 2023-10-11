@@ -34,7 +34,11 @@ export const SwapModeButtons = () => {
                 <PathnameButton pathname="/swap/cross-chain" size="sm">
                   <HoverCardTrigger asChild>
                     <span className="saturate-200 flex items-center gap-2 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
-                      <ShuffleIcon width={20} height={20} className="text-blue" />
+                      <ShuffleIcon
+                        width={20}
+                        height={20}
+                        className="text-blue"
+                      />
                       Cross Chain
                     </span>
                   </HoverCardTrigger>
@@ -46,7 +50,8 @@ export const SwapModeButtons = () => {
             <CardHeader>
               <CardTitle>Cross-chain Swap</CardTitle>
               <CardDescription>
-                Swap your funds on one network and swap them into a token on a different network.{' '}
+                Swap your funds on one network and swap them into a token on a
+                different network.{' '}
               </CardDescription>
             </CardHeader>
             <CardContent>

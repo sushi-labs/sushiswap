@@ -1,8 +1,5 @@
 'use client'
 
-import { Chain } from '@sushiswap/chain'
-import { Amount } from '@sushiswap/currency'
-import { formatUSD } from '@sushiswap/format'
 import { useAngleRewards } from '@sushiswap/react-query'
 import {
   Card,
@@ -15,7 +12,6 @@ import {
   CardItem,
   CardLabel,
   CardTitle,
-  classNames,
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
@@ -26,6 +22,7 @@ import {
   TabsList,
   TabsTrigger,
   Toggle,
+  classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
@@ -40,40 +37,64 @@ import {
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import useIsTickAtLimit from 'lib/hooks/useIsTickAtLimit'
 import React, { FC, Fragment, useMemo, useState } from 'react'
+import { formatUSD } from 'sushi'
+import { Chain } from 'sushi/chain'
+import { Amount } from 'sushi/currency'
 
 import { isAngleEnabledChainId } from '../../config'
 import { Bound } from '../../lib/constants'
-import { formatTickPrice, getPriceOrderingFromPositionForUI, unwrapToken } from '../../lib/functions'
+import {
+  formatTickPrice,
+  getPriceOrderingFromPositionForUI,
+  unwrapToken,
+} from '../../lib/functions'
 import { usePriceInverter, useTokenAmountDollarValues } from '../../lib/hooks'
 import { ConcentratedLiquidityCollectButton } from './ConcentratedLiquidityCollectButton'
 import { ConcentratedLiquidityHarvestButton } from './ConcentratedLiquidityHarvestButton'
-import { ConcentratedLiquidityProvider, useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
+import {
+  ConcentratedLiquidityProvider,
+  useConcentratedDerivedMintInfo,
+} from './ConcentratedLiquidityProvider'
 import { ConcentratedLiquidityRemoveWidget } from './ConcentratedLiquidityRemoveWidget'
 import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
 import { DistributionDataTable } from './DistributionDataTable'
 
 const Component: FC<{ id: string }> = ({ id }) => {
   const { address } = useAccount()
-  const [_chainId, poolId, tokenId] = id.split('%3A') as [SushiSwapV3ChainId, string, string]
+  const [_chainId, poolId, tokenId] = id.split('%3A') as [
+    SushiSwapV3ChainId,
+    string,
+    string,
+  ]
   const chainId = +_chainId as SushiSwapV3ChainId
   const [invert, setInvert] = useState(false)
 
-  const { data: positionDetails, isLoading: isPositionDetailsLoading } = useConcentratedLiquidityPositionsFromTokenId({
+  const { data: positionDetails, isLoading: isPositionDetailsLoading } =
+    useConcentratedLiquidityPositionsFromTokenId({
+      chainId,
+      tokenId,
+    })
+
+  const { data: token0, isLoading: token0Loading } = useTokenWithCache({
     chainId,
-    tokenId,
+    address: positionDetails?.token0,
+  })
+  const { data: token1, isLoading: token1Loading } = useTokenWithCache({
+    chainId,
+    address: positionDetails?.token1,
   })
 
-  const { data: token0, isLoading: token0Loading } = useTokenWithCache({ chainId, address: positionDetails?.token0 })
-  const { data: token1, isLoading: token1Loading } = useTokenWithCache({ chainId, address: positionDetails?.token1 })
+  const { data: position, isLoading: isPositionLoading } =
+    useConcentratedPositionInfo({
+      chainId,
+      token0,
+      tokenId,
+      token1,
+    })
 
-  const { data: position, isLoading: isPositionLoading } = useConcentratedPositionInfo({
-    chainId,
-    token0,
-    tokenId,
-    token1,
-  })
-
-  const pricesFromPosition = position ? getPriceOrderingFromPositionForUI(position) : undefined
+  const pricesFromPosition = position
+    ? getPriceOrderingFromPositionForUI(position)
+    : undefined
 
   const { pool, outOfRange } = useConcentratedDerivedMintInfo({
     chainId,
@@ -86,8 +107,11 @@ const Component: FC<{ id: string }> = ({ id }) => {
   })
 
   const [_token0, _token1] = useMemo(
-    () => [token0 ? unwrapToken(token0) : undefined, token1 ? unwrapToken(token1) : undefined],
-    [token0, token1]
+    () => [
+      token0 ? unwrapToken(token0) : undefined,
+      token1 ? unwrapToken(token1) : undefined,
+    ],
+    [token0, token1],
   )
 
   const amounts = useMemo(() => {
@@ -108,15 +132,28 @@ const Component: FC<{ id: string }> = ({ id }) => {
     invert,
   })
 
-  const tickAtLimit = useIsTickAtLimit(positionDetails?.fee, position?.tickLower, position?.tickUpper)
+  const tickAtLimit = useIsTickAtLimit(
+    positionDetails?.fee,
+    position?.tickLower,
+    position?.tickUpper,
+  )
 
   const inverted = token1 ? base?.equals(token1) : undefined
   const currencyQuote = inverted ? token0 : token1
   const currencyBase = inverted ? token1 : token0
-  const below = pool && position && true ? pool.tickCurrent < position.tickLower : undefined
-  const above = pool && position && true ? pool.tickCurrent >= position.tickUpper : undefined
-  const inRange = typeof below === 'boolean' && typeof above === 'boolean' ? !below && !above : false
-  const fullRange = Boolean(tickAtLimit[Bound.LOWER] && tickAtLimit[Bound.UPPER])
+  const below =
+    pool && position && true ? pool.tickCurrent < position.tickLower : undefined
+  const above =
+    pool && position && true
+      ? pool.tickCurrent >= position.tickUpper
+      : undefined
+  const inRange =
+    typeof below === 'boolean' && typeof above === 'boolean'
+      ? !below && !above
+      : false
+  const fullRange = Boolean(
+    tickAtLimit[Bound.LOWER] && tickAtLimit[Bound.UPPER],
+  )
 
   const { data: owner } = useConcentratedPositionOwner({ chainId, tokenId })
   const { data: rewardsData, isLoading: rewardsLoading } = useAngleRewards({
@@ -125,8 +162,14 @@ const Component: FC<{ id: string }> = ({ id }) => {
   })
 
   const fiatValuesAmounts = useTokenAmountDollarValues({ chainId, amounts })
-  const positionAmounts = useMemo(() => [position?.amount0, position?.amount1], [position])
-  const fiatValuesPosition = useTokenAmountDollarValues({ chainId, amounts: positionAmounts })
+  const positionAmounts = useMemo(
+    () => [position?.amount0, position?.amount1],
+    [position],
+  )
+  const fiatValuesPosition = useTokenAmountDollarValues({
+    chainId,
+    amounts: positionAmounts,
+  })
   const currentAngleRewardsPool = rewardsData?.pools[poolId]
 
   return (
@@ -137,22 +180,40 @@ const Component: FC<{ id: string }> = ({ id }) => {
             <Card>
               <CardHeader>
                 <CardTitle>Manage</CardTitle>
-                <CardDescription>Manage your concentrated liquidity position.</CardDescription>
+                <CardDescription>
+                  Manage your concentrated liquidity position.
+                </CardDescription>
               </CardHeader>
               <Tabs className="w-full" defaultValue="add">
                 <CardContent>
                   <TabsList className="!flex">
-                    <TabsTrigger testdata-id="add-tab" value="add" className="flex flex-1">
+                    <TabsTrigger
+                      testdata-id="add-tab"
+                      value="add"
+                      className="flex flex-1"
+                    >
                       Add
                     </TabsTrigger>
-                    <TabsTrigger testdata-id="remove-tab" value="remove" className="flex flex-1">
+                    <TabsTrigger
+                      testdata-id="remove-tab"
+                      value="remove"
+                      className="flex flex-1"
+                    >
                       Remove
                     </TabsTrigger>
-                    <TabsTrigger testdata-id="fees-tab" value="fees" className="flex flex-1">
+                    <TabsTrigger
+                      testdata-id="fees-tab"
+                      value="fees"
+                      className="flex flex-1"
+                    >
                       Fees
                     </TabsTrigger>
                     {isAngleEnabledChainId(chainId) ? (
-                      <TabsTrigger testdata-id="rewards-tab" value="rewards" className="flex flex-1">
+                      <TabsTrigger
+                        testdata-id="rewards-tab"
+                        value="rewards"
+                        className="flex flex-1"
+                      >
                         Rewards
                       </TabsTrigger>
                     ) : null}
@@ -165,7 +226,9 @@ const Component: FC<{ id: string }> = ({ id }) => {
                   <CardContent>
                     <CardHeader className="px-0 pb-0">
                       <CardTitle>Add liquidity</CardTitle>
-                      <CardDescription>Provide liquidity to earn fees & rewards.</CardDescription>
+                      <CardDescription>
+                        Provide liquidity to earn fees & rewards.
+                      </CardDescription>
                     </CardHeader>
                     <ConcentratedLiquidityWidget
                       withTitleAndDescription={false}
@@ -183,7 +246,9 @@ const Component: FC<{ id: string }> = ({ id }) => {
                 <TabsContent value="remove">
                   <CardHeader>
                     <CardTitle>Remove liquidity</CardTitle>
-                    <CardDescription>Please enter how much of the position you want to remove.</CardDescription>
+                    <CardDescription>
+                      Please enter how much of the position you want to remove.
+                    </CardDescription>
                   </CardHeader>
                   <ConcentratedLiquidityRemoveWidget
                     token0={_token0}
@@ -197,7 +262,9 @@ const Component: FC<{ id: string }> = ({ id }) => {
                 <TabsContent value="fees">
                   <CardHeader>
                     <CardTitle>Unclaimed fees</CardTitle>
-                    <CardDescription>{formatUSD(fiatValuesAmounts[0] + fiatValuesAmounts[1])}</CardDescription>
+                    <CardDescription>
+                      {formatUSD(fiatValuesAmounts[0] + fiatValuesAmounts[1])}
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <CardGroup>
@@ -224,9 +291,23 @@ const Component: FC<{ id: string }> = ({ id }) => {
                       chainId={chainId}
                     >
                       {({ sendTransaction, isLoading }) => (
-                        <Checker.Connect variant="outline" fullWidth size="default">
-                          <Checker.Network variant="outline" fullWidth size="default" chainId={chainId}>
-                            <Button fullWidth disabled={isLoading} onClick={() => sendTransaction?.()} size="default">
+                        <Checker.Connect
+                          variant="outline"
+                          fullWidth
+                          size="default"
+                        >
+                          <Checker.Network
+                            variant="outline"
+                            fullWidth
+                            size="default"
+                            chainId={chainId}
+                          >
+                            <Button
+                              fullWidth
+                              disabled={isLoading}
+                              onClick={() => sendTransaction?.()}
+                              size="default"
+                            >
                               Collect
                             </Button>
                           </Checker.Network>
@@ -240,21 +321,32 @@ const Component: FC<{ id: string }> = ({ id }) => {
                     <CardHeader>
                       <CardTitle>Unclaimed rewards</CardTitle>
                       <CardDescription>
-                        This will claim your rewards for <b>every</b> V3 liquidity position on{' '}
-                        {Chain.from(chainId).name}
+                        This will claim your rewards for <b>every</b> V3
+                        liquidity position on {Chain.from(chainId)?.name}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <CardGroup>
-                        <CardLabel>Tokens (accrued over all positions)</CardLabel>
+                        <CardLabel>
+                          Tokens (accrued over all positions)
+                        </CardLabel>
                         {rewardsLoading || isPositionLoading ? (
                           <CardItem skeleton />
                         ) : rewardsData &&
                           positionDetails &&
                           rewardsData.pools[positionDetails.address] &&
-                          Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).length > 0 ? (
-                          Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).map((el) => (
-                            <CardCurrencyAmountItem key={el.unclaimed.currency.address} amount={el.unclaimed} />
+                          Object.values(
+                            rewardsData.pools[positionDetails.address]
+                              .rewardsPerToken,
+                          ).length > 0 ? (
+                          Object.values(
+                            rewardsData.pools[positionDetails.address]
+                              .rewardsPerToken,
+                          ).map((el) => (
+                            <CardCurrencyAmountItem
+                              key={el.unclaimed.currency.address}
+                              amount={el.unclaimed}
+                            />
                           ))
                         ) : (
                           <CardItem title="No rewards found" />
@@ -262,11 +354,28 @@ const Component: FC<{ id: string }> = ({ id }) => {
                       </CardGroup>
                     </CardContent>
                     <CardFooter>
-                      <ConcentratedLiquidityHarvestButton account={address} chainId={chainId}>
+                      <ConcentratedLiquidityHarvestButton
+                        account={address}
+                        chainId={chainId}
+                      >
                         {({ write, isLoading }) => (
-                          <Checker.Connect fullWidth variant="outline" size="default">
-                            <Checker.Network fullWidth variant="outline" size="default" chainId={chainId}>
-                              <Button fullWidth disabled={isLoading} onClick={() => write?.()} size="default">
+                          <Checker.Connect
+                            fullWidth
+                            variant="outline"
+                            size="default"
+                          >
+                            <Checker.Network
+                              fullWidth
+                              variant="outline"
+                              size="default"
+                              chainId={chainId}
+                            >
+                              <Button
+                                fullWidth
+                                disabled={isLoading}
+                                onClick={() => write?.()}
+                                size="default"
+                              >
                                 Harvest
                               </Button>
                             </Checker.Network>
@@ -287,18 +396,31 @@ const Component: FC<{ id: string }> = ({ id }) => {
                   <div
                     className={classNames(
                       !inRange ? 'bg-yellow/10' : 'bg-green/10',
-                      'px-2 py-1 flex items-center gap-1 rounded-full'
+                      'px-2 py-1 flex items-center gap-1 rounded-full',
                     )}
                   >
-                    <div className={classNames(outOfRange ? 'bg-yellow' : 'bg-green', 'w-3 h-3 rounded-full')} />
+                    <div
+                      className={classNames(
+                        outOfRange ? 'bg-yellow' : 'bg-green',
+                        'w-3 h-3 rounded-full',
+                      )}
+                    />
                     {outOfRange ? (
-                      <span className="text-xs font-medium text-yellow-900 dark:text-yellow">Out of Range</span>
+                      <span className="text-xs font-medium text-yellow-900 dark:text-yellow">
+                        Out of Range
+                      </span>
                     ) : (
-                      <span className="text-xs font-medium text-green">In Range</span>
+                      <span className="text-xs font-medium text-green">
+                        In Range
+                      </span>
                     )}
                   </div>
                 </CardTitle>
-                <CardDescription>{formatUSD(fiatValuesPosition.reduce((acc, cur) => acc + cur, 0))}</CardDescription>
+                <CardDescription>
+                  {formatUSD(
+                    fiatValuesPosition.reduce((acc, cur) => acc + cur, 0),
+                  )}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <CardGroup>
@@ -321,16 +443,29 @@ const Component: FC<{ id: string }> = ({ id }) => {
                       title={
                         <>
                           1 {unwrapToken(currencyBase)?.symbol} ={' '}
-                          {(inverted ? pool?.token1Price : pool?.token0Price)?.toSignificant(6)}{' '}
+                          {(inverted
+                            ? pool?.token1Price
+                            : pool?.token0Price
+                          )?.toSignificant(6)}{' '}
                           {unwrapToken(currencyQuote)?.symbol}
                         </>
                       }
                     >
                       <div className="flex items-center gap-1">
-                        <Toggle pressed={invert} onClick={() => setInvert(true)} size="xs" variant="outline">
+                        <Toggle
+                          pressed={invert}
+                          onClick={() => setInvert(true)}
+                          size="xs"
+                          variant="outline"
+                        >
                           {_token0?.symbol}
                         </Toggle>
-                        <Toggle pressed={!invert} onClick={() => setInvert(false)} size="xs" variant="outline">
+                        <Toggle
+                          pressed={!invert}
+                          onClick={() => setInvert(false)}
+                          size="xs"
+                          variant="outline"
+                        >
                           {_token1?.symbol}
                         </Toggle>
                       </div>
@@ -364,8 +499,16 @@ const Component: FC<{ id: string }> = ({ id }) => {
                                   <span className="text-sm underline decoration-dotted underline-offset-2 text-muted-foreground font-normal">
                                     (
                                     {priceLower
-                                      ?.subtract(invert ? pool.token1Price : pool.token0Price)
-                                      .divide(invert ? pool.token1Price : pool.token0Price)
+                                      ?.subtract(
+                                        invert
+                                          ? pool.token1Price
+                                          : pool.token0Price,
+                                      )
+                                      .divide(
+                                        invert
+                                          ? pool.token1Price
+                                          : pool.token0Price,
+                                      )
                                       .multiply(100)
                                       .toSignificant(2)}
                                     %)
@@ -377,11 +520,20 @@ const Component: FC<{ id: string }> = ({ id }) => {
                                     <CardDescription>
                                       If the current price moves down{' '}
                                       {priceLower
-                                        ?.subtract(invert ? pool.token1Price : pool.token0Price)
-                                        .divide(invert ? pool.token1Price : pool.token0Price)
+                                        ?.subtract(
+                                          invert
+                                            ? pool.token1Price
+                                            : pool.token0Price,
+                                        )
+                                        .divide(
+                                          invert
+                                            ? pool.token1Price
+                                            : pool.token0Price,
+                                        )
                                         .multiply(100)
                                         .toSignificant(2)}
-                                      % from the current price, your position will be 100%{' '}
+                                      % from the current price, your position
+                                      will be 100%{' '}
                                       {unwrapToken(currencyBase).symbol}
                                     </CardDescription>
                                   </CardHeader>
@@ -396,7 +548,8 @@ const Component: FC<{ id: string }> = ({ id }) => {
                     </div>
                     {currencyBase && (
                       <span className="text-xs text-slate-500">
-                        Your position will be 100% {unwrapToken(currencyBase).symbol} at this price.
+                        Your position will be 100%{' '}
+                        {unwrapToken(currencyBase).symbol} at this price.
                       </span>
                     )}
                   </div>
@@ -413,15 +566,27 @@ const Component: FC<{ id: string }> = ({ id }) => {
                             '∞'
                           ) : (
                             <>
-                              {formatTickPrice({ price: priceUpper, atLimit: tickAtLimit, direction: Bound.UPPER })}{' '}
+                              {formatTickPrice({
+                                price: priceUpper,
+                                atLimit: tickAtLimit,
+                                direction: Bound.UPPER,
+                              })}{' '}
                               {unwrapToken(currencyQuote)?.symbol}{' '}
                               <HoverCard closeDelay={0} openDelay={0}>
                                 <HoverCardTrigger asChild>
                                   <span className="text-sm underline decoration-dotted underline-offset-2 text-muted-foreground font-normal">
                                     ( +
                                     {priceUpper
-                                      ?.subtract(invert ? pool.token1Price : pool.token0Price)
-                                      .divide(invert ? pool.token1Price : pool.token0Price)
+                                      ?.subtract(
+                                        invert
+                                          ? pool.token1Price
+                                          : pool.token0Price,
+                                      )
+                                      .divide(
+                                        invert
+                                          ? pool.token1Price
+                                          : pool.token0Price,
+                                      )
                                       .multiply(100)
                                       .toSignificant(2)}
                                     %)
@@ -433,11 +598,20 @@ const Component: FC<{ id: string }> = ({ id }) => {
                                     <CardDescription>
                                       If the current price moves up +
                                       {priceUpper
-                                        ?.subtract(invert ? pool.token1Price : pool.token0Price)
-                                        .divide(invert ? pool.token1Price : pool.token0Price)
+                                        ?.subtract(
+                                          invert
+                                            ? pool.token1Price
+                                            : pool.token0Price,
+                                        )
+                                        .divide(
+                                          invert
+                                            ? pool.token1Price
+                                            : pool.token0Price,
+                                        )
                                         .multiply(100)
                                         .toSignificant(2)}
-                                      % from the current price, your position will be 100%{' '}
+                                      % from the current price, your position
+                                      will be 100%{' '}
                                       {unwrapToken(currencyQuote).symbol}
                                     </CardDescription>
                                   </CardHeader>
@@ -452,7 +626,8 @@ const Component: FC<{ id: string }> = ({ id }) => {
                     </div>
                     {currencyQuote && (
                       <span className="text-xs text-slate-500">
-                        Your position will be 100% {unwrapToken(currencyQuote).symbol} at this price.
+                        Your position will be 100%{' '}
+                        {unwrapToken(currencyQuote).symbol} at this price.
                       </span>
                     )}
                   </div>
@@ -475,7 +650,9 @@ const Component: FC<{ id: string }> = ({ id }) => {
                     <LinkInternal
                       href={`/pool/incentivize?chainId=${chainId}&fromCurrency=${
                         _token0.isNative ? 'NATIVE' : _token0.address
-                      }&toCurrency=${_token1.isNative ? 'NATIVE' : _token1.address}&feeAmount=${positionDetails?.fee}`}
+                      }&toCurrency=${
+                        _token1.isNative ? 'NATIVE' : _token1.address
+                      }&feeAmount=${positionDetails?.fee}`}
                     >
                       <Button asChild variant="link">
                         Want to add one?
@@ -498,13 +675,17 @@ const Component: FC<{ id: string }> = ({ id }) => {
                 <TabsContent value="active">
                   <DistributionDataTable
                     isLoading={rewardsLoading}
-                    data={currentAngleRewardsPool?.distributionData.filter((el) => el.isLive)}
+                    data={currentAngleRewardsPool?.distributionData.filter(
+                      (el) => el.isLive,
+                    )}
                   />
                 </TabsContent>
                 <TabsContent value="inactive">
                   <DistributionDataTable
                     isLoading={rewardsLoading}
-                    data={currentAngleRewardsPool?.distributionData.filter((el) => !el.isLive)}
+                    data={currentAngleRewardsPool?.distributionData.filter(
+                      (el) => !el.isLive,
+                    )}
                   />
                 </TabsContent>
               </Tabs>

@@ -3,7 +3,14 @@ import * as React from 'react'
 import { IconComponent } from '../../../../types'
 
 export const BobaBNBCircle: IconComponent = (props) => (
-  <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <svg
+    width="128"
+    height="128"
+    viewBox="0 0 128 128"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
     <rect width="128" height="128" rx="64" fill="url(#paint0_linear_706_842)" />
     <g clipPath="url(#clip0_706_842)">
       <path
@@ -64,12 +71,24 @@ export const BobaBNBCircle: IconComponent = (props) => (
       />
     </g>
     <defs>
-      <linearGradient id="paint0_linear_706_842" x1="0" y1="0" x2="128" y2="140.5" gradientUnits="userSpaceOnUse">
+      <linearGradient
+        id="paint0_linear_706_842"
+        x1="0"
+        y1="0"
+        x2="128"
+        y2="140.5"
+        gradientUnits="userSpaceOnUse"
+      >
         <stop stopColor="#1CD8D2" />
         <stop offset="1" stopColor="#CCFF00" />
       </linearGradient>
       <clipPath id="clip0_706_842">
-        <rect width="60.9238" height="80" fill="white" transform="translate(39 24)" />
+        <rect
+          width="60.9238"
+          height="80"
+          fill="white"
+          transform="translate(39 24)"
+        />
       </clipPath>
     </defs>
   </svg>

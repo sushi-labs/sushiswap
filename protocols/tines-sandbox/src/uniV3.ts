@@ -1,8 +1,19 @@
-import { erc20Abi, nonfungiblePositionManagerAbi, sushiV3FactoryAbi, sushiV3PoolAbi } from '@sushiswap/abi'
-import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
-import { CL_MAX_TICK, CL_MIN_TICK, CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
-import { Contract } from '@sushiswap/types'
+import {
+  erc20Abi,
+  nonfungiblePositionManagerAbi,
+  sushiV3FactoryAbi,
+  sushiV3PoolAbi,
+} from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
+import {
+  CL_MAX_TICK,
+  CL_MIN_TICK,
+  CLTick,
+  RToken,
+  UniV3Pool,
+} from '@sushiswap/tines'
+import { type Contract } from 'sushi/types'
 import NonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import WETH9 from 'canonical-weth/build/contracts/WETH9.json'
 import { expect } from 'chai'
@@ -14,6 +25,7 @@ import ERC20Mock from '../artifacts/contracts/ERC20Mock.sol/ERC20Mock.json'
 import TestRouter from '../artifacts/contracts/TestRouter.sol/TestRouter.json'
 import UniswapV3Factory from '../artifacts/contracts/UniswapV3FactoryFlat.sol/UniswapV3Factory.json'
 import { testRouterAbi } from './abis'
+import { getDeploymentAddress, getRndLin, getRndLinInt } from './utils'
 
 const ZERO = 0n
 
@@ -40,11 +52,11 @@ feeAmountTickSpacing[500] = 10 // 0.05%
 feeAmountTickSpacing[3000] = 60 // 0.3%
 feeAmountTickSpacing[10000] = 200 // 1%
 
-export const getDeploymentAddress = async (client: WalletClient, promise: Promise<Hex>) =>
-  waitForTransactionReceipt(client, { hash: await promise }).then((receipt) => receipt.contractAddress as Address)
-
 // Makes artificial environment, deploys factory, smallpositionmanager for mint and swap
-export async function createUniV3EnvZero(walletClient: WalletClient, userDeployContracts?: Address) {
+export async function createUniV3EnvZero(
+  walletClient: WalletClient,
+  userDeployContracts?: Address,
+) {
   const user = userDeployContracts || (await walletClient.getAddresses())[0]
 
   const tokenFactory = {
@@ -61,7 +73,7 @@ export async function createUniV3EnvZero(walletClient: WalletClient, userDeployC
       abi: sushiV3FactoryAbi,
       bytecode: UniswapV3Factory.bytecode as Hex,
       account: user,
-    })
+    }),
   )
   const SushiV3Factory = {
     abi: sushiV3FactoryAbi,
@@ -75,7 +87,7 @@ export async function createUniV3EnvZero(walletClient: WalletClient, userDeployC
       abi: WETH9.abi,
       bytecode: WETH9.bytecode as Hex,
       account: user,
-    })
+    }),
   )
 
   const NonfungiblePositionManagerAddress = await getDeploymentAddress(
@@ -85,8 +97,12 @@ export async function createUniV3EnvZero(walletClient: WalletClient, userDeployC
       abi: nonfungiblePositionManagerAbi,
       bytecode: NonfungiblePositionManager.bytecode as Hex,
       account: user,
-      args: [SushiV3Factory.address, WETH9Address, '0x0000000000000000000000000000000000000000'],
-    })
+      args: [
+        SushiV3Factory.address,
+        WETH9Address,
+        '0x0000000000000000000000000000000000000000',
+      ],
+    }),
   )
   const PositionManager = {
     abi: nonfungiblePositionManagerAbi,
@@ -101,7 +117,7 @@ export async function createUniV3EnvZero(walletClient: WalletClient, userDeployC
       bytecode: TestRouter.bytecode as Hex,
       account: user,
       args: [],
-    })
+    }),
   )
   const TestRouterContract = {
     abi: testRouterAbi,
@@ -115,7 +131,12 @@ export async function createUniV3EnvZero(walletClient: WalletClient, userDeployC
     PositionManager,
     swapper: TestRouterContract,
     minter: TestRouterContract,
-    mint: async (pool: UniV3PoolInfo, from: number, to: number, liquidity: bigint) => {
+    mint: async (
+      pool: UniV3PoolInfo,
+      from: number,
+      to: number,
+      liquidity: bigint,
+    ) => {
       await pool.env.walletClient.writeContract({
         ...pool.env.minter,
         functionName: 'mint',
@@ -128,12 +149,20 @@ export async function createUniV3EnvZero(walletClient: WalletClient, userDeployC
     },
   } satisfies {
     user: Address
-    tokenFactory: Omit<DeployContractParameters<typeof erc20Abi>, 'args' | 'type'>
+    tokenFactory: Omit<
+      DeployContractParameters<typeof erc20Abi>,
+      'args' | 'type'
+    >
     SushiV3Factory: Contract<typeof sushiV3FactoryAbi>
     PositionManager: Contract<typeof nonfungiblePositionManagerAbi>
     swapper: Contract<typeof testRouterAbi>
     minter: Contract<typeof testRouterAbi>
-    mint: (pool: UniV3PoolInfo, from: number, to: number, liquidity: bigint) => Promise<bigint>
+    mint: (
+      pool: UniV3PoolInfo,
+      from: number,
+      to: number,
+      liquidity: bigint,
+    ) => Promise<bigint>
   }
 
   // Weird hack to make typescript happy
@@ -148,12 +177,16 @@ export type UniV3Environment = Awaited<ReturnType<typeof createUniV3EnvZero>>
 // Uses real environment
 export async function createUniV3EnvReal(
   walletClient: WalletClient,
-  userDeployContracts?: Address
+  userDeployContracts?: Address,
 ): Promise<UniV3Environment | undefined> {
   const user = userDeployContracts || (await walletClient.getAddresses())[0]
   const chainId = await walletClient.getChainId()
 
-  if (UniswapV3FactoryAddress[chainId] === undefined || PositionManagerAddress[chainId] === undefined) return
+  if (
+    UniswapV3FactoryAddress[chainId] === undefined ||
+    PositionManagerAddress[chainId] === undefined
+  )
+    return
 
   const tokenFactory = {
     chain: null,
@@ -180,7 +213,7 @@ export async function createUniV3EnvReal(
       bytecode: TestRouter.bytecode as Hex,
       account: user,
       args: [],
-    })
+    }),
   )
   const TestRouterContract = {
     abi: testRouterAbi,
@@ -195,7 +228,12 @@ export async function createUniV3EnvReal(
     PositionManager,
     swapper: TestRouterContract,
     minter: TestRouterContract,
-    mint: async (pool: UniV3PoolInfo, from: number, to: number, liquidity: bigint) => {
+    mint: async (
+      pool: UniV3PoolInfo,
+      from: number,
+      to: number,
+      liquidity: bigint,
+    ) => {
       let res
       try {
         res = await pool.env.walletClient.writeContract({
@@ -220,17 +258,21 @@ export async function createUniV3EnvReal(
           chain: null,
           value: 0n,
         })
-      } catch (e) {
+      } catch {
         return ZERO
       }
-      const receipt = await waitForTransactionReceipt(walletClient, { hash: res })
+      const receipt = await waitForTransactionReceipt(walletClient, {
+        hash: res,
+      })
 
       // event IncreaseLiquidity(uint256 indexed tokenId, uint128 liquidity, uint256 amount0, uint256 amount1);
       const increaseLiquidityEvent = receipt.logs.find(
         (ev: { topics: string[] }) =>
-          ev.topics[0] === '0x3067048beee31b25b2f1681f88dac838c8bba36af25bfb2b7cf7473a5847e35f'
+          ev.topics[0] ===
+          '0x3067048beee31b25b2f1681f88dac838c8bba36af25bfb2b7cf7473a5847e35f',
       )
-      if (increaseLiquidityEvent === undefined) throw new Error("Logs doesn't contain IncreaseLiquidity event")
+      if (increaseLiquidityEvent === undefined)
+        throw new Error("Logs doesn't contain IncreaseLiquidity event")
       const liquidityReal = BigInt(increaseLiquidityEvent.data.substring(0, 66))
       return liquidityReal
     },
@@ -265,7 +307,7 @@ export async function createUniV3Pool(
   env: UniV3Environment,
   fee: number,
   price: number,
-  positions: UniV3Position[]
+  positions: UniV3Position[],
 ): Promise<UniV3PoolInfo> {
   const sqrtPriceX96 = BigInt(Math.sqrt(price) * 2 ** 96)
   const tickSpacing = feeAmountTickSpacing[fee]
@@ -276,14 +318,14 @@ export async function createUniV3Pool(
     env.walletClient.deployContract({
       ...env.tokenFactory,
       args: ['Token0', 'Token0', tokenSupply],
-    })
+    }),
   )
   const _token1Address = await getDeploymentAddress(
     env.walletClient,
     env.walletClient.deployContract({
       ...env.tokenFactory,
       args: ['Token1', 'Token1', tokenSupply],
-    })
+    }),
   )
   const [token0Address, token1Address] = isLess(_token0Address, _token1Address)
     ? [_token0Address, _token1Address]
@@ -386,10 +428,16 @@ export async function createUniV3Pool(
     expect(position.to % tickSpacing).to.equal(0)
 
     const liquidityExpected = BigInt(position.val)
-    const liquidity = await env.mint(poolInfo, position.from, position.to, liquidityExpected)
+    const liquidity = await env.mint(
+      poolInfo,
+      position.from,
+      position.to,
+      liquidityExpected,
+    )
 
     let tickLiquidity = tickMap.get(position.from)
-    tickLiquidity = tickLiquidity === undefined ? liquidity : tickLiquidity + liquidity
+    tickLiquidity =
+      tickLiquidity === undefined ? liquidity : tickLiquidity + liquidity
     tickMap.set(position.from, tickLiquidity)
 
     tickLiquidity = tickMap.get(position.to) || ZERO
@@ -429,17 +477,10 @@ export async function createUniV3Pool(
     slot[1],
     liquidity,
     sqrtPriceX96,
-    ticks
+    ticks,
   )
 
   return poolInfo
-}
-
-function getRndLin(rnd: () => number, min: number, max: number) {
-  return rnd() * (max - min) + min
-}
-export function getRndLinInt(rnd: () => number, min: number, max: number) {
-  return Math.floor(getRndLin(rnd, min, max))
 }
 
 export async function createRandomUniV3Pool(
@@ -449,7 +490,7 @@ export async function createRandomUniV3Pool(
   price?: number,
   _fee?: number,
   minTick = CL_MIN_TICK,
-  maxTick = CL_MAX_TICK
+  maxTick = CL_MAX_TICK,
 ): Promise<UniV3PoolInfo> {
   const rnd: () => number = seedrandom(seed) // random [0, 1)
 
@@ -464,7 +505,10 @@ export async function createRandomUniV3Pool(
     const pos2 = (pos1 + getRndLinInt(rnd, 1, RANGE - 1)) % RANGE
     const from = Math.min(pos1, pos2) * tickSpacing + SHIFT
     const to = Math.max(pos1, pos2) * tickSpacing + SHIFT
-    console.assert(minTick <= from && from < to && to <= maxTick, `Wrong from-to range ${from} - ${to}`)
+    console.assert(
+      minTick <= from && from < to && to <= maxTick,
+      `Wrong from-to range ${from} - ${to}`,
+    )
     positions.push({ from, to, val: getRndLin(rnd, 0.01, 30) * 1e18 })
   }
   price = price === undefined ? getRndLin(rnd, 0.01, 100) : price

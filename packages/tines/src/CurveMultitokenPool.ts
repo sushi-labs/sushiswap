@@ -22,7 +22,7 @@ export class CurveMultitokenPool extends RPool {
       core.reserves[index0],
       core.reserves[index1],
       MIN_LIQUIDITY,
-      SWAP_GAS_COST
+      SWAP_GAS_COST,
     )
     this.core = core
     this.index0 = index0
@@ -35,18 +35,27 @@ export class CurveMultitokenPool extends RPool {
     this.core.updateReserve(this.index1, res1)
   }
 
-  calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
-    if (direction) return this.core.calcOutByIn(amountIn, this.index0, this.index1)
+  calcOutByIn(
+    amountIn: number,
+    direction: boolean,
+  ): { out: number; gasSpent: number } {
+    if (direction)
+      return this.core.calcOutByIn(amountIn, this.index0, this.index1)
     else return this.core.calcOutByIn(amountIn, this.index1, this.index0)
   }
 
-  calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
-    if (direction) return this.core.calcInByOut(amountOut, this.index0, this.index1)
+  calcInByOut(
+    amountOut: number,
+    direction: boolean,
+  ): { inp: number; gasSpent: number } {
+    if (direction)
+      return this.core.calcInByOut(amountOut, this.index0, this.index1)
     else return this.core.calcInByOut(amountOut, this.index1, this.index0)
   }
 
   calcCurrentPriceWithoutFee(direction: boolean): number {
-    if (direction) return this.core.calcCurrentPriceWithoutFee(this.index0, this.index1)
+    if (direction)
+      return this.core.calcCurrentPriceWithoutFee(this.index0, this.index1)
     else return this.core.calcCurrentPriceWithoutFee(this.index1, this.index0)
   }
 }
@@ -72,16 +81,27 @@ class CurveMultitokenCore {
   n: bigint
   nPlus1: bigint
 
-  constructor(address: string, tokens: RToken[], fee: number, A: number, reserves: bigint[], rates?: number[]) {
+  constructor(
+    address: string,
+    tokens: RToken[],
+    fee: number,
+    A: number,
+    reserves: bigint[],
+    rates?: number[],
+  ) {
     this.address = address
     this.tokens = tokens
     this.fee = fee
     this.A = A
     this.reserves = reserves
     const decimalsMax = Math.max(...tokens.map((t) => t.decimals))
-    this.rates = tokens.map((t, i) => Math.pow(10, decimalsMax - t.decimals) * (rates?.[i] ?? 1))
+    this.rates = tokens.map(
+      (t, i) => Math.pow(10, decimalsMax - t.decimals) * (rates?.[i] ?? 1),
+    )
     this.ratesBN18 = this.rates.map((r) => getBigInt(r * 1e18)) // precision is 18 digits
-    this.reservesRated = this.reserves.map((r, i) => (r * this.ratesBN18[i]) / E18)
+    this.reservesRated = this.reserves.map(
+      (r, i) => (r * this.ratesBN18[i]) / E18,
+    )
     this.D = ZERO
 
     this.Ann = getBigInt(A * this.tokens.length)
@@ -148,7 +168,11 @@ class CurveMultitokenCore {
     return y
   }
 
-  calcOutByIn(amountIn: number, from: number, to: number): { out: number; gasSpent: number } {
+  calcOutByIn(
+    amountIn: number,
+    from: number,
+    to: number,
+  ): { out: number; gasSpent: number } {
     amountIn *= this.rates[from]
     const xBN = this.reservesRated[from]
     const yBN = this.reservesRated[to]
@@ -159,7 +183,11 @@ class CurveMultitokenCore {
     return { out: dy * (1 - this.fee), gasSpent: SWAP_GAS_COST }
   }
 
-  calcInByOut(amountOut: number, from: number, to: number): { inp: number; gasSpent: number } {
+  calcInByOut(
+    amountOut: number,
+    from: number,
+    to: number,
+  ): { inp: number; gasSpent: number } {
     amountOut *= this.rates[to]
     const xBN = this.reservesRated[from]
     const yBN = this.reservesRated[to]
@@ -203,11 +231,12 @@ export function createCurvePoolsForMultipool(
   fee: number,
   A: number,
   reserves: bigint[],
-  rates?: number[]
+  rates?: number[],
 ) {
   const core = new CurveMultitokenCore(address, tokens, fee, A, reserves, rates)
   const pools: CurveMultitokenPool[] = []
   for (let i = 0; i < tokens.length; ++i)
-    for (let j = i + 1; j < tokens.length; ++j) pools.push(new CurveMultitokenPool(core, i, j))
+    for (let j = i + 1; j < tokens.length; ++j)
+      pools.push(new CurveMultitokenPool(core, i, j))
   return pools
 }

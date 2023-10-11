@@ -1,5 +1,9 @@
-import { Token } from '@sushiswap/currency'
-import { findMultiRouteExactIn as TinesFindMultiRouteExactIn, MultiRoute, RToken } from '@sushiswap/tines'
+import { Token } from 'sushi/currency'
+import {
+  findMultiRouteExactIn as TinesFindMultiRouteExactIn,
+  MultiRoute,
+  RToken,
+} from '@sushiswap/tines'
 
 import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
 import { Pool } from '@sushiswap/base-sdk'
@@ -11,7 +15,7 @@ export function findMultiRouteExactIn(
   amountIn: bigint | number,
   pools: (Pool | SushiSwapV2Pool)[],
   baseToken: Token,
-  gasPrice: number
+  gasPrice: number,
 ): MultiRoute {
   return TinesFindMultiRouteExactIn(
     from as RToken,
@@ -19,6 +23,6 @@ export function findMultiRouteExactIn(
     amountIn,
     pools.map((pool) => convertPoolOrPairtoRPool(pool)),
     baseToken as RToken,
-    gasPrice
+    gasPrice,
   )
 }

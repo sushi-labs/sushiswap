@@ -1,6 +1,11 @@
-import { complexRewarderTimeAbi, miniChefAbi } from '@sushiswap/abi'
-import { ChainId } from '@sushiswap/chain'
-import { MINICHEF_SUBGRAPH_NAME, SUBGRAPH_HOST, SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
+import { complexRewarderTimeAbi, miniChefAbi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
+import {
+  MINICHEF_SUBGRAPH_NAME,
+  SUBGRAPH_HOST,
+  SushiSwapChainId,
+  TridentChainId,
+} from '@sushiswap/graph-config'
 import { Address, readContract, readContracts } from '@wagmi/core'
 import zip from 'lodash.zip'
 
@@ -48,7 +53,7 @@ export async function getPoolInfos(poolLength: bigint, chainId: ChainId) {
         chainId: chainId,
         abi: miniChefAbi,
         functionName: 'poolInfo',
-      } as const)
+      }) as const,
   )
 
   return readContracts({
@@ -59,7 +64,7 @@ export async function getPoolInfos(poolLength: bigint, chainId: ChainId) {
       accSushiPerShare: result[0],
       lastRewardTime: result[1],
       allocPoint: result[2],
-    }))
+    })),
   )
 }
 
@@ -72,7 +77,7 @@ export async function getLpTokens(poolLength: bigint, chainId: ChainId) {
         chainId: chainId,
         abi: miniChefAbi,
         functionName: 'lpToken',
-      } as const)
+      }) as const,
   )
 
   return readContracts({
@@ -90,7 +95,7 @@ export async function getRewarders(poolLength: bigint, chainId: ChainId) {
         chainId: chainId,
         abi: miniChefAbi,
         functionName: 'rewarder',
-      } as const)
+      }) as const,
   )
 
   return readContracts({
@@ -100,9 +105,13 @@ export async function getRewarders(poolLength: bigint, chainId: ChainId) {
 }
 
 // TODO: Fix type
-export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainId) {
+export async function getRewarderInfos(
+  chainId: SushiSwapChainId | TridentChainId,
+) {
   const { getBuiltGraphSDK } = await import('../../../../.graphclient/index.js')
-  const subgraphName = (MINICHEF_SUBGRAPH_NAME as Record<SushiSwapChainId | TridentChainId, string>)[chainId]
+  const subgraphName = (
+    MINICHEF_SUBGRAPH_NAME as Record<SushiSwapChainId | TridentChainId, string>
+  )[chainId]
   if (!subgraphName) {
     console.log(chainId, 'does not have a minichef subgraph!')
     return []
@@ -158,7 +167,10 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
           ],
         }
 
-        if (blacklist[chainId]?.includes(rewarder.id) || rewarder.id === '0x0000000000000000000000000000000000000000') {
+        if (
+          blacklist[chainId]?.includes(rewarder.id) ||
+          rewarder.id === '0x0000000000000000000000000000000000000000'
+        ) {
           return {
             id: rewarder.id,
             rewardToken: rewarder.rewardToken,
@@ -168,7 +180,8 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
 
         const poolLength = await getPoolLength(chainId)
 
-        const poolIds = poolLength !== 0n ? [...Array(Number(poolLength)).keys()] : []
+        const poolIds =
+          poolLength !== 0n ? [...Array(Number(poolLength)).keys()] : []
 
         const poolInfoCalls = poolIds.map(
           (_, i) =>
@@ -178,7 +191,7 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
               chainId: chainId,
               abi: complexRewarderTimeAbi,
               functionName: 'poolInfo',
-            } as const)
+            }) as const,
         )
 
         const poolInfos = await readContracts({
@@ -215,6 +228,6 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
           rewardPerSecond: BigInt(rewarder.rewardPerSecond),
         }
       }
-    })
+    }),
   )
 }

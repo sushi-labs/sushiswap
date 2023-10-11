@@ -5,9 +5,20 @@ interface DocsIcon {
   secondaryColor: string
 }
 
-export const DocsIcon: FC<React.ComponentProps<'svg'> & DocsIcon> = ({ color, secondaryColor, ...props }) => {
+export const DocsIcon: FC<React.ComponentProps<'svg'> & DocsIcon> = ({
+  color,
+  secondaryColor,
+  ...props
+}) => {
   return (
-    <svg width="108" height="91" viewBox="0 0 108 91" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <svg
+      width="108"
+      height="91"
+      viewBox="0 0 108 91"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
       <path
         d="M26.4976 31.2191L16.9134 85.8525C16.6955 87.0944 17.0402 88.2855 17.8716 89.1638C18.703 90.042 19.953 90.5353 21.3467 90.5353H77.3983C78.7919 90.5353 80.2151 90.042 81.3546 89.1638C82.4941 88.2855 83.2567 87.0944 83.4746 85.8525L95.7971 15.6095L81.0194 0H37.2291C35.8354 0 34.4123 0.493372 33.2727 1.37158C32.1332 2.24979 31.3706 3.44089 31.1527 4.68286L26.4976 31.2191Z"
         fill="#101728"

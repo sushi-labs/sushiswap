@@ -17,7 +17,11 @@ export const getV3TickLensContractConfig = (chainId: SushiSwapV3ChainId) => ({
           components: [
             { internalType: 'int24', name: 'tick', type: 'int24' },
             { internalType: 'int128', name: 'liquidityNet', type: 'int128' },
-            { internalType: 'uint128', name: 'liquidityGross', type: 'uint128' },
+            {
+              internalType: 'uint128',
+              name: 'liquidityGross',
+              type: 'uint128',
+            },
           ],
           internalType: 'struct ITickLens.PopulatedTick[]',
           name: 'populatedTicks',
@@ -36,6 +40,9 @@ export function useTickLensContract(chainId: SushiSwapV3ChainId | undefined) {
   return useMemo(() => {
     if (!chainId) return null
 
-    return getContract({ ...getV3TickLensContractConfig(chainId), walletClient: publicClient })
+    return getContract({
+      ...getV3TickLensContractConfig(chainId),
+      walletClient: publicClient,
+    })
   }, [chainId, publicClient])
 }

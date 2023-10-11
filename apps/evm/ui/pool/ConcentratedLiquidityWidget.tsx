@@ -2,8 +2,8 @@
 
 import { Transition } from '@headlessui/react'
 import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
-import { ChainId } from '@sushiswap/chain'
-import { Type } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Type } from 'sushi/currency'
 import { classNames, DialogTrigger, FormSection, Message } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { FeeAmount, Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
@@ -54,7 +54,8 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
 }) => {
   const { onFieldAInput, onFieldBInput } = useConcentratedMintActionHandlers()
   const { independentField, typedValue } = useConcentratedMintState()
-  const { data: owner, isLoading: isOwnerLoading } = useConcentratedPositionOwner({ chainId, tokenId })
+  const { data: owner, isLoading: isOwnerLoading } =
+    useConcentratedPositionOwner({ chainId, tokenId })
 
   const isOwner = owner === account
 
@@ -95,7 +96,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
         onChange(val, 'a')
       }
     },
-    [noLiquidity, onChange, onFieldAInput]
+    [noLiquidity, onChange, onFieldAInput],
   )
 
   const _onFieldBInput = useCallback(
@@ -105,7 +106,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
         onChange(val, 'b')
       }
     },
-    [noLiquidity, onChange, onFieldBInput]
+    [noLiquidity, onChange, onFieldBInput],
   )
 
   const amounts = useMemo(() => {
@@ -120,38 +121,49 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
     <div className={classNames('flex flex-col gap-4')}>
       {!!existingPosition && !isOwner && !isOwnerLoading ? (
         <Message size="sm" variant="destructive">
-          You are not the owner of this LP position. You will not be able to withdraw the liquidity from this position
-          unless you own the following address: {owner}
+          You are not the owner of this LP position. You will not be able to
+          withdraw the liquidity from this position unless you own the following
+          address: {owner}
         </Message>
       ) : null}
       {outOfRange ? (
         <Message size="sm" variant="warning">
-          Your position will not earn fees or be used in trades until the market price moves into your range.
+          Your position will not earn fees or be used in trades until the market
+          price moves into your range.
         </Message>
       ) : null}
 
       {invalidRange ? (
         <Message size="sm" variant="warning">
-          Invalid range selected. The minimum price must be lower than the maximum price.
+          Invalid range selected. The minimum price must be lower than the
+          maximum price.
         </Message>
       ) : null}
       <div
         className={classNames(
           !isPoolLoading &&
-            !isOwnerLoading &&
-            (tickLower === undefined || tickUpper === undefined || invalidPool || invalidRange)
+          !isOwnerLoading &&
+          (tickLower === undefined ||
+            tickUpper === undefined ||
+            invalidPool ||
+            invalidRange)
             ? 'opacity-40 pointer-events-none'
             : '',
-          'flex flex-col gap-4'
+          'flex flex-col gap-4',
         )}
       >
         <div className="relative">
           {depositADisabled && !depositBDisabled ? (
             <div className="bg-gray-200 dark:bg-slate-800 absolute inset-0 z-[1] rounded-xl flex items-center justify-center">
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-10 text-sm font-medium text-center">
-                <LockClosedIcon width={24} height={24} className="text-gray-400 dark:text-slate-400 text-slate-600" />
+                <LockClosedIcon
+                  width={24}
+                  height={24}
+                  className="text-gray-400 dark:text-slate-400 text-slate-600"
+                />
                 <span className="dark:text-slate-400 text-slate-600">
-                  The market price is outside your specified price range. Single-asset deposit only.{' '}
+                  The market price is outside your specified price range.
+                  Single-asset deposit only.{' '}
                   <a
                     // TODO
                     href="https://www.sushi.com/academy"
@@ -180,7 +192,11 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
         </div>
         <div className="flex items-center justify-center mt-[-24px] mb-[-24px] z-10">
           <div className="p-1 bg-white dark:bg-slate-900 border border-accent rounded-full">
-            <PlusIcon width={16} height={16} className="text-muted-foreground" />
+            <PlusIcon
+              width={16}
+              height={16}
+              className="text-muted-foreground"
+            />
           </div>
         </div>
         <div className="relative">
@@ -196,9 +212,14 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
           >
             <div className="bg-gray-200 dark:bg-slate-800 absolute inset-0 z-[1] rounded-xl flex items-center justify-center">
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-10 text-sm font-medium text-center">
-                <LockClosedIcon width={24} height={24} className="text-gray-400 dark:text-slate-400 text-slate-600" />
+                <LockClosedIcon
+                  width={24}
+                  height={24}
+                  className="text-gray-400 dark:text-slate-400 text-slate-600"
+                />
                 <span className="dark:text-slate-400 text-slate-600">
-                  The market price is outside your specified price range. Single-asset deposit only.{' '}
+                  The market price is outside your specified price range.
+                  Single-asset deposit only.{' '}
                   <a
                     // TODO
                     href="https://www.sushi.com/academy"
@@ -233,14 +254,19 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                 fullWidth
                 id="approve-erc20-0"
                 amount={parsedAmounts[Field.CURRENCY_A]}
-                contract={getV3NonFungiblePositionManagerConractConfig(chainId).address}
+                contract={
+                  getV3NonFungiblePositionManagerConractConfig(chainId).address
+                }
                 enabled={!depositADisabled}
               >
                 <Checker.ApproveERC20
                   fullWidth
                   id="approve-erc20-1"
                   amount={parsedAmounts[Field.CURRENCY_B]}
-                  contract={getV3NonFungiblePositionManagerConractConfig(chainId).address}
+                  contract={
+                    getV3NonFungiblePositionManagerConractConfig(chainId)
+                      .address
+                  }
                   enabled={!depositBDisabled}
                 >
                   <AddSectionReviewModalConcentrated
@@ -264,7 +290,11 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                     successLink={successLink}
                   >
                     <DialogTrigger asChild>
-                      <Button fullWidth size="xl" testId="add-liquidity-preview">
+                      <Button
+                        fullWidth
+                        size="xl"
+                        testId="add-liquidity-preview"
+                      >
                         Preview
                       </Button>
                     </DialogTrigger>

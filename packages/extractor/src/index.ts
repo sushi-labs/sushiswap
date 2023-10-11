@@ -1,3 +1,4 @@
+export * from './AlgebraExtractor'
 export * from './Extractor'
 export * from './LogFilter2'
 export * from './MulticallAggregator'

@@ -1,15 +1,26 @@
-import { ArticleFiltersInput, getMeshSDK, GetProductsQueryVariables, PaginationArg } from '../.mesh'
+import {
+  ArticleFiltersInput,
+  getMeshSDK,
+  GetProductsQueryVariables,
+  PaginationArg,
+} from '../.mesh'
 import { ArticleSchema } from './validate'
 
 const sdk = getMeshSDK()
 
-export const getArticleAndMoreArticles = async (slug: string, preview: Record<string, unknown> | null) => {
+export const getArticleAndMoreArticles = async (
+  slug: string,
+  preview: Record<string, unknown> | null,
+) => {
   return sdk.articleAndMoreArticles({
     filters: {
       slug: { eq: slug },
       articleTypes: { type: { eq: 'academy' } },
     },
-    filters_ne: { slug: { not: { eq: slug } }, articleTypes: { type: { eq: 'academy' } } },
+    filters_ne: {
+      slug: { not: { eq: slug } },
+      articleTypes: { type: { eq: 'academy' } },
+    },
     publicationState: preview ? 'PREVIEW' : 'LIVE',
   })
 }
@@ -33,13 +44,18 @@ export const getArticles = async (variables?: {
 }) => {
   const result = await sdk.getArticles({
     ...variables,
-    filters: { ...variables?.filters, articleTypes: { type: { eq: 'academy' } } },
+    filters: {
+      ...variables?.filters,
+      articleTypes: { type: { eq: 'academy' } },
+    },
     sort: variables?.sort ?? ['publishedAt:desc'],
   })
 
   return {
     ...result.articles,
-    data: (result.articles?.data || []).map((article) => ArticleSchema.parse(article)),
+    data: (result.articles?.data || []).map((article) =>
+      ArticleSchema.parse(article),
+    ),
   }
 }
 
@@ -55,7 +71,10 @@ export const getProducts = async (variables?: GetProductsQueryVariables) => {
   return sdk.GetProducts(variables)
 }
 
-export const getLatestAndRelevantArticles = async (productSlug: string, relevantArticleIds: string[]) => {
+export const getLatestAndRelevantArticles = async (
+  productSlug: string,
+  relevantArticleIds: string[],
+) => {
   const result = await sdk.GetLatestAndRelevantArticles({
     filters: {
       products: {
@@ -70,8 +89,12 @@ export const getLatestAndRelevantArticles = async (productSlug: string, relevant
   })
 
   return {
-    articles: result.articles?.data.map((article) => ArticleSchema.parse(article)),
-    relevantArticles: result.relevantArticles?.data.map((article) => ArticleSchema.parse(article)),
+    articles: result.articles?.data.map((article) =>
+      ArticleSchema.parse(article),
+    ),
+    relevantArticles: result.relevantArticles?.data.map((article) =>
+      ArticleSchema.parse(article),
+    ),
   }
 }
 

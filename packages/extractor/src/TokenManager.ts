@@ -1,6 +1,6 @@
-import { erc20Abi } from '@sushiswap/abi'
-import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
+import { erc20Abi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
 import { Address } from 'viem'
 
 import { MultiCallAggregator } from './MulticallAggregator'
@@ -16,7 +16,11 @@ interface TokenCacheRecord {
 
 // For some tokens that are not 100% ERC-20:
 const SpecialTokens: Record<string, Omit<TokenCacheRecord, 'address'>> = {
-  '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2': { name: 'Maker Token', symbol: 'MKR', decimals: 18 },
+  '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2': {
+    name: 'Maker Token',
+    symbol: 'MKR',
+    decimals: 18,
+  },
 }
 
 export class TokenManager {
@@ -37,7 +41,7 @@ export class TokenManager {
           ...r,
           chainId: this.client.client.chain?.id as ChainId,
         }),
-        false
+        false,
       )
     })
   }
@@ -88,14 +92,26 @@ export class TokenManager {
       const newToken = new Token({
         chainId: this.client.client.chain?.id as ChainId,
         address: address,
-        decimals: decimals.status === 'fulfilled' ? Number(decimals.value as bigint) : 18,
-        symbol: symbol.status === 'fulfilled' ? (symbol.value as string) : `Unknown_${address.substring(2, 10)}`,
-        name: name.status === 'fulfilled' ? (name.value as string) : `Unknown_${address.substring(2, 10)}`,
+        decimals:
+          decimals.status === 'fulfilled'
+            ? Number(decimals.value as bigint)
+            : 18,
+        symbol:
+          symbol.status === 'fulfilled'
+            ? (symbol.value as string)
+            : `Unknown_${address.substring(2, 10)}`,
+        name:
+          name.status === 'fulfilled'
+            ? (name.value as string)
+            : `Unknown_${address.substring(2, 10)}`,
       })
       this.addToken(newToken)
       return newToken
     } catch (e) {
-      warnLog(this.client.client.chain?.id, `Token downloading error ${address}`)
+      warnLog(
+        this.client.client.chain?.id,
+        `Token downloading error ${address}`,
+      )
       return undefined
     }
   }
