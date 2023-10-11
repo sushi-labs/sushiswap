@@ -1,20 +1,27 @@
 'use client'
 
 import { Slot } from '@radix-ui/react-slot'
-import { ChainId } from '@sushiswap/chain'
 import { DataTable } from '@sushiswap/ui'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future'
 import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useState } from 'react'
+import { ChainId } from 'sushi/chain'
 import { Address } from 'wagmi'
 
-import { NAME_COLUMN_V3, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL, PRICE_RANGE_COLUMN } from '../../../columns'
+import {
+  NAME_COLUMN_V3,
+  POSITION_SIZE_CELL,
+  POSITION_UNCLAIMED_CELL,
+  PRICE_RANGE_COLUMN,
+} from '../../../columns'
 import { useManualPositions } from './useManualPositions'
 
-const COLUMNS = [NAME_COLUMN_V3, PRICE_RANGE_COLUMN, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL] satisfies ColumnDef<
-  ConcentratedLiquidityPositionWithV3Pool,
-  unknown
->[]
+const COLUMNS = [
+  NAME_COLUMN_V3,
+  PRICE_RANGE_COLUMN,
+  POSITION_SIZE_CELL,
+  POSITION_UNCLAIMED_CELL,
+] satisfies ColumnDef<ConcentratedLiquidityPositionWithV3Pool, unknown>[]
 
 const tableState = { sorting: [{ id: 'positionSize', desc: true }] }
 
@@ -34,13 +41,16 @@ export const Manual: FC<Manual> = ({ chainId, poolAddress, onRowClick }) => {
     (row: Row<ConcentratedLiquidityPositionWithV3Pool>, rowNode: ReactNode) => {
       if (onRowClick)
         return (
-          <Slot className="cursor-pointer" onClick={() => onRowClick?.(row.original)}>
+          <Slot
+            className="cursor-pointer"
+            onClick={() => onRowClick?.(row.original)}
+          >
             {rowNode}
           </Slot>
         )
       return rowNode
     },
-    [onRowClick]
+    [onRowClick],
   )
 
   const { data, isInitialLoading } = useManualPositions({
@@ -52,7 +62,11 @@ export const Manual: FC<Manual> = ({ chainId, poolAddress, onRowClick }) => {
     <DataTable
       testId="concentrated-positions"
       loading={isInitialLoading}
-      linkFormatter={(row) => `/pool/${row.chainId}:${row.address}/positions/${row.tokenId.toString()}`}
+      linkFormatter={(row) =>
+        `/pool/${row.chainId}:${
+          row.address
+        }/positions/${row.tokenId.toString()}`
+      }
       rowRenderer={rowRenderer}
       columns={COLUMNS}
       data={data}

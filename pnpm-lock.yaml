@@ -2061,9 +2061,12 @@ importers:
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
-      '@sushiswap/typescript-config':
-        specifier: workspace:*
-        version: link:../../config/typescript
+      '@tsconfig/esm':
+        specifier: 1.0.4
+        version: 1.0.4
+      '@tsconfig/strictest':
+        specifier: 2.0.2
+        version: 2.0.2
       '@types/node':
         specifier: '18'
         version: 18.17.5
@@ -6516,7 +6519,7 @@ packages:
       eth-ens-namehash: 2.0.8
       solc: 0.4.26
       testrpc: 0.0.1
-      web3-utils: 1.10.1
+      web3-utils: 1.10.2
 
   /@ensdomains/resolver@0.2.4:
     resolution: {integrity: sha512-bvaTH34PMCbv6anRa9I/0zjLJgY4EuznbEMgbV77JBCQ9KNC46rzi0avuxpOfu+xDjPEtSFGqVEOr5GlUSGudA==}
@@ -16578,7 +16581,6 @@ packages:
 
   /@tsconfig/esm@1.0.4:
     resolution: {integrity: sha512-bix9CWljCxyD06nGQRDYdmTw0wevvEDyrLKjbDocGV31JQYbfqqgMV1yFeJ9aDgorKQ9yDLrak8poiggsB5Liw==}
-    deprecated: Use the tsconfig base for your runtime instead of general 'esm', e.g. 'node18'
     dev: true
 
   /@tsconfig/next@2.0.0:
@@ -38776,6 +38778,7 @@ packages:
       number-to-bn: 1.7.0
       randombytes: 2.1.0
       utf8: 3.0.0
+    dev: true
 
   /web3-utils@1.10.2:
     resolution: {integrity: sha512-TdApdzdse5YR+5GCX/b/vQnhhbj1KSAtfrDtRW7YS0kcWp1gkJsN62gw6GzCaNTeXookB7UrLtmDUuMv65qgow==}
@@ -38789,7 +38792,6 @@ packages:
       number-to-bn: 1.7.0
       randombytes: 2.1.0
       utf8: 3.0.0
-    dev: false
 
   /web3-utils@1.2.11:
     resolution: {integrity: sha512-3Tq09izhD+ThqHEaWYX4VOT7dNPdZiO+c/1QMA0s5X2lDFKK/xHJb7cyTRRVzN2LvlHbR7baS1tmQhSua51TcQ==}

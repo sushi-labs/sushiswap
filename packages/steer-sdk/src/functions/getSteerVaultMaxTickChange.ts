@@ -1,5 +1,5 @@
-import { getChainIdAddressFromId } from '@sushiswap/format'
-import { PublicClient } from 'viem'
+import { getChainIdAddressFromId } from 'sushi/format'
+import type { PublicClient } from 'viem'
 
 import { steerMultiPositionManager } from '../abi/steerMultiPositionManager.js'
 
@@ -8,7 +8,10 @@ interface GetSteerVaultsMaxTickChanges {
   vaultIds: string[]
 }
 
-async function getSteerVaultsMaxTickChanges({ client, vaultIds }: GetSteerVaultsMaxTickChanges) {
+async function getSteerVaultsMaxTickChanges({
+  client,
+  vaultIds,
+}: GetSteerVaultsMaxTickChanges) {
   const result = await client.multicall({
     allowFailure: true,
     contracts: vaultIds.map((id) => {
@@ -31,8 +34,13 @@ interface GetSteerVaultMaxTickChange {
   vaultId: string
 }
 
-async function getSteerVaultMaxTickChange({ client, vaultId }: GetSteerVaultMaxTickChange) {
-  return (await getSteerVaultsMaxTickChanges({ client, vaultIds: [vaultId] }))[0]
+async function getSteerVaultMaxTickChange({
+  client,
+  vaultId,
+}: GetSteerVaultMaxTickChange) {
+  return (
+    await getSteerVaultsMaxTickChanges({ client, vaultIds: [vaultId] })
+  )[0]
 }
 
 export { getSteerVaultMaxTickChange, getSteerVaultsMaxTickChanges }

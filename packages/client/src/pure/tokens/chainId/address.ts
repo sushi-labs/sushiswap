@@ -1,15 +1,18 @@
-import { ChainId } from '@sushiswap/chain'
 import type { getToken as _getToken } from '@sushiswap/tokens-api/lib/api.js'
 import { TokenApiSchema } from '@sushiswap/tokens-api/lib/schemas/chainId/address'
+import type { ChainId } from 'sushi/chain'
 
 import { TOKENS_API } from '../../../constants.js'
-import { GetApiInputFromOutput } from '../../../types.js'
+import { type GetApiInputFromOutput } from '../../../types.js'
 
 export { TokenApiSchema }
 export type Token = Awaited<ReturnType<typeof _getToken>>
 // Slightly opinionated, adding string to support the chainId:address format
 export type GetTokenArgs =
-  | GetApiInputFromOutput<(typeof TokenApiSchema)['_input'], (typeof TokenApiSchema)['_output']>
+  | GetApiInputFromOutput<
+      typeof TokenApiSchema['_input'],
+      typeof TokenApiSchema['_output']
+    >
   | string
 
 export const getTokenUrl = (args: GetTokenArgs) => {

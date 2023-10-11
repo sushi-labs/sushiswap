@@ -1,6 +1,6 @@
-import { getChainIdAddressFromId } from '@sushiswap/format'
-import { isPromiseFulfilled } from '@sushiswap/validate'
 import { fetch } from '@whatwg-node/fetch'
+import { isPromiseFulfilled } from 'sushi'
+import { getChainIdAddressFromId } from 'sushi/format'
 
 interface GetSteerVaultsAprs {
   vaultIds: string[]
@@ -12,12 +12,15 @@ interface AprTimeseries {
       startTime: number
       endTime: number
       feeApr: number
-    }
+    },
   ]
   message: string
 }
 
-function getAprTimeseries(chainId: number, address: string): Promise<AprTimeseries['data']> {
+function getAprTimeseries(
+  chainId: number,
+  address: string,
+): Promise<AprTimeseries['data']> {
   const url = `https://ro81h8hq6b.execute-api.us-east-1.amazonaws.com/pool/apr/historical?address=${address}&chain=${chainId}`
 
   return fetch(url)
@@ -31,7 +34,7 @@ async function getSteerVaultsAprTimeseries({ vaultIds }: GetSteerVaultsAprs) {
       const { address, chainId } = getChainIdAddressFromId(vaultId)
 
       return getAprTimeseries(chainId, address)
-    })
+    }),
   )
 
   return results.map((r) => (isPromiseFulfilled(r) ? r.value : null))

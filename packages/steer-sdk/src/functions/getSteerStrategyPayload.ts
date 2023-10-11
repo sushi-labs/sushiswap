@@ -1,5 +1,5 @@
-import { isPromiseFulfilled } from '@sushiswap/validate'
 import { fetch } from '@whatwg-node/fetch'
+import { isPromiseFulfilled } from 'sushi'
 
 interface Payload {
   strategyConfigData: {
@@ -25,11 +25,15 @@ interface GetSteerStrategiesPayloads {
   payloadHashes: string[]
 }
 
-async function getSteerStrategiesPayloads({ payloadHashes }: GetSteerStrategiesPayloads) {
+async function getSteerStrategiesPayloads({
+  payloadHashes,
+}: GetSteerStrategiesPayloads) {
   const results = await Promise.allSettled(
     payloadHashes.map(async (payloadHash) => {
-      return fetch(`https://ipfs.io/ipfs/${payloadHash}`).then((res) => res.json() as Promise<Payload>)
-    })
+      return fetch(`https://ipfs.io/ipfs/${payloadHash}`).then(
+        (res) => res.json() as Promise<Payload>,
+      )
+    }),
   )
 
   return results.map((r) => (isPromiseFulfilled(r) ? r.value : null))

@@ -1,4 +1,4 @@
-import { getEarnPoolCount as getEarnPoolCountOriginal } from '@sushiswap/pools-api/lib/api/index.js'
+import type { getEarnPoolCount as getEarnPoolCountOriginal } from '@sushiswap/pools-api/lib/api/index.js'
 import { PoolCountApiSchema } from '@sushiswap/pools-api/lib/schemas/count'
 import { fetch } from '@whatwg-node/fetch'
 

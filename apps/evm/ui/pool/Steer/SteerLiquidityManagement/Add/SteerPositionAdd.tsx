@@ -1,14 +1,14 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import { ChainId } from '@sushiswap/chain'
 import { SteerVault } from '@sushiswap/client/src/pure/steer-vault/vault'
 import { STEER_PERIPHERY_ADDRESS, SteerChainId } from '@sushiswap/steer-sdk'
-import { Button, classNames, DialogTrigger } from '@sushiswap/ui'
+import { Button, DialogTrigger, classNames } from '@sushiswap/ui'
 import { Checker } from '@sushiswap/wagmi/future'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import { Field } from 'lib/constants'
 import React, { FC, useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
 
 import {
   useSteerPositionAddActions,
@@ -22,7 +22,13 @@ interface SteerPositionAddProps {
 }
 
 export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
-  const { currencies, independentField, dependentField, parsedAmounts, isLoading } = useSteerPositionAddDerivedInfo({
+  const {
+    currencies,
+    independentField,
+    dependentField,
+    parsedAmounts,
+    isLoading,
+  } = useSteerPositionAddDerivedInfo({
     vault,
   })
   const { onFieldAInput, onFieldBInput } = useSteerPositionAddActions()
@@ -39,7 +45,12 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
   }, [parsedAmounts])
 
   return (
-    <div className={classNames(isLoading ? 'opacity-40 pointer-events-none' : '', 'flex flex-col gap-4')}>
+    <div
+      className={classNames(
+        isLoading ? 'opacity-40 pointer-events-none' : '',
+        'flex flex-col gap-4',
+      )}
+    >
       <div className="relative">
         <Web3Input.Currency
           id="add-liquidity-token0"
@@ -72,7 +83,11 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
 
       <Checker.Connect fullWidth>
         <Checker.Network fullWidth chainId={vault.chainId}>
-          <Checker.Amounts fullWidth chainId={vault.chainId as ChainId} amounts={amounts}>
+          <Checker.Amounts
+            fullWidth
+            chainId={vault.chainId as ChainId}
+            amounts={amounts}
+          >
             <Checker.ApproveERC20
               fullWidth
               id="approve-erc20-0"
@@ -84,7 +99,9 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
                 fullWidth
                 id="approve-erc20-1"
                 amount={parsedAmounts?.[Field.CURRENCY_B]}
-                contract={STEER_PERIPHERY_ADDRESS[vault.chainId as SteerChainId]}
+                contract={
+                  STEER_PERIPHERY_ADDRESS[vault.chainId as SteerChainId]
+                }
                 enabled={!!parsedAmounts?.[Field.CURRENCY_B]}
               >
                 <SteerPositionAddReviewModal
@@ -96,7 +113,11 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
                   // successLink={successLink}
                 >
                   <DialogTrigger asChild>
-                    <Button fullWidth size="xl" testId="add-steer-liquidity-preview">
+                    <Button
+                      fullWidth
+                      size="xl"
+                      testId="add-steer-liquidity-preview"
+                    >
                       Preview
                     </Button>
                   </DialogTrigger>

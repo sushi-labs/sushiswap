@@ -1,8 +1,8 @@
-import { getChainIdAddressFromId } from '@sushiswap/format'
-import { PublicClient } from 'viem'
+import { getChainIdAddressFromId } from 'sushi/format'
+import type { PublicClient } from 'viem'
 
 import { steerPeripheryAbi } from '../abi/steerPeripheryAbi.js'
-import { isSteerChainId, STEER_PERIPHERY_ADDRESS } from '../constants.js'
+import { STEER_PERIPHERY_ADDRESS, isSteerChainId } from '../constants.js'
 import { multichainMulticall } from '../helpers/multichainMulticall.js'
 
 interface GetSteerVaultsReserves {
@@ -10,14 +10,18 @@ interface GetSteerVaultsReserves {
   vaultIds: string[]
 }
 
-async function getSteerVaultsReserves({ clients, vaultIds }: GetSteerVaultsReserves) {
+async function getSteerVaultsReserves({
+  clients,
+  vaultIds,
+}: GetSteerVaultsReserves) {
   const result = await multichainMulticall({
     clients,
     params: {
       contracts: vaultIds.map((id) => {
         const { chainId, address } = getChainIdAddressFromId(id)
 
-        if (!isSteerChainId(chainId)) throw new Error(`Invalid chainId: ${chainId}`)
+        if (!isSteerChainId(chainId))
+          throw new Error(`Invalid chainId: ${chainId}`)
         const steerPeriphery = STEER_PERIPHERY_ADDRESS[chainId]
 
         return {
@@ -32,7 +36,12 @@ async function getSteerVaultsReserves({ clients, vaultIds }: GetSteerVaultsReser
   })
 
   return result.map(({ result }) =>
-    result ? ({ reserve0: result.amountToken0, reserve1: result.amountToken1 } as const) : null
+    result
+      ? ({
+          reserve0: result.amountToken0,
+          reserve1: result.amountToken1,
+        } as const)
+      : null,
   )
 }
 
@@ -41,8 +50,13 @@ interface GetSteerVaultReserves {
   vaultId: string
 }
 
-async function getSteerVaultReserves({ client, vaultId }: GetSteerVaultReserves) {
-  return (await getSteerVaultsReserves({ clients: [client], vaultIds: [vaultId] }))[0]
+async function getSteerVaultReserves({
+  client,
+  vaultId,
+}: GetSteerVaultReserves) {
+  return (
+    await getSteerVaultsReserves({ clients: [client], vaultIds: [vaultId] })
+  )[0]
 }
 
 export { getSteerVaultReserves, getSteerVaultsReserves }

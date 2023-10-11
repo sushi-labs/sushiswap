@@ -1,4 +1,4 @@
-import {
+import type {
   ContractFunctionConfig,
   MulticallContracts,
   MulticallParameters,
@@ -6,11 +6,13 @@ import {
   PublicClient,
 } from 'viem'
 
-type ContractFunctionConfigWithChainId = ContractFunctionConfig & { chainId: number }
+type ContractFunctionConfigWithChainId = ContractFunctionConfig & {
+  chainId: number
+}
 
 interface MultichainMulticallParams<
   TContracts extends ContractFunctionConfigWithChainId[],
-  TAllowFailure extends boolean = true
+  TAllowFailure extends boolean = true,
 > {
   clients: PublicClient[]
   params: MulticallParameters<TContracts, TAllowFailure> & {
@@ -20,12 +22,16 @@ interface MultichainMulticallParams<
 
 async function multichainMulticall<
   TContracts extends ContractFunctionConfigWithChainId[],
-  TAllowFailure extends boolean = true
+  TAllowFailure extends boolean = true,
 >({
   clients,
   params,
-}: MultichainMulticallParams<TContracts, TAllowFailure>): Promise<MulticallReturnType<TContracts, TAllowFailure>> {
-  const paramsChainIds = Array.from(new Set(params.contracts.map((contract) => contract.chainId)))
+}: MultichainMulticallParams<TContracts, TAllowFailure>): Promise<
+  MulticallReturnType<TContracts, TAllowFailure>
+> {
+  const paramsChainIds = Array.from(
+    new Set(params.contracts.map((contract) => contract.chainId)),
+  )
 
   const inputResultIndexMap = new Map<number, number>()
   const promises = []
@@ -49,7 +55,7 @@ async function multichainMulticall<
       client.multicall({
         ...params,
         contracts: oneChainIdContracts as typeof params.contracts,
-      })
+      }),
     )
   }
 

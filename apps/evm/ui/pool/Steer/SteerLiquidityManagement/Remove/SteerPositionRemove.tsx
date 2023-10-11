@@ -2,11 +2,8 @@
 
 import { CogIcon } from '@heroicons/react-v1/solid'
 import { calculateSlippageAmount } from '@sushiswap/amm'
-import { ChainId } from '@sushiswap/chain'
 import { SteerVault } from '@sushiswap/client/src/pure/steer-vault/vault'
-import { Amount, Token } from '@sushiswap/currency'
 import { useDebounce } from '@sushiswap/hooks'
-import { Percent } from '@sushiswap/math'
 import { isSteerChainId } from '@sushiswap/steer-sdk'
 import { steerMultiPositionManager } from '@sushiswap/steer-sdk/abi'
 import {
@@ -15,12 +12,12 @@ import {
   CardCurrencyAmountItem,
   CardGroup,
   CardLabel,
-  classNames,
-  createErrorToast,
-  createToast,
   IconButton,
   SettingsModule,
   SettingsOverlay,
+  classNames,
+  createErrorToast,
+  createToast,
 } from '@sushiswap/ui'
 import {
   SendTransactionResult,
@@ -35,13 +32,18 @@ import { Checker } from '@sushiswap/wagmi/future'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import React, { FC, useCallback, useMemo, useState } from 'react'
-import { Address, encodeFunctionData, UserRejectedRequestError } from 'viem'
+import { ChainId } from 'sushi/chain'
+import { Amount, Token } from 'sushi/currency'
+import { Percent } from 'sushi/math'
+import { Address, UserRejectedRequestError, encodeFunctionData } from 'viem'
 
 interface SteerPositionRemoveProps {
   vault: SteerVault
 }
 
-export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({ vault }) => {
+export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
+  vault,
+}) => {
   const { chainId } = vault as { chainId: ChainId }
 
   const { chain } = useNetwork()
@@ -51,13 +53,19 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({ vault }) => 
   const debouncedValue = useDebounce(value, 300)
 
   const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
+    return new Percent(
+      Math.floor(
+        +(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100,
+      ),
+      10_000,
+    )
   }, [slippageTolerance])
 
-  const { data: position, isLoading: isPositionLoading } = useSteerAccountPosition({
-    account: account,
-    vaultId: vault.id,
-  })
+  const { data: position, isLoading: isPositionLoading } =
+    useSteerAccountPosition({
+      account: account,
+      vaultId: vault.id,
+    })
 
   const [token0, token1] = useMemo(() => {
     const token0 = new Token({ chainId: chainId, ...vault.pool.token0 })
@@ -67,8 +75,14 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({ vault }) => 
   }, [chainId, vault])
 
   const tokenAmountsTotal = useMemo(() => {
-    const token0Amount = Amount.fromRawAmount(token0, position?.token0Balance || 0n)
-    const token1Amount = Amount.fromRawAmount(token1, position?.token1Balance || 0n)
+    const token0Amount = Amount.fromRawAmount(
+      token0,
+      position?.token0Balance || 0n,
+    )
+    const token1Amount = Amount.fromRawAmount(
+      token1,
+      position?.token1Balance || 0n,
+    )
 
     return [token0Amount, token1Amount]
   }, [position, token0, token1])
@@ -77,13 +91,15 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({ vault }) => 
     const liquidityPercentage = new Percent(debouncedValue, 100)
     const token0Amount = Amount.fromRawAmount(
       token0,
-      liquidityPercentage.multiply(tokenAmountsTotal[0].quotient).quotient
+      liquidityPercentage.multiply(tokenAmountsTotal[0].quotient).quotient,
     )
     const token1Amount = Amount.fromRawAmount(
       token1,
-      liquidityPercentage.multiply(tokenAmountsTotal[1].quotient).quotient
+      liquidityPercentage.multiply(tokenAmountsTotal[1].quotient).quotient,
     )
-    const steerTokenAmount = liquidityPercentage.multiply(position?.steerTokenBalance || 0n).quotient
+    const steerTokenAmount = liquidityPercentage.multiply(
+      position?.steerTokenBalance || 0n,
+    ).quotient
 
     return { token0Amount, token1Amount, steerTokenAmount }
   }, [position, tokenAmountsTotal, debouncedValue, token0, token1])
@@ -111,11 +127,17 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({ vault }) => 
         groupTimestamp: ts,
       })
     },
-    [account, chainId, token0.symbol, token1.symbol]
+    [account, chainId, token0.symbol, token1.symbol],
   )
 
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
-    if (!account || position?.steerTokenBalance === 0n || !tokenAmountsDiscounted || !isSteerChainId(chainId)) return {}
+    if (
+      !account ||
+      position?.steerTokenBalance === 0n ||
+      !tokenAmountsDiscounted ||
+      !isSteerChainId(chainId)
+    )
+      return {}
 
     return {
       to: vault.address as Address,
@@ -124,13 +146,26 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({ vault }) => 
         functionName: 'withdraw',
         args: [
           tokenAmountsDiscounted.steerTokenAmount,
-          calculateSlippageAmount(tokenAmountsDiscounted.token0Amount, slippagePercent)[0],
-          calculateSlippageAmount(tokenAmountsDiscounted.token1Amount, slippagePercent)[0],
+          calculateSlippageAmount(
+            tokenAmountsDiscounted.token0Amount,
+            slippagePercent,
+          )[0],
+          calculateSlippageAmount(
+            tokenAmountsDiscounted.token1Amount,
+            slippagePercent,
+          )[0],
           account,
         ],
       }),
     }
-  }, [account, chainId, position?.steerTokenBalance, slippagePercent, tokenAmountsDiscounted, vault.address])
+  }, [
+    account,
+    chainId,
+    position?.steerTokenBalance,
+    slippagePercent,
+    tokenAmountsDiscounted,
+    vault.address,
+  ])
 
   const { config } = usePrepareSendTransaction({
     ...prepare,
@@ -149,14 +184,18 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({ vault }) => 
   return (
     <div
       className={classNames(
-        isPositionLoading || position?.steerTokenBalance === 0n ? 'opacity-40 pointer-events-none' : '',
-        'flex flex-col gap-4'
+        isPositionLoading || position?.steerTokenBalance === 0n
+          ? 'opacity-40 pointer-events-none'
+          : '',
+        'flex flex-col gap-4',
       )}
     >
       <div className="p-3 pb-2 space-y-2 overflow-hidden bg-white rounded-xl dark:bg-secondary border border-accent">
         <div className="flex justify-between gap-4">
           <div>
-            <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">{value}%</h1>
+            <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">
+              {value}%
+            </h1>
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -201,7 +240,13 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({ vault }) => 
               }}
               modules={[SettingsModule.SlippageTolerance]}
             >
-              <IconButton size="sm" name="Settings" icon={CogIcon} variant="secondary" className="!rounded-xl" />
+              <IconButton
+                size="sm"
+                name="Settings"
+                icon={CogIcon}
+                variant="secondary"
+                className="!rounded-xl"
+              />
             </SettingsOverlay>
           </div>
         </div>
@@ -219,12 +264,21 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({ vault }) => 
       <Card variant="outline" className="space-y-6 p-6">
         <CardGroup>
           <CardLabel>{"You'll"} receive</CardLabel>
-          <CardCurrencyAmountItem amount={tokenAmountsTotal?.[0].multiply(value).divide(100)} />
-          <CardCurrencyAmountItem amount={tokenAmountsTotal?.[1].multiply(value).divide(100)} />
+          <CardCurrencyAmountItem
+            amount={tokenAmountsTotal?.[0].multiply(value).divide(100)}
+          />
+          <CardCurrencyAmountItem
+            amount={tokenAmountsTotal?.[1].multiply(value).divide(100)}
+          />
         </CardGroup>
       </Card>
       <Checker.Connect fullWidth variant="outline" size="xl">
-        <Checker.Network fullWidth variant="outline" size="xl" chainId={chainId}>
+        <Checker.Network
+          fullWidth
+          variant="outline"
+          size="xl"
+          chainId={chainId}
+        >
           <Button
             size="xl"
             loading={isWritePending}

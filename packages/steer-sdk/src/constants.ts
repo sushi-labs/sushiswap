@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 
 export const STEER_SUPPORTED_CHAIN_IDS = [
   ChainId.BASE,
@@ -15,7 +15,7 @@ export const STEER_SUPPORTED_CHAIN_IDS = [
 
 export const SteerChainIds = STEER_SUPPORTED_CHAIN_IDS
 
-export type SteerChainId = (typeof STEER_SUPPORTED_CHAIN_IDS)[number]
+export type SteerChainId = typeof STEER_SUPPORTED_CHAIN_IDS[number]
 
 export const isSteerChainId = (chainId: ChainId): chainId is SteerChainId =>
   STEER_SUPPORTED_CHAIN_IDS.includes(chainId as SteerChainId)

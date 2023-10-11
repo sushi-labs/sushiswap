@@ -1,12 +1,16 @@
-import { getChainIdAddressFromId } from '@sushiswap/format'
-import { isPromiseFulfilled } from '@sushiswap/validate'
 import { fetch } from '@whatwg-node/fetch'
+import { isPromiseFulfilled } from 'sushi'
+import { getChainIdAddressFromId } from 'sushi/format'
 
 interface GetSteerVaultsAprs {
   vaultIds: string[]
 }
 
-function getApr(chainId: number, address: string, interval?: number): Promise<number | string> {
+function getApr(
+  chainId: number,
+  address: string,
+  interval?: number,
+): Promise<number | string> {
   let url = `https://ro81h8hq6b.execute-api.us-east-1.amazonaws.com/pool/fee-apr?address=${address}&chain=${chainId}`
   if (interval) {
     url += `&interval=${interval}`
@@ -22,7 +26,10 @@ async function getSteerVaultsAprs({ vaultIds }: GetSteerVaultsAprs) {
     vaultIds.map(async (vaultId) => {
       const { address, chainId } = getChainIdAddressFromId(vaultId)
 
-      const aprs = await Promise.all([getApr(chainId, address), getApr(chainId, address, 604800)])
+      const aprs = await Promise.all([
+        getApr(chainId, address),
+        getApr(chainId, address, 604800),
+      ])
 
       if (aprs.some((apr) => typeof apr === 'undefined')) {
         throw new Error("Couldn't fetch APR")
@@ -34,7 +41,7 @@ async function getSteerVaultsAprs({ vaultIds }: GetSteerVaultsAprs) {
         apr,
         apr1w,
       }
-    })
+    }),
   )
 
   return results.map((r) => (isPromiseFulfilled(r) ? r.value : null))

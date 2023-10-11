@@ -1,5 +1,5 @@
-import { getChainIdAddressFromId } from '@sushiswap/format'
-import { PublicClient } from 'viem'
+import { getChainIdAddressFromId } from 'sushi/format'
+import type { PublicClient } from 'viem'
 
 import { steerMultiPositionManager } from '../abi/steerMultiPositionManager.js'
 
@@ -8,7 +8,10 @@ interface GetSteerVaultsPositions {
   vaultIds: string[]
 }
 
-async function getSteerVaultsPositions({ client, vaultIds }: GetSteerVaultsPositions) {
+async function getSteerVaultsPositions({
+  client,
+  vaultIds,
+}: GetSteerVaultsPositions) {
   const result = await client.multicall({
     allowFailure: true,
     contracts: vaultIds.map((id) => {
@@ -31,9 +34,9 @@ async function getSteerVaultsPositions({ client, vaultIds }: GetSteerVaultsPosit
     const relativeWeights = res.result[2]
 
     return lowerTicks.map((_, i) => ({
-      lowerTick: BigInt(lowerTicks[i].toString()),
-      upperTick: BigInt(upperTicks[i].toString()),
-      relativeWeight: BigInt(relativeWeights[i].toString()),
+      lowerTick: BigInt(lowerTicks[i]!.toString()),
+      upperTick: BigInt(upperTicks[i]!.toString()),
+      relativeWeight: BigInt(relativeWeights[i]!.toString()),
     }))
   })
 }
@@ -43,7 +46,10 @@ interface GetSteerVaultPositions {
   vaultId: string
 }
 
-async function getSteerVaultPositions({ client, vaultId }: GetSteerVaultPositions) {
+async function getSteerVaultPositions({
+  client,
+  vaultId,
+}: GetSteerVaultPositions) {
   return (await getSteerVaultsPositions({ client, vaultIds: [vaultId] }))[0]
 }
 

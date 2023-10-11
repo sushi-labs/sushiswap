@@ -23,15 +23,20 @@ async function getTokenRatios(vault: GetTokenRatiosProps) {
   }
 
   const [reserve0USD, reserve1USD] = [
-    (Number(vault.reserve0) / 10 ** (vault.token0.decimals - 36)) * prices[vault.token0.address] || 0,
-    (Number(vault.reserve1) / 10 ** (vault.token1.decimals - 36)) * prices[vault.token1.address] || 0,
+    (Number(vault.reserve0) / 10 ** (vault.token0.decimals - 36)) *
+      (prices[vault.token0.address] || 0),
+    (Number(vault.reserve1) / 10 ** (vault.token1.decimals - 36)) *
+      (prices[vault.token1.address] || 0),
   ]
 
   const totalReserveUSD = reserve0USD + reserve1USD
 
   if (totalReserveUSD === 0) return { token0: 0, token1: 0 }
 
-  let [token0, token1] = [reserve0USD / totalReserveUSD, reserve1USD / totalReserveUSD]
+  let [token0, token1] = [
+    reserve0USD / totalReserveUSD,
+    reserve1USD / totalReserveUSD,
+  ]
 
   token0 = token0 < 0.00001 ? 0 : Math.min(token0, 1)
   token1 = token1 < 0.00001 ? 0 : Math.min(token1, 1)

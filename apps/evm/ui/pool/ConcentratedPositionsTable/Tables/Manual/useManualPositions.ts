@@ -1,10 +1,13 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
-import { isSushiSwapV3ChainId, SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
+import {
+  SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
+  isSushiSwapV3ChainId,
+} from '@sushiswap/v3-sdk'
 import { Address, useAccount } from '@sushiswap/wagmi'
 import { useConcentratedLiquidityPositions } from '@sushiswap/wagmi/future/hooks'
 import { useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
 import { Writeable } from 'zod'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
@@ -14,7 +17,10 @@ interface UseManualPositions {
   poolAddress?: Address
 }
 
-export const useManualPositions = ({ poolAddress, chainId }: UseManualPositions) => {
+export const useManualPositions = ({
+  poolAddress,
+  chainId,
+}: UseManualPositions) => {
   const { address } = useAccount()
   const { chainIds, tokenSymbols } = usePoolFilters()
 
@@ -26,10 +32,11 @@ export const useManualPositions = ({ poolAddress, chainId }: UseManualPositions)
     return SUSHISWAP_V3_SUPPORTED_CHAIN_IDS
   }, [chainId])
 
-  const { data: manualPositions, isInitialLoading } = useConcentratedLiquidityPositions({
-    account: address,
-    chainIds: chainIdsToQuery as Writeable<typeof chainIdsToQuery>,
-  })
+  const { data: manualPositions, isInitialLoading } =
+    useConcentratedLiquidityPositions({
+      account: address,
+      chainIds: chainIdsToQuery as Writeable<typeof chainIdsToQuery>,
+    })
 
   return {
     data: useMemo(() => {
@@ -39,12 +46,20 @@ export const useManualPositions = ({ poolAddress, chainId }: UseManualPositions)
         .filter((el) =>
           _tokenSymbols.length > 0
             ? _tokenSymbols.some((symbol) => {
-                return [el.pool?.token0.symbol, el.pool?.token1.symbol].includes(symbol.toUpperCase())
+                return [
+                  el.pool?.token0.symbol,
+                  el.pool?.token1.symbol,
+                ].includes(symbol.toUpperCase())
               })
-            : true
+            : true,
         )
         .filter((el) => {
-          return el.liquidity !== 0n && (poolAddress ? el.address.toLowerCase() === poolAddress.toLowerCase() : true)
+          return (
+            el.liquidity !== 0n &&
+            (poolAddress
+              ? el.address.toLowerCase() === poolAddress.toLowerCase()
+              : true)
+          )
         })
     }, [tokenSymbols, manualPositions, chainIds, poolAddress]),
     isInitialLoading,

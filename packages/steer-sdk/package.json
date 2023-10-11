@@ -66,9 +66,10 @@
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "18",
     "@wagmi/core": "1.4.1",
+    "@tsconfig/esm": "1.0.4",
+    "@tsconfig/strictest": "2.0.2",
     "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",

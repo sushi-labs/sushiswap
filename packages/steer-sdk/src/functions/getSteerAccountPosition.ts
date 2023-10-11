@@ -1,6 +1,6 @@
-import { getChainIdAddressFromId } from '@sushiswap/format'
 import { erc20ABI } from '@wagmi/core'
-import { Address, PublicClient } from 'viem'
+import { getChainIdAddressFromId } from 'sushi/format'
+import type { Address, PublicClient } from 'viem'
 
 import { multichainMulticall } from '../helpers/multichainMulticall.js'
 import { getSteerVaultsReserves } from './getSteerVaultReserves.js'
@@ -11,7 +11,11 @@ interface GetSteerAccountPositions {
   vaultIds: string[]
 }
 
-async function getSteerAccountPositions({ clients, account, vaultIds }: GetSteerAccountPositions) {
+async function getSteerAccountPositions({
+  clients,
+  account,
+  vaultIds,
+}: GetSteerAccountPositions) {
   const accountBalancesP = multichainMulticall({
     clients,
     params: {
@@ -56,12 +60,17 @@ async function getSteerAccountPositions({ clients, account, vaultIds }: GetSteer
   ])
 
   return vaultIds.map((_, i) => {
-    const accountBalance = accountBalances[i].result
-    const totalSupply = totalSupplies[i].result
+    const accountBalance = accountBalances[i]!.result
+    const totalSupply = totalSupplies[i]!.result
     const vaultReserve = vaultReserves[i]
 
-    if (typeof accountBalance === 'undefined' || typeof totalSupply === 'undefined' || vaultReserve === null)
+    if (
+      typeof accountBalance === 'undefined' ||
+      typeof totalSupply === 'undefined' ||
+      !vaultReserve
+    ) {
       return null
+    }
 
     let token0Balance = 0n
     let token1Balance = 0n
@@ -86,8 +95,18 @@ interface GetSteerAccountPosition {
   vaultId: string
 }
 
-async function getSteerAccountPosition({ client, account, vaultId }: GetSteerAccountPosition) {
-  return (await getSteerAccountPositions({ clients: [client], account, vaultIds: [vaultId] }))[0]
+async function getSteerAccountPosition({
+  client,
+  account,
+  vaultId,
+}: GetSteerAccountPosition) {
+  return (
+    await getSteerAccountPositions({
+      clients: [client],
+      account,
+      vaultIds: [vaultId],
+    })
+  )[0]
 }
 
 export { getSteerAccountPosition, getSteerAccountPositions }
