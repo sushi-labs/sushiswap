@@ -1,18 +1,30 @@
 'use client'
 
-import {Cog6ToothIcon, XMarkIcon} from '@heroicons/react/24/outline'
-import {useSlippageTolerance} from '@sushiswap/hooks'
-import React, {FC, ReactNode, useState} from 'react'
+import { Cog6ToothIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useSlippageTolerance } from '@sushiswap/hooks'
+import React, { FC, ReactNode, useState } from 'react'
 
-import {Button} from '../button'
-import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger,} from '../dialog'
-import {List} from '../list'
-import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,} from '../tooltip'
-import {CarbonOffset} from './CarbonOffset'
-import {ExpertMode} from './ExpertMode'
-import {SlippageTolerance} from './SlippageTolerance'
-import {SwapApi} from './SwapApi'
-import {TokenApi} from './TokenApi'
+import { Button } from '../button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '../dialog'
+import { List } from '../list'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../tooltip'
+import { CarbonOffset } from './CarbonOffset'
+import { ExpertMode } from './ExpertMode'
+import { SlippageTolerance } from './SlippageTolerance'
+import { SwapApi } from './SwapApi'
+import { TokenApi } from './TokenApi'
 
 export enum SettingsModule {
   CarbonOffset = 'CarbonOffset',
@@ -20,7 +32,7 @@ export enum SettingsModule {
   SlippageTolerance = 'SlippageTolerance',
   ExpertMode = 'ExpertMode',
   SwapApi = 'SwapApi',
-  TokenApi = 'TokenApi'
+  TokenApi = 'TokenApi',
 }
 
 interface SettingsOverlayProps {
@@ -120,11 +132,11 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
             </List>
           )}
           {modules.includes(SettingsModule.TokenApi) && (
-              <List className="!pt-0">
-                <List.Control>
-                  <TokenApi />
-                </List.Control>
-              </List>
+            <List className="!pt-0">
+              <List.Control>
+                <TokenApi />
+              </List.Control>
+            </List>
           )}
         </div>
       </DialogContent>

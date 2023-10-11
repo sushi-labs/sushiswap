@@ -1,6 +1,6 @@
 'use client'
 
-import {SettingsModule, SettingsOverlay} from '@sushiswap/ui'
+import { SettingsModule, SettingsOverlay } from '@sushiswap/ui'
 
 export const SimpleSwapSettingsOverlay = () => {
   return (
@@ -9,7 +9,7 @@ export const SimpleSwapSettingsOverlay = () => {
         SettingsModule.SlippageTolerance,
         SettingsModule.CarbonOffset,
         SettingsModule.SwapApi,
-        SettingsModule.TokenApi
+        SettingsModule.TokenApi,
       ]}
     />
   )
