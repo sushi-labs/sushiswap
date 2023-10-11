@@ -1,10 +1,12 @@
 import { createAppAuth } from '@octokit/auth-app'
-import { ChainId, ChainKey } from 'sushi/chain'
-import { formatUSD } from 'sushi'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
+import { Ratelimit } from '@upstash/ratelimit'
+import { Redis } from '@upstash/redis'
 import stringify from 'fast-json-stable-stringify'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { Octokit } from 'octokit'
+import { formatUSD } from 'sushi'
+import { ChainId, ChainKey } from 'sushi/chain'
 
 import { ApplyForTokenListTokenSchemaType } from '../../../../../lib/tokenlist-request/ApplyForTokenListSchema'
 
@@ -25,7 +27,37 @@ interface MutationParams extends ApplyForTokenListTokenSchemaType {
   tokenDecimals: number
 }
 
-export async function POST(request: Request) {
+// To allow for development without rate limiting
+let ratelimit: Ratelimit | undefined
+try {
+  if (!process.env.UPSTASH_REDIS_REST_URL)
+    throw new Error('UPSTASH_REDIS_REST_URL undefined')
+  if (!process.env.UPSTASH_REDIS_REST_TOKEN)
+    throw new Error('UPSTASH_REDIS_REST_TOKEN undefined')
+
+  const redis = new Redis({
+    url: process.env.UPSTASH_REDIS_REST_URL,
+    token: process.env.UPSTASH_REDIS_REST_TOKEN,
+  })
+
+  ratelimit = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(5, '1 h'),
+  })
+} catch {
+  console.log('Warning: Rate limit not enabled')
+}
+
+export const maxDuration = 15 // in seconds
+
+export async function POST(request: NextRequest) {
+  if (ratelimit) {
+    const { remaining } = await ratelimit.limit(request.ip || '127.0.0.1')
+    if (!remaining) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+    }
+  }
+
   if (!process.env.TOKEN_LIST_PR_WEBHOOK_URL)
     throw new Error('TOKEN_LIST_PR_WEBHOOK_URL undefined')
   if (!process.env.OCTOKIT_KEY) throw new Error('OCTOKIT_KEY undefined')
