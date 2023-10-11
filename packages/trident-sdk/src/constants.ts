@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 
 export const TRIDENT_STABLE_POOL_FACTORY_ADDRESS = {
   [ChainId.ARBITRUM]: '0xc2fB256ABa36852DCcEA92181eC6b355f09A0288',
@@ -58,7 +58,7 @@ export const TRIDENT_SUPPORTED_CHAIN_IDS = [
 
 export const TridentChainIds = TRIDENT_SUPPORTED_CHAIN_IDS
 
-export type TridentChainId = (typeof TRIDENT_SUPPORTED_CHAIN_IDS)[number]
+export type TridentChainId = typeof TRIDENT_SUPPORTED_CHAIN_IDS[number]
 
 export const isTridentChainId = (chainId: ChainId): chainId is TridentChainId =>
   TRIDENT_SUPPORTED_CHAIN_IDS.includes(chainId as TridentChainId)

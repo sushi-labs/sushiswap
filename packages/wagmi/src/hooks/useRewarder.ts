@@ -1,7 +1,7 @@
 'use client'
 
 import { ChefType } from '@sushiswap/client'
-import { Amount, Token } from '@sushiswap/currency'
+import { Amount, Token } from 'sushi/currency'
 import { useMemo } from 'react'
 import { Address, useContractRead, useContractReads } from 'wagmi'
 
@@ -18,7 +18,8 @@ interface UseRewarderPayload {
   chef: ChefType
 }
 
-interface UseRewarderData extends Pick<ReturnType<typeof useContractRead>, 'isLoading' | 'isError'> {
+interface UseRewarderData
+  extends Pick<ReturnType<typeof useContractRead>, 'isLoading' | 'isError'> {
   data: (Amount<Token> | undefined)[]
 }
 
@@ -39,7 +40,8 @@ export const useRewarder: UseRewarder = ({
     if (
       !account ||
       !config ||
-      (rewardTokens.length !== rewarderAddresses.length && rewardTokens.length !== types.length)
+      (rewardTokens.length !== rewarderAddresses.length &&
+        rewardTokens.length !== types.length)
     ) {
       return []
     }
@@ -121,7 +123,15 @@ export const useRewarder: UseRewarder = ({
             args: [BigInt(farmId), account as Address, 0n],
           } as const)
     })
-  }, [account, chainId, config, farmId, rewardTokens.length, rewarderAddresses, types])
+  }, [
+    account,
+    chainId,
+    config,
+    farmId,
+    rewardTokens.length,
+    rewarderAddresses,
+    types,
+  ])
 
   const { isError, isLoading, data } = useContractReads({
     contracts,
@@ -143,15 +153,22 @@ export const useRewarder: UseRewarder = ({
     // ! POSSIBLY BROKE IT, TEST
     return {
       data: data
-        .filter((el): el is NonNullable<(typeof data)[0]> => !!el)
+        .filter((el): el is NonNullable<typeof data[0]> => !!el)
         .reduce<(Amount<Token> | undefined)[]>((acc, result, index) => {
           if (typeof result === 'bigint') {
-            acc.push(result ? Amount.fromRawAmount(rewardTokens[index], result) : undefined)
+            acc.push(
+              result
+                ? Amount.fromRawAmount(rewardTokens[index], result)
+                : undefined,
+            )
           } else {
             acc.push(
               ...result[1].map((rewardAmount, index2: number) => {
-                return Amount.fromRawAmount(rewardTokens[index + index2], rewardAmount)
-              })
+                return Amount.fromRawAmount(
+                  rewardTokens[index + index2],
+                  rewardAmount,
+                )
+              }),
             )
           }
 

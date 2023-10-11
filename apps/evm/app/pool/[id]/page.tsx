@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { Separator } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import { ManageV2LiquidityCard } from 'ui/pool/ManageV2LiquidityCard'
@@ -18,24 +18,18 @@ import { PoolPageV3 } from '../../../ui/pool/PoolPageV3'
 import { PoolPosition } from '../../../ui/pool/PoolPosition'
 import { PoolRewards } from '../../../ui/pool/PoolRewards'
 import { PoolStats } from '../../../ui/pool/PoolStats'
-
-export async function getPool({ chainId, address }: { chainId: ChainId; address: string }) {
-  try {
-    if (typeof +chainId !== 'number' || !isAddress(address)) {
-      return
-    }
-    const res = await fetch(`https://pools.sushi.com/api/v0/${chainId}/${address}`, { next: { revalidate: 60 } })
-    const data = await res.json()
-    return data
-  } catch (e) {
-    return
-  }
-}
+import { Pool } from '@sushiswap/client'
 
 export default async function PoolPage({ params }: { params: { id: string } }) {
-  const [_chainId, address] = params.id.split(params.id.includes('%3A') ? '%3A' : ':') as [string, string]
-  const chainId = Number(_chainId) as ChainId
-  const pool = await getPool({ chainId, address })
+  const [chainId, address] = params.id.split(
+    params.id.includes('%3A') ? '%3A' : ':',
+  ) as [string, string]
+
+  const res = await fetch(
+    `https://pools.sushi.com/api/v0/${chainId}/${address}`,
+    { next: { revalidate: 60 } },
+  )
+  const pool = (await res.json()) as Pool
 
   if (!pool) {
     notFound()
@@ -69,7 +63,10 @@ export default async function PoolPage({ params }: { params: { id: string } }) {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
           <div>
-            <PoolChartV2 address={pool.address} chainId={pool.chainId as ChainId} />
+            <PoolChartV2
+              address={pool.address}
+              chainId={pool.chainId as ChainId}
+            />
           </div>
           <div className="flex flex-col gap-6">
             <PoolComposition pool={pool} />

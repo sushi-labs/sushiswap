@@ -5,17 +5,30 @@ import { ReactNode, useCallback } from 'react'
 
 import { ExtractProps } from '../types'
 import { Container, ContainerProps } from './container'
-import { DiscordIcon, GithubIcon, InstagramIcon, SushiWithTextIcon, TwitterIcon } from './icons'
+import {
+  DiscordIcon,
+  GithubIcon,
+  InstagramIcon,
+  SushiWithTextIcon,
+  TwitterIcon,
+} from './icons'
 import { LinkExternal } from './link'
 
-export interface FooterProps extends React.HTMLProps<HTMLDivElement>, Pick<ExtractProps<ContainerProps>, 'maxWidth'> {
+export interface FooterProps
+  extends React.HTMLProps<HTMLDivElement>,
+    Pick<ExtractProps<ContainerProps>, 'maxWidth'> {
   children?: ReactNode
 }
 
 const config: Record<
   string,
   | Record<string, { href: string; rel?: string; target?: string }>
-  | Array<Record<string, Record<string, { href: string; rel?: string; target?: string }>>>
+  | Array<
+      Record<
+        string,
+        Record<string, { href: string; rel?: string; target?: string }>
+      >
+    >
 > = {
   Services: {
     Swap: { href: 'https://www.sushi.com/swap' },
@@ -113,7 +126,10 @@ const config: Record<
 
 const Component = ({ children, maxWidth = '5xl', ...props }: FooterProps) => {
   const leafNode = useCallback(
-    (title: string, items: Record<string, { href: string; rel?: string; target?: string }>) => {
+    (
+      title: string,
+      items: Record<string, { href: string; rel?: string; target?: string }>,
+    ) => {
       return (
         <div key={title} className="flex flex-col gap-[10px]">
           <span className="font-semibold tracking-tighter text-sm sm:text-xs text-gray-900 dark:text-slate-100">
@@ -133,19 +149,29 @@ const Component = ({ children, maxWidth = '5xl', ...props }: FooterProps) => {
         </div>
       )
     },
-    []
+    [],
   )
 
   return (
-    <footer className="bg-secondary hidden sm:flex flex-col pt-[72px]" {...props}>
-      <Container maxWidth={maxWidth} className="grid grid-cols-1 md:grid-cols-[176px_auto] mx-auto px-4 gap-4">
+    <footer
+      className="bg-secondary hidden sm:flex flex-col pt-[72px]"
+      {...props}
+    >
+      <Container
+        maxWidth={maxWidth}
+        className="grid grid-cols-1 md:grid-cols-[176px_auto] mx-auto px-4 gap-4"
+      >
         <div className="col-span-2">{children && children}</div>
         <div className="flex flex-col gap-5">
           <div className="flex items-center justify-start gap-3 pt-2">
-            <SushiWithTextIcon height={20} className="text-gray-700 dark:text-slate-50" />
+            <SushiWithTextIcon
+              height={20}
+              className="text-gray-700 dark:text-slate-50"
+            />
           </div>
           <p className="text-xs text-gray-600 dark:text-slate-400">
-            Our community is building a comprehensive decentralized trading platform for the future of finance. Join us!
+            Our community is building a comprehensive decentralized trading
+            platform for the future of finance. Join us!
           </p>
           <div className="flex items-center gap-4">
             <LinkExternal href="https://github.com/sushiswap">
@@ -182,7 +208,7 @@ const Component = ({ children, maxWidth = '5xl', ...props }: FooterProps) => {
                   {items.map((item) =>
                     Object.entries(item).map(([_title, _items]) => {
                       return leafNode(_title, _items)
-                    })
+                    }),
                   )}
                 </div>
               )

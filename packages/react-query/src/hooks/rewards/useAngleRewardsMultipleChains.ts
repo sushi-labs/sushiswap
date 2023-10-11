@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { useQuery } from '@tanstack/react-query'
 
 import { useAllPrices } from '../prices'
@@ -10,23 +10,32 @@ interface UseAngleRewardsParams {
   account: string | undefined
 }
 
-export const useAngleRewardsMultipleChains = ({ chainIds, account }: UseAngleRewardsParams) => {
+export const useAngleRewardsMultipleChains = ({
+  chainIds,
+  account,
+}: UseAngleRewardsParams) => {
   const { data: prices } = useAllPrices()
 
   return useQuery({
     queryKey: ['getAngleRewardsMultiple', { chainIds, account, prices }],
     queryFn: async () => {
       if (account && prices) {
-        const res = await Promise.all(chainIds.map((chainId) => angleRewardsQueryFn({ chainId, account })))
+        const res = await Promise.all(
+          chainIds.map((chainId) => angleRewardsQueryFn({ chainId, account })),
+        )
         const parsed = angleRewardsMultipleValidator.parse(res)
 
         return parsed
           .map((el, i) => {
-            const data = angleRewardsSelect({ chainId: chainIds[i], data: el, prices: prices[chainIds[i]] })
+            const data = angleRewardsSelect({
+              chainId: chainIds[i]!,
+              data: el,
+              prices: prices[chainIds[i]!],
+            })
 
             return data
               ? {
-                  chainId: chainIds[i],
+                  chainId: chainIds[i]!,
                   ...data,
                 }
               : null

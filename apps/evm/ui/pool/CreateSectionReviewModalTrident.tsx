@@ -1,13 +1,11 @@
 import {
-  computeTridentConstantPoolAddress,
-  computeTridentStablePoolAddress,
   Fee,
   TridentConstantPool,
   TridentStablePool,
+  computeTridentConstantPoolAddress,
+  computeTridentStablePoolAddress,
 } from '@sushiswap/amm'
 import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Type } from '@sushiswap/currency'
 import {
   DialogConfirm,
   DialogContent,
@@ -34,18 +32,31 @@ import {
   useTridentRouterContract,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
-import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import {
+  SendTransactionResult,
+  waitForTransaction,
+} from '@sushiswap/wagmi/actions'
+import {
+  useApproved,
+  useSignature,
+} from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { approveMasterContractAction, batchAction, deployNewPoolAction, LiquidityInput } from 'lib/actions'
+import {
+  LiquidityInput,
+  approveMasterContractAction,
+  batchAction,
+  deployNewPoolAction,
+} from 'lib/actions'
 import { APPROVE_TAG_CREATE_TRIDENT } from 'lib/constants'
 import { FC, ReactNode, useCallback, useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Amount, Type } from 'sushi/currency'
 import {
   Address,
+  UserRejectedRequestError,
   encodeAbiParameters,
   encodeFunctionData,
   parseAbiParameters,
-  UserRejectedRequestError,
   zeroAddress,
 } from 'viem'
 
@@ -62,27 +73,21 @@ interface CreateSectionReviewModalTridentProps {
   children: ReactNode
 }
 
-export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTridentProps> = ({
-  token0,
-  token1,
-  input0,
-  input1,
-  fee,
-  poolType,
-  chainId,
-  children,
-}) => {
+export const CreateSectionReviewModalTrident: FC<
+  CreateSectionReviewModalTridentProps
+> = ({ token0, token1, input0, input1, fee, poolType, chainId, children }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
   const { signature, setSignature } = useSignature(APPROVE_TAG_CREATE_TRIDENT)
   const { approved } = useApproved(APPROVE_TAG_CREATE_TRIDENT)
   const contract = useTridentRouterContract(chainId)
-  const constantProductPoolFactory = useTridentConstantPoolFactoryContract(chainId)
+  const constantProductPoolFactory =
+    useTridentConstantPoolFactoryContract(chainId)
   const stablePoolFactory = useStablePoolFactoryContract(chainId)
 
   const totals = useBentoBoxTotals(
     chainId,
-    useMemo(() => [token0, token1], [token0, token1])
+    useMemo(() => [token0, token1], [token0, token1]),
   )
 
   const pool = useMemo(() => {
@@ -92,7 +97,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
         Amount.fromRawAmount(token0.wrapped, 0),
         Amount.fromRawAmount(token1.wrapped, 0),
         fee,
-        false
+        false,
       )
     } else if (
       poolType === PoolFinderType.Stable &&
@@ -105,12 +110,15 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
         Amount.fromRawAmount(token1.wrapped, 0),
         fee,
         totals[token0.wrapped.address],
-        totals[token1.wrapped.address]
+        totals[token1.wrapped.address],
       )
     }
   }, [fee, token0, token1, poolType, totals])
 
-  const totalSupply = useMemo(() => (pool ? Amount.fromRawAmount(pool?.liquidityToken, 0) : undefined), [pool])
+  const totalSupply = useMemo(
+    () => (pool ? Amount.fromRawAmount(pool?.liquidityToken, 0) : undefined),
+    [pool],
+  )
 
   const factory = useMemo(() => {
     switch (poolType) {
@@ -156,9 +164,21 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
         pool &&
         contract &&
         totals?.[token0.wrapped.address] &&
-        totals?.[token1.wrapped.address]
+        totals?.[token1.wrapped.address],
     )
-  }, [chain?.id, contract, factory, input0, input1, pool, poolAddress, token0, token1, totalSupply, totals])
+  }, [
+    chain?.id,
+    contract,
+    factory,
+    input0,
+    input1,
+    pool,
+    poolAddress,
+    token0,
+    token1,
+    totalSupply,
+    totals,
+  ])
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined, error: Error | null) => {
@@ -183,7 +203,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
         groupTimestamp: ts,
       })
     },
-    [chain?.id, token0, token1, address]
+    [chain?.id, token0, token1, address],
   )
 
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
@@ -208,7 +228,9 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
 
       let value
       const liquidityInput: LiquidityInput[] = []
-      const encoded = encodeAbiParameters(parseAbiParameters('address'), [address])
+      const encoded = encodeAbiParameters(parseAbiParameters('address'), [
+        address,
+      ])
 
       if (input0) {
         if (input0.currency.isNative) {
@@ -216,7 +238,9 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
         }
 
         liquidityInput.push({
-          token: input0.currency.isNative ? zeroAddress : (input0.currency.wrapped.address as Address),
+          token: input0.currency.isNative
+            ? zeroAddress
+            : (input0.currency.wrapped.address as Address),
           native: true,
           amount: BigInt(input0.quotient.toString()),
         })
@@ -228,7 +252,9 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
         }
 
         liquidityInput.push({
-          token: input1.currency.isNative ? zeroAddress : (input1.currency.wrapped.address as Address),
+          token: input1.currency.isNative
+            ? zeroAddress
+            : (input1.currency.wrapped.address as Address),
           native: true,
           amount: BigInt(input1.quotient.toString()),
         })
@@ -259,9 +285,9 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
                     .getLiquidityMinted(
                       totalSupply,
                       input0.wrapped.toShare(totals?.[token0.wrapped.address]),
-                      input1.wrapped.toShare(totals?.[token1.wrapped.address])
+                      input1.wrapped.toShare(totals?.[token1.wrapped.address]),
                     )
-                    .quotient.toString()
+                    .quotient.toString(),
                 ),
                 encoded,
               ],
@@ -271,7 +297,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
         value: value ?? 0n,
       }
     } catch (e: unknown) {
-      console.log(e)
+      console.error(e)
     }
   }, [
     address,
@@ -290,7 +316,11 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
     totals,
   ])
 
-  const { config, error } = usePrepareSendTransaction({ ...prepare, chainId, enabled: Boolean(approved && totals) })
+  const { config, error } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
+    enabled: Boolean(approved && totals),
+  })
 
   const {
     sendTransactionAsync,
@@ -315,9 +345,15 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Create pool</DialogTitle>
-                <DialogDescription>Please review your entered details.</DialogDescription>
+                <DialogDescription>
+                  Please review your entered details.
+                </DialogDescription>
               </DialogHeader>
-              <AddSectionReviewModal chainId={chainId as BentoBoxChainId} input0={input0} input1={input1} />
+              <AddSectionReviewModal
+                chainId={chainId as BentoBoxChainId}
+                input0={input0}
+                input1={input1}
+              />
               <DialogFooter>
                 <Button
                   id="confirm-add-liquidity"

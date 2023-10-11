@@ -1,8 +1,13 @@
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { Token as TokenEntity } from '@sushiswap/currency'
+import { Token as TokenEntity } from 'sushi/currency'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Loader } from '@sushiswap/ui/components/loader'
-import { Select, SelectContent, SelectItem, SelectTrigger } from '@sushiswap/ui/components/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from '@sushiswap/ui/components/select'
 import stringify from 'fast-json-stable-stringify'
 import Image from 'next/legacy/image'
 import React, { FC, useCallback, useMemo, useState } from 'react'
@@ -17,9 +22,13 @@ interface TokenAdder {
 
 export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
   const [selectedLogoURI, setSelectedLogoURI] = useState<string>()
-  const [addState, setAddState] = useState<'ready' | 'submitting' | 'error'>('ready')
+  const [addState, setAddState] = useState<'ready' | 'submitting' | 'error'>(
+    'ready',
+  )
 
-  const { data: tokenLogos } = useSWR<TokenLogo[]>('tokenLogos', () => getTokenLogos())
+  const { data: tokenLogos } = useSWR<TokenLogo[]>('tokenLogos', () =>
+    getTokenLogos(),
+  )
 
   const _token = useMemo(
     () =>
@@ -29,7 +38,7 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
         chainId: token.chainId,
         symbol: token.symbol,
       }),
-    [token.chainId, token.decimals, token.id, token.symbol]
+    [token.chainId, token.decimals, token.id, token.symbol],
   )
 
   const submitToken = useCallback(
@@ -51,24 +60,27 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
           })
 
         // ! Won't reflect dev changes
-        const result = await fetch('https://www.sushi.com/api/partner/submitToken', {
-          headers: {
-            Accept: '*/*',
-            'Content-Type': 'application/json',
-          },
-          method: 'POST',
-          body: stringify({
-            tokenAddress: token.id.split(':')[1],
-            tokenData: {
-              name: token.name,
-              symbol: token.symbol,
-              decimals: token.decimals,
+        const result = await fetch(
+          'https://www.sushi.com/api/partner/submitToken',
+          {
+            headers: {
+              Accept: '*/*',
+              'Content-Type': 'application/json',
             },
-            tokenIcon: logo,
-            chainId: token.chainId,
-            listType: 'default-token-list',
-          }),
-        })
+            method: 'POST',
+            body: stringify({
+              tokenAddress: token.id.split(':')[1],
+              tokenData: {
+                name: token.name,
+                symbol: token.symbol,
+                decimals: token.decimals,
+              },
+              tokenIcon: logo,
+              chainId: token.chainId,
+              listType: 'default-token-list',
+            }),
+          },
+        )
 
         const { listPr } = await result.json()
         if (listPr) {
@@ -82,7 +94,7 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
         setAddState('error')
       }
     },
-    [selectedLogoURI, token]
+    [selectedLogoURI, token],
   )
 
   return (
@@ -90,21 +102,42 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
       <SelectTrigger placeholder="Select logo">
         {selectedLogoURI ? (
           <>
-            <Image src={selectedLogoURI} height={24} width={24} alt="img" className="rounded-full" />
+            <Image
+              src={selectedLogoURI}
+              height={24}
+              width={24}
+              alt="img"
+              className="rounded-full"
+            />
             <div
               onClick={(e) => submitToken(e)}
               className="flex items-center justify-center w-6 h-6 rounded-md bg-slate-700"
             >
-              {addState === 'ready' && <CheckIcon className="text-white" width={24} height={24} />}
+              {addState === 'ready' && (
+                <CheckIcon className="text-white" width={24} height={24} />
+              )}
               {addState === 'submitting' && <Loader width={24} height={24} />}
-              {addState === 'error' && <XMarkIcon className="text-red" width={24} height={24} />}
+              {addState === 'error' && (
+                <XMarkIcon className="text-red" width={24} height={24} />
+              )}
             </div>
           </>
         ) : hasIcon ? (
           <Currency.Icon disableLink currency={_token} width={24} height={24} />
         ) : (
-          <svg width={24} height={24} viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="30" height="30" rx="15" fill="url(#paint0_linear_13084_19043)" />
+          <svg
+            width={24}
+            height={24}
+            viewBox="0 0 30 30"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              width="30"
+              height="30"
+              rx="15"
+              fill="url(#paint0_linear_13084_19043)"
+            />
             <defs>
               <linearGradient
                 id="paint0_linear_13084_19043"

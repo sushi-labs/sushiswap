@@ -1,5 +1,5 @@
 // import { createClient, Prisma } from '@sushiswap/database'
-// import { ChainId, chainName } from '@sushiswap/chain'
+// import { ChainId, chainName } from 'sushi/chain'
 // import { performance } from 'perf_hooks'
 
 //

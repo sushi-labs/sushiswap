@@ -1,6 +1,6 @@
 'use client'
 
-import { bentoBoxV1Abi } from '@sushiswap/abi'
+import { bentoBoxV1Abi } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { getContract } from 'viem'
 import { usePublicClient } from 'wagmi'

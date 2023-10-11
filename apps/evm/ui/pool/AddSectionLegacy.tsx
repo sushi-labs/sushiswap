@@ -1,12 +1,17 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { Pool } from '@sushiswap/client'
-import { tryParseAmount } from '@sushiswap/currency'
+import { tryParseAmount } from 'sushi/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { Address, getSushiSwapRouterContractConfig, SushiSwapV2PoolState, useSushiSwapV2Pool } from '@sushiswap/wagmi'
+import {
+  Address,
+  getSushiSwapRouterContractConfig,
+  SushiSwapV2PoolState,
+  useSushiSwapV2Pool,
+} from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { CheckerProvider } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
@@ -43,11 +48,13 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
         const parsedAmount = tryParseAmount(value, token0)
         setTypedAmounts({
           input0: value,
-          input1: parsedAmount ? pool.priceOf(token0.wrapped).quote(parsedAmount.wrapped).toExact() : '',
+          input1: parsedAmount
+            ? pool.priceOf(token0.wrapped).quote(parsedAmount.wrapped).toExact()
+            : '',
         })
       }
     },
-    [pool, poolState, token0]
+    [pool, poolState, token0],
   )
 
   const onChangeToken1TypedAmount = useCallback(
@@ -60,15 +67,20 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
       } else if (token1 && pool) {
         const parsedAmount = tryParseAmount(value, token1)
         setTypedAmounts({
-          input0: parsedAmount ? pool.priceOf(token1.wrapped).quote(parsedAmount.wrapped).toExact() : '',
+          input0: parsedAmount
+            ? pool.priceOf(token1.wrapped).quote(parsedAmount.wrapped).toExact()
+            : '',
           input1: value,
         })
       }
     },
-    [pool, poolState, token1]
+    [pool, poolState, token1],
   )
 
-  const amounts = useMemo(() => [parsedInput0, parsedInput1], [parsedInput1, parsedInput0])
+  const amounts = useMemo(
+    () => [parsedInput0, parsedInput1],
+    [parsedInput1, parsedInput0],
+  )
 
   return (
     <CheckerProvider>
@@ -86,10 +98,21 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
           <Checker.Guard
             size="default"
             variant="outline"
-            guardWhen={isMounted && [SushiSwapV2PoolState.NOT_EXISTS, SushiSwapV2PoolState.INVALID].includes(poolState)}
+            guardWhen={
+              isMounted &&
+              [
+                SushiSwapV2PoolState.NOT_EXISTS,
+                SushiSwapV2PoolState.INVALID,
+              ].includes(poolState)
+            }
             guardText="Pool not found"
           >
-            <Checker.Network size="default" variant="outline" fullWidth chainId={_pool.chainId}>
+            <Checker.Network
+              size="default"
+              variant="outline"
+              fullWidth
+              chainId={_pool.chainId}
+            >
               <Checker.Amounts
                 size="default"
                 variant="outline"
@@ -104,7 +127,9 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                   className="whitespace-nowrap"
                   fullWidth
                   amount={parsedInput0}
-                  contract={getSushiSwapRouterContractConfig(chainId).address as Address}
+                  contract={
+                    getSushiSwapRouterContractConfig(chainId).address as Address
+                  }
                 >
                   <Checker.ApproveERC20
                     size="default"
@@ -113,7 +138,10 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                     className="whitespace-nowrap"
                     fullWidth
                     amount={parsedInput1}
-                    contract={getSushiSwapRouterContractConfig(chainId).address as Address}
+                    contract={
+                      getSushiSwapRouterContractConfig(chainId)
+                        .address as Address
+                    }
                   >
                     <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
                       <AddSectionReviewModalLegacy

@@ -4,8 +4,9 @@ import { ChevronRightIcon } from '@heroicons/react/20/solid'
 import { usePathname, useSearchParams } from 'next/navigation'
 import React, { Suspense } from 'react'
 
-import { classNames, LinkInternal } from '../index'
+import classNames from 'classnames'
 import { Button } from './button'
+import { LinkInternal } from './link'
 
 const Params = () => {
   const searchParams = useSearchParams()!
@@ -18,11 +19,17 @@ const Params = () => {
           <React.Fragment key={key}>
             {index !== 0 ? <span>&</span> : null}
             <span className="px-1">
-              <span key={key} className="animate-[highlight_1s_ease-in-out_1] text-gray-100">
+              <span
+                key={key}
+                className="animate-[highlight_1s_ease-in-out_1] text-gray-100"
+              >
                 {key}
               </span>
               <span>=</span>
-              <span key={value} className="animate-[highlight_1s_ease-in-out_1] text-gray-100">
+              <span
+                key={value}
+                className="animate-[highlight_1s_ease-in-out_1] text-gray-100"
+              >
                 {value}
               </span>
             </span>
@@ -44,7 +51,9 @@ export const Breadcrumb = () => {
         size="sm"
         className={classNames(
           '!font-normal hover:underline',
-          pathname.split('/').length === 2 ? '!text-gray-900 dark:!text-slate-50' : '!text-accent-foreground'
+          pathname.split('/').length === 2
+            ? '!text-gray-900 dark:!text-slate-50'
+            : '!text-accent-foreground',
         )}
       >
         <LinkInternal href={`/${pathname.split('/')[1]}`}>Home</LinkInternal>
@@ -52,7 +61,11 @@ export const Breadcrumb = () => {
 
       {pathname ? (
         <>
-          <ChevronRightIcon width={16} height={16} className="text-muted-foreground" />
+          <ChevronRightIcon
+            width={16}
+            height={16}
+            className="text-muted-foreground"
+          />
           {items.map((segment, i) => {
             const segments = [...items].slice(0, i + 1)
             return (
@@ -65,14 +78,20 @@ export const Breadcrumb = () => {
                     'hover:underline !inline font-normal capitalize whitespace-nowrap max-w-[120px] truncate',
                     i < items.length - 1
                       ? '!font-normal !text-muted-foreground'
-                      : '!font-medium !text-gray-900 dark:!text-slate-50'
+                      : '!font-medium !text-gray-900 dark:!text-slate-50',
                   )}
                 >
-                  <LinkInternal href={`/pool/${segments.join('/')}`}>{segment}</LinkInternal>
+                  <LinkInternal href={`/pool/${segments.join('/')}`}>
+                    {segment}
+                  </LinkInternal>
                 </Button>
 
                 {i < items.length - 1 ? (
-                  <ChevronRightIcon width={16} height={16} className="text-muted-foreground" />
+                  <ChevronRightIcon
+                    width={16}
+                    height={16}
+                    className="text-muted-foreground"
+                  />
                 ) : null}
               </React.Fragment>
             )

@@ -14,11 +14,27 @@ export const PepeIcon: IconComponent = (props) => {
       <path fill="url(#pattern0)" d="M0 0H294V251H0z"></path>
       <path fill="url(#pattern1)" d="M243 105H409V254H243z"></path>
       <defs>
-        <pattern id="pattern0" width="1" height="1" patternContentUnits="objectBoundingBox">
-          <use transform="matrix(.00112 0 0 .00131 -.339 -.048)" xlinkHref="#image0_5045_4268"></use>
+        <pattern
+          id="pattern0"
+          width="1"
+          height="1"
+          patternContentUnits="objectBoundingBox"
+        >
+          <use
+            transform="matrix(.00112 0 0 .00131 -.339 -.048)"
+            xlinkHref="#image0_5045_4268"
+          ></use>
         </pattern>
-        <pattern id="pattern1" width="1" height="1" patternContentUnits="objectBoundingBox">
-          <use transform="matrix(.00152 0 0 .00169 -.53 -.74)" xlinkHref="#image1_5045_4268"></use>
+        <pattern
+          id="pattern1"
+          width="1"
+          height="1"
+          patternContentUnits="objectBoundingBox"
+        >
+          <use
+            transform="matrix(.00152 0 0 .00169 -.53 -.74)"
+            xlinkHref="#image1_5045_4268"
+          ></use>
         </pattern>
         <image
           id="image0_5045_4268"

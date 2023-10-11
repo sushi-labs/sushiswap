@@ -1,12 +1,12 @@
 import { createAppAuth } from '@octokit/auth-app'
-import { ChainId, ChainKey } from '@sushiswap/chain'
-import { formatUSD } from '@sushiswap/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 import stringify from 'fast-json-stable-stringify'
 import { NextRequest, NextResponse } from 'next/server'
 import { Octokit } from 'octokit'
+import { formatUSD } from 'sushi'
+import { ChainId, ChainKey } from 'sushi/chain'
 
 import { ApplyForTokenListTokenSchemaType } from '../../../../../lib/tokenlist-request/ApplyForTokenListSchema'
 
@@ -30,8 +30,10 @@ interface MutationParams extends ApplyForTokenListTokenSchemaType {
 // To allow for development without rate limiting
 let ratelimit: Ratelimit | undefined
 try {
-  if (!process.env.UPSTASH_REDIS_REST_URL) throw new Error('UPSTASH_REDIS_REST_URL undefined')
-  if (!process.env.UPSTASH_REDIS_REST_TOKEN) throw new Error('UPSTASH_REDIS_REST_TOKEN undefined')
+  if (!process.env.UPSTASH_REDIS_REST_URL)
+    throw new Error('UPSTASH_REDIS_REST_URL undefined')
+  if (!process.env.UPSTASH_REDIS_REST_TOKEN)
+    throw new Error('UPSTASH_REDIS_REST_TOKEN undefined')
 
   const redis = new Redis({
     url: process.env.UPSTASH_REDIS_REST_URL,
@@ -56,11 +58,19 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  if (!process.env.TOKEN_LIST_PR_WEBHOOK_URL) throw new Error('TOKEN_LIST_PR_WEBHOOK_URL undefined')
+  if (!process.env.TOKEN_LIST_PR_WEBHOOK_URL)
+    throw new Error('TOKEN_LIST_PR_WEBHOOK_URL undefined')
   if (!process.env.OCTOKIT_KEY) throw new Error('OCTOKIT_KEY undefined')
 
-  const { tokenAddress, tokenName, tokenDecimals, tokenSymbol, logoFile, chainId, listType } =
-    (await request.json()) as MutationParams
+  const {
+    tokenAddress,
+    tokenName,
+    tokenDecimals,
+    tokenSymbol,
+    logoFile,
+    chainId,
+    listType,
+  } = (await request.json()) as MutationParams
 
   const octoKit = new Octokit({
     authStrategy: createAppAuth,
@@ -73,9 +83,7 @@ export async function POST(request: NextRequest) {
 
   // Get latest commit for the new branch
   const {
-    data: {
-      commit: { sha: latestIconsSha },
-    },
+    data: { commit: { sha: latestIconsSha } },
   } = await octoKit.request('GET /repos/{owner}/{repo}/branches/{branch}', {
     owner,
     repo: 'list',
@@ -90,14 +98,20 @@ export async function POST(request: NextRequest) {
     const branches: string[] = []
 
     for (let i = 1; ; i++) {
-      const { data }: { data: { name: string }[] } = await octoKit.request('GET /repos/{owner}/{repo}/branches', {
-        owner,
-        repo: 'list',
-        per_page: 100,
-        page: i,
-      })
+      const { data }: { data: { name: string }[] } = await octoKit.request(
+        'GET /repos/{owner}/{repo}/branches',
+        {
+          owner,
+          repo: 'list',
+          per_page: 100,
+          page: i,
+        },
+      )
 
-      const newBranches = data.reduce((acc: string[], e: { name: string }) => [...acc, e.name], [] as string[])
+      const newBranches = data.reduce(
+        (acc: string[], e: { name: string }) => [...acc, e.name],
+        [] as string[],
+      )
 
       branches.push(...newBranches)
 
@@ -121,19 +135,24 @@ export async function POST(request: NextRequest) {
     sha: latestIconsSha,
   })
 
-  const imagePath = `logos/token-logos/network/${ChainKey[chainId].toLowerCase()}/${tokenAddress}.jpg`
+  const imagePath = `logos/token-logos/network/${ChainKey[
+    chainId
+  ].toLowerCase()}/${tokenAddress}.jpg`
 
   try {
     // Figure out if image already exists, overwrite if it does
     let previousImageFileSha: string | undefined
 
     try {
-      const res = await octoKit.request('GET /repos/{owner}/{repo}/contents/{path}', {
-        owner,
-        repo: 'list',
-        branch: 'master',
-        path: imagePath,
-      })
+      const res = await octoKit.request(
+        'GET /repos/{owner}/{repo}/contents/{path}',
+        {
+          owner,
+          repo: 'list',
+          branch: 'master',
+          path: imagePath,
+        },
+      )
 
       if (!Array.isArray(res.data)) {
         previousImageFileSha = res.data.sha
@@ -153,21 +172,29 @@ export async function POST(request: NextRequest) {
       sha: previousImageFileSha,
     })
   } catch (e) {
-    return NextResponse.json({ error: 'Failed to add token image' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to add token image' },
+      { status: 500 },
+    )
   }
 
-  const listPath = `lists/token-lists/${listType}/tokens/${ChainKey[chainId].toLowerCase()}.json`
+  const listPath = `lists/token-lists/${listType}/tokens/${ChainKey[
+    chainId
+  ].toLowerCase()}.json`
 
   // Get current token list to append to
   let currentListData
 
   try {
-    const res = await octoKit.request('GET /repos/{owner}/{repo}/contents/{path}', {
-      owner,
-      repo: 'list',
-      branch: 'master',
-      path: listPath,
-    })
+    const res = await octoKit.request(
+      'GET /repos/{owner}/{repo}/contents/{path}',
+      {
+        owner,
+        repo: 'list',
+        branch: 'master',
+        path: listPath,
+      },
+    )
 
     if (!Array.isArray(res.data) && res.data.type === 'file') {
       currentListData = { sha: res.data.sha, content: res.data.content }
@@ -177,7 +204,9 @@ export async function POST(request: NextRequest) {
   }
 
   let currentList: ListEntry[] = currentListData
-    ? JSON.parse(Buffer.from(currentListData?.content, 'base64').toString('ascii'))
+    ? JSON.parse(
+        Buffer.from(currentListData?.content, 'base64').toString('ascii'),
+      )
     : []
 
   // Remove from current list if exists to overwrite later
@@ -261,12 +290,18 @@ export async function POST(request: NextRequest) {
         'Access-Control-Allow-Methods': 'POST',
         'Access-Control-Allow-Headers': 'Content-Type',
       },
-    }
+    },
   )
 }
 
 async function getCoinGecko(chainId: ChainId, address: string) {
-  return await fetch(`https://api.coingecko.com/api/v3/coins/${CHAIN_NAME[chainId].toLowerCase()}/contract/${address}`)
+  return await fetch(
+    `https://api.coingecko.com/api/v3/coins/${CHAIN_NAME[
+      chainId
+    ].toLowerCase()}/contract/${address}`,
+  )
     .then((data) => data.json())
-    .then((data) => (data.id ? `https://www.coingecko.com/en/coins/${data.id}` : 'Not Found'))
+    .then((data) =>
+      data.id ? `https://www.coingecko.com/en/coins/${data.id}` : 'Not Found',
+    )
 }

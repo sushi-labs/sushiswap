@@ -21,7 +21,11 @@ export interface ListProps {
 }
 
 export const List: List<ListProps> = ({ children, className }) => {
-  return <div className={classNames('flex flex-col gap-3 pt-3', className)}>{children}</div>
+  return (
+    <div className={classNames('flex flex-col gap-3 pt-3', className)}>
+      {children}
+    </div>
+  )
 }
 
 List.Item = ListItem

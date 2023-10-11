@@ -33,7 +33,7 @@ app.get(
       res.status(500).send(err)
     }
   },
-  timeout('1200s')
+  timeout('1200s'),
 )
 
 app.get(
@@ -47,7 +47,7 @@ app.get(
       res.status(500).send(err)
     }
   },
-  timeout('600s')
+  timeout('600s'),
 )
 
 app.get(
@@ -61,7 +61,7 @@ app.get(
       res.status(500).send(err)
     }
   },
-  timeout('600s')
+  timeout('600s'),
 )
 
 app.get(
@@ -75,7 +75,7 @@ app.get(
       res.status(500).send(err)
     }
   },
-  timeout('600s')
+  timeout('600s'),
 )
 
 app.get(
@@ -89,7 +89,7 @@ app.get(
       res.status(500).send(err)
     }
   },
-  timeout('600s')
+  timeout('600s'),
 )
 
 app.listen(8080)

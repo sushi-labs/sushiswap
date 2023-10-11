@@ -1,6 +1,6 @@
 'use client'
 
-import { chainName } from '@sushiswap/chain'
+import { chainName } from 'sushi/chain'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import React, { FC, ReactElement } from 'react'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
@@ -24,7 +24,12 @@ const Network: FC<NetworkProps> = ({
   const _chainId = Number(chainId)
   if (chain?.id !== _chainId)
     return (
-      <Button fullWidth={fullWidth} size={size} onClick={() => switchNetwork?.(_chainId)} {...rest}>
+      <Button
+        fullWidth={fullWidth}
+        size={size}
+        onClick={() => switchNetwork?.(_chainId)}
+        {...rest}
+      >
         Switch to {chainName[_chainId]}
       </Button>
     )

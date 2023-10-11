@@ -30,7 +30,9 @@ const messageVariants = cva('relative', {
   },
 })
 
-export interface MessageProps extends React.ButtonHTMLAttributes<HTMLDivElement>, VariantProps<typeof messageVariants> {
+export interface MessageProps
+  extends React.ButtonHTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof messageVariants> {
   asChild?: boolean
   children?: React.ReactNode
   onClose?(): void
@@ -44,17 +46,28 @@ const Message = React.forwardRef<HTMLDivElement, MessageProps>(
       <Comp
         {...props}
         ref={ref}
-        className={messageVariants({ variant, size, className, hasClose: onClose ? 'yes' : 'no' })}
+        className={messageVariants({
+          variant,
+          size,
+          className,
+          hasClose: onClose ? 'yes' : 'no',
+        })}
       >
         {children}
         {onClose ? (
           <div className="absolute right-1 top-1 bottom-0">
-            <IconButton variant="ghost" size="xs" name="close" icon={XMarkIcon} onClick={onClose} />
+            <IconButton
+              variant="ghost"
+              size="xs"
+              name="close"
+              icon={XMarkIcon}
+              onClick={onClose}
+            />
           </div>
         ) : null}
       </Comp>
     )
-  }
+  },
 )
 
 Message.displayName = 'Message'

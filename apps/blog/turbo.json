@@ -11,8 +11,8 @@
       "outputs": [".next/**", "!.next/cache/**"],
       "dependsOn": ["^build", "generate"],
       "env": [
-        "ALCHEMY_ID", 
-        "STRAPI_API_URL", 
+        "ALCHEMY_ID",
+        "STRAPI_API_URL",
         "STRAPI_PREVIEW_SECRET",
         "NEXT_TELEMETRY_DISABLED"
       ],
@@ -23,7 +23,11 @@
       "cache": false
     },
     "sitemap": {
-      "outputs": ["public/sitemap.xml", "public/sitemap-*.xml", "public/robots.txt"],
+      "outputs": [
+        "public/sitemap.xml",
+        "public/sitemap-*.xml",
+        "public/robots.txt"
+      ],
       "dependsOn": ["build"],
       "cache": true
     }

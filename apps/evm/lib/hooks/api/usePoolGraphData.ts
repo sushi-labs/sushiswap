@@ -1,7 +1,7 @@
 'use client'
 
-import { ChainId, chainShortName } from '@sushiswap/chain'
-import { Amount, Token } from '@sushiswap/currency'
+import { ChainId, chainShortName } from 'sushi/chain'
+import { Amount, Token } from 'sushi/currency'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { useQuery } from '@tanstack/react-query'
 
@@ -13,7 +13,11 @@ interface UsePoolGraphDataParams {
 
 const sdk = getBuiltGraphSDK()
 
-export const usePoolGraphData = ({ poolAddress, chainId, enabled = true }: UsePoolGraphDataParams) => {
+export const usePoolGraphData = ({
+  poolAddress,
+  chainId,
+  enabled = true,
+}: UsePoolGraphDataParams) => {
   return useQuery({
     queryKey: ['usePoolGraphData', { poolAddress, chainId }],
     queryFn: async () => {

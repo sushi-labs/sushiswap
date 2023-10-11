@@ -1,9 +1,16 @@
 'use client'
 
-import { tridentConstantPoolAbi, tridentConstantPoolFactoryAbi } from '@sushiswap/abi'
-import { computeTridentConstantPoolAddress, Fee, TridentConstantPool } from '@sushiswap/amm'
-import { Amount, Currency, Token } from '@sushiswap/currency'
+import {
+  Fee,
+  TridentConstantPool,
+  computeTridentConstantPoolAddress,
+} from '@sushiswap/amm'
 import { useMemo } from 'react'
+import {
+  tridentConstantPoolAbi,
+  tridentConstantPoolFactoryAbi,
+} from 'sushi/abi'
+import { Amount, Currency, Token } from 'sushi/currency'
 import { Address, useContractReads } from 'wagmi'
 
 import { useTridentConstantPoolFactoryContract } from './useTridentConstantPoolFactoryContract'
@@ -29,12 +36,15 @@ interface UseGetTridentConstantPoolsReturn {
   data: [TridentConstantPoolState, TridentConstantPool | null][]
 }
 
-type Config = Omit<NonNullable<Parameters<typeof useContractReads>['0']>, 'contracts'>
+type Config = Omit<
+  NonNullable<Parameters<typeof useContractReads>['0']>,
+  'contracts'
+>
 
 export function useGetTridentConstantPools(
   chainId: number | undefined,
   currencies: [Currency | undefined, Currency | undefined][],
-  config: Config = { enabled: true }
+  config: Config = { enabled: true },
 ): UseGetTridentConstantPoolsReturn {
   const contract = useTridentConstantPoolFactoryContract(chainId)
   const pairsUnique = useMemo<[Token, Token][]>(() => {
@@ -44,7 +54,8 @@ export function useGetTridentConstantPools(
         const addr1 = c1.wrapped.address as string | undefined
         const addr2 = c2.wrapped.address as string | undefined
         if (addr1 !== undefined && addr2 !== undefined) {
-          if (addr1.toLowerCase() < addr2.toLowerCase()) pairsMap.set(addr1 + addr2, [c1, c2] as [Token, Token])
+          if (addr1.toLowerCase() < addr2.toLowerCase())
+            pairsMap.set(addr1 + addr2, [c1, c2] as [Token, Token])
           else pairsMap.set(addr2 + addr1, [c2, c1] as [Token, Token])
         }
       }
@@ -54,7 +65,7 @@ export function useGetTridentConstantPools(
 
   const pairsUniqueAddr = useMemo<[string, string][]>(
     () => pairsUnique.map(([t0, t1]) => [t0.address, t1.address]),
-    [pairsUnique]
+    [pairsUnique],
   )
 
   const {
@@ -80,7 +91,12 @@ export function useGetTridentConstantPools(
         .filter(([, length]) => length)
         .map(
           ([i, length]) =>
-            [pairsUniqueAddr[i][0] as Address, pairsUniqueAddr[i][1] as Address, 0n, BigInt(length)] as const
+            [
+              pairsUniqueAddr[i][0] as Address,
+              pairsUniqueAddr[i][1] as Address,
+              0n,
+              BigInt(length),
+            ] as const,
         ) ?? []
     )
   }, [callStatePoolsCount, pairsUniqueAddr])
@@ -108,7 +124,11 @@ export function useGetTridentConstantPools(
       }))
     }, [callStatePoolsCountProcessed, chainId, contract?.address]),
 
-    enabled: Boolean(callStatePoolsCountProcessed && callStatePoolsCountProcessed?.length > 0 && config?.enabled),
+    enabled: Boolean(
+      callStatePoolsCountProcessed &&
+        callStatePoolsCountProcessed?.length > 0 &&
+        config?.enabled,
+    ),
     watch: !config?.enabled,
     select: (results) => results.map((r) => r.result),
   })
@@ -128,7 +148,10 @@ export function useGetTridentConstantPools(
     return pools
   }, [callStatePools, pairsUniqueProcessed])
 
-  const poolsAddresses = useMemo(() => pools.map((p) => p.address as Address), [pools])
+  const poolsAddresses = useMemo(
+    () => pools.map((p) => p.address as Address),
+    [pools],
+  )
 
   const contracts = [
     ...poolsAddresses.map((address) => ({
@@ -158,8 +181,12 @@ export function useGetTridentConstantPools(
 
   return useMemo(() => {
     return {
-      isLoading: callStatePoolsCountLoading || callStatePoolsLoading || reservesAndFeesLoading,
-      isError: callStatePoolsCountError || callStatePoolsError || reservesAndFeesError,
+      isLoading:
+        callStatePoolsCountLoading ||
+        callStatePoolsLoading ||
+        reservesAndFeesLoading,
+      isError:
+        callStatePoolsCountError || callStatePoolsError || reservesAndFeesError,
       data: pools.map((p, i) => {
         const _reserves = reservesAndFees?.[i]
         const _swapFee = reservesAndFees?.[i + poolsAddresses.length]
@@ -186,7 +213,7 @@ export function useGetTridentConstantPools(
             Amount.fromRawAmount(p.token0, reserves._reserve0.toString()),
             Amount.fromRawAmount(p.token1, reserves._reserve1.toString()),
             parseInt(swapFee.toString()),
-            reserves._blockTimestampLast !== 0
+            reserves._blockTimestampLast !== 0,
           ),
         ]
       }),
@@ -206,9 +233,10 @@ export function useGetTridentConstantPools(
 
 export function useTridentConstantPools(
   chainId: number,
-  pools: PoolInput[]
+  pools: PoolInput[],
 ): [TridentConstantPoolState, TridentConstantPool | null][] {
-  const tridentConstantPoolFactory = useTridentConstantPoolFactoryContract(chainId)
+  const tridentConstantPoolFactory =
+    useTridentConstantPoolFactoryContract(chainId)
 
   const input = useMemo(
     () =>
@@ -222,16 +250,18 @@ export function useTridentConstantPools(
               twap !== undefined &&
               currencyA.chainId === currencyB.chainId &&
               !currencyA.wrapped.equals(currencyB.wrapped) &&
-              tridentConstantPoolFactory?.address
+              tridentConstantPoolFactory?.address,
           )
         })
-        .map<[Token, Token, Fee, boolean]>(([currencyA, currencyB, fee, twap]) => [
-          currencyA.wrapped,
-          currencyB.wrapped,
-          fee,
-          twap,
-        ]),
-    [tridentConstantPoolFactory?.address, pools]
+        .map<[Token, Token, Fee, boolean]>(
+          ([currencyA, currencyB, fee, twap]) => [
+            currencyA.wrapped,
+            currencyB.wrapped,
+            fee,
+            twap,
+          ],
+        ),
+    [tridentConstantPoolFactory?.address, pools],
   )
 
   const poolsAddresses = useMemo(
@@ -248,7 +278,7 @@ export function useTridentConstantPools(
         acc.push(address)
         return acc
       }, []),
-    [tridentConstantPoolFactory, input]
+    [tridentConstantPoolFactory, input],
   )
 
   const { data } = useContractReads({
@@ -265,17 +295,22 @@ export function useTridentConstantPools(
   })
 
   return useMemo(() => {
-    if (poolsAddresses.length === 0) return [[TridentConstantPoolState.INVALID, null]]
-    if (!data || !data.length) return poolsAddresses.map(() => [TridentConstantPoolState.LOADING, null])
+    if (poolsAddresses.length === 0)
+      return [[TridentConstantPoolState.INVALID, null]]
+    if (!data || !data.length)
+      return poolsAddresses.map(() => [TridentConstantPoolState.LOADING, null])
     return data.map((result, i) => {
       const tokenA = pools[i][0]?.wrapped
       const tokenB = pools[i][1]?.wrapped
       const fee = pools[i]?.[2]
       const twap = pools[i]?.[3]
-      if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [TridentConstantPoolState.INVALID, null]
+      if (!tokenA || !tokenB || tokenA.equals(tokenB))
+        return [TridentConstantPoolState.INVALID, null]
       if (!result) return [TridentConstantPoolState.NOT_EXISTS, null]
       const [reserve0, reserve1] = result
-      const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
+      const [token0, token1] = tokenA.sortsBefore(tokenB)
+        ? [tokenA, tokenB]
+        : [tokenB, tokenA]
 
       return [
         TridentConstantPoolState.EXISTS,
@@ -283,7 +318,7 @@ export function useTridentConstantPools(
           Amount.fromRawAmount(token0, reserve0),
           Amount.fromRawAmount(token1, reserve1),
           fee,
-          twap
+          twap,
         ),
       ]
     })
@@ -295,9 +330,11 @@ export function useTridentConstantPool(
   tokenA: Currency | undefined,
   tokenB: Currency | undefined,
   fee: Fee,
-  twap: boolean
+  twap: boolean,
 ): [TridentConstantPoolState, TridentConstantPool | null] {
-  console.log('useTridentConstantPool', twap, typeof twap)
-  const inputs: [PoolInput] = useMemo(() => [[tokenA, tokenB, Number(fee), Boolean(twap)]], [tokenA, tokenB, fee, twap])
+  const inputs: [PoolInput] = useMemo(
+    () => [[tokenA, tokenB, Number(fee), Boolean(twap)]],
+    [tokenA, tokenB, fee, twap],
+  )
   return useTridentConstantPools(chainId, inputs)[0]
 }

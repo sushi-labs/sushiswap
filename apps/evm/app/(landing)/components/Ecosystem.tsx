@@ -13,24 +13,31 @@ interface TabsExpendableCardData extends ExpendableCardData {
 const TABS: TabsExpendableCardData[] = [
   {
     title: 'Furo Streaming',
-    summary: 'Automate your DAO salaries and vesting schedules while earning interest from yield strategies.',
-    image: 'https://res.cloudinary.com/sushi-cdn/image/upload/v1669286681/Frame_38656_lci5if.webp',
+    summary:
+      'Automate your DAO salaries and vesting schedules while earning interest from yield strategies.',
+    image:
+      'https://res.cloudinary.com/sushi-cdn/image/upload/v1669286681/Frame_38656_lci5if.webp',
     content: (
       <>
         <p>
-          Furo is Sushi’s payment streaming and token vesting application, a useful and efficient way of setting up
-          automatic payments for contributors to your protocol or DAO, or for executing a company payroll.
+          Furo is Sushi’s payment streaming and token vesting application, a
+          useful and efficient way of setting up automatic payments for
+          contributors to your protocol or DAO, or for executing a company
+          payroll.
         </p>
         <h3>Fully customizable</h3>
         <p>
-          With Furo’s easy to use interface, set any number of parameters you’d like: the asset to be paid in, the
-          frequency with which to pay them that asset, when to start paying it, when to stop paying it, etc. Or, set up
-          traditional token vestings with optional cliffs, complete with an array of options for paying out as well.
+          With Furo’s easy to use interface, set any number of parameters you’d
+          like: the asset to be paid in, the frequency with which to pay them
+          that asset, when to start paying it, when to stop paying it, etc. Or,
+          set up traditional token vestings with optional cliffs, complete with
+          an array of options for paying out as well.
         </p>
         <h3>Completely under your control</h3>
         <p>
-          Additionally, choose to keep your funds in the Sushi Vault to accrue more yield, making your direct deposits
-          even larger without you having to do a thing.
+          Additionally, choose to keep your funds in the Sushi Vault to accrue
+          more yield, making your direct deposits even larger without you having
+          to do a thing.
         </p>
       </>
     ),
@@ -122,29 +129,57 @@ export const Ecosystem: FC = () => {
           <div className="prose dark:prose-invert justify-center flex flex-col gap-3 pt-10">
             <span className="text-center text-muted-foreground">Ecosystem</span>
             <h2 className="px-4 text-center">
-              Explore our <span className="text-blue">DeFi</span> Payment Solution
+              Explore our <span className="text-blue">DeFi</span> Payment
+              Solution
             </h2>
             <div className="flex items-center p-10 min-h-[420px]">
-              {TABS.map(({ title, content, image, summary, link, linkText, caption }) => (
-                <div key={title} className="grid items-center grid-cols-1 gap-20 md:grid-cols-2">
-                  <ExpandableCard title={title} caption={caption} content={content} link={link} linkText={linkText}>
-                    {({ setOpen, containerId, titleId }) => (
-                      <motion.div layoutId={containerId} className="flex flex-col items-center lg:items-start">
-                        <motion.h1
-                          layoutId={titleId}
-                          className="text-4xl font-semibold flex flex-col items-center text-center lg:items-start lg:text-left"
+              {TABS.map(
+                ({
+                  title,
+                  content,
+                  image,
+                  summary,
+                  link,
+                  linkText,
+                  caption,
+                }) => (
+                  <div
+                    key={title}
+                    className="grid items-center grid-cols-1 gap-20 md:grid-cols-2"
+                  >
+                    <ExpandableCard
+                      title={title}
+                      caption={caption}
+                      content={content}
+                      link={link}
+                      linkText={linkText}
+                    >
+                      {({ setOpen, containerId, titleId }) => (
+                        <motion.div
+                          layoutId={containerId}
+                          className="flex flex-col items-center lg:items-start"
                         >
-                          {title}
-                        </motion.h1>
-                        <span className="text-lg mt-2 text-center lg:text-left mb-3">{summary}</span>
-                        <Button onClick={() => setOpen(true)} variant="secondary">
-                          Learn More
-                        </Button>
-                      </motion.div>
-                    )}
-                  </ExpandableCard>
-                </div>
-              ))}
+                          <motion.h1
+                            layoutId={titleId}
+                            className="text-4xl font-semibold flex flex-col items-center text-center lg:items-start lg:text-left"
+                          >
+                            {title}
+                          </motion.h1>
+                          <span className="text-lg mt-2 text-center lg:text-left mb-3">
+                            {summary}
+                          </span>
+                          <Button
+                            onClick={() => setOpen(true)}
+                            variant="secondary"
+                          >
+                            Learn More
+                          </Button>
+                        </motion.div>
+                      )}
+                    </ExpandableCard>
+                  </div>
+                ),
+              )}
             </div>
           </div>
         </div>

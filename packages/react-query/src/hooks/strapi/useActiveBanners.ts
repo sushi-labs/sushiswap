@@ -45,10 +45,13 @@ export const useActiveBanners = () => {
     queryFn: async () => {
       const date = new Date().toISOString()
       const data: Response = await fetch(
-        `https://sushi-strapi-cms.herokuapp.com/api/banners?filters[dateTo][$gte]=${date}&filters[dateFrom][$lte]=${date}&populate=*`
+        `https://sushi-strapi-cms.herokuapp.com/api/banners?filters[dateTo][$gte]=${date}&filters[dateFrom][$lte]=${date}&populate=*`,
       ).then((response) => response.json())
 
-      return data.data.map((entry) => ({ ...entry.attributes, image: entry.attributes.image.data.attributes }))
+      return data.data.map((entry) => ({
+        ...entry.attributes,
+        image: entry.attributes.image.data.attributes,
+      }))
     },
     staleTime: 3600000, // 1 hr
     cacheTime: 14400000, // 4hrs

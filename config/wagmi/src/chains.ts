@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import type { Chain } from '@wagmi/core'
 import {
   arbitrum,
@@ -141,10 +141,16 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'xDAI', symbol: 'xDAI', decimals: 18 },
     rpcUrls: {
       default: {
-        http: ['https://xdai-rpc.gateway.pokt.network', 'https://rpc.gnosischain.com'],
+        http: [
+          'https://xdai-rpc.gateway.pokt.network',
+          'https://rpc.gnosischain.com',
+        ],
       },
       public: {
-        http: ['https://xdai-rpc.gateway.pokt.network', 'https://rpc.gnosischain.com'],
+        http: [
+          'https://xdai-rpc.gateway.pokt.network',
+          'https://rpc.gnosischain.com',
+        ],
       },
     },
     blockExplorers: {
@@ -381,10 +387,16 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     rpcUrls: {
       default: {
-        http: ['https://nova.arbitrum.io/rpc', 'https://arbitrum-nova.drpc.org'],
+        http: [
+          'https://nova.arbitrum.io/rpc',
+          'https://arbitrum-nova.drpc.org',
+        ],
       },
       public: {
-        http: ['https://nova.arbitrum.io/rpc', 'https://arbitrum-nova.drpc.org'],
+        http: [
+          'https://nova.arbitrum.io/rpc',
+          'https://arbitrum-nova.drpc.org',
+        ],
       },
     },
     blockExplorers: {
@@ -471,10 +483,14 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'Palm', symbol: 'PALM', decimals: 18 },
     rpcUrls: {
       default: {
-        http: ['https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b'],
+        http: [
+          'https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b',
+        ],
       },
       public: {
-        http: ['https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b'],
+        http: [
+          'https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b',
+        ],
       },
     },
     blockExplorers: {

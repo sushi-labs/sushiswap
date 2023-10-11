@@ -27,7 +27,11 @@ describe('Tokens', () => {
   const chainIds = [1, 137]
   it.skip('should return tokens for multiple chain ids', async () => {
     const { tokens } = await sdk.TokensByChainIds({ chainIds })
-    expect(chainIds.every((chainId) => tokens.find((token) => chainId === token.chainId))).toBe(true)
+    expect(
+      chainIds.every((chainId) =>
+        tokens.find((token) => chainId === token.chainId),
+      ),
+    ).toBe(true)
   })
   it.skip('should return 2000 tokens for multiple chain ids', async () => {
     const { tokens } = await sdk.TokensByChainIds({ chainIds, first: 1000 })

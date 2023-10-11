@@ -45,7 +45,7 @@ export const ConnectButton: FC<ButtonProps> = ({ children, ...props }) => {
         connector: connectors.find((el) => el.id === connectorId),
       })
     },
-    [connect, connectors]
+    [connect, connectors],
   )
 
   const _connectors = useMemo(() => {
@@ -53,7 +53,12 @@ export const ConnectButton: FC<ButtonProps> = ({ children, ...props }) => {
     const injected = conns.find((el) => el.id === 'injected')
 
     if (injected) {
-      return [injected, ...conns.filter((el) => el.id !== 'injected' && el.name !== injected.name)]
+      return [
+        injected,
+        ...conns.filter(
+          (el) => el.id !== 'injected' && el.name !== injected.name,
+        ),
+      ]
     }
 
     return conns
@@ -80,9 +85,13 @@ export const ConnectButton: FC<ButtonProps> = ({ children, ...props }) => {
       <DropdownMenuContent className="w-56">
         <DropdownMenuGroup>
           {_connectors.map((connector) => {
-            const Icon = connector.name in Icons ? Icons[connector.name] : Icons.Injected
+            const Icon =
+              connector.name in Icons ? Icons[connector.name] : Icons.Injected
             return (
-              <DropdownMenuItem onClick={() => onSelect(connector.id)} key={connector.id}>
+              <DropdownMenuItem
+                onClick={() => onSelect(connector.id)}
+                key={connector.id}
+              >
                 <Icon className="w-4 h-4 mr-2" />
                 {connector.name === 'Safe'
                   ? 'Gnosis Safe'

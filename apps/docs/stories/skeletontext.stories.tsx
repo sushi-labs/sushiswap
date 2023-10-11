@@ -3,7 +3,15 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { SkeletonText, SkeletonTextProps } from '@sushiswap/ui'
 
-const fontSizes: SkeletonTextProps['fontSize'][] = ['xs', 'sm', 'default', 'lg', 'xl', '2xl', '3xl']
+const fontSizes: SkeletonTextProps['fontSize'][] = [
+  'xs',
+  'sm',
+  'default',
+  'lg',
+  'xl',
+  '2xl',
+  '3xl',
+]
 const meta = {
   title: 'Primitives/Skeleton/Text',
   component: SkeletonText,

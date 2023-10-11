@@ -1,6 +1,11 @@
 import { Fee, Pool } from '@sushiswap/base-sdk'
-import { Token } from '@sushiswap/currency'
-import { ConstantProductRPool, RPool, RToken, StableSwapRPool } from '@sushiswap/tines'
+import { Token } from 'sushi/currency'
+import {
+  ConstantProductRPool,
+  RPool,
+  RToken,
+  StableSwapRPool,
+} from '@sushiswap/tines'
 import { TridentConstantPool, TridentStablePool } from '@sushiswap/trident-sdk'
 import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
 import { Address } from 'viem'
@@ -18,7 +23,10 @@ export function convertTokenToBento(token: Token): RToken {
   return t
 }
 
-export function convertPoolOrPairtoRPool(pool: Pool | SushiSwapV2Pool, convertTokensToBento = false): RPool {
+export function convertPoolOrPairtoRPool(
+  pool: Pool | SushiSwapV2Pool,
+  convertTokensToBento = false,
+): RPool {
   if (pool instanceof SushiSwapV2Pool) {
     return new ConstantProductRPool(
       pool.liquidityToken.address as Address,
@@ -26,26 +34,34 @@ export function convertPoolOrPairtoRPool(pool: Pool | SushiSwapV2Pool, convertTo
       pool.token1 as RToken,
       Fee.DEFAULT / 10000,
       BigInt(pool.reserve0.quotient.toString()),
-      BigInt(pool.reserve1.quotient.toString())
+      BigInt(pool.reserve1.quotient.toString()),
     )
   } else if (pool instanceof TridentConstantPool) {
     return new ConstantProductRPool(
       pool.liquidityToken.address as Address,
-      convertTokensToBento ? convertTokenToBento(pool.token0.wrapped) : (pool.assets[0].wrapped as RToken),
-      convertTokensToBento ? convertTokenToBento(pool.token1.wrapped) : (pool.assets[1].wrapped as RToken),
+      convertTokensToBento
+        ? convertTokenToBento(pool.token0.wrapped)
+        : (pool.assets[0].wrapped as RToken),
+      convertTokensToBento
+        ? convertTokenToBento(pool.token1.wrapped)
+        : (pool.assets[1].wrapped as RToken),
       // pool.assets[0].wrapped as RToken,
       // pool.assets[1].wrapped as RToken,
       pool.fee / 10000,
       BigInt(pool.reserves[0].quotient.toString()),
-      BigInt(pool.reserves[1].quotient.toString())
+      BigInt(pool.reserves[1].quotient.toString()),
     )
   } else if (pool instanceof TridentStablePool) {
     return new StableSwapRPool(
       pool.liquidityToken.address as Address,
       // pool.token0 as RToken,
       // pool.token1 as RToken,
-      convertTokensToBento ? convertTokenToBento(pool.token0.wrapped) : (pool.token0 as RToken),
-      convertTokensToBento ? convertTokenToBento(pool.token1.wrapped) : (pool.token1 as RToken),
+      convertTokensToBento
+        ? convertTokenToBento(pool.token0.wrapped)
+        : (pool.token0 as RToken),
+      convertTokensToBento
+        ? convertTokenToBento(pool.token1.wrapped)
+        : (pool.token1 as RToken),
       pool.fee / 10000,
       BigInt(
         pool.reserve0
@@ -53,7 +69,7 @@ export function convertPoolOrPairtoRPool(pool: Pool | SushiSwapV2Pool, convertTo
             elastic: pool.total0.elastic,
             base: pool.total0.base,
           })
-          .quotient.toString()
+          .quotient.toString(),
       ),
       BigInt(
         pool.reserve1
@@ -61,7 +77,7 @@ export function convertPoolOrPairtoRPool(pool: Pool | SushiSwapV2Pool, convertTo
             elastic: pool.total1.elastic,
             base: pool.total1.base,
           })
-          .quotient.toString()
+          .quotient.toString(),
       ),
       // BigNumber.from(pool.reserve0.quotient.toString()),
       // BigNumber.from(pool.reserve1.quotient.toString()),
@@ -74,7 +90,7 @@ export function convertPoolOrPairtoRPool(pool: Pool | SushiSwapV2Pool, convertTo
       {
         elastic: BigInt(pool.total1.elastic.toString()),
         base: BigInt(pool.total1.base.toString()),
-      }
+      },
     )
   } else {
     throw new Error('Unknown pool type')

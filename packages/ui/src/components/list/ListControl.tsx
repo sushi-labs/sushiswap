@@ -11,7 +11,10 @@ export interface ListControlProps {
 export const ListControl: FC<ListControlProps> = ({ children, className }) => {
   return (
     <Card
-      className={classNames('!border-none bg-white dark:!bg-secondary rounded-xl overflow-hidden shadow-sm', className)}
+      className={classNames(
+        '!border-none bg-white dark:!bg-secondary rounded-xl overflow-hidden shadow-sm',
+        className,
+      )}
     >
       {children}
     </Card>

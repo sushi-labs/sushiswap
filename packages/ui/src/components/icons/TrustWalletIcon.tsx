@@ -4,7 +4,12 @@ import { IconComponent } from '../../types'
 
 export const TrustWalletIcon: IconComponent = (props) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" {...props} viewBox="0 0 1024 1024" fill="none">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+      viewBox="0 0 1024 1024"
+      fill="none"
+    >
       <path
         d="M0 260C0 116.406 116.406 0 260 0H764C907.594 0 1024 116.406 1024 260V764C1024 907.594 907.594 1024 764 1024H260C116.406 1024 0 907.594 0 764V260Z"
         fill="white"

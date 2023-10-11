@@ -20,7 +20,9 @@ describe('HEXer', () => {
     })
 
     it('should return hexed amount with padding', () => {
-      expect(HEXER.uint(1000).toString()).toEqual('00000000000000000000000000000000000000000000000000000000000003e8')
+      expect(HEXER.uint(1000).toString()).toEqual(
+        '00000000000000000000000000000000000000000000000000000000000003e8',
+      )
     })
 
     it('should return hexed value 0 + padding', () => {
@@ -127,10 +129,13 @@ describe('HEXer', () => {
       expect(() => HEXER.uint(amount)).toThrow('Wrong uint256: ' + amount)
     })
 
-    it.each([1, Number.MAX_SAFE_INTEGER])('should not throw with a valid value: %i', (n) => {
-      expect(() => HEXER.uint256(n)).not.toThrowError()
-      expect(() => HEXER.uint(n)).not.toThrowError()
-    })
+    it.each([1, Number.MAX_SAFE_INTEGER])(
+      'should not throw with a valid value: %i',
+      (n) => {
+        expect(() => HEXER.uint256(n)).not.toThrowError()
+        expect(() => HEXER.uint(n)).not.toThrowError()
+      },
+    )
   })
 
   describe('#share16', () => {
@@ -138,12 +143,16 @@ describe('HEXer', () => {
     const maxValue = (256 * 256) / limit - 1
     it(`throws when input is greater than ${maxValue}`, () => {
       const amount = maxValue + 1
-      expect(() => HEXER.share16(amount)).toThrow('Wrong uint16: ' + amount * limit)
+      expect(() => HEXER.share16(amount)).toThrow(
+        'Wrong uint16: ' + amount * limit,
+      )
     })
 
     it('throws when input is less than 0', () => {
       const amount = -1
-      expect(() => HEXER.share16(amount)).toThrow('Wrong uint16: ' + amount * limit)
+      expect(() => HEXER.share16(amount)).toThrow(
+        'Wrong uint16: ' + amount * limit,
+      )
     })
 
     it.each([1, maxValue])('should not throw with a valid value: %i', (n) => {
@@ -172,7 +181,9 @@ describe('HEXer', () => {
 
     it('throws when input length is odd', () => {
       const input = '123'
-      expect(() => HEXER.hexData(input)).toThrow('Wrong hex data length: ' + input.length)
+      expect(() => HEXER.hexData(input)).toThrow(
+        'Wrong hex data length: ' + input.length,
+      )
     })
 
     it('slices the 0x prefix', () => {
@@ -185,20 +196,31 @@ describe('HEXer', () => {
 
     it('throws when input length is odd', () => {
       const input = '123'
-      expect(() => HEXER.bytes(input)).toThrow('Wrong bytes length: ' + input.length)
+      expect(() => HEXER.bytes(input)).toThrow(
+        'Wrong bytes length: ' + input.length,
+      )
     })
 
     it('adds padding and slices the 0x prefix', () => {
       const len = '14' // address length after slicing prefix is 20, 20 in decimal is 14 in hex
-      const expected = '00000000000000000000000000000000000000000000000000000000000000' + len + address.slice(2)
+      const expected =
+        '00000000000000000000000000000000000000000000000000000000000000' +
+        len +
+        address.slice(2)
       expect(HEXER.bytes(address).toString()).toEqual(expected)
     })
 
-    it.each(['10', '1010', '101010'])('adds 0 padding and length info of the bytecode', (n) => {
-      const actual = HEXER.bytes(n).toString()
-      const expected = '000000000000000000000000000000000000000000000000000000000000000' + n.length / 2 + n
-      expect(actual).toEqual(expected)
-    })
+    it.each(['10', '1010', '101010'])(
+      'adds 0 padding and length info of the bytecode',
+      (n) => {
+        const actual = HEXER.bytes(n).toString()
+        const expected =
+          '000000000000000000000000000000000000000000000000000000000000000' +
+          n.length / 2 +
+          n
+        expect(actual).toEqual(expected)
+      },
+    )
   })
 
   describe('#bool', () => {

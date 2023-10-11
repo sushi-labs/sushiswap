@@ -1,8 +1,12 @@
-import { calculateSlippageAmount, TridentConstantPool, TridentStablePool } from '@sushiswap/amm'
+import {
+  calculateSlippageAmount,
+  TridentConstantPool,
+  TridentStablePool,
+} from '@sushiswap/amm'
 import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Token, Type } from '@sushiswap/currency'
-import { Percent, ZERO } from '@sushiswap/math'
+import { ChainId } from 'sushi/chain'
+import { Amount, Token, Type } from 'sushi/currency'
+import { Percent, ZERO } from 'sushi'
 import {
   DialogConfirm,
   DialogContent,
@@ -29,10 +33,20 @@ import {
   useTridentRouterContract,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import { SendTransactionResult, waitForTransaction } from '@sushiswap/wagmi/actions'
-import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import {
+  SendTransactionResult,
+  waitForTransaction,
+} from '@sushiswap/wagmi/actions'
+import {
+  useApproved,
+  useSignature,
+} from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { approveMasterContractAction, batchAction, LiquidityInput } from 'lib/actions'
+import {
+  approveMasterContractAction,
+  batchAction,
+  LiquidityInput,
+} from 'lib/actions'
 import { APPROVE_TAG_ADD_TRIDENT } from 'lib/constants'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import { FC, ReactNode, useCallback, useMemo } from 'react'
@@ -62,7 +76,9 @@ interface AddSectionReviewModalTridentProps {
 
 const ZERO_PERCENT = new Percent('0')
 
-export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps> = ({
+export const AddSectionReviewModalTrident: FC<
+  AddSectionReviewModalTridentProps
+> = ({
   poolAddress,
   poolState,
   pool,
@@ -80,7 +96,9 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   const { approved } = useApproved(APPROVE_TAG_ADD_TRIDENT)
   const liquidityToken = useMemo(() => {
     return new Token({
-      address: poolAddress.includes(':') ? poolAddress.split(':')[1] : poolAddress,
+      address: poolAddress.includes(':')
+        ? poolAddress.split(':')[1]
+        : poolAddress,
       name: 'SLP Token',
       decimals: 18,
       symbol: 'SLP',
@@ -94,20 +112,33 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   const contract = useTridentRouterContract(chainId)
   const [slippageTolerance] = useSlippageTolerance('addLiquidity')
   const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
+    return new Percent(
+      Math.floor(
+        +(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100,
+      ),
+      10_000,
+    )
   }, [slippageTolerance])
 
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
       input0
-        ? poolState === TridentConstantPoolState.NOT_EXISTS || poolState === TridentStablePoolState.NOT_EXISTS
+        ? poolState === TridentConstantPoolState.NOT_EXISTS ||
+          poolState === TridentStablePoolState.NOT_EXISTS
           ? input0
-          : Amount.fromRawAmount(input0.currency, calculateSlippageAmount(input0, slippagePercent)[0])
+          : Amount.fromRawAmount(
+              input0.currency,
+              calculateSlippageAmount(input0, slippagePercent)[0],
+            )
         : undefined,
       input1
-        ? poolState === TridentConstantPoolState.NOT_EXISTS || poolState === TridentStablePoolState.NOT_EXISTS
+        ? poolState === TridentConstantPoolState.NOT_EXISTS ||
+          poolState === TridentStablePoolState.NOT_EXISTS
           ? input1
-          : Amount.fromRawAmount(input1.currency, calculateSlippageAmount(input1, slippagePercent)[0])
+          : Amount.fromRawAmount(
+              input1.currency,
+              calculateSlippageAmount(input1, slippagePercent)[0],
+            )
         : undefined,
     ]
   }, [poolState, input0, input1, slippagePercent])
@@ -117,7 +148,11 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
       poolState === TridentConstantPoolState.NOT_EXISTS ||
       poolState === TridentStablePoolState.NOT_EXISTS ||
       Boolean(totalSupply && totalSupply.quotient === ZERO) ||
-      Boolean(pool && pool.reserve0.quotient === ZERO && pool.reserve1.quotient === ZERO)
+      Boolean(
+        pool &&
+          pool.reserve0.quotient === ZERO &&
+          pool.reserve1.quotient === ZERO,
+      )
     )
   }, [pool, poolState, totalSupply])
 
@@ -140,7 +175,10 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
 
       try {
         const slp = pool.getLiquidityMinted(totalSupply, amountA, amountB)
-        const minSLP = calculateSlippageAmount(slp, noLiquidity ? ZERO_PERCENT : slippagePercent)[0]
+        const minSLP = calculateSlippageAmount(
+          slp,
+          noLiquidity ? ZERO_PERCENT : slippagePercent,
+        )[0]
         return Amount.fromRawAmount(slp.currency, minSLP.toString())
       } catch (error) {
         console.error(error)
@@ -148,7 +186,17 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
     }
 
     return undefined
-  }, [noLiquidity, input0, input1, pool, rebases, slippagePercent, token0, token1, totalSupply])
+  }, [
+    noLiquidity,
+    input0,
+    input1,
+    pool,
+    rebases,
+    slippagePercent,
+    token0,
+    token1,
+    totalSupply,
+  ])
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined, error: Error | null) => {
@@ -173,7 +221,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
         groupTimestamp: ts,
       })
     },
-    [address, chain?.id, token0, token1]
+    [address, chain?.id, token0, token1],
   )
 
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
@@ -196,14 +244,18 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
 
       let value = 0n
       const liquidityInput: LiquidityInput[] = []
-      const encoded = encodeAbiParameters(parseAbiParameters('address'), [address])
+      const encoded = encodeAbiParameters(parseAbiParameters('address'), [
+        address,
+      ])
       if (input0) {
         if (input0.currency.isNative) {
           value = BigInt(input0.quotient.toString())
         }
 
         liquidityInput.push({
-          token: input0.currency.isNative ? zeroAddress : (input0.currency.wrapped.address as Address),
+          token: input0.currency.isNative
+            ? zeroAddress
+            : (input0.currency.wrapped.address as Address),
           native: true,
           amount: BigInt(input0.quotient.toString()),
         })
@@ -215,7 +267,9 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
         }
 
         liquidityInput.push({
-          token: input1.currency.isNative ? zeroAddress : (input1.currency.wrapped.address as Address),
+          token: input1.currency.isNative
+            ? zeroAddress
+            : (input1.currency.wrapped.address as Address),
           native: true,
           amount: BigInt(input1.quotient.toString()),
         })
@@ -266,7 +320,11 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   const { config } = usePrepareSendTransaction({
     ...prepare,
     chainId,
-    enabled: Boolean(approved && minAmount0?.greaterThan(ZERO) && minAmount1?.greaterThan(ZERO)),
+    enabled: Boolean(
+      approved &&
+        minAmount0?.greaterThan(ZERO) &&
+        minAmount1?.greaterThan(ZERO),
+    ),
   })
 
   const {
@@ -293,14 +351,22 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Add liquidity</DialogTitle>
-                <DialogDescription>Please review your entered details.</DialogDescription>
+                <DialogDescription>
+                  Please review your entered details.
+                </DialogDescription>
               </DialogHeader>
-              <AddSectionReviewModal chainId={chainId as BentoBoxChainId} input0={input0} input1={input1} />
+              <AddSectionReviewModal
+                chainId={chainId as BentoBoxChainId}
+                input0={input0}
+                input1={input1}
+              />
               <DialogFooter>
                 <Button
                   size="xl"
                   id="confirm-add-liquidity"
-                  disabled={isWritePending || !approved || !sendTransactionAsync}
+                  disabled={
+                    isWritePending || !approved || !sendTransactionAsync
+                  }
                   fullWidth
                   onClick={() => sendTransactionAsync?.().then(() => confirm())}
                 >

@@ -1,6 +1,15 @@
-import { Children, cloneElement, FC, isValidElement, ReactElement, ReactNode, useMemo, useReducer } from 'react'
+import {
+  Children,
+  FC,
+  ReactElement,
+  ReactNode,
+  cloneElement,
+  isValidElement,
+  useMemo,
+  useReducer,
+} from 'react'
 
-import { SushiSwapV2PoolState } from '../../hooks'
+import { SushiSwapV2PoolState } from '../../hooks/useSushiSwapV2Pools'
 import { ComponentsWrapper } from './ComponentsWrapper'
 import { SushiSwapV2Pool } from './SushiSwapV2Pool'
 import { TridentConstantPool } from './TridentConstantPool'
@@ -14,7 +23,9 @@ import {
 } from './types'
 
 interface Props {
-  components: ReactElement<ComponentsWrapperProps<SushiSwapV2PoolFinderProps | TridentPoolFinderProps>>
+  components: ReactElement<
+    ComponentsWrapperProps<SushiSwapV2PoolFinderProps | TridentPoolFinderProps>
+  >
   children({ pool }: { pool: PoolStateUnion }): ReactNode
 }
 
@@ -48,7 +59,7 @@ const Controller: FC<Props> = ({ components, children }) => {
             index,
           })
         }
-      })
+      }),
     )
   }, [components])
 

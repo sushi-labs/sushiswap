@@ -14,7 +14,9 @@ export async function createTokens(tokens: Prisma.TokenCreateManyInput[]) {
   }
 }
 
-export async function getMissingTokens(tokens: {chainId: number, address: string}[]) {
+export async function getMissingTokens(
+  tokens: { chainId: number; address: string }[],
+) {
   if (tokens.length === 0) {
     return []
   }
@@ -27,9 +29,17 @@ export async function getMissingTokens(tokens: {chainId: number, address: string
     },
     where: {
       id: {
-        in: tokens.map(token => `${token.chainId}:${token.address.toLowerCase()}`)
-      }
+        in: tokens.map(
+          (token) => `${token.chainId}:${token.address.toLowerCase()}`,
+        ),
+      },
     },
   })
-  return tokens.filter(token => !tokensFound.find(createdToken => createdToken.id === `${token.chainId}:${token.address.toLowerCase()}`))
+  return tokens.filter(
+    (token) =>
+      !tokensFound.find(
+        (createdToken) =>
+          createdToken.id === `${token.chainId}:${token.address.toLowerCase()}`,
+      ),
+  )
 }

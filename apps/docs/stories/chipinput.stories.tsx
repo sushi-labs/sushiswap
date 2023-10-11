@@ -36,7 +36,14 @@ export const Default = {
   },
   render: (args) => {
     const [blacklist, setBlacklist] = useState<string[]>([])
-    return <ChipInput {...args} delimiters={[',', ' ', ';', ':']} values={blacklist} onValueChange={setBlacklist} />
+    return (
+      <ChipInput
+        {...args}
+        delimiters={[',', ' ', ';', ':']}
+        values={blacklist}
+        onValueChange={setBlacklist}
+      />
+    )
   },
 } satisfies Story
 
@@ -46,6 +53,13 @@ export const Outline = {
   },
   render: (args) => {
     const [blacklist, setBlacklist] = useState<string[]>([])
-    return <ChipInput {...args} delimiters={[',', ' ', ';', ':']} values={blacklist} onValueChange={setBlacklist} />
+    return (
+      <ChipInput
+        {...args}
+        delimiters={[',', ' ', ';', ':']}
+        values={blacklist}
+        onValueChange={setBlacklist}
+      />
+    )
   },
 } satisfies Story
