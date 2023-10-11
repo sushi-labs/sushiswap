@@ -51,6 +51,8 @@
     "@tanstack/react-query-persist-client": "4.28.0",
     "@tanstack/react-table": "8.9.1",
     "@uniswap/token-lists": "1.0.0-beta.30",
+    "@upstash/ratelimit": "0.4.4",
+    "@upstash/redis": "1.22.1",
     "@vercel/analytics": "1.0.1",
     "@vercel/edge-config": "0.2.1",
     "@wagmi/core": "1.4.3",
