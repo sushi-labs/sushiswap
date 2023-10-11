@@ -16,13 +16,19 @@ interface ProductHero {
   productStats?: ProductStat[]
 }
 
-const Title: FC<{ productName: ReactNode; isCentered: boolean }> = ({ productName, isCentered }) => (
+const Title: FC<{ productName: ReactNode; isCentered: boolean }> = ({
+  productName,
+  isCentered,
+}) => (
   <>
     {typeof productName === 'string'
       ? productName.split('-').map((name, i) => (
           <h1
             key={i}
-            className={classNames('text-4xl sm:text-6xl font-bold sm:leading-[78px]', isCentered && 'text-center')}
+            className={classNames(
+              'text-4xl sm:text-6xl font-bold sm:leading-[78px]',
+              isCentered && 'text-center',
+            )}
           >
             {name}
           </h1>
@@ -31,7 +37,8 @@ const Title: FC<{ productName: ReactNode; isCentered: boolean }> = ({ productNam
   </>
 )
 
-const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
+const useIsomorphicLayoutEffect =
+  typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 export const ProductHero: FC<ProductHero> = ({
   productName,
@@ -56,7 +63,12 @@ export const ProductHero: FC<ProductHero> = ({
         <div className={classNames(isCentered && 'flex flex-col items-center')}>
           <Title productName={productName} isCentered={isCentered} />
 
-          <h3 className={classNames('sm:text-2xl mt-1.5 font-medium text-slate-400', isCentered && 'text-center')}>
+          <h3
+            className={classNames(
+              'sm:text-2xl mt-1.5 font-medium text-slate-400',
+              isCentered && 'text-center',
+            )}
+          >
             {productDescription}
           </h3>
 
@@ -67,7 +79,9 @@ export const ProductHero: FC<ProductHero> = ({
         {image && <div className="hidden md:block">{image}</div>}
       </div>
 
-      {productStats && <ProductStats productStats={productStats} isCentered={isCentered} />}
+      {productStats && (
+        <ProductStats productStats={productStats} isCentered={isCentered} />
+      )}
     </section>
   )
 }

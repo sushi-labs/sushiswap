@@ -9,7 +9,11 @@ interface FilterButton {
   onClick: () => void
 }
 
-export const FilterButton: FC<FilterButton> = ({ title, isSelected, onClick }) => {
+export const FilterButton: FC<FilterButton> = ({
+  title,
+  isSelected,
+  onClick,
+}) => {
   return (
     <Button onClick={onClick} color={isSelected ? 'blue' : 'default'}>
       {title}

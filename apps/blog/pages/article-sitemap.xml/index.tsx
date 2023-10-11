@@ -6,7 +6,9 @@ import { getAllArticlesBySlug } from '../../lib/api'
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { articles } = await getAllArticlesBySlug()
 
-  const slugs = (articles?.data || []).map((article) => article.attributes?.slug)
+  const slugs = (articles?.data || []).map(
+    (article) => article.attributes?.slug,
+  )
 
   const fields = slugs.map<ISitemapField>((slug) => ({
     loc: `https://www.sushi.com/blog/${slug}`,

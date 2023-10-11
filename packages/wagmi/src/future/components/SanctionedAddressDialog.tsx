@@ -20,9 +20,15 @@ export const SanctionedAddressDialog = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Sanctioned address detected</DialogTitle>
-          <DialogDescription>Your address has been identified as sanctioned and cannot be supported.</DialogDescription>
+          <DialogDescription>
+            Your address has been identified as sanctioned and cannot be
+            supported.
+          </DialogDescription>
           <div className="flex flex-col gap-4">
-            <LinkExternal href="https://www.trmlabs.com/products/sanctions" className="text-blue underline text-sm">
+            <LinkExternal
+              href="https://www.trmlabs.com/products/sanctions"
+              className="text-blue underline text-sm"
+            >
               What is this?
             </LinkExternal>
           </div>

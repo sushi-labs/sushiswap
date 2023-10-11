@@ -1,8 +1,12 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { config } from 'hardhat'
 import { createProvider } from 'hardhat/internal/core/providers/construction'
 
-export async function createHardhatProvider(chainId: ChainId, url: string, blockNumber: number) {
+export async function createHardhatProvider(
+  chainId: ChainId,
+  url: string,
+  blockNumber: number,
+) {
   return await createProvider(
     {
       ...config,
@@ -20,7 +24,7 @@ export async function createHardhatProvider(chainId: ChainId, url: string, block
         },
       },
     },
-    'hardhat'
+    'hardhat',
   )
 }
 
@@ -39,7 +43,7 @@ export async function createHardhatProviderEmptyBlockchain(chainId = 31337) {
         },
       },
     },
-    'hardhat'
+    'hardhat',
   )
 
   return { provider, chainId: chainId as ChainId }

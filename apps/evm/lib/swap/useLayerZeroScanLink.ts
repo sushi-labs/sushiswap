@@ -1,5 +1,5 @@
 import { createClient } from '@layerzerolabs/scan-client'
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { STARGATE_CHAIN_ID, StargateChainId } from '@sushiswap/stargate'
 import { useQuery } from '@tanstack/react-query'
 
@@ -19,10 +19,15 @@ export const useLayerZeroScanLink = ({
   return useQuery({
     queryKey: ['lzLink', { txHash, network0, network1, tradeId }],
     queryFn: async () => {
-      if (txHash && network0 in STARGATE_CHAIN_ID && network1 in STARGATE_CHAIN_ID) {
+      if (
+        txHash &&
+        network0 in STARGATE_CHAIN_ID &&
+        network1 in STARGATE_CHAIN_ID
+      ) {
         const result = await client.getMessagesBySrcTxHash(txHash)
         if (result.messages.length > 0) {
-          const { srcUaAddress, dstUaAddress, srcUaNonce, status, dstTxHash } = result.messages[0]
+          const { srcUaAddress, dstUaAddress, srcUaNonce, status, dstTxHash } =
+            result.messages[0]
           return {
             link: `https://layerzeroscan.com/${
               STARGATE_CHAIN_ID[network0 as StargateChainId]

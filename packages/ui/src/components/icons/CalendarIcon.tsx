@@ -4,7 +4,12 @@ import { IconComponent } from '../../types'
 
 export const CalendarIcon: IconComponent = (props) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 24 24">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+      fill="none"
+      viewBox="0 0 24 24"
+    >
       <path
         stroke="currentColor"
         strokeWidth="2"

@@ -15,7 +15,7 @@ import { WideTriangle } from 'common/icons'
 import { PRODUCTS_DATA } from 'common/productsData'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
-import Image from "next/legacy/image"
+import Image from 'next/legacy/image'
 import { FC } from 'react'
 import useSWR from 'swr'
 
@@ -43,14 +43,17 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       revalidateOnFocus: false,
       revalidateIfStale: false,
       revalidateOnReconnect: false,
-    }
+    },
   )
 
   const latestArticles = data?.articles ?? []
   const relevantArticles = data?.relevantArticles ?? []
 
   return (
-    <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', DEFAULT_SIDE_PADDING)}>
+    <Container
+      maxWidth="6xl"
+      className={classNames('mx-auto pt-10 pb-24', DEFAULT_SIDE_PADDING)}
+    >
       <ProductBackground color={color} />
       <ProductHero
         productName={
@@ -59,7 +62,10 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
             <span className="flex items-center">
               <WideTriangle fill="#F7EA75" className="h-6 -mr-2 sm:h-10" />
               X
-              <WideTriangle fill="#FF9A5F" className="h-6 -ml-2 rotate-180 sm:h-10" />
+              <WideTriangle
+                fill="#FF9A5F"
+                className="h-6 -ml-2 rotate-180 sm:h-10"
+              />
             </span>
             <span>Swap</span>
           </h1>

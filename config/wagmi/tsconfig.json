@@ -1,12 +1,12 @@
 {
-  "extends": "@sushiswap/typescript-config/esm.json",
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/esm/tsconfig"],
   "include": ["src"],
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "skipLibCheck": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
+    "sourceMap": true
   }
 }

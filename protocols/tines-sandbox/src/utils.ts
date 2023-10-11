@@ -2,7 +2,11 @@ import { expect } from 'chai'
 import { Abi, Address, Hex, PublicClient, WalletClient } from 'viem'
 import { waitForTransactionReceipt } from 'viem/actions'
 
-function closeValues(_a: number | bigint, _b: number | bigint, accuracy: number): boolean {
+function closeValues(
+  _a: number | bigint,
+  _b: number | bigint,
+  accuracy: number,
+): boolean {
   const a = Number(_a)
   const b = Number(_b)
   if (accuracy === 0) return a === b
@@ -11,7 +15,12 @@ function closeValues(_a: number | bigint, _b: number | bigint, accuracy: number)
   return Math.abs(a / b - 1) < accuracy
 }
 
-export function expectCloseValues(_a: number | bigint, _b: number | bigint, accuracy: number, logInfoIfFalse = '') {
+export function expectCloseValues(
+  _a: number | bigint,
+  _b: number | bigint,
+  accuracy: number,
+  logInfoIfFalse = '',
+) {
   const res = closeValues(_a, _b, accuracy)
   if (!res) {
     console.log(`Expected close: ${_a}, ${_b}, ${accuracy} ${logInfoIfFalse}`)
@@ -24,15 +33,17 @@ export function expectCloseValues(_a: number | bigint, _b: number | bigint, accu
 export function tryCall<A>(f: () => A): A | undefined {
   try {
     return f()
-  } catch (e) {
+  } catch {
     //
   }
 }
 
-export async function tryCallAsync<A>(f: () => Promise<A>): Promise<A | undefined> {
+export async function tryCallAsync<A>(
+  f: () => Promise<A>,
+): Promise<A | undefined> {
   try {
     return await f()
-  } catch (e) {
+  } catch {
     //
   }
 }
@@ -60,14 +71,19 @@ export function getRndExpInt(rnd: () => number, min: number, max: number) {
   return Math.floor(getRndExp(rnd, min, max))
 }
 
-export const getDeploymentAddress = async (client: WalletClient, promise: Promise<Hex>) =>
-  waitForTransactionReceipt(client, { hash: await promise }).then((receipt) => receipt.contractAddress as Address)
+export const getDeploymentAddress = async (
+  client: WalletClient,
+  promise: Promise<Hex>,
+) =>
+  waitForTransactionReceipt(client, { hash: await promise }).then(
+    (receipt) => receipt.contractAddress as Address,
+  )
 
 export async function deployContract(
   client: PublicClient & WalletClient,
   contract: { abi: unknown; bytecode: string },
   args?: unknown[],
-  deployer?: Address
+  deployer?: Address,
 ): Promise<Address> {
   return getDeploymentAddress(
     client,
@@ -77,6 +93,6 @@ export async function deployContract(
       bytecode: contract.bytecode as Hex,
       account: deployer as Address,
       args,
-    })
+    }),
   )
 }

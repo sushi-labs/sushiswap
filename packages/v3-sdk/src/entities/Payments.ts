@@ -1,7 +1,7 @@
 import { Interface } from '@ethersproject/abi'
 import { validateAndParseAddress } from '@sushiswap/amm'
-import { Token } from '@sushiswap/currency'
-import { Percent } from '@sushiswap/math'
+import { Token } from 'sushi/currency'
+import { Percent } from 'sushi'
 import IPeripheryPaymentsWithFee from '@uniswap/v3-periphery/artifacts/contracts/interfaces/IPeripheryPaymentsWithFee.sol/IPeripheryPaymentsWithFee.json'
 
 import { toHex } from '../utils/calldata'
@@ -19,7 +19,9 @@ export interface FeeOptions {
 }
 
 export abstract class Payments {
-  public static INTERFACE: Interface = new Interface(IPeripheryPaymentsWithFee.abi)
+  public static INTERFACE: Interface = new Interface(
+    IPeripheryPaymentsWithFee.abi,
+  )
 
   /**
    * Cannot be constructed.
@@ -30,7 +32,11 @@ export abstract class Payments {
     return toHex(fee.multiply(10_000).quotient)
   }
 
-  public static encodeUnwrapWETH9(amountMinimum: bigint, recipient: string, feeOptions?: FeeOptions): string {
+  public static encodeUnwrapWETH9(
+    amountMinimum: bigint,
+    recipient: string,
+    feeOptions?: FeeOptions,
+  ): string {
     recipient = validateAndParseAddress(recipient)
 
     if (feeOptions) {
@@ -44,7 +50,10 @@ export abstract class Payments {
         feeRecipient,
       ])
     } else {
-      return Payments.INTERFACE.encodeFunctionData('unwrapWETH9', [toHex(amountMinimum), recipient])
+      return Payments.INTERFACE.encodeFunctionData('unwrapWETH9', [
+        toHex(amountMinimum),
+        recipient,
+      ])
     }
   }
 
@@ -52,7 +61,7 @@ export abstract class Payments {
     token: Token,
     amountMinimum: bigint,
     recipient: string,
-    feeOptions?: FeeOptions
+    feeOptions?: FeeOptions,
   ): string {
     recipient = validateAndParseAddress(recipient)
 
@@ -68,7 +77,11 @@ export abstract class Payments {
         feeRecipient,
       ])
     } else {
-      return Payments.INTERFACE.encodeFunctionData('sweepToken', [token.address, toHex(amountMinimum), recipient])
+      return Payments.INTERFACE.encodeFunctionData('sweepToken', [
+        token.address,
+        toHex(amountMinimum),
+        recipient,
+      ])
     }
   }
 

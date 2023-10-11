@@ -7,14 +7,17 @@ import {
   TridentConstantPool,
   TridentStablePool,
 } from '@sushiswap/amm'
-import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
 import {
   isTridentChainId,
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
 } from '@sushiswap/trident-sdk'
-import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS } from '@sushiswap/v2-sdk'
+import {
+  isSushiSwapV2ChainId,
+  SUSHISWAP_V2_FACTORY_ADDRESS,
+} from '@sushiswap/v2-sdk'
 import { useQuery } from '@tanstack/react-query'
 
 import { getAllPools } from '../actions/getAllPools'
@@ -68,19 +71,32 @@ interface UsePoolsAsMapParams extends UsePoolsParams {
   poolType: PoolType
   fee: Fee
 }
-export const usePoolsAsMap = ({ enabled = true, ...variables }: UsePoolsAsMapParams) => {
+export const usePoolsAsMap = ({
+  enabled = true,
+  ...variables
+}: UsePoolsAsMapParams) => {
   const { chainId, currencyA, currencyB } = variables
 
   return useQuery({
     queryKey: ['usePoolsAsMap', { chainId, currencyA, currencyB }],
     queryFn: async () => {
-      const data = await getAllPools({ ...variables, asMap: true, withCombinations: false, withBentoPools: false })
+      const data = await getAllPools({
+        ...variables,
+        asMap: true,
+        withCombinations: false,
+        withBentoPools: false,
+      })
       const pools = [
         ...(data.sushiSwapV2Pools || []),
         ...(data.tridentStablePools || []),
         ...(data.tridentConstantPools || []),
       ]
-      return pools.reduce<Record<string, SushiSwapV2Pool | TridentConstantPool | TridentStablePool>>((acc, cur) => {
+      return pools.reduce<
+        Record<
+          string,
+          SushiSwapV2Pool | TridentConstantPool | TridentStablePool
+        >
+      >((acc, cur) => {
         acc[cur.liquidityToken.address] = cur
         return acc
       }, {})
@@ -98,7 +114,9 @@ export const usePoolsAsMap = ({ enabled = true, ...variables }: UsePoolsAsMapPar
           : undefined
 
       return {
-        pool: computeCurrentPairAddress ? data[computeCurrentPairAddress] : undefined,
+        pool: computeCurrentPairAddress
+          ? data[computeCurrentPairAddress]
+          : undefined,
         map: data,
       }
     },

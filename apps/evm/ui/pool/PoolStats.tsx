@@ -1,9 +1,16 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { Pool } from '@sushiswap/client'
-import { formatNumber, formatPercent, formatUSD } from '@sushiswap/format'
-import { Card, CardContent, CardHeader, CardLabel, CardTitle, classNames } from '@sushiswap/ui'
+import { formatNumber, formatPercent, formatUSD } from 'sushi'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardLabel,
+  CardTitle,
+  classNames,
+} from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { usePoolGraphData } from 'lib/hooks'
 import { FC } from 'react'
@@ -32,7 +39,12 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
             ) : data ? (
               <div className="text-xl font-semibold">
                 {formatUSD(data.liquidityUSD ?? 0)}{' '}
-                <span className={classNames('text-xs', data.liquidity1dChange > 0 ? 'text-green' : 'text-red')}>
+                <span
+                  className={classNames(
+                    'text-xs',
+                    data.liquidity1dChange > 0 ? 'text-green' : 'text-red',
+                  )}
+                >
                   {data.liquidity1dChange > 0 ? '+' : '-'}
                   {formatPercent(Math.abs(data.liquidity1dChange))}
                 </span>
@@ -44,7 +56,12 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
             {data ? (
               <div className="text-xl font-semibold">
                 {formatUSD(data.volume1d ?? 0)}{' '}
-                <span className={classNames('text-xs', data.volume1dChange > 0 ? 'text-green' : 'text-red')}>
+                <span
+                  className={classNames(
+                    'text-xs',
+                    data.volume1dChange > 0 ? 'text-green' : 'text-red',
+                  )}
+                >
                   {data.volume1dChange > 0 ? '+' : '-'}
                   {formatPercent(Math.abs(data.volume1dChange))}
                 </span>
@@ -58,7 +75,12 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
             {data ? (
               <div className="text-xl font-semibold">
                 {formatUSD(data.fees1d ?? 0)}{' '}
-                <span className={classNames('text-xs', data.fees1dChange > 0 ? 'text-green' : 'text-red')}>
+                <span
+                  className={classNames(
+                    'text-xs',
+                    data.fees1dChange > 0 ? 'text-green' : 'text-red',
+                  )}
+                >
                   {data.fees1dChange > 0 ? '+' : '-'}
                   {formatPercent(Math.abs(data.fees1dChange))}
                 </span>
@@ -72,7 +94,12 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
             {data ? (
               <div className="text-xl font-semibold">
                 {formatNumber(data.txCount1d).replace('.00', '')}{' '}
-                <span className={classNames('text-xs', data.txCount1dChange > 0 ? 'text-green' : 'text-red')}>
+                <span
+                  className={classNames(
+                    'text-xs',
+                    data.txCount1dChange > 0 ? 'text-green' : 'text-red',
+                  )}
+                >
                   {data.txCount1dChange > 0 ? '+' : '-'}
                   {formatPercent(Math.abs(data.txCount1dChange))}
                 </span>

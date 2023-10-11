@@ -1,6 +1,6 @@
-import { erc20Abi } from '@sushiswap/abi'
-import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
+import { erc20Abi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
 import { createTestClient, http, publicActions, walletActions } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { Chain, arbitrum, mainnet, polygon } from 'viem/chains'
@@ -28,7 +28,9 @@ export async function createERC20({
     throw new Error('Unsupported chain')
   }
 
-  const account = privateKeyToAccount('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80')
+  const account = privateKeyToAccount(
+    '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
+  )
   const client = createTestClient({
     chain,
     mode: 'anvil',

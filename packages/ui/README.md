@@ -51,8 +51,7 @@ https://react-typescript-cheatsheet.netlify.app/docs/advanced/patterns_by_usecas
 "exports": {
   "./future/components/GlobalNav": "./future/components/GlobalNav/**/*.{ts,tsx}",
   "./index.css": "./index.css",
-  "./globals.css": "./globals.css",
-  "./variables.css": "./variables.css",
+  "./DatePicker.css": "./DatePicker.css",
   "./tailwind.js": "./tailwind.js",
   "./package.json": "./package.json"
 },

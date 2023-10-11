@@ -1,6 +1,13 @@
-import { ChainId } from '@sushiswap/chain'
-import { WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { Address, createPublicClient, http, Log, parseAbiItem, PublicClient } from 'viem'
+import { ChainId } from 'sushi/chain'
+import { WNATIVE_ADDRESS } from 'sushi/currency'
+import {
+  Address,
+  createPublicClient,
+  http,
+  Log,
+  parseAbiItem,
+  PublicClient,
+} from 'viem'
 import { arbitrum, Chain, mainnet, optimism, polygon } from 'viem/chains'
 
 import { RP3Address } from './Extractor.test'
@@ -64,7 +71,9 @@ class Diargam {
   }
 
   print() {
-    diapasons.forEach((d, i) => console.log(`${d.name}: ${this.counters[i] / this.total}`))
+    diapasons.forEach((d, i) =>
+      console.log(`${d.name}: ${this.counters[i] / this.total}`),
+    )
   }
 }
 
@@ -76,13 +85,21 @@ const coinGeckoPlatform = {
 } as const
 
 const tokenCache: Map<Address, number | null> = new Map()
-async function getPrice(token: Address, chainId: ChainId): Promise<number | null> {
+async function getPrice(
+  token: Address,
+  chainId: ChainId,
+): Promise<number | null> {
   const cached = tokenCache.get(token)
   if (cached !== undefined) return cached
 
   const platform = coinGeckoPlatform[chainId]
-  const erc20 = token === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' ? WNATIVE_ADDRESS[chainId] : token
-  const response = await fetch(`https://api.coingecko.com/api/v3/coins/${platform}/contract/${erc20}`)
+  const erc20 =
+    token === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+      ? WNATIVE_ADDRESS[chainId]
+      : token
+  const response = await fetch(
+    `https://api.coingecko.com/api/v3/coins/${platform}/contract/${erc20}`,
+  )
   const data = await response.json()
   const price = data?.market_data?.current_price?.usd
   const decimals = data?.detail_platforms?.[platform].decimal_place
@@ -97,9 +114,13 @@ async function getPrice(token: Address, chainId: ChainId): Promise<number | null
 }
 
 async function getLogTime(client: PublicClient, l: Log) {
-  const block = await client.getBlock({ blockNumber: l.blockNumber ?? BigInt(0) })
+  const block = await client.getBlock({
+    blockNumber: l.blockNumber ?? BigInt(0),
+  })
   const date = new Date(Number(block.timestamp) * 1000)
-  return `${date.toLocaleDateString('en-US')} ${date.toLocaleTimeString('en-US')}`
+  return `${date.toLocaleDateString('en-US')} ${date.toLocaleTimeString(
+    'en-US',
+  )}`
 }
 
 async function getSlippageStatistics(args: {
@@ -122,7 +143,7 @@ async function getSlippageStatistics(args: {
     address: args.RP3Address,
     fromBlock: blockNumCurrent - BigInt(args.blockQuantity),
     event: parseAbiItem(
-      'event Route(address indexed from, address to, address indexed tokenIn, address indexed tokenOut, uint amountIn, uint amountOutMin, uint amountOut)'
+      'event Route(address indexed from, address to, address indexed tokenIn, address indexed tokenOut, uint amountIn, uint amountOutMin, uint amountOut)',
     ),
   })
   const diagram = new Diargam(diapasons)
@@ -137,23 +158,33 @@ async function getSlippageStatistics(args: {
       diagram.addPoint(diff * 10_000)
       if (diff > 0.005 && diff < 0.025) {
         const price = await getPrice(logArgs.tokenOut, chainId)
-        const amount = Number(logArgs.amountOut) - Number(logArgs.amountOutMin) * 1.005
+        const amount =
+          Number(logArgs.amountOut) - Number(logArgs.amountOutMin) * 1.005
         if (price !== null) {
           positiveSurplus += amount * price
-          if (amount * price > 100) console.log(`${logArgs.tokenOut} ${logs[i].transactionHash} ${amount * price}`)
+          if (amount * price > 100)
+            console.log(
+              `${logArgs.tokenOut} ${logs[i].transactionHash} ${
+                amount * price
+              }`,
+            )
           //console.log(`Token ${logArgs.tokenOut} price: ${price}`)
         } //else console.log(`Unknown token: ${logArgs.tokenOut}`)
       }
       if (diff < 0.0005) {
         ++mevedNumber
         const price = await getPrice(logArgs.tokenOut, chainId)
-        if (price !== null) mevedOutputAmout += Number(logArgs.amountOutMin) * price
+        if (price !== null)
+          mevedOutputAmout += Number(logArgs.amountOutMin) * price
       }
       if (diff > 1) {
         const price = await getPrice(logArgs.tokenOut, chainId)
-        const amount = Number(logArgs.amountOut) - Number(logArgs.amountOutMin) * 1.005
+        const amount =
+          Number(logArgs.amountOut) - Number(logArgs.amountOutMin) * 1.005
         if (price !== null) {
-          console.log(`${logArgs.tokenOut} ${logs[i].transactionHash} ${amount * price}`)
+          console.log(
+            `${logArgs.tokenOut} ${logs[i].transactionHash} ${amount * price}`,
+          )
         }
       }
     } //else console.log(args)
@@ -165,7 +196,11 @@ async function getSlippageStatistics(args: {
     console.log(`Total logs: ${logs.length} ${start} - ${finish}`)
     diagram.print()
     console.log(`Positive surplus: ${Math.round(positiveSurplus)} usd`)
-    console.log(`MEVed: ${mevedNumber} transactions, total value: ${mevedOutputAmout * 0.005} usd`)
+    console.log(
+      `MEVed: ${mevedNumber} transactions, total value: ${
+        mevedOutputAmout * 0.005
+      } usd`,
+    )
   } else console.log(`Total logs: ${logs.length}`)
 }
 

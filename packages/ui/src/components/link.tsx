@@ -7,7 +7,14 @@ const LinkExternal: FC<AnchorHTMLAttributes<HTMLAnchorElement>> = ({
   rel = 'noopener noreferrer',
   ...props
 }) => {
-  return <a {...props} target={target} rel={rel} className="cursor-pointer text-blue hover:underline" />
+  return (
+    <a
+      {...props}
+      target={target}
+      rel={rel}
+      className="cursor-pointer text-blue hover:underline"
+    />
+  )
 }
 
 export { LinkExternal, LinkInternal }

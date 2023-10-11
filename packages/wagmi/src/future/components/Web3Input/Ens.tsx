@@ -1,15 +1,20 @@
 'use client'
 
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { TextField, TextFieldProps } from '@sushiswap/ui'
 import { ForwardedRef, forwardRef, useEffect } from 'react'
 import { useEnsAddress } from 'wagmi'
 
-function Component(props: Omit<TextFieldProps<'text'>, 'type'>, ref: ForwardedRef<HTMLInputElement>) {
+function Component(
+  props: Omit<TextFieldProps<'text'>, 'type'>,
+  ref: ForwardedRef<HTMLInputElement>,
+) {
   const { data } = useEnsAddress({
     name: `${props.value}`,
     chainId: ChainId.ETHEREUM,
-    enabled: Boolean(props.value && typeof props.value === 'string' && props.value.length > 2),
+    enabled: Boolean(
+      props.value && typeof props.value === 'string' && props.value.length > 2,
+    ),
   })
 
   useEffect(() => {

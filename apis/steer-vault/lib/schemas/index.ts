@@ -1,3 +1,3 @@
-export * from './count.js'
-export * from './vault.js'
-export * from './vaults.js'
+export * from './count'
+export * from './vault'
+export * from './vaults'

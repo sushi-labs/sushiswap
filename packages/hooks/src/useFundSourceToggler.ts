@@ -6,10 +6,16 @@ export enum FundSource {
 }
 
 export const useFundSourceToggler = (initialValue?: FundSource) => {
-  const [fundSource, setFundSource] = useState<FundSource | undefined>(initialValue)
+  const [fundSource, setFundSource] = useState<FundSource | undefined>(
+    initialValue,
+  )
 
   const toggle = useCallback(() => {
-    setFundSource((prevState) => (prevState === FundSource.BENTOBOX ? FundSource.WALLET : FundSource.BENTOBOX))
+    setFundSource((prevState) =>
+      prevState === FundSource.BENTOBOX
+        ? FundSource.WALLET
+        : FundSource.BENTOBOX,
+    )
   }, [])
 
   return useMemo(
@@ -20,6 +26,6 @@ export const useFundSourceToggler = (initialValue?: FundSource) => {
       toggle,
       setValue: setFundSource,
     }),
-    [fundSource, toggle]
+    [fundSource, toggle],
   )
 }

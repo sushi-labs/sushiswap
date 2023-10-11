@@ -1,7 +1,7 @@
 import { isAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Native, Token, Type } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Amount, Native, Token, Type } from 'sushi/currency'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 
@@ -14,10 +14,20 @@ interface UseBalanceParams {
   enabled?: boolean
 }
 
-export const queryFnUseBalances = async ({ chainId, currencies, account }: Omit<UseBalanceParams, 'enabled'>) => {
+export const queryFnUseBalances = async ({
+  chainId,
+  currencies,
+  account,
+}: Omit<UseBalanceParams, 'enabled'>) => {
   if (!account || !chainId || !currencies) return null
-  const native = await fetchBalance({ address: account, chainId, formatUnits: 'wei' })
-  const [validatedTokens, validatedTokenAddresses] = currencies.reduce<[Token[], Address[]]>(
+  const native = await fetchBalance({
+    address: account,
+    chainId,
+    formatUnits: 'wei',
+  })
+  const [validatedTokens, validatedTokenAddresses] = currencies.reduce<
+    [Token[], Address[]]
+  >(
     (acc, currencies) => {
       if (chainId && currencies && isAddress(currencies.wrapped.address)) {
         acc[0].push(currencies.wrapped)
@@ -26,7 +36,7 @@ export const queryFnUseBalances = async ({ chainId, currencies, account }: Omit<
 
       return acc
     },
-    [[], []]
+    [[], []],
   )
 
   const data = await readContracts({
@@ -38,27 +48,40 @@ export const queryFnUseBalances = async ({ chainId, currencies, account }: Omit<
           abi: erc20ABI,
           functionName: 'balanceOf',
           args: [account],
-        } as const)
+        }) as const,
     ),
   })
 
   const _data = data.reduce<Record<string, Amount<Type>>>((acc, cur, i) => {
     const amount = data[i].result
     if (typeof amount === 'bigint') {
-      acc[validatedTokens[i].address] = Amount.fromRawAmount(validatedTokens[i], amount)
+      acc[validatedTokens[i].address] = Amount.fromRawAmount(
+        validatedTokens[i],
+        amount,
+      )
     }
     return acc
   }, {})
 
-  _data[AddressZero] = Amount.fromRawAmount(Native.onChain(chainId), native.value)
+  _data[AddressZero] = Amount.fromRawAmount(
+    Native.onChain(chainId),
+    native.value,
+  )
 
   return _data
 }
 
-export const useBalancesWeb3 = ({ chainId, currencies, account, enabled = true }: UseBalanceParams) => {
+export const useBalancesWeb3 = ({
+  chainId,
+  currencies,
+  account,
+  enabled = true,
+}: UseBalanceParams) => {
   useEffect(() => {
     if (currencies && currencies.length > 100) {
-      throw new Error('useBalancesWeb3: currencies length > 100, this will hurt performance and cause rate limits')
+      throw new Error(
+        'useBalancesWeb3: currencies length > 100, this will hurt performance and cause rate limits',
+      )
     }
   }, [currencies])
 

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { ChainId, chainName, chainShortName } from '@sushiswap/chain'
+import { ChainId, chainName, chainShortName } from 'sushi/chain'
 import {
   SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
@@ -9,7 +9,12 @@ import {
 } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
 
-import { Query, QueryResolvers, QuerytokensByChainIdsArgs, Token } from '../../.graphclient/index.js'
+import {
+  Query,
+  QueryResolvers,
+  QuerytokensByChainIdsArgs,
+  Token,
+} from '../../.graphclient/index.js'
 import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'
 import { TridentTypes } from '../../.graphclient/sources/Trident/types.js'
 import { page } from '../../lib/page.js'
@@ -26,13 +31,13 @@ export const _tokensByChainIds = async (
   root = {},
   args: QuerytokensByChainIdsArgs,
   context: SushiSwapTypes.Context & TridentTypes.Context,
-  info: GraphQLResolveInfo
+  info: GraphQLResolveInfo,
 ): Promise<Query['tokensByChainIds']> => {
   // @ts-ignore
   return Promise.all<Query['tokensByChainIds'][]>([
     ...args.chainIds
       .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
-      .map((chainId: (typeof TRIDENT_ENABLED_NETWORKS)[number]) =>
+      .map((chainId: typeof TRIDENT_ENABLED_NETWORKS[number]) =>
         context.Trident.Query.tokens({
           root,
           // @ts-ignore
@@ -69,11 +74,11 @@ export const _tokensByChainIds = async (
                 source: 'TRIDENT',
               }))
             : []
-        })
+        }),
       ),
     ...args.chainIds
       .filter((el) => SUSHISWAP_ENABLED_NETWORKS.includes(el))
-      .map((chainId: (typeof SUSHISWAP_ENABLED_NETWORKS)[number]) =>
+      .map((chainId: typeof SUSHISWAP_ENABLED_NETWORKS[number]) =>
         context.SushiSwap.Query.tokens({
           root,
           // @ts-ignore
@@ -111,23 +116,34 @@ export const _tokensByChainIds = async (
                 source: 'LEGACY',
               }))
             : []
-        })
+        }),
       ),
   ]).then((value) =>
     page(
       value.flat().sort((a, b) => {
         if (args.orderDirection === 'asc') {
-          return a[args.orderBy || 'liquidityUSD'] - b[args.orderBy || 'liquidityUSD']
+          return (
+            a[args.orderBy || 'liquidityUSD'] -
+            b[args.orderBy || 'liquidityUSD']
+          )
         } else if (args.orderDirection === 'desc') {
-          return b[args.orderBy || 'liquidityUSD'] - a[args.orderBy || 'liquidityUSD']
+          return (
+            b[args.orderBy || 'liquidityUSD'] -
+            a[args.orderBy || 'liquidityUSD']
+          )
         }
         return 0
       }),
-      args.pagination
-    )
+      args.pagination,
+    ),
   )
 }
 
-export const tokensByChainIds: QueryResolvers['tokensByChainIds'] = async (root, args, context, info) => {
+export const tokensByChainIds: QueryResolvers['tokensByChainIds'] = async (
+  root,
+  args,
+  context,
+  info,
+) => {
   return _tokensByChainIds(root, args, context, info)
 }

@@ -1,4 +1,4 @@
-import { Amount, Token, Type } from '@sushiswap/currency'
+import { Amount, Token, Type } from 'sushi/currency'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { FeeAmount } from '@sushiswap/v3-sdk'
 import { SendTransactionResult, waitForTransaction } from '@wagmi/core'
@@ -38,7 +38,12 @@ export const V3MigrateContractConfig = (chainId: V3MigrateChainId) => ({
   abi: V3Migrator,
 })
 
-export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Migrate) => {
+export const useV3Migrate = ({
+  account,
+  args,
+  chainId,
+  enabled = true,
+}: UseV3Migrate) => {
   const prepare = usePrepareContractWrite(
     args.noLiquidity
       ? {
@@ -61,7 +66,12 @@ export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Mi
                     encodeFunctionData({
                       abi: V3Migrator,
                       functionName: 'createAndInitializePoolIfNecessary',
-                      args: [args.token0.address as Address, args.token1.address as Address, args.fee, args.sqrtPrice],
+                      args: [
+                        args.token0.address as Address,
+                        args.token1.address as Address,
+                        args.fee,
+                        args.sqrtPrice,
+                      ],
                     }),
                     encodeFunctionData({
                       abi: V3Migrator,
@@ -97,7 +107,7 @@ export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Mi
               args.token1 &&
               typeof args.tickLower === 'number' &&
               typeof args.tickUpper === 'number' &&
-              args.deadline
+              args.deadline,
           ),
         }
       : {
@@ -143,9 +153,9 @@ export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Mi
               args.token1 &&
               typeof args.tickLower === 'number' &&
               typeof args.tickUpper === 'number' &&
-              args.deadline
+              args.deadline,
           ),
-        }
+        },
   )
 
   const onSettled = useCallback(
@@ -174,7 +184,7 @@ export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Mi
         })
       }
     },
-    [account, chainId]
+    [account, chainId],
   )
 
   return {

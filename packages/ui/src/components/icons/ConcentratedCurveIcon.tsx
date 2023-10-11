@@ -4,7 +4,12 @@ import { IconComponent } from '../../types'
 
 export const ConcentratedCurveIcon: IconComponent = (props) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 30 30">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+      fill="none"
+      viewBox="0 0 30 30"
+    >
       <circle
         cx="5.911"
         cy="5.911"

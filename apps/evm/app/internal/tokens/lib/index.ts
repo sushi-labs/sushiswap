@@ -1,11 +1,14 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { SUSHI_DEFAULT_TOKEN_LIST } from '@sushiswap/token-lists'
 
 export type Token = Awaited<ReturnType<typeof getTokens>>[0]
 
 // price might be screwed because of the combination, source won't make sense either
-export async function getTokens({ chainIds, filter }: { chainIds: ChainId[]; filter?: string }) {
+export async function getTokens({
+  chainIds,
+  filter,
+}: { chainIds: ChainId[]; filter?: string }) {
   const sdk = getBuiltGraphSDK()
 
   const defaultTokenList = await getDefaultTokenList()
@@ -22,12 +25,14 @@ export async function getTokens({ chainIds, filter }: { chainIds: ChainId[]; fil
         listEntry:
           defaultTokenList.find(
             (entry) =>
-              entry.address.toLowerCase() === token.id.toLowerCase().split(':')[1] && entry.chainId === token.chainId
+              entry.address.toLowerCase() ===
+                token.id.toLowerCase().split(':')[1] &&
+              entry.chainId === token.chainId,
           ) || null,
-      }))
+      })),
     )
 
-  const tokensCombined = new Map<string, (typeof tokens)[0]>()
+  const tokensCombined = new Map<string, typeof tokens[0]>()
   tokens.forEach((token) => {
     const tokenCombined = tokensCombined.get(token.id)
 
@@ -35,7 +40,8 @@ export async function getTokens({ chainIds, filter }: { chainIds: ChainId[]; fil
       tokensCombined.set(token.id, {
         ...token,
         volumeUSD: Number(token.volumeUSD) + Number(tokenCombined.volumeUSD),
-        liquidityUSD: Number(token.liquidityUSD) + Number(tokenCombined.liquidityUSD),
+        liquidityUSD:
+          Number(token.liquidityUSD) + Number(tokenCombined.liquidityUSD),
         feesUSD: Number(token.feesUSD) + Number(tokenCombined.feesUSD),
       })
     } else {
@@ -67,8 +73,13 @@ export interface TokenLogo {
 }
 
 export async function getTokenLogos(): Promise<TokenLogo[]> {
-  const allRepoFiles = await fetch('https://api.github.com/repos/sushiswap/list/git/trees/master?recursive=1').then(
-    (data) => data.json() as Promise<{ tree: { path: string; type: 'tree' | 'blob'; url: string }[] }>
+  const allRepoFiles = await fetch(
+    'https://api.github.com/repos/sushiswap/list/git/trees/master?recursive=1',
+  ).then(
+    (data) =>
+      data.json() as Promise<{
+        tree: { path: string; type: 'tree' | 'blob'; url: string }[]
+      }>,
   )
 
   const images = allRepoFiles.tree

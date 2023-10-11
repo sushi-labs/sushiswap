@@ -2,25 +2,25 @@
   "name": "@sushiswap/docs",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "storybook dev -p 6007",
     "build": "storybook build --docs",
     "build-storybook": "storybook build --docs",
-    "start": "serve storybook-static",
     "chromatic": "chromatic --exit-zero-on-changes",
-    "clean": "rm -rf .turbo && rm -rf node_modules"
+    "clean": "rm -rf .turbo && rm -rf node_modules",
+    "dev": "storybook dev -p 6007",
+    "start": "serve storybook-static"
   },
   "dependencies": {
     "@heroicons/react": "2.0.13",
-    "@sushiswap/chain": "workspace:*",
-    "@sushiswap/currency": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@tanstack/react-table": "8.9.1",
     "class-variance-authority": "^0.6.0",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "sushi": "workspace:*"
   },
   "devDependencies": {
     "@storybook/addon-a11y": "7.0.25",
@@ -36,6 +36,7 @@
     "@storybook/react": "7.0.25",
     "@storybook/react-vite": "7.0.25",
     "@sushiswap/typescript-config": "workspace:*",
+    "@types/react": "18.2.14",
     "@vitejs/plugin-react": "4.0.1",
     "autoprefixer": "10.4.14",
     "chromatic": "^7.0.0",
@@ -43,7 +44,7 @@
     "serve": "14.2.0",
     "storybook": "7.1.0-alpha.42",
     "tailwindcss": "3.3.2",
-    "typescript": "5.1.6",
+    "typescript": "5.2.2",
     "vite": "4.3.9"
   }
 }

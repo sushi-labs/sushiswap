@@ -62,7 +62,9 @@ export class PermanentCache<CacheRecord> {
         .map((s) => JSON.parse(s) as CacheRecord)
       await file.close()
     } catch (e) {
-      throw new Error(`Cache ${this.filePath} in incorrect! Please fix it or remove file`)
+      throw new Error(
+        `Cache ${this.filePath} in incorrect! Please fix it or remove file`,
+      )
     }
     this.lock.returnTurn()
     return records

@@ -1,7 +1,14 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
-import { Address, createPublicClient, custom, PublicClient, walletActions, WalletClient } from 'viem'
+import {
+  Address,
+  createPublicClient,
+  custom,
+  PublicClient,
+  walletActions,
+  WalletClient,
+} from 'viem'
 import { hardhat } from 'viem/chains'
 
 import {
@@ -36,9 +43,17 @@ async function createAlgebraPool(
   cntx: TestContext,
   fee: number,
   price: number,
-  positions: Range[]
+  positions: Range[],
 ): Promise<AlgebraPoolInfo> {
-  return createAlgebraPoolBase(cntx.client, cntx.env, cntx.testTokens, cntx.user, fee, price, positions)
+  return createAlgebraPoolBase(
+    cntx.client,
+    cntx.env,
+    cntx.testTokens,
+    cntx.user,
+    fee,
+    price,
+    positions,
+  )
 }
 
 function getPrecisionExpectation(amount: number): number {
@@ -51,19 +66,30 @@ async function checkAlgebraPoolSwap(
   pool: AlgebraPoolInfo,
   amountIn: number | bigint,
   direction: boolean,
-  printTick = false
+  printTick = false,
 ) {
   const { tick } = await updateTinesAlgebraPool(cntx.client, pool.pool)
-  const expectedAmountOut = pool.pool.calcOutByIn(Number(amountIn), direction, false).out
+  const expectedAmountOut = pool.pool.calcOutByIn(
+    Number(amountIn),
+    direction,
+    false,
+  ).out
   if (printTick) console.log('Tick:', tick, 'Amount: ', amountIn)
 
-  const [t0, t1] = direction ? [pool.token0, pool.token1] : [pool.token1, pool.token0]
+  const [t0, t1] = direction
+    ? [pool.token0, pool.token1]
+    : [pool.token1, pool.token0]
   const actialAmountOut = await tryCallAsync(() =>
-    algebraPoolSwap(cntx.client, cntx.env, t0, t1, cntx.user, BigInt(amountIn))
+    algebraPoolSwap(cntx.client, cntx.env, t0, t1, cntx.user, BigInt(amountIn)),
   )
 
   if (actialAmountOut === undefined) expect(expectedAmountOut).equal(0)
-  else expectCloseValues(actialAmountOut, expectedAmountOut, getPrecisionExpectation(expectedAmountOut))
+  else
+    expectCloseValues(
+      actialAmountOut,
+      expectedAmountOut,
+      getPrecisionExpectation(expectedAmountOut),
+    )
 }
 
 const E18 = 10n ** 18n
@@ -71,7 +97,7 @@ const E18 = 10n ** 18n
 async function getAlgebraRandomSwapParams(
   rnd: () => number,
   client: PublicClient,
-  pool: AlgebraPoolInfo
+  pool: AlgebraPoolInfo,
 ): Promise<[number, boolean]> {
   const res0 = Number(await balanceOf(client, pool.token0, pool.poolAddress))
   const res1 = Number(await balanceOf(client, pool.token1, pool.poolAddress))
@@ -94,7 +120,7 @@ export async function createRandomAlgebraPool(
   seed: string,
   positionNumber: number,
   fee?: number,
-  price?: number
+  price?: number,
 ): Promise<AlgebraPoolInfo> {
   return createRandomAlgebraPoolBase(
     cntx.client,
@@ -104,7 +130,7 @@ export async function createRandomAlgebraPool(
     seed,
     positionNumber,
     fee,
-    price
+    price,
   )
 }
 
@@ -113,11 +139,15 @@ async function algebraPoolMonkeyTest(
   pool: AlgebraPoolInfo,
   seed: string,
   iterations: number,
-  printTick = false
+  printTick = false,
 ) {
   const rnd: () => number = seedrandom(seed) // random [0, 1)
   for (let i = 0; i < iterations; ++i) {
-    const [amount, direction] = await getAlgebraRandomSwapParams(rnd, cntx.client, pool)
+    const [amount, direction] = await getAlgebraRandomSwapParams(
+      rnd,
+      cntx.client,
+      pool,
+    )
     await checkAlgebraPoolSwap(cntx, pool, amount, direction, printTick)
   }
 }
@@ -160,43 +190,65 @@ describe('AlgebraIntegral test', () => {
 
   describe('One position', () => {
     it('No tick crossing', async () => {
-      const pool = await createAlgebraPool(cntx, 3000, 5, [{ from: -1200, to: 18000, val: E18 }])
+      const pool = await createAlgebraPool(cntx, 3000, 5, [
+        { from: -1200, to: 18000, val: E18 },
+      ])
       await checkAlgebraPoolSwap(cntx, pool, 1e16, true)
       await checkAlgebraPoolSwap(cntx, pool, 1e16, false)
     })
 
     it('Tick crossing', async () => {
-      const pool = await createAlgebraPool(cntx, 3000, 5, [{ from: -1200, to: 18000, val: E18 }])
+      const pool = await createAlgebraPool(cntx, 3000, 5, [
+        { from: -1200, to: 18000, val: E18 },
+      ])
       await checkAlgebraPoolSwap(cntx, pool, 1e18, true)
-      const pool2 = await createAlgebraPool(cntx, 3000, 4, [{ from: -1200, to: 18000, val: E18 }])
+      const pool2 = await createAlgebraPool(cntx, 3000, 4, [
+        { from: -1200, to: 18000, val: E18 },
+      ])
       await checkAlgebraPoolSwap(cntx, pool2, 1e20, false)
     })
 
     it('Swap exact to tick', async () => {
-      const pool = await createAlgebraPool(cntx, 3000, 5, [{ from: -1200, to: 18000, val: E18 }])
+      const pool = await createAlgebraPool(cntx, 3000, 5, [
+        { from: -1200, to: 18000, val: E18 },
+      ])
       await checkAlgebraPoolSwap(cntx, pool, 616469173272709204n, true) // before tick
-      const pool2 = await createAlgebraPool(cntx, 3000, 5, [{ from: -1200, to: 18000, val: E18 }])
+      const pool2 = await createAlgebraPool(cntx, 3000, 5, [
+        { from: -1200, to: 18000, val: E18 },
+      ])
       await checkAlgebraPoolSwap(cntx, pool2, 616469173272709205n, true) // after tick
-      const pool3 = await createAlgebraPool(cntx, 3000, 4, [{ from: -1200, to: 18000, val: E18 }])
+      const pool3 = await createAlgebraPool(cntx, 3000, 4, [
+        { from: -1200, to: 18000, val: E18 },
+      ])
       await checkAlgebraPoolSwap(cntx, pool3, 460875064077414607n, false) // before tick
-      const pool4 = await createAlgebraPool(cntx, 3000, 4, [{ from: -1200, to: 18000, val: E18 }])
+      const pool4 = await createAlgebraPool(cntx, 3000, 4, [
+        { from: -1200, to: 18000, val: E18 },
+      ])
       await checkAlgebraPoolSwap(cntx, pool4, 460875064077414607n, false) // after tick
     })
 
     it('From 0 zone to not 0 zone', async () => {
-      const pool = await createAlgebraPool(cntx, 3000, 50, [{ from: -1200, to: 18000, val: E18 }])
+      const pool = await createAlgebraPool(cntx, 3000, 50, [
+        { from: -1200, to: 18000, val: E18 },
+      ])
       await checkAlgebraPoolSwap(cntx, pool, 1e17, true)
     })
 
     it('From 0 zone through ticks to 0 zone', async () => {
-      const pool = await createAlgebraPool(cntx, 3000, 50, [{ from: -1200, to: 18000, val: E18 }])
+      const pool = await createAlgebraPool(cntx, 3000, 50, [
+        { from: -1200, to: 18000, val: E18 },
+      ])
       await checkAlgebraPoolSwap(cntx, pool, 1e18, true)
-      const pool2 = await createAlgebraPool(cntx, 3000, 0.1, [{ from: -1200, to: 18000, val: E18 }])
+      const pool2 = await createAlgebraPool(cntx, 3000, 0.1, [
+        { from: -1200, to: 18000, val: E18 },
+      ])
       await checkAlgebraPoolSwap(cntx, pool2, 1e19, false)
     })
 
     it.skip('Monkey test', async () => {
-      const pool = await createAlgebraPool(cntx, 3000, 5, [{ from: -1200, to: 18000, val: E18 }])
+      const pool = await createAlgebraPool(cntx, 3000, 5, [
+        { from: -1200, to: 18000, val: E18 },
+      ])
       await algebraPoolMonkeyTest(cntx, pool, 'test1', 1000, true)
     })
   })

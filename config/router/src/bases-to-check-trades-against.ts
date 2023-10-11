@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import {
   DAI,
   FRAX,
@@ -16,7 +16,7 @@ import {
   WBTC,
   WETH9,
   WNATIVE,
-} from '@sushiswap/currency'
+} from 'sushi/currency'
 
 export const BASES_TO_CHECK_TRADES_AGAINST: {
   readonly [chainId: number]: Token[]
@@ -54,7 +54,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
       symbol: 'BCT',
     }),
   ],
-  [ChainId.POLYGON_TESTNET]: [WNATIVE[ChainId.POLYGON_TESTNET], USDC[ChainId.POLYGON_TESTNET]],
+  [ChainId.POLYGON_TESTNET]: [
+    WNATIVE[ChainId.POLYGON_TESTNET],
+    USDC[ChainId.POLYGON_TESTNET],
+  ],
   [ChainId.FANTOM]: [
     WNATIVE[ChainId.FANTOM],
     WETH9[ChainId.FANTOM],
@@ -65,7 +68,12 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     MIM[ChainId.FANTOM],
     FRAX[ChainId.FANTOM],
   ],
-  [ChainId.GNOSIS]: [WNATIVE[ChainId.GNOSIS], USDC[ChainId.GNOSIS], USDT[ChainId.GNOSIS], DAI[ChainId.GNOSIS]],
+  [ChainId.GNOSIS]: [
+    WNATIVE[ChainId.GNOSIS],
+    USDC[ChainId.GNOSIS],
+    USDT[ChainId.GNOSIS],
+    DAI[ChainId.GNOSIS],
+  ],
   [ChainId.BSC]: [
     WNATIVE[ChainId.BSC],
     WETH9[ChainId.BSC],
@@ -137,7 +145,12 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     }),
   ],
 
-  [ChainId.HECO]: [WNATIVE[ChainId.HECO], USDC[ChainId.HECO], USDT[ChainId.HECO], DAI[ChainId.HECO]],
+  [ChainId.HECO]: [
+    WNATIVE[ChainId.HECO],
+    USDC[ChainId.HECO],
+    USDT[ChainId.HECO],
+    DAI[ChainId.HECO],
+  ],
   [ChainId.HARMONY]: [
     WNATIVE[ChainId.HARMONY],
     USDC[ChainId.HARMONY],
@@ -145,7 +158,12 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     DAI[ChainId.HARMONY],
     FRAX[ChainId.HARMONY],
   ],
-  [ChainId.OKEX]: [WNATIVE[ChainId.OKEX], USDC[ChainId.OKEX], USDT[ChainId.OKEX], DAI[ChainId.OKEX]],
+  [ChainId.OKEX]: [
+    WNATIVE[ChainId.OKEX],
+    USDC[ChainId.OKEX],
+    USDT[ChainId.OKEX],
+    DAI[ChainId.OKEX],
+  ],
   [ChainId.CELO]: [
     WNATIVE[ChainId.CELO],
     USDC[ChainId.CELO],
@@ -189,8 +207,17 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     MIM[ChainId.MOONRIVER],
     FRAX[ChainId.MOONRIVER],
   ],
-  [ChainId.FUSE]: [WNATIVE[ChainId.FUSE], USDC[ChainId.FUSE], USDT[ChainId.FUSE], DAI[ChainId.FUSE]],
-  [ChainId.TELOS]: [WNATIVE[ChainId.TELOS], USDC[ChainId.TELOS], USDT[ChainId.TELOS]],
+  [ChainId.FUSE]: [
+    WNATIVE[ChainId.FUSE],
+    USDC[ChainId.FUSE],
+    USDT[ChainId.FUSE],
+    DAI[ChainId.FUSE],
+  ],
+  [ChainId.TELOS]: [
+    WNATIVE[ChainId.TELOS],
+    USDC[ChainId.TELOS],
+    USDT[ChainId.TELOS],
+  ],
   [ChainId.MOONBEAM]: [
     WNATIVE[ChainId.MOONBEAM],
     USDC[ChainId.MOONBEAM],
@@ -248,7 +275,12 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDT[ChainId.BOBA_BNB],
     USDC[ChainId.BOBA_BNB],
   ],
-  [ChainId.BTTC]: [WNATIVE[ChainId.BTTC], WETH9[ChainId.BTTC], USDC[ChainId.BTTC], USDT[ChainId.BTTC]],
+  [ChainId.BTTC]: [
+    WNATIVE[ChainId.BTTC],
+    WETH9[ChainId.BTTC],
+    USDC[ChainId.BTTC],
+    USDT[ChainId.BTTC],
+  ],
   [ChainId.POLYGON_ZKEVM]: [
     WNATIVE[ChainId.POLYGON_ZKEVM],
     MATIC[ChainId.POLYGON_ZKEVM],
@@ -272,8 +304,25 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDT[ChainId.HAQQ],
     DAI[ChainId.HAQQ],
   ],
-  [ChainId.CORE]: [WNATIVE[ChainId.CORE], WETH9[ChainId.CORE], USDC[ChainId.CORE], USDT[ChainId.CORE]],
-  [ChainId.ZKSYNC_ERA]: [WNATIVE[ChainId.ZKSYNC_ERA], WBTC[ChainId.ZKSYNC_ERA], USDC[ChainId.ZKSYNC_ERA]],
-  [ChainId.LINEA]: [WNATIVE[ChainId.LINEA], USDC[ChainId.LINEA], DAI[ChainId.LINEA]],
-  [ChainId.BASE]: [WNATIVE[ChainId.BASE], USDC[ChainId.BASE], DAI[ChainId.BASE]],
+  [ChainId.CORE]: [
+    WNATIVE[ChainId.CORE],
+    WETH9[ChainId.CORE],
+    USDC[ChainId.CORE],
+    USDT[ChainId.CORE],
+  ],
+  [ChainId.ZKSYNC_ERA]: [
+    WNATIVE[ChainId.ZKSYNC_ERA],
+    WBTC[ChainId.ZKSYNC_ERA],
+    USDC[ChainId.ZKSYNC_ERA],
+  ],
+  [ChainId.LINEA]: [
+    WNATIVE[ChainId.LINEA],
+    USDC[ChainId.LINEA],
+    DAI[ChainId.LINEA],
+  ],
+  [ChainId.BASE]: [
+    WNATIVE[ChainId.BASE],
+    USDC[ChainId.BASE],
+    DAI[ChainId.BASE],
+  ],
 }

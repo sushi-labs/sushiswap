@@ -1,12 +1,15 @@
 {
-  "extends": "@sushiswap/typescript-config/node18.json",
+  // TODO: Fix strictness "@tsconfig/strictest/tsconfig"
+  "extends": ["@tsconfig/node18/tsconfig"],
   "include": ["src"],
+  "exclude": ["node_modules", "dist", ".turbo"],
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "skipLibCheck": true,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
+    "downlevelIteration": true,
+    "skipLibCheck": true
   }
 }

@@ -1,6 +1,6 @@
 import { getAddress, isAddress } from '@ethersproject/address'
-import type { ChainId } from '@sushiswap/chain'
-import { Token, Type } from '@sushiswap/currency'
+import type { ChainId } from 'sushi/chain'
+import { Token, Type } from 'sushi/currency'
 import type { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
 
 type TagDetails = Tags[keyof Tags]
@@ -29,7 +29,8 @@ export class WrappedTokenInfo implements Token {
 
   public get address(): string {
     if (this._checksummedAddress) return this._checksummedAddress
-    if (!isAddress(this.tokenInfo.address)) throw new Error(`Invalid token address: ${this.tokenInfo.address}`)
+    if (!isAddress(this.tokenInfo.address))
+      throw new Error(`Invalid token address: ${this.tokenInfo.address}`)
     const checksummedAddress = getAddress(this.tokenInfo.address)
     return (this._checksummedAddress = checksummedAddress)
   }
@@ -70,7 +71,11 @@ export class WrappedTokenInfo implements Token {
   }
 
   equals(other: Type): boolean {
-    return other.chainId === this.chainId && other.isToken && other.address.toLowerCase() === this.address.toLowerCase()
+    return (
+      other.chainId === this.chainId &&
+      other.isToken &&
+      other.address.toLowerCase() === this.address.toLowerCase()
+    )
   }
 
   sortsBefore(other: Token): boolean {

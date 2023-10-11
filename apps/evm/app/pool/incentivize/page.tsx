@@ -1,12 +1,9 @@
 'use client'
 
-import { Chain } from '@sushiswap/chain'
-import { Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { useAngleRewardTokens } from '@sushiswap/react-query'
 import {
   Button,
   ChipInput,
-  classNames,
   Currency,
   DateField,
   DialogConfirm,
@@ -27,18 +24,33 @@ import {
   Slider,
   Switch,
   TextField,
+  classNames,
   typographyVariants,
 } from '@sushiswap/ui'
-import { ADDRESS_ZERO, SushiSwapV3ChainId, SushiSwapV3Pool } from '@sushiswap/v3-sdk'
-import { Address, readContract, useAccount, useSignMessage } from '@sushiswap/wagmi'
+import {
+  ADDRESS_ZERO,
+  SushiSwapV3ChainId,
+  SushiSwapV3Pool,
+} from '@sushiswap/v3-sdk'
+import {
+  Address,
+  readContract,
+  useAccount,
+  useSignMessage,
+} from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { DistributionCreator } from '@sushiswap/wagmi/future/hooks/rewards/abis/DistributionCreator'
 import { useIncentivizePoolWithRewards } from '@sushiswap/wagmi/future/hooks/rewards/hooks/useIncentivizePoolWithRewards'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import {
+  useApproved,
+  withCheckerRoot,
+} from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { format } from 'date-fns'
 import { useCallback, useMemo, useState } from 'react'
+import { Chain } from 'sushi/chain'
+import { Token, Type, tryParseAmount } from 'sushi/currency'
 import { useWaitForTransaction } from 'wagmi'
 
 import { ANGLE_ENABLED_NETWORKS } from '../../../config'
@@ -55,7 +67,9 @@ const APPROVE_TAG = 'approve-incentivize'
 
 export default async function Page() {
   return (
-    <ConcentratedLiquidityURLStateProvider supportedNetworks={ANGLE_ENABLED_NETWORKS}>
+    <ConcentratedLiquidityURLStateProvider
+      supportedNetworks={ANGLE_ENABLED_NETWORKS}
+    >
       <ConcentratedLiquidityProvider>
         <Incentivize />
       </ConcentratedLiquidityProvider>
@@ -65,8 +79,17 @@ export default async function Page() {
 
 const Incentivize = withCheckerRoot(() => {
   const { address } = useAccount()
-  const { chainId, token0, token1, setToken1, setToken0, setNetwork, feeAmount, setFeeAmount, tokensLoading } =
-    useConcentratedLiquidityURLState()
+  const {
+    chainId,
+    token0,
+    token1,
+    setToken1,
+    setToken0,
+    setNetwork,
+    feeAmount,
+    setFeeAmount,
+    tokensLoading,
+  } = useConcentratedLiquidityURLState()
 
   const { approved } = useApproved(APPROVE_TAG)
   const [value, setValue] = useState('')
@@ -82,23 +105,38 @@ const Incentivize = withCheckerRoot(() => {
   const [distro3, setDistro3] = useState<number[]>([40])
   const totalDistro = distro1[0] + distro2[0] + distro3[0]
 
-  const amount = useMemo(() => [tryParseAmount(value, rewardToken)], [value, rewardToken])
-  const { data: pool } = useConcentratedLiquidityPool({ chainId, token0, token1, feeAmount })
+  const amount = useMemo(
+    () => [tryParseAmount(value, rewardToken)],
+    [value, rewardToken],
+  )
+  const { data: pool } = useConcentratedLiquidityPool({
+    chainId,
+    token0,
+    token1,
+    feeAmount,
+  })
 
   const v3Address =
-    token0 && token1 && feeAmount ? SushiSwapV3Pool.getAddress(token0.wrapped, token1.wrapped, feeAmount) : undefined
+    token0 && token1 && feeAmount
+      ? SushiSwapV3Pool.getAddress(token0.wrapped, token1.wrapped, feeAmount)
+      : undefined
 
   const epochs = useMemo(() => {
-    return startDate && endDate ? Math.floor((endDate.getTime() - startDate.getTime()) / 3600000) : undefined
+    return startDate && endDate
+      ? Math.floor((endDate.getTime() - startDate.getTime()) / 3600000)
+      : undefined
   }, [startDate, endDate])
 
   const { data: signature, signMessage } = useSignMessage()
 
-  const { data: angleRewardTokens, isLoading: angleRewardTokensLoading } = useAngleRewardTokens({ chainId })
+  const { data: angleRewardTokens, isLoading: angleRewardTokensLoading } =
+    useAngleRewardTokens({ chainId })
 
   const minAmount = useMemo(() => {
     if (!angleRewardTokens) return undefined
-    const token = angleRewardTokens.find((el) => el.token.wrapped.address === rewardToken?.wrapped.address)
+    const token = angleRewardTokens.find(
+      (el) => el.token.wrapped.address === rewardToken?.wrapped.address,
+    )
     if (token && epochs) return token.minimumAmountPerEpoch?.multiply(epochs)
   }, [angleRewardTokens, epochs, rewardToken])
 
@@ -114,7 +152,8 @@ const Incentivize = withCheckerRoot(() => {
               uniV3Pool: v3Address as Address,
               rewardToken: rewardToken.wrapped.address as Address,
               amount: amount[0].quotient,
-              positionWrappers: blacklist.length > 0 ? (blacklist as Address[]) : [],
+              positionWrappers:
+                blacklist.length > 0 ? (blacklist as Address[]) : [],
               wrapperTypes: blacklist.length > 0 ? [3] : [],
               propToken0: customize ? distro1[0] * 100 : 2000,
               propToken1: customize ? distro2[0] * 100 : 2000,
@@ -124,14 +163,18 @@ const Incentivize = withCheckerRoot(() => {
               isOutOfRangeIncentivized: customizeOOR ? 1 : 0,
               boostedReward: 0,
               boostingAddress: ADDRESS_ZERO,
-              rewardId: '0x0000000000000000000000000000000000000000000000000000000000000000',
-              additionalData: '0x0000000000000000000000000000000000000000000000000000000000000000',
+              rewardId:
+                '0x0000000000000000000000000000000000000000000000000000000000000000',
+              additionalData:
+                '0x0000000000000000000000000000000000000000000000000000000000000000',
             },
             signature,
           ]
         : undefined,
     chainId: chainId as SushiSwapV3ChainId,
-    enabled: Boolean(amount[0] && v3Address && rewardToken && epochs && startDate && approved),
+    enabled: Boolean(
+      amount[0] && v3Address && rewardToken && epochs && startDate && approved,
+    ),
   })
 
   const sign = useCallback(async () => {
@@ -154,11 +197,12 @@ const Incentivize = withCheckerRoot(() => {
             return acc
           }, {})
         : {},
-    [angleRewardTokens]
+    [angleRewardTokens],
   )
 
   const validStartDate = startDate ? startDate > new Date() : true
-  const validEndDate = endDate && startDate ? endDate > startDate && endDate > new Date() : true
+  const validEndDate =
+    endDate && startDate ? endDate > startDate && endDate > new Date() : true
 
   return (
     <DialogProvider>
@@ -186,7 +230,10 @@ const Incentivize = withCheckerRoot(() => {
           disableIfNotExists={true}
         />
         <Separator />
-        <FormSection title="Duration" description="The time period you want to distribute rewards within">
+        <FormSection
+          title="Duration"
+          description="The time period you want to distribute rewards within"
+        >
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-2">
               <DateField
@@ -203,7 +250,9 @@ const Incentivize = withCheckerRoot(() => {
                 placeholderText="Start date"
                 autoComplete="off"
               />
-              {!validStartDate ? <FormError>Invalid start date.</FormError> : null}
+              {!validStartDate ? (
+                <FormError>Invalid start date.</FormError>
+              ) : null}
             </div>
             <div className="flex flex-col gap-2">
               <DateField
@@ -214,8 +263,12 @@ const Incentivize = withCheckerRoot(() => {
                 timeFormat="HH:mm"
                 timeIntervals={15}
                 timeCaption="time"
-                startDate={startDate ? startDate : new Date(Date.now() + 5 * 60 * 1000)}
-                minDate={startDate ? startDate : new Date(Date.now() + 5 * 60 * 1000)}
+                startDate={
+                  startDate ? startDate : new Date(Date.now() + 5 * 60 * 1000)
+                }
+                minDate={
+                  startDate ? startDate : new Date(Date.now() + 5 * 60 * 1000)
+                }
                 dateFormat="MMM d, yyyy HH:mm"
                 placeholderText="End date"
                 autoComplete="off"
@@ -224,7 +277,10 @@ const Incentivize = withCheckerRoot(() => {
             </div>
           </div>
         </FormSection>
-        <FormSection title="Rewards" description="How many rewards in total would you like to distribute?">
+        <FormSection
+          title="Rewards"
+          description="How many rewards in total would you like to distribute?"
+        >
           <Web3Input.Currency
             id="swap-from"
             type="INPUT"
@@ -244,20 +300,36 @@ const Incentivize = withCheckerRoot(() => {
               rewardToken &&
               amount[0] &&
               minAmount &&
-              amount[0].lessThan(minAmount) && { error: `Min. ${minAmount.toSignificant(4)} ${rewardToken.symbol}` })}
+              amount[0].lessThan(minAmount) && {
+                error: `Min. ${minAmount.toSignificant(4)} ${
+                  rewardToken.symbol
+                }`,
+              })}
           />
-          <p className={typographyVariants({ variant: 'muted', className: 'text-sm' })}>
-            Rewards are distributed per hour. The minimum reward for this distribution is dependent on the selected
-            duration. <br />
+          <p
+            className={typographyVariants({
+              variant: 'muted',
+              className: 'text-sm',
+            })}
+          >
+            Rewards are distributed per hour. The minimum reward for this
+            distribution is dependent on the selected duration. <br />
             <br /> Looking to get your token added here?{' '}
             <Button variant="link" asChild>
-              <LinkExternal href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe">Get in touch with us.</LinkExternal>
+              <LinkExternal href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe">
+                Get in touch with us.
+              </LinkExternal>
             </Button>
           </p>
           <Separator className="!my-10" />
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <h1 className={typographyVariants({ variant: 'p', className: 'text-muted-foreground' })}>
+              <h1
+                className={typographyVariants({
+                  variant: 'p',
+                  className: 'text-muted-foreground',
+                })}
+              >
                 Customize the distribution formula?
               </h1>
               <Switch
@@ -266,7 +338,12 @@ const Incentivize = withCheckerRoot(() => {
                 onCheckedChange={() => setCustomize((prevState) => !prevState)}
               />
             </div>
-            <div className={classNames('flex flex-col gap-3', customize ? 'mt-4' : 'hidden')}>
+            <div
+              className={classNames(
+                'flex flex-col gap-3',
+                customize ? 'mt-4' : 'hidden',
+              )}
+            >
               <div className="flex flex-col gap-10">
                 <div className="flex flex-col">
                   {token0 ? (
@@ -293,7 +370,8 @@ const Incentivize = withCheckerRoot(() => {
                       />
                     </div>
                     <span className="col-span-9 text-sm text-muted-foreground">
-                      Percentage of rewards that get distributed to {token0?.symbol} liquidity
+                      Percentage of rewards that get distributed to{' '}
+                      {token0?.symbol} liquidity
                     </span>
                   </div>
                 </div>
@@ -322,7 +400,8 @@ const Incentivize = withCheckerRoot(() => {
                       />
                     </div>
                     <span className="col-span-9 text-sm text-muted-foreground">
-                      Percentage of rewards that get distributed to {token1?.symbol} liquidity
+                      Percentage of rewards that get distributed to{' '}
+                      {token1?.symbol} liquidity
                     </span>
                   </div>
                 </div>
@@ -346,43 +425,73 @@ const Incentivize = withCheckerRoot(() => {
                       />
                     </div>
                     <span className="col-span-9 text-sm text-muted-foreground">
-                      Percentage of rewards that get distributed to fee generation
+                      Percentage of rewards that get distributed to fee
+                      generation
                     </span>
                   </div>
                 </div>
               </div>
-              <h1 className={classNames(totalDistro !== 100 ? 'text-red' : 'text-muted-foreground', 'text-sm pt-4')}>
-                You have assigned <b>{totalDistro}%</b> of the available <b>100%</b>.
+              <h1
+                className={classNames(
+                  totalDistro !== 100 ? 'text-red' : 'text-muted-foreground',
+                  'text-sm pt-4',
+                )}
+              >
+                You have assigned <b>{totalDistro}%</b> of the available{' '}
+                <b>100%</b>.
               </h1>
             </div>
           </div>
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <h1 className={typographyVariants({ variant: 'p', className: 'text-muted-foreground' })}>
+              <h1
+                className={typographyVariants({
+                  variant: 'p',
+                  className: 'text-muted-foreground',
+                })}
+              >
                 Exclude any addresses from receiving rewards?
               </h1>
               <Switch
                 testdata-id="customize-blacklist-switch"
                 checked={includeBlacklist}
-                onCheckedChange={() => setIncludeBlacklist((prevState) => !prevState)}
+                onCheckedChange={() =>
+                  setIncludeBlacklist((prevState) => !prevState)
+                }
               />
             </div>
-            <div className={classNames(includeBlacklist ? 'flex flex-col gap-2' : 'hidden')}>
+            <div
+              className={classNames(
+                includeBlacklist ? 'flex flex-col gap-2' : 'hidden',
+              )}
+            >
               <ChipInput
                 delimiters={[',', ' ', ';', ':']}
                 values={blacklist}
                 onValueChange={setBlacklist}
                 placeholder="Address"
               />
-              <p className={typographyVariants({ variant: 'muted', className: 'text-sm px-3' })}>
+              <p
+                className={typographyVariants({
+                  variant: 'muted',
+                  className: 'text-sm px-3',
+                })}
+              >
                 {blacklist.length > 0
-                  ? `${blacklist.length} address${blacklist.length > 1 ? 'es' : ''} blacklisted.`
+                  ? `${blacklist.length} address${
+                      blacklist.length > 1 ? 'es' : ''
+                    } blacklisted.`
                   : 'The addresses to blacklist, use commas to separate addresses.'}
               </p>
             </div>
           </div>
           <div className="flex items-center justify-between">
-            <h1 className={typographyVariants({ variant: 'p', className: 'text-muted-foreground' })}>
+            <h1
+              className={typographyVariants({
+                variant: 'p',
+                className: 'text-muted-foreground',
+              })}
+            >
               Distribute rewards to positions that are out of range?
             </h1>
             <Switch
@@ -396,8 +505,14 @@ const Incentivize = withCheckerRoot(() => {
             <Checker.Network chainId={chainId}>
               <Checker.Guard guardWhen={!pool} guardText="Pool not found">
                 <Checker.Amounts chainId={chainId} amounts={amount}>
-                  <Checker.Guard guardWhen={!startDate || !endDate} guardText="Enter duration">
-                    <Checker.Guard guardWhen={totalDistro !== 100} guardText="Invalid distribution">
+                  <Checker.Guard
+                    guardWhen={!startDate || !endDate}
+                    guardText="Enter duration"
+                  >
+                    <Checker.Guard
+                      guardWhen={totalDistro !== 100}
+                      guardText="Invalid distribution"
+                    >
                       <Checker.Guard
                         guardWhen={!validEndDate || !validStartDate}
                         guardText="Invalid distribution duration"
@@ -417,48 +532,81 @@ const Incentivize = withCheckerRoot(() => {
                                 {({ confirm }) => (
                                   <>
                                     <DialogTrigger asChild>
-                                      <Button fullWidth size="xl" testId="incentivize-pool-review">
+                                      <Button
+                                        fullWidth
+                                        size="xl"
+                                        testId="incentivize-pool-review"
+                                      >
                                         Incentivize pool
                                       </Button>
                                     </DialogTrigger>
                                     <DialogContent>
                                       <DialogHeader>
-                                        <DialogTitle>Incentivize Pool</DialogTitle>
+                                        <DialogTitle>
+                                          Incentivize Pool
+                                        </DialogTitle>
                                         <DialogDescription>
-                                          {token0?.symbol}/{token1?.symbol} • SushiSwap V3 • {feeAmount / 10000}%
+                                          {token0?.symbol}/{token1?.symbol} •
+                                          SushiSwap V3 • {feeAmount / 10000}%
                                         </DialogDescription>
                                       </DialogHeader>
                                       <div className="flex flex-col gap-4">
                                         <List className="!pt-0">
                                           <List.Control>
                                             {pool ? (
-                                              <List.KeyValue flex title="Network">
-                                                {Chain.from(pool.chainId).name}
+                                              <List.KeyValue
+                                                flex
+                                                title="Network"
+                                              >
+                                                {Chain.from(pool.chainId)?.name}
                                               </List.KeyValue>
                                             ) : null}
                                             {feeAmount && (
-                                              <List.KeyValue title="Fee Tier">{`${+feeAmount / 10000}%`}</List.KeyValue>
+                                              <List.KeyValue title="Fee Tier">{`${
+                                                +feeAmount / 10000
+                                              }%`}</List.KeyValue>
                                             )}
                                           </List.Control>
                                         </List>
                                         <List className="!pt-0">
                                           <List.Control>
                                             {startDate ? (
-                                              <List.KeyValue flex title="Start date">
-                                                {format(startDate, 'dd MMM yyyy hh:mmaaa')}
+                                              <List.KeyValue
+                                                flex
+                                                title="Start date"
+                                              >
+                                                {format(
+                                                  startDate,
+                                                  'dd MMM yyyy hh:mmaaa',
+                                                )}
                                               </List.KeyValue>
                                             ) : null}
                                             {endDate ? (
-                                              <List.KeyValue flex title="End date">
-                                                {format(endDate, 'dd MMM yyyy hh:mmaaa')}
+                                              <List.KeyValue
+                                                flex
+                                                title="End date"
+                                              >
+                                                {format(
+                                                  endDate,
+                                                  'dd MMM yyyy hh:mmaaa',
+                                                )}
                                               </List.KeyValue>
                                             ) : null}
                                             {amount[0] ? (
-                                              <List.KeyValue title={`Total distributed`}>
+                                              <List.KeyValue
+                                                title={`Total distributed`}
+                                              >
                                                 <div className="flex items-center gap-2">
-                                                  <Currency.Icon currency={amount[0].currency} width={18} height={18} />
+                                                  <Currency.Icon
+                                                    currency={
+                                                      amount[0].currency
+                                                    }
+                                                    width={18}
+                                                    height={18}
+                                                  />
                                                   <span>
-                                                    {amount[0].toSignificant(6)} {amount[0].currency.symbol}
+                                                    {amount[0].toSignificant(6)}{' '}
+                                                    {amount[0].currency.symbol}
                                                   </span>
                                                 </div>
                                               </List.KeyValue>
@@ -475,7 +623,9 @@ const Incentivize = withCheckerRoot(() => {
                                               title="Exclude addresses"
                                               subtitle="Exluded addresses from receiving rewards"
                                             >
-                                              {blacklist ? `${blacklist.length} Addresses` : 'No'}
+                                              {blacklist
+                                                ? `${blacklist.length} Addresses`
+                                                : 'No'}
                                             </List.KeyValue>
                                             {token0 && token1 ? (
                                               <List.KeyValue
@@ -483,7 +633,9 @@ const Incentivize = withCheckerRoot(() => {
                                                 title="Customized distribution formula"
                                                 subtitle={`${token0.symbol} / ${token1.symbol} / Fees`}
                                               >
-                                                {customize ? `${distro1[0]}% / ${distro2[0]}% / ${distro3[0]}%` : 'No'}
+                                                {customize
+                                                  ? `${distro1[0]}% / ${distro2[0]}% / ${distro3[0]}%`
+                                                  : 'No'}
                                               </List.KeyValue>
                                             ) : null}
                                           </List.Control>
@@ -493,10 +645,18 @@ const Incentivize = withCheckerRoot(() => {
                                         <Button
                                           fullWidth
                                           size="xl"
-                                          variant={isError ? 'destructive' : 'default'}
-                                          loading={isIncentivizeLoading && !isError}
-                                          onClick={() => writeAsync?.().then(() => confirm())}
-                                          disabled={isIncentivizeLoading || isError}
+                                          variant={
+                                            isError ? 'destructive' : 'default'
+                                          }
+                                          loading={
+                                            isIncentivizeLoading && !isError
+                                          }
+                                          onClick={() =>
+                                            writeAsync?.().then(() => confirm())
+                                          }
+                                          disabled={
+                                            isIncentivizeLoading || isError
+                                          }
                                           testId="incentivize-pool-confirm"
                                         >
                                           {isError ? (

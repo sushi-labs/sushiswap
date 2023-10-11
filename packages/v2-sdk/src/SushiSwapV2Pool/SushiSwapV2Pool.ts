@@ -1,10 +1,16 @@
-import { InsufficientInputAmountError, InsufficientReservesError } from '@sushiswap/base-sdk'
-import { chainName } from '@sushiswap/chain'
-import { Amount, Price, Token } from '@sushiswap/currency'
-import { _997, _1000, BigintIsh, FIVE, ONE, sqrt, ZERO } from '@sushiswap/math'
+import {
+  InsufficientInputAmountError,
+  InsufficientReservesError,
+} from '@sushiswap/base-sdk'
+import { chainName } from 'sushi/chain'
+import { Amount, Price, Token } from 'sushi/currency'
+import { _997, _1000, BigintIsh, FIVE, ONE, sqrt, ZERO } from 'sushi'
 import invariant from 'tiny-invariant'
 
-import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS } from '../constants'
+import {
+  isSushiSwapV2ChainId,
+  SUSHISWAP_V2_FACTORY_ADDRESS,
+} from '../constants'
 import { computeSushiSwapV2PoolAddress } from './computeSushiSwapV2PoolAddress'
 import { SerializedSushiSwapV2Pool, sushiSwapV2PoolSchema } from './zod'
 
@@ -16,7 +22,11 @@ export class SushiSwapV2Pool {
 
   public static getAddress(tokenA: Token, tokenB: Token): string {
     if (!isSushiSwapV2ChainId(tokenA.chainId)) {
-      throw new Error(`ChainId Error: SushiSwapV2 is not available on ${chainName[tokenA.chainId]}`)
+      throw new Error(
+        `ChainId Error: SushiSwapV2 is not available on ${
+          chainName[tokenA.chainId]
+        }`,
+      )
     }
 
     return computeSushiSwapV2PoolAddress({
@@ -32,7 +42,10 @@ export class SushiSwapV2Pool {
       : [AmountB, AmountA]
     this.liquidityToken = new Token({
       chainId: Amounts[0].currency.chainId,
-      address: SushiSwapV2Pool.getAddress(Amounts[0].currency, Amounts[1].currency),
+      address: SushiSwapV2Pool.getAddress(
+        Amounts[0].currency,
+        Amounts[1].currency,
+      ),
       decimals: 18,
       symbol: 'UNI-V2',
       name: 'Uniswap V2',
@@ -53,7 +66,12 @@ export class SushiSwapV2Pool {
    */
   public get token0Price(): Price<Token, Token> {
     const result = this.tokenAmounts[1].divide(this.tokenAmounts[0])
-    return new Price(this.token0, this.token1, result.denominator, result.numerator)
+    return new Price(
+      this.token0,
+      this.token1,
+      result.denominator,
+      result.numerator,
+    )
   }
 
   /**
@@ -61,7 +79,12 @@ export class SushiSwapV2Pool {
    */
   public get token1Price(): Price<Token, Token> {
     const result = this.tokenAmounts[0].divide(this.tokenAmounts[1])
-    return new Price(this.token1, this.token0, result.denominator, result.numerator)
+    return new Price(
+      this.token1,
+      this.token0,
+      result.denominator,
+      result.numerator,
+    )
   }
 
   /**
@@ -101,27 +124,39 @@ export class SushiSwapV2Pool {
     return token.equals(this.token0) ? this.reserve0 : this.reserve1
   }
 
-  public getOutputAmount(inputAmount: Amount<Token>): [Amount<Token>, SushiSwapV2Pool] {
+  public getOutputAmount(
+    inputAmount: Amount<Token>,
+  ): [Amount<Token>, SushiSwapV2Pool] {
     invariant(this.involvesToken(inputAmount.currency), 'TOKEN')
     if (this.reserve0.quotient === ZERO || this.reserve1.quotient === ZERO) {
       throw new InsufficientReservesError()
     }
     const inputReserve = this.reserveOf(inputAmount.currency)
-    const outputReserve = this.reserveOf(inputAmount.currency.equals(this.token0) ? this.token1 : this.token0)
+    const outputReserve = this.reserveOf(
+      inputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
+    )
     const inputAmountWithFee = inputAmount.quotient * _997
     const numerator = inputAmountWithFee * outputReserve.quotient
     const denominator = inputReserve.quotient * _1000 + inputAmountWithFee
     const outputAmount = Amount.fromRawAmount(
       inputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
-      numerator / denominator
+      numerator / denominator,
     )
     if (outputAmount.quotient === ZERO) {
       throw new InsufficientInputAmountError()
     }
-    return [outputAmount, new SushiSwapV2Pool(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))]
+    return [
+      outputAmount,
+      new SushiSwapV2Pool(
+        inputReserve.add(inputAmount),
+        outputReserve.subtract(outputAmount),
+      ),
+    ]
   }
 
-  public getInputAmount(outputAmount: Amount<Token>): [Amount<Token>, SushiSwapV2Pool] {
+  public getInputAmount(
+    outputAmount: Amount<Token>,
+  ): [Amount<Token>, SushiSwapV2Pool] {
     invariant(this.involvesToken(outputAmount.currency), 'TOKEN')
     if (
       this.reserve0.quotient === ZERO ||
@@ -132,33 +167,53 @@ export class SushiSwapV2Pool {
     }
 
     const outputReserve = this.reserveOf(outputAmount.currency)
-    const inputReserve = this.reserveOf(outputAmount.currency.equals(this.token0) ? this.token1 : this.token0)
+    const inputReserve = this.reserveOf(
+      outputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
+    )
     const numerator = inputReserve.quotient * outputAmount.quotient * _1000
     const denominator = (outputReserve.quotient - outputAmount.quotient) * _997
     const inputAmount = Amount.fromRawAmount(
       outputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
-      numerator / denominator + ONE
+      numerator / denominator + ONE,
     )
-    return [inputAmount, new SushiSwapV2Pool(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))]
+    return [
+      inputAmount,
+      new SushiSwapV2Pool(
+        inputReserve.add(inputAmount),
+        outputReserve.subtract(outputAmount),
+      ),
+    ]
   }
 
   public getLiquidityMinted(
     totalSupply: Amount<Token>,
     tokenAmountA: Amount<Token>,
-    tokenAmountB: Amount<Token>
+    tokenAmountB: Amount<Token>,
   ): Amount<Token> {
     invariant(totalSupply.currency.equals(this.liquidityToken), 'LIQUIDITY')
-    const tokenAmounts = tokenAmountA.currency.sortsBefore(tokenAmountB.currency) // does safety checks
+    const tokenAmounts = tokenAmountA.currency.sortsBefore(
+      tokenAmountB.currency,
+    ) // does safety checks
       ? [tokenAmountA, tokenAmountB]
       : [tokenAmountB, tokenAmountA]
-    invariant(tokenAmounts[0].currency.equals(this.token0) && tokenAmounts[1].currency.equals(this.token1), 'TOKEN')
+    invariant(
+      tokenAmounts[0].currency.equals(this.token0) &&
+        tokenAmounts[1].currency.equals(this.token1),
+      'TOKEN',
+    )
 
     let liquidity: bigint
     if (totalSupply.quotient === ZERO) {
-      liquidity = sqrt(tokenAmounts[0].quotient * tokenAmounts[1].quotient) - this.minLiquidity
+      liquidity =
+        sqrt(tokenAmounts[0].quotient * tokenAmounts[1].quotient) -
+        this.minLiquidity
     } else {
-      const amount0 = (tokenAmounts[0].quotient * totalSupply.quotient) / this.reserve0.quotient
-      const amount1 = (tokenAmounts[1].quotient * totalSupply.quotient) / this.reserve1.quotient
+      const amount0 =
+        (tokenAmounts[0].quotient * totalSupply.quotient) /
+        this.reserve0.quotient
+      const amount1 =
+        (tokenAmounts[1].quotient * totalSupply.quotient) /
+        this.reserve1.quotient
       liquidity = amount0 <= amount1 ? amount0 : amount1
     }
     if (liquidity <= ZERO) {
@@ -173,7 +228,7 @@ export class SushiSwapV2Pool {
     totalSupply: Amount<Token>,
     liquidity: Amount<Token>,
     feeOn = false,
-    kLast?: BigintIsh
+    kLast?: BigintIsh,
   ): Amount<Token> {
     invariant(this.involvesToken(token), 'TOKEN')
     invariant(totalSupply.currency.equals(this.liquidityToken), 'TOTAL_SUPPLY')
@@ -185,7 +240,9 @@ export class SushiSwapV2Pool {
       totalSupplyAdjusted = totalSupply
     } else {
       invariant(!!kLast, 'K_LAST')
-      const kLastParsed = BigInt(typeof kLast === 'bigint' ? kLast.toString() : kLast)
+      const kLastParsed = BigInt(
+        typeof kLast === 'bigint' ? kLast.toString() : kLast,
+      )
       if (kLastParsed !== ZERO) {
         const rootK = sqrt(this.reserve0.quotient * this.reserve1.quotient)
         const rootKLast = sqrt(kLastParsed)
@@ -193,7 +250,9 @@ export class SushiSwapV2Pool {
           const numerator = totalSupply.quotient * (rootK - rootKLast)
           const denominator = rootK * FIVE + rootKLast
           const feeLiquidity = numerator / denominator
-          totalSupplyAdjusted = totalSupply.add(Amount.fromRawAmount(this.liquidityToken, feeLiquidity))
+          totalSupplyAdjusted = totalSupply.add(
+            Amount.fromRawAmount(this.liquidityToken, feeLiquidity),
+          )
         } else {
           totalSupplyAdjusted = totalSupply
         }
@@ -204,7 +263,8 @@ export class SushiSwapV2Pool {
 
     return Amount.fromRawAmount(
       token,
-      (liquidity.quotient * this.reserveOf(token).quotient) / totalSupplyAdjusted.quotient
+      (liquidity.quotient * this.reserveOf(token).quotient) /
+        totalSupplyAdjusted.quotient,
     )
   }
 
@@ -216,6 +276,9 @@ export class SushiSwapV2Pool {
   }
 
   public static deserialize(pair: SerializedSushiSwapV2Pool): SushiSwapV2Pool {
-    return new SushiSwapV2Pool(Amount.deserialize(pair.reserve0), Amount.deserialize(pair.reserve1))
+    return new SushiSwapV2Pool(
+      Amount.deserialize(pair.reserve0),
+      Amount.deserialize(pair.reserve1),
+    )
   }
 }

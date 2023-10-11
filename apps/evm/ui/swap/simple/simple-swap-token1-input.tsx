@@ -2,7 +2,10 @@
 
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 
-import { useDerivedStateSimpleSwap, useSimpleSwapTrade } from './derivedstate-simple-swap-provider'
+import {
+  useDerivedStateSimpleSwap,
+  useSimpleSwapTrade,
+} from './derivedstate-simple-swap-provider'
 
 export const SimpleSwapToken1Input = () => {
   const {
@@ -11,7 +14,11 @@ export const SimpleSwapToken1Input = () => {
     isToken1Loading: tokenLoading,
   } = useDerivedStateSimpleSwap()
 
-  const { isInitialLoading: isLoading, isFetching, data: trade } = useSimpleSwapTrade()
+  const {
+    isInitialLoading: isLoading,
+    isFetching,
+    data: trade,
+  } = useSimpleSwapTrade()
 
   return (
     <Web3Input.Currency

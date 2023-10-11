@@ -2,7 +2,13 @@ import { IconComponent } from '../../types'
 
 export const SteerIcon: IconComponent = (props) => {
   return (
-    <svg viewBox="0 0 92 124" {...props} fill="currentColor " xmlns="http://www.w3.org/2000/svg" pointerEvents="none">
+    <svg
+      viewBox="0 0 92 124"
+      {...props}
+      fill="currentColor "
+      xmlns="http://www.w3.org/2000/svg"
+      pointerEvents="none"
+    >
       <title>Steer Icon</title>
       <g
         style={{ transformOrigin: '152.832px 88.777px;' }}

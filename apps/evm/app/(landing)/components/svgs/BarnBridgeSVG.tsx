@@ -2,7 +2,12 @@ import React from 'react'
 
 export const BarnBridgeSVG = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 189 32">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+      fill="none"
+      viewBox="0 0 189 32"
+    >
       <title>BarnBridge</title>
       <g clipPath="url(#clip0)">
         <path

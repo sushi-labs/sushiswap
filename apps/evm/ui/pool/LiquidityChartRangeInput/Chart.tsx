@@ -31,14 +31,20 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
   const [zoom, setZoom] = useState<ZoomTransform | null>(null)
 
   const [innerHeight, innerWidth] = useMemo(
-    () => [height - margins.top - margins.bottom, width - margins.left - margins.right],
-    [width, height, margins]
+    () => [
+      height - margins.top - margins.bottom,
+      width - margins.left - margins.right,
+    ],
+    [width, height, margins],
   )
 
   const { xScale, yScale } = useMemo(() => {
     const scales = {
       xScale: scaleLinear()
-        .domain([current * zoomLevels.initialMin, current * zoomLevels.initialMax] as number[])
+        .domain([
+          current * zoomLevels.initialMin,
+          current * zoomLevels.initialMax,
+        ] as number[])
         .range([0, innerWidth]),
       yScale: scaleLinear()
         .domain([0, max(series, yAccessor)] as number[])
@@ -51,7 +57,15 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
     }
 
     return scales
-  }, [current, zoomLevels.initialMin, zoomLevels.initialMax, innerWidth, series, innerHeight, zoom])
+  }, [
+    current,
+    zoomLevels.initialMin,
+    zoomLevels.initialMax,
+    innerWidth,
+    series,
+    innerHeight,
+    zoom,
+  ])
 
   useEffect(() => {
     // reset zoom as necessary
@@ -77,14 +91,24 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
         }
         resetBrush={() => {
           onBrushDomainChange(
-            [current * zoomLevels.initialMin, current * zoomLevels.initialMax] as [number, number],
-            'reset'
+            [
+              current * zoomLevels.initialMin,
+              current * zoomLevels.initialMax,
+            ] as [number, number],
+            'reset',
           )
         }}
-        showResetButton={Boolean(ticksAtLimit[Bound.LOWER] || ticksAtLimit[Bound.UPPER])}
+        showResetButton={Boolean(
+          ticksAtLimit[Bound.LOWER] || ticksAtLimit[Bound.UPPER],
+        )}
         zoomLevels={zoomLevels}
       />
-      <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} style={{ overflow: 'visible' }}>
+      <svg
+        width="100%"
+        height="100%"
+        viewBox={`0 0 ${width} ${height}`}
+        style={{ overflow: 'visible' }}
+      >
         <defs>
           <clipPath id={`${id}-chart-clip`}>
             <rect x="0" y="0" width={innerWidth} height={height} />

@@ -1,12 +1,11 @@
 {
   "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/esm/tsconfig"],
-  "include": ["."],
+  "include": ["api", "lib"],
   "exclude": ["node_modules", ".vercel"],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "nodenext",
+    "target": "ES2022",
+    "noEmit": true
   }
 }

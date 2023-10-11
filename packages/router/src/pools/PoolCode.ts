@@ -8,7 +8,11 @@ export abstract class PoolCode {
   liquidityProvider: LiquidityProviders
   poolName: string
 
-  constructor(pool: RPool, liquidityProvider: LiquidityProviders, poolName: string) {
+  constructor(
+    pool: RPool,
+    liquidityProvider: LiquidityProviders,
+    poolName: string,
+  ) {
     this.pool = pool
     this.liquidityProvider = liquidityProvider
     this.poolName = poolName
@@ -22,13 +26,26 @@ export abstract class PoolCode {
     return this.pool.address
   }
 
-  abstract getSwapCodeForRouteProcessor(leg: RouteLeg, route: MultiRoute, to: string, exactAmount?: bigint): string
+  abstract getSwapCodeForRouteProcessor(
+    leg: RouteLeg,
+    route: MultiRoute,
+    to: string,
+    exactAmount?: bigint,
+  ): string
 
-  getSwapCodeForRouteProcessor2(_leg: RouteLeg, _route: MultiRoute, _to: string): string {
+  getSwapCodeForRouteProcessor2(
+    _leg: RouteLeg,
+    _route: MultiRoute,
+    _to: string,
+  ): string {
     return 'unimplemented'
   }
 
-  getSwapCodeForRouteProcessor4(leg: RouteLeg, route: MultiRoute, to: string): string {
+  getSwapCodeForRouteProcessor4(
+    leg: RouteLeg,
+    route: MultiRoute,
+    to: string,
+  ): string {
     return this.getSwapCodeForRouteProcessor2(leg, route, to)
   }
 }

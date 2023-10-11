@@ -23,9 +23,11 @@ export const Card: FC<Card> = ({ article }) => {
               quality={100}
               image={article?.attributes.cover.data}
               className={classNames(
-                isMediaVideo(article?.attributes.cover.data?.attributes?.provider_metadata)
+                isMediaVideo(
+                  article?.attributes.cover.data?.attributes?.provider_metadata,
+                )
                   ? ''
-                  : 'group-hover:scale-[1.06] scale-[1.01] transition duration-[400ms]'
+                  : 'group-hover:scale-[1.06] scale-[1.01] transition duration-[400ms]',
               )}
             />
           )}
@@ -41,13 +43,20 @@ export const Card: FC<Card> = ({ article }) => {
             </div>
           )}
           <div className="flex flex-col gap-1">
-            <p className="text-sm font-medium text-slate-200 line-clamp-1">{article?.attributes?.title}</p>
-            <p className="text-sm text-slate-400 line-clamp-2">{article?.attributes?.description}</p>
+            <p className="text-sm font-medium text-slate-200 line-clamp-1">
+              {article?.attributes?.title}
+            </p>
+            <p className="text-sm text-slate-400 line-clamp-2">
+              {article?.attributes?.description}
+            </p>
             <div className="absolute bottom-3 left-4 right-4">
               <div className="flex items-center justify-between">
                 <p className="text-xs font-medium text-slate-400 line-clamp-2">
                   {article?.attributes?.publishedAt &&
-                    format(new Date(article?.attributes.publishedAt), 'dd MMM, yyyy')}
+                    format(
+                      new Date(article?.attributes.publishedAt),
+                      'dd MMM, yyyy',
+                    )}
                 </p>
                 <div className="flex items-center text-sm font-medium text-blue">
                   Read more <ChevronRightIcon width={16} height={16} />

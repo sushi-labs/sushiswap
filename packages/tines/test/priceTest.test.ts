@@ -1,7 +1,12 @@
 import seedrandom from 'seedrandom'
 
 import { calcTokenPrices } from '../src'
-import { createNetwork, expectCloseValues, MAX_POOL_IMBALANCE, TToken } from './utils'
+import {
+  createNetwork,
+  expectCloseValues,
+  MAX_POOL_IMBALANCE,
+  TToken,
+} from './utils'
 
 const GAS_PRICE = 50 * 1e-9
 
@@ -20,7 +25,11 @@ it('Token price calculation is correct for minLiquidity = 0', () => {
       expectCloseValues(price, 1, 1e-10)
     }
     if (price !== 0) {
-      expectCloseValues(price, t.price / baseToken.price, 5 * (MAX_POOL_IMBALANCE - 1))
+      expectCloseValues(
+        price,
+        t.price / baseToken.price,
+        5 * (MAX_POOL_IMBALANCE - 1),
+      )
     }
   })
   expect(prices.size).toEqual(network.tokens.length)
@@ -36,7 +45,11 @@ it('Token price calculation is correct for minLiquidity != 0', () => {
       expectCloseValues(price, 1, 1e-10)
     }
     if (price !== 0) {
-      expectCloseValues(price, t.price / baseToken.price, 5 * (MAX_POOL_IMBALANCE - 1))
+      expectCloseValues(
+        price,
+        t.price / baseToken.price,
+        5 * (MAX_POOL_IMBALANCE - 1),
+      )
     }
   })
   expect(prices.size).toBeLessThan(network.tokens.length)
