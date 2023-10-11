@@ -31,6 +31,10 @@
       "types": "./dist/currency/index.d.ts",
       "default": "./dist/currency/index.js"
     },
+    "./format": {
+      "types": "./dist/format/index.d.ts",
+      "default": "./dist/format/index.js"
+    },
     "./math": {
       "types": "./dist/math/index.d.ts",
       "default": "./dist/math/index.js"

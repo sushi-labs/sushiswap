@@ -70,7 +70,6 @@
     "@sushiswap/token-price-api": "workspace:*",
     "@sushiswap/steer-vault-api": "workspace:*",
     "@sushiswap/tokens-api": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "18",
     "eslint": "8.43.0",

@@ -137,7 +137,7 @@ export const PoolNameCellPool: FC<{ pool: Pool }> = ({ pool }) => {
             position="bottom-right"
             badgeContent={
               <NetworkIcon
-                chainId={original.chainId as ChainId}
+                chainId={pool.chainId as ChainId}
                 width={14}
                 height={14}
               />
