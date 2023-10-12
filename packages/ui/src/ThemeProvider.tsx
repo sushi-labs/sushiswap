@@ -1,13 +1,12 @@
 'use client'
 
-import { ThemeProvider as NextThemeProvider } from 'next-themes'
-import { FC, ReactNode } from 'react'
+import {ThemeProvider as NextThemeProvider} from 'next-themes'
+import {FC, ReactNode} from 'react'
 
-import { ToastContainer } from './components'
-import { OnramperProvider } from './components/onramper'
+import {OnramperProvider, Toaster} from './components'
 
 interface ThemeProvider {
-  children: ReactNode | Array<ReactNode>
+  children: ReactNode | ReactNode[]
   forcedTheme?: string
 }
 
@@ -19,7 +18,7 @@ export const ThemeProvider: FC<ThemeProvider> = ({ children, forcedTheme }) => {
       forcedTheme={forcedTheme}
     >
       <OnramperProvider>
-        <ToastContainer />
+        <Toaster />
         <div id="network-check-portal" />
         {children}
         <div id="popover-portal" />
