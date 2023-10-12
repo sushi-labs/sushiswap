@@ -36,7 +36,7 @@
     "react-markdown": "^8.0.3",
     "sushi": "workspace:*",
     "swr": "2.1.5",
-    "zod": "3.21.4"
+    "zod": "3.22.4"
   },
   "devDependencies": {
     "@graphql-mesh/cli": "0.82.3",

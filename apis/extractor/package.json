@@ -42,7 +42,7 @@
     "sushi": "workspace:*",
     "viem": "1.16.2",
     "wagmi": "1.4.3",
-    "zod": "3.21.4"
+    "zod": "3.22.4"
   },
   "devDependencies": {
     "@tsconfig/esm": "1.0.4",

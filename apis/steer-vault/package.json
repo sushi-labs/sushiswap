@@ -27,7 +27,7 @@
     "@vercel/node": "3.0.7",
     "deepmerge-ts": "^4.3.0",
     "sushi": "workspace:*",
-    "zod": "3.21.4"
+    "zod": "3.22.4"
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
