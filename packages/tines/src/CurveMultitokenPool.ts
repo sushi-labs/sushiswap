@@ -16,11 +16,11 @@ export class CurveMultitokenPool extends RPool {
   constructor(core: CurveMultitokenCore, index0: number, index1: number) {
     super(
       core.address as Address,
-      core.tokens[index0],
-      core.tokens[index1],
+      core.tokens[index0] as RToken,
+      core.tokens[index1] as RToken,
       core.fee,
-      core.reserves[index0],
-      core.reserves[index1],
+      core.reserves[index0] as bigint,
+      core.reserves[index1] as bigint,
       MIN_LIQUIDITY,
       SWAP_GAS_COST,
     )
@@ -29,7 +29,7 @@ export class CurveMultitokenPool extends RPool {
     this.index1 = index1
   }
 
-  updateReserves(res0: bigint, res1: bigint) {
+  override updateReserves(res0: bigint, res1: bigint) {
     super.updateReserves(res0, res1)
     this.core.updateReserve(this.index0, res0)
     this.core.updateReserve(this.index1, res1)
@@ -100,7 +100,7 @@ class CurveMultitokenCore {
     )
     this.ratesBN18 = this.rates.map((r) => getBigInt(r * 1e18)) // precision is 18 digits
     this.reservesRated = this.reserves.map(
-      (r, i) => (r * this.ratesBN18[i]) / E18,
+      (r, i) => (r * (this.ratesBN18[i] as bigint)) / E18,
     )
     this.D = ZERO
 
@@ -115,7 +115,7 @@ class CurveMultitokenCore {
   updateReserve(index: number, res: bigint) {
     this.D = ZERO
     this.reserves[index] = res
-    this.reservesRated[index] = (res * this.ratesBN18[index]) / E18 // remove precision 1e18
+    this.reservesRated[index] = (res * (this.ratesBN18[index] as bigint)) / E18 // remove precision 1e18
   }
 
   computeLiquidity(): bigint {
@@ -148,7 +148,7 @@ class CurveMultitokenCore {
     for (let i = 0; i < this.tokens.length; ++i) {
       let _x = ZERO
       if (i == xIndex) _x = x
-      else if (i != yIndex) _x = this.reservesRated[i]
+      else if (i != yIndex) _x = this.reservesRated[i] as bigint
       else continue
       S_ = S_ + _x
       c = (c * D) / _x / this.n
@@ -173,13 +173,13 @@ class CurveMultitokenCore {
     from: number,
     to: number,
   ): { out: number; gasSpent: number } {
-    amountIn *= this.rates[from]
-    const xBN = this.reservesRated[from]
-    const yBN = this.reservesRated[to]
+    amountIn *= this.rates[from] as number
+    const xBN = this.reservesRated[from] as bigint
+    const yBN = this.reservesRated[to] as bigint
     const xNewBN = xBN + getBigInt(amountIn)
     const yNewBN = this.computeY(from, xNewBN, to)
     if (yNewBN < MIN_LIQUIDITY) throw 'Curve pool OutOfLiquidity'
-    const dy = Number(yBN - yNewBN) / this.rates[to]
+    const dy = Number(yBN - yNewBN) / (this.rates[to] as number)
     return { out: dy * (1 - this.fee), gasSpent: SWAP_GAS_COST }
   }
 
@@ -188,29 +188,29 @@ class CurveMultitokenCore {
     from: number,
     to: number,
   ): { inp: number; gasSpent: number } {
-    amountOut *= this.rates[to]
-    const xBN = this.reservesRated[from]
-    const yBN = this.reservesRated[to]
+    amountOut *= this.rates[to] as number
+    const xBN = this.reservesRated[from] as bigint
+    const yBN = this.reservesRated[to] as bigint
     let yNewBN = yBN - getBigInt(amountOut / (1 - this.fee))
     if (yNewBN < 1)
       // lack of precision
       yNewBN = 1n
 
     const xNewBN = this.computeY(to, yNewBN, from)
-    const input = Math.round(Number(xNewBN - xBN) / this.rates[from])
+    const input = Math.round(Number(xNewBN - xBN) / (this.rates[from] as number))
 
     //if (input < 1) input = 1
     return { inp: input, gasSpent: SWAP_GAS_COST }
   }
 
   calcCurrentPriceWithoutFee(from: number, to: number): number {
-    const xInp = parseInt(this.reservesRated[from].toString())
-    const D = parseInt(this.computeLiquidity().toString())
+    const xInp = Number(this.reservesRated[from])
+    const D = Number(this.computeLiquidity())
     let Sx = 0,
       Px = 1
     this.tokens.forEach((_, i) => {
       if (i == to) return
-      const x = parseInt(this.reservesRated[i].toString())
+      const x = Number(this.reservesRated[i])
       Sx += x
       Px *= x
     })
@@ -220,7 +220,7 @@ class CurveMultitokenCore {
     const Ds = Math.sqrt(b * b + 4 * c)
     const dD = 2 * b - (4 * c) / xInp
     const price = 0.5 - dD / Ds / 4
-    const scale = this.rates[from] / this.rates[to]
+    const scale = (this.rates[from] as number) / (this.rates[to] as number)
     return price * scale
   }
 }

@@ -55,8 +55,6 @@ export class BridgeStargateV04OneWay extends RPool {
   }
 
   calcInByOut(
-    amountOut: number,
-    direction: boolean,
   ): { inp: number; gasSpent: number } {
     throw new Error('calcInByOut for BridgeStargateV04OneWay')
   }
@@ -65,7 +63,7 @@ export class BridgeStargateV04OneWay extends RPool {
     return 1
   }
 
-  alwaysAppropriateForPricing() {
+  override alwaysAppropriateForPricing() {
     return true
   }
 }

@@ -8,7 +8,7 @@ const BRIDGING_GAS_COST = 60_000 // gas points
 export class BridgeBento extends RPool {
   elastic: number
   base: number
-  freeLiquidity?: number // Maximum number of tokens we can withdraw without harvest
+  freeLiquidity: number | undefined // Maximum number of tokens we can withdraw without harvest
 
   // elastic is reserve0, base is reserve1
   constructor(
@@ -43,7 +43,7 @@ export class BridgeBento extends RPool {
     }
   }
 
-  updateReserves(elastic: bigint, base: bigint) {
+  override updateReserves(elastic: bigint, base: bigint) {
     this.reserve0 = elastic
     this.elastic = parseInt(elastic.toString())
     this.reserve1 = base
@@ -80,7 +80,7 @@ export class BridgeBento extends RPool {
     return { out, gasSpent: this.swapGasCost }
   }
 
-  calcOutByInReal(amountIn: number, direction: boolean): number {
+  override calcOutByInReal(amountIn: number, direction: boolean): number {
     return Math.floor(this.calcOutByIn(amountIn, direction, false).out)
   }
 
