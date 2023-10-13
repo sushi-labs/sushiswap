@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import {AnchorHTMLAttributes, FC} from 'react'
-import {classNames} from "../index";
+import { AnchorHTMLAttributes, FC } from 'react'
+import { classNames } from '../index'
 
 const LinkInternal = Link
 const LinkExternal: FC<AnchorHTMLAttributes<HTMLAnchorElement>> = ({
@@ -13,7 +13,10 @@ const LinkExternal: FC<AnchorHTMLAttributes<HTMLAnchorElement>> = ({
       {...props}
       target={target}
       rel={rel}
-      className={classNames(props.className, "cursor-pointer text-blue hover:underline")}
+      className={classNames(
+        props.className,
+        'cursor-pointer text-blue hover:underline',
+      )}
     />
   )
 }

@@ -1,9 +1,9 @@
 'use client'
 
-import {ThemeProvider as NextThemeProvider} from 'next-themes'
-import {FC, ReactNode} from 'react'
+import { ThemeProvider as NextThemeProvider } from 'next-themes'
+import { FC, ReactNode } from 'react'
 
-import {OnramperProvider, Toaster} from './components'
+import { OnramperProvider, Toaster } from './components'
 
 interface ThemeProvider {
   children: ReactNode | ReactNode[]
