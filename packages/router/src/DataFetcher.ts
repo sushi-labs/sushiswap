@@ -34,9 +34,9 @@ import type { PoolCode } from './pools/PoolCode'
 
 // import { create } from 'viem'
 const isTest =
-  process.env.APP_ENV === 'test' ||
-  process.env.TEST === 'true' ||
-  process.env.NEXT_PUBLIC_TEST === 'true'
+  process.env['APP_ENV'] === 'test' ||
+  process.env['TEST'] === 'true' ||
+  process.env['NEXT_PUBLIC_TEST'] === 'true'
 
 // Gathers pools info, creates routing in 'incremental' mode
 // This means that new routing recalculates each time new pool fetching data comes

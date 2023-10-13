@@ -26,13 +26,13 @@ export class CurvePoolCode extends PoolCode {
     return 'CurvePool is not supported by RP1'
   }
 
-  getSwapCodeForRouteProcessor2(): string {
+  override getSwapCodeForRouteProcessor2(): string {
     return 'CurvePool is not supported by RP2'
   }
 
-  getSwapCodeForRouteProcessor4(
+  override getSwapCodeForRouteProcessor4(
     leg: RouteLeg,
-    route: MultiRoute,
+    _: MultiRoute,
     to: string,
   ): string {
     // supports only 2-token pools currently

@@ -1,7 +1,7 @@
 import https from 'https'
 import { MultiRoute, getBigInt } from '@sushiswap/tines'
-import { ChainId, TestnetChainId } from 'sushi/chain'
-import { Type, USDC, USDT } from 'sushi/currency'
+import { ChainId } from 'sushi/chain'
+import { Token, Type, USDC, USDT } from 'sushi/currency'
 
 import { DataFetcher } from '../DataFetcher'
 import { Router } from '../Router'
@@ -174,10 +174,10 @@ async function test(
 ) {
   const fromAddress = from.isNative
     ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-    : from.address
+    : (from as Token).address
   const toAddress = to.isNative
     ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-    : to.address
+    : (to as Token).address
   const [
     // res1,
     res2,

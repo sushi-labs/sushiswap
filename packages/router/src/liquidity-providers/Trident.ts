@@ -65,7 +65,7 @@ interface PoolInfo {
 
 export class TridentProvider extends LiquidityProvider {
   // Need to override for type narrowing
-  chainId: Extract<ChainId, BentoBoxChainId & TridentChainId>
+  //chainId: Extract<ChainId, BentoBoxChainId & TridentChainId>
 
   readonly TOP_POOL_SIZE = 155
   readonly TOP_POOL_LIQUIDITY_THRESHOLD = 1000
@@ -140,7 +140,7 @@ export class TridentProvider extends LiquidityProvider {
       //console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${topPools.length}`)
     } else {
       //console.debug(`${this.getLogPrefix()} - INIT: NO pools found.`)
-      return []
+      //return []
     }
 
     await this.initPools(topPools)
@@ -264,8 +264,9 @@ export class TridentProvider extends LiquidityProvider {
       ])
 
     classicPools.forEach((pool, i) => {
-      const res0 = classicReserves?.[i]?.result?.[0]
-      const res1 = classicReserves?.[i]?.result?.[1]
+      const reserves = classicReserves as {result: readonly [bigint, bigint, number]}[]
+      const res0 = reserves[i]?.result?.[0]
+      const res1 = reserves[i]?.result?.[1]
       if (!res0 || !res1) return
       const tokens = [
         convertTokenToBento(mapToken(this.chainId, pool.token0)),
@@ -290,9 +291,11 @@ export class TridentProvider extends LiquidityProvider {
     const rebases: Map<string, Rebase> = new Map()
 
     sortedTokens.forEach((t, i) => {
-      const elastic = totals?.[i]?.result?.[0]
-      const base = totals?.[i]?.result?.[1]
-      const balance = balances?.[i]?.result
+      const total = totals as {result: readonly [bigint, bigint]}[]
+      const bal = balances as {result: bigint}[]
+      const elastic = total[i]?.result?.[0]
+      const base = total[i]?.result?.[1]
+      const balance = bal[i]?.result
       if (!elastic || !base || !balance) return
       const pool = new BridgeBento(
         `Bento bridge for ${t.symbol}`,
@@ -318,8 +321,9 @@ export class TridentProvider extends LiquidityProvider {
     })
 
     stablePools.forEach((pool, i) => {
-      const res0 = stableReserves?.[i]?.result?.[0]
-      const res1 = stableReserves?.[i]?.result?.[1]
+      const sRes = stableReserves as {result: readonly [bigint, bigint]}[]
+      const res0 = sRes[i]?.result?.[0]
+      const res1 = sRes[i]?.result?.[1]
       const totals0 = rebases.get(pool.token0.address)
       const totals1 = rebases.get(pool.token1.address)
 
