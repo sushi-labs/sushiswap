@@ -186,7 +186,7 @@ export class Router {
   ): MultiRoute {
     const networks: NetworkInfo[] = [
       {
-        chainId: chainId,
+        chainId: Number(chainId),
         baseToken: WNATIVE[chainId] as RToken,
         gasPrice: gasPrice as number,
       },
@@ -286,7 +286,7 @@ export class Router {
 
     return {
       tokenIn,
-      amountIn: source === RouterLiquiditySource.Sender ? route.amountInBI : 0n,
+      amountIn: route.amountInBI,
       tokenOut,
       amountOutMin,
       to,

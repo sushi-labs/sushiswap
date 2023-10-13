@@ -8,14 +8,17 @@ import {
 import { tryParseAmount, Type } from 'sushi/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import {
+  Button,
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
   classNames,
   FormSection,
   Label,
+  LinkExternal,
   Message,
   TextField,
   TextFieldDescription,
@@ -139,6 +142,12 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
     ticksAtLimit[Bound.LOWER] && ticksAtLimit[Bound.UPPER],
   )
 
+  const poolFish = new URL('https://poolfish.xyz/calculators/sushi')
+  poolFish.searchParams.append('network', `${chainId}`)
+  if (token0) poolFish.searchParams.append('token0', token0.wrapped.address)
+  if (token1) poolFish.searchParams.append('token1', token1.wrapped.address)
+  if (feeAmount) poolFish.searchParams.append('feeTier', `${feeAmount}`)
+
   return (
     <FormSection
       title="Range"
@@ -164,7 +173,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
         )}
       >
         {noLiquidity ? (
-          <Message size="sm">
+          <Message size="sm" variant="muted" className="text-center">
             This pool must be initialized before you can add liquidity.{' '}
             {showStartPrice
               ? 'To initialize, select a starting price for the pool. Then, enter your liquidity price range and deposit amount. '
@@ -326,6 +335,28 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                 }
               />
             </div>
+            <Card>
+              <CardHeader>
+                <CardDescription>
+                  We{`'`}re excited to share that Sushi integration is now live
+                  on{' '}
+                  <LinkExternal href="https://poolfish.xyz/calculators/sushi">
+                    Poolfish.xyz
+                  </LinkExternal>
+                  ! To get an estimate of the fees you could earn based on your
+                  chosen parameters, please visit our platform by clicking here.
+                  We look forward to assisting you with your earnings
+                  calculations.
+                </CardDescription>
+              </CardHeader>
+              <CardFooter>
+                <LinkExternal href={poolFish.toString()}>
+                  <Button variant="link" size="sm">
+                    View position on Poolfish.xyz
+                  </Button>
+                </LinkExternal>
+              </CardFooter>
+            </Card>
           </div>
         </div>
       </div>

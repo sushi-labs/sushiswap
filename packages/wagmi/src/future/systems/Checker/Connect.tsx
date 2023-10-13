@@ -1,6 +1,5 @@
 'use client'
 
-import { useIsMounted } from '@sushiswap/hooks'
 import { ButtonProps } from '@sushiswap/ui/components/button'
 import { FC } from 'react'
 import { useAccount } from 'wagmi'
@@ -13,10 +12,9 @@ const Connect: FC<ButtonProps> = ({
   size = 'xl',
   ...props
 }) => {
-  const isMounted = useIsMounted()
   const { address } = useAccount()
 
-  if (isMounted && !address)
+  if (!address)
     return (
       <ConnectButton fullWidth={fullWidth} size={size} {...props}>
         Connect Wallet

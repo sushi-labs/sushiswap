@@ -41,6 +41,7 @@ interface CurrencyInputProps {
   allowNative?: boolean
   error?: string
   hidePinnedTokens?: boolean
+  disableInsufficientBalanceError?: boolean
   hideSearch?: boolean
 }
 
@@ -63,6 +64,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   error,
   hidePinnedTokens = false,
   hideSearch = false,
+  disableInsufficientBalanceError = false,
   fetching,
 }) => {
   const [localValue, setLocalValue] = useState<string>('')
@@ -91,7 +93,12 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     [value, currency],
   )
   const insufficientBalance =
-    address && type === 'INPUT' && balance && _value && balance.lessThan(_value)
+    address &&
+    type === 'INPUT' &&
+    balance &&
+    _value &&
+    balance.lessThan(_value) &&
+    !disableInsufficientBalanceError
 
   // If currency changes, trim input to decimals
   useEffect(() => {
@@ -101,8 +108,6 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         onChange((+value).toFixed(currency.decimals))
       }
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currency])
 
   const isLoading = loading || currencyLoading || isBalanceLoading
