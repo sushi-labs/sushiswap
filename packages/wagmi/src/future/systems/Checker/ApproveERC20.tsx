@@ -2,7 +2,6 @@
 
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { InformationCircleIcon } from '@heroicons/react/24/solid'
-import { Amount, Type } from 'sushi/currency'
 import {
   CardDescription,
   CardHeader,
@@ -21,6 +20,7 @@ import {
   SelectPrimitive,
 } from '@sushiswap/ui/components/select'
 import React, { FC, useState } from 'react'
+import { Amount, Type } from 'sushi/currency'
 import { Address } from 'wagmi'
 
 import { ApprovalState, useTokenApproval } from '../../hooks'

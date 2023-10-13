@@ -1,7 +1,6 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
-import { shortenAddress } from 'sushi'
+import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'
 import { JazzIcon } from '@sushiswap/ui/components/icons/JazzIcon'
 import {
@@ -11,6 +10,8 @@ import {
 } from '@sushiswap/ui/components/popover'
 import { useBreakpoint } from '@sushiswap/ui/lib/useBreakpoint'
 import React, { FC, useState } from 'react'
+import { shortenAddress } from 'sushi'
+import { ChainId } from 'sushi/chain'
 import { useAccount, useEnsAvatar, useEnsName, useNetwork } from 'wagmi'
 
 import { ConnectButton } from '../ConnectButton'
@@ -31,6 +32,7 @@ interface ProfileProps {
 }
 
 export const UserProfile: FC<ProfileProps> = () => {
+  const isMounted = useIsMounted()
   const { isSm } = useBreakpoint('sm')
   const [view, setView] = useState<ProfileView>(ProfileView.Default)
   const { chain } = useNetwork()
@@ -48,7 +50,7 @@ export const UserProfile: FC<ProfileProps> = () => {
 
   const chainId = (chain?.id as ChainId) || ChainId.ETHEREUM
 
-  if (!address) return <ConnectButton variant="secondary" />
+  if (!address || !isMounted) return <ConnectButton variant="secondary" />
 
   return (
     <Popover>

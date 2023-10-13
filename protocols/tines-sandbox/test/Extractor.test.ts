@@ -221,10 +221,9 @@ async function startInfinitTest(args: {
         continue
       }
       try {
-        const amountOutReal = await client.readContract({
+        const { result: amountOutReal } = (await client.simulateContract({
           address: args.RP3Address,
           abi: routeProcessor2Abi,
-          // @ts-ignore
           functionName: 'processRoute',
           args: [
             rpParams.tokenIn as Address,
@@ -236,7 +235,7 @@ async function startInfinitTest(args: {
           ],
           value: BigInt(rpParams.value?.toString() as string),
           account: args.account,
-        })
+        })) as { result: bigint }
         const amountOutExp = BigInt(route.amountOutBI.toString())
         const diff =
           amountOutExp === 0n
@@ -435,77 +434,4 @@ it.skip('Extractor Base infinit work test', async () => {
     // }),
     // ],
   })
-})
-
-// have been fixed in 1.4.2
-it.skip('viem issue #1', async () => {
-  const client = createPublicClient({
-    chain: polygonZkEvm,
-    transport: http('https://polygonzkevm-mainnet.g.alchemy.com/v2/demo'),
-  })
-  const res = await client.multicall({
-    allowFailure: true,
-    contracts: [
-      {
-        address: '0x6aa981bff95edfea36bdae98c26b274ffcafe8d3',
-        abi: [
-          {
-            inputs: [],
-            name: 'liquidity',
-            outputs: [{ internalType: 'uint128', name: '', type: 'uint128' }],
-            stateMutability: 'view',
-            type: 'function',
-          },
-        ],
-        functionName: 'liquidity',
-      },
-    ],
-  })
-  console.log(res)
-  // const r = await fetch(`https://polygonzkevm-mainnet.g.alchemy.com/v2/demo`, {
-  //   method: 'POST',
-  //   body: JSON.stringify({
-  //     jsonrpc: '2.0',
-  //     id: 1,
-  //     method: 'eth_blockNumber',
-  //     params: [],
-  //   }),
-  // })
-  // const res = await r.json()
-  // console.log(r.status, res)
-})
-
-it.skip('Alchemy issue #1', async () => {
-  // const client = createPublicClient({
-  //   chain: polygonZkEvm,
-  //   transport: http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/demo`),
-  // })
-  // const UniV3EventsAbi = parseAbiItem(
-  //   'event Mint(address sender, address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)'
-  // )
-  // const res = await client.getLogs({
-  //   blockHash: '0x17695bbbc7cb24f056472d70db4725a0ccb91aa1d8a3863c5c1fadba2916b966',
-  //   event: UniV3EventsAbi,
-  // })
-  // console.log(res.map((e) => e.eventName))
-
-  const r = await fetch('https://polygonzkevm-mainnet.g.alchemy.com/v2/demo', {
-    method: 'POST',
-    body: JSON.stringify({
-      jsonrpc: '2.0',
-      id: 1,
-      method: 'eth_getLogs',
-      params: [
-        {
-          blockHash:
-            '0x17695bbbc7cb24f056472d70db4725a0ccb91aa1d8a3863c5c1fadba2916b966',
-          topics: [
-            '0x7a53080ba414158be7ec69b987b5fb7d07dee101fe85488f0853ae16239d0bde',
-          ],
-        },
-      ],
-    }),
-  })
-  const res = await r.json()
-  console.log(r.status, res.result.length)
 })

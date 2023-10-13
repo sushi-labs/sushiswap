@@ -1,6 +1,4 @@
 import { ArrowDownIcon } from '@heroicons/react/24/outline'
-import { ChainId } from 'sushi/chain'
-import { Native, SUSHI } from 'sushi/currency'
 import { useInterval } from '@sushiswap/hooks'
 import { LinkInternal, typographyVariants } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
@@ -8,6 +6,8 @@ import { Container } from '@sushiswap/ui/components/container'
 import { CurrencyInput } from '@sushiswap/wagmi/future/components/Web3Input/Currency'
 import { motion } from 'framer-motion'
 import React, { FC, useEffect, useState } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Native, SUSHI } from 'sushi/currency'
 
 const TITLES = ['Whenever', 'Wherever', 'Whoever']
 const VALUES = [
@@ -91,8 +91,6 @@ export const Hero: FC = () => {
                 type="INPUT"
                 className="p-3 bg-white dark:bg-slate-800 rounded-xl"
                 value={valueIndex >= 0 ? VALUES[valueIndex].value0 : ''}
-                onChange={() => {}}
-                onSelect={() => {}}
                 currency={Native.onChain(ChainId.ETHEREUM)}
                 chainId={ChainId.ETHEREUM}
                 disabled={true}

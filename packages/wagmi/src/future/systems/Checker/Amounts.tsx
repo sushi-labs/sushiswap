@@ -1,11 +1,11 @@
 'use client'
 
 import { AddressZero } from '@ethersproject/constants'
-import { ChainId } from 'sushi/chain'
-import { Amount, Type } from 'sushi/currency'
-import { ZERO } from 'sushi'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import React, { FC, useMemo } from 'react'
+import { ZERO } from 'sushi'
+import { ChainId } from 'sushi/chain'
+import { Amount, Type } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 
 import { useBalancesWeb3 } from '../../hooks'

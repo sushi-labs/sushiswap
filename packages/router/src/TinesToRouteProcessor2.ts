@@ -28,7 +28,7 @@ export function getTokenType(token: RToken): TokenType {
 
 export enum RouterLiquiditySource {
   Sender = 'Sender', // msg.sender
-  Self = 'Self', // already aboard
+  XSwap = 'XSwap',
 }
 
 export class TinesToRouteProcessor2 {
@@ -82,7 +82,7 @@ export class TinesToRouteProcessor2 {
           res += this.processNativeCode(token, route, toAddress)
         else
           res += this.processERC20Code(
-            source === RouterLiquiditySource.Self,
+            source === RouterLiquiditySource.XSwap,
             token,
             route,
             toAddress,
