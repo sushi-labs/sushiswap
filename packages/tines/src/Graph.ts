@@ -61,7 +61,7 @@ export function NoWayMultiRoute(from: RToken, to: RToken) {
     primaryPrice: undefined,
     swapPrice: undefined,
     priceImpact: undefined
-  }
+  } as MultiRoute
 }
 
 // Tines input info about blockchains
@@ -399,7 +399,7 @@ export class Vertice {
   }
 
   getNeibour(e?: Edge) {
-    if (!e) return
+    if (!e) return undefined
     return e.vert0 === this ? e.vert1 : e.vert0
   }
 
@@ -717,7 +717,7 @@ export class Graph {
     | undefined {
     const start = this.getVert(from)
     const finish = this.getVert(to)
-    if (!start || !finish) return
+    if (!start || !finish) return undefined
 
     this.edges.forEach((e) => {
       e.bestEdgeIncome = 0
@@ -749,7 +749,7 @@ export class Graph {
         }
       })
 
-      if (!closestVert) return
+      if (!closestVert) return undefined
 
       closestVert.checkLine = checkLine++
 
@@ -836,7 +836,7 @@ export class Graph {
     | undefined {
     const start = this.getVert(to)
     const finish = this.getVert(from)
-    if (!start || !finish) return
+    if (!start || !finish) return undefined
 
     this.edges.forEach((e) => {
       e.bestEdgeIncome = 0
@@ -868,7 +868,7 @@ export class Graph {
         }
       })
 
-      if (!closestVert) return
+      if (!closestVert) return undefined
 
       closestVert.checkLine = checkLine++
 
