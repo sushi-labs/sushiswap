@@ -10,9 +10,9 @@ const defaultNextConfig = {
       '@heroicons-v1/react/20/solid',
       '@heroicons-v1/react/24/solid',
       '@heroicons-v1/react/24/outline',
-      "@sushiswap/ui",
-      "@sushiswap/wagmi"
-    ]
+      '@sushiswap/ui',
+      '@sushiswap/wagmi',
+    ],
   },
   experimental: {
     esmExternals: 'loose',

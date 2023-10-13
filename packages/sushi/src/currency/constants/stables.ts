@@ -1,5 +1,5 @@
 import { ChainId } from '../../chain/index.js'
-import {  BUSD, DAI, LUSD, USDC, USDT } from './tokens.js'
+import { BUSD, DAI, LUSD, USDC, USDT } from './tokens.js'
 import { Token } from '../Token.js'
 
 const THUNDERCORE_ANY_USDT = new Token({
@@ -70,29 +70,91 @@ const BTTC_TRON_BRIDGE_USDT = new Token({
 })
 
 export const STABLES = {
-  [ChainId.ETHEREUM]: [USDC[ChainId.ETHEREUM], USDT[ChainId.ETHEREUM], DAI[ChainId.ETHEREUM], LUSD[ChainId.ETHEREUM]],
+  [ChainId.ETHEREUM]: [
+    USDC[ChainId.ETHEREUM],
+    USDT[ChainId.ETHEREUM],
+    DAI[ChainId.ETHEREUM],
+    LUSD[ChainId.ETHEREUM],
+  ],
   [ChainId.RINKEBY]: [USDC[ChainId.RINKEBY]],
-  [ChainId.ROPSTEN]: [USDC[ChainId.ROPSTEN], USDT[ChainId.ROPSTEN], DAI[ChainId.ROPSTEN]],
-  [ChainId.KOVAN]: [USDC[ChainId.KOVAN], USDT[ChainId.KOVAN], DAI[ChainId.KOVAN]],
-  [ChainId.POLYGON]: [USDC[ChainId.POLYGON], USDT[ChainId.POLYGON], DAI[ChainId.POLYGON]],
+  [ChainId.ROPSTEN]: [
+    USDC[ChainId.ROPSTEN],
+    USDT[ChainId.ROPSTEN],
+    DAI[ChainId.ROPSTEN],
+  ],
+  [ChainId.KOVAN]: [
+    USDC[ChainId.KOVAN],
+    USDT[ChainId.KOVAN],
+    DAI[ChainId.KOVAN],
+  ],
+  [ChainId.POLYGON]: [
+    USDC[ChainId.POLYGON],
+    USDT[ChainId.POLYGON],
+    DAI[ChainId.POLYGON],
+  ],
   [ChainId.POLYGON_TESTNET]: [USDC[ChainId.POLYGON_TESTNET]],
-  [ChainId.FANTOM]: [USDC[ChainId.FANTOM], USDT[ChainId.FANTOM], DAI[ChainId.FANTOM]],
-  [ChainId.BSC]: [USDC[ChainId.BSC], USDT[ChainId.BSC], DAI[ChainId.BSC], BUSD[ChainId.BSC]],
-  [ChainId.HARMONY]: [USDC[ChainId.HARMONY], USDT[ChainId.HARMONY], DAI[ChainId.HARMONY]],
+  [ChainId.FANTOM]: [
+    USDC[ChainId.FANTOM],
+    USDT[ChainId.FANTOM],
+    DAI[ChainId.FANTOM],
+  ],
+  [ChainId.BSC]: [
+    USDC[ChainId.BSC],
+    USDT[ChainId.BSC],
+    DAI[ChainId.BSC],
+    BUSD[ChainId.BSC],
+  ],
+  [ChainId.HARMONY]: [
+    USDC[ChainId.HARMONY],
+    USDT[ChainId.HARMONY],
+    DAI[ChainId.HARMONY],
+  ],
   [ChainId.HECO]: [USDC[ChainId.HECO], USDT[ChainId.HECO], DAI[ChainId.HECO]],
   [ChainId.OKEX]: [USDC[ChainId.OKEX], USDT[ChainId.OKEX], DAI[ChainId.OKEX]],
-  [ChainId.GNOSIS]: [USDC[ChainId.GNOSIS], USDT[ChainId.GNOSIS], DAI[ChainId.GNOSIS]],
-  [ChainId.ARBITRUM]: [USDC[ChainId.ARBITRUM], USDT[ChainId.ARBITRUM], DAI[ChainId.ARBITRUM]],
-  [ChainId.AVALANCHE]: [USDC[ChainId.AVALANCHE], USDT[ChainId.AVALANCHE], DAI[ChainId.AVALANCHE]],
-  [ChainId.MOONRIVER]: [USDC[ChainId.MOONRIVER], USDT[ChainId.MOONRIVER], DAI[ChainId.MOONRIVER]],
+  [ChainId.GNOSIS]: [
+    USDC[ChainId.GNOSIS],
+    USDT[ChainId.GNOSIS],
+    DAI[ChainId.GNOSIS],
+  ],
+  [ChainId.ARBITRUM]: [
+    USDC[ChainId.ARBITRUM],
+    USDT[ChainId.ARBITRUM],
+    DAI[ChainId.ARBITRUM],
+  ],
+  [ChainId.AVALANCHE]: [
+    USDC[ChainId.AVALANCHE],
+    USDT[ChainId.AVALANCHE],
+    DAI[ChainId.AVALANCHE],
+  ],
+  [ChainId.MOONRIVER]: [
+    USDC[ChainId.MOONRIVER],
+    USDT[ChainId.MOONRIVER],
+    DAI[ChainId.MOONRIVER],
+  ],
   [ChainId.CELO]: [USDC[ChainId.CELO], USDT[ChainId.CELO], DAI[ChainId.CELO]],
   [ChainId.TELOS]: [USDC[ChainId.TELOS], USDT[ChainId.TELOS]],
   [ChainId.FUSE]: [USDC[ChainId.FUSE], USDT[ChainId.FUSE], DAI[ChainId.FUSE]],
-  [ChainId.MOONBEAM]: [USDC[ChainId.MOONBEAM], USDT[ChainId.MOONBEAM], DAI[ChainId.MOONBEAM]],
-  [ChainId.OPTIMISM]: [USDC[ChainId.OPTIMISM], USDT[ChainId.OPTIMISM], DAI[ChainId.OPTIMISM]],
+  [ChainId.MOONBEAM]: [
+    USDC[ChainId.MOONBEAM],
+    USDT[ChainId.MOONBEAM],
+    DAI[ChainId.MOONBEAM],
+  ],
+  [ChainId.OPTIMISM]: [
+    USDC[ChainId.OPTIMISM],
+    USDT[ChainId.OPTIMISM],
+    DAI[ChainId.OPTIMISM],
+  ],
   [ChainId.KAVA]: [USDC[ChainId.KAVA], USDT[ChainId.KAVA], DAI[ChainId.KAVA]],
-  [ChainId.METIS]: [USDC[ChainId.METIS], USDT[ChainId.METIS], DAI[ChainId.METIS]],
-  [ChainId.ARBITRUM_NOVA]: [USDC[ChainId.ARBITRUM_NOVA], USDT[ChainId.ARBITRUM_NOVA], DAI[ChainId.ARBITRUM_NOVA]],
+  [ChainId.METIS]: [
+    USDC[ChainId.METIS],
+    USDT[ChainId.METIS],
+    DAI[ChainId.METIS],
+  ],
+  [ChainId.ARBITRUM_NOVA]: [
+    USDC[ChainId.ARBITRUM_NOVA],
+    USDT[ChainId.ARBITRUM_NOVA],
+    DAI[ChainId.ARBITRUM_NOVA],
+  ],
   [ChainId.BOBA]: [USDC[ChainId.BOBA], USDT[ChainId.BOBA], DAI[ChainId.BOBA]],
   [ChainId.BOBA_AVAX]: [USDC[ChainId.BOBA_AVAX], USDT[ChainId.BOBA_AVAX]],
   [ChainId.BOBA_BNB]: [USDC[ChainId.BOBA_BNB], USDT[ChainId.BOBA_BNB]],
@@ -106,7 +168,11 @@ export const STABLES = {
     BTTC_ETHEREUM_BRIDGE_USDT,
     BTTC_TRON_BRIDGE_USDT,
   ],
-  [ChainId.POLYGON_ZKEVM]: [USDC[ChainId.POLYGON_ZKEVM], USDT[ChainId.POLYGON_ZKEVM], DAI[ChainId.POLYGON_ZKEVM]],
+  [ChainId.POLYGON_ZKEVM]: [
+    USDC[ChainId.POLYGON_ZKEVM],
+    USDT[ChainId.POLYGON_ZKEVM],
+    DAI[ChainId.POLYGON_ZKEVM],
+  ],
   [ChainId.THUNDERCORE]: [
     USDC[ChainId.THUNDERCORE],
     USDT[ChainId.THUNDERCORE],
