@@ -25,7 +25,7 @@
     "test": "artillery run test/load.yml"
   },
   "dependencies": {
-    "@sentry/node": "7.68.0",
+    "@sentry/node": "7.74.0",
     "@sushiswap/extractor": "workspace:*",
     "@sushiswap/route-processor-sdk": "workspace:*",
     "@sushiswap/router": "workspace:*",
