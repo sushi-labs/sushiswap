@@ -26,10 +26,8 @@ const testWalletIndex = Number(
 
 export const createWagmiConfig = () => {
   if (isTest) {
-    console.log(`CREATE TEST WAGMI CONFIG FOR CHAIN ${chainId}`)
     return createTestConfig(chainId as TestChainId, testWalletIndex)
   }
-
   const { chains, publicClient } = configureChains(allChains, allProviders, {
     pollingInterval: 4_000,
   })

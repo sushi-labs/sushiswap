@@ -2,7 +2,7 @@
 const defaultNextConfig = {
   reactStrictMode: true,
   productionBrowserSourceMaps: true,
-  swcMinify: false,
+  swcMinify: true,
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
   experimental: {
@@ -10,8 +10,17 @@ const defaultNextConfig = {
       '@heroicons-v1/react/20/solid',
       '@heroicons-v1/react/24/solid',
       '@heroicons-v1/react/24/outline',
+      "@sushiswap/client",
+      "@sushiswap/dexie",
+      "@sushiswap/hooks",
+      "@sushiswap/react-query",
       "@sushiswap/ui",
-      "@sushiswap/wagmi"
+      "@sushiswap/wagmi",
+      "d3",
+      "date-fns",
+      "echarts",
+      "echarts-for-react",
+      "sushi"
     ]
   },
   experimental: {
