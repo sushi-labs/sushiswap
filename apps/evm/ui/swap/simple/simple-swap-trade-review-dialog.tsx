@@ -1,57 +1,69 @@
 'use client'
 
-import {useSlippageTolerance} from '@sushiswap/hooks'
-import {UseTradeReturn} from '@sushiswap/react-query'
+import { useSlippageTolerance } from '@sushiswap/hooks'
+import { UseTradeReturn } from '@sushiswap/react-query'
 import {
-	isRouteProcessor3_1ChainId,
-	isRouteProcessor3_2ChainId,
-	isRouteProcessor3ChainId,
-	isRouteProcessorChainId,
-	ROUTE_PROCESSOR_3_1_ADDRESS,
-	ROUTE_PROCESSOR_3_2_ADDRESS,
-	ROUTE_PROCESSOR_3_ADDRESS,
-	ROUTE_PROCESSOR_ADDRESS,
+  isRouteProcessor3_1ChainId,
+  isRouteProcessor3_2ChainId,
+  isRouteProcessor3ChainId,
+  isRouteProcessorChainId,
+  ROUTE_PROCESSOR_3_1_ADDRESS,
+  ROUTE_PROCESSOR_3_2_ADDRESS,
+  ROUTE_PROCESSOR_3_ADDRESS,
+  ROUTE_PROCESSOR_ADDRESS,
 } from '@sushiswap/route-processor-sdk'
-import {Bridge, LiquidityProviders} from '@sushiswap/router'
+import { Bridge, LiquidityProviders } from '@sushiswap/router'
 import {
-	classNames,
-	DialogConfirm,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogProvider,
-	DialogReview,
-	DialogTitle,
-	useToast,
+  classNames,
+  DialogConfirm,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogProvider,
+  DialogReview,
+  DialogTitle,
+  useToast,
 } from '@sushiswap/ui'
-import {Button} from '@sushiswap/ui/components/button'
-import {List} from '@sushiswap/ui/components/list/List'
-import {SkeletonBox, SkeletonText} from '@sushiswap/ui/components/skeleton'
-import {createErrorToast} from '@sushiswap/ui/components/toast'
+import { Button } from '@sushiswap/ui/components/button'
+import { List } from '@sushiswap/ui/components/list/List'
+import { SkeletonBox, SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { createErrorToast } from '@sushiswap/ui/components/toast'
 import {
-	useAccount,
-	useContractWrite,
-	useNetwork,
-	usePrepareContractWrite,
-	useWaitForTransaction,
+  useAccount,
+  useContractWrite,
+  useNetwork,
+  usePrepareContractWrite,
+  useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import {SendTransactionResult, waitForTransaction,} from '@sushiswap/wagmi/actions'
-import {useBalanceWeb3Refetch, useTransactionAdder,} from '@sushiswap/wagmi/future/hooks'
-import {useApproved} from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import {APPROVE_TAG_SWAP} from 'lib/constants'
-import {warningSeverity, warningSeverityClassName,} from 'lib/swap/warningSeverity'
-import {log} from 'next-axiom'
-import React, {FC, ReactNode, useCallback, useRef} from 'react'
-import {calculateGasMargin, shortenAddress, ZERO} from 'sushi'
-import {routeProcessor3Abi, routeProcessorAbi} from 'sushi/abi'
-import {Chain} from 'sushi/chain'
-import {Native} from 'sushi/currency'
-import {stringify} from 'viem'
+import {
+  SendTransactionResult,
+  waitForTransaction,
+} from '@sushiswap/wagmi/actions'
+import {
+  useBalanceWeb3Refetch,
+  useTransactionAdder,
+} from '@sushiswap/wagmi/future/hooks'
+import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { APPROVE_TAG_SWAP } from 'lib/constants'
+import {
+  warningSeverity,
+  warningSeverityClassName,
+} from 'lib/swap/warningSeverity'
+import { log } from 'next-axiom'
+import React, { FC, ReactNode, useCallback, useRef } from 'react'
+import { calculateGasMargin, shortenAddress, ZERO } from 'sushi'
+import { routeProcessor3Abi, routeProcessorAbi } from 'sushi/abi'
+import { Chain } from 'sushi/chain'
+import { Native } from 'sushi/currency'
+import { stringify } from 'viem'
 
-import {TradeRoutePathView} from '../trade-route-path-view'
-import {useDerivedStateSimpleSwap, useSimpleSwapTrade,} from './derivedstate-simple-swap-provider'
-import {SimpleSwapErrorMessage} from './simple-swap-error-message'
+import { TradeRoutePathView } from '../trade-route-path-view'
+import {
+  useDerivedStateSimpleSwap,
+  useSimpleSwapTrade,
+} from './derivedstate-simple-swap-provider'
+import { SimpleSwapErrorMessage } from './simple-swap-error-message'
 
 export const SimpleSwapTradeReviewDialog: FC<{
   children({
