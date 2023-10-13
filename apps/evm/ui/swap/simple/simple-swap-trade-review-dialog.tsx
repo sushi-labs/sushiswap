@@ -3,38 +3,38 @@
 import {useSlippageTolerance} from "@sushiswap/hooks";
 import {UseTradeReturn} from "@sushiswap/react-query";
 import {
-  isRouteProcessor3_1ChainId,
-  isRouteProcessor3_2ChainId,
-  isRouteProcessor3ChainId,
-  isRouteProcessorChainId,
-  ROUTE_PROCESSOR_3_1_ADDRESS,
-  ROUTE_PROCESSOR_3_2_ADDRESS,
-  ROUTE_PROCESSOR_3_ADDRESS,
-  ROUTE_PROCESSOR_ADDRESS,
+	isRouteProcessor3_1ChainId,
+	isRouteProcessor3_2ChainId,
+	isRouteProcessor3ChainId,
+	isRouteProcessorChainId,
+	ROUTE_PROCESSOR_3_1_ADDRESS,
+	ROUTE_PROCESSOR_3_2_ADDRESS,
+	ROUTE_PROCESSOR_3_ADDRESS,
+	ROUTE_PROCESSOR_ADDRESS,
 } from "@sushiswap/route-processor-sdk";
 import {Bridge, LiquidityProviders} from "@sushiswap/router";
 import {
-  classNames,
-  DialogConfirm,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogProvider,
-  DialogReview,
-  DialogTitle,
-  useToast,
+	classNames,
+	DialogConfirm,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogProvider,
+	DialogReview,
+	DialogTitle,
+	useToast,
 } from "@sushiswap/ui";
 import {Button} from "@sushiswap/ui/components/button";
 import {List} from "@sushiswap/ui/components/list/List";
 import {SkeletonBox, SkeletonText} from "@sushiswap/ui/components/skeleton";
 import {createErrorToast} from "@sushiswap/ui/components/toast";
 import {
-  useAccount,
-  useContractWrite,
-  useNetwork,
-  usePrepareContractWrite,
-  useWaitForTransaction,
+	useAccount,
+	useContractWrite,
+	useNetwork,
+	usePrepareContractWrite,
+	useWaitForTransaction,
 } from "@sushiswap/wagmi";
 import {SendTransactionResult, waitForTransaction,} from "@sushiswap/wagmi/actions";
 import {useBalanceWeb3Refetch, useTransactionAdder,} from "@sushiswap/wagmi/future/hooks";
@@ -163,14 +163,14 @@ export const SimpleSwapTradeReviewDialog: FC<{
 					toast({
 						variant: 'success',
 						description: 									<>
-							{isWrap ? "Wrap" : isUnwrap ? "Unwrap" : "Swap"}
+							{isWrap ? "Wrap" : isUnwrap ? "Unwrap" : "Swap"}{' '}
 							<b>
-								{trade.amountIn?.toSignificant(6)}
-								{trade.amountIn?.currency.symbol}
+								{trade.amountIn?.toSignificant(6)}{' '}
+								{trade.amountIn?.currency.symbol}{' '}
 							</b>
-							{isWrap ? "to" : isUnwrap ? "to" : "for"}
+							{isWrap ? "to" : isUnwrap ? "to" : "for"}{' '}
 							<b>
-								{trade.amountOut?.toSignificant(6)}
+								{trade.amountOut?.toSignificant(6)}{' '}
 								{trade.amountOut?.currency.symbol}{" "}
 							</b>
 						</>,
