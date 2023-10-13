@@ -1,5 +1,5 @@
 import https from 'https'
-import { MultiRoute, getBigInt } from '@sushiswap/tines'
+import { MultiRoute } from '@sushiswap/tines'
 import { ChainId } from 'sushi/chain'
 import { Token, Type, USDC, USDT } from 'sushi/currency'
 
@@ -38,7 +38,7 @@ async function getAPIObject(
   })
 }
 
-async function quote1InchV5(
+export async function quote1InchV5(
   chainId: ChainId,
   fromTokenAddress: string,
   toTokenAddress: string,
@@ -98,16 +98,16 @@ function getEnvironment(
   chainId: ChainId,
   lps: LiquidityProviders[],
 ): Environment {
-  let network
-  switch (chainId) {
-    case ChainId.ETHEREUM:
-      network = 'mainnet'
-      break
-    case ChainId.POLYGON:
-      network = 'matic'
-      break
-    default:
-  }
+  // let network
+  // switch (chainId) {
+  //   case ChainId.ETHEREUM:
+  //     network = 'mainnet'
+  //     break
+  //   case ChainId.POLYGON:
+  //     network = 'matic'
+  //     break
+  //   default:
+  // }
   const dataFetcher = new DataFetcher(chainId)
   dataFetcher.startDataFetching(lps)
 
@@ -157,6 +157,8 @@ function getProtocol(lp: LiquidityProviders, chainId: ChainId) {
       return `${prefix}TRIDENT`
     case LiquidityProviders.UniswapV2:
       return `${prefix}UNISWAP_V2`
+    default:
+      return 'Unknown protocol'
   }
 }
 
@@ -164,7 +166,7 @@ function getProtocols(lp: LiquidityProviders[], chainId: ChainId): string {
   return lp.map((l) => getProtocol(l, chainId)).join(',')
 }
 
-async function test(
+export async function test(
   env: Environment,
   from: Type,
   to: Type,
@@ -201,22 +203,22 @@ async function testTrident() {
   try {
     const chainId = ChainId.POLYGON
     const from = USDT[chainId]
-    const divisor = Math.pow(10, from.decimals)
+    //const divisor = Math.pow(10, from.decimals)
     const to = USDC[chainId]
-    const gasPrice = 100e9
+    //const gasPrice = 100e9
     const providers = [LiquidityProviders.Trident]
     const env = getEnvironment(chainId, providers)
     await delay(5000)
     env.dataFetcher.fetchPoolsForToken(from, to)
     await delay(5000)
-    for (let i = 6; i < 15; ++i) {
-      const amount = getBigInt(Math.pow(10, i)).toString()
-      const res = await test(env, from, to, amount, gasPrice, providers)
-      // console.log(
-      //   Math.pow(10, i) / divisor,
-      //   res.map((e) => e / divisor)
-      // )
-    }
+    // for (let i = 6; i < 15; ++i) {
+    //   const amount = getBigInt(Math.pow(10, i)).toString()
+    //   //const res = await test(env, from, to, amount, gasPrice, providers)
+    //   // console.log(
+    //   //   Math.pow(10, i) / divisor,
+    //   //   res.map((e) => e / divisor)
+    //   // )
+    // }
     env.dataFetcher.stopDataFetching()
   } catch (e) {
     console.log('Error', e)
