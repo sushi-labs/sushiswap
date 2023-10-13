@@ -1,12 +1,12 @@
-import { Chain, ChainId } from 'sushi/chain'
-import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { NetworkIcon } from '@sushiswap/ui/components/icons'
-import { createErrorToast } from '@sushiswap/ui/components/toast'
-import React, { FC, Suspense, useCallback } from 'react'
-import { ProviderRpcError, UserRejectedRequestError } from 'viem'
-import { useNetwork, useSwitchNetwork } from 'wagmi'
-import { useIsMounted } from '@sushiswap/hooks'
+import {Chain, ChainId} from 'sushi/chain'
+import {NetworkSelector, NetworkSelectorOnSelectCallback} from '@sushiswap/ui'
+import {Button} from '@sushiswap/ui/components/button'
+import {NetworkIcon} from '@sushiswap/ui/components/icons'
+import {createErrorToast} from '@sushiswap/ui/components/toast'
+import React, {FC, Suspense, useCallback} from 'react'
+import {ProviderRpcError, UserRejectedRequestError} from 'viem'
+import {useNetwork, useSwitchNetwork} from 'wagmi'
+import {useIsMounted} from '@sushiswap/hooks'
 
 export const HeaderNetworkSelector: FC<{
   networks: ChainId[]
@@ -50,7 +50,7 @@ export const HeaderNetworkSelector: FC<{
       onSelect={onSwitchNetwork}
       networks={networks}
     >
-      <Button variant="secondary" testId="network-selector">
+      <Button variant="outline" testId="network-selector">
         <Suspense fallback={null}>
           <NetworkIcon chainId={selected} width={20} height={20} />
           <div className="hidden xl:block">{Chain.from(selected)?.name}</div>
