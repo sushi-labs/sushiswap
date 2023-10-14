@@ -1,3 +1,4 @@
 module.exports = {
-  extends: 'next/core-web-vitals',
+  root: true,
+  extends: ['@sushiswap/eslint-config/next'],
 }

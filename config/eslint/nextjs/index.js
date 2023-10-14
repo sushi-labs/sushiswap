@@ -1,15 +1,44 @@
-// @ts-check
-/** @type {import('eslint').ESLint.ConfigData} */
-const eslintConfig = {
-  extends: ['@sushiswap/eslint-config', 'next/core-web-vitals'],
+const { resolve } = require('node:path')
+
+const project = resolve(process.cwd(), 'tsconfig.json')
+
+/*
+ * This is a custom ESLint configuration for use with
+ * Next.js apps.
+ *
+ * This config extends the Vercel Engineering Style Guide.
+ * For more information, see https://github.com/vercel/style-guide
+ *
+ */
+
+module.exports = {
+  extends: [
+    '@vercel/style-guide/eslint/node',
+    '@vercel/style-guide/eslint/typescript',
+    '@vercel/style-guide/eslint/browser',
+    '@vercel/style-guide/eslint/react',
+    '@vercel/style-guide/eslint/next',
+    // turborepo custom eslint configuration configures the following rules:
+    //  - https://github.com/vercel/turbo/blob/main/packages/eslint-plugin-turbo/docs/rules/no-undeclared-env-vars.md
+    'eslint-config-turbo',
+  ].map(require.resolve),
+  parserOptions: {
+    project,
+  },
+  globals: {
+    React: true,
+    JSX: true,
+  },
   settings: {
-    next: {
-      rootDir: ['apps/*/', 'examples/*/', 'packages/*/'],
+    'import/resolver': {
+      typescript: {
+        project,
+      },
     },
   },
+  ignorePatterns: ['node_modules/', 'dist/'],
+  // add rules configurations here
   rules: {
-    '@next/next/no-html-link-for-pages': 'warn',
+    'import/no-default-export': 'off',
   },
 }
-
-module.exports = eslintConfig

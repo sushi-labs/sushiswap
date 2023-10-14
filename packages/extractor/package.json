@@ -14,8 +14,8 @@
   },
   "license": "UNLICENSED",
   "author": "Ilya Lyalin",
+  "sideEffects": false,
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
   "files": [

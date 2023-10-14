@@ -17,26 +17,12 @@
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "exports": {
     "./base.json": "./base.json",
-    "./esm.json": "./esm.json",
     "./hardhat.json": "./hardhat.json",
-    "./nextjs.json": "./nextjs.json",
-    "./node18-strictest-esm.combined.json": "./node18-strictest-esm.combined.json",
-    "./node18-vercel.json": "./node18-vercel.json",
-    "./node18.json": "./node18.json",
-    "./react-library.json": "./react-library.json",
-    "./strictest.json": "./strictest.json",
-    "./recommended.json": "./recommended.json"
+    "./react-library.json": "./react-library.json"
   },
   "files": [
     "./base.json",
-    "./esm.json",
     "./hardhat.json",
-    "./nextjs.json",
-    "./node18-strictest-esm.combined.json",
-    "./node18-vercel.json",
-    "./node18.json",
-    "./react-library.json",
-    "./strictest.json",
-    "./recommended.json"
+    "./react-library.json"
   ]
 }

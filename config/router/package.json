@@ -16,24 +16,14 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewlilley.com>",
   "sideEffects": false,
-  "type": "module",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.ts"
-    },
-    "./package.json": "./package.json"
-  },
-  "main": "./dist/index.cjs",
-  "module": "dist/index.js",
+  "main": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --external @sushiswap/chain,@sushiswap/currency",
+    "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
@@ -45,9 +35,10 @@
   "dependencies": {},
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/typescript-config": "workspace:*",
+    "@tsconfig/esm": "1.0.4",
+    "@tsconfig/node18": "18.2.2",
+    "@tsconfig/strictest": "2.0.2",
     "sushi": "workspace:*",
-    "tsup": "7.2.0",
     "typescript": "5.2.2"
   },
   "peerDependencies": {

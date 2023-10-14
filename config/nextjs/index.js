@@ -6,6 +6,7 @@ const defaultNextConfig = {
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
   experimental: {
+    esmExternals: 'loose',
     optimizePackageImports: [
       '@heroicons-v1/react/20/solid',
       '@heroicons-v1/react/24/solid',
@@ -22,9 +23,6 @@ const defaultNextConfig = {
       'echarts-for-react',
       'sushi',
     ],
-  },
-  experimental: {
-    esmExternals: 'loose',
   },
   images: {
     loader: 'cloudinary',
