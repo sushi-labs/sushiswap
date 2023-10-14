@@ -9,8 +9,8 @@
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "sideEffects": true,
   "type": "module",
+  "sideEffects": true,
   "exports": {
     ".": "./src/index.ts",
     "./*": [
@@ -41,7 +41,9 @@
   ],
   "scripts": {
     "check": "tsc --pretty --noEmit",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "tsc --watch",
+    "test": "jest --passWithNoTests"
   },
   "dependencies": {
     "@ethersproject/address": "5.7.0",
@@ -71,6 +73,7 @@
     "@tanstack/react-query-persist-client": "4.28.0",
     "@uniswap/v2-core": "1.0.1",
     "@uniswap/v3-periphery": "1.4.1",
+    "abitype": "0.9.3",
     "next-themes": "0.2.1",
     "sushi": "workspace:*",
     "viem": "1.16.5",
@@ -84,7 +87,7 @@
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
     "@wagmi/core": "1.4.3",
-    "next": "13.5.4",
+    "next": "13.5.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.2.2",
@@ -93,7 +96,7 @@
   "peerDependencies": {
     "@sentry/nextjs": "7.74.0",
     "@wagmi/core": "1.4.3",
-    "next": "13.5.4",
+    "next": "13.5.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "wagmi": "1.4.3"
@@ -119,6 +122,6 @@
     }
   },
   "optionalDependencies": {
-    "next": "13.5.4"
+    "next": "13.5.3"
   }
 }

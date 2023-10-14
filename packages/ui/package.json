@@ -11,6 +11,7 @@
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "type": "module",
   "sideEffects": [
     "**/*.css"
   ],
@@ -91,7 +92,7 @@
     "classnames": "2.3.2",
     "clsx": "1.2.1",
     "cmdk": "0.2.0",
-    "date-fns": "2.29.3",
+    "date-fns": "2.30.0",
     "lucide-react": "0.258.0",
     "nanoid": "4.0.0",
     "next-themes": "0.2.1",
@@ -118,7 +119,7 @@
     "@types/react-virtualized-auto-sizer": "1.0.1",
     "@types/react-window": "1.8.5",
     "autoprefixer": "10.4.14",
-    "next": "13.5.4",
+    "next": "13.5.3",
     "postcss": "8.4.23",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -127,7 +128,7 @@
     "wagmi": "1.4.3"
   },
   "peerDependencies": {
-    "next": "13.5.4",
+    "next": "13.5.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwindcss": "3.3.2",

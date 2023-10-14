@@ -45,12 +45,12 @@
       "cache": false
     },
     "dev": {
-      "dependsOn": ["^build", "generate", "export"],
+      "dependsOn": ["^build", "generate"],
       "cache": false,
       "persistent": true
     },
     "generate": {
-      "outputs": [".graphclient/**/*", "src/generated.ts", "typechain"],
+      "outputs": [".mesh/**/*", ".graphclient/**/*", "src/generated.ts", "typechain"],
       "cache": false
     },
     "lint": {
@@ -83,9 +83,6 @@
       "env": []
     },
     "validate": {
-      "cache": true
-    },
-    "export": {
       "cache": true
     }
   }

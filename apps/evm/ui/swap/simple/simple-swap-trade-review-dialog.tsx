@@ -48,9 +48,9 @@ import {
 } from 'lib/swap/warningSeverity'
 import { log } from 'next-axiom'
 import React, { FC, ReactNode, useCallback, useRef } from 'react'
-import { shortenAddress } from 'sushi'
-import { ZERO } from 'sushi'
-import { calculateGasMargin } from 'sushi'
+import { shortenAddress } from 'sushi/format'
+import { ZERO } from 'sushi/math'
+import { gasMargin } from 'sushi/calculate'
 import { routeProcessor3Abi, routeProcessorAbi } from 'sushi/abi'
 import { Chain } from 'sushi/chain'
 import { Native } from 'sushi/currency'
@@ -201,7 +201,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
           ...config.request,
           gas:
             typeof config.request.gas === 'bigint'
-              ? calculateGasMargin(config.request.gas)
+              ? gasMargin(config.request.gas)
               : undefined,
         }
       : undefined,

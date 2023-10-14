@@ -60,9 +60,9 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { shortenAddress } from 'sushi'
-import { ZERO } from 'sushi'
-import { calculateGasMargin } from 'sushi'
+import { shortenAddress } from 'sushi/format'
+import { ZERO } from 'sushi/math'
+import { gasMargin } from 'sushi/calculate'
 import { Chain, chainName } from 'sushi/chain'
 import { UserRejectedRequestError, stringify } from 'viem'
 
@@ -201,7 +201,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
           ...config.request,
           gas:
             typeof config.request.gas === 'bigint'
-              ? calculateGasMargin(config.request.gas)
+              ? gasMargin(config.request.gas)
               : undefined,
         }
       : undefined,

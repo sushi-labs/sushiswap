@@ -41,13 +41,13 @@ const AvatarImage = React.forwardRef<
       ref={ref}
       className={classNames('aspect-square h-full w-full', className)}
     >
-      <Image
+      {/* <Image
         loader={loader}
         alt="avatar"
         src={src}
         width={_width}
         height={_width}
-      />
+      /> */}
     </AvatarPrimitive.Image>
   )
 })

@@ -36,9 +36,8 @@ import {
 } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { Percent } from 'sushi'
-import { calculateGasMargin } from 'sushi'
-import { slippageAmount } from 'sushi/calculate'
+import { Percent } from 'sushi/math'
+import { slippageAmount, gasMargin } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
 import { Amount, Native } from 'sushi/currency'
 import { encodeFunctionData } from 'viem'
@@ -246,7 +245,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
         const safeGasEstimates = await Promise.all(
           config.functionNames.map((methodName) =>
             contract.estimateGas[methodName](config.args as any)
-              .then(calculateGasMargin)
+              .then(gasMargin)
               .catch((e) => {
                 console.error(e)
                 return undefined

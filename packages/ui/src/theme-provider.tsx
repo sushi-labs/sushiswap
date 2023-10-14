@@ -3,15 +3,18 @@
 import { ThemeProvider as NextThemeProvider } from 'next-themes'
 import { FC, ReactNode } from 'react'
 
-import { ToastContainer } from './components'
 import { OnramperProvider } from './components/onramper'
+import { ToastContainer } from './components/toast'
 
-interface ThemeProvider {
-  children: ReactNode | Array<ReactNode>
+interface ThemeProviderProps {
+  children: ReactNode | ReactNode[]
   forcedTheme?: string
 }
 
-export const ThemeProvider: FC<ThemeProvider> = ({ children, forcedTheme }) => {
+export const ThemeProvider: FC<ThemeProviderProps> = ({
+  children,
+  forcedTheme,
+}) => {
   return (
     <NextThemeProvider
       attribute="class"

@@ -1,11 +1,8 @@
-import {
-  Button,
-  Container,
-  LinkExternal,
-  LinkInternal,
-  Separator,
-  typographyVariants,
-} from '@sushiswap/ui'
+import { typographyVariants } from '@sushiswap/ui/components/typography'
+import { Button } from '@sushiswap/ui/components/button'
+import { Container } from '@sushiswap/ui/components/container'
+import { LinkExternal, LinkInternal } from '@sushiswap/ui/components/link'
+import { Separator } from '@sushiswap/ui/components/separator'
 import { Metadata } from 'next'
 import React from 'react'
 import { CollabHubImage } from './collab-hub-image'

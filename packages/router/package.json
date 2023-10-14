@@ -44,7 +44,7 @@
     "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",
-    "date-fns": "2.29.3",
+    "date-fns": "2.30.0",
     "ethers": "5.7.2",
     "lodash.flatmap": "^4.5.0",
     "node-fetch": "2.6.6",
