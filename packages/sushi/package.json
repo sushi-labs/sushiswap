@@ -80,7 +80,7 @@
       "calculate": [
         "./dist/calculate/index.d.ts"
       ],
-    "chain": [
+      "chain": [
         "./dist/chain/index.d.ts"
       ],
       "convert": [
