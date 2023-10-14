@@ -67,10 +67,11 @@ jobs:
     name: Types
     needs: format
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    # timeout-minutes: 5
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
+
       - name: Install dependencies
         uses: ./.github/actions/install
       - name: Check types
@@ -83,6 +84,6 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v4
       - name: Install dependencies
-        uses: ./.github/actions/install-dependencies
+        uses: ./.github/actions/install
       - name: Test packages
         run: pnpm exec turbo run test --filter=./packages/*
