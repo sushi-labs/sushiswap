@@ -38,24 +38,13 @@ import {
 } from '../static-pool-fetcher/Trident'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
+import { convertTokenToBento } from '@sushiswap/tines'
+
 export function convertToNumbers(arr: bigint[]): (number | undefined)[] {
   return arr.map((a) => {
     if (a === undefined) return undefined
     return parseInt(a.toString(16), 16)
   })
-}
-
-export function getBentoChainId(chainId: string | number | undefined): string {
-  return `Bento ${chainId}`
-}
-
-export function convertTokenToBento(token: Token): RToken {
-  const t: RToken = { ...token } as RToken
-  t.chainId = getBentoChainId(token.chainId)
-  t.name = getBentoChainId(token.name)
-  t.symbol = getBentoChainId(token.symbol)
-  delete t.tokenId
-  return t
 }
 
 interface PoolInfo {

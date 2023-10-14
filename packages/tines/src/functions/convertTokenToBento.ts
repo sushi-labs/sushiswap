@@ -1,9 +1,6 @@
 import { Token } from 'sushi/currency'
-import { RToken } from '@sushiswap/tines'
-
-export function getBentoChainId(chainId: string | number | undefined): string {
-  return `Bento ${chainId}`
-}
+import { RToken } from '../PrimaryPools'
+import { getBentoChainId } from './getBentoChainId'
 
 export function convertTokenToBento(token: Token): RToken {
   const t: RToken = { ...token } as RToken

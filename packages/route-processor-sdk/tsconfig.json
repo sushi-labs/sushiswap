@@ -1,13 +1,12 @@
 {
-  "extends": "@sushiswap/typescript-config/node18.json",
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node18/tsconfig"],
   "include": ["src"],
+  "exclude": ["node_modules", "dist", ".turbo"],
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
+    "sourceMap": true
   }
 }

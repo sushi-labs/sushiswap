@@ -1,7 +1,7 @@
 import { balanceOfAbi } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { Token } from 'sushi/currency'
-import { convertTokenToBento } from '@sushiswap/router/dist/liquidity-providers/Trident'
+import { convertTokenToBento } from '@sushiswap/tines'
 import { BridgeBento, Rebase, RToken } from '@sushiswap/tines'
 import { Address, readContracts } from 'wagmi'
 

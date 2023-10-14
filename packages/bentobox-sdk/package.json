@@ -36,7 +36,9 @@
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/typescript-config": "workspace:*",
+    "@tsconfig/esm": "1.0.4",
+    "@tsconfig/node18": "18.2.2",
+    "@tsconfig/strictest": "2.0.2",
     "@types/node": "18",
     "typescript": "5.2.2"
   }

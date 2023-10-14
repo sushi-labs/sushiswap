@@ -1363,9 +1363,15 @@ importers:
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
-      '@sushiswap/typescript-config':
-        specifier: workspace:*
-        version: link:../../config/typescript
+      '@tsconfig/esm':
+        specifier: 1.0.4
+        version: 1.0.4
+      '@tsconfig/node18':
+        specifier: 18.2.2
+        version: 18.2.2
+      '@tsconfig/strictest':
+        specifier: 2.0.2
+        version: 2.0.2
       '@types/node':
         specifier: '18'
         version: 18.17.5
@@ -1379,9 +1385,15 @@ importers:
         specifier: workspace:*
         version: link:../sushi
     devDependencies:
-      '@sushiswap/typescript-config':
-        specifier: workspace:*
-        version: link:../../config/typescript
+      '@tsconfig/esm':
+        specifier: 1.0.4
+        version: 1.0.4
+      '@tsconfig/node18':
+        specifier: 18.2.2
+        version: 18.2.2
+      '@tsconfig/strictest':
+        specifier: 2.0.2
+        version: 2.0.2
       '@types/node':
         specifier: '18'
         version: 18.17.5
@@ -1401,9 +1413,15 @@ importers:
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
-      '@sushiswap/typescript-config':
-        specifier: workspace:*
-        version: link:../../config/typescript
+      '@tsconfig/esm':
+        specifier: 1.0.4
+        version: 1.0.4
+      '@tsconfig/node18':
+        specifier: 18.2.2
+        version: 18.2.2
+      '@tsconfig/strictest':
+        specifier: 2.0.2
+        version: 2.0.2
       '@types/node':
         specifier: '18'
         version: 18.17.5
@@ -1865,9 +1883,15 @@ importers:
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
-      '@sushiswap/typescript-config':
-        specifier: workspace:*
-        version: link:../../config/typescript
+      '@tsconfig/esm':
+        specifier: 1.0.4
+        version: 1.0.4
+      '@tsconfig/node18':
+        specifier: 18.2.2
+        version: 18.2.2
+      '@tsconfig/strictest':
+        specifier: 2.0.2
+        version: 2.0.2
       '@types/node':
         specifier: '18'
         version: 18.17.5
@@ -2064,9 +2088,15 @@ importers:
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
-      '@sushiswap/typescript-config':
-        specifier: workspace:*
-        version: link:../../config/typescript
+      '@tsconfig/esm':
+        specifier: 1.0.4
+        version: 1.0.4
+      '@tsconfig/node18':
+        specifier: 18.2.2
+        version: 18.2.2
+      '@tsconfig/strictest':
+        specifier: 2.0.2
+        version: 2.0.2
       '@types/node':
         specifier: '18'
         version: 18.17.5
@@ -2150,9 +2180,15 @@ importers:
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
-      '@sushiswap/typescript-config':
-        specifier: workspace:*
-        version: link:../../config/typescript
+      '@tsconfig/esm':
+        specifier: 1.0.4
+        version: 1.0.4
+      '@tsconfig/node18':
+        specifier: 18.2.2
+        version: 18.2.2
+      '@tsconfig/strictest':
+        specifier: 2.0.2
+        version: 2.0.2
       '@types/jest':
         specifier: 29.5.5
         version: 29.5.5
@@ -2413,9 +2449,15 @@ importers:
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
-      '@sushiswap/typescript-config':
-        specifier: workspace:*
-        version: link:../../config/typescript
+      '@tsconfig/esm':
+        specifier: 1.0.4
+        version: 1.0.4
+      '@tsconfig/node18':
+        specifier: 18.2.2
+        version: 18.2.2
+      '@tsconfig/strictest':
+        specifier: 2.0.2
+        version: 2.0.2
       '@types/jest':
         specifier: 29.5.5
         version: 29.5.5
@@ -2477,9 +2519,15 @@ importers:
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
-      '@sushiswap/typescript-config':
-        specifier: workspace:*
-        version: link:../../config/typescript
+      '@tsconfig/esm':
+        specifier: 1.0.4
+        version: 1.0.4
+      '@tsconfig/node18':
+        specifier: 18.2.2
+        version: 18.2.2
+      '@tsconfig/strictest':
+        specifier: 2.0.2
+        version: 2.0.2
       '@types/jest':
         specifier: 29.5.5
         version: 29.5.5

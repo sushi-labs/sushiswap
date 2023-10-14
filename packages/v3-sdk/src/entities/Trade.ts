@@ -1,11 +1,11 @@
-import { sortedInsert, TradeType } from '@sushiswap/amm'
+import { TradeType, sortedInsert } from '@sushiswap/amm'
+import { Fraction, Percent } from 'sushi'
 import {
   Amount as CurrencyAmount,
   Currency,
   Price,
   Token,
 } from 'sushi/currency'
-import { Fraction, Percent } from 'sushi'
 import invariant from 'tiny-invariant'
 
 import { Route } from './Route'
@@ -98,7 +98,7 @@ export class Trade<
    * i.e. which pools the trade goes through.
    */
   public get route(): Route<TInput, TOutput> {
-    invariant(this.swaps.length == 1, 'MULTIPLE_ROUTES')
+    invariant(this.swaps.length === 1, 'MULTIPLE_ROUTES')
     return this.swaps[0].route
   }
 
@@ -179,15 +179,15 @@ export class Trade<
    * The price expressed in terms of output amount/input amount.
    */
   public get executionPrice(): Price<TInput, TOutput> {
-    return (
-      this._executionPrice ??
-      (this._executionPrice = new Price(
+    if (!this._executionPrice) {
+      this._executionPrice = new Price(
         this.inputAmount.currency,
         this.outputAmount.currency,
         this.inputAmount.quotient,
         this.outputAmount.quotient,
-      ))
-    )
+      )
+    }
+    return this._executionPrice
   }
 
   /**
@@ -519,7 +519,7 @@ export class Trade<
       }
     }
 
-    invariant(numPools == poolAddressSet.size, 'POOLS_DUPLICATED')
+    invariant(numPools === poolAddressSet.size, 'POOLS_DUPLICATED')
 
     this.swaps = routes
     this.tradeType = tradeType

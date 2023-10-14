@@ -5,8 +5,9 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "declaration": false,
-    "declarationMap": false,
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
     "target": "ES2020"
    }
 }
