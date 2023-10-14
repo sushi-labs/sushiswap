@@ -32,7 +32,7 @@ import {
   ApplyForTokenListListType,
   ApplyForTokenListTokenSchema,
   ApplyForTokenListTokenSchemaType,
-} from './api/submit/schema'
+} from './schema'
 
 export default function Partner() {
   const methods = useForm<ApplyForTokenListTokenSchemaType>({

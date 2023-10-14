@@ -8,7 +8,7 @@ import { Octokit } from 'octokit'
 import { formatUSD } from 'sushi'
 import { ChainId, ChainKey } from 'sushi/chain'
 
-import { ApplyForTokenListTokenSchemaType } from './schema'
+import { ApplyForTokenListTokenSchemaType } from '../../schema'
 
 const owner = 'sushiswap'
 
