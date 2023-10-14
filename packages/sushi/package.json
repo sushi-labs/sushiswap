@@ -23,13 +23,33 @@
       "types": "./dist/abi/index.d.ts",
       "default": "./dist/abi/index.js"
     },
+    "./calculate": {
+      "types": "./dist/calculate/index.d.ts",
+      "default": "./dist/calculate/index.js"
+    },
     "./chain": {
       "types": "./dist/chain/index.d.ts",
       "default": "./dist/chain/index.js"
     },
+    "./convert": {
+      "types": "./dist/convert/index.d.ts",
+      "default": "./dist/convert/index.js"
+    },
     "./currency": {
       "types": "./dist/currency/index.d.ts",
       "default": "./dist/currency/index.js"
+    },
+    "./format": {
+      "types": "./dist/format/index.d.ts",
+      "default": "./dist/format/index.js"
+    },
+    "./gas": {
+      "types": "./dist/gas/index.d.ts",
+      "default": "./dist/gas/index.js"
+    },
+    "./log": {
+      "types": "./dist/log/index.d.ts",
+      "default": "./dist/log/index.js"
     },
     "./math": {
       "types": "./dist/math/index.d.ts",
@@ -43,6 +63,10 @@
       "types": "./dist/types/index.d.ts",
       "default": "./dist/types/index.js"
     },
+    "./validate": {
+      "types": "./dist/validate/index.d.ts",
+      "default": "./dist/validate/index.js"
+    },
     "./package.json": "./package.json"
   },
   "main": "dist/index.js",
@@ -53,11 +77,26 @@
       "abi": [
         "./dist/abi/index.d.ts"
       ],
+      "calculate": [
+        "./dist/calculate/index.d.ts"
+      ],
       "chain": [
         "./dist/chain/index.d.ts"
       ],
+      "convert": [
+        "./dist/convert/index.d.ts"
+      ],
       "currency": [
         "./dist/currency/index.d.ts"
+      ],
+      "format": [
+        "./dist/format/index.d.ts"
+      ],
+      "gas": [
+        "./dist/gas/index.d.ts"
+      ],
+      "log": [
+        "./dist/log/index.d.ts"
       ],
       "math": [
         "./dist/math/index.d.ts"
@@ -67,6 +106,9 @@
       ],
       "types": [
         "./dist/types/index.d.ts"
+      ],
+      "validate": [
+        "./dist/validate/index.d.ts"
       ]
     }
   },
