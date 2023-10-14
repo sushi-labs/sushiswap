@@ -1,5 +1,5 @@
-import { db } from '../db'
-import type { ChainId } from 'sushi/chain'
+import {db} from '../db'
+import type {ChainId} from 'sushi/chain'
 
 type TransactionStatus = 'success' | 'pending' | 'reverted' | 'replaced'
 
@@ -29,7 +29,7 @@ const editTransactionStatus = async ({
     .then(() => ({ id, status }))
 }
 
-const getTransactions = async (account: `0x${string}` | undefined) =>
+const getTransactions = async (account: `0x${string}` | undefined): Promise<Transaction[]> =>
   account
     ? await db
         .table('transactions')
