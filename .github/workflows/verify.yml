@@ -67,7 +67,7 @@ jobs:
     name: Types
     needs: format
     runs-on: ubuntu-latest
-    # timeout-minutes: 5
+    timeout-minutes: 5
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
