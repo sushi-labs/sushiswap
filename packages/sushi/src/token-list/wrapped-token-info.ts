@@ -1,7 +1,7 @@
-import { getAddress, isAddress } from '@ethersproject/address'
+import type { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
 import type { ChainId } from 'sushi/chain'
 import { Token, Type } from 'sushi/currency'
-import type { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
+import { getAddress, isAddress } from 'viem'
 
 type TagDetails = Tags[keyof Tags]
 
@@ -15,7 +15,7 @@ export class WrappedTokenInfo implements Token {
   public readonly id: string
   public readonly isNative = false as const
   public readonly isToken = true as const
-  public readonly list?: TokenList
+  public readonly list?: TokenList | undefined
 
   public readonly tokenInfo: TokenInfo
 
@@ -31,8 +31,8 @@ export class WrappedTokenInfo implements Token {
     if (this._checksummedAddress) return this._checksummedAddress
     if (!isAddress(this.tokenInfo.address))
       throw new Error(`Invalid token address: ${this.tokenInfo.address}`)
-    const checksummedAddress = getAddress(this.tokenInfo.address)
-    return (this._checksummedAddress = checksummedAddress)
+    this._checksummedAddress = getAddress(this.tokenInfo.address)
+    return this._checksummedAddress
   }
 
   public get chainId(): ChainId {
@@ -58,16 +58,22 @@ export class WrappedTokenInfo implements Token {
   private _tags: TagInfo[] | null = null
   public get tags(): TagInfo[] {
     if (this._tags !== null) return this._tags
-    if (!this.tokenInfo.tags) return (this._tags = [])
+    if (!this.tokenInfo.tags) {
+      this._tags = []
+      return this._tags
+    }
     const listTags = this.list?.tags
-    if (!listTags) return (this._tags = [])
-
-    return (this._tags = this.tokenInfo.tags.map((tagId) => {
+    if (!listTags) {
+      this._tags = []
+      return this._tags
+    }
+    this._tags = this.tokenInfo.tags.map((tagId) => {
       return {
         ...listTags[tagId],
         id: tagId,
-      }
-    }))
+      } as TagInfo
+    })
+    return this._tags
   }
 
   equals(other: Type): boolean {

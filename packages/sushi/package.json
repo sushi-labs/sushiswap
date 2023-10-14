@@ -35,6 +35,10 @@
       "types": "./dist/math/index.d.ts",
       "default": "./dist/math/index.js"
     },
+    "./token-list": {
+      "types": "./dist/token-list/index.d.ts",
+      "default": "./dist/token-list/index.js"
+    },
     "./types": {
       "types": "./dist/types/index.d.ts",
       "default": "./dist/types/index.js"
@@ -58,6 +62,9 @@
       "math": [
         "./dist/math/index.d.ts"
       ],
+      "token-list": [
+        "./dist/token-list/index.d.ts"
+      ],
       "types": [
         "./dist/types/index.d.ts"
       ]
@@ -75,6 +82,7 @@
     "test": "vitest -c ./test/vitest.config.ts dev"
   },
   "dependencies": {
+    "@uniswap/token-lists": "1.0.0-beta.33",
     "big.js": "6.1.1",
     "decimal.js-light": "2.5.1",
     "numeral": "2.0.6",

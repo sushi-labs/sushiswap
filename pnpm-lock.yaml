@@ -772,9 +772,6 @@ importers:
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../../packages/tines
-      '@sushiswap/token-lists':
-        specifier: workspace:*
-        version: link:../../packages/token-lists
       '@sushiswap/trident-sdk':
         specifier: workspace:*
         version: link:../../packages/trident-sdk
@@ -808,9 +805,6 @@ importers:
       '@tanstack/react-table':
         specifier: 8.9.1
         version: 8.9.1(react-dom@18.2.0)(react@18.2.0)
-      '@uniswap/token-lists':
-        specifier: 1.0.0-beta.30
-        version: 1.0.0-beta.30
       '@upstash/ratelimit':
         specifier: 0.4.4
         version: 0.4.4
@@ -2008,6 +2002,9 @@ importers:
 
   packages/sushi:
     dependencies:
+      '@uniswap/token-lists':
+        specifier: 1.0.0-beta.33
+        version: 1.0.0-beta.33
       big.js:
         specifier: 6.1.1
         version: 6.1.1
@@ -2119,46 +2116,6 @@ importers:
       viem:
         specifier: 1.16.2
         version: 1.16.2(typescript@5.2.2)(zod@3.22.4)
-
-  packages/token-lists:
-    dependencies:
-      '@ethersproject/address':
-        specifier: 5.7.0
-        version: 5.7.0
-      '@uniswap/token-lists':
-        specifier: ^1.0.0-beta.31
-        version: 1.0.0-beta.33
-      sushi:
-        specifier: workspace:*
-        version: link:../sushi
-      tiny-invariant:
-        specifier: 1.3.1
-        version: 1.3.1
-    devDependencies:
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../../config/jest
-      '@sushiswap/typescript-config':
-        specifier: workspace:*
-        version: link:../../config/typescript
-      '@types/jest':
-        specifier: 29.5.5
-        version: 29.5.5
-      '@types/node':
-        specifier: '18'
-        version: 18.17.5
-      '@types/react':
-        specifier: 18.2.14
-        version: 18.2.14
-      jest:
-        specifier: 29.7.0
-        version: 29.7.0(@types/node@18.17.5)(ts-node@10.9.1)
-      react:
-        specifier: 18.2.0
-        version: 18.2.0
-      typescript:
-        specifier: 5.2.2
-        version: 5.2.2
 
   packages/trident-sdk:
     dependencies:
@@ -2298,9 +2255,6 @@ importers:
       '@sushiswap/tailwindcss-config':
         specifier: workspace:*
         version: link:../../config/tailwindcss
-      '@sushiswap/token-lists':
-        specifier: workspace:*
-        version: link:../token-lists
       '@tailwindcss/aspect-ratio':
         specifier: 0.4.2
         version: 0.4.2(tailwindcss@3.3.2)
@@ -17363,11 +17317,6 @@ packages:
       hardhat-watcher: 2.5.0(hardhat@2.17.0)
     transitivePeerDependencies:
       - hardhat
-    dev: false
-
-  /@uniswap/token-lists@1.0.0-beta.30:
-    resolution: {integrity: sha512-HwY2VvkQ8lNR6ks5NqQfAtg+4IZqz3KV1T8d2DlI8emIn9uMmaoFbIOg0nzjqAVKKnZSbMTRRtUoAh6mmjRvog==}
-    engines: {node: '>=10'}
     dev: false
 
   /@uniswap/token-lists@1.0.0-beta.33:
