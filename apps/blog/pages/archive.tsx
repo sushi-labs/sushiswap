@@ -3,7 +3,7 @@ import { useDebounce } from '@sushiswap/hooks'
 import { LinkInternal } from '@sushiswap/ui'
 import { Container } from '@sushiswap/ui/components/container'
 import type { InferGetServerSidePropsType } from 'next'
-import type { FC} from 'react';
+import type { FC } from 'react'
 import { useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import type { Article, Category, Collection } from 'types'
@@ -121,14 +121,17 @@ const _Archive: FC = () => {
               <div className="flex items-center order-1 w-full gap-3 px-3 md:w-auto md:order-2 rounded-xl bg-slate-800 focus-within:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
                 <input
                   className="w-full font-medium placeholder:text-sm h-[40px] text-slate-300 bg-transparent text-base !ring-0 !outline-0"
-                  onChange={(e) => { setQuery(e.target.value); }}
+                  onChange={(e) => {
+                    setQuery(e.target.value)
+                  }}
                   placeholder="Search in Archive..."
                 />
                 <SearchIcon className="text-slate-500" height={24} width={24} />
               </div>
             </div>
             <div className="border-t border-b divide-y divide-slate-200/5 border-slate-200/5">
-              {articleList ? <ArticleList
+              {articleList ? (
+                <ArticleList
                   articles={articleList as Article[]}
                   loading={loading}
                   render={(article) => (
@@ -137,14 +140,17 @@ const _Archive: FC = () => {
                       key={`article__left__${article.attributes.slug}`}
                     />
                   )}
-                /> : null}
+                />
+              ) : null}
             </div>
             <div className="flex justify-center">
-              {articlesMeta ? <Pagination
+              {articlesMeta ? (
+                <Pagination
                   onPage={setPage}
                   page={articlesMeta.pagination.page}
                   pages={articlesMeta.pagination.pageCount}
-                /> : null}
+                />
+              ) : null}
             </div>
           </Container>
         </section>

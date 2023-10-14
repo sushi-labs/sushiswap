@@ -1,5 +1,5 @@
 import { Toggle } from '@sushiswap/ui/components/toggle'
-import type { Dispatch, FC, SetStateAction} from 'react';
+import type { Dispatch, FC, SetStateAction } from 'react'
 import { useCallback } from 'react'
 import type { Category } from 'types'
 
@@ -33,7 +33,9 @@ export const Categories: FC<Categories> = ({
         return (
           <Toggle
             key={category.id}
-            onPressedChange={() => { handleSelect(category.id ); }}
+            onPressedChange={() => {
+              handleSelect(category.id)
+            }}
             pressed={Boolean(selected.includes(category.id))}
           >
             {category.attributes.name}

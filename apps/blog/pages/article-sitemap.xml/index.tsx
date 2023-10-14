@@ -1,5 +1,5 @@
 import type { GetServerSideProps } from 'next'
-import type { ISitemapField } from 'next-sitemap';
+import type { ISitemapField } from 'next-sitemap'
 import { getServerSideSitemap } from 'next-sitemap'
 import { getAllArticlesBySlug } from '../../lib/api'
 

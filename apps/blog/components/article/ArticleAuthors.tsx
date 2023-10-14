@@ -16,17 +16,20 @@ export const ArticleAuthors: FC<ArticleAuthors> = ({ article }) => {
             key={author.attributes.email}
           >
             <div className="relative mr-3 overflow-hidden rounded-full w-9 h-9 bg-slate-800">
-              {author.attributes.avatar.data ? <Image
+              {author.attributes.avatar.data ? (
+                <Image
                   height={64}
                   image={author.attributes.avatar.data}
                   width={64}
-                /> : null}
+                />
+              ) : null}
             </div>
             <div className="text-sm leading-4">
               <div className="font-medium text-slate-200">
                 {author.attributes.name}
               </div>
-              {author.attributes.handle ? <div className="mt-1">
+              {author.attributes.handle ? (
+                <div className="mt-1">
                   <a
                     className="font-medium text-sky-400"
                     href={`https://twitter.com/${author.attributes.handle}`}
@@ -35,7 +38,8 @@ export const ArticleAuthors: FC<ArticleAuthors> = ({ article }) => {
                   >
                     @{author.attributes.handle}
                   </a>
-                </div> : null}
+                </div>
+              ) : null}
             </div>
           </li>
         ))}

@@ -20,7 +20,8 @@ export const ArticleFooter: FC<ArticleFooter> = ({ articles }) => {
             <h3 className="order-1 text-lg font-semibold text-slate-200">
               {article.attributes.title}
             </h3>
-            {article.attributes.publishedAt ? <time
+            {article.attributes.publishedAt ? (
+              <time
                 className="text-sm leading-7 text-slate-400"
                 dateTime={article.attributes.publishedAt}
               >
@@ -28,7 +29,8 @@ export const ArticleFooter: FC<ArticleFooter> = ({ articles }) => {
                   new Date(article.attributes.publishedAt),
                   'dd MMM yyyy',
                 )}
-              </time> : null}
+              </time>
+            ) : null}
             <Button
               asChild
               className="order-1 mt-6"
