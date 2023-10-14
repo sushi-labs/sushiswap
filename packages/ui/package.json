@@ -16,7 +16,7 @@
   ],
   "exports": {
     "./index.css": "./index.css",
-    "./DatePicker.css": "./DatePicker.css",
+    "./date-picker.css": "./date-picker.css",
     "./tailwind.js": "./tailwind.js",
     ".": [
       "./dist/index.js"
@@ -43,7 +43,7 @@
   "files": [
     "dist",
     "index.css",
-    "DatePicker.css",
+    "date-picker.css",
     "tailwind.js"
   ],
   "scripts": {
