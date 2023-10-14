@@ -8,7 +8,7 @@ import { Octokit } from 'octokit'
 import { formatUSD } from 'sushi'
 import { ChainId, ChainKey } from 'sushi/chain'
 
-import { ApplyForTokenListTokenSchemaType } from '../../../../../lib/tokenlist-request/ApplyForTokenListSchema'
+import { ApplyForTokenListTokenSchemaType } from './schema'
 
 const owner = 'sushiswap'
 
@@ -171,7 +171,7 @@ export async function POST(request: NextRequest) {
       message: `Upload ${displayName} icon`,
       sha: previousImageFileSha,
     })
-  } catch (e) {
+  } catch (e: unknown) {
     return NextResponse.json(
       { error: 'Failed to add token image' },
       { status: 500 },

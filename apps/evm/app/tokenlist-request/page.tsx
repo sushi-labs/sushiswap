@@ -27,12 +27,12 @@ import { DropzoneOptions, useDropzone } from 'react-dropzone'
 import { useForm } from 'react-hook-form'
 import { Chain, ChainId } from 'sushi/chain'
 
-import { SUPPORTED_CHAIN_IDS } from '../../../config'
+import { SUPPORTED_CHAIN_IDS } from '../../config'
 import {
   ApplyForTokenListListType,
   ApplyForTokenListTokenSchema,
   ApplyForTokenListTokenSchemaType,
-} from '../../../lib/tokenlist-request/ApplyForTokenListSchema'
+} from './api/submit/schema'
 
 export default function Partner() {
   const methods = useForm<ApplyForTokenListTokenSchemaType>({

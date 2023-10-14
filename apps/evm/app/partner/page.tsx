@@ -8,8 +8,8 @@ import {
 } from '@sushiswap/ui'
 import { Metadata } from 'next'
 import React from 'react'
-import { CollabHubImage } from 'ui/(landing)/partner/CollabHubImage'
-import { FarmerImage } from 'ui/(landing)/partner/FarmerImage'
+import { CollabHubImage } from './collab-hub-image'
+import { FarmerImage } from './farmer-image'
 
 export const metadata: Metadata = {
   title: 'Partner Portal',
