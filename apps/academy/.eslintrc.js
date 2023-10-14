@@ -1,4 +1,4 @@
 module.exports = {
-  root: true,
-  extends: ['sushi/next'],
+  // extends: ['sushi/next'],
+  extends: 'next/core-web-vitals',
 }

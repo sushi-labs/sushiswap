@@ -18,6 +18,8 @@ module.exports = {
     '@vercel/style-guide/eslint/browser',
     '@vercel/style-guide/eslint/react',
     '@vercel/style-guide/eslint/next',
+    // turborepo custom eslint configuration configures the following rules:
+    //  - https://github.com/vercel/turbo/blob/main/packages/eslint-plugin-turbo/docs/rules/no-undeclared-env-vars.md
     'eslint-config-turbo',
   ].map(require.resolve),
   parserOptions: {

@@ -1,9 +1,8 @@
 import { ArticleJsonLd } from 'next-seo'
-import { FC } from 'react'
+import type { FC } from 'react'
 import useSWR from 'swr'
-
+import type { ArticleEntityResponseCollection } from '../../.mesh'
 import SEO from '../../next-seo.config'
-import { ArticleEntityResponseCollection } from '.mesh'
 
 export const BlogSeo: FC = () => {
   const { data: articlesData } =
@@ -11,14 +10,14 @@ export const BlogSeo: FC = () => {
 
   return (
     <ArticleJsonLd
+      authorName="Sushi"
+      dateModified={articlesData?.data[0].attributes?.updatedAt}
+      datePublished={articlesData?.data[0].attributes?.publishedAt}
+      description={SEO.description}
+      images={SEO.openGraph.images}
+      title={SEO.title}
       type="Blog"
       url={SEO.openGraph.url}
-      title={SEO.title}
-      description={SEO.description}
-      authorName="Sushi"
-      images={SEO.openGraph.images}
-      datePublished={articlesData?.data[0].attributes?.publishedAt}
-      dateModified={articlesData?.data[0].attributes?.updatedAt}
     />
   )
 }
