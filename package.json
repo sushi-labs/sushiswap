@@ -47,8 +47,7 @@
       "graphql": "16.6.0",
       "typescript": "5.2.2",
       "@types/react": "18.2.14",
-      "@types/react-dom": "18.2.6",
-      "@babel/core": "7.22.10"
+      "@types/react-dom": "18.2.6"
     }
   }
 }

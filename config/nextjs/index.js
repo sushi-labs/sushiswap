@@ -11,25 +11,7 @@ const defaultNextConfig = {
       '@heroicons-v1/react/20/solid',
       '@heroicons-v1/react/24/solid',
       '@heroicons-v1/react/24/outline',
-      '@sushiswap/client',
-      '@sushiswap/dexie',
-      '@sushiswap/graph-client',
-      '@sushiswap/hooks',
-      '@sushiswap/react-query',
-      '@sushiswap/router',
-      '@sushiswap/tines',
       '@sushiswap/ui',
-      '@sushiswap/v2-sdk',
-      '@sushiswap/v3-sdk',
-      '@sushiswap/wagmi',
-      'd3',
-      'date-fns',
-      'echarts',
-      'echarts-for-react',
-      'framer-motion',
-      'octokit',
-      'react-dropzone',
-      'react-hook-form',
       'sushi',
     ],
   },
@@ -62,10 +44,10 @@ const defaultNextConfig = {
       }
     }
 
-    // config.module = {
-    //   ...config.module,
-    //   exprContextCritical: false,
-    // }
+    config.module = {
+      ...config.module,
+      exprContextCritical: false,
+    }
 
     return config
   },
