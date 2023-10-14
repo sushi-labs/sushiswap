@@ -28,16 +28,18 @@
     "prepublishOnly": "pnpm build"
   },
   "jest": {
-    "preset": "@sushiswap/jest-config/node"
+    "preset": "@sushiswap/jest-config"
   },
   "dependencies": {
     "sushi": "workspace:*"
   },
   "devDependencies": {
+    "@sushiswap/jest-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/node18": "18.2.2",
     "@tsconfig/strictest": "2.0.2",
     "@types/node": "18",
+    "jest": "29.7.0",
     "typescript": "5.2.2"
   }
 }

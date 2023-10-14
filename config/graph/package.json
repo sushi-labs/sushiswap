@@ -30,13 +30,14 @@
     "test": "jest --passWithNoTests"
   },
   "jest": {
-    "preset": "@sushiswap/jest-config/node"
+    "preset": "@sushiswap/jest-config"
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/node18": "18.2.2",
     "@tsconfig/strictest": "2.0.2",
+    "jest": "29.7.0",
     "sushi": "workspace:*",
     "typescript": "5.2.2"
   },

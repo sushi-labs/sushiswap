@@ -1,9 +1,9 @@
 {
-  "extends": "@sushiswap/typescript-config/esm.json",
   "include": [
     "lib", 
     "resolvers",
-    "transformers"
+    "transformers",
+    "__tests__"
   ],
   "exclude": ["node_modules"],
   "compilerOptions": {
@@ -22,9 +22,5 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-  },
-  "ts-node": {
-    "swc": true,
-    "esm": true
   }
 }

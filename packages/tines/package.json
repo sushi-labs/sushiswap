@@ -24,7 +24,7 @@
     "test_debug": "node --inspect-brk ../../node_modules/jest/bin/jest.js --runInBand"
   },
   "jest": {
-    "preset": "@sushiswap/jest-config/node"
+    "preset": "@sushiswap/jest-config"
   },
   "dependencies": {
     "seedrandom": "3.0.5",

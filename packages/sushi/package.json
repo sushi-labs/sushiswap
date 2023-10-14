@@ -128,7 +128,8 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
     "prepublishOnly": "pnpm build",
-    "test": "vitest -c ./test/vitest.config.ts dev"
+    "test": "vitest run -c ./test/vitest.config.ts",
+    "test:watch": "vitest dev -c ./test/vitest.config.ts"
   },
   "dependencies": {
     "@uniswap/token-lists": "1.0.0-beta.33",

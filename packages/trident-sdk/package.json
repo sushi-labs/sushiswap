@@ -29,7 +29,7 @@
     "test": "jest --passWithNoTests"
   },
   "jest": {
-    "preset": "@sushiswap/jest-config/node"
+    "preset": "@sushiswap/jest-config"
   },
   "dependencies": {
     "@ethersproject/abi": "5.7.0",
