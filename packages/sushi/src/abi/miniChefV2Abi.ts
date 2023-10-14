@@ -1,4 +1,4 @@
-export const minichefV2Abi = [
+export const miniChefV2Abi = [
   {
     inputs: [
       { internalType: 'contract IERC20', name: '_sushi', type: 'address' },

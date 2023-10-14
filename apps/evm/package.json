@@ -79,7 +79,7 @@
     "react-virtualized-auto-sizer": "1.0.7",
     "sushi": "workspace:*",
     "swr": "2.1.5",
-    "viem": "1.16.2",
+    "viem": "1.16.5",
     "wagmi": "1.4.3",
     "zod": "3.22.4"
   },

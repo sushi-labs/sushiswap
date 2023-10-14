@@ -80,7 +80,7 @@
       "calculate": [
         "./dist/calculate/index.d.ts"
       ],
-      "chain": [
+    "chain": [
         "./dist/chain/index.d.ts"
       ],
       "convert": [
@@ -140,7 +140,7 @@
     "@types/numeral": "2.0.3",
     "jest": "29.7.0",
     "typescript": "5.2.2",
-    "viem": "1.16.2",
+    "viem": "1.16.5",
     "vitest": "0.34.6",
     "zod": "3.22.4"
   },

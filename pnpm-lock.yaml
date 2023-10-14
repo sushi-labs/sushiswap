@@ -47,7 +47,7 @@ importers:
         version: 3.0.7
       '@wagmi/core':
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4)
+        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4)
       '@whatwg-node/fetch':
         specifier: 0.8.4
         version: 0.8.4
@@ -117,7 +117,7 @@ importers:
         version: 3.0.7
       '@wagmi/core':
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4)
+        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4)
       cors:
         specifier: 2.8.5
         version: 2.8.5
@@ -134,11 +134,11 @@ importers:
         specifier: workspace:*
         version: link:../../packages/sushi
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.22.4)
+        specifier: 1.16.5
+        version: 1.16.5(typescript@5.2.2)(zod@3.22.4)
       wagmi:
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4)
+        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4)
       zod:
         specifier: 3.22.4
         version: 3.22.4
@@ -181,7 +181,7 @@ importers:
         version: 3.0.7
       '@wagmi/core':
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4)
+        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4)
       deepmerge-ts:
         specifier: ^4.3.0
         version: 4.3.0
@@ -341,7 +341,7 @@ importers:
         version: 3.0.7
       '@wagmi/core':
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4)
+        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4)
       zod:
         specifier: 3.22.4
         version: 3.22.4
@@ -819,7 +819,7 @@ importers:
         version: 0.2.1
       '@wagmi/core':
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4)
+        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4)
       cors:
         specifier: 2.8.5
         version: 2.8.5
@@ -896,11 +896,11 @@ importers:
         specifier: 2.1.5
         version: 2.1.5(react@18.2.0)
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.22.4)
+        specifier: 1.16.5
+        version: 1.16.5(typescript@5.2.2)(zod@3.22.4)
       wagmi:
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4)
+        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4)
       zod:
         specifier: 3.22.4
         version: 3.22.4
@@ -1146,8 +1146,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.22.4)
+        specifier: 1.16.5
+        version: 1.16.5(typescript@5.2.2)(zod@3.22.4)
 
   config/wagmi:
     devDependencies:
@@ -1165,7 +1165,7 @@ importers:
         version: 2.0.2
       '@wagmi/core':
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4)
+        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4)
       sushi:
         specifier: workspace:*
         version: link:../../packages/sushi
@@ -1249,7 +1249,7 @@ importers:
         version: link:../../config/wagmi
       '@wagmi/core':
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4)
+        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4)
       '@whatwg-node/fetch':
         specifier: 0.8.4
         version: 0.8.4
@@ -1275,8 +1275,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/sushi
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.22.4)
+        specifier: 1.16.5
+        version: 1.16.5(typescript@5.2.2)(zod@3.22.4)
       zod:
         specifier: 3.22.4
         version: 3.22.4
@@ -1354,8 +1354,8 @@ importers:
         specifier: 1.0.3
         version: 1.0.3
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.22.4)
+        specifier: 1.16.5
+        version: 1.16.5(typescript@5.2.2)(zod@3.22.4)
       zod:
         specifier: 3.22.4
         version: 3.22.4
@@ -1573,14 +1573,14 @@ importers:
         specifier: 1.0.1
         version: 1.0.1
       abitype:
-        specifier: 0.10.1
-        version: 0.10.1(typescript@5.2.2)
+        specifier: 0.9.3
+        version: 0.9.3(typescript@5.2.2)
       sushi:
         specifier: workspace:*
         version: link:../sushi
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.22.4)
+        specifier: 1.16.5
+        version: 1.16.5(typescript@5.2.2)(zod@3.22.4)
     devDependencies:
       '@sushiswap/jest-config':
         specifier: workspace:*
@@ -1696,7 +1696,7 @@ importers:
         version: 2.0.2
       '@wagmi/core':
         specifier: 1.4.3-cjs
-        version: 1.4.3-cjs(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4)
+        version: 1.4.3-cjs(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4)
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -1810,11 +1810,11 @@ importers:
         specifier: workspace:*
         version: link:../sushi
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.22.4)
+        specifier: 1.16.5
+        version: 1.16.5(typescript@5.2.2)(zod@3.22.4)
       wagmi:
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4)
+        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4)
       zod:
         specifier: 3.22.4
         version: 3.22.4
@@ -1932,8 +1932,8 @@ importers:
         specifier: 1.0.3
         version: 1.0.3
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.22.4)
+        specifier: 1.16.5
+        version: 1.16.5(typescript@5.2.2)(zod@3.22.4)
       zod:
         specifier: 3.22.4
         version: 3.22.4
@@ -2046,8 +2046,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.22.4)
+        specifier: 1.16.5
+        version: 1.16.5(typescript@5.2.2)(zod@3.22.4)
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -2114,8 +2114,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.22.4)
+        specifier: 1.16.5
+        version: 1.16.5(typescript@5.2.2)(zod@3.22.4)
 
   packages/trident-sdk:
     dependencies:
@@ -2378,7 +2378,7 @@ importers:
         version: 5.2.2
       wagmi:
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react-native@0.72.5)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)
+        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react-native@0.72.5)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)
 
   packages/v2-sdk:
     dependencies:
@@ -2586,8 +2586,8 @@ importers:
         specifier: workspace:*
         version: link:../sushi
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.22.4)
+        specifier: 1.16.5
+        version: 1.16.5(typescript@5.2.2)(zod@3.22.4)
       zod:
         specifier: 3.22.4
         version: 3.22.4
@@ -2616,7 +2616,7 @@ importers:
         version: 18.2.6
       '@wagmi/core':
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4)
+        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -2628,7 +2628,7 @@ importers:
         version: 5.2.2
       wagmi:
         specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4)
+        version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4)
 
   protocols/route-processor:
     devDependencies:
@@ -2774,8 +2774,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.22.4)
+        specifier: 1.16.5
+        version: 1.16.5(typescript@5.2.2)(zod@3.22.4)
 
   protocols/tines-sandbox:
     devDependencies:
@@ -2948,8 +2948,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       viem:
-        specifier: 1.16.2
-        version: 1.16.2(typescript@5.2.2)(zod@3.22.4)
+        specifier: 1.16.5
+        version: 1.16.5(typescript@5.2.2)(zod@3.22.4)
 
 packages:
 
@@ -13719,7 +13719,7 @@ packages:
     resolution: {integrity: sha512-gYw0ki/EAuV1oSyMxpqandHjnthZjYYy+YWpTAzf8BqfXM3ItcZLpjxfg+3+mXW8HIO+3jw6T9iiqEXsqHaMMw==}
     dependencies:
       '@safe-global/safe-gateway-typescript-sdk': 3.9.0
-      viem: 1.16.2(typescript@5.2.2)(zod@3.22.4)
+      viem: 1.16.5(typescript@5.2.2)(zod@3.22.4)
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -13731,7 +13731,7 @@ packages:
     resolution: {integrity: sha512-XJbEPuaVc7b9n23MqlF6c+ToYIS3f7P2Sel8f3cSBQ9WORE4xrSuvhMpK9fDSFqJ7by/brc+rmJR/5HViRr0/w==}
     dependencies:
       '@safe-global/safe-gateway-typescript-sdk': 3.9.0
-      viem: 1.16.2(typescript@5.2.2)(zod@3.22.4)
+      viem: 1.16.5(typescript@5.2.2)(zod@3.22.4)
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -17659,7 +17659,7 @@ packages:
       pretty-format: 29.7.0
     dev: true
 
-  /@wagmi/connectors@3.1.2(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4):
+  /@wagmi/connectors@3.1.2(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4):
     resolution: {integrity: sha512-IlLKErqCzQRBUcCvXGPowcczbWcvJtEG006gPsAoePNJEXCHEWoKASghgu+L/bqD7006Z6mW6zlTNjcSQJvFAg==}
     peerDependencies:
       typescript: 5.2.2
@@ -17679,7 +17679,7 @@ packages:
       abitype: 0.8.7(typescript@5.2.2)(zod@3.22.4)
       eventemitter3: 4.0.7
       typescript: 5.2.2
-      viem: 1.16.2(typescript@5.2.2)(zod@3.22.4)
+      viem: 1.16.5(typescript@5.2.2)(zod@3.22.4)
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
       - '@types/react'
@@ -17691,7 +17691,7 @@ packages:
       - utf-8-validate
       - zod
 
-  /@wagmi/core@1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4):
+  /@wagmi/core@1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4):
     resolution: {integrity: sha512-CIV9jwv5ue+WpqmA3FvwGa+23cppe7oIaz6TRnlGm0Hm0wDImSaQSWqcsFyOPvleD29oOIJ8e3KnHINEvI64AA==}
     peerDependencies:
       typescript: 5.2.2
@@ -17700,11 +17700,11 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@wagmi/connectors': 3.1.2(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4)
+      '@wagmi/connectors': 3.1.2(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4)
       abitype: 0.8.7(typescript@5.2.2)(zod@3.22.4)
       eventemitter3: 4.0.7
       typescript: 5.2.2
-      viem: 1.16.2(typescript@5.2.2)(zod@3.22.4)
+      viem: 1.16.5(typescript@5.2.2)(zod@3.22.4)
       zustand: 4.4.1(@types/react@18.2.14)(react@18.2.0)
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
@@ -17718,7 +17718,7 @@ packages:
       - utf-8-validate
       - zod
 
-  /@wagmi/core@1.4.3-cjs(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4):
+  /@wagmi/core@1.4.3-cjs(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4):
     resolution: {integrity: sha512-NCGW0Y8TAZ5zTcS5shXcvpDhzcWCc8MPXKjrEz8J1qu4Y8YkVkDRR3JF+MprRCvF8k3gt1nrLatnwEGnY1izmg==}
     peerDependencies:
       typescript: 5.2.2
@@ -17727,11 +17727,11 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@wagmi/connectors': 3.1.2(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4)
+      '@wagmi/connectors': 3.1.2(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4)
       abitype: 0.8.7(typescript@5.2.2)(zod@3.22.4)
       eventemitter3: 4.0.7
       typescript: 5.2.2
-      viem: 1.16.2(typescript@5.2.2)(zod@3.22.4)
+      viem: 1.16.5(typescript@5.2.2)(zod@3.22.4)
       zustand: 4.4.1(@types/react@18.2.14)(react@18.2.0)
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
@@ -18400,20 +18400,6 @@ packages:
   /abbrev@1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
 
-  /abitype@0.10.1(typescript@5.2.2):
-    resolution: {integrity: sha512-nFx5F2RniXGXw2Ci1uu6iDGnP/z3hW+H65G7cxrs5JDF3Ot9GuYkBJCRAB9EZ5QIi3dNByZaCrGFUn8LLkLQbw==}
-    peerDependencies:
-      typescript: 5.2.2
-      zod: ^3 >=3.22.0
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-      zod:
-        optional: true
-    dependencies:
-      typescript: 5.2.2
-    dev: false
-
   /abitype@0.8.7(typescript@5.2.2)(zod@3.22.4):
     resolution: {integrity: sha512-wQ7hV8Yg/yKmGyFpqrNZufCxbszDe5es4AZGYPBitocfSqXtjrTG9JMWFcc4N30ukl2ve48aBTwt7NJxVQdU3w==}
     peerDependencies:
@@ -18425,6 +18411,20 @@ packages:
     dependencies:
       typescript: 5.2.2
       zod: 3.22.4
+
+  /abitype@0.9.3(typescript@5.2.2):
+    resolution: {integrity: sha512-dz4qCQLurx97FQhnb/EIYTk/ldQ+oafEDUqC0VVIeQS1Q48/YWt/9YNfMmp9SLFqN41ktxny3c8aYxHjmFIB/w==}
+    peerDependencies:
+      typescript: 5.2.2
+      zod: ^3 >=3.19.1
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+      zod:
+        optional: true
+    dependencies:
+      typescript: 5.2.2
+    dev: false
 
   /abitype@0.9.8(typescript@5.2.2)(zod@3.22.4):
     resolution: {integrity: sha512-puLifILdm+8sjyss4S+fsUN09obiT1g2YW6CtcQF+QDzxR0euzgEB29MZujC6zMk2a6SVmtttq1fc6+YFA7WYQ==}
@@ -37374,8 +37374,8 @@ packages:
       unist-util-stringify-position: 3.0.3
       vfile-message: 3.1.4
 
-  /viem@1.16.2(typescript@5.2.2)(zod@3.22.4):
-    resolution: {integrity: sha512-ZQ8kemNvRVwucwcsj4/SjKohK+wZv9Vxx/gXAlwqGMCW7r+niOeECtFku/1L7UPTmPgdmq4kic9R71t6XQDmGw==}
+  /viem@1.16.5(typescript@5.2.2)(zod@3.22.4):
+    resolution: {integrity: sha512-D8aE6cp/5w6PDtOOkJjkN+FtLyfsNWkfE78N4yTgCt4BG7KsBsePp4O68r1IaTVTVa41anebiZAy9kNEIwAXiw==}
     peerDependencies:
       typescript: 5.2.2
     peerDependenciesMeta:
@@ -37562,7 +37562,7 @@ packages:
       xml-name-validator: 4.0.0
     dev: false
 
-  /wagmi@1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react-native@0.72.5)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2):
+  /wagmi@1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react-native@0.72.5)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5):
     resolution: {integrity: sha512-3LjbqqVRe6WW/WD07QCd5Itmo4nUfLsXuoc8F7nw9NslNUg8SFEb+g/jZ4665V0xh5ZRqPBJ7XOXASpdM2Y/5Q==}
     peerDependencies:
       react: '>=17.0.0'
@@ -37575,12 +37575,12 @@ packages:
       '@tanstack/query-sync-storage-persister': 4.27.1
       '@tanstack/react-query': 4.28.0(react-dom@18.2.0)(react-native@0.72.5)(react@18.2.0)
       '@tanstack/react-query-persist-client': 4.28.0(@tanstack/react-query@4.28.0)
-      '@wagmi/core': 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4)
+      '@wagmi/core': 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4)
       abitype: 0.8.7(typescript@5.2.2)(zod@3.22.4)
       react: 18.2.0
       typescript: 5.2.2
       use-sync-external-store: 1.2.0(react@18.2.0)
-      viem: 1.16.2(typescript@5.2.2)(zod@3.22.4)
+      viem: 1.16.5(typescript@5.2.2)(zod@3.22.4)
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
       - '@types/react'
@@ -37595,7 +37595,7 @@ packages:
       - zod
     dev: true
 
-  /wagmi@1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4):
+  /wagmi@1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4):
     resolution: {integrity: sha512-3LjbqqVRe6WW/WD07QCd5Itmo4nUfLsXuoc8F7nw9NslNUg8SFEb+g/jZ4665V0xh5ZRqPBJ7XOXASpdM2Y/5Q==}
     peerDependencies:
       react: '>=17.0.0'
@@ -37608,12 +37608,12 @@ packages:
       '@tanstack/query-sync-storage-persister': 4.27.1
       '@tanstack/react-query': 4.28.0(react-dom@18.2.0)(react-native@0.72.5)(react@18.2.0)
       '@tanstack/react-query-persist-client': 4.28.0(@tanstack/react-query@4.28.0)
-      '@wagmi/core': 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.2)(zod@3.22.4)
+      '@wagmi/core': 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.22.4)
       abitype: 0.8.7(typescript@5.2.2)(zod@3.22.4)
       react: 18.2.0
       typescript: 5.2.2
       use-sync-external-store: 1.2.0(react@18.2.0)
-      viem: 1.16.2(typescript@5.2.2)(zod@3.22.4)
+      viem: 1.16.5(typescript@5.2.2)(zod@3.22.4)
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
       - '@types/react'

@@ -1,19 +1,17 @@
 'use client'
 
-import { masterChefV1Abi } from 'sushi/abi'
 import { ChefType } from '@sushiswap/client'
-import { Amount, Token } from 'sushi/currency'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { useCallback, useMemo } from 'react'
-import { encodeFunctionData, UserRejectedRequestError } from 'viem'
+import { masterChefV1Abi, masterChefV2Abi, miniChefV2Abi } from 'sushi/abi'
+import { Amount, Token } from 'sushi/currency'
+import { UserRejectedRequestError, encodeFunctionData } from 'viem'
 import {
   useAccount,
   usePrepareSendTransaction,
   useSendTransaction,
 } from 'wagmi'
 import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
-
-import { masterchefV2Abi, minichefV2Abi } from '../../abis'
 import { getMasterChefContractConfig } from '../useMasterChefContract'
 import { UsePrepareSendTransactionConfig } from '../useSendTransaction'
 
@@ -83,14 +81,14 @@ export const useMasterChefWithdraw: UseMasterChefWithdraw = ({
           break
         case ChefType.MasterChefV2:
           data = encodeFunctionData({
-            abi: masterchefV2Abi,
+            abi: masterChefV2Abi,
             functionName: 'withdraw',
             args: [BigInt(pid), BigInt(amount.quotient.toString()), address],
           })
           break
         case ChefType.MiniChef:
           data = encodeFunctionData({
-            abi: minichefV2Abi,
+            abi: miniChefV2Abi,
             functionName: 'withdrawAndHarvest',
             args: [BigInt(pid), BigInt(amount.quotient.toString()), address],
           })

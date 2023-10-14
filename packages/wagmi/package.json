@@ -73,7 +73,7 @@
     "@uniswap/v3-periphery": "1.4.1",
     "next-themes": "0.2.1",
     "sushi": "workspace:*",
-    "viem": "1.16.2",
+    "viem": "1.16.5",
     "zod": "3.22.4"
   },
   "devDependencies": {

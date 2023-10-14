@@ -1,8 +1,8 @@
 'use client'
 
+import { useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Native } from 'sushi/currency'
-import { useMemo } from 'react'
 
 export function useNativeCurrency({
   chainId = ChainId.ETHEREUM,
