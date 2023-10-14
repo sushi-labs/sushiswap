@@ -1,4 +1,3 @@
-export * from './functions'
 export * from './Trade'
 export { Fee, Pool } from '@sushiswap/base-sdk'
 export {

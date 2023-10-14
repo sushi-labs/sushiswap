@@ -1,6 +1,6 @@
-import { Amount, Price, Type as Currency } from 'sushi/currency'
-import { Fraction, ONE, Percent, ZERO } from 'sushi'
 import { MultiRoute, RToken } from '@sushiswap/tines'
+import { Fraction, ONE, Percent, ZERO } from 'sushi'
+import { Amount, Price, Type as Currency } from 'sushi/currency'
 import invariant from 'tiny-invariant'
 
 import { TradeType as Type } from './TradeType'

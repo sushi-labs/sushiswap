@@ -1,27 +1,27 @@
-import { calculateSlippageAmount } from '@sushiswap/amm'
-import { ChainId } from 'sushi/chain'
-import { Amount, Native, Price, WNATIVE_ADDRESS } from 'sushi/currency'
-import { Percent } from 'sushi'
 import {
-  usePrice,
   UseTradeParams,
   UseTradeReturnWriteArgs,
+  usePrice,
 } from '@sushiswap/react-query'
 import {
-  isRouteProcessor3_1ChainId,
-  isRouteProcessor3_2ChainId,
-  isRouteProcessor3ChainId,
-  isRouteProcessorChainId,
   ROUTE_PROCESSOR_3_1_ADDRESS,
   ROUTE_PROCESSOR_3_2_ADDRESS,
   ROUTE_PROCESSOR_3_ADDRESS,
   ROUTE_PROCESSOR_ADDRESS,
+  isRouteProcessor3ChainId,
+  isRouteProcessor3_1ChainId,
+  isRouteProcessor3_2ChainId,
+  isRouteProcessorChainId,
 } from '@sushiswap/route-processor-sdk'
 import { Router } from '@sushiswap/router'
+import { Percent } from 'sushi'
+import { slippageAmount } from 'sushi/calculate'
+import { ChainId } from 'sushi/chain'
+import { Amount, Native, Price, WNATIVE_ADDRESS } from 'sushi/currency'
 
 import { useQuery } from '@tanstack/react-query'
-import { useFeeData } from 'wagmi'
 import { Address, Hex } from 'viem'
+import { useFeeData } from 'wagmi'
 
 import { usePoolsCodeMap } from '../../pools'
 
@@ -236,7 +236,7 @@ ${logPools}
                     ? Amount.fromRawAmount(toToken, writeArgs[3])
                     : Amount.fromRawAmount(
                         toToken,
-                        calculateSlippageAmount(
+                        slippageAmount(
                           amountOut,
                           new Percent(Math.floor(0.5 * 100), 10_000),
                         )[0],

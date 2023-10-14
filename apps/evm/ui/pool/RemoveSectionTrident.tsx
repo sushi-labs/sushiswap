@@ -1,20 +1,16 @@
 'use client'
 
-import { calculateSlippageAmount } from '@sushiswap/amm'
 import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { ChainId } from 'sushi/chain'
 import { Pool, Protocol } from '@sushiswap/client'
-import { Amount, Native } from 'sushi/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { Percent } from 'sushi'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createToast } from '@sushiswap/ui/components/toast'
 import {
   Address,
-  getTridentRouterContractConfig,
   TridentConstantPoolState,
   TridentStablePoolState,
+  getTridentRouterContractConfig,
   useAccount,
   useBentoBoxTotals,
   useNetwork,
@@ -37,10 +33,10 @@ import {
 } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import {
+  LiquidityOutput,
   approveMasterContractAction,
   batchAction,
   burnLiquidityAction,
-  LiquidityOutput,
   sweepAction,
   unwrapWETHAction,
 } from 'lib/actions'
@@ -48,6 +44,10 @@ import { APPROVE_TAG_REMOVE_TRIDENT } from 'lib/constants'
 import { useTokensFromPool, useUnderlyingTokenBalanceFromPool } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import { FC, useCallback, useMemo, useState } from 'react'
+import { Percent } from 'sushi'
+import { slippageAmount } from 'sushi/calculate'
+import { ChainId } from 'sushi/chain'
+import { Amount, Native } from 'sushi/currency'
 
 import { usePoolPosition } from './PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
@@ -164,13 +164,13 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
         currencyAToRemove
           ? Amount.fromRawAmount(
               currencyAToRemove.currency,
-              calculateSlippageAmount(currencyAToRemove, slippagePercent)[0],
+              slippageAmount(currencyAToRemove, slippagePercent)[0],
             )
           : undefined,
         currencyBToRemove
           ? Amount.fromRawAmount(
               currencyBToRemove.currency,
-              calculateSlippageAmount(currencyBToRemove, slippagePercent)[0],
+              slippageAmount(currencyBToRemove, slippagePercent)[0],
             )
           : undefined,
       ]

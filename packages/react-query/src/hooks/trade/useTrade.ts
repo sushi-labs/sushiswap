@@ -1,4 +1,4 @@
-import { calculateSlippageAmount } from '@sushiswap/amm'
+import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
 import {
   Amount,
@@ -194,7 +194,7 @@ export const useTrade = (variables: UseTradeParams) => {
           amountOut,
           minAmountOut: Amount.fromRawAmount(
             toToken,
-            calculateSlippageAmount(
+            slippageAmount(
               amountOut,
               new Percent(Math.floor(+slippagePercentage * 100), 10_000),
             )[0],

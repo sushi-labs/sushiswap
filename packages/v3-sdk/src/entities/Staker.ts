@@ -1,11 +1,11 @@
-import { defaultAbiCoder, Interface } from '@ethersproject/abi'
-import { validateAndParseAddress } from '@sushiswap/amm'
-import { Token } from 'sushi/currency'
-import { BigintIsh } from 'sushi'
+import { Interface, defaultAbiCoder } from '@ethersproject/abi'
 import IUniswapV3Staker from '@uniswap/v3-staker/artifacts/contracts/UniswapV3Staker.sol/UniswapV3Staker.json'
+import { BigintIsh } from 'sushi'
+import { Token } from 'sushi/currency'
+import { validateAndParseAddress } from '../utils'
 
-import { MethodParameters, toHex } from '../utils/calldata'
 import { SushiSwapV3Pool } from '.'
+import { MethodParameters, toHex } from '../utils/calldata'
 import { Multicall } from './Multicall'
 
 export type FullWithdrawOptions = ClaimOptions & WithdrawOptions

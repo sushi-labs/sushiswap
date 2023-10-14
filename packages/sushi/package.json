@@ -55,6 +55,10 @@
       "types": "./dist/math/index.d.ts",
       "default": "./dist/math/index.js"
     },
+    "./sort": {
+      "types": "./dist/sort/index.d.ts",
+      "default": "./dist/sort/index.js"
+    },
     "./token-list": {
       "types": "./dist/token-list/index.d.ts",
       "default": "./dist/token-list/index.js"
@@ -100,6 +104,9 @@
       ],
       "math": [
         "./dist/math/index.d.ts"
+      ],
+      "sort": [
+        "./dist/sort/index.d.ts"
       ],
       "token-list": [
         "./dist/token-list/index.d.ts"
