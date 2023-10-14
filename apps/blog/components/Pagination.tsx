@@ -20,7 +20,9 @@ export const Pagination: FC<Pagination> = ({ page, onPage, pages }) => {
         <ChevronLeftIcon
           className="text-slate-200"
           height={28}
-          onClick={() => { onPage(page - 1); }}
+          onClick={() => {
+            onPage(page - 1)
+          }}
           width={28}
         />
       </div>
@@ -36,7 +38,9 @@ export const Pagination: FC<Pagination> = ({ page, onPage, pages }) => {
         <ChevronRightIcon
           className="text-slate-200"
           height={28}
-          onClick={() => { onPage(page + 1); }}
+          onClick={() => {
+            onPage(page + 1)
+          }}
           width={28}
         />
       </div>

@@ -3,7 +3,7 @@ import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import type { FC } from 'react'
 import { addBodyToArticle } from 'lib/ghost'
-import type { GhostArticle } from 'lib/ghost';
+import type { GhostArticle } from 'lib/ghost'
 import { ArticleSchema } from 'lib/validate'
 import type { Article } from 'types'
 import {

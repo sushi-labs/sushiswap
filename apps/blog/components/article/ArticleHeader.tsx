@@ -18,12 +18,14 @@ export const ArticleHeader: FC<ArticleHeader> = ({ article }) => {
       <dl>
         <dt className="sr-only">Date</dt>
         <dd className="absolute inset-x-0 top-0 text-slate-400">
-          {article?.attributes.publishedAt ? <time dateTime={article.attributes.publishedAt}>
+          {article?.attributes.publishedAt ? (
+            <time dateTime={article.attributes.publishedAt}>
               {format(
                 new Date(article.attributes.publishedAt),
                 'EEEE, dd MMM yyyy',
               )}
-            </time> : null}
+            </time>
+          ) : null}
         </dd>
       </dl>
     </>
