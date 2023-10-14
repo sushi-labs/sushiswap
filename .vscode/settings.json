@@ -12,6 +12,9 @@
     "strings": "on"
   },
   "eslint.enable": true,
+  "eslint.workingDirectories": [
+    { "pattern": "apps/*/" }
+  ],
   "eslint.validate": [
     "json",
     "javascript",
