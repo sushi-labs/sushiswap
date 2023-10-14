@@ -11,10 +11,10 @@
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "type": "module",
   "sideEffects": [
     "**/*.css"
   ],
+  "type": "module",
   "exports": {
     "./index.css": "./index.css",
     "./date-picker.css": "./date-picker.css",

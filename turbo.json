@@ -50,7 +50,12 @@
       "persistent": true
     },
     "generate": {
-      "outputs": [".mesh/**/*", ".graphclient/**/*", "src/generated.ts", "typechain"],
+      "outputs": [
+        ".mesh/**/*",
+        ".graphclient/**/*",
+        "src/generated.ts",
+        "typechain"
+      ],
       "cache": false
     },
     "lint": {
