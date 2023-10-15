@@ -3,7 +3,7 @@ import { isTridentChainId } from '@sushiswap/trident-sdk'
 import { config } from '@sushiswap/viem-config'
 import { ChainId, TestnetChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
-import { http, PublicClient, createPublicClient } from 'viem'
+import { http, PublicClient, createPublicClient, Transport } from 'viem'
 
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
 import { BiswapProvider } from './liquidity-providers/Biswap'
@@ -79,9 +79,10 @@ export class DataFetcher {
     } else {
       this.web3Client = createPublicClient({
         ...config[this.chainId],
-        transport: isTest
+        chain: null,
+        transport: (isTest
           ? http('http://127.0.0.1:8545')
-          : config[this.chainId].transport,
+          : config[this.chainId].transport) as Transport,
         pollingInterval: 8_000,
         batch: {
           multicall: {

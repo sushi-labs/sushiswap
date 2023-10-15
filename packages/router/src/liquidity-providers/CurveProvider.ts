@@ -254,6 +254,7 @@ export async function getAllSupportedCurvePools(
     const factoryContract = getContract({
       address: factory as '0x${string}',
       abi: factoryABI,
+      // @ts-ignore
       publicClient,
     })
 
@@ -532,7 +533,7 @@ export class CurveProvider extends LiquidityProvider {
         _balance1 === undefined ||
         _ratio === undefined
       )
-        return
+        return []
       const poolTines = new CurvePool(
         poolAddress,
         token0 as RToken,
