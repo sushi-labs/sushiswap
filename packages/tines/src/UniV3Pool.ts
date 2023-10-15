@@ -187,7 +187,9 @@ export class UniV3Pool extends RPool {
           parseInt((currentPriceBI - nextTickPriceBI).toString()) / two96
         startFlag = false
       } else {
-        nextTickPrice = Math.sqrt(1.0001 ** (this.ticks[nextTickToCross] as CLTick).index)
+        nextTickPrice = Math.sqrt(
+          1.0001 ** (this.ticks[nextTickToCross] as CLTick).index,
+        )
         priceDiff = currentPrice - nextTickPrice
       }
 
@@ -219,7 +221,8 @@ export class UniV3Pool extends RPool {
           currentPrice = nextTickPrice
           input -= maxDx
           currentLiquidityBI =
-            currentLiquidityBI - (this.ticks[nextTickToCross] as CLTick).DLiquidity
+            currentLiquidityBI -
+            (this.ticks[nextTickToCross] as CLTick).DLiquidity
           nextTickToCross--
           if (nextTickToCross === 0) currentLiquidityBI = ZERO // Protection if we know not all ticks
         }
@@ -237,7 +240,8 @@ export class UniV3Pool extends RPool {
           currentPrice = nextTickPrice
           input -= maxDy
           currentLiquidityBI =
-            currentLiquidityBI + (this.ticks[nextTickToCross] as CLTick).DLiquidity
+            currentLiquidityBI +
+            (this.ticks[nextTickToCross] as CLTick).DLiquidity
           nextTickToCross++
           if (nextTickToCross === this.ticks.length - 1)
             currentLiquidityBI = ZERO // Protection if we know not all ticks
@@ -290,7 +294,9 @@ export class UniV3Pool extends RPool {
           parseInt((currentPriceBI - nextTickPriceBI).toString()) / two96
         startFlag = false
       } else {
-        nextTickPrice = Math.sqrt(1.0001 ** (this.ticks[nextTickToCross] as CLTick).index)
+        nextTickPrice = Math.sqrt(
+          1.0001 ** (this.ticks[nextTickToCross] as CLTick).index,
+        )
         priceDiff = currentPrice - nextTickPrice
       }
 
@@ -313,7 +319,8 @@ export class UniV3Pool extends RPool {
           currentPrice = nextTickPrice
           outBeforeFee -= maxDy
           currentLiquidityBI =
-            currentLiquidityBI - (this.ticks[nextTickToCross] as CLTick).DLiquidity
+            currentLiquidityBI -
+            (this.ticks[nextTickToCross] as CLTick).DLiquidity
           nextTickToCross--
           if (nextTickToCross === 0) currentLiquidityBI = ZERO // Protection if we know not all ticks
         }
@@ -333,7 +340,8 @@ export class UniV3Pool extends RPool {
           currentPrice = nextTickPrice
           outBeforeFee -= maxDx
           currentLiquidityBI =
-            currentLiquidityBI + (this.ticks[nextTickToCross] as CLTick).DLiquidity
+            currentLiquidityBI +
+            (this.ticks[nextTickToCross] as CLTick).DLiquidity
           nextTickToCross++
           if (nextTickToCross === this.ticks.length - 1)
             currentLiquidityBI = ZERO // Protection if we know not all ticks

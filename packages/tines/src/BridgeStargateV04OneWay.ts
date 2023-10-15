@@ -54,8 +54,7 @@ export class BridgeStargateV04OneWay extends RPool {
     return { out, gasSpent: this.swapGasCost }
   }
 
-  calcInByOut(
-  ): { inp: number; gasSpent: number } {
+  calcInByOut(): { inp: number; gasSpent: number } {
     throw new Error('calcInByOut for BridgeStargateV04OneWay')
   }
 

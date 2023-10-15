@@ -264,7 +264,9 @@ export class TridentProvider extends LiquidityProvider {
       ])
 
     classicPools.forEach((pool, i) => {
-      const reserves = classicReserves as {result: readonly [bigint, bigint, number]}[]
+      const reserves = classicReserves as {
+        result: readonly [bigint, bigint, number]
+      }[]
       const res0 = reserves[i]?.result?.[0]
       const res1 = reserves[i]?.result?.[1]
       if (!res0 || !res1) return
@@ -291,8 +293,8 @@ export class TridentProvider extends LiquidityProvider {
     const rebases: Map<string, Rebase> = new Map()
 
     sortedTokens.forEach((t, i) => {
-      const total = totals as {result: readonly [bigint, bigint]}[]
-      const bal = balances as {result: bigint}[]
+      const total = totals as { result: readonly [bigint, bigint] }[]
+      const bal = balances as { result: bigint }[]
       const elastic = total[i]?.result?.[0]
       const base = total[i]?.result?.[1]
       const balance = bal[i]?.result
@@ -321,7 +323,7 @@ export class TridentProvider extends LiquidityProvider {
     })
 
     stablePools.forEach((pool, i) => {
-      const sRes = stableReserves as {result: readonly [bigint, bigint]}[]
+      const sRes = stableReserves as { result: readonly [bigint, bigint] }[]
       const res0 = sRes[i]?.result?.[0]
       const res1 = sRes[i]?.result?.[1]
       const totals0 = rebases.get(pool.token0.address)

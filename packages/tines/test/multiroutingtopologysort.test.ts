@@ -35,7 +35,7 @@ function createTopology(t: Topology): [Graph, Vertice, Vertice] {
       (edge[1] as number) === parseInt(e.vert1.token.name),
       'internal Error 29',
     )
-    e.direction = (edge[0] as number)=== parseInt(e.vert0.token.name)
+    e.direction = (edge[0] as number) === parseInt(e.vert0.token.name)
   })
   g.getOrCreateVertice(tokens[0] as RToken)
   g.getOrCreateVertice(tokens[tokens.length - 1] as RToken)
@@ -274,11 +274,14 @@ function getEdge(
   i: number,
   res: { status: number; vertices: Vertice[] },
 ): [number, number] {
-  return [vertIndex(res.vertices[i] as Vertice), vertIndex(res.vertices[i - 1] as Vertice)]
+  return [
+    vertIndex(res.vertices[i] as Vertice),
+    vertIndex(res.vertices[i - 1] as Vertice),
+  ]
 }
 function findEdge(edge: [number, number], t: Topology): number {
   for (let j = 0; j < t[1].length; j++) {
-    if ((t[1][j][0] === edge[0]) && (t[1][j][1] === edge[1])) {
+    if (t[1][j][0] === edge[0] && t[1][j][1] === edge[1]) {
       return j
     }
   }

@@ -138,9 +138,7 @@ export class CLRPool extends RPool {
       let nextTickPrice, priceDiff
       if (startFlag) {
         // Increasing precision at first step only - otherwise its too slow
-        const nextTickPriceBI = getSqrtRatioAtTick(
-          tick.index,
-        )
+        const nextTickPriceBI = getSqrtRatioAtTick(tick.index)
         nextTickPrice = parseInt(nextTickPriceBI.toString()) / two96
         priceDiff =
           parseInt((currentPriceBI - nextTickPriceBI).toString()) / two96
@@ -170,15 +168,10 @@ export class CLRPool extends RPool {
           //currentPriceBI = nextTickPriceBI
           currentPrice = nextTickPrice
           input -= maxDx
-          if (
-            (tick.index / this.tickSpacing) % 2 ===
-            0
-          ) {
-            currentLiquidityBI =
-              currentLiquidityBI - tick.DLiquidity
+          if ((tick.index / this.tickSpacing) % 2 === 0) {
+            currentLiquidityBI = currentLiquidityBI - tick.DLiquidity
           } else {
-            currentLiquidityBI =
-              currentLiquidityBI + tick.DLiquidity
+            currentLiquidityBI = currentLiquidityBI + tick.DLiquidity
           }
           nextTickToCross--
         }
@@ -195,15 +188,10 @@ export class CLRPool extends RPool {
           //currentPriceBI = nextTickPriceBI
           currentPrice = nextTickPrice
           input -= maxDy
-          if (
-            (tick.index / this.tickSpacing) % 2 ===
-            0
-          ) {
-            currentLiquidityBI =
-              currentLiquidityBI + tick.DLiquidity
+          if ((tick.index / this.tickSpacing) % 2 === 0) {
+            currentLiquidityBI = currentLiquidityBI + tick.DLiquidity
           } else {
-            currentLiquidityBI =
-              currentLiquidityBI - tick.DLiquidity
+            currentLiquidityBI = currentLiquidityBI - tick.DLiquidity
           }
           nextTickToCross++
         }
@@ -238,9 +226,7 @@ export class CLRPool extends RPool {
       let nextTickPrice, priceDiff
       if (startFlag) {
         // Increasing precision at first step only - otherwise its too slow
-        const nextTickPriceBI = getSqrtRatioAtTick(
-          nextTick.index,
-        )
+        const nextTickPriceBI = getSqrtRatioAtTick(nextTick.index)
         nextTickPrice = parseInt(nextTickPriceBI.toString()) / two96
         priceDiff =
           parseInt((currentPriceBI - nextTickPriceBI).toString()) / two96
@@ -268,15 +254,10 @@ export class CLRPool extends RPool {
           //currentPriceBI = nextTickPriceBI
           currentPrice = nextTickPrice
           outBeforeFee -= maxDy
-          if (
-            (nextTick.index / this.tickSpacing) % 2 ===
-            0
-          ) {
-            currentLiquidityBI =
-              currentLiquidityBI - nextTick.DLiquidity
+          if ((nextTick.index / this.tickSpacing) % 2 === 0) {
+            currentLiquidityBI = currentLiquidityBI - nextTick.DLiquidity
           } else {
-            currentLiquidityBI =
-              currentLiquidityBI + nextTick.DLiquidity
+            currentLiquidityBI = currentLiquidityBI + nextTick.DLiquidity
           }
           nextTickToCross--
         }
@@ -295,15 +276,10 @@ export class CLRPool extends RPool {
           //currentPriceBI = nextTickPriceBI
           currentPrice = nextTickPrice
           outBeforeFee -= maxDx
-          if (
-            (nextTick.index / this.tickSpacing) % 2 ===
-            0
-          ) {
-            currentLiquidityBI =
-              currentLiquidityBI + nextTick.DLiquidity
+          if ((nextTick.index / this.tickSpacing) % 2 === 0) {
+            currentLiquidityBI = currentLiquidityBI + nextTick.DLiquidity
           } else {
-            currentLiquidityBI =
-              currentLiquidityBI - nextTick.DLiquidity
+            currentLiquidityBI = currentLiquidityBI - nextTick.DLiquidity
           }
           nextTickToCross++
         }

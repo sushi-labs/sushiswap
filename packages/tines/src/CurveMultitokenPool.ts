@@ -197,7 +197,9 @@ class CurveMultitokenCore {
       yNewBN = 1n
 
     const xNewBN = this.computeY(to, yNewBN, from)
-    const input = Math.round(Number(xNewBN - xBN) / (this.rates[from] as number))
+    const input = Math.round(
+      Number(xNewBN - xBN) / (this.rates[from] as number),
+    )
 
     //if (input < 1) input = 1
     return { inp: input, gasSpent: SWAP_GAS_COST }

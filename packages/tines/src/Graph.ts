@@ -60,7 +60,7 @@ export function NoWayMultiRoute(from: RToken, to: RToken) {
     totalAmountOutBI: 0n,
     primaryPrice: undefined,
     swapPrice: undefined,
-    priceImpact: undefined
+    priceImpact: undefined,
   } as MultiRoute
 }
 
@@ -1023,7 +1023,7 @@ export class Graph {
     let primaryPrice
     let step
     for (step = 0; step < routeValues.length; ++step) {
-      const routeValue =  routeValues[step] as number
+      const routeValue = routeValues[step] as number
       const p = this.findBestPathExactIn(from, to, amountIn * routeValue)
       if (!p) {
         break
@@ -1116,11 +1116,7 @@ export class Graph {
     let step
     for (step = 0; step < routeValues.length; ++step) {
       const routeValue = routeValues[step] as number
-      const p = this.findBestPathExactOut(
-        from,
-        to,
-        amountOut * routeValue,
-      )
+      const p = this.findBestPathExactOut(from, to, amountOut * routeValue)
       if (!p) {
         break
       } else {
@@ -1283,7 +1279,8 @@ export class Graph {
         return a
       }, 0)
       outEdges.forEach((e, i) => {
-        if ((amounts[i] as number) / totalOut < minFraction) weakEdgeList.push(e)
+        if ((amounts[i] as number) / totalOut < minFraction)
+          weakEdgeList.push(e)
       })
     })
     weakEdgeList.forEach((e) => {
@@ -1323,7 +1320,11 @@ export class Graph {
       l.assumedAmountIn = input
       l.assumedAmountOut = output
     })
-    return amounts.get((legs[legs.length - 1] as RouteLeg).tokenTo.tokenId as string) || 0
+    return (
+      amounts.get(
+        (legs[legs.length - 1] as RouteLeg).tokenTo.tokenId as string,
+      ) || 0
+    )
   }
 
   // TODO: make full test coverage!
@@ -1339,7 +1340,10 @@ export class Graph {
     })
 
     const amounts = new Map<string, number>()
-    amounts.set((legs[legs.length - 1] as RouteLeg).tokenTo.tokenId as string, amountOut)
+    amounts.set(
+      (legs[legs.length - 1] as RouteLeg).tokenTo.tokenId as string,
+      amountOut,
+    )
     for (let i = legs.length - 1; i >= 0; --i) {
       const l = legs[i] as RouteLeg
       const vert = this.getVert(l.tokenTo)
