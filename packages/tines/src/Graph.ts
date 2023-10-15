@@ -754,7 +754,7 @@ export class Graph {
       closestVert.checkLine = checkLine++
 
       if (closestVert === finish) {
-        const bestPath = []
+        const bestPath: Edge[] = []
         for (
           let v: Vertice | undefined = finish;
           v?.bestSource;
@@ -873,7 +873,7 @@ export class Graph {
       closestVert.checkLine = checkLine++
 
       if (closestVert === finish) {
-        const bestPath = []
+        const bestPath: Edge[] = []
         for (
           let v: Vertice | undefined = finish;
           v?.bestSource;
@@ -1003,7 +1003,7 @@ export class Graph {
       amountInBI = getBigInt(amountIn)
     }
 
-    let routeValues = []
+    let routeValues: number[] = []
     if (Array.isArray(mode)) {
       const sum = mode.reduce((a, b) => a + b, 0)
       routeValues = mode.map((e) => e / sum)
@@ -1095,7 +1095,7 @@ export class Graph {
     amountOut: number,
     mode: number | number[],
   ): MultiRoute {
-    let routeValues = []
+    let routeValues: number[] = []
     if (Array.isArray(mode)) {
       const sum = mode.reduce((a, b) => a + b, 0)
       routeValues = mode.map((e) => e / sum)
