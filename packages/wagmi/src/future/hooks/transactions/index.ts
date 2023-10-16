@@ -1,6 +1,11 @@
-import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
-import {addTransaction, editTransactionStatus, getTransactions, Transaction,} from '@sushiswap/dexie'
-import {waitForTransaction} from '@wagmi/core'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  addTransaction,
+  editTransactionStatus,
+  getTransactions,
+  Transaction,
+} from '@sushiswap/dexie'
+import { waitForTransaction } from '@wagmi/core'
 
 const useTransactions = ({
   account,
@@ -23,7 +28,7 @@ const usePendingTransactions = ({
     },
     select: (data) => {
       return data.filter((el) => el.status === 'pending')
-    }
+    },
   })
 }
 
