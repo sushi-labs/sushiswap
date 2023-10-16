@@ -60,6 +60,7 @@
     "@sushiswap/database": "workspace:*",
     "@sushiswap/pools-api": "workspace:*",
     "@sushiswap/steer-vault-api": "workspace:*",
+    "@sushiswap/token-price-api": "workspace:*",
     "@whatwg-node/fetch": "0.8.4",
     "sushi": "workspace:*",
     "tslib": "latest"

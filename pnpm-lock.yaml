@@ -1431,6 +1431,9 @@ importers:
       '@sushiswap/steer-vault-api':
         specifier: workspace:*
         version: link:../../apis/steer-vault
+      '@sushiswap/token-price-api':
+        specifier: workspace:*
+        version: link:../../apis/token-price
       '@whatwg-node/fetch':
         specifier: 0.8.4
         version: 0.8.4
@@ -1444,9 +1447,6 @@ importers:
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
-      '@sushiswap/token-price-api':
-        specifier: workspace:*
-        version: link:../../apis/token-price
       '@sushiswap/tokens-api':
         specifier: workspace:*
         version: link:../../apis/tokens

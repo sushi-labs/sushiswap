@@ -1,7 +1,7 @@
 import { getPool } from '@sushiswap/client'
-import { unsanitize } from '@sushiswap/format'
 import notFound from 'app/pool/not-found'
 import { unstable_cache } from 'next/cache'
+import { unsanitize } from 'sushi/format'
 import { SteerCarousel } from 'ui/pool/Steer/SteerCarousel'
 
 export default async function PositionsCreatePage({

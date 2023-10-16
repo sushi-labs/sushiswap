@@ -1,5 +1,5 @@
-import { getChainIdAddressFromId } from '@sushiswap/format'
-import { getPublicClient, PublicClient } from '@wagmi/core'
+import { PublicClient, getPublicClient } from '@wagmi/core'
+import { getChainIdAddressFromId } from 'sushi/format'
 
 function clientsFromIds(ids: string[]): PublicClient[] {
   const chainIds = Array.from(

@@ -1,7 +1,5 @@
 import { getSteerVault } from '@sushiswap/client'
 import { SteerVault } from '@sushiswap/client/src/pure/steer-vault/vault'
-import { Token } from '@sushiswap/currency'
-import { formatNumber, unsanitize } from '@sushiswap/format'
 import { getSteerVaultPositions, getTokenRatios } from '@sushiswap/steer-sdk'
 import { Container } from '@sushiswap/ui'
 import { tickToPrice } from '@sushiswap/v3-sdk'
@@ -10,6 +8,8 @@ import { deserialize, serialize } from '@wagmi/core'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { unstable_cache } from 'next/cache'
+import { Token } from 'sushi/currency'
+import { formatNumber, unsanitize } from 'sushi/format'
 import {
   SteerStrategyComponents,
   SteerStrategyGeneric,

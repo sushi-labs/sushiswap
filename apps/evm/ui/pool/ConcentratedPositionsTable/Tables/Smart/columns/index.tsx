@@ -1,6 +1,6 @@
-import { formatNumber } from '@sushiswap/format'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { ColumnDef } from '@tanstack/react-table'
+import { formatNumber } from 'sushi/format'
 import { PoolNameCellPool } from 'ui/pool/PoolNameCell'
 
 import { SteerPosition } from '../useSteerPositions'

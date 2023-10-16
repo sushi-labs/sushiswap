@@ -1,10 +1,10 @@
 import { getPool, getSteerVault } from '@sushiswap/client'
-import { unsanitize } from '@sushiswap/format'
 import { Breadcrumb, Container, LinkInternal } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import React from 'react'
+import { unsanitize } from 'sushi/format'
 import { PoolHeader } from 'ui/pool/PoolHeader'
 
 export default async function Layout({

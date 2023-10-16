@@ -1,5 +1,5 @@
-import { SteerVault } from '@sushiswap/client/src/pure/steer-vault/vault'
-import { SteerStrategy } from '@sushiswap/database'
+import { SteerVault } from '@sushiswap/client'
+import { SteerStrategy } from '@sushiswap/client'
 import { FC } from 'react'
 
 import { SteerClassicRebalanceStrategy } from './SteerClassicRebalanceStrategy'

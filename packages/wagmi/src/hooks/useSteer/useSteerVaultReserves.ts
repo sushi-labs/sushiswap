@@ -1,9 +1,9 @@
-import { getChainIdAddressFromId } from '@sushiswap/format'
 import {
   getSteerVaultReserves,
   getSteerVaultsReserves,
 } from '@sushiswap/steer-sdk'
 import { useQuery } from '@tanstack/react-query'
+import { getChainIdAddressFromId } from 'sushi'
 import { usePublicClient } from 'wagmi'
 
 import { clientsFromIds } from './getClientsFromIds'
