@@ -10,7 +10,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { readContract } from '@wagmi/core'
 import { useCallback, useMemo, useState } from 'react'
-import { hexToSignature, UserRejectedRequestError } from 'viem'
+import { UserRejectedRequestError, hexToSignature } from 'viem'
 import {
   Address,
   useAccount,

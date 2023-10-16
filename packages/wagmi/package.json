@@ -3,21 +3,25 @@
   "version": "0.0.0",
   "private": true,
   "description": "Sushi Wagmi",
-  "keywords": [
-    "sushi",
-    "wagmi"
-  ],
+  "keywords": ["sushi", "wagmi"],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "sideEffects": true,
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+
     "./*": [
       "./src/*.ts",
       "./src/*.tsx",
       "./src/*/index.ts",
       "./src/*/index.tsx"
+    ],
+    "./components/*": [
+      "./src/components/*.ts",
+      "./src/components/*.tsx",
+      "./src/components/*/index.ts",
+      "./src/components/*/index.tsx"
     ],
     "./future/*": [
       "./src/future/*.ts",
@@ -31,14 +35,14 @@
       "*": [
         "src/*",
         "src/*/index",
+        "src/components/*",
+        "src/components/*/index",
         "src/future/*",
         "src/future/*/index"
       ]
     }
   },
-  "files": [
-    "src"
-  ],
+  "files": ["src"],
   "scripts": {
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
@@ -73,7 +77,6 @@
     "@uniswap/v3-periphery": "1.4.1",
     "next-themes": "0.2.1",
     "sushi": "workspace:*",
-    "viem": "1.16.5",
     "zod": "3.21.4"
   },
   "devDependencies": {
@@ -88,7 +91,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.2.2",
-    "wagmi": "1.4.3"
+    "wagmi": "1.4.3",
+    "viem": "1.16.5"
   },
   "peerDependencies": {
     "@sentry/nextjs": "7.68.0",
@@ -96,7 +100,8 @@
     "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "wagmi": "1.4.3"
+    "wagmi": "1.4.3",
+    "viem": "1.16.5"
   },
   "peerDependenciesMeta": {
     "@sentry/nextjs": {
@@ -115,7 +120,10 @@
       "optional": true
     },
     "wagmi": {
-      "optional": true
+      "optional": false
+    },
+    "viem": {
+      "optional": false
     }
   },
   "optionalDependencies": {

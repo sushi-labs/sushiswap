@@ -2,11 +2,7 @@
   "name": "@sushiswap/wagmi-config",
   "version": "1.0.0",
   "description": "Sushi Wagmi Config",
-  "keywords": [
-    "sushi",
-    "wagmi",
-    "config"
-  ],
+  "keywords": ["sushi", "wagmi", "config"],
   "homepage": "https://www.sushi.com",
   "repository": {
     "type": "git",
@@ -15,6 +11,7 @@
   },
   "license": "MIT",
   "author": "LufyCZ <me@lufy.cz>",
+  "sideEffects": false,
   "type": "module",
   "exports": {
     ".": {
@@ -36,17 +33,11 @@
   "types": "dist/index.d.ts",
   "typesVersions": {
     "*": {
-      "chains": [
-        "./dist/chains.d.ts"
-      ],
-      "providers": [
-        "./dist/providers.d.ts"
-      ]
+      "chains": ["./dist/chains.d.ts"],
+      "providers": ["./dist/providers.d.ts"]
     }
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",

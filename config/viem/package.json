@@ -2,11 +2,7 @@
   "name": "@sushiswap/viem-config",
   "version": "2.0.0",
   "description": "Sushi Viem Config",
-  "keywords": [
-    "sushi",
-    "viem",
-    "config"
-  ],
+  "keywords": ["sushi", "viem", "config"],
   "homepage": "https://www.sushi.com",
   "repository": {
     "type": "git",
@@ -15,12 +11,11 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewlilley.com>",
+  "sideEffects": false,
   "main": "dist/index.js",
   "source": "src/index.ts",
   "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
@@ -34,7 +29,6 @@
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
-    "@tsconfig/esm": "1.0.4",
     "@tsconfig/node18": "18.2.2",
     "@tsconfig/strictest": "2.0.2",
     "jest": "29.7.0",

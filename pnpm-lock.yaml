@@ -1148,9 +1148,6 @@ importers:
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../jest
-      '@tsconfig/esm':
-        specifier: 1.0.4
-        version: 1.0.4
       '@tsconfig/node18':
         specifier: 18.2.2
         version: 18.2.2
@@ -1563,6 +1560,12 @@ importers:
       '@graphql-tools/merge':
         specifier: 9.0.0
         version: 9.0.0(graphql@16.6.0)
+      '@sushiswap/graph-config':
+        specifier: workspace:*
+        version: link:../../config/graph
+      '@sushiswap/wagmi-config':
+        specifier: workspace:*
+        version: link:../../config/wagmi
       date-fns:
         specifier: 2.30.0
         version: 2.30.0
@@ -1576,18 +1579,12 @@ importers:
       '@graphprotocol/client-cli':
         specifier: 3.0.0
         version: 3.0.0(@babel/core@7.23.2)(@envelop/core@4.0.0)(@graphql-mesh/cross-helpers@0.4.0)(@graphql-mesh/store@0.94.1)(@graphql-mesh/types@0.94.1)(@graphql-mesh/utils@0.94.1)(@graphql-tools/delegate@10.0.2)(@graphql-tools/merge@9.0.0)(@graphql-tools/utils@9.2.1)(@graphql-tools/wrap@10.0.0)(@types/node@18.17.5)(graphql-tag@2.12.6)(graphql@16.6.0)(react-native@0.72.5)
-      '@sushiswap/graph-config':
-        specifier: workspace:*
-        version: link:../../config/graph
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
       '@sushiswap/typescript-config':
         specifier: workspace:*
         version: link:../../config/typescript
-      '@sushiswap/wagmi-config':
-        specifier: workspace:*
-        version: link:../../config/wagmi
       '@types/jest':
         specifier: 29.5.5
         version: 29.5.5
@@ -2521,9 +2518,6 @@ importers:
       sushi:
         specifier: workspace:*
         version: link:../sushi
-      viem:
-        specifier: 1.16.5
-        version: 1.16.5(typescript@5.2.2)(zod@3.21.4)
       zod:
         specifier: 3.21.4
         version: 3.21.4
@@ -2562,6 +2556,9 @@ importers:
       typescript:
         specifier: 5.2.2
         version: 5.2.2
+      viem:
+        specifier: 1.16.5
+        version: 1.16.5(typescript@5.2.2)(zod@3.21.4)
       wagmi:
         specifier: 1.4.3
         version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.5)(zod@3.21.4)

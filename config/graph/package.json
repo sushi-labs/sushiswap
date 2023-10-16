@@ -2,11 +2,7 @@
   "name": "@sushiswap/graph-config",
   "version": "1.0.0",
   "description": "Sushi Graph Config",
-  "keywords": [
-    "sushi",
-    "graph",
-    "config"
-  ],
+  "keywords": ["sushi", "graph", "config"],
   "homepage": "https://www.sushi.com",
   "repository": {
     "type": "git",
@@ -15,12 +11,11 @@
   },
   "license": "MIT",
   "author": "LufyCZ <me@lufy.cz>",
+  "sideEffects": false,
   "main": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",

@@ -1,17 +1,21 @@
 {
   "include": [
-    "lib", 
+    "lib",
     "resolvers",
     "transformers",
     "__tests__"
   ],
-  "exclude": ["node_modules"],
+  "exclude": [
+    "node_modules"
+  ],
   "compilerOptions": {
     "outDir": ".",
     "baseUrl": ".",
     "rootDir": ".",
     "target": "ESNext",
-    "lib": ["ESNext"],
+    "lib": [
+      "ESNext"
+    ],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "esModuleInterop": true,

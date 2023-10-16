@@ -2,11 +2,7 @@
   "name": "@sushiswap/router-config",
   "version": "3.0.0",
   "description": "Sushi Router Config",
-  "keywords": [
-    "sushi",
-    "wagmi",
-    "config"
-  ],
+  "keywords": ["sushi", "wagmi", "config"],
   "homepage": "https://www.sushi.com",
   "repository": {
     "type": "git",
@@ -15,12 +11,11 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewlilley.com>",
+  "sideEffects": false,
   "main": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
