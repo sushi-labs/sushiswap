@@ -4,7 +4,7 @@ import {
   BENTOBOX_ADDRESS,
   BentoBoxChainId,
   isBentoBoxChainId,
-} from '@sushiswap/bentobox-sdk'
+} from 'sushi/config'
 import { ChainId } from 'sushi/chain'
 import { Pool, Protocol } from '@sushiswap/client'
 import { tryParseAmount } from 'sushi/currency'

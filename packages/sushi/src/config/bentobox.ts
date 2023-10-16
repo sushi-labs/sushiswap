@@ -1,4 +1,4 @@
-import { ChainId } from 'sushi/chain'
+import { ChainId } from '../chain'
 
 export const BENTOBOX_SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,

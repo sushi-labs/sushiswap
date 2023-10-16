@@ -3,6 +3,10 @@ import {
   UseTradeReturnWriteArgs,
   usePrice,
 } from '@sushiswap/react-query'
+import { Router } from '@sushiswap/router'
+import { useQuery } from '@tanstack/react-query'
+import { slippageAmount } from 'sushi/calculate'
+import { ChainId } from 'sushi/chain'
 import {
   ROUTE_PROCESSOR_3_1_ADDRESS,
   ROUTE_PROCESSOR_3_2_ADDRESS,
@@ -12,11 +16,7 @@ import {
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,
   isRouteProcessorChainId,
-} from '@sushiswap/route-processor-sdk'
-import { Router } from '@sushiswap/router'
-import { useQuery } from '@tanstack/react-query'
-import { slippageAmount } from 'sushi/calculate'
-import { ChainId } from 'sushi/chain'
+} from 'sushi/config'
 import { Amount, Native, Price, WNATIVE_ADDRESS } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { Address, Hex } from 'viem'

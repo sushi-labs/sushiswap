@@ -2,7 +2,7 @@
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
 import { Fee, TridentConstantPool, TridentStablePool } from '@sushiswap/amm'
-import { BENTOBOX_ADDRESS, isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
+import { BENTOBOX_ADDRESS, isBentoBoxChainId } from 'sushi/config'
 import { ChainId } from 'sushi/chain'
 import {
   defaultQuoteCurrency,

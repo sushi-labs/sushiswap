@@ -1,6 +1,5 @@
 'use client'
 
-import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import {
   createErrorToast,
   createFailedToast,
@@ -9,6 +8,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { readContract } from '@wagmi/core'
 import { useCallback, useMemo, useState } from 'react'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import { UserRejectedRequestError, hexToSignature } from 'viem'
 import {
   Address,

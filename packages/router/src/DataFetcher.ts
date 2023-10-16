@@ -1,9 +1,9 @@
-import { isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { isTridentChainId } from '@sushiswap/trident-sdk'
 import { config } from '@sushiswap/viem-config'
 import { ChainId, TestnetChainId } from 'sushi/chain'
+import { isBentoBoxChainId } from 'sushi/config'
 import { Type } from 'sushi/currency'
-import { http, PublicClient, createPublicClient, Transport } from 'viem'
+import { http, PublicClient, Transport, createPublicClient } from 'viem'
 
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
 import { BiswapProvider } from './liquidity-providers/Biswap'

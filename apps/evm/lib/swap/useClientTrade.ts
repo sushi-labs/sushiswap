@@ -8,9 +8,9 @@ import {
   TridentStablePool,
   Version as TradeVersion,
 } from '@sushiswap/amm'
-import { BentoBoxChainId, isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
+import { BentoBoxChainId, isBentoBoxChainId } from 'sushi/config'
 import { Amount, Type as Currency, WNATIVE } from 'sushi/currency'
-import { RouteProcessor3ChainId } from '@sushiswap/route-processor-sdk'
+import { RouteProcessor3ChainId } from 'sushi/config'
 import { RouteStatus } from '@sushiswap/tines'
 import {
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,

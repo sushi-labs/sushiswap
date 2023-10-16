@@ -5,7 +5,7 @@ import {
   computeTridentConstantPoolAddress,
   computeTridentStablePoolAddress,
 } from '@sushiswap/amm'
-import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
+import { BentoBoxChainId } from 'sushi/config'
 import {
   DialogConfirm,
   DialogContent,

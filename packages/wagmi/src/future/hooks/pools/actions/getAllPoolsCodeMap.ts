@@ -1,8 +1,8 @@
-import {
-  isRouteProcessor3_1ChainId,
-  isRouteProcessor3ChainId,
-} from '@sushiswap/route-processor-sdk'
 import { DataFetcher, LiquidityProviders, PoolCode } from '@sushiswap/router'
+import {
+  isRouteProcessor3ChainId,
+  isRouteProcessor3_1ChainId,
+} from 'sushi/config'
 
 import { UsePoolsParams } from '../types'
 

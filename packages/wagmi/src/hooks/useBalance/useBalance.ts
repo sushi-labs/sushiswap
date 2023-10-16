@@ -1,13 +1,13 @@
 'use client'
 
-import { isAddress } from 'viem'
-import { zeroAddress } from 'viem'
-import { bentoBoxV1Abi } from 'sushi/abi'
-import { isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { ChainId, chainName } from 'sushi/chain'
-import { Amount, Native, Token, Type } from 'sushi/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { useMemo } from 'react'
+import { bentoBoxV1Abi } from 'sushi/abi'
+import { ChainId, chainName } from 'sushi/chain'
+import { isBentoBoxChainId } from 'sushi/config'
+import { Amount, Native, Token, Type } from 'sushi/currency'
+import { isAddress } from 'viem'
+import { zeroAddress } from 'viem'
 import {
   Address,
   erc20ABI,

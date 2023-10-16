@@ -1,8 +1,8 @@
 'use client'
 
-import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { Type as Currency } from 'sushi/currency'
 import { useMemo } from 'react'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
+import { Type as Currency } from 'sushi/currency'
 import { Address, useContractReads } from 'wagmi'
 
 type UseBentoBoxTotals = (

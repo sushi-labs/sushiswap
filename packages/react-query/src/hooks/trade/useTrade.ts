@@ -1,20 +1,20 @@
+import { useQuery } from '@tanstack/react-query'
+import { useCallback } from 'react'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
 import {
-  Amount,
-  Native,
-  nativeCurrencyIds,
-  Price,
-  WNATIVE_ADDRESS,
-} from 'sushi/currency'
-import { Percent, ZERO } from 'sushi/math'
-import {
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,
-} from '@sushiswap/route-processor-sdk'
-import { useQuery } from '@tanstack/react-query'
-import { useCallback } from 'react'
-import { stringify, type Hex, type Address } from 'viem'
+} from 'sushi/config'
+import {
+  Amount,
+  Native,
+  Price,
+  WNATIVE_ADDRESS,
+  nativeCurrencyIds,
+} from 'sushi/currency'
+import { Percent, ZERO } from 'sushi/math'
+import { type Address, type Hex, stringify } from 'viem'
 import { deserialize } from 'wagmi'
 
 import { usePrice } from '../prices'

@@ -1,4 +1,4 @@
-import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
+import { BentoBoxChainId } from 'sushi/config'
 import { Amount, Price, Type } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { Button, List } from '@sushiswap/ui'

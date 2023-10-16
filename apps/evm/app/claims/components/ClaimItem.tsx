@@ -3,7 +3,7 @@
 import { CheckIcon } from '@heroicons/react-v1/solid'
 import { Amount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
-import { ROUTE_PROCESSOR_2_ADDRESS } from '@sushiswap/route-processor-sdk'
+import { ROUTE_PROCESSOR_2_ADDRESS } from 'sushi/config'
 import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/badge'
 import { Button } from '@sushiswap/ui/components/button'

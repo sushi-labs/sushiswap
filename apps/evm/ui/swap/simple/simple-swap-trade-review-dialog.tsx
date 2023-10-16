@@ -11,7 +11,7 @@ import {
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,
   isRouteProcessorChainId,
-} from '@sushiswap/route-processor-sdk'
+} from 'sushi/config'
 import { Bridge, LiquidityProviders } from '@sushiswap/router'
 import {
   DialogConfirm,

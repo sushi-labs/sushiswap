@@ -4,10 +4,10 @@ import {
   TridentConstantPool,
   TridentStablePool,
 } from '@sushiswap/amm'
-import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { Type } from 'sushi/currency'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { ReactElement } from 'react'
+import { BentoBoxChainId } from 'sushi/config'
+import { Type } from 'sushi/currency'
 
 import {
   SushiSwapV2PoolState,

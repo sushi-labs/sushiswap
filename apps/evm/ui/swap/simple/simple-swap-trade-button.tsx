@@ -11,7 +11,7 @@ import {
   ROUTE_PROCESSOR_3_2_ADDRESS,
   ROUTE_PROCESSOR_3_ADDRESS,
   ROUTE_PROCESSOR_ADDRESS,
-} from '@sushiswap/route-processor-sdk'
+} from 'sushi/config'
 import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Checker } from '@sushiswap/wagmi/future/systems'

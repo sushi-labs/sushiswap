@@ -1,11 +1,8 @@
 'use client'
 
-import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import { ZERO } from 'sushi/math'
-import {
-  SUSHIXSWAP_ADDRESS,
-  SushiXSwapChainId,
-} from '@sushiswap/sushixswap-sdk'
+import { SUSHIXSWAP_ADDRESS, SushiXSwapChainId } from 'sushi/config'
 import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Checker } from '@sushiswap/wagmi/future/systems'

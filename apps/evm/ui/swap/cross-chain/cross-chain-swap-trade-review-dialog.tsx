@@ -5,10 +5,7 @@ import {
   STARGATE_BRIDGE_TOKENS,
   isStargateBridgeToken,
 } from '@sushiswap/stargate'
-import {
-  SushiXSwapChainId,
-  isSushiXSwapChainId,
-} from '@sushiswap/sushixswap-sdk'
+import { SushiXSwapChainId, isSushiXSwapChainId } from 'sushi/config'
 import {
   DialogClose,
   DialogContent,

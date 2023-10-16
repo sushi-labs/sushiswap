@@ -1,6 +1,6 @@
 'use client'
 
-import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
+import { BentoBoxChainId } from 'sushi/config'
 import { Pool, Protocol } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'

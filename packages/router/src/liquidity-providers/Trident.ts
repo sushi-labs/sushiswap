@@ -1,4 +1,3 @@
-import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import {
   BridgeBento,
   ConstantProductRPool,
@@ -20,6 +19,7 @@ import {
   totalsAbi,
 } from 'sushi/abi'
 import type { ChainId } from 'sushi/chain'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { Address, PublicClient } from 'viem'
 
