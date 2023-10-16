@@ -18,15 +18,11 @@ export class TridentCLPoolCode extends PoolCode {
   }
 
   // eslint-disable-next-line unused-imports/no-unused-vars, no-unused-vars, @typescript-eslint/no-unused-vars
-  getSwapCodeForRouteProcessor(
-    leg: RouteLeg,
-    route: MultiRoute,
-    to: string,
-  ): string {
+  getSwapCodeForRouteProcessor(): string {
     return 'unsupported'
   }
 
-  getSwapCodeForRouteProcessor2(
+  override getSwapCodeForRouteProcessor2(
     leg: RouteLeg,
     _route: MultiRoute,
     to: string,

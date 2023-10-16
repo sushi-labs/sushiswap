@@ -27,9 +27,7 @@ env:
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
   NODE_OPTIONS: --max-old-space-size=8192
   NEXT_TELEMETRY_DISABLED: 1
-concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 jobs:
   e2e:
     timeout-minutes: 30

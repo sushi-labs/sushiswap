@@ -169,7 +169,7 @@ const network = createNetwork(rnd, 20, 0.3, GAS_PRICE)
 
 it('Token price calculation is correct', () => {
   const baseTokenIndex = 0
-  const baseToken = network.tokens[baseTokenIndex]
+  const baseToken = network.tokens[baseTokenIndex] as TToken
   const gasPrice = getBasePrice(network, baseToken)
   const g = new Graph(network.pools, baseToken, baseToken, gasPrice)
   g.vertices.forEach((v) => {

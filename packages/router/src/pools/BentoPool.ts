@@ -51,7 +51,7 @@ export class BentoPoolCode extends PoolCode {
     return code
   }
 
-  getSwapCodeForRouteProcessor2(
+  override getSwapCodeForRouteProcessor2(
     leg: RouteLeg,
     _route: MultiRoute,
     to: string,

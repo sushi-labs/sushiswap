@@ -3,7 +3,7 @@ import { isTridentChainId } from '@sushiswap/trident-sdk'
 import { config } from '@sushiswap/viem-config'
 import { ChainId, TestnetChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
-import { http, PublicClient, createPublicClient } from 'viem'
+import { http, PublicClient, createPublicClient, Transport } from 'viem'
 
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
 import { BiswapProvider } from './liquidity-providers/Biswap'
@@ -34,9 +34,9 @@ import type { PoolCode } from './pools/PoolCode'
 
 // import { create } from 'viem'
 const isTest =
-  process.env.APP_ENV === 'test' ||
-  process.env.TEST === 'true' ||
-  process.env.NEXT_PUBLIC_TEST === 'true'
+  process.env['APP_ENV'] === 'test' ||
+  process.env['TEST'] === 'true' ||
+  process.env['NEXT_PUBLIC_TEST'] === 'true'
 
 // Gathers pools info, creates routing in 'incremental' mode
 // This means that new routing recalculates each time new pool fetching data comes
@@ -79,9 +79,10 @@ export class DataFetcher {
     } else {
       this.web3Client = createPublicClient({
         ...config[this.chainId],
-        transport: isTest
+        chain: null,
+        transport: (isTest
           ? http('http://127.0.0.1:8545')
-          : config[this.chainId].transport,
+          : config[this.chainId].transport) as Transport,
         pollingInterval: 8_000,
         batch: {
           multicall: {
