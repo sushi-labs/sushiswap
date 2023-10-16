@@ -3,10 +3,10 @@ import { Button } from '@sushiswap/ui/components/button'
 import { List } from '@sushiswap/ui/components/list/List'
 import React, { Dispatch, FC, SetStateAction } from 'react'
 
-import { ProfileView } from './index'
-import { NotificationGroup } from './NotificationGroup'
 import { useClearNotifications, useNotifications } from '@sushiswap/dexie'
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
+import { NotificationGroup } from './NotificationGroup'
+import { ProfileView } from './ProfileView'
 
 interface TransactionsProps {
   address: `0x${string}`

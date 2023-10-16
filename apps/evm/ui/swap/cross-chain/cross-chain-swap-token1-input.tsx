@@ -12,7 +12,7 @@ import {
   SelectIcon,
 } from '@sushiswap/ui'
 import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
-import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
+import { Web3Input } from '@sushiswap/wagmi/future/components/web3-input'
 import { Chain } from 'sushi/chain'
 
 import {

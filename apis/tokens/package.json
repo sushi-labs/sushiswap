@@ -3,11 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Sushi Tokens API",
-  "keywords": [
-    "sushi",
-    "tokens",
-    "api"
-  ],
+  "keywords": ["sushi", "tokens", "api"],
   "homepage": "https://www.sushi.com",
   "repository": {
     "type": "git",
@@ -27,7 +23,7 @@
     "@sushiswap/wagmi-config": "workspace:*",
     "@vercel/node": "3.0.7",
     "@wagmi/core": "1.4.3",
-    "zod": "3.22.4"
+    "zod": "3.21.4"
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",

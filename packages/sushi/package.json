@@ -2,9 +2,7 @@
   "name": "sushi",
   "version": "3.0.0",
   "description": "Sushi",
-  "keywords": [
-    "sushi"
-  ],
+  "keywords": ["sushi"],
   "homepage": "https://www.sushi.com",
   "repository": {
     "type": "git",
@@ -13,7 +11,6 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -78,50 +75,22 @@
   "types": "dist/index.d.ts",
   "typesVersions": {
     "*": {
-      "abi": [
-        "./dist/abi/index.d.ts"
-      ],
-      "calculate": [
-        "./dist/calculate/index.d.ts"
-      ],
-      "chain": [
-        "./dist/chain/index.d.ts"
-      ],
-      "convert": [
-        "./dist/convert/index.d.ts"
-      ],
-      "currency": [
-        "./dist/currency/index.d.ts"
-      ],
-      "format": [
-        "./dist/format/index.d.ts"
-      ],
-      "gas": [
-        "./dist/gas/index.d.ts"
-      ],
-      "log": [
-        "./dist/log/index.d.ts"
-      ],
-      "math": [
-        "./dist/math/index.d.ts"
-      ],
-      "sort": [
-        "./dist/sort/index.d.ts"
-      ],
-      "token-list": [
-        "./dist/token-list/index.d.ts"
-      ],
-      "types": [
-        "./dist/types/index.d.ts"
-      ],
-      "validate": [
-        "./dist/validate/index.d.ts"
-      ]
+      "abi": ["./dist/abi/index.d.ts"],
+      "calculate": ["./dist/calculate/index.d.ts"],
+      "chain": ["./dist/chain/index.d.ts"],
+      "convert": ["./dist/convert/index.d.ts"],
+      "currency": ["./dist/currency/index.d.ts"],
+      "format": ["./dist/format/index.d.ts"],
+      "gas": ["./dist/gas/index.d.ts"],
+      "log": ["./dist/log/index.d.ts"],
+      "math": ["./dist/math/index.d.ts"],
+      "sort": ["./dist/sort/index.d.ts"],
+      "token-list": ["./dist/token-list/index.d.ts"],
+      "types": ["./dist/types/index.d.ts"],
+      "validate": ["./dist/validate/index.d.ts"]
     }
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
@@ -150,7 +119,7 @@
     "typescript": "5.2.2",
     "viem": "1.16.5",
     "vitest": "0.34.6",
-    "zod": "3.22.4"
+    "zod": "3.21.4"
   },
   "peerDependencies": {
     "viem": "*",

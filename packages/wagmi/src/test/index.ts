@@ -1,28 +1,13 @@
+import { MockConnector } from '@wagmi/core/connectors/mock'
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { http, createWalletClient } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
-import { Chain, configureChains, createConfig } from 'wagmi'
-
-import { foundry } from '../chains'
-import { MockConnector } from '../connectors/mock'
+import { Chain, foundry } from 'viem/chains'
+import { configureChains, createConfig } from 'wagmi'
 import { TestChainId, accounts, testChains } from './constants'
 
 const foundryPort = String(
   process.env.ANVIL_PORT || process.env.NEXT_PUBLIC_ANVIL_PORT || 8545,
-)
-
-const { publicClient } = configureChains(
-  testChains,
-  [
-    jsonRpcProvider({
-      rpc: () => ({
-        http: foundry.rpcUrls.default.http[0].replace('8545', foundryPort),
-      }),
-    }),
-  ],
-  {
-    pollingInterval: 4_000,
-  },
 )
 
 export function getNetwork(chain: Chain) {
@@ -44,6 +29,20 @@ export function getTransport(chainId: TestChainId) {
   return http(url)
 }
 
+const { publicClient } = configureChains(
+  testChains,
+  [
+    jsonRpcProvider({
+      rpc: () => ({
+        http: foundry.rpcUrls.default.http[0].replace('8545', foundryPort),
+      }),
+    }),
+  ],
+  {
+    pollingInterval: 1_000,
+  },
+)
+
 export const createTestConfig = (
   chainId: TestChainId,
   accountIndex: number,
@@ -54,7 +53,7 @@ export const createTestConfig = (
         account: getAccounts()[accountIndex],
         transport: getTransport(chainId),
         chain: testChains.find((x) => x.id === chainId),
-        pollingInterval: 4000,
+        pollingInterval: 1_000,
       }),
     },
   })

@@ -38,14 +38,11 @@ jobs:
       matrix:
         chain-id: [137]
         node-version: [18]
-        pnpm-version: [8.9.0]
+        pnpm-version: [8.9.2]
         block-number: [47479278]
     steps:
-      - name: Check out
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
-          submodules: true
+      - name: Clone repository
+        uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v2
         with:

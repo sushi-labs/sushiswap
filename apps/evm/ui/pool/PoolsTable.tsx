@@ -1,6 +1,6 @@
 'use client'
 
-import { Slot } from '@radix-ui/react-slot'
+import { Slot } from '@sushiswap/ui/components/slot'
 import {
   GetPoolsArgs,
   Pool,

@@ -17,12 +17,10 @@
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "exports": {
     "./base.json": "./base.json",
-    "./hardhat.json": "./hardhat.json",
     "./react-library.json": "./react-library.json"
   },
   "files": [
     "./base.json",
-    "./hardhat.json",
     "./react-library.json"
   ]
 }

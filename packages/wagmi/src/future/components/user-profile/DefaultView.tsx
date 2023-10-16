@@ -6,8 +6,6 @@ import {
   InboxArrowDownIcon,
   LinkIcon,
 } from '@heroicons/react/24/outline'
-import chains, { ChainId } from 'sushi/chain'
-import { Amount, Native } from 'sushi/currency'
 import { usePrice } from '@sushiswap/react-query'
 import {
   ClipboardController,
@@ -17,9 +15,10 @@ import {
 import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { List } from '@sushiswap/ui/components/list/List'
 import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
+import chains, { ChainId } from 'sushi/chain'
+import { Amount, Native } from 'sushi/currency'
 import { useBalance, useDisconnect } from 'wagmi'
-
-import { ProfileView } from './index'
+import { ProfileView } from './ProfileView'
 
 interface DefaultProps {
   chainId: ChainId

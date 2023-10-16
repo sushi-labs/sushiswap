@@ -1,4 +1,4 @@
-import { AddressZero } from '@ethersproject/constants'
+import { zeroAddress } from 'viem'
 import {
   ArrowTopRightOnSquareIcon,
   CheckCircleIcon,
@@ -66,7 +66,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
         <div
           testdata-id={`${id}-row-${
             currency.isNative
-              ? AddressZero
+              ? zeroAddress
               : currency.wrapped.address.toLowerCase()
           }`}
           onClick={onClick}

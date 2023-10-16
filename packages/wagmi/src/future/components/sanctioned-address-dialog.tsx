@@ -1,6 +1,7 @@
 'use client'
 
 import { useLocalStorage } from '@sushiswap/hooks'
+import { Button } from '@sushiswap/ui/components/button'
 import {
   Dialog,
   DialogContent,
@@ -8,9 +9,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  LinkExternal,
-} from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
+} from '@sushiswap/ui/components/dialog'
+import { LinkExternal } from '@sushiswap/ui/components/link'
 
 export const SanctionedAddressDialog = () => {
   const [open, setOpen] = useLocalStorage('sanctionedAddress', false)

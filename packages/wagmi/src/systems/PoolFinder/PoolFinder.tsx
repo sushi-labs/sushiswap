@@ -9,7 +9,7 @@ import {
   useReducer,
 } from 'react'
 
-import { SushiSwapV2PoolState } from '../../hooks/useSushiSwapV2Pools'
+import { SushiSwapV2PoolState } from '../../hooks'
 import { ComponentsWrapper } from './ComponentsWrapper'
 import { SushiSwapV2Pool } from './SushiSwapV2Pool'
 import { TridentConstantPool } from './TridentConstantPool'

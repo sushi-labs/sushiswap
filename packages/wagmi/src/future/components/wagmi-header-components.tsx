@@ -2,8 +2,8 @@
 
 import { ChainId } from 'sushi/chain'
 
-import { HeaderNetworkSelector } from './HeaderNetworkSelector'
-import { UserProfile } from './UserProfile'
+import { HeaderNetworkSelector } from './header-network-selector'
+import { UserProfile } from './user-profile'
 
 interface WagmiHeaderComponentsProps {
   chainIds: ChainId[]

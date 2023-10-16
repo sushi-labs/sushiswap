@@ -1,9 +1,9 @@
-import { ChainId } from 'sushi/chain'
-import { Amount, Native, Type } from 'sushi/currency'
-import { Fraction } from 'sushi'
 import { NativeAddress } from '@sushiswap/react-query'
 import { Currency } from '@sushiswap/ui/components/currency'
 import React, { FC, memo, useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Amount, Native, Type } from 'sushi/currency'
+import { Fraction } from 'sushi/math'
 import { useAccount } from 'wagmi'
 
 import { TokenSelectorRow } from './TokenSelectorRow'

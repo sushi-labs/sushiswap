@@ -1,11 +1,11 @@
-import { TransactionReceipt } from '@ethersproject/providers'
 import { ReactNode } from 'react'
+import { TransactionReceipt } from 'viem'
 
 export interface CreateNotificationParams {
   summary: {
-    pending: ReactNode | Array<ReactNode>
-    completed: ReactNode | Array<ReactNode>
-    failed: ReactNode | Array<ReactNode>
+    pending: ReactNode | ReactNode[]
+    completed: ReactNode | ReactNode[]
+    failed: ReactNode | ReactNode[]
   }
   href: string
   txHash: string

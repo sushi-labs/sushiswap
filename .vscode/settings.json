@@ -4,16 +4,22 @@
     "quickfix.biome": true,
     "source.organizeImports.biome": true
   },
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "biomejs.biome",
   "editor.formatOnPaste": false,
-  "editor.formatOnSave": false,
+  "editor.formatOnSave": true,
   "editor.quickSuggestions": {
     "strings": "on"
   },
   "eslint.enable": true,
-  "eslint.workingDirectories": [{ "pattern": "./apps/*/" }],
+  "eslint.workingDirectories": [
+    {
+      "pattern": "./apps/*/"
+    },
+    {
+      "pattern": "./packages/*/"
+    }
+  ],
   "eslint.validate": [
-    "json",
     "javascript",
     "javascriptreact",
     "typescript",

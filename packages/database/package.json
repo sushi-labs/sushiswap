@@ -2,10 +2,7 @@
   "name": "@sushiswap/database",
   "version": "0.0.1",
   "description": "Sushi Database",
-  "keywords": [
-    "sushi",
-    "database"
-  ],
+  "keywords": ["sushi", "database"],
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
@@ -13,13 +10,10 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "sideEffects": false,
   "main": "dist/index.js",
   "source": "src/index.ts",
   "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",

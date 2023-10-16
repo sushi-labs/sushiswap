@@ -1,15 +1,15 @@
 import { ArrowLeftIcon } from '@heroicons/react/20/solid'
-import { List } from '@sushiswap/ui/components/list/List'
+import { List } from '@sushiswap/ui/components/list'
 import React, { Dispatch, FC, Fragment, SetStateAction } from 'react'
 
-import { ProfileView } from './index'
-import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { RadioGroup } from '@headlessui/react'
-import { classNames } from '@sushiswap/ui'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
 import { useLocalStorage } from '@sushiswap/hooks'
+import { classNames } from '@sushiswap/ui'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { Switch } from '@sushiswap/ui/components/switch'
 import { useTheme } from 'next-themes'
+import { ProfileView } from './ProfileView'
 
 interface SettingsViewProps {
   setView: Dispatch<SetStateAction<ProfileView>>
@@ -49,6 +49,7 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
                   <RadioGroup.Option as={Fragment} key={i} value={k}>
                     {({ checked }) => (
                       <button
+                        type="button"
                         className={classNames(
                           checked
                             ? 'text-gray-900 dark:text-slate-50 bg-white dark:bg-white/[0.08]'

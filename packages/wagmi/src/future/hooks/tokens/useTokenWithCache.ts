@@ -1,4 +1,4 @@
-import { isAddress } from '@ethersproject/address'
+import { isAddress } from 'viem'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { getToken, saveTokens } from '@sushiswap/dexie'

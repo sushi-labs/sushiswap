@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/nextjs'
+import { captureException } from '@sentry/nextjs'
 import { QueryCache, QueryClient } from '@tanstack/react-query'
 
 const queryClientConfig = {
@@ -9,7 +9,7 @@ const queryClientConfig = {
   },
   queryCache: new QueryCache({
     onError: (error) => {
-      Sentry.captureException(error)
+      captureException(error)
     },
   }),
   // deprecated in next version so there's no point using

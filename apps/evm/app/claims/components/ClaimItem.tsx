@@ -10,7 +10,7 @@ import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { Address } from '@sushiswap/wagmi'
+import { Address } from 'viem'
 import {
   useRP2ExploitClaim,
   useRP2ExploitIsClaimed,

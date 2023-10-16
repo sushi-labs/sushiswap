@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/nextjs'
+import { captureMessage } from '@sentry/nextjs'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import { configureChains, createConfig } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
@@ -8,13 +8,14 @@ import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { SafeConnector } from 'wagmi/connectors/safe'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
-import { TestChainId } from './_test/constants'
-import { createTestConfig } from './_test/setup'
+import { createTestConfig } from './test'
+import { type TestChainId } from './test/constants'
 
 const isTest =
-  process.env.APP_ENV === 'test' ||
+  process.env.NODE_ENV === 'test' ||
   process.env.TEST === 'true' ||
   process.env.NEXT_PUBLIC_TEST === 'true'
+
 const chainId = Number(
   process.env.CHAIN_ID || process.env.NEXT_PUBLIC_CHAIN_ID || 137,
 )
@@ -24,18 +25,18 @@ const testWalletIndex = Number(
     0,
 )
 
+const { chains, publicClient } = configureChains(allChains, allProviders, {
+  pollingInterval: 4_000,
+})
+
 export const createWagmiConfig = () => {
-  if (isTest) {
-    return createTestConfig(chainId as TestChainId, testWalletIndex)
-  }
-  const { chains, publicClient } = configureChains(allChains, allProviders, {
-    pollingInterval: 4_000,
-  })
+  if (isTest) return createTestConfig(chainId as TestChainId, testWalletIndex)
+
   return createConfig({
     publicClient,
     logger: {
       warn: (message) => {
-        Sentry.captureMessage(message, 'warning')
+        captureMessage(message, 'warning')
       },
     },
     autoConnect: true,

@@ -13,9 +13,10 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline'
 import { ResolvedNotification } from '@sushiswap/dexie'
-import { LinkExternal, classNames } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { Currency as UICurrency } from '@sushiswap/ui/components/currency'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { LinkExternal } from '@sushiswap/ui/components/link'
 import { Loader } from '@sushiswap/ui/components/loader'
 import { TimeAgo } from '@sushiswap/ui/components/time-ago'
 import React, { FC } from 'react'

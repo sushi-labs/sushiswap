@@ -1,12 +1,15 @@
-import { Chain, ChainId } from 'sushi/chain'
-import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui'
+import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import {
+  NetworkSelector,
+  NetworkSelectorOnSelectCallback,
+} from '@sushiswap/ui/components/network-selector'
 import { createErrorToast } from '@sushiswap/ui/components/toast'
 import React, { FC, Suspense, useCallback } from 'react'
+import { Chain, ChainId } from 'sushi/chain'
 import { ProviderRpcError, UserRejectedRequestError } from 'viem'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
-import { useIsMounted } from '@sushiswap/hooks'
 
 export const HeaderNetworkSelector: FC<{
   networks: ChainId[]
@@ -31,6 +34,7 @@ export const HeaderNetworkSelector: FC<{
 
         close()
       } catch (e) {
+        console.error(`Failed to switch network: ${e}`)
         if (e instanceof UserRejectedRequestError) return
         if (e instanceof ProviderRpcError) {
           createErrorToast(e.message, true)

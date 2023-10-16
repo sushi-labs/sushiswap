@@ -3,11 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Sushi Extractor API",
-  "keywords": [
-    "sushi",
-    "extractor",
-    "api"
-  ],
+  "keywords": ["sushi", "extractor", "api"],
   "homepage": "https://www.sushi.com",
   "repository": {
     "type": "git",
@@ -42,7 +38,7 @@
     "sushi": "workspace:*",
     "viem": "1.16.5",
     "wagmi": "1.4.3",
-    "zod": "3.22.4"
+    "zod": "3.21.4"
   },
   "devDependencies": {
     "@tsconfig/esm": "1.0.4",

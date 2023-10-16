@@ -14,6 +14,8 @@ export const useConnect: typeof useWagmiConnect = (props) => {
   return useWagmiConnect({
     ...props,
     onSuccess: async (data) => {
+      if (process.env.NODE_ENV !== 'production') return
+
       const resp = await fetch(
         'https://api.trmlabs.com/public/v1/sanctions/screening',
         {

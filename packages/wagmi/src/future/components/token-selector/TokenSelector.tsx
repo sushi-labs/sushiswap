@@ -1,10 +1,7 @@
 'use client'
 
-import { isAddress } from '@ethersproject/address'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
-import { ChainId } from 'sushi/chain'
-import { Native, Token, Type } from 'sushi/currency'
 import { useCustomTokens, usePinnedTokens } from '@sushiswap/hooks'
 import {
   useBalances,
@@ -13,7 +10,6 @@ import {
   useTokens,
 } from '@sushiswap/react-query'
 import {
-  classNames,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -22,10 +18,11 @@ import {
   DialogTrigger,
   IconButton,
   TextField,
+  classNames,
 } from '@sushiswap/ui'
 import { Button, buttonIconVariants } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
-import { List } from '@sushiswap/ui/components/list/List'
+import { List } from '@sushiswap/ui/components/list'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import React, {
   FC,
@@ -35,12 +32,14 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Native, Token, Type } from 'sushi/currency'
+import { isAddress } from 'viem'
 import { useAccount } from 'wagmi'
-
 import { useTokenWithCache } from '../../hooks'
-import { useSortedTokenList } from './hooks/useSortedTokenList'
 import { TokenSelectorCurrencyList } from './TokenSelectorCurrencyList'
 import { TokenSelectorImportRow } from './TokenSelectorImportRow'
+import { useSortedTokenList } from './hooks/useSortedTokenList'
 
 interface TokenSelectorProps {
   id: string

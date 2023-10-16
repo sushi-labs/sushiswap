@@ -1,21 +1,21 @@
-import { ChainId } from 'sushi/chain'
 import { ReactNode, useEffect } from 'react'
-import { useEnsName } from 'wagmi'
+import { ChainId } from 'sushi/chain'
+import { useEnsAddress } from 'wagmi'
 
-export type Props = Parameters<typeof useEnsName>[0] & {
+export type Props = Parameters<typeof useEnsAddress>[0] & {
   children:
     | ReactNode
-    | Array<ReactNode>
-    | ((payload: ReturnType<typeof useEnsName>) => JSX.Element)
+    | ReactNode[]
+    | ((payload: ReturnType<typeof useEnsAddress>) => JSX.Element)
 }
 
-export const AddressToEnsResolver = ({
+export const EnsToAddressResolver = ({
   children,
   onSuccess,
   chainId = ChainId.ETHEREUM,
   ...props
 }: Props): JSX.Element => {
-  const result = useEnsName({ ...props, chainId })
+  const result = useEnsAddress({ ...props, chainId })
 
   // Custom onSuccess callback to send success data with resolved result
   useEffect(() => {

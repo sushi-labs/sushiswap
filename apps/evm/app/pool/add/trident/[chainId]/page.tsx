@@ -26,7 +26,7 @@ import {
   TridentConstantPoolState,
   TridentStablePoolState,
 } from '@sushiswap/wagmi'
-import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
+import { Web3Input } from '@sushiswap/wagmi/future/components/web3-input'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { CheckerProvider } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import {

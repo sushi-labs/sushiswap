@@ -5,15 +5,29 @@ const defaultNextConfig = {
   swcMinify: true,
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
+  // modularizeImports: {
+  //   '@heroicons-v1/react/solid': {
+  //     transform: '@heroicons-v1/react/solid/{{member}}',
+  //   },
+  //   '@heroicons-v1/react/outline': {
+  //     transform: '@heroicons-v1/react/outline/{{member}}',
+  //   },
+  //   '@heroicons/react': {
+  //     transform: '@heroicons/react/{{member}}',
+  //   },
+  //   lodash: {
+  //     transform: 'lodash/{{member}}',
+  //   },
+  // },
   experimental: {
     esmExternals: 'loose',
-    optimizePackageImports: [
-      '@heroicons-v1/react/20/solid',
-      '@heroicons-v1/react/24/solid',
-      '@heroicons-v1/react/24/outline',
-      '@sushiswap/ui',
-      'sushi',
-    ],
+    // optimizePackageImports: [
+    //   '@heroicons-v1/react/20/solid',
+    //   '@heroicons-v1/react/24/solid',
+    //   '@heroicons-v1/react/24/outline',
+    //   '@sushiswap/ui',
+    //   'sushi',
+    // ],
   },
   images: {
     loader: 'cloudinary',

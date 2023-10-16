@@ -1,31 +1,24 @@
 'use client'
 
 import { useIsMounted } from '@sushiswap/hooks'
+import { useBreakpoint } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { JazzIcon } from '@sushiswap/ui/components/icons/JazzIcon'
+// import { JazzIcon } from '@sushiswap/ui/components/icons/JazzIcon'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@sushiswap/ui/components/popover'
-import { useBreakpoint } from '@sushiswap/ui/lib/useBreakpoint'
 import React, { FC, useState } from 'react'
-import { shortenAddress } from 'sushi'
 import { ChainId } from 'sushi/chain'
+import { shortenAddress } from 'sushi/format'
 import { useAccount, useEnsAvatar, useEnsName, useNetwork } from 'wagmi'
-
-import { ConnectButton } from '../ConnectButton'
+import { ConnectButton } from '../connect-button'
 import { ConnectView } from './ConnectView'
 import { DefaultView } from './DefaultView'
+import { ProfileView } from './ProfileView'
 import { SettingsView } from './SettingsView'
 import { TransactionsView } from './TransactionsView'
-
-export enum ProfileView {
-  Disconnected = 'Disconnected',
-  Default = 'Default',
-  Transactions = 'Transactions',
-  Settings = 'Settings',
-}
 
 interface ProfileProps {
   networks: ChainId[]
@@ -56,17 +49,18 @@ export const UserProfile: FC<ProfileProps> = () => {
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="secondary">
-          {avatar ? (
-            <img
-              alt="ens-avatar"
-              src={avatar}
-              width={20}
-              height={20}
-              className="rounded-full"
-            />
-          ) : (
-            <JazzIcon diameter={20} address={address} />
-          )}
+          {
+            avatar ? (
+              <img
+                alt="ens-avatar"
+                src={avatar}
+                width={20}
+                height={20}
+                className="rounded-full"
+              />
+            ) : null
+            // <JazzIcon diameter={20} address={address} />
+          }
           <span className="hidden sm:block">
             {shortenAddress(address, isSm ? 3 : 2)}
           </span>

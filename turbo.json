@@ -89,6 +89,9 @@
     },
     "validate": {
       "cache": true
+    },
+    "export": {
+      "cache": true
     }
   }
 }

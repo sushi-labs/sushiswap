@@ -2,10 +2,7 @@
   "name": "@sushiswap/client",
   "version": "0.0.0",
   "description": "Sushi Client",
-  "keywords": [
-    "sushi",
-    "client"
-  ],
+  "keywords": ["sushi", "client"],
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
@@ -18,9 +15,7 @@
   "source": "src/index.ts",
   "types": "dist/index.d.ts",
   "typings": "dist/index.d.ts",
-  "files": [
-    "dist/**"
-  ],
+  "files": ["dist/**"],
   "scripts": {
     "build": "tsup src/index.ts",
     "check": "tsc --pretty --noEmit",

@@ -1,6 +1,6 @@
 'use client'
 
-import { Navigation } from '@sushiswap/ui'
+import { Navigation } from '@sushiswap/ui/components/navigation'
 import { WagmiHeaderComponents } from '@sushiswap/wagmi/future'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import React, { FC } from 'react'

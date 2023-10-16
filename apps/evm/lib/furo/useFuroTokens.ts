@@ -21,7 +21,7 @@ export type FuroToken = NonNullable<
 export const getFuroTokensUrl = (args: GetFuroTokenArgs) =>
   `/analytics/api/furoTokens${parseArgs(args)}`
 
-function useFuroTokens(args: GetFuroTokenArgs) {
+export function useFuroTokens(args: GetFuroTokenArgs) {
   const { data: furoTokens, isValidating } = useSWR<Furo_token[]>(
     getFuroTokensUrl(args),
     (url) => fetch(url).then((data) => data.json()),
@@ -74,5 +74,3 @@ function useFuroTokens(args: GetFuroTokenArgs) {
     isLoading: isLoading || isValidating,
   }
 }
-
-export { useFuroTokens }

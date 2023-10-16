@@ -1,4 +1,4 @@
-import { arbitrum, mainnet, polygon } from '../chains'
+import { arbitrum, mainnet, polygon } from 'viem/chains'
 
 export const testChains = [polygon, mainnet, arbitrum]
 export type TestChainId = typeof testChains[number]['id']

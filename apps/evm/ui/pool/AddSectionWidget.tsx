@@ -14,7 +14,7 @@ import {
   SettingsOverlay,
 } from '@sushiswap/ui/components/settings'
 import { Widget, WidgetHeader } from '@sushiswap/ui/components/widget'
-import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
+import { Web3Input } from '@sushiswap/wagmi/future/components/web3-input'
 import React, { FC, ReactNode } from 'react'
 
 interface AddSectionWidgetProps {

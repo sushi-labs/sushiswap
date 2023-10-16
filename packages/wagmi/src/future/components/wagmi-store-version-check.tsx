@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useEffect } from 'react'
+import React, { FC, useEffect } from 'react'
 
 interface WagmiStoreVersionCheckProps {
   children: React.ReactNode
@@ -16,6 +16,5 @@ export const WagmiStoreVersionCheck: FC<WagmiStoreVersionCheckProps> = ({
       localStorage.removeItem('wagmi.store')
     }
   }, [])
-
   return <>{children}</>
 }
