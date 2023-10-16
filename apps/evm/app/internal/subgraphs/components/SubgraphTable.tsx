@@ -2,7 +2,7 @@
 
 import { RefreshIcon } from '@heroicons/react-v1/solid'
 import { ChainId, chainName } from 'sushi/chain'
-import { formatNumber, formatPercent } from 'sushi'
+import { formatNumber, formatPercent } from 'sushi/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import {
   Card,

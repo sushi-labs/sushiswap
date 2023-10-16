@@ -1,7 +1,7 @@
 'use client'
 
 import { Pool } from '@sushiswap/client'
-import { formatUSD } from 'sushi'
+import { formatUSD } from 'sushi/format'
 import { Button } from '@sushiswap/ui/components/button'
 import {
   Card,

@@ -2,7 +2,7 @@
 
 import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
 import { Chain } from 'sushi/chain'
-import { shortenAddress } from 'sushi'
+import { shortenAddress } from 'sushi/format'
 import { Token as GraphToken } from '@sushiswap/graph-client'
 import { ClipboardController, LinkExternal } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'

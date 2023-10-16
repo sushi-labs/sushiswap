@@ -3,7 +3,7 @@
 import { ChainId } from 'sushi/chain'
 import { Pool } from '@sushiswap/client'
 import { Native } from 'sushi/currency'
-import { formatUSD } from 'sushi'
+import { formatUSD } from 'sushi/format'
 import { usePrices } from '@sushiswap/react-query'
 import {
   Card,

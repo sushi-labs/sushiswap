@@ -6,7 +6,7 @@ import {
   erc20ABI,
   readContract,
 } from '@wagmi/core'
-import { isPromiseFulfilled } from 'sushi'
+import { isPromiseFulfilled } from 'sushi/validate'
 
 const { publicClient } = configureChains(allChains, allProviders)
 

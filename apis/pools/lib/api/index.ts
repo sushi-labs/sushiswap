@@ -1,15 +1,15 @@
 // eslint-disable-next-line
 import type * as _ from '@prisma/client/runtime'
 
-import { createClient, Prisma, type DecimalToString } from '@sushiswap/database'
-import { isPromiseFulfilled } from 'sushi'
+import { type DecimalToString, Prisma, createClient } from '@sushiswap/database'
 import { deepmergeInto } from 'deepmerge-ts'
+import { isPromiseFulfilled } from 'sushi/validate'
+import { getUnindexedPool } from '../getUnindexedPool'
 import type {
   PoolApiSchema,
   PoolCountApiSchema,
   PoolsApiSchema,
 } from './../schemas'
-import { getUnindexedPool } from '../getUnindexedPool'
 import { SushiPoolSelect } from './select'
 
 function parseWhere(

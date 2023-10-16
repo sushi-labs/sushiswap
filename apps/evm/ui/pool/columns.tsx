@@ -1,5 +1,10 @@
 import { Pool } from '@sushiswap/client'
-import { formatNumber, formatPercent, formatUSD, shortenAddress } from 'sushi'
+import {
+  formatNumber,
+  formatPercent,
+  formatUSD,
+  shortenAddress,
+} from 'sushi/format'
 import { AngleRewardsPool } from '@sushiswap/react-query'
 import {
   classNames,

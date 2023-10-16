@@ -22,7 +22,7 @@ import { List } from '@sushiswap/ui/components/list/List'
 import { Address } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import React, { FC, ReactNode } from 'react'
-import { formatNumber } from 'sushi'
+import { formatNumber } from 'sushi/format'
 import { Chain } from 'sushi/chain'
 
 import { ConcentratedLiquidityHarvestButton } from './ConcentratedLiquidityHarvestButton'

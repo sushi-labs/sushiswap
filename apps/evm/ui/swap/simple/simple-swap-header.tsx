@@ -2,7 +2,7 @@
 
 import { ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
 import { Price, tryParseAmount } from 'sushi/currency'
-import { formatUSD } from 'sushi'
+import { formatUSD } from 'sushi/format'
 import { usePrices } from '@sushiswap/react-query'
 import { Button, typographyVariants } from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'

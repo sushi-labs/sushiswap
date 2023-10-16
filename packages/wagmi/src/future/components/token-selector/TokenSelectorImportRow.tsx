@@ -14,9 +14,9 @@ import { Button } from '@sushiswap/ui/components/button'
 import { Icon } from '@sushiswap/ui/components/currency/Icon'
 import { List } from '@sushiswap/ui/components/list/List'
 import React, { FC, ReactNode, useCallback, useState } from 'react'
-import { shortenAddress } from 'sushi'
 import { Chain } from 'sushi/chain'
 import { Token } from 'sushi/currency'
+import { shortenAddress } from 'sushi/format'
 
 interface TokenSelectorImportRow {
   currencies: (Token | undefined)[]

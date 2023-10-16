@@ -1,6 +1,6 @@
 'use client'
 
-import { formatNumber, formatUSD } from 'sushi'
+import { formatNumber, formatUSD } from 'sushi/format'
 import {
   Badge,
   Card,
