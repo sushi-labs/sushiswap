@@ -1,4 +1,3 @@
-import { isPromiseFulfilled } from 'sushi'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import {
   Address,
@@ -7,6 +6,7 @@ import {
   erc20ABI,
   readContract,
 } from '@wagmi/core'
+import { isPromiseFulfilled } from 'sushi'
 
 const { publicClient } = configureChains(allChains, allProviders)
 
