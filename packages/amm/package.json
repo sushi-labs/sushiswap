@@ -2,7 +2,10 @@
   "name": "@sushiswap/amm",
   "version": "0.1.15",
   "description": "Sushi AMM",
-  "keywords": ["sushi", "amm"],
+  "keywords": [
+    "sushi",
+    "amm"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
@@ -13,7 +16,9 @@
   "main": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
-  "files": ["dist/**"],
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",

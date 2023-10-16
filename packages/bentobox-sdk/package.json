@@ -2,7 +2,10 @@
   "name": "@sushiswap/bentobox-sdk",
   "version": "1.0.0",
   "description": "BentoBox SDK",
-  "keywords": ["bentobox", "sdk"],
+  "keywords": [
+    "bentobox",
+    "sdk"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
@@ -13,7 +16,9 @@
   "main": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
-  "files": ["dist/**"],
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",

@@ -2,7 +2,11 @@
   "name": "@sushiswap/v3-sdk",
   "version": "1.0.12",
   "description": "Sushi V3 SDK",
-  "keywords": ["sushiswap", "v3", "sdk"],
+  "keywords": [
+    "sushiswap",
+    "v3",
+    "sdk"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
@@ -13,7 +17,9 @@
   "main": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
-  "files": ["dist/**"],
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
