@@ -14,15 +14,13 @@ import {
   isRouteProcessorChainId,
 } from '@sushiswap/route-processor-sdk'
 import { Router } from '@sushiswap/router'
-import { Percent } from 'sushi'
+import { useQuery } from '@tanstack/react-query'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
 import { Amount, Native, Price, WNATIVE_ADDRESS } from 'sushi/currency'
-
-import { useQuery } from '@tanstack/react-query'
+import { Percent } from 'sushi/math'
 import { Address, Hex } from 'viem'
 import { useFeeData } from 'wagmi'
-
 import { usePoolsCodeMap } from '../../pools'
 
 export const useClientTrade = (variables: UseTradeParams) => {

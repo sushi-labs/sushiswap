@@ -52,9 +52,6 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@ethersproject/address": "5.7.0",
-    "@ethersproject/constants": "5.7.0",
-    "@ethersproject/providers": "5.7.2",
     "@headlessui/react": "1.7.7",
     "@heroicons/react": "2.0.13",
     "@radix-ui/react-slot": "1.0.2",
@@ -84,7 +81,7 @@
     "zod": "3.21.4"
   },
   "devDependencies": {
-    "@sentry/nextjs": "7.68.0",
+    "@sentry/nextjs": "7.74.0",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "29.5.5",
@@ -99,7 +96,7 @@
     "wagmi": "1.4.3"
   },
   "peerDependencies": {
-    "@sentry/nextjs": "7.68.0",
+    "@sentry/nextjs": "7.74.0",
     "@wagmi/core": "1.4.3",
     "next": "13.4.19",
     "react": "18.2.0",

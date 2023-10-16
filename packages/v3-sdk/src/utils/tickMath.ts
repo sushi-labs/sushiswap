@@ -1,4 +1,4 @@
-import { MAX_UINT256 } from 'sushi'
+import { MAX_UINT256 } from 'sushi/math'
 import invariant from 'tiny-invariant'
 
 import { mostSignificantBit } from './mostSignificantBit'
@@ -22,7 +22,7 @@ export abstract class TickMath {
   /**
    * The maximum tick that can be used on any pool.
    */
-  public static MAX_TICK: number = -TickMath.MIN_TICK
+  public static MAX_TICK = -TickMath.MIN_TICK
 
   /**
    * The sqrt ratio corresponding to the minimum tick that could be used on any pool.

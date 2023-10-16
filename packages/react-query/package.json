@@ -43,9 +43,6 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
-    "@ethersproject/address": "5.7.0",
-    "@ethersproject/bignumber": "5.7.0",
-    "@ethersproject/units": "^5.7.0",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/client": "workspace:*",
     "@sushiswap/database": "workspace:*",
@@ -53,7 +50,6 @@
     "@sushiswap/route-processor-sdk": "workspace:*",
     "@tanstack/react-query": "4.28.0",
     "@tanstack/react-query-devtools": "4.28.0",
-    "ethers": "5.7.2",
     "idb-keyval": "6.2.0",
     "nanoid": "4.0.0",
     "sushi": "workspace:*",

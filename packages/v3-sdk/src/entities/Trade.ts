@@ -1,11 +1,11 @@
-import { TradeType } from '@sushiswap/amm'
-import { Fraction, Percent } from 'sushi'
 import {
   Amount as CurrencyAmount,
   Currency,
   Price,
   Token,
 } from 'sushi/currency'
+import { TradeType } from 'sushi/dex'
+import { Fraction, Percent } from 'sushi/math'
 import { sortedInsert } from 'sushi/sort'
 import invariant from 'tiny-invariant'
 

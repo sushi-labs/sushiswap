@@ -8,7 +8,7 @@ import {
   Type,
   WNATIVE_ADDRESS,
 } from 'sushi/currency'
-import { Fraction, ONE, Percent, ZERO } from 'sushi'
+import { Fraction, ONE, Percent, ZERO } from 'sushi/math'
 import { usePrice } from '@sushiswap/react-query'
 import {
   isStargateBridgeToken,

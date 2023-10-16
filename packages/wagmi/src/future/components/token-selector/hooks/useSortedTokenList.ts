@@ -1,8 +1,8 @@
+import { useDebounce } from '@sushiswap/hooks'
+import { useQuery } from '@tanstack/react-query'
 import { ChainId } from 'sushi/chain'
 import { Amount, Native, Token, Type } from 'sushi/currency'
-import { useDebounce } from '@sushiswap/hooks'
-import { Fraction } from 'sushi'
-import { useQuery } from '@tanstack/react-query'
+import { Fraction } from 'sushi/math'
 
 import {
   filterTokens,

@@ -1,5 +1,5 @@
 import { Amount, Price, Type } from 'sushi/currency'
-import { Percent } from 'sushi'
+import { Percent } from 'sushi/math'
 import { SushiXSwapChainId } from '@sushiswap/sushixswap-sdk'
 import { Address, Signature } from 'viem'
 

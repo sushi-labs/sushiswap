@@ -1,5 +1,5 @@
 import { Amount, Price, Type as Currency } from 'sushi/currency'
-import { Percent } from 'sushi'
+import { Percent } from 'sushi/math'
 
 /**
  * Returns the percent difference between the mid price and the execution price, i.e. price impact.

@@ -1,7 +1,7 @@
 'use client'
 
 import { Native } from 'sushi/currency'
-import { ZERO } from 'sushi'
+import { ZERO } from 'sushi/math'
 import {
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,

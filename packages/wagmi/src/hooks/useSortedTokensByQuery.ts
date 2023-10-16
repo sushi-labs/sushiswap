@@ -1,9 +1,9 @@
 'use client'
 
-import { isAddress } from 'viem'
-import { Amount, Token, Type } from 'sushi/currency'
-import { Fraction } from 'sushi'
 import { useMemo } from 'react'
+import { Amount, Token, Type } from 'sushi/currency'
+import { Fraction } from 'sushi/math'
+import { isAddress } from 'viem'
 
 const alwaysTrue = () => true
 

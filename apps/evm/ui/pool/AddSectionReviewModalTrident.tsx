@@ -43,7 +43,7 @@ import {
 import { APPROVE_TAG_ADD_TRIDENT } from 'lib/constants'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import { FC, ReactNode, useCallback, useMemo } from 'react'
-import { Percent, ZERO } from 'sushi'
+import { Percent, ZERO } from 'sushi/math'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
 import { Amount, Token, Type } from 'sushi/currency'

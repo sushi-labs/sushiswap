@@ -4,7 +4,7 @@ import { CogIcon } from '@heroicons/react-v1/outline'
 import { ChainId } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { ZERO } from 'sushi'
+import { ZERO } from 'sushi/math'
 import {
   Card,
   CardCurrencyAmountItem,

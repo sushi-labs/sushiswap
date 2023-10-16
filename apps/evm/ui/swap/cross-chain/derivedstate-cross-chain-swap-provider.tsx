@@ -9,7 +9,7 @@ import {
   Type,
 } from 'sushi/currency'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { ZERO } from 'sushi'
+import { ZERO } from 'sushi/math'
 import {
   STARGATE_SUPPORTED_CHAIN_IDS,
   StargateChainId,

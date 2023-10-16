@@ -1,4 +1,4 @@
-import { getAddress } from '@ethersproject/address'
+import { getAddress } from 'viem'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { Token } from 'sushi/currency'

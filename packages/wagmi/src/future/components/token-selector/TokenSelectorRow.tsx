@@ -1,4 +1,3 @@
-import { zeroAddress } from 'viem'
 import {
   ArrowTopRightOnSquareIcon,
   CheckCircleIcon,
@@ -16,9 +15,10 @@ import {
 import { Badge } from '@sushiswap/ui/components/badge'
 import { Icon } from '@sushiswap/ui/components/currency/Icon'
 import React, { CSSProperties, FC, memo, useCallback } from 'react'
-import { Fraction, ZERO } from 'sushi'
 import { Chain } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'
+import { Fraction, ZERO } from 'sushi/math'
+import { zeroAddress } from 'viem'
 
 export interface TokenSelectorRow {
   id: string

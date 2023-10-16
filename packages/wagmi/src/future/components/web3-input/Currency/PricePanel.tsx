@@ -1,11 +1,9 @@
-import { tryParseAmount } from 'sushi/currency'
 import { classNames } from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
-
 import { FC, useMemo } from 'react'
-
+import { tryParseAmount } from 'sushi/currency'
+import { Fraction, ZERO } from 'sushi/math'
 import { CurrencyInputProps } from './CurrencyInput'
-import { Fraction, ZERO } from 'sushi'
 
 type PricePanel = Pick<
   CurrencyInputProps,

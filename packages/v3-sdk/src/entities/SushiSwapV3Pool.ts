@@ -1,5 +1,5 @@
 import { Amount as CurrencyAmount, Price, Token } from 'sushi/currency'
-import { BigintIsh } from 'sushi'
+import { BigintIsh } from 'sushi/math'
 import invariant from 'tiny-invariant'
 
 import {

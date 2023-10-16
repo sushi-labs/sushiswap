@@ -1,8 +1,8 @@
-import { abs } from 'sushi'
+import { abs } from 'sushi/math'
 import { Address } from 'viem'
 
-import { computeHybridLiquidity } from './functions'
 import { getBigInt, revertPositive } from './Utils'
+import { computeHybridLiquidity } from './functions'
 
 export const TYPICAL_SWAP_GAS_COST = 60_000
 export const TYPICAL_MINIMAL_LIQUIDITY = 1000

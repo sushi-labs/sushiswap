@@ -4,7 +4,7 @@ import { ChainId } from 'sushi/chain'
 import { ChefType, Pool, usePool } from '@sushiswap/client'
 import { tryParseAmount } from 'sushi/currency'
 import { useIsMounted } from '@sushiswap/hooks'
-import { ZERO } from 'sushi'
+import { ZERO } from 'sushi/math'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import {

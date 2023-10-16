@@ -1,7 +1,7 @@
 import { Interface, defaultAbiCoder } from '@ethersproject/abi'
 import IUniswapV3Staker from '@uniswap/v3-staker/artifacts/contracts/UniswapV3Staker.sol/UniswapV3Staker.json'
-import { BigintIsh } from 'sushi'
 import { Token } from 'sushi/currency'
+import { BigintIsh } from 'sushi/math'
 import { validateAndParseAddress } from '../utils'
 
 import { SushiSwapV3Pool } from '.'

@@ -38,6 +38,10 @@
       "types": "./dist/currency/index.d.ts",
       "default": "./dist/currency/index.js"
     },
+    "./dex": {
+      "types": "./dist/dex/index.d.ts",
+      "default": "./dist/dex/index.js"
+    },
     "./format": {
       "types": "./dist/format/index.d.ts",
       "default": "./dist/format/index.js"
@@ -91,6 +95,9 @@
       ],
       "currency": [
         "./dist/currency/index.d.ts"
+      ],
+      "dex": [
+        "./dist/dex/index.d.ts"
       ],
       "format": [
         "./dist/format/index.d.ts"

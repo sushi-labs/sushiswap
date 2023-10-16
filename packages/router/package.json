@@ -32,9 +32,7 @@
     "preset": "@sushiswap/jest-config"
   },
   "dependencies": {
-    "@ethersproject/abi": "5.7.0",
     "@ethersproject/address": "5.7.0",
-    "@ethersproject/solidity": "5.7.0",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/bentobox-sdk": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
@@ -44,7 +42,6 @@
     "@sushiswap/v3-sdk": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",
     "date-fns": "2.30.0",
-    "ethers": "5.7.2",
     "lodash.flatmap": "^4.5.0",
     "node-fetch": "2.6.6",
     "sushi": "workspace:*",

@@ -30,7 +30,7 @@ export class TridentCLPoolCode extends PoolCode {
     const code = new HEXer()
       .uint8(5) // TridentCL pool
       .address(this.pool.address)
-      .bool(leg.tokenFrom.address == this.pool.token0.address)
+      .bool(leg.tokenFrom.address === this.pool.token0.address)
       .address(to)
       .toString()
     return code

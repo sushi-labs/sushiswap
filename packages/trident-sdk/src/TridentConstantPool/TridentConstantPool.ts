@@ -4,7 +4,7 @@ import {
 } from '@sushiswap/base-sdk'
 import { Fee, Pool } from '@sushiswap/base-sdk'
 import { Amount, Price, Share, Token } from 'sushi/currency'
-import { ONE, sqrt, ZERO } from 'sushi'
+import { ONE, ZERO, sqrt } from 'sushi/math'
 import invariant from 'tiny-invariant'
 
 import {

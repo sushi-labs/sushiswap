@@ -2,22 +2,14 @@
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
 import { SushiSwapV2Pool } from '@sushiswap/amm'
-import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
-import {
-  defaultQuoteCurrency,
-  Native,
-  tryParseAmount,
-  Type,
-} from 'sushi/currency'
-import { ZERO } from 'sushi'
 import { FormSection } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Loader } from '@sushiswap/ui/components/loader'
 import {
-  isSushiSwapV2ChainId,
   SUSHISWAP_V2_ROUTER_ADDRESS,
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
   SushiSwapV2ChainId,
+  isSushiSwapV2ChainId,
 } from '@sushiswap/v2-sdk'
 import { PoolFinder, SushiSwapV2PoolState } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/future/components/web3-input'
@@ -37,6 +29,14 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
+import {
+  Native,
+  Type,
+  defaultQuoteCurrency,
+  tryParseAmount,
+} from 'sushi/currency'
+import { ZERO } from 'sushi/math'
 import { SWRConfig } from 'swr'
 
 import { AddSectionReviewModalLegacy } from '../../../../../ui/pool/AddSectionReviewModalLegacy'

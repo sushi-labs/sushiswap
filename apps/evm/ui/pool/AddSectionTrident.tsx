@@ -9,7 +9,7 @@ import { ChainId } from 'sushi/chain'
 import { Pool, Protocol } from '@sushiswap/client'
 import { tryParseAmount } from 'sushi/currency'
 import { useIsMounted } from '@sushiswap/hooks'
-import { ZERO } from 'sushi'
+import { ZERO } from 'sushi/math'
 import { Button } from '@sushiswap/ui/components/button'
 import {
   getTridentRouterContractConfig,

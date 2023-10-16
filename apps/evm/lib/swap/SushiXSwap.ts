@@ -1,6 +1,6 @@
 import { Trade, TradeType, Version as TradeVersion } from '@sushiswap/amm'
 import { Amount, Currency, Native, Share, Token } from 'sushi/currency'
-import { BigintIsh } from 'sushi'
+import { BigintIsh } from 'sushi/math'
 import {
   isStargateBridgeToken,
   STARGATE_BRIDGE_TOKENS,

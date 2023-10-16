@@ -1,4 +1,3 @@
-import { TradeType } from '@sushiswap/amm'
 import {
   Amount as CurrencyAmount,
   Native,
@@ -6,7 +5,8 @@ import {
   Token,
   WETH9,
 } from 'sushi/currency'
-import { Percent, sqrt } from 'sushi'
+import { TradeType } from 'sushi/dex'
+import { Percent, sqrt } from 'sushi/math'
 
 import { FeeAmount, TICK_SPACINGS } from '../constants'
 import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96'

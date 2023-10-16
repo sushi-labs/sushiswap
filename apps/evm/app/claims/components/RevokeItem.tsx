@@ -1,6 +1,6 @@
 import { CheckIcon } from '@heroicons/react-v1/solid'
 import { Token } from 'sushi/currency'
-import { ZERO } from 'sushi'
+import { ZERO } from 'sushi/math'
 import {
   ROUTE_PROCESSOR_2_ADDRESS,
   RouteProcessor2ChainId,

@@ -1,6 +1,5 @@
 'use client'
 
-import { HashZero } from '@ethersproject/constants'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import {
   createErrorToast,
@@ -83,7 +82,14 @@ export const useBentoboxApproval = ({
     functionName: 'setMasterContractApproval',
     args:
       masterContract && address
-        ? [address, masterContract, true, 0, HashZero, HashZero]
+        ? [
+            address,
+            masterContract,
+            true,
+            0,
+            '0x0000000000000000000000000000000000000000000000000000000000000000',
+            '0x0000000000000000000000000000000000000000000000000000000000000000',
+          ]
         : undefined,
     onError: (error) => {
       console.error('error preparing master contract approval', error)

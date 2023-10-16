@@ -1,12 +1,12 @@
 import { Interface } from '@ethersproject/abi'
 import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
-import { BigintIsh, Percent } from 'sushi'
 import {
   Amount as CurrencyAmount,
   Currency,
   Native,
   Token,
 } from 'sushi/currency'
+import { BigintIsh, Percent } from 'sushi/math'
 import invariant from 'tiny-invariant'
 
 import { SushiSwapV3Pool } from '.'
