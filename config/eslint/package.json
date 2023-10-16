@@ -2,11 +2,17 @@
   "name": "eslint-config-sushi",
   "version": "0.1.1",
   "description": "Sushi Config",
-  "keywords": ["sushi", "config", "eslint"],
+  "keywords": [
+    "sushi",
+    "config",
+    "eslint"
+  ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "main": "index.js",
-  "files": ["nextjs/index.js"],
+  "files": [
+    "nextjs/index.js"
+  ],
   "dependencies": {
     "@vercel/style-guide": "5.0.1",
     "eslint-config-turbo": "1.10.15",

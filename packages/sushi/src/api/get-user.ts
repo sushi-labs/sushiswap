@@ -1,3 +1,3 @@
 export function getUser() {
-    return 'getUser'
+  return 'getUser'
 }

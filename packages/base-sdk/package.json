@@ -2,7 +2,10 @@
   "name": "@sushiswap/base-sdk",
   "version": "0.0.3",
   "description": "Sushi Base SDK",
-  "keywords": ["sushi", "sdk"],
+  "keywords": [
+    "sushi",
+    "sdk"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
@@ -13,7 +16,9 @@
   "main": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
-  "files": ["dist/**"],
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",

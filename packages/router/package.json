@@ -2,7 +2,10 @@
   "name": "@sushiswap/router",
   "version": "0.0.16",
   "description": "Sushi Router",
-  "keywords": ["sushi", "routers"],
+  "keywords": [
+    "sushi",
+    "routers"
+  ],
   "homepage": "https://www.sushi.com",
   "repository": {
     "type": "git",
@@ -14,7 +17,9 @@
   "main": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
-  "files": ["dist/**"],
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",

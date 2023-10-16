@@ -2,7 +2,10 @@
   "name": "@sushiswap/dexie",
   "version": "1.0.0",
   "description": "Sushi Dexie",
-  "keywords": ["sushi", "dexie"],
+  "keywords": [
+    "sushi",
+    "dexie"
+  ],
   "homepage": "https://www.sushi.com",
   "repository": {
     "type": "git",
@@ -16,7 +19,9 @@
   "module": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
-  "files": ["dist/**"],
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts",
     "check": "tsc --pretty --noEmit",

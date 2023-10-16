@@ -11,7 +11,9 @@
   "main": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
-  "files": ["dist/**"],
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",

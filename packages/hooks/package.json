@@ -3,7 +3,11 @@
   "version": "2.0.0",
   "private": true,
   "description": "Sushi Hooks",
-  "keywords": ["sushi", "hooks", "react"],
+  "keywords": [
+    "sushi",
+    "hooks",
+    "react"
+  ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "main": "./dist/index.js",

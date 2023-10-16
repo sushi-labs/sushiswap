@@ -3,7 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "description": "Sushi Wagmi",
-  "keywords": ["sushi", "wagmi"],
+  "keywords": [
+    "sushi",
+    "wagmi"
+  ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "sideEffects": true,
@@ -25,10 +28,17 @@
   },
   "typesVersions": {
     "*": {
-      "*": ["src/*", "src/*/index", "src/future/*", "src/future/*/index"]
+      "*": [
+        "src/*",
+        "src/*/index",
+        "src/future/*",
+        "src/future/*/index"
+      ]
     }
   },
-  "files": ["src"],
+  "files": [
+    "src"
+  ],
   "scripts": {
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
