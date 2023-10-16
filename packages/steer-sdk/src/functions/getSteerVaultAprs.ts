@@ -28,6 +28,7 @@ async function getSteerVaultsAprs({ vaultIds }: GetSteerVaultsAprs) {
 
       const aprs = await Promise.all([
         getApr(chainId, address),
+        getApr(chainId, address, 86400),
         getApr(chainId, address, 604800),
       ])
 
@@ -35,10 +36,11 @@ async function getSteerVaultsAprs({ vaultIds }: GetSteerVaultsAprs) {
         throw new Error("Couldn't fetch APR")
       }
 
-      const [apr, apr1w] = aprs.map((apr) => Number(apr) / 100)
+      const [apr, apr1d, apr1w] = aprs.map((apr) => Number(apr) / 100)
 
       return {
         apr,
+        apr1d,
         apr1w,
       }
     }),
