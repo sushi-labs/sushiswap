@@ -2,7 +2,11 @@
   "name": "@sushiswap/typescript-config",
   "version": "0.1.0",
   "description": "Sushi TypeScript Config",
-  "keywords": ["sushi", "typescript", "config"],
+  "keywords": [
+    "sushi",
+    "typescript",
+    "config"
+  ],
   "homepage": "https://www.sushi.com",
   "repository": {
     "type": "git",
@@ -16,5 +20,8 @@
     "./base.json": "./base.json",
     "./react-library.json": "./react-library.json"
   },
-  "files": ["./base.json", "./react-library.json"]
+  "files": [
+    "./base.json",
+    "./react-library.json"
+  ]
 }

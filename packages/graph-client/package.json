@@ -2,7 +2,11 @@
   "name": "@sushiswap/graph-client",
   "version": "1.0.0",
   "description": "Sushi Graph Client",
-  "keywords": ["sushi", "graph", "client"],
+  "keywords": [
+    "sushi",
+    "graph",
+    "client"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
@@ -20,7 +24,9 @@
   },
   "main": ".graphclient/index.js",
   "types": ".graphclient/index.d.ts",
-  "files": [".graphclient"],
+  "files": [
+    ".graphclient"
+  ],
   "scripts": {
     "build": "graphclient build --fileType js --throwOnInvalidConfig && rm -f .graphclient/package.json && tsc",
     "check": "tsc --pretty --noEmit",
@@ -52,8 +58,8 @@
     "@graphql-mesh/types": "0.94.1",
     "@graphql-mesh/utils": "0.94.1",
     "@graphql-tools/merge": "9.0.0",
-    "@sushiswap/wagmi-config": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
+    "@sushiswap/wagmi-config": "workspace:*",
     "date-fns": "2.30.0",
     "node-fetch": "3.3.0",
     "tslib": "2.5.0"

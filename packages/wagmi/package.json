@@ -3,14 +3,16 @@
   "version": "0.0.0",
   "private": true,
   "description": "Sushi Wagmi",
-  "keywords": ["sushi", "wagmi"],
+  "keywords": [
+    "sushi",
+    "wagmi"
+  ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "sideEffects": true,
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-
     "./*": [
       "./src/*.ts",
       "./src/*.tsx",
@@ -42,7 +44,9 @@
       ]
     }
   },
-  "files": ["src"],
+  "files": [
+    "src"
+  ],
   "scripts": {
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
@@ -91,8 +95,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.2.2",
-    "wagmi": "1.4.3",
-    "viem": "1.16.5"
+    "viem": "1.16.5",
+    "wagmi": "1.4.3"
   },
   "peerDependencies": {
     "@sentry/nextjs": "7.68.0",
@@ -100,8 +104,8 @@
     "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "wagmi": "1.4.3",
-    "viem": "1.16.5"
+    "viem": "1.16.5",
+    "wagmi": "1.4.3"
   },
   "peerDependenciesMeta": {
     "@sentry/nextjs": {
@@ -119,10 +123,10 @@
     "react-dom": {
       "optional": true
     },
-    "wagmi": {
+    "viem": {
       "optional": false
     },
-    "viem": {
+    "wagmi": {
       "optional": false
     }
   },
