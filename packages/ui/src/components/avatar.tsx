@@ -33,13 +33,22 @@ const AvatarImage = React.forwardRef<
   AvatarImageProps
 >(({ className, loader, width, src }, ref) => {
   const _width = Number(width) ?? 40
-  const _src = loader({ src, width: _width })
+
   return (
     <AvatarPrimitive.Image
-      src={_src}
+      src={loader({ src, width: _width })}
+      asChild
       ref={ref}
       className={classNames('aspect-square h-full w-full', className)}
-    />
+    >
+      <Image
+        loader={loader}
+        alt="avatar"
+        src={src}
+        width={_width}
+        height={_width}
+      />
+    </AvatarPrimitive.Image>
   )
 })
 AvatarImage.displayName = AvatarPrimitive.Image.displayName

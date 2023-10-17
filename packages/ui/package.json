@@ -3,49 +3,24 @@
   "version": "0.0.0",
   "private": true,
   "description": "Sushi UI",
-  "keywords": [
-    "sushi",
-    "ui",
-    "react",
-    "components"
-  ],
+  "keywords": ["sushi", "ui", "react", "components"],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "sideEffects": [
-    "**/*.css"
-  ],
+  "sideEffects": ["**/*.css"],
   "exports": {
     "./index.css": "./index.css",
     "./date-picker.css": "./date-picker.css",
     "./tailwind.js": "./tailwind.js",
-    ".": [
-      "./dist/index.js"
-    ],
-    "./*": [
-      "./dist/*.js",
-      "./dist/*/index.js"
-    ],
-    "./future/*": [
-      "./dist/future/*.js",
-      "./dist/future/*/index.js"
-    ]
+    ".": ["./dist/index.js"],
+    "./*": ["./dist/*.js", "./dist/*/index.js"],
+    "./future/*": ["./dist/future/*.js", "./dist/future/*/index.js"]
   },
   "typesVersions": {
     "*": {
-      "*": [
-        "dist/*",
-        "dist/*/index",
-        "dist/future/*",
-        "dist/future/*/index"
-      ]
+      "*": ["dist/*", "dist/*/index", "dist/future/*", "dist/future/*/index"]
     }
   },
-  "files": [
-    "dist",
-    "index.css",
-    "date-picker.css",
-    "tailwind.js"
-  ],
+  "files": ["dist", "index.css", "date-picker.css", "tailwind.js"],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
