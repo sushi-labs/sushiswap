@@ -52,10 +52,6 @@
       "types": "./dist/format/index.d.ts",
       "default": "./dist/format/index.js"
     },
-    "./gas": {
-      "types": "./dist/gas/index.d.ts",
-      "default": "./dist/gas/index.js"
-    },
     "./log": {
       "types": "./dist/log/index.d.ts",
       "default": "./dist/log/index.js"
@@ -96,7 +92,6 @@
       "dex": ["./dist/dex/index.d.ts"],
       "extractor": ["./dist/extractor/index.d.ts"],
       "format": ["./dist/format/index.d.ts"],
-      "gas": ["./dist/gas/index.d.ts"],
       "log": ["./dist/log/index.d.ts"],
       "math": ["./dist/math/index.d.ts"],
       "sort": ["./dist/sort/index.d.ts"],
