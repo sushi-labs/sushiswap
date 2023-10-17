@@ -1,7 +1,7 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import { SteerVault } from '@sushiswap/client/src/pure/steer-vault/vault'
+import { SteerVault } from '@sushiswap/client'
 import { STEER_PERIPHERY_ADDRESS, SteerChainId } from '@sushiswap/steer-sdk'
 import { Button, DialogTrigger, classNames } from '@sushiswap/ui'
 import { Checker } from '@sushiswap/wagmi/future'
@@ -40,7 +40,7 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
   }
 
   const amounts = useMemo(() => {
-    if (!parsedAmounts) return undefined
+    if (!parsedAmounts) return [undefined, undefined]
     return Object.values(parsedAmounts)
   }, [parsedAmounts])
 

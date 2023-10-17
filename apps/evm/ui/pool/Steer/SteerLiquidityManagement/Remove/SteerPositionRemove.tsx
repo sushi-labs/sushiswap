@@ -2,7 +2,7 @@
 
 import { CogIcon } from '@heroicons/react-v1/solid'
 import { calculateSlippageAmount } from '@sushiswap/amm'
-import { SteerVault } from '@sushiswap/client/src/pure/steer-vault/vault'
+import { SteerVault } from '@sushiswap/client'
 import { useDebounce } from '@sushiswap/hooks'
 import { isSteerChainId } from '@sushiswap/steer-sdk'
 import { steerMultiPositionManager } from '@sushiswap/steer-sdk/abi'

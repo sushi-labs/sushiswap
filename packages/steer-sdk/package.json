@@ -61,7 +61,7 @@
     "@whatwg-node/fetch": "0.8.4",
     "sushi": "workspace:*",
     "tslib": "latest",
-    "viem": "1.10.7"
+    "viem": "1.16.2"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

@@ -11,13 +11,8 @@ import {
   PlusIcon,
 } from '@heroicons/react/24/outline'
 import { Slot } from '@radix-ui/react-slot'
-import {
-  GetPoolsArgs,
-  Pool,
-  Protocol,
-  usePoolCount,
-  usePoolsInfinite,
-} from '@sushiswap/client'
+import { GetPoolsArgs, Pool, Protocol } from '@sushiswap/client'
+import { usePoolCount, usePoolsInfinite } from '@sushiswap/client/hooks'
 import {
   Button,
   Card,

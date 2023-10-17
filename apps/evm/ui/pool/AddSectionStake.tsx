@@ -21,6 +21,7 @@ import { ChainId } from 'sushi/chain'
 import { tryParseAmount } from 'sushi/currency'
 import { useSWRConfig } from 'swr'
 
+import { usePool } from '@sushiswap/client/hooks'
 import { AddSectionStakeWidget } from './AddSectionStakeWidget'
 
 interface AddSectionStakeProps {

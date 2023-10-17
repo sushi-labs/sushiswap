@@ -1,5 +1,4 @@
 export * from './count.js'
 export * from './vault.js'
 export * from './vaults.js'
-export type { SteerVault } from '@sushiswap/database'
 export { SteerStrategy } from '@sushiswap/database'

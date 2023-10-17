@@ -215,7 +215,7 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
                   <List className="!pt-0">
                     <List.Control>
                       <List.KeyValue flex title="Network">
-                        {Chain.from(chainId).name}
+                        {Chain.from(chainId)!.name}
                       </List.KeyValue>
                     </List.Control>
                   </List>

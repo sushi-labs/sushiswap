@@ -1,6 +1,6 @@
 'use client'
 
-import { SteerVault } from '@sushiswap/client/src/pure/steer-vault/vault'
+import { SteerVault } from '@sushiswap/client'
 import {
   CardContent,
   CardCurrencyAmountItem,

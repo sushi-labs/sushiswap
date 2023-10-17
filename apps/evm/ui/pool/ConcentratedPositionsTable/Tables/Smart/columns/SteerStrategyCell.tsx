@@ -1,4 +1,4 @@
-import { SteerVault } from '@sushiswap/client/src/pure/steer-vault/vault'
+import { SteerVault } from '@sushiswap/client'
 import React, { FC } from 'react'
 import { SteerStrategyConfig } from 'ui/pool/Steer/constants'
 
