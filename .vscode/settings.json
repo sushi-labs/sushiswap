@@ -6,7 +6,8 @@
   },
   "editor.defaultFormatter": "biomejs.biome",
   "editor.formatOnPaste": false,
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": false,
+  "biome.lspBin": "node_modules/.bin/biome-lsp",
   "editor.quickSuggestions": {
     "strings": "on"
   },
@@ -46,9 +47,10 @@
   },
   "[html]": {
     "editor.defaultFormatter": "biomejs.biome",
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": true
   },
   "[solidity]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+
 }

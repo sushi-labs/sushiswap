@@ -2,7 +2,9 @@
   "name": "sushi",
   "version": "3.0.0",
   "description": "Sushi",
-  "keywords": ["sushi"],
+  "keywords": [
+    "sushi"
+  ],
   "homepage": "https://www.sushi.com",
   "repository": {
     "type": "git",
@@ -83,25 +85,59 @@
   "types": "dist/index.d.ts",
   "typesVersions": {
     "*": {
-      "abi": ["./dist/abi/index.d.ts"],
-      "calculate": ["./dist/calculate/index.d.ts"],
-      "chain": ["./dist/chain/index.d.ts"],
-      "config": ["./dist/config/index.d.ts"],
-      "convert": ["./dist/convert/index.d.ts"],
-      "currency": ["./dist/currency/index.d.ts"],
-      "dex": ["./dist/dex/index.d.ts"],
-      "extractor": ["./dist/extractor/index.d.ts"],
-      "format": ["./dist/format/index.d.ts"],
-      "gas": ["./dist/gas/index.d.ts"],
-      "log": ["./dist/log/index.d.ts"],
-      "math": ["./dist/math/index.d.ts"],
-      "sort": ["./dist/sort/index.d.ts"],
-      "token-list": ["./dist/token-list/index.d.ts"],
-      "types": ["./dist/types/index.d.ts"],
-      "validate": ["./dist/validate/index.d.ts"]
+      "abi": [
+        "./dist/abi/index.d.ts"
+      ],
+      "calculate": [
+        "./dist/calculate/index.d.ts"
+      ],
+      "chain": [
+        "./dist/chain/index.d.ts"
+      ],
+      "config": [
+        "./dist/config/index.d.ts"
+      ],
+      "convert": [
+        "./dist/convert/index.d.ts"
+      ],
+      "currency": [
+        "./dist/currency/index.d.ts"
+      ],
+      "dex": [
+        "./dist/dex/index.d.ts"
+      ],
+      "extractor": [
+        "./dist/extractor/index.d.ts"
+      ],
+      "format": [
+        "./dist/format/index.d.ts"
+      ],
+      "gas": [
+        "./dist/gas/index.d.ts"
+      ],
+      "log": [
+        "./dist/log/index.d.ts"
+      ],
+      "math": [
+        "./dist/math/index.d.ts"
+      ],
+      "sort": [
+        "./dist/sort/index.d.ts"
+      ],
+      "token-list": [
+        "./dist/token-list/index.d.ts"
+      ],
+      "types": [
+        "./dist/types/index.d.ts"
+      ],
+      "validate": [
+        "./dist/validate/index.d.ts"
+      ]
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",

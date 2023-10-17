@@ -27,7 +27,6 @@
     "lineWidth": 80
   },
   "linter": {
-    "ignore": ["apps/**"],
     "enabled": true,
     "rules": {
       "recommended": true,
