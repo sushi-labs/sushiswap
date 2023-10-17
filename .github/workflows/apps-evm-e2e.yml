@@ -74,7 +74,7 @@ jobs:
       - name: Forge RPC cache
         uses: actions/cache@v3
         with:
-            path: "/home/runner/.foundry/cache"
+            path: "/home/runner/work/sushiswap/.foundry/cache"
             key: rpc-cache-${{ matrix.node-version }}-${{ matrix.chain-id }}-${{ matrix.block-number }}
 
       # /home/runner/work/sushiswap/sushiswap
