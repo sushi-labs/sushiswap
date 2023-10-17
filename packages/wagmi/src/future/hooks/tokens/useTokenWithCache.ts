@@ -106,7 +106,7 @@ export const getTokenWithCacheQueryFn = async ({
       tokens: [
         {
           address: address.toLowerCase(),
-          chainId: +chainId,
+          chainId: Number(chainId),
           name,
           symbol,
           decimals,
@@ -126,7 +126,7 @@ export const getTokenWithCacheQueryFn = async ({
       tokens: [
         {
           address: tokenAddress,
-          chainId: +chainId,
+          chainId: Number(chainId),
           name,
           symbol,
           decimals,

@@ -72,15 +72,6 @@ export const ConcentratedLiquidityRemoveWidget: FC<
   const { data: deadline } = useTransactionDeadline({ chainId })
   const debouncedValue = useDebounce(value, 300)
 
-  const slippagePercent = useMemo(() => {
-    return new Percent(
-      Math.floor(
-        +(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100,
-      ),
-      10_000,
-    )
-  }, [slippageTolerance])
-
   const _onChange = useCallback(
     (val: string) => {
       setValue(val)
@@ -166,7 +157,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
         NonfungiblePositionManager.removeCallParameters(position, {
           tokenId: positionDetails.tokenId.toString(),
           liquidityPercentage,
-          slippageTolerance: slippagePercent,
+          slippageTolerance,
           deadline: deadline.toString(),
           collectOptions: {
             expectedCurrencyOwed0:
@@ -180,7 +171,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
       console.debug({
         tokenId: positionDetails.tokenId.toString(),
         liquidityPercentage,
-        slippageTolerance: slippagePercent,
+        slippageTolerance,
         deadline: deadline.toString(),
         collectOptions: {
           expectedCurrencyOwed0:
@@ -205,7 +196,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
     feeValue1,
     position,
     positionDetails,
-    slippagePercent,
+    slippageTolerance,
     token0,
     token1,
     debouncedValue,

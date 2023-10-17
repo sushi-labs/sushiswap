@@ -127,15 +127,6 @@ export const AddSectionReviewModalConcentrated: FC<
 
   const hasExistingPosition = !!existingPosition
 
-  const slippagePercent = useMemo(() => {
-    return new Percent(
-      Math.floor(
-        +(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100,
-      ),
-      10_000,
-    )
-  }, [slippageTolerance])
-
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined, error: Error | null) => {
       if (error instanceof UserRejectedRequestError) {
@@ -188,12 +179,12 @@ export const AddSectionReviewModalConcentrated: FC<
         hasExistingPosition && tokenId
           ? NonfungiblePositionManager.addCallParameters(position, {
               tokenId,
-              slippageTolerance: slippagePercent,
+              slippageTolerance,
               deadline: deadline.toString(),
               useNative,
             })
           : NonfungiblePositionManager.addCallParameters(position, {
-              slippageTolerance: slippagePercent,
+              slippageTolerance,
               recipient: address,
               deadline: deadline.toString(),
               useNative,
@@ -215,7 +206,7 @@ export const AddSectionReviewModalConcentrated: FC<
     hasExistingPosition,
     noLiquidity,
     position,
-    slippagePercent,
+    slippageTolerance,
     token0,
     token1,
     tokenId,

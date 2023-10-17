@@ -67,14 +67,6 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
     const { signature, setSignature } = useSignature(APPROVE_TAG_REMOVE_TRIDENT)
     const contract = useTridentRouterContract(_pool.chainId)
     const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
-    const slippagePercent = useMemo(() => {
-      return new Percent(
-        Math.floor(
-          +(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100,
-        ),
-        10_000,
-      )
-    }, [slippageTolerance])
 
     const [percentage, setPercentage] = useState<string>('0')
     const percentToRemove = useMemo(
@@ -164,17 +156,17 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
         currencyAToRemove
           ? Amount.fromRawAmount(
               currencyAToRemove.currency,
-              slippageAmount(currencyAToRemove, slippagePercent)[0],
+              slippageAmount(currencyAToRemove, slippageTolerance)[0],
             )
           : undefined,
         currencyBToRemove
           ? Amount.fromRawAmount(
               currencyBToRemove.currency,
-              slippageAmount(currencyBToRemove, slippagePercent)[0],
+              slippageAmount(currencyBToRemove, slippageTolerance)[0],
             )
           : undefined,
       ]
-    }, [slippagePercent, currencyAToRemove, currencyBToRemove])
+    }, [slippageTolerance, currencyAToRemove, currencyBToRemove])
 
     const onSettled = useCallback(
       (data: SendTransactionResult | undefined) => {

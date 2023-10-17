@@ -67,7 +67,9 @@ export const Breadcrumb = () => {
             className="text-muted-foreground"
           />
           {items.map((segment, i) => {
-            const segments = [...items].slice(0, i + 1)
+            const segments = [...items]
+              .map((s) => s.replace(/%3A/g, ':'))
+              .slice(0, i + 1)
             return (
               <React.Fragment key={segment}>
                 <Button

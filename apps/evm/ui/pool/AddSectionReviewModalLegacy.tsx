@@ -71,14 +71,6 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
     const { chain } = useNetwork()
     const { approved } = useApproved(APPROVE_TAG_ADD_LEGACY)
     const [slippageTolerance] = useSlippageTolerance('addLiquidity')
-    const slippagePercent = useMemo(() => {
-      return new Percent(
-        Math.floor(
-          +(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100,
-        ),
-        10_000,
-      )
-    }, [slippageTolerance])
 
     const onSettled = useCallback(
       (data: SendTransactionResult | undefined, error: Error | null) => {
@@ -113,7 +105,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
             ? input0
             : Amount.fromRawAmount(
                 input0.currency,
-                slippageAmount(input0, slippagePercent)[0],
+                slippageAmount(input0, slippageTolerance)[0],
               )
           : undefined,
         input1
@@ -121,11 +113,11 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
             ? input1
             : Amount.fromRawAmount(
                 input1.currency,
-                slippageAmount(input1, slippagePercent)[0],
+                slippageAmount(input1, slippageTolerance)[0],
               )
           : undefined,
       ]
-    }, [poolState, input0, input1, slippagePercent])
+    }, [poolState, input0, input1, slippageTolerance])
 
     const [prepare, setPrepare] = useState<UsePrepareSendTransactionConfig>({})
 
