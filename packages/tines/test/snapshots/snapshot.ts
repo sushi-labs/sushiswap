@@ -17,7 +17,7 @@ export function checkRouteResult(id: string, amountOut: number) {
         encoding: 'utf8',
         flag: 'r',
       })
-    } catch (e) {
+    } catch {
       data = ''
     }
     const records = data.split('\n')
@@ -33,9 +33,14 @@ export function checkRouteResult(id: string, amountOut: number) {
   const prevOut = snapshotMap.get(id)
   if (prevOut === undefined) {
     snapshotMap.set(id, amountOut)
-    fs.writeFileSync(`${__dirname}/${SNAPSHOT_FILE}`, `"${id}" ${amountOut}\n`, { encoding: 'utf8', flag: 'a' })
+    fs.writeFileSync(
+      `${__dirname}/${SNAPSHOT_FILE}`,
+      `"${id}" ${amountOut}\n`,
+      { encoding: 'utf8', flag: 'a' },
+    )
   } else {
-    const increase = prevOut === 0 ? amountOut - prevOut : (amountOut / prevOut - 1) * 100
+    const increase =
+      prevOut === 0 ? amountOut - prevOut : (amountOut / prevOut - 1) * 100
     totalIncrease += increase
     testCount++
     const avgInc = totalIncrease / testCount
@@ -47,7 +52,7 @@ export function checkRouteResult(id: string, amountOut: number) {
       {
         encoding: 'utf8',
         flag: newReportWasStarted ? 'a' : 'w',
-      }
+      },
     )
     newReportWasStarted = true
   }

@@ -6,10 +6,7 @@ import {
 
 import { UsePoolsParams } from '../types'
 
-const isTest =
-  process.env.APP_ENV === 'test' ||
-  process.env.TEST === 'true' ||
-  process.env.NEXT_PUBLIC_TEST === 'true'
+const isTest = process.env.NEXT_PUBLIC_APP_ENV === 'test'
 
 export const getAllPoolsCodeMap = async ({
   currencyA,

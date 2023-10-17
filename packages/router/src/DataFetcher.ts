@@ -3,7 +3,7 @@ import { config } from '@sushiswap/viem-config'
 import { ChainId, TestnetChainId } from 'sushi/chain'
 import { isBentoBoxChainId } from 'sushi/config'
 import { Type } from 'sushi/currency'
-import { http, PublicClient, Transport, createPublicClient } from 'viem'
+import { http, PublicClient, createPublicClient } from 'viem'
 
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
 import { BiswapProvider } from './liquidity-providers/Biswap'
@@ -71,20 +71,18 @@ export class DataFetcher {
 
     if (publicClient) {
       this.web3Client = publicClient
-    } else {
+    } else if (isTest) {
       this.web3Client = createPublicClient({
         ...config[this.chainId],
-        // chain: null,
-        transport: (isTest
-          ? http('http://127.0.0.1:8545')
-          : config[this.chainId].transport) as Transport,
-        pollingInterval: 1_000,
+        transport: http('http://127.0.0.1:8545'),
         batch: {
           multicall: {
-            batchSize: 512,
+            batchSize: 512
           },
         },
       })
+    } else {
+      this.web3Client = createPublicClient(config[this.chainId])
     }
   }
 

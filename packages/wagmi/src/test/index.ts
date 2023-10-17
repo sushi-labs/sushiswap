@@ -49,7 +49,7 @@ export const createTestConfig = () => {
       }),
     ],
     {
-      pollingInterval: 1_000,
+      pollingInterval: 8_000,
     },
   )
   const mockConnector = new MockConnector({
@@ -58,7 +58,7 @@ export const createTestConfig = () => {
         account: getAccounts()[testWalletIndex],
         transport: getTransport(chainId),
         chain: testChains.find((x) => x.id === chainId),
-        pollingInterval: 1_000,
+        pollingInterval: 8_000,
       }),
     },
   })
