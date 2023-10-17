@@ -1,12 +1,5 @@
-import {
-  calculateSlippageAmount,
-  TridentConstantPool,
-  TridentStablePool,
-} from '@sushiswap/amm'
-import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { ChainId } from 'sushi/chain'
-import { Amount, Token, Type } from 'sushi/currency'
-import { Percent, ZERO } from 'sushi'
+import { BentoBoxChainId } from 'sushi/config'
+import { TridentConstantPool, TridentStablePool } from '@sushiswap/trident-sdk'
 import {
   DialogConfirm,
   DialogContent,
@@ -43,19 +36,23 @@ import {
 } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import {
+  LiquidityInput,
   approveMasterContractAction,
   batchAction,
-  LiquidityInput,
 } from 'lib/actions'
 import { APPROVE_TAG_ADD_TRIDENT } from 'lib/constants'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import { FC, ReactNode, useCallback, useMemo } from 'react'
+import { Percent, ZERO } from 'sushi/math'
+import { slippageAmount } from 'sushi/calculate'
+import { ChainId } from 'sushi/chain'
+import { Amount, Token, Type } from 'sushi/currency'
 import {
   Address,
+  UserRejectedRequestError,
   encodeAbiParameters,
   encodeFunctionData,
   parseAbiParameters,
-  UserRejectedRequestError,
   zeroAddress,
 } from 'viem'
 
@@ -111,15 +108,6 @@ export const AddSectionReviewModalTrident: FC<
   const rebases = useBentoBoxTotals(chainId, tokens)
   const contract = useTridentRouterContract(chainId)
   const [slippageTolerance] = useSlippageTolerance('addLiquidity')
-  const slippagePercent = useMemo(() => {
-    return new Percent(
-      Math.floor(
-        +(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100,
-      ),
-      10_000,
-    )
-  }, [slippageTolerance])
-
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
       input0
@@ -128,7 +116,7 @@ export const AddSectionReviewModalTrident: FC<
           ? input0
           : Amount.fromRawAmount(
               input0.currency,
-              calculateSlippageAmount(input0, slippagePercent)[0],
+              slippageAmount(input0, slippageTolerance)[0],
             )
         : undefined,
       input1
@@ -137,11 +125,11 @@ export const AddSectionReviewModalTrident: FC<
           ? input1
           : Amount.fromRawAmount(
               input1.currency,
-              calculateSlippageAmount(input1, slippagePercent)[0],
+              slippageAmount(input1, slippageTolerance)[0],
             )
         : undefined,
     ]
-  }, [poolState, input0, input1, slippagePercent])
+  }, [poolState, input0, input1, slippageTolerance])
 
   const noLiquidity = useMemo(() => {
     return (
@@ -175,9 +163,9 @@ export const AddSectionReviewModalTrident: FC<
 
       try {
         const slp = pool.getLiquidityMinted(totalSupply, amountA, amountB)
-        const minSLP = calculateSlippageAmount(
+        const minSLP = slippageAmount(
           slp,
-          noLiquidity ? ZERO_PERCENT : slippagePercent,
+          noLiquidity ? ZERO_PERCENT : slippageTolerance,
         )[0]
         return Amount.fromRawAmount(slp.currency, minSLP.toString())
       } catch (error) {
@@ -192,7 +180,7 @@ export const AddSectionReviewModalTrident: FC<
     input1,
     pool,
     rebases,
-    slippagePercent,
+    slippageTolerance,
     token0,
     token1,
     totalSupply,
@@ -381,7 +369,7 @@ export const AddSectionReviewModalTrident: FC<
         chainId={chainId as ChainId}
         status={status}
         testId="incentivize-confirmation-modal"
-        successMessage={`Successfully added liquidity`}
+        successMessage="Successfully added liquidity"
         buttonText="Go to pool"
         buttonLink={`/pools/${chainId}:${poolAddress}`}
         txHash={data?.hash}

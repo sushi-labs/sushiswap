@@ -1,11 +1,11 @@
 'use client'
 
-import { AddressZero } from '@ethersproject/constants'
-import { ChainId } from 'sushi/chain'
-import { Amount, Type } from 'sushi/currency'
-import { ZERO } from 'sushi'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import React, { FC, useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Amount, Type } from 'sushi/currency'
+import { ZERO } from 'sushi/math'
+import { zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useBalancesWeb3 } from '../../hooks'
@@ -45,7 +45,7 @@ const Amounts: FC<AmountsProps> = ({
     return amounts?.every((amount) => {
       if (!amount) return true
       return !balances?.[
-        amount.currency.isNative ? AddressZero : amount.currency.wrapped.address
+        amount.currency.isNative ? zeroAddress : amount.currency.wrapped.address
       ]?.lessThan(amount)
     })
   }, [amounts, balances])

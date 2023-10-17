@@ -1,21 +1,12 @@
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
 import { RouterLiquiditySource } from '@sushiswap/router'
 import { STARGATE_CHAIN_ID, StargateChainId } from '@sushiswap/stargate'
-import {
-  STARGATE_ADAPTER_ADDRESS,
-  STARGATE_DEFAULT_SLIPPAGE,
-  TransactionType,
-  encodeStargateTeleportParams,
-  encodeSwapData,
-  estimateStargateDstGas,
-  getBridgeParams,
-  getStargateBridgePath,
-} from '@sushiswap/sushixswap-sdk'
 import { readContract, useFeeData } from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
 import { log } from 'next-axiom'
 import { useMemo } from 'react'
 import { stargateAdapterAbi } from 'sushi/abi'
+import { STARGATE_ADAPTER_ADDRESS } from 'sushi/config'
 import { Amount, Currency, Native } from 'sushi/currency'
 import { Fraction, ONE, Percent, ZERO } from 'sushi/math'
 import {
@@ -24,6 +15,15 @@ import {
   parseUnits,
   stringify,
 } from 'viem'
+import {
+  STARGATE_DEFAULT_SLIPPAGE,
+  TransactionType,
+  encodeStargateTeleportParams,
+  encodeSwapData,
+  estimateStargateDstGas,
+  getBridgeParams,
+  getStargateBridgePath,
+} from './SushiXSwap2'
 import { UseCrossChainTradeParams, UseCrossChainTradeReturn } from './types'
 import { useStargateBridgeFees } from './useStargateBridgeFees'
 

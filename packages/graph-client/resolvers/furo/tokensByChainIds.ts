@@ -1,13 +1,13 @@
 // @ts-nocheck
 
 import { FURO_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
-import { isPromiseFulfilled } from 'sushi'
 import { GraphQLResolveInfo } from 'graphql'
+import { isPromiseFulfilled } from 'sushi/validate'
 
 import {
   Query,
-  QueryfuroTokensByChainIdsArgs,
   QueryResolvers,
+  QueryfuroTokensByChainIdsArgs,
   RequireFields,
 } from '../../.graphclient/index.js'
 import { FuroStreamTypes } from '../../.graphclient/sources/FuroStream/types.js'

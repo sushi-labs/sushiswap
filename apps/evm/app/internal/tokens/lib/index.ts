@@ -1,6 +1,6 @@
-import { ChainId } from 'sushi/chain'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
-import { SUSHI_DEFAULT_TOKEN_LIST } from '@sushiswap/token-lists'
+import { ChainId } from 'sushi/chain'
+import { SUSHI_DEFAULT_TOKEN_LIST } from 'sushi/token-list'
 
 export type Token = Awaited<ReturnType<typeof getTokens>>[0]
 

@@ -1,4 +1,3 @@
-import { InsufficientInputAmountError } from '@sushiswap/base-sdk'
 import { ChainId } from 'sushi/chain'
 import {
   Amount,
@@ -8,10 +7,11 @@ import {
   WETH9,
   WETH9_ADDRESS,
 } from 'sushi/currency'
+import { InsufficientInputAmountError } from 'sushi/dex'
 
 import { TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS } from '../constants'
-import { computeTridentConstantPoolAddress } from './computeTridentConstantPoolAddress'
 import { TridentConstantPool } from './TridentConstantPool'
+import { computeTridentConstantPoolAddress } from './computeTridentConstantPoolAddress'
 
 describe('computePoolAddress', () => {
   it('should correctly compute the pool address', () => {

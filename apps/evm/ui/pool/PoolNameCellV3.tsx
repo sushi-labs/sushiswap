@@ -1,6 +1,6 @@
 import { ChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
-import { formatNumber } from 'sushi'
+import { formatNumber } from 'sushi/format'
 import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/badge'
 import { Currency } from '@sushiswap/ui/components/currency'

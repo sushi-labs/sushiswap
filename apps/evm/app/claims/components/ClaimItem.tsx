@@ -2,15 +2,15 @@
 
 import { CheckIcon } from '@heroicons/react-v1/solid'
 import { Amount } from 'sushi/currency'
-import { ZERO } from 'sushi'
-import { ROUTE_PROCESSOR_2_ADDRESS } from '@sushiswap/route-processor-sdk'
+import { ZERO } from 'sushi/math'
+import { ROUTE_PROCESSOR_2_ADDRESS } from 'sushi/config'
 import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/badge'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { Address } from '@sushiswap/wagmi'
+import { Address } from 'viem'
 import {
   useRP2ExploitClaim,
   useRP2ExploitIsClaimed,

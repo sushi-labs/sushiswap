@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import { expect, Page, test } from '@playwright/test'
+import { Page, expect, test } from '@playwright/test'
 import { ChainId } from 'sushi/chain'
 import { DAI, Native, SUSHI, Type, USDC, USDT, WBTC } from 'sushi/currency'
 import { zeroAddress } from 'viem'

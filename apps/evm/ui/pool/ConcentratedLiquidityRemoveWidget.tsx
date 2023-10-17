@@ -3,7 +3,7 @@
 import { CogIcon } from '@heroicons/react/24/outline'
 import { Amount, Type } from 'sushi/currency'
 import { useDebounce } from '@sushiswap/hooks'
-import { Percent, ZERO } from 'sushi'
+import { Percent, ZERO } from 'sushi/math'
 import {
   Card,
   CardContent,
@@ -71,15 +71,6 @@ export const ConcentratedLiquidityRemoveWidget: FC<
   const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
   const { data: deadline } = useTransactionDeadline({ chainId })
   const debouncedValue = useDebounce(value, 300)
-
-  const slippagePercent = useMemo(() => {
-    return new Percent(
-      Math.floor(
-        +(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100,
-      ),
-      10_000,
-    )
-  }, [slippageTolerance])
 
   const _onChange = useCallback(
     (val: string) => {
@@ -166,7 +157,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
         NonfungiblePositionManager.removeCallParameters(position, {
           tokenId: positionDetails.tokenId.toString(),
           liquidityPercentage,
-          slippageTolerance: slippagePercent,
+          slippageTolerance,
           deadline: deadline.toString(),
           collectOptions: {
             expectedCurrencyOwed0:
@@ -180,7 +171,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
       console.debug({
         tokenId: positionDetails.tokenId.toString(),
         liquidityPercentage,
-        slippageTolerance: slippagePercent,
+        slippageTolerance,
         deadline: deadline.toString(),
         collectOptions: {
           expectedCurrencyOwed0:
@@ -205,7 +196,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
     feeValue1,
     position,
     positionDetails,
-    slippagePercent,
+    slippageTolerance,
     token0,
     token1,
     debouncedValue,

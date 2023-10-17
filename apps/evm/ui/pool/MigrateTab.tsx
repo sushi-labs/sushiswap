@@ -67,11 +67,10 @@ import { unwrapToken } from 'lib/functions'
 import { useGraphPool, useTokenAmountDollarValues } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import React, { FC, useMemo, useState } from 'react'
-import { formatUSD } from 'sushi'
-import { Fraction, Percent, ZERO } from 'sushi'
+import { formatUSD } from 'sushi/format'
+import { Fraction, Percent, ZERO } from 'sushi/math'
 import { Chain, ChainId } from 'sushi/chain'
 import { Amount, Price, tryParseAmount } from 'sushi/currency'
-
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 import { usePoolPosition } from './PoolPositionProvider'
 import { usePoolPositionStaked } from './PoolPositionStakedProvider'
@@ -87,14 +86,6 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   const [invertPrice, setInvertPrice] = useState(false)
   const [invertTokens, setInvertTokens] = useState(false)
   const [slippageTolerance] = useSlippageTolerance('addLiquidity')
-  const slippagePercent = useMemo(() => {
-    return new Percent(
-      Math.floor(
-        +(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100,
-      ),
-      10_000,
-    )
-  }, [slippageTolerance])
 
   const {
     data: { token0: _token0, token1: _token1, liquidityToken },
@@ -301,9 +292,9 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   const { amount0: v3Amount0Min, amount1: v3Amount1Min } = useMemo(
     () =>
       position
-        ? position.mintAmountsWithSlippage(slippagePercent)
+        ? position.mintAmountsWithSlippage(slippageTolerance)
         : { amount0: undefined, amount1: undefined },
-    [position, slippagePercent],
+    [position, slippageTolerance],
   )
 
   const [positionAmount0, positionAmount1] = useMemo(

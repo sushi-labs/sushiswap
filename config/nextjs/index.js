@@ -2,25 +2,17 @@
 const defaultNextConfig = {
   reactStrictMode: true,
   productionBrowserSourceMaps: true,
-  swcMinify: false,
+  swcMinify: true,
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
-  modularizeImports: {
-    '@heroicons-v1/react/solid': {
-      transform: '@heroicons-v1/react/solid/{{member}}',
-    },
-    '@heroicons-v1/react/outline': {
-      transform: '@heroicons-v1/react/outline/{{member}}',
-    },
-    '@heroicons/react': {
-      transform: '@heroicons/react/{{member}}',
-    },
-    lodash: {
-      transform: 'lodash/{{member}}',
-    },
-  },
   experimental: {
     esmExternals: 'loose',
+    // optimizePackageImports: [
+    //   '@heroicons/react-v1/solid',
+    //   '@heroicons/react-v1/outline',
+    //   '@sushiswap/ui',
+    //   'sushi',
+    // ],
   },
   images: {
     loader: 'cloudinary',

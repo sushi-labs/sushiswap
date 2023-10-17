@@ -1,8 +1,5 @@
-import {
-  SushiSwapV2Pool,
-  TridentConstantPool,
-  TridentStablePool,
-} from '@sushiswap/amm'
+import { TridentConstantPool, TridentStablePool } from '@sushiswap/trident-sdk'
+import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
 import { ChainId } from 'sushi/chain'
 import { Pool, Protocol } from '@sushiswap/client'
 import {

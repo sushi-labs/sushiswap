@@ -1,4 +1,4 @@
-import { formatNumber } from 'sushi'
+import { formatNumber } from 'sushi/format'
 import { AngleRewardsPool } from '@sushiswap/react-query'
 import { Row } from '@tanstack/react-table'
 import { useTokenAmountDollarValues } from 'lib/hooks'

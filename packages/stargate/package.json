@@ -8,10 +8,9 @@
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "sideEffects": false,
   "main": "dist/index.js",
   "source": "src/index.ts",
-  "types": "dist/index.d.ts",
+  "typings": "dist/index.d.ts",
   "files": [
     "dist/**",
     "abis/**",
@@ -27,7 +26,7 @@
     "test": "jest --passWithNoTests"
   },
   "jest": {
-    "preset": "@sushiswap/jest-config/node"
+    "preset": "@sushiswap/jest-config"
   },
   "dependencies": {
     "tiny-invariant": "1.3.1"

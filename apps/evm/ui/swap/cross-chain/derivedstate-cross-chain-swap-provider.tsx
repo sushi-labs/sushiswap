@@ -1,10 +1,6 @@
 'use client'
 
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import {
-  SushiXSwap2ChainId,
-  isSushiXSwap2ChainId,
-} from '@sushiswap/sushixswap-sdk'
 import { Address, useAccount, useNetwork, watchNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future'
 import { IS_XSWAP_MAINTENANCE } from 'lib/constants'
@@ -24,6 +20,10 @@ import {
 } from 'react'
 import { ChainId } from 'sushi/chain'
 import {
+  SushiXSwap2ChainId,
+  isSushiXSwap2ChainId,
+} from 'sushi/config'
+import {
   Amount,
   Native,
   Type,
@@ -37,8 +37,8 @@ const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'
     ? token
     : token.isNative
-    ? 'NATIVE'
-    : token.wrapped.address
+      ? 'NATIVE'
+      : token.wrapped.address
 const getQuoteCurrency = (chainId: number) =>
   defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency].wrapped
     .address
@@ -399,8 +399,8 @@ const useCrossChainSwapTrade = () => {
     recipient: recipient as Address,
     enabled: Boolean(
       isSushiXSwap2ChainId(chainId0) &&
-        isSushiXSwap2ChainId(chainId1) &&
-        swapAmount?.greaterThan(ZERO),
+      isSushiXSwap2ChainId(chainId1) &&
+      swapAmount?.greaterThan(ZERO),
     ),
   })
 }

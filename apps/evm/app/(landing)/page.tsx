@@ -15,7 +15,7 @@ import {
   Story,
 } from './components'
 
-export default async function LandingPage() {
+export default function LandingPage() {
   const isSmallScreen = useIsSmScreen()
   return (
     <MotionConfig reducedMotion={isSmallScreen ? 'always' : 'user'}>

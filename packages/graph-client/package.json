@@ -37,7 +37,7 @@
     "validate": "graphclient validate"
   },
   "jest": {
-    "preset": "@sushiswap/jest-config/node"
+    "preset": "@sushiswap/jest-config"
   },
   "dependencies": {
     "@graphprotocol/client-add-source-name": "2.0.0",
@@ -58,17 +58,16 @@
     "@graphql-mesh/types": "0.94.1",
     "@graphql-mesh/utils": "0.94.1",
     "@graphql-tools/merge": "9.0.0",
-    "date-fns": "2.29.3",
-    "ethers": "5.7.2",
+    "@sushiswap/graph-config": "workspace:*",
+    "@sushiswap/wagmi-config": "workspace:*",
+    "date-fns": "2.30.0",
     "node-fetch": "3.3.0",
     "tslib": "2.5.0"
   },
   "devDependencies": {
     "@graphprotocol/client-cli": "3.0.0",
-    "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@sushiswap/wagmi-config": "workspace:*",
     "@types/jest": "29.5.5",
     "@types/node": "18",
     "@types/numeral": "2.0.2",
@@ -76,7 +75,7 @@
     "graphql": "16.6.0",
     "jest": "29.7.0",
     "sushi": "workspace:*",
-    "ts-jest": "29.0.3",
+    "ts-jest": "29.1.1",
     "typescript": "5.2.2"
   },
   "peerDependencies": {

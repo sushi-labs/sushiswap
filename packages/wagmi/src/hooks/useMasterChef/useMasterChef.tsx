@@ -1,11 +1,11 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
 import { ChefType } from '@sushiswap/client'
-import { Amount, SUSHI, SUSHI_ADDRESS, Token } from 'sushi/currency'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { useCallback, useMemo } from 'react'
-import { encodeFunctionData, UserRejectedRequestError } from 'viem'
+import { ChainId } from 'sushi/chain'
+import { Amount, SUSHI, SUSHI_ADDRESS, Token } from 'sushi/currency'
+import { UserRejectedRequestError, encodeFunctionData } from 'viem'
 import {
   Address,
   erc20ABI,
@@ -17,7 +17,7 @@ import {
 } from 'wagmi'
 import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
-import { masterchefV2Abi, minichefV2Abi } from '../../abis'
+import { masterChefV2Abi, miniChefV2Abi } from 'sushi/abi'
 import {
   MASTERCHEF_ADDRESS,
   MASTERCHEF_V2_ADDRESS,
@@ -276,16 +276,16 @@ export const useMasterChef: UseMasterChef = ({
             account: address,
             to: contract.address,
             data: encodeFunctionData({
-              abi: masterchefV2Abi,
+              abi: masterChefV2Abi,
               functionName: 'batch',
               args: [
                 [
                   encodeFunctionData({
-                    abi: masterchefV2Abi,
+                    abi: masterChefV2Abi,
                     functionName: 'harvestFromMasterChef',
                   }),
                   encodeFunctionData({
-                    abi: masterchefV2Abi,
+                    abi: masterChefV2Abi,
                     functionName: 'harvest',
                     args: [BigInt(pid), address],
                   }),
@@ -299,7 +299,7 @@ export const useMasterChef: UseMasterChef = ({
             account: address,
             to: contract.address,
             data: encodeFunctionData({
-              abi: masterchefV2Abi,
+              abi: masterChefV2Abi,
               functionName: 'harvest',
               args: [BigInt(pid), address],
             }),
@@ -311,7 +311,7 @@ export const useMasterChef: UseMasterChef = ({
           account: address,
           to: contract.address,
           data: encodeFunctionData({
-            abi: minichefV2Abi,
+            abi: miniChefV2Abi,
             functionName: 'harvest',
             args: [BigInt(pid), address],
           }),

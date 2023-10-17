@@ -3,14 +3,10 @@
 import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import React, { FC, useEffect, useState } from 'react'
-import { ZERO } from 'sushi/math'
-
-import {
-  SUSHIXSWAP_2_ADDRESS,
-  SushiXSwap2ChainId,
-} from '@sushiswap/sushixswap-sdk'
 import { APPROVE_TAG_XSWAP } from 'lib/constants'
+import React, { FC, useEffect, useState } from 'react'
+import { SUSHIXSWAP_2_ADDRESS, SushiXSwap2ChainId } from 'sushi/config'
+import { ZERO } from 'sushi/math'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import { CrossChainSwapTradeReviewDialog } from './cross-chain-swap-trade-review-dialog'
 import {
@@ -59,10 +55,10 @@ export const CrossChainSwapTradeButton: FC = () => {
                       <Button
                         disabled={Boolean(
                           !trade?.amountOut?.greaterThan(ZERO) ||
-                            trade?.route?.status === 'NoWay' ||
-                            +swapAmountString === 0 ||
-                            (!checked &&
-                              warningSeverity(trade?.priceImpact) > 3),
+                          trade?.route?.status === 'NoWay' ||
+                          +swapAmountString === 0 ||
+                          (!checked &&
+                            warningSeverity(trade?.priceImpact) > 3),
                         )}
                         color={
                           warningSeverity(trade?.priceImpact) >= 3
@@ -75,8 +71,8 @@ export const CrossChainSwapTradeButton: FC = () => {
                         {!checked && warningSeverity(trade?.priceImpact) >= 3
                           ? 'Price impact too high'
                           : trade?.route?.status === 'NoWay'
-                          ? 'No trade found'
-                          : 'Swap'}
+                            ? 'No trade found'
+                            : 'Swap'}
                       </Button>
                     </DialogTrigger>
                   </Checker.Success>

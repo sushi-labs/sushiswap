@@ -37,7 +37,7 @@ import {
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import useIsTickAtLimit from 'lib/hooks/useIsTickAtLimit'
 import React, { FC, Fragment, useMemo, useState } from 'react'
-import { formatUSD } from 'sushi'
+import { formatUSD } from 'sushi/format'
 import { Chain } from 'sushi/chain'
 import { Amount } from 'sushi/currency'
 
@@ -66,7 +66,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
     string,
     string,
   ]
-  const chainId = +_chainId as SushiSwapV3ChainId
+  const chainId = Number(_chainId) as SushiSwapV3ChainId
   const [invert, setInvert] = useState(false)
 
   const { data: positionDetails, isLoading: isPositionDetailsLoading } =

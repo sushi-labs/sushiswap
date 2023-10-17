@@ -1,4 +1,4 @@
-import { formatUSD } from 'sushi'
+import { formatUSD } from 'sushi/format'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import {
   CardContent,

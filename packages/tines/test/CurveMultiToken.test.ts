@@ -111,7 +111,7 @@ function createMultiPool(
     params.A,
     [params.reserve0, params.reserve1],
     [1, params.ratio],
-  )[0]
+  )[0] as CurveMultitokenPool
 }
 
 function checkSwap(

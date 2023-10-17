@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import { Page } from '@playwright/test'
-import { Fee } from '@sushiswap/base-sdk'
+import { Fee } from 'sushi/dex'
 import {
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,

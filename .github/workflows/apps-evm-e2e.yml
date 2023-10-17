@@ -28,7 +28,7 @@ env:
   NODE_OPTIONS: --max-old-space-size=8192
   NEXT_TELEMETRY_DISABLED: 1
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   e2e:
@@ -38,14 +38,11 @@ jobs:
       matrix:
         chain-id: [137]
         node-version: [18]
-        pnpm-version: [8.9.0]
+        pnpm-version: [8.9.2]
         block-number: [47479278]
     steps:
-      - name: Check out
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
-          submodules: true
+      - name: Clone repository
+        uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v2
         with:
@@ -71,12 +68,6 @@ jobs:
       - name: Install playwright
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Forge RPC cache
-        uses: actions/cache@v3
-        with:
-            path: "$HOME/.foundry/cache"
-            key: rpc-cache-${{ matrix.node-version }}-${{ matrix.chain-id }}-${{ matrix.block-number }}
-
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
@@ -91,7 +82,7 @@ jobs:
           NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
           NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}
           # NEXT_PUBLIC_DRPC_ID: ${{ secrets.NEXT_PUBLIC_DRPC_ID }}
-          NEXT_PUBLIC_TEST: true
+          NEXT_PUBLIC_APP_ENV: 'test'
         working-directory: .
 
       - name: Upload test results

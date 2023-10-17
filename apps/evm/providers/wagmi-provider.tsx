@@ -1,6 +1,15 @@
-import { config, WagmiConfig as _WagmiConfig } from '@sushiswap/wagmi'
-import { FC, ReactNode } from 'react'
+import {
+  WagmiConfig as _WagmiConfig,
+  createProductionConfig,
+  createTestConfig,
+} from '@sushiswap/wagmi'
+import type { FC, ReactNode } from 'react'
 
-export const WagmiConfig: FC<{ children: ReactNode }> = ({ children }) => (
-  <_WagmiConfig config={config}>{children}</_WagmiConfig>
-)
+const config =
+  process.env.NEXT_PUBLIC_APP_ENV !== 'test'
+    ? createProductionConfig()
+    : createTestConfig()
+
+export const WagmiConfig: FC<{ children: ReactNode }> = ({ children }) => {
+  return <_WagmiConfig config={config}>{children}</_WagmiConfig>
+}

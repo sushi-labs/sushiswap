@@ -1,12 +1,12 @@
 'use client'
 
+import { useMemo } from 'react'
 import { sushiXSwapAbi } from 'sushi/abi'
 import {
-  isSushiXSwapChainId,
   SUSHIXSWAP_ADDRESS,
   SushiXSwapChainId,
-} from '@sushiswap/sushixswap-sdk'
-import { useMemo } from 'react'
+  isSushiXSwapChainId,
+} from 'sushi/config'
 import { WalletClient } from 'viem'
 import { usePublicClient, useWalletClient } from 'wagmi'
 import { getContract } from 'wagmi/actions'

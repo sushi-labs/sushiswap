@@ -1,10 +1,9 @@
 'use client'
 
 import { allChains } from '@sushiswap/wagmi-config'
+import { multicall3Abi } from 'sushi/abi'
 import { getContract } from 'viem'
 import { Address, usePublicClient } from 'wagmi'
-
-import { multicall3Abi } from '../abis'
 
 type Multicall3ChainId = typeof allChains[number]['id']
 

@@ -1,12 +1,24 @@
 {
-  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/esm/tsconfig"],
-  "include": ["src"],
-  "exclude": ["node_modules", "dist", ".turbo"],
+  "extends": [
+    "@tsconfig/strictest/tsconfig",
+    "@tsconfig/esm/tsconfig"
+  ],
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".turbo"
+  ],
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
     "jsx": "react-jsx",
-    "lib": ["ESNext", "DOM"],
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "module": "ES2020",
     "moduleResolution": "Bundler",
     "target": "ESNext",

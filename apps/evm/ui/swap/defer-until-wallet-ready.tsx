@@ -2,7 +2,7 @@
 
 import { useInterval } from '@sushiswap/hooks'
 import { useAccount } from '@sushiswap/wagmi'
-import Loading from 'app/swap/loading'
+import { Splash } from '@sushiswap/ui'
 import { FC, ReactNode, useState } from 'react'
 
 export const DeferUntilWalletReady: FC<{ children: ReactNode }> = ({
@@ -22,7 +22,7 @@ export const DeferUntilWalletReady: FC<{ children: ReactNode }> = ({
   if (show) return <>{children}</>
 
   if (status === 'connecting' || status === 'reconnecting') {
-    return <Loading />
+    return <Splash />
   }
 
   return <>{children}</>

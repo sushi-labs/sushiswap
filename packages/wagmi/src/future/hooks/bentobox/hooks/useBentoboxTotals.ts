@@ -1,9 +1,9 @@
 'use client'
 
-import { isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { ChainId } from 'sushi/chain'
-import { Type } from 'sushi/currency'
 import { useQuery } from '@tanstack/react-query'
+import { ChainId } from 'sushi/chain'
+import { isBentoBoxChainId } from 'sushi/config'
+import { Type } from 'sushi/currency'
 
 import { getBentoboxTotals } from '../actions'
 

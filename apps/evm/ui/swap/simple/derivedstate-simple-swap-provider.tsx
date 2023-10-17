@@ -24,7 +24,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { ZERO } from 'sushi'
+import { ZERO } from 'sushi/math'
 import { ChainId, TestnetChainId } from 'sushi/chain'
 import {
   Amount,

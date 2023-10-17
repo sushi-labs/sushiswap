@@ -2,6 +2,7 @@ import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
 import { TridentChainIds } from '@sushiswap/trident-sdk'
 import { SushiSwapV2ChainIds } from '@sushiswap/v2-sdk'
 import { SushiSwapV3ChainIds } from '@sushiswap/v3-sdk'
+import { Currency } from 'sushi/currency'
 
 export const ANGLE_ENABLED_NETWORKS = [
   ChainId.ETHEREUM,
@@ -72,3 +73,11 @@ export const SUPPORTED_CHAIN_IDS = Array.from(
 )
 
 export type SupportedChainId = typeof SUPPORTED_CHAIN_IDS[number]
+
+export type Config = {
+  [chainId in SupportedChainId]: {
+    stables: Currency[]
+    lsds: Currency[]
+    tokenLists: []
+  }
+}

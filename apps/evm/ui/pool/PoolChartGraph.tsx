@@ -1,7 +1,7 @@
 'use client'
 
 import { ChainId } from 'sushi/chain'
-import { formatPercent, formatUSD } from 'sushi'
+import { formatPercent, formatUSD } from 'sushi/format'
 import {
   CardContent,
   CardHeader,

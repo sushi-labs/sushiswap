@@ -1,7 +1,5 @@
 'use client'
 
-import { HashZero } from '@ethersproject/constants'
-import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import {
   createErrorToast,
   createFailedToast,
@@ -10,7 +8,8 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { readContract } from '@wagmi/core'
 import { useCallback, useMemo, useState } from 'react'
-import { hexToSignature, UserRejectedRequestError } from 'viem'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
+import { UserRejectedRequestError, hexToSignature } from 'viem'
 import {
   Address,
   useAccount,
@@ -83,7 +82,14 @@ export const useBentoboxApproval = ({
     functionName: 'setMasterContractApproval',
     args:
       masterContract && address
-        ? [address, masterContract, true, 0, HashZero, HashZero]
+        ? [
+            address,
+            masterContract,
+            true,
+            0,
+            '0x0000000000000000000000000000000000000000000000000000000000000000',
+            '0x0000000000000000000000000000000000000000000000000000000000000000',
+          ]
         : undefined,
     onError: (error) => {
       console.error('error preparing master contract approval', error)

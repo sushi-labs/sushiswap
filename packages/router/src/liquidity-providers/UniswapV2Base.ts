@@ -92,7 +92,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       //console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${topPools.length}`)
     } else {
       //console.debug(`${this.getLogPrefix()} - INIT: NO pools found.`)
-      return []
+      //return []
     }
 
     const results = await this.client

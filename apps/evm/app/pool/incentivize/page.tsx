@@ -38,7 +38,7 @@ import {
   useAccount,
   useSignMessage,
 } from '@sushiswap/wagmi'
-import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
+import { Web3Input } from '@sushiswap/wagmi/future/components/web3-input'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { DistributionCreator } from '@sushiswap/wagmi/future/hooks/rewards/abis/DistributionCreator'
 import { useIncentivizePoolWithRewards } from '@sushiswap/wagmi/future/hooks/rewards/hooks/useIncentivizePoolWithRewards'
@@ -51,7 +51,7 @@ import { format } from 'date-fns'
 import { useCallback, useMemo, useState } from 'react'
 import { Chain } from 'sushi/chain'
 import { Token, Type, tryParseAmount } from 'sushi/currency'
-import { useWaitForTransaction } from 'wagmi'
+import { useWaitForTransaction } from '@sushiswap/wagmi'
 
 import { ANGLE_ENABLED_NETWORKS } from '../../../config'
 import { ConcentratedLiquidityProvider } from '../../../ui/pool/ConcentratedLiquidityProvider'
@@ -65,7 +65,7 @@ import { SelectTokensWidget } from '../../../ui/pool/SelectTokensWidget'
 
 const APPROVE_TAG = 'approve-incentivize'
 
-export default async function Page() {
+export default function Page() {
   return (
     <ConcentratedLiquidityURLStateProvider
       supportedNetworks={ANGLE_ENABLED_NETWORKS}

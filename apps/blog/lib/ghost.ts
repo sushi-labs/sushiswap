@@ -1,6 +1,5 @@
 import GhostContentAPI from '@tryghost/content-api'
-
-import { ArticleSchema } from './validate'
+import type { ArticleSchema } from './validate'
 
 export function getGhostClient() {
   return new GhostContentAPI({

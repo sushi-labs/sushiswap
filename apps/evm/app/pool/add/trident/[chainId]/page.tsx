@@ -1,8 +1,8 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import { Fee, TridentConstantPool, TridentStablePool } from '@sushiswap/amm'
-import { BENTOBOX_ADDRESS, isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
+import { Fee } from 'sushi/dex'
+import { BENTOBOX_ADDRESS, isBentoBoxChainId } from 'sushi/config'
 import { ChainId } from 'sushi/chain'
 import {
   defaultQuoteCurrency,
@@ -14,6 +14,8 @@ import {
   isTridentChainId,
   TridentChainId,
   TridentChainIds,
+  TridentConstantPool,
+  TridentStablePool,
 } from '@sushiswap/trident-sdk'
 import { FormSection } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
@@ -26,7 +28,7 @@ import {
   TridentConstantPoolState,
   TridentStablePoolState,
 } from '@sushiswap/wagmi'
-import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
+import { Web3Input } from '@sushiswap/wagmi/future/components/web3-input'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { CheckerProvider } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import {

@@ -1,7 +1,7 @@
 'use client'
 
 import { Amount, Token, Type } from 'sushi/currency'
-import { ZERO } from 'sushi'
+import { ZERO } from 'sushi/math'
 import { useMemo } from 'react'
 
 interface Params {

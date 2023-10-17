@@ -8,7 +8,7 @@ import {
   tryParseAmount,
   Type,
 } from 'sushi/currency'
-import { Rounding } from 'sushi'
+import { Rounding } from 'sushi/math'
 import {
   encodeSqrtRatioX96,
   FeeAmount,

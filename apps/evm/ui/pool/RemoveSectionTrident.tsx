@@ -1,20 +1,16 @@
 'use client'
 
-import { calculateSlippageAmount } from '@sushiswap/amm'
-import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { ChainId } from 'sushi/chain'
+import { BentoBoxChainId } from 'sushi/config'
 import { Pool, Protocol } from '@sushiswap/client'
-import { Amount, Native } from 'sushi/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { Percent } from 'sushi'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createToast } from '@sushiswap/ui/components/toast'
 import {
   Address,
-  getTridentRouterContractConfig,
   TridentConstantPoolState,
   TridentStablePoolState,
+  getTridentRouterContractConfig,
   useAccount,
   useBentoBoxTotals,
   useNetwork,
@@ -37,10 +33,10 @@ import {
 } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import {
+  LiquidityOutput,
   approveMasterContractAction,
   batchAction,
   burnLiquidityAction,
-  LiquidityOutput,
   sweepAction,
   unwrapWETHAction,
 } from 'lib/actions'
@@ -48,6 +44,10 @@ import { APPROVE_TAG_REMOVE_TRIDENT } from 'lib/constants'
 import { useTokensFromPool, useUnderlyingTokenBalanceFromPool } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import { FC, useCallback, useMemo, useState } from 'react'
+import { Percent } from 'sushi/math'
+import { slippageAmount } from 'sushi/calculate'
+import { ChainId } from 'sushi/chain'
+import { Amount, Native } from 'sushi/currency'
 
 import { usePoolPosition } from './PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
@@ -67,14 +67,6 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
     const { signature, setSignature } = useSignature(APPROVE_TAG_REMOVE_TRIDENT)
     const contract = useTridentRouterContract(_pool.chainId)
     const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
-    const slippagePercent = useMemo(() => {
-      return new Percent(
-        Math.floor(
-          +(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100,
-        ),
-        10_000,
-      )
-    }, [slippageTolerance])
 
     const [percentage, setPercentage] = useState<string>('0')
     const percentToRemove = useMemo(
@@ -164,17 +156,17 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
         currencyAToRemove
           ? Amount.fromRawAmount(
               currencyAToRemove.currency,
-              calculateSlippageAmount(currencyAToRemove, slippagePercent)[0],
+              slippageAmount(currencyAToRemove, slippageTolerance)[0],
             )
           : undefined,
         currencyBToRemove
           ? Amount.fromRawAmount(
               currencyBToRemove.currency,
-              calculateSlippageAmount(currencyBToRemove, slippagePercent)[0],
+              slippageAmount(currencyBToRemove, slippageTolerance)[0],
             )
           : undefined,
       ]
-    }, [slippagePercent, currencyAToRemove, currencyBToRemove])
+    }, [slippageTolerance, currencyAToRemove, currencyBToRemove])
 
     const onSettled = useCallback(
       (data: SendTransactionResult | undefined) => {

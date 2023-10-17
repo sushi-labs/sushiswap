@@ -1,4 +1,4 @@
-import { abs } from 'sushi'
+import { abs } from 'sushi/math'
 
 import { closeValues, getBigInt, StableSwapRPool } from '../src'
 
@@ -218,7 +218,10 @@ describe('StableSwap test', () => {
     it('total is 0', () => {
       const v01 = [0n, 1n]
       function totalZero(n: number) {
-        return { elastic: v01[(n >> 1) % 2], base: v01[n % 2] }
+        return {
+          elastic: v01[(n >> 1) % 2] as bigint,
+          base: v01[n % 2] as bigint,
+        }
       }
       for (let j = 0; j < 16; ++j) {
         const pool = createPool(
