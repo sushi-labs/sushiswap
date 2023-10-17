@@ -1,6 +1,11 @@
-import { arbitrum, mainnet, polygon } from 'viem/chains'
+import { Chain, arbitrum, foundry, mainnet, polygon } from 'viem/chains'
 
-export const testChains = [polygon, mainnet, arbitrum]
+export const foundryPolygon: Chain = {
+  ...mainnet,
+  rpcUrls: foundry.rpcUrls,
+}
+
+export const testChains = [foundryPolygon, polygon, mainnet, arbitrum]
 export type TestChainId = typeof testChains[number]['id']
 
 // Default accounts from Anvil

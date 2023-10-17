@@ -10,7 +10,16 @@ const foundryPort = String(
   process.env.ANVIL_PORT || process.env.NEXT_PUBLIC_ANVIL_PORT || 8545,
 )
 
-export function getNetwork(chain: Chain) {
+const chainId = Number(
+  process.env.CHAIN_ID || process.env.NEXT_PUBLIC_CHAIN_ID || 137,
+)
+const testWalletIndex = Number(
+  process.env.TEST_WALLET_INDEX ||
+    process.env.NEXT_PUBLIC_TEST_WALLET_INDEX ||
+    0,
+)
+
+function getNetwork(chain: Chain) {
   return {
     chainId: chain.id,
     ensAddress: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
@@ -18,39 +27,35 @@ export function getNetwork(chain: Chain) {
   }
 }
 
-export function getAccounts() {
+function getAccounts() {
   return accounts.map((x) => privateKeyToAccount(x.privateKey))
 }
 
-export function getTransport(chainId: TestChainId) {
+function getTransport(chainId: TestChainId) {
   const chain = testChains.find((x) => x.id === chainId)
   if (!chain) throw Error(`No test chain found for ${chainId}`)
   const url = foundry.rpcUrls.default.http[0].replace('8545', foundryPort)
   return http(url)
 }
 
-const { publicClient } = configureChains(
-  testChains,
-  [
-    jsonRpcProvider({
-      rpc: () => ({
-        http: foundry.rpcUrls.default.http[0].replace('8545', foundryPort),
+export const createTestConfig = () => {
+  const { publicClient } = configureChains(
+    testChains,
+    [
+      jsonRpcProvider({
+        rpc: () => ({
+          http: foundry.rpcUrls.default.http[0].replace('8545', foundryPort),
+        }),
       }),
-    }),
-  ],
-  {
-    pollingInterval: 1_000,
-  },
-)
-
-export const createTestConfig = (
-  chainId: TestChainId,
-  accountIndex: number,
-) => {
+    ],
+    {
+      pollingInterval: 1_000,
+    },
+  )
   const mockConnector = new MockConnector({
     options: {
       walletClient: createWalletClient({
-        account: getAccounts()[accountIndex],
+        account: getAccounts()[testWalletIndex],
         transport: getTransport(chainId),
         chain: testChains.find((x) => x.id === chainId),
         pollingInterval: 1_000,

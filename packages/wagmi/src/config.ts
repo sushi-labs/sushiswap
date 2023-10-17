@@ -8,30 +8,10 @@ import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { SafeConnector } from 'wagmi/connectors/safe'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
-import { createTestConfig } from './test'
-import { type TestChainId } from './test/constants'
-
-const isTest =
-  process.env.NODE_ENV === 'test' ||
-  process.env.TEST === 'true' ||
-  process.env.NEXT_PUBLIC_TEST === 'true'
-
-const chainId = Number(
-  process.env.CHAIN_ID || process.env.NEXT_PUBLIC_CHAIN_ID || 137,
-)
-const testWalletIndex = Number(
-  process.env.TEST_WALLET_INDEX ||
-    process.env.NEXT_PUBLIC_TEST_WALLET_INDEX ||
-    0,
-)
-
-const { chains, publicClient } = configureChains(allChains, allProviders, {
-  pollingInterval: 4_000,
-})
-
-export const createWagmiConfig = () => {
-  if (isTest) return createTestConfig(chainId as TestChainId, testWalletIndex)
-
+export const createProductionConfig = () => {
+  const { chains, publicClient } = configureChains(allChains, allProviders, {
+    pollingInterval: 4_000,
+  })
   return createConfig({
     publicClient,
     logger: {
@@ -102,4 +82,4 @@ export const createWagmiConfig = () => {
   })
 }
 
-export const config = createWagmiConfig()
+// export const config = createWagmiConfig()

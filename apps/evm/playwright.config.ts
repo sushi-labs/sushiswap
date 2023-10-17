@@ -105,6 +105,7 @@ const config: PlaywrightTestConfig = {
         `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
         `--fork-url=${process.env.ANVIL_FORK_URL}`,
         `--port=${Number(process.env.ANVIL_PORT || 8545)}`,
+        // '--no-mining',
         // '--silent',
         // '--block-time 15',
       ].join(' '),
@@ -122,8 +123,7 @@ const config: PlaywrightTestConfig = {
       reuseExistingServer: !process.env.CI,
       env: {
         NEXT_PUBLIC_CHAIN_ID: String(process.env.NEXT_PUBLIC_CHAIN_ID),
-        NEXT_PUBLIC_TEST: String(process.env.NEXT_PUBLIC_TEST),
-        // NODE_ENV: 'test',
+        NEXT_PUBLIC_APP_ENV: String(process.env.NEXT_PUBLIC_APP_ENV),
       },
     },
   ],
