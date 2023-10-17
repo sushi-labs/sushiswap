@@ -685,7 +685,7 @@ async function startInfinitTest(args: {
   }
 }
 
-it.skip('UniV3 Extractor Ethereum infinit work test', async () => {
+it.skip('UniV3 Extractor Ethereum infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
@@ -696,7 +696,7 @@ it.skip('UniV3 Extractor Ethereum infinit work test', async () => {
   })
 })
 
-it.skip('UniV3 Extractor Polygon infinit work test', async () => {
+it.skip('UniV3 Extractor Polygon infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: polygon,
@@ -707,7 +707,7 @@ it.skip('UniV3 Extractor Polygon infinit work test', async () => {
   })
 })
 
-it.skip('UniV3 Extractor Arbitrum infinit work test', async () => {
+it.skip('UniV3 Extractor Arbitrum infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: arbitrum,
@@ -718,7 +718,7 @@ it.skip('UniV3 Extractor Arbitrum infinit work test', async () => {
   })
 })
 
-it.skip('UniV3 Extractor Optimism infinit work test', async () => {
+it.skip('UniV3 Extractor Optimism infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: optimism,
@@ -730,7 +730,7 @@ it.skip('UniV3 Extractor Optimism infinit work test', async () => {
   })
 })
 
-it.skip('UniV3 Extractor Celo infinit work test', async () => {
+it.skip('UniV3 Extractor Celo infinite work test', async () => {
   await startInfinitTest({
     providerURL: 'https://forno.celo.org',
     chain: celo,

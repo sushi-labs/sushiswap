@@ -257,7 +257,7 @@ async function startInfinitTest(args: {
   }
 }
 
-it.skip('Extractor Ethereum infinit work test', async () => {
+it.skip('Extractor Ethereum infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
@@ -272,7 +272,7 @@ it.skip('Extractor Ethereum infinit work test', async () => {
   })
 })
 
-it.skip('Extractor Polygon infinit work test', async () => {
+it.skip('Extractor Polygon infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: polygon,
@@ -295,7 +295,7 @@ it.skip('Extractor Polygon infinit work test', async () => {
   })
 })
 
-it.skip('Extractor Arbitrum infinit work test', async () => {
+it.skip('Extractor Arbitrum infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: arbitrum,
@@ -310,7 +310,7 @@ it.skip('Extractor Arbitrum infinit work test', async () => {
   })
 })
 
-it.skip('Extractor Optimism infinit work test', async () => {
+it.skip('Extractor Optimism infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: optimism,
@@ -325,7 +325,7 @@ it.skip('Extractor Optimism infinit work test', async () => {
   })
 })
 
-it.skip('Extractor Celo infinit work test', async () => {
+it.skip('Extractor Celo infinite work test', async () => {
   await startInfinitTest({
     providerURL: 'https://forno.celo.org',
     chain: celo,
@@ -339,7 +339,7 @@ it.skip('Extractor Celo infinit work test', async () => {
   })
 })
 
-it.skip('Extractor Polygon zkevm infinit work test', async () => {
+it.skip('Extractor Polygon zkevm infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://polygonzkevm-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: polygonZkEvm,
@@ -363,7 +363,7 @@ it.skip('Extractor Polygon zkevm infinit work test', async () => {
   })
 })
 
-it.skip('Extractor AVALANCH infinit work test', async () => {
+it.skip('Extractor AVALANCH infinite work test', async () => {
   await startInfinitTest({
     transport: config[ChainId.AVALANCHE].transport,
     chain: config[ChainId.AVALANCHE].chain as Chain,
@@ -386,7 +386,7 @@ it.skip('Extractor AVALANCH infinit work test', async () => {
   })
 })
 
-it.skip('Extractor Base infinit work test', async () => {
+it.skip('Extractor Base infinite work test', async () => {
   await startInfinitTest({
     ...config[ChainId.BASE],
     chain: config[ChainId.BASE].chain as Chain,

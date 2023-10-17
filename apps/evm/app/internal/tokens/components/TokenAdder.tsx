@@ -87,7 +87,7 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
           setAddState('ready')
           window.open(listPr, '_blank')
         } else {
-          throw new Error('An unexpected error has occured.')
+          throw new Error('An unexpected error has occurred.')
         }
       } catch (e) {
         console.error(e)

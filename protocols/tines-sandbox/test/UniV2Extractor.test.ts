@@ -168,7 +168,7 @@ async function allPoolsPrefetchingTest(args: {
   )
 }
 
-it.skip('UniV2 Extractor Ethereum infinit work test', async () => {
+it.skip('UniV2 Extractor Ethereum infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
