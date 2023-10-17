@@ -108,15 +108,6 @@ export const AddSectionReviewModalTrident: FC<
   const rebases = useBentoBoxTotals(chainId, tokens)
   const contract = useTridentRouterContract(chainId)
   const [slippageTolerance] = useSlippageTolerance('addLiquidity')
-  const slippagePercent = useMemo(() => {
-    return new Percent(
-      Math.floor(
-        +(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100,
-      ),
-      10_000,
-    )
-  }, [slippageTolerance])
-
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
       input0
@@ -125,7 +116,7 @@ export const AddSectionReviewModalTrident: FC<
           ? input0
           : Amount.fromRawAmount(
               input0.currency,
-              slippageAmount(input0, slippagePercent)[0],
+              slippageAmount(input0, slippageTolerance)[0],
             )
         : undefined,
       input1
@@ -134,11 +125,11 @@ export const AddSectionReviewModalTrident: FC<
           ? input1
           : Amount.fromRawAmount(
               input1.currency,
-              slippageAmount(input1, slippagePercent)[0],
+              slippageAmount(input1, slippageTolerance)[0],
             )
         : undefined,
     ]
-  }, [poolState, input0, input1, slippagePercent])
+  }, [poolState, input0, input1, slippageTolerance])
 
   const noLiquidity = useMemo(() => {
     return (
@@ -174,7 +165,7 @@ export const AddSectionReviewModalTrident: FC<
         const slp = pool.getLiquidityMinted(totalSupply, amountA, amountB)
         const minSLP = slippageAmount(
           slp,
-          noLiquidity ? ZERO_PERCENT : slippagePercent,
+          noLiquidity ? ZERO_PERCENT : slippageTolerance,
         )[0]
         return Amount.fromRawAmount(slp.currency, minSLP.toString())
       } catch (error) {
@@ -189,7 +180,7 @@ export const AddSectionReviewModalTrident: FC<
     input1,
     pool,
     rebases,
-    slippagePercent,
+    slippageTolerance,
     token0,
     token1,
     totalSupply,
