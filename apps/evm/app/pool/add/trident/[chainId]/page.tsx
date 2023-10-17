@@ -1,7 +1,7 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import { Fee, TridentConstantPool, TridentStablePool } from '@sushiswap/amm'
+import { Fee } from 'sushi/dex'
 import { BENTOBOX_ADDRESS, isBentoBoxChainId } from 'sushi/config'
 import { ChainId } from 'sushi/chain'
 import {
@@ -14,6 +14,8 @@ import {
   isTridentChainId,
   TridentChainId,
   TridentChainIds,
+  TridentConstantPool,
+  TridentStablePool,
 } from '@sushiswap/trident-sdk'
 import { FormSection } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'

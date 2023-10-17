@@ -1,4 +1,4 @@
-import { TridentStablePool } from '@sushiswap/amm'
+import { TridentStablePool } from '@sushiswap/trident-sdk'
 import { tridentStablePoolAbi, tridentStablePoolFactoryAbi } from 'sushi/abi'
 import { BentoBoxChainId } from 'sushi/config'
 import { Amount, Currency, Token } from 'sushi/currency'

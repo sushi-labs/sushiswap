@@ -1,4 +1,6 @@
-import { Fee } from '@sushiswap/base-sdk'
+import {
+  Fee
+} from 'sushi/dex'
 import { amountSchema } from 'sushi/currency'
 import z from 'zod'
 

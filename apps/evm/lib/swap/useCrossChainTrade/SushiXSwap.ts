@@ -1,4 +1,5 @@
-import { Trade, TradeType, Version as TradeVersion } from '@sushiswap/amm'
+import { TradeType, Version as TradeVersion } from 'sushi/dex'
+import { Trade } from './trade'
 import { Amount, Currency, Native, Share, Token } from 'sushi/currency'
 import { BigintIsh } from 'sushi/math'
 import {
@@ -11,7 +12,6 @@ import {
 import { SushiXSwapChainId } from 'sushi/config'
 import { getBigInt } from '@sushiswap/tines'
 import {
-  Address,
   getSushiXSwapContractConfig,
   SushiXSwap as SushiXSwapContract,
 } from '@sushiswap/wagmi'
@@ -23,6 +23,7 @@ import {
   Signature,
   stringToHex,
   zeroAddress,
+  Address,
 } from 'viem'
 
 export type Complex = [

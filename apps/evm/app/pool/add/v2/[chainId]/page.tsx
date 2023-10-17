@@ -1,7 +1,7 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import { SushiSwapV2Pool } from '@sushiswap/amm'
+import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
 import { FormSection } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Loader } from '@sushiswap/ui/components/loader'

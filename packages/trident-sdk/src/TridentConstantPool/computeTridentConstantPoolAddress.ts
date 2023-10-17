@@ -1,7 +1,7 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
 import { getCreate2Address } from '@ethersproject/address'
 import { keccak256 } from '@ethersproject/solidity'
-import { Fee } from '@sushiswap/base-sdk'
+import { Fee } from 'sushi/dex'
 import { Token } from 'sushi/currency'
 
 export const computeTridentConstantPoolAddress = ({

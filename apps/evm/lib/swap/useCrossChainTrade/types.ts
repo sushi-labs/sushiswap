@@ -3,7 +3,7 @@ import { Percent } from 'sushi/math'
 import { SushiXSwapChainId } from 'sushi/config'
 import { Address, Signature } from 'viem'
 
-import { Action } from '../SushiXSwap'
+import { Action } from './SushiXSwap'
 
 export interface UseCrossChainTradeParams {
   tradeId: string

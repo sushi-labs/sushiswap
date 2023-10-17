@@ -2,9 +2,7 @@ import { MultiRoute, RToken } from '@sushiswap/tines'
 import { Amount, Price, Type as Currency } from 'sushi/currency'
 import { Fraction, ONE, Percent, ZERO } from 'sushi/math'
 import invariant from 'tiny-invariant'
-
-import { TradeType as Type } from './TradeType'
-import { Version } from './Version'
+import { Version, TradeType as Type } from 'sushi/dex'
 
 /**
  * Represents a trade executed against a list of pools.

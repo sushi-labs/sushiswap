@@ -3,10 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Sushi Wagmi",
-  "keywords": [
-    "sushi",
-    "wagmi"
-  ],
+  "keywords": ["sushi", "wagmi"],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "sideEffects": true,
@@ -44,9 +41,7 @@
       ]
     }
   },
-  "files": [
-    "src"
-  ],
+  "files": ["src"],
   "scripts": {
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
@@ -55,16 +50,12 @@
     "@headlessui/react": "1.7.7",
     "@heroicons/react": "2.0.13",
     "@radix-ui/react-slot": "1.0.2",
-    "@sushiswap/amm": "workspace:*",
-    "@sushiswap/bentobox-sdk": "workspace:*",
     "@sushiswap/client": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
-    "@sushiswap/route-processor-sdk": "workspace:*",
     "@sushiswap/router": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
-    "@sushiswap/sushixswap-sdk": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/trident-sdk": "workspace:*",
     "@sushiswap/ui": "workspace:*",

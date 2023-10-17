@@ -21,7 +21,7 @@ import { Amount, Native, Price, WNATIVE_ADDRESS } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { Address, Hex } from 'viem'
 import { useFeeData } from 'wagmi'
-import { usePoolsCodeMap } from '../../pools'
+import { usePoolsCodeMap } from '../pools'
 
 export const useClientTrade = (variables: UseTradeParams) => {
   const {

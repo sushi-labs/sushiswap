@@ -1,4 +1,4 @@
-import { Fee } from '@sushiswap/amm'
+import { Fee } from 'sushi/dex'
 import { Type } from 'sushi/currency'
 import {
   Address,

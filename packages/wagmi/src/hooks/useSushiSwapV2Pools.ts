@@ -1,9 +1,9 @@
 'use client'
 
-import { SushiSwapV2Pool } from '@sushiswap/amm'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SushiSwapV2ChainId,
+  SushiSwapV2Pool,
   computeSushiSwapV2PoolAddress,
   isSushiSwapV2ChainId,
 } from '@sushiswap/v2-sdk'

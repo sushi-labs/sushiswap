@@ -6,7 +6,7 @@ import {
 } from '@sushiswap/tines'
 
 import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
-import { Pool } from '@sushiswap/base-sdk'
+import { Pool } from 'sushi/dex'
 import { convertPoolOrPairtoRPool } from './convertPoolOrPairtoRPool'
 
 export function findMultiRouteExactIn(

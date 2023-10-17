@@ -1,12 +1,11 @@
-import { Token } from 'sushi/currency'
 import {
-  findSingleRouteExactIn as TinesFindSingleRouteExactIn,
   MultiRoute,
   RToken,
+  findSingleRouteExactIn as TinesFindSingleRouteExactIn,
 } from '@sushiswap/tines'
-
 import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
-import { Pool } from '@sushiswap/base-sdk'
+import { Token } from 'sushi/currency'
+import { Pool } from 'sushi/dex'
 import { convertPoolOrPairtoRPool } from './convertPoolOrPairtoRPool'
 
 export function findSingleRouteExactIn(

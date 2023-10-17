@@ -1,9 +1,10 @@
+import { Amount, Price, Share, Token } from 'sushi/currency'
 import {
+  Fee,
   InsufficientInputAmountError,
   InsufficientReservesError,
-} from '@sushiswap/base-sdk'
-import { Fee, Pool } from '@sushiswap/base-sdk'
-import { Amount, Price, Share, Token } from 'sushi/currency'
+  Pool,
+} from 'sushi/dex'
 import { ONE, ZERO, sqrt } from 'sushi/math'
 import invariant from 'tiny-invariant'
 

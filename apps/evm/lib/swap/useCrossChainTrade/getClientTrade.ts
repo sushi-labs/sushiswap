@@ -1,18 +1,14 @@
-import {
-  findMultiRouteExactIn,
-  findSingleRouteExactIn,
-  Trade,
-  TradeType,
-  Version as TradeVersion,
-} from '@sushiswap/amm'
-import { ChainId } from 'sushi/chain'
-import { Amount, Type as Currency, Type, WNATIVE } from 'sushi/currency'
 import { RouteStatus } from '@sushiswap/tines'
 import { isTridentChainId } from '@sushiswap/trident-sdk'
 import { SUSHISWAP_V2_FACTORY_ADDRESS } from '@sushiswap/v2-sdk'
+import { ChainId } from 'sushi/chain'
+import { Amount, Currency, Type, WNATIVE } from 'sushi/currency'
+import { TradeType, Version as TradeVersion } from 'sushi/dex'
 import { FetchFeeDataResult } from 'wagmi/actions'
-
-import { UsePoolsReturn } from '../../pools'
+import { findMultiRouteExactIn } from './findMultiRouteExactIn'
+import { findSingleRouteExactIn } from './findSingleRouteExactIn'
+import { Trade } from './trade'
+import { UsePoolsReturn } from '@sushiswap/wagmi/future/hooks/pools'
 
 export interface GetTradeParams {
   chainId: ChainId

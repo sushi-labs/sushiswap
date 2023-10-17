@@ -1,15 +1,16 @@
 'use client'
 
 import {
-  Fee,
+  TridentChainId,
   TridentStablePool,
   computeTridentStablePoolAddress,
-} from '@sushiswap/amm'
-import { TridentChainId, isTridentChainId } from '@sushiswap/trident-sdk'
+  isTridentChainId,
+} from '@sushiswap/trident-sdk'
 import { useMemo } from 'react'
 import { tridentStablePoolAbi, tridentStablePoolFactoryAbi } from 'sushi/abi'
 import { BentoBoxChainId } from 'sushi/config'
 import { Amount, Currency, Token, Type } from 'sushi/currency'
+import { Fee } from 'sushi/dex'
 import { Address, useContractReads } from 'wagmi'
 
 import { useBentoBoxTotals } from './useBentoBoxTotals'

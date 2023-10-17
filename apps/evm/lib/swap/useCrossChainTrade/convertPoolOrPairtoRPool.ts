@@ -1,5 +1,3 @@
-import { Fee, Pool } from '@sushiswap/base-sdk'
-import { Token } from 'sushi/currency'
 import {
   ConstantProductRPool,
   RPool,
@@ -8,6 +6,8 @@ import {
 } from '@sushiswap/tines'
 import { TridentConstantPool, TridentStablePool } from '@sushiswap/trident-sdk'
 import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
+import { Token } from 'sushi/currency'
+import { Fee, Pool } from 'sushi/dex'
 import { Address } from 'viem'
 
 export function getBentoChainId(chainId: string | number | undefined): string {

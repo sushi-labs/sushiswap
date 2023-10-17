@@ -2,10 +2,7 @@
   "name": "@sushiswap/trident-sdk",
   "version": "1.0.0",
   "description": "Trident SDK",
-  "keywords": [
-    "trident",
-    "sdk"
-  ],
+  "keywords": ["trident", "sdk"],
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
@@ -17,9 +14,7 @@
   "main": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
-  "files": [
-    "dist/**"
-  ],
+  "files": ["dist/**"],
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
@@ -36,7 +31,6 @@
     "@ethersproject/address": "5.7.0",
     "@ethersproject/bignumber": "5.7.0",
     "@ethersproject/solidity": "5.7.0",
-    "@sushiswap/base-sdk": "workspace:*",
     "sushi": "workspace:*",
     "tiny-invariant": "1.3.1",
     "tiny-warning": "1.0.3",

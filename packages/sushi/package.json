@@ -40,6 +40,10 @@
       "types": "./dist/currency/index.d.ts",
       "default": "./dist/currency/index.js"
     },
+    "./extractor": {
+      "types": "./dist/extractor/index.d.ts",
+      "default": "./dist/extractor/index.js"
+    },
     "./dex": {
       "types": "./dist/dex/index.d.ts",
       "default": "./dist/dex/index.js"
@@ -90,6 +94,7 @@
       "convert": ["./dist/convert/index.d.ts"],
       "currency": ["./dist/currency/index.d.ts"],
       "dex": ["./dist/dex/index.d.ts"],
+      "extractor": ["./dist/extractor/index.d.ts"],
       "format": ["./dist/format/index.d.ts"],
       "gas": ["./dist/gas/index.d.ts"],
       "log": ["./dist/log/index.d.ts"],
@@ -132,10 +137,14 @@
     "zod": "3.21.4"
   },
   "peerDependencies": {
+    "@sushiswap/tines": "*",
     "viem": "*",
     "zod": "*"
   },
   "peerDependenciesMeta": {
+    "@sushiswap/tines": {
+      "optional": true
+    },
     "viem": {
       "optional": true
     },
