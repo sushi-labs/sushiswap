@@ -1,7 +1,7 @@
 'use client'
 
-import { useSlippageTolerance } from '@sushiswap/hooks'
-import { UseTradeReturn } from '@sushiswap/react-query'
+import {useSlippageTolerance} from '@sushiswap/hooks'
+import {UseTradeReturn} from '@sushiswap/react-query'
 import {
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,
@@ -12,7 +12,7 @@ import {
   ROUTE_PROCESSOR_3_ADDRESS,
   ROUTE_PROCESSOR_ADDRESS,
 } from '@sushiswap/route-processor-sdk'
-import { Bridge, LiquidityProviders } from '@sushiswap/router'
+import {Bridge, LiquidityProviders} from '@sushiswap/router'
 import {
   classNames,
   DialogContent,
@@ -25,10 +25,10 @@ import {
   DialogTitle,
   useToast,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { List } from '@sushiswap/ui/components/list/List'
-import { SkeletonBox, SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { createErrorToast } from '@sushiswap/ui/components/toast'
+import {Button} from '@sushiswap/ui/components/button'
+import {List} from '@sushiswap/ui/components/list/List'
+import {SkeletonBox, SkeletonText} from '@sushiswap/ui/components/skeleton'
+import {createErrorToast} from '@sushiswap/ui/components/toast'
 import {
   useAccount,
   useContractWrite,
@@ -36,34 +36,22 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import {
-  SendTransactionResult,
-  waitForTransaction,
-} from '@sushiswap/wagmi/actions'
-import {
-  useBalanceWeb3Refetch,
-  useTransactionAdder,
-} from '@sushiswap/wagmi/future/hooks'
-import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { APPROVE_TAG_SWAP } from 'lib/constants'
-import {
-  warningSeverity,
-  warningSeverityClassName,
-} from 'lib/swap/warningSeverity'
-import { log } from 'next-axiom'
-import React, { FC, ReactNode, useCallback, useRef } from 'react'
-import { calculateGasMargin, shortenAddress, ZERO } from 'sushi'
-import { routeProcessor3Abi, routeProcessorAbi } from 'sushi/abi'
-import { Chain } from 'sushi/chain'
-import { Native } from 'sushi/currency'
-import { stringify } from 'viem'
+import {SendTransactionResult, waitForTransaction,} from '@sushiswap/wagmi/actions'
+import {useBalanceWeb3Refetch, useTransactionAdder,} from '@sushiswap/wagmi/future/hooks'
+import {useApproved} from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import {APPROVE_TAG_SWAP} from 'lib/constants'
+import {warningSeverity, warningSeverityClassName,} from 'lib/swap/warningSeverity'
+import {log} from 'next-axiom'
+import React, {FC, ReactNode, useCallback, useRef} from 'react'
+import {calculateGasMargin, shortenAddress, ZERO} from 'sushi'
+import {routeProcessor3Abi, routeProcessorAbi} from 'sushi/abi'
+import {Chain} from 'sushi/chain'
+import {Native} from 'sushi/currency'
+import {stringify} from 'viem'
 
-import { TradeRoutePathView } from '../trade-route-path-view'
-import {
-  useDerivedStateSimpleSwap,
-  useSimpleSwapTrade,
-} from './derivedstate-simple-swap-provider'
-import { SimpleSwapErrorMessage } from './simple-swap-error-message'
+import {TradeRoutePathView} from '../trade-route-path-view'
+import {useDerivedStateSimpleSwap, useSimpleSwapTrade,} from './derivedstate-simple-swap-provider'
+import {SimpleSwapErrorMessage} from './simple-swap-error-message'
 
 export const SimpleSwapTradeReviewDialog: FC<{
   children({
@@ -162,10 +150,18 @@ export const SimpleSwapTradeReviewDialog: FC<{
         hash: data.hash,
         payload: JSON.stringify({
           type: 'swap',
-          inputAmount: '0.0001',
-          outputAmount: '0.0001',
-          inputToken: {},
-          outputToken: {},
+          inputAmount: tradeRef.current?.amountIn?.toSignificant(6),
+          outputAmount: tradeRef.current?.amountOut?.toSignificant(6),
+          inputToken: {
+            address: tradeRef.current?.route?.fromToken.address,
+            decimals: tradeRef.current?.route?.fromToken.decimals,
+            symbol: tradeRef.current?.route?.fromToken.symbol,
+          },
+          outputToken: {
+            address: tradeRef.current?.route?.toToken.address,
+            decimals: tradeRef.current?.route?.toToken.decimals,
+            symbol: tradeRef.current?.route?.toToken.symbol,
+          },
         }),
         timestamp: new Date().getTime(),
       })
