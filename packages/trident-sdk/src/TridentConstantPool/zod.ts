@@ -1,6 +1,4 @@
-import {
-  Fee
-} from 'sushi/dex'
+import { Fee } from 'sushi/dex'
 import { amountSchema } from 'sushi/currency'
 import z from 'zod'
 

@@ -92,6 +92,7 @@
       "dex": ["./dist/dex/index.d.ts"],
       "extractor": ["./dist/extractor/index.d.ts"],
       "format": ["./dist/format/index.d.ts"],
+      "gas": ["./dist/gas/index.d.ts"],
       "log": ["./dist/log/index.d.ts"],
       "math": ["./dist/math/index.d.ts"],
       "sort": ["./dist/sort/index.d.ts"],
