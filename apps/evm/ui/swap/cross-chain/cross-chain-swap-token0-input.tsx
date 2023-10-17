@@ -11,7 +11,7 @@ import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
 import { Web3Input } from '@sushiswap/wagmi/future/components/web3-input'
 import { Chain } from 'sushi/chain'
 
-import { SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS } from '@sushiswap/sushixswap-sdk'
+import { SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS } from 'sushi/config'
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapToken0Input = () => {

@@ -1,14 +1,14 @@
 import { STARGATE_TOKEN } from '@sushiswap/stargate'
-import { TransactionType } from '@sushiswap/sushixswap-sdk'
 import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { CheckMarkIcon } from '@sushiswap/ui/components/icons/CheckmarkIcon'
 import { FailedMarkIcon } from '@sushiswap/ui/components/icons/FailedMarkIcon'
 import { Loader } from '@sushiswap/ui/components/loader'
+import { TransactionType } from 'lib/swap/useCrossChainTrade/SushiXSwap2'
 import { FC, ReactNode } from 'react'
-import { shortenAddress } from 'sushi/format'
 import { Chain } from 'sushi/chain'
+import { shortenAddress } from 'sushi/format'
 import {
   useCrossChainSwapTrade,
   useDerivedStateCrossChainSwap,
