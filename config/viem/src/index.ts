@@ -378,7 +378,9 @@ export const config: Record<
 > = {
   [ChainId.ARBITRUM_NOVA]: {
     chain: arbitrumNova,
-    transport: http(`https://lb.drpc.org/ogrpc?network=arbitrum-nova&dkey=${drpcId}`),
+    transport: http(
+      `https://lb.drpc.org/ogrpc?network=arbitrum-nova&dkey=${drpcId}`,
+    ),
   },
   [ChainId.ARBITRUM]: {
     chain: arbitrum,
@@ -392,7 +394,9 @@ export const config: Record<
   },
   [ChainId.AVALANCHE]: {
     chain: avalanche,
-    transport: http(`https://lb.drpc.org/ogrpc?network=avalanche&dkey=${drpcId}`),
+    transport: http(
+      `https://lb.drpc.org/ogrpc?network=avalanche&dkey=${drpcId}`,
+    ),
   },
   [ChainId.BOBA]: {
     chain: boba,
@@ -482,11 +486,13 @@ export const config: Record<
   },
   [ChainId.METIS]: {
     chain: metis,
-    transport: http(`https://lb.drpc.org/ogrpc?network=metis&dkey=${drpcId}`)
+    transport: http(`https://lb.drpc.org/ogrpc?network=metis&dkey=${drpcId}`),
   },
   [ChainId.MOONBEAM]: {
     chain: moonbeam,
-    transport: http(`https://lb.drpc.org/ogrpc?network=moonbeam&dkey=${drpcId}`),
+    transport: http(
+      `https://lb.drpc.org/ogrpc?network=moonbeam&dkey=${drpcId}`,
+    ),
   },
   [ChainId.MOONRIVER]: {
     chain: moonriver,

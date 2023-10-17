@@ -27,5 +27,5 @@ export const allProviders: ChainProviderFn[] = [
     apiKey: alchemyId as string,
   }),
   // infuraProvider({ infuraId }),
-  publicProvider()
+  publicProvider(),
 ]
