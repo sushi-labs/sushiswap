@@ -6,7 +6,9 @@ import { Percent } from 'sushi/math'
 export const useSlippageTolerance = (
   key: string | undefined = 'swapSlippage',
 ) => {
-  const [slippageTolerance, setSlippageTolerance] = useLocalStorage<number | string>(key, 0.5)
+  const [slippageTolerance, setSlippageTolerance] = useLocalStorage<
+    number | string
+  >(key, 0.5)
 
   return [
     new Percent(
@@ -15,6 +17,6 @@ export const useSlippageTolerance = (
       ),
       10_000,
     ),
-    setSlippageTolerance
+    setSlippageTolerance,
   ] as const
 }

@@ -127,7 +127,6 @@ export const AddSectionReviewModalConcentrated: FC<
 
   const hasExistingPosition = !!existingPosition
 
-
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined, error: Error | null) => {
       if (error instanceof UserRejectedRequestError) {
