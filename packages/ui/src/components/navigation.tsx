@@ -278,7 +278,9 @@ const Navigation: React.FC<NavProps> = ({
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
-      <div className="flex items-center gap-2">{rightElement}</div>
+      <div className="flex items-center gap-2">
+        {rightElement ? rightElement : null}
+      </div>
     </NavigationContainer>
   )
 }

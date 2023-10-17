@@ -1,13 +1,13 @@
 'use client'
 
-import { isAddress } from '@ethersproject/address'
-import { AddressZero } from '@ethersproject/constants'
-import { bentoBoxV1Abi } from 'sushi/abi'
-import { isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { ChainId, chainName } from 'sushi/chain'
-import { Amount, Native, Token, Type } from 'sushi/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { useMemo } from 'react'
+import { bentoBoxV1Abi } from 'sushi/abi'
+import { ChainId, chainName } from 'sushi/chain'
+import { isBentoBoxChainId } from 'sushi/config'
+import { Amount, Native, Token, Type } from 'sushi/currency'
+import { isAddress } from 'viem'
+import { zeroAddress } from 'viem'
 import {
   Address,
   erc20ABI,
@@ -190,7 +190,7 @@ export const useBalances: UseBalances = ({
   ])
 
   return useMemo(() => {
-    tokens[AddressZero] = {
+    tokens[zeroAddress] = {
       [FundSource.WALLET]:
         chainId && nativeBalance?.value
           ? Amount.fromRawAmount(
@@ -255,12 +255,12 @@ export const useBalance: UseBalance = ({
   })
   return useMemo(() => {
     const walletBalance = currency
-      ? data?.[currency.isNative ? AddressZero : currency.wrapped.address]?.[
+      ? data?.[currency.isNative ? zeroAddress : currency.wrapped.address]?.[
           FundSource.WALLET
         ]
       : undefined
     const bentoBalance = currency
-      ? data?.[currency.isNative ? AddressZero : currency.wrapped.address]?.[
+      ? data?.[currency.isNative ? zeroAddress : currency.wrapped.address]?.[
           FundSource.BENTOBOX
         ]
       : undefined

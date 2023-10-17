@@ -32,9 +32,9 @@ export interface MultiRoute {
   status: RouteStatus
   fromToken: RToken
   toToken: RToken
-  primaryPrice?: number
-  swapPrice?: number
-  priceImpact?: number
+  primaryPrice: number | undefined
+  swapPrice: number | undefined
+  priceImpact: number | undefined
   amountIn: number
   amountInBI: bigint
   amountOut: number
@@ -58,12 +58,15 @@ export function NoWayMultiRoute(from: RToken, to: RToken) {
     gasSpent: 0,
     totalAmountOut: 0,
     totalAmountOutBI: 0n,
-  }
+    primaryPrice: undefined,
+    swapPrice: undefined,
+    priceImpact: undefined,
+  } as MultiRoute
 }
 
 // Tines input info about blockchains
 export interface NetworkInfo {
-  chainId?: number | string
+  chainId: number | string | undefined
   baseToken: RToken // native coin of the blockchain, or its wrapper, for example: WETH, MATIC
   //baseTokenPrice: number // price of baseToke, in $ for example
   gasPrice: number // current gas price, in baseToken. For example, if gas costs 17Gwei then gasPrice is 17*1e9
@@ -371,7 +374,7 @@ export class Vertice {
   bestIncome: number // temp data used for findBestPath algorithm
   gasSpent: number // temp data used for findBestPath algorithm
   bestTotal: number // temp data used for findBestPath algorithm
-  bestSource?: Edge // temp data used for findBestPath algorithm
+  bestSource: Edge | undefined // temp data used for findBestPath algorithm
   checkLine: number // debug data
 
   constructor(t: RToken) {
@@ -396,7 +399,7 @@ export class Vertice {
   }
 
   getNeibour(e?: Edge) {
-    if (!e) return
+    if (!e) return undefined
     return e.vert0 === this ? e.vert1 : e.vert0
   }
 
@@ -504,7 +507,7 @@ export class Graph {
       newEdges.sort((e1, e2) => value(e1) - value(e2))
       const res: Edge[] = []
       while (nextEdges.length && newEdges.length) {
-        if (value(nextEdges[0]) < value(newEdges[0]))
+        if (value(nextEdges[0] as Edge) < value(newEdges[0] as Edge))
           res.push(nextEdges.shift() as Edge)
         else res.push(newEdges.shift() as Edge)
       }
@@ -581,7 +584,7 @@ export class Graph {
       newEdges.sort((e1, e2) => value(e1) - value(e2))
       const res: Edge[] = []
       while (nextEdges.length && newEdges.length) {
-        if (value(nextEdges[0]) < value(newEdges[0]))
+        if (value(nextEdges[0] as Edge) < value(newEdges[0] as Edge))
           res.push(nextEdges.shift() as Edge)
         else res.push(newEdges.shift() as Edge)
       }
@@ -714,7 +717,7 @@ export class Graph {
     | undefined {
     const start = this.getVert(from)
     const finish = this.getVert(to)
-    if (!start || !finish) return
+    if (!start || !finish) return undefined
 
     this.edges.forEach((e) => {
       e.bestEdgeIncome = 0
@@ -746,12 +749,12 @@ export class Graph {
         }
       })
 
-      if (!closestVert) return
+      if (!closestVert) return undefined
 
       closestVert.checkLine = checkLine++
 
       if (closestVert === finish) {
-        const bestPath = []
+        const bestPath: Edge[] = []
         for (
           let v: Vertice | undefined = finish;
           v?.bestSource;
@@ -833,7 +836,7 @@ export class Graph {
     | undefined {
     const start = this.getVert(to)
     const finish = this.getVert(from)
-    if (!start || !finish) return
+    if (!start || !finish) return undefined
 
     this.edges.forEach((e) => {
       e.bestEdgeIncome = 0
@@ -865,12 +868,12 @@ export class Graph {
         }
       })
 
-      if (!closestVert) return
+      if (!closestVert) return undefined
 
       closestVert.checkLine = checkLine++
 
       if (closestVert === finish) {
-        const bestPath = []
+        const bestPath: Edge[] = []
         for (
           let v: Vertice | undefined = finish;
           v?.bestSource;
@@ -1000,7 +1003,7 @@ export class Graph {
       amountInBI = getBigInt(amountIn)
     }
 
-    let routeValues = []
+    let routeValues: number[] = []
     if (Array.isArray(mode)) {
       const sum = mode.reduce((a, b) => a + b, 0)
       routeValues = mode.map((e) => e / sum)
@@ -1020,7 +1023,8 @@ export class Graph {
     let primaryPrice
     let step
     for (step = 0; step < routeValues.length; ++step) {
-      const p = this.findBestPathExactIn(from, to, amountIn * routeValues[step])
+      const routeValue = routeValues[step] as number
+      const p = this.findBestPathExactIn(from, to, amountIn * routeValue)
       if (!p) {
         break
       } else {
@@ -1028,7 +1032,7 @@ export class Graph {
         gasSpentInit += p.gasSpent
         totalOutput += p.totalOutput
         this.addPath(this.getVert(from), this.getVert(to), p.path)
-        totalrouted += routeValues[step]
+        totalrouted += routeValue
       }
     }
     if (step === 0 || output === 0) return NoWayMultiRoute(from, to)
@@ -1091,7 +1095,7 @@ export class Graph {
     amountOut: number,
     mode: number | number[],
   ): MultiRoute {
-    let routeValues = []
+    let routeValues: number[] = []
     if (Array.isArray(mode)) {
       const sum = mode.reduce((a, b) => a + b, 0)
       routeValues = mode.map((e) => e / sum)
@@ -1111,11 +1115,8 @@ export class Graph {
     let primaryPrice
     let step
     for (step = 0; step < routeValues.length; ++step) {
-      const p = this.findBestPathExactOut(
-        from,
-        to,
-        amountOut * routeValues[step],
-      )
+      const routeValue = routeValues[step] as number
+      const p = this.findBestPathExactOut(from, to, amountOut * routeValue)
       if (!p) {
         break
       } else {
@@ -1123,7 +1124,7 @@ export class Graph {
         gasSpentInit += p.gasSpent
         //totalInput += p.totalInput
         this.addPath(this.getVert(from), this.getVert(to), p.path)
-        totalrouted += routeValues[step]
+        totalrouted += routeValue
         // if (step === 0) {
         //   primaryPrice = this.getPrimaryPriceForPath(this.getVert(from) as Vertice, p.path)
         // }
@@ -1271,13 +1272,15 @@ export class Graph {
         const data = this.edgeFrom(e)
         if (data !== undefined) return data.amount
         console.error('Tines: Internal Error 1123')
+        return undefined
       }) as number[]
       const totalOut = amounts.reduce((a, b) => {
         a += b
         return a
       }, 0)
       outEdges.forEach((e, i) => {
-        if (amounts[i] / totalOut < minFraction) weakEdgeList.push(e)
+        if ((amounts[i] as number) / totalOut < minFraction)
+          weakEdgeList.push(e)
       })
     })
     weakEdgeList.forEach((e) => {
@@ -1288,8 +1291,9 @@ export class Graph {
 
   // returns route output
   updateLegsAmountOut(legs: RouteLeg[], amountIn: number): number {
+    if (legs.length == 0) return 0
     const amounts = new Map<string, number>()
-    amounts.set(legs[0].tokenFrom.tokenId as string, amountIn)
+    amounts.set((legs[0] as RouteLeg).tokenFrom.tokenId as string, amountIn)
     legs.forEach((l) => {
       const vert = this.getVert(l.tokenFrom)
       console.assert(vert !== undefined, 'Internal Error 570')
@@ -1316,7 +1320,11 @@ export class Graph {
       l.assumedAmountIn = input
       l.assumedAmountOut = output
     })
-    return amounts.get(legs[legs.length - 1].tokenTo.tokenId as string) || 0
+    return (
+      amounts.get(
+        (legs[legs.length - 1] as RouteLeg).tokenTo.tokenId as string,
+      ) || 0
+    )
   }
 
   // TODO: make full test coverage!
@@ -1332,9 +1340,12 @@ export class Graph {
     })
 
     const amounts = new Map<string, number>()
-    amounts.set(legs[legs.length - 1].tokenTo.tokenId as string, amountOut)
+    amounts.set(
+      (legs[legs.length - 1] as RouteLeg).tokenTo.tokenId as string,
+      amountOut,
+    )
     for (let i = legs.length - 1; i >= 0; --i) {
-      const l = legs[i]
+      const l = legs[i] as RouteLeg
       const vert = this.getVert(l.tokenTo)
       console.assert(vert !== undefined, 'Internal Error 884')
       const edge = (vert as Vertice).edges.find(
@@ -1357,7 +1368,7 @@ export class Graph {
       const prevAmount = amounts.get(vertNext.token.tokenId as string)
       amounts.set(vertNext.token.tokenId as string, (prevAmount || 0) + input)
     }
-    return amounts.get(legs[0].tokenFrom.tokenId as string) || 0
+    return amounts.get((legs[0] as RouteLeg).tokenFrom.tokenId as string) || 0
   }
 
   // removes all cycles if there are any, then removes all dead end could appear after cycle removing
@@ -1407,7 +1418,7 @@ export class Graph {
       })
       if (out < minOutput) {
         minVert = v1
-        minVertNext = v2
+        minVertNext = v2 as Vertice
         minOutput = out
       }
     })

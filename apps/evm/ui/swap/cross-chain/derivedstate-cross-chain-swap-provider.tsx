@@ -9,15 +9,12 @@ import {
   Type,
 } from 'sushi/currency'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { ZERO } from 'sushi'
+import { ZERO } from 'sushi/math'
 import {
   STARGATE_SUPPORTED_CHAIN_IDS,
   StargateChainId,
 } from '@sushiswap/stargate'
-import {
-  isSushiXSwapChainId,
-  SushiXSwapChainId,
-} from '@sushiswap/sushixswap-sdk'
+import { isSushiXSwapChainId, SushiXSwapChainId } from 'sushi/config'
 import { Address, useAccount, useNetwork, watchNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future'
 import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'

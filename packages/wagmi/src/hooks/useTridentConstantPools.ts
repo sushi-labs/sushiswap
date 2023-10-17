@@ -1,16 +1,16 @@
 'use client'
 
 import {
-  Fee,
   TridentConstantPool,
   computeTridentConstantPoolAddress,
-} from '@sushiswap/amm'
+} from '@sushiswap/trident-sdk'
 import { useMemo } from 'react'
 import {
   tridentConstantPoolAbi,
   tridentConstantPoolFactoryAbi,
 } from 'sushi/abi'
 import { Amount, Currency, Token } from 'sushi/currency'
+import { Fee } from 'sushi/dex'
 import { Address, useContractReads } from 'wagmi'
 
 import { useTridentConstantPoolFactoryContract } from './useTridentConstantPoolFactoryContract'

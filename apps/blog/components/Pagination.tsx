@@ -1,10 +1,10 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline'
 import { classNames } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 
 interface Pagination {
   page: number
-  onPage(page: number): void
+  onPage: (page: number) => void
   pages: number
 }
 
@@ -19,9 +19,11 @@ export const Pagination: FC<Pagination> = ({ page, onPage, pages }) => {
       >
         <ChevronLeftIcon
           className="text-slate-200"
-          width={28}
           height={28}
-          onClick={() => onPage(page - 1)}
+          onClick={() => {
+            onPage(page - 1)
+          }}
+          width={28}
         />
       </div>
       <div className="text-base text-slate-200">
@@ -35,9 +37,11 @@ export const Pagination: FC<Pagination> = ({ page, onPage, pages }) => {
       >
         <ChevronRightIcon
           className="text-slate-200"
-          width={28}
           height={28}
-          onClick={() => onPage(page + 1)}
+          onClick={() => {
+            onPage(page + 1)
+          }}
+          width={28}
         />
       </div>
     </div>

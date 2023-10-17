@@ -1,5 +1,5 @@
 import { Pool } from '@sushiswap/client'
-import { formatUSD } from 'sushi'
+import { formatUSD } from 'sushi/format'
 import {
   CardCurrencyAmountItem,
   CardGroup,

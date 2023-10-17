@@ -1,7 +1,7 @@
 import { isAddress } from '@ethersproject/address'
-import { Amount, Token, Type } from 'sushi/currency'
-import { Fraction } from 'sushi'
 import { useMemo } from 'react'
+import { Amount, Token, Type } from 'sushi/currency'
+import { Fraction } from 'sushi/math'
 
 import { FundSource } from './useFundSourceToggler'
 

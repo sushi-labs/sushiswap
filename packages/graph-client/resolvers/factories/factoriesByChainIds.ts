@@ -7,7 +7,7 @@ import {
   TRIDENT_ENABLED_NETWORKS,
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
-import { isPromiseFulfilled } from 'sushi'
+import { isPromiseFulfilled } from 'sushi/validate'
 
 import {
   Factory,

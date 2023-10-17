@@ -5,8 +5,7 @@ import { quality } from '@cloudinary/url-gen/actions/delivery'
 import { fill, scale } from '@cloudinary/url-gen/actions/resize'
 import { toAnimated } from '@cloudinary/url-gen/actions/transcode'
 import { auto } from '@cloudinary/url-gen/qualifiers/quality'
-
-import { cld } from '../pages/_app'
+import { cld } from './cld'
 
 type Metadata =
   | {
@@ -56,44 +55,43 @@ export function getOptimizedMedia({
       )
       .delivery(quality(auto()))
       .toURL()
-  } else {
-    if (height && width) {
-      return cld
-        .image(metadata.public_id)
-        .format('webp')
-        .resize(fill().width(width).height(height))
-        .delivery(quality(auto()))
-        .toURL()
-    }
-
-    if (height) {
-      return cld
-        .image(metadata.public_id)
-        .format('webp')
-        .resize(fill().height(height))
-        .delivery(quality(auto()))
-        .toURL()
-    }
-
-    if (width) {
-      return cld
-        .image(metadata.public_id)
-        .format('webp')
-        .resize(fill().width(width))
-        .delivery(quality(auto()))
-        .toURL()
-    }
-
+  }
+  if (height && width) {
     return cld
       .image(metadata.public_id)
       .format('webp')
-      .conditional(
-        ifCondition(
-          'height > 1280',
-          new Transformation().resize(fill().height('1280')),
-        ),
-      )
+      .resize(fill().width(width).height(height))
       .delivery(quality(auto()))
       .toURL()
   }
+
+  if (height) {
+    return cld
+      .image(metadata.public_id)
+      .format('webp')
+      .resize(fill().height(height))
+      .delivery(quality(auto()))
+      .toURL()
+  }
+
+  if (width) {
+    return cld
+      .image(metadata.public_id)
+      .format('webp')
+      .resize(fill().width(width))
+      .delivery(quality(auto()))
+      .toURL()
+  }
+
+  return cld
+    .image(metadata.public_id)
+    .format('webp')
+    .conditional(
+      ifCondition(
+        'height > 1280',
+        new Transformation().resize(fill().height('1280')),
+      ),
+    )
+    .delivery(quality(auto()))
+    .toURL()
 }

@@ -1,4 +1,4 @@
-import { AddressZero } from '@ethersproject/constants'
+import { zeroAddress } from 'viem'
 import { ChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
 import { useQuery } from '@tanstack/react-query'
@@ -29,7 +29,7 @@ export const useBalanceWeb3 = ({
         account,
       })
       return (
-        data?.[currency.isNative ? AddressZero : currency.wrapped.address] ??
+        data?.[currency.isNative ? zeroAddress : currency.wrapped.address] ??
         null
       )
     },

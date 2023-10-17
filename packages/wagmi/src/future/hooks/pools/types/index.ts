@@ -1,12 +1,9 @@
-import {
-  SushiSwapV2Pool,
-  TradeType,
-  TridentConstantPool,
-  TridentStablePool,
-} from '@sushiswap/amm'
 import { BridgeBento, UniV3Pool } from '@sushiswap/tines'
-import { ChainId, TestnetChainId } from 'sushi/chain'
+import { TridentConstantPool, TridentStablePool } from '@sushiswap/trident-sdk'
+import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
+import { ChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
+import { TradeType } from 'sushi/dex'
 
 export enum PoolType {
   SushiSwapV2Pool = 'SushiSwapV2',

@@ -3,7 +3,7 @@
 import { CogIcon } from '@heroicons/react/24/outline'
 import { Amount, Type } from 'sushi/currency'
 import { useDebounce } from '@sushiswap/hooks'
-import { Percent, ZERO } from 'sushi'
+import { Percent, ZERO } from 'sushi/math'
 import {
   Card,
   CardContent,

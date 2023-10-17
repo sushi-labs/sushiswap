@@ -1,4 +1,4 @@
-import { Slot } from '@radix-ui/react-slot'
+import { Slot } from '@sushiswap/ui/components/slot'
 import { Protocol } from '@sushiswap/client'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import { useAccount } from '@sushiswap/wagmi'

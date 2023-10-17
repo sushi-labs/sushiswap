@@ -1,4 +1,4 @@
-import { MAX_UINT256 } from 'sushi'
+import { MAX_UINT256 } from 'sushi/math'
 
 import { mostSignificantBit } from './mostSignificantBit'
 

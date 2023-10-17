@@ -1,15 +1,12 @@
-import {
-  isRouteProcessor3_1ChainId,
-  isRouteProcessor3ChainId,
-} from '@sushiswap/route-processor-sdk'
 import { DataFetcher, LiquidityProviders, PoolCode } from '@sushiswap/router'
+import {
+  isRouteProcessor3ChainId,
+  isRouteProcessor3_1ChainId,
+} from 'sushi/config'
 
 import { UsePoolsParams } from '../types'
 
-const isTest =
-  process.env.APP_ENV === 'test' ||
-  process.env.TEST === 'true' ||
-  process.env.NEXT_PUBLIC_TEST === 'true'
+const isTest = process.env.NEXT_PUBLIC_APP_ENV === 'test'
 
 export const getAllPoolsCodeMap = async ({
   currencyA,

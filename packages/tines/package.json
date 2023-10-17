@@ -9,14 +9,13 @@
   "author": "Ilya Lyalin",
   "sideEffects": false,
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
   "files": [
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
@@ -25,7 +24,7 @@
     "test_debug": "node --inspect-brk ../../node_modules/jest/bin/jest.js --runInBand"
   },
   "jest": {
-    "preset": "@sushiswap/jest-config/node"
+    "preset": "@sushiswap/jest-config"
   },
   "dependencies": {
     "seedrandom": "3.0.5",
@@ -40,8 +39,7 @@
     "@types/node": "18",
     "@types/seedrandom": "3.0.1",
     "jest": "29.7.0",
-    "tsup": "7.2.0",
     "typescript": "5.2.2",
-    "viem": "1.16.2"
+    "viem": "1.16.6"
   }
 }

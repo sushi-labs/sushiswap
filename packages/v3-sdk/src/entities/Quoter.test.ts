@@ -1,4 +1,4 @@
-import { TradeType } from '@sushiswap/amm'
+import { TradeType } from 'sushi/dex'
 import { Amount as CurrencyAmount, Token, WETH9 } from 'sushi/currency'
 
 import { FeeAmount, TICK_SPACINGS } from '../constants'

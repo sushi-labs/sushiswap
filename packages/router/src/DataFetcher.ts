@@ -1,7 +1,7 @@
-import { isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import { isTridentChainId } from '@sushiswap/trident-sdk'
 import { config } from '@sushiswap/viem-config'
 import { ChainId, TestnetChainId } from 'sushi/chain'
+import { isBentoBoxChainId } from 'sushi/config'
 import { Type } from 'sushi/currency'
 import { http, PublicClient, createPublicClient } from 'viem'
 
@@ -32,11 +32,9 @@ import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
 import { UniswapV3Provider } from './liquidity-providers/UniswapV3'
 import type { PoolCode } from './pools/PoolCode'
 
-// import { create } from 'viem'
 const isTest =
-  process.env.APP_ENV === 'test' ||
-  process.env.TEST === 'true' ||
-  process.env.NEXT_PUBLIC_TEST === 'true'
+  process.env['APP_ENV'] === 'test' ||
+  process.env['NEXT_PUBLIC_APP_ENV'] === 'test'
 
 // Gathers pools info, creates routing in 'incremental' mode
 // This means that new routing recalculates each time new pool fetching data comes
@@ -58,11 +56,8 @@ export class DataFetcher {
     if (cache) {
       return cache
     }
-
     const dataFetcher = new DataFetcher(chainId)
-
     this.cache[chainId] = dataFetcher
-
     return dataFetcher
   }
 
@@ -76,19 +71,18 @@ export class DataFetcher {
 
     if (publicClient) {
       this.web3Client = publicClient
-    } else {
+    } else if (isTest) {
       this.web3Client = createPublicClient({
         ...config[this.chainId],
-        transport: isTest
-          ? http('http://127.0.0.1:8545')
-          : config[this.chainId].transport,
-        pollingInterval: 8_000,
+        transport: http('http://127.0.0.1:8545'),
         batch: {
           multicall: {
             batchSize: 512,
           },
         },
       })
+    } else {
+      this.web3Client = createPublicClient(config[this.chainId])
     }
   }
 

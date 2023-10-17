@@ -1,6 +1,11 @@
 {
-  "extends": "@sushiswap/typescript-config/hardhat.json",
-  "include": ["scripts", "test", "deploy"],
-  "exclude": ["soljson-v0.8.10+commit.fc410830.js", "soljson-v0.6.12+commit.27d51765.js", "node_modules"],
-  "files": ["hardhat.config.ts"]
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  }
 }

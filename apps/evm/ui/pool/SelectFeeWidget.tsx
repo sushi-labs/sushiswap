@@ -1,7 +1,7 @@
 'use client'
 
 import { RadioGroup } from '@headlessui/react'
-import { Fee } from '@sushiswap/amm'
+import { Fee } from 'sushi/dex'
 import { classNames, FormSection } from '@sushiswap/ui'
 import React, { FC, memo } from 'react'
 

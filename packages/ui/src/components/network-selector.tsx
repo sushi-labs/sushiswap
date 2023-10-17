@@ -10,7 +10,7 @@ import {
   CommandInput,
   CommandItem,
 } from './command'
-import { NetworkIcon } from './icons/NetworkIcon'
+import { NetworkIcon } from './icons'
 import { Popover, PopoverContent, PopoverPrimitive } from './popover'
 
 export type NetworkSelectorOnSelectCallback<T extends number = ChainId> = (

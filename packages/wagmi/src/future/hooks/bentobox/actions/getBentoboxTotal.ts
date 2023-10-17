@@ -1,4 +1,4 @@
-import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
+import { BentoBoxChainId } from 'sushi/config'
 import { Type } from 'sushi/currency'
 
 import { getBentoboxTotals } from './getBentoboxTotals'

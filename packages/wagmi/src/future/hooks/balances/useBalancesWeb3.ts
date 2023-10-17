@@ -1,5 +1,5 @@
-import { isAddress } from '@ethersproject/address'
-import { AddressZero } from '@ethersproject/constants'
+import { isAddress } from 'viem'
+import { zeroAddress } from 'viem'
 import { ChainId } from 'sushi/chain'
 import { Amount, Native, Token, Type } from 'sushi/currency'
 import { useQuery } from '@tanstack/react-query'
@@ -63,7 +63,7 @@ export const queryFnUseBalances = async ({
     return acc
   }, {})
 
-  _data[AddressZero] = Amount.fromRawAmount(
+  _data[zeroAddress] = Amount.fromRawAmount(
     Native.onChain(chainId),
     native.value,
   )

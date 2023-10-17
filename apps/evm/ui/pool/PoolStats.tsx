@@ -2,7 +2,7 @@
 
 import { ChainId } from 'sushi/chain'
 import { Pool } from '@sushiswap/client'
-import { formatNumber, formatPercent, formatUSD } from 'sushi'
+import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 import {
   Card,
   CardContent,

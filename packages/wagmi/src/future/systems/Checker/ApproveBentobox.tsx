@@ -1,7 +1,6 @@
 'use client'
 
 import { InformationCircleIcon } from '@heroicons/react/24/solid'
-import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
 import {
   CardDescription,
   CardHeader,
@@ -13,6 +12,7 @@ import {
 } from '@sushiswap/ui'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import React, { FC } from 'react'
+import { BentoBoxChainId } from 'sushi/config'
 import { Address } from 'wagmi'
 
 import { ApprovalState, useBentoboxApproval } from '../../hooks'

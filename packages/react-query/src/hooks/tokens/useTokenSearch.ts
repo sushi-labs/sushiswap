@@ -1,6 +1,6 @@
-import { getAddress, isAddress } from '@ethersproject/address'
-import { Token } from 'sushi/currency'
 import { useQuery } from '@tanstack/react-query'
+import { Token } from 'sushi/currency'
+import { getAddress, isAddress } from 'viem'
 
 interface UseTokensParams {
   address: string | undefined

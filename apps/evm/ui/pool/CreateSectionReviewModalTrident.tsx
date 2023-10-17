@@ -1,11 +1,11 @@
+import { Fee } from 'sushi/dex'
 import {
-  Fee,
   TridentConstantPool,
   TridentStablePool,
   computeTridentConstantPoolAddress,
   computeTridentStablePoolAddress,
-} from '@sushiswap/amm'
-import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
+} from '@sushiswap/trident-sdk'
+import { BentoBoxChainId } from 'sushi/config'
 import {
   DialogConfirm,
   DialogContent,

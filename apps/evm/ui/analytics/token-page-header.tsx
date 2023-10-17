@@ -1,6 +1,6 @@
 'use client'
 
-import { formatUSD } from 'sushi'
+import { formatUSD } from 'sushi/format'
 import { Bundle, Token as GraphToken } from '@sushiswap/graph-client'
 import { Button } from '@sushiswap/ui/components/button'
 import { Chip } from '@sushiswap/ui/components/chip'

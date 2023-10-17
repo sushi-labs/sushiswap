@@ -1,8 +1,4 @@
-import { calculateSlippageAmount } from '@sushiswap/amm'
-import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { Amount, Type } from 'sushi/currency'
-import { calculateGasMargin } from 'sushi'
-import { Percent, ZERO } from 'sushi'
+import { BentoBoxChainId } from 'sushi/config'
 import {
   DialogConfirm,
   DialogContent,
@@ -38,7 +34,10 @@ import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
 import { useTransactionDeadline } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import { encodeFunctionData, UserRejectedRequestError } from 'viem'
+import { gasMargin, slippageAmount } from 'sushi/calculate'
+import { Amount, Type } from 'sushi/currency'
+import { Percent, ZERO } from 'sushi/math'
+import { UserRejectedRequestError, encodeFunctionData } from 'viem'
 
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
@@ -114,7 +113,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
             ? input0
             : Amount.fromRawAmount(
                 input0.currency,
-                calculateSlippageAmount(input0, slippagePercent)[0],
+                slippageAmount(input0, slippagePercent)[0],
               )
           : undefined,
         input1
@@ -122,7 +121,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
             ? input1
             : Amount.fromRawAmount(
                 input1.currency,
-                calculateSlippageAmount(input1, slippagePercent)[0],
+                slippageAmount(input1, slippagePercent)[0],
               )
           : undefined,
       ]
@@ -175,7 +174,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
                 args,
               }),
               value,
-              gas: calculateGasMargin(gasLimit),
+              gas: gasMargin(gasLimit),
             }
           } else {
             const args = [
@@ -200,7 +199,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
                 functionName: 'addLiquidity',
                 args,
               }),
-              gas: calculateGasMargin(gasLimit),
+              gas: gasMargin(gasLimit),
             }
           }
         } catch (e: unknown) {
@@ -286,7 +285,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
           chainId={chainId}
           status={status}
           testId="incentivize-confirmation-modal"
-          successMessage={`Successfully added liquidity`}
+          successMessage="Successfully added liquidity"
           buttonText="Go to pool"
           buttonLink={`/pools/${chainId}:${poolAddress}`}
           txHash={data?.hash}

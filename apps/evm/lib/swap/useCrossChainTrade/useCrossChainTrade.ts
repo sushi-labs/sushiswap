@@ -1,4 +1,4 @@
-import { TradeType } from '@sushiswap/amm'
+import { TradeType } from 'sushi/dex'
 import {
   Amount,
   Native,
@@ -8,7 +8,7 @@ import {
   Type,
   WNATIVE_ADDRESS,
 } from 'sushi/currency'
-import { Fraction, ONE, Percent, ZERO } from 'sushi'
+import { Fraction, ONE, Percent, ZERO } from 'sushi/math'
 import { usePrice } from '@sushiswap/react-query'
 import {
   isStargateBridgeToken,
@@ -16,16 +16,13 @@ import {
   StargateChainId,
 } from '@sushiswap/stargate'
 import { useFeeData, useSushiXSwapContract } from '@sushiswap/wagmi'
-import {
-  getClientTrade,
-  useBentoboxTotals,
-  usePools,
-} from '@sushiswap/wagmi/future/hooks'
+import { useBentoboxTotals, usePools } from '@sushiswap/wagmi/future/hooks'
+import { getClientTrade } from './getClientTrade'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { stringify } from 'viem'
 
-import { Action, SushiXSwap } from '../SushiXSwap'
+import { Action, SushiXSwap } from './SushiXSwap'
 import { getBridgeFees } from './getBridgeFees'
 import {
   UseCrossChainSelect,

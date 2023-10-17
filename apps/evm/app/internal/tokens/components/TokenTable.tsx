@@ -2,7 +2,7 @@
 
 import { XIcon } from '@heroicons/react-v1/outline'
 import { ChainId, chainName } from 'sushi/chain'
-import { formatUSD } from 'sushi'
+import { formatUSD } from 'sushi/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { DataTable } from '@sushiswap/ui'
 import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'

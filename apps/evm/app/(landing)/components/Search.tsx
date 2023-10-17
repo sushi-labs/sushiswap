@@ -3,16 +3,16 @@ import {
   SearchIcon,
   StarIcon,
 } from '@heroicons/react-v1/solid'
-import chains, { ChainId, chainShortName } from 'sushi/chain'
-import { Native, Token, Type } from 'sushi/currency'
 import { useDebounce, useOnClickOutside } from '@sushiswap/hooks'
-import { classNames, LinkInternal } from '@sushiswap/ui'
+import { LinkInternal, classNames } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { useQuery, useToken } from '@sushiswap/wagmi'
-import type { TokenList } from '@uniswap/token-lists'
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
+import chains, { ChainId, chainShortName } from 'sushi/chain'
+import { Native, Token, Type } from 'sushi/currency'
+import { type TokenList } from 'sushi/token-list'
 import { isAddress } from 'viem'
 
 import { SUPPORTED_CHAIN_IDS } from '../../../config'

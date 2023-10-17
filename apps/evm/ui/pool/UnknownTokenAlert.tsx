@@ -2,7 +2,7 @@
 
 import { ChainId } from 'sushi/chain'
 import { Pool } from '@sushiswap/client'
-import { shortenAddress } from 'sushi'
+import { shortenAddress } from 'sushi/format'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { Message } from '@sushiswap/ui'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'

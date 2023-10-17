@@ -2,7 +2,7 @@
 
 import { ChainId } from 'sushi/chain'
 import { Pool, Protocol } from '@sushiswap/client'
-import { formatNumber } from 'sushi'
+import { formatNumber } from 'sushi/format'
 import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/badge'
 import { Currency } from '@sushiswap/ui/components/currency'

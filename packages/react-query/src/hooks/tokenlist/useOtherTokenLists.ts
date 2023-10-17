@@ -1,8 +1,8 @@
-import { getAddress } from '@ethersproject/address'
-import { ChainId } from 'sushi/chain'
-import { Token } from 'sushi/currency'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
+import { getAddress } from 'viem'
 
 import { useTokens } from '../tokens'
 import { DEFAULT_LIST_OF_LISTS } from './constants'
@@ -26,8 +26,7 @@ export const useOtherTokenListsQuery = ({
       )
       return res
         .map((el) => otherTokenListValidator.parse(el))
-        .map((el) => el.tokens)
-        .flat()
+        .flatMap((el) => el.tokens)
     },
     keepPreviousData: true,
     staleTime: 900000, // 15 mins

@@ -1,19 +1,15 @@
 'use client'
 
-import { calculateSlippageAmount } from '@sushiswap/amm'
-import { ChainId } from 'sushi/chain'
 import { Pool } from '@sushiswap/client'
-import { Amount, Native } from 'sushi/currency'
 import { FundSource, useDebounce, useIsMounted } from '@sushiswap/hooks'
-import { Percent } from 'sushi'
 import { Dots } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { createToast } from '@sushiswap/ui/components/toast'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   Address,
-  getSushiSwapRouterContractConfig,
   SushiSwapV2PoolState,
+  getSushiSwapRouterContractConfig,
   useAccount,
   useNetwork,
   usePrepareSendTransaction,
@@ -40,7 +36,10 @@ import {
 } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { calculateGasMargin } from 'sushi'
+import { Percent } from 'sushi/math'
+import { slippageAmount, gasMargin } from 'sushi/calculate'
+import { ChainId } from 'sushi/chain'
+import { Amount, Native } from 'sushi/currency'
 import { encodeFunctionData } from 'viem'
 
 import { usePoolPosition } from './PoolPositionProvider'
@@ -129,13 +128,13 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
         currencyAToRemove
           ? Amount.fromRawAmount(
               currencyAToRemove.currency,
-              calculateSlippageAmount(currencyAToRemove, slippagePercent)[0],
+              slippageAmount(currencyAToRemove, slippagePercent)[0],
             )
           : undefined,
         currencyBToRemove
           ? Amount.fromRawAmount(
               currencyBToRemove.currency,
-              calculateSlippageAmount(currencyBToRemove, slippagePercent)[0],
+              slippageAmount(currencyBToRemove, slippagePercent)[0],
             )
           : undefined,
       ]
@@ -246,7 +245,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
         const safeGasEstimates = await Promise.all(
           config.functionNames.map((methodName) =>
             contract.estimateGas[methodName](config.args as any)
-              .then(calculateGasMargin)
+              .then(gasMargin)
               .catch((e) => {
                 console.error(e)
                 return undefined

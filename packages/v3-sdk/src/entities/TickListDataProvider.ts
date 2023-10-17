@@ -1,4 +1,4 @@
-import { BigintIsh } from 'sushi'
+import { BigintIsh } from 'sushi/math'
 
 import { TickList } from '../utils/tickList'
 import { Tick, TickConstructorArgs } from './Tick'

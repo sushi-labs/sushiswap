@@ -7,12 +7,11 @@ import {
   useConcentratedPositionInfo,
 } from '@sushiswap/wagmi/future/hooks'
 import { getV3FactoryContractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3FactoryContract'
-import { SUPPORTED_CHAIN_IDS } from 'config'
-import { useTokenAmountDollarValues } from 'lib/hooks'
+import { SUPPORTED_CHAIN_IDS } from '../../../config'
+import { useTokenAmountDollarValues } from '../../../lib/hooks'
 import React, { FC, useMemo, useState } from 'react'
 import { tryParseAmount } from 'sushi/currency'
 import { SWRConfig } from 'swr'
-
 import { ConcentratedLiquidityProvider } from '../../../ui/pool/ConcentratedLiquidityProvider'
 import {
   ConcentratedLiquidityURLStateProvider,

@@ -86,6 +86,7 @@ screenshots
 
 # playwright
 playwright-report
+test-results
 
 # Sentry
 .sentryclirc

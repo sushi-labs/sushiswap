@@ -1,30 +1,29 @@
-import {
-  SushiSwapV2Pool,
-  TradeType,
-  TridentConstantPool,
-  TridentStablePool,
-} from '@sushiswap/amm'
-import { isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { Type } from 'sushi/currency'
 import { getCurrencyCombinations } from '@sushiswap/router'
 import { BridgeBento, UniV3Pool } from '@sushiswap/tines'
-import { isTridentChainId } from '@sushiswap/trident-sdk'
-import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
+import {
+  TridentConstantPool,
+  TridentStablePool,
+  isTridentChainId,
+} from '@sushiswap/trident-sdk'
+import { SushiSwapV2Pool, isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { isBentoBoxChainId } from 'sushi/config'
+import { Type } from 'sushi/currency'
+import { TradeType } from 'sushi/dex'
 
 import { getBentoboxTotalsMap } from '../../bentobox'
 import { UsePoolsParams, UsePoolsReturn } from '../types'
 import { BridgeBentoState, getBridgeBentoPools } from './getBridgeBentoPools'
-import { getSushiSwapV2Pools, PairState } from './getSushiSwapV2Pools'
+import { PairState, getSushiSwapV2Pools } from './getSushiSwapV2Pools'
 import {
-  getTridentConstantPools,
   TridentConstantPoolState,
+  getTridentConstantPools,
 } from './getTridentConstantPools'
 import {
-  getTridentStablePools,
   TridentStablePoolState,
+  getTridentStablePools,
 } from './getTridentStablePools'
-import { getV3Pools, V3PoolState } from './getV3Pools'
+import { V3PoolState, getV3Pools } from './getV3Pools'
 import { pairsUnique, tokensUnique } from './utils'
 
 const queryFn = async ({

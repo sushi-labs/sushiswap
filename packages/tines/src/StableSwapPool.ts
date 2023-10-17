@@ -1,4 +1,4 @@
-import { abs } from 'sushi'
+import { abs } from 'sushi/math'
 import { Address } from 'viem'
 
 import { RPool, RToken } from './PrimaryPools'
@@ -118,28 +118,28 @@ export class StableSwapRPool extends RPool {
     }
   }
 
-  getReserve0() {
+  override getReserve0() {
     return adjustedReservesToReal(
       this.reserve0,
       this.total0.rebaseBI,
       this.decimals0,
     )
   }
-  getReserve1() {
+  override getReserve1() {
     return adjustedReservesToReal(
       this.reserve1,
       this.total1.rebaseBI,
       this.decimals1,
     )
   }
-  granularity0(): number {
+  override granularity0(): number {
     return Math.max(1 / this.decimalsCompensation0, 1)
   }
-  granularity1(): number {
+  override granularity1(): number {
     return Math.max(1 / this.decimalsCompensation1, 1)
   }
 
-  updateReserves(res0: bigint, res1: bigint) {
+  override updateReserves(res0: bigint, res1: bigint) {
     this.k = 0n
     this.reserve0 = realReservesToAdjusted(
       res0,
@@ -240,7 +240,7 @@ export class StableSwapRPool extends RPool {
     return { out, gasSpent: this.swapGasCost }
   }
 
-  calcOutByInReal(amountIn: number, direction: boolean): number {
+  override calcOutByInReal(amountIn: number, direction: boolean): number {
     return Math.floor(this.calcOutByIn(amountIn, direction, false).out)
   }
 

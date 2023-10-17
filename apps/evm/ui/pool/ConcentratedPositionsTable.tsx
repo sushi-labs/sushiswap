@@ -1,7 +1,7 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react/20/solid'
-import { Slot } from '@radix-ui/react-slot'
+import { Slot } from '@sushiswap/ui/components/slot'
 import { ChainId } from 'sushi/chain'
 import {
   Button,
