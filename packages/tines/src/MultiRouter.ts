@@ -5,7 +5,7 @@ import {
   NoWayMultiRoute,
   RouteStatus,
 } from './Graph'
-import { RPool, RToken, setTokenId } from './PrimaryPools'
+import { RPool, RToken, setTokenId } from './RPool'
 
 // Assumes route is a single path
 function calcPriceImactWithoutFee(route: MultiRoute) {

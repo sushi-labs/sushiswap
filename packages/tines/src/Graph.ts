@@ -1,6 +1,7 @@
 import { Address } from 'viem'
 
-import { ConstantProductRPool, RPool, RToken, setTokenId } from './PrimaryPools'
+import { RPool, RToken, setTokenId } from './RPool'
+import { ConstantProductRPool} from './PrimaryPools'
 import { StableSwapRPool } from './StableSwapPool'
 import { ASSERT, closeValues, DEBUG, getBigInt } from './Utils'
 
@@ -82,7 +83,7 @@ export class Edge {
   amountInPrevious: number // How many liquidity were passed from vert0 to vert1
   amountOutPrevious: number // How many liquidity were passed from vert0 to vert1
   spentGas: number // How much gas was spent for this edge
-  spentGasNew: number //  How much gas was will be spent for this edge
+  spentGasNew: number //  How much gas will be spent for this edge
   bestEdgeIncome: number // debug data
 
   constructor(p: RPool, v0: Vertice, v1: Vertice) {

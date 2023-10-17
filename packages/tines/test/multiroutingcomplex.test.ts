@@ -7,7 +7,7 @@ import {
   MultiRoute,
   RouteStatus,
 } from '../src'
-import { RPool } from '../src/PrimaryPools'
+import { RPool } from '../src/RPool'
 import { checkRouteResult } from './snapshots/snapshot'
 import {
   atomPrice,

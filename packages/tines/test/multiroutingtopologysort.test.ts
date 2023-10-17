@@ -2,7 +2,8 @@ import seedrandom from 'seedrandom'
 import { Address } from 'viem'
 
 import { Edge, getBigInt, Graph, Vertice } from '../src'
-import { ConstantProductRPool, RToken } from '../src/PrimaryPools'
+import { RToken } from '../src/RPool'
+import { ConstantProductRPool } from '../src/PrimaryPools'
 
 type Topology = [number, number[][]]
 

@@ -1,7 +1,7 @@
 //import { bigint } from '@ethersproject/bignumber'
 import { Address } from 'viem'
 
-import { RPool, RToken } from './PrimaryPools'
+import { RPool, RToken } from './RPool'
 import { getBigInt } from './Utils'
 
 const ZERO = 0n

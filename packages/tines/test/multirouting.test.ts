@@ -8,7 +8,8 @@ import {
   MultiRoute,
   RouteStatus,
 } from '../src'
-import { ConstantProductRPool, RToken } from '../src/PrimaryPools'
+import { RToken } from '../src/RPool'
+import { ConstantProductRPool } from '../src/PrimaryPools'
 import { checkRouteResult } from './snapshots/snapshot'
 
 const gasPrice = 1 * 200 * 1e-9

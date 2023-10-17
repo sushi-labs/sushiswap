@@ -6,7 +6,7 @@ import {
   RToken,
   TYPICAL_MINIMAL_LIQUIDITY,
   TYPICAL_SWAP_GAS_COST,
-} from './PrimaryPools'
+} from './RPool'
 
 const BASE_GAS_CONSUMPTION = 70_000
 const STEP_GAS_CONSUMPTION = 40_000

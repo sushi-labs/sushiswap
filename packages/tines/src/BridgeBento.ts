@@ -1,6 +1,6 @@
 import { Address } from 'viem'
 
-import { RPool, RToken } from './PrimaryPools'
+import { RPool, RToken } from './RPool'
 
 const BENTO_MINIMUM_SHARE_BALANCE = 1000 // Bento Shares
 const BRIDGING_GAS_COST = 60_000 // gas points
