@@ -1,6 +1,5 @@
 'use client'
 
-import { formatPercent, formatUSD } from '@sushiswap/format'
 import {
   Card,
   CardContent,
@@ -17,9 +16,10 @@ import {
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
+import { formatPercent, formatUSD } from 'sushi/format'
 import { APRHoverCard } from 'ui/pool/APRHoverCard'
 
-import { SteerStrategyConfig } from '../constants'
+import { SteerStrategyComponent } from '.'
 import { SteerAPRChart } from '../SteerAPRChart'
 import { SteerLiquidityInRangeChip } from '../SteerLiquidityDistributionWidget/SteerLiquidityInRangeChip'
 import {
@@ -29,7 +29,7 @@ import {
   SteerPositionRemove,
 } from '../SteerLiquidityManagement'
 import { SteerStrategyLiquidityDistribution } from '../SteerStrategyLiquidityChart'
-import { SteerStrategyComponent } from '.'
+import { SteerStrategyConfig } from '../constants'
 
 export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
   vault,

@@ -1,4 +1,4 @@
-import { SteerStrategy } from '@sushiswap/database'
+import { SteerStrategy } from '@sushiswap/client'
 
 interface SteerStrategyConfig {
   name: string

@@ -1,5 +1,5 @@
 import { getPool } from '@sushiswap/client'
-import { unsanitize } from '@sushiswap/format'
+import { unsanitize } from 'sushi/format'
 import {
   Breadcrumb,
   CardDescription,

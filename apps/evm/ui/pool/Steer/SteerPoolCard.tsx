@@ -1,26 +1,26 @@
 'use client'
 
 import { Pool } from '@sushiswap/client'
-import { formatPercent, formatUSD } from '@sushiswap/format'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-  classNames,
   LinkInternal,
   Separator,
   Stat,
   StatLabel,
   StatValue,
+  classNames,
 } from '@sushiswap/ui'
 import { FC } from 'react'
+import { formatPercent, formatUSD } from 'sushi/format'
 
 import { APRHoverCard } from '../APRHoverCard'
-import { SteerStrategyConfig } from './constants'
 import { SteerAPRChart } from './SteerAPRChart'
 import { SteerLiquidityDistributionWidget } from './SteerLiquidityDistributionWidget/SteerLiquidityDistributionWidget'
+import { SteerStrategyConfig } from './constants'
 
 interface SteerPoolCardProps {
   pool: Pool

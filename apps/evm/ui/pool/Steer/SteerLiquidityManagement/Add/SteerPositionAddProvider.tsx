@@ -1,18 +1,18 @@
 'use client'
 
+import type { SteerVault } from '@sushiswap/client'
 import { useSteerVault } from '@sushiswap/client/hooks'
-import type { SteerVault } from '@sushiswap/client/src/pure/steer-vault/vault'
-import { Amount, Currency, Token, tryParseAmount } from '@sushiswap/currency'
 import { useSteerVaultReserves } from '@sushiswap/wagmi'
 import { Field } from 'lib/constants'
 import {
-  createContext,
   FC,
   ReactNode,
+  createContext,
   useContext,
   useMemo,
   useReducer,
 } from 'react'
+import { Amount, Currency, Token, tryParseAmount } from 'sushi/currency'
 interface State {
   independentField: Field
   typedValue: string

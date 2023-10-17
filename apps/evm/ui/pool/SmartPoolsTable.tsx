@@ -1,5 +1,7 @@
 'use client'
 
+import { UploadIcon } from '@heroicons/react-v1/outline'
+import { DownloadIcon } from '@heroicons/react-v1/solid'
 import { ArrowDownRightIcon } from '@heroicons/react/20/solid'
 import {
   EllipsisHorizontalIcon,
@@ -8,12 +10,8 @@ import {
   MinusIcon,
   PlusIcon,
 } from '@heroicons/react/24/outline'
-import { UploadIcon } from '@heroicons/react-v1/outline'
-import { DownloadIcon } from '@heroicons/react-v1/solid'
 import { Protocol, SteerVaults } from '@sushiswap/client'
 import { useSteerVaults } from '@sushiswap/client/hooks'
-import { Native, Token, unwrapToken } from '@sushiswap/currency'
-import { formatNumber, formatPercent, formatUSD } from '@sushiswap/format'
 import {
   Badge,
   Button,
@@ -22,7 +20,6 @@ import {
   CardHeader,
   CardTitle,
   Chip,
-  classNames,
   Currency,
   DataTable,
   DropdownMenu,
@@ -41,6 +38,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
+  classNames,
 } from '@sushiswap/ui'
 import {
   ColumnDef,
@@ -50,6 +48,8 @@ import {
 } from '@tanstack/react-table'
 import Link from 'next/link'
 import React, { useMemo, useState } from 'react'
+import { Native, Token, unwrapToken } from 'sushi/currency'
+import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 
 import { isAngleEnabledChainId } from '../../config'
 import { APRHoverCard } from './APRHoverCard'

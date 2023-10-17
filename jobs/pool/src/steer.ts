@@ -86,16 +86,20 @@ async function extractChain(chainId: SteerChainId) {
       ])
 
       const payload = isPromiseFulfilled(payloadP) ? payloadP.value : null
-      const { apr: annualPercentageYield, apr1w: annualPercentageWeeklyYield } =
-        isPromiseFulfilled(aprP) && aprP.value
-          ? aprP.value
-          : { apr: null, apr1w: null }
+      const {
+        apr: annualPercentageYield,
+        apr1d: annualPercentageDailyYield,
+        apr1w: annualPercentageWeeklyYield,
+      } = isPromiseFulfilled(aprP) && aprP.value
+        ? aprP.value
+        : { apr: null, apr1d: null, apr1w: null }
 
       return {
         ...vault,
         poolId,
         payload,
         annualPercentageYield,
+        annualPercentageDailyYield,
         annualPercentageWeeklyYield,
         reserve0USD,
         fees0USD,

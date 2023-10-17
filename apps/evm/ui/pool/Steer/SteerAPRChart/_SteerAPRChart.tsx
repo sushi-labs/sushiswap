@@ -1,12 +1,12 @@
 'use client'
 
-import { formatPercent } from '@sushiswap/format'
 import { getSteerVaultAprTimeseries } from '@sushiswap/steer-sdk'
 import { SkeletonBox } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import ReactECharts, { EChartsOption } from 'echarts-for-react'
 import React, { useMemo } from 'react'
 import ReactVirtualizedAutoSizer from 'react-virtualized-auto-sizer'
+import { formatPercent } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 

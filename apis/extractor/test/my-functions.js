@@ -8,7 +8,7 @@ const {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
 } = require('@sushiswap/currency')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { ChainId } = require('@sushiswap/chain')
+const { ChainId } = require('sushi/chain')
 
 function setQuery(context, events, done) {
   const chainIds = [

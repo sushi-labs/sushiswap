@@ -1,16 +1,10 @@
 'use client'
 
 import { calculateSlippageAmount } from '@sushiswap/amm'
-import { Chain, ChainId } from '@sushiswap/chain'
-import { SteerVault } from '@sushiswap/client/src/pure/steer-vault/vault'
-import { Amount } from '@sushiswap/currency'
-import { formatUSD } from '@sushiswap/format'
-import { Percent } from '@sushiswap/math'
-import { isSteerChainId, STEER_PERIPHERY_ADDRESS } from '@sushiswap/steer-sdk'
+import { SteerVault } from '@sushiswap/client'
+import { STEER_PERIPHERY_ADDRESS, isSteerChainId } from '@sushiswap/steer-sdk'
 import { steerPeripheryAbi } from '@sushiswap/steer-sdk/abi'
 import {
-  createErrorToast,
-  createToast,
   Currency,
   DialogConfirm,
   DialogContent,
@@ -20,6 +14,8 @@ import {
   DialogProvider,
   DialogReview,
   DialogTitle,
+  createErrorToast,
+  createToast,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
@@ -38,7 +34,11 @@ import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendT
 import { useTokenAmountDollarValues } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
-import { Address, encodeFunctionData, UserRejectedRequestError } from 'viem'
+import { Chain, ChainId } from 'sushi/chain'
+import { Amount } from 'sushi/currency'
+import { formatUSD } from 'sushi/format'
+import { Percent } from 'sushi/math'
+import { Address, UserRejectedRequestError, encodeFunctionData } from 'viem'
 
 import { SteerStrategyConfig } from '../../constants'
 import { useSteerPositionAddDerivedInfo } from './SteerPositionAddProvider'

@@ -1,14 +1,14 @@
 'use client'
 
-import { parseArgs, Protocol } from '@sushiswap/client'
+import { Protocol, parseArgs } from '@sushiswap/client'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import { useRouter } from 'next/navigation'
 import {
-  createContext,
   Dispatch,
   FC,
   ReactNode,
   SetStateAction,
+  createContext,
   useContext,
   useMemo,
 } from 'react'
@@ -42,11 +42,6 @@ export const poolFiltersSchema = z.object({
     ),
   protocols: z
     .string()
-<<<<<<< HEAD
-    .transform((protocols) => (protocols !== null && protocols !== ',' ? (protocols.split(',') as Protocol[]) : [])),
-  farmsOnly: z.string().transform((bool) => (bool ? bool === 'true' : undefined)),
-  smartPoolsOnly: z.string().transform((bool) => (bool ? bool === 'true' : undefined)),
-=======
     .transform((protocols) =>
       protocols !== null && protocols !== ','
         ? (protocols.split(',') as Protocol[])
@@ -55,14 +50,17 @@ export const poolFiltersSchema = z.object({
   farmsOnly: z
     .string()
     .transform((bool) => (bool ? bool === 'true' : undefined)),
->>>>>>> 89e31983ea7d5004c04ab74616f393c546f65c4d
+  smartPoolsOnly: z
+    .string()
+    .transform((bool) => (bool ? bool === 'true' : undefined)),
 })
 
 export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({
   children,
 }) => {
   const urlFilters = useTypedSearchParams(poolFiltersSchema.partial())
-  const { tokenSymbols, chainIds, protocols, farmsOnly, smartPoolsOnly } = urlFilters
+  const { tokenSymbols, chainIds, protocols, farmsOnly, smartPoolsOnly } =
+    urlFilters
 
   return (
     <FilterContext.Provider
@@ -74,11 +72,7 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({
           farmsOnly: farmsOnly ? farmsOnly : false,
           smartPoolsOnly: smartPoolsOnly ? smartPoolsOnly : false,
         }),
-<<<<<<< HEAD
-        [chainIds, farmsOnly, protocols, tokenSymbols, smartPoolsOnly]
-=======
-        [chainIds, farmsOnly, protocols, tokenSymbols],
->>>>>>> 89e31983ea7d5004c04ab74616f393c546f65c4d
+        [chainIds, farmsOnly, protocols, tokenSymbols, smartPoolsOnly],
       )}
     >
       {children}
