@@ -40,6 +40,6 @@
     "@types/seedrandom": "3.0.1",
     "jest": "29.7.0",
     "typescript": "5.2.2",
-    "viem": "1.16.5"
+    "viem": "1.16.6"
   }
 }

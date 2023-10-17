@@ -88,7 +88,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.2.2",
-    "viem": "1.16.5",
+    "viem": "1.16.6",
     "wagmi": "1.4.3"
   },
   "peerDependencies": {
@@ -97,7 +97,7 @@
     "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "viem": "1.16.5",
+    "viem": "1.16.6",
     "wagmi": "1.4.3"
   },
   "peerDependenciesMeta": {

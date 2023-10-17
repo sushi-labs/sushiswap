@@ -51,7 +51,7 @@
     "idb-keyval": "6.2.0",
     "nanoid": "4.0.0",
     "sushi": "workspace:*",
-    "viem": "1.16.5",
+    "viem": "1.16.6",
     "wagmi": "1.4.3",
     "zod": "3.21.4"
   },
