@@ -21,7 +21,6 @@ const baseURL = `http://localhost:${PORT}`
 const config: PlaywrightTestConfig = {
   // Test directory
   testDir: path.join(__dirname, 'test'),
-  testMatch: 'swap.test.ts',
   /* Maximum time one test can run for. */
   timeout: 60 * 1_000,
   expect: {
