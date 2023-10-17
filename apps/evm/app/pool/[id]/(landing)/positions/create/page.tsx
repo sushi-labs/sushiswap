@@ -1,9 +1,9 @@
-import { LinkInternal } from '@sushiswap/ui'
-import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import {LinkInternal} from '@sushiswap/ui'
+import {isSushiSwapV3ChainId} from '@sushiswap/v3-sdk'
 
-import { getChainIdAddressFromId, unsanitize } from 'sushi/format'
-import { ConcentratedLiquidityProvider } from '../../../../../ui/pool/ConcentratedLiquidityProvider'
-import { NewPosition } from '../../../../../ui/pool/NewPosition'
+import {getChainIdAddressFromId, unsanitize} from 'sushi/format'
+import {ConcentratedLiquidityProvider} from 'ui/pool/ConcentratedLiquidityProvider'
+import {NewPosition} from 'ui/pool/NewPosition'
 
 export default async function PositionsCreatePage({
   params,
