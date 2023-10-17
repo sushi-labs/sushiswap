@@ -400,18 +400,12 @@ importers:
       '@sushiswap/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@tailwindcss/typography':
-        specifier: 0.5.9
-        version: 0.5.9(tailwindcss@3.3.2)
       '@tryghost/content-api':
         specifier: 1.11.17
         version: 1.11.17
       '@vercel/analytics':
         specifier: 1.1.1
         version: 1.1.1
-      classnames:
-        specifier: 2.3.2
-        version: 2.3.2
       date-fns:
         specifier: 2.30.0
         version: 2.30.0
@@ -427,9 +421,6 @@ importers:
       next-sitemap:
         specifier: 3.1.43
         version: 3.1.43(@next/env@13.5.4)(next@13.4.19)
-      qs:
-        specifier: 6.11.2
-        version: 6.11.2
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -467,9 +458,6 @@ importers:
       '@types/node':
         specifier: '18'
         version: 18.17.5
-      '@types/qs':
-        specifier: 6.9.8
-        version: 6.9.8
       '@types/react':
         specifier: 18.2.14
         version: 18.2.14
@@ -518,9 +506,6 @@ importers:
       '@sushiswap/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@tailwindcss/typography':
-        specifier: 0.5.9
-        version: 0.5.9(tailwindcss@3.3.2)
       '@tryghost/content-api':
         specifier: 1.11.17
         version: 1.11.17
@@ -530,9 +515,6 @@ importers:
       date-fns:
         specifier: 2.30.0
         version: 2.30.0
-      fast-json-stable-stringify:
-        specifier: 2.1.0
-        version: 2.1.0
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -545,9 +527,6 @@ importers:
       next-sitemap:
         specifier: 3.1.43
         version: 3.1.43(@next/env@13.5.4)(next@13.4.19)
-      qs:
-        specifier: 6.11.2
-        version: 6.11.2
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -588,9 +567,6 @@ importers:
       '@types/node':
         specifier: '18'
         version: 18.17.5
-      '@types/qs':
-        specifier: 6.9.8
-        version: 6.9.8
       '@types/react':
         specifier: 18.2.14
         version: 18.2.14
@@ -910,7 +886,7 @@ importers:
         version: 7.4.6(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)
       '@storybook/addon-designs':
         specifier: 7.0.5
-        version: 7.0.5(@storybook/addon-docs@7.4.6)(@storybook/addons@7.4.6)(@storybook/components@7.3.1)(@storybook/manager-api@7.4.6)(@storybook/preview-api@7.4.6)(@storybook/theming@7.4.6)(react-dom@18.2.0)(react@18.2.0)
+        version: 7.0.5(@storybook/addon-docs@7.4.6)(@storybook/addons@7.4.6)(@storybook/components@7.4.6)(@storybook/manager-api@7.4.6)(@storybook/preview-api@7.4.6)(@storybook/theming@7.4.6)(react-dom@18.2.0)(react@18.2.0)
       '@storybook/addon-docs':
         specifier: 7.4.6
         version: 7.4.6(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)
@@ -1965,14 +1941,11 @@ importers:
         specifier: 8.9.1
         version: 8.9.1(react-dom@18.2.0)(react@18.2.0)
       class-variance-authority:
-        specifier: 0.6.1
-        version: 0.6.1
+        specifier: 0.7.0
+        version: 0.7.0
       classnames:
         specifier: 2.3.2
         version: 2.3.2
-      clsx:
-        specifier: 1.2.1
-        version: 1.2.1
       cmdk:
         specifier: 0.2.0
         version: 0.2.0(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)
@@ -13081,7 +13054,7 @@ packages:
       - supports-color
     dev: true
 
-  /@storybook/addon-designs@7.0.5(@storybook/addon-docs@7.4.6)(@storybook/addons@7.4.6)(@storybook/components@7.3.1)(@storybook/manager-api@7.4.6)(@storybook/preview-api@7.4.6)(@storybook/theming@7.4.6)(react-dom@18.2.0)(react@18.2.0):
+  /@storybook/addon-designs@7.0.5(@storybook/addon-docs@7.4.6)(@storybook/addons@7.4.6)(@storybook/components@7.4.6)(@storybook/manager-api@7.4.6)(@storybook/preview-api@7.4.6)(@storybook/theming@7.4.6)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-yB1YwkVhnTI28mS+00avAf7vPAppZi2pdXQF91725g+RoiM7llY87q+c1z2/YiQNQYNm2QXpYcrcYiLQzyr0NQ==}
     peerDependencies:
       '@storybook/addon-docs': ^7.0.0
@@ -13101,7 +13074,7 @@ packages:
       '@figspec/react': 1.0.3(react@18.2.0)
       '@storybook/addon-docs': 7.4.6(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)
       '@storybook/addons': 7.4.6(react-dom@18.2.0)(react@18.2.0)
-      '@storybook/components': 7.3.1(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)
+      '@storybook/components': 7.4.6(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)
       '@storybook/manager-api': 7.4.6(react-dom@18.2.0)(react@18.2.0)
       '@storybook/preview-api': 7.4.6
       '@storybook/theming': 7.4.6(react-dom@18.2.0)(react@18.2.0)
@@ -19155,12 +19128,6 @@ packages:
       define-property: 0.2.5
       isobject: 3.0.1
       static-extend: 0.1.2
-
-  /class-variance-authority@0.6.1:
-    resolution: {integrity: sha512-eurOEGc7YVx3majOrOb099PNKgO3KnKSApOprXI4BTq6bcfbqbQXPN2u+rPPmIJ2di23bMwhk0SxCCthBmszEQ==}
-    dependencies:
-      clsx: 1.2.1
-    dev: false
 
   /class-variance-authority@0.7.0:
     resolution: {integrity: sha512-jFI8IQw4hczaL4ALINxqLEXQbWcNjoSkloa4IaufXCJr6QawJyw7tuRysRsrE8w2p/4gGaxKIt/hX3qz/IbD1A==}
