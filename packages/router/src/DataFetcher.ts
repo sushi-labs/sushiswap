@@ -77,7 +77,7 @@ export class DataFetcher {
         transport: http('http://127.0.0.1:8545'),
         batch: {
           multicall: {
-            batchSize: 512
+            batchSize: 512,
           },
         },
       })
