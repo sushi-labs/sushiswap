@@ -66,7 +66,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
     string,
     string,
   ]
-  const chainId = +_chainId as SushiSwapV3ChainId
+  const chainId = Number(_chainId) as SushiSwapV3ChainId
   const [invert, setInvert] = useState(false)
 
   const { data: positionDetails, isLoading: isPositionDetailsLoading } =

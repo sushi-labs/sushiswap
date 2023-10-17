@@ -67,14 +67,6 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
     const { signature, setSignature } = useSignature(APPROVE_TAG_REMOVE_TRIDENT)
     const contract = useTridentRouterContract(_pool.chainId)
     const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
-    const slippagePercent = useMemo(() => {
-      return new Percent(
-        Math.floor(
-          +(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100,
-        ),
-        10_000,
-      )
-    }, [slippageTolerance])
 
     const [percentage, setPercentage] = useState<string>('0')
     const percentToRemove = useMemo(
@@ -138,9 +130,9 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
         token0
           ? percentToRemove?.greaterThan('0') && underlying0
             ? Amount.fromRawAmount(
-                token0,
-                percentToRemove.multiply(underlying0.quotient).quotient || '0',
-              )
+              token0,
+              percentToRemove.multiply(underlying0.quotient).quotient || '0',
+            )
             : Amount.fromRawAmount(token0, '0')
           : undefined,
       [token0, percentToRemove, underlying0],
@@ -151,9 +143,9 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
         token1
           ? percentToRemove?.greaterThan('0') && underlying1
             ? Amount.fromRawAmount(
-                token1,
-                percentToRemove.multiply(underlying1.quotient).quotient || '0',
-              )
+              token1,
+              percentToRemove.multiply(underlying1.quotient).quotient || '0',
+            )
             : Amount.fromRawAmount(token1, '0')
           : undefined,
       [token1, percentToRemove, underlying1],
@@ -163,18 +155,18 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
       return [
         currencyAToRemove
           ? Amount.fromRawAmount(
-              currencyAToRemove.currency,
-              slippageAmount(currencyAToRemove, slippagePercent)[0],
-            )
+            currencyAToRemove.currency,
+            slippageAmount(currencyAToRemove, slippageTolerance)[0],
+          )
           : undefined,
         currencyBToRemove
           ? Amount.fromRawAmount(
-              currencyBToRemove.currency,
-              slippageAmount(currencyBToRemove, slippagePercent)[0],
-            )
+            currencyBToRemove.currency,
+            slippageAmount(currencyBToRemove, slippageTolerance)[0],
+          )
           : undefined,
       ]
-    }, [slippagePercent, currencyAToRemove, currencyBToRemove])
+    }, [slippageTolerance, currencyAToRemove, currencyBToRemove])
 
     const onSettled = useCallback(
       (data: SendTransactionResult | undefined) => {
@@ -235,12 +227,12 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
         let indexOfWETH = -1
         indexOfWETH =
           minAmount0.wrapped.currency.address ===
-          Native.onChain(_pool.chainId).wrapped.address
+            Native.onChain(_pool.chainId).wrapped.address
             ? 0
             : indexOfWETH
         indexOfWETH =
           minAmount1.wrapped.currency.address ===
-          Native.onChain(_pool.chainId).wrapped.address
+            Native.onChain(_pool.chainId).wrapped.address
             ? 1
             : indexOfWETH
 

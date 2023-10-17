@@ -61,14 +61,6 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
       _pool.chainId as SushiSwapV2ChainId,
     )
     const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
-    const slippagePercent = useMemo(() => {
-      return new Percent(
-        Math.floor(
-          +(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100,
-        ),
-        10_000,
-      )
-    }, [slippageTolerance])
 
     const [percentage, setPercentage] = useState<string>('0')
     const percentToRemove = useMemo(
@@ -102,9 +94,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
         token0
           ? percentToRemove?.greaterThan('0') && underlying0
             ? Amount.fromRawAmount(
-                token0,
-                percentToRemove.multiply(underlying0.quotient).quotient || '0',
-              )
+              token0,
+              percentToRemove.multiply(underlying0.quotient).quotient || '0',
+            )
             : Amount.fromRawAmount(token0, '0')
           : undefined,
       [percentToRemove, token0, underlying0],
@@ -115,9 +107,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
         token1
           ? percentToRemove?.greaterThan('0') && underlying1
             ? Amount.fromRawAmount(
-                token1,
-                percentToRemove.multiply(underlying1.quotient).quotient || '0',
-              )
+              token1,
+              percentToRemove.multiply(underlying1.quotient).quotient || '0',
+            )
             : Amount.fromRawAmount(token1, '0')
           : undefined,
       [percentToRemove, token1, underlying1],
@@ -127,18 +119,18 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
       return [
         currencyAToRemove
           ? Amount.fromRawAmount(
-              currencyAToRemove.currency,
-              slippageAmount(currencyAToRemove, slippagePercent)[0],
-            )
+            currencyAToRemove.currency,
+            slippageAmount(currencyAToRemove, slippageTolerance)[0],
+          )
           : undefined,
         currencyBToRemove
           ? Amount.fromRawAmount(
-              currencyBToRemove.currency,
-              slippageAmount(currencyBToRemove, slippagePercent)[0],
-            )
+            currencyBToRemove.currency,
+            slippageAmount(currencyBToRemove, slippageTolerance)[0],
+          )
           : undefined,
       ]
-    }, [slippagePercent, currencyAToRemove, currencyBToRemove])
+    }, [slippageTolerance, currencyAToRemove, currencyBToRemove])
 
     const debouncedMinAmount0 = useDebounce(minAmount0, 500)
     const debouncedMinAmount1 = useDebounce(minAmount1, 500)
@@ -195,7 +187,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
 
         const withNative =
           Native.onChain(_pool.chainId).wrapped.address ===
-            pool.token0.address ||
+          pool.token0.address ||
           Native.onChain(_pool.chainId).wrapped.address === pool.token1.address
 
         const config = (function () {
