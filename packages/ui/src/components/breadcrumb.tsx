@@ -82,7 +82,7 @@ export const Breadcrumb = () => {
                   )}
                 >
                   <LinkInternal href={`/pool/${segments.join('/')}`}>
-                    {segment}
+                    {segment.replace(/%3A/g, ':')}
                   </LinkInternal>
                 </Button>
 
