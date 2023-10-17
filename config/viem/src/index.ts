@@ -378,13 +378,7 @@ export const config: Record<
 > = {
   [ChainId.ARBITRUM_NOVA]: {
     chain: arbitrumNova,
-    transport: fallback(
-      [
-        // http(arbitrumNova.rpcUrls.default.http[0]),
-        http(`https://lb.drpc.org/ogrpc?network=arbitrum-nova&dkey=${drpcId}`),
-      ],
-      { rank: true },
-    ),
+    transport: http(`https://lb.drpc.org/ogrpc?network=arbitrum-nova&dkey=${drpcId}`),
   },
   [ChainId.ARBITRUM]: {
     chain: arbitrum,
@@ -398,16 +392,7 @@ export const config: Record<
   },
   [ChainId.AVALANCHE]: {
     chain: avalanche,
-    transport: fallback(
-      [
-        http(`https://lb.drpc.org/ogrpc?network=avalanche&dkey=${drpcId}`),
-        // http('https://rpc.ankr.com/avalanche'),
-        // http(avalanche.rpcUrls.default.http[0])
-      ],
-      {
-        rank: false,
-      },
-    ),
+    transport: http(`https://lb.drpc.org/ogrpc?network=avalanche&dkey=${drpcId}`),
   },
   [ChainId.BOBA]: {
     chain: boba,
@@ -447,15 +432,7 @@ export const config: Record<
   },
   [ChainId.BSC]: {
     chain: bsc,
-    transport: fallback(
-      [
-        //http(bsc.rpcUrls.default.http[0]),
-        http(`https://lb.drpc.org/ogrpc?network=bsc&dkey=${drpcId}`),
-      ],
-      {
-        rank: true,
-      },
-    ),
+    transport: http(`https://lb.drpc.org/ogrpc?network=bsc&dkey=${drpcId}`),
   },
   [ChainId.BTTC]: {
     chain: bttc,
@@ -463,7 +440,7 @@ export const config: Record<
   },
   [ChainId.CELO]: {
     chain: celo,
-    transport: http(celo.rpcUrls.default.http[0]),
+    transport: http(`https://lb.drpc.org/ogrpc?network=celo&dkey=${drpcId}`),
   },
   [ChainId.ETHEREUM]: {
     chain: mainnet,
@@ -477,17 +454,7 @@ export const config: Record<
   },
   [ChainId.FANTOM]: {
     chain: fantom,
-    transport: fallback(
-      [
-        http(`https://lb.drpc.org/ogrpc?network=fantom&dkey=${drpcId}`),
-        // http(fantom.rpcUrls.default.http[0]),
-        // http('https://rpc.fantom.network'),
-        // http('https://rpc2.fantom.network')
-      ],
-      {
-        rank: true,
-      },
-    ),
+    transport: http(`https://lb.drpc.org/ogrpc?network=fantom&dkey=${drpcId}`),
   },
   [ChainId.FUSE]: {
     chain: fuse,
@@ -495,16 +462,7 @@ export const config: Record<
   },
   [ChainId.GNOSIS]: {
     chain: gnosis,
-    transport: fallback(
-      [
-        http(`https://lb.drpc.org/ogrpc?network=gnosis&dkey=${drpcId}`),
-        // http(gnosis.rpcUrls.default.http[0]),
-        // http('https://rpc.ankr.com/gnosis')
-      ],
-      {
-        rank: true,
-      },
-    ),
+    transport: http(`https://lb.drpc.org/ogrpc?network=gnosis&dkey=${drpcId}`),
   },
   [ChainId.HARMONY]: {
     chain: harmonyOne,
@@ -520,28 +478,15 @@ export const config: Record<
   },
   [ChainId.KAVA]: {
     chain: kava,
-    transport: fallback(
-      kava.rpcUrls.default.http.map((url) => http(url)),
-      {
-        rank: true,
-      },
-    ),
+    transport: http(`https://lb.drpc.org/ogrpc?network=kava&dkey=${drpcId}`),
   },
   [ChainId.METIS]: {
     chain: metis,
-    transport: http(metis.rpcUrls.default.http[0]),
+    transport: http(`https://lb.drpc.org/ogrpc?network=metis&dkey=${drpcId}`)
   },
   [ChainId.MOONBEAM]: {
     chain: moonbeam,
-    transport: fallback(
-      [
-        http(moonbeam.rpcUrls.default.http[0]),
-        http('https://rpc.ankr.com/moonbeam'),
-      ],
-      {
-        rank: true,
-      },
-    ),
+    transport: http(`https://lb.drpc.org/ogrpc?network=moonbeam&dkey=${drpcId}`),
   },
   [ChainId.MOONRIVER]: {
     chain: moonriver,
@@ -566,7 +511,6 @@ export const config: Record<
       ],
       { rank: true },
     ),
-    // transport: fallback([http(`${polygon.rpcUrls.alchemy.http}/${alchemyId}`), http('https://polygon.llamarpc.com')]),
   },
   [ChainId.POLYGON_ZKEVM]: {
     chain: polygonZkEvm,
@@ -634,12 +578,10 @@ export const config: Record<
   },
   [ChainId.LINEA]: {
     chain: linea,
-    transport: http(linea.rpcUrls.default.http[0]),
+    transport: http(`https://lb.drpc.org/ogrpc?network=linea&dkey=${drpcId}`),
   },
   [ChainId.BASE]: {
     chain: base,
-    transport: fallback([
-      http(`https://lb.drpc.org/ogrpc?network=base&dkey=${drpcId}`),
-    ]),
+    transport: http(`https://lb.drpc.org/ogrpc?network=base&dkey=${drpcId}`),
   },
 } as const

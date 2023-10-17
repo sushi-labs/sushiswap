@@ -13,6 +13,7 @@
     "outDir": "./dist",
     "declaration": false,
     "declarationMap": false,
-    "target": "ES2020"
+    "sourceMap": false,
+    "target": "ESNext"
   }
 }
