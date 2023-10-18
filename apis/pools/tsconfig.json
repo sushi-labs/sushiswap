@@ -6,6 +6,7 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "noEmit": true,
-    "module": "ESNext"
+    "module": "ESNext",
+    "esModuleInterop": true
   }
 }
