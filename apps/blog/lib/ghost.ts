@@ -15,7 +15,7 @@ function processVideos(html: string) {
     /<div class="kg-video-player-container">(.*?)<input type="range" class="kg-video-volume-slider" max="100" value="100">/gms,
     '',
   )
-  html = html.replaceAll("<video src=", "<video controls=true src=")
+  html = html.replaceAll('<video src=', '<video controls=true src=')
   return html
 }
 
