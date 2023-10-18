@@ -1,5 +1,5 @@
 import * as Database from '@sushiswap/database'
-import { allChains, allProviders } from '@sushiswap/wagmi-config'
+import * as Wagmi from '@sushiswap/wagmi-config'
 import type { Address, FetchTokenResult } from '@wagmi/core'
 import {
   configureChains,
@@ -16,7 +16,7 @@ import {
 
 import type { getEarnPool } from './api/index.js'
 
-const { publicClient } = configureChains(allChains, allProviders)
+const { publicClient } = configureChains(Wagmi.allChains, Wagmi.allProviders)
 
 createConfig({
   autoConnect: true,
