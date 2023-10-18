@@ -25,8 +25,9 @@ export abstract class RPool {
   readonly fee: number
   reserve0: bigint
   reserve1: bigint
-  flow0: number = 0
-  flow1: number = 0
+  // flow0: number = 0
+  // flow1: number = 0
+  // gasSpent: number = 0
   readonly minLiquidity: number
   readonly swapGasCost: number
 
@@ -82,29 +83,48 @@ export abstract class RPool {
     return this.calcOutByIn(amountIn, direction).out
   }
 
-  addFlow(diff0: number, diff1: number) {
-    this.flow0 += diff0
-    this.flow1 += diff1
-  }
-  cleanFlow() {
-    this.flow0 = 0
-    this.flow1 = 0
-  }
-  calcOutByInFlow(
-    amountIn: number,
-    direction: boolean,
-  ): { out: number; gasSpent: number } {
-    const flowInpPrev = (direction ? this.flow0 : this.flow1)
-    const flowOutPrev = (direction ? this.flow1 : this.flow0)
-    const flowInpNew = flowInpPrev + amountIn
-    if (flowInpNew >= 0) {      
-      const {out, gasSpent} = this.calcOutByIn(flowInpNew, direction)
-      return {out: out + flowOutPrev, gasSpent}
-    } else {
-      const {inp, gasSpent} = this.calcInByOut(-flowInpNew, direction)
-      return {out: flowOutPrev - inp, gasSpent}
-    }
-  }
+  // For multitoken pools
+  setCurrentFlow(_flow0: number, _flow1: number, _gas: number) {}
+  // addFlow(diff0: number, diff1: number, gasDiff: number) {
+  //   this.flow0 += diff0
+  //   this.flow1 += diff1
+  //   this.gasSpent += gasDiff
+  // }
+  // cleanFlow() {
+  //   this.flow0 = 0
+  //   this.flow1 = 0
+  //   this.gasSpent = 0
+  // }
+  // calcOutByInFlow(
+  //   amountIn: number,
+  //   direction: boolean,
+  // ): { out: number; gasSpent: number } {
+  //   const flowInpPrev = (direction ? this.flow0 : this.flow1)
+  //   const flowOutPrev = (direction ? this.flow1 : this.flow0)
+  //   const flowInpNew = flowInpPrev + amountIn
+  //   if (flowInpNew >= 0) {      
+  //     const {out, gasSpent} = this.calcOutByIn(flowInpNew, direction)
+  //     return {out: out + flowOutPrev, gasSpent: gasSpent - this.gasSpent}
+  //   } else {
+  //     const {inp, gasSpent} = this.calcInByOut(-flowInpNew, !direction)
+  //     return {out: flowOutPrev - inp, gasSpent: gasSpent - this.gasSpent}
+  //   }
+  // }
+  // calcInByOutFlow(
+  //   amountOut: number,
+  //   direction: boolean,
+  // ): { inp: number; gasSpent: number } {
+  //   const flowInpPrev = (direction ? this.flow0 : this.flow1)
+  //   const flowOutPrev = (direction ? this.flow1 : this.flow0)
+  //   const flowOutNew = flowOutPrev - amountOut
+  //   if (flowOutNew >= 0) {      
+  //     const {out, gasSpent} = this.calcOutByIn(flowOutNew, !direction)
+  //     return {inp: -flowInpPrev - out, gasSpent: gasSpent - this.gasSpent}
+  //   } else {
+  //     const {inp, gasSpent} = this.calcInByOut(-flowOutNew, direction)
+  //     return {inp: inp - flowInpPrev, gasSpent: gasSpent - this.gasSpent}
+  //   }
+  // }
 
   // precision of calcOutByIn
   granularity0() {

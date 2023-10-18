@@ -8,12 +8,13 @@ const ZERO = 0n
 const MIN_LIQUIDITY = 1000
 const SWAP_GAS_COST = 90_000
 
-export class CurveMultitokenPool extends RPool {
-  core: CurveMultitokenCore
+// Only one pair osf  the pool can be used - the first one
+export class CurveMultitokenPoolSingle extends RPool {
+  core: CurveMultitokenCoreSingle
   index0: number
   index1: number
 
-  constructor(core: CurveMultitokenCore, index0: number, index1: number) {
+  constructor(core: CurveMultitokenCoreSingle, index0: number, index1: number) {
     super(
       core.address as Address,
       core.tokens[index0] as RToken,
@@ -58,11 +59,15 @@ export class CurveMultitokenPool extends RPool {
       return this.core.calcCurrentPriceWithoutFee(this.index0, this.index1)
     else return this.core.calcCurrentPriceWithoutFee(this.index1, this.index0)
   }
+
+  override setCurrentFlow(flow0: number, flow1: number, gas: number) {
+    this.core.setCurrentFlow(this.index1, this.index0, flow0, flow1, gas)
+  }
 }
 
 const E18 = getBigInt(1e18)
 
-class CurveMultitokenCore {
+class CurveMultitokenCoreSingle {
   address: string
   tokens: RToken[]
   fee: number
@@ -71,6 +76,7 @@ class CurveMultitokenCore {
   rates: number[]
   ratesBN18: bigint[]
   reservesRated: bigint[]
+  singlePairUsed?: [number, number]
   D: bigint
 
   // For faster calculation
@@ -173,6 +179,9 @@ class CurveMultitokenCore {
     from: number,
     to: number,
   ): { out: number; gasSpent: number } {
+    if (this.singlePairUsed)
+      if (this.singlePairUsed[0] !== from || this.singlePairUsed[1] !== to)
+        throw 'Curve pool unused pair'
     amountIn *= this.rates[from] as number
     const xBN = this.reservesRated[from] as bigint
     const yBN = this.reservesRated[to] as bigint
@@ -188,6 +197,9 @@ class CurveMultitokenCore {
     from: number,
     to: number,
   ): { inp: number; gasSpent: number } {
+    if (this.singlePairUsed)
+    if (this.singlePairUsed[0] !== from || this.singlePairUsed[1] !== to)
+      return { inp: Number.POSITIVE_INFINITY, gasSpent: 0 }
     amountOut *= this.rates[to] as number
     const xBN = this.reservesRated[from] as bigint
     const yBN = this.reservesRated[to] as bigint
@@ -225,9 +237,20 @@ class CurveMultitokenCore {
     const scale = (this.rates[from] as number) / (this.rates[to] as number)
     return price * scale
   }
+
+  setCurrentFlow(from: number, to: number, flow0: number, flow1: number, _gas: number) {
+    if (this.singlePairUsed) {
+      if (flow0 !== 0 || flow1 !== 0)
+        console.assert(this.singlePairUsed[0] == from && this.singlePairUsed[1] == to, 'CurveMultitokenCoreSingle unexpected pair error')
+      else this.singlePairUsed = undefined
+    } else {
+      if (flow0 !== 0 || flow1 !== 0)
+      this.singlePairUsed = [from, to]
+    }
+  }
 }
 
-export function createCurvePoolsForMultipool(
+export function createCurvePoolsSingleForMultipool(
   address: string,
   tokens: RToken[],
   fee: number,
@@ -235,10 +258,10 @@ export function createCurvePoolsForMultipool(
   reserves: bigint[],
   rates?: number[],
 ) {
-  const core = new CurveMultitokenCore(address, tokens, fee, A, reserves, rates)
-  const pools: CurveMultitokenPool[] = []
+  const core = new CurveMultitokenCoreSingle(address, tokens, fee, A, reserves, rates)
+  const pools: CurveMultitokenPoolSingle[] = []
   for (let i = 0; i < tokens.length; ++i)
     for (let j = i + 1; j < tokens.length; ++j)
-      pools.push(new CurveMultitokenPool(core, i, j))
+      pools.push(new CurveMultitokenPoolSingle(core, i, j))
   return pools
 }

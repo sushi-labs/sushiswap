@@ -4,8 +4,8 @@ import {
 } from '@nomicfoundation/hardhat-network-helpers'
 import { erc20Abi } from 'sushi/abi'
 import {
-  createCurvePoolsForMultipool,
-  CurveMultitokenPool,
+  createCurvePoolsSingleForMultipool,
+  CurveMultitokenPoolSingle,
   CurvePool,
   getBigInt,
   RPool,
@@ -200,7 +200,7 @@ interface PoolInfo {
   poolType: CurvePoolType
   poolContract: Contract<any>
   tokenContracts: (Contract<typeof erc20Abi> | undefined)[]
-  poolTines: (CurvePool | CurveMultitokenPool | undefined)[][]
+  poolTines: (CurvePool | CurveMultitokenPoolSingle | undefined)[][]
   user: Address
   snapshot: SnapshotRestorer
 }
@@ -425,14 +425,14 @@ async function createCurvePoolInfo(
       snapshot,
     }
   } else {
-    const pools = createCurvePoolsForMultipool(
+    const pools = createCurvePoolsSingleForMultipool(
       poolAddress,
       tokenTines,
       Number(fee) / 1e10,
       Number(A),
       reserves,
     )
-    const poolTines: (CurvePool | CurveMultitokenPool | undefined)[][] = []
+    const poolTines: (CurvePool | CurveMultitokenPoolSingle | undefined)[][] = []
     let n = 0
     for (let i = 0; i < tokenContracts.length; ++i) {
       poolTines[i] = []

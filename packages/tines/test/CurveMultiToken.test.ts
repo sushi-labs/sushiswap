@@ -3,8 +3,8 @@ import seedrandom from 'seedrandom'
 import { RToken } from '../dist'
 import {
   closeValues,
-  createCurvePoolsForMultipool,
-  CurveMultitokenPool,
+  createCurvePoolsSingleForMultipool,
+  CurveMultitokenPoolSingle,
   CurvePool,
   getBigInt,
 } from '../src'
@@ -103,20 +103,20 @@ function createMultiPool(
   },
   token0: RToken,
   token1: RToken,
-): CurveMultitokenPool {
-  return createCurvePoolsForMultipool(
+): CurveMultitokenPoolSingle {
+  return createCurvePoolsSingleForMultipool(
     'curve multipool',
     [token0, token1],
     params.fee,
     params.A,
     [params.reserve0, params.reserve1],
     [1, params.ratio],
-  )[0] as CurveMultitokenPool
+  )[0] as CurveMultitokenPoolSingle
 }
 
 function checkSwap(
   pool: CurvePool,
-  multipool: CurveMultitokenPool,
+  multipool: CurveMultitokenPoolSingle,
   amountIn: number,
   direction: boolean,
 ): number {
@@ -137,7 +137,7 @@ function checkSwap(
 
 function checkPoolPriceCalculation(
   pool: CurvePool,
-  multipool: CurveMultitokenPool,
+  multipool: CurveMultitokenPoolSingle,
 ) {
   const price1 = pool.calcCurrentPriceWithoutFee(true)
   const price1M = multipool.calcCurrentPriceWithoutFee(true)
