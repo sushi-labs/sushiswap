@@ -23,7 +23,7 @@ import React, { FC, useState } from 'react'
 import { Amount, Type } from 'sushi/currency'
 import { Address } from 'wagmi'
 
-import { ApprovalState, useTokenApproval } from '../../hooks'
+import { ApprovalState, useTokenApproval } from '../../future/hooks'
 
 interface ApproveERC20Props extends ButtonProps {
   id: string

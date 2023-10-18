@@ -20,7 +20,7 @@ import {
 } from '@sushiswap/wagmi/future/hooks'
 import { RP2MerkleTreeClaimSchema } from '@sushiswap/wagmi/future/hooks/exploits/constants'
 import { RP2ClaimChainId } from '@sushiswap/wagmi/future/hooks/exploits/types'
-import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
+import { Checker } from '../../../../../packages/wagmi/src/systems/Checker'
 import React, { FC, useMemo } from 'react'
 import { z } from 'zod'
 

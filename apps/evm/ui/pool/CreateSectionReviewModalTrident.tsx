@@ -39,7 +39,7 @@ import {
 import {
   useApproved,
   useSignature,
-} from '@sushiswap/wagmi/future/systems/Checker/Provider'
+} from '../../../../packages/wagmi/src/systems/Checker/Provider'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import {
   LiquidityInput,
@@ -154,17 +154,17 @@ export const CreateSectionReviewModalTrident: FC<
   const isValid = useMemo(() => {
     return Boolean(
       chain?.id &&
-        factory &&
-        token0 &&
-        token1 &&
-        poolAddress &&
-        input0 &&
-        input1 &&
-        totalSupply &&
-        pool &&
-        contract &&
-        totals?.[token0.wrapped.address] &&
-        totals?.[token1.wrapped.address],
+      factory &&
+      token0 &&
+      token1 &&
+      poolAddress &&
+      input0 &&
+      input1 &&
+      totalSupply &&
+      pool &&
+      contract &&
+      totals?.[token0.wrapped.address] &&
+      totals?.[token1.wrapped.address],
     )
   }, [
     chain?.id,

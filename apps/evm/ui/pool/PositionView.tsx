@@ -34,7 +34,7 @@ import {
   useConcentratedPositionOwner,
   useTokenWithCache,
 } from '@sushiswap/wagmi/future/hooks'
-import { Checker } from '@sushiswap/wagmi/future/systems'
+import { Checker } from '@sushiswap/wagmi/systems'
 import useIsTickAtLimit from 'lib/hooks/useIsTickAtLimit'
 import React, { FC, Fragment, useMemo, useState } from 'react'
 import { formatUSD } from 'sushi/format'
@@ -648,11 +648,9 @@ const Component: FC<{ id: string }> = ({ id }) => {
                   Anyone can add distributions to this pool.{' '}
                   {_token0 && _token1 ? (
                     <LinkInternal
-                      href={`/pool/incentivize?chainId=${chainId}&fromCurrency=${
-                        _token0.isNative ? 'NATIVE' : _token0.address
-                      }&toCurrency=${
-                        _token1.isNative ? 'NATIVE' : _token1.address
-                      }&feeAmount=${positionDetails?.fee}`}
+                      href={`/pool/incentivize?chainId=${chainId}&fromCurrency=${_token0.isNative ? 'NATIVE' : _token0.address
+                        }&toCurrency=${_token1.isNative ? 'NATIVE' : _token1.address
+                        }&feeAmount=${positionDetails?.fee}`}
                     >
                       <Button asChild variant="link">
                         Want to add one?

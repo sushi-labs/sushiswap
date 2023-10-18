@@ -18,8 +18,8 @@ import {
   useTridentConstantPool,
   useTridentStablePool,
 } from '@sushiswap/wagmi'
-import { Checker } from '@sushiswap/wagmi/future/systems'
-import { CheckerProvider } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { Checker } from '@sushiswap/wagmi/systems'
+import { CheckerProvider } from '../../../../packages/wagmi/src/systems/Checker/Provider'
 import { APPROVE_TAG_ADD_TRIDENT } from 'lib/constants'
 import { useTokensFromPool } from 'lib/hooks'
 import { FC, useCallback, useMemo, useState } from 'react'

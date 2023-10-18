@@ -6,7 +6,7 @@ import { LinkExternal, LinkInternal } from '@sushiswap/ui'
 import { Container } from '@sushiswap/ui/components/container'
 import { List } from '@sushiswap/ui/components/list/List'
 import { useAccount } from '@sushiswap/wagmi'
-import { ConnectButton } from '@sushiswap/wagmi/future/components'
+import { ConnectButton } from '@sushiswap/wagmi/components'
 import {
   useRP2ExploitCheck,
   useRP2ExploitClaimFinder,

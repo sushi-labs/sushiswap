@@ -15,7 +15,7 @@ import React, { FC } from 'react'
 import { BentoBoxChainId } from 'sushi/config'
 import { Address } from 'wagmi'
 
-import { ApprovalState, useBentoboxApproval } from '../../hooks'
+import { ApprovalState, useBentoboxApproval } from '../../future/hooks'
 
 interface ApproveBentoboxProps extends ButtonProps {
   chainId: BentoBoxChainId

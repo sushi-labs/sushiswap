@@ -1,6 +1,6 @@
 'use client'
 
-import { WagmiStoreVersionCheck } from '@sushiswap/wagmi/future'
+import { WagmiStoreVersionCheck } from '@sushiswap/wagmi/components'
 
 import { QueryClientProvider } from '../providers/query-client-provider'
 import { WagmiConfig } from '../providers/wagmi-provider'

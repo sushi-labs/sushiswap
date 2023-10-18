@@ -17,7 +17,7 @@ import {
 import { isSushiXSwapChainId, SushiXSwapChainId } from 'sushi/config'
 import { Address, useAccount, useNetwork, watchNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future'
-import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { useSignature } from '../../../../../packages/wagmi/src/systems/Checker/Provider'
 import { APPROVE_TAG_XSWAP, IS_XSWAP_MAINTENANCE } from 'lib/constants'
 import { useCrossChainTrade } from 'lib/swap/useCrossChainTrade/useCrossChainTrade'
 import { nanoid } from 'nanoid'
@@ -39,8 +39,8 @@ const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'
     ? token
     : token.isNative
-    ? 'NATIVE'
-    : token.wrapped.address
+      ? 'NATIVE'
+      : token.wrapped.address
 const getQuoteCurrency = (chainId: number) =>
   defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency].wrapped
     .address
@@ -104,7 +104,7 @@ const DerivedstateCrossChainSwapProvider: FC<
       params.set(
         'chainId0',
         (chain?.id &&
-        STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId)
+          STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId)
           ? chain.id
           : ChainId.ETHEREUM
         ).toString(),
@@ -403,8 +403,8 @@ const useCrossChainSwapTrade = () => {
     recipient: recipient as Address,
     enabled: Boolean(
       isSushiXSwapChainId(chainId0) &&
-        isSushiXSwapChainId(chainId1) &&
-        swapAmount?.greaterThan(ZERO),
+      isSushiXSwapChainId(chainId1) &&
+      swapAmount?.greaterThan(ZERO),
     ),
     bentoboxSignature: signature,
   })

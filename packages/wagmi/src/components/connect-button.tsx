@@ -20,7 +20,7 @@ import {
 } from '@sushiswap/ui/components/icons'
 import React, { FC, useCallback, useMemo } from 'react'
 
-import { useConnect } from '../../hooks'
+import { useConnect } from '../hooks'
 
 const Icons: Record<string, React.ElementType> = {
   Injected: ChevronDoubleDownIcon,

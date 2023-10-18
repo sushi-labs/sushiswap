@@ -8,7 +8,7 @@ import {
   filterTokens,
   getSortedTokensByQuery,
   tokenComparator,
-} from '../../../../hooks/useSortedTokensByQuery'
+} from '../../../hooks'
 
 interface Params {
   query: string

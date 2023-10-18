@@ -19,12 +19,6 @@
       "./src/*/index.ts",
       "./src/*/index.tsx"
     ],
-    "./components/*": [
-      "./src/components/*.ts",
-      "./src/components/*.tsx",
-      "./src/components/*/index.ts",
-      "./src/components/*/index.tsx"
-    ],
     "./future/*": [
       "./src/future/*.ts",
       "./src/future/*.tsx",
@@ -37,8 +31,6 @@
       "*": [
         "src/*",
         "src/*/index",
-        "src/components/*",
-        "src/components/*/index",
         "src/future/*",
         "src/future/*/index"
       ]

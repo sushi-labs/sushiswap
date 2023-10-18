@@ -14,7 +14,7 @@ import {
   CardLabel,
   CardTitle,
 } from '@sushiswap/ui/components/card'
-import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
+import { Checker } from '../../../../packages/wagmi/src/systems/Checker'
 import { FC } from 'react'
 
 import { usePoolPositionRewards } from './PoolPositionRewardsProvider'

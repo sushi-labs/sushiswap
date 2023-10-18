@@ -7,10 +7,10 @@ import { Type } from 'sushi/currency'
 import { classNames, DialogTrigger, FormSection, Message } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { FeeAmount, Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { Web3Input } from '@sushiswap/wagmi/future/components/web3-input'
+import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
 import { useConcentratedPositionOwner } from '@sushiswap/wagmi/future/hooks/positions/hooks/useConcentratedPositionOwner'
-import { Checker } from '@sushiswap/wagmi/future/systems'
+import { Checker } from '@sushiswap/wagmi/systems'
 import { Bound, Field } from 'lib/constants'
 import React, { FC, Fragment, useCallback, useMemo } from 'react'
 
@@ -142,11 +142,11 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
       <div
         className={classNames(
           !isPoolLoading &&
-          !isOwnerLoading &&
-          (tickLower === undefined ||
-            tickUpper === undefined ||
-            invalidPool ||
-            invalidRange)
+            !isOwnerLoading &&
+            (tickLower === undefined ||
+              tickUpper === undefined ||
+              invalidPool ||
+              invalidRange)
             ? 'opacity-40 pointer-events-none'
             : '',
           'flex flex-col gap-4',

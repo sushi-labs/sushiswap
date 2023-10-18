@@ -28,9 +28,9 @@ import {
   TridentConstantPoolState,
   TridentStablePoolState,
 } from '@sushiswap/wagmi'
-import { Web3Input } from '@sushiswap/wagmi/future/components/web3-input'
-import { Checker } from '@sushiswap/wagmi/future/systems'
-import { CheckerProvider } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
+import { Checker } from '@sushiswap/wagmi/systems'
+import { CheckerProvider } from '../../../../../../../packages/wagmi/src/systems/Checker/Provider'
 import {
   APPROVE_TAG_ADD_TRIDENT,
   APPROVE_TAG_CREATE_TRIDENT,
@@ -138,18 +138,18 @@ export default function Page({ params }: { params: { chainId: string } }) {
             !token0 || !token1 ? (
               'Select Tokens'
             ) : [
-                SushiSwapV2PoolState.LOADING,
-                TridentConstantPoolState.LOADING,
-                TridentStablePoolState.LOADING,
-              ].includes(poolState) ? (
+              SushiSwapV2PoolState.LOADING,
+              TridentConstantPoolState.LOADING,
+              TridentStablePoolState.LOADING,
+            ].includes(poolState) ? (
               <div className="h-[20px] flex items-center justify-center">
                 <Loader width={14} />
               </div>
             ) : [
-                SushiSwapV2PoolState.EXISTS,
-                TridentConstantPoolState.EXISTS,
-                TridentStablePoolState.EXISTS,
-              ].includes(poolState) ? (
+              SushiSwapV2PoolState.EXISTS,
+              TridentConstantPoolState.EXISTS,
+              TridentStablePoolState.EXISTS,
+            ].includes(poolState) ? (
               'Add Liquidity'
             ) : (
               'Create Pool'
@@ -393,13 +393,13 @@ const _Add: FC<AddProps> = ({
                                   // TODO: Shouldnt need to cast if this is done right
                                   poolState={
                                     poolState as
-                                      | TridentConstantPoolState
-                                      | TridentStablePoolState
+                                    | TridentConstantPoolState
+                                    | TridentStablePoolState
                                   }
                                   pool={
                                     pool as
-                                      | TridentConstantPool
-                                      | TridentStablePool
+                                    | TridentConstantPool
+                                    | TridentStablePool
                                   }
                                   chainId={chainId}
                                   token0={token0}

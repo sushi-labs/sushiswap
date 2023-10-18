@@ -12,9 +12,9 @@ import {
   isSushiSwapV2ChainId,
 } from '@sushiswap/v2-sdk'
 import { PoolFinder, SushiSwapV2PoolState } from '@sushiswap/wagmi'
-import { Web3Input } from '@sushiswap/wagmi/future/components/web3-input'
-import { Checker } from '@sushiswap/wagmi/future/systems'
-import { CheckerProvider } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
+import { Checker } from '@sushiswap/wagmi/systems'
+import { CheckerProvider } from '../../../../../../../packages/wagmi/src/systems/Checker/Provider'
 import { DISABLED_CHAIN_IDS } from 'config'
 import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
 import { isSushiSwapV2Pool } from 'lib/functions'
@@ -79,14 +79,14 @@ export default function Page({ params }: { params: { chainId: string } }) {
             !token0 || !token1 ? (
               'Select Tokens'
             ) : [SushiSwapV2PoolState.LOADING].includes(
-                poolState as SushiSwapV2PoolState,
-              ) ? (
+              poolState as SushiSwapV2PoolState,
+            ) ? (
               <div className="h-[20px] flex items-center justify-center">
                 <Loader width={14} />
               </div>
             ) : [SushiSwapV2PoolState.EXISTS].includes(
-                poolState as SushiSwapV2PoolState,
-              ) ? (
+              poolState as SushiSwapV2PoolState,
+            ) ? (
               'Add Liquidity'
             ) : (
               'Create Pool'

@@ -36,7 +36,7 @@ import { ChainId } from 'sushi/chain'
 import { Native, Token, Type } from 'sushi/currency'
 import { isAddress } from 'viem'
 import { useAccount } from 'wagmi'
-import { useTokenWithCache } from '../../hooks'
+import { useTokenWithCache } from '../../future/hooks'
 import { TokenSelectorCurrencyList } from './TokenSelectorCurrencyList'
 import { TokenSelectorImportRow } from './TokenSelectorImportRow'
 import { useSortedTokenList } from './hooks/useSortedTokenList'
@@ -260,7 +260,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
           >
             {queryToken &&
               !customTokenMap[
-                `${queryToken.chainId}:${queryToken.wrapped.address}`
+              `${queryToken.chainId}:${queryToken.wrapped.address}`
               ] &&
               !tokenMap?.[`${queryToken.wrapped.address}`] && (
                 <TokenSelectorImportRow

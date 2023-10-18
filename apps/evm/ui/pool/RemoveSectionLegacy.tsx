@@ -22,11 +22,11 @@ import {
   SendTransactionResult,
   waitForTransaction,
 } from '@sushiswap/wagmi/actions'
-import { Checker } from '@sushiswap/wagmi/future/systems'
+import { Checker } from '@sushiswap/wagmi/systems'
 import {
   useApproved,
   withCheckerRoot,
-} from '@sushiswap/wagmi/future/systems/Checker/Provider'
+} from '../../../../packages/wagmi/src/systems/Checker/Provider'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { APPROVE_TAG_REMOVE_LEGACY } from 'lib/constants'
 import {
@@ -94,9 +94,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
         token0
           ? percentToRemove?.greaterThan('0') && underlying0
             ? Amount.fromRawAmount(
-                token0,
-                percentToRemove.multiply(underlying0.quotient).quotient || '0',
-              )
+              token0,
+              percentToRemove.multiply(underlying0.quotient).quotient || '0',
+            )
             : Amount.fromRawAmount(token0, '0')
           : undefined,
       [percentToRemove, token0, underlying0],
@@ -107,9 +107,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
         token1
           ? percentToRemove?.greaterThan('0') && underlying1
             ? Amount.fromRawAmount(
-                token1,
-                percentToRemove.multiply(underlying1.quotient).quotient || '0',
-              )
+              token1,
+              percentToRemove.multiply(underlying1.quotient).quotient || '0',
+            )
             : Amount.fromRawAmount(token1, '0')
           : undefined,
       [percentToRemove, token1, underlying1],
@@ -119,15 +119,15 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
       return [
         currencyAToRemove
           ? Amount.fromRawAmount(
-              currencyAToRemove.currency,
-              slippageAmount(currencyAToRemove, slippageTolerance)[0],
-            )
+            currencyAToRemove.currency,
+            slippageAmount(currencyAToRemove, slippageTolerance)[0],
+          )
           : undefined,
         currencyBToRemove
           ? Amount.fromRawAmount(
-              currencyBToRemove.currency,
-              slippageAmount(currencyBToRemove, slippageTolerance)[0],
-            )
+            currencyBToRemove.currency,
+            slippageAmount(currencyBToRemove, slippageTolerance)[0],
+          )
           : undefined,
       ]
     }, [slippageTolerance, currencyAToRemove, currencyBToRemove])
@@ -187,7 +187,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
 
         const withNative =
           Native.onChain(_pool.chainId).wrapped.address ===
-            pool.token0.address ||
+          pool.token0.address ||
           Native.onChain(_pool.chainId).wrapped.address === pool.token1.address
 
         const config = (function () {

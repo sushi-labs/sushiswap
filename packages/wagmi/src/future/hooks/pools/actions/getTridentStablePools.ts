@@ -5,7 +5,7 @@ import { Amount, Currency, Token } from 'sushi/currency'
 import { Address, readContracts } from 'wagmi'
 import { getContract } from 'wagmi/actions'
 
-import { getTridentStablePoolFactoryContract } from '../../../contracts/actions'
+import { getTridentStablePoolFactoryContract } from '../../../../contracts'
 import { pairsUnique } from './utils'
 
 export enum TridentStablePoolState {

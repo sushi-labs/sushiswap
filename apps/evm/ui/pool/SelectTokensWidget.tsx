@@ -4,7 +4,7 @@ import { FormSection } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { SelectIcon } from '@sushiswap/ui/components/select'
-import { TokenSelector } from '@sushiswap/wagmi/future/components/token-selector/TokenSelector'
+import { TokenSelector } from '@sushiswap/wagmi/components/token-selector/TokenSelector'
 import React, { FC } from 'react'
 
 interface SelectTokensWidget {

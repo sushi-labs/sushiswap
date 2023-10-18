@@ -12,7 +12,7 @@ import {
   useTokenAllowance,
   useTokenRevokeApproval,
 } from '@sushiswap/wagmi/future/hooks'
-import { Checker } from '@sushiswap/wagmi/future/systems'
+import { Checker } from '@sushiswap/wagmi/systems'
 import React, { FC } from 'react'
 
 export const RevokeItem: FC<{ token: Token; account: Address }> = ({

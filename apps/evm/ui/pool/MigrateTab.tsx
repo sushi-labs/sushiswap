@@ -52,11 +52,11 @@ import {
   useV3Migrate,
 } from '@sushiswap/wagmi/future/hooks/migrate/hooks/useV3Migrate'
 import { V3MigrateChainId } from '@sushiswap/wagmi/future/hooks/migrate/types'
-import { Checker } from '@sushiswap/wagmi/future/systems'
+import { Checker } from '@sushiswap/wagmi/systems'
 import {
   useApproved,
   withCheckerRoot,
-} from '@sushiswap/wagmi/future/systems/Checker/Provider'
+} from '../../../../packages/wagmi/src/systems/Checker/Provider'
 import {
   APPROVE_TAG_MIGRATE,
   APPROVE_TAG_UNSTAKE,
@@ -140,9 +140,9 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
     chef: pool.incentives?.[0]?.chefType,
     enabled: Boolean(
       approved &&
-        stakedBalance?.greaterThan(ZERO) &&
-        pool.incentives?.[0]?.pid &&
-        pool.incentives?.[0]?.chefType,
+      stakedBalance?.greaterThan(ZERO) &&
+      pool.incentives?.[0]?.pid &&
+      pool.incentives?.[0]?.chefType,
     ),
   })
 
@@ -151,13 +151,13 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
     () =>
       token0 && pair?.[1] && totalSupply && balance
         ? Amount.fromRawAmount(
-            token0?.wrapped,
-            (balance[FundSource.WALLET].quotient *
-              (token0.wrapped.equals(pair[1].token0)
-                ? pair[1].reserve0.quotient
-                : pair[1].reserve1.quotient)) /
-              totalSupply.quotient,
-          )
+          token0?.wrapped,
+          (balance[FundSource.WALLET].quotient *
+            (token0.wrapped.equals(pair[1].token0)
+              ? pair[1].reserve0.quotient
+              : pair[1].reserve1.quotient)) /
+          totalSupply.quotient,
+        )
         : undefined,
     [token0, pair, totalSupply, balance],
   )
@@ -166,13 +166,13 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
     () =>
       token1 && pair?.[1]?.reserve1 && totalSupply && balance
         ? Amount.fromRawAmount(
-            token1?.wrapped,
-            (balance[FundSource.WALLET].quotient *
-              (token1.wrapped.equals(pair[1].token1)
-                ? pair[1].reserve1.quotient
-                : pair[1].reserve0.quotient)) /
-              totalSupply.quotient,
-          )
+          token1?.wrapped,
+          (balance[FundSource.WALLET].quotient *
+            (token1.wrapped.equals(pair[1].token1)
+              ? pair[1].reserve1.quotient
+              : pair[1].reserve0.quotient)) /
+          totalSupply.quotient,
+        )
         : undefined,
     [token1, pair, totalSupply, balance],
   )
@@ -209,11 +209,11 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
     () =>
       _token0 && _token1 && pair?.[1]?.reserve0 && pair?.[1]?.reserve1
         ? new Price(
-            _token0.wrapped,
-            _token1.wrapped,
-            pair[1].reserve0.quotient,
-            pair[1].reserve1.quotient,
-          )
+          _token0.wrapped,
+          _token1.wrapped,
+          pair[1].reserve0.quotient,
+          pair[1].reserve1.quotient,
+        )
         : undefined,
     [_token0, _token1, pair],
   )
@@ -243,36 +243,36 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   const position = useMemo(
     () =>
       typeof tickLower === 'number' &&
-      typeof tickUpper === 'number' &&
-      !invalidRange &&
-      token0 &&
-      token1 &&
-      token0Value &&
-      token1Value &&
-      sqrtPrice &&
-      tick
+        typeof tickUpper === 'number' &&
+        !invalidRange &&
+        token0 &&
+        token1 &&
+        token0Value &&
+        token1Value &&
+        sqrtPrice &&
+        tick
         ? Position.fromAmounts({
-            pool:
-              v3Pool ??
-              new SushiSwapV3Pool(
-                token0.wrapped,
-                token1.wrapped,
-                feeAmount,
-                sqrtPrice,
-                0,
-                tick,
-                [],
-              ),
-            tickLower,
-            tickUpper,
-            amount0: token0.wrapped.sortsBefore(token1.wrapped)
-              ? token0Value.quotient
-              : token1Value.quotient,
-            amount1: token0.wrapped.sortsBefore(token1.wrapped)
-              ? token1Value.quotient
-              : token0Value.quotient,
-            useFullPrecision: true, // we want full precision for the theoretical position
-          })
+          pool:
+            v3Pool ??
+            new SushiSwapV3Pool(
+              token0.wrapped,
+              token1.wrapped,
+              feeAmount,
+              sqrtPrice,
+              0,
+              tick,
+              [],
+            ),
+          tickLower,
+          tickUpper,
+          amount0: token0.wrapped.sortsBefore(token1.wrapped)
+            ? token0Value.quotient
+            : token1Value.quotient,
+          amount1: token0.wrapped.sortsBefore(token1.wrapped)
+            ? token1Value.quotient
+            : token0Value.quotient,
+          useFullPrecision: true, // we want full precision for the theoretical position
+        })
         : undefined,
     [
       feeAmount,
@@ -506,9 +506,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                   >
                     1 {invertPrice ? _token1.symbol : _token0.symbol} ={' '}
                     {invertPrice
-                      ? `${v2SpotPrice?.invert()?.toSignificant(6)} ${
-                          _token0.symbol
-                        }`
+                      ? `${v2SpotPrice?.invert()?.toSignificant(6)} ${_token0.symbol
+                      }`
                       : `${v2SpotPrice?.toSignificant(6)} ${_token1.symbol}`}
                   </Button>
                 </div>
@@ -529,9 +528,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                     >
                       1 {invertPrice ? _token1.symbol : _token0.symbol} ={' '}
                       {invertPrice
-                        ? `${v3SpotPrice?.invert()?.toSignificant(6)} ${
-                            _token0.symbol
-                          }`
+                        ? `${v3SpotPrice?.invert()?.toSignificant(6)} ${_token0.symbol
+                        }`
                         : `${v3SpotPrice?.toSignificant(6)} ${_token1.symbol}`}
                     </Button>
                   </div>
@@ -666,8 +664,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                         size="default"
                         guardWhen={Boolean(
                           !position ||
-                            positionAmount0?.equalTo(ZERO) ||
-                            positionAmount1?.equalTo(ZERO),
+                          positionAmount0?.equalTo(ZERO) ||
+                          positionAmount1?.equalTo(ZERO),
                         )}
                         guardText="Enter valid range"
                       >
@@ -717,9 +715,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                             {Chain.from(pool.chainId)?.name}
                                           </List.KeyValue>
                                           {feeAmount && (
-                                            <List.KeyValue title="Fee Tier">{`${
-                                              +feeAmount / 10000
-                                            }%`}</List.KeyValue>
+                                            <List.KeyValue title="Fee Tier">{`${+feeAmount / 10000
+                                              }%`}</List.KeyValue>
                                           )}
                                         </List.Control>
                                       </List>
@@ -734,8 +731,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                               {isFullRange
                                                 ? '0'
                                                 : leftPrice?.toSignificant(
-                                                    6,
-                                                  )}{' '}
+                                                  6,
+                                                )}{' '}
                                               {token1?.symbol}
                                             </div>
                                           </List.KeyValue>
@@ -772,8 +769,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                               {isFullRange
                                                 ? '∞'
                                                 : rightPrice?.toSignificant(
-                                                    6,
-                                                  )}{' '}
+                                                  6,
+                                                )}{' '}
                                               {token1?.symbol}
                                             </div>
                                           </List.KeyValue>{' '}

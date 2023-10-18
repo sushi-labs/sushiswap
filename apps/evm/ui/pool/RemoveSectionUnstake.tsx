@@ -19,8 +19,8 @@ import {
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { useMasterChefWithdraw } from '@sushiswap/wagmi'
-import { Checker } from '@sushiswap/wagmi/future/systems'
-import { withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { Checker } from '@sushiswap/wagmi/systems'
+import { withCheckerRoot } from '../../../../packages/wagmi/src/systems/Checker/Provider'
 import { FC, useMemo, useState } from 'react'
 import { useSWRConfig } from 'swr'
 

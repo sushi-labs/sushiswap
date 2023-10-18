@@ -11,11 +11,11 @@ import {
   getMasterChefContractConfig,
   useMasterChefDeposit,
 } from '@sushiswap/wagmi'
-import { Checker } from '@sushiswap/wagmi/future/systems'
+import { Checker } from '@sushiswap/wagmi/systems'
 import {
   useApproved,
   withCheckerRoot,
-} from '@sushiswap/wagmi/future/systems/Checker/Provider'
+} from '../../../../packages/wagmi/src/systems/Checker/Provider'
 import { APPROVE_TAG_STAKE } from 'lib/constants'
 import { useGraphPool } from 'lib/hooks'
 import { FC, useMemo, useState } from 'react'

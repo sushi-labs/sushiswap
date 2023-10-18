@@ -20,7 +20,7 @@ import {
 import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
 import { getBentoBoxContractConfig } from '../../../../hooks'
-import { useSignature } from '../../../systems/Checker/Provider'
+import { useSignature } from '../../../../systems/Checker/Provider'
 import { ApprovalState } from '../../approvals'
 
 interface UseBentoboxApprovalParams {
