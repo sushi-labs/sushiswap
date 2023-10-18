@@ -16,6 +16,7 @@
   "license": "MIT",
   "author": "LufyCZ <me@lufy.cz>",
   "sideEffects": false,
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
