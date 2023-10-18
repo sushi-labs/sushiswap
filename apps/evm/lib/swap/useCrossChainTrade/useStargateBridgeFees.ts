@@ -4,12 +4,13 @@ import {
   STARGATE_POOL_ADDRESS,
   STARGATE_POOL_ID,
   StargateChainId,
-} from '@sushiswap/stargate'
+  STARGATE_ADAPTER_ADDRESS,
+  StargateAdapterChainId,
+} from 'sushi/config'
 import { ADDRESS_ZERO } from '@sushiswap/v3-sdk'
 import { Address, useContractRead, useContractReads } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
 import { stargateFeeLibraryV03Abi, stargatePoolAbi } from 'sushi/abi'
-import { STARGATE_ADAPTER_ADDRESS, StargateAdapterChainId } from 'sushi/config'
 import { Amount, Currency } from 'sushi/currency'
 
 export const useStargateBridgeFees = ({

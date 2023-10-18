@@ -1,16 +1,16 @@
-import {
-  STARGATE_BRIDGE_TOKENS,
-  STARGATE_CHAIN_ID,
-  STARGATE_POOL_ID,
-  isStargateBridgeToken,
-} from '@sushiswap/stargate'
 import { getBigInt } from '@sushiswap/tines'
 import {
   SushiXSwap as SushiXSwapContract,
   getSushiXSwapContractConfig,
 } from '@sushiswap/wagmi'
 import { readContract } from '@sushiswap/wagmi/actions'
-import { SushiXSwapChainId } from 'sushi/config'
+import {
+  SushiXSwapChainId,
+  STARGATE_BRIDGE_TOKENS,
+  STARGATE_CHAIN_ID,
+  STARGATE_POOL_ID,
+  isStargateBridgeToken,
+} from 'sushi/config'
 import { Amount, Currency, Native, Share, Token } from 'sushi/currency'
 import { TradeType, Version as TradeVersion } from 'sushi/dex'
 import { BigintIsh } from 'sushi/math'

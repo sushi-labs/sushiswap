@@ -1,4 +1,4 @@
-import { STARGATE_TOKEN } from '@sushiswap/stargate'
+import { STARGATE_TOKEN } from 'sushi/config'
 import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Dots } from '@sushiswap/ui/components/dots'

@@ -1,12 +1,15 @@
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
 import { RouterLiquiditySource } from '@sushiswap/router'
-import { STARGATE_CHAIN_ID, StargateChainId } from '@sushiswap/stargate'
 import { readContract, useFeeData } from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
 import { log } from 'next-axiom'
 import { useMemo } from 'react'
 import { stargateAdapterAbi } from 'sushi/abi'
-import { STARGATE_ADAPTER_ADDRESS } from 'sushi/config'
+import {
+  STARGATE_ADAPTER_ADDRESS,
+  STARGATE_CHAIN_ID,
+  StargateChainId,
+} from 'sushi/config'
 import { Amount, Currency, Native } from 'sushi/currency'
 import { Fraction, ONE, Percent, ZERO } from 'sushi/math'
 import {

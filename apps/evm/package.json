@@ -29,7 +29,6 @@
     "@sushiswap/react-query": "workspace:*",
     "@sushiswap/router": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
-    "@sushiswap/stargate": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/trident-sdk": "workspace:*",
