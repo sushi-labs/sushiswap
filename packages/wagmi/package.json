@@ -9,7 +9,7 @@
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "sideEffects": false,
+  "sideEffects": true,
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
