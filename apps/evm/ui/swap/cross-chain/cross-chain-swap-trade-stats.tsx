@@ -48,9 +48,10 @@ export const CrossChainSwapTradeStats: FC = () => {
             {loading || !trade?.priceImpact ? (
               <SkeletonBox className="h-4 py-0.5 w-[40px]" />
             ) : trade?.priceImpact ? (
-              `${trade?.priceImpact?.lessThan(ZERO)
-                ? '+'
-                : trade?.priceImpact?.greaterThan(ZERO)
+              `${
+                trade?.priceImpact?.lessThan(ZERO)
+                  ? '+'
+                  : trade?.priceImpact?.greaterThan(ZERO)
                   ? '-'
                   : ''
               }${Math.abs(Number(trade?.priceImpact?.toFixed(2)))}%`
@@ -66,7 +67,8 @@ export const CrossChainSwapTradeStats: FC = () => {
             {loading || !trade?.amountOut ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
             ) : (
-              `${trade?.amountOut?.toSignificant(6) ?? '0.00'} ${trade?.amountOut?.currency?.symbol ?? ''
+              `${trade?.amountOut?.toSignificant(6) ?? '0.00'} ${
+                trade?.amountOut?.currency?.symbol ?? ''
               }`
             )}
           </span>
@@ -80,7 +82,8 @@ export const CrossChainSwapTradeStats: FC = () => {
             {loading || !trade?.minAmountOut ? (
               <SkeletonBox className="h-4 py-0.5 w-[100px]" />
             ) : (
-              `${trade?.minAmountOut?.toSignificant(6) ?? '0.00'} ${trade?.amountOut?.currency?.symbol ?? ''
+              `${trade?.minAmountOut?.toSignificant(6) ?? '0.00'} ${
+                trade?.amountOut?.currency?.symbol ?? ''
               }`
             )}
           </span>

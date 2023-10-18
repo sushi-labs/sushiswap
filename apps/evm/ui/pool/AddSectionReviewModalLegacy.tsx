@@ -104,17 +104,17 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
           ? poolState === SushiSwapV2PoolState.NOT_EXISTS
             ? input0
             : Amount.fromRawAmount(
-              input0.currency,
-              slippageAmount(input0, slippageTolerance)[0],
-            )
+                input0.currency,
+                slippageAmount(input0, slippageTolerance)[0],
+              )
           : undefined,
         input1
           ? poolState === SushiSwapV2PoolState.NOT_EXISTS
             ? input1
             : Amount.fromRawAmount(
-              input1.currency,
-              slippageAmount(input1, slippageTolerance)[0],
-            )
+                input1.currency,
+                slippageAmount(input1, slippageTolerance)[0],
+              )
           : undefined,
       ]
     }, [poolState, input0, input1, slippageTolerance])
@@ -218,8 +218,8 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
       chainId,
       enabled: Boolean(
         approved &&
-        minAmount0?.greaterThan(ZERO) &&
-        minAmount1?.greaterThan(ZERO),
+          minAmount0?.greaterThan(ZERO) &&
+          minAmount1?.greaterThan(ZERO),
       ),
     })
 

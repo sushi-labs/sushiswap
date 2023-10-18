@@ -79,14 +79,14 @@ export default function Page({ params }: { params: { chainId: string } }) {
             !token0 || !token1 ? (
               'Select Tokens'
             ) : [SushiSwapV2PoolState.LOADING].includes(
-              poolState as SushiSwapV2PoolState,
-            ) ? (
+                poolState as SushiSwapV2PoolState,
+              ) ? (
               <div className="h-[20px] flex items-center justify-center">
                 <Loader width={14} />
               </div>
             ) : [SushiSwapV2PoolState.EXISTS].includes(
-              poolState as SushiSwapV2PoolState,
-            ) ? (
+                poolState as SushiSwapV2PoolState,
+              ) ? (
               'Add Liquidity'
             ) : (
               'Create Pool'

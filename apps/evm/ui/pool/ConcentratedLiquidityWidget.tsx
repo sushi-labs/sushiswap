@@ -142,11 +142,11 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
       <div
         className={classNames(
           !isPoolLoading &&
-            !isOwnerLoading &&
-            (tickLower === undefined ||
-              tickUpper === undefined ||
-              invalidPool ||
-              invalidRange)
+          !isOwnerLoading &&
+          (tickLower === undefined ||
+            tickUpper === undefined ||
+            invalidPool ||
+            invalidRange)
             ? 'opacity-40 pointer-events-none'
             : '',
           'flex flex-col gap-4',

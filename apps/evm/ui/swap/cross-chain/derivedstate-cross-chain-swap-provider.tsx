@@ -39,8 +39,8 @@ const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'
     ? token
     : token.isNative
-      ? 'NATIVE'
-      : token.wrapped.address
+    ? 'NATIVE'
+    : token.wrapped.address
 const getQuoteCurrency = (chainId: number) =>
   defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency].wrapped
     .address
@@ -104,7 +104,7 @@ const DerivedstateCrossChainSwapProvider: FC<
       params.set(
         'chainId0',
         (chain?.id &&
-          STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId)
+        STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId)
           ? chain.id
           : ChainId.ETHEREUM
         ).toString(),
@@ -403,8 +403,8 @@ const useCrossChainSwapTrade = () => {
     recipient: recipient as Address,
     enabled: Boolean(
       isSushiXSwapChainId(chainId0) &&
-      isSushiXSwapChainId(chainId1) &&
-      swapAmount?.greaterThan(ZERO),
+        isSushiXSwapChainId(chainId1) &&
+        swapAmount?.greaterThan(ZERO),
     ),
     bentoboxSignature: signature,
   })
