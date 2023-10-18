@@ -102,31 +102,31 @@ export const SimpleSwapTradeReviewDialog: FC<{
     address: isRouteProcessor3_2ChainId(chainId)
       ? ROUTE_PROCESSOR_3_2_ADDRESS[chainId]
       : isRouteProcessor3_1ChainId(chainId)
-        ? ROUTE_PROCESSOR_3_1_ADDRESS[chainId]
-        : isRouteProcessor3ChainId(chainId)
-          ? ROUTE_PROCESSOR_3_ADDRESS[chainId]
-          : isRouteProcessorChainId(chainId)
-            ? ROUTE_PROCESSOR_ADDRESS[chainId]
-            : undefined,
+      ? ROUTE_PROCESSOR_3_1_ADDRESS[chainId]
+      : isRouteProcessor3ChainId(chainId)
+      ? ROUTE_PROCESSOR_3_ADDRESS[chainId]
+      : isRouteProcessorChainId(chainId)
+      ? ROUTE_PROCESSOR_ADDRESS[chainId]
+      : undefined,
     abi: (isRouteProcessor3_2ChainId(chainId) ||
-      isRouteProcessor3_1ChainId(chainId) ||
-      isRouteProcessor3ChainId(chainId)
+    isRouteProcessor3_1ChainId(chainId) ||
+    isRouteProcessor3ChainId(chainId)
       ? routeProcessor3Abi
       : isRouteProcessorChainId(chainId)
-        ? routeProcessorAbi
-        : undefined) as any,
+      ? routeProcessorAbi
+      : undefined) as any,
     functionName: trade?.functionName,
     args: trade?.writeArgs as any,
     enabled: Boolean(
       trade?.writeArgs &&
-      (isRouteProcessorChainId(chainId) ||
-        isRouteProcessor3ChainId(chainId) ||
-        isRouteProcessor3_1ChainId(chainId) ||
-        isRouteProcessor3_2ChainId(chainId)) &&
-      approved &&
-      trade?.route?.status !== 'NoWay' &&
-      chain?.id === chainId &&
-      token1?.chainId === chainId,
+        (isRouteProcessorChainId(chainId) ||
+          isRouteProcessor3ChainId(chainId) ||
+          isRouteProcessor3_1ChainId(chainId) ||
+          isRouteProcessor3_2ChainId(chainId)) &&
+        approved &&
+        trade?.route?.status !== 'NoWay' &&
+        chain?.id === chainId &&
+        token1?.chainId === chainId,
     ),
     value: trade?.value || 0n,
     onError: (error) => {
@@ -159,19 +159,29 @@ export const SimpleSwapTradeReviewDialog: FC<{
         txHash: data.hash,
         promise: waitForTransaction({ hash: data.hash }),
         summary: {
-          pending: `${isWrap ? 'Wrapping' : isUnwrap ? 'Unwrapping' : 'Swapping'
-            } ${trade.amountIn?.toSignificant(6)} ${trade.amountIn?.currency.symbol
-            } ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-            } ${trade.amountOut?.toSignificant(6)} ${trade.amountOut?.currency.symbol
-            }`,
-          completed: `${isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'
-            } ${trade.amountIn?.toSignificant(6)} ${trade.amountIn?.currency.symbol
-            } ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-            } ${trade.amountOut?.toSignificant(6)} ${trade.amountOut?.currency.symbol
-            }`,
-          failed: `Something went wrong when trying to ${isWrap ? 'wrap' : isUnwrap ? 'unwrap' : 'swap'
-            } ${trade.amountIn?.currency.symbol} ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-            } ${trade.amountOut?.currency.symbol}`,
+          pending: `${
+            isWrap ? 'Wrapping' : isUnwrap ? 'Unwrapping' : 'Swapping'
+          } ${trade.amountIn?.toSignificant(6)} ${
+            trade.amountIn?.currency.symbol
+          } ${
+            isWrap ? 'to' : isUnwrap ? 'to' : 'for'
+          } ${trade.amountOut?.toSignificant(6)} ${
+            trade.amountOut?.currency.symbol
+          }`,
+          completed: `${
+            isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'
+          } ${trade.amountIn?.toSignificant(6)} ${
+            trade.amountIn?.currency.symbol
+          } ${
+            isWrap ? 'to' : isUnwrap ? 'to' : 'for'
+          } ${trade.amountOut?.toSignificant(6)} ${
+            trade.amountOut?.currency.symbol
+          }`,
+          failed: `Something went wrong when trying to ${
+            isWrap ? 'wrap' : isUnwrap ? 'unwrap' : 'swap'
+          } ${trade.amountIn?.currency.symbol} ${
+            isWrap ? 'to' : isUnwrap ? 'to' : 'for'
+          } ${trade.amountOut?.currency.symbol}`,
         },
         timestamp: ts,
         groupTimestamp: ts,
@@ -188,12 +198,12 @@ export const SimpleSwapTradeReviewDialog: FC<{
     ...config,
     request: config?.request
       ? {
-        ...config.request,
-        gas:
-          typeof config.request.gas === 'bigint'
-            ? gasMargin(config.request.gas)
-            : undefined,
-      }
+          ...config.request,
+          gas:
+            typeof config.request.gas === 'bigint'
+              ? gasMargin(config.request.gas)
+              : undefined,
+        }
       : undefined,
     onMutate: () => {
       // Set reference of current trade
@@ -413,9 +423,10 @@ export const SimpleSwapTradeReviewDialog: FC<{
                           {isFetching ? (
                             <SkeletonBox className="h-4 py-0.5 w-[60px] rounded-md" />
                           ) : (
-                            `${trade?.priceImpact?.lessThan(ZERO)
-                              ? '+'
-                              : trade?.priceImpact?.greaterThan(ZERO)
+                            `${
+                              trade?.priceImpact?.lessThan(ZERO)
+                                ? '+'
+                                : trade?.priceImpact?.greaterThan(ZERO)
                                 ? '-'
                                 : ''
                             }${Math.abs(
@@ -427,10 +438,11 @@ export const SimpleSwapTradeReviewDialog: FC<{
                     )}
                     {isSwap && (
                       <List.KeyValue
-                        title={`Min. received after slippage (${slippageTolerance === 'AUTO'
+                        title={`Min. received after slippage (${
+                          slippageTolerance === 'AUTO'
                             ? '0.5'
                             : slippageTolerance
-                          }%)`}
+                        }%)`}
                         subtitle="The minimum amount you are guaranteed to receive."
                       >
                         {isFetching ? (
@@ -440,15 +452,16 @@ export const SimpleSwapTradeReviewDialog: FC<{
                             className="w-1/2"
                           />
                         ) : (
-                          `${trade?.minAmountOut?.toSignificant(6)} ${token1?.symbol
+                          `${trade?.minAmountOut?.toSignificant(6)} ${
+                            token1?.symbol
                           }`
                         )}
                       </List.KeyValue>
                     )}
                     <List.KeyValue title="Network fee">
                       {isFetching ||
-                        !trade?.gasSpent ||
-                        trade.gasSpent === '0' ? (
+                      !trade?.gasSpent ||
+                      trade.gasSpent === '0' ? (
                         <SkeletonText
                           align="right"
                           fontSize="sm"
@@ -508,26 +521,26 @@ export const SimpleSwapTradeReviewDialog: FC<{
                     onClick={() => writeAsync?.().then(() => confirm())}
                     disabled={Boolean(
                       !!error ||
-                      isWritePending ||
-                      Boolean(!writeAsync && swapAmount?.greaterThan(ZERO)) ||
-                      isError,
+                        isWritePending ||
+                        Boolean(!writeAsync && swapAmount?.greaterThan(ZERO)) ||
+                        isError,
                     )}
                     color={
                       isError
                         ? 'red'
                         : warningSeverity(trade?.priceImpact) >= 3
-                          ? 'red'
-                          : 'blue'
+                        ? 'red'
+                        : 'blue'
                     }
                     testId="confirm-swap"
                   >
                     {isError
                       ? 'Shoot! Something went wrong :('
                       : isWrap
-                        ? 'Wrap'
-                        : isUnwrap
-                          ? 'Unwrap'
-                          : `Swap ${token0?.symbol} for ${token1?.symbol}`}
+                      ? 'Wrap'
+                      : isUnwrap
+                      ? 'Unwrap'
+                      : `Swap ${token0?.symbol} for ${token1?.symbol}`}
                   </Button>
                 </div>
               </DialogFooter>
@@ -541,9 +554,11 @@ export const SimpleSwapTradeReviewDialog: FC<{
         testId="make-another-swap"
         buttonText="Make another swap"
         txHash={data?.hash}
-        successMessage={`You ${isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'
-          } ${tradeRef.current?.amountIn?.toSignificant(6)} ${token0?.symbol} ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-          } ${tradeRef.current?.amountOut?.toSignificant(6)} ${token1?.symbol}`}
+        successMessage={`You ${
+          isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'
+        } ${tradeRef.current?.amountIn?.toSignificant(6)} ${token0?.symbol} ${
+          isWrap ? 'to' : isUnwrap ? 'to' : 'for'
+        } ${tradeRef.current?.amountOut?.toSignificant(6)} ${token1?.symbol}`}
       />
     </DialogProvider>
   )

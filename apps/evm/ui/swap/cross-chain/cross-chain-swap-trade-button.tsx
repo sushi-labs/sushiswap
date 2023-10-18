@@ -63,10 +63,10 @@ export const CrossChainSwapTradeButton: FC = () => {
                         <Button
                           disabled={Boolean(
                             !trade?.amountOut?.greaterThan(ZERO) ||
-                            trade?.route?.status === 'NoWay' ||
-                            +swapAmountString === 0 ||
-                            (!checked &&
-                              warningSeverity(trade?.priceImpact) > 3),
+                              trade?.route?.status === 'NoWay' ||
+                              +swapAmountString === 0 ||
+                              (!checked &&
+                                warningSeverity(trade?.priceImpact) > 3),
                           )}
                           color={
                             warningSeverity(trade?.priceImpact) >= 3
@@ -79,8 +79,8 @@ export const CrossChainSwapTradeButton: FC = () => {
                           {!checked && warningSeverity(trade?.priceImpact) >= 3
                             ? 'Price impact too high'
                             : trade?.route?.status === 'NoWay'
-                              ? 'No trade found'
-                              : 'Swap'}
+                            ? 'No trade found'
+                            : 'Swap'}
                         </Button>
                       </DialogTrigger>
                     </Checker.Success>

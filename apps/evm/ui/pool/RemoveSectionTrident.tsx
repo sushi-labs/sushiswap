@@ -130,9 +130,9 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
         token0
           ? percentToRemove?.greaterThan('0') && underlying0
             ? Amount.fromRawAmount(
-              token0,
-              percentToRemove.multiply(underlying0.quotient).quotient || '0',
-            )
+                token0,
+                percentToRemove.multiply(underlying0.quotient).quotient || '0',
+              )
             : Amount.fromRawAmount(token0, '0')
           : undefined,
       [token0, percentToRemove, underlying0],
@@ -143,9 +143,9 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
         token1
           ? percentToRemove?.greaterThan('0') && underlying1
             ? Amount.fromRawAmount(
-              token1,
-              percentToRemove.multiply(underlying1.quotient).quotient || '0',
-            )
+                token1,
+                percentToRemove.multiply(underlying1.quotient).quotient || '0',
+              )
             : Amount.fromRawAmount(token1, '0')
           : undefined,
       [token1, percentToRemove, underlying1],
@@ -155,15 +155,15 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
       return [
         currencyAToRemove
           ? Amount.fromRawAmount(
-            currencyAToRemove.currency,
-            slippageAmount(currencyAToRemove, slippageTolerance)[0],
-          )
+              currencyAToRemove.currency,
+              slippageAmount(currencyAToRemove, slippageTolerance)[0],
+            )
           : undefined,
         currencyBToRemove
           ? Amount.fromRawAmount(
-            currencyBToRemove.currency,
-            slippageAmount(currencyBToRemove, slippageTolerance)[0],
-          )
+              currencyBToRemove.currency,
+              slippageAmount(currencyBToRemove, slippageTolerance)[0],
+            )
           : undefined,
       ]
     }, [slippageTolerance, currencyAToRemove, currencyBToRemove])
@@ -227,12 +227,12 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
         let indexOfWETH = -1
         indexOfWETH =
           minAmount0.wrapped.currency.address ===
-            Native.onChain(_pool.chainId).wrapped.address
+          Native.onChain(_pool.chainId).wrapped.address
             ? 0
             : indexOfWETH
         indexOfWETH =
           minAmount1.wrapped.currency.address ===
-            Native.onChain(_pool.chainId).wrapped.address
+          Native.onChain(_pool.chainId).wrapped.address
             ? 1
             : indexOfWETH
 
