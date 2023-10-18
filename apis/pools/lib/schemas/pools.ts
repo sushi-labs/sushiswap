@@ -1,4 +1,4 @@
-import type { Protocol } from '@sushiswap/database' // Unused as a regular import, but type is being used for casting
+import * as Database from '@sushiswap/database' // Unused as a regular import, but type is being used for casting
 import { z } from 'zod'
 
 export const PoolsApiSchema = z.object({
@@ -56,7 +56,7 @@ export const PoolsApiSchema = z.object({
     .optional(),
   protocols: z
     .string()
-    .transform((protocols) => protocols?.split(',') as Protocol[])
+    .transform((protocols) => protocols?.split(',') as Database.Protocol[])
     .optional(),
   cursor: z.string().optional(),
   orderBy: z.string().default('liquidityUSD'),

@@ -1,4 +1,4 @@
-import { Protocol } from '@sushiswap/database'
+import * as Database from '@sushiswap/database'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import type { Address, FetchTokenResult } from '@wagmi/core'
 import {
@@ -26,7 +26,7 @@ createConfig({
 interface GetPoolArgs {
   chainId: number
   address: string
-  protocol?: Protocol
+  protocol?: Database.Protocol
 }
 
 interface Pool {
@@ -34,7 +34,7 @@ interface Pool {
   totalSupply: string
   swapFee: number
   twapEnabled: boolean
-  protocol: Protocol
+  protocol: Database.Protocol
 }
 
 async function getV2Pool({ chainId, address }: GetPoolArgs): Promise<Pool> {
@@ -67,7 +67,7 @@ async function getV2Pool({ chainId, address }: GetPoolArgs): Promise<Pool> {
     totalSupply: totalSupply.toString(),
     swapFee: 0.003,
     twapEnabled: true,
-    protocol: Protocol.SUSHISWAP_V2,
+    protocol: Database.Protocol.SUSHISWAP_V2,
   }
 }
 
@@ -111,7 +111,7 @@ async function getTridentStablePool({
     // 30 => 0.003%
     swapFee: Number(swapFee) / 10000,
     twapEnabled: false,
-    protocol: Protocol.BENTOBOX_STABLE,
+    protocol: Database.Protocol.BENTOBOX_STABLE,
   }
 }
 
@@ -163,7 +163,7 @@ async function getTridentConstantPool({
     // 30 => 0.003%
     swapFee: Number(swapFee) / 10000,
     twapEnabled,
-    protocol: Protocol.BENTOBOX_CLASSIC,
+    protocol: Database.Protocol.BENTOBOX_CLASSIC,
   }
 }
 
@@ -203,7 +203,7 @@ async function getV3Pool({ chainId, address }: GetPoolArgs): Promise<Pool> {
     // 500 is 0.05%. divide it by 1M to get the 0.0005 format
     swapFee: fee / 1_000_000,
     twapEnabled: true,
-    protocol: Protocol.SUSHISWAP_V3,
+    protocol: Database.Protocol.SUSHISWAP_V3,
   }
 }
 
@@ -222,7 +222,7 @@ export async function getUnindexedPool(
   try {
     lpTokenName = (await fetchToken({ address: address as Address, chainId }))
       .name
-  } catch (e) {
+  } catch {
     lpTokenName = 'V3'
   }
 
