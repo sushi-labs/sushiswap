@@ -1,5 +1,9 @@
 import { captureException } from '@sentry/nextjs'
-import { QueryCache, QueryClient, type QueryClientConfig } from '@tanstack/react-query'
+import {
+  QueryCache,
+  QueryClient,
+  type QueryClientConfig,
+} from '@tanstack/react-query'
 
 const queryClientConfig = {
   defaultOptions: {
@@ -26,7 +30,9 @@ const queryClientConfig = {
   // },
 }
 
-export const createQueryClient = (config: QueryClientConfig | undefined = queryClientConfig) => {
+export const createQueryClient = (
+  config: QueryClientConfig | undefined = queryClientConfig,
+) => {
   return new QueryClient(config)
 }
 
