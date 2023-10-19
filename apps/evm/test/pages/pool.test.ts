@@ -1,7 +1,7 @@
 // @ts-nocheck
 
-import {Page} from '@playwright/test'
-import {Fee} from 'sushi/dex'
+import { Page } from '@playwright/test'
+import { Fee } from 'sushi/dex'
 import {
   computeTridentConstantPoolAddress,
   computeTridentStablePoolAddress,
@@ -10,14 +10,24 @@ import {
   TRIDENT_SUPPORTED_CHAIN_IDS,
   TridentChainId,
 } from '@sushiswap/trident-sdk'
-import {computeSushiSwapV2PoolAddress, SUSHISWAP_V2_FACTORY_ADDRESS,} from '@sushiswap/v2-sdk'
-import {computePoolAddress, SUSHISWAP_V3_FACTORY_ADDRESS,} from '@sushiswap/v3-sdk'
-import {expect, NextFixture, test,} from 'next/experimental/testmode/playwright'
-import {Native, SUSHI, Token, Type} from 'sushi/currency'
+import {
+  computeSushiSwapV2PoolAddress,
+  SUSHISWAP_V2_FACTORY_ADDRESS,
+} from '@sushiswap/v2-sdk'
+import {
+  computePoolAddress,
+  SUSHISWAP_V3_FACTORY_ADDRESS,
+} from '@sushiswap/v3-sdk'
+import {
+  expect,
+  NextFixture,
+  test,
+} from 'next/experimental/testmode/playwright'
+import { Native, SUSHI, Token, Type } from 'sushi/currency'
 // import { expect, test } from 'next/experimental/testmode/playwright/msw'
-import {zeroAddress} from 'viem'
+import { zeroAddress } from 'viem'
 
-import {createERC20} from '../create-erc20'
+import { createERC20 } from '../create-erc20'
 
 interface TridentPoolArgs {
   token0: Type
@@ -555,7 +565,7 @@ async function removeLiquidityV3(page: Page, next: NextFixture) {
   await handleLiquidityLocator.click()
 
   const confirmLiquidityLocator = page.locator(
-      '[testdata-id=confirm-remove-liquidity-button]',
+    '[testdata-id=confirm-remove-liquidity-button]',
   )
   await expect(confirmLiquidityLocator).toBeVisible()
   await expect(confirmLiquidityLocator).toBeEnabled() // needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
