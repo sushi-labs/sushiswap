@@ -126,7 +126,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
         return tokenMap?.[address] || customTokenMap?.[address]
       })
       .filter((token): token is Token => !!token)
-  }, [pinnedTokenMap, tokenMap])
+  }, [pinnedTokenMap, tokenMap, chainId, customTokenMap])
 
   const _onSelect = useCallback(
     (currency: Type) => {
@@ -148,7 +148,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
         pinnedTokenMutate('add', currencyId)
       }
     },
-    [pinnedTokenMutate],
+    [pinnedTokenMutate, isTokenPinned],
   )
 
   const handleImport = useCallback(
@@ -263,7 +263,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
           >
             {queryToken &&
               !customTokenMap[
-                `${queryToken.chainId}:${queryToken.wrapped.address}`
+              `${queryToken.chainId}:${queryToken.wrapped.address}`
               ] &&
               !tokenMap?.[`${queryToken.wrapped.address}`] && (
                 <TokenSelectorImportRow

@@ -45,7 +45,7 @@ const iconButtonVariants = cva(
 
 export interface IconButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   icon: IconComponent | string
   iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
   name: string
@@ -66,7 +66,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
       description,
       size,
       variant = 'secondary',
-      name,
+      name: _name,
       ...props
     },
     ref,

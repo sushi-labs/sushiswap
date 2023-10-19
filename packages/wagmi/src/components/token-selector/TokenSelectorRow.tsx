@@ -59,7 +59,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
     const onPin = useCallback((e: React.MouseEvent | React.KeyboardEvent) => {
       e.stopPropagation()
       pin?.onPin()
-    }, [])
+    }, [pin])
 
     return (
       <div className="relative py-0.5 h-[64px]" style={style}>

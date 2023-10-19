@@ -90,7 +90,7 @@ DialogPortal.displayName = DialogPrimitive.Portal.displayName
 
 interface DialogOverlay
   extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>,
-    VariantProps<typeof dialogOverlayVariants> {}
+  VariantProps<typeof dialogOverlayVariants> { }
 
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
@@ -106,14 +106,14 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 interface DialogContentProps
   extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
-    VariantProps<typeof dialogVariants> {
+  VariantProps<typeof dialogVariants> {
   hideClose?: boolean
 }
 
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   DialogContentProps
->(({ className, hideClose = false, variant, children, ...props }, ref) => (
+>(({ className, hideClose: _hideClose = false, variant, children, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay variant={variant} />
     <DialogPrimitive.Content
@@ -361,14 +361,14 @@ const DialogProvider: FC<DialogProviderProps> = ({ children }) => {
 
 type UseDialog<T> = T extends DialogType.Review
   ? {
-      open: boolean
-      setOpen(open: boolean): void
-      confirm(): void
-    }
+    open: boolean
+    setOpen(open: boolean): void
+    confirm(): void
+  }
   : {
-      open: boolean
-      setOpen(open: boolean): void
-    }
+    open: boolean
+    setOpen(open: boolean): void
+  }
 
 const useDialog = <T extends DialogType>(type: T): UseDialog<T> => {
   const context = useContext(DialogContext)
@@ -391,7 +391,7 @@ const useDialog = <T extends DialogType>(type: T): UseDialog<T> => {
           context.setState((prev) => ({ ...prev, [DialogType.Confirm]: val })),
       } as UseDialog<T>
     }
-  }, [context, type])
+  }, [type])
 }
 
 export {

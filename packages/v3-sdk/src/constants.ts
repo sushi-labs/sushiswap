@@ -9,26 +9,27 @@ export const POOL_INIT_CODE_HASH =
  * The default factory enabled fee amounts, denominated in hundredths of bips.
  */
 
-export enum FeeAmount {
+export const FeeAmount = {
   /** 0.01% */
-  LOWEST = 100,
+  LOWEST: 100,
   /** 0.1% */
-  LOW = 500,
+  LOW: 500,
   /** 0.3% */
-  MEDIUM = 3000,
+  MEDIUM: 3000,
   /** 1% */
-  HIGH = 10000,
-}
+  HIGH: 10000,
+} as const
+export type FeeAmount = typeof FeeAmount[keyof typeof FeeAmount]
 
 /**
  * The default factory tick spacings by fee amount.
  */
-export const TICK_SPACINGS: { [_amount in FeeAmount]: number } = {
+export const TICK_SPACINGS = {
   [FeeAmount.LOWEST]: 1,
   [FeeAmount.LOW]: 10,
   [FeeAmount.MEDIUM]: 60,
   [FeeAmount.HIGH]: 200,
-}
+} as const
 
 export const SUSHISWAP_V3_FACTORY_ADDRESS: Record<
   SushiSwapV3ChainId,

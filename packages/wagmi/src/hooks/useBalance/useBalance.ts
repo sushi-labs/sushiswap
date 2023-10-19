@@ -100,7 +100,7 @@ export const useBalances: UseBalances = ({
         args: [token] as const,
       }))
 
-      const balanceInputs = validatedTokenAddresses.map((token, i) => ({
+      const balanceInputs = validatedTokenAddresses.map((_token, i) => ({
         chainId,
         ...getBentoBoxContractConfig(chainId),
         abi: bentoBoxV1Abi,
@@ -212,7 +212,7 @@ export const useBalances: UseBalances = ({
   }, [
     tokens,
     chainId,
-    nativeBalance?.value,
+    nativeBalance,
     isLoading,
     isNativeLoading,
     isError,

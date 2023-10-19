@@ -6,17 +6,9 @@ import {
 } from '@sushiswap/v2-sdk'
 import { useMemo } from 'react'
 import { uniswapV2RouterAbi } from 'sushi/abi'
-import { ChainId } from 'sushi/chain'
 import { WalletClient } from 'viem'
 import { usePublicClient, useWalletClient } from 'wagmi'
 import { getContract } from 'wagmi/actions'
-
-export const getSushiSwapKlimaRouterContractConfig = (
-  chainId: typeof ChainId.POLYGON,
-) => ({
-  address: '0x85B5cc3ec95AE5D0b02E7c17e53F97C4B02a78e4',
-  abi: uniswapV2RouterAbi,
-})
 
 export const getSushiSwapRouterContractConfig = (
   chainId: SushiSwapV2ChainId,

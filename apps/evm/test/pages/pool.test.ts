@@ -46,10 +46,10 @@ interface V2PoolArgs {
   type: 'CREATE' | 'ADD'
 }
 
-interface MigrateArgs {
-  minPrice: string
-  maxPrice: string
-}
+// interface MigrateArgs {
+//   minPrice: string
+//   maxPrice: string
+// }
 
 interface V3PoolArgs {
   token0: Type
@@ -568,24 +568,24 @@ async function removeLiquidityV3(page: Page, _next: NextFixture) {
   expect(page.getByText(regex))
 }
 
-async function manageUnstakeAndClaim(page: Page) {
-  await switchNetwork(page, CHAIN_ID)
+// async function manageUnstakeAndClaim(page: Page) {
+//   await switchNetwork(page, CHAIN_ID)
 
-  const approveSlpId = 'approve-token0-button'
-  const approveSlpLocator = page.locator(`[testdata-id=${approveSlpId}]`)
-  await expect(approveSlpLocator).toBeVisible()
-  await expect(approveSlpLocator).toBeEnabled()
-  await approveSlpLocator.click()
+//   const approveSlpId = 'approve-token0-button'
+//   const approveSlpLocator = page.locator(`[testdata-id=${approveSlpId}]`)
+//   await expect(approveSlpLocator).toBeVisible()
+//   await expect(approveSlpLocator).toBeEnabled()
+//   await approveSlpLocator.click()
 
-  const unstakeId = 'unstake-liquidity-button'
-  const unstakeLocator = page.locator(`[testdata-id=${unstakeId}]`)
-  await expect(unstakeLocator).toBeVisible()
-  await expect(unstakeLocator).toBeEnabled()
-  await unstakeLocator.click()
+//   const unstakeId = 'unstake-liquidity-button'
+//   const unstakeLocator = page.locator(`[testdata-id=${unstakeId}]`)
+//   await expect(unstakeLocator).toBeVisible()
+//   await expect(unstakeLocator).toBeEnabled()
+//   await unstakeLocator.click()
 
-  const regex = new RegExp('(Successfully unstaked * * tokens)')
-  expect(page.getByText(regex))
-}
+//   const regex = new RegExp('(Successfully unstaked * * tokens)')
+//   expect(page.getByText(regex))
+// }
 
 // async function migrateV2(page: Page, args: MigrateArgs) {
 //   await switchNetwork(page, CHAIN_ID)

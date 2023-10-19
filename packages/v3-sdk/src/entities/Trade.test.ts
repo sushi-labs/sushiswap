@@ -568,6 +568,7 @@ describe('Trade', () => {
           tradeType: TradeType.EXACT_INPUT,
         })
       it('is cached', () => {
+        // biome-ignore lint/suspicious/noSelfCompare: <explanation>
         expect(exactIn.priceImpact === exactIn.priceImpact).toStrictEqual(true)
       })
       it('is correct', () => {
@@ -576,6 +577,7 @@ describe('Trade', () => {
 
       it('is cached with multiple routes', () => {
         expect(
+          // biome-ignore lint/suspicious/noSelfCompare: <explanation>
           exactInMultipleRoutes.priceImpact ===
             exactInMultipleRoutes.priceImpact,
         ).toStrictEqual(true)
@@ -615,6 +617,7 @@ describe('Trade', () => {
         })
 
       it('is cached', () => {
+        // biome-ignore lint/suspicious/noSelfCompare: <explanation>
         expect(exactOut.priceImpact === exactOut.priceImpact).toStrictEqual(
           true,
         )
@@ -625,6 +628,7 @@ describe('Trade', () => {
 
       it('is cached with multiple routes', () => {
         expect(
+          // biome-ignore lint/suspicious/noSelfCompare: <explanation>
           exactOutMultipleRoutes.priceImpact ===
             exactOutMultipleRoutes.priceImpact,
         ).toStrictEqual(true)

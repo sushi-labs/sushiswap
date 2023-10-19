@@ -52,7 +52,7 @@ export const queryFnUseBalances = async ({
     ),
   })
 
-  const _data = data.reduce<Record<string, Amount<Type>>>((acc, cur, i) => {
+  const _data = data.reduce<Record<string, Amount<Type>>>((acc, _cur, i) => {
     const amount = data[i].result
     if (typeof amount === 'bigint') {
       acc[validatedTokens[i].address] = Amount.fromRawAmount(

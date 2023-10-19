@@ -16,7 +16,7 @@ interface AmountsProps extends ButtonProps {
 }
 
 const Amounts: FC<AmountsProps> = ({
-  type,
+  type: _type,
   amounts,
   chainId,
   children,

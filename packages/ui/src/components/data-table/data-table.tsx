@@ -40,6 +40,7 @@ declare module '@tanstack/react-table' {
     className?: string
     skeleton?: React.ReactNode
     headerDescription?: string
+    columnDef: ColumnMeta<TData, TValue>
   }
 }
 

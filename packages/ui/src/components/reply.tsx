@@ -29,7 +29,7 @@ type ReplyProps = React.HTMLAttributes<HTMLDivElement>
 const ReplyArrow = forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ ...props }, _ref) => {
+>((_props, _ref) => {
   return (
     <div className="absolute left-2 top-0 bottom-0 w-5 h-full">
       <div className="absolute left-0 bottom-0 top-0 right-0 h-[50%] border-b border-l rounded-bl-[20px] border-accent" />

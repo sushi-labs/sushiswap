@@ -273,7 +273,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         dest: StepState.NotStarted,
       })
     }, 500)
-  }, [setReview])
+  }, [])
 
   const onClick = useCallback(
     (confirm: () => void) => {

@@ -504,7 +504,6 @@ export class CurveProvider extends LiquidityProvider {
           abi: curvePoolABI[poolType],
           functionName: functionName,
           args,
-          // biome-ignore lint/suspicious/noExplicitAny: any
         })) as any,
       })
     }
