@@ -38,7 +38,7 @@ export const defaultChains: Chain[] = [
   zkSync,
   // polygonMumbai,
   // sepolia,
-  scroll
+  scroll,
 ]
 
 export const otherChains: Chain[] = [

@@ -269,7 +269,7 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     WNATIVE: WNATIVE[ChainId.SCROLL],
     ETH: Native.onChain(ChainId.SCROLL),
     WETH: WNATIVE[ChainId.SCROLL],
-  }
+  },
 } as const
 
 export type ShortCurrencyNameChainId =

@@ -309,8 +309,8 @@ export const COMMON_BASES = {
     WNATIVE[ChainId.SCROLL],
     USDC[ChainId.SCROLL],
     USDT[ChainId.SCROLL],
-    WBTC[ChainId.SCROLL]
-  ]
+    WBTC[ChainId.SCROLL],
+  ],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const
 
