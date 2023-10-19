@@ -11,7 +11,6 @@ import {
 import { PoolCode } from './pools/PoolCode'
 
 class TinesToRouteProcessor4 extends TinesToRouteProcessor2 {
-
   override getRouteProcessorCode(
     route: MultiRoute,
     toAddress: string,

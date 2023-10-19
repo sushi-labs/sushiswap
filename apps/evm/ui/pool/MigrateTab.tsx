@@ -784,7 +784,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                           {positionAmount0 && (
                                             <List.KeyValue
                                               flex
-                                              title={"Migration"}
+                                              title={'Migration'}
                                               subtitle="The value of your position after migration"
                                               className="!items-start"
                                             >
@@ -815,7 +815,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                           {positionAmount1 && (
                                             <List.KeyValue
                                               flex
-                                              title={""}
+                                              title={''}
                                               className="!items-start"
                                             >
                                               <div className="flex flex-col gap-0.5">
@@ -848,7 +848,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                           {token0Value && (
                                             <List.KeyValue
                                               flex
-                                              title={"Refund"}
+                                              title={'Refund'}
                                               subtitle="The refund you receive after migration"
                                               className="!items-start"
                                             >
@@ -878,7 +878,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                           {token1Value && (
                                             <List.KeyValue
                                               flex
-                                              title={""}
+                                              title={''}
                                               className="!items-start"
                                             >
                                               <div className="flex flex-col gap-0.5">
@@ -924,7 +924,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                         ) : isMigrateLoading ? (
                                           <Dots>Confirm Migrate</Dots>
                                         ) : (
-                                          "Confirm Migrate"
+                                          'Confirm Migrate'
                                         )}
                                       </Button>
                                     </DialogFooter>

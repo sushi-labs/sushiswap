@@ -28,30 +28,30 @@ export default function TabsLayout({
       </Container>
       <Container maxWidth="7xl" className="px-4">
         <div className="flex flex-wrap items-center gap-2 mb-4">
-          <LinkInternal shallow={true} scroll={false} href={"/analytics"}>
+          <LinkInternal shallow={true} scroll={false} href={'/analytics'}>
             <PathnameButton
               id="all-pools"
-              pathname={"/analytics"}
+              pathname={'/analytics'}
               asChild
               size="sm"
             >
               Pools
             </PathnameButton>
           </LinkInternal>
-          <LinkInternal shallow={true} scroll={false} href={"/analytics/pay"}>
+          <LinkInternal shallow={true} scroll={false} href={'/analytics/pay'}>
             <PathnameButton
               id="my-positions"
-              pathname={"/analytics/pay"}
+              pathname={'/analytics/pay'}
               asChild
               size="sm"
             >
               Sushi Pay
             </PathnameButton>
           </LinkInternal>
-          <LinkInternal shallow={true} scroll={false} href={"/analytics/vault"}>
+          <LinkInternal shallow={true} scroll={false} href={'/analytics/vault'}>
             <PathnameButton
               id="my-rewards"
-              pathname={"/analytics/vault"}
+              pathname={'/analytics/vault'}
               asChild
               size="sm"
             >

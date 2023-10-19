@@ -54,9 +54,7 @@ export const EnhancedView = ({ prop, value = '', ...props }) => {
             <span className="text-gray-700 p-1.5">No properties selected</span>
           )}
         </div>
-        <div className="bg-grid bg-gray-50/50 flex-1 p-2.5">
-          {children}
-        </div>
+        <div className="bg-grid bg-gray-50/50 flex-1 p-2.5">{children}</div>
       </div>
     </div>
   )
