@@ -115,26 +115,32 @@ ToastVisual.displayName = "ToastVisual";
 const ToastDescription = React.forwardRef<
 	React.ElementRef<typeof ToastPrimitives.Description>,
 	React.ComponentPropsWithoutRef<typeof ToastPrimitives.Description>
->(({ className, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => (
 	<ToastPrimitives.Description
 		ref={ref}
 		className={classNames(
-			"pt-3 h-full flex items-center gap-1.5 relative text-sm opacity-90 pr-10 truncate",
+			"pt-3 h-full flex items-center gap-1.5 relative text-sm opacity-90 pr-10 flex-1",
 			className,
 		)}
 		{...props}
-	/>
+	>
+		<div className="truncate min-w-0">{children}</div>
+	</ToastPrimitives.Description>
 ));
 ToastDescription.displayName = ToastPrimitives.Description.displayName;
 
+interface ToastCaption extends VariantProps<typeof toastVariants> {}
+
 const ToastCaption = React.forwardRef<
 	React.ElementRef<typeof ToastPrimitives.Description>,
-	React.ComponentPropsWithoutRef<typeof ToastPrimitives.Description>
+	React.ComponentPropsWithoutRef<typeof ToastPrimitives.Description> &
+		ToastCaption
 >(({ className, ...props }, ref) => (
 	<span
 		ref={ref}
 		className={classNames(
-			"absolute top-2 left-0  text-[10px] uppercase tracking-wide font-semibold text-muted-foreground",
+			props.variant === "default" ? "text-muted-foreground" : "text-white",
+			"absolute top-2 left-0  text-[10px] uppercase tracking-wide font-semibold",
 			className,
 		)}
 		{...props}

@@ -90,7 +90,7 @@ export function Toaster() {
 							{visual && <ToastVisual>{visual}</ToastVisual>}
 							{description && (
 								<ToastDescription className="max-h-[70px]">
-									{caption ? <ToastCaption>{caption}</ToastCaption> : null}
+									{caption ? <ToastCaption variant={props.variant}>{caption}</ToastCaption> : null}
 									{description}
 									<ToastClose />
 								</ToastDescription>

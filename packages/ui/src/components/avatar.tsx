@@ -5,7 +5,7 @@ import Image from 'next/image'
 import * as React from 'react'
 
 import classNames from 'classnames'
-import { cloudinaryImageLoader } from '../cloudinary'
+import {cloudinaryImageLoader} from '../cloudinary'
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
@@ -14,7 +14,7 @@ const Avatar = React.forwardRef<
   <AvatarPrimitive.Root
     ref={ref}
     className={classNames(
-      'relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full',
+      'relative inline-block h-10 w-10 shrink-0 overflow-hidden rounded-full',
       className,
     )}
     {...props}
