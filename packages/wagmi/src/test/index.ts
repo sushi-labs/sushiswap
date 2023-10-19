@@ -2,7 +2,7 @@ import { MockConnector } from '@wagmi/core/connectors/mock'
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { http, createWalletClient } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
-import { Chain, foundry } from 'viem/chains'
+import { foundry } from 'viem/chains'
 import { configureChains, createConfig } from 'wagmi'
 import { TestChainId, accounts, testChains } from './constants'
 
@@ -18,14 +18,6 @@ const testWalletIndex = Number(
     process.env.NEXT_PUBLIC_TEST_WALLET_INDEX ||
     0,
 )
-
-function getNetwork(chain: Chain) {
-  return {
-    chainId: chain.id,
-    ensAddress: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-    name: chain.name,
-  }
-}
 
 function getAccounts() {
   return accounts.map((x) => privateKeyToAccount(x.privateKey))

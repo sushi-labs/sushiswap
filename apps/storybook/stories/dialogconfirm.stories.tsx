@@ -82,7 +82,7 @@ export const Pending = {
           chainId={1}
           status="loading"
           testId="incentivize-confirmation-modal"
-          successMessage={"Successfully incentivized V3 pool"}
+          successMessage={'Successfully incentivized V3 pool'}
           txHash="0x58c018d0f15df78c392e0850f5ee5e74e1e919213552646d979c9a37e6f5119a"
         />
       </DialogProvider>
@@ -136,7 +136,7 @@ export const Success = {
           chainId={1}
           status="success"
           testId="incentivize-confirmation-modal"
-          successMessage={"Successfully incentivized V3 pool"}
+          successMessage={'Successfully incentivized V3 pool'}
           txHash="0x58c018d0f15df78c392e0850f5ee5e74e1e919213552646d979c9a37e6f5119a"
         />
       </DialogProvider>
@@ -190,7 +190,7 @@ export const Error = {
           chainId={1}
           status="error"
           testId="incentivize-confirmation-modal"
-          successMessage={"Successfully incentivized V3 pool"}
+          successMessage={'Successfully incentivized V3 pool'}
           txHash="0x58c018d0f15df78c392e0850f5ee5e74e1e919213552646d979c9a37e6f5119a"
         />
       </DialogProvider>

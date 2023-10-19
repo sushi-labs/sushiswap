@@ -26,10 +26,7 @@ import { config, network } from 'hardhat'
 import seedrandom from 'seedrandom'
 import { erc20Abi, routeProcessor3Abi, weth9Abi } from 'sushi/abi'
 import { ChainId, chainName } from 'sushi/chain'
-import {
-  BENTOBOX_ADDRESS,
-  BentoBoxChainId,
-} from 'sushi/config'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import {
   DAI,
   DAI_ADDRESS,

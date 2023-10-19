@@ -195,14 +195,7 @@ export const useBentoboxApproval = ({
           setFallback(true)
         })
     }
-  }, [
-    address,
-    chainId,
-    data?.nonces,
-    masterContract,
-    setSignature,
-    signTypedDataAsync,
-  ])
+  }, [address, chainId, data, masterContract, setSignature, signTypedDataAsync])
 
   return useMemo(() => {
     let state = ApprovalState.UNKNOWN

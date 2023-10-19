@@ -144,7 +144,7 @@ export function DataTable<TData, TValue>({
               .fill(null)
               .map((_, i) => (
                 <TableRow key={i}>
-                  {table.getVisibleFlatColumns().map((column, i) => {
+                  {table.getVisibleFlatColumns().map((column, _i) => {
                     return (
                       <TableCell
                         style={{ width: column.getSize() }}

@@ -139,14 +139,17 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
     [onSelect],
   )
 
-  const _onPin = useCallback((currencyId: string) => {
-    console.debug('onPin', currencyId, isTokenPinned(currencyId))
-    if (isTokenPinned(currencyId)) {
-      pinnedTokenMutate('remove', currencyId)
-    } else {
-      pinnedTokenMutate('add', currencyId)
-    }
-  }, [])
+  const _onPin = useCallback(
+    (currencyId: string) => {
+      console.debug('onPin', currencyId, isTokenPinned(currencyId))
+      if (isTokenPinned(currencyId)) {
+        pinnedTokenMutate('remove', currencyId)
+      } else {
+        pinnedTokenMutate('add', currencyId)
+      }
+    },
+    [pinnedTokenMutate],
+  )
 
   const handleImport = useCallback(
     (currency: Token) => {
@@ -159,7 +162,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   // Refetch whenever TokenSelector opens
   useEffect(() => {
     if (open) refetch()
-  }, [open])
+  }, [open, refetch])
 
   const isLoading =
     isTokensLoading || isOtherTokensLoading || isQueryTokenLoading

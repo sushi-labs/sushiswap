@@ -23,7 +23,7 @@ export default function TabsLayout({
             scroll={false}
             href={`/pool?${searchParams.toString()}`}
           >
-            <PathnameButton id="all-pools" pathname={"/pool"} asChild size="sm">
+            <PathnameButton id="all-pools" pathname={'/pool'} asChild size="sm">
               All Pools
             </PathnameButton>
           </LinkInternal>
@@ -34,7 +34,7 @@ export default function TabsLayout({
           >
             <PathnameButton
               id="my-positions"
-              pathname={"/pool/my-positions"}
+              pathname={'/pool/my-positions'}
               asChild
               size="sm"
             >
@@ -48,7 +48,7 @@ export default function TabsLayout({
           >
             <PathnameButton
               id="my-rewards"
-              pathname={"/pool/my-rewards"}
+              pathname={'/pool/my-rewards'}
               asChild
               size="sm"
             >
@@ -62,7 +62,7 @@ export default function TabsLayout({
           >
             <PathnameButton
               id="migrate"
-              pathname={"/pool/migrate"}
+              pathname={'/pool/migrate'}
               asChild
               size="sm"
             >

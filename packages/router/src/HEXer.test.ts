@@ -203,8 +203,9 @@ describe('HEXer', () => {
 
     it('adds padding and slices the 0x prefix', () => {
       const len = '14' // address length after slicing prefix is 20, 20 in decimal is 14 in hex
-      const expected =
-        `00000000000000000000000000000000000000000000000000000000000000${len}${address.slice(2)}`
+      const expected = `00000000000000000000000000000000000000000000000000000000000000${len}${address.slice(
+        2,
+      )}`
       expect(HEXER.bytes(address).toString()).toEqual(expected)
     })
 
@@ -212,8 +213,9 @@ describe('HEXer', () => {
       'adds 0 padding and length info of the bytecode',
       (n) => {
         const actual = HEXER.bytes(n).toString()
-        const expected =
-          `000000000000000000000000000000000000000000000000000000000000000${n.length / 2}${n}`
+        const expected = `000000000000000000000000000000000000000000000000000000000000000${
+          n.length / 2
+        }${n}`
         expect(actual).toEqual(expected)
       },
     )

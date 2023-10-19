@@ -60,8 +60,7 @@ export const AddSectionMyPositionStaked: FC = () => {
             )}
           </div>
           <p className="text-xs font-medium flex items-center gap-1 dark:text-slate-400 text-gray-600">
-            {underlying0?.toSignificant(3)}{' '}
-            {underlying0?.currency.symbol}
+            {underlying0?.toSignificant(3)} {underlying0?.currency.symbol}
           </p>
         </div>
         <div className="flex items-center gap-1.5">
@@ -75,8 +74,7 @@ export const AddSectionMyPositionStaked: FC = () => {
             )}
           </div>
           <p className="text-xs font-medium flex items-center gap-1 dark:text-slate-400 text-gray-600">
-            {underlying1?.toSignificant(3)}{' '}
-            {underlying1?.currency.symbol}
+            {underlying1?.toSignificant(3)} {underlying1?.currency.symbol}
           </p>
         </div>
       </div>

@@ -222,7 +222,7 @@ export async function getUnindexedPool(
   try {
     lpTokenName = (await fetchToken({ address: address as Address, chainId }))
       .name
-  } catch (e) {
+  } catch (_e) {
     lpTokenName = 'V3'
   }
 

@@ -323,8 +323,8 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
 DialogConfirm.displayName = 'DialogConfirm'
 
 enum DialogType {
-  Review,
-  Confirm,
+  Review = 0,
+  Confirm = 1,
 }
 
 interface DialogContext {

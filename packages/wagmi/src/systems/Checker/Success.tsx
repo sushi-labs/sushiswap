@@ -17,7 +17,7 @@ const Success: FC<SuccessProps> = ({ children, tag }) => {
     return () => {
       setApproved(false)
     }
-  }, [])
+  }, [setApproved])
 
   return <>{children}</>
 }

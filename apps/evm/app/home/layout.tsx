@@ -26,6 +26,7 @@ export default function HomeLayout({
       <Container maxWidth="6xl" className="mx-auto px-4 text-center">
         Smart Pools Table
       </Container>
+      {children}
     </Providers>
   )
 }

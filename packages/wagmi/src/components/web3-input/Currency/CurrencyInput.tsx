@@ -105,10 +105,10 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     if (currency && onChange && value && value.includes('.')) {
       const [, decimals] = value.split('.')
       if (decimals.length > currency.decimals) {
-        onChange((+value).toFixed(currency.decimals))
+        onChange(Number(value).toFixed(currency.decimals))
       }
     }
-  }, [currency])
+  }, [onChange, currency, value])
 
   const isLoading = loading || currencyLoading || isBalanceLoading
   const _error = error
@@ -133,7 +133,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         `Selected token chainId not equal to passed chainId, impossible state. Currency chainId: ${currency.chainId}, chainId: ${chainId}`,
       )
     }
-  }, [currency?.chainId, chainId])
+  }, [currency, chainId])
 
   const selector = useMemo(() => {
     if (!onSelect) return null
@@ -194,6 +194,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   return (
     <div
       onClick={focusInput}
+      onKeyDown={focusInput}
       className={classNames(
         _error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
         'relative space-y-2 overflow-hidden pb-2',

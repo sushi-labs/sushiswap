@@ -96,7 +96,7 @@ export default function Partner() {
     [methods],
   )
 
-  const { getRootProps, inputRef, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: { 'image/jpeg': ['.jpeg', '.jpg'] },
     maxFiles: 1,

@@ -145,7 +145,7 @@ export const getTokenWithCacheQueryFn = async ({
       id: `${chainId}:${tokenAddress}`,
     } as Data
   } else {
-    throw Error(`Could not fetch token`)
+    throw Error('Could not fetch token')
   }
 }
 

@@ -32,7 +32,7 @@ const func: DeployFunction = async function ({
     constructorArguments: args,
   })
 
-  console.log("RouteProcessor3_1 verified")
+  console.log('RouteProcessor3_1 verified')
 }
 
 func.tags = ['RouteProcessor3_1']

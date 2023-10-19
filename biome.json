@@ -37,6 +37,9 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "a11y": {
+        "noSvgWithoutTitle": "off"
+      },
       "correctness": {
         "noUnusedVariables": "error"
       },
