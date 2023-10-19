@@ -31,7 +31,7 @@ import {
 } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { isAddress } from 'viem'
-import { SUPPORTED_CHAIN_IDS, isSwapApiEnabledChainId } from '../../../config'
+import { SUPPORTED_CHAIN_IDS, isSupportedChainId, isSwapApiEnabledChainId } from '../../../config'
 import { useCarbonOffset } from '../../../lib/swap/useCarbonOffset'
 import { useSwapApi } from '../../../lib/swap/useSwapApi'
 
@@ -39,8 +39,8 @@ const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'
     ? token
     : token.isNative
-    ? 'NATIVE'
-    : token.wrapped.address
+      ? 'NATIVE'
+      : token.wrapped.address
 const getQuoteCurrency = (chainId: number) =>
   defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency].wrapped
     .address
@@ -94,7 +94,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
       if (!params.has('chainId'))
         params.set(
           'chainId',
-          (chain?.id && SUPPORTED_CHAIN_IDS.includes(chain.id as ChainId)
+          (chain?.id && isSupportedChainId(chain.id)
             ? chain.id
             : ChainId.ETHEREUM
           ).toString(),
