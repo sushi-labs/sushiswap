@@ -55,7 +55,7 @@ export const EnhancedView = ({ prop, value = '', ...props }) => {
           )}
         </div>
         <div className="bg-grid bg-gray-50/50 flex-1 p-2.5">
-          {props.children}
+          {children}
         </div>
       </div>
     </div>

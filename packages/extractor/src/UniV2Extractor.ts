@@ -219,7 +219,7 @@ export class UniV2Extractor {
             addToCache: false,
             startTime,
           })
-        } catch (e) {
+        } catch (_e) {
           this.taskCounter.dec()
           warnLog(
             this.multiCallAggregator.chainId,
@@ -261,7 +261,7 @@ export class UniV2Extractor {
       const [reserve0, reserve1] = reserves as [bigint, bigint]
       pool.updateReserves(reserve0, reserve1)
       poolState.status = PoolStatus.ValidPool
-    } catch (e) {
+    } catch (_e) {
       warnLog(
         this.multiCallAggregator.chainId,
         `Ext2 pool ${poolState.poolCode.pool.address} update fail`,
@@ -381,7 +381,7 @@ export class UniV2Extractor {
             )
             const [res0, res1] = reserves as [bigint, bigint]
             return await this.addPoolByLog(addr as Address, res0, res1, factory)
-          } catch (e) {
+          } catch (_e) {
             return
           }
         })()

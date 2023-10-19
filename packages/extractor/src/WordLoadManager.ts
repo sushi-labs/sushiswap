@@ -85,7 +85,7 @@ export class WordLoadManager extends EventEmitter {
               this.downloadQueue.pop()
           }
         }
-      } catch (e) {
+      } catch (_e) {
         warnLog(
           this.client.chainId,
           `Pool ${this.poolAddress} ticks downloading failed`,

@@ -429,7 +429,7 @@ export class AlgebraExtractor {
           return
         }
       }
-    } catch (e) {
+    } catch (_e) {
       // adding pool failed - let's add its address in otherFactoryPoolSet in order to not
       // spent resources for in the future
     }

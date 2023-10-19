@@ -916,7 +916,7 @@ export class SushiXSwap {
   teleport(
     srcBridgeToken: Token,
     dstBridgeToken: Token,
-    gasSpent: number,
+    gasSpent: number | undefined = 1000000,
     id: string,
     amountMin: Amount<Currency>,
     dustAmount: Amount<Currency> = Amount.fromRawAmount(

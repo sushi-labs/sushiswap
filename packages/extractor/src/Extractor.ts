@@ -285,7 +285,7 @@ export class Extractor {
         await file.writeFile(`${token.address} ${token.symbol} ${num}\n`)
       }
       await file.close()
-    } catch (e) {
+    } catch (_e) {
       // do nothing
     }
   }

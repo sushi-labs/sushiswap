@@ -96,7 +96,7 @@ class CurveMultitokenCore {
     this.reserves = reserves
     const decimalsMax = Math.max(...tokens.map((t) => t.decimals))
     this.rates = tokens.map(
-      (t, i) => Math.pow(10, decimalsMax - t.decimals) * (rates?.[i] ?? 1),
+      (t, i) => 10 ** (decimalsMax - t.decimals) * (rates?.[i] ?? 1),
     )
     this.ratesBN18 = this.rates.map((r) => getBigInt(r * 1e18)) // precision is 18 digits
     this.reservesRated = this.reserves.map(
@@ -108,7 +108,7 @@ class CurveMultitokenCore {
     this.n = BigInt(this.tokens.length)
     this.Annn = this.Ann * this.n
     this.AnnMinus1 = this.Ann - 1n
-    this.nn = getBigInt(Math.pow(this.tokens.length, this.tokens.length))
+    this.nn = getBigInt(this.tokens.length ** this.tokens.length)
     this.nPlus1 = this.n + 1n
   }
 
@@ -147,8 +147,8 @@ class CurveMultitokenCore {
     let S_ = ZERO
     for (let i = 0; i < this.tokens.length; ++i) {
       let _x = ZERO
-      if (i == xIndex) _x = x
-      else if (i != yIndex) _x = this.reservesRated[i] as bigint
+      if (i === xIndex) _x = x
+      else if (i !== yIndex) _x = this.reservesRated[i] as bigint
       else continue
       S_ = S_ + _x
       c = (c * D) / _x / this.n
@@ -208,17 +208,17 @@ class CurveMultitokenCore {
   calcCurrentPriceWithoutFee(from: number, to: number): number {
     const xInp = Number(this.reservesRated[from])
     const D = Number(this.computeLiquidity())
-    let Sx = 0,
-      Px = 1
+    let Sx = 0
+    let Px = 1
     this.tokens.forEach((_, i) => {
-      if (i == to) return
+      if (i === to) return
       const x = Number(this.reservesRated[i])
       Sx += x
       Px *= x
     })
     const n = this.tokens.length
     const b = Sx + D / this.A / n - D
-    const c = Math.pow(D / n, n + 1) / Px / this.A
+    const c = (D / n) ** (n + 1) / Px / this.A
     const Ds = Math.sqrt(b * b + 4 * c)
     const dD = 2 * b - (4 * c) / xInp
     const price = 0.5 - dD / Ds / 4

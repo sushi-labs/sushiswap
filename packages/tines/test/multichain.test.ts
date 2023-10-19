@@ -33,7 +33,7 @@ function setRandomBaseTokenInNetworkInfo(
   ) as TToken
   networksInfo.baseToken = randomToken
   //networksInfo.baseTokenPrice = randomToken.price
-  networksInfo.gasPrice = gasPrice * Math.pow(10, randomToken.decimals - 18)
+  networksInfo.gasPrice = gasPrice * 10 ** (randomToken.decimals - 18)
 }
 
 it('two chains with pool bridge', () => {

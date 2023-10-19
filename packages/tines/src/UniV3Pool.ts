@@ -176,7 +176,8 @@ export class UniV3Pool extends RPool {
         else return { out: outAmount, gasSpent: this.swapGasCost }
       }
 
-      let nextTickPrice, priceDiff
+      let nextTickPrice
+      let priceDiff
       if (startFlag) {
         // Increasing precision at first step only - otherwise its too slow
         const nextTickPriceBI = getSqrtRatioAtTick(
@@ -283,7 +284,8 @@ export class UniV3Pool extends RPool {
         return { inp: Number.POSITIVE_INFINITY, gasSpent: this.swapGasCost }
 
       ++stepCounter
-      let nextTickPrice, priceDiff
+      let nextTickPrice
+      let priceDiff
       if (startFlag) {
         // Increasing precision at first step only - otherwise its too slow
         const nextTickPriceBI = getSqrtRatioAtTick(

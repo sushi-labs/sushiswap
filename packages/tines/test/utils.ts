@@ -550,7 +550,7 @@ export function expectCloseValues(
         `\n v1 = ${a}` +
         `\n v2 = ${b}` +
         `\n precision = ${Math.abs(a / b - 1)}, expected < ${precision}` +
-        `${additionalInfo === '' ? '' : '\n' + additionalInfo}`,
+        `${additionalInfo === '' ? '' : `\n${additionalInfo}`}`,
     )
     //debugger
   }

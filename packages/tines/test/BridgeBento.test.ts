@@ -44,7 +44,7 @@ function checkBridging(bridge: BridgeBento, amount: number) {
   try {
     const amount2 = bridge.calcOutByIn(share, false).out
     expectCloseValues(amount, amount2, 1e-10)
-  } catch (e) {
+  } catch (_e) {
     expect(bridge.freeLiquidity).toBeDefined()
     let out
     if (bridge.base === 0) {

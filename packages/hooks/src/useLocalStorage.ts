@@ -20,7 +20,7 @@ export const useLocalStorage = <T>(
       const item = window.localStorage.getItem(key)
       // Parse stored json or if none return initialValue
       return item ? (JSON.parse(item) as T) : initialValue
-    } catch (error) {
+    } catch (_error) {
       // If error also return initialValue
       return initialValue
     }
