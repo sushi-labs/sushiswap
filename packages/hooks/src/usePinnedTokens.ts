@@ -2,7 +2,7 @@ import { getAddress as _getAddress, isAddress } from '@ethersproject/address'
 import { ChainId } from 'sushi/chain'
 import {
   ARB,
-  Currency,
+  type Currency,
   DAI,
   FRAX,
   GNO,
