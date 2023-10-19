@@ -1,33 +1,23 @@
 // @ts-nocheck
 
-import { Page } from '@playwright/test'
-import { Fee } from 'sushi/dex'
+import {Page} from '@playwright/test'
+import {Fee} from 'sushi/dex'
 import {
+  computeTridentConstantPoolAddress,
+  computeTridentStablePoolAddress,
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
   TRIDENT_SUPPORTED_CHAIN_IDS,
   TridentChainId,
-  computeTridentConstantPoolAddress,
-  computeTridentStablePoolAddress,
 } from '@sushiswap/trident-sdk'
-import {
-  SUSHISWAP_V2_FACTORY_ADDRESS,
-  computeSushiSwapV2PoolAddress,
-} from '@sushiswap/v2-sdk'
-import {
-  SUSHISWAP_V3_FACTORY_ADDRESS,
-  computePoolAddress,
-} from '@sushiswap/v3-sdk'
-import {
-  NextFixture,
-  expect,
-  test,
-} from 'next/experimental/testmode/playwright'
-import { Native, SUSHI, Token, Type } from 'sushi/currency'
+import {computeSushiSwapV2PoolAddress, SUSHISWAP_V2_FACTORY_ADDRESS,} from '@sushiswap/v2-sdk'
+import {computePoolAddress, SUSHISWAP_V3_FACTORY_ADDRESS,} from '@sushiswap/v3-sdk'
+import {expect, NextFixture, test,} from 'next/experimental/testmode/playwright'
+import {Native, SUSHI, Token, Type} from 'sushi/currency'
 // import { expect, test } from 'next/experimental/testmode/playwright/msw'
-import { zeroAddress } from 'viem'
+import {zeroAddress} from 'viem'
 
-import { createERC20 } from '../create-erc20'
+import {createERC20} from '../create-erc20'
 
 interface TridentPoolArgs {
   token0: Type
@@ -563,6 +553,13 @@ async function removeLiquidityV3(page: Page, next: NextFixture) {
   await expect(handleLiquidityLocator).toBeVisible()
   await expect(handleLiquidityLocator).toBeEnabled() // needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
   await handleLiquidityLocator.click()
+
+  const confirmLiquidityLocator = page.locator(
+      '[testdata-id=confirm-remove-liquidity-button]',
+  )
+  await expect(confirmLiquidityLocator).toBeVisible()
+  await expect(confirmLiquidityLocator).toBeEnabled() // needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
+  await confirmLiquidityLocator.click({ timeout: 5_000 })
 
   const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
   expect(page.getByText(regex))

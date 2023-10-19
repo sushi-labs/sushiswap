@@ -8,17 +8,12 @@ import {
   DialogReview,
   DialogTitle,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Currency } from '@sushiswap/ui/components/currency'
-import { Dots } from '@sushiswap/ui/components/dots'
-import { List } from '@sushiswap/ui/components/list/List'
-import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import {
-  FeeAmount,
-  NonfungiblePositionManager,
-  Position,
-  isSushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
+import {Button} from '@sushiswap/ui/components/button'
+import {Currency} from '@sushiswap/ui/components/currency'
+import {Dots} from '@sushiswap/ui/components/dots'
+import {List} from '@sushiswap/ui/components/list/List'
+import {createErrorToast, createToast} from '@sushiswap/ui/components/toast'
+import {FeeAmount, isSushiSwapV3ChainId, NonfungiblePositionManager, Position,} from '@sushiswap/v3-sdk'
 import {
   useAccount,
   useNetwork,
@@ -26,23 +21,21 @@ import {
   useSendTransaction,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
+import {SendTransactionResult, waitForTransaction,} from '@sushiswap/wagmi/actions'
+import {useTransactionDeadline} from '@sushiswap/wagmi/future/hooks'
 import {
-  SendTransactionResult,
-  waitForTransaction,
-} from '@sushiswap/wagmi/actions'
-import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
-import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
-import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { Bound } from 'lib/constants'
-import { useTokenAmountDollarValues } from 'lib/hooks'
-import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
-import React, { FC, ReactNode, useCallback, useMemo } from 'react'
-import { Percent } from 'sushi/math'
-import { Chain, ChainId } from 'sushi/chain'
-import { Amount, Type, tryParseAmount } from 'sushi/currency'
-import { Hex, UserRejectedRequestError } from 'viem'
+  getV3NonFungiblePositionManagerConractConfig
+} from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
+import {UsePrepareSendTransactionConfig} from '@sushiswap/wagmi/hooks/useSendTransaction'
+import {Bound} from 'lib/constants'
+import {useTokenAmountDollarValues} from 'lib/hooks'
+import {useSlippageTolerance} from 'lib/hooks/useSlippageTolerance'
+import React, {FC, ReactNode, useCallback, useMemo} from 'react'
+import {Chain, ChainId} from 'sushi/chain'
+import {Amount, tryParseAmount, Type} from 'sushi/currency'
+import {Hex, UserRejectedRequestError} from 'viem'
 
-import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
+import {useConcentratedDerivedMintInfo} from './ConcentratedLiquidityProvider'
 
 interface AddSectionReviewModalConcentratedProps
   extends Pick<
@@ -264,7 +257,7 @@ export const AddSectionReviewModalConcentrated: FC<
                   <List.Control>
                     <List.KeyValue
                       flex
-                      title={`Minimum Price`}
+                      title={"Minimum Price"}
                       subtitle={`Your position will be 100% composed of ${input0?.currency.symbol} at this price`}
                     >
                       <div className="flex flex-col gap-1">
@@ -302,7 +295,7 @@ export const AddSectionReviewModalConcentrated: FC<
                     </List.KeyValue>
                     <List.KeyValue
                       flex
-                      title={`Maximum Price`}
+                      title={"Maximum Price"}
                       subtitle={`Your position will be 100% composed of ${token1?.symbol} at this price`}
                     >
                       <div className="flex flex-col gap-1">
@@ -322,6 +315,7 @@ export const AddSectionReviewModalConcentrated: FC<
                         )}{' '}
                       </div>
                     </List.KeyValue>{' '}
+                    <List.KeyValue flex title="Slippage">{slippageTolerance.toSignificant(2)}%</List.KeyValue>
                   </List.Control>
                 </List>
                 <List className="!pt-0">

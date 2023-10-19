@@ -1,6 +1,6 @@
 'use client'
 
-import { useAngleRewards } from '@sushiswap/react-query'
+import {useAngleRewards} from '@sushiswap/react-query'
 import {
   Card,
   CardContent,
@@ -12,52 +12,51 @@ import {
   CardItem,
   CardLabel,
   CardTitle,
+  classNames,
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
+  IconButton,
   LinkInternal,
   Separator,
+  SettingsModule,
+  SettingsOverlay,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
   Toggle,
-  classNames,
+  WidgetAction,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { useAccount } from '@sushiswap/wagmi'
+import {Button} from '@sushiswap/ui/components/button'
+import {SkeletonText} from '@sushiswap/ui/components/skeleton'
+import {SushiSwapV3ChainId} from '@sushiswap/v3-sdk'
+import {useAccount} from '@sushiswap/wagmi'
 import {
   useConcentratedLiquidityPositionsFromTokenId,
   useConcentratedPositionInfo,
   useConcentratedPositionOwner,
   useTokenWithCache,
 } from '@sushiswap/wagmi/future/hooks'
-import { Checker } from '@sushiswap/wagmi/future/systems'
+import {Checker} from '@sushiswap/wagmi/future/systems'
 import useIsTickAtLimit from 'lib/hooks/useIsTickAtLimit'
-import React, { FC, Fragment, useMemo, useState } from 'react'
-import { formatUSD } from 'sushi/format'
-import { Chain } from 'sushi/chain'
-import { Amount } from 'sushi/currency'
+import React, {FC, useMemo, useState} from 'react'
+import {CogIcon} from '@heroicons/react-v1/outline'
 
-import { isAngleEnabledChainId } from '../../config'
-import { Bound } from '../../lib/constants'
-import {
-  formatTickPrice,
-  getPriceOrderingFromPositionForUI,
-  unwrapToken,
-} from '../../lib/functions'
-import { usePriceInverter, useTokenAmountDollarValues } from '../../lib/hooks'
-import { ConcentratedLiquidityCollectButton } from './ConcentratedLiquidityCollectButton'
-import { ConcentratedLiquidityHarvestButton } from './ConcentratedLiquidityHarvestButton'
-import {
-  ConcentratedLiquidityProvider,
-  useConcentratedDerivedMintInfo,
-} from './ConcentratedLiquidityProvider'
-import { ConcentratedLiquidityRemoveWidget } from './ConcentratedLiquidityRemoveWidget'
-import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
-import { DistributionDataTable } from './DistributionDataTable'
+import {formatUSD} from 'sushi/format'
+import {Chain} from 'sushi/chain'
+import {Amount} from 'sushi/currency'
+
+import {isAngleEnabledChainId} from '../../config'
+import {Bound} from '../../lib/constants'
+import {formatTickPrice, getPriceOrderingFromPositionForUI, unwrapToken,} from '../../lib/functions'
+import {usePriceInverter, useTokenAmountDollarValues} from '../../lib/hooks'
+import {ConcentratedLiquidityCollectButton} from './ConcentratedLiquidityCollectButton'
+import {ConcentratedLiquidityHarvestButton} from './ConcentratedLiquidityHarvestButton'
+import {ConcentratedLiquidityProvider, useConcentratedDerivedMintInfo,} from './ConcentratedLiquidityProvider'
+import {ConcentratedLiquidityRemoveWidget} from './ConcentratedLiquidityRemoveWidget'
+import {ConcentratedLiquidityWidget} from './ConcentratedLiquidityWidget'
+import {DistributionDataTable} from './DistributionDataTable'
 
 const Component: FC<{ id: string }> = ({ id }) => {
   const { address } = useAccount()
@@ -223,12 +222,34 @@ const Component: FC<{ id: string }> = ({ id }) => {
                   <Separator />
                 </div>
                 <TabsContent value="add">
-                  <CardContent>
+                  <CardContent className="relative">
                     <CardHeader className="px-0 pb-0">
                       <CardTitle>Add liquidity</CardTitle>
                       <CardDescription>
                         Provide liquidity to earn fees & rewards.
                       </CardDescription>
+                      <WidgetAction>
+                        <SettingsOverlay
+                            options={{
+                              slippageTolerance: {
+                                storageKey: 'addLiquidity',
+                                defaultValue: '0.5',
+                                title: 'Add Liquidity Slippage',
+                              },
+                            }}
+                            modules={[
+                              SettingsModule.CustomTokens,
+                              SettingsModule.SlippageTolerance,
+                            ]}
+                        >
+                          <IconButton
+                              size="sm"
+                              name="Settings"
+                              icon={CogIcon}
+                              variant="secondary"
+                          />
+                        </SettingsOverlay>
+                      </WidgetAction>
                     </CardHeader>
                     <ConcentratedLiquidityWidget
                       withTitleAndDescription={false}
