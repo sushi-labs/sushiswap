@@ -211,7 +211,7 @@ export async function approveTestTokensToContract(
   )
 }
 
-const Two96 = Math.pow(2, 96)
+const Two96 = 2 ** 96
 export function encodePriceSqrt(reserve1: number, reserve0: number) {
   return BigInt(Math.round(Math.sqrt(reserve1 / reserve0) * Two96))
 }

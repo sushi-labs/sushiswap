@@ -171,7 +171,7 @@ export async function POST(request: NextRequest) {
       message: `Upload ${displayName} icon`,
       sha: previousImageFileSha,
     })
-  } catch (e: unknown) {
+  } catch (_e: unknown) {
     return NextResponse.json(
       { error: 'Failed to add token image' },
       { status: 500 },

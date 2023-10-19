@@ -171,12 +171,12 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
 }
 
 export enum StepState {
-  Sign,
-  NotStarted,
-  Pending,
-  PartialSuccess,
-  Success,
-  Failed,
+  Sign = 0,
+  NotStarted = 1,
+  Pending = 2,
+  PartialSuccess = 3,
+  Success = 4,
+  Failed = 5,
 }
 
 export const initState = (state: {

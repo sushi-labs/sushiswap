@@ -145,7 +145,7 @@ export abstract class Cooker implements Cooker {
     token: Currency,
     to: Address,
     amount: BigintIsh,
-    share: BigintIsh = 0n,
+    share: BigintIsh,
     unwrap: boolean,
   ): void {
     if (this.debug)
@@ -205,9 +205,9 @@ export abstract class Cooker implements Cooker {
 
   dstWithdrawFromBentoBox(
     token: Currency,
-    to: Address = this.user,
-    amount: BigintIsh = 0n,
-    share: BigintIsh = 0n,
+    to: Address,
+    amount: BigintIsh,
+    share: BigintIsh,
     unwrap: boolean,
   ): void {
     const data = encodeAbiParameters(
@@ -264,7 +264,7 @@ export abstract class Cooker implements Cooker {
       TradeVersion.V1 | TradeVersion.V2
     >,
     to: Address,
-    shareIn: BigintIsh = 0n,
+    shareIn: BigintIsh,
     shareOutMinimum: BigintIsh,
     unwrapBento: boolean,
   ): void {
@@ -596,7 +596,7 @@ export class SushiXSwap {
   // T2: Wallet - Stargate - Wallet
   // T3: Wallet - Stargate - BentoBox
   // T4: BentoBox - Stargate - Wallet
-  transfer(amountIn: Amount<Currency>, shareIn: Share<Currency>): void {
+  transfer(_amountIn: Amount<Currency>, shareIn: Share<Currency>): void {
     // T1-T4
     if (!this.srcUseBentoBox) {
       this.srcCooker.srcDepositToBentoBox(
@@ -914,9 +914,9 @@ export class SushiXSwap {
   }
 
   teleport(
-    srcBridgeToken: Token = STARGATE_BRIDGE_TOKENS[this.srcChainId][0],
-    dstBridgeToken: Token = STARGATE_BRIDGE_TOKENS[this.dstChainId][0],
-    gasSpent = 1000000,
+    srcBridgeToken: Token,
+    dstBridgeToken: Token,
+    gasSpent: number,
     id: string,
     amountMin: Amount<Currency>,
     dustAmount: Amount<Currency> = Amount.fromRawAmount(

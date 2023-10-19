@@ -79,7 +79,7 @@ async function testTaxTokenBuy(
     value: rpParams.value,
     account,
   })
-  return route.amountOutBI == 0n
+  return route.amountOutBI === 0n
     ? -1
     : Number(amountOutReal - route.amountOutBI) / route.amountOut
 }
@@ -157,7 +157,7 @@ async function testTaxToken(args: {
       } pools` + ` diff = ${diff > 0 ? '+' : ''}${diff} `,
     )
   } catch (e) {
-    console.log('Routing failed. No connection ? ' + e)
+    console.log(`Routing failed. No connection ? ${e}`)
   }
 }
 

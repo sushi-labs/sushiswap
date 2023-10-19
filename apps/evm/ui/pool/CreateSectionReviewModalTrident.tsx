@@ -373,7 +373,7 @@ export const CreateSectionReviewModalTrident: FC<
         chainId={chainId as ChainId}
         status={status}
         testId="incentivize-confirmation-modal"
-        successMessage={`Successfully added liquidity`}
+        successMessage={"Successfully added liquidity"}
         buttonText="Go to pool"
         buttonLink={`/pools/${chainId}:${poolAddress}`}
         txHash={data?.hash}

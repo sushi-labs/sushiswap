@@ -22,11 +22,11 @@ import resolveConfig from 'tailwindcss/resolveConfig'
 const tailwind = resolveConfig(tailwindConfig)
 
 enum TvlChartPeriod {
-  Day,
-  Week,
-  Month,
-  Year,
-  All,
+  Day = 0,
+  Week = 1,
+  Month = 2,
+  Year = 3,
+  All = 4,
 }
 
 const chartTimespans: Record<TvlChartPeriod, number> = {
@@ -48,8 +48,8 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
       (x) => x * 1000 >= currentDate - chartTimespans[chartPeriod],
     )
     return [
-      x?.filter((x, i) => predicates[i]).reverse(),
-      y?.filter((y, i) => predicates[i]).reverse(),
+      x?.filter((_x, i) => predicates[i]).reverse(),
+      y?.filter((_y, i) => predicates[i]).reverse(),
     ]
   }, [chartPeriod, x, y])
 
@@ -224,7 +224,7 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
       </div>
       <CardHeader>
         <CardTitle>
-          {yData && yData.length ? (
+          {yData?.length ? (
             <span className="hoveredItemValueVolume">
               {formatUSD(yData[yData.length - 1])}
             </span>
@@ -233,7 +233,7 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
           )}
         </CardTitle>
         <CardDescription>
-          {xData && xData.length ? (
+          {xData?.length ? (
             <div className="text-sm text-gray-500 dark:text-slate-500 hoveredItemNameVolume">
               {format(
                 new Date(xData[xData.length - 1] * 1000),

@@ -22,8 +22,8 @@ const CATEGORIES = {
   KASHI: { ...KASHI_SUBGRAPH_NAME },
   CHEF: {
     ...MINICHEF_SUBGRAPH_NAME,
-    [ChainId.ETHEREUM + '-1']: 'jiro-ono/masterchef-staging',
-    [ChainId.ETHEREUM + '-2']: 'sushiswap/master-chefv2',
+    [`${ChainId.ETHEREUM}-1`]: 'jiro-ono/masterchef-staging',
+    [`${ChainId.ETHEREUM}-2`]: 'sushiswap/master-chefv2',
   },
   FURO: { ...FURO_SUBGRAPH_NAME },
   OTHER: {},

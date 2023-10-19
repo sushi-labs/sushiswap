@@ -67,7 +67,7 @@ async function volatilityCheck(args: {
               )}s diff: ${sdiff}`,
             )
           }
-        } catch (e) {
+        } catch (_e) {
           console.log('Routing failed. No connection ?')
         }
         inProgress = false

@@ -143,8 +143,8 @@ it.skip('LogFilter completeness test', async () => {
       })
       logs1.forEach((l) => logsEthalon.delete(l))
     }
-    let uniqueMy = 0,
-      uniqueEthalon = 0
+    let uniqueMy = 0
+    let uniqueEthalon = 0
     logsMy.forEach((l) => {
       if (!logsEthalon.has(l)) uniqueMy++
     })

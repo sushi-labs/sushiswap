@@ -263,7 +263,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
             </>
           ) : (
             <>
-              <Button asChild variant="link"></Button>
+              <Button asChild variant="link" />
               {tokenFrom?.token &&
                 tokenSecurity.honeypots.includes(tokenFrom.token.address) && (
                   <List>

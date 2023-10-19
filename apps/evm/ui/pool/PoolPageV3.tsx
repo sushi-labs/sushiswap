@@ -30,8 +30,8 @@ import { PoolsFiltersProvider } from './PoolsFiltersProvider'
 import { StatisticsCharts } from './StatisticsChart'
 
 enum Granularity {
-  Day,
-  Week,
+  Day = 0,
+  Week = 1,
 }
 
 const PoolPageV3: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({
@@ -71,7 +71,7 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
     () => poolStats?.incentives.map((el) => el.reward),
     [poolStats?.incentives],
   )
-  const fiatValuesIncentives = useTokenAmountDollarValues({
+  const _fiatValuesIncentives = useTokenAmountDollarValues({
     chainId,
     amounts: incentiveAmounts,
   })

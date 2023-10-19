@@ -29,7 +29,6 @@ import { ChainId, chainName } from 'sushi/chain'
 import {
   BENTOBOX_ADDRESS,
   BentoBoxChainId,
-  isBentoBoxChainId,
 } from 'sushi/config'
 import {
   DAI,
@@ -936,7 +935,7 @@ describe('End-to-end RouteProcessor3_1 test', async function () {
           intermidiateResult,
           usedPools,
         )
-      } catch (e) {
+      } catch (_e) {
         throwed = true
       }
       expect(

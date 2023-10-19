@@ -27,7 +27,7 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pool }) => {
   const { pendingRewards, harvest, values, isLoading } =
     usePoolPositionRewards()
 
-  if (!pool?.incentives?.length && !pendingRewards?.length) return <span></span>
+  if (!pool?.incentives?.length && !pendingRewards?.length) return <span />
 
   return (
     <Card>

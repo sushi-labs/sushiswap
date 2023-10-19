@@ -291,7 +291,7 @@ const _Articles: FC = () => {
               />
             </div>
             <div className="flex flex-col gap-2 mt-12">
-              {products.map((product, i) => (
+              {products.map((product, _i) => (
                 <span
                   key={product.id}
                   className={classNames(
@@ -304,7 +304,7 @@ const _Articles: FC = () => {
                   {product.attributes?.longName}
                 </span>
               ))}
-              {topics.map((topic, i) => (
+              {topics.map((topic, _i) => (
                 <span
                   key={topic.id}
                   className={classNames(

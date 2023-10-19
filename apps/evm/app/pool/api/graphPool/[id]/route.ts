@@ -10,7 +10,7 @@ const schema = z.object({
 
 // uses thegraph, not the pools api
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: { id: string } },
 ) {
   const result = schema.safeParse(params)

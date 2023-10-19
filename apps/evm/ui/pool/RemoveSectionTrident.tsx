@@ -267,7 +267,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
             actions,
           }),
         }
-      } catch (e: unknown) {
+      } catch (_e: unknown) {
         return {}
       }
     }, [

@@ -189,8 +189,8 @@ async function startInfinitTest(args: {
       nativeProvider
         .getCurrentPoolList()
         .forEach((p) => poolMap.set(p.pool.address, p))
-      const fromToken = Native.onChain(chainId),
-        toToken = tokens[i]
+      const fromToken = Native.onChain(chainId)
+      const toToken = tokens[i]
       const route = Router.findBestRoute(
         poolMap,
         chainId,

@@ -194,7 +194,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
               gas: gasMargin(gasLimit),
             }
           }
-        } catch (e: unknown) {
+        } catch (_e: unknown) {
           //
         }
       }

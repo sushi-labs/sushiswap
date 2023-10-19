@@ -214,8 +214,8 @@ const _Add: FC<AddProps> = ({
   poolType,
   setPoolType,
 }) => {
-  const [open, setOpen] = useState(false)
-  const close = useCallback(() => setOpen(false), [])
+  const [_open, setOpen] = useState(false)
+  const _close = useCallback(() => setOpen(false), [])
   // const [permit, setPermit] = useState<Signature>()
 
   const [{ input0, input1 }, setTypedAmounts] = useState<{

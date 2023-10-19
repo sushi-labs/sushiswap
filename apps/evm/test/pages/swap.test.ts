@@ -22,7 +22,7 @@ const wnative = native.wrapped
 
 const usdc = USDC[chainId]
 const usdt = USDT[chainId]
-const dai = DAI[chainId]
+const _dai = DAI[chainId]
 const sushi = SUSHI[chainId]
 const wbtc = WBTC[chainId]
 
@@ -216,11 +216,11 @@ async function swap(
   await makeAnotherSwap.click()
 
   // Compare against cached balances to ensure there is at least a change...
-  const swapFromBalanceAfter = await swapFromBalance.textContent()
+  const _swapFromBalanceAfter = await swapFromBalance.textContent()
   await expect(swapFromBalance).not.toHaveText(swapFromBalanceBefore as string)
   // expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfter)
 
-  const swapToBalanceAfter = await swapToBalance.textContent()
+  const _swapToBalanceAfter = await swapToBalance.textContent()
   await expect(swapToBalance).not.toHaveText(swapToBalanceBefore as string)
   // expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfter)
 }

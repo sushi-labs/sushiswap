@@ -76,8 +76,8 @@ async function startInfinitTest(args: {
       nativeProvider
         .getCurrentPoolList()
         .forEach((p) => poolMap.set(p.pool.address, p))
-      const fromToken = Native.onChain(chainId),
-        toToken = tokens[i]
+      const fromToken = Native.onChain(chainId)
+      const toToken = tokens[i]
       const route = Router.findBestRoute(
         poolMap,
         chainId,
@@ -136,7 +136,7 @@ async function startInfinitTest(args: {
         )
         if (Math.abs(Number(diff)) > 0.001)
           console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
-      } catch (e) {
+      } catch (_e) {
         console.log('Routing failed. No connection ?')
       }
     }

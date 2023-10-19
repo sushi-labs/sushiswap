@@ -162,7 +162,7 @@ describe('DataFetcher Uni V3', () => {
       ][i % possibleFee.length]
       const poolInfo = await createRandomUniV3Pool(
         env,
-        'pool' + i,
+        `pool${i}`,
         10,
         0.8,
         fee,

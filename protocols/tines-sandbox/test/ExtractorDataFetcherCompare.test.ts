@@ -152,7 +152,7 @@ async function CompareTest(args: {
   let count = 0
   for (let i = 1; i < tokens.length; i += 2) {
     const j = i - 1
-    if (tokens[i].address == tokens[j].address) continue
+    if (tokens[i].address === tokens[j].address) continue
 
     const add0 = ADDITIONAL_BASES[chainId]?.[tokens[i].address] ?? []
     const add1 = ADDITIONAL_BASES[chainId]?.[tokens[j].address] ?? []

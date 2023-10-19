@@ -9,7 +9,7 @@ export const usePersistedSlippageError = ({
 
   // Need to perform some funky business because wagmi isn't keeping the previous error while its refetching
   useEffect(() => {
-    if (error && error.message.includes('Minimal ouput balance violation')) {
+    if (error?.message.includes('Minimal ouput balance violation')) {
       setShow(true)
       setPersistedError(error)
     }

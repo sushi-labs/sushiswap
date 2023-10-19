@@ -42,17 +42,13 @@ export async function setTokenBalance(
   ) => {
     // Solidity mapping
     const slotData =
-      '0x' +
-      user.padStart(64, '0') +
-      Number(slotNumber).toString(16).padStart(64, '0')
+      `0x${user.padStart(64, '0')}${Number(slotNumber).toString(16).padStart(64, '0')}`
     const slot = keccak256(slotData)
     const previousValue0 = await getStorageAt(realContract, slot)
     await setStorageAt(realContract, slot, value0)
     // Vyper mapping
     const slotData2 =
-      '0x' +
-      Number(slotNumber).toString(16).padStart(64, '0') +
-      user.padStart(64, '0')
+      `0x${Number(slotNumber).toString(16).padStart(64, '0')}${user.padStart(64, '0')}`
     const slot2 = keccak256(slotData2)
     const previousValue1 = await getStorageAt(realContract, slot)
     await setStorageAt(realContract, slot2, value1)

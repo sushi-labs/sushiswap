@@ -109,7 +109,7 @@ async function getAlgebraRandomSwapParams(
     maxRes = direction ? pool.res0Max - res0 : pool.res1Max - res1
   }
   maxRes = Math.min(maxRes, 1e35)
-  const amount = getRndExpInt(rnd, Math.pow(maxRes, 1 / 4), maxRes) + 1000
+  const amount = getRndExpInt(rnd, maxRes ** (1 / 4), maxRes) + 1000
   //console.log('current price:', price, 'amount:', amount, 'direction:', direction)
 
   return [amount, direction]

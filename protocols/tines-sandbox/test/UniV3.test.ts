@@ -135,7 +135,7 @@ function checkPrice(pool: UniV3Pool) {
   try {
     const out = pool.calcOutByIn(inp, direction).out
     realPrice = out / inp
-  } catch (e) {
+  } catch (_e) {
     return
   }
   expectCloseValues(direction ? price1 : price2, realPrice, 10 / inp)
@@ -235,7 +235,7 @@ async function checkSwap(
     let amounOutTines = 0
     try {
       amounOutTines = pool.tinesPool.calcOutByIn(amountN, direction).out
-    } catch (e) {
+    } catch (_e) {
       errorThrown = true
     }
     if (!errorThrown) {

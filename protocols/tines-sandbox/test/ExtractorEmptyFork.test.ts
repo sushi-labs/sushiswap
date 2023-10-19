@@ -77,7 +77,7 @@ async function startInfinitTest(args: {
   for (;;) {
     for (let i = 0; i < tokens.length; ++i) {
       for (let j = 0; j < tokens.length; ++j) {
-        if (i == j) continue
+        if (i === j) continue
         await delay(1000)
         const time0 = performance.now()
         const pools0 = extractor.getPoolCodesForTokens(tokens)
@@ -184,7 +184,7 @@ async function simulateUserActivity(
   for (;;) {
     for (let i = 0; i < tokens.length; ++i)
       for (let j = 0; j < tokens.length; ++j) {
-        if (i == j) continue
+        if (i === j) continue
         await delay(delayValue)
         try {
           const amountIn = BigInt(1e12)
@@ -199,7 +199,7 @@ async function simulateUserActivity(
           console.log(
             `Swap simulation: ${amountIn} ${tokens[i].symbol} => ${amountOut} ${tokens[j].symbol} `,
           )
-        } catch (e) {
+        } catch (_e) {
           //
         }
       }
@@ -237,7 +237,7 @@ async function simulateUserActivity(
           console.log(
             `Mint simulation: ${tokens[i].symbol} => ${tokens[j].symbol} tokenId=${tokenId}`,
           )
-        } catch (e) {
+        } catch (_e) {
           // console.log(e)
         }
       }
@@ -252,7 +252,7 @@ async function simulateUserActivity(
           positions[i].liquidity,
         )
         console.log(`Burn simulation: ${positions[i].tokenId}`)
-      } catch (e) {
+      } catch (_e) {
         // console.log(e)
       }
     }

@@ -3,7 +3,7 @@ import { promisify } from 'util'
 import { type FullConfig } from '@playwright/test'
 const exec = promisify(childProcess.exec)
 
-async function globalTeardown(config: FullConfig) {
+async function globalTeardown(_config: FullConfig) {
   // console.log('globalTeardown')
   try {
     const { stderr, stdout } = await exec('pkill -2 anvil')

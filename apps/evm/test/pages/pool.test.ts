@@ -348,7 +348,7 @@ test.describe('V2', () => {
 
 async function createOrAddLiquidityV3(
   page: Page,
-  next: NextFixture,
+  _next: NextFixture,
   args: V3PoolArgs,
 ) {
   await handleToken(page, args.token0, 'FIRST')
@@ -403,7 +403,7 @@ async function createOrAddLiquidityV3(
 
 async function createOrAddTridentPool(
   page: Page,
-  next: NextFixture,
+  _next: NextFixture,
   args: TridentPoolArgs,
 ) {
   await handleToken(page, args.token0, 'FIRST')
@@ -427,7 +427,7 @@ async function createOrAddTridentPool(
 
   if (args.type === 'CREATE') {
     const approveBentoLocator = page.locator(
-      `[testdata-id=create-trident-approve-bentobox-button]`,
+      "[testdata-id=create-trident-approve-bentobox-button]",
     )
     await expect(approveBentoLocator).toBeVisible()
     await expect(approveBentoLocator).toBeEnabled()
@@ -471,7 +471,7 @@ async function createOrAddTridentPool(
 
 async function createOrAddV2Pool(
   page: Page,
-  next: NextFixture,
+  _next: NextFixture,
   args: V2PoolArgs,
 ) {
   await handleToken(page, args.token0, 'FIRST')
@@ -535,7 +535,7 @@ async function createOrAddV2Pool(
   expect(page.getByText(regex))
 }
 
-async function removeLiquidityV3(page: Page, next: NextFixture) {
+async function removeLiquidityV3(page: Page, _next: NextFixture) {
   await page.goto(BASE_URL)
   await page.locator('[testdata-id=my-positions-button]').click()
 
@@ -571,13 +571,13 @@ async function removeLiquidityV3(page: Page, next: NextFixture) {
 async function manageUnstakeAndClaim(page: Page) {
   await switchNetwork(page, CHAIN_ID)
 
-  const approveSlpId = `approve-token0-button`
+  const approveSlpId = "approve-token0-button"
   const approveSlpLocator = page.locator(`[testdata-id=${approveSlpId}]`)
   await expect(approveSlpLocator).toBeVisible()
   await expect(approveSlpLocator).toBeEnabled()
   await approveSlpLocator.click()
 
-  const unstakeId = `unstake-liquidity-button`
+  const unstakeId = "unstake-liquidity-button"
   const unstakeLocator = page.locator(`[testdata-id=${unstakeId}]`)
   await expect(unstakeLocator).toBeVisible()
   await expect(unstakeLocator).toBeEnabled()
@@ -599,7 +599,7 @@ async function migrateV2(page: Page, args: MigrateArgs) {
   await page.locator('[testdata-id=max-price-input]').fill(args.maxPrice)
   await page.locator('[testdata-id=max-price-input]').blur()
 
-  const approveMigrateButton = `approve-migrate-button`
+  const approveMigrateButton = "approve-migrate-button"
   const approveMigrateButtonLocator = page.locator(
     `[testdata-id=${approveMigrateButton}]`,
   )
@@ -609,7 +609,7 @@ async function migrateV2(page: Page, args: MigrateArgs) {
   await expect(approveMigrateButtonLocator).toBeEnabled()
   await approveMigrateButtonLocator.click()
 
-  const migrateButton = `migrate-button`
+  const migrateButton = "migrate-button"
   const migrateButtonLocator = page.locator(`[testdata-id=${migrateButton}]`)
   await migrateButtonLocator.scrollIntoViewIfNeeded()
 
@@ -617,7 +617,7 @@ async function migrateV2(page: Page, args: MigrateArgs) {
   await expect(migrateButtonLocator).toBeEnabled()
   await migrateButtonLocator.click()
 
-  const migrateConfirmButton = `migrate-confirm-button`
+  const migrateConfirmButton = "migrate-confirm-button"
   const migrateConfirmButtonLocator = page.locator(
     `[testdata-id=${migrateConfirmButton}]`,
   )
@@ -668,10 +668,10 @@ async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
   expect(page.getByText(regex))
 }
 
-async function removeLiquidityV2(page: Page, next: NextFixture) {
+async function removeLiquidityV2(page: Page, _next: NextFixture) {
   await switchNetwork(page, CHAIN_ID)
 
-  const removeLiquidityTabSelector = page.locator(`[testdata-id=remove-tab]`)
+  const removeLiquidityTabSelector = page.locator("[testdata-id=remove-tab]")
   await expect(removeLiquidityTabSelector).toBeVisible()
   await removeLiquidityTabSelector.click()
 
@@ -851,7 +851,7 @@ async function mockTokenApi(page: Page, tokens: Token[]) {
 }
 
 async function mockPoolApi(
-  page: Page,
+  _page: Page,
   next: NextFixture,
   token0: Token,
   token1: Token,

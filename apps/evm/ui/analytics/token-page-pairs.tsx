@@ -49,7 +49,7 @@ export const TokenPairs: FC<TokenPairs> = ({ token }) => {
         <TableBody>
           {pools &&
             token.pairs.map(({ pair }, i) => {
-              const pool = pools.find((pool) => pool.id === pair.id)
+              const _pool = pools.find((pool) => pool.id === pair.id)
 
               const [token0, token1] = [
                 pair.token0.id === Native.onChain(token.chainId).wrapped.address

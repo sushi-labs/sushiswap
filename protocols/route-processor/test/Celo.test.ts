@@ -26,7 +26,7 @@ async function makeSwap(
   signer: Signer,
   fromToken: Type,
   toToken: Type,
-  from: string,
+  _from: string,
   to: string,
   amountIn: bigint,
 ): Promise<number | undefined> {

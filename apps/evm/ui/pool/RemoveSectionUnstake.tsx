@@ -165,7 +165,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot(
                 <Checker.Guard
                   size="default"
                   variant="outline"
-                  guardWhen={Boolean(balance && balance.equalTo(ZERO))}
+                  guardWhen={Boolean(balance?.equalTo(ZERO))}
                   guardText="No staked tokens"
                 >
                   <Checker.Guard

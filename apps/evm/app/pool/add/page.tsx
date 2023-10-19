@@ -51,7 +51,7 @@ const _Add: FC = () => {
     switchTokens,
   } = useConcentratedLiquidityURLState()
 
-  const [invert, setInvert] = useState(false)
+  const [_invert, _setInvert] = useState(false)
   const { data: position } = useConcentratedPositionInfo({
     chainId,
     token0,
@@ -83,7 +83,7 @@ const _Add: FC = () => {
     () => [tryParseAmount('1', token0), tryParseAmount('1', token1)],
     [token0, token1],
   )
-  const fiatAmountsAsNumber = useTokenAmountDollarValues({
+  const _fiatAmountsAsNumber = useTokenAmountDollarValues({
     chainId,
     amounts: fiatAmounts,
   })

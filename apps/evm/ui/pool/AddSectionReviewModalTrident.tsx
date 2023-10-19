@@ -286,7 +286,7 @@ export const AddSectionReviewModalTrident: FC<
         }),
         value,
       }
-    } catch (e: unknown) {
+    } catch (_e: unknown) {
       //
     }
   }, [

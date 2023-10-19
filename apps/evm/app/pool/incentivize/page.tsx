@@ -594,7 +594,7 @@ const Incentivize = withCheckerRoot(() => {
                                             ) : null}
                                             {amount[0] ? (
                                               <List.KeyValue
-                                                title={`Total distributed`}
+                                                title={"Total distributed"}
                                               >
                                                 <div className="flex items-center gap-2">
                                                   <Currency.Icon
@@ -664,7 +664,7 @@ const Incentivize = withCheckerRoot(() => {
                                           ) : isIncentivizeLoading ? (
                                             <Dots>Incentivize Pool</Dots>
                                           ) : (
-                                            `Incentivize Pool`
+                                            "Incentivize Pool"
                                           )}
                                         </Button>
                                       </DialogFooter>
