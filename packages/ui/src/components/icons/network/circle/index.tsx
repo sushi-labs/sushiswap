@@ -29,6 +29,7 @@ import { OptimismCircle } from './OptimismCircle'
 import { PalmCircle } from './PalmCircle'
 import { PolygonCircle } from './PolygonCircle'
 import { PolygonZKCircle } from './PolygonZKCircle'
+import { ScrollCircle } from './ScrollCircle'
 import { TelosCircle } from './TelosCircle'
 import { ThunderCoreCircle } from './ThunderCoreCircle'
 
@@ -60,6 +61,7 @@ export * from './OptimismCircle'
 export * from './PalmCircle'
 export * from './PolygonCircle'
 export * from './PolygonZKCircle'
+export * from './ScrollCircle'
 export * from './TelosCircle'
 export * from './ThunderCoreCircle'
 
@@ -95,4 +97,5 @@ export const NETWORK_CIRCLE_ICON: Record<number, IconComponent> = {
   [ChainId.ZKSYNC_ERA]: EthereumCircle,
   [ChainId.LINEA]: LineaCircle,
   [ChainId.BASE]: BaseCircle,
+  [ChainId.SCROLL]: ScrollCircle
 }
