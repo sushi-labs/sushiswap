@@ -36,11 +36,11 @@ import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTablePagination } from './data-table-pagination'
 
 declare module '@tanstack/react-table' {
+  // biome-ignore lint/correctness/noUnusedVariables: <explanation>
   interface ColumnMeta<TData extends RowData, TValue> {
     className?: string
     skeleton?: React.ReactNode
     headerDescription?: string
-    columnDef: ColumnMeta<TData, TValue>
   }
 }
 
