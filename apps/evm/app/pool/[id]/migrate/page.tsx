@@ -1,5 +1,3 @@
-'use client'
-
 import { LinkInternal } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import React from 'react'
