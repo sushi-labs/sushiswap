@@ -36,7 +36,7 @@ const Icons: Record<string, React.ElementType> = {
   'XDEFI Wallet': XDEFIWalletIcon,
 }
 
-export const ConnectButton: FC<ButtonProps> = ({ children, ...props }) => {
+export const ConnectButton: FC<ButtonProps> = ({ children: _children, ...props }) => {
   const { connectors, connect, pendingConnector } = useConnect()
 
   const onSelect = useCallback(
@@ -96,8 +96,8 @@ export const ConnectButton: FC<ButtonProps> = ({ children, ...props }) => {
                 {connector.name === 'Safe'
                   ? 'Gnosis Safe'
                   : connector.name === 'WalletConnectLegacy'
-                  ? 'WalletConnect'
-                  : connector.name}
+                    ? 'WalletConnect'
+                    : connector.name}
               </DropdownMenuItem>
             )
           })}

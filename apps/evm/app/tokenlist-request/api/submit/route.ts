@@ -108,10 +108,10 @@ export async function POST(request: NextRequest) {
         },
       )
 
-      const newBranches = data.reduce(
-        (acc: string[], e: { name: string }) => [...acc, e.name],
-        [] as string[],
-      )
+      const newBranches = data.reduce((acc: string[], e: { name: string }) => {
+        acc.push(e.name)
+        return acc
+      }, [] as string[])
 
       branches.push(...newBranches)
 

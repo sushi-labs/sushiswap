@@ -333,15 +333,17 @@ export const usePinnedTokens = () => {
         setValue(value)
       }
     })
-  }, [value])
+  }, [setValue])
 
   const addPinnedToken = useCallback(
     (currencyId: string) => {
       const [chainId, address] = currencyId.split(':')
-      value[chainId] = Array.from(
-        new Set([...value[chainId], `${chainId}:${getAddress(address)}`]),
-      )
-      setValue(value)
+      setValue((value) => {
+        value[chainId] = Array.from(
+          new Set([...value[chainId], `${chainId}:${getAddress(address)}`]),
+        )
+        return value
+      })
     },
     [setValue],
   )
@@ -349,14 +351,16 @@ export const usePinnedTokens = () => {
   const removePinnedToken = useCallback(
     (currencyId: string) => {
       const [chainId, address] = currencyId.split(':')
-      value[chainId] = Array.from(
-        new Set(
-          value[chainId].filter(
-            (token) => token !== `${chainId}:${getAddress(address)}`,
+      setValue((value) => {
+        value[chainId] = Array.from(
+          new Set(
+            value[chainId].filter(
+              (token) => token !== `${chainId}:${getAddress(address)}`,
+            ),
           ),
-        ),
-      )
-      setValue(value)
+        )
+        return value
+      })
     },
     [setValue],
   )

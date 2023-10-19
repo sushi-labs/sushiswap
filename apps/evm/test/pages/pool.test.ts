@@ -587,49 +587,49 @@ async function manageUnstakeAndClaim(page: Page) {
   expect(page.getByText(regex))
 }
 
-async function migrateV2(page: Page, args: MigrateArgs) {
-  await switchNetwork(page, CHAIN_ID)
+// async function migrateV2(page: Page, args: MigrateArgs) {
+//   await switchNetwork(page, CHAIN_ID)
 
-  const feeOptionSelector = page.locator('[testdata-id=fee-option-10000]')
-  await expect(feeOptionSelector).toBeEnabled()
-  await feeOptionSelector.click()
-  await expect(feeOptionSelector).toHaveAttribute('data-state', 'on')
+//   const feeOptionSelector = page.locator('[testdata-id=fee-option-10000]')
+//   await expect(feeOptionSelector).toBeEnabled()
+//   await feeOptionSelector.click()
+//   await expect(feeOptionSelector).toHaveAttribute('data-state', 'on')
 
-  await page.locator('[testdata-id=min-price-input]').fill(args.minPrice)
-  await page.locator('[testdata-id=max-price-input]').fill(args.maxPrice)
-  await page.locator('[testdata-id=max-price-input]').blur()
+//   await page.locator('[testdata-id=min-price-input]').fill(args.minPrice)
+//   await page.locator('[testdata-id=max-price-input]').fill(args.maxPrice)
+//   await page.locator('[testdata-id=max-price-input]').blur()
 
-  const approveMigrateButton = 'approve-migrate-button'
-  const approveMigrateButtonLocator = page.locator(
-    `[testdata-id=${approveMigrateButton}]`,
-  )
-  await approveMigrateButtonLocator.scrollIntoViewIfNeeded()
+//   const approveMigrateButton = 'approve-migrate-button'
+//   const approveMigrateButtonLocator = page.locator(
+//     `[testdata-id=${approveMigrateButton}]`,
+//   )
+//   await approveMigrateButtonLocator.scrollIntoViewIfNeeded()
 
-  await expect(approveMigrateButtonLocator).toBeVisible()
-  await expect(approveMigrateButtonLocator).toBeEnabled()
-  await approveMigrateButtonLocator.click()
+//   await expect(approveMigrateButtonLocator).toBeVisible()
+//   await expect(approveMigrateButtonLocator).toBeEnabled()
+//   await approveMigrateButtonLocator.click()
 
-  const migrateButton = 'migrate-button'
-  const migrateButtonLocator = page.locator(`[testdata-id=${migrateButton}]`)
-  await migrateButtonLocator.scrollIntoViewIfNeeded()
+//   const migrateButton = 'migrate-button'
+//   const migrateButtonLocator = page.locator(`[testdata-id=${migrateButton}]`)
+//   await migrateButtonLocator.scrollIntoViewIfNeeded()
 
-  await expect(migrateButtonLocator).toBeVisible()
-  await expect(migrateButtonLocator).toBeEnabled()
-  await migrateButtonLocator.click()
+//   await expect(migrateButtonLocator).toBeVisible()
+//   await expect(migrateButtonLocator).toBeEnabled()
+//   await migrateButtonLocator.click()
 
-  const migrateConfirmButton = 'migrate-confirm-button'
-  const migrateConfirmButtonLocator = page.locator(
-    `[testdata-id=${migrateConfirmButton}]`,
-  )
-  await migrateConfirmButtonLocator.scrollIntoViewIfNeeded()
+//   const migrateConfirmButton = 'migrate-confirm-button'
+//   const migrateConfirmButtonLocator = page.locator(
+//     `[testdata-id=${migrateConfirmButton}]`,
+//   )
+//   await migrateConfirmButtonLocator.scrollIntoViewIfNeeded()
 
-  await expect(migrateConfirmButtonLocator).toBeVisible()
-  await expect(migrateConfirmButtonLocator).toBeEnabled()
-  await migrateConfirmButtonLocator.click()
+//   await expect(migrateConfirmButtonLocator).toBeVisible()
+//   await expect(migrateConfirmButtonLocator).toBeEnabled()
+//   await migrateConfirmButtonLocator.click()
 
-  const regex = new RegExp('(Successfully migrated your liquidity)')
-  expect(page.getByText(regex))
-}
+//   const regex = new RegExp('(Successfully migrated your liquidity)')
+//   expect(page.getByText(regex))
+// }
 
 async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
   await switchNetwork(page, CHAIN_ID)

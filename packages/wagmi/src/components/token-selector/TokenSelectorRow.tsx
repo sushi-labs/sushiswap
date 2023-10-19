@@ -64,11 +64,10 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
     return (
       <div className="relative py-0.5 h-[64px]" style={style}>
         <div
-          testdata-id={`${id}-row-${
-            currency.isNative
-              ? zeroAddress
-              : currency.wrapped.address.toLowerCase()
-          }`}
+          testdata-id={`${id}-row-${currency.isNative
+            ? zeroAddress
+            : currency.wrapped.address.toLowerCase()
+            }`}
           onClick={onClick}
           onKeyDown={onClick}
           className={classNames(

@@ -31,7 +31,7 @@ import {
 } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { isAddress } from 'viem'
-import { SUPPORTED_CHAIN_IDS, isSupportedChainId, isSwapApiEnabledChainId } from '../../../config'
+import { isSupportedChainId, isSwapApiEnabledChainId } from '../../../config'
 import { useCarbonOffset } from '../../../lib/swap/useCarbonOffset'
 import { useSwapApi } from '../../../lib/swap/useSwapApi'
 
@@ -360,7 +360,7 @@ const useFallback = (chainId: ChainId) => {
 
   const resetFallback = useCallback(() => {
     setIsFallback(initialFallbackState)
-  }, [setIsFallback, initialFallbackState])
+  }, [initialFallbackState])
 
   return {
     isFallback: !swapApi || isFallback,
@@ -421,10 +421,10 @@ const useSimpleSwapTrade = () => {
         resetFallback()
       }
     })
-
     return () => unwatch()
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [resetFallback])
+
+
 
   return (isFallback ? clientTrade : apiTrade) as ReturnType<typeof useApiTrade>
 }

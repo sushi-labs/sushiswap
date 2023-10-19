@@ -578,7 +578,7 @@ export function checkRoute(
     return
   }
 
-  const multiChain = baseTokenOrNetworks instanceof Array
+  const multiChain = Array.isArray(baseTokenOrNetworks)
   const basePricesAreSet = multiChain
     ? true
     : connectedTokens.has(baseTokenOrNetworks as TToken)

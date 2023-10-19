@@ -259,7 +259,7 @@ export default function computeSurroundingTicks(
 
 interface FormatTickPriceArgs {
   price: Price<Token, Token> | undefined
-  atLimit: { [bound in Bound]?: boolean | undefined }
+  atLimit: { [_bound in Bound]?: boolean | undefined }
   direction: Bound
   placeholder?: string
 }

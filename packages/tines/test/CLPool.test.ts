@@ -118,7 +118,7 @@ function getRandomCLPool(
 function getMaxInputApprox(pool: CLRPool, direction: boolean): number {
   let prevOutput = -1
   let input = 10
-  // eslint-disable-next-line no-constant-condition
+  // biome-ignore lint/correctness/noConstantCondition: <explanation>
   while (1) {
     const output = pool.calcOutByIn(input, direction).out
     if (output === prevOutput) {

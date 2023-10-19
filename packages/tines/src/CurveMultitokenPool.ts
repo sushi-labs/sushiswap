@@ -128,7 +128,9 @@ class CurveMultitokenCore {
     const AnnS = this.Ann * s
     for (let i = 0; i < 256; i++) {
       let dP = D
-      this.reservesRated.forEach((r) => (dP = (dP * D) / r))
+      this.reservesRated.forEach((r) => {
+        dP = (dP * D) / r
+      })
       dP = dP / this.nn
       prevD = D
       // D = (Ann * S + D_P * N_COINS) * D / ((Ann - 1) * D + (N_COINS + 1) * D_P)

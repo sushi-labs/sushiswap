@@ -1,5 +1,5 @@
 import GhostContentAPI from '@tryghost/content-api'
-import type { ArticleSchema } from './validate'
+import { ArticleSchema } from './validate'
 
 export function getGhostClient() {
   return new GhostContentAPI({
@@ -9,9 +9,9 @@ export function getGhostClient() {
   })
 }
 
-export async function addBodyToArticle(
-  article: typeof ArticleSchema['_output'],
-) {
+type Article = typeof ArticleSchema['_output']
+
+export async function addBodyToArticle(article: Article) {
   const ghostClient = getGhostClient()
   const { html } = await ghostClient.posts.read({
     slug: article.attributes.ghostSlug,

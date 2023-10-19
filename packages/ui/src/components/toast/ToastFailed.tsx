@@ -10,17 +10,17 @@ interface ToastFailed extends ResolvedNotification {
 
 export const ToastFailed: FC<ToastFailed> = ({
   href,
-  type,
+  type: _type,
   chainId,
   txHash,
-  onDismiss,
+  onDismiss: _onDismiss,
   summary,
 }) => {
   const txUrl = href
     ? href
     : txHash
-    ? Chain.from(chainId)?.getTxUrl(txHash)
-    : ''
+      ? Chain.from(chainId)?.getTxUrl(txHash)
+      : ''
   return (
     <>
       <ToastContent href={txUrl} summary={summary} />

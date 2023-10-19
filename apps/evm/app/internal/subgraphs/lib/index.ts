@@ -29,7 +29,7 @@ const CATEGORIES = {
   OTHER: {},
 } as const
 
-type CategoryKey = keyof typeof CATEGORIES
+// type CategoryKey = keyof typeof CATEGORIES
 // type Category = typeof CATEGORIES[CategoryKey]
 
 const NODE_URLS: Record<number, string> = {
@@ -40,13 +40,10 @@ const NODE_URLS: Record<number, string> = {
         chainId in SUBGRAPH_HOST,
     )
     .filter((chainId) => SUBGRAPH_HOST[chainId] === GRAPH_HOST)
-    .reduce(
-      (acc, chainId) => ({
-        ...acc,
-        [Number(chainId)]: 'api.thegraph.com/index-node/graphql',
-      }),
-      {},
-    ),
+    .reduce((acc, chainId) => {
+      acc[Number(chainId)] = 'api.thegraph.com/index-node/graphql'
+      return acc
+    }, {} as Record<number, string>),
   [ChainId.KAVA]: 'pvt-metrics.graph.kava.io/graphql',
   // [ChainId.METIS]: '',
 }

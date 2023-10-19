@@ -439,8 +439,7 @@ export class Graph {
     minPriceLiquidity = 0,
     priceLogging = false,
   ) {
-    const networks: NetworkInfo[] =
-      baseTokenOrNetworks instanceof Array
+    const networks: NetworkInfo[] =Array.isArray(baseTokenOrNetworks)
         ? baseTokenOrNetworks
         : [
             {
@@ -784,7 +783,7 @@ export class Graph {
             closestVert as Vertice,
             (closestVert as Vertice).bestIncome,
           )
-          if (!isFinite(out) || !isFinite(gasSpent))
+          if (!Number.isFinite(out) || !Number.isFinite(gasSpent))
             // Math errors protection
             return
 
@@ -904,7 +903,7 @@ export class Graph {
             closestVert as Vertice,
             (closestVert as Vertice).bestIncome,
           )
-          if (!isFinite(inp) || !isFinite(gasSpent))
+          if (!Number.isFinite(inp) || !Number.isFinite(gasSpent))
             // Math errors protection
             return
           if (inp < 0) return // No enouph liquidity in the pool

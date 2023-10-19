@@ -46,7 +46,7 @@ export const SteerManual: FC<ManualProps> = ({ address, chainId }) => {
     ]
 
     return invertTokens ? tokens.reverse() : tokens
-  }, [invertTokens, poolStats?.token0, poolStats?.token1])
+  }, [invertTokens, poolStats])
 
   return (
     <Card>

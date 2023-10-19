@@ -203,7 +203,7 @@ export const CreateSectionReviewModalTrident: FC<
         groupTimestamp: ts,
       })
     },
-    [chain?.id, token0, token1, address],
+    [chain, token0, token1, address],
   )
 
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {

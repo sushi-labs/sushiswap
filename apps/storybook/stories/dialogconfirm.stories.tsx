@@ -144,6 +144,7 @@ export const Success = {
   },
 } satisfies Story
 
+// biome-ignore lint/suspicious/noShadowRestrictedNames: This is a storybook
 export const Error = {
   storyName: 'Error',
   args: { chainId: 1, status: 'error' },

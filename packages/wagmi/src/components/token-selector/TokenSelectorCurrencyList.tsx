@@ -48,9 +48,9 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> =
           balancesMap?.[currency.isNative ? NativeAddress : currency.address],
         price:
           pricesMap?.[
-            currency.isNative
-              ? Native.onChain(currency.chainId).wrapped.address
-              : currency.address
+          currency.isNative
+            ? Native.onChain(currency.chainId).wrapped.address
+            : currency.address
           ],
         showWarning: currency.isNative
           ? false
@@ -58,15 +58,15 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> =
         onSelect: () => onSelect(currency),
         pin: pin
           ? {
-              onPin: () => pin?.onPin(currency.id),
-              isPinned: pin.isPinned(currency.id),
-            }
+            onPin: () => pin?.onPin(currency.id),
+            isPinned: pin.isPinned(currency.id),
+          }
           : undefined,
         selected: selected
           ? (currency.isNative === true && selected.isNative === true) ||
-            (selected.isToken &&
-              currency.isToken &&
-              currency.wrapped.address === selected.wrapped.address)
+          (selected.isToken &&
+            currency.isToken &&
+            currency.wrapped.address === selected.wrapped.address)
           : false,
         isBalanceLoading,
       }))
@@ -76,6 +76,7 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> =
       balancesMap,
       currencies,
       id,
+      officialTokenIds,
       onSelect,
       pricesMap,
       selected,

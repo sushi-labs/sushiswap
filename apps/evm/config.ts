@@ -64,7 +64,12 @@ export const SUPPORTED_CHAIN_IDS = Array.from(
     ...CHAIN_IDS,
   ]),
 ).filter(
-  (c): c is Exclude<typeof CHAIN_IDS[number], typeof TESTNET_CHAIN_IDS[number] | typeof DISABLED_CHAIN_IDS[number]> =>
+  (
+    c,
+  ): c is Exclude<
+    typeof CHAIN_IDS[number],
+    typeof TESTNET_CHAIN_IDS[number] | typeof DISABLED_CHAIN_IDS[number]
+  > =>
     !TESTNET_CHAIN_IDS.includes(c as typeof TESTNET_CHAIN_IDS[number]) &&
     !DISABLED_CHAIN_IDS.includes(c as typeof DISABLED_CHAIN_IDS[number]),
 )
@@ -73,15 +78,15 @@ export type SupportedChainId = typeof SUPPORTED_CHAIN_IDS[number]
 export const isSupportedChainId = (
   chainId: number,
 ): chainId is SupportedChainId =>
-SUPPORTED_CHAIN_IDS.includes(chainId as SupportedChainId)
+  SUPPORTED_CHAIN_IDS.includes(chainId as SupportedChainId)
 
 export type Config = {
-  [chainId in SupportedChainId]: {
+  [_chainId in SupportedChainId]: {
     stables: Currency[]
     lsds: Currency[]
   }
 }
 
 export const config = {
-  [ChainId.ETHEREUM]: {}
+  [ChainId.ETHEREUM]: {},
 }

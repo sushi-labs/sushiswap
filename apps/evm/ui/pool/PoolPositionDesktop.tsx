@@ -14,7 +14,7 @@ interface PoolPositionProps {
 }
 
 export const PoolPositionDesktop: FC<PoolPositionProps> = () => {
-  const { underlying1, underlying0, value1, value0, isError, isLoading } =
+  const { underlying1, underlying0, value1, value0, isLoading } =
     usePoolPosition()
 
   return (

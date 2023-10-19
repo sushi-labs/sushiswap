@@ -137,7 +137,7 @@ export const Ecosystem: FC = () => {
                 ({
                   title,
                   content,
-                  image,
+                  image: _image,
                   summary,
                   link,
                   linkText,

@@ -109,7 +109,7 @@ export const useConcentratedLiquidityPositions = ({
                     ),
                   ),
               )
-              if (isNaN(price) || price < 0.000001) {
+              if (Number.isNaN(price) || price < 0.000001) {
                 return 0
               }
 

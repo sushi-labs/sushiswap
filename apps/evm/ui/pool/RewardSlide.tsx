@@ -84,7 +84,9 @@ export const RewardSlide: FC<RewardSlide> = ({ address, data }) => {
                   }),
                 )
                   .reduce<ReactNode[]>((previousValue, currentValue) => {
-                    return [...previousValue, currentValue, '+']
+                    previousValue.push(currentValue)
+                    previousValue.push('+')
+                    return previousValue
                   }, [])
                   .slice(0, -1)
               )}

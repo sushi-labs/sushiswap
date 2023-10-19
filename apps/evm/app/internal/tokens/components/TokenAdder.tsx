@@ -111,6 +111,7 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
             />
             <div
               onClick={(e) => submitToken(e)}
+              onKeyDown={(e) => submitToken(e)}
               className="flex items-center justify-center w-6 h-6 rounded-md bg-slate-700"
             >
               {addState === 'ready' && (

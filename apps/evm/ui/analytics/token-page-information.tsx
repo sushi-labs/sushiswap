@@ -64,6 +64,7 @@ export const TokenInformation: FC<TokenInformation> = ({ token }) => {
                 {({ setCopied }) => (
                   <span
                     onClick={() => setCopied(_token.wrapped.address)}
+                    onKeyDown={() => setCopied(_token.wrapped.address)}
                     className="text-sm font-medium"
                   >
                     {shortenAddress(_token.wrapped.address)}

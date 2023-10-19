@@ -24,6 +24,7 @@ export const Difficulties: FC<Difficulties> = ({
         const { color } = DIFFICULTY_ELEMENTS[slug]
         return (
           <button
+            type="button"
             key={i}
             onClick={() => onSelect(difficulty)}
             className="text-sm px-4 font-semibold h-[38px] rounded-lg flex items-center gap-2.5 border hover:opacity-90"

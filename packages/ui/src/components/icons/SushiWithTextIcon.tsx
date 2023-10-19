@@ -35,17 +35,17 @@ export const SushiWithTextIcon: IconComponent = (props) => {
           y2="31.385"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#27B0E6"></stop>
-          <stop offset="0.107" stopColor="#49A1DB"></stop>
-          <stop offset="0.288" stopColor="#7D8ACA"></stop>
-          <stop offset="0.445" stopColor="#A279BD"></stop>
-          <stop offset="0.572" stopColor="#BA6FB6"></stop>
-          <stop offset="0.651" stopColor="#C26BB3"></stop>
-          <stop offset="0.678" stopColor="#D563AD"></stop>
-          <stop offset="0.715" stopColor="#E65BA7"></stop>
-          <stop offset="0.76" stopColor="#F156A3"></stop>
-          <stop offset="0.824" stopColor="#F853A1"></stop>
-          <stop offset="1" stopColor="#FA52A0"></stop>
+          <stop stopColor="#27B0E6" />
+          <stop offset="0.107" stopColor="#49A1DB" />
+          <stop offset="0.288" stopColor="#7D8ACA" />
+          <stop offset="0.445" stopColor="#A279BD" />
+          <stop offset="0.572" stopColor="#BA6FB6" />
+          <stop offset="0.651" stopColor="#C26BB3" />
+          <stop offset="0.678" stopColor="#D563AD" />
+          <stop offset="0.715" stopColor="#E65BA7" />
+          <stop offset="0.76" stopColor="#F156A3" />
+          <stop offset="0.824" stopColor="#F853A1" />
+          <stop offset="1" stopColor="#FA52A0" />
         </linearGradient>
       </defs>
     </svg>

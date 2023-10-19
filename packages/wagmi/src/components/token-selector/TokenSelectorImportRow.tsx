@@ -43,7 +43,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
     } else {
       setOpen(false)
     }
-  }, [onImport])
+  }, [onImport, tokenSecurity])
 
   return (
     <Dialog>
