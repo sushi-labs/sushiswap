@@ -47,6 +47,7 @@ export const ChainId = {
   ZKSYNC_ERA: 324,
   LINEA: 59144,
   BASE: 8453,
+  SCROLL: 534352,
 } as const
 export type ChainId = typeof ChainId[keyof typeof ChainId]
 
@@ -119,5 +120,6 @@ export const ChainKey = {
   [ChainId.BASE]: 'base',
   // [ChainId.FILECOIN]: 'filecoin',
   // [ChainId.SEPOLIA]: 'sepolia',
+  [ChainId.SCROLL]: 'scroll',
 } as const
 export type ChainKey = typeof ChainKey[keyof typeof ChainKey]

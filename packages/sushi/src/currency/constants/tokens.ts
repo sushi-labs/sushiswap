@@ -589,6 +589,7 @@ export const WNATIVE = {
   [ChainId.ZKSYNC_ERA]: WETH9[ChainId.ZKSYNC_ERA],
   [ChainId.LINEA]: WETH9[ChainId.LINEA],
   [ChainId.BASE]: WETH9[ChainId.BASE],
+  [ChainId.SCROLL]: WETH9[ChainId.SCROLL]
 } as const
 
 export const SUSHI = addressMapToTokenMap(

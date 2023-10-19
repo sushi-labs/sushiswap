@@ -325,4 +325,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDC[ChainId.BASE],
     DAI[ChainId.BASE],
   ],
+  [ChainId.SCROLL]: [
+    WNATIVE[ChainId.SCROLL],
+    WBTC[ChainId.SCROLL],
+    USDC[ChainId.SCROLL],
+    USDT[ChainId.SCROLL]
+  ]
 }

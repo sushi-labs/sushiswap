@@ -39,6 +39,14 @@ module.exports.defaultConfig = {
           browserURL: 'https://andromeda-explorer.metis.io',
         },
       },
+      {
+        network: 'scroll',
+        chainId: 534352,
+        urls: {
+          apiURL: 'https://api.scrollscan.com/api',
+          browserURL: 'https://scrollscan.com/',
+        }
+      }
     ],
     apiKey: {
       mainnet: process.env.ETHERSCAN_API_KEY || '',
@@ -84,6 +92,7 @@ module.exports.defaultConfig = {
       // bobaAvax: 'api-key',
       bttc: process.env.BTTC_API_KEY || '',
       gnosis: process.env.GNOSIS_API_KEY || '',
+      scroll: process.env.SCROLL_API_KEY || '',
     },
   },
   tenderly: {
@@ -492,6 +501,13 @@ module.exports.defaultConfig = {
       live: true,
       saveDeployments: true,
     },
+    scroll: {
+      url: 'https://rpc.scroll.io/',
+      accounts,
+      chainId: 534352,
+      live: true,
+      saveDeployments: true,
+    }
   },
   namedAccounts: {
     // e.g. ledger://0x18dd4e0Eb8699eA4fee238dE41ecF115e32272F8
