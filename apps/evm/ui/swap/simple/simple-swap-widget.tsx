@@ -1,4 +1,3 @@
-import {useToast,} from "@sushiswap/ui";
 import {CrossChainBanner} from "../cross-chain-banner";
 import {SwapModeButtons} from "../swap-mode-buttons";
 import {SimpleSwapHeader} from "./simple-swap-header";
@@ -10,10 +9,7 @@ import {SimpleSwapToken1Input} from "./simple-swap-token1-input";
 import {SimpleSwapTradeButton} from "./simple-swap-trade-button";
 import {SimpleSwapTradeStats} from "./simple-swap-trade-stats";
 
-let i = 0;
 export const SimpleSwapWidget = () => {
-	const { toast } = useToast();
-
 	return (
 		<div className="flex flex-col gap-4">
 			<SimpleSwapHeader />
