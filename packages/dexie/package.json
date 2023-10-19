@@ -35,7 +35,6 @@
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/typescript-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
     "@types/lodash.groupby": "4.6.7",
@@ -47,7 +46,7 @@
     "typescript": "5.2.2"
   },
   "peerDependencies": {
-    "next": "13.4.19",
+    "next": "13.5.3",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   }

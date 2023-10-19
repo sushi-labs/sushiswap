@@ -56,7 +56,7 @@
     "fast-json-stable-stringify": "2.1.0",
     "framer-motion": "7.10.3",
     "nanoid": "4.0.0",
-    "next": "13.4.19",
+    "next": "13.5.3",
     "next-axiom": "1.0.0",
     "next-themes": "0.2.1",
     "octokit": "2.1.0",
