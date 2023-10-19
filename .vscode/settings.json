@@ -7,7 +7,6 @@
   "editor.defaultFormatter": "biomejs.biome",
   "editor.formatOnPaste": false,
   "editor.formatOnSave": false,
-  "biome.lspBin": "node_modules/.bin/biome-lsp",
   "editor.quickSuggestions": {
     "strings": "on"
   },

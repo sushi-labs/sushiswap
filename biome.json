@@ -30,7 +30,7 @@
     "enabled": true,
     "formatWithErrors": false,
     "indentStyle": "space",
-    "indentSize": 2,
+    "indentWidth": 2,
     "lineWidth": 80
   },
   "linter": {
@@ -41,10 +41,10 @@
         "noSvgWithoutTitle": "off"
       },
       "correctness": {
-        "noUnusedVariables": "error"
+        "noUnusedVariables": "error",
+        "useExhaustiveDependencies": "error"
       },
       "nursery": {
-        "useExhaustiveDependencies": "error",
         "useGroupedTypeImport": "off"
       },
       "performance": {

@@ -50,9 +50,6 @@ const PREFERRED_CHAINID_ORDER = [
   ChainId.HARMONY,
 ] as const
 
-// const INCLUDED_PREFERRED_CHAIN_IDS = PREFERRED_CHAINID_ORDER.filter((el) => networks.includes(el as T))
-// return Array.from(new Set([...INCLUDED_PREFERRED_CHAIN_IDS, ...networks]))
-
 export const CHAIN_IDS = [
   ...TridentChainIds,
   ...SushiSwapV2ChainIds,
@@ -67,12 +64,12 @@ export const SUPPORTED_CHAIN_IDS = Array.from(
     ...CHAIN_IDS,
   ]),
 ).filter(
-  (c) =>
+  (c): c is Exclude<typeof CHAIN_IDS[number], typeof TESTNET_CHAIN_IDS[number] | typeof DISABLED_CHAIN_IDS[number]> =>
     !TESTNET_CHAIN_IDS.includes(c as typeof TESTNET_CHAIN_IDS[number]) &&
     !DISABLED_CHAIN_IDS.includes(c as typeof DISABLED_CHAIN_IDS[number]),
 )
 
-export type SupportedChainId = Exclude<typeof CHAIN_IDS[number], typeof TESTNET_CHAIN_IDS[number] | typeof DISABLED_CHAIN_IDS[number]>
+export type SupportedChainId = typeof SUPPORTED_CHAIN_IDS[number]
 export const isSupportedChainId = (
   chainId: number,
 ): chainId is SupportedChainId =>
@@ -82,6 +79,9 @@ export type Config = {
   [chainId in SupportedChainId]: {
     stables: Currency[]
     lsds: Currency[]
-    tokenLists: []
   }
+}
+
+export const config = {
+  [ChainId.ETHEREUM]: {}
 }

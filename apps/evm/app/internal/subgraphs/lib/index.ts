@@ -30,7 +30,7 @@ const CATEGORIES = {
 } as const
 
 type CategoryKey = keyof typeof CATEGORIES
-type Category = typeof CATEGORIES[CategoryKey]
+// type Category = typeof CATEGORIES[CategoryKey]
 
 const NODE_URLS: Record<number, string> = {
   ...Object.keys(SUBGRAPH_HOST)
