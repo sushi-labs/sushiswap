@@ -2,11 +2,12 @@
 const defaultNextConfig = {
   reactStrictMode: true,
   productionBrowserSourceMaps: true,
-  swcMinify: false,
+  swcMinify: true,
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
   experimental: {
     esmExternals: 'loose',
+    // Prepare for Next.js 13.5.4+
     // optimizePackageImports: [
     //   '@heroicons/react-v1/solid',
     //   '@heroicons/react-v1/outline',
