@@ -1,10 +1,10 @@
+import { DataFetcher, RPParams, Router } from '@sushiswap/router'
+import { MultiRoute, RouteStatus } from '@sushiswap/tines'
 import { erc20Abi, routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Native, Token } from 'sushi/currency'
-import { DataFetcher, Router, RPParams } from '@sushiswap/router'
-import { MultiRoute, RouteStatus } from '@sushiswap/tines'
-import { Address, createPublicClient, http, PublicClient } from 'viem'
-import { base, Chain } from 'viem/chains'
+import { http, Address, PublicClient, createPublicClient } from 'viem'
+import { Chain, base } from 'viem/chains'
 
 const ROUTE_PROCESSOR_3_ADDRESS: Record<number, Address> = {
   [ChainId.ARBITRUM]: '0xfc506AaA1340b4dedFfd88bE278bEe058952D674' as Address,

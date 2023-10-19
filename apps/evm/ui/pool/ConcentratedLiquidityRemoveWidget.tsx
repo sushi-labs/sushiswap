@@ -1,9 +1,7 @@
 'use client'
 
 import { CogIcon } from '@heroicons/react/24/outline'
-import { Amount, Type } from 'sushi/currency'
 import { useDebounce } from '@sushiswap/hooks'
-import { Percent, ZERO } from 'sushi/math'
 import {
   Card,
   CardContent,
@@ -11,18 +9,18 @@ import {
   CardFooter,
   CardGroup,
   CardLabel,
-  classNames,
   IconButton,
   SettingsModule,
   SettingsOverlay,
+  classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
-  isSushiSwapV3ChainId,
   NonfungiblePositionManager,
   Position,
   SushiSwapV3ChainId,
+  isSushiSwapV3ChainId,
 } from '@sushiswap/v3-sdk'
 import {
   useNetwork,
@@ -38,11 +36,13 @@ import {
   useTransactionDeadline,
 } from '@sushiswap/wagmi/future/hooks'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
-import { Checker } from '@sushiswap/wagmi/systems'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import { Checker } from '@sushiswap/wagmi/systems'
 import { unwrapToken } from 'lib/functions'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import React, { FC, useCallback, useMemo, useState } from 'react'
+import { Amount, Type } from 'sushi/currency'
+import { Percent, ZERO } from 'sushi/math'
 import { Hex, UserRejectedRequestError } from 'viem'
 
 interface ConcentratedLiquidityRemoveWidget {

@@ -1,8 +1,8 @@
 import {
   Bundle,
-  getBuiltGraphSDK,
   Pagination,
   QuerytokensByChainIdsArgs,
+  getBuiltGraphSDK,
 } from '@sushiswap/graph-client'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 

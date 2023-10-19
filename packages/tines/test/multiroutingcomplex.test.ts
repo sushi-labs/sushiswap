@@ -1,24 +1,24 @@
 import seedrandom from 'seedrandom'
 
 import {
-  findMultiRouteExactIn,
-  findSingleRouteExactIn,
   Graph,
   MultiRoute,
   RouteStatus,
+  findMultiRouteExactIn,
+  findSingleRouteExactIn,
 } from '../src'
 import { RPool } from '../src/PrimaryPools'
 import { checkRouteResult } from './snapshots/snapshot'
 import {
+  MAX_POOL_IMBALANCE,
+  Network,
+  TToken,
   atomPrice,
   checkRoute,
   chooseRandomTokensForSwap,
   createNetwork,
   expectCloseValues,
   getRandom,
-  MAX_POOL_IMBALANCE,
-  Network,
-  TToken,
 } from './utils'
 
 const testSeed = '1' // Change it to change random generator values

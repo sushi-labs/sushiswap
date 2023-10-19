@@ -1,9 +1,9 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
 import { useNetwork } from '@sushiswap/wagmi'
 import { useParams, useSearchParams } from 'next/navigation'
 import { useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
 
 export default function useChainId() {
   const { chain } = useNetwork()

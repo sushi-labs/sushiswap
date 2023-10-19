@@ -1,8 +1,8 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
 import { Card } from '@sushiswap/ui'
 import React, { FC, useState } from 'react'
+import { ChainId } from 'sushi/chain'
 
 import { PoolChartGraph } from './PoolChartGraph'
 import { PoolChartPeriod, PoolChartPeriods } from './PoolChartPeriods'

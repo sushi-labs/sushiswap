@@ -9,7 +9,7 @@ import { useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { SubgraphTable } from './components/SubgraphTable'
-import { getSubgraphs, Subgraph } from './lib'
+import { Subgraph, getSubgraphs } from './lib'
 
 const SubgraphsPage = () => {
   const [filterBy, setFilter] = useState<string>('')

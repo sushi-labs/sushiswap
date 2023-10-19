@@ -1,10 +1,10 @@
 'use client'
 
 import { GetApiInputFromOutput, parseArgs } from '@sushiswap/client'
-import { Amount, Token } from 'sushi/currency'
 import { Rebase } from '@sushiswap/graph-client'
 import { useAllPrices } from '@sushiswap/react-query'
 import { useMemo } from 'react'
+import { Amount, Token } from 'sushi/currency'
 import useSWR from 'swr'
 
 import { bentoBoxTokensSchema } from '../schema'

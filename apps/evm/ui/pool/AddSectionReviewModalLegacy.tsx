@@ -1,4 +1,3 @@
-import { BentoBoxChainId } from 'sushi/config'
 import {
   DialogConfirm,
   DialogContent,
@@ -28,13 +27,14 @@ import {
   SendTransactionResult,
   waitForTransaction,
 } from '@sushiswap/wagmi/actions'
-import { useApproved } from '../../../../packages/wagmi/src/systems/Checker/Provider'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
 import { useTransactionDeadline } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { gasMargin, slippageAmount } from 'sushi/calculate'
+import { BentoBoxChainId } from 'sushi/config'
 import { Amount, Type } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
 import { UserRejectedRequestError, encodeFunctionData } from 'viem'

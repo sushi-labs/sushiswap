@@ -1,16 +1,16 @@
 import AlgebraFactory from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraFactory.sol/AlgebraFactory.json'
 import AlgebraPool from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraPool.sol/AlgebraPool.json'
-import { Token } from 'sushi/currency'
 import { LiquidityProviders, PoolCode } from '@sushiswap/router'
 import { Abi } from 'abitype'
+import { Token } from 'sushi/currency'
 import {
   Address,
-  getAddress,
   Hex,
-  keccak256,
   Log,
   PublicClient,
   encodeAbiParameters,
+  getAddress,
+  keccak256,
 } from 'viem'
 
 import { AlgebraEventsAbi, AlgebraPoolWatcher } from './AlgebraPoolWatcher'

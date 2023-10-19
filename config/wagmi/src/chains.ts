@@ -1,4 +1,3 @@
-import { ChainId } from 'sushi/chain'
 import type { Chain } from '@wagmi/core'
 import {
   arbitrum,
@@ -16,6 +15,7 @@ import {
   telos,
   zkSync,
 } from '@wagmi/core/chains'
+import { ChainId } from 'sushi/chain'
 
 export const defaultChains: Chain[] = [
   arbitrum,

@@ -6,18 +6,18 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  classNames,
+  Collapsible,
   HoverCard,
   HoverCardContent,
   HoverCardPrimitive,
   HoverCardTrigger,
   IconButton,
   Label,
+  LinkExternal,
   TextField,
+  classNames,
 } from '@sushiswap/ui'
-import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
 import { FC } from 'react'
-
 import { usePersistedSlippageError } from '../../../lib/hooks'
 
 export const SimpleSwapErrorMessage: FC<{
@@ -87,13 +87,12 @@ export const SimpleSwapErrorMessage: FC<{
                               user-designated range, the transaction will
                               revert.
                             </p>
-                            <a
+                            <LinkExternal
                               className="text-blue hover:underline"
-                              target="_blank"
                               href="https://www.sushi.com/academy/articles/what-is-slippage-price-impact"
                             >
                               Learn more
-                            </a>
+                            </LinkExternal>
                           </CardDescription>
                         </CardHeader>
                       </HoverCardContent>

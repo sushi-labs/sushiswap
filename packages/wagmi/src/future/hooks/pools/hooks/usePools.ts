@@ -1,6 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
 import { getAllPools } from '../actions/getAllPools'
 import { UsePoolsParams } from '../types'
-import { useQuery } from '@tanstack/react-query'
 
 export const usePools = ({ enabled = true, ...variables }: UsePoolsParams) => {
   const { chainId, currencyA, currencyB } = variables

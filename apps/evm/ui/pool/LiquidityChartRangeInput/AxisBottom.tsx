@@ -1,8 +1,8 @@
 import {
   Axis as d3Axis,
-  axisBottom,
   NumberValue,
   ScaleLinear,
+  axisBottom,
   select,
 } from 'd3'
 import React, { FC, useMemo } from 'react'

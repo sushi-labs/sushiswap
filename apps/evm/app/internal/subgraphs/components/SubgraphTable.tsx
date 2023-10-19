@@ -1,8 +1,6 @@
 'use client'
 
 import { RefreshIcon } from '@heroicons/react-v1/solid'
-import { ChainId, chainName } from 'sushi/chain'
-import { formatNumber, formatPercent } from 'sushi/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import {
   Card,
@@ -19,10 +17,12 @@ import {
 } from '@sushiswap/ui'
 import {
   ColumnDef,
-  createColumnHelper,
   PaginationState,
+  createColumnHelper,
 } from '@tanstack/react-table'
 import { useState } from 'react'
+import { ChainId, chainName } from 'sushi/chain'
+import { formatNumber, formatPercent } from 'sushi/format'
 
 import { Subgraph } from '../lib'
 

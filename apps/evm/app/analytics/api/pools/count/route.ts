@@ -1,4 +1,4 @@
-import { getPoolCount, PoolCountApiSchema } from '@sushiswap/client'
+import { PoolCountApiSchema, getPoolCount } from '@sushiswap/client'
 import { NextResponse } from 'next/server'
 
 export const revalidate = 3600

@@ -1,5 +1,5 @@
 import { PlusCircleIcon } from '@heroicons/react/24/solid'
-import { classNames, LinkInternal } from '@sushiswap/ui'
+import { LinkInternal, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { FC, ReactNode } from 'react'
 

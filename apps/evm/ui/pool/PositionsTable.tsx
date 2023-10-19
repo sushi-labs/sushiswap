@@ -1,6 +1,6 @@
-import { Slot } from '@sushiswap/ui/components/slot'
 import { Protocol } from '@sushiswap/client'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
+import { Slot } from '@sushiswap/ui/components/slot'
 import { useAccount } from '@sushiswap/wagmi'
 import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import { SUPPORTED_CHAIN_IDS } from 'config'

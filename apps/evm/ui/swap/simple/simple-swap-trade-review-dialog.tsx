@@ -2,18 +2,9 @@
 
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { UseTradeReturn } from '@sushiswap/react-query'
-import {
-  ROUTE_PROCESSOR_3_1_ADDRESS,
-  ROUTE_PROCESSOR_3_2_ADDRESS,
-  ROUTE_PROCESSOR_3_ADDRESS,
-  ROUTE_PROCESSOR_ADDRESS,
-  isRouteProcessor3ChainId,
-  isRouteProcessor3_1ChainId,
-  isRouteProcessor3_2ChainId,
-  isRouteProcessorChainId,
-} from 'sushi/config'
 import { Bridge, LiquidityProviders } from '@sushiswap/router'
 import {
+  Button,
   DialogConfirm,
   DialogContent,
   DialogDescription,
@@ -22,12 +13,13 @@ import {
   DialogProvider,
   DialogReview,
   DialogTitle,
+  List,
+  SkeletonBox,
+  SkeletonText,
   classNames,
+  createErrorToast,
+  createToast,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { List } from '@sushiswap/ui/components/list/List'
-import { SkeletonBox, SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
   useAccount,
   useContractWrite,
@@ -39,23 +31,32 @@ import {
   SendTransactionResult,
   waitForTransaction,
 } from '@sushiswap/wagmi/actions'
-import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
-import { useApproved } from '../../../../../packages/wagmi/src/systems/Checker/Provider'
-import { APPROVE_TAG_SWAP } from 'lib/constants'
+import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future'
+import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
+import { log } from 'next-axiom'
+import React, { FC, ReactNode, useCallback, useRef } from 'react'
+import { routeProcessor3Abi, routeProcessorAbi } from 'sushi/abi'
+import { gasMargin } from 'sushi/calculate'
+import { Chain } from 'sushi/chain'
+import {
+  ROUTE_PROCESSOR_3_1_ADDRESS,
+  ROUTE_PROCESSOR_3_2_ADDRESS,
+  ROUTE_PROCESSOR_3_ADDRESS,
+  ROUTE_PROCESSOR_ADDRESS,
+  isRouteProcessor3ChainId,
+  isRouteProcessor3_1ChainId,
+  isRouteProcessor3_2ChainId,
+  isRouteProcessorChainId,
+} from 'sushi/config'
+import { Native } from 'sushi/currency'
+import { shortenAddress } from 'sushi/format'
+import { ZERO } from 'sushi/math'
+import { stringify } from 'viem'
+import { APPROVE_TAG_SWAP } from '../../../lib/constants'
 import {
   warningSeverity,
   warningSeverityClassName,
-} from 'lib/swap/warningSeverity'
-import { log } from 'next-axiom'
-import React, { FC, ReactNode, useCallback, useRef } from 'react'
-import { shortenAddress } from 'sushi/format'
-import { ZERO } from 'sushi/math'
-import { gasMargin } from 'sushi/calculate'
-import { routeProcessor3Abi, routeProcessorAbi } from 'sushi/abi'
-import { Chain } from 'sushi/chain'
-import { Native } from 'sushi/currency'
-import { stringify } from 'viem'
-
+} from '../../../lib/swap/warningSeverity'
 import { TradeRoutePathView } from '../trade-route-path-view'
 import {
   useDerivedStateSimpleSwap,

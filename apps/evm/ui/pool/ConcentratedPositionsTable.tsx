@@ -1,8 +1,6 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react/20/solid'
-import { Slot } from '@sushiswap/ui/components/slot'
-import { ChainId } from 'sushi/chain'
 import {
   Button,
   Card,
@@ -12,21 +10,23 @@ import {
   LinkInternal,
   Switch,
 } from '@sushiswap/ui'
+import { Slot } from '@sushiswap/ui/components/slot'
 import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future'
 import { useConcentratedLiquidityPositions } from '@sushiswap/wagmi/future/hooks'
 import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
+import { ChainId } from 'sushi/chain'
 import { Writeable } from 'zod'
 
+import { usePoolFilters } from './PoolsFiltersProvider'
 import {
   NAME_COLUMN_V3,
   POSITION_SIZE_CELL,
   POSITION_UNCLAIMED_CELL,
   PRICE_RANGE_COLUMN,
 } from './columns'
-import { usePoolFilters } from './PoolsFiltersProvider'
 
 const COLUMNS = [
   NAME_COLUMN_V3,

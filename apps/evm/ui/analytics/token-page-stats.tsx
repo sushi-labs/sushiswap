@@ -1,6 +1,6 @@
-import { formatUSD } from 'sushi/format'
 import { Token as GraphToken } from '@sushiswap/graph-client'
 import { FC } from 'react'
+import { formatUSD } from 'sushi/format'
 
 interface TokenStatsProps {
   token: GraphToken

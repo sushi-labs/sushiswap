@@ -1,6 +1,5 @@
 'use client'
 
-import { BentoBoxChainId } from 'sushi/config'
 import { Pool, Protocol } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'
@@ -25,13 +24,13 @@ import {
   SendTransactionResult,
   waitForTransaction,
 } from '@sushiswap/wagmi/actions'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { Checker } from '@sushiswap/wagmi/systems'
 import {
   useApproved,
   useSignature,
   withCheckerRoot,
-} from '../../../../packages/wagmi/src/systems/Checker/Provider'
-import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
+} from '@sushiswap/wagmi/systems/Checker/Provider'
 import {
   LiquidityOutput,
   approveMasterContractAction,
@@ -44,10 +43,11 @@ import { APPROVE_TAG_REMOVE_TRIDENT } from 'lib/constants'
 import { useTokensFromPool, useUnderlyingTokenBalanceFromPool } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import { FC, useCallback, useMemo, useState } from 'react'
-import { Percent } from 'sushi/math'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
+import { BentoBoxChainId } from 'sushi/config'
 import { Amount, Native } from 'sushi/currency'
+import { Percent } from 'sushi/math'
 
 import { usePoolPosition } from './PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'

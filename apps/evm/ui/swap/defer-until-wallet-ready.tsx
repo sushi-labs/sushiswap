@@ -1,8 +1,8 @@
 'use client'
 
 import { useInterval } from '@sushiswap/hooks'
-import { useAccount } from '@sushiswap/wagmi'
 import { Splash } from '@sushiswap/ui'
+import { useAccount } from '@sushiswap/wagmi'
 import { FC, ReactNode, useState } from 'react'
 
 export const DeferUntilWalletReady: FC<{ children: ReactNode }> = ({

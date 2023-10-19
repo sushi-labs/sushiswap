@@ -1,4 +1,4 @@
-import { area, curveStepAfter, ScaleLinear } from 'd3'
+import { ScaleLinear, area, curveStepAfter } from 'd3'
 import React, { FC, useMemo } from 'react'
 
 import { ChartEntry } from './types'

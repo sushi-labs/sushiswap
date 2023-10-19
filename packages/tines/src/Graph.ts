@@ -2,7 +2,7 @@ import { Address } from 'viem'
 
 import { ConstantProductRPool, RPool, RToken, setTokenId } from './PrimaryPools'
 import { StableSwapRPool } from './StableSwapPool'
-import { ASSERT, closeValues, DEBUG, getBigInt } from './Utils'
+import { ASSERT, DEBUG, closeValues, getBigInt } from './Utils'
 
 const ROUTER_DISTRIBUTION_PORTION = 65535
 

@@ -1,9 +1,9 @@
 'use client'
 
-import { Price, Type } from 'sushi/currency'
 import { usePrices } from '@sushiswap/react-query'
 import { classNames } from '@sushiswap/ui'
 import { FC, ReactElement, ReactNode, useCallback, useState } from 'react'
+import { Price, Type } from 'sushi/currency'
 
 interface RenderPayload {
   invert: boolean

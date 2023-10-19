@@ -3,9 +3,9 @@ import { BENTOBOX_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 import { SUSHISWAP_V2_SUPPORTED_CHAIN_IDS } from '@sushiswap/v2-sdk'
 import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { NextResponse } from 'next/server'
-import { formatNumber, formatUSD } from 'sushi/format'
 import { ChainId } from 'sushi/chain'
 import { SUSHI_ADDRESS } from 'sushi/currency'
+import { formatNumber, formatUSD } from 'sushi/format'
 import { getAddress } from 'viem'
 
 const getSushiPriceUSD = async () => {

@@ -1,14 +1,14 @@
 'use client'
 
 import { ChefType, Pool } from '@sushiswap/client'
-import { Amount, Currency, Token } from 'sushi/currency'
 import { useMasterChef } from '@sushiswap/wagmi'
 import {
   useGraphPool,
   useTokenAmountDollarValues,
   useUnderlyingTokenBalanceFromPool,
 } from 'lib/hooks'
-import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
+import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
+import { Amount, Currency, Token } from 'sushi/currency'
 
 interface PoolPositionStakedContext {
   balance: Amount<Token> | undefined

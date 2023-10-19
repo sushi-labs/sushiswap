@@ -1,6 +1,5 @@
 'use client'
 
-import { Slot } from '@sushiswap/ui/components/slot'
 import {
   GetPoolsArgs,
   Pool,
@@ -8,11 +7,13 @@ import {
   usePoolsInfinite,
 } from '@sushiswap/client'
 import { Card, CardHeader, CardTitle, DataTable, Loader } from '@sushiswap/ui'
+import { Slot } from '@sushiswap/ui/components/slot'
 import { ColumnDef, Row, SortingState, TableState } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useSWRConfig } from 'swr'
 
+import { usePoolFilters } from './PoolsFiltersProvider'
 import {
   APR_COLUMN_POOL,
   FEES_COLUMN,
@@ -22,7 +23,6 @@ import {
   VOLUME_1M_COLUMN,
   VOLUME_7D_COLUMN,
 } from './columns'
-import { usePoolFilters } from './PoolsFiltersProvider'
 
 const COLUMNS = [
   NAME_COLUMN_POOL,

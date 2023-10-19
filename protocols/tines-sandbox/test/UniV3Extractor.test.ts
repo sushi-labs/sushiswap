@@ -1,7 +1,4 @@
 import { reset } from '@nomicfoundation/hardhat-network-helpers'
-import { erc20Abi, routeProcessor2Abi } from 'sushi/abi'
-import { ChainId } from 'sushi/chain'
-import { DAI, Native, USDC, WBTC, WETH9, WNATIVE } from 'sushi/currency'
 import {
   FactoryV3,
   LogFilter2,
@@ -24,21 +21,24 @@ import ISwapRouter from '@uniswap/v3-periphery/artifacts/contracts/SwapRouter.so
 import { expect } from 'chai'
 import { network } from 'hardhat'
 import { HardhatNetworkAccountUserConfig } from 'hardhat/types'
+import { erc20Abi, routeProcessor2Abi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
+import { DAI, Native, USDC, WBTC, WETH9, WNATIVE } from 'sushi/currency'
 import {
+  http,
   Address,
+  CustomTransport,
+  Transaction,
+  WalletClient,
   createPublicClient,
   createWalletClient,
   custom,
-  CustomTransport,
-  http,
-  Transaction,
-  WalletClient,
 } from 'viem'
 import { Account, privateKeyToAccount } from 'viem/accounts'
 import {
+  Chain,
   arbitrum,
   celo,
-  Chain,
   hardhat,
   mainnet,
   optimism,

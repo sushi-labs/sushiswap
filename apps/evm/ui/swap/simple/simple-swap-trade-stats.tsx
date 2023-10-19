@@ -1,18 +1,14 @@
 'use client'
 
-import { classNames } from '@sushiswap/ui'
-import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
-import { Explainer } from '@sushiswap/ui/components/explainer'
-import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
+import { Collapsible, Explainer, SkeletonBox, classNames } from '@sushiswap/ui'
 import { Address, useAccount } from '@sushiswap/wagmi'
 import { AddressToEnsResolver } from '@sushiswap/wagmi/components/account/AddressToEnsResolver'
 import React, { FC } from 'react'
-import { shortenAddress } from 'sushi/format'
-import { ZERO } from 'sushi/math'
 import { Chain } from 'sushi/chain'
 import { Native } from 'sushi/currency'
+import { shortenAddress } from 'sushi/format'
+import { ZERO } from 'sushi/math'
 import { isAddress } from 'viem'
-
 import {
   warningSeverity,
   warningSeverityClassName,
@@ -112,7 +108,10 @@ export const SimpleSwapTradeStats: FC = () => {
               <SkeletonBox className="h-4 py-0.5 w-[40px]" />
             ) : (
               <TradeRoutePathView trade={trade}>
-                <button className="text-sm text-blue font-semibold">
+                <button
+                  type="button"
+                  className="text-sm text-blue font-semibold"
+                >
                   View
                 </button>
               </TradeRoutePathView>

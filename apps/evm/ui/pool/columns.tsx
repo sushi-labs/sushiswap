@@ -1,24 +1,24 @@
 import { Pool } from '@sushiswap/client'
-import {
-  formatNumber,
-  formatPercent,
-  formatUSD,
-  shortenAddress,
-} from 'sushi/format'
 import { AngleRewardsPool } from '@sushiswap/react-query'
 import {
-  classNames,
   NetworkIcon,
   Tooltip,
   TooltipPrimitive,
   TooltipProvider,
   TooltipTrigger,
+  classNames,
 } from '@sushiswap/ui'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future'
 import { ColumnDef } from '@tanstack/react-table'
 import { formatDistance } from 'date-fns'
 import React from 'react'
+import {
+  formatNumber,
+  formatPercent,
+  formatUSD,
+  shortenAddress,
+} from 'sushi/format'
 
 import { PositionWithPool } from '../../types'
 import { APRHoverCard } from './APRHoverCard'

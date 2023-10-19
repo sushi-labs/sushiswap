@@ -1,30 +1,30 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
-import {
-  currencyFromShortCurrencyName,
-  isShortCurrencyName,
-  Native,
-  Token,
-  Type,
-} from 'sushi/currency'
 import {
   FeeAmount,
-  isSushiSwapV3ChainId,
   SushiSwapV3ChainId,
+  isSushiSwapV3ChainId,
 } from '@sushiswap/v3-sdk'
 import { useNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, {
-  createContext,
   FC,
   ReactNode,
+  createContext,
   useContext,
   useMemo,
   useState,
 } from 'react'
+import { ChainId } from 'sushi/chain'
+import {
+  Native,
+  Token,
+  Type,
+  currencyFromShortCurrencyName,
+  isShortCurrencyName,
+} from 'sushi/currency'
 import { isAddress } from 'viem'
 import { z } from 'zod'
 

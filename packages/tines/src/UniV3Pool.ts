@@ -1,6 +1,6 @@
 import { Address } from 'viem'
 
-import { CL_MAX_TICK, CL_MIN_TICK, CLTick } from './CLPool'
+import { CLTick, CL_MAX_TICK, CL_MIN_TICK } from './CLPool'
 import {
   RPool,
   RToken,

@@ -1,8 +1,8 @@
-import { formatNumber } from 'sushi/format'
 import { AngleRewardsPool } from '@sushiswap/react-query'
 import { Row } from '@tanstack/react-table'
 import { useTokenAmountDollarValues } from 'lib/hooks'
 import { FC, useMemo } from 'react'
+import { formatNumber } from 'sushi/format'
 
 export const RewardsV3ClaimableCell: FC<Row<AngleRewardsPool>> = ({
   original,

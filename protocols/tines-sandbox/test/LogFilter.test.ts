@@ -1,5 +1,5 @@
 import { LogFilter2, LogFilterType } from '@sushiswap/extractor'
-import { createPublicClient, http, Log, parseAbiItem } from 'viem'
+import { http, Log, createPublicClient, parseAbiItem } from 'viem'
 import { mainnet } from 'viem/chains'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))

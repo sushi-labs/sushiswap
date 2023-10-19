@@ -1,9 +1,3 @@
-import {
-  tridentConstantPoolAbi,
-  tridentStablePoolAbi,
-  uniswapV2PairAbi,
-  v3baseAbi,
-} from 'sushi/abi'
 import { Protocol } from '@sushiswap/database'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import type { Address, FetchTokenResult } from '@wagmi/core'
@@ -13,6 +7,12 @@ import {
   fetchToken,
   readContracts,
 } from '@wagmi/core'
+import {
+  tridentConstantPoolAbi,
+  tridentStablePoolAbi,
+  uniswapV2PairAbi,
+  v3baseAbi,
+} from 'sushi/abi'
 
 import type { getEarnPool } from './api'
 

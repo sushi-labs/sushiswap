@@ -56,7 +56,7 @@ import { Checker } from '@sushiswap/wagmi/systems'
 import {
   useApproved,
   withCheckerRoot,
-} from '../../../../packages/wagmi/src/systems/Checker/Provider'
+} from '@sushiswap/wagmi/systems/Checker/Provider'
 import {
   APPROVE_TAG_MIGRATE,
   APPROVE_TAG_UNSTAKE,
@@ -67,10 +67,10 @@ import { unwrapToken } from 'lib/functions'
 import { useGraphPool, useTokenAmountDollarValues } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import React, { FC, useMemo, useState } from 'react'
-import { formatUSD } from 'sushi/format'
-import { Fraction, Percent, ZERO } from 'sushi/math'
 import { Chain, ChainId } from 'sushi/chain'
 import { Amount, Price, tryParseAmount } from 'sushi/currency'
+import { formatUSD } from 'sushi/format'
+import { Fraction, Percent, ZERO } from 'sushi/math'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 import { usePoolPosition } from './PoolPositionProvider'
 import { usePoolPositionStaked } from './PoolPositionStakedProvider'

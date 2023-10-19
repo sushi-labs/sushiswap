@@ -1,6 +1,6 @@
-import { UsePoolsParams } from '../types'
 import { useQuery } from '@tanstack/react-query'
 import { getAllPoolsCodeMap } from '../actions/getAllPoolsCodeMap'
+import { UsePoolsParams } from '../types'
 
 export const usePoolsCodeMap = ({
   enabled = true,

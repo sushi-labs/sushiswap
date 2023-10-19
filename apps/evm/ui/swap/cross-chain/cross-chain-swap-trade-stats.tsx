@@ -7,10 +7,10 @@ import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 import { useAccount } from '@sushiswap/wagmi'
 import { AddressToEnsResolver } from '@sushiswap/wagmi/components/account/AddressToEnsResolver'
 import React, { FC } from 'react'
-import { shortenAddress } from 'sushi/format'
-import { ZERO } from 'sushi/math'
 import { Chain } from 'sushi/chain'
 import { Native } from 'sushi/currency'
+import { shortenAddress } from 'sushi/format'
+import { ZERO } from 'sushi/math'
 import { isAddress } from 'viem'
 
 import {

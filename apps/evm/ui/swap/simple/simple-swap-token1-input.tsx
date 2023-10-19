@@ -1,7 +1,6 @@
 'use client'
 
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
-
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTrade,

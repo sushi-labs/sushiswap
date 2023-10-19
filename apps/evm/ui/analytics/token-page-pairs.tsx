@@ -1,9 +1,6 @@
 'use client'
 
-import chains from 'sushi/chain'
 import { usePools } from '@sushiswap/client'
-import { Native, Token } from 'sushi/currency'
-import { formatPercent, formatUSD } from 'sushi/format'
 import { Token as GraphToken } from '@sushiswap/graph-client'
 import { LinkExternal, LinkInternal } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
@@ -16,6 +13,9 @@ import {
   TableRow,
 } from '@sushiswap/ui/components/table'
 import React, { FC } from 'react'
+import chains from 'sushi/chain'
+import { Native, Token } from 'sushi/currency'
+import { formatPercent, formatUSD } from 'sushi/format'
 import { useSWRConfig } from 'swr'
 
 interface TokenPairs {

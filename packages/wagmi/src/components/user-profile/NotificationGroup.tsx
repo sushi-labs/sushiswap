@@ -1,8 +1,8 @@
 import { Disclosure } from '@headlessui/react'
 import { FC } from 'react'
 
-import { Notification } from './Notification'
 import { ResolvedNotification } from '@sushiswap/dexie'
+import { Notification } from './Notification'
 
 interface NotificationGroupProps {
   notifications: ResolvedNotification[]

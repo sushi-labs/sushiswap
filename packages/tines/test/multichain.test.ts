@@ -1,13 +1,13 @@
 import seedrandom from 'seedrandom'
 
-import { findMultiRouteExactIn, NetworkInfo } from '../src'
+import { NetworkInfo, findMultiRouteExactIn } from '../src'
 import {
+  Network,
+  TToken,
   checkRoute,
   createMultipleNetworks,
   createMultipleNetworksWithStargateBridge,
   getRandom,
-  Network,
-  TToken,
 } from './utils'
 
 function chooseRandomTokenWithChainId(

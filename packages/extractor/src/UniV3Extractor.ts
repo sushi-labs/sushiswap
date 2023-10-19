@@ -1,9 +1,9 @@
-import { Token } from 'sushi/currency'
 import { LiquidityProviders, PoolCode } from '@sushiswap/router'
-import { computePoolAddress, FeeAmount } from '@sushiswap/v3-sdk'
+import { FeeAmount, computePoolAddress } from '@sushiswap/v3-sdk'
 import IUniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.json'
 import IUniswapV3Pool from '@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json'
 import { Abi } from 'abitype'
+import { Token } from 'sushi/currency'
 import { Address, Log, PublicClient } from 'viem'
 
 import { Counter } from './Counter'

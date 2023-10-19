@@ -1,5 +1,5 @@
 export * from './FarmRewardsAvailableTooltip'
-export * from './PathnameButton'
+export * from '../pathname-button'
 export * from './PoolPositionProvider'
 export * from './PoolPositionRewardsProvider'
 export * from './PoolPositionStakedProvider'

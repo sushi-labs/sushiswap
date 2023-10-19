@@ -1,4 +1,3 @@
-import { formatUSD } from 'sushi/format'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import {
   CardContent,
@@ -10,6 +9,7 @@ import {
 import ReactECharts, { EChartsOption } from 'echarts-for-react'
 import { useTheme } from 'next-themes'
 import React, { FC, useCallback, useMemo, useState } from 'react'
+import { formatUSD } from 'sushi/format'
 import colors from 'tailwindcss/colors'
 
 import { ChartEntry } from './LiquidityChartRangeInput/types'
@@ -102,7 +102,7 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({
           fontSize: 12,
           fontWeight: 500,
         },
-        // rome-ignore lint: echarts doesn't have types
+        // biome-ignore lint: echarts doesn't have types
         formatter: (params: any) => {
           onMouseOver({ name: params[0].name, value: params[0].value })
 

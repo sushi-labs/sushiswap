@@ -1,38 +1,38 @@
 'use client'
 
 import {
-  Amount,
-  Currency,
-  Price,
-  Token,
-  tryParseAmount,
-  Type,
-} from 'sushi/currency'
-import { Rounding } from 'sushi/math'
-import {
-  encodeSqrtRatioX96,
   FeeAmount,
-  nearestUsableTick,
   Position,
-  priceToClosestTick,
   SushiSwapV3ChainId,
   SushiSwapV3Pool,
   TICK_SPACINGS,
   TickMath,
+  encodeSqrtRatioX96,
+  nearestUsableTick,
+  priceToClosestTick,
   tickToPrice,
 } from '@sushiswap/v3-sdk'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { Bound, Field } from 'lib/constants'
 import { getTickToPrice, tryParseTick } from 'lib/functions'
 import {
-  createContext,
   FC,
   ReactNode,
+  createContext,
   useCallback,
   useContext,
   useMemo,
   useReducer,
 } from 'react'
+import {
+  Amount,
+  Currency,
+  Price,
+  Token,
+  Type,
+  tryParseAmount,
+} from 'sushi/currency'
+import { Rounding } from 'sushi/math'
 
 type FullRange = true
 

@@ -5,8 +5,8 @@ import { Redis } from '@upstash/redis'
 import stringify from 'fast-json-stable-stringify'
 import { NextRequest, NextResponse } from 'next/server'
 import { Octokit } from 'octokit'
-import { formatUSD } from 'sushi/format'
 import { ChainId, ChainKey } from 'sushi/chain'
+import { formatUSD } from 'sushi/format'
 
 import { ApplyForTokenListTokenSchemaType } from '../../schema'
 

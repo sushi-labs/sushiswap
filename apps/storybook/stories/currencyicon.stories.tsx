@@ -1,9 +1,9 @@
 // Checkbox.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
+import { Currency } from '@sushiswap/ui'
 import { ChainId } from 'sushi/chain'
 import { SUSHI, USDT } from 'sushi/currency'
-import { Currency } from '@sushiswap/ui'
 
 const meta = {
   title: 'Primitives/CurrencyIcon',

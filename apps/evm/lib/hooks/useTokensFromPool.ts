@@ -1,8 +1,8 @@
 'use client'
 
 import { Pool } from '@sushiswap/client'
-import { Native, Token } from 'sushi/currency'
 import { useMemo } from 'react'
+import { Native, Token } from 'sushi/currency'
 
 export const useTokensFromPool = (pool: Pool) => {
   return useMemo(() => {

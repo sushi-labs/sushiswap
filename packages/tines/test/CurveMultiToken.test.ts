@@ -2,10 +2,10 @@ import seedrandom from 'seedrandom'
 
 import { RToken } from '../dist'
 import {
-  closeValues,
-  createCurvePoolsForMultipool,
   CurveMultitokenPool,
   CurvePool,
+  closeValues,
+  createCurvePoolsForMultipool,
   getBigInt,
 } from '../src'
 

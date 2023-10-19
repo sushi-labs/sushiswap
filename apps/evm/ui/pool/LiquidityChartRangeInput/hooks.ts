@@ -1,10 +1,10 @@
-import { Type } from 'sushi/currency'
 import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import {
   TickProcessed,
   useConcentratedActiveLiquidity,
 } from 'lib/hooks/useConcentratedActiveLiquidity'
 import { useMemo } from 'react'
+import { Type } from 'sushi/currency'
 
 import { ChartEntry } from './types'
 

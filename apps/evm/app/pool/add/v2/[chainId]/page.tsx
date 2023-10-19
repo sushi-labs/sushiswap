@@ -1,10 +1,10 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
 import { FormSection } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Loader } from '@sushiswap/ui/components/loader'
+import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
 import {
   SUSHISWAP_V2_ROUTER_ADDRESS,
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
@@ -14,7 +14,7 @@ import {
 import { PoolFinder, SushiSwapV2PoolState } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { Checker } from '@sushiswap/wagmi/systems'
-import { CheckerProvider } from '../../../../../../../packages/wagmi/src/systems/Checker/Provider'
+import { CheckerProvider } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { DISABLED_CHAIN_IDS } from 'config'
 import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
 import { isSushiSwapV2Pool } from 'lib/functions'

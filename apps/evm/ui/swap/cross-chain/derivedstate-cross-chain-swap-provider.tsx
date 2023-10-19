@@ -1,38 +1,38 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
-import {
-  Amount,
-  defaultQuoteCurrency,
-  Native,
-  tryParseAmount,
-  Type,
-} from 'sushi/currency'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { ZERO } from 'sushi/math'
 import {
   STARGATE_SUPPORTED_CHAIN_IDS,
   StargateChainId,
 } from '@sushiswap/stargate'
-import { isSushiXSwapChainId, SushiXSwapChainId } from 'sushi/config'
 import { Address, useAccount, useNetwork, watchNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future'
-import { useSignature } from '../../../../../packages/wagmi/src/systems/Checker/Provider'
+import { useSignature } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { APPROVE_TAG_XSWAP, IS_XSWAP_MAINTENANCE } from 'lib/constants'
 import { useCrossChainTrade } from 'lib/swap/useCrossChainTrade/useCrossChainTrade'
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
-  createContext,
   Dispatch,
   FC,
   SetStateAction,
+  createContext,
   useCallback,
   useContext,
   useEffect,
   useMemo,
   useState,
 } from 'react'
+import { ChainId } from 'sushi/chain'
+import { SushiXSwapChainId, isSushiXSwapChainId } from 'sushi/config'
+import {
+  Amount,
+  Native,
+  Type,
+  defaultQuoteCurrency,
+  tryParseAmount,
+} from 'sushi/currency'
+import { ZERO } from 'sushi/math'
 import { isAddress } from 'viem'
 
 const getTokenAsString = (token: Type | string) =>

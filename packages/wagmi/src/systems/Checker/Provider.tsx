@@ -2,9 +2,9 @@
 
 import { watchAccount, watchNetwork } from '@wagmi/core'
 import React, {
-  createContext,
   FC,
   ReactNode,
+  createContext,
   useCallback,
   useContext,
   useEffect,

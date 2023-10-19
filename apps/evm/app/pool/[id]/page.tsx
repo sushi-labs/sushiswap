@@ -1,10 +1,11 @@
-import { ChainId } from 'sushi/chain'
 import { Separator } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
+import { ChainId } from 'sushi/chain'
 import { ManageV2LiquidityCard } from 'ui/pool/ManageV2LiquidityCard'
 import { PoolTransactionsV2 } from 'ui/pool/PoolTransactionsV2'
 import { isAddress } from 'viem'
 
+import { Pool } from '@sushiswap/client'
 import {
   PoolPositionProvider,
   PoolPositionRewardsProvider,
@@ -18,7 +19,6 @@ import { PoolPageV3 } from '../../../ui/pool/PoolPageV3'
 import { PoolPosition } from '../../../ui/pool/PoolPosition'
 import { PoolRewards } from '../../../ui/pool/PoolRewards'
 import { PoolStats } from '../../../ui/pool/PoolStats'
-import { Pool } from '@sushiswap/client'
 
 export default async function PoolPage({ params }: { params: { id: string } }) {
   const [chainId, address] = params.id.split(

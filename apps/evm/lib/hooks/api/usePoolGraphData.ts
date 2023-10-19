@@ -1,9 +1,9 @@
 'use client'
 
-import { ChainId, chainShortName } from 'sushi/chain'
-import { Amount, Token } from 'sushi/currency'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { useQuery } from '@tanstack/react-query'
+import { ChainId, chainShortName } from 'sushi/chain'
+import { Amount, Token } from 'sushi/currency'
 
 interface UsePoolGraphDataParams {
   poolAddress: string

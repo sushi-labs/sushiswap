@@ -22,12 +22,12 @@ import {
   SendTransactionResult,
   waitForTransaction,
 } from '@sushiswap/wagmi/actions'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { Checker } from '@sushiswap/wagmi/systems'
 import {
   useApproved,
   withCheckerRoot,
-} from '../../../../packages/wagmi/src/systems/Checker/Provider'
-import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
+} from '@sushiswap/wagmi/systems/Checker/Provider'
 import { APPROVE_TAG_REMOVE_LEGACY } from 'lib/constants'
 import {
   useTokensFromPool,
@@ -36,10 +36,10 @@ import {
 } from 'lib/hooks'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { Percent } from 'sushi/math'
-import { slippageAmount, gasMargin } from 'sushi/calculate'
+import { gasMargin, slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
 import { Amount, Native } from 'sushi/currency'
+import { Percent } from 'sushi/math'
 import { encodeFunctionData } from 'viem'
 
 import { usePoolPosition } from './PoolPositionProvider'

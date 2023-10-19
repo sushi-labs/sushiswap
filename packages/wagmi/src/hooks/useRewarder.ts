@@ -1,8 +1,8 @@
 'use client'
 
 import { ChefType } from '@sushiswap/client'
-import { Amount, Token } from 'sushi/currency'
 import { useMemo } from 'react'
+import { Amount, Token } from 'sushi/currency'
 import { Address, useContractRead, useContractReads } from 'wagmi'
 
 import { RewarderType } from './useFarmRewards'

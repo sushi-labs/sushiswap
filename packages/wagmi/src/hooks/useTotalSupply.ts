@@ -1,7 +1,7 @@
 'use client'
 
-import { Amount, Token } from 'sushi/currency'
 import { useMemo } from 'react'
+import { Amount, Token } from 'sushi/currency'
 import { Address, erc20ABI, useContractReads } from 'wagmi'
 
 function bigIntToCurrencyAmount(totalSupply?: bigint, token?: Token) {

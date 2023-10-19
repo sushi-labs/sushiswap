@@ -1,12 +1,12 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
 import { Pool } from '@sushiswap/client'
-import { shortenAddress } from 'sushi/format'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { Message } from '@sushiswap/ui'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import { FC, useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
+import { shortenAddress } from 'sushi/format'
 
 interface UnknownTokenAlert {
   pool: Pool

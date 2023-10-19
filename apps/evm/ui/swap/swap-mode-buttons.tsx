@@ -14,7 +14,7 @@ import {
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
-import { PathnameButton } from '../pool/PathnameButton'
+import { PathnameButton } from '../pathname-button'
 
 export const SwapModeButtons = () => {
   const [bannerMinimized] = useLocalStorage('xswap-banner-minimized', false)

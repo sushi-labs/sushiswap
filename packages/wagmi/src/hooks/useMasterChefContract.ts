@@ -1,8 +1,8 @@
 'use client'
 
+import { ChefType } from '@sushiswap/client'
 import { masterChefV1Abi, masterChefV2Abi, miniChefAbi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
-import { ChefType } from '@sushiswap/client'
 import { getContract } from 'viem'
 import { Address, usePublicClient } from 'wagmi'
 

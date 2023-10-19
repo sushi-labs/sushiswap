@@ -1,9 +1,9 @@
+import { Pool } from '@sushiswap/client'
 import { Breadcrumb, Container } from '@sushiswap/ui'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import React from 'react'
 import { PoolHeader } from '../../../ui/pool/PoolHeader'
-import { Pool } from '@sushiswap/client'
 
 export const metadata = {
   title: 'Pool 💦',

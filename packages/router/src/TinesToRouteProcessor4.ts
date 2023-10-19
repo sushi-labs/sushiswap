@@ -1,14 +1,14 @@
+import { MultiRoute, RToken, RouteLeg, RouteStatus } from '@sushiswap/tines'
 import { ChainId } from 'sushi/chain'
-import { MultiRoute, RouteLeg, RouteStatus, RToken } from '@sushiswap/tines'
 import { Hex } from 'viem'
 
-import { PoolCode } from './pools/PoolCode'
 import {
-  getTokenType,
   PermitData,
   TinesToRouteProcessor2,
   TokenType,
+  getTokenType,
 } from './TinesToRouteProcessor2'
+import { PoolCode } from './pools/PoolCode'
 
 class TinesToRouteProcessor4 extends TinesToRouteProcessor2 {
   constructor(

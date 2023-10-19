@@ -1,28 +1,28 @@
+import { Pool, Protocol } from '@sushiswap/client'
 import { TridentConstantPool, TridentStablePool } from '@sushiswap/trident-sdk'
 import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
+import {
+  FeeAmount,
+  Position,
+  TICK_SPACINGS,
+  TickMath,
+  encodeSqrtRatioX96,
+  nearestUsableTick,
+  priceToClosestTick,
+  tickToPrice,
+} from '@sushiswap/v3-sdk'
 import { ChainId } from 'sushi/chain'
-import { Pool, Protocol } from '@sushiswap/client'
 import {
   DAI,
   Native,
   Price,
   Token,
-  tryParseAmount,
   Type,
   USDC,
   USDT,
   WBTC,
+  tryParseAmount,
 } from 'sushi/currency'
-import {
-  encodeSqrtRatioX96,
-  FeeAmount,
-  nearestUsableTick,
-  Position,
-  priceToClosestTick,
-  TICK_SPACINGS,
-  TickMath,
-  tickToPrice,
-} from '@sushiswap/v3-sdk'
 
 import { Bound } from './constants'
 import { useTicks } from './hooks'

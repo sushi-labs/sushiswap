@@ -37,9 +37,9 @@ import {
 import { Checker } from '@sushiswap/wagmi/systems'
 import useIsTickAtLimit from 'lib/hooks/useIsTickAtLimit'
 import React, { FC, Fragment, useMemo, useState } from 'react'
-import { formatUSD } from 'sushi/format'
 import { Chain } from 'sushi/chain'
 import { Amount } from 'sushi/currency'
+import { formatUSD } from 'sushi/format'
 
 import { isAngleEnabledChainId } from '../../config'
 import { Bound } from '../../lib/constants'

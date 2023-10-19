@@ -1,25 +1,24 @@
 'use client'
 
-import { Native } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
+import { DialogTrigger } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/components'
+import { Checker } from '@sushiswap/wagmi/systems'
+import React, { FC, useEffect, useState } from 'react'
 import {
-  isRouteProcessor3_1ChainId,
-  isRouteProcessor3_2ChainId,
-  isRouteProcessor3ChainId,
-  isRouteProcessorChainId,
   ROUTE_PROCESSOR_3_1_ADDRESS,
   ROUTE_PROCESSOR_3_2_ADDRESS,
   ROUTE_PROCESSOR_3_ADDRESS,
   ROUTE_PROCESSOR_ADDRESS,
+  isRouteProcessor3ChainId,
+  isRouteProcessor3_1ChainId,
+  isRouteProcessor3_2ChainId,
+  isRouteProcessorChainId,
 } from 'sushi/config'
-import { DialogTrigger } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Checker } from '@sushiswap/wagmi/systems'
-import { APPROVE_TAG_SWAP } from 'lib/constants'
-import { warningSeverity } from 'lib/swap/warningSeverity'
-import React, { FC, useEffect, useState } from 'react'
-
+import { Native } from 'sushi/currency'
+import { ZERO } from 'sushi/math'
+import { APPROVE_TAG_SWAP } from '../../../lib/constants'
 import { usePersistedSlippageError } from '../../../lib/hooks'
+import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTrade,

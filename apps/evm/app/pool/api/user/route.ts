@@ -1,6 +1,6 @@
-import { ChainId } from 'sushi/chain'
 import { getUser } from 'lib/api'
 import { NextResponse } from 'next/server'
+import { ChainId } from 'sushi/chain'
 import { z } from 'zod'
 
 const schema = z.object({

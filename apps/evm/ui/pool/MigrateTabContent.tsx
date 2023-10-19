@@ -1,6 +1,5 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
 import {
   Card,
   CardDescription,
@@ -12,6 +11,7 @@ import {
 import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import React from 'react'
+import { ChainId } from 'sushi/chain'
 
 import { PositionCard, PositionCardSkeleton } from './PositionCard'
 import { PositionCardList } from './PositionCardList'

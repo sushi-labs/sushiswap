@@ -1,10 +1,10 @@
 import { ChartBarIcon, InboxIcon, StopIcon } from '@heroicons/react-v1/solid'
-import { Price, Token, Type } from 'sushi/currency'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { format } from 'd3'
 import { Bound } from 'lib/constants'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
+import { Price, Token, Type } from 'sushi/currency'
 import colors from 'tailwindcss/colors'
 
 import { Chart } from './Chart'

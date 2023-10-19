@@ -2,9 +2,9 @@
 
 import {
   FeeAmount,
-  nearestUsableTick,
   TICK_SPACINGS,
   TickMath,
+  nearestUsableTick,
 } from '@sushiswap/v3-sdk'
 import { useMemo } from 'react'
 

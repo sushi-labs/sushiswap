@@ -1,6 +1,6 @@
 import { ChainId } from '../../chain/index.js'
-import { BUSD, DAI, LUSD, USDC, USDT } from './tokens.js'
 import { Token } from '../Token.js'
+import { BUSD, DAI, LUSD, USDC, USDT } from './tokens.js'
 
 const THUNDERCORE_ANY_USDT = new Token({
   chainId: ChainId.THUNDERCORE,

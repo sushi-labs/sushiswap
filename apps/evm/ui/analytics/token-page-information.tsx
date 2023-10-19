@@ -1,8 +1,6 @@
 'use client'
 
 import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
-import { Chain } from 'sushi/chain'
-import { shortenAddress } from 'sushi/format'
 import { Token as GraphToken } from '@sushiswap/graph-client'
 import { ClipboardController, LinkExternal } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
@@ -15,6 +13,8 @@ import {
   TableRow,
 } from '@sushiswap/ui/components/table'
 import { FC } from 'react'
+import { Chain } from 'sushi/chain'
+import { shortenAddress } from 'sushi/format'
 
 import { useTokenFromToken } from '../../lib/hooks/useTokenFromToken'
 

@@ -9,10 +9,7 @@ import {
   useNetwork,
   watchNetwork,
 } from '@sushiswap/wagmi'
-import { useTokenWithCache } from '@sushiswap/wagmi/future'
-import { useClientTrade } from '@sushiswap/wagmi/future/hooks'
-import { useCarbonOffset } from 'lib/swap/useCarbonOffset'
-import { useSwapApi } from 'lib/swap/useSwapApi'
+import { useClientTrade, useTokenWithCache } from '@sushiswap/wagmi/future'
 import { useLogger } from 'next-axiom'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
@@ -24,7 +21,6 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { ZERO } from 'sushi/math'
 import { ChainId, TestnetChainId } from 'sushi/chain'
 import {
   Amount,
@@ -33,9 +29,11 @@ import {
   defaultQuoteCurrency,
   tryParseAmount,
 } from 'sushi/currency'
+import { ZERO } from 'sushi/math'
 import { isAddress } from 'viem'
-
 import { SUPPORTED_CHAIN_IDS, isSwapApiEnabledChainId } from '../../../config'
+import { useCarbonOffset } from '../../../lib/swap/useCarbonOffset'
+import { useSwapApi } from '../../../lib/swap/useSwapApi'
 
 const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'

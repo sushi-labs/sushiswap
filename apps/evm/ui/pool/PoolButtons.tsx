@@ -1,10 +1,10 @@
 import { Pool } from '@sushiswap/client'
 import { FundSource } from '@sushiswap/hooks'
-import { ZERO } from 'sushi/math'
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import Link from 'next/link'
 import { FC } from 'react'
+import { ZERO } from 'sushi/math'
 import { getAddress } from 'viem'
 
 import { usePoolPosition } from './PoolPositionProvider'

@@ -5,7 +5,6 @@ import {
   STARGATE_BRIDGE_TOKENS,
   isStargateBridgeToken,
 } from '@sushiswap/stargate'
-import { SushiXSwapChainId, isSushiXSwapChainId } from 'sushi/config'
 import {
   DialogClose,
   DialogContent,
@@ -46,7 +45,7 @@ import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
 import {
   useApproved,
   useSignature,
-} from '../../../../../packages/wagmi/src/systems/Checker/Provider'
+} from '@sushiswap/wagmi/systems/Checker/Provider'
 import { nanoid } from 'nanoid'
 import { log } from 'next-axiom'
 import React, {
@@ -57,10 +56,11 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { shortenAddress } from 'sushi/format'
-import { ZERO } from 'sushi/math'
 import { gasMargin } from 'sushi/calculate'
 import { Chain, chainName } from 'sushi/chain'
+import { SushiXSwapChainId, isSushiXSwapChainId } from 'sushi/config'
+import { shortenAddress } from 'sushi/format'
+import { ZERO } from 'sushi/math'
 import { UserRejectedRequestError, stringify } from 'viem'
 
 import { APPROVE_TAG_XSWAP } from '../../../lib/constants'

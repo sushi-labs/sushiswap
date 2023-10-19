@@ -3,7 +3,7 @@
 import { QueryFunction } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { Address, useQuery } from 'wagmi'
-import { fetchToken, FetchTokenArgs, FetchTokenResult } from 'wagmi/actions'
+import { FetchTokenArgs, FetchTokenResult, fetchToken } from 'wagmi/actions'
 
 type QueryKeyArgs = { tokens: Partial<FetchTokenArgs>[] }
 // type QueryKeyConfig = {}

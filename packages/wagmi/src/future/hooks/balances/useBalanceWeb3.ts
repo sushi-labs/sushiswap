@@ -1,7 +1,7 @@
-import { zeroAddress } from 'viem'
+import { useQuery } from '@tanstack/react-query'
 import { ChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
-import { useQuery } from '@tanstack/react-query'
+import { zeroAddress } from 'viem'
 import { Address } from 'wagmi'
 
 import { queryFnUseBalances } from './useBalancesWeb3'

@@ -1,9 +1,9 @@
-import { Amount } from 'sushi/currency'
 import {
-  computePoolAddress,
   SushiSwapV3ChainId,
   SushiSwapV3Pool,
+  computePoolAddress,
 } from '@sushiswap/v3-sdk'
+import { Amount } from 'sushi/currency'
 import { Address } from 'wagmi'
 
 import { fetchBalance } from '../../../..'

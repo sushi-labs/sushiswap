@@ -1,7 +1,6 @@
 'use client'
 
 import { Pool } from '@sushiswap/client'
-import { formatUSD } from 'sushi/format'
 import {
   Card,
   CardContent,
@@ -10,6 +9,7 @@ import {
   CardTitle,
 } from '@sushiswap/ui/components/card'
 import { FC } from 'react'
+import { formatUSD } from 'sushi/format'
 
 import { PoolPositionDesktop } from './PoolPositionDesktop'
 import { usePoolPosition } from './PoolPositionProvider'

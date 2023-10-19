@@ -1,5 +1,4 @@
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { Token as TokenEntity } from 'sushi/currency'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Loader } from '@sushiswap/ui/components/loader'
 import {
@@ -11,9 +10,10 @@ import {
 import stringify from 'fast-json-stable-stringify'
 import Image from 'next/legacy/image'
 import React, { FC, useCallback, useMemo, useState } from 'react'
+import { Token as TokenEntity } from 'sushi/currency'
 import useSWR from 'swr'
 
-import { getTokenLogos, Token, TokenLogo } from '../lib'
+import { Token, TokenLogo, getTokenLogos } from '../lib'
 
 interface TokenAdder {
   token: Token

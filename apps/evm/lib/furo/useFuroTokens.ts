@@ -1,10 +1,10 @@
 'use client'
 
 import { GetApiInputFromOutput, parseArgs } from '@sushiswap/client'
-import { Amount, Token } from 'sushi/currency'
 import { Furo_token } from '@sushiswap/graph-client'
 import { useAllPrices } from '@sushiswap/react-query'
 import { useMemo } from 'react'
+import { Amount, Token } from 'sushi/currency'
 import useSWR from 'swr'
 
 import { furoTokensSchema } from '../schema'

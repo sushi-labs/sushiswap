@@ -1,8 +1,6 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
 import { Pool } from '@sushiswap/client'
-import { Amount, Type } from 'sushi/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { _useBalance as useBalance, useAccount } from '@sushiswap/wagmi'
 import {
@@ -10,7 +8,9 @@ import {
   useTokenAmountDollarValues,
   useUnderlyingTokenBalanceFromPool,
 } from 'lib/hooks'
-import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
+import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Amount, Type } from 'sushi/currency'
 
 interface PoolPositionContext {
   balance: Record<FundSource, Amount<Type>> | undefined

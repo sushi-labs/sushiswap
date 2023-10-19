@@ -5,7 +5,6 @@ import {
   PlusIcon,
   SwitchHorizontalIcon,
 } from '@heroicons/react-v1/solid'
-import { tryParseAmount, Type } from 'sushi/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import {
   Button,
@@ -15,13 +14,13 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-  classNames,
   FormSection,
   Label,
   LinkExternal,
   Message,
   TextField,
   TextFieldDescription,
+  classNames,
 } from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { Toggle } from '@sushiswap/ui/components/toggle'
@@ -38,6 +37,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+import { Type, tryParseAmount } from 'sushi/currency'
 
 import {
   useConcentratedDerivedMintInfo,

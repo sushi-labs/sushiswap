@@ -1,4 +1,4 @@
-import { classNames, LinkExternal } from '@sushiswap/ui'
+import { LinkExternal, classNames } from '@sushiswap/ui'
 import {
   DiscordIcon,
   GithubIcon,

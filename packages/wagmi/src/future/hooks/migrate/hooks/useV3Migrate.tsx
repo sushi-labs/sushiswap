@@ -1,9 +1,9 @@
-import { Amount, Token, Type } from 'sushi/currency'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { FeeAmount } from '@sushiswap/v3-sdk'
 import { SendTransactionResult, waitForTransaction } from '@wagmi/core'
 import { useCallback } from 'react'
-import { encodeFunctionData, UserRejectedRequestError } from 'viem'
+import { Amount, Token, Type } from 'sushi/currency'
+import { UserRejectedRequestError, encodeFunctionData } from 'viem'
 import { Address, useContractWrite, usePrepareContractWrite } from 'wagmi'
 
 import { V3Migrator } from '../abis/V3Migrator'

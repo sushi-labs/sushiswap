@@ -1,6 +1,5 @@
 'use client'
 
-import { formatNumber, formatUSD } from 'sushi/format'
 import {
   Badge,
   Card,
@@ -19,6 +18,7 @@ import {
   TableState,
 } from '@tanstack/react-table'
 import React, { FC, useMemo, useState } from 'react'
+import { formatNumber, formatUSD } from 'sushi/format'
 
 import {
   BentoBoxToken,

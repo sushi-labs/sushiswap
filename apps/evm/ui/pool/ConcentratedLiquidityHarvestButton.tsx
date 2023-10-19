@@ -1,10 +1,10 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
 import { useAngleRewards } from '@sushiswap/react-query'
 import { Address } from '@sushiswap/wagmi'
 import { useHarvestAngleRewards } from '@sushiswap/wagmi/future/hooks'
 import { FC, ReactElement, useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
 
 interface ConcentratedLiquidityHarvestButton {
   account: Address | undefined

@@ -1,9 +1,9 @@
 'use client'
 
-import { Native, Token, Type } from 'sushi/currency'
 import { TradeLegType, UseTradeReturn } from '@sushiswap/react-query'
 import {
   Button,
+  Currency,
   Dialog,
   DialogClose,
   DialogContent,
@@ -14,8 +14,8 @@ import {
   DialogTrigger,
   ScrollArea,
 } from '@sushiswap/ui'
-import { Currency } from '@sushiswap/ui/components/currency'
 import React, { FC, ReactNode, useEffect, useRef, useState } from 'react'
+import { Native, Token, Type } from 'sushi/currency'
 
 const tokenFromRToken = (token: TradeLegType['tokenFrom']) => {
   if (token.address === '' || !token.address)

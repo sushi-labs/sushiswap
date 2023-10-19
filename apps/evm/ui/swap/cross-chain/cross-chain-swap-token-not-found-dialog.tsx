@@ -15,9 +15,9 @@ import { GoPlusLabsIcon } from '@sushiswap/ui/components/icons'
 import { List } from '@sushiswap/ui/components/list/List'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import React, { useCallback, useMemo } from 'react'
-import { shortenAddress } from 'sushi/format'
 import { Chain } from 'sushi/chain'
 import { Native, Token, defaultQuoteCurrency } from 'sushi/currency'
+import { shortenAddress } from 'sushi/format'
 
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 

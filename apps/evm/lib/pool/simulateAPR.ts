@@ -1,5 +1,5 @@
-import { Amount, Token } from 'sushi/currency'
 import { AngleRewardsPool, usePrices } from '@sushiswap/react-query'
+import { Amount, Token } from 'sushi/currency'
 
 interface SimulateParams {
   amount0: Amount<Token>

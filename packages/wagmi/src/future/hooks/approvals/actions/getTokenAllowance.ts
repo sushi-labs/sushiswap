@@ -1,7 +1,7 @@
-import { Address, erc20ABI } from 'wagmi'
 import { readContract } from '@wagmi/core'
-import { Amount, Token } from 'sushi/currency'
 import { ChainId } from 'sushi/chain'
+import { Amount, Token } from 'sushi/currency'
+import { Address, erc20ABI } from 'wagmi'
 
 interface GetTokenAllowance {
   chainId: ChainId

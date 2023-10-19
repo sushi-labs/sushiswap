@@ -1,7 +1,7 @@
 import { default as seedrandom } from 'seedrandom'
 import { Address } from 'viem'
 
-import { CL_MAX_TICK, CL_MIN_TICK, CLRPool, CLTick, getBigInt } from '../src'
+import { CLRPool, CLTick, CL_MAX_TICK, CL_MIN_TICK, getBigInt } from '../src'
 
 const testSeed = '2' // Change it to change random generator values
 const rnd: () => number = seedrandom(testSeed) // random [0, 1)

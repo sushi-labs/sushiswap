@@ -1,9 +1,9 @@
 'use client'
 
-import { Amount, Type } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
 import { usePrices } from '@sushiswap/react-query'
 import { useMemo } from 'react'
+import { Amount, Type } from 'sushi/currency'
+import { ZERO } from 'sushi/math'
 
 interface Params {
   chainId: number

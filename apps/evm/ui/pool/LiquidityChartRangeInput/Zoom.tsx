@@ -5,11 +5,11 @@ import {
 import { Button } from '@sushiswap/ui/components/button'
 import {
   ScaleLinear,
+  ZoomBehavior,
+  ZoomTransform,
   select,
   zoom,
-  ZoomBehavior,
   zoomIdentity,
-  ZoomTransform,
 } from 'd3'
 import React, { FC, useEffect, useMemo, useRef } from 'react'
 

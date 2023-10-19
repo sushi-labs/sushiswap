@@ -1,5 +1,3 @@
-import { ChainId } from 'sushi/chain'
-import { Token } from 'sushi/currency'
 import {
   Extractor,
   FactoryV2,
@@ -28,8 +26,10 @@ import {
   SushiSwapV3ChainId,
 } from '@sushiswap/v3-sdk'
 import { expect } from 'chai'
-import { Address, createPublicClient, http, Transport } from 'viem'
-import { arbitrum, Chain, mainnet, polygon } from 'viem/chains'
+import { ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
+import { http, Address, Transport, createPublicClient } from 'viem'
+import { Chain, arbitrum, mainnet, polygon } from 'viem/chains'
 
 export const RP3Address = {
   [ChainId.ETHEREUM]: '0x827179dD56d07A7eeA32e3873493835da2866976' as Address,

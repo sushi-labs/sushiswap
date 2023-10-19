@@ -1,4 +1,5 @@
 import { getAddress as _getAddress, isAddress } from '@ethersproject/address'
+import { useCallback, useEffect, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import {
   ARB,
@@ -17,7 +18,6 @@ import {
   WETH9,
   WNATIVE,
 } from 'sushi/currency'
-import { useCallback, useEffect, useMemo } from 'react'
 
 import { useLocalStorage } from './useLocalStorage'
 

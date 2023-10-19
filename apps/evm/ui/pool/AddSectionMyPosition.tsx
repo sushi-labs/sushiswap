@@ -1,10 +1,10 @@
-import { ChainId } from 'sushi/chain'
 import { Pool } from '@sushiswap/client'
-import { formatPercent } from 'sushi/format'
 import { classNames } from '@sushiswap/ui'
 import { Currency as UICurrency } from '@sushiswap/ui/components/currency'
 import { incentiveRewardToToken } from 'lib/functions'
 import React, { FC } from 'react'
+import { ChainId } from 'sushi/chain'
+import { formatPercent } from 'sushi/format'
 
 import { AddSectionMyPositionStaked } from './AddSectionMyPositionStaked'
 import { AddSectionMyPositionUnstaked } from './AddSectionMyPositionUnstaked'

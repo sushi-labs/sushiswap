@@ -1,12 +1,12 @@
-import { isAddress } from 'viem'
-import { ChainId } from 'sushi/chain'
-import { Token } from 'sushi/currency'
 import { getToken, saveTokens } from '@sushiswap/dexie'
+import { useCustomTokens } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
-import { fetchToken } from 'wagmi/actions'
+import { ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
+import { isAddress } from 'viem'
 import { Address } from 'wagmi'
-import { useCustomTokens } from '@sushiswap/hooks'
+import { fetchToken } from 'wagmi/actions'
 
 interface UseTokenParams<T extends boolean> {
   chainId: ChainId | undefined

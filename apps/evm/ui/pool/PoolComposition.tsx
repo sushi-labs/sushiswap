@@ -1,9 +1,6 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
 import { Pool } from '@sushiswap/client'
-import { Native } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
 import { usePrices } from '@sushiswap/react-query'
 import {
   Card,
@@ -17,6 +14,9 @@ import {
 } from '@sushiswap/ui/components/card'
 import { usePoolGraphData, useTokenAmountDollarValues } from 'lib/hooks'
 import React, { FC } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Native } from 'sushi/currency'
+import { formatUSD } from 'sushi/format'
 
 interface PoolCompositionProps {
   pool: Pool

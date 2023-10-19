@@ -1,7 +1,4 @@
-import { ChainId } from 'sushi/chain'
 import { Pool } from '@sushiswap/client'
-import { tryParseAmount } from 'sushi/currency'
-import { formatPercent } from 'sushi/format'
 import {
   CardContent,
   CardDescription,
@@ -18,6 +15,9 @@ import {
   ReplyContent,
 } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
+import { ChainId } from 'sushi/chain'
+import { tryParseAmount } from 'sushi/currency'
+import { formatPercent } from 'sushi/format'
 
 import { incentiveRewardToToken } from '../../lib/functions'
 

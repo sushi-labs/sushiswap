@@ -1,5 +1,3 @@
-import { stargateFeeLibraryV03Abi, stargatePoolAbi } from 'sushi/abi'
-import { Amount, Currency, Token } from 'sushi/currency'
 import {
   STARGATE_CHAIN_ID,
   STARGATE_POOL_ADDRESS,
@@ -12,6 +10,8 @@ import {
   readContracts,
 } from '@sushiswap/wagmi'
 import { getContract, readContract } from '@sushiswap/wagmi/actions'
+import { stargateFeeLibraryV03Abi, stargatePoolAbi } from 'sushi/abi'
+import { Amount, Currency, Token } from 'sushi/currency'
 
 export const getBridgeFees = async ({
   amount,

@@ -10,8 +10,8 @@ import { CheckMarkIcon } from '@sushiswap/ui/components/icons/CheckmarkIcon'
 import { FailedMarkIcon } from '@sushiswap/ui/components/icons/FailedMarkIcon'
 import { Loader } from '@sushiswap/ui/components/loader'
 import { FC, ReactNode } from 'react'
-import { shortenAddress } from 'sushi/format'
 import { Chain } from 'sushi/chain'
+import { shortenAddress } from 'sushi/format'
 
 import {
   useCrossChainSwapTrade,

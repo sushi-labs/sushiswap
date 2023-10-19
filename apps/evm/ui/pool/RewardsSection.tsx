@@ -17,14 +17,14 @@ import { ColumnDef, PaginationState } from '@tanstack/react-table'
 import { ANGLE_ENABLED_NETWORKS } from 'config'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 
+import { usePoolFilters } from './PoolsFiltersProvider'
+import { RewardSlide, RewardSlideSkeleton } from './RewardSlide'
 import {
   REWARDS_V3_APR_COLUMN,
   REWARDS_V3_CLAIMABLE_COLUMN,
   REWARDS_V3_NAME_COLUMN,
   REWARDS_V3_POSITION_SIZE_COLUMN,
 } from './columns'
-import { usePoolFilters } from './PoolsFiltersProvider'
-import { RewardSlide, RewardSlideSkeleton } from './RewardSlide'
 
 const COLUMNS = [
   REWARDS_V3_NAME_COLUMN,

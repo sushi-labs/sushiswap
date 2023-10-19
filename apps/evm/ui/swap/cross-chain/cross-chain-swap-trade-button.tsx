@@ -1,13 +1,16 @@
 'use client'
 
-import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
-import { ZERO } from 'sushi/math'
-import { SUSHIXSWAP_ADDRESS, SushiXSwapChainId } from 'sushi/config'
-import { DialogTrigger } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
+import { Button, DialogTrigger } from '@sushiswap/ui'
 import { Checker } from '@sushiswap/wagmi/systems'
 import { APPROVE_TAG_XSWAP } from 'lib/constants'
 import React, { FC, useEffect, useState } from 'react'
+import {
+  BENTOBOX_ADDRESS,
+  BentoBoxChainId,
+  SUSHIXSWAP_ADDRESS,
+  SushiXSwapChainId,
+} from 'sushi/config'
+import { ZERO } from 'sushi/math'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import { CrossChainSwapTradeReviewDialog } from './cross-chain-swap-trade-review-dialog'
 import {

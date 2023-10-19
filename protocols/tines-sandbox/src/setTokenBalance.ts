@@ -3,10 +3,10 @@ import {
   setStorageAt,
 } from '@nomicfoundation/hardhat-network-helpers'
 import { NumberLike } from '@nomicfoundation/hardhat-network-helpers/dist/src/types'
-import { erc20Abi } from 'sushi/abi'
 import { BigNumber, Contract } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
 import { ethers } from 'hardhat'
+import { erc20Abi } from 'sushi/abi'
 
 // Sometimes token contract is a proxy without delegate call
 // So, its storage is in other contract and we need to work with it

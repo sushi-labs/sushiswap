@@ -1,14 +1,12 @@
-import { Amount, Token, tryParseAmount, Type } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
 import { FundSource } from '@sushiswap/hooks'
 import {
   Message,
   TextField,
-  textFieldVariants,
-  typographyVariants,
   WidgetDescription,
   WidgetFooter,
   WidgetTitle,
+  textFieldVariants,
+  typographyVariants,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Widget, WidgetHeader } from '@sushiswap/ui/components/widget'
@@ -18,6 +16,8 @@ import {
   useUnderlyingTokenBalanceFromPool,
 } from 'lib/hooks'
 import { FC, ReactNode, useMemo } from 'react'
+import { Amount, Token, Type, tryParseAmount } from 'sushi/currency'
+import { formatUSD } from 'sushi/format'
 
 import { usePoolPosition } from './PoolPositionProvider'
 

@@ -1,13 +1,13 @@
 'use client'
 
 import { ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
-import { Amount, Price, Token, tryParseAmount } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
 import { usePrices } from '@sushiswap/react-query'
 import { Button, typographyVariants } from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { useTokenAmountDollarValues } from 'lib/hooks'
 import React, { useMemo, useState } from 'react'
+import { Amount, Price, Token, tryParseAmount } from 'sushi/currency'
+import { formatUSD } from 'sushi/format'
 
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 

@@ -1,30 +1,30 @@
-import { TradeType, Version as TradeVersion } from 'sushi/dex'
-import { Trade } from './trade'
-import { Amount, Currency, Native, Share, Token } from 'sushi/currency'
-import { BigintIsh } from 'sushi/math'
 import {
-  isStargateBridgeToken,
   STARGATE_BRIDGE_TOKENS,
   STARGATE_CHAIN_ID,
   STARGATE_POOL_ID,
   StargateChainId,
+  isStargateBridgeToken,
 } from '@sushiswap/stargate'
-import { SushiXSwapChainId } from 'sushi/config'
 import { getBigInt } from '@sushiswap/tines'
 import {
-  getSushiXSwapContractConfig,
   SushiXSwap as SushiXSwapContract,
+  getSushiXSwapContractConfig,
 } from '@sushiswap/wagmi'
 import { readContract } from '@sushiswap/wagmi/actions'
+import { SushiXSwapChainId } from 'sushi/config'
+import { Amount, Currency, Native, Share, Token } from 'sushi/currency'
+import { TradeType, Version as TradeVersion } from 'sushi/dex'
+import { BigintIsh } from 'sushi/math'
 import {
-  encodeAbiParameters,
+  Address,
   Hex,
-  parseAbiParameters,
   Signature,
+  encodeAbiParameters,
+  parseAbiParameters,
   stringToHex,
   zeroAddress,
-  Address,
 } from 'viem'
+import { Trade } from './trade'
 
 export type Complex = [
   {

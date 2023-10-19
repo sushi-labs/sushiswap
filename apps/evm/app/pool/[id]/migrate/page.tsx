@@ -10,8 +10,8 @@ import {
 } from 'ui/pool'
 import { ConcentratedLiquidityProvider } from 'ui/pool/ConcentratedLiquidityProvider'
 
-import { MigrateTab } from '../../../../ui/pool/MigrateTab'
 import { Pool } from '@sushiswap/client'
+import { MigrateTab } from '../../../../ui/pool/MigrateTab'
 
 export default async function MigratePage({
   params,

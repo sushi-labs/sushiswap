@@ -1,6 +1,3 @@
-import { ChainId } from 'sushi/chain'
-import { Type } from 'sushi/currency'
-import { formatNumber } from 'sushi/format'
 import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/badge'
 import { Currency } from '@sushiswap/ui/components/currency'
@@ -9,6 +6,9 @@ import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future
 import { Row } from '@tanstack/react-table'
 import { unwrapToken } from 'lib/functions'
 import { FC, useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Type } from 'sushi/currency'
+import { formatNumber } from 'sushi/format'
 
 export const PoolNameCellV3: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =
   ({ original }) => {

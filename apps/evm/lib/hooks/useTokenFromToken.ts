@@ -1,6 +1,6 @@
-import { Native, Token } from 'sushi/currency'
 import { Token as GraphToken } from '@sushiswap/graph-client'
 import { useMemo } from 'react'
+import { Native, Token } from 'sushi/currency'
 
 export const useTokenFromToken = (token: GraphToken) => {
   return useMemo(() => {

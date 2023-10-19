@@ -1,28 +1,28 @@
 'use client'
 
+import { Pool, Protocol } from '@sushiswap/client'
+import { useIsMounted } from '@sushiswap/hooks'
+import { Button } from '@sushiswap/ui/components/button'
+import {
+  TridentConstantPoolState,
+  TridentStablePoolState,
+  getTridentRouterContractConfig,
+  useTridentConstantPool,
+  useTridentStablePool,
+} from '@sushiswap/wagmi'
+import { Checker } from '@sushiswap/wagmi/systems'
+import { CheckerProvider } from '@sushiswap/wagmi/systems/Checker/Provider'
+import { APPROVE_TAG_ADD_TRIDENT } from 'lib/constants'
+import { useTokensFromPool } from 'lib/hooks'
+import { FC, useCallback, useMemo, useState } from 'react'
+import { ChainId } from 'sushi/chain'
 import {
   BENTOBOX_ADDRESS,
   BentoBoxChainId,
   isBentoBoxChainId,
 } from 'sushi/config'
-import { ChainId } from 'sushi/chain'
-import { Pool, Protocol } from '@sushiswap/client'
 import { tryParseAmount } from 'sushi/currency'
-import { useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from 'sushi/math'
-import { Button } from '@sushiswap/ui/components/button'
-import {
-  getTridentRouterContractConfig,
-  TridentConstantPoolState,
-  TridentStablePoolState,
-  useTridentConstantPool,
-  useTridentStablePool,
-} from '@sushiswap/wagmi'
-import { Checker } from '@sushiswap/wagmi/systems'
-import { CheckerProvider } from '../../../../packages/wagmi/src/systems/Checker/Provider'
-import { APPROVE_TAG_ADD_TRIDENT } from 'lib/constants'
-import { useTokensFromPool } from 'lib/hooks'
-import { FC, useCallback, useMemo, useState } from 'react'
 
 import { AddSectionReviewModalTrident } from './AddSectionReviewModalTrident'
 import { AddSectionWidget } from './AddSectionWidget'

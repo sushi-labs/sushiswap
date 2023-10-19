@@ -1,11 +1,9 @@
-import { Fee } from 'sushi/dex'
 import {
   TridentConstantPool,
   TridentStablePool,
   computeTridentConstantPoolAddress,
   computeTridentStablePoolAddress,
 } from '@sushiswap/trident-sdk'
-import { BentoBoxChainId } from 'sushi/config'
 import {
   DialogConfirm,
   DialogContent,
@@ -36,11 +34,11 @@ import {
   SendTransactionResult,
   waitForTransaction,
 } from '@sushiswap/wagmi/actions'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import {
   useApproved,
   useSignature,
-} from '../../../../packages/wagmi/src/systems/Checker/Provider'
-import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
+} from '@sushiswap/wagmi/systems/Checker/Provider'
 import {
   LiquidityInput,
   approveMasterContractAction,
@@ -50,7 +48,9 @@ import {
 import { APPROVE_TAG_CREATE_TRIDENT } from 'lib/constants'
 import { FC, ReactNode, useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
+import { BentoBoxChainId } from 'sushi/config'
 import { Amount, Type } from 'sushi/currency'
+import { Fee } from 'sushi/dex'
 import {
   Address,
   UserRejectedRequestError,

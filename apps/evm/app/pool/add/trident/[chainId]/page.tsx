@@ -1,36 +1,27 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import { Fee } from 'sushi/dex'
-import { BENTOBOX_ADDRESS, isBentoBoxChainId } from 'sushi/config'
-import { ChainId } from 'sushi/chain'
 import {
-  defaultQuoteCurrency,
-  Native,
-  tryParseAmount,
-  Type,
-} from 'sushi/currency'
-import {
-  isTridentChainId,
   TridentChainId,
   TridentChainIds,
   TridentConstantPool,
   TridentStablePool,
+  isTridentChainId,
 } from '@sushiswap/trident-sdk'
 import { FormSection } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Loader } from '@sushiswap/ui/components/loader'
 import {
-  getTridentRouterContractConfig,
   PoolFinder,
   PoolFinderType,
   SushiSwapV2PoolState,
   TridentConstantPoolState,
   TridentStablePoolState,
+  getTridentRouterContractConfig,
 } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { Checker } from '@sushiswap/wagmi/systems'
-import { CheckerProvider } from '../../../../../../../packages/wagmi/src/systems/Checker/Provider'
+import { CheckerProvider } from '@sushiswap/wagmi/systems/Checker/Provider'
 import {
   APPROVE_TAG_ADD_TRIDENT,
   APPROVE_TAG_CREATE_TRIDENT,
@@ -47,6 +38,15 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+import { ChainId } from 'sushi/chain'
+import { BENTOBOX_ADDRESS, isBentoBoxChainId } from 'sushi/config'
+import {
+  Native,
+  Type,
+  defaultQuoteCurrency,
+  tryParseAmount,
+} from 'sushi/currency'
+import { Fee } from 'sushi/dex'
 import { SWRConfig } from 'swr'
 
 import { AddSectionReviewModalTrident } from '../../../../../ui/pool/AddSectionReviewModalTrident'

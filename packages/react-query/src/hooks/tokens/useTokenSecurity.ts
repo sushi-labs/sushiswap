@@ -1,6 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
-import { useQuery } from '@tanstack/react-query'
 
 const SUPPORTED_CHAINS: ChainId[] = [
   ChainId.AVALANCHE,

@@ -38,6 +38,7 @@ import {
   useAccount,
   useSignMessage,
 } from '@sushiswap/wagmi'
+import { useWaitForTransaction } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { DistributionCreator } from '@sushiswap/wagmi/future/hooks/rewards/abis/DistributionCreator'
@@ -46,12 +47,11 @@ import { Checker } from '@sushiswap/wagmi/systems'
 import {
   useApproved,
   withCheckerRoot,
-} from '../../../../../packages/wagmi/src/systems/Checker/Provider'
+} from '@sushiswap/wagmi/systems/Checker/Provider'
 import { format } from 'date-fns'
 import { useCallback, useMemo, useState } from 'react'
 import { Chain } from 'sushi/chain'
 import { Token, Type, tryParseAmount } from 'sushi/currency'
-import { useWaitForTransaction } from '@sushiswap/wagmi'
 
 import { ANGLE_ENABLED_NETWORKS } from '../../../config'
 import { ConcentratedLiquidityProvider } from '../../../ui/pool/ConcentratedLiquidityProvider'

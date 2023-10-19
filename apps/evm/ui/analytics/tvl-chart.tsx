@@ -1,21 +1,21 @@
 'use client'
 
-import { formatUSD } from 'sushi/format'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-  classNames,
   SkeletonBox,
   SkeletonText,
   Toggle,
+  classNames,
 } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo, useState } from 'react'
+import { formatUSD } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 

@@ -1,19 +1,21 @@
-import { ChainId } from 'sushi/chain'
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
+import { ChainId } from 'sushi/chain'
 import {
   Address,
+  PublicClient,
+  WalletClient,
   createPublicClient,
   custom,
-  PublicClient,
   walletActions,
-  WalletClient,
 } from 'viem'
 import { hardhat } from 'viem/chains'
 
 import {
   AlgebraIntegralPeriphery,
   AlgebraPoolInfo,
+  Range,
+  TestTokens,
   algebraPoolSwap,
   approveTestTokensToAlgebraPerifery,
   balanceOf,
@@ -24,8 +26,6 @@ import {
   createTestTokens,
   expectCloseValues,
   getRndExpInt,
-  Range,
-  TestTokens,
   tryCallAsync,
   updateTinesAlgebraPool,
 } from '../src'

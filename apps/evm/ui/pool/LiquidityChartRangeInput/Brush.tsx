@@ -1,5 +1,5 @@
 import { usePrevious } from '@sushiswap/hooks'
-import { BrushBehavior, brushX, D3BrushEvent, ScaleLinear, select } from 'd3'
+import { BrushBehavior, D3BrushEvent, ScaleLinear, brushX, select } from 'd3'
 import React, {
   FC,
   useCallback,
@@ -9,7 +9,7 @@ import React, {
   useState,
 } from 'react'
 
-import { brushHandleAccentPath, brushHandlePath, OffScreenHandle } from './svg'
+import { OffScreenHandle, brushHandleAccentPath, brushHandlePath } from './svg'
 
 // flips the handles draggers when close to the container edges
 const FLIP_HANDLE_THRESHOLD_PX = 20

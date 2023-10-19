@@ -1,9 +1,9 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
-import { parseArgs, Pools } from '@sushiswap/client'
+import { Pools, parseArgs } from '@sushiswap/client'
 import { UserPosition } from '@sushiswap/graph-client'
 import { useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
 import useSWR from 'swr'
 
 import { PositionWithPool } from '../../../types'

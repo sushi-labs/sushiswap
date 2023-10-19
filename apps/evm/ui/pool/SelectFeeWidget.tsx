@@ -1,9 +1,9 @@
 'use client'
 
 import { RadioGroup } from '@headlessui/react'
-import { Fee } from 'sushi/dex'
-import { classNames, FormSection } from '@sushiswap/ui'
+import { FormSection, classNames } from '@sushiswap/ui'
 import React, { FC, memo } from 'react'
+import { Fee } from 'sushi/dex'
 
 interface SelectFeeWidgetProps {
   fee: number

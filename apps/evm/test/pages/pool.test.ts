@@ -1,7 +1,6 @@
 // @ts-nocheck
 
 import { Page } from '@playwright/test'
-import { Fee } from 'sushi/dex'
 import {
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
@@ -24,6 +23,7 @@ import {
   test,
 } from 'next/experimental/testmode/playwright'
 import { Native, SUSHI, Token, Type } from 'sushi/currency'
+import { Fee } from 'sushi/dex'
 // import { expect, test } from 'next/experimental/testmode/playwright/msw'
 import { zeroAddress } from 'viem'
 

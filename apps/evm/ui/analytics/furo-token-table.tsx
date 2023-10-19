@@ -1,6 +1,5 @@
 'use client'
 
-import { formatNumber, formatUSD } from 'sushi/format'
 import {
   Badge,
   Card,
@@ -14,6 +13,7 @@ import {
 } from '@sushiswap/ui'
 import { ColumnDef, PaginationState, SortingState } from '@tanstack/react-table'
 import React, { FC, useMemo, useState } from 'react'
+import { formatNumber, formatUSD } from 'sushi/format'
 
 import {
   FuroToken,

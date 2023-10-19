@@ -1,8 +1,8 @@
-import type { ChainId } from 'sushi/chain'
 import type {} from '@sushiswap/database'
 import type { getEarnPool as getEarnPoolOriginal } from '@sushiswap/pools-api/lib/api'
 import { PoolApiSchema } from '@sushiswap/pools-api/lib/schemas/pool'
 import { fetch } from '@whatwg-node/fetch'
+import type { ChainId } from 'sushi/chain'
 import useSWR from 'swr'
 
 import { POOL_API } from '../../constants'

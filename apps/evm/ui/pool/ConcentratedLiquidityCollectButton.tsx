@@ -1,12 +1,10 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
-import { Amount, Type } from 'sushi/currency'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
-  isSushiSwapV3ChainId,
   NonfungiblePositionManager,
   Position,
+  isSushiSwapV3ChainId,
 } from '@sushiswap/v3-sdk'
 import {
   useNetwork,
@@ -22,6 +20,8 @@ import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/f
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { unwrapToken } from 'lib/functions'
 import { FC, ReactElement, useCallback, useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Amount, Type } from 'sushi/currency'
 import { Hex, UserRejectedRequestError } from 'viem'
 
 interface ConcentratedLiquidityCollectButton {

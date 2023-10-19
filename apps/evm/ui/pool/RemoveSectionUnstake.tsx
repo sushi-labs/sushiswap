@@ -1,9 +1,7 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
 import { ChefType, Pool, usePool } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
-import { ZERO } from 'sushi/math'
 import {
   Card,
   CardCurrencyAmountItem,
@@ -20,8 +18,10 @@ import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { useMasterChefWithdraw } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/systems'
-import { withCheckerRoot } from '../../../../packages/wagmi/src/systems/Checker/Provider'
+import { withCheckerRoot } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { FC, useMemo, useState } from 'react'
+import { ChainId } from 'sushi/chain'
+import { ZERO } from 'sushi/math'
 import { useSWRConfig } from 'swr'
 
 import { usePoolPositionStaked } from './PoolPositionStakedProvider'

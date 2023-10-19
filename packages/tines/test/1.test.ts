@@ -1,7 +1,7 @@
 import {
   ConstantProductRPool,
-  findMultiRouteExactIn,
   RouteStatus,
+  findMultiRouteExactIn,
 } from '../src'
 
 // Reason of fail: too big Gas price

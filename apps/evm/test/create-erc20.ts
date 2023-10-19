@@ -1,7 +1,7 @@
 import { erc20Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
-import { createTestClient, http, publicActions, walletActions } from 'viem'
+import { http, createTestClient, publicActions, walletActions } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { Chain, arbitrum, mainnet, polygon } from 'viem/chains'
 

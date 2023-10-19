@@ -1,22 +1,22 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
 import { Pool } from '@sushiswap/client'
-import { tryParseAmount } from 'sushi/currency'
 import { useIsMounted } from '@sushiswap/hooks'
-import { Button } from '@sushiswap/ui/components/button'
+import { Button } from '@sushiswap/ui'
 import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   Address,
-  getSushiSwapRouterContractConfig,
   SushiSwapV2PoolState,
+  getSushiSwapRouterContractConfig,
   useSushiSwapV2Pool,
 } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/systems'
-import { CheckerProvider } from '../../../../packages/wagmi/src/systems/Checker/Provider'
+import { CheckerProvider } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { APPROVE_TAG_ADD_LEGACY } from 'lib/constants'
-import { useTokensFromPool } from 'lib/hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
+import { ChainId } from 'sushi/chain'
+import { tryParseAmount } from 'sushi/currency'
+import { useTokensFromPool } from '../../lib/hooks'
 
 import { AddSectionReviewModalLegacy } from './AddSectionReviewModalLegacy'
 import { AddSectionWidget } from './AddSectionWidget'

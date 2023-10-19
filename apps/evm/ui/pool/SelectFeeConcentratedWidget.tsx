@@ -1,6 +1,5 @@
 import { RadioGroup } from '@headlessui/react'
 import { ChevronRightIcon } from '@heroicons/react-v1/solid'
-import { Type } from 'sushi/currency'
 import {
   Button,
   Card,
@@ -13,12 +12,14 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
+  LinkInternal,
   Toggle,
 } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { FeeAmount } from '@sushiswap/v3-sdk'
 import { usePoolsByTokenPair } from 'lib/hooks/usePoolsByTokenPair'
 import React, { FC, memo, useMemo } from 'react'
+import { Type } from 'sushi/currency'
 
 export const FEE_OPTIONS = [
   {
@@ -145,8 +146,7 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
                           size="sm"
                           variant="secondary"
                         >
-                          <a
-                            target="_blank"
+                          <LinkInternal
                             href={`/pool/add?chainId=${
                               token0.chainId
                             }&feeAmount=${option.value}&fromCurrency=${
@@ -160,7 +160,7 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
                             }`}
                           >
                             Create Pool
-                          </a>
+                          </LinkInternal>
                         </Button>
                       </CardFooter>
                     ) : null}

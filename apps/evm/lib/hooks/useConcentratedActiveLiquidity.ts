@@ -1,6 +1,5 @@
 'use client'
 
-import { Type } from 'sushi/currency'
 import {
   FeeAmount,
   SushiSwapV3ChainId,
@@ -9,6 +8,7 @@ import {
 } from '@sushiswap/v3-sdk'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { useMemo } from 'react'
+import { Type } from 'sushi/currency'
 
 import computeSurroundingTicks from '../functions'
 import { useTicks } from './useTicks'

@@ -1,8 +1,8 @@
 'use client'
 
-import { chainsL2 } from 'sushi/chain'
 import { useCurrentBlockTimestamp } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
+import { chainsL2 } from 'sushi/chain'
 
 import { L2_DEADLINE_FROM_NOW } from '../constants'
 

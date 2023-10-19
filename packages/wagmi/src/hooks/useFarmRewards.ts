@@ -1,9 +1,9 @@
 'use client'
 
+import { UseQueryOptions, useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
 import { chainShortName } from 'sushi/chain'
 import { Token } from 'sushi/currency'
-import { useQuery, UseQueryOptions } from '@tanstack/react-query'
-import { useMemo } from 'react'
 
 export interface FarmMap<T> {
   chainId: number

@@ -1,7 +1,5 @@
 import { CogIcon } from '@heroicons/react-v1/outline'
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import { ChainId } from 'sushi/chain'
-import { Type } from 'sushi/currency'
 import {
   WidgetAction,
   WidgetDescription,
@@ -16,6 +14,8 @@ import {
 import { Widget, WidgetHeader } from '@sushiswap/ui/components/widget'
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import React, { FC, ReactNode } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Type } from 'sushi/currency'
 
 interface AddSectionWidgetProps {
   isFarm: boolean

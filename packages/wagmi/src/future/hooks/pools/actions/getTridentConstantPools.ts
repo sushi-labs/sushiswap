@@ -1,8 +1,8 @@
+import { TridentConstantPool } from '@sushiswap/trident-sdk'
 import {
   tridentConstantPoolAbi,
   tridentConstantPoolFactoryAbi,
 } from 'sushi/abi'
-import { TridentConstantPool } from '@sushiswap/trident-sdk'
 import { Amount, Currency, Token } from 'sushi/currency'
 import { Address, readContracts } from 'wagmi'
 import { getContract } from 'wagmi/actions'

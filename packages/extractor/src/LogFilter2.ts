@@ -1,10 +1,10 @@
 import { AbiEvent } from 'abitype'
 import {
   Block,
-  encodeEventTopics,
   Log,
   PublicClient,
   WatchBlocksReturnType,
+  encodeEventTopics,
 } from 'viem'
 
 import { repeatAsync } from './Utils'

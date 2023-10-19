@@ -1,11 +1,11 @@
 'use client'
 
-import { masterChefV1Abi, masterChefV2Abi } from 'sushi/abi'
 import { ChefType } from '@sushiswap/client'
-import { Amount, Token } from 'sushi/currency'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { useCallback, useMemo } from 'react'
-import { encodeFunctionData, UserRejectedRequestError } from 'viem'
+import { masterChefV1Abi, masterChefV2Abi } from 'sushi/abi'
+import { Amount, Token } from 'sushi/currency'
+import { UserRejectedRequestError, encodeFunctionData } from 'viem'
 import {
   useAccount,
   usePrepareSendTransaction,

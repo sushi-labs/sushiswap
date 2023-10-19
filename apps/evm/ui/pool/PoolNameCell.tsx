@@ -1,8 +1,6 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
 import { Pool, Protocol } from '@sushiswap/client'
-import { formatNumber } from 'sushi/format'
 import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/badge'
 import { Currency } from '@sushiswap/ui/components/currency'
@@ -16,6 +14,8 @@ import {
 import { Row } from '@tanstack/react-table'
 import { useTokensFromPool } from 'lib/hooks'
 import { FC } from 'react'
+import { ChainId } from 'sushi/chain'
+import { formatNumber } from 'sushi/format'
 
 import { PositionWithPool } from '../../types'
 

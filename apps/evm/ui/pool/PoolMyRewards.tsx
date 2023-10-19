@@ -1,7 +1,6 @@
 'use client'
 
 import { Pool } from '@sushiswap/client'
-import { formatUSD } from 'sushi/format'
 import { Button } from '@sushiswap/ui/components/button'
 import {
   Card,
@@ -14,8 +13,9 @@ import {
   CardLabel,
   CardTitle,
 } from '@sushiswap/ui/components/card'
-import { Checker } from '../../../../packages/wagmi/src/systems/Checker'
+import { Checker } from '@sushiswap/wagmi/systems/Checker'
 import { FC } from 'react'
+import { formatUSD } from 'sushi/format'
 
 import { usePoolPositionRewards } from './PoolPositionRewardsProvider'
 

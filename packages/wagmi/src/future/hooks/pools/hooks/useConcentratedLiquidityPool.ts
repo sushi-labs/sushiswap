@@ -1,6 +1,6 @@
-import { Type } from 'sushi/currency'
 import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useQuery } from '@tanstack/react-query'
+import { Type } from 'sushi/currency'
 
 import { getConcentratedLiquidityPool } from '../actions'
 

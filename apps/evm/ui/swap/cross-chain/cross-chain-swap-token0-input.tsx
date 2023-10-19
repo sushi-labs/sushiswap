@@ -6,12 +6,12 @@ import {
 } from '@sushiswap/stargate'
 import {
   Button,
+  Collapsible,
   Label,
   NetworkIcon,
   NetworkSelector,
   SelectIcon,
 } from '@sushiswap/ui'
-import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { Chain } from 'sushi/chain'
 

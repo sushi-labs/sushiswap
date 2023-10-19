@@ -1,12 +1,12 @@
 'use client'
 
-import { formatUSD } from 'sushi/format'
 import { Bundle, Token as GraphToken } from '@sushiswap/graph-client'
 import { Button } from '@sushiswap/ui/components/button'
 import { Chip } from '@sushiswap/ui/components/chip'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
+import { formatUSD } from 'sushi/format'
 import useSWR from 'swr'
 import { getAddress } from 'viem'
 

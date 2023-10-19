@@ -19,9 +19,9 @@ import {
 import { SushiSwapV3Pool } from '@sushiswap/v3-sdk'
 import { unwrapToken } from 'lib/functions'
 import React, { FC, useMemo } from 'react'
-import { formatPercent, shortenAddress } from 'sushi/format'
 import { Chain } from 'sushi/chain'
 import { Token } from 'sushi/currency'
+import { formatPercent, shortenAddress } from 'sushi/format'
 
 import { APRHoverCard } from './APRHoverCard'
 

@@ -1,10 +1,7 @@
 'use client'
 
 import { CogIcon } from '@heroicons/react-v1/outline'
-import { ChainId } from 'sushi/chain'
-import { Amount, Type } from 'sushi/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { ZERO } from 'sushi/math'
 import {
   Card,
   CardCurrencyAmountItem,
@@ -27,6 +24,9 @@ import {
   WidgetTitle,
 } from '@sushiswap/ui/components/widget'
 import React, { FC, ReactNode } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Amount, Type } from 'sushi/currency'
+import { ZERO } from 'sushi/math'
 
 import { usePoolPosition } from './PoolPositionProvider'
 

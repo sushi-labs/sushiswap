@@ -2,22 +2,22 @@ import {
   SnapshotRestorer,
   takeSnapshot,
 } from '@nomicfoundation/hardhat-network-helpers'
-import { erc20Abi } from 'sushi/abi'
 import {
-  createCurvePoolsForMultipool,
   CurveMultitokenPool,
   CurvePool,
-  getBigInt,
   RPool,
   RToken,
+  createCurvePoolsForMultipool,
+  getBigInt,
 } from '@sushiswap/tines'
-import { type Contract } from 'sushi/types'
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
-import { Address, parseAbi, WalletClient } from 'viem'
+import { erc20Abi } from 'sushi/abi'
+import { type Contract } from 'sushi/types'
+import { Address, WalletClient, parseAbi } from 'viem'
 import { readContract, simulateContract } from 'viem/actions'
 
-import { getTestConfig, TestConfig } from '../src/getTestConfig'
+import { TestConfig, getTestConfig } from '../src/getTestConfig'
 import { setTokenBalance } from '../src/setTokenBalance'
 
 enum CurvePoolType {

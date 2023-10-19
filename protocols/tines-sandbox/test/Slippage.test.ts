@@ -1,14 +1,14 @@
 import { ChainId } from 'sushi/chain'
 import { WNATIVE_ADDRESS } from 'sushi/currency'
 import {
-  Address,
-  createPublicClient,
   http,
+  Address,
   Log,
-  parseAbiItem,
   PublicClient,
+  createPublicClient,
+  parseAbiItem,
 } from 'viem'
-import { arbitrum, Chain, mainnet, optimism, polygon } from 'viem/chains'
+import { Chain, arbitrum, mainnet, optimism, polygon } from 'viem/chains'
 
 import { RP3Address } from './Extractor.test'
 

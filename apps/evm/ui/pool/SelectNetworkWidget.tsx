@@ -1,9 +1,9 @@
-import { ChainId, chainName } from 'sushi/chain'
 import { FormSection, NetworkSelector } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { SelectIcon } from '@sushiswap/ui/components/select'
 import React, { FC, memo } from 'react'
+import { ChainId, chainName } from 'sushi/chain'
 
 interface SelectNetworkWidgetProps {
   networks: ChainId[]

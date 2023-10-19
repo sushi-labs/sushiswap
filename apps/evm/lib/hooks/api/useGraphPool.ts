@@ -1,9 +1,9 @@
 'use client'
 
 import { Pool } from '@sushiswap/client'
-import { Amount } from 'sushi/currency'
 import { Pair } from '@sushiswap/graph-client'
 import { useMemo } from 'react'
+import { Amount } from 'sushi/currency'
 import useSWR from 'swr'
 
 import { useTokensFromPool } from '../useTokensFromPool'

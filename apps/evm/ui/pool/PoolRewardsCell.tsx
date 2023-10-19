@@ -1,8 +1,8 @@
-import { ChainId } from 'sushi/chain'
-import { SUSHI } from 'sushi/currency'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Row } from '@tanstack/react-table'
 import { FC } from 'react'
+import { ChainId } from 'sushi/chain'
+import { SUSHI } from 'sushi/currency'
 
 export const PoolRewardsCell: FC<Row<{ chainId: ChainId }>> = ({
   original,

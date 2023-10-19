@@ -1,9 +1,9 @@
 'use client'
 
-import { Token } from 'sushi/currency'
 import { createToast } from '@sushiswap/ui/components/toast'
 import { SendTransactionResult, waitForTransaction } from '@wagmi/core'
 import { useCallback, useMemo, useState } from 'react'
+import { Token } from 'sushi/currency'
 import {
   Address,
   erc20ABI,

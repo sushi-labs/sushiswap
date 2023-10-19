@@ -1,6 +1,3 @@
-import { routeProcessor2Abi } from 'sushi/abi'
-import { ChainId } from 'sushi/chain'
-import { Native } from 'sushi/currency'
 import {
   FactoryV2,
   LogFilter2,
@@ -16,7 +13,10 @@ import {
 } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { RouteStatus } from '@sushiswap/tines'
-import { Address, createPublicClient, http } from 'viem'
+import { routeProcessor2Abi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
+import { Native } from 'sushi/currency'
+import { http, Address, createPublicClient } from 'viem'
 import { Chain, mainnet } from 'viem/chains'
 
 import { RP3Address } from './UniV3Extractor.test'

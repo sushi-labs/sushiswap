@@ -1,13 +1,13 @@
 import { PlusIcon, UserCircleIcon } from '@heroicons/react-v1/solid'
-import { ChainId } from 'sushi/chain'
 import { Pool, Protocol } from '@sushiswap/client'
-import { formatNumber, formatPercent } from 'sushi/format'
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { List } from '@sushiswap/ui/components/list/List'
 import { incentiveRewardToToken } from 'lib/functions'
 import React, { FC } from 'react'
+import { ChainId } from 'sushi/chain'
+import { formatNumber, formatPercent } from 'sushi/format'
 
 interface PoolQuickHoverTooltipProps {
   row: Pool

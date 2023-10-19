@@ -1,8 +1,6 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
 import { Pool } from '@sushiswap/client'
-import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 import {
   Card,
   CardContent,
@@ -14,6 +12,8 @@ import {
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { usePoolGraphData } from 'lib/hooks'
 import { FC } from 'react'
+import { ChainId } from 'sushi/chain'
+import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 
 interface PoolStats {
   pool: Pool

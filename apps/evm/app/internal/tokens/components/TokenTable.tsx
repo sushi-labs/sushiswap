@@ -1,13 +1,13 @@
 'use client'
 
 import { XIcon } from '@heroicons/react-v1/outline'
-import { ChainId, chainName } from 'sushi/chain'
-import { formatUSD } from 'sushi/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { DataTable } from '@sushiswap/ui'
 import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
 import { createColumnHelper } from '@tanstack/react-table'
 import { FC } from 'react'
+import { ChainId, chainName } from 'sushi/chain'
+import { formatUSD } from 'sushi/format'
 
 import { Token } from '../lib'
 import { TokenAdder } from './TokenAdder'

@@ -1,4 +1,3 @@
-import { Amount, Token } from 'sushi/currency'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useAllPrices } from '@sushiswap/react-query'
 import {
@@ -7,6 +6,7 @@ import {
   SushiSwapV3Pool,
 } from '@sushiswap/v3-sdk'
 import { useQuery } from '@tanstack/react-query'
+import { Amount, Token } from 'sushi/currency'
 import { Address } from 'wagmi'
 
 import { getConcentratedLiquidityPool } from '../../pools'

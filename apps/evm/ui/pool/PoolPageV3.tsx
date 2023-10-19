@@ -1,10 +1,8 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
 import { getPool } from '@sushiswap/client'
-import { formatUSD } from 'sushi/format'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
-import { CardLabel, classNames, Separator, SkeletonText } from '@sushiswap/ui'
+import { CardLabel, Separator, SkeletonText, classNames } from '@sushiswap/ui'
 import {
   Card,
   CardContent,
@@ -21,12 +19,14 @@ import {
 } from '@sushiswap/wagmi/future/hooks'
 import { useTokenAmountDollarValues } from 'lib/hooks'
 import React, { FC, useMemo, useState } from 'react'
+import { ChainId } from 'sushi/chain'
+import { formatUSD } from 'sushi/format'
 
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
 import { ConcentratedPositionsTable } from './ConcentratedPositionsTable'
 import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'
-import { PoolsFiltersProvider } from './PoolsFiltersProvider'
 import { PoolTransactionsV3 } from './PoolTransactionsV3'
+import { PoolsFiltersProvider } from './PoolsFiltersProvider'
 import { StatisticsCharts } from './StatisticsChart'
 
 enum Granularity {

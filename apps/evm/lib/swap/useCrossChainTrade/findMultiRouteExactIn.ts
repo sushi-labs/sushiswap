@@ -1,9 +1,9 @@
-import { Token } from 'sushi/currency'
 import {
-  findMultiRouteExactIn as TinesFindMultiRouteExactIn,
   MultiRoute,
   RToken,
+  findMultiRouteExactIn as TinesFindMultiRouteExactIn,
 } from '@sushiswap/tines'
+import { Token } from 'sushi/currency'
 
 import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
 import { Pool } from 'sushi/dex'

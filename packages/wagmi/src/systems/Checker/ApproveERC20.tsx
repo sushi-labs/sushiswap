@@ -6,11 +6,11 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  classNames,
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
   LinkExternal,
+  classNames,
 } from '@sushiswap/ui'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import {

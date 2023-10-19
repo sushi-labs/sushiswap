@@ -1,6 +1,6 @@
 import seedrandom from 'seedrandom'
 
-import { getBigInt, RToken } from '../src'
+import { RToken, getBigInt } from '../src'
 import { BridgeBento } from '../src'
 
 function calcPrecision(a: number, b: number): number {

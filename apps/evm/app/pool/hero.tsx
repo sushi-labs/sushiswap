@@ -1,8 +1,7 @@
 'use client'
 
 import { GiftIcon } from '@heroicons/react-v1/outline'
-import { ChainId } from 'sushi/chain'
-import { isTridentChainId, TridentChainId } from '@sushiswap/trident-sdk'
+import { TridentChainId, isTridentChainId } from '@sushiswap/trident-sdk'
 import { LinkExternal, LinkInternal, typographyVariants } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Chip } from '@sushiswap/ui/components/chip'
@@ -16,9 +15,10 @@ import {
 import { DiscordIcon } from '@sushiswap/ui/components/icons'
 import { SelectIcon } from '@sushiswap/ui/components/select'
 import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { isSushiSwapV3ChainId, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { SushiSwapV3ChainId, isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useNetwork } from '@sushiswap/wagmi'
 import { FC } from 'react'
+import { ChainId } from 'sushi/chain'
 
 export const Hero: FC = () => {
   const { chain } = useNetwork()

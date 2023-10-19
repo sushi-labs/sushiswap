@@ -1,8 +1,6 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
 import { Pool } from '@sushiswap/client'
-import { Native } from 'sushi/currency'
 import { useAngleRewards } from '@sushiswap/react-query'
 import {
   Button,
@@ -18,6 +16,8 @@ import {
   TabsTrigger,
 } from '@sushiswap/ui'
 import { FC } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Native } from 'sushi/currency'
 import { getAddress } from 'viem'
 
 import { isAngleEnabledChainId } from '../../config'

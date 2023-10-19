@@ -1,6 +1,6 @@
-import { type FullConfig } from '@playwright/test'
 import childProcess from 'child_process'
 import { promisify } from 'util'
+import { type FullConfig } from '@playwright/test'
 const exec = promisify(childProcess.exec)
 
 async function globalTeardown(config: FullConfig) {

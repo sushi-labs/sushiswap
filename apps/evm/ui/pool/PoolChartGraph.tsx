@@ -1,12 +1,10 @@
 'use client'
 
-import { ChainId } from 'sushi/chain'
-import { formatPercent, formatUSD } from 'sushi/format'
 import {
   CardContent,
   CardHeader,
-  classNames,
   SkeletonText,
+  classNames,
 } from '@sushiswap/ui'
 import { CardDescription, CardTitle } from '@sushiswap/ui/components/card'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
@@ -16,10 +14,12 @@ import { EChartsOption } from 'echarts-for-react/lib/types'
 import { usePoolGraphData } from 'lib/hooks'
 import { useTheme } from 'next-themes'
 import { FC, useCallback, useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
+import { formatPercent, formatUSD } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 
-import { chartPeriods, PoolChartPeriod } from './PoolChartPeriods'
+import { PoolChartPeriod, chartPeriods } from './PoolChartPeriods'
 import { PoolChartType } from './PoolChartTypes'
 
 interface PoolChartProps {

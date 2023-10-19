@@ -13,10 +13,10 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
   OnramperButton,
   PARTNER_NAVIGATION_LINKS,
   TOOLS_NAVIGATION_LINKS,
+  navigationMenuTriggerStyle,
 } from '@sushiswap/ui'
 import React, { FC } from 'react'
 

@@ -1,10 +1,10 @@
 'use client'
 
-// import * as Sentry from '@sentry/nextjs'
-import { Amount, Type } from 'sushi/currency'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { useCallback, useMemo, useState } from 'react'
-import { maxUint256, UserRejectedRequestError } from 'viem'
+// import * as Sentry from '@sentry/nextjs'
+import { Amount, Type } from 'sushi/currency'
+import { UserRejectedRequestError, maxUint256 } from 'viem'
 import {
   Address,
   useAccount,
