@@ -77,7 +77,6 @@ import {
 export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [review, setReview] = useState(false)
   const [slippageTolerance] = useSlippageTolerance()
   const { address } = useAccount()
   const { chain } = useNetwork()
@@ -239,8 +238,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   })
 
   const onComplete = useCallback(() => {
-    setReview(false)
-
     // Reset after half a second because of dialog close animation
     setTimeout(() => {
       setStepStates({
@@ -253,42 +250,36 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
 
   const onClick = useCallback(
     (confirm: () => void) => {
-      if (pendingState(stepStates)) {
-        setReview(true)
-      } else if (review) {
-        setStepStates({
-          source: StepState.Sign,
-          bridge: StepState.NotStarted,
-          dest: StepState.NotStarted,
-        })
+      setStepStates({
+        source: StepState.Sign,
+        bridge: StepState.NotStarted,
+        dest: StepState.NotStarted,
+      })
 
-        const promise = writeAsync?.()
-        if (promise) {
-          promise
-            .then(() => {
-              confirm()
+      const promise = writeAsync?.()
+      if (promise) {
+        promise
+          .then(() => {
+            confirm()
+            setStepStates({
+              source: StepState.Pending,
+              bridge: StepState.NotStarted,
+              dest: StepState.NotStarted,
+            })
+          })
+          .catch((e: unknown) => {
+            if (e instanceof UserRejectedRequestError) onComplete()
+            else {
               setStepStates({
-                source: StepState.Pending,
+                source: StepState.Failed,
                 bridge: StepState.NotStarted,
                 dest: StepState.NotStarted,
               })
-            })
-            .catch((e: unknown) => {
-              if (e instanceof UserRejectedRequestError) onComplete()
-              else {
-                setStepStates({
-                  source: StepState.Failed,
-                  bridge: StepState.NotStarted,
-                  dest: StepState.NotStarted,
-                })
-              }
-            })
-        }
-      } else {
-        setReview(true)
+            }
+          })
       }
     },
-    [onComplete, review, stepStates, writeAsync],
+    [onComplete, stepStates, writeAsync],
   )
 
   const { data: lzData } = useLayerZeroScanLink({
@@ -505,6 +496,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                       ? 'red'
                       : 'blue'
                   }
+                  testId="confirm-swap"
                 >
                   {isError ? (
                     'Shoot! Something went wrong :('
@@ -547,7 +539,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button size="xl" fullWidth>
+              <Button size="xl" fullWidth id="swap-dialog-close">
                 {failedState(stepStates)
                   ? 'Try again'
                   : finishedState(stepStates)
