@@ -46,7 +46,7 @@ export const CrossChainSwapToken1Input = () => {
                 close()
               }}
             >
-              <Button variant="secondary" size="xs">
+              <Button variant="secondary" size="xs" testId="network-selector-to">
                 <NetworkIcon chainId={chainId1} width={16} height={16} />
                 {Chain.from(chainId1)?.name}
                 <SelectIcon />
