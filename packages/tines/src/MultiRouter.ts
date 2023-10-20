@@ -252,9 +252,11 @@ function checkChainId(
     })
   }
 
-  const chainIds: (string | number | undefined)[] =Array.isArray(baseTokenOrNetworks)
-      ? baseTokenOrNetworks.map((n) => n.chainId)
-      : [baseTokenOrNetworks.chainId]
+  const chainIds: (string | number | undefined)[] = Array.isArray(
+    baseTokenOrNetworks,
+  )
+    ? baseTokenOrNetworks.map((n) => n.chainId)
+    : [baseTokenOrNetworks.chainId]
   const chainIdSet = new Set(chainIds)
 
   const checkToken = (t: RToken) => {

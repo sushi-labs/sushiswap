@@ -439,16 +439,16 @@ export class Graph {
     minPriceLiquidity = 0,
     priceLogging = false,
   ) {
-    const networks: NetworkInfo[] =Array.isArray(baseTokenOrNetworks)
-        ? baseTokenOrNetworks
-        : [
-            {
-              chainId: baseTokenOrNetworks.chainId,
-              baseToken: baseTokenOrNetworks,
-              //baseTokenPrice: 1,
-              gasPrice: gasPriceSingleNetwork || 0,
-            },
-          ]
+    const networks: NetworkInfo[] = Array.isArray(baseTokenOrNetworks)
+      ? baseTokenOrNetworks
+      : [
+          {
+            chainId: baseTokenOrNetworks.chainId,
+            baseToken: baseTokenOrNetworks,
+            //baseTokenPrice: 1,
+            gasPrice: gasPriceSingleNetwork || 0,
+          },
+        ]
 
     setTokenId(...networks.map((n) => n.baseToken))
     this.vertices = []

@@ -9,12 +9,7 @@ export const MoonriverCircle: IconComponent = (props) => (
     viewBox="0 0 128 128"
     {...props}
   >
-    <rect
-      width="128"
-      height="128"
-      fill="url(#paint0_radial_303_494)"
-      rx="64"
-    />
+    <rect width="128" height="128" fill="url(#paint0_radial_303_494)" rx="64" />
     <g clipPath="url(#clip0_303_494)">
       <path
         fill="#F2B705"

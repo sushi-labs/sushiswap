@@ -263,7 +263,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
           >
             {queryToken &&
               !customTokenMap[
-              `${queryToken.chainId}:${queryToken.wrapped.address}`
+                `${queryToken.chainId}:${queryToken.wrapped.address}`
               ] &&
               !tokenMap?.[`${queryToken.wrapped.address}`] && (
                 <TokenSelectorImportRow

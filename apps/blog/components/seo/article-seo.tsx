@@ -27,22 +27,19 @@ export const ArticleSeo: FC<ArticleSeoProps> = ({ article }) => {
         openGraph={{
           ...(isMediaVideo(article.cover.data.attributes.provider_metadata)
             ? {
-              videos: [{ url: cover }],
-            }
+                videos: [{ url: cover }],
+              }
             : {
-              images: [{ url: cover, alt: coverAlt }],
-            }),
+                images: [{ url: cover, alt: coverAlt }],
+              }),
           article: {
             publishedTime: article.publishedAt,
             modifiedTime: article.updatedAt,
             authors: authors.map((author) => author.name),
-            tags: article.categories.data.reduce<string[]>(
-              (acc, el) => {
-                acc.push(el.attributes.name)
-                return acc
-              },
-              [],
-            ),
+            tags: article.categories.data.reduce<string[]>((acc, el) => {
+              acc.push(el.attributes.name)
+              return acc
+            }, []),
           },
         }}
         title={article.title}

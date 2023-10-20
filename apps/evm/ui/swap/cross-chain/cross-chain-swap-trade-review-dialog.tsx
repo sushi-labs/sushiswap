@@ -142,12 +142,12 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     args: trade?.writeArgs,
     enabled: Boolean(
       isSushiXSwapChainId(chainId0) &&
-      isSushiXSwapChainId(chainId1) &&
-      trade?.writeArgs &&
-      trade?.writeArgs.length > 0 &&
-      chain?.id === chainId0 &&
-      approved &&
-      trade?.route?.status !== 'NoWay',
+        isSushiXSwapChainId(chainId1) &&
+        trade?.writeArgs &&
+        trade?.writeArgs.length > 0 &&
+        chain?.id === chainId0 &&
+        approved &&
+        trade?.route?.status !== 'NoWay',
     ),
     value: trade?.value || 0n,
     onError: (error) => {
@@ -172,10 +172,12 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         txHash: data.hash,
         promise: waitForTransaction({ hash: data.hash }),
         summary: {
-          pending: `Swapping ${trade.amountIn?.toSignificant(6)} ${trade.amountIn?.currency.symbol
-            } to bridge token ${srcCurrencyB?.symbol}`,
-          completed: `Swap ${trade.amountIn?.toSignificant(6)} ${trade.amountIn?.currency.symbol
-            } to bridge token ${srcCurrencyB?.symbol}`,
+          pending: `Swapping ${trade.amountIn?.toSignificant(6)} ${
+            trade.amountIn?.currency.symbol
+          } to bridge token ${srcCurrencyB?.symbol}`,
+          completed: `Swap ${trade.amountIn?.toSignificant(6)} ${
+            trade.amountIn?.currency.symbol
+          } to bridge token ${srcCurrencyB?.symbol}`,
           failed: `Something went wrong when trying to swap ${trade.amountIn?.currency.symbol} to bridge token`,
         },
         timestamp: groupTs.current,
@@ -193,12 +195,12 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     ...config,
     request: config?.request
       ? {
-        ...config.request,
-        gas:
-          typeof config.request.gas === 'bigint'
-            ? gasMargin(config.request.gas)
-            : undefined,
-      }
+          ...config.request,
+          gas:
+            typeof config.request.gas === 'bigint'
+              ? gasMargin(config.request.gas)
+              : undefined,
+        }
       : undefined,
     onMutate: () => {
       // Set reference of current trade
@@ -354,8 +356,9 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         chainId: chainId0,
         txHash: '0x',
         href: lzData.link,
-        summary: `Bridging ${srcCurrencyB?.symbol} from ${Chain.from(chainId0)?.name
-          } to ${Chain.from(chainId1)?.name}`,
+        summary: `Bridging ${srcCurrencyB?.symbol} from ${
+          Chain.from(chainId0)?.name
+        } to ${Chain.from(chainId1)?.name}`,
         timestamp: new Date().getTime(),
         groupTimestamp: groupTs.current,
       })
@@ -375,15 +378,21 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
           chainId: chainId1,
         }),
         summary: {
-          pending: `Swapping ${dstCurrencyA?.symbol
-            } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${tradeRef?.current?.amountOut?.currency.symbol
-            }`,
-          completed: `Swap ${dstCurrencyA?.symbol
-            } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${tradeRef?.current?.amountOut?.currency.symbol
-            }`,
-          failed: `Something went wrong when trying to swap ${dstCurrencyA?.symbol
-            } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${tradeRef?.current?.amountOut?.currency.symbol
-            }`,
+          pending: `Swapping ${
+            dstCurrencyA?.symbol
+          } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${
+            tradeRef?.current?.amountOut?.currency.symbol
+          }`,
+          completed: `Swap ${
+            dstCurrencyA?.symbol
+          } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${
+            tradeRef?.current?.amountOut?.currency.symbol
+          }`,
+          failed: `Something went wrong when trying to swap ${
+            dstCurrencyA?.symbol
+          } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${
+            tradeRef?.current?.amountOut?.currency.symbol
+          }`,
         },
         timestamp: new Date().getTime(),
         groupTimestamp: groupTs.current,
@@ -401,7 +410,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
               <Collapsible
                 open={Boolean(
                   +swapAmountString > 0 &&
-                  stringify(error).includes('insufficient funds'),
+                    stringify(error).includes('insufficient funds'),
                 )}
               >
                 <div className="pt-4">
@@ -419,7 +428,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                   {isFetching ? (
                     <SkeletonText fontSize="xs" className="w-2/3" />
                   ) : (
-                    `Receive ${trade?.amountOut?.toSignificant(6)} ${token1?.symbol
+                    `Receive ${trade?.amountOut?.toSignificant(6)} ${
+                      token1?.symbol
                     }`
                   )}
                 </DialogTitle>
@@ -457,17 +467,19 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                           className="w-1/5"
                         />
                       ) : (
-                        `${trade?.priceImpact?.lessThan(ZERO)
-                          ? '+'
-                          : trade?.priceImpact?.greaterThan(ZERO)
+                        `${
+                          trade?.priceImpact?.lessThan(ZERO)
+                            ? '+'
+                            : trade?.priceImpact?.greaterThan(ZERO)
                             ? '-'
                             : ''
                         }${Math.abs(Number(trade?.priceImpact?.toFixed(2)))}%`
                       )}
                     </List.KeyValue>
                     <List.KeyValue
-                      title={`Min. received after slippage (${slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance
-                        }%)`}
+                      title={`Min. received after slippage (${
+                        slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance
+                      }%)`}
                       subtitle="The minimum amount you are guaranteed to receive."
                     >
                       {isFetching ? (
@@ -477,7 +489,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                           className="w-1/2"
                         />
                       ) : (
-                        `${trade?.minAmountOut?.toSignificant(6)} ${token1?.symbol
+                        `${trade?.minAmountOut?.toSignificant(6)} ${
+                          token1?.symbol
                         }`
                       )}
                     </List.KeyValue>
@@ -515,8 +528,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                     isError
                       ? 'red'
                       : warningSeverity(trade?.priceImpact) >= 3
-                        ? 'red'
-                        : 'blue'
+                      ? 'red'
+                      : 'blue'
                   }
                 >
                   {isError ? (
@@ -564,8 +577,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                 {failedState(stepStates)
                   ? 'Try again'
                   : finishedState(stepStates)
-                    ? 'Make another swap'
-                    : 'Close'}
+                  ? 'Make another swap'
+                  : 'Close'}
               </Button>
             </DialogClose>
           </DialogFooter>

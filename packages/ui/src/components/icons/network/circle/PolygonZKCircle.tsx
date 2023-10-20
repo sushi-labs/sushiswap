@@ -16,11 +16,7 @@ export const PolygonZKCircle: IconComponent = (props) => (
     </g>
     <defs>
       <clipPath id="clip0_833_64">
-        <path
-          fill="#fff"
-          d="M0 0H72.19V80H0z"
-          transform="translate(28 24)"
-        />
+        <path fill="#fff" d="M0 0H72.19V80H0z" transform="translate(28 24)" />
       </clipPath>
     </defs>
   </svg>

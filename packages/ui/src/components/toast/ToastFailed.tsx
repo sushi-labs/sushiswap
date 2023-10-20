@@ -19,8 +19,8 @@ export const ToastFailed: FC<ToastFailed> = ({
   const txUrl = href
     ? href
     : txHash
-      ? Chain.from(chainId)?.getTxUrl(txHash)
-      : ''
+    ? Chain.from(chainId)?.getTxUrl(txHash)
+    : ''
   return (
     <>
       <ToastContent href={txUrl} summary={summary} />

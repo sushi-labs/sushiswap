@@ -42,7 +42,11 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
   )
 
   const submitToken = useCallback(
-    async (event: React.KeyboardEvent<HTMLDivElement> | React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    async (
+      event:
+        | React.KeyboardEvent<HTMLDivElement>
+        | React.MouseEvent<HTMLDivElement, MouseEvent>,
+    ) => {
       event.stopPropagation()
       setAddState('submitting')
       try {

@@ -45,13 +45,13 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
 
   const token0NotInList = Boolean(
     tokenFrom?.status !== 'APPROVED' &&
-    tokenFrom?.token &&
-    !hasToken(tokenFrom?.token),
+      tokenFrom?.token &&
+      !hasToken(tokenFrom?.token),
   )
   const token1NotInList = Boolean(
     tokenTo?.status !== 'APPROVED' &&
-    tokenTo?.token &&
-    !hasToken(tokenTo?.token),
+      tokenTo?.token &&
+      !hasToken(tokenTo?.token),
   )
 
   const onImport = useCallback(
@@ -91,15 +91,15 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
     ),
     enabled: Boolean(
       !tokenFromLoading &&
-      !tokenToLoading &&
-      (token0NotInList || token1NotInList),
+        !tokenToLoading &&
+        (token0NotInList || token1NotInList),
     ),
   })
 
   const isNotHoneyPot = Boolean(
     !tokenFromLoading &&
-    !tokenToLoading &&
-    (token0NotInList || token1NotInList),
+      !tokenToLoading &&
+      (token0NotInList || token1NotInList),
   )
 
   if (!tokenSecurity) return null
@@ -108,8 +108,8 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
     <Dialog
       open={Boolean(
         !tokenFromLoading &&
-        !tokenToLoading &&
-        (token0NotInList || token1NotInList),
+          !tokenToLoading &&
+          (token0NotInList || token1NotInList),
       )}
     >
       <DialogContent>
@@ -272,7 +272,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                     <List.Label>
                       Token{' '}
                       {tokenTo?.token &&
-                        tokenSecurity.honeypots.includes(tokenTo.token.address)
+                      tokenSecurity.honeypots.includes(tokenTo.token.address)
                         ? '1'
                         : ''}
                     </List.Label>
@@ -304,7 +304,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
                     <List.Label>
                       Token{' '}
                       {tokenFrom?.token &&
-                        tokenSecurity.honeypots.includes(tokenFrom.token.address)
+                      tokenSecurity.honeypots.includes(tokenFrom.token.address)
                         ? '2'
                         : ''}
                     </List.Label>
@@ -348,7 +348,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
         <DialogFooter>
           {isNotHoneyPot ? (
             (token0NotInList && tokenFrom?.token) ||
-              (token1NotInList && tokenTo?.token) ? (
+            (token1NotInList && tokenTo?.token) ? (
               <Button
                 fullWidth
                 size="xl"

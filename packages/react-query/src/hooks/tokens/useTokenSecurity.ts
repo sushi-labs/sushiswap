@@ -49,7 +49,7 @@ const fetchTokenSecurityQueryFn = async (currencies: (Token | undefined)[]) => {
     const isHoneypot = cur?.is_honeypot === '1'
     const supportedCurrencyAddress = supportedCurrencies?.[i]?.address
     if (isHoneypot && typeof supportedCurrencyAddress === 'string') {
-      acc.push(supportedCurrencyAddress)  
+      acc.push(supportedCurrencyAddress)
       return acc
     }
     return acc
