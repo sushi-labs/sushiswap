@@ -496,7 +496,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                       ? 'red'
                       : 'blue'
                   }
-                  testId='confirm-swap'
+                  testId="confirm-swap"
                 >
                   {isError ? (
                     'Shoot! Something went wrong :('
@@ -539,7 +539,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button size="xl" fullWidth id='swap-dialog-close'>
+              <Button size="xl" fullWidth id="swap-dialog-close">
                 {failedState(stepStates)
                   ? 'Try again'
                   : finishedState(stepStates)

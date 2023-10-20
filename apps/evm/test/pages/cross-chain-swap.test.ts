@@ -1,5 +1,3 @@
-
-
 import { Page, expect, test } from '@playwright/test'
 import { ChainId, chainName } from 'sushi/chain'
 import { Native, Type } from 'sushi/currency'
@@ -17,12 +15,16 @@ if (typeof process.env.NEXT_PUBLIC_DST_CHAIN_ID !== 'string') {
   throw new Error('NEXT_PUBLIC_DST_CHAIN_ID not set')
 }
 
-const srcChainId = parseInt(process.env.NEXT_PUBLIC_CHAIN_ID) as SupportedChainId
-const dstChainId = parseInt(process.env.NEXT_PUBLIC_DST_CHAIN_ID) as SupportedChainId
+const srcChainId = parseInt(
+  process.env.NEXT_PUBLIC_CHAIN_ID,
+) as SupportedChainId
+const dstChainId = parseInt(
+  process.env.NEXT_PUBLIC_DST_CHAIN_ID,
+) as SupportedChainId
 
 const url = 'http://localhost:3000/swap/cross-chain'
 
-test.beforeEach(async ({ page, }) => {
+test.beforeEach(async ({ page }) => {
   page.on('pageerror', (error) => {
     console.error(error)
   })
@@ -31,14 +33,24 @@ test.beforeEach(async ({ page, }) => {
   await switchNetwork(page, srcChainId)
 })
 
-test('Bridge Native to Native', async ({ page, }) => {
+test('Bridge Native to Native', async ({ page }) => {
   test.slow()
-  await xswap(page, Native.onChain(srcChainId), Native.onChain(dstChainId), '100')
+  await xswap(
+    page,
+    Native.onChain(srcChainId),
+    Native.onChain(dstChainId),
+    '100',
+  )
 })
 
-test('Bridge Native to USDC', async ({ page, }) => {
+test('Bridge Native to USDC', async ({ page }) => {
   test.slow()
-  await xswap(page, Native.onChain(srcChainId), Native.onChain(dstChainId), '100')
+  await xswap(
+    page,
+    Native.onChain(srcChainId),
+    Native.onChain(dstChainId),
+    '100',
+  )
 })
 
 async function xswap(
@@ -96,7 +108,7 @@ async function xswap(
   expect(page.getByText(expectedSwapText)).toBeVisible()
 
   // Bridge pending
-  await expect(page.getByText("Bridging to destination chain")).toBeVisible()
+  await expect(page.getByText('Bridging to destination chain')).toBeVisible()
 
   await mockLayerZeroApi(page)
 
@@ -107,7 +119,7 @@ async function xswap(
 
   const close = page.locator('[testdata-id=swap-dialog-close-button]', {
     hasText: 'Make another swap',
-  },)
+  })
   await expect(close).toBeVisible()
   await expect(close).toBeEnabled()
   await close.click()
@@ -144,9 +156,7 @@ async function handleNetwork(page: Page, chainId: ChainId, type: InputType) {
   await expect(networkSelector).toBeEnabled()
   await networkSelector.click()
 
-  const networkSearch = page.locator(
-    `[testdata-id=network-selector-input]`,
-  )
+  const networkSearch = page.locator(`[testdata-id=network-selector-input]`)
   await expect(networkSearch).toBeVisible()
   await expect(networkSearch).toBeEnabled()
   await networkSearch.fill(chainName[chainId])
@@ -181,7 +191,8 @@ async function handleToken(page: Page, currency: Type, type: InputType) {
   await tokenSearch.fill(currency.symbol as string)
 
   const tokenToSelect = page.locator(
-    `[testdata-id=swap-${selectorInfix}-token-selector-row-${currency.isNative ? zeroAddress : currency.address.toLowerCase()
+    `[testdata-id=swap-${selectorInfix}-token-selector-row-${
+      currency.isNative ? zeroAddress : currency.address.toLowerCase()
     }]`,
   )
   await expect(tokenToSelect).toBeVisible()
@@ -215,25 +226,26 @@ async function switchNetwork(page: Page, chainId: number) {
   await expect(fromToken).toHaveText(Native.onChain(chainId).symbol)
 }
 
-async function mockLayerZeroApi(
-  page: Page,
-) {
-
+async function mockLayerZeroApi(page: Page) {
   const mockLayerZeroResp = {
-    messages: [{
-      srcUaAddress: zeroAddress,
-      dstUaAddress: zeroAddress,
-      srcChainId: 1,
-      dstChainId: 1,
-      srcUaNonce: 0,
-      status: "DELIVERED",
-    }]
+    messages: [
+      {
+        srcUaAddress: zeroAddress,
+        dstUaAddress: zeroAddress,
+        srcChainId: 1,
+        dstChainId: 1,
+        srcUaNonce: 0,
+        status: 'DELIVERED',
+      },
+    ],
   }
 
-  await page.route('https://api-mainnet.layerzero-scan.com/tx/*', async (route) => {
-    await route.fulfill({
-      json: mockLayerZeroResp
-    })
-  }
+  await page.route(
+    'https://api-mainnet.layerzero-scan.com/tx/*',
+    async (route) => {
+      await route.fulfill({
+        json: mockLayerZeroResp,
+      })
+    },
   )
 }
