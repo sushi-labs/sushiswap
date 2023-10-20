@@ -128,7 +128,7 @@ const _Home: FC = () => {
             ) : null}
             <div className="flex justify-center">
               <Button asChild variant="secondary">
-                <LinkInternal href="/blog/archive">View Archive</LinkInternal>
+                <LinkInternal href="/archive">View Archive</LinkInternal>
               </Button>
             </div>
           </Container>
