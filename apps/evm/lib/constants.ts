@@ -1,6 +1,6 @@
-import { GetPoolsArgs, Protocol } from '@sushiswap/client'
+import {GetPoolsArgs, Protocol} from '@sushiswap/client'
 
-import { SUPPORTED_CHAIN_IDS } from '../config'
+import {SUPPORTED_CHAIN_IDS} from '../config'
 
 export const L2_DEADLINE_FROM_NOW = BigInt(60) * BigInt(5)
 
@@ -73,5 +73,5 @@ export const APPROVE_TAG_MIGRATE = 'APPROVE_TAG_MIGRATE'
 export const APPROVE_TAG_XSWAP = 'APPROVE_TAG_XSWAP'
 export const APPROVE_TAG_SWAP = 'APPROVE_TAG_SWAP'
 
-// MAINTENANCe
-export const IS_XSWAP_MAINTENANCE = false
+// MAINTENANCE
+export const IS_XSWAP_MAINTENANCE = process.env.NEXT_PUBLIC_XSWAP_MAINTENANCE === 'true' ?? false
