@@ -39,9 +39,6 @@ importers:
       jest:
         specifier: 29.7.0
         version: 29.7.0(@types/node@18.11.18)
-      playwright:
-        specifier: 1.37.0
-        version: 1.37.0
       sort-package-json:
         specifier: 2.6.0
         version: 2.6.0
@@ -1735,7 +1732,7 @@ importers:
         version: 1.16.6(typescript@5.2.2)(zod@3.21.4)
       vitest:
         specifier: 0.34.6
-        version: 0.34.6(playwright@1.37.0)
+        version: 0.34.6
       zod:
         specifier: 3.21.4
         version: 3.21.4
@@ -2660,8 +2657,8 @@ packages:
     transitivePeerDependencies:
       - encoding
 
-  /@artilleryio/int-commons@2.0.1:
-    resolution: {integrity: sha512-iRaUAapHHY2LQB7z3SQF97rDTf2Or7M7tI/61XBZgby3rQ0sl0+Jt0R8HFmLstBTKcSQ99ItAZYb+583/CZuzg==}
+  /@artilleryio/int-commons@2.0.2:
+    resolution: {integrity: sha512-IfdHOtprbuoLY8zlfdmJdEn/bt7NEJPTDc9tGjy2ya76uVdarU495E+nGG4PrDnzhDF8R56uUmEW66aRRzEoTA==}
     dependencies:
       async: 2.6.4
       cheerio: 1.0.0-rc.12
@@ -2674,10 +2671,10 @@ packages:
       - supports-color
     dev: true
 
-  /@artilleryio/int-core@2.1.0:
-    resolution: {integrity: sha512-wzGZ7/0s89ZctSJb8KeOZgBc3sLlvWUHqVwAlkr6hh/nMqx00Txc+r5y5qbtrF5sZvaYTLrWUXglpGaCalNYRQ==}
+  /@artilleryio/int-core@2.2.0:
+    resolution: {integrity: sha512-cZSSONpntDDwgRQUMe/6BryPiZRNoejT9nRSWsn2EDVqOaOkb4rNcEKuA0PqwGQM8ompBZsLBorf9UmYQ2b3Ow==}
     dependencies:
-      '@artilleryio/int-commons': 2.0.1
+      '@artilleryio/int-commons': 2.0.2
       '@artilleryio/sketches-js': 2.1.1
       agentkeepalive: 4.5.0
       arrivals: 2.1.2
@@ -10974,9 +10971,25 @@ packages:
       '@opentelemetry/api': 1.6.0
     dev: true
 
+  /@opentelemetry/api-logs@0.43.0:
+    resolution: {integrity: sha512-0CXMOYPXgAdLM2OzVkiUfAL6QQwWVhnMfUXCqLsITY42FZ9TxAhZIHkoc4mfVxvPuXsBnRYGR8UQZX86p87z4A==}
+    engines: {node: '>=14'}
+    dependencies:
+      '@opentelemetry/api': 1.6.0
+    dev: true
+
   /@opentelemetry/api@1.6.0:
     resolution: {integrity: sha512-OWlrQAnWn9577PhVgqjUvMr1pg57Bc4jv0iL4w0PRuOSRvq67rvHW9Ie/dZVMvCzhSCB+UxhcY/PmCmFj33Q+g==}
     engines: {node: '>=8.0.0'}
+    dev: true
+
+  /@opentelemetry/context-async-hooks@1.17.1(@opentelemetry/api@1.6.0):
+    resolution: {integrity: sha512-up5I+RiQEkGrVEHtbAtmRgS+ZOnFh3shaDNHqZPBlGy+O92auL6yMmjzYpSKmJOGWowvs3fhVHePa8Exb5iHUg==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@opentelemetry/api': '>=1.0.0 <1.7.0'
+    dependencies:
+      '@opentelemetry/api': 1.6.0
     dev: true
 
   /@opentelemetry/core@1.15.2(@opentelemetry/api@1.6.0):
@@ -11045,6 +11058,21 @@ packages:
       '@opentelemetry/sdk-metrics': 1.15.2(@opentelemetry/api@1.6.0)
     dev: true
 
+  /@opentelemetry/exporter-trace-otlp-grpc@0.43.0(@opentelemetry/api@1.6.0):
+    resolution: {integrity: sha512-h/oofzwyONMcAeBXD6+E6+foFQg9CPadBFcKAGoMIyVSK7iZgtK5DLEwAF4jz5MhfxWNmwZjHXFRc0GqCRx/tA==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@opentelemetry/api': ^1.0.0
+    dependencies:
+      '@grpc/grpc-js': 1.9.2
+      '@opentelemetry/api': 1.6.0
+      '@opentelemetry/core': 1.17.0(@opentelemetry/api@1.6.0)
+      '@opentelemetry/otlp-grpc-exporter-base': 0.43.0(@opentelemetry/api@1.6.0)
+      '@opentelemetry/otlp-transformer': 0.43.0(@opentelemetry/api@1.6.0)
+      '@opentelemetry/resources': 1.17.0(@opentelemetry/api@1.6.0)
+      '@opentelemetry/sdk-trace-base': 1.17.0(@opentelemetry/api@1.6.0)
+    dev: true
+
   /@opentelemetry/exporter-trace-otlp-http@0.41.2(@opentelemetry/api@1.6.0):
     resolution: {integrity: sha512-Y0fGLipjZXLMelWtlS1/MDtrPxf25oM408KukRdkN31a1MEFo4h/ZkNwS7ZfmqHGUa+4rWRt2bi6JBiqy7Ytgw==}
     engines: {node: '>=14'}
@@ -11097,6 +11125,16 @@ packages:
       '@opentelemetry/core': 1.15.2(@opentelemetry/api@1.6.0)
     dev: true
 
+  /@opentelemetry/otlp-exporter-base@0.43.0(@opentelemetry/api@1.6.0):
+    resolution: {integrity: sha512-LXNtRFVuPRXB9q0qdvrLikQ3NtT9Jmv255Idryz3RJPhOh/Fa03sBASQoj3D55OH3xazmA90KFHfhJ/d8D8y4A==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@opentelemetry/api': ^1.0.0
+    dependencies:
+      '@opentelemetry/api': 1.6.0
+      '@opentelemetry/core': 1.17.0(@opentelemetry/api@1.6.0)
+    dev: true
+
   /@opentelemetry/otlp-grpc-exporter-base@0.41.2(@opentelemetry/api@1.6.0):
     resolution: {integrity: sha512-OErK8dYjXG01XIMIpmOV2SzL9ctkZ0Nyhf2UumICOAKtgLvR5dG1JMlsNVp8Jn0RzpsKc6Urv7JpP69wzRXN+A==}
     engines: {node: '>=14'}
@@ -11107,6 +11145,19 @@ packages:
       '@opentelemetry/api': 1.6.0
       '@opentelemetry/core': 1.15.2(@opentelemetry/api@1.6.0)
       '@opentelemetry/otlp-exporter-base': 0.41.2(@opentelemetry/api@1.6.0)
+      protobufjs: 7.2.4
+    dev: true
+
+  /@opentelemetry/otlp-grpc-exporter-base@0.43.0(@opentelemetry/api@1.6.0):
+    resolution: {integrity: sha512-oOpqtDJo9BBa1+nD6ID1qZ55ZdTwEwSSn2idMobw8jmByJKaanVLdr9SJKsn5T9OBqo/c5QY2brMf0TNZkobJQ==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@opentelemetry/api': ^1.0.0
+    dependencies:
+      '@grpc/grpc-js': 1.9.2
+      '@opentelemetry/api': 1.6.0
+      '@opentelemetry/core': 1.17.0(@opentelemetry/api@1.6.0)
+      '@opentelemetry/otlp-exporter-base': 0.43.0(@opentelemetry/api@1.6.0)
       protobufjs: 7.2.4
     dev: true
 
@@ -11135,6 +11186,21 @@ packages:
       '@opentelemetry/sdk-logs': 0.41.2(@opentelemetry/api-logs@0.41.2)(@opentelemetry/api@1.6.0)
       '@opentelemetry/sdk-metrics': 1.15.2(@opentelemetry/api@1.6.0)
       '@opentelemetry/sdk-trace-base': 1.15.2(@opentelemetry/api@1.6.0)
+    dev: true
+
+  /@opentelemetry/otlp-transformer@0.43.0(@opentelemetry/api@1.6.0):
+    resolution: {integrity: sha512-KXYmgzWdVBOD5NvPmGW1nEMJjyQ8gK3N8r6pi4HvmEhTp0v4T13qDSax4q0HfsqmbPJR355oqQSJUnu1dHNutw==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@opentelemetry/api': '>=1.3.0 <1.7.0'
+    dependencies:
+      '@opentelemetry/api': 1.6.0
+      '@opentelemetry/api-logs': 0.43.0
+      '@opentelemetry/core': 1.17.0(@opentelemetry/api@1.6.0)
+      '@opentelemetry/resources': 1.17.0(@opentelemetry/api@1.6.0)
+      '@opentelemetry/sdk-logs': 0.43.0(@opentelemetry/api-logs@0.43.0)(@opentelemetry/api@1.6.0)
+      '@opentelemetry/sdk-metrics': 1.17.0(@opentelemetry/api@1.6.0)
+      '@opentelemetry/sdk-trace-base': 1.17.0(@opentelemetry/api@1.6.0)
     dev: true
 
   /@opentelemetry/resources@1.15.2(@opentelemetry/api@1.6.0):
@@ -11170,6 +11236,19 @@ packages:
       '@opentelemetry/api-logs': 0.41.2
       '@opentelemetry/core': 1.15.2(@opentelemetry/api@1.6.0)
       '@opentelemetry/resources': 1.15.2(@opentelemetry/api@1.6.0)
+    dev: true
+
+  /@opentelemetry/sdk-logs@0.43.0(@opentelemetry/api-logs@0.43.0)(@opentelemetry/api@1.6.0):
+    resolution: {integrity: sha512-JyJ2BBRKm37Mc4cSEhFmsMl5ASQn1dkGhEWzAAMSlhPtLRTv5PfvJwhR+Mboaic/eDLAlciwsgijq8IFlf6IgQ==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@opentelemetry/api': '>=1.4.0 <1.7.0'
+      '@opentelemetry/api-logs': '>=0.39.1'
+    dependencies:
+      '@opentelemetry/api': 1.6.0
+      '@opentelemetry/api-logs': 0.43.0
+      '@opentelemetry/core': 1.17.0(@opentelemetry/api@1.6.0)
+      '@opentelemetry/resources': 1.17.0(@opentelemetry/api@1.6.0)
     dev: true
 
   /@opentelemetry/sdk-metrics@1.15.2(@opentelemetry/api@1.6.0):
@@ -18452,8 +18531,8 @@ packages:
       - supports-color
     dev: true
 
-  /artillery-plugin-apdex@1.0.0:
-    resolution: {integrity: sha512-Ki2tWv+kK2ed6leSr1D4Ng8uZy/vQHBoXpeL/teB5QGa2lVPNwRLZGJMXeMHAMPrO4lsR8K/PyZ/SbMWxuIZjw==}
+  /artillery-plugin-apdex@1.0.1:
+    resolution: {integrity: sha512-hXYHzkTv3RvapSBuO6YBjIvpsKhngrhBDLfiLuR9NoQhPpOO87K0TAKc9Tt73P36eOH1MOA/D5RCg5Bh1sbH8g==}
     dev: true
 
   /artillery-plugin-ensure@1.2.0:
@@ -18486,14 +18565,16 @@ packages:
       - supports-color
     dev: true
 
-  /artillery-plugin-publish-metrics@2.7.0:
-    resolution: {integrity: sha512-c9tTHGODvvmiCMobQI02fTaiJPfihZEi2Avb4lHgLXic0TS69W6VqoHnKOXm+7DseUuc4KOPZ5wEx7MoX7IBUw==}
+  /artillery-plugin-publish-metrics@2.8.0:
+    resolution: {integrity: sha512-EqC3S2fNNJeHmxGMblWSP3Cwc/R7EDTo96o2qO0TPWxztasDEJbQgxUgKXSgAY1dadZAZ5TJDrwPPBlQz3xMEQ==}
     dependencies:
       '@aws-sdk/client-cloudwatch': 3.393.0
       '@opentelemetry/api': 1.6.0
+      '@opentelemetry/context-async-hooks': 1.17.1(@opentelemetry/api@1.6.0)
       '@opentelemetry/exporter-metrics-otlp-grpc': 0.41.2(@opentelemetry/api@1.6.0)
       '@opentelemetry/exporter-metrics-otlp-http': 0.41.2(@opentelemetry/api@1.6.0)
       '@opentelemetry/exporter-metrics-otlp-proto': 0.41.2(@opentelemetry/api@1.6.0)
+      '@opentelemetry/exporter-trace-otlp-grpc': 0.43.0(@opentelemetry/api@1.6.0)
       '@opentelemetry/exporter-trace-otlp-http': 0.41.2(@opentelemetry/api@1.6.0)
       '@opentelemetry/exporter-trace-otlp-proto': 0.41.2(@opentelemetry/api@1.6.0)
       '@opentelemetry/exporter-zipkin': 1.17.0(@opentelemetry/api@1.6.0)
@@ -18525,8 +18606,8 @@ packages:
     engines: {node: '>= 18.16.1'}
     hasBin: true
     dependencies:
-      '@artilleryio/int-commons': 2.0.1
-      '@artilleryio/int-core': 2.1.0
+      '@artilleryio/int-commons': 2.0.2
+      '@artilleryio/int-core': 2.2.0
       '@artilleryio/platform-fargate': 2.0.0(@types/node@18.17.5)(typescript@5.2.2)
       '@aws-sdk/credential-providers': 3.391.0
       '@oclif/core': 2.11.8(@types/node@18.17.5)(typescript@5.2.2)
@@ -18534,11 +18615,11 @@ packages:
       '@oclif/plugin-not-found': 2.3.37(@types/node@18.17.5)(typescript@5.2.2)
       archiver: 5.3.2
       artillery-engine-playwright: 0.3.1
-      artillery-plugin-apdex: 1.0.0
+      artillery-plugin-apdex: 1.0.1
       artillery-plugin-ensure: 1.2.0
       artillery-plugin-expect: 2.3.2
       artillery-plugin-metrics-by-endpoint: 1.2.0
-      artillery-plugin-publish-metrics: 2.7.0
+      artillery-plugin-publish-metrics: 2.8.0
       async: 2.6.4
       aws-sdk: 2.1438.0
       chalk: 2.4.2
@@ -31868,15 +31949,6 @@ packages:
       playwright-core: 1.34.3
     dev: true
 
-  /playwright@1.37.0:
-    resolution: {integrity: sha512-CrAEFfVioamMwDKmygc/HAkzEAxYAwjD+zod2poTxM7ObivkoDsKHu1ned16fnQV/Tf1kDB8KtsyH8Qd3VzJIg==}
-    engines: {node: '>=16'}
-    hasBin: true
-    requiresBuild: true
-    dependencies:
-      playwright-core: 1.37.0
-    dev: true
-
   /pluralize@8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
     engines: {node: '>=4'}
@@ -37425,7 +37497,7 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /vitest@0.34.6(playwright@1.37.0):
+  /vitest@0.34.6:
     resolution: {integrity: sha512-+5CALsOvbNKnS+ZHMXtuUC7nL8/7F1F2DnHGjSsszX8zCjWSSviphCb/NuS9Nzf4Q03KyyDRBAXhF/8lffME4Q==}
     engines: {node: '>=v14.18.0'}
     hasBin: true
@@ -37473,7 +37545,6 @@ packages:
       magic-string: 0.30.2
       pathe: 1.1.1
       picocolors: 1.0.0
-      playwright: 1.37.0
       std-env: 3.3.3
       strip-literal: 1.3.0
       tinybench: 2.5.0
