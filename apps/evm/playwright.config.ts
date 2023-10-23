@@ -110,8 +110,8 @@ const config: PlaywrightTestConfig = {
         // '--block-time 15',
       ].join(' '),
       port: Number(process.env.ANVIL_PORT || 8545),
-      timeout: 120_000,
-      reuseExistingServer: !process.env.CI,
+      // timeout: 120_000,
+      // reuseExistingServer: !process.env.CI,
       env: {
         ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
         ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
@@ -124,6 +124,7 @@ const config: PlaywrightTestConfig = {
       timeout: 120_000,
       reuseExistingServer: !process.env.CI,
       env: {
+        EDGE_CONFIG: String(process.env.EDGE_CONFIG),
         NEXT_PUBLIC_CHAIN_ID: String(process.env.NEXT_PUBLIC_CHAIN_ID),
         NEXT_PUBLIC_APP_ENV: 'test',
       },
