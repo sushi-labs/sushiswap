@@ -66,6 +66,7 @@ export const CrossChainSwapTradeButton: FC = () => {
                         }
                         fullWidth
                         size="xl"
+                        testId="swap"
                       >
                         {!checked && warningSeverity(trade?.priceImpact) >= 3
                           ? 'Price impact too high'

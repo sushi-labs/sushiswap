@@ -1,6 +1,6 @@
-import {GetPoolsArgs, Protocol} from '@sushiswap/client'
+import { GetPoolsArgs, Protocol } from '@sushiswap/client'
 
-import {SUPPORTED_CHAIN_IDS} from '../config'
+import { SUPPORTED_CHAIN_IDS } from '../config'
 
 export const L2_DEADLINE_FROM_NOW = BigInt(60) * BigInt(5)
 
