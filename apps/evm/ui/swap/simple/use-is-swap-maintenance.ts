@@ -1,15 +1,15 @@
 import {useQuery} from "@tanstack/react-query"
-import {CrossChainSwapEdgeConfig} from "lib/edge/get-cross-chain-swap-edge-config"
+import {SwapEdgeConfig} from "lib/edge/get-swap-edge-config"
 import {useEdgeConfig} from "providers/edge-config-provider"
 
 
-export const useIsCrossChainSwapMaintenance = () => {
-    const { maintenance } = useEdgeConfig<CrossChainSwapEdgeConfig>()
+export const useIsSwapMaintenance = () => {
+    const { maintenance } = useEdgeConfig<SwapEdgeConfig>()
 
     return useQuery({
-        queryKey: ['useIsCrossChainSwapMaintenance'],
+        queryKey: ['useIsSwapMaintenance'],
         queryFn: async () => {
-            const resp = await fetch('/api/config/xswap')
+            const resp = await fetch('/api/config/swap')
             const data = await resp.json()
 
             if (data.success && data.data) {

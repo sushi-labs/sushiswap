@@ -1,11 +1,11 @@
 'use client'
 
-import { useSlippageTolerance } from '@sushiswap/hooks'
-import { Address, useAccount, useNetwork, watchNetwork } from '@sushiswap/wagmi'
-import { useTokenWithCache } from '@sushiswap/wagmi/future'
-import { useCrossChainTrade } from 'lib/swap/useCrossChainTrade/useCrossChainTrade'
-import { nanoid } from 'nanoid'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import {useSlippageTolerance} from '@sushiswap/hooks'
+import {Address, useAccount, useNetwork, watchNetwork} from '@sushiswap/wagmi'
+import {useTokenWithCache} from '@sushiswap/wagmi/future'
+import {useCrossChainTrade} from 'lib/swap/useCrossChainTrade/useCrossChainTrade'
+import {nanoid} from 'nanoid'
+import {usePathname, useRouter, useSearchParams} from 'next/navigation'
 import {
   createContext,
   Dispatch,
@@ -17,17 +17,11 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { ChainId } from 'sushi/chain'
-import { isSushiXSwap2ChainId, SushiXSwap2ChainId } from 'sushi/config'
-import {
-  Amount,
-  defaultQuoteCurrency,
-  Native,
-  tryParseAmount,
-  Type,
-} from 'sushi/currency'
-import { ZERO } from 'sushi/math'
-import { isAddress } from 'viem'
+import {ChainId} from 'sushi/chain'
+import {isSushiXSwap2ChainId, SushiXSwap2ChainId} from 'sushi/config'
+import {Amount, defaultQuoteCurrency, Native, tryParseAmount, Type,} from 'sushi/currency'
+import {ZERO} from 'sushi/math'
+import {isAddress} from 'viem'
 
 const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'
