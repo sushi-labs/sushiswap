@@ -1,9 +1,15 @@
-'use client'
-
+import { getSwapEdgeConfig } from 'lib/edge/get-swap-edge-config'
+import { EdgeProvider } from 'providers/edge-config-provider'
 import { DerivedstateSimpleSwapProvider } from 'ui/swap/simple/derivedstate-simple-swap-provider'
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export async function Providers({ children }: { children: React.ReactNode }) {
+  const config = await getSwapEdgeConfig()
+
   return (
-    <DerivedstateSimpleSwapProvider>{children}</DerivedstateSimpleSwapProvider>
+    <EdgeProvider config={config}>
+      <DerivedstateSimpleSwapProvider>
+        {children}
+      </DerivedstateSimpleSwapProvider>
+    </EdgeProvider>
   )
 }

@@ -7,7 +7,7 @@ export const metadata = {
   title: 'Cross-Chain Swap',
 }
 
-export default function SwapCrossChainPage() {
+export default async function SwapCrossChainPage() {
   return (
     <Providers>
       <Container maxWidth="lg" className="px-4">
