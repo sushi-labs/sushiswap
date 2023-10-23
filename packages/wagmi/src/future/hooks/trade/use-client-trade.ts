@@ -33,6 +33,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
     amount,
     enabled,
     recipient,
+    source,
   } = variables
 
   const { data: feeData } = useFeeData({ chainId, enabled })
@@ -61,6 +62,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
         slippagePercentage,
         recipient,
         poolsCodeMap,
+        source,
       },
     ],
     queryFn: async () => {
@@ -158,6 +160,7 @@ ${logPools}
             ROUTE_PROCESSOR_3_ADDRESS[chainId],
             [],
             +slippagePercentage / 100,
+            source,
           )
         } else if (isRouteProcessorChainId(chainId)) {
           console.debug('routeProcessorParams')
