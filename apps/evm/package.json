@@ -45,7 +45,7 @@
     "@upstash/ratelimit": "0.4.4",
     "@upstash/redis": "1.22.1",
     "@vercel/analytics": "1.1.1",
-    "@vercel/edge-config": "0.2.1",
+    "@vercel/edge-config": "0.4.1",
     "@wagmi/core": "1.4.3",
     "cors": "2.8.5",
     "d3": "7.8.4",

@@ -6,6 +6,8 @@ const schema = z.object({
   maintenance: z.boolean(),
 })
 
+export const runtime = 'edge'
+
 export async function GET() {
   const data = await get('swap')
   return NextResponse.json(schema.safeParse(data))

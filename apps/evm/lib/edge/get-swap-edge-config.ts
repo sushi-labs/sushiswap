@@ -5,7 +5,7 @@ interface SwapEdgeConfig {
 }
 
 const getSwapEdgeConfig = async () => {
-  return await get<SwapEdgeConfig>('swap')
+  return get<SwapEdgeConfig>('swap')
 }
 
 export { type SwapEdgeConfig, getSwapEdgeConfig }

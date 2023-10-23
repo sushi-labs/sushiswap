@@ -30,6 +30,7 @@
         "APP_ENV",
         "CHAIN_ID",
         "DRPC_ID",
+        "EDGE_CONFIG",
         "PORT"
       ]
     },
