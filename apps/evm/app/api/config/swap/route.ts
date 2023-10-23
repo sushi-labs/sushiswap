@@ -6,9 +6,9 @@ const schema = z.object({
   maintenance: z.boolean(),
 })
 
-export const revalidate = 10
-
 export const runtime = 'edge'
+
+export const revalidate = 60
 
 export async function GET() {
   const data = await get('swap')

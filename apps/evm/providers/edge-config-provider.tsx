@@ -3,7 +3,7 @@
 import { createContext, useContext } from 'react'
 import once from 'lodash.once'
 
-interface EdgeConfigProviderProps<T extends unknown> {
+interface EdgeConfigProviderProps<T> {
   config: T
   children: React.ReactNode
 }

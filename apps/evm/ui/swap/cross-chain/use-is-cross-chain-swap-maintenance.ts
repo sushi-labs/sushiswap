@@ -9,7 +9,7 @@ export const useIsCrossChainSwapMaintenance = () => {
     queryKey: ['useIsCrossChainSwapMaintenance'],
     queryFn: async () => {
       const resp = await fetch('/api/config/xswap', {
-        next: { revalidate: 10 },
+        next: { revalidate: 60 },
       })
       const data = await resp.json()
 

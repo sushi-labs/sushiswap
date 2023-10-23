@@ -9,7 +9,7 @@ export const useIsSwapMaintenance = () => {
     queryKey: ['useIsSwapMaintenance'],
     queryFn: async () => {
       const resp = await fetch('/api/config/swap', {
-        next: { revalidate: 10 },
+        next: { revalidate: 60 },
       })
       const data = await resp.json()
 

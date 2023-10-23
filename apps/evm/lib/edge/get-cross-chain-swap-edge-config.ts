@@ -5,7 +5,7 @@ interface CrossChainSwapEdgeConfig {
 }
 
 const getCrossChainSwapEdgeConfig = async () => {
-  return await get<CrossChainSwapEdgeConfig>('xswap')
+  return get<CrossChainSwapEdgeConfig>('xswap')
 }
 
 export { type CrossChainSwapEdgeConfig, getCrossChainSwapEdgeConfig }
