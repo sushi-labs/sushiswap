@@ -11,6 +11,6 @@ export const runtime = 'edge'
 export const revalidate = 60
 
 export async function GET() {
-  const data = await get('swap')
+  const data = await get('xswap')
   return NextResponse.json(schema.safeParse(data))
 }
