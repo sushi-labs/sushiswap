@@ -58,6 +58,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
         working-directory: .
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
 
       - name: Install playwright
         run: npx playwright install --with-deps chromium
