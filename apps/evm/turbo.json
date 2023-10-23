@@ -9,6 +9,7 @@
         "ALCHEMY_ID",
         "BLOG_URL",
         "DRPC_ID",
+        "EDGE_CONFIG",
         "FURO_URL",
         "TOKEN_LIST_PR_WEBHOOK_URL",
         "OCTOKIT_KEY",
