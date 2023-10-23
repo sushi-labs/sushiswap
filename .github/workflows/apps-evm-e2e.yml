@@ -60,12 +60,10 @@ jobs:
         working-directory: .
 
       - name: Install playwright
-        run: npx playwright install-deps chromium
+        run: npx playwright install --with-deps chromium
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
-
-      # /home/runner/work/sushiswap/sushiswap
 
       - name: Test EVM app
         run: pnpm test-evm-app
