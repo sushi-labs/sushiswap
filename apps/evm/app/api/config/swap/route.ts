@@ -1,12 +1,12 @@
-import {get} from "@vercel/edge-config";
-import {NextResponse} from "next/server";
-import {z} from "zod";
+import { get } from '@vercel/edge-config'
+import { NextResponse } from 'next/server'
+import { z } from 'zod'
 
 const schema = z.object({
-	maintenance: z.boolean(),
-});
+  maintenance: z.boolean(),
+})
 
 export async function GET() {
-	const data = await get("swap");
-	return NextResponse.json(schema.safeParse(data));
+  const data = await get('swap')
+  return NextResponse.json(schema.safeParse(data))
 }

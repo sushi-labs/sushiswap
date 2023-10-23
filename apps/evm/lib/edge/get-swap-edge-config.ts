@@ -1,11 +1,11 @@
-import {get} from "@vercel/edge-config";
+import { get } from '@vercel/edge-config'
 
 interface SwapEdgeConfig {
-    maintenance: boolean;
+  maintenance: boolean
 }
 
 const getSwapEdgeConfig = async () => {
-    return await get<SwapEdgeConfig>("swap");
+  return await get<SwapEdgeConfig>('swap')
 }
 
 export { type SwapEdgeConfig, getSwapEdgeConfig }

@@ -1,11 +1,11 @@
-import {get} from "@vercel/edge-config";
+import { get } from '@vercel/edge-config'
 
 interface CrossChainSwapEdgeConfig {
-    maintenance: boolean;
+  maintenance: boolean
 }
 
 const getCrossChainSwapEdgeConfig = async () => {
-    return await get<CrossChainSwapEdgeConfig>("xswap");
+  return await get<CrossChainSwapEdgeConfig>('xswap')
 }
 
 export { type CrossChainSwapEdgeConfig, getCrossChainSwapEdgeConfig }
