@@ -6,6 +6,8 @@ const schema = z.object({
   maintenance: z.boolean(),
 })
 
+export const revalidate = 10
+
 export const runtime = 'edge'
 
 export async function GET() {

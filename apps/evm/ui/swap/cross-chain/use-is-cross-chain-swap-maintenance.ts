@@ -8,7 +8,9 @@ export const useIsCrossChainSwapMaintenance = () => {
   return useQuery({
     queryKey: ['useIsCrossChainSwapMaintenance'],
     queryFn: async () => {
-      const resp = await fetch('/api/config/xswap')
+      const resp = await fetch('/api/config/xswap', {
+        next: { revalidate: 10 },
+      })
       const data = await resp.json()
 
       if (data.success && data.data) {
