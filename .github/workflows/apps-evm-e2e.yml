@@ -27,6 +27,7 @@ env:
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
   NODE_OPTIONS: --max-old-space-size=8192
   NEXT_TELEMETRY_DISABLED: 1
+  EDGE_CONFIG: ${{ secrets.EDGE_CONFIG }}
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
