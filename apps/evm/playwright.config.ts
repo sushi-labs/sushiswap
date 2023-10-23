@@ -115,6 +115,7 @@ const config: PlaywrightTestConfig = {
         ANVIL_PORT: String(process.env.ANVIL_PORT || 8545),
       },
       port: Number(process.env.ANVIL_PORT || 8545),
+      timeout: 120 * 1000,
     },
     {
       command: 'npm run start -- --experimental-test-proxy',
