@@ -741,6 +741,9 @@ importers:
       framer-motion:
         specifier: 7.10.3
         version: 7.10.3(react-dom@18.2.0)(react@18.2.0)
+      lodash.once:
+        specifier: ^4.1.1
+        version: 4.1.1
       nanoid:
         specifier: 4.0.0
         version: 4.0.0
@@ -823,6 +826,9 @@ importers:
       '@types/d3':
         specifier: 7.4.0
         version: 7.4.0
+      '@types/lodash.once':
+        specifier: ^4.1.8
+        version: 4.1.8
       '@types/node':
         specifier: '18'
         version: 18.17.5
@@ -16235,6 +16241,12 @@ packages:
       '@types/lodash': 4.14.197
     dev: true
 
+  /@types/lodash.once@4.1.8:
+    resolution: {integrity: sha512-kTRKTOMyz1ksmXWi+sHgliiqKY2KXcWfhNjcCPZgwPa++5w7QXqupjfrj006nBTlPOX6tBo5IhLUx19ezNd9Yg==}
+    dependencies:
+      '@types/lodash': 4.14.197
+    dev: true
+
   /@types/lodash.zip@4.2.7:
     resolution: {integrity: sha512-wRtK2bZ0HYXkJkeldrD35qOquGn5GOmp8+o886N18Aqw2DGFLP7JCTEb00j3xQZ+PCMTyfMS2OMbLUwah+bcyg==}
     dependencies:
@@ -28923,6 +28935,10 @@ packages:
   /lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
 
+  /lodash.once@4.1.1:
+    resolution: {integrity: sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg==}
+    dev: false
+
   /lodash.set@4.3.2:
     resolution: {integrity: sha512-4hNPN5jlm/N/HLMCO43v8BXKq9Z7QdAGc/VGrRD61w8gN9g/6jF9A4L1pbUgBLCffi0w9VsXfTOij5x8iTyFvg==}
     dev: true
@@ -36199,7 +36215,7 @@ packages:
       '@babel/core': 7.23.2
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 29.7.0(@types/node@18.17.5)
+      jest: 29.7.0(@types/node@18.11.18)
       jest-util: 29.7.0
       json5: 2.2.3
       lodash.memoize: 4.1.2

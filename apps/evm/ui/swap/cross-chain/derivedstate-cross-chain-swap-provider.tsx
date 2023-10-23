@@ -3,15 +3,14 @@
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { Address, useAccount, useNetwork, watchNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi/future'
-import { IS_XSWAP_MAINTENANCE } from 'lib/constants'
 import { useCrossChainTrade } from 'lib/swap/useCrossChainTrade/useCrossChainTrade'
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
+  createContext,
   Dispatch,
   FC,
   SetStateAction,
-  createContext,
   useCallback,
   useContext,
   useEffect,
@@ -19,13 +18,13 @@ import {
   useState,
 } from 'react'
 import { ChainId } from 'sushi/chain'
-import { SushiXSwap2ChainId, isSushiXSwap2ChainId } from 'sushi/config'
+import { isSushiXSwap2ChainId, SushiXSwap2ChainId } from 'sushi/config'
 import {
   Amount,
-  Native,
-  Type,
   defaultQuoteCurrency,
+  Native,
   tryParseAmount,
+  Type,
 } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { isAddress } from 'viem'
@@ -61,7 +60,6 @@ interface State {
     swapAmountString: string
     swapAmount: Amount<Type> | undefined
     recipient: string | undefined
-    maintenance: boolean
   }
   isLoading: boolean
   isToken0Loading: boolean
@@ -317,7 +315,6 @@ const DerivedstateCrossChainSwapProvider: FC<
             swapAmount: tryParseAmount(swapAmountString, _token0),
             token0: _token0,
             token1: _token1,
-            maintenance: IS_XSWAP_MAINTENANCE,
           },
           isLoading: token0Loading || token1Loading,
           isToken0Loading: token0Loading,
@@ -358,17 +355,6 @@ const useDerivedStateCrossChainSwap = () => {
   return context
 }
 
-const useIsXswapMaintenance = () => {
-  const context = useContext(DerivedStateCrossChainSwapContext)
-  if (!context) {
-    throw new Error(
-      'Hook can only be used inside CrossChain Swap Derived State Context',
-    )
-  }
-
-  return context.state.maintenance
-}
-
 const useCrossChainSwapTrade = () => {
   const {
     state: {
@@ -406,5 +392,4 @@ export {
   DerivedstateCrossChainSwapProvider,
   useCrossChainSwapTrade,
   useDerivedStateCrossChainSwap,
-  useIsXswapMaintenance,
 }
