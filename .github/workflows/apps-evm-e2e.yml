@@ -55,19 +55,12 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
 
-      - name: Cache pnpm
-        uses: actions/cache@v3
-        with:
-          path: ~/.pnpm-store
-          key: pnpm-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: pnpm-
-
       - name: Install dependencies
         run: pnpm install
         working-directory: .
 
       - name: Install playwright
-        run: pnpm exec playwright install --with-deps chromium
+        run: npx playwright install-deps chromium
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
@@ -82,9 +75,8 @@ jobs:
           ANVIL_PORT: 8545
           NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
           NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}
-          NEXT_PUBLIC_DST_CHAIN_ID: ${{ matrix.dst-chain-id }}
+          # NEXT_PUBLIC_DST_CHAIN_ID: ${{ matrix.dst-chain-id }}
           # NEXT_PUBLIC_DRPC_ID: ${{ secrets.NEXT_PUBLIC_DRPC_ID }}
-          NEXT_PUBLIC_APP_ENV: 'test'
         working-directory: .
 
       - name: Upload test results
