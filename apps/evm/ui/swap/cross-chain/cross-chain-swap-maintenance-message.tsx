@@ -1,11 +1,11 @@
 'use client'
 
-import { Message } from '@sushiswap/ui'
-
-import { useIsXswapMaintenance } from './derivedstate-cross-chain-swap-provider'
+import {Message} from '@sushiswap/ui'
+import {useIsCrossChainSwapMaintenance} from "./use-is-cross-chain-swap-maintenance";
 
 export const CrossChainSwapMaintenanceMessage = () => {
-  const isMaintenance = useIsXswapMaintenance()
+  const { data: isMaintenance } = useIsCrossChainSwapMaintenance()
+
   if (isMaintenance)
     return (
       <Message variant="warning" size="sm" className="text-center font-medium">
@@ -13,5 +13,6 @@ export const CrossChainSwapMaintenanceMessage = () => {
         back later.
       </Message>
     )
+    
   return <></>
 }

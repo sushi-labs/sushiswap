@@ -1,11 +1,15 @@
-'use client'
+import {getCrossChainSwapEdgeConfig} from "lib/edge/get-cross-chain-swap-edge-config";
+import {DerivedstateCrossChainSwapProvider} from "ui/swap/cross-chain/derivedstate-cross-chain-swap-provider";
+import {EdgeProvider} from "../../../providers/edge-config-provider";
 
-import { DerivedstateCrossChainSwapProvider } from 'ui/swap/cross-chain/derivedstate-cross-chain-swap-provider'
+export async function Providers({ children }: { children: React.ReactNode }) {
+	const config = await getCrossChainSwapEdgeConfig();
 
-export function Providers({ children }: { children: React.ReactNode }) {
-  return (
-    <DerivedstateCrossChainSwapProvider>
-      {children}
-    </DerivedstateCrossChainSwapProvider>
-  )
+	return (
+		<EdgeProvider config={config}>
+			<DerivedstateCrossChainSwapProvider>
+				{children}
+			</DerivedstateCrossChainSwapProvider>
+		</EdgeProvider>
+	);
 }
