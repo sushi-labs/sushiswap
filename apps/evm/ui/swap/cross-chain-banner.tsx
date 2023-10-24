@@ -1,7 +1,7 @@
 'use client'
 
-import {XMarkIcon} from '@heroicons/react/20/solid'
-import {useLocalStorage} from '@sushiswap/hooks'
+import { XMarkIcon } from '@heroicons/react/20/solid'
+import { useLocalStorage } from '@sushiswap/hooks'
 import {
   Card,
   CardContent,
@@ -12,9 +12,9 @@ import {
   ShuffleIcon,
   Switch,
 } from '@sushiswap/ui'
-import {AnimatePresence, motion} from 'framer-motion'
-import {usePathname, useRouter} from 'next/navigation'
-import React, {FC, useCallback, useState, useTransition} from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { usePathname, useRouter } from 'next/navigation'
+import React, { FC, useCallback, useState, useTransition } from 'react'
 
 export const CrossChainBanner: FC = () => {
   const [minimized, setBannerMinimize] = useLocalStorage(
@@ -54,7 +54,8 @@ export const CrossChainBanner: FC = () => {
                 </motion.div>
               </CardTitle>
               <CardDescription>
-                Swap tokens natively across 7 chains including Ethereum, Arbitrum, Optimism, Polygon, Base and more!{' '}
+                Swap tokens natively across 7 chains including Ethereum,
+                Arbitrum, Optimism, Polygon, Base and more!{' '}
                 <a
                   target="_blank"
                   className="text-blue hover:underline"
