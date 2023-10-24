@@ -751,7 +751,27 @@ export const otherChains: Chain[] = [
         blockCreated: 5022,
       },
     },
+  }, {
+    id: ChainId.FILECOIN,
+    name: 'Filecoin',
+    network: 'filecoin',
+    nativeCurrency: { name: 'Filecoin', symbol: 'FIL', decimals: 18 },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.ankr.com/filecoin'],
+      },
+      public: {
+        http: ['https://rpc.ankr.com/filecoin'],
+      },
+    },
+    contracts: {
+      multicall3: {
+        address: '0x08ba1ac7f15f2215f27b5403a89bed22ceb70cfb',
+        blockCreated: 2732870,
+      },
+    },
   },
+
 ]
 
 export const allChains = [...defaultChains, ...otherChains]

@@ -304,6 +304,12 @@ export const COMMON_BASES = {
     }),
     USDC[ChainId.BASE],
   ],
+  [ChainId.FILECOIN]: [
+    Native.onChain(ChainId.FILECOIN),
+    WNATIVE[ChainId.FILECOIN],
+    USDC[ChainId.FILECOIN],
+    DAI[ChainId.FILECOIN],
+  ],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const
 

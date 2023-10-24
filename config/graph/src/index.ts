@@ -56,6 +56,7 @@ export const SUSHISWAP_V3_ENABLED_NETWORKS = [
   ChainId.CORE,
   ChainId.BASE,
   ChainId.LINEA,
+  ChainId.FILECOIN
 ]
 export type SushiSwapV3ChainId = typeof SUSHISWAP_V3_ENABLED_NETWORKS[number]
 
@@ -79,6 +80,7 @@ export const PENDING_KAVA_HOST = 'pvt.graph.kava.io/subgraphs/id'
 export const METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/name'
 export const PENDING_METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/id'
 
+export const FILECOIN_HOST = 'sushi.laconic.com/subgraphs/name'
 export const STUDIO_HOST = 'api.studio.thegraph.com/query/32073'
 export const THUNDERCORE_HOST = 'graph-node.thundercore.com/subgraphs/name'
 export const CORE_HOST = 'thegraph.coredao.org/subgraphs/name'
@@ -117,6 +119,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.CORE]: 'Core',
   [ChainId.BASE]: 'Base',
   [ChainId.LINEA]: 'Linea',
+  [ChainId.FILECOIN]: 'Filecoin'
 } as const
 
 export const SUBGRAPH_HOST: Record<number, string> = {
@@ -149,6 +152,7 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.CORE]: CORE_HOST,
   [ChainId.BASE]: STUDIO_HOST,
   [ChainId.LINEA]: LINEA_HOST,
+  [ChainId.FILECOIN]: FILECOIN_HOST,
 } as const
 
 export const BENTOBOX_SUBGRAPH_NAME = {
@@ -203,6 +207,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.CORE]: 'sushiswap/blocks-core',
   [ChainId.BASE]: 'blocks-base/v0.0.1',
   [ChainId.LINEA]: 'sushiswap/blocks-linea',
+  [ChainId.FILECOIN]: 'sushiswap/blocks',
 } as const
 
 export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
@@ -291,6 +296,7 @@ export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.CORE]: 'sushi-v3/v3-core',
   [ChainId.BASE]: 'v3-base/v0.0.1',
   [ChainId.LINEA]: 'sushi-v3/v3-linea',
+  [ChainId.FILECOIN]: 'sushiswap/v3-filecoin',
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number, string> = {

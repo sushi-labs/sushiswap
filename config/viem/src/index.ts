@@ -22,7 +22,7 @@ import {
   //  evmosTestnet,
   fantom,
   // fantomTestnet,
-  // filecoin,
+  filecoin,
   // filecoinTestnet,
   foundry,
   fuse as _fuse, // missing multicall
@@ -590,4 +590,13 @@ export const config: Record<
     chain: base,
     transport: http(`https://lb.drpc.org/ogrpc?network=base&dkey=${drpcId}`),
   },
+  [ChainId.FILECOIN]: {
+    chain: filecoin,
+    transport: fallback(
+      filecoin.rpcUrls.default.http.map((url) => http(url)),
+      {
+        rank: true,
+      }
+    ),
+  }
 } as const
