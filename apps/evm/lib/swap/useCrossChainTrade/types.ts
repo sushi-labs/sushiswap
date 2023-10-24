@@ -1,47 +1,34 @@
-import { Amount, Price, Type } from 'sushi/currency'
+import { SushiXSwap2ChainId } from 'sushi/config'
+import { Amount, Type } from 'sushi/currency'
 import { Percent } from 'sushi/math'
-import { SushiXSwapChainId } from 'sushi/config'
-import { Address, Signature } from 'viem'
-
-import { Action } from './SushiXSwap'
+import { Address } from 'viem'
+import { TransactionType } from './SushiXSwap2'
 
 export interface UseCrossChainTradeParams {
   tradeId: string
-  network0: SushiXSwapChainId
-  network1: SushiXSwapChainId
+  network0: SushiXSwap2ChainId
+  network1: SushiXSwap2ChainId
   token0: Type | undefined
   token1: Type | undefined
   amount: Amount<Type> | undefined
   slippagePercentage: string
   recipient: Address | undefined
   enabled: boolean
-  bentoboxSignature?: Signature
-}
-
-export type UseCrossChainSelect = Omit<
-  UseCrossChainTradeReturn,
-  'priceImpact' | 'amountIn' | 'amountOut' | 'minAmountOut' | 'swapPrice'
-> & {
-  priceImpact: [string, string] | undefined
-  amountIn: string | undefined
-  amountOut: string | undefined
-  minAmountOut: string | undefined
 }
 
 export interface UseCrossChainTradeReturn {
-  swapPrice: Price<Type, Type> | undefined
   priceImpact: Percent | undefined
   amountIn: Amount<Type> | undefined
   amountOut: Amount<Type> | undefined
   minAmountOut: Amount<Type> | undefined
   gasSpent: string | undefined
-  gasSpentUsd: string | undefined
-  functionName: 'cook'
-  writeArgs: [Action[], bigint[], `0x${string}`[]] | undefined
+  bridgeFee: string | undefined
+  srcGasFee: string | undefined
+  functionName: string
+  writeArgs: (string | object)[] | undefined
   route: { status: string }
-  value?: bigint | undefined
+  value: bigint | undefined
+  transactionType: TransactionType | undefined
+  srcBridgeToken: Type | undefined
+  dstBridgeToken: Type | undefined
 }
-
-export type UseCrossChainTradeQuerySelect = (
-  data: UseCrossChainSelect,
-) => UseCrossChainTradeReturn

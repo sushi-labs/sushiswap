@@ -1,6 +1,12 @@
 'use client'
 
-import { classNames } from '@sushiswap/ui'
+import {
+  Tooltip,
+  TooltipPrimitive,
+  TooltipProvider,
+  TooltipTrigger,
+  classNames,
+} from '@sushiswap/ui'
 import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
 import { Explainer } from '@sushiswap/ui/components/explainer'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
@@ -25,7 +31,7 @@ import {
 export const CrossChainSwapTradeStats: FC = () => {
   const { address } = useAccount()
   const {
-    state: { chainId0, swapAmountString, recipient },
+    state: { chainId0, chainId1, swapAmountString, recipient },
   } = useDerivedStateCrossChainSwap()
   const { isInitialLoading: isLoading, data: trade } = useCrossChainSwapTrade()
   const loading = Boolean(isLoading && !trade?.writeArgs)
@@ -67,7 +73,7 @@ export const CrossChainSwapTradeStats: FC = () => {
             {loading || !trade?.amountOut ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
             ) : (
-              `${trade?.amountOut?.toSignificant(6) ?? '0.00'} ${
+              `${trade?.amountOut?.toFixed(6) ?? '0.00'} ${
                 trade?.amountOut?.currency?.symbol ?? ''
               }`
             )}
@@ -82,7 +88,7 @@ export const CrossChainSwapTradeStats: FC = () => {
             {loading || !trade?.minAmountOut ? (
               <SkeletonBox className="h-4 py-0.5 w-[100px]" />
             ) : (
-              `${trade?.minAmountOut?.toSignificant(6) ?? '0.00'} ${
+              `${trade?.minAmountOut?.toFixed(6) ?? '0.00'} ${
                 trade?.amountOut?.currency?.symbol ?? ''
               }`
             )}
@@ -97,7 +103,40 @@ export const CrossChainSwapTradeStats: FC = () => {
             {loading || !trade?.gasSpent || trade.gasSpent === '0' ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
             ) : trade?.gasSpent ? (
-              `${trade.gasSpent} ${Native.onChain(chainId0).symbol}`
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <span className="underline decoration-dotted flex items-center justify-end gap-1 text-sm text-gray-900 dark:text-slate-50">
+                      {trade.gasSpent} {Native.onChain(chainId0).symbol}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipPrimitive.Portal>
+                    <TooltipPrimitive.Content
+                      sideOffset={4}
+                      className="border border-accent max-h-[var(--radix-popper-available-height)] z-50 w-80 bg-white/50 dark:bg-slate-800/50 paper rounded-xl p-4 shadow-md outline-none animate-in data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 text-sm gap-3"
+                    >
+                      <div className="flex justify-between space-x-3 font-bold">
+                        <div>Network Fee</div>
+                        <div>
+                          {trade.gasSpent} {Native.onChain(chainId0).symbol}
+                        </div>
+                      </div>
+                      <div className="flex justify-between space-x-3 pl-6">
+                        <div className="font-semibold">on Origin Chain</div>
+                        <div className="font-bold">
+                          {trade.srcGasFee} {Native.onChain(chainId0).symbol}
+                        </div>
+                      </div>
+                      <div className="flex justify-between space-x-3 pl-6">
+                        <div className="font-semibold">on Dest. Chain</div>
+                        <div className="font-bold">
+                          {trade.bridgeFee} {Native.onChain(chainId0).symbol}
+                        </div>
+                      </div>
+                    </TooltipPrimitive.Content>
+                  </TooltipPrimitive.Portal>
+                </Tooltip>
+              </TooltipProvider>
             ) : null}
           </span>
         </div>
@@ -110,7 +149,7 @@ export const CrossChainSwapTradeStats: FC = () => {
             <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
               <a
                 target="_blank"
-                href={Chain.from(chainId0)?.getAccountUrl(recipient)}
+                href={Chain.from(chainId1)?.getAccountUrl(recipient)}
                 className={classNames(
                   address !== recipient
                     ? 'text-yellow-600'

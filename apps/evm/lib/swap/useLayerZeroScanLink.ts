@@ -1,6 +1,6 @@
 import { createClient } from '@layerzerolabs/scan-client'
 import { ChainId } from 'sushi/chain'
-import { STARGATE_CHAIN_ID, StargateChainId } from '@sushiswap/stargate'
+import { STARGATE_CHAIN_ID, StargateChainId } from 'sushi/config'
 import { useQuery } from '@tanstack/react-query'
 
 const client = createClient('mainnet')

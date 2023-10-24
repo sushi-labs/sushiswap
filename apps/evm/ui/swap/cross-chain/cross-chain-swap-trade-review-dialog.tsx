@@ -2,11 +2,6 @@
 
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import {
-  STARGATE_BRIDGE_TOKENS,
-  isStargateBridgeToken,
-} from '@sushiswap/stargate'
-import { SushiXSwapChainId, isSushiXSwapChainId } from 'sushi/config'
-import {
   DialogClose,
   DialogContent,
   DialogCustom,
@@ -31,7 +26,7 @@ import {
 } from '@sushiswap/ui/components/toast'
 import {
   Address,
-  getSushiXSwapContractConfig,
+  getSushiXSwap2ContractConfig,
   useAccount,
   useContractWrite,
   useNetwork,
@@ -43,10 +38,6 @@ import {
   waitForTransaction,
 } from '@sushiswap/wagmi/actions'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
-import {
-  useApproved,
-  useSignature,
-} from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { nanoid } from 'nanoid'
 import { log } from 'next-axiom'
 import React, {
@@ -57,13 +48,15 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { shortenAddress } from 'sushi/format'
-import { ZERO } from 'sushi/math'
 import { gasMargin } from 'sushi/calculate'
 import { Chain, chainName } from 'sushi/chain'
+import { SushiXSwap2ChainId, isSushiXSwap2ChainId } from 'sushi/config'
+import { shortenAddress } from 'sushi/format'
+import { ZERO } from 'sushi/math'
 import { UserRejectedRequestError, stringify } from 'viem'
 
-import { APPROVE_TAG_XSWAP } from '../../../lib/constants'
+import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { APPROVE_TAG_XSWAP } from 'lib/constants'
 import { UseCrossChainTradeReturn } from '../../../lib/swap/useCrossChainTrade/types'
 import { useLayerZeroScanLink } from '../../../lib/swap/useLayerZeroScanLink'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
@@ -84,7 +77,6 @@ import {
 export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [review, setReview] = useState(false)
   const [slippageTolerance] = useSlippageTolerance()
   const { address } = useAccount()
   const { chain } = useNetwork()
@@ -102,7 +94,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     },
   } = useDerivedStateCrossChainSwap()
   const { data: trade, isFetching } = useCrossChainSwapTrade()
-  const { setSignature } = useSignature(APPROVE_TAG_XSWAP)
   const { approved } = useApproved(APPROVE_TAG_XSWAP)
   const groupTs = useRef<number>()
   const refetchBalances = useBalanceWeb3Refetch()
@@ -117,39 +108,22 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     dest: StepState.Success,
   })
 
-  const srcBridgeToken =
-    token0?.isToken && isStargateBridgeToken(token0)
-      ? token0
-      : STARGATE_BRIDGE_TOKENS[chainId0]?.[0]
-  const dstBridgeToken =
-    token1?.isToken && isStargateBridgeToken(token1)
-      ? token1
-      : STARGATE_BRIDGE_TOKENS[chainId1]?.[0]
-  const crossChainSwap =
-    !isStargateBridgeToken(token0) && !isStargateBridgeToken(token1)
-  const swapTransfer =
-    !isStargateBridgeToken(token0) && isStargateBridgeToken(token1)
-  const transferSwap =
-    isStargateBridgeToken(token0) && !isStargateBridgeToken(token1)
-  const srcCurrencyB = crossChainSwap || swapTransfer ? srcBridgeToken : token1
-  const dstCurrencyA =
-    crossChainSwap || transferSwap ? dstBridgeToken : undefined
   const tradeRef = useRef<UseCrossChainTradeReturn | null>(null)
 
   const { config, isError, error } = usePrepareContractWrite({
-    ...getSushiXSwapContractConfig(chainId0 as SushiXSwapChainId),
-    functionName: 'cook',
+    ...getSushiXSwap2ContractConfig(chainId0 as SushiXSwap2ChainId),
+    functionName: trade?.functionName,
     args: trade?.writeArgs,
     enabled: Boolean(
-      isSushiXSwapChainId(chainId0) &&
-        isSushiXSwapChainId(chainId1) &&
+      isSushiXSwap2ChainId(chainId0) &&
+        isSushiXSwap2ChainId(chainId1) &&
         trade?.writeArgs &&
         trade?.writeArgs.length > 0 &&
         chain?.id === chainId0 &&
         approved &&
         trade?.route?.status !== 'NoWay',
     ),
-    value: trade?.value || 0n,
+    value: trade?.value ?? 0n,
     onError: (error) => {
       console.error('cross chain swap prepare error', error)
       if (error.message.startsWith('user rejected transaction')) return
@@ -162,7 +136,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {
-      if (!trade || !chainId0 || !data) return
+      if (!tradeRef?.current || !chainId0 || !data) return
 
       groupTs.current = new Date().getTime()
       void createToast({
@@ -172,19 +146,19 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         txHash: data.hash,
         promise: waitForTransaction({ hash: data.hash }),
         summary: {
-          pending: `Swapping ${trade.amountIn?.toSignificant(6)} ${
-            trade.amountIn?.currency.symbol
-          } to bridge token ${srcCurrencyB?.symbol}`,
-          completed: `Swap ${trade.amountIn?.toSignificant(6)} ${
-            trade.amountIn?.currency.symbol
-          } to bridge token ${srcCurrencyB?.symbol}`,
-          failed: `Something went wrong when trying to swap ${trade.amountIn?.currency.symbol} to bridge token`,
+          pending: `Swapping ${tradeRef?.current?.amountIn?.toSignificant(6)} ${
+            tradeRef?.current?.amountIn?.currency.symbol
+          } to bridge token ${tradeRef?.current?.srcBridgeToken?.symbol}`,
+          completed: `Swap ${tradeRef?.current?.amountIn?.toSignificant(6)} ${
+            tradeRef?.current?.amountIn?.currency.symbol
+          } to bridge token ${tradeRef?.current?.srcBridgeToken?.symbol}`,
+          failed: `Something went wrong when trying to swap ${tradeRef?.current?.amountIn?.currency.symbol} to bridge token`,
         },
         timestamp: groupTs.current,
         groupTimestamp: groupTs.current,
       })
     },
-    [trade, chainId0, srcCurrencyB?.symbol, address],
+    [chainId0, address],
   )
 
   const {
@@ -249,7 +223,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         })
         .finally(async () => {
           await refetchBalances()
-          setSignature(undefined)
           setTradeId(nanoid())
         })
     },
@@ -265,8 +238,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   })
 
   const onComplete = useCallback(() => {
-    setReview(false)
-
     // Reset after half a second because of dialog close animation
     setTimeout(() => {
       setStepStates({
@@ -275,46 +246,40 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         dest: StepState.NotStarted,
       })
     }, 500)
-  }, [setReview])
+  }, [])
 
   const onClick = useCallback(
     (confirm: () => void) => {
-      if (pendingState(stepStates)) {
-        setReview(true)
-      } else if (review) {
-        setStepStates({
-          source: StepState.Sign,
-          bridge: StepState.NotStarted,
-          dest: StepState.NotStarted,
-        })
+      setStepStates({
+        source: StepState.Sign,
+        bridge: StepState.NotStarted,
+        dest: StepState.NotStarted,
+      })
 
-        const promise = writeAsync?.()
-        if (promise) {
-          promise
-            .then(() => {
-              confirm()
+      const promise = writeAsync?.()
+      if (promise) {
+        promise
+          .then(() => {
+            confirm()
+            setStepStates({
+              source: StepState.Pending,
+              bridge: StepState.NotStarted,
+              dest: StepState.NotStarted,
+            })
+          })
+          .catch((e: unknown) => {
+            if (e instanceof UserRejectedRequestError) onComplete()
+            else {
               setStepStates({
-                source: StepState.Pending,
+                source: StepState.Failed,
                 bridge: StepState.NotStarted,
                 dest: StepState.NotStarted,
               })
-            })
-            .catch((e: unknown) => {
-              if (e instanceof UserRejectedRequestError) onComplete()
-              else {
-                setStepStates({
-                  source: StepState.Failed,
-                  bridge: StepState.NotStarted,
-                  dest: StepState.NotStarted,
-                })
-              }
-            })
-        }
-      } else {
-        setReview(true)
+            }
+          })
       }
     },
-    [onComplete, review, stepStates, writeAsync],
+    [onComplete, stepStates, writeAsync],
   )
 
   const { data: lzData } = useLayerZeroScanLink({
@@ -344,6 +309,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     }
   }, [lzData?.status])
 
+  // biome-ignore lint/nursery/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (
       lzData?.link &&
@@ -354,18 +320,17 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         account: address,
         type: 'stargate',
         chainId: chainId0,
-        txHash: '0x',
         href: lzData.link,
-        summary: `Bridging ${srcCurrencyB?.symbol} from ${
+        summary: `Bridging ${tradeRef?.current?.srcBridgeToken?.symbol} from ${
           Chain.from(chainId0)?.name
         } to ${Chain.from(chainId1)?.name}`,
         timestamp: new Date().getTime(),
         groupTimestamp: groupTs.current,
       })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lzData?.link])
 
+  // biome-ignore lint/nursery/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (receipt && groupTs.current) {
       void createToast({
@@ -379,17 +344,17 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         }),
         summary: {
           pending: `Swapping ${
-            dstCurrencyA?.symbol
+            tradeRef?.current?.dstBridgeToken?.symbol
           } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${
             tradeRef?.current?.amountOut?.currency.symbol
           }`,
           completed: `Swap ${
-            dstCurrencyA?.symbol
+            tradeRef?.current?.dstBridgeToken?.symbol
           } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${
             tradeRef?.current?.amountOut?.currency.symbol
           }`,
           failed: `Something went wrong when trying to swap ${
-            dstCurrencyA?.symbol
+            tradeRef?.current?.dstBridgeToken?.symbol
           } to ${tradeRef?.current?.amountOut?.toSignificant(6)} ${
             tradeRef?.current?.amountOut?.currency.symbol
           }`,
@@ -531,6 +496,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                       ? 'red'
                       : 'blue'
                   }
+                  testId="confirm-swap"
                 >
                   {isError ? (
                     'Shoot! Something went wrong :('
@@ -573,7 +539,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button size="xl" fullWidth>
+              <Button size="xl" fullWidth id="swap-dialog-close">
                 {failedState(stepStates)
                   ? 'Try again'
                   : finishedState(stepStates)
