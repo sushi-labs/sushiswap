@@ -56,7 +56,7 @@ export const SUSHISWAP_V3_ENABLED_NETWORKS = [
   ChainId.CORE,
   ChainId.BASE,
   ChainId.LINEA,
-  ChainId.FILECOIN
+  ChainId.FILECOIN,
 ]
 export type SushiSwapV3ChainId = typeof SUSHISWAP_V3_ENABLED_NETWORKS[number]
 
@@ -119,7 +119,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.CORE]: 'Core',
   [ChainId.BASE]: 'Base',
   [ChainId.LINEA]: 'Linea',
-  [ChainId.FILECOIN]: 'Filecoin'
+  [ChainId.FILECOIN]: 'Filecoin',
 } as const
 
 export const SUBGRAPH_HOST: Record<number, string> = {

@@ -221,7 +221,7 @@ export const ROUTE_PROCESSOR_3_2_SUPPORTED_CHAIN_IDS = [
   ChainId.OPTIMISM,
   ChainId.POLYGON,
   // ChainId.POLYGON_ZKEVM,
-  ChainId.FILECOIN
+  ChainId.FILECOIN,
 ] as const
 export type RouteProcessor3_2ChainId =
   typeof ROUTE_PROCESSOR_3_2_SUPPORTED_CHAIN_IDS[number]

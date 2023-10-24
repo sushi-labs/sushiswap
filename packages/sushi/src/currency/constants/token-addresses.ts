@@ -398,7 +398,7 @@ export const USDC_ADDRESS = {
   [ChainId.ZKSYNC_ERA]: '0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4',
   [ChainId.LINEA]: axlUSDC_ADDRESS[ChainId.LINEA],
   [ChainId.BASE]: axlUSDC_ADDRESS[ChainId.BASE],
-  [ChainId.FILECOIN]: axlUSDC_ADDRESS[ChainId.FILECOIN]
+  [ChainId.FILECOIN]: axlUSDC_ADDRESS[ChainId.FILECOIN],
 } as const
 
 export const USDT_ADDRESS = {
@@ -461,7 +461,7 @@ export const DAI_ADDRESS = {
   [ChainId.HAQQ]: '0xC5e00D3b04563950941f7137B5AfA3a534F0D6d6',
   [ChainId.LINEA]: axlDAI_ADDRESS[ChainId.LINEA],
   [ChainId.BASE]: axlDAI_ADDRESS[ChainId.BASE],
-  [ChainId.FILECOIN]: axlDAI_ADDRESS[ChainId.FILECOIN]
+  [ChainId.FILECOIN]: axlDAI_ADDRESS[ChainId.FILECOIN],
 } as const
 
 export const MIM_ADDRESS = {

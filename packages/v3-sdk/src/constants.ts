@@ -186,7 +186,7 @@ export const SUSHISWAP_V3_SUPPORTED_CHAIN_IDS = [
   // ChainId.ZKSYNC_ERA,
   ChainId.LINEA,
   ChainId.BASE,
-  ChainId.FILECOIN
+  ChainId.FILECOIN,
 ] as const
 
 export const SushiSwapV3ChainIds = SUSHISWAP_V3_SUPPORTED_CHAIN_IDS

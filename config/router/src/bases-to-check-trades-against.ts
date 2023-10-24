@@ -325,5 +325,9 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDC[ChainId.BASE],
     DAI[ChainId.BASE],
   ],
-  [ChainId.FILECOIN]: [WNATIVE[ChainId.FILECOIN], USDC[ChainId.FILECOIN], DAI[ChainId.FILECOIN]],
+  [ChainId.FILECOIN]: [
+    WNATIVE[ChainId.FILECOIN],
+    USDC[ChainId.FILECOIN],
+    DAI[ChainId.FILECOIN],
+  ],
 }

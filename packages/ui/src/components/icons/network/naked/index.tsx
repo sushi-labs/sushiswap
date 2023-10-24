@@ -96,5 +96,5 @@ export const NETWORK_NAKED_ICON: Record<number, IconComponent> = {
   [ChainId.ZKSYNC_ERA]: EthereumNaked,
   [ChainId.LINEA]: LineaNaked,
   [ChainId.BASE]: BaseNaked,
-  [ChainId.FILECOIN]: FilecoinNaked
+  [ChainId.FILECOIN]: FilecoinNaked,
 }

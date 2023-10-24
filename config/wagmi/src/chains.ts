@@ -751,7 +751,8 @@ export const otherChains: Chain[] = [
         blockCreated: 5022,
       },
     },
-  }, {
+  },
+  {
     id: ChainId.FILECOIN,
     name: 'Filecoin',
     network: 'filecoin',
@@ -771,7 +772,6 @@ export const otherChains: Chain[] = [
       },
     },
   },
-
 ]
 
 export const allChains = [...defaultChains, ...otherChains]

@@ -596,7 +596,7 @@ export const config: Record<
       filecoin.rpcUrls.default.http.map((url) => http(url)),
       {
         rank: true,
-      }
+      },
     ),
-  }
+  },
 } as const
