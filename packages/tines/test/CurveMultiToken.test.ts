@@ -4,7 +4,7 @@ import { RToken } from '../dist'
 import {
   closeValues,
   createCurvePoolsSingleForMultipool,
-  CurveMultitokenPoolSingle,
+  CurveMultitokenPool,
   CurvePool,
   getBigInt,
 } from '../src'
@@ -103,7 +103,7 @@ function createMultiPool(
   },
   token0: RToken,
   token1: RToken,
-): CurveMultitokenPoolSingle {
+): CurveMultitokenPool {
   return createCurvePoolsSingleForMultipool(
     'curve multipool',
     [token0, token1],
@@ -111,12 +111,12 @@ function createMultiPool(
     params.A,
     [params.reserve0, params.reserve1],
     [1, params.ratio],
-  )[0] as CurveMultitokenPoolSingle
+  )[0] as CurveMultitokenPool
 }
 
 function checkSwap(
   pool: CurvePool,
-  multipool: CurveMultitokenPoolSingle,
+  multipool: CurveMultitokenPool,
   amountIn: number,
   direction: boolean,
 ): number {
@@ -137,7 +137,7 @@ function checkSwap(
 
 function checkPoolPriceCalculation(
   pool: CurvePool,
-  multipool: CurveMultitokenPoolSingle,
+  multipool: CurveMultitokenPool,
 ) {
   const price1 = pool.calcCurrentPriceWithoutFee(true)
   const price1M = multipool.calcCurrentPriceWithoutFee(true)
