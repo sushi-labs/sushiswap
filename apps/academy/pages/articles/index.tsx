@@ -100,8 +100,8 @@ const _Articles: FC = () => {
   }, [router.isReady, searchQuery])
 
   const { data: articlesData, isValidating } = useSWR(
-    [`/articles`, selectedDifficulty, selectedProduct, selectedTopic, debouncedQuery, page, sortBy.key],
-    async (_url, searchDifficulty, searchProduct, searchTopic, searchInput, searchPage, sortKey) => {
+    ['/articles', selectedDifficulty, selectedProduct, selectedTopic, debouncedQuery, page, sortBy.key],
+    async ([_url, searchDifficulty, searchProduct, searchTopic, searchInput, searchPage, sortKey]) => {
       const difficultySlug = searchDifficulty?.attributes?.slug
       const productSlug = searchProduct?.attributes?.slug
       const topicSlug = searchTopic?.attributes?.slug
@@ -188,9 +188,9 @@ const _Articles: FC = () => {
             }
           >
             <Select.Options className="!bg-slate-700 p-2 space-y-1">
-              {difficulties.map((difficulty, i) => (
+              {difficulties.map((difficulty) => (
                 <SelectOption
-                  key={i}
+                  key={difficulty.id}
                   value={difficulty}
                   title={difficulty.attributes?.name}
                   isSelected={selectedDifficulty?.id === difficulty.id}
@@ -244,9 +244,9 @@ const _Articles: FC = () => {
               />
             </div>
             <div className="flex flex-col gap-2 mt-12">
-              {products.map((product, i) => (
+              {products.map((product) => (
                 <Typography
-                  key={i}
+                  key={product.id}
                   className={classNames(
                     'py-2 px-5 rounded-lg hover:bg-blue-500 text-slate-300',
                     selectedProduct?.id === product.id && 'bg-blue-500'
@@ -258,7 +258,7 @@ const _Articles: FC = () => {
               ))}
               {topics.map((topic, i) => (
                 <Typography
-                  key={i}
+                  key={topic.id}
                   className={classNames(
                     'py-2 px-5 rounded-lg hover:bg-blue-500 text-slate-300',
                     selectedTopic?.id === topic.id && 'bg-blue-500'

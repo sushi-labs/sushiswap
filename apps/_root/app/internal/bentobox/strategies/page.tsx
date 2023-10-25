@@ -46,8 +46,8 @@ export default function BentoBoxStrategiesPage() {
         )}
       </>
       <div className="grid grid-cols-1 gap-5">
-        {filteredStrategies?.map((strategy, i) => (
-          <pre key={i} className="p-4 bg-slate-700 rounded-3xl">
+        {filteredStrategies?.map((strategy) => (
+          <pre key={`${strategy.chainId}:${strategy.id}`} className="p-4 bg-slate-700 rounded-3xl">
             {JSON.stringify(strategy, null, 2)}
           </pre>
         ))}

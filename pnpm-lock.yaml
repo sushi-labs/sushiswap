@@ -11,6 +11,7 @@ importers:
 
   .:
     specifiers:
+      '@changesets/changelog-github': 0.4.8
       '@changesets/cli': 2.26.1
       '@graphql-eslint/eslint-plugin': 3.14.3
       '@sushiswap/eslint-config': workspace:*
@@ -42,6 +43,7 @@ importers:
       ts-node: 10.9.1
       turbo: 1.10.3
     devDependencies:
+      '@changesets/changelog-github': 0.4.8
       '@changesets/cli': 2.26.1
       '@graphql-eslint/eslint-plugin': 3.14.3_@types+node@18.11.18
       '@sushiswap/eslint-config': link:config/eslint
@@ -404,7 +406,7 @@ importers:
       react-image-file-resizer: 0.4.8
       react-redux: 8.0.7
       react-slider: 2.0.4
-      swr: ^1.3.0
+      swr: 2.1.5
       tailwindcss: 3.3.2
       typescript: 5.0.4
       unimported: 1.28.0
@@ -483,7 +485,7 @@ importers:
       react-image-file-resizer: 0.4.8
       react-redux: 8.0.7_lhsvdmrfrkqkmxtqosqgyd3k4i
       react-slider: 2.0.4_react@18.2.0
-      swr: 1.3.0_react@18.2.0
+      swr: 2.1.5_react@18.2.0
       viem: 1.0.2_z34kx2cq3kivpffalfeqk2ugre
       wagmi: 0.12.15_ylt6pwwz665g7ztw2tsete3ppe
       yup: 0.32.11
@@ -544,7 +546,7 @@ importers:
       react-dom: 18.2.0
       react-markdown: ^8.0.3
       sharp: 0.31.3
-      swr: ^1.3.0
+      swr: 2.1.5
       tailwindcss: 3.3.2
       typescript: 5.0.4
     dependencies:
@@ -567,7 +569,7 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-markdown: 8.0.7_s3k22s5ab4eu26xuel7hiaraxy
-      swr: 1.3.0_react@18.2.0
+      swr: 2.1.5_react@18.2.0
     devDependencies:
       '@graphql-mesh/cli': 0.82.3_ykzowzmb7rcumunkscnbisnkom
       '@graphql-mesh/graphql': 0.33.3_ykzowzmb7rcumunkscnbisnkom
@@ -829,7 +831,7 @@ importers:
       react-dom: 18.2.0
       react-markdown: ^8.0.3
       sharp: 0.31.3
-      swr: ^1.3.0
+      swr: 2.1.5
       tailwindcss: 3.3.2
       typescript: 5.0.4
     dependencies:
@@ -852,7 +854,7 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-markdown: 8.0.7_s3k22s5ab4eu26xuel7hiaraxy
-      swr: 1.3.0_react@18.2.0
+      swr: 2.1.5_react@18.2.0
     devDependencies:
       '@graphql-mesh/cli': 0.82.3_ykzowzmb7rcumunkscnbisnkom
       '@graphql-mesh/graphql': 0.33.3_ykzowzmb7rcumunkscnbisnkom
@@ -1137,7 +1139,7 @@ importers:
       react-spring: 9.6.1
       redux-devtools-extension: 2.13.9
       redux-persist: 6.0.0
-      swr: ^1.3.0
+      swr: 2.1.5
       tailwindcss: 3.3.2
       ts-jest: ^29.0.0
       typescript: 5.0.4
@@ -1213,7 +1215,7 @@ importers:
       react-spring: 9.6.1_biqbaboplfbrettd7655fr4n2y
       redux-devtools-extension: 2.13.9
       redux-persist: 6.0.0_react@18.2.0
-      swr: 1.3.0_react@18.2.0
+      swr: 2.1.5_react@18.2.0
       wagmi: 0.12.15_ylt6pwwz665g7ztw2tsete3ppe
       zod: 3.21.4
     devDependencies:
@@ -5285,6 +5287,16 @@ packages:
       '@changesets/types': 5.2.1
     dev: true
 
+  /@changesets/changelog-github/0.4.8:
+    resolution: {integrity: sha512-jR1DHibkMAb5v/8ym77E4AMNWZKB5NPzw5a5Wtqm1JepAuIF+hrKp2u04NKM14oBZhHglkCfrla9uq8ORnK/dw==}
+    dependencies:
+      '@changesets/get-github-info': 0.5.2
+      '@changesets/types': 5.2.1
+      dotenv: 8.6.0
+    transitivePeerDependencies:
+      - encoding
+    dev: true
+
   /@changesets/cli/2.26.1:
     resolution: {integrity: sha512-XnTa+b51vt057fyAudvDKGB0Sh72xutQZNAdXkCqPBKO2zvs2yYZx5hFZj1u9cbtpwM6Sxtcr02/FQJfZOzemQ==}
     hasBin: true
@@ -5350,6 +5362,15 @@ packages:
       chalk: 2.4.2
       fs-extra: 7.0.1
       semver: 7.5.3
+    dev: true
+
+  /@changesets/get-github-info/0.5.2:
+    resolution: {integrity: sha512-JppheLu7S114aEs157fOZDjFqUDpm7eHdq5E8SSR0gUBTEK0cNSHsrSR5a66xs0z3RWuo46QvA3vawp8BxDHvg==}
+    dependencies:
+      dataloader: 1.4.0
+      node-fetch: 2.6.11
+    transitivePeerDependencies:
+      - encoding
     dev: true
 
   /@changesets/get-release-plan/3.0.17:
@@ -20300,6 +20321,10 @@ packages:
       whatwg-url: 11.0.0
     dev: false
 
+  /dataloader/1.4.0:
+    resolution: {integrity: sha512-68s5jYdlvasItOJnCuI2Q9s4q98g0pCyL3HrcKJu8KNugUl8ahgmZYg38ysLTgQjjXX3H8CJLkAvWrclWfcalw==}
+    dev: true
+
   /dataloader/2.1.0:
     resolution: {integrity: sha512-qTcEYLen3r7ojZNgVUaRggOI+KM7jrKxXeSHhogh/TWxYMeONEMqY+hmkobiYQozsGIyg9OYVzO4ZIfoB4I0pQ==}
     dev: true
@@ -21017,6 +21042,11 @@ packages:
   /dotenv/16.3.1:
     resolution: {integrity: sha512-IPzF4w4/Rd94bA9imS68tZBaYyBWSCE47V1RGuMrB94iyTOIEwRmVL2x/4An+6mETpLrKJ5hQkB8W4kFAadeIQ==}
     engines: {node: '>=12'}
+    dev: true
+
+  /dotenv/8.6.0:
+    resolution: {integrity: sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==}
+    engines: {node: '>=10'}
     dev: true
 
   /dotignore/0.1.2:
@@ -36627,14 +36657,6 @@ packages:
       - utf-8-validate
     dev: false
     optional: true
-
-  /swr/1.3.0_react@18.2.0:
-    resolution: {integrity: sha512-dkghQrOl2ORX9HYrMDtPa7LTVHJjCTeZoB1dqTbnnEDlSvN8JEKpYIYurDfvbQFUUS8Cg8PceFVZNkW0KNNYPw==}
-    peerDependencies:
-      react: ^16.11.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      react: 18.2.0
-    dev: false
 
   /swr/2.1.5:
     resolution: {integrity: sha512-/OhfZMcEpuz77KavXST5q6XE9nrOBOVcBLWjMT+oAE/kQHyE3PASrevXCtQDZ8aamntOfFkbVJp7Il9tNBQWrw==}

@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/chain",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Sushi Chain",
   "keywords": [
     "sushi",
@@ -26,7 +26,6 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
     "generate": "ls ./src/generated.ts || ts-node ./scripts/generate.ts",
-    "preinstall": "pnpm run generate",
     "lint": "TIMING=1 eslint src --fix",
     "test": "jest --passWithNoTests"
   },

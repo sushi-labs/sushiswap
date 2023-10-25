@@ -40,8 +40,8 @@ const _Home: FC = () => {
   const { data: categoriesData } = useSWR<Collection<Category>>('/categories')
 
   const { data: filterData, isValidating } = useSWR(
-    [`/articles`, selected, debouncedQuery],
-    async (url, selected, debouncedQuery) => {
+    ['/articles', selected, debouncedQuery],
+    async ([_url, selected, debouncedQuery]) => {
       return (
         await getArticles({
           filters: {

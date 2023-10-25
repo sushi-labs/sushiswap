@@ -83,7 +83,7 @@
     "react-spring": "9.6.1",
     "redux-devtools-extension": "2.13.9",
     "redux-persist": "6.0.0",
-    "swr": "^1.3.0",
+    "swr": "2.1.5",
     "wagmi": "0.12.15",
     "zod": "3.21.4"
   },

@@ -230,13 +230,13 @@ export const PRODUCTS_DATA = {
               out your funds via Kashi.
             </p>
             <p>How?</p>
-            <ol className="list-decimal pl-4">
+            <ol className="pl-4 list-decimal">
               <li>Lend out your funds via Kashi and earn interest from borrowers.</li>
               <li>Idle assets automatically earn a small yield from Bentobox strategies.</li>
               <li>Stake the KMP tokens you receive in Kashi farms to earn extra $SUSHI rewards.</li>
             </ol>
             <p>With Trident it will be possible to do the same with your SLPs</p>
-            <ol className="list-decimal pl-4">
+            <ol className="pl-4 list-decimal">
               <li>Add liquidity on Trident and earn fees from all swaps.</li>
               <li>Idle assets automatically earn a small yield from Bentobox strategies.</li>
               <li>Stake the SLP tokens you receive in Sushiswap farms to earn extra $SUSHI rewards.</li>
@@ -266,7 +266,7 @@ export const PRODUCTS_DATA = {
         answer: (
           <div className="space-y-4">
             <p>There are three different types of implementations for Masterchef</p>
-            <ul className="list-disc pl-4">
+            <ul className="pl-4 list-disc">
               <li>
                 MasterChefv1: The main contract on the Ethereum network that rewards $SUSHI to users for staking their
                 LP and/or KMP tokens.
@@ -435,7 +435,7 @@ export const PRODUCTS_DATA = {
         answer: (
           <div className="space-y-4">
             <p>On Sushi, you can stake two different type of liquidity tokens:</p>
-            <ul className="list-disc pl-4">
+            <ul className="pl-4 list-disc">
               <li>SLP tokens: Tokens you receive as an IOU when adding liquidity on Sushi.</li>
               <li>KMP tokens: Tokens you receive as an IOU when lending on Kashi.</li>
             </ul>
@@ -456,13 +456,13 @@ export const PRODUCTS_DATA = {
               out your funds via Kashi.
             </p>
             <p>How?</p>
-            <ol className="list-decimal pl-4">
+            <ol className="pl-4 list-decimal">
               <li>Lend out your funds via Kashi and earn interest from borrowers.</li>
               <li>Idle assets automatically earn a small yield from Bentobox strategies.</li>
               <li>Stake the KMP tokens you receive in Kashi farms to earn extra $SUSHI rewards.</li>
             </ol>
             <p>With Trident it will be possible to do the same with your SLPs</p>
-            <ol className="list-decimal pl-4">
+            <ol className="pl-4 list-decimal">
               <li>Add liquidity on Trident and earn fees from all swaps.</li>
               <li>Idle assets automatically earn a small yield from Bentobox strategies.</li>
               <li>Stake the SLP tokens you receive in Sushiswap farms to earn extra $SUSHI rewards.</li>

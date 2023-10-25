@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 
-export const ANGLE_ENABLED_NETWORKS = [ChainId.POLYGON, ChainId.ARBITRUM, ChainId.OPTIMISM]
+export const ANGLE_ENABLED_NETWORKS = [ChainId.ETHEREUM, ChainId.POLYGON, ChainId.ARBITRUM, ChainId.OPTIMISM]
 
 export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.OPTIMISM,

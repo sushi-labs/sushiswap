@@ -5,7 +5,7 @@ import { Currency } from '@sushiswap/ui/future/components/currency'
 import { FC } from 'react'
 
 import { useTokensFromPool } from '../../../../lib/hooks'
-import { ICON_SIZE } from '../contants'
+import { ICON_SIZE } from '../constants'
 import { Row } from './types'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'

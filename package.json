@@ -13,8 +13,8 @@
     "build-scripts": "dotenv -- turbo run build --filter={./scripts/*}[HEAD^1]...",
     "build-earn-app": "dotenv -- turbo run build --filter=earn...[HEAD^1]",
     "changeset": "changeset",
-    "changeset-publish": "changeset publish",
-    "changeset-version": "changeset version",
+    "changeset:release": "changeset publish",
+    "changeset:version": "changeset version && pnpm install --lockfile-only",
     "check": "turbo run check --no-cache",
     "clean": "turbo run clean && rm -rf node_modules",
     "dev": "dotenv -- turbo run dev --no-cache --parallel --continue",
@@ -46,6 +46,7 @@
     "version-packages": "dotenv -- turbo run build --filter=./packages/* && changeset version"
   },
   "devDependencies": {
+    "@changesets/changelog-github": "0.4.8",
     "@changesets/cli": "2.26.1",
     "@graphql-eslint/eslint-plugin": "3.14.3",
     "@sushiswap/eslint-config": "workspace:*",

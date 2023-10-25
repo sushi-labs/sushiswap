@@ -15,7 +15,7 @@ const SubgraphsPage = () => {
   const [groupBy, setGroupBy] = useState<keyof Subgraph>('category')
   const [blocks, setBlocks] = useState<{ title: string; subgraphs: Subgraph[] }[]>([])
 
-  const { data, isValidating, error } = useSWR(stringify(['subgraphs', debouncedFilterBy]), () =>
+  const { data, isValidating } = useSWR(stringify(['subgraphs', debouncedFilterBy]), () =>
     getSubgraphs({ filter: debouncedFilterBy })
   )
 
@@ -63,12 +63,12 @@ const SubgraphsPage = () => {
                   placeholder="Name"
                 />
               </div>
-              <div></div>
+              <div />
             </div>
           </div>
           <div className="flex flex-col items-center w-full space-y-6">
-            {blocks.map((block, i) => (
-              <div key={i} className="space-y-2">
+            {blocks.map((block) => (
+              <div key={block.title} className="space-y-2">
                 <div>{block.title}</div>
                 <SubgraphTable subgraphs={block.subgraphs} groupBy={groupBy} />
               </div>

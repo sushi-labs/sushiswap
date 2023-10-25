@@ -22,6 +22,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          submodules: true
 
       - uses: pnpm/action-setup@v2
         with:
@@ -36,11 +37,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Build packages
+        run: pnpm exec turbo run build --filter=./packages/*
+
+      - name: Build config
+        run: pnpm exec turbo run build --filter=./config/*
+
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm publish-packages
+          title: "chore: version packages"
+          commit: "chore: version packages"
+          publish: pnpm changeset:release
+          version: pnpm changeset:version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

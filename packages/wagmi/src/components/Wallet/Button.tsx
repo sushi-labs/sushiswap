@@ -13,11 +13,11 @@ import {
   WalletConnectIcon,
 } from '@sushiswap/ui'
 import React, { ReactNode, useMemo } from 'react'
-import { useConnect } from 'wagmi'
 
 import {
   // useAutoConnect,
   useWalletState,
+  useConnect
 } from '../../hooks'
 import { RabbyIcon, FrameIcon } from '@sushiswap/ui/future/components/icons'
 

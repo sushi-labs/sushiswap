@@ -16,5 +16,8 @@ export * from './systems'
 // Re-export wagmi
 export * from 'wagmi'
 
+// Re-export useConnect to avoid ambiguity
+export { useConnect } from './hooks'
+
 // Re-export @wagmi/core
 // export * from '@wagmi/core'

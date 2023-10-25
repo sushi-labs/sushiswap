@@ -1,7 +1,7 @@
 import { TradeType } from '@sushiswap/amm'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, StargateChainId } from '@sushiswap/stargate'
 import { useSushiXSwapContract } from '@sushiswap/wagmi'
-import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import { Fraction, JSBI, ONE, Percent, ZERO } from '@sushiswap/math'
 import { Amount, Native, Price, Token, tryParseAmount, Type, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { useQuery } from '@tanstack/react-query'
 import { getBridgeFees } from './getBridgeFees'
@@ -13,6 +13,8 @@ import { usePrice } from '@sushiswap/react-query'
 import { getClientTrade, useBentoboxTotals, usePools } from '@sushiswap/wagmi/future/hooks'
 
 const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // 0.50%
+
+const STARGATE_DEFAULT_SLIPPAGE = new Percent(100, 10_000) // 1%
 
 export const useCrossChainTradeQuery = (
   {
@@ -263,12 +265,19 @@ export const useCrossChainTradeQuery = (
       }
 
       if (srcAmountOut && dstAmountIn) {
+        const slippageAdjustedAmountOut = new Fraction(ONE)
+          .add(STARGATE_DEFAULT_SLIPPAGE)
+          .invert()
+          .multiply(srcAmountOut.quotient).quotient
+
+        const amountMin = Amount.fromRawAmount(srcAmountOut.currency, slippageAdjustedAmountOut)
+
         sushiXSwap.teleport(
           srcBridgeToken,
           dstBridgeToken,
           dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined,
           tradeId,
-          srcAmountOut
+          amountMin
         )
       }
 

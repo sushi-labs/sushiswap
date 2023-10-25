@@ -3,7 +3,7 @@ import { classNames, NetworkIcon } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { FC, useMemo } from 'react'
 
-import { ICON_SIZE } from '../contants'
+import { ICON_SIZE } from '../constants'
 import { Row } from './types'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future/hooks'
 import { Badge } from '@sushiswap/ui/future/components/Badge'

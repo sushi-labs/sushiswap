@@ -23,7 +23,7 @@ const { color, usps, productStats, buttonText, cards, faq } = PRODUCTS_DATA[PROD
 export const getStaticProps: GetStaticProps = async () => {
   const data = await getProducts({ filters: { slug: { eq: PRODUCT_SLUG } } })
   const product = data?.products?.data?.[0].attributes
-  if (!product) throw new Error(`Product not found`)
+  if (!product) throw new Error('Product not found')
   return { props: product, revalidate: 60 }
 }
 
@@ -36,7 +36,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   relevantArticleIds,
 }) => {
   const { data, isValidating } = useSWR(
-    [`/bentobox-articles`],
+    ['/bentobox-articles'],
     async () => await getLatestAndRelevantArticles(slug, relevantArticleIds),
     {
       revalidateOnFocus: false,
@@ -75,8 +75,8 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         />
 
         <div className="grid gap-6 mt-8 sm:grid-cols-2">
-          {usps.map((usp, i) => (
-            <div key={i} className="flex gap-4 sm:gap-6 sm:p-4">
+          {usps.map((usp) => (
+            <div key={usp} className="flex gap-4 sm:gap-6 sm:p-4">
               <div className="bg-slate-800 rounded-full min-w-[32px] sm:min-w-[56px] h-8 sm:h-14 flex items-center justify-center">
                 <CheckIcon className="text-[#7CFF6B] w-4 sm:w-10" />
               </div>
@@ -88,7 +88,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         <div className="grid sm:grid-cols-[repeat(auto-fit,minmax(360px,1fr))] mt-10 sm:mt-[70px] gap-x-6 gap-y-8">
           {cards.map((card, i) => (
             <div
-              key={i}
+              key={card.title}
               className="p-px sm:h-[415px] rounded-3xl"
               style={{
                 background: !i ? `linear-gradient(218.8deg, ${color} 2.35%, rgba(0, 0, 0, 0) 97.65%)` : 'unset',

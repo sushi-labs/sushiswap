@@ -15,7 +15,7 @@ import {
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Loader } from '@sushiswap/ui/future/components/Loader'
 import React, { FC, Fragment, useCallback, useMemo } from 'react'
-import { useConnect } from 'wagmi'
+import { useConnect } from '../../hooks'
 import { classNames, ExtractProps } from '@sushiswap/ui'
 
 const Icons: Record<string, React.ElementType> = {

@@ -114,9 +114,7 @@ const _Streams: FC = () => {
                 onMouseLeave={() => setHover(ChartHover.NONE)}
               >
                 <ProgressBar
-                  progress={
-                    stream && stream.streamedPercentage ? stream.streamedPercentage.divide(100).toSignificant(4) : 0
-                  }
+                  progress={stream?.streamedPercentage ? stream.streamedPercentage.divide(100).toSignificant(4) : 0}
                   color={ProgressColor.BLUE}
                   showLabel={false}
                 />

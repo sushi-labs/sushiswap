@@ -28,8 +28,8 @@ export function BentoBoxKpis() {
 
   return (
     <dl className="grid grid-cols-1 gap-5 mt-5 sm:grid-cols-3">
-      {kpis?.map((kpi, i) => (
-        <Kpi key={i} kpi={kpi} />
+      {kpis?.map((kpi) => (
+        <Kpi key={kpi.name} kpi={kpi} />
       ))}
     </dl>
   )

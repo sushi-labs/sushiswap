@@ -2,7 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 import { FC } from 'react'
 
-import { ICON_SIZE } from '../contants'
+import { ICON_SIZE } from '../constants'
 import { Row } from './types'
 
 export const PoolChainCell: FC<Row<{ chainId: ChainId }>> = ({ row }) => {

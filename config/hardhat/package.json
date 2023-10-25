@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/hardhat-config",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Sushi Hardhat Config",
   "keywords": [
     "sushi",
@@ -24,8 +24,7 @@
   ],
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts --external hardhat,ethers",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "postinstall": "pnpm build"
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "jest": {
     "preset": "@sushiswap/jest-config/node"

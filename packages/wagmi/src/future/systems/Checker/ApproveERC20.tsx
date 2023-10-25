@@ -55,15 +55,17 @@ export const Component: FC<ApproveERC20Props> = ({
     return <>{children}</>
   }
 
+  const loading = [ApprovalState.UNKNOWN, ApprovalState.LOADING, ApprovalState.PENDING].includes(state)
+
   return (
     <Button
       as={as}
       disabled={state !== ApprovalState.NOT_APPROVED}
-      loading={[ApprovalState.UNKNOWN, ApprovalState.LOADING, ApprovalState.PENDING].includes(state)}
+      loading={loading}
       testdata-id={id}
       variant={variant}
       size={size}
-      className={classNames(className, 'group relative pr-16')}
+      className={classNames(className, 'group relative', !loading && 'pr-16' )}
       fullWidth={fullWidth}
       onClick={() => write?.()}
       type={type}
