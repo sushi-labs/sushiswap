@@ -1,40 +1,46 @@
-'use client'
+"use client";
 
-import { watchAccount, watchNetwork } from '@wagmi/core'
+import { watchAccount, watchNetwork } from "@wagmi/core";
 import React, {
+  createContext,
   FC,
   ReactNode,
-  createContext,
   useCallback,
   useContext,
   useEffect,
   useMemo,
   useState,
-} from 'react'
-import { Signature } from 'viem'
+} from "react";
+import { Signature } from "viem";
 
 type CheckerContext = {
-  state: Record<string, boolean>
-  signatureState: Record<string, Signature | undefined>
-  setApproved: (tag: string, approved: boolean) => void
-  setSignature: (tag: string, signature: Signature | undefined) => void
-}
+  setApproved: (tag: string, approved: boolean) => void;
+  setSignature: (tag: string, signature: Signature | undefined) => void;
+};
 
-const CheckerContext = createContext<CheckerContext | undefined>(undefined)
+type CheckerStateContext = {
+  state: Record<string, boolean>;
+  signatureState: Record<string, Signature | undefined>;
+};
+
+const CheckerContext = createContext<CheckerContext | undefined>(undefined);
+const CheckerStateContext = createContext<CheckerStateContext | undefined>(
+  undefined
+);
 
 interface ProviderProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 interface State {
-  state: Record<string, boolean>
-  signatureState: Record<string, Signature | undefined>
+  state: Record<string, boolean>;
+  signatureState: Record<string, Signature | undefined>;
 }
 
-const initialState = { state: {}, signatureState: {} }
+const initialState = { state: {}, signatureState: {} };
 
 const CheckerProvider: FC<ProviderProps> = ({ children }) => {
-  const [{ state, signatureState }, setState] = useState<State>(initialState)
+  const [{ state, signatureState }, setState] = useState<State>(initialState);
 
   const setApproved = useCallback((tag: string, approved: boolean) => {
     setState((prevState) => ({
@@ -43,8 +49,8 @@ const CheckerProvider: FC<ProviderProps> = ({ children }) => {
         ...prevState.state,
         [tag]: approved,
       },
-    }))
-  }, [])
+    }));
+  }, []);
 
   const setSignature = useCallback(
     (tag: string, signature: Signature | undefined) => {
@@ -54,81 +60,93 @@ const CheckerProvider: FC<ProviderProps> = ({ children }) => {
           ...prevState.signatureState,
           [tag]: signature,
         },
-      }))
+      }));
     },
-    [],
-  )
+    []
+  );
 
   // Reset state when address/wallet changes
   useEffect(() => {
-    const unwatchAccountListener = watchAccount(() => setState(initialState))
-    const unwatchChainListener = watchNetwork(() => setState(initialState))
+    const unwatchAccountListener = watchAccount(() => setState(initialState));
+    const unwatchChainListener = watchNetwork(() => setState(initialState));
 
     return () => {
-      unwatchAccountListener()
-      unwatchChainListener()
-    }
-  }, [])
+      unwatchAccountListener();
+      unwatchChainListener();
+    };
+  }, []);
 
   return (
     <CheckerContext.Provider
       value={useMemo(
-        () => ({ setApproved, state, signatureState, setSignature }),
-        [setApproved, setSignature, signatureState, state],
+        () => ({ setApproved, setSignature }),
+        [setApproved, setSignature]
       )}
     >
-      {children}
+      <CheckerStateContext.Provider
+        value={useMemo(
+          () => ({ state, signatureState }),
+          [state, signatureState]
+        )}
+      >
+        {children}
+      </CheckerStateContext.Provider>
     </CheckerContext.Provider>
-  )
-}
+  );
+};
 
-const useCheckerContext = () => useContext(CheckerContext)
+const useCheckerContext = () => useContext(CheckerContext);
+const useCheckerStateContext = () => useContext(CheckerStateContext);
 
 const useApproved = (tag: string) => {
-  const context = useCheckerContext()
-  if (!context) {
-    throw new Error('Hook can only be used inside Checker Context')
+  const context = useCheckerContext();
+  const stateContext = useCheckerStateContext();
+
+  if (!context || !stateContext) {
+    throw new Error("Hook can only be used inside Checker Context");
   }
 
   return useMemo(
     () => ({
-      approved: context.state[tag] ? context.state[tag] : false,
+      approved: stateContext.state[tag] ? stateContext.state[tag] : false,
       setApproved: (approved: boolean) => context.setApproved(tag, approved),
     }),
-    [context, tag],
-  )
-}
+    [context, tag]
+  );
+};
 
 const useSignature = (tag: string) => {
-  const context = useCheckerContext()
-  if (!context) {
-    throw new Error('Hook can only be used inside Checker Context')
+  const context = useCheckerContext();
+  const stateContext = useCheckerStateContext();
+
+  if (!context || !stateContext) {
+    throw new Error("Hook can only be used inside Checker Context");
   }
 
   return useMemo(
     () => ({
-      signature: context.signatureState[tag]
-        ? context.signatureState[tag]
+      signature: stateContext.signatureState[tag]
+        ? stateContext.signatureState[tag]
         : undefined,
       setSignature: (signature: Signature | undefined) =>
         context.setSignature(tag, signature),
     }),
-    [context, tag],
-  )
-}
+    [context, tag]
+  );
+};
 
 // HOC component
 // useful for when the useApproved hook and the Checker.Success component are in the same component
 const withCheckerRoot = <P extends object>(
-  Component: React.FunctionComponent<P>,
+  Component: React.FunctionComponent<P>
 ): FC<P> =>
   function WithCheckerRootComponent(props: P) {
     return (
       <CheckerProvider>
         <Component {...props} />
       </CheckerProvider>
-    )
-  }
+    );
+  };
 
 export {
   type CheckerContext,
@@ -138,4 +156,4 @@ export {
   useCheckerContext,
   useSignature,
   withCheckerRoot,
-}
+};
